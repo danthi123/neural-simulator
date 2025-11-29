@@ -1273,9 +1273,125 @@ class SimulationBridge:
         return conn_matrix
 
     def _generate_watts_strogatz_connections_3d(self, n, k_neighbors, p_rewire, config):
-        """Generates connections using a Watts-Strogatz small-world network model (fallback)."""
-        self._log_console("Watts-Strogatz 3D generation currently falls back to 3D spatial generation.", "warning")
-        return self._generate_spatial_connections_3d(n, config.connections_per_neuron, self.cp_neuron_positions_3d, self.cp_traits, config)
+        """Generates connections using a Watts-Strogatz small-world network model in 3D.
+        
+        Creates a small-world network with high clustering and short path lengths:
+        1. Create ring lattice based on 3D spatial proximity (k nearest neighbors)
+        2. Rewire each edge with probability p_rewire to a random target
+        3. Maintain directed network structure
+        
+        Args:
+            n: Number of neurons
+            k_neighbors: Number of nearest spatial neighbors to connect (must be even)
+            p_rewire: Rewiring probability (0 = regular lattice, 1 = random network)
+            config: CoreSimConfig with weight parameters
+        """
+        self._log_console(f"Generating Watts-Strogatz 3D network (n={n}, k={k_neighbors}, p_rewire={p_rewire})...")
+        start_t = time.time()
+        
+        if n == 0:
+            return csp.csr_matrix((0, 0), dtype=cp.float32)
+        
+        if n == 1:
+            self._log_console("Only 1 neuron, returning empty connectivity.", "info")
+            return csp.csr_matrix((1, 1), dtype=cp.float32)
+        
+        # Ensure k is valid and even
+        k = min(k_neighbors, n - 1)
+        if k % 2 == 1:
+            k = k + 1  # Make even
+            k = min(k, n - 1)
+        if k < 2:
+            k = 2
+        
+        min_w, max_w = config.hebbian_min_weight, config.hebbian_max_weight
+        
+        # Step 1: Create spatial ordering - sort neurons by 3D position
+        # We'll use a space-filling curve approximation (sum of coordinates)
+        positions = self.cp_neuron_positions_3d
+        spatial_order = cp.sum(positions, axis=1)  # Simple spatial key
+        sorted_indices = cp.argsort(spatial_order)
+        
+        # Step 2: Build k-nearest neighbor ring lattice
+        # Each neuron connects to its k/2 predecessors and k/2 successors in spatial order
+        rows = []
+        cols = []
+        weights = []
+        
+        half_k = k // 2
+        
+        for i in range(n):
+            source_idx = int(sorted_indices[i])
+            
+            # Connect to k/2 neighbors on each side in the spatial ring
+            for offset in range(1, half_k + 1):
+                # Forward connections (clockwise)
+                target_spatial_idx = (i + offset) % n
+                target_idx = int(sorted_indices[target_spatial_idx])
+                
+                # Rewiring decision
+                if cp.random.random() < p_rewire:
+                    # Rewire to random target (avoid self-loops and duplicates)
+                    target_idx = int(cp.random.randint(0, n))
+                    while target_idx == source_idx:
+                        target_idx = int(cp.random.randint(0, n))
+                
+                weight = float(cp.random.uniform(min_w, max_w))
+                rows.append(source_idx)
+                cols.append(target_idx)
+                weights.append(weight)
+                
+                # Backward connections (counter-clockwise)
+                target_spatial_idx = (i - offset) % n
+                target_idx = int(sorted_indices[target_spatial_idx])
+                
+                # Rewiring decision
+                if cp.random.random() < p_rewire:
+                    # Rewire to random target
+                    target_idx = int(cp.random.randint(0, n))
+                    while target_idx == source_idx:
+                        target_idx = int(cp.random.randint(0, n))
+                
+                weight = float(cp.random.uniform(min_w, max_w))
+                rows.append(source_idx)
+                cols.append(target_idx)
+                weights.append(weight)
+            
+            # Progress indicator for large networks
+            if n > 1000 and i % (n // 20) == 0:
+                print(f"\rWS generation: {i/n*100:.1f}%", end="")
+        
+        if n > 1000:
+            print("\rWS generation: 100.0%")
+        
+        # Step 3: Create sparse matrix and remove duplicate edges
+        # Convert to COO, then CSR to handle duplicates
+        rows_cp = cp.array(rows, dtype=cp.int32)
+        cols_cp = cp.array(cols, dtype=cp.int32)
+        weights_cp = cp.array(weights, dtype=cp.float32)
+        
+        conn_matrix = csp.coo_matrix(
+            (weights_cp, (rows_cp, cols_cp)),
+            shape=(n, n),
+            dtype=cp.float32
+        ).tocsr()
+        
+        # Remove self-loops if any exist
+        conn_matrix.setdiag(0)
+        conn_matrix.eliminate_zeros()
+        
+        conn_matrix.sort_indices()
+        elapsed = time.time() - start_t
+        
+        # Calculate network statistics
+        avg_degree = conn_matrix.nnz / n if n > 0 else 0
+        
+        self._log_console(
+            f"Watts-Strogatz network complete: {conn_matrix.nnz} connections "
+            f"(avg degree: {avg_degree:.1f}, expected: {k}). Time: {elapsed:.2f}s"
+        )
+        
+        return conn_matrix
 
     def apply_simulation_configuration_core(self, full_config_dict, is_part_of_playback_setup=False):
         """Applies a new simulation configuration from a full dictionary."""

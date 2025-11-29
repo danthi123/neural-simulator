@@ -118,8 +118,10 @@ python -c "import cupy as cp; free, total = cp.cuda.Device().mem_info; print(f'{
 - Disable both to maximize network size with limited VRAM
 
 ### Network Topology
-- `enable_watts_strogatz`: Small-world network (currently falls back to spatial)
-- `connections_per_neuron`: Average outgoing synapses
+- `enable_watts_strogatz`: Small-world network with high clustering + short paths
+  - `connectivity_k`: Number of nearest spatial neighbors (must be even)
+  - `connectivity_p_rewire`: Rewiring probability (0=regular, 1=random)
+- `connections_per_neuron`: Average outgoing synapses (for spatial connectivity)
 - `num_traits`: Neuron population types (affects trait-based connectivity)
 
 ## File Formats
