@@ -953,7 +953,13 @@ class SimulationBridge:
                 cp.random.seed(cfg.seed)
                 np.random.seed(cfg.seed)
 
-            self.cp_external_input_current = cp.zeros(n, dtype=cp.float32)
+            # Initialize external input current
+            # HH neurons need baseline drive to spike, Izhikevich can be spontaneous
+            if cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
+                # Add small baseline current (5-15 pA) to drive HH neurons above threshold
+                self.cp_external_input_current = cp.random.uniform(5.0, 15.0, n).astype(cp.float32)
+            else:
+                self.cp_external_input_current = cp.zeros(n, dtype=cp.float32)
             self.cp_firing_states = cp.zeros(n, dtype=bool)
             self.cp_prev_firing_states = cp.zeros(n, dtype=bool)
             self.cp_traits = cp.random.randint(0, max(1, cfg.num_traits), (n,), dtype=cp.int32) if n > 0 else cp.array([], dtype=cp.int32)
