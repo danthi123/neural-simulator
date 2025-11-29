@@ -1377,7 +1377,7 @@ class SimulationBridge:
         ).tocsr()
         
         # Remove self-loops if any exist
-        conn_matrix.setdiag(0)
+        conn_matrix.setdiag(cp.zeros(n, dtype=cp.float32))
         conn_matrix.eliminate_zeros()
         
         conn_matrix.sort_indices()
