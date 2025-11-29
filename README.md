@@ -103,7 +103,7 @@ PyOpenGL-accelerate >= 3.1.6
 
 4. **Clone and run**:
    ```bash
-   git clone https://github.com/yourusername/neural-simulator.git
+   git clone https://github.com/danthi123/neural-simulator.git
    cd neural-simulator
    python sim3d_v6.py
    ```
@@ -298,9 +298,9 @@ If you use this simulator in your research, please cite:
 ```bibtex
 @software{neural_simulator_2025,
   title = {GPU-Accelerated Neural Network Simulator},
-  author = {Your Name},
+  author = {danthi123},
   year = {2025},
-  url = {https://github.com/yourusername/neural-simulator}
+  url = {https://github.com/danthi123/neural-simulator}
 }
 ```
 
@@ -316,8 +316,7 @@ If you use this simulator in your research, please cite:
 ## Contact
 
 For questions, issues, or suggestions:
-- GitHub Issues: [Project Issues](https://github.com/yourusername/neural-simulator/issues)
-- Email: your.email@example.com
+- GitHub Issues: [Project Issues](https://github.com/danthi123/neural-simulator/issues)
 
 ---
 
