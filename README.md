@@ -105,13 +105,13 @@ PyOpenGL-accelerate >= 3.1.6
    ```bash
    git clone https://github.com/danthi123/neural-simulator.git
    cd neural-simulator
-   python sim3d_v6.py
+   python neural-simulator.py
    ```
 
 ## Quick Start
 
 ### Basic Usage
-1. Launch the simulator: `python sim3d_v6.py`
+1. Launch the simulator: `python neural-simulator.py`
 2. Configure parameters in the DearPyGUI control panel (left side)
 3. Click **"Apply Changes & Reset Sim"** to initialize the network
 4. Click **"Start"** to begin simulation

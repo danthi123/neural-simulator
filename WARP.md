@@ -11,7 +11,7 @@ A high-performance GPU-accelerated 3D neural network simulator using NVIDIA CUDA
 ## Architecture
 
 ### Single-File Design
-The entire simulator is in `sim3d_v6.py` (~9500 lines). This monolithic structure keeps all GPU kernels, UI, and simulation logic together for easier CUDA optimization and deployment.
+The entire simulator is in `neural-simulator.py` (~9500 lines). This monolithic structure keeps all GPU kernels, UI, and simulation logic together for easier CUDA optimization and deployment.
 
 ### Thread Model
 - **Main Thread**: DearPyGUI event loop + OpenGL rendering (60 FPS target)
@@ -51,7 +51,7 @@ The entire simulator is in `sim3d_v6.py` (~9500 lines). This monolithic structur
 
 ### Run Simulator
 ```bash
-python sim3d_v6.py
+python neural-simulator.py
 ```
 
 ### Install Dependencies
