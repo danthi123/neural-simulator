@@ -956,8 +956,10 @@ class SimulationBridge:
             # Initialize external input current
             # HH neurons need baseline drive to spike, Izhikevich can be spontaneous
             if cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
-                # Add small baseline current (5-15 pA) to drive HH neurons above threshold
-                self.cp_external_input_current = cp.random.uniform(5.0, 15.0, n).astype(cp.float32)
+                # HH model expects current density in µA/cm²
+                # For spiking: need 5-20 µA/cm² (converted to pA for consistency)
+                # 10 µA/cm² = 10,000,000 pA (when divided by 1e-6 later = 10 µA/cm²)
+                self.cp_external_input_current = cp.random.uniform(5e6, 20e6, n).astype(cp.float32)
             else:
                 self.cp_external_input_current = cp.zeros(n, dtype=cp.float32)
             self.cp_firing_states = cp.zeros(n, dtype=bool)
