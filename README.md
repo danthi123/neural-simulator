@@ -238,7 +238,10 @@ python neural-simulator.py --auto-tune [--quick]
 
 The tuner:
 - Iterates through Hodgkin–Huxley + AdEx model combinations with all defined
-  **Neural Structure Profiles** (and HH presets for HH model).
+  **Neural Structure Profiles**.
+- For HH, only uses **profile-compatible HH presets** (e.g. striatum → MSN,
+  CA1 → CA1 pyramidal, STN–GPe → STN bursting). Generic/unstructured profiles
+  still allow all HH presets.
 - For each combination, tests several external drive scales.
 - Measures spike activity, fraction of neurons that spiked, and connectivity.
 - Chooses the best scale according to simple criteria (network is alive but not

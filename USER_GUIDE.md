@@ -193,6 +193,8 @@ Each profile encodes:
 - Trait definitions (fractions and roles: excitatory vs inhibitory).
 - Optional **connectivity motif** name.
 - Optional **default HH neuron type** for HH model.
+- An implicit mapping between profile and HH preset(s) used for realistic HH
+  simulations.
 
 Examples:
 - `CORTEX_L23_RS_FS`
@@ -202,9 +204,11 @@ Examples:
 - `BASAL_GANGLIA_STRIATUM`
 - `BASAL_GANGLIA_STN_GPE`
 
-When using HH, profiles with `default_hh_neuron_type` will automatically set
-both the HH preset and UI HH parameter panel to match (and auto-tuned drive
-scale will be applied if available).
+When using HH, profiles with `default_hh_neuron_type` will:
+- Restrict the **HH Default Neuron Type** combo to only profile-compatible
+  presets (usually a single biologically grounded choice per profile).
+- Automatically set both the HH preset and UI HH parameter panel to match.
+- Use profile-specific auto-tuned drive scales when available.
 
 ### 5.2 Connectivity Generators
 

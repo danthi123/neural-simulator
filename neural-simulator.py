@@ -1021,6 +1021,79 @@ NEURAL_STRUCTURE_PROFILES = {
     },
 }
 
+# --- Profile / neuron-type compatibility helpers (realism-focused) ---
+
+def get_profile_default_hh_type_name(profile_name):
+    """Returns the default HH neuron type name for a profile, if any."""
+    profile_def = NEURAL_STRUCTURE_PROFILES.get(profile_name)
+    if not profile_def:
+        return None
+    return profile_def.get("default_hh_neuron_type")
+
+
+def get_compatible_hh_type_names_for_profile(profile_name):
+    """Returns the list of HH neuron type names considered realistic for a profile.
+
+    If a profile defines a default HH preset (and optionally an explicit
+    allowed_hh_neuron_types list), we restrict to those. Generic/unstructured
+    profiles fall back to all defined HH presets.
+    """
+    profile_def = NEURAL_STRUCTURE_PROFILES.get(profile_name)
+    if not profile_def:
+        # Unknown profile: allow all defined HH presets
+        return [nt.name for nt in NeuronType if nt in DefaultHodgkinHuxleyParams.PARAMS]
+
+    allowed = []
+
+    # Optional explicit list of compatible HH types
+    explicit_list = profile_def.get("allowed_hh_neuron_types") or []
+    for name in explicit_list:
+        if name in NeuronType.__members__ and NeuronType[name] in DefaultHodgkinHuxleyParams.PARAMS:
+            if name not in allowed:
+                allowed.append(name)
+
+    # Always include the profile's default HH preset if present
+    default_hh = profile_def.get("default_hh_neuron_type")
+    if default_hh and default_hh in NeuronType.__members__ and NeuronType[default_hh] in DefaultHodgkinHuxleyParams.PARAMS:
+        if default_hh not in allowed:
+            allowed.append(default_hh)
+
+    # If nothing explicit was configured, fall back to all HH presets
+    if not allowed:
+        return [nt.name for nt in NeuronType if nt in DefaultHodgkinHuxleyParams.PARAMS]
+
+    return allowed
+
+
+def enforce_profile_neuron_type_compatibility(core_cfg):
+    """Clamp core_cfg to a realistic (profile, neuron model, HH preset) combo.
+
+    Currently this enforces that when running the HH model with a structured
+    profile, the default HH neuron type is the profile-appropriate preset.
+    """
+    try:
+        profile_name = getattr(core_cfg, "neural_profile_name", "GENERIC_UNSTRUCTURED")
+        model_name = getattr(core_cfg, "neuron_model_type", NeuronModel.IZHIKEVICH.name)
+
+        if model_name != NeuronModel.HODGKIN_HUXLEY.name:
+            return
+
+        allowed_hh = get_compatible_hh_type_names_for_profile(profile_name)
+        if not allowed_hh:
+            return
+
+        current_hh = getattr(core_cfg, "default_neuron_type_hh", allowed_hh[0])
+        if current_hh not in allowed_hh:
+            new_hh = allowed_hh[0]
+            print(
+                f"[PROFILE_COMPAT] Profile '{profile_name}' does not support HH preset '{current_hh}'. "
+                f"Using '{new_hh}' instead for realism."
+            )
+            core_cfg.default_neuron_type_hh = new_hh
+    except Exception as e:
+        print(f"Warning: failed to enforce profile/neuron-type compatibility: {e}")
+
+# --- Connectivity Motifs Registry ---
 # --- Connectivity Motifs Registry ---
 # Each motif describes high-level population connectivity based on trait indices.
 # The rules are approximate and designed to be GPU-friendly while capturing
@@ -2210,6 +2283,12 @@ class SimulationBridge:
         # We don't load runtime_state from profiles, so we re-initialize it.
         # Checkpoints might restore it, but that's handled in load_checkpoint.
         self.runtime_state = RuntimeState()
+
+        # Enforce realistic profile ↔ neuron-type compatibility before applying
+        # any auto-tuned overrides, so that tuning lookup matches the clamped
+        # (model, profile, HH preset) combination actually used by the sim.
+        if not is_part_of_playback_setup:
+            enforce_profile_neuron_type_compatibility(self.core_config)
 
         # Apply auto-tuned overrides for this (model, profile, HH preset) combination if available.
         try:
@@ -5112,11 +5191,24 @@ def _populate_ui_from_config_dict(config_dict):
     if dpg.does_item_exist("cfg_dt_ms"): dpg.set_value("cfg_dt_ms", cfg.dt_ms)
     if dpg.does_item_exist("cfg_seed"): dpg.set_value("cfg_seed", cfg.seed)
     if dpg.does_item_exist("cfg_neuron_model_type"): dpg.set_value("cfg_neuron_model_type", cfg.neuron_model_type)
-    if dpg.does_item_exist("cfg_default_neuron_type_hh") and hasattr(cfg, 'default_neuron_type_hh'):
-        dpg.set_value("cfg_default_neuron_type_hh", cfg.default_neuron_type_hh)
-    if dpg.does_item_exist("cfg_neural_profile") and hasattr(cfg, 'neural_profile_name'):
-        profile_value = cfg.neural_profile_name if cfg.neural_profile_name in NEURAL_STRUCTURE_PROFILES else "GENERIC_UNSTRUCTURED"
+
+    # Neural structure profile and HH preset (with realism constraints)
+    profile_value = getattr(cfg, "neural_profile_name", "GENERIC_UNSTRUCTURED")
+    if profile_value not in NEURAL_STRUCTURE_PROFILES:
+        profile_value = "GENERIC_UNSTRUCTURED"
+    if dpg.does_item_exist("cfg_neural_profile"):
         dpg.set_value("cfg_neural_profile", profile_value)
+
+    if dpg.does_item_exist("cfg_default_neuron_type_hh") and hasattr(cfg, "default_neuron_type_hh"):
+        allowed_hh = get_compatible_hh_type_names_for_profile(profile_value)
+        if allowed_hh:
+            dpg.configure_item("cfg_default_neuron_type_hh", items=allowed_hh)
+            current_hh = cfg.default_neuron_type_hh
+            if current_hh not in allowed_hh:
+                current_hh = allowed_hh[0]
+            dpg.set_value("cfg_default_neuron_type_hh", current_hh)
+        else:
+            dpg.set_value("cfg_default_neuron_type_hh", cfg.default_neuron_type_hh)
     
     # Connectivity
     if dpg.does_item_exist("cfg_enable_watts_strogatz"): dpg.set_value("cfg_enable_watts_strogatz", cfg.enable_watts_strogatz)
@@ -5396,44 +5488,52 @@ def _update_sim_config_from_ui_and_signal_reset_needed(sender=None, app_data=Non
         # Update visibility of model-specific parameter groups
         _toggle_model_specific_params_visibility(sender, app_data)
 
-        # If switching to HH while a structured profile is selected, and the HH preset
-        # combo is still at its global default, auto-select the profile's HH preset.
+        # If switching to HH, clamp the preset list to profile-compatible types and
+        # snap the selection (and visible HH params) to a valid preset.
         try:
             if app_data == NeuronModel.HODGKIN_HUXLEY.name and dpg.is_dearpygui_running():
                 if dpg.does_item_exist("cfg_default_neuron_type_hh") and dpg.does_item_exist("cfg_neural_profile"):
-                    current_hh = dpg.get_value("cfg_default_neuron_type_hh")
-                    if current_hh == NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name:
-                        profile_name = dpg.get_value("cfg_neural_profile")
-                        profile_def = NEURAL_STRUCTURE_PROFILES.get(profile_name)
-                        if profile_def:
-                            profile_hh = profile_def.get("default_hh_neuron_type")
-                            if profile_hh:
-                                dpg.set_value("cfg_default_neuron_type_hh", profile_hh)
-                                _apply_hh_preset_params_to_ui(profile_hh)
+                    profile_name = dpg.get_value("cfg_neural_profile")
+                    allowed_hh = get_compatible_hh_type_names_for_profile(profile_name)
+                    if allowed_hh:
+                        dpg.configure_item("cfg_default_neuron_type_hh", items=allowed_hh)
+                        current_hh = dpg.get_value("cfg_default_neuron_type_hh")
+                        if current_hh not in allowed_hh:
+                            current_hh = allowed_hh[0]
+                            dpg.set_value("cfg_default_neuron_type_hh", current_hh)
+                        _apply_hh_preset_params_to_ui(current_hh)
         except Exception as e:
-            print(f"Warning: failed to auto-select HH preset on model change: {e}")
+            print(f"Warning: failed to enforce HH preset compatibility on model change: {e}")
 
     elif sender == "cfg_neural_profile":
-        # When changing neural structure profile, if HH model is active and the HH preset
-        # combo is still at its global default, auto-select the profile's HH preset in the UI.
+        # When changing neural structure profile, if HH model is active, clamp the HH
+        # preset list and snap the selection to the profile-compatible preset.
         try:
             if dpg.is_dearpygui_running() and dpg.does_item_exist("cfg_neuron_model_type"):
                 model_name = dpg.get_value("cfg_neuron_model_type")
+                profile_name = app_data
                 if model_name == NeuronModel.HODGKIN_HUXLEY.name and dpg.does_item_exist("cfg_default_neuron_type_hh"):
-                    current_hh = dpg.get_value("cfg_default_neuron_type_hh")
-                    profile_name = app_data
-                    profile_def = NEURAL_STRUCTURE_PROFILES.get(profile_name)
-                    if profile_def:
-                        profile_hh = profile_def.get("default_hh_neuron_type")
-                        if profile_hh and current_hh == NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name:
-                            dpg.set_value("cfg_default_neuron_type_hh", profile_hh)
-                            _apply_hh_preset_params_to_ui(profile_hh)
+                    allowed_hh = get_compatible_hh_type_names_for_profile(profile_name)
+                    if allowed_hh:
+                        dpg.configure_item("cfg_default_neuron_type_hh", items=allowed_hh)
+                        current_hh = dpg.get_value("cfg_default_neuron_type_hh")
+                        if current_hh not in allowed_hh:
+                            current_hh = allowed_hh[0]
+                            dpg.set_value("cfg_default_neuron_type_hh", current_hh)
+                        _apply_hh_preset_params_to_ui(current_hh)
         except Exception as e:
-            print(f"Warning: failed to auto-select HH preset on profile change: {e}")
+            print(f"Warning: failed to enforce HH preset compatibility on profile change: {e}")
 
     elif sender == "cfg_default_neuron_type_hh":
-        # Direct change of HH preset by the user; update HH params panel to match.
+        # Direct change of HH preset by the user; update HH params panel to match,
+        # but still respect per-profile compatibility.
         try:
+            if dpg.is_dearpygui_running() and dpg.does_item_exist("cfg_neural_profile"):
+                profile_name = dpg.get_value("cfg_neural_profile")
+                allowed_hh = get_compatible_hh_type_names_for_profile(profile_name)
+                if allowed_hh and app_data not in allowed_hh:
+                    app_data = allowed_hh[0]
+                    dpg.set_value("cfg_default_neuron_type_hh", app_data)
             _apply_hh_preset_params_to_ui(app_data)
         except Exception as e:
             print(f"Warning: failed to apply HH preset params on preset change: {e}")
@@ -7100,13 +7200,24 @@ def run_auto_tuning(quick=False):
     # Models to tune: HH + AdEx (Izhikevich already behaves well in most cases)
     models_to_tune = [NeuronModel.HODGKIN_HUXLEY, NeuronModel.ADEX]
 
-    # HH neuron types to sweep over for HH model
-    hh_types = [nt for nt in NeuronType if nt.name.startswith("HH_")]
-    if quick:
-        hh_types = hh_types[:3]
+    # Determine HH presets to tune per profile, respecting realism constraints.
+    # For structured profiles, this will typically be a single region-appropriate
+    # preset; generic/unstructured profiles fall back to all HH types.
+    profile_to_hh_types = {}
+    for profile_name in profile_names:
+        allowed_names = get_compatible_hh_type_names_for_profile(profile_name)
+        hh_list = []
+        for name in allowed_names:
+            if name in NeuronType.__members__ and name.startswith("HH_"):
+                hh_list.append(NeuronType[name])
+        if not hh_list:
+            hh_list = [nt for nt in NeuronType if nt.name.startswith("HH_")]
+        if quick and len(hh_list) > 3:
+            hh_list = hh_list[:3]
+        profile_to_hh_types[profile_name] = hh_list
 
     tuned_combos = {}
-    num_hh_combos = len(profile_names) * len(hh_types)
+    num_hh_combos = sum(len(ts) for ts in profile_to_hh_types.values())
     num_adex_combos = len(profile_names)
     total_combos = num_hh_combos + num_adex_combos
     combo_index = 0
@@ -7116,7 +7227,8 @@ def run_auto_tuning(quick=False):
 
     # Hodgkin-Huxley tuning: per (profile, HH preset)
     for profile_name in profile_names:
-        for hh_type in hh_types:
+        hh_types_for_profile = profile_to_hh_types.get(profile_name, [])
+        for hh_type in hh_types_for_profile:
             combo_index += 1
             key = f"{NeuronModel.HODGKIN_HUXLEY.name}|{profile_name}|{hh_type.name}"
             print(f"[{combo_index}/{total_combos}] Tuning {key} ...")
