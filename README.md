@@ -110,7 +110,7 @@ PyOpenGL-accelerate >= 3.1.6
 
 ## Quick Start
 
-### Basic Usage
+### Basic Usage (GUI Mode)
 1. Launch the simulator: `python neural-simulator.py`
 2. Configure parameters in the DearPyGUI control panel (left side)
 3. Click **"Apply Changes & Reset Sim"** to initialize the network
@@ -119,6 +119,38 @@ PyOpenGL-accelerate >= 3.1.6
    - **Left click + drag**: Rotate camera
    - **Right click + drag**: Pan camera
    - **Scroll wheel**: Zoom in/out
+
+### Quick Auto-Tuning (Headless Mode)
+
+The simulator includes a headless **auto-tuning** workflow that scans combinations of
+neuron model, neural structure profile, and Hodgkin–Huxley preset to pick sensible
+external drive scales so networks are active but not saturated.
+
+- **Run a full tuning sweep** (all profiles and presets):
+  ```bash
+  python neural-simulator.py --auto-tune
+  ```
+- **Run a faster, reduced sweep** (for testing):
+  ```bash
+  python neural-simulator.py --auto-tune --quick
+  ```
+
+This produces `simulation_profiles/auto_tuned_overrides.json`, which contains
+per-combination overrides (e.g. `hh_external_drive_scale`, `adex_external_drive_scale`).
+These are automatically loaded and applied whenever you:
+
+- Select the corresponding **Neuron Model / Neural Structure Profile / HH preset** in the UI
+- Click **"Apply Changes & Reset Sim"**
+
+In the HH and AdEx parameter panels you can see and adjust these as:
+
+- **External Drive Scale (HH, auto-tuned)** – scales baseline HH DC input
+- **External Drive Scale (AdEx, auto-tuned)** – scales baseline AdEx DC input
+
+You can also click the **"Reset HH Drive to Auto-Tuned"** or
+**"Reset AdEx Drive to Auto-Tuned"** buttons to restore the slider to the
+auto-tuned value for the current combination, then press **Apply & Reset**
+to use it in the simulation.
 
 ### Example Configurations
 
@@ -180,6 +212,41 @@ Note: Requires 16GB+ VRAM
   - Highlight Spiking: Show recent activity
   - Show Only Spiking: Filter inactive neurons
   - No Spiking Highlight: Static colors
+
+## Command-Line Usage
+
+The main entry point is `neural-simulator.py`.
+
+### GUI Mode (default)
+
+```bash
+python neural-simulator.py
+```
+
+Starts the DearPyGUI control window and the OpenGL 3D visualization (if PyOpenGL is
+available). All configuration is done through the UI.
+
+### Auto-Tuning Mode (headless)
+
+```bash
+python neural-simulator.py --auto-tune [--quick]
+```
+
+- `--auto-tune` – run the headless tuning workflow instead of launching the GUI.
+- `--quick` – optional; restricts the sweep to a smaller subset of profiles/presets
+  for faster runs (useful while developing).
+
+The tuner:
+- Iterates through Hodgkin–Huxley + AdEx model combinations with all defined
+  **Neural Structure Profiles** (and HH presets for HH model).
+- For each combination, tests several external drive scales.
+- Measures spike activity, fraction of neurons that spiked, and connectivity.
+- Chooses the best scale according to simple criteria (network is alive but not
+  seizure-like).
+- Saves the results into `simulation_profiles/auto_tuned_overrides.json`.
+
+At runtime, whenever a matching combination is selected in the GUI, these values
+are applied automatically before initialization.
 
 ## Keyboard Shortcuts
 

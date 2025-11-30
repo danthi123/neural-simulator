@@ -66,11 +66,19 @@ sim_to_ui_queue = queue.Queue()
 class NeuronModel(Enum):
     IZHIKEVICH = "IZHIKEVICH"
     HODGKIN_HUXLEY = "HODGKIN_HUXLEY"
+    ADEX = "ADEX"  # Adaptive Exponential Integrate-and-Fire
 
 class NeuronType(Enum):
     IZH2007_RS_CORTICAL_PYRAMIDAL = "IZH2007_RS_CORTICAL_PYRAMIDAL"
     IZH2007_FS_CORTICAL_INTERNEURON = "IZH2007_FS_CORTICAL_INTERNEURON"
     HH_L5_CORTICAL_PYRAMIDAL_RS = "HH_L5_CORTICAL_PYRAMIDAL_RS"
+    HH_THALAMIC_RELAY_TBURST = "HH_THALAMIC_RELAY_TBURST"
+    HH_CA1_PYRAMIDAL_BURST = "HH_CA1_PYRAMIDAL_BURST"
+    HH_STRIATAL_MSN = "HH_STRIATAL_MSN"
+    HH_TRN_BURST_INHIB = "HH_TRN_BURST_INHIB"
+    HH_CA3_PYRAMIDAL_BURST = "HH_CA3_PYRAMIDAL_BURST"
+    HH_STN_BURST = "HH_STN_BURST"
+    HH_GPE_PACEMAKER = "HH_GPE_PACEMAKER"
     RS_EXCITATORY_LEGACY = "RS_EXCITATORY_LEGACY"
     FS_INHIBITORY_LEGACY = "FS_INHIBITORY_LEGACY"
     IB_EXCITATORY_LEGACY = "IB_EXCITATORY_LEGACY"
@@ -113,7 +121,7 @@ class DefaultIzhikevichParamsManager:
 
 
 class DefaultHodgkinHuxleyParams:
-    # Parameters for a more realistic Layer 5 Pyramidal Neuron (Regular Spiking) at 37°C
+    # Parameters for a more realistic Layer 5 Pyramidal Neuron (Regular Spiking) at 37 C
     # Adapted from literature, may require tuning for specific behaviors.
     # Key sources: Mainen & Sejnowski (1996), Pospischil et al. (2008) for general cortical neuron models.
     REALISTIC_L5_PYRAMIDAL_RS_37C = {
@@ -129,18 +137,132 @@ class DefaultHodgkinHuxleyParams:
         # Initial gating variable values (approximate for v_rest_hh = -65mV)
         "m_init": 0.0529, # Calculated from alpha_m / (alpha_m + beta_m) at -65mV for original HH
         "h_init": 0.5961, # Calculated from alpha_h / (alpha_h + beta_h) at -65mV for original HH
-        "n_init": 0.3177  # Calculated from alpha_n / (alpha_n + beta_n) at -65mV for original HH
+        "n_init": 0.3177, # Calculated from alpha_n / (alpha_n + beta_n) at -65mV for original HH
+        # Extended current defaults (all off by default)
+        "g_M_max": 0.0,
+        "g_CaT_max": 0.0,
+        "E_CaT": 120.0,
+        "g_h_max": 0.0,
+        "E_h": -30.0,
+        "g_NaP_max": 0.0,
     }
-    # Original Hodgkin-Huxley parameters (Squid Giant Axon at 6.3°C)
+    # Original Hodgkin-Huxley parameters (Squid Giant Axon at 6.3 C)
     ORIGINAL_HH_PARAMS = {
         "C_m": 1.0, "g_Na_max": 120.0, "g_K_max": 36.0, "g_L": 0.3,
         "E_Na": 50.0, "E_K": -77.0, "E_L": -54.387, # Note: E_L adjusted for V_rest = -65mV in original model
         "v_rest_hh": -65.0, "v_peak_hh": 40.0,
-        "m_init": 0.0529, "h_init": 0.5961, "n_init": 0.3177
+        "m_init": 0.0529, "h_init": 0.5961, "n_init": 0.3177,
+        # Extended current defaults (all off by default)
+        "g_M_max": 0.0,
+        "g_CaT_max": 0.0,
+        "E_CaT": 120.0,
+        "g_h_max": 0.0,
+        "E_h": -30.0,
+        "g_NaP_max": 0.0,
     }
+
+    # Region-specific HH presets (single-compartment, point-neuron approximations)
+    THALAMIC_RELAY_TBURST = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    THALAMIC_RELAY_TBURST.update({
+        # Strong low-threshold CaT and Ih for bursty thalamic relay cells
+        "g_CaT_max": 2.0,
+        "E_CaT": 120.0,
+        "g_h_max": 0.5,
+        "E_h": -40.0,
+        "g_M_max": 0.0,
+        "g_NaP_max": 0.0,
+    })
+
+    CA1_PYRAMIDAL_BURST = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    CA1_PYRAMIDAL_BURST.update({
+        # Moderate CaT, Ih, M-current and NaP to support burst firing and adaptation
+        "g_Na_max": 60.0,
+        "g_K_max": 6.0,
+        "g_CaT_max": 1.0,
+        "E_CaT": 120.0,
+        "g_h_max": 0.2,
+        "E_h": -40.0,
+        "g_M_max": 0.8,
+        "g_NaP_max": 0.5,
+    })
+
+    STRIATAL_MSN = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    STRIATAL_MSN.update({
+        # Strong M-current and modest Ih to approximate down-state stability and slow ramping
+        "g_Na_max": 45.0,
+        "g_K_max": 4.0,
+        "g_M_max": 1.2,
+        "g_CaT_max": 0.0,
+        "g_h_max": 0.3,
+        "E_h": -35.0,
+        "g_NaP_max": 0.0,
+    })
+
+    # Thalamic reticular nucleus (TRN) bursting inhibitory cell
+    TRN_BURST_INHIB = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    TRN_BURST_INHIB.update({
+        # Strong CaT and Ih, plus some M-current for burst–tonic transitions
+        "g_Na_max": 50.0,
+        "g_K_max": 5.0,
+        "g_CaT_max": 2.5,
+        "E_CaT": 120.0,
+        "g_h_max": 0.4,
+        "E_h": -40.0,
+        "g_M_max": 0.5,
+        "g_NaP_max": 0.0,
+    })
+
+    # Hippocampal CA3 pyramidal bursting cell
+    CA3_PYRAMIDAL_BURST = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    CA3_PYRAMIDAL_BURST.update({
+        # Slightly stronger Na/K and bursting currents than CA1
+        "g_Na_max": 65.0,
+        "g_K_max": 7.0,
+        "g_CaT_max": 1.2,
+        "E_CaT": 120.0,
+        "g_h_max": 0.25,
+        "E_h": -40.0,
+        "g_M_max": 1.0,
+        "g_NaP_max": 0.7,
+    })
+
+    # Subthalamic nucleus (STN) bursting cell
+    STN_BURST = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    STN_BURST.update({
+        # CaT- and NaP-mediated bursting with some Ih and M-current
+        "g_Na_max": 55.0,
+        "g_K_max": 6.0,
+        "g_CaT_max": 1.5,
+        "E_CaT": 120.0,
+        "g_h_max": 0.3,
+        "E_h": -40.0,
+        "g_M_max": 0.5,
+        "g_NaP_max": 0.8,
+    })
+
+    # Globus pallidus externus (GPe) pacemaking neuron
+    GPE_PACEMAKER = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    GPE_PACEMAKER.update({
+        # Strong M and NaP for tonic spiking, with modest Ih
+        "g_Na_max": 55.0,
+        "g_K_max": 5.5,
+        "g_CaT_max": 0.0,
+        "g_h_max": 0.2,
+        "E_h": -35.0,
+        "g_M_max": 1.0,
+        "g_NaP_max": 0.8,
+    })
+
     PARAMS = {
         NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS: REALISTIC_L5_PYRAMIDAL_RS_37C.copy(),
         NeuronType.HH_EXCITATORY_DEFAULT_LEGACY: ORIGINAL_HH_PARAMS.copy(), # Legacy can map to original HH
+        NeuronType.HH_THALAMIC_RELAY_TBURST: THALAMIC_RELAY_TBURST.copy(),
+        NeuronType.HH_CA1_PYRAMIDAL_BURST: CA1_PYRAMIDAL_BURST.copy(),
+        NeuronType.HH_STRIATAL_MSN: STRIATAL_MSN.copy(),
+        NeuronType.HH_TRN_BURST_INHIB: TRN_BURST_INHIB.copy(),
+        NeuronType.HH_CA3_PYRAMIDAL_BURST: CA3_PYRAMIDAL_BURST.copy(),
+        NeuronType.HH_STN_BURST: STN_BURST.copy(),
+        NeuronType.HH_GPE_PACEMAKER: GPE_PACEMAKER.copy(),
     }
     FALLBACK = PARAMS[NeuronType.HH_EXCITATORY_DEFAULT_LEGACY].copy()
 
@@ -225,6 +347,8 @@ class CoreSimConfig:
     neuron_model_type: str = NeuronModel.IZHIKEVICH.name
     default_neuron_type_izh: str = NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name
     default_neuron_type_hh: str = NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name
+    neural_profile_name: str = "GENERIC_UNSTRUCTURED"  # High-level structural preset (brain region / mode)
+    inhibitory_trait_indices: List[int] = field(default_factory=list)  # Optional multi-trait inhibitory set
     
     # Izhikevich - initialized from a default type
     izh_C_val: float = field(default_factory=lambda: DefaultIzhikevichParamsManager.PARAMS[NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL]["C"])
@@ -252,6 +376,30 @@ class CoreSimConfig:
     hh_n_init: float = field(default_factory=lambda: DefaultHodgkinHuxleyParams.PARAMS[NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS]["n_init"])
     hh_temperature_celsius: float = 37.0
     hh_q10_factor: float = 3.0
+    # Optional extended HH currents. Zero conductance disables each one.
+    hh_g_M_max: float = 0.0
+    hh_m_current_tau_ms: float = 100.0
+    hh_g_CaT_max: float = 0.0
+    hh_E_CaT: float = 120.0
+    hh_g_h_max: float = 0.0
+    hh_E_h: float = -30.0
+    hh_g_NaP_max: float = 0.0
+
+    # AdEx parameters (single-compartment RS default; per-neuron variation can be added later)
+    adex_C: float = 281.0          # pF
+    adex_g_L: float = 30.0         # nS
+    adex_E_L: float = -70.6        # mV
+    adex_V_T: float = -50.4        # mV
+    adex_Delta_T: float = 2.0      # mV
+    adex_a: float = 4.0            # nS
+    adex_tau_w: float = 144.0      # ms
+    adex_b: float = 80.5           # pA
+    adex_V_r: float = -70.6        # mV (reset voltage)
+    adex_V_peak: float = -40.0     # mV (spike detection threshold)
+
+    # Per-model external drive scaling (tuned per combination; 1.0 = baseline range)
+    hh_external_drive_scale: float = 1.0
+    adex_external_drive_scale: float = 1.0
 
     # Synapse & Plasticity
     refractory_period_steps: int = 2
@@ -336,6 +484,66 @@ def _get_full_config_dict(core_cfg, viz_cfg, runtime_state):
         "runtime_state": asdict(runtime_state)
     }
 
+# --- Auto-tuned override support ---
+AUTO_TUNED_OVERRIDES_PATH = os.path.join("simulation_profiles", "auto_tuned_overrides.json")
+AUTO_TUNED_OVERRIDES = None  # Lazy-loaded mapping from combo key -> overrides dict
+
+
+def _load_auto_tuned_overrides_if_needed():
+    """Lazily loads auto-tuned overrides from JSON if present.
+
+    File format:
+        {
+          "schema_version": 1,
+          "created_at": "...",
+          "tuned_combinations": {
+             "MODEL|PROFILE|HH_TYPE_OR_NONE": {"core_overrides": {...}, "metrics": {...}, ...},
+             ...
+          }
+        }
+    """
+    global AUTO_TUNED_OVERRIDES
+    if AUTO_TUNED_OVERRIDES is not None:
+        return
+
+    if not os.path.exists(AUTO_TUNED_OVERRIDES_PATH):
+        AUTO_TUNED_OVERRIDES = {}
+        return
+
+    try:
+        with open(AUTO_TUNED_OVERRIDES_PATH, "r") as f:
+            data = json.load(f)
+        tuned_map = data.get("tuned_combinations", {})
+        if isinstance(tuned_map, dict):
+            AUTO_TUNED_OVERRIDES = tuned_map
+        else:
+            AUTO_TUNED_OVERRIDES = {}
+        print(f"Loaded {len(AUTO_TUNED_OVERRIDES)} auto-tuned combinations from {AUTO_TUNED_OVERRIDES_PATH}.")
+    except Exception as e:
+        print(f"Warning: Failed to load auto-tuned overrides from {AUTO_TUNED_OVERRIDES_PATH}: {e}")
+        AUTO_TUNED_OVERRIDES = {}
+
+
+def get_auto_tuned_overrides_for_combo(neuron_model_type_str, profile_name_str, default_hh_type_str=None):
+    """Returns auto-tuned overrides dict for a given (model, profile, HH preset) combo, if available.
+
+    The key format is "MODEL|PROFILE|HH_TYPE_OR_NONE". For non-HH models we allow HH type to be "NONE".
+    """
+    _load_auto_tuned_overrides_if_needed()
+    if not AUTO_TUNED_OVERRIDES:
+        return None
+
+    key_full = f"{neuron_model_type_str}|{profile_name_str}|{default_hh_type_str or 'NONE'}"
+    entry = AUTO_TUNED_OVERRIDES.get(key_full)
+
+    # For non-HH models, also allow a generic per-(model,profile) entry with HH type NONE
+    if entry is None and neuron_model_type_str != NeuronModel.HODGKIN_HUXLEY.name:
+        key_model_profile = f"{neuron_model_type_str}|{profile_name_str}|NONE"
+        entry = AUTO_TUNED_OVERRIDES.get(key_model_profile)
+
+    return entry
+
+
 # Compatibility class for old SimulationConfiguration usage
 class SimulationConfiguration:
     """Legacy configuration class for backward compatibility. Wraps the new dataclass structure."""
@@ -349,9 +557,12 @@ class SimulationConfiguration:
         self.seed = -1 # Random seed for reproducibility (-1 for random initialization)
 
         # Neuron Model Selection
-        self.neuron_model_type = NeuronModel.IZHIKEVICH.name # Current neuron model ('IZHIKEVICH' or 'HODGKIN_HUXLEY')
+        self.neuron_model_type = NeuronModel.IZHIKEVICH.name # Current neuron model ('IZHIKEVICH', 'HODGKIN_HUXLEY', or 'ADEX')
         self.default_neuron_type_izh = NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name # Default Izhikevich type if trait mapping fails
         self.default_neuron_type_hh = NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name # Default Hodgkin-Huxley type
+
+        # High-level structural profile (brain region / mode)
+        self.neural_profile_name = "GENERIC_UNSTRUCTURED"
 
         # Izhikevich Model Parameters (2007 Formulation - Global defaults, can be overridden per-neuron by trait)
         # These are initialized from a default Izhikevich neuron type (e.g., RS Cortical Pyramidal)
@@ -388,6 +599,30 @@ class SimulationConfiguration:
         self.hh_n_init = hh_defaults["n_init"]       # Initial n gating variable value
         self.hh_temperature_celsius = 37.0           # Temperature for HH kinetics (Celsius)
         self.hh_q10_factor = 3.0                     # Q10 temperature coefficient for HH rates
+        # Optional extended HH currents (all disabled by default)
+        self.hh_g_M_max = hh_defaults.get("g_M_max", 0.0)            # Max M-current conductance (mS/cm^2); 0 disables
+        self.hh_m_current_tau_ms = 100.0 # Approximate activation time constant for M-current (ms)
+        self.hh_g_CaT_max = hh_defaults.get("g_CaT_max", 0.0)
+        self.hh_E_CaT = hh_defaults.get("E_CaT", 120.0)
+        self.hh_g_h_max = hh_defaults.get("g_h_max", 0.0)
+        self.hh_E_h = hh_defaults.get("E_h", -30.0)
+        self.hh_g_NaP_max = hh_defaults.get("g_NaP_max", 0.0)
+
+        # AdEx Model Parameters (Adaptive Exponential IF)
+        self.adex_C = 281.0          # Membrane capacitance (pF)
+        self.adex_g_L = 30.0         # Leak conductance (nS)
+        self.adex_E_L = -70.6        # Leak reversal (mV)
+        self.adex_V_T = -50.4        # Threshold (mV)
+        self.adex_Delta_T = 2.0      # Slope factor (mV)
+        self.adex_a = 4.0            # Subthreshold coupling (nS)
+        self.adex_tau_w = 144.0      # Adaptation time constant (ms)
+        self.adex_b = 80.5           # Spike-triggered increment (pA)
+        self.adex_V_r = -70.6        # Reset voltage (mV)
+        self.adex_V_peak = -40.0     # Spike detection threshold (mV)
+
+        # External drive scaling (tuned per model/profile; 1.0 = baseline range)
+        self.hh_external_drive_scale = 1.0
+        self.adex_external_drive_scale = 1.0
 
         # Basic Neuron & Synapse Properties
         self.refractory_period_steps = 2 # Absolute refractory period in simulation steps (dt units)
@@ -402,6 +637,7 @@ class SimulationConfiguration:
         # Inhibitory Neuron Configuration
         self.enable_inhibitory_neurons = True # Whether to model inhibitory neurons
         self.inhibitory_trait_index = 1 # Trait index designated as inhibitory (0-indexed)
+        self.inhibitory_trait_indices = [] # Optional list of inhibitory trait indices (overrides inhibitory_trait_index if non-empty)
 
         # Hebbian Learning / Long-Term Potentiation (LTP)
         self.enable_hebbian_learning = True # Enable Hebbian-like weight potentiation
@@ -575,6 +811,9 @@ class SimulationConfiguration:
             'izh_a_val', 'izh_b_val', 'izh_c_val', 'izh_d_val',
             'hh_C_m', 'hh_g_Na_max', 'hh_g_K_max', 'hh_g_L', 'hh_E_Na', 'hh_E_K', 'hh_E_L',
             'hh_v_rest_init', 'hh_v_peak', 'hh_temperature_celsius', 'hh_q10_factor',
+            'hh_g_M_max', 'hh_m_current_tau_ms',
+            'hh_g_CaT_max', 'hh_E_CaT', 'hh_g_h_max', 'hh_E_h', 'hh_g_NaP_max',
+            'adex_C', 'adex_g_L', 'adex_E_L', 'adex_V_T', 'adex_Delta_T', 'adex_a', 'adex_tau_w', 'adex_b', 'adex_V_r', 'adex_V_peak',
             'volume_min_x', 'volume_max_x', 'volume_min_y', 'volume_max_y', 'volume_min_z', 'volume_max_z',
             'camera_eye_x', 'camera_eye_y', 'camera_eye_z',
             'camera_center_x', 'camera_center_y', 'camera_center_z',
@@ -598,6 +837,248 @@ class SimulationConfiguration:
                 setattr(config, param_key, float(current_val) if current_val is not None else default_type_val)
 
         return config
+
+# --- Neural Structure Profiles (brain-region presets) ---
+# These presets describe high-level mixtures of neuron classes and E/I balance.
+# They are intentionally conservative and primarily influence trait assignment and neuron types.
+NEURAL_STRUCTURE_PROFILES = {
+    "GENERIC_UNSTRUCTURED": {
+        "display_name": "Generic Unstructured Network",
+        "description": "Random traits with no specific brain-region structure.",
+        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
+        "trait_definitions": [],  # Falls back to existing random trait logic
+        "default_core_overrides": {}
+    },
+    "CORTEX_L23_RS_FS": {
+        "display_name": "Neocortex L2/3 RS/FS",
+        "description": "Cortical microcircuit with ~80% excitatory RS pyramidal cells and ~20% FS interneurons.",
+        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
+        # Optional laminar-like cortical motif when enabled
+        "connectivity_motif": "CORTEX_L23_RS_FS",
+        # When using HH, approximate L2/3 excitatory cells with the L5 RS HH preset
+        "default_hh_neuron_type": NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.8},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.2},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 10,
+            "connectivity_p_rewire": 0.1,
+        },
+    },
+    "HIPPOCAMPUS_CA1_RS_FS": {
+        "display_name": "Hippocampus CA1 RS/FS",
+        "description": "Hippocampal CA1-like network with pyramidal cells and diverse interneurons (modeled as FS).",
+        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
+        # Use CA1-specific HH bursting preset when HH model is active
+        "default_hh_neuron_type": NeuronType.HH_CA1_PYRAMIDAL_BURST.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.7},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.3},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 8,
+            "connectivity_p_rewire": 0.15,
+        },
+    },
+    "CEREBELLAR_CORTEX_SIMPLE": {
+        "display_name": "Cerebellar Cortex (simplified)",
+        "description": "Simplified cerebellar cortex: granule-like excitatory cells and Purkinje / interneuron inhibition.",
+        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
+        # No dedicated cerebellar HH preset yet; use generic cortical RS as HH fallback
+        "default_hh_neuron_type": NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.75},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.25},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 6,
+            "connectivity_p_rewire": 0.05,
+            "syn_tau_g_e": 2.0,
+            "syn_tau_g_i": 8.0,
+        },
+    },
+    "SPINAL_CORD_SEGMENT": {
+        "display_name": "Spinal Cord Segment",
+        "description": "Segment with excitatory motor/interneurons and strong recurrent inhibition.",
+        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
+        # Use generic cortical RS HH preset as a first-order approximation for spinal excitatory cells
+        "default_hh_neuron_type": NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.6},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.4},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 12,
+            "connectivity_p_rewire": 0.05,
+        },
+    },
+    "BASAL_GANGLIA_STRIATUM": {
+        "display_name": "Basal Ganglia Striatum",
+        "description": "Striatal network with ~95% inhibitory MSNs and a small FS interneuron population.",
+        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
+        # Use MSN-specific HH preset when HH model is active
+        "default_hh_neuron_type": NeuronType.HH_STRIATAL_MSN.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.95},  # MSNs modeled as RS-like inhibitory
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.05},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 0,
+            "connectivity_k": 20,
+            "connectivity_p_rewire": 0.2,
+        },
+    },
+    "THALAMUS_TC_TRN": {
+        "display_name": "Thalamus TC-TRN Loop",
+        "description": "Thalamic relay (TC) and reticular (TRN) network with excitatory-inhibitory recurrence and bursting.",
+        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
+        "connectivity_motif": "THALAMUS_TC_TRN",
+        # Use thalamic relay HH preset when HH model is active
+        "default_hh_neuron_type": NeuronType.HH_THALAMIC_RELAY_TBURST.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.6},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.4},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 8,
+            "connectivity_p_rewire": 0.1,
+        },
+    },
+    "HIPPOCAMPUS_CA3_RECURRENT": {
+        "display_name": "Hippocampus CA3 Recurrent",
+        "description": "Hippocampal CA3-like network with strong recurrent excitation and interneuron-mediated inhibition.",
+        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
+        "connectivity_motif": "HIPPOCAMPUS_CA3_RECURRENT",
+        # Use CA3-specific HH bursting preset when HH model is active
+        "default_hh_neuron_type": NeuronType.HH_CA3_PYRAMIDAL_BURST.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.7},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.3},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 10,
+            "connectivity_p_rewire": 0.15,
+        },
+    },
+    "CORTEX_L4_INPUT_LAYER": {
+        "display_name": "Cortex L4 Input Layer",
+        "description": "Sensory cortical input layer with spiny stellate-like excitatory cells and FS interneurons.",
+        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
+        "connectivity_motif": "CORTEX_L4_INPUT_LAYER",
+        # Use generic cortical RS HH preset as a proxy for L4 spiny stellate cells
+        "default_hh_neuron_type": NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.8},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.2},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 10,
+            "connectivity_p_rewire": 0.1,
+        },
+    },
+    "BASAL_GANGLIA_STN_GPE": {
+        "display_name": "Basal Ganglia STN-GPe",
+        "description": "Subthalamic nucleus (STN) and globus pallidus externus (GPe) excitatory-inhibitory loop.",
+        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
+        "connectivity_motif": "BASAL_GANGLIA_STN_GPE",
+        # Use STN bursting HH preset when HH model is active
+        "default_hh_neuron_type": NeuronType.HH_STN_BURST.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.3},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.7},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 14,
+            "connectivity_p_rewire": 0.15,
+        },
+    },
+}
+
+# --- Connectivity Motifs Registry ---
+# Each motif describes high-level population connectivity based on trait indices.
+# The rules are approximate and designed to be GPU-friendly while capturing
+# canonical motif structure (e.g., TC-TRN loops, CA3 recurrence, STN-GPe loops).
+CONNECTIVITY_MOTIFS = {
+    "CORTEX_L23_RS_FS": {
+        "description": "Canonical L2/3 cortical microcircuit with RS excitatory and FS inhibitory neurons.",
+        # Trait 0: excitatory RS, Trait 1: inhibitory FS
+        "rules": [
+            # Excitatory sources
+            {"source_traits": [0], "target_traits": [0], "k_fraction": 0.6, "weight_scale": 1.0},  # E->E
+            {"source_traits": [0], "target_traits": [1], "k_fraction": 0.4, "weight_scale": 1.0},  # E->I
+            # Inhibitory sources
+            {"source_traits": [1], "target_traits": [0], "k_fraction": 0.8, "weight_scale": 1.0},  # I->E
+            {"source_traits": [1], "target_traits": [1], "k_fraction": 0.2, "weight_scale": 0.8},  # I->I
+        ],
+    },
+    "THALAMUS_TC_TRN": {
+        "description": "Thalamic relay (TC) and reticular (TRN) loop.",
+        # Trait 0: TC excitatory, Trait 1: TRN inhibitory
+        "rules": [
+            {"source_traits": [0], "target_traits": [1], "k_fraction": 0.7, "weight_scale": 1.0},  # TC->TRN
+            {"source_traits": [0], "target_traits": [0], "k_fraction": 0.3, "weight_scale": 0.7},  # TC->TC
+            {"source_traits": [1], "target_traits": [0], "k_fraction": 0.7, "weight_scale": 1.0},  # TRN->TC
+            {"source_traits": [1], "target_traits": [1], "k_fraction": 0.3, "weight_scale": 0.7},  # TRN->TRN
+        ],
+    },
+    "HIPPOCAMPUS_CA3_RECURRENT": {
+        "description": "Hippocampal CA3 recurrent excitatory network with inhibitory feedback.",
+        # Trait 0: CA3 pyramidal, Trait 1: interneurons
+        "rules": [
+            {"source_traits": [0], "target_traits": [0], "k_fraction": 0.7, "weight_scale": 1.0},  # E->E strong recurrence
+            {"source_traits": [0], "target_traits": [1], "k_fraction": 0.3, "weight_scale": 0.8},  # E->I
+            {"source_traits": [1], "target_traits": [0], "k_fraction": 0.8, "weight_scale": 1.0},  # I->E
+            {"source_traits": [1], "target_traits": [1], "k_fraction": 0.2, "weight_scale": 0.7},  # I->I
+        ],
+    },
+    "CORTEX_L4_INPUT_LAYER": {
+        "description": "Cortical L4 input layer with spiny stellate-like excitatory neurons and FS interneurons.",
+        # Trait 0: excitatory, Trait 1: inhibitory
+        "rules": [
+            {"source_traits": [0], "target_traits": [0], "k_fraction": 0.5, "weight_scale": 1.0},  # E->E
+            {"source_traits": [0], "target_traits": [1], "k_fraction": 0.5, "weight_scale": 1.0},  # E->I
+            {"source_traits": [1], "target_traits": [0], "k_fraction": 0.8, "weight_scale": 1.0},  # I->E
+            {"source_traits": [1], "target_traits": [1], "k_fraction": 0.2, "weight_scale": 0.8},  # I->I
+        ],
+    },
+    "BASAL_GANGLIA_STN_GPE": {
+        "description": "STN-GPe excitatory-inhibitory loop in basal ganglia.",
+        # Trait 0: STN-like excitatory, Trait 1: GPe-like inhibitory
+        "rules": [
+            {"source_traits": [0], "target_traits": [1], "k_fraction": 0.9, "weight_scale": 1.0},  # STN->GPe
+            {"source_traits": [0], "target_traits": [0], "k_fraction": 0.1, "weight_scale": 0.7},  # STN->STN (weak)
+            {"source_traits": [1], "target_traits": [0], "k_fraction": 0.6, "weight_scale": 1.0},  # GPe->STN
+            {"source_traits": [1], "target_traits": [1], "k_fraction": 0.4, "weight_scale": 0.8},  # GPe->GPe
+        ],
+    },
+}
 
 # --- HDF5 Helper Functions ---
 def save_dict_to_hdf5_attrs(h5_group_or_file, data_dict):
@@ -730,6 +1211,75 @@ def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g
     return V_new, m_new, h_new, n_new
 
 @cp.fuse()
+def fused_hh_m_current_update(V, p_old, dt, g_M_max, E_K, tau_m_ms):
+    """Optional slow K+ M-current for extended HH models.
+
+    Uses a simple sigmoidal steady-state activation with a first-order time course.
+    g_M_max = 0.0 disables the current without branching.
+    """
+    # Steady-state activation (approximate; centered around -35 mV)
+    p_inf = 1.0 / (1.0 + cp.exp(-(V + 35.0) / 10.0))
+    # Time constant (ms), kept positive
+    tau_safe = cp.maximum(tau_m_ms, 1e-3)
+    # First-order update assuming V is approximately constant over dt
+    p_new = p_inf + (p_old - p_inf) * cp.exp(-dt / tau_safe)
+    # M-current (K+): uses potassium reversal potential E_K
+    I_M = g_M_max * p_new * (V - E_K)
+    return p_new, I_M
+
+@cp.fuse()
+def fused_hh_CaT_current_update(V, m_old, h_old, dt, g_CaT_max, E_CaT):
+    """Low-threshold T-type Ca2+ current for extended HH models.
+
+    Uses simple sigmoidal steady-state activation/inactivation and fixed time constants.
+    """
+    # Steady-state activation/inactivation (approximate, thalamic-like)
+    m_inf = 1.0 / (1.0 + cp.exp(-(V + 50.0) / 7.4))
+    h_inf = 1.0 / (1.0 + cp.exp((V + 80.0) / 5.0))
+    tau_m = 5.0   # ms, fast activation
+    tau_h = 20.0  # ms, slower inactivation
+    m_new = m_inf + (m_old - m_inf) * cp.exp(-dt / tau_m)
+    h_new = h_inf + (h_old - h_inf) * cp.exp(-dt / tau_h)
+    I_CaT = g_CaT_max * (m_new ** 2) * h_new * (V - E_CaT)
+    return m_new, h_new, I_CaT
+
+@cp.fuse()
+def fused_hh_h_current_update(V, q_old, dt, g_h_max, E_h):
+    """Hyperpolarization-activated mixed cation current (I_h) for extended HH models."""
+    # Steady-state activation: more active at hyperpolarized voltages
+    q_inf = 1.0 / (1.0 + cp.exp((V + 75.0) / 5.5))
+    tau_q = 100.0  # ms, slow activation
+    q_new = q_inf + (q_old - q_inf) * cp.exp(-dt / tau_q)
+    I_h = g_h_max * q_new * (V - E_h)
+    return q_new, I_h
+
+@cp.fuse()
+def fused_hh_NaP_current_update(V, p_old, dt, g_NaP_max, E_Na):
+    """Persistent Na+ current for extended HH models."""
+    p_inf = 1.0 / (1.0 + cp.exp(-(V + 55.0) / 5.0))
+    tau_p = 5.0  # ms, relatively fast activation with minimal inactivation
+    p_new = p_inf + (p_old - p_inf) * cp.exp(-dt / tau_p)
+    I_NaP = g_NaP_max * p_new * (V - E_Na)
+    return p_new, I_NaP
+
+@cp.fuse()
+def fused_adex_dynamics_update(V, w, I_syn, dt, C, g_L, E_L, V_T, Delta_T, a, tau_w):
+    """Fused kernel for Adaptive Exponential Integrate-and-Fire (AdEx) dynamics.
+
+    All parameters can be either scalars or arrays broadcastable to V.
+    Units are assumed to be consistent with the calling code (pF, nS, mV, ms, pA).
+    """
+    C_safe = cp.where(C == 0.0, 1.0, C)
+    tau_w_safe = cp.maximum(tau_w, 1e-9)
+    # Membrane equation: C dV/dt = -g_L (V - E_L) + g_L * Delta_T * exp((V - V_T)/Delta_T) - w + I_syn
+    dV_dt = (-g_L * (V - E_L) + g_L * Delta_T * cp.exp((V - V_T) / Delta_T) - w + I_syn) / C_safe
+    # Adaptation variable: tau_w dw/dt = a (V - E_L) - w
+    dw_dt = (a * (V - E_L) - w) / tau_w_safe
+    V_new = V + dV_dt * dt
+    w_new = w + dw_dt * dt
+    return V_new, w_new
+
+@cp.fuse()
 def fused_conductance_decay_and_current(g_e, g_i, decay_e, decay_i, v, E_e, E_i):
     """Fused kernel for synaptic conductance decay and calculating synaptic current."""
     # Decay conductances
@@ -801,10 +1351,19 @@ class SimulationBridge:
         self.cp_izh_legacy_c_reset = None; self.cp_izh_legacy_d_increment = None
         self.cp_izh_legacy_vpeak = None
 
+        # AdEx adaptation variable (w); membrane potential reuses cp_membrane_potential_v
+        self.cp_adex_w = None
+
         self.cp_gating_variable_m = None 
         self.cp_gating_variable_h = None 
         self.cp_gating_variable_n = None 
-
+        # Optional extended HH current state (slow K+ M-current activation and additional gates)
+        self.cp_hh_m_current_activation = None
+        self.cp_hh_CaT_m = None
+        self.cp_hh_CaT_h = None
+        self.cp_hh_h_current_q = None
+        self.cp_hh_NaP_activation = None
+ 
         self.cp_hh_C_m = None; self.cp_hh_g_Na_max = None; self.cp_hh_g_K_max = None; self.cp_hh_g_L = None
         self.cp_hh_E_Na = None; self.cp_hh_E_K = None; self.cp_hh_E_L = None; self.cp_hh_v_peak = None
 
@@ -954,17 +1513,90 @@ class SimulationBridge:
                 np.random.seed(cfg.seed)
 
             # Initialize external input current
-            # HH neurons need baseline drive to spike, Izhikevich can be spontaneous
+            # HH and AdEx neurons generally need some baseline drive to spike; Izhikevich can be spontaneous.
             if cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
                 # HH model expects current density in µA/cm²
-                # For spiking: need 5-20 µA/cm² (converted to pA for consistency)
+                # For spiking: need ~5–20 µA/cm² (converted to pA for consistency)
                 # 10 µA/cm² = 10,000,000 pA (when divided by 1e-6 later = 10 µA/cm²)
-                self.cp_external_input_current = cp.random.uniform(5e6, 20e6, n).astype(cp.float32)
+                drive_scale = getattr(cfg, "hh_external_drive_scale", 1.0)
+                base_min, base_max = 5e6, 20e6
+                self.cp_external_input_current = cp.random.uniform(base_min * drive_scale,
+                                                                    base_max * drive_scale,
+                                                                    n).astype(cp.float32)
+            elif cfg.neuron_model_type == NeuronModel.ADEX.name:
+                # AdEx uses current in pA directly; give a modest heterogeneous DC drive
+                # so networks can spike even with sparse connectivity.
+                drive_scale = getattr(cfg, "adex_external_drive_scale", 1.0)
+                base_min, base_max = 50.0, 250.0
+                self.cp_external_input_current = cp.random.uniform(base_min * drive_scale,
+                                                                    base_max * drive_scale,
+                                                                    n).astype(cp.float32)
             else:
+                # Izhikevich and other models default to zero external drive unless overridden
                 self.cp_external_input_current = cp.zeros(n, dtype=cp.float32)
             self.cp_firing_states = cp.zeros(n, dtype=bool)
             self.cp_prev_firing_states = cp.zeros(n, dtype=bool)
+            # Start with a generic random trait assignment
             self.cp_traits = cp.random.randint(0, max(1, cfg.num_traits), (n,), dtype=cp.int32) if n > 0 else cp.array([], dtype=cp.int32)
+
+            # If a structured neural profile is selected, override trait distribution on host
+            profile_name = getattr(cfg, "neural_profile_name", "GENERIC_UNSTRUCTURED")
+            profile_def = NEURAL_STRUCTURE_PROFILES.get(profile_name)
+
+            # If running HH model and the profile defines a default HH preset, use it
+            # unless the user has explicitly selected a non-default HH type.
+            if cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name and profile_def:
+                profile_hh_type = profile_def.get("default_hh_neuron_type")
+                if profile_hh_type:
+                    try:
+                        # Only auto-override when HH type is still the global default preset
+                        if cfg.default_neuron_type_hh == NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name:
+                            # Validate that the profile's HH type exists
+                            _ = NeuronType[profile_hh_type]
+                            cfg.default_neuron_type_hh = profile_hh_type
+                            self._log_console(f"Profile {profile_name}: using HH preset {profile_hh_type} as default.")
+                    except Exception as e:
+                        self._log_console(f"Warning: profile {profile_name} specifies invalid default_hh_neuron_type={profile_hh_type}: {e}", "warning")
+
+            if profile_def and profile_def.get("trait_definitions") and n > 0:
+                trait_defs = profile_def["trait_definitions"]
+                # Extract and normalize fractions
+                fractions = [max(0.0, float(td.get("fraction", 0.0))) for td in trait_defs]
+                total_frac = sum(fractions)
+                if total_frac <= 0.0:
+                    fractions = [1.0 / len(trait_defs)] * len(trait_defs)
+                else:
+                    fractions = [f / total_frac for f in fractions]
+                # Convert fractions to integer counts, then adjust to sum exactly to n
+                counts = [int(round(f * n)) for f in fractions]
+                diff = n - sum(counts)
+                idx = 0
+                while diff != 0 and len(counts) > 0:
+                    j = idx % len(counts)
+                    if diff > 0:
+                        counts[j] += 1; diff -= 1
+                    else:
+                        if counts[j] > 0:
+                            counts[j] -= 1; diff += 1
+                    idx += 1
+                np_traits = np.empty(n, dtype=np.int32)
+                start = 0
+                for td, c in zip(trait_defs, counts):
+                    end = start + max(0, c)
+                    if end > start:
+                        np_traits[start:end] = int(td["trait_index"])
+                    start = end
+                # If rounding caused fewer than n assignments, fill the remainder with the first trait index
+                if start < n and trait_defs:
+                    np_traits[start:n] = int(trait_defs[0]["trait_index"])
+                if n > 1:
+                    np.random.shuffle(np_traits)
+                self.cp_traits = cp.asarray(np_traits, dtype=cp.int32)
+                # Ensure num_traits is at least large enough to index all configured traits
+                max_trait_idx = max(td["trait_index"] for td in trait_defs)
+                if cfg.num_traits <= max_trait_idx:
+                    cfg.num_traits = max_trait_idx + 1
+
             self.cp_neuron_type_ids = cp.zeros(n, dtype=cp.int32) if n > 0 else cp.array([], dtype=cp.int32)  # Will be populated per neuron
             self.cp_conductance_g_e = cp.zeros(n, dtype=cp.float32)
             self.cp_conductance_g_i = cp.zeros(n, dtype=cp.float32)
@@ -1033,30 +1665,40 @@ class SimulationBridge:
                 self.cp_hh_E_Na = cp.zeros(n, dtype=cp.float32); self.cp_hh_E_K = cp.zeros(n, dtype=cp.float32)
                 self.cp_hh_E_L = cp.zeros(n, dtype=cp.float32); self.cp_hh_v_peak = cp.zeros(n, dtype=cp.float32)
                 
+                # Initialize membrane and gating variables
                 self.cp_membrane_potential_v = cp.zeros(n, dtype=cp.float32)
                 self.cp_gating_variable_m = cp.zeros(n, dtype=cp.float32)
                 self.cp_gating_variable_h = cp.zeros(n, dtype=cp.float32)
                 self.cp_gating_variable_n = cp.zeros(n, dtype=cp.float32)
+                self.cp_hh_m_current_activation = cp.zeros(n, dtype=cp.float32)
+                self.cp_hh_CaT_m = cp.zeros(n, dtype=cp.float32)
+                self.cp_hh_CaT_h = cp.zeros(n, dtype=cp.float32)
+                self.cp_hh_h_current_q = cp.zeros(n, dtype=cp.float32)
+                self.cp_hh_NaP_activation = cp.zeros(n, dtype=cp.float32)
                 self.cp_neuron_firing_thresholds = None 
 
-                np_traits_host = cp.asnumpy(self.cp_traits)
-                defined_hh_types = [
-                    ntype for ntype in NeuronType
-                    if "HH_" in ntype.name and ntype in DefaultHodgkinHuxleyParams.PARAMS
-                ]
-                num_defined_hh_variants = len(defined_hh_types)
-                for i in range(n):
-                    trait_val = np_traits_host[i]
-                    selected_neuron_type_enum = NeuronType[cfg.default_neuron_type_hh]
-                    if num_defined_hh_variants > 0:
-                        type_idx_in_list = trait_val % num_defined_hh_variants
-                        selected_neuron_type_enum = defined_hh_types[type_idx_in_list]
-                    
-                    # Store integer type ID for GPU operations
-                    type_id = NEURON_TYPE_MAPPER.get_id(selected_neuron_type_enum)
-                    self.cp_neuron_type_ids[i] = type_id
+                # Use default HH neuron type to populate extended current config defaults (if defined)
+                try:
+                    default_hh_type_enum = NeuronType[cfg.default_neuron_type_hh]
+                    hh_base_params_for_ext = DefaultHodgkinHuxleyParams.get_params(default_hh_type_enum)
+                    cfg.hh_g_M_max = hh_base_params_for_ext.get("g_M_max", cfg.hh_g_M_max)
+                    cfg.hh_g_CaT_max = hh_base_params_for_ext.get("g_CaT_max", cfg.hh_g_CaT_max)
+                    cfg.hh_E_CaT = hh_base_params_for_ext.get("E_CaT", cfg.hh_E_CaT)
+                    cfg.hh_g_h_max = hh_base_params_for_ext.get("g_h_max", cfg.hh_g_h_max)
+                    cfg.hh_E_h = hh_base_params_for_ext.get("E_h", cfg.hh_E_h)
+                    cfg.hh_g_NaP_max = hh_base_params_for_ext.get("g_NaP_max", cfg.hh_g_NaP_max)
+                except Exception as e:
+                    self._log_console(f"Warning: Failed to derive extended HH defaults from {cfg.default_neuron_type_hh}: {e}", "warning")
 
-                    params = DefaultHodgkinHuxleyParams.get_params(selected_neuron_type_enum)
+                np_traits_host = cp.asnumpy(self.cp_traits)
+                # For now, use a single HH neuron type (default_neuron_type_hh) for all neurons.
+                default_hh_type_enum = NeuronType[cfg.default_neuron_type_hh]
+                for i in range(n):
+                    # Store integer type ID for GPU operations
+                    type_id = NEURON_TYPE_MAPPER.get_id(default_hh_type_enum)
+                    self.cp_neuron_type_ids[i] = type_id
+                    
+                    params = DefaultHodgkinHuxleyParams.get_params(default_hh_type_enum)
                     self.cp_hh_C_m[i] = params["C_m"]; self.cp_hh_g_Na_max[i] = params["g_Na_max"]
                     self.cp_hh_g_K_max[i] = params["g_K_max"]; self.cp_hh_g_L[i] = params["g_L"]
                     self.cp_hh_E_Na[i] = params["E_Na"]; self.cp_hh_E_K[i] = params["E_K"]
@@ -1065,7 +1707,17 @@ class SimulationBridge:
                     self.cp_gating_variable_m[i] = params["m_init"] 
                     self.cp_gating_variable_h[i] = params["h_init"]
                     self.cp_gating_variable_n[i] = params["n_init"]
-                    self.runtime_state.neuron_types_list_for_viz[i] = f"HH_{selected_neuron_type_enum.name.replace('HH_', '')}"
+                    self.runtime_state.neuron_types_list_for_viz[i] = f"HH_{default_hh_type_enum.name.replace('HH_', '')}"
+
+            elif cfg.neuron_model_type == NeuronModel.ADEX.name:
+                self._log_console(f"Initializing AdEx model specifics for {n} neurons...")
+                # Single-parameter set broadcast to all neurons; traits currently only affect visualization and E/I status
+                self.cp_membrane_potential_v = cp.full(n, cfg.adex_E_L, dtype=cp.float32)
+                self.cp_adex_w = cp.zeros(n, dtype=cp.float32)
+                self.cp_neuron_firing_thresholds = None  # AdEx uses adex_V_peak from config
+                # Simple labeling for visualization
+                for i in range(n):
+                    self.runtime_state.neuron_types_list_for_viz[i] = "AdEx_RS"
             
             self._log_console(f"Generating 3D neuron positions for {n} neurons...")
             if n > 0:
@@ -1082,11 +1734,31 @@ class SimulationBridge:
 
             if not called_from_playback_init:
                 self._log_console("Generating connections (3D)...")
-                if cfg.enable_watts_strogatz:
+                profile_name_for_conn = getattr(cfg, "neural_profile_name", "GENERIC_UNSTRUCTURED")
+                profile_def_for_conn = NEURAL_STRUCTURE_PROFILES.get(profile_name_for_conn)
+                motif_name = profile_def_for_conn.get("connectivity_motif") if profile_def_for_conn else None
+
+                if motif_name:
+                    self.cp_connections = self._generate_motif_connections_3d(n, self.cp_neuron_positions_3d, self.cp_traits, cfg, motif_name)
+                elif cfg.enable_watts_strogatz:
                     self.cp_connections = self._generate_watts_strogatz_connections_3d(n, cfg.connectivity_k, cfg.connectivity_p_rewire, cfg)
                 else: 
                     self.cp_connections = self._generate_spatial_connections_3d(n, cfg.connections_per_neuron, self.cp_neuron_positions_3d, self.cp_traits, cfg)
                 
+                # Defensive fallback: if no synapses were generated, fall back to spatial generator
+                if self.cp_connections is None or (hasattr(self.cp_connections, 'nnz') and self.cp_connections.nnz == 0 and n > 1):
+                    self._log_console(
+                        f"No synapses generated for profile '{profile_name_for_conn}' (motif={motif_name}). Falling back to spatial generator.",
+                        "warning",
+                    )
+                    self.cp_connections = self._generate_spatial_connections_3d(
+                        n,
+                        cfg.connections_per_neuron,
+                        self.cp_neuron_positions_3d,
+                        self.cp_traits,
+                        cfg,
+                    )
+
                 if self.cp_connections is None:
                     self._log_console("Connection generation resulted in None. Initializing as empty matrix.", "warning")
                     self.cp_connections = csp.csr_matrix((n,n), dtype=cp.float32)
@@ -1098,9 +1770,17 @@ class SimulationBridge:
             if num_synapses > 0:
                 self.cp_synapse_pulse_timers = cp.zeros(num_synapses, dtype=cp.int32)
                 self.cp_synapse_pulse_progress = cp.zeros(num_synapses, dtype=cp.float32)
-            else: 
+            else:
                 self.cp_synapse_pulse_timers = cp.array([], dtype=cp.int32)
                 self.cp_synapse_pulse_progress = cp.array([], dtype=cp.float32)
+
+            # If a structured neural profile is configured, populate inhibitory_trait_indices
+            profile_name = getattr(cfg, "neural_profile_name", "GENERIC_UNSTRUCTURED")
+            profile_def = NEURAL_STRUCTURE_PROFILES.get(profile_name)
+            if profile_def and profile_def.get("trait_definitions"):
+                inhibitory_indices = [td["trait_index"] for td in profile_def["trait_definitions"] if td.get("role", "").lower().startswith("inhib")]
+                if inhibitory_indices:
+                    cfg.inhibitory_trait_indices = inhibitory_indices
 
             if cfg.enable_short_term_plasticity and num_synapses > 0:
                 self._log_console(f"Initializing STP state for {num_synapses} synapses...")
@@ -1299,6 +1979,120 @@ class SimulationBridge:
         
         if n == 0:
             return csp.csr_matrix((0, 0), dtype=cp.float32)
+
+    def _generate_motif_connections_3d(self, n, neuron_positions_3d_cp, traits_cp, config, motif_name):
+        """Generates connections according to a high-level connectivity motif.
+
+        Motifs are defined in CONNECTIVITY_MOTIFS and operate on trait-based
+        populations. This generator is optimized for small-to-medium networks
+        where explicit population-based sampling is acceptable.
+        """
+        motif_def = CONNECTIVITY_MOTIFS.get(motif_name)
+        if motif_def is None:
+            self._log_console(f"Unknown connectivity motif '{motif_name}'. Falling back to spatial generator.", "warning")
+            return self._generate_spatial_connections_3d(n, config.connections_per_neuron, neuron_positions_3d_cp, traits_cp, config)
+
+        self._log_console(f"Generating connections (Motif: {motif_name})...")
+        start_t = time.time()
+
+        if n == 0:
+            return csp.csr_matrix((0, 0), dtype=cp.float32)
+
+        # For very large networks, fall back to spatial generator to avoid O(N^2) patterns
+        if n > 50000:
+            self._log_console(
+                f"Network size n={n} too large for motif generator; falling back to spatial generator.",
+                "warning",
+            )
+            return self._generate_spatial_connections_3d(n, config.connections_per_neuron, neuron_positions_3d_cp, traits_cp, config)
+
+        # Traits on host for flexible population definitions
+        if traits_cp is not None and traits_cp.size == n:
+            traits_np = cp.asnumpy(traits_cp).astype(np.int32)
+        else:
+            traits_np = np.zeros(n, dtype=np.int32)
+
+        base_k = getattr(config, "connectivity_k", getattr(config, "connections_per_neuron", 10))
+        if base_k < 1:
+            base_k = 1
+        min_w, max_w = config.hebbian_min_weight, config.hebbian_max_weight
+
+        rows: list[int] = []
+        cols: list[int] = []
+        weights_list: list[float] = []
+
+        rules = motif_def.get("rules", [])
+        for rule in rules:
+            src_traits = rule.get("source_traits", [])
+            tgt_traits = rule.get("target_traits", [])
+            if not src_traits or not tgt_traits:
+                continue
+
+            k_fraction = float(rule.get("k_fraction", 1.0))
+            if k_fraction <= 0.0:
+                continue
+
+            weight_scale = float(rule.get("weight_scale", 1.0))
+
+            src_mask = np.isin(traits_np, np.array(src_traits, dtype=np.int32))
+            tgt_mask = np.isin(traits_np, np.array(tgt_traits, dtype=np.int32))
+            src_indices = np.nonzero(src_mask)[0]
+            tgt_indices = np.nonzero(tgt_mask)[0]
+
+            if src_indices.size == 0 or tgt_indices.size == 0:
+                continue
+
+            rule_k = int(max(0, round(base_k * k_fraction)))
+            if rule_k <= 0:
+                continue
+
+            # Local weight range for this rule
+            local_min_w = min_w * weight_scale
+            local_max_w = max_w * weight_scale
+            if local_min_w > local_max_w:
+                local_min_w, local_max_w = local_max_w, local_min_w
+
+            for src_idx in src_indices:
+                # Avoid self-connections when source and target populations overlap
+                if traits_np[src_idx] in tgt_traits and tgt_indices.size > 1:
+                    available_targets = tgt_indices[tgt_indices != src_idx]
+                    if available_targets.size == 0:
+                        continue
+                else:
+                    available_targets = tgt_indices
+
+                num_targets = min(rule_k, available_targets.size)
+                if num_targets <= 0:
+                    continue
+
+                chosen_targets = np.random.choice(available_targets, size=num_targets, replace=False)
+                weights = np.random.uniform(local_min_w, local_max_w, size=num_targets).astype(np.float32)
+
+                rows.extend([int(src_idx)] * num_targets)
+                cols.extend(chosen_targets.astype(np.int32).tolist())
+                weights_list.extend(weights.tolist())
+
+        if not rows:
+            self._log_console(
+                f"No connections generated by motif '{motif_name}'. Falling back to spatial generator.",
+                "warning",
+            )
+            return self._generate_spatial_connections_3d(n, config.connections_per_neuron, neuron_positions_3d_cp, traits_cp, config)
+
+        conn_matrix = csp.csr_matrix(
+            (
+                cp.asarray(weights_list, dtype=cp.float32),
+                (cp.asarray(rows, dtype=cp.int32), cp.asarray(cols, dtype=cp.int32)),
+            ),
+            shape=(n, n),
+            dtype=cp.float32,
+        )
+        conn_matrix.sort_indices()
+        elapsed = time.time() - start_t
+        self._log_console(
+            f"Connections (Motif {motif_name}): {conn_matrix.nnz} synapses. Time: {elapsed:.2f}s",
+        )
+        return conn_matrix
         
         if n == 1:
             self._log_console("Only 1 neuron, returning empty connectivity.", "info")
@@ -1417,6 +2211,22 @@ class SimulationBridge:
         # Checkpoints might restore it, but that's handled in load_checkpoint.
         self.runtime_state = RuntimeState()
 
+        # Apply auto-tuned overrides for this (model, profile, HH preset) combination if available.
+        try:
+            tuned_entry = get_auto_tuned_overrides_for_combo(
+                self.core_config.neuron_model_type,
+                getattr(self.core_config, "neural_profile_name", "GENERIC_UNSTRUCTURED"),
+                getattr(self.core_config, "default_neuron_type_hh", None),
+            )
+            if tuned_entry and isinstance(tuned_entry, dict):
+                core_overrides = tuned_entry.get("core_overrides", {})
+                if isinstance(core_overrides, dict):
+                    for key, value in core_overrides.items():
+                        if hasattr(self.core_config, key):
+                            setattr(self.core_config, key, value)
+        except Exception as e:
+            self._log_console(f"Warning: Failed to apply auto-tuned overrides: {e}", "warning")
+
         # Update max_delay_steps based on new config
         dt = self.core_config.dt_ms
         self.runtime_state.max_delay_steps = int(self.core_config.max_synaptic_delay_ms / dt) if dt > 0 else 200
@@ -1448,7 +2258,9 @@ class SimulationBridge:
             'cp_izh_a', 'cp_izh_b', 'cp_izh_c_reset', 'cp_izh_d_increment',
             'cp_izh_legacy_a', 'cp_izh_legacy_b', 'cp_izh_legacy_c_reset',
             'cp_izh_legacy_d_increment', 'cp_izh_legacy_vpeak',
+            'cp_adex_w',
             'cp_gating_variable_m','cp_gating_variable_h','cp_gating_variable_n',
+            'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
             'cp_hh_C_m','cp_hh_g_Na_max','cp_hh_g_K_max','cp_hh_g_L',
             'cp_hh_E_Na','cp_hh_E_K','cp_hh_E_L', 'cp_hh_v_peak',
             'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
@@ -1565,7 +2377,9 @@ class SimulationBridge:
         arrays_to_check = [
             'cp_membrane_potential_v', 'cp_firing_states', 'cp_viz_activity_timers',
             'cp_conductance_g_e', 'cp_conductance_g_i', 'cp_recovery_variable_u',
-            'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n'
+            'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
+            'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
+            'cp_adex_w'
         ]
         
         if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
@@ -1638,11 +2452,14 @@ class SimulationBridge:
 
         arrays_to_capture = [
             'cp_membrane_potential_v', 'cp_recovery_variable_u', 'cp_gating_variable_m',
-            'cp_gating_variable_h', 'cp_gating_variable_n', 'cp_conductance_g_e',
+            'cp_gating_variable_h', 'cp_gating_variable_n',
+            'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
+            'cp_conductance_g_e',
             'cp_conductance_g_i', 'cp_external_input_current', 'cp_refractory_timers',
             'cp_viz_activity_timers', 'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
             'cp_firing_states', 'cp_prev_firing_states',
-            'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress'
+            'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
+            'cp_adex_w'
         ]
         for attr_name in arrays_to_capture:
             array_data = getattr(self, attr_name, None)
@@ -1876,7 +2693,12 @@ class SimulationBridge:
                     if self.core_config.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
                         dynamic_arrays_to_capture.append('cp_neuron_firing_thresholds')
                 elif self.core_config.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
-                    dynamic_arrays_to_capture.extend(['cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n'])
+                    dynamic_arrays_to_capture.extend([
+                        'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
+                        'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation'
+                    ])
+                elif self.core_config.neuron_model_type == NeuronModel.ADEX.name:
+                    dynamic_arrays_to_capture.extend(['cp_adex_w'])
 
                 if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
                     if self.cp_connections.data is not None:
@@ -1920,7 +2742,12 @@ class SimulationBridge:
                     if self.core_config.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
                         dynamic_arrays_to_capture.append('cp_neuron_firing_thresholds')
                 elif self.core_config.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
-                    dynamic_arrays_to_capture.extend(['cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n'])
+                    dynamic_arrays_to_capture.extend([
+                        'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
+                        'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation'
+                    ])
+                elif self.core_config.neuron_model_type == NeuronModel.ADEX.name:
+                    dynamic_arrays_to_capture.extend(['cp_adex_w'])
 
                 if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
                     if self.cp_connections.data is not None:
@@ -2279,7 +3106,12 @@ class SimulationBridge:
             if self.core_config.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
                 dynamic_arrays_to_apply.append('cp_neuron_firing_thresholds')
         elif self.core_config.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
-            dynamic_arrays_to_apply.extend(['cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n'])
+            dynamic_arrays_to_apply.extend([
+                'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
+                'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation'
+            ])
+        elif self.core_config.neuron_model_type == NeuronModel.ADEX.name:
+            dynamic_arrays_to_apply.append('cp_adex_w')
         
         # Copy CuPy arrays directly (GPU→GPU, very fast)
         for attr_name in dynamic_arrays_to_apply:
@@ -2409,8 +3241,14 @@ class SimulationBridge:
             'cp_gating_variable_m': 'cp_gating_variable_m', 
             'cp_gating_variable_h': 'cp_gating_variable_h', 
             'cp_gating_variable_n': 'cp_gating_variable_n', 
+            'cp_hh_m_current_activation': 'cp_hh_m_current_activation',
+            'cp_hh_CaT_m': 'cp_hh_CaT_m',
+            'cp_hh_CaT_h': 'cp_hh_CaT_h',
+            'cp_hh_h_current_q': 'cp_hh_h_current_q',
+            'cp_hh_NaP_activation': 'cp_hh_NaP_activation',
             'cp_conductance_g_e': 'cp_conductance_g_e',
             'cp_conductance_g_i': 'cp_conductance_g_i',
+            'cp_adex_w': 'cp_adex_w',
             'cp_external_input_current': 'cp_external_input_current',
             'cp_refractory_timers': ('cp_refractory_timers', cp.int32),
             'cp_viz_activity_timers': ('cp_viz_activity_timers', cp.int32),
@@ -2509,7 +3347,13 @@ class SimulationBridge:
                 prev_fired_float = self.cp_prev_firing_states.astype(cp.float32) 
 
                 if cfg.enable_inhibitory_neurons and self.cp_traits is not None:
-                    is_inhibitory_neuron_output = (self.cp_traits == cfg.inhibitory_trait_index)
+                    # Support multiple inhibitory trait indices while preserving legacy single-index behavior
+                    inhibitory_indices = getattr(cfg, "inhibitory_trait_indices", None)
+                    if inhibitory_indices:
+                        inhibitory_indices_cp = cp.asarray(inhibitory_indices, dtype=cp.int32)
+                        is_inhibitory_neuron_output = cp.isin(self.cp_traits, inhibitory_indices_cp)
+                    else:
+                        is_inhibitory_neuron_output = (self.cp_traits == cfg.inhibitory_trait_index)
                     exc_fired_prev = prev_fired_float * (~is_inhibitory_neuron_output) 
                     inhib_fired_prev = prev_fired_float * is_inhibitory_neuron_output 
 
@@ -2550,9 +3394,64 @@ class SimulationBridge:
 
             elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
                 total_input_current_uA_density_equivalent = total_input_current_pA * 1e-6 
+
+                # Start from synaptic/external input current density
+                effective_input_uA = total_input_current_uA_density_equivalent
+
+                # Optional slow K+ M-current: treated as part of ionic current by subtracting I_M from I_syn
+                if cfg.hh_g_M_max != 0.0:
+                    m_act_new, I_M = fused_hh_m_current_update(
+                        self.cp_membrane_potential_v,
+                        self.cp_hh_m_current_activation,
+                        dt,
+                        cfg.hh_g_M_max,
+                        self.cp_hh_E_K,
+                        cfg.hh_m_current_tau_ms
+                    )
+                    self.cp_hh_m_current_activation[:] = m_act_new
+                    effective_input_uA = effective_input_uA - I_M
+
+                # Optional low-threshold Ca2+ current (CaT)
+                if cfg.hh_g_CaT_max != 0.0:
+                    m_CaT_new, h_CaT_new, I_CaT = fused_hh_CaT_current_update(
+                        self.cp_membrane_potential_v,
+                        self.cp_hh_CaT_m,
+                        self.cp_hh_CaT_h,
+                        dt,
+                        cfg.hh_g_CaT_max,
+                        cfg.hh_E_CaT
+                    )
+                    self.cp_hh_CaT_m[:] = m_CaT_new
+                    self.cp_hh_CaT_h[:] = h_CaT_new
+                    effective_input_uA = effective_input_uA - I_CaT
+
+                # Optional hyperpolarization-activated current (I_h)
+                if cfg.hh_g_h_max != 0.0:
+                    q_new, I_h = fused_hh_h_current_update(
+                        self.cp_membrane_potential_v,
+                        self.cp_hh_h_current_q,
+                        dt,
+                        cfg.hh_g_h_max,
+                        cfg.hh_E_h
+                    )
+                    self.cp_hh_h_current_q[:] = q_new
+                    effective_input_uA = effective_input_uA - I_h
+
+                # Optional persistent Na+ current (NaP)
+                if cfg.hh_g_NaP_max != 0.0:
+                    p_new, I_NaP = fused_hh_NaP_current_update(
+                        self.cp_membrane_potential_v,
+                        self.cp_hh_NaP_activation,
+                        dt,
+                        cfg.hh_g_NaP_max,
+                        self.cp_hh_E_Na
+                    )
+                    self.cp_hh_NaP_activation[:] = p_new
+                    effective_input_uA = effective_input_uA - I_NaP
+
                 v_new, m_new, h_new, n_new = fused_hodgkin_huxley_dynamics_update(
                     self.cp_membrane_potential_v, self.cp_gating_variable_m, self.cp_gating_variable_h, self.cp_gating_variable_n,
-                    total_input_current_uA_density_equivalent, dt,
+                    effective_input_uA, dt,
                     self.cp_hh_C_m, self.cp_hh_g_Na_max, self.cp_hh_g_K_max, self.cp_hh_g_L,
                     self.cp_hh_E_Na, self.cp_hh_E_K, self.cp_hh_E_L,
                     cfg.hh_temperature_celsius, cfg.hh_q10_factor
@@ -2563,6 +3462,26 @@ class SimulationBridge:
                 self.cp_gating_variable_m[:] = m_new
                 self.cp_gating_variable_h[:] = h_new
                 self.cp_gating_variable_n[:] = n_new
+
+            elif cfg.neuron_model_type == NeuronModel.ADEX.name:
+                v_new, w_new = fused_adex_dynamics_update(
+                    self.cp_membrane_potential_v, self.cp_adex_w,
+                    total_input_current_pA, dt,
+                    cfg.adex_C, cfg.adex_g_L, cfg.adex_E_L,
+                    cfg.adex_V_T, cfg.adex_Delta_T, cfg.adex_a, cfg.adex_tau_w
+                )
+                not_in_refractory = (self.cp_refractory_timers <= 0)
+                fired_this_step = (v_new >= cfg.adex_V_peak) & not_in_refractory
+                fired_indices = cp.where(fired_this_step)[0]
+
+                if fired_indices.size > 0:
+                    v_new[fired_indices] = cfg.adex_V_r
+                    w_new[fired_indices] += cfg.adex_b
+                    self.cp_refractory_timers[fired_indices] = cfg.refractory_period_steps
+
+                self.cp_membrane_potential_v[:] = v_new
+                self.cp_adex_w[:] = w_new
+                self.cp_refractory_timers[self.cp_refractory_timers > 0] -= 1
 
             self.cp_firing_states[:] = fired_this_step
             
@@ -2652,7 +3571,8 @@ class SimulationBridge:
                     'cp_external_input_current', 'cp_firing_states', 'cp_prev_firing_states',
                     'cp_traits', 'cp_refractory_timers', 'cp_neuron_positions_3d',
                     'cp_neuron_activity_ema', 'cp_viz_activity_timers',
-                    'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress'
+                    'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
+                    'cp_adex_w'
                 ]
                 for attr_name in arrays_to_save_direct:
                     data_array = getattr(self, attr_name, None)
@@ -2693,6 +3613,19 @@ class SimulationBridge:
                         data_array = getattr(self, attr_name_cp, None)
                         if data_array is not None and data_array.size > 0: state_group.create_dataset(attr_name_cp, data=cp.asnumpy(data_array), compression="gzip")
                         elif data_array is not None : state_group.attrs[f"{attr_name_cp}_is_empty"] = True
+                    # Optional extended HH activation states
+                    for attr_name_cp in [
+                        "cp_hh_m_current_activation",
+                        "cp_hh_CaT_m",
+                        "cp_hh_CaT_h",
+                        "cp_hh_h_current_q",
+                        "cp_hh_NaP_activation",
+                    ]:
+                        data_array = getattr(self, attr_name_cp, None)
+                        if data_array is not None and data_array.size > 0:
+                            state_group.create_dataset(attr_name_cp, data=cp.asnumpy(data_array), compression="gzip")
+                        elif data_array is not None:
+                            state_group.attrs[f"{attr_name_cp}_is_empty"] = True
                     for param in ['C_m', 'g_Na_max', 'g_K_max', 'g_L', 'E_Na', 'E_K', 'E_L', 'v_peak']:
                          attr_name_cp = f"cp_hh_{param}"
                          data_array = getattr(self, attr_name_cp, None)
@@ -2762,7 +3695,8 @@ class SimulationBridge:
                     'cp_neuron_activity_ema': ('cp_neuron_activity_ema', cp.float32),
                     'cp_viz_activity_timers': ('cp_viz_activity_timers', cp.int32),
                     'cp_synapse_pulse_timers': ('cp_synapse_pulse_timers', cp.int32),
-                    'cp_synapse_pulse_progress': ('cp_synapse_pulse_progress', cp.float32)
+                    'cp_synapse_pulse_progress': ('cp_synapse_pulse_progress', cp.float32),
+                    'cp_adex_w': ('cp_adex_w', cp.float32)
                 }
                 for attr_name, (h5_key, dtype) in direct_load_map.items():
                     setattr(self, attr_name, _load_cp_array_from_h5(h5_key, 
@@ -2822,6 +3756,27 @@ class SimulationBridge:
                     for attr_name_suffix in ['m', 'h', 'n']:
                          setattr(self, f"cp_gating_variable_{attr_name_suffix}", _load_cp_array_from_h5(f"cp_gating_variable_{attr_name_suffix}",
                                  lambda s, suff=attr_name_suffix: cp.full(s, getattr(self.core_config, f"hh_{suff}_init"), dtype=cp.float32)))
+                    # Optional extended HH activation states
+                    self.cp_hh_m_current_activation = _load_cp_array_from_h5(
+                        "cp_hh_m_current_activation",
+                        lambda s: cp.zeros(s, dtype=cp.float32)
+                    )
+                    self.cp_hh_CaT_m = _load_cp_array_from_h5(
+                        "cp_hh_CaT_m",
+                        lambda s: cp.zeros(s, dtype=cp.float32)
+                    )
+                    self.cp_hh_CaT_h = _load_cp_array_from_h5(
+                        "cp_hh_CaT_h",
+                        lambda s: cp.zeros(s, dtype=cp.float32)
+                    )
+                    self.cp_hh_h_current_q = _load_cp_array_from_h5(
+                        "cp_hh_h_current_q",
+                        lambda s: cp.zeros(s, dtype=cp.float32)
+                    )
+                    self.cp_hh_NaP_activation = _load_cp_array_from_h5(
+                        "cp_hh_NaP_activation",
+                        lambda s: cp.zeros(s, dtype=cp.float32)
+                    )
                     hh_param_map = {'C_m': 'hh_C_m', 'g_Na_max': 'hh_g_Na_max', 'g_K_max': 'hh_g_K_max', 'g_L': 'hh_g_L',
                                     'E_Na': 'hh_E_Na', 'E_K': 'hh_E_K', 'E_L': 'hh_E_L', 'v_peak': 'hh_v_peak'}
                     for param_key, config_attr_name in hh_param_map.items():
@@ -3131,14 +4086,10 @@ class SimulationBridge:
                             if num_defined_izh_variants > 0: selected_neuron_type_enum = defined_izh2007_types[trait_val % num_defined_izh_variants]
                             cfg.neuron_types_list_for_viz[i] = f"Izh2007_{selected_neuron_type_enum.name.replace('IZH2007_', '')}"
                     elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
+                        # For HH, use a single preset neuron type for all neurons (default_neuron_type_hh)
                         default_hh_type_enum = NeuronType[cfg.default_neuron_type_hh]
-                        defined_hh_types = [ntype for ntype in NeuronType if "HH_" in ntype.name and ntype in DefaultHodgkinHuxleyParams.PARAMS]
-                        num_defined_hh_variants = len(defined_hh_types)
                         for i in range(num_n):
-                            trait_val = np_traits_host_temp[i]
-                            selected_neuron_type_enum = default_hh_type_enum
-                            if num_defined_hh_variants > 0: selected_neuron_type_enum = defined_hh_types[trait_val % num_defined_hh_variants]
-                            cfg.neuron_types_list_for_viz[i] = f"HH_{selected_neuron_type_enum.name.replace('HH_', '')}"
+                            cfg.neuron_types_list_for_viz[i] = f"HH_{default_hh_type_enum.name.replace('HH_', '')}"
                     else: 
                         cfg.neuron_types_list_for_viz = [f"Unknown_Type_{np_traits_host_temp[i]}" for i in range(num_n)]
 
@@ -4012,6 +4963,8 @@ def _update_sim_config_from_ui(update_model_specific=True):
         if dpg.does_item_exist("cfg_total_sim_time"): cfg_dict_from_ui["total_simulation_time_ms"] = max(0.0, dpg.get_value("cfg_total_sim_time"))
         if dpg.does_item_exist("cfg_dt_ms"): cfg_dict_from_ui["dt_ms"] = max(0.001, dpg.get_value("cfg_dt_ms"))
         if dpg.does_item_exist("cfg_seed"): cfg_dict_from_ui["seed"] = dpg.get_value("cfg_seed")
+        if dpg.does_item_exist("cfg_neural_profile"): cfg_dict_from_ui["neural_profile_name"] = dpg.get_value("cfg_neural_profile")
+        if dpg.does_item_exist("cfg_default_neuron_type_hh"): cfg_dict_from_ui["default_neuron_type_hh"] = dpg.get_value("cfg_default_neuron_type_hh")
 
         if dpg.does_item_exist("cfg_neuron_model_type"):
             selected_model_name = dpg.get_value("cfg_neuron_model_type")
@@ -4019,11 +4972,8 @@ def _update_sim_config_from_ui(update_model_specific=True):
             # Default neuron types based on selected model (these are part of SimulationConfiguration defaults too)
             if selected_model_name == NeuronModel.IZHIKEVICH.name:
                 cfg_dict_from_ui["default_neuron_type_izh"] = NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name
-            elif selected_model_name == NeuronModel.HODGKIN_HUXLEY.name:
-                cfg_dict_from_ui["default_neuron_type_hh"] = NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name
-                # Suggest smaller dt for HH if current UI value is large
-                if dpg.does_item_exist("cfg_dt_ms") and dpg.get_value("cfg_dt_ms") > 0.05:
-                     cfg_dict_from_ui["dt_ms"] = 1.000 # This will be part of the dict sent
+            # For HH, do not override default_neuron_type_hh here; we use the value from the HH preset combo
+            # and/or any profile-specific default mapping.
 
         # Connectivity
         if dpg.does_item_exist("cfg_enable_watts_strogatz"): cfg_dict_from_ui["enable_watts_strogatz"] = dpg.get_value("cfg_enable_watts_strogatz")
@@ -4071,8 +5021,23 @@ def _update_sim_config_from_ui(update_model_specific=True):
 
             elif current_model_in_ui == NeuronModel.HODGKIN_HUXLEY.name:
                 # ... (all Hodgkin-Huxley params)
-                ui_hh_params_keys = ["hh_C_m", "hh_g_Na_max", "hh_g_K_max", "hh_g_L", "hh_E_Na", "hh_E_K", "hh_E_L", "hh_v_peak", "hh_v_rest_init", "hh_q10_factor", "hh_temperature_celsius"]
+                ui_hh_params_keys = [
+                    "hh_C_m", "hh_g_Na_max", "hh_g_K_max", "hh_g_L", "hh_E_Na", "hh_E_K", "hh_E_L",
+                    "hh_v_peak", "hh_v_rest_init", "hh_g_M_max", "hh_m_current_tau_ms",
+                    "hh_g_CaT_max", "hh_E_CaT", "hh_g_h_max", "hh_E_h", "hh_g_NaP_max",
+                    "hh_q10_factor", "hh_temperature_celsius",
+                    "hh_external_drive_scale",
+                ]
                 for key_suffix in ui_hh_params_keys:
+                    dpg_tag = f"cfg_{key_suffix}"
+                    if dpg.does_item_exist(dpg_tag): cfg_dict_from_ui[key_suffix] = dpg.get_value(dpg_tag)
+            elif current_model_in_ui == NeuronModel.ADEX.name:
+                ui_adex_params_keys = [
+                    "adex_C", "adex_g_L", "adex_E_L", "adex_V_T", "adex_Delta_T",
+                    "adex_a", "adex_tau_w", "adex_b", "adex_V_r", "adex_V_peak",
+                    "adex_external_drive_scale",
+                ]
+                for key_suffix in ui_adex_params_keys:
                     dpg_tag = f"cfg_{key_suffix}"
                     if dpg.does_item_exist(dpg_tag): cfg_dict_from_ui[key_suffix] = dpg.get_value(dpg_tag)
         
@@ -4113,11 +5078,33 @@ def _populate_ui_from_config_dict(config_dict):
     """
     Populates DPG UI elements from a given simulation configuration dictionary.
     Called by the main/UI thread, e.g., after loading a profile or checkpoint.
+
+    Supports both legacy flat SimulationConfiguration-style dicts and the
+    newer nested structure returned by _get_full_config_dict, i.e.
+        {"core_config": {...}, "viz_config": {...}, "runtime_state": {...}}.
     """
     if not dpg.is_dearpygui_running() or not config_dict: return
 
+    # Normalize to a flat dict compatible with SimulationConfiguration.from_dict
+    if any(k in config_dict for k in ("core_config", "viz_config", "runtime_state")):
+        core_part = config_dict.get("core_config", {}) or {}
+        viz_part = config_dict.get("viz_config", {}) or {}
+        runtime_part = config_dict.get("runtime_state", {}) or {}
+
+        flat_dict = {}
+        if isinstance(core_part, dict):
+            flat_dict.update(core_part)
+        # Merge viz and runtime sections, without overriding core keys
+        for section in (viz_part, runtime_part):
+            if isinstance(section, dict):
+                for k, v in section.items():
+                    if k not in flat_dict:
+                        flat_dict[k] = v
+    else:
+        flat_dict = config_dict
+
     # Use SimulationConfiguration.from_dict to ensure all fields are present with defaults if missing in dict
-    cfg = SimulationConfiguration.from_dict(config_dict)
+    cfg = SimulationConfiguration.from_dict(flat_dict)
 
     # General parameters
     if dpg.does_item_exist("cfg_num_neurons"): dpg.set_value("cfg_num_neurons", cfg.num_neurons)
@@ -4125,6 +5112,11 @@ def _populate_ui_from_config_dict(config_dict):
     if dpg.does_item_exist("cfg_dt_ms"): dpg.set_value("cfg_dt_ms", cfg.dt_ms)
     if dpg.does_item_exist("cfg_seed"): dpg.set_value("cfg_seed", cfg.seed)
     if dpg.does_item_exist("cfg_neuron_model_type"): dpg.set_value("cfg_neuron_model_type", cfg.neuron_model_type)
+    if dpg.does_item_exist("cfg_default_neuron_type_hh") and hasattr(cfg, 'default_neuron_type_hh'):
+        dpg.set_value("cfg_default_neuron_type_hh", cfg.default_neuron_type_hh)
+    if dpg.does_item_exist("cfg_neural_profile") and hasattr(cfg, 'neural_profile_name'):
+        profile_value = cfg.neural_profile_name if cfg.neural_profile_name in NEURAL_STRUCTURE_PROFILES else "GENERIC_UNSTRUCTURED"
+        dpg.set_value("cfg_neural_profile", profile_value)
     
     # Connectivity
     if dpg.does_item_exist("cfg_enable_watts_strogatz"): dpg.set_value("cfg_enable_watts_strogatz", cfg.enable_watts_strogatz)
@@ -4167,8 +5159,23 @@ def _populate_ui_from_config_dict(config_dict):
             dpg_tag = f"cfg_{key_suffix}"
             if dpg.does_item_exist(dpg_tag): dpg.set_value(dpg_tag, getattr(cfg, key_suffix))
     elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
-        ui_hh_params_keys = ["hh_C_m", "hh_g_Na_max", "hh_g_K_max", "hh_g_L", "hh_E_Na", "hh_E_K", "hh_E_L", "hh_v_peak", "hh_v_rest_init", "hh_q10_factor", "hh_temperature_celsius"]
+        ui_hh_params_keys = [
+            "hh_C_m", "hh_g_Na_max", "hh_g_K_max", "hh_g_L", "hh_E_Na", "hh_E_K", "hh_E_L",
+            "hh_v_peak", "hh_v_rest_init", "hh_g_M_max", "hh_m_current_tau_ms",
+            "hh_g_CaT_max", "hh_E_CaT", "hh_g_h_max", "hh_E_h", "hh_g_NaP_max",
+            "hh_q10_factor", "hh_temperature_celsius",
+            "hh_external_drive_scale",
+        ]
         for key_suffix in ui_hh_params_keys:
+            dpg_tag = f"cfg_{key_suffix}"
+            if dpg.does_item_exist(dpg_tag): dpg.set_value(dpg_tag, getattr(cfg, key_suffix))
+    elif cfg.neuron_model_type == NeuronModel.ADEX.name:
+        ui_adex_params_keys = [
+            "adex_C", "adex_g_L", "adex_E_L", "adex_V_T", "adex_Delta_T",
+            "adex_a", "adex_tau_w", "adex_b", "adex_V_r", "adex_V_peak",
+            "adex_external_drive_scale",
+        ]
+        for key_suffix in ui_adex_params_keys:
             dpg_tag = f"cfg_{key_suffix}"
             if dpg.does_item_exist(dpg_tag): dpg.set_value(dpg_tag, getattr(cfg, key_suffix))
 
@@ -4185,10 +5192,12 @@ def _toggle_model_specific_params_visibility(sender, app_data, user_data=None):
 
     is_izh = selected_model_name == NeuronModel.IZHIKEVICH.name
     is_hh = selected_model_name == NeuronModel.HODGKIN_HUXLEY.name
+    is_adex = selected_model_name == NeuronModel.ADEX.name
 
     if dpg.is_dearpygui_running():
         if dpg.does_item_exist("izhikevich_params_group"): dpg.configure_item("izhikevich_params_group", show=is_izh)
         if dpg.does_item_exist("hodgkin_huxley_params_group"): dpg.configure_item("hodgkin_huxley_params_group", show=is_hh)
+        if dpg.does_item_exist("adex_params_group"): dpg.configure_item("adex_params_group", show=is_adex)
         if dpg.does_item_exist("homeostasis_izh_specific_group"): dpg.configure_item("homeostasis_izh_specific_group", show=is_izh)
         
         # Update neuron type filter combo based on selected model
@@ -4275,6 +5284,105 @@ def handle_gl_enable_synaptic_pulses_change(sender, app_data, user_data):
 
 # --- DPG Event Handlers for Simulation Control & Configuration ---
 
+def _apply_hh_preset_params_to_ui(hh_type_name):
+    """Update HH parameter input fields in the UI to match a given preset.
+
+    This keeps the visible HH parameter panel in sync with the selected
+    HH neuron type and any profile/model-driven preset selection.
+    """
+    if not dpg.is_dearpygui_running() or not hh_type_name:
+        return
+    try:
+        hh_enum = NeuronType[hh_type_name]
+        params = DefaultHodgkinHuxleyParams.get_params(hh_enum)
+    except Exception as e:
+        print(f"Warning: could not apply HH preset '{hh_type_name}' to UI: {e}")
+        return
+
+    tag_key_pairs = [
+        ("cfg_hh_C_m", "C_m"),
+        ("cfg_hh_g_Na_max", "g_Na_max"),
+        ("cfg_hh_g_K_max", "g_K_max"),
+        ("cfg_hh_g_L", "g_L"),
+        ("cfg_hh_E_Na", "E_Na"),
+        ("cfg_hh_E_K", "E_K"),
+        ("cfg_hh_E_L", "E_L"),
+        ("cfg_hh_v_rest_init", "v_rest_hh"),
+        ("cfg_hh_v_peak", "v_peak_hh"),
+        ("cfg_hh_g_M_max", "g_M_max"),
+        ("cfg_hh_m_current_tau_ms", "m_current_tau_ms"),
+        ("cfg_hh_g_CaT_max", "g_CaT_max"),
+        ("cfg_hh_E_CaT", "E_CaT"),
+        ("cfg_hh_g_h_max", "g_h_max"),
+        ("cfg_hh_E_h", "E_h"),
+        ("cfg_hh_g_NaP_max", "g_NaP_max"),
+        ("cfg_hh_q10_factor", "q10_factor"),
+        ("cfg_hh_temperature_celsius", "temperature_celsius"),
+    ]
+    for tag, key in tag_key_pairs:
+        if dpg.does_item_exist(tag) and key in params:
+            dpg.set_value(tag, params[key])
+
+
+def handle_reset_hh_drive_to_auto(sender=None, app_data=None, user_data=None):
+    """Reset the HH external drive scale slider to the auto-tuned value for the current combo, if any."""
+    try:
+        if not dpg.is_dearpygui_running():
+            return
+        if not dpg.does_item_exist("cfg_neuron_model_type"):
+            return
+        model_name = dpg.get_value("cfg_neuron_model_type")
+        if model_name != NeuronModel.HODGKIN_HUXLEY.name:
+            update_status_bar("HH drive reset: current model is not Hodgkin-Huxley.", level="warning")
+            return
+        profile_name = dpg.get_value("cfg_neural_profile") if dpg.does_item_exist("cfg_neural_profile") else "GENERIC_UNSTRUCTURED"
+        hh_type = dpg.get_value("cfg_default_neuron_type_hh") if dpg.does_item_exist("cfg_default_neuron_type_hh") else NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name
+        tuned = get_auto_tuned_overrides_for_combo(model_name, profile_name, hh_type)
+        if not tuned or not isinstance(tuned, dict):
+            update_status_bar("No auto-tuned HH entry found for this combination.", level="warning")
+            return
+        core_overrides = tuned.get("core_overrides", {}) or {}
+        scale = core_overrides.get("hh_external_drive_scale")
+        if scale is None:
+            update_status_bar("Auto-tuned config has no HH drive scale for this combination.", level="warning")
+            return
+        if dpg.does_item_exist("cfg_hh_external_drive_scale"):
+            dpg.set_value("cfg_hh_external_drive_scale", float(scale))
+        _update_sim_config_from_ui_and_signal_reset_needed("cfg_hh_external_drive_scale", float(scale))
+        update_status_bar("HH drive scale reset to auto-tuned value. Apply & Reset to use in sim.", level="info")
+    except Exception as e:
+        update_status_bar(f"Error resetting HH drive scale: {e}", level="error")
+
+
+def handle_reset_adex_drive_to_auto(sender=None, app_data=None, user_data=None):
+    """Reset the AdEx external drive scale slider to the auto-tuned value for the current profile, if any."""
+    try:
+        if not dpg.is_dearpygui_running():
+            return
+        if not dpg.does_item_exist("cfg_neuron_model_type"):
+            return
+        model_name = dpg.get_value("cfg_neuron_model_type")
+        if model_name != NeuronModel.ADEX.name:
+            update_status_bar("AdEx drive reset: current model is not AdEx.", level="warning")
+            return
+        profile_name = dpg.get_value("cfg_neural_profile") if dpg.does_item_exist("cfg_neural_profile") else "GENERIC_UNSTRUCTURED"
+        tuned = get_auto_tuned_overrides_for_combo(model_name, profile_name, None)
+        if not tuned or not isinstance(tuned, dict):
+            update_status_bar("No auto-tuned AdEx entry found for this profile.", level="warning")
+            return
+        core_overrides = tuned.get("core_overrides", {}) or {}
+        scale = core_overrides.get("adex_external_drive_scale")
+        if scale is None:
+            update_status_bar("Auto-tuned config has no AdEx drive scale for this profile.", level="warning")
+            return
+        if dpg.does_item_exist("cfg_adex_external_drive_scale"):
+            dpg.set_value("cfg_adex_external_drive_scale", float(scale))
+        _update_sim_config_from_ui_and_signal_reset_needed("cfg_adex_external_drive_scale", float(scale))
+        update_status_bar("AdEx drive scale reset to auto-tuned value. Apply & Reset to use in sim.", level="info")
+    except Exception as e:
+        update_status_bar(f"Error resetting AdEx drive scale: {e}", level="error")
+
+
 def _update_sim_config_from_ui_and_signal_reset_needed(sender=None, app_data=None, user_data=None):
     """
     Callback for UI elements that change sim config. Sets a flag that sim needs reset.
@@ -4282,9 +5390,53 @@ def _update_sim_config_from_ui_and_signal_reset_needed(sender=None, app_data=Non
     """
     global_gui_state["reset_sim_needed_from_ui_change"] = True
     update_status_bar("Parameter changed. Press 'Apply Changes & Reset Sim' to take effect.", color=[255,165,0,255], level="warning")
-    # If model type changed, also update visibility of specific param groups
-    if sender == "cfg_neuron_model_type": # Check if this callback is for model type combo
-         _toggle_model_specific_params_visibility(sender, app_data)
+
+    # Special handling for certain controls
+    if sender == "cfg_neuron_model_type":
+        # Update visibility of model-specific parameter groups
+        _toggle_model_specific_params_visibility(sender, app_data)
+
+        # If switching to HH while a structured profile is selected, and the HH preset
+        # combo is still at its global default, auto-select the profile's HH preset.
+        try:
+            if app_data == NeuronModel.HODGKIN_HUXLEY.name and dpg.is_dearpygui_running():
+                if dpg.does_item_exist("cfg_default_neuron_type_hh") and dpg.does_item_exist("cfg_neural_profile"):
+                    current_hh = dpg.get_value("cfg_default_neuron_type_hh")
+                    if current_hh == NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name:
+                        profile_name = dpg.get_value("cfg_neural_profile")
+                        profile_def = NEURAL_STRUCTURE_PROFILES.get(profile_name)
+                        if profile_def:
+                            profile_hh = profile_def.get("default_hh_neuron_type")
+                            if profile_hh:
+                                dpg.set_value("cfg_default_neuron_type_hh", profile_hh)
+                                _apply_hh_preset_params_to_ui(profile_hh)
+        except Exception as e:
+            print(f"Warning: failed to auto-select HH preset on model change: {e}")
+
+    elif sender == "cfg_neural_profile":
+        # When changing neural structure profile, if HH model is active and the HH preset
+        # combo is still at its global default, auto-select the profile's HH preset in the UI.
+        try:
+            if dpg.is_dearpygui_running() and dpg.does_item_exist("cfg_neuron_model_type"):
+                model_name = dpg.get_value("cfg_neuron_model_type")
+                if model_name == NeuronModel.HODGKIN_HUXLEY.name and dpg.does_item_exist("cfg_default_neuron_type_hh"):
+                    current_hh = dpg.get_value("cfg_default_neuron_type_hh")
+                    profile_name = app_data
+                    profile_def = NEURAL_STRUCTURE_PROFILES.get(profile_name)
+                    if profile_def:
+                        profile_hh = profile_def.get("default_hh_neuron_type")
+                        if profile_hh and current_hh == NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name:
+                            dpg.set_value("cfg_default_neuron_type_hh", profile_hh)
+                            _apply_hh_preset_params_to_ui(profile_hh)
+        except Exception as e:
+            print(f"Warning: failed to auto-select HH preset on profile change: {e}")
+
+    elif sender == "cfg_default_neuron_type_hh":
+        # Direct change of HH preset by the user; update HH params panel to match.
+        try:
+            _apply_hh_preset_params_to_ui(app_data)
+        except Exception as e:
+            print(f"Warning: failed to apply HH preset params on preset change: {e}")
 
 
 def _handle_model_type_change_dpg(sender, app_data, user_data=None):
@@ -5192,6 +6344,7 @@ def create_gui_layout():
                 add_parameter_table_row("Seed (-1 for random):", dpg.add_input_int, "cfg_seed", -1, _update_sim_config_from_ui_and_signal_reset_needed)
                 add_parameter_table_row("Number of Traits:", dpg.add_input_int, "cfg_num_traits", 5, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=len(TRAIT_COLOR_MAP_RAW) if TRAIT_COLOR_MAP_RAW else 10)
                 add_parameter_table_row("Neuron Model:", dpg.add_combo, "cfg_neuron_model_type", NeuronModel.IZHIKEVICH.name, _handle_model_type_change_dpg, items=[model.name for model in NeuronModel])
+                add_parameter_table_row("Neural Structure Profile:", dpg.add_combo, "cfg_neural_profile", "GENERIC_UNSTRUCTURED", _update_sim_config_from_ui_and_signal_reset_needed, items=sorted(NEURAL_STRUCTURE_PROFILES.keys()))
 
             with dpg.group(tag="izhikevich_params_group", show=True):
                 dpg.add_text("--- Izhikevich 2007 Model Parameters ---", color=[200,200,100,255])
@@ -5213,16 +6366,115 @@ def create_gui_layout():
                 with dpg.table(header_row=False):
                     dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                     dpg.add_table_column(width_stretch=True)
+                    # HH neuron type preset selector
+                    add_parameter_table_row(
+                        "HH Default Neuron Type:",
+                        dpg.add_combo,
+                        "cfg_default_neuron_type_hh",
+                        NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name,
+                        _update_sim_config_from_ui_and_signal_reset_needed,
+                        items=[nt.name for nt in NeuronType if "HH_" in nt.name]
+                    )
                     ui_hh_params = [
-                        ("Membrane Capacitance C_m (uF/cm^2)", "cfg_hh_C_m", "%.2f", 1.0), ("Max Sodium Cond. g_Na_max (mS/cm^2)", "cfg_hh_g_Na_max", "%.1f", 50.0),
-                        ("Max Potassium Cond. g_K_max (mS/cm^2)", "cfg_hh_g_K_max", "%.1f", 5.0), ("Leak Cond. g_L (mS/cm^2)", "cfg_hh_g_L", "%.3f", 0.1),
-                        ("Sodium Reversal E_Na (mV)", "cfg_hh_E_Na", "%.1f", 50.0), ("Potassium Reversal E_K (mV)", "cfg_hh_E_K", "%.1f", -85.0),
-                        ("Leak Reversal E_L (mV)", "cfg_hh_E_L", "%.3f", -70.0), ("Spike Detection V_peak (mV)", "cfg_hh_v_peak", "%.1f", 40.0),
-                        ("Initial V_rest (mV)", "cfg_hh_v_rest_init", "%.1f", -65.0), ("Kinetics Q10 Factor", "cfg_hh_q10_factor", "%.1f", 3.0),
-                        ("Kinetics Temperature (°C)", "cfg_hh_temperature_celsius", "%.1f", 37.0)
+                        ("Membrane Capacitance C_m (uF/cm^2)", "cfg_hh_C_m", "%.2f", 1.0),
+                        ("Max Sodium Cond. g_Na_max (mS/cm^2)", "cfg_hh_g_Na_max", "%.1f", 50.0),
+                        ("Max Potassium Cond. g_K_max (mS/cm^2)", "cfg_hh_g_K_max", "%.1f", 5.0),
+                        ("Leak Cond. g_L (mS/cm^2)", "cfg_hh_g_L", "%.3f", 0.1),
+                        ("Sodium Reversal E_Na (mV)", "cfg_hh_E_Na", "%.1f", 50.0),
+                        ("Potassium Reversal E_K (mV)", "cfg_hh_E_K", "%.1f", -85.0),
+                        ("Leak Reversal E_L (mV)", "cfg_hh_E_L", "%.3f", -70.0),
+                        ("Spike Detection V_peak (mV)", "cfg_hh_v_peak", "%.1f", 40.0),
+                        ("Initial V_rest (mV)", "cfg_hh_v_rest_init", "%.1f", -65.0),
+                        ("M-current g_M_max (mS/cm^2)", "cfg_hh_g_M_max", "%.3f", 0.0),
+                        ("M-current Tau (ms)", "cfg_hh_m_current_tau_ms", "%.1f", 100.0),
+                        ("CaT g_CaT_max (mS/cm^2)", "cfg_hh_g_CaT_max", "%.3f", 0.0),
+                        ("CaT Reversal E_CaT (mV)", "cfg_hh_E_CaT", "%.1f", 120.0),
+                        ("I_h g_h_max (mS/cm^2)", "cfg_hh_g_h_max", "%.3f", 0.0),
+                        ("I_h Reversal E_h (mV)", "cfg_hh_E_h", "%.1f", -30.0),
+                        ("NaP g_NaP_max (mS/cm^2)", "cfg_hh_g_NaP_max", "%.3f", 0.0),
+                        ("Kinetics Q10 Factor", "cfg_hh_q10_factor", "%.1f", 3.0),
+                        ("Kinetics Temperature (C)", "cfg_hh_temperature_celsius", "%.1f", 37.0),
                     ]
                     for desc_label, tag, fmt, def_val in ui_hh_params:
-                         add_parameter_table_row(desc_label, dpg.add_input_float, tag, def_val, _update_sim_config_from_ui_and_signal_reset_needed, format=fmt)
+                        add_parameter_table_row(
+                            desc_label,
+                            dpg.add_input_float,
+                            tag,
+                            def_val,
+                            _update_sim_config_from_ui_and_signal_reset_needed,
+                            format=fmt,
+                        )
+
+                    # External drive scale slider (auto-tuned)
+                    add_parameter_table_row(
+                        "External Drive Scale (HH, auto-tuned):",
+                        dpg.add_slider_float,
+                        "cfg_hh_external_drive_scale",
+                        1.0,
+                        _update_sim_config_from_ui_and_signal_reset_needed,
+                        min_value=0.1,
+                        max_value=8.0,
+                        format="%.2f",
+                    )
+
+                    # Button to reset HH drive scale to auto-tuned value (if available)
+                    with dpg.table_row():
+                        dpg.add_text("Reset HH Drive to Auto-Tuned:")
+                        dpg.add_button(
+                            tag="cfg_hh_reset_drive_to_auto_btn",
+                            label="Reset",
+                            callback=handle_reset_hh_drive_to_auto,
+                            width=-1,
+                        )
+
+            with dpg.group(tag="adex_params_group", show=False):
+                dpg.add_text("--- AdEx Model Parameters ---", color=[200,200,100,255])
+                with dpg.table(header_row=False):
+                    dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                    dpg.add_table_column(width_stretch=True)
+                    ui_adex_params = [
+                        ("Membrane Capacitance C (pF)", "cfg_adex_C", "%.1f", 281.0),
+                        ("Leak Conductance g_L (nS)", "cfg_adex_g_L", "%.1f", 30.0),
+                        ("Leak Reversal E_L (mV)", "cfg_adex_E_L", "%.1f", -70.6),
+                        ("Spike Threshold V_T (mV)", "cfg_adex_V_T", "%.1f", -50.4),
+                        ("Slope Factor Delta_T (mV)", "cfg_adex_Delta_T", "%.2f", 2.0),
+                        ("Subthreshold Coupling a (nS)", "cfg_adex_a", "%.1f", 4.0),
+                        ("Adaptation Time Constant tau_w (ms)", "cfg_adex_tau_w", "%.1f", 144.0),
+                        ("Spike-triggered Increment b (pA)", "cfg_adex_b", "%.1f", 80.5),
+                        ("Reset Potential V_r (mV)", "cfg_adex_V_r", "%.1f", -70.6),
+                        ("Spike Detection V_peak (mV)", "cfg_adex_V_peak", "%.1f", -40.0),
+                    ]
+                    for desc_label, tag, fmt, def_val in ui_adex_params:
+                        add_parameter_table_row(
+                            desc_label,
+                            dpg.add_input_float,
+                            tag,
+                            def_val,
+                            _update_sim_config_from_ui_and_signal_reset_needed,
+                            format=fmt,
+                        )
+
+                    # External drive scale slider (auto-tuned)
+                    add_parameter_table_row(
+                        "External Drive Scale (AdEx, auto-tuned):",
+                        dpg.add_slider_float,
+                        "cfg_adex_external_drive_scale",
+                        1.0,
+                        _update_sim_config_from_ui_and_signal_reset_needed,
+                        min_value=0.1,
+                        max_value=5.0,
+                        format="%.2f",
+                    )
+
+                    # Button to reset AdEx drive scale to auto-tuned value (if available)
+                    with dpg.table_row():
+                        dpg.add_text("Reset AdEx Drive to Auto-Tuned:")
+                        dpg.add_button(
+                            tag="cfg_adex_reset_drive_to_auto_btn",
+                            label="Reset",
+                            callback=handle_reset_adex_drive_to_auto,
+                            width=-1,
+                        )
 
         with dpg.collapsing_header(label="Network Connectivity", default_open=False, tag="network_connectivity_header"):
             with dpg.table(header_row=False):
@@ -5563,8 +6815,14 @@ def main_dpg_loop_and_gl_idle():
                      initial_data = global_simulation_bridge.get_initial_sim_data_snapshot()
                      if initial_data: update_monitoring_overlay_values(initial_data)
             elif msg_type == "CONFIG_APPLIED_AND_RESET_DONE":
-                # Don't repopulate UI - it already has the values the user set
-                # Only update monitoring values
+                # Repopulate UI from the configuration actually used by the sim thread.
+                # This ensures any profile/model-specific defaults or auto-tuned overrides
+                # are reflected in the visible parameters.
+                new_cfg_full = message.get("new_config_dict")
+                if new_cfg_full:
+                    _populate_ui_from_config_dict(new_cfg_full)
+
+                # Update monitoring values and GL snapshot
                 update_monitoring_overlay_values(message["initial_gui_data"])
                 
                 initial_gl_data = message.get("initial_gui_data")
@@ -5721,11 +6979,263 @@ def main_dpg_loop_and_gl_idle():
     if not OPENGL_AVAILABLE and dpg.is_dearpygui_running(): # DPG only mode
         time.sleep(0.005) # Prevent DPG-only loop from busy-waiting excessively
 
+
+# --- Headless auto-tuning runner -------------------------------------------------
+
+def _evaluate_candidate_config(sim_bridge, core_cfg, viz_cfg, total_time_ms):
+    """Initializes sim_bridge with the given config, runs a short headless simulation,
+    and returns basic activity/connectivity metrics for auto-tuning.
+    """
+    # Reset any previous state and GPU memory
+    sim_bridge.clear_simulation_state_and_gpu_memory()
+    sim_bridge.core_config = core_cfg
+    sim_bridge.viz_config = viz_cfg
+    sim_bridge.runtime_state = RuntimeState()
+
+    dt = core_cfg.dt_ms if core_cfg.dt_ms > 0 else 0.0
+    sim_bridge.runtime_state.max_delay_steps = int(core_cfg.max_synaptic_delay_ms / dt) if dt > 0 else 200
+
+    sim_bridge._initialize_simulation_data(called_from_playback_init=False)
+    if not sim_bridge.is_initialized or core_cfg.num_neurons <= 0 or dt <= 0:
+        sim_bridge._log_console("Auto-tune: initialization failed or invalid config.", "warning")
+        return None
+
+    n = core_cfg.num_neurons
+    num_steps = int(total_time_ms / dt)
+    if num_steps <= 0:
+        return None
+
+    ever_spiked = cp.zeros(n, dtype=bool)
+    total_spikes = 0
+
+    for _ in range(num_steps):
+        sim_bridge._run_one_simulation_step()
+        sim_bridge.runtime_state.current_time_ms += dt
+        sim_bridge.runtime_state.current_time_step += 1
+
+        fired = sim_bridge.cp_firing_states
+        if fired is None:
+            break
+        ever_spiked = cp.logical_or(ever_spiked, fired)
+        step_spikes = int(cp.sum(fired).get())
+        total_spikes += step_spikes
+
+    num_synapses = int(sim_bridge.cp_connections.nnz) if sim_bridge.cp_connections is not None else 0
+    num_spiking_neurons = int(cp.sum(ever_spiked).get())
+    avg_spikes_per_step = total_spikes / float(max(1, num_steps))
+    total_time_s = (dt * num_steps) / 1000.0
+    avg_spikes_per_neuron_hz = 0.0
+    if n > 0 and total_time_s > 0.0:
+        avg_spikes_per_neuron_hz = total_spikes / (n * total_time_s)
+    spiking_fraction = num_spiking_neurons / float(n) if n > 0 else 0.0
+
+    return {
+        "num_neurons": n,
+        "num_synapses": num_synapses,
+        "num_steps": num_steps,
+        "total_spikes": total_spikes,
+        "avg_spikes_per_step": avg_spikes_per_step,
+        "avg_spikes_per_neuron_hz": avg_spikes_per_neuron_hz,
+        "spiking_neuron_fraction": spiking_fraction,
+    }
+
+
+def _score_auto_tune_metrics(metrics):
+    """Scores a candidate based on firing activity and neuron participation."""
+    n = metrics.get("num_neurons", 0)
+    if n <= 0:
+        return -1.0
+
+    total_spikes = metrics.get("total_spikes", 0)
+    num_synapses = metrics.get("num_synapses", 0)
+    if total_spikes <= 0 or num_synapses <= 0:
+        return -1.0
+
+    avg_spikes_per_step = metrics.get("avg_spikes_per_step", 0.0)
+    spiking_fraction = metrics.get("spiking_neuron_fraction", 0.0)
+
+    frac_spikes_per_step = avg_spikes_per_step / float(n) if n > 0 else 0.0
+
+    # Desired range (fraction of neurons spiking per step on average)
+    target_frac = 0.10
+    min_frac = 0.02
+    max_frac = 0.30
+
+    in_range = min_frac <= frac_spikes_per_step <= max_frac
+
+    # Component 1: closeness to target firing fraction
+    diff = abs(frac_spikes_per_step - target_frac)
+    score_firing = max(0.0, 1.0 - diff / max(target_frac, 1e-6))
+
+    # Component 2: fraction of neurons that ever spiked
+    target_spiking_fraction = 0.3
+    score_participation = min(1.0, spiking_fraction / max(target_spiking_fraction, 1e-6))
+
+    base_score = 0.6 * score_firing + 0.4 * score_participation
+
+    # Penalty if firing is outside desired window
+    if not in_range:
+        base_score -= 0.5
+
+    return float(base_score)
+
+
+def run_auto_tuning(quick=False):
+    """Headless auto-tuning entry point.
+
+    When quick=True, only a small subset of combinations is tuned for faster testing.
+    """
+    print(f"Starting auto-tuning workflow (quick={quick})...")
+    sim_bridge = SimulationBridge()
+
+    # Profiles to sweep
+    if "NEURAL_STRUCTURE_PROFILES" in globals():
+        profile_names = sorted(NEURAL_STRUCTURE_PROFILES.keys())
+    else:
+        profile_names = ["GENERIC_UNSTRUCTURED"]
+
+    if quick:
+        profile_names = profile_names[:2]
+
+    # Models to tune: HH + AdEx (Izhikevich already behaves well in most cases)
+    models_to_tune = [NeuronModel.HODGKIN_HUXLEY, NeuronModel.ADEX]
+
+    # HH neuron types to sweep over for HH model
+    hh_types = [nt for nt in NeuronType if nt.name.startswith("HH_")]
+    if quick:
+        hh_types = hh_types[:3]
+
+    tuned_combos = {}
+    num_hh_combos = len(profile_names) * len(hh_types)
+    num_adex_combos = len(profile_names)
+    total_combos = num_hh_combos + num_adex_combos
+    combo_index = 0
+
+    hh_scales = [0.5, 1.0, 2.0, 4.0]
+    adex_scales = [0.5, 1.0, 1.5, 2.0, 3.0]
+
+    # Hodgkin-Huxley tuning: per (profile, HH preset)
+    for profile_name in profile_names:
+        for hh_type in hh_types:
+            combo_index += 1
+            key = f"{NeuronModel.HODGKIN_HUXLEY.name}|{profile_name}|{hh_type.name}"
+            print(f"[{combo_index}/{total_combos}] Tuning {key} ...")
+
+            best_score = -1e9
+            best_scale = None
+            best_metrics = None
+
+            for scale in hh_scales:
+                core_cfg = CoreSimConfig()
+                core_cfg.neuron_model_type = NeuronModel.HODGKIN_HUXLEY.name
+                core_cfg.neural_profile_name = profile_name
+                core_cfg.default_neuron_type_hh = hh_type.name
+                core_cfg.num_neurons = 400 if not quick else 250
+                core_cfg.dt_ms = 1.0
+                core_cfg.total_simulation_time_ms = 600.0 if not quick else 300.0
+                core_cfg.hh_external_drive_scale = scale
+
+                viz_cfg = VisualizationConfig()
+                metrics = _evaluate_candidate_config(sim_bridge, core_cfg, viz_cfg, core_cfg.total_simulation_time_ms)
+                if metrics is None:
+                    continue
+
+                score = _score_auto_tune_metrics(metrics)
+                metrics["score"] = score
+                metrics["selected_scale"] = scale
+
+                if score > best_score:
+                    best_score = score
+                    best_scale = scale
+                    best_metrics = metrics
+
+            if best_scale is not None:
+                tuned_combos[key] = {
+                    "neuron_model_type": NeuronModel.HODGKIN_HUXLEY.name,
+                    "neural_profile_name": profile_name,
+                    "default_neuron_type_hh": hh_type.name,
+                    "core_overrides": {"hh_external_drive_scale": float(best_scale)},
+                    "metrics": best_metrics,
+                }
+            else:
+                tuned_combos[key] = {
+                    "neuron_model_type": NeuronModel.HODGKIN_HUXLEY.name,
+                    "neural_profile_name": profile_name,
+                    "default_neuron_type_hh": hh_type.name,
+                    "core_overrides": {},
+                    "metrics": {"note": "no viable candidate found"},
+                }
+
+    # AdEx tuning: per (profile, model) only
+    for profile_name in profile_names:
+        combo_index += 1
+        key = f"{NeuronModel.ADEX.name}|{profile_name}|NONE"
+        print(f"[{combo_index}/{total_combos}] Tuning {key} ...")
+
+        best_score = -1e9
+        best_scale = None
+        best_metrics = None
+
+        for scale in adex_scales:
+            core_cfg = CoreSimConfig()
+            core_cfg.neuron_model_type = NeuronModel.ADEX.name
+            core_cfg.neural_profile_name = profile_name
+            core_cfg.num_neurons = 400 if not quick else 250
+            core_cfg.dt_ms = 1.0
+            core_cfg.total_simulation_time_ms = 800.0 if not quick else 400.0
+            core_cfg.adex_external_drive_scale = scale
+
+            viz_cfg = VisualizationConfig()
+            metrics = _evaluate_candidate_config(sim_bridge, core_cfg, viz_cfg, core_cfg.total_simulation_time_ms)
+            if metrics is None:
+                continue
+
+            score = _score_auto_tune_metrics(metrics)
+            metrics["score"] = score
+            metrics["selected_scale"] = scale
+
+            if score > best_score:
+                best_score = score
+                best_scale = scale
+                best_metrics = metrics
+
+        if best_scale is not None:
+            tuned_combos[key] = {
+                "neuron_model_type": NeuronModel.ADEX.name,
+                "neural_profile_name": profile_name,
+                "default_neuron_type_hh": None,
+                "core_overrides": {"adex_external_drive_scale": float(best_scale)},
+                "metrics": best_metrics,
+            }
+        else:
+            tuned_combos[key] = {
+                "neuron_model_type": NeuronModel.ADEX.name,
+                "neural_profile_name": profile_name,
+                "default_neuron_type_hh": None,
+                "core_overrides": {},
+                "metrics": {"note": "no viable candidate found"},
+            }
+
+    # Persist results
+    os.makedirs(os.path.dirname(AUTO_TUNED_OVERRIDES_PATH), exist_ok=True)
+    payload = {
+        "schema_version": 1,
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime()),
+        "tuned_combinations": tuned_combos,
+    }
+    with open(AUTO_TUNED_OVERRIDES_PATH, "w") as f:
+        json.dump(payload, f, indent=2)
+
+    print(f"Auto-tuning complete. Wrote {len(tuned_combos)} combinations to {AUTO_TUNED_OVERRIDES_PATH}.")
+    return 0
+
+
 def signal_handler(sig, frame):
     """Handle Ctrl+C gracefully"""
     global shutdown_flag
     print("\nCtrl+C detected. Shutting down gracefully...")
     shutdown_flag.set()
+
 
 def main():
     global global_simulation_bridge, simulation_thread, shutdown_flag, glut_window_id
@@ -5870,4 +7380,10 @@ def main():
     print("Neuron simulator application shutdown complete.")
 
 if __name__ == '__main__':
-    main()
+    # If launched with --auto-tune, run the headless tuning workflow instead of the GUI.
+    if '--auto-tune' in sys.argv:
+        quick = '--quick' in sys.argv
+        exit_code = run_auto_tuning(quick=quick)
+        sys.exit(exit_code)
+    else:
+        main()
