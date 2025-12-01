@@ -35,6 +35,12 @@ simulation_profiles/
 simulation_checkpoints_h5/
 simulation_recordings_h5/
 
+# Development artifacts
+WARP.md
+previous versions/
+benchmarks/
+*_backup_*.py
+
 # Temporary files
 *.tmp
 *.log
