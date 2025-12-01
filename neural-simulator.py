@@ -4150,9 +4150,8 @@ class SimulationBridge:
 
             self.cp_firing_states[:] = fired_this_step
             
-            # OPTIMIZATION: Defer spike count until needed (avoids GPU->CPU sync every step)
-            # Only compute when sending data to UI
-            self._mock_num_spikes_this_step = 0  # Will be computed on-demand
+            # Update spike count for OpenGL HUD (DPG monitor computes on-demand)
+            self._mock_num_spikes_this_step = int(cp.sum(fired_this_step).get())
 
             if self.cp_viz_activity_timers is not None:
                 max_highlight_val = opengl_viz_config.get('ACTIVITY_HIGHLIGHT_FRAMES', 7) if OPENGL_AVAILABLE else 7
