@@ -794,6 +794,20 @@ class SimulationConfiguration:
         self.homeostasis_ema_alpha = 0.01 # Alpha for EMA of neuron activity
         self.homeostasis_threshold_min = -55.0 # Minimum firing threshold (mV)
         self.homeostasis_threshold_max = -30.0 # Maximum firing threshold (mV)
+        
+        # Parameter Heterogeneity (Phase B2)
+        self.enable_parameter_heterogeneity = False # Enable per-neuron parameter variability
+        self.heterogeneity_seed = -1 # Seed for heterogeneity sampling (-1 = use main seed)
+        self.heterogeneity_distributions = {} # Dict of parameter distributions (empty = use defaults)
+        
+        # Enhanced Channel Noise (Phase B4)
+        self.enable_conductance_noise = False # Enable multiplicative conductance noise (HH only)
+        self.conductance_noise_relative_std = 0.05 # Relative std for conductance noise (5%)
+        self.enable_ou_process = False # Enable Ornstein-Uhlenbeck background current
+        self.ou_mean_current_pA = 0.0 # OU process mean current (pA)
+        self.ou_std_current_pA = 100.0 # OU process std current (pA)
+        self.ou_tau_ms = 15.0 # OU process time constant (ms)
+        self.ou_seed = -1 # Seed for OU process (-1 = use main seed)
 
         # Network Generation (Watts-Strogatz specific, if spatial fallback is not used)
         self.enable_watts_strogatz = True # Use Watts-Strogatz generator for connections
