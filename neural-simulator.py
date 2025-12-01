@@ -1614,6 +1614,85 @@ class SimulationBridge:
         
         return False
 
+    def get_profiling_stats(self):
+        """Returns summary statistics for profiling timings.
+        
+        Returns:
+            Dict with keys for each timing category, each containing:
+            - mean: average time in seconds
+            - std: standard deviation
+            - p50: median (50th percentile)
+            - p95: 95th percentile
+            - p99: 99th percentile
+            - count: number of samples
+        """
+        if not self.gpu_config.enable_profiling:
+            return {"profiling_disabled": True}
+        
+        stats = {}
+        for category, timings in self._profile_timings.items():
+            if len(timings) == 0:
+                stats[category] = {
+                    "mean": 0.0, "std": 0.0, "p50": 0.0, "p95": 0.0, "p99": 0.0, "count": 0
+                }
+                continue
+            
+            timings_array = np.array(list(timings))
+            stats[category] = {
+                "mean": float(np.mean(timings_array)),
+                "std": float(np.std(timings_array)),
+                "p50": float(np.percentile(timings_array, 50)),
+                "p95": float(np.percentile(timings_array, 95)),
+                "p99": float(np.percentile(timings_array, 99)),
+                "count": len(timings)
+            }
+        
+        return stats
+    
+    def export_profiling_report(self, filepath):
+        """Exports profiling statistics to a JSON file.
+        
+        Args:
+            filepath: Path to save the JSON report
+            
+        Returns:
+            True if successful, False otherwise
+        """
+        if not self.gpu_config.enable_profiling:
+            self._log_to_ui("Profiling is disabled. Enable it in GPUConfig first.", "warning")
+            return False
+        
+        try:
+            stats = self.get_profiling_stats()
+            
+            # Add metadata
+            report = {
+                "profiling_report_version": "1.0",
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                "config": {
+                    "neuron_model": self.core_config.neuron_model_type,
+                    "num_neurons": self.core_config.num_neurons,
+                    "dt_ms": self.core_config.dt_ms,
+                    "enable_hebbian": self.core_config.enable_hebbian_learning,
+                    "enable_stp": self.core_config.enable_short_term_plasticity,
+                    "enable_homeostasis": self.core_config.enable_homeostasis,
+                    "profiling_window_size": self.gpu_config.profiling_window_size,
+                    "profiling_detailed": self.gpu_config.profiling_detailed
+                },
+                "gpu_info": self._get_gpu_memory_info(),
+                "statistics": stats
+            }
+            
+            with open(filepath, 'w') as f:
+                json.dump(report, f, indent=2)
+            
+            self._log_to_ui(f"Profiling report exported to {filepath}", "success")
+            return True
+            
+        except Exception as e:
+            self._log_to_ui(f"Error exporting profiling report: {e}", "error")
+            return False
+
     def _initialize_rng(self, seed):
         """Centralized RNG initialization for reproducibility.
         
