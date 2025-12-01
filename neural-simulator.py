@@ -7851,7 +7851,7 @@ def create_gui_layout():
                 color=[150,150,150,255]
             )
 
-        with dpg.collapsing_header(label="Visual Settings & Filters", default_open=False, tag="visual_settings_header"):
+        with dpg.collapsing_header(label="Visual Settings", default_open=False, tag="visual_settings_header"):
             dpg.add_text("--- Neurons ---", color=[150,200,250,255])
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
@@ -7884,9 +7884,7 @@ def create_gui_layout():
                 add_parameter_table_row("Activity Highlight Frames (GL):", dpg.add_input_int, "gl_activity_highlight_frames_input", opengl_viz_config.get('ACTIVITY_HIGHLIGHT_FRAMES', 7) if OPENGL_AVAILABLE else 1, handle_gl_activity_highlight_frames_change, min_value=1, max_value=30)
                 add_parameter_table_row("Viz Update Interval (steps):", dpg.add_input_int, "cfg_viz_update_interval_steps", 1, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=200, step=1)
 
-        dpg.add_spacer(height=5); dpg.add_separator(); dpg.add_spacer(height=5)
-
-        with dpg.collapsing_header(label="Performance Testing & Optimization", default_open=False, tag="perf_testing_header"):
+        with dpg.collapsing_header(label="Testing & Optimization", default_open=False, tag="perf_testing_header"):
             dpg.add_text("Run performance tests and optimization tasks:")
             dpg.add_spacer(height=3)
             
@@ -7922,8 +7920,6 @@ def create_gui_layout():
             dpg.add_spacer(height=3)
             dpg.add_text("Results:", color=[150,200,250,255])
             dpg.add_input_text(default_value="", tag="perf_test_results_text", multiline=True, readonly=True, height=80, width=-1)
-
-        dpg.add_spacer(height=5); dpg.add_separator(); dpg.add_spacer(height=5)
 
         with dpg.collapsing_header(label="System Logs", default_open=False, tag="system_logs_header"):
             dpg.add_text("Search logs:")
