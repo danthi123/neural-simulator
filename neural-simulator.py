@@ -8749,6 +8749,10 @@ def main():
     if loaded_default_gui_config_dict: # Apply GUI settings from profile if they exist
         apply_gui_configuration_core(loaded_default_gui_config_dict)
     
+    # Ensure hardware note is displayed (direct widget update after UI population)
+    if hardware_note and dpg.does_item_exist("cfg_hardware_performance_note"):
+        dpg.set_value("cfg_hardware_performance_note", hardware_note)
+    
     if dpg.does_item_exist("profile_name_input"): # Show current profile name
         dpg.set_value("profile_name_input", global_gui_state["current_profile_name"].replace(".json", ""))
 
