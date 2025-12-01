@@ -477,6 +477,24 @@ class CoreSimConfig:
     # Per-model external drive scaling (tuned per combination; 1.0 = baseline range)
     hh_external_drive_scale: float = 1.0
     adex_external_drive_scale: float = 1.0
+    
+    # B2: Parameter Heterogeneity (Marder & Goaillard 2006, Tripathy et al. 2013)
+    enable_parameter_heterogeneity: bool = False
+    heterogeneity_seed: int = -1  # Separate from main seed for reproducibility (-1 = use main seed)
+    # Distribution specifications: {"param_name": {"type": "lognormal"|"gaussian", "mean_log"|"mean": X, "sigma_log"|"std": Y}}
+    heterogeneity_distributions: dict = field(default_factory=dict)  # Empty by default, populated on demand
+    
+    # B4: Enhanced Channel Noise (White et al. 2000, Destexhe & Rudolph-Lilith 2012)
+    # Conductance noise (multiplicative, applied to HH channels)
+    enable_conductance_noise: bool = False
+    conductance_noise_relative_std: float = 0.05  # 5% relative noise (conservative estimate)
+    
+    # Ornstein-Uhlenbeck process for background synaptic drive
+    enable_ou_process: bool = False
+    ou_mean_current_pA: float = 0.0           # Mean background current (pA)
+    ou_std_current_pA: float = 100.0          # Fluctuation amplitude (50-200 pA typical, produces 2-5mV Vm fluctuations)
+    ou_tau_ms: float = 15.0                   # Correlation time (10-20 ms, matches synaptic time constants)
+    ou_seed: int = -1                         # Separate seed for noise (-1 = use main seed)
 
     # Synapse & Plasticity
     refractory_period_steps: int = 2
@@ -776,6 +794,23 @@ class SimulationConfiguration:
         self.homeostasis_ema_alpha = 0.01 # Alpha for EMA of neuron activity
         self.homeostasis_threshold_min = -55.0 # Minimum firing threshold (mV)
         self.homeostasis_threshold_max = -30.0 # Maximum firing threshold (mV)
+        
+        # Parameter Heterogeneity (Phase B2)
+        self.enable_parameter_heterogeneity = False # Enable per-neuron parameter variability
+        self.heterogeneity_seed = -1 # Seed for heterogeneity sampling (-1 = use main seed)
+        self.heterogeneity_distributions = {} # Dict of parameter distributions (empty = use defaults)
+        
+        # Enhanced Channel Noise (Phase B4)
+        self.enable_conductance_noise = False # Enable multiplicative conductance noise (HH only)
+        self.conductance_noise_relative_std = 0.05 # Relative std for conductance noise (5%)
+        self.enable_ou_process = False # Enable Ornstein-Uhlenbeck background current
+        self.ou_mean_current_pA = 0.0 # OU process mean current (pA)
+        self.ou_std_current_pA = 100.0 # OU process std current (pA)
+        self.ou_tau_ms = 15.0 # OU process time constant (ms)
+        self.ou_seed = -1 # Seed for OU process (-1 = use main seed)
+        
+        # Hardware Performance Note (populated by viz_benchmark.py)
+        self.hardware_performance_note = "" # Note about hardware realtime capacity
 
         # Network Generation (Watts-Strogatz specific, if spatial fallback is not used)
         self.enable_watts_strogatz = True # Use Watts-Strogatz generator for connections
@@ -2025,6 +2060,18 @@ class SimulationBridge:
                 for i in range(n):
                     self.runtime_state.neuron_types_list_for_viz[i] = "AdEx_RS"
             
+            # B2: Apply parameter heterogeneity if enabled
+            if cfg.enable_parameter_heterogeneity and n > 0:
+                self._apply_parameter_heterogeneity(cfg, n)
+            
+            # B4: Initialize OU process state if enabled
+            if cfg.enable_ou_process and n > 0:
+                self._initialize_ou_process_state(cfg, n)
+            else:
+                self.cp_ou_current = None
+                self.ou_decay_factor = None
+                self.ou_noise_std = None
+            
             self._log_console(f"Generating 3D neuron positions for {n} neurons...")
             if n > 0:
                 np_positions_3d = np.random.uniform(
@@ -2112,6 +2159,145 @@ class SimulationBridge:
             if 'cupy' in sys.modules and cp.is_available():
                 cp.get_default_memory_pool().free_all_blocks()
                 cp.get_default_pinned_memory_pool().free_all_blocks()
+    
+    def _apply_parameter_heterogeneity(self, cfg, n):
+        """Applies parameter heterogeneity by drawing per-neuron values from distributions.
+        
+        Uses scientifically-grounded distributions based on:
+        - Marder & Goaillard (2006) Nature Reviews Neuroscience
+        - Tripathy et al. (2013) PNAS
+        - Golowasch et al. (2002) Neural Computation
+        
+        Args:
+            cfg: CoreSimConfig with heterogeneity_distributions dict
+            n: Number of neurons
+        """
+        if not cfg.heterogeneity_distributions:
+            # Use scientifically-validated defaults if no custom distributions specified
+            cfg.heterogeneity_distributions = self._get_default_heterogeneity_distributions(cfg)
+        
+        self._log_console("Applying parameter heterogeneity to neuron parameters...")
+        
+        # Set separate RNG state for heterogeneity (deterministic if seed provided)
+        het_seed = cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed
+        if het_seed >= 0:
+            rng_state = cp.random.get_random_state()
+            cp.random.seed(het_seed)
+        
+        # Map parameter names to CuPy arrays
+        param_map = {
+            # Izhikevich parameters
+            "izh_C_val": getattr(self, 'cp_izh_C', None),
+            "izh_a_val": getattr(self, 'cp_izh_a', None),
+            "izh_b_val": getattr(self, 'cp_izh_b', None),
+            "izh_d_val": getattr(self, 'cp_izh_d_increment', None),
+            # Hodgkin-Huxley parameters
+            "hh_C_m": getattr(self, 'cp_hh_C_m', None),
+            "hh_g_Na_max": getattr(self, 'cp_hh_g_Na_max', None),
+            "hh_g_K_max": getattr(self, 'cp_hh_g_K_max', None),
+            "hh_g_L": getattr(self, 'cp_hh_g_L', None),
+        }
+        
+        applied_count = 0
+        for param_name, dist_spec in cfg.heterogeneity_distributions.items():
+            target_array = param_map.get(param_name)
+            if target_array is None or target_array.size != n:
+                continue
+            
+            dist_type = dist_spec.get("type")
+            if dist_type == "lognormal":
+                # CuPy lognormal takes mean and sigma of underlying normal distribution
+                samples = cp.random.lognormal(
+                    mean=dist_spec["mean_log"],
+                    sigma=dist_spec["sigma_log"],
+                    size=n
+                ).astype(cp.float32)
+            elif dist_type == "gaussian":
+                samples = cp.random.normal(
+                    loc=dist_spec["mean"],
+                    scale=dist_spec["std"],
+                    size=n
+                ).astype(cp.float32)
+                # Clip to prevent non-physical values (0.1x to 3x mean)
+                samples = cp.clip(samples, dist_spec["mean"] * 0.1, dist_spec["mean"] * 3.0)
+            else:
+                self._log_console(f"Unknown distribution type '{dist_type}' for {param_name}", "warning")
+                continue
+            
+            # Apply heterogeneity
+            target_array[:] = samples
+            applied_count += 1
+        
+        # Restore RNG state
+        if het_seed >= 0:
+            cp.random.set_random_state(rng_state)
+        
+        self._log_console(f"Applied heterogeneity to {applied_count} parameters.")
+    
+    def _get_default_heterogeneity_distributions(self, cfg):
+        """Returns scientifically-grounded default heterogeneity distributions.
+        
+        Based on experimental data showing:
+        - CV = 0.2-0.4 for most neural parameters (Tripathy et al. 2013)
+        - Log-normal for conductances (Golowasch et al. 2002)
+        - Gaussian for capacitance (10-15% variance)
+        """
+        defaults = {}
+        
+        if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
+            # Izhikevich parameters (CV ~ 0.3)
+            defaults["izh_a_val"] = {"type": "lognormal", "mean_log": cp.log(cfg.izh_a_val).item(), "sigma_log": 0.3}
+            defaults["izh_b_val"] = {"type": "lognormal", "mean_log": cp.log(cfg.izh_b_val).item(), "sigma_log": 0.25}
+            defaults["izh_d_val"] = {"type": "gaussian", "mean": cfg.izh_d_val, "std": cfg.izh_d_val * 0.25}
+            defaults["izh_C_val"] = {"type": "gaussian", "mean": cfg.izh_C_val, "std": cfg.izh_C_val * 0.15}
+        
+        elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
+            # HH conductances (CV ~ 0.4, log-normal)
+            defaults["hh_g_Na_max"] = {"type": "lognormal", "mean_log": cp.log(cfg.hh_g_Na_max).item(), "sigma_log": 0.4}
+            defaults["hh_g_K_max"] = {"type": "lognormal", "mean_log": cp.log(cfg.hh_g_K_max).item(), "sigma_log": 0.4}
+            defaults["hh_g_L"] = {"type": "lognormal", "mean_log": cp.log(cfg.hh_g_L).item(), "sigma_log": 0.3}
+            defaults["hh_C_m"] = {"type": "gaussian", "mean": cfg.hh_C_m, "std": cfg.hh_C_m * 0.15}
+        
+        return defaults
+    
+    def _initialize_ou_process_state(self, cfg, n):
+        """Initializes Ornstein-Uhlenbeck process state for background drive.
+        
+        Based on:
+        - Destexhe & Rudolph-Lilith (2012) "Neuronal Noise" Springer
+        - Produces realistic Vm fluctuations (2-5 mV)
+        - Tau = 10-20ms matches synaptic time constants
+        
+        The OU process is defined as:
+            dI/dt = -(I - μ)/τ + σ√(2/τ) dW
+        
+        Exact solution over timestep dt:
+            I(t+dt) = I(t)*exp(-dt/τ) + μ(1-exp(-dt/τ)) + σ√((1-exp(-2dt/τ))/2) * N(0,1)
+        
+        Args:
+            cfg: CoreSimConfig with OU parameters
+            n: Number of neurons
+        """
+        self._log_console(f"Initializing OU process state (tau={cfg.ou_tau_ms}ms, sigma={cfg.ou_std_current_pA}pA)...")
+        
+        # Initialize OU current state (starts at mean)
+        self.cp_ou_current = cp.full(n, cfg.ou_mean_current_pA, dtype=cp.float32)
+        
+        # Pre-compute OU update coefficients using exact solution (Gillespie 1996)
+        dt_sec = cfg.dt_ms / 1000.0
+        tau_sec = cfg.ou_tau_ms / 1000.0
+        
+        # Decay factor: exp(-dt/tau)
+        self.ou_decay_factor = cp.float32(cp.exp(-dt_sec / tau_sec))
+        
+        # Noise std: sigma * sqrt((1 - exp(-2*dt/tau)) / 2)
+        # This ensures correct variance in steady state
+        self.ou_noise_std = cp.float32(
+            cfg.ou_std_current_pA * cp.sqrt((1.0 - cp.exp(-2.0 * dt_sec / tau_sec)) / 2.0)
+        )
+        
+        # Store mean for convenience
+        self.ou_mean = cp.float32(cfg.ou_mean_current_pA)
 
     def _calculate_distances_3d_gpu(self, pos_i_cp, pos_neighbors_cp):
         """Calculates Euclidean distances in 3D between a point and an array of other points using CuPy."""
@@ -2706,7 +2892,8 @@ class SimulationBridge:
             'cp_hh_C_m','cp_hh_g_Na_max','cp_hh_g_K_max','cp_hh_g_L',
             'cp_hh_E_Na','cp_hh_E_K','cp_hh_E_L', 'cp_hh_v_peak',
             'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
-            'cp_stp_u','cp_stp_x'
+            'cp_stp_u','cp_stp_x',
+            'cp_ou_current'  # OU process state for background noise
         ]
         for attr_name in attrs_to_clear:
             if hasattr(self, attr_name) and getattr(self, attr_name) is not None:
@@ -2821,7 +3008,7 @@ class SimulationBridge:
             'cp_conductance_g_e', 'cp_conductance_g_i', 'cp_recovery_variable_u',
             'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
-            'cp_adex_w'
+            'cp_adex_w', 'cp_ou_current'
         ]
         
         if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
@@ -2901,7 +3088,7 @@ class SimulationBridge:
             'cp_viz_activity_timers', 'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
             'cp_firing_states', 'cp_prev_firing_states',
             'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
-            'cp_adex_w'
+            'cp_adex_w', 'cp_ou_current'
         ]
         for attr_name in arrays_to_capture:
             array_data = getattr(self, attr_name, None)
@@ -3808,9 +3995,27 @@ class SimulationBridge:
                     self.cp_conductance_g_e += g_e_increase
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
+            
+            # --- 2.5. Update OU Process & Inject Background Noise ---
+            if cfg.enable_ou_process and hasattr(self, 'cp_ou_current') and self.cp_ou_current is not None:
+                # Update OU current using exact solution: I(t+dt) = I(t)*exp(-dt/tau) + mean*(1-exp(-dt/tau)) + noise
+                ou_seed = cfg.ou_seed if cfg.ou_seed >= 0 else (cfg.seed + self.runtime_state.current_time_step)
+                if ou_seed >= 0:
+                    cp.random.seed(ou_seed)
+                
+                # Exact OU update (Gillespie 1996)
+                noise_samples = cp.random.randn(n_neurons).astype(cp.float32)
+                self.cp_ou_current[:] = (
+                    self.cp_ou_current * self.ou_decay_factor +
+                    self.ou_mean * (1.0 - self.ou_decay_factor) +
+                    self.ou_noise_std * noise_samples
+                )
+                
+                # Add OU current to total input
+                total_input_current_pA = total_input_current_pA + self.cp_ou_current
 
             # --- 3. Neuron Model Dynamics Update ---
-            fired_this_step = cp.zeros(n_neurons, dtype=bool) 
+            fired_this_step = cp.zeros(n_neurons, dtype=bool)
 
             if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
                 v_new, u_new = fused_izhikevich2007_dynamics_update(
@@ -3835,6 +4040,25 @@ class SimulationBridge:
 
             elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
                 total_input_current_uA_density_equivalent = total_input_current_pA * 1e-6 
+                
+                # Apply multiplicative conductance noise (intrinsic channel noise)
+                g_Na_effective = self.cp_hh_g_Na_max
+                g_K_effective = self.cp_hh_g_K_max
+                
+                if cfg.enable_conductance_noise:
+                    noise_seed = cfg.seed + self.runtime_state.current_time_step + 1000000
+                    cp.random.seed(noise_seed)
+                    
+                    # Multiplicative noise: g_noisy = g_nominal * (1 + noise_std * N(0,1))
+                    noise_Na = cp.random.randn(n_neurons).astype(cp.float32)
+                    noise_K = cp.random.randn(n_neurons).astype(cp.float32)
+                    
+                    g_Na_effective = self.cp_hh_g_Na_max * (1.0 + cfg.conductance_noise_relative_std * noise_Na)
+                    g_K_effective = self.cp_hh_g_K_max * (1.0 + cfg.conductance_noise_relative_std * noise_K)
+                    
+                    # Clip to prevent negative conductances
+                    g_Na_effective = cp.maximum(g_Na_effective, 0.0)
+                    g_K_effective = cp.maximum(g_K_effective, 0.0)
 
                 # Start from synaptic/external input current density
                 effective_input_uA = total_input_current_uA_density_equivalent
@@ -3893,7 +4117,7 @@ class SimulationBridge:
                 v_new, m_new, h_new, n_new = fused_hodgkin_huxley_dynamics_update(
                     self.cp_membrane_potential_v, self.cp_gating_variable_m, self.cp_gating_variable_h, self.cp_gating_variable_n,
                     effective_input_uA, dt,
-                    self.cp_hh_C_m, self.cp_hh_g_Na_max, self.cp_hh_g_K_max, self.cp_hh_g_L,
+                    self.cp_hh_C_m, g_Na_effective, g_K_effective, self.cp_hh_g_L,
                     self.cp_hh_E_Na, self.cp_hh_E_K, self.cp_hh_E_L,
                     cfg.hh_temperature_celsius, cfg.hh_q10_factor
                 )
@@ -4013,7 +4237,7 @@ class SimulationBridge:
                     'cp_traits', 'cp_refractory_timers', 'cp_neuron_positions_3d',
                     'cp_neuron_activity_ema', 'cp_viz_activity_timers',
                     'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
-                    'cp_adex_w'
+                    'cp_adex_w', 'cp_ou_current'
                 ]
                 for attr_name in arrays_to_save_direct:
                     data_array = getattr(self, attr_name, None)
@@ -4137,7 +4361,8 @@ class SimulationBridge:
                     'cp_viz_activity_timers': ('cp_viz_activity_timers', cp.int32),
                     'cp_synapse_pulse_timers': ('cp_synapse_pulse_timers', cp.int32),
                     'cp_synapse_pulse_progress': ('cp_synapse_pulse_progress', cp.float32),
-                    'cp_adex_w': ('cp_adex_w', cp.float32)
+                    'cp_adex_w': ('cp_adex_w', cp.float32),
+                    'cp_ou_current': ('cp_ou_current', cp.float32)
                 }
                 for attr_name, (h5_key, dtype) in direct_load_map.items():
                     setattr(self, attr_name, _load_cp_array_from_h5(h5_key, 
@@ -5488,6 +5713,17 @@ def _update_sim_config_from_ui(update_model_specific=True):
         if dpg.does_item_exist("cfg_homeostasis_threshold_min"): cfg_dict_from_ui["homeostasis_threshold_min"] = dpg.get_value("cfg_homeostasis_threshold_min")
         if dpg.does_item_exist("cfg_homeostasis_threshold_max"): cfg_dict_from_ui["homeostasis_threshold_max"] = dpg.get_value("cfg_homeostasis_threshold_max")
         
+        # Heterogeneity & Noise
+        if dpg.does_item_exist("cfg_enable_parameter_heterogeneity"): cfg_dict_from_ui["enable_parameter_heterogeneity"] = dpg.get_value("cfg_enable_parameter_heterogeneity")
+        if dpg.does_item_exist("cfg_heterogeneity_seed"): cfg_dict_from_ui["heterogeneity_seed"] = dpg.get_value("cfg_heterogeneity_seed")
+        if dpg.does_item_exist("cfg_enable_conductance_noise"): cfg_dict_from_ui["enable_conductance_noise"] = dpg.get_value("cfg_enable_conductance_noise")
+        if dpg.does_item_exist("cfg_conductance_noise_relative_std"): cfg_dict_from_ui["conductance_noise_relative_std"] = dpg.get_value("cfg_conductance_noise_relative_std")
+        if dpg.does_item_exist("cfg_enable_ou_process"): cfg_dict_from_ui["enable_ou_process"] = dpg.get_value("cfg_enable_ou_process")
+        if dpg.does_item_exist("cfg_ou_mean_current_pA"): cfg_dict_from_ui["ou_mean_current_pA"] = dpg.get_value("cfg_ou_mean_current_pA")
+        if dpg.does_item_exist("cfg_ou_std_current_pA"): cfg_dict_from_ui["ou_std_current_pA"] = dpg.get_value("cfg_ou_std_current_pA")
+        if dpg.does_item_exist("cfg_ou_tau_ms"): cfg_dict_from_ui["ou_tau_ms"] = dpg.get_value("cfg_ou_tau_ms")
+        if dpg.does_item_exist("cfg_ou_seed"): cfg_dict_from_ui["ou_seed"] = dpg.get_value("cfg_ou_seed")
+        
         # Camera FOV and Visualization settings (part of viz_config)
         if dpg.does_item_exist("cfg_camera_fov"): cfg_dict_from_ui["camera_fov"] = dpg.get_value("cfg_camera_fov")
         if dpg.does_item_exist("cfg_viz_update_interval_steps"): cfg_dict_from_ui["viz_update_interval_steps"] = max(1, dpg.get_value("cfg_viz_update_interval_steps"))
@@ -5643,6 +5879,17 @@ def _populate_ui_from_config_dict(config_dict):
     if dpg.does_item_exist("cfg_homeostasis_target_rate"): dpg.set_value("cfg_homeostasis_target_rate", cfg.homeostasis_target_rate)
     if dpg.does_item_exist("cfg_homeostasis_threshold_min"): dpg.set_value("cfg_homeostasis_threshold_min", cfg.homeostasis_threshold_min)
     if dpg.does_item_exist("cfg_homeostasis_threshold_max"): dpg.set_value("cfg_homeostasis_threshold_max", cfg.homeostasis_threshold_max)
+    
+    # Heterogeneity & Noise
+    if dpg.does_item_exist("cfg_enable_parameter_heterogeneity"): dpg.set_value("cfg_enable_parameter_heterogeneity", cfg.enable_parameter_heterogeneity)
+    if dpg.does_item_exist("cfg_heterogeneity_seed"): dpg.set_value("cfg_heterogeneity_seed", cfg.heterogeneity_seed)
+    if dpg.does_item_exist("cfg_enable_conductance_noise"): dpg.set_value("cfg_enable_conductance_noise", cfg.enable_conductance_noise)
+    if dpg.does_item_exist("cfg_conductance_noise_relative_std"): dpg.set_value("cfg_conductance_noise_relative_std", cfg.conductance_noise_relative_std)
+    if dpg.does_item_exist("cfg_enable_ou_process"): dpg.set_value("cfg_enable_ou_process", cfg.enable_ou_process)
+    if dpg.does_item_exist("cfg_ou_mean_current_pA"): dpg.set_value("cfg_ou_mean_current_pA", cfg.ou_mean_current_pA)
+    if dpg.does_item_exist("cfg_ou_std_current_pA"): dpg.set_value("cfg_ou_std_current_pA", cfg.ou_std_current_pA)
+    if dpg.does_item_exist("cfg_ou_tau_ms"): dpg.set_value("cfg_ou_tau_ms", cfg.ou_tau_ms)
+    if dpg.does_item_exist("cfg_ou_seed"): dpg.set_value("cfg_ou_seed", cfg.ou_seed)
 
     # Camera FOV and Visualization settings
     if dpg.does_item_exist("cfg_camera_fov"): dpg.set_value("cfg_camera_fov", cfg.camera_fov)
@@ -5650,10 +5897,12 @@ def _populate_ui_from_config_dict(config_dict):
     if hasattr(cfg, "viz_update_interval_steps") and dpg.does_item_exist("cfg_viz_update_interval_steps"):
         dpg.set_value("cfg_viz_update_interval_steps", cfg.viz_update_interval_steps)
     
-    # Hardware performance note
+    # Hardware performance note - only update if config has a value (don't overwrite loaded benchmark data with fallback)
     if hasattr(cfg, "hardware_performance_note") and dpg.does_item_exist("cfg_hardware_performance_note"):
-        note_text = cfg.hardware_performance_note if cfg.hardware_performance_note else "Run visualization benchmark to determine hardware limits (viz_benchmark.py)"
-        dpg.set_value("cfg_hardware_performance_note", note_text)
+        if cfg.hardware_performance_note:  # Only update if config has actual data
+            dpg.set_value("cfg_hardware_performance_note", cfg.hardware_performance_note)
+        elif not dpg.get_value("cfg_hardware_performance_note"):  # Only set fallback if widget is currently empty
+            dpg.set_value("cfg_hardware_performance_note", "Run visualization benchmark to determine hardware limits (viz_benchmark.py)")
     
     # Model-specific parameters
     if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
@@ -7484,6 +7733,124 @@ def create_gui_layout():
                     add_parameter_table_row("Homeostasis Target Rate (spikes/dt for Izh):", dpg.add_input_float, "cfg_homeostasis_target_rate", 0.02, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f")
                     add_parameter_table_row("Homeostasis Min Threshold (Izh, mV):", dpg.add_input_float, "cfg_homeostasis_threshold_min", -55.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f")
                     add_parameter_table_row("Homeostasis Max Threshold (Izh, mV):", dpg.add_input_float, "cfg_homeostasis_threshold_max", -30.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f")
+        
+        with dpg.collapsing_header(label="Heterogeneity & Noise", default_open=False, tag="heterogeneity_noise_header"):
+            dpg.add_text("Add biological realism through parameter variability and intrinsic noise.", wrap=label_col_width * 2, color=[200,200,200,255])
+            dpg.add_spacer(height=5)
+            
+            dpg.add_text("--- Parameter Heterogeneity ---", color=[200,200,100,255])
+            with dpg.table(header_row=False):
+                dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                dpg.add_table_column(width_stretch=True)
+                add_parameter_table_row(
+                    "Enable Parameter Heterogeneity:",
+                    dpg.add_checkbox,
+                    "cfg_enable_parameter_heterogeneity",
+                    False,
+                    _update_sim_config_from_ui_and_signal_reset_needed
+                )
+                add_parameter_table_row(
+                    "Heterogeneity Seed (-1 = use main seed):",
+                    dpg.add_input_int,
+                    "cfg_heterogeneity_seed",
+                    -1,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    min_value=-1,
+                    step=1
+                )
+            
+            dpg.add_text(
+                "When enabled, parameters are sampled from distributions (CV~0.3-0.4) matching experimental data.",
+                wrap=label_col_width * 2,
+                color=[150,150,150,255]
+            )
+            
+            dpg.add_spacer(height=8)
+            dpg.add_separator()
+            dpg.add_spacer(height=5)
+            
+            dpg.add_text("--- Channel & Background Noise ---", color=[200,200,100,255])
+            with dpg.table(header_row=False):
+                dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                dpg.add_table_column(width_stretch=True)
+                
+                # Conductance noise (HH only)
+                add_parameter_table_row(
+                    "Enable Conductance Noise (HH only):",
+                    dpg.add_checkbox,
+                    "cfg_enable_conductance_noise",
+                    False,
+                    _update_sim_config_from_ui_and_signal_reset_needed
+                )
+                add_parameter_table_row(
+                    "Conductance Noise Std (relative, 0.05 = 5%):",
+                    dpg.add_input_float,
+                    "cfg_conductance_noise_relative_std",
+                    0.05,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    format="%.3f",
+                    min_value=0.0,
+                    max_value=0.5
+                )
+            
+            dpg.add_spacer(height=5)
+            dpg.add_separator()
+            dpg.add_spacer(height=5)
+            
+            with dpg.table(header_row=False):
+                dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                dpg.add_table_column(width_stretch=True)
+                
+                # OU process
+                add_parameter_table_row(
+                    "Enable OU Process (background drive):",
+                    dpg.add_checkbox,
+                    "cfg_enable_ou_process",
+                    False,
+                    _update_sim_config_from_ui_and_signal_reset_needed
+                )
+                add_parameter_table_row(
+                    "OU Mean Current (pA):",
+                    dpg.add_input_float,
+                    "cfg_ou_mean_current_pA",
+                    0.0,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    format="%.1f"
+                )
+                add_parameter_table_row(
+                    "OU Std Current (pA, 50-200 typical):",
+                    dpg.add_input_float,
+                    "cfg_ou_std_current_pA",
+                    100.0,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    format="%.1f",
+                    min_value=0.0
+                )
+                add_parameter_table_row(
+                    "OU Time Constant Tau (ms, 10-20 typical):",
+                    dpg.add_input_float,
+                    "cfg_ou_tau_ms",
+                    15.0,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    format="%.1f",
+                    min_value=1.0,
+                    max_value=100.0
+                )
+                add_parameter_table_row(
+                    "OU Seed (-1 = use main seed):",
+                    dpg.add_input_int,
+                    "cfg_ou_seed",
+                    -1,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    min_value=-1,
+                    step=1
+                )
+            
+            dpg.add_text(
+                "OU process adds temporally correlated background noise (2-5mV Vm fluctuations).",
+                wrap=label_col_width * 2,
+                color=[150,150,150,255]
+            )
 
         with dpg.collapsing_header(label="Visual Settings & Filters", default_open=False, tag="visual_settings_header"):
             dpg.add_text("--- Neurons ---", color=[150,200,250,255])
@@ -8383,6 +8750,10 @@ def main():
     _populate_ui_from_config_dict(loaded_default_sim_config_dict)
     if loaded_default_gui_config_dict: # Apply GUI settings from profile if they exist
         apply_gui_configuration_core(loaded_default_gui_config_dict)
+    
+    # Ensure hardware note is displayed (direct widget update after UI population)
+    if hardware_note and dpg.does_item_exist("cfg_hardware_performance_note"):
+        dpg.set_value("cfg_hardware_performance_note", hardware_note)
     
     if dpg.does_item_exist("profile_name_input"): # Show current profile name
         dpg.set_value("profile_name_input", global_gui_state["current_profile_name"].replace(".json", ""))
