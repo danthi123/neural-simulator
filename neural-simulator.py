@@ -479,14 +479,14 @@ class CoreSimConfig:
     adex_external_drive_scale: float = 1.0
     
     # B2: Parameter Heterogeneity (Marder & Goaillard 2006, Tripathy et al. 2013)
-    enable_parameter_heterogeneity: bool = False
+    enable_parameter_heterogeneity: bool = True  # Enabled by default for biological realism
     heterogeneity_seed: int = -1  # Separate from main seed for reproducibility (-1 = use main seed)
     # Distribution specifications: {"param_name": {"type": "lognormal"|"gaussian", "mean_log"|"mean": X, "sigma_log"|"std": Y}}
     heterogeneity_distributions: dict = field(default_factory=dict)  # Empty by default, populated on demand
     
     # B4: Enhanced Channel Noise (White et al. 2000, Destexhe & Rudolph-Lilith 2012)
     # Conductance noise (multiplicative, applied to HH channels)
-    enable_conductance_noise: bool = False
+    enable_conductance_noise: bool = True  # Enabled by default for HH model biological realism
     conductance_noise_relative_std: float = 0.05  # 5% relative noise (conservative estimate)
     
     # Ornstein-Uhlenbeck process for background synaptic drive
@@ -8134,7 +8134,7 @@ def create_gui_layout():
                     "Enable Parameter Heterogeneity:",
                     dpg.add_checkbox,
                     "cfg_enable_parameter_heterogeneity",
-                    False,
+                    True,
                     _update_sim_config_from_ui_and_signal_reset_needed
                 )
                 add_parameter_table_row(
@@ -8167,7 +8167,7 @@ def create_gui_layout():
                     "Enable Conductance Noise (HH only):",
                     dpg.add_checkbox,
                     "cfg_enable_conductance_noise",
-                    False,
+                    True,
                     _update_sim_config_from_ui_and_signal_reset_needed
                 )
                 add_parameter_table_row(
