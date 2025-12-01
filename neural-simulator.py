@@ -16,6 +16,82 @@ import signal
 from dataclasses import dataclass, field, asdict, fields
 from typing import List
 
+# === LOG CAPTURE SYSTEM ===
+# Initialize IMMEDIATELY after imports to capture ALL print output
+class LogCapture:
+    """Thread-safe log capture system for displaying console output in the GUI."""
+    def __init__(self, max_lines=5000):
+        self.max_lines = max_lines
+        self.log_buffer = []
+        self.lock = threading.Lock()
+        self.original_stdout = None
+        self.original_stderr = None
+        self.enabled = False
+    
+    def start_capture(self):
+        """Begin capturing print statements and stderr."""
+        if self.enabled:
+            return
+        self.original_stdout = sys.stdout
+        self.original_stderr = sys.stderr
+        sys.stdout = self
+        sys.stderr = self
+        self.enabled = True
+    
+    def stop_capture(self):
+        """Restore original stdout/stderr."""
+        if not self.enabled:
+            return
+        sys.stdout = self.original_stdout
+        sys.stderr = self.original_stderr
+        self.enabled = False
+    
+    def write(self, text):
+        """Called by print() to capture output."""
+        # Write to original stdout as well
+        if self.original_stdout:
+            self.original_stdout.write(text)
+        
+        # Add to buffer
+        if text and text.strip():
+            with self.lock:
+                self.log_buffer.append(text.rstrip())
+                if len(self.log_buffer) > self.max_lines:
+                    self.log_buffer = self.log_buffer[-self.max_lines:]
+    
+    def flush(self):
+        """Required for file-like object interface."""
+        if self.original_stdout:
+            self.original_stdout.flush()
+    
+    def get_logs(self):
+        """Get all captured log lines."""
+        with self.lock:
+            return self.log_buffer.copy()
+    
+    def clear(self):
+        """Clear the log buffer."""
+        with self.lock:
+            self.log_buffer.clear()
+    
+    def search(self, query, case_sensitive=False):
+        """Find all line indices containing the search query."""
+        with self.lock:
+            if not case_sensitive:
+                query = query.lower()
+            matches = []
+            for i, line in enumerate(self.log_buffer):
+                search_text = line if case_sensitive else line.lower()
+                if query in search_text:
+                    matches.append(i)
+            return matches
+
+# Initialize global log capture immediately
+_global_log_capture = LogCapture(max_lines=5000)
+_global_log_capture.start_capture()
+
+# === END LOG CAPTURE SYSTEM ===
+
 # Attempt to get screen resolution using tkinter
 SCREEN_WIDTH, SCREEN_HEIGHT = 1280, 760 # Default values
 try:
@@ -450,6 +526,7 @@ class VisualizationConfig:
     mouse_right_button_down: bool = False
     viz_update_interval_steps: int = 17  # Update visualization every N steps (~60fps at dt=1.0ms)
 
+
 @dataclass
 class RuntimeState:
     """Holds the dynamic state of the simulation run. Not typically saved in profiles."""
@@ -522,6 +599,10 @@ def _get_full_config_dict(core_cfg, viz_cfg, runtime_state, gpu_cfg=None):
 # --- Auto-tuned override support ---
 AUTO_TUNED_OVERRIDES_PATH = os.path.join("simulation_profiles", "auto_tuned_overrides.json")
 AUTO_TUNED_OVERRIDES = None  # Lazy-loaded mapping from combo key -> overrides dict
+
+# --- Performance test stop flag ---
+performance_test_stop_flag = threading.Event()  # Global flag to signal stop for benchmarks/optimization
+performance_test_running_type = None  # Track which test is running: "benchmark" or "optimization"
 
 
 def _load_auto_tuned_overrides_if_needed():
@@ -2038,7 +2119,9 @@ class SimulationBridge:
         return cp.sqrt(cp.sum(diff_3d**2, axis=1))
 
     def _generate_spatial_connections_3d_vectorized(self, n, max_connections_per_neuron, neuron_positions_3d_cp, traits_cp, config):
-        """Generates connections using fully vectorized GPU operations (fast, scalable to 100K+ neurons)."""
+        """Generates connections using fully vectorized GPU operations (fast, scalable to 100K+ neurons).
+        Uses chunked processing to avoid OOM errors on large networks.
+        """
         self._log_console("Generating connections (3D spatial, GPU-vectorized)...")
         start_t = time.time()
         
@@ -2050,8 +2133,15 @@ class SimulationBridge:
         min_w, max_w = config.hebbian_min_weight, config.hebbian_max_weight
         k = min(max_connections_per_neuron, n - 1)
         
+        # For very large networks, use chunked processing to avoid memory issues
+        # Memory for n×n float32 matrix: n^2 * 4 bytes
+        # 20GB limit: sqrt(20e9 / 4) ≈ 70k neurons can fit in full matrix
+        # Use chunking for n > 15000 to be safe (allows 4GB per chunk with overhead)
+        if n > 15000:
+            return self._generate_spatial_connections_3d_chunked(n, max_connections_per_neuron, neuron_positions_3d_cp, traits_cp, config)
+        
+        # Small enough network - use full vectorization
         # Compute all pairwise distances on GPU (n x n matrix)
-        # Use broadcasting: positions[i] - positions[j] for all i,j
         pos = neuron_positions_3d_cp  # Shape: (n, 3)
         pos_i = pos[:, None, :]  # Shape: (n, 1, 3)
         pos_j = pos[None, :, :]  # Shape: (1, n, 3)
@@ -2073,7 +2163,6 @@ class SimulationBridge:
         conn_prob = prob_dist + prob_trait  # Shape: (n, n)
         
         # For each neuron, select top-k connections based on probability
-        # Use argsort to get indices of highest probabilities
         top_k_indices = cp.argsort(conn_prob, axis=1)[:, -k:]  # Shape: (n, k)
         
         # Generate weights for connections
@@ -2094,6 +2183,128 @@ class SimulationBridge:
         conn_matrix.sort_indices()
         elapsed = time.time() - start_t
         self._log_console(f"Connections (3D Spatial GPU): {conn_matrix.nnz}. Time: {elapsed:.2f}s")
+        return conn_matrix
+    
+    def _generate_spatial_connections_3d_chunked(self, n, max_connections_per_neuron, neuron_positions_3d_cp, traits_cp, config):
+        """Chunked version of vectorized connection generation for large networks (>15k neurons).
+        Processes neurons in batches to avoid OOM errors while still using GPU acceleration.
+        """
+        self._log_console("Generating connections (3D spatial, GPU-vectorized-chunked)...")
+        start_t = time.time()
+        
+        dist_decay = getattr(config, 'connection_distance_decay_factor', 0.01)
+        trait_bias = getattr(config, 'trait_connection_bias', 0.5)
+        min_w, max_w = config.hebbian_min_weight, config.hebbian_max_weight
+        k = min(max_connections_per_neuron, n - 1)
+        
+        # Determine chunk size based on available memory
+        # Need to account for multiple intermediate arrays:
+        # - diff: (chunk_size, n, 3) = chunk_size * n * 3 * 4 bytes
+        # - diff^2: same size
+        # - distances: (chunk_size, n) = chunk_size * n * 4 bytes
+        # - prob arrays: ~3x (chunk_size, n) arrays
+        # Total: ~8 * chunk_size * n * 4 bytes per chunk
+        # Dynamically use as much VRAM as available while leaving safety margin
+        mem_info = cp.cuda.Device().mem_info
+        free_mem = mem_info[0]  # Free VRAM in bytes
+        
+        # Use 70% of free memory for chunking operations (30% safety margin for other allocations)
+        # This is more aggressive than previous 40% but still safe
+        target_mem_bytes = free_mem * 0.70
+        
+        # chunk_size * n * 32 bytes (8 arrays * 4 bytes) < target_mem
+        bytes_per_chunk_element = n * 32
+        chunk_size = max(100, int(target_mem_bytes / bytes_per_chunk_element))
+        chunk_size = min(chunk_size, n)  # Don't exceed total neurons
+        
+        free_mem_gb = free_mem / 1e9
+        target_mem_gb = target_mem_bytes / 1e9
+        self._log_console(f"VRAM: {free_mem_gb:.2f}GB free, using {target_mem_gb:.2f}GB (70%) for chunking")
+        
+        self._log_console(f"Using chunked processing: {n} neurons, chunk_size={chunk_size}")
+        
+        # Lists to accumulate connection data
+        all_rows = []
+        all_cols = []
+        all_weights = []
+        
+        pos = neuron_positions_3d_cp  # Shape: (n, 3)
+        
+        # Process neurons in chunks
+        num_chunks = (n + chunk_size - 1) // chunk_size
+        for chunk_idx in range(num_chunks):
+            start_idx = chunk_idx * chunk_size
+            end_idx = min(start_idx + chunk_size, n)
+            chunk_n = end_idx - start_idx
+            
+            # Get positions and traits for this chunk
+            chunk_pos = pos[start_idx:end_idx]  # Shape: (chunk_n, 3)
+            chunk_traits = traits_cp[start_idx:end_idx]  # Shape: (chunk_n,)
+            
+            # Compute distances from chunk neurons to ALL neurons
+            # chunk_pos: (chunk_n, 3) -> (chunk_n, 1, 3)
+            # pos: (n, 3) -> (1, n, 3)
+            chunk_pos_i = chunk_pos[:, None, :]  # (chunk_n, 1, 3)
+            pos_j = pos[None, :, :]  # (1, n, 3)
+            diff = chunk_pos_i - pos_j  # (chunk_n, n, 3)
+            distances = cp.sqrt(cp.sum(diff**2, axis=2))  # (chunk_n, n)
+            
+            # Set self-distances to infinity (for neurons in this chunk)
+            for i in range(chunk_n):
+                global_idx = start_idx + i
+                distances[i, global_idx] = cp.inf
+            
+            # Compute connection probabilities
+            prob_dist = cp.exp(-dist_decay * distances)  # (chunk_n, n)
+            
+            # Trait similarity component
+            chunk_traits_i = chunk_traits[:, None]  # (chunk_n, 1)
+            traits_j = traits_cp[None, :]  # (1, n)
+            prob_trait = (chunk_traits_i == traits_j).astype(cp.float32) * trait_bias  # (chunk_n, n)
+            
+            # Combined probability
+            conn_prob = prob_dist + prob_trait  # (chunk_n, n)
+            
+            # Select top-k connections for each neuron in chunk
+            top_k_indices = cp.argsort(conn_prob, axis=1)[:, -k:]  # (chunk_n, k)
+            
+            # Generate weights
+            weights = cp.random.uniform(min_w, max_w, (chunk_n, k)).astype(cp.float32)
+            
+            # Create row indices (offset by start_idx for global indexing)
+            chunk_rows = cp.repeat(cp.arange(start_idx, end_idx), k)  # (chunk_n * k,)
+            chunk_cols = top_k_indices.ravel()  # (chunk_n * k,)
+            chunk_weights = weights.ravel()  # (chunk_n * k,)
+            
+            # Accumulate
+            all_rows.append(cp.asnumpy(chunk_rows))
+            all_cols.append(cp.asnumpy(chunk_cols))
+            all_weights.append(cp.asnumpy(chunk_weights))
+            
+            # Progress update
+            if num_chunks > 1:
+                progress = ((chunk_idx + 1) / num_chunks) * 100
+                self._log_console(f"Chunked progress: {progress:.1f}%")
+        
+        # Concatenate all chunks
+        all_rows_np = np.concatenate(all_rows)
+        all_cols_np = np.concatenate(all_cols)
+        all_weights_np = np.concatenate(all_weights)
+        
+        # Convert back to GPU and create sparse matrix
+        row_indices_cp = cp.asarray(all_rows_np)
+        col_indices_cp = cp.asarray(all_cols_np)
+        weights_cp = cp.asarray(all_weights_np)
+        
+        conn_matrix = csp.coo_matrix(
+            (weights_cp, (row_indices_cp, col_indices_cp)),
+            shape=(n, n),
+            dtype=cp.float32
+        ).tocsr()
+        
+        conn_matrix.sort_indices()
+        elapsed = time.time() - start_t
+        self._log_console(f"Connections (3D Spatial GPU-Chunked): {conn_matrix.nnz}. Time: {elapsed:.2f}s")
         return conn_matrix
     
     def _generate_spatial_connections_3d(self, n, max_connections_per_neuron, neuron_positions_3d_cp, traits_cp, config):
@@ -6489,6 +6700,330 @@ def update_ui_after_recording_loaded(loaded_meta_data_package):
             dpg.configure_item("playback_button", enabled=False)
         update_status_bar("Failed to process loaded recording metadata.", level="error")
 
+# --- Handlers for Performance Testing & System Logs ---
+
+def handle_run_benchmark_click(sender=None, app_data=None, user_data=None):
+    """Runs the benchmark suite in a background thread."""
+    global performance_test_running_type
+    # Clear stop flag and enable stop button
+    performance_test_stop_flag.clear()
+    performance_test_running_type = "benchmark"
+    if dpg.is_dearpygui_running() and dpg.does_item_exist("stop_perf_test_button"):
+        dpg.configure_item("stop_perf_test_button", enabled=True)
+    
+    def run_benchmark():
+        try:
+            if dpg.is_dearpygui_running() and dpg.does_item_exist("perf_test_status_text"):
+                dpg.set_value("perf_test_status_text", "Running benchmark suite...")
+                dpg.set_value("perf_test_results_text", "")
+            
+            import subprocess
+            # Stream output line-by-line so LogCapture can see it
+            process = subprocess.Popen(
+                [sys.executable, "benchmark.py"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,  # Line buffered
+                universal_newlines=True
+            )
+            
+            output_lines = []
+            for line in process.stdout:
+                # Check stop flag
+                if performance_test_stop_flag.is_set():
+                    process.terminate()
+                    try:
+                        process.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        process.kill()
+                    print("[STOPPED] Benchmark suite stopped by user")
+                    if dpg.is_dearpygui_running():
+                        dpg.set_value("perf_test_status_text", "Benchmark stopped by user.")
+                        dpg.set_value("perf_test_results_text", "Partial results discarded. Previous results preserved.")
+                        update_status_bar("Benchmark stopped", level="warning")
+                    return
+                
+                print(line.rstrip())  # Print to console AND LogCapture
+                output_lines.append(line.rstrip())
+            
+            returncode = process.wait(timeout=300)
+            
+            if returncode == 0:
+                status = "Benchmark complete. Check System Logs or benchmark_results.json for details."
+                summary = "\n".join(output_lines[-10:]) if len(output_lines) > 10 else "\n".join(output_lines)
+            else:
+                status = f"Benchmark failed with code {returncode}"
+                summary = "\n".join(output_lines[-10:]) if len(output_lines) > 10 else "\n".join(output_lines)
+            
+            if dpg.is_dearpygui_running():
+                dpg.set_value("perf_test_status_text", status)
+                dpg.set_value("perf_test_results_text", summary)
+                update_status_bar(status, level="info" if returncode == 0 else "error")
+        except subprocess.TimeoutExpired:
+            process.kill()
+            if dpg.is_dearpygui_running():
+                dpg.set_value("perf_test_status_text", "Benchmark timed out after 5 minutes.")
+                dpg.set_value("perf_test_results_text", "Check System Logs for partial results.")
+                update_status_bar("Benchmark timed out", level="error")
+        except Exception as e:
+            if dpg.is_dearpygui_running():
+                dpg.set_value("perf_test_status_text", f"Error: {str(e)}")
+                dpg.set_value("perf_test_results_text", "")
+                update_status_bar(f"Benchmark error: {str(e)}", level="error")
+        finally:
+            global performance_test_running_type
+            performance_test_running_type = None
+            # Disable stop button when done
+            if dpg.is_dearpygui_running() and dpg.does_item_exist("stop_perf_test_button"):
+                dpg.configure_item("stop_perf_test_button", enabled=False)
+    
+    threading.Thread(target=run_benchmark, daemon=True).start()
+    update_status_bar("Starting benchmark suite...", level="info")
+
+def handle_run_optimization_click(sender=None, app_data=None, user_data=None):
+    """Runs the auto-tuning workflow to optimize drive scales for different model/profile combinations."""
+    global performance_test_running_type
+    # Clear stop flag and enable stop button
+    performance_test_stop_flag.clear()
+    performance_test_running_type = "optimization"
+    if dpg.is_dearpygui_running() and dpg.does_item_exist("stop_perf_test_button"):
+        dpg.configure_item("stop_perf_test_button", enabled=True)
+    
+    def run_optimization():
+        try:
+            # Check if quick mode is enabled
+            quick_mode = False
+            if dpg.is_dearpygui_running() and dpg.does_item_exist("optimization_quick_mode_checkbox"):
+                quick_mode = dpg.get_value("optimization_quick_mode_checkbox")
+            
+            mode_text = "quick mode" if quick_mode else "full mode"
+            if dpg.is_dearpygui_running() and dpg.does_item_exist("perf_test_status_text"):
+                dpg.set_value("perf_test_status_text", f"Running auto-tuning workflow ({mode_text})...")
+                dpg.set_value("perf_test_results_text", "This may take several minutes.\nCheck console for detailed progress.")
+            
+            import subprocess
+            # Build command with --auto-tune flag, optionally with --quick
+            cmd = [sys.executable, "neural-simulator.py", "--auto-tune"]
+            if quick_mode:
+                cmd.append("--quick")
+            
+            # Stream output line-by-line so LogCapture can see it
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,  # Line buffered
+                universal_newlines=True
+            )
+            
+            output_lines = []
+            for line in process.stdout:
+                # Check stop flag
+                if performance_test_stop_flag.is_set():
+                    process.terminate()
+                    try:
+                        process.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        process.kill()
+                    print("[STOPPED] Auto-tuning/optimization stopped by user")
+                    if dpg.is_dearpygui_running():
+                        dpg.set_value("perf_test_status_text", "Auto-tuning stopped by user.")
+                        dpg.set_value("perf_test_results_text", "Partial results discarded. Previous overrides preserved.")
+                        update_status_bar("Auto-tuning stopped", level="warning")
+                    return
+                
+                print(line.rstrip())  # Print to console AND LogCapture
+                output_lines.append(line.rstrip())
+            
+            returncode = process.wait(timeout=1800)
+            
+            if returncode == 0:
+                status = "Auto-tuning complete. Results saved to auto_tuned_overrides.json"
+                # Count how many combinations were tuned
+                try:
+                    import json
+                    with open("simulation_profiles/auto_tuned_overrides.json", "r") as f:
+                        data = json.load(f)
+                    count = len(data.get("tuned_combinations", {}))
+                    summary = f"Successfully tuned {count} model/profile combinations.\nReload overrides to apply them."
+                except:
+                    summary = "Check System Logs or auto_tuned_overrides.json for results."
+            else:
+                status = f"Auto-tuning failed with code {returncode}"
+                summary = "\n".join(output_lines[-10:]) if len(output_lines) > 10 else "\n".join(output_lines)
+            
+            if dpg.is_dearpygui_running():
+                dpg.set_value("perf_test_status_text", status)
+                dpg.set_value("perf_test_results_text", summary)
+                update_status_bar(status, level="info" if returncode == 0 else "error")
+        except subprocess.TimeoutExpired:
+            process.kill()
+            if dpg.is_dearpygui_running():
+                dpg.set_value("perf_test_status_text", "Auto-tuning timed out after 30 minutes.")
+                dpg.set_value("perf_test_results_text", "Check System Logs for partial results.")
+                update_status_bar("Auto-tuning timed out", level="error")
+        except Exception as e:
+            if dpg.is_dearpygui_running():
+                dpg.set_value("perf_test_status_text", f"Error: {str(e)}")
+                dpg.set_value("perf_test_results_text", "")
+                update_status_bar(f"Auto-tuning error: {str(e)}", level="error")
+        finally:
+            global performance_test_running_type
+            performance_test_running_type = None
+            # Disable stop button when done
+            if dpg.is_dearpygui_running() and dpg.does_item_exist("stop_perf_test_button"):
+                dpg.configure_item("stop_perf_test_button", enabled=False)
+    
+    threading.Thread(target=run_optimization, daemon=True).start()
+    update_status_bar("Starting auto-tuning workflow...", level="info")
+
+def handle_stop_perf_test_click(sender=None, app_data=None, user_data=None):
+    """Stops any running benchmark or optimization task."""
+    global performance_test_running_type
+    
+    if performance_test_running_type:
+        test_name = "benchmark suite" if performance_test_running_type == "benchmark" else "auto-tuning/optimization"
+        print(f"[STOP REQUESTED] Stopping {test_name}...")
+        update_status_bar(f"Stopping {test_name}...", level="warning")
+    else:
+        print("[STOP] No performance test currently running")
+        update_status_bar("No test running to stop", level="info")
+    
+    performance_test_stop_flag.set()
+    if dpg.is_dearpygui_running() and dpg.does_item_exist("perf_test_status_text"):
+        dpg.set_value("perf_test_status_text", "Stopping...")
+
+def handle_reload_overrides_click(sender=None, app_data=None, user_data=None):
+    """Reloads auto-tuned overrides from disk."""
+    global AUTO_TUNED_OVERRIDES
+    AUTO_TUNED_OVERRIDES = None  # Force reload
+    _load_auto_tuned_overrides_if_needed()
+    
+    count = len(AUTO_TUNED_OVERRIDES) if AUTO_TUNED_OVERRIDES else 0
+    msg = f"Reloaded {count} auto-tuned combinations from disk."
+    update_status_bar(msg, level="success")
+    
+    if dpg.is_dearpygui_running() and dpg.does_item_exist("perf_test_status_text"):
+        dpg.set_value("perf_test_status_text", msg)
+        dpg.set_value("perf_test_results_text", f"Available combinations: {count}\nThese will be applied automatically when Apply & Reset is clicked.")
+
+def handle_log_search_change(sender, app_data, user_data):
+    """Handles search input changes in the log viewer."""
+    if not hasattr(handle_log_search_change, "log_capture"):
+        return
+    
+    query = app_data.strip()
+    if not query:
+        if dpg.is_dearpygui_running():
+            dpg.set_value("log_search_match_text", "0 / 0 matches")
+            dpg.configure_item("log_search_prev_button", enabled=False)
+            dpg.configure_item("log_search_next_button", enabled=False)
+        return
+    
+    log_capture = handle_log_search_change.log_capture
+    matches = log_capture.search(query)
+    
+    if dpg.is_dearpygui_running():
+        if matches:
+            handle_log_search_change.current_matches = matches
+            handle_log_search_change.current_match_index = 0
+            dpg.set_value("log_search_match_text", f"1 / {len(matches)} matches")
+            dpg.configure_item("log_search_prev_button", enabled=len(matches) > 1)
+            dpg.configure_item("log_search_next_button", enabled=len(matches) > 1)
+            # Highlight first match
+            _update_log_display_with_highlight(matches[0])
+        else:
+            dpg.set_value("log_search_match_text", "0 / 0 matches")
+            dpg.configure_item("log_search_prev_button", enabled=False)
+            dpg.configure_item("log_search_next_button", enabled=False)
+
+def handle_log_search_prev(sender=None, app_data=None, user_data=None):
+    """Navigate to previous search match."""
+    if not hasattr(handle_log_search_change, "current_matches"):
+        return
+    
+    matches = handle_log_search_change.current_matches
+    if not matches:
+        return
+    
+    handle_log_search_change.current_match_index = (handle_log_search_change.current_match_index - 1) % len(matches)
+    idx = handle_log_search_change.current_match_index
+    
+    if dpg.is_dearpygui_running():
+        dpg.set_value("log_search_match_text", f"{idx + 1} / {len(matches)} matches")
+        _update_log_display_with_highlight(matches[idx])
+
+def handle_log_search_next(sender=None, app_data=None, user_data=None):
+    """Navigate to next search match."""
+    if not hasattr(handle_log_search_change, "current_matches"):
+        return
+    
+    matches = handle_log_search_change.current_matches
+    if not matches:
+        return
+    
+    handle_log_search_change.current_match_index = (handle_log_search_change.current_match_index + 1) % len(matches)
+    idx = handle_log_search_change.current_match_index
+    
+    if dpg.is_dearpygui_running():
+        dpg.set_value("log_search_match_text", f"{idx + 1} / {len(matches)} matches")
+        _update_log_display_with_highlight(matches[idx])
+
+def _update_log_display_with_highlight(line_index):
+    """Updates the log display and scrolls to highlight a specific line."""
+    if not hasattr(handle_log_search_change, "log_capture"):
+        return
+    
+    log_capture = handle_log_search_change.log_capture
+    logs = log_capture.get_logs()
+    
+    if 0 <= line_index < len(logs):
+        # Show context around the match
+        start = max(0, line_index - 5)
+        end = min(len(logs), line_index + 6)
+        
+        display_lines = []
+        for i in range(start, end):
+            prefix = ">>> " if i == line_index else "    "
+            display_lines.append(f"{prefix}{logs[i]}")
+        
+        display_text = "\n".join(display_lines)
+        if dpg.is_dearpygui_running() and dpg.does_item_exist("system_logs_display"):
+            dpg.set_value("system_logs_display", display_text)
+
+def handle_clear_logs_click(sender=None, app_data=None, user_data=None):
+    """Clears the log buffer."""
+    if hasattr(handle_log_search_change, "log_capture"):
+        handle_log_search_change.log_capture.clear()
+        if dpg.is_dearpygui_running() and dpg.does_item_exist("system_logs_display"):
+            dpg.set_value("system_logs_display", "")
+        update_status_bar("Logs cleared.", level="info")
+
+def handle_export_logs_click(sender=None, app_data=None, user_data=None):
+    """Exports logs to a timestamped file."""
+    if not hasattr(handle_log_search_change, "log_capture"):
+        return
+    
+    try:
+        log_capture = handle_log_search_change.log_capture
+        logs = log_capture.get_logs()
+        
+        if not logs:
+            update_status_bar("No logs to export.", level="warning")
+            return
+        
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        filepath = f"simulation_logs_{timestamp}.txt"
+        
+        with open(filepath, 'w') as f:
+            f.write("\n".join(logs))
+        
+        update_status_bar(f"Logs exported to {filepath}", level="success")
+    except Exception as e:
+        update_status_bar(f"Export error: {str(e)}", level="error")
+
 # --- Main DPG GUI Layout Creation (Called by Main/UI Thread) ---
 
 def add_parameter_table_row(label_text, item_callable, item_tag, default_value, callback_func, **kwargs):
@@ -6803,6 +7338,67 @@ def create_gui_layout():
                 add_parameter_table_row("Camera Field of View (FOV, degrees):", dpg.add_slider_float, "cfg_camera_fov", 60.0, _update_sim_config_from_ui_and_signal_reset_needed, min_value=10.0, max_value=120.0)
                 add_parameter_table_row("Activity Highlight Frames (GL):", dpg.add_input_int, "gl_activity_highlight_frames_input", opengl_viz_config.get('ACTIVITY_HIGHLIGHT_FRAMES', 7) if OPENGL_AVAILABLE else 1, handle_gl_activity_highlight_frames_change, min_value=1, max_value=30)
                 add_parameter_table_row("Viz Update Interval (steps):", dpg.add_input_int, "cfg_viz_update_interval_steps", 1, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=200, step=1)
+
+        dpg.add_spacer(height=5); dpg.add_separator(); dpg.add_spacer(height=5)
+
+        with dpg.collapsing_header(label="Performance Testing & Optimization", default_open=False, tag="perf_testing_header"):
+            dpg.add_text("Run performance tests and optimization tasks:")
+            dpg.add_spacer(height=3)
+            
+            with dpg.group(horizontal=True):
+                dpg.add_button(label="Run Benchmark Suite", tag="run_benchmark_button", callback=handle_run_benchmark_click, width=-1)
+            
+            dpg.add_spacer(height=3)
+            
+            with dpg.group(horizontal=True):
+                dpg.add_button(label="Run Auto-Tuning (Optimize Drive Scales)", tag="run_optimization_button", callback=handle_run_optimization_click, width=-80)
+                dpg.add_checkbox(label="Quick", tag="optimization_quick_mode_checkbox", default_value=False)
+            
+            dpg.add_spacer(height=3)
+            
+            with dpg.group(horizontal=True):
+                dpg.add_button(label="Stop Running Test", tag="stop_perf_test_button", callback=handle_stop_perf_test_click, width=-1, enabled=False)
+            
+            dpg.add_spacer(height=3)
+            
+            with dpg.group(horizontal=True):
+                dpg.add_button(label="Reload Auto-Tuned Overrides", tag="reload_overrides_button", callback=handle_reload_overrides_click, width=-1)
+            
+            dpg.add_spacer(height=5)
+            dpg.add_text("Status:", color=[150,200,250,255])
+            dpg.add_text("Ready", tag="perf_test_status_text", wrap=label_col_width * 2)
+            
+            dpg.add_spacer(height=3)
+            dpg.add_text("Results:", color=[150,200,250,255])
+            dpg.add_input_text(default_value="", tag="perf_test_results_text", multiline=True, readonly=True, height=80, width=-1)
+
+        dpg.add_spacer(height=5); dpg.add_separator(); dpg.add_spacer(height=5)
+
+        with dpg.collapsing_header(label="System Logs", default_open=False, tag="system_logs_header"):
+            dpg.add_text("Search logs:")
+            with dpg.group(horizontal=True):
+                dpg.add_input_text(tag="log_search_input", width=220, callback=handle_log_search_change)
+                dpg.add_button(label="Previous", tag="log_search_prev_button", callback=handle_log_search_prev, width=70, enabled=False)
+                dpg.add_button(label="Next", tag="log_search_next_button", callback=handle_log_search_next, width=70, enabled=False)
+            
+            dpg.add_text("0 / 0 matches", tag="log_search_match_text")
+            dpg.add_spacer(height=3)
+            
+            def toggle_log_autoscroll(sender, checked):
+                """Toggle autoscroll tracking on/off for the log field."""
+                if dpg.does_item_exist("system_logs_display"):
+                    dpg.configure_item("system_logs_display", tracked=checked, track_offset=1.0 if checked else 0.0)
+            
+            with dpg.group(horizontal=True):
+                dpg.add_checkbox(label="Auto-scroll", tag="log_autoscroll_checkbox", default_value=True, callback=toggle_log_autoscroll)
+                dpg.add_button(label="Clear Logs", tag="clear_logs_button", callback=handle_clear_logs_click, width=100)
+                dpg.add_button(label="Export Logs", tag="export_logs_button", callback=handle_export_logs_click, width=100)
+            
+            dpg.add_spacer(height=3)
+            with dpg.child_window(tag="system_logs_scroll_container", width=-1, height=-1, horizontal_scrollbar=False):
+                # Auto-scroll is on by default via tracked=True and track_offset=1.0
+                dpg.add_input_text(default_value="", tag="system_logs_display", multiline=True, readonly=True, 
+                                 tracked=True, track_offset=1.0, width=-1, height=0)
 
     # File Dialogs
     profile_dir = global_simulation_bridge.PROFILE_DIR if global_simulation_bridge else "simulation_profiles/"
@@ -7172,6 +7768,23 @@ def main_dpg_loop_and_gl_idle():
     except queue.Empty:
         pass 
 
+    # --- 1.5. Update Log Display ---
+    if hasattr(handle_log_search_change, "log_capture"):
+        if dpg.is_dearpygui_running() and dpg.does_item_exist("system_logs_display"):
+            log_capture = handle_log_search_change.log_capture
+            logs = log_capture.get_logs()
+            if logs:
+                # Show ALL logs
+                display_text = "\n".join(logs)
+                current_value = dpg.get_value("system_logs_display")
+                if current_value != display_text:
+                    dpg.set_value("system_logs_display", display_text)
+                    # Update input_text height based on text size for proper scrolling
+                    FRAME_PADDING = 3
+                    text_size = dpg.get_text_size(display_text)
+                    if text_size is not None:
+                        dpg.set_item_height("system_logs_display", text_size[1] + (2 * FRAME_PADDING))
+
     # --- 2. Handle UI-Driven Playback Stepping (if active and playing) ---
     if global_gui_state.get("is_playback_mode_active", False) and global_gui_state.get("playback_is_playing_ui", False):
         current_time_ui = time.perf_counter()
@@ -7505,6 +8118,11 @@ def main():
     
     # Register signal handler for Ctrl+C
     signal.signal(signal.SIGINT, signal_handler)
+
+    # Use the global log capture instance that was started at module load
+    global _global_log_capture
+    # Store reference in handler function for access
+    handle_log_search_change.log_capture = _global_log_capture
 
     dpg.create_context()
     dpg.configure_app(docking=False)

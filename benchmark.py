@@ -91,13 +91,67 @@ class BenchmarkRunner:
         except Exception as e:
             return {"error": str(e)}
     
+    def estimate_memory_requirement(self, n_neurons, conn_per_neuron):
+        """Estimates GPU memory requirement for a configuration."""
+        # Conservative estimates in bytes:
+        # - Each neuron: ~200 bytes (state variables)
+        # - Each synapse: ~8 bytes (weight in sparse matrix)
+        bytes_per_neuron = 200
+        synapses_estimate = n_neurons * conn_per_neuron
+        bytes_per_synapse = 8
+        
+        # Add overhead for recording buffers, temporary arrays, etc.
+        overhead_factor = 1.5
+        
+        estimated_bytes = (
+            (n_neurons * bytes_per_neuron + synapses_estimate * bytes_per_synapse) 
+            * overhead_factor
+        )
+        
+        return estimated_bytes
+    
+    def check_memory_available(self, required_bytes):
+        """Checks if enough GPU memory is available."""
+        mem_info = cp.cuda.Device().mem_info
+        free_mem, total_mem = mem_info
+        
+        # Use 80% of free memory as safe limit
+        safe_limit = free_mem * 0.8
+        
+        return required_bytes <= safe_limit, free_mem, total_mem
+    
     def run_single_benchmark(self, config_dict):
-        """Runs a single benchmark configuration."""
+        """Runs a single benchmark configuration.
+        
+        Returns:
+            dict: Benchmark metrics if successful
+            'SKIPPED': If skipped due to insufficient memory
+            None: If failed due to error
+        """
         print(f"\n{'='*60}")
-        print(f"Running: {config_dict['num_neurons']} neurons, "
+        print(f"Testing: {config_dict['num_neurons']} neurons, "
               f"{config_dict['connections_per_neuron']} conn/neuron, "
               f"{config_dict['neuron_model_type']}")
         print(f"{'='*60}")
+        sys.stdout.flush()  # Force log output
+        
+        # Check memory before attempting
+        estimated_mem = self.estimate_memory_requirement(
+            config_dict['num_neurons'],
+            config_dict['connections_per_neuron']
+        )
+        
+        can_run, free_mem, total_mem = self.check_memory_available(estimated_mem)
+        
+        print(f"Estimated memory: {estimated_mem / (1024**3):.2f}GB")
+        print(f"Available memory: {free_mem / (1024**3):.2f}GB free / {total_mem / (1024**3):.2f}GB total")
+        sys.stdout.flush()
+        
+        if not can_run:
+            print(f"[SKIP] Insufficient GPU memory")
+            print(f"       Need ~{estimated_mem / (1024**3):.2f}GB, have {free_mem / (1024**3):.2f}GB available")
+            sys.stdout.flush()
+            return 'SKIPPED'  # Special return value
         
         # Create config objects
         core_config = CoreSimConfig(
@@ -128,15 +182,18 @@ class BenchmarkRunner:
             
             # Initialize
             print("Initializing simulation...")
+            sys.stdout.flush()
             init_start = time.time()
             sim._initialize_simulation_data()
             init_time = time.time() - init_start
             
             if not sim.is_initialized:
-                print("ERROR: Initialization failed")
+                print("[FAIL] Initialization error")
+                sys.stdout.flush()
                 return None
             
             print(f"Initialization: {init_time:.2f}s")
+            sys.stdout.flush()
             
             # Measure GPU memory after initialization
             mem_info = cp.cuda.Device().mem_info
@@ -144,9 +201,11 @@ class BenchmarkRunner:
             used_mem_gb = (total_mem - free_mem) / (1024**3)
             
             print(f"GPU memory used: {used_mem_gb:.2f}GB")
+            sys.stdout.flush()
             
             # Run simulation steps
             print(f"Running {self.num_steps} simulation steps...")
+            sys.stdout.flush()
             step_times = []
             
             for step in range(self.num_steps):
@@ -160,6 +219,7 @@ class BenchmarkRunner:
                     avg_step_time = np.mean(step_times[-100:])
                     print(f"  Step {step+1}/{self.num_steps} - "
                           f"Avg time: {avg_step_time*1000:.2f}ms")
+                    sys.stdout.flush()
             
             # Collect metrics
             step_times_arr = np.array(step_times)
@@ -189,6 +249,7 @@ class BenchmarkRunner:
             print(f"  Steps/sec: {steps_per_sec:.1f}")
             print(f"  Mean step time: {metrics['step_time_mean_ms']:.2f}ms")
             print(f"  P95 step time: {metrics['step_time_p95_ms']:.2f}ms")
+            sys.stdout.flush()
             
             # Cleanup
             sim.clear_simulation_state_and_gpu_memory()
@@ -197,9 +258,10 @@ class BenchmarkRunner:
             return metrics
             
         except Exception as e:
-            print(f"ERROR during benchmark: {e}")
+            print(f"[FAIL] Error during benchmark: {e}")
             import traceback
             traceback.print_exc()
+            sys.stdout.flush()
             return None
     
     def run_all_benchmarks(self):
@@ -230,15 +292,21 @@ class BenchmarkRunner:
                         "neuron_model_type": model
                     }
                     
-                    metrics = self.run_single_benchmark(config_dict)
+                    result = self.run_single_benchmark(config_dict)
                     
-                    if metrics is not None:
+                    if result == 'SKIPPED':
+                        # Memory-skipped configs are noted but not counted as failures
+                        pass  # Already printed skip message
+                    elif result is not None:
                         self.results.append({
                             "config": config_dict,
-                            "metrics": metrics
+                            "metrics": result
                         })
+                        print("[ OK ] Benchmark completed successfully")
+                        sys.stdout.flush()
                     else:
-                        print(f"FAILED: Skipping this configuration")
+                        # Actual failure (error during execution)
+                        pass  # Already printed failure message
                     
                     # Small delay between runs
                     time.sleep(1.0)
@@ -246,7 +314,15 @@ class BenchmarkRunner:
         print("\n" + "="*60)
         print("BENCHMARK SUITE COMPLETE")
         print("="*60)
-        print(f"Successfully completed {len(self.results)}/{total_configs} configurations")
+        
+        num_successful = len(self.results)
+        num_total = total_configs
+        num_failed_or_skipped = num_total - num_successful
+        
+        print(f"Results: {num_successful} successful / {num_total} total")
+        if num_failed_or_skipped > 0:
+            print(f"         ({num_failed_or_skipped} skipped due to insufficient memory or errors)")
+        sys.stdout.flush()
     
     def save_results(self, filepath):
         """Saves benchmark results to JSON file."""
