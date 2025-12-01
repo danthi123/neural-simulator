@@ -425,6 +425,7 @@ class CoreSimConfig:
     default_neuron_type_hh: str = NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name
     neural_profile_name: str = "GENERIC_UNSTRUCTURED"  # High-level structural preset (brain region / mode)
     inhibitory_trait_indices: List[int] = field(default_factory=list)  # Optional multi-trait inhibitory set
+    hardware_performance_note: str = ""  # Note about hardware realtime capacity (populated by viz_benchmark.py)
     
     # Izhikevich - initialized from a default type
     izh_C_val: float = field(default_factory=lambda: DefaultIzhikevichParamsManager.PARAMS[NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL]["C"])
@@ -4607,6 +4608,12 @@ gl_num_pulses_to_draw = 0 # Number of synaptic pulses
 gl_last_render_time = 0.0
 gl_target_frame_time = 1.0 / 60.0  # 60 FPS = 16.67ms per frame
 
+# FPS counter tracking
+gl_frame_times = []  # Rolling window of recent frame times
+gl_fps_update_interval = 0.5  # Update FPS display every 0.5 seconds
+gl_last_fps_update_time = 0.0
+gl_current_fps = 0.0  # Current FPS to display
+
 # NumPy arrays holding data ready for VBO buffering (populated by UI thread before GL render)
 gl_neuron_pos_cp = cp.array([], dtype=cp.float32).reshape(0,3) # Changed from _np
 gl_neuron_colors_cp = cp.array([], dtype=cp.float32).reshape(0,4) # Changed from _np
@@ -5030,8 +5037,28 @@ def render_scene_gl():
     global opengl_viz_config, global_gui_state, glut_window_id 
     global gl_neuron_pos_vbo, gl_neuron_color_vbo, gl_synapse_vertices_vbo, gl_pulse_vertices_vbo
     global gl_num_neurons_to_draw, gl_num_synapse_lines_to_draw, gl_num_pulses_to_draw
+    global gl_frame_times, gl_last_fps_update_time, gl_current_fps, gl_fps_update_interval
 
     if not OPENGL_AVAILABLE or global_simulation_bridge is None : return # Sim bridge for camera config
+    
+    # Track frame time for FPS calculation
+    current_time = time.perf_counter()
+    if len(gl_frame_times) > 0:
+        frame_delta = current_time - gl_frame_times[-1]
+        gl_frame_times.append(current_time)
+        # Keep only last 60 frames for rolling average
+        if len(gl_frame_times) > 60:
+            gl_frame_times.pop(0)
+    else:
+        gl_frame_times.append(current_time)
+    
+    # Update FPS display periodically
+    if current_time - gl_last_fps_update_time >= gl_fps_update_interval:
+        if len(gl_frame_times) >= 2:
+            time_span = gl_frame_times[-1] - gl_frame_times[0]
+            if time_span > 0:
+                gl_current_fps = (len(gl_frame_times) - 1) / time_span
+            gl_last_fps_update_time = current_time
     try: # Ensure GLUT context is current
         current_win = glut.glutGetWindow()
         if glut_window_id is not None and current_win != glut_window_id and current_win != 0: 
@@ -5131,6 +5158,24 @@ def render_scene_gl():
         mode_text = "Mode: Playback" if global_gui_state.get("is_playback_mode_active") else "Mode: Live"
         if global_gui_state.get("is_recording_active"): mode_text += " (Recording)"
         render_text_gl(margin + win_w // 3, margin + line_h, mode_text)
+        
+        # Display FPS counter
+        # Show 0 FPS when sim is stopped/paused and not in playback mode, otherwise show actual FPS
+        is_sim_running = global_gui_state.get("_sim_is_running_ui_view", False)
+        is_paused = global_gui_state.get("_sim_is_paused_ui_view", False)
+        is_playback = global_gui_state.get("is_playback_mode_active", False)
+        
+        if not is_sim_running and not is_playback:
+            # Sim is stopped - show 0 FPS
+            fps_text = "FPS: 0"
+        elif is_paused and not is_playback:
+            # Sim is paused - show 0 FPS
+            fps_text = "FPS: 0"
+        else:
+            # Sim is running or in playback - show actual FPS
+            fps_text = f"FPS: {gl_current_fps:.1f}"
+        
+        render_text_gl(margin + 2*win_w // 3, margin + 2*line_h, fps_text)
 
         render_text_gl(margin, margin, "LMB:Rotate, RMB:Pan, Scroll:Zoom, R:Reset Cam, N:Synapses, P:Pause Sim, S:Step Sim, Esc:Exit")
 
@@ -5604,6 +5649,11 @@ def _populate_ui_from_config_dict(config_dict):
     # Handle viz_update_interval_steps if it exists in the config (backward compatibility)
     if hasattr(cfg, "viz_update_interval_steps") and dpg.does_item_exist("cfg_viz_update_interval_steps"):
         dpg.set_value("cfg_viz_update_interval_steps", cfg.viz_update_interval_steps)
+    
+    # Hardware performance note
+    if hasattr(cfg, "hardware_performance_note") and dpg.does_item_exist("cfg_hardware_performance_note"):
+        note_text = cfg.hardware_performance_note if cfg.hardware_performance_note else "Run visualization benchmark to determine hardware limits (viz_benchmark.py)"
+        dpg.set_value("cfg_hardware_performance_note", note_text)
     
     # Model-specific parameters
     if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
@@ -7024,6 +7074,129 @@ def handle_export_logs_click(sender=None, app_data=None, user_data=None):
     except Exception as e:
         update_status_bar(f"Export error: {str(e)}", level="error")
 
+def handle_run_viz_benchmark_click(sender=None, app_data=None, user_data=None):
+    """Runs the visualization performance test in a background thread."""
+    global performance_test_running_type
+    # Clear stop flag and enable stop button
+    performance_test_stop_flag.clear()
+    performance_test_running_type = "viz_benchmark"
+    if dpg.is_dearpygui_running() and dpg.does_item_exist("stop_perf_test_button"):
+        dpg.configure_item("stop_perf_test_button", enabled=True)
+    
+    def run_viz_benchmark():
+        try:
+            # Check if quick mode is enabled
+            quick_mode = False
+            if dpg.is_dearpygui_running() and dpg.does_item_exist("viz_benchmark_quick_mode_checkbox"):
+                quick_mode = dpg.get_value("viz_benchmark_quick_mode_checkbox")
+            
+            mode_text = "quick mode" if quick_mode else "full mode"
+            if dpg.is_dearpygui_running() and dpg.does_item_exist("perf_test_status_text"):
+                dpg.set_value("perf_test_status_text", f"Running visualization performance test ({mode_text})...")
+                dpg.set_value("perf_test_results_text", "This may take several minutes.\nCheck System Logs for detailed progress.")
+            
+            import subprocess
+            # Build command with optional --quick flag
+            cmd = [sys.executable, "viz_benchmark.py"]
+            if quick_mode:
+                cmd.append("--quick")
+            
+            # Stream output line-by-line so LogCapture can see it
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,  # Line buffered
+                universal_newlines=True
+            )
+            
+            output_lines = []
+            for line in process.stdout:
+                # Check stop flag
+                if performance_test_stop_flag.is_set():
+                    process.terminate()
+                    try:
+                        process.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        process.kill()
+                    print("[STOPPED] Viz performance test stopped by user")
+                    if dpg.is_dearpygui_running():
+                        dpg.set_value("perf_test_status_text", "Viz performance test stopped by user.")
+                        dpg.set_value("perf_test_results_text", "Partial results discarded.")
+                        update_status_bar("Viz performance test stopped", level="warning")
+                    return
+                
+                print(line.rstrip())  # Print to console AND LogCapture
+                output_lines.append(line.rstrip())
+            
+            returncode = process.wait(timeout=600)  # 10 minute timeout
+            
+            if returncode == 0:
+                # Load results and update hardware note
+                results_path = "benchmarks/viz_performance_results.json"
+                try:
+                    with open(results_path, 'r') as f:
+                        benchmark_data = json.load(f)
+                    
+                    hardware_note = benchmark_data.get("hardware_performance_note", "Benchmark completed.")
+                    
+                    # Update hardware note in UI
+                    if dpg.does_item_exist("cfg_hardware_performance_note"):
+                        dpg.set_value("cfg_hardware_performance_note", hardware_note)
+                    
+                    # Build summary for results text
+                    capacity_summary = benchmark_data.get("capacity_summary", {})
+                    summary_lines = ["Viz Performance Test Complete!", ""]
+                    if capacity_summary:
+                        for key, data in capacity_summary.items():
+                            max_n = data.get("max_neurons", 0)
+                            conn = data.get("connections_per_neuron", 0)
+                            if max_n > 0:
+                                summary_lines.append(f"{key}: {max_n:,}N ({max_n * conn:,} synapses)")
+                            else:
+                                summary_lines.append(f"{key}: No realtime configs found")
+                    else:
+                        summary_lines.append("No realtime-capable configurations found.")
+                    
+                    summary_lines.append("")
+                    summary_lines.append("Results: benchmarks/viz_performance_results.json")
+                    summary_lines.append("Hardware note updated in Core Simulation Parameters.")
+                    summary = "\n".join(summary_lines)
+                    
+                    status = "Viz performance test complete."
+                except Exception as e:
+                    status = "Viz test complete but failed to parse results."
+                    summary = f"Error: {str(e)}\nCheck benchmarks/viz_performance_results.json"
+            else:
+                status = f"Viz performance test failed with code {returncode}"
+                summary = "\n".join(output_lines[-10:]) if len(output_lines) > 10 else "\n".join(output_lines)
+            
+            if dpg.is_dearpygui_running():
+                dpg.set_value("perf_test_status_text", status)
+                dpg.set_value("perf_test_results_text", summary)
+                update_status_bar(status, level="info" if returncode == 0 else "error")
+        except subprocess.TimeoutExpired:
+            process.kill()
+            if dpg.is_dearpygui_running():
+                dpg.set_value("perf_test_status_text", "Viz performance test timed out after 10 minutes.")
+                dpg.set_value("perf_test_results_text", "Check System Logs for partial results.")
+                update_status_bar("Viz performance test timed out", level="error")
+        except Exception as e:
+            if dpg.is_dearpygui_running():
+                dpg.set_value("perf_test_status_text", f"Error: {str(e)}")
+                dpg.set_value("perf_test_results_text", "")
+                update_status_bar(f"Viz performance test error: {str(e)}", level="error")
+        finally:
+            global performance_test_running_type
+            performance_test_running_type = None
+            # Disable stop button when done
+            if dpg.is_dearpygui_running() and dpg.does_item_exist("stop_perf_test_button"):
+                dpg.configure_item("stop_perf_test_button", enabled=False)
+    
+    threading.Thread(target=run_viz_benchmark, daemon=True).start()
+    update_status_bar("Starting viz performance test...", level="info")
+
 # --- Main DPG GUI Layout Creation (Called by Main/UI Thread) ---
 
 def add_parameter_table_row(label_text, item_callable, item_tag, default_value, callback_func, **kwargs):
@@ -7130,6 +7303,12 @@ def create_gui_layout():
                 add_parameter_table_row("Number of Traits:", dpg.add_input_int, "cfg_num_traits", 5, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=len(TRAIT_COLOR_MAP_RAW) if TRAIT_COLOR_MAP_RAW else 10)
                 add_parameter_table_row("Neuron Model:", dpg.add_combo, "cfg_neuron_model_type", NeuronModel.IZHIKEVICH.name, _handle_model_type_change_dpg, items=[model.name for model in NeuronModel])
                 add_parameter_table_row("Neural Structure Profile:", dpg.add_combo, "cfg_neural_profile", "GENERIC_UNSTRUCTURED", _update_sim_config_from_ui_and_signal_reset_needed, items=sorted(NEURAL_STRUCTURE_PROFILES.keys()))
+            
+            # Hardware performance note (read-only info)
+            dpg.add_spacer(height=5)
+            dpg.add_text("Hardware Performance Note:", color=[150,200,255,255])
+            dpg.add_text("", tag="cfg_hardware_performance_note", wrap=label_col_width + 50, color=[180,180,180,255])
+            dpg.add_spacer(height=5)
 
             with dpg.group(tag="izhikevich_params_group", show=True):
                 dpg.add_text("--- Izhikevich 2007 Model Parameters ---", color=[200,200,100,255])
@@ -7347,6 +7526,12 @@ def create_gui_layout():
             
             with dpg.group(horizontal=True):
                 dpg.add_button(label="Run Benchmark Suite", tag="run_benchmark_button", callback=handle_run_benchmark_click, width=-1)
+            
+            dpg.add_spacer(height=3)
+            
+            with dpg.group(horizontal=True):
+                dpg.add_button(label="Run Viz Performance Test", tag="run_viz_benchmark_button", callback=handle_run_viz_benchmark_click, width=-80)
+                dpg.add_checkbox(label="Quick", tag="viz_benchmark_quick_mode_checkbox", default_value=False)
             
             dpg.add_spacer(height=3)
             
@@ -8105,6 +8290,31 @@ def run_auto_tuning(quick=False):
     return 0
 
 
+def load_viz_benchmark_hardware_note():
+    """Loads the hardware performance note from viz benchmark results if available.
+    
+    Returns:
+        str: Hardware note if found, empty string otherwise
+    """
+    viz_results_path = os.path.join("benchmarks", "viz_performance_results.json")
+    
+    if not os.path.exists(viz_results_path):
+        return ""
+    
+    try:
+        with open(viz_results_path, 'r') as f:
+            results = json.load(f)
+        
+        hardware_note = results.get("hardware_performance_note", "")
+        if hardware_note:
+            print(f"Loaded hardware performance note from {viz_results_path}")
+            return hardware_note
+    except Exception as e:
+        print(f"Warning: Could not load viz benchmark results from {viz_results_path}: {e}")
+    
+    return ""
+
+
 def signal_handler(sig, frame):
     """Handle Ctrl+C gracefully"""
     global shutdown_flag
@@ -8152,6 +8362,11 @@ def main():
         print("Using basic default internal configuration for initial UI population.")
         loaded_default_sim_config_dict = SimulationConfiguration().to_dict() # Use fresh defaults
         global_gui_state["current_profile_name"] = "unsaved_internal_defaults.json"
+    
+    # Load hardware performance note from viz benchmark if available
+    hardware_note = load_viz_benchmark_hardware_note()
+    if hardware_note and loaded_default_sim_config_dict:
+        loaded_default_sim_config_dict["hardware_performance_note"] = hardware_note
 
 
     # DPG Viewport setup

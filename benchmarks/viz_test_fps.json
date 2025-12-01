@@ -1,0 +1,733 @@
+{
+  "benchmark_version": "2.0",
+  "benchmark_type": "visualization_performance",
+  "timestamp": "2025-12-01T04:45:29.821973",
+  "quick_mode": true,
+  "num_steps_per_config": 500,
+  "viz_update_threshold_ms": 33.3,
+  "dt_ms": 1.0,
+  "viz_update_interval": 1,
+  "system_info": {
+    "gpu_name": "NVIDIA GeForce RTX 3090",
+    "gpu_memory_gb": 23.99951171875,
+    "cuda_version": "12.9",
+    "cupy_version": "13.6.0",
+    "numpy_version": "1.26.4",
+    "python_version": "3.12.6"
+  },
+  "capacity_summary": {
+    "IZHIKEVICH_100conn": {
+      "max_neurons": 10000,
+      "connections_per_neuron": 100,
+      "total_synapses": 1000000,
+      "metrics": {
+        "init_time_s": 2.8734989166259766,
+        "total_sim_time_s": 17.292818784713745,
+        "steps_per_sec": 28.913736171339675,
+        "neurons_per_sec": 289137.36171339673,
+        "num_steps_completed": 500,
+        "baseline_step_time_ms": 0.9248924255371094,
+        "step_time_mean_ms": 2.0954980850219727,
+        "step_time_std_ms": 1.3161296174642676,
+        "step_time_p50_ms": 1.5113353729248047,
+        "step_time_p95_ms": 4.532814025878906,
+        "step_time_p99_ms": 6.027882099151611,
+        "viz_update_mean_ms": 32.49013948440552,
+        "viz_update_std_ms": 4.890098684066498,
+        "viz_update_p95_ms": 41.80670976638794,
+        "viz_update_threshold_ms": 33.3,
+        "viz_actual_fps": 30.778569001834413,
+        "viz_performance_tier": "Acceptable (30 FPS)",
+        "is_viz_acceptable": true,
+        "gpu_memory_used_gb": 8.24169921875,
+        "profiling": {
+          "step_total": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "connectivity": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "dynamics": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_sync": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "neuron_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "synapse_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "plasticity_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "recording": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_memory_ops": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          }
+        }
+      }
+    },
+    "IZHIKEVICH_500conn": {
+      "max_neurons": 1000,
+      "connections_per_neuron": 500,
+      "total_synapses": 500000,
+      "metrics": {
+        "init_time_s": 2.4340171813964844,
+        "total_sim_time_s": 11.302192449569702,
+        "steps_per_sec": 44.2392042279404,
+        "neurons_per_sec": 44239.2042279404,
+        "num_steps_completed": 500,
+        "baseline_step_time_ms": 0.9567928314208984,
+        "step_time_mean_ms": 1.971451759338379,
+        "step_time_std_ms": 1.3080810093995694,
+        "step_time_p50_ms": 1.5087127685546875,
+        "step_time_p95_ms": 4.523611068725586,
+        "step_time_p99_ms": 6.092779636383052,
+        "viz_update_mean_ms": 20.632933139801025,
+        "viz_update_std_ms": 2.999482591630253,
+        "viz_update_p95_ms": 25.843679904937744,
+        "viz_update_threshold_ms": 33.3,
+        "viz_actual_fps": 48.466206584607946,
+        "viz_performance_tier": "Acceptable (30 FPS)",
+        "is_viz_acceptable": true,
+        "gpu_memory_used_gb": 1.52880859375,
+        "profiling": {
+          "step_total": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "connectivity": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "dynamics": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_sync": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "neuron_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "synapse_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "plasticity_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "recording": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_memory_ops": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          }
+        }
+      }
+    }
+  },
+  "hardware_performance_note": "Hardware Performance (NVIDIA GeForce RTX 3090): Max with real-time viz (30+ FPS): ~10,000 neurons with 100 conn/neuron (1,000,000 synapses) using IZHIKEVICH model. Going above this may reduce refresh rate below 30 FPS.",
+  "results": [
+    {
+      "config": {
+        "num_neurons": 1000,
+        "connections_per_neuron": 100,
+        "neuron_model_type": "IZHIKEVICH"
+      },
+      "metrics": {
+        "init_time_s": 2.5069491863250732,
+        "total_sim_time_s": 6.873330593109131,
+        "steps_per_sec": 72.74493685801696,
+        "neurons_per_sec": 72744.93685801695,
+        "num_steps_completed": 500,
+        "baseline_step_time_ms": 1.2826347351074219,
+        "step_time_mean_ms": 1.538172721862793,
+        "step_time_std_ms": 0.7719481238663377,
+        "step_time_p50_ms": 1.5072822570800781,
+        "step_time_p95_ms": 3.0246734619140625,
+        "step_time_p99_ms": 3.6294364929199183,
+        "viz_update_mean_ms": 12.208488464355469,
+        "viz_update_std_ms": 2.1951507603092315,
+        "viz_update_p95_ms": 15.691244602203367,
+        "viz_update_threshold_ms": 33.3,
+        "viz_actual_fps": 81.91022196725265,
+        "viz_performance_tier": "Good (60 FPS)",
+        "is_viz_acceptable": true,
+        "gpu_memory_used_gb": 1.25146484375,
+        "profiling": {
+          "step_total": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "connectivity": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "dynamics": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_sync": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "neuron_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "synapse_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "plasticity_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "recording": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_memory_ops": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "num_neurons": 5000,
+        "connections_per_neuron": 100,
+        "neuron_model_type": "IZHIKEVICH"
+      },
+      "metrics": {
+        "init_time_s": 1.490105390548706,
+        "total_sim_time_s": 10.604832649230957,
+        "steps_per_sec": 47.14831591767354,
+        "neurons_per_sec": 235741.57958836772,
+        "num_steps_completed": 500,
+        "baseline_step_time_ms": 1.064152717590332,
+        "step_time_mean_ms": 1.5897789001464844,
+        "step_time_std_ms": 0.9998715649421391,
+        "step_time_p50_ms": 1.5063285827636719,
+        "step_time_p95_ms": 3.5109996795654297,
+        "step_time_p99_ms": 5.036287307739257,
+        "viz_update_mean_ms": 19.61988639831543,
+        "viz_update_std_ms": 3.1306498269079905,
+        "viz_update_p95_ms": 24.312198162078854,
+        "viz_update_threshold_ms": 33.3,
+        "viz_actual_fps": 50.968694705890876,
+        "viz_performance_tier": "Acceptable (30 FPS)",
+        "is_viz_acceptable": true,
+        "gpu_memory_used_gb": 3.02490234375,
+        "profiling": {
+          "step_total": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "connectivity": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "dynamics": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_sync": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "neuron_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "synapse_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "plasticity_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "recording": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_memory_ops": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "num_neurons": 10000,
+        "connections_per_neuron": 100,
+        "neuron_model_type": "IZHIKEVICH"
+      },
+      "metrics": {
+        "init_time_s": 2.8734989166259766,
+        "total_sim_time_s": 17.292818784713745,
+        "steps_per_sec": 28.913736171339675,
+        "neurons_per_sec": 289137.36171339673,
+        "num_steps_completed": 500,
+        "baseline_step_time_ms": 0.9248924255371094,
+        "step_time_mean_ms": 2.0954980850219727,
+        "step_time_std_ms": 1.3161296174642676,
+        "step_time_p50_ms": 1.5113353729248047,
+        "step_time_p95_ms": 4.532814025878906,
+        "step_time_p99_ms": 6.027882099151611,
+        "viz_update_mean_ms": 32.49013948440552,
+        "viz_update_std_ms": 4.890098684066498,
+        "viz_update_p95_ms": 41.80670976638794,
+        "viz_update_threshold_ms": 33.3,
+        "viz_actual_fps": 30.778569001834413,
+        "viz_performance_tier": "Acceptable (30 FPS)",
+        "is_viz_acceptable": true,
+        "gpu_memory_used_gb": 8.24169921875,
+        "profiling": {
+          "step_total": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "connectivity": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "dynamics": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_sync": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "neuron_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "synapse_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "plasticity_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "recording": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_memory_ops": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "num_neurons": 1000,
+        "connections_per_neuron": 500,
+        "neuron_model_type": "IZHIKEVICH"
+      },
+      "metrics": {
+        "init_time_s": 2.4340171813964844,
+        "total_sim_time_s": 11.302192449569702,
+        "steps_per_sec": 44.2392042279404,
+        "neurons_per_sec": 44239.2042279404,
+        "num_steps_completed": 500,
+        "baseline_step_time_ms": 0.9567928314208984,
+        "step_time_mean_ms": 1.971451759338379,
+        "step_time_std_ms": 1.3080810093995694,
+        "step_time_p50_ms": 1.5087127685546875,
+        "step_time_p95_ms": 4.523611068725586,
+        "step_time_p99_ms": 6.092779636383052,
+        "viz_update_mean_ms": 20.632933139801025,
+        "viz_update_std_ms": 2.999482591630253,
+        "viz_update_p95_ms": 25.843679904937744,
+        "viz_update_threshold_ms": 33.3,
+        "viz_actual_fps": 48.466206584607946,
+        "viz_performance_tier": "Acceptable (30 FPS)",
+        "is_viz_acceptable": true,
+        "gpu_memory_used_gb": 1.52880859375,
+        "profiling": {
+          "step_total": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "connectivity": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "dynamics": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_sync": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "neuron_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "synapse_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "plasticity_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "recording": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_memory_ops": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "num_neurons": 5000,
+        "connections_per_neuron": 500,
+        "neuron_model_type": "IZHIKEVICH"
+      },
+      "metrics": {
+        "init_time_s": 1.096315860748291,
+        "total_sim_time_s": 4.013957977294922,
+        "steps_per_sec": 12.954794318759593,
+        "neurons_per_sec": 64773.97159379796,
+        "num_steps_completed": 52,
+        "baseline_step_time_ms": 0.891423225402832,
+        "step_time_mean_ms": 1.5290471223684459,
+        "step_time_std_ms": 0.6252422421338655,
+        "step_time_p50_ms": 1.5072822570800781,
+        "step_time_p95_ms": 2.5418043136596675,
+        "step_time_p99_ms": 3.010234832763672,
+        "viz_update_mean_ms": 75.66245244099544,
+        "viz_update_std_ms": 10.375234495297347,
+        "viz_update_p95_ms": 91.17439985275269,
+        "viz_update_threshold_ms": 33.3,
+        "viz_actual_fps": 13.216595123979618,
+        "viz_performance_tier": "Poor (<30 FPS)",
+        "is_viz_acceptable": false,
+        "gpu_memory_used_gb": 3.12060546875,
+        "profiling": {
+          "step_total": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "connectivity": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "dynamics": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_sync": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "neuron_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "synapse_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "plasticity_update": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "recording": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          },
+          "gpu_memory_ops": {
+            "mean": 0.0,
+            "std": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "count": 0
+          }
+        }
+      }
+    }
+  ]
+}
