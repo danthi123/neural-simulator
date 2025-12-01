@@ -286,10 +286,113 @@ are applied automatically before initialization.
 - Includes initial state and all dynamic variables per frame
 - Location: `simulation_recordings_h5/`
 
+## GPU Configuration and Profiling
+
+### GPU Feature Flags
+
+Configure GPU-specific features via `GPUConfig` dataclass:
+
+**Recording Modes:**
+- `gpu_buffered` (default): Store all frames in VRAM for maximum speed
+- `streaming`: Write frames directly to disk as generated
+- `disabled`: No recording
+
+**Playback Modes:**
+- `gpu_cached` (default): Load entire recording into VRAM for instant seeking
+- `streaming`: Read frames from disk on demand
+- `auto`: Automatically choose based on available GPU memory
+
+**CUDA-OpenGL Interop:**
+Enable zero-copy GPU→OpenGL transfers for visualization with no CPU roundtrip.
+
+**Memory Management:**
+- `memory_pool_limit_fraction`: Max GPU memory for CuPy pool (default: 0.8)
+- `memory_pressure_threshold`: Trigger cleanup above this usage (default: 0.9)
+- `enable_adaptive_quality`: Reduce quality under memory pressure
+
+### Performance Profiling
+
+Enable detailed profiling in your simulation:
+
+```python
+from neural_simulator import GPUConfig, SimulationBridge, CoreSimConfig
+
+gpu_config = GPUConfig(
+    enable_profiling=True,
+    profiling_detailed=True,
+    profiling_window_size=1000  # Keep last 1000 step timings
+)
+
+sim = SimulationBridge(
+    core_config=CoreSimConfig(num_neurons=10000),
+    gpu_config=gpu_config
+)
+```
+
+Get profiling statistics:
+```python
+stats = sim.get_profiling_stats()
+print(f"Mean step time: {stats['step_total']['mean']*1000:.2f}ms")
+print(f"P95 step time: {stats['step_total']['p95']*1000:.2f}ms")
+```
+
+Export full profiling report:
+```python
+sim.export_profiling_report("profile_report.json")
+```
+
+### Benchmarking
+
+Run comprehensive benchmark suite:
+```bash
+python benchmark.py --output results.json
+```
+
+Quick benchmark (reduced configurations):
+```bash
+python benchmark.py --quick
+```
+
+Compare against baseline:
+```bash
+python benchmark.py --compare benchmarks/baseline_v1.json
+```
+
+The benchmark suite:
+- Sweeps network sizes (1K, 10K, 50K neurons)
+- Tests different connection densities
+- Runs all neuron models (Izhikevich, HH, AdEx)
+- Measures step time, GPU memory, throughput
+- Outputs JSON report with system info
+
+### Determinism and Reproducibility
+
+For reproducible simulations:
+
+1. **Set explicit seed:**
+```python
+config = CoreSimConfig(seed=42)
+```
+
+2. **Track actual seed used:**
+```python
+sim._initialize_simulation_data()
+print(f"Actual seed: {sim.runtime_state.actual_seed_used}")
+```
+
+3. **Run determinism tests:**
+```bash
+pytest tests/test_determinism.py -v
+```
+
+All RNG sources (CuPy, NumPy, random) are initialized together for full determinism.
+
 ## Performance Optimization
 
 ### GPU Memory Management
 The simulator automatically manages GPU memory, but you can optimize:
+- Configure `GPUConfig.memory_pool_limit_fraction` (default: 0.8)
+- Adjust `memory_pressure_threshold` for earlier cleanup
 - Reduce `Max Neurons to Render` if visualization is slow
 - Disable synaptic pulses for better performance
 - Use larger `Viz Update Interval` to reduce GPU-CPU transfers
