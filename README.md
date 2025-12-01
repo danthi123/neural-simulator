@@ -41,7 +41,7 @@ A high-performance 3D neural network simulator with real-time OpenGL visualizati
 - **Homeostatic Plasticity**: Adaptive firing thresholds for network stability
 - **Conductance-based synapses**: Separate excitatory (AMPA) and inhibitory (GABA) channels
 
-### Biological Realism (Phase B)
+### Biological Realism
 - **Parameter Heterogeneity**: Per-neuron variability via lognormal/Gaussian distributions
   - Biologically realistic coefficients of variation (CV ~0.3-0.4)
   - Scientifically grounded defaults from experimental literature
