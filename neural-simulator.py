@@ -2043,6 +2043,18 @@ class SimulationBridge:
                 for i in range(n):
                     self.runtime_state.neuron_types_list_for_viz[i] = "AdEx_RS"
             
+            # B2: Apply parameter heterogeneity if enabled
+            if cfg.enable_parameter_heterogeneity and n > 0:
+                self._apply_parameter_heterogeneity(cfg, n)
+            
+            # B4: Initialize OU process state if enabled
+            if cfg.enable_ou_process and n > 0:
+                self._initialize_ou_process_state(cfg, n)
+            else:
+                self.cp_ou_current = None
+                self.ou_decay_factor = None
+                self.ou_noise_std = None
+            
             self._log_console(f"Generating 3D neuron positions for {n} neurons...")
             if n > 0:
                 np_positions_3d = np.random.uniform(
@@ -2130,6 +2142,145 @@ class SimulationBridge:
             if 'cupy' in sys.modules and cp.is_available():
                 cp.get_default_memory_pool().free_all_blocks()
                 cp.get_default_pinned_memory_pool().free_all_blocks()
+    
+    def _apply_parameter_heterogeneity(self, cfg, n):
+        """Applies parameter heterogeneity by drawing per-neuron values from distributions.
+        
+        Uses scientifically-grounded distributions based on:
+        - Marder & Goaillard (2006) Nature Reviews Neuroscience
+        - Tripathy et al. (2013) PNAS
+        - Golowasch et al. (2002) Neural Computation
+        
+        Args:
+            cfg: CoreSimConfig with heterogeneity_distributions dict
+            n: Number of neurons
+        """
+        if not cfg.heterogeneity_distributions:
+            # Use scientifically-validated defaults if no custom distributions specified
+            cfg.heterogeneity_distributions = self._get_default_heterogeneity_distributions(cfg)
+        
+        self._log_console("Applying parameter heterogeneity to neuron parameters...")
+        
+        # Set separate RNG state for heterogeneity (deterministic if seed provided)
+        het_seed = cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed
+        if het_seed >= 0:
+            rng_state = cp.random.get_random_state()
+            cp.random.seed(het_seed)
+        
+        # Map parameter names to CuPy arrays
+        param_map = {
+            # Izhikevich parameters
+            "izh_C_val": getattr(self, 'cp_izh_C', None),
+            "izh_a_val": getattr(self, 'cp_izh_a', None),
+            "izh_b_val": getattr(self, 'cp_izh_b', None),
+            "izh_d_val": getattr(self, 'cp_izh_d_increment', None),
+            # Hodgkin-Huxley parameters
+            "hh_C_m": getattr(self, 'cp_hh_C_m', None),
+            "hh_g_Na_max": getattr(self, 'cp_hh_g_Na_max', None),
+            "hh_g_K_max": getattr(self, 'cp_hh_g_K_max', None),
+            "hh_g_L": getattr(self, 'cp_hh_g_L', None),
+        }
+        
+        applied_count = 0
+        for param_name, dist_spec in cfg.heterogeneity_distributions.items():
+            target_array = param_map.get(param_name)
+            if target_array is None or target_array.size != n:
+                continue
+            
+            dist_type = dist_spec.get("type")
+            if dist_type == "lognormal":
+                # CuPy lognormal takes mean and sigma of underlying normal distribution
+                samples = cp.random.lognormal(
+                    mean=dist_spec["mean_log"],
+                    sigma=dist_spec["sigma_log"],
+                    size=n
+                ).astype(cp.float32)
+            elif dist_type == "gaussian":
+                samples = cp.random.normal(
+                    loc=dist_spec["mean"],
+                    scale=dist_spec["std"],
+                    size=n
+                ).astype(cp.float32)
+                # Clip to prevent non-physical values (0.1x to 3x mean)
+                samples = cp.clip(samples, dist_spec["mean"] * 0.1, dist_spec["mean"] * 3.0)
+            else:
+                self._log_console(f"Unknown distribution type '{dist_type}' for {param_name}", "warning")
+                continue
+            
+            # Apply heterogeneity
+            target_array[:] = samples
+            applied_count += 1
+        
+        # Restore RNG state
+        if het_seed >= 0:
+            cp.random.set_random_state(rng_state)
+        
+        self._log_console(f"Applied heterogeneity to {applied_count} parameters.")
+    
+    def _get_default_heterogeneity_distributions(self, cfg):
+        """Returns scientifically-grounded default heterogeneity distributions.
+        
+        Based on experimental data showing:
+        - CV = 0.2-0.4 for most neural parameters (Tripathy et al. 2013)
+        - Log-normal for conductances (Golowasch et al. 2002)
+        - Gaussian for capacitance (10-15% variance)
+        """
+        defaults = {}
+        
+        if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
+            # Izhikevich parameters (CV ~ 0.3)
+            defaults["izh_a_val"] = {"type": "lognormal", "mean_log": cp.log(cfg.izh_a_val).item(), "sigma_log": 0.3}
+            defaults["izh_b_val"] = {"type": "lognormal", "mean_log": cp.log(cfg.izh_b_val).item(), "sigma_log": 0.25}
+            defaults["izh_d_val"] = {"type": "gaussian", "mean": cfg.izh_d_val, "std": cfg.izh_d_val * 0.25}
+            defaults["izh_C_val"] = {"type": "gaussian", "mean": cfg.izh_C_val, "std": cfg.izh_C_val * 0.15}
+        
+        elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
+            # HH conductances (CV ~ 0.4, log-normal)
+            defaults["hh_g_Na_max"] = {"type": "lognormal", "mean_log": cp.log(cfg.hh_g_Na_max).item(), "sigma_log": 0.4}
+            defaults["hh_g_K_max"] = {"type": "lognormal", "mean_log": cp.log(cfg.hh_g_K_max).item(), "sigma_log": 0.4}
+            defaults["hh_g_L"] = {"type": "lognormal", "mean_log": cp.log(cfg.hh_g_L).item(), "sigma_log": 0.3}
+            defaults["hh_C_m"] = {"type": "gaussian", "mean": cfg.hh_C_m, "std": cfg.hh_C_m * 0.15}
+        
+        return defaults
+    
+    def _initialize_ou_process_state(self, cfg, n):
+        """Initializes Ornstein-Uhlenbeck process state for background drive.
+        
+        Based on:
+        - Destexhe & Rudolph-Lilith (2012) "Neuronal Noise" Springer
+        - Produces realistic Vm fluctuations (2-5 mV)
+        - Tau = 10-20ms matches synaptic time constants
+        
+        The OU process is defined as:
+            dI/dt = -(I - μ)/τ + σ√(2/τ) dW
+        
+        Exact solution over timestep dt:
+            I(t+dt) = I(t)*exp(-dt/τ) + μ(1-exp(-dt/τ)) + σ√((1-exp(-2dt/τ))/2) * N(0,1)
+        
+        Args:
+            cfg: CoreSimConfig with OU parameters
+            n: Number of neurons
+        """
+        self._log_console(f"Initializing OU process state (tau={cfg.ou_tau_ms}ms, sigma={cfg.ou_std_current_pA}pA)...")
+        
+        # Initialize OU current state (starts at mean)
+        self.cp_ou_current = cp.full(n, cfg.ou_mean_current_pA, dtype=cp.float32)
+        
+        # Pre-compute OU update coefficients using exact solution (Gillespie 1996)
+        dt_sec = cfg.dt_ms / 1000.0
+        tau_sec = cfg.ou_tau_ms / 1000.0
+        
+        # Decay factor: exp(-dt/tau)
+        self.ou_decay_factor = cp.float32(cp.exp(-dt_sec / tau_sec))
+        
+        # Noise std: sigma * sqrt((1 - exp(-2*dt/tau)) / 2)
+        # This ensures correct variance in steady state
+        self.ou_noise_std = cp.float32(
+            cfg.ou_std_current_pA * cp.sqrt((1.0 - cp.exp(-2.0 * dt_sec / tau_sec)) / 2.0)
+        )
+        
+        # Store mean for convenience
+        self.ou_mean = cp.float32(cfg.ou_mean_current_pA)
 
     def _calculate_distances_3d_gpu(self, pos_i_cp, pos_neighbors_cp):
         """Calculates Euclidean distances in 3D between a point and an array of other points using CuPy."""
