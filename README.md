@@ -23,6 +23,11 @@ A high-performance 3D neural network simulator with real-time OpenGL visualizati
   - Layer 5 Cortical Pyramidal neurons
   - Temperature-dependent kinetics (Q10 scaling)
   - Multi-compartment gating variables (m, h, n)
+  - Optional extended currents (M-current, T-type Ca²⁺, I_h, persistent Na⁺)
+- **Adaptive Exponential Integrate-and-Fire (AdEx)**: Efficient, flexible spiking model
+  - Exponential spike mechanism with adaptation
+  - Layer 5 RS pyramidal default parameters
+  - Fast computation with biological realism
 
 ### Synaptic Plasticity
 - **Hebbian Learning (LTP/LTD)**: Activity-dependent weight modification
@@ -30,11 +35,24 @@ A high-performance 3D neural network simulator with real-time OpenGL visualizati
 - **Homeostatic Plasticity**: Adaptive firing thresholds for network stability
 - **Conductance-based synapses**: Separate excitatory (AMPA) and inhibitory (GABA) channels
 
+### Biological Realism (Phase B)
+- **Parameter Heterogeneity**: Per-neuron variability via lognormal/Gaussian distributions
+  - Biologically realistic coefficients of variation (CV ~0.3-0.4)
+  - Scientifically grounded defaults from experimental literature
+- **Enhanced Channel Noise**: Optional intrinsic stochasticity
+  - Ornstein-Uhlenbeck background current (synaptic bombardment model)
+  - Multiplicative conductance noise for HH model channels
+  - Configurable noise levels with GPU-accelerated generation
+
 ### Network Architecture
+- **Neural Structure Profiles**: Brain-region specific network templates
+  - Cortex (L2/3 RS/FS), Hippocampus (CA1), Striatum (MSNs), and more
+  - Predefined cell-type mixtures and E/I ratios
+  - Profile-compatible HH presets (e.g., CA1 bursting, STN pacemaker)
 - **3D spatial connectivity**: Distance-dependent connection probabilities
 - **Trait-based organization**: Neuron populations with shared properties
 - **Watts-Strogatz networks**: Small-world topology generation
-- **Inhibitory interneurons**: Configurable E/I balance
+- **Inhibitory interneurons**: Configurable E/I balance with multi-trait support
 
 ### Visualization
 - **Real-time 3D OpenGL rendering**: Hardware-accelerated graphics
@@ -477,7 +495,9 @@ The simulator automatically manages GPU memory, but you can optimize:
 ## Contributing
 
 Contributions are welcome! Areas for improvement:
-- Additional neuron models (LIF, AdEx, multi-compartment)
+- Additional neuron models (LIF/GLIF, multi-compartment)
+- Spike-timing dependent plasticity (STDP)
+- Layered connectivity motifs and topographic organization
 - Network analysis tools (connectivity statistics, firing patterns)
 - Export to SONATA/NeuroML formats
 - Multi-GPU support for larger networks
@@ -502,9 +522,18 @@ If you use this simulator in your research, please cite:
 
 ## Acknowledgments
 
+### Neuron Models & Dynamics
 - Izhikevich neuron model: Izhikevich, E. M. (2007). Dynamical Systems in Neuroscience
 - Hodgkin-Huxley model: Hodgkin & Huxley (1952). J. Physiol.
+- AdEx model: Brette & Gerstner (2005). J. Neurophysiol.
 - STP model: Tsodyks & Markram (1997). PNAS
+
+### Biological Realism
+- Parameter heterogeneity: Marder & Goaillard (2006), Tripathy et al. (2013)
+- OU process noise: Destexhe et al. (2001), Destexhe & Rudolph-Lilith (2012)
+- Channel noise: White et al. (2000)
+
+### Software & Tools
 - CuPy library for GPU acceleration
 - DearPyGUI for UI framework
 - OpenGL for 3D visualization
