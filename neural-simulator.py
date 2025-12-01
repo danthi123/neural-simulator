@@ -5389,19 +5389,21 @@ def render_scene_gl():
         mode_text = "Playback" if is_playback else "Live"
         if global_gui_state.get("is_recording_active"): mode_text += " (Rec)"
         
-        # Layout: 3 rows of information
-        # Row 3 (top): Time, Spikes/Step, FPS
-        render_text_gl(margin, margin + 3*line_h, f"Time: {sim_time_s:.3f}s")
-        render_text_gl(margin + win_w // 3, margin + 3*line_h, f"Spikes: {spikes_step}")
-        render_text_gl(margin + 2*win_w // 3, margin + 3*line_h, fps_text)
+        # Layout: 4 rows of information
+        # Row 4 (top): Time, Spikes/Step, FPS
+        render_text_gl(margin, margin + 4*line_h, f"Time: {sim_time_s:.3f}s")
+        render_text_gl(margin + win_w // 3, margin + 4*line_h, f"Spikes: {spikes_step}")
+        render_text_gl(margin + 2*win_w // 3, margin + 4*line_h, fps_text)
         
-        # Row 2 (middle): Step, Avg Rate, Mode
-        render_text_gl(margin, margin + 2*line_h, f"Step: {runtime.current_time_step}")
-        render_text_gl(margin + win_w // 3, margin + 2*line_h, f"Rate: {avg_fr:.2f} Hz")
-        render_text_gl(margin + 2*win_w // 3, margin + 2*line_h, f"Mode: {mode_text}")
+        # Row 3: Step, Avg Rate, Mode
+        render_text_gl(margin, margin + 3*line_h, f"Step: {runtime.current_time_step}")
+        render_text_gl(margin + win_w // 3, margin + 3*line_h, f"Rate: {avg_fr:.2f} Hz")
+        render_text_gl(margin + 2*win_w // 3, margin + 3*line_h, f"Mode: {mode_text}")
         
-        # Row 1 (above hotkeys): Plasticity Events
-        render_text_gl(margin, margin + line_h, f"Plasticity: {plasticity_events}")
+        # Row 2: Plasticity, Visible Neurons, Visible Synapses
+        render_text_gl(margin, margin + 2*line_h, f"Plasticity: {plasticity_events}")
+        render_text_gl(margin + win_w // 3, margin + 2*line_h, f"Vis.Neurons: {gl_num_neurons_to_draw}")
+        render_text_gl(margin + 2*win_w // 3, margin + 2*line_h, f"Vis.Syns: {gl_num_synapse_lines_to_draw}")
         
         # Row 0 (bottom): Hotkey hints
         render_text_gl(margin, margin, "LMB:Rotate, RMB:Pan, Scroll:Zoom, R:Reset, S:Synapses, N:Neurons, Space:Pause/Resume, Esc:Exit")
@@ -5488,18 +5490,16 @@ def keyboard_func_gl(key, x, y):
 
     if global_simulation_bridge is None : return # Should not happen if GL window is up
 
+    # Handle ESC key first (special case)
+    if key == b'\x1b': # ESC key
+        print("ESC pressed in OpenGL window. Signaling shutdown.")
+        shutdown_flag.set() # Signal all threads to shut down
+        return
+    
     try: 
-        key_char = key.decode("utf-8").lower() # Decode byte string to char
-    except UnicodeDecodeError: # Handle special keys like ESC and Space
-        if key == b'\x1b': # ESC key
-            print("ESC pressed in OpenGL window. Signaling shutdown.")
-            shutdown_flag.set() # Signal all threads to shut down
-            # GLUT main loop and DPG loop will check this flag.
-            return
-        elif key == b' ': # Space key
-            key_char = ' ' # Handle space as a normal character
-        else:
-            return # Other non-decodeable keys are ignored
+        key_char = key.decode("utf-8").lower() # Decode byte string to char (includes space as ' ')
+    except UnicodeDecodeError: # Handle other special keys
+        return # Other non-decodeable keys are ignored
 
     cfg = global_simulation_bridge.viz_config # For camera reset
 
@@ -5531,6 +5531,7 @@ def keyboard_func_gl(key, x, y):
         if not global_gui_state.get("is_playback_mode_active", False):
             current_sim_running = global_gui_state.get("_sim_is_running_ui_view", False)
             current_sim_paused = global_gui_state.get("_sim_is_paused_ui_view", False)
+            print(f"GL Keyboard: Space pressed. Running={current_sim_running}, Paused={current_sim_paused}")
             
             if not current_sim_running:
                 # Sim is stopped, start it
