@@ -2288,16 +2288,16 @@ class SimulationBridge:
         tau_sec = cfg.ou_tau_ms / 1000.0
         
         # Decay factor: exp(-dt/tau)
-        self.ou_decay_factor = cp.float32(cp.exp(-dt_sec / tau_sec))
+        self.ou_decay_factor = float(cp.exp(-dt_sec / tau_sec))
         
         # Noise std: sigma * sqrt((1 - exp(-2*dt/tau)) / 2)
         # This ensures correct variance in steady state
-        self.ou_noise_std = cp.float32(
+        self.ou_noise_std = float(
             cfg.ou_std_current_pA * cp.sqrt((1.0 - cp.exp(-2.0 * dt_sec / tau_sec)) / 2.0)
         )
         
         # Store mean for convenience
-        self.ou_mean = cp.float32(cfg.ou_mean_current_pA)
+        self.ou_mean = float(cfg.ou_mean_current_pA)
 
     def _calculate_distances_3d_gpu(self, pos_i_cp, pos_neighbors_cp):
         """Calculates Euclidean distances in 3D between a point and an array of other points using CuPy."""
