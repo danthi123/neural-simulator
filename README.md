@@ -38,17 +38,33 @@ A high-performance 3D neural network simulator with real-time OpenGL visualizati
 ### Synaptic Plasticity
 - **Hebbian Learning (LTP/LTD)**: Activity-dependent weight modification
 - **Short-Term Plasticity (STP)**: Tsodyks-Markram depression and facilitation
+- **STDP (Spike-Timing-Dependent Plasticity)**: Classical Bi & Poo asymmetric learning window
+  - LTP when postsynaptic spike follows presynaptic spike
+  - LTD when presynaptic spike follows postsynaptic spike
+  - Exponentially decaying timing window (~20ms)
+  - GPU-accelerated weight updates
+- **Reward-Modulated Plasticity**: Three-factor learning rule (Izhikevich 2007)
+  - Eligibility traces track recent synaptic activity
+  - Dopamine-like reward signal modulates weight changes
+  - Enables reinforcement learning and delayed reward tasks
+- **Structural Plasticity**: Dynamic synapse formation and elimination
+  - Activity-dependent connection formation
+  - Weak synapse pruning
+  - Distance-dependent spatial clustering
+  - Homeostatic connection density regulation
 - **Homeostatic Plasticity**: Adaptive firing thresholds for network stability
 - **Conductance-based synapses**: Separate excitatory (AMPA) and inhibitory (GABA) channels
 
-### Biological Realism
+### Biological Realism (Enabled by Default)
 - **Parameter Heterogeneity**: Per-neuron variability via lognormal/Gaussian distributions
   - Biologically realistic coefficients of variation (CV ~0.3-0.4)
   - Scientifically grounded defaults from experimental literature
-- **Enhanced Channel Noise**: Optional intrinsic stochasticity
+  - Applied to all neuron models automatically
+- **Enhanced Channel Noise**: Intrinsic stochasticity for realistic dynamics
   - Ornstein-Uhlenbeck background current (synaptic bombardment model)
-  - Multiplicative conductance noise for HH model channels
+  - Multiplicative conductance noise for HH model channels (5% relative)
   - Configurable noise levels with GPU-accelerated generation
+  - Produces realistic membrane potential fluctuations (2-5mV)
 
 ### Network Architecture
 - **Neural Structure Profiles**: Brain-region specific network templates
@@ -249,6 +265,18 @@ Note: Requires 16GB+ VRAM
   - U: Baseline utilization (0.1-0.5)
   - tau_d: Depression timescale (50-500 ms)
   - tau_f: Facilitation timescale (20-200 ms)
+- **STDP Parameters** (enabled by default):
+  - A+: LTP amplitude (0.005-0.02, default: 0.01)
+  - A-: LTD amplitude (0.005-0.02, default: 0.0105)
+  - τ+/τ-: Time constants (~20ms)
+- **Reward Modulation** (enabled by default):
+  - Learning rate: 0.001-0.05 (default: 0.01)
+  - Eligibility trace decay: 500-2000ms (default: 1000ms)
+  - Reward signal: Set dynamically during simulation
+- **Structural Plasticity** (enabled by default):
+  - Formation rate: ~1e-6 per timestep
+  - Elimination rate: ~5e-7 per timestep
+  - Update interval: Every 100 steps for efficiency
 - **Homeostasis Target Rate**: Desired firing rate for stability (0.01-0.05)
 
 ### Visualization
