@@ -151,7 +151,7 @@ PyOpenGL-accelerate >= 3.1.6
 The simulator includes a **visualization performance benchmark** that determines your hardware's
 maximum neuron and synapse count for real-time simulation with visualization enabled.
 
-- **Run benchmark from GUI**: Click "Run Viz Performance Test" in Performance Testing & Optimization section
+- **Run benchmark from GUI**: Click "Run Viz Performance Test" in Testing & Optimization section
 - **Run from command line**:
   ```bash
   python viz_benchmark.py --output benchmarks/viz_performance_results.json
@@ -303,9 +303,9 @@ are applied automatically before initialization.
 ### OpenGL Window
 - **ESC**: Exit application
 - **R**: Reset camera position
-- **N**: Toggle synapse visibility
-- **P**: Pause/resume simulation
-- **S**: Step simulation (1ms forward)
+- **S**: Toggle synapse visibility
+- **N**: Cycle neuron display modes (Highlight Spiking → Show Only Spiking → No Spiking Highlight)
+- **Space**: Pause/Resume simulation (or Start if stopped)
 
 ### General
 - **Ctrl+S**: Save profile
