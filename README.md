@@ -52,7 +52,9 @@ A high-performance 3D neural network simulator with real-time OpenGL visualizati
 ### User Interface
 - **DearPyGUI control panel**: Comprehensive parameter configuration
 - **Live monitoring**: Real-time metrics (firing rate, spike counts, plasticity events)
+- **System logs panel**: Real-time console output with search, export, and auto-scroll
 - **Profile management**: Save/load simulation configurations as JSON
+- **Performance testing**: Built-in benchmarking with stop/start controls
 - **Keyboard shortcuts**: Quick access to common operations
 
 ## Requirements
