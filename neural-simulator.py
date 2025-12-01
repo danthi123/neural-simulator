@@ -5531,19 +5531,28 @@ def keyboard_func_gl(key, x, y):
         if not global_gui_state.get("is_playback_mode_active", False):
             current_sim_running = global_gui_state.get("_sim_is_running_ui_view", False)
             current_sim_paused = global_gui_state.get("_sim_is_paused_ui_view", False)
-            print(f"GL Keyboard: Space pressed. Running={current_sim_running}, Paused={current_sim_paused}")
             
             if not current_sim_running:
                 # Sim is stopped, start it
                 ui_to_sim_queue.put({"type": "START_SIM"})
+                # Optimistic UI state update (matches handle_start_simulation_event)
+                global_gui_state["_sim_is_running_ui_view"] = True
+                global_gui_state["_sim_is_paused_ui_view"] = False
+                update_ui_for_simulation_run_state(is_running=True, is_paused=False)
                 print("GL Keyboard: Starting simulation.")
             elif current_sim_paused:
                 # Sim is paused, resume it
                 ui_to_sim_queue.put({"type": "RESUME_SIM"})
+                # Optimistic UI state update (matches handle_pause_simulation_event)
+                global_gui_state["_sim_is_paused_ui_view"] = False
+                update_ui_for_simulation_run_state(is_running=True, is_paused=False)
                 print("GL Keyboard: Resuming simulation.")
             else:
                 # Sim is running, pause it
                 ui_to_sim_queue.put({"type": "PAUSE_SIM"})
+                # Optimistic UI state update (matches handle_pause_simulation_event)
+                global_gui_state["_sim_is_paused_ui_view"] = True
+                update_ui_for_simulation_run_state(is_running=True, is_paused=True)
                 print("GL Keyboard: Pausing simulation.")
     
     elif key_char == 'r': # Reset camera position
