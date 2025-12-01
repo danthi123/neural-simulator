@@ -3977,9 +3977,27 @@ class SimulationBridge:
                     self.cp_conductance_g_e += g_e_increase
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
+            
+            # --- 2.5. Update OU Process & Inject Background Noise ---
+            if cfg.enable_ou_process and hasattr(self, 'cp_ou_current') and self.cp_ou_current is not None:
+                # Update OU current using exact solution: I(t+dt) = I(t)*exp(-dt/tau) + mean*(1-exp(-dt/tau)) + noise
+                ou_seed = cfg.ou_seed if cfg.ou_seed >= 0 else (cfg.seed + self.runtime_state.current_time_step)
+                if ou_seed >= 0:
+                    cp.random.seed(ou_seed)
+                
+                # Exact OU update (Gillespie 1996)
+                noise_samples = cp.random.randn(n_neurons).astype(cp.float32)
+                self.cp_ou_current[:] = (
+                    self.cp_ou_current * self.ou_decay_factor +
+                    self.ou_mean * (1.0 - self.ou_decay_factor) +
+                    self.ou_noise_std * noise_samples
+                )
+                
+                # Add OU current to total input
+                total_input_current_pA = total_input_current_pA + self.cp_ou_current
 
             # --- 3. Neuron Model Dynamics Update ---
-            fired_this_step = cp.zeros(n_neurons, dtype=bool) 
+            fired_this_step = cp.zeros(n_neurons, dtype=bool)
 
             if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
                 v_new, u_new = fused_izhikevich2007_dynamics_update(
@@ -4004,6 +4022,25 @@ class SimulationBridge:
 
             elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
                 total_input_current_uA_density_equivalent = total_input_current_pA * 1e-6 
+                
+                # Apply multiplicative conductance noise (intrinsic channel noise)
+                g_Na_effective = self.cp_hh_g_Na_max
+                g_K_effective = self.cp_hh_g_K_max
+                
+                if cfg.enable_conductance_noise:
+                    noise_seed = cfg.seed + self.runtime_state.current_time_step + 1000000
+                    cp.random.seed(noise_seed)
+                    
+                    # Multiplicative noise: g_noisy = g_nominal * (1 + noise_std * N(0,1))
+                    noise_Na = cp.random.randn(n_neurons).astype(cp.float32)
+                    noise_K = cp.random.randn(n_neurons).astype(cp.float32)
+                    
+                    g_Na_effective = self.cp_hh_g_Na_max * (1.0 + cfg.conductance_noise_relative_std * noise_Na)
+                    g_K_effective = self.cp_hh_g_K_max * (1.0 + cfg.conductance_noise_relative_std * noise_K)
+                    
+                    # Clip to prevent negative conductances
+                    g_Na_effective = cp.maximum(g_Na_effective, 0.0)
+                    g_K_effective = cp.maximum(g_K_effective, 0.0)
 
                 # Start from synaptic/external input current density
                 effective_input_uA = total_input_current_uA_density_equivalent
@@ -4062,7 +4099,7 @@ class SimulationBridge:
                 v_new, m_new, h_new, n_new = fused_hodgkin_huxley_dynamics_update(
                     self.cp_membrane_potential_v, self.cp_gating_variable_m, self.cp_gating_variable_h, self.cp_gating_variable_n,
                     effective_input_uA, dt,
-                    self.cp_hh_C_m, self.cp_hh_g_Na_max, self.cp_hh_g_K_max, self.cp_hh_g_L,
+                    self.cp_hh_C_m, g_Na_effective, g_K_effective, self.cp_hh_g_L,
                     self.cp_hh_E_Na, self.cp_hh_E_K, self.cp_hh_E_L,
                     cfg.hh_temperature_celsius, cfg.hh_q10_factor
                 )
