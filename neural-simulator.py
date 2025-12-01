@@ -490,7 +490,7 @@ class CoreSimConfig:
     conductance_noise_relative_std: float = 0.05  # 5% relative noise (conservative estimate)
     
     # Ornstein-Uhlenbeck process for background synaptic drive
-    enable_ou_process: bool = False
+    enable_ou_process: bool = True  # Enabled by default for biological realism
     ou_mean_current_pA: float = 0.0           # Mean background current (pA)
     ou_std_current_pA: float = 100.0          # Fluctuation amplitude (50-200 pA typical, produces 2-5mV Vm fluctuations)
     ou_tau_ms: float = 15.0                   # Correlation time (10-20 ms, matches synaptic time constants)
@@ -527,7 +527,7 @@ class CoreSimConfig:
     connectivity_p_rewire: float = 0.1
     
     # C2: STDP (Spike-Timing-Dependent Plasticity) - Bi & Poo 1998, Caporale & Dan 2008
-    enable_stdp: bool = False
+    enable_stdp: bool = True  # Enabled by default for biologically realistic learning
     stdp_a_plus: float = 0.01              # LTP amplitude (typical: 0.005-0.02)
     stdp_a_minus: float = 0.0105           # LTD amplitude (typical: slightly > A+)
     stdp_tau_plus_ms: float = 20.0         # LTP time constant (ms, typical: 15-25ms)
@@ -537,14 +537,14 @@ class CoreSimConfig:
     stdp_only_nearest_spike: bool = True   # Use only nearest spike pairs (more efficient)
     
     # C2: Reward-Modulated Plasticity (Three-factor learning rule) - Izhikevich 2007
-    enable_reward_modulation: bool = False
+    enable_reward_modulation: bool = True  # Enabled by default for reinforcement learning
     reward_learning_rate: float = 0.01     # Modulation strength (typical: 0.001-0.05)
     reward_eligibility_tau_ms: float = 1000.0  # Eligibility trace decay (ms, typical: 500-2000ms)
     reward_baseline: float = 0.0           # Expected reward (for prediction error)
     current_reward_signal: float = 0.0     # Current reward value (updated externally or via task)
     
     # C3: Structural Plasticity (Synapse Formation/Elimination) - Butz et al. 2009
-    enable_structural_plasticity: bool = False
+    enable_structural_plasticity: bool = True  # Enabled by default for dynamic network adaptation
     struct_plast_formation_rate: float = 1e-6     # Probability per timestep per neuron pair
     struct_plast_elimination_rate: float = 5e-7   # Probability per timestep per synapse
     struct_plast_weight_threshold: float = 0.05   # Eliminate synapses below this weight
@@ -8084,11 +8084,11 @@ def create_gui_layout():
             
             # C2: STDP Controls
             dpg.add_separator()
-            dpg.add_text("--- Phase C: STDP (Spike-Timing-Dependent Plasticity) ---", color=[100,200,200,255])
+            dpg.add_text("--- STDP (Spike-Timing-Dependent Plasticity) ---", color=[100,200,200,255])
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Enable STDP:", dpg.add_checkbox, "cfg_enable_stdp", False, _update_sim_config_from_ui_and_signal_reset_needed)
+                add_parameter_table_row("Enable STDP:", dpg.add_checkbox, "cfg_enable_stdp", True, _update_sim_config_from_ui_and_signal_reset_needed)
                 add_parameter_table_row("STDP A+ (LTP amplitude, 0.005-0.02):", dpg.add_input_float, "cfg_stdp_a_plus", 0.01, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0)
                 add_parameter_table_row("STDP A- (LTD amplitude, 0.005-0.02):", dpg.add_input_float, "cfg_stdp_a_minus", 0.0105, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0)
                 add_parameter_table_row("STDP Tau+ (LTP time constant, ms):", dpg.add_input_float, "cfg_stdp_tau_plus_ms", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0)
@@ -8098,11 +8098,11 @@ def create_gui_layout():
             
             # C2: Reward Modulation Controls
             dpg.add_separator()
-            dpg.add_text("--- Phase C: Reward-Modulated Plasticity ---", color=[100,200,200,255])
+            dpg.add_text("--- Reward-Modulated Plasticity ---", color=[100,200,200,255])
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Enable Reward Modulation:", dpg.add_checkbox, "cfg_enable_reward_modulation", False, _update_sim_config_from_ui_and_signal_reset_needed)
+                add_parameter_table_row("Enable Reward Modulation:", dpg.add_checkbox, "cfg_enable_reward_modulation", True, _update_sim_config_from_ui_and_signal_reset_needed)
                 add_parameter_table_row("Reward Learning Rate (0.001-0.05):", dpg.add_input_float, "cfg_reward_learning_rate", 0.01, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0)
                 add_parameter_table_row("Eligibility Trace Tau (ms, 500-2000):", dpg.add_input_float, "cfg_reward_eligibility_tau_ms", 1000.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=10.0)
                 add_parameter_table_row("Reward Baseline (expected reward):", dpg.add_input_float, "cfg_reward_baseline", 0.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f")
@@ -8110,11 +8110,11 @@ def create_gui_layout():
             
             # C3: Structural Plasticity Controls
             dpg.add_separator()
-            dpg.add_text("--- Phase C: Structural Plasticity ---", color=[100,200,200,255])
+            dpg.add_text("--- Structural Plasticity ---", color=[100,200,200,255])
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Enable Structural Plasticity:", dpg.add_checkbox, "cfg_enable_structural_plasticity", False, _update_sim_config_from_ui_and_signal_reset_needed)
+                add_parameter_table_row("Enable Structural Plasticity:", dpg.add_checkbox, "cfg_enable_structural_plasticity", True, _update_sim_config_from_ui_and_signal_reset_needed)
                 add_parameter_table_row("Formation Rate (per timestep, 1e-7 to 1e-5):", dpg.add_input_float, "cfg_struct_plast_formation_rate", 1e-6, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2e", min_value=0.0)
                 add_parameter_table_row("Elimination Rate (per timestep, 1e-7 to 1e-5):", dpg.add_input_float, "cfg_struct_plast_elimination_rate", 5e-7, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2e", min_value=0.0)
                 add_parameter_table_row("Weight Threshold (eliminate below):", dpg.add_input_float, "cfg_struct_plast_weight_threshold", 0.05, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", min_value=0.0)
@@ -8194,7 +8194,7 @@ def create_gui_layout():
                     "Enable OU Process (background drive):",
                     dpg.add_checkbox,
                     "cfg_enable_ou_process",
-                    False,
+                    True,
                     _update_sim_config_from_ui_and_signal_reset_needed
                 )
                 add_parameter_table_row(
