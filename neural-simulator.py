@@ -2875,7 +2875,8 @@ class SimulationBridge:
             'cp_hh_C_m','cp_hh_g_Na_max','cp_hh_g_K_max','cp_hh_g_L',
             'cp_hh_E_Na','cp_hh_E_K','cp_hh_E_L', 'cp_hh_v_peak',
             'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
-            'cp_stp_u','cp_stp_x'
+            'cp_stp_u','cp_stp_x',
+            'cp_ou_current'  # OU process state for background noise
         ]
         for attr_name in attrs_to_clear:
             if hasattr(self, attr_name) and getattr(self, attr_name) is not None:
@@ -2990,7 +2991,7 @@ class SimulationBridge:
             'cp_conductance_g_e', 'cp_conductance_g_i', 'cp_recovery_variable_u',
             'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
-            'cp_adex_w'
+            'cp_adex_w', 'cp_ou_current'
         ]
         
         if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
@@ -3070,7 +3071,7 @@ class SimulationBridge:
             'cp_viz_activity_timers', 'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
             'cp_firing_states', 'cp_prev_firing_states',
             'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
-            'cp_adex_w'
+            'cp_adex_w', 'cp_ou_current'
         ]
         for attr_name in arrays_to_capture:
             array_data = getattr(self, attr_name, None)
@@ -4219,7 +4220,7 @@ class SimulationBridge:
                     'cp_traits', 'cp_refractory_timers', 'cp_neuron_positions_3d',
                     'cp_neuron_activity_ema', 'cp_viz_activity_timers',
                     'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
-                    'cp_adex_w'
+                    'cp_adex_w', 'cp_ou_current'
                 ]
                 for attr_name in arrays_to_save_direct:
                     data_array = getattr(self, attr_name, None)
@@ -4343,7 +4344,8 @@ class SimulationBridge:
                     'cp_viz_activity_timers': ('cp_viz_activity_timers', cp.int32),
                     'cp_synapse_pulse_timers': ('cp_synapse_pulse_timers', cp.int32),
                     'cp_synapse_pulse_progress': ('cp_synapse_pulse_progress', cp.float32),
-                    'cp_adex_w': ('cp_adex_w', cp.float32)
+                    'cp_adex_w': ('cp_adex_w', cp.float32),
+                    'cp_ou_current': ('cp_ou_current', cp.float32)
                 }
                 for attr_name, (h5_key, dtype) in direct_load_map.items():
                     setattr(self, attr_name, _load_cp_array_from_h5(h5_key, 
