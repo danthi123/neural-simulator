@@ -15,19 +15,25 @@ A high-performance 3D neural network simulator with real-time OpenGL visualizati
 - **Memory optimized**: Smart GPU memory management with automatic garbage collection
 
 ### Neuron Models
-- **Izhikevich 2007 formulation**: Fast, biologically plausible spiking neurons
-  - Regular Spiking (RS) Cortical Pyramidal cells
-  - Fast Spiking (FS) Cortical Interneurons
-  - Custom parameter configurations
-- **Hodgkin-Huxley model**: Detailed biophysical neuron dynamics
-  - Layer 5 Cortical Pyramidal neurons
-  - Temperature-dependent kinetics (Q10 scaling)
-  - Multi-compartment gating variables (m, h, n)
-  - Optional extended currents (M-current, T-type Ca²⁺, I_h, persistent Na⁺)
-- **Adaptive Exponential Integrate-and-Fire (AdEx)**: Efficient, flexible spiking model
-  - Exponential spike mechanism with adaptation
-  - Layer 5 RS pyramidal default parameters
-  - Fast computation with biological realism
+- **Izhikevich 2007 (9-parameter formulation)**: Fast, biologically plausible spiking neurons
+  - Wide range of cortical and subcortical cell types
+  - Efficient GPU computation with rich dynamics
+  - Supports regular spiking, fast spiking, bursting, chattering, and more
+  - Per-neuron parameter customization
+- **Hodgkin-Huxley (multi-current)**: Detailed biophysical conductance-based model
+  - Extensive library of region-specific presets (cortex, hippocampus, thalamus, basal ganglia)
+  - Temperature-dependent kinetics with Q10 scaling
+  - Standard Na⁺/K⁺/leak channels plus optional extended currents:
+    - M-current (KCNQ, spike frequency adaptation)
+    - T-type Ca²⁺ (low-threshold bursting)
+    - I_h (hyperpolarization-activated cation current)
+    - Persistent Na⁺ (NaP, subthreshold oscillations)
+  - Profile-matched presets for realistic network simulations
+- **Adaptive Exponential Integrate-and-Fire (AdEx)**: Efficient spiking model with adaptation
+  - Exponential spike generation mechanism
+  - Two-variable system (voltage + adaptation current)
+  - Balanced speed and biological realism
+  - Ideal for large-scale network simulations
 
 ### Synaptic Plasticity
 - **Hebbian Learning (LTP/LTD)**: Activity-dependent weight modification
