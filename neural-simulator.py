@@ -808,6 +808,9 @@ class SimulationConfiguration:
         self.ou_std_current_pA = 100.0 # OU process std current (pA)
         self.ou_tau_ms = 15.0 # OU process time constant (ms)
         self.ou_seed = -1 # Seed for OU process (-1 = use main seed)
+        
+        # Hardware Performance Note (populated by viz_benchmark.py)
+        self.hardware_performance_note = "" # Note about hardware realtime capacity
 
         # Network Generation (Watts-Strogatz specific, if spatial fallback is not used)
         self.enable_watts_strogatz = True # Use Watts-Strogatz generator for connections
