@@ -122,6 +122,27 @@ PyOpenGL-accelerate >= 3.1.6
    - **Right click + drag**: Pan camera
    - **Scroll wheel**: Zoom in/out
 
+### Visualization Performance Benchmark
+
+The simulator includes a **visualization performance benchmark** that determines your hardware's
+maximum neuron and synapse count for real-time simulation with visualization enabled.
+
+- **Run benchmark from GUI**: Click "Run Viz Performance Test" in Performance Testing & Optimization section
+- **Run from command line**:
+  ```bash
+  python viz_benchmark.py --output benchmarks/viz_performance_results.json
+  python viz_benchmark.py --quick  # Faster reduced sweep
+  ```
+
+The benchmark:
+- Tests incrementally scaled networks (1K to 100K neurons)
+- Measures visualization update times at 30/60/90+ FPS thresholds  
+- Identifies GPU→CPU data transfer bottlenecks
+- Generates a hardware performance note displayed in the GUI
+- Results auto-load on simulator startup from `benchmarks/viz_performance_results.json`
+
+**Note**: The FPS counter in the OpenGL HUD shows current visualization update rate (0 when stopped/paused).
+
 ### Quick Auto-Tuning (Headless Mode)
 
 The simulator includes a headless **auto-tuning** workflow that scans combinations of
