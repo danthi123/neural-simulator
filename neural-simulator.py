@@ -5897,10 +5897,12 @@ def _populate_ui_from_config_dict(config_dict):
     if hasattr(cfg, "viz_update_interval_steps") and dpg.does_item_exist("cfg_viz_update_interval_steps"):
         dpg.set_value("cfg_viz_update_interval_steps", cfg.viz_update_interval_steps)
     
-    # Hardware performance note
+    # Hardware performance note - only update if config has a value (don't overwrite loaded benchmark data with fallback)
     if hasattr(cfg, "hardware_performance_note") and dpg.does_item_exist("cfg_hardware_performance_note"):
-        note_text = cfg.hardware_performance_note if cfg.hardware_performance_note else "Run visualization benchmark to determine hardware limits (viz_benchmark.py)"
-        dpg.set_value("cfg_hardware_performance_note", note_text)
+        if cfg.hardware_performance_note:  # Only update if config has actual data
+            dpg.set_value("cfg_hardware_performance_note", cfg.hardware_performance_note)
+        elif not dpg.get_value("cfg_hardware_performance_note"):  # Only set fallback if widget is currently empty
+            dpg.set_value("cfg_hardware_performance_note", "Run visualization benchmark to determine hardware limits (viz_benchmark.py)")
     
     # Model-specific parameters
     if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
