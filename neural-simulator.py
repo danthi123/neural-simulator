@@ -5364,44 +5364,47 @@ def render_scene_gl():
     footer_h = opengl_viz_config.get('FOOTER_HEIGHT_PIXELS', 75)
     if footer_h > 0:
         line_h, margin = 15, 10 # Text line height and margin
-        # Get current time and step from runtime_state (updated by sim_thread, reflected in UI thread via queue)
-        # For rendering, it's better if this data is directly from the latest snapshot used for GL.
-        # Assume global_simulation_bridge.runtime_state is reasonably up-to-date via messages or direct access if safe.
-        sim_time_s = (runtime.current_time_ms / 1000.0)
-        render_text_gl(margin, margin + 3*line_h, f"Time: {sim_time_s:.3f} s")
-        render_text_gl(margin, margin + 2*line_h, f"Step: {runtime.current_time_step}")
-        
-        # Get telemetry from sim_bridge (this might need to come from the snapshot too)
-        avg_fr = global_simulation_bridge._mock_network_avg_firing_rate_hz # Accessing sim_bridge directly here
-        render_text_gl(margin, margin + line_h, f"Avg Rate: {avg_fr:.2f} Hz")
-
-        spikes_step = global_simulation_bridge._mock_num_spikes_this_step
         win_w = opengl_viz_config.get('WINDOW_WIDTH', 800)
-        render_text_gl(margin + win_w // 3, margin + 2*line_h, f"Spikes/Step: {spikes_step}")
-
-        mode_text = "Mode: Playback" if global_gui_state.get("is_playback_mode_active") else "Mode: Live"
-        if global_gui_state.get("is_recording_active"): mode_text += " (Recording)"
-        render_text_gl(margin + win_w // 3, margin + line_h, mode_text)
+        
+        # Get current time and step from runtime_state
+        sim_time_s = (runtime.current_time_ms / 1000.0)
+        
+        # Get telemetry from sim_bridge
+        avg_fr = global_simulation_bridge._mock_network_avg_firing_rate_hz
+        spikes_step = global_simulation_bridge._mock_num_spikes_this_step
+        plasticity_events = global_simulation_bridge._mock_total_plasticity_events
         
         # Display FPS counter
-        # Show 0 FPS when sim is stopped/paused and not in playback mode, otherwise show actual FPS
         is_sim_running = global_gui_state.get("_sim_is_running_ui_view", False)
         is_paused = global_gui_state.get("_sim_is_paused_ui_view", False)
         is_playback = global_gui_state.get("is_playback_mode_active", False)
         
         if not is_sim_running and not is_playback:
-            # Sim is stopped - show 0 FPS
             fps_text = "FPS: 0"
         elif is_paused and not is_playback:
-            # Sim is paused - show 0 FPS
             fps_text = "FPS: 0"
         else:
-            # Sim is running or in playback - show actual FPS
             fps_text = f"FPS: {gl_current_fps:.1f}"
         
-        render_text_gl(margin + 2*win_w // 3, margin + 2*line_h, fps_text)
-
-        render_text_gl(margin, margin, "LMB:Rotate, RMB:Pan, Scroll:Zoom, R:Reset Cam, N:Synapses, P:Pause Sim, S:Step Sim, Esc:Exit")
+        mode_text = "Playback" if is_playback else "Live"
+        if global_gui_state.get("is_recording_active"): mode_text += " (Rec)"
+        
+        # Layout: 3 rows of information
+        # Row 3 (top): Time, Spikes/Step, FPS
+        render_text_gl(margin, margin + 3*line_h, f"Time: {sim_time_s:.3f}s")
+        render_text_gl(margin + win_w // 3, margin + 3*line_h, f"Spikes: {spikes_step}")
+        render_text_gl(margin + 2*win_w // 3, margin + 3*line_h, fps_text)
+        
+        # Row 2 (middle): Step, Avg Rate, Mode
+        render_text_gl(margin, margin + 2*line_h, f"Step: {runtime.current_time_step}")
+        render_text_gl(margin + win_w // 3, margin + 2*line_h, f"Rate: {avg_fr:.2f} Hz")
+        render_text_gl(margin + 2*win_w // 3, margin + 2*line_h, f"Mode: {mode_text}")
+        
+        # Row 1 (above hotkeys): Plasticity Events
+        render_text_gl(margin, margin + line_h, f"Plasticity: {plasticity_events}")
+        
+        # Row 0 (bottom): Hotkey hints
+        render_text_gl(margin, margin, "LMB:Rotate, RMB:Pan, Scroll:Zoom, R:Reset, S:Synapses, N:Neurons, Space:Pause/Resume, Esc:Exit")
 
     glut.glutSwapBuffers() # Swap front and back buffers to display rendered scene
 
@@ -5487,17 +5490,21 @@ def keyboard_func_gl(key, x, y):
 
     try: 
         key_char = key.decode("utf-8").lower() # Decode byte string to char
-    except UnicodeDecodeError: # Handle special keys like ESC
+    except UnicodeDecodeError: # Handle special keys like ESC and Space
         if key == b'\x1b': # ESC key
             print("ESC pressed in OpenGL window. Signaling shutdown.")
             shutdown_flag.set() # Signal all threads to shut down
             # GLUT main loop and DPG loop will check this flag.
-        return # Other non-decodeable keys are ignored
+            return
+        elif key == b' ': # Space key
+            key_char = ' ' # Handle space as a normal character
+        else:
+            return # Other non-decodeable keys are ignored
 
     cfg = global_simulation_bridge.viz_config # For camera reset
 
     # --- Keyboard Shortcuts for OpenGL Window ---
-    if key_char == 'n': # Toggle synapse visibility
+    if key_char == 's': # Toggle synapse visibility
         # This action directly modifies UI state, which then affects GL rendering data prep.
         new_show_state = not global_gui_state.get("show_connections_gl", False)
         global_gui_state["show_connections_gl"] = new_show_state
@@ -5506,34 +5513,37 @@ def keyboard_func_gl(key, x, y):
         trigger_filter_update_signal() # Signal GL data needs re-filtering and VBO update
         print(f"Synapse visibility toggled {'on' if new_show_state else 'off'}.")
 
-    elif key_char == 'p': # Pause/Resume simulation (Live mode only)
-        if not global_gui_state.get("is_playback_mode_active", False):
-            # Command the simulation thread to toggle pause
-            # The actual pause/resume is handled by sim_thread, UI updates via queue.
-            current_sim_running = global_gui_state.get("_sim_is_running_ui_view", False) # UI's idea of sim running
-            current_sim_paused = global_gui_state.get("_sim_is_paused_ui_view", False) # UI's idea of sim paused
-            if current_sim_running:
-                if current_sim_paused:
-                    ui_to_sim_queue.put({"type": "RESUME_SIM"})
-                else:
-                    ui_to_sim_queue.put({"type": "PAUSE_SIM"})
-            else:
-                print("GL Keyboard: Sim not running, cannot pause/resume.")
+    elif key_char == 'n': # Cycle through neuron spiking display modes
+        if dpg.is_dearpygui_running() and dpg.does_item_exist("filter_spiking_mode_combo"):
+            modes = ["Highlight Spiking", "Show Only Spiking", "No Spiking Highlight"]
+            current_mode = dpg.get_value("filter_spiking_mode_combo")
+            try:
+                current_idx = modes.index(current_mode)
+                next_idx = (current_idx + 1) % len(modes)
+            except ValueError:
+                next_idx = 0  # Default to first mode if current mode not found
+            new_mode = modes[next_idx]
+            dpg.set_value("filter_spiking_mode_combo", new_mode)
+            trigger_filter_update_signal()
+            print(f"Neuron display mode: {new_mode}")
 
-
-    elif key_char == 's': # Step simulation if paused/stopped (Live mode only)
+    elif key_char == ' ': # Space: Pause/Resume or Start simulation
         if not global_gui_state.get("is_playback_mode_active", False):
-            is_paused_ui = global_gui_state.get("_sim_is_paused_ui_view", False)
-            is_running_ui = global_gui_state.get("_sim_is_running_ui_view", False)
-            if (is_running_ui and is_paused_ui) or not is_running_ui:
-                # Determine number of steps for approx 1ms based on current dt
-                # This dt should come from the actual sim_config, ideally via a UI state mirror
-                # For now, assume a default or fetch if possible (but direct sim_config access is tricky from here)
-                # Let sim_thread decide num_steps for its "STEP_SIM_ONE_MS" command.
-                ui_to_sim_queue.put({"type": "STEP_SIM_ONE_MS"}) 
-                print("GL Keyboard: Step command sent.")
+            current_sim_running = global_gui_state.get("_sim_is_running_ui_view", False)
+            current_sim_paused = global_gui_state.get("_sim_is_paused_ui_view", False)
+            
+            if not current_sim_running:
+                # Sim is stopped, start it
+                ui_to_sim_queue.put({"type": "START_SIM"})
+                print("GL Keyboard: Starting simulation.")
+            elif current_sim_paused:
+                # Sim is paused, resume it
+                ui_to_sim_queue.put({"type": "RESUME_SIM"})
+                print("GL Keyboard: Resuming simulation.")
             else:
-                print("GL Keyboard: Sim must be paused or stopped to step.")
+                # Sim is running, pause it
+                ui_to_sim_queue.put({"type": "PAUSE_SIM"})
+                print("GL Keyboard: Pausing simulation.")
     
     elif key_char == 'r': # Reset camera position
         cfg.camera_azimuth_angle = 0.0
@@ -6601,27 +6611,12 @@ def apply_gui_configuration_core(gui_cfg_dict):
 
 def update_monitoring_overlay_values(sim_data_dict):
     """
-    Updates the DPG monitoring overlay text elements with current simulation data.
+    Updates the DPG monitoring text elements with current simulation data.
     Called by the main/UI thread when new data arrives from sim_to_ui_queue.
+    Note: Most monitoring data is now displayed in the OpenGL HUD. This function
+    only updates the playback frame counter.
     """
-    if not dpg.is_dearpygui_running() or not dpg.does_item_exist("monitor_sim_time_text"): return
-
-    if sim_data_dict is None: # If no data (e.g., sim not started, or error)
-        for tag_sfx in ["sim_time_text", "current_step_text", "step_spikes_text", "avg_firerate_text", "plasticity_updates_text"]:
-            tag, label = f"monitor_{tag_sfx}", tag_sfx.replace('_text', '').replace('_', ' ').title()
-            if dpg.does_item_exist(tag): dpg.set_value(tag, f"{label}: N/A")
-    else: # Valid data received
-        dpg.set_value("monitor_sim_time_text", f"Sim Time: {sim_data_dict.get('current_time_ms', 0)/1000.0:.3f} s")
-        dpg.set_value("monitor_current_step_text", f"Current Step: {sim_data_dict.get('current_time_step', 0)}")
-        dpg.set_value("monitor_step_spikes_text", f"Spikes (step): {sim_data_dict.get('num_spikes_this_step', 0)}")
-        dpg.set_value("monitor_avg_firerate_text", f"Avg Rate (net): {sim_data_dict.get('network_avg_firing_rate_hz', 0.0):.2f} Hz")
-        dpg.set_value("monitor_plasticity_updates_text", f"Plasticity Evts: {sim_data_dict.get('total_plasticity_events', 0)}")
-
-    # Update GL specific monitor values (these are from main thread's GL state)
-    vis_neurons_gl = gl_num_neurons_to_draw if OPENGL_AVAILABLE else 'N/A'
-    vis_syns_gl = gl_num_synapse_lines_to_draw if OPENGL_AVAILABLE else 'N/A'
-    if dpg.does_item_exist("monitor_visible_neurons_text"): dpg.set_value("monitor_visible_neurons_text", f"Visible Neurons: {vis_neurons_gl}")
-    if dpg.does_item_exist("monitor_visible_synapses_text"): dpg.set_value("monitor_visible_synapses_text", f"Visible Synapses: {vis_syns_gl}")
+    if not dpg.is_dearpygui_running(): return
 
     # Update playback frame counter if in playback mode
     if global_gui_state.get("is_playback_mode_active") and dpg.does_item_exist("playback_current_frame_text"):
@@ -7498,14 +7493,9 @@ def create_gui_layout():
                 dpg.add_separator()
                 dpg.add_menu_item(label="Exit", callback=lambda: (shutdown_flag.set(), dpg.stop_dearpygui() if dpg.is_dearpygui_running() else None))
 
-        with dpg.collapsing_header(label="Simulation Monitor", default_open=True, tag="monitor_panel_group"):
-            monitor_labels = ["Sim Time", "Current Step", "Spikes (Current Step)", "Avg Rate (Network)", "Plasticity Events", "Visible Neurons", "Visible Synapses"]
-            monitor_tags = ["sim_time_text", "current_step_text", "step_spikes_text", "avg_firerate_text", "plasticity_updates_text", "visible_neurons_text", "visible_synapses_text"]
-            for label, tag_suffix in zip(monitor_labels, monitor_tags):
-                dpg.add_text(f"{label}: N/A", tag=f"monitor_{tag_suffix}")
-            dpg.add_text("Status: Idle", tag="status_bar_text") 
-
         with dpg.collapsing_header(label="Simulation Controls", default_open=True):
+            dpg.add_text("Status: Idle", tag="status_bar_text")
+            dpg.add_spacer(height=3)
             with dpg.group(horizontal=True):
                 dpg.add_button(label="Start", tag="start_button", callback=handle_start_simulation_event, width = -1)
             with dpg.group(horizontal=True): 
