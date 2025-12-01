@@ -525,6 +525,33 @@ class CoreSimConfig:
     enable_watts_strogatz: bool = True
     connectivity_k: int = 10
     connectivity_p_rewire: float = 0.1
+    
+    # C2: STDP (Spike-Timing-Dependent Plasticity) - Bi & Poo 1998, Caporale & Dan 2008
+    enable_stdp: bool = False
+    stdp_a_plus: float = 0.01              # LTP amplitude (typical: 0.005-0.02)
+    stdp_a_minus: float = 0.0105           # LTD amplitude (typical: slightly > A+)
+    stdp_tau_plus_ms: float = 20.0         # LTP time constant (ms, typical: 15-25ms)
+    stdp_tau_minus_ms: float = 20.0        # LTD time constant (ms, typical: 15-25ms)
+    stdp_w_min: float = 0.0                # Minimum synaptic weight
+    stdp_w_max: float = 2.0                # Maximum synaptic weight
+    stdp_only_nearest_spike: bool = True   # Use only nearest spike pairs (more efficient)
+    
+    # C2: Reward-Modulated Plasticity (Three-factor learning rule) - Izhikevich 2007
+    enable_reward_modulation: bool = False
+    reward_learning_rate: float = 0.01     # Modulation strength (typical: 0.001-0.05)
+    reward_eligibility_tau_ms: float = 1000.0  # Eligibility trace decay (ms, typical: 500-2000ms)
+    reward_baseline: float = 0.0           # Expected reward (for prediction error)
+    current_reward_signal: float = 0.0     # Current reward value (updated externally or via task)
+    
+    # C3: Structural Plasticity (Synapse Formation/Elimination) - Butz et al. 2009
+    enable_structural_plasticity: bool = False
+    struct_plast_formation_rate: float = 1e-6     # Probability per timestep per neuron pair
+    struct_plast_elimination_rate: float = 5e-7   # Probability per timestep per synapse
+    struct_plast_weight_threshold: float = 0.05   # Eliminate synapses below this weight
+    struct_plast_target_density: float = 0.1      # Target connection density (fraction)
+    struct_plast_distance_kernel: str = "exp_decay"  # "uniform", "exp_decay", "gaussian"
+    struct_plast_distance_scale: float = 20.0     # Spatial scale for distance-dependent formation
+    struct_plast_update_interval_steps: int = 100  # Update interval (for efficiency)
 
 @dataclass
 class VisualizationConfig:
@@ -1545,6 +1572,62 @@ def fused_homeostasis_update(neuron_activity_ema_in, fired_this_step_float, targ
     new_neuron_firing_thresholds_clipped = cp.clip(new_neuron_firing_thresholds, thresh_min, thresh_max)
     return new_neuron_activity_ema, new_neuron_firing_thresholds_clipped
 
+# --- Phase C2: STDP Kernels (Bi & Poo 1998, Caporale & Dan 2008) ---
+@cp.fuse()
+def fused_stdp_weight_update(delta_t, w_current, A_plus, A_minus, tau_plus, tau_minus, w_min, w_max):
+    """Fused kernel for STDP weight update based on spike timing difference.
+    
+    Implements classical asymmetric STDP window:
+    - delta_t > 0 (post-before-pre): LTP (potentiation) 
+    - delta_t < 0 (pre-before-post): LTD (depression)
+    
+    Args:
+        delta_t: Spike timing difference (t_post - t_pre) in ms
+        w_current: Current synaptic weight
+        A_plus: LTP amplitude
+        A_minus: LTD amplitude
+        tau_plus: LTP time constant (ms)
+        tau_minus: LTD time constant (ms)
+        w_min: Minimum weight
+        w_max: Maximum weight
+    
+    Returns:
+        Updated synaptic weight
+    """
+    # LTP: delta_t > 0 means post fired after pre -> strengthen synapse
+    # Use soft-bound: delta_w = A_plus * (w_max - w) * exp(-delta_t / tau_plus)
+    ltp_update = cp.where(
+        delta_t > 0.0,
+        A_plus * (w_max - w_current) * cp.exp(-delta_t / tau_plus),
+        0.0
+    )
+    
+    # LTD: delta_t < 0 means pre fired after post -> weaken synapse
+    # Use soft-bound: delta_w = -A_minus * (w - w_min) * exp(delta_t / tau_minus)
+    ltd_update = cp.where(
+        delta_t < 0.0,
+        -A_minus * (w_current - w_min) * cp.exp(delta_t / tau_minus),
+        0.0
+    )
+    
+    # Apply update and clip to bounds
+    w_new = w_current + ltp_update + ltd_update
+    w_new_clipped = cp.clip(w_new, w_min, w_max)
+    return w_new_clipped
+
+@cp.fuse()
+def fused_eligibility_trace_decay(trace, decay_factor):
+    """Fused kernel for eligibility trace exponential decay.
+    
+    Args:
+        trace: Current eligibility trace value
+        decay_factor: exp(-dt / tau)
+    
+    Returns:
+        Decayed trace value
+    """
+    return trace * decay_factor
+
 
 # --- Simulation Bridge (Core Logic) ---
 class SimulationBridge:
@@ -2141,6 +2224,29 @@ class SimulationBridge:
                 self.cp_stp_u = cp.full(num_synapses, cfg.stp_U, dtype=cp.float32) 
             else: 
                 self.cp_stp_x = None; self.cp_stp_u = None
+            
+            # C2: Initialize STDP state arrays
+            if cfg.enable_stdp and n > 0:
+                self._log_console(f"Initializing STDP state for {n} neurons...")
+                # Track last spike time for each neuron (ms, initialized to large negative value)
+                self.cp_last_spike_time = cp.full(n, -1000.0, dtype=cp.float32)
+            else:
+                self.cp_last_spike_time = None
+            
+            # C2: Initialize reward modulation state
+            if cfg.enable_reward_modulation and num_synapses > 0:
+                self._log_console(f"Initializing reward modulation eligibility traces for {num_synapses} synapses...")
+                # Eligibility trace for each synapse (decays over time)
+                self.cp_eligibility_trace = cp.zeros(num_synapses, dtype=cp.float32)
+            else:
+                self.cp_eligibility_trace = None
+            
+            # C3: Initialize structural plasticity state
+            if cfg.enable_structural_plasticity:
+                self._log_console("Initializing structural plasticity state...")
+                self.cp_struct_plast_step_counter = 0  # Track steps for update interval
+            else:
+                self.cp_struct_plast_step_counter = None
 
             self.is_initialized = True
             conn_count = self.cp_connections.nnz if self.cp_connections is not None else 0
@@ -4191,6 +4297,212 @@ class SimulationBridge:
                     self.cp_connections.data *= (1.0 - cfg.hebbian_weight_decay) 
                     cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight, out=self.cp_connections.data)
                     if num_potentiation_events > 0: self._mock_total_plasticity_events += num_potentiation_events
+            
+            # --- 4b. C2: STDP (Spike-Timing-Dependent Plasticity) ---
+            if cfg.enable_stdp and self.cp_last_spike_time is not None and self.cp_connections.nnz > 0:
+                current_time = self.runtime_state.current_time_ms
+                
+                # Update last spike times for neurons that fired this step
+                if fired_this_step.any():
+                    self.cp_last_spike_time = cp.where(
+                        fired_this_step,
+                        current_time,
+                        self.cp_last_spike_time
+                    )
+                
+                # Apply STDP updates for spike pairs
+                # Only update synapses where both pre and post have spiked recently
+                if self.cp_prev_firing_states.any() or fired_this_step.any():
+                    coo_matrix_stdp = self.cp_connections.tocoo(copy=False)
+                    
+                    # Get last spike times for pre and post neurons
+                    pre_spike_times = self.cp_last_spike_time[coo_matrix_stdp.row]
+                    post_spike_times = self.cp_last_spike_time[coo_matrix_stdp.col]
+                    
+                    # Calculate spike timing differences (t_post - t_pre)
+                    delta_t = post_spike_times - pre_spike_times
+                    
+                    # Only update synapses where both neurons have spiked (not at initial value)
+                    valid_pairs_mask = (pre_spike_times > -500.0) & (post_spike_times > -500.0)
+                    
+                    # Apply STDP time window constraint (only update recent spike pairs)
+                    stdp_window_ms = max(cfg.stdp_tau_plus_ms, cfg.stdp_tau_minus_ms) * 5.0  # 5 tau is ~99% decay
+                    within_window_mask = (cp.abs(delta_t) < stdp_window_ms) & valid_pairs_mask
+                    
+                    stdp_active_indices = cp.where(within_window_mask)[0]
+                    
+                    if stdp_active_indices.size > 0:
+                        # Apply STDP weight updates using fused kernel
+                        current_weights = self.cp_connections.data[stdp_active_indices]
+                        delta_t_active = delta_t[stdp_active_indices]
+                        
+                        updated_weights = fused_stdp_weight_update(
+                            delta_t_active,
+                            current_weights,
+                            cfg.stdp_a_plus,
+                            cfg.stdp_a_minus,
+                            cfg.stdp_tau_plus_ms,
+                            cfg.stdp_tau_minus_ms,
+                            cfg.stdp_w_min,
+                            cfg.stdp_w_max
+                        )
+                        
+                        self.cp_connections.data[stdp_active_indices] = updated_weights
+                        
+                        # Update eligibility traces if reward modulation is enabled
+                        if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
+                            # Eligibility trace increases when STDP would cause weight change
+                            weight_changes = updated_weights - current_weights
+                            self.cp_eligibility_trace[stdp_active_indices] += cp.abs(weight_changes)
+                        
+                        self._mock_total_plasticity_events += stdp_active_indices.size
+            
+            # --- 4c. C2: Reward-Modulated Plasticity (Three-Factor Learning) ---
+            if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None and self.cp_connections.nnz > 0:
+                # Decay eligibility traces
+                decay_factor = cp.exp(-dt / cfg.reward_eligibility_tau_ms)
+                self.cp_eligibility_trace = fused_eligibility_trace_decay(
+                    self.cp_eligibility_trace,
+                    decay_factor
+                )
+                
+                # Apply reward modulation if reward signal is non-zero
+                reward_prediction_error = cfg.current_reward_signal - cfg.reward_baseline
+                if abs(reward_prediction_error) > 1e-6:  # Only update if there's a reward signal
+                    # Modulate weights based on eligibility trace and reward
+                    # Delta_w = learning_rate * reward_error * eligibility_trace
+                    weight_updates = cfg.reward_learning_rate * reward_prediction_error * self.cp_eligibility_trace
+                    self.cp_connections.data += weight_updates
+                    
+                    # Clip to bounds (use STDP bounds if STDP is enabled, otherwise Hebbian bounds)
+                    w_min = cfg.stdp_w_min if cfg.enable_stdp else cfg.hebbian_min_weight
+                    w_max = cfg.stdp_w_max if cfg.enable_stdp else cfg.hebbian_max_weight
+                    cp.clip(self.cp_connections.data, w_min, w_max, out=self.cp_connections.data)
+                    
+                    # Count significant updates
+                    significant_updates = cp.sum(cp.abs(weight_updates) > 1e-6)
+                    if significant_updates > 0:
+                        self._mock_total_plasticity_events += int(significant_updates.get())
+            
+            # --- 4d. C3: Structural Plasticity (Synapse Formation/Elimination) ---
+            if cfg.enable_structural_plasticity and self.cp_struct_plast_step_counter is not None:
+                self.cp_struct_plast_step_counter += 1
+                
+                # Only update periodically for efficiency
+                if self.cp_struct_plast_step_counter >= cfg.struct_plast_update_interval_steps:
+                    self.cp_struct_plast_step_counter = 0
+                    
+                    # Synapse elimination: remove weak synapses
+                    weak_synapse_mask = self.cp_connections.data < cfg.struct_plast_weight_threshold
+                    num_weak = cp.sum(weak_synapse_mask).get()
+                    
+                    if num_weak > 0:
+                        # Probabilistic elimination based on elimination rate
+                        # Rate is per-synapse-per-timestep, so scale by update interval
+                        elimination_prob = cfg.struct_plast_elimination_rate * cfg.struct_plast_update_interval_steps
+                        elimination_prob = min(elimination_prob, 0.5)  # Cap at 50% per update
+                        
+                        # Generate random numbers for each weak synapse
+                        eliminate_mask = weak_synapse_mask & (cp.random.rand(self.cp_connections.nnz) < elimination_prob)
+                        num_eliminated = cp.sum(eliminate_mask).get()
+                        
+                        if num_eliminated > 0:
+                            # Set eliminated synapses to zero weight
+                            self.cp_connections.data[eliminate_mask] = 0.0
+                            
+                            # Rebuild sparse matrix to remove zeros (expensive, but necessary)
+                            self.cp_connections.eliminate_zeros()
+                    
+                    # Synapse formation: create new connections
+                    current_density = self.cp_connections.nnz / (n_neurons * n_neurons)
+                    
+                    if current_density < cfg.struct_plast_target_density:
+                        # Calculate number of new synapses to add
+                        target_synapses = int(cfg.struct_plast_target_density * n_neurons * n_neurons)
+                        current_synapses = self.cp_connections.nnz
+                        potential_new = target_synapses - current_synapses
+                        
+                        if potential_new > 0:
+                            # Formation rate per neuron pair per timestep, scaled by update interval
+                            formation_prob = cfg.struct_plast_formation_rate * cfg.struct_plast_update_interval_steps
+                            expected_new_synapses = int(potential_new * formation_prob)
+                            expected_new_synapses = max(1, min(expected_new_synapses, n_neurons * 10))  # Form at least 1, cap at 10*N
+                            
+                            # Generate candidate new connections
+                            # Use distance-dependent probability for spatial realism
+                            candidate_pre = cp.random.randint(0, n_neurons, size=expected_new_synapses * 3, dtype=cp.int32)
+                            candidate_post = cp.random.randint(0, n_neurons, size=expected_new_synapses * 3, dtype=cp.int32)
+                            
+                            # Filter out self-connections and existing connections
+                            valid_candidates_mask = candidate_pre != candidate_post
+                            
+                            # Check if connection already exists (convert to COO for efficient lookup)
+                            coo_existing = self.cp_connections.tocoo(copy=False)
+                            existing_pairs = set(zip(cp.asnumpy(coo_existing.row), cp.asnumpy(coo_existing.col)))
+                            
+                            # Filter candidates on CPU (small operation)
+                            candidate_pre_np = cp.asnumpy(candidate_pre)
+                            candidate_post_np = cp.asnumpy(candidate_post)
+                            valid_candidates_mask_np = cp.asnumpy(valid_candidates_mask)
+                            
+                            new_connections = []
+                            for i in range(len(candidate_pre_np)):
+                                if valid_candidates_mask_np[i]:
+                                    pair = (candidate_pre_np[i], candidate_post_np[i])
+                                    if pair not in existing_pairs and len(new_connections) < expected_new_synapses:
+                                        new_connections.append(pair)
+                            
+                            if len(new_connections) > 0:
+                                # Add new synapses with initial weight
+                                new_pre = cp.array([p[0] for p in new_connections], dtype=cp.int32)
+                                new_post = cp.array([p[1] for p in new_connections], dtype=cp.int32)
+                                
+                                # Calculate distance-dependent initial weights
+                                if cfg.struct_plast_distance_kernel == "exp_decay":
+                                    pre_pos = self.cp_neuron_positions_3d[new_pre]
+                                    post_pos = self.cp_neuron_positions_3d[new_post]
+                                    distances = cp.linalg.norm(pre_pos - post_pos, axis=1)
+                                    distance_factor = cp.exp(-distances / cfg.struct_plast_distance_scale)
+                                elif cfg.struct_plast_distance_kernel == "gaussian":
+                                    pre_pos = self.cp_neuron_positions_3d[new_pre]
+                                    post_pos = self.cp_neuron_positions_3d[new_post]
+                                    distances = cp.linalg.norm(pre_pos - post_pos, axis=1)
+                                    distance_factor = cp.exp(-(distances ** 2) / (2.0 * cfg.struct_plast_distance_scale ** 2))
+                                else:  # uniform
+                                    distance_factor = cp.ones(len(new_connections), dtype=cp.float32)
+                                
+                                # Initial weights scaled by distance
+                                initial_weights = cfg.struct_plast_weight_threshold * 2.0 * distance_factor
+                                
+                                # Create new sparse matrix with added connections
+                                new_connections_matrix = csp.csr_matrix(
+                                    (initial_weights, (new_pre, new_post)),
+                                    shape=(n_neurons, n_neurons),
+                                    dtype=cp.float32
+                                )
+                                
+                                # Add to existing connections
+                                self.cp_connections = self.cp_connections + new_connections_matrix
+                                
+                                # Update STP arrays if enabled
+                                if cfg.enable_short_term_plasticity:
+                                    new_synapse_count = len(new_connections)
+                                    new_stp_x = cp.ones(new_synapse_count, dtype=cp.float32)
+                                    new_stp_u = cp.full(new_synapse_count, cfg.stp_U, dtype=cp.float32)
+                                    self.cp_stp_x = cp.concatenate([self.cp_stp_x, new_stp_x])
+                                    self.cp_stp_u = cp.concatenate([self.cp_stp_u, new_stp_u])
+                                
+                                # Update eligibility traces if reward modulation is enabled
+                                if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
+                                    new_traces = cp.zeros(len(new_connections), dtype=cp.float32)
+                                    self.cp_eligibility_trace = cp.concatenate([self.cp_eligibility_trace, new_traces])
+                                
+                                # Update visualization arrays
+                                if self.cp_synapse_pulse_timers is not None:
+                                    new_timers = cp.zeros(len(new_connections), dtype=cp.int32)
+                                    new_progress = cp.zeros(len(new_connections), dtype=cp.float32)
+                                    self.cp_synapse_pulse_timers = cp.concatenate([self.cp_synapse_pulse_timers, new_timers])
+                                    self.cp_synapse_pulse_progress = cp.concatenate([self.cp_synapse_pulse_progress, new_progress])
 
             # --- 5. Homeostatic Plasticity (Adaptive Thresholds for Izhikevich) ---
             if cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
@@ -4259,6 +4571,21 @@ class SimulationBridge:
                 elif self.cp_stp_u is not None: state_group.attrs["cp_stp_u_is_empty"] = True
                 if self.cp_stp_x is not None and self.cp_stp_x.size > 0: state_group.create_dataset("cp_stp_x", data=cp.asnumpy(self.cp_stp_x), compression="gzip")
                 elif self.cp_stp_x is not None: state_group.attrs["cp_stp_x_is_empty"] = True
+                
+                # C2: Save STDP and reward modulation state
+                if self.cp_last_spike_time is not None and self.cp_last_spike_time.size > 0:
+                    state_group.create_dataset("cp_last_spike_time", data=cp.asnumpy(self.cp_last_spike_time), compression="gzip")
+                elif self.cp_last_spike_time is not None:
+                    state_group.attrs["cp_last_spike_time_is_empty"] = True
+                
+                if self.cp_eligibility_trace is not None and self.cp_eligibility_trace.size > 0:
+                    state_group.create_dataset("cp_eligibility_trace", data=cp.asnumpy(self.cp_eligibility_trace), compression="gzip")
+                elif self.cp_eligibility_trace is not None:
+                    state_group.attrs["cp_eligibility_trace_is_empty"] = True
+                
+                # C3: Save structural plasticity state
+                if self.cp_struct_plast_step_counter is not None:
+                    state_group.attrs["cp_struct_plast_step_counter"] = self.cp_struct_plast_step_counter
 
                 if self.core_config.neuron_model_type == NeuronModel.IZHIKEVICH.name:
                     if self.cp_recovery_variable_u is not None and self.cp_recovery_variable_u.size > 0: state_group.create_dataset("cp_recovery_variable_u", data=cp.asnumpy(self.cp_recovery_variable_u), compression="gzip")
@@ -4409,6 +4736,28 @@ class SimulationBridge:
                         self.cp_stp_u = cp.full(num_synapses_loaded, self.core_config.stp_U, dtype=cp.float32)
                     if self.cp_stp_x is None or self.cp_stp_x.size != num_synapses_loaded:
                         self.cp_stp_x = cp.ones(num_synapses_loaded, dtype=cp.float32)
+                
+                # C2: Load STDP and reward modulation state
+                if self.core_config.enable_stdp and n > 0:
+                    self.cp_last_spike_time = _load_cp_array_from_h5("cp_last_spike_time",
+                        lambda s: cp.full(s, -1000.0, dtype=cp.float32))
+                else:
+                    self.cp_last_spike_time = None
+                
+                if self.core_config.enable_reward_modulation and num_synapses_loaded > 0:
+                    self.cp_eligibility_trace = _load_cp_array_from_h5("cp_eligibility_trace",
+                        lambda s: cp.zeros(s, dtype=cp.float32) if s > 0 else cp.array([], dtype=cp.float32))
+                    # Ensure size matches number of synapses
+                    if self.cp_eligibility_trace.size != num_synapses_loaded:
+                        self.cp_eligibility_trace = cp.zeros(num_synapses_loaded, dtype=cp.float32)
+                else:
+                    self.cp_eligibility_trace = None
+                
+                # C3: Load structural plasticity state
+                if self.core_config.enable_structural_plasticity:
+                    self.cp_struct_plast_step_counter = state_group.attrs.get("cp_struct_plast_step_counter", 0)
+                else:
+                    self.cp_struct_plast_step_counter = None
 
                 if self.core_config.neuron_model_type == NeuronModel.IZHIKEVICH.name:
                     self.cp_recovery_variable_u = _load_cp_array_from_h5("cp_recovery_variable_u", lambda s: cp.zeros(s, dtype=cp.float32))
@@ -7732,6 +8081,46 @@ def create_gui_layout():
                     add_parameter_table_row("Homeostasis Target Rate (spikes/dt for Izh):", dpg.add_input_float, "cfg_homeostasis_target_rate", 0.02, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f")
                     add_parameter_table_row("Homeostasis Min Threshold (Izh, mV):", dpg.add_input_float, "cfg_homeostasis_threshold_min", -55.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f")
                     add_parameter_table_row("Homeostasis Max Threshold (Izh, mV):", dpg.add_input_float, "cfg_homeostasis_threshold_max", -30.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f")
+            
+            # C2: STDP Controls
+            dpg.add_separator()
+            dpg.add_text("--- Phase C: STDP (Spike-Timing-Dependent Plasticity) ---", color=[100,200,200,255])
+            with dpg.table(header_row=False):
+                dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                dpg.add_table_column(width_stretch=True)
+                add_parameter_table_row("Enable STDP:", dpg.add_checkbox, "cfg_enable_stdp", False, _update_sim_config_from_ui_and_signal_reset_needed)
+                add_parameter_table_row("STDP A+ (LTP amplitude, 0.005-0.02):", dpg.add_input_float, "cfg_stdp_a_plus", 0.01, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0)
+                add_parameter_table_row("STDP A- (LTD amplitude, 0.005-0.02):", dpg.add_input_float, "cfg_stdp_a_minus", 0.0105, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0)
+                add_parameter_table_row("STDP Tau+ (LTP time constant, ms):", dpg.add_input_float, "cfg_stdp_tau_plus_ms", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0)
+                add_parameter_table_row("STDP Tau- (LTD time constant, ms):", dpg.add_input_float, "cfg_stdp_tau_minus_ms", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0)
+                add_parameter_table_row("STDP Weight Min:", dpg.add_input_float, "cfg_stdp_w_min", 0.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f")
+                add_parameter_table_row("STDP Weight Max:", dpg.add_input_float, "cfg_stdp_w_max", 2.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f")
+            
+            # C2: Reward Modulation Controls
+            dpg.add_separator()
+            dpg.add_text("--- Phase C: Reward-Modulated Plasticity ---", color=[100,200,200,255])
+            with dpg.table(header_row=False):
+                dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                dpg.add_table_column(width_stretch=True)
+                add_parameter_table_row("Enable Reward Modulation:", dpg.add_checkbox, "cfg_enable_reward_modulation", False, _update_sim_config_from_ui_and_signal_reset_needed)
+                add_parameter_table_row("Reward Learning Rate (0.001-0.05):", dpg.add_input_float, "cfg_reward_learning_rate", 0.01, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0)
+                add_parameter_table_row("Eligibility Trace Tau (ms, 500-2000):", dpg.add_input_float, "cfg_reward_eligibility_tau_ms", 1000.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=10.0)
+                add_parameter_table_row("Reward Baseline (expected reward):", dpg.add_input_float, "cfg_reward_baseline", 0.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f")
+                add_parameter_table_row("Current Reward Signal:", dpg.add_input_float, "cfg_current_reward_signal", 0.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f")
+            
+            # C3: Structural Plasticity Controls
+            dpg.add_separator()
+            dpg.add_text("--- Phase C: Structural Plasticity ---", color=[100,200,200,255])
+            with dpg.table(header_row=False):
+                dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                dpg.add_table_column(width_stretch=True)
+                add_parameter_table_row("Enable Structural Plasticity:", dpg.add_checkbox, "cfg_enable_structural_plasticity", False, _update_sim_config_from_ui_and_signal_reset_needed)
+                add_parameter_table_row("Formation Rate (per timestep, 1e-7 to 1e-5):", dpg.add_input_float, "cfg_struct_plast_formation_rate", 1e-6, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2e", min_value=0.0)
+                add_parameter_table_row("Elimination Rate (per timestep, 1e-7 to 1e-5):", dpg.add_input_float, "cfg_struct_plast_elimination_rate", 5e-7, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2e", min_value=0.0)
+                add_parameter_table_row("Weight Threshold (eliminate below):", dpg.add_input_float, "cfg_struct_plast_weight_threshold", 0.05, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", min_value=0.0)
+                add_parameter_table_row("Target Connection Density (0-1):", dpg.add_input_float, "cfg_struct_plast_target_density", 0.1, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", min_value=0.0, max_value=1.0)
+                add_parameter_table_row("Distance Scale (spatial, units):", dpg.add_input_float, "cfg_struct_plast_distance_scale", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0)
+                add_parameter_table_row("Update Interval (steps):", dpg.add_input_int, "cfg_struct_plast_update_interval_steps", 100, _update_sim_config_from_ui_and_signal_reset_needed, min_value=10, step=10)
         
         with dpg.collapsing_header(label="Heterogeneity & Noise", default_open=False, tag="heterogeneity_noise_header"):
             dpg.add_text("Add biological realism through parameter variability and intrinsic noise.", wrap=label_col_width * 2, color=[200,200,200,255])
