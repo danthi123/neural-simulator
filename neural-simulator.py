@@ -5696,6 +5696,17 @@ def _update_sim_config_from_ui(update_model_specific=True):
         if dpg.does_item_exist("cfg_homeostasis_threshold_min"): cfg_dict_from_ui["homeostasis_threshold_min"] = dpg.get_value("cfg_homeostasis_threshold_min")
         if dpg.does_item_exist("cfg_homeostasis_threshold_max"): cfg_dict_from_ui["homeostasis_threshold_max"] = dpg.get_value("cfg_homeostasis_threshold_max")
         
+        # Heterogeneity & Noise
+        if dpg.does_item_exist("cfg_enable_parameter_heterogeneity"): cfg_dict_from_ui["enable_parameter_heterogeneity"] = dpg.get_value("cfg_enable_parameter_heterogeneity")
+        if dpg.does_item_exist("cfg_heterogeneity_seed"): cfg_dict_from_ui["heterogeneity_seed"] = dpg.get_value("cfg_heterogeneity_seed")
+        if dpg.does_item_exist("cfg_enable_conductance_noise"): cfg_dict_from_ui["enable_conductance_noise"] = dpg.get_value("cfg_enable_conductance_noise")
+        if dpg.does_item_exist("cfg_conductance_noise_relative_std"): cfg_dict_from_ui["conductance_noise_relative_std"] = dpg.get_value("cfg_conductance_noise_relative_std")
+        if dpg.does_item_exist("cfg_enable_ou_process"): cfg_dict_from_ui["enable_ou_process"] = dpg.get_value("cfg_enable_ou_process")
+        if dpg.does_item_exist("cfg_ou_mean_current_pA"): cfg_dict_from_ui["ou_mean_current_pA"] = dpg.get_value("cfg_ou_mean_current_pA")
+        if dpg.does_item_exist("cfg_ou_std_current_pA"): cfg_dict_from_ui["ou_std_current_pA"] = dpg.get_value("cfg_ou_std_current_pA")
+        if dpg.does_item_exist("cfg_ou_tau_ms"): cfg_dict_from_ui["ou_tau_ms"] = dpg.get_value("cfg_ou_tau_ms")
+        if dpg.does_item_exist("cfg_ou_seed"): cfg_dict_from_ui["ou_seed"] = dpg.get_value("cfg_ou_seed")
+        
         # Camera FOV and Visualization settings (part of viz_config)
         if dpg.does_item_exist("cfg_camera_fov"): cfg_dict_from_ui["camera_fov"] = dpg.get_value("cfg_camera_fov")
         if dpg.does_item_exist("cfg_viz_update_interval_steps"): cfg_dict_from_ui["viz_update_interval_steps"] = max(1, dpg.get_value("cfg_viz_update_interval_steps"))
@@ -5851,6 +5862,17 @@ def _populate_ui_from_config_dict(config_dict):
     if dpg.does_item_exist("cfg_homeostasis_target_rate"): dpg.set_value("cfg_homeostasis_target_rate", cfg.homeostasis_target_rate)
     if dpg.does_item_exist("cfg_homeostasis_threshold_min"): dpg.set_value("cfg_homeostasis_threshold_min", cfg.homeostasis_threshold_min)
     if dpg.does_item_exist("cfg_homeostasis_threshold_max"): dpg.set_value("cfg_homeostasis_threshold_max", cfg.homeostasis_threshold_max)
+    
+    # Heterogeneity & Noise
+    if dpg.does_item_exist("cfg_enable_parameter_heterogeneity"): dpg.set_value("cfg_enable_parameter_heterogeneity", cfg.enable_parameter_heterogeneity)
+    if dpg.does_item_exist("cfg_heterogeneity_seed"): dpg.set_value("cfg_heterogeneity_seed", cfg.heterogeneity_seed)
+    if dpg.does_item_exist("cfg_enable_conductance_noise"): dpg.set_value("cfg_enable_conductance_noise", cfg.enable_conductance_noise)
+    if dpg.does_item_exist("cfg_conductance_noise_relative_std"): dpg.set_value("cfg_conductance_noise_relative_std", cfg.conductance_noise_relative_std)
+    if dpg.does_item_exist("cfg_enable_ou_process"): dpg.set_value("cfg_enable_ou_process", cfg.enable_ou_process)
+    if dpg.does_item_exist("cfg_ou_mean_current_pA"): dpg.set_value("cfg_ou_mean_current_pA", cfg.ou_mean_current_pA)
+    if dpg.does_item_exist("cfg_ou_std_current_pA"): dpg.set_value("cfg_ou_std_current_pA", cfg.ou_std_current_pA)
+    if dpg.does_item_exist("cfg_ou_tau_ms"): dpg.set_value("cfg_ou_tau_ms", cfg.ou_tau_ms)
+    if dpg.does_item_exist("cfg_ou_seed"): dpg.set_value("cfg_ou_seed", cfg.ou_seed)
 
     # Camera FOV and Visualization settings
     if dpg.does_item_exist("cfg_camera_fov"): dpg.set_value("cfg_camera_fov", cfg.camera_fov)
@@ -7692,6 +7714,124 @@ def create_gui_layout():
                     add_parameter_table_row("Homeostasis Target Rate (spikes/dt for Izh):", dpg.add_input_float, "cfg_homeostasis_target_rate", 0.02, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f")
                     add_parameter_table_row("Homeostasis Min Threshold (Izh, mV):", dpg.add_input_float, "cfg_homeostasis_threshold_min", -55.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f")
                     add_parameter_table_row("Homeostasis Max Threshold (Izh, mV):", dpg.add_input_float, "cfg_homeostasis_threshold_max", -30.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f")
+        
+        with dpg.collapsing_header(label="Heterogeneity & Noise", default_open=False, tag="heterogeneity_noise_header"):
+            dpg.add_text("Add biological realism through parameter variability and intrinsic noise.", wrap=label_col_width * 2, color=[200,200,200,255])
+            dpg.add_spacer(height=5)
+            
+            dpg.add_text("--- Parameter Heterogeneity ---", color=[200,200,100,255])
+            with dpg.table(header_row=False):
+                dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                dpg.add_table_column(width_stretch=True)
+                add_parameter_table_row(
+                    "Enable Parameter Heterogeneity:",
+                    dpg.add_checkbox,
+                    "cfg_enable_parameter_heterogeneity",
+                    False,
+                    _update_sim_config_from_ui_and_signal_reset_needed
+                )
+                add_parameter_table_row(
+                    "Heterogeneity Seed (-1 = use main seed):",
+                    dpg.add_input_int,
+                    "cfg_heterogeneity_seed",
+                    -1,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    min_value=-1,
+                    step=1
+                )
+            
+            dpg.add_text(
+                "When enabled, parameters are sampled from distributions (CV~0.3-0.4) matching experimental data.",
+                wrap=label_col_width * 2,
+                color=[150,150,150,255]
+            )
+            
+            dpg.add_spacer(height=8)
+            dpg.add_separator()
+            dpg.add_spacer(height=5)
+            
+            dpg.add_text("--- Channel & Background Noise ---", color=[200,200,100,255])
+            with dpg.table(header_row=False):
+                dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                dpg.add_table_column(width_stretch=True)
+                
+                # Conductance noise (HH only)
+                add_parameter_table_row(
+                    "Enable Conductance Noise (HH only):",
+                    dpg.add_checkbox,
+                    "cfg_enable_conductance_noise",
+                    False,
+                    _update_sim_config_from_ui_and_signal_reset_needed
+                )
+                add_parameter_table_row(
+                    "Conductance Noise Std (relative, 0.05 = 5%):",
+                    dpg.add_input_float,
+                    "cfg_conductance_noise_relative_std",
+                    0.05,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    format="%.3f",
+                    min_value=0.0,
+                    max_value=0.5
+                )
+            
+            dpg.add_spacer(height=5)
+            dpg.add_separator()
+            dpg.add_spacer(height=5)
+            
+            with dpg.table(header_row=False):
+                dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                dpg.add_table_column(width_stretch=True)
+                
+                # OU process
+                add_parameter_table_row(
+                    "Enable OU Process (background drive):",
+                    dpg.add_checkbox,
+                    "cfg_enable_ou_process",
+                    False,
+                    _update_sim_config_from_ui_and_signal_reset_needed
+                )
+                add_parameter_table_row(
+                    "OU Mean Current (pA):",
+                    dpg.add_input_float,
+                    "cfg_ou_mean_current_pA",
+                    0.0,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    format="%.1f"
+                )
+                add_parameter_table_row(
+                    "OU Std Current (pA, 50-200 typical):",
+                    dpg.add_input_float,
+                    "cfg_ou_std_current_pA",
+                    100.0,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    format="%.1f",
+                    min_value=0.0
+                )
+                add_parameter_table_row(
+                    "OU Time Constant Tau (ms, 10-20 typical):",
+                    dpg.add_input_float,
+                    "cfg_ou_tau_ms",
+                    15.0,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    format="%.1f",
+                    min_value=1.0,
+                    max_value=100.0
+                )
+                add_parameter_table_row(
+                    "OU Seed (-1 = use main seed):",
+                    dpg.add_input_int,
+                    "cfg_ou_seed",
+                    -1,
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    min_value=-1,
+                    step=1
+                )
+            
+            dpg.add_text(
+                "OU process adds temporally correlated background noise (2-5mV Vm fluctuations).",
+                wrap=label_col_width * 2,
+                color=[150,150,150,255]
+            )
 
         with dpg.collapsing_header(label="Visual Settings & Filters", default_open=False, tag="visual_settings_header"):
             dpg.add_text("--- Neurons ---", color=[150,200,250,255])
