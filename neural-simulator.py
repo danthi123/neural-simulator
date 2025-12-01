@@ -477,6 +477,24 @@ class CoreSimConfig:
     # Per-model external drive scaling (tuned per combination; 1.0 = baseline range)
     hh_external_drive_scale: float = 1.0
     adex_external_drive_scale: float = 1.0
+    
+    # B2: Parameter Heterogeneity (Marder & Goaillard 2006, Tripathy et al. 2013)
+    enable_parameter_heterogeneity: bool = False
+    heterogeneity_seed: int = -1  # Separate from main seed for reproducibility (-1 = use main seed)
+    # Distribution specifications: {"param_name": {"type": "lognormal"|"gaussian", "mean_log"|"mean": X, "sigma_log"|"std": Y}}
+    heterogeneity_distributions: dict = field(default_factory=dict)  # Empty by default, populated on demand
+    
+    # B4: Enhanced Channel Noise (White et al. 2000, Destexhe & Rudolph-Lilith 2012)
+    # Conductance noise (multiplicative, applied to HH channels)
+    enable_conductance_noise: bool = False
+    conductance_noise_relative_std: float = 0.05  # 5% relative noise (conservative estimate)
+    
+    # Ornstein-Uhlenbeck process for background synaptic drive
+    enable_ou_process: bool = False
+    ou_mean_current_pA: float = 0.0           # Mean background current (pA)
+    ou_std_current_pA: float = 100.0          # Fluctuation amplitude (50-200 pA typical, produces 2-5mV Vm fluctuations)
+    ou_tau_ms: float = 15.0                   # Correlation time (10-20 ms, matches synaptic time constants)
+    ou_seed: int = -1                         # Separate seed for noise (-1 = use main seed)
 
     # Synapse & Plasticity
     refractory_period_steps: int = 2
