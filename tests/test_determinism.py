@@ -17,10 +17,21 @@ import numpy as np
 import cupy as cp
 import pytest
 
-from neural_simulator import (
-    SimulationBridge, CoreSimConfig, VisualizationConfig,
-    RuntimeState, GPUConfig, NeuronModel
+# Import from neural-simulator.py (using importlib to handle hyphen)
+import importlib.util
+spec = importlib.util.spec_from_file_location(
+    "neural_simulator",
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "neural-simulator.py")
 )
+neural_simulator = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(neural_simulator)
+
+SimulationBridge = neural_simulator.SimulationBridge
+CoreSimConfig = neural_simulator.CoreSimConfig
+VisualizationConfig = neural_simulator.VisualizationConfig
+RuntimeState = neural_simulator.RuntimeState
+GPUConfig = neural_simulator.GPUConfig
+NeuronModel = neural_simulator.NeuronModel
 
 
 class TestDeterministicSpikes:
