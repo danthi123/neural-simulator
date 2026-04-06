@@ -2535,6 +2535,7 @@ class StimulusChannel:
     # Timing
     onset_ms: float = 0.0                   # Start time relative to phase/trial start
     duration_ms: float = 1000.0             # How long the stimulus is active
+    repeat_period_ms: float = 0.0           # If > 0, stimulus repeats with this period (for trial-based phases)
 
     # Noise overlay
     add_trial_noise: bool = False           # Add per-trial amplitude jitter
@@ -2760,8 +2761,11 @@ class StimulusManager:
             if mask is None:
                 continue
 
-            # Check timing (relative to phase start)
+            # Check timing (relative to phase start, with optional trial repetition)
             t_rel = current_time_ms - phase_start_ms
+            if ch.repeat_period_ms > 0:
+                # Wrap time within trial period for repeating stimuli
+                t_rel = t_rel % ch.repeat_period_ms
             if t_rel < ch.onset_ms or t_rel >= (ch.onset_ms + ch.duration_ms):
                 continue
 
@@ -3677,6 +3681,7 @@ class ExperimentPresets:
                     target_group_name="cs_input",
                     onset_ms=0.0,
                     duration_ms=200.0,
+                    repeat_period_ms=500.0,  # Repeat per trial (400ms stim + 100ms ITI)
                 ),
                 StimulusChannel(
                     name="us",
@@ -3687,16 +3692,18 @@ class ExperimentPresets:
                     target_group_name="us_output",
                     onset_ms=cs_us_delay_ms,
                     duration_ms=100.0,
+                    repeat_period_ms=500.0,  # Repeat per trial
                 ),
             ],
             phases=[
-                # Pre-training baseline: CS alone
+                # Pre-training baseline: CS alone (5 presentations)
                 ExperimentPhase(name="pre_test", phase_type=ExperimentPhaseType.TESTING.name,
                                duration_ms=500.0, active_channels=["cs"],
                                enable_plasticity=False, num_repetitions=5),
-                # Training: CS + US paired
+                # Training: CS + US paired — single long phase, trial engine manages repetitions
                 ExperimentPhase(name="training", phase_type=ExperimentPhaseType.TRAINING.name,
-                               duration_ms=500.0, active_channels=["cs", "us"],
+                               duration_ms=num_trials * 500.0,  # 500ms per trial (400 stim + 100 ITI)
+                               active_channels=["cs", "us"],
                                training_config=TrainingConfig(
                                    mode=TrainingMode.ASSOCIATIVE_PAIRING.name,
                                    num_trials=num_trials,
@@ -3706,8 +3713,8 @@ class ExperimentPresets:
                                    us_channel_name="us",
                                    cs_us_delay_ms=cs_us_delay_ms,
                                ),
-                               num_repetitions=num_trials),
-                # Post-training test: CS alone (US disabled)
+                               num_repetitions=1),
+                # Post-training test: CS alone (US disabled, 10 presentations)
                 ExperimentPhase(name="post_test", phase_type=ExperimentPhaseType.TESTING.name,
                                duration_ms=500.0, active_channels=["cs"],
                                enable_plasticity=False, num_repetitions=10),
@@ -3750,13 +3757,14 @@ class ExperimentPresets:
                     target_group_name="stimulus",
                     onset_ms=0.0,
                     duration_ms=300.0,
+                    repeat_period_ms=600.0,  # Repeat per trial (400ms stim + 200ms ITI)
                 ),
             ],
             phases=[
                 ExperimentPhase(name="baseline", phase_type=ExperimentPhaseType.BASELINE.name,
                                duration_ms=3000.0),
                 ExperimentPhase(name="rl_training", phase_type=ExperimentPhaseType.TRAINING.name,
-                               duration_ms=600.0,
+                               duration_ms=num_trials * 600.0,  # 600ms per trial (400 stim + 200 ITI)
                                active_channels=["input_pattern"],
                                training_config=TrainingConfig(
                                    mode=TrainingMode.REINFORCEMENT_LEARNING.name,
@@ -3772,7 +3780,7 @@ class ExperimentPresets:
                                    eval_delay_ms=100.0,
                                    eval_window_ms=200.0,
                                ),
-                               num_repetitions=num_trials),
+                               num_repetitions=1),
                 ExperimentPhase(name="post_test", phase_type=ExperimentPhaseType.TESTING.name,
                                duration_ms=600.0,
                                active_channels=["input_pattern"],
