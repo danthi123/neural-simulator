@@ -30,8 +30,8 @@ wheels/
 *.swo
 *~
 
-# Simulation output directories
-simulation_profiles/
+# Simulation output directories (profiles tracked, but auto-tuned overrides are machine-specific)
+simulation_profiles/auto_tuned_overrides.json
 simulation_checkpoints_h5/
 simulation_recordings_h5/
 
