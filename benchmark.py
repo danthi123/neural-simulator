@@ -58,8 +58,15 @@ class BenchmarkRunner:
             self.connections_per_neuron = [100, 500]
             self.models = [NeuronModel.IZHIKEVICH.name]
         else:
-            self.neuron_counts = [1000, 10000, 50000]
-            self.connections_per_neuron = [100, 500, 1000]
+            # Biologically realistic neuron/connection ratios:
+            #   Cortical neurons: ~7K-10K synapses/neuron
+            #   Thalamic relay: ~2K-5K synapses/neuron
+            #   Hippocampal CA3: ~12K-30K (highly recurrent)
+            # We test sparse (100), moderate (1K), and cortical-realistic (5K).
+            # At large N, higher conn/neuron increases memory substantially —
+            # the estimator auto-skips configs that would exceed VRAM.
+            self.neuron_counts = [1000, 10000, 50000, 100000]
+            self.connections_per_neuron = [100, 1000, 5000]
             self.models = [
                 NeuronModel.IZHIKEVICH.name,
                 NeuronModel.HODGKIN_HUXLEY.name,
@@ -92,23 +99,26 @@ class BenchmarkRunner:
             return {"error": str(e)}
     
     def estimate_memory_requirement(self, n_neurons, conn_per_neuron):
-        """Estimates GPU memory requirement for a configuration."""
-        # Conservative estimates in bytes:
-        # - Each neuron: ~200 bytes (state variables)
-        # - Each synapse: ~8 bytes (weight in sparse matrix)
-        bytes_per_neuron = 200
+        """Estimates GPU memory requirement for a configuration.
+
+        Based on actual measurements from RTX 3090 benchmarks:
+        - Per-neuron overhead: ~32KB (state vars, positions, heterogeneity, OU, STDP traces)
+        - Per-synapse overhead: ~80 bytes (CSR weight + STP u,x + eligibility + structural arrays)
+        - Connection generation peak: ~2x steady-state (temporary distance/prob matrices)
+        """
         synapses_estimate = n_neurons * conn_per_neuron
-        bytes_per_synapse = 8
-        
-        # Add overhead for recording buffers, temporary arrays, etc.
-        overhead_factor = 1.5
-        
-        estimated_bytes = (
-            (n_neurons * bytes_per_neuron + synapses_estimate * bytes_per_synapse) 
-            * overhead_factor
-        )
-        
-        return estimated_bytes
+
+        # Steady-state memory
+        bytes_per_neuron = 32000    # ~32KB per neuron (measured: 1.6GB / 50K = 32KB)
+        bytes_per_synapse = 80      # ~80 bytes per synapse (measured: 5GB at 50M synapses)
+
+        steady_state = n_neurons * bytes_per_neuron + synapses_estimate * bytes_per_synapse
+
+        # Connection generation needs additional temporary VRAM (chunked: ~35% of free mem)
+        # For large networks, generation peak can be 2x steady state
+        gen_overhead = 1.5 if n_neurons <= 10000 else 2.0
+
+        return int(steady_state * gen_overhead)
     
     def check_memory_available(self, required_bytes):
         """Checks if enough GPU memory is available."""
@@ -153,12 +163,20 @@ class BenchmarkRunner:
             sys.stdout.flush()
             return 'SKIPPED'  # Special return value
         
-        # Create config objects
+        # Create config objects — set dt_ms per model to respect stability constraints
+        model_type = config_dict['neuron_model_type']
+        if model_type == NeuronModel.HODGKIN_HUXLEY.name:
+            dt_ms = 0.025  # HH gating kinetics require ≤0.1ms; 0.025ms standard
+        elif model_type == NeuronModel.ADEX.name:
+            dt_ms = 0.1    # AdEx exponential term needs ≤0.5ms; 0.1ms safe
+        else:
+            dt_ms = 1.0    # Izhikevich stable at 1.0ms
+
         core_config = CoreSimConfig(
             num_neurons=config_dict['num_neurons'],
             connections_per_neuron=config_dict['connections_per_neuron'],
             neuron_model_type=config_dict['neuron_model_type'],
-            dt_ms=1.0,
+            dt_ms=dt_ms,
             seed=42,  # Fixed seed for reproducibility
             enable_hebbian_learning=False,  # Disable for consistent benchmarking
             enable_short_term_plasticity=False,
@@ -286,10 +304,19 @@ class BenchmarkRunner:
                     config_num += 1
                     print(f"\n[{config_num}/{total_configs}]")
                     
+                    # Set dt_ms per model for stability
+                    if model == NeuronModel.HODGKIN_HUXLEY.name:
+                        dt = 0.025
+                    elif model == NeuronModel.ADEX.name:
+                        dt = 0.1
+                    else:
+                        dt = 1.0
+
                     config_dict = {
                         "num_neurons": n_neurons,
                         "connections_per_neuron": conn_per_neuron,
-                        "neuron_model_type": model
+                        "neuron_model_type": model,
+                        "dt_ms": dt
                     }
                     
                     result = self.run_single_benchmark(config_dict)

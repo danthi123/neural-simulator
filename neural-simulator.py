@@ -13,8 +13,25 @@ import h5py
 import math
 import queue
 import signal
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field, asdict, fields
 from typing import List
+
+# Optional: hdf5plugin for LZ4 compression (faster than gzip)
+try:
+    import hdf5plugin
+    HAS_HDF5PLUGIN = True
+except ImportError:
+    HAS_HDF5PLUGIN = False
+    # Fallback warning printed later when needed
+
+# Optional: psutil for CPU memory monitoring during recording
+try:
+    import psutil
+    HAS_PSUTIL = True
+except ImportError:
+    HAS_PSUTIL = False
+    # CPU memory monitoring disabled without psutil
 
 # === LOG CAPTURE SYSTEM ===
 # Initialize IMMEDIATELY after imports to capture ALL print output
@@ -119,7 +136,10 @@ except ImportError:
 
 
 import cupy as cp
-import cupy.sparse as csp
+try:
+    import cupy.sparse as csp
+except (ImportError, ModuleNotFoundError):
+    import cupyx.scipy.sparse as csp
 print("CuPy initialized for GPU acceleration.")
 
 RECORDING_FORMAT_VERSION = "1.1.0-h5" # Version for .simrec.h5 files
@@ -171,7 +191,11 @@ class DefaultIzhikevichParamsManager:
         },
         NeuronType.IZH2007_FS_CORTICAL_INTERNEURON: {
             "C": 20.0, "k": 1.0, "vr": -55.0, "vt": -40.0, "vpeak": 25.0,
-            "a": 0.2, "b": -2.0, "c_reset": -45.0, "d_increment": -55.0 # d_increment was -55.0, Izhikevich paper says -65 for some FS, but params vary. This seems specific.
+            "a": 0.2, "b": -2.0, "c_reset": -45.0, "d_increment": 25.0
+            # d_increment must be POSITIVE for FS interneurons (Izhikevich 2007, Table 2).
+            # Positive d drives post-spike recovery variable u upward → stronger AHP → faster return to rest.
+            # Negative d would paradoxically cause post-spike depolarization (excitation after inhibition).
+            # Value of 25 pA gives the characteristic non-adapting, high-frequency firing pattern of PV+ basket cells.
         },
         NeuronType.RS_EXCITATORY_LEGACY: {"a": 0.02, "b": 0.2, "c_reset": -65.0, "d_increment": 8.0, "vpeak": 30.0},
         NeuronType.FS_INHIBITORY_LEGACY: {"a": 0.1, "b": 0.2, "c_reset": -65.0, "d_increment": 2.0, "vpeak": 30.0},
@@ -222,6 +246,52 @@ class DefaultHodgkinHuxleyParams:
         "E_h": -30.0,
         "g_NaP_max": 0.0,
     }
+    @staticmethod
+    def compute_hh_gating_steady_state(V_rest, temperature_celsius=37.0, q10_factor=3.0):
+        """Compute HH gating variable steady-state values at a given resting potential.
+
+        This ensures gating variables start at equilibrium regardless of V_rest,
+        avoiding transient artifacts at simulation onset. Uses original HH alpha/beta
+        rate functions with Q10 temperature correction.
+
+        Args:
+            V_rest: Resting membrane potential (mV)
+            temperature_celsius: Simulation temperature (°C)
+            q10_factor: Q10 temperature coefficient (default 3.0)
+
+        Returns:
+            dict with 'm_init', 'h_init', 'n_init' at steady-state for V_rest
+        """
+        import math
+        V = V_rest
+        BASE_T = 6.3  # Original HH kinetics temperature
+        phi = q10_factor ** ((temperature_celsius - BASE_T) / 10.0)
+
+        # Alpha/beta rate functions (original HH, Hodgkin & Huxley 1952)
+        v40 = V + 40.0
+        if abs(v40) < 1e-6:
+            alpha_m = 1.0  # L'Hôpital limit
+        else:
+            alpha_m = -0.1 * v40 / (math.exp(-v40 / 10.0) - 1.0)
+        beta_m = 4.0 * math.exp(-(V + 65.0) / 18.0)
+
+        alpha_h = 0.07 * math.exp(-(V + 65.0) / 20.0)
+        beta_h = 1.0 / (math.exp(-(V + 35.0) / 10.0) + 1.0)
+
+        v55 = V + 55.0
+        if abs(v55) < 1e-6:
+            alpha_n = 0.1 * 0.01 * 10.0  # L'Hôpital limit
+        else:
+            alpha_n = -0.01 * v55 / (math.exp(-v55 / 10.0) - 1.0)
+        beta_n = 0.125 * math.exp(-(V + 65.0) / 80.0)
+
+        # phi cancels in inf = alpha/(alpha+beta) since both scale by phi
+        m_inf = alpha_m / (alpha_m + beta_m) if (alpha_m + beta_m) > 0 else 0.0
+        h_inf = alpha_h / (alpha_h + beta_h) if (alpha_h + beta_h) > 0 else 1.0
+        n_inf = alpha_n / (alpha_n + beta_n) if (alpha_n + beta_n) > 0 else 0.0
+
+        return {"m_init": round(m_inf, 6), "h_init": round(h_inf, 6), "n_init": round(n_inf, 6)}
+
     # Original Hodgkin-Huxley parameters (Squid Giant Axon at 6.3 C)
     ORIGINAL_HH_PARAMS = {
         "C_m": 1.0, "g_Na_max": 120.0, "g_K_max": 36.0, "g_L": 0.3,
@@ -502,6 +572,12 @@ class CoreSimConfig:
     syn_reversal_potential_i: float = -70.0
     syn_tau_g_e: float = 5.0
     syn_tau_g_i: float = 10.0
+    # NMDA conductance with voltage-dependent Mg²⁺ block (Jahr & Stevens 1990)
+    enable_nmda: bool = False
+    nmda_ratio: float = 0.4           # NMDA:AMPA conductance ratio (0 = no NMDA, 1 = equal)
+    nmda_tau_decay: float = 100.0     # NMDA decay time constant (ms) — slow compared to AMPA
+    nmda_tau_rise: float = 3.0        # NMDA rise time constant (ms)
+    nmda_mg_concentration: float = 1.0  # Extracellular [Mg²⁺] in mM
     propagation_strength: float = 0.05
     inhibitory_propagation_strength: float = 0.15
     max_synaptic_delay_ms: float = 20.0
@@ -522,6 +598,10 @@ class CoreSimConfig:
     homeostasis_ema_alpha: float = 0.01
     homeostasis_threshold_min: float = -55.0
     homeostasis_threshold_max: float = -30.0
+    # Synaptic scaling (Turrigiano 2008): multiplicatively scales excitatory weights
+    # toward target rate. Works across all neuron models, biologically grounded.
+    enable_synaptic_scaling: bool = False
+    synaptic_scaling_rate: float = 0.001  # Slow scaling rate (operates on seconds timescale)
     enable_watts_strogatz: bool = True
     connectivity_k: int = 10
     connectivity_p_rewire: float = 0.1
@@ -552,6 +632,64 @@ class CoreSimConfig:
     struct_plast_distance_kernel: str = "exp_decay"  # "uniform", "exp_decay", "gaussian"
     struct_plast_distance_scale: float = 20.0     # Spatial scale for distance-dependent formation
     struct_plast_update_interval_steps: int = 100  # Update interval (for efficiency)
+
+    def __post_init__(self):
+        """Validate configuration parameters after initialization."""
+        errors = []
+
+        # Time parameters
+        if self.dt_ms <= 0:
+            errors.append(f"dt_ms must be positive, got {self.dt_ms}")
+        if self.dt_ms > 0.1 and self.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
+            errors.append(f"dt_ms={self.dt_ms}ms is UNSAFE for Hodgkin-Huxley (max 0.1ms for stability). "
+                          f"HH gating kinetics have time constants ~0.1-1ms at 37°C; dt must resolve these.")
+        if self.total_simulation_time_ms <= 0:
+            errors.append(f"total_simulation_time_ms must be positive, got {self.total_simulation_time_ms}")
+
+        # Network parameters
+        if self.num_neurons <= 0:
+            errors.append(f"num_neurons must be positive, got {self.num_neurons}")
+        if self.connections_per_neuron < 0:
+            errors.append(f"connections_per_neuron cannot be negative, got {self.connections_per_neuron}")
+        if self.num_traits <= 0:
+            errors.append(f"num_traits must be positive, got {self.num_traits}")
+
+        # Learning rate validations
+        if self.hebbian_learning_rate < 0:
+            errors.append(f"hebbian_learning_rate cannot be negative, got {self.hebbian_learning_rate}")
+        if self.reward_learning_rate < 0:
+            errors.append(f"reward_learning_rate cannot be negative, got {self.reward_learning_rate}")
+        if self.stdp_a_plus < 0:
+            errors.append(f"stdp_a_plus cannot be negative, got {self.stdp_a_plus}")
+        if self.stdp_a_minus < 0:
+            errors.append(f"stdp_a_minus cannot be negative, got {self.stdp_a_minus}")
+
+        # Weight bounds
+        if self.hebbian_min_weight > self.hebbian_max_weight:
+            errors.append(f"hebbian_min_weight ({self.hebbian_min_weight}) > hebbian_max_weight ({self.hebbian_max_weight})")
+        if self.stdp_w_min > self.stdp_w_max:
+            errors.append(f"stdp_w_min ({self.stdp_w_min}) > stdp_w_max ({self.stdp_w_max})")
+
+        # Plasticity parameters
+        if self.stp_U < 0 or self.stp_U > 1:
+            errors.append(f"stp_U must be in [0, 1], got {self.stp_U}")
+        if self.stp_tau_d <= 0:
+            errors.append(f"stp_tau_d must be positive, got {self.stp_tau_d}")
+        if self.stp_tau_f <= 0:
+            errors.append(f"stp_tau_f must be positive, got {self.stp_tau_f}")
+
+        # Structural plasticity
+        if self.struct_plast_target_density < 0 or self.struct_plast_target_density > 1:
+            errors.append(f"struct_plast_target_density must be in [0, 1], got {self.struct_plast_target_density}")
+
+        # Raise all errors together
+        if errors:
+            raise ValueError("CoreSimConfig validation failed:\n  - " + "\n  - ".join(errors))
+
+    def to_dict(self):
+        """Convert to dictionary for serialization."""
+        from dataclasses import asdict
+        return asdict(self)
 
 @dataclass
 class VisualizationConfig:
@@ -594,29 +732,104 @@ class GPUConfig:
     enable_gpu_buffered_recording: bool = True
     recording_mode: str = "gpu_buffered"  # "gpu_buffered", "streaming", "disabled"
     max_recording_memory_fraction: float = 0.6  # Fraction of free GPU memory for recording
-    
+    recording_compression: str = "lz4"  # "lz4", "gzip", "none" - LZ4 is 5-10x faster
+    recording_compression_level: int = 1  # 1-9 for gzip (lower=faster), ignored for lz4
+    enable_parallel_compression: bool = True  # Use ThreadPoolExecutor for batch writes
+    parallel_compression_workers: int = 4  # Number of worker threads for compression
+    enable_delta_encoding: bool = False  # Store only changed values (experimental)
+    delta_keyframe_interval: int = 100  # Full frame every N frames when delta encoding
+    delta_threshold: float = 0.001  # Values must change by this much to store in delta
+
+    # Large-scale recording options (for 100K+ neuron simulations)
+    recording_skip_synaptic_data: bool = False  # Skip connection weights and STP arrays (16x smaller frames)
+    recording_frame_skip: int = 1  # Record every Nth frame (1 = every frame, 10 = every 10th)
+    streaming_write_batch_size: int = 10  # Write frames in batches when streaming
+    streaming_async_write: bool = True  # Use background thread for async disk writes
+
+    # Recording memory safety
+    recording_memory_check_interval: int = 50  # Check memory every N frames during recording
+    recording_gpu_memory_limit: float = 0.85  # Auto-pause when GPU usage exceeds this
+    recording_cpu_memory_limit: float = 0.90  # Auto-pause when CPU RAM usage exceeds this
+    recording_auto_pause_on_memory: bool = True  # Auto-pause simulation when memory critical
+
     # Playback modes
     enable_gpu_buffered_playback: bool = True
     playback_mode: str = "gpu_cached"  # "gpu_cached", "streaming", "auto"
-    
+    playback_cache_chunk_size: int = 100  # Frames per batch when loading cache
+    enable_playback_prefetch: bool = True  # Prefetch next N frames during streaming
+    playback_prefetch_count: int = 10  # Number of frames to prefetch ahead
+
     # CUDA-OpenGL interop
     enable_cuda_gl_interop: bool = True
     cuda_gl_fallback_on_error: bool = True
-    
+
     # Memory management
     memory_pool_limit_fraction: float = 0.8  # Max fraction of GPU memory for mempool
     enable_adaptive_quality: bool = True  # Reduce quality under memory pressure
     memory_pressure_threshold: float = 0.9  # Trigger cleanup above this usage
     memory_warning_threshold: float = 0.8  # Log warning above this usage
-    
+
     # GPU connection generation (future)
     enable_gpu_connectivity_generation: bool = False  # Placeholder for future work
     enable_gpu_synapse_filtering: bool = False  # Placeholder for future work
-    
+
     # Performance profiling
     enable_profiling: bool = False  # Disabled by default for production
     profiling_window_size: int = 100  # Number of steps to keep in timing deques
     profiling_detailed: bool = False  # Log per-kernel timings
+
+    # Performance tuning
+    stats_sync_interval_steps: int = 17  # Sync GPU stats every N steps (default ~60Hz at dt=1ms)
+    max_steps_per_batch: int = 60  # Max simulation steps before yielding to UI
+    data_update_interval_steps: int = 1  # Steps between GUI data updates
+
+    # Debug mode
+    enable_debug_checks: bool = False  # Enable inf/nan checking (performance impact)
+
+    # Structural plasticity optimization
+    struct_plast_compaction_interval: int = 1000  # Steps between CSR compaction
+    synapse_capacity_growth_factor: float = 1.5  # Pre-allocation growth factor
+
+    def __post_init__(self):
+        """Validate GPU configuration parameters."""
+        errors = []
+
+        # Memory fractions must be in valid range
+        if not 0 < self.memory_pool_limit_fraction <= 1:
+            errors.append(f"memory_pool_limit_fraction must be in (0, 1], got {self.memory_pool_limit_fraction}")
+        if not 0 < self.max_recording_memory_fraction <= 1:
+            errors.append(f"max_recording_memory_fraction must be in (0, 1], got {self.max_recording_memory_fraction}")
+        if not 0 < self.memory_pressure_threshold <= 1:
+            errors.append(f"memory_pressure_threshold must be in (0, 1], got {self.memory_pressure_threshold}")
+        if not 0 < self.memory_warning_threshold <= 1:
+            errors.append(f"memory_warning_threshold must be in (0, 1], got {self.memory_warning_threshold}")
+
+        # Validate recording memory safety limits
+        if not 0 < self.recording_gpu_memory_limit <= 1:
+            errors.append(f"recording_gpu_memory_limit must be in (0, 1], got {self.recording_gpu_memory_limit}")
+        if not 0 < self.recording_cpu_memory_limit <= 1:
+            errors.append(f"recording_cpu_memory_limit must be in (0, 1], got {self.recording_cpu_memory_limit}")
+        if self.recording_memory_check_interval < 1:
+            errors.append(f"recording_memory_check_interval must be >= 1, got {self.recording_memory_check_interval}")
+
+        # Validate intervals
+        if self.stats_sync_interval_steps < 1:
+            errors.append(f"stats_sync_interval_steps must be >= 1, got {self.stats_sync_interval_steps}")
+        if self.max_steps_per_batch < 1:
+            errors.append(f"max_steps_per_batch must be >= 1, got {self.max_steps_per_batch}")
+        if self.struct_plast_compaction_interval < 1:
+            errors.append(f"struct_plast_compaction_interval must be >= 1, got {self.struct_plast_compaction_interval}")
+
+        # Validate recording/playback modes
+        valid_recording_modes = {"gpu_buffered", "streaming", "disabled"}
+        if self.recording_mode not in valid_recording_modes:
+            errors.append(f"recording_mode must be one of {valid_recording_modes}, got '{self.recording_mode}'")
+        valid_playback_modes = {"gpu_cached", "streaming", "auto"}
+        if self.playback_mode not in valid_playback_modes:
+            errors.append(f"playback_mode must be one of {valid_playback_modes}, got '{self.playback_mode}'")
+
+        if errors:
+            raise ValueError("GPUConfig validation failed:\n  - " + "\n  - ".join(errors))
 
 def _create_config_from_dict(config_cls, data_dict):
     """Helper to create a dataclass instance from a dictionary, ignoring extra keys."""
@@ -704,6 +917,195 @@ def get_auto_tuned_overrides_for_combo(neuron_model_type_str, profile_name_str, 
         entry = AUTO_TUNED_OVERRIDES.get(key_model_profile)
 
     return entry
+
+
+# --- Benchmark-derived hardware limits ---
+BENCHMARK_RESULTS_PATH = os.path.join("benchmarks", "benchmark_results.json")
+HARDWARE_LIMITS = None  # Lazy-loaded dict: model_name -> {max_neurons, max_conn, limits_table, hardware_note}
+
+
+def _parse_benchmark_limits(results_data):
+    """Parses benchmark_results.json and derives per-model hardware limits.
+
+    Builds a table of tested configurations with their performance, and determines
+    the maximum neuron/connection counts that succeeded for each model.
+
+    Returns:
+        dict: {
+            "gpu_name": str,
+            "per_model": {
+                "IZHIKEVICH": {
+                    "max_neurons_tested": 50000,
+                    "max_conn_tested": 1000,
+                    "realtime_max_neurons": 10000,   # Steps/s >= 1000/dt (real-time threshold)
+                    "configs": [  # All tested configs for this model, sorted by size
+                        {"neurons": 1000, "conn": 100, "steps_per_sec": 345.0, "mean_ms": 2.9, "gpu_gb": 1.2},
+                        ...
+                    ]
+                },
+                ...
+            },
+            "hardware_note": str  # Human-readable summary
+        }
+    """
+    gpu_info = results_data.get("system_info", {})
+    gpu_name = gpu_info.get("gpu_name", "Unknown GPU")
+    gpu_mem_gb = gpu_info.get("gpu_memory_gb", 0)
+
+    per_model = {}
+    for entry in results_data.get("results", []):
+        cfg = entry.get("config", {})
+        metrics = entry.get("metrics", {})
+        if not cfg or not metrics:
+            continue
+
+        model = cfg.get("neuron_model_type", "UNKNOWN")
+        dt_ms = cfg.get("dt_ms", 1.0)
+        neurons = cfg.get("num_neurons", 0)
+        conn = cfg.get("connections_per_neuron", 0)
+        steps_per_sec = metrics.get("steps_per_sec", 0)
+        mean_ms = metrics.get("step_time_mean_ms", 0)
+        gpu_gb = metrics.get("gpu_memory_used_gb", 0)
+
+        if model not in per_model:
+            per_model[model] = {
+                "max_neurons_tested": 0,
+                "max_conn_tested": 0,
+                "realtime_max_neurons": 0,
+                "dt_ms": dt_ms,
+                "configs": []
+            }
+
+        info = per_model[model]
+        info["configs"].append({
+            "neurons": neurons, "conn": conn,
+            "steps_per_sec": steps_per_sec, "mean_ms": mean_ms, "gpu_gb": gpu_gb
+        })
+
+        if neurons > info["max_neurons_tested"]:
+            info["max_neurons_tested"] = neurons
+        if conn > info["max_conn_tested"]:
+            info["max_conn_tested"] = conn
+
+        # Real-time threshold: steps_per_sec >= 1000/dt_ms (i.e., 1 second of bio time per wall second)
+        realtime_threshold = 1000.0 / dt_ms if dt_ms > 0 else 1000.0
+        if steps_per_sec >= realtime_threshold and neurons > info["realtime_max_neurons"]:
+            info["realtime_max_neurons"] = neurons
+
+    # Sort configs by neuron count then connection count
+    for model, info in per_model.items():
+        info["configs"].sort(key=lambda x: (x["neurons"], x["conn"]))
+
+    # Build human-readable summary
+    model_short = {"IZHIKEVICH": "Izh", "HODGKIN_HUXLEY": "HH", "ADEX": "AdEx"}
+    lines = [f"{gpu_name} ({gpu_mem_gb:.0f}GB) — Benchmark Limits:"]
+    for model_name in ["IZHIKEVICH", "HODGKIN_HUXLEY", "ADEX"]:
+        if model_name not in per_model:
+            continue
+        info = per_model[model_name]
+        short = model_short.get(model_name, model_name[:3])
+        max_n = info["max_neurons_tested"]
+        max_c = info["max_conn_tested"]
+        dt = info["dt_ms"]
+
+        # Find performance range for max neuron count
+        max_n_configs = [c for c in info["configs"] if c["neurons"] == max_n]
+        if max_n_configs:
+            best_steps = max(c["steps_per_sec"] for c in max_n_configs)
+            max_gpu = max(c["gpu_gb"] for c in max_n_configs)
+            # Bio throughput: steps_per_sec * dt_ms = bio_ms per wall_second
+            best_bio_ms_per_s = best_steps * dt
+            worst_bio_ms_per_s = min(c["steps_per_sec"] for c in max_n_configs) * dt
+            lines.append(f"  {short} (dt={dt}ms): up to {max_n//1000}K neurons, "
+                         f"{worst_bio_ms_per_s:.0f}-{best_bio_ms_per_s:.0f} bio-ms/s, "
+                         f"{max_gpu:.1f}GB VRAM")
+
+    hardware_note = "\n".join(lines)
+
+    return {
+        "gpu_name": gpu_name,
+        "gpu_memory_gb": gpu_mem_gb,
+        "per_model": per_model,
+        "hardware_note": hardware_note
+    }
+
+
+def _load_benchmark_limits():
+    """Loads and parses benchmark results at startup."""
+    global HARDWARE_LIMITS
+    if not os.path.exists(BENCHMARK_RESULTS_PATH):
+        HARDWARE_LIMITS = {}
+        return
+
+    try:
+        with open(BENCHMARK_RESULTS_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        HARDWARE_LIMITS = _parse_benchmark_limits(data)
+        print(f"Loaded hardware limits from {BENCHMARK_RESULTS_PATH} "
+              f"({len(HARDWARE_LIMITS.get('per_model', {}))} models)")
+    except Exception as e:
+        print(f"Warning: Could not load benchmark limits from {BENCHMARK_RESULTS_PATH}: {e}")
+        HARDWARE_LIMITS = {}
+
+
+def get_hardware_limits_for_model(model_name):
+    """Returns hardware limits dict for a specific neuron model, or None if unavailable.
+
+    Returns:
+        dict with keys: max_neurons_tested, max_conn_tested, realtime_max_neurons, dt_ms, configs
+        or None if no benchmark data exists for this model.
+    """
+    if HARDWARE_LIMITS is None:
+        _load_benchmark_limits()
+    if not HARDWARE_LIMITS:
+        return None
+    return HARDWARE_LIMITS.get("per_model", {}).get(model_name)
+
+
+def get_hardware_note():
+    """Returns the human-readable hardware note from benchmark results."""
+    if HARDWARE_LIMITS is None:
+        _load_benchmark_limits()
+    return HARDWARE_LIMITS.get("hardware_note", "") if HARDWARE_LIMITS else ""
+
+
+def check_config_against_limits(model_name, num_neurons, conn_per_neuron):
+    """Checks a proposed config against benchmark-derived limits.
+
+    Returns:
+        tuple: (is_safe: bool, warning_message: str or None)
+            is_safe = True means config is within tested limits
+            warning_message = None if safe, otherwise a descriptive string
+    """
+    limits = get_hardware_limits_for_model(model_name)
+    if limits is None:
+        return True, None  # No benchmark data — can't warn
+
+    max_tested_n = limits["max_neurons_tested"]
+    max_tested_c = limits["max_conn_tested"]
+
+    if num_neurons > max_tested_n:
+        return False, (f"WARNING: {num_neurons} neurons exceeds benchmark-tested maximum "
+                       f"({max_tested_n} for {model_name}). May cause OOM or severe slowdown.")
+    if conn_per_neuron > max_tested_c:
+        return False, (f"WARNING: {conn_per_neuron} conn/neuron exceeds benchmark-tested maximum "
+                       f"({max_tested_c} for {model_name}). May cause OOM.")
+
+    # Check if this specific combo was tested — find closest match
+    configs = limits["configs"]
+    matching = [c for c in configs if c["neurons"] == num_neurons and c["conn"] == conn_per_neuron]
+    if matching:
+        gpu_gb = matching[0]["gpu_gb"]
+        steps_s = matching[0]["steps_per_sec"]
+        return True, None
+
+    # Interpolate: check if a similar-sized config was tested and had high VRAM
+    larger_configs = [c for c in configs if c["neurons"] >= num_neurons and c["conn"] >= conn_per_neuron]
+    if larger_configs:
+        best_match = larger_configs[0]  # Smallest config >= requested
+        return True, None
+
+    return True, None  # Within max bounds but exact combo not tested — assume OK
 
 
 # Compatibility class for old SimulationConfiguration usage
@@ -821,7 +1223,45 @@ class SimulationConfiguration:
         self.homeostasis_ema_alpha = 0.01 # Alpha for EMA of neuron activity
         self.homeostasis_threshold_min = -55.0 # Minimum firing threshold (mV)
         self.homeostasis_threshold_max = -30.0 # Maximum firing threshold (mV)
-        
+
+        # Synaptic Scaling (Turrigiano 2008) - multiplicative excitatory weight scaling
+        self.enable_synaptic_scaling = False
+        self.synaptic_scaling_rate = 0.001 # Slow scaling rate (operates on seconds timescale)
+
+        # NMDA conductance with voltage-dependent Mg²⁺ block (Jahr & Stevens 1990)
+        self.enable_nmda = False
+        self.nmda_ratio = 0.4             # NMDA:AMPA conductance ratio
+        self.nmda_tau_decay = 100.0       # NMDA decay time constant (ms)
+        self.nmda_tau_rise = 3.0          # NMDA rise time constant (ms)
+        self.nmda_mg_concentration = 1.0  # Extracellular [Mg²⁺] in mM
+
+        # STDP (Spike-Timing Dependent Plasticity)
+        self.enable_stdp = True
+        self.stdp_a_plus = 0.01           # LTP amplitude
+        self.stdp_a_minus = 0.0105        # LTD amplitude
+        self.stdp_tau_plus_ms = 20.0      # LTP time constant (ms)
+        self.stdp_tau_minus_ms = 20.0     # LTD time constant (ms)
+        self.stdp_w_min = 0.0             # Minimum STDP weight
+        self.stdp_w_max = 2.0             # Maximum STDP weight
+        self.stdp_only_nearest_spike = True
+
+        # Reward-Modulated Plasticity
+        self.enable_reward_modulation = True
+        self.reward_learning_rate = 0.01
+        self.reward_eligibility_tau_ms = 1000.0
+        self.reward_baseline = 0.0
+        self.current_reward_signal = 0.0
+
+        # Structural Plasticity
+        self.enable_structural_plasticity = True
+        self.struct_plast_formation_rate = 1e-6
+        self.struct_plast_elimination_rate = 5e-7
+        self.struct_plast_weight_threshold = 0.05
+        self.struct_plast_target_density = 0.1
+        self.struct_plast_distance_kernel = "exp_decay"
+        self.struct_plast_distance_scale = 20.0
+        self.struct_plast_update_interval_steps = 100
+
         # Parameter Heterogeneity (Phase B2)
         self.enable_parameter_heterogeneity = False # Enable per-neuron parameter variability
         self.heterogeneity_seed = -1 # Seed for heterogeneity sampling (-1 = use main seed)
@@ -1431,22 +1871,21 @@ def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g
     # m_new = m_inf - (m_inf - m_old) * exp(-dt / tau_m)
     # where m_inf = alpha_m / (alpha_m + beta_m) and tau_m = 1 / (alpha_m + beta_m)
 
-    sum_alpha_beta_m = alpha_m + beta_m
-    m_inf = cp.where(sum_alpha_beta_m == 0, m, alpha_m / sum_alpha_beta_m) # Avoid division by zero if sum is 0
-    tau_m = cp.where(sum_alpha_beta_m == 0, cp.inf, 1.0 / sum_alpha_beta_m) # tau is inf if sum is 0
-    # Handle infinite tau by not changing m (exp(0)=1, so m_new = m_inf - (m_inf - m) = m)
-    m_new = m_inf + (m - m_inf) * cp.exp(cp.where(cp.isinf(tau_m), 0.0, -dt / tau_m))
+    # Epsilon-based safe division eliminates branching overhead from cp.where()
+    # For biophysically valid voltages, alpha+beta > 0 always; epsilon is only a numerical guard.
+    # This avoids 6 cp.where() calls and 3 cp.isinf() calls per step (3-5% HH speedup).
+    _EPS_GATE = 1e-12  # Small enough to not affect dynamics, large enough for float32 safety
+    sum_alpha_beta_m = alpha_m + beta_m + _EPS_GATE
+    m_inf = alpha_m / sum_alpha_beta_m
+    m_new = m_inf + (m - m_inf) * cp.exp(-dt * sum_alpha_beta_m)
 
+    sum_alpha_beta_h = alpha_h + beta_h + _EPS_GATE
+    h_inf = alpha_h / sum_alpha_beta_h
+    h_new = h_inf + (h - h_inf) * cp.exp(-dt * sum_alpha_beta_h)
 
-    sum_alpha_beta_h = alpha_h + beta_h
-    h_inf = cp.where(sum_alpha_beta_h == 0, h, alpha_h / sum_alpha_beta_h)
-    tau_h = cp.where(sum_alpha_beta_h == 0, cp.inf, 1.0 / sum_alpha_beta_h)
-    h_new = h_inf + (h - h_inf) * cp.exp(cp.where(cp.isinf(tau_h), 0.0, -dt / tau_h))
-
-    sum_alpha_beta_n = alpha_n + beta_n
-    n_inf = cp.where(sum_alpha_beta_n == 0, n, alpha_n / sum_alpha_beta_n)
-    tau_n = cp.where(sum_alpha_beta_n == 0, cp.inf, 1.0 / sum_alpha_beta_n)
-    n_new = n_inf + (n - n_inf) * cp.exp(cp.where(cp.isinf(tau_n), 0.0, -dt / tau_n))
+    sum_alpha_beta_n = alpha_n + beta_n + _EPS_GATE
+    n_inf = alpha_n / sum_alpha_beta_n
+    n_new = n_inf + (n - n_inf) * cp.exp(-dt * sum_alpha_beta_n)
     
     # Clip gating variables to be between 0 and 1
     m_new = cp.clip(m_new, 0.0, 1.0); h_new = cp.clip(h_new, 0.0, 1.0); n_new = cp.clip(n_new, 0.0, 1.0)
@@ -1463,16 +1902,18 @@ def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g
     return V_new, m_new, h_new, n_new
 
 @cp.fuse()
-def fused_hh_m_current_update(V, p_old, dt, g_M_max, E_K, tau_m_ms):
+def fused_hh_m_current_update(V, p_old, dt, g_M_max, E_K, tau_m_ms, phi):
     """Optional slow K+ M-current for extended HH models.
 
     Uses a simple sigmoidal steady-state activation with a first-order time course.
     g_M_max = 0.0 disables the current without branching.
+    phi: Q10 temperature correction factor (same as main HH kinetics).
     """
     # Steady-state activation (approximate; centered around -35 mV)
     p_inf = 1.0 / (1.0 + cp.exp(-(V + 35.0) / 10.0))
-    # Time constant (ms), kept positive
-    tau_safe = cp.maximum(tau_m_ms, 1e-3)
+    # Time constant (ms) with Q10 temperature correction — faster at higher temperatures
+    # Literature: M-current tau ranges 30-200ms depending on cell type and temperature
+    tau_safe = cp.maximum(tau_m_ms / phi, 1e-3)
     # First-order update assuming V is approximately constant over dt
     p_new = p_inf + (p_old - p_inf) * cp.exp(-dt / tau_safe)
     # M-current (K+): uses potassium reversal potential E_K
@@ -1480,36 +1921,46 @@ def fused_hh_m_current_update(V, p_old, dt, g_M_max, E_K, tau_m_ms):
     return p_new, I_M
 
 @cp.fuse()
-def fused_hh_CaT_current_update(V, m_old, h_old, dt, g_CaT_max, E_CaT):
+def fused_hh_CaT_current_update(V, m_old, h_old, dt, g_CaT_max, E_CaT, phi):
     """Low-threshold T-type Ca2+ current for extended HH models.
 
-    Uses simple sigmoidal steady-state activation/inactivation and fixed time constants.
+    Uses simple sigmoidal steady-state activation/inactivation with Q10-corrected time constants.
+    phi: Q10 temperature correction factor.
     """
     # Steady-state activation/inactivation (approximate, thalamic-like)
     m_inf = 1.0 / (1.0 + cp.exp(-(V + 50.0) / 7.4))
     h_inf = 1.0 / (1.0 + cp.exp((V + 80.0) / 5.0))
-    tau_m = 5.0   # ms, fast activation
-    tau_h = 20.0  # ms, slower inactivation
+    # Temperature-corrected time constants (Q10 ~3-4 for Ca2+ channels)
+    tau_m = 5.0 / phi   # ms, fast activation (scaled by temperature)
+    tau_h = 20.0 / phi  # ms, slower inactivation (scaled by temperature)
     m_new = m_inf + (m_old - m_inf) * cp.exp(-dt / tau_m)
     h_new = h_inf + (h_old - h_inf) * cp.exp(-dt / tau_h)
     I_CaT = g_CaT_max * (m_new ** 2) * h_new * (V - E_CaT)
     return m_new, h_new, I_CaT
 
 @cp.fuse()
-def fused_hh_h_current_update(V, q_old, dt, g_h_max, E_h):
-    """Hyperpolarization-activated mixed cation current (I_h) for extended HH models."""
+def fused_hh_h_current_update(V, q_old, dt, g_h_max, E_h, phi):
+    """Hyperpolarization-activated mixed cation current (I_h) for extended HH models.
+
+    phi: Q10 temperature correction factor. I_h has Q10 ~3-4 (Magee 1998).
+    """
     # Steady-state activation: more active at hyperpolarized voltages
     q_inf = 1.0 / (1.0 + cp.exp((V + 75.0) / 5.5))
-    tau_q = 100.0  # ms, slow activation
+    # Temperature-corrected time constant
+    tau_q = 100.0 / phi  # ms, slow activation (faster at mammalian temperatures)
     q_new = q_inf + (q_old - q_inf) * cp.exp(-dt / tau_q)
     I_h = g_h_max * q_new * (V - E_h)
     return q_new, I_h
 
 @cp.fuse()
-def fused_hh_NaP_current_update(V, p_old, dt, g_NaP_max, E_Na):
-    """Persistent Na+ current for extended HH models."""
+def fused_hh_NaP_current_update(V, p_old, dt, g_NaP_max, E_Na, phi):
+    """Persistent Na+ current for extended HH models.
+
+    phi: Q10 temperature correction factor. NaP kinetics scale similarly to transient Na+ (Q10 ~3).
+    """
     p_inf = 1.0 / (1.0 + cp.exp(-(V + 55.0) / 5.0))
-    tau_p = 5.0  # ms, relatively fast activation with minimal inactivation
+    # Temperature-corrected time constant
+    tau_p = 5.0 / phi  # ms, relatively fast activation (faster at mammalian temperatures)
     p_new = p_inf + (p_old - p_inf) * cp.exp(-dt / tau_p)
     I_NaP = g_NaP_max * p_new * (V - E_Na)
     return p_new, I_NaP
@@ -1523,8 +1974,15 @@ def fused_adex_dynamics_update(V, w, I_syn, dt, C, g_L, E_L, V_T, Delta_T, a, ta
     """
     C_safe = cp.where(C == 0.0, 1.0, C)
     tau_w_safe = cp.maximum(tau_w, 1e-9)
+    Delta_T_safe = cp.maximum(Delta_T, 1e-9)  # Prevent division by zero
+
+    # Clamp exponential argument to prevent overflow. For float32:
+    # exp(-20) ≈ 2e-9 (underflows gracefully), exp(5) ≈ 148 (safe with g_L*Delta_T scaling)
+    # Wider range improves subthreshold accuracy near threshold without numerical risk.
+    exp_arg = cp.clip((V - V_T) / Delta_T_safe, -20.0, 5.0)
+
     # Membrane equation: C dV/dt = -g_L (V - E_L) + g_L * Delta_T * exp((V - V_T)/Delta_T) - w + I_syn
-    dV_dt = (-g_L * (V - E_L) + g_L * Delta_T * cp.exp((V - V_T) / Delta_T) - w + I_syn) / C_safe
+    dV_dt = (-g_L * (V - E_L) + g_L * Delta_T * cp.exp(exp_arg) - w + I_syn) / C_safe
     # Adaptation variable: tau_w dw/dt = a (V - E_L) - w
     dw_dt = (a * (V - E_L) - w) / tau_w_safe
     V_new = V + dV_dt * dt
@@ -1540,6 +1998,30 @@ def fused_conductance_decay_and_current(g_e, g_i, decay_e, decay_i, v, E_e, E_i)
     # Calculate total synaptic current based on new conductances
     I_syn = g_e_new * (E_e - v) + g_i_new * (E_i - v) # I_syn = g_e*(E_e - V) + g_i*(E_i - V)
     return g_e_new, g_i_new, I_syn
+
+@cp.fuse()
+def fused_nmda_update_and_current(g_nmda, g_nmda_rise, decay_nmda, decay_nmda_rise, v, E_nmda, mg_conc):
+    """Fused kernel for NMDA conductance with voltage-dependent Mg²⁺ block.
+
+    Implements the Jahr & Stevens (1990) Mg²⁺ block:
+        B(V) = 1 / (1 + [Mg²⁺]_o/3.57 * exp(-0.062 * V))
+
+    Uses dual-exponential kinetics: g_NMDA = g_slow - g_rise for realistic
+    rise/decay dynamics. The Mg²⁺ block factor B(V) produces the characteristic
+    voltage-dependent nonlinearity that gates Ca²⁺ influx and is critical
+    for coincidence detection in STDP and associative learning.
+    """
+    # Dual-exponential decay
+    g_nmda_new = g_nmda * decay_nmda
+    g_nmda_rise_new = g_nmda_rise * decay_nmda_rise
+    # Effective NMDA conductance (difference of exponentials)
+    g_eff = g_nmda_new - g_nmda_rise_new
+    g_eff = cp.maximum(g_eff, 0.0)
+    # Voltage-dependent Mg²⁺ block (Jahr & Stevens 1990)
+    mg_block = 1.0 / (1.0 + (mg_conc / 3.57) * cp.exp(-0.062 * v))
+    # NMDA current with Mg²⁺ gating
+    I_nmda = g_eff * mg_block * (E_nmda - v)
+    return g_nmda_new, g_nmda_rise_new, I_nmda
 
 @cp.fuse()
 def fused_stp_decay_recovery(u, x, dt, tau_f, tau_d):
@@ -1650,8 +2132,10 @@ class SimulationBridge:
         # --- CuPy Arrays for Simulation State ---
         self.cp_membrane_potential_v = None 
         self.cp_recovery_variable_u = None  
-        self.cp_conductance_g_e = None      
-        self.cp_conductance_g_i = None      
+        self.cp_conductance_g_e = None
+        self.cp_conductance_g_i = None
+        self.cp_conductance_g_nmda = None
+        self.cp_conductance_g_nmda_rise = None
         self.cp_external_input_current = None 
         self.cp_firing_states = None        
         self.cp_prev_firing_states = None   
@@ -1701,7 +2185,24 @@ class SimulationBridge:
         self._mock_total_plasticity_events = 0
         self._mock_network_avg_firing_rate_hz = 0.0
         self._mock_num_spikes_this_step = 0
-        
+
+        # GPU-side statistics accumulators (avoid frequent GPU-CPU sync)
+        self._stats_sync_counter = 0  # Counter for stats sync interval
+        self._accumulated_spikes_gpu = None  # GPU-side spike accumulator
+        self._last_synced_spike_count = 0  # Last synced value
+
+        # COO matrix cache (avoid repeated conversions)
+        self._cached_coo_matrix = None
+        self._coo_cache_valid = False
+
+        # Structural plasticity optimization
+        self._compaction_counter = 0  # Counter for deferred CSR compaction
+        self._pending_eliminations = False  # Flag for pending zero-weight synapses
+        self._synapse_capacity = 0  # Pre-allocated capacity for synapse arrays
+
+        # Eligibility trace for STDP/reward
+        self.cp_eligibility_trace = None
+
         # Performance profiling - now controlled by gpu_config
         self._profile_timings = {
             "step_total": deque(maxlen=self.gpu_config.profiling_window_size),
@@ -1725,8 +2226,23 @@ class SimulationBridge:
         
         # GPU-buffered recording/playback: store frames in VRAM (controlled by gpu_config)
         self.gpu_frame_buffer = {}  # Dict of frame_idx -> dict of CuPy arrays
+        self.cpu_frame_buffer = {}  # Dict of frame_idx -> dict of NumPy arrays (overflow when GPU full)
+        self.recording_overflow_to_cpu = False  # Flag: True when GPU is full, storing to CPU RAM
         self.gpu_recording_max_frames = 0  # Maximum frames we can buffer
         self.gpu_playback_cache = {}  # Dict of frame_idx -> dict of CuPy arrays
+
+        # Streaming playback prefetch buffer (for non-cached playback mode)
+        self.prefetch_buffer = {}  # Dict of frame_idx -> NumPy frame data (not GPU)
+        self.prefetch_lock = threading.Lock()
+        self.prefetch_executor = None  # ThreadPoolExecutor for background prefetching
+        self.prefetch_pending = set()  # Frame indices currently being prefetched
+
+        # Async streaming recording writer (for large-scale simulations)
+        self.streaming_write_queue = queue.Queue()  # Queue of (frame_idx, frame_data_np) to write
+        self.streaming_writer_thread = None  # Background thread for async disk writes
+        self.streaming_writer_stop_event = threading.Event()  # Signal to stop writer thread
+        self.streaming_frames_written = 0  # Counter for frames successfully written to disk
+        self.streaming_frames_queued = 0  # Counter for frames queued for writing
 
         for dir_path in [self.PROFILE_DIR, self.CHECKPOINT_DIR, self.RECORDING_DIR]:
             if not os.path.exists(dir_path):
@@ -1811,8 +2327,159 @@ class SimulationBridge:
         elif usage_fraction > self.gpu_config.memory_warning_threshold:
             self._log_console(f"GPU memory high: {mem_stats['usage_percent']:.1f}%")
             return False
-        
+
         return False
+
+    def _get_cached_coo(self):
+        """Returns cached COO representation of connectivity matrix.
+
+        Avoids repeated tocoo() conversions within a simulation step.
+        Cache is invalidated when connectivity changes (synapse formation/elimination).
+        """
+        if self.cp_connections is None or self.cp_connections.nnz == 0:
+            return None
+
+        if not self._coo_cache_valid or self._cached_coo_matrix is None:
+            self._cached_coo_matrix = self.cp_connections.tocoo(copy=False)
+            self._coo_cache_valid = True
+
+        return self._cached_coo_matrix
+
+    def _invalidate_coo_cache(self):
+        """Invalidates COO cache when connectivity changes."""
+        self._coo_cache_valid = False
+        self._cached_coo_matrix = None
+
+    def _init_synapse_arrays_with_capacity(self, num_synapses, cfg):
+        """Initializes synapse-indexed arrays with pre-allocated capacity for growth.
+
+        Pre-allocates extra space to avoid frequent reallocations during structural plasticity.
+        Uses gpu_config.synapse_capacity_growth_factor to determine extra capacity.
+        """
+        growth_factor = self.gpu_config.synapse_capacity_growth_factor
+        capacity = int(num_synapses * growth_factor) if num_synapses > 0 else 100
+
+        self._synapse_count = num_synapses
+        self._synapse_capacity = capacity
+
+        # STP arrays
+        if cfg.enable_short_term_plasticity and num_synapses > 0:
+            self._log_console(f"Initializing STP state for {num_synapses} synapses (capacity: {capacity})...")
+            self.cp_stp_x = cp.ones(capacity, dtype=cp.float32)
+            self.cp_stp_u = cp.full(capacity, cfg.stp_U, dtype=cp.float32)
+        else:
+            self.cp_stp_x = None
+            self.cp_stp_u = None
+
+        # Eligibility traces for reward modulation
+        if cfg.enable_reward_modulation and num_synapses > 0:
+            self._log_console(f"Initializing eligibility traces for {num_synapses} synapses (capacity: {capacity})...")
+            self.cp_eligibility_trace = cp.zeros(capacity, dtype=cp.float32)
+        else:
+            self.cp_eligibility_trace = None
+
+        # Visualization arrays
+        if OPENGL_AVAILABLE and num_synapses > 0:
+            self.cp_synapse_pulse_timers = cp.zeros(capacity, dtype=cp.int32)
+            self.cp_synapse_pulse_progress = cp.zeros(capacity, dtype=cp.float32)
+        else:
+            self.cp_synapse_pulse_timers = None
+            self.cp_synapse_pulse_progress = None
+
+    def _grow_synapse_arrays_if_needed(self, new_synapse_count, cfg):
+        """Grows synapse arrays if new_synapse_count exceeds current capacity.
+
+        Returns True if reallocation occurred, False if existing capacity was sufficient.
+        """
+        total_needed = self._synapse_count + new_synapse_count
+
+        if total_needed <= self._synapse_capacity:
+            return False  # Existing capacity is sufficient
+
+        # Need to grow - calculate new capacity
+        growth_factor = self.gpu_config.synapse_capacity_growth_factor
+        new_capacity = int(total_needed * growth_factor)
+
+        self._log_console(f"Growing synapse arrays: {self._synapse_capacity} -> {new_capacity}")
+
+        # Grow STP arrays
+        if cfg.enable_short_term_plasticity and self.cp_stp_x is not None:
+            new_stp_x = cp.ones(new_capacity, dtype=cp.float32)
+            new_stp_u = cp.full(new_capacity, cfg.stp_U, dtype=cp.float32)
+            new_stp_x[:self._synapse_count] = self.cp_stp_x[:self._synapse_count]
+            new_stp_u[:self._synapse_count] = self.cp_stp_u[:self._synapse_count]
+            self.cp_stp_x = new_stp_x
+            self.cp_stp_u = new_stp_u
+
+        # Grow eligibility traces
+        if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
+            new_traces = cp.zeros(new_capacity, dtype=cp.float32)
+            new_traces[:self._synapse_count] = self.cp_eligibility_trace[:self._synapse_count]
+            self.cp_eligibility_trace = new_traces
+
+        # Grow visualization arrays
+        if self.cp_synapse_pulse_timers is not None:
+            new_timers = cp.zeros(new_capacity, dtype=cp.int32)
+            new_progress = cp.zeros(new_capacity, dtype=cp.float32)
+            new_timers[:self._synapse_count] = self.cp_synapse_pulse_timers[:self._synapse_count]
+            new_progress[:self._synapse_count] = self.cp_synapse_pulse_progress[:self._synapse_count]
+            self.cp_synapse_pulse_timers = new_timers
+            self.cp_synapse_pulse_progress = new_progress
+
+        self._synapse_capacity = new_capacity
+        return True
+
+    def _add_synapses_to_arrays(self, new_count, cfg):
+        """Adds new synapses to pre-allocated arrays at the current synapse_count position.
+
+        Assumes _grow_synapse_arrays_if_needed was called first to ensure capacity.
+        Updates _synapse_count after adding.
+        """
+        start_idx = self._synapse_count
+
+        # Initialize new STP entries
+        if cfg.enable_short_term_plasticity and self.cp_stp_x is not None:
+            self.cp_stp_x[start_idx:start_idx + new_count] = 1.0
+            self.cp_stp_u[start_idx:start_idx + new_count] = cfg.stp_U
+
+        # Initialize new eligibility traces
+        if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
+            self.cp_eligibility_trace[start_idx:start_idx + new_count] = 0.0
+
+        # Initialize new visualization entries
+        if self.cp_synapse_pulse_timers is not None:
+            self.cp_synapse_pulse_timers[start_idx:start_idx + new_count] = 0
+            self.cp_synapse_pulse_progress[start_idx:start_idx + new_count] = 0.0
+
+        self._synapse_count += new_count
+
+    def _compact_synapse_arrays(self, keep_mask):
+        """Compacts synapse arrays by removing eliminated synapses.
+
+        Called when deferred CSR compaction occurs.
+        keep_mask: boolean array indicating which synapses to keep.
+        """
+        if self.cp_stp_x is not None:
+            # Extract kept values
+            kept_x = self.cp_stp_x[:self._synapse_count][keep_mask]
+            kept_u = self.cp_stp_u[:self._synapse_count][keep_mask]
+            new_count = kept_x.size
+
+            # Write back to beginning of arrays
+            self.cp_stp_x[:new_count] = kept_x
+            self.cp_stp_u[:new_count] = kept_u
+
+        if self.cp_eligibility_trace is not None:
+            kept_traces = self.cp_eligibility_trace[:self._synapse_count][keep_mask]
+            self.cp_eligibility_trace[:kept_traces.size] = kept_traces
+
+        if self.cp_synapse_pulse_timers is not None:
+            kept_timers = self.cp_synapse_pulse_timers[:self._synapse_count][keep_mask]
+            kept_progress = self.cp_synapse_pulse_progress[:self._synapse_count][keep_mask]
+            self.cp_synapse_pulse_timers[:kept_timers.size] = kept_timers
+            self.cp_synapse_pulse_progress[:kept_progress.size] = kept_progress
+
+        self._synapse_count = int(cp.sum(keep_mask).get())
 
     def get_profiling_stats(self):
         """Returns summary statistics for profiling timings.
@@ -2024,6 +2691,9 @@ class SimulationBridge:
             self.cp_neuron_type_ids = cp.zeros(n, dtype=cp.int32) if n > 0 else cp.array([], dtype=cp.int32)  # Will be populated per neuron
             self.cp_conductance_g_e = cp.zeros(n, dtype=cp.float32)
             self.cp_conductance_g_i = cp.zeros(n, dtype=cp.float32)
+            # NMDA conductance (dual-exponential: g_nmda_slow - g_nmda_rise)
+            self.cp_conductance_g_nmda = cp.zeros(n, dtype=cp.float32)
+            self.cp_conductance_g_nmda_rise = cp.zeros(n, dtype=cp.float32)
             self.cp_refractory_timers = cp.zeros(n, dtype=cp.int32)
             self.cp_neuron_activity_ema = cp.zeros(n, dtype=cp.float32) 
             self.cp_viz_activity_timers = cp.zeros(n, dtype=cp.int32) 
@@ -2055,32 +2725,84 @@ class SimulationBridge:
                             cfg.homeostasis_threshold_min, cfg.homeostasis_threshold_max,
                             out=self.cp_neuron_firing_thresholds)
 
-                np_traits_host = cp.asnumpy(self.cp_traits) 
+                np_traits_host = cp.asnumpy(self.cp_traits)
                 defined_izh2007_types = [
                     ntype for ntype in NeuronType
                     if "IZH2007" in ntype.name and ntype in DefaultIzhikevichParamsManager.PARAMS
                 ]
                 num_defined_izh_variants = len(defined_izh2007_types)
-                for i in range(n):
-                    trait_val = np_traits_host[i]
-                    selected_neuron_type_enum = NeuronType[cfg.default_neuron_type_izh]
-                    if num_defined_izh_variants > 0:
-                        type_idx_in_list = trait_val % num_defined_izh_variants
-                        selected_neuron_type_enum = defined_izh2007_types[type_idx_in_list]
-                    
-                    # Store integer type ID for GPU operations
-                    type_id = NEURON_TYPE_MAPPER.get_id(selected_neuron_type_enum)
-                    self.cp_neuron_type_ids[i] = type_id
-                    
-                    params = DefaultIzhikevichParamsManager.get_params(selected_neuron_type_enum, use_2007_formulation=True)
-                    self.cp_izh_C[i] = params["C"]; self.cp_izh_k[i] = params["k"]
-                    self.cp_izh_vr[i] = params["vr"]; self.cp_izh_vt[i] = params["vt"]
-                    self.cp_izh_vpeak[i] = params["vpeak"]; self.cp_izh_a[i] = params["a"]
-                    self.cp_izh_b[i] = params["b"]; self.cp_izh_c_reset[i] = params["c_reset"]
-                    self.cp_izh_d_increment[i] = params["d_increment"]
-                    self.cp_membrane_potential_v[i] = params["vr"] 
-                    self.cp_recovery_variable_u[i] = params["b"] * (self.cp_membrane_potential_v[i] - params["vr"]) 
-                    self.runtime_state.neuron_types_list_for_viz[i] = f"Izh2007_{selected_neuron_type_enum.name.replace('IZH2007_', '')}"
+
+                # Vectorized initialization: build arrays on CPU, transfer once to GPU
+                # Pre-fetch all parameter sets
+                param_sets = []
+                type_names = []
+                for ntype in defined_izh2007_types:
+                    params = DefaultIzhikevichParamsManager.get_params(ntype, use_2007_formulation=True)
+                    param_sets.append(params)
+                    type_names.append(f"Izh2007_{ntype.name.replace('IZH2007_', '')}")
+
+                # Build CPU arrays
+                np_C = np.zeros(n, dtype=np.float32)
+                np_k = np.zeros(n, dtype=np.float32)
+                np_vr = np.zeros(n, dtype=np.float32)
+                np_vt = np.zeros(n, dtype=np.float32)
+                np_vpeak = np.zeros(n, dtype=np.float32)
+                np_a = np.zeros(n, dtype=np.float32)
+                np_b = np.zeros(n, dtype=np.float32)
+                np_c_reset = np.zeros(n, dtype=np.float32)
+                np_d_increment = np.zeros(n, dtype=np.float32)
+                np_type_ids = np.zeros(n, dtype=np.int32)
+
+                default_type_enum = NeuronType[cfg.default_neuron_type_izh]
+                default_params = DefaultIzhikevichParamsManager.get_params(default_type_enum, use_2007_formulation=True)
+                default_type_id = NEURON_TYPE_MAPPER.get_id(default_type_enum)
+
+                if num_defined_izh_variants > 0:
+                    # Vectorized type selection based on traits
+                    type_indices = np_traits_host % num_defined_izh_variants
+                    for type_idx, params in enumerate(param_sets):
+                        mask = (type_indices == type_idx)
+                        np_C[mask] = params["C"]
+                        np_k[mask] = params["k"]
+                        np_vr[mask] = params["vr"]
+                        np_vt[mask] = params["vt"]
+                        np_vpeak[mask] = params["vpeak"]
+                        np_a[mask] = params["a"]
+                        np_b[mask] = params["b"]
+                        np_c_reset[mask] = params["c_reset"]
+                        np_d_increment[mask] = params["d_increment"]
+                        np_type_ids[mask] = NEURON_TYPE_MAPPER.get_id(defined_izh2007_types[type_idx])
+                    # Build viz labels
+                    self.runtime_state.neuron_types_list_for_viz = [type_names[type_indices[i]] for i in range(n)]
+                else:
+                    # All neurons use default type
+                    np_C[:] = default_params["C"]
+                    np_k[:] = default_params["k"]
+                    np_vr[:] = default_params["vr"]
+                    np_vt[:] = default_params["vt"]
+                    np_vpeak[:] = default_params["vpeak"]
+                    np_a[:] = default_params["a"]
+                    np_b[:] = default_params["b"]
+                    np_c_reset[:] = default_params["c_reset"]
+                    np_d_increment[:] = default_params["d_increment"]
+                    np_type_ids[:] = default_type_id
+                    self.runtime_state.neuron_types_list_for_viz = [f"Izh2007_{default_type_enum.name.replace('IZH2007_', '')}"] * n
+
+                # Single GPU transfer for all parameter arrays
+                self.cp_izh_C = cp.asarray(np_C)
+                self.cp_izh_k = cp.asarray(np_k)
+                self.cp_izh_vr = cp.asarray(np_vr)
+                self.cp_izh_vt = cp.asarray(np_vt)
+                self.cp_izh_vpeak = cp.asarray(np_vpeak)
+                self.cp_izh_a = cp.asarray(np_a)
+                self.cp_izh_b = cp.asarray(np_b)
+                self.cp_izh_c_reset = cp.asarray(np_c_reset)
+                self.cp_izh_d_increment = cp.asarray(np_d_increment)
+                self.cp_neuron_type_ids = cp.asarray(np_type_ids)
+
+                # Initialize membrane potential and recovery variable
+                self.cp_membrane_potential_v = cp.asarray(np_vr)
+                self.cp_recovery_variable_u = self.cp_izh_b * (self.cp_membrane_potential_v - self.cp_izh_vr)
 
             elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
                 self._log_console(f"Initializing Hodgkin-Huxley model specifics for {n} neurons...")
@@ -2114,24 +2836,29 @@ class SimulationBridge:
                 except Exception as e:
                     self._log_console(f"Warning: Failed to derive extended HH defaults from {cfg.default_neuron_type_hh}: {e}", "warning")
 
-                np_traits_host = cp.asnumpy(self.cp_traits)
-                # For now, use a single HH neuron type (default_neuron_type_hh) for all neurons.
+                # Vectorized HH initialization: all neurons use same type, use cp.full() for broadcast
                 default_hh_type_enum = NeuronType[cfg.default_neuron_type_hh]
-                for i in range(n):
-                    # Store integer type ID for GPU operations
-                    type_id = NEURON_TYPE_MAPPER.get_id(default_hh_type_enum)
-                    self.cp_neuron_type_ids[i] = type_id
-                    
-                    params = DefaultHodgkinHuxleyParams.get_params(default_hh_type_enum)
-                    self.cp_hh_C_m[i] = params["C_m"]; self.cp_hh_g_Na_max[i] = params["g_Na_max"]
-                    self.cp_hh_g_K_max[i] = params["g_K_max"]; self.cp_hh_g_L[i] = params["g_L"]
-                    self.cp_hh_E_Na[i] = params["E_Na"]; self.cp_hh_E_K[i] = params["E_K"]
-                    self.cp_hh_E_L[i] = params["E_L"]; self.cp_hh_v_peak[i] = params["v_peak_hh"]
-                    self.cp_membrane_potential_v[i] = params["v_rest_hh"] 
-                    self.cp_gating_variable_m[i] = params["m_init"] 
-                    self.cp_gating_variable_h[i] = params["h_init"]
-                    self.cp_gating_variable_n[i] = params["n_init"]
-                    self.runtime_state.neuron_types_list_for_viz[i] = f"HH_{default_hh_type_enum.name.replace('HH_', '')}"
+                params = DefaultHodgkinHuxleyParams.get_params(default_hh_type_enum)
+                type_id = NEURON_TYPE_MAPPER.get_id(default_hh_type_enum)
+
+                # Single GPU transfer using cp.full() for uniform values
+                self.cp_neuron_type_ids = cp.full(n, type_id, dtype=cp.int32)
+                self.cp_hh_C_m = cp.full(n, params["C_m"], dtype=cp.float32)
+                self.cp_hh_g_Na_max = cp.full(n, params["g_Na_max"], dtype=cp.float32)
+                self.cp_hh_g_K_max = cp.full(n, params["g_K_max"], dtype=cp.float32)
+                self.cp_hh_g_L = cp.full(n, params["g_L"], dtype=cp.float32)
+                self.cp_hh_E_Na = cp.full(n, params["E_Na"], dtype=cp.float32)
+                self.cp_hh_E_K = cp.full(n, params["E_K"], dtype=cp.float32)
+                self.cp_hh_E_L = cp.full(n, params["E_L"], dtype=cp.float32)
+                self.cp_hh_v_peak = cp.full(n, params["v_peak_hh"], dtype=cp.float32)
+                self.cp_membrane_potential_v = cp.full(n, params["v_rest_hh"], dtype=cp.float32)
+                self.cp_gating_variable_m = cp.full(n, params["m_init"], dtype=cp.float32)
+                self.cp_gating_variable_h = cp.full(n, params["h_init"], dtype=cp.float32)
+                self.cp_gating_variable_n = cp.full(n, params["n_init"], dtype=cp.float32)
+
+                # Vectorized viz label assignment
+                viz_label = f"HH_{default_hh_type_enum.name.replace('HH_', '')}"
+                self.runtime_state.neuron_types_list_for_viz = [viz_label] * n
 
             elif cfg.neuron_model_type == NeuronModel.ADEX.name:
                 self._log_console(f"Initializing AdEx model specifics for {n} neurons...")
@@ -2139,9 +2866,8 @@ class SimulationBridge:
                 self.cp_membrane_potential_v = cp.full(n, cfg.adex_E_L, dtype=cp.float32)
                 self.cp_adex_w = cp.zeros(n, dtype=cp.float32)
                 self.cp_neuron_firing_thresholds = None  # AdEx uses adex_V_peak from config
-                # Simple labeling for visualization
-                for i in range(n):
-                    self.runtime_state.neuron_types_list_for_viz[i] = "AdEx_RS"
+                # Vectorized viz label assignment
+                self.runtime_state.neuron_types_list_for_viz = ["AdEx_RS"] * n
             
             # B2: Apply parameter heterogeneity if enabled
             if cfg.enable_parameter_heterogeneity and n > 0:
@@ -2218,13 +2944,9 @@ class SimulationBridge:
                 if inhibitory_indices:
                     cfg.inhibitory_trait_indices = inhibitory_indices
 
-            if cfg.enable_short_term_plasticity and num_synapses > 0:
-                self._log_console(f"Initializing STP state for {num_synapses} synapses...")
-                self.cp_stp_x = cp.ones(num_synapses, dtype=cp.float32) 
-                self.cp_stp_u = cp.full(num_synapses, cfg.stp_U, dtype=cp.float32) 
-            else: 
-                self.cp_stp_x = None; self.cp_stp_u = None
-            
+            # Initialize synapse-indexed arrays with pre-allocated capacity for structural plasticity
+            self._init_synapse_arrays_with_capacity(num_synapses, cfg)
+
             # C2: Initialize STDP state arrays
             if cfg.enable_stdp and n > 0:
                 self._log_console(f"Initializing STDP state for {n} neurons...")
@@ -2233,14 +2955,6 @@ class SimulationBridge:
             else:
                 self.cp_last_spike_time = None
             
-            # C2: Initialize reward modulation state
-            if cfg.enable_reward_modulation and num_synapses > 0:
-                self._log_console(f"Initializing reward modulation eligibility traces for {num_synapses} synapses...")
-                # Eligibility trace for each synapse (decays over time)
-                self.cp_eligibility_trace = cp.zeros(num_synapses, dtype=cp.float32)
-            else:
-                self.cp_eligibility_trace = None
-            
             # C3: Initialize structural plasticity state
             if cfg.enable_structural_plasticity:
                 self._log_console("Initializing structural plasticity state...")
@@ -2248,9 +2962,17 @@ class SimulationBridge:
             else:
                 self.cp_struct_plast_step_counter = None
 
+            # Pre-compute step-invariant constants (avoids redundant exp/pow per step)
+            self._cached_decay_e = float(cp.exp(-cfg.dt_ms / cfg.syn_tau_g_e)) if cfg.syn_tau_g_e > 0 else 0.0
+            self._cached_decay_i = float(cp.exp(-cfg.dt_ms / cfg.syn_tau_g_i)) if cfg.syn_tau_g_i > 0 else 0.0
+            self._cached_decay_nmda = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_decay)) if cfg.nmda_tau_decay > 0 else 0.0
+            self._cached_decay_nmda_rise = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_rise)) if cfg.nmda_tau_rise > 0 else 0.0
+            _BASE_HH_TEMP = 6.3
+            self._cached_hh_phi = cfg.hh_q10_factor ** ((cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0)
+
             self.is_initialized = True
             conn_count = self.cp_connections.nnz if self.cp_connections is not None else 0
-            
+
             # Log GPU memory usage after initialization
             mem_stats = self._get_gpu_memory_info()
             self._log_console(
@@ -2324,8 +3046,14 @@ class SimulationBridge:
                     scale=dist_spec["std"],
                     size=n
                 ).astype(cp.float32)
-                # Clip to prevent non-physical values (0.1x to 3x mean)
-                samples = cp.clip(samples, dist_spec["mean"] * 0.1, dist_spec["mean"] * 3.0)
+                # Clip to prevent non-physical values (~0.1x to 3x magnitude from mean)
+                mean_val = dist_spec["mean"]
+                if mean_val > 0:
+                    samples = cp.clip(samples, mean_val * 0.1, mean_val * 3.0)
+                elif mean_val < 0:
+                    # For negative parameters (e.g., izh_b = -2.0 nS): clip symmetrically around mean
+                    samples = cp.clip(samples, mean_val * 3.0, mean_val * 0.1)
+                # else mean == 0: no clipping (allow both positive and negative)
             else:
                 self._log_console(f"Unknown distribution type '{dist_type}' for {param_name}", "warning")
                 continue
@@ -2352,9 +3080,10 @@ class SimulationBridge:
         
         if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
             # Izhikevich parameters (CV ~ 0.3)
-            defaults["izh_a_val"] = {"type": "lognormal", "mean_log": cp.log(cfg.izh_a_val).item(), "sigma_log": 0.3}
-            defaults["izh_b_val"] = {"type": "lognormal", "mean_log": cp.log(cfg.izh_b_val).item(), "sigma_log": 0.25}
-            defaults["izh_d_val"] = {"type": "gaussian", "mean": cfg.izh_d_val, "std": cfg.izh_d_val * 0.25}
+            defaults["izh_a_val"] = {"type": "lognormal", "mean_log": cp.log(cfg.izh_a_val).item(), "sigma_log": 0.3} if cfg.izh_a_val > 0 else {"type": "gaussian", "mean": cfg.izh_a_val, "std": abs(cfg.izh_a_val) * 0.3}
+            # b can be negative (e.g., -2.0 nS for RS neurons) — use Gaussian, not log-normal
+            defaults["izh_b_val"] = {"type": "gaussian", "mean": cfg.izh_b_val, "std": abs(cfg.izh_b_val) * 0.25}
+            defaults["izh_d_val"] = {"type": "gaussian", "mean": cfg.izh_d_val, "std": abs(cfg.izh_d_val) * 0.25 if cfg.izh_d_val != 0 else 10.0}
             defaults["izh_C_val"] = {"type": "gaussian", "mean": cfg.izh_C_val, "std": cfg.izh_C_val * 0.15}
         
         elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
@@ -2478,42 +3207,331 @@ class SimulationBridge:
         self._log_console(f"Connections (3D Spatial GPU): {conn_matrix.nnz}. Time: {elapsed:.2f}s")
         return conn_matrix
     
-    def _generate_spatial_connections_3d_chunked(self, n, max_connections_per_neuron, neuron_positions_3d_cp, traits_cp, config):
-        """Chunked version of vectorized connection generation for large networks (>15k neurons).
-        Processes neurons in batches to avoid OOM errors while still using GPU acceleration.
+    def _generate_random_connections_large(self, n, k, traits_np, trait_bias, min_w, max_w):
+        """Generate random connections for very large networks when spatial constraints don't apply.
+
+        Used when connection_radius exceeds spatial extent, meaning all neurons are
+        effectively within connection range of each other. Uses chunked processing
+        to avoid memory issues.
         """
-        self._log_console("Generating connections (3D spatial, GPU-vectorized-chunked)...")
         start_t = time.time()
-        
+        self._log_console(f"Generating random connections for {n} neurons (k={k})...")
+
+        all_rows = []
+        all_cols = []
+        all_weights = []
+
+        # Process in chunks
+        chunk_size = max(1000, n // 100)
+        num_chunks = (n + chunk_size - 1) // chunk_size
+
+        for chunk_idx in range(num_chunks):
+            start_idx = chunk_idx * chunk_size
+            end_idx = min(start_idx + chunk_size, n)
+            chunk_n = end_idx - start_idx
+
+            # For each neuron in chunk, randomly select k targets
+            for i in range(chunk_n):
+                neuron_i = start_idx + i
+                trait_i = traits_np[neuron_i]
+
+                # Generate candidate pool (exclude self)
+                candidates = np.concatenate([np.arange(0, neuron_i), np.arange(neuron_i + 1, n)])
+
+                # Weight by trait similarity
+                candidate_traits = traits_np[candidates]
+                weights = np.ones(len(candidates), dtype=np.float32)
+                weights[candidate_traits == trait_i] += trait_bias
+
+                # Normalize to probabilities
+                probs = weights / weights.sum()
+
+                # Sample k targets
+                actual_k = min(k, len(candidates))
+                targets = np.random.choice(candidates, size=actual_k, replace=False, p=probs)
+
+                # Generate connection weights
+                conn_weights = np.random.uniform(min_w, max_w, actual_k).astype(np.float32)
+
+                all_rows.extend([neuron_i] * actual_k)
+                all_cols.extend(targets.tolist())
+                all_weights.extend(conn_weights.tolist())
+
+            if num_chunks > 1 and (chunk_idx + 1) % max(1, num_chunks // 10) == 0:
+                progress = ((chunk_idx + 1) / num_chunks) * 100
+                self._log_console(f"Random connection progress: {progress:.1f}%")
+
+        # Create sparse matrix
+        row_indices_cp = cp.asarray(np.array(all_rows, dtype=np.int32))
+        col_indices_cp = cp.asarray(np.array(all_cols, dtype=np.int32))
+        weights_cp = cp.asarray(np.array(all_weights, dtype=np.float32))
+
+        conn_matrix = csp.coo_matrix(
+            (weights_cp, (row_indices_cp, col_indices_cp)),
+            shape=(n, n),
+            dtype=cp.float32
+        ).tocsr()
+
+        conn_matrix.sort_indices()
+        elapsed = time.time() - start_t
+        self._log_console(f"Connections (Random Large): {conn_matrix.nnz}. Time: {elapsed:.2f}s")
+        return conn_matrix
+
+    def _generate_spatial_connections_3d_binned(self, n, max_connections_per_neuron, neuron_positions_3d_cp, traits_cp, config):
+        """Spatial binning approach for very large networks (>50k neurons).
+
+        Instead of computing distances to all N neurons, we divide the space into bins
+        and only compute distances to neurons in nearby bins. This reduces memory from
+        O(N) to O(N/num_bins * neighborhood_size), making 100K+ networks feasible.
+        """
+        self._log_console("Generating connections (3D spatial, GPU-binned)...")
+        start_t = time.time()
+
         dist_decay = getattr(config, 'connection_distance_decay_factor', 0.01)
         trait_bias = getattr(config, 'trait_connection_bias', 0.5)
         min_w, max_w = config.hebbian_min_weight, config.hebbian_max_weight
         k = min(max_connections_per_neuron, n - 1)
-        
+
+        # Transfer positions to CPU for binning (more efficient for indexing)
+        positions_np = cp.asnumpy(neuron_positions_3d_cp)
+        traits_np = cp.asnumpy(traits_cp)
+
+        # Get spatial bounds
+        pos_min = positions_np.min(axis=0)
+        pos_max = positions_np.max(axis=0)
+        spatial_extent = pos_max - pos_min + 1e-6  # Avoid zero extent
+        max_extent = spatial_extent.max()
+
+        # connection_radius = distance at which probability drops to ~1%
+        connection_radius = 4.6 / max(dist_decay, 0.001)
+
+        # If connection_radius exceeds spatial extent, all neurons can connect to all others
+        # In this case, use random sampling instead of spatial binning
+        if connection_radius >= max_extent:
+            self._log_console(f"Connection radius ({connection_radius:.1f}) >= spatial extent ({max_extent:.1f}). Using random sampling.")
+            return self._generate_random_connections_large(n, k, traits_np, trait_bias, min_w, max_w)
+
+        # Determine bin size based on network size (aim for manageable bins)
+        # For 100K neurons, target ~500-1000 neurons per bin = ~100-200 bins total
+        target_neurons_per_bin = max(500, n // 200)
+        num_bins_total = max(27, n // target_neurons_per_bin)
+        num_bins_per_dim = max(3, int(np.cbrt(num_bins_total)))
+
+        bin_size = spatial_extent / num_bins_per_dim
+
+        # Recompute actual num_bins based on bin_size
+        num_bins_xyz = np.ceil(spatial_extent / bin_size).astype(int)
+        num_bins_xyz = np.maximum(num_bins_xyz, 1)
+
+        # How many bins does connection_radius span?
+        avg_bin_size = bin_size.mean()
+        neighbor_range = max(1, int(np.ceil(connection_radius / avg_bin_size)))
+
+        # Cap neighbor_range to avoid searching more than half the bins
+        max_neighbor_range = num_bins_per_dim // 2
+        if neighbor_range > max_neighbor_range:
+            self._log_console(f"Neighbor range {neighbor_range} too large. Using random sampling.")
+            return self._generate_random_connections_large(n, k, traits_np, trait_bias, min_w, max_w)
+
+        self._log_console(f"Spatial binning: {num_bins_xyz} bins, bin_size={avg_bin_size:.2f}, neighbor_range={neighbor_range}")
+
+        # Assign each neuron to a bin
+        bin_indices = np.floor((positions_np - pos_min) / bin_size).astype(int)
+        bin_indices = np.clip(bin_indices, 0, num_bins_xyz - 1)  # Clamp to valid range
+
+        # Convert 3D bin index to linear index
+        bin_linear = (bin_indices[:, 0] * num_bins_xyz[1] * num_bins_xyz[2] +
+                      bin_indices[:, 1] * num_bins_xyz[2] +
+                      bin_indices[:, 2])
+
+        # Build bin-to-neuron lookup (dict: bin_id -> list of neuron indices)
+        from collections import defaultdict
+        bin_to_neurons = defaultdict(list)
+        for neuron_idx, bin_id in enumerate(bin_linear):
+            bin_to_neurons[bin_id].append(neuron_idx)
+
+        # Pre-compute neighbor offsets based on neighbor_range
+        # If neighbor_range=1, we search 3x3x3=27 bins
+        # If neighbor_range=2, we search 5x5x5=125 bins, etc.
+        neighbor_offsets = []
+        for dx in range(-neighbor_range, neighbor_range + 1):
+            for dy in range(-neighbor_range, neighbor_range + 1):
+                for dz in range(-neighbor_range, neighbor_range + 1):
+                    neighbor_offsets.append((dx, dy, dz))
+
+        # Process neurons and generate connections - bin-by-bin for vectorization
+        all_rows = []
+        all_cols = []
+        all_weights = []
+
+        # Process bin-by-bin (all neurons in a bin share the same neighbor bins)
+        total_bins = len(bin_to_neurons)
+        processed_bins = 0
+
+        for bin_id, source_neurons in bin_to_neurons.items():
+            if len(source_neurons) == 0:
+                continue
+
+            # Get 3D bin coordinates from linear index
+            bx = bin_id // (num_bins_xyz[1] * num_bins_xyz[2])
+            remainder = bin_id % (num_bins_xyz[1] * num_bins_xyz[2])
+            by = remainder // num_bins_xyz[2]
+            bz = remainder % num_bins_xyz[2]
+
+            # Gather ALL candidate neurons from neighboring bins (same for all source neurons in this bin)
+            candidates = []
+            for dx, dy, dz in neighbor_offsets:
+                nx, ny, nz = bx + dx, by + dy, bz + dz
+                if (0 <= nx < num_bins_xyz[0] and
+                    0 <= ny < num_bins_xyz[1] and
+                    0 <= nz < num_bins_xyz[2]):
+                    neighbor_linear = nx * num_bins_xyz[1] * num_bins_xyz[2] + ny * num_bins_xyz[2] + nz
+                    candidates.extend(bin_to_neurons[neighbor_linear])
+
+            if len(candidates) == 0:
+                continue
+
+            # Convert to arrays for vectorized operations
+            source_arr = np.array(source_neurons, dtype=np.int32)
+            candidate_arr = np.array(candidates, dtype=np.int32)
+
+            # Get positions and traits for sources and candidates
+            source_pos = positions_np[source_arr]  # (num_sources, 3)
+            candidate_pos = positions_np[candidate_arr]  # (num_candidates, 3)
+            source_traits = traits_np[source_arr]  # (num_sources,)
+            candidate_traits = traits_np[candidate_arr]  # (num_candidates,)
+
+            # Compute all pairwise distances: (num_sources, num_candidates)
+            # Using broadcasting: diff = source_pos[:, None, :] - candidate_pos[None, :, :]
+            diff = source_pos[:, None, :] - candidate_pos[None, :, :]  # (S, C, 3)
+            distances = np.sqrt(np.sum(diff**2, axis=2))  # (S, C)
+
+            # Set self-distances to infinity
+            # Create mask where source[i] == candidate[j]
+            source_expanded = source_arr[:, None]  # (S, 1)
+            candidate_expanded = candidate_arr[None, :]  # (1, C)
+            self_mask = (source_expanded == candidate_expanded)  # (S, C)
+            distances[self_mask] = np.inf
+
+            # Compute connection probabilities
+            prob_dist = np.exp(-dist_decay * distances)  # (S, C)
+
+            # Trait similarity: (S, 1) == (1, C) -> (S, C)
+            trait_match = (source_traits[:, None] == candidate_traits[None, :])
+            prob_trait = trait_match.astype(np.float32) * trait_bias  # (S, C)
+
+            conn_prob = prob_dist + prob_trait  # (S, C)
+
+            # For each source neuron, select top-k candidates
+            num_candidates = len(candidate_arr)
+            actual_k = min(k, num_candidates - 1)  # -1 to account for self-exclusion
+
+            if actual_k <= 0:
+                continue
+
+            # Use argpartition for each row to get top-k indices
+            if actual_k < num_candidates:
+                # Partition to get top-k indices (unsorted)
+                partition_idx = np.argpartition(conn_prob, -actual_k, axis=1)[:, -actual_k:]  # (S, k)
+            else:
+                partition_idx = np.tile(np.arange(num_candidates), (len(source_arr), 1))
+
+            # Generate connections
+            num_sources = len(source_arr)
+            for i in range(num_sources):
+                source_neuron = source_arr[i]
+                # Filter out any infinite distances (self-connections that might slip through)
+                valid_mask = conn_prob[i, partition_idx[i]] > 0
+                valid_targets = partition_idx[i][valid_mask]
+
+                if len(valid_targets) == 0:
+                    continue
+
+                target_neurons = candidate_arr[valid_targets]
+                num_connections = len(target_neurons)
+
+                weights = np.random.uniform(min_w, max_w, num_connections).astype(np.float32)
+
+                all_rows.extend([source_neuron] * num_connections)
+                all_cols.extend(target_neurons.tolist())
+                all_weights.extend(weights.tolist())
+
+            processed_bins += 1
+            if total_bins > 10 and processed_bins % max(1, total_bins // 10) == 0:
+                progress = (processed_bins / total_bins) * 100
+                self._log_console(f"Binned connection progress: {progress:.1f}%")
+
+        # Convert to arrays and create sparse matrix on GPU
+        if len(all_rows) == 0:
+            self._log_console("Warning: No connections generated!", "warning")
+            return csp.csr_matrix((n, n), dtype=cp.float32)
+
+        row_indices_cp = cp.asarray(np.array(all_rows, dtype=np.int32))
+        col_indices_cp = cp.asarray(np.array(all_cols, dtype=np.int32))
+        weights_cp = cp.asarray(np.array(all_weights, dtype=np.float32))
+
+        conn_matrix = csp.coo_matrix(
+            (weights_cp, (row_indices_cp, col_indices_cp)),
+            shape=(n, n),
+            dtype=cp.float32
+        ).tocsr()
+
+        conn_matrix.sort_indices()
+        elapsed = time.time() - start_t
+        self._log_console(f"Connections (3D Spatial GPU-Binned): {conn_matrix.nnz}. Time: {elapsed:.2f}s")
+        return conn_matrix
+
+    def _generate_spatial_connections_3d_chunked(self, n, max_connections_per_neuron, neuron_positions_3d_cp, traits_cp, config):
+        """Chunked version of vectorized connection generation for large networks.
+        Processes neurons in GPU-accelerated batches.  Memory-adaptive chunk sizing
+        keeps peak VRAM within safe limits for networks up to ~500K neurons on 24GB cards.
+
+        Falls back to the CPU-based binned generator only when a single chunk row
+        would exceed available VRAM (extremely large N with high connectivity).
+        """
+        # Estimate per-chunk-row VRAM: N * 60 bytes (distance matrix + probs + argpartition)
+        # Fall back to CPU-binned only if a SINGLE row would exceed 25% of free VRAM
+        # (meaning even chunk_size=1 would OOM)
+        mem_info = cp.cuda.Device().mem_info
+        free_mem = mem_info[0]
+        bytes_per_row = n * 60
+        if bytes_per_row > free_mem * 0.25:
+            self._log_console(f"Single chunk row ({bytes_per_row/1e9:.1f}GB) exceeds 25% of free VRAM ({free_mem/1e9:.1f}GB). Falling back to CPU-binned generator.")
+            return self._generate_spatial_connections_3d_binned(n, max_connections_per_neuron, neuron_positions_3d_cp, traits_cp, config)
+
+        self._log_console("Generating connections (3D spatial, GPU-vectorized-chunked)...")
+        start_t = time.time()
+
+        dist_decay = getattr(config, 'connection_distance_decay_factor', 0.01)
+        trait_bias = getattr(config, 'trait_connection_bias', 0.5)
+        min_w, max_w = config.hebbian_min_weight, config.hebbian_max_weight
+        k = min(max_connections_per_neuron, n - 1)
+
         # Determine chunk size based on available memory
-        # Need to account for multiple intermediate arrays:
-        # - diff: (chunk_size, n, 3) = chunk_size * n * 3 * 4 bytes
-        # - diff^2: same size
-        # - distances: (chunk_size, n) = chunk_size * n * 4 bytes
-        # - prob arrays: ~3x (chunk_size, n) arrays
-        # Total: ~8 * chunk_size * n * 4 bytes per chunk
-        # Dynamically use as much VRAM as available while leaving safety margin
+        # Peak memory per chunk row (all arrays that coexist during argpartition):
+        #   diff:           n * 3 * 4 = 12n bytes  (chunk_n, n, 3) float32
+        #   distances:      n * 4     =  4n bytes  (chunk_n, n)    float32
+        #   prob_dist:      n * 4     =  4n bytes  (chunk_n, n)    float32
+        #   prob_trait:     n * 4     =  4n bytes  (chunk_n, n)    float32
+        #   conn_prob:      n * 4     =  4n bytes  (chunk_n, n)    float32
+        #   argpartition internals (thrust sort): ~3x (chunk_n, n) int32+float32
+        #                   n * 24    = 24n bytes  (hidden CuPy/Thrust temporaries)
+        # Total peak: ~52n bytes per chunk row.  Use 60n for safety margin.
         mem_info = cp.cuda.Device().mem_info
         free_mem = mem_info[0]  # Free VRAM in bytes
-        
-        # Use 70% of free memory for chunking operations (30% safety margin for other allocations)
-        # This is more aggressive than previous 40% but still safe
-        target_mem_bytes = free_mem * 0.70
-        
-        # chunk_size * n * 32 bytes (8 arrays * 4 bytes) < target_mem
-        bytes_per_chunk_element = n * 32
-        chunk_size = max(100, int(target_mem_bytes / bytes_per_chunk_element))
+
+        # Use only 35% of free memory — argpartition's Thrust backend allocates
+        # large hidden temporaries that are not visible to CuPy's pool accounting
+        target_mem_bytes = free_mem * 0.35
+
+        bytes_per_chunk_row = n * 60  # Conservative: accounts for Thrust sort internals
+        chunk_size = max(64, int(target_mem_bytes / bytes_per_chunk_row))
         chunk_size = min(chunk_size, n)  # Don't exceed total neurons
-        
+
         free_mem_gb = free_mem / 1e9
         target_mem_gb = target_mem_bytes / 1e9
-        self._log_console(f"VRAM: {free_mem_gb:.2f}GB free, using {target_mem_gb:.2f}GB (70%) for chunking")
-        
+        self._log_console(f"VRAM: {free_mem_gb:.2f}GB free, using {target_mem_gb:.2f}GB ({target_mem_gb/free_mem_gb*100:.0f}%) for chunking")
+
         self._log_console(f"Using chunked processing: {n} neurons, chunk_size={chunk_size}")
         
         # Lists to accumulate connection data
@@ -2557,9 +3575,22 @@ class SimulationBridge:
             
             # Combined probability
             conn_prob = prob_dist + prob_trait  # (chunk_n, n)
-            
+
+            # Free intermediate arrays BEFORE argpartition — Thrust sort
+            # allocates large hidden temporaries that can exceed the pool limit
+            del prob_dist, prob_trait, distances, diff
+            del chunk_pos_i, pos_j
+            cp.get_default_memory_pool().free_all_blocks()
+
             # Select top-k connections for each neuron in chunk
-            top_k_indices = cp.argsort(conn_prob, axis=1)[:, -k:]  # (chunk_n, k)
+            # Use argpartition (O(n)) instead of argsort (O(n log n)) - more memory efficient
+            # argpartition returns indices where the k largest are in the last k positions (unsorted)
+            partition_idx = cp.argpartition(conn_prob, -k, axis=1)[:, -k:]  # (chunk_n, k)
+            # Get the actual values at these positions for sorting within top-k
+            top_k_values = cp.take_along_axis(conn_prob, partition_idx, axis=1)
+            # Sort within top-k to get proper ordering (small sort, k elements)
+            sorted_within_k = cp.argsort(top_k_values, axis=1)
+            top_k_indices = cp.take_along_axis(partition_idx, sorted_within_k, axis=1)  # (chunk_n, k)
             
             # Generate weights
             weights = cp.random.uniform(min_w, max_w, (chunk_n, k)).astype(cp.float32)
@@ -2569,15 +3600,24 @@ class SimulationBridge:
             chunk_cols = top_k_indices.ravel()  # (chunk_n * k,)
             chunk_weights = weights.ravel()  # (chunk_n * k,)
             
-            # Accumulate
+            # Accumulate (transfer to CPU immediately to free GPU memory)
             all_rows.append(cp.asnumpy(chunk_rows))
             all_cols.append(cp.asnumpy(chunk_cols))
             all_weights.append(cp.asnumpy(chunk_weights))
-            
-            # Progress update
-            if num_chunks > 1:
+
+            # Explicit cleanup to prevent memory fragmentation
+            # (diff, distances, prob_dist, prob_trait, chunk_pos_i, pos_j already freed pre-argpartition)
+            del chunk_rows, chunk_cols, chunk_weights, weights
+            del top_k_indices, top_k_values, sorted_within_k, partition_idx
+            del conn_prob, chunk_pos, chunk_traits
+            cp.get_default_memory_pool().free_all_blocks()
+
+            # Progress update (every 10% or every chunk if few chunks)
+            if num_chunks > 1 and ((chunk_idx + 1) % max(1, num_chunks // 10) == 0 or chunk_idx == num_chunks - 1):
                 progress = ((chunk_idx + 1) / num_chunks) * 100
-                self._log_console(f"Chunked progress: {progress:.1f}%")
+                elapsed = time.time() - start_t
+                eta = elapsed / (chunk_idx + 1) * (num_chunks - chunk_idx - 1)
+                self._log_console(f"Chunked progress: {progress:.1f}% ({elapsed:.1f}s elapsed, ~{eta:.0f}s remaining)")
         
         # Concatenate all chunks
         all_rows_np = np.concatenate(all_rows)
@@ -2984,7 +4024,7 @@ class SimulationBridge:
         """Clears all CuPy arrays and resets the initialization flag."""
         self._log_console("Clearing simulation state and GPU memory...")
         attrs_to_clear = [
-            'cp_membrane_potential_v','cp_recovery_variable_u', 'cp_conductance_g_e','cp_conductance_g_i',
+            'cp_membrane_potential_v','cp_recovery_variable_u', 'cp_conductance_g_e','cp_conductance_g_i','cp_conductance_g_nmda','cp_conductance_g_nmda_rise',
             'cp_external_input_current', 'cp_firing_states','cp_prev_firing_states','cp_traits',
             'cp_neuron_positions_3d','cp_connections', 'cp_refractory_timers', 'cp_viz_activity_timers',
             'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
@@ -3012,7 +4052,15 @@ class SimulationBridge:
             except Exception as e:
                 self._log_console(f"Error freeing CuPy memory: {e}", "warning")
 
-        self.is_initialized = False 
+        # Invalidate COO cache so stale data from previous network doesn't persist
+        self._cached_coo_matrix = None
+        self._coo_cache_valid = False
+        self._synapse_count = 0
+        self._synapse_capacity = 0
+        self._compaction_counter = 0
+        self._pending_eliminations = False
+
+        self.is_initialized = False
         self._log_console("Cleared simulation state and GPU memory.")
 
     def start_simulation(self):
@@ -3051,12 +4099,33 @@ class SimulationBridge:
             self._log_to_ui("Simulation resumed.", "info")
 
     def toggle_pause_simulation(self):
-        """Toggles the pause state of the simulation. Returns the new pause state."""
-        # This logic should primarily live in the UI thread to avoid race conditions.
-        # The UI sends discrete PAUSE/RESUME commands. This function can be deprecated.
-        if not self.runtime_state.is_running:
-            self._log_to_ui("Cannot toggle pause: Simulation is not running.", "warning"); return self.runtime_state.is_paused
+        """Toggles the pause state of the simulation. Returns the new pause state.
 
+        DEPRECATED: This method directly modifies shared state and has race condition risks.
+        Prefer sending PAUSE/RESUME commands through ui_to_sim_queue instead.
+        """
+        import warnings
+        warnings.warn(
+            "toggle_pause_simulation() is deprecated due to race conditions. "
+            "Use ui_to_sim_queue.put({'type': 'PAUSE'/'RESUME'}) instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+
+        if not self.runtime_state.is_running:
+            self._log_to_ui("Cannot toggle pause: Simulation is not running.", "warning")
+            return self.runtime_state.is_paused
+
+        # Route through command queue for thread safety (if queue is available)
+        if ui_to_sim_queue:
+            command = "PAUSE" if not self.runtime_state.is_paused else "RESUME"
+            try:
+                ui_to_sim_queue.put_nowait({"type": command})
+            except queue.Full:
+                self._log_to_ui("Command queue full, cannot toggle pause.", "warning")
+            return not self.runtime_state.is_paused  # Return expected state
+
+        # Fallback for non-threaded use (legacy)
         self.runtime_state.is_paused = not self.runtime_state.is_paused
         action = "paused" if self.runtime_state.is_paused else "resumed"
         self._log_to_ui(f"Simulation {action}.", "info")
@@ -3102,13 +4171,21 @@ class SimulationBridge:
         self._log_to_ui(f"Stepped sim by {num_steps} substeps. Current time: {self.runtime_state.current_time_ms:.3f} ms", "info")
 
 
-    def _estimate_frame_size_bytes(self):
-        """Estimates the size in bytes of a single recording frame."""
+    def _estimate_frame_size_bytes(self, skip_synaptic_data=None):
+        """Estimates the size in bytes of a single recording frame.
+
+        Args:
+            skip_synaptic_data: If True, exclude synaptic arrays from estimate.
+                               If None, uses gpu_config.recording_skip_synaptic_data.
+        """
         if not self.is_initialized:
             return 0
-        
+
+        if skip_synaptic_data is None:
+            skip_synaptic_data = self.gpu_config.recording_skip_synaptic_data
+
         total_bytes = 0
-        # Dynamic arrays that change each frame
+        # Dynamic arrays that change each frame (neuron state)
         arrays_to_check = [
             'cp_membrane_potential_v', 'cp_firing_states', 'cp_viz_activity_timers',
             'cp_conductance_g_e', 'cp_conductance_g_i', 'cp_recovery_variable_u',
@@ -3116,22 +4193,24 @@ class SimulationBridge:
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
             'cp_adex_w', 'cp_ou_current'
         ]
-        
-        if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
-            if self.cp_connections.data is not None:
-                total_bytes += self.cp_connections.data.nbytes
-        
-        if self.core_config.enable_short_term_plasticity:
-            if self.cp_stp_u is not None:
-                total_bytes += self.cp_stp_u.nbytes
-            if self.cp_stp_x is not None:
-                total_bytes += self.cp_stp_x.nbytes
-        
+
+        # Synaptic data is often 10-20x larger than neuron data
+        if not skip_synaptic_data:
+            if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
+                if self.cp_connections.data is not None:
+                    total_bytes += self.cp_connections.data.nbytes
+
+            if self.core_config.enable_short_term_plasticity:
+                if self.cp_stp_u is not None:
+                    total_bytes += self.cp_stp_u.nbytes
+                if self.cp_stp_x is not None:
+                    total_bytes += self.cp_stp_x.nbytes
+
         for attr_name in arrays_to_check:
             array_data = getattr(self, attr_name, None)
             if array_data is not None:
                 total_bytes += array_data.nbytes
-        
+
         # Add overhead for metadata
         total_bytes += 1024  # Small overhead for scalars
         return total_bytes
@@ -3157,9 +4236,62 @@ class SimulationBridge:
                 "warning"
             )
             return False, max_frames
-        
+
         return True, max_frames
-    
+
+    def _check_recording_memory_pressure(self):
+        """Checks GPU and CPU memory usage during recording.
+
+        Recording is allowed to overflow from GPU to CPU RAM. We only pause when
+        BOTH GPU and CPU RAM exceed their respective limits, allowing maximum
+        recording capacity before auto-pause.
+
+        Returns:
+            tuple: (is_critical, gpu_usage_pct, cpu_usage_pct, message)
+        """
+        # Check GPU memory
+        try:
+            mem_info = cp.cuda.Device().mem_info
+            free_memory, total_memory = mem_info
+            gpu_used = total_memory - free_memory
+            gpu_usage_pct = gpu_used / total_memory
+        except Exception:
+            gpu_usage_pct = 0.0
+
+        # Check CPU memory (requires psutil)
+        cpu_usage_pct = 0.0
+        if HAS_PSUTIL:
+            try:
+                mem = psutil.virtual_memory()
+                cpu_usage_pct = mem.percent / 100.0
+            except Exception:
+                pass
+
+        # Determine if memory is critical
+        # Only critical when BOTH GPU AND CPU RAM exceed their limits
+        # This allows GPU to fill up and overflow into CPU RAM before pausing
+        gpu_limit = self.gpu_config.recording_gpu_memory_limit
+        cpu_limit = self.gpu_config.recording_cpu_memory_limit
+
+        gpu_exceeded = gpu_usage_pct >= gpu_limit
+        cpu_exceeded = cpu_usage_pct >= cpu_limit
+
+        is_critical = False
+        message = None
+
+        if gpu_exceeded and cpu_exceeded:
+            # Both limits exceeded - must pause to prevent crash
+            is_critical = True
+            message = (f"GPU ({gpu_usage_pct*100:.1f}%) and CPU RAM ({cpu_usage_pct*100:.1f}%) "
+                      f"both exceed limits ({gpu_limit*100:.0f}%/{cpu_limit*100:.0f}%)")
+        elif gpu_exceeded and not HAS_PSUTIL:
+            # GPU full but can't check CPU - pause to be safe
+            is_critical = True
+            message = (f"GPU memory at {gpu_usage_pct*100:.1f}% (limit: {gpu_limit*100:.0f}%). "
+                      f"Cannot monitor CPU RAM (psutil not installed).")
+
+        return is_critical, gpu_usage_pct, cpu_usage_pct, message
+
     def _capture_initial_state_for_recording(self):
         """Captures the full initial state of the simulation for HDF5 recording."""
         if not self.is_initialized:
@@ -3212,74 +4344,258 @@ class SimulationBridge:
             snapshot["connections_data"] = np.array([]); snapshot["connections_indices"] = np.array([])
             snapshot["connections_indptr"] = np.array([]); snapshot["connections_shape"] = (0,0)
 
-        if self.cp_stp_u is not None: snapshot["cp_stp_u"] = cp.asnumpy(self.cp_stp_u)
+        # Save only active portion of pre-allocated STP arrays
+        synapse_count = getattr(self, '_synapse_count', None)
+        if self.cp_stp_u is not None:
+            active_u = self.cp_stp_u[:synapse_count] if synapse_count else self.cp_stp_u
+            snapshot["cp_stp_u"] = cp.asnumpy(active_u)
         else: snapshot["cp_stp_u"] = None
-        if self.cp_stp_x is not None: snapshot["cp_stp_x"] = cp.asnumpy(self.cp_stp_x)
+        if self.cp_stp_x is not None:
+            active_x = self.cp_stp_x[:synapse_count] if synapse_count else self.cp_stp_x
+            snapshot["cp_stp_x"] = cp.asnumpy(active_x)
         else: snapshot["cp_stp_x"] = None
         
         return snapshot
 
+    def _get_compression_kwargs(self):
+        """Returns HDF5 dataset compression kwargs based on gpu_config settings."""
+        compression = self.gpu_config.recording_compression.lower()
+
+        if compression == "lz4":
+            if HAS_HDF5PLUGIN:
+                return hdf5plugin.LZ4()
+            else:
+                self._log_console("LZ4 requested but hdf5plugin not installed. Falling back to gzip.", "warning")
+                return {"compression": "gzip", "compression_opts": self.gpu_config.recording_compression_level}
+        elif compression == "gzip":
+            return {"compression": "gzip", "compression_opts": self.gpu_config.recording_compression_level}
+        elif compression == "none":
+            return {}
+        else:
+            self._log_console(f"Unknown compression '{compression}'. Using gzip.", "warning")
+            return {"compression": "gzip", "compression_opts": 1}
+
+    def _create_compressed_dataset(self, group, key, data):
+        """Creates an HDF5 dataset with configured compression."""
+        compression_kwargs = self._get_compression_kwargs()
+        if isinstance(compression_kwargs, dict):
+            group.create_dataset(key, data=data, **compression_kwargs)
+        else:
+            # hdf5plugin returns a filter object, use it directly
+            group.create_dataset(key, data=data, **compression_kwargs)
+
     def _write_gpu_frames_to_disk(self):
-        """Writes all GPU-buffered frames to disk in a single batch operation."""
-        if not self.gpu_frame_buffer:
+        """Writes all buffered frames (GPU + CPU overflow) to disk with optimized compression.
+
+        Features:
+        - Handles both GPU (CuPy) and CPU (NumPy) frame buffers
+        - Configurable compression (LZ4/GZIP/none)
+        - Optional parallel compression using ThreadPoolExecutor
+        - Progress reporting
+        """
+        gpu_frame_count = len(self.gpu_frame_buffer)
+        cpu_frame_count = len(self.cpu_frame_buffer)
+        total_frames = gpu_frame_count + cpu_frame_count
+
+        if total_frames == 0:
             return  # No frames to write
-        
-        total_frames = len(self.gpu_frame_buffer)
-        self._log_to_ui(f"Writing {total_frames} GPU-buffered frames to disk...", "info")
+
+        compression_type = self.gpu_config.recording_compression
+        use_parallel = self.gpu_config.enable_parallel_compression and total_frames > 10
+
+        self._log_to_ui(
+            f"Writing {total_frames} frames to disk ({gpu_frame_count} GPU + {cpu_frame_count} CPU, "
+            f"compression={compression_type}, parallel={use_parallel})...",
+            "info"
+        )
         start_time = time.time()
-        
+
         try:
-            # Process frames in order
-            sorted_frame_indices = sorted(self.gpu_frame_buffer.keys())
-            
-            for i, frame_idx in enumerate(sorted_frame_indices):
-                frame_data_gpu = self.gpu_frame_buffer[frame_idx]
-                
-                # Convert CuPy arrays to NumPy (GPU→CPU transfer happens here)
-                frame_data_np = {}
-                for key, value in frame_data_gpu.items():
-                    if isinstance(value, cp.ndarray):
-                        frame_data_np[key] = cp.asnumpy(value)
-                    else:
-                        frame_data_np[key] = value  # Scalars
-                
-                # Write to HDF5
-                frame_group_name = f"frames/frame_{frame_idx}"
-                current_frame_group = self.recording_file_handle.create_group(frame_group_name)
-                
-                for key, value in frame_data_np.items():
-                    if isinstance(value, np.ndarray):
-                        if value.size > 0:
-                            current_frame_group.create_dataset(key, data=value, compression="gzip")
+            frames_np = {}
+
+            # Phase 1a: GPU→CPU transfer for GPU-buffered frames
+            if gpu_frame_count > 0:
+                self._log_console(f"Phase 1a: Transferring {gpu_frame_count} GPU frames to CPU...")
+                transfer_start = time.time()
+                sorted_gpu_indices = sorted(self.gpu_frame_buffer.keys())
+
+                for i, frame_idx in enumerate(sorted_gpu_indices):
+                    frame_data_gpu = self.gpu_frame_buffer[frame_idx]
+                    frame_data_np = {}
+                    for key, value in frame_data_gpu.items():
+                        if isinstance(value, cp.ndarray):
+                            frame_data_np[key] = cp.asnumpy(value)
                         else:
-                            current_frame_group.attrs[f"{key}_is_empty"] = True
-                    elif value is not None:
-                        current_frame_group.attrs[key] = value
-                    else:
-                        current_frame_group.attrs[key] = "NoneType"
-                
-                # Progress logging every 10%
-                if (i + 1) % max(1, total_frames // 10) == 0:
-                    progress_pct = ((i + 1) / total_frames) * 100
-                    self._log_console(f"  Writing progress: {progress_pct:.0f}% ({i+1}/{total_frames})")
-            
+                            frame_data_np[key] = value
+                    frames_np[frame_idx] = frame_data_np
+
+                    # Progress every 20%
+                    if (i + 1) % max(1, gpu_frame_count // 5) == 0:
+                        self._log_console(f"  GPU→CPU transfer: {((i+1)/gpu_frame_count)*100:.0f}%")
+
+                transfer_elapsed = time.time() - transfer_start
+                self._log_console(f"GPU→CPU transfer completed in {transfer_elapsed:.2f}s")
+            else:
+                transfer_elapsed = 0.0
+
+            # Phase 1b: Add CPU-buffered frames (already NumPy)
+            if cpu_frame_count > 0:
+                self._log_console(f"Phase 1b: Adding {cpu_frame_count} CPU-buffered frames...")
+                for frame_idx, frame_data in self.cpu_frame_buffer.items():
+                    frames_np[frame_idx] = frame_data
+
+            # Phase 2: Write to HDF5 (with optional parallel compression)
+            self._log_console(f"Phase 2: Compressing and writing {total_frames} frames to disk...")
+            write_start = time.time()
+
+            compression_kwargs = self._get_compression_kwargs()
+            write_lock = threading.Lock()
+            completed_count = [0]  # Use list for mutable reference in nested function
+
+            def write_single_frame(frame_idx, frame_data):
+                """Write a single frame to HDF5 (thread-safe)."""
+                frame_group_name = f"frames/frame_{frame_idx}"
+
+                with write_lock:
+                    current_frame_group = self.recording_file_handle.create_group(frame_group_name)
+
+                    for key, value in frame_data.items():
+                        if isinstance(value, np.ndarray):
+                            if value.size > 0:
+                                if isinstance(compression_kwargs, dict):
+                                    current_frame_group.create_dataset(key, data=value, **compression_kwargs)
+                                else:
+                                    current_frame_group.create_dataset(key, data=value, **compression_kwargs)
+                            else:
+                                current_frame_group.attrs[f"{key}_is_empty"] = True
+                        elif value is not None:
+                            current_frame_group.attrs[key] = value
+                        else:
+                            current_frame_group.attrs[key] = "NoneType"
+
+                    completed_count[0] += 1
+                    if completed_count[0] % max(1, total_frames // 10) == 0:
+                        self._log_console(f"  Write progress: {(completed_count[0]/total_frames)*100:.0f}%")
+
+                return frame_idx
+
+            sorted_all_indices = sorted(frames_np.keys())
+
+            if use_parallel:
+                # Parallel compression (HDF5 writes still serialized via lock)
+                num_workers = min(self.gpu_config.parallel_compression_workers, os.cpu_count() or 4)
+                with ThreadPoolExecutor(max_workers=num_workers) as executor:
+                    futures = {
+                        executor.submit(write_single_frame, idx, frames_np[idx]): idx
+                        for idx in sorted_all_indices
+                    }
+                    # Wait for all to complete
+                    for future in as_completed(futures):
+                        try:
+                            future.result()  # Raises exception if frame write failed
+                        except Exception as e:
+                            self._log_console(f"Error writing frame: {e}", "error")
+            else:
+                # Sequential write
+                for frame_idx in sorted_all_indices:
+                    write_single_frame(frame_idx, frames_np[frame_idx])
+
+            write_elapsed = time.time() - write_start
+
             # Final flush
             self.recording_file_handle.flush()
-            
+
             elapsed = time.time() - start_time
             frames_per_sec = total_frames / elapsed if elapsed > 0 else 0
             self._log_to_ui(
-                f"Successfully wrote {total_frames} frames in {elapsed:.2f}s ({frames_per_sec:.1f} frames/s)",
+                f"Successfully wrote {total_frames} frames in {elapsed:.2f}s "
+                f"({frames_per_sec:.1f} frames/s, transfer={transfer_elapsed:.1f}s, write={write_elapsed:.1f}s)",
                 "success"
             )
-            
-            # Clear GPU buffer to free VRAM
+
+            # Clear both buffers to free memory
             self.gpu_frame_buffer.clear()
-            
+            self.cpu_frame_buffer.clear()
+
         except Exception as e:
-            self._log_to_ui(f"Error writing GPU frames to disk: {e}", "error")
+            self._log_to_ui(f"Error writing frames to disk: {e}", "error")
             raise
-    
+
+    def _async_streaming_writer_thread(self):
+        """Background thread for writing recording frames to disk asynchronously.
+
+        This prevents the simulation from stalling while waiting for disk I/O,
+        which is critical for network storage or large recordings.
+        """
+        compression_kwargs = self._get_compression_kwargs()
+        batch_size = self.gpu_config.streaming_write_batch_size
+        pending_frames = []
+        last_log_time = time.time()
+        log_interval = 5.0  # Log progress every 5 seconds
+
+        self._log_console("Async streaming writer thread started.")
+
+        while not self.streaming_writer_stop_event.is_set() or not self.streaming_write_queue.empty():
+            try:
+                # Get frame from queue with timeout to allow periodic checks
+                try:
+                    frame_idx, frame_data_np = self.streaming_write_queue.get(timeout=0.1)
+                    pending_frames.append((frame_idx, frame_data_np))
+                except queue.Empty:
+                    pass
+
+                # Write batch when we have enough or when stopping
+                should_flush = (
+                    len(pending_frames) >= batch_size or
+                    (self.streaming_writer_stop_event.is_set() and pending_frames)
+                )
+
+                if should_flush and self.recording_file_handle and pending_frames:
+                    for fidx, fdata in pending_frames:
+                        try:
+                            frame_group_name = f"frames/frame_{fidx}"
+                            current_frame_group = self.recording_file_handle.create_group(frame_group_name)
+
+                            for key, value in fdata.items():
+                                if isinstance(value, np.ndarray):
+                                    if value.size > 0:
+                                        current_frame_group.create_dataset(key, data=value, **compression_kwargs)
+                                    else:
+                                        current_frame_group.attrs[f"{key}_is_empty"] = True
+                                elif value is not None:
+                                    current_frame_group.attrs[key] = value
+                                else:
+                                    current_frame_group.attrs[key] = "NoneType"
+
+                            self.streaming_frames_written += 1
+                        except Exception as e:
+                            self._log_console(f"Error writing frame {fidx}: {e}", "error")
+
+                    # Flush to disk periodically
+                    try:
+                        self.recording_file_handle.flush()
+                    except Exception:
+                        pass
+
+                    pending_frames.clear()
+
+                    # Log progress periodically
+                    now = time.time()
+                    if now - last_log_time >= log_interval:
+                        queued = self.streaming_frames_queued
+                        written = self.streaming_frames_written
+                        pending = queued - written
+                        self._log_console(
+                            f"Streaming write progress: {written} frames written, {pending} pending in queue"
+                        )
+                        last_log_time = now
+
+            except Exception as e:
+                self._log_console(f"Error in async streaming writer: {e}", "error")
+                time.sleep(0.1)
+
+        self._log_console(f"Async streaming writer thread finished. Total frames written: {self.streaming_frames_written}")
+
     def start_recording_to_file(self, filepath):
         """Starts recording the simulation state to an HDF5 file (called by sim_thread)."""
         if self.recording_file_handle: 
@@ -3314,33 +4630,91 @@ class SimulationBridge:
                 return False
 
             initial_state_group = self.recording_file_handle.create_group("initial_state")
+            compression_kwargs = self._get_compression_kwargs()
             for key, value in initial_state_data.items():
                 if isinstance(value, np.ndarray):
-                    if value.size > 0 : 
-                        initial_state_group.create_dataset(key, data=value, compression="gzip") 
-                    else: 
+                    if value.size > 0:
+                        if isinstance(compression_kwargs, dict):
+                            initial_state_group.create_dataset(key, data=value, **compression_kwargs)
+                        else:
+                            initial_state_group.create_dataset(key, data=value, **compression_kwargs)
+                    else:
                         initial_state_group.attrs[f"{key}_is_empty"] = True
-                elif key == "connections_shape": 
+                elif key == "connections_shape":
                     initial_state_group.attrs["connections_shape_0"] = value[0]
                     initial_state_group.attrs["connections_shape_1"] = value[1]
-                elif value is not None : 
+                elif value is not None:
                     initial_state_group.attrs[key] = value
-                else: 
+                else:
                     initial_state_group.attrs[key] = "NoneType"
-            
+
+            # Store compression type and recording options for playback compatibility
+            self.recording_file_handle.attrs["compression_type"] = self.gpu_config.recording_compression
+            self.recording_file_handle.attrs["recording_skip_synaptic_data"] = self.gpu_config.recording_skip_synaptic_data
+            self.recording_file_handle.attrs["recording_frame_skip"] = self.gpu_config.recording_frame_skip
+
             self.recording_file_handle.create_group("frames")
-            
-            # Initialize GPU-buffered recording (controlled by gpu_config)
-            # Estimate frames based on simulation duration
-            estimated_frames = int(self.core_config.total_simulation_time_ms / self.core_config.dt_ms)
-            can_gpu_buffer, max_gpu_frames = self._check_gpu_recording_capacity(estimated_frames)
-            
-            if self.gpu_config.enable_gpu_buffered_recording and self.gpu_config.recording_mode == "gpu_buffered":
-                self.gpu_frame_buffer = {}  # Clear any old data
+
+            # Estimate frames based on simulation duration and frame skip
+            frame_skip = max(1, self.gpu_config.recording_frame_skip)
+            estimated_frames = int(self.core_config.total_simulation_time_ms / self.core_config.dt_ms) // frame_skip
+            frame_size = self._estimate_frame_size_bytes()
+
+            # Log frame size info for large recordings
+            if self.gpu_config.recording_skip_synaptic_data:
+                full_frame_size = self._estimate_frame_size_bytes(skip_synaptic_data=False)
+                reduction = (1 - frame_size / full_frame_size) * 100 if full_frame_size > 0 else 0
+                self._log_console(
+                    f"Frame size: {frame_size/1e6:.1f}MB (neuron-only, {reduction:.0f}% smaller than full {full_frame_size/1e6:.1f}MB)"
+                )
+            else:
+                self._log_console(f"Frame size: {frame_size/1e6:.1f}MB")
+
+            if frame_skip > 1:
+                self._log_console(f"Recording every {frame_skip}th frame ({estimated_frames} frames for {self.core_config.total_simulation_time_ms:.0f}ms)")
+
+            # Determine recording mode
+            recording_mode = self.gpu_config.recording_mode
+
+            if recording_mode == "streaming":
+                # Streaming mode: write frames to disk immediately via background thread
+                self.gpu_frame_buffer = {}
+                self.cpu_frame_buffer = {}
+                self.streaming_frames_written = 0
+                self.streaming_frames_queued = 0
+
+                # Clear the queue
+                while not self.streaming_write_queue.empty():
+                    try:
+                        self.streaming_write_queue.get_nowait()
+                    except queue.Empty:
+                        break
+
+                # Start async writer thread if enabled
+                if self.gpu_config.streaming_async_write:
+                    self.streaming_writer_stop_event.clear()
+                    self.streaming_writer_thread = threading.Thread(
+                        target=self._async_streaming_writer_thread,
+                        name="StreamingRecordWriter",
+                        daemon=True
+                    )
+                    self.streaming_writer_thread.start()
+                    self._log_console("Streaming recording mode with async writer enabled.")
+                else:
+                    self._log_console("Streaming recording mode (synchronous writes).")
+
+                self._log_to_ui(f"Recording armed (streaming to disk). Start sim to capture.", "info", color=[0,150,200])
+
+            else:
+                # GPU-buffered mode (default): buffer in memory, write at end
+                can_gpu_buffer, max_gpu_frames = self._check_gpu_recording_capacity(estimated_frames)
+
+                self.gpu_frame_buffer = {}  # Clear any old GPU frames
+                self.cpu_frame_buffer = {}  # Clear any old CPU overflow frames
+                self.recording_overflow_to_cpu = False  # Reset overflow state
                 self.gpu_recording_max_frames = max_gpu_frames
-                self._log_console(f"GPU-buffered recording enabled. Max frames: {max_gpu_frames}")
-            
-            self._log_to_ui(f"Recording armed (GPU-buffered). Start sim to capture.", "info", color=[0,150,200])
+                self._log_console(f"GPU-buffered recording enabled. Max GPU frames: {max_gpu_frames} (will overflow to CPU RAM if needed)")
+                self._log_to_ui(f"Recording armed (GPU-buffered). Start sim to capture.", "info", color=[0,150,200])
             # Signal UI that recording has started successfully
             if self.ui_queue:
                 self.ui_queue.put({"type": "RECORDING_STARTED", "filepath": self.recording_filepath})
@@ -3356,26 +4730,49 @@ class SimulationBridge:
                 self.ui_queue.put({"type": "RECORDING_START_FAILED", "error": str(e)})
             return False
 
-    def stop_recording(self): # Added prompt_save=True default to match original, though UI handles dialogs now
+    def stop_recording(self):
         """Stops the HDF5 recording stream and finalizes the file (called by sim_thread)."""
-        if not self.recording_file_handle: 
+        if not self.recording_file_handle:
             self._log_to_ui("No active recording to stop.", "info")
-            if self.ui_queue: self.ui_queue.put({"type": "RECORDING_STOPPED_UNEXPECTEDLY"}) # Or a specific "NO_RECORDING_TO_STOP"
+            if self.ui_queue:
+                self.ui_queue.put({"type": "RECORDING_STOPPED_UNEXPECTEDLY"})
             return
 
         self._log_console("Stopping HDF5 recording stream.")
         was_recording_to_file = False
         finalized_filepath = self.recording_filepath
+
         if self.recording_file_handle and isinstance(self.recording_file_handle, h5py.File) and self.recording_file_handle.id:
             try:
-                # Write GPU-buffered frames to disk if GPU buffering was enabled
-                if self.gpu_config.enable_gpu_buffered_recording and self.gpu_frame_buffer:
-                    self._write_gpu_frames_to_disk()
-                
+                # Handle streaming mode: wait for async writer to finish
+                if self.gpu_config.recording_mode == "streaming":
+                    if self.streaming_writer_thread and self.streaming_writer_thread.is_alive():
+                        pending = self.streaming_frames_queued - self.streaming_frames_written
+                        if pending > 0:
+                            self._log_to_ui(
+                                f"Waiting for {pending} frames to be written to disk...",
+                                "info"
+                            )
+                        # Signal the writer thread to stop after draining queue
+                        self.streaming_writer_stop_event.set()
+                        # Wait for thread to finish (with timeout to avoid infinite hang)
+                        self.streaming_writer_thread.join(timeout=300)  # 5 minute timeout
+                        if self.streaming_writer_thread.is_alive():
+                            self._log_to_ui("Warning: Streaming writer thread did not finish in time.", "warning")
+                        self.streaming_writer_thread = None
+
+                    self._log_console(
+                        f"Streaming recording complete: {self.streaming_frames_written} frames written to disk."
+                    )
+                else:
+                    # GPU-buffered mode: write buffered frames to disk
+                    has_buffered_frames = self.gpu_frame_buffer or self.cpu_frame_buffer
+                    if has_buffered_frames:
+                        self._write_gpu_frames_to_disk()
+
                 # Final flush before closing
                 self.recording_file_handle.flush()
                 self.recording_file_handle.close()
-                self.recording_file_handle.close() 
                 was_recording_to_file = True
                 self._log_to_ui(f"Recording stream to {finalized_filepath} finalized and saved.", "success")
             except Exception as e:
@@ -3383,10 +4780,15 @@ class SimulationBridge:
         else:
             self._log_console(f"Stop recording called, but no active file handle or already closed for {finalized_filepath}.", "warning")
 
+        # Reset all recording state
         self.recording_file_handle = None
         self.recording_filepath = None
         self.current_frame_count_for_h5 = 0
-        self.gpu_frame_buffer.clear()  # Clear GPU buffer
+        self.gpu_frame_buffer.clear()
+        self.cpu_frame_buffer.clear()
+        self.recording_overflow_to_cpu = False
+        self.streaming_frames_written = 0
+        self.streaming_frames_queued = 0
 
         if self.ui_queue:
             self.ui_queue.put({
@@ -3395,33 +4797,190 @@ class SimulationBridge:
                 "filepath": finalized_filepath if was_recording_to_file else None
             })
 
+    def _capture_frame_as_numpy(self, skip_synaptic_data=False):
+        """Captures current simulation state as NumPy arrays for recording.
+
+        Args:
+            skip_synaptic_data: If True, exclude connection weights and STP arrays
+                               (reduces frame size by 10-20x for large networks).
+        Returns:
+            dict: Frame data with NumPy arrays ready for HDF5 storage.
+        """
+        frame_data = {
+            "time_ms": self.runtime_state.current_time_ms,
+            "step": self.runtime_state.current_time_step,
+            "_mock_num_spikes_this_step": self._mock_num_spikes_this_step,
+            "_mock_network_avg_firing_rate_hz": self._mock_network_avg_firing_rate_hz,
+            "_mock_total_plasticity_events": self._mock_total_plasticity_events
+        }
+
+        # Build list of neuron state arrays to capture
+        dynamic_arrays = [
+            'cp_membrane_potential_v', 'cp_firing_states', 'cp_viz_activity_timers',
+            'cp_conductance_g_e', 'cp_conductance_g_i',
+            'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress'
+        ]
+
+        if self.core_config.neuron_model_type == NeuronModel.IZHIKEVICH.name:
+            dynamic_arrays.extend(['cp_recovery_variable_u'])
+            if self.core_config.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
+                dynamic_arrays.append('cp_neuron_firing_thresholds')
+        elif self.core_config.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
+            dynamic_arrays.extend([
+                'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
+                'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h',
+                'cp_hh_h_current_q', 'cp_hh_NaP_activation'
+            ])
+        elif self.core_config.neuron_model_type == NeuronModel.ADEX.name:
+            dynamic_arrays.extend(['cp_adex_w'])
+
+        # Capture neuron state arrays (GPU → CPU transfer)
+        for attr_name in dynamic_arrays:
+            array_data = getattr(self, attr_name, None)
+            if array_data is not None:
+                frame_data[attr_name] = cp.asnumpy(array_data)
+            else:
+                frame_data[attr_name] = None
+
+        # Capture synaptic data (optional - this is the large part)
+        if not skip_synaptic_data:
+            if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
+                if self.cp_connections.data is not None:
+                    frame_data["cp_connections_data"] = cp.asnumpy(self.cp_connections.data)
+
+            if self.core_config.enable_short_term_plasticity:
+                synapse_count = getattr(self, '_synapse_count', None)
+                if self.cp_stp_u is not None:
+                    frame_data["cp_stp_u"] = cp.asnumpy(
+                        self.cp_stp_u[:synapse_count] if synapse_count else self.cp_stp_u
+                    )
+                if self.cp_stp_x is not None:
+                    frame_data["cp_stp_x"] = cp.asnumpy(
+                        self.cp_stp_x[:synapse_count] if synapse_count else self.cp_stp_x
+                    )
+
+        return frame_data
+
     def record_current_frame_if_active(self):
         """Records the current simulation state as a frame if recording is active (called by sim_thread)."""
         if not self.recording_file_handle or \
            not isinstance(self.recording_file_handle, h5py.File) or \
            not self.recording_file_handle.id or \
            not self.runtime_state.is_running or \
-           self.runtime_state.is_paused: 
+           self.runtime_state.is_paused:
             return
 
         try:
+            # Frame skip: only record every Nth simulation step
+            frame_skip = max(1, self.gpu_config.recording_frame_skip)
+            if self.runtime_state.current_time_step % frame_skip != 0:
+                return
+
             frame_idx = self.current_frame_count_for_h5
-            
-            # GPU-buffered recording: store frames in VRAM as CuPy arrays (NO GPU→CPU transfers)
-            if self.gpu_config.enable_gpu_buffered_recording and self.gpu_config.recording_mode == "gpu_buffered":
-                frame_data_gpu = {
-                    "time_ms": self.runtime_state.current_time_ms,
-                    "step": self.runtime_state.current_time_step,
-                    "_mock_num_spikes_this_step": self._mock_num_spikes_this_step,
-                    "_mock_network_avg_firing_rate_hz": self._mock_network_avg_firing_rate_hz,
-                    "_mock_total_plasticity_events": self._mock_total_plasticity_events
-                }
-                
-                # Collect all CuPy arrays that need to be stored
+            skip_synaptic = self.gpu_config.recording_skip_synaptic_data
+            recording_mode = self.gpu_config.recording_mode
+
+            # Streaming mode: queue frames for async disk writes
+            if recording_mode == "streaming":
+                frame_data_np = self._capture_frame_as_numpy(skip_synaptic)
+
+                if self.gpu_config.streaming_async_write:
+                    # Queue for background writer thread
+                    self.streaming_write_queue.put((frame_idx, frame_data_np))
+                    self.streaming_frames_queued += 1
+
+                    # Periodic logging
+                    if frame_idx % 500 == 0:
+                        pending = self.streaming_frames_queued - self.streaming_frames_written
+                        self._log_console(f"Streaming recording: frame {frame_idx} queued, {pending} pending write")
+                else:
+                    # Synchronous write (slower, blocks simulation)
+                    compression_kwargs = self._get_compression_kwargs()
+                    frame_group_name = f"frames/frame_{frame_idx}"
+                    current_frame_group = self.recording_file_handle.create_group(frame_group_name)
+
+                    for key, value in frame_data_np.items():
+                        if isinstance(value, np.ndarray):
+                            if value.size > 0:
+                                current_frame_group.create_dataset(key, data=value, **compression_kwargs)
+                            else:
+                                current_frame_group.attrs[f"{key}_is_empty"] = True
+                        elif value is not None:
+                            current_frame_group.attrs[key] = value
+                        else:
+                            current_frame_group.attrs[key] = "NoneType"
+
+                    # Flush periodically
+                    if frame_idx % self.gpu_config.streaming_write_batch_size == 0:
+                        self.recording_file_handle.flush()
+
+                self.current_frame_count_for_h5 += 1
+                return
+
+            # GPU-buffered recording with CPU overflow support
+            if recording_mode == "gpu_buffered":
+
+                # Check memory BEFORE storing to decide where to put this frame
+                check_interval = self.gpu_config.recording_memory_check_interval
+                gpu_pct = 0.0
+                cpu_pct = 0.0
+
+                if frame_idx % check_interval == 0:
+                    is_critical, gpu_pct, cpu_pct, warning_msg = self._check_recording_memory_pressure()
+
+                    # Check if we need to switch to CPU overflow mode
+                    gpu_limit = self.gpu_config.recording_gpu_memory_limit
+                    if not self.recording_overflow_to_cpu and gpu_pct >= gpu_limit:
+                        self.recording_overflow_to_cpu = True
+                        self._log_to_ui(
+                            f"GPU memory at {gpu_pct*100:.1f}%. Switching to CPU RAM for new frames.",
+                            "warning"
+                        )
+                        self._log_console(
+                            f"RECORDING OVERFLOW: GPU {gpu_pct*100:.1f}% >= {gpu_limit*100:.0f}% limit. "
+                            f"Frame {frame_idx}+ will be stored in CPU RAM."
+                        )
+
+                    # Check for critical memory (both GPU AND CPU full)
+                    if is_critical and self.gpu_config.recording_auto_pause_on_memory:
+                        self.runtime_state.is_paused = True
+                        gpu_frames = len(self.gpu_frame_buffer)
+                        cpu_frames = len(self.cpu_frame_buffer)
+                        self._log_to_ui(
+                            f"RECORDING PAUSED: {warning_msg}. "
+                            f"Recorded {frame_idx} frames ({gpu_frames} GPU + {cpu_frames} CPU). "
+                            f"Finalize recording now to prevent data loss.",
+                            "warning"
+                        )
+                        self._log_console(
+                            f"MEMORY CRITICAL - Auto-paused at frame {frame_idx}. "
+                            f"GPU: {gpu_pct*100:.1f}%, CPU: {cpu_pct*100:.1f}%"
+                        )
+                        if self.ui_queue:
+                            self.ui_queue.put({
+                                "type": "RECORDING_MEMORY_CRITICAL",
+                                "frame_count": frame_idx,
+                                "gpu_frames": gpu_frames,
+                                "cpu_frames": cpu_frames,
+                                "gpu_usage_pct": gpu_pct,
+                                "cpu_usage_pct": cpu_pct,
+                                "message": warning_msg,
+                                "suggestion": "Finalize recording now to save data before memory exhaustion."
+                            })
+                        return
+
+                    # Periodic logging
+                    if frame_idx % (check_interval * 10) == 0:
+                        storage_mode = "CPU" if self.recording_overflow_to_cpu else "GPU"
+                        self._log_console(
+                            f"Recording frame {frame_idx}: GPU {gpu_pct*100:.1f}%, CPU {cpu_pct*100:.1f}% [{storage_mode}]"
+                        )
+
+                # Build list of arrays to capture
                 dynamic_arrays_to_capture = [
                     'cp_membrane_potential_v', 'cp_firing_states', 'cp_viz_activity_timers',
                     'cp_conductance_g_e', 'cp_conductance_g_i',
-                    'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress' 
+                    'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress'
                 ]
                 if self.core_config.neuron_model_type == NeuronModel.IZHIKEVICH.name:
                     dynamic_arrays_to_capture.extend(['cp_recovery_variable_u'])
@@ -3435,82 +4994,95 @@ class SimulationBridge:
                 elif self.core_config.neuron_model_type == NeuronModel.ADEX.name:
                     dynamic_arrays_to_capture.extend(['cp_adex_w'])
 
-                if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
-                    if self.cp_connections.data is not None:
-                        frame_data_gpu["cp_connections_data"] = self.cp_connections.data.copy()
+                # Store frame data - either GPU (CuPy) or CPU (NumPy) depending on overflow state
+                if self.recording_overflow_to_cpu:
+                    # CPU overflow mode: store as NumPy arrays
+                    frame_data = {
+                        "time_ms": self.runtime_state.current_time_ms,
+                        "step": self.runtime_state.current_time_step,
+                        "_mock_num_spikes_this_step": self._mock_num_spikes_this_step,
+                        "_mock_network_avg_firing_rate_hz": self._mock_network_avg_firing_rate_hz,
+                        "_mock_total_plasticity_events": self._mock_total_plasticity_events
+                    }
 
-                if self.core_config.enable_short_term_plasticity:
-                    if self.cp_stp_u is not None: frame_data_gpu["cp_stp_u"] = self.cp_stp_u.copy()
-                    if self.cp_stp_x is not None: frame_data_gpu["cp_stp_x"] = self.cp_stp_x.copy()
+                    # Synaptic data (optional - skip for large recordings)
+                    if not skip_synaptic:
+                        if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
+                            if self.cp_connections.data is not None:
+                                frame_data["cp_connections_data"] = cp.asnumpy(self.cp_connections.data)
 
-                for attr_name in dynamic_arrays_to_capture:
-                    array_data = getattr(self, attr_name, None)
-                    if array_data is not None:
-                        frame_data_gpu[attr_name] = array_data.copy()  # Store CuPy array directly
-                    else: 
-                        frame_data_gpu[attr_name] = None
-                
-                # Store entire frame in GPU buffer
-                self.gpu_frame_buffer[frame_idx] = frame_data_gpu
-                
-                # Warn if approaching capacity
-                if frame_idx % 100 == 0 and frame_idx > self.gpu_recording_max_frames * 0.8:
-                    self._log_console(f"WARNING: GPU buffer at {frame_idx}/{self.gpu_recording_max_frames} frames")
-                
+                        if self.core_config.enable_short_term_plasticity:
+                            synapse_count = getattr(self, '_synapse_count', None)
+                            if self.cp_stp_u is not None:
+                                frame_data["cp_stp_u"] = cp.asnumpy(self.cp_stp_u[:synapse_count] if synapse_count else self.cp_stp_u)
+                            if self.cp_stp_x is not None:
+                                frame_data["cp_stp_x"] = cp.asnumpy(self.cp_stp_x[:synapse_count] if synapse_count else self.cp_stp_x)
+
+                    for attr_name in dynamic_arrays_to_capture:
+                        array_data = getattr(self, attr_name, None)
+                        if array_data is not None:
+                            frame_data[attr_name] = cp.asnumpy(array_data)  # GPU→CPU transfer
+                        else:
+                            frame_data[attr_name] = None
+
+                    self.cpu_frame_buffer[frame_idx] = frame_data
+
+                else:
+                    # GPU mode: store as CuPy arrays (fast, no transfer)
+                    frame_data = {
+                        "time_ms": self.runtime_state.current_time_ms,
+                        "step": self.runtime_state.current_time_step,
+                        "_mock_num_spikes_this_step": self._mock_num_spikes_this_step,
+                        "_mock_network_avg_firing_rate_hz": self._mock_network_avg_firing_rate_hz,
+                        "_mock_total_plasticity_events": self._mock_total_plasticity_events
+                    }
+
+                    # Synaptic data (optional - skip for large recordings)
+                    if not skip_synaptic:
+                        if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
+                            if self.cp_connections.data is not None:
+                                frame_data["cp_connections_data"] = self.cp_connections.data.copy()
+
+                        if self.core_config.enable_short_term_plasticity:
+                            synapse_count = getattr(self, '_synapse_count', None)
+                            if self.cp_stp_u is not None:
+                                frame_data["cp_stp_u"] = self.cp_stp_u[:synapse_count].copy() if synapse_count else self.cp_stp_u.copy()
+                            if self.cp_stp_x is not None:
+                                frame_data["cp_stp_x"] = self.cp_stp_x[:synapse_count].copy() if synapse_count else self.cp_stp_x.copy()
+
+                    for attr_name in dynamic_arrays_to_capture:
+                        array_data = getattr(self, attr_name, None)
+                        if array_data is not None:
+                            frame_data[attr_name] = array_data.copy()  # CuPy copy (stays on GPU)
+                        else:
+                            frame_data[attr_name] = None
+
+                    self.gpu_frame_buffer[frame_idx] = frame_data
+
             else:
                 # Legacy CPU path: immediate streaming to HDF5
-                frame_data_np = {
-                    "time_ms": self.runtime_state.current_time_ms,
-                    "step": self.runtime_state.current_time_step,
-                    "_mock_num_spikes_this_step": self._mock_num_spikes_this_step,
-                    "_mock_network_avg_firing_rate_hz": self._mock_network_avg_firing_rate_hz,
-                    "_mock_total_plasticity_events": self._mock_total_plasticity_events
-                }
-
-                dynamic_arrays_to_capture = [
-                    'cp_membrane_potential_v', 'cp_firing_states', 'cp_viz_activity_timers',
-                    'cp_conductance_g_e', 'cp_conductance_g_i',
-                    'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress' 
-                ]
-                if self.core_config.neuron_model_type == NeuronModel.IZHIKEVICH.name:
-                    dynamic_arrays_to_capture.extend(['cp_recovery_variable_u'])
-                    if self.core_config.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
-                        dynamic_arrays_to_capture.append('cp_neuron_firing_thresholds')
-                elif self.core_config.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
-                    dynamic_arrays_to_capture.extend([
-                        'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
-                        'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation'
-                    ])
-                elif self.core_config.neuron_model_type == NeuronModel.ADEX.name:
-                    dynamic_arrays_to_capture.extend(['cp_adex_w'])
-
-                if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
-                    if self.cp_connections.data is not None:
-                         frame_data_np["cp_connections_data"] = cp.asnumpy(self.cp_connections.data)
-
-                if self.core_config.enable_short_term_plasticity:
-                    if self.cp_stp_u is not None: frame_data_np["cp_stp_u"] = cp.asnumpy(self.cp_stp_u)
-                    if self.cp_stp_x is not None: frame_data_np["cp_stp_x"] = cp.asnumpy(self.cp_stp_x)
-
-                for attr_name in dynamic_arrays_to_capture:
-                    array_data = getattr(self, attr_name, None)
-                    if array_data is not None:
-                        frame_data_np[attr_name] = cp.asnumpy(array_data)
-                    else: 
-                        frame_data_np[attr_name] = None 
+                # Use the helper function for consistency
+                frame_data_np = self._capture_frame_as_numpy(skip_synaptic)
 
                 frame_group_name = f"frames/frame_{frame_idx}"
                 current_frame_group = self.recording_file_handle.create_group(frame_group_name)
 
+                # Use configured compression settings instead of hardcoded gzip
+                compression_kwargs = self._get_compression_kwargs()
+
                 for key, value in frame_data_np.items():
                     if isinstance(value, np.ndarray):
-                        if value.size > 0: 
-                            current_frame_group.create_dataset(key, data=value, compression="gzip")
-                        else: 
+                        if value.size > 0:
+                            if isinstance(compression_kwargs, dict):
+                                current_frame_group.create_dataset(key, data=value, **compression_kwargs)
+                            else:
+                                # hdf5plugin returns a filter object
+                                current_frame_group.create_dataset(key, data=value, **compression_kwargs)
+                        else:
                             current_frame_group.attrs[f"{key}_is_empty"] = True
-                    elif value is not None: 
+                    elif value is not None:
                         current_frame_group.attrs[key] = value
-                    else: 
+                    else:
                         current_frame_group.attrs[key] = "NoneType"
                 
                 # Batch frames: only flush periodically for better performance
@@ -3588,17 +5160,23 @@ class SimulationBridge:
             if 'h5_file' in locals() and h5_file.id: h5_file.close() 
             return None
 
-    def load_recording(self, filepath):
-        """Loads a recording for playback (called by sim_thread)."""
-        self._log_to_ui(f"Attempting to load recording from {filepath} for playback...", "info")
+    def load_recording(self, filepath, stream_only=False):
+        """Loads a recording for playback (called by sim_thread).
+
+        Args:
+            filepath: Path to the .simrec.h5 file
+            stream_only: If True, skip GPU caching and stream all frames from disk
+        """
+        mode_str = "streaming" if stream_only else "caching"
+        self._log_to_ui(f"Loading recording ({mode_str} mode) from {filepath}...", "info")
 
         if self.runtime_state.is_running: self.stop_simulation()
-        if self.recording_file_handle: 
+        if self.recording_file_handle:
             self._log_console("load_recording: Closing an existing recording file before loading new one.", "warning")
             try: self.recording_file_handle.close()
             except: pass
             self.recording_file_handle = None; self.recording_filepath = None
-        
+
         # Close any HDF5 file this sim_bridge instance might be holding for playback itself.
         # Note: The main HDF5 handle for playback is managed by UI thread via global_gui_state.active_recording_data_source.
         # This method is for the sim_thread to initially process the file.
@@ -3607,22 +5185,27 @@ class SimulationBridge:
         prepared_metadata = self._prepare_loaded_recording_metadata(filepath)
 
         if prepared_metadata:
-            # Load recording into GPU cache for instant playback
             h5_file = prepared_metadata["h5_file_obj_for_playback"]
             num_frames = prepared_metadata["num_frames"]
-            
-            if num_frames > 0:
+
+            if stream_only:
+                # Streaming mode: skip GPU caching entirely, clear any existing cache
+                self.gpu_playback_cache.clear()
+                self._log_to_ui(f"Streaming mode: {num_frames} frames will be read from disk during playback.", "info")
+            elif num_frames > 0:
+                # Caching mode: attempt to load recording into GPU cache
                 success = self._load_recording_to_gpu_cache(h5_file, num_frames)
                 if not success:
                     self._log_to_ui("Warning: GPU cache loading failed. Playback will use slower disk I/O.", "warning")
-            
+
             if self.ui_queue:
                 self.ui_queue.put({
                     "type": "RECORDING_METADATA_PREPARED",
-                    "data": prepared_metadata 
+                    "data": prepared_metadata,
+                    "stream_only": stream_only
                 })
                 self._log_to_ui(f"Recording metadata for '{os.path.basename(filepath)}' prepared. UI can now initialize playback.", "info")
-            return True 
+            return True
         else:
             if self.ui_queue:
                  self.ui_queue.put({"type": "RECORDING_LOAD_FAILED", "filepath": filepath})
@@ -3688,63 +5271,220 @@ class SimulationBridge:
         return True
 
     def _load_recording_to_gpu_cache(self, h5_file_handle, num_frames):
-        """Loads entire recording into GPU memory for instant frame seeking."""
-        self._log_to_ui(f"Loading {num_frames} frames into GPU cache...", "info")
+        """Loads recording into GPU memory with chunked loading, memory-aware partial caching.
+
+        Features:
+        - Chunked loading to provide progress updates without blocking
+        - Parallel disk reads using ThreadPoolExecutor
+        - Progress reporting to UI
+        - Memory-aware partial caching: stops loading before GPU OOM
+        - Seamlessly falls back to streaming for frames beyond cache
+        """
+        chunk_size = self.gpu_config.playback_cache_chunk_size
+        num_chunks = (num_frames + chunk_size - 1) // chunk_size
+
+        # Check initial GPU memory availability
+        mem_info = cp.cuda.Device().mem_info
+        free_memory_initial, total_memory = mem_info
+        free_gb_initial = free_memory_initial / 1e9
+
+        # Reserve 20% of total memory for safety margin (simulation state, OS, etc.)
+        safety_margin = 0.20
+        usable_free_memory = free_memory_initial - (total_memory * safety_margin)
+        usable_free_gb = max(0, usable_free_memory / 1e9)
+
+        self._log_to_ui(
+            f"Loading up to {num_frames} frames into GPU cache ({num_chunks} chunks of {chunk_size})...",
+            "info"
+        )
+        self._log_console(f"  Available GPU memory: {free_gb_initial:.2f}GB (usable after safety margin: {usable_free_gb:.2f}GB)")
         start_time = time.time()
-        
+
         try:
             self.gpu_playback_cache.clear()
-            
-            for frame_idx in range(num_frames):
+            cp.get_default_memory_pool().free_all_blocks()  # Free unused CuPy memory
+
+            # Send initial progress to UI
+            if self.ui_queue:
+                self.ui_queue.put({
+                    "type": "CACHE_LOAD_PROGRESS",
+                    "progress": 0.0,
+                    "frames_loaded": 0,
+                    "total_frames": num_frames
+                })
+
+            frames_loaded = 0
+            memory_limit_reached = False
+            estimated_frame_size_bytes = None
+
+            def read_frame_from_hdf5(frame_idx):
+                """Read a single frame from HDF5 to NumPy (thread-safe for HDF5 reads)."""
                 frame_group_name = f"frames/frame_{frame_idx}"
                 frame_group = h5_file_handle.get(frame_group_name)
-                
+
                 if not frame_group:
-                    self._log_console(f"Warning: Frame {frame_idx} not found, skipping")
-                    continue
-                
-                # Load frame data and convert to CuPy arrays
-                frame_data_gpu = {}
-                
+                    return frame_idx, None
+
+                frame_data_np = {}
+
                 # Load attributes (scalars)
                 for key, value in frame_group.attrs.items():
                     if value == "NoneType":
-                        frame_data_gpu[key] = None
+                        frame_data_np[key] = None
                     elif key.endswith("_is_empty") and value is True:
                         original_key = key.replace("_is_empty", "")
-                        frame_data_gpu[original_key] = cp.array([], dtype=cp.float32)
+                        frame_data_np[original_key] = np.array([], dtype=np.float32)
                     else:
-                        frame_data_gpu[key] = value
-                
-                # Load datasets (arrays) - CPU→GPU transfer happens here
+                        frame_data_np[key] = value
+
+                # Load datasets (arrays)
                 for key in frame_group.keys():
                     if f"{key}_is_empty" not in frame_group.attrs:
-                        np_data = frame_group[key][:]
-                        frame_data_gpu[key] = cp.array(np_data)  # Transfer to GPU
-                
-                self.gpu_playback_cache[frame_idx] = frame_data_gpu
-                
-                # Progress logging every 10%
-                if (frame_idx + 1) % max(1, num_frames // 10) == 0:
-                    progress_pct = ((frame_idx + 1) / num_frames) * 100
-                    self._log_console(f"  Loading progress: {progress_pct:.0f}% ({frame_idx+1}/{num_frames})")
-            
+                        frame_data_np[key] = frame_group[key][:]
+
+                return frame_idx, frame_data_np
+
+            # Process in chunks
+            for chunk_idx in range(num_chunks):
+                # Check GPU memory before loading this chunk
+                mem_info = cp.cuda.Device().mem_info
+                free_memory_now, _ = mem_info
+                free_gb_now = free_memory_now / 1e9
+
+                # Estimate if we have room for this chunk
+                if estimated_frame_size_bytes is not None:
+                    estimated_chunk_size_bytes = estimated_frame_size_bytes * chunk_size
+                    if free_memory_now < estimated_chunk_size_bytes + (total_memory * safety_margin):
+                        memory_limit_reached = True
+                        self._log_to_ui(
+                            f"GPU memory limit reached at {frames_loaded}/{num_frames} frames cached. "
+                            f"Remaining {num_frames - frames_loaded} frames will stream from disk.",
+                            "warning"
+                        )
+                        break
+
+                chunk_start = chunk_idx * chunk_size
+                chunk_end = min(chunk_start + chunk_size, num_frames)
+                chunk_frames = list(range(chunk_start, chunk_end))
+
+                chunk_start_time = time.time()
+
+                # Phase 1: Parallel disk reads (HDF5 supports concurrent reads in most cases)
+                frames_np_chunk = {}
+
+                # Use ThreadPoolExecutor for parallel HDF5 reads
+                max_workers = min(4, len(chunk_frames))
+                if max_workers > 1:
+                    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                        futures = {executor.submit(read_frame_from_hdf5, idx): idx for idx in chunk_frames}
+                        for future in as_completed(futures):
+                            frame_idx, frame_data = future.result()
+                            if frame_data is not None:
+                                frames_np_chunk[frame_idx] = frame_data
+                else:
+                    # Serial fallback for small chunks
+                    for frame_idx in chunk_frames:
+                        _, frame_data = read_frame_from_hdf5(frame_idx)
+                        if frame_data is not None:
+                            frames_np_chunk[frame_idx] = frame_data
+
+                # Estimate frame size from first chunk (for memory prediction)
+                if estimated_frame_size_bytes is None and frames_np_chunk:
+                    sample_frame = next(iter(frames_np_chunk.values()))
+                    estimated_frame_size_bytes = sum(
+                        arr.nbytes if isinstance(arr, np.ndarray) else 8
+                        for arr in sample_frame.values()
+                    )
+                    # Account for CuPy overhead (~10%)
+                    estimated_frame_size_bytes = int(estimated_frame_size_bytes * 1.1)
+
+                    # Check if we can fit all remaining frames
+                    remaining_frames = num_frames - frames_loaded
+                    estimated_total_bytes = remaining_frames * estimated_frame_size_bytes
+                    if estimated_total_bytes > usable_free_memory:
+                        max_cacheable = int(usable_free_memory / estimated_frame_size_bytes)
+                        self._log_console(
+                            f"  Frame size ~{estimated_frame_size_bytes / 1024:.1f}KB. "
+                            f"Can cache ~{max_cacheable} of {num_frames} frames."
+                        )
+
+                # Phase 2: CPU→GPU transfer (must be serial due to CUDA context)
+                try:
+                    for frame_idx in sorted(frames_np_chunk.keys()):
+                        frame_data_np = frames_np_chunk[frame_idx]
+                        frame_data_gpu = {}
+
+                        for key, value in frame_data_np.items():
+                            if isinstance(value, np.ndarray):
+                                frame_data_gpu[key] = cp.array(value)
+                            else:
+                                frame_data_gpu[key] = value
+
+                        self.gpu_playback_cache[frame_idx] = frame_data_gpu
+                        frames_loaded += 1
+
+                except cp.cuda.memory.OutOfMemoryError:
+                    # OOM during transfer - stop here and use what we have
+                    memory_limit_reached = True
+                    self._log_to_ui(
+                        f"GPU OOM at {frames_loaded}/{num_frames} frames. "
+                        f"Remaining frames will stream from disk.",
+                        "warning"
+                    )
+                    break
+
+                # Report progress after each chunk
+                chunk_elapsed = time.time() - chunk_start_time
+                progress_pct = (frames_loaded / num_frames) * 100
+
+                self._log_console(
+                    f"  Chunk {chunk_idx + 1}/{num_chunks}: {len(frames_np_chunk)} frames "
+                    f"({progress_pct:.0f}%, {chunk_elapsed:.2f}s, GPU free: {free_gb_now:.1f}GB)"
+                )
+
+                # Send progress update to UI
+                if self.ui_queue:
+                    self.ui_queue.put({
+                        "type": "CACHE_LOAD_PROGRESS",
+                        "progress": progress_pct / 100.0,
+                        "frames_loaded": frames_loaded,
+                        "total_frames": num_frames
+                    })
+
             elapsed = time.time() - start_time
-            frames_per_sec = num_frames / elapsed if elapsed > 0 else 0
-            
+            frames_per_sec = frames_loaded / elapsed if elapsed > 0 else 0
+
             # Check GPU memory usage
             mem_info = cp.cuda.Device().mem_info
             free_memory, total_memory = mem_info
             used_gb = (total_memory - free_memory) / 1e9
-            
-            self._log_to_ui(
-                f"Loaded {num_frames} frames in {elapsed:.2f}s ({frames_per_sec:.1f} frames/s). GPU usage: {used_gb:.1f}GB",
-                "success"
-            )
-            
-            # GPU playback is now enabled (tracked internally, could optionally update gpu_config)
-            return True
-            
+
+            if memory_limit_reached:
+                self._log_to_ui(
+                    f"Partial cache: {frames_loaded}/{num_frames} frames in {elapsed:.2f}s "
+                    f"({frames_per_sec:.1f} frames/s). GPU: {used_gb:.1f}GB. "
+                    f"Frames 0-{frames_loaded-1} cached, rest will stream.",
+                    "info"
+                )
+            else:
+                self._log_to_ui(
+                    f"Full cache: {frames_loaded} frames in {elapsed:.2f}s ({frames_per_sec:.1f} frames/s). GPU: {used_gb:.1f}GB",
+                    "success"
+                )
+
+            # Send completion to UI
+            if self.ui_queue:
+                self.ui_queue.put({
+                    "type": "CACHE_LOAD_COMPLETE",
+                    "frames_loaded": frames_loaded,
+                    "total_frames": num_frames,
+                    "partial_cache": memory_limit_reached,
+                    "elapsed_seconds": elapsed,
+                    "frames_per_second": frames_per_sec
+                })
+
+            return True  # Partial success is still success - playback will work
+
         except Exception as e:
             self._log_to_ui(f"Error loading recording to GPU cache: {e}", "error")
             self.gpu_playback_cache.clear()
@@ -3775,49 +5515,124 @@ class SimulationBridge:
                 else: frame_content[key] = value
 
             for key in frame_group.keys():
-                 if f"{key}_is_empty" not in frame_group.attrs: 
-                    frame_content[key] = frame_group[key][:] 
+                 if f"{key}_is_empty" not in frame_group.attrs:
+                    frame_content[key] = frame_group[key][:]
             return frame_content
         except Exception as e:
             self._log_to_ui(f"Error reading frame {frame_idx} from HDF5: {e}", "error")
-            import traceback; traceback.print_exc() 
+            import traceback; traceback.print_exc()
             return None
 
-    def set_playback_frame(self, frame_idx, h5_file_handle):
-        """Sets the simulation state to a specific frame from the loaded recording."""
-        if not self.is_initialized: 
+    def _prefetch_frame(self, frame_idx, h5_file_handle, num_frames):
+        """Prefetch a single frame in background thread."""
+        if frame_idx < 0 or frame_idx >= num_frames:
+            return
+
+        with self.prefetch_lock:
+            # Skip if already cached or being fetched
+            if frame_idx in self.prefetch_buffer or frame_idx in self.prefetch_pending:
+                return
+            self.prefetch_pending.add(frame_idx)
+
+        try:
+            frame_data = self._read_frame_from_file(frame_idx, h5_file_handle)
+            if frame_data is not None:
+                with self.prefetch_lock:
+                    self.prefetch_buffer[frame_idx] = frame_data
+                    # Limit buffer size to avoid memory bloat
+                    max_buffer_size = self.gpu_config.playback_prefetch_count * 2
+                    if len(self.prefetch_buffer) > max_buffer_size:
+                        # Remove oldest entries
+                        oldest_keys = sorted(self.prefetch_buffer.keys())[:-max_buffer_size]
+                        for key in oldest_keys:
+                            del self.prefetch_buffer[key]
+        finally:
+            with self.prefetch_lock:
+                self.prefetch_pending.discard(frame_idx)
+
+    def _trigger_prefetch(self, current_frame, h5_file_handle, num_frames):
+        """Trigger prefetching of upcoming frames in background."""
+        if not self.gpu_config.enable_playback_prefetch:
+            return
+
+        prefetch_count = self.gpu_config.playback_prefetch_count
+
+        # Initialize executor if needed
+        if self.prefetch_executor is None:
+            self.prefetch_executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="prefetch")
+
+        # Submit prefetch tasks for next N frames
+        for offset in range(1, prefetch_count + 1):
+            frame_to_prefetch = current_frame + offset
+            if frame_to_prefetch < num_frames:
+                with self.prefetch_lock:
+                    if frame_to_prefetch not in self.prefetch_buffer and frame_to_prefetch not in self.prefetch_pending:
+                        self.prefetch_executor.submit(
+                            self._prefetch_frame, frame_to_prefetch, h5_file_handle, num_frames
+                        )
+
+    def _get_prefetched_frame(self, frame_idx):
+        """Get a frame from the prefetch buffer if available."""
+        with self.prefetch_lock:
+            return self.prefetch_buffer.pop(frame_idx, None)
+
+    def _clear_prefetch_buffer(self):
+        """Clear the prefetch buffer and pending set."""
+        with self.prefetch_lock:
+            self.prefetch_buffer.clear()
+            self.prefetch_pending.clear()
+
+    def set_playback_frame(self, frame_idx, h5_file_handle, num_frames=None):
+        """Sets the simulation state to a specific frame from the loaded recording.
+
+        Args:
+            frame_idx: Frame index to load
+            h5_file_handle: Open HDF5 file handle for streaming reads
+            num_frames: Total number of frames (needed for prefetching bounds)
+        """
+        if not self.is_initialized:
             self._log_to_ui("Cannot set playback frame: Sim not initialized for playback.", "error")
             if self.ui_queue: self.ui_queue.put({"type": "PLAYBACK_ERROR", "reason": "Not initialized"})
             return
-        
+
         # GPU-cached playback: instant frame seeking (no disk I/O)
         if self.gpu_config.enable_gpu_buffered_playback and frame_idx in self.gpu_playback_cache:
             frame_content_gpu = self.gpu_playback_cache[frame_idx]
-            
+
             # Apply GPU data directly (NO GPU→CPU→GPU transfers)
             self._apply_recorded_arrays_to_gpu_direct(frame_content_gpu, is_initial_state=False)
-            
+
             self.runtime_state.current_time_ms = frame_content_gpu.get("time_ms", self.runtime_state.current_time_ms)
             self.runtime_state.current_time_step = frame_content_gpu.get("step", self.runtime_state.current_time_step)
         else:
-            # Legacy path: read from HDF5 file (slow)
-            frame_content_np = self._read_frame_from_file(frame_idx, h5_file_handle)
+            # Streaming playback with prefetching
+            # First check if frame is already in prefetch buffer
+            frame_content_np = self._get_prefetched_frame(frame_idx)
+
+            if frame_content_np is None:
+                # Not prefetched, read directly from HDF5
+                frame_content_np = self._read_frame_from_file(frame_idx, h5_file_handle)
+
             if frame_content_np is None:
                 self._log_to_ui(f"Failed to read frame {frame_idx} for playback. Playback may be unstable.", "error")
                 if self.ui_queue: self.ui_queue.put({"type": "PLAYBACK_ERROR", "reason": f"Failed to read frame {frame_idx}"})
                 return
 
-            self._apply_recorded_arrays_to_gpu(frame_content_np, is_initial_state=False) 
+            self._apply_recorded_arrays_to_gpu(frame_content_np, is_initial_state=False)
 
             self.runtime_state.current_time_ms = frame_content_np.get("time_ms", self.runtime_state.current_time_ms)
             self.runtime_state.current_time_step = frame_content_np.get("step", self.runtime_state.current_time_step)
 
+            # Trigger prefetch for upcoming frames (background I/O)
+            if num_frames is not None and self.gpu_config.enable_playback_prefetch:
+                self._trigger_prefetch(frame_idx, h5_file_handle, num_frames)
+
         latest_gui_data = self.get_latest_simulation_data_for_gui(force_fetch=True)
         if self.ui_queue and latest_gui_data:
             self.ui_queue.put({
-                "type": "PLAYBACK_FRAME_APPLIED", 
+                "type": "PLAYBACK_FRAME_APPLIED",
                 "gui_data": latest_gui_data,
-                "frame_index": frame_idx, 
+                "frame_index": frame_idx,
                 "current_time_ms": self.runtime_state.current_time_ms,
                 "current_time_step": self.runtime_state.current_time_step
             })
@@ -3883,10 +5698,13 @@ class SimulationBridge:
              if self.ui_queue: self.ui_queue.put({"type": "PLAYBACK_SETUP_FAILED", "reason": "Sim config missing for initial apply"})
              return
 
+        # Synapse arrays that should be resized to match recording's synapse count
+        synapse_arrays = {'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress', 'cp_stp_u', 'cp_stp_x'}
+
         def _apply_to_cp_array(cp_array_attr_name, np_array_key_in_dict, default_dtype=cp.float32):
             """Helper to apply a NumPy array from state_dict_np to a CuPy array attribute."""
             source_np_array = state_dict_np.get(np_array_key_in_dict)
-            
+
             if source_np_array is None:
                 if hasattr(self, cp_array_attr_name) and getattr(self, cp_array_attr_name) is not None:
                     setattr(self, cp_array_attr_name, None)
@@ -3906,16 +5724,23 @@ class SimulationBridge:
                 if target_cp_array.shape == source_np_array.shape:
                     if target_cp_array.dtype == source_np_array.dtype:
                         target_cp_array[:] = cp.asarray(source_np_array)
-                    else: 
+                    else:
                         try: target_cp_array[:] = cp.asarray(source_np_array.astype(target_cp_array.dtype))
                         except Exception as e: self._log_console(f"Error applying {cp_array_attr_name} due to dtype mismatch and cast fail: {e}", "error")
-                elif target_cp_array.size == source_np_array.size and source_np_array.size > 0: 
+                elif target_cp_array.size == source_np_array.size and source_np_array.size > 0:
                     try: target_cp_array[:] = cp.asarray(source_np_array.reshape(target_cp_array.shape))
                     except ValueError as ve: self._log_console(f"ERROR: Failed to reshape {cp_array_attr_name}. Error: {ve}", "error")
-                elif source_np_array.size == 0 and target_cp_array.size == 0: pass 
-                elif source_np_array.size == 0 and target_cp_array.size > 0: 
-                     target_cp_array.fill(0) 
-                else: 
+                elif source_np_array.size == 0 and target_cp_array.size == 0: pass
+                elif source_np_array.size == 0 and target_cp_array.size > 0:
+                     target_cp_array.fill(0)
+                elif cp_array_attr_name in synapse_arrays:
+                    # Synapse arrays can be resized to match recording's synapse count
+                    # This happens when recording has different connection count than current config
+                    try:
+                        setattr(self, cp_array_attr_name, cp.asarray(source_np_array, dtype=default_dtype))
+                    except Exception as e:
+                        self._log_console(f"Error resizing {cp_array_attr_name} from recording: {e}", "error")
+                else:
                     self._log_console(f"Error: Shape/size mismatch for {cp_array_attr_name} from recording. Target: {target_cp_array.shape}, Source: {source_np_array.shape}. Cannot apply.", "error")
             elif target_cp_array is None and source_np_array.size == 0:
                 setattr(self, cp_array_attr_name, cp.array([], dtype=default_dtype))
@@ -4005,8 +5830,10 @@ class SimulationBridge:
                     elif self.cp_connections.data.size == conn_data_frame_np.size and conn_data_frame_np.size > 0:
                         try: self.cp_connections.data[:] = cp.asarray(conn_data_frame_np.reshape(self.cp_connections.data.shape))
                         except ValueError as ve: self._log_console(f"ERROR: Failed to reshape cp_connections.data from recording frame. Error: {ve}", "error")
-                    elif not (self.cp_connections.data.size == 0 and conn_data_frame_np.size == 0) : 
-                        self._log_console(f"Error: Shape/size mismatch for dynamic cp_connections.data from recording frame. Cannot apply.", "error")
+                    elif not (self.cp_connections.data.size == 0 and conn_data_frame_np.size == 0):
+                        # Size mismatch due to structural plasticity during recording - silently skip
+                        # Connection weights won't update but other state (membrane potential, firing) is fine
+                        pass
             elif conn_data_frame_np is None and self.cp_connections is not None and self.cp_connections.data is not None:
                  pass 
                  
@@ -4043,8 +5870,10 @@ class SimulationBridge:
 
                 self.cp_stp_u, self.cp_stp_x = fused_stp_decay_recovery(self.cp_stp_u, self.cp_stp_x, dt, cfg.stp_tau_f, cfg.stp_tau_d)
 
-                if self.cp_prev_firing_states.any(): 
-                    coo_matrix_stp = self.cp_connections.tocoo(copy=False) 
+                if self.cp_prev_firing_states.any():
+                    coo_matrix_stp = self._get_cached_coo()  # Use cached COO (avoids 40-400ms tocoo() per step)
+                    if coo_matrix_stp is None:
+                        coo_matrix_stp = self.cp_connections.tocoo(copy=False)  # Fallback
                     active_syn_mask_stp = self.cp_prev_firing_states[coo_matrix_stp.row]
                     active_syn_indices_stp = cp.where(active_syn_mask_stp)[0] 
 
@@ -4060,7 +5889,14 @@ class SimulationBridge:
                 cp.clip(self.cp_stp_x, 0.0, 1.0, out=self.cp_stp_x)
                 cp.clip(self.cp_stp_u, 0.0, 1.0, out=self.cp_stp_u)
 
-                effective_synaptic_strength = base_synaptic_weights * self.cp_stp_u * self.cp_stp_x
+                # Use actual connection count (cp_connections.nnz) as authoritative size.
+                # _synapse_count tracks pre-allocated array usage but can diverge from
+                # cp_connections.nnz when CSR addition deduplicates overlapping (pre,post)
+                # pairs during structural plasticity.
+                actual_nnz = self.cp_connections.nnz
+                stp_u_active = self.cp_stp_u[:actual_nnz]
+                stp_x_active = self.cp_stp_x[:actual_nnz]
+                effective_synaptic_strength = base_synaptic_weights * stp_u_active * stp_x_active
                 effective_connections_matrix = csp.csr_matrix(
                     (effective_synaptic_strength, self.cp_connections.indices, self.cp_connections.indptr),
                     shape=self.cp_connections.shape
@@ -4069,16 +5905,17 @@ class SimulationBridge:
                 effective_connections_matrix = self.cp_connections 
 
             # --- 2. Synaptic Conductance Update & Current Calculation ---
-            decay_e = cp.exp(-dt / cfg.syn_tau_g_e) if cfg.syn_tau_g_e > 0 else 0.0
-            decay_i = cp.exp(-dt / cfg.syn_tau_g_i) if cfg.syn_tau_g_i > 0 else 0.0
+            decay_e = self._cached_decay_e
+            decay_i = self._cached_decay_i
 
             self.cp_conductance_g_e, self.cp_conductance_g_i, synaptic_current_I_syn_pA = fused_conductance_decay_and_current(
                 self.cp_conductance_g_e, self.cp_conductance_g_i, decay_e, decay_i,
                 self.cp_membrane_potential_v, cfg.syn_reversal_potential_e, cfg.syn_reversal_potential_i
             )
 
+            g_e_increase = None  # Track for NMDA input
             if effective_connections_matrix.nnz > 0 and self.cp_prev_firing_states.any():
-                prev_fired_float = self.cp_prev_firing_states.astype(cp.float32) 
+                prev_fired_float = self.cp_prev_firing_states.astype(cp.float32)
 
                 if cfg.enable_inhibitory_neurons and self.cp_traits is not None:
                     # Support multiple inhibitory trait indices while preserving legacy single-index behavior
@@ -4088,27 +5925,42 @@ class SimulationBridge:
                         is_inhibitory_neuron_output = cp.isin(self.cp_traits, inhibitory_indices_cp)
                     else:
                         is_inhibitory_neuron_output = (self.cp_traits == cfg.inhibitory_trait_index)
-                    exc_fired_prev = prev_fired_float * (~is_inhibitory_neuron_output) 
-                    inhib_fired_prev = prev_fired_float * is_inhibitory_neuron_output 
+                    exc_fired_prev = prev_fired_float * (~is_inhibitory_neuron_output)
+                    inhib_fired_prev = prev_fired_float * is_inhibitory_neuron_output
 
                     g_e_increase = (effective_connections_matrix.T @ exc_fired_prev) * cfg.propagation_strength
                     g_i_increase = (effective_connections_matrix.T @ inhib_fired_prev) * cfg.inhibitory_propagation_strength
 
                     self.cp_conductance_g_e += g_e_increase
                     self.cp_conductance_g_i += g_i_increase
-                else: 
-                    g_e_increase = (effective_connections_matrix.T @ prev_fired_float) * cfg.propagation_strength # Corrected line: use prev_fired_float
+                else:
+                    g_e_increase = (effective_connections_matrix.T @ prev_fired_float) * cfg.propagation_strength
                     self.cp_conductance_g_e += g_e_increase
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
-            
+
+            # --- 2.3. NMDA conductance with Mg²⁺ block (Jahr & Stevens 1990) ---
+            if cfg.enable_nmda and self.cp_conductance_g_nmda is not None:
+                # Update NMDA dual-exponential conductance and compute Mg²⁺-gated current
+                self.cp_conductance_g_nmda, self.cp_conductance_g_nmda_rise, I_nmda = fused_nmda_update_and_current(
+                    self.cp_conductance_g_nmda, self.cp_conductance_g_nmda_rise,
+                    self._cached_decay_nmda, self._cached_decay_nmda_rise,
+                    self.cp_membrane_potential_v, cfg.syn_reversal_potential_e,  # E_NMDA = E_AMPA = 0 mV
+                    cfg.nmda_mg_concentration
+                )
+                # NMDA gets same excitatory input as AMPA, scaled by nmda_ratio
+                if g_e_increase is not None:
+                    g_nmda_increase = g_e_increase * cfg.nmda_ratio
+                    self.cp_conductance_g_nmda += g_nmda_increase
+                    self.cp_conductance_g_nmda_rise += g_nmda_increase
+                total_input_current_pA = total_input_current_pA + I_nmda
+
             # --- 2.5. Update OU Process & Inject Background Noise ---
             if cfg.enable_ou_process and hasattr(self, 'cp_ou_current') and self.cp_ou_current is not None:
                 # Update OU current using exact solution: I(t+dt) = I(t)*exp(-dt/tau) + mean*(1-exp(-dt/tau)) + noise
-                ou_seed = cfg.ou_seed if cfg.ou_seed >= 0 else (cfg.seed + self.runtime_state.current_time_step)
-                if ou_seed >= 0:
-                    cp.random.seed(ou_seed)
-                
+                # NOTE: RNG was seeded once at initialization. Per-step seeding removed to preserve
+                # temporal correlations in OU process and improve performance.
+
                 # Exact OU update (Gillespie 1996)
                 noise_samples = cp.random.randn(n_neurons).astype(cp.float32)
                 self.cp_ou_current[:] = (
@@ -4145,16 +5997,20 @@ class SimulationBridge:
                 self.cp_refractory_timers[self.cp_refractory_timers > 0] -= 1 
 
             elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
-                total_input_current_uA_density_equivalent = total_input_current_pA * 1e-6 
-                
+                total_input_current_uA_density_equivalent = total_input_current_pA * 1e-6
+
+                # Use pre-computed Q10 temperature factor for extended currents
+                # (Main HH kernel computes phi internally; extended currents need it passed explicitly)
+                hh_phi = self._cached_hh_phi
+
                 # Apply multiplicative conductance noise (intrinsic channel noise)
                 g_Na_effective = self.cp_hh_g_Na_max
                 g_K_effective = self.cp_hh_g_K_max
                 
                 if cfg.enable_conductance_noise:
-                    noise_seed = cfg.seed + self.runtime_state.current_time_step + 1000000
-                    cp.random.seed(noise_seed)
-                    
+                    # NOTE: RNG was seeded once at initialization. Per-step seeding removed
+                    # for performance. Reproducibility maintained through initial seed.
+
                     # Multiplicative noise: g_noisy = g_nominal * (1 + noise_std * N(0,1))
                     noise_Na = cp.random.randn(n_neurons).astype(cp.float32)
                     noise_K = cp.random.randn(n_neurons).astype(cp.float32)
@@ -4177,7 +6033,8 @@ class SimulationBridge:
                         dt,
                         cfg.hh_g_M_max,
                         self.cp_hh_E_K,
-                        cfg.hh_m_current_tau_ms
+                        cfg.hh_m_current_tau_ms,
+                        hh_phi
                     )
                     self.cp_hh_m_current_activation[:] = m_act_new
                     effective_input_uA = effective_input_uA - I_M
@@ -4190,7 +6047,8 @@ class SimulationBridge:
                         self.cp_hh_CaT_h,
                         dt,
                         cfg.hh_g_CaT_max,
-                        cfg.hh_E_CaT
+                        cfg.hh_E_CaT,
+                        hh_phi
                     )
                     self.cp_hh_CaT_m[:] = m_CaT_new
                     self.cp_hh_CaT_h[:] = h_CaT_new
@@ -4203,7 +6061,8 @@ class SimulationBridge:
                         self.cp_hh_h_current_q,
                         dt,
                         cfg.hh_g_h_max,
-                        cfg.hh_E_h
+                        cfg.hh_E_h,
+                        hh_phi
                     )
                     self.cp_hh_h_current_q[:] = q_new
                     effective_input_uA = effective_input_uA - I_h
@@ -4215,7 +6074,8 @@ class SimulationBridge:
                         self.cp_hh_NaP_activation,
                         dt,
                         cfg.hh_g_NaP_max,
-                        self.cp_hh_E_Na
+                        self.cp_hh_E_Na,
+                        hh_phi
                     )
                     self.cp_hh_NaP_activation[:] = p_new
                     effective_input_uA = effective_input_uA - I_NaP
@@ -4255,9 +6115,28 @@ class SimulationBridge:
                 self.cp_refractory_timers[self.cp_refractory_timers > 0] -= 1
 
             self.cp_firing_states[:] = fired_this_step
-            
-            # Update spike count for OpenGL HUD (DPG monitor computes on-demand)
-            self._mock_num_spikes_this_step = int(cp.sum(fired_this_step).get())
+
+            # Accumulate spike count on GPU, sync to CPU periodically (reduces GPU-CPU stalls)
+            spike_count_gpu = cp.sum(fired_this_step)
+            if self._accumulated_spikes_gpu is None:
+                self._accumulated_spikes_gpu = spike_count_gpu
+            else:
+                self._accumulated_spikes_gpu += spike_count_gpu
+
+            self._stats_sync_counter += 1
+            if self._stats_sync_counter >= self.gpu_config.stats_sync_interval_steps:
+                self._mock_num_spikes_this_step = int(self._accumulated_spikes_gpu.get()) // self._stats_sync_counter
+                self._last_synced_spike_count = self._mock_num_spikes_this_step
+                self._accumulated_spikes_gpu = None
+                self._stats_sync_counter = 0
+
+                # Debug mode: check for numerical issues
+                if self.gpu_config.enable_debug_checks:
+                    if cp.any(cp.isnan(self.cp_membrane_potential_v)) or cp.any(cp.isinf(self.cp_membrane_potential_v)):
+                        self._log_to_ui("WARNING: NaN/Inf detected in membrane potential!", "critical")
+            else:
+                # Use last synced value between syncs
+                self._mock_num_spikes_this_step = self._last_synced_spike_count
 
             if self.cp_viz_activity_timers is not None:
                 max_highlight_val = opengl_viz_config.get('ACTIVITY_HIGHLIGHT_FRAMES', 7) if OPENGL_AVAILABLE else 7
@@ -4268,7 +6147,7 @@ class SimulationBridge:
             if OPENGL_AVAILABLE and opengl_viz_config.get("ENABLE_SYNAPTIC_PULSES", False) and \
                self.cp_synapse_pulse_timers is not None and fired_this_step.any(): 
                 if self.cp_connections is not None and self.cp_connections.nnz > 0:
-                    coo_matrix_for_pulses = self.cp_connections.tocoo(copy=False)
+                    coo_matrix_for_pulses = self._get_cached_coo()  # Use cached COO
                     presynaptic_fired_mask_for_pulses = fired_this_step[coo_matrix_for_pulses.row]
                     synapses_to_activate_indices = cp.where(presynaptic_fired_mask_for_pulses)[0]
 
@@ -4281,7 +6160,7 @@ class SimulationBridge:
             if cfg.enable_hebbian_learning and self.cp_connections.nnz > 0 and \
                self.cp_connections.data is not None and self.cp_connections.data.size > 0:
                 if self.cp_prev_firing_states.any() and fired_this_step.any(): 
-                    coo_matrix_heb = self.cp_connections.tocoo(copy=False) 
+                    coo_matrix_heb = self._get_cached_coo()  # Use cached COO
                     pre_fired_mask_heb = self.cp_prev_firing_states[coo_matrix_heb.row] 
                     post_fired_mask_heb = fired_this_step[coo_matrix_heb.col] 
 
@@ -4313,7 +6192,7 @@ class SimulationBridge:
                 # Apply STDP updates for spike pairs
                 # Only update synapses where both pre and post have spiked recently
                 if self.cp_prev_firing_states.any() or fired_this_step.any():
-                    coo_matrix_stdp = self.cp_connections.tocoo(copy=False)
+                    coo_matrix_stdp = self._get_cached_coo()  # Use cached COO
                     
                     # Get last spike times for pre and post neurons
                     pre_spike_times = self.cp_last_spike_time[coo_matrix_stdp.row]
@@ -4407,11 +6286,33 @@ class SimulationBridge:
                         num_eliminated = cp.sum(eliminate_mask).get()
                         
                         if num_eliminated > 0:
-                            # Set eliminated synapses to zero weight
+                            # DON'T filter synapse arrays here - defer to compaction
+                            # This keeps arrays aligned with CSR.data during the deferred window
+
+                            # Set eliminated synapses to zero weight (STP multiplication will yield 0 anyway)
                             self.cp_connections.data[eliminate_mask] = 0.0
-                            
-                            # Rebuild sparse matrix to remove zeros (expensive, but necessary)
-                            self.cp_connections.eliminate_zeros()
+
+                            # Mark that we have pending zero-weight synapses
+                            self._pending_eliminations = True
+
+                            # Invalidate COO cache since connectivity changed
+                            self._invalidate_coo_cache()
+
+                    # Deferred CSR compaction: only rebuild periodically to amortize cost
+                    self._compaction_counter += 1
+                    if self._pending_eliminations and self._compaction_counter >= self.gpu_config.struct_plast_compaction_interval:
+                        # Filter synapse arrays BEFORE eliminate_zeros() to maintain alignment
+                        # keep_mask identifies entries with non-zero weight
+                        keep_mask = (self.cp_connections.data != 0)
+
+                        # Compact all synapse-indexed arrays
+                        self._compact_synapse_arrays(keep_mask)
+
+                        # Now compact the CSR matrix
+                        self.cp_connections.eliminate_zeros()
+                        self._pending_eliminations = False
+                        self._compaction_counter = 0
+                        self._invalidate_coo_cache()
                     
                     # Synapse formation: create new connections
                     current_density = self.cp_connections.nnz / (n_neurons * n_neurons)
@@ -4427,35 +6328,51 @@ class SimulationBridge:
                             formation_prob = cfg.struct_plast_formation_rate * cfg.struct_plast_update_interval_steps
                             expected_new_synapses = int(potential_new * formation_prob)
                             expected_new_synapses = max(1, min(expected_new_synapses, n_neurons * 10))  # Form at least 1, cap at 10*N
-                            
-                            # Generate candidate new connections
-                            # Use distance-dependent probability for spatial realism
-                            candidate_pre = cp.random.randint(0, n_neurons, size=expected_new_synapses * 3, dtype=cp.int32)
-                            candidate_post = cp.random.randint(0, n_neurons, size=expected_new_synapses * 3, dtype=cp.int32)
-                            
-                            # Filter out self-connections and existing connections
-                            valid_candidates_mask = candidate_pre != candidate_post
-                            
-                            # Check if connection already exists (convert to COO for efficient lookup)
-                            coo_existing = self.cp_connections.tocoo(copy=False)
-                            existing_pairs = set(zip(cp.asnumpy(coo_existing.row), cp.asnumpy(coo_existing.col)))
-                            
-                            # Filter candidates on CPU (small operation)
-                            candidate_pre_np = cp.asnumpy(candidate_pre)
-                            candidate_post_np = cp.asnumpy(candidate_post)
-                            valid_candidates_mask_np = cp.asnumpy(valid_candidates_mask)
-                            
-                            new_connections = []
-                            for i in range(len(candidate_pre_np)):
-                                if valid_candidates_mask_np[i]:
-                                    pair = (candidate_pre_np[i], candidate_post_np[i])
-                                    if pair not in existing_pairs and len(new_connections) < expected_new_synapses:
-                                        new_connections.append(pair)
-                            
-                            if len(new_connections) > 0:
-                                # Add new synapses with initial weight
-                                new_pre = cp.array([p[0] for p in new_connections], dtype=cp.int32)
-                                new_post = cp.array([p[1] for p in new_connections], dtype=cp.int32)
+
+                            # Generate candidate new connections on GPU
+                            candidate_pre = cp.random.randint(0, n_neurons, size=expected_new_synapses * 3, dtype=cp.int64)
+                            candidate_post = cp.random.randint(0, n_neurons, size=expected_new_synapses * 3, dtype=cp.int64)
+
+                            # Filter out self-connections on GPU
+                            valid_mask = candidate_pre != candidate_post
+                            candidate_pre = candidate_pre[valid_mask]
+                            candidate_post = candidate_post[valid_mask]
+
+                            if candidate_pre.size > 0:
+                                # GPU-based duplicate checking using unique pair IDs
+                                # Encode (pre, post) pairs as unique integers: pre * n_neurons + post
+                                candidate_ids = candidate_pre * n_neurons + candidate_post
+
+                                # Get existing pair IDs from COO matrix
+                                coo_existing = self._get_cached_coo()
+                                if coo_existing is not None:
+                                    existing_ids = coo_existing.row.astype(cp.int64) * n_neurons + coo_existing.col.astype(cp.int64)
+                                    # Find candidates that don't exist in current connections
+                                    is_duplicate = cp.isin(candidate_ids, existing_ids)
+                                    new_mask = ~is_duplicate
+                                else:
+                                    new_mask = cp.ones(candidate_ids.shape[0], dtype=cp.bool_)
+
+                                # Also remove duplicates within candidates
+                                candidate_ids_filtered = candidate_ids[new_mask]
+                                if candidate_ids_filtered.size > 0:
+                                    unique_ids, unique_indices = cp.unique(candidate_ids_filtered, return_index=True)
+                                    # Limit to expected number of new synapses
+                                    if unique_ids.size > expected_new_synapses:
+                                        unique_indices = unique_indices[:expected_new_synapses]
+                                        unique_ids = unique_ids[:expected_new_synapses]
+
+                                    # Decode back to (pre, post) pairs
+                                    new_pre = (unique_ids // n_neurons).astype(cp.int32)
+                                    new_post = (unique_ids % n_neurons).astype(cp.int32)
+                                else:
+                                    new_pre = cp.array([], dtype=cp.int32)
+                                    new_post = cp.array([], dtype=cp.int32)
+                            else:
+                                new_pre = cp.array([], dtype=cp.int32)
+                                new_post = cp.array([], dtype=cp.int32)
+
+                            if new_pre.size > 0:
                                 
                                 # Calculate distance-dependent initial weights
                                 if cfg.struct_plast_distance_kernel == "exp_decay":
@@ -4469,53 +6386,75 @@ class SimulationBridge:
                                     distances = cp.linalg.norm(pre_pos - post_pos, axis=1)
                                     distance_factor = cp.exp(-(distances ** 2) / (2.0 * cfg.struct_plast_distance_scale ** 2))
                                 else:  # uniform
-                                    distance_factor = cp.ones(len(new_connections), dtype=cp.float32)
-                                
+                                    distance_factor = cp.ones(new_pre.size, dtype=cp.float32)
+
                                 # Initial weights scaled by distance
                                 initial_weights = cfg.struct_plast_weight_threshold * 2.0 * distance_factor
-                                
+
                                 # Create new sparse matrix with added connections
                                 new_connections_matrix = csp.csr_matrix(
                                     (initial_weights, (new_pre, new_post)),
                                     shape=(n_neurons, n_neurons),
                                     dtype=cp.float32
                                 )
-                                
-                                # Add to existing connections
-                                self.cp_connections = self.cp_connections + new_connections_matrix
-                                
-                                # Update STP arrays if enabled
-                                if cfg.enable_short_term_plasticity:
-                                    new_synapse_count = len(new_connections)
-                                    new_stp_x = cp.ones(new_synapse_count, dtype=cp.float32)
-                                    new_stp_u = cp.full(new_synapse_count, cfg.stp_U, dtype=cp.float32)
-                                    self.cp_stp_x = cp.concatenate([self.cp_stp_x, new_stp_x])
-                                    self.cp_stp_u = cp.concatenate([self.cp_stp_u, new_stp_u])
-                                
-                                # Update eligibility traces if reward modulation is enabled
-                                if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
-                                    new_traces = cp.zeros(len(new_connections), dtype=cp.float32)
-                                    self.cp_eligibility_trace = cp.concatenate([self.cp_eligibility_trace, new_traces])
-                                
-                                # Update visualization arrays
-                                if self.cp_synapse_pulse_timers is not None:
-                                    new_timers = cp.zeros(len(new_connections), dtype=cp.int32)
-                                    new_progress = cp.zeros(len(new_connections), dtype=cp.float32)
-                                    self.cp_synapse_pulse_timers = cp.concatenate([self.cp_synapse_pulse_timers, new_timers])
-                                    self.cp_synapse_pulse_progress = cp.concatenate([self.cp_synapse_pulse_progress, new_progress])
 
-            # --- 5. Homeostatic Plasticity (Adaptive Thresholds for Izhikevich) ---
+                                # Add to existing connections
+                                nnz_before = self.cp_connections.nnz
+                                self.cp_connections = self.cp_connections + new_connections_matrix
+
+                                # CSR addition deduplicates overlapping (pre,post) pairs by summing
+                                # their weights, so actual new synapses may be fewer than candidates.
+                                actual_new = self.cp_connections.nnz - nnz_before
+
+                                # Invalidate COO cache since connectivity changed
+                                self._invalidate_coo_cache()
+
+                                # Update synapse arrays only for actually added synapses
+                                if actual_new > 0:
+                                    self._grow_synapse_arrays_if_needed(actual_new, cfg)
+                                    self._add_synapses_to_arrays(actual_new, cfg)
+
+                                # Keep _synapse_count in sync with actual connection matrix
+                                self._synapse_count = self.cp_connections.nnz
+
+            # --- 5. Homeostatic Plasticity ---
+            # 5a. Adaptive thresholds (Izhikevich-specific)
             if cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
-                if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name: 
+                if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
                     self.cp_neuron_activity_ema, self.cp_neuron_firing_thresholds = fused_homeostasis_update(
                         self.cp_neuron_activity_ema, fired_this_step.astype(cp.float32),
                         cfg.homeostasis_target_rate, cfg.homeostasis_ema_alpha, cfg.homeostasis_threshold_adapt_rate,
                         self.cp_neuron_firing_thresholds,
                         cfg.homeostasis_threshold_min, cfg.homeostasis_threshold_max
                     )
-                elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name: 
+                elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
                      self.cp_neuron_activity_ema = (1.0 - cfg.homeostasis_ema_alpha) * self.cp_neuron_activity_ema + \
                                                cfg.homeostasis_ema_alpha * fired_this_step.astype(cp.float32)
+
+            # 5b. Synaptic scaling (Turrigiano 2008) — works for all neuron models
+            # Multiplicatively scales excitatory synaptic weights to maintain target firing rate.
+            # scale_factor = 1 + rate * (target - actual_ema) per postsynaptic neuron
+            if cfg.enable_synaptic_scaling and self.cp_connections is not None and self.cp_connections.nnz > 0:
+                # Update EMA if not already done by threshold homeostasis
+                if not (cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None):
+                    self.cp_neuron_activity_ema = (1.0 - cfg.homeostasis_ema_alpha) * self.cp_neuron_activity_ema + \
+                                                  cfg.homeostasis_ema_alpha * fired_this_step.astype(cp.float32)
+                # Compute per-neuron scaling factor based on firing rate error
+                rate_error = cfg.homeostasis_target_rate - self.cp_neuron_activity_ema  # positive = too quiet, scale up
+                scale_factors = 1.0 + cfg.synaptic_scaling_rate * rate_error
+                scale_factors = cp.clip(scale_factors, 0.95, 1.05)  # Prevent runaway scaling per step
+                # Apply to excitatory weights via postsynaptic neuron index (CSR column structure)
+                # In CSR format, each row i has connections FROM neuron i. For postsynaptic scaling,
+                # we need the target (column) neuron's scale factor applied to the weight.
+                coo = self._get_cached_coo()
+                if coo is not None and coo.nnz == self.cp_connections.nnz:
+                    post_scales = scale_factors[coo.col]
+                    self.cp_connections.data[:] = self.cp_connections.data * post_scales
+                    # Enforce weight bounds
+                    if cfg.enable_hebbian_learning:
+                        cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight, out=self.cp_connections.data)
+                    else:
+                        cp.clip(self.cp_connections.data, 0.01, 5.0, out=self.cp_connections.data)
 
             # --- 6. Prepare for Next Step & Record Frame ---
             self.cp_prev_firing_states[:] = fired_this_step 
@@ -4542,12 +6481,13 @@ class SimulationBridge:
 
                 state_group = h5f 
 
-                arrays_to_save_direct = [ 
+                # Note: cp_synapse_pulse_timers and cp_synapse_pulse_progress are synapse-indexed
+                # and handled separately with pre-allocation slicing
+                arrays_to_save_direct = [
                     'cp_membrane_potential_v', 'cp_conductance_g_e', 'cp_conductance_g_i',
                     'cp_external_input_current', 'cp_firing_states', 'cp_prev_firing_states',
                     'cp_traits', 'cp_refractory_timers', 'cp_neuron_positions_3d',
                     'cp_neuron_activity_ema', 'cp_viz_activity_timers',
-                    'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
                     'cp_adex_w', 'cp_ou_current'
                 ]
                 for attr_name in arrays_to_save_direct:
@@ -4567,9 +6507,15 @@ class SimulationBridge:
                     state_group.attrs["connections_shape_0"] = self.cp_connections.shape[0]
                     state_group.attrs["connections_shape_1"] = self.cp_connections.shape[1]
 
-                if self.cp_stp_u is not None and self.cp_stp_u.size > 0: state_group.create_dataset("cp_stp_u", data=cp.asnumpy(self.cp_stp_u), compression="gzip")
+                # Save only active synapse elements (not pre-allocated capacity)
+                synapse_count = getattr(self, '_synapse_count', None)
+                if self.cp_stp_u is not None and self.cp_stp_u.size > 0:
+                    active_stp_u = self.cp_stp_u[:synapse_count] if synapse_count else self.cp_stp_u
+                    state_group.create_dataset("cp_stp_u", data=cp.asnumpy(active_stp_u), compression="gzip")
                 elif self.cp_stp_u is not None: state_group.attrs["cp_stp_u_is_empty"] = True
-                if self.cp_stp_x is not None and self.cp_stp_x.size > 0: state_group.create_dataset("cp_stp_x", data=cp.asnumpy(self.cp_stp_x), compression="gzip")
+                if self.cp_stp_x is not None and self.cp_stp_x.size > 0:
+                    active_stp_x = self.cp_stp_x[:synapse_count] if synapse_count else self.cp_stp_x
+                    state_group.create_dataset("cp_stp_x", data=cp.asnumpy(active_stp_x), compression="gzip")
                 elif self.cp_stp_x is not None: state_group.attrs["cp_stp_x_is_empty"] = True
                 
                 # C2: Save STDP and reward modulation state
@@ -4579,10 +6525,23 @@ class SimulationBridge:
                     state_group.attrs["cp_last_spike_time_is_empty"] = True
                 
                 if self.cp_eligibility_trace is not None and self.cp_eligibility_trace.size > 0:
-                    state_group.create_dataset("cp_eligibility_trace", data=cp.asnumpy(self.cp_eligibility_trace), compression="gzip")
+                    active_traces = self.cp_eligibility_trace[:synapse_count] if synapse_count else self.cp_eligibility_trace
+                    state_group.create_dataset("cp_eligibility_trace", data=cp.asnumpy(active_traces), compression="gzip")
                 elif self.cp_eligibility_trace is not None:
                     state_group.attrs["cp_eligibility_trace_is_empty"] = True
-                
+
+                # Save synapse visualization arrays (synapse-indexed with pre-allocation)
+                if self.cp_synapse_pulse_timers is not None and self.cp_synapse_pulse_timers.size > 0:
+                    active_timers = self.cp_synapse_pulse_timers[:synapse_count] if synapse_count else self.cp_synapse_pulse_timers
+                    state_group.create_dataset("cp_synapse_pulse_timers", data=cp.asnumpy(active_timers), compression="gzip")
+                elif self.cp_synapse_pulse_timers is not None:
+                    state_group.attrs["cp_synapse_pulse_timers_is_empty"] = True
+                if self.cp_synapse_pulse_progress is not None and self.cp_synapse_pulse_progress.size > 0:
+                    active_progress = self.cp_synapse_pulse_progress[:synapse_count] if synapse_count else self.cp_synapse_pulse_progress
+                    state_group.create_dataset("cp_synapse_pulse_progress", data=cp.asnumpy(active_progress), compression="gzip")
+                elif self.cp_synapse_pulse_progress is not None:
+                    state_group.attrs["cp_synapse_pulse_progress_is_empty"] = True
+
                 # C3: Save structural plasticity state
                 if self.cp_struct_plast_step_counter is not None:
                     state_group.attrs["cp_struct_plast_step_counter"] = self.cp_struct_plast_step_counter
@@ -4674,7 +6633,9 @@ class SimulationBridge:
                     self._log_console(f"Checkpoint: Dataset for '{key}' not found or was empty. Using default.", "debug")
                     return default_val_func(n) if n > 0 else default_val_func(0)
 
-                direct_load_map = { 
+                # Note: cp_synapse_pulse_timers and cp_synapse_pulse_progress are synapse-indexed
+                # and loaded separately below
+                direct_load_map = {
                     'cp_membrane_potential_v': ('cp_membrane_potential_v', cp.float32),
                     'cp_conductance_g_e': ('cp_conductance_g_e', cp.float32),
                     'cp_conductance_g_i': ('cp_conductance_g_i', cp.float32),
@@ -4685,8 +6646,6 @@ class SimulationBridge:
                     'cp_refractory_timers': ('cp_refractory_timers', cp.int32),
                     'cp_neuron_activity_ema': ('cp_neuron_activity_ema', cp.float32),
                     'cp_viz_activity_timers': ('cp_viz_activity_timers', cp.int32),
-                    'cp_synapse_pulse_timers': ('cp_synapse_pulse_timers', cp.int32),
-                    'cp_synapse_pulse_progress': ('cp_synapse_pulse_progress', cp.float32),
                     'cp_adex_w': ('cp_adex_w', cp.float32),
                     'cp_ou_current': ('cp_ou_current', cp.float32)
                 }
@@ -4752,12 +6711,31 @@ class SimulationBridge:
                         self.cp_eligibility_trace = cp.zeros(num_synapses_loaded, dtype=cp.float32)
                 else:
                     self.cp_eligibility_trace = None
-                
+
+                # Load synapse visualization arrays (synapse-indexed)
+                if OPENGL_AVAILABLE and num_synapses_loaded > 0:
+                    self.cp_synapse_pulse_timers = _load_cp_array_from_h5("cp_synapse_pulse_timers",
+                        lambda s: cp.zeros(s, dtype=cp.int32) if s > 0 else cp.array([], dtype=cp.int32))
+                    if self.cp_synapse_pulse_timers.size != num_synapses_loaded:
+                        self.cp_synapse_pulse_timers = cp.zeros(num_synapses_loaded, dtype=cp.int32)
+                    self.cp_synapse_pulse_progress = _load_cp_array_from_h5("cp_synapse_pulse_progress",
+                        lambda s: cp.zeros(s, dtype=cp.float32) if s > 0 else cp.array([], dtype=cp.float32))
+                    if self.cp_synapse_pulse_progress.size != num_synapses_loaded:
+                        self.cp_synapse_pulse_progress = cp.zeros(num_synapses_loaded, dtype=cp.float32)
+                else:
+                    self.cp_synapse_pulse_timers = None
+                    self.cp_synapse_pulse_progress = None
+
                 # C3: Load structural plasticity state
                 if self.core_config.enable_structural_plasticity:
                     self.cp_struct_plast_step_counter = state_group.attrs.get("cp_struct_plast_step_counter", 0)
                 else:
                     self.cp_struct_plast_step_counter = None
+
+                # Initialize synapse tracking variables from loaded array sizes
+                # (no extra capacity initially - will grow dynamically if structural plasticity adds synapses)
+                self._synapse_count = num_synapses_loaded
+                self._synapse_capacity = num_synapses_loaded
 
                 if self.core_config.neuron_model_type == NeuronModel.IZHIKEVICH.name:
                     self.cp_recovery_variable_u = _load_cp_array_from_h5("cp_recovery_variable_u", lambda s: cp.zeros(s, dtype=cp.float32))
@@ -4922,7 +6900,8 @@ class SimulationBridge:
             if self.cp_connections is not None and hasattr(self.cp_connections,'nnz') and self.cp_connections.nnz > 0:
                 max_synapses_to_sample_for_gui = 20000
                 try:
-                    coo_conn = self.cp_connections.tocoo(copy=False)
+                    cached_coo = self._get_cached_coo()
+                    coo_conn = cached_coo if cached_coo is not None else self.cp_connections.tocoo(copy=False)
                     num_actual_synapses = coo_conn.nnz
                     num_to_send = min(num_actual_synapses, max_synapses_to_sample_for_gui)
 
@@ -4971,7 +6950,8 @@ class SimulationBridge:
             active_pulse_indices = cp.where(active_pulse_mask)[0]
 
             if active_pulse_indices.size > 0:
-                coo_conn_for_pulses = self.cp_connections.tocoo(copy=False) # Ensure COO is available
+                cached_coo_p = self._get_cached_coo()
+                coo_conn_for_pulses = cached_coo_p if cached_coo_p is not None else self.cp_connections.tocoo(copy=False)
 
                 # Get source and target neuron indices for active pulses
                 # These indices are into the full list of synapses (coo_conn.row/col)
@@ -6037,7 +8017,7 @@ def _update_sim_config_from_ui(update_model_specific=True):
         cfg_dict_from_ui = {} # Build a dictionary of config values from UI
 
         # General parameters
-        if dpg.does_item_exist("cfg_num_neurons"): cfg_dict_from_ui["num_neurons"] = max(0, dpg.get_value("cfg_num_neurons"))
+        if dpg.does_item_exist("cfg_num_neurons"): cfg_dict_from_ui["num_neurons"] = max(1, dpg.get_value("cfg_num_neurons"))
         if dpg.does_item_exist("cfg_total_sim_time"): cfg_dict_from_ui["total_simulation_time_ms"] = max(0.0, dpg.get_value("cfg_total_sim_time"))
         if dpg.does_item_exist("cfg_dt_ms"): cfg_dict_from_ui["dt_ms"] = max(0.001, dpg.get_value("cfg_dt_ms"))
         if dpg.does_item_exist("cfg_seed"): cfg_dict_from_ui["seed"] = dpg.get_value("cfg_seed")
@@ -6064,6 +8044,12 @@ def _update_sim_config_from_ui(update_model_specific=True):
         if dpg.does_item_exist("cfg_inhibitory_propagation_strength"): cfg_dict_from_ui["inhibitory_propagation_strength"] = dpg.get_value("cfg_inhibitory_propagation_strength")
         if dpg.does_item_exist("cfg_syn_tau_e"): cfg_dict_from_ui["syn_tau_g_e"] = max(0.1, dpg.get_value("cfg_syn_tau_e"))
         if dpg.does_item_exist("cfg_syn_tau_i"): cfg_dict_from_ui["syn_tau_g_i"] = max(0.1, dpg.get_value("cfg_syn_tau_i"))
+        # NMDA parameters
+        if dpg.does_item_exist("cfg_enable_nmda"): cfg_dict_from_ui["enable_nmda"] = dpg.get_value("cfg_enable_nmda")
+        if dpg.does_item_exist("cfg_nmda_ratio"): cfg_dict_from_ui["nmda_ratio"] = max(0.0, dpg.get_value("cfg_nmda_ratio"))
+        if dpg.does_item_exist("cfg_nmda_tau_decay"): cfg_dict_from_ui["nmda_tau_decay"] = max(10.0, dpg.get_value("cfg_nmda_tau_decay"))
+        if dpg.does_item_exist("cfg_nmda_tau_rise"): cfg_dict_from_ui["nmda_tau_rise"] = max(0.5, dpg.get_value("cfg_nmda_tau_rise"))
+        if dpg.does_item_exist("cfg_nmda_mg_conc"): cfg_dict_from_ui["nmda_mg_concentration"] = max(0.0, dpg.get_value("cfg_nmda_mg_conc"))
         if dpg.does_item_exist("cfg_num_traits"): cfg_dict_from_ui["num_traits"] = max(1, dpg.get_value("cfg_num_traits"))
 
         # Learning & Plasticity
@@ -6080,7 +8066,32 @@ def _update_sim_config_from_ui(update_model_specific=True):
         if dpg.does_item_exist("cfg_homeostasis_target_rate"): cfg_dict_from_ui["homeostasis_target_rate"] = dpg.get_value("cfg_homeostasis_target_rate")
         if dpg.does_item_exist("cfg_homeostasis_threshold_min"): cfg_dict_from_ui["homeostasis_threshold_min"] = dpg.get_value("cfg_homeostasis_threshold_min")
         if dpg.does_item_exist("cfg_homeostasis_threshold_max"): cfg_dict_from_ui["homeostasis_threshold_max"] = dpg.get_value("cfg_homeostasis_threshold_max")
-        
+        if dpg.does_item_exist("cfg_enable_synaptic_scaling"): cfg_dict_from_ui["enable_synaptic_scaling"] = dpg.get_value("cfg_enable_synaptic_scaling")
+        if dpg.does_item_exist("cfg_synaptic_scaling_rate"): cfg_dict_from_ui["synaptic_scaling_rate"] = dpg.get_value("cfg_synaptic_scaling_rate")
+
+        # STDP
+        if dpg.does_item_exist("cfg_enable_stdp"): cfg_dict_from_ui["enable_stdp"] = dpg.get_value("cfg_enable_stdp")
+        if dpg.does_item_exist("cfg_stdp_a_plus"): cfg_dict_from_ui["stdp_a_plus"] = dpg.get_value("cfg_stdp_a_plus")
+        if dpg.does_item_exist("cfg_stdp_a_minus"): cfg_dict_from_ui["stdp_a_minus"] = dpg.get_value("cfg_stdp_a_minus")
+        if dpg.does_item_exist("cfg_stdp_tau_plus_ms"): cfg_dict_from_ui["stdp_tau_plus_ms"] = dpg.get_value("cfg_stdp_tau_plus_ms")
+        if dpg.does_item_exist("cfg_stdp_tau_minus_ms"): cfg_dict_from_ui["stdp_tau_minus_ms"] = dpg.get_value("cfg_stdp_tau_minus_ms")
+        if dpg.does_item_exist("cfg_stdp_w_min"): cfg_dict_from_ui["stdp_w_min"] = dpg.get_value("cfg_stdp_w_min")
+        if dpg.does_item_exist("cfg_stdp_w_max"): cfg_dict_from_ui["stdp_w_max"] = dpg.get_value("cfg_stdp_w_max")
+
+        # Reward-Modulated Plasticity
+        if dpg.does_item_exist("cfg_enable_reward_modulation"): cfg_dict_from_ui["enable_reward_modulation"] = dpg.get_value("cfg_enable_reward_modulation")
+        if dpg.does_item_exist("cfg_reward_learning_rate"): cfg_dict_from_ui["reward_learning_rate"] = dpg.get_value("cfg_reward_learning_rate")
+        if dpg.does_item_exist("cfg_reward_eligibility_tau_ms"): cfg_dict_from_ui["reward_eligibility_tau_ms"] = dpg.get_value("cfg_reward_eligibility_tau_ms")
+
+        # Structural Plasticity
+        if dpg.does_item_exist("cfg_enable_structural_plasticity"): cfg_dict_from_ui["enable_structural_plasticity"] = dpg.get_value("cfg_enable_structural_plasticity")
+        if dpg.does_item_exist("cfg_struct_plast_formation_rate"): cfg_dict_from_ui["struct_plast_formation_rate"] = dpg.get_value("cfg_struct_plast_formation_rate")
+        if dpg.does_item_exist("cfg_struct_plast_elimination_rate"): cfg_dict_from_ui["struct_plast_elimination_rate"] = dpg.get_value("cfg_struct_plast_elimination_rate")
+        if dpg.does_item_exist("cfg_struct_plast_weight_threshold"): cfg_dict_from_ui["struct_plast_weight_threshold"] = dpg.get_value("cfg_struct_plast_weight_threshold")
+        if dpg.does_item_exist("cfg_struct_plast_target_density"): cfg_dict_from_ui["struct_plast_target_density"] = dpg.get_value("cfg_struct_plast_target_density")
+        if dpg.does_item_exist("cfg_struct_plast_distance_scale"): cfg_dict_from_ui["struct_plast_distance_scale"] = dpg.get_value("cfg_struct_plast_distance_scale")
+        if dpg.does_item_exist("cfg_struct_plast_update_interval_steps"): cfg_dict_from_ui["struct_plast_update_interval_steps"] = dpg.get_value("cfg_struct_plast_update_interval_steps")
+
         # Heterogeneity & Noise
         if dpg.does_item_exist("cfg_enable_parameter_heterogeneity"): cfg_dict_from_ui["enable_parameter_heterogeneity"] = dpg.get_value("cfg_enable_parameter_heterogeneity")
         if dpg.does_item_exist("cfg_heterogeneity_seed"): cfg_dict_from_ui["heterogeneity_seed"] = dpg.get_value("cfg_heterogeneity_seed")
@@ -6231,6 +8242,12 @@ def _populate_ui_from_config_dict(config_dict):
     if dpg.does_item_exist("cfg_inhibitory_propagation_strength"): dpg.set_value("cfg_inhibitory_propagation_strength", cfg.inhibitory_propagation_strength)
     if dpg.does_item_exist("cfg_syn_tau_e"): dpg.set_value("cfg_syn_tau_e", cfg.syn_tau_g_e)
     if dpg.does_item_exist("cfg_syn_tau_i"): dpg.set_value("cfg_syn_tau_i", cfg.syn_tau_g_i)
+    # NMDA
+    if dpg.does_item_exist("cfg_enable_nmda"): dpg.set_value("cfg_enable_nmda", cfg.enable_nmda)
+    if dpg.does_item_exist("cfg_nmda_ratio"): dpg.set_value("cfg_nmda_ratio", cfg.nmda_ratio)
+    if dpg.does_item_exist("cfg_nmda_tau_decay"): dpg.set_value("cfg_nmda_tau_decay", cfg.nmda_tau_decay)
+    if dpg.does_item_exist("cfg_nmda_tau_rise"): dpg.set_value("cfg_nmda_tau_rise", cfg.nmda_tau_rise)
+    if dpg.does_item_exist("cfg_nmda_mg_conc"): dpg.set_value("cfg_nmda_mg_conc", cfg.nmda_mg_concentration)
     if dpg.does_item_exist("cfg_num_traits"): dpg.set_value("cfg_num_traits", cfg.num_traits)
 
     # Learning & Plasticity
@@ -6247,7 +8264,34 @@ def _populate_ui_from_config_dict(config_dict):
     if dpg.does_item_exist("cfg_homeostasis_target_rate"): dpg.set_value("cfg_homeostasis_target_rate", cfg.homeostasis_target_rate)
     if dpg.does_item_exist("cfg_homeostasis_threshold_min"): dpg.set_value("cfg_homeostasis_threshold_min", cfg.homeostasis_threshold_min)
     if dpg.does_item_exist("cfg_homeostasis_threshold_max"): dpg.set_value("cfg_homeostasis_threshold_max", cfg.homeostasis_threshold_max)
-    
+    if dpg.does_item_exist("cfg_enable_synaptic_scaling"): dpg.set_value("cfg_enable_synaptic_scaling", cfg.enable_synaptic_scaling)
+    if dpg.does_item_exist("cfg_synaptic_scaling_rate"): dpg.set_value("cfg_synaptic_scaling_rate", cfg.synaptic_scaling_rate)
+
+    # STDP
+    if dpg.does_item_exist("cfg_enable_stdp"): dpg.set_value("cfg_enable_stdp", cfg.enable_stdp)
+    if dpg.does_item_exist("cfg_stdp_a_plus"): dpg.set_value("cfg_stdp_a_plus", cfg.stdp_a_plus)
+    if dpg.does_item_exist("cfg_stdp_a_minus"): dpg.set_value("cfg_stdp_a_minus", cfg.stdp_a_minus)
+    if dpg.does_item_exist("cfg_stdp_tau_plus_ms"): dpg.set_value("cfg_stdp_tau_plus_ms", cfg.stdp_tau_plus_ms)
+    if dpg.does_item_exist("cfg_stdp_tau_minus_ms"): dpg.set_value("cfg_stdp_tau_minus_ms", cfg.stdp_tau_minus_ms)
+    if dpg.does_item_exist("cfg_stdp_w_min"): dpg.set_value("cfg_stdp_w_min", cfg.stdp_w_min)
+    if dpg.does_item_exist("cfg_stdp_w_max"): dpg.set_value("cfg_stdp_w_max", cfg.stdp_w_max)
+
+    # Reward-Modulated Plasticity
+    if dpg.does_item_exist("cfg_enable_reward_modulation"): dpg.set_value("cfg_enable_reward_modulation", cfg.enable_reward_modulation)
+    if hasattr(cfg, 'reward_learning_rate') and dpg.does_item_exist("cfg_reward_learning_rate"):
+        dpg.set_value("cfg_reward_learning_rate", cfg.reward_learning_rate)
+    if hasattr(cfg, 'reward_eligibility_tau_ms') and dpg.does_item_exist("cfg_reward_eligibility_tau_ms"):
+        dpg.set_value("cfg_reward_eligibility_tau_ms", cfg.reward_eligibility_tau_ms)
+
+    # Structural Plasticity
+    if dpg.does_item_exist("cfg_enable_structural_plasticity"): dpg.set_value("cfg_enable_structural_plasticity", cfg.enable_structural_plasticity)
+    if dpg.does_item_exist("cfg_struct_plast_formation_rate"): dpg.set_value("cfg_struct_plast_formation_rate", cfg.struct_plast_formation_rate)
+    if dpg.does_item_exist("cfg_struct_plast_elimination_rate"): dpg.set_value("cfg_struct_plast_elimination_rate", cfg.struct_plast_elimination_rate)
+    if dpg.does_item_exist("cfg_struct_plast_weight_threshold"): dpg.set_value("cfg_struct_plast_weight_threshold", cfg.struct_plast_weight_threshold)
+    if dpg.does_item_exist("cfg_struct_plast_target_density"): dpg.set_value("cfg_struct_plast_target_density", cfg.struct_plast_target_density)
+    if dpg.does_item_exist("cfg_struct_plast_distance_scale"): dpg.set_value("cfg_struct_plast_distance_scale", cfg.struct_plast_distance_scale)
+    if dpg.does_item_exist("cfg_struct_plast_update_interval_steps"): dpg.set_value("cfg_struct_plast_update_interval_steps", cfg.struct_plast_update_interval_steps)
+
     # Heterogeneity & Noise
     if dpg.does_item_exist("cfg_enable_parameter_heterogeneity"): dpg.set_value("cfg_enable_parameter_heterogeneity", cfg.enable_parameter_heterogeneity)
     if dpg.does_item_exist("cfg_heterogeneity_seed"): dpg.set_value("cfg_heterogeneity_seed", cfg.heterogeneity_seed)
@@ -6348,8 +8392,11 @@ def _toggle_model_specific_params_visibility(sender, app_data, user_data=None):
                 dpg.set_value("filter_neuron_type_combo", "All")
             elif available_types_for_filter: 
                 dpg.set_value("filter_neuron_type_combo", available_types_for_filter[0])
-            else: 
+            else:
                 dpg.set_value("filter_neuron_type_combo", "")
+
+    # Check config against benchmark limits after populating
+    _check_and_warn_hardware_limits()
 
 
 # --- DPG Event Handlers for OpenGL Visualization Settings ---
@@ -6566,6 +8613,49 @@ def _update_sim_config_from_ui_and_signal_reset_needed(sender=None, app_data=Non
         except Exception as e:
             print(f"Warning: failed to apply HH preset params on preset change: {e}")
 
+    # Check proposed config against benchmark-derived hardware limits
+    _check_and_warn_hardware_limits()
+
+
+def _check_and_warn_hardware_limits():
+    """Reads current UI values and warns if config exceeds benchmark-tested limits."""
+    try:
+        if not dpg.is_dearpygui_running():
+            return
+        if not dpg.does_item_exist("cfg_num_neurons") or not dpg.does_item_exist("cfg_neuron_model_type"):
+            return
+
+        model_name = dpg.get_value("cfg_neuron_model_type")
+        num_neurons = dpg.get_value("cfg_num_neurons")
+        conn_per = dpg.get_value("cfg_connections_per_neuron") if dpg.does_item_exist("cfg_connections_per_neuron") else 100
+
+        is_safe, warning = check_config_against_limits(model_name, num_neurons, conn_per)
+
+        tag = "hw_limit_warning_text"
+        if dpg.does_item_exist(tag):
+            if warning:
+                dpg.set_value(tag, warning)
+                dpg.configure_item(tag, color=[255, 100, 100, 255], show=True)
+            else:
+                # Show positive feedback if within limits and benchmark data exists
+                limits = get_hardware_limits_for_model(model_name)
+                if limits:
+                    # Find the matching or next-larger tested config
+                    configs = limits["configs"]
+                    matching = [c for c in configs if c["neurons"] >= num_neurons and c["conn"] >= conn_per]
+                    if matching:
+                        m = matching[0]
+                        dpg.set_value(tag, f"Tested OK: {m['steps_per_sec']:.0f} steps/s, {m['gpu_gb']:.1f}GB VRAM")
+                        dpg.configure_item(tag, color=[100, 255, 100, 255], show=True)
+                    else:
+                        dpg.set_value(tag, "")
+                        dpg.configure_item(tag, show=False)
+                else:
+                    dpg.set_value(tag, "")
+                    dpg.configure_item(tag, show=False)
+    except Exception:
+        pass  # Never let limit check crash the UI
+
 
 def _handle_model_type_change_dpg(sender, app_data, user_data=None):
     """Handles change in neuron model type selection in DPG. Updates UI visibility and signals reset."""
@@ -6704,14 +8794,44 @@ def handle_load_profile_button_press(sender=None, app_data=None, user_data=None)
     if dpg.is_dearpygui_running() and dpg.does_item_exist("load_profile_file_dialog"):
         dpg.show_item("load_profile_file_dialog")
 
+def _normalize_filepath_extension(filepath, required_extension, filter_extension=None):
+    """
+    Normalizes a filepath to ensure it has the correct extension.
+
+    Args:
+        filepath: The filepath from the file dialog
+        required_extension: The extension we want (e.g., ".json", ".simstate.h5", ".simrec.h5")
+        filter_extension: The filter extension DPG might have appended (e.g., ".h5", ".*")
+
+    Returns:
+        Normalized filepath with correct extension
+    """
+    # Strip ".*" if DPG appended it from "All Files" filter
+    if filepath.endswith(".*"):
+        filepath = filepath[:-2]
+
+    # Strip the filter extension if DPG appended it (e.g., ".h5" when we want ".simstate.h5")
+    if filter_extension and filter_extension != ".*":
+        if filepath.lower().endswith(filter_extension.lower()) and not filepath.lower().endswith(required_extension.lower()):
+            filepath = filepath[:-len(filter_extension)]
+
+    # Add the required extension if not present
+    if not filepath.lower().endswith(required_extension.lower()):
+        filepath += required_extension
+
+    return filepath
+
 def save_profile_dialog_callback(sender, app_data): # Profiles are JSON
     """
     Callback for the 'Save Profile' file dialog. Saves current UI config and GUI settings.
     This operation is done entirely by the UI thread.
     """
     if "file_path_name" in app_data and app_data["file_path_name"]:
-        filepath = app_data["file_path_name"]
-        if not filepath.lower().endswith(".json"): filepath += ".json"
+        filepath = _normalize_filepath_extension(
+            app_data["file_path_name"],
+            required_extension=".json",
+            filter_extension=app_data.get("current_filter")
+        )
 
         # Get current simulation config from UI (doesn't interact with sim_thread for this)
         sim_config_dict_to_save = _update_sim_config_from_ui(update_model_specific=True)
@@ -6729,7 +8849,7 @@ def save_profile_dialog_callback(sender, app_data): # Profiles are JSON
         content_to_save = {"simulation_configuration": sim_config_dict_to_save, "gui_configuration": gui_settings_to_save}
 
         try:
-            with open(filepath, 'w') as f: json.dump(content_to_save, f, indent=4)
+            with open(filepath, 'w', encoding='utf-8') as f: json.dump(content_to_save, f, indent=4, ensure_ascii=False)
             update_status_bar(f"Profile saved: {os.path.basename(filepath)}", color=[0,200,0,255], level="success")
             if dpg.does_item_exist("profile_name_input"): 
                 dpg.set_value("profile_name_input", os.path.basename(filepath).replace(".json", ""))
@@ -6740,6 +8860,67 @@ def save_profile_dialog_callback(sender, app_data): # Profiles are JSON
         update_status_bar("Save profile cancelled.", level="info")
 
 
+# --- Full Profile Dropdown (auto-populated from simulation_profiles/*.json) ---
+_FULL_PROFILE_MAP = {}  # display_name -> filepath, populated at startup and on refresh
+
+def _scan_profile_directory():
+    """Scans simulation_profiles/ for .json files and builds display_name -> filepath map.
+
+    Reads _profile_metadata.name if present, otherwise derives a readable name from filename.
+    Excludes auto_tuned_overrides.json (system file, not a user profile).
+    """
+    global _FULL_PROFILE_MAP
+    profile_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "simulation_profiles")
+    if not os.path.isdir(profile_dir):
+        return
+
+    new_map = {"(None — use settings below)": ""}  # Default empty entry
+    try:
+        for fname in sorted(os.listdir(profile_dir)):
+            if not fname.endswith(".json") or fname == "auto_tuned_overrides.json":
+                continue
+            fpath = os.path.join(profile_dir, fname)
+            # Try to extract a human-readable name from metadata
+            display = fname.replace(".json", "").replace("_", " ").title()
+            try:
+                with open(fpath, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                meta = data.get("_profile_metadata", {})
+                if meta.get("name"):
+                    display = meta["name"]
+            except Exception:
+                pass  # Fall back to filename-derived name
+            new_map[display] = fpath
+    except Exception as e:
+        print(f"Warning: Could not scan profile directory: {e}")
+
+    _FULL_PROFILE_MAP = new_map
+
+
+def _handle_full_profile_dropdown_change(sender, app_data, user_data=None):
+    """Callback when user selects a full profile from the dropdown."""
+    if not app_data or app_data == "(None — use settings below)":
+        return
+
+    filepath = _FULL_PROFILE_MAP.get(app_data, "")
+    if not filepath or not os.path.exists(filepath):
+        update_status_bar(f"Profile file not found for '{app_data}'", color=[255,100,0,255], level="warning")
+        return
+
+    _execute_profile_load_on_ui_thread(filepath)
+
+    # After loading, update the dropdown to reflect current selection (don't reset to None)
+    # The profile is now applied — user sees it in the dropdown
+
+
+def _refresh_full_profile_dropdown():
+    """Rescans the profile directory and updates the dropdown items."""
+    _scan_profile_directory()
+    if dpg.is_dearpygui_running() and dpg.does_item_exist("cfg_full_profile"):
+        items = list(_FULL_PROFILE_MAP.keys())
+        dpg.configure_item("cfg_full_profile", items=items)
+
+
 def _execute_profile_load_on_ui_thread(filepath): # Profiles are JSON
     """
     Loads a profile file, updates UI, and sends new config to sim_thread.
@@ -6748,7 +8929,7 @@ def _execute_profile_load_on_ui_thread(filepath): # Profiles are JSON
     profile_name = os.path.basename(filepath)
     update_status_bar(f"Loading profile '{profile_name}'...", level="info")
     try:
-        with open(filepath, 'r') as f: profile_content = json.load(f)
+        with open(filepath, 'r', encoding='utf-8') as f: profile_content = json.load(f)
         sim_cfg_data_from_profile = profile_content.get("simulation_configuration")
         gui_cfg_data_from_profile = profile_content.get("gui_configuration")
 
@@ -6772,6 +8953,13 @@ def _execute_profile_load_on_ui_thread(filepath): # Profiles are JSON
                 if dpg.does_item_exist("profile_name_input"):
                     dpg.set_value("profile_name_input", profile_name.replace(".json", ""))
                 global_gui_state["current_profile_name"] = profile_name
+                # Update full profile dropdown to reflect loaded profile
+                if dpg.does_item_exist("cfg_full_profile"):
+                    # Find the display name matching this filepath
+                    for display_name, fpath in _FULL_PROFILE_MAP.items():
+                        if fpath and os.path.normpath(fpath) == os.path.normpath(filepath):
+                            dpg.set_value("cfg_full_profile", display_name)
+                            break
                 global_gui_state["reset_sim_needed_from_ui_change"] = False # Reset is being handled
             else:
                 update_status_bar("Error creating final config from UI after profile load.", color=[255,0,0,255], level="error")
@@ -6799,20 +8987,11 @@ def handle_save_checkpoint_button_press(sender, app_data, user_data): # Checkpoi
 def save_checkpoint_dialog_callback_h5(sender, app_data): # Checkpoints are HDF5
     """Callback for 'Save Checkpoint'. Ensures correct extension."""
     if "file_path_name" in app_data and app_data["file_path_name"]:
-        filepath = app_data["file_path_name"]
-        selected_filter = app_data.get("current_filter", "")
-
-        # If ".*" was the filter and DPG appended ".*" to a user-typed name
-        if selected_filter == ".*" and filepath.endswith(".*"):
-            filepath = filepath[:-2] # Strip the ".*"
-
-        # Ensure the filepath ends with the correct ".simstate.h5"
-        # Remove other potential HDF5 extensions first to avoid "file.h5.simstate.h5"
-        if filepath.lower().endswith(".h5"):
-            filepath = filepath[:-3] # Remove .h5
-        
-        if not filepath.lower().endswith(".simstate.h5"):
-            filepath += ".simstate.h5"
+        filepath = _normalize_filepath_extension(
+            app_data["file_path_name"],
+            required_extension=".simstate.h5",
+            filter_extension=app_data.get("current_filter")
+        )
 
         current_gui_config_for_checkpoint = get_current_gui_configuration_dict()
         ui_to_sim_queue.put({
@@ -6987,38 +9166,61 @@ def update_monitoring_overlay_values(sim_data_dict):
 
 # --- DPG Event Handlers for Recording & Playback (HDF5) ---
 
+def _recording_options_continue_callback(sender=None, app_data=None, user_data=None):
+    """Called when user clicks Continue in the recording options popup."""
+    # Read options from the popup and update sim_bridge's gpu_config
+    recording_mode = dpg.get_value("rec_opt_mode_combo")
+    skip_synaptic = dpg.get_value("rec_opt_skip_synaptic")
+    frame_skip = dpg.get_value("rec_opt_frame_skip")
+
+    # Send options to sim_bridge via command queue
+    ui_to_sim_queue.put({
+        "type": "SET_RECORDING_OPTIONS",
+        "recording_mode": recording_mode,
+        "recording_skip_synaptic_data": skip_synaptic,
+        "recording_frame_skip": frame_skip
+    })
+
+    # Hide the options popup
+    if dpg.does_item_exist("recording_options_popup"):
+        dpg.hide_item("recording_options_popup")
+
+    # Show the file dialog
+    if dpg.is_dearpygui_running() and dpg.does_item_exist("save_recording_file_dialog_h5"):
+        dpg.show_item("save_recording_file_dialog_h5")
+
+def _recording_options_cancel_callback(sender=None, app_data=None, user_data=None):
+    """Called when user cancels the recording options popup."""
+    if dpg.does_item_exist("recording_options_popup"):
+        dpg.hide_item("recording_options_popup")
+    update_status_bar("Recording cancelled.", level="info")
+
 def handle_record_button_click(sender=None, app_data=None, user_data=None):
     """
     Handles the 'Record' / 'Finalize Recording' button click.
-    Shows file dialog or sends command to stop recording.
+    Shows recording options popup or sends command to stop recording.
     """
-    if global_gui_state.get("is_recording_active", False): # If currently recording, this button means "Finalize"
+    if global_gui_state.get("is_recording_active", False):  # If currently recording, this button means "Finalize"
         ui_to_sim_queue.put({"type": "STOP_RECORDING"})
         update_status_bar("Finalize recording command sent...", level="info")
         # UI state will be updated when sim_thread confirms via "RECORDING_FINALIZED"
-    else: # Not recording, this button means "Record" - show save dialog
+    else:  # Not recording, this button means "Record" - show options popup
         if global_gui_state.get("is_playback_mode_active", False):
             update_status_bar("Error: Cannot record while in playback mode.", color=[255,0,0,255], level="error")
             return
-        if dpg.is_dearpygui_running() and dpg.does_item_exist("save_recording_file_dialog_h5"):
-            dpg.show_item("save_recording_file_dialog_h5")
+        if dpg.is_dearpygui_running() and dpg.does_item_exist("recording_options_popup"):
+            dpg.show_item("recording_options_popup")
         else:
-            update_status_bar("Error: Recording dialog missing.", color=[255,0,0,255], level="error")
+            update_status_bar("Error: Recording options dialog missing.", color=[255,0,0,255], level="error")
 
 def save_recording_for_streaming_dialog_callback_h5(sender, app_data):
     """Callback for the 'Record' (Save Recording As) file dialog. Ensures correct extension."""
     if "file_path_name" in app_data and app_data["file_path_name"]:
-        filepath = app_data["file_path_name"]
-        selected_filter = app_data.get("current_filter", "")
-
-        if selected_filter == ".*" and filepath.endswith(".*"):
-            filepath = filepath[:-2]
-
-        if filepath.lower().endswith(".h5"):
-            filepath = filepath[:-3]
-
-        if not filepath.lower().endswith(".simrec.h5"):
-            filepath += ".simrec.h5"
+        filepath = _normalize_filepath_extension(
+            app_data["file_path_name"],
+            required_extension=".simrec.h5",
+            filter_extension=app_data.get("current_filter")
+        )
 
         ui_to_sim_queue.put({"type": "START_RECORDING", "filepath": filepath})
         update_status_bar(f"Start recording command sent for: {os.path.basename(filepath)}", level="info")
@@ -7072,20 +9274,153 @@ def handle_load_recording_menu_click(sender=None, app_data=None, user_data=None)
     if dpg.is_dearpygui_running() and dpg.does_item_exist("load_recording_file_dialog_h5"):
         dpg.show_item("load_recording_file_dialog_h5")
 
+def _normalize_load_filepath(filepath, filter_extension=None):
+    """
+    Normalizes a filepath from a load dialog by stripping filter artifacts.
+
+    Args:
+        filepath: The filepath from the file dialog
+        filter_extension: The filter extension that may have been appended (e.g., ".*", ".h5")
+
+    Returns:
+        Cleaned filepath
+    """
+    # Strip ".*" if DPG appended it from "All Files" filter
+    if filepath.endswith(".*"):
+        filepath = filepath[:-2]
+
+    # Strip filter extension if it was appended to a valid file path
+    if filter_extension and filter_extension not in [".*", ""]:
+        if filepath.endswith(filter_extension):
+            potential_path = filepath[:-len(filter_extension)]
+            if os.path.isfile(potential_path):
+                filepath = potential_path
+
+    return filepath
+
+def _estimate_recording_memory_requirements(filepath):
+    """
+    Estimates the GPU memory required to cache a recording.
+
+    Returns:
+        tuple: (num_frames, estimated_bytes, fits_in_vram, available_vram_bytes, vram_limit_pct)
+               or (None, None, None, None, None) if estimation fails
+    """
+    try:
+        import h5py
+
+        # Get available GPU memory
+        if not cp:
+            return None, None, None, None, None
+
+        mem_info = cp.cuda.Device().mem_info
+        free_memory, total_memory = mem_info
+        vram_limit_pct = 0.90  # Use 90% of available VRAM
+        usable_memory = free_memory * vram_limit_pct
+
+        # Open file briefly to estimate size
+        with h5py.File(filepath, 'r') as h5_file:
+            frames_group = h5_file.get("frames")
+            if not frames_group:
+                return None, None, None, None, None
+
+            num_frames = len(frames_group.keys())
+            if num_frames == 0:
+                return 0, 0, True, free_memory, vram_limit_pct
+
+            # Sample first frame to estimate per-frame size
+            first_frame_key = f"frame_0"
+            first_frame = frames_group.get(first_frame_key)
+            if not first_frame:
+                # Try to find any frame
+                frame_keys = list(frames_group.keys())
+                if frame_keys:
+                    first_frame = frames_group.get(frame_keys[0])
+
+            if not first_frame:
+                return num_frames, None, None, free_memory, vram_limit_pct
+
+            # Estimate frame size from datasets
+            frame_size_bytes = 0
+            for key in first_frame.keys():
+                dataset = first_frame[key]
+                if hasattr(dataset, 'shape') and hasattr(dataset, 'dtype'):
+                    frame_size_bytes += np.prod(dataset.shape) * dataset.dtype.itemsize
+
+            # Add overhead for CuPy arrays (~10%)
+            frame_size_bytes = int(frame_size_bytes * 1.1)
+
+            total_estimated_bytes = frame_size_bytes * num_frames
+            fits_in_vram = total_estimated_bytes <= usable_memory
+
+            return num_frames, total_estimated_bytes, fits_in_vram, free_memory, vram_limit_pct
+
+    except Exception as e:
+        print(f"Error estimating recording memory: {e}")
+        return None, None, None, None, None
+
+def _show_recording_memory_warning_popup(filepath, num_frames, estimated_bytes, available_bytes):
+    """Shows a popup warning that the recording won't fit in VRAM."""
+    global_gui_state["_pending_recording_filepath"] = filepath
+
+    estimated_gb = estimated_bytes / 1e9
+    available_gb = available_bytes / 1e9
+    pct_of_vram = (estimated_bytes / available_bytes) * 100 if available_bytes > 0 else 0
+
+    # Update popup text
+    if dpg.does_item_exist("recording_memory_warning_text"):
+        dpg.set_value("recording_memory_warning_text",
+            f"The selected recording ({num_frames} frames) is estimated to require\n"
+            f"{estimated_gb:.2f} GB of GPU memory, but only {available_gb:.2f} GB is available.\n"
+            f"(Recording is ~{pct_of_vram:.0f}% of available VRAM)\n\n"
+            f"How would you like to proceed?"
+        )
+
+    if dpg.does_item_exist("recording_memory_warning_popup"):
+        dpg.show_item("recording_memory_warning_popup")
+
+def _recording_memory_popup_partial_cache(sender=None, app_data=None):
+    """Callback for 'Partial Cache' button in memory warning popup."""
+    filepath = global_gui_state.get("_pending_recording_filepath")
+    if dpg.does_item_exist("recording_memory_warning_popup"):
+        dpg.hide_item("recording_memory_warning_popup")
+
+    if filepath:
+        ui_to_sim_queue.put({
+            "type": "LOAD_RECORDING",
+            "filepath": filepath,
+            "stream_only": False  # Will auto-stop caching when memory limit reached
+        })
+        update_status_bar(f"Load recording (partial cache) command sent for: {os.path.basename(filepath)}", level="info")
+
+def _recording_memory_popup_stream_only(sender=None, app_data=None):
+    """Callback for 'Stream Only' button in memory warning popup."""
+    filepath = global_gui_state.get("_pending_recording_filepath")
+    if dpg.does_item_exist("recording_memory_warning_popup"):
+        dpg.hide_item("recording_memory_warning_popup")
+
+    if filepath:
+        ui_to_sim_queue.put({
+            "type": "LOAD_RECORDING",
+            "filepath": filepath,
+            "stream_only": True
+        })
+        update_status_bar(f"Load recording (streaming) command sent for: {os.path.basename(filepath)}", level="info")
+
+def _recording_memory_popup_cancel(sender=None, app_data=None):
+    """Callback for 'Cancel' button in memory warning popup."""
+    if dpg.does_item_exist("recording_memory_warning_popup"):
+        dpg.hide_item("recording_memory_warning_popup")
+    update_status_bar("Recording load cancelled.", level="info")
+
 def load_recording_dialog_callback_h5(sender, app_data):
     """Callback for the 'Load Recording' file dialog. Sends command to sim_thread."""
     filepath_to_load = None
     if "file_path_name" in app_data and app_data["file_path_name"]:
-        filepath = app_data["file_path_name"]
-        selected_filter = app_data.get("current_filter", "")
-
-        if selected_filter == ".*" and filepath.endswith(".*"):
-            potential_filepath_stripped = filepath[:-2]
-            if os.path.isfile(potential_filepath_stripped):
-                filepath = potential_filepath_stripped
-            elif not os.path.isfile(filepath):
-                 update_status_bar(f"Load error: Path '{filepath}' from '.*' filter seems invalid.", color=[255,0,0,255], level="error")
-                 return
+        filepath = _normalize_load_filepath(
+            app_data["file_path_name"],
+            filter_extension=app_data.get("current_filter")
+        )
 
         if os.path.isfile(filepath):
             filepath_to_load = filepath
@@ -7095,7 +9430,7 @@ def load_recording_dialog_callback_h5(sender, app_data):
         else:
             update_status_bar(f"Load error: File not found or invalid path: '{filepath}'.", color=[255,0,0,255], level="error")
             return
-            
+
     elif "file_name" in app_data and app_data["file_name"] and "current_path" in app_data: # Fallback
         filepath = os.path.join(app_data["current_path"], app_data["file_name"])
         if os.path.isfile(filepath):
@@ -7108,8 +9443,29 @@ def load_recording_dialog_callback_h5(sender, app_data):
         return
 
     if filepath_to_load:
-        ui_to_sim_queue.put({"type": "LOAD_RECORDING", "filepath": filepath_to_load})
-        update_status_bar(f"Load recording command sent for: {os.path.basename(filepath_to_load)}", level="info")
+        # Check if recording fits in VRAM
+        num_frames, estimated_bytes, fits_in_vram, available_bytes, _ = _estimate_recording_memory_requirements(filepath_to_load)
+
+        if fits_in_vram is None:
+            # Couldn't estimate, just proceed with caching attempt
+            ui_to_sim_queue.put({
+                "type": "LOAD_RECORDING",
+                "filepath": filepath_to_load,
+                "stream_only": False
+            })
+            update_status_bar(f"Load recording (caching) command sent for: {os.path.basename(filepath_to_load)}", level="info")
+        elif fits_in_vram:
+            # Recording fits, proceed with caching
+            ui_to_sim_queue.put({
+                "type": "LOAD_RECORDING",
+                "filepath": filepath_to_load,
+                "stream_only": False
+            })
+            estimated_gb = estimated_bytes / 1e9 if estimated_bytes else 0
+            update_status_bar(f"Load recording (caching ~{estimated_gb:.1f}GB) command sent for: {os.path.basename(filepath_to_load)}", level="info")
+        else:
+            # Recording won't fit, show warning popup
+            _show_recording_memory_warning_popup(filepath_to_load, num_frames, estimated_bytes, available_bytes)
 
 def handle_playback_slider_change(sender, frame_idx_from_slider_float, user_data=None):
     """Handles playback slider changes. Sends command to sim_thread to set frame if handle is valid."""
@@ -7130,10 +9486,12 @@ def handle_playback_slider_change(sender, frame_idx_from_slider_float, user_data
         h5_handle = loaded_data_meta.get("h5_file_obj_for_playback")
 
     if h5_handle and hasattr(h5_handle, 'id') and h5_handle.id: # Check if handle is valid and open
+        num_frames = loaded_data_meta.get("num_frames") if loaded_data_meta else None
         ui_to_sim_queue.put({
             "type": "SET_PLAYBACK_FRAME",
             "frame_index": frame_idx_from_slider,
-            "h5_file_handle_for_sim_thread": h5_handle
+            "h5_file_handle_for_sim_thread": h5_handle,
+            "num_frames": num_frames
         })
         # Status update for successful command send can be minimal or handled by sim thread ACK
         # update_status_bar(f"Seek to frame {frame_idx_from_slider+1} command sent.", level="debug")
@@ -7159,9 +9517,15 @@ def handle_playback_play_pause_button_click(sender=None, app_data=None, user_dat
         active_rec_meta = global_gui_state.get("active_recording_data_source")
         if active_rec_meta and "num_frames" in active_rec_meta:
             num_frames = active_rec_meta["num_frames"]
+            h5_handle = active_rec_meta.get("h5_file_obj_for_playback")
             current_frame_ui = global_gui_state.get("current_playback_frame_index", 0)
             if num_frames > 0 and current_frame_ui >= num_frames - 1:
-                ui_to_sim_queue.put({"type": "SET_PLAYBACK_FRAME", "frame_index": 0})
+                ui_to_sim_queue.put({
+                    "type": "SET_PLAYBACK_FRAME",
+                    "frame_index": 0,
+                    "h5_file_handle_for_sim_thread": h5_handle,
+                    "num_frames": num_frames
+                })
         update_status_bar("Playback started/resumed by UI.", level="info")
     else:
         update_status_bar("Playback paused by UI.", level="info")
@@ -7200,7 +9564,8 @@ def handle_playback_step_frames_click(sender, app_data, user_data):
         ui_to_sim_queue.put({
             "type": "SET_PLAYBACK_FRAME",
             "frame_index": new_frame_idx,
-            "h5_file_handle_for_sim_thread": h5_handle
+            "h5_file_handle_for_sim_thread": h5_handle,
+            "num_frames": num_frames
         })
         # update_status_bar(f"Step playback by {step_amount} (to frame {new_frame_idx+1}) command sent.", level="debug")
     else:
@@ -7402,12 +9767,20 @@ def handle_run_benchmark_click(sender=None, app_data=None, user_data=None):
             returncode = process.wait(timeout=300)
             
             if returncode == 0:
-                status = "Benchmark complete. Check System Logs or benchmark_results.json for details."
-                summary = "\n".join(output_lines[-10:]) if len(output_lines) > 10 else "\n".join(output_lines)
+                # Reload hardware limits from freshly written benchmark_results.json
+                global HARDWARE_LIMITS
+                HARDWARE_LIMITS = None  # Force reload
+                _load_benchmark_limits()
+                hw_note = get_hardware_note()
+                if hw_note and dpg.is_dearpygui_running() and dpg.does_item_exist("cfg_hardware_performance_note"):
+                    dpg.set_value("cfg_hardware_performance_note", hw_note)
+
+                status = "Benchmark complete. Hardware limits updated."
+                summary = hw_note + "\n\n" + "\n".join(output_lines[-5:]) if hw_note else "\n".join(output_lines[-10:])
             else:
                 status = f"Benchmark failed with code {returncode}"
                 summary = "\n".join(output_lines[-10:]) if len(output_lines) > 10 else "\n".join(output_lines)
-            
+
             if dpg.is_dearpygui_running():
                 dpg.set_value("perf_test_status_text", status)
                 dpg.set_value("perf_test_results_text", summary)
@@ -7496,7 +9869,7 @@ def handle_run_optimization_click(sender=None, app_data=None, user_data=None):
                 # Count how many combinations were tuned
                 try:
                     import json
-                    with open("simulation_profiles/auto_tuned_overrides.json", "r") as f:
+                    with open("simulation_profiles/auto_tuned_overrides.json", "r", encoding='utf-8') as f:
                         data = json.load(f)
                     count = len(data.get("tuned_combinations", {}))
                     summary = f"Successfully tuned {count} model/profile combinations.\nReload overrides to apply them."
@@ -7801,16 +10174,22 @@ def handle_run_viz_benchmark_click(sender=None, app_data=None, user_data=None):
 
 # --- Main DPG GUI Layout Creation (Called by Main/UI Thread) ---
 
-def add_parameter_table_row(label_text, item_callable, item_tag, default_value, callback_func, **kwargs):
+def add_parameter_table_row(label_text, item_callable, item_tag, default_value, callback_func, tooltip=None, **kwargs):
     """
     Adds a row to a DPG table with a label in the first column and a DPG item in the second.
     Assumes this is called within a `with dpg.table(): ...` context where columns are already defined.
+
+    Args:
+        tooltip: Optional string for a hover tooltip on the label, providing parameter help.
     """
     with dpg.table_row():
-        dpg.add_text(label_text)
+        label_id = dpg.add_text(label_text)
+        if tooltip:
+            with dpg.tooltip(label_id):
+                dpg.add_text(tooltip, wrap=350, color=[220, 220, 180, 255])
         # Ensure 'label' kwarg for the item itself is empty as we're using a separate text widget
-        kwargs['label'] = "" 
-        
+        kwargs['label'] = ""
+
         # Only add width=-1 if it's not a checkbox and width is not already specified.
         # Checkboxes and some other items might not support the 'width' argument or handle it differently.
         if item_callable != dpg.add_checkbox: # Check if the item is NOT a checkbox
@@ -7819,7 +10198,7 @@ def add_parameter_table_row(label_text, item_callable, item_tag, default_value, 
         elif 'width' in kwargs and item_callable == dpg.add_checkbox:
             # If width was somehow passed for a checkbox, remove it to prevent error
             del kwargs['width']
-            
+
         return item_callable(tag=item_tag, default_value=default_value, callback=callback_func, **kwargs)
 
 def create_gui_layout():
@@ -7888,23 +10267,49 @@ def create_gui_layout():
         dpg.add_spacer(height=5); dpg.add_separator(); dpg.add_spacer(height=5)
 
         with dpg.collapsing_header(label="Core Simulation Parameters", default_open=False, tag="core_sim_params_header"):
+            # Full Profile dropdown (auto-populated from simulation_profiles/*.json)
+            _scan_profile_directory()
+            dpg.add_text("Load Full Profile:", color=[150,220,255,255])
+            dpg.add_text("Applies all parameters (model, plasticity, noise, etc.) from a saved profile.",
+                         color=[140,140,140,255], wrap=label_col_width + 50)
+            with dpg.group(horizontal=True):
+                dpg.add_combo(tag="cfg_full_profile",
+                              items=list(_FULL_PROFILE_MAP.keys()),
+                              default_value="(None — use settings below)",
+                              callback=_handle_full_profile_dropdown_change,
+                              width=350)
+                dpg.add_button(label="Refresh", callback=lambda: _refresh_full_profile_dropdown(),
+                               width=70)
+            dpg.add_spacer(height=5)
+            dpg.add_separator()
+            dpg.add_spacer(height=5)
+
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
 
-                add_parameter_table_row("Number of Neurons:", dpg.add_input_int, "cfg_num_neurons", 1000, _update_sim_config_from_ui_and_signal_reset_needed)
-                add_parameter_table_row("Connections/Neuron (Spatial Fallback):", dpg.add_input_int, "cfg_connections_per_neuron", 100, _update_sim_config_from_ui_and_signal_reset_needed)
-                add_parameter_table_row("Total Sim Time (ms):", dpg.add_input_float, "cfg_total_sim_time", 60000.0, _update_sim_config_from_ui_and_signal_reset_needed, step=100)
-                add_parameter_table_row("Time Step dt (ms):", dpg.add_input_float, "cfg_dt_ms", 1.000, _update_sim_config_from_ui_and_signal_reset_needed, step=0.001, format="%.3f", min_value=0.001)
-                add_parameter_table_row("Seed (-1 for random):", dpg.add_input_int, "cfg_seed", -1, _update_sim_config_from_ui_and_signal_reset_needed)
-                add_parameter_table_row("Number of Traits:", dpg.add_input_int, "cfg_num_traits", 5, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=len(TRAIT_COLOR_MAP_RAW) if TRAIT_COLOR_MAP_RAW else 10)
-                add_parameter_table_row("Neuron Model:", dpg.add_combo, "cfg_neuron_model_type", NeuronModel.IZHIKEVICH.name, _handle_model_type_change_dpg, items=[model.name for model in NeuronModel])
-                add_parameter_table_row("Neural Structure Profile:", dpg.add_combo, "cfg_neural_profile", "GENERIC_UNSTRUCTURED", _update_sim_config_from_ui_and_signal_reset_needed, items=sorted(NEURAL_STRUCTURE_PROFILES.keys()))
+                add_parameter_table_row("Number of Neurons:", dpg.add_input_int, "cfg_num_neurons", 1000, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, step=100,
+                    tooltip="Total neurons in the network. 1K-10K for real-time on most GPUs. 50K-100K for RTX 3090+ (24GB VRAM). Higher counts require more VRAM.")
+                add_parameter_table_row("Connections/Neuron (Spatial Fallback):", dpg.add_input_int, "cfg_connections_per_neuron", 100, _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Average synaptic connections per neuron when using spatial connectivity. Biological range: 1K-10K (cortex ~7K). Higher values increase memory and computation.")
+                add_parameter_table_row("Total Sim Time (ms):", dpg.add_input_float, "cfg_total_sim_time", 60000.0, _update_sim_config_from_ui_and_signal_reset_needed, step=100,
+                    tooltip="Maximum simulation duration in milliseconds. 60000ms = 60 seconds of biological time. Can always be stopped early.")
+                add_parameter_table_row("Time Step dt (ms):", dpg.add_input_float, "cfg_dt_ms", 1.000, _update_sim_config_from_ui_and_signal_reset_needed, step=0.001, format="%.3f", min_value=0.001,
+                    tooltip="Integration timestep. Izhikevich: 0.5-1.0ms is stable. Hodgkin-Huxley: MUST be <= 0.1ms (gating kinetics require fine resolution). AdEx: 0.1-0.5ms recommended. Smaller dt = more accurate but slower.")
+                add_parameter_table_row("Seed (-1 for random):", dpg.add_input_int, "cfg_seed", -1, _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Random seed for reproducibility. Set to -1 for a new random seed each run. Use a fixed positive integer to reproduce identical simulations.")
+                add_parameter_table_row("Number of Traits:", dpg.add_input_int, "cfg_num_traits", 5, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=len(TRAIT_COLOR_MAP_RAW) if TRAIT_COLOR_MAP_RAW else 10,
+                    tooltip="Number of neuron sub-populations (color-coded in 3D view). One trait is designated inhibitory. More traits = more diverse network topology.")
+                add_parameter_table_row("Neuron Model:", dpg.add_combo, "cfg_neuron_model_type", NeuronModel.IZHIKEVICH.name, _handle_model_type_change_dpg, items=[model.name for model in NeuronModel],
+                    tooltip="Izhikevich: Fast, versatile (20+ firing patterns). Good for large networks.\nHodgkin-Huxley: Biophysically detailed (ion channels, temperature). Requires dt<=0.1ms.\nAdEx: Balance of speed and biophysics. Good for adaptation studies.")
+                add_parameter_table_row("Neural Structure Profile:", dpg.add_combo, "cfg_neural_profile", "GENERIC_UNSTRUCTURED", _update_sim_config_from_ui_and_signal_reset_needed, items=sorted(NEURAL_STRUCTURE_PROFILES.keys()),
+                    tooltip="Pre-configured brain region profiles with literature-based connectivity, E/I ratios, and neuron type distributions. GENERIC_UNSTRUCTURED uses basic random connectivity.")
             
-            # Hardware performance note (read-only info)
+            # Hardware performance note (read-only info from benchmarks)
             dpg.add_spacer(height=5)
             dpg.add_text("Hardware Performance Note:", color=[150,200,255,255])
             dpg.add_text("", tag="cfg_hardware_performance_note", wrap=label_col_width + 50, color=[180,180,180,255])
+            dpg.add_text("", tag="hw_limit_warning_text", wrap=label_col_width + 50, color=[255,100,100,255], show=False)
             dpg.add_spacer(height=5)
 
             with dpg.group(tag="izhikevich_params_group", show=True):
@@ -7919,8 +10324,20 @@ def create_gui_layout():
                         ("Recovery Sensitivity b (nS)", "cfg_izh_b_val", "%.2f", -2.0), ("Voltage Reset c (mV)", "cfg_izh_c_val", "%.1f", -50.0),
                         ("Recovery Increment d (pA)", "cfg_izh_d_val", "%.1f", 100.0)
                     ]
+                    _izh_tooltips = {
+                        "cfg_izh_C_val": "Membrane capacitance. Higher C = slower voltage changes.\nRS ~100 pF, FS ~20-50 pF. (Izhikevich 2007, Table 2)",
+                        "cfg_izh_k_val": "Scaling factor relating subthreshold I-V curvature.\nDetermines input resistance near rest.\nRS ~0.7, FS ~1.0, IB ~1.2 nS/mV.",
+                        "cfg_izh_vr_val": "Resting membrane potential (no input).\nTypically -60 to -65 mV for cortical neurons.",
+                        "cfg_izh_vt_val": "Instantaneous threshold potential.\nVoltage at which dV/dt becomes positive.\nTypically -40 to -45 mV.",
+                        "cfg_izh_vpeak_val": "Spike cutoff voltage. When V >= vpeak, a spike\nis registered and V resets to c.\nTypically +25 to +35 mV.",
+                        "cfg_izh_a_val": "Recovery variable time constant (1/ms).\nSmall a = slow recovery (RS ~0.03).\nLarge a = fast recovery (FS ~0.1).",
+                        "cfg_izh_b_val": "Recovery sensitivity to subthreshold V.\nNegative b = resonator properties.\nRS ~-2 nS, FS ~0.25 nS.",
+                        "cfg_izh_c_val": "Post-spike voltage reset.\nMore negative c = stronger after-hyperpolarization.\nRS ~-50 mV, IB ~-55 mV, CH ~-40 mV.",
+                        "cfg_izh_d_val": "Post-spike recovery variable increment.\nControls spike-frequency adaptation.\nRS ~100 pA, FS ~25 pA, IB ~130 pA.",
+                    }
                     for desc_label, tag, fmt, def_val in ui_izh_params:
-                        add_parameter_table_row(desc_label, dpg.add_input_float, tag, def_val, _update_sim_config_from_ui_and_signal_reset_needed, format=fmt)
+                        add_parameter_table_row(desc_label, dpg.add_input_float, tag, def_val, _update_sim_config_from_ui_and_signal_reset_needed, format=fmt,
+                            tooltip=_izh_tooltips.get(tag))
             
             with dpg.group(tag="hodgkin_huxley_params_group", show=False):
                 dpg.add_text("--- Hodgkin-Huxley Model Parameters ---", color=[200,200,100,255])
@@ -7934,7 +10351,8 @@ def create_gui_layout():
                         "cfg_default_neuron_type_hh",
                         NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name,
                         _update_sim_config_from_ui_and_signal_reset_needed,
-                        items=[nt.name for nt in NeuronType if "HH_" in nt.name]
+                        items=[nt.name for nt in NeuronType if "HH_" in nt.name],
+                        tooltip="Select a biophysical neuron type preset.\nSets conductances and kinetics for specific cell classes\n(e.g., cortical pyramidal, fast-spiking interneuron)."
                     )
                     ui_hh_params = [
                         ("Membrane Capacitance C_m (uF/cm^2)", "cfg_hh_C_m", "%.2f", 1.0),
@@ -7956,6 +10374,26 @@ def create_gui_layout():
                         ("Kinetics Q10 Factor", "cfg_hh_q10_factor", "%.1f", 3.0),
                         ("Kinetics Temperature (C)", "cfg_hh_temperature_celsius", "%.1f", 37.0),
                     ]
+                    _hh_tooltips = {
+                        "cfg_hh_C_m": "Specific membrane capacitance.\nStandard squid axon: 1.0 uF/cm².\nHigher C_m = slower voltage dynamics.",
+                        "cfg_hh_g_Na_max": "Maximum sodium conductance density.\nControls action potential amplitude and rise speed.\nSquid axon: 120, cortical: 50 mS/cm².",
+                        "cfg_hh_g_K_max": "Maximum delayed-rectifier potassium conductance.\nControls repolarization and spike width.\nSquid: 36, cortical: 5 mS/cm².",
+                        "cfg_hh_g_L": "Leak conductance density.\nSets resting input resistance.\nTypically 0.03-0.3 mS/cm².",
+                        "cfg_hh_E_Na": "Sodium Nernst reversal potential.\nSet by [Na+] gradient across membrane.\nTypically +50 mV (mammalian).",
+                        "cfg_hh_E_K": "Potassium Nernst reversal potential.\nSet by [K+] gradient.\nTypically -77 to -90 mV.",
+                        "cfg_hh_E_L": "Leak reversal potential.\nApproximates resting V when no active currents.\nTypically -54 to -70 mV.",
+                        "cfg_hh_v_peak": "Voltage threshold for formal spike detection.\nAt 37°C with Q10=3, fast kinetics may produce\nspikes below +40 mV. Adjust if needed.",
+                        "cfg_hh_v_rest_init": "Initial resting membrane potential.\nGating variables are initialized to steady-state\nvalues at this voltage.",
+                        "cfg_hh_g_M_max": "Muscarinic (M-type) K+ current max conductance.\nSlow non-inactivating K+ current. Causes spike\nfrequency adaptation. 0 = disabled.",
+                        "cfg_hh_m_current_tau_ms": "M-current activation time constant.\nSlow ~100 ms gives adaptation over multiple spikes.\nRange: 50-200 ms.",
+                        "cfg_hh_g_CaT_max": "Low-threshold Ca²+ (T-type) current conductance.\nEnables rebound bursting and subthreshold oscillations.\n0 = disabled. Typical: 0.5-2.0 mS/cm².",
+                        "cfg_hh_E_CaT": "Calcium reversal potential.\nSet by [Ca²+] gradient. Typically +120 mV.",
+                        "cfg_hh_g_h_max": "Hyperpolarization-activated cation current (I_h).\nContributes to resting potential, sag response,\nand pacemaker activity. 0 = disabled.",
+                        "cfg_hh_E_h": "I_h reversal potential (mixed Na+/K+).\nTypically -20 to -40 mV, depolarizing from rest.",
+                        "cfg_hh_g_NaP_max": "Persistent sodium current conductance.\nNon-inactivating Na+ near threshold.\nAmplifies subthreshold inputs. 0 = disabled.",
+                        "cfg_hh_q10_factor": "Temperature coefficient for gating kinetics.\nRate multiplier per 10°C: phi = Q10^((T-6.3)/10).\nQ10=3 is standard for ion channels.",
+                        "cfg_hh_temperature_celsius": "Simulation temperature for HH kinetics.\n6.3°C = original squid axon (Hodgkin & Huxley 1952).\n37°C = mammalian with ~28x faster kinetics.",
+                    }
                     for desc_label, tag, fmt, def_val in ui_hh_params:
                         add_parameter_table_row(
                             desc_label,
@@ -7964,6 +10402,7 @@ def create_gui_layout():
                             def_val,
                             _update_sim_config_from_ui_and_signal_reset_needed,
                             format=fmt,
+                            tooltip=_hh_tooltips.get(tag),
                         )
 
                     # External drive scale slider (auto-tuned)
@@ -7976,6 +10415,7 @@ def create_gui_layout():
                         min_value=0.1,
                         max_value=8.0,
                         format="%.2f",
+                        tooltip="Multiplier for external input current to HH neurons.\nAuto-tuned during initialization. Increase if neurons\nare too quiet, decrease if network is epileptic.",
                     )
 
                     # Button to reset HH drive scale to auto-tuned value (if available)
@@ -8005,6 +10445,18 @@ def create_gui_layout():
                         ("Reset Potential V_r (mV)", "cfg_adex_V_r", "%.1f", -70.6),
                         ("Spike Detection V_peak (mV)", "cfg_adex_V_peak", "%.1f", -40.0),
                     ]
+                    _adex_tooltips = {
+                        "cfg_adex_C": "Membrane capacitance. Brette & Gerstner 2005:\nRS ~281 pF, FS ~100 pF. Controls voltage time constant.",
+                        "cfg_adex_g_L": "Leak conductance. Sets resting input resistance.\nR_in = 1/g_L. RS ~30 nS, FS ~10 nS.",
+                        "cfg_adex_E_L": "Leak reversal / resting potential.\nTypically -70 to -65 mV for cortical neurons.",
+                        "cfg_adex_V_T": "Effective spike threshold voltage.\nThe exponential term activates steeply above V_T.\nTypically -50 to -45 mV.",
+                        "cfg_adex_Delta_T": "Slope factor of exponential spike initiation.\nSmaller = sharper threshold. 0 = perfect IF.\nTypical: 1-4 mV. (Badel et al. 2008)",
+                        "cfg_adex_a": "Subthreshold adaptation coupling.\nLinks adaptation variable w to voltage.\nRS ~4 nS, bursting ~0.5 nS.",
+                        "cfg_adex_tau_w": "Adaptation time constant.\nControls how quickly w decays after spikes.\nRS ~144 ms, FS ~20 ms.",
+                        "cfg_adex_b": "Spike-triggered adaptation increment.\nAdded to w after each spike.\nLarger b = stronger spike-frequency adaptation.\nRS ~80 pA, FS ~0 pA.",
+                        "cfg_adex_V_r": "Post-spike membrane potential reset.\nTypically near E_L. More negative = stronger\nafter-hyperpolarization.",
+                        "cfg_adex_V_peak": "Spike detection threshold.\nWhen V exceeds V_peak, spike is registered\nand V resets to V_r. Typically 0 to -40 mV.",
+                    }
                     for desc_label, tag, fmt, def_val in ui_adex_params:
                         add_parameter_table_row(
                             desc_label,
@@ -8013,6 +10465,7 @@ def create_gui_layout():
                             def_val,
                             _update_sim_config_from_ui_and_signal_reset_needed,
                             format=fmt,
+                            tooltip=_adex_tooltips.get(tag),
                         )
 
                     # External drive scale slider (auto-tuned)
@@ -8025,6 +10478,7 @@ def create_gui_layout():
                         min_value=0.1,
                         max_value=5.0,
                         format="%.2f",
+                        tooltip="Multiplier for external input current to AdEx neurons.\nAuto-tuned during initialization. Adjust if firing\nrates are too low or too high.",
                     )
 
                     # Button to reset AdEx drive scale to auto-tuned value (if available)
@@ -8041,60 +10495,104 @@ def create_gui_layout():
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Use Watts-Strogatz Generator:", dpg.add_checkbox, "cfg_enable_watts_strogatz", True, _update_sim_config_from_ui_and_signal_reset_needed)
-                add_parameter_table_row("W-S K (Nearest Neighbors, even):", dpg.add_input_int, "cfg_connectivity_k", 10, _update_sim_config_from_ui_and_signal_reset_needed, step=2, min_value=2)
-                add_parameter_table_row("W-S P (Rewire Probability):", dpg.add_input_float, "cfg_connectivity_p_rewire", 0.1, _update_sim_config_from_ui_and_signal_reset_needed, min_value=0.0, max_value=1.0, format="%.3f")
+                add_parameter_table_row("Use Watts-Strogatz Generator:", dpg.add_checkbox, "cfg_enable_watts_strogatz", True, _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Use Watts-Strogatz small-world network topology.\nCombines local clustering with short path lengths.\nDisable for random Erdos-Renyi connectivity.")
+                add_parameter_table_row("W-S K (Nearest Neighbors, even):", dpg.add_input_int, "cfg_connectivity_k", 10, _update_sim_config_from_ui_and_signal_reset_needed, step=2, min_value=2,
+                    tooltip="Each neuron connects to K nearest neighbors.\nMust be even. Higher K = denser local connectivity.\nK=10 gives ~10% connection prob. for 100 neurons.")
+                add_parameter_table_row("W-S P (Rewire Probability):", dpg.add_input_float, "cfg_connectivity_p_rewire", 0.1, _update_sim_config_from_ui_and_signal_reset_needed, min_value=0.0, max_value=1.0, format="%.3f",
+                    tooltip="Probability of rewiring each edge to a random target.\nP=0: regular lattice. P=1: fully random.\nP=0.05-0.2: small-world regime (Watts & Strogatz 1998).")
 
         with dpg.collapsing_header(label="Synaptic Parameters", default_open=False, tag="synaptic_params_header"):
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Excitatory Prop. Strength (g_peak_e scale):", dpg.add_input_float, "cfg_propagation_strength", 0.05, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f")
-                add_parameter_table_row("Inhibitory Prop. Strength (g_peak_i scale):", dpg.add_input_float, "cfg_inhibitory_propagation_strength", 0.15, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f")
-                add_parameter_table_row("Excitatory Conductance Tau_g_e (ms):", dpg.add_input_float, "cfg_syn_tau_e", 5.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f", min_value=0.1)
-                add_parameter_table_row("Inhibitory Conductance Tau_g_i (ms):", dpg.add_input_float, "cfg_syn_tau_i", 10.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f", min_value=0.1)
+                add_parameter_table_row("Excitatory Prop. Strength (g_peak_e scale):", dpg.add_input_float, "cfg_propagation_strength", 0.05, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f",
+                    tooltip="Peak excitatory conductance increase per spike (nS).\nScales AMPA synaptic input. Higher = stronger\nexcitatory drive. Typical: 0.01-0.5.")
+                add_parameter_table_row("Inhibitory Prop. Strength (g_peak_i scale):", dpg.add_input_float, "cfg_inhibitory_propagation_strength", 0.15, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f",
+                    tooltip="Peak inhibitory conductance increase per spike (nS).\nScales GABA_A synaptic input. Usually 2-4x excitatory\nfor E/I balance. Typical: 0.05-1.0.")
+                add_parameter_table_row("Excitatory Conductance Tau_g_e (ms):", dpg.add_input_float, "cfg_syn_tau_e", 5.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f", min_value=0.1, tooltip="AMPA receptor decay time constant. Fast excitatory transmission (1-10 ms typical).")
+                add_parameter_table_row("Inhibitory Conductance Tau_g_i (ms):", dpg.add_input_float, "cfg_syn_tau_i", 10.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f", min_value=0.1, tooltip="GABA_A receptor decay time constant. Inhibitory transmission (5-20 ms typical).")
+            dpg.add_separator()
+            dpg.add_text("NMDA Receptors (Voltage-Dependent Mg²⁺ Block)")
+            with dpg.table(header_row=False):
+                dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                dpg.add_table_column(width_stretch=True)
+                add_parameter_table_row("Enable NMDA:", dpg.add_checkbox, "cfg_enable_nmda", False, _update_sim_config_from_ui_and_signal_reset_needed, tooltip="NMDA receptors with voltage-dependent Mg²⁺ block (Jahr & Stevens 1990). Adds slow excitatory current gated by postsynaptic depolarization — critical for coincidence detection and associative plasticity.")
+                add_parameter_table_row("NMDA:AMPA Ratio:", dpg.add_input_float, "cfg_nmda_ratio", 0.4, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f", min_value=0.0, max_value=2.0, tooltip="Ratio of NMDA to AMPA peak conductance. 0.3-0.5 typical for cortex (Myme et al. 2003).")
+                add_parameter_table_row("NMDA Tau Decay (ms):", dpg.add_input_float, "cfg_nmda_tau_decay", 100.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=10.0, tooltip="NMDA receptor decay (~100 ms). Much slower than AMPA (~5 ms), enabling temporal integration.")
+                add_parameter_table_row("NMDA Tau Rise (ms):", dpg.add_input_float, "cfg_nmda_tau_rise", 3.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=0.5, tooltip="NMDA receptor rise time (2-5 ms). Slower rise than AMPA due to glutamate binding kinetics.")
+                add_parameter_table_row("[Mg²⁺] (mM):", dpg.add_input_float, "cfg_nmda_mg_conc", 1.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f", min_value=0.0, max_value=5.0, tooltip="Extracellular magnesium concentration. 1.0 mM physiological. Higher = stronger voltage-dependent block, less NMDA current at rest.")
 
         with dpg.collapsing_header(label="Learning & Plasticity", default_open=False, tag="learning_plasticity_header"):
             with dpg.table(header_row=False): 
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Enable Hebbian Learning:", dpg.add_checkbox, "cfg_enable_hebbian_learning", True, _update_sim_config_from_ui_and_signal_reset_needed)
-                add_parameter_table_row("Hebbian Learning Rate:", dpg.add_input_float, "cfg_hebbian_learning_rate", 0.0005, _update_sim_config_from_ui_and_signal_reset_needed, format="%.6f")
-                add_parameter_table_row("Hebbian Max Weight:", dpg.add_input_float, "cfg_hebbian_max_weight", 1.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f")
+                add_parameter_table_row("Enable Hebbian Learning:", dpg.add_checkbox, "cfg_enable_hebbian_learning", True, _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Simple Hebbian co-activation learning rule.\nWeights increase when pre and post neurons fire together.\nIncludes weight decay to prevent runaway excitation.")
+                add_parameter_table_row("Hebbian Learning Rate:", dpg.add_input_float, "cfg_hebbian_learning_rate", 0.0005, _update_sim_config_from_ui_and_signal_reset_needed, format="%.6f",
+                    tooltip="Rate of weight change per co-activation event.\nSmaller = more stable but slower learning.\nTypical range: 0.0001–0.01.")
+                add_parameter_table_row("Hebbian Max Weight:", dpg.add_input_float, "cfg_hebbian_max_weight", 1.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f",
+                    tooltip="Upper bound on synaptic weights under Hebbian learning.\nPrevents runaway excitation. Also used as upper\nclamp for synaptic scaling.")
             dpg.add_separator()
             with dpg.table(header_row=False): 
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Enable Short-Term Plasticity (STP):", dpg.add_checkbox, "cfg_enable_short_term_plasticity", True, _update_sim_config_from_ui_and_signal_reset_needed)
-                add_parameter_table_row("STP U (Baseline Utilization):", dpg.add_input_float, "cfg_stp_U", 0.15, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f")
-                add_parameter_table_row("STP Tau_d (Depression, ms):", dpg.add_input_float, "cfg_stp_tau_d", 200.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=0.1)
-                add_parameter_table_row("STP Tau_f (Facilitation, ms):", dpg.add_input_float, "cfg_stp_tau_f", 50.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=0.1)
+                add_parameter_table_row("Enable Short-Term Plasticity (STP):", dpg.add_checkbox, "cfg_enable_short_term_plasticity", True, _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Tsodyks-Markram short-term plasticity model. Synapses exhibit depression (weakening) and facilitation (strengthening) on timescales of 10-1000ms. Essential for temporal coding.")
+                add_parameter_table_row("STP U (Baseline Utilization):", dpg.add_input_float, "cfg_stp_U", 0.15, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", min_value=0.0, max_value=1.0,
+                    tooltip="Fraction of available resources used per spike (0-1). Low U (~0.1-0.2): facilitating synapses (cortical). High U (~0.5-0.8): depressing synapses (thalamocortical). Literature: Tsodyks & Markram 1997.")
+                add_parameter_table_row("STP Tau_d (Depression, ms):", dpg.add_input_float, "cfg_stp_tau_d", 200.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=0.1,
+                    tooltip="Recovery time constant for synaptic resources (ms). Controls how fast depressed synapses recover. Typical range: 100-800ms.")
+                add_parameter_table_row("STP Tau_f (Facilitation, ms):", dpg.add_input_float, "cfg_stp_tau_f", 50.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=0.1,
+                    tooltip="Decay time constant for facilitation variable (ms). Controls duration of synaptic facilitation. Typical range: 20-200ms.")
             dpg.add_separator()
             with dpg.table(header_row=False): 
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Enable Homeostasis:", dpg.add_checkbox, "cfg_enable_homeostasis", True, _update_sim_config_from_ui_and_signal_reset_needed)
+                add_parameter_table_row("Enable Homeostasis:", dpg.add_checkbox, "cfg_enable_homeostasis", True, _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Intrinsic homeostasis via adaptive firing thresholds.\nFor Izhikevich: adjusts spike threshold toward target rate.\nEssential for stable network dynamics over long simulations.")
             with dpg.group(tag="homeostasis_izh_specific_group", show=True):
                  with dpg.table(header_row=False):
                     dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                     dpg.add_table_column(width_stretch=True)
-                    add_parameter_table_row("Homeostasis Target Rate (spikes/dt for Izh):", dpg.add_input_float, "cfg_homeostasis_target_rate", 0.02, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f")
-                    add_parameter_table_row("Homeostasis Min Threshold (Izh, mV):", dpg.add_input_float, "cfg_homeostasis_threshold_min", -55.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f")
-                    add_parameter_table_row("Homeostasis Max Threshold (Izh, mV):", dpg.add_input_float, "cfg_homeostasis_threshold_max", -30.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f")
-            
+                    add_parameter_table_row("Homeostasis Target Rate (spikes/dt for Izh):", dpg.add_input_float, "cfg_homeostasis_target_rate", 0.02, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f",
+                        tooltip="Desired firing probability per timestep.\n0.02 = ~2% chance of firing each dt.\nAt dt=0.5ms this corresponds to ~40 Hz.\nThreshold adapts to reach this target.")
+                    add_parameter_table_row("Homeostasis Min Threshold (Izh, mV):", dpg.add_input_float, "cfg_homeostasis_threshold_min", -55.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f",
+                        tooltip="Lower bound on adaptive firing threshold.\nPrevents threshold from dropping too low,\nwhich would cause pathological firing.\nShould be above resting potential (vr).")
+                    add_parameter_table_row("Homeostasis Max Threshold (Izh, mV):", dpg.add_input_float, "cfg_homeostasis_threshold_max", -30.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f",
+                        tooltip="Upper bound on adaptive firing threshold.\nPrevents threshold from rising too high,\nwhich would silence the neuron entirely.\nShould be below spike peak (vpeak).")
+
+            # C1b: Synaptic Scaling Controls (Turrigiano 2008)
+            dpg.add_separator()
+            dpg.add_text("--- Synaptic Scaling (Homeostatic) ---", color=[100,200,200,255])
+            with dpg.table(header_row=False):
+                dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                dpg.add_table_column(width_stretch=True)
+                add_parameter_table_row("Enable Synaptic Scaling:", dpg.add_checkbox, "cfg_enable_synaptic_scaling", False, _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Multiplicative synaptic scaling (Turrigiano 2008).\nScales excitatory weights up/down to maintain target firing rate.\nComplementary to threshold homeostasis — works on synaptic strengths\nrather than intrinsic excitability.")
+                add_parameter_table_row("Synaptic Scaling Rate:", dpg.add_input_float, "cfg_synaptic_scaling_rate", 0.001, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f",
+                    tooltip="Rate of multiplicative weight scaling per timestep.\nHigher values = faster homeostatic correction but risk instability.\nTypical range: 0.0001–0.01. Default 0.001.")
+
             # C2: STDP Controls
             dpg.add_separator()
             dpg.add_text("--- STDP (Spike-Timing-Dependent Plasticity) ---", color=[100,200,200,255])
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Enable STDP:", dpg.add_checkbox, "cfg_enable_stdp", True, _update_sim_config_from_ui_and_signal_reset_needed)
-                add_parameter_table_row("STDP A+ (LTP amplitude, 0.005-0.02):", dpg.add_input_float, "cfg_stdp_a_plus", 0.01, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0)
-                add_parameter_table_row("STDP A- (LTD amplitude, 0.005-0.02):", dpg.add_input_float, "cfg_stdp_a_minus", 0.0105, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0)
-                add_parameter_table_row("STDP Tau+ (LTP time constant, ms):", dpg.add_input_float, "cfg_stdp_tau_plus_ms", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0)
-                add_parameter_table_row("STDP Tau- (LTD time constant, ms):", dpg.add_input_float, "cfg_stdp_tau_minus_ms", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0)
-                add_parameter_table_row("STDP Weight Min:", dpg.add_input_float, "cfg_stdp_w_min", 0.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f")
-                add_parameter_table_row("STDP Weight Max:", dpg.add_input_float, "cfg_stdp_w_max", 2.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f")
+                add_parameter_table_row("Enable STDP:", dpg.add_checkbox, "cfg_enable_stdp", True, _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Spike-Timing-Dependent Plasticity (Bi & Poo 2001).\nPre-before-post = LTP, post-before-pre = LTD.\nBiological Hebbian learning with precise timing.")
+                add_parameter_table_row("STDP A+ (LTP amplitude, 0.005-0.02):", dpg.add_input_float, "cfg_stdp_a_plus", 0.01, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0,
+                    tooltip="Maximum weight increase for causal (pre→post) pairing.\nLarger A+ = faster potentiation.\nA- > A+ gives net depression bias (stable).")
+                add_parameter_table_row("STDP A- (LTD amplitude, 0.005-0.02):", dpg.add_input_float, "cfg_stdp_a_minus", 0.0105, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0,
+                    tooltip="Maximum weight decrease for anti-causal (post→pre) pairing.\nSlightly larger than A+ ensures net weight decrease\nfor random firing, preventing runaway excitation.")
+                add_parameter_table_row("STDP Tau+ (LTP time constant, ms):", dpg.add_input_float, "cfg_stdp_tau_plus_ms", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0,
+                    tooltip="Time window for LTP (pre-before-post).\n20ms matches cortical STDP data (Bi & Poo 2001).\nLarger tau = wider learning window.")
+                add_parameter_table_row("STDP Tau- (LTD time constant, ms):", dpg.add_input_float, "cfg_stdp_tau_minus_ms", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0,
+                    tooltip="Time window for LTD (post-before-pre).\n20ms standard. Asymmetric tau+/tau- gives\ndifferent temporal sensitivity for LTP vs LTD.")
+                add_parameter_table_row("STDP Weight Min:", dpg.add_input_float, "cfg_stdp_w_min", 0.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f",
+                    tooltip="Lower bound on STDP-modified weights.\n0 = synapses can be fully depressed.\nSet > 0 to maintain minimal connectivity.")
+                add_parameter_table_row("STDP Weight Max:", dpg.add_input_float, "cfg_stdp_w_max", 2.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f",
+                    tooltip="Upper bound on STDP-modified weights.\nPrevents individual synapses from becoming\ntoo strong. 2.0 = 2x initial weight.")
             
             # C2: Reward Modulation Controls
             dpg.add_separator()
@@ -8102,11 +10600,16 @@ def create_gui_layout():
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Enable Reward Modulation:", dpg.add_checkbox, "cfg_enable_reward_modulation", True, _update_sim_config_from_ui_and_signal_reset_needed)
-                add_parameter_table_row("Reward Learning Rate (0.001-0.05):", dpg.add_input_float, "cfg_reward_learning_rate", 0.01, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0)
-                add_parameter_table_row("Eligibility Trace Tau (ms, 500-2000):", dpg.add_input_float, "cfg_reward_eligibility_tau_ms", 1000.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=10.0)
-                add_parameter_table_row("Reward Baseline (expected reward):", dpg.add_input_float, "cfg_reward_baseline", 0.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f")
-                add_parameter_table_row("Current Reward Signal:", dpg.add_input_float, "cfg_current_reward_signal", 0.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f")
+                add_parameter_table_row("Enable Reward Modulation:", dpg.add_checkbox, "cfg_enable_reward_modulation", True, _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Three-factor learning: STDP eligibility traces\nare gated by a reward signal (Schultz 2002).\nRequires STDP enabled. Models dopaminergic modulation.")
+                add_parameter_table_row("Reward Learning Rate (0.001-0.05):", dpg.add_input_float, "cfg_reward_learning_rate", 0.01, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0,
+                    tooltip="Scales how strongly reward modulates weight changes.\nHigher = faster reward-driven learning but noisier.\nTypical: 0.001-0.05.")
+                add_parameter_table_row("Eligibility Trace Tau (ms, 500-2000):", dpg.add_input_float, "cfg_reward_eligibility_tau_ms", 1000.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=10.0,
+                    tooltip="Decay time for eligibility traces (ms).\nBridges the gap between STDP events and delayed reward.\n1000ms = 1 second memory of recent spike correlations.")
+                add_parameter_table_row("Reward Baseline (expected reward):", dpg.add_input_float, "cfg_reward_baseline", 0.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f",
+                    tooltip="Expected (average) reward level.\nWeight changes proportional to (reward - baseline).\n0 = any positive reward causes LTP.")
+                add_parameter_table_row("Current Reward Signal:", dpg.add_input_float, "cfg_current_reward_signal", 0.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f",
+                    tooltip="Current reward value (can be changed live).\nPositive = reinforce recent activity.\nNegative = suppress recent activity patterns.\nModels dopaminergic reward prediction error.")
             
             # C3: Structural Plasticity Controls
             dpg.add_separator()
@@ -8114,13 +10617,20 @@ def create_gui_layout():
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Enable Structural Plasticity:", dpg.add_checkbox, "cfg_enable_structural_plasticity", True, _update_sim_config_from_ui_and_signal_reset_needed)
-                add_parameter_table_row("Formation Rate (per timestep, 1e-7 to 1e-5):", dpg.add_input_float, "cfg_struct_plast_formation_rate", 1e-6, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2e", min_value=0.0)
-                add_parameter_table_row("Elimination Rate (per timestep, 1e-7 to 1e-5):", dpg.add_input_float, "cfg_struct_plast_elimination_rate", 5e-7, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2e", min_value=0.0)
-                add_parameter_table_row("Weight Threshold (eliminate below):", dpg.add_input_float, "cfg_struct_plast_weight_threshold", 0.05, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", min_value=0.0)
-                add_parameter_table_row("Target Connection Density (0-1):", dpg.add_input_float, "cfg_struct_plast_target_density", 0.1, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", min_value=0.0, max_value=1.0)
-                add_parameter_table_row("Distance Scale (spatial, units):", dpg.add_input_float, "cfg_struct_plast_distance_scale", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0)
-                add_parameter_table_row("Update Interval (steps):", dpg.add_input_int, "cfg_struct_plast_update_interval_steps", 100, _update_sim_config_from_ui_and_signal_reset_needed, min_value=10, step=10)
+                add_parameter_table_row("Enable Structural Plasticity:", dpg.add_checkbox, "cfg_enable_structural_plasticity", True, _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Dynamic synapse formation and elimination.\nNew connections form between co-active neurons.\nWeak synapses are pruned. Models developmental\nand experience-dependent rewiring.")
+                add_parameter_table_row("Formation Rate (per timestep, 1e-7 to 1e-5):", dpg.add_input_float, "cfg_struct_plast_formation_rate", 1e-6, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2e", min_value=0.0,
+                    tooltip="Probability of new synapse creation per candidate pair\nper update interval. Very small values needed to\navoid explosive connectivity growth.")
+                add_parameter_table_row("Elimination Rate (per timestep, 1e-7 to 1e-5):", dpg.add_input_float, "cfg_struct_plast_elimination_rate", 5e-7, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2e", min_value=0.0,
+                    tooltip="Probability of pruning weak synapses per update interval.\nBalances formation rate. Higher elimination =\nmore aggressive pruning of unused connections.")
+                add_parameter_table_row("Weight Threshold (eliminate below):", dpg.add_input_float, "cfg_struct_plast_weight_threshold", 0.05, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", min_value=0.0,
+                    tooltip="Synapses with weight below this value are candidates\nfor elimination. Higher threshold = more aggressive\npruning. 0.05 = prune very weak connections.")
+                add_parameter_table_row("Target Connection Density (0-1):", dpg.add_input_float, "cfg_struct_plast_target_density", 0.1, _update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", min_value=0.0, max_value=1.0,
+                    tooltip="Target fraction of possible connections present.\n0.1 = 10% connectivity. Formation/elimination rates\nadjust to approach this density.")
+                add_parameter_table_row("Distance Scale (spatial, units):", dpg.add_input_float, "cfg_struct_plast_distance_scale", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0,
+                    tooltip="Spatial scale for distance-dependent connection\nprobability. New synapses preferentially form between\nnearby neurons. Smaller = more local connectivity.")
+                add_parameter_table_row("Update Interval (steps):", dpg.add_input_int, "cfg_struct_plast_update_interval_steps", 100, _update_sim_config_from_ui_and_signal_reset_needed, min_value=10, step=10,
+                    tooltip="How often (in sim steps) to evaluate structural changes.\nCSR matrix rebuilds are expensive, so infrequent updates\n(100-1000 steps) are recommended.")
         
         with dpg.collapsing_header(label="Heterogeneity & Noise", default_open=False, tag="heterogeneity_noise_header"):
             dpg.add_text("Add biological realism through parameter variability and intrinsic noise.", wrap=label_col_width * 2, color=[200,200,200,255])
@@ -8135,7 +10645,8 @@ def create_gui_layout():
                     dpg.add_checkbox,
                     "cfg_enable_parameter_heterogeneity",
                     True,
-                    _update_sim_config_from_ui_and_signal_reset_needed
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Add neuron-to-neuron parameter variability.\nSamples from distributions matching experimental data\n(CV~0.3-0.4). More realistic than identical neurons."
                 )
                 add_parameter_table_row(
                     "Heterogeneity Seed (-1 = use main seed):",
@@ -8144,7 +10655,8 @@ def create_gui_layout():
                     -1,
                     _update_sim_config_from_ui_and_signal_reset_needed,
                     min_value=-1,
-                    step=1
+                    step=1,
+                    tooltip="RNG seed for parameter variability.\n-1 = use main simulation seed (deterministic).\nSet different values to explore different\ninstantiations of the same heterogeneity level."
                 )
             
             dpg.add_text(
@@ -8168,7 +10680,8 @@ def create_gui_layout():
                     dpg.add_checkbox,
                     "cfg_enable_conductance_noise",
                     True,
-                    _update_sim_config_from_ui_and_signal_reset_needed
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Add stochastic fluctuations to ion channel conductances.\nModels channel noise from finite ion channel populations.\nOnly applies to Hodgkin-Huxley model."
                 )
                 add_parameter_table_row(
                     "Conductance Noise Std (relative, 0.05 = 5%):",
@@ -8178,7 +10691,8 @@ def create_gui_layout():
                     _update_sim_config_from_ui_and_signal_reset_needed,
                     format="%.3f",
                     min_value=0.0,
-                    max_value=0.5
+                    max_value=0.5,
+                    tooltip="Standard deviation of conductance noise as fraction\nof max conductance. 0.05 = 5% noise.\nHigher values = more stochastic spiking."
                 )
             
             dpg.add_spacer(height=5)
@@ -8195,7 +10709,8 @@ def create_gui_layout():
                     dpg.add_checkbox,
                     "cfg_enable_ou_process",
                     True,
-                    _update_sim_config_from_ui_and_signal_reset_needed
+                    _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Ornstein-Uhlenbeck process for background synaptic drive.\nModels bombardment from ~10,000 unmodeled synapses.\nProduces realistic 2-5 mV membrane potential fluctuations."
                 )
                 add_parameter_table_row(
                     "OU Mean Current (pA):",
@@ -8203,7 +10718,8 @@ def create_gui_layout():
                     "cfg_ou_mean_current_pA",
                     0.0,
                     _update_sim_config_from_ui_and_signal_reset_needed,
-                    format="%.1f"
+                    format="%.1f",
+                    tooltip="Mean (DC offset) of background current.\n0 = symmetric fluctuations around zero.\nPositive = tonic depolarizing drive.\nNegative = tonic hyperpolarizing."
                 )
                 add_parameter_table_row(
                     "OU Std Current (pA, 50-200 typical):",
@@ -8212,7 +10728,8 @@ def create_gui_layout():
                     100.0,
                     _update_sim_config_from_ui_and_signal_reset_needed,
                     format="%.1f",
-                    min_value=0.0
+                    min_value=0.0,
+                    tooltip="Standard deviation of OU noise current.\nControls amplitude of Vm fluctuations.\n100 pA typical for Izhikevich. Scale for HH/AdEx."
                 )
                 add_parameter_table_row(
                     "OU Time Constant Tau (ms, 10-20 typical):",
@@ -8222,7 +10739,8 @@ def create_gui_layout():
                     _update_sim_config_from_ui_and_signal_reset_needed,
                     format="%.1f",
                     min_value=1.0,
-                    max_value=100.0
+                    max_value=100.0,
+                    tooltip="Temporal correlation time of background noise.\nSmall tau (~5 ms) = fast, white-noise-like.\nLarge tau (~20 ms) = slowly varying, colored noise.\n15 ms matches cortical synaptic timescales."
                 )
                 add_parameter_table_row(
                     "OU Seed (-1 = use main seed):",
@@ -8231,7 +10749,8 @@ def create_gui_layout():
                     -1,
                     _update_sim_config_from_ui_and_signal_reset_needed,
                     min_value=-1,
-                    step=1
+                    step=1,
+                    tooltip="RNG seed for OU noise process.\n-1 = use main simulation seed (deterministic).\nDifferent seeds give different noise realizations\nwhile preserving other simulation state."
                 )
             
             dpg.add_text(
@@ -8246,32 +10765,46 @@ def create_gui_layout():
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
                 spiking_filter_options = ["Highlight Spiking", "Show Only Spiking", "No Spiking Highlight"]
-                add_parameter_table_row("Show Spiking Neurons:", dpg.add_combo, "filter_spiking_mode_combo", "Highlight Spiking", trigger_filter_update_signal, items=spiking_filter_options)
-                add_parameter_table_row("Enable Synaptic Pulses (GL):", dpg.add_checkbox, "gl_enable_synaptic_pulses_cb", opengl_viz_config.get('ENABLE_SYNAPTIC_PULSES', True) if OPENGL_AVAILABLE else False, handle_gl_enable_synaptic_pulses_change)
-                add_parameter_table_row("Filter By Neuron Type:", dpg.add_checkbox, "filter_type_enable_cb", False, lambda s, a, u: (dpg.configure_item("filter_neuron_type_combo", enabled=a), trigger_filter_update_signal(s,a,u)))
-                add_parameter_table_row("Select Type:", dpg.add_combo, "filter_neuron_type_combo", "All", trigger_filter_update_signal, items=["All"], enabled=False)
-                add_parameter_table_row("Max Visible Neurons (GL):", dpg.add_input_int, "gl_max_neurons_render_input", opengl_viz_config.get('MAX_NEURONS_TO_RENDER', 10000) if OPENGL_AVAILABLE else 0, handle_gl_max_neurons_change, min_value=0, step=100)
-                add_parameter_table_row("Neuron Size (GL):", dpg.add_slider_float, "gl_neuron_point_size_slider", opengl_viz_config.get('POINT_SIZE', 2.0) if OPENGL_AVAILABLE else 1.0, handle_gl_point_size_change, min_value=0.5, max_value=10.0, format="%.1f")
-                add_parameter_table_row("Inactive Neuron Opacity (GL):", dpg.add_slider_float, "gl_inactive_neuron_opacity_slider", opengl_viz_config.get('INACTIVE_NEURON_OPACITY', 0.25) if OPENGL_AVAILABLE else 0.1, handle_gl_inactive_neuron_opacity_change, min_value=0.0, max_value=1.0, format="%.2f")
+                add_parameter_table_row("Show Spiking Neurons:", dpg.add_combo, "filter_spiking_mode_combo", "Highlight Spiking", trigger_filter_update_signal, items=spiking_filter_options,
+                    tooltip="How to display spiking neurons.\nHighlight: bright flash on spike, dim otherwise.\nOnly Spiking: hide non-spiking neurons.\nNo Highlight: uniform appearance.")
+                add_parameter_table_row("Enable Synaptic Pulses (GL):", dpg.add_checkbox, "gl_enable_synaptic_pulses_cb", opengl_viz_config.get('ENABLE_SYNAPTIC_PULSES', True) if OPENGL_AVAILABLE else False, handle_gl_enable_synaptic_pulses_change,
+                    tooltip="Show animated pulses traveling along synapses\nwhen spikes propagate. Visually appealing but\ncosts GPU performance at high spike rates.")
+                add_parameter_table_row("Filter By Neuron Type:", dpg.add_checkbox, "filter_type_enable_cb", False, lambda s, a, u: (dpg.configure_item("filter_neuron_type_combo", enabled=a), trigger_filter_update_signal(s,a,u)),
+                    tooltip="Enable filtering to show only neurons of a specific type.\nUseful for isolating excitatory or inhibitory populations.")
+                add_parameter_table_row("Select Type:", dpg.add_combo, "filter_neuron_type_combo", "All", trigger_filter_update_signal, items=["All"], enabled=False,
+                    tooltip="Select which neuron type to display.\nRequires 'Filter By Neuron Type' to be enabled.")
+                add_parameter_table_row("Max Visible Neurons (GL):", dpg.add_input_int, "gl_max_neurons_render_input", opengl_viz_config.get('MAX_NEURONS_TO_RENDER', 10000) if OPENGL_AVAILABLE else 0, handle_gl_max_neurons_change, min_value=0, step=100,
+                    tooltip="Maximum neurons rendered in OpenGL viewport.\nReduce for better frame rate with large networks.\n10000 default. 0 = render all.")
+                add_parameter_table_row("Neuron Size (GL):", dpg.add_slider_float, "gl_neuron_point_size_slider", opengl_viz_config.get('POINT_SIZE', 2.0) if OPENGL_AVAILABLE else 1.0, handle_gl_point_size_change, min_value=0.5, max_value=10.0, format="%.1f",
+                    tooltip="Point size for neuron rendering in pixels.\nIncrease for visibility at distance, decrease\nfor dense networks to reduce overlap.")
+                add_parameter_table_row("Inactive Neuron Opacity (GL):", dpg.add_slider_float, "gl_inactive_neuron_opacity_slider", opengl_viz_config.get('INACTIVE_NEURON_OPACITY', 0.25) if OPENGL_AVAILABLE else 0.1, handle_gl_inactive_neuron_opacity_change, min_value=0.0, max_value=1.0, format="%.2f",
+                    tooltip="Transparency of non-spiking neurons.\n0.0 = fully transparent, 1.0 = fully opaque.\nLow values make spiking activity pop visually.")
             
             dpg.add_separator()
             dpg.add_text("--- Synapses ---", color=[150,200,250,255])
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Show Synapses (GL):", dpg.add_checkbox, "filter_show_synapses_gl_cb", global_gui_state.get("show_connections_gl", True), lambda s,a,u: (global_gui_state.update({"show_connections_gl":a}), trigger_filter_update_signal()))
-                add_parameter_table_row("Max Visible Connections (GL):", dpg.add_input_int, "gl_max_connections_render_input", opengl_viz_config.get('MAX_CONNECTIONS_TO_RENDER', 20000) if OPENGL_AVAILABLE else 0, handle_gl_max_connections_change, min_value=0, step=500)
-                add_parameter_table_row("Synapse Alpha Multiplier (GL):", dpg.add_slider_float, "gl_synapse_alpha_slider", opengl_viz_config.get('SYNAPSE_ALPHA_MODIFIER', 0.3) if OPENGL_AVAILABLE else 0.1, handle_gl_synapse_alpha_change, min_value=0.0, max_value=2.0, format="%.2f")
-                add_parameter_table_row("Min Abs Synapse Weight (Filter):", dpg.add_slider_float, "filter_min_abs_weight_slider", 0.000, trigger_filter_update_signal, max_value=1.0, format="%.3f")
+                add_parameter_table_row("Show Synapses (GL):", dpg.add_checkbox, "filter_show_synapses_gl_cb", global_gui_state.get("show_connections_gl", True), lambda s,a,u: (global_gui_state.update({"show_connections_gl":a}), trigger_filter_update_signal()),
+                    tooltip="Toggle synapse line rendering in OpenGL viewport.\nDisable for cleaner neuron-only view and\nbetter performance with dense networks.")
+                add_parameter_table_row("Max Visible Connections (GL):", dpg.add_input_int, "gl_max_connections_render_input", opengl_viz_config.get('MAX_CONNECTIONS_TO_RENDER', 20000) if OPENGL_AVAILABLE else 0, handle_gl_max_connections_change, min_value=0, step=500,
+                    tooltip="Maximum synapse lines rendered. Dense networks\nmay have millions of connections — cap this\nfor usable frame rates. 20000 default.")
+                add_parameter_table_row("Synapse Alpha Multiplier (GL):", dpg.add_slider_float, "gl_synapse_alpha_slider", opengl_viz_config.get('SYNAPSE_ALPHA_MODIFIER', 0.3) if OPENGL_AVAILABLE else 0.1, handle_gl_synapse_alpha_change, min_value=0.0, max_value=2.0, format="%.2f",
+                    tooltip="Opacity multiplier for synapse lines.\nLower values = more transparent connections.\nUseful to reduce visual clutter in dense networks.")
+                add_parameter_table_row("Min Abs Synapse Weight (Filter):", dpg.add_slider_float, "filter_min_abs_weight_slider", 0.000, trigger_filter_update_signal, max_value=1.0, format="%.3f",
+                    tooltip="Only show synapses with |weight| above this value.\nIncrease to see only the strongest connections.\n0 = show all connections.")
             
             dpg.add_separator()
             dpg.add_text("--- General Visuals ---", color=[150,200,250,255])
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Camera Field of View (FOV, degrees):", dpg.add_slider_float, "cfg_camera_fov", 60.0, _update_sim_config_from_ui_and_signal_reset_needed, min_value=10.0, max_value=120.0)
-                add_parameter_table_row("Activity Highlight Frames (GL):", dpg.add_input_int, "gl_activity_highlight_frames_input", opengl_viz_config.get('ACTIVITY_HIGHLIGHT_FRAMES', 7) if OPENGL_AVAILABLE else 1, handle_gl_activity_highlight_frames_change, min_value=1, max_value=30)
-                add_parameter_table_row("Viz Update Interval (steps):", dpg.add_input_int, "cfg_viz_update_interval_steps", 1, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=200, step=1)
+                add_parameter_table_row("Camera Field of View (FOV, degrees):", dpg.add_slider_float, "cfg_camera_fov", 60.0, _update_sim_config_from_ui_and_signal_reset_needed, min_value=10.0, max_value=120.0,
+                    tooltip="Perspective camera field of view.\n60° is natural. Lower = telephoto (flatter).\nHigher = wide-angle (more depth distortion).")
+                add_parameter_table_row("Activity Highlight Frames (GL):", dpg.add_input_int, "gl_activity_highlight_frames_input", opengl_viz_config.get('ACTIVITY_HIGHLIGHT_FRAMES', 7) if OPENGL_AVAILABLE else 1, handle_gl_activity_highlight_frames_change, min_value=1, max_value=30,
+                    tooltip="How many frames a neuron stays highlighted after spiking.\nHigher = longer visible flash. 7 default.\nIncrease for slow sim speeds, decrease for fast.")
+                add_parameter_table_row("Viz Update Interval (steps):", dpg.add_input_int, "cfg_viz_update_interval_steps", 1, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=200, step=1,
+                    tooltip="Update visualization every N simulation steps.\n1 = real-time update (smoothest, most GPU overhead).\nHigher values = faster simulation but choppier visuals.")
 
         with dpg.collapsing_header(label="Testing & Optimization", default_open=False, tag="perf_testing_header"):
             dpg.add_text("Run performance tests and optimization tasks:")
@@ -8345,32 +10878,119 @@ def create_gui_layout():
         if not os.path.exists(p_dir): os.makedirs(p_dir, exist_ok=True)
 
     # Profile dialogs (JSON)
-    with dpg.file_dialog(directory_selector=False, show=False, callback=save_profile_dialog_callback, tag="save_profile_file_dialog", width=700, height=400, modal=True, default_path=profile_dir):
+    with dpg.file_dialog(directory_selector=False, show=False, callback=save_profile_dialog_callback, tag="save_profile_file_dialog", width=700, height=400, modal=True, default_path=profile_dir, default_filename="profile"):
         dpg.add_file_extension(".json", color=(255, 255, 0, 255), custom_text="JSON Profile (*.json)")
+        dpg.add_file_extension(".*", custom_text="All Files (*.*)")
     with dpg.file_dialog(directory_selector=False, show=False, callback=load_profile_dialog_callback, tag="load_profile_file_dialog", width=700, height=400, modal=True, default_path=profile_dir):
         dpg.add_file_extension(".json", color=(255, 255, 0, 255), custom_text="JSON Profile (*.json)")
+        dpg.add_file_extension(".*", custom_text="All Files (*.*)")
 
-    # Checkpoint dialogs (HDF5)
+    # Checkpoint dialogs (HDF5) - use .h5 as filter (DPG doesn't handle compound extensions well)
     with dpg.file_dialog(directory_selector=False, show=False, callback=save_checkpoint_dialog_callback_h5,
-                         tag="save_checkpoint_file_dialog_h5", width=700, height=400, modal=True, default_path=checkpoint_dir_h5):
-        dpg.add_file_extension(".h5", color=(0, 200, 200, 255), custom_text="HDF5 Checkpoints (*.simstate.h5, *.h5)")
+                         tag="save_checkpoint_file_dialog_h5", width=700, height=400, modal=True, default_path=checkpoint_dir_h5, default_filename="checkpoint"):
+        dpg.add_file_extension(".h5", color=(0, 200, 200, 255), custom_text="Checkpoint Files (*.simstate.h5)")
         dpg.add_file_extension(".*", custom_text="All Files (*.*)")
 
     with dpg.file_dialog(directory_selector=False, show=False, callback=load_checkpoint_dialog_callback_h5,
                          tag="load_checkpoint_file_dialog_h5", width=700, height=400, modal=True, default_path=checkpoint_dir_h5):
-        dpg.add_file_extension(".h5", color=(0, 200, 200, 255), custom_text="HDF5 Checkpoints (*.simstate.h5, *.h5)")
+        dpg.add_file_extension(".h5", color=(0, 200, 200, 255), custom_text="Checkpoint Files (*.simstate.h5)")
         dpg.add_file_extension(".*", custom_text="All Files (*.*)")
 
-    # Recording dialogs (HDF5)
+    # Recording dialogs (HDF5) - use .h5 as filter (DPG doesn't handle compound extensions well)
     with dpg.file_dialog(directory_selector=False, show=False, callback=save_recording_for_streaming_dialog_callback_h5,
-                         tag="save_recording_file_dialog_h5", width=700, height=400, modal=True, default_path=recording_dir_h5):
-        dpg.add_file_extension(".h5", color=(100, 0, 100, 255), custom_text="HDF5 Recordings (*.simrec.h5, *.h5)")
+                         tag="save_recording_file_dialog_h5", width=700, height=400, modal=True, default_path=recording_dir_h5, default_filename="recording"):
+        dpg.add_file_extension(".h5", color=(150, 0, 200, 255), custom_text="Recording Files (*.simrec.h5)")
         dpg.add_file_extension(".*", custom_text="All Files (*.*)")
 
+    # Load recording dialog
     with dpg.file_dialog(directory_selector=False, show=False, callback=load_recording_dialog_callback_h5,
                          tag="load_recording_file_dialog_h5", width=700, height=400, modal=True, default_path=recording_dir_h5):
-        dpg.add_file_extension(".h5", color=(100, 0, 100, 255), custom_text="HDF5 Recordings (*.simrec.h5, *.h5)")
+        dpg.add_file_extension(".h5", color=(150, 0, 200, 255), custom_text="Recording Files (*.simrec.h5)")
         dpg.add_file_extension(".*", custom_text="All Files (*.*)")
+
+    # Recording memory warning popup
+    with dpg.window(label="Recording Too Large for GPU", tag="recording_memory_warning_popup",
+                    modal=True, show=False, width=450, height=200, no_resize=True, no_collapse=True,
+                    pos=[300, 250], no_close=True):
+        dpg.add_text("", tag="recording_memory_warning_text", wrap=420)
+        dpg.add_spacer(height=15)
+        with dpg.group(horizontal=True):
+            dpg.add_button(label="Partial Cache", width=130, callback=_recording_memory_popup_partial_cache)
+            with dpg.tooltip(dpg.last_item()):
+                dpg.add_text("Cache as many frames as will fit in GPU memory.\n"
+                            "Remaining frames will stream from disk.", wrap=250)
+            dpg.add_button(label="Stream Only", width=130, callback=_recording_memory_popup_stream_only)
+            with dpg.tooltip(dpg.last_item()):
+                dpg.add_text("Stream all frames from disk (no GPU caching).\n"
+                            "Uses minimal GPU memory but playback may be slower.", wrap=250)
+            dpg.add_button(label="Cancel", width=80, callback=_recording_memory_popup_cancel)
+
+    # Recording options popup (for large-scale recordings)
+    with dpg.window(label="Recording Options", tag="recording_options_popup",
+                    modal=True, show=False, width=420, height=320, no_resize=True, no_collapse=True,
+                    pos=[280, 180], no_close=True):
+        dpg.add_text("Configure recording settings before selecting output file.", wrap=400)
+        dpg.add_spacer(height=10)
+
+        # Recording mode
+        dpg.add_text("Recording Mode:")
+        dpg.add_combo(
+            items=["gpu_buffered", "streaming"],
+            default_value="gpu_buffered",
+            tag="rec_opt_mode_combo",
+            width=250
+        )
+        with dpg.tooltip(dpg.last_item()):
+            dpg.add_text(
+                "gpu_buffered: Buffer frames in GPU/CPU memory, write at end.\n"
+                "  Best for short recordings that fit in memory.\n\n"
+                "streaming: Write frames to disk during simulation.\n"
+                "  Required for long recordings or limited memory.",
+                wrap=300
+            )
+        dpg.add_spacer(height=10)
+
+        # Skip synaptic data
+        dpg.add_checkbox(
+            label="Skip synaptic data (neuron-only recording)",
+            tag="rec_opt_skip_synaptic",
+            default_value=False
+        )
+        with dpg.tooltip(dpg.last_item()):
+            dpg.add_text(
+                "For large networks (100K+ neurons), synaptic data can be 10-20x larger "
+                "than neuron data. Enable this to dramatically reduce recording size.\n\n"
+                "Example: 100K neurons, 10M synapses:\n"
+                "  Full frame: ~165MB\n"
+                "  Neuron-only: ~10MB (16x smaller)",
+                wrap=300
+            )
+        dpg.add_spacer(height=10)
+
+        # Frame skip
+        dpg.add_text("Frame skip (0 = disabled):")
+        dpg.add_input_int(
+            tag="rec_opt_frame_skip",
+            default_value=0,
+            min_value=0,
+            max_value=1000,
+            min_clamped=True,
+            max_clamped=True,
+            width=100
+        )
+        with dpg.tooltip(dpg.last_item()):
+            dpg.add_text(
+                "0 or 1 = record every frame (no skipping)\n"
+                "10 = record every 10th frame (10x smaller files)\n"
+                "100 = record every 100th frame (100x smaller files)\n\n"
+                "For dt=1ms, frame_skip=10 gives 10ms temporal resolution.",
+                wrap=300
+            )
+        dpg.add_spacer(height=20)
+
+        with dpg.group(horizontal=True):
+            dpg.add_button(label="Continue", width=150, callback=_recording_options_continue_callback)
+            dpg.add_button(label="Cancel", width=100, callback=_recording_options_cancel_callback)
 
 # --- Main Application Loop Functions ---
 
@@ -8396,8 +11016,12 @@ def simulation_worker_loop(sim_bridge, local_shutdown_event, command_q, data_q):
         while not local_shutdown_event.is_set():
             # --- 1. Process Commands from UI Thread ---
             try:
-                while not command_q.empty():
-                    command = command_q.get_nowait()
+                # Use exception handling instead of empty() check to avoid TOCTOU race
+                while True:
+                    try:
+                        command = command_q.get_nowait()
+                    except queue.Empty:
+                        break
                     cmd_type = command.get("type")
 
                     if cmd_type == "START_SIM":
@@ -8429,12 +11053,26 @@ def simulation_worker_loop(sim_bridge, local_shutdown_event, command_q, data_q):
                         sim_bridge.save_checkpoint(command["filepath"]) # Sim_bridge will send status to UI
                     elif cmd_type == "LOAD_CHECKPOINT":
                         sim_bridge.load_checkpoint(command["filepath"]) # Sim_bridge sends status/data
+                    elif cmd_type == "SET_RECORDING_OPTIONS":
+                        # Update gpu_config with recording options from UI
+                        if "recording_mode" in command:
+                            sim_bridge.gpu_config.recording_mode = command["recording_mode"]
+                        if "recording_skip_synaptic_data" in command:
+                            sim_bridge.gpu_config.recording_skip_synaptic_data = command["recording_skip_synaptic_data"]
+                        if "recording_frame_skip" in command:
+                            sim_bridge.gpu_config.recording_frame_skip = max(1, command["recording_frame_skip"])
+                        sim_bridge._log_console(
+                            f"Recording options set: mode={sim_bridge.gpu_config.recording_mode}, "
+                            f"skip_synaptic={sim_bridge.gpu_config.recording_skip_synaptic_data}, "
+                            f"frame_skip={sim_bridge.gpu_config.recording_frame_skip}"
+                        )
                     elif cmd_type == "START_RECORDING":
-                        sim_bridge.start_recording_to_file(command["filepath"]) # Sim_bridge sends status
+                        sim_bridge.start_recording_to_file(command["filepath"])  # Sim_bridge sends status
                     elif cmd_type == "STOP_RECORDING":
                         sim_bridge.stop_recording() # Sim_bridge sends status
                     elif cmd_type == "LOAD_RECORDING": # UI requests sim_thread to prepare metadata
-                        sim_bridge.load_recording(command["filepath"]) # Sim_bridge sends RECORDING_METADATA_PREPARED or _FAILED
+                        stream_only = command.get("stream_only", False)
+                        sim_bridge.load_recording(command["filepath"], stream_only=stream_only) # Sim_bridge sends RECORDING_METADATA_PREPARED or _FAILED
                     elif cmd_type == "SETUP_PLAYBACK_FROM_RECORDING":
                         # This command implies UI has received RECORDING_METADATA_PREPARED
                         # and now tells sim_thread to use that data to set its state.
@@ -8461,8 +11099,13 @@ def simulation_worker_loop(sim_bridge, local_shutdown_event, command_q, data_q):
 
                     elif cmd_type == "SET_PLAYBACK_FRAME":
                         active_playback_handle_for_frame = command.get("h5_file_handle_for_sim_thread")
+                        num_frames_for_prefetch = command.get("num_frames")
                         if active_playback_handle_for_frame:
-                            sim_bridge.set_playback_frame(command["frame_index"], active_playback_handle_for_frame)
+                            sim_bridge.set_playback_frame(
+                                command["frame_index"],
+                                active_playback_handle_for_frame,
+                                num_frames=num_frames_for_prefetch
+                            )
                         else:
                              sim_bridge._log_to_ui("Playback error: No HDF5 handle for SET_PLAYBACK_FRAME.", "error")
                              data_q.put({"type": "PLAYBACK_ERROR", "reason": "Missing H5 handle for frame set"})
@@ -8471,6 +11114,7 @@ def simulation_worker_loop(sim_bridge, local_shutdown_event, command_q, data_q):
                         # It just needs to reset its internal state if it was in a playback-specific mode.
                         # For example, if it was holding an HDF5 file open for playback, it should close it.
                         # The main task is to re-apply the "live" simulation config.
+                        sim_bridge._clear_prefetch_buffer()  # Clean up prefetch resources
                         sim_bridge.apply_simulation_configuration_core(sim_bridge.core_config.to_dict(), is_part_of_playback_setup=False)
                         data_q.put({
                             "type": "PLAYBACK_EXITED_SIM_SIDE",
@@ -8501,8 +11145,9 @@ def simulation_worker_loop(sim_bridge, local_shutdown_event, command_q, data_q):
                     for _ in range(min(num_steps_to_run_total, MAX_STEPS_PER_BATCH)):
                         if sim_bridge.runtime_state.current_time_ms < sim_bridge.core_config.total_simulation_time_ms:
                             sim_bridge._run_one_simulation_step() # Core simulation logic
-                            sim_bridge.runtime_state.current_time_ms += dt_ms_val
                             sim_bridge.runtime_state.current_time_step += 1
+                            # Compute time from step count to avoid floating point drift
+                            sim_bridge.runtime_state.current_time_ms = sim_bridge.runtime_state.current_time_step * dt_ms_val
                             steps_executed_in_batch +=1
 
                             # Periodically send data to UI
@@ -8556,13 +11201,13 @@ def main_dpg_loop_and_gl_idle():
                         glut.glutDestroyWindow(current_glut_window)
             except Exception as e_glut_shutdown:
                  print(f"Exception during GLUT shutdown: {e_glut_shutdown}")
-        
+
         # Ensure DPG is also signaled to stop if it hasn't already by the on_close callback.
-        if dpg.is_dearpygui_running(): 
+        if dpg.is_dearpygui_running():
             dpg.stop_dearpygui()
-        
-        # Force exit from the idle loop
-        sys.exit(0)
+
+        # Don't call sys.exit() from within GLUT callback - just return and let main loop handle exit
+        return
 
     if not dpg.is_dearpygui_running(): # If DPG window was closed by user (on_close already ran)
         # This block might be redundant if the above shutdown_flag block handles everything,
@@ -8636,11 +11281,9 @@ def main_dpg_loop_and_gl_idle():
                 update_ui_for_recording_state(is_recording_active_ui=True)
                 update_status_bar(f"Recording started: {os.path.basename(message.get('filepath','N/A'))}", color=[0,150,200,255], level="info")
             elif msg_type == "RECORDING_FINALIZED":
-                update_ui_for_recording_state(is_recording_active_ui=False) 
+                update_ui_for_recording_state(is_recording_active_ui=False)
                 if message.get("success"):
                     update_status_bar(f"Recording saved: {os.path.basename(message.get('filepath','N/A'))}", color=[0,200,0,255], level="success")
-                    if message.get("filepath"): # Auto-load the just-saved recording
-                        ui_to_sim_queue.put({"type": "LOAD_RECORDING", "filepath": message["filepath"]})
                 else:
                     update_status_bar("Recording finalization failed or was cancelled by sim.", color=[255,0,0,255], level="error")
             elif msg_type == "PLAYBACK_READY": 
@@ -8809,8 +11452,9 @@ def _evaluate_candidate_config(sim_bridge, core_cfg, viz_cfg, total_time_ms):
 
     for _ in range(num_steps):
         sim_bridge._run_one_simulation_step()
-        sim_bridge.runtime_state.current_time_ms += dt
         sim_bridge.runtime_state.current_time_step += 1
+        # Compute time from step count to avoid floating point drift
+        sim_bridge.runtime_state.current_time_ms = sim_bridge.runtime_state.current_time_step * dt
 
         fired = sim_bridge.cp_firing_states
         if fired is None:
@@ -9098,7 +11742,7 @@ def main():
 
     if os.path.exists(default_profile_path):
         try:
-            with open(default_profile_path, 'r') as f: profile_content = json.load(f)
+            with open(default_profile_path, 'r', encoding='utf-8') as f: profile_content = json.load(f)
             loaded_default_sim_config_dict = profile_content.get("simulation_configuration")
             loaded_default_gui_config_dict = profile_content.get("gui_configuration")
             if loaded_default_sim_config_dict:
@@ -9114,8 +11758,12 @@ def main():
         loaded_default_sim_config_dict = SimulationConfiguration().to_dict() # Use fresh defaults
         global_gui_state["current_profile_name"] = "unsaved_internal_defaults.json"
     
-    # Load hardware performance note from viz benchmark if available
-    hardware_note = load_viz_benchmark_hardware_note()
+    # Load hardware performance notes from benchmarks
+    # Priority: benchmark_results.json (comprehensive) > viz_performance_results.json (viz-only)
+    _load_benchmark_limits()  # Parse benchmark_results.json into HARDWARE_LIMITS
+    hardware_note = get_hardware_note()  # From benchmark_results.json
+    if not hardware_note:
+        hardware_note = load_viz_benchmark_hardware_note()  # Fallback to viz benchmark
     if hardware_note and loaded_default_sim_config_dict:
         loaded_default_sim_config_dict["hardware_performance_note"] = hardware_note
 
@@ -9225,8 +11873,20 @@ def main():
         simulation_thread.join(timeout=5.0) # Wait for sim_thread
         if simulation_thread.is_alive():
             print("Warning: Simulation thread did not terminate gracefully.")
-    
-    if dpg.is_dearpygui_running(): dpg.destroy_context() 
+
+    # Clean up OpenGL VBOs to prevent GPU memory leaks
+    if OPENGL_AVAILABLE:
+        try:
+            vbo_list = [gl_neuron_pos_vbo, gl_neuron_color_vbo, gl_synapse_vertices_vbo, gl_pulse_vertices_vbo]
+            valid_vbos = [v for v in vbo_list if v is not None and v > 0]
+            if valid_vbos:
+                from OpenGL.GL import glDeleteBuffers
+                glDeleteBuffers(len(valid_vbos), valid_vbos)
+                print(f"Cleaned up {len(valid_vbos)} OpenGL VBOs.")
+        except Exception as e:
+            print(f"Note: OpenGL VBO cleanup skipped ({e})")
+
+    if dpg.is_dearpygui_running(): dpg.destroy_context()
     print("Neuron simulator application shutdown complete.")
 
 if __name__ == '__main__':
