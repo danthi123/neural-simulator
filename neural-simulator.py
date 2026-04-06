@@ -2605,7 +2605,7 @@ class TrainingConfig:
     cs_channel_name: str = ""              # Conditioned stimulus channel
     us_channel_name: str = ""              # Unconditioned stimulus channel
     cs_us_delay_ms: float = 100.0          # Delay between CS onset and US onset
-    cr_threshold_hz: float = 20.0          # Conditioned response detection threshold (Hz)
+    cr_threshold_hz: float = 8.0           # Conditioned response detection threshold (Hz)
 
     # Reinforcement learning
     reward_delay_ms: float = 50.0          # Delay after response to deliver reward
@@ -3268,17 +3268,21 @@ class TrainingProtocolEngine:
             trial_data["success"] = success
             trial_data["output_rate"] = rate
         elif self.config.mode == TrainingMode.ASSOCIATIVE_PAIRING.name:
-            # For associative conditioning: success = US output group rate exceeds baseline
-            # during CS presentation (conditioned response detected)
+            # For associative conditioning: success = US output group rate exceeds CR threshold.
+            # NOTE: _end_trial() is called at the end of each trial (during ITI), so the
+            # readout rate reflects the post-ITI baseline, NOT the CS-driven response.
+            # Per-trial accuracy during training is therefore not meaningful for associative
+            # conditioning — the true learning metric is the pre_test vs post_test comparison
+            # of output rates during CS-alone presentation. This metric is preserved here for
+            # API consistency and may show success in later trials if STDP strengthens CS→US
+            # pathways enough that residual activity during ITI exceeds the threshold.
             us_group = self.config.us_channel_name.replace("us", "us_output") if self.config.us_channel_name else "us_output"
-            # Try to find the output group rate
             output_rate = 0.0
             for grp_name, rate in snapshot.get("rates", {}).items():
                 if "output" in grp_name.lower() or "us" in grp_name.lower():
                     output_rate = rate
                     break
-            # Conditioned response: output rate > baseline threshold (e.g. > 15 Hz)
-            cr_threshold = getattr(self.config, 'cr_threshold_hz', 20.0)
+            cr_threshold = getattr(self.config, 'cr_threshold_hz', 8.0)
             trial_data["success"] = output_rate > cr_threshold
             trial_data["output_rate"] = output_rate
 
@@ -3656,18 +3660,21 @@ class ExperimentEngine:
                 "trial_data": self.training.trials_data,
             }, f, indent=2, default=str)
 
-    def ensure_inter_group_connectivity(self, sim_bridge, cp_module, min_connection_prob=0.20):
+    def ensure_inter_group_connectivity(self, sim_bridge, cp_module, min_connection_prob=0.80):
         """Ensure sufficient synaptic connections exist between INPUT and OUTPUT groups.
 
-        For associative conditioning to work via STDP, there must be direct or near-direct
-        synaptic paths from CS (input) to US (output) neurons. Random connectivity in large
-        networks often has too few such paths. This method injects sparse connections between
-        input and output groups if insufficient connections exist.
+        For associative conditioning to work via STDP, there must be dense direct synaptic
+        paths from CS (input) to US (output) neurons. In noise-dominated networks (where OU
+        noise σ ≈ 80 pA dwarfs individual synaptic currents of ~3 pA), learning-induced weight
+        changes are only detectable if enough connections exist. With propagation_strength=0.05,
+        each synapse at weight=1.0 contributes ~3 pA of driving current. To produce a ~25 pA
+        shift (detectable above noise), ~80 connections per output neuron are needed from a
+        100-neuron input group (hence default 80% connection probability).
 
         Args:
             sim_bridge: SimulationBridge instance (for cp_connections access)
             cp_module: CuPy module reference
-            min_connection_prob: Minimum connection probability between groups (default 5%)
+            min_connection_prob: Minimum connection probability between groups (default 80%)
         """
         import cupyx.scipy.sparse as csp_local
 
@@ -3720,9 +3727,10 @@ class ExperimentEngine:
                 new_post = (unique_ids % self.n_neurons).astype(cp_module.int32)
 
                 if new_pre.size > 0:
-                    # Use moderate initial weights (above structural plasticity threshold,
-                    # high enough that STDP potentiation produces detectable output change)
-                    initial_weights = cp_module.full(new_pre.size, 0.5, dtype=cp_module.float32)
+                    # Initial weight 0.3: low enough that STDP potentiation to ~0.95 produces
+                    # a ~3x increase in synaptic drive (detectable rate change), but above
+                    # structural plasticity pruning threshold
+                    initial_weights = cp_module.full(new_pre.size, 0.3, dtype=cp_module.float32)
 
                     new_matrix = csp_local.csr_matrix(
                         (initial_weights, (new_pre, new_post)),
@@ -3809,13 +3817,18 @@ class ExperimentPresets:
         )
 
     @staticmethod
-    def associative_conditioning(cs_amplitude_pA=200.0, us_amplitude_pA=300.0,
+    def associative_conditioning(cs_amplitude_pA=500.0, us_amplitude_pA=500.0,
                                   cs_us_delay_ms=100.0, num_trials=100,
                                   input_group_size=100, output_group_size=100):
         """Classical conditioning: pair CS (input) with US (output), test if CS alone evokes response.
 
         Based on Pavlovian conditioning with STDP as the learning mechanism.
         The CS-US delay determines the temporal window for STDP potentiation.
+
+        High stimulus amplitudes (500 pA) ensure CS neurons fire at 30-40 Hz,
+        needed because each synapse at propagation_strength=0.05 provides only
+        ~3 pA per spike. Dense connectivity (80% via ensure_inter_group_connectivity)
+        gives ~80 CS→US paths per output neuron for adequate signal vs OU noise.
         """
         return ExperimentConfig(
             name="Associative Conditioning (CS-US Pairing)",
