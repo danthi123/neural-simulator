@@ -2605,6 +2605,7 @@ class TrainingConfig:
     cs_channel_name: str = ""              # Conditioned stimulus channel
     us_channel_name: str = ""              # Unconditioned stimulus channel
     cs_us_delay_ms: float = 100.0          # Delay between CS onset and US onset
+    cr_threshold_hz: float = 20.0          # Conditioned response detection threshold (Hz)
 
     # Reinforcement learning
     reward_delay_ms: float = 50.0          # Delay after response to deliver reward
@@ -3259,13 +3260,27 @@ class TrainingProtocolEngine:
             "spike_counts": snapshot.get("spike_counts", {}),
         }
 
-        # Evaluate success for RL
+        # Evaluate success based on training mode
         if self.config.mode == TrainingMode.REINFORCEMENT_LEARNING.name:
             target_group = self.config.target_output_group
             rate = snapshot.get("rates", {}).get(target_group, 0.0)
             success = self.config.target_min_rate_hz <= rate <= self.config.target_max_rate_hz
             trial_data["success"] = success
             trial_data["output_rate"] = rate
+        elif self.config.mode == TrainingMode.ASSOCIATIVE_PAIRING.name:
+            # For associative conditioning: success = US output group rate exceeds baseline
+            # during CS presentation (conditioned response detected)
+            us_group = self.config.us_channel_name.replace("us", "us_output") if self.config.us_channel_name else "us_output"
+            # Try to find the output group rate
+            output_rate = 0.0
+            for grp_name, rate in snapshot.get("rates", {}).items():
+                if "output" in grp_name.lower() or "us" in grp_name.lower():
+                    output_rate = rate
+                    break
+            # Conditioned response: output rate > baseline threshold (e.g. > 15 Hz)
+            cr_threshold = getattr(self.config, 'cr_threshold_hz', 20.0)
+            trial_data["success"] = output_rate > cr_threshold
+            trial_data["output_rate"] = output_rate
 
         self.trials_data.append(trial_data)
 
@@ -3448,6 +3463,10 @@ class ExperimentEngine:
         if not self.is_experiment_running or self.is_experiment_complete:
             return cp_module.zeros(self.n_neurons, dtype=cp_module.float32)
 
+        # Store refs for use in phase transitions (weight diagnostics)
+        self._sim_bridge_ref = sim_bridge_ref
+        self._cp_module = cp_module
+
         # Check phase transition
         self._check_phase_transition(current_time_ms)
 
@@ -3508,6 +3527,47 @@ class ExperimentEngine:
                     self.is_experiment_running = False
                     self.log.append({"event": "experiment_complete", "time_ms": current_time_ms})
 
+    def _log_intergroup_weights(self, sim_bridge_ref, cp_module, label=""):
+        """Log mean weight of inter-group (INPUT→OUTPUT) connections for diagnostics."""
+        try:
+            input_groups = self.group_manager.get_groups_by_role(NeuronGroupRole.INPUT.name)
+            output_groups = self.group_manager.get_groups_by_role(NeuronGroupRole.OUTPUT.name)
+            if not input_groups or not output_groups or sim_bridge_ref is None:
+                return
+            coo = sim_bridge_ref._get_cached_coo()
+            if coo is None:
+                return
+            for in_grp in input_groups:
+                for out_grp in output_groups:
+                    in_mask = (coo.row >= in_grp.index_start) & (coo.row < in_grp.index_end)
+                    out_mask = (coo.col >= out_grp.index_start) & (coo.col < out_grp.index_end)
+                    inter_mask = in_mask & out_mask
+                    n_inter = int(cp_module.sum(inter_mask))
+                    if n_inter > 0:
+                        weights = sim_bridge_ref.cp_connections.data[
+                            cp_module.where(inter_mask)[0]  # need global indices in data array
+                        ] if hasattr(coo, 'row') else None
+                        # For COO, the indices map directly to data array
+                        inter_indices = cp_module.where(inter_mask)[0]
+                        inter_weights = coo.data[inter_indices]
+                        mean_w = float(cp_module.mean(inter_weights))
+                        std_w = float(cp_module.std(inter_weights))
+                        max_w = float(cp_module.max(inter_weights))
+                        min_w = float(cp_module.min(inter_weights))
+                        self.log.append({
+                            "event": "intergroup_weights",
+                            "label": label,
+                            "from_group": in_grp.name,
+                            "to_group": out_grp.name,
+                            "n_connections": n_inter,
+                            "mean_weight": round(mean_w, 6),
+                            "std_weight": round(std_w, 6),
+                            "min_weight": round(min_w, 6),
+                            "max_weight": round(max_w, 6),
+                        })
+        except Exception as e:
+            self.log.append({"event": "intergroup_weights_error", "error": str(e)})
+
     def _enter_phase(self, phase, current_time_ms):
         """Set up a new experiment phase."""
         self.log.append({
@@ -3516,6 +3576,11 @@ class ExperimentEngine:
             "type": phase.phase_type,
             "time_ms": current_time_ms,
         })
+
+        # Log inter-group weights at phase transitions for learning diagnostics
+        if hasattr(self, '_sim_bridge_ref') and hasattr(self, '_cp_module'):
+            self._log_intergroup_weights(self._sim_bridge_ref, self._cp_module,
+                                          label=f"entering_{phase.name}")
 
         # Gate plasticity based on phase setting (checked by simulation step)
         self.plasticity_enabled_this_phase = phase.enable_plasticity
