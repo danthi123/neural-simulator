@@ -2759,6 +2759,9 @@ class StimulusManager:
         self.cp_stimulus_current[:] = 0.0
 
         for ch in self.channels:
+            if not ch.enabled:
+                continue  # Skip channels disabled by current experiment phase
+
             mask = self._channel_target_masks.get(ch.name)
             if mask is None:
                 continue
