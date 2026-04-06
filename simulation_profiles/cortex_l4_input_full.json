@@ -10,7 +10,6 @@
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
         "default_neuron_type_hh": "HH_L5_CORTICAL_PYRAMIDAL_RS",
         "neural_profile_name": "CORTEX_L4_INPUT_LAYER",
-
         "izh_C_val": 100.0,
         "izh_k_val": 0.7,
         "izh_vr_val": -60.0,
@@ -20,11 +19,9 @@
         "izh_b_val": -2.0,
         "izh_c_val": -50.0,
         "izh_d_val": 100.0,
-
         "enable_watts_strogatz": true,
         "connectivity_k": 10,
         "connectivity_p_rewire": 0.1,
-
         "propagation_strength": 0.06,
         "inhibitory_propagation_strength": 0.2,
         "syn_reversal_potential_e": 0.0,
@@ -34,24 +31,20 @@
         "max_synaptic_delay_ms": 10.0,
         "enable_inhibitory_neurons": true,
         "inhibitory_trait_index": 1,
-
         "enable_nmda": true,
         "nmda_ratio": 0.3,
         "nmda_tau_decay": 80.0,
         "nmda_tau_rise": 2.0,
         "nmda_mg_concentration": 1.0,
-
         "enable_hebbian_learning": true,
         "hebbian_learning_rate": 0.0004,
         "hebbian_weight_decay": 1.5e-05,
         "hebbian_min_weight": 0.05,
         "hebbian_max_weight": 1.0,
-
         "enable_short_term_plasticity": true,
         "stp_U": 0.6,
         "stp_tau_d": 150.0,
         "stp_tau_f": 15.0,
-
         "enable_stdp": true,
         "stdp_a_plus": 0.012,
         "stdp_a_minus": 0.012,
@@ -59,11 +52,9 @@
         "stdp_tau_minus_ms": 15.0,
         "stdp_w_min": 0.0,
         "stdp_w_max": 2.0,
-
         "enable_reward_modulation": false,
         "reward_learning_rate": 0.01,
         "reward_eligibility_tau_ms": 1000.0,
-
         "enable_structural_plasticity": true,
         "struct_plast_formation_rate": 8e-07,
         "struct_plast_elimination_rate": 4e-07,
@@ -72,7 +63,6 @@
         "struct_plast_distance_kernel": "gaussian",
         "struct_plast_distance_scale": 15.0,
         "struct_plast_update_interval_steps": 100,
-
         "enable_homeostasis": true,
         "homeostasis_target_rate": 0.025,
         "homeostasis_threshold_adapt_rate": 0.015,
@@ -81,7 +71,6 @@
         "homeostasis_threshold_max": -30.0,
         "enable_synaptic_scaling": true,
         "synaptic_scaling_rate": 0.001,
-
         "enable_parameter_heterogeneity": true,
         "heterogeneity_seed": -1,
         "enable_conductance_noise": true,
@@ -91,7 +80,6 @@
         "ou_std_current_pA": 90.0,
         "ou_tau_ms": 10.0,
         "ou_seed": -1,
-
         "refractory_period_steps": 2
     },
     "gui_configuration": {
@@ -111,7 +99,7 @@
         }
     },
     "_profile_metadata": {
-        "name": "Cortex L4 — Sensory Input Layer",
+        "name": "Cortex L4 - Sensory Input Layer",
         "description": "Primary sensory cortical input layer (L4): 80% excitatory spiny stellate-like neurons, 20% FS interneurons. Strongly depressing STP (U=0.6, tau_d=150ms) characteristic of thalamocortical→L4 synapses (Gil 1999). Low NMDA ratio (0.3) — thalamocortical synapses are AMPA-dominated. Symmetric STDP (A+=A-) reflecting balanced potentiation/depression for receptive field refinement. Positive OU mean current (+20pA) and high OU std (90pA) model tonic thalamic drive. Fast AMPA decay (3ms) for temporal precision.",
         "literature": [
             "Gil et al. 1999 — Thalamocortical→L4 strong depression (U≈0.6)",
@@ -121,9 +109,18 @@
             "Braitenberg & Schüz 1998 — L4 80:20 E/I ratio"
         ],
         "recommended_scale": {
-            "beginner": {"num_neurons": 1000, "connections_per_neuron": 50},
-            "intermediate": {"num_neurons": 10000, "connections_per_neuron": 100},
-            "advanced": {"num_neurons": 50000, "connections_per_neuron": 200}
+            "beginner": {
+                "num_neurons": 1000,
+                "connections_per_neuron": 50
+            },
+            "intermediate": {
+                "num_neurons": 10000,
+                "connections_per_neuron": 100
+            },
+            "advanced": {
+                "num_neurons": 50000,
+                "connections_per_neuron": 200
+            }
         }
     }
 }

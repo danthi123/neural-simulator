@@ -10,7 +10,6 @@
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
         "default_neuron_type_hh": "HH_STRIATAL_MSN",
         "neural_profile_name": "BASAL_GANGLIA_STRIATUM",
-
         "izh_C_val": 50.0,
         "izh_k_val": 1.0,
         "izh_vr_val": -80.0,
@@ -20,11 +19,9 @@
         "izh_b_val": -20.0,
         "izh_c_val": -55.0,
         "izh_d_val": 150.0,
-
         "enable_watts_strogatz": true,
         "connectivity_k": 20,
         "connectivity_p_rewire": 0.2,
-
         "propagation_strength": 0.03,
         "inhibitory_propagation_strength": 0.08,
         "syn_reversal_potential_e": 0.0,
@@ -34,24 +31,20 @@
         "max_synaptic_delay_ms": 10.0,
         "enable_inhibitory_neurons": true,
         "inhibitory_trait_index": 0,
-
         "enable_nmda": true,
         "nmda_ratio": 0.5,
         "nmda_tau_decay": 120.0,
         "nmda_tau_rise": 4.0,
         "nmda_mg_concentration": 1.0,
-
         "enable_hebbian_learning": true,
         "hebbian_learning_rate": 0.0002,
         "hebbian_weight_decay": 2e-05,
         "hebbian_min_weight": 0.02,
         "hebbian_max_weight": 0.6,
-
         "enable_short_term_plasticity": true,
         "stp_U": 0.4,
         "stp_tau_d": 400.0,
         "stp_tau_f": 30.0,
-
         "enable_stdp": true,
         "stdp_a_plus": 0.005,
         "stdp_a_minus": 0.008,
@@ -59,11 +52,9 @@
         "stdp_tau_minus_ms": 30.0,
         "stdp_w_min": 0.0,
         "stdp_w_max": 1.0,
-
         "enable_reward_modulation": true,
         "reward_learning_rate": 0.02,
         "reward_eligibility_tau_ms": 500.0,
-
         "enable_structural_plasticity": true,
         "struct_plast_formation_rate": 5e-07,
         "struct_plast_elimination_rate": 3e-07,
@@ -72,7 +63,6 @@
         "struct_plast_distance_kernel": "uniform",
         "struct_plast_distance_scale": 20.0,
         "struct_plast_update_interval_steps": 200,
-
         "enable_homeostasis": true,
         "homeostasis_target_rate": 0.005,
         "homeostasis_threshold_adapt_rate": 0.005,
@@ -81,7 +71,6 @@
         "homeostasis_threshold_max": -15.0,
         "enable_synaptic_scaling": false,
         "synaptic_scaling_rate": 0.0005,
-
         "enable_parameter_heterogeneity": true,
         "heterogeneity_seed": -1,
         "enable_conductance_noise": true,
@@ -91,7 +80,6 @@
         "ou_std_current_pA": 40.0,
         "ou_tau_ms": 20.0,
         "ou_seed": -1,
-
         "refractory_period_steps": 3
     },
     "gui_configuration": {
@@ -111,7 +99,7 @@
         }
     },
     "_profile_metadata": {
-        "name": "Basal Ganglia Striatum — MSN Network",
+        "name": "Basal Ganglia Striatum - MSN Network",
         "description": "Striatal microcircuit: 95% inhibitory MSNs (Medium Spiny Neurons), 5% FS interneurons. MSNs have hyperpolarized rest (-80mV), high spike threshold (-25mV) requiring strong cortical drive — modeled via negative OU mean current. Strong STP depression (U=0.4, tau_d=400ms) reflecting corticostriatal synaptic depression (Ding 2008). REWARD MODULATION ENABLED — critical for dopaminergic reinforcement learning in striatum. LTD-biased STDP reflecting dopamine-dependent plasticity (Shen 2008).",
         "literature": [
             "Ding et al. 2008 — Corticostriatal STP depression (U≈0.4, tau_d~400ms)",
@@ -122,9 +110,18 @@
             "Izhikevich 2007 — MSN-like parameters (high rheobase, delayed firing)"
         ],
         "recommended_scale": {
-            "beginner": {"num_neurons": 1000, "connections_per_neuron": 50},
-            "intermediate": {"num_neurons": 10000, "connections_per_neuron": 100},
-            "advanced": {"num_neurons": 50000, "connections_per_neuron": 200}
+            "beginner": {
+                "num_neurons": 1000,
+                "connections_per_neuron": 50
+            },
+            "intermediate": {
+                "num_neurons": 10000,
+                "connections_per_neuron": 100
+            },
+            "advanced": {
+                "num_neurons": 50000,
+                "connections_per_neuron": 200
+            }
         }
     }
 }
