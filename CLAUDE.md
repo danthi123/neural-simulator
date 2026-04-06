@@ -99,27 +99,41 @@ Located in the main file, these are performance-critical GPU operations:
 Region-specific HH parameter dictionaries in `DefaultHodgkinHuxleyParams`, all derived from
 `REALISTIC_L5_PYRAMIDAL_RS_37C` base with region-appropriate overrides:
 - `HH_L5_CORTICAL_PYRAMIDAL_RS`: L5 pyramidal regular spiking (base preset)
-- `HH_L23_CORTICAL_PYRAMIDAL`: L2/3 pyramidal (lower g_Na, higher g_M)
-- `HH_CORTICAL_FS_INTERNEURON`: Fast-spiking interneuron (high g_Na/g_K, no adaptation)
-- `HH_HIPPOCAMPAL_CA1_PYRAMIDAL`: CA1 pyramidal (prominent Ih, moderate CaT)
-- `HH_HIPPOCAMPAL_CA3_PYRAMIDAL`: CA3 pyramidal (high CaT for bursting)
-- `HH_THALAMOCORTICAL_RELAY`: TC relay (strong CaT rebound, strong Ih)
-- `HH_TRN_RETICULAR`: TRN (very high CaT for oscillatory bursting)
+- `HH_THALAMIC_RELAY_TBURST`: TC relay (strong CaT rebound, strong Ih)
+- `HH_CA1_PYRAMIDAL_BURST`: CA1 pyramidal (prominent Ih, moderate CaT)
+- `HH_CA3_PYRAMIDAL_BURST`: CA3 pyramidal (high CaT for bursting)
+- `HH_TRN_BURST_INHIB`: TRN (very high CaT for oscillatory bursting)
 - `HH_STRIATAL_MSN`: Medium spiny neuron (low g_Na, very negative E_L)
-- `HH_STN_NEURON`: Subthalamic nucleus (autonomous pacemaker, strong NaP)
+- `HH_STN_BURST`: Subthalamic nucleus (autonomous pacemaker, strong NaP)
+- `HH_GPE_PACEMAKER`: Globus pallidus externus (tonic pacemaker firing)
 - `HH_CEREBELLAR_PURKINJE`: Purkinje cell (high g_Na, strong CaT for complex spikes)
 - `HH_CEREBELLAR_GRANULE`: Granule cell (compact, low capacitance, minimal Ca²⁺)
 - `HH_SPINAL_MOTOR`: Motor neuron (high C_m, strong NaP for plateau potentials)
 - `HH_SPINAL_INTERNEURON`: Spinal interneuron (moderate channels, no NaP)
+- `HH_PFC_PYRAMIDAL`: PFC pyramidal (strong NaP for persistent activity, enhanced Ih)
+- `HH_OLFACTORY_MITRAL`: Olfactory mitral cell (high g_Na, minimal adaptation)
+- `HH_DOPAMINE_SNC`: DA neuron (low g_Na, strong CaT pacemaker, depolarized rest)
+- `HH_CORTICAL_FS_INTERNEURON`: PV+ fast-spiking (very high g_Na/g_K, zero adaptation)
+- `HH_INFERIOR_OLIVE`: Olivary neuron (strong CaT+Ih for subthreshold oscillations)
 
-### Neural Structure Profiles (~lines 1463-1641)
+### Neural Structure Profiles (~lines 1463-1900+)
 Brain region presets that configure trait definitions, connectivity, and default parameters:
 - GENERIC_UNSTRUCTURED
-- CORTEX_L23_RS_FS, CORTEX_L4_INPUT_LAYER
+- CORTEX_L23_RS_FS, CORTEX_L4_INPUT_LAYER, CORTEX_L5_DEEP_OUTPUT
+- PREFRONTAL_CORTEX_WM
 - HIPPOCAMPUS_CA1_RS_FS, HIPPOCAMPUS_CA3_RECURRENT
 - BASAL_GANGLIA_STRIATUM, BASAL_GANGLIA_STN_GPE
 - THALAMUS_TC_TRN
 - CEREBELLAR_CORTEX_SIMPLE, SPINAL_CORD_SEGMENT
+- OLFACTORY_BULB, DOPAMINERGIC_MIDBRAIN
+- CORTEX_GAMMA_FS_NETWORK, INFERIOR_OLIVE
+
+### Profile Naming Convention
+Each brain region has three JSON profile variants in `simulation_profiles/`:
+- `{region}_hh.json`: Full biophysics (Hodgkin-Huxley, dt=0.05ms)
+- `{region}_adex.json`: Adaptive Exponential (dt=0.5ms, 10-20× faster than HH)
+- `{region}_izh.json`: Izhikevich fast testing (dt=1.0ms, fastest)
+- Plus `quick_demo_cortex.json` for beginners
 
 ### JSON Profile Dropdown System (~lines 8863-8956)
 Full simulation profiles saved as `.json` in `simulation_profiles/`. A UI dropdown auto-populates from this directory, allowing one-click loading of complete parameter sets. Key functions:

@@ -1,0 +1,145 @@
+{
+    "simulation_configuration": {
+        "total_simulation_time_ms": 60000.0,
+        "dt_ms": 1.0,
+        "neuron_model_type": "IZHIKEVICH",
+        "default_neuron_type_hh": "HH_OLFACTORY_MITRAL",
+        "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
+        "izh_C_val": 100.0,
+        "izh_k_val": 0.7,
+        "izh_vr_val": -60.0,
+        "izh_vt_val": -40.0,
+        "izh_vpeak_val": 35.0,
+        "izh_a_val": 0.03,
+        "izh_b_val": -2.0,
+        "izh_c_val": -50.0,
+        "izh_d_val": 100.0,
+        "neural_profile_name": "OLFACTORY_BULB",
+        "num_traits": 2,
+        "seed": -1,
+        "num_neurons": 10000,
+        "connections_per_neuron": 80,
+        "enable_watts_strogatz": true,
+        "connectivity_k": 10,
+        "connectivity_p_rewire": 0.1,
+        "propagation_strength": 0.05,
+        "inhibitory_propagation_strength": 0.175,
+        "syn_reversal_potential_e": 0.0,
+        "syn_reversal_potential_i": -75.0,
+        "syn_tau_g_e": 3.0,
+        "syn_tau_g_i": 15.0,
+        "max_synaptic_delay_ms": 10.0,
+        "enable_inhibitory_neurons": true,
+        "inhibitory_trait_index": 1,
+        "enable_nmda": true,
+        "nmda_ratio": 0.3,
+        "nmda_tau_decay": 80.0,
+        "nmda_tau_rise": 3.0,
+        "nmda_mg_concentration": 1.0,
+        "stp_U": 0.2,
+        "stp_tau_d": 100.0,
+        "stp_tau_f": 150.0,
+        "stp_U_per_type": [
+            0.2,
+            0.2,
+            0.15,
+            0.15
+        ],
+        "stp_tau_d_per_type": [
+            100.0,
+            100.0,
+            60.0,
+            60.0
+        ],
+        "stp_tau_f_per_type": [
+            150.0,
+            150.0,
+            50.0,
+            50.0
+        ],
+        "enable_hebbian_learning": true,
+        "hebbian_learning_rate": 0.0005,
+        "hebbian_weight_decay": 1e-05,
+        "hebbian_min_weight": 0.05,
+        "hebbian_max_weight": 1.0,
+        "enable_short_term_plasticity": true,
+        "enable_stdp": true,
+        "stdp_a_plus": 0.01,
+        "stdp_a_minus": 0.0105,
+        "stdp_tau_plus_ms": 20.0,
+        "stdp_tau_minus_ms": 20.0,
+        "stdp_w_min": 0.0,
+        "stdp_w_max": 2.0,
+        "enable_reward_modulation": false,
+        "reward_learning_rate": 0.01,
+        "reward_eligibility_tau_ms": 1000.0,
+        "enable_structural_plasticity": false,
+        "struct_plast_formation_rate": 1e-06,
+        "struct_plast_elimination_rate": 5e-07,
+        "struct_plast_weight_threshold": 0.05,
+        "struct_plast_target_density": 0.01,
+        "struct_plast_distance_kernel": "exp_decay",
+        "struct_plast_distance_scale": 20.0,
+        "struct_plast_update_interval_steps": 100,
+        "enable_homeostasis": true,
+        "homeostasis_target_rate": 0.02,
+        "homeostasis_threshold_adapt_rate": 0.0005,
+        "homeostasis_ema_alpha": 0.0002,
+        "homeostasis_threshold_min": -55.0,
+        "homeostasis_threshold_max": -30.0,
+        "enable_synaptic_scaling": true,
+        "synaptic_scaling_rate": 0.001,
+        "enable_parameter_heterogeneity": true,
+        "heterogeneity_seed": -1,
+        "enable_conductance_noise": true,
+        "conductance_noise_relative_std": 0.04,
+        "enable_ou_process": true,
+        "ou_mean_current_pA": 0.0,
+        "ou_std_current_pA": 70.0,
+        "ou_tau_ms": 10.0,
+        "ou_seed": -1,
+        "refractory_period_steps": 2,
+        "enable_per_type_stp": true,
+        "struct_plast_activity_bias": 0.5
+    },
+    "gui_configuration": {
+        "filter_settings": {
+            "spiking_mode": "Highlight Spiking",
+            "type_filter_enabled": false,
+            "selected_neuron_type": "All",
+            "min_abs_weight": 0.0,
+            "show_synapses_cb": true
+        },
+        "opengl_visualization_settings": {
+            "POINT_SIZE": 3.0,
+            "INACTIVE_NEURON_OPACITY": 0.25,
+            "ACTIVITY_HIGHLIGHT_FRAMES": 7,
+            "ENABLE_SYNAPTIC_PULSES": true,
+            "SYNAPTIC_PULSE_MAX_LIFETIME_FRAMES": 5
+        }
+    },
+    "_profile_metadata": {
+        "name": "Olfactory Bulb - Fast Testing (Izhikevich)",
+        "description": "Neuron model: IZHIKEVICH (dt=1.0ms). Olfactory bulb: 50% excitatory mitral/tufted cells, 50% inhibitory granule cells (dendrodendritic). Strong inhibition drives gamma/theta oscillations. Slow GABA (15ms) reflects dendrodendritic kinetics. Facilitating STP (U=0.2, tau_f=150ms) at mitral-granule synapses.",
+        "literature": [
+            "Migliore et al. 2005 -- Olfactory bulb mitral cell model",
+            "Davison et al. 2003 -- OB network model",
+            "Schoppa 2006 -- OB gamma oscillations",
+            "Urban & Sakmann 2002 -- Mitral cell lateral inhibition"
+        ],
+        "recommended_scale": {
+            "beginner": {
+                "num_neurons": 1000,
+                "connections_per_neuron": 50
+            },
+            "intermediate": {
+                "num_neurons": 10000,
+                "connections_per_neuron": 100
+            },
+            "advanced": {
+                "num_neurons": 50000,
+                "connections_per_neuron": 200
+            }
+        }
+    }
+}

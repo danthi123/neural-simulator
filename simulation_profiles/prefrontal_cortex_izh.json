@@ -1,15 +1,10 @@
 {
     "simulation_configuration": {
         "total_simulation_time_ms": 60000.0,
-        "dt_ms": 0.05,
-        "num_neurons": 10000,
-        "connections_per_neuron": 100,
-        "num_traits": 2,
-        "seed": -1,
-        "neuron_model_type": "HODGKIN_HUXLEY",
+        "dt_ms": 1.0,
+        "neuron_model_type": "IZHIKEVICH",
+        "default_neuron_type_hh": "HH_PFC_PYRAMIDAL",
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
-        "default_neuron_type_hh": "HH_L5_CORTICAL_PYRAMIDAL_RS",
-        "neural_profile_name": "CORTEX_L23_RS_FS",
         "izh_C_val": 100.0,
         "izh_k_val": 0.7,
         "izh_vr_val": -60.0,
@@ -19,10 +14,15 @@
         "izh_b_val": -2.0,
         "izh_c_val": -50.0,
         "izh_d_val": 100.0,
+        "neural_profile_name": "PREFRONTAL_CORTEX_WM",
+        "num_traits": 2,
+        "seed": -1,
+        "num_neurons": 10000,
+        "connections_per_neuron": 120,
         "enable_watts_strogatz": true,
-        "connectivity_k": 10,
-        "connectivity_p_rewire": 0.1,
-        "propagation_strength": 0.05,
+        "connectivity_k": 15,
+        "connectivity_p_rewire": 0.2,
+        "propagation_strength": 0.04,
         "inhibitory_propagation_strength": 0.105,
         "syn_reversal_potential_e": 0.0,
         "syn_reversal_potential_i": -75.0,
@@ -32,19 +32,37 @@
         "enable_inhibitory_neurons": true,
         "inhibitory_trait_index": 1,
         "enable_nmda": true,
-        "nmda_ratio": 0.4,
-        "nmda_tau_decay": 100.0,
-        "nmda_tau_rise": 3.0,
+        "nmda_ratio": 0.65,
+        "nmda_tau_decay": 150.0,
+        "nmda_tau_rise": 5.0,
         "nmda_mg_concentration": 1.0,
+        "stp_U": 0.3,
+        "stp_tau_d": 150.0,
+        "stp_tau_f": 50.0,
+        "stp_U_per_type": [
+            0.3,
+            0.3,
+            0.2,
+            0.2
+        ],
+        "stp_tau_d_per_type": [
+            150.0,
+            150.0,
+            80.0,
+            80.0
+        ],
+        "stp_tau_f_per_type": [
+            50.0,
+            50.0,
+            50.0,
+            50.0
+        ],
         "enable_hebbian_learning": true,
-        "hebbian_learning_rate": 0.0005,
+        "hebbian_learning_rate": 0.0003,
         "hebbian_weight_decay": 1e-05,
         "hebbian_min_weight": 0.05,
         "hebbian_max_weight": 1.0,
         "enable_short_term_plasticity": true,
-        "stp_U": 0.5,
-        "stp_tau_d": 200.0,
-        "stp_tau_f": 20.0,
         "enable_stdp": true,
         "stdp_a_plus": 0.01,
         "stdp_a_minus": 0.0105,
@@ -77,30 +95,12 @@
         "conductance_noise_relative_std": 0.05,
         "enable_ou_process": true,
         "ou_mean_current_pA": 0.0,
-        "ou_std_current_pA": 80.0,
-        "ou_tau_ms": 15.0,
+        "ou_std_current_pA": 60.0,
+        "ou_tau_ms": 20.0,
         "ou_seed": -1,
         "refractory_period_steps": 2,
         "enable_per_type_stp": true,
-        "struct_plast_activity_bias": 0.5,
-        "stp_U_per_type": [
-            0.5,
-            0.5,
-            0.25,
-            0.25
-        ],
-        "stp_tau_d_per_type": [
-            200.0,
-            200.0,
-            100.0,
-            100.0
-        ],
-        "stp_tau_f_per_type": [
-            20.0,
-            20.0,
-            50.0,
-            50.0
-        ]
+        "struct_plast_activity_bias": 0.5
     },
     "gui_configuration": {
         "filter_settings": {
@@ -119,15 +119,13 @@
         }
     },
     "_profile_metadata": {
-        "name": "Neocortex L2/3 - Full Realism",
-        "description": "Neuron model: HODGKIN_HUXLEY (dt=0.05ms). Cortical microcircuit: 80% excitatory RS pyramidal, 20% FS interneurons. AMPA+NMDA excitation, GABA-A inhibition, STDP with slight LTD bias (Bi & Poo 1998), depressing STP at E→E synapses (Markram 1997), synaptic scaling (Turrigiano 2008), structural turnover. OU noise models in-vivo-like background synaptic bombardment.",
+        "name": "Prefrontal Cortex (Working Memory) - Fast Testing (Izhikevich)",
+        "description": "Neuron model: IZHIKEVICH (dt=1.0ms). PFC persistent activity network for working memory. VERY strong NMDA (0.65 ratio, tau=150ms) enables bistable UP/DOWN states and sustained firing (Wang 2001). Strong recurrent connectivity (k=15, p_rewire=0.2). Moderate STP with mixed facilitation/depression. Slow OU noise (tau=20ms) for persistent input integration.",
         "literature": [
-            "Markram et al. 1997 — STP depression at cortical synapses (U=0.5, tau_d=200ms)",
-            "Bi & Poo 1998 — Asymmetric STDP (A-/A+ ≈ 1.05, tau=20ms)",
-            "Jahr & Stevens 1990 — NMDA voltage-dependent Mg²⁺ block",
-            "Turrigiano et al. 2008 — Synaptic scaling homeostasis",
-            "Izhikevich 2007 — RS cortical pyramidal cell parameters",
-            "Braitenberg & Schüz 1998 — 80/20 E/I ratio in cortex"
+            "Wang 2001 -- PFC persistent activity model",
+            "Durstewitz et al. 2000 -- PFC dopamine modulation of working memory",
+            "Compte et al. 2000 -- Persistent activity in PFC models",
+            "Goldman-Rakic 1995 -- Working memory and prefrontal cortex"
         ],
         "recommended_scale": {
             "beginner": {

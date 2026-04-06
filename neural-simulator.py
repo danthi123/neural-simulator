@@ -179,6 +179,11 @@ class NeuronType(Enum):
     HH_CEREBELLAR_GRANULE = "HH_CEREBELLAR_GRANULE"
     HH_SPINAL_MOTOR = "HH_SPINAL_MOTOR"
     HH_SPINAL_INTERNEURON = "HH_SPINAL_INTERNEURON"
+    HH_PFC_PYRAMIDAL = "HH_PFC_PYRAMIDAL"
+    HH_OLFACTORY_MITRAL = "HH_OLFACTORY_MITRAL"
+    HH_DOPAMINE_SNC = "HH_DOPAMINE_SNC"
+    HH_CORTICAL_FS_INTERNEURON = "HH_CORTICAL_FS_INTERNEURON"
+    HH_INFERIOR_OLIVE = "HH_INFERIOR_OLIVE"
     RS_EXCITATORY_LEGACY = "RS_EXCITATORY_LEGACY"
     FS_INHIBITORY_LEGACY = "FS_INHIBITORY_LEGACY"
     IB_EXCITATORY_LEGACY = "IB_EXCITATORY_LEGACY"
@@ -473,6 +478,95 @@ class DefaultHodgkinHuxleyParams:
         "v_rest_hh": -68.0,
     })
 
+    # Prefrontal Cortex pyramidal neuron (Wang 2001, Durstewitz et al. 2000)
+    # Strong persistent sodium supports persistent activity / UP states for working memory.
+    # Enhanced Ih contributes to subthreshold resonance and temporal integration.
+    PFC_PYRAMIDAL = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    PFC_PYRAMIDAL.update({
+        "C_m": 1.0,           # Standard pyramidal capacitance
+        "g_Na_max": 50.0,     # Moderate Na (PFC pyramidals fire slower than L5 PT)
+        "g_K_max": 5.0,       # Standard delayed rectifier
+        "g_CaT_max": 0.5,     # Moderate Ca for UP-state calcium signaling
+        "E_CaT": 120.0,
+        "g_h_max": 0.25,      # Moderate Ih for subthreshold resonance
+        "E_h": -30.0,
+        "g_M_max": 0.8,       # Moderate M-current for spike frequency adaptation
+        "g_NaP_max": 0.5,     # STRONG persistent Na — enables bistable persistent activity
+        "E_L": -70.0,
+        "v_rest_hh": -68.0,
+    })
+
+    # Olfactory bulb mitral cell (Migliore et al. 2005, Davison et al. 2003)
+    # Fast, reliable spiking with high Na density. Minimal adaptation (sustains high-frequency
+    # firing during odor responses). Moderate NaP contributes to subthreshold oscillations.
+    OLFACTORY_MITRAL = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    OLFACTORY_MITRAL.update({
+        "C_m": 1.0,           # Standard capacitance
+        "g_Na_max": 65.0,     # High Na for fast, reliable spikes
+        "g_K_max": 8.0,       # Strong K for fast repolarization
+        "g_CaT_max": 0.3,     # Small CaT for calcium signaling
+        "E_CaT": 120.0,
+        "g_h_max": 0.1,       # Small Ih
+        "E_h": -30.0,
+        "g_M_max": 0.2,       # Minimal adaptation — mitral cells sustain high rates
+        "g_NaP_max": 0.3,     # Moderate persistent Na for subthreshold oscillations
+        "E_L": -65.0,
+        "v_rest_hh": -62.0,
+    })
+
+    # Substantia nigra pars compacta / VTA dopamine neuron (Drion et al. 2011, Putzier et al. 2009)
+    # Autonomous pacemaker at 2-4 Hz driven by interplay of L-type Ca² (modeled as CaT)
+    # and hyperpolarization-activated Ih. Low Na density, depolarized rest, slow kinetics.
+    DOPAMINE_SNC = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    DOPAMINE_SNC.update({
+        "C_m": 1.2,           # Moderate soma size
+        "g_Na_max": 35.0,     # LOW Na — DA neurons have sparse Na channels
+        "g_K_max": 4.0,       # Moderate K
+        "g_CaT_max": 2.0,     # STRONG Ca — L-type Ca proxy, primary pacemaker driver
+        "E_CaT": 120.0,
+        "g_h_max": 0.4,       # Moderate-strong Ih, contributes to pacemaking rebound
+        "E_h": -30.0,
+        "g_M_max": 0.3,       # Mild M-current (SK channel analog for AHP)
+        "g_NaP_max": 0.2,     # Small persistent Na
+        "E_L": -55.0,         # Depolarized rest — key for autonomous firing
+        "v_rest_hh": -52.0,
+    })
+
+    # Cortical fast-spiking PV+ interneuron (Erisir et al. 1999, Wang & Buzsaki 1996)
+    # Very high Na/K density for narrow, fast spikes. Zero adaptation currents — the defining
+    # feature of FS cells. Drives perisomatic inhibition and gamma oscillations.
+    CORTICAL_FS_INTERNEURON = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    CORTICAL_FS_INTERNEURON.update({
+        "C_m": 0.8,           # Smaller soma than pyramidals
+        "g_Na_max": 80.0,     # VERY HIGH Na — enables fast, narrow APs
+        "g_K_max": 15.0,      # VERY HIGH K — fast repolarization, narrow spike
+        "g_CaT_max": 0.0,     # No CaT
+        "g_h_max": 0.0,       # No Ih
+        "g_M_max": 0.0,       # NO adaptation — defining feature of FS interneurons
+        "g_NaP_max": 0.0,     # No persistent Na
+        "E_L": -70.0,
+        "v_rest_hh": -68.0,
+    })
+
+    # Inferior olivary neuron (Llinas & Yarom 1981, De Gruijl et al. 2012)
+    # Strong CaT + Ih interplay generates subthreshold oscillations (~3-10 Hz).
+    # Note: gap junctions (electrical coupling) are not modeled; intrinsic oscillatory
+    # properties are captured but network-level synchronization requires chemical synapses.
+    INFERIOR_OLIVE = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    INFERIOR_OLIVE.update({
+        "C_m": 1.0,           # Standard capacitance
+        "g_Na_max": 40.0,     # Moderate Na
+        "g_K_max": 5.0,       # Standard K
+        "g_CaT_max": 1.5,     # STRONG CaT — drives subthreshold oscillations
+        "E_CaT": 120.0,
+        "g_h_max": 0.5,       # STRONG Ih — rebound from inhibition, oscillation partner
+        "E_h": -30.0,
+        "g_M_max": 0.3,       # Mild M-current
+        "g_NaP_max": 0.3,     # Moderate persistent Na for oscillation support
+        "E_L": -65.0,
+        "v_rest_hh": -60.0,
+    })
+
     PARAMS = {
         NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS: REALISTIC_L5_PYRAMIDAL_RS_37C.copy(),
         NeuronType.HH_EXCITATORY_DEFAULT_LEGACY: ORIGINAL_HH_PARAMS.copy(), # Legacy can map to original HH
@@ -487,6 +581,11 @@ class DefaultHodgkinHuxleyParams:
         NeuronType.HH_CEREBELLAR_GRANULE: CEREBELLAR_GRANULE.copy(),
         NeuronType.HH_SPINAL_MOTOR: SPINAL_MOTOR.copy(),
         NeuronType.HH_SPINAL_INTERNEURON: SPINAL_INTERNEURON.copy(),
+        NeuronType.HH_PFC_PYRAMIDAL: PFC_PYRAMIDAL.copy(),
+        NeuronType.HH_OLFACTORY_MITRAL: OLFACTORY_MITRAL.copy(),
+        NeuronType.HH_DOPAMINE_SNC: DOPAMINE_SNC.copy(),
+        NeuronType.HH_CORTICAL_FS_INTERNEURON: CORTICAL_FS_INTERNEURON.copy(),
+        NeuronType.HH_INFERIOR_OLIVE: INFERIOR_OLIVE.copy(),
     }
     FALLBACK = PARAMS[NeuronType.HH_EXCITATORY_DEFAULT_LEGACY].copy()
 
@@ -1736,6 +1835,120 @@ NEURAL_STRUCTURE_PROFILES = {
             "inhibitory_trait_index": 1,
             "connectivity_k": 14,
             "connectivity_p_rewire": 0.15,
+        },
+    },
+    "CORTEX_L5_DEEP_OUTPUT": {
+        "display_name": "Neocortex L5 Deep Output",
+        "description": "Layer 5 corticofugal output circuit: thick-tufted pyramidal tract (PT) neurons with burst-firing properties.",
+        "recommended_neuron_model": NeuronModel.HODGKIN_HUXLEY.name,
+        "default_hh_neuron_type": NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.80},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.20},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 12,
+            "connectivity_p_rewire": 0.15,
+            "syn_tau_g_e": 5.0,
+            "syn_tau_g_i": 10.0,
+        },
+    },
+    "PREFRONTAL_CORTEX_WM": {
+        "display_name": "Prefrontal Cortex (Working Memory)",
+        "description": "PFC persistent activity network: strong NMDA recurrence enables working memory-like sustained firing.",
+        "recommended_neuron_model": NeuronModel.HODGKIN_HUXLEY.name,
+        "default_hh_neuron_type": NeuronType.HH_PFC_PYRAMIDAL.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.75},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.25},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 15,
+            "connectivity_p_rewire": 0.2,
+            "syn_tau_g_e": 5.0,
+            "syn_tau_g_i": 10.0,
+        },
+    },
+    "OLFACTORY_BULB": {
+        "display_name": "Olfactory Bulb",
+        "description": "Mitral/tufted cells with strong granule cell inhibition. High E/I ratio drives gamma/theta oscillations.",
+        "recommended_neuron_model": NeuronModel.HODGKIN_HUXLEY.name,
+        "default_hh_neuron_type": NeuronType.HH_OLFACTORY_MITRAL.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.50},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.50},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 10,
+            "connectivity_p_rewire": 0.1,
+            "syn_tau_g_e": 3.0,
+            "syn_tau_g_i": 15.0,
+        },
+    },
+    "DOPAMINERGIC_MIDBRAIN": {
+        "display_name": "Dopaminergic Midbrain (SNc/VTA)",
+        "description": "Midbrain dopamine circuit: autonomous pacemaker DA neurons (65%) with GABAergic interneurons (35%).",
+        "recommended_neuron_model": NeuronModel.HODGKIN_HUXLEY.name,
+        "default_hh_neuron_type": NeuronType.HH_DOPAMINE_SNC.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.65},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.35},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 8,
+            "connectivity_p_rewire": 0.1,
+            "syn_tau_g_e": 4.0,
+            "syn_tau_g_i": 10.0,
+        },
+    },
+    "CORTEX_GAMMA_FS_NETWORK": {
+        "display_name": "Cortical Gamma Oscillation Network",
+        "description": "Inhibition-dominated network for studying gamma (30-80 Hz) oscillations driven by PV+ FS interneurons.",
+        "recommended_neuron_model": NeuronModel.HODGKIN_HUXLEY.name,
+        "default_hh_neuron_type": NeuronType.HH_CORTICAL_FS_INTERNEURON.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.40},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.60},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 20,
+            "connectivity_p_rewire": 0.15,
+            "syn_tau_g_e": 3.0,
+            "syn_tau_g_i": 5.0,
+        },
+    },
+    "INFERIOR_OLIVE": {
+        "display_name": "Inferior Olive",
+        "description": "Olivary neurons with CaT/Ih-driven subthreshold oscillations. Note: gap junctions not modeled.",
+        "recommended_neuron_model": NeuronModel.HODGKIN_HUXLEY.name,
+        "default_hh_neuron_type": NeuronType.HH_INFERIOR_OLIVE.name,
+        "trait_definitions": [
+            {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.90},
+            {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.10},
+        ],
+        "default_core_overrides": {
+            "num_traits": 2,
+            "enable_inhibitory_neurons": True,
+            "inhibitory_trait_index": 1,
+            "connectivity_k": 10,
+            "connectivity_p_rewire": 0.3,
+            "syn_tau_g_e": 4.0,
+            "syn_tau_g_i": 8.0,
         },
     },
 }
