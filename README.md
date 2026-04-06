@@ -91,6 +91,7 @@ A high-performance 3D neural network simulator with real-time OpenGL visualizati
 
 ### User Interface
 - **DearPyGUI control panel**: Comprehensive parameter configuration
+- **Profile dropdown system**: Quick selection of neural structure profiles and HH presets
 - **Live monitoring**: Real-time metrics (firing rate, spike counts, plasticity events)
 - **System logs panel**: Real-time console output with search, export, and auto-scroll
 - **Profile management**: Save/load simulation configurations as JSON
@@ -530,7 +531,6 @@ The simulator automatically manages GPU memory, but you can optimize:
 
 Contributions are welcome! Areas for improvement:
 - Additional neuron models (LIF/GLIF, multi-compartment)
-- Spike-timing dependent plasticity (STDP)
 - Layered connectivity motifs and topographic organization
 - Network analysis tools (connectivity statistics, firing patterns)
 - Export to SONATA/NeuroML formats

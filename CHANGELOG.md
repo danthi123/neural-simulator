@@ -8,6 +8,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Profile System** - Biologically accurate brain region presets and UI integration
+  - 9 brain region profile JSONs with realistic neuron models and connectivity: Cortex L2/3, Cortex L4, Hippocampus CA1, Hippocampus CA3, Thalamus TC-TRN, Basal Ganglia Striatum, Basal Ganglia STN-GPe, Cerebellar Cortex, Spinal Cord
+  - Quick Demo profile for rapid testing
+  - Full profile dropdown menu in UI that auto-populates from `simulation_profiles/*.json` files
+  - Refresh button to reload profiles from disk without restarting
+
+- **Plasticity Parameters in UI** - STDP, reward modulation, and structural plasticity
+  - 28 new fields added to SimulationConfiguration for complete plasticity roundtrip (save/load)
+  - Support for STDP timing windows, reward modulation learning rates, and structural synapse thresholds
+  - Full persistence in simulation profiles and checkpoint files
+
+- **COO Cache Invalidation** - Fixed stale data handling in GPU memory
+  - Cache invalidation in `clear_simulation_state_and_gpu_memory()` prevents stale sparse matrix data across reinitializations
+
+### Fixed
+- **STP/Connection Shape Mismatch at Scale** - CSR matrix deduplication bug
+  - Fixed shape mismatch occurring at 100K+ neurons caused by CSR matrix addition deduplicating overlapping (pre,post) pairs
+  - Now uses `cp_connections.nnz` as authoritative size instead of stale shape values
+  - Structural plasticity synapse count now properly synced after CSR addition
+
+- **Synaptic Scaling Crash** - Stale COO cache surviving reinitialization
+  - COO cache no longer persists across simulation reinitializations, preventing crashes when synaptic scaling is active
+
+- **Unicode Handling on Windows** - JSON I/O encoding issue
+  - UnicodeDecodeError on Windows (cp1252) when loading profile JSONs with Unicode characters (em dashes, etc.)
+  - All JSON I/O now uses UTF-8 encoding explicitly
+
+- **Em Dash Rendering** - DearPyGui font limitation
+  - Em dashes rendered as question marks in DearPyGUI default font
+  - Replaced with regular hyphens in all UI text and profile names
+
+### Changed
+- **.gitignore** - Profile tracking and auto-tuning separation
+  - Now tracks `simulation_profiles/*.json` to include biologically accurate presets in repository
+  - Excludes `auto_tuned_overrides.json` to prevent auto-tuned parameters overwriting checked-in profiles
+
+- **Profile Files** - Superseded files removed
+  - Removed 7 old profile files replaced by new standardized brain region profiles
+
 - **System Logs Panel** - Comprehensive log viewing and management
   - Real-time display of all console output within the GUI
   - Auto-scroll functionality using DearPyGUI's `tracked` parameter

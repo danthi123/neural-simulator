@@ -1,8 +1,10 @@
 # To install these dependencies, run the following command in your terminal:
 # pip install -r requirements.txt
 
-dearpygui
+cupy-cuda11x # Or cupy-cuda12x, or another version matching your CUDA installation
 numpy
+h5py
+dearpygui
 PyOpenGL
 PyOpenGL_accelerate
 
@@ -11,7 +13,6 @@ PyOpenGL_accelerate
 # Example for CUDA 11.x: cupy-cuda11x
 # Example for CUDA 12.x: cupy-cuda12x
 # Visit the CuPy installation guide for more details: https://docs.cupy.dev/en/stable/install.html
-cupy-cuda11x # Or cupy-cuda12x, or another version matching your CUDA installation
 
 # tkinter is usually included with Python standard distributions,
 # but if you encounter issues, you might need to install it separately

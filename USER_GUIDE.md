@@ -183,6 +183,37 @@ Visible when **Neuron Model = ADEX**:
   - Restores the slider to the tuned value for the current profile (if any).
   - Requires **Apply Changes & Reset Sim** to take effect in the sim.
 
+### 4.7 Visualization Filtering
+
+Control what neurons and synapses appear in the 3D view:
+- **Filter by Neuron Type**: Show only neurons of specific traits (e.g., only
+  excitatory, only inhibitory).
+- **Filter by Spiking Mode**: Show only neurons that are currently spiking or
+  subthreshold.
+- **Min Weight Filter**: Hide synapses weaker than a threshold; useful for
+  reducing visual clutter in dense networks.
+
+Filters are applied in real-time without restarting the simulation.
+
+### 4.8 Parameter Heterogeneity
+
+Introduce variability within the neural population:
+- **Enable**: Toggle heterogeneity on/off. When enabled, neuron parameters vary
+  around their default values.
+- **CV Coefficient**: Coefficient of variation (CV = std / mean). Controls the
+  relative spread of parameters. Higher values = more diversity.
+- Effects apply to neuron-specific parameters like resting potential, capacitance,
+  and conductances (model-dependent).
+
+### 4.9 Background Noise
+
+Stochastic input to neurons (Ornstein–Uhlenbeck process):
+- **Tau (ms)**: Time constant of noise decay; higher values = more autocorrelated.
+- **Mean**: Average noise level.
+- **Seed**: RNG seed for reproducibility (-1 = random).
+- For Hodgkin–Huxley: Optional conductance-based noise can also be enabled,
+  simulating background synaptic activity.
+
 ---
 
 ## 5. Connectivity and Profiles
@@ -196,13 +227,17 @@ Each profile encodes:
 - An implicit mapping between profile and HH preset(s) used for realistic HH
   simulations.
 
-Examples:
-- `CORTEX_L23_RS_FS`
-- `HIPPOCAMPUS_CA1_RS_FS`
-- `HIPPOCAMPUS_CA3_RECURRENT`
-- `THALAMUS_TC_TRN`
-- `BASAL_GANGLIA_STRIATUM`
-- `BASAL_GANGLIA_STN_GPE`
+Predefined profiles:
+- `CORTEX_L23_RS_FS` – Layer 2/3 cortex (regular-spiking and fast-spiking neurons)
+- `CORTEX_L4_INPUT_LAYER` – Layer 4 cortex with lemniscal input characteristics
+- `HIPPOCAMPUS_CA1_RS_FS` – CA1 region (pyramidal and interneurons)
+- `HIPPOCAMPUS_CA3_RECURRENT` – CA3 with recurrent connectivity
+- `THALAMUS_TC_TRN` – Thalamocortical and reticular nuclei
+- `BASAL_GANGLIA_STRIATUM` – Striatal neurons
+- `BASAL_GANGLIA_STN_GPE` – Subthalamic nucleus and globus pallidus externa
+- `CEREBELLAR_CORTEX_SIMPLE` – Cerebellar cortex (Purkinje cells, granule cells, basket cells)
+- `SPINAL_CORD_SEGMENT` – Spinal motor circuits
+- `GENERIC_UNSTRUCTURED` – Uniform population with no explicit brain region structure
 
 When using HH, profiles with `default_hh_neuron_type` will:
 - Restrict the **HH Default Neuron Type** combo to only profile-compatible
@@ -210,7 +245,20 @@ When using HH, profiles with `default_hh_neuron_type` will:
 - Automatically set both the HH preset and UI HH parameter panel to match.
 - Use profile-specific auto-tuned drive scales when available.
 
-### 5.2 Connectivity Generators
+### 5.2 Profile Dropdown System
+
+The **Neural Structure Profile** dropdown in the GUI automatically populates from
+all `.json` files in the `simulation_profiles/` directory. This lets you:
+
+- Select a complete brain region configuration (traits, connectivity, HH defaults)
+  with a single click.
+- Add custom profiles by placing new `.json` files in `simulation_profiles/`.
+- Use the **Refresh** button to rescan the directory after adding new profiles.
+
+Each profile file specifies trait definitions, connectivity motifs, and optional
+HH neuron type defaults, keeping your simulation setup consistent and reusable.
+
+### 5.3 Connectivity Generators
 
 Priority when initializing connections:
 1. **Connectivity motif** (if profile defines one)
@@ -224,13 +272,71 @@ generator to ensure a non-empty network.
 
 ## 6. Learning & Plasticity
 
-- **Hebbian Learning**: Activity-dependent long-term weight updates.
-- **Short-Term Plasticity (STP)**: Tsodyks–Markram `u` and `x` variables.
-- **Homeostasis**:
-  - For Izhikevich: adaptive thresholds via EMA of firing.
-  - For HH: EMA of activity only (no threshold adjustment).
+### 6.1 Hebbian Learning
 
-All are configurable in the **Learning & Plasticity** section.
+Activity-dependent long-term weight updates. Pre- and post-synaptic activity
+drives weight changes over longer timescales (typically seconds).
+
+### 6.2 Short-Term Plasticity (STP)
+
+Tsodyks–Markram model with `u` (utilization) and `x` (recovery) variables.
+Synapses exhibit facilitation or depression on millisecond timescales.
+
+### 6.3 Spike-Timing-Dependent Plasticity (STDP)
+
+Refines synaptic weights based on the precise timing between pre- and post-synaptic
+spikes. Configurable parameters:
+- **A+, A−**: Magnitude of potentiation and depression.
+- **τ+, τ−**: Time windows (ms) for potentiation and depression.
+- **Weight Min/Max**: Bounds on synaptic strength.
+- **Nearest-Spike Mode**: Whether to use nearest spikes or all spike pairs.
+
+### 6.4 Reward-Modulated Plasticity
+
+Three-factor learning: combines STDP with an external reward signal (e.g.,
+dopamine). Parameters:
+- **Learning Rate**: Overall strength of reward modulation.
+- **Eligibility Tau**: Time window (ms) for eligibility trace decay.
+- **Reward Baseline**: Expected reward level.
+- **Current Reward Signal**: Externally supplied reward (updated in real-time).
+
+### 6.5 Structural Plasticity
+
+Activity-dependent synapse formation and elimination. New synapses grow when
+neurons are coactive; weak or unused synapses are pruned. Parameters:
+- **Formation Rate**: Probability per timestep of creating new synapses.
+- **Elimination Rate**: Probability per timestep of removing weak synapses.
+- **Weight Threshold**: Minimum strength to prevent elimination.
+- **Target Density**: Desired fraction of possible connections.
+- **Distance Scale**: Spatial range for new synapse formation.
+- **Update Interval**: How often (in timesteps) to check for formation/elimination.
+
+### 6.6 Synaptic Scaling
+
+Homeostatic multiplicative scaling: normalizes total incoming weight per neuron
+to maintain activity within a target range. Parameters:
+- **Rate Parameter**: Speed of scaling adjustment.
+
+### 6.7 NMDA Receptors
+
+Voltage-dependent Mg²⁺ block adds biological realism to synaptic transmission.
+Parameters:
+- **Ratio**: Fraction of current carried by NMDA.
+- **Tau Decay**: NMDA current decay time constant (ms).
+- **Tau Rise**: NMDA current rise time constant (ms).
+- **Mg Concentration**: Extracellular Mg²⁺ concentration (mM); higher values
+  increase block at rest.
+
+### 6.8 Homeostasis
+
+Prevents runaway activity and maintains network balance:
+- **For Izhikevich**: Adaptive thresholds via exponential moving average (EMA)
+  of firing rate. If firing exceeds target, threshold is raised.
+- **For Hodgkin–Huxley**: EMA-based activity monitoring only; no direct threshold
+  adjustment.
+
+All plasticity mechanisms are configurable in the **Learning & Plasticity** panel
+of the GUI.
 
 ---
 
@@ -242,13 +348,34 @@ All are configurable in the **Learning & Plasticity** section.
   toolbar buttons.
 - Checkpoints store full simulation state: neuron potentials, conductances,
   connections, plasticity variables, etc.
+- Restart the simulation from any checkpoint to pick up where you left off.
 
 ### 7.2 Recordings (.simrec.h5)
 
-- Use the **Record** / **Playback Recording** buttons.
-- Recording is GPU-buffered and written to HDF5.
-- Playback mode lets you scrub through frames using the playback slider and
-  controls.
+Use the **Record** / **Playback Recording** buttons to capture simulation frames
+for later analysis or visualization.
+
+**Recording Modes:**
+- **GPU Buffered** (default): Frames accumulate in GPU memory, then batch-written
+  to disk. Faster and less CPU overhead; requires sufficient VRAM.
+- **Streaming**: Frames written to disk frame-by-frame. Slower but lower memory
+  footprint; use for very long simulations.
+
+**Compression Options:**
+- **LZ4** (default): Fast compression; good balance of speed and space savings.
+- **GZIP**: Maximum compression; slower write time; useful for archival.
+- **None**: No compression; fastest writes; largest file size.
+
+**Playback:**
+- Use the playback slider and controls to scrub through recorded frames.
+- Hover over timeline to preview frame numbers.
+- Press Play to animate through the recording.
+
+**Memory Management:**
+- Adjust **Memory Pool Fraction** (default 0.8) in GPU settings to control how
+  much VRAM is reserved for CuPy operations.
+- For recordings of long simulations, increase the **Viz Update Interval** to
+  record fewer frames and reduce memory usage.
 
 ---
 

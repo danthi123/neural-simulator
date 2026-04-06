@@ -33,7 +33,7 @@ pytest tests/test_determinism.py -v
 ## Architecture
 
 ### Single-File Design
-The entire simulator is contained in `neural-simulator.py` (~9000 lines). This is intentional for easy distribution. Code is organized into clear sections with comment blocks.
+The entire simulator is contained in `neural-simulator.py` (~12,000 lines). This is intentional for easy distribution. Code is organized into clear sections with comment blocks.
 
 ### Thread Model
 - **Main Thread**: DearPyGUI event loop + OpenGL rendering
@@ -42,7 +42,7 @@ The entire simulator is contained in `neural-simulator.py` (~9000 lines). This i
 
 ### Key Classes
 
-**SimulationBridge** (line ~1633): Central simulation orchestrator
+**SimulationBridge** (line ~2115): Central simulation orchestrator
 - Manages all GPU state arrays (CuPy)
 - Simulation stepping and dynamics updates
 - Recording/playback to HDF5
@@ -50,10 +50,10 @@ The entire simulator is contained in `neural-simulator.py` (~9000 lines). This i
 - Profiling and performance monitoring
 
 **Configuration Dataclasses**:
-- `CoreSimConfig` (~line 415): Network topology, neuron models, plasticity, biological realism
-- `VisualizationConfig` (~line 557): OpenGL rendering and camera parameters
-- `RuntimeState` (~line 577): Mutable execution state (running, paused, time tracking)
-- `GPUConfig` (~line 591): GPU features, memory management, recording modes
+- `CoreSimConfig` (~line 485): Network topology, neuron models, plasticity, biological realism
+- `VisualizationConfig` (~line 695): OpenGL rendering and camera parameters
+- `RuntimeState` (~line 715): Mutable execution state (running, paused, time tracking)
+- `GPUConfig` (~line 729): GPU features, memory management, recording modes
 
 ### GPU Array Naming Conventions
 - `cp_*`: CuPy GPU arrays (e.g., `cp_membrane_potential_v`, `cp_firing_states`)
@@ -69,22 +69,43 @@ The entire simulator is contained in `neural-simulator.py` (~9000 lines). This i
 6. Visualization updates
 7. Recording (if active)
 
-### Fused CUDA Kernels (~lines 1374-1630)
+### Fused CUDA Kernels (~lines 1813-2101)
 Located in the main file, these are performance-critical GPU operations:
 - `fused_izhikevich2007_dynamics_update()`: 9-parameter Izhikevich model
+- `fused_izhikevich_legacy_dynamics_update()`: Legacy 4-param Izhikevich
 - `fused_hodgkin_huxley_dynamics_update()`: Temperature-dependent HH
 - `fused_adex_dynamics_update()`: Adaptive Exponential IF
 - `fused_hh_m_current_update()`, `fused_hh_CaT_current_update()`, etc.: Extended HH currents
+- `fused_hh_h_current_update()`: HH h-current (Ih)
+- `fused_hh_NaP_current_update()`: HH persistent sodium current
 - `fused_conductance_decay_and_current()`: Synaptic dynamics
+- `fused_nmda_update_and_current()`: NMDA voltage-dependent Mg2+ block
+- `fused_stp_decay_recovery()`: Short-term plasticity Tsodyks-Markram
 - `fused_stdp_weight_update()`: Spike-timing dependent plasticity
+- `fused_homeostasis_update()`: Homeostatic firing rate regulation
+- `fused_eligibility_trace_decay()`: Reward modulation eligibility traces
 
-### Neural Structure Profiles (~lines 1023-1200)
+### Neural Structure Profiles (~lines 1463-1641)
 Brain region presets that configure trait definitions, connectivity, and default parameters:
+- GENERIC_UNSTRUCTURED
 - CORTEX_L23_RS_FS, CORTEX_L4_INPUT_LAYER
 - HIPPOCAMPUS_CA1_RS_FS, HIPPOCAMPUS_CA3_RECURRENT
 - BASAL_GANGLIA_STRIATUM, BASAL_GANGLIA_STN_GPE
 - THALAMUS_TC_TRN
 - CEREBELLAR_CORTEX_SIMPLE, SPINAL_CORD_SEGMENT
+
+### JSON Profile Dropdown System (~lines 8863-8956)
+Full simulation profiles saved as `.json` in `simulation_profiles/`. A UI dropdown auto-populates from this directory, allowing one-click loading of complete parameter sets. Key functions:
+- `_scan_profile_directory()`: Scans for `.json` files, builds display name map
+- `_handle_full_profile_dropdown_change()`: Loads selected profile into UI
+- `_refresh_full_profile_dropdown()`: Rescans directory and updates dropdown
+
+### UI-Config Roundtrip
+Two critical functions must be kept in sync for profile save/load to work correctly:
+- `_update_sim_config_from_ui()`: Extracts all parameter values from UI widgets and builds `CoreSimConfig`, `VisualizationConfig`, `RuntimeState`, and `GPUConfig` dataclasses
+- `_populate_ui_from_config_dict()`: Takes a configuration dictionary and updates all UI widgets to reflect those values
+
+These are inverse operations: any parameter exposed in the UI must have a corresponding getter and setter to ensure bidirectional sync between UI state and simulation configuration.
 
 ## File Formats
 

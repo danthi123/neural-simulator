@@ -103,20 +103,32 @@ git commit -m "Add feature X: brief description
 
 ### Example:
 ```python
-def process_spikes(self, firing_states: cp.ndarray) -> cp.ndarray:
-    """Process spike events and update synaptic conductances.
-    
+def update_network_activity(self, bridge: SimulationBridge) -> dict:
+    """Monitor and update network activity based on firing states.
+
     Args:
-        firing_states: Boolean array of neuron firing states (N,)
-        
+        bridge: The SimulationBridge instance managing simulation
+
     Returns:
-        Updated conductance array (N,)
-        
+        Dictionary with activity statistics
+
     Notes:
-        This method uses GPU-accelerated sparse matrix operations
-        to propagate spikes through the network efficiently.
+        This method accesses GPU arrays directly via SimulationBridge
+        to compute network metrics without CPU-GPU transfers.
     """
-    # Implementation
+    # Access GPU firing states directly
+    firing_states = bridge.cp_firing_states  # Boolean array (num_neurons,)
+    spike_counts = cp.count_nonzero(firing_states)
+
+    # Run a simulation step and retrieve results
+    bridge._run_one_simulation_step()
+    membrane_potentials = bridge.cp_membrane_potential_v
+
+    return {
+        'spike_count': int(spike_counts),
+        'mean_voltage': float(cp.mean(membrane_potentials)),
+        'firing_rate': float(spike_counts / bridge.core_config.num_neurons)
+    }
 ```
 
 ## Testing
@@ -346,9 +358,12 @@ black neural-simulator.py benchmark.py tests/
 sim/
 ├── neural-simulator.py      # Main simulator code
 ├── benchmark.py             # Benchmark runner
+├── viz_benchmark.py         # Visualization performance benchmark
 ├── tests/                   # Test suite
-│   ├── test_determinism.py # Determinism tests
-│   └── README.md           # Test documentation
+│   ├── test_determinism.py  # Determinism tests
+│   ├── test_kernels_cpu.py  # CPU kernel validation tests
+│   ├── test_ui_build.py     # UI initialization tests
+│   └── README.md            # Test documentation
 ├── benchmarks/             # Benchmark results
 ├── simulation_profiles/    # Saved configurations
 ├── simulation_checkpoints_h5/  # Saved states
