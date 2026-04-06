@@ -978,7 +978,7 @@ class GPUConfig:
 
     # Debug mode
     enable_debug_checks: bool = False  # Enable inf/nan checking (performance impact)
-    enable_step_profiler: bool = True  # TEMP: profiling bottleneck — set back to False after
+    enable_step_profiler: bool = False  # Log per-section timing for performance analysis
 
     # Structural plasticity optimization
     struct_plast_compaction_interval: int = 1000  # Steps between CSR compaction
