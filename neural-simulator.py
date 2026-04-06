@@ -978,6 +978,7 @@ class GPUConfig:
 
     # Debug mode
     enable_debug_checks: bool = False  # Enable inf/nan checking (performance impact)
+    enable_step_profiler: bool = False  # Log per-section timing for performance analysis
 
     # Structural plasticity optimization
     struct_plast_compaction_interval: int = 1000  # Steps between CSR compaction
@@ -7794,8 +7795,21 @@ class SimulationBridge:
         try:
             n_neurons = self.core_config.num_neurons; cfg = self.core_config; dt = cfg.dt_ms
 
+            # Step profiler: optional per-section wall-clock timing for bottleneck analysis.
+            # Enable via GPUConfig.enable_step_profiler. Logs summary every 500 steps.
+            _profiling = self.gpu_config.enable_step_profiler
+            if _profiling:
+                import time as _time
+                _prof = {}
+                _t0 = _time.perf_counter()
+
+            # Cache cp_prev_firing_states.any() ONCE per step to avoid repeated GPU-CPU sync stalls.
+            # This result is used in STP, synaptic propagation, and Hebbian blocks.
+            _prev_any = bool(self.cp_prev_firing_states.any())
+
             # --- 1. Synaptic Plasticity (STP) Update ---
-            base_synaptic_weights = self.cp_connections.data 
+            if _profiling: cp.cuda.Device().synchronize(); _prof['t_init'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
+            base_synaptic_weights = self.cp_connections.data
             effective_synaptic_strength = base_synaptic_weights 
 
             if cfg.enable_short_term_plasticity and self.cp_connections.nnz > 0 and \
@@ -7827,7 +7841,7 @@ class SimulationBridge:
                     self.cp_stp_u, self.cp_stp_x = fused_stp_decay_recovery(
                         self.cp_stp_u, self.cp_stp_x, dt, cfg.stp_tau_f, cfg.stp_tau_d)
 
-                if self.cp_prev_firing_states.any():
+                if _prev_any:
                     coo_matrix_stp = self._get_cached_coo()  # Use cached COO (avoids 40-400ms tocoo() per step)
                     if coo_matrix_stp is None:
                         coo_matrix_stp = self.cp_connections.tocoo(copy=False)  # Fallback
@@ -7865,6 +7879,7 @@ class SimulationBridge:
             else: 
                 effective_connections_matrix = self.cp_connections 
 
+            if _profiling: cp.cuda.Device().synchronize(); _prof['t_stp'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 2. Synaptic Conductance Update & Current Calculation ---
             decay_e = self._cached_decay_e
             decay_i = self._cached_decay_i
@@ -7875,7 +7890,7 @@ class SimulationBridge:
             )
 
             g_e_increase = None  # Track for NMDA input
-            if effective_connections_matrix.nnz > 0 and self.cp_prev_firing_states.any():
+            if effective_connections_matrix.nnz > 0 and _prev_any:
                 prev_fired_float = self.cp_prev_firing_states.astype(cp.float32)
 
                 if cfg.enable_inhibitory_neurons and self.cp_traits is not None:
@@ -7946,6 +7961,7 @@ class SimulationBridge:
                 # Add OU current to total input
                 total_input_current_pA = total_input_current_pA + self.cp_ou_current
 
+            if _profiling: cp.cuda.Device().synchronize(); _prof['t_syn'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 3. Neuron Model Dynamics Update ---
             fired_this_step = cp.zeros(n_neurons, dtype=bool)
 
@@ -8090,6 +8106,11 @@ class SimulationBridge:
 
             self.cp_firing_states[:] = fired_this_step
 
+            # Cache fired_this_step.any() to avoid repeated GPU-CPU synchronization stalls.
+            # Each .any() call forces the GPU pipeline to flush and transfer a scalar to CPU.
+            # This boolean is used 4+ times across Hebbian, STDP, visualization, and homeostasis.
+            _fired_any = bool(fired_this_step.any())
+
             # Accumulate spike count on GPU, sync to CPU periodically (reduces GPU-CPU stalls)
             spike_count_gpu = cp.sum(fired_this_step)
             if self._accumulated_spikes_gpu is None:
@@ -8119,7 +8140,7 @@ class SimulationBridge:
                                                        self.cp_viz_activity_timers) 
 
             if OPENGL_AVAILABLE and opengl_viz_config.get("ENABLE_SYNAPTIC_PULSES", False) and \
-               self.cp_synapse_pulse_timers is not None and fired_this_step.any(): 
+               self.cp_synapse_pulse_timers is not None and _fired_any:
                 if self.cp_connections is not None and self.cp_connections.nnz > 0:
                     coo_matrix_for_pulses = self._get_cached_coo()  # Use cached COO
                     presynaptic_fired_mask_for_pulses = fired_this_step[coo_matrix_for_pulses.row]
@@ -8130,10 +8151,11 @@ class SimulationBridge:
                         self.cp_synapse_pulse_timers[synapses_to_activate_indices] = pulse_lifetime 
                         self.cp_synapse_pulse_progress[synapses_to_activate_indices] = 0.0 
 
+            if _profiling: cp.cuda.Device().synchronize(); _prof['t_dyn'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 4. Hebbian Learning (Long-Term Potentiation/Depression) ---
             if cfg.enable_hebbian_learning and self.cp_connections.nnz > 0 and \
                self.cp_connections.data is not None and self.cp_connections.data.size > 0:
-                if self.cp_prev_firing_states.any() and fired_this_step.any(): 
+                if _prev_any and _fired_any:
                     coo_matrix_heb = self._get_cached_coo()  # Use cached COO
                     pre_fired_mask_heb = self.cp_prev_firing_states[coo_matrix_heb.row] 
                     post_fired_mask_heb = fired_this_step[coo_matrix_heb.col] 
@@ -8156,7 +8178,7 @@ class SimulationBridge:
                 current_time = self.runtime_state.current_time_ms
 
                 # Update last spike times for neurons that fired this step
-                if fired_this_step.any():
+                if _fired_any:
                     self.cp_last_spike_time = cp.where(
                         fired_this_step,
                         current_time,
@@ -8167,7 +8189,7 @@ class SimulationBridge:
                 # This is the key optimization: instead of computing delta_t for ALL synapses
                 # and filtering, we pre-filter to synapses where pre OR post neuron fired this step.
                 # At typical firing rates (2-10 Hz), this reduces the working set from ~1M to ~1-10K.
-                if fired_this_step.any():
+                if _fired_any:
                     coo_matrix_stdp = self._get_cached_coo()  # Use cached COO
 
                     # Pre-filter: only synapses where pre or post neuron fired THIS step
@@ -8430,6 +8452,7 @@ class SimulationBridge:
                                 # Keep _synapse_count in sync with actual connection matrix
                                 self._synapse_count = self.cp_connections.nnz
 
+            if _profiling: cp.cuda.Device().synchronize(); _prof['t_plast'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 5. Homeostatic Plasticity ---
             # 5a. Adaptive thresholds (Izhikevich-specific)
             if cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
@@ -8469,12 +8492,31 @@ class SimulationBridge:
                     else:
                         cp.clip(self.cp_connections.data, 0.01, 5.0, out=self.cp_connections.data)
 
+            if _profiling: cp.cuda.Device().synchronize(); _prof['t_homeo'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 6. Prepare for Next Step & Record Frame ---
-            self.cp_prev_firing_states[:] = fired_this_step 
+            self.cp_prev_firing_states[:] = fired_this_step
             self.record_current_frame_if_active() # This was the missing method call's target
 
             # Note: Network firing rate calculation deferred to avoid GPU->CPU sync every step
             # Will be updated on-demand when GUI data is requested
+
+            # Step profiler: accumulate and log summary every 500 steps
+            if _profiling:
+                cp.cuda.Device().synchronize()
+                _prof['t_final'] = _time.perf_counter() - _t0
+                if not hasattr(self, '_prof_accum'):
+                    self._prof_accum = {k: 0.0 for k in _prof}
+                    self._prof_count = 0
+                for k, v in _prof.items():
+                    self._prof_accum[k] = self._prof_accum.get(k, 0.0) + v
+                self._prof_count += 1
+                if self._prof_count >= 500:
+                    total = sum(self._prof_accum.values())
+                    parts = " | ".join(f"{k}={v*1000/self._prof_count:.2f}ms ({v/total*100:.0f}%)"
+                                       for k, v in sorted(self._prof_accum.items()))
+                    self._log_console(f"[PROFILER] avg/step: {total*1000/self._prof_count:.2f}ms | {parts}")
+                    self._prof_accum = {}
+                    self._prof_count = 0
 
         except Exception as e:
             self._log_to_ui(f"Error during simulation step: {e}","critical")
