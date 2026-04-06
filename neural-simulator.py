@@ -8292,16 +8292,17 @@ class SimulationBridge:
                     if num_potentiation_events > 0: self._mock_total_plasticity_events += num_potentiation_events
             
             # --- 4b. C2: STDP (Spike-Timing-Dependent Plasticity) ---
+            # Always update last spike times regardless of plasticity gating, so STDP
+            # has valid timing data when plasticity re-enables (e.g. training phase starts).
+            if cfg.enable_stdp and self.cp_last_spike_time is not None and _fired_any:
+                self.cp_last_spike_time = cp.where(
+                    fired_this_step,
+                    self.runtime_state.current_time_ms,
+                    self.cp_last_spike_time
+                )
+
             if _plasticity_gated and cfg.enable_stdp and self.cp_last_spike_time is not None and self.cp_connections.nnz > 0:
                 current_time = self.runtime_state.current_time_ms
-
-                # Update last spike times for neurons that fired this step
-                if _fired_any:
-                    self.cp_last_spike_time = cp.where(
-                        fired_this_step,
-                        current_time,
-                        self.cp_last_spike_time
-                    )
 
                 # Apply STDP updates — ONLY for synapses connected to neurons that just fired.
                 # This is the key optimization: instead of computing delta_t for ALL synapses
@@ -13624,6 +13625,11 @@ def simulation_worker_loop(sim_bridge, local_shutdown_event, command_q, data_q):
                                     sim_bridge.experiment_engine.initialize(
                                         cp_traits=sim_bridge.cp_traits, cp_module=cp
                                     )
+                                    # Ensure inter-group connectivity for STDP learning
+                                    added = sim_bridge.experiment_engine.ensure_inter_group_connectivity(sim_bridge, cp)
+                                    if added > 0:
+                                        sim_bridge._log_to_ui(
+                                            f"Injected {added} inter-group connections for experiment learning paths", "info")
                                 data_q.put({
                                     "type": "EXPERIMENT_LOADED",
                                     "name": exp_config.name,
@@ -13651,6 +13657,11 @@ def simulation_worker_loop(sim_bridge, local_shutdown_event, command_q, data_q):
                                 sim_bridge.experiment_engine.initialize(
                                     cp_traits=sim_bridge.cp_traits, cp_module=cp
                                 )
+                                # Ensure inter-group connectivity for STDP learning
+                                added = sim_bridge.experiment_engine.ensure_inter_group_connectivity(sim_bridge, cp)
+                                if added > 0:
+                                    sim_bridge._log_to_ui(
+                                        f"Injected {added} inter-group connections for experiment learning paths", "info")
                             data_q.put({
                                 "type": "EXPERIMENT_LOADED",
                                 "name": exp_config.name,
