@@ -1,14 +1,14 @@
 {
     "simulation_configuration": {
         "total_simulation_time_ms": 60000.0,
-        "dt_ms": 1.0,
+        "dt_ms": 0.05,
         "num_neurons": 10000,
         "connections_per_neuron": 80,
         "num_traits": 2,
         "seed": -1,
-        "neuron_model_type": "IZHIKEVICH",
+        "neuron_model_type": "HODGKIN_HUXLEY",
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
-        "default_neuron_type_hh": "HH_L5_CORTICAL_PYRAMIDAL_RS",
+        "default_neuron_type_hh": "HH_CEREBELLAR_PURKINJE",
         "neural_profile_name": "CEREBELLAR_CORTEX_SIMPLE",
         "izh_C_val": 100.0,
         "izh_k_val": 0.7,
@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Cerebellar Cortex - Simplified",
-        "description": "Neuron model: IZHIKEVICH (dt=1.0ms). Simplified cerebellar cortex: 75% granule-like excitatory cells, 25% Purkinje/interneuron inhibition. Very fast AMPA decay (2ms) reflecting parallel fiber synapses. Strongly facilitating STP (U=0.1, tau_f=300ms) characteristic of parallel fiber→Purkinje cell synapses (Atluri & Regehr 1996). NMDA DISABLED — parallel fiber synapses are primarily AMPA-mediated. Strong LTD-biased STDP (A-/A+=3:1) reflecting cerebellar LTD as the dominant learning rule (Ito 2001). Low connectivity_k=6 reflecting sparse parallel fiber activation.",
+        "description": "Neuron model: HODGKIN_HUXLEY (dt=0.05ms, HH_CEREBELLAR_PURKINJE preset). Simplified cerebellar cortex: 75% granule-like excitatory cells, 25% Purkinje/interneuron inhibition. Purkinje HH preset features high g_Na (75 mS/cm²), prominent CaT current (1.8 mS/cm²) for complex spike-like Ca²⁺ events, and M-current for spike frequency adaptation. Very fast AMPA decay (2ms) reflecting parallel fiber synapses. Strongly facilitating STP (U=0.1, tau_f=300ms) characteristic of parallel fiber→Purkinje cell synapses (Atluri & Regehr 1996). NMDA DISABLED — parallel fiber synapses are primarily AMPA-mediated. Strong LTD-biased STDP (A-/A+=3:1) reflecting cerebellar LTD as the dominant learning rule (Ito 2001). Low connectivity_k=6 reflecting sparse parallel fiber activation.",
         "literature": [
             "Atluri & Regehr 1996 — Parallel fiber facilitation (U≈0.1, tau_f~300ms)",
             "Ito 2001 — Cerebellar LTD as error-driven motor learning",

@@ -175,6 +175,10 @@ class NeuronType(Enum):
     HH_CA3_PYRAMIDAL_BURST = "HH_CA3_PYRAMIDAL_BURST"
     HH_STN_BURST = "HH_STN_BURST"
     HH_GPE_PACEMAKER = "HH_GPE_PACEMAKER"
+    HH_CEREBELLAR_PURKINJE = "HH_CEREBELLAR_PURKINJE"
+    HH_CEREBELLAR_GRANULE = "HH_CEREBELLAR_GRANULE"
+    HH_SPINAL_MOTOR = "HH_SPINAL_MOTOR"
+    HH_SPINAL_INTERNEURON = "HH_SPINAL_INTERNEURON"
     RS_EXCITATORY_LEGACY = "RS_EXCITATORY_LEGACY"
     FS_INHIBITORY_LEGACY = "FS_INHIBITORY_LEGACY"
     IB_EXCITATORY_LEGACY = "IB_EXCITATORY_LEGACY"
@@ -399,6 +403,76 @@ class DefaultHodgkinHuxleyParams:
         "g_NaP_max": 0.8,
     })
 
+    # Cerebellar Purkinje cell (Khaliq et al. 2003, De Schutter & Bower 1994)
+    # Very high Na for fast simple spikes (~50-100 Hz tonic), strong CaT for complex spikes,
+    # large M-current for afterhyperpolarization, no Ih (Purkinje cells lack it).
+    CEREBELLAR_PURKINJE = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    CEREBELLAR_PURKINJE.update({
+        "C_m": 1.2,           # Larger soma + dendrite
+        "g_Na_max": 75.0,     # High Na for fast tonic spiking
+        "g_K_max": 8.0,       # Strong repolarization
+        "g_CaT_max": 1.8,     # Strong T-type Ca for complex spikes / dendritic bursts
+        "E_CaT": 120.0,
+        "g_h_max": 0.0,       # Purkinje cells lack Ih
+        "g_M_max": 1.5,       # Strong AHP via M-current (BK-like)
+        "g_NaP_max": 0.3,     # Modest persistent Na supports tonic firing
+        "E_L": -68.0,         # Slightly depolarized for spontaneous activity
+        "v_rest_hh": -62.0,
+    })
+
+    # Cerebellar granule cell (D'Angelo et al. 2001)
+    # Small, high input resistance, modest Na/K, with Ih for resonance.
+    CEREBELLAR_GRANULE = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    CEREBELLAR_GRANULE.update({
+        "C_m": 0.8,           # Small cells
+        "g_Na_max": 40.0,     # Moderate Na
+        "g_K_max": 4.0,       # Moderate K
+        "g_L": 0.08,          # High input resistance (lower leak)
+        "g_CaT_max": 0.0,     # Minimal CaT
+        "g_h_max": 0.15,      # Small Ih for resonance
+        "E_h": -30.0,
+        "g_M_max": 0.3,       # Mild adaptation
+        "g_NaP_max": 0.2,     # Small persistent Na
+        "E_L": -72.0,
+        "v_rest_hh": -68.0,
+    })
+
+    # Spinal motor neuron (Powers & Binder 2001, Heckman & Enoka 2012)
+    # Large soma (C ~1.5), strong Na/K for robust action potentials, prominent CaT for
+    # plateau potentials (bistability), strong M-current for spike-frequency adaptation,
+    # persistent Na for amplification of synaptic inputs.
+    SPINAL_MOTOR = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    SPINAL_MOTOR.update({
+        "C_m": 1.5,           # Large alpha motor neuron soma
+        "g_Na_max": 70.0,     # Strong Na for reliable spiking
+        "g_K_max": 7.0,       # Strong repolarization
+        "g_CaT_max": 1.2,     # CaT for plateau potentials / bistability
+        "E_CaT": 120.0,
+        "g_h_max": 0.3,       # Ih contributes to resting conductance
+        "E_h": -30.0,
+        "g_M_max": 1.0,       # M-current for adaptation and AHP
+        "g_NaP_max": 0.6,     # Persistent Na for input amplification
+        "E_L": -70.0,
+        "v_rest_hh": -65.0,
+    })
+
+    # Spinal inhibitory interneuron (Renshaw / Ia inhibitory, Jankowska 2001)
+    # Fast-spiking, moderate size, strong K for brief spikes, CaT for rebound.
+    SPINAL_INTERNEURON = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    SPINAL_INTERNEURON.update({
+        "C_m": 0.9,           # Moderate soma size
+        "g_Na_max": 55.0,     # Moderate Na
+        "g_K_max": 6.0,       # Strong K for fast repolarization
+        "g_CaT_max": 0.8,     # CaT for rebound bursting
+        "E_CaT": 120.0,
+        "g_h_max": 0.15,      # Small Ih
+        "E_h": -30.0,
+        "g_M_max": 0.4,       # Mild adaptation
+        "g_NaP_max": 0.0,     # No persistent Na
+        "E_L": -72.0,
+        "v_rest_hh": -68.0,
+    })
+
     PARAMS = {
         NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS: REALISTIC_L5_PYRAMIDAL_RS_37C.copy(),
         NeuronType.HH_EXCITATORY_DEFAULT_LEGACY: ORIGINAL_HH_PARAMS.copy(), # Legacy can map to original HH
@@ -409,6 +483,10 @@ class DefaultHodgkinHuxleyParams:
         NeuronType.HH_CA3_PYRAMIDAL_BURST: CA3_PYRAMIDAL_BURST.copy(),
         NeuronType.HH_STN_BURST: STN_BURST.copy(),
         NeuronType.HH_GPE_PACEMAKER: GPE_PACEMAKER.copy(),
+        NeuronType.HH_CEREBELLAR_PURKINJE: CEREBELLAR_PURKINJE.copy(),
+        NeuronType.HH_CEREBELLAR_GRANULE: CEREBELLAR_GRANULE.copy(),
+        NeuronType.HH_SPINAL_MOTOR: SPINAL_MOTOR.copy(),
+        NeuronType.HH_SPINAL_INTERNEURON: SPINAL_INTERNEURON.copy(),
     }
     FALLBACK = PARAMS[NeuronType.HH_EXCITATORY_DEFAULT_LEGACY].copy()
 
@@ -1531,9 +1609,9 @@ NEURAL_STRUCTURE_PROFILES = {
     "CEREBELLAR_CORTEX_SIMPLE": {
         "display_name": "Cerebellar Cortex (simplified)",
         "description": "Simplified cerebellar cortex: granule-like excitatory cells and Purkinje / interneuron inhibition.",
-        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
-        # No dedicated cerebellar HH preset yet; use generic cortical RS as HH fallback
-        "default_hh_neuron_type": NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name,
+        "recommended_neuron_model": NeuronModel.HODGKIN_HUXLEY.name,
+        # Dedicated cerebellar HH preset: Purkinje-like for excitatory trait, granule-like available
+        "default_hh_neuron_type": NeuronType.HH_CEREBELLAR_PURKINJE.name,
         "trait_definitions": [
             {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.75},
             {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.25},
@@ -1551,9 +1629,9 @@ NEURAL_STRUCTURE_PROFILES = {
     "SPINAL_CORD_SEGMENT": {
         "display_name": "Spinal Cord Segment",
         "description": "Segment with excitatory motor/interneurons and strong recurrent inhibition.",
-        "recommended_neuron_model": NeuronModel.IZHIKEVICH.name,
-        # Use generic cortical RS HH preset as a first-order approximation for spinal excitatory cells
-        "default_hh_neuron_type": NeuronType.HH_L5_CORTICAL_PYRAMIDAL_RS.name,
+        "recommended_neuron_model": NeuronModel.HODGKIN_HUXLEY.name,
+        # Dedicated spinal HH preset: motor neuron for excitatory trait, interneuron available
+        "default_hh_neuron_type": NeuronType.HH_SPINAL_MOTOR.name,
         "trait_definitions": [
             {"trait_index": 0, "role": "Excitatory", "neuron_type": NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name, "fraction": 0.6},
             {"trait_index": 1, "role": "Inhibitory", "neuron_type": NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name, "fraction": 0.4},

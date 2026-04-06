@@ -1,14 +1,14 @@
 {
     "simulation_configuration": {
         "total_simulation_time_ms": 60000.0,
-        "dt_ms": 1.0,
+        "dt_ms": 0.05,
         "num_neurons": 10000,
         "connections_per_neuron": 120,
         "num_traits": 2,
         "seed": -1,
-        "neuron_model_type": "IZHIKEVICH",
+        "neuron_model_type": "HODGKIN_HUXLEY",
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
-        "default_neuron_type_hh": "HH_L5_CORTICAL_PYRAMIDAL_RS",
+        "default_neuron_type_hh": "HH_SPINAL_MOTOR",
         "neural_profile_name": "SPINAL_CORD_SEGMENT",
         "izh_C_val": 150.0,
         "izh_k_val": 1.2,
@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Spinal Cord Segment - Motor/Interneuron Pool",
-        "description": "Neuron model: IZHIKEVICH (dt=1.0ms). Spinal ventral horn segment: 60% excitatory motor neurons/interneurons, 40% inhibitory Renshaw/Ia interneurons. Higher inhibition ratio reflecting strong reciprocal inhibition in spinal circuits. Strong propagation_strength (0.08) and inhibitory_propagation_strength (0.25) for robust motor pattern generation. Fast synaptic kinetics (AMPA 3ms, GABA 6ms, OU tau=8ms) reflecting spinal cord's need for rapid signal processing. Depressing STP (U=0.35) at descending/afferent synapses. Low p_rewire=0.05 reflecting local circuit organization. Structural plasticity disabled (spinal circuits are anatomically stable post-development).",
+        "description": "Neuron model: HODGKIN_HUXLEY (dt=0.05ms, HH_SPINAL_MOTOR preset). Spinal ventral horn segment: 60% excitatory motor neurons/interneurons, 40% inhibitory Renshaw/Ia interneurons. Motor neuron HH preset features high capacitance (1.5 µF/cm²), strong persistent sodium (0.6 mS/cm²) for plateau potentials, CaT current (1.2 mS/cm²) for bistable firing, and h-current (0.3 mS/cm²) for sag responses. Higher inhibition ratio reflecting strong reciprocal inhibition in spinal circuits. Strong propagation_strength (0.08) and inhibitory_propagation_strength (0.175) for robust motor pattern generation. Fast synaptic kinetics (AMPA 3ms, GABA 6ms, OU tau=8ms) reflecting spinal cord's need for rapid signal processing. Depressing STP (U=0.4) at descending/afferent synapses. Low p_rewire=0.05 reflecting local circuit organization. Structural plasticity disabled (spinal circuits are anatomically stable post-development).",
         "literature": [
             "Renshaw 1946 — Recurrent inhibition in spinal motor circuits",
             "Baldissera et al. 1981 — Spinal E/I ratio ~60/40",
