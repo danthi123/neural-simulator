@@ -69,6 +69,7 @@ The entire simulator is contained in `neural-simulator.py` (~12,000 lines). This
 ### Simulation Step Pipeline (in `_run_one_simulation_step()`)
 1. STP (Short-Term Plasticity) update – per-connection-type if enabled
 2. Synaptic conductance update – uses E_inh = -75mV with 0.7x propagation scaling
+2b. **Experiment stimulus injection** – if ExperimentEngine is running, adds stimulus current
 3. Background noise (OU process)
 4. Neuron dynamics (model-specific: Izhikevich/HH/AdEx)
 5. Plasticity updates (Hebbian, STDP, reward modulation, structural with activity bias, homeostasis)
@@ -147,6 +148,40 @@ Two critical functions must be kept in sync for profile save/load to work correc
 - `_populate_ui_from_config_dict()`: Takes a configuration dictionary and updates all UI widgets to reflect those values
 
 These are inverse operations: any parameter exposed in the UI must have a corresponding getter and setter to ensure bidirectional sync between UI state and simulation configuration.
+
+### Experiment & Stimulus System (~lines 2427-3950)
+Programmable experiment infrastructure for stimulus injection, I/O neuron group management,
+training protocols, readout/analysis, and multi-phase experiment orchestration.
+
+**Key Classes:**
+- `StimulusManager`: Generates per-step GPU current arrays from stimulus channel definitions
+- `NeuronGroupManager`: Manages designated neuron populations (input/output/hidden)
+- `ReadoutEngine`: Measures population firing rates, spike counts, PSD via FFT
+- `TrainingProtocolEngine`: Trial state machine for RL reward, supervised error, associative pairing
+- `ExperimentEngine`: Top-level orchestrator called once per simulation step
+- `ExperimentPresets`: Factory for 4 common experiment configurations
+
+**Stimulus Pattern Types:** CONSTANT, PULSE_TRAIN, SINUSOIDAL, RAMP, POISSON_SPIKE_TRAIN, GAUSSIAN_NOISE, CUSTOM_WAVEFORM
+
+**Training Modes:** ASSOCIATIVE_PAIRING (Rescorla-Wagner), REINFORCEMENT_LEARNING (R-STDP), SUPERVISED_TARGET, RESERVOIR_READOUT
+
+**Built-in Presets:**
+- Basic Stimulus-Response: inject current, measure output transfer function
+- Associative Conditioning (CS-US): Pavlovian pairing with STDP learning
+- Reinforcement Learning (R-STDP): Three-factor learning with reward/punishment
+- Frequency Response Characterization: Sinusoidal sweep for bandpass analysis
+
+**Integration Points:**
+- SimulationBridge: `self.experiment_engine` initialized in `apply_simulation_configuration_core()`
+- Simulation step: experiment stimulus injected after synaptic current, before OU noise
+- Queue messages: LOAD_EXPERIMENT_PRESET, LOAD_EXPERIMENT_CONFIG, START_EXPERIMENT, STOP_EXPERIMENT, GET_EXPERIMENT_STATUS, SAVE_EXPERIMENT_LOG
+- Checkpoint: experiment config saved/restored as JSON attribute in HDF5
+- UI: "Experiment & Stimulus System" collapsing header with preset selector, controls, status display
+
+**Running Tests:**
+```bash
+pytest tests/test_experiment_system.py -v
+```
 
 ## File Formats
 

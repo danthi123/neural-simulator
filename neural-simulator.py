@@ -15,7 +15,7 @@ import queue
 import signal
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field, asdict, fields
-from typing import List
+from typing import List, Dict
 
 # Optional: hdf5plugin for LZ4 compression (faster than gzip)
 try:
@@ -2424,6 +2424,1534 @@ def fused_eligibility_trace_decay(trace, decay_factor):
     return trace * decay_factor
 
 
+# =============================================================================
+# EXPERIMENT & STIMULUS SYSTEM
+# =============================================================================
+# Provides programmable stimulus injection, I/O neuron group management,
+# training protocols, readout/analysis, and multi-phase experiment execution.
+#
+# Architecture:
+#   ExperimentEngine (top-level orchestrator)
+#   ├── StimulusManager (generates per-step current arrays)
+#   │   └── StimulusChannel (pattern + target neurons + timing)
+#   ├── NeuronGroupManager (input/output/hidden populations)
+#   ├── ReadoutEngine (measures network responses)
+#   ├── TrainingProtocol (learning protocol execution)
+#   └── ExperimentLog (trial-level data logging)
+#
+# Scientific references:
+#   - Current injection patterns: Destexhe & Bhatt 2015 (in vivo conductance injection)
+#   - Poisson input: Shadlen & Newsome 1998 (neural variability)
+#   - R-STDP training: Izhikevich 2007, Frémaux et al. 2013 (three-factor learning)
+#   - Reservoir computing: Maass et al. 2002, Jaeger & Haas 2004
+#   - Associative conditioning: Rescorla & Wagner 1972
+# =============================================================================
+
+# --- Stimulus Pattern Definitions ---
+
+class StimulusPatternType(Enum):
+    """Available stimulus waveform types."""
+    CONSTANT = "CONSTANT"                   # DC current step
+    PULSE_TRAIN = "PULSE_TRAIN"             # Repeated brief pulses
+    SINUSOIDAL = "SINUSOIDAL"               # AC sinusoidal current
+    RAMP = "RAMP"                           # Linearly increasing/decreasing
+    POISSON_SPIKE_TRAIN = "POISSON_SPIKE_TRAIN"  # Poisson-distributed brief pulses
+    GAUSSIAN_NOISE = "GAUSSIAN_NOISE"       # White noise injection
+    CUSTOM_WAVEFORM = "CUSTOM_WAVEFORM"     # Arbitrary time series
+
+class NeuronGroupRole(Enum):
+    """Role designation for neuron populations."""
+    INPUT = "INPUT"       # Receives external stimuli
+    OUTPUT = "OUTPUT"     # Activity decoded as network response
+    HIDDEN = "HIDDEN"     # Internal processing (default)
+
+class TrainingMode(Enum):
+    """Available training paradigms."""
+    NONE = "NONE"
+    ASSOCIATIVE_PAIRING = "ASSOCIATIVE_PAIRING"         # CS-US Pavlovian conditioning
+    REINFORCEMENT_LEARNING = "REINFORCEMENT_LEARNING"   # R-STDP with reward signal
+    SUPERVISED_TARGET = "SUPERVISED_TARGET"               # Target rate matching
+    RESERVOIR_READOUT = "RESERVOIR_READOUT"               # Fixed recurrent, train readout
+
+class ExperimentPhaseType(Enum):
+    """Types of experiment phases."""
+    BASELINE = "BASELINE"           # Record baseline activity (no stimulus)
+    STIMULUS = "STIMULUS"           # Present stimulus, record response
+    TRAINING = "TRAINING"           # Active learning with stimulus + feedback
+    TESTING = "TESTING"             # Test learned responses (no weight updates)
+    REST = "REST"                   # Inter-trial interval (no stimulus)
+
+@dataclass
+class StimulusPattern:
+    """Defines a single stimulus waveform.
+
+    All amplitudes are in picoamperes (pA), consistent with simulator units.
+    """
+    pattern_type: str = StimulusPatternType.CONSTANT.name
+    amplitude_pA: float = 100.0       # Peak amplitude
+
+    # Pulse train parameters
+    pulse_frequency_hz: float = 20.0  # Pulse repetition rate
+    pulse_duration_ms: float = 2.0    # Each pulse width
+
+    # Sinusoidal parameters
+    frequency_hz: float = 10.0        # Oscillation frequency
+    phase_offset_rad: float = 0.0     # Phase offset
+    dc_offset_pA: float = 0.0         # DC baseline offset
+
+    # Ramp parameters
+    start_amplitude_pA: float = 0.0   # Ramp start
+    end_amplitude_pA: float = 200.0   # Ramp end
+
+    # Poisson spike train parameters
+    poisson_rate_hz: float = 50.0     # Mean firing rate of Poisson process
+    spike_current_pA: float = 200.0   # Current per spike event
+    spike_duration_ms: float = 1.0    # Duration of each spike current pulse
+
+    # Gaussian noise parameters
+    noise_mean_pA: float = 0.0
+    noise_std_pA: float = 50.0
+
+    # Custom waveform (time_ms, amplitude_pA pairs — interpolated)
+    custom_waveform_times_ms: List[float] = field(default_factory=list)
+    custom_waveform_values_pA: List[float] = field(default_factory=list)
+
+@dataclass
+class StimulusChannel:
+    """Maps a StimulusPattern to target neurons with timing.
+
+    Multiple channels can be active simultaneously, targeting different
+    neuron groups with different patterns (e.g., CS to input, US to output).
+    """
+    name: str = "channel_0"
+    pattern: StimulusPattern = field(default_factory=StimulusPattern)
+
+    # Targeting
+    target_group_name: str = ""              # NeuronGroup name (preferred)
+    target_neuron_indices: List[int] = field(default_factory=list)  # Direct indices (override)
+    target_trait_index: int = -1             # Target by trait (-1 = all)
+    target_fraction: float = 1.0            # Fraction of target group to stimulate (0-1)
+
+    # Timing
+    onset_ms: float = 0.0                   # Start time relative to phase/trial start
+    duration_ms: float = 1000.0             # How long the stimulus is active
+
+    # Noise overlay
+    add_trial_noise: bool = False           # Add per-trial amplitude jitter
+    trial_noise_std_fraction: float = 0.1   # Fraction of amplitude as noise std
+
+    enabled: bool = True
+
+@dataclass
+class NeuronGroup:
+    """A designated population of neurons with a functional role.
+
+    Groups are defined by their indices into the network's neuron array.
+    The role determines how the group interacts with stimulus/readout systems.
+    """
+    name: str = "group_0"
+    role: str = NeuronGroupRole.HIDDEN.name
+    neuron_indices: List[int] = field(default_factory=list)
+
+    # Auto-population rules (used when indices not specified directly)
+    trait_index: int = -1              # Populate from trait (-1 = manual)
+    index_start: int = 0              # Range-based population
+    index_end: int = 0
+    fraction_of_trait: float = 1.0    # Use only a fraction of the trait
+
+    # Visual distinction
+    highlight_color: List[float] = field(default_factory=lambda: [1.0, 1.0, 0.0, 1.0])  # RGBA
+
+@dataclass
+class ReadoutConfig:
+    """Configuration for network response measurement."""
+    # Firing rate readout
+    rate_window_ms: float = 50.0           # Sliding window for rate estimation
+    rate_group_names: List[str] = field(default_factory=list)  # Groups to measure
+
+    # Spike count readout
+    spike_count_window_ms: float = 100.0   # Window for spike counting
+
+    # Power spectral density
+    enable_psd: bool = False
+    psd_window_ms: float = 500.0           # FFT window
+    psd_freq_range_hz: List[float] = field(default_factory=lambda: [1.0, 200.0])
+
+    # Cross-correlation
+    enable_cross_correlation: bool = False
+    correlation_max_lag_ms: float = 50.0
+    correlation_group_pairs: List[List[str]] = field(default_factory=list)
+
+@dataclass
+class TrainingConfig:
+    """Configuration for training protocols.
+
+    Scientific grounding:
+    - Associative: Rescorla-Wagner 1972, Bi & Poo 1998 (STDP timing rules)
+    - R-STDP: Izhikevich 2007 Ch.7, Frémaux et al. 2013
+    - Supervised: Pfister et al. 2006 (target rate learning)
+    - Reservoir: Maass et al. 2002, Jaeger & Haas 2004
+    """
+    mode: str = TrainingMode.NONE.name
+
+    # Trial structure
+    num_trials: int = 100
+    trial_duration_ms: float = 500.0       # Single trial length
+    inter_trial_interval_ms: float = 200.0 # Rest between trials
+
+    # Associative pairing (CS-US)
+    cs_channel_name: str = ""              # Conditioned stimulus channel
+    us_channel_name: str = ""              # Unconditioned stimulus channel
+    cs_us_delay_ms: float = 100.0          # Delay between CS onset and US onset
+
+    # Reinforcement learning
+    reward_delay_ms: float = 50.0          # Delay after response to deliver reward
+    reward_magnitude: float = 1.0          # Reward signal strength
+    punishment_magnitude: float = -0.5     # Punishment signal strength
+    target_output_group: str = ""          # Output group to evaluate
+    target_min_rate_hz: float = 10.0       # Min rate for "correct" response
+    target_max_rate_hz: float = 50.0       # Max rate for "correct" response
+
+    # Supervised target matching
+    target_rates_per_group: Dict[str, float] = field(default_factory=dict)  # {group_name: target_hz}
+    supervised_error_gain: float = 0.01    # Error signal scaling
+
+    # Reservoir computing
+    reservoir_freeze_weights: bool = True  # Freeze recurrent weights
+    readout_learning_rate: float = 0.01    # Readout weight update rate
+    readout_regularization: float = 1e-4   # L2 regularization
+
+    # Evaluation
+    eval_window_ms: float = 100.0          # Response evaluation window
+    eval_delay_ms: float = 50.0            # Delay after stimulus onset before evaluation
+    success_threshold: float = 0.7         # Fraction of correct trials for convergence
+
+@dataclass
+class ExperimentPhase:
+    """A single phase in a multi-phase experiment."""
+    name: str = "phase_0"
+    phase_type: str = ExperimentPhaseType.BASELINE.name
+    duration_ms: float = 5000.0
+
+    # Which stimulus channels are active during this phase
+    active_channels: List[str] = field(default_factory=list)
+
+    # Training config for TRAINING phases
+    training_config: TrainingConfig = field(default_factory=TrainingConfig)
+
+    # Phase-specific overrides
+    enable_plasticity: bool = True         # Allow weight changes
+    record_data: bool = True               # Log readout data
+
+    # Repeat control (for trial-based phases)
+    num_repetitions: int = 1               # Repeat this phase N times
+
+@dataclass
+class ExperimentConfig:
+    """Top-level experiment configuration.
+
+    An experiment consists of:
+    1. Neuron group definitions (input/output/hidden populations)
+    2. Stimulus channels (patterns mapped to groups with timing)
+    3. Phases (ordered sequence of baseline/stimulus/training/testing)
+    4. Readout configuration (what to measure)
+    """
+    name: str = "Untitled Experiment"
+    description: str = ""
+
+    # Component definitions
+    neuron_groups: List[NeuronGroup] = field(default_factory=list)
+    stimulus_channels: List[StimulusChannel] = field(default_factory=list)
+    phases: List[ExperimentPhase] = field(default_factory=list)
+    readout: ReadoutConfig = field(default_factory=ReadoutConfig)
+
+    # Global settings
+    random_seed: int = -1                   # Experiment RNG seed (-1 = random)
+    save_experiment_log: bool = True
+    log_trial_details: bool = True          # Log per-trial metrics
+
+    enabled: bool = False                   # Master enable for experiment system
+
+
+# --- Stimulus Manager (generates per-step current arrays) ---
+
+class StimulusManager:
+    """Generates GPU current arrays from stimulus channel definitions.
+
+    Called once per simulation step to compute the total stimulus current
+    for all active channels. The result is a CuPy array of shape [n_neurons]
+    that gets added to the neuron dynamics input current.
+    """
+
+    def __init__(self, n_neurons, dt_ms):
+        self.n_neurons = n_neurons
+        self.dt_ms = dt_ms
+        self.channels = []               # List[StimulusChannel]
+        self.cp_stimulus_current = None  # GPU array [n_neurons], float32
+        self._channel_target_masks = {}  # channel_name -> GPU bool array
+        self._poisson_active = {}        # channel_name -> GPU bool array for active spikes
+        self._poisson_timers = {}        # channel_name -> GPU float32 for spike duration countdown
+        self._rng = None
+
+    def initialize(self, channels, group_manager, cp_module):
+        """Set up channels with resolved neuron targets.
+
+        Args:
+            channels: List[StimulusChannel] definitions
+            group_manager: NeuronGroupManager for resolving group names
+            cp_module: CuPy module reference
+        """
+        self.channels = [ch for ch in channels if ch.enabled]
+        self.cp_stimulus_current = cp_module.zeros(self.n_neurons, dtype=cp_module.float32)
+        self._rng = cp_module.random
+
+        for ch in self.channels:
+            # Resolve target neuron indices
+            indices = self._resolve_targets(ch, group_manager)
+            mask = cp_module.zeros(self.n_neurons, dtype=cp_module.bool_)
+            if len(indices) > 0:
+                mask[cp_module.array(indices, dtype=cp_module.int32)] = True
+            self._channel_target_masks[ch.name] = mask
+
+            # Initialize Poisson state if needed
+            if ch.pattern.pattern_type == StimulusPatternType.POISSON_SPIKE_TRAIN.name:
+                self._poisson_active[ch.name] = cp_module.zeros(self.n_neurons, dtype=cp_module.bool_)
+                self._poisson_timers[ch.name] = cp_module.zeros(self.n_neurons, dtype=cp_module.float32)
+
+    def _resolve_targets(self, channel, group_manager):
+        """Resolve a channel's target specification to neuron indices."""
+        if channel.target_neuron_indices:
+            indices = channel.target_neuron_indices
+        elif channel.target_group_name and group_manager:
+            group = group_manager.get_group(channel.target_group_name)
+            if group:
+                indices = group.neuron_indices
+            else:
+                indices = list(range(self.n_neurons))
+        elif channel.target_trait_index >= 0:
+            # Will be resolved later when trait info is available
+            indices = list(range(self.n_neurons))
+        else:
+            indices = list(range(self.n_neurons))
+
+        # Apply fraction sampling
+        if channel.target_fraction < 1.0 and len(indices) > 0:
+            n_select = max(1, int(len(indices) * channel.target_fraction))
+            import random as py_random
+            indices = sorted(py_random.sample(indices, n_select))
+
+        return indices
+
+    def compute_step_current(self, current_time_ms, phase_start_ms, cp_module):
+        """Compute total stimulus current for the current timestep.
+
+        Args:
+            current_time_ms: Absolute simulation time
+            phase_start_ms: Start time of current experiment phase
+            cp_module: CuPy module reference
+
+        Returns:
+            cp array of shape [n_neurons] with stimulus current in pA
+        """
+        self.cp_stimulus_current[:] = 0.0
+
+        for ch in self.channels:
+            mask = self._channel_target_masks.get(ch.name)
+            if mask is None:
+                continue
+
+            # Check timing (relative to phase start)
+            t_rel = current_time_ms - phase_start_ms
+            if t_rel < ch.onset_ms or t_rel >= (ch.onset_ms + ch.duration_ms):
+                continue
+
+            t_in_stim = t_rel - ch.onset_ms  # Time since stimulus onset
+
+            # Generate current based on pattern type
+            current = self._compute_pattern(ch, t_in_stim, mask, cp_module)
+
+            # Apply to target neurons
+            self.cp_stimulus_current += current * mask.astype(cp_module.float32)
+
+        return self.cp_stimulus_current
+
+    def _compute_pattern(self, channel, t_ms, mask, cp_module):
+        """Compute current value for a single channel at time t_ms."""
+        p = channel.pattern
+
+        if p.pattern_type == StimulusPatternType.CONSTANT.name:
+            return cp_module.float32(p.amplitude_pA)
+
+        elif p.pattern_type == StimulusPatternType.PULSE_TRAIN.name:
+            period_ms = 1000.0 / max(p.pulse_frequency_hz, 0.01)
+            t_in_period = t_ms % period_ms
+            is_on = t_in_period < p.pulse_duration_ms
+            return cp_module.float32(p.amplitude_pA * float(is_on))
+
+        elif p.pattern_type == StimulusPatternType.SINUSOIDAL.name:
+            import math
+            phase = 2.0 * math.pi * p.frequency_hz * t_ms / 1000.0 + p.phase_offset_rad
+            value = p.amplitude_pA * math.sin(phase) + p.dc_offset_pA
+            return cp_module.float32(value)
+
+        elif p.pattern_type == StimulusPatternType.RAMP.name:
+            fraction = min(1.0, t_ms / max(channel.duration_ms, 0.001))
+            value = p.start_amplitude_pA + fraction * (p.end_amplitude_pA - p.start_amplitude_pA)
+            return cp_module.float32(value)
+
+        elif p.pattern_type == StimulusPatternType.POISSON_SPIKE_TRAIN.name:
+            # Poisson process: probability of spike in dt
+            p_spike = p.poisson_rate_hz * self.dt_ms / 1000.0
+            n_targets = int(cp_module.sum(mask).get())
+
+            # Decrement active spike timers
+            timers = self._poisson_timers.get(channel.name)
+            if timers is not None:
+                timers -= self.dt_ms
+                timers_clipped = cp_module.maximum(timers, cp_module.float32(0.0))
+                self._poisson_timers[channel.name] = timers_clipped
+
+                # New spikes where timer has expired
+                new_spikes = (self._rng.random(self.n_neurons) < p_spike) & mask & (timers_clipped <= 0)
+                self._poisson_timers[channel.name] = cp_module.where(
+                    new_spikes, cp_module.float32(p.spike_duration_ms), timers_clipped
+                )
+
+                # Current is applied where timer > 0
+                is_active = self._poisson_timers[channel.name] > 0
+                return cp_module.where(is_active, cp_module.float32(p.spike_current_pA), cp_module.float32(0.0))
+
+            return cp_module.float32(0.0)
+
+        elif p.pattern_type == StimulusPatternType.GAUSSIAN_NOISE.name:
+            noise = self._rng.randn(self.n_neurons).astype(cp_module.float32) * p.noise_std_pA + p.noise_mean_pA
+            return noise
+
+        elif p.pattern_type == StimulusPatternType.CUSTOM_WAVEFORM.name:
+            if len(p.custom_waveform_times_ms) < 2:
+                return cp_module.float32(0.0)
+            # Linear interpolation of custom waveform
+            import numpy as np_interp_helper
+            value = float(np_interp_helper.interp(t_ms, p.custom_waveform_times_ms, p.custom_waveform_values_pA))
+            return cp_module.float32(value)
+
+        return cp_module.float32(0.0)
+
+    def cleanup(self):
+        """Release GPU memory."""
+        self.cp_stimulus_current = None
+        self._channel_target_masks.clear()
+        self._poisson_active.clear()
+        self._poisson_timers.clear()
+
+
+# --- Neuron Group Manager ---
+
+class NeuronGroupManager:
+    """Manages designated neuron populations (input/output/hidden).
+
+    Provides methods to resolve group names to indices, populate groups
+    from trait arrays, and track group statistics.
+    """
+
+    def __init__(self, n_neurons):
+        self.n_neurons = n_neurons
+        self.groups = {}  # name -> NeuronGroup
+
+    def initialize(self, group_defs, cp_traits=None, cp_module=None):
+        """Set up neuron groups from definitions.
+
+        Args:
+            group_defs: List[NeuronGroup] definitions
+            cp_traits: GPU array of neuron trait indices (for trait-based population)
+            cp_module: CuPy module reference
+        """
+        for gdef in group_defs:
+            group = NeuronGroup(
+                name=gdef.name,
+                role=gdef.role,
+                neuron_indices=list(gdef.neuron_indices),
+                trait_index=gdef.trait_index,
+                index_start=gdef.index_start,
+                index_end=gdef.index_end,
+                fraction_of_trait=gdef.fraction_of_trait,
+                highlight_color=list(gdef.highlight_color),
+            )
+
+            # Auto-populate from trait if indices not specified
+            if not group.neuron_indices:
+                if group.trait_index >= 0 and cp_traits is not None:
+                    trait_np = cp_traits.get() if hasattr(cp_traits, 'get') else cp_traits
+                    all_trait_indices = [int(i) for i in range(len(trait_np)) if int(trait_np[i]) == group.trait_index]
+
+                    if group.fraction_of_trait < 1.0 and len(all_trait_indices) > 0:
+                        import random as py_random
+                        n_select = max(1, int(len(all_trait_indices) * group.fraction_of_trait))
+                        group.neuron_indices = sorted(py_random.sample(all_trait_indices, n_select))
+                    else:
+                        group.neuron_indices = all_trait_indices
+
+                elif group.index_end > group.index_start:
+                    group.neuron_indices = list(range(
+                        max(0, group.index_start),
+                        min(self.n_neurons, group.index_end)
+                    ))
+
+            self.groups[group.name] = group
+
+    def get_group(self, name):
+        """Get a neuron group by name."""
+        return self.groups.get(name)
+
+    def get_groups_by_role(self, role):
+        """Get all groups with a specific role."""
+        return [g for g in self.groups.values() if g.role == role]
+
+    def get_group_mask(self, name, cp_module):
+        """Get a boolean GPU mask for a neuron group."""
+        group = self.groups.get(name)
+        if group is None or not group.neuron_indices:
+            return cp_module.zeros(self.n_neurons, dtype=cp_module.bool_)
+        mask = cp_module.zeros(self.n_neurons, dtype=cp_module.bool_)
+        mask[cp_module.array(group.neuron_indices, dtype=cp_module.int32)] = True
+        return mask
+
+    def get_summary(self):
+        """Get a summary of all groups for logging."""
+        summary = {}
+        for name, group in self.groups.items():
+            summary[name] = {
+                "role": group.role,
+                "n_neurons": len(group.neuron_indices),
+                "trait_index": group.trait_index,
+            }
+        return summary
+
+
+# --- Readout Engine ---
+
+class ReadoutEngine:
+    """Measures and logs network responses per neuron group.
+
+    Provides real-time population firing rate, spike counts,
+    and optional spectral analysis. All computations stay on GPU
+    where possible to minimize transfer overhead.
+    """
+
+    def __init__(self, n_neurons, dt_ms):
+        self.n_neurons = n_neurons
+        self.dt_ms = dt_ms
+        self.config = ReadoutConfig()
+        self.group_manager = None
+
+        # Rate estimation buffers (circular buffers on GPU)
+        self._rate_buffers = {}          # group_name -> circular buffer of spike counts
+        self._rate_buffer_idx = 0
+        self._rate_buffer_size = 0
+
+        # Spike count accumulators
+        self._spike_counts = {}          # group_name -> int accumulator
+        self._spike_count_window_steps = 0
+        self._spike_count_step = 0
+
+        # PSD buffers
+        self._psd_buffers = {}           # group_name -> voltage history buffer
+        self._psd_buffer_idx = 0
+
+        # Current readout values (CPU, for UI display and logging)
+        self.current_rates = {}          # group_name -> float (Hz)
+        self.current_spike_counts = {}   # group_name -> int
+        self.current_psd = {}            # group_name -> dict with freqs, power
+
+        # Trial-level metrics
+        self.trial_metrics = []          # List of per-trial measurement dicts
+
+    def initialize(self, config, group_manager, cp_module):
+        """Set up readout buffers.
+
+        Args:
+            config: ReadoutConfig
+            group_manager: NeuronGroupManager
+            cp_module: CuPy module reference
+        """
+        self.config = config
+        self.group_manager = group_manager
+
+        # Rate buffer: store spike counts per step for sliding window
+        self._rate_buffer_size = max(1, int(config.rate_window_ms / self.dt_ms))
+        self._rate_buffer_idx = 0
+
+        groups_to_track = config.rate_group_names
+        if not groups_to_track:
+            # Default: track all output groups
+            groups_to_track = [g.name for g in group_manager.get_groups_by_role(NeuronGroupRole.OUTPUT.name)]
+            # Also track input groups for comparison
+            groups_to_track += [g.name for g in group_manager.get_groups_by_role(NeuronGroupRole.INPUT.name)]
+
+        for gname in groups_to_track:
+            group = group_manager.get_group(gname)
+            if group and group.neuron_indices:
+                self._rate_buffers[gname] = cp_module.zeros(self._rate_buffer_size, dtype=cp_module.float32)
+                self._spike_counts[gname] = 0
+                self.current_rates[gname] = 0.0
+                self.current_spike_counts[gname] = 0
+
+        # Spike count window
+        self._spike_count_window_steps = max(1, int(config.spike_count_window_ms / self.dt_ms))
+        self._spike_count_step = 0
+
+        # PSD buffer
+        if config.enable_psd:
+            psd_steps = max(1, int(config.psd_window_ms / self.dt_ms))
+            for gname in groups_to_track:
+                self._psd_buffers[gname] = cp_module.zeros(psd_steps, dtype=cp_module.float32)
+            self._psd_buffer_idx = 0
+
+    def update(self, cp_firing_states, cp_membrane_potential_v, cp_module):
+        """Update readout measurements for the current timestep.
+
+        Args:
+            cp_firing_states: GPU bool array [n_neurons] of current spikes
+            cp_membrane_potential_v: GPU float32 array [n_neurons] of membrane voltages
+            cp_module: CuPy module reference
+        """
+        for gname, buffer in self._rate_buffers.items():
+            group = self.group_manager.get_group(gname)
+            if group is None or not group.neuron_indices:
+                continue
+
+            # Count spikes in this group this step
+            group_indices = cp_module.array(group.neuron_indices, dtype=cp_module.int32)
+            group_spikes = cp_firing_states[group_indices]
+            n_spikes = float(cp_module.sum(group_spikes).get())
+            n_neurons_in_group = len(group.neuron_indices)
+
+            # Update circular rate buffer
+            buffer[self._rate_buffer_idx % self._rate_buffer_size] = n_spikes
+
+            # Compute instantaneous population rate (Hz)
+            total_spikes_in_window = float(cp_module.sum(buffer).get())
+            window_duration_s = self._rate_buffer_size * self.dt_ms / 1000.0
+            if n_neurons_in_group > 0 and window_duration_s > 0:
+                self.current_rates[gname] = total_spikes_in_window / (n_neurons_in_group * window_duration_s)
+
+            # Update spike count accumulator
+            self._spike_counts[gname] = self._spike_counts.get(gname, 0) + int(n_spikes)
+
+        # Advance circular buffer index
+        self._rate_buffer_idx += 1
+
+        # Spike count window reset
+        self._spike_count_step += 1
+        if self._spike_count_step >= self._spike_count_window_steps:
+            for gname in self._spike_counts:
+                self.current_spike_counts[gname] = self._spike_counts[gname]
+                self._spike_counts[gname] = 0
+            self._spike_count_step = 0
+
+        # PSD buffer update
+        if self.config.enable_psd:
+            psd_size = len(next(iter(self._psd_buffers.values()))) if self._psd_buffers else 0
+            for gname, psd_buf in self._psd_buffers.items():
+                group = self.group_manager.get_group(gname)
+                if group and group.neuron_indices:
+                    group_indices = cp_module.array(group.neuron_indices, dtype=cp_module.int32)
+                    mean_v = float(cp_module.mean(cp_membrane_potential_v[group_indices]).get())
+                    psd_buf[self._psd_buffer_idx % psd_size] = mean_v
+            self._psd_buffer_idx += 1
+
+    def compute_psd(self, group_name, cp_module):
+        """Compute power spectral density for a group.
+
+        Returns dict with 'frequencies_hz' and 'power' arrays (numpy).
+        """
+        import numpy as np
+
+        psd_buf = self._psd_buffers.get(group_name)
+        if psd_buf is None:
+            return None
+
+        signal = psd_buf.get()  # Transfer to CPU
+
+        # FFT
+        n = len(signal)
+        if n < 2:
+            return None
+
+        fft_vals = np.fft.rfft(signal - np.mean(signal))
+        power = np.abs(fft_vals) ** 2 / n
+        freqs = np.fft.rfftfreq(n, d=self.dt_ms / 1000.0)
+
+        # Filter to requested range
+        f_min, f_max = self.config.psd_freq_range_hz
+        mask = (freqs >= f_min) & (freqs <= f_max)
+
+        return {
+            'frequencies_hz': freqs[mask],
+            'power': power[mask],
+        }
+
+    def get_trial_snapshot(self):
+        """Get current readout state for trial logging."""
+        return {
+            'rates': dict(self.current_rates),
+            'spike_counts': dict(self.current_spike_counts),
+        }
+
+    def cleanup(self):
+        """Release GPU memory."""
+        self._rate_buffers.clear()
+        self._psd_buffers.clear()
+        self._spike_counts.clear()
+
+
+# --- Training Protocol Engine ---
+
+class TrainingProtocolEngine:
+    """Executes training protocols: associative pairing, RL, supervised, reservoir.
+
+    Coordinates stimulus timing, response measurement, and weight modification
+    signals across trials. Works with the existing reward modulation and STDP
+    systems rather than replacing them.
+    """
+
+    def __init__(self, dt_ms):
+        self.dt_ms = dt_ms
+        self.config = TrainingConfig()
+        self.readout = None
+        self.group_manager = None
+
+        # Trial state
+        self.current_trial = 0
+        self.trial_start_ms = 0.0
+        self.trial_phase = "idle"       # idle, stimulus, eval, reward, iti
+        self.trials_data = []            # Per-trial performance metrics
+
+        # Reservoir readout weights (CPU numpy for simplicity)
+        self._readout_weights = None     # [n_output, n_reservoir]
+        self._readout_bias = None        # [n_output]
+
+        # Performance tracking
+        self.recent_accuracy = 0.0
+        self.is_converged = False
+
+    def initialize(self, config, readout, group_manager):
+        """Set up training protocol.
+
+        Args:
+            config: TrainingConfig
+            readout: ReadoutEngine
+            group_manager: NeuronGroupManager
+        """
+        self.config = config
+        self.readout = readout
+        self.group_manager = group_manager
+        self.current_trial = 0
+        self.trial_start_ms = 0.0
+        self.trial_phase = "idle"
+        self.trials_data = []
+        self.recent_accuracy = 0.0
+        self.is_converged = False
+
+        # Initialize reservoir readout weights if needed
+        if config.mode == TrainingMode.RESERVOIR_READOUT.name:
+            output_groups = group_manager.get_groups_by_role(NeuronGroupRole.OUTPUT.name)
+            hidden_groups = group_manager.get_groups_by_role(NeuronGroupRole.HIDDEN.name)
+
+            n_output = sum(len(g.neuron_indices) for g in output_groups)
+            n_reservoir = sum(len(g.neuron_indices) for g in hidden_groups)
+
+            if n_output > 0 and n_reservoir > 0:
+                import numpy as np
+                self._readout_weights = np.zeros((n_output, n_reservoir), dtype=np.float32)
+                self._readout_bias = np.zeros(n_output, dtype=np.float32)
+
+    def update(self, current_time_ms, sim_bridge_ref):
+        """Per-step training protocol update.
+
+        Called every simulation step. Manages trial state machine and
+        generates reward/error signals at appropriate times.
+
+        Args:
+            current_time_ms: Absolute simulation time
+            sim_bridge_ref: Reference to SimulationBridge for setting reward signal
+
+        Returns:
+            dict with training state info for logging/UI
+        """
+        if self.config.mode == TrainingMode.NONE.name:
+            return {"mode": "none"}
+
+        if self.is_converged:
+            return {"mode": self.config.mode, "converged": True, "trial": self.current_trial}
+
+        if self.current_trial >= self.config.num_trials:
+            return {"mode": self.config.mode, "completed": True, "trial": self.current_trial}
+
+        t_in_trial = current_time_ms - self.trial_start_ms
+        trial_total_ms = self.config.trial_duration_ms + self.config.inter_trial_interval_ms
+
+        # Trial state machine
+        if self.trial_phase == "idle":
+            self.trial_phase = "stimulus"
+            self.trial_start_ms = current_time_ms
+            t_in_trial = 0.0
+
+        if t_in_trial >= trial_total_ms:
+            # Trial complete — advance to next trial
+            self._end_trial(current_time_ms, sim_bridge_ref)
+            self.current_trial += 1
+            self.trial_start_ms = current_time_ms
+            self.trial_phase = "stimulus"
+            t_in_trial = 0.0
+
+            # Check convergence
+            if len(self.trials_data) >= 10:
+                recent = self.trials_data[-10:]
+                self.recent_accuracy = sum(1 for t in recent if t.get("success", False)) / len(recent)
+                if self.recent_accuracy >= self.config.success_threshold:
+                    self.is_converged = True
+
+        # Evaluation window
+        if (t_in_trial >= self.config.eval_delay_ms and
+            t_in_trial < self.config.eval_delay_ms + self.config.eval_window_ms):
+            self.trial_phase = "eval"
+
+        # Reward delivery (for RL mode)
+        if (self.config.mode == TrainingMode.REINFORCEMENT_LEARNING.name and
+            self.trial_phase == "eval" and
+            t_in_trial >= self.config.eval_delay_ms + self.config.eval_window_ms):
+            self._deliver_reward(sim_bridge_ref)
+            self.trial_phase = "iti"
+
+        # Supervised error signal (continuous during stimulus)
+        if (self.config.mode == TrainingMode.SUPERVISED_TARGET.name and
+            t_in_trial < self.config.trial_duration_ms):
+            self._apply_supervised_error(sim_bridge_ref)
+
+        # ITI: clear reward signal
+        if t_in_trial >= self.config.trial_duration_ms:
+            if hasattr(sim_bridge_ref, 'cfg') and sim_bridge_ref.cfg is not None:
+                sim_bridge_ref.cfg.current_reward_signal = 0.0
+
+        return {
+            "mode": self.config.mode,
+            "trial": self.current_trial,
+            "total_trials": self.config.num_trials,
+            "phase": self.trial_phase,
+            "accuracy": self.recent_accuracy,
+            "t_in_trial": t_in_trial,
+        }
+
+    def _end_trial(self, current_time_ms, sim_bridge_ref):
+        """Record trial outcome."""
+        snapshot = self.readout.get_trial_snapshot() if self.readout else {}
+
+        trial_data = {
+            "trial": self.current_trial,
+            "time_ms": current_time_ms,
+            "rates": snapshot.get("rates", {}),
+            "spike_counts": snapshot.get("spike_counts", {}),
+        }
+
+        # Evaluate success for RL
+        if self.config.mode == TrainingMode.REINFORCEMENT_LEARNING.name:
+            target_group = self.config.target_output_group
+            rate = snapshot.get("rates", {}).get(target_group, 0.0)
+            success = self.config.target_min_rate_hz <= rate <= self.config.target_max_rate_hz
+            trial_data["success"] = success
+            trial_data["output_rate"] = rate
+
+        self.trials_data.append(trial_data)
+
+    def _deliver_reward(self, sim_bridge_ref):
+        """Deliver reward or punishment based on output group activity."""
+        if not hasattr(sim_bridge_ref, 'cfg') or sim_bridge_ref.cfg is None:
+            return
+
+        target_group = self.config.target_output_group
+        rate = self.readout.current_rates.get(target_group, 0.0) if self.readout else 0.0
+
+        if self.config.target_min_rate_hz <= rate <= self.config.target_max_rate_hz:
+            sim_bridge_ref.cfg.current_reward_signal = self.config.reward_magnitude
+        else:
+            sim_bridge_ref.cfg.current_reward_signal = self.config.punishment_magnitude
+
+    def _apply_supervised_error(self, sim_bridge_ref):
+        """Apply supervised error signal as reward modulation.
+
+        Uses the existing reward signal mechanism as an error channel.
+        Error = (target_rate - actual_rate) * gain
+        """
+        if not hasattr(sim_bridge_ref, 'cfg') or sim_bridge_ref.cfg is None:
+            return
+
+        total_error = 0.0
+        n_groups = 0
+
+        for group_name, target_rate in self.config.target_rates_per_group.items():
+            actual_rate = self.readout.current_rates.get(group_name, 0.0) if self.readout else 0.0
+            error = target_rate - actual_rate
+            total_error += error
+            n_groups += 1
+
+        if n_groups > 0:
+            mean_error = total_error / n_groups
+            sim_bridge_ref.cfg.current_reward_signal = mean_error * self.config.supervised_error_gain
+
+    def get_training_summary(self):
+        """Get summary of training progress."""
+        return {
+            "mode": self.config.mode,
+            "trials_completed": self.current_trial,
+            "total_trials": self.config.num_trials,
+            "recent_accuracy": self.recent_accuracy,
+            "is_converged": self.is_converged,
+            "trials_data_count": len(self.trials_data),
+        }
+
+
+# --- Experiment Engine (Top-Level Orchestrator) ---
+
+class ExperimentEngine:
+    """Orchestrates multi-phase experiments with stimulus, training, and readout.
+
+    The engine is called once per simulation step by SimulationBridge.
+    It manages:
+    1. Phase transitions (baseline → stimulus → training → testing → rest)
+    2. Stimulus current generation via StimulusManager
+    3. Response measurement via ReadoutEngine
+    4. Training protocol execution via TrainingProtocolEngine
+    5. Experiment logging
+
+    Usage:
+        engine = ExperimentEngine(n_neurons, dt_ms)
+        engine.load_experiment(experiment_config)
+        engine.initialize(cp_traits, cp_module)
+
+        # In simulation loop:
+        stimulus_current = engine.step(current_time_ms, cp_firing_states, cp_v, sim_bridge, cp)
+    """
+
+    def __init__(self, n_neurons, dt_ms):
+        self.n_neurons = n_neurons
+        self.dt_ms = dt_ms
+
+        self.config = None                # ExperimentConfig
+        self.stimulus_manager = StimulusManager(n_neurons, dt_ms)
+        self.group_manager = NeuronGroupManager(n_neurons)
+        self.readout = ReadoutEngine(n_neurons, dt_ms)
+        self.training = TrainingProtocolEngine(dt_ms)
+
+        # Phase management
+        self.phases = []                  # List[ExperimentPhase]
+        self.current_phase_idx = 0
+        self.phase_start_ms = 0.0
+        self.phase_repetition = 0
+        self.is_experiment_running = False
+        self.is_experiment_complete = False
+
+        # Experiment log
+        self.log = []                     # List of timestamped event dicts
+        self._log_interval_steps = 100    # Log readout every N steps
+        self._step_counter = 0
+
+        # Active stimulus channels for current phase
+        self._current_phase_channels = []
+
+    def load_experiment(self, config):
+        """Load an experiment configuration.
+
+        Args:
+            config: ExperimentConfig dataclass
+        """
+        self.config = config
+        self.phases = list(config.phases)
+        self.current_phase_idx = 0
+        self.phase_repetition = 0
+        self.is_experiment_running = False
+        self.is_experiment_complete = False
+        self.log = []
+
+    def initialize(self, cp_traits=None, cp_module=None):
+        """Initialize all subsystems with GPU arrays.
+
+        Args:
+            cp_traits: GPU array of neuron trait indices
+            cp_module: CuPy module reference
+        """
+        if self.config is None:
+            return
+
+        # Initialize neuron groups
+        self.group_manager = NeuronGroupManager(self.n_neurons)
+        self.group_manager.initialize(self.config.neuron_groups, cp_traits, cp_module)
+
+        # Initialize stimulus manager
+        self.stimulus_manager = StimulusManager(self.n_neurons, self.dt_ms)
+        self.stimulus_manager.initialize(self.config.stimulus_channels, self.group_manager, cp_module)
+
+        # Initialize readout
+        self.readout = ReadoutEngine(self.n_neurons, self.dt_ms)
+        self.readout.initialize(self.config.readout, self.group_manager, cp_module)
+
+        # Log initialization
+        self.log.append({
+            "event": "experiment_initialized",
+            "groups": self.group_manager.get_summary(),
+            "channels": len(self.config.stimulus_channels),
+            "phases": len(self.phases),
+        })
+
+    def start(self, current_time_ms):
+        """Begin experiment execution."""
+        self.is_experiment_running = True
+        self.is_experiment_complete = False
+        self.current_phase_idx = 0
+        self.phase_repetition = 0
+        self.phase_start_ms = current_time_ms
+        self._step_counter = 0
+
+        if self.phases:
+            self._enter_phase(self.phases[0], current_time_ms)
+
+        self.log.append({"event": "experiment_started", "time_ms": current_time_ms})
+
+    def stop(self):
+        """Stop experiment execution."""
+        self.is_experiment_running = False
+        self.log.append({"event": "experiment_stopped"})
+
+    def step(self, current_time_ms, cp_firing_states, cp_membrane_potential_v, sim_bridge_ref, cp_module):
+        """Execute one experiment step.
+
+        Called every simulation step. Returns stimulus current array.
+
+        Args:
+            current_time_ms: Absolute simulation time
+            cp_firing_states: GPU bool array [n_neurons]
+            cp_membrane_potential_v: GPU float32 array [n_neurons]
+            sim_bridge_ref: Reference to SimulationBridge
+            cp_module: CuPy module
+
+        Returns:
+            cp array [n_neurons] with stimulus current in pA (zeros if no stimulus)
+        """
+        if not self.is_experiment_running or self.is_experiment_complete:
+            return cp_module.zeros(self.n_neurons, dtype=cp_module.float32)
+
+        # Check phase transition
+        self._check_phase_transition(current_time_ms)
+
+        # Update readout
+        self.readout.update(cp_firing_states, cp_membrane_potential_v, cp_module)
+
+        # Update training protocol
+        if self.phases and self.current_phase_idx < len(self.phases):
+            current_phase = self.phases[self.current_phase_idx]
+            if current_phase.phase_type == ExperimentPhaseType.TRAINING.name:
+                self.training.update(current_time_ms, sim_bridge_ref)
+
+        # Compute stimulus current
+        stimulus_current = self.stimulus_manager.compute_step_current(
+            current_time_ms, self.phase_start_ms, cp_module
+        )
+
+        # Periodic logging
+        self._step_counter += 1
+        if self._step_counter % self._log_interval_steps == 0:
+            self._log_step(current_time_ms)
+
+        return stimulus_current
+
+    def _check_phase_transition(self, current_time_ms):
+        """Check if current phase has ended and transition to next."""
+        if not self.phases or self.current_phase_idx >= len(self.phases):
+            self.is_experiment_complete = True
+            self.is_experiment_running = False
+            self.log.append({"event": "experiment_complete", "time_ms": current_time_ms})
+            return
+
+        current_phase = self.phases[self.current_phase_idx]
+        elapsed = current_time_ms - self.phase_start_ms
+
+        if elapsed >= current_phase.duration_ms:
+            self.phase_repetition += 1
+
+            if self.phase_repetition < current_phase.num_repetitions:
+                # Repeat current phase
+                self.phase_start_ms = current_time_ms
+                self.log.append({
+                    "event": "phase_repeat",
+                    "phase": current_phase.name,
+                    "repetition": self.phase_repetition,
+                    "time_ms": current_time_ms,
+                })
+            else:
+                # Move to next phase
+                self.current_phase_idx += 1
+                self.phase_repetition = 0
+                self.phase_start_ms = current_time_ms
+
+                if self.current_phase_idx < len(self.phases):
+                    self._enter_phase(self.phases[self.current_phase_idx], current_time_ms)
+                else:
+                    self.is_experiment_complete = True
+                    self.is_experiment_running = False
+                    self.log.append({"event": "experiment_complete", "time_ms": current_time_ms})
+
+    def _enter_phase(self, phase, current_time_ms):
+        """Set up a new experiment phase."""
+        self.log.append({
+            "event": "phase_entered",
+            "phase": phase.name,
+            "type": phase.phase_type,
+            "time_ms": current_time_ms,
+        })
+
+        # Configure active stimulus channels
+        for ch in self.stimulus_manager.channels:
+            ch.enabled = (ch.name in phase.active_channels) if phase.active_channels else True
+
+        # Configure training if this is a training phase
+        if phase.phase_type == ExperimentPhaseType.TRAINING.name:
+            self.training.initialize(
+                phase.training_config, self.readout, self.group_manager
+            )
+            self.training.trial_phase = "idle"
+            self.training.current_trial = 0
+            self.training.trial_start_ms = current_time_ms
+
+    def _log_step(self, current_time_ms):
+        """Log periodic readout data."""
+        if not self.config or not self.config.save_experiment_log:
+            return
+
+        entry = {
+            "event": "readout",
+            "time_ms": current_time_ms,
+            "rates": dict(self.readout.current_rates),
+            "spike_counts": dict(self.readout.current_spike_counts),
+        }
+
+        if self.phases and self.current_phase_idx < len(self.phases):
+            entry["phase"] = self.phases[self.current_phase_idx].name
+            entry["phase_type"] = self.phases[self.current_phase_idx].phase_type
+
+        training_state = self.training.get_training_summary()
+        if training_state["mode"] != TrainingMode.NONE.name:
+            entry["training"] = training_state
+
+        self.log.append(entry)
+
+    def get_experiment_status(self):
+        """Get current experiment status for UI display."""
+        status = {
+            "is_running": self.is_experiment_running,
+            "is_complete": self.is_experiment_complete,
+            "current_phase_idx": self.current_phase_idx,
+            "total_phases": len(self.phases),
+            "readout_rates": dict(self.readout.current_rates),
+            "readout_spike_counts": dict(self.readout.current_spike_counts),
+        }
+
+        if self.phases and self.current_phase_idx < len(self.phases):
+            phase = self.phases[self.current_phase_idx]
+            status["current_phase_name"] = phase.name
+            status["current_phase_type"] = phase.phase_type
+            status["phase_repetition"] = self.phase_repetition
+
+        training_state = self.training.get_training_summary()
+        if training_state["mode"] != TrainingMode.NONE.name:
+            status["training"] = training_state
+
+        return status
+
+    def save_log(self, filepath):
+        """Save experiment log to JSON file."""
+        import json
+        with open(filepath, 'w') as f:
+            json.dump({
+                "experiment_name": self.config.name if self.config else "Unknown",
+                "description": self.config.description if self.config else "",
+                "groups": self.group_manager.get_summary() if self.group_manager else {},
+                "training_summary": self.training.get_training_summary(),
+                "log_entries": self.log,
+                "trial_data": self.training.trials_data,
+            }, f, indent=2, default=str)
+
+    def cleanup(self):
+        """Release all GPU resources."""
+        self.stimulus_manager.cleanup()
+        self.readout.cleanup()
+        self.is_experiment_running = False
+
+
+# --- Experiment Preset Definitions ---
+# Pre-built experiment configurations for common neuroscience paradigms.
+
+class ExperimentPresets:
+    """Factory for common experiment configurations.
+
+    Each preset returns a fully configured ExperimentConfig that can be
+    loaded directly or customized before use.
+    """
+
+    @staticmethod
+    def basic_stimulus_response(input_amplitude_pA=150.0, stimulus_duration_ms=500.0,
+                                 num_trials=20, input_group_size=100, output_group_size=100):
+        """Basic stimulus-response: inject current into input group, measure output.
+
+        Good for characterizing network transfer functions and I/O mapping.
+        """
+        return ExperimentConfig(
+            name="Basic Stimulus-Response",
+            description="Inject constant current into input group, measure output group firing rate.",
+            neuron_groups=[
+                NeuronGroup(name="input", role=NeuronGroupRole.INPUT.name,
+                           index_start=0, index_end=input_group_size,
+                           highlight_color=[0.0, 1.0, 0.0, 1.0]),
+                NeuronGroup(name="output", role=NeuronGroupRole.OUTPUT.name,
+                           index_start=input_group_size, index_end=input_group_size + output_group_size,
+                           highlight_color=[1.0, 0.0, 0.0, 1.0]),
+            ],
+            stimulus_channels=[
+                StimulusChannel(
+                    name="input_drive",
+                    pattern=StimulusPattern(
+                        pattern_type=StimulusPatternType.CONSTANT.name,
+                        amplitude_pA=input_amplitude_pA,
+                    ),
+                    target_group_name="input",
+                    onset_ms=100.0,
+                    duration_ms=stimulus_duration_ms,
+                ),
+            ],
+            phases=[
+                ExperimentPhase(name="baseline", phase_type=ExperimentPhaseType.BASELINE.name,
+                               duration_ms=2000.0, active_channels=[]),
+                ExperimentPhase(name="stimulus", phase_type=ExperimentPhaseType.STIMULUS.name,
+                               duration_ms=stimulus_duration_ms + 200.0,
+                               active_channels=["input_drive"],
+                               num_repetitions=num_trials),
+                ExperimentPhase(name="post", phase_type=ExperimentPhaseType.BASELINE.name,
+                               duration_ms=2000.0, active_channels=[]),
+            ],
+            readout=ReadoutConfig(
+                rate_window_ms=50.0,
+                rate_group_names=["input", "output"],
+                spike_count_window_ms=100.0,
+            ),
+            enabled=True,
+        )
+
+    @staticmethod
+    def associative_conditioning(cs_amplitude_pA=100.0, us_amplitude_pA=200.0,
+                                  cs_us_delay_ms=100.0, num_trials=100,
+                                  input_group_size=100, output_group_size=100):
+        """Classical conditioning: pair CS (input) with US (output), test if CS alone evokes response.
+
+        Based on Pavlovian conditioning with STDP as the learning mechanism.
+        The CS-US delay determines the temporal window for STDP potentiation.
+        """
+        return ExperimentConfig(
+            name="Associative Conditioning (CS-US Pairing)",
+            description="Pavlovian conditioning: repeated CS-US pairing followed by CS-alone testing.",
+            neuron_groups=[
+                NeuronGroup(name="cs_input", role=NeuronGroupRole.INPUT.name,
+                           index_start=0, index_end=input_group_size,
+                           highlight_color=[0.0, 1.0, 0.0, 1.0]),
+                NeuronGroup(name="us_output", role=NeuronGroupRole.OUTPUT.name,
+                           index_start=input_group_size, index_end=input_group_size + output_group_size,
+                           highlight_color=[1.0, 0.0, 0.0, 1.0]),
+            ],
+            stimulus_channels=[
+                StimulusChannel(
+                    name="cs",
+                    pattern=StimulusPattern(
+                        pattern_type=StimulusPatternType.PULSE_TRAIN.name,
+                        amplitude_pA=cs_amplitude_pA,
+                        pulse_frequency_hz=40.0,
+                        pulse_duration_ms=5.0,
+                    ),
+                    target_group_name="cs_input",
+                    onset_ms=0.0,
+                    duration_ms=200.0,
+                ),
+                StimulusChannel(
+                    name="us",
+                    pattern=StimulusPattern(
+                        pattern_type=StimulusPatternType.CONSTANT.name,
+                        amplitude_pA=us_amplitude_pA,
+                    ),
+                    target_group_name="us_output",
+                    onset_ms=cs_us_delay_ms,
+                    duration_ms=100.0,
+                ),
+            ],
+            phases=[
+                # Pre-training baseline: CS alone
+                ExperimentPhase(name="pre_test", phase_type=ExperimentPhaseType.TESTING.name,
+                               duration_ms=500.0, active_channels=["cs"],
+                               enable_plasticity=False, num_repetitions=5),
+                # Training: CS + US paired
+                ExperimentPhase(name="training", phase_type=ExperimentPhaseType.TRAINING.name,
+                               duration_ms=500.0, active_channels=["cs", "us"],
+                               training_config=TrainingConfig(
+                                   mode=TrainingMode.ASSOCIATIVE_PAIRING.name,
+                                   num_trials=num_trials,
+                                   trial_duration_ms=400.0,
+                                   inter_trial_interval_ms=100.0,
+                                   cs_channel_name="cs",
+                                   us_channel_name="us",
+                                   cs_us_delay_ms=cs_us_delay_ms,
+                               ),
+                               num_repetitions=num_trials),
+                # Post-training test: CS alone (US disabled)
+                ExperimentPhase(name="post_test", phase_type=ExperimentPhaseType.TESTING.name,
+                               duration_ms=500.0, active_channels=["cs"],
+                               enable_plasticity=False, num_repetitions=10),
+            ],
+            readout=ReadoutConfig(
+                rate_window_ms=50.0,
+                rate_group_names=["cs_input", "us_output"],
+            ),
+            enabled=True,
+        )
+
+    @staticmethod
+    def reinforcement_learning(stimulus_amplitude_pA=120.0, num_trials=200,
+                                input_group_size=100, output_group_size=50):
+        """Reward-modulated STDP training: stimulus → response → reward/punishment.
+
+        Based on three-factor learning rule (Izhikevich 2007, Frémaux et al. 2013).
+        Uses the existing eligibility trace and reward modulation infrastructure.
+        """
+        return ExperimentConfig(
+            name="Reinforcement Learning (R-STDP)",
+            description="Three-factor learning: stimulus evokes response, reward/punishment shapes connections.",
+            neuron_groups=[
+                NeuronGroup(name="stimulus", role=NeuronGroupRole.INPUT.name,
+                           index_start=0, index_end=input_group_size,
+                           highlight_color=[0.0, 1.0, 0.5, 1.0]),
+                NeuronGroup(name="response", role=NeuronGroupRole.OUTPUT.name,
+                           index_start=input_group_size, index_end=input_group_size + output_group_size,
+                           highlight_color=[1.0, 0.5, 0.0, 1.0]),
+            ],
+            stimulus_channels=[
+                StimulusChannel(
+                    name="input_pattern",
+                    pattern=StimulusPattern(
+                        pattern_type=StimulusPatternType.POISSON_SPIKE_TRAIN.name,
+                        poisson_rate_hz=50.0,
+                        spike_current_pA=stimulus_amplitude_pA,
+                        spike_duration_ms=1.0,
+                    ),
+                    target_group_name="stimulus",
+                    onset_ms=0.0,
+                    duration_ms=300.0,
+                ),
+            ],
+            phases=[
+                ExperimentPhase(name="baseline", phase_type=ExperimentPhaseType.BASELINE.name,
+                               duration_ms=3000.0),
+                ExperimentPhase(name="rl_training", phase_type=ExperimentPhaseType.TRAINING.name,
+                               duration_ms=600.0,
+                               active_channels=["input_pattern"],
+                               training_config=TrainingConfig(
+                                   mode=TrainingMode.REINFORCEMENT_LEARNING.name,
+                                   num_trials=num_trials,
+                                   trial_duration_ms=400.0,
+                                   inter_trial_interval_ms=200.0,
+                                   reward_delay_ms=50.0,
+                                   reward_magnitude=1.0,
+                                   punishment_magnitude=-0.5,
+                                   target_output_group="response",
+                                   target_min_rate_hz=15.0,
+                                   target_max_rate_hz=40.0,
+                                   eval_delay_ms=100.0,
+                                   eval_window_ms=200.0,
+                               ),
+                               num_repetitions=num_trials),
+                ExperimentPhase(name="post_test", phase_type=ExperimentPhaseType.TESTING.name,
+                               duration_ms=600.0,
+                               active_channels=["input_pattern"],
+                               enable_plasticity=False,
+                               num_repetitions=20),
+            ],
+            readout=ReadoutConfig(
+                rate_window_ms=50.0,
+                rate_group_names=["stimulus", "response"],
+            ),
+            enabled=True,
+        )
+
+    @staticmethod
+    def frequency_response_characterization(freq_start_hz=1.0, freq_end_hz=100.0,
+                                             num_frequencies=20, duration_per_freq_ms=2000.0,
+                                             amplitude_pA=100.0, input_group_size=200):
+        """Characterize network frequency response with sinusoidal stimulation.
+
+        Sweeps through frequencies to measure how the network filters/transforms
+        oscillatory input — reveals resonance frequencies and bandpass properties.
+        """
+        import math
+
+        channels = []
+        phases = [
+            ExperimentPhase(name="baseline", phase_type=ExperimentPhaseType.BASELINE.name,
+                           duration_ms=3000.0, active_channels=[]),
+        ]
+
+        # Generate log-spaced frequencies
+        log_start = math.log10(max(freq_start_hz, 0.1))
+        log_end = math.log10(max(freq_end_hz, 1.0))
+
+        for i in range(num_frequencies):
+            frac = i / max(num_frequencies - 1, 1)
+            freq = 10 ** (log_start + frac * (log_end - log_start))
+
+            ch_name = f"sin_{freq:.1f}hz"
+            channels.append(StimulusChannel(
+                name=ch_name,
+                pattern=StimulusPattern(
+                    pattern_type=StimulusPatternType.SINUSOIDAL.name,
+                    amplitude_pA=amplitude_pA,
+                    frequency_hz=freq,
+                    dc_offset_pA=amplitude_pA * 0.5,  # Ensure positive current
+                ),
+                target_group_name="input",
+                onset_ms=100.0,
+                duration_ms=duration_per_freq_ms - 200.0,
+            ))
+
+            phases.append(ExperimentPhase(
+                name=f"freq_{freq:.1f}hz",
+                phase_type=ExperimentPhaseType.STIMULUS.name,
+                duration_ms=duration_per_freq_ms,
+                active_channels=[ch_name],
+                enable_plasticity=False,
+            ))
+
+        phases.append(ExperimentPhase(name="post", phase_type=ExperimentPhaseType.BASELINE.name,
+                                     duration_ms=2000.0))
+
+        return ExperimentConfig(
+            name="Frequency Response Characterization",
+            description=f"Sinusoidal sweep {freq_start_hz}-{freq_end_hz} Hz to characterize network filtering.",
+            neuron_groups=[
+                NeuronGroup(name="input", role=NeuronGroupRole.INPUT.name,
+                           index_start=0, index_end=input_group_size,
+                           highlight_color=[0.0, 0.8, 1.0, 1.0]),
+                NeuronGroup(name="network", role=NeuronGroupRole.OUTPUT.name,
+                           index_start=input_group_size, index_end=input_group_size * 3,
+                           highlight_color=[1.0, 0.8, 0.0, 1.0]),
+            ],
+            stimulus_channels=channels,
+            phases=phases,
+            readout=ReadoutConfig(
+                rate_window_ms=100.0,
+                rate_group_names=["input", "network"],
+                enable_psd=True,
+                psd_window_ms=1000.0,
+            ),
+            enabled=True,
+        )
+
+    @staticmethod
+    def get_preset_names():
+        """Return list of available preset names."""
+        return [
+            "Basic Stimulus-Response",
+            "Associative Conditioning (CS-US)",
+            "Reinforcement Learning (R-STDP)",
+            "Frequency Response Characterization",
+        ]
+
+    @staticmethod
+    def get_preset(name, **kwargs):
+        """Get a preset by name."""
+        presets = {
+            "Basic Stimulus-Response": ExperimentPresets.basic_stimulus_response,
+            "Associative Conditioning (CS-US)": ExperimentPresets.associative_conditioning,
+            "Reinforcement Learning (R-STDP)": ExperimentPresets.reinforcement_learning,
+            "Frequency Response Characterization": ExperimentPresets.frequency_response_characterization,
+        }
+        factory = presets.get(name)
+        if factory:
+            return factory(**kwargs)
+        return None
+
+
+# --- JSON Serialization for Experiment Configs ---
+
+def experiment_config_to_dict(config):
+    """Serialize an ExperimentConfig to a JSON-safe dictionary."""
+    import dataclasses
+
+    def _to_dict(obj):
+        if dataclasses.is_dataclass(obj):
+            d = {}
+            for f in dataclasses.fields(obj):
+                val = getattr(obj, f.name)
+                d[f.name] = _to_dict(val)
+            return d
+        elif isinstance(obj, list):
+            return [_to_dict(item) for item in obj]
+        elif isinstance(obj, dict):
+            return {k: _to_dict(v) for k, v in obj.items()}
+        elif isinstance(obj, Enum):
+            return obj.name
+        else:
+            return obj
+
+    return _to_dict(config)
+
+
+def experiment_config_from_dict(d):
+    """Deserialize an ExperimentConfig from a dictionary."""
+
+    def _build_pattern(pd):
+        if pd is None:
+            return StimulusPattern()
+        return StimulusPattern(**{k: v for k, v in pd.items()})
+
+    def _build_channel(cd):
+        cd = dict(cd)
+        if 'pattern' in cd:
+            cd['pattern'] = _build_pattern(cd['pattern'])
+        return StimulusChannel(**cd)
+
+    def _build_group(gd):
+        return NeuronGroup(**gd)
+
+    def _build_readout(rd):
+        return ReadoutConfig(**rd)
+
+    def _build_training(td):
+        return TrainingConfig(**td)
+
+    def _build_phase(pd):
+        pd = dict(pd)
+        if 'training_config' in pd:
+            pd['training_config'] = _build_training(pd['training_config'])
+        return ExperimentPhase(**pd)
+
+    d = dict(d)
+    if 'neuron_groups' in d:
+        d['neuron_groups'] = [_build_group(g) for g in d['neuron_groups']]
+    if 'stimulus_channels' in d:
+        d['stimulus_channels'] = [_build_channel(c) for c in d['stimulus_channels']]
+    if 'phases' in d:
+        d['phases'] = [_build_phase(p) for p in d['phases']]
+    if 'readout' in d:
+        d['readout'] = _build_readout(d['readout'])
+
+    return ExperimentConfig(**d)
+
+
+
+
 # --- Simulation Bridge (Core Logic) ---
 class SimulationBridge:
     def __init__(self, sim_core_ref=None, core_config=None, viz_config=None, runtime_state=None, gpu_config=None):
@@ -2515,6 +4043,10 @@ class SimulationBridge:
 
         # Eligibility trace for STDP/reward
         self.cp_eligibility_trace = None
+
+        # Experiment & stimulus system
+        self.experiment_engine = None
+        self.experiment_config = None  # ExperimentConfig dataclass
 
         # Performance profiling - now controlled by gpu_config
         self._profile_timings = {
@@ -4379,6 +5911,23 @@ class SimulationBridge:
             self._log_to_ui("Failed to initialize simulation from new configuration. Critical error.", "critical")
             return False
 
+        # Initialize experiment engine if an experiment config is loaded
+        if self.experiment_config is not None and self.experiment_config.enabled:
+            try:
+                self.experiment_engine = ExperimentEngine(
+                    self.core_config.num_neurons, self.core_config.dt_ms
+                )
+                self.experiment_engine.load_experiment(self.experiment_config)
+                self.experiment_engine.initialize(
+                    cp_traits=self.cp_traits, cp_module=cp
+                )
+                self._log_to_ui(f"Experiment engine initialized: {self.experiment_config.name}", "info")
+            except Exception as e:
+                self._log_to_ui(f"Failed to initialize experiment engine: {e}", "warning")
+                self.experiment_engine = None
+        else:
+            self.experiment_engine = None
+
         self.runtime_state.current_time_ms = 0.0
         self.runtime_state.current_time_step = 0
         self._log_to_ui(f"Sim config applied ({self.core_config.neuron_model_type}, N={self.core_config.num_neurons}). Sim re-initialized.", "success")
@@ -4419,6 +5968,14 @@ class SimulationBridge:
                 cp.get_default_pinned_memory_pool().free_all_blocks()
             except Exception as e:
                 self._log_console(f"Error freeing CuPy memory: {e}", "warning")
+
+        # Cleanup experiment engine GPU resources
+        if self.experiment_engine is not None:
+            try:
+                self.experiment_engine.cleanup()
+            except Exception:
+                pass
+            self.experiment_engine = None
 
         # Invalidate COO cache so stale data from previous network doesn't persist
         self._cached_coo_matrix = None
@@ -6335,6 +7892,19 @@ class SimulationBridge:
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
 
+            # --- 2.2b. Experiment Stimulus Injection ---
+            if self.experiment_engine is not None and self.experiment_engine.is_experiment_running:
+                try:
+                    experiment_stimulus = self.experiment_engine.step(
+                        self.runtime_state.current_time_ms,
+                        self.cp_firing_states,
+                        self.cp_membrane_potential_v,
+                        self, cp
+                    )
+                    total_input_current_pA = total_input_current_pA + experiment_stimulus
+                except Exception as e:
+                    self._log_console(f"Experiment engine step error: {e}", "warning")
+
             # --- 2.3. NMDA conductance with Mg²⁺ block (Jahr & Stevens 1990) ---
             if cfg.enable_nmda and self.cp_conductance_g_nmda is not None:
                 # Update NMDA dual-exponential conductance and compute Mg²⁺-gated current
@@ -7018,6 +8588,13 @@ class SimulationBridge:
                     if "filter_settings" in gui_config_snapshot and gui_config_snapshot["filter_settings"]:
                          h5f.attrs["dpg_filter_settings_json"] = json.dumps(gui_config_snapshot["filter_settings"])
 
+                # Save experiment config if present
+                if self.experiment_config is not None:
+                    try:
+                        exp_dict = experiment_config_to_dict(self.experiment_config)
+                        h5f.attrs["experiment_config_json"] = json.dumps(exp_dict)
+                    except Exception as e_exp:
+                        self._log_console(f"Warning: Could not save experiment config to checkpoint: {e_exp}", "warning")
 
             self._log_to_ui(f"Checkpoint saved successfully to {filepath}", "success")
             if self.ui_queue: self.ui_queue.put({"type": "CHECKPOINT_SAVE_SUCCESS", "filepath": filepath})
@@ -7214,12 +8791,29 @@ class SimulationBridge:
                     try: loaded_gui_settings["filter_settings"] = json.loads(h5f.attrs["dpg_filter_settings_json"])
                     except: self._log_console("Warning: Could not parse dpg_filter_settings_json from checkpoint.", "warning")
                 
-                if "neuron_types_list_for_viz_json" in h5f.attrs: 
-                    try: 
+                if "neuron_types_list_for_viz_json" in h5f.attrs:
+                    try:
                         self.runtime_state.neuron_types_list_for_viz = json.loads(h5f.attrs["neuron_types_list_for_viz_json"])
                         loaded_gui_settings["neuron_types_list_for_viz"] = self.runtime_state.neuron_types_list_for_viz
                     except: self._log_console("Warning: Could not parse neuron_types_list_for_viz_json from checkpoint.", "warning")
-                
+
+                # Restore experiment config if present in checkpoint
+                if "experiment_config_json" in h5f.attrs:
+                    try:
+                        exp_dict = json.loads(h5f.attrs["experiment_config_json"])
+                        self.experiment_config = experiment_config_from_dict(exp_dict)
+                        if self.experiment_config.enabled and self.is_initialized:
+                            self.experiment_engine = ExperimentEngine(
+                                self.core_config.num_neurons, self.core_config.dt_ms
+                            )
+                            self.experiment_engine.load_experiment(self.experiment_config)
+                            self.experiment_engine.initialize(
+                                cp_traits=self.cp_traits, cp_module=cp
+                            )
+                            self._log_console(f"Experiment config restored from checkpoint: {self.experiment_config.name}", "info")
+                    except Exception as e_exp:
+                        self._log_console(f"Warning: Could not restore experiment config: {e_exp}", "warning")
+
                 if self.ui_queue:
                     initial_gui_data = self.get_initial_sim_data_snapshot() 
                     self.ui_queue.put({
@@ -7403,6 +8997,15 @@ class SimulationBridge:
         # Example: if self.cp_membrane_potential_v is not None and n > 0:
         #     sample_indices = cp.random.choice(cp.arange(n), size=min(n, 10), replace=False) # Small sample for plotting
         #     gui_data_dict["neuron_Vm_trace_sample_np"] = cp.asnumpy(self.cp_membrane_potential_v[sample_indices])
+
+        # Experiment system status (lightweight — no GPU sync needed)
+        if self.experiment_engine is not None:
+            try:
+                gui_data_dict["experiment_status"] = self.experiment_engine.get_experiment_status()
+            except Exception:
+                gui_data_dict["experiment_status"] = {"is_running": False}
+        else:
+            gui_data_dict["experiment_status"] = None
 
         return gui_data_dict
 
@@ -9365,6 +10968,130 @@ def _scan_profile_directory():
     _FULL_PROFILE_MAP = new_map
 
 
+# =============================================================================
+# EXPERIMENT SYSTEM UI CALLBACKS
+# =============================================================================
+
+def _handle_experiment_preset_change(preset_name):
+    """Callback when user selects an experiment preset from the dropdown."""
+    if not preset_name or preset_name == "-- Select Preset --":
+        return
+    ui_to_sim_queue.put({"type": "LOAD_EXPERIMENT_PRESET", "preset_name": preset_name})
+    update_status_bar(f"Loading experiment preset: {preset_name}", color=[100, 200, 255, 255])
+
+
+def _handle_inject_manual_stimulus(sender=None, app_data=None, user_data=None):
+    """Inject a quick manual stimulus using a basic experiment config."""
+    try:
+        amplitude = dpg.get_value("manual_stim_amplitude")
+        pattern_str = dpg.get_value("manual_stim_pattern_combo")
+        group_size = dpg.get_value("manual_stim_group_size")
+        duration = dpg.get_value("manual_stim_duration")
+
+        # Build a simple experiment config for manual injection
+        exp_config = ExperimentConfig(
+            name="Manual Stimulus Injection",
+            description=f"Quick {pattern_str} stimulus: {amplitude} pA for {duration} ms",
+            neuron_groups=[
+                NeuronGroup(name="stim_target", role=NeuronGroupRole.INPUT.name,
+                           index_start=0, index_end=group_size,
+                           highlight_color=[0.0, 1.0, 0.0, 1.0]),
+                NeuronGroup(name="network_response", role=NeuronGroupRole.OUTPUT.name,
+                           index_start=group_size, index_end=group_size * 3,
+                           highlight_color=[1.0, 0.5, 0.0, 1.0]),
+            ],
+            stimulus_channels=[
+                StimulusChannel(
+                    name="manual_stim",
+                    pattern=StimulusPattern(
+                        pattern_type=pattern_str,
+                        amplitude_pA=amplitude,
+                    ),
+                    target_group_name="stim_target",
+                    onset_ms=100.0,
+                    duration_ms=duration,
+                ),
+            ],
+            phases=[
+                ExperimentPhase(name="pre_baseline", phase_type=ExperimentPhaseType.BASELINE.name,
+                               duration_ms=500.0, active_channels=[]),
+                ExperimentPhase(name="stimulus", phase_type=ExperimentPhaseType.STIMULUS.name,
+                               duration_ms=duration + 200.0,
+                               active_channels=["manual_stim"]),
+                ExperimentPhase(name="post_baseline", phase_type=ExperimentPhaseType.BASELINE.name,
+                               duration_ms=1000.0, active_channels=[]),
+            ],
+            readout=ReadoutConfig(
+                rate_window_ms=50.0,
+                rate_group_names=["stim_target", "network_response"],
+            ),
+            enabled=True,
+        )
+
+        config_dict = experiment_config_to_dict(exp_config)
+        ui_to_sim_queue.put({"type": "LOAD_EXPERIMENT_CONFIG", "config_dict": config_dict})
+        # Auto-start after a brief delay to allow initialization
+        ui_to_sim_queue.put({"type": "START_EXPERIMENT"})
+        update_status_bar(f"Injecting {pattern_str} stimulus: {amplitude} pA", color=[100, 255, 100, 255])
+    except Exception as e:
+        update_status_bar(f"Stimulus injection error: {e}", color=[255, 100, 100, 255])
+
+
+def _update_experiment_ui_from_status(experiment_status):
+    """Update experiment UI elements from status dict (called from UI thread)."""
+    if experiment_status is None:
+        return
+
+    try:
+        is_running = experiment_status.get("is_running", False)
+        is_complete = experiment_status.get("is_complete", False)
+
+        # Status text
+        if is_complete:
+            dpg.set_value("experiment_status_text", "COMPLETE")
+            dpg.configure_item("experiment_status_text", color=[100, 255, 100])
+        elif is_running:
+            dpg.set_value("experiment_status_text", "RUNNING")
+            dpg.configure_item("experiment_status_text", color=[255, 255, 100])
+        else:
+            dpg.set_value("experiment_status_text", "Idle")
+            dpg.configure_item("experiment_status_text", color=[150, 150, 150])
+
+        # Phase info
+        phase_name = experiment_status.get("current_phase_name", "--")
+        phase_type = experiment_status.get("current_phase_type", "--")
+        phase_idx = experiment_status.get("current_phase_idx", 0)
+        total_phases = experiment_status.get("total_phases", 0)
+        rep = experiment_status.get("phase_repetition", 0)
+        dpg.set_value("experiment_phase_text",
+                       f"Phase: {phase_name} ({phase_type}) [{phase_idx+1}/{total_phases}] rep={rep}")
+
+        # Readout rates
+        rates = experiment_status.get("readout_rates", {})
+        if rates:
+            rate_lines = [f"  {name}: {rate:.1f} Hz" for name, rate in rates.items()]
+            dpg.set_value("experiment_readout_text", "\n".join(rate_lines))
+        else:
+            dpg.set_value("experiment_readout_text", "No data")
+
+        # Training info
+        training = experiment_status.get("training")
+        if training and training.get("mode", "NONE") != "NONE":
+            trials_done = training.get("trials_completed", 0)
+            total_trials = training.get("total_trials", 0)
+            accuracy = training.get("recent_accuracy", 0.0)
+            converged = training.get("is_converged", False)
+            status_str = f"Trial {trials_done}/{total_trials} | Accuracy: {accuracy:.1%}"
+            if converged:
+                status_str += " [CONVERGED]"
+            dpg.set_value("experiment_training_text", status_str)
+        else:
+            dpg.set_value("experiment_training_text", "No training active")
+
+    except Exception:
+        pass  # UI elements may not exist yet during startup
+
+
 def _handle_full_profile_dropdown_change(sender, app_data, user_data=None):
     """Callback when user selects a full profile from the dropdown."""
     if not app_data or app_data == "(None - use settings below)":
@@ -11305,6 +13032,78 @@ def create_gui_layout():
                 add_parameter_table_row("Viz Update Interval (steps):", dpg.add_input_int, "cfg_viz_update_interval_steps", 1, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=200, step=1,
                     tooltip="Update visualization every N simulation steps.\n1 = real-time update (smoothest, most GPU overhead).\nHigher values = faster simulation but choppier visuals.")
 
+        # =============================================================================
+        # EXPERIMENT & STIMULUS SYSTEM UI
+        # =============================================================================
+        with dpg.collapsing_header(label="Experiment & Stimulus System", default_open=False, tag="experiment_system_header"):
+            dpg.add_text("Configure and run programmable experiments with stimulus injection,\nneuron group I/O, training protocols, and readout analysis.")
+            dpg.add_spacer(height=5)
+
+            # --- Experiment Preset Selector ---
+            dpg.add_text("Experiment Presets:", color=[180, 220, 255])
+            experiment_preset_names = ["-- Select Preset --"] + ExperimentPresets.get_preset_names()
+            dpg.add_combo(experiment_preset_names, default_value="-- Select Preset --",
+                          tag="experiment_preset_combo", width=350,
+                          callback=lambda s, a, u: _handle_experiment_preset_change(a))
+            dpg.add_spacer(height=3)
+
+            # Experiment info display
+            dpg.add_text("No experiment loaded.", tag="experiment_info_text", color=[150, 150, 150])
+            dpg.add_spacer(height=5)
+
+            # --- Control Buttons ---
+            with dpg.group(horizontal=True):
+                dpg.add_button(label="Start Experiment", tag="btn_start_experiment",
+                               callback=lambda: ui_to_sim_queue.put({"type": "START_EXPERIMENT"}))
+                dpg.add_button(label="Stop Experiment", tag="btn_stop_experiment",
+                               callback=lambda: ui_to_sim_queue.put({"type": "STOP_EXPERIMENT"}))
+                dpg.add_button(label="Save Log", tag="btn_save_experiment_log",
+                               callback=lambda: ui_to_sim_queue.put({"type": "SAVE_EXPERIMENT_LOG",
+                                   "filepath": f"experiment_log_{int(time.time())}.json"}))
+            dpg.add_spacer(height=5)
+
+            # --- Experiment Status Display ---
+            dpg.add_text("Status:", color=[180, 220, 255])
+            dpg.add_text("Idle", tag="experiment_status_text", color=[150, 150, 150])
+            dpg.add_spacer(height=3)
+
+            # Phase progress
+            dpg.add_text("Phase: --", tag="experiment_phase_text", color=[150, 150, 150])
+            dpg.add_spacer(height=3)
+
+            # Readout rates display
+            dpg.add_text("Readout Rates:", color=[180, 220, 255])
+            dpg.add_text("No data", tag="experiment_readout_text", color=[150, 150, 150])
+            dpg.add_spacer(height=3)
+
+            # Training progress
+            dpg.add_text("Training:", color=[180, 220, 255])
+            dpg.add_text("No training active", tag="experiment_training_text", color=[150, 150, 150])
+            dpg.add_spacer(height=5)
+
+            # --- Manual Stimulus Configuration ---
+            with dpg.collapsing_header(label="Manual Stimulus (Quick Test)", default_open=False,
+                                       tag="manual_stimulus_sub_header", indent=10):
+                dpg.add_text("Inject a simple stimulus into the network without\nsetting up a full experiment.", color=[150, 150, 150])
+                dpg.add_spacer(height=3)
+                add_parameter_table_row("Stimulus Amplitude (pA):", dpg.add_input_float,
+                    "manual_stim_amplitude", 150.0, None, min_value=0.0, max_value=5000.0,
+                    tooltip="Peak current amplitude in picoamperes.\n100-300 pA typical for driving activity.")
+                add_parameter_table_row("Pattern:", dpg.add_combo,
+                    "manual_stim_pattern_combo", "CONSTANT",
+                    None, items=["CONSTANT", "PULSE_TRAIN", "SINUSOIDAL", "POISSON_SPIKE_TRAIN", "GAUSSIAN_NOISE"],
+                    tooltip="Stimulus waveform type.\nCONSTANT: DC step current\nPULSE_TRAIN: Repeated brief pulses\nSINUSOIDAL: Oscillatory current")
+                add_parameter_table_row("Target Group Size:", dpg.add_input_int,
+                    "manual_stim_group_size", 100, None, min_value=1, max_value=10000,
+                    tooltip="Number of neurons in the stimulus target group.\nSelects the first N neurons in the network.")
+                add_parameter_table_row("Duration (ms):", dpg.add_input_float,
+                    "manual_stim_duration", 500.0, None, min_value=10.0, max_value=100000.0,
+                    tooltip="How long the stimulus will be active in milliseconds.")
+                dpg.add_spacer(height=3)
+                dpg.add_button(label="Inject Stimulus", tag="btn_inject_manual_stimulus",
+                               callback=_handle_inject_manual_stimulus)
+                dpg.add_spacer(height=5)
+
         with dpg.collapsing_header(label="Testing & Optimization", default_open=False, tag="perf_testing_header"):
             dpg.add_text("Run performance tests and optimization tasks:")
             dpg.add_spacer(height=3)
@@ -11620,6 +13419,89 @@ def simulation_worker_loop(sim_bridge, local_shutdown_event, command_q, data_q):
                             "new_config_dict": sim_bridge.get_current_simulation_configuration_dict(),
                             "initial_gui_data": sim_bridge.get_initial_sim_data_snapshot()
                         })
+
+                    # --- Experiment System Commands ---
+                    elif cmd_type == "LOAD_EXPERIMENT_PRESET":
+                        preset_name = command.get("preset_name", "")
+                        try:
+                            exp_config = ExperimentPresets.get_preset(preset_name)
+                            if exp_config:
+                                sim_bridge.experiment_config = exp_config
+                                if sim_bridge.is_initialized:
+                                    sim_bridge.experiment_engine = ExperimentEngine(
+                                        sim_bridge.core_config.num_neurons,
+                                        sim_bridge.core_config.dt_ms
+                                    )
+                                    sim_bridge.experiment_engine.load_experiment(exp_config)
+                                    sim_bridge.experiment_engine.initialize(
+                                        cp_traits=sim_bridge.cp_traits, cp_module=cp
+                                    )
+                                data_q.put({
+                                    "type": "EXPERIMENT_LOADED",
+                                    "name": exp_config.name,
+                                    "description": exp_config.description,
+                                    "num_phases": len(exp_config.phases),
+                                    "num_channels": len(exp_config.stimulus_channels),
+                                    "num_groups": len(exp_config.neuron_groups),
+                                })
+                            else:
+                                data_q.put({"type": "EXPERIMENT_ERROR", "reason": f"Unknown preset: {preset_name}"})
+                        except Exception as e:
+                            data_q.put({"type": "EXPERIMENT_ERROR", "reason": str(e)})
+
+                    elif cmd_type == "LOAD_EXPERIMENT_CONFIG":
+                        try:
+                            config_dict = command.get("config_dict", {})
+                            exp_config = experiment_config_from_dict(config_dict)
+                            sim_bridge.experiment_config = exp_config
+                            if sim_bridge.is_initialized:
+                                sim_bridge.experiment_engine = ExperimentEngine(
+                                    sim_bridge.core_config.num_neurons,
+                                    sim_bridge.core_config.dt_ms
+                                )
+                                sim_bridge.experiment_engine.load_experiment(exp_config)
+                                sim_bridge.experiment_engine.initialize(
+                                    cp_traits=sim_bridge.cp_traits, cp_module=cp
+                                )
+                            data_q.put({
+                                "type": "EXPERIMENT_LOADED",
+                                "name": exp_config.name,
+                                "description": exp_config.description,
+                                "num_phases": len(exp_config.phases),
+                                "num_channels": len(exp_config.stimulus_channels),
+                                "num_groups": len(exp_config.neuron_groups),
+                            })
+                        except Exception as e:
+                            data_q.put({"type": "EXPERIMENT_ERROR", "reason": str(e)})
+
+                    elif cmd_type == "START_EXPERIMENT":
+                        if sim_bridge.experiment_engine is not None:
+                            sim_bridge.experiment_engine.start(sim_bridge.runtime_state.current_time_ms)
+                            data_q.put({"type": "EXPERIMENT_STARTED"})
+                        else:
+                            data_q.put({"type": "EXPERIMENT_ERROR", "reason": "No experiment loaded"})
+
+                    elif cmd_type == "STOP_EXPERIMENT":
+                        if sim_bridge.experiment_engine is not None:
+                            sim_bridge.experiment_engine.stop()
+                            data_q.put({"type": "EXPERIMENT_STOPPED"})
+
+                    elif cmd_type == "GET_EXPERIMENT_STATUS":
+                        if sim_bridge.experiment_engine is not None:
+                            status = sim_bridge.experiment_engine.get_experiment_status()
+                            data_q.put({"type": "EXPERIMENT_STATUS", "status": status})
+                        else:
+                            data_q.put({"type": "EXPERIMENT_STATUS", "status": {"is_running": False}})
+
+                    elif cmd_type == "SAVE_EXPERIMENT_LOG":
+                        if sim_bridge.experiment_engine is not None:
+                            filepath = command.get("filepath", "experiment_log.json")
+                            try:
+                                sim_bridge.experiment_engine.save_log(filepath)
+                                data_q.put({"type": "EXPERIMENT_LOG_SAVED", "filepath": filepath})
+                            except Exception as e:
+                                data_q.put({"type": "EXPERIMENT_ERROR", "reason": f"Log save failed: {e}"})
+
                     command_q.task_done()
             except queue.Empty:
                 pass # No commands from UI
@@ -11728,10 +13610,14 @@ def main_dpg_loop_and_gl_idle():
             elif msg_type == "SIM_DATA_UPDATE":
                 data_payload = message.get("data")
                 if data_payload:
-                    update_monitoring_overlay_values(data_payload) 
+                    update_monitoring_overlay_values(data_payload)
                     with global_viz_data_cache["gl_render_data_lock"]:
                         global_viz_data_cache["gl_render_data_buffer"] = data_payload
-                    global_viz_data_cache["gl_render_data_available"].set() 
+                    global_viz_data_cache["gl_render_data_available"].set()
+                    # Update experiment UI if experiment status is present
+                    exp_status = data_payload.get("experiment_status")
+                    if exp_status is not None:
+                        _update_experiment_ui_from_status(exp_status)
             elif msg_type == "SIM_STOPPED_OR_ENDED":
                 global_gui_state["_sim_is_running_ui_view"] = False
                 global_gui_state["_sim_is_paused_ui_view"] = False
@@ -11836,7 +13722,26 @@ def main_dpg_loop_and_gl_idle():
                 update_ui_for_playback_mode_state(is_playback_active_ui=False) 
                 update_status_bar("Exited playback mode. Live simulation mode restored.", level="info")
 
-            elif msg_type in ["CONFIG_APPLIED_ERROR", "CHECKPOINT_LOAD_FAILED", "RECORDING_LOAD_FAILED", 
+            # --- Experiment System Messages ---
+            elif msg_type == "EXPERIMENT_LOADED":
+                exp_name = message.get("name", "Unknown")
+                n_phases = message.get("num_phases", 0)
+                n_channels = message.get("num_channels", 0)
+                n_groups = message.get("num_groups", 0)
+                dpg.set_value("experiment_info_text",
+                              f"Loaded: {exp_name}\n  {n_phases} phases, {n_channels} channels, {n_groups} groups")
+                dpg.configure_item("experiment_info_text", color=[100, 255, 100])
+                update_status_bar(f"Experiment loaded: {exp_name}", color=[100, 200, 255, 255])
+            elif msg_type == "EXPERIMENT_STARTED":
+                update_status_bar("Experiment started", color=[100, 255, 100, 255])
+            elif msg_type == "EXPERIMENT_STOPPED":
+                update_status_bar("Experiment stopped", color=[255, 200, 100, 255])
+            elif msg_type == "EXPERIMENT_LOG_SAVED":
+                update_status_bar(f"Experiment log saved: {message.get('filepath', '')}", color=[100, 255, 100, 255])
+            elif msg_type == "EXPERIMENT_ERROR":
+                update_status_bar(f"Experiment error: {message.get('reason', 'Unknown')}", color=[255, 100, 100, 255])
+
+            elif msg_type in ["CONFIG_APPLIED_ERROR", "CHECKPOINT_LOAD_FAILED", "RECORDING_LOAD_FAILED",
                               "RECORDING_START_FAILED", "PLAYBACK_SETUP_FAILED", "PLAYBACK_ERROR", "SIM_FATAL_ERROR",
                               "CHECKPOINT_SAVE_FAILED"]:
                 update_status_bar(f"Error: {message.get('reason', message.get('error', 'Unknown error'))}", color=[255,0,0,255], level="error")
