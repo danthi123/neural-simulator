@@ -13086,19 +13086,22 @@ def create_gui_layout():
                                        tag="manual_stimulus_sub_header", indent=10):
                 dpg.add_text("Inject a simple stimulus into the network without\nsetting up a full experiment.", color=[150, 150, 150])
                 dpg.add_spacer(height=3)
-                add_parameter_table_row("Stimulus Amplitude (pA):", dpg.add_input_float,
-                    "manual_stim_amplitude", 150.0, None, min_value=0.0, max_value=5000.0,
-                    tooltip="Peak current amplitude in picoamperes.\n100-300 pA typical for driving activity.")
-                add_parameter_table_row("Pattern:", dpg.add_combo,
-                    "manual_stim_pattern_combo", "CONSTANT",
-                    None, items=["CONSTANT", "PULSE_TRAIN", "SINUSOIDAL", "POISSON_SPIKE_TRAIN", "GAUSSIAN_NOISE"],
-                    tooltip="Stimulus waveform type.\nCONSTANT: DC step current\nPULSE_TRAIN: Repeated brief pulses\nSINUSOIDAL: Oscillatory current")
-                add_parameter_table_row("Target Group Size:", dpg.add_input_int,
-                    "manual_stim_group_size", 100, None, min_value=1, max_value=10000,
-                    tooltip="Number of neurons in the stimulus target group.\nSelects the first N neurons in the network.")
-                add_parameter_table_row("Duration (ms):", dpg.add_input_float,
-                    "manual_stim_duration", 500.0, None, min_value=10.0, max_value=100000.0,
-                    tooltip="How long the stimulus will be active in milliseconds.")
+                with dpg.table(header_row=False):
+                    dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
+                    dpg.add_table_column(width_stretch=True)
+                    add_parameter_table_row("Stimulus Amplitude (pA):", dpg.add_input_float,
+                        "manual_stim_amplitude", 150.0, None, min_value=0.0, max_value=5000.0,
+                        tooltip="Peak current amplitude in picoamperes.\n100-300 pA typical for driving activity.")
+                    add_parameter_table_row("Pattern:", dpg.add_combo,
+                        "manual_stim_pattern_combo", "CONSTANT",
+                        None, items=["CONSTANT", "PULSE_TRAIN", "SINUSOIDAL", "POISSON_SPIKE_TRAIN", "GAUSSIAN_NOISE"],
+                        tooltip="Stimulus waveform type.\nCONSTANT: DC step current\nPULSE_TRAIN: Repeated brief pulses\nSINUSOIDAL: Oscillatory current")
+                    add_parameter_table_row("Target Group Size:", dpg.add_input_int,
+                        "manual_stim_group_size", 100, None, min_value=1, max_value=10000,
+                        tooltip="Number of neurons in the stimulus target group.\nSelects the first N neurons in the network.")
+                    add_parameter_table_row("Duration (ms):", dpg.add_input_float,
+                        "manual_stim_duration", 500.0, None, min_value=10.0, max_value=100000.0,
+                        tooltip="How long the stimulus will be active in milliseconds.")
                 dpg.add_spacer(height=3)
                 dpg.add_button(label="Inject Stimulus", tag="btn_inject_manual_stimulus",
                                callback=_handle_inject_manual_stimulus)
