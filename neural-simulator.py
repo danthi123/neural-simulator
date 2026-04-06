@@ -978,7 +978,7 @@ class GPUConfig:
 
     # Debug mode
     enable_debug_checks: bool = False  # Enable inf/nan checking (performance impact)
-    enable_step_profiler: bool = False  # Log per-section timing for performance analysis
+    enable_step_profiler: bool = True  # TEMP: profiling bottleneck — set back to False after
 
     # Structural plasticity optimization
     struct_plast_compaction_interval: int = 1000  # Steps between CSR compaction
@@ -8514,7 +8514,9 @@ class SimulationBridge:
                     total = sum(self._prof_accum.values())
                     parts = " | ".join(f"{k}={v*1000/self._prof_count:.2f}ms ({v/total*100:.0f}%)"
                                        for k, v in sorted(self._prof_accum.items()))
-                    self._log_console(f"[PROFILER] avg/step: {total*1000/self._prof_count:.2f}ms | {parts}")
+                    prof_msg = f"[PROFILER] avg/step: {total*1000/self._prof_count:.2f}ms | {parts}"
+                    self._log_console(prof_msg)
+                    self._log_to_ui(prof_msg, "info")
                     self._prof_accum = {}
                     self._prof_count = 0
 
