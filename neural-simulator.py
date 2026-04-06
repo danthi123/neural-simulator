@@ -569,7 +569,7 @@ class CoreSimConfig:
     # Synapse & Plasticity
     refractory_period_steps: int = 2
     syn_reversal_potential_e: float = 0.0
-    syn_reversal_potential_i: float = -70.0
+    syn_reversal_potential_i: float = -75.0  # GABA-A chloride reversal (was -70; -75 matches Cl- Nernst at 37C)
     syn_tau_g_e: float = 5.0
     syn_tau_g_i: float = 10.0
     # NMDA conductance with voltage-dependent Mg²⁺ block (Jahr & Stevens 1990)
@@ -579,7 +579,7 @@ class CoreSimConfig:
     nmda_tau_rise: float = 3.0        # NMDA rise time constant (ms)
     nmda_mg_concentration: float = 1.0  # Extracellular [Mg²⁺] in mM
     propagation_strength: float = 0.05
-    inhibitory_propagation_strength: float = 0.15
+    inhibitory_propagation_strength: float = 0.105  # Scaled for E_inh=-75mV (was 0.15 at E_inh=-70mV)
     max_synaptic_delay_ms: float = 20.0
     enable_inhibitory_neurons: bool = True
     inhibitory_trait_index: int = 1
@@ -589,13 +589,19 @@ class CoreSimConfig:
     hebbian_min_weight: float = 0.05
     hebbian_max_weight: float = 1.0
     enable_short_term_plasticity: bool = True
-    stp_U: float = 0.15
-    stp_tau_d: float = 200.0
-    stp_tau_f: float = 50.0
+    stp_U: float = 0.15          # Global fallback U (used when per-type not available)
+    stp_tau_d: float = 200.0     # Global fallback tau_d (ms)
+    stp_tau_f: float = 50.0      # Global fallback tau_f (ms)
+    # Per-connection-type STP parameters [E->E, E->I, I->E, I->I]
+    # When enable_per_type_stp is True, these override the global values.
+    enable_per_type_stp: bool = True
+    stp_U_per_type: list = None       # [U_ee, U_ei, U_ie, U_ii] — set in __post_init__
+    stp_tau_d_per_type: list = None   # [tau_d_ee, tau_d_ei, tau_d_ie, tau_d_ii] (ms)
+    stp_tau_f_per_type: list = None   # [tau_f_ee, tau_f_ei, tau_f_ie, tau_f_ii] (ms)
     enable_homeostasis: bool = True
     homeostasis_target_rate: float = 0.02
-    homeostasis_threshold_adapt_rate: float = 0.015
-    homeostasis_ema_alpha: float = 0.01
+    homeostasis_threshold_adapt_rate: float = 0.0005  # Slower: ~0.5 mV/sec at max error (was 0.015)
+    homeostasis_ema_alpha: float = 0.0002  # tau_ema ~5000 steps = 5s at dt=1ms (was 0.01 = 100ms)
     homeostasis_threshold_min: float = -55.0
     homeostasis_threshold_max: float = -30.0
     # Synaptic scaling (Turrigiano 2008): multiplicatively scales excitatory weights
@@ -632,9 +638,19 @@ class CoreSimConfig:
     struct_plast_distance_kernel: str = "exp_decay"  # "uniform", "exp_decay", "gaussian"
     struct_plast_distance_scale: float = 20.0     # Spatial scale for distance-dependent formation
     struct_plast_update_interval_steps: int = 100  # Update interval (for efficiency)
+    struct_plast_activity_bias: float = 0.5  # Weight of co-activity vs random in formation [0=random, 1=fully activity-driven]
 
     def __post_init__(self):
         """Validate configuration parameters after initialization."""
+        # Initialize per-type STP defaults if not provided
+        # Defaults: cortical-style depression for E->E/E->I, weaker for I->E/I->I
+        if self.stp_U_per_type is None:
+            self.stp_U_per_type = [0.5, 0.5, 0.25, 0.25]       # E->E, E->I, I->E, I->I
+        if self.stp_tau_d_per_type is None:
+            self.stp_tau_d_per_type = [200.0, 200.0, 100.0, 100.0]  # ms
+        if self.stp_tau_f_per_type is None:
+            self.stp_tau_f_per_type = [20.0, 20.0, 50.0, 50.0]      # ms
+
         errors = []
 
         # Time parameters
@@ -1191,11 +1207,11 @@ class SimulationConfiguration:
         # Basic Neuron & Synapse Properties
         self.refractory_period_steps = 2 # Absolute refractory period in simulation steps (dt units)
         self.syn_reversal_potential_e = 0.0 # Reversal potential for excitatory synapses (mV)
-        self.syn_reversal_potential_i = -70.0 # Reversal potential for inhibitory synapses (mV)
+        self.syn_reversal_potential_i = -75.0 # Reversal potential for inhibitory synapses (mV) — Cl- Nernst at 37C
         self.syn_tau_g_e = 5.0 # Time constant for excitatory synaptic conductance decay (ms)
         self.syn_tau_g_i = 10.0 # Time constant for inhibitory synaptic conductance decay (ms)
         self.propagation_strength = 0.05 # Scaling factor for excitatory synaptic conductance increase per spike
-        self.inhibitory_propagation_strength = 0.15 # Scaling factor for inhibitory synaptic conductance increase
+        self.inhibitory_propagation_strength = 0.105 # Scaled for E_inh=-75mV (was 0.15 at -70mV)
         self.max_synaptic_delay_ms = 20.0 # Maximum synaptic delay in ms (Not fully implemented for individual delays yet)
 
         # Inhibitory Neuron Configuration
@@ -1215,12 +1231,17 @@ class SimulationConfiguration:
         self.stp_U = 0.15 # STP U parameter (baseline utilization of synaptic resources)
         self.stp_tau_d = 200.0 # STP tau_d (depression time constant, ms)
         self.stp_tau_f = 50.0 # STP tau_f (facilitation time constant, ms)
+        # Per-connection-type STP [E->E, E->I, I->E, I->I]
+        self.enable_per_type_stp = True
+        self.stp_U_per_type = [0.5, 0.5, 0.25, 0.25]
+        self.stp_tau_d_per_type = [200.0, 200.0, 100.0, 100.0]
+        self.stp_tau_f_per_type = [20.0, 20.0, 50.0, 50.0]
 
         # Homeostatic Plasticity (Adaptive Thresholds for Izhikevich model)
         self.enable_homeostasis = True # Enable homeostatic threshold adaptation
         self.homeostasis_target_rate = 0.02 # Target firing rate (spikes per dt step)
-        self.homeostasis_threshold_adapt_rate = 0.015 # Adaptation rate for firing thresholds
-        self.homeostasis_ema_alpha = 0.01 # Alpha for EMA of neuron activity
+        self.homeostasis_threshold_adapt_rate = 0.0005 # Adaptation rate for firing thresholds (slower, biologically grounded)
+        self.homeostasis_ema_alpha = 0.0002 # Alpha for EMA of neuron activity (tau ~5s at dt=1ms)
         self.homeostasis_threshold_min = -55.0 # Minimum firing threshold (mV)
         self.homeostasis_threshold_max = -30.0 # Maximum firing threshold (mV)
 
@@ -1261,6 +1282,7 @@ class SimulationConfiguration:
         self.struct_plast_distance_kernel = "exp_decay"
         self.struct_plast_distance_scale = 20.0
         self.struct_plast_update_interval_steps = 100
+        self.struct_plast_activity_bias = 0.5  # Co-activity bias for synapse formation
 
         # Parameter Heterogeneity (Phase B2)
         self.enable_parameter_heterogeneity = False # Enable per-neuron parameter variability
@@ -2386,6 +2408,49 @@ class SimulationBridge:
             self.cp_synapse_pulse_timers = None
             self.cp_synapse_pulse_progress = None
 
+    def _build_synapse_conn_type_array(self, cfg):
+        """Build per-synapse connection type array: 0=E->E, 1=E->I, 2=I->E, 3=I->I.
+
+        Uses the COO representation to look up pre/post neuron traits and classify
+        each synapse. Falls back to all-zeros (E->E) if trait information is unavailable.
+        """
+        if self.cp_connections is None or self.cp_connections.nnz == 0:
+            self.cp_synapse_conn_type = None
+            return
+
+        nnz = self.cp_connections.nnz
+        capacity = self._synapse_capacity if hasattr(self, '_synapse_capacity') else nnz
+
+        # Default: all E->E (type 0)
+        conn_types = cp.zeros(max(capacity, nnz), dtype=cp.int8)
+
+        inh_indices = getattr(cfg, 'inhibitory_trait_indices', [])
+        if self.cp_traits is not None and len(inh_indices) > 0:
+            coo = self._get_cached_coo()
+            if coo is None:
+                coo = self.cp_connections.tocoo(copy=False)
+
+            pre_traits = self.cp_traits[coo.row]
+            post_traits = self.cp_traits[coo.col]
+
+            # Build inhibitory neuron mask from trait indices
+            pre_is_inh = cp.zeros(coo.row.shape, dtype=cp.bool_)
+            post_is_inh = cp.zeros(coo.col.shape, dtype=cp.bool_)
+            for idx in inh_indices:
+                pre_is_inh |= (pre_traits == idx)
+                post_is_inh |= (post_traits == idx)
+
+            # Classify: 0=E->E, 1=E->I, 2=I->E, 3=I->I
+            conn_types[:nnz] = (pre_is_inh.astype(cp.int8) * 2) + post_is_inh.astype(cp.int8)
+
+            type_counts = [int((conn_types[:nnz] == t).sum()) for t in range(4)]
+            self._log_console(f"Per-synapse STP types: E->E={type_counts[0]}, E->I={type_counts[1]}, "
+                              f"I->E={type_counts[2]}, I->I={type_counts[3]}")
+        else:
+            self._log_console("No trait info available; all synapses default to E->E STP type.", "warning")
+
+        self.cp_synapse_conn_type = conn_types
+
     def _grow_synapse_arrays_if_needed(self, new_synapse_count, cfg):
         """Grows synapse arrays if new_synapse_count exceeds current capacity.
 
@@ -2416,6 +2481,12 @@ class SimulationBridge:
             new_traces = cp.zeros(new_capacity, dtype=cp.float32)
             new_traces[:self._synapse_count] = self.cp_eligibility_trace[:self._synapse_count]
             self.cp_eligibility_trace = new_traces
+
+        # Grow connection type array for per-type STP
+        if self.cp_synapse_conn_type is not None:
+            new_conn_types = cp.zeros(new_capacity, dtype=cp.int8)
+            new_conn_types[:self._synapse_count] = self.cp_synapse_conn_type[:self._synapse_count]
+            self.cp_synapse_conn_type = new_conn_types
 
         # Grow visualization arrays
         if self.cp_synapse_pulse_timers is not None:
@@ -2946,6 +3017,12 @@ class SimulationBridge:
 
             # Initialize synapse-indexed arrays with pre-allocated capacity for structural plasticity
             self._init_synapse_arrays_with_capacity(num_synapses, cfg)
+
+            # Build per-synapse connection type array for per-type STP
+            # Types: 0=E->E, 1=E->I, 2=I->E, 3=I->I
+            self.cp_synapse_conn_type = None
+            if cfg.enable_per_type_stp and cfg.enable_short_term_plasticity and num_synapses > 0:
+                self._build_synapse_conn_type_array(cfg)
 
             # C2: Initialize STDP state arrays
             if cfg.enable_stdp and n > 0:
@@ -5868,17 +5945,45 @@ class SimulationBridge:
             if cfg.enable_short_term_plasticity and self.cp_connections.nnz > 0 and \
                self.cp_stp_u is not None and self.cp_stp_x is not None:
 
-                self.cp_stp_u, self.cp_stp_x = fused_stp_decay_recovery(self.cp_stp_u, self.cp_stp_x, dt, cfg.stp_tau_f, cfg.stp_tau_d)
+                # Per-synapse-type STP: build per-synapse tau_f/tau_d/U arrays from connection types
+                if cfg.enable_per_type_stp and self.cp_synapse_conn_type is not None:
+                    actual_nnz_stp = self.cp_connections.nnz
+                    ctypes = self.cp_synapse_conn_type[:actual_nnz_stp]
+                    # Build per-synapse parameter arrays via lookup table
+                    U_arr = cp.array(cfg.stp_U_per_type, dtype=cp.float32)
+                    tau_f_arr = cp.array(cfg.stp_tau_f_per_type, dtype=cp.float32)
+                    tau_d_arr = cp.array(cfg.stp_tau_d_per_type, dtype=cp.float32)
+                    stp_tau_f_per_syn = tau_f_arr[ctypes]
+                    stp_tau_d_per_syn = tau_d_arr[ctypes]
+                    stp_U_per_syn = U_arr[ctypes]
+                    # Pad to full array length for fused kernel (capacity may exceed nnz)
+                    n_pad = self.cp_stp_u.size - actual_nnz_stp
+                    if n_pad > 0:
+                        stp_tau_f_full = cp.concatenate([stp_tau_f_per_syn, cp.full(n_pad, cfg.stp_tau_f, dtype=cp.float32)])
+                        stp_tau_d_full = cp.concatenate([stp_tau_d_per_syn, cp.full(n_pad, cfg.stp_tau_d, dtype=cp.float32)])
+                    else:
+                        stp_tau_f_full = stp_tau_f_per_syn
+                        stp_tau_d_full = stp_tau_d_per_syn
+                    self.cp_stp_u, self.cp_stp_x = fused_stp_decay_recovery(
+                        self.cp_stp_u, self.cp_stp_x, dt, stp_tau_f_full, stp_tau_d_full)
+                else:
+                    stp_U_per_syn = None
+                    self.cp_stp_u, self.cp_stp_x = fused_stp_decay_recovery(
+                        self.cp_stp_u, self.cp_stp_x, dt, cfg.stp_tau_f, cfg.stp_tau_d)
 
                 if self.cp_prev_firing_states.any():
                     coo_matrix_stp = self._get_cached_coo()  # Use cached COO (avoids 40-400ms tocoo() per step)
                     if coo_matrix_stp is None:
                         coo_matrix_stp = self.cp_connections.tocoo(copy=False)  # Fallback
                     active_syn_mask_stp = self.cp_prev_firing_states[coo_matrix_stp.row]
-                    active_syn_indices_stp = cp.where(active_syn_mask_stp)[0] 
+                    active_syn_indices_stp = cp.where(active_syn_mask_stp)[0]
 
                     if active_syn_indices_stp.size > 0:
-                        U_stp = cfg.stp_U 
+                        # Per-type U at spike time
+                        if stp_U_per_syn is not None:
+                            U_stp = stp_U_per_syn[active_syn_indices_stp]
+                        else:
+                            U_stp = cfg.stp_U
                         u_active_old = self.cp_stp_u[active_syn_indices_stp]
                         x_active_old = self.cp_stp_x[active_syn_indices_stp]
 
@@ -6330,8 +6435,36 @@ class SimulationBridge:
                             expected_new_synapses = max(1, min(expected_new_synapses, n_neurons * 10))  # Form at least 1, cap at 10*N
 
                             # Generate candidate new connections on GPU
-                            candidate_pre = cp.random.randint(0, n_neurons, size=expected_new_synapses * 3, dtype=cp.int64)
-                            candidate_post = cp.random.randint(0, n_neurons, size=expected_new_synapses * 3, dtype=cp.int64)
+                            # Activity-dependent synaptogenesis (Cline & Haas 2008):
+                            # Bias formation toward co-active neuron pairs using activity EMA.
+                            activity_bias = cfg.struct_plast_activity_bias
+                            n_candidates = expected_new_synapses * 3
+
+                            if activity_bias > 0.0 and self.cp_neuron_activity_ema is not None:
+                                # Number of activity-biased vs random candidates
+                                n_biased = int(n_candidates * activity_bias)
+                                n_random = n_candidates - n_biased
+
+                                # Activity-biased: sample neurons proportional to their firing EMA
+                                ema = self.cp_neuron_activity_ema + 1e-9  # avoid all-zero
+                                ema_probs = ema / ema.sum()
+                                ema_probs_np = cp.asnumpy(ema_probs).astype(np.float64)
+                                ema_probs_np /= ema_probs_np.sum()  # renormalize for float64 precision
+                                # Sample active neurons as both pre and post (co-active pairs)
+                                biased_pre_np = np.random.choice(n_neurons, size=n_biased, p=ema_probs_np)
+                                biased_post_np = np.random.choice(n_neurons, size=n_biased, p=ema_probs_np)
+                                biased_pre = cp.asarray(biased_pre_np, dtype=cp.int64)
+                                biased_post = cp.asarray(biased_post_np, dtype=cp.int64)
+
+                                # Random candidates (preserve exploration)
+                                random_pre = cp.random.randint(0, n_neurons, size=n_random, dtype=cp.int64)
+                                random_post = cp.random.randint(0, n_neurons, size=n_random, dtype=cp.int64)
+
+                                candidate_pre = cp.concatenate([biased_pre, random_pre])
+                                candidate_post = cp.concatenate([biased_post, random_post])
+                            else:
+                                candidate_pre = cp.random.randint(0, n_neurons, size=n_candidates, dtype=cp.int64)
+                                candidate_post = cp.random.randint(0, n_neurons, size=n_candidates, dtype=cp.int64)
 
                             # Filter out self-connections on GPU
                             valid_mask = candidate_pre != candidate_post
@@ -8060,6 +8193,24 @@ def _update_sim_config_from_ui(update_model_specific=True):
         if dpg.does_item_exist("cfg_stp_U"): cfg_dict_from_ui["stp_U"] = dpg.get_value("cfg_stp_U")
         if dpg.does_item_exist("cfg_stp_tau_d"): cfg_dict_from_ui["stp_tau_d"] = max(0.1, dpg.get_value("cfg_stp_tau_d"))
         if dpg.does_item_exist("cfg_stp_tau_f"): cfg_dict_from_ui["stp_tau_f"] = max(0.1, dpg.get_value("cfg_stp_tau_f"))
+        if dpg.does_item_exist("cfg_enable_per_type_stp"): cfg_dict_from_ui["enable_per_type_stp"] = dpg.get_value("cfg_enable_per_type_stp")
+        # Per-type STP: read individual UI fields into lists
+        for conn_type_suffix in ["ee", "ei", "ie", "ii"]:
+            for param in ["U", "tau_d", "tau_f"]:
+                tag = f"cfg_stp_{param}_{conn_type_suffix}"
+                if dpg.does_item_exist(tag):
+                    pass  # Gathered below as composite list
+        # Build per-type lists from UI
+        stp_U_list, stp_tau_d_list, stp_tau_f_list = [], [], []
+        for suffix in ["ee", "ei", "ie", "ii"]:
+            stp_U_list.append(dpg.get_value(f"cfg_stp_U_{suffix}") if dpg.does_item_exist(f"cfg_stp_U_{suffix}") else cfg_dict_from_ui.get("stp_U", 0.15))
+            stp_tau_d_list.append(max(0.1, dpg.get_value(f"cfg_stp_tau_d_{suffix}")) if dpg.does_item_exist(f"cfg_stp_tau_d_{suffix}") else cfg_dict_from_ui.get("stp_tau_d", 200.0))
+            stp_tau_f_list.append(max(0.1, dpg.get_value(f"cfg_stp_tau_f_{suffix}")) if dpg.does_item_exist(f"cfg_stp_tau_f_{suffix}") else cfg_dict_from_ui.get("stp_tau_f", 50.0))
+        cfg_dict_from_ui["stp_U_per_type"] = stp_U_list
+        cfg_dict_from_ui["stp_tau_d_per_type"] = stp_tau_d_list
+        cfg_dict_from_ui["stp_tau_f_per_type"] = stp_tau_f_list
+        # Structural plasticity activity bias
+        if dpg.does_item_exist("cfg_struct_plast_activity_bias"): cfg_dict_from_ui["struct_plast_activity_bias"] = dpg.get_value("cfg_struct_plast_activity_bias")
 
         # Homeostasis
         if dpg.does_item_exist("cfg_enable_homeostasis"): cfg_dict_from_ui["enable_homeostasis"] = dpg.get_value("cfg_enable_homeostasis")
@@ -8258,6 +8409,17 @@ def _populate_ui_from_config_dict(config_dict):
     if dpg.does_item_exist("cfg_stp_U"): dpg.set_value("cfg_stp_U", cfg.stp_U)
     if dpg.does_item_exist("cfg_stp_tau_d"): dpg.set_value("cfg_stp_tau_d", cfg.stp_tau_d)
     if dpg.does_item_exist("cfg_stp_tau_f"): dpg.set_value("cfg_stp_tau_f", cfg.stp_tau_f)
+    if dpg.does_item_exist("cfg_enable_per_type_stp"): dpg.set_value("cfg_enable_per_type_stp", getattr(cfg, 'enable_per_type_stp', True))
+    # Per-type STP UI fields
+    per_type_U = getattr(cfg, 'stp_U_per_type', None) or [0.5, 0.5, 0.25, 0.25]
+    per_type_tau_d = getattr(cfg, 'stp_tau_d_per_type', None) or [200.0, 200.0, 100.0, 100.0]
+    per_type_tau_f = getattr(cfg, 'stp_tau_f_per_type', None) or [20.0, 20.0, 50.0, 50.0]
+    for i, suffix in enumerate(["ee", "ei", "ie", "ii"]):
+        if dpg.does_item_exist(f"cfg_stp_U_{suffix}"): dpg.set_value(f"cfg_stp_U_{suffix}", per_type_U[i])
+        if dpg.does_item_exist(f"cfg_stp_tau_d_{suffix}"): dpg.set_value(f"cfg_stp_tau_d_{suffix}", per_type_tau_d[i])
+        if dpg.does_item_exist(f"cfg_stp_tau_f_{suffix}"): dpg.set_value(f"cfg_stp_tau_f_{suffix}", per_type_tau_f[i])
+    # Structural plasticity activity bias
+    if dpg.does_item_exist("cfg_struct_plast_activity_bias"): dpg.set_value("cfg_struct_plast_activity_bias", getattr(cfg, 'struct_plast_activity_bias', 0.5))
 
     # Homeostasis
     if dpg.does_item_exist("cfg_enable_homeostasis"): dpg.set_value("cfg_enable_homeostasis", cfg.enable_homeostasis)
@@ -8660,6 +8822,21 @@ def _check_and_warn_hardware_limits():
 def _handle_model_type_change_dpg(sender, app_data, user_data=None):
     """Handles change in neuron model type selection in DPG. Updates UI visibility and signals reset."""
     _toggle_model_specific_params_visibility(sender, app_data) # Update UI sections
+    # Auto-adjust dt when switching to HH (needs dt <= 0.1ms for stability)
+    # or back to a simpler model (can use larger dt)
+    if dpg.does_item_exist("cfg_dt_ms"):
+        current_dt = dpg.get_value("cfg_dt_ms")
+        if app_data == NeuronModel.HODGKIN_HUXLEY.name:
+            if current_dt > 0.1:
+                dpg.set_value("cfg_dt_ms", 0.05)
+                update_status_bar("dt auto-adjusted to 0.05 ms for HH stability (was {:.3f} ms)".format(current_dt),
+                                  color=[255, 200, 100, 255], level="warning")
+        else:
+            # When switching away from HH, if dt is very small (likely auto-set), restore a reasonable default
+            if current_dt <= 0.1:
+                dpg.set_value("cfg_dt_ms", 0.5)
+                update_status_bar("dt restored to 0.5 ms for {} model".format(app_data),
+                                  color=[150, 220, 255, 255], level="info")
     _update_sim_config_from_ui_and_signal_reset_needed() # Mark that config changed and reset is needed
 
 
@@ -10545,8 +10722,37 @@ def create_gui_layout():
                     tooltip="Recovery time constant for synaptic resources (ms). Controls how fast depressed synapses recover. Typical range: 100-800ms.")
                 add_parameter_table_row("STP Tau_f (Facilitation, ms):", dpg.add_input_float, "cfg_stp_tau_f", 50.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=0.1,
                     tooltip="Decay time constant for facilitation variable (ms). Controls duration of synaptic facilitation. Typical range: 20-200ms.")
+                add_parameter_table_row("Enable Per-Type STP:", dpg.add_checkbox, "cfg_enable_per_type_stp", True, _update_sim_config_from_ui_and_signal_reset_needed,
+                    tooltip="Use different STP parameters for E->E, E->I, I->E, I->I synapses.\nMore biologically realistic: cortical E->E synapses depress (U~0.5)\nwhile I->E show weaker depression (U~0.25).")
+            # Per-type STP parameter table
+            dpg.add_text("Per-Connection-Type STP Parameters:", color=[150,200,220,255])
+            dpg.add_text("(E->E, E->I, I->E, I->I)", color=[140,140,140,255])
+            with dpg.table(header_row=True):
+                dpg.add_table_column(label="Param", width_fixed=True, init_width_or_weight=80)
+                dpg.add_table_column(label="E->E", width_stretch=True)
+                dpg.add_table_column(label="E->I", width_stretch=True)
+                dpg.add_table_column(label="I->E", width_stretch=True)
+                dpg.add_table_column(label="I->I", width_stretch=True)
+                with dpg.table_row():
+                    dpg.add_text("U")
+                    dpg.add_input_float(tag="cfg_stp_U_ee", default_value=0.5, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", width=-1, min_value=0.0, max_value=1.0)
+                    dpg.add_input_float(tag="cfg_stp_U_ei", default_value=0.5, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", width=-1, min_value=0.0, max_value=1.0)
+                    dpg.add_input_float(tag="cfg_stp_U_ie", default_value=0.25, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", width=-1, min_value=0.0, max_value=1.0)
+                    dpg.add_input_float(tag="cfg_stp_U_ii", default_value=0.25, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.3f", width=-1, min_value=0.0, max_value=1.0)
+                with dpg.table_row():
+                    dpg.add_text("Tau_d")
+                    dpg.add_input_float(tag="cfg_stp_tau_d_ee", default_value=200.0, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", width=-1, min_value=0.1)
+                    dpg.add_input_float(tag="cfg_stp_tau_d_ei", default_value=200.0, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", width=-1, min_value=0.1)
+                    dpg.add_input_float(tag="cfg_stp_tau_d_ie", default_value=100.0, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", width=-1, min_value=0.1)
+                    dpg.add_input_float(tag="cfg_stp_tau_d_ii", default_value=100.0, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", width=-1, min_value=0.1)
+                with dpg.table_row():
+                    dpg.add_text("Tau_f")
+                    dpg.add_input_float(tag="cfg_stp_tau_f_ee", default_value=20.0, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", width=-1, min_value=0.1)
+                    dpg.add_input_float(tag="cfg_stp_tau_f_ei", default_value=20.0, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", width=-1, min_value=0.1)
+                    dpg.add_input_float(tag="cfg_stp_tau_f_ie", default_value=50.0, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", width=-1, min_value=0.1)
+                    dpg.add_input_float(tag="cfg_stp_tau_f_ii", default_value=50.0, callback=_update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", width=-1, min_value=0.1)
             dpg.add_separator()
-            with dpg.table(header_row=False): 
+            with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
                 add_parameter_table_row("Enable Homeostasis:", dpg.add_checkbox, "cfg_enable_homeostasis", True, _update_sim_config_from_ui_and_signal_reset_needed,
@@ -10631,7 +10837,9 @@ def create_gui_layout():
                     tooltip="Spatial scale for distance-dependent connection\nprobability. New synapses preferentially form between\nnearby neurons. Smaller = more local connectivity.")
                 add_parameter_table_row("Update Interval (steps):", dpg.add_input_int, "cfg_struct_plast_update_interval_steps", 100, _update_sim_config_from_ui_and_signal_reset_needed, min_value=10, step=10,
                     tooltip="How often (in sim steps) to evaluate structural changes.\nCSR matrix rebuilds are expensive, so infrequent updates\n(100-1000 steps) are recommended.")
-        
+                add_parameter_table_row("Activity Bias (formation):", dpg.add_input_float, "cfg_struct_plast_activity_bias", 0.5, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f", min_value=0.0, max_value=1.0,
+                    tooltip="Bias synapse formation toward co-active neuron pairs.\n0.0 = purely random formation.\n1.0 = fully activity-driven (Cline & Haas 2008).\n0.5 = 50/50 mix of co-activity-biased and random candidates.")
+
         with dpg.collapsing_header(label="Heterogeneity & Noise", default_open=False, tag="heterogeneity_noise_header"):
             dpg.add_text("Add biological realism through parameter variability and intrinsic noise.", wrap=label_col_width * 2, color=[200,200,200,255])
             dpg.add_spacer(height=5)

@@ -18,6 +18,7 @@ Steps:
    - **Connections/Neuron (Spatial Fallback)**
    - **Neuron Model** (Izhikevich, Hodgkin–Huxley, AdEx)
    - **Neural Structure Profile** (e.g. cortical, hippocampal, thalamic, basal ganglia)
+   - **Note**: When switching to **Hodgkin–Huxley**, dt automatically adjusts to 0.05ms for numerical stability; it restores to 0.5ms when you switch away.
 3. Click **"Apply Changes & Reset Sim"**.
 4. Click **"Start"** in the **Simulation Controls** section.
 5. Navigate the 3D scene with the mouse:
@@ -282,6 +283,12 @@ drives weight changes over longer timescales (typically seconds).
 Tsodyks–Markram model with `u` (utilization) and `x` (recovery) variables.
 Synapses exhibit facilitation or depression on millisecond timescales.
 
+**Per-Connection-Type STP**: Enable `enable_per_type_stp` to use experimentally validated,
+connection-type-specific STP profiles. Configure separate `stp_U`, `stp_tau_d`, and `stp_tau_f`
+for each of the four synapse types: E->E, E->I, I->E, I->I. Different brain regions exhibit
+distinct STP signatures; this feature allows region-specific realism (e.g., short-term facilitation
+in L4→L2/3 pyramidal synapses).
+
 ### 6.3 Spike-Timing-Dependent Plasticity (STDP)
 
 Refines synaptic weights based on the precise timing between pre- and post-synaptic
@@ -310,6 +317,10 @@ neurons are coactive; weak or unused synapses are pruned. Parameters:
 - **Target Density**: Desired fraction of possible connections.
 - **Distance Scale**: Spatial range for new synapse formation.
 - **Update Interval**: How often (in timesteps) to check for formation/elimination.
+- **Activity-Dependent Bias** (`struct_plast_activity_bias`): Controls how much synapse formation
+  favors co-active neuron pairs. Range 0.0–1.0, default 0.5. 0 = random formation; 1 = fully
+  activity-driven (Hebbian structure). Based on Cline & Haas (2008) model of activity-dependent
+  neurite outgrowth.
 
 ### 6.6 Synaptic Scaling
 
@@ -329,9 +340,10 @@ Parameters:
 
 ### 6.8 Homeostasis
 
-Prevents runaway activity and maintains network balance:
+Prevents runaway activity and maintains network balance. Timescales updated to match
+biological observations (seconds-to-minutes):
 - **For Izhikevich**: Adaptive thresholds via exponential moving average (EMA)
-  of firing rate. If firing exceeds target, threshold is raised.
+  of firing rate (tau ~5 seconds at dt=1ms). If firing exceeds target, threshold is raised.
 - **For Hodgkin–Huxley**: EMA-based activity monitoring only; no direct threshold
   adjustment.
 

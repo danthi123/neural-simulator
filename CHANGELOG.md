@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Support for STDP timing windows, reward modulation learning rates, and structural synapse thresholds
   - Full persistence in simulation profiles and checkpoint files
 
+- **Per-Connection-Type STP** - Biologically realistic short-term plasticity heterogeneity
+  - New `enable_per_type_stp` parameter and per-type arrays `stp_U_per_type`, `stp_tau_d_per_type`, `stp_tau_f_per_type`
+  - Each is indexed by connection type [E->E, E->I, I->E, I->I]
+  - Different brain regions now use experimentally validated STP profiles per connection type
+  - UI table exposes all 12 parameters (4 connection types × 3 STP variables)
+
+- **Activity-Dependent Structural Synaptogenesis** - Cline & Haas 2008 model
+  - New `struct_plast_activity_bias` parameter (0.0-1.0, default 0.5)
+  - Biases new synapse formation toward co-active neuron pairs using activity EMA
+  - 0 = random synapse formation; 1 = fully activity-driven (Hebbian structuring)
+
 - **COO Cache Invalidation** - Fixed stale data handling in GPU memory
   - Cache invalidation in `clear_simulation_state_and_gpu_memory()` prevents stale sparse matrix data across reinitializations
 
@@ -40,6 +51,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Replaced with regular hyphens in all UI text and profile names
 
 ### Changed
+- **Hodgkin-Huxley Numerical Stability** - Automatic time step adjustment
+  - dt automatically reduces to 0.05ms when switching to HH model for improved numerical stability
+  - dt automatically restores to 0.5ms when switching away from HH model
+  - Prevents instabilities in voltage-gated kinetics at larger time steps
+
+- **Homeostatic Plasticity Timescale** - Biologically realistic adaptation
+  - EMA alpha reduced from 0.01 (tau ~100ms) to 0.0002 (tau ~5s at dt=1ms)
+  - Threshold adapt rate reduced from 0.015 to 0.0005
+  - Homeostatic mechanisms now operate on seconds-to-minutes timescale, matching experimental observations
+
+- **Inhibitory Reversal Potential** - Corrected Nernst equilibrium
+  - E_inh changed from -70mV to -75mV (matches Cl- Nernst potential at 37°C)
+  - Inhibitory propagation strength scaled by 0.7 to compensate for increased driving force
+  - Improves accuracy of GABAergic synaptic transmission
+
 - **.gitignore** - Profile tracking and auto-tuning separation
   - Now tracks `simulation_profiles/*.json` to include biologically accurate presets in repository
   - Excludes `auto_tuned_overrides.json` to prevent auto-tuned parameters overwriting checked-in profiles

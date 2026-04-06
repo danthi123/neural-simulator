@@ -51,6 +51,12 @@ The entire simulator is contained in `neural-simulator.py` (~12,000 lines). This
 
 **Configuration Dataclasses**:
 - `CoreSimConfig` (~line 485): Network topology, neuron models, plasticity, biological realism
+  - STP fields: `stp_U`, `stp_tau_d`, `stp_tau_f` (global defaults)
+  - Per-connection-type STP: `enable_per_type_stp`, `stp_U_per_type[4]`, `stp_tau_d_per_type[4]`, `stp_tau_f_per_type[4]`
+  - Structural plasticity: `struct_plast_activity_bias` (0.0–1.0) for activity-dependent synaptogenesis
+  - Homeostasis: EMA alpha (~0.0002, tau ~5s) and threshold adapt rate (~0.0005)
+  - Inhibitory reversal: `E_inh = -75mV`, propagation scaled 0.7x for driving force compensation
+  - HH numerical stability: dt auto-adjusts to 0.05ms when HH model selected
 - `VisualizationConfig` (~line 695): OpenGL rendering and camera parameters
 - `RuntimeState` (~line 715): Mutable execution state (running, paused, time tracking)
 - `GPUConfig` (~line 729): GPU features, memory management, recording modes
@@ -61,13 +67,17 @@ The entire simulator is contained in `neural-simulator.py` (~12,000 lines). This
 - `fused_*`: GPU kernel functions decorated with `@cp.fuse()`
 
 ### Simulation Step Pipeline (in `_run_one_simulation_step()`)
-1. STP (Short-Term Plasticity) update
-2. Synaptic conductance update
+1. STP (Short-Term Plasticity) update – per-connection-type if enabled
+2. Synaptic conductance update – uses E_inh = -75mV with 0.7x propagation scaling
 3. Background noise (OU process)
 4. Neuron dynamics (model-specific: Izhikevich/HH/AdEx)
-5. Plasticity updates (Hebbian, STDP, reward modulation, structural, homeostasis)
+5. Plasticity updates (Hebbian, STDP, reward modulation, structural with activity bias, homeostasis)
 6. Visualization updates
 7. Recording (if active)
+
+**Note on dt Auto-Adjustment**: When switching to Hodgkin–Huxley model, dt is automatically
+reduced to 0.05ms for numerical stability of voltage-gated kinetics. When switching to Izhikevich
+or AdEx, dt restores to 0.5ms. This occurs in `apply_simulation_configuration_core()`.
 
 ### Fused CUDA Kernels (~lines 1813-2101)
 Located in the main file, these are performance-critical GPU operations:

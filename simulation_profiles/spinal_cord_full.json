@@ -23,9 +23,9 @@
         "connectivity_k": 12,
         "connectivity_p_rewire": 0.05,
         "propagation_strength": 0.08,
-        "inhibitory_propagation_strength": 0.25,
+        "inhibitory_propagation_strength": 0.175,
         "syn_reversal_potential_e": 0.0,
-        "syn_reversal_potential_i": -80.0,
+        "syn_reversal_potential_i": -75.0,
         "syn_tau_g_e": 3.0,
         "syn_tau_g_i": 6.0,
         "max_synaptic_delay_ms": 5.0,
@@ -42,7 +42,7 @@
         "hebbian_min_weight": 0.05,
         "hebbian_max_weight": 1.0,
         "enable_short_term_plasticity": true,
-        "stp_U": 0.35,
+        "stp_U": 0.4,
         "stp_tau_d": 200.0,
         "stp_tau_f": 40.0,
         "enable_stdp": true,
@@ -65,8 +65,8 @@
         "struct_plast_update_interval_steps": 200,
         "enable_homeostasis": true,
         "homeostasis_target_rate": 0.03,
-        "homeostasis_threshold_adapt_rate": 0.015,
-        "homeostasis_ema_alpha": 0.01,
+        "homeostasis_threshold_adapt_rate": 0.0005,
+        "homeostasis_ema_alpha": 0.0002,
         "homeostasis_threshold_min": -55.0,
         "homeostasis_threshold_max": -30.0,
         "enable_synaptic_scaling": false,
@@ -80,7 +80,27 @@
         "ou_std_current_pA": 100.0,
         "ou_tau_ms": 8.0,
         "ou_seed": -1,
-        "refractory_period_steps": 2
+        "refractory_period_steps": 2,
+        "enable_per_type_stp": true,
+        "struct_plast_activity_bias": 0.5,
+        "stp_U_per_type": [
+            0.4,
+            0.4,
+            0.3,
+            0.3
+        ],
+        "stp_tau_d_per_type": [
+            150.0,
+            150.0,
+            80.0,
+            80.0
+        ],
+        "stp_tau_f_per_type": [
+            25.0,
+            25.0,
+            40.0,
+            40.0
+        ]
     },
     "gui_configuration": {
         "filter_settings": {
