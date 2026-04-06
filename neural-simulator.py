@@ -3656,7 +3656,7 @@ class ExperimentEngine:
                 "trial_data": self.training.trials_data,
             }, f, indent=2, default=str)
 
-    def ensure_inter_group_connectivity(self, sim_bridge, cp_module, min_connection_prob=0.05):
+    def ensure_inter_group_connectivity(self, sim_bridge, cp_module, min_connection_prob=0.20):
         """Ensure sufficient synaptic connections exist between INPUT and OUTPUT groups.
 
         For associative conditioning to work via STDP, there must be direct or near-direct
@@ -3720,8 +3720,9 @@ class ExperimentEngine:
                 new_post = (unique_ids % self.n_neurons).astype(cp_module.int32)
 
                 if new_pre.size > 0:
-                    # Use moderate initial weights (above threshold for structural plasticity)
-                    initial_weights = cp_module.full(new_pre.size, 0.3, dtype=cp_module.float32)
+                    # Use moderate initial weights (above structural plasticity threshold,
+                    # high enough that STDP potentiation produces detectable output change)
+                    initial_weights = cp_module.full(new_pre.size, 0.5, dtype=cp_module.float32)
 
                     new_matrix = csp_local.csr_matrix(
                         (initial_weights, (new_pre, new_post)),
@@ -3808,7 +3809,7 @@ class ExperimentPresets:
         )
 
     @staticmethod
-    def associative_conditioning(cs_amplitude_pA=100.0, us_amplitude_pA=200.0,
+    def associative_conditioning(cs_amplitude_pA=200.0, us_amplitude_pA=300.0,
                                   cs_us_delay_ms=100.0, num_trials=100,
                                   input_group_size=100, output_group_size=100):
         """Classical conditioning: pair CS (input) with US (output), test if CS alone evokes response.
