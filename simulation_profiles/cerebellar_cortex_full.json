@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Cerebellar Cortex - Simplified",
-        "description": "Simplified cerebellar cortex: 75% granule-like excitatory cells, 25% Purkinje/interneuron inhibition. Very fast AMPA decay (2ms) reflecting parallel fiber synapses. Strongly facilitating STP (U=0.1, tau_f=300ms) characteristic of parallel fiber→Purkinje cell synapses (Atluri & Regehr 1996). NMDA DISABLED — parallel fiber synapses are primarily AMPA-mediated. Strong LTD-biased STDP (A-/A+=3:1) reflecting cerebellar LTD as the dominant learning rule (Ito 2001). Low connectivity_k=6 reflecting sparse parallel fiber activation.",
+        "description": "Neuron model: IZHIKEVICH (dt=1.0ms). Simplified cerebellar cortex: 75% granule-like excitatory cells, 25% Purkinje/interneuron inhibition. Very fast AMPA decay (2ms) reflecting parallel fiber synapses. Strongly facilitating STP (U=0.1, tau_f=300ms) characteristic of parallel fiber→Purkinje cell synapses (Atluri & Regehr 1996). NMDA DISABLED — parallel fiber synapses are primarily AMPA-mediated. Strong LTD-biased STDP (A-/A+=3:1) reflecting cerebellar LTD as the dominant learning rule (Ito 2001). Low connectivity_k=6 reflecting sparse parallel fiber activation.",
         "literature": [
             "Atluri & Regehr 1996 — Parallel fiber facilitation (U≈0.1, tau_f~300ms)",
             "Ito 2001 — Cerebellar LTD as error-driven motor learning",

@@ -1,12 +1,12 @@
 {
     "simulation_configuration": {
         "total_simulation_time_ms": 60000.0,
-        "dt_ms": 1.0,
+        "dt_ms": 0.05,
         "num_neurons": 10000,
         "connections_per_neuron": 100,
         "num_traits": 2,
         "seed": -1,
-        "neuron_model_type": "IZHIKEVICH",
+        "neuron_model_type": "HODGKIN_HUXLEY",
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
         "default_neuron_type_hh": "HH_STN_BURST",
         "neural_profile_name": "BASAL_GANGLIA_STN_GPE",
@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Basal Ganglia STN-GPe - Pacemaker Loop",
-        "description": "Subthalamic nucleus (30% excitatory) and globus pallidus externus (70% inhibitory) reciprocal loop. STN neurons are autonomous pacemakers (~25Hz) modeled via positive OU mean current. GPe neurons fire tonically at ~40-80Hz. Short synaptic delays (8ms) reflecting tight reciprocal connectivity. REWARD MODULATION enabled for dopamine-sensitive plasticity. Structural plasticity disabled — STN-GPe connectivity is anatomically stable. LTD-biased STDP reflecting inhibition-dominated dynamics.",
+        "description": "Neuron model: HODGKIN_HUXLEY (dt=0.05ms). Subthalamic nucleus (30% excitatory) and globus pallidus externus (70% inhibitory) reciprocal loop. STN neurons are autonomous pacemakers (~25Hz) modeled via positive OU mean current. GPe neurons fire tonically at ~40-80Hz. Short synaptic delays (8ms) reflecting tight reciprocal connectivity. REWARD MODULATION enabled for dopamine-sensitive plasticity. Structural plasticity disabled — STN-GPe connectivity is anatomically stable. LTD-biased STDP reflecting inhibition-dominated dynamics.",
         "literature": [
             "Bevan et al. 2002 — STN-GPe reciprocal connectivity and oscillations",
             "Wilson et al. 2004 — STN autonomous pacemaking (~25Hz)",

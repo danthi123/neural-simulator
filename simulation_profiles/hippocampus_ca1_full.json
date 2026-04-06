@@ -1,12 +1,12 @@
 {
     "simulation_configuration": {
         "total_simulation_time_ms": 60000.0,
-        "dt_ms": 1.0,
+        "dt_ms": 0.05,
         "num_neurons": 10000,
         "connections_per_neuron": 100,
         "num_traits": 2,
         "seed": -1,
-        "neuron_model_type": "IZHIKEVICH",
+        "neuron_model_type": "HODGKIN_HUXLEY",
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
         "default_neuron_type_hh": "HH_CA1_PYRAMIDAL_BURST",
         "neural_profile_name": "HIPPOCAMPUS_CA1_RS_FS",
@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Hippocampus CA1 - Full Realism",
-        "description": "CA1 pyramidal layer: 70% excitatory pyramidal, 30% inhibitory interneurons. Strong NMDA component (ratio 0.6) reflecting Schaffer collateral synapses critical for LTP induction. STDP with LTP bias (A+>A-) reflecting CA1 asymmetric plasticity (Nishiyama 2000). Mixed STP with moderate facilitation (tau_f=100ms). Higher structural turnover reflecting hippocampal synapse remodeling.",
+        "description": "Neuron model: HODGKIN_HUXLEY (dt=0.05ms). CA1 pyramidal layer: 70% excitatory pyramidal, 30% inhibitory interneurons. Strong NMDA component (ratio 0.6) reflecting Schaffer collateral synapses critical for LTP induction. STDP with LTP bias (A+>A-) reflecting CA1 asymmetric plasticity (Nishiyama 2000). Mixed STP with moderate facilitation (tau_f=100ms). Higher structural turnover reflecting hippocampal synapse remodeling.",
         "literature": [
             "Nishiyama et al. 2000 — CA1 STDP with LTP-biased window",
             "Megías et al. 2001 — CA1 pyramidal cell synapse counts (~30K)",

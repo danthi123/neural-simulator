@@ -1,12 +1,12 @@
 {
     "simulation_configuration": {
         "total_simulation_time_ms": 60000.0,
-        "dt_ms": 1.0,
+        "dt_ms": 0.05,
         "num_neurons": 10000,
         "connections_per_neuron": 100,
         "num_traits": 2,
         "seed": -1,
-        "neuron_model_type": "IZHIKEVICH",
+        "neuron_model_type": "HODGKIN_HUXLEY",
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
         "default_neuron_type_hh": "HH_L5_CORTICAL_PYRAMIDAL_RS",
         "neural_profile_name": "CORTEX_L4_INPUT_LAYER",
@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Cortex L4 - Sensory Input Layer",
-        "description": "Primary sensory cortical input layer (L4): 80% excitatory spiny stellate-like neurons, 20% FS interneurons. Strongly depressing STP (U=0.6, tau_d=150ms) characteristic of thalamocortical→L4 synapses (Gil 1999). Low NMDA ratio (0.3) — thalamocortical synapses are AMPA-dominated. Symmetric STDP (A+=A-) reflecting balanced potentiation/depression for receptive field refinement. Positive OU mean current (+20pA) and high OU std (90pA) model tonic thalamic drive. Fast AMPA decay (3ms) for temporal precision.",
+        "description": "Neuron model: HODGKIN_HUXLEY (dt=0.05ms). Primary sensory cortical input layer (L4): 80% excitatory spiny stellate-like neurons, 20% FS interneurons. Strongly depressing STP (U=0.6, tau_d=150ms) characteristic of thalamocortical→L4 synapses (Gil 1999). Low NMDA ratio (0.3) — thalamocortical synapses are AMPA-dominated. Symmetric STDP (A+=A-) reflecting balanced potentiation/depression for receptive field refinement. Positive OU mean current (+20pA) and high OU std (90pA) model tonic thalamic drive. Fast AMPA decay (3ms) for temporal precision.",
         "literature": [
             "Gil et al. 1999 — Thalamocortical→L4 strong depression (U≈0.6)",
             "Stratford et al. 1996 — L4 spiny stellate cell physiology",

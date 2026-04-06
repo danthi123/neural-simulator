@@ -1,12 +1,12 @@
 {
     "simulation_configuration": {
         "total_simulation_time_ms": 60000.0,
-        "dt_ms": 1.0,
+        "dt_ms": 0.05,
         "num_neurons": 10000,
         "connections_per_neuron": 150,
         "num_traits": 2,
         "seed": -1,
-        "neuron_model_type": "IZHIKEVICH",
+        "neuron_model_type": "HODGKIN_HUXLEY",
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
         "default_neuron_type_hh": "HH_CA3_PYRAMIDAL_BURST",
         "neural_profile_name": "HIPPOCAMPUS_CA3_RECURRENT",
@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Hippocampus CA3 - Recurrent Autoassociative",
-        "description": "CA3 recurrent network: 70% excitatory pyramidal with strong recurrent collaterals, 30% interneurons. Very high NMDA ratio (0.7) reflecting mossy fiber/associational synapses. Facilitating STP (low U=0.15, high tau_f=200ms) characteristic of mossy fiber synapses (Salin 1996). Strong LTP-biased STDP. Higher connection density reflecting CA3's dense recurrent architecture (~12K-30K synapses/neuron in vivo).",
+        "description": "Neuron model: HODGKIN_HUXLEY (dt=0.05ms). CA3 recurrent network: 70% excitatory pyramidal with strong recurrent collaterals, 30% interneurons. Very high NMDA ratio (0.7) reflecting mossy fiber/associational synapses. Facilitating STP (low U=0.15, high tau_f=200ms) characteristic of mossy fiber synapses (Salin 1996). Strong LTP-biased STDP. Higher connection density reflecting CA3's dense recurrent architecture (~12K-30K synapses/neuron in vivo).",
         "literature": [
             "Salin et al. 1996 — Mossy fiber facilitation (U≈0.05-0.15, tau_f~200ms)",
             "Miles & Wong 1986 — CA3 recurrent excitatory connectivity",

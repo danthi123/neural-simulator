@@ -1,12 +1,12 @@
 {
     "simulation_configuration": {
         "total_simulation_time_ms": 60000.0,
-        "dt_ms": 1.0,
+        "dt_ms": 0.05,
         "num_neurons": 10000,
         "connections_per_neuron": 80,
         "num_traits": 2,
         "seed": -1,
-        "neuron_model_type": "IZHIKEVICH",
+        "neuron_model_type": "HODGKIN_HUXLEY",
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
         "default_neuron_type_hh": "HH_THALAMIC_RELAY_TBURST",
         "neural_profile_name": "THALAMUS_TC_TRN",
@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Thalamus TC-TRN - Relay & Reticular Loop",
-        "description": "Thalamocortical relay (60% TC excitatory) and reticular nucleus (40% TRN inhibitory) loop. Low NMDA ratio (0.3) reflecting corticothalamic inputs. Depressing STP (tau_d=300ms) at TC synapses (Gil 1997). Slow GABA-A decay (15ms) from TRN reflects GABA-A/B mixture. LTD-biased STDP reflecting thalamic gain control (A->A+). Low OU noise — thalamic neurons receive more patterned drive. Structural plasticity disabled (thalamic connectivity is relatively stable).",
+        "description": "Neuron model: HODGKIN_HUXLEY (dt=0.05ms). Thalamocortical relay (60% TC excitatory) and reticular nucleus (40% TRN inhibitory) loop. Low NMDA ratio (0.3) reflecting corticothalamic inputs. Depressing STP (tau_d=300ms) at TC synapses (Gil 1997). Slow GABA-A decay (15ms) from TRN reflects GABA-A/B mixture. LTD-biased STDP reflecting thalamic gain control (A->A+). Low OU noise — thalamic neurons receive more patterned drive. Structural plasticity disabled (thalamic connectivity is relatively stable).",
         "literature": [
             "Gil et al. 1997 — Thalamocortical STP depression",
             "Huguenard & McCormick 2007 — TC/TRN oscillatory dynamics",

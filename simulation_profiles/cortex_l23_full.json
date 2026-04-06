@@ -1,12 +1,12 @@
 {
     "simulation_configuration": {
         "total_simulation_time_ms": 60000.0,
-        "dt_ms": 1.0,
+        "dt_ms": 0.05,
         "num_neurons": 10000,
         "connections_per_neuron": 100,
         "num_traits": 2,
         "seed": -1,
-        "neuron_model_type": "IZHIKEVICH",
+        "neuron_model_type": "HODGKIN_HUXLEY",
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
         "default_neuron_type_hh": "HH_L5_CORTICAL_PYRAMIDAL_RS",
         "neural_profile_name": "CORTEX_L23_RS_FS",
@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Neocortex L2/3 - Full Realism",
-        "description": "Cortical microcircuit: 80% excitatory RS pyramidal, 20% FS interneurons. AMPA+NMDA excitation, GABA-A inhibition, STDP with slight LTD bias (Bi & Poo 1998), depressing STP at E→E synapses (Markram 1997), synaptic scaling (Turrigiano 2008), structural turnover. OU noise models in-vivo-like background synaptic bombardment.",
+        "description": "Neuron model: HODGKIN_HUXLEY (dt=0.05ms). Cortical microcircuit: 80% excitatory RS pyramidal, 20% FS interneurons. AMPA+NMDA excitation, GABA-A inhibition, STDP with slight LTD bias (Bi & Poo 1998), depressing STP at E→E synapses (Markram 1997), synaptic scaling (Turrigiano 2008), structural turnover. OU noise models in-vivo-like background synaptic bombardment.",
         "literature": [
             "Markram et al. 1997 — STP depression at cortical synapses (U=0.5, tau_d=200ms)",
             "Bi & Poo 1998 — Asymmetric STDP (A-/A+ ≈ 1.05, tau=20ms)",

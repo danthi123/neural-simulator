@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Quick Demo - Cortical (Beginner)",
-        "description": "Lightweight cortical demo for beginners. 1K neurons, fast initialization, visually engaging with larger point sizes and longer highlight frames. NMDA and structural plasticity disabled for performance. Fixed seed for reproducibility. Good starting point for exploring the simulator's features.",
+        "description": "Neuron model: IZHIKEVICH (dt=1.0ms). Lightweight cortical demo for beginners. 1K neurons, fast initialization, visually engaging with larger point sizes and longer highlight frames. NMDA and structural plasticity disabled for performance. Fixed seed for reproducibility. Good starting point for exploring the simulator's features.",
         "recommended_scale": {
             "beginner": {
                 "num_neurons": 1000,

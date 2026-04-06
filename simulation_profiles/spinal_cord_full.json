@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Spinal Cord Segment - Motor/Interneuron Pool",
-        "description": "Spinal ventral horn segment: 60% excitatory motor neurons/interneurons, 40% inhibitory Renshaw/Ia interneurons. Higher inhibition ratio reflecting strong reciprocal inhibition in spinal circuits. Strong propagation_strength (0.08) and inhibitory_propagation_strength (0.25) for robust motor pattern generation. Fast synaptic kinetics (AMPA 3ms, GABA 6ms, OU tau=8ms) reflecting spinal cord's need for rapid signal processing. Depressing STP (U=0.35) at descending/afferent synapses. Low p_rewire=0.05 reflecting local circuit organization. Structural plasticity disabled (spinal circuits are anatomically stable post-development).",
+        "description": "Neuron model: IZHIKEVICH (dt=1.0ms). Spinal ventral horn segment: 60% excitatory motor neurons/interneurons, 40% inhibitory Renshaw/Ia interneurons. Higher inhibition ratio reflecting strong reciprocal inhibition in spinal circuits. Strong propagation_strength (0.08) and inhibitory_propagation_strength (0.25) for robust motor pattern generation. Fast synaptic kinetics (AMPA 3ms, GABA 6ms, OU tau=8ms) reflecting spinal cord's need for rapid signal processing. Depressing STP (U=0.35) at descending/afferent synapses. Low p_rewire=0.05 reflecting local circuit organization. Structural plasticity disabled (spinal circuits are anatomically stable post-development).",
         "literature": [
             "Renshaw 1946 — Recurrent inhibition in spinal motor circuits",
             "Baldissera et al. 1981 — Spinal E/I ratio ~60/40",

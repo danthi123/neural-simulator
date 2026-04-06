@@ -1,12 +1,12 @@
 {
     "simulation_configuration": {
         "total_simulation_time_ms": 60000.0,
-        "dt_ms": 1.0,
+        "dt_ms": 0.05,
         "num_neurons": 10000,
         "connections_per_neuron": 100,
         "num_traits": 2,
         "seed": -1,
-        "neuron_model_type": "IZHIKEVICH",
+        "neuron_model_type": "HODGKIN_HUXLEY",
         "default_neuron_type_izh": "IZH2007_RS_CORTICAL_PYRAMIDAL",
         "default_neuron_type_hh": "HH_STRIATAL_MSN",
         "neural_profile_name": "BASAL_GANGLIA_STRIATUM",
@@ -120,7 +120,7 @@
     },
     "_profile_metadata": {
         "name": "Basal Ganglia Striatum - MSN Network",
-        "description": "Striatal microcircuit: 95% inhibitory MSNs (Medium Spiny Neurons), 5% FS interneurons. MSNs have hyperpolarized rest (-80mV), high spike threshold (-25mV) requiring strong cortical drive — modeled via negative OU mean current. Strong STP depression (U=0.4, tau_d=400ms) reflecting corticostriatal synaptic depression (Ding 2008). REWARD MODULATION ENABLED — critical for dopaminergic reinforcement learning in striatum. LTD-biased STDP reflecting dopamine-dependent plasticity (Shen 2008).",
+        "description": "Neuron model: HODGKIN_HUXLEY (dt=0.05ms). Striatal microcircuit: 95% inhibitory MSNs (Medium Spiny Neurons), 5% FS interneurons. MSNs have hyperpolarized rest (-80mV), high spike threshold (-25mV) requiring strong cortical drive — modeled via negative OU mean current. Strong STP depression (U=0.4, tau_d=400ms) reflecting corticostriatal synaptic depression (Ding 2008). REWARD MODULATION ENABLED — critical for dopaminergic reinforcement learning in striatum. LTD-biased STDP reflecting dopamine-dependent plasticity (Shen 2008).",
         "literature": [
             "Ding et al. 2008 — Corticostriatal STP depression (U≈0.4, tau_d~400ms)",
             "Shen et al. 2008 — Dopamine-dependent bidirectional STDP in MSNs",
