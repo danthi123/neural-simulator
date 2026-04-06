@@ -791,8 +791,8 @@ class CoreSimConfig:
     
     # C2: STDP (Spike-Timing-Dependent Plasticity) - Bi & Poo 1998, Caporale & Dan 2008
     enable_stdp: bool = True  # Enabled by default for biologically realistic learning
-    stdp_a_plus: float = 0.01              # LTP amplitude (typical: 0.005-0.02)
-    stdp_a_minus: float = 0.0105           # LTD amplitude (typical: slightly > A+)
+    stdp_a_plus: float = 0.012             # LTP amplitude (typical: 0.005-0.02, biased > A- for net potentiation)
+    stdp_a_minus: float = 0.01             # LTD amplitude (typical: slightly < A+, net LTP bias per Song et al. 2000)
     stdp_tau_plus_ms: float = 20.0         # LTP time constant (ms, typical: 15-25ms)
     stdp_tau_minus_ms: float = 20.0        # LTD time constant (ms, typical: 15-25ms)
     stdp_w_min: float = 0.0                # Minimum synaptic weight
@@ -1436,8 +1436,8 @@ class SimulationConfiguration:
 
         # STDP (Spike-Timing Dependent Plasticity)
         self.enable_stdp = True
-        self.stdp_a_plus = 0.01           # LTP amplitude
-        self.stdp_a_minus = 0.0105        # LTD amplitude
+        self.stdp_a_plus = 0.012          # LTP amplitude (biased > A- for net potentiation)
+        self.stdp_a_minus = 0.01          # LTD amplitude
         self.stdp_tau_plus_ms = 20.0      # LTP time constant (ms)
         self.stdp_tau_minus_ms = 20.0     # LTD time constant (ms)
         self.stdp_w_min = 0.0             # Minimum STDP weight
@@ -3356,6 +3356,9 @@ class ExperimentEngine:
         self.is_experiment_running = False
         self.is_experiment_complete = False
 
+        # Phase-gated plasticity flag (checked by simulation step)
+        self.plasticity_enabled_this_phase = True
+
         # Experiment log
         self.log = []                     # List of timestamped event dicts
         self._log_interval_steps = 100    # Log readout every N steps
@@ -3514,6 +3517,9 @@ class ExperimentEngine:
             "time_ms": current_time_ms,
         })
 
+        # Gate plasticity based on phase setting (checked by simulation step)
+        self.plasticity_enabled_this_phase = phase.enable_plasticity
+
         # Configure active stimulus channels
         for ch in self.stimulus_manager.channels:
             ch.enabled = (ch.name in phase.active_channels) if phase.active_channels else True
@@ -3584,6 +3590,92 @@ class ExperimentEngine:
                 "log_entries": self.log,
                 "trial_data": self.training.trials_data,
             }, f, indent=2, default=str)
+
+    def ensure_inter_group_connectivity(self, sim_bridge, cp_module, min_connection_prob=0.05):
+        """Ensure sufficient synaptic connections exist between INPUT and OUTPUT groups.
+
+        For associative conditioning to work via STDP, there must be direct or near-direct
+        synaptic paths from CS (input) to US (output) neurons. Random connectivity in large
+        networks often has too few such paths. This method injects sparse connections between
+        input and output groups if insufficient connections exist.
+
+        Args:
+            sim_bridge: SimulationBridge instance (for cp_connections access)
+            cp_module: CuPy module reference
+            min_connection_prob: Minimum connection probability between groups (default 5%)
+        """
+        import cupyx.scipy.sparse as csp_local
+
+        input_groups = self.group_manager.get_groups_by_role(NeuronGroupRole.INPUT.name)
+        output_groups = self.group_manager.get_groups_by_role(NeuronGroupRole.OUTPUT.name)
+
+        if not input_groups or not output_groups:
+            return 0
+
+        total_added = 0
+        for in_grp in input_groups:
+            for out_grp in output_groups:
+                in_indices = cp_module.arange(in_grp.index_start, in_grp.index_end)
+                out_indices = cp_module.arange(out_grp.index_start, out_grp.index_end)
+
+                # Count existing connections from input to output
+                coo = sim_bridge._get_cached_coo()
+                if coo is not None:
+                    in_set = set(range(in_grp.index_start, in_grp.index_end))
+                    out_set = set(range(out_grp.index_start, out_grp.index_end))
+                    existing = sum(1 for r, c in zip(
+                        cp_module.asnumpy(coo.row), cp_module.asnumpy(coo.col)
+                    ) if int(r) in in_set and int(c) in out_set)
+                else:
+                    existing = 0
+
+                n_in = in_grp.index_end - in_grp.index_start
+                n_out = out_grp.index_end - out_grp.index_start
+                target_connections = int(n_in * n_out * min_connection_prob)
+
+                if existing >= target_connections:
+                    continue  # Already have enough connections
+
+                n_to_add = target_connections - existing
+
+                # Generate random input→output connections
+                pre_idx = cp_module.random.randint(in_grp.index_start, in_grp.index_end,
+                                                    size=n_to_add * 3, dtype=cp_module.int32)
+                post_idx = cp_module.random.randint(out_grp.index_start, out_grp.index_end,
+                                                     size=n_to_add * 3, dtype=cp_module.int32)
+
+                # Remove duplicates
+                pair_ids = pre_idx.astype(cp_module.int64) * self.n_neurons + post_idx.astype(cp_module.int64)
+                unique_ids, unique_indices = cp_module.unique(pair_ids, return_index=True)
+                if unique_ids.size > n_to_add:
+                    unique_indices = unique_indices[:n_to_add]
+                    unique_ids = unique_ids[:n_to_add]
+
+                new_pre = (unique_ids // self.n_neurons).astype(cp_module.int32)
+                new_post = (unique_ids % self.n_neurons).astype(cp_module.int32)
+
+                if new_pre.size > 0:
+                    # Use moderate initial weights (above threshold for structural plasticity)
+                    initial_weights = cp_module.full(new_pre.size, 0.3, dtype=cp_module.float32)
+
+                    new_matrix = csp_local.csr_matrix(
+                        (initial_weights, (new_pre, new_post)),
+                        shape=sim_bridge.cp_connections.shape,
+                        dtype=cp_module.float32
+                    )
+
+                    nnz_before = sim_bridge.cp_connections.nnz
+                    sim_bridge.cp_connections = sim_bridge.cp_connections + new_matrix
+                    actual_new = sim_bridge.cp_connections.nnz - nnz_before
+
+                    if actual_new > 0:
+                        sim_bridge._invalidate_coo_cache()
+                        sim_bridge._grow_synapse_arrays_if_needed(actual_new, sim_bridge.core_config)
+                        sim_bridge._add_synapses_to_arrays(actual_new, sim_bridge.core_config)
+                        sim_bridge._synapse_count = sim_bridge.cp_connections.nnz
+                        total_added += actual_new
+
+        return total_added
 
     def cleanup(self):
         """Release all GPU resources."""
@@ -5935,6 +6027,11 @@ class SimulationBridge:
                 self.experiment_engine.initialize(
                     cp_traits=self.cp_traits, cp_module=cp
                 )
+                # Ensure sufficient connectivity between experiment input/output groups
+                # for STDP-based learning to function (random networks often have too few paths)
+                added = self.experiment_engine.ensure_inter_group_connectivity(self, cp)
+                if added > 0:
+                    self._log_to_ui(f"Injected {added} inter-group connections for experiment learning paths", "info")
                 self._log_to_ui(f"Experiment engine initialized: {self.experiment_config.name}", "info")
             except Exception as e:
                 self._log_to_ui(f"Failed to initialize experiment engine: {e}", "warning")
@@ -8166,8 +8263,15 @@ class SimulationBridge:
                         self.cp_synapse_pulse_progress[synapses_to_activate_indices] = 0.0 
 
             if _profiling: cp.cuda.Device().synchronize(); _prof['t_dyn'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
+
+            # Experiment-phase plasticity gating: if an experiment is running,
+            # respect the current phase's enable_plasticity flag (e.g. testing phases disable plasticity).
+            _plasticity_gated = True  # Default: plasticity allowed
+            if self.experiment_engine is not None and self.experiment_engine.is_experiment_running:
+                _plasticity_gated = self.experiment_engine.plasticity_enabled_this_phase
+
             # --- 4. Hebbian Learning (Long-Term Potentiation/Depression) ---
-            if cfg.enable_hebbian_learning and self.cp_connections.nnz > 0 and \
+            if _plasticity_gated and cfg.enable_hebbian_learning and self.cp_connections.nnz > 0 and \
                self.cp_connections.data is not None and self.cp_connections.data.size > 0:
                 if _prev_any and _fired_any:
                     coo_matrix_heb = self._get_cached_coo()  # Use cached COO
@@ -8188,7 +8292,7 @@ class SimulationBridge:
                     if num_potentiation_events > 0: self._mock_total_plasticity_events += num_potentiation_events
             
             # --- 4b. C2: STDP (Spike-Timing-Dependent Plasticity) ---
-            if cfg.enable_stdp and self.cp_last_spike_time is not None and self.cp_connections.nnz > 0:
+            if _plasticity_gated and cfg.enable_stdp and self.cp_last_spike_time is not None and self.cp_connections.nnz > 0:
                 current_time = self.runtime_state.current_time_ms
 
                 # Update last spike times for neurons that fired this step
@@ -8258,7 +8362,7 @@ class SimulationBridge:
                             self._mock_total_plasticity_events += stdp_active_indices.size
             
             # --- 4c. C2: Reward-Modulated Plasticity (Three-Factor Learning) ---
-            if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None and self.cp_connections.nnz > 0:
+            if _plasticity_gated and cfg.enable_reward_modulation and self.cp_eligibility_trace is not None and self.cp_connections.nnz > 0:
                 # Decay eligibility traces
                 decay_factor = cp.exp(-dt / cfg.reward_eligibility_tau_ms)
                 self.cp_eligibility_trace = fused_eligibility_trace_decay(
@@ -8285,7 +8389,7 @@ class SimulationBridge:
                         self._mock_total_plasticity_events += int(significant_updates.get())
             
             # --- 4d. C3: Structural Plasticity (Synapse Formation/Elimination) ---
-            if cfg.enable_structural_plasticity and self.cp_struct_plast_step_counter is not None:
+            if _plasticity_gated and cfg.enable_structural_plasticity and self.cp_struct_plast_step_counter is not None:
                 self.cp_struct_plast_step_counter += 1
                 
                 # Only update periodically for efficiency
