@@ -4044,6 +4044,9 @@ class SimulationBridge:
         # COO matrix cache (avoid repeated conversions)
         self._cached_coo_matrix = None
         self._coo_cache_valid = False
+        # Per-step derived-data caches (invalidated with COO cache on connectivity change)
+        self._cached_stp_per_type = None  # (tau_f_full, tau_d_full, U_per_syn)
+        self._cached_inhibitory_mask = None  # Boolean mask of inhibitory neurons
 
         # Structural plasticity optimization
         self._compaction_counter = 0  # Counter for deferred CSR compaction
@@ -4200,9 +4203,11 @@ class SimulationBridge:
         return self._cached_coo_matrix
 
     def _invalidate_coo_cache(self):
-        """Invalidates COO cache when connectivity changes."""
+        """Invalidates COO cache and derived caches when connectivity changes."""
         self._coo_cache_valid = False
         self._cached_coo_matrix = None
+        self._cached_stp_per_type = None  # STP per-synapse params depend on connectivity
+        self._cached_inhibitory_mask = None  # Inhibitory mask depends on traits
 
     def _init_synapse_arrays_with_capacity(self, num_synapses, cfg):
         """Initializes synapse-indexed arrays with pre-allocated capacity for growth.
@@ -5986,9 +5991,12 @@ class SimulationBridge:
                 pass
             self.experiment_engine = None
 
-        # Invalidate COO cache so stale data from previous network doesn't persist
+        # Invalidate all caches so stale data from previous network doesn't persist
         self._cached_coo_matrix = None
         self._coo_cache_valid = False
+        self._cached_stp_per_type = None
+        self._cached_inhibitory_mask = None
+        self._cached_static_gui_data = None
         self._synapse_count = 0
         self._synapse_capacity = 0
         self._compaction_counter = 0
@@ -7815,25 +7823,29 @@ class SimulationBridge:
             if cfg.enable_short_term_plasticity and self.cp_connections.nnz > 0 and \
                self.cp_stp_u is not None and self.cp_stp_x is not None:
 
-                # Per-synapse-type STP: build per-synapse tau_f/tau_d/U arrays from connection types
+                # Per-synapse-type STP: use cached per-synapse tau_f/tau_d/U arrays
                 if cfg.enable_per_type_stp and self.cp_synapse_conn_type is not None:
-                    actual_nnz_stp = self.cp_connections.nnz
-                    ctypes = self.cp_synapse_conn_type[:actual_nnz_stp]
-                    # Build per-synapse parameter arrays via lookup table
-                    U_arr = cp.array(cfg.stp_U_per_type, dtype=cp.float32)
-                    tau_f_arr = cp.array(cfg.stp_tau_f_per_type, dtype=cp.float32)
-                    tau_d_arr = cp.array(cfg.stp_tau_d_per_type, dtype=cp.float32)
-                    stp_tau_f_per_syn = tau_f_arr[ctypes]
-                    stp_tau_d_per_syn = tau_d_arr[ctypes]
-                    stp_U_per_syn = U_arr[ctypes]
-                    # Pad to full array length for fused kernel (capacity may exceed nnz)
-                    n_pad = self.cp_stp_u.size - actual_nnz_stp
-                    if n_pad > 0:
-                        stp_tau_f_full = cp.concatenate([stp_tau_f_per_syn, cp.full(n_pad, cfg.stp_tau_f, dtype=cp.float32)])
-                        stp_tau_d_full = cp.concatenate([stp_tau_d_per_syn, cp.full(n_pad, cfg.stp_tau_d, dtype=cp.float32)])
-                    else:
-                        stp_tau_f_full = stp_tau_f_per_syn
-                        stp_tau_d_full = stp_tau_d_per_syn
+                    # Cache per-synapse STP parameter arrays — they only change when
+                    # connectivity changes (structural plasticity) or config is reloaded.
+                    # Avoids 3 cp.array() + 3 fancy-index + 2 concatenate ops per step.
+                    if not hasattr(self, '_cached_stp_per_type') or self._cached_stp_per_type is None:
+                        actual_nnz_stp = self.cp_connections.nnz
+                        ctypes = self.cp_synapse_conn_type[:actual_nnz_stp]
+                        U_arr = cp.array(cfg.stp_U_per_type, dtype=cp.float32)
+                        tau_f_arr = cp.array(cfg.stp_tau_f_per_type, dtype=cp.float32)
+                        tau_d_arr = cp.array(cfg.stp_tau_d_per_type, dtype=cp.float32)
+                        stp_tau_f_per_syn = tau_f_arr[ctypes]
+                        stp_tau_d_per_syn = tau_d_arr[ctypes]
+                        stp_U_per_syn_cached = U_arr[ctypes]
+                        n_pad = self.cp_stp_u.size - actual_nnz_stp
+                        if n_pad > 0:
+                            stp_tau_f_full = cp.concatenate([stp_tau_f_per_syn, cp.full(n_pad, cfg.stp_tau_f, dtype=cp.float32)])
+                            stp_tau_d_full = cp.concatenate([stp_tau_d_per_syn, cp.full(n_pad, cfg.stp_tau_d, dtype=cp.float32)])
+                        else:
+                            stp_tau_f_full = stp_tau_f_per_syn
+                            stp_tau_d_full = stp_tau_d_per_syn
+                        self._cached_stp_per_type = (stp_tau_f_full, stp_tau_d_full, stp_U_per_syn_cached)
+                    stp_tau_f_full, stp_tau_d_full, stp_U_per_syn = self._cached_stp_per_type
                     self.cp_stp_u, self.cp_stp_x = fused_stp_decay_recovery(
                         self.cp_stp_u, self.cp_stp_x, dt, stp_tau_f_full, stp_tau_d_full)
                 else:
@@ -7894,13 +7906,16 @@ class SimulationBridge:
                 prev_fired_float = self.cp_prev_firing_states.astype(cp.float32)
 
                 if cfg.enable_inhibitory_neurons and self.cp_traits is not None:
-                    # Support multiple inhibitory trait indices while preserving legacy single-index behavior
-                    inhibitory_indices = getattr(cfg, "inhibitory_trait_indices", None)
-                    if inhibitory_indices:
-                        inhibitory_indices_cp = cp.asarray(inhibitory_indices, dtype=cp.int32)
-                        is_inhibitory_neuron_output = cp.isin(self.cp_traits, inhibitory_indices_cp)
-                    else:
-                        is_inhibitory_neuron_output = (self.cp_traits == cfg.inhibitory_trait_index)
+                    # Cache inhibitory neuron mask — traits don't change during simulation.
+                    # Avoids cp.isin() or equality check + cp.asarray() every step.
+                    if self._cached_inhibitory_mask is None:
+                        inhibitory_indices = getattr(cfg, "inhibitory_trait_indices", None)
+                        if inhibitory_indices:
+                            inhibitory_indices_cp = cp.asarray(inhibitory_indices, dtype=cp.int32)
+                            self._cached_inhibitory_mask = cp.isin(self.cp_traits, inhibitory_indices_cp)
+                        else:
+                            self._cached_inhibitory_mask = (self.cp_traits == cfg.inhibitory_trait_index)
+                    is_inhibitory_neuron_output = self._cached_inhibitory_mask
                     exc_fired_prev = prev_fired_float * (~is_inhibitory_neuron_output)
                     inhib_fired_prev = prev_fired_float * is_inhibitory_neuron_output
 
@@ -8106,13 +8121,12 @@ class SimulationBridge:
 
             self.cp_firing_states[:] = fired_this_step
 
-            # Cache fired_this_step.any() to avoid repeated GPU-CPU synchronization stalls.
-            # Each .any() call forces the GPU pipeline to flush and transfer a scalar to CPU.
-            # This boolean is used 4+ times across Hebbian, STDP, visualization, and homeostasis.
-            _fired_any = bool(fired_this_step.any())
-
-            # Accumulate spike count on GPU, sync to CPU periodically (reduces GPU-CPU stalls)
+            # Combine spike count + any() into a single GPU reduction.
+            # cp.sum(bool_array) gives spike count; > 0 gives _fired_any — one kernel, one sync.
             spike_count_gpu = cp.sum(fired_this_step)
+            _fired_any = bool(spike_count_gpu > 0)
+
+            # Accumulate spike count on GPU, sync to CPU periodically
             if self._accumulated_spikes_gpu is None:
                 self._accumulated_spikes_gpu = spike_count_gpu
             else:
@@ -8902,15 +8916,13 @@ class SimulationBridge:
         n = self.core_config.num_neurons
         dt = self.core_config.dt_ms
         
-        # Compute spike count on-demand only when GUI requests it (avoids sync every step)
-        num_spikes_this_step = int(cp.sum(self.cp_firing_states).get()) if self.cp_firing_states is not None else 0
-        
-        # Compute firing rate on-demand using current spike count
+        # Use pre-computed spike count from simulation step (avoids GPU-CPU sync here)
+        num_spikes_this_step = self._mock_num_spikes_this_step if hasattr(self, '_mock_num_spikes_this_step') else 0
+
+        # Update firing rate EMA from cached spike count
         if n > 0 and dt > 0:
             instantaneous_rate_hz = (num_spikes_this_step / n) / (dt / 1000.0)
             self._mock_network_avg_firing_rate_hz = self._mock_network_avg_firing_rate_hz * 0.95 + instantaneous_rate_hz * 0.05
-        else:
-            self._mock_network_avg_firing_rate_hz = 0.0
         
         gui_data_dict = {
             "current_time_ms": self.runtime_state.current_time_ms,
@@ -8924,6 +8936,7 @@ class SimulationBridge:
         }
 
         # --- Data to keep as CuPy arrays for OpenGL ---
+        # Dynamic arrays (change every step) — must copy to avoid race with sim thread
         if self.cp_firing_states is not None:
             gui_data_dict["neuron_fired_status_cp"] = self.cp_firing_states.copy()
         elif n > 0:
@@ -8938,27 +8951,32 @@ class SimulationBridge:
         else:
             gui_data_dict["neuron_activity_timers_cp"] = cp.array([], dtype=cp.int32)
 
-        if self.cp_neuron_positions_3d is not None:
-            gui_data_dict["neuron_positions_3d_cp"] = self.cp_neuron_positions_3d.copy()
-        elif n > 0:
-            gui_data_dict["neuron_positions_3d_cp"] = cp.zeros((n,3),dtype=cp.float32)
-        else:
-            gui_data_dict["neuron_positions_3d_cp"] = cp.array([], dtype=cp.float32).reshape(0,3)
+        # Static arrays (positions, traits, type IDs) — don't change during simulation.
+        # Cache once and reuse to avoid expensive GPU copies every update.
+        if not hasattr(self, '_cached_static_gui_data') or self._cached_static_gui_data is None:
+            self._cached_static_gui_data = {}
+            if self.cp_neuron_positions_3d is not None:
+                self._cached_static_gui_data["neuron_positions_3d_cp"] = self.cp_neuron_positions_3d.copy()
+            elif n > 0:
+                self._cached_static_gui_data["neuron_positions_3d_cp"] = cp.zeros((n,3),dtype=cp.float32)
+            else:
+                self._cached_static_gui_data["neuron_positions_3d_cp"] = cp.array([], dtype=cp.float32).reshape(0,3)
 
-        if self.cp_traits is not None:
-            gui_data_dict["neuron_traits_cp"] = self.cp_traits.copy()
-        elif n > 0:
-            gui_data_dict["neuron_traits_cp"] = cp.zeros(n, dtype=cp.int32)
-        else:
-            gui_data_dict["neuron_traits_cp"] = cp.array([], dtype=cp.int32)
-        
-        # Add neuron type IDs for GPU-efficient filtering
-        if self.cp_neuron_type_ids is not None:
-            gui_data_dict["neuron_type_ids_cp"] = self.cp_neuron_type_ids.copy()
-        elif n > 0:
-            gui_data_dict["neuron_type_ids_cp"] = cp.zeros(n, dtype=cp.int32)
-        else:
-            gui_data_dict["neuron_type_ids_cp"] = cp.array([], dtype=cp.int32)
+            if self.cp_traits is not None:
+                self._cached_static_gui_data["neuron_traits_cp"] = self.cp_traits.copy()
+            elif n > 0:
+                self._cached_static_gui_data["neuron_traits_cp"] = cp.zeros(n, dtype=cp.int32)
+            else:
+                self._cached_static_gui_data["neuron_traits_cp"] = cp.array([], dtype=cp.int32)
+
+            if self.cp_neuron_type_ids is not None:
+                self._cached_static_gui_data["neuron_type_ids_cp"] = self.cp_neuron_type_ids.copy()
+            elif n > 0:
+                self._cached_static_gui_data["neuron_type_ids_cp"] = cp.zeros(n, dtype=cp.int32)
+            else:
+                self._cached_static_gui_data["neuron_type_ids_cp"] = cp.array([], dtype=cp.int32)
+
+        gui_data_dict.update(self._cached_static_gui_data)
 
         # --- Data for DPG text display (can be NumPy or Python types) ---
         if self.cp_membrane_potential_v is not None:
@@ -13373,7 +13391,7 @@ def simulation_worker_loop(sim_bridge, local_shutdown_event, command_q, data_q):
     # How often to send data updates to UI (in terms of simulation steps)
     # Lower = more responsive visualization at cost of more GPU→CPU transfers
     # For 60 FPS visualization: Update every 1-2 steps for real-time display
-    DATA_UPDATE_INTERVAL_STEPS = 1 # Real-time visualization (60 FPS capable)
+    DATA_UPDATE_INTERVAL_STEPS = 10 # GUI update every 10 steps (~100 FPS at dt=1ms, was 1 = every step)
     SYNAPSE_SAMPLE_UPDATE_INTERVAL_STEPS = 200 # Update synapse samples much less frequently
 
     try:
