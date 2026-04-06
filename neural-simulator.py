@@ -8154,7 +8154,7 @@ class SimulationBridge:
             # --- 4b. C2: STDP (Spike-Timing-Dependent Plasticity) ---
             if cfg.enable_stdp and self.cp_last_spike_time is not None and self.cp_connections.nnz > 0:
                 current_time = self.runtime_state.current_time_ms
-                
+
                 # Update last spike times for neurons that fired this step
                 if fired_this_step.any():
                     self.cp_last_spike_time = cp.where(
@@ -8162,53 +8162,64 @@ class SimulationBridge:
                         current_time,
                         self.cp_last_spike_time
                     )
-                
-                # Apply STDP updates for spike pairs
-                # Only update synapses where both pre and post have spiked recently
-                if self.cp_prev_firing_states.any() or fired_this_step.any():
+
+                # Apply STDP updates — ONLY for synapses connected to neurons that just fired.
+                # This is the key optimization: instead of computing delta_t for ALL synapses
+                # and filtering, we pre-filter to synapses where pre OR post neuron fired this step.
+                # At typical firing rates (2-10 Hz), this reduces the working set from ~1M to ~1-10K.
+                if fired_this_step.any():
                     coo_matrix_stdp = self._get_cached_coo()  # Use cached COO
-                    
-                    # Get last spike times for pre and post neurons
-                    pre_spike_times = self.cp_last_spike_time[coo_matrix_stdp.row]
-                    post_spike_times = self.cp_last_spike_time[coo_matrix_stdp.col]
-                    
-                    # Calculate spike timing differences (t_post - t_pre)
-                    delta_t = post_spike_times - pre_spike_times
-                    
-                    # Only update synapses where both neurons have spiked (not at initial value)
-                    valid_pairs_mask = (pre_spike_times > -500.0) & (post_spike_times > -500.0)
-                    
-                    # Apply STDP time window constraint (only update recent spike pairs)
-                    stdp_window_ms = max(cfg.stdp_tau_plus_ms, cfg.stdp_tau_minus_ms) * 5.0  # 5 tau is ~99% decay
-                    within_window_mask = (cp.abs(delta_t) < stdp_window_ms) & valid_pairs_mask
-                    
-                    stdp_active_indices = cp.where(within_window_mask)[0]
-                    
-                    if stdp_active_indices.size > 0:
-                        # Apply STDP weight updates using fused kernel
-                        current_weights = self.cp_connections.data[stdp_active_indices]
-                        delta_t_active = delta_t[stdp_active_indices]
-                        
-                        updated_weights = fused_stdp_weight_update(
-                            delta_t_active,
-                            current_weights,
-                            cfg.stdp_a_plus,
-                            cfg.stdp_a_minus,
-                            cfg.stdp_tau_plus_ms,
-                            cfg.stdp_tau_minus_ms,
-                            cfg.stdp_w_min,
-                            cfg.stdp_w_max
-                        )
-                        
-                        self.cp_connections.data[stdp_active_indices] = updated_weights
-                        
-                        # Update eligibility traces if reward modulation is enabled
-                        if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
-                            # Eligibility trace increases when STDP would cause weight change
-                            weight_changes = updated_weights - current_weights
-                            self.cp_eligibility_trace[stdp_active_indices] += cp.abs(weight_changes)
-                        
-                        self._mock_total_plasticity_events += stdp_active_indices.size
+
+                    # Pre-filter: only synapses where pre or post neuron fired THIS step
+                    pre_fired_now = fired_this_step[coo_matrix_stdp.row]
+                    post_fired_now = fired_this_step[coo_matrix_stdp.col]
+                    candidate_mask = pre_fired_now | post_fired_now
+                    candidate_indices = cp.where(candidate_mask)[0]
+
+                    if candidate_indices.size > 0:
+                        # Get spike times only for candidate synapses
+                        pre_spike_times = self.cp_last_spike_time[coo_matrix_stdp.row[candidate_indices]]
+                        post_spike_times = self.cp_last_spike_time[coo_matrix_stdp.col[candidate_indices]]
+
+                        # Calculate spike timing differences (t_post - t_pre)
+                        delta_t = post_spike_times - pre_spike_times
+
+                        # Only update synapses where both neurons have spiked (not at initial value)
+                        valid_pairs_mask = (pre_spike_times > -500.0) & (post_spike_times > -500.0)
+
+                        # Apply STDP time window constraint
+                        stdp_window_ms = max(cfg.stdp_tau_plus_ms, cfg.stdp_tau_minus_ms) * 5.0
+                        within_window_mask = (cp.abs(delta_t) < stdp_window_ms) & valid_pairs_mask
+
+                        stdp_local_indices = cp.where(within_window_mask)[0]
+
+                        if stdp_local_indices.size > 0:
+                            # Map back to global synapse indices
+                            stdp_active_indices = candidate_indices[stdp_local_indices]
+
+                            # Apply STDP weight updates using fused kernel
+                            current_weights = self.cp_connections.data[stdp_active_indices]
+                            delta_t_active = delta_t[stdp_local_indices]
+
+                            updated_weights = fused_stdp_weight_update(
+                                delta_t_active,
+                                current_weights,
+                                cfg.stdp_a_plus,
+                                cfg.stdp_a_minus,
+                                cfg.stdp_tau_plus_ms,
+                                cfg.stdp_tau_minus_ms,
+                                cfg.stdp_w_min,
+                                cfg.stdp_w_max
+                            )
+
+                            self.cp_connections.data[stdp_active_indices] = updated_weights
+
+                            # Update eligibility traces if reward modulation is enabled
+                            if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
+                                weight_changes = updated_weights - current_weights
+                                self.cp_eligibility_trace[stdp_active_indices] += cp.abs(weight_changes)
+
+                            self._mock_total_plasticity_events += stdp_active_indices.size
             
             # --- 4c. C2: Reward-Modulated Plasticity (Three-Factor Learning) ---
             if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None and self.cp_connections.nnz > 0:
