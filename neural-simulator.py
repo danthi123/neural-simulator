@@ -7994,9 +7994,19 @@ class SimulationBridge:
             # --- 1. Synaptic Plasticity (STP) Update ---
             if _profiling: cp.cuda.Device().synchronize(); _prof['t_init'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             base_synaptic_weights = self.cp_connections.data
-            effective_synaptic_strength = base_synaptic_weights 
+            effective_synaptic_strength = base_synaptic_weights
 
-            if cfg.enable_short_term_plasticity and self.cp_connections.nnz > 0 and \
+            # Freeze STP during experiments: sustained stimulus-driven firing (e.g. 34 Hz
+            # CS input over 200ms pulses) causes pathological synaptic depression under
+            # Tsodyks-Markram STP (U=0.15, τ_d=200ms → effective multiplier ≈ 0.07), reducing
+            # a ~48 pA learned signal to ~3.6 pA — invisible against OU noise. Real experiments
+            # account for STP by design (ISI, frequency tuning); our STP parameters are tuned
+            # for general network dynamics, not experiment validation protocols.
+            _stp_active = cfg.enable_short_term_plasticity and not (
+                self.experiment_engine is not None and self.experiment_engine.is_experiment_running
+            )
+
+            if _stp_active and self.cp_connections.nnz > 0 and \
                self.cp_stp_u is not None and self.cp_stp_x is not None:
 
                 # Per-synapse-type STP: use cached per-synapse tau_f/tau_d/U arrays
