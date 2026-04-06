@@ -8874,7 +8874,7 @@ def _scan_profile_directory():
     if not os.path.isdir(profile_dir):
         return
 
-    new_map = {"(None — use settings below)": ""}  # Default empty entry
+    new_map = {"(None - use settings below)": ""}  # Default empty entry
     try:
         for fname in sorted(os.listdir(profile_dir)):
             if not fname.endswith(".json") or fname == "auto_tuned_overrides.json":
@@ -8899,7 +8899,7 @@ def _scan_profile_directory():
 
 def _handle_full_profile_dropdown_change(sender, app_data, user_data=None):
     """Callback when user selects a full profile from the dropdown."""
-    if not app_data or app_data == "(None — use settings below)":
+    if not app_data or app_data == "(None - use settings below)":
         return
 
     filepath = _FULL_PROFILE_MAP.get(app_data, "")
@@ -10275,7 +10275,7 @@ def create_gui_layout():
             with dpg.group(horizontal=True):
                 dpg.add_combo(tag="cfg_full_profile",
                               items=list(_FULL_PROFILE_MAP.keys()),
-                              default_value="(None — use settings below)",
+                              default_value="(None - use settings below)",
                               callback=_handle_full_profile_dropdown_change,
                               width=350)
                 dpg.add_button(label="Refresh", callback=lambda: _refresh_full_profile_dropdown(),
