@@ -8346,8 +8346,15 @@ class SimulationBridge:
             # Experiment-phase plasticity gating: if an experiment is running,
             # respect the current phase's enable_plasticity flag (e.g. testing phases disable plasticity).
             _plasticity_gated = True  # Default: plasticity allowed
+            _homeostasis_gated = True  # Default: homeostasis allowed
             if self.experiment_engine is not None and self.experiment_engine.is_experiment_running:
                 _plasticity_gated = self.experiment_engine.plasticity_enabled_this_phase
+                # Disable homeostasis during ALL experiment phases. Rationale: homeostatic
+                # plasticity in vivo operates on hours-to-days timescales (Turrigiano 2008),
+                # far slower than the seconds-long experiments here. With EMA tau ≈ 5s, it
+                # actively opposes learning — e.g., US neurons driven at 125 Hz during training
+                # get their thresholds raised, masking STDP-strengthened CS→US pathways in post-test.
+                _homeostasis_gated = False
 
             # --- 4. Hebbian Learning (Long-Term Potentiation/Depression) ---
             if _plasticity_gated and cfg.enable_hebbian_learning and self.cp_connections.nnz > 0 and \
@@ -8651,9 +8658,9 @@ class SimulationBridge:
                                 self._synapse_count = self.cp_connections.nnz
 
             if _profiling: cp.cuda.Device().synchronize(); _prof['t_plast'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
-            # --- 5. Homeostatic Plasticity ---
+            # --- 5. Homeostatic Plasticity (gated separately from learning plasticity) ---
             # 5a. Adaptive thresholds (Izhikevich-specific)
-            if cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
+            if _homeostasis_gated and cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
                 if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
                     self.cp_neuron_activity_ema, self.cp_neuron_firing_thresholds = fused_homeostasis_update(
                         self.cp_neuron_activity_ema, fired_this_step.astype(cp.float32),
@@ -8668,7 +8675,7 @@ class SimulationBridge:
             # 5b. Synaptic scaling (Turrigiano 2008) — works for all neuron models
             # Multiplicatively scales excitatory synaptic weights to maintain target firing rate.
             # scale_factor = 1 + rate * (target - actual_ema) per postsynaptic neuron
-            if cfg.enable_synaptic_scaling and self.cp_connections is not None and self.cp_connections.nnz > 0:
+            if _homeostasis_gated and cfg.enable_synaptic_scaling and self.cp_connections is not None and self.cp_connections.nnz > 0:
                 # Update EMA if not already done by threshold homeostasis
                 if not (cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None):
                     self.cp_neuron_activity_ema = (1.0 - cfg.homeostasis_ema_alpha) * self.cp_neuron_activity_ema + \
