@@ -35,6 +35,12 @@ from ui.experiment_dashboard import (
     populate_experiment_info,
 )
 from ui.sweep_panel import SweepPanel
+from ui.figure_export import (
+    export_sweep_figure,
+    export_experiment_comparison,
+    export_frequency_response,
+    MATPLOTLIB_AVAILABLE,
+)
 
 __all__ = [
     'init_callbacks',
@@ -68,4 +74,8 @@ __all__ = [
     'create_experiment_dashboard',
     'populate_experiment_info',
     'SweepPanel',
+    'export_sweep_figure',
+    'export_experiment_comparison',
+    'export_frequency_response',
+    'MATPLOTLIB_AVAILABLE',
 ]

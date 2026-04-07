@@ -104,6 +104,8 @@ class SweepPanel:
                               callback=self._export_csv)
                 dpg.add_button(label="Export JSON", tag="sweep_export_json_btn", width=100,
                               callback=self._export_json)
+                dpg.add_button(label="Export Figure", tag="sweep_export_fig_btn", width=100,
+                              callback=self._export_figure)
 
     def _start_sweep(self):
         """Start the sweep in a background thread."""
@@ -341,3 +343,11 @@ class SweepPanel:
         filepath = f"sweep_results_{int(time.time())}.json"
         with open(filepath, 'w') as f:
             json.dump({"config": self._sweep_config, "results": self.results}, f, indent=2, default=str)
+
+    def _export_figure(self):
+        """Export results as a publication-quality matplotlib figure."""
+        if not self.results:
+            return
+        from ui.figure_export import export_sweep_figure
+        param_name = list(self._sweep_config["parameters"].keys())[0] if self._sweep_config else "param"
+        export_sweep_figure(self.results, param_name)
