@@ -95,7 +95,7 @@ def create_firing_rate_plot(parent, data_bus, tag_prefix="rate"):
                 dpg.add_line_series([], [], label="Population", tag=series_tag)
         # Set sensible initial axis limits
         dpg.set_axis_limits(f"{tag_prefix}_x", 0, 10)
-        dpg.set_axis_limits(f"{tag_prefix}_y", 0, 20)
+        dpg.set_axis_limits(f"{tag_prefix}_y", 0, 4)
 
     times = deque(maxlen=10000)
     rates = deque(maxlen=10000)
@@ -118,7 +118,7 @@ def create_firing_rate_plot(parent, data_bus, tag_prefix="rate"):
             dpg.set_axis_limits(f"{tag_prefix}_x", t_max - 10.0, t_max)
             # Auto-expand Y if rates exceed current limit
             r_max = max(r_list) if r_list else 0
-            y_limit = max(20, r_max * 1.2)
+            y_limit = max(4, r_max * 1.2)
             dpg.set_axis_limits(f"{tag_prefix}_y", 0, y_limit)
 
     return update
@@ -133,10 +133,10 @@ def create_weight_histogram(parent, data_bus, tag_prefix="whist"):
 
     with dpg.collapsing_header(label="Weight Distribution", parent=parent, default_open=False):
         with dpg.plot(label="Synaptic Weights", height=170, width=-1, tag=f"{tag_prefix}_plot"):
-            dpg.add_plot_axis(dpg.mvXAxis, label="Count", tag=f"{tag_prefix}_x")
-            with dpg.plot_axis(dpg.mvYAxis, label="Weight", tag=f"{tag_prefix}_y"):
-                dpg.add_bar_series([], [], tag=series_tag, weight=0.06, horizontal=True)
-            dpg.set_axis_limits(f"{tag_prefix}_y", 0.0, 2.0)
+            dpg.add_plot_axis(dpg.mvXAxis, label="Weight", tag=f"{tag_prefix}_x")
+            with dpg.plot_axis(dpg.mvYAxis, label="Count", tag=f"{tag_prefix}_y"):
+                dpg.add_bar_series([], [], tag=series_tag, weight=0.07)
+            dpg.set_axis_limits(f"{tag_prefix}_x", 0.0, 2.0)
 
     def update():
         history = data_bus.get_history("weights", 1) if data_bus else []
@@ -147,8 +147,11 @@ def create_weight_histogram(parent, data_bus, tag_prefix="whist"):
             return
         counts, edges = np.histogram(weights, bins=25, range=(0, 2))
         centers = (edges[:-1] + edges[1:]) / 2
-        # Horizontal bars: x=counts (bar length), y=weight bin centers (bar position)
+        # Vertical bars: x=weight bin centers, y=counts
         dpg.set_value(series_tag, [centers.tolist(), counts.tolist()])
+        # Auto-scale Y to fit data
+        max_count = int(counts.max()) if len(counts) > 0 else 100
+        dpg.set_axis_limits(f"{tag_prefix}_y", 0, max_count * 1.1)
 
     return update
 

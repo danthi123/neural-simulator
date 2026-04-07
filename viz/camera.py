@@ -95,6 +95,7 @@ def mouse_button_func_gl(button, state, x, y):
                 dx = abs(x - _mouse_down_pos[0])
                 dy = abs(y - _mouse_down_pos[1])
                 if dx <= _CLICK_DRAG_THRESHOLD and dy <= _CLICK_DRAG_THRESHOLD:
+                    print(f"[Camera] Click detected at ({x},{y}), calling picker...")
                     _handle_neuron_pick(x, y)
                 _mouse_down_pos = None
     elif button == glut.GLUT_RIGHT_BUTTON:
@@ -118,6 +119,7 @@ def mouse_button_func_gl(button, state, x, y):
 def _handle_neuron_pick(x, y):
     """Perform color-based neuron picking at screen coordinates (x, y)."""
     if not global_simulation_bridge or _ui_state is None:
+        print(f"[Picker] Early return: bridge={global_simulation_bridge is not None}, ui_state={_ui_state is not None}")
         return
 
     try:
