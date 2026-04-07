@@ -1021,7 +1021,8 @@ def _scan_profile_directory():
     Excludes auto_tuned_overrides.json (system file, not a user profile).
     """
     global _FULL_PROFILE_MAP
-    profile_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "simulation_profiles")
+    # Profile dir is at project root, not relative to this file (which is in ui/)
+    profile_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "simulation_profiles")
     if not os.path.isdir(profile_dir):
         return
 

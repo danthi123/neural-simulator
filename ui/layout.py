@@ -193,7 +193,7 @@ def create_gui_layout():
                          color=[140,140,140,255], wrap=label_col_width + 50)
             with dpg.group(horizontal=True):
                 dpg.add_combo(tag="cfg_full_profile",
-                              items=list(_FULL_PROFILE_MAP.keys()),
+                              items=list(_cb_module._FULL_PROFILE_MAP.keys()),
                               default_value="(None - use settings below)",
                               callback=_handle_full_profile_dropdown_change,
                               width=350)
