@@ -135,8 +135,8 @@ def create_weight_histogram(parent, data_bus, tag_prefix="whist"):
         with dpg.plot(label="Synaptic Weights", height=170, width=-1, tag=f"{tag_prefix}_plot"):
             dpg.add_plot_axis(dpg.mvXAxis, label="Weight", tag=f"{tag_prefix}_x")
             with dpg.plot_axis(dpg.mvYAxis, label="Count", tag=f"{tag_prefix}_y"):
-                dpg.add_bar_series([], [], tag=series_tag, weight=0.07)
-            dpg.set_axis_limits(f"{tag_prefix}_x", 0.0, 2.0)
+                dpg.add_bar_series([], [], tag=series_tag, weight=0.035)
+            dpg.set_axis_limits(f"{tag_prefix}_x", 0.0, 1.0)
 
     def update():
         history = data_bus.get_history("weights", 1) if data_bus else []
@@ -145,7 +145,7 @@ def create_weight_histogram(parent, data_bus, tag_prefix="whist"):
         weights = history[-1].get("weights")
         if weights is None or len(weights) == 0:
             return
-        counts, edges = np.histogram(weights, bins=25, range=(0, 2))
+        counts, edges = np.histogram(weights, bins=25, range=(0, 1))
         centers = (edges[:-1] + edges[1:]) / 2
         # Vertical bars: x=weight bin centers, y=counts
         dpg.set_value(series_tag, [centers.tolist(), counts.tolist()])

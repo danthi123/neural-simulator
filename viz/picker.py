@@ -31,17 +31,7 @@ def color_to_index(r, g, b):
 def pick_neuron_at(x, y, neuron_positions, num_neurons, viz_cfg):
     """Pick the neuron at screen position (x, y).
 
-    Renders a single off-screen frame with index-encoded colors,
-    reads the pixel at the click position, and returns the neuron index.
-
-    Args:
-        x, y: Screen coordinates from GLUT (y=0 is top)
-        neuron_positions: numpy array (n, 3) of neuron world positions
-        num_neurons: total neuron count
-        viz_cfg: VisualizationConfig object with camera state
-
-    Returns:
-        int: neuron index (0-based), or -1 if no neuron was hit
+    Returns neuron index (0-based), or -1 if no neuron was hit.
     """
     if not OPENGL_AVAILABLE or neuron_positions is None or num_neurons == 0:
         return -1
@@ -51,28 +41,35 @@ def pick_neuron_at(x, y, neuron_positions, num_neurons, viz_cfg):
         width = int(viewport[2])
         height = int(viewport[3])
         if width <= 0 or height <= 0:
+            print(f"[Picker] Invalid viewport: {width}x{height}")
             return -1
 
-        # Save all GL state
+        # Render to the BACK buffer (double-buffered GLUT)
+        glDrawBuffer(GL_BACK)
+        glReadBuffer(GL_BACK)
+
+        # Save state
         glPushAttrib(GL_ALL_ATTRIB_BITS)
         glMatrixMode(GL_PROJECTION)
         glPushMatrix()
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
 
-        # Set up clean render state for picking
+        # Clean render state
         glDisable(GL_LIGHTING)
         glDisable(GL_TEXTURE_2D)
         glDisable(GL_BLEND)
         glDisable(GL_DITHER)
         glDisable(GL_FOG)
         glDisable(GL_POINT_SMOOTH)
+        glEnable(GL_DEPTH_TEST)
+        glDepthFunc(GL_LESS)
 
-        # Clear with background color that maps to "no neuron"
+        # White background = no hit
         glClearColor(1.0, 1.0, 1.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        # Set up same projection as main renderer
+        # Same projection as main renderer
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         fov = getattr(viz_cfg, 'camera_fov', 60.0)
@@ -80,7 +77,7 @@ def pick_neuron_at(x, y, neuron_positions, num_neurons, viz_cfg):
         far = getattr(viz_cfg, 'camera_far_clip', 10000.0)
         gluPerspective(fov, width / height, near, far)
 
-        # Set up same modelview as main renderer
+        # Same modelview as main renderer
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
@@ -101,16 +98,11 @@ def pick_neuron_at(x, y, neuron_positions, num_neurons, viz_cfg):
 
         gluLookAt(eye_x, eye_y, eye_z, cx, cy, cz, up_x, up_y, up_z)
 
-        # Draw neurons as large points with index-encoded colors.
-        # Use larger point size for easier picking.
+        # Draw neurons with index-encoded colors using vertex arrays
         glPointSize(12.0)
-        glDepthFunc(GL_LESS)
-        glEnable(GL_DEPTH_TEST)
 
-        # Cap to avoid extremely slow immediate-mode rendering
         draw_count = min(num_neurons, len(neuron_positions), 50000)
 
-        # Build color + vertex arrays for batch rendering (much faster than glBegin/glEnd)
         colors = np.zeros((draw_count, 3), dtype=np.uint8)
         for i in range(draw_count):
             r, g, b = index_to_color(i)
@@ -126,50 +118,78 @@ def pick_neuron_at(x, y, neuron_positions, num_neurons, viz_cfg):
         glDisableClientState(GL_VERTEX_ARRAY)
         glDisableClientState(GL_COLOR_ARRAY)
 
-        glFinish()  # Ensure drawing is complete before reading
+        glFinish()
 
-        # Read pixel at click position (GLUT y=0 is top, GL y=0 is bottom)
+        # Read pixel — GL y=0 is bottom, GLUT y=0 is top
         gl_y = height - y - 1
-        pixel = glReadPixels(x, gl_y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE)
 
-        # Restore GL state
+        # Read a small area around the click for tolerance
+        read_size = 5  # 5x5 pixel area
+        half = read_size // 2
+        rx = max(0, x - half)
+        ry = max(0, gl_y - half)
+        rw = min(read_size, width - rx)
+        rh = min(read_size, height - ry)
+
+        pixels = glReadPixels(rx, ry, rw, rh, GL_RGB, GL_UNSIGNED_BYTE)
+
+        # Restore state
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()
         glMatrixMode(GL_MODELVIEW)
         glPopMatrix()
         glPopAttrib()
 
-        # Decode pixel
-        if pixel is None:
+        # Search the read area for a non-white pixel (nearest to center first)
+        if pixels is None:
+            print("[Picker] glReadPixels returned None")
             return -1
 
-        # Handle different pixel format returns
+        # Convert to numpy for easier indexing
         try:
-            if hasattr(pixel, 'shape'):
-                r_val = int(pixel[0, 0, 0])
-                g_val = int(pixel[0, 0, 1])
-                b_val = int(pixel[0, 0, 2])
-            else:
-                r_val = int(pixel[0][0][0])
-                g_val = int(pixel[0][0][1])
-                b_val = int(pixel[0][0][2])
-        except (IndexError, TypeError):
-            return -1
+            pixel_arr = np.frombuffer(pixels, dtype=np.uint8).reshape(rh, rw, 3)
+        except (ValueError, TypeError):
+            # Try alternative pixel format
+            pixel_arr = np.array(pixels, dtype=np.uint8).reshape(rh, rw, 3)
 
-        index = color_to_index(r_val, g_val, b_val)
+        # Search from center outward
+        center_ry = min(half, rh - 1)
+        center_rx = min(half, rw - 1)
 
-        # White (255, 255, 255) = background = no hit
-        if r_val == 255 and g_val == 255 and b_val == 255:
-            return -1
+        best_idx = -1
+        best_dist = 999
 
-        if index >= num_neurons:
-            return -1
+        for dy in range(-half, half + 1):
+            for dx in range(-half, half + 1):
+                py = center_ry + dy
+                px = center_rx + dx
+                if 0 <= py < rh and 0 <= px < rw:
+                    r_val = int(pixel_arr[py, px, 0])
+                    g_val = int(pixel_arr[py, px, 1])
+                    b_val = int(pixel_arr[py, px, 2])
 
-        return index
+                    # Skip white (background)
+                    if r_val == 255 and g_val == 255 and b_val == 255:
+                        continue
+
+                    idx = color_to_index(r_val, g_val, b_val)
+                    if 0 <= idx < num_neurons:
+                        dist = abs(dx) + abs(dy)
+                        if dist < best_dist:
+                            best_dist = dist
+                            best_idx = idx
+
+        if best_idx >= 0:
+            print(f"[Picker] Hit neuron #{best_idx} at pixel offset {best_dist}")
+        else:
+            print(f"[Picker] No hit at ({x},{y}) — center pixel RGB=({int(pixel_arr[center_ry, center_rx, 0])},{int(pixel_arr[center_ry, center_rx, 1])},{int(pixel_arr[center_ry, center_rx, 2])})")
+
+        return best_idx
 
     except Exception as e:
         print(f"[Picker] Error: {e}")
-        # Try to restore state on error
+        import traceback
+        traceback.print_exc()
         try:
             glMatrixMode(GL_PROJECTION)
             glPopMatrix()
