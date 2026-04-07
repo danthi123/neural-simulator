@@ -70,6 +70,9 @@ from ui.callbacks import (
     handle_clear_logs_click, handle_export_logs_click,
     trigger_filter_update_signal,
     get_profile_files, get_hdf5_files,
+    _recording_memory_popup_partial_cache,
+    _recording_memory_popup_stream_only,
+    _recording_memory_popup_cancel,
 )
 
 
