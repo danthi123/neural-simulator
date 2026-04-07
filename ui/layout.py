@@ -865,9 +865,9 @@ def create_gui_layout():
                                  tracked=True, track_offset=1.0, width=-1, height=0)
 
     # File Dialogs
-    profile_dir = global_simulation_bridge.PROFILE_DIR if global_simulation_bridge else "simulation_profiles/"
-    checkpoint_dir_h5 = global_simulation_bridge.CHECKPOINT_DIR if global_simulation_bridge else "simulation_checkpoints_h5/" # Updated
-    recording_dir_h5 = global_simulation_bridge.RECORDING_DIR if global_simulation_bridge else "simulation_recordings_h5/"   # Updated
+    profile_dir = _cb_module.global_simulation_bridge.PROFILE_DIR if _cb_module.global_simulation_bridge else "simulation_profiles/"
+    checkpoint_dir_h5 = _cb_module.global_simulation_bridge.CHECKPOINT_DIR if _cb_module.global_simulation_bridge else "simulation_checkpoints_h5/" # Updated
+    recording_dir_h5 = _cb_module.global_simulation_bridge.RECORDING_DIR if _cb_module.global_simulation_bridge else "simulation_recordings_h5/"   # Updated
 
     for p_dir in [profile_dir, checkpoint_dir_h5, recording_dir_h5]:
         if not os.path.exists(p_dir): os.makedirs(p_dir, exist_ok=True)
