@@ -15,8 +15,28 @@ import re
 from pathlib import Path
 
 
-# Path to the neural simulator source
-SIMULATOR_PATH = Path(__file__).parent.parent / "neural-simulator.py"
+# Paths to all source files that may contain UI code after the refactor
+_PROJECT_ROOT = Path(__file__).parent.parent
+SOURCE_PATHS = [
+    _PROJECT_ROOT / "neural-simulator.py",
+    _PROJECT_ROOT / "ui" / "layout.py",
+    _PROJECT_ROOT / "ui" / "callbacks.py",
+    _PROJECT_ROOT / "viz" / "renderer.py",
+    _PROJECT_ROOT / "sim" / "bridge.py",
+    _PROJECT_ROOT / "sim" / "config.py",
+]
+
+# Keep for backward-compat reference in test_simulator_file_exists
+SIMULATOR_PATH = _PROJECT_ROOT / "neural-simulator.py"
+
+
+def _read_all_sources() -> str:
+    """Concatenate text of all source files that exist."""
+    content = ""
+    for p in SOURCE_PATHS:
+        if p.exists():
+            content += p.read_text(encoding='utf-8') + "\n"
+    return content
 
 
 class TestUIBuild:
@@ -24,19 +44,18 @@ class TestUIBuild:
 
     @pytest.fixture(scope="class")
     def source_code(self):
-        """Load and cache the simulator source code."""
-        with open(SIMULATOR_PATH, 'r', encoding='utf-8') as f:
-            return f.read()
+        """Load and cache all simulator source code."""
+        return _read_all_sources()
 
     def test_simulator_file_exists(self):
-        """Verify the neural-simulator.py file exists."""
+        """Verify at least the main neural-simulator.py file exists."""
         assert SIMULATOR_PATH.exists(), f"Neural simulator not found at {SIMULATOR_PATH}"
 
-    def test_tooltip_count_is_82(self, source_code):
-        """Verify exactly 82 tooltip= occurrences in the source code."""
+    def test_tooltip_count_is_88(self, source_code):
+        """Verify exactly 88 tooltip= occurrences in the source code."""
         tooltip_count = len(re.findall(r'tooltip=', source_code))
-        assert tooltip_count == 82, (
-            f"Expected 82 tooltip= occurrences, found {tooltip_count}. "
+        assert tooltip_count == 88, (
+            f"Expected 88 tooltip= occurrences, found {tooltip_count}. "
             "This likely indicates UI controls were added/removed without updating tooltips."
         )
 
@@ -349,9 +368,8 @@ class TestUIDocumentation:
 
     @pytest.fixture(scope="class")
     def source_code(self):
-        """Load simulator source code."""
-        with open(SIMULATOR_PATH, 'r', encoding='utf-8') as f:
-            return f.read()
+        """Load all simulator source code."""
+        return _read_all_sources()
 
     def test_tooltip_references_literature(self, source_code):
         """Verify tooltips include scientific literature references where appropriate."""
