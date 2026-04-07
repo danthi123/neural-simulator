@@ -306,6 +306,9 @@ class SimulationBridge:
         self.streaming_frames_written = 0  # Counter for frames successfully written to disk
         self.streaming_frames_queued = 0  # Counter for frames queued for writing
 
+        # Data bus for pub/sub streaming to UI (set externally or left None for legacy queue mode)
+        self.data_bus = None
+
         for dir_path in [self.PROFILE_DIR, self.CHECKPOINT_DIR, self.RECORDING_DIR]:
             if not os.path.exists(dir_path):
                 try:
@@ -3969,6 +3972,22 @@ class SimulationBridge:
             # --- 6. Prepare for Next Step & Record Frame ---
             self.cp_prev_firing_states[:] = fired_this_step
             self.record_current_frame_if_active() # This was the missing method call's target
+
+            # Publish to data bus if available
+            if self.data_bus is not None:
+                n_spikes = int(spike_count_gpu.get()) if _fired_any else 0
+                self.data_bus.publish("firing_rates", {
+                    "time_ms": self.runtime_state.current_time_ms,
+                    "total_spikes": n_spikes,
+                    "rate_hz": n_spikes / (n_neurons * dt / 1000.0) if n_neurons > 0 else 0,
+                })
+                if _fired_any:
+                    fired_idx = cp.where(fired_this_step)[0]
+                    if fired_idx.size <= 500:  # Cap to avoid huge GPU->CPU transfers
+                        self.data_bus.publish("spike_events", {
+                            "time_ms": self.runtime_state.current_time_ms,
+                            "neuron_indices": cp.asnumpy(fired_idx),
+                        })
 
             # Note: Network firing rate calculation deferred to avoid GPU->CPU sync every step
             # Will be updated on-demand when GUI data is requested
