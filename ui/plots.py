@@ -132,10 +132,11 @@ def create_weight_histogram(parent, data_bus, tag_prefix="whist"):
     series_tag = f"{tag_prefix}_series"
 
     with dpg.collapsing_header(label="Weight Distribution", parent=parent, default_open=False):
-        with dpg.plot(label="Synaptic Weights", height=150, width=-1, tag=f"{tag_prefix}_plot"):
-            dpg.add_plot_axis(dpg.mvXAxis, label="Weight", tag=f"{tag_prefix}_x")
-            with dpg.plot_axis(dpg.mvYAxis, label="Count", tag=f"{tag_prefix}_y"):
-                dpg.add_bar_series([], [], tag=series_tag, weight=0.04)
+        with dpg.plot(label="Synaptic Weights", height=170, width=-1, tag=f"{tag_prefix}_plot"):
+            dpg.add_plot_axis(dpg.mvXAxis, label="Count", tag=f"{tag_prefix}_x")
+            with dpg.plot_axis(dpg.mvYAxis, label="Weight", tag=f"{tag_prefix}_y"):
+                dpg.add_bar_series([], [], tag=series_tag, weight=0.06, horizontal=True)
+            dpg.set_axis_limits(f"{tag_prefix}_y", 0.0, 2.0)
 
     def update():
         history = data_bus.get_history("weights", 1) if data_bus else []
@@ -146,6 +147,7 @@ def create_weight_histogram(parent, data_bus, tag_prefix="whist"):
             return
         counts, edges = np.histogram(weights, bins=25, range=(0, 2))
         centers = (edges[:-1] + edges[1:]) / 2
+        # Horizontal bars: x=counts (bar length), y=weight bin centers (bar position)
         dpg.set_value(series_tag, [centers.tolist(), counts.tolist()])
 
     return update
