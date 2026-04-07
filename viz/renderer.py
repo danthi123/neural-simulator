@@ -572,7 +572,7 @@ def render_scene_gl():
     if global_gui_state.get("show_connections_gl", False) and gl_num_synapse_lines_to_draw > 0 and \
        gl_synapse_vertices_vbo is not None and gl_synapse_vertices_vbo > 0:
         base_syn_color = opengl_viz_config.get('SYNAPSE_BASE_COLOR', [0.3, 0.3, 0.4])
-        alpha_mod = opengl_viz_config.get('SYNAPSE_ALPHA_MODIFIER', 0.5)
+        alpha_mod = opengl_viz_config.get('SYNAPSE_ALPHA_MODIFIER', 0.75)
         final_alpha = np.clip(0.15 * alpha_mod, 0.02, 0.5)
         glColor4f(base_syn_color[0], base_syn_color[1], base_syn_color[2], final_alpha)
         glLineWidth(0.5)

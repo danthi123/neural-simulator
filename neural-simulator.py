@@ -949,7 +949,7 @@ if OPENGL_AVAILABLE:
         "FIRING_NEURON_COLOR": [1.0, 1.0, 0.0, 1.0], # RGBA for spiking neurons
         "ACTIVITY_HIGHLIGHT_FRAMES": 7, # Frames a neuron stays highlighted after firing
         "FOOTER_HEIGHT_PIXELS": 75, # Height of text overlay at bottom of GL window
-        "SYNAPSE_ALPHA_MODIFIER": 0.50, # Multiplier for base synapse alpha
+        "SYNAPSE_ALPHA_MODIFIER": 0.75, # Multiplier for base synapse alpha
         "SYNAPSE_BASE_COLOR": [0.4, 0.4, 0.5], # Base RGB for synapses
         "VBO_UPDATE_SKIP": 2, # Update VBOs every Nth render frame (reduces GPU-CPU sync overhead)
         "CAMERA_PAN_SPEED_FACTOR": 0.1, # Mouse pan speed
@@ -1585,6 +1585,10 @@ def main_dpg_loop_and_gl_idle():
     _plot_mgr = global_gui_state.get("_plot_manager")
     if _plot_mgr:
         _plot_mgr.update_all()
+    # Update neuron inspector panel
+    _inspector_fn = global_gui_state.get("_inspector_update_fn")
+    if _inspector_fn:
+        _inspector_fn(global_gui_state.get("_ui_state"), global_simulation_bridge)
     # Update sweep panel progress if running
     _sweep = global_gui_state.get("_sweep_panel")
     if _sweep:
@@ -2021,7 +2025,7 @@ def main():
                         width=dpg_viewport_width, height=dpg_viewport_height,
                         x_pos=0, y_pos=20) # Position on the left
 
-    create_gui_layout() # Create all DPG widgets
+    _layout_result = create_gui_layout() # Create all DPG widgets
     dpg.set_primary_window("controls_monitor_window", True)
 
     # Populate UI with the (default or profile-loaded) simulation configuration
@@ -2083,6 +2087,8 @@ def main():
     global_gui_state["_data_bus"] = global_data_bus
     global_gui_state["_plot_manager"] = global_plot_manager
     global_gui_state["_ui_state"] = global_ui_state
+    if _layout_result and _layout_result.get("inspector_update"):
+        global_gui_state["_inspector_update_fn"] = _layout_result["inspector_update"]
 
 
     # --- Start the Simulation Worker Thread ---

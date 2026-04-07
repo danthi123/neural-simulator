@@ -1403,7 +1403,7 @@ def apply_gui_configuration_core(gui_cfg_dict):
         # Apply these settings to DPG widgets for GL config
         gl_settings_to_apply_to_dpg = [
             ("gl_neuron_point_size_slider", 'POINT_SIZE', 2.0),
-            ("gl_synapse_alpha_slider", 'SYNAPSE_ALPHA_MODIFIER', 0.3),
+            ("gl_synapse_alpha_slider", 'SYNAPSE_ALPHA_MODIFIER', 0.75),
             ("gl_max_neurons_render_input", 'MAX_NEURONS_TO_RENDER', 10000),
             ("gl_max_connections_render_input", 'MAX_CONNECTIONS_TO_RENDER', 20000),
             ("gl_inactive_neuron_opacity_slider", 'INACTIVE_NEURON_OPACITY', 0.25),

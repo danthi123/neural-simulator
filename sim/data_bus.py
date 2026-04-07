@@ -86,7 +86,7 @@ def create_default_bus():
     bus = DataBus()
     bus.create_channel("firing_rates", max_history=10000, throttle_steps=1)
     bus.create_channel("spike_events", max_history=5000, throttle_steps=1)
-    bus.create_channel("weights", max_history=100, throttle_steps=1000)
+    bus.create_channel("weights", max_history=100, throttle_steps=1)
     bus.create_channel("experiment_status", max_history=100, throttle_steps=1)
     bus.create_channel("band_power", max_history=100, throttle_steps=2000)
     bus.create_channel("synchrony", max_history=10000, throttle_steps=1)
