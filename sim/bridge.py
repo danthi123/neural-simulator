@@ -3989,6 +3989,19 @@ class SimulationBridge:
                             "neuron_indices": cp.asnumpy(fired_idx),
                         })
 
+                # Publish weight snapshot (infrequent — every 1000 steps for histogram)
+                if not hasattr(self, '_weight_pub_counter'):
+                    self._weight_pub_counter = 0
+                self._weight_pub_counter += 1
+                if self._weight_pub_counter >= 1000 and self.cp_connections is not None and self.cp_connections.nnz > 0:
+                    self._weight_pub_counter = 0
+                    data = self.cp_connections.data
+                    sample_size = min(10000, data.size)
+                    if sample_size > 0:
+                        indices = cp.random.randint(0, data.size, sample_size)
+                        sampled = cp.asnumpy(data[indices])
+                        self.data_bus.publish("weights", {"weights": sampled})
+
             # Note: Network firing rate calculation deferred to avoid GPU->CPU sync every step
             # Will be updated on-demand when GUI data is requested
 

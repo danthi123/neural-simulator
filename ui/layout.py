@@ -146,6 +146,12 @@ def create_gui_layout():
 
         dpg.add_spacer(height=5); dpg.add_separator(); dpg.add_spacer(height=5)
 
+        # --- Live Monitoring Plots ---
+        with dpg.collapsing_header(label="Live Monitoring", default_open=False, tag="live_monitoring_header"):
+            dpg.add_text("Real-time simulation data plots", color=[150, 150, 150])
+
+        dpg.add_spacer(height=5); dpg.add_separator(); dpg.add_spacer(height=5)
+
         with dpg.collapsing_header(label="Core Simulation Parameters", default_open=False, tag="core_sim_params_header"):
             # Full Profile dropdown (auto-populated from simulation_profiles/*.json)
             _scan_profile_directory()
