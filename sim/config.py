@@ -1,6 +1,6 @@
 """Configuration dataclasses for the neural simulator."""
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field, fields, asdict
 from typing import List, Dict
 
 from sim.enums import (NeuronModel, NeuronType, DefaultHodgkinHuxleyParams,
@@ -601,3 +601,31 @@ class ExperimentConfig:
     override_inhibitory_prop_strength: float = -1.0  # -1 = use global default
 
     enabled: bool = False                   # Master enable for experiment system
+
+
+# --- Config Helper Functions ---
+
+def _create_config_from_dict(config_cls, data_dict):
+    """Helper to create a dataclass instance from a dictionary, ignoring extra keys."""
+    if not data_dict:
+        return config_cls()
+
+    # Get the field names defined in the dataclass
+    class_fields = {f.name for f in fields(config_cls)}
+
+    # Filter the input dictionary to only include keys that are fields in the class
+    filtered_data = {k: v for k, v in data_dict.items() if k in class_fields}
+
+    return config_cls(**filtered_data)
+
+
+def _get_full_config_dict(core_cfg, viz_cfg, runtime_state, gpu_cfg=None):
+    """Helper to combine all config objects into a single dictionary for saving."""
+    result = {
+        "core_config": asdict(core_cfg),
+        "viz_config": asdict(viz_cfg),
+        "runtime_state": asdict(runtime_state)
+    }
+    if gpu_cfg is not None:
+        result["gpu_config"] = asdict(gpu_cfg)
+    return result

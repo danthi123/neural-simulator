@@ -418,3 +418,106 @@ class ExperimentPhaseType(Enum):
     TRAINING = "TRAINING"           # Active learning with stimulus + feedback
     TESTING = "TESTING"             # Test learned responses (no weight updates)
     REST = "REST"                   # Inter-trial interval (no stimulus)
+
+
+# --- Izhikevich Parameter Defaults ---
+class DefaultIzhikevichParamsManager:
+    PARAMS = {
+        NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL: {
+            "C": 100.0, "k": 0.7, "vr": -60.0, "vt": -40.0, "vpeak": 35.0,
+            "a": 0.03, "b": -2.0, "c_reset": -50.0, "d_increment": 100.0
+        },
+        NeuronType.IZH2007_FS_CORTICAL_INTERNEURON: {
+            "C": 20.0, "k": 1.0, "vr": -55.0, "vt": -40.0, "vpeak": 25.0,
+            "a": 0.2, "b": -2.0, "c_reset": -45.0, "d_increment": 25.0
+            # d_increment must be POSITIVE for FS interneurons (Izhikevich 2007, Table 2).
+            # Positive d drives post-spike recovery variable u upward -> stronger AHP -> faster return to rest.
+            # Negative d would paradoxically cause post-spike depolarization (excitation after inhibition).
+            # Value of 25 pA gives the characteristic non-adapting, high-frequency firing pattern of PV+ basket cells.
+        },
+        NeuronType.RS_EXCITATORY_LEGACY: {"a": 0.02, "b": 0.2, "c_reset": -65.0, "d_increment": 8.0, "vpeak": 30.0},
+        NeuronType.FS_INHIBITORY_LEGACY: {"a": 0.1, "b": 0.2, "c_reset": -65.0, "d_increment": 2.0, "vpeak": 30.0},
+        NeuronType.IB_EXCITATORY_LEGACY: {"a": 0.02, "b": 0.2, "c_reset": -55.0, "d_increment": 4.0, "vpeak": 50.0},
+        NeuronType.CH_EXCITATORY_LEGACY: {"a": 0.02, "b": 0.2, "c_reset": -50.0, "d_increment": 2.0, "vpeak": 35.0},
+        NeuronType.LTS_INHIBITORY_LEGACY: {"a": 0.02, "b": 0.25, "c_reset": -65.0, "d_increment": 2.0, "vpeak": 30.0}
+    }
+    FALLBACK_2007 = PARAMS[NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL].copy()
+    FALLBACK_LEGACY = PARAMS[NeuronType.RS_EXCITATORY_LEGACY].copy()
+
+    @staticmethod
+    def get_params(neuron_type_enum, use_2007_formulation=True):
+        if use_2007_formulation:
+            if neuron_type_enum in [NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL, NeuronType.IZH2007_FS_CORTICAL_INTERNEURON]:
+                 return DefaultIzhikevichParamsManager.PARAMS.get(neuron_type_enum, DefaultIzhikevichParamsManager.FALLBACK_2007).copy()
+            print(f"Warning: Requested legacy type {neuron_type_enum} for 2007 formulation. Using RS_CORTICAL_PYRAMIDAL fallback.")
+            return DefaultIzhikevichParamsManager.FALLBACK_2007.copy()
+        else: # Legacy formulation
+            if 'LEGACY' in neuron_type_enum.name:
+                 return DefaultIzhikevichParamsManager.PARAMS.get(neuron_type_enum, DefaultIzhikevichParamsManager.FALLBACK_LEGACY).copy()
+            print(f"Warning: Requested 2007 type {neuron_type_enum} for legacy formulation. Using RS_EXCITATORY_LEGACY fallback.")
+            return DefaultIzhikevichParamsManager.FALLBACK_LEGACY.copy()
+
+
+# --- Performance Optimization: Neuron Type ID Mapper ---
+class NeuronTypeIDMapper:
+    """Maps NeuronType enums to integer IDs for GPU-efficient operations.
+
+    This eliminates string comparisons on CPU by using integer type IDs
+    that can be processed directly on the GPU.
+    """
+    def __init__(self):
+        self.type_to_id = {}
+        self.id_to_type = {}
+        self.id_to_display_name = {}
+        self._build_mappings()
+
+    def _build_mappings(self):
+        """Build bidirectional mappings between NeuronType enums and integer IDs."""
+        # Izhikevich types
+        izh_types = [nt for nt in NeuronType if "IZH2007" in nt.name and nt in DefaultIzhikevichParamsManager.PARAMS]
+        for idx, ntype in enumerate(izh_types):
+            self.type_to_id[ntype] = idx
+            self.id_to_type[idx] = ntype
+            self.id_to_display_name[idx] = f"Izh2007_{ntype.name.replace('IZH2007_', '')}"
+
+        # Hodgkin-Huxley types (offset by max Izh type ID)
+        hh_types = [nt for nt in NeuronType if "HH_" in nt.name and nt in DefaultHodgkinHuxleyParams.PARAMS]
+        hh_offset = len(izh_types)
+        for idx, ntype in enumerate(hh_types):
+            type_id = hh_offset + idx
+            self.type_to_id[ntype] = type_id
+            self.id_to_type[type_id] = ntype
+            self.id_to_display_name[type_id] = f"HH_{ntype.name.replace('HH_', '')}"
+
+    def get_id(self, neuron_type_enum):
+        """Get integer ID for a NeuronType enum."""
+        return self.type_to_id.get(neuron_type_enum, 0)  # Default to 0 if not found
+
+    def get_type(self, type_id):
+        """Get NeuronType enum for an integer ID."""
+        return self.id_to_type.get(type_id, list(self.id_to_type.values())[0] if self.id_to_type else NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL)
+
+    def get_display_name(self, type_id):
+        """Get display name string for an integer type ID."""
+        return self.id_to_display_name.get(type_id, "Unknown")
+
+    def get_all_display_names_for_model(self, model_name):
+        """Get list of display names for a specific model type."""
+        if model_name == NeuronModel.IZHIKEVICH.name:
+            return [self.id_to_display_name[i] for i in sorted(self.id_to_display_name.keys())
+                    if "Izh" in self.id_to_display_name[i]]
+        elif model_name == NeuronModel.HODGKIN_HUXLEY.name:
+            return [self.id_to_display_name[i] for i in sorted(self.id_to_display_name.keys())
+                    if "HH" in self.id_to_display_name[i]]
+        return []
+
+    def get_id_from_display_name(self, display_name):
+        """Get type ID from display name string."""
+        for type_id, name in self.id_to_display_name.items():
+            if name == display_name:
+                return type_id
+        return 0  # Default
+
+
+# Global type mapper instance (initialized after all required classes are defined)
+NEURON_TYPE_MAPPER = NeuronTypeIDMapper()
