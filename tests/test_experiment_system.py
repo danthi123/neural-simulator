@@ -95,7 +95,7 @@ if os.path.exists(experiment_block_path):
 else:
     # Fallback: extract from neural-simulator.py
     simulator_path = os.path.join(os.path.dirname(__file__), '..', 'neural-simulator.py')
-    with open(simulator_path, 'r') as f:
+    with open(simulator_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
     # Find the experiment system block

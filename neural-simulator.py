@@ -952,6 +952,9 @@ class GPUConfig:
     enable_playback_prefetch: bool = True  # Prefetch next N frames during streaming
     playback_prefetch_count: int = 10  # Number of frames to prefetch ahead
 
+    # Rendering performance
+    render_vbo_update_skip: int = 2  # Update VBOs every Nth render frame (1=every, 2=every other, etc.)
+
     # CUDA-OpenGL interop
     enable_cuda_gl_interop: bool = True
     cuda_gl_fallback_on_error: bool = True
@@ -2627,7 +2630,7 @@ class TrainingConfig:
     # Evaluation
     eval_window_ms: float = 100.0          # Response evaluation window
     eval_delay_ms: float = 50.0            # Delay after stimulus onset before evaluation
-    success_threshold: float = 0.7         # Fraction of correct trials for convergence
+    success_threshold: float = 0.9         # Fraction of correct trials for convergence
 
 @dataclass
 class ExperimentPhase:
@@ -2672,6 +2675,12 @@ class ExperimentConfig:
     random_seed: int = -1                   # Experiment RNG seed (-1 = random)
     save_experiment_log: bool = True
     log_trial_details: bool = True          # Log per-trial metrics
+
+    # Experiment-level simulation overrides (restored when experiment stops).
+    # These allow experiments to temporarily adjust network parameters for
+    # adequate signal-to-noise without permanently modifying global config.
+    override_propagation_strength: float = -1.0     # -1 = use global default
+    override_inhibitory_prop_strength: float = -1.0  # -1 = use global default
 
     enabled: bool = False                   # Master enable for experiment system
 
@@ -2972,6 +2981,10 @@ class ReadoutEngine:
         self.current_spike_counts = {}   # group_name -> int
         self.current_psd = {}            # group_name -> dict with freqs, power
 
+        # Synchrony metrics (computed per readout window)
+        self._sync_spike_counts = {}     # group_name -> list of per-step spike fractions
+        self.current_synchrony = {}      # group_name -> synchrony index (0-1)
+
         # Trial-level metrics
         self.trial_metrics = []          # List of per-trial measurement dicts
 
@@ -3008,6 +3021,11 @@ class ReadoutEngine:
         # Spike count window
         self._spike_count_window_steps = max(1, int(config.spike_count_window_ms / self.dt_ms))
         self._spike_count_step = 0
+
+        # Synchrony tracking: store per-step spike fractions within the rate window
+        for gname in groups_to_track:
+            self._sync_spike_counts[gname] = []
+            self.current_synchrony[gname] = 0.0
 
         # PSD buffer
         if config.enable_psd:
@@ -3046,6 +3064,30 @@ class ReadoutEngine:
 
             # Update spike count accumulator
             self._spike_counts[gname] = self._spike_counts.get(gname, 0) + int(n_spikes)
+
+            # Track per-step spike fraction for synchrony computation
+            spike_frac = n_spikes / max(n_neurons_in_group, 1)
+            sync_list = self._sync_spike_counts.get(gname)
+            if sync_list is not None:
+                sync_list.append(spike_frac)
+                # Keep only the last rate_window worth of steps
+                if len(sync_list) > self._rate_buffer_size:
+                    sync_list.pop(0)
+                # Synchrony index: variance of spike fractions normalized by mean.
+                # High synchrony = neurons fire together (high variance in fraction).
+                # Fano factor of population spike count: Var(count) / Mean(count).
+                # Ranges from ~0 (asynchronous, Poisson) to >>1 (synchronous bursting).
+                if len(sync_list) >= 2:
+                    import numpy as _np
+                    arr = _np.array(sync_list)
+                    mean_f = arr.mean()
+                    if mean_f > 1e-9:
+                        # Fano factor of spike count = Var(N) / E[N]
+                        # N = fraction * n_neurons, so Fano = Var(frac) * n / mean(frac)
+                        fano = float(arr.var() * n_neurons_in_group / mean_f)
+                        self.current_synchrony[gname] = round(fano, 4)
+                    else:
+                        self.current_synchrony[gname] = 0.0
 
         # Advance circular buffer index
         self._rate_buffer_idx += 1
@@ -3099,6 +3141,53 @@ class ReadoutEngine:
             'frequencies_hz': freqs[mask],
             'power': power[mask],
         }
+
+    def compute_band_power(self, group_name, cp_module):
+        """Compute power in standard frequency bands for a group.
+
+        Returns dict mapping band names to power values, or None if PSD
+        is not enabled or buffer is insufficient.
+
+        Bands (Hz): delta 1-4, theta 4-8, alpha 8-13, beta 13-30,
+                    gamma 30-80, high_gamma 80-150.
+        """
+        psd = self.compute_psd(group_name, cp_module)
+        if psd is None:
+            return None
+
+        import numpy as np
+        freqs = psd['frequencies_hz']
+        power = psd['power']
+
+        bands = {
+            'delta': (1.0, 4.0),
+            'theta': (4.0, 8.0),
+            'alpha': (8.0, 13.0),
+            'beta': (13.0, 30.0),
+            'gamma': (30.0, 80.0),
+            'high_gamma': (80.0, 150.0),
+        }
+
+        band_power = {}
+        total_power = float(np.sum(power)) if len(power) > 0 else 1e-12
+        for band_name, (f_lo, f_hi) in bands.items():
+            mask = (freqs >= f_lo) & (freqs < f_hi)
+            bp = float(np.sum(power[mask])) if np.any(mask) else 0.0
+            band_power[band_name] = round(bp, 6)
+        band_power['total'] = round(total_power, 6)
+
+        # Relative power (fraction of total)
+        for band_name in bands:
+            band_power[f'{band_name}_rel'] = (
+                round(band_power[band_name] / total_power, 4)
+                if total_power > 0 else 0.0
+            )
+
+        # Dominant band
+        band_powers_abs = {k: band_power[k] for k in bands}
+        band_power['dominant_band'] = max(band_powers_abs, key=band_powers_abs.get)
+
+        return band_power
 
     def get_trial_snapshot(self):
         """Get current readout state for trial logging."""
@@ -3240,8 +3329,8 @@ class TrainingProtocolEngine:
 
         # ITI: clear reward signal
         if t_in_trial >= self.config.trial_duration_ms:
-            if hasattr(sim_bridge_ref, 'cfg') and sim_bridge_ref.cfg is not None:
-                sim_bridge_ref.cfg.current_reward_signal = 0.0
+            if hasattr(sim_bridge_ref, 'core_config') and sim_bridge_ref.core_config is not None:
+                sim_bridge_ref.core_config.current_reward_signal = 0.0
 
         return {
             "mode": self.config.mode,
@@ -3293,16 +3382,16 @@ class TrainingProtocolEngine:
 
     def _deliver_reward(self, sim_bridge_ref):
         """Deliver reward or punishment based on output group activity."""
-        if not hasattr(sim_bridge_ref, 'cfg') or sim_bridge_ref.cfg is None:
+        if not hasattr(sim_bridge_ref, 'core_config') or sim_bridge_ref.core_config is None:
             return
 
         target_group = self.config.target_output_group
         rate = self.readout.current_rates.get(target_group, 0.0) if self.readout else 0.0
 
         if self.config.target_min_rate_hz <= rate <= self.config.target_max_rate_hz:
-            sim_bridge_ref.cfg.current_reward_signal = self.config.reward_magnitude
+            sim_bridge_ref.core_config.current_reward_signal = self.config.reward_magnitude
         else:
-            sim_bridge_ref.cfg.current_reward_signal = self.config.punishment_magnitude
+            sim_bridge_ref.core_config.current_reward_signal = self.config.punishment_magnitude
 
     def _apply_supervised_error(self, sim_bridge_ref):
         """Apply supervised error signal as reward modulation.
@@ -3310,7 +3399,7 @@ class TrainingProtocolEngine:
         Uses the existing reward signal mechanism as an error channel.
         Error = (target_rate - actual_rate) * gain
         """
-        if not hasattr(sim_bridge_ref, 'cfg') or sim_bridge_ref.cfg is None:
+        if not hasattr(sim_bridge_ref, 'core_config') or sim_bridge_ref.core_config is None:
             return
 
         total_error = 0.0
@@ -3324,7 +3413,7 @@ class TrainingProtocolEngine:
 
         if n_groups > 0:
             mean_error = total_error / n_groups
-            sim_bridge_ref.cfg.current_reward_signal = mean_error * self.config.supervised_error_gain
+            sim_bridge_ref.core_config.current_reward_signal = mean_error * self.config.supervised_error_gain
 
     def get_training_summary(self):
         """Get summary of training progress."""
@@ -3433,8 +3522,13 @@ class ExperimentEngine:
             "phases": len(self.phases),
         })
 
-    def start(self, current_time_ms):
-        """Begin experiment execution."""
+    def start(self, current_time_ms, sim_bridge_ref=None):
+        """Begin experiment execution.
+
+        Args:
+            current_time_ms: Absolute simulation time
+            sim_bridge_ref: Optional SimulationBridge for applying config overrides
+        """
         self.is_experiment_running = True
         self.is_experiment_complete = False
         self.current_phase_idx = 0
@@ -3442,14 +3536,35 @@ class ExperimentEngine:
         self.phase_start_ms = current_time_ms
         self._step_counter = 0
 
+        # Apply experiment-level simulation overrides (e.g. boosted propagation_strength)
+        self._saved_overrides = {}
+        if sim_bridge_ref is not None and self.config is not None:
+            cfg = sim_bridge_ref.core_config
+            if self.config.override_propagation_strength > 0:
+                self._saved_overrides['propagation_strength'] = cfg.propagation_strength
+                cfg.propagation_strength = self.config.override_propagation_strength
+            if self.config.override_inhibitory_prop_strength > 0:
+                self._saved_overrides['inhibitory_propagation_strength'] = cfg.inhibitory_propagation_strength
+                cfg.inhibitory_propagation_strength = self.config.override_inhibitory_prop_strength
+        self._sim_bridge_for_overrides = sim_bridge_ref
+
         if self.phases:
             self._enter_phase(self.phases[0], current_time_ms)
 
         self.log.append({"event": "experiment_started", "time_ms": current_time_ms})
 
     def stop(self):
-        """Stop experiment execution."""
+        """Stop experiment execution and restore any config overrides."""
         self.is_experiment_running = False
+
+        # Restore overridden config values
+        if hasattr(self, '_saved_overrides') and self._saved_overrides:
+            bridge = getattr(self, '_sim_bridge_for_overrides', None)
+            if bridge is not None:
+                for key, val in self._saved_overrides.items():
+                    setattr(bridge.core_config, key, val)
+            self._saved_overrides = {}
+
         self.log.append({"event": "experiment_stopped"})
 
     def step(self, current_time_ms, cp_firing_states, cp_membrane_potential_v, sim_bridge_ref, cp_module):
@@ -3575,6 +3690,26 @@ class ExperimentEngine:
         except Exception as e:
             self.log.append({"event": "intergroup_weights_error", "error": str(e)})
 
+    def _log_band_power(self, label, current_time_ms):
+        """Log spectral band power for all readout groups if PSD is enabled."""
+        if not self.readout.config.enable_psd:
+            return
+        if not hasattr(self, '_cp_module') or self._cp_module is None:
+            return
+        try:
+            for gname in self.readout.config.rate_group_names:
+                bp = self.readout.compute_band_power(gname, self._cp_module)
+                if bp is not None:
+                    self.log.append({
+                        "event": "band_power",
+                        "label": label,
+                        "group": gname,
+                        "time_ms": current_time_ms,
+                        **bp,
+                    })
+        except Exception as e:
+            self.log.append({"event": "band_power_error", "error": str(e)})
+
     def _enter_phase(self, phase, current_time_ms):
         """Set up a new experiment phase."""
         self.log.append({
@@ -3588,13 +3723,19 @@ class ExperimentEngine:
         if hasattr(self, '_sim_bridge_ref') and hasattr(self, '_cp_module'):
             self._log_intergroup_weights(self._sim_bridge_ref, self._cp_module,
                                           label=f"entering_{phase.name}")
+            # Log spectral band power if PSD is enabled
+            self._log_band_power(f"entering_{phase.name}", current_time_ms)
 
         # Gate plasticity based on phase setting (checked by simulation step)
         self.plasticity_enabled_this_phase = phase.enable_plasticity
 
-        # Configure active stimulus channels
+        # Configure active stimulus channels.
+        # None = all channels enabled (default); [] = no channels (baseline/rest).
         for ch in self.stimulus_manager.channels:
-            ch.enabled = (ch.name in phase.active_channels) if phase.active_channels else True
+            if phase.active_channels is None:
+                ch.enabled = True
+            else:
+                ch.enabled = (ch.name in phase.active_channels)
 
         # Configure training if this is a training phase
         if phase.phase_type == ExperimentPhaseType.TRAINING.name:
@@ -3615,6 +3756,7 @@ class ExperimentEngine:
             "time_ms": current_time_ms,
             "rates": dict(self.readout.current_rates),
             "spike_counts": dict(self.readout.current_spike_counts),
+            "synchrony": dict(self.readout.current_synchrony),
         }
 
         if self.phases and self.current_phase_idx < len(self.phases):
@@ -3663,7 +3805,7 @@ class ExperimentEngine:
                 "trial_data": self.training.trials_data,
             }, f, indent=2, default=str)
 
-    def ensure_inter_group_connectivity(self, sim_bridge, cp_module, min_connection_prob=0.80):
+    def ensure_inter_group_connectivity(self, sim_bridge, cp_module, min_connection_prob=0.95):
         """Ensure sufficient synaptic connections exist between INPUT and OUTPUT groups.
 
         For associative conditioning to work via STDP, there must be dense direct synaptic
@@ -3713,9 +3855,35 @@ class ExperimentEngine:
 
                 n_to_add = target_connections - existing
 
+                # Filter to excitatory presynaptic neurons only: inhibitory CS neurons
+                # with inhibitory_propagation_strength (0.105, 2.1x excitatory) create
+                # strong opposing currents that cancel excitatory CS→US drive. With 20%
+                # inhibitory neurons in a cortical profile, STDP potentiates both exc and
+                # inh CS→US connections equally, but the inh pathways suppress the
+                # conditioned response in post-test. Restricting to excitatory pre-synaptic
+                # neurons ensures the learned pathway is purely excitatory.
+                exc_neuron_ids = None
+                if sim_bridge.cp_traits is not None:
+                    inhibitory_idx = getattr(sim_bridge.core_config, 'inhibitory_trait_index', -1)
+                    if inhibitory_idx >= 0:
+                        in_range_traits = sim_bridge.cp_traits[in_grp.index_start:in_grp.index_end]
+                        exc_mask = (in_range_traits != inhibitory_idx)
+                        exc_neuron_ids = cp_module.arange(in_grp.index_start, in_grp.index_end)[exc_mask]
+                        n_exc = int(exc_neuron_ids.size)
+                        if n_exc > 0:
+                            # Adjust target for excitatory-only source pool
+                            target_connections = int(n_exc * n_out * min_connection_prob)
+                            n_to_add = max(0, target_connections - existing)
+
                 # Generate random input→output connections
-                pre_idx = cp_module.random.randint(in_grp.index_start, in_grp.index_end,
-                                                    size=n_to_add * 3, dtype=cp_module.int32)
+                if exc_neuron_ids is not None and exc_neuron_ids.size > 0:
+                    # Sample from excitatory neurons only
+                    rand_indices = cp_module.random.randint(0, exc_neuron_ids.size,
+                                                            size=n_to_add * 3, dtype=cp_module.int32)
+                    pre_idx = exc_neuron_ids[rand_indices].astype(cp_module.int32)
+                else:
+                    pre_idx = cp_module.random.randint(in_grp.index_start, in_grp.index_end,
+                                                        size=n_to_add * 3, dtype=cp_module.int32)
                 post_idx = cp_module.random.randint(out_grp.index_start, out_grp.index_end,
                                                      size=n_to_add * 3, dtype=cp_module.int32)
 
@@ -3730,10 +3898,10 @@ class ExperimentEngine:
                 new_post = (unique_ids % self.n_neurons).astype(cp_module.int32)
 
                 if new_pre.size > 0:
-                    # Initial weight 0.3: low enough that STDP potentiation to ~0.95 produces
-                    # a ~3x increase in synaptic drive (detectable rate change), but above
-                    # structural plasticity pruning threshold
-                    initial_weights = cp_module.full(new_pre.size, 0.3, dtype=cp_module.float32)
+                    # Initial weight 0.1: low enough that STDP potentiation to ~0.99 produces
+                    # a ~10x increase in synaptic drive (strongly detectable rate change).
+                    # Must stay above structural plasticity pruning threshold.
+                    initial_weights = cp_module.full(new_pre.size, 0.1, dtype=cp_module.float32)
 
                     new_matrix = csp_local.csr_matrix(
                         (initial_weights, (new_pre, new_post)),
@@ -3836,6 +4004,12 @@ class ExperimentPresets:
         return ExperimentConfig(
             name="Associative Conditioning (CS-US Pairing)",
             description="Pavlovian conditioning: repeated CS-US pairing followed by CS-alone testing.",
+            # Boost propagation_strength during experiment: default 0.05 gives only
+            # ~3 pA per synapse against OU noise sigma=100 pA (SNR ≈ 0.27). Doubling
+            # to 0.10 yields ~6 pA/synapse and ~54 pA total CS→US drive, producing
+            # a detectable ~9 Hz conditioned response in post-test.
+            override_propagation_strength=0.10,
+            override_inhibitory_prop_strength=0.21,
             neuron_groups=[
                 NeuronGroup(name="cs_input", role=NeuronGroupRole.INPUT.name,
                            index_start=0, index_end=input_group_size,
@@ -3902,16 +4076,24 @@ class ExperimentPresets:
         )
 
     @staticmethod
-    def reinforcement_learning(stimulus_amplitude_pA=120.0, num_trials=200,
+    def reinforcement_learning(stimulus_amplitude_pA=400.0, num_trials=200,
                                 input_group_size=100, output_group_size=50):
         """Reward-modulated STDP training: stimulus → response → reward/punishment.
 
         Based on three-factor learning rule (Izhikevich 2007, Frémaux et al. 2013).
         Uses the existing eligibility trace and reward modulation infrastructure.
+
+        The target window must be achievable from spontaneous baseline (~5-8 Hz)
+        so that random fluctuations occasionally reach the rewarded zone, allowing
+        the RL mechanism to bootstrap learning (operant conditioning analogy:
+        the animal must sometimes perform the desired behavior by chance).
         """
         return ExperimentConfig(
             name="Reinforcement Learning (R-STDP)",
             description="Three-factor learning: stimulus evokes response, reward/punishment shapes connections.",
+            # Boost propagation for experiment signal-to-noise (same rationale as associative)
+            override_propagation_strength=0.10,
+            override_inhibitory_prop_strength=0.21,
             neuron_groups=[
                 NeuronGroup(name="stimulus", role=NeuronGroupRole.INPUT.name,
                            index_start=0, index_end=input_group_size,
@@ -3948,10 +4130,19 @@ class ExperimentPresets:
                                    inter_trial_interval_ms=200.0,
                                    reward_delay_ms=50.0,
                                    reward_magnitude=1.0,
-                                   punishment_magnitude=-0.5,
+                                   # No punishment: dopaminergic RPE is asymmetric
+                                   # (Schultz 2002) — tonic DA maintains connections,
+                                   # phasic dips are weaker than phasic bursts. Pure
+                                   # punishment creates a negative spiral where failed
+                                   # trials weaken pathways, making future success harder.
+                                   punishment_magnitude=0.0,
                                    target_output_group="response",
-                                   target_min_rate_hz=15.0,
-                                   target_max_rate_hz=40.0,
+                                   # Target window: must overlap the upper tail of
+                                   # spontaneous fluctuations (~5-8 Hz ± 2-3 Hz) so
+                                   # ~10-20% of trials succeed by chance, bootstrapping
+                                   # the reward signal for three-factor learning.
+                                   target_min_rate_hz=8.0,
+                                   target_max_rate_hz=30.0,
                                    eval_delay_ms=100.0,
                                    eval_window_ms=200.0,
                                ),
@@ -4352,8 +4543,9 @@ class SimulationBridge:
                 f"WARNING: GPU memory usage at {mem_stats['usage_percent']:.1f}% ({mem_stats['used_gb']:.1f}GB/{mem_stats['total_gb']:.1f}GB)",
                 "warning"
             )
-            # Trigger garbage collection
-            cp.get_default_memory_pool().free_all_blocks()
+            # Note: avoid free_all_blocks() here — it causes a GPU sync stall
+            # (50-200ms) during simulation. CuPy's pool reuses freed blocks naturally.
+            # Only free during cleanup/shutdown (clear_simulation_state_and_gpu_memory).
             return True
         elif usage_fraction > self.gpu_config.memory_warning_threshold:
             self._log_console(f"GPU memory high: {mem_stats['usage_percent']:.1f}%")
@@ -5264,20 +5456,40 @@ class SimulationBridge:
         # Compute connection probabilities
         prob_dist = cp.exp(-dist_decay * distances)
         
-        # Trait similarity component
+        # Trait similarity component: multiplicative bias, not additive.
+        # Additive bias with top-k selection causes same-type segregation
+        # (same-type bonus always wins over distance). Multiplicative bias
+        # preserves spatial structure while mildly preferring same-type.
         traits_i = traits_cp[:, None]  # Shape: (n, 1)
         traits_j = traits_cp[None, :]  # Shape: (1, n)
-        prob_trait = (traits_i == traits_j).astype(cp.float32) * trait_bias
-        
+        same_type = (traits_i == traits_j).astype(cp.float32)
+        # Scale: same-type gets (1 + trait_bias), cross-type gets 1.0
+        prob_trait = 1.0 + same_type * trait_bias
+
         # Combined probability
-        conn_prob = prob_dist + prob_trait  # Shape: (n, n)
-        
-        # For each neuron, select top-k connections based on probability
-        top_k_indices = cp.argsort(conn_prob, axis=1)[:, -k:]  # Shape: (n, k)
-        
+        conn_prob = prob_dist * prob_trait  # Shape: (n, n)
+
+        # Gumbel-max trick for GPU-vectorized probabilistic sampling:
+        # Adding Gumbel noise to log-probabilities and taking top-k is
+        # mathematically equivalent to sampling without replacement from the
+        # categorical distribution (Vieira 2014), but runs entirely on GPU.
+        # This avoids the same-type segregation of deterministic top-k while
+        # being O(n*k) on GPU instead of O(n^2) on CPU.
+        log_prob = cp.log(cp.maximum(conn_prob, 1e-30))
+        # Gumbel noise: -log(-log(U)) where U ~ Uniform(0,1)
+        gumbel_noise = -cp.log(-cp.log(cp.random.uniform(1e-10, 1.0 - 1e-10,
+                                                          size=conn_prob.shape,
+                                                          dtype=cp.float32)))
+        perturbed = log_prob + gumbel_noise
+        # Zero out self-connections
+        cp.fill_diagonal(perturbed, -cp.inf)
+
+        # Top-k selection on perturbed scores gives probabilistic sampling
+        top_k_indices = cp.argsort(perturbed, axis=1)[:, -k:]  # Shape: (n, k)
+
         # Generate weights for connections
         weights = cp.random.uniform(min_w, max_w, (n, k)).astype(cp.float32)
-        
+
         # Convert to COO format
         row_indices = cp.repeat(cp.arange(n), k)  # Shape: (n*k,)
         col_indices = top_k_indices.ravel()  # Shape: (n*k,)
@@ -5504,11 +5716,11 @@ class SimulationBridge:
             # Compute connection probabilities
             prob_dist = np.exp(-dist_decay * distances)  # (S, C)
 
-            # Trait similarity: (S, 1) == (1, C) -> (S, C)
+            # Trait similarity: multiplicative bias (not additive)
             trait_match = (source_traits[:, None] == candidate_traits[None, :])
-            prob_trait = trait_match.astype(np.float32) * trait_bias  # (S, C)
+            prob_trait = 1.0 + trait_match.astype(np.float32) * trait_bias  # (S, C)
 
-            conn_prob = prob_dist + prob_trait  # (S, C)
+            conn_prob = prob_dist * prob_trait  # (S, C)
 
             # For each source neuron, select top-k candidates
             num_candidates = len(candidate_arr)
@@ -5656,29 +5868,31 @@ class SimulationBridge:
             # Compute connection probabilities
             prob_dist = cp.exp(-dist_decay * distances)  # (chunk_n, n)
             
-            # Trait similarity component
+            # Trait similarity component (multiplicative, not additive)
             chunk_traits_i = chunk_traits[:, None]  # (chunk_n, 1)
             traits_j = traits_cp[None, :]  # (1, n)
-            prob_trait = (chunk_traits_i == traits_j).astype(cp.float32) * trait_bias  # (chunk_n, n)
-            
-            # Combined probability
-            conn_prob = prob_dist + prob_trait  # (chunk_n, n)
+            same_type = (chunk_traits_i == traits_j).astype(cp.float32)
+            prob_trait = 1.0 + same_type * trait_bias  # (chunk_n, n)
 
-            # Free intermediate arrays BEFORE argpartition — Thrust sort
-            # allocates large hidden temporaries that can exceed the pool limit
+            # Combined probability (multiplicative)
+            conn_prob = prob_dist * prob_trait  # (chunk_n, n)
+
+            # Free intermediate arrays BEFORE selection
             del prob_dist, prob_trait, distances, diff
-            del chunk_pos_i, pos_j
-            cp.get_default_memory_pool().free_all_blocks()
+            del chunk_pos_i, pos_j, same_type
 
-            # Select top-k connections for each neuron in chunk
-            # Use argpartition (O(n)) instead of argsort (O(n log n)) - more memory efficient
-            # argpartition returns indices where the k largest are in the last k positions (unsorted)
-            partition_idx = cp.argpartition(conn_prob, -k, axis=1)[:, -k:]  # (chunk_n, k)
-            # Get the actual values at these positions for sorting within top-k
-            top_k_values = cp.take_along_axis(conn_prob, partition_idx, axis=1)
-            # Sort within top-k to get proper ordering (small sort, k elements)
-            sorted_within_k = cp.argsort(top_k_values, axis=1)
-            top_k_indices = cp.take_along_axis(partition_idx, sorted_within_k, axis=1)  # (chunk_n, k)
+            # Gumbel-max trick for probabilistic top-k (avoids same-type segregation)
+            log_prob = cp.log(cp.maximum(conn_prob, 1e-30))
+            gumbel_noise = -cp.log(-cp.log(cp.random.uniform(
+                1e-10, 1.0 - 1e-10, size=conn_prob.shape, dtype=cp.float32)))
+            perturbed = log_prob + gumbel_noise
+            del log_prob, gumbel_noise, conn_prob
+            # Zero out self-connections
+            for i in range(chunk_n):
+                perturbed[i, start_idx + i] = -cp.inf
+
+            top_k_indices = cp.argsort(perturbed, axis=1)[:, -k:]  # (chunk_n, k)
+            del perturbed
             
             # Generate weights
             weights = cp.random.uniform(min_w, max_w, (chunk_n, k)).astype(cp.float32)
@@ -7423,7 +7637,7 @@ class SimulationBridge:
 
         try:
             self.gpu_playback_cache.clear()
-            cp.get_default_memory_pool().free_all_blocks()  # Free unused CuPy memory
+            # Pool reuses blocks naturally — no sync stall needed here
 
             # Send initial progress to UI
             if self.ui_queue:
@@ -8096,7 +8310,6 @@ class SimulationBridge:
 
                 if cfg.enable_inhibitory_neurons and self.cp_traits is not None:
                     # Cache inhibitory neuron mask — traits don't change during simulation.
-                    # Avoids cp.isin() or equality check + cp.asarray() every step.
                     if self._cached_inhibitory_mask is None:
                         inhibitory_indices = getattr(cfg, "inhibitory_trait_indices", None)
                         if inhibitory_indices:
@@ -8108,8 +8321,12 @@ class SimulationBridge:
                     exc_fired_prev = prev_fired_float * (~is_inhibitory_neuron_output)
                     inhib_fired_prev = prev_fired_float * is_inhibitory_neuron_output
 
-                    g_e_increase = (effective_connections_matrix.T @ exc_fired_prev) * cfg.propagation_strength
-                    g_i_increase = (effective_connections_matrix.T @ inhib_fired_prev) * cfg.inhibitory_propagation_strength
+                    # Batched sparse matmul: stack exc/inh firing vectors into (n, 2)
+                    # matrix, perform single A.T @ B (reuses CSR index traversal).
+                    fired_2col = cp.stack([exc_fired_prev, inhib_fired_prev], axis=1)
+                    g_increase_2col = effective_connections_matrix.T @ fired_2col
+                    g_e_increase = g_increase_2col[:, 0] * cfg.propagation_strength
+                    g_i_increase = g_increase_2col[:, 1] * cfg.inhibitory_propagation_strength
 
                     self.cp_conductance_g_e += g_e_increase
                     self.cp_conductance_g_i += g_i_increase
@@ -8386,7 +8603,13 @@ class SimulationBridge:
                         base_weights_data_array[active_synapse_indices_heb] += delta_weights
                         num_potentiation_events = active_synapse_indices_heb.size
 
-                    self.cp_connections.data *= (1.0 - cfg.hebbian_weight_decay) 
+                    # Skip global weight decay during experiments: over 50K training steps,
+                    # decay (1-1e-5)^50000 ≈ 0.61 destroys 40% of non-STDP-reinforced weights,
+                    # collapsing network baseline excitability by post-test.
+                    _experiment_running = (self.experiment_engine is not None and
+                                           self.experiment_engine.is_experiment_running)
+                    if not _experiment_running:
+                        self.cp_connections.data *= (1.0 - cfg.hebbian_weight_decay)
                     cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight, out=self.cp_connections.data)
                     if num_potentiation_events > 0: self._mock_total_plasticity_events += num_potentiation_events
             
@@ -8475,7 +8698,10 @@ class SimulationBridge:
                 if abs(reward_prediction_error) > 1e-6:  # Only update if there's a reward signal
                     # Modulate weights based on eligibility trace and reward
                     # Delta_w = learning_rate * reward_error * eligibility_trace
-                    weight_updates = cfg.reward_learning_rate * reward_prediction_error * self.cp_eligibility_trace
+                    # Slice eligibility trace to match actual synapse count (trace array
+                    # is pre-allocated to capacity which may exceed cp_connections.nnz).
+                    actual_nnz = self.cp_connections.nnz
+                    weight_updates = cfg.reward_learning_rate * reward_prediction_error * self.cp_eligibility_trace[:actual_nnz]
                     self.cp_connections.data += weight_updates
                     
                     # Clip to bounds (use STDP bounds if STDP is enabled, otherwise Hebbian bounds)
@@ -8489,7 +8715,14 @@ class SimulationBridge:
                         self._mock_total_plasticity_events += int(significant_updates.get())
             
             # --- 4d. C3: Structural Plasticity (Synapse Formation/Elimination) ---
-            if _plasticity_gated and cfg.enable_structural_plasticity and self.cp_struct_plast_step_counter is not None:
+            # Freeze structural plasticity during experiments: synaptogenesis operates on
+            # hours-to-days timescales in vivo (Holtmaat & Svoboda 2009). In a 50-second
+            # experiment, activity-biased formation adds hundreds of thousands of random
+            # synapses that dilute learned CS→US pathways and alter network dynamics.
+            _structural_plasticity_active = _plasticity_gated and not (
+                self.experiment_engine is not None and self.experiment_engine.is_experiment_running
+            )
+            if _structural_plasticity_active and cfg.enable_structural_plasticity and self.cp_struct_plast_step_counter is not None:
                 self.cp_struct_plast_step_counter += 1
                 
                 # Only update periodically for efficiency
@@ -9503,6 +9736,7 @@ if OPENGL_AVAILABLE:
         "FOOTER_HEIGHT_PIXELS": 75, # Height of text overlay at bottom of GL window
         "SYNAPSE_ALPHA_MODIFIER": 0.50, # Multiplier for base synapse alpha
         "SYNAPSE_BASE_COLOR": [0.4, 0.4, 0.5], # Base RGB for synapses
+        "VBO_UPDATE_SKIP": 2, # Update VBOs every Nth render frame (reduces GPU-CPU sync overhead)
         "CAMERA_PAN_SPEED_FACTOR": 0.1, # Mouse pan speed
         "CAMERA_ROTATE_SPEED_FACTOR": 0.005, # Mouse rotate speed
         "CAMERA_ZOOM_SPEED_FACTOR": 20.0, # Mouse scroll zoom speed
@@ -9666,6 +9900,8 @@ def get_color_for_trait(trait_index, activity_timer_value, is_currently_spiking,
     
     return final_color_rgba
 
+_gl_frame_counter = 0  # Module-level frame counter for VBO update skipping
+
 def update_gl_data():
     """
     Prepares neuron, synapse, and pulse data for OpenGL rendering by updating VBOs.
@@ -9675,10 +9911,17 @@ def update_gl_data():
     global gl_neuron_pos_vbo, gl_neuron_color_vbo, gl_synapse_vertices_vbo, gl_pulse_vertices_vbo
     global gl_num_neurons_to_draw, gl_num_synapse_lines_to_draw, gl_num_pulses_to_draw
     # Use the new global CuPy array names
-    global gl_neuron_pos_cp, gl_neuron_colors_cp, gl_connection_vertices_cp, gl_pulse_vertices_cp 
+    global gl_neuron_pos_cp, gl_neuron_colors_cp, gl_connection_vertices_cp, gl_pulse_vertices_cp
+    global _gl_frame_counter
 
     if not OPENGL_AVAILABLE:
         gl_num_neurons_to_draw = 0; gl_num_synapse_lines_to_draw = 0; gl_num_pulses_to_draw = 0
+        return
+
+    # Frame skip: only update VBOs every Nth frame to reduce GPU->CPU sync overhead
+    _gl_frame_counter += 1
+    skip = opengl_viz_config.get("VBO_UPDATE_SKIP", 2)
+    if _gl_frame_counter % skip != 0:
         return
 
     sim_data_snapshot = None
@@ -13774,7 +14017,10 @@ def simulation_worker_loop(sim_bridge, local_shutdown_event, command_q, data_q):
 
                     elif cmd_type == "START_EXPERIMENT":
                         if sim_bridge.experiment_engine is not None:
-                            sim_bridge.experiment_engine.start(sim_bridge.runtime_state.current_time_ms)
+                            sim_bridge.experiment_engine.start(
+                                sim_bridge.runtime_state.current_time_ms,
+                                sim_bridge_ref=sim_bridge
+                            )
                             data_q.put({"type": "EXPERIMENT_STARTED"})
                         else:
                             data_q.put({"type": "EXPERIMENT_ERROR", "reason": "No experiment loaded"})

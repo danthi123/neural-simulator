@@ -45,6 +45,31 @@ benchmarks/
 *.tmp
 *.log
 
+# Experiment and benchmark output (transient)
+experiment_log_*.json
+experiment_associative_*.json
+experiment_stimulus_response_*.json
+experiment_freq_response_*.json
+experiment_rl_*.json
+freq_test_*.json
+sync_test*.json
+sweep_*.json
+sweep_*.csv
+benchmark_results_*.json
+*_summary.json
+*_freq_data.json
+startup_debug.txt
+
+# Claude Code
+.claude/
+
+# Test output (transient)
+tests/validation_results.json
+tests/example_validation_results.json
+tests/VALIDATE_GPU_README.md
+tests/VALIDATE_QUICKSTART.md
+tests/VALIDATION_SUITE_INDEX.md
+
 # OS
 .DS_Store
 Thumbs.db
