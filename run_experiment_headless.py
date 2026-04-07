@@ -22,27 +22,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cupy as cp
 import cupyx.scipy.sparse as csp
 
-
-def load_simulator():
-    """Load the neural-simulator module."""
-    simulator_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "neural-simulator.py")
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("neural_simulator", simulator_path)
-    mod = importlib.util.module_from_spec(spec)
-    old_argv = sys.argv
-    sys.argv = [simulator_path]
-    try:
-        spec.loader.exec_module(mod)
-    finally:
-        sys.argv = old_argv
-    return mod
+from sim import SimulationBridge, CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
+from sim.enums import NeuronModel
+from experiment import ExperimentEngine, ExperimentPresets
 
 
-def create_sim_bridge(mod, num_neurons=10000):
+def create_sim_bridge(num_neurons=10000):
     """Create and initialize a SimulationBridge."""
-    core_cfg = mod.CoreSimConfig()
+    core_cfg = CoreSimConfig()
     core_cfg.num_neurons = num_neurons
-    core_cfg.neuron_model_type = mod.NeuronModel.IZHIKEVICH.name
+    core_cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
     core_cfg.neural_profile_name = "CORTEX_L23_RS_FS"
     core_cfg.dt_ms = 1.0
     core_cfg.enable_hebbian_learning = True
@@ -54,11 +43,11 @@ def create_sim_bridge(mod, num_neurons=10000):
     core_cfg.stdp_a_minus = 0.01
     core_cfg.reward_learning_rate = 0.05  # Faster RL convergence for experiment timescales
 
-    viz_cfg = mod.VisualizationConfig()
-    runtime_state = mod.RuntimeState()
-    gpu_cfg = mod.GPUConfig()
+    viz_cfg = VisualizationConfig()
+    runtime_state = RuntimeState()
+    gpu_cfg = GPUConfig()
 
-    sim_bridge = mod.SimulationBridge(
+    sim_bridge = SimulationBridge(
         core_config=core_cfg, viz_config=viz_cfg,
         runtime_state=runtime_state, gpu_config=gpu_cfg,
     )
@@ -113,10 +102,10 @@ def run_experiment(sim_bridge, engine, exp_config, dt, total_exp_ms):
     return wall_time, step
 
 
-def setup_engine(mod, sim_bridge, exp_config, dt):
+def setup_engine(sim_bridge, exp_config, dt):
     """Create experiment engine, inject connectivity, attach to bridge."""
     n = sim_bridge.core_config.num_neurons
-    engine = mod.ExperimentEngine(n, dt)
+    engine = ExperimentEngine(n, dt)
     engine.load_experiment(exp_config)
     engine.initialize(cp_traits=sim_bridge.cp_traits, cp_module=cp)
 
@@ -142,20 +131,20 @@ def setup_engine(mod, sim_bridge, exp_config, dt):
 # Experiment-specific runners
 # ============================================================
 
-def run_stimulus_response(mod, args):
+def run_stimulus_response(args):
     """Basic Stimulus-Response: inject current, measure I/O transfer function."""
     print("\n[2/5] Creating SimulationBridge...")
-    sim_bridge, core_cfg, dt = create_sim_bridge(mod, args.num_neurons)
+    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons)
 
     print("\n[3/5] Loading Basic Stimulus-Response preset...")
-    exp_config = mod.ExperimentPresets.basic_stimulus_response(
+    exp_config = ExperimentPresets.basic_stimulus_response(
         input_amplitude_pA=150.0,
         stimulus_duration_ms=500.0,
         num_trials=20,
         input_group_size=100,
         output_group_size=100,
     )
-    engine, total_exp_ms = setup_engine(mod, sim_bridge, exp_config, dt)
+    engine, total_exp_ms = setup_engine(sim_bridge, exp_config, dt)
 
     print("\n[4/5] Running experiment...")
     wall_time, _ = run_experiment(sim_bridge, engine, exp_config, dt, total_exp_ms)
@@ -226,18 +215,18 @@ def run_stimulus_response(mod, args):
     return success
 
 
-def run_associative_conditioning(mod, args):
+def run_associative_conditioning(args):
     """Associative Conditioning (CS-US Pairing)."""
     print("\n[2/5] Creating SimulationBridge...")
-    sim_bridge, core_cfg, dt = create_sim_bridge(mod, args.num_neurons)
+    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons)
 
     print("\n[3/5] Loading Associative Conditioning preset...")
-    exp_config = mod.ExperimentPresets.associative_conditioning(
+    exp_config = ExperimentPresets.associative_conditioning(
         cs_amplitude_pA=500.0, us_amplitude_pA=500.0,
         cs_us_delay_ms=100.0, num_trials=args.num_trials,
         input_group_size=100, output_group_size=100,
     )
-    engine, total_exp_ms = setup_engine(mod, sim_bridge, exp_config, dt)
+    engine, total_exp_ms = setup_engine(sim_bridge, exp_config, dt)
 
     print("\n[4/5] Running experiment...")
     wall_time, _ = run_experiment(sim_bridge, engine, exp_config, dt, total_exp_ms)
@@ -282,20 +271,20 @@ def run_associative_conditioning(mod, args):
     return success
 
 
-def run_frequency_response(mod, args):
+def run_frequency_response(args):
     """Frequency Response Characterization: sinusoidal sweep."""
     print("\n[2/5] Creating SimulationBridge...")
-    sim_bridge, core_cfg, dt = create_sim_bridge(mod, args.num_neurons)
+    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons)
 
     print("\n[3/5] Loading Frequency Response preset...")
-    exp_config = mod.ExperimentPresets.frequency_response_characterization(
+    exp_config = ExperimentPresets.frequency_response_characterization(
         freq_start_hz=1.0, freq_end_hz=100.0,
         num_frequencies=12,  # Reduced for faster runs
         duration_per_freq_ms=2000.0,
         amplitude_pA=300.0,  # 300 pA: strong enough to modulate vs OU noise sigma=100 pA
         input_group_size=200,
     )
-    engine, total_exp_ms = setup_engine(mod, sim_bridge, exp_config, dt)
+    engine, total_exp_ms = setup_engine(sim_bridge, exp_config, dt)
 
     print("\n[4/5] Running experiment...")
     wall_time, _ = run_experiment(sim_bridge, engine, exp_config, dt, total_exp_ms)
@@ -372,19 +361,19 @@ def run_frequency_response(mod, args):
     return False
 
 
-def run_reinforcement_learning(mod, args):
+def run_reinforcement_learning(args):
     """Reinforcement Learning (R-STDP): three-factor learning."""
     print("\n[2/5] Creating SimulationBridge...")
-    sim_bridge, core_cfg, dt = create_sim_bridge(mod, args.num_neurons)
+    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons)
 
     print("\n[3/5] Loading Reinforcement Learning preset...")
-    exp_config = mod.ExperimentPresets.reinforcement_learning(
+    exp_config = ExperimentPresets.reinforcement_learning(
         stimulus_amplitude_pA=120.0,
         num_trials=args.num_trials,
         input_group_size=100,
         output_group_size=50,
     )
-    engine, total_exp_ms = setup_engine(mod, sim_bridge, exp_config, dt)
+    engine, total_exp_ms = setup_engine(sim_bridge, exp_config, dt)
 
     print("\n[4/5] Running experiment...")
     wall_time, _ = run_experiment(sim_bridge, engine, exp_config, dt, total_exp_ms)
@@ -476,9 +465,9 @@ def main():
     print(f"HEADLESS EXPERIMENT RUNNER: {args.experiment.upper()}")
     print("=" * 70)
 
-    print("\n[1/5] Loading simulator module...")
+    print("\n[1/5] Loading simulator packages...")
     t0 = time.time()
-    mod = load_simulator()
+    # Packages are already imported at module level; this just reports timing
     print(f"    Loaded in {time.time() - t0:.1f}s")
 
     experiments = {
@@ -494,14 +483,14 @@ def main():
             print(f"\n{'#'*70}")
             print(f"# RUNNING: {name.upper()}")
             print(f"{'#'*70}")
-            results[name] = func(mod, args)
+            results[name] = func(args)
         print(f"\n{'='*70}")
         print("ALL EXPERIMENTS SUMMARY")
         for name, success in results.items():
             print(f"  {name:30s}: {'PASS' if success else 'NEEDS WORK'}")
         print(f"{'='*70}")
     else:
-        experiments[args.experiment](mod, args)
+        experiments[args.experiment](args)
 
 
 if __name__ == "__main__":

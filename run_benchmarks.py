@@ -20,27 +20,16 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cupy as cp
 
-
-def load_simulator():
-    simulator_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                  "neural-simulator.py")
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("neural_simulator", simulator_path)
-    mod = importlib.util.module_from_spec(spec)
-    old_argv = sys.argv
-    sys.argv = [simulator_path]
-    try:
-        spec.loader.exec_module(mod)
-    finally:
-        sys.argv = old_argv
-    return mod
+from sim import SimulationBridge, CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
+from sim.enums import NeuronModel
+from sim.kernels import fused_stdp_weight_update, fused_stp_decay_recovery
 
 
 # ============================================================
 # Benchmark 2.1: STDP Timing Curve (Bi & Poo 1998)
 # ============================================================
 
-def benchmark_stdp_timing(mod):
+def benchmark_stdp_timing():
     """Verify STDP weight change follows the classic exponential window.
 
     Protocol: For each timing offset dt (-100ms to +100ms):
@@ -78,14 +67,12 @@ def benchmark_stdp_timing(mod):
     w_init = 0.5  # Mid-range initial weight for clear bidirectional changes
 
     # Run through the fused kernel
-    fused_stdp = mod.fused_stdp_weight_update
-
     results = []
     for dt in dt_values:
         dt_gpu = cp.array([float(dt)], dtype=cp.float32)
         w_gpu = cp.array([w_init], dtype=cp.float32)
 
-        w_new = fused_stdp(dt_gpu, w_gpu, A_plus, A_minus,
+        w_new = fused_stdp_weight_update(dt_gpu, w_gpu, A_plus, A_minus,
                            tau_plus, tau_minus, w_min, w_max)
         dw = float((w_new - w_gpu).get()[0])
 
@@ -161,9 +148,9 @@ def benchmark_stdp_timing(mod):
     sim_results = []
 
     for dt in test_dts:
-        core_cfg = mod.CoreSimConfig()
+        core_cfg = CoreSimConfig()
         core_cfg.num_neurons = 2
-        core_cfg.neuron_model_type = mod.NeuronModel.IZHIKEVICH.name
+        core_cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
         core_cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
         core_cfg.dt_ms = 1.0
         core_cfg.enable_stdp = True
@@ -184,11 +171,11 @@ def benchmark_stdp_timing(mod):
         core_cfg.connectivity_k = 1
         core_cfg.connectivity_p_rewire = 0.0
 
-        sb = mod.SimulationBridge(
+        sb = SimulationBridge(
             core_config=core_cfg,
-            viz_config=mod.VisualizationConfig(),
-            runtime_state=mod.RuntimeState(),
-            gpu_config=mod.GPUConfig(),
+            viz_config=VisualizationConfig(),
+            runtime_state=RuntimeState(),
+            gpu_config=GPUConfig(),
         )
         sb.runtime_state.max_delay_steps = 200
         sb._initialize_simulation_data(called_from_playback_init=False)
@@ -274,7 +261,7 @@ def benchmark_stdp_timing(mod):
 # Benchmark 2.2: E/I Balance and Spontaneous Firing Rates
 # ============================================================
 
-def benchmark_ei_balance(mod):
+def benchmark_ei_balance():
     """Verify cortical profiles produce biologically realistic spontaneous activity.
 
     Expected (Destexhe & Pare 1999, Haider et al. 2006):
@@ -287,9 +274,9 @@ def benchmark_ei_balance(mod):
     print("BENCHMARK 2.2: E/I Balance and Spontaneous Firing Rates")
     print(f"{'='*65}")
 
-    core_cfg = mod.CoreSimConfig()
+    core_cfg = CoreSimConfig()
     core_cfg.num_neurons = 10000
-    core_cfg.neuron_model_type = mod.NeuronModel.IZHIKEVICH.name
+    core_cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
     core_cfg.neural_profile_name = "CORTEX_L23_RS_FS"
     core_cfg.dt_ms = 1.0
     core_cfg.enable_hebbian_learning = False
@@ -298,11 +285,11 @@ def benchmark_ei_balance(mod):
     core_cfg.enable_homeostasis = False
     core_cfg.enable_structural_plasticity = False
 
-    sb = mod.SimulationBridge(
+    sb = SimulationBridge(
         core_config=core_cfg,
-        viz_config=mod.VisualizationConfig(),
-        runtime_state=mod.RuntimeState(),
-        gpu_config=mod.GPUConfig(),
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
     )
     dt = core_cfg.dt_ms
     sb.runtime_state.max_delay_steps = int(core_cfg.max_synaptic_delay_ms / dt)
@@ -459,7 +446,7 @@ def benchmark_ei_balance(mod):
 # Benchmark 2.3: STP Paired-Pulse Ratio (Tsodyks-Markram)
 # ============================================================
 
-def benchmark_stp_paired_pulse(mod):
+def benchmark_stp_paired_pulse():
     """Verify paired-pulse ratios match Tsodyks-Markram model predictions.
 
     Protocol: Analytically compute the STP effective transmission for two
@@ -559,7 +546,6 @@ def benchmark_stp_paired_pulse(mod):
 
     # Verify through the fused kernel too
     print(f"\n  Fused kernel verification:")
-    fused = mod.fused_stp_decay_recovery
     dt = 1.0
     U_test, tau_d_test, tau_f_test = 0.5, 200.0, 20.0
     isi_test = 50  # ms
@@ -575,7 +561,7 @@ def benchmark_stp_paired_pulse(mod):
 
     # Decay for ISI steps
     for _ in range(isi_test):
-        u, x = fused(u, x, dt, tau_f_test, tau_d_test)
+        u, x = fused_stp_decay_recovery(u, x, dt, tau_f_test, tau_d_test)
     x = cp.clip(x, 0.0, 1.0)
 
     # Spike 2
@@ -608,7 +594,7 @@ def benchmark_stp_paired_pulse(mod):
 # Benchmark 2.4: Gamma Oscillation Emergence (PING Mechanism)
 # ============================================================
 
-def benchmark_gamma_oscillations(mod):
+def benchmark_gamma_oscillations():
     """Verify cortical network produces gamma-band oscillations via E/I PING.
 
     Uses the CORTEX_GAMMA_FS_NETWORK profile (40% exc, 60% inh, high connectivity).
@@ -622,9 +608,9 @@ def benchmark_gamma_oscillations(mod):
     print("BENCHMARK 2.4: Gamma Oscillation Emergence (PING)")
     print(f"{'='*65}")
 
-    core_cfg = mod.CoreSimConfig()
+    core_cfg = CoreSimConfig()
     core_cfg.num_neurons = 5000
-    core_cfg.neuron_model_type = mod.NeuronModel.IZHIKEVICH.name
+    core_cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
     core_cfg.neural_profile_name = "CORTEX_GAMMA_FS_NETWORK"
     core_cfg.dt_ms = 0.5  # Finer dt for oscillation detection
     core_cfg.enable_hebbian_learning = False
@@ -635,11 +621,11 @@ def benchmark_gamma_oscillations(mod):
     # Boost drive to push network into oscillatory regime
     core_cfg.ou_mean_pA = 50.0
 
-    sb = mod.SimulationBridge(
+    sb = SimulationBridge(
         core_config=core_cfg,
-        viz_config=mod.VisualizationConfig(),
-        runtime_state=mod.RuntimeState(),
-        gpu_config=mod.GPUConfig(),
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
     )
     dt = core_cfg.dt_ms
     sb.runtime_state.max_delay_steps = int(core_cfg.max_synaptic_delay_ms / dt)
@@ -795,7 +781,7 @@ def benchmark_gamma_oscillations(mod):
 # Benchmark 2.5: Homeostatic Firing Rate Regulation
 # ============================================================
 
-def benchmark_homeostasis(mod):
+def benchmark_homeostasis():
     """Verify homeostasis restores firing rates after perturbation.
 
     Protocol:
@@ -811,9 +797,9 @@ def benchmark_homeostasis(mod):
     print("BENCHMARK 2.5: Homeostatic Firing Rate Regulation")
     print(f"{'='*65}")
 
-    core_cfg = mod.CoreSimConfig()
+    core_cfg = CoreSimConfig()
     core_cfg.num_neurons = 5000
-    core_cfg.neuron_model_type = mod.NeuronModel.IZHIKEVICH.name
+    core_cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
     core_cfg.neural_profile_name = "CORTEX_L23_RS_FS"
     core_cfg.dt_ms = 1.0
     core_cfg.enable_hebbian_learning = False
@@ -823,9 +809,9 @@ def benchmark_homeostasis(mod):
     core_cfg.enable_synaptic_scaling = True
     core_cfg.enable_structural_plasticity = False
 
-    sb = mod.SimulationBridge(
-        core_config=core_cfg, viz_config=mod.VisualizationConfig(),
-        runtime_state=mod.RuntimeState(), gpu_config=mod.GPUConfig(),
+    sb = SimulationBridge(
+        core_config=core_cfg, viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(), gpu_config=GPUConfig(),
     )
     dt = core_cfg.dt_ms
     sb.runtime_state.max_delay_steps = int(core_cfg.max_synaptic_delay_ms / dt)
@@ -964,9 +950,9 @@ def main():
     print("BIOLOGICAL BENCHMARK VALIDATION SUITE")
     print("=" * 65)
 
-    print("\nLoading simulator module...")
+    print("\nLoading simulator packages...")
     t0 = time.time()
-    mod = load_simulator()
+    # Packages are already imported at module level; this just reports timing
     print(f"Loaded in {time.time() - t0:.1f}s")
 
     benchmarks = {
@@ -981,9 +967,9 @@ def main():
 
     if args.benchmark == "all":
         for name, func in benchmarks.items():
-            all_results[name] = func(mod)
+            all_results[name] = func()
     else:
-        all_results[args.benchmark] = benchmarks[args.benchmark](mod)
+        all_results[args.benchmark] = benchmarks[args.benchmark]()
 
     # Summary
     print(f"\n{'='*65}")

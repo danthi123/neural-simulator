@@ -34,28 +34,16 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cupy as cp
 
-
-def load_simulator():
-    """Load the neural-simulator module."""
-    simulator_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                  "neural-simulator.py")
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("neural_simulator", simulator_path)
-    mod = importlib.util.module_from_spec(spec)
-    old_argv = sys.argv
-    sys.argv = [simulator_path]
-    try:
-        spec.loader.exec_module(mod)
-    finally:
-        sys.argv = old_argv
-    return mod
+from sim import SimulationBridge, CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
+from sim.enums import NeuronModel
+from experiment import ExperimentEngine, ExperimentPresets
 
 
-def create_sim_bridge(mod, num_neurons, core_overrides=None):
+def create_sim_bridge(num_neurons, core_overrides=None):
     """Create and initialize a SimulationBridge with optional parameter overrides."""
-    core_cfg = mod.CoreSimConfig()
+    core_cfg = CoreSimConfig()
     core_cfg.num_neurons = num_neurons
-    core_cfg.neuron_model_type = mod.NeuronModel.IZHIKEVICH.name
+    core_cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
     core_cfg.neural_profile_name = "CORTEX_L23_RS_FS"
     core_cfg.dt_ms = 1.0
     core_cfg.enable_hebbian_learning = True
@@ -73,11 +61,11 @@ def create_sim_bridge(mod, num_neurons, core_overrides=None):
             if hasattr(core_cfg, key):
                 setattr(core_cfg, key, val)
 
-    sim_bridge = mod.SimulationBridge(
+    sim_bridge = SimulationBridge(
         core_config=core_cfg,
-        viz_config=mod.VisualizationConfig(),
-        runtime_state=mod.RuntimeState(),
-        gpu_config=mod.GPUConfig(),
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
     )
     dt = core_cfg.dt_ms
     sim_bridge.runtime_state.max_delay_steps = (
@@ -89,27 +77,27 @@ def create_sim_bridge(mod, num_neurons, core_overrides=None):
     return sim_bridge, core_cfg, dt
 
 
-def run_single_experiment(mod, experiment_name, num_neurons, num_trials,
+def run_single_experiment(experiment_name, num_neurons, num_trials,
                           core_overrides=None):
     """Run one experiment and return structured results dict."""
-    sim_bridge, core_cfg, dt = create_sim_bridge(mod, num_neurons, core_overrides)
+    sim_bridge, core_cfg, dt = create_sim_bridge(num_neurons, core_overrides)
     if sim_bridge is None:
         return {"error": "Initialization failed"}
 
     # Load preset
     presets = {
-        "associative": lambda: mod.ExperimentPresets.associative_conditioning(
+        "associative": lambda: ExperimentPresets.associative_conditioning(
             num_trials=num_trials),
-        "stimulus-response": lambda: mod.ExperimentPresets.basic_stimulus_response(),
-        "frequency-response": lambda: mod.ExperimentPresets.frequency_response_characterization(
+        "stimulus-response": lambda: ExperimentPresets.basic_stimulus_response(),
+        "frequency-response": lambda: ExperimentPresets.frequency_response_characterization(
             num_frequencies=12, amplitude_pA=300.0),
-        "reinforcement": lambda: mod.ExperimentPresets.reinforcement_learning(
+        "reinforcement": lambda: ExperimentPresets.reinforcement_learning(
             num_trials=num_trials),
     }
     exp_config = presets[experiment_name]()
 
     # Setup engine
-    engine = mod.ExperimentEngine(core_cfg.num_neurons, dt)
+    engine = ExperimentEngine(core_cfg.num_neurons, dt)
     engine.load_experiment(exp_config)
     engine.initialize(cp_traits=sim_bridge.cp_traits, cp_module=cp)
     added = engine.ensure_inter_group_connectivity(sim_bridge, cp)
@@ -297,7 +285,7 @@ def generate_sweep_combinations(parameters, mode="grid"):
     return [dict(zip(keys, combo)) for combo in combos]
 
 
-def run_sweep(mod, config):
+def run_sweep(config):
     """Execute a full parameter sweep and return results."""
     experiment = config["experiment"]
     num_neurons = config.get("num_neurons", 10000)
@@ -324,7 +312,7 @@ def run_sweep(mod, config):
         print(f"\n--- Run {i+1}/{total}: {combo} ---")
 
         result = run_single_experiment(
-            mod, experiment, num_neurons, num_trials,
+            experiment, num_neurons, num_trials,
             core_overrides=combo,
         )
         result["params"] = combo
@@ -421,12 +409,12 @@ def main():
         parser.error("Provide --config or (--experiment + --sweep)")
         return
 
-    print("Loading simulator module...")
+    print("Loading simulator packages...")
     t0 = time.time()
-    mod = load_simulator()
+    # Packages are already imported at module level; this just reports timing
     print(f"Loaded in {time.time() - t0:.1f}s")
 
-    results, sweep_time = run_sweep(mod, config)
+    results, sweep_time = run_sweep(config)
 
     # Save results
     output_path = args.output or f"sweep_{config['experiment']}_{int(time.time())}.json"
