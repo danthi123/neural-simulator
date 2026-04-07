@@ -1581,7 +1581,16 @@ def main_dpg_loop_and_gl_idle():
     except queue.Empty:
         pass 
 
-    # --- 1.5. Update Log Display ---
+    # --- 1.5. Update Live Plots ---
+    _plot_mgr = global_gui_state.get("_plot_manager")
+    if _plot_mgr:
+        _plot_mgr.update_all()
+    # Update sweep panel progress if running
+    _sweep = global_gui_state.get("_sweep_panel")
+    if _sweep:
+        _sweep.update_ui()
+
+    # --- 1.6. Update Log Display ---
     if hasattr(handle_log_search_change, "log_capture"):
         if dpg.is_dearpygui_running() and dpg.does_item_exist("system_logs_display"):
             log_capture = handle_log_search_change.log_capture
@@ -2043,6 +2052,37 @@ def main():
 
     global_gui_state["reset_sim_needed_from_ui_change"] = True # Force "Apply Changes" for initial config
     update_status_bar("Application started. Apply initial config or load a profile/state.", level="info")
+
+    # --- Wire up new features: data bus, live plots, state manager, picker ---
+    from sim.data_bus import create_default_bus
+    from ui.plot_manager import PlotManager
+    from ui.plots import create_live_plots
+    from ui.state_manager import UIState
+    from ui.sweep_panel import SweepPanel
+
+    # Create data bus and attach to simulation bridge
+    global_data_bus = create_default_bus()
+    global_simulation_bridge.data_bus = global_data_bus
+
+    # Create UI state manager
+    global_ui_state = UIState()
+
+    # Create plot manager and live plots (after GUI layout exists)
+    global_plot_manager = PlotManager(data_bus=global_data_bus)
+    if dpg.does_item_exist("live_monitoring_header"):
+        plot_updates = create_live_plots("live_monitoring_header", global_data_bus, global_plot_manager)
+
+    # Wire picker and inspector into viz/camera
+    try:
+        from viz.camera import set_ui_state as set_camera_ui_state
+        set_camera_ui_state(global_ui_state)
+    except (ImportError, AttributeError):
+        pass  # Picker available only when OpenGL is active
+
+    # Store refs for access in main loop
+    global_gui_state["_data_bus"] = global_data_bus
+    global_gui_state["_plot_manager"] = global_plot_manager
+    global_gui_state["_ui_state"] = global_ui_state
 
 
     # --- Start the Simulation Worker Thread ---
