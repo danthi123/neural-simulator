@@ -34,6 +34,7 @@ from ui.experiment_dashboard import (
     create_experiment_dashboard,
     populate_experiment_info,
 )
+from ui.sweep_panel import SweepPanel
 
 __all__ = [
     'init_callbacks',
@@ -66,4 +67,5 @@ __all__ = [
     'create_inspector_panel',
     'create_experiment_dashboard',
     'populate_experiment_info',
+    'SweepPanel',
 ]

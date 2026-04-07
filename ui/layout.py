@@ -10,6 +10,7 @@ import os
 import dearpygui.dearpygui as dpg
 
 from ui.experiment_dashboard import create_experiment_dashboard
+from ui.sweep_panel import SweepPanel
 
 # Re-import everything needed from callbacks (which holds the shared state refs)
 import ui.callbacks as _cb_module  # module ref passed to experiment dashboard
@@ -782,6 +783,10 @@ def create_gui_layout():
                                callback=_handle_inject_manual_stimulus)
                 dpg.add_spacer(height=5)
 
+        # --- Parameter Sweep Panel ---
+        _sweep_panel = SweepPanel()
+        _sweep_panel.create_ui(parent="left_panel")
+
         with dpg.collapsing_header(label="Testing & Optimization", default_open=False, tag="perf_testing_header"):
             dpg.add_text("Run performance tests and optimization tasks:")
             dpg.add_spacer(height=3)
@@ -971,5 +976,6 @@ def create_gui_layout():
     return {
         "inspector_update": _inspector_update_fn,
         "experiment_dashboard_update": _experiment_dashboard_update,
+        "sweep_panel": _sweep_panel,
     }
 
