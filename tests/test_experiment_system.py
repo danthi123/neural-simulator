@@ -84,6 +84,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from enum import Enum
 from dataclasses import dataclass, field, asdict, fields
 from typing import List, Dict
+from sim.enums import (NeuronModel, NeuronType, DefaultHodgkinHuxleyParams,
+                        StimulusPatternType, NeuronGroupRole, ExperimentPhaseType,
+                        TrainingMode)
 
 # Read the experiment system code block directly
 experiment_block_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'experiment_system_block.py')
