@@ -76,46 +76,17 @@ class MockCuPy:
         return False
 
 
-# We need to import the experiment system classes from neural-simulator.py
-# Since it's a monolithic file, we'll extract and exec the relevant section
+# Ensure project root is on the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-# Import the Enum and dataclass types needed
-from enum import Enum
-from dataclasses import dataclass, field, asdict, fields
-from typing import List, Dict
-from sim.enums import (NeuronModel, NeuronType, DefaultHodgkinHuxleyParams,
-                        StimulusPatternType, NeuronGroupRole, ExperimentPhaseType,
+# Import from extracted packages
+from sim.enums import (StimulusPatternType, NeuronGroupRole, ExperimentPhaseType,
                         TrainingMode)
-from sim.config import (CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig,
-                         ReadoutConfig, TrainingConfig, StimulusPattern, StimulusChannel,
+from sim.config import (ReadoutConfig, TrainingConfig, StimulusPattern, StimulusChannel,
                          NeuronGroup, ExperimentPhase, ExperimentConfig)
-
-# Read the experiment system code block directly
-experiment_block_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'experiment_system_block.py')
-if os.path.exists(experiment_block_path):
-    with open(experiment_block_path, 'r') as f:
-        experiment_code = f.read()
-    # Execute the experiment system code in our namespace
-    exec(experiment_code, globals())
-else:
-    # Fallback: extract from neural-simulator.py
-    simulator_path = os.path.join(os.path.dirname(__file__), '..', 'neural-simulator.py')
-    with open(simulator_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-
-    # Find the experiment system block
-    start_marker = "# =============================================================================\n# EXPERIMENT & STIMULUS SYSTEM"
-    end_marker = "# --- Simulation Bridge (Core Logic) ---"
-
-    start_idx = content.find(start_marker)
-    end_idx = content.find(end_marker)
-
-    if start_idx >= 0 and end_idx >= 0:
-        experiment_code = content[start_idx:end_idx]
-        exec(experiment_code, globals())
-    else:
-        raise ImportError("Could not find experiment system code in neural-simulator.py")
+from experiment import (ExperimentEngine, ExperimentPresets, ReadoutEngine,
+                         TrainingProtocolEngine, StimulusManager, NeuronGroupManager)
+from experiment.engine import experiment_config_from_dict, experiment_config_to_dict
 
 
 cp = MockCuPy()
