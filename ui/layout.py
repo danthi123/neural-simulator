@@ -15,14 +15,15 @@ from ui.sweep_panel import SweepPanel
 # Re-import everything needed from callbacks (which holds the shared state refs)
 import ui.callbacks as _cb_module  # module ref passed to experiment dashboard
 
+from sim.enums import (NeuronModel, NeuronType, DefaultIzhikevichParamsManager,
+                       DefaultHodgkinHuxleyParams, StimulusPatternType)
+from sim.profiles import NEURAL_STRUCTURE_PROFILES
+from experiment.presets import ExperimentPresets
+
 from ui.callbacks import (
     # Shared state
     global_gui_state, opengl_viz_config, OPENGL_AVAILABLE,
     TRAIT_COLOR_MAP_RAW, shutdown_flag,
-    # Types
-    NeuronModel, NeuronType, DefaultIzhikevichParamsManager, DefaultHodgkinHuxleyParams,
-    NEURAL_STRUCTURE_PROFILES,
-    StimulusPatternType, ExperimentPresets,
     # Callbacks
     update_status_bar,
     handle_start_simulation_event, handle_stop_simulation_event,
