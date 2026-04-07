@@ -30,6 +30,10 @@ from ui.callbacks import (
 )
 from ui.layout import create_gui_layout, add_parameter_table_row
 from ui.inspector import create_inspector_panel
+from ui.experiment_dashboard import (
+    create_experiment_dashboard,
+    populate_experiment_info,
+)
 
 __all__ = [
     'init_callbacks',
@@ -60,4 +64,6 @@ __all__ = [
     '_refresh_full_profile_dropdown',
     '_execute_profile_load_on_ui_thread',
     'create_inspector_panel',
+    'create_experiment_dashboard',
+    'populate_experiment_info',
 ]

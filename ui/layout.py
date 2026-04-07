@@ -9,7 +9,11 @@ References to callback functions and shared state are imported from ui.callbacks
 import os
 import dearpygui.dearpygui as dpg
 
+from ui.experiment_dashboard import create_experiment_dashboard
+
 # Re-import everything needed from callbacks (which holds the shared state refs)
+import ui.callbacks as _cb_module  # module ref passed to experiment dashboard
+
 from ui.callbacks import (
     # Shared state
     global_gui_state, opengl_viz_config, OPENGL_AVAILABLE,
@@ -17,7 +21,7 @@ from ui.callbacks import (
     # Types
     NeuronModel, NeuronType, DefaultIzhikevichParamsManager, DefaultHodgkinHuxleyParams,
     NEURAL_STRUCTURE_PROFILES,
-    StimulusPatternType,
+    StimulusPatternType, ExperimentPresets,
     # Callbacks
     update_status_bar,
     handle_start_simulation_event, handle_stop_simulation_event,
@@ -735,53 +739,22 @@ def create_gui_layout():
                     tooltip="Update visualization every N simulation steps.\n1 = real-time update (smoothest, most GPU overhead).\nHigher values = faster simulation but choppier visuals.")
 
         # =============================================================================
-        # EXPERIMENT & STIMULUS SYSTEM UI
+        # EXPERIMENT & STIMULUS SYSTEM UI (Enhanced Dashboard)
         # =============================================================================
         with dpg.collapsing_header(label="Experiment & Stimulus System", default_open=False, tag="experiment_system_header"):
             dpg.add_text("Configure and run programmable experiments with stimulus injection,\nneuron group I/O, training protocols, and readout analysis.")
             dpg.add_spacer(height=5)
 
-            # --- Experiment Preset Selector ---
-            dpg.add_text("Experiment Presets:", color=[180, 220, 255])
-            experiment_preset_names = ["-- Select Preset --"] + ExperimentPresets.get_preset_names()
-            dpg.add_combo(experiment_preset_names, default_value="-- Select Preset --",
-                          tag="experiment_preset_combo", width=350,
-                          callback=lambda s, a, u: _handle_experiment_preset_change(a))
-            dpg.add_spacer(height=3)
+            # Build preset name list (ExperimentPresets may still be None at import)
+            _preset_names = ["-- Select Preset --"]
+            if ExperimentPresets is not None:
+                _preset_names += ExperimentPresets.get_preset_names()
 
-            # Experiment info display
-            dpg.add_text("No experiment loaded.", tag="experiment_info_text", color=[150, 150, 150])
-            dpg.add_spacer(height=5)
-
-            # --- Control Buttons ---
-            with dpg.group(horizontal=True):
-                dpg.add_button(label="Start Experiment", tag="btn_start_experiment",
-                               callback=lambda: ui_to_sim_queue.put({"type": "START_EXPERIMENT"}))
-                dpg.add_button(label="Stop Experiment", tag="btn_stop_experiment",
-                               callback=lambda: ui_to_sim_queue.put({"type": "STOP_EXPERIMENT"}))
-                dpg.add_button(label="Save Log", tag="btn_save_experiment_log",
-                               callback=lambda: ui_to_sim_queue.put({"type": "SAVE_EXPERIMENT_LOG",
-                                   "filepath": f"experiment_log_{int(time.time())}.json"}))
-            dpg.add_spacer(height=5)
-
-            # --- Experiment Status Display ---
-            dpg.add_text("Status:", color=[180, 220, 255])
-            dpg.add_text("Idle", tag="experiment_status_text", color=[150, 150, 150])
-            dpg.add_spacer(height=3)
-
-            # Phase progress
-            dpg.add_text("Phase: --", tag="experiment_phase_text", color=[150, 150, 150])
-            dpg.add_spacer(height=3)
-
-            # Readout rates display
-            dpg.add_text("Readout Rates:", color=[180, 220, 255])
-            dpg.add_text("No data", tag="experiment_readout_text", color=[150, 150, 150])
-            dpg.add_spacer(height=3)
-
-            # Training progress
-            dpg.add_text("Training:", color=[180, 220, 255])
-            dpg.add_text("No training active", tag="experiment_training_text", color=[150, 150, 150])
-            dpg.add_spacer(height=5)
+            _experiment_dashboard_update = create_experiment_dashboard(
+                parent="experiment_system_header",
+                preset_names=_preset_names,
+                callbacks_module=_cb_module,
+            )
 
             # --- Manual Stimulus Configuration ---
             with dpg.collapsing_header(label="Manual Stimulus (Quick Test)", default_open=False,
@@ -995,5 +968,8 @@ def create_gui_layout():
             dpg.add_button(label="Continue", width=150, callback=_recording_options_continue_callback)
             dpg.add_button(label="Cancel", width=100, callback=_recording_options_cancel_callback)
 
-    return {"inspector_update": _inspector_update_fn}
+    return {
+        "inspector_update": _inspector_update_fn,
+        "experiment_dashboard_update": _experiment_dashboard_update,
+    }
 
