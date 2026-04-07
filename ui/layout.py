@@ -12,19 +12,32 @@ import dearpygui.dearpygui as dpg
 from ui.experiment_dashboard import create_experiment_dashboard
 from ui.sweep_panel import SweepPanel
 
-# Re-import everything needed from callbacks (which holds the shared state refs)
-import ui.callbacks as _cb_module  # module ref passed to experiment dashboard
+# Import types directly from source packages (not through callbacks.py
+# which uses lazy init — values are None at import time)
+import ui.callbacks as _cb_module  # module ref for shared state access
 
 from sim.enums import (NeuronModel, NeuronType, DefaultIzhikevichParamsManager,
                        DefaultHodgkinHuxleyParams, StimulusPatternType)
 from sim.profiles import NEURAL_STRUCTURE_PROFILES
 from experiment.presets import ExperimentPresets
 
+# Shared state must be accessed via _cb_module at call time, NOT imported
+# as values (they're None at import time, set later by init_callbacks).
+# Helper accessors:
+def _get_gui_state():
+    return _cb_module.global_gui_state or {}
+
+def _get_viz_config():
+    return _cb_module.opengl_viz_config or {}
+
+def _get_opengl_available():
+    return getattr(_cb_module, 'OPENGL_AVAILABLE', False)
+
+def _get_trait_colors():
+    return _cb_module.TRAIT_COLOR_MAP_RAW or []
+
 from ui.callbacks import (
-    # Shared state
-    global_gui_state, opengl_viz_config, OPENGL_AVAILABLE,
-    TRAIT_COLOR_MAP_RAW, shutdown_flag,
-    # Callbacks
+    # Callbacks only (not state)
     update_status_bar,
     handle_start_simulation_event, handle_stop_simulation_event,
     handle_pause_simulation_event, handle_step_simulation_event,
@@ -106,7 +119,7 @@ def create_gui_layout():
 
     with dpg.window(label="Controls & Configuration", tag="controls_monitor_window",
                     width=-1, height=-1, pos=[0,0], 
-                    on_close=lambda: (shutdown_flag.set(), dpg.stop_dearpygui() if dpg.is_dearpygui_running() else None),
+                    on_close=lambda: (_cb_module.shutdown_flag.set(), dpg.stop_dearpygui() if dpg.is_dearpygui_running() else None),
                     menubar=True):
         dpg.add_spacer(height=5)
 
@@ -120,7 +133,7 @@ def create_gui_layout():
                 dpg.add_separator()
                 dpg.add_menu_item(label="Load Recording (.simrec.h5)", callback=handle_load_recording_menu_click, tag="load_recording_menu_h5")
                 dpg.add_separator()
-                dpg.add_menu_item(label="Exit", callback=lambda: (shutdown_flag.set(), dpg.stop_dearpygui() if dpg.is_dearpygui_running() else None))
+                dpg.add_menu_item(label="Exit", callback=lambda: (_cb_module.shutdown_flag.set(), dpg.stop_dearpygui() if dpg.is_dearpygui_running() else None))
 
         with dpg.collapsing_header(label="Simulation Controls", default_open=True):
             dpg.add_text("Status: Idle", tag="status_bar_text")
@@ -201,7 +214,7 @@ def create_gui_layout():
                     tooltip="Integration timestep. Izhikevich: 0.5-1.0ms is stable. Hodgkin-Huxley: MUST be <= 0.1ms (gating kinetics require fine resolution). AdEx: 0.1-0.5ms recommended. Smaller dt = more accurate but slower.")
                 add_parameter_table_row("Seed (-1 for random):", dpg.add_input_int, "cfg_seed", -1, _update_sim_config_from_ui_and_signal_reset_needed,
                     tooltip="Random seed for reproducibility. Set to -1 for a new random seed each run. Use a fixed positive integer to reproduce identical simulations.")
-                add_parameter_table_row("Number of Traits:", dpg.add_input_int, "cfg_num_traits", 5, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=len(TRAIT_COLOR_MAP_RAW) if TRAIT_COLOR_MAP_RAW else 10,
+                add_parameter_table_row("Number of Traits:", dpg.add_input_int, "cfg_num_traits", 5, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=len(_get_trait_colors()) if _get_trait_colors() else 10,
                     tooltip="Number of neuron sub-populations (color-coded in 3D view). One trait is designated inhibitory. More traits = more diverse network topology.")
                 add_parameter_table_row("Neuron Model:", dpg.add_combo, "cfg_neuron_model_type", NeuronModel.IZHIKEVICH.name, _handle_model_type_change_dpg, items=[model.name for model in NeuronModel],
                     tooltip="Izhikevich: Fast, versatile (20+ firing patterns). Good for large networks.\nHodgkin-Huxley: Biophysically detailed (ion channels, temperature). Requires dt<=0.1ms.\nAdEx: Balance of speed and biophysics. Good for adaptation studies.")
@@ -701,17 +714,17 @@ def create_gui_layout():
                 spiking_filter_options = ["Highlight Spiking", "Show Only Spiking", "No Spiking Highlight"]
                 add_parameter_table_row("Show Spiking Neurons:", dpg.add_combo, "filter_spiking_mode_combo", "Highlight Spiking", trigger_filter_update_signal, items=spiking_filter_options,
                     tooltip="How to display spiking neurons.\nHighlight: bright flash on spike, dim otherwise.\nOnly Spiking: hide non-spiking neurons.\nNo Highlight: uniform appearance.")
-                add_parameter_table_row("Enable Synaptic Pulses (GL):", dpg.add_checkbox, "gl_enable_synaptic_pulses_cb", opengl_viz_config.get('ENABLE_SYNAPTIC_PULSES', True) if OPENGL_AVAILABLE else False, handle_gl_enable_synaptic_pulses_change,
+                add_parameter_table_row("Enable Synaptic Pulses (GL):", dpg.add_checkbox, "gl_enable_synaptic_pulses_cb", _get_viz_config().get('ENABLE_SYNAPTIC_PULSES', True) if _get_opengl_available() else False, handle_gl_enable_synaptic_pulses_change,
                     tooltip="Show animated pulses traveling along synapses\nwhen spikes propagate. Visually appealing but\ncosts GPU performance at high spike rates.")
                 add_parameter_table_row("Filter By Neuron Type:", dpg.add_checkbox, "filter_type_enable_cb", False, lambda s, a, u: (dpg.configure_item("filter_neuron_type_combo", enabled=a), trigger_filter_update_signal(s,a,u)),
                     tooltip="Enable filtering to show only neurons of a specific type.\nUseful for isolating excitatory or inhibitory populations.")
                 add_parameter_table_row("Select Type:", dpg.add_combo, "filter_neuron_type_combo", "All", trigger_filter_update_signal, items=["All"], enabled=False,
                     tooltip="Select which neuron type to display.\nRequires 'Filter By Neuron Type' to be enabled.")
-                add_parameter_table_row("Max Visible Neurons (GL):", dpg.add_input_int, "gl_max_neurons_render_input", opengl_viz_config.get('MAX_NEURONS_TO_RENDER', 10000) if OPENGL_AVAILABLE else 0, handle_gl_max_neurons_change, min_value=0, step=100,
+                add_parameter_table_row("Max Visible Neurons (GL):", dpg.add_input_int, "gl_max_neurons_render_input", _get_viz_config().get('MAX_NEURONS_TO_RENDER', 10000) if _get_opengl_available() else 0, handle_gl_max_neurons_change, min_value=0, step=100,
                     tooltip="Maximum neurons rendered in OpenGL viewport.\nReduce for better frame rate with large networks.\n10000 default. 0 = render all.")
-                add_parameter_table_row("Neuron Size (GL):", dpg.add_slider_float, "gl_neuron_point_size_slider", opengl_viz_config.get('POINT_SIZE', 2.0) if OPENGL_AVAILABLE else 1.0, handle_gl_point_size_change, min_value=0.5, max_value=10.0, format="%.1f",
+                add_parameter_table_row("Neuron Size (GL):", dpg.add_slider_float, "gl_neuron_point_size_slider", _get_viz_config().get('POINT_SIZE', 2.0) if _get_opengl_available() else 1.0, handle_gl_point_size_change, min_value=0.5, max_value=10.0, format="%.1f",
                     tooltip="Point size for neuron rendering in pixels.\nIncrease for visibility at distance, decrease\nfor dense networks to reduce overlap.")
-                add_parameter_table_row("Inactive Neuron Opacity (GL):", dpg.add_slider_float, "gl_inactive_neuron_opacity_slider", opengl_viz_config.get('INACTIVE_NEURON_OPACITY', 0.25) if OPENGL_AVAILABLE else 0.1, handle_gl_inactive_neuron_opacity_change, min_value=0.0, max_value=1.0, format="%.2f",
+                add_parameter_table_row("Inactive Neuron Opacity (GL):", dpg.add_slider_float, "gl_inactive_neuron_opacity_slider", _get_viz_config().get('INACTIVE_NEURON_OPACITY', 0.25) if _get_opengl_available() else 0.1, handle_gl_inactive_neuron_opacity_change, min_value=0.0, max_value=1.0, format="%.2f",
                     tooltip="Transparency of non-spiking neurons.\n0.0 = fully transparent, 1.0 = fully opaque.\nLow values make spiking activity pop visually.")
             
             dpg.add_separator()
@@ -719,11 +732,11 @@ def create_gui_layout():
             with dpg.table(header_row=False):
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
-                add_parameter_table_row("Show Synapses (GL):", dpg.add_checkbox, "filter_show_synapses_gl_cb", global_gui_state.get("show_connections_gl", True), lambda s,a,u: (global_gui_state.update({"show_connections_gl":a}), trigger_filter_update_signal()),
+                add_parameter_table_row("Show Synapses (GL):", dpg.add_checkbox, "filter_show_synapses_gl_cb", _get_gui_state().get("show_connections_gl", True), lambda s,a,u: (_cb_module.global_gui_state.update({"show_connections_gl":a}) if _cb_module.global_gui_state else None, trigger_filter_update_signal()),
                     tooltip="Toggle synapse line rendering in OpenGL viewport.\nDisable for cleaner neuron-only view and\nbetter performance with dense networks.")
-                add_parameter_table_row("Max Visible Connections (GL):", dpg.add_input_int, "gl_max_connections_render_input", opengl_viz_config.get('MAX_CONNECTIONS_TO_RENDER', 20000) if OPENGL_AVAILABLE else 0, handle_gl_max_connections_change, min_value=0, step=500,
+                add_parameter_table_row("Max Visible Connections (GL):", dpg.add_input_int, "gl_max_connections_render_input", _get_viz_config().get('MAX_CONNECTIONS_TO_RENDER', 20000) if _get_opengl_available() else 0, handle_gl_max_connections_change, min_value=0, step=500,
                     tooltip="Maximum synapse lines rendered. Dense networks\nmay have millions of connections — cap this\nfor usable frame rates. 20000 default.")
-                add_parameter_table_row("Synapse Alpha Multiplier (GL):", dpg.add_slider_float, "gl_synapse_alpha_slider", opengl_viz_config.get('SYNAPSE_ALPHA_MODIFIER', 0.3) if OPENGL_AVAILABLE else 0.1, handle_gl_synapse_alpha_change, min_value=0.0, max_value=2.0, format="%.2f",
+                add_parameter_table_row("Synapse Alpha Multiplier (GL):", dpg.add_slider_float, "gl_synapse_alpha_slider", _get_viz_config().get('SYNAPSE_ALPHA_MODIFIER', 0.3) if _get_opengl_available() else 0.1, handle_gl_synapse_alpha_change, min_value=0.0, max_value=2.0, format="%.2f",
                     tooltip="Opacity multiplier for synapse lines.\nLower values = more transparent connections.\nUseful to reduce visual clutter in dense networks.")
                 add_parameter_table_row("Min Abs Synapse Weight (Filter):", dpg.add_slider_float, "filter_min_abs_weight_slider", 0.000, trigger_filter_update_signal, max_value=1.0, format="%.3f",
                     tooltip="Only show synapses with |weight| above this value.\nIncrease to see only the strongest connections.\n0 = show all connections.")
@@ -735,7 +748,7 @@ def create_gui_layout():
                 dpg.add_table_column(width_stretch=True)
                 add_parameter_table_row("Camera Field of View (FOV, degrees):", dpg.add_slider_float, "cfg_camera_fov", 60.0, _update_sim_config_from_ui_and_signal_reset_needed, min_value=10.0, max_value=120.0,
                     tooltip="Perspective camera field of view.\n60° is natural. Lower = telephoto (flatter).\nHigher = wide-angle (more depth distortion).")
-                add_parameter_table_row("Activity Highlight Frames (GL):", dpg.add_input_int, "gl_activity_highlight_frames_input", opengl_viz_config.get('ACTIVITY_HIGHLIGHT_FRAMES', 7) if OPENGL_AVAILABLE else 1, handle_gl_activity_highlight_frames_change, min_value=1, max_value=30,
+                add_parameter_table_row("Activity Highlight Frames (GL):", dpg.add_input_int, "gl_activity_highlight_frames_input", _get_viz_config().get('ACTIVITY_HIGHLIGHT_FRAMES', 7) if _get_opengl_available() else 1, handle_gl_activity_highlight_frames_change, min_value=1, max_value=30,
                     tooltip="How many frames a neuron stays highlighted after spiking.\nHigher = longer visible flash. 7 default.\nIncrease for slow sim speeds, decrease for fast.")
                 add_parameter_table_row("Viz Update Interval (steps):", dpg.add_input_int, "cfg_viz_update_interval_steps", 1, _update_sim_config_from_ui_and_signal_reset_needed, min_value=1, max_value=200, step=1,
                     tooltip="Update visualization every N simulation steps.\n1 = real-time update (smoothest, most GPU overhead).\nHigher values = faster simulation but choppier visuals.")
