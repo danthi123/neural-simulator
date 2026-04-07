@@ -29,6 +29,19 @@ ui_to_sim_queue = None
 _trigger_filter_update_signal = None
 _update_ui_for_simulation_run_state = None
 
+# Click-detection state for neuron picking (click = down+up at ~same position)
+_mouse_down_pos = None  # (x, y) at mouse-down, or None
+_CLICK_DRAG_THRESHOLD = 5  # pixels; movement beyond this is a drag, not a click
+
+# UI state reference for selected neurons (set via set_ui_state)
+_ui_state = None
+
+
+def set_ui_state(ui_state):
+    """Inject UIState reference for neuron selection tracking."""
+    global _ui_state
+    _ui_state = ui_state
+
 
 def set_shared_state(sim_bridge, gui_state, viz_config, shutdown_evt,
                      ui_sim_queue, filter_fn, update_run_state_fn):
@@ -65,13 +78,25 @@ def reshape_gl_window(width, height):
 
 def mouse_button_func_gl(button, state, x, y):
     """Handles mouse button events for OpenGL window (camera control). Called by GLUT."""
+    global _mouse_down_pos
     if not global_simulation_bridge:
         return
     cfg = global_simulation_bridge.viz_config
     zoom_speed = opengl_viz_config.get("CAMERA_ZOOM_SPEED_FACTOR", 20.0)
 
     if button == glut.GLUT_LEFT_BUTTON:
-        cfg.mouse_left_button_down = (state == glut.GLUT_DOWN)
+        if state == glut.GLUT_DOWN:
+            _mouse_down_pos = (x, y)
+            cfg.mouse_left_button_down = True
+        else:
+            cfg.mouse_left_button_down = False
+            # Detect click (not drag): mouse-up near mouse-down position
+            if _mouse_down_pos is not None:
+                dx = abs(x - _mouse_down_pos[0])
+                dy = abs(y - _mouse_down_pos[1])
+                if dx <= _CLICK_DRAG_THRESHOLD and dy <= _CLICK_DRAG_THRESHOLD:
+                    _handle_neuron_pick(x, y)
+                _mouse_down_pos = None
     elif button == glut.GLUT_RIGHT_BUTTON:
         cfg.mouse_right_button_down = (state == glut.GLUT_DOWN)
     elif button == 3:  # Scroll up (zoom in)
@@ -88,6 +113,35 @@ def mouse_button_func_gl(button, state, x, y):
     cfg.mouse_last_y = y
     if glut.glutGetWindow() != 0:
         glut.glutPostRedisplay()
+
+
+def _handle_neuron_pick(x, y):
+    """Perform color-based neuron picking at screen coordinates (x, y)."""
+    if not global_simulation_bridge or _ui_state is None:
+        return
+
+    try:
+        import cupy as cp
+        from viz.picker import pick_neuron_at
+
+        bridge = global_simulation_bridge
+        if bridge.cp_neuron_positions_3d is None or bridge.cp_neuron_positions_3d.shape[0] == 0:
+            return
+
+        positions_np = cp.asnumpy(bridge.cp_neuron_positions_3d)
+        num_neurons = bridge.core_config.num_neurons
+        viz_cfg = bridge.viz_config
+
+        idx = pick_neuron_at(x, y, positions_np, num_neurons, viz_cfg)
+
+        if idx >= 0:
+            _ui_state.set("selected_neurons", {idx})
+            print(f"Selected neuron #{idx}")
+        else:
+            _ui_state.set("selected_neurons", set())
+
+    except Exception as e:
+        print(f"Neuron pick error: {e}")
 
 
 def mouse_motion_func_gl(x, y):

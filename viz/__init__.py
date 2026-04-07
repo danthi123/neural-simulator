@@ -9,8 +9,9 @@ from viz.renderer import (
 )
 from viz.camera import (
     mouse_button_func_gl, mouse_motion_func_gl, keyboard_func_gl,
-    reshape_gl_window,
+    reshape_gl_window, set_ui_state,
 )
+from viz.picker import pick_neuron_at, index_to_color, color_to_index
 from viz.overlays import render_text_gl
 
 __all__ = [
@@ -19,6 +20,7 @@ __all__ = [
     'apply_synapse_filters_to_indices', 'trigger_filter_update_signal',
     'get_current_filter_settings_from_gui',
     'mouse_button_func_gl', 'mouse_motion_func_gl', 'keyboard_func_gl',
-    'reshape_gl_window',
+    'reshape_gl_window', 'set_ui_state',
+    'pick_neuron_at', 'index_to_color', 'color_to_index',
     'render_text_gl',
 ]

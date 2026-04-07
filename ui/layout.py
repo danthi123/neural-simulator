@@ -82,8 +82,13 @@ def add_parameter_table_row(label_text, item_callable, item_tag, default_value, 
         return item_callable(tag=item_tag, default_value=default_value, callback=callback_func, **kwargs)
 
 def create_gui_layout():
-    """Creates the main Dear PyGui layout, including all windows, menus, and widgets."""
-    profile_dir = "simulation_profiles/" 
+    """Creates the main Dear PyGui layout, including all windows, menus, and widgets.
+
+    Returns:
+        dict: A dict with 'inspector_update' callable for refreshing the neuron inspector.
+    """
+    _inspector_update_fn = None
+    profile_dir = "simulation_profiles/"
     checkpoint_dir_h5 = "simulation_checkpoints_h5/"
     recording_dir_h5 = "simulation_recordings_h5/"  
 
@@ -149,6 +154,12 @@ def create_gui_layout():
         # --- Live Monitoring Plots ---
         with dpg.collapsing_header(label="Live Monitoring", default_open=False, tag="live_monitoring_header"):
             dpg.add_text("Real-time simulation data plots", color=[150, 150, 150])
+
+        dpg.add_spacer(height=5); dpg.add_separator(); dpg.add_spacer(height=5)
+
+        # --- Neuron Inspector ---
+        from ui.inspector import create_inspector_panel
+        _inspector_update_fn = create_inspector_panel("controls_monitor_window")
 
         dpg.add_spacer(height=5); dpg.add_separator(); dpg.add_spacer(height=5)
 
@@ -983,4 +994,6 @@ def create_gui_layout():
         with dpg.group(horizontal=True):
             dpg.add_button(label="Continue", width=150, callback=_recording_options_continue_callback)
             dpg.add_button(label="Cancel", width=100, callback=_recording_options_cancel_callback)
+
+    return {"inspector_update": _inspector_update_fn}
 

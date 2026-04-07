@@ -29,6 +29,7 @@ from ui.callbacks import (
     _execute_profile_load_on_ui_thread,
 )
 from ui.layout import create_gui_layout, add_parameter_table_row
+from ui.inspector import create_inspector_panel
 
 __all__ = [
     'init_callbacks',
@@ -58,4 +59,5 @@ __all__ = [
     '_handle_full_profile_dropdown_change',
     '_refresh_full_profile_dropdown',
     '_execute_profile_load_on_ui_thread',
+    'create_inspector_panel',
 ]
