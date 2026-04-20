@@ -1422,6 +1422,107 @@ class SimulationBridge:
         self.is_initialized = False
         self._log_console("Cleared simulation state and GPU memory.")
 
+    def inject_explicit_wiring(self, wiring_plan, output_inhibitory_indices=None):
+        """Replace auto-generated connectivity with an explicit wiring plan.
+
+        Used by research runners that need a precise topology (G1 classifier and
+        later gates). Must be called AFTER `_initialize_simulation_data()` so
+        per-neuron state is already allocated.
+
+        The plan is a dict of population-name -> dict with keys:
+            pre_indices, post_indices, initial_weights, plastic (bool),
+            conn_type (string, informational).
+
+        If `output_inhibitory_indices` is non-empty, those neurons' trait is
+        set to 1 (inhibitory) so their outgoing synapses route through the
+        inhibitory conductance channel. Used for G1's lateral-inhibition layer.
+
+        Side effects:
+            - rebuilds self.cp_connections from the explicit edges
+            - resets self._synapse_count / _synapse_capacity to match
+            - invalidates COO cache, inhibitory mask cache, STP-type cache
+            - re-initializes synapse-indexed arrays (pulse timers, conn type)
+        """
+        import cupyx.scipy.sparse as csp
+
+        n = self.core_config.num_neurons
+
+        # Concatenate all populations into flat arrays.
+        all_pre = []
+        all_post = []
+        all_w = []
+        for name, group in wiring_plan.items():
+            if not isinstance(group, dict) or "pre_indices" not in group:
+                continue
+            all_pre.extend(group["pre_indices"])
+            all_post.extend(group["post_indices"])
+            all_w.extend([float(x) for x in group["initial_weights"]])
+
+        if len(all_pre) == 0:
+            self._log_console("inject_explicit_wiring: no synapses in plan.", "warning")
+            return
+
+        pre_np = np.asarray(all_pre, dtype=np.int32)
+        post_np = np.asarray(all_post, dtype=np.int32)
+        w_np = np.asarray(all_w, dtype=np.float32)
+
+        pre_cp = cp.asarray(pre_np)
+        post_cp = cp.asarray(post_np)
+        w_cp = cp.asarray(w_np)
+
+        # Build CSR in (pre -> post) layout. cp_connections[i, j] = weight of i->j.
+        coo = csp.coo_matrix((w_cp, (pre_cp, post_cp)), shape=(n, n))
+        self.cp_connections = coo.tocsr()
+        # sum_duplicates() merges duplicate (i,j) entries. G1 has none, but be safe.
+        self.cp_connections.sum_duplicates()
+
+        nnz = int(self.cp_connections.nnz)
+        self._synapse_count = nnz
+        self._synapse_capacity = nnz
+
+        # Flip output trait to inhibitory if requested (enables lateral inhibition).
+        if output_inhibitory_indices:
+            inh_idx_cp = cp.asarray(np.asarray(output_inhibitory_indices, dtype=np.int32))
+            if self.cp_traits is None:
+                self.cp_traits = cp.zeros(n, dtype=cp.int32)
+            self.cp_traits[inh_idx_cp] = 1
+            if 1 not in self.core_config.inhibitory_trait_indices:
+                self.core_config.inhibitory_trait_indices = list(
+                    set(list(self.core_config.inhibitory_trait_indices) + [1])
+                )
+
+        # Invalidate any caches that depend on connections or traits.
+        self._invalidate_coo_cache()
+        self._cached_inhibitory_mask = None
+        self._cached_stp_per_type = None
+
+        # Re-initialize synapse-indexed arrays to match the new nnz.
+        if self.gpu_config is not None:
+            # Pulse timers (visualization)
+            if self.cp_synapse_pulse_timers is not None:
+                self.cp_synapse_pulse_timers = cp.zeros(nnz, dtype=cp.int32)
+                self.cp_synapse_pulse_progress = cp.zeros(nnz, dtype=cp.float32)
+
+            # Reset STP state arrays (sized to capacity).
+            if self.core_config.enable_short_term_plasticity:
+                self.cp_stp_x = cp.ones(nnz, dtype=cp.float32)
+                self.cp_stp_u = cp.full(nnz, self.core_config.stp_U, dtype=cp.float32)
+
+            # Reset eligibility traces.
+            if self.core_config.enable_reward_modulation:
+                self.cp_eligibility_trace = cp.zeros(nnz, dtype=cp.float32)
+
+            # Reset per-synapse conn type (for per-type STP).
+            self.cp_synapse_conn_type = None
+            if (self.core_config.enable_per_type_stp and
+                    self.core_config.enable_short_term_plasticity and nnz > 0):
+                self._build_synapse_conn_type_array(self.core_config)
+
+        self._log_console(
+            f"inject_explicit_wiring: installed {nnz} synapses across "
+            f"{sum(1 for k,v in wiring_plan.items() if isinstance(v, dict) and 'pre_indices' in v)} populations."
+        )
+
     def start_simulation(self):
         """Starts or restarts the simulation (called by sim_thread)."""
         if not self.is_initialized:
