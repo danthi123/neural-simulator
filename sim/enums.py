@@ -393,6 +393,7 @@ class StimulusPatternType(Enum):
     POISSON_SPIKE_TRAIN = "POISSON_SPIKE_TRAIN"  # Poisson-distributed brief pulses
     GAUSSIAN_NOISE = "GAUSSIAN_NOISE"       # White noise injection
     CUSTOM_WAVEFORM = "CUSTOM_WAVEFORM"     # Arbitrary time series
+    RATE_VECTOR_POISSON = "RATE_VECTOR_POISSON"  # Per-neuron Poisson rate vector
 
 
 class NeuronGroupRole(Enum):

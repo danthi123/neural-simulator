@@ -26,6 +26,7 @@ class StimulusManager:
         self._channel_target_masks = {}  # channel_name -> GPU bool array
         self._poisson_active = {}        # channel_name -> GPU bool array for active spikes
         self._poisson_timers = {}        # channel_name -> GPU float32 for spike duration countdown
+        self._poisson_rate_vectors = {}  # channel_name -> GPU float32 dense per-neuron rate
         self._rng = None
 
     def initialize(self, channels, group_manager, cp_module):
@@ -43,6 +44,16 @@ class StimulusManager:
         for ch in self.channels:
             # Resolve target neuron indices
             indices = self._resolve_targets(ch, group_manager)
+
+            # Validate rate_vector_hz length up front so errors are clear.
+            if ch.pattern.pattern_type == StimulusPatternType.RATE_VECTOR_POISSON.name:
+                if len(ch.pattern.rate_vector_hz) != len(indices):
+                    raise ValueError(
+                        f"RATE_VECTOR_POISSON rate_vector_hz length "
+                        f"({len(ch.pattern.rate_vector_hz)}) must equal number of "
+                        f"target neurons ({len(indices)}) for channel '{ch.name}'"
+                    )
+
             mask = cp_module.zeros(self.n_neurons, dtype=cp_module.bool_)
             if len(indices) > 0:
                 mask[cp_module.array(indices, dtype=cp_module.int32)] = True
@@ -50,6 +61,17 @@ class StimulusManager:
 
             # Initialize Poisson state if needed
             if ch.pattern.pattern_type == StimulusPatternType.POISSON_SPIKE_TRAIN.name:
+                self._poisson_active[ch.name] = cp_module.zeros(self.n_neurons, dtype=cp_module.bool_)
+                self._poisson_timers[ch.name] = cp_module.zeros(self.n_neurons, dtype=cp_module.float32)
+            elif ch.pattern.pattern_type == StimulusPatternType.RATE_VECTOR_POISSON.name:
+                # Build a dense n_neurons-sized rate array (0 on non-target neurons).
+                rate_full = cp_module.zeros(self.n_neurons, dtype=cp_module.float32)
+                if len(indices) > 0:
+                    idx_arr = cp_module.array(indices, dtype=cp_module.int32)
+                    rate_full[idx_arr] = cp_module.array(
+                        ch.pattern.rate_vector_hz, dtype=cp_module.float32
+                    )
+                self._poisson_rate_vectors[ch.name] = rate_full
                 self._poisson_active[ch.name] = cp_module.zeros(self.n_neurons, dtype=cp_module.bool_)
                 self._poisson_timers[ch.name] = cp_module.zeros(self.n_neurons, dtype=cp_module.float32)
 
@@ -163,6 +185,33 @@ class StimulusManager:
 
             return cp_module.float32(0.0)
 
+        elif p.pattern_type == StimulusPatternType.RATE_VECTOR_POISSON.name:
+            # Per-neuron Poisson rate. Each target neuron draws Bernoulli(rate * dt/1000).
+            rate_vec = self._poisson_rate_vectors.get(channel.name)
+            timers = self._poisson_timers.get(channel.name)
+            if rate_vec is None or timers is None:
+                return cp_module.float32(0.0)
+
+            # Decrement timers, clamp to 0
+            timers = timers - self.dt_ms
+            timers_clipped = cp_module.maximum(timers, cp_module.float32(0.0))
+
+            # Per-neuron spike probability for this dt
+            p_spike = rate_vec * (self.dt_ms / 1000.0)
+            draws = self._rng.random(self.n_neurons)
+            new_spikes = (draws < p_spike) & mask & (timers_clipped <= 0)
+
+            # Load new spike duration where a spike just fired
+            timers_next = cp_module.where(
+                new_spikes, cp_module.float32(p.spike_duration_ms), timers_clipped
+            )
+            self._poisson_timers[channel.name] = timers_next
+
+            is_active = timers_next > 0
+            return cp_module.where(
+                is_active, cp_module.float32(p.spike_current_pA), cp_module.float32(0.0)
+            )
+
         elif p.pattern_type == StimulusPatternType.GAUSSIAN_NOISE.name:
             noise = self._rng.randn(self.n_neurons).astype(cp_module.float32) * p.noise_std_pA + p.noise_mean_pA
             return noise
@@ -183,3 +232,4 @@ class StimulusManager:
         self._channel_target_masks.clear()
         self._poisson_active.clear()
         self._poisson_timers.clear()
+        self._poisson_rate_vectors.clear()

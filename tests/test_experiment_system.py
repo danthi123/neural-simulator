@@ -105,7 +105,9 @@ class TestStimulusPatternType:
         assert hasattr(StimulusPatternType, 'CUSTOM_WAVEFORM')
 
     def test_pattern_count(self):
-        assert len(StimulusPatternType) == 7
+        # 8: CONSTANT, PULSE_TRAIN, SINUSOIDAL, RAMP, POISSON_SPIKE_TRAIN,
+        # GAUSSIAN_NOISE, CUSTOM_WAVEFORM, RATE_VECTOR_POISSON
+        assert len(StimulusPatternType) == 8
 
 
 class TestStimulusPattern:

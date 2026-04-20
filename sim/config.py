@@ -432,6 +432,12 @@ class StimulusPattern:
     custom_waveform_times_ms: List[float] = field(default_factory=list)
     custom_waveform_values_pA: List[float] = field(default_factory=list)
 
+    # Per-neuron Poisson rate vector (for RATE_VECTOR_POISSON pattern).
+    # Length must equal the number of target neurons in the channel.
+    # Each target neuron fires Poisson with its own rate (same order as
+    # target_neuron_indices).
+    rate_vector_hz: List[float] = field(default_factory=list)
+
 
 @dataclass
 class StimulusChannel:
