@@ -1,0 +1,86 @@
+{
+  "seed": 42,
+  "n_epochs": 5,
+  "algo": "g2_stdp_input_to_hidden_then_logreg",
+  "dataset": "tiny_patterns.npz",
+  "dataset_metadata": {
+    "seed": 222799335,
+    "K": 4,
+    "n_features": 64,
+    "n_train": 200,
+    "n_test": 50,
+    "noise_sigma": 4.0,
+    "rate_min": 1.0,
+    "rate_max": 40.0,
+    "class_means_shape": [
+      4,
+      64
+    ]
+  },
+  "n_plastic_synapses": 6400,
+  "n_frozen_synapses": 3800,
+  "n_train_used": 100,
+  "n_test_used": 40,
+  "epochs": [
+    {
+      "epoch": 0,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.875,
+      "mean_hidden_rate_hz_train": 66.1323356628418,
+      "mean_hidden_rate_hz_test": 70.17000198364258,
+      "plastic_weight_mean": 2.0644333362579346,
+      "plastic_weight_std": 0.3473776876926422,
+      "plastic_weight_min": 0.8313059210777283,
+      "plastic_weight_max": 2.8737099170684814,
+      "time_seconds": 226.330570936203
+    },
+    {
+      "epoch": 1,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.85,
+      "mean_hidden_rate_hz_train": 69.95800018310547,
+      "mean_hidden_rate_hz_test": 69.64916865030925,
+      "plastic_weight_mean": 2.07686185836792,
+      "plastic_weight_std": 0.3416174054145813,
+      "plastic_weight_min": 0.8679906129837036,
+      "plastic_weight_max": 2.838916301727295,
+      "time_seconds": 204.6405098438263
+    },
+    {
+      "epoch": 2,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.85,
+      "mean_hidden_rate_hz_train": 70.31266530354817,
+      "mean_hidden_rate_hz_test": 68.55583190917969,
+      "plastic_weight_mean": 2.0696988105773926,
+      "plastic_weight_std": 0.34147459268569946,
+      "plastic_weight_min": 0.8403170108795166,
+      "plastic_weight_max": 2.869366407394409,
+      "time_seconds": 202.46262192726135
+    },
+    {
+      "epoch": 3,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.825,
+      "mean_hidden_rate_hz_train": 69.44366455078125,
+      "mean_hidden_rate_hz_test": 71.0658327738444,
+      "plastic_weight_mean": 2.06801700592041,
+      "plastic_weight_std": 0.33972036838531494,
+      "plastic_weight_min": 0.7920407652854919,
+      "plastic_weight_max": 2.877201557159424,
+      "time_seconds": 200.2333300113678
+    },
+    {
+      "epoch": 4,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.8,
+      "mean_hidden_rate_hz_train": 70.23199717203777,
+      "mean_hidden_rate_hz_test": 71.10249837239583,
+      "plastic_weight_mean": 2.0675063133239746,
+      "plastic_weight_std": 0.3388715982437134,
+      "plastic_weight_min": 0.793534517288208,
+      "plastic_weight_max": 2.8671875,
+      "time_seconds": 168.70604872703552
+    }
+  ]
+}
