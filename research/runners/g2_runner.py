@@ -54,6 +54,10 @@ def _build_g2_plan(
     input_to_hidden_weight=1.5,
     hidden_exc_weight=0.3,
     hidden_inh_weight=0.8,
+    enable_homeostasis=False,
+    homeostasis_target_rate=0.003,   # ~3 Hz, only used when enable_homeostasis
+    stdp_a_plus=0.008,
+    stdp_a_minus=0.008,
 ):
     """Same reservoir topology as v3, but input->hidden is plastic=True
     and hidden->hidden is plastic=False.
@@ -74,21 +78,20 @@ def _build_g2_plan(
     core_cfg.inhibitory_trait_indices = [1]
     core_cfg.connections_per_neuron = 0
 
-    # STDP on. Symmetric rates — the G1.v1 post-mortem showed A+ > A-
-    # caused uniform weight inflation; symmetric means net change tracks
-    # co-activity asymmetry (pre-before-post) without drift.
+    # STDP on.
     core_cfg.enable_stdp = True
-    core_cfg.stdp_a_plus = 0.008
-    core_cfg.stdp_a_minus = 0.008
+    core_cfg.stdp_a_plus = float(stdp_a_plus)
+    core_cfg.stdp_a_minus = float(stdp_a_minus)
     core_cfg.stdp_tau_plus_ms = 20.0
     core_cfg.stdp_tau_minus_ms = 20.0
     core_cfg.stdp_w_min = 0.0
     core_cfg.stdp_w_max = 3.0
 
-    # All other plasticity off.
+    # Other plasticity off except homeostasis (G2.b pivot).
     core_cfg.enable_hebbian_learning = False
     core_cfg.enable_short_term_plasticity = False
-    core_cfg.enable_homeostasis = False
+    core_cfg.enable_homeostasis = bool(enable_homeostasis)
+    core_cfg.homeostasis_target_rate = float(homeostasis_target_rate)
     core_cfg.enable_reward_modulation = False
     core_cfg.enable_structural_plasticity = False
     core_cfg.enable_watts_strogatz = False
@@ -164,6 +167,10 @@ def run_g2(
     max_train_per_epoch=None,
     max_test_per_epoch=None,
     verbose=True,
+    enable_homeostasis=False,
+    homeostasis_target_rate=0.003,
+    stdp_a_plus=0.008,
+    stdp_a_minus=0.008,
 ):
     import cupy as cp
     from sklearn.linear_model import LogisticRegression
@@ -171,7 +178,13 @@ def run_g2(
     ds = TinyPatternDataset.load(dataset_path)
     K = int(ds.metadata["K"])
 
-    core_cfg, plan = _build_g2_plan(seed=seed)
+    core_cfg, plan = _build_g2_plan(
+        seed=seed,
+        enable_homeostasis=enable_homeostasis,
+        homeostasis_target_rate=homeostasis_target_rate,
+        stdp_a_plus=stdp_a_plus,
+        stdp_a_minus=stdp_a_minus,
+    )
     bridge = SimulationBridge(
         core_config=core_cfg, viz_config=VisualizationConfig(),
         runtime_state=RuntimeState(), gpu_config=GPUConfig(),
