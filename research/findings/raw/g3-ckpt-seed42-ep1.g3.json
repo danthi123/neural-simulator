@@ -1,0 +1,30 @@
+{
+  "epoch": 1,
+  "rng_state_json": "{\"bit_generator\": \"PCG64\", \"state\": {\"state\": 303326352767179392473698552730697785440, \"inc\": 332724090758049132448979897138935081983}, \"has_uint32\": 1, \"uinteger\": 3655582501}",
+  "history": [
+    {
+      "epoch": 0,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.65,
+      "plastic_weight_mean": 1.6158450841903687,
+      "plastic_weight_std": 0.11305893957614899,
+      "plastic_weight_min": 1.070762038230896,
+      "plastic_weight_max": 1.9997479915618896,
+      "time_seconds": 179.53693771362305
+    },
+    {
+      "epoch": 1,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.65,
+      "plastic_weight_mean": 1.655138373374939,
+      "plastic_weight_std": 0.0929245576262474,
+      "plastic_weight_min": 1.2506608963012695,
+      "plastic_weight_max": 1.9282898902893066,
+      "time_seconds": 150.74139547348022
+    }
+  ],
+  "dataset_path": "E:\\Documents\\Projects\\sim\\research\\datasets\\tiny_patterns.npz",
+  "seed": 42,
+  "train_N": 100,
+  "test_N": 40
+}

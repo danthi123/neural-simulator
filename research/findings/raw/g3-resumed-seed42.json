@@ -1,0 +1,63 @@
+{
+  "seed": 42,
+  "n_epochs": 4,
+  "algo": "g3_stdp_then_logreg_resumable",
+  "dataset": "tiny_patterns.npz",
+  "dataset_metadata": {
+    "seed": 222799335,
+    "K": 4,
+    "n_features": 64,
+    "n_train": 200,
+    "n_test": 50,
+    "noise_sigma": 4.0,
+    "rate_min": 1.0,
+    "rate_max": 40.0,
+    "class_means_shape": [
+      4,
+      64
+    ]
+  },
+  "resumed_from": "research/findings/raw/g3-ckpt-seed42-ep1",
+  "epochs": [
+    {
+      "epoch": 0,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.65,
+      "plastic_weight_mean": 1.6158450841903687,
+      "plastic_weight_std": 0.11305893957614899,
+      "plastic_weight_min": 1.070762038230896,
+      "plastic_weight_max": 1.9997479915618896,
+      "time_seconds": 179.53693771362305
+    },
+    {
+      "epoch": 1,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.65,
+      "plastic_weight_mean": 1.655138373374939,
+      "plastic_weight_std": 0.0929245576262474,
+      "plastic_weight_min": 1.2506608963012695,
+      "plastic_weight_max": 1.9282898902893066,
+      "time_seconds": 150.74139547348022
+    },
+    {
+      "epoch": 2,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.725,
+      "plastic_weight_mean": 1.6614058017730713,
+      "plastic_weight_std": 0.08678662031888962,
+      "plastic_weight_min": 1.3390048742294312,
+      "plastic_weight_max": 1.9259653091430664,
+      "time_seconds": 164.63248372077942
+    },
+    {
+      "epoch": 3,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.675,
+      "plastic_weight_mean": 1.669026494026184,
+      "plastic_weight_std": 0.0862094834446907,
+      "plastic_weight_min": 1.395923376083374,
+      "plastic_weight_max": 1.9904807806015015,
+      "time_seconds": 159.6237645149231
+    }
+  ]
+}

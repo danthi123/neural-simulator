@@ -4545,6 +4545,10 @@ class SimulationBridge:
                     self.ou_noise_std = None
                     self.ou_mean = None
 
+                # HH Q10 temperature phase factor (harmless for non-HH models).
+                _BASE_HH_TEMP = 6.3
+                self._cached_hh_phi = cfg.hh_q10_factor ** ((cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0)
+
                 self.is_initialized = True
                 self._log_to_ui(f"Checkpoint loaded. Sim time: {self.runtime_state.current_time_ms}ms, Step: {self.runtime_state.current_time_step}, Model: {self.core_config.neuron_model_type}", "success")
 
