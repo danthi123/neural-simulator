@@ -1,0 +1,54 @@
+{
+  "seed": 44,
+  "algo": "g1_v3_reservoir_logreg",
+  "dataset": "tiny_patterns.npz",
+  "dataset_metadata": {
+    "seed": 222799335,
+    "K": 4,
+    "n_features": 64,
+    "n_train": 200,
+    "n_test": 50,
+    "noise_sigma": 4.0,
+    "rate_min": 1.0,
+    "rate_max": 40.0,
+    "class_means_shape": [
+      4,
+      64
+    ]
+  },
+  "n_input": 64,
+  "n_hidden_exc": 160,
+  "n_hidden_inh": 40,
+  "n_train_used": 150,
+  "n_test_used": 50,
+  "mean_hidden_rate_hz_train": 20.521999994913738,
+  "train_accuracy": 1.0,
+  "test_accuracy": 0.7,
+  "test_confusion": [
+    [
+      9,
+      1,
+      3,
+      0
+    ],
+    [
+      1,
+      10,
+      2,
+      0
+    ],
+    [
+      3,
+      0,
+      7,
+      2
+    ],
+    [
+      1,
+      0,
+      2,
+      9
+    ]
+  ],
+  "total_time_seconds": 211.925288438797
+}

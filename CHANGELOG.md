@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **G1 pipeline GO** - First end-to-end dataset → encoder → sim → decoder → loss round-trip
+  - `research/datasets/tiny_patterns.py` + canonical `.npz` - K=4 Poisson-rate synthetic dataset
+  - `RATE_VECTOR_POISSON` stimulus pattern - per-neuron Poisson rate encoding
+  - `SimulationBridge.inject_explicit_wiring()` - injectable explicit CSR connectivity for research networks
+  - Three runners explored: v1 teacher-forced STDP (NO-GO), v2 external perceptron (NO-GO), v3 reservoir + external LogReg (**GO** - mean 71.3% test acc across 3 seeds, threshold 55%)
+  - v1/v2 post-mortem: sim's default `propagation_strength=0.05` is calibrated for ~1000 converging synapses per neuron; the 68-neuron tiny architecture needs non-default params. v3 uses a 264-neuron reservoir in the sim's calibrated regime.
+  - Full findings in `research/findings/2026-04-20-g1.md`
+
 - **Profile System** - Biologically accurate brain region presets and UI integration
   - 9 brain region profile JSONs with realistic neuron models and connectivity: Cortex L2/3, Cortex L4, Hippocampus CA1, Hippocampus CA3, Thalamus TC-TRN, Basal Ganglia Striatum, Basal Ganglia STN-GPe, Cerebellar Cortex, Spinal Cord
   - Quick Demo profile for rapid testing
