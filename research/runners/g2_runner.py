@@ -294,12 +294,15 @@ def run_g2(
                 f"{epoch_record['plastic_weight_max']:.3f}] "
                 f"(mean {epoch_record['plastic_weight_mean']:.3f})  "
                 f"hid rate={epoch_record['mean_hidden_rate_hz_train']:.1f} Hz  "
-                f"{epoch_record['time_seconds']:.1f}s"
+                f"{epoch_record['time_seconds']:.1f}s",
+                flush=True,
             )
 
-    Path(out_path).parent.mkdir(parents=True, exist_ok=True)
-    with open(out_path, "w") as f:
-        json.dump(results, f, indent=2)
+        # Write incrementally so a caller polling the JSON file sees progress.
+        Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+        with open(out_path, "w") as f:
+            json.dump(results, f, indent=2)
+
     return results
 
 

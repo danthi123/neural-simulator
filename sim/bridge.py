@@ -4225,6 +4225,15 @@ class SimulationBridge:
                     state_group.create_dataset("cp_last_spike_time", data=cp.asnumpy(self.cp_last_spike_time), compression="gzip")
                 elif self.cp_last_spike_time is not None:
                     state_group.attrs["cp_last_spike_time_is_empty"] = True
+
+                # G3: Save per-synapse plastic mask if present (research runners).
+                # Sized to cp_connections.nnz, not the pre-allocated capacity.
+                if self.cp_synapse_plastic_mask is not None and self.cp_synapse_plastic_mask.size > 0:
+                    nnz = self.cp_connections.nnz if self.cp_connections is not None else self.cp_synapse_plastic_mask.size
+                    mask_active = self.cp_synapse_plastic_mask[:nnz]
+                    state_group.create_dataset("cp_synapse_plastic_mask",
+                                               data=cp.asnumpy(mask_active).astype(np.bool_),
+                                               compression="gzip")
                 
                 if self.cp_eligibility_trace is not None and self.cp_eligibility_trace.size > 0:
                     active_traces = self.cp_eligibility_trace[:synapse_count] if synapse_count else self.cp_eligibility_trace
@@ -4425,6 +4434,15 @@ class SimulationBridge:
                         lambda s: cp.full(s, -1000.0, dtype=cp.float32))
                 else:
                     self.cp_last_spike_time = None
+
+                # G3: Load per-synapse plastic mask if present in checkpoint.
+                # Absent → leave as None (all plastic, back-compat).
+                if "cp_synapse_plastic_mask" in state_group:
+                    self.cp_synapse_plastic_mask = cp.asarray(
+                        state_group["cp_synapse_plastic_mask"][:]
+                    ).astype(cp.bool_)
+                else:
+                    self.cp_synapse_plastic_mask = None
                 
                 if self.core_config.enable_reward_modulation and num_synapses_loaded > 0:
                     self.cp_eligibility_trace = _load_cp_array_from_h5("cp_eligibility_trace",
