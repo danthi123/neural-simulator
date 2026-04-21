@@ -4520,7 +4520,17 @@ class SimulationBridge:
                 self._mock_total_plasticity_events = h5f.attrs.get("_mock_total_plasticity_events",0)
                 self._mock_network_avg_firing_rate_hz = h5f.attrs.get("_mock_network_avg_firing_rate_hz",0.0)
 
-                self.is_initialized = True 
+                # Recompute step-invariant cached constants that aren't saved to
+                # the checkpoint (derivable from core_config). Without these, the
+                # first _run_one_simulation_step after load crashes on
+                # `AttributeError: _cached_decay_e`.
+                cfg = self.core_config
+                self._cached_decay_e = float(cp.exp(-cfg.dt_ms / cfg.syn_tau_g_e)) if cfg.syn_tau_g_e > 0 else 0.0
+                self._cached_decay_i = float(cp.exp(-cfg.dt_ms / cfg.syn_tau_g_i)) if cfg.syn_tau_g_i > 0 else 0.0
+                self._cached_decay_nmda = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_decay)) if cfg.nmda_tau_decay > 0 else 0.0
+                self._cached_decay_nmda_rise = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_rise)) if cfg.nmda_tau_rise > 0 else 0.0
+
+                self.is_initialized = True
                 self._log_to_ui(f"Checkpoint loaded. Sim time: {self.runtime_state.current_time_ms}ms, Step: {self.runtime_state.current_time_step}, Model: {self.core_config.neuron_model_type}", "success")
 
                 loaded_gui_settings = {}
