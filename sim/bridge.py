@@ -232,10 +232,15 @@ class SimulationBridge:
         self.cp_stp_u = None 
         self.cp_stp_x = None 
 
-        self.cp_synapse_pulse_timers = None   
-        self.cp_synapse_pulse_progress = None 
+        self.cp_synapse_pulse_timers = None
+        self.cp_synapse_pulse_progress = None
 
-        self.is_initialized = False 
+        # Optional per-synapse plastic mask. When not None, STDP (and other
+        # plasticity paths that opt-in) only write back where this is True.
+        # Set by inject_explicit_wiring when any population has plastic=False.
+        self.cp_synapse_plastic_mask = None
+
+        self.is_initialized = False
 
         self._mock_total_plasticity_events = 0
         self._mock_network_avg_firing_rate_hz = 0.0
@@ -1447,16 +1452,25 @@ class SimulationBridge:
 
         n = self.core_config.num_neurons
 
-        # Concatenate all populations into flat arrays.
+        # Concatenate all populations into flat arrays, tracking the
+        # per-population plastic flag so we can build a per-synapse mask
+        # after CSR construction (order may differ from insertion).
         all_pre = []
         all_post = []
         all_w = []
+        all_plastic = []
+        any_fixed = False
         for name, group in wiring_plan.items():
             if not isinstance(group, dict) or "pre_indices" not in group:
                 continue
+            plastic_flag = bool(group.get("plastic", True))
+            if not plastic_flag:
+                any_fixed = True
+            n_syn = len(group["pre_indices"])
             all_pre.extend(group["pre_indices"])
             all_post.extend(group["post_indices"])
             all_w.extend([float(x) for x in group["initial_weights"]])
+            all_plastic.extend([plastic_flag] * n_syn)
 
         if len(all_pre) == 0:
             self._log_console("inject_explicit_wiring: no synapses in plan.", "warning")
@@ -1465,6 +1479,7 @@ class SimulationBridge:
         pre_np = np.asarray(all_pre, dtype=np.int32)
         post_np = np.asarray(all_post, dtype=np.int32)
         w_np = np.asarray(all_w, dtype=np.float32)
+        plastic_np = np.asarray(all_plastic, dtype=np.bool_)
 
         pre_cp = cp.asarray(pre_np)
         post_cp = cp.asarray(post_np)
@@ -1479,6 +1494,21 @@ class SimulationBridge:
         nnz = int(self.cp_connections.nnz)
         self._synapse_count = nnz
         self._synapse_capacity = nnz
+
+        # Build per-synapse plastic mask aligned with cp_connections.data order.
+        # tocoo() preserves CSR's internal order (row-major by pre then post),
+        # so we re-sort the original (pre, post, plastic) tuples by the same key
+        # to match. Only build the mask if anything is fixed; otherwise leave None
+        # so back-compat paths take the "all plastic" behaviour.
+        if any_fixed:
+            keyed = sorted(
+                zip(all_pre, all_post, all_plastic),
+                key=lambda t: (t[0], t[1]),
+            )
+            sorted_plastic = np.asarray([p for _, _, p in keyed], dtype=np.bool_)
+            self.cp_synapse_plastic_mask = cp.asarray(sorted_plastic)
+        else:
+            self.cp_synapse_plastic_mask = None
 
         # Flip output trait to inhibitory if requested (enables lateral inhibition).
         if output_inhibitory_indices:
@@ -3800,6 +3830,15 @@ class SimulationBridge:
                                 cfg.stdp_w_min,
                                 cfg.stdp_w_max
                             )
+
+                            # Respect per-synapse plastic mask if set —
+                            # research runners (G2+) use this to freeze
+                            # reservoir weights while training input pathways.
+                            if self.cp_synapse_plastic_mask is not None:
+                                plastic_here = self.cp_synapse_plastic_mask[stdp_active_indices]
+                                updated_weights = cp.where(
+                                    plastic_here, updated_weights, current_weights
+                                )
 
                             self.cp_connections.data[stdp_active_indices] = updated_weights
 
