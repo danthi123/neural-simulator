@@ -223,10 +223,13 @@ def _present_example(bridge, engine, rate_vector, teacher_class, spec, cp):
     readout_end_step = int(READOUT_END_MS / dt)
 
     # Stimulus channel: per-neuron Poisson rate from this example's rate vector.
+    # Pulse chosen so 1 Poisson event ≈ 1 input spike (Izhikevich RS rheobase ~60 pA).
+    # 250 pA × 1 ms was only ~15% efficient — 1000 pA × 2 ms gets ~linear rate tracking
+    # from 5 Hz up to 40 Hz (empirically verified 2026-04-20).
     pat = StimulusPattern(
         pattern_type=StimulusPatternType.RATE_VECTOR_POISSON.name,
-        spike_current_pA=250.0,
-        spike_duration_ms=1.0,
+        spike_current_pA=1000.0,
+        spike_duration_ms=2.0,
         rate_vector_hz=[float(r) for r in rate_vector],
     )
     ch_input = StimulusChannel(

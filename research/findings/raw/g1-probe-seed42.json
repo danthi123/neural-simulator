@@ -1,0 +1,351 @@
+{
+  "seed": 42,
+  "n_epochs": 5,
+  "dataset": "tiny_patterns.npz",
+  "dataset_metadata": {
+    "seed": 222799335,
+    "K": 4,
+    "n_features": 64,
+    "n_train": 200,
+    "n_test": 50,
+    "noise_sigma": 4.0,
+    "rate_min": 1.0,
+    "rate_max": 40.0,
+    "class_means_shape": [
+      4,
+      64
+    ]
+  },
+  "spec": {
+    "n_input": 64,
+    "n_output": 4,
+    "weight_max_cap": 1.5,
+    "lateral_inhibition_weight": 1.0,
+    "init_weight_range": [
+      0.05,
+      0.15
+    ]
+  },
+  "epochs": [
+    {
+      "epoch": 0,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.16,
+      "mean_margin_train": 12.313333333333333,
+      "mean_margin_test": -0.026666666666666644,
+      "mean_weight": 0.17575703561306,
+      "weight_std": 0.19105534255504608,
+      "weight_min": 0.05139362812042236,
+      "weight_max": 0.98271244764328,
+      "train_confusion": [
+        [
+          24,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          24,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          23,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          29
+        ]
+      ],
+      "test_confusion": [
+        [
+          2,
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          2,
+          0,
+          0
+        ],
+        [
+          4,
+          3,
+          0,
+          0
+        ],
+        [
+          7,
+          1,
+          0,
+          0
+        ]
+      ],
+      "time_seconds": 117.32350182533264
+    },
+    {
+      "epoch": 1,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.24,
+      "mean_margin_train": 12.303333333333335,
+      "mean_margin_test": 0.06666666666666668,
+      "mean_weight": 0.20069780945777893,
+      "weight_std": 0.228480264544487,
+      "weight_min": 0.05139362812042236,
+      "weight_max": 1.1622488498687744,
+      "train_confusion": [
+        [
+          22,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          23,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          27,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          28
+        ]
+      ],
+      "test_confusion": [
+        [
+          3,
+          2,
+          0,
+          0
+        ],
+        [
+          2,
+          3,
+          0,
+          0
+        ],
+        [
+          6,
+          1,
+          0,
+          0
+        ],
+        [
+          6,
+          2,
+          0,
+          0
+        ]
+      ],
+      "time_seconds": 119.41267013549805
+    },
+    {
+      "epoch": 2,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.24,
+      "mean_margin_train": 12.503333333333332,
+      "mean_margin_test": -0.09333333333333332,
+      "mean_weight": 0.21503210067749023,
+      "weight_std": 0.24245776236057281,
+      "weight_min": 0.05139362812042236,
+      "weight_max": 1.1483757495880127,
+      "train_confusion": [
+        [
+          28,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          27,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          20,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          25
+        ]
+      ],
+      "test_confusion": [
+        [
+          5,
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          1,
+          0,
+          0
+        ],
+        [
+          3,
+          4,
+          0,
+          0
+        ],
+        [
+          6,
+          2,
+          0,
+          0
+        ]
+      ],
+      "time_seconds": 116.78236198425293
+    },
+    {
+      "epoch": 3,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.2,
+      "mean_margin_train": 12.803333333333335,
+      "mean_margin_test": -0.24,
+      "mean_weight": 0.2262575477361679,
+      "weight_std": 0.25619515776634216,
+      "weight_min": 0.05139362812042236,
+      "weight_max": 1.2288132905960083,
+      "train_confusion": [
+        [
+          29,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          24,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          28,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          19
+        ]
+      ],
+      "test_confusion": [
+        [
+          4,
+          1,
+          0,
+          0
+        ],
+        [
+          4,
+          1,
+          0,
+          0
+        ],
+        [
+          6,
+          1,
+          0,
+          0
+        ],
+        [
+          4,
+          4,
+          0,
+          0
+        ]
+      ],
+      "time_seconds": 117.16297793388367
+    },
+    {
+      "epoch": 4,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.2,
+      "mean_margin_train": 12.823333333333334,
+      "mean_margin_test": -0.19999999999999996,
+      "mean_weight": 0.2351025640964508,
+      "weight_std": 0.26210513710975647,
+      "weight_min": 0.05139362812042236,
+      "weight_max": 1.2328563928604126,
+      "train_confusion": [
+        [
+          26,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          24,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          30,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          20
+        ]
+      ],
+      "test_confusion": [
+        [
+          4,
+          1,
+          0,
+          0
+        ],
+        [
+          4,
+          1,
+          0,
+          0
+        ],
+        [
+          5,
+          2,
+          0,
+          0
+        ],
+        [
+          4,
+          4,
+          0,
+          0
+        ]
+      ],
+      "time_seconds": 118.66600465774536
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "seed": 42,
+  "n_epochs": 1,
+  "dataset": "tiny_patterns.npz",
+  "dataset_metadata": {
+    "seed": 222799335,
+    "K": 4,
+    "n_features": 64,
+    "n_train": 200,
+    "n_test": 50,
+    "noise_sigma": 4.0,
+    "rate_min": 1.0,
+    "rate_max": 40.0,
+    "class_means_shape": [
+      4,
+      64
+    ]
+  },
+  "spec": {
+    "n_input": 64,
+    "n_output": 4,
+    "weight_max_cap": 1.5,
+    "lateral_inhibition_weight": 1.0,
+    "init_weight_range": [
+      0.05,
+      0.15
+    ]
+  },
+  "epochs": [
+    {
+      "epoch": 0,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.2,
+      "mean_margin_train": 12.1,
+      "mean_margin_test": 0.18333333333333338,
+      "mean_weight": 0.15066009759902954,
+      "weight_std": 0.1426239162683487,
+      "weight_min": 0.05139362812042236,
+      "weight_max": 0.8357645869255066,
+      "train_confusion": [
+        [
+          10,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          12,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          11,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          17
+        ]
+      ],
+      "test_confusion": [
+        [
+          2,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          5,
+          2,
+          0,
+          0
+        ],
+        [
+          7,
+          0,
+          0,
+          0
+        ]
+      ],
+      "time_seconds": 66.74432063102722
+    }
+  ]
+}
