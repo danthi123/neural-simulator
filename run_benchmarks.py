@@ -29,7 +29,7 @@ from sim.kernels import fused_stdp_weight_update, fused_stp_decay_recovery
 # Benchmark 2.1: STDP Timing Curve (Bi & Poo 1998)
 # ============================================================
 
-def benchmark_stdp_timing():
+def benchmark_stdp_timing(seed_override: int = 42):
     """Verify STDP weight change follows the classic exponential window.
 
     Protocol: For each timing offset dt (-100ms to +100ms):
@@ -41,6 +41,12 @@ def benchmark_stdp_timing():
     Expected (Bi & Poo 1998):
       - Pre-before-post (dt>0): potentiation, exponential decay with tau~20ms
       - Post-before-pre (dt<0): depression, exponential decay with tau~20ms
+
+    The fused STDP kernel is analytical (deterministic regardless of seed).
+    The full-simulation sub-runs force spikes and disable OU noise, so they
+    are also essentially seed-independent, but we seed explicitly anyway so
+    the benchmark stays deterministic under future refactors that may
+    introduce RNG-dependent paths (e.g. weight initialization).
     """
     print(f"\n{'='*65}")
     print("BENCHMARK 2.1: STDP Timing Curve (Bi & Poo 1998)")
@@ -153,6 +159,7 @@ def benchmark_stdp_timing():
         core_cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
         core_cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
         core_cfg.dt_ms = 1.0
+        core_cfg.seed = seed_override  # Session A: explicit seeding for reproducibility
         core_cfg.enable_stdp = True
         core_cfg.enable_hebbian_learning = False  # Only STDP
         core_cfg.enable_short_term_plasticity = False
@@ -248,7 +255,7 @@ def benchmark_stdp_timing():
 
     return {
         "benchmark": "stdp_timing_curve",
-        "passed": all_pass,
+        "passed": bool(all_pass),
         "parameters": {"A_plus": A_plus, "A_minus": A_minus,
                         "tau_plus": tau_plus, "tau_minus": tau_minus,
                         "w_init": w_init},
@@ -261,7 +268,7 @@ def benchmark_stdp_timing():
 # Benchmark 2.2: E/I Balance and Spontaneous Firing Rates
 # ============================================================
 
-def benchmark_ei_balance():
+def benchmark_ei_balance(seed_override: int = 42):
     """Verify cortical profiles produce biologically realistic spontaneous activity.
 
     Expected (Destexhe & Pare 1999, Haider et al. 2006):
@@ -269,6 +276,10 @@ def benchmark_ei_balance():
       - Inhibitory (FS) interneurons: 10-50 Hz spontaneous firing
       - E/I population ratio: ~80/20 for cortical L2/3
       - CV of ISI: 0.5-1.5 (irregular firing, not clock-like)
+
+    Seeded explicitly so firing-rate and CV(ISI) metrics are reproducible
+    across reruns. OU background noise and parameter heterogeneity both
+    draw from the main RNG stream, so the single `seed` field fixes both.
     """
     print(f"\n{'='*65}")
     print("BENCHMARK 2.2: E/I Balance and Spontaneous Firing Rates")
@@ -279,6 +290,7 @@ def benchmark_ei_balance():
     core_cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
     core_cfg.neural_profile_name = "CORTEX_L23_RS_FS"
     core_cfg.dt_ms = 1.0
+    core_cfg.seed = seed_override  # Session A: explicit seeding for reproducibility
     core_cfg.enable_hebbian_learning = False
     core_cfg.enable_stdp = False
     core_cfg.enable_short_term_plasticity = True
@@ -427,7 +439,7 @@ def benchmark_ei_balance():
 
     return {
         "benchmark": "ei_balance",
-        "passed": all_pass,
+        "passed": bool(all_pass),
         "excitatory": {
             "count": n_exc, "fraction": round(n_exc/n, 3),
             "mean_rate_hz": round(exc_mean, 3), "std_rate_hz": round(exc_std, 3),
@@ -446,8 +458,12 @@ def benchmark_ei_balance():
 # Benchmark 2.3: STP Paired-Pulse Ratio (Tsodyks-Markram)
 # ============================================================
 
-def benchmark_stp_paired_pulse():
+def benchmark_stp_paired_pulse(seed_override: int = 42):
     """Verify paired-pulse ratios match Tsodyks-Markram model predictions.
+
+    Analytical + single kernel eval — no RNG dependency in practice, but the
+    seed_override param is accepted for API consistency with the other
+    benchmarks so the multi-seed dispatcher can hand it uniformly.
 
     Protocol: Analytically compute the STP effective transmission for two
     consecutive spikes at varying inter-spike intervals (ISIs).
@@ -587,14 +603,14 @@ def benchmark_stp_paired_pulse():
     print(f"  STP PAIRED-PULSE: {'ALL CHECKS PASSED' if all_pass else 'SOME CHECKS FAILED'}")
     print(f"  {'='*50}")
 
-    return {"benchmark": "stp_paired_pulse", "passed": all_pass, "synapse_types": all_results}
+    return {"benchmark": "stp_paired_pulse", "passed": bool(all_pass), "synapse_types": all_results}
 
 
 # ============================================================
 # Benchmark 2.4: Gamma Oscillation Emergence (PING Mechanism)
 # ============================================================
 
-def benchmark_gamma_oscillations():
+def benchmark_gamma_oscillations(seed_override: int = 42):
     """Verify cortical network produces gamma-band oscillations via E/I PING.
 
     Uses the CORTEX_GAMMA_FS_NETWORK profile (40% exc, 60% inh, high connectivity).
@@ -620,15 +636,13 @@ def benchmark_gamma_oscillations():
     core_cfg.enable_structural_plasticity = False
     # Boost drive to push network into oscillatory regime
     core_cfg.ou_mean_pA = 50.0
-    # Fix the seed so peak-frequency measurement is reproducible across runs.
-    # Without this, the PSD peak-detection is run-to-run variance-dominated
-    # (observed 29-135 Hz spread across same-commit reruns on 2026-04-24);
-    # the benchmark intermittently fails at the 100 Hz threshold depending
-    # on which Poisson/OU realization the un-seeded RNG happens to draw.
-    # Arbitrary fixed value; a seed that lands in classic gamma (30-80 Hz)
-    # was chosen. If no seed in a small sweep lands in classic gamma, that
-    # itself would be a meaningful sim regression.
-    core_cfg.seed = 42
+    # Seed explicitly. Without this, the PSD peak-detection is run-to-run
+    # variance-dominated (observed 29-135 Hz spread across same-commit reruns
+    # on 2026-04-24); the benchmark intermittently fails at the 100 Hz
+    # threshold depending on which Poisson/OU realization the un-seeded RNG
+    # happens to draw. Session A moved the default to a `seed_override` param
+    # so the multi-seed CLI can sweep and the drift test can lock a value.
+    core_cfg.seed = seed_override
 
     sb = SimulationBridge(
         core_config=core_cfg,
@@ -776,7 +790,7 @@ def benchmark_gamma_oscillations():
     cp.get_default_memory_pool().free_all_blocks()
 
     return {
-        "benchmark": "gamma_oscillations", "passed": all_pass,
+        "benchmark": "gamma_oscillations", "passed": bool(all_pass),
         "peak_freq_hz": round(peak_freq, 1),
         "gamma_fraction": round(gamma_frac, 4),
         "beta_fraction": round(beta_frac, 4),
@@ -790,7 +804,7 @@ def benchmark_gamma_oscillations():
 # Benchmark 2.5: Homeostatic Firing Rate Regulation
 # ============================================================
 
-def benchmark_homeostasis():
+def benchmark_homeostasis(seed_override: int = 42):
     """Verify homeostasis restores firing rates after perturbation.
 
     Protocol:
@@ -801,6 +815,9 @@ def benchmark_homeostasis():
     Expected (Turrigiano 2008):
       - Rates increase during perturbation
       - Rates recover toward baseline within ~20-30s (given EMA tau ~5s)
+
+    Seeded explicitly. Recovery rate depends on OU noise realization, so
+    without a fixed seed this benchmark is run-to-run variance-dominated.
     """
     print(f"\n{'='*65}")
     print("BENCHMARK 2.5: Homeostatic Firing Rate Regulation")
@@ -811,6 +828,7 @@ def benchmark_homeostasis():
     core_cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
     core_cfg.neural_profile_name = "CORTEX_L23_RS_FS"
     core_cfg.dt_ms = 1.0
+    core_cfg.seed = seed_override  # Session A: explicit seeding for reproducibility
     core_cfg.enable_hebbian_learning = False
     core_cfg.enable_stdp = False
     core_cfg.enable_short_term_plasticity = False
@@ -937,13 +955,73 @@ def benchmark_homeostasis():
     cp.get_default_memory_pool().free_all_blocks()
 
     return {
-        "benchmark": "homeostasis", "passed": all_pass,
+        "benchmark": "homeostasis", "passed": bool(all_pass),
         "baseline_hz": round(bl_mean, 3),
         "perturbation_hz": round(pt_mean, 3),
         "recovery_early_hz": round(rc_early, 3),
         "recovery_late_hz": round(rc_late, 3),
         "recovery_trajectory": [round(float(r), 3) for r in rc],
     }
+
+
+# Keys to summarize across seeds for each benchmark when --multi-seed is used.
+# Stats (mean/std/min/max) are computed on these numeric fields across seeds.
+_MULTI_SEED_METRIC_KEYS = {
+    "stdp-timing": ["passed"],  # boolean; reported as pass-rate
+    "ei-balance": ["passed", "ei_ratio",
+                   "excitatory.mean_rate_hz", "excitatory.cv_isi",
+                   "inhibitory.mean_rate_hz", "inhibitory.cv_isi"],
+    "stp-paired-pulse": ["passed"],  # analytical; no RNG var
+    "gamma-oscillations": ["passed", "peak_freq_hz", "gamma_fraction",
+                           "exc_rate_hz", "inh_rate_hz"],
+    "homeostasis": ["passed", "baseline_hz", "perturbation_hz",
+                    "recovery_early_hz", "recovery_late_hz"],
+}
+
+
+def _get_nested(d: dict, key: str):
+    """Dot-path lookup: _get_nested(r, 'excitatory.mean_rate_hz')."""
+    for part in key.split("."):
+        if not isinstance(d, dict) or part not in d:
+            return None
+        d = d[part]
+    return d
+
+
+def _multi_seed_summary(name: str, per_seed_results: list) -> dict:
+    """Compute mean/std/min/max for RNG-sensitive metrics across seeds.
+
+    Handles the case where a benchmark's `passed` is a numpy.bool_ (produced
+    by e.g. `13.0 <= peak_freq <= 100.0` on a numpy scalar) by accepting
+    np.bool_ alongside Python bool, and by coercing strings 'True'/'False'
+    produced by json.dump(default=str) on numpy bools.
+    """
+    keys = _MULTI_SEED_METRIC_KEYS.get(name, ["passed"])
+    summary = {"n_seeds": len(per_seed_results), "seeds": [r["_seed"] for r in per_seed_results]}
+
+    for key in keys:
+        vals = []
+        for r in per_seed_results:
+            v = _get_nested(r, key)
+            if v is None:
+                continue
+            if isinstance(v, (bool, np.bool_)):
+                vals.append(1.0 if bool(v) else 0.0)
+            elif isinstance(v, str) and v in ("True", "False"):
+                vals.append(1.0 if v == "True" else 0.0)
+            elif isinstance(v, (int, float, np.integer, np.floating)):
+                vals.append(float(v))
+        if not vals:
+            continue
+        arr = np.array(vals, dtype=np.float64)
+        summary[key] = {
+            "mean": round(float(arr.mean()), 6),
+            "std": round(float(arr.std()), 6),
+            "min": round(float(arr.min()), 6),
+            "max": round(float(arr.max()), 6),
+            "values": [round(float(v), 6) for v in vals],
+        }
+    return summary
 
 
 def main():
@@ -953,11 +1031,25 @@ def main():
                                  "gamma-oscillations", "homeostasis", "all"],
                         help="Which benchmark to run")
     parser.add_argument("--output", type=str, default=None)
+    parser.add_argument("--seed", type=int, default=42,
+                        help="RNG seed for single-run mode (default: 42).")
+    parser.add_argument("--multi-seed", type=str, default=None,
+                        help="Comma-separated seeds, e.g. '42,43,44'. When set, "
+                             "overrides --seed and reports mean/std across seeds.")
     args = parser.parse_args()
+
+    # Parse seed list: either single --seed or multi-seed sweep
+    if args.multi_seed:
+        seed_list = [int(s.strip()) for s in args.multi_seed.split(",") if s.strip()]
+        if not seed_list:
+            raise ValueError(f"--multi-seed '{args.multi_seed}' parsed empty")
+    else:
+        seed_list = [args.seed]
 
     print("=" * 65)
     print("BIOLOGICAL BENCHMARK VALIDATION SUITE")
     print("=" * 65)
+    print(f"Seeds: {seed_list}")
 
     print("\nLoading simulator packages...")
     t0 = time.time()
@@ -972,21 +1064,47 @@ def main():
         "homeostasis": benchmark_homeostasis,
     }
 
+    to_run = list(benchmarks.items()) if args.benchmark == "all" \
+        else [(args.benchmark, benchmarks[args.benchmark])]
+
     all_results = {}
 
-    if args.benchmark == "all":
-        for name, func in benchmarks.items():
-            all_results[name] = func()
-    else:
-        all_results[args.benchmark] = benchmarks[args.benchmark]()
+    for name, func in to_run:
+        per_seed_results = []
+        for s in seed_list:
+            if len(seed_list) > 1:
+                print(f"\n{'#'*65}\n# {name} @ seed={s}\n{'#'*65}")
+            r = func(seed_override=s)
+            r["_seed"] = s
+            per_seed_results.append(r)
+
+        if len(seed_list) == 1:
+            all_results[name] = per_seed_results[0]
+        else:
+            all_results[name] = {
+                "per_seed": per_seed_results,
+                "summary": _multi_seed_summary(name, per_seed_results),
+            }
 
     # Summary
     print(f"\n{'='*65}")
     print("BENCHMARK SUMMARY")
     print(f"{'='*65}")
     for name, result in all_results.items():
-        status = "PASS" if result.get("passed", False) else "FAIL"
-        print(f"  {name:30s}: {status}")
+        if "per_seed" in result:
+            passed = [r.get("passed", False) for r in result["per_seed"]]
+            pass_rate = sum(passed) / len(passed)
+            status = f"{sum(passed)}/{len(passed)} seeds PASS"
+            print(f"  {name:30s}: {status}")
+            # Print per-metric mean/std for quick eyeballing
+            for key, stats in result["summary"].items():
+                if isinstance(stats, dict) and "mean" in stats:
+                    print(f"    {key:30s}  mean={stats['mean']:.4g}  "
+                          f"std={stats['std']:.4g}  "
+                          f"range=[{stats['min']:.4g}, {stats['max']:.4g}]")
+        else:
+            status = "PASS" if result.get("passed", False) else "FAIL"
+            print(f"  {name:30s}: {status}")
 
     # Save results
     output_path = args.output or f"benchmark_results_{int(time.time())}.json"
