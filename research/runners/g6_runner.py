@@ -173,6 +173,8 @@ def run_g6_episode(
     grid_size=8,
     start_pos=(1, 1),
     goal_pos=(6, 6),
+    goal_schedule=None,      # list of (step, (gx, gy)) tuples. If None, use
+                             # goal_pos for the whole episode.
     learning_rate=0.01,
     w_max=3.0,
     lr_schedule="decay_after_goal",
@@ -266,13 +268,26 @@ def run_g6_episode(
     initial_data = cp.asnumpy(bridge.cp_connections.data).copy()
 
     x, y = start_pos
-    gx, gy = goal_pos
+    # Normalize goal schedule — default to single-entry list so the rest of the
+    # loop just indexes it.
+    if goal_schedule is None:
+        goal_schedule_sorted = [(0, tuple(goal_pos))]
+    else:
+        goal_schedule_sorted = sorted(
+            [(int(s), tuple(g)) for s, g in goal_schedule], key=lambda t: t[0]
+        )
+    current_schedule_idx = 0
+    gx, gy = goal_schedule_sorted[0][1]
+    goal_change_steps = []          # record steps where goal changed
     max_dist = (grid_size - 1) * 2  # Manhattan diameter
 
-    def manhattan(px, py):
-        return abs(px - gx) + abs(py - gy)
+    def manhattan(px, py, goal_x=None, goal_y=None):
+        gxi = gx if goal_x is None else goal_x
+        gyi = gy if goal_y is None else goal_y
+        return abs(px - gxi) + abs(py - gyi)
 
     trajectory = [(x, y)]
+    goal_log = [(gx, gy)]
     motor_counts_log = []
     action_log = []
     reward_log = []
@@ -281,6 +296,19 @@ def run_g6_episode(
 
     t0 = time.time()
     for step in range(n_steps):
+        # Advance goal schedule if we've crossed a change-step.
+        while (current_schedule_idx + 1 < len(goal_schedule_sorted)
+               and step >= goal_schedule_sorted[current_schedule_idx + 1][0]):
+            current_schedule_idx += 1
+            gx, gy = goal_schedule_sorted[current_schedule_idx][1]
+            goal_change_steps.append(step)
+            # Reset first-goal tracker so decay_after_goal gives the agent
+            # full-strength LR to adapt to the new target.
+            first_goal_step = None
+            if verbose:
+                print(f"[g6 seed={seed}] step {step}: GOAL CHANGED to ({gx}, {gy})",
+                      flush=True)
+
         # Effective LR
         if lr_schedule == "decay_after_goal" and first_goal_step is not None:
             effective_lr = learning_rate * lr_decay_factor
@@ -349,6 +377,7 @@ def run_g6_episode(
         dist_after = manhattan(new_x, new_y)
         x, y = new_x, new_y
         trajectory.append((x, y))
+        goal_log.append((gx, gy))
         distance_log.append(dist_after)
 
         if dist_after < dist_before:
@@ -412,9 +441,38 @@ def run_g6_episode(
     q = len(dist_arr) // 4
     quarters = [float(dist_arr[i*q:(i+1)*q].mean()) for i in range(4)]
 
+    # Per-phase stats when goal changed mid-episode.
+    phase_stats = []
+    phase_boundaries = [0] + goal_change_steps + [n_steps]
+    for phase_idx in range(len(phase_boundaries) - 1):
+        p_start = phase_boundaries[phase_idx]
+        p_end = phase_boundaries[phase_idx + 1]
+        p_dist = dist_arr[p_start:p_end]
+        p_actions = action_log[p_start:p_end]
+        if len(p_dist) == 0:
+            continue
+        # Use the goal active at the first step of this phase.
+        p_goal = goal_log[p_start + 1] if p_start + 1 < len(goal_log) else goal_log[-1]
+        phase_stats.append({
+            "phase": phase_idx,
+            "step_start": p_start,
+            "step_end": p_end,
+            "goal": list(p_goal),
+            "mean_distance": float(p_dist.mean()),
+            "final_quarter_mean_distance": float(
+                p_dist[len(p_dist) * 3 // 4:].mean()
+            ) if len(p_dist) >= 4 else float(p_dist.mean()),
+            "n_steps_at_goal": int((p_dist == 0).sum()),
+            "n_steps": len(p_dist),
+            "action_counts": [int((np.asarray(p_actions) == a).sum()) for a in range(n_motor)],
+        })
+
     results = {
         "seed": seed, "n_steps": n_steps, "grid_size": grid_size,
         "start_pos": list(start_pos), "goal_pos": list(goal_pos),
+        "goal_schedule": [[s, list(g)] for s, g in goal_schedule_sorted],
+        "goal_change_steps": goal_change_steps,
+        "phase_stats": phase_stats,
         "learning_rate": learning_rate, "lr_schedule": lr_schedule,
         "lr_decay_factor": lr_decay_factor,
         "epsilon_start": epsilon_start, "epsilon_end": epsilon_end,
@@ -423,6 +481,7 @@ def run_g6_episode(
         "w_max": w_max, "n_plastic_synapses": n_plastic,
         "reservoir_weight_drift_max": reservoir_drift,
         "trajectory": trajectory,
+        "goal_log": goal_log,
         "motor_counts": motor_counts_log,
         "action_log": action_log,
         "reward_log": reward_log,
