@@ -182,6 +182,9 @@ def run_g6_episode(
     epsilon_start=0.0,       # probability of random action early in episode
     epsilon_end=0.0,         # probability of random action late in episode
     epsilon_decay_steps=100, # steps over which to linearly interpolate
+    reset_epsilon_on_goal_change=False,  # if True, restart epsilon schedule
+                                         # (from epsilon_start) when goal
+                                         # changes — forces re-exploration
     verbose=True,
 ):
     import cupy as cp
@@ -279,6 +282,9 @@ def run_g6_episode(
     current_schedule_idx = 0
     gx, gy = goal_schedule_sorted[0][1]
     goal_change_steps = []          # record steps where goal changed
+    # Tracks the step at which the current epsilon schedule started (for
+    # reset_epsilon_on_goal_change). Updated when goal changes.
+    epsilon_schedule_origin = 0
     max_dist = (grid_size - 1) * 2  # Manhattan diameter
 
     def manhattan(px, py, goal_x=None, goal_y=None):
@@ -305,6 +311,8 @@ def run_g6_episode(
             # Reset first-goal tracker so decay_after_goal gives the agent
             # full-strength LR to adapt to the new target.
             first_goal_step = None
+            if reset_epsilon_on_goal_change:
+                epsilon_schedule_origin = step
             if verbose:
                 print(f"[g6 seed={seed}] step {step}: GOAL CHANGED to ({gx}, {gy})",
                       flush=True)
@@ -353,9 +361,12 @@ def run_g6_episode(
 
         # Epsilon-greedy: with probability epsilon, pick a random action
         # instead of argmax. Linearly anneal from epsilon_start to epsilon_end
-        # over the first epsilon_decay_steps steps.
+        # over the first epsilon_decay_steps steps *since the current epsilon
+        # schedule began* (reset to current step on each goal change when
+        # reset_epsilon_on_goal_change is True).
+        steps_since_epsilon_reset = step - epsilon_schedule_origin
         if epsilon_decay_steps > 0:
-            frac = min(1.0, step / epsilon_decay_steps)
+            frac = min(1.0, steps_since_epsilon_reset / epsilon_decay_steps)
             epsilon = epsilon_start * (1.0 - frac) + epsilon_end * frac
         else:
             epsilon = epsilon_end
@@ -477,6 +488,7 @@ def run_g6_episode(
         "lr_decay_factor": lr_decay_factor,
         "epsilon_start": epsilon_start, "epsilon_end": epsilon_end,
         "epsilon_decay_steps": epsilon_decay_steps,
+        "reset_epsilon_on_goal_change": reset_epsilon_on_goal_change,
         "first_goal_step": first_goal_step,
         "w_max": w_max, "n_plastic_synapses": n_plastic,
         "reservoir_weight_drift_max": reservoir_drift,
