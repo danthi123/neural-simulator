@@ -38,19 +38,21 @@ def extract_weight_trajectory(log: list) -> list[dict]:
     return events
 
 
-def extract_cs_response_trajectory(log: list) -> dict:
-    """Pull us_output firing rates during CS-ON windows, grouped by phase.
+def extract_cs_response_trajectory(log: list, input_group: str, output_group: str) -> dict:
+    """Pull output-group firing rates during input-ON windows, grouped by phase.
 
-    Defines 'CS-ON' as readout entries where cs_input rate > 20 Hz (CS
-    active and driving input).
+    Defines 'input-ON' as readout entries where the input group's rate > 20 Hz
+    (stimulus active and driving input). Works for both associative (CS->US)
+    and reinforcement (stimulus->response) experiments.
     """
-    by_phase = {"pre_test": [], "training": [], "post_test": []}
+    by_phase = {"pre_test": [], "training": [], "post_test": [],
+                "baseline": [], "rl_training": []}
     for e in log:
         if e.get("event") != "readout":
             continue
         rates = e.get("rates", {})
-        cs = rates.get("cs_input", 0.0)
-        us = rates.get("us_output", 0.0)
+        cs = rates.get(input_group, 0.0)
+        us = rates.get(output_group, 0.0)
         phase = e.get("phase", "")
         if cs > 20 and phase in by_phase:
             by_phase[phase].append({
@@ -100,20 +102,53 @@ def rescorla_wagner_fit(t: np.ndarray, V: np.ndarray) -> dict:
     }
 
 
+def extract_per_trial_curve(trial_data: list, input_group: str, output_group: str
+                            ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """From trial_data list, extract (trial_index, input_rate, output_rate, success) arrays."""
+    if not trial_data:
+        return (np.array([]),) * 4
+    trials = np.array([t.get("trial", i) for i, t in enumerate(trial_data)])
+    cs_rates = np.array([t.get("rates", {}).get(input_group, 0.0) for t in trial_data])
+    us_rates = np.array([t.get("rates", {}).get(output_group, t.get("output_rate", 0.0))
+                          for t in trial_data])
+    success = np.array([1.0 if t.get("success") else 0.0 for t in trial_data])
+    return trials, cs_rates, us_rates, success
+
+
 def analyze_one(path: str) -> dict:
     data = json.load(open(path))
-    log = data.get("log", data) if isinstance(data, dict) else data
-    # Handle both "has .log attr saved directly" and "log nested"
-    if isinstance(log, dict) and "log" in log:
-        log = log["log"]
+    # run_experiment_headless outputs use "log_entries"; legacy / alt layouts may use "log"
+    log = (
+        data.get("log_entries")
+        or data.get("log")
+        or (data if isinstance(data, list) else [])
+    )
+    trial_data = data.get("trial_data", [])
+
+    # Determine input/output group names from the groups dict
+    groups = data.get("groups") or {}
+    group_names = list(groups.keys()) if isinstance(groups, dict) else []
+    # Heuristic: first group = input, second = output
+    input_group = group_names[0] if len(group_names) >= 1 else "cs_input"
+    output_group = group_names[1] if len(group_names) >= 2 else "us_output"
+
+    exp_name = data.get("experiment_name", "")
+    training_summary = data.get("training_summary", {}) or {}
 
     weights = extract_weight_trajectory(log)
-    cs_resp = extract_cs_response_trajectory(log)
+    cs_resp = extract_cs_response_trajectory(log, input_group, output_group)
 
     pre_us = np.array([e["us_rate"] for e in cs_resp["pre_test"]])
     post_us = np.array([e["us_rate"] for e in cs_resp["post_test"]])
-    training_us = np.array([e["us_rate"] for e in cs_resp["training"]])
-    training_t = np.array([e["time_ms"] for e in cs_resp["training"]])
+    # Combine both associative "training" and reinforcement "rl_training" phases
+    training_entries = cs_resp.get("training", []) + cs_resp.get("rl_training", [])
+    training_us = np.array([e["us_rate"] for e in training_entries])
+    training_t = np.array([e["time_ms"] for e in training_entries])
+
+    # Per-trial learning curve (richer than log-extracted CS-ON windows)
+    trials_arr, trial_cs_rates, trial_us_rates, trial_success = extract_per_trial_curve(
+        trial_data, input_group, output_group
+    )
 
     # Pavlovian delta
     pavlov_delta = float(post_us.mean() - pre_us.mean()) if pre_us.size and post_us.size else 0.0
@@ -137,9 +172,40 @@ def analyze_one(path: str) -> dict:
     if training_us.size >= 10:
         rw_training_us = rescorla_wagner_fit(training_t - training_t[0], training_us)
 
+    # R-W fit on per-trial data — the richer signal
+    # Raw per-trial firing rates are Poisson-noisy; smooth with 20-trial window
+    # to expose the underlying associative-strength curve that R-W models.
+    rw_trial_us = None
+    rw_trial_cs = None
+    rw_trial_us_smooth = None
+    rw_trial_cs_smooth = None
+    smoothed_us = None
+    smoothed_cs = None
+    if trials_arr.size >= 10:
+        rw_trial_us = rescorla_wagner_fit(trials_arr.astype(float), trial_us_rates)
+        rw_trial_cs = rescorla_wagner_fit(trials_arr.astype(float), trial_cs_rates)
+        # Smoothed variant: rolling mean over W=20 trials
+        W = min(20, trials_arr.size // 4)
+        if W >= 3:
+            kernel = np.ones(W) / W
+            smoothed_us = np.convolve(trial_us_rates, kernel, mode="valid")
+            smoothed_cs = np.convolve(trial_cs_rates, kernel, mode="valid")
+            smoothed_t = np.arange(len(smoothed_us), dtype=float)
+            rw_trial_us_smooth = rescorla_wagner_fit(smoothed_t, smoothed_us)
+            rw_trial_cs_smooth = rescorla_wagner_fit(smoothed_t, smoothed_cs)
+
+    # Reinforcement-specific metrics: success rate over time, tail success
+    n_success_total = int(trial_success.sum()) if trial_success.size else 0
+    success_rate_total = float(trial_success.mean()) if trial_success.size else 0.0
+    tail_success_rate = float(trial_success[-30:].mean()) if trial_success.size >= 30 else 0.0
+
     return {
         "file": path,
+        "experiment_name": exp_name,
+        "input_group": input_group,
+        "output_group": output_group,
         "n_log_entries": len(log),
+        "n_trials": int(trials_arr.size),
         "pavlov_delta_hz": round(pavlov_delta, 3),
         "pavlov_t_stat": round(t_stat, 2),
         "pre_us_mean": round(float(pre_us.mean()), 3) if pre_us.size else None,
@@ -149,6 +215,16 @@ def analyze_one(path: str) -> dict:
         "weight_trajectory": weights,
         "rw_fit_weights": rw_weights,
         "rw_fit_training_us": rw_training_us,
+        "rw_fit_per_trial_us": rw_trial_us,
+        "rw_fit_per_trial_cs": rw_trial_cs,
+        "rw_fit_per_trial_us_smooth20": rw_trial_us_smooth,
+        "rw_fit_per_trial_cs_smooth20": rw_trial_cs_smooth,
+        "trial_us_rates": trial_us_rates.tolist() if trials_arr.size else [],
+        "trial_cs_rates": trial_cs_rates.tolist() if trials_arr.size else [],
+        "n_success_trials": n_success_total,
+        "success_rate_total": round(success_rate_total, 3),
+        "tail_success_rate_last30": round(tail_success_rate, 3),
+        "training_summary": training_summary,
     }
 
 
@@ -171,13 +247,20 @@ def main():
         except Exception as e:
             print(f"  FAILED: {f}  ({e})")
             continue
-        print(f"\n  {Path(f).name}")
-        print(f"    log entries: {s['n_log_entries']}")
+        print(f"\n  {Path(f).name}  [{s.get('experiment_name', '?')}]")
+        print(f"    groups: {s['input_group']} -> {s['output_group']}  "
+              f"log entries: {s['n_log_entries']}")
         print(
-            f"    PRE  CS->US: {s['pre_us_mean']} Hz (n={s['pre_us_n']})  |  "
-            f"POST CS->US: {s['post_us_mean']} Hz (n={s['post_us_n']})"
+            f"    PRE  in->out: {s['pre_us_mean']} Hz (n={s['pre_us_n']})  |  "
+            f"POST in->out: {s['post_us_mean']} Hz (n={s['post_us_n']})"
         )
         print(f"    Pavlov delta: {s['pavlov_delta_hz']:+.3f} Hz  (t = {s['pavlov_t_stat']:+.2f})")
+        if s.get("n_success_trials", 0) > 0 or s.get("success_rate_total", 0) > 0:
+            print(
+                f"    R-STDP success: {s['n_success_trials']}/{s['n_trials']} "
+                f"({s['success_rate_total']*100:.1f}%)  tail-30 = "
+                f"{s['tail_success_rate_last30']*100:.1f}%"
+            )
         if s["weight_trajectory"]:
             w_start = s["weight_trajectory"][0]["mean_weight"]
             w_end = s["weight_trajectory"][-1]["mean_weight"]
@@ -193,6 +276,32 @@ def main():
             print(
                 f"    RW fit on training US rate: lambda={rw['lambda']:.2f} Hz  tau={rw['tau']:.0f} ms  "
                 f"R^2={rw['r_squared']:.3f} (n={rw['n_points']})"
+            )
+        if s.get("n_trials", 0) > 0:
+            print(f"    n_trials recorded: {s['n_trials']}")
+        if s.get("rw_fit_per_trial_us"):
+            rw = s["rw_fit_per_trial_us"]
+            print(
+                f"    RW fit per-trial US rate: lambda={rw['lambda']:.2f} Hz  "
+                f"tau={rw['tau']:.0f} trials  R^2={rw['r_squared']:.3f} (n={rw['n_points']})"
+            )
+        if s.get("rw_fit_per_trial_cs"):
+            rw = s["rw_fit_per_trial_cs"]
+            print(
+                f"    RW fit per-trial CS rate: lambda={rw['lambda']:.2f} Hz  "
+                f"tau={rw['tau']:.0f} trials  R^2={rw['r_squared']:.3f} (n={rw['n_points']})"
+            )
+        if s.get("rw_fit_per_trial_us_smooth20"):
+            rw = s["rw_fit_per_trial_us_smooth20"]
+            print(
+                f"    RW fit smoothed US (W=20): lambda={rw['lambda']:.2f} Hz  "
+                f"tau={rw['tau']:.0f} trials  R^2={rw['r_squared']:.3f} (n={rw['n_points']})"
+            )
+        if s.get("rw_fit_per_trial_cs_smooth20"):
+            rw = s["rw_fit_per_trial_cs_smooth20"]
+            print(
+                f"    RW fit smoothed CS (W=20): lambda={rw['lambda']:.2f} Hz  "
+                f"tau={rw['tau']:.0f} trials  R^2={rw['r_squared']:.3f} (n={rw['n_points']})"
             )
         all_summaries.append(s)
 
