@@ -177,6 +177,9 @@ def run_g6_episode(
     w_max=3.0,
     lr_schedule="decay_after_goal",
     lr_decay_factor=0.25,
+    epsilon_start=0.0,       # probability of random action early in episode
+    epsilon_end=0.0,         # probability of random action late in episode
+    epsilon_decay_steps=100, # steps over which to linearly interpolate
     verbose=True,
 ):
     import cupy as cp
@@ -320,10 +323,24 @@ def run_g6_episode(
 
         motor_counts_log.append(motor_counts.tolist())
 
-        if motor_counts.sum() > 0:
+        # Epsilon-greedy: with probability epsilon, pick a random action
+        # instead of argmax. Linearly anneal from epsilon_start to epsilon_end
+        # over the first epsilon_decay_steps steps.
+        if epsilon_decay_steps > 0:
+            frac = min(1.0, step / epsilon_decay_steps)
+            epsilon = epsilon_start * (1.0 - frac) + epsilon_end * frac
+        else:
+            epsilon = epsilon_end
+        explore_rng = np.random.default_rng(seed * 7919 + step * 2)
+        if explore_rng.random() < epsilon:
+            action = int(explore_rng.integers(0, n_motor))
+            explore_flag = True
+        elif motor_counts.sum() > 0:
             action = int(np.argmax(motor_counts))
+            explore_flag = False
         else:
             action = int(np.random.default_rng(seed * 10_000 + step).integers(0, n_motor))
+            explore_flag = True
 
         action_log.append(action)
         dx, dy = ACTION_DELTAS[action]
@@ -400,6 +417,8 @@ def run_g6_episode(
         "start_pos": list(start_pos), "goal_pos": list(goal_pos),
         "learning_rate": learning_rate, "lr_schedule": lr_schedule,
         "lr_decay_factor": lr_decay_factor,
+        "epsilon_start": epsilon_start, "epsilon_end": epsilon_end,
+        "epsilon_decay_steps": epsilon_decay_steps,
         "first_goal_step": first_goal_step,
         "w_max": w_max, "n_plastic_synapses": n_plastic,
         "reservoir_weight_drift_max": reservoir_drift,
