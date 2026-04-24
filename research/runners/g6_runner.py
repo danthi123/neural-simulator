@@ -175,6 +175,11 @@ def run_g6_episode(
     goal_pos=(6, 6),
     goal_schedule=None,      # list of (step, (gx, gy)) tuples. If None, use
                              # goal_pos for the whole episode.
+    negative_reward_rule="B", # "B" = split -reward across 3 non-chosen equally
+                              # "C" = axis-decomposed: potentiate only the 2
+                              # cardinal directions that reduce Manhattan
+                              # distance (leaks goal-direction info but
+                              # avoids re-anchoring to old target)
     learning_rate=0.01,
     w_max=3.0,
     lr_schedule="decay_after_goal",
@@ -402,31 +407,54 @@ def run_g6_episode(
         if dist_after == 0 and first_goal_step is None:
             first_goal_step = step
 
-        # Perceptron delta (4-motor variant, rule B: split negative reward
-        # across the 3 non-chosen motors).
+        # Perceptron delta (4-motor variant).
+        # ACTION_DELTAS order: N=(0,+1), E=(+1,0), S=(0,-1), W=(-1,0).
         if reward != 0 and hidden_counts.sum() > 0:
             h_act = hidden_counts.astype(np.float32) / max(hidden_counts.max(), 1)
             if reward > 0:
-                # Straightforward: chosen motor is the target; depress others.
-                # delta[k] = +lr*h if post==chosen else -lr*h.
+                # Chosen motor is correct. Rule is the same for both B and C.
                 direction_per_syn = np.where(
                     i2m_post_local_np == action, 1.0, -1.0
                 ).astype(np.float32)
                 delta_np = effective_lr * h_act[i2m_pre_local_np] * direction_per_syn
+            elif negative_reward_rule == "C":
+                # Axis-decomposed rule. Figure out which cardinal directions
+                # would reduce Manhattan distance from current (x, y) to (gx, gy).
+                # Multiple directions can be correct (e.g. NE when goal is up-right).
+                want_n = 1 if gy > y else 0
+                want_s = 1 if gy < y else 0
+                want_e = 1 if gx > x else 0
+                want_w = 1 if gx < x else 0
+                # Motor-index layout: N=0, E=1, S=2, W=3.
+                correct_motor_flags = np.array([want_n, want_e, want_s, want_w],
+                                               dtype=np.float32)
+                n_correct = correct_motor_flags.sum()
+                if n_correct == 0:
+                    # At goal (shouldn't happen because reward would be 0).
+                    direction_per_syn = None
+                else:
+                    # +1/n_correct for each correct direction, -1/n_wrong for
+                    # each wrong direction (so per-step net delta magnitude is
+                    # comparable to reward>0 case).
+                    n_wrong = n_motor - n_correct
+                    per_motor = np.where(
+                        correct_motor_flags > 0, 1.0 / n_correct, -1.0 / n_wrong
+                    ).astype(np.float32)
+                    direction_per_syn = per_motor[i2m_post_local_np]
+                    delta_np = effective_lr * h_act[i2m_pre_local_np] * direction_per_syn
             else:
-                # reward < 0. Chosen was wrong. Depress chosen fully; potentiate
-                # the other 3 by 1/3 each (so total "positive" weight equals
-                # "negative" weight in magnitude, matching the reward>0 case).
+                # Rule B: depress chosen, potentiate 3 non-chosen equally.
                 direction_per_syn = np.where(
                     i2m_post_local_np == action, -1.0, 1.0 / (n_motor - 1)
                 ).astype(np.float32)
                 delta_np = effective_lr * h_act[i2m_pre_local_np] * direction_per_syn
 
-            delta_cp = cp.asarray(delta_np)
-            bridge.cp_connections.data[i2m_flat_indices_cp] += delta_cp
-            w_slice = bridge.cp_connections.data[i2m_flat_indices_cp]
-            cp.clip(w_slice, 0.0, w_max, out=w_slice)
-            bridge.cp_connections.data[i2m_flat_indices_cp] = w_slice
+            if direction_per_syn is not None:
+                delta_cp = cp.asarray(delta_np)
+                bridge.cp_connections.data[i2m_flat_indices_cp] += delta_cp
+                w_slice = bridge.cp_connections.data[i2m_flat_indices_cp]
+                cp.clip(w_slice, 0.0, w_max, out=w_slice)
+                bridge.cp_connections.data[i2m_flat_indices_cp] = w_slice
 
         if verbose and (step + 1) % 100 == 0:
             recent_dist = float(np.mean(distance_log[-100:]))
@@ -489,6 +517,7 @@ def run_g6_episode(
         "epsilon_start": epsilon_start, "epsilon_end": epsilon_end,
         "epsilon_decay_steps": epsilon_decay_steps,
         "reset_epsilon_on_goal_change": reset_epsilon_on_goal_change,
+        "negative_reward_rule": negative_reward_rule,
         "first_goal_step": first_goal_step,
         "w_max": w_max, "n_plastic_synapses": n_plastic,
         "reservoir_weight_drift_max": reservoir_drift,
