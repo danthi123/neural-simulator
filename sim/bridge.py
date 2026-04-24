@@ -4167,9 +4167,15 @@ class SimulationBridge:
 
         except Exception as e:
             self._log_to_ui(f"Error during simulation step: {e}","critical")
-            import traceback; traceback.print_exc() 
-            self.stop_simulation() 
+            import traceback; traceback.print_exc()
+            self.stop_simulation()
             if self.ui_queue: self.ui_queue.put({"type": "SIM_ERROR_OCCURRED", "error_message": str(e)})
+            # Research runners can opt in to loud failure via
+            # bridge.strict_step_errors = True. Default keeps the biological
+            # experiment UI's load-bearing "single bad step doesn't kill the
+            # session" behaviour.
+            if getattr(self, "strict_step_errors", False):
+                raise
     def save_checkpoint(self, filepath, gui_config_snapshot=None): # Added gui_config_snapshot
         """Saves the current simulation state to an HDF5 checkpoint file."""
         self._log_to_ui(f"Saving checkpoint to {filepath}...", "info")
