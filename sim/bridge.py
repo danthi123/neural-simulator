@@ -3842,10 +3842,20 @@ class SimulationBridge:
 
                             self.cp_connections.data[stdp_active_indices] = updated_weights
 
-                            # Update eligibility traces if reward modulation is enabled
+                            # Update eligibility traces if reward modulation is enabled.
+                            # SIGNED eligibility (this branch): accumulate the
+                            # raw STDP weight change, preserving LTP (+) vs LTD (-)
+                            # direction. Positive reward then selectively
+                            # potentiates recently-LTP pairings and depresses
+                            # recently-LTD pairings; negative reward flips that.
+                            # The original unsigned version (`+= cp.abs(...)`)
+                            # uniformly boosted or depressed all recently-plastic
+                            # synapses, which made reward modulation path-
+                            # agnostic and caused the G5.v2 degenerate attractor
+                            # (see research/findings/2026-04-20-g5v2.md).
                             if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
                                 weight_changes = updated_weights - current_weights
-                                self.cp_eligibility_trace[stdp_active_indices] += cp.abs(weight_changes)
+                                self.cp_eligibility_trace[stdp_active_indices] += weight_changes
 
                             self._mock_total_plasticity_events += stdp_active_indices.size
             
