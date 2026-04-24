@@ -168,6 +168,9 @@ def run_g5_v3_episode(
     goal_position=12,
     learning_rate=0.01,
     w_max=3.0,
+    lr_schedule="constant",    # "constant" | "inverse_sqrt" | "decay_after_goal"
+    lr_schedule_warmup=100,    # for inverse_sqrt: lr / sqrt(max(step-warmup, 1))
+    lr_decay_factor=0.25,      # for decay_after_goal: multiplier applied after first goal reached
     verbose=True,
 ):
     import cupy as cp
@@ -266,10 +269,21 @@ def run_g5_v3_episode(
     motor_counts_log = []
     reward_log = []
     distance_log = [abs(x - goal_position)]
+    first_goal_step = None   # for decay_after_goal schedule
 
     t0 = time.time()
     for step in range(n_steps):
         dist_before = abs(x - goal_position)
+
+        # Compute effective learning rate for this step.
+        if lr_schedule == "inverse_sqrt":
+            effective_lr = learning_rate / max(
+                1.0, float(max(step - lr_schedule_warmup, 1)) ** 0.5
+            )
+        elif lr_schedule == "decay_after_goal" and first_goal_step is not None:
+            effective_lr = learning_rate * lr_decay_factor
+        else:
+            effective_lr = learning_rate
 
         # Present stimulus
         rates = _position_to_rates(
@@ -328,13 +342,17 @@ def run_g5_v3_episode(
             reward = 0
         reward_log.append(reward)
 
+        # Track first-goal hit for decay_after_goal schedule.
+        if dist_after == 0 and first_goal_step is None:
+            first_goal_step = step
+
         # Perceptron delta on hidden->motor
         if reward != 0 and hidden_counts.sum() > 0:
             target = action if reward > 0 else (1 - action)
             # Normalise hidden activity so lr is scale-stable per step.
             h_act = hidden_counts.astype(np.float32) / max(hidden_counts.max(), 1)
             # +lr*h_act on synapses whose post matches target; -lr*h_act elsewhere.
-            delta_np = learning_rate * h_act[i2m_pre_local_np] * np.where(
+            delta_np = effective_lr * h_act[i2m_pre_local_np] * np.where(
                 i2m_post_local_np == target, 1.0, -1.0
             ).astype(np.float32)
             delta_cp = cp.asarray(delta_np)
@@ -371,7 +389,11 @@ def run_g5_v3_episode(
     results = {
         "seed": seed, "n_steps": n_steps, "n_positions": n_positions,
         "start_position": start_position, "goal_position": goal_position,
-        "learning_rate": learning_rate, "w_max": w_max,
+        "learning_rate": learning_rate, "lr_schedule": lr_schedule,
+        "lr_schedule_warmup": lr_schedule_warmup,
+        "lr_decay_factor": lr_decay_factor,
+        "first_goal_step": first_goal_step,
+        "w_max": w_max,
         "n_plastic_synapses": n_plastic,
         "reservoir_weight_drift_max": reservoir_drift,
         "trajectory": trajectory,
