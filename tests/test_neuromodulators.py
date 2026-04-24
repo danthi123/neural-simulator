@@ -65,3 +65,35 @@ def test_production_rule_defaults():
     assert r.sensitivity == 1.0
     assert r.threshold == 0.5
     assert r.window_ms == 500.0
+
+
+# ---------- Task 2: manager state allocation ----------
+
+def test_manager_allocates_concentration_per_modulator():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import NeuromodulatorConfig, NeuromodulatorManager
+
+    nms = [
+        NeuromodulatorConfig(name="dopamine", baseline=0.0),
+        NeuromodulatorConfig(name="noradrenaline", baseline=0.2),
+    ]
+    mgr = NeuromodulatorManager(nms, dt_ms=1.0)
+    mgr.initialize(n_neurons=100, cp_module=cp)
+
+    assert mgr.get_concentration("dopamine") == 0.0
+    assert abs(mgr.get_concentration("noradrenaline") - 0.2) < 1e-6
+    with pytest.raises(KeyError):
+        mgr.get_concentration("serotonin")
+
+
+def test_manager_empty_modulator_list_initializes_cleanly():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import NeuromodulatorManager
+
+    mgr = NeuromodulatorManager([], dt_ms=1.0)
+    mgr.initialize(n_neurons=100, cp_module=cp)
+    assert mgr.modulator_names() == []

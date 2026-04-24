@@ -102,3 +102,43 @@ class NeuromodulatorConfig:
     concentration_max: float = 5.0
     targets: List[ModulatorTarget] = field(default_factory=list)
     production_rules: List[ProductionRule] = field(default_factory=list)
+
+
+class NeuromodulatorManager:
+    """Owns per-modulator concentration state and applies effects each step.
+
+    Lifecycle:
+        mgr = NeuromodulatorManager(configs, dt_ms)
+        mgr.initialize(n_neurons, cp_module)            # called once after bridge has cp + n
+        mgr.set_group_indices({"motor": [...], ...})    # optional, for group:NAME scopes
+        # per simulation step:
+        mgr.step(bridge)                                # decay + production
+        # query effects to apply:
+        mgr.compute_synaptic_gain_multiplier()
+        mgr.compute_plasticity_rate_multiplier()
+        mgr.compute_excitability_drive_pA()             # scalar
+        mgr.compute_excitability_drive_per_neuron(cp_traits=..., group_indices=...)
+    """
+
+    def __init__(self, configs: Sequence[NeuromodulatorConfig], dt_ms: float):
+        self._configs = list(configs)
+        self.dt_ms = float(dt_ms)
+        self._concentrations: dict[str, float] = {}
+        self._cp = None
+        self._n_neurons = 0
+        # Per-rule running state (e.g. EMA of reward error)
+        self._rule_state: dict[str, dict] = {}
+        # Optional cached group indices: {group_name: list[int]}
+        self._group_indices: dict[str, list[int]] = {}
+
+    def initialize(self, n_neurons: int, cp_module) -> None:
+        self._cp = cp_module
+        self._n_neurons = int(n_neurons)
+        self._concentrations = {c.name: float(c.baseline) for c in self._configs}
+        self._rule_state = {c.name: {"err_ema": 0.0} for c in self._configs}
+
+    def get_concentration(self, name: str) -> float:
+        return self._concentrations[name]
+
+    def modulator_names(self) -> List[str]:
+        return list(self._concentrations.keys())
