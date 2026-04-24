@@ -61,3 +61,32 @@ def test_g9_smoke_first_spike(tmp_path):
     assert data["action_selection"] == "first_spike"
     assert len(data["trajectory"]) == 31
     assert data["reservoir_weight_drift_max"] == 0.0
+
+
+def test_g9_smoke_rsg_probe(tmp_path):
+    """Session D.A.3: eval_random_starts triggers post-training frozen-weight probe."""
+    pytest.importorskip("cupy")
+    from research.runners.g9_runner import run_g9_episode
+
+    out = tmp_path / "g9_rsg.json"
+    r = run_g9_episode(
+        out_path=str(out),
+        seed=42, n_steps=30, grid_size=8,
+        start_pos=(1, 1), goal_pos=(6, 6),
+        learning_rate=0.05,
+        action_selection="argmax",
+        eval_random_starts=3,
+        eval_steps_per_start=5,
+        verbose=False,
+    )
+    data = json.load(open(out))
+    rsg = data.get("rsg")
+    assert rsg is not None, "rsg block missing from output"
+    assert rsg["n_random_starts"] == 3
+    assert rsg["steps_per_start"] == 5
+    assert len(rsg["episodes"]) == 3
+    for ep in rsg["episodes"]:
+        assert "tail_mean_dist" in ep
+        assert "start" in ep
+        assert ep["start"] != list(rsg["final_goal"]), "probe start should not equal goal"
+    assert data["reservoir_weight_drift_max"] == 0.0

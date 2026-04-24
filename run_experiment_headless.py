@@ -27,13 +27,20 @@ from sim.enums import NeuronModel
 from experiment import ExperimentEngine, ExperimentPresets
 
 
-def create_sim_bridge(num_neurons=10000):
-    """Create and initialize a SimulationBridge."""
+def create_sim_bridge(num_neurons=10000, seed=-1):
+    """Create and initialize a SimulationBridge.
+
+    Args:
+        num_neurons: total neuron count.
+        seed: RNG seed (-1 = random, otherwise fixed for reproducibility).
+              Session D.C.1 audit added this for multi-seed Pavlovian probes.
+    """
     core_cfg = CoreSimConfig()
     core_cfg.num_neurons = num_neurons
     core_cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
     core_cfg.neural_profile_name = "CORTEX_L23_RS_FS"
     core_cfg.dt_ms = 1.0
+    core_cfg.seed = seed  # Session D: explicit seed for reproducibility
     core_cfg.enable_hebbian_learning = True
     core_cfg.enable_stdp = True
     core_cfg.enable_short_term_plasticity = True
@@ -134,7 +141,7 @@ def setup_engine(sim_bridge, exp_config, dt):
 def run_stimulus_response(args):
     """Basic Stimulus-Response: inject current, measure I/O transfer function."""
     print("\n[2/5] Creating SimulationBridge...")
-    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons)
+    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons, seed=args.seed)
 
     print("\n[3/5] Loading Basic Stimulus-Response preset...")
     exp_config = ExperimentPresets.basic_stimulus_response(
@@ -218,7 +225,7 @@ def run_stimulus_response(args):
 def run_associative_conditioning(args):
     """Associative Conditioning (CS-US Pairing)."""
     print("\n[2/5] Creating SimulationBridge...")
-    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons)
+    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons, seed=args.seed)
 
     print("\n[3/5] Loading Associative Conditioning preset...")
     exp_config = ExperimentPresets.associative_conditioning(
@@ -274,7 +281,7 @@ def run_associative_conditioning(args):
 def run_frequency_response(args):
     """Frequency Response Characterization: sinusoidal sweep."""
     print("\n[2/5] Creating SimulationBridge...")
-    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons)
+    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons, seed=args.seed)
 
     print("\n[3/5] Loading Frequency Response preset...")
     exp_config = ExperimentPresets.frequency_response_characterization(
@@ -364,7 +371,7 @@ def run_frequency_response(args):
 def run_reinforcement_learning(args):
     """Reinforcement Learning (R-STDP): three-factor learning."""
     print("\n[2/5] Creating SimulationBridge...")
-    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons)
+    sim_bridge, core_cfg, dt = create_sim_bridge(args.num_neurons, seed=args.seed)
 
     print("\n[3/5] Loading Reinforcement Learning preset...")
     exp_config = ExperimentPresets.reinforcement_learning(
@@ -459,6 +466,8 @@ def main():
     parser.add_argument("--num-trials", type=int, default=100, help="Training trials (learning exps)")
     parser.add_argument("--num-neurons", type=int, default=10000, help="Total neuron count")
     parser.add_argument("--output", type=str, default=None, help="Output JSON path")
+    parser.add_argument("--seed", type=int, default=-1,
+                        help="RNG seed (-1 = random; set to fix for reproducibility)")
     args = parser.parse_args()
 
     print("=" * 70)

@@ -266,6 +266,10 @@ def run_g9_episode(
     enable_neuromod_gating=False,       # Session C: fast neuromod gain
     neuromod_tau_ms=100.0,
     neuromod_strength=0.5,
+    eval_random_starts=0,               # Session D.A.3: number of random-start
+                                        # eval episodes to run AFTER training.
+                                        # 0 = no eval (backward compat).
+    eval_steps_per_start=30,            # steps per eval episode
     verbose=True,
 ):
     """Run a G9 episode with sim-native R-STDP learning.
@@ -519,6 +523,122 @@ def run_g9_episode(
 
     elapsed = time.time() - t0
 
+    # -------------------- Session D.A.3: RSG post-training eval --------------------
+    # Freeze plastic weights and reward signal; run `eval_random_starts` short
+    # episodes, each from a random start position, and record mean-distance
+    # over the final 1/3 of each episode. This tests whether the trained
+    # hidden->motor mapping is a *controller* (generalizes) or a *trajectory*
+    # (memorized one path from start_pos).
+    rsg_results = None
+    if eval_random_starts > 0:
+        from numpy.random import default_rng as _drng
+        eval_rng = _drng(seed * 13 + 7)
+        # Disable further plasticity: zero reward signal, zero reward lr.
+        # (Easier than flipping enable_stdp because weights were already
+        # written via sim-native three-factor learning.)
+        saved_reward_lr = bridge.core_config.reward_learning_rate
+        bridge.core_config.reward_learning_rate = 0.0
+        bridge.core_config.current_reward_signal = 0.0
+
+        # Also suppress further STDP weight writes by clearing eligibility
+        # and zeroing the STDP amplitudes for the eval phase.
+        saved_a_plus = bridge.core_config.stdp_a_plus
+        saved_a_minus = bridge.core_config.stdp_a_minus
+        bridge.core_config.stdp_a_plus = 0.0
+        bridge.core_config.stdp_a_minus = 0.0
+        if bridge.cp_eligibility_trace is not None:
+            bridge.cp_eligibility_trace.fill(0.0)
+
+        eval_episodes = []
+        # Use the final goal in effect at end of training for fair eval
+        eval_gx, eval_gy = gx, gy
+        for ep in range(eval_random_starts):
+            # Pick a random start cell not exactly at the goal
+            while True:
+                sx = int(eval_rng.integers(0, grid_size))
+                sy = int(eval_rng.integers(0, grid_size))
+                if (sx, sy) != (eval_gx, eval_gy):
+                    break
+            ex, ey = sx, sy
+            ep_dist = [abs(ex - eval_gx) + abs(ey - eval_gy)]
+            for _ in range(eval_steps_per_start):
+                rates = _position_to_rates_2d(ex, ey, n_sensor_half, grid_size)
+                pat = StimulusPattern(
+                    pattern_type=StimulusPatternType.RATE_VECTOR_POISSON.name,
+                    spike_current_pA=1000.0, spike_duration_ms=2.0,
+                    rate_vector_hz=[float(r) for r in rates],
+                )
+                ch = StimulusChannel(
+                    name="sensor", pattern=pat,
+                    target_neuron_indices=layout["input_idx"],
+                    onset_ms=0.0, duration_ms=STIMULUS_MS, enabled=True,
+                )
+                engine.stimulus_manager.cleanup()
+                engine.stimulus_manager.initialize([ch], engine.group_manager, cp)
+                engine.phase_start_ms = bridge.runtime_state.current_time_ms
+
+                motor_counts_eval = np.zeros(n_motor, dtype=np.int32)
+                first_spike_eval = np.full(n_motor, -1, dtype=np.int32)
+                for s in range(n_stim_steps):
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+                    bridge.runtime_state.current_time_ms = bridge.runtime_state.current_time_step * dt
+                    if readout_start_step <= s < readout_end_step:
+                        fired = bridge.cp_firing_states[motor_idx_cp].get().astype(bool)
+                        motor_counts_eval += fired.astype(np.int32)
+                        new_firing = fired & (first_spike_eval == -1)
+                        first_spike_eval[new_firing] = s
+                # pick action same way as training
+                if action_selection == "first_spike":
+                    valid = first_spike_eval >= 0
+                    if valid.any():
+                        masked_times = np.where(valid, first_spike_eval, n_stim_steps + 1)
+                        action = int(np.argmin(masked_times))
+                    else:
+                        action = int(eval_rng.integers(0, n_motor))
+                else:
+                    action = int(np.argmax(motor_counts_eval)) if motor_counts_eval.sum() > 0 else int(eval_rng.integers(0, n_motor))
+                dxe, dye = ACTION_DELTAS[action]
+                ex = int(np.clip(ex + dxe, 0, grid_size - 1))
+                ey = int(np.clip(ey + dye, 0, grid_size - 1))
+                ep_dist.append(abs(ex - eval_gx) + abs(ey - eval_gy))
+            tail = ep_dist[-(max(1, eval_steps_per_start // 3)):]
+            eval_episodes.append({
+                "start": [sx, sy],
+                "goal": [eval_gx, eval_gy],
+                "initial_dist": ep_dist[0],
+                "final_dist": ep_dist[-1],
+                "tail_mean_dist": float(np.mean(tail)),
+                "full_traj_mean_dist": float(np.mean(ep_dist)),
+            })
+
+        # Restore training config (in case someone re-runs downstream)
+        bridge.core_config.reward_learning_rate = saved_reward_lr
+        bridge.core_config.stdp_a_plus = saved_a_plus
+        bridge.core_config.stdp_a_minus = saved_a_minus
+
+        tail_dists = [e["tail_mean_dist"] for e in eval_episodes]
+        # Random-walk baseline approximation: expected Manhattan distance
+        # after T uniform steps on an 8x8 grid, starting far from goal.
+        # Empirically on this grid, E[dist | random walk] converges to ~6-7.
+        rsg_results = {
+            "n_random_starts": eval_random_starts,
+            "steps_per_start": eval_steps_per_start,
+            "final_goal": [eval_gx, eval_gy],
+            "episodes": eval_episodes,
+            "tail_mean_dist_aggregate": float(np.mean(tail_dists)),
+            "tail_std_dist_aggregate": float(np.std(tail_dists)),
+            "fraction_near_goal": float(np.mean([t <= 2 for t in tail_dists])),
+        }
+        if verbose:
+            print(
+                f"[g9 seed={seed}] RSG: {eval_random_starts} random-start evals, "
+                f"tail_mean_dist={rsg_results['tail_mean_dist_aggregate']:.2f}+/-"
+                f"{rsg_results['tail_std_dist_aggregate']:.2f}  "
+                f"frac_near_goal={rsg_results['fraction_near_goal']:.2f}",
+                flush=True,
+            )
+
     final_data = cp.asnumpy(bridge.cp_connections.data)
     non_plastic_mask = ~i2m_mask
     reservoir_drift = float(
@@ -586,6 +706,7 @@ def run_g9_episode(
         "plastic_weight_final_max": float(final_data[i2m_flat_indices].max()),
         "plastic_weight_final_mean": float(final_data[i2m_flat_indices].mean()),
         "plastic_weight_final_std": float(final_data[i2m_flat_indices].std()),
+        "rsg": rsg_results,
     }
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:
