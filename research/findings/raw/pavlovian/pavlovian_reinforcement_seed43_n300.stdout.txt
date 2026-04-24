@@ -1,0 +1,159 @@
+======================================================================
+HEADLESS EXPERIMENT RUNNER: REINFORCEMENT
+======================================================================
+
+[1/5] Loading simulator packages...
+    Loaded in 0.0s
+
+[2/5] Creating SimulationBridge...
+[2026-04-24 19:24:46][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-04-24 19:24:46][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-04-24 19:24:46][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-04-24 19:24:46][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 10000 neurons...
+[2026-04-24 19:24:46][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-04-24 19:24:46][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-04-24 19:24:46][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-04-24 19:24:46][INFO] SIM_BRIDGE: Generating 3D neuron positions for 10000 neurons...
+[2026-04-24 19:24:46][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-04-24 19:24:46][INFO] SIM_BRIDGE: Generating connections (Motif: CORTEX_L23_RS_FS)...
+[2026-04-24 19:24:48][INFO] SIM_BRIDGE: Connections (Motif CORTEX_L23_RS_FS): 100000 synapses. Time: 1.83s
+[2026-04-24 19:24:48][INFO] SIM_BRIDGE: Initializing STP state for 100000 synapses (capacity: 150000)...
+[2026-04-24 19:24:48][INFO] SIM_BRIDGE: Initializing eligibility traces for 100000 synapses (capacity: 150000)...
+[2026-04-24 19:24:48][INFO] SIM_BRIDGE: Per-synapse STP types: E->E=48000, E->I=32000, I->E=16000, I->I=4000
+[2026-04-24 19:24:48][INFO] SIM_BRIDGE: Initializing STDP state for 10000 neurons...
+[2026-04-24 19:24:48][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-04-24 19:24:48][INFO] SIM_BRIDGE: Simulation data initialized for 10000 neurons (3D). Connections: 100000. GPU memory: 1.3GB/25.8GB (5.1%)
+
+[3/5] Loading Reinforcement Learning preset...
+    Injected 3835 inter-group connections
+    Total synapses: 103,835
+    Phases: 3
+      - baseline: 3000ms x 1 reps, channels=[]
+      - rl_training: 180000ms x 1 reps, channels=['input_pattern']
+      - post_test: 600ms x 20 reps, channels=['input_pattern']
+    Total experiment time: 195000 ms (195.0s)
+
+[4/5] Running experiment...
+    [  1.1%] t=2109ms | phase=baseline | 4.74ms/step | ETA 924s
+    [  2.3%] t=4437ms | phase=rl_training | 4.51ms/step | ETA 868s
+    [  3.4%] t=6596ms | phase=rl_training | 4.55ms/step | ETA 866s
+    [  4.4%] t=8617ms | phase=rl_training | 4.64ms/step | ETA 875s
+    [  5.5%] t=10668ms | phase=rl_training | 4.69ms/step | ETA 873s
+    [  6.5%] t=12624ms | phase=rl_training | 4.75ms/step | ETA 876s
+    [  7.4%] t=14411ms | phase=rl_training | 4.86ms/step | ETA 887s
+    [  8.4%] t=16382ms | phase=rl_training | 4.88ms/step | ETA 882s
+    [  9.3%] t=18210ms | phase=rl_training | 4.94ms/step | ETA 884s
+    [ 10.4%] t=20211ms | phase=rl_training | 4.95ms/step | ETA 875s
+    [ 11.4%] t=22157ms | phase=rl_training | 4.97ms/step | ETA 868s
+    [ 12.4%] t=24104ms | phase=rl_training | 4.98ms/step | ETA 861s
+    [ 13.4%] t=26164ms | phase=rl_training | 4.97ms/step | ETA 849s
+    [ 14.5%] t=28226ms | phase=rl_training | 4.96ms/step | ETA 837s
+    [ 15.5%] t=30244ms | phase=rl_training | 4.96ms/step | ETA 827s
+    [ 16.5%] t=32210ms | phase=rl_training | 4.97ms/step | ETA 819s
+    [ 17.6%] t=34320ms | phase=rl_training | 4.95ms/step | ETA 806s
+    [ 18.7%] t=36538ms | phase=rl_training | 4.93ms/step | ETA 791s
+    [ 19.9%] t=38798ms | phase=rl_training | 4.90ms/step | ETA 775s
+    [ 20.8%] t=40657ms | phase=rl_training | 4.92ms/step | ETA 769s
+    [ 21.9%] t=42639ms | phase=rl_training | 4.93ms/step | ETA 760s
+    [ 22.9%] t=44700ms | phase=rl_training | 4.92ms/step | ETA 750s
+    [ 23.9%] t=46688ms | phase=rl_training | 4.93ms/step | ETA 741s
+    [ 25.1%] t=48861ms | phase=rl_training | 4.91ms/step | ETA 728s
+    [ 26.2%] t=51139ms | phase=rl_training | 4.89ms/step | ETA 713s
+    [ 27.4%] t=53417ms | phase=rl_training | 4.87ms/step | ETA 699s
+    [ 28.5%] t=55523ms | phase=rl_training | 4.86ms/step | ETA 688s
+    [ 29.6%] t=57653ms | phase=rl_training | 4.86ms/step | ETA 677s
+    [ 30.7%] t=59938ms | phase=rl_training | 4.84ms/step | ETA 663s
+    [ 31.8%] t=62038ms | phase=rl_training | 4.84ms/step | ETA 653s
+    [ 32.8%] t=64048ms | phase=rl_training | 4.84ms/step | ETA 644s
+    [ 33.9%] t=66116ms | phase=rl_training | 4.84ms/step | ETA 634s
+    [ 35.0%] t=68175ms | phase=rl_training | 4.84ms/step | ETA 624s
+    [ 36.0%] t=70150ms | phase=rl_training | 4.85ms/step | ETA 615s
+    [ 37.0%] t=72191ms | phase=rl_training | 4.85ms/step | ETA 605s
+    [ 38.1%] t=74284ms | phase=rl_training | 4.85ms/step | ETA 595s
+    [ 39.2%] t=76433ms | phase=rl_training | 4.84ms/step | ETA 584s
+    [ 40.3%] t=78512ms | phase=rl_training | 4.84ms/step | ETA 574s
+    [ 41.3%] t=80576ms | phase=rl_training | 4.84ms/step | ETA 564s
+    [ 42.5%] t=82812ms | phase=rl_training | 4.83ms/step | ETA 552s
+    [ 43.5%] t=84833ms | phase=rl_training | 4.83ms/step | ETA 542s
+    [ 44.6%] t=86938ms | phase=rl_training | 4.83ms/step | ETA 532s
+    [ 45.7%] t=89047ms | phase=rl_training | 4.83ms/step | ETA 521s
+    [ 46.8%] t=91169ms | phase=rl_training | 4.83ms/step | ETA 511s
+    [ 47.8%] t=93287ms | phase=rl_training | 4.83ms/step | ETA 500s
+    [ 48.8%] t=95154ms | phase=rl_training | 4.84ms/step | ETA 492s
+    [ 49.8%] t=97126ms | phase=rl_training | 4.84ms/step | ETA 483s
+    [ 50.9%] t=99189ms | phase=rl_training | 4.84ms/step | ETA 473s
+    [ 51.7%] t=100862ms | phase=rl_training | 4.86ms/step | ETA 467s
+    [ 52.2%] t=101840ms | phase=rl_training | 4.91ms/step | ETA 467s
+    [ 52.7%] t=102828ms | phase=rl_training | 4.96ms/step | ETA 467s
+    [ 53.2%] t=103738ms | phase=rl_training | 5.01ms/step | ETA 468s
+    [ 54.1%] t=105400ms | phase=rl_training | 5.03ms/step | ETA 461s
+    [ 55.0%] t=107206ms | phase=rl_training | 5.04ms/step | ETA 452s
+    [ 55.9%] t=109050ms | phase=rl_training | 5.05ms/step | ETA 444s
+    [ 56.8%] t=110812ms | phase=rl_training | 5.06ms/step | ETA 436s
+    [ 57.9%] t=112830ms | phase=rl_training | 5.05ms/step | ETA 425s
+    [ 59.0%] t=114991ms | phase=rl_training | 5.05ms/step | ETA 414s
+    [ 60.0%] t=117011ms | phase=rl_training | 5.04ms/step | ETA 403s
+    [ 61.1%] t=119169ms | phase=rl_training | 5.04ms/step | ETA 392s
+    [ 62.2%] t=121234ms | phase=rl_training | 5.03ms/step | ETA 381s
+    [ 63.3%] t=123437ms | phase=rl_training | 5.02ms/step | ETA 370s
+    [ 64.5%] t=125687ms | phase=rl_training | 5.01ms/step | ETA 358s
+    [ 65.5%] t=127699ms | phase=rl_training | 5.01ms/step | ETA 347s
+    [ 66.5%] t=129732ms | phase=rl_training | 5.01ms/step | ETA 337s
+    [ 67.7%] t=132019ms | phase=rl_training | 5.00ms/step | ETA 325s
+    [ 68.9%] t=134322ms | phase=rl_training | 4.99ms/step | ETA 313s
+    [ 70.1%] t=136622ms | phase=rl_training | 4.98ms/step | ETA 301s
+    [ 71.1%] t=138740ms | phase=rl_training | 4.97ms/step | ETA 290s
+    [ 72.3%] t=140990ms | phase=rl_training | 4.97ms/step | ETA 278s
+    [ 73.5%] t=143301ms | phase=rl_training | 4.96ms/step | ETA 266s
+    [ 74.6%] t=145500ms | phase=rl_training | 4.95ms/step | ETA 255s
+    [ 75.8%] t=147785ms | phase=rl_training | 4.94ms/step | ETA 243s
+    [ 77.0%] t=150116ms | phase=rl_training | 4.93ms/step | ETA 231s
+    [ 78.2%] t=152418ms | phase=rl_training | 4.92ms/step | ETA 219s
+    [ 79.3%] t=154716ms | phase=rl_training | 4.91ms/step | ETA 208s
+    [ 80.5%] t=157025ms | phase=rl_training | 4.91ms/step | ETA 196s
+    [ 81.7%] t=159276ms | phase=rl_training | 4.90ms/step | ETA 185s
+    [ 82.7%] t=161205ms | phase=rl_training | 4.90ms/step | ETA 175s
+    [ 83.5%] t=162831ms | phase=rl_training | 4.91ms/step | ETA 168s
+    [ 84.5%] t=164760ms | phase=rl_training | 4.92ms/step | ETA 159s
+    [ 85.5%] t=166694ms | phase=rl_training | 4.92ms/step | ETA 149s
+    [ 86.5%] t=168678ms | phase=rl_training | 4.92ms/step | ETA 139s
+    [ 87.5%] t=170648ms | phase=rl_training | 4.92ms/step | ETA 130s
+    [ 88.4%] t=172315ms | phase=rl_training | 4.93ms/step | ETA 122s
+    [ 89.4%] t=174274ms | phase=rl_training | 4.94ms/step | ETA 112s
+    [ 90.4%] t=176203ms | phase=rl_training | 4.94ms/step | ETA 103s
+    [ 91.3%] t=178129ms | phase=rl_training | 4.94ms/step | ETA 93s
+    [ 92.3%] t=180006ms | phase=rl_training | 4.95ms/step | ETA 84s
+    [ 93.3%] t=181938ms | phase=rl_training | 4.95ms/step | ETA 75s
+    [ 94.4%] t=184067ms | phase=post_test | 4.95ms/step | ETA 64s
+    [ 95.6%] t=186385ms | phase=post_test | 4.94ms/step | ETA 52s
+    [ 96.8%] t=188838ms | phase=post_test | 4.93ms/step | ETA 40s
+    [ 98.2%] t=191506ms | phase=post_test | 4.91ms/step | ETA 27s
+    [ 99.6%] t=194278ms | phase=post_test | 4.89ms/step | ETA 13s
+
+    Experiment completed at step 195000 (195001 ms)
+
+    Wall time: 953.0s | Avg: 4.89 ms/step
+
+[5/5] Analyzing results...
+
+============================================================
+REINFORCEMENT LEARNING (R-STDP) RESULTS
+============================================================
+  Baseline response rate: 4.71 Hz
+  Target window: 8.0-30.0 Hz
+  Total trials: 299
+
+  Early trials (1-20):
+    Response rate: 4.92 ± 2.11 Hz
+    Success rate:  10%
+  Late trials (280-299):
+    Response rate: 4.98 ± 1.53 Hz
+    Success rate:  5%
+  Improvement:     -5% success rate
+
+  Post-test response: 5.32 ± 2.01 Hz
+  Post-test in target window: 0%
+
+  Learning detected: NO
+============================================================
+  Log saved to: research\findings\raw\pavlovian\pavlovian_reinforcement_seed43_n300.json
