@@ -946,11 +946,16 @@ def test_excitability_drive_per_neuron_scope_trait():
 
 def test_drift_regression_subsystem_off_unchanged():
     """With subsystem disabled (default), the locked tiny-seeded-sim spike
-    count from the drift detector must still be 170 +- 10. Verifies the
+    count from the drift detector must still be 149 +- 10. Verifies the
     new subsystem code paths are inactive when not enabled.
 
     Mirrors tests/test_benchmark_drift.test_tiny_seeded_sim_spike_count_in_range
     but asserts explicitly that neuromodulator_manager is None.
+
+    Locked at 149 from commit 5fc92c8 (2026-04-25). Was 170 before that
+    commit added 8 IZH2007 BG/thalamus/HC/DA presets, which expanded
+    `defined_izh2007_types` and shifted the trait-to-preset modulo math
+    in bridge.py:958. See research/findings/2026-04-25-rng-drift-from-izh-presets.md.
     """
     pytest.importorskip("cupy")
     from tests.test_benchmark_drift import _build_tiny_sim, _run_and_count
@@ -960,8 +965,8 @@ def test_drift_regression_subsystem_off_unchanged():
     assert sb.neuromodulator_manager is None
     total, _ = _run_and_count(sb, cfg, n_steps=200)
     sb.clear_simulation_state_and_gpu_memory()
-    assert 160 <= total <= 180, (
-        f"Drift detected: {total} spikes (expected 170 +- 10)"
+    assert 139 <= total <= 159, (
+        f"Drift detected: {total} spikes (expected 149 +- 10)"
     )
 
 
