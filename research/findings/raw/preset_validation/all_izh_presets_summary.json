@@ -1,0 +1,420 @@
+{
+  "currents_pA": [
+    0.0,
+    100.0,
+    300.0,
+    600.0,
+    1000.0,
+    2000.0
+  ],
+  "n_neurons": 5,
+  "presets": [
+    {
+      "preset": "IZH2007_RS_CORTICAL_PYRAMIDAL",
+      "rest_vm": -60.0,
+      "max_vm_seen": 34.975791931152344,
+      "spike_threshold_pA": 100.0,
+      "max_steady_rate": 200.0,
+      "fires_at_least_once": true,
+      "fi_curve": [
+        {
+          "current_pA": 0.0,
+          "rate_initial": 0.0,
+          "rate_steady": 0.0,
+          "n_spikes_total": 0,
+          "rest_vm": -60.0,
+          "max_vm": -60.0
+        },
+        {
+          "current_pA": 100.0,
+          "rate_initial": 10.0,
+          "rate_steady": 10.0,
+          "n_spikes_total": 30,
+          "rest_vm": -60.0,
+          "max_vm": 33.95111846923828
+        },
+        {
+          "current_pA": 300.0,
+          "rate_initial": 50.0,
+          "rate_steady": 50.0,
+          "n_spikes_total": 125,
+          "rest_vm": -60.0,
+          "max_vm": 34.36105728149414
+        },
+        {
+          "current_pA": 600.0,
+          "rate_initial": 90.0,
+          "rate_steady": 90.0,
+          "n_spikes_total": 225,
+          "rest_vm": -60.0,
+          "max_vm": 34.975791931152344
+        },
+        {
+          "current_pA": 1000.0,
+          "rate_initial": 130.0,
+          "rate_steady": 125.0,
+          "n_spikes_total": 315,
+          "rest_vm": -60.0,
+          "max_vm": 34.92781066894531
+        },
+        {
+          "current_pA": 2000.0,
+          "rate_initial": 210.0,
+          "rate_steady": 200.0,
+          "n_spikes_total": 505,
+          "rest_vm": -60.0,
+          "max_vm": 34.600704193115234
+        }
+      ]
+    },
+    {
+      "preset": "IZH2007_FS_CORTICAL_INTERNEURON",
+      "rest_vm": -55.0,
+      "max_vm_seen": 55.6177978515625,
+      "spike_threshold_pA": 100.0,
+      "max_steady_rate": 500.0,
+      "fires_at_least_once": true,
+      "fi_curve": [
+        {
+          "current_pA": 0.0,
+          "rate_initial": 0.0,
+          "rate_steady": 0.0,
+          "n_spikes_total": 0,
+          "rest_vm": -55.0,
+          "max_vm": -55.0
+        },
+        {
+          "current_pA": 100.0,
+          "rate_initial": 190.0,
+          "rate_steady": 200.0,
+          "n_spikes_total": 495,
+          "rest_vm": -55.0,
+          "max_vm": -1.7989978790283203
+        },
+        {
+          "current_pA": 300.0,
+          "rate_initial": 330.0,
+          "rate_steady": 335.0,
+          "n_spikes_total": 830,
+          "rest_vm": -55.0,
+          "max_vm": 12.799999237060547
+        },
+        {
+          "current_pA": 600.0,
+          "rate_initial": 500.0,
+          "rate_steady": 500.0,
+          "n_spikes_total": 1250,
+          "rest_vm": -55.0,
+          "max_vm": -18.149999618530273
+        },
+        {
+          "current_pA": 1000.0,
+          "rate_initial": 500.0,
+          "rate_steady": 500.0,
+          "n_spikes_total": 1250,
+          "rest_vm": -55.0,
+          "max_vm": 2.6766281127929688
+        },
+        {
+          "current_pA": 2000.0,
+          "rate_initial": 500.0,
+          "rate_steady": 500.0,
+          "n_spikes_total": 1250,
+          "rest_vm": -55.0,
+          "max_vm": 55.6177978515625
+        }
+      ]
+    },
+    {
+      "preset": "RS_EXCITATORY_LEGACY",
+      "rest_vm": -60.0,
+      "max_vm_seen": 34.975791931152344,
+      "spike_threshold_pA": 100.0,
+      "max_steady_rate": 200.0,
+      "fires_at_least_once": true,
+      "fi_curve": [
+        {
+          "current_pA": 0.0,
+          "rate_initial": 0.0,
+          "rate_steady": 0.0,
+          "n_spikes_total": 0,
+          "rest_vm": -60.0,
+          "max_vm": -60.0
+        },
+        {
+          "current_pA": 100.0,
+          "rate_initial": 10.0,
+          "rate_steady": 10.0,
+          "n_spikes_total": 30,
+          "rest_vm": -60.0,
+          "max_vm": 33.95111846923828
+        },
+        {
+          "current_pA": 300.0,
+          "rate_initial": 50.0,
+          "rate_steady": 50.0,
+          "n_spikes_total": 125,
+          "rest_vm": -60.0,
+          "max_vm": 34.36105728149414
+        },
+        {
+          "current_pA": 600.0,
+          "rate_initial": 90.0,
+          "rate_steady": 90.0,
+          "n_spikes_total": 225,
+          "rest_vm": -60.0,
+          "max_vm": 34.975791931152344
+        },
+        {
+          "current_pA": 1000.0,
+          "rate_initial": 130.0,
+          "rate_steady": 125.0,
+          "n_spikes_total": 315,
+          "rest_vm": -60.0,
+          "max_vm": 34.92781066894531
+        },
+        {
+          "current_pA": 2000.0,
+          "rate_initial": 210.0,
+          "rate_steady": 200.0,
+          "n_spikes_total": 505,
+          "rest_vm": -60.0,
+          "max_vm": 34.600704193115234
+        }
+      ]
+    },
+    {
+      "preset": "FS_INHIBITORY_LEGACY",
+      "rest_vm": -60.0,
+      "max_vm_seen": 34.975791931152344,
+      "spike_threshold_pA": 100.0,
+      "max_steady_rate": 200.0,
+      "fires_at_least_once": true,
+      "fi_curve": [
+        {
+          "current_pA": 0.0,
+          "rate_initial": 0.0,
+          "rate_steady": 0.0,
+          "n_spikes_total": 0,
+          "rest_vm": -60.0,
+          "max_vm": -60.0
+        },
+        {
+          "current_pA": 100.0,
+          "rate_initial": 10.0,
+          "rate_steady": 10.0,
+          "n_spikes_total": 30,
+          "rest_vm": -60.0,
+          "max_vm": 33.95111846923828
+        },
+        {
+          "current_pA": 300.0,
+          "rate_initial": 50.0,
+          "rate_steady": 50.0,
+          "n_spikes_total": 125,
+          "rest_vm": -60.0,
+          "max_vm": 34.36105728149414
+        },
+        {
+          "current_pA": 600.0,
+          "rate_initial": 90.0,
+          "rate_steady": 90.0,
+          "n_spikes_total": 225,
+          "rest_vm": -60.0,
+          "max_vm": 34.975791931152344
+        },
+        {
+          "current_pA": 1000.0,
+          "rate_initial": 130.0,
+          "rate_steady": 125.0,
+          "n_spikes_total": 315,
+          "rest_vm": -60.0,
+          "max_vm": 34.92781066894531
+        },
+        {
+          "current_pA": 2000.0,
+          "rate_initial": 210.0,
+          "rate_steady": 200.0,
+          "n_spikes_total": 505,
+          "rest_vm": -60.0,
+          "max_vm": 34.600704193115234
+        }
+      ]
+    },
+    {
+      "preset": "IB_EXCITATORY_LEGACY",
+      "rest_vm": -60.0,
+      "max_vm_seen": 34.975791931152344,
+      "spike_threshold_pA": 100.0,
+      "max_steady_rate": 200.0,
+      "fires_at_least_once": true,
+      "fi_curve": [
+        {
+          "current_pA": 0.0,
+          "rate_initial": 0.0,
+          "rate_steady": 0.0,
+          "n_spikes_total": 0,
+          "rest_vm": -60.0,
+          "max_vm": -60.0
+        },
+        {
+          "current_pA": 100.0,
+          "rate_initial": 10.0,
+          "rate_steady": 10.0,
+          "n_spikes_total": 30,
+          "rest_vm": -60.0,
+          "max_vm": 33.95111846923828
+        },
+        {
+          "current_pA": 300.0,
+          "rate_initial": 50.0,
+          "rate_steady": 50.0,
+          "n_spikes_total": 125,
+          "rest_vm": -60.0,
+          "max_vm": 34.36105728149414
+        },
+        {
+          "current_pA": 600.0,
+          "rate_initial": 90.0,
+          "rate_steady": 90.0,
+          "n_spikes_total": 225,
+          "rest_vm": -60.0,
+          "max_vm": 34.975791931152344
+        },
+        {
+          "current_pA": 1000.0,
+          "rate_initial": 130.0,
+          "rate_steady": 125.0,
+          "n_spikes_total": 315,
+          "rest_vm": -60.0,
+          "max_vm": 34.92781066894531
+        },
+        {
+          "current_pA": 2000.0,
+          "rate_initial": 210.0,
+          "rate_steady": 200.0,
+          "n_spikes_total": 505,
+          "rest_vm": -60.0,
+          "max_vm": 34.600704193115234
+        }
+      ]
+    },
+    {
+      "preset": "CH_EXCITATORY_LEGACY",
+      "rest_vm": -60.0,
+      "max_vm_seen": 34.975791931152344,
+      "spike_threshold_pA": 100.0,
+      "max_steady_rate": 200.0,
+      "fires_at_least_once": true,
+      "fi_curve": [
+        {
+          "current_pA": 0.0,
+          "rate_initial": 0.0,
+          "rate_steady": 0.0,
+          "n_spikes_total": 0,
+          "rest_vm": -60.0,
+          "max_vm": -60.0
+        },
+        {
+          "current_pA": 100.0,
+          "rate_initial": 10.0,
+          "rate_steady": 10.0,
+          "n_spikes_total": 30,
+          "rest_vm": -60.0,
+          "max_vm": 33.95111846923828
+        },
+        {
+          "current_pA": 300.0,
+          "rate_initial": 50.0,
+          "rate_steady": 50.0,
+          "n_spikes_total": 125,
+          "rest_vm": -60.0,
+          "max_vm": 34.36105728149414
+        },
+        {
+          "current_pA": 600.0,
+          "rate_initial": 90.0,
+          "rate_steady": 90.0,
+          "n_spikes_total": 225,
+          "rest_vm": -60.0,
+          "max_vm": 34.975791931152344
+        },
+        {
+          "current_pA": 1000.0,
+          "rate_initial": 130.0,
+          "rate_steady": 125.0,
+          "n_spikes_total": 315,
+          "rest_vm": -60.0,
+          "max_vm": 34.92781066894531
+        },
+        {
+          "current_pA": 2000.0,
+          "rate_initial": 210.0,
+          "rate_steady": 200.0,
+          "n_spikes_total": 505,
+          "rest_vm": -60.0,
+          "max_vm": 34.600704193115234
+        }
+      ]
+    },
+    {
+      "preset": "LTS_INHIBITORY_LEGACY",
+      "rest_vm": -60.0,
+      "max_vm_seen": 34.975791931152344,
+      "spike_threshold_pA": 100.0,
+      "max_steady_rate": 200.0,
+      "fires_at_least_once": true,
+      "fi_curve": [
+        {
+          "current_pA": 0.0,
+          "rate_initial": 0.0,
+          "rate_steady": 0.0,
+          "n_spikes_total": 0,
+          "rest_vm": -60.0,
+          "max_vm": -60.0
+        },
+        {
+          "current_pA": 100.0,
+          "rate_initial": 10.0,
+          "rate_steady": 10.0,
+          "n_spikes_total": 30,
+          "rest_vm": -60.0,
+          "max_vm": 33.95111846923828
+        },
+        {
+          "current_pA": 300.0,
+          "rate_initial": 50.0,
+          "rate_steady": 50.0,
+          "n_spikes_total": 125,
+          "rest_vm": -60.0,
+          "max_vm": 34.36105728149414
+        },
+        {
+          "current_pA": 600.0,
+          "rate_initial": 90.0,
+          "rate_steady": 90.0,
+          "n_spikes_total": 225,
+          "rest_vm": -60.0,
+          "max_vm": 34.975791931152344
+        },
+        {
+          "current_pA": 1000.0,
+          "rate_initial": 130.0,
+          "rate_steady": 125.0,
+          "n_spikes_total": 315,
+          "rest_vm": -60.0,
+          "max_vm": 34.92781066894531
+        },
+        {
+          "current_pA": 2000.0,
+          "rate_initial": 210.0,
+          "rate_steady": 200.0,
+          "n_spikes_total": 505,
+          "rest_vm": -60.0,
+          "max_vm": 34.600704193115234
+        }
+      ]
+    }
+  ],
+  "elapsed_sec": 31.297701120376587
+}
