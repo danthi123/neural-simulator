@@ -266,6 +266,14 @@ class SimulationBridge:
         # Eligibility trace for STDP/reward
         self.cp_eligibility_trace = None
 
+        # Neuromodulator subsystem (Session E.1, opt-in).
+        # When core_config.enable_neuromodulator_subsystem is True, this is
+        # populated by _initialize_simulation_data with a
+        # sim.neuromodulators.NeuromodulatorManager that owns per-modulator
+        # concentrations and applies receptor effects each step. Default
+        # None means legacy reward path is used unchanged.
+        self.neuromodulator_manager = None
+
         # Experiment & stimulus system
         self.experiment_engine = None
         self.experiment_config = None  # ExperimentConfig dataclass
@@ -450,6 +458,24 @@ class SimulationBridge:
             self.cp_eligibility_trace = cp.zeros(capacity, dtype=cp.float32)
         else:
             self.cp_eligibility_trace = None
+
+        # Neuromodulator subsystem (Session E.1, opt-in).
+        # When `enable_neuromodulator_subsystem` is True, allocate a
+        # NeuromodulatorManager per the user's `neuromodulators` configs.
+        # When False (default), legacy reward modulation path runs unchanged.
+        if getattr(cfg, "enable_neuromodulator_subsystem", False) and getattr(cfg, "neuromodulators", None):
+            from sim.neuromodulators import NeuromodulatorManager
+            self.neuromodulator_manager = NeuromodulatorManager(
+                cfg.neuromodulators, cfg.dt_ms,
+            )
+            self.neuromodulator_manager.initialize(cfg.num_neurons, cp)
+            self._log_console(
+                f"Initialized neuromodulator subsystem with "
+                f"{len(cfg.neuromodulators)} modulators: "
+                f"{self.neuromodulator_manager.modulator_names()}"
+            )
+        else:
+            self.neuromodulator_manager = None
 
         # Visualization arrays
         if OPENGL_AVAILABLE and num_synapses > 0:
@@ -3443,12 +3469,35 @@ class SimulationBridge:
                 stp_u_active = self.cp_stp_u[:actual_nnz]
                 stp_x_active = self.cp_stp_x[:actual_nnz]
                 effective_synaptic_strength = base_synaptic_weights * stp_u_active * stp_x_active
+
+                # Neuromodulator subsystem: scope=all synaptic_gain multiplier.
+                if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                        and self.neuromodulator_manager is not None):
+                    nm_gain = self.neuromodulator_manager.compute_synaptic_gain_multiplier()
+                    if abs(nm_gain - 1.0) > 1e-9:
+                        effective_synaptic_strength = effective_synaptic_strength * nm_gain
+
                 effective_connections_matrix = csp.csr_matrix(
                     (effective_synaptic_strength, self.cp_connections.indices, self.cp_connections.indptr),
                     shape=self.cp_connections.shape
                 )
-            else: 
-                effective_connections_matrix = self.cp_connections 
+            else:
+                # No STP, no neuromod: use connections as-is.
+                # If neuromod synaptic_gain is active, build a scaled matrix.
+                if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                        and self.neuromodulator_manager is not None):
+                    nm_gain = self.neuromodulator_manager.compute_synaptic_gain_multiplier()
+                    if abs(nm_gain - 1.0) > 1e-9:
+                        actual_nnz = self.cp_connections.nnz
+                        scaled_data = self.cp_connections.data[:actual_nnz] * nm_gain
+                        effective_connections_matrix = csp.csr_matrix(
+                            (scaled_data, self.cp_connections.indices, self.cp_connections.indptr),
+                            shape=self.cp_connections.shape,
+                        )
+                    else:
+                        effective_connections_matrix = self.cp_connections
+                else:
+                    effective_connections_matrix = self.cp_connections
 
             if _profiling: cp.cuda.Device().synchronize(); _prof['t_stp'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 2. Synaptic Conductance Update & Current Calculation ---
@@ -3491,6 +3540,18 @@ class SimulationBridge:
                     self.cp_conductance_g_e += g_e_increase
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
+
+            # Neuromodulator excitability_drive (additive pA, scope=all + per-neuron).
+            if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                    and self.neuromodulator_manager is not None):
+                nm_scalar_drive = self.neuromodulator_manager.compute_excitability_drive_pA()
+                if abs(nm_scalar_drive) > 1e-9:
+                    total_input_current_pA = total_input_current_pA + cp.float32(nm_scalar_drive)
+                nm_per_neuron_drive = self.neuromodulator_manager.compute_excitability_drive_per_neuron(
+                    cp_traits=self.cp_traits,
+                )
+                if nm_per_neuron_drive is not None:
+                    total_input_current_pA = total_input_current_pA + nm_per_neuron_drive
 
             # --- 2.2b. Experiment Stimulus Injection ---
             if self.experiment_engine is not None and self.experiment_engine.is_experiment_running:
@@ -3871,12 +3932,21 @@ class SimulationBridge:
                 # Apply reward modulation if reward signal is non-zero
                 reward_prediction_error = cfg.current_reward_signal - cfg.reward_baseline
                 if abs(reward_prediction_error) > 1e-6:  # Only update if there's a reward signal
+                    # Effective lr is reward_learning_rate × neuromod plasticity_rate
+                    # multiplier (subsystem off → multiplier 1.0, no change).
+                    effective_reward_lr = cfg.reward_learning_rate
+                    if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                            and self.neuromodulator_manager is not None):
+                        effective_reward_lr *= (
+                            self.neuromodulator_manager.compute_plasticity_rate_multiplier()
+                        )
+
                     # Modulate weights based on eligibility trace and reward
                     # Delta_w = learning_rate * reward_error * eligibility_trace
                     # Slice eligibility trace to match actual synapse count (trace array
                     # is pre-allocated to capacity which may exceed cp_connections.nnz).
                     actual_nnz = self.cp_connections.nnz
-                    weight_updates = cfg.reward_learning_rate * reward_prediction_error * self.cp_eligibility_trace[:actual_nnz]
+                    weight_updates = effective_reward_lr * reward_prediction_error * self.cp_eligibility_trace[:actual_nnz]
                     self.cp_connections.data += weight_updates
                     
                     # Clip to bounds (use STDP bounds if STDP is enabled, otherwise Hebbian bounds)
@@ -3888,7 +3958,17 @@ class SimulationBridge:
                     significant_updates = cp.sum(cp.abs(weight_updates) > 1e-6)
                     if significant_updates > 0:
                         self._mock_total_plasticity_events += int(significant_updates.get())
-            
+
+            # --- 4c2. Neuromodulator subsystem update (Session E.1, opt-in) ---
+            # Run AFTER reward modulation so this step's reward signal has
+            # been consumed by the legacy path AND has produced its effect on
+            # neuromodulator concentrations. The neuromodulator effects on
+            # synaptic gain / plasticity rate / excitability are then applied
+            # in the next step (since concentrations now reflect this step).
+            if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                    and self.neuromodulator_manager is not None):
+                self.neuromodulator_manager.step(self)
+
             # --- 4d. C3: Structural Plasticity (Synapse Formation/Elimination) ---
             # Freeze structural plasticity during experiments: synaptogenesis operates on
             # hours-to-days timescales in vivo (Holtmaat & Svoboda 2009). In a 50-second

@@ -183,6 +183,54 @@ training protocols, readout/analysis, and multi-phase experiment orchestration.
 pytest tests/test_experiment_system.py -v
 ```
 
+### Neuromodulator Subsystem (Session E.1, opt-in)
+
+Declarative framework for hormones / neuromodulators with concentration
+dynamics and configurable receptor effects on bridge state. Replaces
+the one-off `current_reward_signal` and shelved `cp_synaptic_gain_modulator`
+mechanisms. Default OFF for full backward compatibility.
+
+**Module:** `sim/neuromodulators.py`
+
+**Config (in `CoreSimConfig`):**
+- `enable_neuromodulator_subsystem: bool = False` — opt-in flag
+- `neuromodulators: List[NeuromodulatorConfig]` — list of declared modulators
+
+**Three dataclasses:**
+- `NeuromodulatorConfig(name, baseline, decay_tau_ms, concentration_min/max, targets, production_rules)`
+- `ModulatorTarget(target_type, scope, sensitivity)` — receptor effect spec
+- `ProductionRule(rule_type, sensitivity, threshold, window_ms)` — what drives concentration
+
+**Built-in target types:**
+- `synaptic_gain` — multiplies effective synaptic strength (scope=all only)
+- `plasticity_rate` — multiplies reward_learning_rate (scope=all)
+- `excitability_drive` — adds pA to membrane drive (scope=all, trait:N, group:NAME)
+
+**Built-in production rules:**
+- `manual` — only set externally (testing, experiments)
+- `from_reward` — adds sensitivity*(current_reward_signal - reward_baseline) per step
+- `from_error_persistence` — EMA of |error| > threshold drives sustained tonic increase
+
+**Bridge integration:**
+- Manager allocated in `_init_synapse_arrays_with_capacity` when subsystem enabled
+- `manager.step(self)` called once per simulation step after C2 reward modulation
+- `compute_synaptic_gain_multiplier()` applied in `effective_synaptic_strength`
+- `compute_plasticity_rate_multiplier()` applied to `reward_learning_rate`
+- `compute_excitability_drive_pA()` + `compute_excitability_drive_per_neuron()` added to `total_input_current_pA`
+
+**Group registration:**
+Runners that want `scope="group:NAME"` targets must call
+`bridge.neuromodulator_manager.set_group_indices({name: indices})`
+after the engine groups are known. G9 runner does this automatically
+for the standard input/hidden/motor groups.
+
+**Plan:** `docs/plans/2026-04-24-neuromodulator-subsystem.md`
+
+**Running tests:**
+```bash
+pytest tests/test_neuromodulators.py -v
+```
+
 ## File Formats
 
 | Format | Extension | Purpose |
