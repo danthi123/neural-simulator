@@ -378,3 +378,225 @@ def test_from_error_persistence_responds_to_positive_or_negative_error():
     assert pos > 0.1
     assert neg > 0.1
     assert abs(pos - neg) < 0.1
+
+
+# ---------- Task 6: synaptic_gain target multiplier ----------
+
+
+def test_synaptic_gain_multiplier_when_concentration_at_baseline():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="da",
+        baseline=0.0,
+        targets=[ModulatorTarget(target_type="synaptic_gain", scope="all", sensitivity=1.0)],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    # Concentration at baseline -> multiplier == 1.0
+    assert mgr.compute_synaptic_gain_multiplier() == 1.0
+
+
+def test_synaptic_gain_multiplier_with_concentration_above_baseline():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="da",
+        baseline=0.0,
+        targets=[ModulatorTarget(target_type="synaptic_gain", scope="all", sensitivity=0.5)],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    mgr.set_concentration("da", 1.0)
+    # 1.0 + 0.5 * (1.0 - 0.0) = 1.5
+    assert abs(mgr.compute_synaptic_gain_multiplier() - 1.5) < 1e-6
+
+
+def test_synaptic_gain_returns_one_when_no_targets():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import NeuromodulatorManager
+
+    mgr = NeuromodulatorManager([], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    assert mgr.compute_synaptic_gain_multiplier() == 1.0
+
+
+def test_synaptic_gain_multiplier_clamped_at_zero():
+    """Negative concentration shouldn't make multiplier negative (transmission
+    can't be reversed). It should clamp at 0.
+    """
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="da",
+        baseline=1.0,
+        concentration_min=-2.0,  # allow negatives just for this test
+        targets=[ModulatorTarget(target_type="synaptic_gain", scope="all", sensitivity=2.0)],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    mgr.set_concentration("da", -2.0)
+    # 1 + 2 * (-2 - 1) = 1 - 6 = -5 -> clamped to 0
+    assert mgr.compute_synaptic_gain_multiplier() == 0.0
+
+
+# ---------- Task 7: plasticity_rate target multiplier ----------
+
+
+def test_plasticity_rate_multiplier_with_concentration():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="da",
+        baseline=0.0,
+        targets=[ModulatorTarget(target_type="plasticity_rate", scope="all", sensitivity=2.0)],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    mgr.set_concentration("da", 0.5)
+    # 1 + 2 * 0.5 = 2.0
+    assert abs(mgr.compute_plasticity_rate_multiplier() - 2.0) < 1e-6
+
+
+def test_plasticity_rate_multiplier_default_is_one():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import NeuromodulatorManager
+
+    mgr = NeuromodulatorManager([], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    assert mgr.compute_plasticity_rate_multiplier() == 1.0
+
+
+# ---------- Task 8: excitability_drive target ----------
+
+
+def test_excitability_drive_scalar_scope_all():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="ne",
+        baseline=0.1,
+        targets=[ModulatorTarget(target_type="excitability_drive", scope="all", sensitivity=50.0)],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    mgr.set_concentration("ne", 0.4)
+    # 50 * (0.4 - 0.1) = 15 pA
+    assert abs(mgr.compute_excitability_drive_pA() - 15.0) < 1e-6
+
+
+def test_excitability_drive_per_neuron_with_trait_scope():
+    pytest.importorskip("cupy")
+    import cupy as cp
+    import numpy as np
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="ne",
+        baseline=0.0,
+        targets=[ModulatorTarget(target_type="excitability_drive", scope="trait:1", sensitivity=10.0)],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=4, cp_module=cp)
+    mgr.set_concentration("ne", 1.0)
+
+    traits = cp.asarray([0, 1, 1, 0], dtype=cp.int32)
+    drive = mgr.compute_excitability_drive_per_neuron(cp_traits=traits)
+    drive_np = cp.asnumpy(drive)
+    # Effect = 10.0 * (1.0 - 0.0) = 10.0 on neurons with trait==1.
+    expected = np.array([0.0, 10.0, 10.0, 0.0], dtype=np.float32)
+    assert np.allclose(drive_np, expected, atol=1e-5)
+
+
+def test_excitability_drive_per_neuron_with_group_scope():
+    pytest.importorskip("cupy")
+    import cupy as cp
+    import numpy as np
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="ne",
+        baseline=0.0,
+        targets=[ModulatorTarget(target_type="excitability_drive", scope="group:motor", sensitivity=20.0)],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=6, cp_module=cp)
+    mgr.set_group_indices({"motor": [3, 5]})
+    mgr.set_concentration("ne", 0.5)
+
+    drive = mgr.compute_excitability_drive_per_neuron()
+    drive_np = cp.asnumpy(drive)
+    # 20 * 0.5 = 10 on neurons 3 and 5
+    expected = np.array([0.0, 0.0, 0.0, 10.0, 0.0, 10.0], dtype=np.float32)
+    assert np.allclose(drive_np, expected, atol=1e-5)
+
+
+def test_excitability_drive_per_neuron_returns_none_if_no_per_neuron_targets():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="ne",
+        baseline=0.0,
+        targets=[ModulatorTarget(target_type="excitability_drive", scope="all", sensitivity=10.0)],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=4, cp_module=cp)
+    mgr.set_concentration("ne", 1.0)
+    # Only scope=all targets, no per-neuron arrays needed
+    assert mgr.compute_excitability_drive_per_neuron() is None

@@ -180,6 +180,131 @@ class NeuromodulatorManager:
             conc = max(cfg.concentration_min, min(cfg.concentration_max, conc))
             self._concentrations[cfg.name] = conc
 
+    # ----- Group registration (for scope="group:NAME" targets) -----
+
+    def set_group_indices(self, group_dict: dict) -> None:
+        """Register neuron groups so target scopes like 'group:motor' work.
+
+        group_dict: {group_name: list_of_int_indices}.
+        """
+        self._group_indices = {
+            str(name): [int(i) for i in indices]
+            for name, indices in group_dict.items()
+        }
+
+    # ----- Effect computation -----
+
+    def compute_synaptic_gain_multiplier(self) -> float:
+        """Aggregate synaptic_gain effects across all modulators (scope=all).
+
+        Per-trait / per-group / per-synapse scoping is not supported on this
+        path -- callers needing those should compute per-synapse effects
+        explicitly. Returns a non-negative scalar; clamped at 0 so transmission
+        cannot be reversed by extreme negative concentrations.
+
+        Effect formula per modulator: 1 + sensitivity * (conc - baseline).
+        Multiplicative across modulators.
+        """
+        multiplier = 1.0
+        for cfg in self._configs:
+            for tgt in cfg.targets:
+                if tgt.target_type != "synaptic_gain":
+                    continue
+                if tgt.scope != "all":
+                    continue
+                conc = self._concentrations[cfg.name]
+                multiplier *= 1.0 + tgt.sensitivity * (conc - cfg.baseline)
+        return float(max(0.0, multiplier))
+
+    def compute_plasticity_rate_multiplier(self) -> float:
+        """Aggregate plasticity_rate effects across all modulators (scope=all).
+
+        Returns a non-negative scalar to multiply STDP amplitudes / reward
+        learning rate. Same formula as synaptic_gain.
+        """
+        multiplier = 1.0
+        for cfg in self._configs:
+            for tgt in cfg.targets:
+                if tgt.target_type != "plasticity_rate":
+                    continue
+                if tgt.scope != "all":
+                    continue
+                conc = self._concentrations[cfg.name]
+                multiplier *= 1.0 + tgt.sensitivity * (conc - cfg.baseline)
+        return float(max(0.0, multiplier))
+
+    def compute_excitability_drive_pA(self) -> float:
+        """Scalar additive drive (pA) from all scope=all excitability_drive targets.
+
+        Sum across modulators, additive (not multiplicative).
+        """
+        drive = 0.0
+        for cfg in self._configs:
+            for tgt in cfg.targets:
+                if tgt.target_type != "excitability_drive":
+                    continue
+                if tgt.scope != "all":
+                    continue
+                conc = self._concentrations[cfg.name]
+                drive += tgt.sensitivity * (conc - cfg.baseline)
+        return float(drive)
+
+    def compute_excitability_drive_per_neuron(self, cp_traits=None):
+        """Per-neuron additive drive array, honoring trait:N and group:NAME scopes.
+
+        Returns:
+            None if no per-neuron-scoped excitability_drive targets exist
+            (caller can skip applying it).
+            Otherwise, a cupy float32 array of shape (n_neurons,) summing
+            contributions from all matching targets.
+        """
+        if self._cp is None:
+            return None
+        cp = self._cp
+
+        drive = None  # Allocate lazily
+        for cfg in self._configs:
+            for tgt in cfg.targets:
+                if tgt.target_type != "excitability_drive":
+                    continue
+                if tgt.scope == "all":
+                    continue  # handled by compute_excitability_drive_pA
+                conc = self._concentrations[cfg.name]
+                value = float(tgt.sensitivity * (conc - cfg.baseline))
+                if abs(value) < 1e-12:
+                    continue
+
+                if drive is None:
+                    drive = cp.zeros(self._n_neurons, dtype=cp.float32)
+
+                if tgt.scope.startswith("trait:") and cp_traits is not None:
+                    try:
+                        idx = int(tgt.scope.split(":", 1)[1])
+                    except ValueError:
+                        continue
+                    drive = drive + cp.where(
+                        cp_traits == idx,
+                        cp.float32(value),
+                        cp.float32(0.0),
+                    )
+                elif tgt.scope.startswith("group:"):
+                    gname = tgt.scope.split(":", 1)[1]
+                    indices = self._group_indices.get(gname)
+                    if not indices:
+                        continue
+                    idx_arr = cp.asarray(indices, dtype=cp.int32)
+                    mask = cp.zeros(self._n_neurons, dtype=cp.bool_)
+                    mask[idx_arr] = True
+                    drive = drive + cp.where(
+                        mask,
+                        cp.float32(value),
+                        cp.float32(0.0),
+                    )
+
+        return drive
+
+    # ----- Production rule helpers -----
+
     def _compute_production(self, rule: ProductionRule,
                              cfg: NeuromodulatorConfig, bridge) -> float:
         """Compute production contribution for one rule.
