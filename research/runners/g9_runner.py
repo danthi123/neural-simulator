@@ -279,6 +279,10 @@ def run_g9_episode(
                                         # Preferred replacement for enable_neuromod_gating.
                                         # When non-empty, the bridge runs the
                                         # full neuromodulator subsystem.
+    n_hidden_exc=160,                   # Route C (E.2.5): reservoir size knobs.
+    n_hidden_inh=40,                    # Default 200 hidden total (G9 baseline).
+    hidden_to_hidden_density=0.1,       # Tighten when scaling to 5000+ neurons
+    input_to_hidden_density=0.5,        # so synapse count stays tractable.
     eval_random_starts=0,               # Session D.A.3: number of random-start
                                         # eval episodes to run AFTER training.
                                         # 0 = no eval (backward compat).
@@ -312,6 +316,10 @@ def run_g9_episode(
         neuromod_tau_ms=neuromod_tau_ms,
         neuromod_strength=neuromod_strength,
         nm_configs=nm_configs,
+        n_hidden_exc=n_hidden_exc,
+        n_hidden_inh=n_hidden_inh,
+        hidden_to_hidden_density=hidden_to_hidden_density,
+        input_to_hidden_density=input_to_hidden_density,
     )
     bridge = SimulationBridge(
         core_config=core_cfg, viz_config=VisualizationConfig(),

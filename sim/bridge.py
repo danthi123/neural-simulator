@@ -1109,11 +1109,23 @@ class SimulationBridge:
                         self.cp_connections = self._generate_motif_connections_3d(n, self.cp_neuron_positions_3d, self.cp_traits, cfg, motif_name)
                     elif cfg.enable_watts_strogatz:
                         self.cp_connections = self._generate_watts_strogatz_connections_3d(n, cfg.connectivity_k, cfg.connectivity_p_rewire, cfg)
+                    elif cfg.connections_per_neuron == 0:
+                        # Explicit "no connections" signal — caller plans to use
+                        # inject_explicit_wiring afterwards (G9 runners since
+                        # Session B). Skip the legacy spatial generator (which
+                        # has a known bug at large N when called with cpn=0)
+                        # and start with an empty CSR.
+                        self.cp_connections = csp.csr_matrix((n, n), dtype=cp.float32)
                     else:
                         self.cp_connections = self._generate_spatial_connections_3d(n, cfg.connections_per_neuron, self.cp_neuron_positions_3d, self.cp_traits, cfg)
-                
-                # Defensive fallback: if no synapses were generated, fall back to spatial generator
-                if self.cp_connections is None or (hasattr(self.cp_connections, 'nnz') and self.cp_connections.nnz == 0 and n > 1):
+
+                # Defensive fallback: if no synapses were generated, fall back
+                # to spatial generator. SKIP this fallback when caller explicitly
+                # set connections_per_neuron=0 (they plan to inject wiring).
+                if cfg.connections_per_neuron != 0 and (
+                    self.cp_connections is None
+                    or (hasattr(self.cp_connections, 'nnz') and self.cp_connections.nnz == 0 and n > 1)
+                ):
                     self._log_console(
                         f"No synapses generated for profile '{profile_name_for_conn}' (motif={motif_name}). Falling back to spatial generator.",
                         "warning",
