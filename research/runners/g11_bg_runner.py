@@ -279,7 +279,7 @@ def run_moving_goal_episode(
     start_pos=(1, 1),
     goal_pos=(6, 6),
     goal_schedule=None,
-    learning_rate: float = 0.0,  # Default 0 — start with no plasticity to verify cascade stability
+    learning_rate: float = 0.01,
     reward_eligibility_tau_ms: float = 500.0,
     reward_hold_steps: int = 10,
     verbose: bool = True,
@@ -393,9 +393,6 @@ def run_moving_goal_episode(
               f"{cfg.num_neurons} neurons, {bridge.cp_connections.nnz} synapses",
               flush=True)
 
-    # DEBUG: track cascade state across trials
-    debug_steps = [0, 1, 2, 5]
-
     t0 = time.time()
     for step in range(n_steps):
         # Goal change
@@ -434,18 +431,6 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = cp.float32(800.0)
         if gx < x:
             bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = cp.float32(800.0)
-
-        # DEBUG: snapshot pre-stim state
-        if step in debug_steps:
-            ext_n = float(bridge.cp_external_input_current[region_indices_cp["cortex_N"]].sum().get())
-            ext_e = float(bridge.cp_external_input_current[region_indices_cp["cortex_E"]].sum().get())
-            ext_s = float(bridge.cp_external_input_current[region_indices_cp["cortex_S"]].sum().get())
-            ext_w = float(bridge.cp_external_input_current[region_indices_cp["cortex_W"]].sum().get())
-            vm_str_d1_e = float(bridge.cp_membrane_potential_v[region_indices_cp["str_D1_E"]].mean().get())
-            vm_motor_e = float(bridge.cp_membrane_potential_v[region_indices_cp["motor_E"]].mean().get())
-            print(f"DEBUG step {step} pos=({x},{y}) goal=({gx},{gy}): "
-                  f"cortex_drives N={ext_n:.0f}/E={ext_e:.0f}/S={ext_s:.0f}/W={ext_w:.0f}, "
-                  f"Vm_str_D1_E={vm_str_d1_e:.2f}, Vm_motor_E={vm_motor_e:.2f}", flush=True)
 
         # Run stimulus window and tally motor spikes
         motor_counts = {a: 0 for a in ACTION_NAMES}
