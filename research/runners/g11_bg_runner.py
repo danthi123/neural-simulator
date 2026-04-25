@@ -2,7 +2,7 @@
 
 Phase B follow-up to the silent-motor trap arc (Sessions G/H/I, all NEGATIVE).
 The trap was diagnosed (V6) as a *reservoir-state bias problem* — random
-hidden→motor weights on a shared reservoir naturally favor whichever motor
+hidden->motor weights on a shared reservoir naturally favor whichever motor
 the input pattern happens to align with. Argmax + reservoir bias = lock-in.
 
 Phase B fix (architectural): replace the shared-reservoir + argmax-readout
@@ -12,16 +12,16 @@ inhibition between motor populations provides structural winner-take-all
 (no shared spike count to bias).
 
 Architecture:
-    cortex ─→ str_D1[N,E,S,W]    str_D2[N,E,S,W]
+    cortex ─-> str_D1[N,E,S,W]    str_D2[N,E,S,W]
                   │                     │
               direct path          indirect path
-                  ↓                     ↓
-              GPi[N,E,S,W] ←── STN ←── GPe[N,E,S,W]
+                  v                     v
+              GPi[N,E,S,W] <-── STN <-── GPe[N,E,S,W]
                   │
-                  ↓ (disinhibition)
+                  v (disinhibition)
               thal[N,E,S,W]
                   │
-                  ↓
+                  v
               motor[N,E,S,W]   (lateral inhibition between)
 
 DA modulation: VTA/SNc DA neurons project to all striatal pools. DA enhances
@@ -170,7 +170,7 @@ def build_bg_brain_regions(
 
     # ---- Pathways (cross-region projections) ----
 
-    # Cortex → striatum (this is the LEARNING site under cortico-striatal plasticity)
+    # Cortex -> striatum (this is the LEARNING site under cortico-striatal plasticity)
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
             from_region="cortex", to_region=f"str_D1_{action}",
@@ -181,14 +181,14 @@ def build_bg_brain_regions(
             density=0.4, weight_mean=0.5, weight_jitter=0.2, plastic=True,
         ))
 
-    # Direct pathway: D1 → GPi (inhibitory)
+    # Direct pathway: D1 -> GPi (inhibitory)
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
             from_region=f"str_D1_{action}", to_region=f"gpi_{action}",
             density=0.6, weight_mean=2.5, weight_jitter=0.2, plastic=False,
         ))
 
-    # Indirect pathway: D2 → GPe → STN → GPi
+    # Indirect pathway: D2 -> GPe -> STN -> GPi
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
             from_region=f"str_D2_{action}", to_region=f"gpe_{action}",
@@ -199,7 +199,7 @@ def build_bg_brain_regions(
             density=0.3, weight_mean=1.5, weight_jitter=0.2, plastic=False,
         ))
 
-    # STN → all GPi (diffuse excitation; this is the "hyperdirect"-like
+    # STN -> all GPi (diffuse excitation; this is the "hyperdirect"-like
     # contribution that biases against premature action selection)
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
@@ -207,7 +207,7 @@ def build_bg_brain_regions(
             density=0.4, weight_mean=1.0, weight_jitter=0.2, plastic=False,
         ))
 
-    # GPi → thalamus (inhibitory; tonic suppression at rest, released by
+    # GPi -> thalamus (inhibitory; tonic suppression at rest, released by
     # striatal D1 firing, "opens the gate" for the corresponding action)
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
@@ -215,7 +215,7 @@ def build_bg_brain_regions(
             density=0.6, weight_mean=2.5, weight_jitter=0.2, plastic=False,
         ))
 
-    # Thalamus → motor cortex (excitatory)
+    # Thalamus -> motor cortex (excitatory)
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
             from_region=f"thal_{action}", to_region=f"motor_{action}",
@@ -239,7 +239,10 @@ def build_bg_brain_regions(
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true",
-                    help="Smoke test: build + 30 steps + verify no crashes")
+                    help="Smoke test: build + 50 steps at rest")
+    ap.add_argument("--probe-action", type=str, default=None,
+                    choices=ACTION_NAMES,
+                    help="Drive cortex toward this action and measure motor output")
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
 
@@ -296,7 +299,7 @@ def main():
     print(f"  Total neurons: {cfg.num_neurons}")
     print(f"  Total synapses: {bridge.cp_connections.nnz}")
 
-    if not args.smoke:
+    if not args.smoke and not args.probe_action:
         return 0
 
     # Quick 30-step smoke run with no input — should show GPe/GPi tonic firing
@@ -323,6 +326,78 @@ def main():
 
     print(f"\n  Smoke test PASSED — {len(regions)} regions, "
           f"{bridge.cp_connections.nnz} synapses initialized cleanly.")
+
+    # ---- Phase B.T4 / T5: action selection probe ----
+    if args.probe_action:
+        print(f"\n{'='*72}")
+        print(f"  Action selection probe: drive cortex -> {args.probe_action} pathway")
+        print(f"{'='*72}\n", flush=True)
+
+        # Inject strong current into a SUBSET of cortex neurons. The cortex->D1/D2
+        # weights are random — so the input pattern preferentially activates
+        # whichever D1/D2 happens to have stronger weights from these inputs.
+        # For a clean probe, manually override: inject ONLY into cortex neurons
+        # whose hash maps to the target action.
+        cortex_idx = list(bridge.region_manager.indices("cortex"))
+        # Drive a deterministic SUBSET of cortex matching the probe action
+        a_idx = ACTION_NAMES.index(args.probe_action)
+        per_action_size = len(cortex_idx) // N_ACTIONS
+        target_cortex = cortex_idx[a_idx * per_action_size:(a_idx + 1) * per_action_size]
+        target_cortex_cp = cp.asarray(target_cortex, dtype=cp.int64)
+
+        # Reset state
+        bridge.cp_external_input_current[:] = 0.0
+        # Fix Vm to reset since the override may have changed it
+        bridge.runtime_state.current_time_step = 0
+        bridge.runtime_state.current_time_ms = 0.0
+
+        # Inject strong drive only to target cortex subset for 200ms
+        drive_pA = 600.0  # well above Izh RS rheobase ~100 pA
+        spike_counts = np.zeros(cfg.num_neurons, dtype=np.int32)
+        for s in range(200):
+            bridge.cp_external_input_current[target_cortex_cp] = cp.float32(drive_pA)
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+            bridge.runtime_state.current_time_ms = bridge.runtime_state.current_time_step * cfg.dt_ms
+            firing = bridge.cp_firing_states.get().astype(np.int32)
+            spike_counts += firing
+
+        # Per-region firing rate
+        print(f"  Driving {len(target_cortex)}/{len(cortex_idx)} cortex neurons "
+              f"with {drive_pA} pA for 200ms")
+        print(f"\n  Per-region firing rates over 200ms:")
+        ordered_groups = ["cortex"]
+        for a in ACTION_NAMES:
+            ordered_groups += [f"str_D1_{a}", f"str_D2_{a}", f"gpe_{a}",
+                                f"gpi_{a}", f"thal_{a}", f"motor_{a}"]
+        ordered_groups += ["stn", "dopamine"]
+        for region_name in ordered_groups:
+            r = next((reg for reg in regions if reg.name == region_name), None)
+            if r is None:
+                continue
+            idx = bridge.region_manager.indices(r.name)
+            if not idx:
+                continue
+            rate_hz = spike_counts[list(idx)].sum() / r.n_neurons / 0.2
+            marker = " <-" if (region_name.endswith(f"_{args.probe_action}") and
+                              region_name.startswith(("str_D1_", "thal_", "motor_"))) else ""
+            print(f"    {r.name:<15s} {rate_hz:>6.1f} Hz{marker}")
+
+        # Quick check: did the right motor pop fire most?
+        motor_rates = {}
+        for a in ACTION_NAMES:
+            idx = bridge.region_manager.indices(f"motor_{a}")
+            n = len(idx)
+            r = spike_counts[list(idx)].sum() / max(n, 1) / 0.2
+            motor_rates[a] = r
+        winner = max(motor_rates, key=motor_rates.get)
+        print(f"\n  Motor rates: {motor_rates}")
+        print(f"  Winner: {winner}  (target: {args.probe_action})")
+        if winner == args.probe_action and motor_rates[winner] > 5:
+            print(f"  [OK] BG circuit selected the correct motor")
+        else:
+            print(f"  -> BG circuit did not produce a clean winner (rates may be too low/noisy)")
+
     return 0
 
 
