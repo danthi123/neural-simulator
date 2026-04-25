@@ -154,3 +154,103 @@ def test_concentration_clipped_to_min_max():
     mgr.set_concentration("da", 100.0)  # absurdly high, should clip to max
     mgr.step(bridge=None)
     assert mgr.get_concentration("da") <= 2.0
+
+
+# ---------- Task 4: from_reward production rule ----------
+
+
+class _FakeBridge:
+    """Minimal bridge stub for production-rule unit tests."""
+
+    class _Cfg:
+        current_reward_signal = 0.0
+        reward_baseline = 0.0
+
+    def __init__(self):
+        self.core_config = self._Cfg()
+
+
+def test_from_reward_rule_pulses_dopamine_on_positive_reward():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="dopamine",
+        baseline=0.0,
+        decay_tau_ms=500.0,
+        production_rules=[ProductionRule(rule_type="from_reward", sensitivity=1.0)],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    bridge = _FakeBridge()
+
+    bridge.core_config.current_reward_signal = 1.0
+    mgr.step(bridge)
+    # 1.0 added (sensitivity * (1 - 0)), tiny decay -> ~0.998
+    assert mgr.get_concentration("dopamine") > 0.5
+
+    bridge.core_config.current_reward_signal = 0.0
+    for _ in range(2000):
+        mgr.step(bridge)
+    assert mgr.get_concentration("dopamine") < 0.05
+
+
+def test_from_reward_rule_negative_reward_reduces_below_baseline():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="dopamine",
+        baseline=0.5,
+        decay_tau_ms=500.0,
+        concentration_min=0.0,
+        concentration_max=5.0,
+        production_rules=[ProductionRule(rule_type="from_reward", sensitivity=1.0)],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    bridge = _FakeBridge()
+
+    # Sustained negative reward, dopamine drops below baseline (clipped at 0)
+    bridge.core_config.current_reward_signal = -0.5
+    for _ in range(500):
+        mgr.step(bridge)
+    # With baseline 0.5 and sustained -0.5 reward production, equilibrium
+    # is below 0.5 (suppressed dopamine). Verify it's below baseline but
+    # not below the clip floor.
+    assert 0.0 <= mgr.get_concentration("dopamine") < 0.5
+
+
+def test_from_reward_rule_ignores_missing_bridge_config():
+    """When bridge has no core_config, rule produces 0 (no-op, no crash)."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="dopamine",
+        baseline=0.0,
+        decay_tau_ms=500.0,
+        production_rules=[ProductionRule(rule_type="from_reward", sensitivity=1.0)],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    mgr.step(bridge=None)
+    assert mgr.get_concentration("dopamine") == 0.0

@@ -182,6 +182,31 @@ class NeuromodulatorManager:
 
     def _compute_production(self, rule: ProductionRule,
                              cfg: NeuromodulatorConfig, bridge) -> float:
-        """Compute production contribution for one rule. Filled in by Tasks 4 and 5."""
-        # Default: no production. Overridden as production rules are added.
+        """Compute production contribution for one rule.
+
+        Returns the additive concentration contribution for this step,
+        BEFORE clipping (which step() applies after summing all rules).
+        """
+        rt = rule.rule_type
+        if rt == "manual":
+            return 0.0
+
+        if rt == "from_reward":
+            if bridge is None or not hasattr(bridge, "core_config"):
+                return 0.0
+            cc = bridge.core_config
+            reward = float(getattr(cc, "current_reward_signal", 0.0))
+            baseline = float(getattr(cc, "reward_baseline", 0.0))
+            return rule.sensitivity * (reward - baseline)
+
+        if rt == "from_error_persistence":
+            # Implemented in Task 5
+            return 0.0
+
+        if rt == "from_novelty":
+            # Reserved for future ACh
+            return 0.0
+
+        # Unknown rule type: silently no-op rather than crash. Future rules
+        # are forward-compatible.
         return 0.0
