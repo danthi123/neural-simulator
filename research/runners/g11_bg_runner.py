@@ -72,35 +72,44 @@ def build_bg_brain_regions(
     regions = []
     pathways = []
 
-    # Cortex (input layer for goal-directed signals)
-    regions.append(BrainRegion(
-        name="cortex",
-        n_neurons=n_cortex,
-        exc_fraction=0.8,
-        internal_density=0.0,  # No recurrent
-        exc_weight_mean=0.0, inh_weight_mean=0.0,
-        weight_jitter=0.0, plastic_internal=False,
-        izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
-    ))
+    # Cortex (input layer for goal-directed signals).
+    # Split into per-action pools so different inputs preferentially activate
+    # different actions. This is a phenomenological substitute for what
+    # learning would produce: differential cortex→striatum weights.
+    n_cortex_per_action = n_cortex // N_ACTIONS
+    for action in ACTION_NAMES:
+        regions.append(BrainRegion(
+            name=f"cortex_{action}",
+            n_neurons=n_cortex_per_action,
+            exc_fraction=1.0,  # All excitatory for cortex inputs
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
 
-    # Per-action striatal pools (D1 direct, D2 indirect)
+    # Per-action striatal pools (D1 direct, D2 indirect).
+    # internal_density=0 (no lateral inhibition) initially — MSNs need
+    # strong cortex drive to escape the down-state and lateral inhibition
+    # makes that even harder. Add it back later if action selection needs
+    # sharpening.
     for action in ACTION_NAMES:
         regions.append(BrainRegion(
             name=f"str_D1_{action}",
             n_neurons=n_striatum_per_action,
-            exc_fraction=0.0,  # MSNs are inhibitory output
-            internal_density=0.05,  # Mild lateral inhibition
-            exc_weight_mean=0.0, inh_weight_mean=0.5,
-            weight_jitter=0.1, plastic_internal=False,
+            exc_fraction=0.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
         ))
         regions.append(BrainRegion(
             name=f"str_D2_{action}",
             n_neurons=n_striatum_per_action,
             exc_fraction=0.0,
-            internal_density=0.05,
-            exc_weight_mean=0.0, inh_weight_mean=0.5,
-            weight_jitter=0.1, plastic_internal=False,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D2.name,
         ))
 
@@ -170,22 +179,32 @@ def build_bg_brain_regions(
 
     # ---- Pathways (cross-region projections) ----
 
-    # Cortex -> striatum (this is the LEARNING site under cortico-striatal plasticity)
-    for action in ACTION_NAMES:
-        pathways.append(RegionPathway(
-            from_region="cortex", to_region=f"str_D1_{action}",
-            density=0.4, weight_mean=0.5, weight_jitter=0.2, plastic=True,
-        ))
-        pathways.append(RegionPathway(
-            from_region="cortex", to_region=f"str_D2_{action}",
-            density=0.4, weight_mean=0.5, weight_jitter=0.2, plastic=True,
-        ))
+    # Cortex -> striatum (LEARNING site).
+    # Each cortex_X projects strongly to its corresponding str_D1_X / str_D2_X
+    # AND weakly to other actions' striatum (cross-projection allows learning
+    # to redistribute action representations on goal change).
+    for cortex_action in ACTION_NAMES:
+        for str_action in ACTION_NAMES:
+            same = (cortex_action == str_action)
+            density = 1.0 if same else 0.3
+            weight = 25.0 if same else 5.0
+            pathways.append(RegionPathway(
+                from_region=f"cortex_{cortex_action}",
+                to_region=f"str_D1_{str_action}",
+                density=density, weight_mean=weight, weight_jitter=0.2, plastic=True,
+            ))
+            pathways.append(RegionPathway(
+                from_region=f"cortex_{cortex_action}",
+                to_region=f"str_D2_{str_action}",
+                density=density, weight_mean=weight, weight_jitter=0.2, plastic=True,
+            ))
 
-    # Direct pathway: D1 -> GPi (inhibitory)
+    # Direct pathway: D1 -> GPi (inhibitory). Strong weight needed to overcome
+    # GPi tonic firing (~30-75 Hz baseline).
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
             from_region=f"str_D1_{action}", to_region=f"gpi_{action}",
-            density=0.6, weight_mean=2.5, weight_jitter=0.2, plastic=False,
+            density=1.0, weight_mean=15.0, weight_jitter=0.2, plastic=False,
         ))
 
     # Indirect pathway: D2 -> GPe -> STN -> GPi
@@ -207,31 +226,30 @@ def build_bg_brain_regions(
             density=0.4, weight_mean=1.0, weight_jitter=0.2, plastic=False,
         ))
 
-    # GPi -> thalamus (inhibitory; tonic suppression at rest, released by
-    # striatal D1 firing, "opens the gate" for the corresponding action)
+    # GPi -> thalamus (inhibitory). Strong weight + density needed so
+    # GPi tonic firing fully suppresses thal, AND so D1-mediated GPi
+    # silence cleanly releases the gate.
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
             from_region=f"gpi_{action}", to_region=f"thal_{action}",
-            density=0.6, weight_mean=2.5, weight_jitter=0.2, plastic=False,
+            density=1.0, weight_mean=8.0, weight_jitter=0.2, plastic=False,
         ))
 
-    # Thalamus -> motor cortex (excitatory)
+    # Thalamus -> motor cortex (excitatory). Very strong weight needed
+    # because thal pool is small (10 cells) and we need ~50 Hz motor output
+    # from ~24 Hz thal input.
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
             from_region=f"thal_{action}", to_region=f"motor_{action}",
-            density=0.5, weight_mean=1.5, weight_jitter=0.2, plastic=False,
+            density=1.0, weight_mean=20.0, weight_jitter=0.2, plastic=False,
         ))
 
-    # Lateral inhibition between motor populations (mediated by FS interneurons in
-    # real cortex; here as direct inhibitory projection for simplicity).
-    for a in ACTION_NAMES:
-        for b in ACTION_NAMES:
-            if a == b:
-                continue
-            pathways.append(RegionPathway(
-                from_region=f"motor_{a}", to_region=f"motor_{b}",
-                density=0.3, weight_mean=0.8, weight_jitter=0.1, plastic=False,
-            ))
+    # NOTE: motor→motor "lateral inhibition" was creating EXCITATORY synapses
+    # because motor regions have exc_fraction=1.0 (RegionPathway sign comes
+    # from source region's exc_fraction). For real lateral inhibition we'd
+    # need motor-pool FS interneuron sub-populations. Removed for now; BG
+    # gating already provides selectivity (only the action with silenced
+    # GPi gets thalamic drive).
 
     return regions, pathways
 
@@ -338,24 +356,46 @@ def main():
         # whichever D1/D2 happens to have stronger weights from these inputs.
         # For a clean probe, manually override: inject ONLY into cortex neurons
         # whose hash maps to the target action.
-        cortex_idx = list(bridge.region_manager.indices("cortex"))
-        # Drive a deterministic SUBSET of cortex matching the probe action
-        a_idx = ACTION_NAMES.index(args.probe_action)
-        per_action_size = len(cortex_idx) // N_ACTIONS
-        target_cortex = cortex_idx[a_idx * per_action_size:(a_idx + 1) * per_action_size]
-        target_cortex_cp = cp.asarray(target_cortex, dtype=cp.int64)
-
-        # Reset state
+        # Apply tonic baseline drive to BG output nuclei (mimics intrinsic
+        # depolarizing conductance that makes real GPe/GPi/STN autonomously
+        # fire 30-80 Hz). Without this, our Izh presets sit at rest because
+        # Izh doesn't model intrinsic Ca pacemaker currents.
         bridge.cp_external_input_current[:] = 0.0
-        # Fix Vm to reset since the override may have changed it
+        # Per-region tonic drive levels:
+        for region_name in [f"gpe_{a}" for a in ACTION_NAMES]:
+            idx = list(bridge.region_manager.indices(region_name))
+            if idx:
+                bridge.cp_external_input_current[cp.asarray(idx, dtype=cp.int64)] = cp.float32(150.0)
+        for region_name in [f"gpi_{a}" for a in ACTION_NAMES]:
+            idx = list(bridge.region_manager.indices(region_name))
+            if idx:
+                # Lower baseline for GPi → easier to silence by D1 inhibition
+                bridge.cp_external_input_current[cp.asarray(idx, dtype=cp.int64)] = cp.float32(110.0)
+        for region_name in ["stn", "dopamine"]:
+            idx = list(bridge.region_manager.indices(region_name))
+            if idx:
+                bridge.cp_external_input_current[cp.asarray(idx, dtype=cp.int64)] = cp.float32(150.0)
+        # Thalamus baseline drive — set such that GPi inhibition (when active)
+        # keeps thal silent, AND when GPi drops to 0 (D1 suppression),
+        # thal fires actively.
+        for region_name in [f"thal_{a}" for a in ACTION_NAMES]:
+            idx = list(bridge.region_manager.indices(region_name))
+            if idx:
+                bridge.cp_external_input_current[cp.asarray(idx, dtype=cp.int64)] = cp.float32(300.0)
+
+        # Drive ONLY the target action's cortex pool
+        cortex_idx = list(bridge.region_manager.indices(f"cortex_{args.probe_action}"))
+        cortex_cp = cp.asarray(cortex_idx, dtype=cp.int64)
+
         bridge.runtime_state.current_time_step = 0
         bridge.runtime_state.current_time_ms = 0.0
 
-        # Inject strong drive only to target cortex subset for 200ms
-        drive_pA = 600.0  # well above Izh RS rheobase ~100 pA
+        drive_pA = 800.0
+        n_probe_steps = 500
+        target_cortex = cortex_idx
         spike_counts = np.zeros(cfg.num_neurons, dtype=np.int32)
-        for s in range(200):
-            bridge.cp_external_input_current[target_cortex_cp] = cp.float32(drive_pA)
+        for s in range(n_probe_steps):
+            bridge.cp_external_input_current[cortex_cp] = cp.float32(drive_pA)
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
             bridge.runtime_state.current_time_ms = bridge.runtime_state.current_time_step * cfg.dt_ms
@@ -364,9 +404,9 @@ def main():
 
         # Per-region firing rate
         print(f"  Driving {len(target_cortex)}/{len(cortex_idx)} cortex neurons "
-              f"with {drive_pA} pA for 200ms")
-        print(f"\n  Per-region firing rates over 200ms:")
-        ordered_groups = ["cortex"]
+              f"with {drive_pA} pA for {n_probe_steps}ms")
+        print(f"\n  Per-region firing rates over {n_probe_steps}ms:")
+        ordered_groups = [f"cortex_{a}" for a in ACTION_NAMES]
         for a in ACTION_NAMES:
             ordered_groups += [f"str_D1_{a}", f"str_D2_{a}", f"gpe_{a}",
                                 f"gpi_{a}", f"thal_{a}", f"motor_{a}"]
@@ -378,7 +418,7 @@ def main():
             idx = bridge.region_manager.indices(r.name)
             if not idx:
                 continue
-            rate_hz = spike_counts[list(idx)].sum() / r.n_neurons / 0.2
+            rate_hz = spike_counts[list(idx)].sum() / r.n_neurons / (n_probe_steps / 1000.0)
             marker = " <-" if (region_name.endswith(f"_{args.probe_action}") and
                               region_name.startswith(("str_D1_", "thal_", "motor_"))) else ""
             print(f"    {r.name:<15s} {rate_hz:>6.1f} Hz{marker}")
@@ -388,7 +428,7 @@ def main():
         for a in ACTION_NAMES:
             idx = bridge.region_manager.indices(f"motor_{a}")
             n = len(idx)
-            r = spike_counts[list(idx)].sum() / max(n, 1) / 0.2
+            r = spike_counts[list(idx)].sum() / max(n, 1) / (n_probe_steps / 1000.0)
             motor_rates[a] = r
         winner = max(motor_rates, key=motor_rates.get)
         print(f"\n  Motor rates: {motor_rates}")
