@@ -331,6 +331,15 @@ def run_g9_episode(
                                         # winner basin via partial weight reset
                                         # combined with V1 exploration noise
                                         # breaks the silent-motor trap.
+    epsilon_greedy=0.0,                 # Session I: with probability epsilon,
+                                        # pick a uniformly random action instead
+                                        # of using the configured action_selection.
+                                        # This is the canonical RL exploration
+                                        # mechanism. Guarantees every motor gets
+                                        # selected ~epsilon/n_motor of the time,
+                                        # regardless of reservoir bias or weight
+                                        # entrenchment. 0.0 disables; 0.1 typical;
+                                        # 0.3+ starts to dominate learned policy.
     verbose=True,
 ):
     """Run a G9 episode with sim-native R-STDP learning.
@@ -610,6 +619,15 @@ def run_g9_episode(
             else:
                 action = int(np.random.default_rng(seed * 10_000 + step).integers(0, n_motor))
 
+        # Session I: ε-greedy override. With probability epsilon, replace the
+        # chosen action with a uniformly random action. Guarantees every motor
+        # has ~epsilon/n_motor selection rate regardless of reservoir bias or
+        # weight entrenchment.
+        if epsilon_greedy > 0.0:
+            rng_eps = np.random.default_rng(seed * 10_000 + step + 999_999)
+            if rng_eps.random() < epsilon_greedy:
+                action = int(rng_eps.integers(0, n_motor))
+
         action_log.append(action)
 
         # Session G v4: action attribution. Zero eligibility for hidden->motor
@@ -841,6 +859,7 @@ def run_g9_episode(
         "positive_only_reward": positive_only_reward,
         "action_attribution_eligibility": action_attribution_eligibility,
         "weight_reset_alpha_on_goal_change": weight_reset_alpha_on_goal_change,
+        "epsilon_greedy": epsilon_greedy,
         "reservoir_weight_drift_max": reservoir_drift,
         "trajectory": trajectory,
         "goal_log": goal_log,

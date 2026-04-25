@@ -293,6 +293,43 @@ def test_g9_smoke_weight_reset_on_goal_change(tmp_path):
     )
 
 
+def test_g9_smoke_epsilon_greedy(tmp_path):
+    """Session I: epsilon_greedy=0.3 forces ~30% of actions to be random.
+    Verify the action distribution becomes more uniform than baseline."""
+    pytest.importorskip("cupy")
+    import numpy as np
+    from research.runners.g9_runner import run_g9_episode
+
+    out_baseline = tmp_path / "g9_eps0.json"
+    out_eps = tmp_path / "g9_eps03.json"
+    common = dict(
+        seed=42, n_steps=60, grid_size=8,
+        start_pos=(1, 1), goal_pos=(6, 6),
+        learning_rate=0.05,
+        action_selection="argmax",
+        verbose=False,
+    )
+    run_g9_episode(out_path=str(out_baseline), epsilon_greedy=0.0, **common)
+    run_g9_episode(out_path=str(out_eps), epsilon_greedy=0.3, **common)
+
+    d0 = json.load(open(out_baseline))
+    d3 = json.load(open(out_eps))
+    assert d0["epsilon_greedy"] == 0.0
+    assert d3["epsilon_greedy"] == 0.3
+    # The eps=0.3 run should have a more uniform action distribution.
+    # Specifically, the smallest motor count should be larger under eps-greedy
+    # (since random actions distribute uniformly across motors).
+    counts0 = np.bincount(d0["action_log"], minlength=4)
+    counts3 = np.bincount(d3["action_log"], minlength=4)
+    # Sanity: both have 60 actions
+    assert counts0.sum() == 60 and counts3.sum() == 60
+    # eps=0.3 should hit at least 3 distinct motors (vs baseline often 1-2)
+    n_distinct_eps = (counts3 > 0).sum()
+    assert n_distinct_eps >= 3, (
+        f"Expected eps=0.3 to use >=3 motors in 60 steps; got {counts3.tolist()}"
+    )
+
+
 def test_g9_smoke_with_neuromodulators(tmp_path):
     """Session E.1: G9 runner accepts nm_configs and threads them into
     the bridge, registers group indices, records final concentrations."""

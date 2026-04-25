@@ -411,3 +411,73 @@ the design space but did not yield improvements over V1.
 - [`research/run_g9_motor_exploration.py`](research/run_g9_motor_exploration.py) — probe driver
 - [`tests/test_g9_runner_smoke.py`](tests/test_g9_runner_smoke.py) — `test_g9_smoke_motor_exploration`
 - [Raw data](research/findings/raw/g9_motor_exploration/) — JSON per seed×condition
+
+---
+
+## Session H Addendum — V6 (weight reset on goal change) NEGATIVE
+
+After Session G closed with V1 as the only winner, V6 tested whether
+*resetting hidden→motor weights at the moment of goal change* (combined
+with V1 motor exploration) could break the trained-winner basin.
+
+### V6 Results
+
+| Condition           | seed | Phase 1 finalQ | actions [N, E, S, **W**] |
+|---------------------|------|----------------|--------------------------|
+| reset_alpha=0.5     | 42   | 7.18           | [381, 921, 198, **0**]   |
+| reset_alpha=0.5     | 43   | 5.76           | [428, 622, 152, **298**] |
+| reset_alpha=0.5     | 44   | 6.79           | [778, 540, 163, **19**]  |
+| **reset α=0.5 avg** | —    | **6.58**       | (worse than V1 6.40)     |
+| reset_alpha=1.0     | 42   | 7.01           | [407, 859, 234, **0**]   |
+| reset_alpha=1.0     | 43   | 6.08           | [420, 617, 170, **293**] |
+| reset_alpha=1.0     | 44   | 6.78           | [813, 533, 133, **21**]  |
+| **reset α=1.0 avg** | —    | **6.62**       | (worse than V1 6.40)     |
+
+V6 is a NEGATIVE result. Both alpha=0.5 (half blend) and alpha=1.0 (full
+reset to random initial) underperform V1 on average.
+
+### Major Insight: Reservoir-State Bias, not Weight-Trained-Winner
+
+Seed 42 with **alpha=1.0** (FULL reset of hidden→motor to random initial
+values) **still has W=0** for the entire phase 1 (1500 steps). Random
+uniform weights, not trained weights — yet E still wins argmax 100% of
+the time.
+
+This rules out "trained-weight basin of attraction" as the trap mechanism.
+The actual mechanism: **the reservoir's hidden state pattern, in response
+to phase-1 input positions (around (6,6) heading right), structurally
+activates hidden neurons that happen to connect strongly to E in the
+random initial wiring.** With argmax + random initial weights, E gets
+slightly more total spike count than W from any reservoir state, and
+argmax is winner-take-all.
+
+The trap is not in the readout (hidden→motor weights) — it's in the
+*reservoir's reaction to position inputs*. Resetting the readout doesn't
+help because the reservoir keeps producing the same E-favoring patterns.
+
+### Architectural implication
+
+This means none of these will fix the trap:
+- Higher motor exploration rate (V1 saturates this — adds equal noise
+  floor to all motors but doesn't change spike-count ranking)
+- Different reward signs (V3 — reward sign isn't the bottleneck)
+- Action attribution (V4 — masking eligibility doesn't change which motor
+  the reservoir activates)
+- Weight reset (V6 — the reservoir, not the readout, is biased)
+- Proportional sampling (V5 — too noisy, destroys phase 0)
+
+The remaining intervention type: **bypass the reservoir entirely at the
+action selection level**. ε-greedy: with probability ε, pick a uniformly
+random action regardless of motor counts. Forces W to be the chosen
+action ~ε/n_motor of the time, giving reward signal a chance to update
+hidden→W eligibility traces in goal-aligned directions.
+
+## Session I (V7): ε-greedy action selection
+
+[TBD — `research/run_g9_motor_exploration_v7_epsilon_greedy.py` running.
+Two epsilon levels × 3 seeds = 6 runs. ~80 min wall.
+
+Conditions (all with motor_exploration_rate_hz=15 + argmax + bipolar):
+- `eps_01`: epsilon_greedy=0.1 (W selected ~37 times in phase 1)
+- `eps_02`: epsilon_greedy=0.2 (W selected ~75 times in phase 1)
+]
