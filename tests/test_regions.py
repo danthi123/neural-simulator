@@ -146,3 +146,105 @@ def test_region_manager_empty_lists_yield_zero_total():
     mgr.initialize()
     assert mgr.total_neurons() == 0
     assert mgr.region_indices_dict() == {}
+
+
+# ---------- Task 3: internal connectivity in wiring plan ----------
+
+def test_internal_wiring_plan_for_single_region():
+    from sim.regions import BrainRegion, RegionManager
+
+    regions = [BrainRegion(name="PFC", n_neurons=50,
+                            exc_fraction=0.8, internal_density=0.1)]
+    mgr = RegionManager(regions, [])
+    mgr.initialize(seed=42)
+    plan = mgr.build_wiring_plan(seed=42)
+    assert "PFC_internal" in plan
+    g = plan["PFC_internal"]
+    n_pairs = 50 * 49  # ordered, no self
+    expected = int(n_pairs * 0.1)
+    # Allow ±25% slack for stochasticity at small N
+    assert int(0.7 * expected) < g["count"] < int(1.3 * expected)
+    # All endpoints inside [0, 50)
+    for pre, post in zip(g["pre_indices"], g["post_indices"]):
+        assert 0 <= pre < 50
+        assert 0 <= post < 50
+        assert pre != post
+
+
+def test_internal_wiring_plan_inhibitory_synapses_have_inh_weights():
+    """Synapses originating from inhibitory neurons should use inh_weight_mean."""
+    from sim.regions import BrainRegion, RegionManager
+
+    # Make all weights deterministic (no jitter) so we can check exact values
+    regions = [BrainRegion(
+        name="PFC", n_neurons=20, exc_fraction=0.5,
+        internal_density=1.0,  # fully connected for fast verification
+        exc_weight_mean=0.3, inh_weight_mean=0.8, weight_jitter=0.0,
+    )]
+    mgr = RegionManager(regions, [])
+    mgr.initialize(seed=42)
+    plan = mgr.build_wiring_plan(seed=42)
+    g = plan["PFC_internal"]
+    inh = set(mgr.inhibitory_indices("PFC"))
+    for pre, w in zip(g["pre_indices"], g["initial_weights"]):
+        if int(pre) in inh:
+            assert abs(float(w) - 0.8) < 1e-6, f"inh pre {pre} should have w=0.8, got {w}"
+        else:
+            assert abs(float(w) - 0.3) < 1e-6, f"exc pre {pre} should have w=0.3, got {w}"
+
+
+def test_internal_wiring_plan_plastic_flag_passes_through():
+    from sim.regions import BrainRegion, RegionManager
+
+    regions = [BrainRegion(name="PFC", n_neurons=10,
+                            internal_density=0.5, plastic_internal=True)]
+    mgr = RegionManager(regions, [])
+    mgr.initialize(seed=42)
+    plan = mgr.build_wiring_plan(seed=42)
+    assert plan["PFC_internal"]["plastic"] is True
+
+    regions2 = [BrainRegion(name="Motor", n_neurons=10,
+                             internal_density=0.5, plastic_internal=False)]
+    mgr2 = RegionManager(regions2, [])
+    mgr2.initialize(seed=42)
+    plan2 = mgr2.build_wiring_plan(seed=42)
+    assert plan2["Motor_internal"]["plastic"] is False
+
+
+# ---------- Task 4: cross-region pathway in wiring plan ----------
+
+def test_cross_region_pathway_in_wiring_plan():
+    from sim.regions import BrainRegion, RegionPathway, RegionManager
+
+    regions = [
+        BrainRegion(name="PFC", n_neurons=100, internal_density=0.0),
+        BrainRegion(name="Motor", n_neurons=20, internal_density=0.0),
+    ]
+    pathways = [RegionPathway(from_region="PFC", to_region="Motor",
+                                density=0.5, weight_mean=1.0,
+                                weight_jitter=0.0)]
+    mgr = RegionManager(regions, pathways)
+    mgr.initialize(seed=42)
+    plan = mgr.build_wiring_plan(seed=42)
+    assert "pathway_PFC_to_Motor" in plan
+    g = plan["pathway_PFC_to_Motor"]
+    n_pairs = 100 * 20  # 2000 ordered pairs (PFC -> Motor)
+    expected = int(n_pairs * 0.5)
+    assert int(0.85 * expected) < g["count"] < int(1.15 * expected)
+    # Endpoints respect region boundaries
+    for pre, post in zip(g["pre_indices"], g["post_indices"]):
+        assert 0 <= pre < 100  # PFC range
+        assert 100 <= post < 120  # Motor range
+    # Plastic by default for cross-region
+    assert g["plastic"] is True
+
+
+def test_cross_region_pathway_unknown_region_raises():
+    from sim.regions import BrainRegion, RegionPathway, RegionManager
+
+    regions = [BrainRegion(name="PFC", n_neurons=10)]
+    pathways = [RegionPathway(from_region="PFC", to_region="Hippocampus")]
+    mgr = RegionManager(regions, pathways)
+    mgr.initialize()
+    with pytest.raises(KeyError):
+        mgr.build_wiring_plan(seed=42)

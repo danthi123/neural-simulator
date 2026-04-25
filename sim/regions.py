@@ -190,3 +190,130 @@ class RegionManager:
 
     def pathways(self) -> List[RegionPathway]:
         return list(self._pathways)
+
+    def build_wiring_plan(self, seed: int = 0) -> Dict[str, dict]:
+        """Build a `wiring_plan` dict in the format consumed by
+        bridge.inject_explicit_wiring().
+
+        Each entry is one population of synapses with shape:
+            {
+                "pre_indices": [int, ...],
+                "post_indices": [int, ...],
+                "initial_weights": [float, ...],
+                "plastic": bool,
+                "conn_type": str,
+                "count": int,
+            }
+
+        Population names:
+            "{region}_internal"           — sparse internal connectivity
+            "pathway_{from}_to_{to}"      — cross-region projection
+
+        Determinism: rng seeded from `seed`. Independent of initialize()'s
+        seed so the same RegionManager can re-build with different seeds.
+        """
+        if self._total_neurons == 0:
+            return {}
+
+        rng = random.Random(seed)
+        plan: Dict[str, dict] = {}
+
+        # ----- Internal connectivity per region -----
+        for region in self._regions:
+            entry = self._build_region_internal(region, rng)
+            if entry is None:
+                continue
+            plan[f"{region.name}_internal"] = entry
+
+        # ----- Cross-region pathways -----
+        for pw in self._pathways:
+            if pw.from_region not in self._indices:
+                raise KeyError(pw.from_region)
+            if pw.to_region not in self._indices:
+                raise KeyError(pw.to_region)
+            entry = self._build_pathway(pw, rng)
+            if entry is None:
+                continue
+            plan[f"pathway_{pw.from_region}_to_{pw.to_region}"] = entry
+
+        return plan
+
+    def _build_region_internal(self, region: BrainRegion,
+                                rng: random.Random) -> dict:
+        """Sparse Erdős-Rényi internal connectivity for a region.
+
+        Each ordered (pre, post) pair (pre != post) within the region is
+        included with probability `region.internal_density`.
+        """
+        if region.n_neurons <= 1 or region.internal_density <= 0:
+            return None
+
+        idx = self._indices[region.name]
+        inh = set(self._inhibitory[region.name])
+        density = region.internal_density
+
+        pre_list: List[int] = []
+        post_list: List[int] = []
+        weights: List[float] = []
+        for pre in idx:
+            base_w = region.inh_weight_mean if pre in inh else region.exc_weight_mean
+            jitter = region.weight_jitter
+            for post in idx:
+                if pre == post:
+                    continue
+                if rng.random() < density:
+                    pre_list.append(int(pre))
+                    post_list.append(int(post))
+                    if jitter > 0:
+                        w = base_w * (1.0 + rng.gauss(0.0, jitter))
+                    else:
+                        w = base_w
+                    # Clamp to a reasonable positive minimum
+                    weights.append(max(0.01, float(w)))
+
+        if not pre_list:
+            return None
+
+        return {
+            "pre_indices": pre_list,
+            "post_indices": post_list,
+            "initial_weights": weights,
+            "plastic": bool(region.plastic_internal),
+            "conn_type": "MIXED",
+            "count": len(pre_list),
+        }
+
+    def _build_pathway(self, pw: RegionPathway, rng: random.Random) -> dict:
+        """Sparse Erdős-Rényi connectivity for a directed cross-region pathway."""
+        pre_idx = self._indices[pw.from_region]
+        post_idx = self._indices[pw.to_region]
+        if pw.density <= 0 or not pre_idx or not post_idx:
+            return None
+
+        pre_list: List[int] = []
+        post_list: List[int] = []
+        weights: List[float] = []
+        for pre in pre_idx:
+            for post in post_idx:
+                if rng.random() < pw.density:
+                    pre_list.append(int(pre))
+                    post_list.append(int(post))
+                    if pw.weight_jitter > 0:
+                        w = pw.weight_mean * (1.0 + rng.gauss(0.0, pw.weight_jitter))
+                    else:
+                        w = pw.weight_mean
+                    weights.append(max(0.01, float(w)))
+
+        if not pre_list:
+            return None
+
+        return {
+            "pre_indices": pre_list,
+            "post_indices": post_list,
+            "initial_weights": weights,
+            "plastic": bool(pw.plastic),
+            "conn_type": "E_TO_MIX",
+            "count": len(pre_list),
+            # Pathway-specific metadata used in Task 8 for plasticity gating
+            "neuromodulator_gates": list(pw.neuromodulator_gates),
+        }
