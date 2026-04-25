@@ -90,8 +90,15 @@ class DefaultHodgkinHuxleyParams:
         "m_init": 0.0529, # Calculated from alpha_m / (alpha_m + beta_m) at -65mV for original HH
         "h_init": 0.5961, # Calculated from alpha_h / (alpha_h + beta_h) at -65mV for original HH
         "n_init": 0.3177, # Calculated from alpha_n / (alpha_n + beta_n) at -65mV for original HH
-        # Extended current defaults (all off by default)
-        "g_M_max": 0.0,
+        # Extended currents.
+        # 2026-04-25: Added g_M=0.6 (M-current / Kv7) to base. Real cortical
+        # RS pyramidals have substantial M-current providing slow K-channel
+        # activation above -55 mV. Without it, sustained input causes
+        # depolarization block (cell fires once then locks). M-current
+        # provides spike-frequency adaptation AND keeps V from staying at
+        # plateau — required for proper tonic firing.
+        # Yamada et al. 1989, Storm 1990 give g_M_density ~0.3-1.0 mS/cm².
+        "g_M_max": 0.6,
         "g_CaT_max": 0.0,
         "E_CaT": 120.0,
         "g_h_max": 0.0,
@@ -379,22 +386,22 @@ class DefaultHodgkinHuxleyParams:
     # Substantia nigra pars compacta / VTA dopamine neuron (Drion et al. 2011, Putzier et al. 2009)
     DOPAMINE_SNC = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     DOPAMINE_SNC.update({
-        # Re-tuned 2026-04-25: g_K 4→8 (allows higher firing during phasic
-        # bursts; tonic rate stays low at ~1-5 Hz). g_CaT 2.0→1.0 (was too
-        # strong, pulling rest too high). E_L stays slightly depolarized
-        # (-60) to support the slow autonomous pacemaking characteristic of
-        # DA neurons (Grace & Bunney 1984: 1-5 Hz spontaneous, 15-20 Hz bursts).
-        "C_m": 1.2,           # Moderate soma size
-        "g_Na_max": 35.0,     # LOW Na — DA neurons have sparse Na channels
-        "g_K_max": 8.0,
-        "g_CaT_max": 1.0,
+        # Re-tuned 2026-04-25 (v3): Earlier retune over-corrected — moved
+        # E_L too far negative (-60) and the cell stopped firing entirely.
+        # Real DA neurons NEED depolarized rest (-55 mV range) to support
+        # the slow autonomous pacemaking via Cav1 (L-type Ca) at threshold.
+        # Restored E_L=-55 with the reduced (but non-zero) CaT/NaP.
+        "C_m": 1.2,
+        "g_Na_max": 40.0,     # was 35 — slightly higher for spike upstroke
+        "g_K_max": 8.0,       # was 4 — still allows slow firing
+        "g_CaT_max": 1.5,     # was 2.0 then 1.0 — middle ground
         "E_CaT": 120.0,
-        "g_h_max": 0.3,       # was 0.4 — moderate Ih
+        "g_h_max": 0.3,
         "E_h": -30.0,
-        "g_M_max": 0.3,       # Mild M-current (SK channel analog for AHP)
-        "g_NaP_max": 0.1,     # was 0.2 — small persistent Na
-        "E_L": -60.0,         # was -55 — slightly closer to biological rest
-        "v_rest_hh": -55.0,
+        "g_M_max": 0.3,       # Mild M (SK analog for AHP)
+        "g_NaP_max": 0.15,    # Small persistent Na
+        "E_L": -55.0,         # Depolarized rest — autonomous firing
+        "v_rest_hh": -52.0,
     })
 
     # Cortical fast-spiking PV+ interneuron (Erisir et al. 1999, Wang & Buzsaki 1996)
