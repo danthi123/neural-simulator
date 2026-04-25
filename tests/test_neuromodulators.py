@@ -939,3 +939,94 @@ def test_excitability_drive_per_neuron_scope_trait():
         f"trait:1 boost should bias toward inhibitory; got inh_rate={inh_rate:.2f} "
         f"exc_rate={exc_rate:.2f}"
     )
+
+
+# ---------- Task 14: drift regression guard ----------
+
+
+def test_drift_regression_subsystem_off_unchanged():
+    """With subsystem disabled (default), the locked tiny-seeded-sim spike
+    count from the drift detector must still be 170 +- 10. Verifies the
+    new subsystem code paths are inactive when not enabled.
+
+    Mirrors tests/test_benchmark_drift.test_tiny_seeded_sim_spike_count_in_range
+    but asserts explicitly that neuromodulator_manager is None.
+    """
+    pytest.importorskip("cupy")
+    from tests.test_benchmark_drift import _build_tiny_sim, _run_and_count
+
+    sb, cfg = _build_tiny_sim(seed=42)
+    assert getattr(cfg, "enable_neuromodulator_subsystem", False) is False
+    assert sb.neuromodulator_manager is None
+    total, _ = _run_and_count(sb, cfg, n_steps=200)
+    sb.clear_simulation_state_and_gpu_memory()
+    assert 160 <= total <= 180, (
+        f"Drift detected: {total} spikes (expected 170 +- 10)"
+    )
+
+
+# ---------- Task 15: legacy parity ----------
+
+
+def test_subsystem_with_no_targets_matches_legacy_reward_path():
+    """Subsystem ON with a dopamine modulator that has only from_reward
+    production but ZERO targets should produce mean-weight outcome
+    indistinguishable from subsystem OFF (legacy reward modulation only).
+
+    Why: a no-target modulator just tracks its own concentration but
+    has no effect on bridge state. The legacy current_reward_signal path
+    runs unchanged. This proves the subsystem doesn't accidentally
+    interfere with the legacy code path when no effects are wired.
+    """
+    pytest.importorskip("cupy")
+    import cupy as cp
+    from sim.neuromodulators import NeuromodulatorConfig, ProductionRule
+
+    def _final_mean_weight(use_subsystem: bool) -> float:
+        sb, cfg = _make_bridge({
+            "num_neurons": 100,
+            "enable_stdp": True,
+            "enable_reward_modulation": True,
+            "reward_learning_rate": 0.01,
+            **(
+                {
+                    "enable_neuromodulator_subsystem": True,
+                    "neuromodulators": [
+                        NeuromodulatorConfig(
+                            name="dopamine",
+                            baseline=0.0,
+                            decay_tau_ms=500.0,
+                            production_rules=[ProductionRule(rule_type="from_reward",
+                                                              sensitivity=1.0)],
+                            targets=[],  # KEY: no targets -> no effect on bridge state
+                        )
+                    ],
+                }
+                if use_subsystem
+                else {}
+            ),
+        })
+        sb.core_config.current_reward_signal = 0.5
+        for _ in range(50):
+            sb._run_one_simulation_step()
+            sb.runtime_state.current_time_step += 1
+        sb.core_config.current_reward_signal = 0.0
+        for _ in range(50):
+            sb._run_one_simulation_step()
+            sb.runtime_state.current_time_step += 1
+        actual_nnz = int(sb.cp_connections.nnz)
+        w_mean = float(cp.mean(sb.cp_connections.data[:actual_nnz]).get())
+        sb.clear_simulation_state_and_gpu_memory()
+        return w_mean
+
+    w_legacy = _final_mean_weight(use_subsystem=False)
+    w_subsys = _final_mean_weight(use_subsystem=True)
+    rel_diff = abs(w_legacy - w_subsys) / max(abs(w_legacy), 1e-9)
+    # Both paths should give bit-identical results in principle (subsystem
+    # with no targets only steps its own concentration). Allow tiny
+    # tolerance for any RNG-state ordering shifts caused by the manager
+    # constructor.
+    assert rel_diff < 0.05, (
+        f"subsystem-with-no-targets diverged from legacy: "
+        f"legacy={w_legacy:.6f} subsys={w_subsys:.6f} rel_diff={rel_diff:.4f}"
+    )
