@@ -254,6 +254,302 @@ def build_bg_brain_regions(
     return regions, pathways
 
 
+def _position_to_cortex_drive(x, y, n_cortex_per_action, grid_size,
+                                rate_peak=400.0, rate_floor=50.0, sigma=1.5):
+    """Map (x,y) position to per-action cortex drive amplitudes.
+
+    Each action's cortex pool gets a baseline + position-dependent component.
+    For now: uniform baseline drive to all 4 cortex pools (the differential
+    selectivity comes from learning the cortex→striatum weights, not from
+    input encoding).
+
+    Returns a dict {action: drive_pA}.
+    """
+    # Simple encoding: drive ALL cortex pools uniformly with a position-
+    # dependent total amplitude. The cortex→striatum learning has to
+    # discover which action is right for each position.
+    return {a: rate_peak for a in ACTION_NAMES}
+
+
+def run_moving_goal_episode(
+    out_path: str,
+    seed: int = 42,
+    n_steps: int = 1800,
+    grid_size: int = 8,
+    start_pos=(1, 1),
+    goal_pos=(6, 6),
+    goal_schedule=None,
+    learning_rate: float = 0.01,
+    reward_eligibility_tau_ms: float = 500.0,
+    reward_hold_steps: int = 10,
+    verbose: bool = True,
+):
+    """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
+
+    If the BG architecture dissolves the silent-motor trap (which V1-V7
+    runner-side interventions all failed to do), phase 1 finalQ should
+    drop substantially below the G9 baseline of 6.74.
+    """
+    import cupy as cp
+    from sim import (
+        SimulationBridge, CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig,
+    )
+    from sim.enums import NeuronModel
+
+    if goal_schedule is None:
+        goal_schedule = [(0, tuple(goal_pos))]
+    goal_schedule_sorted = sorted(
+        [(int(s), tuple(g)) for s, g in goal_schedule], key=lambda t: t[0]
+    )
+
+    regions, pathways = build_bg_brain_regions(n_cortex=400)  # 100 per action
+    cfg = CoreSimConfig()
+    cfg.num_neurons = 0
+    cfg.dt_ms = 1.0
+    cfg.seed = int(seed)
+    cfg.num_traits = 1
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.connections_per_neuron = 0
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = regions
+    cfg.region_pathways = pathways
+    cfg.enable_stdp = True  # PLASTICITY ON
+    cfg.enable_reward_modulation = True
+    cfg.reward_learning_rate = float(learning_rate)
+    cfg.reward_eligibility_tau_ms = float(reward_eligibility_tau_ms)
+    cfg.enable_hebbian_learning = False
+    cfg.enable_homeostasis = False
+    cfg.enable_short_term_plasticity = False
+    cfg.enable_ou_process = False
+    cfg.enable_conductance_noise = False
+    cfg.enable_parameter_heterogeneity = False
+
+    bridge = SimulationBridge(
+        core_config=cfg, viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(), gpu_config=GPUConfig(),
+    )
+    bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    # Pre-cache region indices (cupy arrays for fast per-step indexing)
+    region_indices_cp = {}
+    for r in regions:
+        idx = list(bridge.region_manager.indices(r.name))
+        if idx:
+            region_indices_cp[r.name] = cp.asarray(idx, dtype=cp.int64)
+    motor_idx_per_action = {
+        a: region_indices_cp[f"motor_{a}"] for a in ACTION_NAMES
+    }
+
+    # Setup baseline tonic drives that don't change between steps
+    bridge.cp_external_input_current[:] = 0.0
+    for region_name in [f"gpe_{a}" for a in ACTION_NAMES]:
+        bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(150.0)
+    for region_name in [f"gpi_{a}" for a in ACTION_NAMES]:
+        bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(110.0)
+    for region_name in ["stn", "dopamine"]:
+        bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(150.0)
+    for region_name in [f"thal_{a}" for a in ACTION_NAMES]:
+        bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(300.0)
+
+    # Action deltas
+    ACTION_DELTAS = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # N, E, S, W
+    n_motor_per_action = sum(1 for r in regions if r.name.startswith("motor_")) * 0  # placeholder
+    # Number of neurons in each motor pool (all same)
+    n_motor_pop = next(r.n_neurons for r in regions if r.name.startswith("motor_"))
+
+    x, y = start_pos
+    current_schedule_idx = 0
+    gx, gy = goal_schedule_sorted[0][1]
+
+    def manhattan(px, py):
+        return abs(px - gx) + abs(py - gy)
+
+    trajectory = [(x, y)]
+    goal_log = [(gx, gy)]
+    motor_counts_log = []
+    action_log = []
+    reward_log = []
+    distance_log = [manhattan(x, y)]
+    goal_change_steps = []
+
+    STIMULUS_MS = 100.0
+    READOUT_START_MS = 30.0
+    READOUT_END_MS = 100.0
+    n_stim_steps = int(STIMULUS_MS / cfg.dt_ms)
+    readout_start = int(READOUT_START_MS / cfg.dt_ms)
+    readout_end = int(READOUT_END_MS / cfg.dt_ms)
+
+    cortex_idx_per_action = {
+        a: region_indices_cp[f"cortex_{a}"] for a in ACTION_NAMES
+    }
+
+    if verbose:
+        print(f"[g11 seed={seed}] BG circuit: {len(regions)} regions, "
+              f"{cfg.num_neurons} neurons, {bridge.cp_connections.nnz} synapses",
+              flush=True)
+
+    t0 = time.time()
+    for step in range(n_steps):
+        # Goal change
+        while (current_schedule_idx + 1 < len(goal_schedule_sorted)
+               and step >= goal_schedule_sorted[current_schedule_idx + 1][0]):
+            current_schedule_idx += 1
+            gx, gy = goal_schedule_sorted[current_schedule_idx][1]
+            goal_change_steps.append(step)
+            if verbose:
+                print(f"[g11 seed={seed}] step {step}: GOAL CHANGED to ({gx}, {gy})",
+                      flush=True)
+
+        dist_before = manhattan(x, y)
+
+        # Sensory input encoding: drive cortex pools based on position.
+        # SIMPLE HEURISTIC: drive each cortex_X pool with strength inversely
+        # proportional to current direction's distance to goal. This is a
+        # phenomenological "goal-direction signal" — what the agent's
+        # higher cortex would compute given knowledge of the goal.
+        # The BG circuit then has to produce a clean motor output.
+        # NOTE: this DOESN'T let the BG demonstrate "discovery" — but it
+        # does test whether the BG's per-action structure dissolves the
+        # silent-motor trap on phase change.
+        # Initial drive: just fire all cortex pools mildly + one strongly
+        # (the one matching goal direction).
+        bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = cp.float32(50.0)
+        bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = cp.float32(50.0)
+        bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = cp.float32(50.0)
+        bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = cp.float32(50.0)
+        # Goal direction: which cortex pool should be driven STRONGER?
+        # If gy > y → N; if gx > x → E; if gy < y → S; if gx < x → W.
+        if gy > y:
+            bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = cp.float32(500.0)
+        if gx > x:
+            bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = cp.float32(500.0)
+        if gy < y:
+            bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = cp.float32(500.0)
+        if gx < x:
+            bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = cp.float32(500.0)
+        # If on the goal: drive nothing extra (all pools at 50)
+
+        # Run stimulus window and tally motor spikes
+        motor_counts = {a: 0 for a in ACTION_NAMES}
+        bridge.core_config.current_reward_signal = 0.0
+        for s in range(n_stim_steps):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+            bridge.runtime_state.current_time_ms = (
+                bridge.runtime_state.current_time_step * cfg.dt_ms
+            )
+            if readout_start <= s < readout_end:
+                firing = bridge.cp_firing_states.get().astype(bool)
+                for a in ACTION_NAMES:
+                    motor_counts[a] += int(firing[motor_idx_per_action[a].get()].sum())
+
+        motor_counts_log.append([motor_counts[a] for a in ACTION_NAMES])
+
+        # Argmax action selection (random if all silent)
+        if max(motor_counts.values()) > 0:
+            action_idx = max(range(N_ACTIONS), key=lambda i: motor_counts[ACTION_NAMES[i]])
+        else:
+            action_idx = int(np.random.default_rng(seed * 10000 + step).integers(0, N_ACTIONS))
+        action_log.append(action_idx)
+
+        dx, dy = ACTION_DELTAS[action_idx]
+        new_x = int(np.clip(x + dx, 0, grid_size - 1))
+        new_y = int(np.clip(y + dy, 0, grid_size - 1))
+        dist_after = manhattan(new_x, new_y)
+        x, y = new_x, new_y
+        trajectory.append((x, y))
+        goal_log.append((gx, gy))
+        distance_log.append(dist_after)
+
+        if dist_after < dist_before:
+            reward = 1.0
+        elif dist_after > dist_before:
+            reward = -1.0
+        else:
+            reward = 0.0
+        reward_log.append(float(reward))
+
+        # Apply reward via existing reward modulation path
+        if abs(reward) > 0:
+            bridge.core_config.current_reward_signal = float(reward)
+            for _ in range(reward_hold_steps):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+                bridge.runtime_state.current_time_ms = (
+                    bridge.runtime_state.current_time_step * cfg.dt_ms
+                )
+            bridge.core_config.current_reward_signal = 0.0
+
+        if verbose and (step + 1) % 100 == 0:
+            recent_dist = float(np.mean(distance_log[-100:]))
+            print(f"[g11 seed={seed}] step {step+1}/{n_steps}  pos=({x},{y})  "
+                  f"goal=({gx},{gy})  recent_dist={recent_dist:.2f}  "
+                  f"actions={action_log[-100:].count(0):>3d}N/{action_log[-100:].count(1):>3d}E/"
+                  f"{action_log[-100:].count(2):>3d}S/{action_log[-100:].count(3):>3d}W",
+                  flush=True)
+
+    elapsed = time.time() - t0
+    dist_arr = np.asarray(distance_log[1:])
+    quarters = [float(dist_arr[i*len(dist_arr)//4:(i+1)*len(dist_arr)//4].mean())
+                for i in range(4)]
+
+    # Per-phase stats
+    phase_stats = []
+    phase_boundaries = [0] + goal_change_steps + [n_steps]
+    for phase_idx in range(len(phase_boundaries) - 1):
+        p_start = phase_boundaries[phase_idx]
+        p_end = phase_boundaries[phase_idx + 1]
+        p_dist = dist_arr[p_start:p_end]
+        p_actions = action_log[p_start:p_end]
+        if len(p_dist) == 0:
+            continue
+        p_goal = goal_log[p_start + 1] if p_start + 1 < len(goal_log) else goal_log[-1]
+        phase_stats.append({
+            "phase": phase_idx,
+            "step_start": p_start, "step_end": p_end,
+            "goal": list(p_goal),
+            "mean_distance": float(p_dist.mean()),
+            "final_quarter_mean_distance": float(p_dist[len(p_dist)*3//4:].mean())
+                if len(p_dist) >= 4 else float(p_dist.mean()),
+            "n_steps_at_goal": int((p_dist == 0).sum()),
+            "n_steps": len(p_dist),
+            "action_counts": [int((np.asarray(p_actions) == a).sum())
+                              for a in range(N_ACTIONS)],
+        })
+
+    results = {
+        "seed": seed, "n_steps": n_steps, "grid_size": grid_size,
+        "start_pos": list(start_pos), "goal_pos": list(goal_pos),
+        "goal_schedule": [[s, list(g)] for s, g in goal_schedule_sorted],
+        "goal_change_steps": goal_change_steps,
+        "phase_stats": phase_stats,
+        "reward_learning_rate": learning_rate,
+        "trajectory": trajectory, "goal_log": goal_log,
+        "motor_counts": motor_counts_log,
+        "action_log": action_log, "reward_log": reward_log,
+        "distance_log": distance_log,
+        "mean_distance_overall": float(dist_arr.mean()),
+        "mean_distance_quarters": quarters,
+        "n_steps_at_goal": int((dist_arr == 0).sum()),
+        "elapsed_seconds": elapsed,
+    }
+    Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+    with open(out_path, "w") as f:
+        json.dump(results, f, indent=2)
+    if verbose:
+        print(f"\n[g11 seed={seed}] DONE in {elapsed:.0f}s. "
+              f"Phase stats:")
+        for p in phase_stats:
+            print(f"  phase {p['phase']} goal={p['goal']} "
+                  f"meanD={p['mean_distance']:.2f} "
+                  f"finalQ={p['final_quarter_mean_distance']:.2f} "
+                  f"actions={p['action_counts']}")
+
+    return results
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true",
@@ -261,8 +557,22 @@ def main():
     ap.add_argument("--probe-action", type=str, default=None,
                     choices=ACTION_NAMES,
                     help="Drive cortex toward this action and measure motor output")
+    ap.add_argument("--moving-goal", action="store_true",
+                    help="Run G9-style moving-goal scenario (Phase B.T6 acid test)")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--n-steps", type=int, default=1800)
+    ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
+
+    if args.moving_goal:
+        out_path = args.out or f"research/findings/raw/g11_bg/g11_seed{args.seed}.json"
+        run_moving_goal_episode(
+            out_path=out_path,
+            seed=args.seed,
+            n_steps=args.n_steps,
+            goal_schedule=[(0, (6, 6)), (300, (1, 6))],
+        )
+        return 0
 
     from sim import (
         SimulationBridge, CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig,
