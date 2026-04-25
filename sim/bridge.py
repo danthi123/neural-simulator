@@ -1058,12 +1058,42 @@ class SimulationBridge:
 
             elif cfg.neuron_model_type == NeuronModel.ADEX.name:
                 self._log_console(f"Initializing AdEx model specifics for {n} neurons...")
-                # Single-parameter set broadcast to all neurons; traits currently only affect visualization and E/I status
+                # Overlay AdEx preset params onto cfg.adex_* fields if a
+                # preset is configured. This lets users select e.g.
+                # ADEX_FS_CORTICAL_INTERNEURON without manually setting
+                # all 10 parameters.
+                preset_name = getattr(cfg, "default_neuron_type_adex", None)
+                if preset_name:
+                    try:
+                        preset_enum = NeuronType[preset_name]
+                        from sim.enums import DefaultAdExParamsManager
+                        preset_params = DefaultAdExParamsManager.get_params(preset_enum)
+                        cfg.adex_C = float(preset_params["C"])
+                        cfg.adex_g_L = float(preset_params["g_L"])
+                        cfg.adex_E_L = float(preset_params["E_L"])
+                        cfg.adex_V_T = float(preset_params["V_T"])
+                        cfg.adex_Delta_T = float(preset_params["Delta_T"])
+                        cfg.adex_a = float(preset_params["a"])
+                        cfg.adex_tau_w = float(preset_params["tau_w"])
+                        cfg.adex_b = float(preset_params["b"])
+                        cfg.adex_V_r = float(preset_params["V_r"])
+                        cfg.adex_V_peak = float(preset_params["V_peak"])
+                        self._log_console(
+                            f"AdEx preset '{preset_name}' loaded: "
+                            f"C={cfg.adex_C} g_L={cfg.adex_g_L} a={cfg.adex_a} "
+                            f"tau_w={cfg.adex_tau_w} b={cfg.adex_b}",
+                        )
+                    except (KeyError, AttributeError) as e:
+                        self._log_console(
+                            f"Failed to load AdEx preset '{preset_name}': {e}. "
+                            f"Using default cfg.adex_* fields.", "warning",
+                        )
                 self.cp_membrane_potential_v = cp.full(n, cfg.adex_E_L, dtype=cp.float32)
                 self.cp_adex_w = cp.zeros(n, dtype=cp.float32)
                 self.cp_neuron_firing_thresholds = None  # AdEx uses adex_V_peak from config
                 # Vectorized viz label assignment
-                self.runtime_state.neuron_types_list_for_viz = ["AdEx_RS"] * n
+                viz_label = preset_name.replace("ADEX_", "AdEx_") if preset_name else "AdEx_RS"
+                self.runtime_state.neuron_types_list_for_viz = [viz_label] * n
             
             # B2: Apply parameter heterogeneity if enabled
             if cfg.enable_parameter_heterogeneity and n > 0:

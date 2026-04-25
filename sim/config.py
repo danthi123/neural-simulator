@@ -83,7 +83,13 @@ class CoreSimConfig:
     hh_E_h: float = -30.0
     hh_g_NaP_max: float = 0.0
 
-    # AdEx parameters (single-compartment RS default; per-neuron variation can be added later)
+    # AdEx parameters. Default: Brette & Gerstner 2005 RS pyramidal.
+    # Override via cfg.default_neuron_type_adex ∈ {ADEX_RS_CORTICAL_PYRAMIDAL,
+    # ADEX_FS_CORTICAL_INTERNEURON, ADEX_IB_BURSTING, ADEX_CH_CHATTERING,
+    # ADEX_LTS_LOW_THRESHOLD, ADEX_STRIATAL_MSN, ADEX_DOPAMINE}. The bridge
+    # init reads this enum and overlays preset values onto the cfg.adex_*
+    # fields below.
+    default_neuron_type_adex: str = "ADEX_RS_CORTICAL_PYRAMIDAL"
     adex_C: float = 281.0          # pF
     adex_g_L: float = 30.0         # nS
     adex_E_L: float = -70.6        # mV
