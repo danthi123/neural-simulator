@@ -307,7 +307,7 @@ def run_moving_goal_episode(
         [(int(s), tuple(g)) for s, g in goal_schedule], key=lambda t: t[0]
     )
 
-    regions, pathways = build_bg_brain_regions(n_cortex=400)  # 100 per action
+    regions, pathways = build_bg_brain_regions(n_cortex=100)  # 25 per action — keeps D1 firing in physiological range (~75 Hz). Larger pools over-drive GPi past D1 inhibition.
     cfg = CoreSimConfig()
     cfg.num_neurons = 0
     cfg.dt_ms = 1.0
@@ -319,9 +319,8 @@ def run_moving_goal_episode(
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = regions
     cfg.region_pathways = pathways
-    # DEBUG: disable plasticity entirely to isolate the cascade-degradation issue
-    cfg.enable_stdp = False
-    cfg.enable_reward_modulation = False
+    cfg.enable_stdp = True
+    cfg.enable_reward_modulation = True
     cfg.reward_learning_rate = float(learning_rate)
     cfg.reward_eligibility_tau_ms = float(reward_eligibility_tau_ms)
     cfg.enable_hebbian_learning = False
@@ -479,16 +478,15 @@ def run_moving_goal_episode(
             reward = 0.0
         reward_log.append(float(reward))
 
-        # DEBUG: skip reward-hold steps entirely to test if those are killing the cascade
-        # if abs(reward) > 0:
-        #     bridge.core_config.current_reward_signal = float(reward)
-        #     for _ in range(reward_hold_steps):
-        #         bridge._run_one_simulation_step()
-        #         bridge.runtime_state.current_time_step += 1
-        #         bridge.runtime_state.current_time_ms = (
-        #             bridge.runtime_state.current_time_step * cfg.dt_ms
-        #         )
-        #     bridge.core_config.current_reward_signal = 0.0
+        if abs(reward) > 0:
+            bridge.core_config.current_reward_signal = float(reward)
+            for _ in range(reward_hold_steps):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+                bridge.runtime_state.current_time_ms = (
+                    bridge.runtime_state.current_time_step * cfg.dt_ms
+                )
+            bridge.core_config.current_reward_signal = 0.0
 
         if verbose and (step + 1) % 100 == 0:
             recent_dist = float(np.mean(distance_log[-100:]))
