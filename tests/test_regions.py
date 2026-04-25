@@ -76,3 +76,73 @@ def test_region_pathway_with_nm_gating():
         neuromodulator_gates=["dopamine"],
     )
     assert p.neuromodulator_gates == ["dopamine"]
+
+
+# ---------- Task 2: RegionManager allocation ----------
+
+def test_region_manager_allocates_contiguous_indices():
+    from sim.regions import BrainRegion, RegionManager
+
+    regions = [
+        BrainRegion(name="PFC", n_neurons=100),
+        BrainRegion(name="Motor", n_neurons=20),
+    ]
+    mgr = RegionManager(regions, [])
+    mgr.initialize()
+    assert mgr.total_neurons() == 120
+    assert mgr.indices("PFC") == list(range(0, 100))
+    assert mgr.indices("Motor") == list(range(100, 120))
+    with pytest.raises(KeyError):
+        mgr.indices("Hippocampus")
+
+
+def test_region_manager_inhibitory_indices_match_exc_fraction():
+    from sim.regions import BrainRegion, RegionManager
+
+    regions = [BrainRegion(name="PFC", n_neurons=100, exc_fraction=0.8)]
+    mgr = RegionManager(regions, [])
+    mgr.initialize(seed=42)
+    inh_indices = mgr.inhibitory_indices("PFC")
+    # 20% inhibitory of 100 = 20
+    assert len(inh_indices) == 20
+    # All within PFC range
+    for idx in inh_indices:
+        assert 0 <= idx < 100
+
+
+def test_region_manager_inhibitory_indices_seed_deterministic():
+    from sim.regions import BrainRegion, RegionManager
+
+    regions = [BrainRegion(name="PFC", n_neurons=100, exc_fraction=0.8)]
+
+    mgr1 = RegionManager(regions, [])
+    mgr1.initialize(seed=42)
+
+    mgr2 = RegionManager(regions, [])
+    mgr2.initialize(seed=42)
+
+    assert mgr1.inhibitory_indices("PFC") == mgr2.inhibitory_indices("PFC")
+
+
+def test_region_manager_indices_dict_for_neuromod_groups():
+    """region_indices_dict() returns {name: [int]} for nm_mgr.set_group_indices."""
+    from sim.regions import BrainRegion, RegionManager
+
+    regions = [
+        BrainRegion(name="PFC", n_neurons=10),
+        BrainRegion(name="Motor", n_neurons=4),
+    ]
+    mgr = RegionManager(regions, [])
+    mgr.initialize()
+    d = mgr.region_indices_dict()
+    assert d["PFC"] == list(range(0, 10))
+    assert d["Motor"] == list(range(10, 14))
+
+
+def test_region_manager_empty_lists_yield_zero_total():
+    from sim.regions import RegionManager
+
+    mgr = RegionManager([], [])
+    mgr.initialize()
+    assert mgr.total_neurons() == 0
+    assert mgr.region_indices_dict() == {}

@@ -22,8 +22,9 @@ See:
 
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass, field
-from typing import List
+from typing import Dict, List, Sequence
 
 
 @dataclass
@@ -117,3 +118,75 @@ class RegionPathway:
     weight_jitter: float = 0.2
     plastic: bool = True
     neuromodulator_gates: List[str] = field(default_factory=list)
+
+
+class RegionManager:
+    """Owns per-region neuron-index allocation, inhibitory cell selection,
+    and (later) wiring-plan generation.
+
+    Lifecycle:
+        mgr = RegionManager(regions, pathways)
+        mgr.initialize(seed=42)              # allocate index ranges + inh
+        plan = mgr.build_wiring_plan(rng=...)  # used by bridge.inject_explicit_wiring (Task 3+)
+        mgr.region_indices_dict()             # for nm_mgr.set_group_indices
+
+    Backward compat: an empty regions list yields total_neurons() == 0
+    and an empty wiring plan, so the bridge falls through to the legacy
+    single-population path.
+    """
+
+    def __init__(self,
+                 regions: Sequence[BrainRegion],
+                 pathways: Sequence[RegionPathway]):
+        self._regions: List[BrainRegion] = list(regions)
+        self._pathways: List[RegionPathway] = list(pathways)
+        self._indices: Dict[str, List[int]] = {}
+        self._inhibitory: Dict[str, List[int]] = {}
+        self._total_neurons: int = 0
+
+    def initialize(self, seed: int = 0) -> None:
+        """Allocate contiguous index ranges for each region and pick
+        inhibitory cells deterministically from `seed`."""
+        rng = random.Random(seed)
+        cursor = 0
+        self._indices = {}
+        self._inhibitory = {}
+        for region in self._regions:
+            start = cursor
+            end = cursor + int(region.n_neurons)
+            idx_list = list(range(start, end))
+            self._indices[region.name] = idx_list
+
+            # Pick inhibitory subset deterministically
+            n_inh = int(round((1.0 - region.exc_fraction) * region.n_neurons))
+            n_inh = max(0, min(region.n_neurons, n_inh))
+            inh_chosen = sorted(rng.sample(idx_list, n_inh)) if n_inh > 0 else []
+            self._inhibitory[region.name] = inh_chosen
+
+            cursor = end
+        self._total_neurons = cursor
+
+    def total_neurons(self) -> int:
+        return self._total_neurons
+
+    def indices(self, region_name: str) -> List[int]:
+        if region_name not in self._indices:
+            raise KeyError(region_name)
+        return list(self._indices[region_name])
+
+    def inhibitory_indices(self, region_name: str) -> List[int]:
+        if region_name not in self._inhibitory:
+            raise KeyError(region_name)
+        return list(self._inhibitory[region_name])
+
+    def region_indices_dict(self) -> Dict[str, List[int]]:
+        """Returns {name: indices} suitable for
+        sim.neuromodulators.NeuromodulatorManager.set_group_indices().
+        """
+        return {name: list(idx) for name, idx in self._indices.items()}
+
+    def regions(self) -> List[BrainRegion]:
+        return list(self._regions)
+
+    def pathways(self) -> List[RegionPathway]:
+        return list(self._pathways)
