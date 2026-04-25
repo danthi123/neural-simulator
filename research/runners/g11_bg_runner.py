@@ -323,6 +323,8 @@ def run_moving_goal_episode(
     cfg.enable_reward_modulation = True
     cfg.reward_learning_rate = float(learning_rate)
     cfg.reward_eligibility_tau_ms = float(reward_eligibility_tau_ms)
+    # cortex->D1 weight_mean=25 needs w_max above that or soft-bound STDP collapses it
+    cfg.stdp_w_max = 30.0
     cfg.enable_hebbian_learning = False
     cfg.enable_homeostasis = False
     cfg.enable_short_term_plasticity = False
