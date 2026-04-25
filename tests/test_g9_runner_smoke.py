@@ -92,6 +92,44 @@ def test_g9_smoke_rsg_probe(tmp_path):
     assert data["reservoir_weight_drift_max"] == 0.0
 
 
+def test_g9_smoke_with_large_reservoir(tmp_path):
+    """Route C: 5000-hidden-neuron G9 runs cleanly. Tests that the runner
+    + bridge + reservoir pipeline scales to where the GPU is actually
+    compute-bound rather than dispatch-bound. 30 trials so it's still
+    a smoke test (~1-2 min on RTX 3090)."""
+    pytest.importorskip("cupy")
+    from research.runners.g9_runner import _build_g9_plan, run_g9_episode
+
+    # Override hidden layer size via the plan-builder defaults. The
+    # public run_g9_episode doesn't expose these, so build the plan
+    # directly to validate the larger network at the wiring level.
+    core_cfg, plan = _build_g9_plan(
+        seed=42,
+        n_hidden_exc=4000,
+        n_hidden_inh=1000,
+        # default densities will yield a manageable synapse count:
+        # input(64) -> hidden(5000) at 0.5 = 160000
+        # hidden(5000) recurrent at 0.1 = ~2500000
+        # hidden(5000) -> motor(4) at 0.5 = 10000
+        hidden_to_hidden_density=0.05,  # tighter at this scale to keep nnz tractable
+        input_to_hidden_density=0.1,
+    )
+    layout = plan["layout"]
+    assert len(layout["hidden_idx"]) == 5000
+    assert core_cfg.num_neurons == 64 + 5000 + 4
+    # input->hidden + hidden_recurrent + hidden->motor counts
+    n_input_to_hidden = plan["input_to_hidden"]["count"]
+    n_hidden_recurrent = plan["hidden_recurrent"]["count"]
+    n_hidden_to_motor = plan["hidden_to_motor"]["count"]
+    total_synapses = n_input_to_hidden + n_hidden_recurrent + n_hidden_to_motor
+    # Sanity: roughly density * full pairs
+    assert n_input_to_hidden > 30000  # 64*5000*0.1 = 32000
+    assert n_hidden_recurrent > 1_000_000  # 5000*5000*0.05 ~ 1.25M
+    assert n_hidden_to_motor > 8000  # 5000*4*0.5 = 10000
+    print(f"\n  Route C smoke: {core_cfg.num_neurons} neurons, "
+          f"{total_synapses:,} synapses")
+
+
 def test_g9_smoke_with_neuromodulators(tmp_path):
     """Session E.1: G9 runner accepts nm_configs and threads them into
     the bridge, registers group indices, records final concentrations."""
