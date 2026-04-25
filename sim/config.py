@@ -171,6 +171,17 @@ class CoreSimConfig:
     reward_baseline: float = 0.0           # Expected reward (for prediction error)
     current_reward_signal: float = 0.0     # Current reward value (updated externally or via task)
 
+    # C2b: Neuromodulator subsystem (Session E.1)
+    # Opt-in framework subsuming the legacy current_reward_signal path. When
+    # enabled, neuromodulators in `neuromodulators` are managed by a
+    # NeuromodulatorManager with concentration dynamics, production rules,
+    # and configurable receptor effects on synaptic gain / plasticity rate
+    # / excitability drive. Default OFF for full backward compatibility.
+    # See sim/neuromodulators.py and
+    # docs/plans/2026-04-24-neuromodulator-subsystem.md
+    enable_neuromodulator_subsystem: bool = False
+    neuromodulators: list = field(default_factory=list)  # List[NeuromodulatorConfig]
+
     # C3: Structural Plasticity (Synapse Formation/Elimination) - Butz et al. 2009
     enable_structural_plasticity: bool = True  # Enabled by default for dynamic network adaptation
     struct_plast_formation_rate: float = 1e-6     # Probability per timestep per neuron pair

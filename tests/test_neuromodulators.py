@@ -600,3 +600,76 @@ def test_excitability_drive_per_neuron_returns_none_if_no_per_neuron_targets():
     mgr.set_concentration("ne", 1.0)
     # Only scope=all targets, no per-neuron arrays needed
     assert mgr.compute_excitability_drive_per_neuron() is None
+
+
+# ---------- Task 9: bridge config flag + allocation ----------
+
+
+def _make_bridge(extra_cfg_overrides: dict = None):
+    """Helper: minimal bridge for integration tests. Returns (sb, cfg)."""
+    pytest.importorskip("cupy")
+    from sim import (
+        SimulationBridge,
+        CoreSimConfig,
+        VisualizationConfig,
+        RuntimeState,
+        GPUConfig,
+    )
+    from sim.enums import NeuronModel
+
+    cfg = CoreSimConfig()
+    cfg.num_neurons = 50
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.dt_ms = 1.0
+    cfg.seed = 42
+    if extra_cfg_overrides:
+        for k, v in extra_cfg_overrides.items():
+            setattr(cfg, k, v)
+
+    sb = SimulationBridge(
+        core_config=cfg,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
+    )
+    sb.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    sb._initialize_simulation_data(called_from_playback_init=False)
+    return sb, cfg
+
+
+def test_bridge_no_manager_when_subsystem_disabled():
+    """Default config (subsystem off) -> bridge.neuromodulator_manager is None."""
+    pytest.importorskip("cupy")
+    sb, cfg = _make_bridge()
+    assert cfg.enable_neuromodulator_subsystem is False
+    assert sb.neuromodulator_manager is None
+    sb.clear_simulation_state_and_gpu_memory()
+
+
+def test_bridge_allocates_manager_when_subsystem_enabled():
+    """With enable_neuromodulator_subsystem=True and a non-empty list,
+    bridge allocates a NeuromodulatorManager and exposes it via attr."""
+    pytest.importorskip("cupy")
+    from sim.neuromodulators import NeuromodulatorConfig
+
+    sb, cfg = _make_bridge({
+        "enable_neuromodulator_subsystem": True,
+        "neuromodulators": [NeuromodulatorConfig(name="dopamine", baseline=0.0)],
+    })
+    assert sb.neuromodulator_manager is not None
+    assert sb.neuromodulator_manager.get_concentration("dopamine") == 0.0
+    sb.clear_simulation_state_and_gpu_memory()
+
+
+def test_bridge_no_manager_when_subsystem_enabled_but_empty_list():
+    """If enable_neuromodulator_subsystem is True but no modulators are
+    configured, manager stays None (no point allocating an empty manager)."""
+    pytest.importorskip("cupy")
+
+    sb, cfg = _make_bridge({
+        "enable_neuromodulator_subsystem": True,
+        "neuromodulators": [],
+    })
+    assert sb.neuromodulator_manager is None
+    sb.clear_simulation_state_and_gpu_memory()

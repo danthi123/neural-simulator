@@ -266,6 +266,14 @@ class SimulationBridge:
         # Eligibility trace for STDP/reward
         self.cp_eligibility_trace = None
 
+        # Neuromodulator subsystem (Session E.1, opt-in).
+        # When core_config.enable_neuromodulator_subsystem is True, this is
+        # populated by _initialize_simulation_data with a
+        # sim.neuromodulators.NeuromodulatorManager that owns per-modulator
+        # concentrations and applies receptor effects each step. Default
+        # None means legacy reward path is used unchanged.
+        self.neuromodulator_manager = None
+
         # Experiment & stimulus system
         self.experiment_engine = None
         self.experiment_config = None  # ExperimentConfig dataclass
@@ -450,6 +458,24 @@ class SimulationBridge:
             self.cp_eligibility_trace = cp.zeros(capacity, dtype=cp.float32)
         else:
             self.cp_eligibility_trace = None
+
+        # Neuromodulator subsystem (Session E.1, opt-in).
+        # When `enable_neuromodulator_subsystem` is True, allocate a
+        # NeuromodulatorManager per the user's `neuromodulators` configs.
+        # When False (default), legacy reward modulation path runs unchanged.
+        if getattr(cfg, "enable_neuromodulator_subsystem", False) and getattr(cfg, "neuromodulators", None):
+            from sim.neuromodulators import NeuromodulatorManager
+            self.neuromodulator_manager = NeuromodulatorManager(
+                cfg.neuromodulators, cfg.dt_ms,
+            )
+            self.neuromodulator_manager.initialize(cfg.num_neurons, cp)
+            self._log_console(
+                f"Initialized neuromodulator subsystem with "
+                f"{len(cfg.neuromodulators)} modulators: "
+                f"{self.neuromodulator_manager.modulator_names()}"
+            )
+        else:
+            self.neuromodulator_manager = None
 
         # Visualization arrays
         if OPENGL_AVAILABLE and num_synapses > 0:
