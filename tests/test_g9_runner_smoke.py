@@ -130,6 +130,127 @@ def test_g9_smoke_with_large_reservoir(tmp_path):
           f"{total_synapses:,} synapses")
 
 
+def test_g9_smoke_motor_exploration(tmp_path):
+    """Session G: motor_exploration_rate_hz forces all motors to fire at least
+    once in a short episode, breaking the silent-motor trap.
+
+    Without exploration, with seed 42 / 30 steps, only 1-2 motors typically fire
+    (the rest are 'silent'). With 15 Hz exploration, every motor should fire."""
+    pytest.importorskip("cupy")
+    import numpy as np
+    from research.runners.g9_runner import run_g9_episode
+
+    out = tmp_path / "g9_explore.json"
+    r = run_g9_episode(
+        out_path=str(out),
+        seed=42, n_steps=30, grid_size=8,
+        start_pos=(1, 1), goal_pos=(6, 6),
+        learning_rate=0.05,
+        reward_eligibility_tau_ms=500.0,
+        reward_hold_steps=10,
+        action_selection="argmax",
+        motor_exploration_rate_hz=15.0,
+        verbose=False,
+    )
+    data = json.load(open(out))
+    assert data["motor_exploration_rate_hz"] == 15.0
+    # Reservoir still frozen by plastic mask
+    assert data["reservoir_weight_drift_max"] == 0.0
+    # Critical invariant: every motor fired at least once across the episode.
+    # motor_counts is a list of [n_motor] count arrays per step.
+    motor_counts = np.asarray(data["motor_counts"])  # (n_steps, n_motor)
+    per_motor_total = motor_counts.sum(axis=0)
+    assert (per_motor_total > 0).all(), (
+        f"Some motors silent despite exploration noise: {per_motor_total.tolist()}"
+    )
+
+
+def test_g9_smoke_positive_only_reward(tmp_path):
+    """Session G v3: positive_only_reward emits 0 instead of -1 when distance
+    increases. Verify reward log has no negative entries."""
+    pytest.importorskip("cupy")
+    from research.runners.g9_runner import run_g9_episode
+
+    out = tmp_path / "g9_posrew.json"
+    run_g9_episode(
+        out_path=str(out),
+        seed=42, n_steps=30, grid_size=8,
+        start_pos=(1, 1), goal_pos=(6, 6),
+        learning_rate=0.05,
+        action_selection="argmax",
+        positive_only_reward=True,
+        verbose=False,
+    )
+    data = json.load(open(out))
+    assert data["positive_only_reward"] is True
+    # No negative reward signals.
+    assert all(r >= 0 for r in data["reward_log"]), (
+        f"positive_only_reward should never emit negative; got "
+        f"{[r for r in data['reward_log'] if r < 0]}"
+    )
+    # But should still emit positive when agent moves toward goal.
+    assert any(r > 0 for r in data["reward_log"]), (
+        "Expected at least one positive reward in 30 steps"
+    )
+    assert data["reservoir_weight_drift_max"] == 0.0
+
+
+def test_g9_smoke_proportional(tmp_path):
+    """Session G v5: proportional action selection samples motors with
+    probability proportional to spike_count + 1. Verify it runs and
+    produces non-trivial action distribution."""
+    pytest.importorskip("cupy")
+    import numpy as np
+    from research.runners.g9_runner import run_g9_episode
+
+    out = tmp_path / "g9_prop.json"
+    run_g9_episode(
+        out_path=str(out),
+        seed=42, n_steps=30, grid_size=8,
+        start_pos=(1, 1), goal_pos=(6, 6),
+        learning_rate=0.05,
+        action_selection="proportional",
+        verbose=False,
+    )
+    data = json.load(open(out))
+    assert data["action_selection"] == "proportional"
+    assert data["reservoir_weight_drift_max"] == 0.0
+    # Proportional sampling produces variety of actions, not just one motor
+    # winning every time. Even with weak training, we should see >=2 distinct
+    # motors picked across 30 steps (entropy floor from +1 prior).
+    action_counts = np.bincount(data["action_log"], minlength=4)
+    n_distinct = (action_counts > 0).sum()
+    assert n_distinct >= 2, (
+        f"Expected proportional sampling to pick >=2 distinct motors in 30 steps, "
+        f"got distribution {action_counts.tolist()}"
+    )
+
+
+def test_g9_smoke_action_attribution(tmp_path):
+    """Session G v4: action_attribution_eligibility zeros eligibility for
+    non-chosen motors. Verify it runs and reservoir is still frozen."""
+    pytest.importorskip("cupy")
+    from research.runners.g9_runner import run_g9_episode
+
+    out = tmp_path / "g9_attr.json"
+    run_g9_episode(
+        out_path=str(out),
+        seed=42, n_steps=30, grid_size=8,
+        start_pos=(1, 1), goal_pos=(6, 6),
+        learning_rate=0.05,
+        action_selection="argmax",
+        motor_exploration_rate_hz=15.0,
+        action_attribution_eligibility=True,
+        verbose=False,
+    )
+    data = json.load(open(out))
+    assert data["action_attribution_eligibility"] is True
+    assert data["reservoir_weight_drift_max"] == 0.0
+    # Plastic weights should still move (action attribution narrows the
+    # eligible set but doesn't prevent updates).
+    assert data["plastic_weight_final_std"] > 0.0
+
+
 def test_g9_smoke_with_neuromodulators(tmp_path):
     """Session E.1: G9 runner accepts nm_configs and threads them into
     the bridge, registers group indices, records final concentrations."""

@@ -275,6 +275,38 @@ Default OFF for full backward compatibility.
 pytest tests/test_regions.py -v
 ```
 
+### Motor Exploration Noise (Session G)
+
+**Purpose:** Defeats the silent-motor trap (motor neurons that never fire in
+phase 1 cannot acquire STDP eligibility, so reward-mediated weight updates
+never reach them; agent stays glued to phase-1 winners even when reward
+flips sign).
+
+**Mechanism:** Inject independent Poisson spike trains into each output
+neuron during the stimulus integration window. Each event is a strong
+spike-driving current pulse, so every motor fires occasionally regardless
+of upstream activity. STDP can then form positive eligibility on
+hidden→silent-motor synapses; reward converts those into weight changes.
+
+**Implementation:** Reuses existing `StimulusManager` POISSON_SPIKE_TRAIN
+support — no new GPU code. The G9 runner adds a second `StimulusChannel`
+alongside the sensor channel when `motor_exploration_rate_hz > 0`.
+
+**Runner kwargs (`research/runners/g9_runner.py`):**
+- `motor_exploration_rate_hz` (default 0.0 — backward compatible)
+- `motor_exploration_current_pA` (default 1000.0)
+- `motor_exploration_spike_ms` (default 2.0)
+
+Typical working range: 5-30 Hz (~0.5-3 spurious spikes per motor per 100 ms
+readout window). 0 disables. Above ~50 Hz starts to dominate action selection.
+
+**Relation to ε-greedy:** Equivalent to ε-greedy / entropy regularization /
+Boltzmann exploration in tabular RL, just at the spike-event level instead
+of the action-distribution level. Biologically grounded in tonic dopamine
+driving spontaneous striatal/cortical activity (Schultz 2007).
+
+**Plan / findings:** `research/findings/2026-04-25-session-g-motor-exploration.md`
+
 ## File Formats
 
 | Format | Extension | Purpose |

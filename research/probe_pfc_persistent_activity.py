@@ -237,10 +237,15 @@ def main():
             (1.5, 1.0, 0.20, 0.8),
         ]
     else:
-        # 12-config grid (3x2x2)
-        exc_weights = [0.5, 1.0, 1.5]
-        inh_weights = [1.0, 1.5]
-        densities = [0.15, 0.20]
+        # Wider grid focused on STRONG recurrent excitation. Initial quick
+        # grid at exc_weight 0.5-1.5 + density 0.15-0.20 showed persistent
+        # rate collapses to baseline (~5 Hz) for all configs — recurrent
+        # excitation isn't strong enough to maintain firing post-pulse.
+        # Going up to exc_weight=4.0 and density=0.30 to bracket the
+        # bistability boundary.
+        exc_weights = [1.5, 2.5, 3.5]
+        inh_weights = [0.5, 1.0, 1.5]
+        densities = [0.20, 0.30]
         exc_fractions = [0.8]
         configs = list(product(exc_weights, inh_weights, densities, exc_fractions))
 
