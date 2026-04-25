@@ -1095,6 +1095,15 @@ class SimulationBridge:
                 viz_label = preset_name.replace("ADEX_", "AdEx_") if preset_name else "AdEx_RS"
                 self.runtime_state.neuron_types_list_for_viz = [viz_label] * n
             
+            # Per-region neuron type override (Phase B). After all neurons
+            # are initialized with the default type, walk each region and
+            # override the params for neurons in that region's slice using
+            # the region's izh/hh/adex_neuron_type if specified. This lets
+            # e.g. striatum_D1 region use IZH2007_STRIATAL_MSN_D1 while
+            # motor region uses IZH2007_RS_CORTICAL_PYRAMIDAL.
+            if self.region_manager is not None:
+                self._apply_per_region_neuron_types(cfg, n)
+
             # B2: Apply parameter heterogeneity if enabled
             if cfg.enable_parameter_heterogeneity and n > 0:
                 self._apply_parameter_heterogeneity(cfg, n)
@@ -1254,6 +1263,60 @@ class SimulationBridge:
                 cp.get_default_memory_pool().free_all_blocks()
                 cp.get_default_pinned_memory_pool().free_all_blocks()
     
+    def _apply_per_region_neuron_types(self, cfg, n):
+        """Override per-neuron parameters based on region.izh_neuron_type /
+        region.hh_neuron_type / region.adex_neuron_type fields.
+
+        Phase B addition (2026-04-25): the brain-region framework
+        previously assigned all neurons the same type (cfg.default_neuron_type_*).
+        For BG-style action selection circuits, each region needs its own
+        neuron type (striatum_D1 uses MSN_D1, GPe uses GPE_PACEMAKER, etc.).
+
+        This method walks each region in cfg.brain_regions, looks up its
+        index range from region_manager, and overrides cp_izh_* / cp_hh_*
+        arrays for those indices using the region's per-type preset.
+        """
+        import cupy as cp_local  # local alias avoids confusion with self attrs
+        for region in cfg.brain_regions:
+            indices = self.region_manager.indices(region.name)
+            if not indices:
+                continue
+            idx_arr = cp.asarray(list(indices), dtype=cp.int64)
+
+            if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name and region.izh_neuron_type:
+                try:
+                    type_enum = NeuronType[region.izh_neuron_type]
+                    params = DefaultIzhikevichParamsManager.get_params(
+                        type_enum, use_2007_formulation=True,
+                    )
+                    self.cp_izh_C[idx_arr] = cp.float32(params["C"])
+                    self.cp_izh_k[idx_arr] = cp.float32(params["k"])
+                    self.cp_izh_vr[idx_arr] = cp.float32(params["vr"])
+                    self.cp_izh_vt[idx_arr] = cp.float32(params["vt"])
+                    self.cp_izh_vpeak[idx_arr] = cp.float32(params["vpeak"])
+                    self.cp_izh_a[idx_arr] = cp.float32(params["a"])
+                    self.cp_izh_b[idx_arr] = cp.float32(params["b"])
+                    self.cp_izh_c_reset[idx_arr] = cp.float32(params["c_reset"])
+                    self.cp_izh_d_increment[idx_arr] = cp.float32(params["d_increment"])
+                    # Reset Vm + recovery to the new vr / b
+                    self.cp_membrane_potential_v[idx_arr] = cp.float32(params["vr"])
+                    self.cp_recovery_variable_u[idx_arr] = (
+                        cp.float32(params["b"]) *
+                        (cp.float32(params["vr"]) - cp.float32(params["vr"]))  # 0 at rest
+                    )
+                    self._log_console(
+                        f"Region '{region.name}' ({len(indices)} neurons): "
+                        f"using Izh type {region.izh_neuron_type}"
+                    )
+                except (KeyError, AttributeError) as e:
+                    self._log_console(
+                        f"Region '{region.name}' Izh type override failed: {e}", "warning",
+                    )
+            # HH per-region override is more complex (uses scalar cfg fields,
+            # not per-neuron arrays for many params) — defer until Phase B
+            # actually needs HH-mode regions.
+            # AdEx per-region override likewise deferred.
+
     def _apply_parameter_heterogeneity(self, cfg, n):
         """Applies parameter heterogeneity by drawing per-neuron values from distributions.
         
