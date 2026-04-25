@@ -836,3 +836,106 @@ def test_plasticity_rate_target_scales_reward_weight_updates():
         f"Expected ~2x reward-update with DA plasticity_rate, got ratio "
         f"{ratio:.3f} (no_da={delta_no_da:.6f} da_05={delta_da_05:.6f})"
     )
+
+
+# ---------- Task 13: excitability_drive wired into bridge ----------
+
+
+def test_excitability_drive_increases_firing_rate():
+    """A high-NE config with excitability_drive (scope=all) should produce
+    measurably more spikes than the same config with NE at baseline."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget, NeuromodulatorConfig,
+    )
+
+    def _spike_count(ne_concentration: float, n_steps: int = 200) -> int:
+        sb, cfg = _make_bridge({
+            "num_neurons": 100,
+            "enable_neuromodulator_subsystem": True,
+            "neuromodulators": [
+                NeuromodulatorConfig(
+                    name="ne",
+                    baseline=0.0,
+                    decay_tau_ms=1e9,
+                    targets=[ModulatorTarget(target_type="excitability_drive",
+                                              scope="all", sensitivity=200.0)],
+                )
+            ],
+        })
+        sb.neuromodulator_manager.set_concentration("ne", ne_concentration)
+        total = 0
+        for _ in range(n_steps):
+            sb._run_one_simulation_step()
+            sb.runtime_state.current_time_step += 1
+            total += int(cp.sum(sb.cp_firing_states).get())
+        sb.clear_simulation_state_and_gpu_memory()
+        return total
+
+    n_low = _spike_count(0.0)
+    n_high = _spike_count(1.0)  # +200 pA on every neuron
+    # Heavy current injection should produce many more spikes
+    assert n_high > n_low + 100, (
+        f"Excitability drive ineffective: low={n_low}, high={n_high}"
+    )
+
+
+def test_excitability_drive_per_neuron_scope_trait():
+    """trait:1 (inhibitory) excitability_drive boost should preferentially
+    raise inhibitory firing rate."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+    import numpy as np
+
+    from sim.neuromodulators import (
+        ModulatorTarget, NeuromodulatorConfig,
+    )
+
+    sb, cfg = _make_bridge({
+        "num_neurons": 200,
+        "neural_profile_name": "CORTEX_L23_RS_FS",  # has inhibitory traits
+        "enable_neuromodulator_subsystem": True,
+        "neuromodulators": [
+            NeuromodulatorConfig(
+                name="ne",
+                baseline=0.0,
+                decay_tau_ms=1e9,
+                targets=[ModulatorTarget(target_type="excitability_drive",
+                                          scope="trait:1", sensitivity=200.0)],
+            )
+        ],
+    })
+    if sb.cp_traits is None:
+        sb.clear_simulation_state_and_gpu_memory()
+        pytest.skip("traits not allocated under this profile")
+
+    sb.neuromodulator_manager.set_concentration("ne", 1.0)
+
+    inh_mask = (sb.cp_traits == 1)
+    exc_mask = (sb.cp_traits == 0)
+    inh_count = 0
+    exc_count = 0
+    n_inh_neurons = int(cp.sum(inh_mask).get())
+    n_exc_neurons = int(cp.sum(exc_mask).get())
+    if n_inh_neurons == 0 or n_exc_neurons == 0:
+        sb.clear_simulation_state_and_gpu_memory()
+        pytest.skip("no inhibitory or excitatory neurons in this profile")
+
+    for _ in range(200):
+        sb._run_one_simulation_step()
+        sb.runtime_state.current_time_step += 1
+        fired = sb.cp_firing_states
+        inh_count += int(cp.sum(fired & inh_mask).get())
+        exc_count += int(cp.sum(fired & exc_mask).get())
+    sb.clear_simulation_state_and_gpu_memory()
+
+    # Inhibitory firing rate per neuron should be much higher than
+    # excitatory under this targeted boost.
+    inh_rate = inh_count / max(n_inh_neurons, 1)
+    exc_rate = exc_count / max(n_exc_neurons, 1)
+    assert inh_rate > 2.0 * exc_rate, (
+        f"trait:1 boost should bias toward inhibitory; got inh_rate={inh_rate:.2f} "
+        f"exc_rate={exc_rate:.2f}"
+    )

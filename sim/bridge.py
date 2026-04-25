@@ -3541,6 +3541,18 @@ class SimulationBridge:
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
 
+            # Neuromodulator excitability_drive (additive pA, scope=all + per-neuron).
+            if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                    and self.neuromodulator_manager is not None):
+                nm_scalar_drive = self.neuromodulator_manager.compute_excitability_drive_pA()
+                if abs(nm_scalar_drive) > 1e-9:
+                    total_input_current_pA = total_input_current_pA + cp.float32(nm_scalar_drive)
+                nm_per_neuron_drive = self.neuromodulator_manager.compute_excitability_drive_per_neuron(
+                    cp_traits=self.cp_traits,
+                )
+                if nm_per_neuron_drive is not None:
+                    total_input_current_pA = total_input_current_pA + nm_per_neuron_drive
+
             # --- 2.2b. Experiment Stimulus Injection ---
             if self.experiment_engine is not None and self.experiment_engine.is_experiment_running:
                 try:
