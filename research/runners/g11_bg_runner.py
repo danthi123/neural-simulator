@@ -186,8 +186,13 @@ def build_bg_brain_regions(
     for cortex_action in ACTION_NAMES:
         for str_action in ACTION_NAMES:
             same = (cortex_action == str_action)
-            density = 1.0 if same else 0.3
-            weight = 25.0 if same else 5.0
+            # Eliminate cross-projections to avoid confused multi-cortex drive.
+            # Each cortex_X projects ONLY to str_D1_X / str_D2_X.
+            # Learning-based redistribution can come later.
+            if not same:
+                continue
+            density = 1.0
+            weight = 25.0
             pathways.append(RegionPathway(
                 from_region=f"cortex_{cortex_action}",
                 to_region=f"str_D1_{str_action}",
@@ -314,12 +319,10 @@ def run_moving_goal_episode(
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = regions
     cfg.region_pathways = pathways
-    # Very low learning rate to avoid destroying carefully-tuned BG weights.
-    # The BG cascade is PRECISELY balanced; even small weight changes break
-    # action selection.
-    cfg.enable_stdp = True
-    cfg.enable_reward_modulation = True
-    cfg.reward_learning_rate = float(learning_rate)  # default 0.01
+    # DEBUG: disable plasticity entirely to isolate the cascade-degradation issue
+    cfg.enable_stdp = False
+    cfg.enable_reward_modulation = False
+    cfg.reward_learning_rate = float(learning_rate)
     cfg.reward_eligibility_tau_ms = float(reward_eligibility_tau_ms)
     cfg.enable_hebbian_learning = False
     cfg.enable_homeostasis = False
@@ -416,13 +419,17 @@ def run_moving_goal_episode(
         # NOTE: this DOESN'T let the BG demonstrate "discovery" — but it
         # does test whether the BG's per-action structure dissolves the
         # silent-motor trap on phase change.
-        # Drive ONLY the goal-direction-relevant cortex pool(s); others quiet.
-        # This removes the background noise that was keeping non-correct
-        # action pathways partially active.
-        bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = cp.float32(0.0)
-        bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = cp.float32(0.0)
-        bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = cp.float32(0.0)
-        bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = cp.float32(0.0)
+        # RE-SET ALL baseline drives every trial (defensive against any drift).
+        bridge.cp_external_input_current[:] = 0.0
+        for rn in [f"gpe_{a}" for a in ACTION_NAMES]:
+            bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
+        for rn in [f"gpi_{a}" for a in ACTION_NAMES]:
+            bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(110.0)
+        for rn in ["stn", "dopamine"]:
+            bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
+        for rn in [f"thal_{a}" for a in ACTION_NAMES]:
+            bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(300.0)
+        # Cortex drives based on goal direction
         if gy > y:
             bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = cp.float32(800.0)
         if gx > x:
@@ -472,16 +479,16 @@ def run_moving_goal_episode(
             reward = 0.0
         reward_log.append(float(reward))
 
-        # Apply reward via existing reward modulation path
-        if abs(reward) > 0:
-            bridge.core_config.current_reward_signal = float(reward)
-            for _ in range(reward_hold_steps):
-                bridge._run_one_simulation_step()
-                bridge.runtime_state.current_time_step += 1
-                bridge.runtime_state.current_time_ms = (
-                    bridge.runtime_state.current_time_step * cfg.dt_ms
-                )
-            bridge.core_config.current_reward_signal = 0.0
+        # DEBUG: skip reward-hold steps entirely to test if those are killing the cascade
+        # if abs(reward) > 0:
+        #     bridge.core_config.current_reward_signal = float(reward)
+        #     for _ in range(reward_hold_steps):
+        #         bridge._run_one_simulation_step()
+        #         bridge.runtime_state.current_time_step += 1
+        #         bridge.runtime_state.current_time_ms = (
+        #             bridge.runtime_state.current_time_step * cfg.dt_ms
+        #         )
+        #     bridge.core_config.current_reward_signal = 0.0
 
         if verbose and (step + 1) % 100 == 0:
             recent_dist = float(np.mean(distance_log[-100:]))
