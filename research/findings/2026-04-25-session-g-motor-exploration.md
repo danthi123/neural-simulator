@@ -260,15 +260,150 @@ motor's synapses. V4 tests this.
 
 ## Results — V4 (action attribution + exploration)
 
-[TBD — `research/run_g9_motor_exploration_v4.py` running. Two conditions:
-- `attr_only`: action_attribution + rate=15 (bipolar reward kept)
-- `attr_posonly`: action_attribution + rate=15 + positive-only (full stack)
+| Condition       | seed | Phase 1 finalQ | atGoal | actions [N, E, S, **W**] |
+|-----------------|------|----------------|--------|--------------------------|
+| attr_only       | 42   | 7.47           | 0      | [409, 890, 200, **1**]   |
+| attr_only       | 43   | 5.40           | 6      | [392, 586, 178, **344**] |
+| attr_only       | 44   | 6.83           | 0      | [788, 549, 143, **20**]  |
+| **attr_only avg** | — | **6.57**       | 2.0    | (worse than V1 6.40)     |
+| attr_posonly    | 42   | 7.61           | 0      | [440, 835, 225, **0**]   |
+| attr_posonly    | 43   | 5.42           | 4      | [389, 664, 161, **286**] |
+| attr_posonly    | 44   | 6.84           | 0      | [801, 537, 139, **23**]  |
+| **attr_posonly avg** | — | **6.62**  | 1.3    | —                        |
 
-Expected wall: ~80 min.]
+V4 is also a NEGATIVE result. attr_only is slightly *worse* than V1
+(6.57 vs 6.40). Combining attr + positive-only doesn't help either.
+
+## Diagnosis update (V4)
+
+Action attribution as implemented (zero non-chosen-motor eligibility before
+reward) actively *prevents* hidden→silent-motor weights from changing.
+Every step where W isn't selected (≈99%), W's nascent eligibility is wiped.
+Hidden→W weights stay at random initial values forever — they neither
+grow (no positive reward) nor shrink (no negative reward applied to them).
+
+In V1 (no attribution), at least the negative reward when E went wrong
+*depressed* hidden→E enough to give W a chance over time. With attribution,
+that depression is selective to E, but W's lack of any updates means W
+never catches up.
+
+The fundamental block: **W must be SELECTED occasionally** for any of these
+mechanisms to matter. Without W winning, no path exists for hidden→W weights
+to grow.
+
+## Results — V5 (proportional action selection)
+
+| Condition       | seed | Phase 0 finalQ | Phase 1 finalQ | actions [N, E, S, **W**] |
+|-----------------|------|----------------|----------------|--------------------------|
+| prop + rate=0   | 42   | 3.76           | **8.67**       | [349, 481, 432, **238**] |
+| prop + rate=0   | 43   | 7.60           | 6.19           | [352, 420, 359, **369**] |
+| prop + rate=0   | 44   | 3.17           | 5.47           | [421, 436, 343, **300**] |
+| **prop+rate=0 avg** | — | **4.84**     | **6.78**       | (~ baseline 6.74)        |
+| prop + rate=15  | 42   | 3.73           | 9.27           | [358, 479, 425, **238**] |
+| prop + rate=15  | 43   | 5.33           | 5.18           | [376, 401, 352, **371**] |
+| prop + rate=15  | 44   | 3.80           | 6.94           | [414, 421, 363, **302**] |
+| **prop+rate=15 avg** | — | **4.29**    | **7.13**       | (worse than baseline)    |
+
+**V5 is a NEGATIVE result.** Proportional sampling is too aggressive an
+exploration policy: phase 0 finalQ degrades from 1.99 (baseline) to 4-5
+across all V5 seeds. The agent can't establish a coherent policy in either
+phase — actions are near-uniform (`[~375, ~430, ~370, ~350]` ≈ 25% each).
+Phase 1 finalQ ≈ 5.5 (the random-walk expected value on 8×8 grid for
+goal (1,6)) confirms the agent is essentially random-walking.
+
+Counterintuitively, V5 **does break the silent-motor invariant** (W=238-371
+across seeds, vs baseline 0-13). But it does so by destroying *all*
+learning, not by selectively unblocking the silent motor.
+
+## Final cumulative results
+
+| Variant | avg Phase 1 finalQ | Silent-motor invariant | Verdict |
+|---------|---------------------|------------------------|---------|
+| baseline (rate=0, argmax, bipolar) | 6.74 | 2/3 motors silent | reference |
+| **V1: rate=15 + argmax + bipolar** | **6.40** | **3/3 fire** ✓ | **partial GO** |
+| V2: rate=30 + argmax | 6.71 | 3/3 (mixed) | NO-GO |
+| V2: rate=15 + first_spike | 6.07 | 3/3 (random) | NO-GO (misleading) |
+| V3: rate=15 + posrew | 6.75 | 3/3 | NO-GO |
+| V3: rate=0 + posrew | 6.76 | 2/3 | NO-GO |
+| V4: rate=15 + attr_only | 6.57 | 3/3 (mixed) | NO-GO |
+| V4: rate=15 + attr + posrew | 6.62 | mixed | NO-GO |
+| V5: rate=0 + proportional | 6.78 | 4/4 (random) | NO-GO |
+| V5: rate=15 + proportional | 7.13 | 4/4 (random) | NO-GO |
 
 ## Discussion
 
-[TBD until V4 lands.]
+**V1 (motor exploration noise) is the only real contribution.** With
+`motor_exploration_rate_hz=15` + standard argmax + bipolar reward:
+- Every motor fires occasionally in phase 1 (silent-motor invariant broken)
+- Phase 0 learning preserved (finalQ 1.92 ≈ baseline 1.99)
+- Phase 1 finalQ slightly improves (6.40 vs 6.74 baseline)
+
+The improvement is modest because V1 fixes Layer A (silent-motor *firing*)
+but not the deeper trap layers. Further direct attacks on Layer B
+(action-selection lock-in) and Layer C (action-blind reward) all fail or
+make things worse:
+- Removing punishment (V3 positive-only) loses information about wrong
+  actions; bipolar reward turns out to be useful
+- Action attribution (V4) starves silent motors of weight updates entirely
+- Proportional sampling (V5) destroys all learning by adding too much noise
+
+**Architectural conclusion:** The silent-motor trap on this 200-neuron
+reservoir + 4-motor R-STDP architecture is robust against shallow
+interventions on motor activity, reward sign, or action selection. The
+trap is a structural property of:
+1. Argmax + trained-winner-dominance creating a fixed point that exploration
+   noise alone can't escape
+2. Global reward eligibility coupling that propagates phase-1-correct
+   weight changes back into hidden→silent-motor synapses inappropriately
+3. STDP eligibility tau (~500ms) being too short to bridge the readaptation
+   gap when the silent motor only fires from sparse noise events
+
+Possible deeper interventions for a hypothetical Session H (NOT in scope):
+- **Per-action local circuits**: separate inhibitory pools for each motor
+  preventing action-blind weight updates at the architectural level
+- **Goal-change detection + targeted weight reset**: when reward variance
+  exceeds threshold, reset hidden→motor weights toward initial values
+- **Adaptive learning rate**: boost LR after goal change to overcome
+  entrenched weights faster
+- **Curriculum learning**: start with similar phase-0/phase-1 goals and
+  gradually increase distance — gives system a chance to learn the
+  general "goal-direction" representation before the hard test
+- **More biological architectures**: thalamic relay layer with selective
+  attention; basal ganglia disinhibition for selection; hippocampal
+  prediction-error-driven replay during goal change
+
+## V1 recommendation
+
+Despite the partial nature of the win, V1's `motor_exploration_rate_hz=15`
+should become the **default G9 recommendation** because:
+1. It guarantees the silent-motor invariant (every motor fires occasionally)
+2. It marginally improves phase-1 readaptation (6.40 vs 6.74)
+3. It's biologically grounded (tonic dopamine / cortical baseline activity)
+4. It's cheap (no GPU code change, just adds a `StimulusChannel`)
+
+The other variants (V2-V5) are documented as alternatives that explored
+the design space but did not yield improvements over V1.
+
+## Files
+
+**Code:**
+- [`research/runners/g9_runner.py`](research/runners/g9_runner.py) — added
+  `motor_exploration_rate_hz`, `positive_only_reward`,
+  `action_attribution_eligibility`, `action_selection="proportional"`
+- [`tests/test_g9_runner_smoke.py`](tests/test_g9_runner_smoke.py) — 4 new
+  smoke tests, all 9 G9 smokes pass
+
+**Probes:**
+- [V1](research/run_g9_motor_exploration.py) — baseline vs rate=15
+- [V2](research/run_g9_motor_exploration_v2.py) — first_spike + argmax+rate=30
+- [V3](research/run_g9_motor_exploration_v3.py) — positive-only reward
+- [V4](research/run_g9_motor_exploration_v4.py) — action attribution
+- [V5](research/run_g9_motor_exploration_v5.py) — proportional sampling
+- [analyzer](research/analyze_motor_exploration.py)
+
+**Raw data:** [`research/findings/raw/g9_motor_exploration/`](research/findings/raw/g9_motor_exploration/)
+
+**CLAUDE.md:** "Motor Exploration Noise (Session G)" section added.
 
 ## Files
 
