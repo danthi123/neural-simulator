@@ -105,7 +105,8 @@ def _build_g9_plan(
     stdp_w_max=3.0,
     reward_learning_rate=0.01,
     reward_eligibility_tau_ms=500.0,
-    enable_neuromod_gating=False,          # Session C: fast gain modulation
+    enable_neuromod_gating=False,          # Session C: fast gain modulation (DEPRECATED)
+    nm_configs=None,                       # Session E.1: list[NeuromodulatorConfig] — preferred path
     neuromod_tau_ms=100.0,
     neuromod_strength=0.5,
 ):
@@ -157,10 +158,18 @@ def _build_g9_plan(
     core_cfg.reward_baseline = 0.0
     core_cfg.current_reward_signal = 0.0
 
-    # Session C: neuromodulatory gain gating (opt-in)
+    # Session C: neuromodulatory gain gating (opt-in, DEPRECATED — use nm_configs)
     core_cfg.enable_neuromod_gating = enable_neuromod_gating
     core_cfg.neuromod_tau_ms = neuromod_tau_ms
     core_cfg.neuromod_strength = neuromod_strength
+
+    # Session E.1: neuromodulator subsystem (preferred path)
+    if nm_configs:
+        core_cfg.enable_neuromodulator_subsystem = True
+        core_cfg.neuromodulators = list(nm_configs)
+    else:
+        core_cfg.enable_neuromodulator_subsystem = False
+        core_cfg.neuromodulators = []
 
     core_cfg.propagation_strength = 1.0
     core_cfg.inhibitory_propagation_strength = 1.0
@@ -263,9 +272,13 @@ def run_g9_episode(
     reward_hold_steps=10,               # hold reward signal for N steps after action
     stdp_w_max=3.0,
     action_selection="argmax",          # "argmax" or "first_spike"
-    enable_neuromod_gating=False,       # Session C: fast neuromod gain
+    enable_neuromod_gating=False,       # Session C: fast neuromod gain (DEPRECATED)
     neuromod_tau_ms=100.0,
     neuromod_strength=0.5,
+    nm_configs=None,                    # Session E.1: list[NeuromodulatorConfig]
+                                        # Preferred replacement for enable_neuromod_gating.
+                                        # When non-empty, the bridge runs the
+                                        # full neuromodulator subsystem.
     eval_random_starts=0,               # Session D.A.3: number of random-start
                                         # eval episodes to run AFTER training.
                                         # 0 = no eval (backward compat).
@@ -298,6 +311,7 @@ def run_g9_episode(
         enable_neuromod_gating=enable_neuromod_gating,
         neuromod_tau_ms=neuromod_tau_ms,
         neuromod_strength=neuromod_strength,
+        nm_configs=nm_configs,
     )
     bridge = SimulationBridge(
         core_config=core_cfg, viz_config=VisualizationConfig(),
@@ -351,6 +365,17 @@ def run_g9_episode(
     engine.initialize(cp_traits=bridge.cp_traits, cp_module=cp)
     engine.is_experiment_running = True
     bridge.experiment_engine = engine
+
+    # Register neuron groups with the neuromodulator manager so
+    # `scope="group:NAME"` targets work (e.g. NE excitability_drive on motor).
+    if bridge.neuromodulator_manager is not None:
+        bridge.neuromodulator_manager.set_group_indices({
+            "input": layout["input_idx"],
+            "hidden": layout["hidden_idx"],
+            "hidden_exc": layout["hidden_exc_idx"],
+            "hidden_inh": layout["hidden_inh_idx"],
+            "motor": layout["motor_idx"],
+        })
 
     dt = core_cfg.dt_ms
     n_stim_steps = int(STIMULUS_MS / dt)
@@ -707,6 +732,14 @@ def run_g9_episode(
         "plastic_weight_final_mean": float(final_data[i2m_flat_indices].mean()),
         "plastic_weight_final_std": float(final_data[i2m_flat_indices].std()),
         "rsg": rsg_results,
+        "neuromodulator_concentrations": (
+            {
+                name: bridge.neuromodulator_manager.get_concentration(name)
+                for name in bridge.neuromodulator_manager.modulator_names()
+            }
+            if bridge.neuromodulator_manager is not None
+            else None
+        ),
     }
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:

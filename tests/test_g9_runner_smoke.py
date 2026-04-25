@@ -90,3 +90,62 @@ def test_g9_smoke_rsg_probe(tmp_path):
         assert "start" in ep
         assert ep["start"] != list(rsg["final_goal"]), "probe start should not equal goal"
     assert data["reservoir_weight_drift_max"] == 0.0
+
+
+def test_g9_smoke_with_neuromodulators(tmp_path):
+    """Session E.1: G9 runner accepts nm_configs and threads them into
+    the bridge, registers group indices, records final concentrations."""
+    pytest.importorskip("cupy")
+    from research.runners.g9_runner import run_g9_episode
+    from sim.neuromodulators import (
+        NeuromodulatorConfig, ModulatorTarget, ProductionRule,
+    )
+
+    nm_configs = [
+        NeuromodulatorConfig(
+            name="dopamine",
+            baseline=0.0,
+            decay_tau_ms=500.0,
+            production_rules=[ProductionRule(rule_type="from_reward", sensitivity=1.0)],
+            targets=[],
+        ),
+        NeuromodulatorConfig(
+            name="noradrenaline",
+            baseline=0.1,
+            decay_tau_ms=2000.0,
+            production_rules=[
+                ProductionRule(
+                    rule_type="from_error_persistence",
+                    sensitivity=0.5,
+                    threshold=0.3,
+                    window_ms=1000.0,
+                )
+            ],
+            targets=[
+                ModulatorTarget(
+                    target_type="excitability_drive",
+                    scope="group:motor",
+                    sensitivity=30.0,
+                ),
+            ],
+        ),
+    ]
+    out = tmp_path / "g9_nm.json"
+    r = run_g9_episode(
+        out_path=str(out),
+        seed=42, n_steps=30, grid_size=8,
+        start_pos=(1, 1), goal_pos=(6, 6),
+        learning_rate=0.05,
+        action_selection="argmax",
+        nm_configs=nm_configs,
+        verbose=False,
+    )
+    data = json.load(open(out))
+    assert "neuromodulator_concentrations" in data
+    nmc = data["neuromodulator_concentrations"]
+    assert nmc is not None
+    assert "dopamine" in nmc
+    assert "noradrenaline" in nmc
+    # Reservoir weights still must be frozen by the plastic mask, even
+    # under neuromod (gain modulation should not write to base weights).
+    assert data["reservoir_weight_drift_max"] == 0.0
