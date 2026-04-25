@@ -722,3 +722,58 @@ def test_bridge_step_no_concentration_change_when_subsystem_off():
     sb.runtime_state.current_time_step += 1
     assert sb.neuromodulator_manager is None
     sb.clear_simulation_state_and_gpu_memory()
+
+
+# ---------- Task 11: synaptic_gain wired into bridge ----------
+
+
+def test_synaptic_gain_modulates_conductance_via_bridge():
+    """When dopamine has a synaptic_gain target with high concentration,
+    propagated conductance should be roughly proportional to (1 + sens*conc).
+    """
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget, NeuromodulatorConfig, ProductionRule,
+    )
+
+    def _g_e_after_pulse(set_dopamine: float) -> float:
+        sb, cfg = _make_bridge({
+            "enable_neuromodulator_subsystem": True,
+            "enable_short_term_plasticity": False,
+            "enable_ou_process": False,
+            "neuromodulators": [
+                NeuromodulatorConfig(
+                    name="dopamine",
+                    baseline=0.0,
+                    decay_tau_ms=1e9,  # effectively no decay during test
+                    targets=[ModulatorTarget(target_type="synaptic_gain",
+                                              scope="all", sensitivity=1.0)],
+                )
+            ],
+        })
+        sb.neuromodulator_manager.set_concentration("dopamine", set_dopamine)
+        # Force a synthetic prior firing pattern
+        sb.cp_prev_firing_states[:] = False
+        sb.cp_prev_firing_states[0] = True
+        # Reset conductance baseline
+        sb.cp_conductance_g_e[:] = 0.0
+        sb._run_one_simulation_step()
+        g_total = float(cp.sum(sb.cp_conductance_g_e).get())
+        sb.clear_simulation_state_and_gpu_memory()
+        return g_total
+
+    g0 = _g_e_after_pulse(0.0)  # multiplier 1.0
+    g1 = _g_e_after_pulse(1.0)  # multiplier 1 + 1*1 = 2.0
+
+    # With dopamine=1.0 (multiplier 2.0), conductance should be ~2x.
+    # Allow up to 30% slack for any non-modulated baseline drift.
+    if g0 < 1e-6:
+        # If neuron 0 has no outgoing E synapses (sparse network) skip
+        pytest.skip("synthetic pulse produced no excitatory conductance to test")
+    ratio = g1 / max(g0, 1e-9)
+    assert ratio > 1.5, (
+        f"Expected ~2x conductance with dopamine, got ratio {ratio:.3f} "
+        f"(g0={g0:.4f}, g1={g1:.4f})"
+    )

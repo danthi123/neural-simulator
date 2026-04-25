@@ -3469,12 +3469,35 @@ class SimulationBridge:
                 stp_u_active = self.cp_stp_u[:actual_nnz]
                 stp_x_active = self.cp_stp_x[:actual_nnz]
                 effective_synaptic_strength = base_synaptic_weights * stp_u_active * stp_x_active
+
+                # Neuromodulator subsystem: scope=all synaptic_gain multiplier.
+                if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                        and self.neuromodulator_manager is not None):
+                    nm_gain = self.neuromodulator_manager.compute_synaptic_gain_multiplier()
+                    if abs(nm_gain - 1.0) > 1e-9:
+                        effective_synaptic_strength = effective_synaptic_strength * nm_gain
+
                 effective_connections_matrix = csp.csr_matrix(
                     (effective_synaptic_strength, self.cp_connections.indices, self.cp_connections.indptr),
                     shape=self.cp_connections.shape
                 )
-            else: 
-                effective_connections_matrix = self.cp_connections 
+            else:
+                # No STP, no neuromod: use connections as-is.
+                # If neuromod synaptic_gain is active, build a scaled matrix.
+                if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                        and self.neuromodulator_manager is not None):
+                    nm_gain = self.neuromodulator_manager.compute_synaptic_gain_multiplier()
+                    if abs(nm_gain - 1.0) > 1e-9:
+                        actual_nnz = self.cp_connections.nnz
+                        scaled_data = self.cp_connections.data[:actual_nnz] * nm_gain
+                        effective_connections_matrix = csp.csr_matrix(
+                            (scaled_data, self.cp_connections.indices, self.cp_connections.indptr),
+                            shape=self.cp_connections.shape,
+                        )
+                    else:
+                        effective_connections_matrix = self.cp_connections
+                else:
+                    effective_connections_matrix = self.cp_connections
 
             if _profiling: cp.cuda.Device().synchronize(); _prof['t_stp'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 2. Synaptic Conductance Update & Current Calculation ---
