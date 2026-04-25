@@ -27,39 +27,39 @@
       "rate_hz_initial": 0.0,
       "rate_hz_steady": 0.0,
       "n_spikes": 0,
-      "mean_vm_pre_stim": -71.15540313720703
+      "mean_vm_pre_stim": -71.15336608886719
     },
     {
       "current_pA": 15000000.0,
       "rate_hz_initial": 10.0,
       "rate_hz_steady": 2.0,
       "n_spikes": 5,
-      "mean_vm_pre_stim": -71.15540313720703
+      "mean_vm_pre_stim": -71.15336608886719
     },
     {
       "current_pA": 50000000.0,
       "rate_hz_initial": 10.0,
       "rate_hz_steady": 2.0,
       "n_spikes": 5,
-      "mean_vm_pre_stim": -71.15540313720703
+      "mean_vm_pre_stim": -71.15336608886719
     },
     {
       "current_pA": 100000000.0,
       "rate_hz_initial": 10.0,
       "rate_hz_steady": 2.0,
       "n_spikes": 5,
-      "mean_vm_pre_stim": -71.15540313720703
+      "mean_vm_pre_stim": -71.15336608886719
     },
     {
       "current_pA": 500000000.0,
       "rate_hz_initial": 10.0,
       "rate_hz_steady": 2.0,
       "n_spikes": 5,
-      "mean_vm_pre_stim": -71.15540313720703
+      "mean_vm_pre_stim": -71.15336608886719
     }
   ],
   "metrics": {
-    "rest_vm": -71.15540313720703,
+    "rest_vm": -71.15336608886719,
     "rest_vm_std": 0.0,
     "spike_threshold_pA": 15000000.0,
     "rheobase_rate_hz": 2.0,
