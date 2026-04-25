@@ -97,3 +97,60 @@ def test_manager_empty_modulator_list_initializes_cleanly():
     mgr = NeuromodulatorManager([], dt_ms=1.0)
     mgr.initialize(n_neurons=100, cp_module=cp)
     assert mgr.modulator_names() == []
+
+
+# ---------- Task 3: per-step exponential decay ----------
+
+def test_concentration_decays_toward_baseline():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import NeuromodulatorConfig, NeuromodulatorManager
+
+    nm = NeuromodulatorConfig(name="dopamine", baseline=0.0, decay_tau_ms=100.0)
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+
+    # Perturb to 1.0 manually, then decay over 1 tau (100 steps of 1ms).
+    mgr.set_concentration("dopamine", 1.0)
+    for _ in range(100):
+        mgr.step(bridge=None)
+    # exp(-1) ≈ 0.368
+    assert 0.30 < mgr.get_concentration("dopamine") < 0.45
+
+    # Far past steady state, converge to baseline.
+    for _ in range(2000):
+        mgr.step(bridge=None)
+    assert abs(mgr.get_concentration("dopamine")) < 0.01
+
+
+def test_concentration_decays_to_nonzero_baseline():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import NeuromodulatorConfig, NeuromodulatorManager
+
+    nm = NeuromodulatorConfig(name="ne", baseline=0.3, decay_tau_ms=200.0)
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    mgr.set_concentration("ne", 1.5)
+    for _ in range(2000):
+        mgr.step(bridge=None)
+    assert abs(mgr.get_concentration("ne") - 0.3) < 0.01
+
+
+def test_concentration_clipped_to_min_max():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import NeuromodulatorConfig, NeuromodulatorManager
+
+    nm = NeuromodulatorConfig(
+        name="da", baseline=0.0, decay_tau_ms=10000.0,
+        concentration_min=0.0, concentration_max=2.0,
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    mgr.set_concentration("da", 100.0)  # absurdly high, should clip to max
+    mgr.step(bridge=None)
+    assert mgr.get_concentration("da") <= 2.0

@@ -140,5 +140,48 @@ class NeuromodulatorManager:
     def get_concentration(self, name: str) -> float:
         return self._concentrations[name]
 
+    def set_concentration(self, name: str, value: float) -> None:
+        """Manually set a concentration, clipped to the modulator's bounds.
+
+        Useful for tests, manual probes, and 'manual' production rules.
+        """
+        cfg = self._config_by_name(name)
+        v = max(cfg.concentration_min, min(cfg.concentration_max, float(value)))
+        self._concentrations[name] = v
+
     def modulator_names(self) -> List[str]:
         return list(self._concentrations.keys())
+
+    def _config_by_name(self, name: str) -> NeuromodulatorConfig:
+        for c in self._configs:
+            if c.name == name:
+                return c
+        raise KeyError(name)
+
+    def step(self, bridge) -> None:
+        """One simulation step: decay each concentration toward baseline,
+        then add production-rule contributions, then clip.
+
+        bridge can be None for unit tests that only exercise decay (no
+        production rules will fire without bridge state).
+        """
+        for cfg in self._configs:
+            conc = self._concentrations[cfg.name]
+
+            # Exponential decay toward baseline.
+            decay_factor = math.exp(-self.dt_ms / max(cfg.decay_tau_ms, 1e-9))
+            conc = cfg.baseline + (conc - cfg.baseline) * decay_factor
+
+            # Production rules -- implemented in subsequent tasks.
+            for rule in cfg.production_rules:
+                conc += self._compute_production(rule, cfg, bridge)
+
+            # Clip to bounds.
+            conc = max(cfg.concentration_min, min(cfg.concentration_max, conc))
+            self._concentrations[cfg.name] = conc
+
+    def _compute_production(self, rule: ProductionRule,
+                             cfg: NeuromodulatorConfig, bridge) -> float:
+        """Compute production contribution for one rule. Filled in by Tasks 4 and 5."""
+        # Default: no production. Overridden as production rules are added.
+        return 0.0
