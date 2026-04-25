@@ -200,31 +200,43 @@ class DefaultHodgkinHuxleyParams:
         "g_NaP_max": 0.7,
     })
 
-    # Subthalamic nucleus (STN) bursting cell
+    # Subthalamic nucleus (STN) bursting cell.
+    # Re-tuned (2026-04-25): original g_NaP=0.8 was 5-10x too high vs. real
+    # biology (Bevan & Wilson 1999: g_NaP_density ~0.05-0.15 mS/cm²).
+    # Excessive NaP pulled rest to -34 mV → categorically unfireable.
+    # Now: g_NaP=0.15, g_K=12, E_L=-68 → biologically realistic resting
+    # range and capable of pacemaking + rebound bursts.
     STN_BURST = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     STN_BURST.update({
-        # CaT- and NaP-mediated bursting with some Ih and M-current
-        "g_Na_max": 55.0,
-        "g_K_max": 6.0,
-        "g_CaT_max": 1.5,
+        "g_Na_max": 70.0,     # was 55 — higher Na for fast spike upstroke
+        "g_K_max": 12.0,      # was 6 — stronger K for repolarization
+        "g_CaT_max": 1.5,     # T-type Ca for rebound bursting (kept)
         "E_CaT": 120.0,
-        "g_h_max": 0.3,
+        "g_h_max": 0.2,       # was 0.3 — modest Ih for sag
         "E_h": -40.0,
-        "g_M_max": 0.5,
-        "g_NaP_max": 0.8,
+        "g_M_max": 0.3,       # was 0.5 — modest AHP
+        "g_NaP_max": 0.15,    # was 0.8 — real biophysical density
+        "E_L": -68.0,         # was -70 inherited — slightly depolarized for
+                               # spontaneous activity, but not at threshold
+        "v_rest_hh": -62.0,
     })
 
-    # Globus pallidus externus (GPe) pacemaking neuron
+    # Globus pallidus externus (GPe) pacemaking neuron.
+    # Re-tuned (2026-04-25): same NaP issue as STN. Real GPe has lower NaP
+    # than original preset suggested. Cooper & Stanford 2000: GPe has high
+    # tonic rate (30-60 Hz) supported by g_Na (~80) + g_K (~15) balance,
+    # not by extreme NaP.
     GPE_PACEMAKER = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     GPE_PACEMAKER.update({
-        # Strong M and NaP for tonic spiking, with modest Ih
-        "g_Na_max": 55.0,
-        "g_K_max": 5.5,
+        "g_Na_max": 80.0,     # was 55 — high Na for fast tonic firing
+        "g_K_max": 15.0,      # was 5.5 — strong K for high-rate repolarization
         "g_CaT_max": 0.0,
-        "g_h_max": 0.2,
+        "g_h_max": 0.1,       # was 0.2 — modest Ih (some sag)
         "E_h": -35.0,
-        "g_M_max": 1.0,
-        "g_NaP_max": 0.8,
+        "g_M_max": 0.5,       # was 1.0 — moderate AHP (allows high rates)
+        "g_NaP_max": 0.1,     # was 0.8 — real biophysical density
+        "E_L": -65.0,         # was -70 — slightly depolarized to support 30 Hz tonic
+        "v_rest_hh": -60.0,
     })
 
     # Cerebellar Purkinje cell (Khaliq et al. 2003, De Schutter & Bower 1994)
