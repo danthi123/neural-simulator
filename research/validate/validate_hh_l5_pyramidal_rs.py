@@ -94,8 +94,8 @@ def main():
         current_steps_pA=currents_pA,
         n_neurons=n_neurons,
         dt_ms=0.01,
-        temperature_celsius=6.3,  # See findings: at 37°C with Q10=3, rates over-compress
-                                   # and APs don't reach v_peak. Tested at 6.3°C base.
+        temperature_celsius=37.0,  # Body temperature — now fires correctly with
+                                    # per-gate Q10 fix (Q10_m=3, Q10_h=Q10_n=1.5).
         stim_duration_ms=500.0,
         pre_stim_ms=100.0,
         initial_settle_ms=100.0,

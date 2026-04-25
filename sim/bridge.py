@@ -1192,6 +1192,11 @@ class SimulationBridge:
             self._cached_decay_nmda_rise = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_rise)) if cfg.nmda_tau_rise > 0 else 0.0
             _BASE_HH_TEMP = 6.3
             self._cached_hh_phi = cfg.hh_q10_factor ** ((cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0)
+            # Per-gate phi values (Session "fix-bugs" — see HH temperature bug findings)
+            _temp_delta_div_10 = (cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0
+            self._cached_hh_phi_m = cfg.hh_q10_m ** _temp_delta_div_10
+            self._cached_hh_phi_h = cfg.hh_q10_h ** _temp_delta_div_10
+            self._cached_hh_phi_n = cfg.hh_q10_n ** _temp_delta_div_10
 
             self.is_initialized = True
             conn_count = self.cp_connections.nnz if self.cp_connections is not None else 0
@@ -3777,12 +3782,13 @@ class SimulationBridge:
                     self.cp_hh_NaP_activation[:] = p_new
                     effective_input_uA = effective_input_uA - I_NaP
 
+                # Per-gate Q10 (precomputed phi values cached on bridge)
                 v_new, m_new, h_new, n_new = fused_hodgkin_huxley_dynamics_update(
                     self.cp_membrane_potential_v, self.cp_gating_variable_m, self.cp_gating_variable_h, self.cp_gating_variable_n,
                     effective_input_uA, dt,
                     self.cp_hh_C_m, g_Na_effective, g_K_effective, self.cp_hh_g_L,
                     self.cp_hh_E_Na, self.cp_hh_E_K, self.cp_hh_E_L,
-                    cfg.hh_temperature_celsius, cfg.hh_q10_factor
+                    self._cached_hh_phi_m, self._cached_hh_phi_h, self._cached_hh_phi_n,
                 )
                 fired_this_step = (self.cp_membrane_potential_v < self.cp_hh_v_peak) & (v_new >= self.cp_hh_v_peak) 
 
@@ -4712,7 +4718,12 @@ class SimulationBridge:
 
                 # HH Q10 temperature phase factor (harmless for non-HH models).
                 _BASE_HH_TEMP = 6.3
-                self._cached_hh_phi = cfg.hh_q10_factor ** ((cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0)
+                _temp_delta_div_10 = (cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0
+                self._cached_hh_phi = cfg.hh_q10_factor ** _temp_delta_div_10  # legacy uniform-Q10 phi
+                # Per-gate phi values (HH temperature bug fix)
+                self._cached_hh_phi_m = cfg.hh_q10_m ** _temp_delta_div_10
+                self._cached_hh_phi_h = cfg.hh_q10_h ** _temp_delta_div_10
+                self._cached_hh_phi_n = cfg.hh_q10_n ** _temp_delta_div_10
 
                 self.is_initialized = True
                 self._log_to_ui(f"Checkpoint loaded. Sim time: {self.runtime_state.current_time_ms}ms, Step: {self.runtime_state.current_time_step}, Model: {self.core_config.neuron_model_type}", "success")

@@ -56,6 +56,7 @@ def build_hh_isolated_config(
     enable_conductance_noise: bool = False,
     enable_parameter_heterogeneity: bool = False,
     temperature_celsius: float = 37.0,
+    q10_factor: float = 3.0,
     seed: int = 42,
 ):
     """Returns a CoreSimConfig wired up for an isolated population of N
@@ -83,6 +84,7 @@ def build_hh_isolated_config(
     cfg.neuron_model_type = NeuronModel.HODGKIN_HUXLEY.name
     cfg.default_neuron_type_hh = neuron_type_name  # KEY: this is what the bridge reads
     cfg.hh_temperature_celsius = float(temperature_celsius)
+    cfg.hh_q10_factor = float(q10_factor)
     cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
 
     # Also seed cfg.hh_* fields for any code path that reads them (UI, etc.)
@@ -149,6 +151,7 @@ def run_step_current_protocol(
     seed: int = 42,
     initial_settle_ms: float = 200.0,
     temperature_celsius: float = 37.0,
+    q10_factor_override: float = None,
 ) -> List[FICurvePoint]:
     """Run a sequence of step-current injections and measure firing rate at each.
 
@@ -174,10 +177,14 @@ def run_step_current_protocol(
 
     points = []
     for I_pA in current_steps_pA:
+        kwargs = {}
+        if q10_factor_override is not None:
+            kwargs["q10_factor"] = float(q10_factor_override)
         cfg = build_hh_isolated_config(
             neuron_type_name=neuron_type_name,
             n_neurons=n_neurons, dt_ms=dt_ms,
             temperature_celsius=temperature_celsius, seed=seed,
+            **kwargs,
         )
         bridge = SimulationBridge(
             core_config=cfg, viz_config=VisualizationConfig(),

@@ -33,13 +33,20 @@ def fused_izhikevich2007_dynamics_update(v, u, C_param, k_param, vr_param, vt_pa
     return v_new, u_new
 
 @cp.fuse()
-def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g_K_max, g_L, E_Na, E_K, E_L, temperature_celsius, q10_factor):
-    """Fused kernel for Hodgkin-Huxley model dynamics, including temperature effects."""
-    # Base temperature for original HH kinetics (typically 6.3°C or similar)
-    BASE_HH_KINETICS_TEMP_C = 6.3
-    # Temperature adjustment factor (phi) using Q10
-    phi = q10_factor**((temperature_celsius - BASE_HH_KINETICS_TEMP_C) / 10.0)
+def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g_K_max, g_L, E_Na, E_K, E_L, phi_m, phi_h, phi_n):
+    """Fused kernel for Hodgkin-Huxley model dynamics with per-gate Q10.
 
+    Per-gate phi (φ_m, φ_h, φ_n) values precomputed by caller from
+    temperature and per-gate Q10 values. This replaces the previous
+    uniform-Q10 implementation, which over-compressed dynamics at body
+    temperature (37°C) and prevented APs from firing — see
+    `research/findings/2026-04-25-hh-temperature-bug.md`.
+
+    Biological default Q10 values at body temperature:
+      Q10_m ≈ 3.0   (fast activation)
+      Q10_h ≈ 1.5   (slower inactivation; preserves spike width)
+      Q10_n ≈ 1.5   (slower recovery; preserves AP duration)
+    """
     # Rate functions (alpha, beta) for gating variables m, h, n
     # Original HH equations, adjusted for V in mV.
     # Handling for V = -40 (for alpha_m) and V = -55 (for alpha_n) to avoid division by zero in expm1.
@@ -58,10 +65,10 @@ def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g
     alpha_n_orig = cp.where(v_plus_55 == 0, 0.1 * 0.01 * 10.0, -0.01 * v_plus_55 / cp.expm1(-v_plus_55 / 10.0)) # Corrected limit handling
     beta_n_orig  = 0.125 * cp.exp(-(V + 65.0) / 80.0)
 
-    # Apply temperature correction to rate constants
-    alpha_m = alpha_m_orig * phi; beta_m  = beta_m_orig  * phi
-    alpha_h = alpha_h_orig * phi; beta_h  = beta_h_orig  * phi
-    alpha_n = alpha_n_orig * phi; beta_n  = beta_n_orig  * phi
+    # Per-gate temperature correction
+    alpha_m = alpha_m_orig * phi_m; beta_m  = beta_m_orig  * phi_m
+    alpha_h = alpha_h_orig * phi_h; beta_h  = beta_h_orig  * phi_h
+    alpha_n = alpha_n_orig * phi_n; beta_n  = beta_n_orig  * phi_n
 
     # Update gating variables using analytical solution for first-order kinetics (assuming V is constant during dt)
     # m_new = m_inf - (m_inf - m_old) * exp(-dt / tau_m)

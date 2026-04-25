@@ -64,7 +64,16 @@ class CoreSimConfig:
     hh_h_init: float = field(default_factory=lambda: _HH_L5_DEFAULTS["h_init"])
     hh_n_init: float = field(default_factory=lambda: _HH_L5_DEFAULTS["n_init"])
     hh_temperature_celsius: float = 37.0
-    hh_q10_factor: float = 3.0
+    hh_q10_factor: float = 3.0  # Legacy uniform Q10 — kept as fallback for
+                                 # per-gate Q10 fields below when those are
+                                 # set to <=0 (meaning "use legacy Q10").
+    # Per-gate Q10 (preferred over hh_q10_factor at biological temps).
+    # Default values produce real APs at 37°C; uniform Q10=3 over-compressed
+    # dynamics so the cell tonically depolarized without firing — see
+    # research/findings/2026-04-25-hh-temperature-bug.md.
+    hh_q10_m: float = 3.0   # Activation (m-gate): fast — Mainen & Sejnowski 1996
+    hh_q10_h: float = 1.5   # Inactivation (h-gate): slower — preserves AP width
+    hh_q10_n: float = 1.5   # Recovery (n-gate): slower — preserves AP duration
     # Optional extended HH currents. Zero conductance disables each one.
     hh_g_M_max: float = 0.0
     hh_m_current_tau_ms: float = 100.0
