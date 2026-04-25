@@ -5,7 +5,80 @@ All notable changes to the GPU-Accelerated Neural Network Simulator will be docu
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
+
+## [Unreleased] — 2026-04-25 — Phase A presets + Phase B BG action selection
+
+### Added
+- **Phase B: BG-style action selection cascade** — silent-motor trap resolved
+  - `research/runners/g11_bg_runner.py` builds 30-region cascade: cortex → str_D1/str_D2 → GPi/GPe → STN → thalamus → motor with disinhibition gating
+  - 3-seed acid test: phase 1 finalQ 1.76 avg vs G9 baseline 6.74 (74% improvement, agent stays at Manhattan distance ~1.7 from goal vs random walk's ~5.5)
+  - Per-action populations replace shared reservoir + argmax — eliminates the dominant-motor bias that defeated 7 prior runner-side variants (V1–V7)
+  - Findings: `research/findings/2026-04-25-phase-b-acid-test-real-win.md`, `2026-04-25-phase-b-cascade-stability-fix.md`, `2026-04-25-phase-b-honest-correction.md`
+- **Phase A: comprehensive preset audit + retuning** (HH + Izh + AdEx — 30 working biological presets)
+  - 4 new HH BG cell types: `HH_STRIATAL_MSN_D1`, `HH_STRIATAL_MSN_D2`, `HH_STRIATAL_TAN`, `HH_GPI_OUTPUT`
+  - 8 new IZH2007 brain-region presets: `IZH2007_STRIATAL_MSN`, `IZH2007_STRIATAL_MSN_D1/D2`, `IZH2007_STRIATAL_TAN`, `IZH2007_GPE_PACEMAKER`, `IZH2007_GPI_OUTPUT`, `IZH2007_STN_BURST`, `IZH2007_THALAMIC_RELAY`, `IZH2007_THALAMIC_RETICULAR`, `IZH2007_HIPPO_PYRAMIDAL`, `IZH2007_DOPAMINE`
+  - Full AdEx preset library (`DefaultAdExParamsManager`): RS, FS, IB, CH, LTS, MSN, DOPAMINE — all 7 fire at 37°C with biological rates
+  - Per-region neuron type override on `BrainRegion`: `izh_neuron_type`, `hh_neuron_type`, `adex_neuron_type` (independent of global default)
+  - Findings: `2026-04-25-hh-preset-audit.md`, `2026-04-25-izh-preset-audit.md`, `2026-04-25-hh-presets-after-q10-fix.md`
+- **Per-gate Q10 temperature scaling** for Hodgkin–Huxley (`hh_q10_m=3.0`, `hh_q10_h=hh_q10_n=1.5`)
+  - Replaces uniform Q10=3 that over-compressed gating dynamics at 37°C
+  - HH model now produces action potentials at body temperature
+  - Finding: `2026-04-25-hh-temperature-bug.md`
+
+### Fixed
+- **STDP soft-bound w_max collapse** — when synapse `weight_mean > stdp_w_max`, every "LTP" event is strongly negative (`Δw = A_plus * (w_max - w) * exp(...)`), collapsing weights to w_max within milliseconds. Set `cfg.stdp_w_max` above design weights (e.g. cortex→D1 `weight_mean=25` needs `stdp_w_max=30`). Documented in CLAUDE.md and Phase B findings; runners now set it explicitly.
+- **n_cortex saturation in BG cascade** — over-driving D1 above ~150 Hz puts MSNs into refractory dominance and breaks D1→GPi inhibition. Probes must use the same `n_cortex` value as deployment. (`research/runners/g11_bg_runner.py` now uses `n_cortex=100` matching the static probe.)
+- **Izhikevich preset wasn't applied** — bridge always trait-split via `traits % num_variants`; now opt-in only when `cfg.num_traits > 1`. `cfg.default_neuron_type_izh` now respected when single-type is intended.
+- **AdEx presets all behaved identically** — bridge wasn't loading preset params into `cfg.adex_*` fields. Now overlays preset onto config before initialization.
+- **GPE/STN didn't fire** — `g_NaP=0.8` was 5–10× too high for these cell types. Retuned in `HH_GPE_PACEMAKER` and `HH_STN_BURST` (commit `9f4c3f7`).
+
+## [Unreleased] — 2026-04-24 — Brain-region framework + neuromodulator subsystem + Route C performance
+
+### Added
+- **Brain-region framework** (Session E.2, opt-in)
+  - `sim/regions.py` — `BrainRegion`, `RegionPathway`, `RegionManager` dataclasses
+  - Declarative multi-region simulations (PFC + Motor + Hippocampus + Striatum on one bridge)
+  - Each region owns a contiguous neuron-index slice with its own internal connectivity
+  - Cross-region pathways declared with density, weight_mean, plasticity flag, and optional neuromodulator gates
+  - `cfg.enable_brain_region_framework=True` opt-in; default OFF for backward compatibility
+  - Bridge integration: regions allocated before neuron arrays (auto-sets `num_neurons`); wiring fed through `inject_explicit_wiring()` replacing legacy motif/WS/spatial paths
+  - Composes with neuromodulator subsystem — regions auto-register as NM groups
+  - Plan: `docs/plans/2026-04-24-brain-region-framework.md`; tests: `tests/test_regions.py`
+- **Neuromodulator subsystem** (Session E.1, opt-in)
+  - `sim/neuromodulators.py` — `NeuromodulatorConfig`, `ModulatorTarget`, `ProductionRule`, `NeuromodulatorManager`
+  - Declarative concentration dynamics for DA / NE / 5-HT / etc.
+  - Built-in target types: `synaptic_gain`, `plasticity_rate`, `excitability_drive`
+  - Built-in production rules: `manual`, `from_reward`, `from_error_persistence`
+  - Replaces ad-hoc `current_reward_signal` and shelved `cp_synaptic_gain_modulator`
+  - `cfg.enable_neuromodulator_subsystem=True` opt-in; default OFF
+  - Plan: `docs/plans/2026-04-24-neuromodulator-subsystem.md`; tests: `tests/test_neuromodulators.py`
+  - Finding: `research/findings/2026-04-24-session-e1-neuromodulator-subsystem.md` (framework GO, NE params NO-GO on silent-motor)
+- **Route C: 101× synapse-update throughput** at 1.2× wall time (bigger networks performance)
+  - Finding: `research/findings/2026-04-24-route-b-profile.md`
+- **Module split** — extracted `sim/`, `viz/`, `ui/`, `experiment/` packages from monolithic `neural-simulator.py`
+  - `sim/__init__.py` exposes public API (`SimulationBridge`, configs, `NeuronModel`, `NeuronType`)
+  - `neural-simulator.py` reduced from ~12K lines to ~2.2K (now just GUI host)
+
+## [Unreleased] — 2026-04-20/21 — Research-gate runner framework (G1–G6)
+
+### Added
+- **Research-gate runner framework** (`research/runners/`)
+  - 16 headless runners (g1..g11) each invocable via `python -m research.runners.gN_runner`
+  - Each writes raw data to `research/findings/raw/gN/` and a markdown finding to `research/findings/`
+  - Negative results documented as findings, not failures
+- **G1: encoder-decoder roundtrip** — GO (v3, 71.3% test acc, 3 seeds, threshold 55%)
+  - `research/datasets/tiny_patterns.py` — K=4 Poisson-rate synthetic dataset
+  - `RATE_VECTOR_POISSON` stimulus pattern type
+  - `SimulationBridge.inject_explicit_wiring()` — injectable explicit CSR connectivity
+  - Three runner variants explored; v3 (264-neuron reservoir + external LogReg) passes
+  - Finding: `2026-04-20-g1.md`
+- **G2: STDP local learning** — NO-GO (no epoch-over-epoch improvement on target task) — `2026-04-20-g2.md`
+- **G3: persistence/checkpointing** — GO — `2026-04-20-g3.md`
+- **G5: sensorimotor signed perceptron** — GO (v3 with LR decay, 3/3 seeds pass) — `2026-04-21-g5v3.md`, `2026-04-21-signed-eligibility-branch.md`
+- **G6: 2D gridworld** — PARTIAL (gate metric needs redesign — agent converges too fast) — `2026-04-21-g6.md`, `2026-04-21-g7.md` (proposed metric replacements)
+
+## [Unreleased] — Earlier (2026-04-06 baseline)
 
 ### Added
 - **G1 pipeline GO** - First end-to-end dataset → encoder → sim → decoder → loss round-trip

@@ -1,582 +1,575 @@
 # GPU-Accelerated Neural Network Simulator
 
-A high-performance 3D neural network simulator with real-time OpenGL visualization, leveraging NVIDIA CUDA/CuPy for massively parallel GPU computation. Simulates large-scale networks (10K-100K+ neurons) with biologically-inspired models including Izhikevich and Hodgkin-Huxley neurons, synaptic plasticity, and spatial connectivity.
+A high-performance spiking neural network simulator with real-time 3D OpenGL visualization, built on NVIDIA CUDA / CuPy. Simulates large-scale networks (10K–100K+ neurons) with biologically-grounded models (Izhikevich 2007, Hodgkin–Huxley, AdEx), full plasticity stack (STDP, STP, Hebbian, structural, homeostasis, NMDA), declarative brain-region + neuromodulator frameworks, and a programmable experiment system. Drives a research-gate progression (G1 → G11) where each gate produces a versioned finding.
 
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![CUDA](https://img.shields.io/badge/CUDA-CuPy-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
+> **Project status (2026-04):** Active research codebase. Recent milestones: Phase A preset audit (30 working biological presets across HH+Izh+AdEx, per-gate Q10 fix), Phase B basal-ganglia action selection (silent-motor trap resolved, phase 1 finalQ 1.76 vs G9 baseline 6.74). Detailed session findings in [`research/findings/`](research/findings/).
+
+---
+
+## Table of Contents
+
+- [System Architecture](#system-architecture)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Usage Modes](#usage-modes)
+- [Research Runners](#research-runners)
+- [Programmable API](#programmable-api)
+- [File Formats](#file-formats)
+- [Performance](#performance)
+- [Testing](#testing)
+- [Documentation Map](#documentation-map)
+- [Contributing](#contributing)
+
+---
+
+## System Architecture
+
+The simulator is split into focused packages. `neural-simulator.py` is now just the GUI host (~2K lines); the engine lives in `sim/`.
+
+```mermaid
+graph TB
+    subgraph CLI["Entry Points"]
+        GUI["neural-simulator.py<br/>(DearPyGUI host)"]
+        HEAD["run_experiment_headless.py<br/>run_parameter_sweep.py<br/>run_benchmarks.py"]
+        RES["research/runners/<br/>g1..g11"]
+    end
+
+    subgraph UI["ui/ (DearPyGUI)"]
+        UI_LAYOUT["layout.py<br/>callbacks.py<br/>experiment_dashboard.py<br/>sweep_panel.py<br/>plots.py"]
+    end
+
+    subgraph VIZ["viz/ (OpenGL)"]
+        VIZ_INT["renderer.py<br/>camera.py<br/>picker.py<br/>overlays.py"]
+    end
+
+    subgraph SIM["sim/ — Core Engine"]
+        BRIDGE["bridge.py<br/>SimulationBridge<br/>(GPU state + step loop)"]
+        CFG["config.py<br/>CoreSimConfig<br/>+ all dataclasses"]
+        KERN["kernels.py<br/>@cp.fuse() Izh / HH / AdEx<br/>STDP / STP / NMDA"]
+        CONN["connectivity.py<br/>spatial / WS / motif<br/>generators"]
+        ENUMS["enums.py<br/>NeuronType (50+)<br/>HH / Izh / AdEx presets"]
+        PROF["profiles.py<br/>NEURAL_STRUCTURE_PROFILES"]
+        REG["regions.py<br/>BrainRegion + Pathway<br/>+ RegionManager"]
+        NM["neuromodulators.py<br/>declarative DA / NE / 5-HT<br/>concentration dynamics"]
+        BUS["data_bus.py<br/>DataChannel pub/sub"]
+    end
+
+    subgraph EXP["experiment/ — Stimulus + Training"]
+        ENG["engine.py<br/>ExperimentEngine"]
+        STIM["stimulus.py<br/>StimulusManager"]
+        READ["readout.py<br/>ReadoutEngine<br/>(rates, PSD, Fano, bands)"]
+        TRAIN["training.py<br/>TrainingProtocolEngine<br/>(RL / supervised / pairing)"]
+        GROUPS["groups.py<br/>NeuronGroupManager"]
+        PRESETS["presets.py<br/>4 built-in protocols"]
+    end
+
+    subgraph PERSIST["File Formats"]
+        JSON["simulation_profiles/<br/>*.json"]
+        H5_CHK["simulation_checkpoints_h5/<br/>*.simstate.h5"]
+        H5_REC["simulation_recordings_h5/<br/>*.simrec.h5"]
+    end
+
+    GUI --> UI
+    UI --> BRIDGE
+    BRIDGE -.publishes.-> BUS
+    BUS -.streams.-> VIZ
+    BRIDGE --> VIZ
+
+    HEAD --> BRIDGE
+    HEAD --> EXP
+    RES --> BRIDGE
+    RES --> REG
+    RES --> NM
+
+    BRIDGE --> CFG
+    BRIDGE --> KERN
+    BRIDGE --> CONN
+    BRIDGE --> ENUMS
+    BRIDGE --> PROF
+    BRIDGE --> REG
+    BRIDGE --> NM
+
+    REG -.composes.-> NM
+    EXP --> BRIDGE
+    EXP --> CFG
+
+    BRIDGE --> JSON
+    BRIDGE --> H5_CHK
+    BRIDGE --> H5_REC
+
+    classDef entry fill:#fef3c7,stroke:#92400e,color:#000
+    classDef ui fill:#dbeafe,stroke:#1e3a8a,color:#000
+    classDef viz fill:#dcfce7,stroke:#166534,color:#000
+    classDef sim fill:#f3e8ff,stroke:#581c87,color:#000
+    classDef exp fill:#fce7f3,stroke:#9d174d,color:#000
+    classDef persist fill:#f1f5f9,stroke:#334155,color:#000
+
+    class GUI,HEAD,RES entry
+    class UI_LAYOUT ui
+    class VIZ_INT viz
+    class BRIDGE,CFG,KERN,CONN,ENUMS,PROF,REG,NM,BUS sim
+    class ENG,STIM,READ,TRAIN,GROUPS,PRESETS exp
+    class JSON,H5_CHK,H5_REC persist
+```
+
+### Per-step pipeline (in `SimulationBridge._run_one_simulation_step`)
+
+```mermaid
+flowchart LR
+    A[STP decay/recovery<br/>per-type if enabled] --> B[Synaptic conductance<br/>E_inh = -75mV<br/>0.7x propagation scale]
+    B --> C[Experiment stimulus<br/>injection<br/>if engine running]
+    C --> D[OU background noise]
+    D --> E[Neuron dynamics<br/>Izh / HH / AdEx<br/>fused kernels]
+    E --> F[Plasticity stack]
+    F --> F1[STDP weight update<br/>respects plastic mask]
+    F --> F2[Reward modulation<br/>eligibility + DA]
+    F --> F3[Hebbian / Homeostasis]
+    F --> F4[Structural<br/>activity-biased]
+    F1 --> G[Neuromodulator step<br/>concentration update<br/>+ effects applied next step]
+    F2 --> G
+    F3 --> G
+    F4 --> G
+    G --> H[Visualization update<br/>via DataChannel]
+    H --> I[Recording<br/>HDF5 if active]
+```
+
+### Phase B — Basal-Ganglia Action Selection (resolved 2026-04-25)
+
+Per-action BG cascade replacing the older shared-reservoir + argmax readout that had a structural silent-motor trap. Built declaratively via the brain-region framework in `research/runners/g11_bg_runner.py`:
+
+```mermaid
+flowchart TB
+    subgraph CTX["cortex_X (per action: N, E, S, W)"]
+        C[cortex_X<br/>25 RS pyramidal]
+    end
+
+    subgraph STR["striatum (per action)"]
+        D1[str_D1_X<br/>50 D1 MSN]
+        D2[str_D2_X<br/>50 D2 MSN]
+    end
+
+    subgraph PALL["pallidal (per action)"]
+        GPE[gpe_X<br/>10 pacemaker]
+        GPI[gpi_X<br/>10 output]
+    end
+
+    STN[STN<br/>20 burster<br/>shared]
+    DA[dopamine<br/>10 SNc-like<br/>shared]
+
+    subgraph THAL["thalamus (per action)"]
+        T[thal_X<br/>10 relay]
+    end
+
+    subgraph MOT["motor cortex (per action)"]
+        M[motor_X<br/>10 RS pyramidal]
+    end
+
+    C ==>|"exc, w=25, plastic"| D1
+    C ==>|"exc, w=25, plastic"| D2
+    D1 -.->|"inh: direct path"| GPI
+    D2 -.->|"inh"| GPE
+    GPE -.->|"inh"| STN
+    STN ==>|"exc: hyperdirect"| GPI
+    GPI -.->|"inh: disinhibition gate"| T
+    T ==>|"exc"| M
+    DA -.->|"modulates plasticity"| D1
+    DA -.->|"modulates plasticity"| D2
+
+    style C fill:#fef3c7
+    style D1 fill:#fce7f3
+    style D2 fill:#fce7f3
+    style GPE fill:#dbeafe
+    style GPI fill:#dbeafe
+    style T fill:#dcfce7
+    style M fill:#f3e8ff
+    style STN fill:#fee2e2
+    style DA fill:#fef3c7
+```
+
+When `cortex_N` drives, `str_D1_N` fires → `gpi_N` is silenced → `thal_N` is released → `motor_N` fires. Other actions' GPi remain tonically firing and keep their thalami suppressed. **Selection emerges from independent disinhibition gates, not a shared argmax.**
+
+---
+
 ## Features
 
-### GPU-Accelerated Simulation
-- **CuPy-based computation**: All neural dynamics run on GPU using fused CUDA kernels
-- **Scalable**: Efficiently handles 10K-100K+ neurons with millions of synaptic connections
-- **Real-time performance**: 60 FPS visualization with parallel simulation updates
-- **Memory optimized**: Smart GPU memory management with automatic garbage collection
+### GPU-accelerated simulation
+- All neural dynamics run on GPU via fused CuPy kernels (`@cp.fuse()`)
+- Scales to 10K–100K+ neurons with millions of synaptic connections
+- Real-time 60 FPS visualization with parallel simulation thread
+- CUDA-OpenGL interop for zero-copy GPU→display transfers
+- Smart memory pool management with adaptive cleanup
 
-### Neuron Models
-- **Izhikevich 2007 (9-parameter formulation)**: Fast, biologically plausible spiking neurons
-  - Wide range of cortical and subcortical cell types
-  - Efficient GPU computation with rich dynamics
-  - Supports regular spiking, fast spiking, bursting, chattering, and more
-  - Per-neuron parameter customization
-- **Hodgkin-Huxley (multi-current)**: Detailed biophysical conductance-based model
-  - Extensive library of region-specific presets (cortex, hippocampus, thalamus, basal ganglia)
-  - Temperature-dependent kinetics with Q10 scaling
-  - Standard Na⁺/K⁺/leak channels plus optional extended currents:
-    - M-current (KCNQ, spike frequency adaptation)
-    - T-type Ca²⁺ (low-threshold bursting)
-    - I_h (hyperpolarization-activated cation current)
-    - Persistent Na⁺ (NaP, subthreshold oscillations)
-  - Profile-matched presets for realistic network simulations
-- **Adaptive Exponential Integrate-and-Fire (AdEx)**: Efficient spiking model with adaptation
-  - Exponential spike generation mechanism
-  - Two-variable system (voltage + adaptation current)
-  - Balanced speed and biological realism
-  - Ideal for large-scale network simulations
+### Neuron models
+- **Izhikevich 2007** (9-parameter): wide cortical/subcortical phenotype library, fast on GPU. Per-neuron parameter heterogeneity supported.
+- **Hodgkin–Huxley** (multi-current): full biophysics with per-gate Q10 temperature scaling. Optional extended currents — M-current (KCNQ), CaT (low-threshold burst), I_h, NaP. 22+ region-specific presets (cortex, hippocampus, thalamus, BG, cerebellum, spinal cord, dopamine, olivary, PFC).
+- **Adaptive Exponential (AdEx)**: 7 phenotypes (RS, FS, IB, CH, LTS, MSN, DA). 10–20× faster than full HH while preserving spike adaptation.
+- **Per-region neuron type override**: declarative — assign each `BrainRegion` its own `izh_neuron_type` / `hh_neuron_type` / `adex_neuron_type` independent of the global default.
 
-### Synaptic Plasticity
-- **Hebbian Learning (LTP/LTD)**: Activity-dependent weight modification
-- **Short-Term Plasticity (STP)**: Tsodyks-Markram depression and facilitation
-- **STDP (Spike-Timing-Dependent Plasticity)**: Classical Bi & Poo asymmetric learning window
-  - LTP when postsynaptic spike follows presynaptic spike
-  - LTD when presynaptic spike follows postsynaptic spike
-  - Exponentially decaying timing window (~20ms)
-  - GPU-accelerated weight updates
-- **Reward-Modulated Plasticity**: Three-factor learning rule (Izhikevich 2007)
-  - Eligibility traces track recent synaptic activity
-  - Dopamine-like reward signal modulates weight changes
-  - Enables reinforcement learning and delayed reward tasks
-- **Structural Plasticity**: Dynamic synapse formation and elimination
-  - Activity-dependent connection formation
-  - Weak synapse pruning
-  - Distance-dependent spatial clustering
-  - Homeostatic connection density regulation
-- **Homeostatic Plasticity**: Adaptive firing thresholds for network stability
-- **Conductance-based synapses**: Separate excitatory (AMPA) and inhibitory (GABA) channels
+### Plasticity (full stack)
+- **STDP**: classical Bi & Poo asymmetric window, soft-bound, GPU-accelerated. Validated against analytical kernel to 3e-8 max error.
+- **Reward-modulated STDP** (three-factor learning): eligibility traces × dopamine signal. Used for RL.
+- **Short-term plasticity** (Tsodyks–Markram): per-connection-type if `enable_per_type_stp=True` (E→E, E→I, I→E, I→I).
+- **Hebbian**: activity-dependent long-term updates.
+- **Structural plasticity**: activity-biased synapse formation (Cline & Haas 2008 style) + weak-synapse pruning.
+- **Homeostasis**: EMA-based threshold adaptation, biological timescales (tau ~5s).
+- **NMDA receptors**: voltage-dependent Mg²⁺ block, separate rise/decay.
+- **Per-synapse plastic mask**: research runners can freeze specific pathways while training others.
 
-### Biological Realism (Enabled by Default)
-- **Parameter Heterogeneity**: Per-neuron variability via lognormal/Gaussian distributions
-  - Biologically realistic coefficients of variation (CV ~0.3-0.4)
-  - Scientifically grounded defaults from experimental literature
-  - Applied to all neuron models automatically
-- **Enhanced Channel Noise**: Intrinsic stochasticity for realistic dynamics
-  - Ornstein-Uhlenbeck background current (synaptic bombardment model)
-  - Multiplicative conductance noise for HH model channels (5% relative)
-  - Configurable noise levels with GPU-accelerated generation
-  - Produces realistic membrane potential fluctuations (2-5mV)
+### Biological realism (on by default)
+- Per-neuron parameter heterogeneity (CV ~0.3–0.4, lognormal/Gaussian)
+- Ornstein–Uhlenbeck background current (synaptic bombardment)
+- Multiplicative conductance noise for HH (5% relative)
+- Realistic E_inh = −75 mV (Cl⁻ Nernst at 37°C) with compensating 0.7× propagation scale
 
-### Network Architecture
-- **Neural Structure Profiles**: Brain-region specific network templates
-  - Cortex (L2/3 RS/FS), Hippocampus (CA1), Striatum (MSNs), and more
-  - Predefined cell-type mixtures and E/I ratios
-  - Profile-compatible HH presets (e.g., CA1 bursting, STN pacemaker)
-- **3D spatial connectivity**: Distance-dependent connection probabilities
-- **Trait-based organization**: Neuron populations with shared properties
-- **Watts-Strogatz networks**: Small-world topology generation
-- **Inhibitory interneurons**: Configurable E/I balance with multi-trait support
+### Network architecture
+- **Spatial 3D connectivity** with distance-dependent probability and trait bias
+- **Watts–Strogatz** small-world topology
+- **Connectivity motifs** (region-specific patterns)
+- **Neural Structure Profiles**: 15 brain-region templates × 3 model variants (HH/Izh/AdEx) = 47 JSON profiles
 
-### Visualization
-- **Real-time 3D OpenGL rendering**: Hardware-accelerated graphics
-- **Interactive camera**: Orbit, pan, zoom controls
-- **Activity visualization**: Color-coded neuron states (firing, silent, recent activity)
-- **Synaptic pulse rendering**: Visual feedback for spike propagation
-- **GPU-efficient filtering**: Type-based and activity-based neuron filtering on GPU
+### Brain-region framework (opt-in, `enable_brain_region_framework=True`)
+Declarative multi-region simulation. Each `BrainRegion` owns a contiguous neuron slice with its own internal connectivity. Cross-region pathways are declared (`from_region → to_region` with density, weight, plasticity flag). Supports neuromodulator gating per pathway. Enables PFC/Striatum/Thalamus/Motor on a single bridge without manual index bookkeeping.
 
-### Recording & Playback
-- **HDF5-based recording**: Efficient compression and streaming to disk
-- **GPU-buffered recording**: Zero-copy recording of entire simulations in VRAM
-- **Frame-accurate playback**: Scrub through recorded simulations
-- **State checkpointing**: Save and restore full simulation state
+### Neuromodulator subsystem (opt-in, `enable_neuromodulator_subsystem=True`)
+Declarative concentration dynamics for dopamine / NE / 5-HT / etc. Each `NeuromodulatorConfig` declares baseline, decay tau, production rules (`from_reward`, `from_error_persistence`, `manual`), and receptor effects (`synaptic_gain`, `plasticity_rate`, `excitability_drive`). Supports per-trait and per-group scope.
 
-### User Interface
-- **DearPyGUI control panel**: Comprehensive parameter configuration
-- **Profile dropdown system**: Quick selection of neural structure profiles and HH presets
-- **Live monitoring**: Real-time metrics (firing rate, spike counts, plasticity events)
-- **System logs panel**: Real-time console output with search, export, and auto-scroll
-- **Profile management**: Save/load simulation configurations as JSON
-- **Performance testing**: Built-in benchmarking with stop/start controls
-- **Keyboard shortcuts**: Quick access to common operations
+### Experiment system
+Programmable stimulus + training infrastructure. 7 stimulus pattern types (CONSTANT, PULSE_TRAIN, SINUSOIDAL, RAMP, POISSON_SPIKE_TRAIN, GAUSSIAN_NOISE, CUSTOM_WAVEFORM). 4 training modes (ASSOCIATIVE_PAIRING, REINFORCEMENT_LEARNING, SUPERVISED_TARGET, RESERVOIR_READOUT). Multi-phase orchestration. Built-in presets: stimulus-response, Pavlovian, R-STDP, frequency response.
+
+### Visualization & UI
+- Real-time 3D OpenGL with hardware-accelerated rendering
+- Interactive orbit/pan/zoom camera
+- Activity-color-coded neurons + synaptic pulse animation
+- DearPyGUI control panel with all parameters
+- Profile dropdown auto-populated from `simulation_profiles/`
+- Live system logs panel with search + export
+- Built-in benchmarking with stop/start controls
+
+### Recording, playback, checkpointing
+- HDF5 with LZ4 compression (default), GZIP, or none
+- GPU-buffered recording (zero-copy, fast) or streaming (low memory)
+- Frame-accurate playback with scrubbing
+- Full state checkpointing including plasticity variables
+
+---
 
 ## Requirements
 
-### Core Dependencies
-```
-python >= 3.8
-cupy-cuda12x >= 12.0.0  # For CUDA 12.x (adjust for your CUDA version)
-numpy >= 1.21.0
-h5py >= 3.7.0
-dearpygui >= 1.9.0
-```
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| Python    | 3.8+    | 3.10+       |
+| CUDA      | 11.x    | 12.x        |
+| GPU       | Pascal (CC 6.0+) | Ampere/Ada (CC 8.0+) |
+| VRAM      | 4 GB (1K–10K neurons) | 16 GB+ (50K–100K+) |
+| RAM       | 8 GB    | 16 GB+      |
+| Display   | OpenGL 3.3+ | OpenGL 4.0+ |
 
-### Graphics Dependencies
+### Python dependencies
+
 ```
+cupy-cuda12x >= 12.0    # or cupy-cuda11x for CUDA 11
+numpy >= 1.21
+h5py >= 3.7
+hdf5plugin              # for LZ4 recording compression
+dearpygui >= 1.9
 PyOpenGL >= 3.1.6
 PyOpenGL-accelerate >= 3.1.6
 ```
 
-### Hardware Requirements
-- **GPU**: NVIDIA GPU with CUDA compute capability 6.0+ (Pascal or newer)
-- **VRAM**: 
-  - 4GB minimum (for 1K-10K neurons)
-  - 8GB recommended (for 10K-50K neurons)
-  - 16GB+ for large networks (50K-100K+ neurons)
-- **RAM**: 8GB+ system memory
-- **Display**: OpenGL 3.3+ compatible graphics
+---
 
 ## Installation
 
-1. **Install CUDA Toolkit** (if not already installed):
-   - Download from [NVIDIA CUDA Downloads](https://developer.nvidia.com/cuda-downloads)
-   - Version 11.x or 12.x recommended
+```bash
+# 1. Install CUDA Toolkit (https://developer.nvidia.com/cuda-downloads)
 
-2. **Install CuPy** (match your CUDA version):
-   ```bash
-   # For CUDA 12.x
-   pip install cupy-cuda12x
-   
-   # For CUDA 11.x
-   pip install cupy-cuda11x
-   ```
+# 2. Install CuPy matching your CUDA version
+pip install cupy-cuda12x   # for CUDA 12.x
+# or: pip install cupy-cuda11x
 
-3. **Install other dependencies**:
-   ```bash
-   pip install numpy h5py dearpygui PyOpenGL PyOpenGL-accelerate
-   ```
+# 3. Install other dependencies
+pip install -r requirements.txt
 
-4. **Clone and run**:
-   ```bash
-   git clone https://github.com/danthi123/neural-simulator.git
-   cd neural-simulator
-   python neural-simulator.py
-   ```
+# 4. Clone and run
+git clone https://github.com/danthi123/neural-simulator.git
+cd neural-simulator
+python neural-simulator.py
+```
+
+---
 
 ## Quick Start
 
-### Basic Usage (GUI Mode)
-1. Launch the simulator: `python neural-simulator.py`
-2. Configure parameters in the DearPyGUI control panel (left side)
-3. Click **"Apply Changes & Reset Sim"** to initialize the network
-4. Click **"Start"** to begin simulation
-5. Use mouse in OpenGL window to navigate:
-   - **Left click + drag**: Rotate camera
-   - **Right click + drag**: Pan camera
-   - **Scroll wheel**: Zoom in/out
-
-### Visualization Performance Benchmark
-
-The simulator includes a **visualization performance benchmark** that determines your hardware's
-maximum neuron and synapse count for real-time simulation with visualization enabled.
-
-- **Run benchmark from GUI**: Click "Run Viz Performance Test" in Testing & Optimization section
-- **Run from command line**:
-  ```bash
-  python viz_benchmark.py --output benchmarks/viz_performance_results.json
-  python viz_benchmark.py --quick  # Faster reduced sweep
-  ```
-
-The benchmark:
-- Tests incrementally scaled networks (1K to 100K neurons)
-- Measures visualization update times at 30/60/90+ FPS thresholds  
-- Identifies GPU→CPU data transfer bottlenecks
-- Generates a hardware performance note displayed in the GUI
-- Results auto-load on simulator startup from `benchmarks/viz_performance_results.json`
-
-**Note**: The FPS counter in the OpenGL HUD shows current visualization update rate (0 when stopped/paused).
-
-### Quick Auto-Tuning (Headless Mode)
-
-The simulator includes a headless **auto-tuning** workflow that scans combinations of
-neuron model, neural structure profile, and Hodgkin–Huxley preset to pick sensible
-external drive scales so networks are active but not saturated.
-
-- **Run a full tuning sweep** (all profiles and presets):
-  ```bash
-  python neural-simulator.py --auto-tune
-  ```
-- **Run a faster, reduced sweep** (for testing):
-  ```bash
-  python neural-simulator.py --auto-tune --quick
-  ```
-
-This produces `simulation_profiles/auto_tuned_overrides.json`, which contains
-per-combination overrides (e.g. `hh_external_drive_scale`, `adex_external_drive_scale`).
-These are automatically loaded and applied whenever you:
-
-- Select the corresponding **Neuron Model / Neural Structure Profile / HH preset** in the UI
-- Click **"Apply Changes & Reset Sim"**
-
-In the HH and AdEx parameter panels you can see and adjust these as:
-
-- **External Drive Scale (HH, auto-tuned)** – scales baseline HH DC input
-- **External Drive Scale (AdEx, auto-tuned)** – scales baseline AdEx DC input
-
-You can also click the **"Reset HH Drive to Auto-Tuned"** or
-**"Reset AdEx Drive to Auto-Tuned"** buttons to restore the slider to the
-auto-tuned value for the current combination, then press **Apply & Reset**
-to use it in the simulation.
-
-### Example Configurations
-
-#### Small Network (Fast Preview)
-```
-Neurons: 1,000
-Connections per neuron: 100
-Model: Izhikevich (RS Cortical Pyramidal)
-dt: 1.0 ms
-```
-
-#### Medium Network (Balanced)
-```
-Neurons: 10,000
-Connections per neuron: 500
-Model: Izhikevich (mixed RS/FS)
-Enable Hebbian Learning: Yes
-Enable STP: Yes
-dt: 1.0 ms
-```
-
-#### Large Network (High Performance GPU)
-```
-Neurons: 50,000+
-Connections per neuron: 1,000+
-Model: Izhikevich
-dt: 1.0 ms
-Note: Requires 16GB+ VRAM
-```
-
-## Key Parameters
-
-### Core Simulation
-- **Total Simulation Time**: Duration in milliseconds
-- **dt (Time Step)**: Integration timestep (0.025-1.0 ms)
-  - Smaller values = more accurate but slower
-  - Izhikevich: 1.0 ms typical
-  - Hodgkin-Huxley: 0.025-0.05 ms recommended
-- **Seed**: Random seed for reproducibility (-1 for random)
-
-### Network Structure
-- **Connections per Neuron**: Average outgoing synapses
-- **Num Traits**: Number of neuron populations/types
-- **Enable Watts-Strogatz**: Use small-world topology vs spatial
-
-### Plasticity
-- **Hebbian Learning Rate**: LTP strength (0.0001-0.001 typical)
-- **STP Parameters**: 
-  - U: Baseline utilization (0.1-0.5)
-  - tau_d: Depression timescale (50-500 ms)
-  - tau_f: Facilitation timescale (20-200 ms)
-- **STDP Parameters** (enabled by default):
-  - A+: LTP amplitude (0.005-0.02, default: 0.01)
-  - A-: LTD amplitude (0.005-0.02, default: 0.0105)
-  - τ+/τ-: Time constants (~20ms)
-- **Reward Modulation** (enabled by default):
-  - Learning rate: 0.001-0.05 (default: 0.01)
-  - Eligibility trace decay: 500-2000ms (default: 1000ms)
-  - Reward signal: Set dynamically during simulation
-- **Structural Plasticity** (enabled by default):
-  - Formation rate: ~1e-6 per timestep
-  - Elimination rate: ~5e-7 per timestep
-  - Update interval: Every 100 steps for efficiency
-- **Homeostasis Target Rate**: Desired firing rate for stability (0.01-0.05)
-
-### Visualization
-- **Viz Update Interval**: Steps between visual updates (17 for ~60fps at dt=1.0ms)
-- **Point Size**: Neuron rendering size
-- **Max Neurons to Render**: Performance cap for visualization
-- **Spiking Mode**: 
-  - Highlight Spiking: Show recent activity
-  - Show Only Spiking: Filter inactive neurons
-  - No Spiking Highlight: Static colors
-
-## Command-Line Usage
-
-The main entry point is `neural-simulator.py`.
-
-### GUI Mode (default)
+### GUI mode
 
 ```bash
 python neural-simulator.py
 ```
 
-Starts the DearPyGUI control window and the OpenGL 3D visualization (if PyOpenGL is
-available). All configuration is done through the UI.
+1. Pick a profile from the **Neural Structure Profile** dropdown (e.g. `cortex_l23_rs_fs_izh.json`)
+2. Click **Apply Changes & Reset Sim**
+3. Click **Start**
+4. Navigate the 3D view: left-drag rotate, right-drag pan, scroll zoom
 
-### Auto-Tuning Mode (headless)
+### Headless mode
 
 ```bash
-python neural-simulator.py --auto-tune [--quick]
+# Auto-tune external drive scales for all model/profile/preset combinations
+python neural-simulator.py --auto-tune          # full sweep (~30 min)
+python neural-simulator.py --auto-tune --quick  # subset (~5 min)
+
+# Run a built-in experiment preset headlessly
+python run_experiment_headless.py --preset rl --seed 42
+
+# Sweep a parameter
+python run_parameter_sweep.py -e associative --sweep "stdp_a_plus=0.004,0.012,0.024"
+
+# Biological validation suite
+python run_benchmarks.py --benchmark stdp-timing
+python run_benchmarks.py --benchmark gamma-oscillations
 ```
 
-- `--auto-tune` – run the headless tuning workflow instead of launching the GUI.
-- `--quick` – optional; restricts the sweep to a smaller subset of profiles/presets
-  for faster runs (useful while developing).
+### Research-gate runner (Phase B BG action selection)
 
-The tuner:
-- Iterates through Hodgkin–Huxley + AdEx model combinations with all defined
-  **Neural Structure Profiles**.
-- For HH, only uses **profile-compatible HH presets** (e.g. striatum → MSN,
-  CA1 → CA1 pyramidal, STN–GPe → STN bursting). Generic/unstructured profiles
-  still allow all HH presets.
-- For each combination, tests several external drive scales.
-- Measures spike activity, fraction of neurons that spiked, and connectivity.
-- Chooses the best scale according to simple criteria (network is alive but not
-  seizure-like).
-- Saves the results into `simulation_profiles/auto_tuned_overrides.json`.
+```bash
+# Static cascade probe (validates the architecture)
+python -m research.runners.g11_bg_runner --probe-action W
 
-At runtime, whenever a matching combination is selected in the GUI, these values
-are applied automatically before initialization.
+# Moving-goal acid test (1800 steps, ~16 min)
+python -m research.runners.g11_bg_runner --moving-goal --seed 42 --n-steps 1800 \
+    --out research/findings/raw/g11_bg/g11_seed42.json
+```
 
-## Keyboard Shortcuts
+---
 
-### OpenGL Window
-- **ESC**: Exit application
-- **R**: Reset camera position
-- **S**: Toggle synapse visibility
-- **N**: Cycle neuron display modes (Highlight Spiking → Show Only Spiking → No Spiking Highlight)
-- **Space**: Pause/Resume simulation (or Start if stopped)
+## Usage Modes
 
-### General
-- **Ctrl+S**: Save profile
-- **Ctrl+L**: Load profile
-- **Ctrl+Shift+S**: Save checkpoint
-- **Ctrl+Shift+L**: Load checkpoint
+| Mode | Entry point | Use case |
+|------|-------------|----------|
+| **GUI** | `python neural-simulator.py` | Interactive exploration, parameter tuning, visualization |
+| **Auto-tune** | `python neural-simulator.py --auto-tune [--quick]` | One-time setup of external drive scales per model/profile combo |
+| **Experiment headless** | `python run_experiment_headless.py --preset {rl,associative,stim,freq}` | Reproducible experiment runs without GUI overhead |
+| **Parameter sweep** | `python run_parameter_sweep.py -e <preset> --sweep "key=v1,v2,v3"` | Grid/zip sweeps with auto t-test + Cohen's d output |
+| **Bio benchmarks** | `python run_benchmarks.py --benchmark <name>` | STDP timing, E/I balance, STP PPR, gamma, homeostasis |
+| **Research runner** | `python -m research.runners.gN_runner [args]` | Specific gate experiments — see [Research Runners](#research-runners) |
+| **Performance bench** | `python benchmark.py --output results.json [--quick]` | GPU throughput / step time / memory across network sizes |
+| **Viz benchmark** | `python viz_benchmark.py --output ...` | Find max neurons for real-time rendering on your GPU |
+
+---
+
+## Research Runners
+
+Headless runners for the research-gate progression (G1 → G11). Each writes raw data to `research/findings/raw/gN/` and a markdown finding to `research/findings/YYYY-MM-DD-gN.md`.
+
+| Gate | Runner | Purpose | Status |
+|------|--------|---------|--------|
+| G1   | `g1_runner.py`, `g1_v2_runner.py`, `g1_v3_runner.py` | Encoder-decoder roundtrip on tiny patterns | **GO** (v3, 71.3% test acc, 3 seeds) |
+| G2   | `g2_runner.py` | STDP local learning improvement | NO-GO (no epoch-over-epoch gain) |
+| G3   | `g3_runner.py` | Persistence / checkpointing | **GO** |
+| G5   | `g5_runner.py`, `g5_v2_runner.py`, `g5_v3_runner.py` | Sensorimotor signed perceptron | **GO** (v3 with LR decay, 3/3 seeds pass) |
+| G6   | `g6_runner.py` | 2D gridworld | PARTIAL — gate metric needs redesign |
+| G8   | `g8_runner.py` | Session 8 work | — |
+| G9   | `g9_runner.py` | Moving-goal RL with motor exploration | NO-GO at runner side (silent-motor trap) |
+| **G11** | **`g11_bg_runner.py`** | **BG cascade action selection** | **GO 2026-04-25** — phase 1 finalQ 1.76 vs G9 baseline 6.74 |
+
+Negative results are real findings and stored in [`research/findings/`](research/findings/) alongside positives. Browse the directory for the full session-by-session arc.
+
+---
+
+## Programmable API
+
+The engine exports its key classes via `sim/__init__.py`:
+
+```python
+from sim import (
+    SimulationBridge, CoreSimConfig, VisualizationConfig,
+    RuntimeState, GPUConfig, NeuronModel, NeuronType,
+)
+
+cfg = CoreSimConfig(
+    num_neurons=10_000,
+    neuron_model_type=NeuronModel.IZHIKEVICH.name,
+    neural_profile_name="CORTEX_L23_RS_FS",
+    enable_stdp=True,
+    enable_reward_modulation=True,
+    seed=42,
+)
+gpu_cfg = GPUConfig(enable_profiling=True)
+
+bridge = SimulationBridge(
+    core_config=cfg,
+    viz_config=VisualizationConfig(),
+    runtime_state=RuntimeState(),
+    gpu_config=gpu_cfg,
+)
+bridge._initialize_simulation_data(called_from_playback_init=False)
+
+for _ in range(1000):
+    bridge._run_one_simulation_step()
+    bridge.runtime_state.current_time_step += 1
+
+print(bridge.get_profiling_stats())
+bridge.export_profiling_report("profile.json")
+```
+
+### Brain-region + neuromodulator example
+
+```python
+from sim.regions import BrainRegion, RegionPathway
+
+regions = [
+    BrainRegion(name="cortex", n_neurons=200, exc_fraction=0.8,
+                internal_density=0.1, exc_weight_mean=2.0, inh_weight_mean=4.0),
+    BrainRegion(name="striatum", n_neurons=100, exc_fraction=0.05,
+                izh_neuron_type="IZH2007_STRIATAL_MSN"),
+]
+pathways = [
+    RegionPathway(from_region="cortex", to_region="striatum",
+                  density=0.5, weight_mean=2.5, plastic=True),
+]
+
+cfg = CoreSimConfig()
+cfg.enable_brain_region_framework = True
+cfg.brain_regions = regions
+cfg.region_pathways = pathways
+cfg.num_traits = 1  # let regions own their own neuron-type assignment
+# ... continue as above
+```
+
+See [`research/runners/g11_bg_runner.py`](research/runners/g11_bg_runner.py) for a full multi-region BG cascade build.
+
+---
 
 ## File Formats
 
-### Profiles (.json)
-- Stores simulation configuration parameters
-- Includes GUI settings and visualization preferences
-- Human-readable, can be edited manually
-- Location: `simulation_profiles/`
+| Extension | Purpose | Directory |
+|-----------|---------|-----------|
+| `.json` | Simulation profile (configuration) | `simulation_profiles/` |
+| `.simstate.h5` | Full state checkpoint (HDF5) | `simulation_checkpoints_h5/` |
+| `.simrec.h5` | Frame-by-frame recording (HDF5, LZ4) | `simulation_recordings_h5/` |
 
-### Checkpoints (.simstate.h5)
-- HDF5 format with full simulation state
-- Includes neuron states, connectivity, plasticity variables
-- Compressed for efficient storage
-- Location: `simulation_checkpoints_h5/`
+Profile naming convention: `{region}_{model}.json` where `{model}` ∈ {`hh`, `adex`, `izh`}. Plus a `quick_demo_cortex.json` for first-time users.
 
-### Recordings (.simrec.h5)
-- HDF5 format with frame-by-frame simulation data
-- GPU-buffered recording for maximum performance
-- Includes initial state and all dynamic variables per frame
-- Location: `simulation_recordings_h5/`
+---
 
-## GPU Configuration and Profiling
+## Performance
 
-### GPU Feature Flags
+| Network size | VRAM | Step time (Izh dt=1ms) | Notes |
+|--------------|------|------------------------|-------|
+| 1K           | ~0.5 GB | <0.1 ms | Real-time interactive |
+| 10K          | ~2 GB   | ~6 ms   | Smooth, recommended |
+| 50K          | ~8 GB   | ~20 ms  | High-end GPU |
+| 100K+        | ~20 GB+ | ~60 ms  | Research-scale |
 
-Configure GPU-specific features via `GPUConfig` dataclass:
+**Tuning knobs:**
+- `GPUConfig.memory_pool_limit_fraction` (default 0.8)
+- `GPUConfig.render_vbo_update_skip` (default 2 — VBO every 2nd frame)
+- `recording_compression="lz4"` (default, fast) vs `"gzip"` (smaller files)
+- For HH at 0.05 ms dt: ~20× slower than Izh; use AdEx for biophysics-lite
 
-**Recording Modes:**
-- `gpu_buffered` (default): Store all frames in VRAM for maximum speed
-- `streaming`: Write frames directly to disk as generated
-- `disabled`: No recording
-
-**Playback Modes:**
-- `gpu_cached` (default): Load entire recording into VRAM for instant seeking
-- `streaming`: Read frames from disk on demand
-- `auto`: Automatically choose based on available GPU memory
-
-**CUDA-OpenGL Interop:**
-Enable zero-copy GPU→OpenGL transfers for visualization with no CPU roundtrip.
-
-**Memory Management:**
-- `memory_pool_limit_fraction`: Max GPU memory for CuPy pool (default: 0.8)
-- `memory_pressure_threshold`: Trigger cleanup above this usage (default: 0.9)
-- `enable_adaptive_quality`: Reduce quality under memory pressure
-
-### Performance Profiling
-
-Enable detailed profiling in your simulation:
+**Profiling:**
 
 ```python
-from neural_simulator import GPUConfig, SimulationBridge, CoreSimConfig
-
-gpu_config = GPUConfig(
-    enable_profiling=True,
-    profiling_detailed=True,
-    profiling_window_size=1000  # Keep last 1000 step timings
-)
-
-sim = SimulationBridge(
-    core_config=CoreSimConfig(num_neurons=10000),
-    gpu_config=gpu_config
-)
+gpu_cfg = GPUConfig(enable_profiling=True, profiling_detailed=True)
+# ... run sim ...
+stats = bridge.get_profiling_stats()
+print(f"Step time: mean={stats['step_total']['mean']*1000:.2f} ms, "
+      f"p95={stats['step_total']['p95']*1000:.2f} ms")
+bridge.export_profiling_report("profile.json")
 ```
 
-Get profiling statistics:
-```python
-stats = sim.get_profiling_stats()
-print(f"Mean step time: {stats['step_total']['mean']*1000:.2f}ms")
-print(f"P95 step time: {stats['step_total']['p95']*1000:.2f}ms")
-```
+---
 
-Export full profiling report:
-```python
-sim.export_profiling_report("profile_report.json")
-```
+## Testing
 
-### Benchmarking
+41 test files in `tests/`. Highlights:
 
-Run comprehensive benchmark suite:
 ```bash
-python benchmark.py --output results.json
-```
+# Full suite
+pytest tests/ -v
 
-Quick benchmark (reduced configurations):
-```bash
-python benchmark.py --quick
-```
-
-Compare against baseline:
-```bash
-python benchmark.py --compare benchmarks/baseline_v1.json
-```
-
-The benchmark suite:
-- Sweeps network sizes (1K, 10K, 50K neurons)
-- Tests different connection densities
-- Runs all neuron models (Izhikevich, HH, AdEx)
-- Measures step time, GPU memory, throughput
-- Outputs JSON report with system info
-
-### Determinism and Reproducibility
-
-For reproducible simulations:
-
-1. **Set explicit seed:**
-```python
-config = CoreSimConfig(seed=42)
-```
-
-2. **Track actual seed used:**
-```python
-sim._initialize_simulation_data()
-print(f"Actual seed: {sim.runtime_state.actual_seed_used}")
-```
-
-3. **Run determinism tests:**
-```bash
+# Determinism (RNG, init, step)
 pytest tests/test_determinism.py -v
+
+# CPU validation of fused kernels
+pytest tests/test_kernels_cpu.py -v
+
+# Per-runner smoke tests
+pytest tests/test_g1_runner_smoke.py -v
+pytest tests/test_g11_bg_runner.py -v   # if present
+
+# Plasticity + freeze-mask correctness
+pytest tests/test_plastic_mask.py -v
+
+# Subsystem tests
+pytest tests/test_experiment_system.py -v
+pytest tests/test_neuromodulators.py -v
+pytest tests/test_regions.py -v
+pytest tests/test_data_bus.py -v
 ```
 
-All RNG sources (CuPy, NumPy, random) are initialized together for full determinism.
+---
 
-## Performance Optimization
+## Documentation Map
 
-### GPU Memory Management
-The simulator automatically manages GPU memory, but you can optimize:
-- Configure `GPUConfig.memory_pool_limit_fraction` (default: 0.8)
-- Adjust `memory_pressure_threshold` for earlier cleanup
-- Reduce `Max Neurons to Render` if visualization is slow
-- Disable synaptic pulses for better performance
-- Use larger `Viz Update Interval` to reduce GPU-CPU transfers
-- Close other GPU-intensive applications
+| Document | Audience | Content |
+|----------|----------|---------|
+| [README.md](README.md) | First-time visitors | This file — overview, install, quick start |
+| [USER_GUIDE.md](USER_GUIDE.md) | End users | GUI walkthrough, panel-by-panel reference, plasticity tuning |
+| [CLAUDE.md](CLAUDE.md) | LLM agents working in repo | Module map, line numbers, gotchas, sub-system spec |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | New contributors | Dev setup, branching, code style, PR template |
+| [CHANGELOG.md](CHANGELOG.md) | Everyone | Dated change history |
+| [docs/SCIENCE_ROADMAP.md](docs/SCIENCE_ROADMAP.md) | Researchers | Validation pillars, gate progression, what's done vs pending |
+| [docs/plans/](docs/plans/) | Implementers | Per-feature design docs, often paired with a finding |
+| [research/findings/INDEX.md](research/findings/INDEX.md) | Researchers | Index of all findings with verdicts |
+| [research/findings/](research/findings/) | Researchers | Session-by-session results, including negatives |
+| [.claude/style.md](.claude/style.md) | LLM agents | Communication style for this codebase |
 
-### Network Size Guidelines
-| Network Size | VRAM Usage | Expected FPS | Notes |
-|-------------|------------|--------------|-------|
-| 1K neurons  | ~500 MB    | 60+ FPS      | Real-time interactive |
-| 10K neurons | ~2 GB      | 60 FPS       | Smooth, recommended |
-| 50K neurons | ~8 GB      | 30-60 FPS    | High performance GPU |
-| 100K neurons| ~20 GB     | 15-30 FPS    | Enthusiast/research |
-
-### CPU vs GPU Bottlenecks
-- **GPU bottleneck**: Reduce network size or disable STP/Hebbian learning
-- **CPU bottleneck**: Increase visualization update interval
-- **Transfer bottleneck**: Enable GPU-buffered recording
-
-## Known Limitations
-
-1. **Memory constraints**: Networks >100K neurons require very large VRAM (20GB+)
-2. **Visualization performance**: Rendering >50K neurons simultaneously may reduce FPS
-3. **Platform**: Currently Windows/Linux with NVIDIA GPUs only (CUDA requirement)
-4. **Precision**: Uses float32 for performance; float64 not currently supported
-
-## Troubleshooting
-
-### "Out of memory" errors
-- Reduce number of neurons or connections per neuron
-- Close other applications using GPU memory
-- Check GPU memory with `nvidia-smi`
-- Disable Hebbian learning and STP for reduced memory usage
-
-### Poor visualization performance
-- Reduce `Max Neurons to Render`
-- Increase `Viz Update Interval`
-- Disable synaptic pulse rendering
-- Use "Show Only Spiking" filter mode
-
-### Simulation crashes on start
-- Ensure CUDA drivers are up to date
-- Verify CuPy installation: `python -c "import cupy; print(cupy.cuda.runtime.getDeviceCount())"`
-- Check that GPU compute capability is 6.0+
-
-## Architecture
-
-### Thread Model
-- **Main Thread**: DearPyGUI event loop and OpenGL rendering
-- **Simulation Thread**: GPU-accelerated neural dynamics computation
-- **Communication**: Lock-free queues for inter-thread messaging
-
-### GPU Optimization Techniques
-- **Fused CUDA kernels**: Minimized kernel launches for dynamics updates
-- **Sparse matrix operations**: CSR format for connectivity
-- **Vectorized operations**: Full GPU parallelization of neuron updates
-- **Zero-copy transfers**: CUDA-OpenGL interop for visualization
-- **Memory pooling**: Reduced allocation overhead with CuPy memory pool
+---
 
 ## Contributing
 
-Contributions are welcome! Areas for improvement:
-- Additional neuron models (LIF/GLIF, multi-compartment)
-- Layered connectivity motifs and topographic organization
-- Network analysis tools (connectivity statistics, firing patterns)
-- Export to SONATA/NeuroML formats
-- Multi-GPU support for larger networks
-- AMD ROCm/HIP port for non-NVIDIA GPUs
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide. High-priority areas:
+- Additional plasticity rules (e.g. BCM, triplet STDP)
+- Multi-GPU support
+- AMD ROCm/HIP port
+- Network analysis tools (graph theoretic, dynamical systems)
+- SONATA / NeuroML export
+
+---
 
 ## License
 
-MIT License - See LICENSE file for details
+MIT. See [LICENSE](LICENSE).
+
+---
 
 ## Citation
 
-If you use this simulator in your research, please cite:
-
 ```bibtex
-@software{neural_simulator_2025,
+@software{neural_simulator_2026,
   title = {GPU-Accelerated Neural Network Simulator},
   author = {danthi123},
-  year = {2025},
+  year = {2026},
   url = {https://github.com/danthi123/neural-simulator}
 }
 ```
 
 ## Acknowledgments
 
-### Neuron Models & Dynamics
-- Izhikevich neuron model: Izhikevich, E. M. (2007). Dynamical Systems in Neuroscience
-- Hodgkin-Huxley model: Hodgkin & Huxley (1952). J. Physiol.
-- AdEx model: Brette & Gerstner (2005). J. Neurophysiol.
-- STP model: Tsodyks & Markram (1997). PNAS
-
-### Biological Realism
-- Parameter heterogeneity: Marder & Goaillard (2006), Tripathy et al. (2013)
-- OU process noise: Destexhe et al. (2001), Destexhe & Rudolph-Lilith (2012)
-- Channel noise: White et al. (2000)
-
-### Software & Tools
-- CuPy library for GPU acceleration
-- DearPyGUI for UI framework
-- OpenGL for 3D visualization
-
-## Contact
-
-For questions, issues, or suggestions:
-- GitHub Issues: [Project Issues](https://github.com/danthi123/neural-simulator/issues)
+Models: Izhikevich (2007), Hodgkin & Huxley (1952), Brette & Gerstner (2005), Tsodyks & Markram (1997).
+Heterogeneity: Marder & Goaillard (2006), Tripathy et al. (2013).
+OU noise: Destexhe et al. (2001), Destexhe & Rudolph-Lilith (2012).
+Channel noise: White et al. (2000).
+BG architecture: Mink (1996), Schultz (2007), Wickens et al. (1995).
+Tools: CuPy, DearPyGUI, PyOpenGL, h5py.
 
 ---
 
-**Note**: This is a research/educational tool. For production neuroscience simulations, consider established frameworks like NEST, Brian2, or NEURON.
+**Note:** This is a research/educational codebase. For published neuroscience studies, established frameworks like NEST, Brian2, NEURON, or GeNN may be more appropriate.
