@@ -372,3 +372,83 @@ def test_region_manager_registers_groups_with_neuromod_manager():
     assert (drive_np[:20] == 0).all()
     assert (drive_np[20:] > 5).all()
     sb.clear_simulation_state_and_gpu_memory()
+
+
+# ---------- T13: PFC+Motor end-to-end smoke ----------
+
+def test_pfc_motor_runs_end_to_end_for_50_steps():
+    """End-to-end smoke: a PFC + Motor configuration runs 50 simulation
+    steps without crashing. Validates the framework is functionally
+    integrated even though we're not validating biology yet (that's the
+    full 1800-step probe deferred to a separate run)."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+    from sim.regions import BrainRegion, RegionPathway
+    from sim.neuromodulators import (
+        NeuromodulatorConfig, ModulatorTarget, ProductionRule,
+    )
+
+    brain_regions = [
+        BrainRegion(
+            name="PFC",
+            n_neurons=80,
+            exc_fraction=0.8,
+            internal_density=0.05,
+            exc_weight_mean=0.4,
+            inh_weight_mean=0.8,
+            plastic_internal=True,
+        ),
+        BrainRegion(
+            name="Motor",
+            n_neurons=4,
+            exc_fraction=1.0,  # all excitatory
+            internal_density=0.0,
+        ),
+    ]
+    region_pathways = [
+        RegionPathway(
+            from_region="PFC",
+            to_region="Motor",
+            density=0.5,
+            weight_mean=1.0,
+            plastic=True,
+            neuromodulator_gates=["dopamine"],  # metadata only at MVP
+        ),
+    ]
+    nm_configs = [
+        NeuromodulatorConfig(
+            name="dopamine", baseline=0.0, decay_tau_ms=500.0,
+            production_rules=[ProductionRule(rule_type="from_reward", sensitivity=1.0)],
+            targets=[
+                ModulatorTarget(
+                    target_type="plasticity_rate",
+                    scope="all",
+                    sensitivity=1.0,
+                ),
+            ],
+        ),
+    ]
+    sb, cfg = _make_bridge_with_regions(
+        brain_regions, region_pathways, nm_configs=nm_configs, seed=42,
+    )
+
+    # Sanity: total neurons = 80 + 4 = 84
+    assert cfg.num_neurons == 84
+    assert sb.region_manager is not None
+    assert sb.neuromodulator_manager is not None
+    assert sb.cp_connections is not None
+    assert sb.cp_connections.nnz > 0  # some synapses from internal+pathway
+
+    # Run 50 steps with a small reward signal — the full pipeline must not
+    # crash under combined region + neuromodulator code paths.
+    sb.core_config.current_reward_signal = 0.5
+    for _ in range(50):
+        sb._run_one_simulation_step()
+        sb.runtime_state.current_time_step += 1
+
+    # Modulator concentration should have moved away from baseline given
+    # the sustained reward signal.
+    da = sb.neuromodulator_manager.get_concentration("dopamine")
+    assert da > 0.1, f"dopamine should rise from 0 under sustained reward, got {da}"
+
+    sb.clear_simulation_state_and_gpu_memory()
