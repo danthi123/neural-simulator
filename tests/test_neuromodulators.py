@@ -254,3 +254,127 @@ def test_from_reward_rule_ignores_missing_bridge_config():
     mgr.initialize(n_neurons=10, cp_module=cp)
     mgr.step(bridge=None)
     assert mgr.get_concentration("dopamine") == 0.0
+
+
+# ---------- Task 5: from_error_persistence rule (noradrenaline-like) ----------
+
+
+def test_from_error_persistence_rises_with_sustained_negative_reward():
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="noradrenaline",
+        baseline=0.1,
+        decay_tau_ms=2000.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        production_rules=[
+            ProductionRule(
+                rule_type="from_error_persistence",
+                sensitivity=2.0,
+                threshold=0.3,
+                window_ms=200.0,
+            )
+        ],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    bridge = _FakeBridge()
+
+    bridge.core_config.current_reward_signal = -1.0
+    for _ in range(2000):
+        mgr.step(bridge)
+    # Persistent error >> threshold -> NE rises well above baseline
+    assert mgr.get_concentration("noradrenaline") > 0.5
+
+    bridge.core_config.current_reward_signal = 0.0
+    for _ in range(15000):
+        mgr.step(bridge)
+    # NE returns to baseline
+    assert abs(mgr.get_concentration("noradrenaline") - nm.baseline) < 0.05
+
+
+def test_from_error_persistence_silent_when_below_threshold():
+    """Small reward errors below threshold should NOT raise NE above baseline."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="ne",
+        baseline=0.1,
+        decay_tau_ms=2000.0,
+        production_rules=[
+            ProductionRule(
+                rule_type="from_error_persistence",
+                sensitivity=2.0,
+                threshold=0.3,
+                window_ms=200.0,
+            )
+        ],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    bridge = _FakeBridge()
+
+    # Small errors well below threshold
+    bridge.core_config.current_reward_signal = 0.1
+    for _ in range(2000):
+        mgr.step(bridge)
+    # Should remain very near baseline
+    assert abs(mgr.get_concentration("ne") - nm.baseline) < 0.05
+
+
+def test_from_error_persistence_responds_to_positive_or_negative_error():
+    """Rule uses |reward_error|, so |+0.8| and |-0.8| both elevate NE."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    nm_cfg = lambda: NeuromodulatorConfig(
+        name="ne",
+        baseline=0.0,
+        decay_tau_ms=2000.0,
+        production_rules=[
+            ProductionRule(
+                rule_type="from_error_persistence",
+                sensitivity=2.0,
+                threshold=0.3,
+                window_ms=200.0,
+            )
+        ],
+    )
+
+    def _equilibrium(reward_signal: float) -> float:
+        mgr = NeuromodulatorManager([nm_cfg()], dt_ms=1.0)
+        mgr.initialize(n_neurons=10, cp_module=cp)
+        bridge = _FakeBridge()
+        bridge.core_config.current_reward_signal = reward_signal
+        for _ in range(2000):
+            mgr.step(bridge)
+        return mgr.get_concentration("ne")
+
+    pos = _equilibrium(+0.8)
+    neg = _equilibrium(-0.8)
+    # Both should produce non-trivial NE elevation; values should be similar
+    # because the rule uses |error|.
+    assert pos > 0.1
+    assert neg > 0.1
+    assert abs(pos - neg) < 0.1

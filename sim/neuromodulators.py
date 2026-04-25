@@ -200,7 +200,25 @@ class NeuromodulatorManager:
             return rule.sensitivity * (reward - baseline)
 
         if rt == "from_error_persistence":
-            # Implemented in Task 5
+            if bridge is None or not hasattr(bridge, "core_config"):
+                return 0.0
+            cc = bridge.core_config
+            reward = float(getattr(cc, "current_reward_signal", 0.0))
+            baseline = float(getattr(cc, "reward_baseline", 0.0))
+            err = abs(reward - baseline)
+
+            # Update EMA of |error| with time-constant matching window_ms.
+            state = self._rule_state[cfg.name]
+            ema_alpha = self.dt_ms / max(rule.window_ms, 1e-9)
+            ema = state.get("err_ema", 0.0)
+            ema = ema + ema_alpha * (err - ema)
+            state["err_ema"] = ema
+
+            # Produce iff sustained EMA exceeds threshold. Per-step
+            # production scales with (ema - threshold) * sensitivity * dt/1000
+            # so equilibrium concentration is balanced against decay.
+            if ema > rule.threshold:
+                return rule.sensitivity * (ema - rule.threshold) * (self.dt_ms / 1000.0)
             return 0.0
 
         if rt == "from_novelty":
