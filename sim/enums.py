@@ -13,6 +13,17 @@ class NeuronModel(Enum):
 class NeuronType(Enum):
     IZH2007_RS_CORTICAL_PYRAMIDAL = "IZH2007_RS_CORTICAL_PYRAMIDAL"
     IZH2007_FS_CORTICAL_INTERNEURON = "IZH2007_FS_CORTICAL_INTERNEURON"
+    # Phase A → B addition: Izhikevich 2007 presets for additional cell types.
+    # All work cleanly at 37°C (unlike HH presets — see HH temperature bug).
+    # Sources: Izhikevich 2003 IEEE TNN Table II + 2007 book parameters.
+    IZH2007_STRIATAL_MSN = "IZH2007_STRIATAL_MSN"  # Medium spiny neuron, BG input
+    IZH2007_THALAMIC_RELAY = "IZH2007_THALAMIC_RELAY"  # TC neurons (RS in tonic mode)
+    IZH2007_THALAMIC_RETICULAR = "IZH2007_THALAMIC_RETICULAR"  # TRN, LTS-like bursting
+    IZH2007_GPE_PACEMAKER = "IZH2007_GPE_PACEMAKER"  # Globus pallidus externus
+    IZH2007_GPI_OUTPUT = "IZH2007_GPI_OUTPUT"  # Globus pallidus internus / SNr
+    IZH2007_STN_BURST = "IZH2007_STN_BURST"  # Subthalamic nucleus
+    IZH2007_HIPPO_PYRAMIDAL = "IZH2007_HIPPO_PYRAMIDAL"  # CA1/CA3 pyramidal (IB-like)
+    IZH2007_DOPAMINE = "IZH2007_DOPAMINE"  # VTA/SNc DA neurons
     HH_L5_CORTICAL_PYRAMIDAL_RS = "HH_L5_CORTICAL_PYRAMIDAL_RS"
     HH_THALAMIC_RELAY_TBURST = "HH_THALAMIC_RELAY_TBURST"
     HH_CA1_PYRAMIDAL_BURST = "HH_CA1_PYRAMIDAL_BURST"
@@ -436,6 +447,59 @@ class DefaultIzhikevichParamsManager:
             # Negative d would paradoxically cause post-spike depolarization (excitation after inhibition).
             # Value of 25 pA gives the characteristic non-adapting, high-frequency firing pattern of PV+ basket cells.
         },
+        # ---- Basal Ganglia + Thalamus (Phase A → B Phase) ----
+        # Izhikevich 2003 Table II, "Simple Model of Spiking Neurons" IEEE TNN 14(6).
+        NeuronType.IZH2007_STRIATAL_MSN: {
+            # Medium spiny neuron — D1/D2 striatal projection neurons.
+            # Down-state stable, ramping with cortical input. Up-state firing
+            # rate moderate (~5-30 Hz). Wilson & Kawaguchi 1996, Mahon 2003.
+            "C": 50.0, "k": 1.0, "vr": -80.0, "vt": -25.0, "vpeak": 40.0,
+            "a": 0.01, "b": -20.0, "c_reset": -55.0, "d_increment": 150.0,
+        },
+        NeuronType.IZH2007_THALAMIC_RELAY: {
+            # Thalamocortical relay neuron in tonic mode (no LTS bursting here;
+            # bursting requires conditional T-current activation which Izh
+            # doesn't natively model — use HH_THALAMIC_RELAY_TBURST for that).
+            # In tonic firing mode this is RS-like at higher rate.
+            "C": 200.0, "k": 1.6, "vr": -60.0, "vt": -50.0, "vpeak": 35.0,
+            "a": 0.01, "b": 15.0, "c_reset": -60.0, "d_increment": 10.0,
+        },
+        NeuronType.IZH2007_THALAMIC_RETICULAR: {
+            # TRN — bursting LTS-like inhibitory cell. Strong adaptation,
+            # low threshold. Destexhe 1996, Wilson & Kawaguchi.
+            "C": 40.0, "k": 0.25, "vr": -65.0, "vt": -45.0, "vpeak": 0.0,
+            "a": 0.015, "b": 10.0, "c_reset": -55.0, "d_increment": 50.0,
+        },
+        NeuronType.IZH2007_GPE_PACEMAKER: {
+            # GPe — autonomous pacemaker firing 30-60 Hz. Cooper & Stanford 2000,
+            # Bevan et al. 2002.
+            "C": 60.0, "k": 1.0, "vr": -65.0, "vt": -50.0, "vpeak": 25.0,
+            "a": 0.05, "b": 1.0, "c_reset": -50.0, "d_increment": 20.0,
+        },
+        NeuronType.IZH2007_GPI_OUTPUT: {
+            # GPi / SNr output — high tonic rate (60-80 Hz at rest), inhibitory.
+            # Acts as the BG output gate (disinhibits thalamus on action selection).
+            "C": 60.0, "k": 1.0, "vr": -65.0, "vt": -50.0, "vpeak": 25.0,
+            "a": 0.05, "b": 2.0, "c_reset": -50.0, "d_increment": 25.0,
+        },
+        NeuronType.IZH2007_STN_BURST: {
+            # STN — bursty pacemaker. Bevan & Wilson 1999. Strong rebound burst
+            # after inhibition release. Uses negative b for low-threshold dynamics.
+            "C": 80.0, "k": 1.5, "vr": -60.0, "vt": -50.0, "vpeak": 30.0,
+            "a": 0.005, "b": -1.0, "c_reset": -45.0, "d_increment": 75.0,
+        },
+        NeuronType.IZH2007_HIPPO_PYRAMIDAL: {
+            # Hippocampal CA1/CA3 pyramidal cell. Intrinsically bursting (IB)-like
+            # phenotype with mild adaptation. Mason & Larkman 1990.
+            "C": 100.0, "k": 0.7, "vr": -65.0, "vt": -40.0, "vpeak": 35.0,
+            "a": 0.01, "b": 5.0, "c_reset": -55.0, "d_increment": 50.0,
+        },
+        NeuronType.IZH2007_DOPAMINE: {
+            # VTA/SNc dopaminergic neuron. Slow tonic firing 1-5 Hz spontaneously,
+            # bursts (>15 Hz) in response to phasic input. Grace & Bunney 1984.
+            "C": 100.0, "k": 0.9, "vr": -65.0, "vt": -45.0, "vpeak": 40.0,
+            "a": 0.01, "b": 1.0, "c_reset": -55.0, "d_increment": 5.0,
+        },
         NeuronType.RS_EXCITATORY_LEGACY: {"a": 0.02, "b": 0.2, "c_reset": -65.0, "d_increment": 8.0, "vpeak": 30.0},
         NeuronType.FS_INHIBITORY_LEGACY: {"a": 0.1, "b": 0.2, "c_reset": -65.0, "d_increment": 2.0, "vpeak": 30.0},
         NeuronType.IB_EXCITATORY_LEGACY: {"a": 0.02, "b": 0.2, "c_reset": -55.0, "d_increment": 4.0, "vpeak": 50.0},
@@ -448,8 +512,9 @@ class DefaultIzhikevichParamsManager:
     @staticmethod
     def get_params(neuron_type_enum, use_2007_formulation=True):
         if use_2007_formulation:
-            if neuron_type_enum in [NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL, NeuronType.IZH2007_FS_CORTICAL_INTERNEURON]:
-                 return DefaultIzhikevichParamsManager.PARAMS.get(neuron_type_enum, DefaultIzhikevichParamsManager.FALLBACK_2007).copy()
+            # Accept any IZH2007_* enum name (Phase A→B added BG/thal/HC/DA presets)
+            if neuron_type_enum.name.startswith("IZH2007_") and neuron_type_enum in DefaultIzhikevichParamsManager.PARAMS:
+                return DefaultIzhikevichParamsManager.PARAMS[neuron_type_enum].copy()
             print(f"Warning: Requested legacy type {neuron_type_enum} for 2007 formulation. Using RS_CORTICAL_PYRAMIDAL fallback.")
             return DefaultIzhikevichParamsManager.FALLBACK_2007.copy()
         else: # Legacy formulation

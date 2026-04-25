@@ -32,7 +32,16 @@ PRESETS = [
     # 2007 formulation (9 params)
     "IZH2007_RS_CORTICAL_PYRAMIDAL",
     "IZH2007_FS_CORTICAL_INTERNEURON",
-    # Legacy 4-param
+    # New BG/thalamus/HC/DA presets (Phase A → B)
+    "IZH2007_STRIATAL_MSN",
+    "IZH2007_THALAMIC_RELAY",
+    "IZH2007_THALAMIC_RETICULAR",
+    "IZH2007_GPE_PACEMAKER",
+    "IZH2007_GPI_OUTPUT",
+    "IZH2007_STN_BURST",
+    "IZH2007_HIPPO_PYRAMIDAL",
+    "IZH2007_DOPAMINE",
+    # Legacy 4-param (silently fall back to RS_CORTICAL_PYRAMIDAL — see audit)
     "RS_EXCITATORY_LEGACY",
     "FS_INHIBITORY_LEGACY",
     "IB_EXCITATORY_LEGACY",
