@@ -777,3 +777,62 @@ def test_synaptic_gain_modulates_conductance_via_bridge():
         f"Expected ~2x conductance with dopamine, got ratio {ratio:.3f} "
         f"(g0={g0:.4f}, g1={g1:.4f})"
     )
+
+
+# ---------- Task 12: plasticity_rate wired into bridge ----------
+
+
+def test_plasticity_rate_target_scales_reward_weight_updates():
+    """When dopamine has a plasticity_rate target with concentration > 0,
+    reward-modulated weight updates should scale by (1 + sens*conc)."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget, NeuromodulatorConfig,
+    )
+
+    def _weight_delta_after_reward(plasticity_mult_concentration: float) -> float:
+        sb, cfg = _make_bridge({
+            "enable_stdp": True,
+            "enable_reward_modulation": True,
+            "enable_neuromodulator_subsystem": True,
+            "reward_learning_rate": 0.05,
+            "neuromodulators": [
+                NeuromodulatorConfig(
+                    name="dopamine",
+                    baseline=0.0,
+                    decay_tau_ms=1e9,  # effectively no decay during test
+                    targets=[ModulatorTarget(target_type="plasticity_rate",
+                                              scope="all", sensitivity=2.0)],
+                )
+            ],
+        })
+        sb.neuromodulator_manager.set_concentration(
+            "dopamine", plasticity_mult_concentration,
+        )
+        # Synthetic eligibility trace
+        if sb.cp_eligibility_trace is None:
+            sb.clear_simulation_state_and_gpu_memory()
+            pytest.skip("eligibility trace not allocated")
+        sb.cp_eligibility_trace[:] = 0.0
+        actual_nnz = int(sb.cp_connections.nnz)
+        sb.cp_eligibility_trace[:actual_nnz] = 0.5  # constant non-zero
+        w_before = float(cp.mean(sb.cp_connections.data[:actual_nnz]).get())
+        sb.core_config.current_reward_signal = 1.0
+        sb._run_one_simulation_step()
+        sb.runtime_state.current_time_step += 1
+        w_after = float(cp.mean(sb.cp_connections.data[:actual_nnz]).get())
+        sb.clear_simulation_state_and_gpu_memory()
+        return w_after - w_before
+
+    delta_no_da = _weight_delta_after_reward(0.0)  # multiplier 1.0
+    delta_da_05 = _weight_delta_after_reward(0.5)  # multiplier 1 + 2*0.5 = 2.0
+
+    if abs(delta_no_da) < 1e-9:
+        pytest.skip("baseline reward update too small to measure")
+    ratio = delta_da_05 / delta_no_da
+    assert 1.7 < ratio < 2.3, (
+        f"Expected ~2x reward-update with DA plasticity_rate, got ratio "
+        f"{ratio:.3f} (no_da={delta_no_da:.6f} da_05={delta_da_05:.6f})"
+    )

@@ -3920,12 +3920,21 @@ class SimulationBridge:
                 # Apply reward modulation if reward signal is non-zero
                 reward_prediction_error = cfg.current_reward_signal - cfg.reward_baseline
                 if abs(reward_prediction_error) > 1e-6:  # Only update if there's a reward signal
+                    # Effective lr is reward_learning_rate × neuromod plasticity_rate
+                    # multiplier (subsystem off → multiplier 1.0, no change).
+                    effective_reward_lr = cfg.reward_learning_rate
+                    if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                            and self.neuromodulator_manager is not None):
+                        effective_reward_lr *= (
+                            self.neuromodulator_manager.compute_plasticity_rate_multiplier()
+                        )
+
                     # Modulate weights based on eligibility trace and reward
                     # Delta_w = learning_rate * reward_error * eligibility_trace
                     # Slice eligibility trace to match actual synapse count (trace array
                     # is pre-allocated to capacity which may exceed cp_connections.nnz).
                     actual_nnz = self.cp_connections.nnz
-                    weight_updates = cfg.reward_learning_rate * reward_prediction_error * self.cp_eligibility_trace[:actual_nnz]
+                    weight_updates = effective_reward_lr * reward_prediction_error * self.cp_eligibility_trace[:actual_nnz]
                     self.cp_connections.data += weight_updates
                     
                     # Clip to bounds (use STDP bounds if STDP is enabled, otherwise Hebbian bounds)
