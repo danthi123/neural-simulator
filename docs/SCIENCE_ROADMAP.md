@@ -3,7 +3,17 @@
 Living document tracking scientific improvements to the neural simulator.
 Updated as features are implemented and validated.
 
-**Last updated:** 2026-04-06
+**Last updated:** 2026-04-25
+
+> **Recent arc (2026-04-20 → 2026-04-25):** the project pivoted from a flat
+> "validate biology + optimise" agenda to an active research arc on
+> reward-driven learning in spiking circuits. The original Pillars (analysis,
+> bio benchmarks, performance) are largely DONE and are kept below as the
+> credibility floor. The current frontier is summarised in
+> [Pillar 4: Reward-Driven Learning Architecture](#pillar-4-reward-driven-learning-architecture)
+> below, which subsumes Sessions D–I (silent-motor trap arc) and Phase A/B
+> (preset audit + BG cascade). The 2026-04-25 acid test (74% improvement
+> over G9 baseline) closes Phase B; next ceiling is the 22% BG-active rate.
 
 ---
 
@@ -187,3 +197,124 @@ Goal: Enable larger networks (50K-100K neurons) to run interactively.
 | E/I Balance | PASS | 80/20, exc 1.8 Hz, inh 3.2 Hz, CV(ISI) 0.86 |
 | STP Paired-Pulse (Markram 1998) | PASS | E->E depressing PPR=0.71, I->E facilitating PPR=1.28 |
 | Gamma Oscillations (PING) | PASS | Peak 27-45 Hz, beta+gamma 41-47% of power |
+
+---
+
+## Pillar 4: Reward-Driven Learning Architecture
+
+Goal: build a trainable artificial-life core that matches real-world biology
+and learns by reward modulation. This pillar emerged organically from the G1
+through G11 research-gate progression and is the current frontier.
+
+### 4.1 Module split + research-runner framework
+- **Status:** DONE (2026-04-20 → 2026-04-24)
+- **What:** monolithic `neural-simulator.py` (~12K lines) extracted into
+  `sim/`, `viz/`, `ui/`, `experiment/` packages. `research/runners/` houses
+  16 headless gate runners. Negative findings documented as first-class
+  artifacts in `research/findings/`.
+
+### 4.2 G1–G6 gates (2026-04-20 → 2026-04-21)
+- **G1: encoder-decoder roundtrip** — **GO** (v3, 71.3% test acc, 3 seeds)
+- **G2: STDP local learning** — NO-GO (no epoch-over-epoch improvement)
+- **G3: persistence/checkpointing** — GO
+- **G5: sensorimotor signed perceptron** — GO (v3 with LR decay, 3/3 seeds)
+- **G6: 2D gridworld** — PARTIAL (agent learns but Q1→Q4 gate metric
+  misfires because convergence is too fast)
+- **G7: gate metric redesign** — proposed three replacements (fraction-of-
+  steps-within-dist-1-of-goal, moving-goal robustness, random-start variance)
+
+### 4.3 Silent-motor trap (Sessions D–I, 2026-04-22 → 2026-04-25)
+- **Symptom:** on G9 moving-goal RL, motor neurons silent in phase 1
+  cannot acquire STDP eligibility, so reward never reaches them. Agent
+  stuck on phase-1 winners.
+- **Variants tried:** V1 motor exploration noise (best of the lot, but
+  still trapped), V2 first-spike + rate boost, V3 positive-only reward,
+  V4 action attribution, V5 proportional sampling (effectively random),
+  V6 weight reset on goal change, V7 ε-greedy. **All NO-GO.**
+- **Diagnosis:** trap is structural — a shared 200-neuron reservoir with
+  argmax readout has dominant-motor bias from random initial weights that
+  no runner-side hack can fix.
+- **Resolution:** Phase B BG cascade (see §4.5).
+- **Findings:** `2026-04-24-session-d-part-a.md`, `2026-04-24-session-d-part-c.md`, `2026-04-24-session-c.md`, `2026-04-25-session-g-motor-exploration.md` (later session-G work), `2026-04-25-pfc-bistability-negative.md`.
+
+### 4.4 Brain-region framework + neuromodulator subsystem (Sessions E.1–E.2, 2026-04-24)
+- **Status:** Both DONE and merged. Composable, opt-in, default-OFF for
+  backward compatibility.
+- **E.1 — Neuromodulator subsystem** (`sim/neuromodulators.py`): declarative
+  DA / NE / 5-HT with concentration dynamics and receptor effects
+  (`synaptic_gain`, `plasticity_rate`, `excitability_drive`). Replaces
+  ad-hoc `current_reward_signal`. Framework GO; NE-params on silent-motor
+  task NO-GO (the trap is upstream of NE modulation).
+- **E.2 — Brain-region framework** (`sim/regions.py`): declarative
+  `BrainRegion` + `RegionPathway` for multi-region simulations on a single
+  bridge. PFC + Motor + Striatum + Thalamus etc. each own a contiguous
+  index slice. Cross-region pathways respect per-pathway plasticity flags.
+  Composes with E.1 — regions auto-register as neuromodulator groups.
+- **Findings:** `2026-04-24-session-e1-neuromodulator-subsystem.md`.
+
+### 4.5 Phase A: biology-preset audit (2026-04-25)
+- **Status:** DONE.
+- **What:** comprehensive validation of all neuron-model presets at 37°C.
+- **Major bug found:** HH model didn't fire APs at 37°C — uniform Q10=3
+  over-compressed gating dynamics. Fixed with per-gate Q10 (`hh_q10_m=3.0`,
+  `hh_q10_h=hh_q10_n=1.5`).
+- **Other fixes:** Izhikevich `default_neuron_type` was always ignored
+  (trait-split was always-on; now opt-in for `num_traits>1`); AdEx presets
+  all behaved identically (bridge wasn't loading them); GPE/STN g_NaP was
+  5–10× too high; added 8 new IZH2007 BG/thalamus/HC/DA presets and 4 new
+  HH BG presets (D1, D2, GPi, TAN); built full AdEx preset library (7
+  phenotypes).
+- **Result:** 30 working biological presets across HH + Izh + AdEx.
+- **Findings:** `2026-04-25-hh-temperature-bug.md`, `2026-04-25-hh-preset-audit.md`,
+  `2026-04-25-hh-presets-after-q10-fix.md`, `2026-04-25-izh-preset-audit.md`.
+
+### 4.6 Phase B: BG-style action selection (2026-04-25, GO)
+- **Status:** **GO**. 3-seed acid test on moving-goal scenario:
+  phase 1 finalQ 1.76 avg vs G9 baseline 6.74 (74% improvement).
+- **Architecture:** `research/runners/g11_bg_runner.py` builds a 30-region
+  cascade — per-action `cortex_X → str_D1_X / str_D2_X → gpi_X → thal_X →
+  motor_X` with disinhibition gating, plus shared STN and dopamine.
+  Selection emerges from independent disinhibition gates, not a shared
+  argmax — silent-motor trap structurally cannot occur.
+- **Two non-obvious bugs found and fixed during the acid test:**
+  1. `n_cortex=400` over-drove D1 to ~220 Hz (saturated, breaking GPi
+     inhibition). Static probe used 100 and worked. Probes must match
+     deployment scale.
+  2. `cortex→D1 weight_mean=25` against default `stdp_w_max=2` collapsed
+     weights from 25→2 in milliseconds (soft-bound STDP rule).
+- **Result:** 22–24% of trials show real BG-driven motor selection (rest
+  random fallback); BG-driven trials show strong correct-direction bias.
+  Agent stays at Manhattan distance ~1.7 from goal vs random walk's ~5.5.
+- **Findings:** `2026-04-25-phase-b-acid-test-real-win.md` (final),
+  `2026-04-25-phase-b-cascade-stability-fix.md` (n_cortex bug),
+  `2026-04-25-phase-b-honest-correction.md` (the trail of an overstated
+  intermediate result), `2026-04-25-phase-b-bg-acid-test.md` (initial
+  overstated finding kept for trail).
+
+### 4.7 Open questions / next ceiling (2026-04-25 → ?)
+
+The Phase B win produced 22% BG-active trials. The next ceiling is to
+push that toward 50%+ via:
+
+1. **Per-action dopamine targeting**: currently DA is broadcast; targeting
+   DA to the active D1 pool (per Schultz / Wickens biology) would sharpen
+   credit assignment and break ties faster.
+2. **Lateral inhibition between motor pools**: the previous motor→motor
+   pathway was incorrectly excitatory. FS interneuron sub-pools would
+   create proper winner-take-all behaviour.
+3. **Position encoding**: cortex drive is currently a heuristic
+   "drive cortex_X if direction X is goal-relative." A proper sensory
+   cortex with position-tuned (Gaussian) inputs and plastic
+   sensory→cortex weights would let position→action mapping be learned.
+4. **Harder tasks**: 8×8 grid + single goal change is the simplest moving
+   goal. Try multiple goal changes, longer episodes, harder grids,
+   non-grid environments.
+5. **Reward signal sharpening**: current reward is +1 / 0 / -1 per step.
+   Distance-shaped or temporal-difference reward could improve credit
+   assignment on the 22% BG-active trials.
+
+### 4.8 Cross-cutting: doc / repo hygiene
+- Module-split docs (CLAUDE.md, CONTRIBUTING.md) were stale (single-file
+  era references) — refreshed 2026-04-25.
+- README architecture diagram added (Mermaid) — 2026-04-25.
+- Findings index added at [`research/findings/INDEX.md`](../research/findings/INDEX.md) — 2026-04-25.

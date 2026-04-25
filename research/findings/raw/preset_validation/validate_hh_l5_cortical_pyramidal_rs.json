@@ -1,0 +1,80 @@
+{
+  "preset_name": "HH_L5_CORTICAL_PYRAMIDAL_RS",
+  "hh_params": {
+    "C_m": 1.0,
+    "g_Na_max": 50.0,
+    "g_K_max": 5.0,
+    "g_L": 0.1,
+    "E_Na": 50.0,
+    "E_K": -85.0,
+    "E_L": -70.0,
+    "v_rest_hh": -65.0,
+    "v_peak_hh": 40.0,
+    "m_init": 0.0529,
+    "h_init": 0.5961,
+    "n_init": 0.3177,
+    "g_M_max": 0.0,
+    "g_CaT_max": 0.0,
+    "E_CaT": 120.0,
+    "g_h_max": 0.0,
+    "E_h": -30.0,
+    "g_NaP_max": 0.0
+  },
+  "n_neurons": 5,
+  "fi_curve": [
+    {
+      "current_pA": 0.0,
+      "rate_hz_initial": 0.0,
+      "rate_hz_steady": 0.0,
+      "n_spikes": 0,
+      "mean_vm_pre_stim": -71.15336608886719
+    },
+    {
+      "current_pA": 15000000.0,
+      "rate_hz_initial": 10.0,
+      "rate_hz_steady": 2.0,
+      "n_spikes": 5,
+      "mean_vm_pre_stim": -71.15336608886719
+    },
+    {
+      "current_pA": 50000000.0,
+      "rate_hz_initial": 10.0,
+      "rate_hz_steady": 2.0,
+      "n_spikes": 5,
+      "mean_vm_pre_stim": -71.15336608886719
+    },
+    {
+      "current_pA": 100000000.0,
+      "rate_hz_initial": 10.0,
+      "rate_hz_steady": 2.0,
+      "n_spikes": 5,
+      "mean_vm_pre_stim": -71.15336608886719
+    },
+    {
+      "current_pA": 500000000.0,
+      "rate_hz_initial": 10.0,
+      "rate_hz_steady": 2.0,
+      "n_spikes": 5,
+      "mean_vm_pre_stim": -71.15336608886719
+    }
+  ],
+  "metrics": {
+    "rest_vm": -71.15336608886719,
+    "rest_vm_std": 0.0,
+    "spike_threshold_pA": 15000000.0,
+    "rheobase_rate_hz": 2.0,
+    "rate_at_1nA": 0.0,
+    "adaptation_ratio_at_1nA": NaN,
+    "max_steady_rate": 2.0,
+    "current_at_1nA": 0.0
+  },
+  "pass_criteria": {
+    "rest_vm_in_range": true,
+    "threshold_below_10e6": false,
+    "fi_monotonic": true,
+    "adaptation_present": false,
+    "fires_at_strong_drive": false
+  },
+  "n_pass": 2,
+  "n_total": 5
+}

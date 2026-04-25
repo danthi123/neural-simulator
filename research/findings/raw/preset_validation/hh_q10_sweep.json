@@ -1,0 +1,76 @@
+{
+  "temperature": 37.0,
+  "preset": "HH_EXCITATORY_DEFAULT_LEGACY",
+  "currents_pA": [
+    0.0,
+    15000000.0,
+    30000000.0,
+    100000000.0
+  ],
+  "n_neurons": 5,
+  "results": [
+    {
+      "q10": 1.0,
+      "rest_vm": -64.9950942993164,
+      "max_vm": 44.97126770019531,
+      "spikes_at_15e6": 5,
+      "spikes_at_30e6": 5,
+      "spikes_at_100e6": 5,
+      "any_spike": true
+    },
+    {
+      "q10": 1.3,
+      "rest_vm": -64.9954605102539,
+      "max_vm": 41.695308685302734,
+      "spikes_at_15e6": 0,
+      "spikes_at_30e6": 0,
+      "spikes_at_100e6": 5,
+      "any_spike": true
+    },
+    {
+      "q10": 1.5,
+      "rest_vm": -64.99565124511719,
+      "max_vm": 38.96874237060547,
+      "spikes_at_15e6": 0,
+      "spikes_at_30e6": 0,
+      "spikes_at_100e6": 0,
+      "any_spike": false
+    },
+    {
+      "q10": 1.7,
+      "rest_vm": -64.99588775634766,
+      "max_vm": 34.89262771606445,
+      "spikes_at_15e6": 0,
+      "spikes_at_30e6": 0,
+      "spikes_at_100e6": 0,
+      "any_spike": false
+    },
+    {
+      "q10": 2.0,
+      "rest_vm": -64.99627685546875,
+      "max_vm": 26.62380599975586,
+      "spikes_at_15e6": 0,
+      "spikes_at_30e6": 0,
+      "spikes_at_100e6": 0,
+      "any_spike": false
+    },
+    {
+      "q10": 2.5,
+      "rest_vm": -64.99658203125,
+      "max_vm": 8.153740882873535,
+      "spikes_at_15e6": 0,
+      "spikes_at_30e6": 0,
+      "spikes_at_100e6": 0,
+      "any_spike": false
+    },
+    {
+      "q10": 3.0,
+      "rest_vm": -64.99678039550781,
+      "max_vm": -16.527986526489258,
+      "spikes_at_15e6": 0,
+      "spikes_at_30e6": 0,
+      "spikes_at_100e6": 0,
+      "any_spike": false
+    }
+  ]
+}

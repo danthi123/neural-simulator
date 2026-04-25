@@ -271,7 +271,14 @@ def run_g9_episode(
     reward_eligibility_tau_ms=500.0,
     reward_hold_steps=10,               # hold reward signal for N steps after action
     stdp_w_max=3.0,
-    action_selection="argmax",          # "argmax" or "first_spike"
+    action_selection="argmax",          # "argmax", "first_spike", or
+                                        # "proportional" (Session G v5:
+                                        # sample motor with probability
+                                        # proportional to its readout-window
+                                        # spike count + 1; biologically
+                                        # equivalent to rate-coded WTA where
+                                        # firing rate maps to selection
+                                        # probability via softmax-like rule).
     enable_neuromod_gating=False,       # Session C: fast neuromod gain (DEPRECATED)
     neuromod_tau_ms=100.0,
     neuromod_strength=0.5,
@@ -287,6 +294,52 @@ def run_g9_episode(
                                         # eval episodes to run AFTER training.
                                         # 0 = no eval (backward compat).
     eval_steps_per_start=30,            # steps per eval episode
+    motor_exploration_rate_hz=0.0,      # Session G: Poisson rate at which each
+                                        # motor neuron receives spurious spike
+                                        # input during the stimulus window.
+                                        # Forces all motors to fire occasionally
+                                        # so silent motors can acquire eligibility
+                                        # traces. 0 disables (backward compat);
+                                        # 5-15 Hz typical (corresponds to ~0.5-1
+                                        # spurious spikes/motor/100ms readout).
+    motor_exploration_current_pA=1000.0,  # Per-spike current amplitude
+    motor_exploration_spike_ms=2.0,       # Duration of each spurious spike pulse
+    positive_only_reward=False,         # Session G v3: when True, dist_after >
+                                        # dist_before emits reward=0 (no
+                                        # punishment) instead of -1. Avoids the
+                                        # action-blind eligibility-depression
+                                        # problem where E winning + going wrong
+                                        # way would depress W's noise-driven
+                                        # eligibility traces.
+    action_attribution_eligibility=False,  # Session G v4: when True, after
+                                        # picking action `a`, zero eligibility
+                                        # for hidden->motor synapses targeting
+                                        # any motor != a, before the
+                                        # reward-hold steps. Reward then
+                                        # selectively updates only the chosen
+                                        # motor's synapses — a runner-side
+                                        # implementation of selective DA /
+                                        # lateral-inhibition action attribution.
+    weight_reset_alpha_on_goal_change=0.0,  # Session H: at each goal-change
+                                        # step, mix hidden->motor weights:
+                                        #   w_new = alpha * w_initial + (1-alpha) * w_current
+                                        # alpha=0.0: no reset (default)
+                                        # alpha=1.0: full reset to initial
+                                        # alpha=0.5: half-blend
+                                        # Also clears hidden->motor eligibility.
+                                        # Tests whether escaping the trained-
+                                        # winner basin via partial weight reset
+                                        # combined with V1 exploration noise
+                                        # breaks the silent-motor trap.
+    epsilon_greedy=0.0,                 # Session I: with probability epsilon,
+                                        # pick a uniformly random action instead
+                                        # of using the configured action_selection.
+                                        # This is the canonical RL exploration
+                                        # mechanism. Guarantees every motor gets
+                                        # selected ~epsilon/n_motor of the time,
+                                        # regardless of reservoir bias or weight
+                                        # entrenchment. 0.0 disables; 0.1 typical;
+                                        # 0.3+ starts to dominate learned policy.
     verbose=True,
 ):
     """Run a G9 episode with sim-native R-STDP learning.
@@ -303,8 +356,9 @@ def run_g9_episode(
     """
     import cupy as cp
 
-    assert action_selection in ("argmax", "first_spike"), (
-        f"action_selection must be 'argmax' or 'first_spike', got {action_selection}"
+    assert action_selection in ("argmax", "first_spike", "proportional"), (
+        f"action_selection must be 'argmax', 'first_spike', or 'proportional', "
+        f"got {action_selection}"
     )
 
     core_cfg, plan = _build_g9_plan(
@@ -411,10 +465,21 @@ def run_g9_episode(
     n_plastic = int(i2m_flat_indices.size)
     initial_data = cp.asnumpy(bridge.cp_connections.data).copy()
 
+    # Per-motor synapse index arrays for action_attribution_eligibility.
+    # i2m_per_motor[a] = synapse indices targeting motor[a] (cupy int64).
+    i2m_per_motor = []
+    for m_neuron in layout["motor_idx"]:
+        mask_m = i2m_mask & (post_h == m_neuron)
+        i2m_per_motor.append(
+            cp.asarray(np.where(mask_m)[0], dtype=cp.int64)
+        )
+
     if verbose:
+        explore_str = (f"  motor_explore={motor_exploration_rate_hz}Hz"
+                       if motor_exploration_rate_hz > 0 else "")
         print(f"[g9 seed={seed}] {n_plastic} plastic hidden->motor synapses  "
               f"action_selection={action_selection}  lr={learning_rate}  "
-              f"tau_elig={reward_eligibility_tau_ms}ms", flush=True)
+              f"tau_elig={reward_eligibility_tau_ms}ms{explore_str}", flush=True)
 
     x, y = start_pos
     if goal_schedule is None:
@@ -451,6 +516,29 @@ def run_g9_episode(
                 print(f"[g9 seed={seed}] step {step}: GOAL CHANGED to ({gx}, {gy})",
                       flush=True)
 
+            # Session H: weight reset on goal change.
+            # Blend hidden->motor weights back toward initial random values.
+            if weight_reset_alpha_on_goal_change > 0.0:
+                alpha = float(weight_reset_alpha_on_goal_change)
+                current_data = cp.asnumpy(bridge.cp_connections.data)
+                blended = (
+                    alpha * initial_data[i2m_flat_indices]
+                    + (1.0 - alpha) * current_data[i2m_flat_indices]
+                )
+                # Write the blended values back via cupy
+                idx_cp = cp.asarray(i2m_flat_indices, dtype=cp.int64)
+                bridge.cp_connections.data[idx_cp] = cp.asarray(
+                    blended, dtype=bridge.cp_connections.data.dtype
+                )
+                # Also clear eligibility on hidden->motor so the freshly-reset
+                # weights aren't immediately depressed/potentiated by stale traces.
+                if bridge.cp_eligibility_trace is not None:
+                    bridge.cp_eligibility_trace[idx_cp] = 0.0
+                if verbose:
+                    print(f"[g9 seed={seed}] step {step}: weight reset "
+                          f"alpha={alpha} applied to {len(i2m_flat_indices)} "
+                          f"hidden->motor synapses", flush=True)
+
         dist_before = manhattan(x, y)
 
         # Build sensory input
@@ -465,8 +553,22 @@ def run_g9_episode(
             target_neuron_indices=layout["input_idx"],
             onset_ms=0.0, duration_ms=STIMULUS_MS, enabled=True,
         )
+        channels_this_step = [ch]
+        if motor_exploration_rate_hz > 0.0:
+            explore_pat = StimulusPattern(
+                pattern_type=StimulusPatternType.POISSON_SPIKE_TRAIN.name,
+                poisson_rate_hz=float(motor_exploration_rate_hz),
+                spike_current_pA=float(motor_exploration_current_pA),
+                spike_duration_ms=float(motor_exploration_spike_ms),
+            )
+            explore_ch = StimulusChannel(
+                name="motor_explore", pattern=explore_pat,
+                target_neuron_indices=layout["motor_idx"],
+                onset_ms=0.0, duration_ms=STIMULUS_MS, enabled=True,
+            )
+            channels_this_step.append(explore_ch)
         engine.stimulus_manager.cleanup()
-        engine.stimulus_manager.initialize([ch], engine.group_manager, cp)
+        engine.stimulus_manager.initialize(channels_this_step, engine.group_manager, cp)
         engine.phase_start_ms = bridge.runtime_state.current_time_ms
 
         # Ensure reward is zero during stimulus integration (so eligibility
@@ -500,13 +602,44 @@ def run_g9_episode(
                 action = int(np.argmin(masked_times))
             else:
                 action = int(np.random.default_rng(seed * 10_000 + step).integers(0, n_motor))
+        elif action_selection == "proportional":
+            # Sample motor with probability ∝ (spike_count + 1). The +1 ensures
+            # silent motors still have positive selection probability;
+            # otherwise zero-count motors would never be chosen and the
+            # silent-motor trap re-forms exactly. With +1, a 0-count motor
+            # still has 1/(total+n_motor) chance of being selected, giving
+            # silent motors a path to acquire reward feedback.
+            probs = (motor_counts.astype(np.float64) + 1.0)
+            probs = probs / probs.sum()
+            rng_step = np.random.default_rng(seed * 10_000 + step)
+            action = int(rng_step.choice(n_motor, p=probs))
         else:  # argmax
             if motor_counts.sum() > 0:
                 action = int(np.argmax(motor_counts))
             else:
                 action = int(np.random.default_rng(seed * 10_000 + step).integers(0, n_motor))
 
+        # Session I: ε-greedy override. With probability epsilon, replace the
+        # chosen action with a uniformly random action. Guarantees every motor
+        # has ~epsilon/n_motor selection rate regardless of reservoir bias or
+        # weight entrenchment.
+        if epsilon_greedy > 0.0:
+            rng_eps = np.random.default_rng(seed * 10_000 + step + 999_999)
+            if rng_eps.random() < epsilon_greedy:
+                action = int(rng_eps.integers(0, n_motor))
+
         action_log.append(action)
+
+        # Session G v4: action attribution. Zero eligibility for hidden->motor
+        # synapses targeting any non-chosen motor before the reward signal
+        # applies. This makes reward selectively update only the chosen
+        # motor's synapses — runner-side credit assignment.
+        if action_attribution_eligibility and bridge.cp_eligibility_trace is not None:
+            for m_idx in range(n_motor):
+                if m_idx == action:
+                    continue
+                bridge.cp_eligibility_trace[i2m_per_motor[m_idx]] = 0.0
+
         dx, dy = ACTION_DELTAS[action]
         new_x = int(np.clip(x + dx, 0, grid_size - 1))
         new_y = int(np.clip(y + dy, 0, grid_size - 1))
@@ -519,7 +652,7 @@ def run_g9_episode(
         if dist_after < dist_before:
             reward = 1.0
         elif dist_after > dist_before:
-            reward = -1.0
+            reward = 0.0 if positive_only_reward else -1.0
         else:
             reward = 0.0
         reward_log.append(float(reward))
@@ -722,6 +855,11 @@ def run_g9_episode(
         "neuromod_strength": neuromod_strength if enable_neuromod_gating else None,
         "first_goal_step": first_goal_step,
         "n_plastic_synapses": n_plastic,
+        "motor_exploration_rate_hz": motor_exploration_rate_hz,
+        "positive_only_reward": positive_only_reward,
+        "action_attribution_eligibility": action_attribution_eligibility,
+        "weight_reset_alpha_on_goal_change": weight_reset_alpha_on_goal_change,
+        "epsilon_greedy": epsilon_greedy,
         "reservoir_weight_drift_max": reservoir_drift,
         "trajectory": trajectory,
         "goal_log": goal_log,

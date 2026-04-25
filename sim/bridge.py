@@ -945,7 +945,15 @@ class SimulationBridge:
                 default_params = DefaultIzhikevichParamsManager.get_params(default_type_enum, use_2007_formulation=True)
                 default_type_id = NEURON_TYPE_MAPPER.get_id(default_type_enum)
 
-                if num_defined_izh_variants > 0:
+                # Trait-based multi-type assignment is opt-in: only happens if there
+                # are >1 IZH2007 variants AND the config requests >1 traits.
+                # This makes single-type configs (cfg.num_traits=1) use
+                # cfg.default_neuron_type_izh for ALL neurons — fixes the bug
+                # where adding new IZH2007 presets silently changed the modulo
+                # math and reassigned existing populations.
+                use_trait_based = (num_defined_izh_variants > 1
+                                    and cfg.num_traits > 1)
+                if use_trait_based:
                     # Vectorized type selection based on traits
                     type_indices = np_traits_host % num_defined_izh_variants
                     for type_idx, params in enumerate(param_sets):
@@ -1050,13 +1058,52 @@ class SimulationBridge:
 
             elif cfg.neuron_model_type == NeuronModel.ADEX.name:
                 self._log_console(f"Initializing AdEx model specifics for {n} neurons...")
-                # Single-parameter set broadcast to all neurons; traits currently only affect visualization and E/I status
+                # Overlay AdEx preset params onto cfg.adex_* fields if a
+                # preset is configured. This lets users select e.g.
+                # ADEX_FS_CORTICAL_INTERNEURON without manually setting
+                # all 10 parameters.
+                preset_name = getattr(cfg, "default_neuron_type_adex", None)
+                if preset_name:
+                    try:
+                        preset_enum = NeuronType[preset_name]
+                        from sim.enums import DefaultAdExParamsManager
+                        preset_params = DefaultAdExParamsManager.get_params(preset_enum)
+                        cfg.adex_C = float(preset_params["C"])
+                        cfg.adex_g_L = float(preset_params["g_L"])
+                        cfg.adex_E_L = float(preset_params["E_L"])
+                        cfg.adex_V_T = float(preset_params["V_T"])
+                        cfg.adex_Delta_T = float(preset_params["Delta_T"])
+                        cfg.adex_a = float(preset_params["a"])
+                        cfg.adex_tau_w = float(preset_params["tau_w"])
+                        cfg.adex_b = float(preset_params["b"])
+                        cfg.adex_V_r = float(preset_params["V_r"])
+                        cfg.adex_V_peak = float(preset_params["V_peak"])
+                        self._log_console(
+                            f"AdEx preset '{preset_name}' loaded: "
+                            f"C={cfg.adex_C} g_L={cfg.adex_g_L} a={cfg.adex_a} "
+                            f"tau_w={cfg.adex_tau_w} b={cfg.adex_b}",
+                        )
+                    except (KeyError, AttributeError) as e:
+                        self._log_console(
+                            f"Failed to load AdEx preset '{preset_name}': {e}. "
+                            f"Using default cfg.adex_* fields.", "warning",
+                        )
                 self.cp_membrane_potential_v = cp.full(n, cfg.adex_E_L, dtype=cp.float32)
                 self.cp_adex_w = cp.zeros(n, dtype=cp.float32)
                 self.cp_neuron_firing_thresholds = None  # AdEx uses adex_V_peak from config
                 # Vectorized viz label assignment
-                self.runtime_state.neuron_types_list_for_viz = ["AdEx_RS"] * n
+                viz_label = preset_name.replace("ADEX_", "AdEx_") if preset_name else "AdEx_RS"
+                self.runtime_state.neuron_types_list_for_viz = [viz_label] * n
             
+            # Per-region neuron type override (Phase B). After all neurons
+            # are initialized with the default type, walk each region and
+            # override the params for neurons in that region's slice using
+            # the region's izh/hh/adex_neuron_type if specified. This lets
+            # e.g. striatum_D1 region use IZH2007_STRIATAL_MSN_D1 while
+            # motor region uses IZH2007_RS_CORTICAL_PYRAMIDAL.
+            if self.region_manager is not None:
+                self._apply_per_region_neuron_types(cfg, n)
+
             # B2: Apply parameter heterogeneity if enabled
             if cfg.enable_parameter_heterogeneity and n > 0:
                 self._apply_parameter_heterogeneity(cfg, n)
@@ -1192,6 +1239,11 @@ class SimulationBridge:
             self._cached_decay_nmda_rise = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_rise)) if cfg.nmda_tau_rise > 0 else 0.0
             _BASE_HH_TEMP = 6.3
             self._cached_hh_phi = cfg.hh_q10_factor ** ((cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0)
+            # Per-gate phi values (Session "fix-bugs" — see HH temperature bug findings)
+            _temp_delta_div_10 = (cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0
+            self._cached_hh_phi_m = cfg.hh_q10_m ** _temp_delta_div_10
+            self._cached_hh_phi_h = cfg.hh_q10_h ** _temp_delta_div_10
+            self._cached_hh_phi_n = cfg.hh_q10_n ** _temp_delta_div_10
 
             self.is_initialized = True
             conn_count = self.cp_connections.nnz if self.cp_connections is not None else 0
@@ -1211,6 +1263,60 @@ class SimulationBridge:
                 cp.get_default_memory_pool().free_all_blocks()
                 cp.get_default_pinned_memory_pool().free_all_blocks()
     
+    def _apply_per_region_neuron_types(self, cfg, n):
+        """Override per-neuron parameters based on region.izh_neuron_type /
+        region.hh_neuron_type / region.adex_neuron_type fields.
+
+        Phase B addition (2026-04-25): the brain-region framework
+        previously assigned all neurons the same type (cfg.default_neuron_type_*).
+        For BG-style action selection circuits, each region needs its own
+        neuron type (striatum_D1 uses MSN_D1, GPe uses GPE_PACEMAKER, etc.).
+
+        This method walks each region in cfg.brain_regions, looks up its
+        index range from region_manager, and overrides cp_izh_* / cp_hh_*
+        arrays for those indices using the region's per-type preset.
+        """
+        import cupy as cp_local  # local alias avoids confusion with self attrs
+        for region in cfg.brain_regions:
+            indices = self.region_manager.indices(region.name)
+            if not indices:
+                continue
+            idx_arr = cp.asarray(list(indices), dtype=cp.int64)
+
+            if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name and region.izh_neuron_type:
+                try:
+                    type_enum = NeuronType[region.izh_neuron_type]
+                    params = DefaultIzhikevichParamsManager.get_params(
+                        type_enum, use_2007_formulation=True,
+                    )
+                    self.cp_izh_C[idx_arr] = cp.float32(params["C"])
+                    self.cp_izh_k[idx_arr] = cp.float32(params["k"])
+                    self.cp_izh_vr[idx_arr] = cp.float32(params["vr"])
+                    self.cp_izh_vt[idx_arr] = cp.float32(params["vt"])
+                    self.cp_izh_vpeak[idx_arr] = cp.float32(params["vpeak"])
+                    self.cp_izh_a[idx_arr] = cp.float32(params["a"])
+                    self.cp_izh_b[idx_arr] = cp.float32(params["b"])
+                    self.cp_izh_c_reset[idx_arr] = cp.float32(params["c_reset"])
+                    self.cp_izh_d_increment[idx_arr] = cp.float32(params["d_increment"])
+                    # Reset Vm + recovery to the new vr / b
+                    self.cp_membrane_potential_v[idx_arr] = cp.float32(params["vr"])
+                    self.cp_recovery_variable_u[idx_arr] = (
+                        cp.float32(params["b"]) *
+                        (cp.float32(params["vr"]) - cp.float32(params["vr"]))  # 0 at rest
+                    )
+                    self._log_console(
+                        f"Region '{region.name}' ({len(indices)} neurons): "
+                        f"using Izh type {region.izh_neuron_type}"
+                    )
+                except (KeyError, AttributeError) as e:
+                    self._log_console(
+                        f"Region '{region.name}' Izh type override failed: {e}", "warning",
+                    )
+            # HH per-region override is more complex (uses scalar cfg fields,
+            # not per-neuron arrays for many params) — defer until Phase B
+            # actually needs HH-mode regions.
+            # AdEx per-region override likewise deferred.
+
     def _apply_parameter_heterogeneity(self, cfg, n):
         """Applies parameter heterogeneity by drawing per-neuron values from distributions.
         
@@ -3777,12 +3883,13 @@ class SimulationBridge:
                     self.cp_hh_NaP_activation[:] = p_new
                     effective_input_uA = effective_input_uA - I_NaP
 
+                # Per-gate Q10 (precomputed phi values cached on bridge)
                 v_new, m_new, h_new, n_new = fused_hodgkin_huxley_dynamics_update(
                     self.cp_membrane_potential_v, self.cp_gating_variable_m, self.cp_gating_variable_h, self.cp_gating_variable_n,
                     effective_input_uA, dt,
                     self.cp_hh_C_m, g_Na_effective, g_K_effective, self.cp_hh_g_L,
                     self.cp_hh_E_Na, self.cp_hh_E_K, self.cp_hh_E_L,
-                    cfg.hh_temperature_celsius, cfg.hh_q10_factor
+                    self._cached_hh_phi_m, self._cached_hh_phi_h, self._cached_hh_phi_n,
                 )
                 fired_this_step = (self.cp_membrane_potential_v < self.cp_hh_v_peak) & (v_new >= self.cp_hh_v_peak) 
 
@@ -4712,7 +4819,12 @@ class SimulationBridge:
 
                 # HH Q10 temperature phase factor (harmless for non-HH models).
                 _BASE_HH_TEMP = 6.3
-                self._cached_hh_phi = cfg.hh_q10_factor ** ((cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0)
+                _temp_delta_div_10 = (cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0
+                self._cached_hh_phi = cfg.hh_q10_factor ** _temp_delta_div_10  # legacy uniform-Q10 phi
+                # Per-gate phi values (HH temperature bug fix)
+                self._cached_hh_phi_m = cfg.hh_q10_m ** _temp_delta_div_10
+                self._cached_hh_phi_h = cfg.hh_q10_h ** _temp_delta_div_10
+                self._cached_hh_phi_n = cfg.hh_q10_n ** _temp_delta_div_10
 
                 self.is_initialized = True
                 self._log_to_ui(f"Checkpoint loaded. Sim time: {self.runtime_state.current_time_ms}ms, Step: {self.runtime_state.current_time_step}, Model: {self.core_config.neuron_model_type}", "success")

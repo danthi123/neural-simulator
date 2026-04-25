@@ -77,6 +77,15 @@ class BrainRegion:
     weight_jitter: float = 0.2
     plastic_internal: bool = False
     nm_outputs: List[str] = field(default_factory=list)
+    # Per-region neuron type override. If set, the bridge uses this
+    # NeuronType enum name when initializing neurons in this region's
+    # index slice. Allows e.g. striatum_D1 region to use IZH2007_STRIATAL_MSN_D1
+    # while motor region uses IZH2007_RS_CORTICAL_PYRAMIDAL.
+    # Falls back to cfg.default_neuron_type_izh / _hh / _adex if None.
+    # 2026-04-25: required for Phase B (BG action selection module).
+    izh_neuron_type: str = None
+    hh_neuron_type: str = None
+    adex_neuron_type: str = None
 
 
 @dataclass

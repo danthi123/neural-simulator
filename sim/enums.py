@@ -13,6 +13,17 @@ class NeuronModel(Enum):
 class NeuronType(Enum):
     IZH2007_RS_CORTICAL_PYRAMIDAL = "IZH2007_RS_CORTICAL_PYRAMIDAL"
     IZH2007_FS_CORTICAL_INTERNEURON = "IZH2007_FS_CORTICAL_INTERNEURON"
+    # Phase A → B addition: Izhikevich 2007 presets for additional cell types.
+    # All work cleanly at 37°C (unlike HH presets — see HH temperature bug).
+    # Sources: Izhikevich 2003 IEEE TNN Table II + 2007 book parameters.
+    IZH2007_STRIATAL_MSN = "IZH2007_STRIATAL_MSN"  # Medium spiny neuron, BG input
+    IZH2007_THALAMIC_RELAY = "IZH2007_THALAMIC_RELAY"  # TC neurons (RS in tonic mode)
+    IZH2007_THALAMIC_RETICULAR = "IZH2007_THALAMIC_RETICULAR"  # TRN, LTS-like bursting
+    IZH2007_GPE_PACEMAKER = "IZH2007_GPE_PACEMAKER"  # Globus pallidus externus
+    IZH2007_GPI_OUTPUT = "IZH2007_GPI_OUTPUT"  # Globus pallidus internus / SNr
+    IZH2007_STN_BURST = "IZH2007_STN_BURST"  # Subthalamic nucleus
+    IZH2007_HIPPO_PYRAMIDAL = "IZH2007_HIPPO_PYRAMIDAL"  # CA1/CA3 pyramidal (IB-like)
+    IZH2007_DOPAMINE = "IZH2007_DOPAMINE"  # VTA/SNc DA neurons
     HH_L5_CORTICAL_PYRAMIDAL_RS = "HH_L5_CORTICAL_PYRAMIDAL_RS"
     HH_THALAMIC_RELAY_TBURST = "HH_THALAMIC_RELAY_TBURST"
     HH_CA1_PYRAMIDAL_BURST = "HH_CA1_PYRAMIDAL_BURST"
@@ -30,12 +41,30 @@ class NeuronType(Enum):
     HH_DOPAMINE_SNC = "HH_DOPAMINE_SNC"
     HH_CORTICAL_FS_INTERNEURON = "HH_CORTICAL_FS_INTERNEURON"
     HH_INFERIOR_OLIVE = "HH_INFERIOR_OLIVE"
+    # BG completion (Phase A → B): missing presets identified during audit.
+    HH_GPI_OUTPUT = "HH_GPI_OUTPUT"             # BG output gate, distinct from GPe
+    HH_STRIATAL_MSN_D1 = "HH_STRIATAL_MSN_D1"   # Direct pathway MSN (DA D1+ sensitive)
+    HH_STRIATAL_MSN_D2 = "HH_STRIATAL_MSN_D2"   # Indirect pathway MSN (DA D2- sensitive)
+    HH_STRIATAL_TAN = "HH_STRIATAL_TAN"          # Tonically Active Cholinergic Interneuron
+    IZH2007_STRIATAL_MSN_D1 = "IZH2007_STRIATAL_MSN_D1"
+    IZH2007_STRIATAL_MSN_D2 = "IZH2007_STRIATAL_MSN_D2"
+    IZH2007_STRIATAL_TAN = "IZH2007_STRIATAL_TAN"
     RS_EXCITATORY_LEGACY = "RS_EXCITATORY_LEGACY"
     FS_INHIBITORY_LEGACY = "FS_INHIBITORY_LEGACY"
     IB_EXCITATORY_LEGACY = "IB_EXCITATORY_LEGACY"
     CH_EXCITATORY_LEGACY = "CH_EXCITATORY_LEGACY"
     LTS_INHIBITORY_LEGACY = "LTS_INHIBITORY_LEGACY"
     HH_EXCITATORY_DEFAULT_LEGACY = "HH_EXCITATORY_DEFAULT_LEGACY"
+    # AdEx (Adaptive Exponential Integrate-and-Fire) presets.
+    # Brette & Gerstner 2005 "Adaptive Exponential Integrate-and-Fire model"
+    # JNeuro 94(5):3637 — five canonical phenotypes via parameter tuning.
+    ADEX_RS_CORTICAL_PYRAMIDAL = "ADEX_RS_CORTICAL_PYRAMIDAL"
+    ADEX_FS_CORTICAL_INTERNEURON = "ADEX_FS_CORTICAL_INTERNEURON"
+    ADEX_IB_BURSTING = "ADEX_IB_BURSTING"             # Intrinsic bursting
+    ADEX_CH_CHATTERING = "ADEX_CH_CHATTERING"         # Chattering (high-rate gamma drivers)
+    ADEX_LTS_LOW_THRESHOLD = "ADEX_LTS_LOW_THRESHOLD"  # Low-threshold spiking interneuron
+    ADEX_STRIATAL_MSN = "ADEX_STRIATAL_MSN"           # Down-state stable MSN
+    ADEX_DOPAMINE = "ADEX_DOPAMINE"                   # Slow tonic + phasic burst
 
 
 class DefaultHodgkinHuxleyParams:
@@ -45,7 +74,12 @@ class DefaultHodgkinHuxleyParams:
     REALISTIC_L5_PYRAMIDAL_RS_37C = {
         "C_m": 1.0,       # Membrane capacitance (uF/cm^2) - Common value
         "g_Na_max": 50.0, # Max Na conductance (mS/cm^2) - Can vary (e.g., 50-120)
-        "g_K_max": 5.0,   # Max K_DR conductance (mS/cm^2) - For delayed rectifier (e.g., 5-30)
+        # NOTE: g_K bumped from 5→12 (2026-04-25 preset audit fix). Original
+        # g_K=5 was way too low — caused depolarization block at moderate
+        # input current. Real cortical RS pyramidals have g_K_DR ~15-30
+        # mS/cm². Higher K allows faster repolarization and sustained
+        # firing rates of 30+ Hz instead of getting stuck at 2 Hz.
+        "g_K_max": 12.0,  # Max K_DR conductance (mS/cm^2) - For delayed rectifier (e.g., 5-30)
         "g_L": 0.1,       # Leak conductance (mS/cm^2) - (e.g., 0.02-0.1)
         "E_Na": 50.0,     # Na reversal potential (mV) - (e.g., +50 to +60)
         "E_K": -85.0,     # K reversal potential (mV) - (e.g., -80 to -90 for K_DR)
@@ -56,8 +90,15 @@ class DefaultHodgkinHuxleyParams:
         "m_init": 0.0529, # Calculated from alpha_m / (alpha_m + beta_m) at -65mV for original HH
         "h_init": 0.5961, # Calculated from alpha_h / (alpha_h + beta_h) at -65mV for original HH
         "n_init": 0.3177, # Calculated from alpha_n / (alpha_n + beta_n) at -65mV for original HH
-        # Extended current defaults (all off by default)
-        "g_M_max": 0.0,
+        # Extended currents.
+        # 2026-04-25: Added g_M=0.6 (M-current / Kv7) to base. Real cortical
+        # RS pyramidals have substantial M-current providing slow K-channel
+        # activation above -55 mV. Without it, sustained input causes
+        # depolarization block (cell fires once then locks). M-current
+        # provides spike-frequency adaptation AND keeps V from staying at
+        # plateau — required for proper tonic firing.
+        # Yamada et al. 1989, Storm 1990 give g_M_density ~0.3-1.0 mS/cm².
+        "g_M_max": 0.6,
         "g_CaT_max": 0.0,
         "E_CaT": 120.0,
         "g_h_max": 0.0,
@@ -139,21 +180,25 @@ class DefaultHodgkinHuxleyParams:
     CA1_PYRAMIDAL_BURST = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     CA1_PYRAMIDAL_BURST.update({
         # Moderate CaT, Ih, M-current and NaP to support burst firing and adaptation
+        # Re-tuned 2026-04-25: g_NaP 0.5→0.15 (rest was -58 mV, now closer to -65)
+        # g_K 6→12 (allow sustained firing instead of depolarization block)
         "g_Na_max": 60.0,
-        "g_K_max": 6.0,
+        "g_K_max": 12.0,
         "g_CaT_max": 1.0,
         "E_CaT": 120.0,
         "g_h_max": 0.2,
         "E_h": -40.0,
         "g_M_max": 0.8,
-        "g_NaP_max": 0.5,
+        "g_NaP_max": 0.15,
     })
 
     STRIATAL_MSN = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     STRIATAL_MSN.update({
-        # Strong M-current and modest Ih to approximate down-state stability and slow ramping
+        # Strong M-current and modest Ih to approximate down-state stability and slow ramping.
+        # Re-tuned 2026-04-25: g_K 4→14 (was getting stuck at 2 Hz). Real MSNs
+        # in up-state fire 5-30 Hz; with higher g_K we now allow proper firing rates.
         "g_Na_max": 45.0,
-        "g_K_max": 4.0,
+        "g_K_max": 14.0,
         "g_M_max": 1.2,
         "g_CaT_max": 0.0,
         "g_h_max": 0.3,
@@ -164,9 +209,11 @@ class DefaultHodgkinHuxleyParams:
     # Thalamic reticular nucleus (TRN) bursting inhibitory cell
     TRN_BURST_INHIB = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     TRN_BURST_INHIB.update({
-        # Strong CaT and Ih, plus some M-current for burst–tonic transitions
+        # Strong CaT and Ih, plus some M-current for burst–tonic transitions.
+        # Re-tuned 2026-04-25: g_K 5→14 for proper firing rates (TRN can do
+        # 100+ Hz tonic between bursts).
         "g_Na_max": 50.0,
-        "g_K_max": 5.0,
+        "g_K_max": 14.0,
         "g_CaT_max": 2.5,
         "E_CaT": 120.0,
         "g_h_max": 0.4,
@@ -178,42 +225,56 @@ class DefaultHodgkinHuxleyParams:
     # Hippocampal CA3 pyramidal bursting cell
     CA3_PYRAMIDAL_BURST = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     CA3_PYRAMIDAL_BURST.update({
-        # Slightly stronger Na/K and bursting currents than CA1
+        # Slightly stronger Na/K and bursting currents than CA1.
+        # Re-tuned 2026-04-25: g_NaP 0.7→0.2 (rest was -56 mV, now closer to -65).
+        # g_K 7→14 (allow sustained firing).
         "g_Na_max": 65.0,
-        "g_K_max": 7.0,
+        "g_K_max": 14.0,
         "g_CaT_max": 1.2,
         "E_CaT": 120.0,
         "g_h_max": 0.25,
         "E_h": -40.0,
         "g_M_max": 1.0,
-        "g_NaP_max": 0.7,
+        "g_NaP_max": 0.2,
     })
 
-    # Subthalamic nucleus (STN) bursting cell
+    # Subthalamic nucleus (STN) bursting cell.
+    # Re-tuned (2026-04-25): original g_NaP=0.8 was 5-10x too high vs. real
+    # biology (Bevan & Wilson 1999: g_NaP_density ~0.05-0.15 mS/cm²).
+    # Excessive NaP pulled rest to -34 mV → categorically unfireable.
+    # Now: g_NaP=0.15, g_K=12, E_L=-68 → biologically realistic resting
+    # range and capable of pacemaking + rebound bursts.
     STN_BURST = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     STN_BURST.update({
-        # CaT- and NaP-mediated bursting with some Ih and M-current
-        "g_Na_max": 55.0,
-        "g_K_max": 6.0,
-        "g_CaT_max": 1.5,
+        "g_Na_max": 70.0,     # was 55 — higher Na for fast spike upstroke
+        "g_K_max": 12.0,      # was 6 — stronger K for repolarization
+        "g_CaT_max": 1.5,     # T-type Ca for rebound bursting (kept)
         "E_CaT": 120.0,
-        "g_h_max": 0.3,
+        "g_h_max": 0.2,       # was 0.3 — modest Ih for sag
         "E_h": -40.0,
-        "g_M_max": 0.5,
-        "g_NaP_max": 0.8,
+        "g_M_max": 0.3,       # was 0.5 — modest AHP
+        "g_NaP_max": 0.15,    # was 0.8 — real biophysical density
+        "E_L": -68.0,         # was -70 inherited — slightly depolarized for
+                               # spontaneous activity, but not at threshold
+        "v_rest_hh": -62.0,
     })
 
-    # Globus pallidus externus (GPe) pacemaking neuron
+    # Globus pallidus externus (GPe) pacemaking neuron.
+    # Re-tuned (2026-04-25): same NaP issue as STN. Real GPe has lower NaP
+    # than original preset suggested. Cooper & Stanford 2000: GPe has high
+    # tonic rate (30-60 Hz) supported by g_Na (~80) + g_K (~15) balance,
+    # not by extreme NaP.
     GPE_PACEMAKER = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     GPE_PACEMAKER.update({
-        # Strong M and NaP for tonic spiking, with modest Ih
-        "g_Na_max": 55.0,
-        "g_K_max": 5.5,
+        "g_Na_max": 80.0,     # was 55 — high Na for fast tonic firing
+        "g_K_max": 15.0,      # was 5.5 — strong K for high-rate repolarization
         "g_CaT_max": 0.0,
-        "g_h_max": 0.2,
+        "g_h_max": 0.1,       # was 0.2 — modest Ih (some sag)
         "E_h": -35.0,
-        "g_M_max": 1.0,
-        "g_NaP_max": 0.8,
+        "g_M_max": 0.5,       # was 1.0 — moderate AHP (allows high rates)
+        "g_NaP_max": 0.1,     # was 0.8 — real biophysical density
+        "E_L": -65.0,         # was -70 — slightly depolarized to support 30 Hz tonic
+        "v_rest_hh": -60.0,
     })
 
     # Cerebellar Purkinje cell (Khaliq et al. 2003, De Schutter & Bower 1994)
@@ -234,15 +295,18 @@ class DefaultHodgkinHuxleyParams:
     # Cerebellar granule cell (D'Angelo et al. 2001)
     CEREBELLAR_GRANULE = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     CEREBELLAR_GRANULE.update({
+        # Re-tuned 2026-04-25: g_K 4→14 (D'Angelo 2001 grain cells fire
+        # >100 Hz; real biophysical g_K_DR is high). Was capped at 66 Hz
+        # but should be capable of much higher.
         "C_m": 0.8,           # Small cells
         "g_Na_max": 40.0,     # Moderate Na
-        "g_K_max": 4.0,       # Moderate K
+        "g_K_max": 14.0,
         "g_L": 0.08,          # High input resistance (lower leak)
         "g_CaT_max": 0.0,     # Minimal CaT
-        "g_h_max": 0.15,      # Small Ih for resonance
+        "g_h_max": 0.05,      # was 0.15 — reduced to avoid mild rest depolarization
         "E_h": -30.0,
         "g_M_max": 0.3,       # Mild adaptation
-        "g_NaP_max": 0.2,     # Small persistent Na
+        "g_NaP_max": 0.05,    # was 0.2 — reduced to keep rest near labeled -68
         "E_L": -72.0,
         "v_rest_hh": -68.0,
     })
@@ -250,15 +314,17 @@ class DefaultHodgkinHuxleyParams:
     # Spinal motor neuron (Powers & Binder 2001, Heckman & Enoka 2012)
     SPINAL_MOTOR = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     SPINAL_MOTOR.update({
+        # Re-tuned 2026-04-25: g_K 7→14 (allows higher firing rates),
+        # g_NaP 0.6→0.15 (was pulling rest to -55 mV; biology has lower NaP).
         "C_m": 1.5,           # Large alpha motor neuron soma
         "g_Na_max": 70.0,     # Strong Na for reliable spiking
-        "g_K_max": 7.0,       # Strong repolarization
+        "g_K_max": 14.0,
         "g_CaT_max": 1.2,     # CaT for plateau potentials / bistability
         "E_CaT": 120.0,
         "g_h_max": 0.3,       # Ih contributes to resting conductance
         "E_h": -30.0,
         "g_M_max": 1.0,       # M-current for adaptation and AHP
-        "g_NaP_max": 0.6,     # Persistent Na for input amplification
+        "g_NaP_max": 0.15,    # was 0.6 — biological density
         "E_L": -70.0,
         "v_rest_hh": -65.0,
     })
@@ -266,9 +332,10 @@ class DefaultHodgkinHuxleyParams:
     # Spinal inhibitory interneuron (Renshaw / Ia inhibitory, Jankowska 2001)
     SPINAL_INTERNEURON = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     SPINAL_INTERNEURON.update({
+        # Re-tuned 2026-04-25: g_K 6→14 for high firing rates.
         "C_m": 0.9,           # Moderate soma size
         "g_Na_max": 55.0,     # Moderate Na
-        "g_K_max": 6.0,       # Strong K for fast repolarization
+        "g_K_max": 14.0,
         "g_CaT_max": 0.8,     # CaT for rebound bursting
         "E_CaT": 120.0,
         "g_h_max": 0.15,      # Small Ih
@@ -282,15 +349,20 @@ class DefaultHodgkinHuxleyParams:
     # Prefrontal Cortex pyramidal neuron (Wang 2001, Durstewitz et al. 2000)
     PFC_PYRAMIDAL = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     PFC_PYRAMIDAL.update({
+        # Re-tuned 2026-04-25: g_K 5→12 (was getting depolarization block),
+        # g_NaP 0.5→0.15 (rest was -52 mV due to overly strong NaP).
+        # Note: 0.15 is still a "moderate" NaP — enough to support persistent
+        # activity in a network context (Wang 2001 needs ~0.1-0.2 g_NaP) but
+        # not so strong it dominates rest in isolated cell tests.
         "C_m": 1.0,           # Standard pyramidal capacitance
         "g_Na_max": 50.0,     # Moderate Na (PFC pyramidals fire slower than L5 PT)
-        "g_K_max": 5.0,       # Standard delayed rectifier
-        "g_CaT_max": 0.5,     # Moderate Ca for UP-state calcium signaling
+        "g_K_max": 12.0,
+        "g_CaT_max": 0.3,     # was 0.5 — slightly lower CaT
         "E_CaT": 120.0,
-        "g_h_max": 0.25,      # Moderate Ih for subthreshold resonance
+        "g_h_max": 0.15,      # was 0.25 — modest Ih (still allows resonance)
         "E_h": -30.0,
         "g_M_max": 0.8,       # Moderate M-current for spike frequency adaptation
-        "g_NaP_max": 0.5,     # STRONG persistent Na — enables bistable persistent activity
+        "g_NaP_max": 0.15,
         "E_L": -70.0,
         "v_rest_hh": -68.0,
     })
@@ -314,16 +386,21 @@ class DefaultHodgkinHuxleyParams:
     # Substantia nigra pars compacta / VTA dopamine neuron (Drion et al. 2011, Putzier et al. 2009)
     DOPAMINE_SNC = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     DOPAMINE_SNC.update({
-        "C_m": 1.2,           # Moderate soma size
-        "g_Na_max": 35.0,     # LOW Na — DA neurons have sparse Na channels
-        "g_K_max": 4.0,       # Moderate K
-        "g_CaT_max": 2.0,     # STRONG Ca — L-type Ca proxy, primary pacemaker driver
+        # Re-tuned 2026-04-25 (v3): Earlier retune over-corrected — moved
+        # E_L too far negative (-60) and the cell stopped firing entirely.
+        # Real DA neurons NEED depolarized rest (-55 mV range) to support
+        # the slow autonomous pacemaking via Cav1 (L-type Ca) at threshold.
+        # Restored E_L=-55 with the reduced (but non-zero) CaT/NaP.
+        "C_m": 1.2,
+        "g_Na_max": 40.0,     # was 35 — slightly higher for spike upstroke
+        "g_K_max": 8.0,       # was 4 — still allows slow firing
+        "g_CaT_max": 1.5,     # was 2.0 then 1.0 — middle ground
         "E_CaT": 120.0,
-        "g_h_max": 0.4,       # Moderate-strong Ih, contributes to pacemaking rebound
+        "g_h_max": 0.3,
         "E_h": -30.0,
-        "g_M_max": 0.3,       # Mild M-current (SK channel analog for AHP)
-        "g_NaP_max": 0.2,     # Small persistent Na
-        "E_L": -55.0,         # Depolarized rest — key for autonomous firing
+        "g_M_max": 0.3,       # Mild M (SK analog for AHP)
+        "g_NaP_max": 0.15,    # Small persistent Na
+        "E_L": -55.0,         # Depolarized rest — autonomous firing
         "v_rest_hh": -52.0,
     })
 
@@ -344,9 +421,11 @@ class DefaultHodgkinHuxleyParams:
     # Inferior olivary neuron (Llinas & Yarom 1981, De Gruijl et al. 2012)
     INFERIOR_OLIVE = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     INFERIOR_OLIVE.update({
+        # Re-tuned 2026-04-25: g_K 5→10. IO has slow STO dynamics so g_K
+        # doesn't need to be very high, but 5 was causing stuck-at-2-Hz.
         "C_m": 1.0,           # Standard capacitance
         "g_Na_max": 40.0,     # Moderate Na
-        "g_K_max": 5.0,       # Standard K
+        "g_K_max": 10.0,
         "g_CaT_max": 1.5,     # STRONG CaT — drives subthreshold oscillations
         "E_CaT": 120.0,
         "g_h_max": 0.5,       # STRONG Ih — rebound from inhibition, oscillation partner
@@ -355,6 +434,75 @@ class DefaultHodgkinHuxleyParams:
         "g_NaP_max": 0.3,     # Moderate persistent Na for oscillation support
         "E_L": -65.0,
         "v_rest_hh": -60.0,
+    })
+
+    # BG output gate: GPi (and SNr, which is functionally similar — primary BG
+    # output to thalamus, suppressing motor activity at rest, releasing it on
+    # action selection via direct-pathway disinhibition). Higher tonic firing
+    # than GPe, modest g_NaP.
+    GPI_OUTPUT = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    GPI_OUTPUT.update({
+        # Bevan & Wilson 1999, Hashimoto 2003: GPi tonic 60-80 Hz at rest.
+        "g_Na_max": 80.0,
+        "g_K_max": 18.0,    # Stronger K than GPe — allows higher tonic rate
+        "g_CaT_max": 0.0,
+        "g_h_max": 0.05,    # Minimal Ih
+        "E_h": -35.0,
+        "g_M_max": 0.4,     # Modest AHP
+        "g_NaP_max": 0.12,  # Modest NaP for tonic excitation
+        "E_L": -64.0,       # Slightly more depolarized than GPe (higher tonic rate)
+        "v_rest_hh": -60.0,
+    })
+
+    # Striatal MSN — Direct pathway (D1 receptor expressing).
+    # Functionally enhanced by DA via D1 receptors (DA → cAMP → enhanced response).
+    # Biophysics: similar to base MSN but slightly higher AHP, supports up-state
+    # ramping and bimodal firing pattern. Wilson & Kawaguchi 1996, Mahon 2003.
+    STRIATAL_MSN_D1 = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    STRIATAL_MSN_D1.update({
+        "g_Na_max": 45.0,
+        "g_K_max": 14.0,
+        "g_M_max": 1.0,    # Slightly less than D2 (D1 cells more prone to up-state)
+        "g_CaT_max": 0.0,
+        "g_h_max": 0.3,
+        "E_h": -35.0,
+        "g_NaP_max": 0.0,
+        "E_L": -78.0,      # Strongly hyperpolarized rest (down-state)
+        "v_rest_hh": -75.0,
+    })
+
+    # Striatal MSN — Indirect pathway (D2 receptor expressing).
+    # Functionally suppressed by DA via D2 receptors. Slightly more KIR
+    # inward rectifier than D1 (modeled by stronger M-current) so harder to
+    # drive into up-state without DA-mediated D2 suppression.
+    STRIATAL_MSN_D2 = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    STRIATAL_MSN_D2.update({
+        "g_Na_max": 45.0,
+        "g_K_max": 14.0,
+        "g_M_max": 1.4,    # Stronger M-current = stronger AHP, harder to fire
+        "g_CaT_max": 0.0,
+        "g_h_max": 0.25,   # Slightly less Ih
+        "E_h": -35.0,
+        "g_NaP_max": 0.0,
+        "E_L": -78.0,
+        "v_rest_hh": -75.0,
+    })
+
+    # Striatal Tonically Active Neuron (TAN) — Cholinergic interneuron (~1-3% of
+    # striatal cells, but functionally critical: modulates DA gain, enables
+    # learning windows). Spontaneously firing 2-10 Hz, strong AHP gives long ISI.
+    # Bennett & Wilson 1999, Reynolds et al. 2004.
+    STRIATAL_TAN = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
+    STRIATAL_TAN.update({
+        "g_Na_max": 60.0,
+        "g_K_max": 12.0,
+        "g_M_max": 0.8,    # Long after-hyperpolarization for slow tonic
+        "g_CaT_max": 0.0,
+        "g_h_max": 0.3,    # Ih supports slow autonomous oscillation
+        "E_h": -40.0,
+        "g_NaP_max": 0.1,  # Modest NaP for tonic firing
+        "E_L": -60.0,      # Depolarized rest enables spontaneous firing
+        "v_rest_hh": -57.0,
     })
 
     PARAMS = {
@@ -376,6 +524,10 @@ class DefaultHodgkinHuxleyParams:
         NeuronType.HH_DOPAMINE_SNC: DOPAMINE_SNC.copy(),
         NeuronType.HH_CORTICAL_FS_INTERNEURON: CORTICAL_FS_INTERNEURON.copy(),
         NeuronType.HH_INFERIOR_OLIVE: INFERIOR_OLIVE.copy(),
+        NeuronType.HH_GPI_OUTPUT: GPI_OUTPUT.copy(),
+        NeuronType.HH_STRIATAL_MSN_D1: STRIATAL_MSN_D1.copy(),
+        NeuronType.HH_STRIATAL_MSN_D2: STRIATAL_MSN_D2.copy(),
+        NeuronType.HH_STRIATAL_TAN: STRIATAL_TAN.copy(),
     }
     FALLBACK = PARAMS[NeuronType.HH_EXCITATORY_DEFAULT_LEGACY].copy()
 
@@ -436,6 +588,78 @@ class DefaultIzhikevichParamsManager:
             # Negative d would paradoxically cause post-spike depolarization (excitation after inhibition).
             # Value of 25 pA gives the characteristic non-adapting, high-frequency firing pattern of PV+ basket cells.
         },
+        # ---- Basal Ganglia + Thalamus (Phase A → B Phase) ----
+        # Izhikevich 2003 Table II, "Simple Model of Spiking Neurons" IEEE TNN 14(6).
+        NeuronType.IZH2007_STRIATAL_MSN: {
+            # Medium spiny neuron — D1/D2 striatal projection neurons.
+            # Down-state stable, ramping with cortical input. Up-state firing
+            # rate moderate (~5-30 Hz). Wilson & Kawaguchi 1996, Mahon 2003.
+            "C": 50.0, "k": 1.0, "vr": -80.0, "vt": -25.0, "vpeak": 40.0,
+            "a": 0.01, "b": -20.0, "c_reset": -55.0, "d_increment": 150.0,
+        },
+        NeuronType.IZH2007_THALAMIC_RELAY: {
+            # Thalamocortical relay neuron in tonic mode (no LTS bursting here;
+            # bursting requires conditional T-current activation which Izh
+            # doesn't natively model — use HH_THALAMIC_RELAY_TBURST for that).
+            # In tonic firing mode this is RS-like at higher rate.
+            "C": 200.0, "k": 1.6, "vr": -60.0, "vt": -50.0, "vpeak": 35.0,
+            "a": 0.01, "b": 15.0, "c_reset": -60.0, "d_increment": 10.0,
+        },
+        NeuronType.IZH2007_THALAMIC_RETICULAR: {
+            # TRN — bursting LTS-like inhibitory cell. Strong adaptation,
+            # low threshold. Destexhe 1996, Wilson & Kawaguchi.
+            "C": 40.0, "k": 0.25, "vr": -65.0, "vt": -45.0, "vpeak": 0.0,
+            "a": 0.015, "b": 10.0, "c_reset": -55.0, "d_increment": 50.0,
+        },
+        NeuronType.IZH2007_GPE_PACEMAKER: {
+            # GPe — autonomous pacemaker firing 30-60 Hz. Cooper & Stanford 2000,
+            # Bevan et al. 2002.
+            "C": 60.0, "k": 1.0, "vr": -65.0, "vt": -50.0, "vpeak": 25.0,
+            "a": 0.05, "b": 1.0, "c_reset": -50.0, "d_increment": 20.0,
+        },
+        NeuronType.IZH2007_GPI_OUTPUT: {
+            # GPi / SNr output — high tonic rate (60-80 Hz at rest), inhibitory.
+            # Acts as the BG output gate (disinhibits thalamus on action selection).
+            "C": 60.0, "k": 1.0, "vr": -65.0, "vt": -50.0, "vpeak": 25.0,
+            "a": 0.05, "b": 2.0, "c_reset": -50.0, "d_increment": 25.0,
+        },
+        NeuronType.IZH2007_STN_BURST: {
+            # STN — bursty pacemaker. Bevan & Wilson 1999. Strong rebound burst
+            # after inhibition release. Uses negative b for low-threshold dynamics.
+            "C": 80.0, "k": 1.5, "vr": -60.0, "vt": -50.0, "vpeak": 30.0,
+            "a": 0.005, "b": -1.0, "c_reset": -45.0, "d_increment": 75.0,
+        },
+        NeuronType.IZH2007_HIPPO_PYRAMIDAL: {
+            # Hippocampal CA1/CA3 pyramidal cell. Intrinsically bursting (IB)-like
+            # phenotype with mild adaptation. Mason & Larkman 1990.
+            "C": 100.0, "k": 0.7, "vr": -65.0, "vt": -40.0, "vpeak": 35.0,
+            "a": 0.01, "b": 5.0, "c_reset": -55.0, "d_increment": 50.0,
+        },
+        NeuronType.IZH2007_DOPAMINE: {
+            # VTA/SNc dopaminergic neuron. Slow tonic firing 1-5 Hz spontaneously,
+            # bursts (>15 Hz) in response to phasic input. Grace & Bunney 1984.
+            "C": 100.0, "k": 0.9, "vr": -65.0, "vt": -45.0, "vpeak": 40.0,
+            "a": 0.01, "b": 1.0, "c_reset": -55.0, "d_increment": 5.0,
+        },
+        NeuronType.IZH2007_STRIATAL_MSN_D1: {
+            # Direct-pathway striatal MSN (D1+ receptor). Same biophysics as
+            # base MSN, semantic distinction is for DA modulation routing.
+            "C": 50.0, "k": 1.0, "vr": -80.0, "vt": -25.0, "vpeak": 40.0,
+            "a": 0.01, "b": -20.0, "c_reset": -55.0, "d_increment": 150.0,
+        },
+        NeuronType.IZH2007_STRIATAL_MSN_D2: {
+            # Indirect-pathway MSN (D2 receptor). Slightly stiffer (more KIR-like
+            # behavior via stronger b) — harder to enter up-state without DA
+            # suppression. Identical to D1 except `b` (recovery slope).
+            "C": 50.0, "k": 1.0, "vr": -80.0, "vt": -25.0, "vpeak": 40.0,
+            "a": 0.01, "b": -25.0, "c_reset": -55.0, "d_increment": 180.0,
+        },
+        NeuronType.IZH2007_STRIATAL_TAN: {
+            # Tonically Active Neuron (cholinergic interneuron). Spontaneously
+            # firing 2-10 Hz with strong AHP between spikes. Bennett & Wilson 1999.
+            "C": 80.0, "k": 0.5, "vr": -60.0, "vt": -45.0, "vpeak": 40.0,
+            "a": 0.05, "b": 0.5, "c_reset": -50.0, "d_increment": 30.0,
+        },
         NeuronType.RS_EXCITATORY_LEGACY: {"a": 0.02, "b": 0.2, "c_reset": -65.0, "d_increment": 8.0, "vpeak": 30.0},
         NeuronType.FS_INHIBITORY_LEGACY: {"a": 0.1, "b": 0.2, "c_reset": -65.0, "d_increment": 2.0, "vpeak": 30.0},
         NeuronType.IB_EXCITATORY_LEGACY: {"a": 0.02, "b": 0.2, "c_reset": -55.0, "d_increment": 4.0, "vpeak": 50.0},
@@ -448,8 +672,9 @@ class DefaultIzhikevichParamsManager:
     @staticmethod
     def get_params(neuron_type_enum, use_2007_formulation=True):
         if use_2007_formulation:
-            if neuron_type_enum in [NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL, NeuronType.IZH2007_FS_CORTICAL_INTERNEURON]:
-                 return DefaultIzhikevichParamsManager.PARAMS.get(neuron_type_enum, DefaultIzhikevichParamsManager.FALLBACK_2007).copy()
+            # Accept any IZH2007_* enum name (Phase A→B added BG/thal/HC/DA presets)
+            if neuron_type_enum.name.startswith("IZH2007_") and neuron_type_enum in DefaultIzhikevichParamsManager.PARAMS:
+                return DefaultIzhikevichParamsManager.PARAMS[neuron_type_enum].copy()
             print(f"Warning: Requested legacy type {neuron_type_enum} for 2007 formulation. Using RS_CORTICAL_PYRAMIDAL fallback.")
             return DefaultIzhikevichParamsManager.FALLBACK_2007.copy()
         else: # Legacy formulation
@@ -457,6 +682,60 @@ class DefaultIzhikevichParamsManager:
                  return DefaultIzhikevichParamsManager.PARAMS.get(neuron_type_enum, DefaultIzhikevichParamsManager.FALLBACK_LEGACY).copy()
             print(f"Warning: Requested 2007 type {neuron_type_enum} for legacy formulation. Using RS_EXCITATORY_LEGACY fallback.")
             return DefaultIzhikevichParamsManager.FALLBACK_LEGACY.copy()
+
+
+# --- AdEx (Adaptive Exponential Integrate-and-Fire) Parameter Defaults ---
+# Brette & Gerstner 2005 J Neurophysiol "Adaptive Exponential Integrate-and-Fire
+# model as an effective description of neuronal activity" — Table 1 phenotypes.
+# Parameters: C (pF), g_L (nS), E_L (mV), V_T (mV), Delta_T (mV),
+#             a (nS), tau_w (ms), b (pA), V_r (mV), V_peak (mV).
+class DefaultAdExParamsManager:
+    PARAMS = {
+        NeuronType.ADEX_RS_CORTICAL_PYRAMIDAL: {
+            # Cortical RS pyramidal — moderate adaptation. Brette & Gerstner 2005 default.
+            "C": 281.0, "g_L": 30.0, "E_L": -70.6, "V_T": -50.4, "Delta_T": 2.0,
+            "a": 4.0, "tau_w": 144.0, "b": 80.5, "V_r": -70.6, "V_peak": -40.0,
+        },
+        NeuronType.ADEX_FS_CORTICAL_INTERNEURON: {
+            # PV+ fast-spiking — minimal adaptation, fast kinetics.
+            "C": 200.0, "g_L": 10.0, "E_L": -65.0, "V_T": -50.0, "Delta_T": 2.0,
+            "a": 0.001, "tau_w": 20.0, "b": 0.0, "V_r": -65.0, "V_peak": -40.0,
+        },
+        NeuronType.ADEX_IB_BURSTING: {
+            # Intrinsically bursting cortical (e.g. some L5 PT cells).
+            "C": 200.0, "g_L": 10.0, "E_L": -58.0, "V_T": -50.0, "Delta_T": 2.0,
+            "a": 0.001, "tau_w": 720.0, "b": 120.0, "V_r": -46.0, "V_peak": -40.0,
+        },
+        NeuronType.ADEX_CH_CHATTERING: {
+            # Chattering — high-rate gamma drivers (some L2/3 cells).
+            "C": 200.0, "g_L": 10.0, "E_L": -65.0, "V_T": -50.0, "Delta_T": 2.0,
+            "a": 4.0, "tau_w": 20.0, "b": 400.0, "V_r": -55.0, "V_peak": -40.0,
+        },
+        NeuronType.ADEX_LTS_LOW_THRESHOLD: {
+            # Low-threshold spiking interneuron (somatostatin+ Martinotti cells).
+            "C": 200.0, "g_L": 10.0, "E_L": -56.0, "V_T": -50.0, "Delta_T": 2.0,
+            "a": 20.0, "tau_w": 20.0, "b": 0.0, "V_r": -65.0, "V_peak": -40.0,
+        },
+        NeuronType.ADEX_STRIATAL_MSN: {
+            # Down-state stable MSN — hyperpolarized rest, ramping in response.
+            # Wilson & Kawaguchi 1996; Naud & Gerstner 2008 AdEx fit.
+            "C": 100.0, "g_L": 10.0, "E_L": -78.0, "V_T": -45.0, "Delta_T": 2.5,
+            "a": 0.0, "tau_w": 100.0, "b": 200.0, "V_r": -55.0, "V_peak": -40.0,
+        },
+        NeuronType.ADEX_DOPAMINE: {
+            # VTA/SNc DA neuron — slow tonic 1-5 Hz, can burst on phasic input.
+            # Drion 2011, Putzier 2009.
+            "C": 150.0, "g_L": 5.0, "E_L": -55.0, "V_T": -45.0, "Delta_T": 2.0,
+            "a": 1.0, "tau_w": 200.0, "b": 60.0, "V_r": -55.0, "V_peak": -40.0,
+        },
+    }
+    FALLBACK = PARAMS[NeuronType.ADEX_RS_CORTICAL_PYRAMIDAL].copy()
+
+    @staticmethod
+    def get_params(neuron_type_enum):
+        return DefaultAdExParamsManager.PARAMS.get(
+            neuron_type_enum, DefaultAdExParamsManager.FALLBACK
+        ).copy()
 
 
 # --- Performance Optimization: Neuron Type ID Mapper ---

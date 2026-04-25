@@ -146,7 +146,7 @@ pytest tests/test_determinism.py -v
 pytest tests/test_determinism.py::TestDeterministicSpikes::test_izhikevich_deterministic_spikes -v
 
 # With coverage
-pytest tests/ --cov=neural_simulator --cov-report=html
+pytest tests/ --cov=sim --cov=experiment --cov-report=html
 ```
 
 ### Writing Tests
@@ -343,31 +343,78 @@ python benchmark.py --quick
 python benchmark.py --output benchmarks/results.json
 
 # Export profiling
-python -c "from neural_simulator import *; sim = ...; sim.export_profiling_report('prof.json')"
+python -c "from sim import SimulationBridge, CoreSimConfig, GPUConfig; sim = ...; sim.export_profiling_report('prof.json')"
 
 # Check GPU memory
 nvidia-smi
 
 # Format code (if using black)
-black neural-simulator.py benchmark.py tests/
+black neural-simulator.py sim/ experiment/ tests/
 ```
 
 ### File Structure
 
 ```
-sim/
-├── neural-simulator.py      # Main simulator code
-├── benchmark.py             # Benchmark runner
-├── viz_benchmark.py         # Visualization performance benchmark
-├── tests/                   # Test suite
-│   ├── test_determinism.py  # Determinism tests
-│   ├── test_kernels_cpu.py  # CPU kernel validation tests
-│   ├── test_ui_build.py     # UI initialization tests
-│   └── README.md            # Test documentation
-├── benchmarks/             # Benchmark results
-├── simulation_profiles/    # Saved configurations
-├── simulation_checkpoints_h5/  # Saved states
-└── simulation_recordings_h5/   # Recorded simulations
+neural-simulator.py            # GUI host + main entry point (2.2K lines)
+sim/                           # Core engine package (9 modules, ~9.1K lines)
+  __init__.py                  # public API: SimulationBridge, configs, enums
+  bridge.py                    # SimulationBridge — GPU state + step loop
+  config.py                    # @dataclass configs (CoreSimConfig etc.)
+  enums.py                     # NeuronType, NeuronModel, preset managers
+  connectivity.py              # spatial / WS / motif generators (GPU)
+  kernels.py                   # @cp.fuse() Izh/HH/AdEx + plasticity kernels
+  profiles.py                  # NEURAL_STRUCTURE_PROFILES dict
+  regions.py                   # BrainRegion, RegionPathway, RegionManager
+  neuromodulators.py           # declarative DA/NE/5-HT subsystem
+  data_bus.py                  # DataChannel pub/sub
+viz/                           # OpenGL renderer / camera / picker / overlays
+ui/                            # DearPyGUI panels / callbacks / layout / plots
+experiment/                    # ExperimentEngine + StimulusManager + Readout + Training
+research/
+  runners/                     # 16 headless gate runners (g1..g11)
+  findings/                    # session-by-session findings (28+ markdown docs)
+  findings/raw/                # raw JSON output per gate run
+  datasets/                    # synthetic datasets (e.g. tiny_patterns.npz)
+docs/
+  SCIENCE_ROADMAP.md           # validation pillars + gate progression
+  plans/                       # per-feature design docs (paired with findings)
+tests/                         # 41 test files
+  test_determinism.py          # RNG determinism (init + step)
+  test_kernels_cpu.py          # CPU validation of fused kernels
+  test_experiment_system.py    # experiment engine + stimulus manager
+  test_neuromodulators.py      # neuromodulator subsystem
+  test_regions.py              # brain-region framework
+  test_data_bus.py             # data-bus pub/sub
+  test_g{1..11}_runner_smoke.py # per-runner smoke tests
+  test_plastic_mask.py         # per-synapse plastic freeze
+  ...
+benchmark.py                   # GPU throughput benchmark runner
+viz_benchmark.py               # visualization performance benchmark
+run_benchmarks.py              # biological validation suite (Bi&Poo, E/I, STP, gamma)
+run_experiment_headless.py     # run a built-in experiment preset without GUI
+run_parameter_sweep.py         # grid/zip parameter sweep with t-test + Cohen's d
+simulation_profiles/           # 47 brain-region JSON profiles + auto-tune cache
+simulation_checkpoints_h5/     # saved simulation state
+simulation_recordings_h5/      # frame-by-frame recordings
+```
+
+### Common Imports
+
+The engine exposes its public API through `sim/__init__.py`:
+
+```python
+from sim import (
+    SimulationBridge, CoreSimConfig, VisualizationConfig,
+    RuntimeState, GPUConfig, NeuronModel, NeuronType,
+)
+```
+
+For research runners and brain-region work:
+
+```python
+from sim.regions import BrainRegion, RegionPathway
+from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
+from sim.enums import DefaultIzhikevichParamsManager, DefaultHodgkinHuxleyParams
 ```
 
 Thank you for contributing! 🚀

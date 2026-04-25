@@ -58,17 +58,32 @@ Then press **Apply Changes & Reset Sim** to use the tuned values.
 
 ## 2. Architecture Overview
 
-- **Simulation core**: `SimulationBridge` in `neural-simulator.py` manages all
-  GPU arrays, connectivity, neuron dynamics, and stepping.
-- **GPU backend**: CuPy + custom fused kernels for Izhikevich, Hodgkin–Huxley,
-  AdEx, synaptic conductance decay, STP, and extended HH currents.
-- **Connectivity**:
+The simulator is split into focused packages (was once a monolithic `neural-simulator.py`, now refactored):
+
+- **Simulation core**: `SimulationBridge` in `sim/bridge.py` manages all GPU
+  arrays, connectivity, neuron dynamics, and stepping. Configs are
+  `@dataclass` instances in `sim/config.py`.
+- **GPU backend**: CuPy + fused `@cp.fuse()` kernels in `sim/kernels.py` for
+  Izhikevich, Hodgkin–Huxley, AdEx, synaptic conductance decay, STP, NMDA,
+  STDP, homeostasis, eligibility traces, and extended HH currents.
+- **Connectivity** (`sim/connectivity.py`):
   - Spatial 3D connectivity (distance + trait-based bias)
   - Watts–Strogatz small-world generator
   - High-level **connectivity motifs** for specific brain-region profiles
-- **UI**: DearPyGUI control pane drives configuration and monitoring.
-- **Visualization**: PyOpenGL-based 3D point cloud of neurons with synapse lines
-  and optional synaptic pulse effects.
+- **Brain-region framework** (`sim/regions.py`, opt-in): declarative
+  multi-region simulations with `BrainRegion` + `RegionPathway`.
+- **Neuromodulator subsystem** (`sim/neuromodulators.py`, opt-in): declarative
+  concentration dynamics for DA / NE / 5-HT with receptor-effect targets.
+- **Experiment system** (`experiment/` package): `ExperimentEngine`,
+  `StimulusManager`, `ReadoutEngine`, `TrainingProtocolEngine`. Drives
+  multi-phase experiments with stimulus injection and reward/eligibility
+  training.
+- **UI** (`ui/` package): DearPyGUI control pane drives configuration and
+  monitoring.
+- **Visualization** (`viz/` package): PyOpenGL-based 3D point cloud of neurons
+  with synapse lines and optional synaptic pulse effects.
+- **Research runners** (`research/runners/`): headless gate experiments
+  (G1 → G11). See [README.md#research-runners](README.md#research-runners).
 
 ---
 
@@ -397,7 +412,185 @@ See the **Keyboard Shortcuts** section in `README.md` for a concise list.
 
 ---
 
-## 9. Troubleshooting
+## 9. Headless / Research Workflows
+
+The simulator can be driven entirely without the GUI. There are four headless
+entry points:
+
+### 9.1 Run a built-in experiment preset
+
+```bash
+python run_experiment_headless.py --preset rl --seed 42
+```
+
+Available presets: `stim` (basic stimulus-response), `associative` (CS-US
+Pavlovian pairing), `rl` (R-STDP reinforcement learning), `freq` (frequency
+response sweep). Output goes to `experiment_<preset>_<timestamp>.json`.
+
+### 9.2 Run a parameter sweep
+
+```bash
+python run_parameter_sweep.py -e associative \
+    --sweep "stdp_a_plus=0.004,0.012,0.024"
+```
+
+Runs a grid (or zip with `--zip`) of parameter combinations. Output JSON +
+CSV includes Welch's t-test and Cohen's d for each condition.
+
+### 9.3 Biological validation suite
+
+```bash
+python run_benchmarks.py --benchmark stdp-timing
+python run_benchmarks.py --benchmark ei-balance
+python run_benchmarks.py --benchmark stp-paired-pulse
+python run_benchmarks.py --benchmark gamma-oscillations
+python run_benchmarks.py --benchmark homeostasis
+```
+
+Each benchmark validates a known neuroscience result (Bi & Poo STDP timing
+curve, cortical E/I balance, Tsodyks–Markram PPR, PING gamma, homeostatic
+adaptation). All currently PASS.
+
+### 9.4 Research-gate runners
+
+For specific architectural experiments. Each runner writes raw data to
+`research/findings/raw/gN/` and a markdown summary to `research/findings/`.
+
+```bash
+# Encoder-decoder roundtrip (G1)
+python -m research.runners.g1_v3_runner --seed 42
+
+# Sensorimotor signed perceptron (G5)
+python -m research.runners.g5_v3_runner --seed 42
+
+# Moving-goal RL with motor exploration (G9)
+python -m research.runners.g9_runner --seed 42 --motor-exploration-rate-hz 15
+
+# Phase B BG cascade action selection (G11) - moving goal acid test
+python -m research.runners.g11_bg_runner --moving-goal --seed 42 --n-steps 1800
+
+# Phase B static cascade probe
+python -m research.runners.g11_bg_runner --probe-action W
+```
+
+See [README.md#research-runners](README.md#research-runners) for the full
+runner status table.
+
+---
+
+## 10. Brain-Region Framework (opt-in)
+
+For multi-region simulations (cortex + striatum + thalamus + motor on one
+bridge), set `cfg.enable_brain_region_framework = True` and declare regions
++ pathways:
+
+```python
+from sim.regions import BrainRegion, RegionPathway
+
+regions = [
+    BrainRegion(name="cortex", n_neurons=400, exc_fraction=0.8,
+                internal_density=0.1, exc_weight_mean=2.0),
+    BrainRegion(name="striatum", n_neurons=200, exc_fraction=0.05,
+                izh_neuron_type="IZH2007_STRIATAL_MSN"),
+    BrainRegion(name="thalamus", n_neurons=100, exc_fraction=0.85,
+                izh_neuron_type="IZH2007_THALAMIC_RELAY"),
+]
+pathways = [
+    RegionPathway(from_region="cortex", to_region="striatum",
+                  density=0.5, weight_mean=2.5, plastic=True),
+    RegionPathway(from_region="striatum", to_region="thalamus",
+                  density=0.8, weight_mean=5.0, plastic=False),
+]
+
+cfg.brain_regions = regions
+cfg.region_pathways = pathways
+cfg.num_traits = 1  # let regions own their type assignment
+```
+
+Each region gets a contiguous slice of the global neuron index space.
+Pathways are CSR sparse and respect the per-pathway `plastic` flag (only
+plastic pathways accept STDP / reward updates; others are frozen).
+
+See `research/runners/g11_bg_runner.py` for a full BG-style cascade build
+(30 regions, 32 pathways) and `docs/plans/2026-04-24-brain-region-framework.md`
+for the design doc.
+
+---
+
+## 11. Neuromodulator Subsystem (opt-in)
+
+For declarative dopamine / NE / 5-HT modeling, set
+`cfg.enable_neuromodulator_subsystem = True` and add `NeuromodulatorConfig`
+entries to `cfg.neuromodulators`:
+
+```python
+from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
+
+dopamine = NeuromodulatorConfig(
+    name="DA",
+    baseline=0.0,
+    decay_tau_ms=500.0,
+    targets=[
+        ModulatorTarget(target_type="plasticity_rate", scope="all", sensitivity=2.0),
+    ],
+    production_rules=[
+        ProductionRule(rule_type="from_reward", sensitivity=1.0),
+    ],
+)
+cfg.neuromodulators = [dopamine]
+```
+
+Effects available: `synaptic_gain`, `plasticity_rate`, `excitability_drive`.
+Production rules: `manual` (set externally), `from_reward` (proportional to
+`current_reward_signal`), `from_error_persistence` (EMA of |error| above
+threshold).
+
+Composes with the brain-region framework — when both are on, regions
+auto-register as neuromodulator groups so
+`ModulatorTarget(scope="group:PFC", ...)` resolves natively.
+
+See `docs/plans/2026-04-24-neuromodulator-subsystem.md`.
+
+---
+
+## 12. Phase B: BG-Style Action Selection
+
+The `g11_bg_runner.py` implements a basal-ganglia cascade for action
+selection that resolved the silent-motor trap (Sessions D–I were unable to
+fix it from the runner side).
+
+**Architecture:** per-action populations of cortex → str_D1 / str_D2 → GPi /
+GPe → STN → thalamus → motor. D1 inhibits GPi (direct path); when GPi
+silences, thalamus is released and motor fires. Each action has its own
+disinhibition gate; selection emerges from independent gates rather than a
+shared argmax.
+
+**Two gotchas worth knowing if you build a similar circuit:**
+
+1. **Pool size matters at deployment, not at probe scale.** The cortex →
+   striatum pathway saturates D1 if `n_cortex` is too large relative to
+   striatum size. With `n_cortex=400` (100/action) D1 fires at ~220 Hz
+   (saturated) and GPi can no longer be silenced. With `n_cortex=100`
+   (25/action) D1 fires at ~75 Hz (physiological MSN range) and the
+   cascade works. **Lesson:** any smoke probe must call the same builder
+   with the same args as the deployed run.
+
+2. **STDP w_max must exceed your design weight.** The STDP rule is
+   soft-bound: `Δw_LTP = A_plus * (w_max - w) * exp(-Δt/τ)`. When
+   `w > w_max`, every "LTP" event is strongly negative and weights collapse
+   to w_max within milliseconds. Cortex → D1 uses `weight_mean=25` but the
+   default `cfg.stdp_w_max=2`. Set `cfg.stdp_w_max = 30.0` to fit.
+
+**Result (3-seed acid test, 1800 steps):** phase 1 finalQ = 1.76 avg
+(vs G9 baseline 6.74) — 74% improvement. Agent stays at Manhattan distance
+~1.7 from goal vs random walk's ~5.5.
+
+See `research/findings/2026-04-25-phase-b-acid-test-real-win.md` for the
+full diagnosis.
+
+---
+
+## 13. Troubleshooting
 
 Common issues:
 - **No visible spikes or pulses**:
@@ -411,3 +604,15 @@ Common issues:
 - **Out of memory**:
   - Reduce neuron count or connections per neuron.
   - Increase `Viz Update Interval` or reduce `Max Visible Neurons` / `Max Visible Connections`.
+- **Cascade dies after first trial in research runner**:
+  - Check `cfg.stdp_w_max` is set above your design `weight_mean` for any
+    plastic pathway. Soft-bound STDP collapses oversize weights silently.
+  - Check input-to-target population ratios — saturation breaks
+    disinhibition gating (see Phase B notes above).
+- **HH presets don't fire at 37°C**:
+  - Use the per-gate Q10 values (`hh_q10_m=3.0`, `hh_q10_h=1.5`,
+    `hh_q10_n=1.5`). Uniform Q10=3 over-compresses gating dynamics. The
+    defaults in `sim/config.py` are correct as of 2026-04-25.
+- **AdEx presets all behave the same**:
+  - Verify the bridge is overlaying preset params onto `cfg.adex_*` fields.
+    Fixed 2026-04-25; older builds bypassed preset loading.

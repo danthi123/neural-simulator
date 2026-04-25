@@ -1,0 +1,33 @@
+[2026-04-24 22:21:09][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-04-24 22:21:09][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-04-24 22:21:09][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-04-24 22:21:09][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 5068 neurons...
+[2026-04-24 22:21:09][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-04-24 22:21:09][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-04-24 22:21:09][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=60.0pA)...
+[2026-04-24 22:21:09][INFO] SIM_BRIDGE: Generating 3D neuron positions for 5068 neurons...
+[2026-04-24 22:21:09][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-04-24 22:21:09][INFO] SIM_BRIDGE: Initializing STDP state for 5068 neurons...
+[2026-04-24 22:21:09][INFO] SIM_BRIDGE: Simulation data initialized for 5068 neurons (3D). Connections: 0. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-04-24 22:21:10][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1287000 synapses across 3 populations.
+[g9 seed=43] 10000 plastic hidden->motor synapses  action_selection=argmax  lr=0.01  tau_elig=500.0ms
+[g9 seed=43] step 100/1800  pos=(4,6)  goal=(6,6)  recent_dist=4.79  W=[0.57,2.06] mean=1.46  |elig|=1.18
+[g9 seed=43] step 200/1800  pos=(4,0)  goal=(6,6)  recent_dist=4.21  W=[0.63,2.11] mean=1.67  |elig|=0.91
+[g9 seed=43] step 300/1800  pos=(6,0)  goal=(6,6)  recent_dist=7.59  W=[0.66,2.18] mean=1.77  |elig|=0.63
+[g9 seed=43] step 300: GOAL CHANGED to (1, 6)
+[g9 seed=43] step 400/1800  pos=(6,0)  goal=(1,6)  recent_dist=10.06  W=[0.70,2.16] mean=1.84  |elig|=0.64
+[g9 seed=43] step 500/1800  pos=(4,0)  goal=(1,6)  recent_dist=8.99  W=[0.73,2.16] mean=1.88  |elig|=0.61
+[g9 seed=43] step 600/1800  pos=(4,3)  goal=(1,6)  recent_dist=8.29  W=[0.74,2.15] mean=1.90  |elig|=0.66
+[g9 seed=43] step 700/1800  pos=(7,7)  goal=(1,6)  recent_dist=7.35  W=[0.77,2.19] mean=1.92  |elig|=0.56
+[g9 seed=43] step 800/1800  pos=(5,0)  goal=(1,6)  recent_dist=7.67  W=[0.84,2.19] mean=1.93  |elig|=0.57
+[g9 seed=43] step 900/1800  pos=(6,1)  goal=(1,6)  recent_dist=9.33  W=[0.85,2.21] mean=1.94  |elig|=0.62
+[g9 seed=43] step 1000/1800  pos=(6,1)  goal=(1,6)  recent_dist=10.00  W=[0.88,2.20] mean=1.95  |elig|=0.62
+[g9 seed=43] step 1100/1800  pos=(5,2)  goal=(1,6)  recent_dist=10.55  W=[0.91,2.16] mean=1.96  |elig|=0.60
+[g9 seed=43] step 1200/1800  pos=(5,1)  goal=(1,6)  recent_dist=9.13  W=[0.98,2.19] mean=1.96  |elig|=0.58
+[g9 seed=43] step 1300/1800  pos=(6,3)  goal=(1,6)  recent_dist=8.38  W=[1.03,2.17] mean=1.96  |elig|=0.57
+[g9 seed=43] step 1400/1800  pos=(7,1)  goal=(1,6)  recent_dist=7.75  W=[1.05,2.17] mean=1.97  |elig|=0.58
+[g9 seed=43] step 1500/1800  pos=(6,2)  goal=(1,6)  recent_dist=9.36  W=[1.08,2.18] mean=1.97  |elig|=0.55
+[g9 seed=43] step 1600/1800  pos=(7,0)  goal=(1,6)  recent_dist=9.74  W=[1.09,2.16] mean=1.97  |elig|=0.58
+[g9 seed=43] step 1700/1800  pos=(7,0)  goal=(1,6)  recent_dist=10.03  W=[1.11,2.20] mean=1.97  |elig|=0.57
+[g9 seed=43] step 1800/1800  pos=(7,1)  goal=(1,6)  recent_dist=10.25  W=[1.15,2.20] mean=1.98  |elig|=0.53
+[g9 seed=43] done: mean_dist=8.53  quarters=[6.86, 8.32, 9.28, 9.65]  at_goal=4  actions=[370, 557, 579, 294]  reservoir_drift=0.00e+00  1578.2s

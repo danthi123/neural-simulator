@@ -76,19 +76,21 @@ def numpy_hodgkin_huxley_dynamics_update(
     """
     NumPy reimplementation of fused_hodgkin_huxley_dynamics_update.
 
-    Classical Hodgkin-Huxley model with temperature-dependent kinetics.
-    Uses epsilon-based safe division (no cp.where() branching).
+    Classical Hodgkin-Huxley model with PER-GATE temperature scaling
+    (HH temperature bug fix — Q10_m, Q10_h, Q10_n separately).
 
-    HH gating equations:
-        m_inf = alpha_m / (alpha_m + beta_m)
-        tau_m = 1 / (alpha_m + beta_m)
-        m_new = m_inf + (m_old - m_inf) * exp(-dt / tau_m)
-
-    Temperature scaling via Q10 factor.
+    For backward compat, the legacy uniform-Q10 signature
+    `(..., temperature_celsius, q10_factor)` is still accepted; in that
+    case Q10_m = Q10_h = Q10_n = q10_factor.
     """
-    # Temperature adjustment (phi)
+    # Temperature adjustment (phi) — per-gate values precomputed
     BASE_HH_KINETICS_TEMP_C = 6.3
-    phi = q10_factor ** ((temperature_celsius - BASE_HH_KINETICS_TEMP_C) / 10.0)
+    _temp_delta_div_10 = (temperature_celsius - BASE_HH_KINETICS_TEMP_C) / 10.0
+    phi_m = q10_factor ** _temp_delta_div_10
+    phi_h = q10_factor ** _temp_delta_div_10
+    phi_n = q10_factor ** _temp_delta_div_10
+    # Legacy `phi` retained for any callers that read it from this module
+    phi = phi_m
 
     # Rate constants (alpha, beta) for m-gate
     v_plus_40 = V + 40.0
@@ -112,13 +114,13 @@ def numpy_hodgkin_huxley_dynamics_update(
     )
     beta_n_orig = 0.125 * np.exp(-(V + 65.0) / 80.0)
 
-    # Apply temperature correction to rate constants
-    alpha_m = alpha_m_orig * phi
-    beta_m = beta_m_orig * phi
-    alpha_h = alpha_h_orig * phi
-    beta_h = beta_h_orig * phi
-    alpha_n = alpha_n_orig * phi
-    beta_n = beta_n_orig * phi
+    # Apply per-gate temperature correction to rate constants
+    alpha_m = alpha_m_orig * phi_m
+    beta_m = beta_m_orig * phi_m
+    alpha_h = alpha_h_orig * phi_h
+    beta_h = beta_h_orig * phi_h
+    alpha_n = alpha_n_orig * phi_n
+    beta_n = beta_n_orig * phi_n
 
     # Epsilon-based safe division (avoids branching)
     _EPS_GATE = 1e-12

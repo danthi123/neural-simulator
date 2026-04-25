@@ -64,7 +64,16 @@ class CoreSimConfig:
     hh_h_init: float = field(default_factory=lambda: _HH_L5_DEFAULTS["h_init"])
     hh_n_init: float = field(default_factory=lambda: _HH_L5_DEFAULTS["n_init"])
     hh_temperature_celsius: float = 37.0
-    hh_q10_factor: float = 3.0
+    hh_q10_factor: float = 3.0  # Legacy uniform Q10 — kept as fallback for
+                                 # per-gate Q10 fields below when those are
+                                 # set to <=0 (meaning "use legacy Q10").
+    # Per-gate Q10 (preferred over hh_q10_factor at biological temps).
+    # Default values produce real APs at 37°C; uniform Q10=3 over-compressed
+    # dynamics so the cell tonically depolarized without firing — see
+    # research/findings/2026-04-25-hh-temperature-bug.md.
+    hh_q10_m: float = 3.0   # Activation (m-gate): fast — Mainen & Sejnowski 1996
+    hh_q10_h: float = 1.5   # Inactivation (h-gate): slower — preserves AP width
+    hh_q10_n: float = 1.5   # Recovery (n-gate): slower — preserves AP duration
     # Optional extended HH currents. Zero conductance disables each one.
     hh_g_M_max: float = 0.0
     hh_m_current_tau_ms: float = 100.0
@@ -74,7 +83,13 @@ class CoreSimConfig:
     hh_E_h: float = -30.0
     hh_g_NaP_max: float = 0.0
 
-    # AdEx parameters (single-compartment RS default; per-neuron variation can be added later)
+    # AdEx parameters. Default: Brette & Gerstner 2005 RS pyramidal.
+    # Override via cfg.default_neuron_type_adex ∈ {ADEX_RS_CORTICAL_PYRAMIDAL,
+    # ADEX_FS_CORTICAL_INTERNEURON, ADEX_IB_BURSTING, ADEX_CH_CHATTERING,
+    # ADEX_LTS_LOW_THRESHOLD, ADEX_STRIATAL_MSN, ADEX_DOPAMINE}. The bridge
+    # init reads this enum and overlays preset values onto the cfg.adex_*
+    # fields below.
+    default_neuron_type_adex: str = "ADEX_RS_CORTICAL_PYRAMIDAL"
     adex_C: float = 281.0          # pF
     adex_g_L: float = 30.0         # nS
     adex_E_L: float = -70.6        # mV
