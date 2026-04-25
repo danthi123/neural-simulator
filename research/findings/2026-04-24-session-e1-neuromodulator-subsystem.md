@@ -6,8 +6,11 @@
 `cp_synaptic_gain_modulator` hacks with a first-class declarative
 framework for neuromodulators (hormones), so adding a new biology
 mechanism in the future is config rather than code.
-**Verdict:** Framework complete and tested; biology validation probe
-results below.
+**Verdict:** **Framework: GO** (37 tests, 0 regressions, drift + legacy
+parity guards pass). **NE-as-parameterized: NO-GO** on silent-motor
+trap (3/3 seeds fail; aggregate P1 PF 0.003 vs 0.007 baseline). Branch
+mergeable as biology-correct infrastructure; specific NE/other-modulator
+parameter tuning is now config-not-code work for future sessions.
 
 ---
 
@@ -121,14 +124,22 @@ gave noisier baseline that occasionally helps).
 |------|--------|-------|--------|-------|--------------|
 | 42   | 135    | 0.40  | never  | 0.000 | ✗ |
 | 43   | 64     | 0.78  | never  | 0.007 | ✗ |
-| 44   | (final seed pending; results land in commit) | | | | |
+| 44   | 49     | 0.94  | never  | 0.001 | ✗ |
+| **agg** | **83** | **0.71** | **0/3** | **0.003** | **0/3** |
 
-### 4.2 vs prior baselines (relaxed argmax probe, no NE)
+### 4.2 vs prior baselines (relaxed argmax probe, no NE — Session D.A.4)
 
-| Condition | Seed 42 P0 PF | Seed 43 P0 PF | P1 PF (any seed > 0.10?) |
-|-----------|---------------|---------------|--------------------------|
-| **No-NE relaxed (Session D.A.4)** | **0.91** | **0.85** | No (max 0.018) |
-| **NE excitability_drive (this probe)** | 0.40 | 0.78 | No (max 0.007) |
+| Condition | Seed 42 P0 PF | Seed 43 P0 PF | Seed 44 P0 PF | P1 PF aggregate |
+|-----------|----------------|----------------|----------------|------------------|
+| **No-NE relaxed (D.A.4)** | 0.91 | 0.85 | 0.94 | 0.007 |
+| **NE excitability_drive (this probe)** | **0.40** | **0.78** | **0.94** | **0.003** |
+| Δ vs baseline | −0.51 | −0.07 | 0.00 | −0.004 |
+
+NE seed-dependently *interferes* with phase-0 learning (catastrophic on
+seed 42, mild on 43, no effect on 44) without helping phase 1. Phase 1
+PF aggregate is even slightly worse than baseline (0.003 vs 0.007),
+confirming NE excitability boost does not break the silent-motor trap
+at these parameters.
 
 NE *interferes* with phase-0 learning (seed 42 P0 PF 0.91 → 0.40) without
 unlocking phase-1. The from_error_persistence rule is firing during phase-1
