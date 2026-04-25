@@ -182,6 +182,19 @@ class CoreSimConfig:
     enable_neuromodulator_subsystem: bool = False
     neuromodulators: list = field(default_factory=list)  # List[NeuromodulatorConfig]
 
+    # C2c: Brain-region framework (Session E.2)
+    # Opt-in declarative framework for multiple cortical / subcortical
+    # populations sharing one bridge. When enabled, brain_regions defines
+    # contiguous index slices and internal connectivity per region;
+    # region_pathways defines directed cross-region projections with
+    # optional neuromodulator-gated plasticity. Bridge auto-sets
+    # num_neurons from RegionManager.total_neurons() when a region list
+    # is non-empty.
+    # See sim/regions.py and docs/plans/2026-04-24-brain-region-framework.md
+    enable_brain_region_framework: bool = False
+    brain_regions: list = field(default_factory=list)  # List[BrainRegion]
+    region_pathways: list = field(default_factory=list)  # List[RegionPathway]
+
     # C3: Structural Plasticity (Synapse Formation/Elimination) - Butz et al. 2009
     enable_structural_plasticity: bool = True  # Enabled by default for dynamic network adaptation
     struct_plast_formation_rate: float = 1e-6     # Probability per timestep per neuron pair

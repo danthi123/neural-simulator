@@ -274,6 +274,14 @@ class SimulationBridge:
         # None means legacy reward path is used unchanged.
         self.neuromodulator_manager = None
 
+        # Brain-region framework (Session E.2, opt-in).
+        # When core_config.enable_brain_region_framework is True and
+        # brain_regions is non-empty, this is populated with a
+        # sim.regions.RegionManager that owns per-region index slices,
+        # inhibitory-cell selection, and the region wiring plan. Default
+        # None means legacy single-population path runs.
+        self.region_manager = None
+
         # Experiment & stimulus system
         self.experiment_engine = None
         self.experiment_config = None  # ExperimentConfig dataclass
@@ -469,6 +477,13 @@ class SimulationBridge:
                 cfg.neuromodulators, cfg.dt_ms,
             )
             self.neuromodulator_manager.initialize(cfg.num_neurons, cp)
+            # E.2 Task 7: if a brain-region framework is also active,
+            # auto-register region indices as neuromodulator groups so
+            # ModulatorTarget(scope='group:PFC') resolves natively.
+            if self.region_manager is not None:
+                self.neuromodulator_manager.set_group_indices(
+                    self.region_manager.region_indices_dict()
+                )
             self._log_console(
                 f"Initialized neuromodulator subsystem with "
                 f"{len(cfg.neuromodulators)} modulators: "
@@ -742,8 +757,33 @@ class SimulationBridge:
             pass # UI thread manages stopping recording/playback before commanding re-init.
 
         try:
-            n = self.core_config.num_neurons
             cfg = self.core_config
+
+            # Brain-region framework (Session E.2, opt-in): allocate the
+            # RegionManager BEFORE anything that depends on num_neurons.
+            # If brain_regions is non-empty, RegionManager.total_neurons()
+            # determines the global neuron count.
+            self.region_manager = None
+            if (getattr(cfg, "enable_brain_region_framework", False)
+                    and getattr(cfg, "brain_regions", None)):
+                from sim.regions import RegionManager
+                self.region_manager = RegionManager(
+                    cfg.brain_regions,
+                    getattr(cfg, "region_pathways", []) or [],
+                )
+                # Use main seed (or 0 default) for deterministic
+                # inhibitory-cell selection.
+                seed_val = cfg.seed if cfg.seed >= 0 else 0
+                self.region_manager.initialize(seed=seed_val)
+                # Override num_neurons to match the regions.
+                cfg.num_neurons = self.region_manager.total_neurons()
+                self._log_console(
+                    f"Brain-region framework: {len(cfg.brain_regions)} regions, "
+                    f"{cfg.num_neurons} total neurons, "
+                    f"{len(getattr(cfg, 'region_pathways', []) or [])} pathways."
+                )
+
+            n = self.core_config.num_neurons
             if n <= 0:
                 self._log_console(f"Number of neurons ({n}) must be positive. Initialization failed.", "warning")
                 self.is_initialized = False; return
@@ -1043,17 +1083,34 @@ class SimulationBridge:
                 self.runtime_state.neuron_positions_x = []; self.runtime_state.neuron_positions_y = []
 
             if not called_from_playback_init:
-                self._log_console("Generating connections (3D)...")
-                profile_name_for_conn = getattr(cfg, "neural_profile_name", "GENERIC_UNSTRUCTURED")
-                profile_def_for_conn = NEURAL_STRUCTURE_PROFILES.get(profile_name_for_conn)
-                motif_name = profile_def_for_conn.get("connectivity_motif") if profile_def_for_conn else None
+                # Brain-region framework path: build wiring from RegionManager
+                # plan and inject via existing inject_explicit_wiring API. Skip
+                # the legacy motif/WS/spatial generators entirely.
+                if self.region_manager is not None:
+                    self._log_console("Generating connections (brain-region framework)...")
+                    seed_val = cfg.seed if cfg.seed >= 0 else 0
+                    plan = self.region_manager.build_wiring_plan(seed=seed_val)
+                    # inject_explicit_wiring wires + sets self.cp_connections,
+                    # the plastic mask, and updates _synapse_count.
+                    inh_indices_concat = []
+                    for region in self.region_manager.regions():
+                        inh_indices_concat.extend(self.region_manager.inhibitory_indices(region.name))
+                    self.inject_explicit_wiring(
+                        plan,
+                        output_inhibitory_indices=inh_indices_concat or None,
+                    )
+                else:
+                    self._log_console("Generating connections (3D)...")
+                    profile_name_for_conn = getattr(cfg, "neural_profile_name", "GENERIC_UNSTRUCTURED")
+                    profile_def_for_conn = NEURAL_STRUCTURE_PROFILES.get(profile_name_for_conn)
+                    motif_name = profile_def_for_conn.get("connectivity_motif") if profile_def_for_conn else None
 
-                if motif_name:
-                    self.cp_connections = self._generate_motif_connections_3d(n, self.cp_neuron_positions_3d, self.cp_traits, cfg, motif_name)
-                elif cfg.enable_watts_strogatz:
-                    self.cp_connections = self._generate_watts_strogatz_connections_3d(n, cfg.connectivity_k, cfg.connectivity_p_rewire, cfg)
-                else: 
-                    self.cp_connections = self._generate_spatial_connections_3d(n, cfg.connections_per_neuron, self.cp_neuron_positions_3d, self.cp_traits, cfg)
+                    if motif_name:
+                        self.cp_connections = self._generate_motif_connections_3d(n, self.cp_neuron_positions_3d, self.cp_traits, cfg, motif_name)
+                    elif cfg.enable_watts_strogatz:
+                        self.cp_connections = self._generate_watts_strogatz_connections_3d(n, cfg.connectivity_k, cfg.connectivity_p_rewire, cfg)
+                    else:
+                        self.cp_connections = self._generate_spatial_connections_3d(n, cfg.connections_per_neuron, self.cp_neuron_positions_3d, self.cp_traits, cfg)
                 
                 # Defensive fallback: if no synapses were generated, fall back to spatial generator
                 if self.cp_connections is None or (hasattr(self.cp_connections, 'nnz') and self.cp_connections.nnz == 0 and n > 1):
