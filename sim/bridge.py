@@ -945,7 +945,15 @@ class SimulationBridge:
                 default_params = DefaultIzhikevichParamsManager.get_params(default_type_enum, use_2007_formulation=True)
                 default_type_id = NEURON_TYPE_MAPPER.get_id(default_type_enum)
 
-                if num_defined_izh_variants > 0:
+                # Trait-based multi-type assignment is opt-in: only happens if there
+                # are >1 IZH2007 variants AND the config requests >1 traits.
+                # This makes single-type configs (cfg.num_traits=1) use
+                # cfg.default_neuron_type_izh for ALL neurons — fixes the bug
+                # where adding new IZH2007 presets silently changed the modulo
+                # math and reassigned existing populations.
+                use_trait_based = (num_defined_izh_variants > 1
+                                    and cfg.num_traits > 1)
+                if use_trait_based:
                     # Vectorized type selection based on traits
                     type_indices = np_traits_host % num_defined_izh_variants
                     for type_idx, params in enumerate(param_sets):
