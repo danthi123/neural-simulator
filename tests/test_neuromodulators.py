@@ -673,3 +673,52 @@ def test_bridge_no_manager_when_subsystem_enabled_but_empty_list():
     })
     assert sb.neuromodulator_manager is None
     sb.clear_simulation_state_and_gpu_memory()
+
+
+# ---------- Task 10: bridge step integration ----------
+
+
+def test_bridge_step_advances_concentration_via_from_reward():
+    """A bridge running with subsystem on + dopamine + from_reward rule
+    + a positive reward signal should see DA concentration rise after
+    one simulation step."""
+    pytest.importorskip("cupy")
+    from sim.neuromodulators import NeuromodulatorConfig, ProductionRule
+
+    sb, cfg = _make_bridge({
+        "enable_neuromodulator_subsystem": True,
+        "enable_reward_modulation": True,
+        "neuromodulators": [
+            NeuromodulatorConfig(
+                name="dopamine",
+                baseline=0.0,
+                decay_tau_ms=500.0,
+                production_rules=[ProductionRule(rule_type="from_reward", sensitivity=1.0)],
+            )
+        ],
+    })
+    assert sb.neuromodulator_manager is not None
+    assert sb.neuromodulator_manager.get_concentration("dopamine") == 0.0
+
+    sb.core_config.current_reward_signal = 1.0
+    sb._run_one_simulation_step()
+    sb.runtime_state.current_time_step += 1
+
+    # After one step: 1.0 added by from_reward, exp(-1/500) decay first ≈ 0.998
+    # Should be ~1.0 (clipped at concentration_max default 5.0)
+    assert sb.neuromodulator_manager.get_concentration("dopamine") > 0.5
+    sb.clear_simulation_state_and_gpu_memory()
+
+
+def test_bridge_step_no_concentration_change_when_subsystem_off():
+    """Subsystem off -> manager.step() never called -> no state change."""
+    pytest.importorskip("cupy")
+
+    sb, cfg = _make_bridge()
+    assert sb.neuromodulator_manager is None  # default off
+    # Just running steps with subsystem off should be a no-op for
+    # neuromodulator state. Call a step to make sure nothing crashes.
+    sb._run_one_simulation_step()
+    sb.runtime_state.current_time_step += 1
+    assert sb.neuromodulator_manager is None
+    sb.clear_simulation_state_and_gpu_memory()

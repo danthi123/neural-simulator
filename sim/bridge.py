@@ -3914,7 +3914,17 @@ class SimulationBridge:
                     significant_updates = cp.sum(cp.abs(weight_updates) > 1e-6)
                     if significant_updates > 0:
                         self._mock_total_plasticity_events += int(significant_updates.get())
-            
+
+            # --- 4c2. Neuromodulator subsystem update (Session E.1, opt-in) ---
+            # Run AFTER reward modulation so this step's reward signal has
+            # been consumed by the legacy path AND has produced its effect on
+            # neuromodulator concentrations. The neuromodulator effects on
+            # synaptic gain / plasticity rate / excitability are then applied
+            # in the next step (since concentrations now reflect this step).
+            if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                    and self.neuromodulator_manager is not None):
+                self.neuromodulator_manager.step(self)
+
             # --- 4d. C3: Structural Plasticity (Synapse Formation/Elimination) ---
             # Freeze structural plasticity during experiments: synaptogenesis operates on
             # hours-to-days timescales in vivo (Holtmaat & Svoboda 2009). In a 50-second
