@@ -320,6 +320,17 @@ def run_g9_episode(
                                         # motor's synapses — a runner-side
                                         # implementation of selective DA /
                                         # lateral-inhibition action attribution.
+    weight_reset_alpha_on_goal_change=0.0,  # Session H: at each goal-change
+                                        # step, mix hidden->motor weights:
+                                        #   w_new = alpha * w_initial + (1-alpha) * w_current
+                                        # alpha=0.0: no reset (default)
+                                        # alpha=1.0: full reset to initial
+                                        # alpha=0.5: half-blend
+                                        # Also clears hidden->motor eligibility.
+                                        # Tests whether escaping the trained-
+                                        # winner basin via partial weight reset
+                                        # combined with V1 exploration noise
+                                        # breaks the silent-motor trap.
     verbose=True,
 ):
     """Run a G9 episode with sim-native R-STDP learning.
@@ -495,6 +506,29 @@ def run_g9_episode(
             if verbose:
                 print(f"[g9 seed={seed}] step {step}: GOAL CHANGED to ({gx}, {gy})",
                       flush=True)
+
+            # Session H: weight reset on goal change.
+            # Blend hidden->motor weights back toward initial random values.
+            if weight_reset_alpha_on_goal_change > 0.0:
+                alpha = float(weight_reset_alpha_on_goal_change)
+                current_data = cp.asnumpy(bridge.cp_connections.data)
+                blended = (
+                    alpha * initial_data[i2m_flat_indices]
+                    + (1.0 - alpha) * current_data[i2m_flat_indices]
+                )
+                # Write the blended values back via cupy
+                idx_cp = cp.asarray(i2m_flat_indices, dtype=cp.int64)
+                bridge.cp_connections.data[idx_cp] = cp.asarray(
+                    blended, dtype=bridge.cp_connections.data.dtype
+                )
+                # Also clear eligibility on hidden->motor so the freshly-reset
+                # weights aren't immediately depressed/potentiated by stale traces.
+                if bridge.cp_eligibility_trace is not None:
+                    bridge.cp_eligibility_trace[idx_cp] = 0.0
+                if verbose:
+                    print(f"[g9 seed={seed}] step {step}: weight reset "
+                          f"alpha={alpha} applied to {len(i2m_flat_indices)} "
+                          f"hidden->motor synapses", flush=True)
 
         dist_before = manhattan(x, y)
 
@@ -806,6 +840,7 @@ def run_g9_episode(
         "motor_exploration_rate_hz": motor_exploration_rate_hz,
         "positive_only_reward": positive_only_reward,
         "action_attribution_eligibility": action_attribution_eligibility,
+        "weight_reset_alpha_on_goal_change": weight_reset_alpha_on_goal_change,
         "reservoir_weight_drift_max": reservoir_drift,
         "trajectory": trajectory,
         "goal_log": goal_log,
