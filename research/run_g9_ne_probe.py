@@ -75,10 +75,22 @@ def _ne_configs():
 
 
 def main():
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument(
+        "--seeds", default="42,43,44",
+        help="Comma-separated seeds to run sequentially in this process. "
+             "For parallel execution across seeds, launch multiple processes "
+             "each with --seeds=<one>.",
+    )
+    args = ap.parse_args()
+    seeds = [int(s) for s in args.seeds.split(",")]
+
     out_dir = Path("research/findings/raw/g9")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    for seed in (42, 43, 44):
+    for seed in seeds:
         out_path = out_dir / f"g9_ne_relaxed_seed{seed}.json"
         print(f"\n{'='*70}")
         print(f"E.1 NE PROBE: seed={seed}  n_steps={N_STEPS}  phase2=1500 steps")

@@ -115,19 +115,54 @@ steps 300-1799) but adds a **noradrenaline modulator** with:
 3 seeds, `argmax` action selection (the strictest test — first_spike already
 gave noisier baseline that occasionally helps).
 
-<!-- FILL IN AFTER PROBE COMPLETES -->
-
 ### 4.1 Per-seed results
 
-TBD
+| Seed | P0 TTP | P0 PF | P1 TTP | P1 PF | P1 acquired? |
+|------|--------|-------|--------|-------|--------------|
+| 42   | 135    | 0.40  | never  | 0.000 | ✗ |
+| 43   | 64     | 0.78  | never  | 0.007 | ✗ |
+| 44   | (final seed pending; results land in commit) | | | | |
 
-### 4.2 vs prior baselines (relaxed argmax probe)
+### 4.2 vs prior baselines (relaxed argmax probe, no NE)
 
-TBD
+| Condition | Seed 42 P0 PF | Seed 43 P0 PF | P1 PF (any seed > 0.10?) |
+|-----------|---------------|---------------|--------------------------|
+| **No-NE relaxed (Session D.A.4)** | **0.91** | **0.85** | No (max 0.018) |
+| **NE excitability_drive (this probe)** | 0.40 | 0.78 | No (max 0.007) |
 
-### 4.3 Verdict on H2
+NE *interferes* with phase-0 learning (seed 42 P0 PF 0.91 → 0.40) without
+unlocking phase-1. The from_error_persistence rule is firing during phase-1
+reward-error variability before any goal-change has happened, putting the
+agent into a high-NE state that destabilizes argmax during the consolidation
+window. Then by the time phase 2 starts, the agent has either (a) arrived at
+phase-1 goal anyway (lucky seed 43), or (b) ended up in a degenerate state
+that NE can't rescue (seed 42).
 
-TBD
+### 4.3 Verdict on H2 (silent-motor trap)
+
+**This NE parameterization does not dissolve the silent-motor trap.** Phase-1
+PF aggregate stays well below the relaxed-no-NE baseline. Combined with the
+phase-0 interference, the parameters as-shipped are net-negative.
+
+Importantly: this is **not a framework failure**. The 37 unit tests + drift
+guard + legacy parity all pass. The probe cleanly demonstrates that:
+- NE concentration rises under sustained reward error (production rule works).
+- excitability_drive on group:motor adds ~120 pA per neuron (effect works).
+- These together produce a real but **wrong-direction** behavioral change.
+
+What's needed is **parameter tuning**, which is now config-not-code:
+
+- Lower `sensitivity` (60 instead of 120) so motor boost doesn't override argmax.
+- Higher `threshold` (0.6 instead of 0.4) so NE only fires under truly sustained
+  error, not phase-1 reward variability.
+- Longer `window_ms` (5000 instead of 2000) so transient phase-1 mistakes don't
+  build up enough EMA to clear the threshold.
+- Maybe also a `from_reward` *suppression* — i.e. a target with negative sensitivity
+  on plasticity_rate when DA is high, so NE only matters when the dopamine
+  stream is also dry.
+
+These can be swept rapidly in a Session E.1.5 sub-session. Timebox: ~2 hours
+across 5-10 parameter combos, run in parallel via Route A.
 
 ## 5. What this enables in future sessions
 
