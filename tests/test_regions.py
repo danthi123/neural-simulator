@@ -248,3 +248,127 @@ def test_cross_region_pathway_unknown_region_raises():
     mgr.initialize()
     with pytest.raises(KeyError):
         mgr.build_wiring_plan(seed=42)
+
+
+# ---------- Tasks 5+6+7: bridge integration ----------
+
+def _make_bridge_with_regions(brain_regions, region_pathways=None,
+                                 nm_configs=None, seed=42):
+    """Helper: minimal bridge with the region framework on."""
+    pytest.importorskip("cupy")
+    from sim import (
+        SimulationBridge, CoreSimConfig, VisualizationConfig,
+        RuntimeState, GPUConfig,
+    )
+    from sim.enums import NeuronModel
+
+    cfg = CoreSimConfig()
+    cfg.num_neurons = 0  # will be set by RegionManager
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.dt_ms = 1.0
+    cfg.seed = seed
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = list(brain_regions)
+    cfg.region_pathways = list(region_pathways or [])
+    if nm_configs:
+        cfg.enable_neuromodulator_subsystem = True
+        cfg.neuromodulators = list(nm_configs)
+
+    sb = SimulationBridge(
+        core_config=cfg,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
+    )
+    sb.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    sb._initialize_simulation_data(called_from_playback_init=False)
+    return sb, cfg
+
+
+def test_bridge_allocates_region_manager_when_enabled():
+    pytest.importorskip("cupy")
+    from sim.regions import BrainRegion, RegionPathway
+
+    sb, cfg = _make_bridge_with_regions(
+        brain_regions=[
+            BrainRegion(name="PFC", n_neurons=80, internal_density=0.05),
+            BrainRegion(name="Motor", n_neurons=20, internal_density=0.05),
+        ],
+        region_pathways=[RegionPathway(from_region="PFC", to_region="Motor",
+                                          density=0.2)],
+    )
+    assert sb.region_manager is not None
+    assert sb.core_config.num_neurons == 100
+    assert sb.cp_connections is not None
+    # Wiring plan injected: should have PFC_internal + Motor_internal +
+    # pathway_PFC_to_Motor synapses, all > 0 nnz.
+    assert sb.cp_connections.nnz > 0
+    sb.clear_simulation_state_and_gpu_memory()
+
+
+def test_bridge_no_region_manager_when_disabled():
+    pytest.importorskip("cupy")
+    from sim import (
+        SimulationBridge, CoreSimConfig, VisualizationConfig,
+        RuntimeState, GPUConfig,
+    )
+    from sim.enums import NeuronModel
+
+    cfg = CoreSimConfig()
+    cfg.num_neurons = 50
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.dt_ms = 1.0
+    cfg.seed = 42
+    # default: enable_brain_region_framework = False
+    sb = SimulationBridge(
+        core_config=cfg,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
+    )
+    sb.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    sb._initialize_simulation_data(called_from_playback_init=False)
+    assert sb.region_manager is None
+    sb.clear_simulation_state_and_gpu_memory()
+
+
+def test_region_manager_registers_groups_with_neuromod_manager():
+    """When both subsystems are on, regions should auto-register as
+    neuromodulator groups so target scope='group:PFC' works."""
+    pytest.importorskip("cupy")
+    from sim.regions import BrainRegion
+    from sim.neuromodulators import (
+        NeuromodulatorConfig, ModulatorTarget,
+    )
+
+    sb, cfg = _make_bridge_with_regions(
+        brain_regions=[
+            BrainRegion(name="PFC", n_neurons=20, internal_density=0.05),
+            BrainRegion(name="Motor", n_neurons=4, internal_density=0.0),
+        ],
+        nm_configs=[
+            NeuromodulatorConfig(
+                name="da", baseline=0.0, decay_tau_ms=500.0,
+                targets=[ModulatorTarget(target_type="excitability_drive",
+                                            scope="group:Motor", sensitivity=10.0)],
+            ),
+        ],
+    )
+    assert sb.neuromodulator_manager is not None
+    assert sb.region_manager is not None
+    # Verify the group:Motor scope resolves: setting da concentration to 1.0
+    # should produce drive only on Motor neurons (last 4).
+    sb.neuromodulator_manager.set_concentration("da", 1.0)
+    drive = sb.neuromodulator_manager.compute_excitability_drive_per_neuron(
+        cp_traits=sb.cp_traits,
+    )
+    assert drive is not None
+    import cupy as cp
+    drive_np = cp.asnumpy(drive)
+    # PFC neurons (0..19) should have 0 drive; Motor neurons (20..23) should
+    # have ~10 pA.
+    assert (drive_np[:20] == 0).all()
+    assert (drive_np[20:] > 5).all()
+    sb.clear_simulation_state_and_gpu_memory()
