@@ -335,6 +335,7 @@ def run_moving_goal_episode(
     reward_hold_steps: int = 10,
     verbose: bool = True,
     enable_motor_lateral_inhibition: bool = False,
+    enable_per_action_da_targeting: bool = False,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -381,6 +382,7 @@ def run_moving_goal_episode(
     cfg.enable_ou_process = False
     cfg.enable_conductance_noise = False
     cfg.enable_parameter_heterogeneity = False
+    cfg.enable_structural_plasticity = False  # keep synapse count fixed (per-action DA mask depends on it)
 
     bridge = SimulationBridge(
         core_config=cfg, viz_config=VisualizationConfig(),
@@ -398,6 +400,34 @@ def run_moving_goal_episode(
     motor_idx_per_action = {
         a: region_indices_cp[f"motor_{a}"] for a in ACTION_NAMES
     }
+
+    # Per-action DA targeting: pre-compute synapse-post-action mask.
+    # For each plastic cortex→str_D1_X synapse, mark which action X it serves.
+    # Per-trial: zero eligibility on synapses where post is in str_D1_Y (Y != selected),
+    # so reward only credits the chosen action's pathway.
+    # We restrict to D1 (direct path); D2 (indirect) keeps broadcast learning.
+    if enable_per_action_da_targeting:
+        coo = bridge.cp_connections.tocoo()
+        post_neurons_cp = coo.col  # cupy int64
+        n_synapses = int(post_neurons_cp.size)
+        synapse_post_action = cp.full(n_synapses, -1, dtype=cp.int8)
+        for action_idx_setup, action_name in enumerate(ACTION_NAMES):
+            d1_indices = region_indices_cp[f"str_D1_{action_name}"]
+            mask_d1 = cp.isin(post_neurons_cp, d1_indices)
+            synapse_post_action[mask_d1] = action_idx_setup
+        # Cache: per-action mask of "synapses NOT going to action X's D1 pool"
+        # (used to zero eligibility before reward hold).
+        d1_synapse_other_action_masks = {}
+        for action_idx_setup, action_name in enumerate(ACTION_NAMES):
+            # Mask = is a D1 synapse AND post-action != this action
+            other_d1 = (synapse_post_action >= 0) & (synapse_post_action != action_idx_setup)
+            d1_synapse_other_action_masks[action_idx_setup] = other_d1
+        if verbose:
+            n_d1_synapses = int((synapse_post_action >= 0).sum().get())
+            print(f"[g11 seed={seed}] per-action DA: "
+                  f"{n_d1_synapses} synapses are cortex->D1 (will be selectively gated)")
+    else:
+        d1_synapse_other_action_masks = None
 
     # Setup baseline tonic drives that don't change between steps
     bridge.cp_external_input_current[:] = 0.0
@@ -531,6 +561,15 @@ def run_moving_goal_episode(
         reward_log.append(float(reward))
 
         if abs(reward) > 0:
+            # Per-action DA targeting: zero eligibility on cortex→D1_Y synapses
+            # for Y != chosen action, so reward only credits the action that was
+            # actually taken. (D2 indirect path retains broadcast learning.)
+            if (d1_synapse_other_action_masks is not None
+                    and bridge.cp_eligibility_trace is not None):
+                actual_nnz = bridge.cp_connections.nnz
+                other_mask = d1_synapse_other_action_masks[action_idx][:actual_nnz]
+                bridge.cp_eligibility_trace[:actual_nnz][other_mask] = 0.0
+
             bridge.core_config.current_reward_signal = float(reward)
             for _ in range(reward_hold_steps):
                 bridge._run_one_simulation_step()
@@ -622,6 +661,8 @@ def main():
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
+    ap.add_argument("--per-action-da", action="store_true",
+                    help="Enable per-action dopamine targeting: reward only credits chosen action's cortex→D1 synapses")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -632,6 +673,7 @@ def main():
             n_steps=args.n_steps,
             goal_schedule=[(0, (6, 6)), (300, (1, 6))],
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
+            enable_per_action_da_targeting=args.per_action_da,
         )
         return 0
 
