@@ -337,7 +337,8 @@ def run_moving_goal_episode(
     enable_motor_lateral_inhibition: bool = False,
     enable_per_action_da_targeting: bool = False,
     enable_adaptive_per_action_da: bool = False,
-    adaptive_da_ema_decay: float = 0.9,  # ~tau=10 trials
+    adaptive_da_ema_decay: float = 0.9,  # ~tau=10 trials (used for positive reward)
+    adaptive_da_ema_decay_negative: float = None,  # if set, separate decay for negative reward (faster = quicker exploration trigger)
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -572,8 +573,16 @@ def run_moving_goal_episode(
         reward_log.append(float(reward))
 
         if abs(reward) > 0:
-            # Update reward EMA (used by adaptive DA mode)
-            reward_ema = adaptive_da_ema_decay * reward_ema + (1 - adaptive_da_ema_decay) * float(reward)
+            # Update reward EMA (used by adaptive DA mode).
+            # If asymmetric decay is configured, use faster decay for negative
+            # reward (quicker exploration trigger on goal change / policy break).
+            # Models phasic DA biology: dips on negative RPE faster than ramps
+            # up on positive (Schultz 1998).
+            if reward < 0 and adaptive_da_ema_decay_negative is not None:
+                _decay = adaptive_da_ema_decay_negative
+            else:
+                _decay = adaptive_da_ema_decay
+            reward_ema = _decay * reward_ema + (1 - _decay) * float(reward)
 
             # Compute gating strength for per-action DA targeting:
             #   hard:     always 1.0 (full gating)
@@ -693,7 +702,11 @@ def main():
     ap.add_argument("--per-action-da", action="store_true",
                     help="Enable per-action dopamine targeting (hard): reward only credits chosen action's cortex->D1 synapses")
     ap.add_argument("--adaptive-da", action="store_true",
-                    help="Enable ADAPTIVE per-action DA: gating strength scales with recent reward EMA (low reward → broadcast)")
+                    help="Enable ADAPTIVE per-action DA: gating strength scales with recent reward EMA (low reward -> broadcast)")
+    ap.add_argument("--adaptive-da-ema-decay", type=float, default=0.9,
+                    help="EMA decay for adaptive DA (default 0.9, tau~10 trials; lower = faster reaction)")
+    ap.add_argument("--adaptive-da-ema-decay-negative", type=float, default=None,
+                    help="Separate (faster) EMA decay for negative reward (asymmetric ramp; biologically: phasic DA dip)")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -706,6 +719,8 @@ def main():
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_per_action_da_targeting=args.per_action_da,
             enable_adaptive_per_action_da=args.adaptive_da,
+            adaptive_da_ema_decay=args.adaptive_da_ema_decay,
+            adaptive_da_ema_decay_negative=args.adaptive_da_ema_decay_negative,
         )
         return 0
 
