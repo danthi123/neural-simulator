@@ -380,6 +380,123 @@ def test_from_error_persistence_responds_to_positive_or_negative_error():
     assert abs(pos - neg) < 0.1
 
 
+# ---------- Task 5b: from_surprise rule (NE-like RPE phasic firing) ----------
+
+
+def test_from_surprise_silent_after_long_constant_reward():
+    """After long convergence to constant reward, NE drops back to baseline.
+
+    Uses threshold > 0 so small EMA-lag-induced RPE doesn't keep firing.
+    """
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="ne",
+        baseline=0.0,
+        decay_tau_ms=200.0,  # fast-decaying NE
+        production_rules=[
+            ProductionRule(rule_type="from_surprise", sensitivity=1.0,
+                            threshold=0.3, window_ms=300.0)  # threshold > expected RPE-during-convergence
+        ],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    bridge = _FakeBridge()
+
+    bridge.core_config.current_reward_signal = 0.5
+    # Long enough for EMA to converge AND NE to decay
+    for _ in range(5000):
+        mgr.step(bridge)
+    # After convergence, RPE small (below threshold), NE decays to baseline
+    assert mgr.get_concentration("ne") < 0.05, (
+        f"NE should decay after convergence, got {mgr.get_concentration('ne'):.3f}"
+    )
+
+
+def test_from_surprise_fires_on_step_change():
+    """Sudden change in reward produces a phasic NE pulse."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="ne",
+        baseline=0.0,
+        decay_tau_ms=200.0,
+        concentration_max=10.0,  # allow high pulses
+        production_rules=[
+            ProductionRule(rule_type="from_surprise", sensitivity=2.0,
+                            threshold=0.1, window_ms=500.0)
+        ],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    bridge = _FakeBridge()
+
+    # Phase 1: stable reward = +0.5, EMA settles
+    bridge.core_config.current_reward_signal = 0.5
+    for _ in range(2000):
+        mgr.step(bridge)
+    pre_change = mgr.get_concentration("ne")
+
+    # Phase 2: sudden flip to reward = -0.5 (big RPE)
+    bridge.core_config.current_reward_signal = -0.5
+    peak = pre_change
+    for _ in range(50):
+        mgr.step(bridge)
+        peak = max(peak, mgr.get_concentration("ne"))
+
+    # NE should spike on the change
+    assert peak > pre_change + 0.5, (
+        f"NE pulse too small: pre={pre_change:.3f}, peak={peak:.3f}"
+    )
+
+
+def test_from_surprise_threshold_silences_small_rpe():
+    """Below-threshold RPE produces no NE."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="ne",
+        baseline=0.0,
+        decay_tau_ms=300.0,
+        production_rules=[
+            ProductionRule(rule_type="from_surprise", sensitivity=2.0,
+                            threshold=0.5, window_ms=500.0)
+        ],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    bridge = _FakeBridge()
+
+    # Small fluctuations — RPE always < threshold
+    for i in range(2000):
+        bridge.core_config.current_reward_signal = 0.1 if i % 2 == 0 else 0.2
+        mgr.step(bridge)
+
+    # NE should stay near baseline since RPE never crosses threshold
+    assert mgr.get_concentration("ne") < 0.1
+
+
 # ---------- Task 6: synaptic_gain target multiplier ----------
 
 

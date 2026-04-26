@@ -75,6 +75,12 @@ class ProductionRule:
             exceeds `threshold`, produces sensitivity * (ema - threshold) *
             (dt/1000) per step. Models tonic noradrenaline rising under
             sustained negative-reward stress.
+        "from_surprise"
+            Tracks an EMA of recent reward over `window_ms`. Produces
+            sensitivity * (|RPE| - threshold) when |RPE| > threshold, where
+            RPE = current_reward - prior_ema. Phasic on unexpected outcomes,
+            silent during expected ones. Models NE-like fast meta-modulation
+            (Schultz 1997 reward-prediction-error encoding).
         "from_novelty"
             (Reserved for future ACh; emits 0 for now.)
 
@@ -344,6 +350,31 @@ class NeuromodulatorManager:
             # so equilibrium concentration is balanced against decay.
             if ema > rule.threshold:
                 return rule.sensitivity * (ema - rule.threshold) * (self.dt_ms / 1000.0)
+            return 0.0
+
+        if rt == "from_surprise":
+            # NE-like phasic firing on unexpected reward (RPE).
+            # Tracks EMA of recent reward; fires when |reward - ema| > threshold.
+            if bridge is None or not hasattr(bridge, "core_config"):
+                return 0.0
+            cc = bridge.core_config
+            reward = float(getattr(cc, "current_reward_signal", 0.0))
+
+            state = self._rule_state[cfg.name]
+            ema = state.get("reward_ema", 0.0)
+            # window_ms is the EMA tau for the reward expectation
+            decay = math.exp(-self.dt_ms / max(rule.window_ms, 1e-9))
+
+            # Compute RPE BEFORE updating ema (= surprise relative to prior expectation)
+            rpe = reward - ema
+            surprise = abs(rpe)
+
+            # Update EMA
+            state["reward_ema"] = decay * ema + (1 - decay) * reward
+
+            # Phasic production iff surprise exceeds threshold
+            if surprise > rule.threshold:
+                return rule.sensitivity * (surprise - rule.threshold)
             return 0.0
 
         if rt == "from_novelty":
