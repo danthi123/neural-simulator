@@ -12,6 +12,7 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
+| 2026-04-26 | [Motor WTA lateral inhibition — mixed result](2026-04-26-wta-lateral-inhibition-mixed.md) | PARTIAL — kept opt-in (exploitation+, readaptation−) |
 | 2026-04-25 | [RNG drift from IZH preset additions](2026-04-25-rng-drift-from-izh-presets.md) | benign drift; locked-baseline relocked 170→149 |
 | 2026-04-25 | [Phase B acid test — REAL win](2026-04-25-phase-b-acid-test-real-win.md) | **GO** — phase 1 finalQ 1.76 vs G9 baseline 6.74 |
 | 2026-04-25 | [Phase B cascade-stability fix (n_cortex)](2026-04-25-phase-b-cascade-stability-fix.md) | bug fixed |

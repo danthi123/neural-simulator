@@ -63,9 +63,24 @@ def build_bg_brain_regions(
     n_stn: int = 20,
     n_thal_per_action: int = 10,
     n_motor_per_action: int = 10,
+    n_motor_fs_per_action: int = 5,
     n_dopamine: int = 10,
+    enable_motor_lateral_inhibition: bool = False,
+    # WTA defaults validated 2026-04-25 on probe_bg_wta_ambiguous: under equal
+    # cortex_N/cortex_E drive, asymmetry 1.06x → 1.77x with these weights.
+    # Lower values (10/5) leave FS pool subthreshold and inhibition is dead.
+    motor_to_fs_weight: float = 50.0,
+    fs_to_motor_weight: float = 20.0,
 ):
-    """Returns list of BrainRegion + list of RegionPathway for the BG circuit."""
+    """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
+
+    When `enable_motor_lateral_inhibition=True`, adds 4 motor_FS_X regions
+    (FS interneuron sub-pools, exc_fraction=0.0) plus pathways:
+      - motor_X → motor_FS_X (excitatory; motor's own activity drives its FS)
+      - motor_FS_X → motor_Y for Y != X (inhibitory; FS suppresses other motors)
+    This creates standard cortical winner-take-all microcircuit dynamics:
+    when motor_X fires, motor_FS_X fires, suppressing motor_{Y,Z,W}.
+    """
     from sim.regions import BrainRegion, RegionPathway
     from sim.enums import NeuronType
 
@@ -249,12 +264,43 @@ def build_bg_brain_regions(
             density=1.0, weight_mean=20.0, weight_jitter=0.2, plastic=False,
         ))
 
-    # NOTE: motor→motor "lateral inhibition" was creating EXCITATORY synapses
-    # because motor regions have exc_fraction=1.0 (RegionPathway sign comes
-    # from source region's exc_fraction). For real lateral inhibition we'd
-    # need motor-pool FS interneuron sub-populations. Removed for now; BG
-    # gating already provides selectivity (only the action with silenced
-    # GPi gets thalamic drive).
+    # ---- Motor lateral inhibition (opt-in) ----
+    # FS interneuron sub-pool per motor pool. Each motor_X drives its own
+    # motor_FS_X (excitatory), which in turn inhibits the other 3 motor pools.
+    # This implements the cortical WTA microcircuit: when motor_X fires,
+    # motor_FS_X fires, suppressing motor_{Y,Z,W}. Combined with BG gating,
+    # this should sharpen action selection in cases where multiple cortex
+    # pools drive simultaneously (currently the dominant random-fallback case).
+    if enable_motor_lateral_inhibition:
+        for action in ACTION_NAMES:
+            regions.append(BrainRegion(
+                name=f"motor_FS_{action}",
+                n_neurons=n_motor_fs_per_action,
+                exc_fraction=0.0,  # all-inhibitory → outgoing synapses are inhibitory
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+            ))
+
+        # motor_X → motor_FS_X (excitatory drive — motor's own activity drives its FS)
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"motor_{action}", to_region=f"motor_FS_{action}",
+                density=1.0, weight_mean=motor_to_fs_weight, weight_jitter=0.2,
+                plastic=False,
+            ))
+
+        # motor_FS_X → motor_Y for Y != X (inhibitory cross-pool suppression)
+        for src_action in ACTION_NAMES:
+            for tgt_action in ACTION_NAMES:
+                if src_action == tgt_action:
+                    continue
+                pathways.append(RegionPathway(
+                    from_region=f"motor_FS_{src_action}", to_region=f"motor_{tgt_action}",
+                    density=1.0, weight_mean=fs_to_motor_weight, weight_jitter=0.2,
+                    plastic=False,
+                ))
 
     return regions, pathways
 
@@ -288,6 +334,7 @@ def run_moving_goal_episode(
     reward_eligibility_tau_ms: float = 500.0,
     reward_hold_steps: int = 10,
     verbose: bool = True,
+    enable_motor_lateral_inhibition: bool = False,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -307,7 +354,10 @@ def run_moving_goal_episode(
         [(int(s), tuple(g)) for s, g in goal_schedule], key=lambda t: t[0]
     )
 
-    regions, pathways = build_bg_brain_regions(n_cortex=100)  # 25 per action — keeps D1 firing in physiological range (~75 Hz). Larger pools over-drive GPi past D1 inhibition.
+    regions, pathways = build_bg_brain_regions(
+        n_cortex=100,  # 25 per action — keeps D1 firing in physiological range (~75 Hz)
+        enable_motor_lateral_inhibition=enable_motor_lateral_inhibition,
+    )
     cfg = CoreSimConfig()
     cfg.num_neurons = 0
     cfg.dt_ms = 1.0
@@ -570,6 +620,8 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--n-steps", type=int, default=1800)
     ap.add_argument("--out", type=str, default=None)
+    ap.add_argument("--motor-lateral-inhibition", action="store_true",
+                    help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -579,6 +631,7 @@ def main():
             seed=args.seed,
             n_steps=args.n_steps,
             goal_schedule=[(0, (6, 6)), (300, (1, 6))],
+            enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
         )
         return 0
 
