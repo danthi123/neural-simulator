@@ -79,6 +79,14 @@ def build_bg_brain_regions(
     enable_learned_perception: bool = False,
     n_sensory: int = 49,  # 7×7 grid of (dx, dy)-tuned neurons
     sensory_to_cortex_weight: float = 10.0,
+    # Hippocampal module (option #1 in Phase B follow-up): adds place cells and
+    # goal cells, both Gaussian-tuned (sparse). Plastic place+goal → cortex
+    # pathways let the agent learn spatial→action associations. Replaces
+    # heuristic cortex drive when enabled. Sparse encoding (σ=0.5) avoids
+    # cascade saturation that broke earlier dense-encoding attempts.
+    enable_hippocampus: bool = False,
+    n_hippocampus_per_layer: int = 64,  # 8×8 grid place + 8×8 grid goal cells
+    hippocampus_to_cortex_weight: float = 10.0,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -94,6 +102,32 @@ def build_bg_brain_regions(
 
     regions = []
     pathways = []
+
+    # Hippocampal module (opt-in): place + goal cells with sparse Gaussian tuning.
+    # Place cells encode agent (x, y), goal cells encode goal (gx, gy). Both
+    # project plastically to all 4 cortex pools so the agent can learn
+    # (place, goal) → action associations via STDP+reward.
+    # Sparse encoding (σ=0.5 in runner): only 1-3 cells fire per position →
+    # avoids cascade saturation that broke previous dense sensory encoding.
+    if enable_hippocampus:
+        regions.append(BrainRegion(
+            name="place_cells",
+            n_neurons=n_hippocampus_per_layer,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="goal_cells",
+            n_neurons=n_hippocampus_per_layer,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
 
     # Sensory layer (opt-in): position-tuned input neurons feeding cortex.
     # Replaces heuristic cortex drive when enable_learned_perception=True.
@@ -226,6 +260,24 @@ def build_bg_brain_regions(
             pathways.append(RegionPathway(
                 from_region="sensory", to_region=f"cortex_{action}",
                 density=1.0, weight_mean=sensory_to_cortex_weight,
+                weight_jitter=0.2, plastic=True,
+            ))
+
+    # Hippocampus → cortex (LEARNING site, opt-in).
+    # Plastic; agent learns (place, goal) → action via STDP + reward.
+    # Place cells provide spatial context (where am I), goal cells provide
+    # task context (where do I want to be). Together they should learn
+    # the full position-action mapping.
+    if enable_hippocampus:
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region="place_cells", to_region=f"cortex_{action}",
+                density=1.0, weight_mean=hippocampus_to_cortex_weight,
+                weight_jitter=0.2, plastic=True,
+            ))
+            pathways.append(RegionPathway(
+                from_region="goal_cells", to_region=f"cortex_{action}",
+                density=1.0, weight_mean=hippocampus_to_cortex_weight,
                 weight_jitter=0.2, plastic=True,
             ))
 
@@ -377,6 +429,9 @@ def run_moving_goal_episode(
     enable_learned_perception: bool = False,
     sensory_drive_max_pA: float = 600.0,
     sensory_drive_sigma: float = 1.5,
+    enable_hippocampus: bool = False,
+    hippocampus_drive_max_pA: float = 600.0,
+    hippocampus_drive_sigma: float = 0.5,  # narrower → sparser firing → 1-3 cells per position
     # Informed init for learned perception: bias initial sensory->cortex_X weights
     # by alignment between sensor's preferred (dx,dy) and action X's direction
     # vector. Solves cold-start failure (random init produces no asymmetry, no
@@ -422,6 +477,7 @@ def run_moving_goal_episode(
         n_cortex=100,  # 25 per action — keeps D1 firing in physiological range (~75 Hz)
         enable_motor_lateral_inhibition=enable_motor_lateral_inhibition,
         enable_learned_perception=enable_learned_perception,
+        enable_hippocampus=enable_hippocampus,
     )
 
     # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
@@ -435,6 +491,14 @@ def run_moving_goal_episode(
     else:
         sensory_pref_dx = None
         sensory_pref_dy = None
+
+    # Pre-compute hippocampal cell preferred (x, y) — 8x8 grid covering [0, 7]²
+    if enable_hippocampus:
+        hippo_pref_x = np.array([i % 8 for i in range(64)], dtype=np.float32)
+        hippo_pref_y = np.array([i // 8 for i in range(64)], dtype=np.float32)
+    else:
+        hippo_pref_x = None
+        hippo_pref_y = None
     cfg = CoreSimConfig()
     cfg.num_neurons = 0
     cfg.dt_ms = 1.0
@@ -690,7 +754,7 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
         for rn in [f"thal_{a}" for a in ACTION_NAMES]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(300.0)
-        # Cortex drives — heuristic OR learned perception
+        # Cortex drives — main source: heuristic OR learned perception (mutually exclusive)
         if enable_learned_perception:
             # Drive sensory layer based on relative goal position (dx, dy).
             # Each sensory neuron i has preferred (dx_i, dy_i); rate = max * exp(-d²/2σ²)
@@ -713,6 +777,18 @@ def run_moving_goal_episode(
                 bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = cp.float32(800.0)
             if gx < x:
                 bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = cp.float32(800.0)
+
+        # Hippocampus drive (ADDITIVE on top of heuristic — provides plastic memory).
+        # Real biology: hippocampus augments cortex, doesn't replace it. Place + goal
+        # cells learn (place, goal) → action associations via STDP+reward, providing
+        # additional cortex drive that should reinforce the correct action over training.
+        if enable_hippocampus:
+            place_dsq = (hippo_pref_x - float(x)) ** 2 + (hippo_pref_y - float(y)) ** 2
+            place_drive = hippocampus_drive_max_pA * np.exp(-place_dsq / (2.0 * hippocampus_drive_sigma ** 2))
+            bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.asarray(place_drive, dtype=cp.float32)
+            goal_dsq = (hippo_pref_x - float(gx)) ** 2 + (hippo_pref_y - float(gy)) ** 2
+            goal_drive = hippocampus_drive_max_pA * np.exp(-goal_dsq / (2.0 * hippocampus_drive_sigma ** 2))
+            bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.asarray(goal_drive, dtype=cp.float32)
 
         # Run stimulus window and tally motor spikes
         motor_counts = {a: 0 for a in ACTION_NAMES}
@@ -918,6 +994,8 @@ def main():
                     help="Bias initial sensory->cortex weights by directional alignment (requires --learned-perception)")
     ap.add_argument("--informed-init-alpha", type=float, default=8.0,
                     help="Strength of positive-only directional prior (default 8.0; aligned weight ~24.5, orthogonal ~0.5)")
+    ap.add_argument("--hippocampus", action="store_true",
+                    help="Enable hippocampal module: 64 place cells + 64 goal cells with sparse Gaussian tuning, plastic to cortex")
     ap.add_argument("--da-gated-wta", action="store_true",
                     help="Scale motor FS->motor inhibition by reward-EMA gating_strength (the 'DA gate'). Requires --motor-lateral-inhibition + --adaptive-da")
     ap.add_argument("--goal-schedule", type=str, default="default",
@@ -950,6 +1028,7 @@ def main():
             enable_learned_perception=args.learned_perception,
             enable_learned_perception_informed_init=args.informed_init,
             informed_init_alpha=args.informed_init_alpha,
+            enable_hippocampus=args.hippocampus,
             enable_da_gated_wta=args.da_gated_wta,
             enable_rpe_scaled_reward=args.rpe_scaled_reward,
             rpe_scale_alpha=args.rpe_alpha,

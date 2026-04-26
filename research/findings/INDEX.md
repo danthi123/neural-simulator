@@ -12,6 +12,7 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
+| 2026-04-26 | [**Hippocampal module additive — same cold-start pattern**](2026-04-26-hippocampus-additive-fail.md) | **NEGATIVE** — fourth consecutive plastic-input-layer failure; closes off the search space until curriculum or cortex-WTA is added |
 | 2026-04-26 | [Pavlovian conditioning demo](2026-04-26-pavlovian-demo.md) | **GO** — clean classical conditioning, CS rate 5.56→16.32 Hz |
 | 2026-04-26 | [Informed-init perception — doesn't solve cold-start](2026-04-26-informed-init-perception-fail.md) | NEGATIVE — directional prior helps marginally but BG cascade needs cleaner cortex selectivity than graded sensory→cortex provides |
 | 2026-04-26 | [**6-seed correction**](2026-04-26-six-seed-correction.md) | **CORRECTION** — asym DA win was overstated; LR boost is actually best on 6 seeds (4.92 vs baseline 5.88) |
@@ -103,6 +104,10 @@ Closing the search space matters as much as opening it.
 - [G9 sim-native R-STDP NO-GO at runner-side](2026-04-24-g9.md)
 - [PFC bistability NEGATIVE](2026-04-25-pfc-bistability-negative.md)
 - [Session C synaptic-gain shelved](2026-04-24-session-c.md)
+- **Plastic-input-layer arc (4 consecutive NEGATIVE — same cold-start mode):**
+  - [Learned perception cold-start fail](2026-04-26-learned-perception-cold-start-fail.md)
+  - [Informed-init perception fail](2026-04-26-informed-init-perception-fail.md)
+  - [Hippocampus additive fail](2026-04-26-hippocampus-additive-fail.md) — robust ceiling: random plastic weights to multiple cortex pools destroys cascade selectivity. Future work needs curriculum or cortex-level WTA, not yet another init scheme.
 
 ### Infrastructure
 - [RNG drift lockdown](2026-04-24-rng-drift.md) (gamma benchmark variance fixed)
