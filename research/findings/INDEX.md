@@ -12,6 +12,7 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
+| 2026-04-26 | [**Surprise-boosted learning rate**](2026-04-26-surprise-lr-boost.md) | **GO** — most robust across task types (4.02 on 2-goal, 9.11 on multi-goal) |
 | 2026-04-26 | [Multi-goal stress test reverses asym adaDA win](2026-04-26-multi-goal-stress-test.md) | CONDITIONAL — asym adaDA HURTS on fast-changing tasks (4-goal: 9.97 vs baseline 8.32) |
 | 2026-04-26 | [Night summary](2026-04-26-night-summary.md) | overview of overnight session |
 | 2026-04-26 | [DA-gated WTA — still net negative](2026-04-26-da-gated-wta.md) | NEGATIVE — adaptive WTA scaling can't rescue WTA on this task; asym adaDA alone wins |

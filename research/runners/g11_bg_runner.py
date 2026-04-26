@@ -389,6 +389,10 @@ def run_moving_goal_episode(
     # muted. Real biology: DA encodes RPE not raw reward (Schultz 1997).
     enable_rpe_scaled_reward: bool = False,
     rpe_scale_alpha: float = 1.0,  # 1.0 means: delivered = 2*reward - ema
+    # Surprise-boosted learning rate: when |RPE| is high (unexpected outcome),
+    # temporarily boost reward_learning_rate. Models NE-like fast meta-modulation.
+    enable_surprise_lr_boost: bool = False,
+    surprise_lr_alpha: float = 2.0,  # max boost factor: 1 + alpha * |RPE|
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -737,12 +741,21 @@ def run_moving_goal_episode(
 
             # RPE-scaled reward (opt-in): amplify surprise (= deviation from expectation)
             # Uses reward_ema_pre (the agent's prediction BEFORE this trial's reward).
+            rpe = float(reward) - reward_ema_pre
             if enable_rpe_scaled_reward:
-                rpe = float(reward) - reward_ema_pre
                 delivered_reward = float(reward) + rpe_scale_alpha * rpe
             else:
                 delivered_reward = float(reward)
             bridge.core_config.current_reward_signal = delivered_reward
+
+            # Surprise-boosted learning rate (opt-in): NE-like fast meta-modulation.
+            # When |RPE| is high, temporarily boost reward_learning_rate. Restored
+            # after reward hold. Decoupled from per-action DA gating mechanism.
+            base_lr = float(learning_rate)
+            if enable_surprise_lr_boost:
+                surprise = abs(rpe)
+                bridge.core_config.reward_learning_rate = base_lr * (1.0 + surprise_lr_alpha * surprise)
+
             for _ in range(reward_hold_steps):
                 bridge._run_one_simulation_step()
                 bridge.runtime_state.current_time_step += 1
@@ -750,6 +763,9 @@ def run_moving_goal_episode(
                     bridge.runtime_state.current_time_step * cfg.dt_ms
                 )
             bridge.core_config.current_reward_signal = 0.0
+            # Restore base reward_learning_rate (in case surprise-boosted)
+            if enable_surprise_lr_boost:
+                bridge.core_config.reward_learning_rate = base_lr
 
         if verbose and (step + 1) % 100 == 0:
             recent_dist = float(np.mean(distance_log[-100:]))
@@ -850,6 +866,9 @@ def main():
     ap.add_argument("--rpe-scaled-reward", action="store_true",
                     help="Scale reward by prediction error: delivered = reward + alpha * (reward - reward_ema). Surprise gets amplified.")
     ap.add_argument("--rpe-alpha", type=float, default=1.0)
+    ap.add_argument("--surprise-lr-boost", action="store_true",
+                    help="Boost reward_learning_rate when |RPE| is high (NE-like fast meta-modulation)")
+    ap.add_argument("--surprise-lr-alpha", type=float, default=2.0)
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -873,6 +892,8 @@ def main():
             enable_da_gated_wta=args.da_gated_wta,
             enable_rpe_scaled_reward=args.rpe_scaled_reward,
             rpe_scale_alpha=args.rpe_alpha,
+            enable_surprise_lr_boost=args.surprise_lr_boost,
+            surprise_lr_alpha=args.surprise_lr_alpha,
         )
         return 0
 
