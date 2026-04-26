@@ -12,6 +12,7 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
+| 2026-04-26 | [Pavlovian conditioning demo](2026-04-26-pavlovian-demo.md) | **GO** — clean classical conditioning, CS rate 5.56→16.32 Hz |
 | 2026-04-26 | [Informed-init perception — doesn't solve cold-start](2026-04-26-informed-init-perception-fail.md) | NEGATIVE — directional prior helps marginally but BG cascade needs cleaner cortex selectivity than graded sensory→cortex provides |
 | 2026-04-26 | [**6-seed correction**](2026-04-26-six-seed-correction.md) | **CORRECTION** — asym DA win was overstated; LR boost is actually best on 6 seeds (4.92 vs baseline 5.88) |
 | 2026-04-26 | [**Surprise-boosted learning rate**](2026-04-26-surprise-lr-boost.md) | **GO** — most robust across task types (4.02 on 2-goal, 9.11 on multi-goal) |
