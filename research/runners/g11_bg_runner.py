@@ -382,6 +382,13 @@ def run_moving_goal_episode(
     # Implements the user's "DA gate" concept: when winning, WTA strong (commit);
     # when losing, WTA relaxes (explore via reduced inhibition).
     enable_da_gated_wta: bool = False,
+    # RPE-scaled reward (NE-like surprise amplification):
+    # delivered_reward = reward + alpha * (reward - reward_ema)
+    # When reward is unexpectedly negative (after positive EMA), the prediction
+    # error is large and amplified — fast adaptation. Expected outcomes get
+    # muted. Real biology: DA encodes RPE not raw reward (Schultz 1997).
+    enable_rpe_scaled_reward: bool = False,
+    rpe_scale_alpha: float = 1.0,  # 1.0 means: delivered = 2*reward - ema
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -689,6 +696,8 @@ def run_moving_goal_episode(
         reward_log.append(float(reward))
 
         if abs(reward) > 0:
+            # Capture EMA BEFORE update (= the agent's prediction at this step)
+            reward_ema_pre = reward_ema
             # Update reward EMA (used by adaptive DA mode).
             # If asymmetric decay is configured, use faster decay for negative
             # reward (quicker exploration trigger on goal change / policy break).
@@ -726,7 +735,14 @@ def run_moving_goal_episode(
                 trace = bridge.cp_eligibility_trace[:actual_nnz]
                 trace[other_mask] = trace[other_mask] * scale
 
-            bridge.core_config.current_reward_signal = float(reward)
+            # RPE-scaled reward (opt-in): amplify surprise (= deviation from expectation)
+            # Uses reward_ema_pre (the agent's prediction BEFORE this trial's reward).
+            if enable_rpe_scaled_reward:
+                rpe = float(reward) - reward_ema_pre
+                delivered_reward = float(reward) + rpe_scale_alpha * rpe
+            else:
+                delivered_reward = float(reward)
+            bridge.core_config.current_reward_signal = delivered_reward
             for _ in range(reward_hold_steps):
                 bridge._run_one_simulation_step()
                 bridge.runtime_state.current_time_step += 1
@@ -829,15 +845,25 @@ def main():
                     help="Enable learned sensory->cortex mapping (49-neuron sensory layer, plastic to cortex)")
     ap.add_argument("--da-gated-wta", action="store_true",
                     help="Scale motor FS->motor inhibition by reward-EMA gating_strength (the 'DA gate'). Requires --motor-lateral-inhibition + --adaptive-da")
+    ap.add_argument("--goal-schedule", type=str, default="default",
+                    help="'default' = (6,6) -> (1,6) at step 300. 'multi' = 4 goal changes across the corners.")
+    ap.add_argument("--rpe-scaled-reward", action="store_true",
+                    help="Scale reward by prediction error: delivered = reward + alpha * (reward - reward_ema). Surprise gets amplified.")
+    ap.add_argument("--rpe-alpha", type=float, default=1.0)
     args = ap.parse_args()
 
     if args.moving_goal:
         out_path = args.out or f"research/findings/raw/g11_bg/g11_seed{args.seed}.json"
+        if args.goal_schedule == "multi":
+            # 4 corners cycle, goal changes every 450 steps
+            goal_schedule = [(0, (6, 6)), (450, (1, 6)), (900, (1, 1)), (1350, (6, 1))]
+        else:
+            goal_schedule = [(0, (6, 6)), (300, (1, 6))]
         run_moving_goal_episode(
             out_path=out_path,
             seed=args.seed,
             n_steps=args.n_steps,
-            goal_schedule=[(0, (6, 6)), (300, (1, 6))],
+            goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_per_action_da_targeting=args.per_action_da,
             enable_adaptive_per_action_da=args.adaptive_da,
@@ -845,6 +871,8 @@ def main():
             adaptive_da_ema_decay_negative=args.adaptive_da_ema_decay_negative,
             enable_learned_perception=args.learned_perception,
             enable_da_gated_wta=args.da_gated_wta,
+            enable_rpe_scaled_reward=args.rpe_scaled_reward,
+            rpe_scale_alpha=args.rpe_alpha,
         )
         return 0
 

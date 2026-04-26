@@ -12,6 +12,8 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
+| 2026-04-26 | [Multi-goal stress test reverses asym adaDA win](2026-04-26-multi-goal-stress-test.md) | CONDITIONAL — asym adaDA HURTS on fast-changing tasks (4-goal: 9.97 vs baseline 8.32) |
+| 2026-04-26 | [Night summary](2026-04-26-night-summary.md) | overview of overnight session |
 | 2026-04-26 | [DA-gated WTA — still net negative](2026-04-26-da-gated-wta.md) | NEGATIVE — adaptive WTA scaling can't rescue WTA on this task; asym adaDA alone wins |
 | 2026-04-26 | [Learned perception — cold-start fail](2026-04-26-learned-perception-cold-start-fail.md) | NEGATIVE — sensory→cortex doesn't bootstrap from random in 1800 trials |
 | 2026-04-26 | [**Asymmetric adaptive DA**](2026-04-26-asymmetric-adaptive-da.md) | **GO (new best)** — sum=3.53 (-33% vs baseline), phase 1 gap nearly closed |
