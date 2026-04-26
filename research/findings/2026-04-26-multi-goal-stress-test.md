@@ -81,12 +81,27 @@ On the 4-goal task with transitions every 450 steps:
 - `research/runners/g11_bg_runner.py:643-650`: `--goal-schedule multi` flag implementation
 - `research/findings/raw/g11_bg/g11_seed{42,43,44}_multi_{baseline,asymDA}.json`: 3-seed × 2-condition acid test data
 
+## Update (2026-04-26 late session): RPE-scaled reward also tested
+
+Implemented RPE-scaled reward (NE-like surprise amplification): `delivered = reward + alpha * (reward - reward_ema_pre)`. Idea: amplify unexpected outcomes for faster adaptation. Tested two variants on the multi-goal task:
+
+| Variant | Sum (3-seed avg) |
+|---|---:|
+| Baseline (broadcast DA) | **8.32** ← still best |
+| Asym adaptive DA only | 9.97 |
+| Asym DA + RPE-scaled reward | 9.49 |
+| RPE-scaled reward only (no asym DA) | 9.62 |
+
+Adding RPE scaling helps modestly — closes ~30% of the asym-vs-baseline gap when combined with asym DA. But none of the sharpening / scaling variants beat the simple broadcast baseline on multi-goal.
+
+**Conclusion: the Phase B BG cascade baseline is the most robust general-purpose configuration.** Sharpening is a task-conditional refinement.
+
 ## Decision
 
-- Keep asym adaDA opt-in (`--adaptive-da --adaptive-da-ema-decay-negative 0.7`).
-- Keep baseline as default — robust across both task types.
-- Document the conditional nature of the asym adaDA win (prior finding doc updated).
-- Future work: implement NE-style fast meta-modulation if multi-goal performance is a priority.
+- Keep asym adaDA opt-in (`--adaptive-da --adaptive-da-ema-decay-negative 0.7`). Recommended for slow-change tasks.
+- Keep RPE-scaled reward opt-in (`--rpe-scaled-reward`). Modest helper.
+- **Baseline remains default** — robust across both task types.
+- Future work: implement true NE concentration (separate dynamics) if multi-goal performance is a priority. RPE scaling is a partial proxy but doesn't fully address the fast-adaptation need.
 
 ## Lesson
 
