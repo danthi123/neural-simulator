@@ -156,6 +156,17 @@ Findings doc: `2026-04-26-multi-goal-stress-test.md`
 
 The natural next research direction is **true NE-style fast meta-modulation** — separate concentration with phasic firing on unexpected reward change. RPE scaling is a partial proxy. A full implementation in the neuromodulator subsystem (sim/neuromodulators.py) could enable both regimes (slow + fast) within one configuration.
 
+## Update: combo testing
+
+Tested LR boost + asymmetric adaptive DA combined on 2-goal task: sum=4.07, slightly worse than asym DA alone (3.53). The two mechanisms interfere through the shared reward EMA — combining them doesn't compose well. **Use one, not both.**
+
+## Final task-aware recommendations
+
+- **Slow-change tasks (1 transition per ~1500 steps)**: `--adaptive-da --adaptive-da-ema-decay-negative 0.7` — sum 3.53
+- **Fast-change tasks (3+ transitions per episode)**: baseline broadcast — sum 8.32
+- **Unknown / mixed task type**: `--surprise-lr-boost` — sum 4.02 / 9.11 (most robust)
+- **Default** (backward compat): no flags
+
 ## Stop point
 
 The Phase B BG cascade architecture is now well-characterized:
