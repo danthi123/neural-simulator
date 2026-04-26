@@ -1,0 +1,144 @@
+"""Smoke tests for g11_bg_runner opt-in flags.
+
+Each test runs a tiny moving-goal episode (50-100 steps, no learning load)
+with one or more flags enabled. Verifies the runner doesn't crash and
+produces structurally valid output. Does NOT test learning quality —
+that's covered by the acid-test runs documented in
+research/findings/2026-04-25/26-*.md.
+
+These guards are intended to catch regressions when the runner is edited.
+"""
+from __future__ import annotations
+
+import json
+import os
+import sys
+import tempfile
+
+import pytest
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+@pytest.fixture
+def tmp_out_path(tmp_path):
+    return str(tmp_path / "g11_smoke.json")
+
+
+def _run_one(out_path, **kwargs):
+    """Run one moving-goal episode with given kwargs, return parsed result."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+
+    n_steps = kwargs.pop("n_steps", 50)
+    run_moving_goal_episode(
+        out_path=out_path,
+        seed=42,
+        n_steps=n_steps,
+        verbose=False,
+        **kwargs,
+    )
+
+    assert os.path.exists(out_path), f"runner did not produce {out_path}"
+    with open(out_path) as f:
+        result = json.load(f)
+    assert "motor_counts" in result
+    assert "phase_stats" in result
+    assert len(result["motor_counts"]) == n_steps
+    return result
+
+
+def test_baseline_no_flags(tmp_out_path):
+    """Default behavior: no opt-in flags, just Phase B baseline."""
+    _run_one(tmp_out_path)
+
+
+def test_motor_lateral_inhibition(tmp_out_path):
+    """WTA microcircuit (FS interneurons + motor cross-pool inhibition)."""
+    _run_one(tmp_out_path, enable_motor_lateral_inhibition=True)
+
+
+def test_per_action_da_hard(tmp_out_path):
+    """Hard per-action DA targeting (always-on eligibility gating)."""
+    _run_one(tmp_out_path, enable_per_action_da_targeting=True)
+
+
+def test_adaptive_per_action_da(tmp_out_path):
+    """Symmetric adaptive DA (reward-EMA-gated eligibility)."""
+    _run_one(tmp_out_path, enable_adaptive_per_action_da=True)
+
+
+def test_asymmetric_adaptive_da(tmp_out_path):
+    """Asymmetric adaptive DA (slow positive, fast negative — recommended for slow-change)."""
+    _run_one(
+        tmp_out_path,
+        enable_adaptive_per_action_da=True,
+        adaptive_da_ema_decay=0.9,
+        adaptive_da_ema_decay_negative=0.7,
+    )
+
+
+def test_da_gated_wta(tmp_out_path):
+    """DA-gated WTA: motor FS->motor weights scaled by gating_strength."""
+    _run_one(
+        tmp_out_path,
+        enable_motor_lateral_inhibition=True,
+        enable_adaptive_per_action_da=True,
+        enable_da_gated_wta=True,
+    )
+
+
+def test_learned_perception(tmp_out_path):
+    """Sensory layer + plastic sensory->cortex mapping (replaces heuristic)."""
+    _run_one(tmp_out_path, enable_learned_perception=True)
+
+
+def test_rpe_scaled_reward(tmp_out_path):
+    """RPE-scaled reward (delivered = reward + alpha * RPE)."""
+    _run_one(tmp_out_path, enable_rpe_scaled_reward=True)
+
+
+def test_surprise_lr_boost(tmp_out_path):
+    """Surprise-boosted learning rate (most robust across task types)."""
+    _run_one(tmp_out_path, enable_surprise_lr_boost=True)
+
+
+def test_multi_goal_schedule(tmp_out_path):
+    """4-corner goal schedule (validates phase counting through multiple goal changes)."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+
+    # 100 steps, 2 goal changes (compressed for speed)
+    run_moving_goal_episode(
+        out_path=tmp_out_path,
+        seed=42,
+        n_steps=80,
+        verbose=False,
+        goal_schedule=[(0, (6, 6)), (30, (1, 6)), (60, (1, 1))],
+    )
+    with open(tmp_out_path) as f:
+        result = json.load(f)
+    # 3 phases expected from the goal_schedule
+    assert len(result["phase_stats"]) == 3, (
+        f"expected 3 phases, got {len(result['phase_stats'])}"
+    )
+
+
+def test_combo_lr_boost_plus_asym_da(tmp_out_path):
+    """Combination flag: surprise LR + asymmetric adaptive DA. Should not crash even if not optimal."""
+    _run_one(
+        tmp_out_path,
+        enable_adaptive_per_action_da=True,
+        adaptive_da_ema_decay_negative=0.7,
+        enable_surprise_lr_boost=True,
+    )
+
+
+def test_motor_counts_structure(tmp_out_path):
+    """Verify motor_counts log is per-trial, length-4 list per entry."""
+    result = _run_one(tmp_out_path, n_steps=20)
+    for trial_counts in result["motor_counts"]:
+        assert len(trial_counts) == 4, f"expected 4 actions, got {len(trial_counts)}"
+        for c in trial_counts:
+            assert isinstance(c, int)
+            assert c >= 0
