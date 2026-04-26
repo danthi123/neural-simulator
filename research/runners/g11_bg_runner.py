@@ -336,6 +336,8 @@ def run_moving_goal_episode(
     verbose: bool = True,
     enable_motor_lateral_inhibition: bool = False,
     enable_per_action_da_targeting: bool = False,
+    enable_adaptive_per_action_da: bool = False,
+    adaptive_da_ema_decay: float = 0.9,  # ~tau=10 trials
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -403,10 +405,14 @@ def run_moving_goal_episode(
 
     # Per-action DA targeting: pre-compute synapse-post-action mask.
     # For each plastic cortex→str_D1_X synapse, mark which action X it serves.
-    # Per-trial: zero eligibility on synapses where post is in str_D1_Y (Y != selected),
-    # so reward only credits the chosen action's pathway.
+    # Per-trial: scale eligibility on synapses where post is in str_D1_Y (Y != selected)
+    # by (1 - gating_strength), where gating_strength is either fixed at 1.0 (hard
+    # mode) or adapted from recent reward stability (adaptive mode).
+    # Adaptive: tracks reward EMA; high positive EMA → strength=1 (commit, exploit);
+    # low/negative EMA → strength=0 (explore, broadcast credit).
     # We restrict to D1 (direct path); D2 (indirect) keeps broadcast learning.
-    if enable_per_action_da_targeting:
+    use_da_targeting = enable_per_action_da_targeting or enable_adaptive_per_action_da
+    if use_da_targeting:
         coo = bridge.cp_connections.tocoo()
         post_neurons_cp = coo.col  # cupy int64
         n_synapses = int(post_neurons_cp.size)
@@ -424,10 +430,15 @@ def run_moving_goal_episode(
             d1_synapse_other_action_masks[action_idx_setup] = other_d1
         if verbose:
             n_d1_synapses = int((synapse_post_action >= 0).sum().get())
-            print(f"[g11 seed={seed}] per-action DA: "
+            mode = "adaptive" if enable_adaptive_per_action_da else "hard"
+            print(f"[g11 seed={seed}] per-action DA ({mode}): "
                   f"{n_d1_synapses} synapses are cortex->D1 (will be selectively gated)")
     else:
         d1_synapse_other_action_masks = None
+
+    # Adaptive DA state — reward EMA in [-1, +1]
+    reward_ema = 0.0
+    da_strength_log = []  # log per-trial gating strength for analysis
 
     # Setup baseline tonic drives that don't change between steps
     bridge.cp_external_input_current[:] = 0.0
@@ -561,14 +572,32 @@ def run_moving_goal_episode(
         reward_log.append(float(reward))
 
         if abs(reward) > 0:
-            # Per-action DA targeting: zero eligibility on cortex→D1_Y synapses
-            # for Y != chosen action, so reward only credits the action that was
-            # actually taken. (D2 indirect path retains broadcast learning.)
-            if (d1_synapse_other_action_masks is not None
+            # Update reward EMA (used by adaptive DA mode)
+            reward_ema = adaptive_da_ema_decay * reward_ema + (1 - adaptive_da_ema_decay) * float(reward)
+
+            # Compute gating strength for per-action DA targeting:
+            #   hard:     always 1.0 (full gating)
+            #   adaptive: scales linearly from reward_ema in [-1, +1] to strength in [0, 1]
+            #             reward_ema=+1 (consistently winning) → strength=1.0 (full gating, exploit)
+            #             reward_ema=-1 (consistently losing)  → strength=0.0 (no gating, explore)
+            if enable_adaptive_per_action_da:
+                gating_strength = max(0.0, min(1.0, (reward_ema + 1.0) / 2.0))
+            elif enable_per_action_da_targeting:
+                gating_strength = 1.0
+            else:
+                gating_strength = 0.0
+            da_strength_log.append(float(gating_strength))
+
+            # Apply per-action DA: scale eligibility on non-selected pathways by (1 - strength)
+            if (gating_strength > 0
+                    and d1_synapse_other_action_masks is not None
                     and bridge.cp_eligibility_trace is not None):
                 actual_nnz = bridge.cp_connections.nnz
                 other_mask = d1_synapse_other_action_masks[action_idx][:actual_nnz]
-                bridge.cp_eligibility_trace[:actual_nnz][other_mask] = 0.0
+                scale = float(1.0 - gating_strength)
+                # Scale eligibility on non-selected pathways
+                trace = bridge.cp_eligibility_trace[:actual_nnz]
+                trace[other_mask] = trace[other_mask] * scale
 
             bridge.core_config.current_reward_signal = float(reward)
             for _ in range(reward_hold_steps):
@@ -662,7 +691,9 @@ def main():
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
     ap.add_argument("--per-action-da", action="store_true",
-                    help="Enable per-action dopamine targeting: reward only credits chosen action's cortex→D1 synapses")
+                    help="Enable per-action dopamine targeting (hard): reward only credits chosen action's cortex->D1 synapses")
+    ap.add_argument("--adaptive-da", action="store_true",
+                    help="Enable ADAPTIVE per-action DA: gating strength scales with recent reward EMA (low reward → broadcast)")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -674,6 +705,7 @@ def main():
             goal_schedule=[(0, (6, 6)), (300, (1, 6))],
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_per_action_da_targeting=args.per_action_da,
+            enable_adaptive_per_action_da=args.adaptive_da,
         )
         return 0
 
