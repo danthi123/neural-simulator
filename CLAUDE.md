@@ -370,38 +370,43 @@ driving spontaneous striatal/cortical activity (Schultz 2007).
 
 ### Phase B refinement (2026-04-26): adaptive DA, WTA, learned perception
 
-After Phase B's structural win, an autonomous overnight session iterated on
-seven additional sharpening / perception variants. Result table in
-[`docs/SCIENCE_ROADMAP.md` §4.7](docs/SCIENCE_ROADMAP.md). Headline:
+After Phase B's structural win, an autonomous overnight session iterated
+on twelve sharpening / perception / meta-modulation variants on both
+2-goal (1 transition) and multi-goal (3 transitions) tasks. Full result
+table in [`docs/SCIENCE_ROADMAP.md` §4.7](docs/SCIENCE_ROADMAP.md).
 
-**Recommended Phase B sharpening config:**
-```bash
-python -m research.runners.g11_bg_runner --moving-goal \
-    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
-    --seed N --n-steps 1800
-```
+### Task-aware recommended configurations
 
-This gives **sum finalQ 3.53** vs 5.24 baseline (-33%, the best result measured).
+| Task type | Recommended config | Sum finalQ |
+|---|---|---:|
+| Default / unknown task | (no flags — broadcast baseline) | 5.24 / 8.32 |
+| Slow-change (rare goal switches) | `--adaptive-da --adaptive-da-ema-decay-negative 0.7` | **3.53** / 9.97 |
+| Fast-change (frequent goal switches) | (no flags — baseline still best) | 5.24 / **8.32** |
+| Mixed / unknown change rate | `--surprise-lr-boost` (most robust) | 4.02 / 9.11 |
 
-**Mechanism:** asymmetric reward-EMA-gated per-action DA targeting. When
-the agent is winning consistently, eligibility is selectively gated to the
-chosen action's pathway (commit). When reward drops after goal change,
-eligibility broadcasts again (explore). Asymmetric ramps (slow positive
-0.9, fast negative 0.7) match phasic DA biology — dips are sharper than
-ramps (Schultz 1998).
+**Asymmetric adaptive DA** (the slow-change winner): reward-EMA-gated per-action DA targeting. When agent is winning consistently, eligibility is selectively gated to the chosen action's pathway (commit). When reward drops after goal change, eligibility broadcasts again (explore). Asymmetric ramps (slow positive tau~10, fast negative tau~3) match phasic DA biology — dips are sharper than ramps (Schultz 1998). Reverses on multi-goal (over-throttles learning during frequent changes).
 
-**Other variants tested:**
-- `--motor-lateral-inhibition`: WTA microcircuit. PARTIAL — exploitation+, readaptation−. Net negative when added to adaptive DA. Counter-intuitively, even DA-gated WTA (`--da-gated-wta`) doesn't help.
-- `--per-action-da`: hard gating (always ON). Same exploitation/exploration trade-off as WTA.
-- `--learned-perception`: replaces heuristic cortex drive with plastic sensory→cortex (49 sensory neurons tuned to (dx, dy)). NEGATIVE — cold-start fails, agent stays at random walk for 1800 trials. Random initial weights produce no asymmetry for STDP+reward to amplify.
+**Surprise-boosted LR** (most robust across task types): when |reward - reward_ema_pre| is high (unexpected outcome), temporarily multiply `reward_learning_rate` by `(1 + α × |RPE|)`. Restored after reward hold. Models NE-like fast meta-modulation. Doesn't gate eligibility — preserves broadcast learning rate while adding "react fast" boost on surprise. Different bottleneck than asym DA: rate not gate.
 
-**Refinement findings:**
-- `research/findings/2026-04-26-asymmetric-adaptive-da.md` — current best (3.53)
-- `research/findings/2026-04-26-adaptive-da-targeting.md` — symmetric variant (3.99)
-- `research/findings/2026-04-26-per-action-da-mixed.md` — hard gating (4.65)
+### Other refinement variants (all opt-in, none beat the recommended configs)
+
+- `--motor-lateral-inhibition`: WTA microcircuit (FS interneurons). PARTIAL — exploitation+, readaptation−. Net negative when stacked with adaptive DA. Even DA-gated WTA doesn't help.
+- `--per-action-da`: hard eligibility gating (always ON). Same exploitation/exploration trade-off as WTA.
+- `--rpe-scaled-reward`: amplifies reward signal magnitude by RPE. Modest help, but `--surprise-lr-boost` is cleaner architecturally.
+- `--learned-perception`: replaces heuristic cortex drive with plastic sensory→cortex layer (49 neurons tuned to (dx, dy)). NEGATIVE — cold-start fails, agent stays at random walk for 1800 trials. Random initial weights produce no asymmetry for STDP+reward to amplify. Future: try with informed init.
+- Combo flags: combining adaptive DA with WTA, or adaptive DA with LR boost, doesn't compose well. Mechanisms interfere through shared reward EMA. Use one, not both.
+
+### Refinement findings (chronological)
+
 - `research/findings/2026-04-26-wta-lateral-inhibition-mixed.md` — WTA (4.86)
+- `research/findings/2026-04-26-per-action-da-mixed.md` — hard DA (4.65)
+- `research/findings/2026-04-26-adaptive-da-targeting.md` — symmetric adaptive DA (3.99)
+- `research/findings/2026-04-26-asymmetric-adaptive-da.md` — asymmetric (3.53, 2-goal best)
 - `research/findings/2026-04-26-da-gated-wta.md` — DA-gated WTA NEGATIVE (4.54)
 - `research/findings/2026-04-26-learned-perception-cold-start-fail.md` — perception NEGATIVE
+- `research/findings/2026-04-26-multi-goal-stress-test.md` — REVERSES asym DA on fast-change
+- `research/findings/2026-04-26-surprise-lr-boost.md` — most robust variant (4.02 / 9.11)
+- `research/findings/2026-04-26-night-summary.md` — overall overview
 
 ### Research Runner Ecosystem (`research/runners/`)
 
