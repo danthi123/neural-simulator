@@ -113,9 +113,28 @@ Agent stays at Manhattan distance ~1.7 from goal in steady state on an 8×8 grid
 
 All merged to main, pushed to origin.
 
-## What remains open
+## Update: multi-goal stress test result
 
-1. **Multi-goal stress test** (currently running): 4 goal changes per episode tests asymmetric adaptive DA's robustness. If it holds up, the mechanism generalizes. Results expected within ~30 min of this writing.
+Multi-goal task (4 goal changes, 1800 steps) results — added after night summary was written:
+
+| Variant | Sum (3-seed avg) |
+|---|---:|
+| Baseline (broadcast DA) | **8.32** ← best on multi-goal |
+| Asym adaptive DA | 9.97 (+20% worse) |
+| Asym DA + RPE-scaled reward | 9.49 |
+| RPE-scaled reward only | 9.62 |
+
+**Asym adaptive DA REVERSES on the multi-goal task.** The mechanism's EMA-based gating throttles learning when reward is mid-range (post-frequent-change), trading adaptation speed for credit precision. None of the sharpening / RPE variants beats baseline.
+
+This makes the conclusion task-conditional:
+- **2-goal task (1 transition)**: asym adaptive DA wins decisively (3.53 vs 5.24)
+- **4-goal task (3 transitions)**: baseline broadcast DA wins decisively (8.32 vs 9.49+)
+
+Phase B BG cascade architecture itself is robust across both regimes. Sharpening is a task-specific refinement.
+
+Findings doc: `2026-04-26-multi-goal-stress-test.md`
+
+## What remains open
 
 2. **Learned perception revisits**: cold-start fail is solvable with informed init or curriculum. Worth a future session if pure learning is a priority.
 
@@ -127,8 +146,29 @@ All merged to main, pushed to origin.
 
 5. **Real position encoding with informed init**: most likely to break the 3.53 ceiling further if pursued — but it's a multi-day project.
 
-## Recommendation
+## Final recommendation (post-multi-goal)
 
-Asymmetric adaptive DA is a clean GO. Document it, ship it, move on.
+**Phase B baseline is the recommended default for general use.** It's robust across both 2-goal and 4-goal task variants and provides the architectural foundation that resolved the silent-motor trap (Phase B win 2026-04-25).
 
-The natural next research direction is **harder tasks** (multi-goal stress test currently validating), and possibly **NE-gated readaptation latency**. The architecture is now strong enough on the 2-goal moving-goal task that further iteration would be diminishing returns; the value is in stress-testing on harder problems.
+**Asym adaptive DA is recommended for known-slow-change scenarios.** When goal changes are rare (1 every 1500+ steps), asym DA gives sum=3.53 (vs baseline 5.24). When goal changes are frequent (1 every 450 steps), it hurts.
+
+**RPE-scaled reward is a partial helper for fast-change tasks** but doesn't fully address the structural issue. Modest improvement when combined with asym DA on multi-goal (9.49 vs 9.97).
+
+The natural next research direction is **true NE-style fast meta-modulation** — separate concentration with phasic firing on unexpected reward change. RPE scaling is a partial proxy. A full implementation in the neuromodulator subsystem (sim/neuromodulators.py) could enable both regimes (slow + fast) within one configuration.
+
+## Stop point
+
+The Phase B BG cascade architecture is now well-characterized:
+- Robust silent-motor-trap fix (74% improvement on 2-goal, 60% on 4-goal vs random walk)
+- Sharpening refinements are task-conditional
+- Best total improvement: 33% (asym adaptive DA on 2-goal)
+- 9 distinct refinement experiments tested, all documented as findings
+
+Future sessions could explore:
+1. True NE/5-HT meta-modulation in `sim/neuromodulators.py`
+2. Hybrid heuristic + learned perception
+3. Curriculum learning for sensory→cortex
+4. Hierarchical action representation (sub-actions for finer control)
+5. Move to a different task class entirely (sequential decision, multi-modal sensory)
+
+All commits pushed to main on https://github.com/danthi123/neural-simulator.
