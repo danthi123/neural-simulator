@@ -377,6 +377,12 @@ def run_moving_goal_episode(
     enable_learned_perception: bool = False,
     sensory_drive_max_pA: float = 600.0,
     sensory_drive_sigma: float = 1.5,
+    # Informed init for learned perception: bias initial sensory->cortex_X weights
+    # by alignment between sensor's preferred (dx,dy) and action X's direction
+    # vector. Solves cold-start failure (random init produces no asymmetry, no
+    # learning signal). Plasticity then refines the prior rather than discovers.
+    enable_learned_perception_informed_init: bool = False,
+    informed_init_alpha: float = 8.0,  # sharper positive-only prior; aligned ~ 24.5 weight (heuristic-equivalent)
     # DA-gated WTA: when both --motor-lateral-inhibition and adaptive DA are on,
     # scale FS→motor inhibition weight per-trial by gating_strength (reward EMA).
     # Implements the user's "DA gate" concept: when winning, WTA strong (commit);
@@ -540,6 +546,55 @@ def run_moving_goal_episode(
         if verbose:
             print(f"[g11 seed={seed}] DA-gated WTA: {int(chosen_mask.sum())} FS->motor synapses "
                   f"({convention}), will scale by gating_strength per trial")
+
+    # Informed initialization for learned perception: bias initial sensory->cortex_X
+    # weights by alignment between sensor's preferred (dx, dy) and action X's
+    # direction vector. Solves the cold-start problem identified in
+    # research/findings/2026-04-26-learned-perception-cold-start-fail.md.
+    if (enable_learned_perception
+            and enable_learned_perception_informed_init
+            and sensory_pref_dx is not None):
+        # Action direction vectors (N, E, S, W) — must match ACTION_DELTAS
+        action_dirs = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        sensory_indices_list = list(bridge.region_manager.indices("sensory"))
+        sensory_set = set(sensory_indices_list)
+        sensory_idx_to_pos = {n: i for i, n in enumerate(sensory_indices_list)}
+        coo = bridge.cp_connections.tocoo()
+        rows_np = coo.row.get(); cols_np = coo.col.get()
+        n_modified = 0
+        # CSR convention here: rows are pre, cols are post (verified by FS->motor logic above)
+        for action_idx, action_name in enumerate(ACTION_NAMES):
+            cortex_X_set = set(bridge.region_manager.indices(f"cortex_{action_name}"))
+            ax, ay = action_dirs[action_idx]
+            # Find synapse indices where pre is in sensory and post is in cortex_X
+            new_weights = []
+            target_indices = []
+            for syn_idx in range(rows_np.size):
+                pre = int(rows_np[syn_idx])
+                post = int(cols_np[syn_idx])
+                if pre in sensory_set and post in cortex_X_set:
+                    sensor_layer_idx = sensory_idx_to_pos[pre]
+                    dx_pref = float(sensory_pref_dx[sensor_layer_idx])
+                    dy_pref = float(sensory_pref_dy[sensor_layer_idx])
+                    # Alignment: dot product of sensor's preferred direction with action's direction
+                    alignment = dx_pref * ax + dy_pref * ay  # ranges roughly [-3, +3]
+                    # SHARP prior: only positive alignment contributes meaningfully.
+                    # Orthogonal/anti-aligned sensors get near-zero weight so they don't
+                    # drive cortex_X (avoiding cascade saturation across all 4 pools).
+                    # Aligned sensors get strong weight (up to ~25 = matches heuristic 800pA equivalent).
+                    positive_alignment = max(0.0, alignment)
+                    new_w = max(0.5, 0.5 + informed_init_alpha * positive_alignment)
+                    new_weights.append(new_w)
+                    target_indices.append(syn_idx)
+            if target_indices:
+                idx_cp = cp.asarray(target_indices, dtype=cp.int64)
+                w_cp = cp.asarray(new_weights, dtype=cp.float32)
+                bridge.cp_connections.data[idx_cp] = w_cp
+                n_modified += len(target_indices)
+        if verbose:
+            print(f"[g11 seed={seed}] learned perception (informed init): "
+                  f"rewrote {n_modified} sensory->cortex weights with directional prior "
+                  f"(alpha={informed_init_alpha})")
 
     # Setup baseline tonic drives that don't change between steps
     bridge.cp_external_input_current[:] = 0.0
@@ -859,6 +914,10 @@ def main():
                     help="Separate (faster) EMA decay for negative reward (asymmetric ramp; biologically: phasic DA dip)")
     ap.add_argument("--learned-perception", action="store_true",
                     help="Enable learned sensory->cortex mapping (49-neuron sensory layer, plastic to cortex)")
+    ap.add_argument("--informed-init", action="store_true",
+                    help="Bias initial sensory->cortex weights by directional alignment (requires --learned-perception)")
+    ap.add_argument("--informed-init-alpha", type=float, default=8.0,
+                    help="Strength of positive-only directional prior (default 8.0; aligned weight ~24.5, orthogonal ~0.5)")
     ap.add_argument("--da-gated-wta", action="store_true",
                     help="Scale motor FS->motor inhibition by reward-EMA gating_strength (the 'DA gate'). Requires --motor-lateral-inhibition + --adaptive-da")
     ap.add_argument("--goal-schedule", type=str, default="default",
@@ -889,6 +948,8 @@ def main():
             adaptive_da_ema_decay=args.adaptive_da_ema_decay,
             adaptive_da_ema_decay_negative=args.adaptive_da_ema_decay_negative,
             enable_learned_perception=args.learned_perception,
+            enable_learned_perception_informed_init=args.informed_init,
+            informed_init_alpha=args.informed_init_alpha,
             enable_da_gated_wta=args.da_gated_wta,
             enable_rpe_scaled_reward=args.rpe_scaled_reward,
             rpe_scale_alpha=args.rpe_alpha,
