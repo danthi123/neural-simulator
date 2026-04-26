@@ -377,6 +377,11 @@ def run_moving_goal_episode(
     enable_learned_perception: bool = False,
     sensory_drive_max_pA: float = 600.0,
     sensory_drive_sigma: float = 1.5,
+    # DA-gated WTA: when both --motor-lateral-inhibition and adaptive DA are on,
+    # scale FS→motor inhibition weight per-trial by gating_strength (reward EMA).
+    # Implements the user's "DA gate" concept: when winning, WTA strong (commit);
+    # when losing, WTA relaxes (explore via reduced inhibition).
+    enable_da_gated_wta: bool = False,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -492,6 +497,39 @@ def run_moving_goal_episode(
     reward_ema = 0.0
     da_strength_log = []  # log per-trial gating strength for analysis
 
+    # DA-gated WTA: pre-compute FS->motor synapse indices and save baseline weights.
+    # Per-trial we'll scale these weights by gating_strength to make WTA adaptive.
+    fs_to_motor_indices = None
+    fs_to_motor_baseline_weights = None
+    if enable_da_gated_wta and enable_motor_lateral_inhibition:
+        # All FS pre-neurons (across 4 actions); all motor post-neurons (across 4 actions)
+        fs_indices_all = []
+        motor_indices_all = []
+        for action in ACTION_NAMES:
+            fs_indices_all.extend(region_indices_cp[f"motor_FS_{action}"].get().tolist())
+            motor_indices_all.extend(region_indices_cp[f"motor_{action}"].get().tolist())
+        fs_set = set(fs_indices_all)
+        motor_set = set(motor_indices_all)
+        # Find synapse indices where pre in fs_set AND post in motor_set
+        coo = bridge.cp_connections.tocoo()
+        rows = coo.row.get(); cols = coo.col.get()
+        # CSR convention: assume cp_connections[i, j] means i->j (pre->post)
+        # We pick the orientation that gives non-zero count.
+        mask_a = np.array([r in fs_set and c in motor_set for r, c in zip(rows, cols)])
+        mask_b = np.array([c in fs_set and r in motor_set for r, c in zip(rows, cols)])
+        if mask_a.sum() > mask_b.sum():
+            chosen_mask = mask_a
+            convention = "row=pre, col=post"
+        else:
+            chosen_mask = mask_b
+            convention = "row=post, col=pre"
+        fs_to_motor_indices = cp.asarray(np.where(chosen_mask)[0], dtype=cp.int64)
+        # Snapshot baseline weights (constant since FS->motor is plastic=False)
+        fs_to_motor_baseline_weights = bridge.cp_connections.data[fs_to_motor_indices].copy()
+        if verbose:
+            print(f"[g11 seed={seed}] DA-gated WTA: {int(chosen_mask.sum())} FS->motor synapses "
+                  f"({convention}), will scale by gating_strength per trial")
+
     # Setup baseline tonic drives that don't change between steps
     bridge.cp_external_input_current[:] = 0.0
     for region_name in [f"gpe_{a}" for a in ACTION_NAMES]:
@@ -541,6 +579,10 @@ def run_moving_goal_episode(
               flush=True)
 
     t0 = time.time()
+    # Track current gating_strength (used for DA-gated WTA across the whole trial,
+    # not just the reward-hold sub-step). Initialized to 1.0 (full WTA on first trial
+    # before any reward feedback exists).
+    current_gating_strength = 1.0
     for step in range(n_steps):
         # Goal change
         while (current_schedule_idx + 1 < len(goal_schedule_sorted)
@@ -551,6 +593,15 @@ def run_moving_goal_episode(
             if verbose:
                 print(f"[g11 seed={seed}] step {step}: GOAL CHANGED to ({gx}, {gy})",
                       flush=True)
+
+        # DA-gated WTA: scale FS->motor synapse weights by current gating_strength.
+        # When gating=1 (winning, exploit), full WTA. When gating=0 (losing,
+        # explore), WTA disabled (no inhibition). Updated AFTER each trial's
+        # reward feedback below.
+        if fs_to_motor_indices is not None:
+            bridge.cp_connections.data[fs_to_motor_indices] = (
+                fs_to_motor_baseline_weights * cp.float32(current_gating_strength)
+            )
 
         dist_before = manhattan(x, y)
 
@@ -661,6 +712,8 @@ def run_moving_goal_episode(
             else:
                 gating_strength = 0.0
             da_strength_log.append(float(gating_strength))
+            # Cache for next trial's WTA scaling
+            current_gating_strength = float(gating_strength)
 
             # Apply per-action DA: scale eligibility on non-selected pathways by (1 - strength)
             if (gating_strength > 0
@@ -774,6 +827,8 @@ def main():
                     help="Separate (faster) EMA decay for negative reward (asymmetric ramp; biologically: phasic DA dip)")
     ap.add_argument("--learned-perception", action="store_true",
                     help="Enable learned sensory->cortex mapping (49-neuron sensory layer, plastic to cortex)")
+    ap.add_argument("--da-gated-wta", action="store_true",
+                    help="Scale motor FS->motor inhibition by reward-EMA gating_strength (the 'DA gate'). Requires --motor-lateral-inhibition + --adaptive-da")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -789,6 +844,7 @@ def main():
             adaptive_da_ema_decay=args.adaptive_da_ema_decay,
             adaptive_da_ema_decay_negative=args.adaptive_da_ema_decay_negative,
             enable_learned_perception=args.learned_perception,
+            enable_da_gated_wta=args.da_gated_wta,
         )
         return 0
 

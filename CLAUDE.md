@@ -368,6 +368,41 @@ driving spontaneous striatal/cortical activity (Schultz 2007).
 - `research/findings/2026-04-25-phase-b-honest-correction.md` — early overstated finding
 - `research/findings/2026-04-25-phase-b-bg-acid-test.md` — initial (overstated) result kept for trail
 
+### Phase B refinement (2026-04-26): adaptive DA, WTA, learned perception
+
+After Phase B's structural win, an autonomous overnight session iterated on
+seven additional sharpening / perception variants. Result table in
+[`docs/SCIENCE_ROADMAP.md` §4.7](docs/SCIENCE_ROADMAP.md). Headline:
+
+**Recommended Phase B sharpening config:**
+```bash
+python -m research.runners.g11_bg_runner --moving-goal \
+    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
+    --seed N --n-steps 1800
+```
+
+This gives **sum finalQ 3.53** vs 5.24 baseline (-33%, the best result measured).
+
+**Mechanism:** asymmetric reward-EMA-gated per-action DA targeting. When
+the agent is winning consistently, eligibility is selectively gated to the
+chosen action's pathway (commit). When reward drops after goal change,
+eligibility broadcasts again (explore). Asymmetric ramps (slow positive
+0.9, fast negative 0.7) match phasic DA biology — dips are sharper than
+ramps (Schultz 1998).
+
+**Other variants tested:**
+- `--motor-lateral-inhibition`: WTA microcircuit. PARTIAL — exploitation+, readaptation−. Net negative when added to adaptive DA. Counter-intuitively, even DA-gated WTA (`--da-gated-wta`) doesn't help.
+- `--per-action-da`: hard gating (always ON). Same exploitation/exploration trade-off as WTA.
+- `--learned-perception`: replaces heuristic cortex drive with plastic sensory→cortex (49 sensory neurons tuned to (dx, dy)). NEGATIVE — cold-start fails, agent stays at random walk for 1800 trials. Random initial weights produce no asymmetry for STDP+reward to amplify.
+
+**Refinement findings:**
+- `research/findings/2026-04-26-asymmetric-adaptive-da.md` — current best (3.53)
+- `research/findings/2026-04-26-adaptive-da-targeting.md` — symmetric variant (3.99)
+- `research/findings/2026-04-26-per-action-da-mixed.md` — hard gating (4.65)
+- `research/findings/2026-04-26-wta-lateral-inhibition-mixed.md` — WTA (4.86)
+- `research/findings/2026-04-26-da-gated-wta.md` — DA-gated WTA NEGATIVE (4.54)
+- `research/findings/2026-04-26-learned-perception-cold-start-fail.md` — perception NEGATIVE
+
 ### Research Runner Ecosystem (`research/runners/`)
 
 Headless runners for the research-gate progression (G1 through G11). Each is invocable as `python -m research.runners.gN_runner [args]` and writes results to `research/findings/raw/gN/`.

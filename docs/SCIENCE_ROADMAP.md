@@ -291,27 +291,64 @@ through G11 research-gate progression and is the current frontier.
   intermediate result), `2026-04-25-phase-b-bg-acid-test.md` (initial
   overstated finding kept for trail).
 
-### 4.7 Open questions / next ceiling (2026-04-25 → ?)
+### 4.7 Phase B refinement experiments (2026-04-26)
 
-The Phase B win produced 22% BG-active trials. The next ceiling is to
-push that toward 50%+ via:
+After Phase B's structural win (sum=5.24 baseline finalQ), an autonomous
+overnight session iterated on three "what's next" candidates plus
+several derived gates. Result summary:
 
-1. **Per-action dopamine targeting**: currently DA is broadcast; targeting
-   DA to the active D1 pool (per Schultz / Wickens biology) would sharpen
-   credit assignment and break ties faster.
-2. **Lateral inhibition between motor pools**: the previous motor→motor
-   pathway was incorrectly excitatory. FS interneuron sub-pools would
-   create proper winner-take-all behaviour.
-3. **Position encoding**: cortex drive is currently a heuristic
-   "drive cortex_X if direction X is goal-relative." A proper sensory
-   cortex with position-tuned (Gaussian) inputs and plastic
-   sensory→cortex weights would let position→action mapping be learned.
-4. **Harder tasks**: 8×8 grid + single goal change is the simplest moving
-   goal. Try multiple goal changes, longer episodes, harder grids,
-   non-grid environments.
-5. **Reward signal sharpening**: current reward is +1 / 0 / -1 per step.
-   Distance-shaped or temporal-difference reward could improve credit
-   assignment on the 22% BG-active trials.
+| Variant | P0 finalQ | P1 finalQ | Sum | Status |
+|---|---:|---:|---:|---|
+| Baseline (Phase B as-is) | 3.48 | 1.76 | 5.24 | reference |
+| Motor WTA (lateral inhibition) | 2.40 | 2.46 | 4.86 | PARTIAL — exploitation+, readaptation− |
+| Per-action DA (hard) | 2.04 | 2.61 | 4.65 | PARTIAL — same trade-off as WTA |
+| Adaptive per-action DA (sym tau~10) | 1.85 | 2.14 | 3.99 | GO — first clean win on sum |
+| Adaptive DA (sym tau~3) | 2.19 | 2.13 | 4.33 | NEUTRAL — too noisy |
+| **Adaptive DA (asym, slow+/fast-)** | **1.61** | **1.92** | **3.53** | **GO — current best** |
+| WTA + adaptive DA (sym) | 2.23 | 2.18 | 4.41 | NEGATIVE — composes badly |
+| WTA + asymmetric adaptive DA | 2.05 | 2.24 | 4.29 | NEGATIVE — same |
+| DA-gated WTA + asymmetric DA | 2.12 | 2.42 | 4.54 | NEGATIVE — gating doesn't rescue |
+| Learned perception (sensory→cortex) | 5.58 | 5.27 | 10.85 | NEGATIVE — cold-start fail |
+
+**Key insights from this iteration:**
+
+1. **Sharpening creates an exploitation/exploration trade-off.** WTA and
+   per-action DA both improve phase 0 acquisition while hurting phase 1
+   readaptation. Two independent mechanisms producing the same pattern
+   confirms it's structural, not tuning.
+
+2. **Adaptive sharpening solves the trade-off.** Reward-EMA-gated DA
+   targeting commits when winning, broadcasts when losing. Asymmetric
+   ramp (slow positive, fast negative — biologically: phasic DA dip
+   faster than ramp) gives the best result.
+
+3. **WTA is structurally redundant once credit is well-targeted.** WTA
+   addresses motor selection ambiguity, but adaptive DA already produces
+   decisive policy via selective reinforcement. Adding WTA on top is
+   double-bookkeeping that hurts more than it helps. Even DA-gated WTA
+   doesn't recover.
+
+4. **Learned perception cold-starts catastrophically.** Replacing
+   heuristic cortex drive with plastic sensory→cortex requires informed
+   initialization or curriculum learning. Random init in 1800 trials
+   produces no signal differentiation.
+
+**Recommended Phase B configuration:** `python -m research.runners.g11_bg_runner
+--moving-goal --adaptive-da --adaptive-da-ema-decay-negative 0.7 [...]`
+
+### 4.8 Open future directions
+
+1. **Hybrid heuristic + learned perception**: keep heuristic cortex drive
+   as base, layer plastic refinement on top. Would let learning fine-tune
+   without bootstrap problem.
+2. **Curriculum learning for sensory→cortex**: pre-train on fixed-goal
+   scenarios before exposing to moving-goal.
+3. **Harder tasks**: multiple goal changes per episode, larger grids,
+   non-grid environments would re-stress-test the architecture.
+4. **NE / 5-HT gates**: untried this session. NE for unexpected-change
+   detection, 5-HT for slow timescale credit assignment.
+5. **Distance-shaped reward**: current ±1 binary reward is sparse.
+   Continuous reward could improve adaptive DA's signal quality.
 
 ### 4.8 Cross-cutting: doc / repo hygiene
 - Module-split docs (CLAUDE.md, CONTRIBUTING.md) were stale (single-file
