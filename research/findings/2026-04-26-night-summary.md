@@ -183,3 +183,89 @@ Future sessions could explore:
 5. Move to a different task class entirely (sequential decision, multi-modal sensory)
 
 All commits pushed to main on https://github.com/danthi123/neural-simulator.
+
+## Postscript: late-night/morning work (added 2026-04-26 ~02:00)
+
+After the "stop point" above, the autonomous session continued. Four
+additional findings were generated:
+
+1. **[6-seed correction](2026-04-26-six-seed-correction.md)** — re-ran the
+   key variants on 6 seeds (42-44 + 100-102) to validate the 3-seed claims.
+   Asymmetric adaptive DA's "33% improvement" was **overstated**: 6-seed
+   sum=5.23±1.90 vs baseline 5.88±1.32 (only 11% improvement, t=0.64, NOT
+   statistically significant). Surprise-LR-boost is now the most robust
+   recommendation: 6-seed sum=4.92±1.96 (16% improvement, t=1.13).
+
+2. **[Pavlovian conditioning demo](2026-04-26-pavlovian-demo.md)** — clean
+   GO. CS rate 5.56 → 16.32 Hz (+10.76 Hz, t=13.95) using existing
+   `ASSOCIATIVE_PAIRING` infrastructure. Validates the plasticity stack on
+   a different problem class (associative learning, not RL) — confirms the
+   underlying machinery is solid.
+
+3. **[Informed-init perception fail](2026-04-26-informed-init-perception-fail.md)** —
+   NEGATIVE. Both soft (α=5) and sharp (α=8) directional priors on
+   sensory→cortex weights underperform baseline by ~2x. The "informed init
+   would fix learned perception" prediction from this summary's §What
+   remains open #5 is **disconfirmed**.
+
+4. **[Hippocampal module additive — NEGATIVE](2026-04-26-hippocampus-additive-fail.md)** —
+   adding 64 place cells + 64 goal cells with sparse Gaussian tuning
+   (σ=0.5), plastic to all 4 cortex pools, ON TOP of working heuristic,
+   degrades baseline by 1.87× (sum 10.98 vs 5.88). P1 action counts
+   ~uniform → cascade selectivity collapsed.
+
+### Architectural ceiling identified
+
+Four consecutive plastic-input-layer attempts have now failed the same way:
+
+| Attempt | Result |
+|---|---|
+| Cold-start learned perception | NEGATIVE |
+| Informed-init perception | NEGATIVE |
+| Hippocampus alone (replacement) | BG-active=0% |
+| Hippocampus additive | NEGATIVE (1.87× worse) |
+
+This is a robust architectural finding: **the BG cascade requires clean
+asymmetric cortex pool selectivity, and any plastic input layer with
+random initial weights breaks this.** Random weights to multiple cortex
+pools inject noise that washes out the heuristic asymmetry the cascade
+amplifies.
+
+### What's *not* the bottleneck (confirmed today)
+
+- Plasticity stack (Pavlovian works cleanly)
+- BG cascade (Phase B works on 2-goal task)
+- Neuromodulator subsystem (E.1 framework GO)
+- Brain-region framework (E.2 — adding 2 new regions worked first try)
+
+### What *is* the bottleneck
+
+Cortex-pool selectivity under graded multi-pool inputs. Solving this
+requires structural work, not parameter tuning:
+
+1. **Curriculum learning** — lock cortex→D1 first under fixed-goal
+   training, then thaw and expose the input layer.
+2. **Cortex-level WTA / lateral inhibition** — enforce
+   one-cortex-pool-at-a-time at the architecture level (plastic FS pool
+   that mediates global inhibition between cortex_{N,E,S,W}).
+3. **Sparse 1-of-N input encoding with hand-built initial weights** —
+   essentially the heuristic via lookup table.
+4. **Novelty / uncertainty gate** — suppresses input layer until cortex
+   has built selectivity.
+
+Each is a multi-day arc. None were tested in this autonomous session —
+they're fresh-conversation design decisions, not 2 AM autonomous calls.
+
+### Final stop point
+
+The autonomous session has converged: Phase B baseline is the recommended
+default; surprise-LR-boost is the recommended robust opt-in;
+plastic-input-layer extensions are an open structural problem. Total work
+on 2026-04-26: 11 findings written, all committed and pushed to main,
+INDEX kept up to date.
+
+Path forward (waiting for user input):
+- **A**: Implement cortex-level WTA (most likely to unblock plastic input layers)
+- **B**: Try curriculum learning (stage-locked plasticity)
+- **C**: Pivot to a different research arc (multi-modal RL+Pavlovian on shared population, scaling to larger networks, HH neurons throughout, etc.)
+
