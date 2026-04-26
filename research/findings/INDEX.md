@@ -12,6 +12,7 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
+| 2026-04-26 | [Learned perception — cold-start fail](2026-04-26-learned-perception-cold-start-fail.md) | NEGATIVE — sensory→cortex doesn't bootstrap from random in 1800 trials |
 | 2026-04-26 | [**Asymmetric adaptive DA**](2026-04-26-asymmetric-adaptive-da.md) | **GO (new best)** — sum=3.53 (-33% vs baseline), phase 1 gap nearly closed |
 | 2026-04-26 | [Adaptive per-action DA targeting](2026-04-26-adaptive-da-targeting.md) | **GO** — best phase 0 (1.85) AND best total (3.99); adapts via reward EMA |
 | 2026-04-26 | [Per-action dopamine targeting — same trade-off as WTA](2026-04-26-per-action-da-mixed.md) | PARTIAL — same exploitation+/readaptation− pattern; opt-in |

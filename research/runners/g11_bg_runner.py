@@ -71,6 +71,14 @@ def build_bg_brain_regions(
     # Lower values (10/5) leave FS pool subthreshold and inhibition is dead.
     motor_to_fs_weight: float = 50.0,
     fs_to_motor_weight: float = 20.0,
+    # Real perception (option #3 in Phase B follow-up): replace heuristic
+    # cortex drive with a learned sensory→cortex mapping. Adds a 49-neuron
+    # sensory layer tuned to (dx, dy) ∈ [-3, 3]² relative-position pairs.
+    # Plastic sensory→cortex pathways must learn position-to-action mapping
+    # via STDP+reward.
+    enable_learned_perception: bool = False,
+    n_sensory: int = 49,  # 7×7 grid of (dx, dy)-tuned neurons
+    sensory_to_cortex_weight: float = 10.0,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -86,6 +94,21 @@ def build_bg_brain_regions(
 
     regions = []
     pathways = []
+
+    # Sensory layer (opt-in): position-tuned input neurons feeding cortex.
+    # Replaces heuristic cortex drive when enable_learned_perception=True.
+    # Each sensory neuron is tuned to a relative-position (dx, dy) ∈ [-3, 3]².
+    # 7×7 grid = 49 neurons. The runner sets per-step drive based on goal offset.
+    if enable_learned_perception:
+        regions.append(BrainRegion(
+            name="sensory",
+            n_neurons=n_sensory,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
 
     # Cortex (input layer for goal-directed signals).
     # Split into per-action pools so different inputs preferentially activate
@@ -193,6 +216,18 @@ def build_bg_brain_regions(
     ))
 
     # ---- Pathways (cross-region projections) ----
+
+    # Sensory → cortex (LEARNING site for perception, opt-in).
+    # Plastic; agent learns position-to-action mapping via STDP + reward.
+    # Each sensory neuron projects to all 4 cortex pools; learning shapes
+    # which sensory patterns drive which cortex action pool.
+    if enable_learned_perception:
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region="sensory", to_region=f"cortex_{action}",
+                density=1.0, weight_mean=sensory_to_cortex_weight,
+                weight_jitter=0.2, plastic=True,
+            ))
 
     # Cortex -> striatum (LEARNING site).
     # Each cortex_X projects strongly to its corresponding str_D1_X / str_D2_X
@@ -339,6 +374,9 @@ def run_moving_goal_episode(
     enable_adaptive_per_action_da: bool = False,
     adaptive_da_ema_decay: float = 0.9,  # ~tau=10 trials (used for positive reward)
     adaptive_da_ema_decay_negative: float = None,  # if set, separate decay for negative reward (faster = quicker exploration trigger)
+    enable_learned_perception: bool = False,
+    sensory_drive_max_pA: float = 600.0,
+    sensory_drive_sigma: float = 1.5,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -361,7 +399,20 @@ def run_moving_goal_episode(
     regions, pathways = build_bg_brain_regions(
         n_cortex=100,  # 25 per action — keeps D1 firing in physiological range (~75 Hz)
         enable_motor_lateral_inhibition=enable_motor_lateral_inhibition,
+        enable_learned_perception=enable_learned_perception,
     )
+
+    # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
+    if enable_learned_perception:
+        sensory_pref = []
+        for iy in range(7):
+            for ix in range(7):
+                sensory_pref.append((ix - 3, iy - 3))  # dx, dy ∈ [-3, 3]
+        sensory_pref_dx = np.array([p[0] for p in sensory_pref], dtype=np.float32)
+        sensory_pref_dy = np.array([p[1] for p in sensory_pref], dtype=np.float32)
+    else:
+        sensory_pref_dx = None
+        sensory_pref_dy = None
     cfg = CoreSimConfig()
     cfg.num_neurons = 0
     cfg.dt_ms = 1.0
@@ -522,15 +573,29 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
         for rn in [f"thal_{a}" for a in ACTION_NAMES]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(300.0)
-        # Cortex drives based on goal direction
-        if gy > y:
-            bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = cp.float32(800.0)
-        if gx > x:
-            bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = cp.float32(800.0)
-        if gy < y:
-            bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = cp.float32(800.0)
-        if gx < x:
-            bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = cp.float32(800.0)
+        # Cortex drives — heuristic OR learned perception
+        if enable_learned_perception:
+            # Drive sensory layer based on relative goal position (dx, dy).
+            # Each sensory neuron i has preferred (dx_i, dy_i); rate = max * exp(-d²/2σ²)
+            # No direct cortex drive — agent must learn sensory→cortex mapping.
+            dx = float(gx - x)
+            dy = float(gy - y)
+            # Clip to sensor range to handle positions far from goal
+            dx_clip = max(-3.0, min(3.0, dx))
+            dy_clip = max(-3.0, min(3.0, dy))
+            d_sq = (sensory_pref_dx - dx_clip) ** 2 + (sensory_pref_dy - dy_clip) ** 2
+            sensory_drive = sensory_drive_max_pA * np.exp(-d_sq / (2.0 * sensory_drive_sigma ** 2))
+            bridge.cp_external_input_current[region_indices_cp["sensory"]] = cp.asarray(sensory_drive, dtype=cp.float32)
+        else:
+            # Heuristic cortex drive: directly drive cortex_X for each goal-relative direction
+            if gy > y:
+                bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = cp.float32(800.0)
+            if gx > x:
+                bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = cp.float32(800.0)
+            if gy < y:
+                bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = cp.float32(800.0)
+            if gx < x:
+                bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = cp.float32(800.0)
 
         # Run stimulus window and tally motor spikes
         motor_counts = {a: 0 for a in ACTION_NAMES}
@@ -707,6 +772,8 @@ def main():
                     help="EMA decay for adaptive DA (default 0.9, tau~10 trials; lower = faster reaction)")
     ap.add_argument("--adaptive-da-ema-decay-negative", type=float, default=None,
                     help="Separate (faster) EMA decay for negative reward (asymmetric ramp; biologically: phasic DA dip)")
+    ap.add_argument("--learned-perception", action="store_true",
+                    help="Enable learned sensory->cortex mapping (49-neuron sensory layer, plastic to cortex)")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -721,6 +788,7 @@ def main():
             enable_adaptive_per_action_da=args.adaptive_da,
             adaptive_da_ema_decay=args.adaptive_da_ema_decay,
             adaptive_da_ema_decay_negative=args.adaptive_da_ema_decay_negative,
+            enable_learned_perception=args.learned_perception,
         )
         return 0
 
