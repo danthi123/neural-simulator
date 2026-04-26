@@ -1,8 +1,9 @@
 # Asymmetric Adaptive DA — Closes Phase 1 Gap, New Best
 
 **Date:** 2026-04-26
-**Status:** GO. Best total finalQ measured (3.53 vs baseline 5.24, -33%). Phase 1 gap nearly closed.
-**Companion:** [Adaptive DA (symmetric)](2026-04-26-adaptive-da-targeting.md), [Phase B real-win](2026-04-25-phase-b-acid-test-real-win.md)
+**Status:** **CORRIGENDUM**: 3-seed claim of 33% improvement was overstated. See [6-seed correction](2026-04-26-six-seed-correction.md) — true 6-seed result is 5.23 ± 1.90 vs baseline 5.88 (11% improvement, t=0.64, NOT significant). Mechanism is highly seed-dependent. Use `--surprise-lr-boost` instead for reliable improvement.
+**Original status (kept for trail):** GO. Best total finalQ measured (3.53 vs baseline 5.24, -33%). Phase 1 gap nearly closed.
+**Companion:** [Adaptive DA (symmetric)](2026-04-26-adaptive-da-targeting.md), [Phase B real-win](2026-04-25-phase-b-acid-test-real-win.md), [6-seed correction](2026-04-26-six-seed-correction.md)
 
 ## TL;DR
 

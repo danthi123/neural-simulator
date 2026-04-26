@@ -1,10 +1,12 @@
 # Phase B Configuration Quick Reference
 
-Quick lookup for the recommended Phase B BG cascade configuration based on task type. Generated from autonomous overnight session 2026-04-26.
+Quick lookup for the recommended Phase B BG cascade configuration based on task type. Generated from autonomous overnight session 2026-04-26 + 6-seed corrigendum.
 
 ## TL;DR
 
-The Phase B BG cascade architecture (validated 2026-04-25) resolves the silent-motor trap structurally. On top of that, several opt-in refinements give task-conditional improvements.
+The Phase B BG cascade architecture (validated 2026-04-25) resolves the silent-motor trap structurally. On top of that, opt-in refinements give modest improvements — but watch out for high seed-variance.
+
+**Important calibration**: The asymmetric adaptive DA "win" (sum=3.53) on seeds 42-44 did NOT generalize to seeds 100-102 (mean 6.94). On a 6-seed pool, asym DA is only 11% better than baseline (within noise). **LR boost is more reliable** — 16% better with lower variance. See [`2026-04-26-six-seed-correction.md`](2026-04-26-six-seed-correction.md).
 
 ## Recommended configurations
 
@@ -16,24 +18,25 @@ python -m research.runners.g11_bg_runner --moving-goal --seed N --n-steps 1800
 - Phase 1 finalQ 1.76 (vs G9 baseline 6.74) — 74% improvement
 - Multi-goal sum 8.32
 
-### Slow-change tasks (recommended for 1-transition episodes)
+### Recommended for general use — most robust
+```bash
+python -m research.runners.g11_bg_runner --moving-goal --surprise-lr-boost \
+    --seed N --n-steps 1800
+```
+- NE-like surprise amplification of `reward_learning_rate`
+- 6-seed mean 4.92 ± 1.07 (16% improvement over baseline 5.88, t=1.31)
+- Lower variance than baseline AND than asym DA — most reliable
+
+### Conditional / experimental: asymmetric adaptive DA
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --seed N --n-steps 1800
 ```
 - Asymmetric adaptive DA (slow positive 0.9, fast negative 0.7 EMA decay)
-- Sum finalQ 3.53 (33% improvement over baseline 5.24)
-- **WARNING**: regresses to 9.97 on multi-goal task — only use when goal-change rate is known to be slow
-
-### Mixed / unknown task types — most robust
-```bash
-python -m research.runners.g11_bg_runner --moving-goal --surprise-lr-boost \
-    --seed N --n-steps 1800
-```
-- NE-like surprise amplification of `reward_learning_rate`
-- Sum 4.02 on 2-goal (23% improvement), 9.11 on multi-goal (9% regression — within 1σ of baseline)
-- Best mid-ground: never catastrophic on either task type
+- 6-seed mean 5.23 ± 1.90 (only 11% improvement, t=0.64, NOT significant)
+- **WARNING**: SEED-DEPENDENT. Worked on seeds 42-44 (mean 3.53) but failed on seeds 100-102 (mean 6.94)
+- Mechanism is biologically plausible but on-task variance too high to be a reliable recommendation
 
 ### Multi-goal (4-corner cycle stress test)
 ```bash

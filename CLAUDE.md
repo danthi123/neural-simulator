@@ -375,14 +375,18 @@ on twelve sharpening / perception / meta-modulation variants on both
 2-goal (1 transition) and multi-goal (3 transitions) tasks. Full result
 table in [`docs/SCIENCE_ROADMAP.md` §4.7](docs/SCIENCE_ROADMAP.md).
 
-### Task-aware recommended configurations
+### Recommended configuration
 
-| Task type | Recommended config | Sum finalQ |
-|---|---|---:|
-| Default / unknown task | (no flags — broadcast baseline) | 5.24 / 8.32 |
-| Slow-change (rare goal switches) | `--adaptive-da --adaptive-da-ema-decay-negative 0.7` | **3.53** / 9.97 |
-| Fast-change (frequent goal switches) | (no flags — baseline still best) | 5.24 / **8.32** |
-| Mixed / unknown change rate | `--surprise-lr-boost` (most robust) | 4.02 / 9.11 |
+After 6-seed validation (the 3-seed asym DA win didn't generalize — see `research/findings/2026-04-26-six-seed-correction.md`):
+
+```bash
+python -m research.runners.g11_bg_runner --moving-goal \
+    --surprise-lr-boost --seed N --n-steps 1800
+```
+
+This is the most reliable refinement: 6-seed mean 4.92 ± 1.07 (16% improvement over baseline 5.88, marginally significant at t=1.31). Lower variance than both baseline and asym DA.
+
+The `--adaptive-da --adaptive-da-ema-decay-negative 0.7` config is kept opt-in but no longer recommended without seed-specific validation — it's seed-dependent (great on 42-44, bad on 100-102, pooled 6-seed mean 5.23 ± 1.90).
 
 **Asymmetric adaptive DA** (the slow-change winner): reward-EMA-gated per-action DA targeting. When agent is winning consistently, eligibility is selectively gated to the chosen action's pathway (commit). When reward drops after goal change, eligibility broadcasts again (explore). Asymmetric ramps (slow positive tau~10, fast negative tau~3) match phasic DA biology — dips are sharper than ramps (Schultz 1998). Reverses on multi-goal (over-throttles learning during frequent changes).
 
