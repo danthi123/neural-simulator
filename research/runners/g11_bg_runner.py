@@ -71,6 +71,18 @@ def build_bg_brain_regions(
     # Lower values (10/5) leave FS pool subthreshold and inhibition is dead.
     motor_to_fs_weight: float = 50.0,
     fs_to_motor_weight: float = 20.0,
+    # Cortex-level WTA (Phase B follow-up to plastic-input-layer cold-start).
+    # Adds per-pool FS interneurons that mediate cross-pool inhibition.
+    # Mirrors motor WTA pattern. Goal: enforce one-cortex-pool-wins regardless
+    # of how noisy the input drive is. Lets hippocampus / sensory plastic layers
+    # add drive on top of heuristic without washing out cascade selectivity.
+    enable_cortex_lateral_inhibition: bool = False,
+    n_cortex_fs_per_action: int = 5,
+    # Scaled down 2.5x from motor WTA values: cortex pools are 25 neurons each
+    # (vs 10 for motor), so density=1.0 gives 2.5x more synapses. Compensating
+    # keeps total drive into/from FS comparable to motor case.
+    cortex_to_fs_weight: float = 20.0,
+    fs_to_cortex_weight: float = 8.0,
     # Real perception (option #3 in Phase B follow-up): replace heuristic
     # cortex drive with a learned sensory→cortex mapping. Adds a 49-neuron
     # sensory layer tuned to (dx, dy) ∈ [-3, 3]² relative-position pairs.
@@ -159,6 +171,23 @@ def build_bg_brain_regions(
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
         ))
+
+    # Cortex WTA microcircuit (opt-in). Per-pool FS interneurons that mediate
+    # cross-pool inhibition: cortex_X drives cortex_FS_X, which inhibits
+    # cortex_{Y,Z,W}. Standard cortical WTA pattern, mirror of motor WTA.
+    # Goal: enforce clean pool selectivity even when plastic input layers
+    # (hippocampus, learned-perception) add noisy drive across all 4 pools.
+    if enable_cortex_lateral_inhibition:
+        for action in ACTION_NAMES:
+            regions.append(BrainRegion(
+                name=f"cortex_FS_{action}",
+                n_neurons=n_cortex_fs_per_action,
+                exc_fraction=0.0,  # all-inhibitory → outgoing synapses are inhibitory
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+            ))
 
     # Per-action striatal pools (D1 direct, D2 indirect).
     # internal_density=0 (no lateral inhibition) initially — MSNs need
@@ -389,6 +418,26 @@ def build_bg_brain_regions(
                     plastic=False,
                 ))
 
+    # Cortex WTA pathways (opt-in). Mirror of motor WTA structure.
+    if enable_cortex_lateral_inhibition:
+        # cortex_X → cortex_FS_X (excitatory: cortex pool drives its FS)
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"cortex_{action}", to_region=f"cortex_FS_{action}",
+                density=1.0, weight_mean=cortex_to_fs_weight, weight_jitter=0.2,
+                plastic=False,
+            ))
+        # cortex_FS_X → cortex_Y for Y != X (inhibitory: FS suppresses other pools)
+        for src_action in ACTION_NAMES:
+            for tgt_action in ACTION_NAMES:
+                if src_action == tgt_action:
+                    continue
+                pathways.append(RegionPathway(
+                    from_region=f"cortex_FS_{src_action}", to_region=f"cortex_{tgt_action}",
+                    density=1.0, weight_mean=fs_to_cortex_weight, weight_jitter=0.2,
+                    plastic=False,
+                ))
+
     return regions, pathways
 
 
@@ -422,6 +471,7 @@ def run_moving_goal_episode(
     reward_hold_steps: int = 10,
     verbose: bool = True,
     enable_motor_lateral_inhibition: bool = False,
+    enable_cortex_lateral_inhibition: bool = False,
     enable_per_action_da_targeting: bool = False,
     enable_adaptive_per_action_da: bool = False,
     adaptive_da_ema_decay: float = 0.9,  # ~tau=10 trials (used for positive reward)
@@ -476,6 +526,7 @@ def run_moving_goal_episode(
     regions, pathways = build_bg_brain_regions(
         n_cortex=100,  # 25 per action — keeps D1 firing in physiological range (~75 Hz)
         enable_motor_lateral_inhibition=enable_motor_lateral_inhibition,
+        enable_cortex_lateral_inhibition=enable_cortex_lateral_inhibition,
         enable_learned_perception=enable_learned_perception,
         enable_hippocampus=enable_hippocampus,
     )
@@ -980,6 +1031,8 @@ def main():
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
+    ap.add_argument("--cortex-wta", action="store_true",
+                    help="Enable cortex-level WTA: per-pool FS interneurons enforce one-cortex-pool-wins. Tools plastic input layers (hippocampus, learned-perception) to coexist with heuristic.")
     ap.add_argument("--per-action-da", action="store_true",
                     help="Enable per-action dopamine targeting (hard): reward only credits chosen action's cortex->D1 synapses")
     ap.add_argument("--adaptive-da", action="store_true",
@@ -1021,6 +1074,7 @@ def main():
             n_steps=args.n_steps,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
+            enable_cortex_lateral_inhibition=args.cortex_wta,
             enable_per_action_da_targeting=args.per_action_da,
             enable_adaptive_per_action_da=args.adaptive_da,
             adaptive_da_ema_decay=args.adaptive_da_ema_decay,
