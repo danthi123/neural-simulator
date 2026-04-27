@@ -828,9 +828,14 @@ def run_moving_goal_episode(
     # waking trials where the agent successfully approached goal
     # (reward > 0). During sleep, these are replayed instead of random
     # patterns, modeling biological hippocampal replay of successful
-    # episodic memories. Bounded list to keep memory finite.
+    # episodic memories.
+    # Bounded to recent ~200 entries so sleep replays mostly the
+    # current-goal patterns, not stale patterns from earlier goals
+    # (which can bias consolidation toward old goal directions).
+    # Biologically: hippocampal trace decay ensures replay reflects
+    # recent experience, not arbitrary old episodes.
     successful_trajectories: List = []
-    SUCCESSFUL_TRAJ_MAX = 1000
+    SUCCESSFUL_TRAJ_MAX = 200
 
     # Curriculum: real plasticity gating (Stage 3, 2026-04-27).
     # The hippo→cortex pathways are tagged "hippo_to_cortex" and cortex→D1/D2
