@@ -12,7 +12,8 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
-| 2026-04-27 | [Sleep-replay infrastructure](2026-04-27-sleep-replay-infrastructure.md) | **PARTIAL** — sleep-replay infrastructure works correctly (gates fire, agent freezes); random replay neutral (sum 3.91 vs no-sleep 3.87). Future: trajectory replay of learned sequences. |
+| 2026-04-27 | [16×16 spatial scaling test](2026-04-27-16x16-scaling.md) | **PARTIAL** — architecture scales cleanly (1251 neurons / 70K synapses) but recipe tuned for 8×8 underperforms baseline at 16×16 (5.26 vs 4.44). Re-tuning needed for larger grids. CLI flags --grid-size and --n-hippocampus-per-layer added. |
+| 2026-04-27 | [Sleep-replay infrastructure](2026-04-27-sleep-replay-infrastructure.md) | PARTIAL — sleep-replay infrastructure works correctly (gates fire, agent freezes); random replay neutral (sum 3.91 vs no-sleep 3.87). Future: trajectory replay of learned sequences. |
 | 2026-04-27 | [**📋 Overnight summary**](2026-04-27-overnight-summary.md) | **MILESTONE** — plastic-input-layer arc closed; major infrastructure (per-pathway gating, NM-driven gates, real curriculum) landed. ~14h autonomous work, 8 commits, all pushed. |
 | 2026-04-27 | [Task-adaptive curriculum](2026-04-27-task-adaptive-curriculum.md) | **GO** — partial freeze (gain=0.2) generalizes across slow-change (2-goal: 4.79, 5/6) and fast-change (4-goal: 7.83, beats baseline 8.32 by 5.9%). Single hyperparameter controls task adaptation. NM-driven plasticity gates landed too. |
 | 2026-04-27 | [Sensory layer additive (multi-input)](2026-04-27-perception-additive.md) | **GO** — sensory + hippo + curriculum: 5/6 seeds beat baseline (4.63 vs 5.88, p=0.05). Three plastic input layers now compose. Heuristic-off test confirms inputs augment, don't replace, the heuristic (biologically expected). |

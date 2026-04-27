@@ -480,6 +480,9 @@ def run_moving_goal_episode(
     start_pos=(1, 1),
     goal_pos=(6, 6),
     goal_schedule=None,
+    n_hippocampus_per_layer: int = 64,  # default 8×8 grid; should be roughly grid_size²
+    sensory_to_cortex_weight: float = 10.0,
+    hippocampus_to_cortex_weight: float = 10.0,
     learning_rate: float = 0.01,
     reward_eligibility_tau_ms: float = 500.0,
     reward_hold_steps: int = 10,
@@ -594,6 +597,9 @@ def run_moving_goal_episode(
         enable_cortex_lateral_inhibition=enable_cortex_lateral_inhibition,
         enable_learned_perception=enable_learned_perception,
         enable_hippocampus=enable_hippocampus,
+        n_hippocampus_per_layer=n_hippocampus_per_layer,
+        sensory_to_cortex_weight=sensory_to_cortex_weight,
+        hippocampus_to_cortex_weight=hippocampus_to_cortex_weight,
     )
 
     # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
@@ -608,10 +614,16 @@ def run_moving_goal_episode(
         sensory_pref_dx = None
         sensory_pref_dy = None
 
-    # Pre-compute hippocampal cell preferred (x, y) — 8x8 grid covering [0, 7]²
+    # Pre-compute hippocampal cell preferred (x, y) — covering full grid.
+    # Layout: square grid of side = ceil(sqrt(n_hippocampus_per_layer)) with
+    # cells spaced to span the full grid range. For 8×8 grid with 64 cells,
+    # one cell per position. For 16×16 grid with 256 cells, also one per
+    # position. For mismatched cases, cells space out uniformly.
     if enable_hippocampus:
-        hippo_pref_x = np.array([i % 8 for i in range(64)], dtype=np.float32)
-        hippo_pref_y = np.array([i // 8 for i in range(64)], dtype=np.float32)
+        side = int(round(n_hippocampus_per_layer ** 0.5))
+        scale = (grid_size - 1) / max(1, side - 1) if side > 1 else 1.0
+        hippo_pref_x = np.array([(i % side) * scale for i in range(n_hippocampus_per_layer)], dtype=np.float32)
+        hippo_pref_y = np.array([(i // side) * scale for i in range(n_hippocampus_per_layer)], dtype=np.float32)
     else:
         hippo_pref_x = None
         hippo_pref_y = None
@@ -1318,6 +1330,14 @@ def main():
                     help="Run G9-style moving-goal scenario (Phase B.T6 acid test)")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--n-steps", type=int, default=1800)
+    ap.add_argument("--grid-size", type=int, default=8,
+                    help="Side length of square gridworld (default 8). Larger grids stress-test the architecture.")
+    ap.add_argument("--n-hippocampus-per-layer", type=int, default=64,
+                    help="Number of place + goal cells per layer (should be ~grid_size² for one cell per position; default 64 = 8×8).")
+    ap.add_argument("--sensory-to-cortex-weight", type=float, default=10.0,
+                    help="Initial mean weight for sensory→cortex pathway (default 10). Higher values let input layer drive cortex more strongly during phase 2.")
+    ap.add_argument("--hippocampus-to-cortex-weight", type=float, default=10.0,
+                    help="Initial mean weight for hippocampus→cortex pathway (default 10). Higher = stronger plastic input contribution.")
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
@@ -1375,22 +1395,29 @@ def main():
 
     if args.moving_goal:
         out_path = args.out or f"research/findings/raw/g11_bg/g11_seed{args.seed}.json"
+        # Scale goal positions to grid size — keeps relative spacing the same
+        # so the same task structure works at any grid scale. Defaults are
+        # ~75% and ~12% of grid extent (matches the 8×8 (6,6) and (1,6)).
+        gs = args.grid_size
+        far = (max(0, gs - 2), max(0, gs - 2))            # was (6, 6)
+        far_west = (max(0, 1), max(0, gs - 2))            # was (1, 6)
+        sw = (max(0, 1), max(0, 1))                        # was (1, 1)
+        far_se = (max(0, gs - 2), max(0, 1))              # was (6, 1)
         if args.goal_schedule == "multi":
-            # 4 corners cycle, goal changes every 450 steps
-            goal_schedule = [(0, (6, 6)), (450, (1, 6)), (900, (1, 1)), (1350, (6, 1))]
+            goal_schedule = [(0, far), (450, far_west), (900, sw), (1350, far_se)]
         elif args.goal_schedule == "curriculum":
-            # Curriculum-aligned schedule: phase 0 ((6,6)) extends through hippo
-            # warmup, then goal flips with hippo already on. Default at warmup=600
-            # gives 600 steps cortex+heuristic only, 600 steps cortex+hippo on (6,6),
-            # 600 steps cortex+hippo on (1,6) for readaptation test.
             flip = max(1200, args.curriculum_warmup_steps + 600)
-            goal_schedule = [(0, (6, 6)), (flip, (1, 6))]
+            goal_schedule = [(0, far), (flip, far_west)]
         else:
-            goal_schedule = [(0, (6, 6)), (300, (1, 6))]
+            goal_schedule = [(0, far), (300, far_west)]
         run_moving_goal_episode(
             out_path=out_path,
             seed=args.seed,
             n_steps=args.n_steps,
+            grid_size=args.grid_size,
+            n_hippocampus_per_layer=args.n_hippocampus_per_layer,
+            sensory_to_cortex_weight=args.sensory_to_cortex_weight,
+            hippocampus_to_cortex_weight=args.hippocampus_to_cortex_weight,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_cortex_lateral_inhibition=args.cortex_wta,
