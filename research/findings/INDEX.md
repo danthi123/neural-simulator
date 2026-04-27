@@ -12,7 +12,8 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
-| 2026-04-26 | [**Hippocampal module additive — same cold-start pattern**](2026-04-26-hippocampus-additive-fail.md) | **NEGATIVE** — fourth consecutive plastic-input-layer failure; closes off the search space until curriculum or cortex-WTA is added |
+| 2026-04-26 | [**Cortex-level WTA — selectivity fix works but readaptation breaks**](2026-04-26-cortex-wta.md) | **PARTIAL** — fixes plastic-input-layer cold-start (16% over hippo-alone) but introduces motor-WTA-style readaptation penalty; combo with adaptive DA is the next logical test |
+| 2026-04-26 | [Hippocampal module additive — same cold-start pattern](2026-04-26-hippocampus-additive-fail.md) | NEGATIVE — fourth consecutive plastic-input-layer failure; closes off the search space until curriculum or cortex-WTA is added |
 | 2026-04-26 | [Pavlovian conditioning demo](2026-04-26-pavlovian-demo.md) | **GO** — clean classical conditioning, CS rate 5.56→16.32 Hz |
 | 2026-04-26 | [Informed-init perception — doesn't solve cold-start](2026-04-26-informed-init-perception-fail.md) | NEGATIVE — directional prior helps marginally but BG cascade needs cleaner cortex selectivity than graded sensory→cortex provides |
 | 2026-04-26 | [**6-seed correction**](2026-04-26-six-seed-correction.md) | **CORRECTION** — asym DA win was overstated; LR boost is actually best on 6 seeds (4.92 vs baseline 5.88) |
