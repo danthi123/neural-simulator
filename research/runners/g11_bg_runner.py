@@ -539,6 +539,17 @@ def run_moving_goal_episode(
     # under top-down attention or unexpected reward (DA-modulated).
     curriculum_phase2_cortex_gain: float = 0.0,
     curriculum_phase2_hippo_gain: float = 1.0,
+    # Heuristic decay (Stage 6, 2026-04-27): scales the heuristic cortex
+    # drive (800 pA per aligned pool) by this factor. Default 1.0 keeps
+    # full heuristic. Set to 0.0 to disable heuristic entirely (tests
+    # whether learned hippo weights alone can navigate). Useful for
+    # validating that hippo actually learned something vs. just being
+    # along for the ride.
+    heuristic_strength: float = 1.0,
+    # Step at which heuristic_strength changes from heuristic_strength to
+    # post_curriculum_heuristic_strength. -1 = no change (default).
+    heuristic_decay_after_step: int = -1,
+    post_curriculum_heuristic_strength: float = 0.0,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -953,15 +964,22 @@ def run_moving_goal_episode(
             sensory_drive = sensory_drive_max_pA * np.exp(-d_sq / (2.0 * sensory_drive_sigma ** 2))
             bridge.cp_external_input_current[region_indices_cp["sensory"]] = cp.asarray(sensory_drive, dtype=cp.float32)
         else:
-            # Heuristic cortex drive: directly drive cortex_X for each goal-relative direction
+            # Heuristic cortex drive: directly drive cortex_X for each goal-relative direction.
+            # Heuristic strength can decay post-curriculum (set heuristic_decay_after_step + post_curriculum_heuristic_strength).
+            # Tests whether learned hippo weights can navigate without heuristic teacher.
+            if heuristic_decay_after_step >= 0 and step >= heuristic_decay_after_step:
+                h_strength = post_curriculum_heuristic_strength
+            else:
+                h_strength = heuristic_strength
+            h_drive = cp.float32(800.0 * h_strength)
             if gy > y:
-                bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = cp.float32(800.0)
+                bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = h_drive
             if gx > x:
-                bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = cp.float32(800.0)
+                bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = h_drive
             if gy < y:
-                bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = cp.float32(800.0)
+                bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = h_drive
             if gx < x:
-                bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = cp.float32(800.0)
+                bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = h_drive
 
         # Hippocampus drive (ADDITIVE on top of heuristic — provides plastic memory).
         # Real biology: hippocampus augments cortex, doesn't replace it. Place + goal
@@ -1215,6 +1233,12 @@ def main():
                     help="Phase 2 plasticity gain for cortex→D1 (default 0.0 = full freeze). Biologically: cortical plasticity slows but doesn't fully halt.")
     ap.add_argument("--curriculum-phase2-hippo-gain", type=float, default=1.0,
                     help="Phase 2 plasticity gain for hippo→cortex (default 1.0 = full plasticity).")
+    ap.add_argument("--heuristic-strength", type=float, default=1.0,
+                    help="Heuristic cortex drive strength multiplier (default 1.0). 0.0 disables heuristic.")
+    ap.add_argument("--heuristic-decay-after-step", type=int, default=-1,
+                    help="Step after which heuristic_strength changes to --post-curriculum-heuristic-strength (default -1 = no decay).")
+    ap.add_argument("--post-curriculum-heuristic-strength", type=float, default=0.0,
+                    help="Heuristic strength after decay step (default 0.0 = full off).")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -1256,6 +1280,9 @@ def main():
             curriculum_ramp_steps=args.curriculum_ramp_steps,
             curriculum_phase2_cortex_gain=args.curriculum_phase2_cortex_gain,
             curriculum_phase2_hippo_gain=args.curriculum_phase2_hippo_gain,
+            heuristic_strength=args.heuristic_strength,
+            heuristic_decay_after_step=args.heuristic_decay_after_step,
+            post_curriculum_heuristic_strength=args.post_curriculum_heuristic_strength,
         )
         return 0
 
