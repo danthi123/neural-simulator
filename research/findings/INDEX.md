@@ -12,7 +12,8 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
-| 2026-04-26 | [**Cortex WTA + adaDA + hippo combo**](2026-04-26-cortex-wta-adapda-combo.md) | **PARTIAL** — adaDA provides ~14% over WTA+hippo (9.26 → 8.01) but combo still 1.36× worse than baseline; closes off "more flags will fix it" approach |
+| 2026-04-26 | [**Curriculum learning (drive-gated)**](2026-04-26-curriculum-fail.md) | **NEGATIVE** — suppressing hippo drive during warmup doesn't crack the plastic-input-layer ceiling; true curriculum needs bridge-level staged plasticity |
+| 2026-04-26 | [Cortex WTA + adaDA + hippo combo](2026-04-26-cortex-wta-adapda-combo.md) | PARTIAL — adaDA provides ~14% over WTA+hippo (9.26 → 8.01) but combo still 1.36× worse than baseline; closes off "more flags will fix it" approach |
 | 2026-04-26 | [Cortex-level WTA — selectivity fix works but readaptation breaks](2026-04-26-cortex-wta.md) | PARTIAL — fixes plastic-input-layer cold-start (16% over hippo-alone) but introduces motor-WTA-style readaptation penalty; combo with adaptive DA is the next logical test |
 | 2026-04-26 | [Hippocampal module additive — same cold-start pattern](2026-04-26-hippocampus-additive-fail.md) | NEGATIVE — fourth consecutive plastic-input-layer failure; closes off the search space until curriculum or cortex-WTA is added |
 | 2026-04-26 | [Pavlovian conditioning demo](2026-04-26-pavlovian-demo.md) | **GO** — clean classical conditioning, CS rate 5.56→16.32 Hz |
