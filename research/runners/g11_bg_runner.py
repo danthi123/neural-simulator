@@ -588,6 +588,9 @@ def run_moving_goal_episode(
     enable_beacon_perception: bool = False,
     n_beacon_sensors: int = 8,
     beacon_to_goal_weight: float = 8.0,
+    beacon_max_intensity: float = 600.0,  # peak sensor drive (pA) when on top of beacon
+    beacon_falloff: float = 1.0,           # intensity = peak / (1 + falloff*distance)
+    beacon_replaces_goal: bool = False,    # if True, beacon→goal_cells is the ONLY goal info (true Stage 1 test)
     learning_rate: float = 0.01,
     reward_eligibility_tau_ms: float = 500.0,
     reward_hold_steps: int = 10,
@@ -752,6 +755,24 @@ def run_moving_goal_episode(
     else:
         hippo_pref_x = None
         hippo_pref_y = None
+
+    # Pre-compute beacon sensor preferred directions (Item 1 Stage 1).
+    # Sensors evenly distributed in 2D — for n=8: N, NE, E, SE, S, SW, W, NW.
+    # Each sensor responds maximally when beacon is in its preferred direction
+    # (cosine alignment), with intensity falling off with distance.
+    # Models biological directional cue detection (e.g., bilateral hearing
+    # estimating sound source direction from intensity differences).
+    if enable_beacon_perception:
+        beacon_pref_x = np.zeros(n_beacon_sensors, dtype=np.float32)
+        beacon_pref_y = np.zeros(n_beacon_sensors, dtype=np.float32)
+        for i in range(n_beacon_sensors):
+            angle = 2.0 * np.pi * i / n_beacon_sensors
+            beacon_pref_x[i] = np.cos(angle)
+            beacon_pref_y[i] = np.sin(angle)
+    else:
+        beacon_pref_x = None
+        beacon_pref_y = None
+
     cfg = CoreSimConfig()
     cfg.num_neurons = 0
     cfg.dt_ms = 1.0
@@ -1262,6 +1283,11 @@ def run_moving_goal_episode(
                               and step < goal_silence_after_step + goal_silence_duration)
             if in_goal_silence:
                 bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.float32(0.0)
+            elif enable_beacon_perception and beacon_replaces_goal:
+                # Replace mode: don't drive goal_cells directly. The
+                # beacon → goal_cells pathway must learn to drive them
+                # from sensor patterns.
+                pass  # goal_cells gets only the plastic beacon→goal drive
             else:
                 goal_dsq = (hippo_pref_x - float(gx)) ** 2 + (hippo_pref_y - float(gy)) ** 2
                 goal_drive = hippocampus_drive_max_pA * np.exp(-goal_dsq / (2.0 * hippocampus_drive_sigma ** 2))
@@ -1272,6 +1298,39 @@ def run_moving_goal_episode(
             # without hippo noise.
             bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.float32(0.0)
             bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.float32(0.0)
+
+        # Beacon perception drive (Item 1 Stage 1, 2026-04-27).
+        # The beacon emits intensity that falls off with distance from goal.
+        # Each sensor has a preferred direction; activation is intensity ×
+        # max(0, cosine_alignment) — modeling biological directional cue
+        # detection (e.g., bilateral hearing inferring sound source direction).
+        # During goal silence (PFC Stage 2 test) and sleep, beacon is also
+        # silenced — these tests assume no external goal info available.
+        if enable_beacon_perception:
+            in_goal_silence_step = (goal_silence_after_step >= 0
+                                    and step >= goal_silence_after_step
+                                    and step < goal_silence_after_step + goal_silence_duration)
+            if in_sleep or in_goal_silence_step:
+                bridge.cp_external_input_current[region_indices_cp["beacon_sensors"]] = cp.float32(0.0)
+            else:
+                # Compute beacon-to-agent vector
+                bdx = float(gx - x)
+                bdy = float(gy - y)
+                distance = (bdx * bdx + bdy * bdy) ** 0.5
+                if distance < 1e-6:
+                    # On top of beacon: all sensors max
+                    sensor_act = np.full(n_beacon_sensors,
+                                         beacon_max_intensity,
+                                         dtype=np.float32)
+                else:
+                    bearing_x = bdx / distance
+                    bearing_y = bdy / distance
+                    intensity = beacon_max_intensity / (1.0 + beacon_falloff * distance)
+                    cos_alignment = beacon_pref_x * bearing_x + beacon_pref_y * bearing_y
+                    sensor_act = intensity * np.maximum(0.0, cos_alignment)
+                bridge.cp_external_input_current[region_indices_cp["beacon_sensors"]] = (
+                    cp.asarray(sensor_act, dtype=cp.float32)
+                )
 
         # Run stimulus window and tally motor spikes
         motor_counts = {a: 0 for a in ACTION_NAMES}
@@ -1491,10 +1550,16 @@ def main():
     ap.add_argument("--goal-to-pfc-weight", type=float, default=8.0)
     ap.add_argument("--pfc-to-cortex-weight", type=float, default=8.0)
     ap.add_argument("--beacon-perception", action="store_true",
-                    help="Item 1 Stage 1 SKELETON: add beacon_sensors region (8 directional cells) and beacon → goal_cells pathway. Trial loop wiring is NOT yet complete — flag is a no-op until next session implements beacon-driven sensor activation.")
+                    help="Item 1 Stage 1: enable beacon_sensors region with directional tuning. Sensors are driven each step based on perceived beacon strength + bearing.")
     ap.add_argument("--n-beacon-sensors", type=int, default=8,
                     help="Number of beacon sensors (default 8 = cardinal+diagonal).")
     ap.add_argument("--beacon-to-goal-weight", type=float, default=8.0)
+    ap.add_argument("--beacon-max-intensity", type=float, default=600.0,
+                    help="Peak sensor drive (pA) when on top of beacon (default 600).")
+    ap.add_argument("--beacon-falloff", type=float, default=1.0,
+                    help="Intensity = peak / (1 + falloff*distance). Higher = faster falloff.")
+    ap.add_argument("--beacon-replaces-goal", action="store_true",
+                    help="If set, beacon → goal_cells is the ONLY goal info source (true perception test). Otherwise beacon adds info on top of direct goal_cells drive.")
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
@@ -1589,6 +1654,9 @@ def main():
             enable_beacon_perception=args.beacon_perception,
             n_beacon_sensors=args.n_beacon_sensors,
             beacon_to_goal_weight=args.beacon_to_goal_weight,
+            beacon_max_intensity=args.beacon_max_intensity,
+            beacon_falloff=args.beacon_falloff,
+            beacon_replaces_goal=args.beacon_replaces_goal,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_cortex_lateral_inhibition=args.cortex_wta,
