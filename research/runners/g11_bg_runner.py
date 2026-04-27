@@ -504,6 +504,15 @@ def run_moving_goal_episode(
     # temporarily boost reward_learning_rate. Models NE-like fast meta-modulation.
     enable_surprise_lr_boost: bool = False,
     surprise_lr_alpha: float = 2.0,  # max boost factor: 1 + alpha * |RPE|
+    # Curriculum learning (Option B from plastic-input-layer arc):
+    # In phase 1 (steps 0..curriculum_warmup_steps), suppress hippocampus drive
+    # so the heuristic+WTA builds up cortex→D1 selectivity in isolation. Then
+    # in phase 2, enable hippo drive — hippo plastic weights learn given that
+    # cortex→D1 is already mature. Tests whether the plastic-input-layer ceiling
+    # is a sample-efficiency problem (curriculum solves it) or a structural
+    # problem (curriculum also fails).
+    enable_curriculum: bool = False,
+    curriculum_warmup_steps: int = 600,  # phase 1 length: cortex→D1 builds without hippo noise
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -833,13 +842,25 @@ def run_moving_goal_episode(
         # Real biology: hippocampus augments cortex, doesn't replace it. Place + goal
         # cells learn (place, goal) → action associations via STDP+reward, providing
         # additional cortex drive that should reinforce the correct action over training.
-        if enable_hippocampus:
+        # Curriculum gate: during the warmup phase, suppress hippo drive so the
+        # heuristic (+WTA if enabled) builds up cortex→D1 selectivity in isolation.
+        # After the warmup, hippo drive turns on and learns via STDP+reward.
+        hippo_active = enable_hippocampus and (
+            not enable_curriculum or step >= curriculum_warmup_steps
+        )
+        if hippo_active:
             place_dsq = (hippo_pref_x - float(x)) ** 2 + (hippo_pref_y - float(y)) ** 2
             place_drive = hippocampus_drive_max_pA * np.exp(-place_dsq / (2.0 * hippocampus_drive_sigma ** 2))
             bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.asarray(place_drive, dtype=cp.float32)
             goal_dsq = (hippo_pref_x - float(gx)) ** 2 + (hippo_pref_y - float(gy)) ** 2
             goal_drive = hippocampus_drive_max_pA * np.exp(-goal_dsq / (2.0 * hippocampus_drive_sigma ** 2))
             bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.asarray(goal_drive, dtype=cp.float32)
+        elif enable_hippocampus:
+            # Curriculum phase 1: keep hippo neurons silent (zero drive) so they
+            # don't fire and don't accumulate STDP eligibility. Cortex→D1 trains
+            # without hippo noise.
+            bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.float32(0.0)
+            bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.float32(0.0)
 
         # Run stimulus window and tally motor spikes
         motor_counts = {a: 0 for a in ACTION_NAMES}
@@ -1059,6 +1080,10 @@ def main():
     ap.add_argument("--surprise-lr-boost", action="store_true",
                     help="Boost reward_learning_rate when |RPE| is high (NE-like fast meta-modulation)")
     ap.add_argument("--surprise-lr-alpha", type=float, default=2.0)
+    ap.add_argument("--curriculum", action="store_true",
+                    help="Curriculum learning: suppress hippocampus drive for first N steps (cortex→D1 builds without hippo noise), then enable. Requires --hippocampus.")
+    ap.add_argument("--curriculum-warmup-steps", type=int, default=600,
+                    help="Steps to keep hippo silent at start of curriculum (default 600).")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -1066,6 +1091,13 @@ def main():
         if args.goal_schedule == "multi":
             # 4 corners cycle, goal changes every 450 steps
             goal_schedule = [(0, (6, 6)), (450, (1, 6)), (900, (1, 1)), (1350, (6, 1))]
+        elif args.goal_schedule == "curriculum":
+            # Curriculum-aligned schedule: phase 0 ((6,6)) extends through hippo
+            # warmup, then goal flips with hippo already on. Default at warmup=600
+            # gives 600 steps cortex+heuristic only, 600 steps cortex+hippo on (6,6),
+            # 600 steps cortex+hippo on (1,6) for readaptation test.
+            flip = max(1200, args.curriculum_warmup_steps + 600)
+            goal_schedule = [(0, (6, 6)), (flip, (1, 6))]
         else:
             goal_schedule = [(0, (6, 6)), (300, (1, 6))]
         run_moving_goal_episode(
@@ -1088,6 +1120,8 @@ def main():
             rpe_scale_alpha=args.rpe_alpha,
             enable_surprise_lr_boost=args.surprise_lr_boost,
             surprise_lr_alpha=args.surprise_lr_alpha,
+            enable_curriculum=args.curriculum,
+            curriculum_warmup_steps=args.curriculum_warmup_steps,
         )
         return 0
 
