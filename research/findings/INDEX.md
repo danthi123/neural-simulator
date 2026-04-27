@@ -12,7 +12,8 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
-| 2026-04-26 | [**Curriculum learning (drive-gated)**](2026-04-26-curriculum-fail.md) | **NEGATIVE** — suppressing hippo drive during warmup doesn't crack the plastic-input-layer ceiling; true curriculum needs bridge-level staged plasticity |
+| 2026-04-27 | [**🎉 Plastic-input-layer arc RESOLVED**](2026-04-27-plastic-input-layer-RESOLVED.md) | **GO** — per-pathway plasticity gating + real curriculum + no WTA: 6/6 seeds beat baseline (sum 4.72 vs 5.88, p=0.02). First time ever with a plastic input layer. Hippocampus genuinely learns place→action mapping. |
+| 2026-04-26 | [Curriculum learning (drive-gated)](2026-04-26-curriculum-fail.md) | NEGATIVE — suppressing hippo drive during warmup doesn't crack the plastic-input-layer ceiling; true curriculum needs bridge-level staged plasticity |
 | 2026-04-26 | [Cortex WTA + adaDA + hippo combo](2026-04-26-cortex-wta-adapda-combo.md) | PARTIAL — adaDA provides ~14% over WTA+hippo (9.26 → 8.01) but combo still 1.36× worse than baseline; closes off "more flags will fix it" approach |
 | 2026-04-26 | [Cortex-level WTA — selectivity fix works but readaptation breaks](2026-04-26-cortex-wta.md) | PARTIAL — fixes plastic-input-layer cold-start (16% over hippo-alone) but introduces motor-WTA-style readaptation penalty; combo with adaptive DA is the next logical test |
 | 2026-04-26 | [Hippocampal module additive — same cold-start pattern](2026-04-26-hippocampus-additive-fail.md) | NEGATIVE — fourth consecutive plastic-input-layer failure; closes off the search space until curriculum or cortex-WTA is added |
@@ -107,10 +108,12 @@ Closing the search space matters as much as opening it.
 - [G9 sim-native R-STDP NO-GO at runner-side](2026-04-24-g9.md)
 - [PFC bistability NEGATIVE](2026-04-25-pfc-bistability-negative.md)
 - [Session C synaptic-gain shelved](2026-04-24-session-c.md)
-- **Plastic-input-layer arc (4 consecutive NEGATIVE — same cold-start mode):**
+- **Plastic-input-layer arc (4 consecutive NEGATIVE — same cold-start mode, then RESOLVED 2026-04-27):**
   - [Learned perception cold-start fail](2026-04-26-learned-perception-cold-start-fail.md)
   - [Informed-init perception fail](2026-04-26-informed-init-perception-fail.md)
-  - [Hippocampus additive fail](2026-04-26-hippocampus-additive-fail.md) — robust ceiling: random plastic weights to multiple cortex pools destroys cascade selectivity. Future work needs curriculum or cortex-level WTA, not yet another init scheme.
+  - [Hippocampus additive fail](2026-04-26-hippocampus-additive-fail.md)
+  - [Cortex WTA partial](2026-04-26-cortex-wta.md), [WTA + adaDA combo](2026-04-26-cortex-wta-adapda-combo.md), [Drive-gated curriculum fail](2026-04-26-curriculum-fail.md) — three more partial/negative attempts.
+  - **[Plastic-input-layer RESOLVED](2026-04-27-plastic-input-layer-RESOLVED.md)** — per-pathway plasticity gating + real curriculum + no WTA: 6/6 seeds beat baseline (4.72 vs 5.88, p=0.02). The architectural ceiling is now broken.
 
 ### Infrastructure
 - [RNG drift lockdown](2026-04-24-rng-drift.md) (gamma benchmark variance fixed)
