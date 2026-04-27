@@ -394,28 +394,39 @@ cortex frozen (or partial) + input layers thawed. Biologically: real
 critical periods close gradually, gated by neuromodulators, allowing
 sensory cortex to mature before association cortex.
 
-### Recommended configuration (current best)
+### Recommended configuration (current best 2026-04-27)
 
-After the plastic-input-layer breakthrough, the recommended config for
-2-goal AND 4-goal (multi-goal) tasks:
+The current best on 2-goal slow-change task uses sensory + hippocampus +
+PFC working memory + curriculum:
 
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception \
+    --hippocampus --learned-perception --pfc \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 \
-    --curriculum-phase2-cortex-gain 0.2 \
     --seed N --n-steps 1800
 ```
 
 Performance (6-seed validated):
-- **2-goal (slow-change)**: sum 4.79 ± 1.19 — 18.5% improvement over baseline 5.88, 5/6 seeds beat baseline (p=0.10)
-- **4-goal (fast-change)**: sum 8.32 — exactly ties baseline broadcast 8.32 (curriculum doesn't help fast-change)
+- **2-goal (slow-change)**: sum 4.41 ± 0.94 — **25.0% improvement over baseline 5.88, 5/6 seeds beat baseline (p=0.018)**
+- **4-goal (fast-change)**: not tested with PFC; curriculum doesn't help fast-change in any variant
 
-For best 2-goal performance (most statistically robust, p=0.02): use
-`--curriculum-phase2-cortex-gain 0.0` (full freeze) and skip
-`--learned-perception`. This gives sum 4.72 (6-seed). Adding sensory
-layer or partial freeze gives marginal differences within seed variance.
+The PFC region adds 60 recurrent neurons modeling working memory, with
+plastic pathways `goal_cells → PFC → cortex_{N,E,S,W}`. Tagged with
+plasticity_gate="pfc_pathways" for future curriculum control.
+
+For partial-freeze variant (similar performance, more flexible cortex):
+```bash
+... --curriculum-phase2-cortex-gain 0.2
+```
+
+For simplest robust variant without PFC (sum 4.72, p=0.02):
+```bash
+python -m research.runners.g11_bg_runner --moving-goal \
+    --hippocampus --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
+    --curriculum --curriculum-warmup-steps 600 \
+    --seed N --n-steps 1800
+```
 
 For multi-goal tasks: skip the curriculum entirely. The baseline
 broadcast DA (no curriculum, no hippo) handles fast-change better
