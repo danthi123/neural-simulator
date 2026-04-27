@@ -111,6 +111,14 @@ def build_bg_brain_regions(
     pfc_internal_density: float = 0.2,  # recurrent connectivity for persistence
     goal_to_pfc_weight: float = 8.0,
     pfc_to_cortex_weight: float = 8.0,
+    # Goal-beacon perception (Item 1 Stage 1, 2026-04-27 skeleton).
+    # Replaces direct (gx, gy) goal access with beacon sensors that detect
+    # beacon strength + direction (modeling biological cue perception).
+    # Skeleton only — full wiring in trial loop deferred to next session.
+    # See docs/plans/2026-04-27-perception-arc-plan.md for the full plan.
+    enable_beacon_perception: bool = False,
+    n_beacon_sensors: int = 8,  # 8 directional sensors (cardinal + diagonal)
+    beacon_to_goal_weight: float = 8.0,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -151,6 +159,23 @@ def build_bg_brain_regions(
             exc_weight_mean=0.0, inh_weight_mean=0.0,
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
+
+    # Goal-beacon perception (Item 1 Stage 1 skeleton, 2026-04-27). Replaces
+    # direct (gx, gy) goal access with directional beacon sensors. Each sensor
+    # has a preferred bearing; activation is proportional to beacon intensity
+    # × cosine alignment with sensor direction. Plastic beacon → goal_cells
+    # pathway lets goal_cells learn to integrate sensor patterns into spatial
+    # representations. Full trial-loop wiring deferred to next session.
+    if enable_beacon_perception:
+        regions.append(BrainRegion(
+            name="beacon_sensors",
+            n_neurons=n_beacon_sensors,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
         ))
 
     # PFC working memory (Item 3, 2026-04-27): recurrent prefrontal region.
@@ -350,6 +375,23 @@ def build_bg_brain_regions(
                 plasticity_gate="hippo_to_cortex",
             ))
 
+    # Beacon perception pathway (Item 1 Stage 1 skeleton, 2026-04-27).
+    # Beacon sensors → goal_cells: tagged plasticity_gate="beacon_to_goal"
+    # for curriculum-staged learning. With curriculum, this pathway is frozen
+    # during cortex warmup (when heuristic provides selectivity) and thawed
+    # in phase 2 to learn beacon-pattern → goal-cell-position mapping.
+    # NOTE: full trial-loop wiring (driving beacon_sensors based on beacon
+    # position) is deferred to next session. Currently the region exists
+    # but isn't driven, so enable_beacon_perception is a no-op until the
+    # trial loop is updated.
+    if enable_beacon_perception and enable_hippocampus:
+        pathways.append(RegionPathway(
+            from_region="beacon_sensors", to_region="goal_cells",
+            density=1.0, weight_mean=beacon_to_goal_weight,
+            weight_jitter=0.2, plastic=True,
+            plasticity_gate="beacon_to_goal",
+        ))
+
     # PFC working memory pathways (Item 3, 2026-04-27):
     #   goal_cells → PFC: goal info enters working memory
     #   PFC → cortex_X: PFC drives cortex selection across delays
@@ -543,6 +585,9 @@ def run_moving_goal_episode(
     pfc_internal_density: float = 0.2,
     goal_to_pfc_weight: float = 8.0,
     pfc_to_cortex_weight: float = 8.0,
+    enable_beacon_perception: bool = False,
+    n_beacon_sensors: int = 8,
+    beacon_to_goal_weight: float = 8.0,
     learning_rate: float = 0.01,
     reward_eligibility_tau_ms: float = 500.0,
     reward_hold_steps: int = 10,
@@ -677,6 +722,9 @@ def run_moving_goal_episode(
         pfc_internal_density=pfc_internal_density,
         goal_to_pfc_weight=goal_to_pfc_weight,
         pfc_to_cortex_weight=pfc_to_cortex_weight,
+        enable_beacon_perception=enable_beacon_perception,
+        n_beacon_sensors=n_beacon_sensors,
+        beacon_to_goal_weight=beacon_to_goal_weight,
     )
 
     # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
@@ -1442,6 +1490,11 @@ def main():
                     help="PFC recurrent connection density (default 0.2; higher = more persistent activity).")
     ap.add_argument("--goal-to-pfc-weight", type=float, default=8.0)
     ap.add_argument("--pfc-to-cortex-weight", type=float, default=8.0)
+    ap.add_argument("--beacon-perception", action="store_true",
+                    help="Item 1 Stage 1 SKELETON: add beacon_sensors region (8 directional cells) and beacon → goal_cells pathway. Trial loop wiring is NOT yet complete — flag is a no-op until next session implements beacon-driven sensor activation.")
+    ap.add_argument("--n-beacon-sensors", type=int, default=8,
+                    help="Number of beacon sensors (default 8 = cardinal+diagonal).")
+    ap.add_argument("--beacon-to-goal-weight", type=float, default=8.0)
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
@@ -1533,6 +1586,9 @@ def main():
             pfc_internal_density=args.pfc_internal_density,
             goal_to_pfc_weight=args.goal_to_pfc_weight,
             pfc_to_cortex_weight=args.pfc_to_cortex_weight,
+            enable_beacon_perception=args.beacon_perception,
+            n_beacon_sensors=args.n_beacon_sensors,
+            beacon_to_goal_weight=args.beacon_to_goal_weight,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_cortex_lateral_inhibition=args.cortex_wta,
