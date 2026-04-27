@@ -555,6 +555,20 @@ def run_moving_goal_episode(
     # post_curriculum_heuristic_strength. -1 = no change (default).
     heuristic_decay_after_step: int = -1,
     post_curriculum_heuristic_strength: float = 0.0,
+    # Sleep-replay memory consolidation (Stage 7, 2026-04-27).
+    # During sleep phases: no external goal, hippo cells fire in random
+    # replay patterns (modeling NREM sharp-wave ripples), cortex_to_d1
+    # is thawed (consolidation), hippo_to_cortex is frozen (preserve
+    # learned weights). The replayed hippo signal drives cortex pools
+    # via the learned hippo→cortex weights, and STDP between cortex_X
+    # and D1_X consolidates the pattern into the cortex→D1 cascade.
+    # After sleep, the cortex→D1 weights should encode hippo's learned
+    # mapping, enabling navigation with reduced hippo dependency.
+    # Biologically: episodic→semantic memory consolidation during NREM.
+    # -1 = no sleep replay (default).
+    sleep_replay_after_step: int = -1,
+    sleep_replay_steps: int = 300,
+    sleep_replay_rate_hz: float = 200.0,  # high rate (sharp-wave ripples)
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -930,6 +944,36 @@ def run_moving_goal_episode(
                         print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 — "
                               f"cortex_to_d1={curriculum_phase2_cortex_gain:.2f}, "
                               f"inputs={curriculum_phase2_hippo_gain:.2f}", flush=True)
+        # Sleep-replay phase (Stage 7, 2026-04-27): biological memory consolidation.
+        # During sleep, hippo cells fire in random replay patterns (sharp-wave ripples),
+        # cortex_to_d1 is thawed (consolidation), hippo_to_cortex is frozen.
+        # Hippo's already-learned weights drive cortex via existing connections;
+        # STDP between cortex and D1 then consolidates the pattern.
+        in_sleep = (sleep_replay_after_step >= 0
+                   and step >= sleep_replay_after_step
+                   and step < sleep_replay_after_step + sleep_replay_steps)
+        if in_sleep:
+            # Set gates for consolidation: cortex_to_d1 plastic, hippo_to_cortex frozen
+            if has_cortex_gate:
+                bridge.set_plasticity_gate("cortex_to_d1", 1.0)
+            if has_hippo_gate:
+                bridge.set_plasticity_gate("hippo_to_cortex", 0.0)
+            if has_sensory_gate:
+                bridge.set_plasticity_gate("sensory_to_cortex", 0.0)
+            # Mark phase entry for verbose output
+            if step == sleep_replay_after_step and verbose:
+                print(f"[g11 seed={seed}] step {step}: ENTERING SLEEP REPLAY "
+                      f"(cortex_to_d1=1, hippo/sensory frozen, replay rate={sleep_replay_rate_hz:.0f}Hz)",
+                      flush=True)
+        elif sleep_replay_after_step >= 0 and step == sleep_replay_after_step + sleep_replay_steps and verbose:
+            print(f"[g11 seed={seed}] step {step}: EXITING SLEEP REPLAY",
+                  flush=True)
+            # Restore phase-2 gates
+            if has_cortex_gate:
+                bridge.set_plasticity_gate("cortex_to_d1", float(curriculum_phase2_cortex_gain))
+            if has_hippo_gate:
+                bridge.set_plasticity_gate("hippo_to_cortex", float(curriculum_phase2_hippo_gain))
+
         # Goal change
         while (current_schedule_idx + 1 < len(goal_schedule_sorted)
                and step >= goal_schedule_sorted[current_schedule_idx + 1][0]):
@@ -977,7 +1021,11 @@ def run_moving_goal_episode(
         # layer learns via STDP+reward using the heuristic as teacher.
         # Heuristic cortex drive: directly drive cortex_X for each goal-relative direction.
         # Heuristic strength can decay post-curriculum to test pure-learned navigation.
-        if heuristic_decay_after_step >= 0 and step >= heuristic_decay_after_step:
+        # During sleep replay: heuristic disabled so consolidation runs purely
+        # on hippo-driven cortex activity.
+        if in_sleep:
+            h_strength = 0.0
+        elif heuristic_decay_after_step >= 0 and step >= heuristic_decay_after_step:
             h_strength = post_curriculum_heuristic_strength
         else:
             h_strength = heuristic_strength
@@ -1010,9 +1058,29 @@ def run_moving_goal_episode(
         # Curriculum gate: during the warmup phase, suppress hippo drive so the
         # heuristic (+WTA if enabled) builds up cortex→D1 selectivity in isolation.
         # After the warmup, hippo drive turns on and learns via STDP+reward.
-        hippo_active = enable_hippocampus and (
-            not enable_curriculum or step >= curriculum_warmup_steps
-        )
+        # SLEEP REPLAY: drive random place + goal cells to simulate sharp-wave
+        # ripples. The replayed pattern, via existing learned hippo→cortex
+        # weights, drives cortex pools, which then strengthens cortex→D1
+        # weights via STDP (cortex_to_d1 thawed).
+        if in_sleep and enable_hippocampus:
+            # Random replay: pick a random (x,y) for place cells and another
+            # random (gx, gy) for goal cells. This activates whichever
+            # (place, goal) → cortex_pool weights have been learned.
+            replay_x = float(np.random.randint(0, grid_size))
+            replay_y = float(np.random.randint(0, grid_size))
+            replay_gx = float(np.random.randint(0, grid_size))
+            replay_gy = float(np.random.randint(0, grid_size))
+            place_dsq = (hippo_pref_x - replay_x) ** 2 + (hippo_pref_y - replay_y) ** 2
+            place_drive = hippocampus_drive_max_pA * np.exp(-place_dsq / (2.0 * hippocampus_drive_sigma ** 2))
+            bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.asarray(place_drive, dtype=cp.float32)
+            goal_dsq = (hippo_pref_x - replay_gx) ** 2 + (hippo_pref_y - replay_gy) ** 2
+            goal_drive = hippocampus_drive_max_pA * np.exp(-goal_dsq / (2.0 * hippocampus_drive_sigma ** 2))
+            bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.asarray(goal_drive, dtype=cp.float32)
+            hippo_active = False  # skip the normal-flow hippo drive below
+        else:
+            hippo_active = enable_hippocampus and (
+                not enable_curriculum or step >= curriculum_warmup_steps
+            )
         if hippo_active:
             place_dsq = (hippo_pref_x - float(x)) ** 2 + (hippo_pref_y - float(y)) ** 2
             place_drive = hippocampus_drive_max_pA * np.exp(-place_dsq / (2.0 * hippocampus_drive_sigma ** 2))
@@ -1051,8 +1119,12 @@ def run_moving_goal_episode(
         action_log.append(action_idx)
 
         dx, dy = ACTION_DELTAS[action_idx]
-        new_x = int(np.clip(x + dx, 0, grid_size - 1))
-        new_y = int(np.clip(y + dy, 0, grid_size - 1))
+        # During sleep, agent does not move (consolidation phase, no behavior)
+        if in_sleep:
+            new_x, new_y = x, y
+        else:
+            new_x = int(np.clip(x + dx, 0, grid_size - 1))
+            new_y = int(np.clip(y + dy, 0, grid_size - 1))
         dist_after = manhattan(new_x, new_y)
         x, y = new_x, new_y
         trajectory.append((x, y))
@@ -1261,6 +1333,12 @@ def main():
                     help="Step after which heuristic_strength changes to --post-curriculum-heuristic-strength (default -1 = no decay).")
     ap.add_argument("--post-curriculum-heuristic-strength", type=float, default=0.0,
                     help="Heuristic strength after decay step (default 0.0 = full off).")
+    ap.add_argument("--sleep-replay-after-step", type=int, default=-1,
+                    help="Step at which to enter sleep-replay phase (default -1 = no sleep). During sleep, hippo replays random place/goal patterns, cortex_to_d1 thaws for consolidation.")
+    ap.add_argument("--sleep-replay-steps", type=int, default=300,
+                    help="Number of steps in sleep-replay phase.")
+    ap.add_argument("--sleep-replay-rate-hz", type=float, default=200.0,
+                    help="Replay drive rate (Hz) — biologically: sharp-wave ripples ~150-250Hz.")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -1305,6 +1383,9 @@ def main():
             heuristic_strength=args.heuristic_strength,
             heuristic_decay_after_step=args.heuristic_decay_after_step,
             post_curriculum_heuristic_strength=args.post_curriculum_heuristic_strength,
+            sleep_replay_after_step=args.sleep_replay_after_step,
+            sleep_replay_steps=args.sleep_replay_steps,
+            sleep_replay_rate_hz=args.sleep_replay_rate_hz,
         )
         return 0
 
