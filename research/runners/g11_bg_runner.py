@@ -637,6 +637,13 @@ def run_moving_goal_episode(
     # and REM (random replay, faster). NREM cycle dominates first half, REM
     # second half, modeling sleep-stage progression.
     sleep_nrem_rem_alternate: bool = False,
+    # PFC Stage 2: delayed-response test. Silence goal_cells during a delay
+    # window to test whether PFC maintains goal info via persistent activity.
+    # If PFC works as working memory, agent should still navigate toward goal
+    # during the silence period (PFC remembers). Without PFC, agent should
+    # drift (no goal info available).
+    goal_silence_after_step: int = -1,
+    goal_silence_duration: int = 0,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -1118,7 +1125,12 @@ def run_moving_goal_episode(
         # Heuristic strength can decay post-curriculum to test pure-learned navigation.
         # During sleep replay: heuristic disabled so consolidation runs purely
         # on hippo-driven cortex activity.
-        if in_sleep:
+        # During goal_silence (PFC Stage 2): also silence heuristic to test
+        # whether PFC + already-learned input layers maintain navigation.
+        in_goal_silence_step = (goal_silence_after_step >= 0
+                                and step >= goal_silence_after_step
+                                and step < goal_silence_after_step + goal_silence_duration)
+        if in_sleep or in_goal_silence_step:
             h_strength = 0.0
         elif heuristic_decay_after_step >= 0 and step >= heuristic_decay_after_step:
             h_strength = post_curriculum_heuristic_strength
@@ -1194,9 +1206,18 @@ def run_moving_goal_episode(
             place_dsq = (hippo_pref_x - float(x)) ** 2 + (hippo_pref_y - float(y)) ** 2
             place_drive = hippocampus_drive_max_pA * np.exp(-place_dsq / (2.0 * hippocampus_drive_sigma ** 2))
             bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.asarray(place_drive, dtype=cp.float32)
-            goal_dsq = (hippo_pref_x - float(gx)) ** 2 + (hippo_pref_y - float(gy)) ** 2
-            goal_drive = hippocampus_drive_max_pA * np.exp(-goal_dsq / (2.0 * hippocampus_drive_sigma ** 2))
-            bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.asarray(goal_drive, dtype=cp.float32)
+            # Goal cells silencing test (PFC Stage 2): during the silence
+            # window, goal_cells are forced to 0 — tests whether PFC working
+            # memory holds the goal info during the delay.
+            in_goal_silence = (goal_silence_after_step >= 0
+                              and step >= goal_silence_after_step
+                              and step < goal_silence_after_step + goal_silence_duration)
+            if in_goal_silence:
+                bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.float32(0.0)
+            else:
+                goal_dsq = (hippo_pref_x - float(gx)) ** 2 + (hippo_pref_y - float(gy)) ** 2
+                goal_drive = hippocampus_drive_max_pA * np.exp(-goal_dsq / (2.0 * hippocampus_drive_sigma ** 2))
+                bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.asarray(goal_drive, dtype=cp.float32)
         elif enable_hippocampus:
             # Curriculum phase 1: keep hippo neurons silent (zero drive) so they
             # don't fire and don't accumulate STDP eligibility. Cortex→D1 trains
@@ -1476,6 +1497,10 @@ def main():
                     help="Replay drive rate (Hz) — biologically: sharp-wave ripples ~150-250Hz.")
     ap.add_argument("--sleep-nrem-rem-alternate", action="store_true",
                     help="Alternate between NREM (trajectory replay, first half) and REM (random replay, second half) during sleep.")
+    ap.add_argument("--goal-silence-after-step", type=int, default=-1,
+                    help="PFC Stage 2 delayed-response test: silence goal_cells AND heuristic at this step. PFC working memory should maintain goal info.")
+    ap.add_argument("--goal-silence-duration", type=int, default=0,
+                    help="How long to keep goal_cells/heuristic silenced.")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -1536,6 +1561,8 @@ def main():
             sleep_replay_steps=args.sleep_replay_steps,
             sleep_replay_rate_hz=args.sleep_replay_rate_hz,
             sleep_nrem_rem_alternate=args.sleep_nrem_rem_alternate,
+            goal_silence_after_step=args.goal_silence_after_step,
+            goal_silence_duration=args.goal_silence_duration,
         )
         return 0
 
