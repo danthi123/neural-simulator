@@ -530,6 +530,15 @@ def run_moving_goal_episode(
     enable_curriculum: bool = False,
     curriculum_warmup_steps: int = 600,  # phase 1 length: cortex→D1 builds without hippo noise
     curriculum_ramp_steps: int = 0,      # 0 = abrupt step; >0 = smooth ramp window
+    # Stage 5 (2026-04-27): partial freeze allows cortex→D1 to keep
+    # adapting at reduced rate during phase 2. 0.0 = full freeze (default,
+    # cortex locked); 1.0 = no freeze (combo A). Intermediate values let
+    # cortex slowly track changing reward landscape while hippo learns
+    # primary input mapping. Biologically: cortical plasticity doesn't
+    # halt absolutely with maturation — it slows but persists, especially
+    # under top-down attention or unexpected reward (DA-modulated).
+    curriculum_phase2_cortex_gain: float = 0.0,
+    curriculum_phase2_hippo_gain: float = 1.0,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -825,23 +834,35 @@ def run_moving_goal_episode(
         """Return (cortex_gate, hippo_gate) for the given step under the
         current curriculum schedule. Linear ramp centered on warmup boundary
         when ramp_steps > 0; abrupt step otherwise.
+
+        Phase 1 values: cortex=1.0, hippo=0.0 (cortex plastic, hippo frozen)
+        Phase 2 values: cortex=curriculum_phase2_cortex_gain (default 0.0),
+                        hippo=curriculum_phase2_hippo_gain (default 1.0).
+        Partial-freeze configs (e.g. cortex=0.3) let cortex slowly track
+        changing reward landscape while hippo learns the primary input
+        mapping — biologically: cortical plasticity slows but persists.
         """
+        c_phase1, h_phase1 = 1.0, 0.0
+        c_phase2 = curriculum_phase2_cortex_gain
+        h_phase2 = curriculum_phase2_hippo_gain
         if curriculum_ramp_steps <= 0:
             # Abrupt: phase 1 until warmup, phase 2 after
             if step_idx < curriculum_warmup_steps:
-                return 1.0, 0.0
-            return 0.0, 1.0
+                return c_phase1, h_phase1
+            return c_phase2, h_phase2
         # Smooth: ramp over [warmup - half, warmup + half]
         half = curriculum_ramp_steps // 2
         ramp_start = curriculum_warmup_steps - half
         ramp_end = curriculum_warmup_steps + (curriculum_ramp_steps - half)
         if step_idx < ramp_start:
-            return 1.0, 0.0
+            return c_phase1, h_phase1
         if step_idx >= ramp_end:
-            return 0.0, 1.0
-        # In ramp window: progress is linear in (0, 1)
+            return c_phase2, h_phase2
+        # In ramp window: linear interpolation between phase 1 and phase 2 values
         progress = (step_idx - ramp_start) / float(curriculum_ramp_steps)
-        return 1.0 - progress, progress
+        c_val = c_phase1 + (c_phase2 - c_phase1) * progress
+        h_val = h_phase1 + (h_phase2 - h_phase1) * progress
+        return c_val, h_val
 
     t0 = time.time()
     # Track current gating_strength (used for DA-gated WTA across the whole trial,
@@ -871,12 +892,13 @@ def run_moving_goal_episode(
                 if last_logged_phase == 1 and step >= curriculum_warmup_steps:
                     last_logged_phase = 2
                     if has_cortex_gate:
-                        bridge.set_plasticity_gate("cortex_to_d1", 0.0)
+                        bridge.set_plasticity_gate("cortex_to_d1", float(curriculum_phase2_cortex_gain))
                     if has_hippo_gate:
-                        bridge.set_plasticity_gate("hippo_to_cortex", 1.0)
+                        bridge.set_plasticity_gate("hippo_to_cortex", float(curriculum_phase2_hippo_gain))
                     if verbose:
                         print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 — "
-                              f"cortex_to_d1 frozen, hippo_to_cortex thawed", flush=True)
+                              f"cortex_to_d1={curriculum_phase2_cortex_gain:.2f}, "
+                              f"hippo_to_cortex={curriculum_phase2_hippo_gain:.2f}", flush=True)
         # Goal change
         while (current_schedule_idx + 1 < len(goal_schedule_sorted)
                and step >= goal_schedule_sorted[current_schedule_idx + 1][0]):
@@ -1189,6 +1211,10 @@ def main():
                     help="Steps to keep hippo silent at start of curriculum (default 600).")
     ap.add_argument("--curriculum-ramp-steps", type=int, default=0,
                     help="Smooth gate ramp window centered on warmup boundary (default 0 = abrupt step). Biologically grounded: critical periods close gradually via PV maturation.")
+    ap.add_argument("--curriculum-phase2-cortex-gain", type=float, default=0.0,
+                    help="Phase 2 plasticity gain for cortex→D1 (default 0.0 = full freeze). Biologically: cortical plasticity slows but doesn't fully halt.")
+    ap.add_argument("--curriculum-phase2-hippo-gain", type=float, default=1.0,
+                    help="Phase 2 plasticity gain for hippo→cortex (default 1.0 = full plasticity).")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -1228,6 +1254,8 @@ def main():
             enable_curriculum=args.curriculum,
             curriculum_warmup_steps=args.curriculum_warmup_steps,
             curriculum_ramp_steps=args.curriculum_ramp_steps,
+            curriculum_phase2_cortex_gain=args.curriculum_phase2_cortex_gain,
+            curriculum_phase2_hippo_gain=args.curriculum_phase2_hippo_gain,
         )
         return 0
 
