@@ -517,11 +517,19 @@ def run_moving_goal_episode(
     # In phase 1 (steps 0..curriculum_warmup_steps), suppress hippocampus drive
     # so the heuristic+WTA builds up cortex→D1 selectivity in isolation. Then
     # in phase 2, enable hippo drive — hippo plastic weights learn given that
-    # cortex→D1 is already mature. Tests whether the plastic-input-layer ceiling
-    # is a sample-efficiency problem (curriculum solves it) or a structural
-    # problem (curriculum also fails).
+    # cortex→D1 is already mature.
+    #
+    # Stage 3 (2026-04-27): real curriculum uses bridge plasticity_gate
+    # infrastructure — cortex→D1 frozen at warmup, hippo→cortex thawed.
+    # Stage 5 (2026-04-27): ramp_steps>0 enables smooth critical-period
+    # closure: gate values interpolate linearly from phase-1 to phase-2
+    # values over `ramp_steps` centered on warmup_steps. Biologically
+    # grounded: real critical periods close gradually via PV interneuron
+    # maturation (~weeks), not as instantaneous step functions. Smoother
+    # transition reduces variance from abrupt cascade disruption.
     enable_curriculum: bool = False,
     curriculum_warmup_steps: int = 600,  # phase 1 length: cortex→D1 builds without hippo noise
+    curriculum_ramp_steps: int = 0,      # 0 = abrupt step; >0 = smooth ramp window
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -790,16 +798,50 @@ def run_moving_goal_episode(
     # input source. By staging plasticity, we let cortex selectivity
     # establish itself, then add the plastic input layer with the cascade
     # protected against further drift.
+    #
+    # Stage 5 ramping: when ramp_steps>0, transitions are smooth (linear
+    # interpolation of gate values over ramp window centered on warmup).
+    # This matches biology — critical periods close gradually via PV
+    # maturation, not as step functions — and reduces variance from
+    # abrupt cascade disruption.
+    has_hippo_gate = (enable_curriculum and enable_hippocampus and
+                     "hippo_to_cortex" in bridge.list_plasticity_gates())
+    has_cortex_gate = (enable_curriculum and enable_hippocampus and
+                      "cortex_to_d1" in bridge.list_plasticity_gates())
     if enable_curriculum and enable_hippocampus:
         # Phase 1: hippo plasticity OFF, cortex plasticity ON
-        if "hippo_to_cortex" in bridge.list_plasticity_gates():
+        if has_hippo_gate:
             bridge.set_plasticity_gate("hippo_to_cortex", 0.0)
-        if "cortex_to_d1" in bridge.list_plasticity_gates():
+        if has_cortex_gate:
             bridge.set_plasticity_gate("cortex_to_d1", 1.0)
         if verbose:
+            ramp_msg = (f", ramp={curriculum_ramp_steps}" if curriculum_ramp_steps > 0
+                       else " (abrupt)")
             print(f"[g11 seed={seed}] curriculum phase 1: cortex_to_d1 plastic, "
-                  f"hippo_to_cortex frozen", flush=True)
-    curriculum_phase = 1  # 1 = warmup, 2 = mature
+                  f"hippo_to_cortex frozen{ramp_msg}", flush=True)
+    last_logged_phase = 1  # for verbose phase-2 announcement on first ramp tick
+
+    def _curriculum_gate_values(step_idx):
+        """Return (cortex_gate, hippo_gate) for the given step under the
+        current curriculum schedule. Linear ramp centered on warmup boundary
+        when ramp_steps > 0; abrupt step otherwise.
+        """
+        if curriculum_ramp_steps <= 0:
+            # Abrupt: phase 1 until warmup, phase 2 after
+            if step_idx < curriculum_warmup_steps:
+                return 1.0, 0.0
+            return 0.0, 1.0
+        # Smooth: ramp over [warmup - half, warmup + half]
+        half = curriculum_ramp_steps // 2
+        ramp_start = curriculum_warmup_steps - half
+        ramp_end = curriculum_warmup_steps + (curriculum_ramp_steps - half)
+        if step_idx < ramp_start:
+            return 1.0, 0.0
+        if step_idx >= ramp_end:
+            return 0.0, 1.0
+        # In ramp window: progress is linear in (0, 1)
+        progress = (step_idx - ramp_start) / float(curriculum_ramp_steps)
+        return 1.0 - progress, progress
 
     t0 = time.time()
     # Track current gating_strength (used for DA-gated WTA across the whole trial,
@@ -807,19 +849,34 @@ def run_moving_goal_episode(
     # before any reward feedback exists).
     current_gating_strength = 1.0
     for step in range(n_steps):
-        # Curriculum phase transition: at warmup, freeze cortex→D1 (it's
-        # mature) and thaw hippo→cortex (start learning the input layer).
-        if (enable_curriculum and enable_hippocampus
-                and curriculum_phase == 1
-                and step >= curriculum_warmup_steps):
-            curriculum_phase = 2
-            if "cortex_to_d1" in bridge.list_plasticity_gates():
-                bridge.set_plasticity_gate("cortex_to_d1", 0.0)
-            if "hippo_to_cortex" in bridge.list_plasticity_gates():
-                bridge.set_plasticity_gate("hippo_to_cortex", 1.0)
-            if verbose:
-                print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 — "
-                      f"cortex_to_d1 frozen, hippo_to_cortex thawed", flush=True)
+        # Curriculum gate update — for ramp mode, update every step during
+        # the ramp window; for abrupt mode, only at the warmup boundary.
+        if enable_curriculum and enable_hippocampus and (has_cortex_gate or has_hippo_gate):
+            target_cortex, target_hippo = _curriculum_gate_values(step)
+            if curriculum_ramp_steps > 0:
+                # Always set during ramp; the bridge handles values in [0, 1]
+                if has_cortex_gate:
+                    bridge.set_plasticity_gate("cortex_to_d1", float(target_cortex))
+                if has_hippo_gate:
+                    bridge.set_plasticity_gate("hippo_to_cortex", float(target_hippo))
+                # Verbose: announce phase 2 entry once
+                if (last_logged_phase == 1 and target_hippo > 0.0):
+                    last_logged_phase = 2
+                    if verbose:
+                        print(f"[g11 seed={seed}] step {step}: CURRICULUM RAMP "
+                              f"BEGINNING (cortex {target_cortex:.2f}, hippo {target_hippo:.2f})",
+                              flush=True)
+            else:
+                # Abrupt mode: only set at boundary
+                if last_logged_phase == 1 and step >= curriculum_warmup_steps:
+                    last_logged_phase = 2
+                    if has_cortex_gate:
+                        bridge.set_plasticity_gate("cortex_to_d1", 0.0)
+                    if has_hippo_gate:
+                        bridge.set_plasticity_gate("hippo_to_cortex", 1.0)
+                    if verbose:
+                        print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 — "
+                              f"cortex_to_d1 frozen, hippo_to_cortex thawed", flush=True)
         # Goal change
         while (current_schedule_idx + 1 < len(goal_schedule_sorted)
                and step >= goal_schedule_sorted[current_schedule_idx + 1][0]):
@@ -1130,6 +1187,8 @@ def main():
                     help="Curriculum learning: suppress hippocampus drive for first N steps (cortex→D1 builds without hippo noise), then enable. Requires --hippocampus.")
     ap.add_argument("--curriculum-warmup-steps", type=int, default=600,
                     help="Steps to keep hippo silent at start of curriculum (default 600).")
+    ap.add_argument("--curriculum-ramp-steps", type=int, default=0,
+                    help="Smooth gate ramp window centered on warmup boundary (default 0 = abrupt step). Biologically grounded: critical periods close gradually via PV maturation.")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -1168,6 +1227,7 @@ def main():
             surprise_lr_alpha=args.surprise_lr_alpha,
             enable_curriculum=args.curriculum,
             curriculum_warmup_steps=args.curriculum_warmup_steps,
+            curriculum_ramp_steps=args.curriculum_ramp_steps,
         )
         return 0
 
