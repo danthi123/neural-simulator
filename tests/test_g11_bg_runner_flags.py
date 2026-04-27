@@ -142,3 +142,117 @@ def test_motor_counts_structure(tmp_out_path):
         for c in trial_counts:
             assert isinstance(c, int)
             assert c >= 0
+
+
+# ───────────────────────── 2026-04-27 additions ─────────────────────────
+
+
+def test_hippocampus_with_curriculum(tmp_out_path):
+    """Hippocampus + curriculum (Phase C breakthrough recipe)."""
+    _run_one(
+        tmp_out_path,
+        enable_hippocampus=True,
+        enable_adaptive_per_action_da=True,
+        adaptive_da_ema_decay_negative=0.7,
+        enable_curriculum=True,
+        curriculum_warmup_steps=20,
+    )
+
+
+def test_pfc_region_builds(tmp_out_path):
+    """PFC region (Item 3): recurrent prefrontal cortex for working memory."""
+    result = _run_one(
+        tmp_out_path,
+        enable_hippocampus=True,
+        enable_pfc=True,
+        n_pfc=30,  # smaller for speed
+    )
+    # Should produce output with phase_stats; PFC region builds cleanly
+    assert "phase_stats" in result
+    assert len(result["phase_stats"]) >= 1
+
+
+def test_sensory_plus_pfc_plus_curriculum(tmp_out_path):
+    """Best-config recipe: sensory + hippo + PFC + curriculum (recommended)."""
+    _run_one(
+        tmp_out_path,
+        enable_hippocampus=True,
+        enable_learned_perception=True,
+        enable_pfc=True,
+        n_pfc=30,
+        enable_adaptive_per_action_da=True,
+        adaptive_da_ema_decay_negative=0.7,
+        enable_curriculum=True,
+        curriculum_warmup_steps=20,
+    )
+
+
+def test_grid_size_scaling(tmp_out_path):
+    """Grid size + n_hippocampus_per_layer scaling (Item 2)."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+
+    run_moving_goal_episode(
+        out_path=tmp_out_path,
+        seed=42,
+        n_steps=50,
+        verbose=False,
+        grid_size=12,  # non-default
+        n_hippocampus_per_layer=144,  # 12² for one cell per position
+        enable_hippocampus=True,
+        goal_schedule=[(0, (10, 10)), (25, (1, 10))],
+    )
+    with open(tmp_out_path) as f:
+        result = json.load(f)
+    assert result["grid_size"] == 12
+
+
+def test_sleep_replay_smoke(tmp_out_path):
+    """Sleep-replay infrastructure: agent freezes, gates flip during sleep."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+
+    run_moving_goal_episode(
+        out_path=tmp_out_path,
+        seed=42,
+        n_steps=80,
+        verbose=False,
+        enable_hippocampus=True,
+        enable_curriculum=True,
+        curriculum_warmup_steps=20,
+        sleep_replay_after_step=50,
+        sleep_replay_steps=20,
+    )
+    with open(tmp_out_path) as f:
+        result = json.load(f)
+    # Distance during sleep should be flat (agent doesn't move)
+    distances = result["distance_log"]
+    sleep_distances = distances[50:70]
+    assert len(set(sleep_distances)) <= 2, (
+        "agent should not move during sleep (distance should be near-constant)"
+    )
+
+
+def test_goal_silence_smoke(tmp_out_path):
+    """PFC Stage 2 delayed-response: goal_silence flag drives goal/heuristic to 0."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+
+    # Smoke test only: just verify it runs without crashing
+    run_moving_goal_episode(
+        out_path=tmp_out_path,
+        seed=42,
+        n_steps=80,
+        verbose=False,
+        enable_hippocampus=True,
+        enable_pfc=True,
+        n_pfc=30,
+        enable_curriculum=True,
+        curriculum_warmup_steps=20,
+        goal_silence_after_step=50,
+        goal_silence_duration=20,
+    )
+    with open(tmp_out_path) as f:
+        result = json.load(f)
+    # Just verify the run completed
+    assert "phase_stats" in result
