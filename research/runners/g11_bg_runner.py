@@ -591,6 +591,16 @@ def run_moving_goal_episode(
     beacon_max_intensity: float = 600.0,  # peak sensor drive (pA) when on top of beacon
     beacon_falloff: float = 1.0,           # intensity = peak / (1 + falloff*distance)
     beacon_replaces_goal: bool = False,    # if True, beacon→goal_cells is the ONLY goal info (true Stage 1 test)
+    # Cue-following reflex (Item 1 Stage 3, 2026-04-27).
+    # Replaces the heuristic with a hand-tuned innate reflex that computes
+    # cortex drive from beacon sensor activations. Models a real animal's
+    # "approach attractive cue" reflex (e.g., phototaxis). The reflex is
+    # non-plastic — it represents innate sensorimotor wiring like vestibular
+    # reflexes or looming detection. Plastic layers (sensory, hippo, beacon
+    # → goal_cells) layer on top to refine the behavior.
+    enable_cue_reflex: bool = False,
+    cue_reflex_strength: float = 800.0,  # peak reflex drive matching heuristic
+    cue_reflex_replaces_heuristic: bool = False,  # if True, heuristic disabled when reflex on
     learning_rate: float = 0.01,
     reward_eligibility_tau_ms: float = 500.0,
     reward_hold_steps: int = 10,
@@ -1210,6 +1220,10 @@ def run_moving_goal_episode(
             h_strength = 0.0
         elif heuristic_decay_after_step >= 0 and step >= heuristic_decay_after_step:
             h_strength = post_curriculum_heuristic_strength
+        elif enable_cue_reflex and cue_reflex_replaces_heuristic:
+            # Stage 3: reflex replaces heuristic. The reflex below computes
+            # cortex drive from beacon sensor activations instead of (gx,gy).
+            h_strength = 0.0
         else:
             h_strength = heuristic_strength
         h_drive = cp.float32(800.0 * h_strength)
@@ -1222,6 +1236,40 @@ def run_moving_goal_episode(
                 bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = h_drive
             if gx < x:
                 bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = h_drive
+
+        # Cue-following reflex (Item 1 Stage 3, 2026-04-27).
+        # Innate reflex: computes cortex drive from beacon sensor activations
+        # instead of from raw (gx, gy) coordinates. Each cortex pool gets
+        # drive proportional to the integrated beacon strength in its
+        # preferred cardinal direction. Models "approach attractive cue"
+        # reflex like phototaxis. Non-plastic (innate sensorimotor wiring).
+        if enable_cue_reflex and enable_beacon_perception and not (in_sleep or in_goal_silence_step):
+            # Compute beacon perception signals (same as in beacon block)
+            bdx = float(gx - x); bdy = float(gy - y)
+            distance = (bdx * bdx + bdy * bdy) ** 0.5
+            if distance > 1e-6:
+                bearing_x = bdx / distance
+                bearing_y = bdy / distance
+                intensity = beacon_max_intensity / (1.0 + beacon_falloff * distance)
+                sensor_act = intensity * np.maximum(0.0, beacon_pref_x * bearing_x + beacon_pref_y * bearing_y)
+                # Each cortex pool integrates sensors aligned with its direction
+                # cortex_N: weighted by sensor.y > 0 component
+                # cortex_E: weighted by sensor.x > 0 component, etc.
+                drive_N = float(np.sum(sensor_act * np.maximum(0, beacon_pref_y)))
+                drive_E = float(np.sum(sensor_act * np.maximum(0, beacon_pref_x)))
+                drive_S = float(np.sum(sensor_act * np.maximum(0, -beacon_pref_y)))
+                drive_W = float(np.sum(sensor_act * np.maximum(0, -beacon_pref_x)))
+                # Scale to match heuristic magnitude (~800 pA peak)
+                # max possible sum is ~peak_intensity * 3 sensors with positive component
+                scale = cue_reflex_strength / (beacon_max_intensity * 3.0)
+                if drive_N > 0:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = cp.float32(drive_N * scale)
+                if drive_E > 0:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = cp.float32(drive_E * scale)
+                if drive_S > 0:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = cp.float32(drive_S * scale)
+                if drive_W > 0:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = cp.float32(drive_W * scale)
         # Sensory layer drive (opt-in, additive on top of heuristic).
         # Each sensory neuron i has preferred (dx_i, dy_i); rate = max * exp(-d²/2σ²)
         # The sensory→cortex pathway is plastic — agent learns mapping via STDP+reward.
@@ -1567,6 +1615,12 @@ def main():
                     help="Intensity = peak / (1 + falloff*distance). Higher = faster falloff.")
     ap.add_argument("--beacon-replaces-goal", action="store_true",
                     help="If set, beacon → goal_cells is the ONLY goal info source (true perception test). Otherwise beacon adds info on top of direct goal_cells drive.")
+    ap.add_argument("--cue-reflex", action="store_true",
+                    help="Item 1 Stage 3: cue-following reflex computes cortex drive from beacon sensors (innate sensorimotor wiring like phototaxis). Augments heuristic by default; use --cue-reflex-replaces-heuristic to fully replace.")
+    ap.add_argument("--cue-reflex-strength", type=float, default=800.0,
+                    help="Peak reflex drive (pA) — matches heuristic strength by default.")
+    ap.add_argument("--cue-reflex-replaces-heuristic", action="store_true",
+                    help="If set with --cue-reflex, the heuristic is fully disabled; only reflex provides cortex drive.")
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
@@ -1664,6 +1718,9 @@ def main():
             beacon_max_intensity=args.beacon_max_intensity,
             beacon_falloff=args.beacon_falloff,
             beacon_replaces_goal=args.beacon_replaces_goal,
+            enable_cue_reflex=args.cue_reflex,
+            cue_reflex_strength=args.cue_reflex_strength,
+            cue_reflex_replaces_heuristic=args.cue_reflex_replaces_heuristic,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_cortex_lateral_inhibition=args.cortex_wta,
