@@ -824,6 +824,14 @@ def run_moving_goal_episode(
               f"{cfg.num_neurons} neurons, {bridge.cp_connections.nnz} synapses",
               flush=True)
 
+    # Sleep-replay trajectory log: stores (x, y, gx, gy) tuples from
+    # waking trials where the agent successfully approached goal
+    # (reward > 0). During sleep, these are replayed instead of random
+    # patterns, modeling biological hippocampal replay of successful
+    # episodic memories. Bounded list to keep memory finite.
+    successful_trajectories: List = []
+    SUCCESSFUL_TRAJ_MAX = 1000
+
     # Curriculum: real plasticity gating (Stage 3, 2026-04-27).
     # The hippo→cortex pathways are tagged "hippo_to_cortex" and cortex→D1/D2
     # are tagged "cortex_to_d1" in build_bg_brain_regions. We use these gates
@@ -1058,18 +1066,27 @@ def run_moving_goal_episode(
         # Curriculum gate: during the warmup phase, suppress hippo drive so the
         # heuristic (+WTA if enabled) builds up cortex→D1 selectivity in isolation.
         # After the warmup, hippo drive turns on and learns via STDP+reward.
-        # SLEEP REPLAY: drive random place + goal cells to simulate sharp-wave
+        # SLEEP REPLAY: drive place + goal cells to simulate sharp-wave
         # ripples. The replayed pattern, via existing learned hippo→cortex
         # weights, drives cortex pools, which then strengthens cortex→D1
         # weights via STDP (cortex_to_d1 thawed).
+        # Trajectory replay (preferred): sample from successful_trajectories
+        # log (built during wake from positive-reward steps). Models
+        # biological replay of episodic memories. Falls back to random
+        # patterns if no trajectories logged yet.
         if in_sleep and enable_hippocampus:
-            # Random replay: pick a random (x,y) for place cells and another
-            # random (gx, gy) for goal cells. This activates whichever
-            # (place, goal) → cortex_pool weights have been learned.
-            replay_x = float(np.random.randint(0, grid_size))
-            replay_y = float(np.random.randint(0, grid_size))
-            replay_gx = float(np.random.randint(0, grid_size))
-            replay_gy = float(np.random.randint(0, grid_size))
+            if successful_trajectories:
+                # Sample a random successful trajectory tuple
+                idx = int(np.random.randint(0, len(successful_trajectories)))
+                replay_x, replay_y, replay_gx, replay_gy = successful_trajectories[idx]
+                replay_x = float(replay_x); replay_y = float(replay_y)
+                replay_gx = float(replay_gx); replay_gy = float(replay_gy)
+            else:
+                # Fallback to random if no trajectories logged
+                replay_x = float(np.random.randint(0, grid_size))
+                replay_y = float(np.random.randint(0, grid_size))
+                replay_gx = float(np.random.randint(0, grid_size))
+                replay_gy = float(np.random.randint(0, grid_size))
             place_dsq = (hippo_pref_x - replay_x) ** 2 + (hippo_pref_y - replay_y) ** 2
             place_drive = hippocampus_drive_max_pA * np.exp(-place_dsq / (2.0 * hippocampus_drive_sigma ** 2))
             bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.asarray(place_drive, dtype=cp.float32)
@@ -1138,6 +1155,16 @@ def run_moving_goal_episode(
         else:
             reward = 0.0
         reward_log.append(float(reward))
+
+        # Log successful (place, goal) tuples during wake for sleep-replay.
+        # When reward > 0 (agent moved toward goal), the (place_before, goal)
+        # pairing is biologically meaningful and should be replayed during
+        # sleep for memory consolidation. Only logged during wake (not sleep).
+        if reward > 0 and not in_sleep:
+            successful_trajectories.append((x, y, gx, gy))
+            if len(successful_trajectories) > SUCCESSFUL_TRAJ_MAX:
+                # Drop oldest to keep memory bounded
+                successful_trajectories.pop(0)
 
         if abs(reward) > 0:
             # Capture EMA BEFORE update (= the agent's prediction at this step)
