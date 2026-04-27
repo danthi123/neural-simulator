@@ -3,17 +3,23 @@
 Living document tracking scientific improvements to the neural simulator.
 Updated as features are implemented and validated.
 
-**Last updated:** 2026-04-25
+**Last updated:** 2026-04-27
 
-> **Recent arc (2026-04-20 → 2026-04-25):** the project pivoted from a flat
+> **Recent arc (2026-04-20 → 2026-04-27):** the project pivoted from a flat
 > "validate biology + optimise" agenda to an active research arc on
 > reward-driven learning in spiking circuits. The original Pillars (analysis,
 > bio benchmarks, performance) are largely DONE and are kept below as the
 > credibility floor. The current frontier is summarised in
 > [Pillar 4: Reward-Driven Learning Architecture](#pillar-4-reward-driven-learning-architecture)
-> below, which subsumes Sessions D–I (silent-motor trap arc) and Phase A/B
-> (preset audit + BG cascade). The 2026-04-25 acid test (74% improvement
-> over G9 baseline) closes Phase B; next ceiling is the 22% BG-active rate.
+> below, which subsumes Sessions D–I (silent-motor trap arc), Phase A/B
+> (preset audit + BG cascade), and Phase C (plastic-input-layer arc + curriculum
+> learning). The 2026-04-25 acid test (74% improvement over G9 baseline) closed
+> Phase B. The 2026-04-26 plastic-input-layer arc hit an architectural ceiling
+> (7 NEGATIVE attempts) which was resolved on 2026-04-27 via per-pathway
+> plasticity gating + real curriculum learning (6/6 seeds beat baseline, 19.8%
+> improvement, p=0.02). See
+> [`research/findings/2026-04-27-plastic-input-layer-RESOLVED.md`](../research/findings/2026-04-27-plastic-input-layer-RESOLVED.md)
+> and [`research/findings/2026-04-27-overnight-summary.md`](../research/findings/2026-04-27-overnight-summary.md).
 
 ---
 
@@ -336,21 +342,87 @@ several derived gates. Result summary:
 **Recommended Phase B configuration:** `python -m research.runners.g11_bg_runner
 --moving-goal --adaptive-da --adaptive-da-ema-decay-negative 0.7 [...]`
 
-### 4.8 Open future directions
+### 4.8 Phase C: plastic-input-layer arc + curriculum (2026-04-26 → 2026-04-27)
 
-1. **Hybrid heuristic + learned perception**: keep heuristic cortex drive
-   as base, layer plastic refinement on top. Would let learning fine-tune
-   without bootstrap problem.
-2. **Curriculum learning for sensory→cortex**: pre-train on fixed-goal
-   scenarios before exposing to moving-goal.
-3. **Harder tasks**: multiple goal changes per episode, larger grids,
-   non-grid environments would re-stress-test the architecture.
-4. **NE / 5-HT gates**: untried this session. NE for unexpected-change
-   detection, 5-HT for slow timescale credit assignment.
-5. **Distance-shaped reward**: current ±1 binary reward is sparse.
-   Continuous reward could improve adaptive DA's signal quality.
+After Phase B's success on heuristic-driven cortex, the next ceiling
+was making **plastic input layers** (sensory, hippocampus) work
+alongside the cascade. 7 NEGATIVE attempts on 2026-04-26 (cold-start
+perception, informed-init, hippo replacement/additive, cortex WTA,
+WTA+adaDA, drive-gated curriculum) all failed to match baseline.
 
-### 4.8 Cross-cutting: doc / repo hygiene
+**Resolution (2026-04-27):** built per-pathway plasticity gating
+infrastructure + real curriculum learning + removed cortex WTA. 6/6
+seeds beat baseline.
+
+| Variant | 6-seed avg sum | beats baseline | p-value |
+|---|---:|---|---:|
+| Baseline (heuristic only) | 5.88 | reference | — |
+| **Hippo + curriculum (full freeze)** | **4.72** | **6/6** | **0.02** |
+| Sensory + hippo + curriculum (full freeze) | 4.63 | 5/6 | 0.05 |
+| Sensory + hippo + curriculum (partial freeze 0.2) | 4.79 | 5/6 | 0.10 |
+
+**Key infrastructure additions:**
+
+1. **Per-pathway plasticity gating** — `RegionPathway.plasticity_gate`
+   field; `cp_plasticity_gain` array gates STDP, eligibility, Hebbian,
+   synaptic scaling; bridge methods `set_plasticity_gate(name, value)`.
+2. **NM-driven plasticity gates** — `target_type="plasticity_gate"`
+   with `scope="gate:<name>"` lets neuromodulator concentrations drive
+   gate values directly (DA-gated corticostriatal LTP, ACh-gated
+   cortical attention, developmental NM ramps).
+3. **Real curriculum** — phase 1 cortex_to_d1 plastic + input layers
+   frozen; phase 2 cortex frozen (or partial) + input layers thawed.
+4. **Heuristic-decay infrastructure** — for testing whether learned
+   weights can navigate without heuristic teacher.
+5. **Sleep-replay infrastructure** — random replay neutral; trajectory
+   replay slightly worse (biased by stale entries); both worse than
+   no-sleep on 2100-step task. Future work needs better replay content.
+
+**Multi-goal correction (2026-04-27 night):** the 3-seed multi-goal
+result (7.83) didn't replicate at 6 seeds (8.32, exactly tying baseline).
+Curriculum doesn't help fast-change tasks because cortex frozen in
+phase 2 can't track changing reward landscape. Lesson: 3-seed
+indicators are unreliable; always validate with 6+ seeds.
+
+**Recommended config (2-goal slow-change):**
+```bash
+python -m research.runners.g11_bg_runner --moving-goal \
+    --hippocampus --learned-perception \
+    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
+    --curriculum --curriculum-warmup-steps 600 \
+    --curriculum-phase2-cortex-gain 0.2 \
+    --seed N --n-steps 1800
+```
+
+For multi-goal/fast-change tasks: skip curriculum; baseline broadcast
+DA handles fast-change better.
+
+**Findings written 2026-04-27:**
+- `2026-04-27-plastic-input-layer-RESOLVED.md` (the breakthrough)
+- `2026-04-27-perception-additive.md` (sensory layer additive)
+- `2026-04-27-task-adaptive-curriculum.md` (partial freeze + corrections)
+- `2026-04-27-sleep-replay-infrastructure.md` (sleep replay neutral)
+- `2026-04-27-overnight-summary.md` (consolidated session summary)
+
+### 4.9 Open future directions
+
+1. **Sleep-replay with proper trajectory content** — random and stale
+   trajectory replay don't help. Recency-weighted, current-goal-only
+   replay might. Needed: log only recent successful steps; replay only
+   matching current goal.
+2. **Working memory in PFC** — persistent activity for delayed-response
+   tasks. Tests temporal integration.
+3. **Spatial scaling** — 16x16+ grids. Tests that the architecture isn't
+   gridworld-specific.
+4. **Multi-modal sensory integration** — visual + proprioceptive layers
+   composing via separate plasticity gates.
+5. **Multiple sleep cycles + NREM/REM stages** — different replay rules
+   per stage.
+6. **Cerebellum** — timing, error correction, fine motor.
+7. **Distance-shaped reward** — current ±1 binary reward is sparse.
+   Continuous reward could improve learning quality.
+
+### 4.10 Cross-cutting: doc / repo hygiene
 - Module-split docs (CLAUDE.md, CONTRIBUTING.md) were stale (single-file
   era references) — refreshed 2026-04-25.
 - README architecture diagram added (Mermaid) — 2026-04-25.
