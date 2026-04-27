@@ -4284,6 +4284,20 @@ class SimulationBridge:
             if (getattr(cfg, "enable_neuromodulator_subsystem", False)
                     and self.neuromodulator_manager is not None):
                 self.neuromodulator_manager.step(self)
+                # Propagate any NM-driven plasticity gate values to the
+                # bridge's per-pathway gain. Biological grounding:
+                # developmental NM ramps modulate critical periods; DA
+                # gates corticostriatal LTP; ACh gates attentional cortex
+                # plasticity. The gate value = NM concentration after
+                # baseline+sensitivity scaling (see compute_plasticity_gate_values).
+                if self._plasticity_gate_to_synapses:
+                    nm_gates = self.neuromodulator_manager.compute_plasticity_gate_values()
+                    for gate_name, gate_value in nm_gates.items():
+                        if gate_name in self._plasticity_gate_to_synapses:
+                            # Only update if value changed materially (avoid GPU writes)
+                            current = self._plasticity_gate_values.get(gate_name, 1.0)
+                            if abs(gate_value - current) > 1e-4:
+                                self.set_plasticity_gate(gate_name, gate_value)
 
             # --- 4d. C3: Structural Plasticity (Synapse Formation/Elimination) ---
             # Freeze structural plasticity during experiments: synaptogenesis operates on

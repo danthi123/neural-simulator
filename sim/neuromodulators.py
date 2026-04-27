@@ -41,6 +41,15 @@ class ModulatorTarget:
         "excitability_drive"
             Adds current to membrane drive (pA).
             effect = sensitivity * (conc - baseline)
+        "plasticity_gate"
+            Drives a per-pathway plasticity gate. The gate name must match
+            a `RegionPathway.plasticity_gate` set during construction.
+            effect = clip(0, 1, sensitivity * (conc - baseline))
+            Use scope to identify the gate: "gate:<name>"
+            Biological grounding: critical-period closure via PV
+            interneuron maturation, DA-gated corticostriatal plasticity,
+            ACh-gated cortical attention plasticity. The neuromodulator
+            concentration becomes the actual plasticity gate value.
 
     scope: which neurons / synapses are affected.
         "all"               every neuron / synapse
@@ -49,6 +58,7 @@ class ModulatorTarget:
                             under that group name
         "plastic_only"      synapses with cp_synapse_plastic_mask == True
                             (synaptic_gain & plasticity_rate only)
+        "gate:<name>"       plasticity-gate by name (plasticity_gate target only)
 
     sensitivity: scaling factor in the effect formulas above.
         0.0 disables the target without removing it.
@@ -238,6 +248,40 @@ class NeuromodulatorManager:
                 conc = self._concentrations[cfg.name]
                 multiplier *= 1.0 + tgt.sensitivity * (conc - cfg.baseline)
         return float(max(0.0, multiplier))
+
+    def compute_plasticity_gate_values(self) -> dict:
+        """Compute plasticity gate values driven by neuromodulator concentrations.
+
+        Returns a dict {gate_name: value} for each plasticity_gate target
+        with scope='gate:<name>'. The bridge calls this each step (or
+        periodically) to update its per-pathway plasticity gates.
+
+        Effect formula: clip(0, 1, sensitivity * (conc - baseline))
+        Multiple modulators targeting the same gate are summed before
+        clipping. A gate driven by NM conc=1, baseline=0, sensitivity=1
+        will have gain=1 (full plasticity) when conc=1; gain=0 (frozen)
+        when conc=0.
+
+        Biological grounding: developmental NMs (slow ramp), critical-period
+        gating (fast on, slow off), DA-gated corticostriatal LTP (phasic),
+        ACh-gated attention plasticity (transient).
+        """
+        gate_contributions: dict = {}
+        for cfg in self._configs:
+            for tgt in cfg.targets:
+                if tgt.target_type != "plasticity_gate":
+                    continue
+                if not tgt.scope.startswith("gate:"):
+                    continue
+                gate_name = tgt.scope.split(":", 1)[1]
+                conc = self._concentrations[cfg.name]
+                contribution = tgt.sensitivity * (conc - cfg.baseline)
+                gate_contributions[gate_name] = (
+                    gate_contributions.get(gate_name, 0.0) + contribution
+                )
+        # Clip to [0, 1]
+        return {name: float(max(0.0, min(1.0, val)))
+                for name, val in gate_contributions.items()}
 
     def compute_excitability_drive_pA(self) -> float:
         """Scalar additive drive (pA) from all scope=all excitability_drive targets.

@@ -642,6 +642,74 @@ def test_thawed_pathway_allows_stdp_weight_changes():
     assert delta > 1e-3, f"thawed pathway should change weights; got max |Δw|={delta}"
 
 
+def test_neuromodulator_drives_plasticity_gate():
+    """NM concentration can drive a plasticity gate via target_type='plasticity_gate'.
+
+    Biological grounding: developmental neuromodulators ramp critical-period
+    plasticity (PV interneuron maturation), DA gates corticostriatal LTP,
+    ACh gates cortical attention plasticity. With this target type, the
+    NM concentration directly determines the per-pathway plasticity gain.
+    """
+    pytest.importorskip("cupy")
+    from sim.regions import BrainRegion, RegionPathway
+    from sim.neuromodulators import (
+        NeuromodulatorConfig, ModulatorTarget, ProductionRule,
+    )
+
+    regions = [
+        BrainRegion(name="A", n_neurons=10, exc_fraction=1.0, internal_density=0.0,
+                    plastic_internal=False),
+        BrainRegion(name="B", n_neurons=10, exc_fraction=1.0, internal_density=0.0,
+                    plastic_internal=False),
+    ]
+    pathways = [
+        RegionPathway(
+            from_region="A", to_region="B",
+            density=1.0, weight_mean=0.5, weight_jitter=0.0,
+            plastic=True, plasticity_gate="ab_gate",
+        ),
+    ]
+    nm_configs = [
+        NeuromodulatorConfig(
+            name="dev_clock",
+            baseline=0.0,
+            decay_tau_ms=1e9,  # effectively constant once set
+            concentration_min=0.0,
+            concentration_max=1.0,
+            production_rules=[ProductionRule(rule_type="manual")],
+            targets=[
+                ModulatorTarget(
+                    target_type="plasticity_gate",
+                    scope="gate:ab_gate",
+                    sensitivity=1.0,
+                ),
+            ],
+        ),
+    ]
+    sb, cfg = _make_bridge_with_regions(regions, pathways, nm_configs=nm_configs, seed=42)
+
+    # Initially gate is at default 1.0 (full plasticity)
+    assert sb.get_plasticity_gate_value("ab_gate") == 1.0
+
+    # Set NM to 0.0 — this should drive the gate to 0.0 (frozen)
+    sb.neuromodulator_manager.set_concentration("dev_clock", 0.0)
+    # Run one step so the NM step propagates to the gate
+    sb._run_one_simulation_step()
+    assert abs(sb.get_plasticity_gate_value("ab_gate") - 0.0) < 1e-3, (
+        f"NM=0.0 should drive gate to 0.0, got {sb.get_plasticity_gate_value('ab_gate')}"
+    )
+
+    # Set NM to 1.0 — gate should be 1.0
+    sb.neuromodulator_manager.set_concentration("dev_clock", 1.0)
+    sb._run_one_simulation_step()
+    assert abs(sb.get_plasticity_gate_value("ab_gate") - 1.0) < 1e-3
+
+    # Partial: NM=0.5 → gate=0.5
+    sb.neuromodulator_manager.set_concentration("dev_clock", 0.5)
+    sb._run_one_simulation_step()
+    assert abs(sb.get_plasticity_gate_value("ab_gate") - 0.5) < 1e-3
+
+
 def test_freeze_thaw_cycle():
     """Freeze, drive, verify no change. Thaw, drive, verify change.
     Freeze again, drive, verify weights don't move further from the
