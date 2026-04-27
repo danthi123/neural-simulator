@@ -99,6 +99,18 @@ def build_bg_brain_regions(
     enable_hippocampus: bool = False,
     n_hippocampus_per_layer: int = 64,  # 8×8 grid place + 8×8 grid goal cells
     hippocampus_to_cortex_weight: float = 10.0,
+    # Working memory in PFC (Item 3, 2026-04-27).
+    # Adds a prefrontal cortex region with recurrent internal connectivity
+    # to support persistent activity (working memory). Real PFC neurons
+    # show sustained firing across delay periods to maintain task-relevant
+    # information. With this region, goal_cells project to PFC (plastic),
+    # PFC has dense recurrent connectivity (plastic), PFC projects to
+    # cortex (plastic). Tests whether PFC can hold goal info across delays.
+    enable_pfc: bool = False,
+    n_pfc: int = 60,
+    pfc_internal_density: float = 0.2,  # recurrent connectivity for persistence
+    goal_to_pfc_weight: float = 8.0,
+    pfc_to_cortex_weight: float = 8.0,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -139,6 +151,25 @@ def build_bg_brain_regions(
             exc_weight_mean=0.0, inh_weight_mean=0.0,
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
+
+    # PFC working memory (Item 3, 2026-04-27): recurrent prefrontal region.
+    # Internal density > 0 enables recurrent connections that can sustain
+    # activity across delay periods (persistent activity / attractor dynamics).
+    # PFC pyramidal preset has biophysical features for sustained firing.
+    if enable_pfc:
+        regions.append(BrainRegion(
+            name="pfc",
+            n_neurons=n_pfc,
+            exc_fraction=0.8,
+            internal_density=pfc_internal_density,
+            exc_weight_mean=2.0,  # moderate self-excitation for persistence
+            inh_weight_mean=4.0,
+            weight_jitter=0.2,
+            plastic_internal=True,  # plastic recurrence supports learning
+            izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+            # IZH2007_HIPPO_PYRAMIDAL works for PFC-style dynamics; can switch
+            # to dedicated PFC preset (HH_PFC_PYRAMIDAL) for full biophysics.
         ))
 
     # Sensory layer (opt-in): position-tuned input neurons feeding cortex.
@@ -319,6 +350,30 @@ def build_bg_brain_regions(
                 plasticity_gate="hippo_to_cortex",
             ))
 
+    # PFC working memory pathways (Item 3, 2026-04-27):
+    #   goal_cells → PFC: goal info enters working memory
+    #   PFC → cortex_X: PFC drives cortex selection across delays
+    # Both tagged with plasticity_gate="pfc_pathways" so curriculum can
+    # stage PFC learning. Internal PFC connectivity is plastic_internal=True
+    # for recurrent learning (gated by "pfc_internal" if needed).
+    if enable_pfc:
+        if enable_hippocampus:
+            # goal_cells → PFC for working memory of goal
+            pathways.append(RegionPathway(
+                from_region="goal_cells", to_region="pfc",
+                density=0.5, weight_mean=goal_to_pfc_weight,
+                weight_jitter=0.2, plastic=True,
+                plasticity_gate="pfc_pathways",
+            ))
+        # PFC → cortex (action selection driven by working memory)
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region="pfc", to_region=f"cortex_{action}",
+                density=0.5, weight_mean=pfc_to_cortex_weight,
+                weight_jitter=0.2, plastic=True,
+                plasticity_gate="pfc_pathways",
+            ))
+
     # Cortex -> striatum (LEARNING site).
     # Each cortex_X projects strongly to its corresponding str_D1_X / str_D2_X
     # AND weakly to other actions' striatum (cross-projection allows learning
@@ -483,6 +538,11 @@ def run_moving_goal_episode(
     n_hippocampus_per_layer: int = 64,  # default 8×8 grid; should be roughly grid_size²
     sensory_to_cortex_weight: float = 10.0,
     hippocampus_to_cortex_weight: float = 10.0,
+    enable_pfc: bool = False,
+    n_pfc: int = 60,
+    pfc_internal_density: float = 0.2,
+    goal_to_pfc_weight: float = 8.0,
+    pfc_to_cortex_weight: float = 8.0,
     learning_rate: float = 0.01,
     reward_eligibility_tau_ms: float = 500.0,
     reward_hold_steps: int = 10,
@@ -600,6 +660,11 @@ def run_moving_goal_episode(
         n_hippocampus_per_layer=n_hippocampus_per_layer,
         sensory_to_cortex_weight=sensory_to_cortex_weight,
         hippocampus_to_cortex_weight=hippocampus_to_cortex_weight,
+        enable_pfc=enable_pfc,
+        n_pfc=n_pfc,
+        pfc_internal_density=pfc_internal_density,
+        goal_to_pfc_weight=goal_to_pfc_weight,
+        pfc_to_cortex_weight=pfc_to_cortex_weight,
     )
 
     # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
@@ -1338,6 +1403,14 @@ def main():
                     help="Initial mean weight for sensory→cortex pathway (default 10). Higher values let input layer drive cortex more strongly during phase 2.")
     ap.add_argument("--hippocampus-to-cortex-weight", type=float, default=10.0,
                     help="Initial mean weight for hippocampus→cortex pathway (default 10). Higher = stronger plastic input contribution.")
+    ap.add_argument("--pfc", action="store_true",
+                    help="Enable PFC working memory region (recurrent connectivity for persistent activity).")
+    ap.add_argument("--n-pfc", type=int, default=60,
+                    help="Number of PFC neurons (default 60).")
+    ap.add_argument("--pfc-internal-density", type=float, default=0.2,
+                    help="PFC recurrent connection density (default 0.2; higher = more persistent activity).")
+    ap.add_argument("--goal-to-pfc-weight", type=float, default=8.0)
+    ap.add_argument("--pfc-to-cortex-weight", type=float, default=8.0)
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
@@ -1418,6 +1491,11 @@ def main():
             n_hippocampus_per_layer=args.n_hippocampus_per_layer,
             sensory_to_cortex_weight=args.sensory_to_cortex_weight,
             hippocampus_to_cortex_weight=args.hippocampus_to_cortex_weight,
+            enable_pfc=args.pfc,
+            n_pfc=args.n_pfc,
+            pfc_internal_density=args.pfc_internal_density,
+            goal_to_pfc_weight=args.goal_to_pfc_weight,
+            pfc_to_cortex_weight=args.pfc_to_cortex_weight,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_cortex_lateral_inhibition=args.cortex_wta,
