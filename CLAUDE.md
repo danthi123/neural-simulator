@@ -375,13 +375,54 @@ on twelve sharpening / perception / meta-modulation variants on both
 2-goal (1 transition) and multi-goal (3 transitions) tasks. Full result
 table in [`docs/SCIENCE_ROADMAP.md` §4.7](docs/SCIENCE_ROADMAP.md).
 
-### Recommended configuration
+### 🎉 Plastic-input-layer arc RESOLVED (2026-04-27)
 
-After 6-seed validation (the 3-seed asym DA win didn't generalize — see `research/findings/2026-04-26-six-seed-correction.md`):
+After 7 NEGATIVE attempts on 2026-04-26, the plastic-input-layer
+problem was resolved on 2026-04-27 via per-pathway plasticity gating
+infrastructure + real curriculum learning. See
+[`research/findings/2026-04-27-plastic-input-layer-RESOLVED.md`](research/findings/2026-04-27-plastic-input-layer-RESOLVED.md)
+and [`research/findings/2026-04-27-task-adaptive-curriculum.md`](research/findings/2026-04-27-task-adaptive-curriculum.md).
+
+Key new infrastructure:
+- `RegionPathway.plasticity_gate: str | None` — tag pathways for runtime gating
+- `bridge.set_plasticity_gate(name, value)` — freeze/thaw at runtime
+- `cp_plasticity_gain` array — gates STDP, eligibility, Hebbian, synaptic scaling
+- NM-driven gates: `target_type="plasticity_gate", scope="gate:<name>"`
+
+Curriculum: phase 1 cortex_to_d1 plastic + input layers frozen; phase 2
+cortex frozen (or partial) + input layers thawed. Biologically: real
+critical periods close gradually, gated by neuromodulators, allowing
+sensory cortex to mature before association cortex.
+
+### Recommended configuration (current best)
+
+After the plastic-input-layer breakthrough, the recommended config for
+2-goal AND 4-goal (multi-goal) tasks:
 
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
-    --surprise-lr-boost --seed N --n-steps 1800
+    --hippocampus --learned-perception \
+    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
+    --curriculum --curriculum-warmup-steps 600 \
+    --curriculum-phase2-cortex-gain 0.2 \
+    --seed N --n-steps 1800
+```
+
+Performance:
+- **2-goal**: sum 4.79 ± 1.19 (6-seed) — 18.5% improvement over baseline 5.88, 5/6 seeds beat baseline
+- **4-goal (multi-goal)**: sum 7.83 (3-seed) — 5.9% improvement over baseline broadcast 8.32
+
+For the simplest 2-goal-best variant (slightly more statistically
+robust, p=0.02): use `--curriculum-phase2-cortex-gain 0.0` (full freeze)
+and skip `--learned-perception`. This gives sum 4.72 (6-seed). The
+partial-freeze + sensory variant trades a tiny bit of 2-goal precision
+for multi-goal generalization.
+
+### Legacy configurations (pre-curriculum, less effective)
+
+```bash
+# Pre-curriculum recommendation (still works, but inferior to curriculum):
+python -m research.runners.g11_bg_runner --moving-goal --surprise-lr-boost --seed N
 ```
 
 This is the most reliable refinement: 6-seed mean 4.92 ± 1.07 (16% improvement over baseline 5.88, marginally significant at t=1.31). Lower variance than both baseline and asym DA.

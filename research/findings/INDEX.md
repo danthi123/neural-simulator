@@ -12,7 +12,8 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
-| 2026-04-27 | [**Sensory layer additive (multi-input)**](2026-04-27-perception-additive.md) | **GO** — sensory + hippo + curriculum: 5/6 seeds beat baseline (4.63 vs 5.88, p=0.05). Three plastic input layers now compose. Heuristic-off test confirms inputs augment, don't replace, the heuristic (biologically expected). |
+| 2026-04-27 | [**Task-adaptive curriculum + final summary**](2026-04-27-task-adaptive-curriculum.md) | **GO** — partial freeze (gain=0.2) generalizes across slow-change (2-goal: 4.79, 5/6) and fast-change (4-goal: 7.83, beats baseline 8.32 by 5.9%). Single hyperparameter controls task adaptation. NM-driven plasticity gates landed too. Comprehensive session summary. |
+| 2026-04-27 | [Sensory layer additive (multi-input)](2026-04-27-perception-additive.md) | **GO** — sensory + hippo + curriculum: 5/6 seeds beat baseline (4.63 vs 5.88, p=0.05). Three plastic input layers now compose. Heuristic-off test confirms inputs augment, don't replace, the heuristic (biologically expected). |
 | 2026-04-27 | [**🎉 Plastic-input-layer arc RESOLVED**](2026-04-27-plastic-input-layer-RESOLVED.md) | **GO** — per-pathway plasticity gating + real curriculum + no WTA: 6/6 seeds beat baseline (sum 4.72 vs 5.88, p=0.02). First time ever with a plastic input layer. Hippocampus genuinely learns place→action mapping. |
 | 2026-04-26 | [Curriculum learning (drive-gated)](2026-04-26-curriculum-fail.md) | NEGATIVE — suppressing hippo drive during warmup doesn't crack the plastic-input-layer ceiling; true curriculum needs bridge-level staged plasticity |
 | 2026-04-26 | [Cortex WTA + adaDA + hippo combo](2026-04-26-cortex-wta-adapda-combo.md) | PARTIAL — adaDA provides ~14% over WTA+hippo (9.26 → 8.01) but combo still 1.36× worse than baseline; closes off "more flags will fix it" approach |
