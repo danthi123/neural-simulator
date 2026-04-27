@@ -17,6 +17,7 @@ import h5py
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
+from typing import Dict, List, Optional
 
 import cupy as cp
 try:
@@ -239,6 +240,20 @@ class SimulationBridge:
         # plasticity paths that opt-in) only write back where this is True.
         # Set by inject_explicit_wiring when any population has plastic=False.
         self.cp_synapse_plastic_mask = None
+
+        # Per-pathway plasticity gating (Stage 1, 2026-04-27).
+        # cp_plasticity_gain: per-synapse float multiplier (1.0=full plasticity,
+        #   0.0=frozen). Default None when no pathway uses plasticity_gate.
+        # _plasticity_gate_to_synapses: gate_name → list of synapse indices.
+        # _plasticity_gate_indices_gpu: gate_name → cp.ndarray of indices.
+        # _plasticity_gate_values: gate_name → current Python float value.
+        # Used by curriculum, developmental staging, and future
+        # neuromodulator-gated learning windows. See sim/regions.py
+        # RegionPathway.plasticity_gate docstring for biology.
+        self.cp_plasticity_gain = None
+        self._plasticity_gate_to_synapses = {}
+        self._plasticity_gate_indices_gpu = {}
+        self._plasticity_gate_values = {}
 
         self.is_initialized = False
 
@@ -1654,24 +1669,31 @@ class SimulationBridge:
         n = self.core_config.num_neurons
 
         # Concatenate all populations into flat arrays, tracking the
-        # per-population plastic flag so we can build a per-synapse mask
-        # after CSR construction (order may differ from insertion).
+        # per-population plastic flag and plasticity_gate name so we can
+        # build per-synapse mask + per-synapse gain index after CSR
+        # construction (order may differ from insertion).
         all_pre = []
         all_post = []
         all_w = []
         all_plastic = []
+        all_gates = []  # gate_name string per synapse, or "" for ungated
         any_fixed = False
+        any_gated = False
         for name, group in wiring_plan.items():
             if not isinstance(group, dict) or "pre_indices" not in group:
                 continue
             plastic_flag = bool(group.get("plastic", True))
+            gate_name = group.get("plasticity_gate", None) or ""
             if not plastic_flag:
                 any_fixed = True
+            if gate_name:
+                any_gated = True
             n_syn = len(group["pre_indices"])
             all_pre.extend(group["pre_indices"])
             all_post.extend(group["post_indices"])
             all_w.extend([float(x) for x in group["initial_weights"]])
             all_plastic.extend([plastic_flag] * n_syn)
+            all_gates.extend([gate_name] * n_syn)
 
         if len(all_pre) == 0:
             self._log_console("inject_explicit_wiring: no synapses in plan.", "warning")
@@ -1696,20 +1718,48 @@ class SimulationBridge:
         self._synapse_count = nnz
         self._synapse_capacity = nnz
 
-        # Build per-synapse plastic mask aligned with cp_connections.data order.
-        # tocoo() preserves CSR's internal order (row-major by pre then post),
-        # so we re-sort the original (pre, post, plastic) tuples by the same key
-        # to match. Only build the mask if anything is fixed; otherwise leave None
-        # so back-compat paths take the "all plastic" behaviour.
-        if any_fixed:
+        # Build per-synapse plastic mask AND per-pathway plasticity-gate map
+        # aligned with cp_connections.data order. tocoo() preserves CSR's
+        # internal order (row-major by pre then post), so we re-sort the
+        # original tuples by the same key to match. Sort once over
+        # (pre, post, plastic, gate) tuples since they're row-aligned.
+        if any_fixed or any_gated:
             keyed = sorted(
-                zip(all_pre, all_post, all_plastic),
+                zip(all_pre, all_post, all_plastic, all_gates),
                 key=lambda t: (t[0], t[1]),
             )
-            sorted_plastic = np.asarray([p for _, _, p in keyed], dtype=np.bool_)
+        else:
+            keyed = None
+
+        if any_fixed:
+            sorted_plastic = np.asarray([p for _, _, p, _ in keyed], dtype=np.bool_)
             self.cp_synapse_plastic_mask = cp.asarray(sorted_plastic)
         else:
             self.cp_synapse_plastic_mask = None
+
+        # Per-pathway plasticity gates: build gate_name → synapse-indices map.
+        # Allocate cp_plasticity_gain only if any synapse is gated; otherwise
+        # leave None and the plasticity update paths skip gain multiplication.
+        if any_gated:
+            sorted_gates = [g for _, _, _, g in keyed]
+            gate_to_indices: Dict[str, List[int]] = {}
+            for syn_idx, gname in enumerate(sorted_gates):
+                if gname:
+                    gate_to_indices.setdefault(gname, []).append(syn_idx)
+            self._plasticity_gate_to_synapses = gate_to_indices
+            self._plasticity_gate_indices_gpu = {
+                name: cp.asarray(np.asarray(indices, dtype=np.int32))
+                for name, indices in gate_to_indices.items()
+            }
+            self._plasticity_gate_values = {n: 1.0 for n in gate_to_indices}
+            # Default gain: 1.0 everywhere (full plasticity). Runners call
+            # set_plasticity_gate(name, value) to alter at runtime.
+            self.cp_plasticity_gain = cp.ones(nnz, dtype=cp.float32)
+        else:
+            self._plasticity_gate_to_synapses = {}
+            self._plasticity_gate_indices_gpu = {}
+            self._plasticity_gate_values = {}
+            self.cp_plasticity_gain = None
 
         # Flip output trait to inhibitory if requested (enables lateral inhibition).
         if output_inhibitory_indices:
@@ -1753,6 +1803,61 @@ class SimulationBridge:
             f"inject_explicit_wiring: installed {nnz} synapses across "
             f"{sum(1 for k,v in wiring_plan.items() if isinstance(v, dict) and 'pre_indices' in v)} populations."
         )
+
+    # ─────────────────────────── Plasticity gates ───────────────────────────
+    # Per-pathway plasticity gating (Stage 1, 2026-04-27). When a pathway
+    # is built with plasticity_gate="some_name", all its synapses share a
+    # runtime-controllable gain. set_plasticity_gate("some_name", 0.0) freezes
+    # all those synapses (no STDP, no eligibility, no reward updates).
+    # set_plasticity_gate("some_name", 1.0) thaws.
+    #
+    # Biological grounding: developmental staging (sensory cortex matures
+    # before association cortex), critical periods (visual cortex ocular
+    # dominance plasticity closes via PV interneuron maturation), and
+    # neuromodulator-gated plasticity windows. The gate is the abstraction;
+    # what controls it (a fixed schedule, a neuromodulator concentration, a
+    # developmental clock) is up to the runner / experiment configuration.
+
+    def set_plasticity_gate(self, name: str, value: float) -> None:
+        """Set the runtime plasticity gain for all synapses in pathways
+        tagged with `name`.
+
+        Default gain on inject is 1.0 (full plasticity). Set to 0.0 to freeze
+        (no weight changes from any source for tagged synapses), or any value
+        in between for partial.
+
+        Raises KeyError if `name` was not declared on any pathway in the
+        active wiring plan.
+        """
+        if name not in self._plasticity_gate_to_synapses:
+            raise KeyError(
+                f"No plasticity gate named '{name}'. "
+                f"Known gates: {list(self._plasticity_gate_to_synapses.keys())}"
+            )
+        self._plasticity_gate_values[name] = float(value)
+        if self.cp_plasticity_gain is None:
+            return
+        indices = self._plasticity_gate_indices_gpu[name]
+        # Bound nnz vs gain length for safety against post-init capacity changes
+        nnz = self.cp_plasticity_gain.shape[0]
+        if indices.size > 0 and int(indices.max()) < nnz:
+            self.cp_plasticity_gain[indices] = cp.float32(value)
+
+    def get_plasticity_gate_value(self, name: str) -> float:
+        """Return the current plasticity gain for the named gate."""
+        if name not in self._plasticity_gate_values:
+            raise KeyError(name)
+        return self._plasticity_gate_values[name]
+
+    def list_plasticity_gates(self) -> List[str]:
+        """Return all plasticity gate names declared in the active wiring."""
+        return list(self._plasticity_gate_to_synapses.keys())
+
+    def plasticity_gate_synapse_count(self, name: str) -> int:
+        """Return how many synapses are tagged with the named gate."""
+        if name not in self._plasticity_gate_to_synapses:
+            raise KeyError(name)
+        return len(self._plasticity_gate_to_synapses[name])
 
     def start_simulation(self):
         """Starts or restarts the simulation (called by sim_thread)."""
@@ -3990,9 +4095,12 @@ class SimulationBridge:
                     active_synapse_indices_heb = cp.where(pre_fired_mask_heb & post_fired_mask_heb)[0]
                     num_potentiation_events = 0
                     if active_synapse_indices_heb.size > 0:
-                        base_weights_data_array = self.cp_connections.data 
+                        base_weights_data_array = self.cp_connections.data
                         current_weights_active_syn = base_weights_data_array[active_synapse_indices_heb]
                         delta_weights = cfg.hebbian_learning_rate * (cfg.hebbian_max_weight - current_weights_active_syn)
+                        # Per-pathway plasticity gain (Stage 1, 2026-04-27)
+                        if self.cp_plasticity_gain is not None:
+                            delta_weights = delta_weights * self.cp_plasticity_gain[active_synapse_indices_heb]
                         base_weights_data_array[active_synapse_indices_heb] += delta_weights
                         num_potentiation_events = active_synapse_indices_heb.size
 
@@ -4002,7 +4110,14 @@ class SimulationBridge:
                     _experiment_running = (self.experiment_engine is not None and
                                            self.experiment_engine.is_experiment_running)
                     if not _experiment_running:
-                        self.cp_connections.data *= (1.0 - cfg.hebbian_weight_decay)
+                        # Per-pathway plasticity gain: decay rate scales with gain.
+                        # gain=0 → no decay (frozen pathway preserves weights);
+                        # gain=1 → full decay (current behavior).
+                        if self.cp_plasticity_gain is not None:
+                            gated_decay = cfg.hebbian_weight_decay * self.cp_plasticity_gain
+                            self.cp_connections.data *= (1.0 - gated_decay)
+                        else:
+                            self.cp_connections.data *= (1.0 - cfg.hebbian_weight_decay)
                     cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight, out=self.cp_connections.data)
                     if num_potentiation_events > 0: self._mock_total_plasticity_events += num_potentiation_events
             
@@ -4077,6 +4192,19 @@ class SimulationBridge:
                                     plastic_here, updated_weights, current_weights
                                 )
 
+                            # Per-pathway plasticity gain (Stage 1, 2026-04-27).
+                            # When set, scales STDP weight delta by gain in
+                            # [0,1]. gain=0 → frozen pathway: no STDP changes
+                            # AND eligibility doesn't accumulate (since the
+                            # weight_changes seen below is now zero).
+                            # gain=1 → full plasticity. Multiplied with
+                            # plastic_mask: a non-plastic synapse stays
+                            # frozen regardless of gain.
+                            if self.cp_plasticity_gain is not None:
+                                gain_here = self.cp_plasticity_gain[stdp_active_indices]
+                                weight_changes_gated = (updated_weights - current_weights) * gain_here
+                                updated_weights = current_weights + weight_changes_gated
+
                             self.cp_connections.data[stdp_active_indices] = updated_weights
 
                             # Update eligibility traces if reward modulation is enabled.
@@ -4090,6 +4218,11 @@ class SimulationBridge:
                             # synapses, which made reward modulation path-
                             # agnostic and caused the G5.v2 degenerate attractor
                             # (see research/findings/2026-04-20-g5v2.md).
+                            #
+                            # Gating: weight_changes here is the post-gain
+                            # delta (already 0 if pathway is frozen), so the
+                            # eligibility trace correctly reflects what
+                            # actually happened to weights.
                             if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
                                 weight_changes = updated_weights - current_weights
                                 self.cp_eligibility_trace[stdp_active_indices] += weight_changes
@@ -4123,6 +4256,13 @@ class SimulationBridge:
                     # is pre-allocated to capacity which may exceed cp_connections.nnz).
                     actual_nnz = self.cp_connections.nnz
                     weight_updates = effective_reward_lr * reward_prediction_error * self.cp_eligibility_trace[:actual_nnz]
+                    # Per-pathway plasticity gain (Stage 1, 2026-04-27): gate
+                    # the eligibility-to-weight conversion. A pathway frozen
+                    # NOW won't accept reward-driven changes from past
+                    # eligibility; this is the standard 3-factor rule
+                    # interpretation (DA/NM gates the learning event itself).
+                    if self.cp_plasticity_gain is not None:
+                        weight_updates = weight_updates * self.cp_plasticity_gain[:actual_nnz]
                     self.cp_connections.data += weight_updates
                     
                     # Clip to bounds (use STDP bounds if STDP is enabled, otherwise Hebbian bounds)
@@ -4367,7 +4507,14 @@ class SimulationBridge:
                 coo = self._get_cached_coo()
                 if coo is not None and coo.nnz == self.cp_connections.nnz:
                     post_scales = scale_factors[coo.col]
-                    self.cp_connections.data[:] = self.cp_connections.data * post_scales
+                    # Per-pathway plasticity gain (Stage 1, 2026-04-27): scale
+                    # the deviation-from-1 by gain. gain=0 → identity (no
+                    # synaptic scaling); gain=1 → full scaling.
+                    if self.cp_plasticity_gain is not None:
+                        effective_scales = 1.0 + (post_scales - 1.0) * self.cp_plasticity_gain
+                        self.cp_connections.data[:] = self.cp_connections.data * effective_scales
+                    else:
+                        self.cp_connections.data[:] = self.cp_connections.data * post_scales
                     # Enforce weight bounds
                     if cfg.enable_hebbian_learning:
                         cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight, out=self.cp_connections.data)

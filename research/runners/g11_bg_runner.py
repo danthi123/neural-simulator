@@ -297,23 +297,30 @@ def build_bg_brain_regions(
     # Place cells provide spatial context (where am I), goal cells provide
     # task context (where do I want to be). Together they should learn
     # the full position-action mapping.
+    # Tagged with plasticity_gate="hippo_to_cortex" so runners can
+    # implement curriculum: freeze during cortex-warmup, thaw later.
     if enable_hippocampus:
         for action in ACTION_NAMES:
             pathways.append(RegionPathway(
                 from_region="place_cells", to_region=f"cortex_{action}",
                 density=1.0, weight_mean=hippocampus_to_cortex_weight,
                 weight_jitter=0.2, plastic=True,
+                plasticity_gate="hippo_to_cortex",
             ))
             pathways.append(RegionPathway(
                 from_region="goal_cells", to_region=f"cortex_{action}",
                 density=1.0, weight_mean=hippocampus_to_cortex_weight,
                 weight_jitter=0.2, plastic=True,
+                plasticity_gate="hippo_to_cortex",
             ))
 
     # Cortex -> striatum (LEARNING site).
     # Each cortex_X projects strongly to its corresponding str_D1_X / str_D2_X
     # AND weakly to other actions' striatum (cross-projection allows learning
     # to redistribute action representations on goal change).
+    # Tagged with plasticity_gate="cortex_to_d1" so curriculum runners can
+    # freeze cortex→striatum once mature (and let upstream plastic input
+    # layers train against the locked downstream).
     for cortex_action in ACTION_NAMES:
         for str_action in ACTION_NAMES:
             same = (cortex_action == str_action)
@@ -328,11 +335,13 @@ def build_bg_brain_regions(
                 from_region=f"cortex_{cortex_action}",
                 to_region=f"str_D1_{str_action}",
                 density=density, weight_mean=weight, weight_jitter=0.2, plastic=True,
+                plasticity_gate="cortex_to_d1",
             ))
             pathways.append(RegionPathway(
                 from_region=f"cortex_{cortex_action}",
                 to_region=f"str_D2_{str_action}",
                 density=density, weight_mean=weight, weight_jitter=0.2, plastic=True,
+                plasticity_gate="cortex_to_d1",
             ))
 
     # Direct pathway: D1 -> GPi (inhibitory). Strong weight needed to overcome
@@ -768,12 +777,49 @@ def run_moving_goal_episode(
               f"{cfg.num_neurons} neurons, {bridge.cp_connections.nnz} synapses",
               flush=True)
 
+    # Curriculum: real plasticity gating (Stage 3, 2026-04-27).
+    # The hippo→cortex pathways are tagged "hippo_to_cortex" and cortex→D1/D2
+    # are tagged "cortex_to_d1" in build_bg_brain_regions. We use these gates
+    # to implement true developmental staging:
+    #   Phase 1 (warmup): cortex→D1 plastic, hippo→cortex frozen
+    #     → cortex builds correct cortex→D1 mapping under heuristic alone
+    #   Phase 2 (mature): cortex→D1 frozen, hippo→cortex plastic
+    #     → hippo learns place→action given that cascade is locked-in
+    # This addresses the architectural ceiling identified in the 6-NEGATIVE
+    # plastic-input-layer arc: the cascade depends on a single clean cortex
+    # input source. By staging plasticity, we let cortex selectivity
+    # establish itself, then add the plastic input layer with the cascade
+    # protected against further drift.
+    if enable_curriculum and enable_hippocampus:
+        # Phase 1: hippo plasticity OFF, cortex plasticity ON
+        if "hippo_to_cortex" in bridge.list_plasticity_gates():
+            bridge.set_plasticity_gate("hippo_to_cortex", 0.0)
+        if "cortex_to_d1" in bridge.list_plasticity_gates():
+            bridge.set_plasticity_gate("cortex_to_d1", 1.0)
+        if verbose:
+            print(f"[g11 seed={seed}] curriculum phase 1: cortex_to_d1 plastic, "
+                  f"hippo_to_cortex frozen", flush=True)
+    curriculum_phase = 1  # 1 = warmup, 2 = mature
+
     t0 = time.time()
     # Track current gating_strength (used for DA-gated WTA across the whole trial,
     # not just the reward-hold sub-step). Initialized to 1.0 (full WTA on first trial
     # before any reward feedback exists).
     current_gating_strength = 1.0
     for step in range(n_steps):
+        # Curriculum phase transition: at warmup, freeze cortex→D1 (it's
+        # mature) and thaw hippo→cortex (start learning the input layer).
+        if (enable_curriculum and enable_hippocampus
+                and curriculum_phase == 1
+                and step >= curriculum_warmup_steps):
+            curriculum_phase = 2
+            if "cortex_to_d1" in bridge.list_plasticity_gates():
+                bridge.set_plasticity_gate("cortex_to_d1", 0.0)
+            if "hippo_to_cortex" in bridge.list_plasticity_gates():
+                bridge.set_plasticity_gate("hippo_to_cortex", 1.0)
+            if verbose:
+                print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 — "
+                      f"cortex_to_d1 frozen, hippo_to_cortex thawed", flush=True)
         # Goal change
         while (current_schedule_idx + 1 < len(goal_schedule_sorted)
                and step >= goal_schedule_sorted[current_schedule_idx + 1][0]):

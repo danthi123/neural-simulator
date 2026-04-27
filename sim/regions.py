@@ -118,6 +118,25 @@ class RegionPathway:
         phasic dopamine; cortical LTP can be gated by acetylcholine
         attention signals. This field implements that as a config
         knob.
+
+    plasticity_gate:
+        Optional name for a runtime-controllable plasticity gate. When
+        set, all synapses in this pathway share a per-synapse plasticity
+        gain that defaults to 1.0 (full plasticity) and can be modified
+        at runtime via `bridge.set_plasticity_gate(name, value)`. Setting
+        the gain to 0.0 freezes the pathway (no STDP, no eligibility
+        accumulation, no reward-driven updates). Setting it back to 1.0
+        thaws.
+
+        Biological analogue: developmental staging (sensory cortex
+        matures before association cortex), critical periods (visual
+        cortex ocular dominance plasticity closes via PV interneuron
+        maturation), and neuromodulator-gated plasticity windows. The
+        gate is the abstraction; what controls it (a fixed schedule, a
+        neuromodulator concentration, a developmental clock) is up to
+        the runner / experiment configuration.
+
+        None = always-on (current behavior, not added to any gate).
     """
 
     from_region: str
@@ -127,6 +146,7 @@ class RegionPathway:
     weight_jitter: float = 0.2
     plastic: bool = True
     neuromodulator_gates: List[str] = field(default_factory=list)
+    plasticity_gate: str = None
 
 
 class RegionManager:
@@ -325,4 +345,6 @@ class RegionManager:
             "count": len(pre_list),
             # Pathway-specific metadata used in Task 8 for plasticity gating
             "neuromodulator_gates": list(pw.neuromodulator_gates),
+            # Per-pathway plasticity gate name (runtime-controllable). None = always-on.
+            "plasticity_gate": pw.plasticity_gate,
         }

@@ -451,4 +451,234 @@ def test_pfc_motor_runs_end_to_end_for_50_steps():
     da = sb.neuromodulator_manager.get_concentration("dopamine")
     assert da > 0.1, f"dopamine should rise from 0 under sustained reward, got {da}"
 
+
+# ---------- Stage 1 (2026-04-27): per-pathway plasticity gating ----------
+
+
+def test_region_pathway_has_plasticity_gate_field():
+    from sim.regions import RegionPathway
+
+    p = RegionPathway(from_region="A", to_region="B", plasticity_gate="cortex_d1")
+    assert p.plasticity_gate == "cortex_d1"
+
+    # Default is None — backward compatible
+    q = RegionPathway(from_region="A", to_region="B")
+    assert q.plasticity_gate is None
+
+
+def test_wiring_plan_includes_plasticity_gate():
+    """Pathway plasticity_gate name flows through build_wiring_plan."""
+    from sim.regions import BrainRegion, RegionPathway, RegionManager
+
+    regions = [
+        BrainRegion(name="A", n_neurons=4, internal_density=0.0),
+        BrainRegion(name="B", n_neurons=4, internal_density=0.0),
+    ]
+    pathways = [
+        RegionPathway(
+            from_region="A", to_region="B",
+            density=1.0, weight_mean=1.0, plastic=True,
+            plasticity_gate="ab_gate",
+        ),
+    ]
+    mgr = RegionManager(regions, pathways)
+    mgr.initialize(seed=0)
+    plan = mgr.build_wiring_plan(seed=0)
+    entry = plan["pathway_A_to_B"]
+    assert entry["plasticity_gate"] == "ab_gate"
+
+
+def _make_bridge_with_gateable_pathway(seed=42, nm_configs=None):
+    """Build a tiny bridge with one A→B pathway tagged with plasticity_gate.
+
+    A is driven by external current; B receives spikes via the plastic
+    pathway. STDP + reward modulation are enabled. The pathway's plasticity
+    can be toggled with set_plasticity_gate("ab_gate", value).
+    """
+    pytest.importorskip("cupy")
+    from sim.regions import BrainRegion, RegionPathway
+
+    regions = [
+        BrainRegion(name="A", n_neurons=20, exc_fraction=1.0, internal_density=0.0,
+                    plastic_internal=False),
+        BrainRegion(name="B", n_neurons=20, exc_fraction=1.0, internal_density=0.0,
+                    plastic_internal=False),
+    ]
+    pathways = [
+        RegionPathway(
+            from_region="A", to_region="B",
+            density=1.0, weight_mean=0.5, weight_jitter=0.0,
+            plastic=True, plasticity_gate="ab_gate",
+        ),
+    ]
+    sb, cfg = _make_bridge_with_regions(
+        regions, pathways, nm_configs=nm_configs, seed=seed,
+    )
+    # Enable STDP and reward modulation so the gate has something to gate
+    cfg.enable_stdp = True
+    cfg.enable_reward_modulation = True
+    cfg.stdp_a_plus = 0.05  # large to make the test fast
+    cfg.stdp_a_minus = 0.05
+    cfg.stdp_w_min = 0.0
+    cfg.stdp_w_max = 5.0
+    cfg.reward_learning_rate = 0.1
+    cfg.reward_baseline = 0.0
+    return sb, cfg
+
+
+def test_bridge_registers_plasticity_gate_from_wiring():
+    """After inject_explicit_wiring, the bridge knows about the gate name."""
+    sb, _ = _make_bridge_with_gateable_pathway(seed=42)
+    assert "ab_gate" in sb.list_plasticity_gates()
+    # Default value is 1.0 (full plasticity)
+    assert sb.get_plasticity_gate_value("ab_gate") == 1.0
+    # Synapse count tagged with the gate equals A→B pathway size (20×20)
+    assert sb.plasticity_gate_synapse_count("ab_gate") == 400
+    # cp_plasticity_gain allocated and starts at 1.0
+    import cupy as cp
+    assert sb.cp_plasticity_gain is not None
+    assert float(sb.cp_plasticity_gain.min()) == 1.0
+
+
+def test_set_plasticity_gate_updates_gain():
+    """set_plasticity_gate('ab_gate', 0.0) zeroes the per-synapse gain
+    for tagged synapses; other (non-gated) synapses stay at 1.0."""
+    import cupy as cp
+    sb, _ = _make_bridge_with_gateable_pathway(seed=42)
+    # Default
+    assert float(sb.cp_plasticity_gain.min()) == 1.0
+    # Freeze
+    sb.set_plasticity_gate("ab_gate", 0.0)
+    assert sb.get_plasticity_gate_value("ab_gate") == 0.0
+    # All gated synapses now 0; the gain array as a whole has min 0
+    assert float(sb.cp_plasticity_gain.min()) == 0.0
+    # Tagged synapses are exactly the pathway count
+    indices = sb._plasticity_gate_indices_gpu["ab_gate"]
+    assert int((sb.cp_plasticity_gain[indices] == 0.0).sum()) == 400
+    # Thaw
+    sb.set_plasticity_gate("ab_gate", 1.0)
+    assert float(sb.cp_plasticity_gain.min()) == 1.0
+
+
+def test_set_plasticity_gate_unknown_name_raises():
+    sb, _ = _make_bridge_with_gateable_pathway(seed=42)
+    with pytest.raises(KeyError):
+        sb.set_plasticity_gate("not_a_real_gate", 0.5)
+
+
+def test_no_gates_means_cp_plasticity_gain_is_none():
+    """Backward compat: pathways without plasticity_gate don't allocate
+    the gain array (stays None, plasticity update fast-paths skip)."""
+    pytest.importorskip("cupy")
+    from sim.regions import BrainRegion, RegionPathway
+
+    regions = [
+        BrainRegion(name="A", n_neurons=10, exc_fraction=1.0, internal_density=0.0,
+                    plastic_internal=False),
+        BrainRegion(name="B", n_neurons=10, exc_fraction=1.0, internal_density=0.0,
+                    plastic_internal=False),
+    ]
+    pathways = [
+        RegionPathway(
+            from_region="A", to_region="B",
+            density=1.0, weight_mean=0.5, plastic=True,
+            # no plasticity_gate
+        ),
+    ]
+    sb, _ = _make_bridge_with_regions(regions, pathways, seed=42)
+    assert sb.cp_plasticity_gain is None
+    assert sb.list_plasticity_gates() == []
+
+
+def test_frozen_pathway_blocks_stdp_weight_changes():
+    """Drive A and B together so STDP would normally produce LTP. With
+    gate=0, weights of tagged pathway should not change."""
+    import cupy as cp
+    sb, cfg = _make_bridge_with_gateable_pathway(seed=42)
+
+    # Freeze the pathway
+    sb.set_plasticity_gate("ab_gate", 0.0)
+
+    # Snapshot weights
+    initial_weights = sb.cp_connections.data.copy()
+
+    # Drive A and B repeatedly to trigger STDP. A is region 0..19, B is 20..39.
+    sb.cp_external_input_current[:] = 0.0
+    sb.cp_external_input_current[0:20] = 1500.0   # drive A hard
+    sb.cp_external_input_current[20:40] = 1500.0  # drive B hard
+
+    # Provide a reward signal so reward modulation also fires
+    sb.core_config.current_reward_signal = 1.0
+
+    for _ in range(50):
+        sb._run_one_simulation_step()
+        sb.runtime_state.current_time_step += 1
+
+    # Weights must not have changed (frozen)
+    delta = float(cp.abs(sb.cp_connections.data - initial_weights).max())
+    assert delta < 1e-5, f"frozen pathway should have zero weight change; got max |Δw|={delta}"
+
+
+def test_thawed_pathway_allows_stdp_weight_changes():
+    """Same setup but gate=1.0; weights SHOULD change under STDP+reward."""
+    import cupy as cp
+    sb, cfg = _make_bridge_with_gateable_pathway(seed=42)
+
+    # Confirm gate is 1.0 (default — full plasticity)
+    assert sb.get_plasticity_gate_value("ab_gate") == 1.0
+
+    initial_weights = sb.cp_connections.data.copy()
+
+    sb.cp_external_input_current[:] = 0.0
+    sb.cp_external_input_current[0:20] = 1500.0
+    sb.cp_external_input_current[20:40] = 1500.0
+    sb.core_config.current_reward_signal = 1.0
+
+    for _ in range(50):
+        sb._run_one_simulation_step()
+        sb.runtime_state.current_time_step += 1
+
+    delta = float(cp.abs(sb.cp_connections.data - initial_weights).max())
+    assert delta > 1e-3, f"thawed pathway should change weights; got max |Δw|={delta}"
+
+
+def test_freeze_thaw_cycle():
+    """Freeze, drive, verify no change. Thaw, drive, verify change.
+    Freeze again, drive, verify weights don't move further from the
+    thawed values."""
+    import cupy as cp
+    sb, cfg = _make_bridge_with_gateable_pathway(seed=42)
+
+    sb.cp_external_input_current[:] = 0.0
+    sb.cp_external_input_current[0:20] = 1500.0
+    sb.cp_external_input_current[20:40] = 1500.0
+    sb.core_config.current_reward_signal = 1.0
+
+    # Phase 1: frozen
+    sb.set_plasticity_gate("ab_gate", 0.0)
+    w0 = sb.cp_connections.data.copy()
+    for _ in range(30):
+        sb._run_one_simulation_step()
+        sb.runtime_state.current_time_step += 1
+    delta_phase1 = float(cp.abs(sb.cp_connections.data - w0).max())
+    assert delta_phase1 < 1e-5
+
+    # Phase 2: thawed
+    sb.set_plasticity_gate("ab_gate", 1.0)
+    w1 = sb.cp_connections.data.copy()
+    for _ in range(30):
+        sb._run_one_simulation_step()
+        sb.runtime_state.current_time_step += 1
+    delta_phase2 = float(cp.abs(sb.cp_connections.data - w1).max())
+    assert delta_phase2 > 1e-3
+
+    # Phase 3: frozen again
+    sb.set_plasticity_gate("ab_gate", 0.0)
+    w2 = sb.cp_connections.data.copy()
+    for _ in range(30):
+        sb._run_one_simulation_step()
+        sb.runtime_state.current_time_step += 1
+    delta_phase3 = float(cp.abs(sb.cp_connections.data - w2).max())
+    assert delta_phase3 < 1e-5
+
     sb.clear_simulation_state_and_gpu_memory()
