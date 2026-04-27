@@ -284,12 +284,17 @@ def build_bg_brain_regions(
     # Plastic; agent learns position-to-action mapping via STDP + reward.
     # Each sensory neuron projects to all 4 cortex pools; learning shapes
     # which sensory patterns drive which cortex action pool.
+    # Tagged with plasticity_gate="sensory_to_cortex" so curriculum can
+    # stage perceptual learning: frozen during cortex warmup, thawed
+    # during phase 2 to learn position→action mapping with the heuristic
+    # as teacher (additive, not mutually exclusive).
     if enable_learned_perception:
         for action in ACTION_NAMES:
             pathways.append(RegionPathway(
                 from_region="sensory", to_region=f"cortex_{action}",
                 density=1.0, weight_mean=sensory_to_cortex_weight,
                 weight_jitter=0.2, plastic=True,
+                plasticity_gate="sensory_to_cortex",
             ))
 
     # Hippocampus → cortex (LEARNING site, opt-in).
@@ -824,21 +829,32 @@ def run_moving_goal_episode(
     # This matches biology — critical periods close gradually via PV
     # maturation, not as step functions — and reduces variance from
     # abrupt cascade disruption.
-    has_hippo_gate = (enable_curriculum and enable_hippocampus and
-                     "hippo_to_cortex" in bridge.list_plasticity_gates())
-    has_cortex_gate = (enable_curriculum and enable_hippocampus and
-                      "cortex_to_d1" in bridge.list_plasticity_gates())
-    if enable_curriculum and enable_hippocampus:
-        # Phase 1: hippo plasticity OFF, cortex plasticity ON
+    # Curriculum gates: cortex_to_d1, hippo_to_cortex, sensory_to_cortex.
+    # In phase 1, all three input layers (hippo, sensory) are frozen and
+    # only cortex_to_d1 is plastic. Cortex builds D1 mapping under the
+    # heuristic teacher. In phase 2, cortex_to_d1 freezes and the input
+    # layers thaw, learning their mappings with cortex as the locked target.
+    available_gates = bridge.list_plasticity_gates() if enable_curriculum else []
+    has_hippo_gate = enable_curriculum and "hippo_to_cortex" in available_gates
+    has_cortex_gate = enable_curriculum and "cortex_to_d1" in available_gates
+    has_sensory_gate = enable_curriculum and "sensory_to_cortex" in available_gates
+    if enable_curriculum:
+        # Phase 1: input plasticity OFF, cortex_to_d1 plasticity ON
         if has_hippo_gate:
             bridge.set_plasticity_gate("hippo_to_cortex", 0.0)
+        if has_sensory_gate:
+            bridge.set_plasticity_gate("sensory_to_cortex", 0.0)
         if has_cortex_gate:
             bridge.set_plasticity_gate("cortex_to_d1", 1.0)
         if verbose:
             ramp_msg = (f", ramp={curriculum_ramp_steps}" if curriculum_ramp_steps > 0
                        else " (abrupt)")
+            gates_msg = ", ".join(filter(None, [
+                "hippo_to_cortex" if has_hippo_gate else None,
+                "sensory_to_cortex" if has_sensory_gate else None,
+            ]))
             print(f"[g11 seed={seed}] curriculum phase 1: cortex_to_d1 plastic, "
-                  f"hippo_to_cortex frozen{ramp_msg}", flush=True)
+                  f"input gates frozen [{gates_msg}]{ramp_msg}", flush=True)
     last_logged_phase = 1  # for verbose phase-2 announcement on first ramp tick
 
     def _curriculum_gate_values(step_idx):
@@ -883,33 +899,37 @@ def run_moving_goal_episode(
     for step in range(n_steps):
         # Curriculum gate update — for ramp mode, update every step during
         # the ramp window; for abrupt mode, only at the warmup boundary.
-        if enable_curriculum and enable_hippocampus and (has_cortex_gate or has_hippo_gate):
+        # Sensory and hippo input layers share phase-2 gain (they're peer
+        # input pathways being thawed together).
+        if enable_curriculum and (has_cortex_gate or has_hippo_gate or has_sensory_gate):
             target_cortex, target_hippo = _curriculum_gate_values(step)
+            target_sensory = target_hippo  # input layers transition together
             if curriculum_ramp_steps > 0:
-                # Always set during ramp; the bridge handles values in [0, 1]
                 if has_cortex_gate:
                     bridge.set_plasticity_gate("cortex_to_d1", float(target_cortex))
                 if has_hippo_gate:
                     bridge.set_plasticity_gate("hippo_to_cortex", float(target_hippo))
-                # Verbose: announce phase 2 entry once
+                if has_sensory_gate:
+                    bridge.set_plasticity_gate("sensory_to_cortex", float(target_sensory))
                 if (last_logged_phase == 1 and target_hippo > 0.0):
                     last_logged_phase = 2
                     if verbose:
                         print(f"[g11 seed={seed}] step {step}: CURRICULUM RAMP "
-                              f"BEGINNING (cortex {target_cortex:.2f}, hippo {target_hippo:.2f})",
+                              f"BEGINNING (cortex {target_cortex:.2f}, inputs {target_hippo:.2f})",
                               flush=True)
             else:
-                # Abrupt mode: only set at boundary
                 if last_logged_phase == 1 and step >= curriculum_warmup_steps:
                     last_logged_phase = 2
                     if has_cortex_gate:
                         bridge.set_plasticity_gate("cortex_to_d1", float(curriculum_phase2_cortex_gain))
                     if has_hippo_gate:
                         bridge.set_plasticity_gate("hippo_to_cortex", float(curriculum_phase2_hippo_gain))
+                    if has_sensory_gate:
+                        bridge.set_plasticity_gate("sensory_to_cortex", float(curriculum_phase2_hippo_gain))
                     if verbose:
                         print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 — "
                               f"cortex_to_d1={curriculum_phase2_cortex_gain:.2f}, "
-                              f"hippo_to_cortex={curriculum_phase2_hippo_gain:.2f}", flush=True)
+                              f"inputs={curriculum_phase2_hippo_gain:.2f}", flush=True)
         # Goal change
         while (current_schedule_idx + 1 < len(goal_schedule_sorted)
                and step >= goal_schedule_sorted[current_schedule_idx + 1][0]):
@@ -950,28 +970,19 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
         for rn in [f"thal_{a}" for a in ACTION_NAMES]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(300.0)
-        # Cortex drives — main source: heuristic OR learned perception (mutually exclusive)
-        if enable_learned_perception:
-            # Drive sensory layer based on relative goal position (dx, dy).
-            # Each sensory neuron i has preferred (dx_i, dy_i); rate = max * exp(-d²/2σ²)
-            # No direct cortex drive — agent must learn sensory→cortex mapping.
-            dx = float(gx - x)
-            dy = float(gy - y)
-            # Clip to sensor range to handle positions far from goal
-            dx_clip = max(-3.0, min(3.0, dx))
-            dy_clip = max(-3.0, min(3.0, dy))
-            d_sq = (sensory_pref_dx - dx_clip) ** 2 + (sensory_pref_dy - dy_clip) ** 2
-            sensory_drive = sensory_drive_max_pA * np.exp(-d_sq / (2.0 * sensory_drive_sigma ** 2))
-            bridge.cp_external_input_current[region_indices_cp["sensory"]] = cp.asarray(sensory_drive, dtype=cp.float32)
+        # Cortex drives — both heuristic AND learned perception can be active
+        # simultaneously (additive). The heuristic represents innate
+        # sensorimotor primitives; the sensory layer learns refined
+        # position→action mappings on top. With curriculum, the sensory
+        # layer learns via STDP+reward using the heuristic as teacher.
+        # Heuristic cortex drive: directly drive cortex_X for each goal-relative direction.
+        # Heuristic strength can decay post-curriculum to test pure-learned navigation.
+        if heuristic_decay_after_step >= 0 and step >= heuristic_decay_after_step:
+            h_strength = post_curriculum_heuristic_strength
         else:
-            # Heuristic cortex drive: directly drive cortex_X for each goal-relative direction.
-            # Heuristic strength can decay post-curriculum (set heuristic_decay_after_step + post_curriculum_heuristic_strength).
-            # Tests whether learned hippo weights can navigate without heuristic teacher.
-            if heuristic_decay_after_step >= 0 and step >= heuristic_decay_after_step:
-                h_strength = post_curriculum_heuristic_strength
-            else:
-                h_strength = heuristic_strength
-            h_drive = cp.float32(800.0 * h_strength)
+            h_strength = heuristic_strength
+        h_drive = cp.float32(800.0 * h_strength)
+        if h_strength > 0:
             if gy > y:
                 bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = h_drive
             if gx > x:
@@ -980,6 +991,17 @@ def run_moving_goal_episode(
                 bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = h_drive
             if gx < x:
                 bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = h_drive
+        # Sensory layer drive (opt-in, additive on top of heuristic).
+        # Each sensory neuron i has preferred (dx_i, dy_i); rate = max * exp(-d²/2σ²)
+        # The sensory→cortex pathway is plastic — agent learns mapping via STDP+reward.
+        if enable_learned_perception:
+            dx = float(gx - x)
+            dy = float(gy - y)
+            dx_clip = max(-3.0, min(3.0, dx))
+            dy_clip = max(-3.0, min(3.0, dy))
+            d_sq = (sensory_pref_dx - dx_clip) ** 2 + (sensory_pref_dy - dy_clip) ** 2
+            sensory_drive = sensory_drive_max_pA * np.exp(-d_sq / (2.0 * sensory_drive_sigma ** 2))
+            bridge.cp_external_input_current[region_indices_cp["sensory"]] = cp.asarray(sensory_drive, dtype=cp.float32)
 
         # Hippocampus drive (ADDITIVE on top of heuristic — provides plastic memory).
         # Real biology: hippocampus augments cortex, doesn't replace it. Place + goal
