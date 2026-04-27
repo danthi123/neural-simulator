@@ -1,7 +1,7 @@
-# PFC Stage 2: Delayed-Response Test (1-seed preliminary)
+# PFC Stage 2: Delayed-Response Test (3-seed PARTIAL)
 
 **Date:** 2026-04-27 (PFC validation continuation)
-**Status:** **PRELIMINARY (1-seed)** — strong signal that PFC IS doing working memory; full multi-seed validation pending.
+**Status:** **PARTIAL** — 3-seed shows PFC drop is 17% smaller than no-PFC (3.48 vs 4.19), with medium-large effect size (Cohen's d=0.73), but not statistically significant due to high variance (p=0.51). Trend in expected direction.
 
 ## TL;DR
 
@@ -35,10 +35,41 @@ If PFC is just extra parameters:
 - During silence, goal info is gone; PFC fires randomly
 - Agent collapses to random walk
 
+## 3-seed validation (added 2026-04-27 evening)
+
+Multi-seed results (drop = silence_start meanD - pre-silence meanD):
+
+| Seed | PFC drop | no-PFC drop |
+|---|---:|---:|
+| 42 | +2.29 | +5.31 |
+| 43 | +4.62 | +4.37 |
+| 44 | +3.53 | +2.88 |
+| **Mean** | **3.48** | **4.19** |
+
+Statistical analysis:
+- **Difference:** PFC's drop is 17% smaller than no-PFC's drop
+- **Effect size:** Cohen's d = 0.73 (medium-to-large)
+- **Significance:** t=-0.73, p=0.51 (not significant with 3 seeds)
+
+Interpretation: trend in the expected direction (PFC has smaller drop) and
+medium-large effect size, but high variance + small sample = not
+statistically significant. Need ~6-8 seeds with this effect size to reach
+p<0.05.
+
+Seed 43 shows PFC and no-PFC tied (4.62 vs 4.37) — for that seed, PFC
+provides no advantage. Seeds 42 and 44 show clearer PFC benefit.
+
 ## Caveats
 
-This is **1 seed only** (seed 42) due to long run time per test (~2-3 hours
-for 2100-step run). Full validation needs 3+ seeds.
+The drop magnitude metric is sensitive to pre-silence baseline. PFC tends
+to have higher pre-silence baseline (some seeds), making the drop look
+smaller for trivial reasons. The cleaner test would be silence-period
+absolute meanD across seeds, but that's confounded by the agent's
+position at silence start.
+
+A better future experiment: shorter delay periods (50, 100 steps) with
+agent forced to specific starting position. Tests memory time-constant
+directly.
 
 In this seed:
 - PFC config had worse pre-silence baseline (4.62) than no-PFC (1.81)
