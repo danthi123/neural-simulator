@@ -632,6 +632,11 @@ def run_moving_goal_episode(
     sleep_replay_after_step: int = -1,
     sleep_replay_steps: int = 300,
     sleep_replay_rate_hz: float = 200.0,  # high rate (sharp-wave ripples)
+    # NREM/REM stages (Item 7, 2026-04-27). When sleep_nrem_rem_alternate=True,
+    # the sleep period alternates between NREM (trajectory replay, slow ripples)
+    # and REM (random replay, faster). NREM cycle dominates first half, REM
+    # second half, modeling sleep-stage progression.
+    sleep_nrem_rem_alternate: bool = False,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -1156,15 +1161,20 @@ def run_moving_goal_episode(
         # log (built during wake from positive-reward steps). Models
         # biological replay of episodic memories. Falls back to random
         # patterns if no trajectories logged yet.
+        # NREM/REM (Item 7): if sleep_nrem_rem_alternate, first half of sleep
+        # is NREM-style (trajectory replay, biological consolidation), second
+        # half is REM-style (random patterns, less structured).
         if in_sleep and enable_hippocampus:
-            if successful_trajectories:
-                # Sample a random successful trajectory tuple
+            sleep_progress = (step - sleep_replay_after_step) / max(1, sleep_replay_steps)
+            in_rem_phase = sleep_nrem_rem_alternate and sleep_progress >= 0.5
+            if successful_trajectories and not in_rem_phase:
+                # NREM: trajectory replay from logged successful steps
                 idx = int(np.random.randint(0, len(successful_trajectories)))
                 replay_x, replay_y, replay_gx, replay_gy = successful_trajectories[idx]
                 replay_x = float(replay_x); replay_y = float(replay_y)
                 replay_gx = float(replay_gx); replay_gy = float(replay_gy)
             else:
-                # Fallback to random if no trajectories logged
+                # REM (or fallback): random patterns, less structured
                 replay_x = float(np.random.randint(0, grid_size))
                 replay_y = float(np.random.randint(0, grid_size))
                 replay_gx = float(np.random.randint(0, grid_size))
@@ -1464,6 +1474,8 @@ def main():
                     help="Number of steps in sleep-replay phase.")
     ap.add_argument("--sleep-replay-rate-hz", type=float, default=200.0,
                     help="Replay drive rate (Hz) — biologically: sharp-wave ripples ~150-250Hz.")
+    ap.add_argument("--sleep-nrem-rem-alternate", action="store_true",
+                    help="Alternate between NREM (trajectory replay, first half) and REM (random replay, second half) during sleep.")
     args = ap.parse_args()
 
     if args.moving_goal:
@@ -1523,6 +1535,7 @@ def main():
             sleep_replay_after_step=args.sleep_replay_after_step,
             sleep_replay_steps=args.sleep_replay_steps,
             sleep_replay_rate_hz=args.sleep_replay_rate_hz,
+            sleep_nrem_rem_alternate=args.sleep_nrem_rem_alternate,
         )
         return 0
 
