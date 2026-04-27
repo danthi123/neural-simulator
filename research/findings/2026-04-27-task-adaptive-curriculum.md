@@ -13,16 +13,30 @@ architecture excel on BOTH slow-change and fast-change tasks.
 | Task | Variant | Sum | vs baseline |
 |---|---|---:|---|
 | 2-goal | Baseline | 5.88 | reference |
-| 2-goal | Hippo + curriculum (full freeze) | 4.72 | -19.8% (p=0.02) |
-| 2-goal | Sensory + hippo + curriculum (full freeze) | 4.63 | -21.3% (p=0.05) |
-| 2-goal | Sensory + hippo + curriculum (**partial freeze 0.2**) | **4.79** | **-18.5%** |
+| 2-goal | Hippo + curriculum (full freeze) | 4.72 (6-seed) | -19.8% (p=0.02) |
+| 2-goal | Sensory + hippo + curriculum (full freeze) | 4.63 (6-seed) | -21.3% (p=0.05) |
+| 2-goal | Sensory + hippo + curriculum (partial freeze 0.2) | 4.79 (6-seed) | -18.5% (p=0.10) |
 | 4-goal | Baseline broadcast DA | 8.32 | reference |
-| 4-goal | Sensory + hippo + curriculum (full freeze) | 8.84 | +6.3% (worse) |
-| 4-goal | Sensory + hippo + curriculum (**partial freeze 0.2**) | **7.83** | **-5.9%** |
+| 4-goal | Sensory + hippo + curriculum (full freeze) | 8.84 (3-seed) | +6.3% (worse) |
+| 4-goal | Sensory + hippo + curriculum (partial freeze 0.2, 3-seed) | 7.83 | -5.9% (looked great) |
+| 4-goal | Sensory + hippo + curriculum (partial freeze 0.2, **6-seed**) | **8.32** | **0.0% (CORRECTED)** |
 
-**Partial freeze (gain=0.2) wins on multi-goal.** On 2-goal it's
-roughly tied with full freeze (within margin of error). So partial
-freeze is the more general configuration.
+**Honest assessment after 6-seed validation:**
+
+- **2-goal (slow-change, 1 transition)**: curriculum + hippo + sensory
+  reliably beats baseline by 18-21%. p=0.02 most significant variant.
+- **4-goal (fast-change, 3 transitions)**: curriculum doesn't help.
+  Partial freeze 6-seed mean = 8.32 (exactly tying baseline). The 3-seed
+  result of 7.83 was a sampling fluke (seeds 42-44 happened to be
+  favorable; seeds 100-102 averaged worse).
+
+**Lesson reinforced**: 3-seed early indicators are unreliable. Always
+validate with 6+ seeds before declaring a generalization claim.
+
+The curriculum mechanism is fundamentally suited to slow-change tasks
+where cortex maturation can be staged. Fast-change tasks need cortex
+to keep adapting, which curriculum (cortex frozen in phase 2)
+prevents — even partial freeze (0.2 plasticity) isn't enough headroom.
 
 ## What partial freeze means
 
