@@ -12,6 +12,8 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
+| 2026-04-27 | [**Item 1 Stage 1: Goal-beacon perception**](2026-04-27-stage1-beacon-perception.md) | **PARTIAL GO** — 3-seed avg 5.36 ± 0.33 with beacon-only goal_cells drive (no direct gx,gy). System navigates without direct goal coords. Heuristic still uses coords; deferred to Stage 3. |
+| 2026-04-27 | [PFC Stage 2: delayed-response 3-seed](2026-04-27-pfc-stage2-delayed-response.md) | PARTIAL — 3-seed PFC drop 17% smaller than no-PFC during goal silence (3.48 vs 4.19, d=0.73, p=0.51). Direction supports working memory; significance needs more seeds. |
 | 2026-04-27 | [**🎉 PFC working memory**](2026-04-27-pfc-working-memory.md) | **GO (NEW BEST)** — 6/6 seeds (4.41 sum, p=0.018, 25% over baseline). Adds recurrent prefrontal region with goal_cells → PFC → cortex pathways. Statistically significant improvement over prior best (4.63). |
 | 2026-04-27 | [Perception cheats investigation](2026-04-27-perception-cheats-investigation.md) | NEGATIVE — simple weight tuning (sensory_to_cortex_weight 10→25→50) doesn't enable heuristic-free navigation. Removing the heuristic requires architectural changes (sparse encoding, LTD for inactive pathways, real perception). Multi-week scope. |
 | 2026-04-27 | [16×16 spatial scaling test](2026-04-27-16x16-scaling.md) | PARTIAL — architecture scales cleanly (1251 neurons / 70K synapses) but recipe tuned for 8×8 underperforms baseline at 16×16 (5.26 vs 4.44). Re-tuning needed for larger grids. CLI flags --grid-size and --n-hippocampus-per-layer added. |

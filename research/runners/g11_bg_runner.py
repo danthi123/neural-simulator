@@ -1014,21 +1014,24 @@ def run_moving_goal_episode(
     # This matches biology — critical periods close gradually via PV
     # maturation, not as step functions — and reduces variance from
     # abrupt cascade disruption.
-    # Curriculum gates: cortex_to_d1, hippo_to_cortex, sensory_to_cortex.
-    # In phase 1, all three input layers (hippo, sensory) are frozen and
-    # only cortex_to_d1 is plastic. Cortex builds D1 mapping under the
-    # heuristic teacher. In phase 2, cortex_to_d1 freezes and the input
-    # layers thaw, learning their mappings with cortex as the locked target.
+    # Curriculum gates: cortex_to_d1, hippo_to_cortex, sensory_to_cortex,
+    # beacon_to_goal. In phase 1, all input layers (hippo, sensory, beacon→goal)
+    # are frozen and only cortex_to_d1 is plastic. Cortex builds D1 mapping
+    # under the heuristic teacher. In phase 2, cortex_to_d1 freezes and the
+    # input layers thaw, learning their mappings with cortex as the locked target.
     available_gates = bridge.list_plasticity_gates() if enable_curriculum else []
     has_hippo_gate = enable_curriculum and "hippo_to_cortex" in available_gates
     has_cortex_gate = enable_curriculum and "cortex_to_d1" in available_gates
     has_sensory_gate = enable_curriculum and "sensory_to_cortex" in available_gates
+    has_beacon_gate = enable_curriculum and "beacon_to_goal" in available_gates
     if enable_curriculum:
         # Phase 1: input plasticity OFF, cortex_to_d1 plasticity ON
         if has_hippo_gate:
             bridge.set_plasticity_gate("hippo_to_cortex", 0.0)
         if has_sensory_gate:
             bridge.set_plasticity_gate("sensory_to_cortex", 0.0)
+        if has_beacon_gate:
+            bridge.set_plasticity_gate("beacon_to_goal", 0.0)
         if has_cortex_gate:
             bridge.set_plasticity_gate("cortex_to_d1", 1.0)
         if verbose:
@@ -1096,6 +1099,8 @@ def run_moving_goal_episode(
                     bridge.set_plasticity_gate("hippo_to_cortex", float(target_hippo))
                 if has_sensory_gate:
                     bridge.set_plasticity_gate("sensory_to_cortex", float(target_sensory))
+                if has_beacon_gate:
+                    bridge.set_plasticity_gate("beacon_to_goal", float(target_sensory))
                 if (last_logged_phase == 1 and target_hippo > 0.0):
                     last_logged_phase = 2
                     if verbose:
@@ -1111,6 +1116,8 @@ def run_moving_goal_episode(
                         bridge.set_plasticity_gate("hippo_to_cortex", float(curriculum_phase2_hippo_gain))
                     if has_sensory_gate:
                         bridge.set_plasticity_gate("sensory_to_cortex", float(curriculum_phase2_hippo_gain))
+                    if has_beacon_gate:
+                        bridge.set_plasticity_gate("beacon_to_goal", float(curriculum_phase2_hippo_gain))
                     if verbose:
                         print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 — "
                               f"cortex_to_d1={curriculum_phase2_cortex_gain:.2f}, "
