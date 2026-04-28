@@ -627,3 +627,53 @@ def test_enable_structural_pruning_kwarg_accepted(tmp_out_path):
         enable_structural_pruning=True,
         pretraining_n_goals=0, pretraining_steps_per_goal=0,
     )
+
+
+def test_pretraining_with_pruning_smoke(tmp_out_path):
+    """End-to-end: tiny pretraining with --enable-structural-pruning. Some
+    cross-projection synapses get pruned (alive=False) by the end."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    import research.runners.g11_bg_runner as runner_mod
+
+    snapshots = {}
+    original = runner_mod._run_pretraining_phase
+
+    def wrapped(*args, **kwargs):
+        bridge = kwargs.get("bridge", args[0] if args else None)
+        result = original(*args, **kwargs)
+        if bridge.cp_synapse_alive is not None:
+            cross = bridge._plasticity_gate_to_synapses.get("bg_cross_projections")
+            if cross:
+                idx = cp.asarray(list(cross), dtype=cp.int64)
+                snapshots["cross_alive_count"] = int(bridge.cp_synapse_alive[idx].sum())
+                snapshots["cross_total"] = int(idx.size)
+        return result
+
+    runner_mod._run_pretraining_phase = wrapped
+    try:
+        run_moving_goal_episode(
+            out_path=tmp_out_path, seed=42, n_steps=50, verbose=False,
+            enable_bg_cross_projections=True,
+            cross_projection_weight=0.0,
+            enable_bg_lateral_inhibition=True,
+            enable_curriculum=True, curriculum_warmup_steps=10,
+            enable_developmental_pretraining=True,
+            enable_structural_pruning=True,
+            # Aggressive pruning hyperparameters so pruning fires within the
+            # short smoke window (default alpha=0.001 + threshold=-1.0 needs
+            # thousands of trials to produce visible effect).
+            pruning_alpha=0.5,
+            pruning_threshold=-0.5,
+            pruning_weight_floor=10.0,
+            pretraining_n_goals=1, pretraining_steps_per_goal=200,
+        )
+    finally:
+        runner_mod._run_pretraining_phase = original
+
+    cross_alive = snapshots["cross_alive_count"]
+    cross_total = snapshots["cross_total"]
+    assert cross_total > 0, "test config should produce cross-projection synapses"
+    assert cross_alive < cross_total, "pruning should eliminate at least 1 synapse"
+    assert cross_alive > 0, "pruning should NOT eliminate everything"

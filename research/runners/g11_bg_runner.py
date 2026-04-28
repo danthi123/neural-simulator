@@ -885,6 +885,22 @@ def _run_pretraining_phase(
                     )
                 bridge.core_config.current_reward_signal = 0.0
 
+            # Structural pruning (cheat-5 option-1, 2026-04-28). Only fires
+            # during pretraining when enable_structural_pruning is on. Restricted
+            # to cross-projection synapses so we don't sparsify the same-action
+            # cortex_to_d1 routing. cp_eligibility_trace is allocated at capacity
+            # (which can exceed nnz to leave room for structural plasticity), so
+            # we slice it down to nnz before handing to update_pruning.
+            if cfg.enable_structural_pruning and bridge.cp_synapse_alive is not None:
+                cross_idx_list = bridge._plasticity_gate_to_synapses.get("bg_cross_projections")
+                if cross_idx_list:
+                    nnz = int(bridge.cp_connections.nnz)
+                    bridge.update_pruning(
+                        eligibility_trace=bridge.cp_eligibility_trace[:nnz],
+                        reward_signal=reward,
+                        prunable_indices=cp.asarray(list(cross_idx_list), dtype=cp.int64),
+                    )
+
             trial_counter += 1
 
     # ── Cross-projection weight summary
@@ -1097,6 +1113,13 @@ def run_moving_goal_episode(
     pretraining_n_goals: int = 10,
     pretraining_steps_per_goal: int = 3000,
     enable_structural_pruning: bool = False,
+    # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
+    # Defaults match CoreSimConfig but can be overridden from the runner's
+    # CLI / kwargs to tune the pruning aggressiveness for short pretraining
+    # windows (e.g. smoke tests). None preserves the cfg default.
+    pruning_alpha: float = None,
+    pruning_threshold: float = None,
+    pruning_weight_floor: float = None,
     # Heuristic decay (Stage 6, 2026-04-27): scales the heuristic cortex
     # drive (800 pA per aligned pool) by this factor. Default 1.0 keeps
     # full heuristic. Set to 0.0 to disable heuristic entirely (tests
@@ -1282,6 +1305,12 @@ def run_moving_goal_episode(
     cfg.enable_parameter_heterogeneity = False
     cfg.enable_structural_plasticity = False  # keep synapse count fixed (per-action DA mask depends on it)
     cfg.enable_structural_pruning = enable_structural_pruning
+    if pruning_alpha is not None:
+        cfg.pruning_alpha = float(pruning_alpha)
+    if pruning_threshold is not None:
+        cfg.pruning_threshold = float(pruning_threshold)
+    if pruning_weight_floor is not None:
+        cfg.pruning_weight_floor = float(pruning_weight_floor)
 
     bridge = SimulationBridge(
         core_config=cfg, viz_config=VisualizationConfig(),
