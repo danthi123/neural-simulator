@@ -1,0 +1,106 @@
+"""Smoke tests for the webapp/server.py FastAPI app.
+
+Tests the surface without booting a real subprocess — uses FastAPI's
+TestClient to hit the in-process app. The launcher endpoint is tested
+with a no-op subprocess (unset path).
+"""
+from __future__ import annotations
+
+import os
+import sys
+
+import pytest
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+@pytest.fixture
+def client():
+    pytest.importorskip("fastapi")
+    pytest.importorskip("httpx")  # FastAPI's TestClient depends on httpx
+    from fastapi.testclient import TestClient
+    from webapp.server import app
+    return TestClient(app)
+
+
+def test_info_endpoint(client):
+    res = client.get("/api/info")
+    assert res.status_code == 200
+    data = res.json()
+    assert "presets" in data
+    assert "flagship" in data["presets"]
+    assert "flagship_with_cheat5" in data["presets"]
+    assert data["phase"].startswith("1")
+
+
+def test_runs_listing(client):
+    res = client.get("/api/runs")
+    assert res.status_code == 200
+    data = res.json()
+    assert "runs" in data
+    assert "count" in data
+    assert isinstance(data["count"], int)
+    # If there are runs, each has the summary fields we render.
+    for r in data["runs"][:3]:
+        assert "name" in r
+        assert "n_phases" in r
+        assert "final_qs" in r
+
+
+def test_findings_listing(client):
+    res = client.get("/api/findings")
+    assert res.status_code == 200
+    data = res.json()
+    assert "findings" in data
+    # We have a lot of findings (60+); expect at least some.
+    assert data["count"] > 0
+
+
+def test_finding_detail_path_traversal_rejected(client):
+    """Path-traversal must not return file content. Either the routing
+    layer normalizes `..` away (404) or our handler rejects it (400);
+    both are safe outcomes."""
+    for name in ("..", "..%2Fserver.py", "..%5Cwebapp%5Cserver.py", ".%2E"):
+        res = client.get(f"/api/findings/{name}")
+        assert res.status_code in (400, 404), (
+            f"path-traversal name={name!r} returned {res.status_code}; "
+            "must be 400 or 404"
+        )
+
+
+def test_run_detail_path_traversal_rejected(client):
+    for name in ("..", "..%2F..%2Fwebapp%2Fserver.py", "%2E%2E"):
+        res = client.get(f"/api/runs/{name}")
+        assert res.status_code in (400, 404), (
+            f"path-traversal name={name!r} returned {res.status_code}; "
+            "must be 400 or 404"
+        )
+
+
+def test_finding_detail_not_found(client):
+    res = client.get("/api/findings/this-finding-does-not-exist.md")
+    assert res.status_code == 404
+
+
+def test_index_html(client):
+    res = client.get("/")
+    assert res.status_code == 200
+    body = res.text
+    assert "<title>" in body
+    assert "Neural Simulator" in body
+
+
+def test_static_assets_served(client):
+    res = client.get("/static/style.css")
+    assert res.status_code == 200
+    assert "background" in res.text  # something CSS-like
+
+
+def test_launch_unknown_preset_rejected(client):
+    res = client.post("/api/runs/launch", json={"preset": "no_such_preset", "seed": 42})
+    assert res.status_code == 400
+
+
+def test_launch_status_unknown_id(client):
+    res = client.get("/api/runs/launch/nonexistent_id")
+    assert res.status_code == 404

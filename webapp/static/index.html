@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Neural Simulator — Research Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Neural Simulator <span class="muted">Research Dashboard</span></h1>
+    <nav>
+      <button data-tab="runs" class="active">Runs</button>
+      <button data-tab="findings">Findings</button>
+      <button data-tab="launcher">Launch</button>
+      <button data-tab="info">About</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="tab-runs" class="tab active">
+      <div class="toolbar">
+        <button id="refresh-runs">Refresh</button>
+        <span class="muted" id="runs-count"></span>
+      </div>
+      <div class="split">
+        <div class="list" id="runs-list">Loading…</div>
+        <div class="detail" id="run-detail">
+          <p class="muted">Click a run to view details.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-findings" class="tab">
+      <div class="toolbar">
+        <button id="refresh-findings">Refresh</button>
+        <span class="muted" id="findings-count"></span>
+      </div>
+      <div class="split">
+        <div class="list" id="findings-list">Loading…</div>
+        <div class="detail" id="finding-detail">
+          <p class="muted">Click a finding to read it.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-launcher" class="tab">
+      <h2>Launch a runner</h2>
+      <form id="launch-form">
+        <label>Preset
+          <select name="preset">
+            <option value="flagship">flagship — 4-cheats-closed (recommended)</option>
+            <option value="flagship_with_cheat5">flagship_with_cheat5 — adds curriculum-staged BG cross-projections</option>
+            <option value="perception_only">perception_only — full perception arc, no sensed reward</option>
+            <option value="baseline">baseline — minimal, no flags</option>
+            <option value="smoke">smoke — 100 steps for quick check</option>
+          </select>
+        </label>
+        <label>Seed
+          <input type="number" name="seed" value="42">
+        </label>
+        <label>Extra flags (space-separated, optional)
+          <input type="text" name="extra_args" placeholder="--something --foo bar">
+        </label>
+        <button type="submit">Launch</button>
+      </form>
+      <div id="launcher-output">
+        <p class="muted">Launches will stream stdout here.</p>
+      </div>
+    </section>
+
+    <section id="tab-info" class="tab">
+      <h2>About</h2>
+      <pre id="info-output">Loading…</pre>
+      <h3>Phase 1 surface</h3>
+      <ul>
+        <li>List + browse completed runs (sortable by sum-finalQ)</li>
+        <li>Inspect run details (per-trial finalQ, motor counts, phase stats)</li>
+        <li>Read research findings (markdown rendering via the browser's text view)</li>
+        <li>Launch new runners from preset configs with live stdout tail</li>
+      </ul>
+      <h3>Phase 2 (planned)</h3>
+      <ul>
+        <li>Three.js viz of the agent in its 2D gridworld with beacon/landmark fields</li>
+        <li>Live region activity feed via the bridge's DataBus (in-process)</li>
+      </ul>
+      <h3>Phase 3 (planned)</h3>
+      <ul>
+        <li>PyBullet 3D world + agent body with camera; pixel-level vision</li>
+      </ul>
+    </section>
+  </main>
+
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>
