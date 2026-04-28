@@ -77,20 +77,6 @@
         <button id="world-live-mode">Live mode</button>
         <span id="world-run-name" class="muted">No run loaded</span>
         <span class="spacer"></span>
-        <span id="playback-controls">
-          <button id="world-play">▶ Play</button>
-          <button id="world-pause" disabled>⏸ Pause</button>
-          <label>Speed
-            <select id="world-speed">
-              <option value="1">1×</option>
-              <option value="2">2×</option>
-              <option value="5" selected>5×</option>
-              <option value="10">10×</option>
-              <option value="30">30×</option>
-              <option value="100">100×</option>
-            </select>
-          </label>
-        </span>
         <span id="live-controls" style="display:none">
           <span id="live-status-badge" class="live-badge">● LIVE</span>
           <span class="muted" id="live-eta">ETA —</span>
@@ -121,6 +107,19 @@
       <div class="scrubber-row">
         <input type="range" id="world-scrubber" min="0" max="0" value="0" step="1">
         <div class="scrubber-meta">
+          <button id="world-play" class="ctrl-btn" title="Play / cycle through steps">▶ Play</button>
+          <button id="world-pause" class="ctrl-btn" disabled title="Pause cycling">⏸ Pause</button>
+          <label class="scrubber-speed-label" title="Playback speed (steps per real-time second)">
+            Speed
+            <select id="world-speed">
+              <option value="1">1×</option>
+              <option value="2">2×</option>
+              <option value="5" selected>5×</option>
+              <option value="10">10×</option>
+              <option value="30">30×</option>
+              <option value="100">100×</option>
+            </select>
+          </label>
           <span id="scrubber-step-label" class="scrubber-step-label" title="Click to jump to a specific step">
             <span id="scrubber-step-current">0</span> / <span id="scrubber-step-total">0</span>
           </span>

@@ -244,13 +244,11 @@ async function attachLive(runId, listItem) {
   };
   world.step = 0;
 
-  // Hide irrelevant playback controls; show live-mode controls instead.
-  // Keep the scrubber row VISIBLE in live mode — user can scrub back to
-  // earlier moments while the run continues; "↦ Latest" snaps back.
-  const pbControls = document.getElementById("playback-controls");
+  // Show live-mode toolbar controls (LIVE badge + ETA + Detach). The
+  // scrubber row's Play/Pause/Speed/Latest are visible in BOTH modes
+  // since they're useful for reviewing earlier moments of a live run.
   const liveControls = document.getElementById("live-controls");
   const progressBar = document.getElementById("world-progress-bar");
-  if (pbControls) pbControls.style.display = "none";
   if (liveControls) liveControls.style.display = "inline-flex";
   if (progressBar) progressBar.style.display = "block";
   world.scrubberFollowsLatest = true;
@@ -441,11 +439,9 @@ function closeLiveSocket() {
     pauseBtn.textContent = "⏸ Pause";
     pauseBtn.classList.remove("active");
   }
-  // Restore playback controls visibility
-  const pbControls = document.getElementById("playback-controls");
+  // Hide live-only toolbar elements
   const liveControls = document.getElementById("live-controls");
   const progressBar = document.getElementById("world-progress-bar");
-  if (pbControls) pbControls.style.display = "inline-flex";
   if (liveControls) liveControls.style.display = "none";
   if (progressBar) {
     progressBar.style.display = "none";
@@ -869,10 +865,22 @@ function tick() {
   world.lastFrameTime = now;
   // Speed = steps per real second. Cap dt to prevent huge jumps after pause.
   const stepsAdvance = Math.max(1, Math.floor(world.speed * Math.min(dt, 0.1)));
-  const total = (world.data.trajectory || []).length;
-  world.step = Math.min(total - 1, world.step + stepsAdvance);
+  // In live mode the upper bound is the latest live step we've received,
+  // not the saved-trajectory length. Manual playback in live mode walks
+  // forward through the recorded history at the chosen speed; if it
+  // catches up to the latest, we re-attach the scrubber to follow live.
+  const maxStep = scrubberMax();
+  world.step = Math.min(maxStep, world.step + stepsAdvance);
+  if (world.live) world.scrubberFollowsLatest = false;
+  $("#world-scrubber").value = String(world.step);
   renderFrame();
-  if (world.step >= total - 1) {
+  updateScrubberStepLabel();
+  if (world.step >= maxStep) {
+    if (world.live) {
+      // Caught up to live — re-attach so future progress events advance
+      // the scrubber automatically, and stop the playback tick.
+      world.scrubberFollowsLatest = true;
+    }
     pause();
     return;
   }
