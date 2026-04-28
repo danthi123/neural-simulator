@@ -50,6 +50,15 @@ class ModulatorTarget:
             interneuron maturation, DA-gated corticostriatal plasticity,
             ACh-gated cortical attention plasticity. The neuromodulator
             concentration becomes the actual plasticity gate value.
+        "plasticity_window_gate"
+            (Wired in Cluster B.3 Task 2.) Inverse of plasticity_gate:
+            HIGH concentration BLOCKS plasticity, LOW concentration
+            (pause) PERMITS it. Models BG TANs / cholinergic gating of
+            corticostriatal LTP. For Task 1 this target is data only —
+            the existing compute_* methods silently skip it (forward-
+            compatibility pattern), but it must parse cleanly into the
+            ACh default config so Task 2 can wire the bridge effect
+            without re-shaping the data.
 
     scope: which neurons / synapses are affected.
         "all"               every neuron / synapse
@@ -91,6 +100,16 @@ class ProductionRule:
             RPE = current_reward - prior_ema. Phasic on unexpected outcomes,
             silent during expected ones. Models NE-like fast meta-modulation
             (Schultz 1997 reward-prediction-error encoding).
+        "pause_on_reward"
+            On each step, adds sensitivity * (|current_reward_signal| -
+            threshold) when |reward| > threshold; otherwise emits 0.
+            With negative sensitivity (e.g., -2.0), salient reward events
+            drive concentration DOWN below baseline. Combined with a
+            tonic baseline > 0 and natural decay back to baseline, this
+            models the BG TAN "pause then recover" pattern: tonic ACh
+            release suppresses corticostriatal plasticity, brief pauses
+            on salient events open plasticity windows. Threshold acts
+            as a salience floor — small fluctuations don't trigger pauses.
         "from_novelty"
             (Reserved for future ACh; emits 0 for now.)
 
@@ -421,6 +440,21 @@ class NeuromodulatorManager:
                 return rule.sensitivity * (surprise - rule.threshold)
             return 0.0
 
+        if rt == "pause_on_reward":
+            # ACh-style: drive concentration DOWN on |reward| > threshold.
+            # With negative sensitivity, salient events suppress the modulator
+            # below its tonic baseline; decay then pulls it back. Models BG
+            # TANs pausing briefly on reward / novelty (Aosaki et al. 1994,
+            # Morris et al. 2004).
+            if bridge is None or not hasattr(bridge, "core_config"):
+                return 0.0
+            cc = bridge.core_config
+            reward = float(getattr(cc, "current_reward_signal", 0.0))
+            magnitude = abs(reward)
+            if magnitude > rule.threshold:
+                return rule.sensitivity * (magnitude - rule.threshold)
+            return 0.0
+
         if rt == "from_novelty":
             # Reserved for future ACh
             return 0.0
@@ -428,3 +462,47 @@ class NeuromodulatorManager:
         # Unknown rule type: silently no-op rather than crash. Future rules
         # are forward-compatible.
         return 0.0
+
+
+# ----- Default config helpers -----
+
+
+def _default_acetylcholine_config() -> NeuromodulatorConfig:
+    """Default acetylcholine (ACh) neuromodulator config for BG TANs.
+
+    Models tonically active cholinergic interneurons that pause briefly on
+    salient events (reward, novelty), opening a transient corticostriatal
+    plasticity window. See Cluster B.3 plan
+    (`docs/plans/2026-04-28-cluster-b3-tans-implementation.md`).
+
+    Defaults:
+        baseline = 1.0           # tonic ACh release ("plasticity off")
+        decay_tau_ms = 500       # ~half-second pause/recover time scale
+        sensitivity = -2.0       # |reward| drives concentration DOWN
+        threshold = 0.0          # any non-zero reward triggers pause
+
+    Targets:
+        plasticity_window_gate (scope=all)
+            Wired in Task 2 of the Cluster B.3 plan; for Task 1 this is
+            data only and the existing compute_* methods silently skip it.
+
+    The runner is expected to enable the neuromodulator subsystem and
+    register this config when `--enable-tans` is set (Task 3).
+    """
+    return NeuromodulatorConfig(
+        name="acetylcholine",
+        baseline=1.0,
+        decay_tau_ms=500.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        targets=[
+            ModulatorTarget(target_type="plasticity_window_gate", scope="all"),
+        ],
+        production_rules=[
+            ProductionRule(
+                rule_type="pause_on_reward",
+                sensitivity=-2.0,
+                threshold=0.0,
+            ),
+        ],
+    )
