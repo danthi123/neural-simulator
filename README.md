@@ -373,6 +373,7 @@ python -m research.runners.g11_bg_runner --moving-goal \
 
 | Mode | Entry point | Use case |
 |------|-------------|----------|
+| **Web dashboard** | `uvicorn webapp.server:app --port 8765` then open http://localhost:8765/ | Browse runs/findings, launch + watch episodes in 2D world viz (recommended for research) |
 | **GUI** | `python neural-simulator.py` | Interactive exploration, parameter tuning, visualization |
 | **Auto-tune** | `python neural-simulator.py --auto-tune [--quick]` | One-time setup of external drive scales per model/profile combo |
 | **Experiment headless** | `python run_experiment_headless.py --preset {rl,associative,stim,freq}` | Reproducible experiment runs without GUI overhead |
@@ -585,7 +586,8 @@ pytest tests/test_data_bus.py -v
 |----------|----------|---------|
 | **[QUICKSTART.md](QUICKSTART.md)** | **First-timers (start here!)** | **60-second TL;DR — install + GUI + flagship research run** |
 | [README.md](README.md) | All visitors | This file — overview, architecture, install, full reference |
-| [USER_GUIDE.md](USER_GUIDE.md) | End users | GUI walkthrough, panel-by-panel reference, plasticity tuning |
+| [webapp/README.md](webapp/README.md) | Researchers using the dashboard | Web-based research dashboard (FastAPI + 2D world viz). Phase 1+2+2.5 — browse runs, read findings, launch + watch in-flight episodes |
+| [USER_GUIDE.md](USER_GUIDE.md) | End users | DearPyGUI walkthrough, panel-by-panel reference, plasticity tuning |
 | [CLAUDE.md](CLAUDE.md) | LLM agents working in repo | Module map, line numbers, gotchas, sub-system spec |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | New contributors | Dev setup, branching, code style, PR template |
 | [CHANGELOG.md](CHANGELOG.md) | Everyone | Dated change history |
