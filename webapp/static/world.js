@@ -1,17 +1,19 @@
 // Phase 2: 2D top-down playback of a recorded run.
+// Phase 2.5: live mode — attach to an in-flight runner via WebSocket and
+// animate the agent in real time.
 //
 // Renders the gridworld using Canvas 2D — an 8×8 (or grid_size) grid with:
 // - Agent (animated along trajectory)
 // - Goal beacon (with intensity-falloff halo)
 // - Landmark (if recorded as fixed at grid center, default for runs with --landmarks)
 // - Trajectory trail (fading)
+// - Live distance chart (Phase 2.5 enhancement) — recent_dist over time
 //
 // Canvas 2D is deliberate over Three.js for the flat 2D gridworld — overkill
 // for a top-down 8×8. Phase 3 swaps to Three.js when the world is 3D
 // (PyBullet integration).
-//
-// Public API: setupWorldTab() — call once at boot. Lazy-loads run list when
-// the tab is first activated; lets the user pick a run, scrub, play/pause.
+
+import { makeLineChart, PALETTE_EXPORT as P } from "/static/charts.js";
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -33,6 +35,7 @@ let world = {
   liveRunId: null,
   liveSocket: null,
   livePoints: [],   // [{step, total, pos, goal, recent_dist}]
+  liveChart: null,  // makeLineChart instance for live recent_dist
 };
 
 export function setupWorldTab() {
@@ -148,6 +151,18 @@ function attachLive(runId, listItem) {
   const canvas = $("#world-canvas");
   resizeCanvas(canvas, 8);
   renderFrame();
+  // Show + initialize the live distance chart
+  const row = $("#world-livechart-row");
+  if (row) {
+    row.style.display = "block";
+    world.liveChart = makeLineChart($("#world-livechart"), {
+      title: `LIVE: ${runId} — recent_dist (last 100 steps)`,
+      yLabel: "distance",
+      yMin: 0,
+      yMax: 14,  // max Manhattan on 8x8 grid is 14
+    });
+    world.liveChart.updateData([{ values: [], color: P.accent, label: "recent_dist" }]);
+  }
   openLiveSocket(runId);
 }
 
@@ -177,6 +192,9 @@ function closeLiveSocket() {
   world.live = false;
   world.liveRunId = null;
   world.livePoints = [];
+  world.liveChart = null;
+  const row = document.getElementById("world-livechart-row");
+  if (row) row.style.display = "none";
 }
 
 /** A progress event covers ~100 sim steps. We extend the synthetic
@@ -205,6 +223,18 @@ function handleLiveProgress(p) {
   $("#world-scrubber").max = String(p.total);
   $("#world-scrubber").value = String(p.step);
   $("#world-step-display").textContent = `step ${p.step} / ${p.total}`;
+
+  // Live chart: index by step so the x-axis aligns with run progress.
+  if (world.liveChart) {
+    const distAt = new Array(p.step + 1).fill(null);
+    for (const pt of world.livePoints) {
+      if (pt.step <= p.step) distAt[pt.step] = pt.recent_dist;
+    }
+    world.liveChart.updateData([
+      { values: distAt, color: P.accent, label: "recent_dist" },
+    ]);
+  }
+
   renderFrame();
 }
 
