@@ -10,12 +10,13 @@ This is a research codebase; entries are organised chronologically rather than b
 ## [Unreleased] — 2026-04-27 — Phase C plastic-input-layer + Item 1 perception arc
 
 ### Added
-- **🎉 Item 1 (perception arc, 2026-04-27 night) — agent navigates from PERCEIVED beacon information**
+- **🎉🎉🎉 Item 1 PERCEPTION ARC COMPLETE (2026-04-27 night)** — agent navigates from PERCEIVED sensory information; ALL major coordinate cheats closed
   - **Stage 1: Goal-beacon perception** — replaces direct (gx, gy) goal cell access with 8 directional sensors detecting beacon strength × cosine alignment. Plastic beacon → goal_cells pathway (curriculum-gated). 6-seed: 5/6 beat baseline (5.36 vs 5.88, p=0.34).
-  - **Stage 3: Cue-following reflex** — replaces the heuristic with non-plastic reflex computing cortex drive from direction-normalized beacon sensor pattern. Models innate phototaxis-like wiring. Combined with Stage 1: 6/6 seeds beat baseline (4.77 vs 5.88, **p=0.00188**, 18.9% improvement). **Agent now has NO direct (gx, gy) coordinate access anywhere.**
-  - **Stage 2: Landmark-based place cell self-organization** — fixed-position landmark with 8 directional sensors + plastic landmark → place_cells pathway. Replaces direct (x, y) place cell access.
-  - Findings: `research/findings/2026-04-27-stage3-full-perception-BREAKTHROUGH.md`, `2026-04-27-stage1-beacon-perception.md`, `2026-04-27-perception-cheats-investigation.md`
-  - Plan: `docs/plans/2026-04-27-perception-arc-plan.md` (multi-week roadmap)
+  - **Stage 3: Cue-following reflex** — replaces the heuristic with non-plastic reflex computing cortex drive from direction-normalized beacon sensor pattern. Models innate phototaxis-like wiring. Combined with Stage 1: 6/6 seeds beat baseline (4.77 vs 5.88, **p=0.00188**, 18.9% improvement).
+  - **Stage 2: Landmark-based place cell self-organization** — fixed-position landmark (default at grid center) with 8 directional sensors + plastic landmark → place_cells pathway. Replaces direct (x, y) place cell access. Combined with Stage 1+3: **6/6 seeds beat baseline (4.56 vs 5.88, p=0.00819, 22.4% improvement)**.
+  - **Final state**: agent has NO direct (gx, gy) AND NO direct (x, y) AND NO heuristic. Only 3% behind cheats-allowed best (4.41) — closing all coordinate cheats costs almost nothing.
+  - Findings: `research/findings/2026-04-27-FULL-PERCEPTION-ARC-COMPLETE.md`, `2026-04-27-stage3-full-perception-BREAKTHROUGH.md`, `2026-04-27-stage1-beacon-perception.md`, `2026-04-27-perception-cheats-investigation.md`
+  - Plan: `docs/plans/2026-04-27-perception-arc-plan.md` (executed in single session)
 
 - **PFC working memory region (Item 3, 2026-04-27)** — recurrent prefrontal cortex for working memory dynamics. 60 neurons, internal_density=0.2, plastic recurrent. Pathways: `goal_cells → PFC → cortex_{N,E,S,W}`. 6-seed: 5/6 beat baseline (4.41 vs 5.88, p=0.018, 25% improvement).
 

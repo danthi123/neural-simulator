@@ -399,20 +399,22 @@ sensory cortex to mature before association cortex.
 There are now two recommended configs depending on whether biological
 realism is required:
 
-**Best biology-grounded (NEW BEST as of 2026-04-27 night):**
+**Best biology-grounded (CURRENT BEST as of 2026-04-27 night):**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
+    --landmarks --landmarks-replace-place \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 \
     --seed N --n-steps 1800
 ```
-Sum 4.77 ± 0.42 (6-seed, p=0.00188, **18.9% over baseline**, 6/6 seeds beat).
-**Agent has NO direct (gx, gy) coordinate access anywhere.** Beacon
-perception + cue-following reflex replaces the heuristic + direct goal
-cell drive. Closes the two biggest biological cheats in the system.
+Sum 4.56 ± 0.70 (6-seed, p=0.00819, **22.4% over baseline**, 6/6 seeds beat).
+**Agent has NO direct (gx, gy), NO direct (x, y), AND NO heuristic.** All
+three major perception cheats closed. Beacon → goal_cells, cue-following
+reflex → cortex, landmark → place_cells. Only 3% behind cheats-allowed
+best — closing all coordinate cheats costs almost nothing.
 
 **Best with cheats (engineering shortcut version):**
 ```bash
