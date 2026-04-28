@@ -735,6 +735,19 @@ def run_moving_goal_episode(
     # under top-down attention or unexpected reward (DA-modulated).
     curriculum_phase2_cortex_gain: float = 0.0,
     curriculum_phase2_hippo_gain: float = 1.0,
+    # Cheat #5 closure (2026-04-28): cross-projections (cortex_X → str_D1_Y / str_D2_Y
+    # for X != Y) are tagged with a separate plasticity gate "bg_cross_projections"
+    # so the curriculum can stage them later than same-action pathways. The
+    # naive approach (cross-projections on same gate as same-action) failed
+    # 2026-04-27 because phase-0 motor activations reinforced cross-projections
+    # to all D1 pools, locking in N/E motor bias before goal change.
+    # Phase 3 thaws cross-projections AFTER goal change, when the agent has
+    # experienced both regimes and STDP+reward can shape cross-action routing
+    # symmetrically. -1 = stay frozen forever (default for safety).
+    bg_cross_thaw_step: int = -1,
+    # Plasticity gain for bg_cross_projections in phase 3. 1.0 = full plastic,
+    # 0.5 = half-rate (slower than same-action), 0.0 = stay frozen.
+    bg_cross_phase3_gain: float = 0.5,
     # Heuristic decay (Stage 6, 2026-04-27): scales the heuristic cortex
     # drive (800 pA per aligned pool) by this factor. Default 1.0 keeps
     # full heuristic. Set to 0.0 to disable heuristic entirely (tests
@@ -1126,8 +1139,11 @@ def run_moving_goal_episode(
     has_sensory_gate = enable_curriculum and "sensory_to_cortex" in available_gates
     has_beacon_gate = enable_curriculum and "beacon_to_goal" in available_gates
     has_landmark_gate = enable_curriculum and "landmark_to_place" in available_gates
+    has_bg_cross_gate = enable_curriculum and "bg_cross_projections" in available_gates
+    bg_cross_thawed = False  # tracks the phase-3 thaw event for verbose logging
     if enable_curriculum:
-        # Phase 1: input plasticity OFF, cortex_to_d1 plasticity ON
+        # Phase 1: input plasticity OFF, cortex_to_d1 plasticity ON,
+        # bg_cross_projections OFF (stays off until phase 3 if configured)
         if has_hippo_gate:
             bridge.set_plasticity_gate("hippo_to_cortex", 0.0)
         if has_sensory_gate:
@@ -1138,6 +1154,8 @@ def run_moving_goal_episode(
             bridge.set_plasticity_gate("landmark_to_place", 0.0)
         if has_cortex_gate:
             bridge.set_plasticity_gate("cortex_to_d1", 1.0)
+        if has_bg_cross_gate:
+            bridge.set_plasticity_gate("bg_cross_projections", 0.0)
         if verbose:
             ramp_msg = (f", ramp={curriculum_ramp_steps}" if curriculum_ramp_steps > 0
                        else " (abrupt)")
@@ -1230,6 +1248,26 @@ def run_moving_goal_episode(
                         print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 — "
                               f"cortex_to_d1={curriculum_phase2_cortex_gain:.2f}, "
                               f"inputs={curriculum_phase2_hippo_gain:.2f}", flush=True)
+
+        # Phase 3 (Cheat #5 closure, 2026-04-28): thaw bg_cross_projections.
+        # Cross-projection cortex_X → str_D1_Y / str_D2_Y pathways stay frozen
+        # through phases 1 and 2 (so they don't accumulate phase-0 motor bias),
+        # then thaw at bg_cross_thaw_step. By this point the agent has typically
+        # experienced both pre- and post-goal-change regimes (default thaw=1200
+        # is ~300 steps after the default goal change at 900), so STDP+reward
+        # can shape cross-action routing symmetrically rather than locking in
+        # phase-0 winners.
+        if (
+            has_bg_cross_gate and not bg_cross_thawed
+            and bg_cross_thaw_step >= 0 and step >= bg_cross_thaw_step
+        ):
+            bridge.set_plasticity_gate("bg_cross_projections", float(bg_cross_phase3_gain))
+            bg_cross_thawed = True
+            if verbose:
+                print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 3 — "
+                      f"bg_cross_projections gain={bg_cross_phase3_gain:.2f}",
+                      flush=True)
+
         # Sleep-replay phase (Stage 7, 2026-04-27): biological memory consolidation.
         # During sleep, hippo cells fire in random replay patterns (sharp-wave ripples),
         # cortex_to_d1 is thawed (consolidation), hippo_to_cortex is frozen.
@@ -1791,6 +1829,14 @@ def main():
                     help="Cheat #5: enable cortex × str_D1 cross-projections (e.g. cortex_E → str_D1_W) at weak initial weight. Plasticity learns the right cross-strengths instead of hand-coded same-action-only.")
     ap.add_argument("--cross-projection-weight", type=float, default=5.0,
                     help="Initial weight for BG cross-projections (default 5.0 vs 25.0 same-action).")
+    ap.add_argument("--bg-cross-thaw-step", type=int, default=-1,
+                    help="Cheat #5 closure (2026-04-28): step at which bg_cross_projections "
+                         "gate thaws to its phase-3 value. -1 = stay frozen. Recommended 1200 "
+                         "for default 1800-step moving-goal episodes (~300 steps after goal "
+                         "change at step 900). Requires --bg-cross-projections + --curriculum.")
+    ap.add_argument("--bg-cross-phase3-gain", type=float, default=0.5,
+                    help="Plasticity gain for bg_cross_projections in phase 3. 1.0 = full plastic, "
+                         "0.5 = half-rate (slower than same-action; default), 0.0 = stay frozen.")
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
@@ -1901,6 +1947,8 @@ def main():
             enable_sensed_reward=args.sensed_reward,
             enable_bg_cross_projections=args.bg_cross_projections,
             cross_projection_weight=args.cross_projection_weight,
+            bg_cross_thaw_step=args.bg_cross_thaw_step,
+            bg_cross_phase3_gain=args.bg_cross_phase3_gain,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_cortex_lateral_inhibition=args.cortex_wta,
