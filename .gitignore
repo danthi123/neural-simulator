@@ -80,3 +80,7 @@ webapp/runtime/
 # under references/ are committed.
 references/textbooks/**/*.pdf
 references/textbooks/**/*.txt
+
+# Catalog session working directory — extracted text, Python scripts,
+# raw subagent outputs. All derivable from sources + git history.
+.catalog-work/
