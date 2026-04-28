@@ -228,6 +228,124 @@ def test_kill_endpoint_404_for_unknown_run(client):
     assert res.status_code == 404
 
 
+def test_trash_lifecycle_roundtrip(client, monkeypatch, tmp_path):
+    """End-to-end trash lifecycle: trash a fake run, see it in /api/runs/trash/list,
+    restore it, see it gone from trash and back as a regular run."""
+    import webapp.server as srv
+    fake_runs = tmp_path / "raw"
+    fake_runs.mkdir()
+    fake_trash = fake_runs / ".trash"
+    fake_trash.mkdir()
+    monkeypatch.setattr(srv, "RAW_RUNS_DIR", fake_runs)
+    monkeypatch.setattr(srv, "TRASH_DIR", fake_trash)
+
+    # Create a fake run JSON
+    sample = fake_runs / "g11_seed42_test.json"
+    sample.write_text(json.dumps({
+        "seed": 42, "n_steps": 100, "phase_stats": [{
+            "phase": 0, "step_start": 0, "step_end": 100, "goal": [6, 6],
+            "mean_distance": 1.5, "final_quarter_mean_distance": 1.4,
+        }],
+    }))
+
+    # Trash it
+    res = client.post("/api/runs/trash", json={"names": ["g11_seed42_test.json"]})
+    assert res.status_code == 200
+    body = res.json()
+    assert body["n_trashed"] == 1
+    assert "g11_seed42_test.json" in body["trashed"]
+
+    # Confirm gone from regular runs list
+    res = client.get("/api/runs")
+    names = [r["name"] for r in res.json()["runs"]]
+    assert "g11_seed42_test.json" not in names
+
+    # Confirm in trash list
+    res = client.get("/api/runs/trash/list")
+    assert res.status_code == 200
+    trashed = res.json()["trashed"]
+    assert len(trashed) == 1
+    trash_filename = trashed[0]["trash_filename"]
+    assert trashed[0]["original_name"] == "g11_seed42_test.json"
+
+    # Restore it
+    res = client.post("/api/runs/trash/restore", json={"trash_filenames": [trash_filename]})
+    assert res.status_code == 200
+    assert res.json()["n_restored"] == 1
+
+    # Back in regular runs list
+    res = client.get("/api/runs")
+    names = [r["name"] for r in res.json()["runs"]]
+    assert "g11_seed42_test.json" in names
+
+    # Trash list is empty
+    res = client.get("/api/runs/trash/list")
+    assert res.json()["count"] == 0
+
+
+def test_trash_purge_permanently_deletes(client, monkeypatch, tmp_path):
+    """After purge, the trashed file is gone from disk."""
+    import webapp.server as srv
+    fake_runs = tmp_path / "raw"
+    fake_runs.mkdir()
+    fake_trash = fake_runs / ".trash"
+    fake_trash.mkdir()
+    monkeypatch.setattr(srv, "RAW_RUNS_DIR", fake_runs)
+    monkeypatch.setattr(srv, "TRASH_DIR", fake_trash)
+
+    (fake_runs / "g11_seed99_test.json").write_text("{}")
+
+    # Trash and capture name
+    client.post("/api/runs/trash", json={"names": ["g11_seed99_test.json"]})
+    trashed = client.get("/api/runs/trash/list").json()["trashed"]
+    assert len(trashed) == 1
+    trash_filename = trashed[0]["trash_filename"]
+
+    # Purge
+    res = client.post("/api/runs/trash/purge", json={"trash_filenames": [trash_filename]})
+    assert res.status_code == 200
+    assert res.json()["n_purged"] == 1
+
+    # Disk: file is actually gone
+    assert not (fake_trash / trash_filename).exists()
+    assert not (fake_runs / "g11_seed99_test.json").exists()
+
+
+def test_trash_incomplete_picks_up_empty_phase_stats(client, monkeypatch, tmp_path):
+    """trash/incomplete should mass-trash runs without complete phase_stats."""
+    import webapp.server as srv
+    fake_runs = tmp_path / "raw"
+    fake_runs.mkdir()
+    fake_trash = fake_runs / ".trash"
+    fake_trash.mkdir()
+    monkeypatch.setattr(srv, "RAW_RUNS_DIR", fake_runs)
+    monkeypatch.setattr(srv, "TRASH_DIR", fake_trash)
+
+    # Two complete + two incomplete + one malformed
+    (fake_runs / "complete_a.json").write_text(json.dumps({
+        "seed": 1, "phase_stats": [{"final_quarter_mean_distance": 2.0}],
+    }))
+    (fake_runs / "complete_b.json").write_text(json.dumps({
+        "seed": 2, "phase_stats": [{"final_quarter_mean_distance": 1.5}],
+    }))
+    (fake_runs / "incomplete_a.json").write_text(json.dumps({
+        "seed": 3, "phase_stats": [],
+    }))
+    (fake_runs / "incomplete_b.json").write_text(json.dumps({
+        "seed": 4, "phase_stats": [{"goal": [1, 2]}],  # no finalQ
+    }))
+    (fake_runs / "malformed.json").write_text("not json {")
+
+    res = client.post("/api/runs/trash/incomplete")
+    assert res.status_code == 200
+    trashed = res.json()["trashed"]
+    assert "incomplete_a.json" in trashed
+    assert "incomplete_b.json" in trashed
+    assert "malformed.json" in trashed
+    assert "complete_a.json" not in trashed
+    assert "complete_b.json" not in trashed
+
+
 def test_kill_endpoint_already_done(client):
     """Killing a run that has no live process returns 200 with status
     'already_done', not an error. Lets the UI safely call kill on stale rows."""
@@ -277,14 +395,13 @@ def test_launch_returns_200_not_500(client, monkeypatch):
     fake_proc.kill = MagicMock()
     fake_proc.wait = MagicMock(return_value=0)
     fake_proc.returncode = None
+    # Real int pid required so the sidecar JSON serialization works.
+    fake_proc.pid = 12345
 
     monkeypatch.setattr(srv.subprocess, "Popen", lambda *a, **kw: fake_proc)
     # asyncio.create_task needs a running loop. The TestClient does run a
     # loop, so we don't replace it — but we DO want to verify our handler
     # is async so the loop is reachable from inside it.
-    captured_tasks = []
-    real_create_task = srv.asyncio.create_task
-
     def fake_create_task(coro):
         # Close the coroutine to suppress the unawaited-coroutine warning,
         # then return a mock task. We're not actually streaming stdout here.
@@ -327,6 +444,7 @@ def test_launch_writes_sidecar_for_rerun(client, monkeypatch, tmp_path):
     fake_proc = MagicMock()
     fake_proc.poll.return_value = None
     fake_proc.stdout = MagicMock()
+    fake_proc.pid = 54321  # real int for JSON-serializable sidecar
     monkeypatch.setattr(srv.subprocess, "Popen", lambda *a, **kw: fake_proc)
     monkeypatch.setattr(srv.asyncio, "create_task", lambda coro: (coro.close(), MagicMock())[1])
 

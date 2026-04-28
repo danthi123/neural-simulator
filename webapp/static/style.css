@@ -114,6 +114,96 @@ main {
   padding-left: 13px;
 }
 
+/* Selection bar — appears on the runs page when >=1 row is selected.
+   Bulk actions for trash, compare, etc. */
+.selection-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--bg-3);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.selection-bar #selection-count {
+  color: var(--accent);
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+.ctrl-btn.bad {
+  border-color: rgba(248, 113, 113, 0.4);
+  color: var(--accent-bad);
+}
+.ctrl-btn.bad:hover {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: var(--accent-bad);
+}
+
+/* Per-row select checkbox */
+.list-item .row-checkbox {
+  margin-right: 8px;
+  cursor: pointer;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+.list-item {
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+}
+.list-item .row-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.list-item.row-selected {
+  background: rgba(110, 231, 183, 0.08);
+  border-left: 3px solid var(--accent);
+  padding-left: 13px;
+}
+
+/* Trash drawer — covers the runs split when active */
+.trash-drawer {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  z-index: 5;
+}
+#tab-runs { position: relative; }
+.trash-drawer .list {
+  border-right: none;
+}
+.trash-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.trash-row:hover { background: var(--bg-2); }
+.trash-row.row-selected { background: rgba(110, 231, 183, 0.08); }
+.trash-row .row-body { flex: 1; min-width: 0; }
+.trash-row .name {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 12px;
+}
+.trash-row .meta {
+  font-size: 11px;
+  color: var(--fg-dim);
+}
+.trash-row .row-actions {
+  display: flex;
+  gap: 4px;
+}
+.trash-row .row-actions .ctrl-btn {
+  font-size: 10px;
+  padding: 2px 8px;
+}
+
 .split {
   display: grid;
   grid-template-columns: 360px 1fr;

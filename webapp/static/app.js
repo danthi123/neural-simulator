@@ -78,7 +78,10 @@ function activateTab(tabName) {
 // Runs tab
 // ─────────────────────────────────────────────────────────────────────────
 let _allRuns = []; // Cached runs after last fetch — re-render on filter change
-const compareSet = new Set(); // run names selected for comparison (max 3)
+const selectionSet = new Set(); // run names selected for bulk actions (compare, trash, ...)
+let _lastClickedRunIndex = -1; // for shift-click range selection
+// Backwards-compatibility alias for the openComparisonView code path.
+const compareSet = selectionSet;
 
 async function loadRuns() {
   const list = $("#runs-list");
@@ -122,13 +125,20 @@ function renderRunsList() {
     `${filtered.length}${filtered.length !== _allRuns.length ? `/${_allRuns.length}` : ""} runs`;
 
   list.replaceChildren();
-  for (const r of filtered) {
+  filtered.forEach((r, idx) => {
     const sumStr = r.sum_finalQ != null ? r.sum_finalQ.toFixed(2) : "—";
-    const isSelected = compareSet.has(r.name);
-    const item = el("div", {
-      class: "list-item" + (isSelected ? " compare-selected" : ""),
-      dataset: { name: r.name },
-    }, [
+    const isSelected = selectionSet.has(r.name);
+    const checkbox = el("input", {
+      type: "checkbox",
+      class: "row-checkbox",
+      "aria-label": `Select ${r.name}`,
+    });
+    checkbox.checked = isSelected;
+    checkbox.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      toggleSelection(r.name);
+    });
+    const body = el("div", { class: "row-body" }, [
       el("div", { class: "name" }, r.name),
       el("div", { class: "meta" }, [
         metric("sum", sumStr),
@@ -136,26 +146,61 @@ function renderRunsList() {
         metric("phases", r.n_phases),
       ]),
     ]);
-    item.addEventListener("click", (ev) => {
-      if (ev.shiftKey || ev.metaKey || ev.ctrlKey) {
-        toggleCompareSelection(r.name);
-      } else {
-        loadRunDetail(r.name, item);
+    const item = el("div", {
+      class: "list-item" + (isSelected ? " row-selected" : ""),
+      dataset: { name: r.name, idx: String(idx) },
+    }, [checkbox, body]);
+    body.addEventListener("click", (ev) => {
+      if (ev.shiftKey) {
+        // Shift-click: toggle range from last clicked index
+        if (_lastClickedRunIndex >= 0) {
+          const lo = Math.min(_lastClickedRunIndex, idx);
+          const hi = Math.max(_lastClickedRunIndex, idx);
+          for (let i = lo; i <= hi; i++) selectionSet.add(filtered[i].name);
+          updateSelectionUI();
+          renderRunsList();
+        } else {
+          toggleSelection(r.name);
+        }
+        return;
       }
+      if (ev.metaKey || ev.ctrlKey) {
+        toggleSelection(r.name);
+        _lastClickedRunIndex = idx;
+        return;
+      }
+      _lastClickedRunIndex = idx;
+      loadRunDetail(r.name, item);
     });
     list.appendChild(item);
-  }
+  });
+  updateSelectionUI();
 }
 
-function toggleCompareSelection(name) {
-  if (compareSet.has(name)) {
-    compareSet.delete(name);
-  } else if (compareSet.size < 3) {
-    compareSet.add(name);
-  }
-  $("#compare-runs").disabled = compareSet.size < 2;
-  $("#compare-runs").textContent = `Compare ${compareSet.size}`;
+function toggleSelection(name) {
+  if (selectionSet.has(name)) selectionSet.delete(name);
+  else selectionSet.add(name);
+  updateSelectionUI();
   renderRunsList();
+}
+
+function clearSelection() {
+  selectionSet.clear();
+  _lastClickedRunIndex = -1;
+  updateSelectionUI();
+  renderRunsList();
+}
+
+function updateSelectionUI() {
+  const n = selectionSet.size;
+  const bar = document.getElementById("selection-bar");
+  if (bar) bar.style.display = n > 0 ? "flex" : "none";
+  const cnt = document.getElementById("selection-count");
+  if (cnt) cnt.textContent = String(n);
+  const cmp = document.getElementById("bulk-compare-btn");
+  if (cmp) cmp.disabled = n < 2 || n > 3;
+  const trash = document.getElementById("bulk-trash-btn");
+  if (trash) trash.disabled = n === 0;
 }
 
 function metric(label, value) {
@@ -1127,7 +1172,239 @@ $("#refresh-findings").addEventListener("click", loadFindings);
 $("#filter-hide-smoke")?.addEventListener("change", renderRunsList);
 $("#filter-hide-incomplete")?.addEventListener("change", renderRunsList);
 $("#filter-search")?.addEventListener("input", renderRunsList);
-$("#compare-runs")?.addEventListener("click", openComparisonView);
+$("#bulk-compare-btn")?.addEventListener("click", openComparisonView);
+$("#bulk-trash-btn")?.addEventListener("click", trashSelected);
+$("#selection-clear-btn")?.addEventListener("click", clearSelection);
+$("#trash-incomplete-btn")?.addEventListener("click", trashAllIncomplete);
+$("#open-trash-btn")?.addEventListener("click", openTrashDrawer);
+$("#close-trash-btn")?.addEventListener("click", closeTrashDrawer);
+$("#empty-trash-btn")?.addEventListener("click", emptyTrash);
+$("#restore-selected-btn")?.addEventListener("click", restoreSelectedTrashed);
+$("#purge-selected-btn")?.addEventListener("click", purgeSelectedTrashed);
+
+// ─────────────────────────────────────────────────────────────────────────
+// Trash actions
+// ─────────────────────────────────────────────────────────────────────────
+async function trashSelected() {
+  if (selectionSet.size === 0) return;
+  const names = Array.from(selectionSet);
+  if (!confirm(`Move ${names.length} run${names.length === 1 ? "" : "s"} to trash?`)) return;
+  try {
+    const res = await fetch("/api/runs/trash", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ names }),
+    });
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    selectionSet.clear();
+    toast(`Trashed ${data.n_trashed} run${data.n_trashed === 1 ? "" : "s"}`,
+      { kind: "success" });
+    if (data.skipped?.length) {
+      toast(`Skipped ${data.skipped.length} (already gone or invalid)`, { kind: "warn" });
+    }
+    await loadRuns();
+    refreshTrashCount();
+  } catch (e) {
+    toast(`Trash failed: ${e.message}`, { kind: "error" });
+  }
+}
+
+async function trashAllIncomplete() {
+  if (!confirm("Move ALL incomplete runs (no phase_stats data) to trash?")) return;
+  try {
+    const res = await fetch("/api/runs/trash/incomplete", { method: "POST" });
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    toast(`Trashed ${data.n_trashed} incomplete run${data.n_trashed === 1 ? "" : "s"}`,
+      { kind: "success" });
+    await loadRuns();
+    refreshTrashCount();
+  } catch (e) {
+    toast(`Trash incomplete failed: ${e.message}`, { kind: "error" });
+  }
+}
+
+async function refreshTrashCount() {
+  try {
+    const res = await fetch("/api/runs/trash/list");
+    if (!res.ok) return;
+    const data = await res.json();
+    const c = document.getElementById("trash-count");
+    if (c) c.textContent = String(data.count);
+  } catch {}
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Trash drawer (replaces runs panel when open)
+// ─────────────────────────────────────────────────────────────────────────
+const trashSelection = new Set();
+
+async function openTrashDrawer() {
+  const drawer = document.getElementById("trash-drawer");
+  if (!drawer) return;
+  drawer.style.display = "flex";
+  await loadTrashList();
+}
+
+function closeTrashDrawer() {
+  const drawer = document.getElementById("trash-drawer");
+  if (drawer) drawer.style.display = "none";
+  trashSelection.clear();
+  updateTrashSelectionUI();
+}
+
+async function loadTrashList() {
+  const list = document.getElementById("trash-list");
+  if (!list) return;
+  showSkeleton(list, 6, "list");
+  try {
+    const res = await fetch("/api/runs/trash/list");
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    document.getElementById("trash-list-count").textContent =
+      `${data.count} trashed run${data.count === 1 ? "" : "s"}`;
+    if (!data.trashed.length) {
+      list.replaceChildren(el("p", { class: "muted", style: "padding:16px" }, "Trash is empty."));
+      return;
+    }
+    list.replaceChildren();
+    for (const t of data.trashed) {
+      const checkbox = el("input", {
+        type: "checkbox",
+        class: "row-checkbox",
+        "aria-label": `Select ${t.original_name}`,
+      });
+      checkbox.checked = trashSelection.has(t.trash_filename);
+      checkbox.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        if (checkbox.checked) trashSelection.add(t.trash_filename);
+        else trashSelection.delete(t.trash_filename);
+        updateTrashSelectionUI();
+        loadTrashList();
+      });
+      const body = el("div", { class: "row-body" }, [
+        el("div", { class: "name" }, t.original_name),
+        el("div", { class: "meta" }, `seed=${t.seed ?? "?"} · trashed ${formatTrashTimestamp(t.trashed_at)} · ${(t.size_bytes / 1024).toFixed(1)} KB`),
+      ]);
+      const restoreBtn = el("button", {
+        class: "ctrl-btn",
+        title: "Restore this run",
+        onclick: (ev) => { ev.stopPropagation(); restoreTrashed([t.trash_filename]); },
+      }, "↺ Restore");
+      const purgeBtn = el("button", {
+        class: "ctrl-btn bad",
+        title: "Permanently delete",
+        onclick: (ev) => { ev.stopPropagation(); purgeTrashed([t.trash_filename]); },
+      }, "🗑 Delete");
+      const actions = el("div", { class: "row-actions" }, [restoreBtn, purgeBtn]);
+      const row = el("div", {
+        class: "trash-row" + (trashSelection.has(t.trash_filename) ? " row-selected" : ""),
+      }, [checkbox, body, actions]);
+      list.appendChild(row);
+    }
+    updateTrashSelectionUI();
+  } catch (e) {
+    list.replaceChildren(el("p", { class: "error" }, e.message));
+  }
+}
+
+function formatTrashTimestamp(s) {
+  // s is "YYYYmmdd_HHMMSS" — make it human-readable
+  if (!s || s.length < 15) return s || "?";
+  const y = s.slice(0, 4), m = s.slice(4, 6), d = s.slice(6, 8);
+  const hh = s.slice(9, 11), mm = s.slice(11, 13), ss = s.slice(13, 15);
+  return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+}
+
+function updateTrashSelectionUI() {
+  const n = trashSelection.size;
+  const restore = document.getElementById("restore-selected-btn");
+  const purge = document.getElementById("purge-selected-btn");
+  if (restore) {
+    restore.disabled = n === 0;
+    restore.textContent = `↺ Restore selected${n ? ` (${n})` : ""}`;
+  }
+  if (purge) {
+    purge.disabled = n === 0;
+    purge.textContent = `🗑 Delete forever${n ? ` (${n})` : ""}`;
+  }
+}
+
+async function restoreTrashed(trashFilenames) {
+  try {
+    const res = await fetch("/api/runs/trash/restore", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trash_filenames: trashFilenames }),
+    });
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    toast(`Restored ${data.n_restored} run${data.n_restored === 1 ? "" : "s"}`, { kind: "success" });
+    if (data.skipped?.length) {
+      const reason = data.skipped[0].reason;
+      toast(`Skipped ${data.skipped.length}: ${reason}`, { kind: "warn" });
+    }
+    trashSelection.clear();
+    await loadTrashList();
+    await loadRuns();
+    refreshTrashCount();
+  } catch (e) {
+    toast(`Restore failed: ${e.message}`, { kind: "error" });
+  }
+}
+
+async function purgeTrashed(trashFilenames) {
+  if (!confirm(`Permanently delete ${trashFilenames.length} run${trashFilenames.length === 1 ? "" : "s"}? This cannot be undone.`)) return;
+  try {
+    const res = await fetch("/api/runs/trash/purge", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trash_filenames: trashFilenames }),
+    });
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    toast(`Purged ${data.n_purged} item${data.n_purged === 1 ? "" : "s"}`, { kind: "success" });
+    trashSelection.clear();
+    await loadTrashList();
+    refreshTrashCount();
+  } catch (e) {
+    toast(`Purge failed: ${e.message}`, { kind: "error" });
+  }
+}
+
+async function restoreSelectedTrashed() {
+  if (trashSelection.size === 0) return;
+  await restoreTrashed(Array.from(trashSelection));
+}
+
+async function purgeSelectedTrashed() {
+  if (trashSelection.size === 0) return;
+  await purgeTrashed(Array.from(trashSelection));
+}
+
+async function emptyTrash() {
+  if (!confirm("Empty the entire trash? This permanently deletes all trashed runs.")) return;
+  try {
+    const res = await fetch("/api/runs/trash/purge", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trash_filenames: null }),
+    });
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    toast(`Emptied trash (${data.n_purged} items)`, { kind: "success" });
+    trashSelection.clear();
+    await loadTrashList();
+    refreshTrashCount();
+  } catch (e) {
+    toast(`Empty trash failed: ${e.message}`, { kind: "error" });
+  }
+}
+
+// Load trash count on page load + periodically
+refreshTrashCount();
+setInterval(refreshTrashCount, 30_000);
 
 // Auto-refresh runs list every 10s when the Runs tab is active. Lets the
 // user see new runs land without manual refresh.

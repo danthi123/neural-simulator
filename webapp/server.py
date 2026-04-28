@@ -73,6 +73,17 @@ class LaunchedRun:
     # file the runner polls every trial for runtime control. Webapp writes
     # to this file via POST /api/runs/launch/{id}/control.
     control_file: str | None = None
+    # Path to the per-run log file holding the runner's stdout/stderr. We
+    # write subprocess output here (instead of in-memory pipe) so the run
+    # survives the webapp being restarted/reloaded — a broken pipe on
+    # restart was killing every in-flight run before this change.
+    log_file: str | None = None
+    # PID of the detached subprocess. Stored even when proc=None (e.g.
+    # after webapp restart we recover by reading the sidecar) so the kill
+    # endpoint can still terminate orphan runs.
+    pid: int | None = None
+    # Position in the log file we've already drained (for the tail loop).
+    log_pos: int = 0
 
 
 launched_runs: dict[str, LaunchedRun] = {}
@@ -278,6 +289,12 @@ class LaunchRequest(BaseModel):
 RUNTIME_DIR = Path(__file__).resolve().parent / "runtime"
 RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
 
+# Trash directory for soft-deleted runs. Files moved here keep their
+# names (with timestamp suffix to avoid collisions). Restore moves them
+# back to RAW_RUNS_DIR; "Empty trash" deletes permanently.
+TRASH_DIR = RAW_RUNS_DIR / ".trash"
+TRASH_DIR.mkdir(parents=True, exist_ok=True)
+
 
 @app.post("/api/runs/launch")
 async def launch_run(req: LaunchRequest) -> JSONResponse:
@@ -306,10 +323,36 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
         *extras,
     ]
 
-    # Write a sidecar `.cmd.json` next to the run output so the dashboard
-    # can later offer a "Re-run" button. Records the preset, seed, extras,
-    # and full cmd. Skip the runtime control_file path from extras since
-    # that's per-run and shouldn't be reused.
+    # Per-run log file. Subprocess writes stdout/stderr here directly
+    # (NOT through a pipe) so the run survives webapp restarts. The drain
+    # task tails this file; on startup we scan sidecars to recover orphan
+    # runs after the webapp was reloaded.
+    log_file = str(RUNTIME_DIR / f"run_{run_id}.log")
+    log_handle = open(log_file, "wb")
+
+    # Force UTF-8 stdout. Windows defaults to cp1252 which crashes on
+    # Unicode chars (em-dash, arrows) in runner prints.
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+
+    # Detach the subprocess so it survives webapp restart. start_new_session
+    # is cross-platform (Windows: DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP;
+    # Unix: setsid). When parent dies, child becomes its own session leader
+    # and is no longer attached to our pipes.
+    popen_kwargs = dict(
+        cwd=str(REPO_ROOT),
+        stdout=log_handle,
+        stderr=subprocess.STDOUT,
+        env=env,
+        start_new_session=True,
+    )
+    proc = subprocess.Popen(cmd, **popen_kwargs)
+    log_handle.close()  # child has its own handle now
+
+    # Sidecar `.cmd.json` next to the run output. Records EVERYTHING needed
+    # to recover this run after a webapp restart: preset, seed, extras,
+    # cmd, pid, log_file, control_file, run_id. The Re-run button uses
+    # preset+seed+extras; the orphan-recovery uses pid+log_file+run_id.
     cleanable_extras = [
         a for a in req.extra_args
         if not a.startswith("--interactive-control-file")
@@ -317,43 +360,36 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
     sidecar_path = Path(out_path).with_suffix(".cmd.json")
     try:
         sidecar_path.write_text(json.dumps({
+            "run_id": run_id,
             "preset": req.preset,
             "seed": req.seed,
             "extra_args": cleanable_extras,
             "cmd": cmd,
+            "pid": proc.pid,
+            "log_file": log_file,
+            "control_file": control_file,
+            "out_path": out_path,
             "started_at": time.time(),
         }, indent=2))
     except OSError:
-        pass  # Best-effort; don't fail the launch on sidecar write failure.
-
-    # Force UTF-8 stdout in the subprocess. Windows defaults to cp1252 which
-    # crashes on Unicode chars (em-dash, arrows) anywhere in runner prints.
-    # Bug surfaced 2026-04-28 when an INTERACTIVE GOAL → print killed a
-    # runner the moment the user clicked to teleport the goal.
-    env = os.environ.copy()
-    env["PYTHONIOENCODING"] = "utf-8"
-    proc = subprocess.Popen(
-        cmd,
-        cwd=str(REPO_ROOT),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        bufsize=1,
-        env=env,
-    )
+        pass
 
     run = LaunchedRun(
         run_id=run_id, cmd=cmd, started_at=time.time(),
         proc=proc, out_path=out_path, control_file=control_file,
+        log_file=log_file, pid=proc.pid,
     )
     launched_runs[run_id] = run
 
-    asyncio.create_task(_drain_stdout(run))
+    asyncio.create_task(_drain_log(run))
     return JSONResponse({
         "run_id": run_id,
         "cmd": cmd,
         "out_path": out_path,
+        "log_file": log_file,
         "control_file": control_file,
         "interactive": control_file is not None,
+        "pid": proc.pid,
         "ws_url": f"/ws/runs/{run_id}",
     })
 
@@ -376,31 +412,126 @@ def get_run_sidecar(name: str) -> JSONResponse:
 @app.post("/api/runs/launch/{run_id}/kill")
 def kill_run(run_id: str) -> JSONResponse:
     """Terminate an in-flight run. Sends SIGTERM, escalates to SIGKILL after
-    5s if still alive. Returns 404 if unknown, 200 with status either way."""
+    5s if still alive. Works for both natively-spawned runs (uses run.proc)
+    and orphan runs recovered from sidecars after webapp restart (uses
+    run.pid + os.kill)."""
+    import signal as _signal
     run = launched_runs.get(run_id)
     if not run:
         raise HTTPException(404, "unknown run_id")
-    if run.proc is None or run.proc.poll() is not None:
+
+    # Native-spawned runs: use the Popen handle.
+    if run.proc is not None:
+        if run.proc.poll() is not None:
+            return JSONResponse({
+                "run_id": run_id, "status": "already_done",
+                "returncode": run.returncode,
+            })
+        try:
+            run.proc.terminate()
+            try:
+                run.proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                run.proc.kill()
+                run.proc.wait(timeout=2)
+            run.returncode = run.proc.returncode
+            return JSONResponse({
+                "run_id": run_id, "status": "killed",
+                "returncode": run.returncode,
+            })
+        except Exception as e:
+            raise HTTPException(500, f"kill failed: {e}")
+
+    # Recovered orphan: only have pid. Use os.kill (cross-platform; on
+    # Windows SIGTERM maps to TerminateProcess).
+    if run.pid is None or not _process_alive(run.pid):
         return JSONResponse({
-            "run_id": run_id,
-            "status": "already_done",
+            "run_id": run_id, "status": "already_done",
             "returncode": run.returncode,
         })
     try:
-        run.proc.terminate()
-        try:
-            run.proc.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            run.proc.kill()
-            run.proc.wait(timeout=2)
-        run.returncode = run.proc.returncode
+        os.kill(run.pid, _signal.SIGTERM)
+        # Brief grace period; then check
+        for _ in range(50):
+            if not _process_alive(run.pid):
+                break
+            time.sleep(0.1)
+        if _process_alive(run.pid):
+            try:
+                os.kill(run.pid, _signal.SIGKILL)
+            except (OSError, AttributeError):
+                # Windows doesn't have SIGKILL; signal.SIGTERM already does TerminateProcess.
+                pass
+        run.returncode = -15  # convention for SIGTERM-killed
         return JSONResponse({
-            "run_id": run_id,
-            "status": "killed",
+            "run_id": run_id, "status": "killed (orphan)",
             "returncode": run.returncode,
         })
     except Exception as e:
         raise HTTPException(500, f"kill failed: {e}")
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Orphan-run recovery on server startup
+# ─────────────────────────────────────────────────────────────────────────
+
+@app.on_event("startup")
+async def recover_orphan_runs() -> None:
+    """Scan sidecar `.cmd.json` files for runs whose pid is still alive.
+    Rebuild LaunchedRun entries for them so the dashboard's Live picker
+    can attach. Survives uvicorn --reload restarts.
+
+    Sidecars whose pid is dead are ignored (run already completed).
+    Sidecars whose log file is missing are skipped."""
+    for sidecar_path in RAW_RUNS_DIR.glob("*.cmd.json"):
+        try:
+            sidecar = json.loads(sidecar_path.read_text())
+        except (OSError, json.JSONDecodeError):
+            continue
+        run_id = sidecar.get("run_id")
+        if not run_id or run_id in launched_runs:
+            continue
+        pid = sidecar.get("pid")
+        if not pid or not _process_alive(pid):
+            continue
+        log_file = sidecar.get("log_file")
+        if not log_file or not Path(log_file).exists():
+            continue
+        # Reconstruct the LaunchedRun. We don't have the Popen handle
+        # (proc=None) but we have everything else needed for tail + kill.
+        run = LaunchedRun(
+            run_id=run_id,
+            cmd=sidecar.get("cmd", []),
+            started_at=sidecar.get("started_at", time.time()),
+            proc=None,  # orphan; can't direct-control
+            out_path=sidecar.get("out_path"),
+            control_file=sidecar.get("control_file"),
+            log_file=log_file,
+            pid=pid,
+        )
+        launched_runs[run_id] = run
+        # Resume tailing the log file from current end (not start) so
+        # we don't replay the entire history. New progress events will
+        # arrive as the runner continues.
+        try:
+            run.log_pos = Path(log_file).stat().st_size
+        except OSError:
+            run.log_pos = 0
+        # Replay progress events by also reading from start? We need them
+        # for the WebSocket replay-on-attach. Compromise: re-read from
+        # start NOW to seed progress_events, then continue tailing.
+        try:
+            new_pos, lines = _read_new_lines(log_file, 0)
+            for line in lines:
+                run.stdout_lines.append(line)
+                ev = _try_parse_progress(line, time.time())
+                if ev is not None:
+                    run.progress_events.append(ev)
+            run.log_pos = new_pos
+        except Exception:
+            pass
+        asyncio.create_task(_drain_log(run))
+        print(f"[webapp] recovered orphan run {run_id} (pid={pid})", flush=True)
 
 
 class ControlUpdate(BaseModel):
@@ -459,23 +590,92 @@ def get_run_control(run_id: str) -> JSONResponse:
     })
 
 
-async def _drain_stdout(run: LaunchedRun) -> None:
-    """Background task: drain subprocess stdout, save lines for tailers,
-    and parse runner progress lines into structured events for live-mode
-    consumers."""
-    if run.proc is None or run.proc.stdout is None:
+def _read_new_lines(path: str, pos: int) -> tuple[int, list[str]]:
+    """Read new complete lines from `path` starting at byte offset `pos`.
+    Returns (new_pos, [line, ...]). Returns (pos, []) if nothing new or
+    only a partial trailing line. Tail-friendly: never reads past the last
+    newline so partial writes aren't surfaced as corrupt lines."""
+    try:
+        with open(path, "rb") as f:
+            f.seek(pos)
+            data = f.read()
+    except FileNotFoundError:
+        return pos, []
+    if not data:
+        return pos, []
+    # Only consume up to the last newline so partial trailing lines wait.
+    last_nl = data.rfind(b"\n")
+    if last_nl < 0:
+        return pos, []
+    consumed = data[: last_nl + 1]
+    new_pos = pos + len(consumed)
+    text = consumed.decode("utf-8", errors="replace")
+    lines = [ln for ln in text.split("\n") if ln.strip()]
+    return new_pos, lines
+
+
+def _process_alive(pid: int | None) -> bool:
+    """Check whether a pid is still running. Cross-platform via os.kill(pid, 0)."""
+    if pid is None:
+        return False
+    try:
+        os.kill(pid, 0)
+        return True
+    except (OSError, ProcessLookupError):
+        return False
+
+
+async def _drain_log(run: LaunchedRun) -> None:
+    """Background task: tail the run's log file, surfacing complete lines
+    for stdout consumers and parsing progress events for live-mode.
+
+    Survives webapp restart: works whether or not run.proc is set (None
+    when we recovered the run from a sidecar after restart). Stops when
+    the process exits AND we've drained any final buffered lines."""
+    if not run.log_file:
         return
     loop = asyncio.get_event_loop()
+    quiet_iters = 0
     while True:
-        line = await loop.run_in_executor(None, run.proc.stdout.readline)
-        if not line:
-            break
-        text = line.decode(errors="replace").rstrip("\r\n")
-        run.stdout_lines.append(text)
-        ev = _try_parse_progress(text, time.time())
-        if ev is not None:
-            run.progress_events.append(ev)
-    run.returncode = run.proc.wait()
+        new_pos, lines = await loop.run_in_executor(
+            None, _read_new_lines, run.log_file, run.log_pos,
+        )
+        if lines:
+            run.log_pos = new_pos
+            quiet_iters = 0
+            for line in lines:
+                run.stdout_lines.append(line)
+                ev = _try_parse_progress(line, time.time())
+                if ev is not None:
+                    run.progress_events.append(ev)
+        else:
+            quiet_iters += 1
+
+        # Termination check: prefer the proc handle when we have it.
+        if run.proc is not None:
+            rc = run.proc.poll()
+            if rc is not None:
+                # Drain one more time for any tail bytes after exit.
+                final_pos, final_lines = await loop.run_in_executor(
+                    None, _read_new_lines, run.log_file, run.log_pos,
+                )
+                if final_lines:
+                    run.log_pos = final_pos
+                    for line in final_lines:
+                        run.stdout_lines.append(line)
+                        ev = _try_parse_progress(line, time.time())
+                        if ev is not None:
+                            run.progress_events.append(ev)
+                run.returncode = rc
+                break
+        else:
+            # Recovered orphan: no proc handle. Stop draining when the pid
+            # is gone AND the log has been quiet for a few iterations.
+            if not _process_alive(run.pid) and quiet_iters > 5:
+                run.returncode = 0  # we don't know the actual rc post-orphan
+                break
+
+        await asyncio.sleep(0.2)
 
 
 @app.get("/api/runs/launch")
@@ -603,6 +803,208 @@ def index() -> FileResponse:
 @app.get("/api/runs/{name}")
 def get_run(name: str) -> JSONResponse:
     return get_run_impl(name)
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Soft-delete (trash) system. Lets users tidy up the runs list without
+# losing data. Trashed runs go into RAW_RUNS_DIR/.trash/ with a timestamp
+# suffix (so re-trashing a previously-restored file doesn't collide).
+# UI surfaces individual + bulk delete, and a Trash view with restore +
+# permanent purge.
+# ─────────────────────────────────────────────────────────────────────────
+
+
+def _trash_paths_for(name: str) -> list[Path]:
+    """All files associated with the run named `name`: the run JSON, its
+    sidecar `.cmd.json` (if any), and any associated logs/control files.
+    We move them all together so restore brings everything back."""
+    base = RAW_RUNS_DIR / name
+    out = [base]
+    sidecar = base.with_suffix(".cmd.json")
+    if sidecar.exists():
+        out.append(sidecar)
+    return out
+
+
+class TrashRequest(BaseModel):
+    names: list[str]
+
+
+@app.post("/api/runs/trash")
+def trash_runs(req: TrashRequest) -> JSONResponse:
+    """Soft-delete runs by moving them (and their sidecars) into the trash
+    directory. Returns counts + per-run statuses."""
+    trashed: list[str] = []
+    skipped: list[dict[str, str]] = []
+    ts = time.strftime("%Y%m%d_%H%M%S")
+    for name in req.names:
+        if "/" in name or "\\" in name or ".." in name or name.startswith("."):
+            skipped.append({"name": name, "reason": "invalid name"})
+            continue
+        srcs = [p for p in _trash_paths_for(name) if p.exists()]
+        if not srcs:
+            skipped.append({"name": name, "reason": "not found"})
+            continue
+        try:
+            for src in srcs:
+                # Tag the trashed file with the timestamp to avoid collision
+                # if the same name is re-trashed later.
+                dst = TRASH_DIR / f"{src.name}.{ts}"
+                src.rename(dst)
+            trashed.append(name)
+        except OSError as e:
+            skipped.append({"name": name, "reason": str(e)})
+    return JSONResponse({
+        "trashed": trashed, "skipped": skipped,
+        "n_trashed": len(trashed),
+    })
+
+
+@app.get("/api/runs/trash/list")
+def list_trashed() -> JSONResponse:
+    """List runs currently in the trash (only the *.json runs, not their
+    associated sidecars). Each entry shows when it was trashed."""
+    out = []
+    for f in sorted(TRASH_DIR.glob("*.json.*"), reverse=True):
+        # filename pattern: foo.json.YYYYmmdd_HHMMSS
+        if ".cmd.json" in f.name:
+            continue  # only show the run JSON, not its sidecar
+        # Recover the original name + timestamp by splitting on the last "."
+        idx = f.name.rfind(".")
+        original_name = f.name[:idx]
+        ts = f.name[idx + 1:]
+        try:
+            data = json.loads(f.read_text())
+        except Exception:
+            data = {}
+        out.append({
+            "trash_filename": f.name,
+            "original_name": original_name,
+            "trashed_at": ts,
+            "size_bytes": f.stat().st_size,
+            "seed": data.get("seed"),
+            "n_steps": data.get("n_steps"),
+        })
+    return JSONResponse({"trashed": out, "count": len(out)})
+
+
+class RestoreRequest(BaseModel):
+    trash_filenames: list[str]
+
+
+@app.post("/api/runs/trash/restore")
+def restore_trashed(req: RestoreRequest) -> JSONResponse:
+    """Move runs out of trash back to their original location. If a file
+    of the same original name already exists, restore is skipped for that
+    item (don't clobber)."""
+    restored: list[str] = []
+    skipped: list[dict[str, str]] = []
+    for trash_name in req.trash_filenames:
+        if "/" in trash_name or "\\" in trash_name or ".." in trash_name:
+            skipped.append({"name": trash_name, "reason": "invalid name"})
+            continue
+        src = TRASH_DIR / trash_name
+        if not src.exists():
+            skipped.append({"name": trash_name, "reason": "not in trash"})
+            continue
+        # Restore the run JSON and any matching sidecar (look for cmd.json
+        # variant with the same timestamp suffix).
+        idx = trash_name.rfind(".")
+        original_name = trash_name[:idx]
+        ts = trash_name[idx + 1:]
+        # Find the sidecar with same timestamp, if any
+        candidates = [src]
+        # Sidecar name pattern: foo.cmd.json.YYYYmmdd_HHMMSS
+        if original_name.endswith(".json"):
+            sidecar_basename = original_name[:-5] + ".cmd.json"
+            sidecar_trash = TRASH_DIR / f"{sidecar_basename}.{ts}"
+            if sidecar_trash.exists():
+                candidates.append(sidecar_trash)
+        try:
+            for c in candidates:
+                # Strip the trailing timestamp to recover original name
+                recovered_name = c.name.rsplit(".", 1)[0]
+                dst = RAW_RUNS_DIR / recovered_name
+                if dst.exists():
+                    skipped.append({
+                        "name": trash_name,
+                        "reason": f"target {recovered_name} already exists",
+                    })
+                    continue
+                c.rename(dst)
+            restored.append(trash_name)
+        except OSError as e:
+            skipped.append({"name": trash_name, "reason": str(e)})
+    return JSONResponse({
+        "restored": restored, "skipped": skipped,
+        "n_restored": len(restored),
+    })
+
+
+class PurgeRequest(BaseModel):
+    trash_filenames: list[str] | None = None  # None = purge all
+
+
+@app.post("/api/runs/trash/purge")
+def purge_trashed(req: PurgeRequest) -> JSONResponse:
+    """Permanently delete trashed runs. If trash_filenames is None, empties
+    the entire trash. Otherwise deletes only the specified files."""
+    targets: list[Path]
+    if req.trash_filenames is None:
+        targets = list(TRASH_DIR.iterdir())
+    else:
+        targets = []
+        for n in req.trash_filenames:
+            if "/" in n or "\\" in n or ".." in n:
+                continue
+            p = TRASH_DIR / n
+            if p.exists():
+                targets.append(p)
+            # Also pick up matching sidecar
+            idx = n.rfind(".")
+            original = n[:idx]
+            ts = n[idx + 1:]
+            if original.endswith(".json"):
+                sb = original[:-5] + ".cmd.json"
+                sp = TRASH_DIR / f"{sb}.{ts}"
+                if sp.exists():
+                    targets.append(sp)
+    purged = []
+    for p in targets:
+        try:
+            p.unlink()
+            purged.append(p.name)
+        except OSError:
+            pass
+    return JSONResponse({"purged": purged, "n_purged": len(purged)})
+
+
+# A quick "trash all incomplete runs" convenience endpoint. "Incomplete" =
+# the JSON has no phase_stats with finalQ data (i.e., the runner died
+# before the trial loop finished writing phase_stats).
+@app.post("/api/runs/trash/incomplete")
+def trash_incomplete() -> JSONResponse:
+    """Mass-trash all runs that don't have a complete phase_stats."""
+    files = sorted(
+        (f for f in RAW_RUNS_DIR.glob("*.json") if not f.name.endswith(".cmd.json")),
+    )
+    incomplete: list[str] = []
+    for f in files:
+        try:
+            data = json.loads(f.read_text())
+        except Exception:
+            incomplete.append(f.name)
+            continue
+        ps = data.get("phase_stats") or []
+        if not ps:
+            incomplete.append(f.name)
+            continue
+        last = ps[-1]
+        if last.get("final_quarter_mean_distance") is None and last.get("finalQ") is None:
+            incomplete.append(f.name)
+    if not incomplete:
+        return JSONResponse({"trashed": [], "skipped": [], "n_trashed": 0})
+    return trash_runs(TrashRequest(names=incomplete))
 
 
 # Auto-group runs by filename suffix and aggregate per-experiment.
