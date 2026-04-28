@@ -284,7 +284,9 @@ function renderRunCharts(data, distCanvas, rewardCanvas, heatmapCanvas, phaseMot
     start: ps.step_start ?? 0,
     end: ps.step_end ?? (data.n_steps ?? 0),
     label: `phase ${i} → goal (${ps.goal[0]},${ps.goal[1]})`,
-    color: i % 2 === 0 ? "#161922" : "#1d2230",
+    // Alternate phase shading between two near-black tones, matching
+    // --bg-2 and --bg-3. PALETTE values mirror the CSS vars.
+    color: i % 2 === 0 ? P.bg2 : P.bg3,
   }));
   const goalChangeMarkers = (data.goal_change_steps || []).map((step) => ({
     x: step,
@@ -360,7 +362,7 @@ function renderHeatmap(canvas, data) {
   if (!trajectory.length) {
     const ctx = canvas.getContext("2d");
     canvas.width = 1; canvas.height = 1;
-    ctx.fillStyle = "#0a0c10";
+    ctx.fillStyle = P.bg;
     ctx.fillRect(0, 0, 1, 1);
     return;
   }
@@ -388,7 +390,7 @@ function renderHeatmap(canvas, data) {
   canvas.style.height = `${h}px`;
   const ctx = canvas.getContext("2d");
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.fillStyle = "#0a0c10";
+  ctx.fillStyle = P.bg;
   ctx.fillRect(0, 0, w, h);
 
   // Grid cells colored by visit count (log-scaled green ramp)
@@ -401,12 +403,12 @@ function renderHeatmap(canvas, data) {
       const py = padding + (gridSize - 1 - y) * cellPx;
       // Color: dark → green for visits, faintly transparent for never visited
       ctx.fillStyle = intensity === 0
-        ? "#161922"
+        ? P.bg2
         : `rgba(110, 231, 183, ${0.15 + intensity * 0.7})`;
       ctx.fillRect(px, py, cellPx - 1, cellPx - 1);
       // Show count if non-trivial
       if (c > 0 && cellPx > 18) {
-        ctx.fillStyle = intensity > 0.6 ? "#0a0c10" : "#e3e6ea";
+        ctx.fillStyle = intensity > 0.6 ? P.bg : P.fg;
         ctx.font = `${Math.max(8, Math.floor(cellPx * 0.32))}px ui-monospace, Consolas, monospace`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -415,8 +417,8 @@ function renderHeatmap(canvas, data) {
     }
   }
   // Legend / max
-  ctx.fillStyle = "#9aa3ad";
-  ctx.font = "10px sans-serif";
+  ctx.fillStyle = P.fgDim;
+  ctx.font = "10px ui-monospace, Consolas, monospace";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
   ctx.fillText(
@@ -433,7 +435,7 @@ async function rerunFromSidecar(name) {
       if (res.status === 404) {
         toast(
           "No sidecar found — this run wasn't launched via the webapp. " +
-          "Re-run is only available for runs launched from this dashboard.",
+          "Re-run is only available for runs launched from this dashboard",
           { kind: "warn", duration: 6000 }
         );
         return;
@@ -455,7 +457,7 @@ async function rerunFromSidecar(name) {
     }
     toast(
       `Loaded re-run config from ${name}: preset=${sidecar.preset}, seed=${sidecar.seed}. ` +
-      `Edit fields then click Launch to start.`,
+      `Edit fields then click Launch to start`,
       { kind: "success", duration: 5000 }
     );
   } catch (e) {
@@ -557,7 +559,7 @@ async function openComparisonView() {
       start: ps.step_start ?? 0,
       end: ps.step_end ?? (datas[0][1].n_steps ?? 0),
       label: `phase ${i}`,
-      color: i % 2 === 0 ? "#161922" : "#1d2230",
+      color: i % 2 === 0 ? P.bg2 : P.bg3,
     }));
     const refMarkers = (datas[0][1].goal_change_steps || []).map((step) => ({
       x: step, label: "goal change", color: P.warn,
@@ -927,7 +929,7 @@ function renderOverviewDistribution(runs) {
   const colors = bins.map((_, i) => {
     if (i === flagshipBin) return P.accent;
     if (i === baselineBin) return P.warn;
-    return "#5f6770";
+    return P.fgMuted;
   });
 
   const chart = makeBarChart(canvas, {

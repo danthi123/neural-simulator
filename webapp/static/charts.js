@@ -8,19 +8,22 @@
 //   makeLineChart(canvas, opts) → updateData(...)
 //   makeBarChart(canvas, opts) → updateData(...)
 //
-// Conventions: colors use the dashboard CSS vars where possible (read via
-// getComputedStyle), but functions accept overrides.
+// Conventions: PALETTE mirrors the CSS vars in :root (style.css). Canvas
+// 2D requires string colors so we duplicate the values here — single source
+// of truth is style.css, update both if a var changes there.
 
 const PALETTE = {
-  fg: "#e3e6ea",
-  fgDim: "#9aa3ad",
-  border: "#2a2f3d",
-  bg: "#0a0c10",
-  bg2: "#161922",
-  accent: "#6ee7b7",
-  warn: "#fbbf24",
-  bad: "#f87171",
-  blue: "#93c5fd",
+  fg: "#e3e6ea",         // --fg
+  fgDim: "#9aa3ad",      // --fg-dim
+  fgMuted: "#5f6770",    // --fg-muted
+  border: "#2a2f3d",     // --border
+  bg: "#0a0c10",         // --code-bg (dark-darkest, used as chart bg)
+  bg2: "#161922",        // --bg-2
+  bg3: "#1d2230",        // --bg-3
+  accent: "#6ee7b7",     // --accent
+  warn: "#fbbf24",       // --accent-warn
+  bad: "#f87171",        // --accent-bad
+  blue: "#93c5fd",       // --link
   purple: "#c4b5fd",
 };
 
@@ -96,7 +99,7 @@ export function makeLineChart(canvas, opts = {}) {
     const allVals = state.series.flatMap((s) => s.values).filter((v) => v != null && isFinite(v));
     if (allVals.length === 0) {
       c.fillStyle = PALETTE.fgDim;
-      c.font = "12px sans-serif";
+      c.font = "12px ui-monospace, Consolas, monospace";
       c.textAlign = "center";
       c.fillText("(no data)", w / 2, h / 2);
       return;
@@ -150,7 +153,7 @@ export function makeLineChart(canvas, opts = {}) {
     // Phase labels (at top)
     c.textAlign = "center";
     c.textBaseline = "top";
-    c.font = "10px sans-serif";
+    c.font = "10px ui-monospace, Consolas, monospace";
     for (const p of state.phaseRanges) {
       if (!p.label) continue;
       c.fillStyle = p.labelColor || PALETTE.fgDim;
@@ -171,7 +174,7 @@ export function makeLineChart(canvas, opts = {}) {
       c.setLineDash([]);
       if (m.label) {
         c.fillStyle = m.color || PALETTE.warn;
-        c.font = "9px sans-serif";
+        c.font = "9px ui-monospace, Consolas, monospace";
         c.textAlign = "left";
         c.fillText(m.label, px + 4, MT + 12);
       }
@@ -221,7 +224,7 @@ export function makeLineChart(canvas, opts = {}) {
     // legend goes top-right in its own zone (no overlap).
     if (state.title) {
       c.fillStyle = PALETTE.fg;
-      c.font = "11px sans-serif";
+      c.font = "11px ui-monospace, Consolas, monospace";
       c.textAlign = "left";
       c.textBaseline = "top";
       // Truncate long titles to leave space for the legend.
@@ -244,7 +247,7 @@ export function makeLineChart(canvas, opts = {}) {
       c.rotate(-Math.PI / 2);
       c.textAlign = "center";
       c.fillStyle = PALETTE.fgDim;
-      c.font = "10px sans-serif";
+      c.font = "10px ui-monospace, Consolas, monospace";
       c.fillText(state.yLabel, 0, 0);
       c.restore();
     }
@@ -253,7 +256,7 @@ export function makeLineChart(canvas, opts = {}) {
     if (state.series.length >= 1 && state.series.some((s) => s.label)) {
       c.textAlign = "right";
       c.textBaseline = "top";
-      c.font = "10px sans-serif";
+      c.font = "10px ui-monospace, Consolas, monospace";
       const maxLabelW = plotW * 0.45;
       let lx = w - MR - 4;
       let ly = 4;
@@ -388,7 +391,7 @@ export function makeBarChart(canvas, opts = {}) {
 
     if (state.title) {
       c.fillStyle = PALETTE.fg;
-      c.font = "11px sans-serif";
+      c.font = "11px ui-monospace, Consolas, monospace";
       c.textAlign = "left";
       c.textBaseline = "top";
       c.fillText(state.title, ML, 4);

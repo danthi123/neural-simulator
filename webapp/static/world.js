@@ -22,6 +22,18 @@ const CELL_PX = 56;   // pixels per grid cell
 const PADDING = 24;   // canvas padding
 const TRAIL_LEN = 30; // trajectory trail samples
 
+// Canvas 2D requires string colors, so we mirror the CSS vars from :root.
+// Single source of truth lives in style.css; if a var changes there, update
+// the matching entry here. Canvas colors are kept identical to vars to keep
+// the Canvas-rendered map visually consistent with the rest of the dashboard.
+const C = {
+  codeBg: "#0a0c10",      // matches --code-bg
+  border: "#2a2f3d",      // matches --border
+  fgMuted: "#5f6770",     // matches --fg-muted
+  accent: "#6ee7b7",      // matches --accent
+  accentWarn: "#fbbf24",  // matches --accent-warn
+};
+
 // State
 let world = {
   data: null,
@@ -351,7 +363,7 @@ async function attachLive(runId, listItem) {
   if (detachBtn && !detachBtn._bound) {
     detachBtn.addEventListener("click", () => {
       closeLiveSocket();
-      $("#world-run-name").textContent = "Detached. No run loaded.";
+      $("#world-run-name").textContent = "Detached — no run loaded";
     });
     detachBtn._bound = true;
   }
@@ -740,13 +752,13 @@ function resizeCanvas(canvas, gridSize) {
 
 function drawEmptyGrid(canvas, gridSize) {
   const ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#0a0c10";
+  ctx.fillStyle = C.codeBg;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   drawGrid(ctx, gridSize);
 }
 
 function drawGrid(ctx, gridSize) {
-  ctx.strokeStyle = "#2a2f3d";
+  ctx.strokeStyle = C.border;
   ctx.lineWidth = 1;
   for (let i = 0; i <= gridSize; i++) {
     const off = PADDING + i * CELL_PX + 0.5;
@@ -760,7 +772,7 @@ function drawGrid(ctx, gridSize) {
     ctx.stroke();
   }
   // Faint cell coordinates
-  ctx.fillStyle = "#5f6770";
+  ctx.fillStyle = C.fgMuted;
   ctx.font = "10px ui-monospace, Consolas, monospace";
   ctx.textBaseline = "top";
   for (let x = 0; x < gridSize; x++) {
@@ -831,13 +843,13 @@ function renderFrame() {
   const gridSize = worldGridSize();
   const data = world.data;
 
-  ctx.fillStyle = "#0a0c10";
+  ctx.fillStyle = C.codeBg;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   if (!data) {
     drawGrid(ctx, gridSize);
-    ctx.fillStyle = "#5f6770";
-    ctx.font = "13px sans-serif";
+    ctx.fillStyle = C.fgMuted;
+    ctx.font = "13px ui-monospace, Consolas, monospace";
     ctx.textAlign = "center";
     ctx.fillText("Pick a run from the right panel.", canvas.width / 2, canvas.height / 2);
     return;
@@ -916,7 +928,7 @@ function drawGoal(ctx, goal) {
   const [px, py] = cellToPx(goal[0], goal[1]);
   ctx.save();
   // Pulsing core
-  ctx.fillStyle = "#6ee7b7";
+  ctx.fillStyle = C.accent;
   ctx.beginPath();
   ctx.arc(px, py, 8, 0, Math.PI * 2);
   ctx.fill();
@@ -948,8 +960,8 @@ function drawAgent(ctx, pos, action) {
   const [px, py] = cellToPx(pos[0], pos[1]);
   ctx.save();
   // Body
-  ctx.fillStyle = "#fbbf24";
-  ctx.strokeStyle = "#0a0c10";
+  ctx.fillStyle = C.accentWarn;
+  ctx.strokeStyle = C.codeBg;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(px, py, 11, 0, Math.PI * 2);
@@ -961,7 +973,7 @@ function drawAgent(ctx, pos, action) {
     const dy = [1, 0, -1, 0][action] || 0; // y up = N
     const tipX = px + dx * 18;
     const tipY = py - dy * 18; // canvas y is flipped
-    ctx.strokeStyle = "#fbbf24";
+    ctx.strokeStyle = C.accentWarn;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(px, py);
@@ -975,7 +987,7 @@ function drawAgent(ctx, pos, action) {
     ctx.lineTo(tipX - ah * Math.cos(ang - Math.PI / 6), tipY - ah * Math.sin(ang - Math.PI / 6));
     ctx.lineTo(tipX - ah * Math.cos(ang + Math.PI / 6), tipY - ah * Math.sin(ang + Math.PI / 6));
     ctx.closePath();
-    ctx.fillStyle = "#fbbf24";
+    ctx.fillStyle = C.accentWarn;
     ctx.fill();
   }
   ctx.restore();

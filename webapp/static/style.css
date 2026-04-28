@@ -1,5 +1,11 @@
 /* Neural Simulator — Research Dashboard
- * Phase 1 minimal styling: dark theme, clear hierarchy, monospace data.
+ * Dark theme, clear hierarchy, monospace throughout.
+ *
+ * Font policy: --font-mono is the universal application font. The whole
+ * dashboard (headings, buttons, body copy, telemetry) uses one mono stack
+ * for a coherent terminal-ish research-workstation aesthetic. --font-sans
+ * is kept defined for future use but is no longer applied anywhere by
+ * default — body inherits mono and per-element overrides are removed.
  */
 :root {
   --bg: #0e1014;
@@ -14,9 +20,9 @@
   --border: #2a2f3d;
   --link: #93c5fd;
   --code-bg: #0a0c10;
-  /* Font stacks. Sans for descriptive copy/labels; mono for telemetry,
-     run IDs, numerics, and any data that benefits from fixed-width
-     alignment. Use these instead of hardcoding font-family lists. */
+  /* Font stacks. --font-mono is the universal application font; --font-sans
+     is reserved for future use. Use these vars instead of hardcoding font
+     lists in CSS or JS. */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", Consolas, "Courier New", monospace;
 }
@@ -26,7 +32,7 @@ html, body { margin: 0; padding: 0; height: 100%; }
 body {
   background: var(--bg);
   color: var(--fg);
-  font: 14px/1.5 var(--font-sans);
+  font: 14px/1.5 var(--font-mono);
   overflow: hidden;
 }
 
@@ -132,7 +138,6 @@ main {
 }
 .selection-bar #selection-count {
   color: var(--accent);
-  font-family: var(--font-mono);
 }
 .ctrl-btn.bad {
   border-color: rgba(248, 113, 113, 0.4);
@@ -193,7 +198,6 @@ main {
 .trash-row.row-selected { background: rgba(110, 231, 183, 0.08); }
 .trash-row .row-body { flex: 1; min-width: 0; }
 .trash-row .name {
-  font-family: var(--font-mono);
   font-size: 12px;
 }
 .trash-row .meta {
@@ -235,19 +239,20 @@ main {
 }
 .list-item:hover { background: var(--bg-2); }
 .list-item.active { background: var(--bg-3); border-left: 3px solid var(--accent); padding-left: 13px; }
-.list-item .name { font-family: var(--font-mono); font-size: 12px; }
+.list-item .name { font-size: 12px; }
 .list-item .meta { font-size: 11px; color: var(--fg-dim); }
 
 .metric { display: inline-block; margin-right: 12px; }
 .metric .label { color: var(--fg-dim); margin-right: 4px; }
-.metric .value { color: var(--accent); font-family: var(--font-mono); }
+.metric .value { color: var(--accent); }
 .metric.warn .value { color: var(--accent-warn); }
 .metric.bad .value { color: var(--accent-bad); }
 
 .muted { color: var(--fg-dim); }
 
 pre, code {
-  font-family: var(--font-mono);
+  /* font-family inherited from body (--font-mono); declared here only for
+     belt-and-suspenders when these elements are extracted from <body>. */
   font-size: 12px;
 }
 pre {
@@ -378,7 +383,6 @@ pre {
   font-size: 22px;
   font-weight: 600;
   color: var(--accent);
-  font-family: var(--font-mono);
 }
 .kpi-card .kpi-sub {
   margin-top: 4px;
@@ -407,7 +411,6 @@ pre {
 .activity-row:hover { background: var(--bg-3); }
 .activity-row:last-child { border-bottom: none; }
 .activity-row .name {
-  font-family: var(--font-mono);
   font-size: 12px;
   flex: 1;
   color: var(--fg);
@@ -424,7 +427,6 @@ pre {
   color: var(--fg-muted);
 }
 .activity-row .sum {
-  font-family: var(--font-mono);
   color: var(--accent);
   font-weight: 600;
   min-width: 48px;
@@ -469,7 +471,6 @@ pre {
   padding: 10px 12px;
   border-bottom: 1px solid var(--border);
   font-size: 12px;
-  font-family: var(--font-mono);
 }
 .experiment-table tr:last-child td { border-bottom: none; }
 .experiment-table tr.expandable { cursor: pointer; }
@@ -481,7 +482,6 @@ pre {
   background: var(--bg-3);
   font-size: 10px;
   color: var(--fg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
 }
 
 .experiment-detail {
@@ -496,7 +496,6 @@ pre {
   display: flex;
   justify-content: space-between;
   padding: 4px 0;
-  font-family: var(--font-mono);
 }
 
 /* ─── Charts ────────────────────────────────────────────────────────── */
@@ -574,17 +573,13 @@ pre {
 }
 #tab-world .toolbar label select { border: none; padding: 0; }
 
-/* Toolbar telemetry — run IDs, step counts, rate/ETA. Monospace so
-   they don't shimmy as digits change and align cleanly with each
-   other. Body sans-serif is for descriptive labels and copy. */
+/* Toolbar telemetry — run IDs, step counts, rate/ETA. Mono is now the
+   universal app font (set on body); these rules just nail down the size
+   so digits stay aligned. */
 #world-run-name,
 #world-step-display,
 #live-eta {
-  font-family: var(--font-mono);
   font-size: 12px;
-}
-.live-badge {
-  font-family: var(--font-sans);  /* keep "● LIVE" in the body sans */
 }
 
 .world-layout {
@@ -624,7 +619,6 @@ pre {
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 10px 14px;
-  font-family: var(--font-mono);
   font-size: 11px;
   width: 180px;
   min-width: 180px;
@@ -654,10 +648,7 @@ pre {
    clicks pass through to the canvas; the button overrides to be
    clickable. The panel uses CSS grid (1fr auto, align-items center)
    so the button sits in row 1 col 2 next to the title in BOTH expanded
-   and collapsed states — same visual position regardless of state.
-   The button uses an explicit sans font so the "−" / "+" glyphs render
-   identically in both panels (the overlay parent uses a mono font,
-   the legend uses sans). */
+   and collapsed states — same visual position regardless of state. */
 .hud-collapse {
   grid-column: 2;
   grid-row: 1;
@@ -665,7 +656,6 @@ pre {
   border: 1px solid transparent;
   color: var(--fg-dim);
   cursor: pointer;
-  font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1;
   padding: 2px 6px;
@@ -681,12 +671,10 @@ pre {
    title+button row is visible. Width is preserved via the panel's
    min-width / width rules so collapsing does not shrink the panel. */
 .hud-collapsed .hud-body { display: none; }
-/* Title sits in row 1 col 1 in both states. Sans font for consistent
-   look across the mono-font overlay and sans-font legend parents. */
+/* Title sits in row 1 col 1 in both states. Inherits mono from body. */
 .hud-title {
   grid-column: 1;
   grid-row: 1;
-  font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 600;
   color: var(--fg-dim);
@@ -784,7 +772,6 @@ pre {
   padding: 6px 8px;
   border-radius: 4px;
   cursor: pointer;
-  font-family: var(--font-mono);
   font-size: 11px;
   display: flex;
   flex-direction: column;
@@ -885,7 +872,6 @@ pre {
 .ctrl-btn.active { background: var(--accent); color: var(--bg); }
 #world-canvas.interactive { cursor: crosshair; }
 #ctrl-status {
-  font-family: var(--font-mono);
   font-size: 11px;
   margin-left: auto;
 }
@@ -925,12 +911,10 @@ pre {
   padding: 2px 4px;
   color: var(--fg);
   font: inherit;
-  font-family: var(--font-mono);
   font-size: 11px;
   cursor: pointer;
 }
 .scrubber-step-label {
-  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--fg-dim);
   cursor: pointer;
@@ -954,7 +938,6 @@ pre {
   padding: 2px 6px;
   color: var(--fg);
   font: inherit;
-  font-family: var(--font-mono);
   font-size: 11px;
   text-align: center;
 }
@@ -991,7 +974,6 @@ pre {
   padding: 8px 10px;
   color: var(--fg);
   font: inherit;
-  font-family: var(--font-mono);
   font-size: 12px;
 }
 #tab-launcher button[type=submit] {
@@ -1012,7 +994,6 @@ pre {
   border-radius: 6px;
   padding: 12px;
   max-width: 1200px;
-  font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.4;
   max-height: 600px;
