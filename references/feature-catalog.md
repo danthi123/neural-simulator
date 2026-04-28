@@ -79,540 +79,12 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 
 ---
 
-## Cluster J — Synapses & plasticity rules
+## Cluster A — Closed BG action-selection loop
 
-Entries from Ch 11 (Overview of Synaptic Transmission) onward.
-
-### J.01 Chemical synaptic transmission (general framework)
-- **System:** all chemical synapses; CNS and PNS
-- **Biological role:** unidirectional signaling via vesicular release of neurotransmitter into a 20–40 nm synaptic cleft, binding to postsynaptic receptors that gate ion flux. Allows amplification (one vesicle → thousands of channels open), modulation, plasticity. The dominant signaling mode in the brain.
-- **Sim status:** implemented — `sim/bridge.py` synaptic conductance update + `sim/kernels.py` `fused_conductance_decay_and_current` model the postsynaptic effect; presynaptic AP triggers conductance increment in target. Synaptic cleft, exocytosis, and vesicle pool are abstracted away.
-- **Cluster:** J
-- **Prerequisites:** I (channels & AP), J.02 (receptor types)
-- **Citation:** Kandel 6e Ch 11 p 241–253
-- **Behavioral validation:** any working forward simulation already validates this — already covered by E/I balance benchmark (`run_benchmarks.py --benchmark ei-balance`).
-
-### J.02 Ionotropic vs metabotropic receptor distinction
-- **System:** all chemical synapses
-- **Biological role:** ionotropic receptors are ligand-gated ion channels — fast (ms-scale), direct conductance change. Metabotropic receptors are GPCRs — slow (100 ms–min), trigger second-messenger cascades (cAMP, IP3, DAG → PKA, PKC) that phosphorylate downstream effectors including channels themselves. The two-timescale architecture is what lets the brain combine fast computation with slow modulation.
-- **Sim status:** partial — ionotropic receptors are implemented (AMPA-like fast conductance, NMDA with voltage-dep Mg2+ block, GABA with `E_inh = -75 mV`). Metabotropic receptors are *abstracted* via the neuromodulator subsystem (`sim/neuromodulators.py`): we don't model GPCRs / cAMP / kinases literally, but the *functional outcome* — concentration-dependent modulation of synaptic gain, plasticity rate, excitability — is captured. The textbook framing is biophysical; ours is phenomenological. `[discrepancy: project doc treats neuromodulators as a peer mechanism to STDP, while textbook treats them as a *type of receptor signaling* — both views are valid; ours skips the molecular layer.]`
-- **Cluster:** J (ionotropic) + C (metabotropic / NM subsystem)
-- **Prerequisites:** J.01
-- **Citation:** Kandel 6e Ch 11 p 250–251 (Fig 11-9)
-- **Behavioral validation:** ionotropic — already in NMDA-Mg2+-block validation. Metabotropic — confirm DA / NE / 5-HT concentration changes alter target metric (e.g. STDP rate doubles when DA concentration doubles, with the right dose-response curve).
-
-### J.03 Active zone and synaptic vesicle pool
-- **System:** all chemical synapses
-- **Biological role:** transmitter is released from specialized presynaptic boutons containing 100–200 synaptic vesicles each, clustered at "active zones" with voltage-gated Ca²⁺ channels. AP-triggered Ca²⁺ entry triggers vesicle fusion (exocytosis) within ~1 ms.
-- **Sim status:** not-applicable at our level of abstraction — vesicle dynamics are absorbed into the short-term plasticity (STP) Tsodyks-Markram model: parameters `stp_U` (release probability), `stp_tau_d` (depletion recovery), `stp_tau_f` (facilitation) phenomenologically capture vesicle-pool depletion and recovery. We do not model individual vesicles or active zones. `[discrepancy: textbook describes vesicle counts and Ca²⁺-triggered fusion as the substrate; project STP fields are the closest functional equivalent. Note in CLAUDE.md: STP fields are global defaults plus per-connection-type variants.]`
-- **Cluster:** J
-- **Prerequisites:** J.01
-- **Citation:** Kandel 6e Ch 11 p 248–249 (Fig 11-7, 11-8)
-- **Behavioral validation:** STP paired-pulse ratio benchmark (`run_benchmarks.py --benchmark stp-paired-pulse`) — covers it.
-
-### J.04 Synaptic delay (~1 ms)
-- **System:** all chemical synapses
-- **Biological role:** the cumulative time for AP arrival, Ca²⁺ entry, vesicle fusion, transmitter diffusion across cleft, receptor binding, and channel gating — "usually 1 ms or less." Constrains how fast spike-based circuits can route information.
-- **Sim status:** partial — there is no explicit per-synapse propagation delay in the current code path; the synaptic conductance is incremented in the same step the presynaptic AP fires. With `dt=0.5 ms` (Izh) or `0.05 ms` (HH) the de-facto delay is one step. For most network behaviors at our scale this is acceptable; for tight timing experiments (millisecond-precise STDP windows, gamma phase-locking), per-synapse axonal delay would matter. *Future work:* per-synapse delay buffer (a small ring buffer keyed off current step).
-- **Cluster:** J
-- **Prerequisites:** J.01
-- **Citation:** Kandel 6e Ch 11 p 248 (Fig 11-8)
-- **Behavioral validation:** STDP-curve validation already passes at our timescales. To stress-test delay, run a polychrony / synfire-chain experiment and check that the simulated chain produces the expected delay profile.
-
-### J.05 Electrical synapses / gap junctions
-- **System:** primarily inhibitory interneurons (cortical FS networks), retina (bipolar / amacrine), olfactory bulb, glia; widespread in immature CNS.
-- **Biological role:** direct cytoplasmic coupling via connexon hemichannels (6 connexins each, 1.5–2 nm pore). Bidirectional, near-zero-delay current passage between two cells. Function: synchronize firing of populations (e.g. FS interneurons → gamma oscillations), rapid escape circuits (fish Mauthner cell, crayfish tail-flip), early developmental coupling, glial Ca²⁺ wave propagation.
-- **Sim status:** missing. Our gamma-oscillation benchmark (Kandel-cited PING mechanism, peak 27–45 Hz) reproduces gamma without electrical coupling, by E↔I delay tuning. The textbook describes gap-junctional electrical coupling among FS interneurons as a *complementary* mechanism that further sharpens synchrony. Adding gap junctions would shift the benchmark from "PING-only" to "PING+ING+gap-junctional" (closer to the *in vivo* mechanism). **Implementation cost:** moderate — would need a new `cp_gap_junction_coupling` matrix and a `V_post += g_gap * (V_pre - V_post)` term added to the conductance step.
-- **Cluster:** J (and indirectly E for retinal circuits, F for cerebellum where they exist on Purkinje axon collaterals)
-- **Prerequisites:** I (V dynamics), J.01
-- **Citation:** Kandel 6e Ch 11 p 241–248 (Fig 11-1, 11-4, 11-5)
-- **Behavioral validation:** gamma-oscillation peak with FS interneurons electrically coupled should be sharper (lower power outside the gamma band) than current PING-only baseline. Replicate Whittington & Traub 2003 in-silico.
-
-### J.06 Glial gap-junction networks (astrocyte Ca²⁺ waves)
-- **System:** astrocytes (CNS), Schwann cells (PNS myelin)
-- **Biological role:** astrocytes form a gap-junction-coupled syncytium across which Ca²⁺ waves propagate at 1–20 µm/s — orders of magnitude slower than APs. Function still partly unknown but implicated in metabolic coordination, neurovascular coupling, and slow modulation of nearby synapses (gliotransmission of glutamate, ATP, D-serine).
-- **Sim status:** missing. We have no glial cells at all. The simulator is purely neuronal.
-- **Cluster:** Q (Glia & neurovascular, added 2026-04-28 from this chapter)
-- **Prerequisites:** J.05 (gap junctions)
-- **Citation:** Kandel 6e Ch 11 p 248
-- **Behavioral validation:** would require co-simulation of glia + neurons — currently out of scope. Skipping for now.
-
-### J.07 AMPA receptor — fast excitatory cation channel
-- **System:** all glutamatergic synapses in the CNS
-- **Biological role:** primary mediator of fast excitatory synaptic transmission. Cation-permeable (Na⁺ in, K⁺ out), reverses near 0 mV. Decay τ ~2–5 ms. GluA1–GluA4 subunits; GluA2-lacking variants are Ca²⁺-permeable. Density / GluA2 editing is the substrate for synaptic-scaling homeostasis.
-- **Sim status:** implemented as the *generic* fast excitatory conductance (`E_exc = 0 mV`, exponential decay via `fused_conductance_decay_and_current`). We don't track AMPA explicitly as a named subtype, but the kinetics and reversal correspond. Synaptic scaling (Pillar 2.5 homeostasis) implicitly models AMPA-receptor density adjustment.
-- **Cluster:** J
-- **Prerequisites:** J.01, J.02
-- **Citation:** Kandel 6e Ch 13 p 277–280
-- **Behavioral validation:** baseline E/I balance benchmark already covers this — exc rate 1.78 Hz, inh rate 3.25 Hz, CV(ISI) 0.86 — consistent with cortical L2/3 driven by AMPA-like fast conductance.
-
-### J.08 NMDA receptor — voltage-dependent coincidence detector
-- **System:** all glutamatergic synapses; especially dense in CA1 hippocampus, neocortical L2/3
-- **Biological role:** ligand- AND voltage-gated; Mg²⁺ blocks the pore at resting V, unblocks above ~-40 mV. Highly Ca²⁺-permeable (~10× the AMPA Ca²⁺ flux). Slow kinetics (decay τ ~50–150 ms). The voltage-dependence makes it a coincidence detector for pre/post activity — the cellular substrate for Hebbian LTP. Subunit composition (GluN2A vs GluN2B) modulates kinetics; developmentally regulated. Hypofunction implicated in schizophrenia (NMDA antagonist ketamine produces psychotic symptoms).
-- **Sim status:** implemented — `fused_nmda_update_and_current` in `sim/kernels.py` models the voltage-dep Mg²⁺ block. Used as the Ca²⁺ source for STDP/LTP. Slow kinetics captured. Subunit composition (GluN2A/GluN2B) is *not* differentiated.
-- **Cluster:** J
-- **Prerequisites:** J.07
-- **Citation:** Kandel 6e Ch 13 p 281–286
-- **Behavioral validation:** STDP timing curve (Bi & Poo 1998) already passes, demonstrating NMDA-driven Ca²⁺-dependent LTP/LTD with correct timing windows.
-
-### J.09 Kainate receptor — third ionotropic glutamate receptor type
-- **System:** mossy-fiber → CA3, presynaptic modulation of inhibitory transmission, some cortical inhibitory interneurons
-- **Biological role:** ionotropic glutamate receptor with intermediate kinetics. Functions partly redundant with AMPA postsynaptically; more interesting role is presynaptic — kainate-mediated frequency-dependent facilitation/depression of release.
-- **Sim status:** missing as a distinct receptor. Subsumed into AMPA-like generic excitatory conductance. *Likely not worth adding* unless we model mossy-fiber-specific phenomena.
-- **Cluster:** J
-- **Prerequisites:** J.07
-- **Citation:** Kandel 6e Ch 13 p 277–278
-- **Behavioral validation:** would only be meaningful in a CA3 mossy-fiber-specific experiment.
-
-### J.10 GABA-A receptor — fast inhibitory Cl⁻ channel
-- **System:** ubiquitous in CNS — basket, chandelier, Martinotti, neurogliaform interneurons
-- **Biological role:** pentameric ligand-gated Cl⁻ channel (most common α1β2γ2). Reversal ~-75 mV in adult neurons (close to but slightly below V_rest), produces hyperpolarizing IPSP in most cells. **Shunting inhibition** is a separate effect: even when ΔV is small, opening Cl⁻ channels increases membrane conductance and divides the EPSP voltage by a factor — works without hyperpolarization. Allosterically modulated by benzodiazepines, barbiturates, alcohol, neurosteroids.
-- **Sim status:** implemented — `E_inh = -75 mV` with 0.7× propagation scaling (CLAUDE.md). Shunting inhibition is *implicitly* captured by the increase in membrane conductance during inhibitory current; works correctly in single-compartment but cannot reproduce *compartment-specific* shunting (e.g. perisomatic vs distal-dendritic shunting differ in real pyramidal cells).
-- **Cluster:** J
-- **Prerequisites:** J.01
-- **Citation:** Kandel 6e Ch 13 p 286–289
-- **Behavioral validation:** E/I balance benchmark (`run_benchmarks.py --benchmark ei-balance`) covers it. PING gamma benchmark also depends on functional GABA-A.
-
-### J.11 Glycine receptor — fast inhibitory Cl⁻ channel (mostly spinal)
-- **System:** brainstem, spinal cord (Renshaw cells, Ia inhibitory interneurons)
-- **Biological role:** functionally similar to GABA-A (Cl⁻-selective, fast IPSP) but pharmacologically distinct (strychnine-sensitive). Dominates inhibition in spinal motor circuits.
-- **Sim status:** not-applicable. We don't model spinal cord; abstractly any spinal "glycinergic" inhibition would be subsumed under our generic GABA-A inhibitory channel. Worth flagging if we add a spinal CPG cluster.
-- **Cluster:** H, J
-- **Prerequisites:** J.10
-- **Citation:** Kandel 6e Ch 13 p 286–289
-- **Behavioral validation:** N/A unless spinal added.
-
-### J.12 Postsynaptic density (PSD) — scaffolding & receptor anchoring
-- **System:** all glutamatergic synapses (PSD-95, Homer, Shank, GKAP family proteins)
-- **Biological role:** dense protein scaffold under the glutamatergic postsynaptic membrane that anchors AMPA + NMDA receptors at the right density and aligns them with presynaptic active zones. PSD-95 specifically anchors NMDA and stabilizes AMPA via TARPs. Plasticity mechanisms (LTP) rearrange the PSD to insert AMPA receptors. The PSD is one of the *protein bottlenecks* for synapse maintenance and plasticity.
-- **Sim status:** not-applicable. The simulator has weights but no scaffolding proteins. AMPA-receptor insertion / removal is captured *phenomenologically* by weight changes (STDP, synaptic scaling). This is the right level of abstraction for circuit-level dynamics; it cannot capture pathologies that disrupt PSD specifically (e.g. SHANK3 mutations in autism — Cluster P).
-- **Cluster:** J (with P implications)
-- **Prerequisites:** J.07, J.08
-- **Citation:** Kandel 6e Ch 13 p 280–281
-- **Behavioral validation:** N/A.
-
-### J.13 G-protein-coupled receptors (GPCRs) — metabotropic neurotransmitter receivers
-- **System:** every modulatory neurotransmitter system uses GPCRs — DA D1/D2/D3/D4/D5, NE α1/α2/β1/β2, 5-HT (most subtypes except 5-HT3), muscarinic AChR (M1–M5), GABA-B, mGluR1–8, opioid, neuropeptides, odorants, light (rhodopsin)
-- **Biological role:** seven-TM receptors that, on transmitter binding, activate a heterotrimeric G protein (Gα + Gβγ). Gα-GTP dissociates and activates a downstream effector (adenylyl cyclase, PLC, ion channel directly, etc.). Hundreds of GPCR genes — the largest receptor family. The **substrate of all neuromodulation in the brain.**
-- **Sim status:** not-applicable as molecular machinery. The neuromodulator subsystem (`sim/neuromodulators.py`) abstracts the entire chain "GPCR → G-protein → effector → ion channel modulation" into three target types (`synaptic_gain`, `plasticity_rate`, `excitability_drive`) that shortcut from concentration to functional outcome. The textbook framing is mechanistic; ours is phenomenological. **Trade-off:** we cannot model receptor-subtype heterogeneity (D1 vs D2, β1 vs β2 etc.) at the molecular level, but we *do* model their distinct concentration-effect curves via per-target sensitivity. Discrepancy with project doc: CLAUDE.md treats neuromodulators as a peer mechanism to STDP — the textbook makes clear they are a *different type of receptor*, not a different system.
-- **Cluster:** C, J
-- **Prerequisites:** J.02
-- **Citation:** Kandel 6e Ch 14 p 301–305
-- **Behavioral validation:** dose-response curve of any neuromodulator effect (DA→plasticity, NE→excitability) should match published data for that specific receptor subtype.
-
-### J.14 cAMP / PKA pathway
-- **System:** Gs-coupled GPCRs (D1, β-adrenergic, 5-HT4/6/7) and Gi (D2, α2, mu-opioid — inhibits cAMP)
-- **Biological role:** Gs activates adenylyl cyclase → cAMP → PKA. PKA phosphorylates a *huge* set of substrates: ion channels (K, Ca, HCN), receptors (AMPA Ser845 enhances function — substrate of LTP), CREB (transcription factor for long-term plasticity). cAMP is the most ubiquitous second messenger; PKA-CREB is the canonical "convert short-term experience to long-term memory" pathway (Kandel's Aplysia work).
-- **Sim status:** not-applicable. The pathway-specific phosphorylation of AMPA-Ser845 is captured by our STDP weight changes; CREB-driven transcription (the "consolidation" arc, hours timescale) is **missing entirely** — we have no transcriptional state in the simulator. *Implication:* we cannot model the early-LTP / late-LTP distinction (cycloheximide-blockable late phase) without adding a per-synapse "consolidated weight" tier with slow protein-synthesis kinetics.
-- **Cluster:** C, J, L (development & long-term plasticity)
-- **Prerequisites:** J.13
-- **Citation:** Kandel 6e Ch 14 p 305–311
-- **Behavioral validation:** would need a long-duration experiment showing weights persist over simulated "hours" with a protein-synthesis dependence — not currently testable.
-
-### J.15 PLC / IP3 / DAG / PKC pathway and intracellular Ca²⁺ release
-- **System:** Gq-coupled GPCRs (mGluR1/5, muscarinic M1/M3/M5, α1-adrenergic, 5-HT2)
-- **Biological role:** Gq → phospholipase C → cleaves PIP2 into IP3 + DAG. IP3 binds receptors on ER, releases stored Ca²⁺ into cytosol. DAG activates PKC (membrane-bound). The IP3-Ca²⁺ pathway is a *parallel* Ca²⁺ source to NMDA receptors and voltage-gated Ca²⁺ channels — important for forms of LTD (mGluR-LTD in cerebellum, hippocampus).
-- **Sim status:** not-applicable. We don't track intracellular Ca²⁺ at all — only the NMDA-derived Ca²⁺ that drives STDP, and that is encoded as an eligibility trace, not an explicit [Ca²⁺] variable. mGluR-LTD specifically would require a separate Ca²⁺ source.
-- **Cluster:** C, J, F (cerebellum LTD)
-- **Prerequisites:** J.13
-- **Citation:** Kandel 6e Ch 14 p 308–311
-- **Behavioral validation:** N/A unless cerebellum (Cluster F) is added.
-
-### J.16 Endocannabinoids — retrograde modulators of presynaptic release
-- **System:** widespread; especially abundant in hippocampus, cerebellum, cortex
-- **Biological role:** when a postsynaptic neuron is strongly depolarized, it synthesizes endocannabinoids (anandamide, 2-AG) on demand, which diffuse *backwards* across the synapse and bind presynaptic CB1 receptors, *reducing* transmitter release. Substrate of DSI (depolarization-induced suppression of inhibition) and DSE (suppression of excitation), and a form of LTD. Retrograde signaling — postsynaptic activity controls presynaptic strength.
-- **Sim status:** missing. Our STDP rule is the only mechanism by which postsynaptic activity influences synaptic strength, and it is *Hebbian* (weight-changing) rather than *modulatory* (release-probability changing). Adding eCB-LTD would require a per-synapse retrograde signal driven by postsynaptic Ca²⁺ that scales the effective release probability — touching the STP machinery from the postsynaptic side, which the current architecture doesn't support.
-- **Cluster:** J (with C-flavor as a modulatory mechanism)
-- **Prerequisites:** J.03 (STP — release probability), J.13 (GPCRs)
-- **Citation:** Kandel 6e Ch 14 p 313–315
-- **Behavioral validation:** induction of DSE in a hippocampal-like model: prolonged postsynaptic depolarization should suppress IPSCs from connected interneurons for ~10 s.
-
-### J.17 Nitric oxide (NO) — gaseous retrograde messenger
-- **System:** NMDAR-coupled, especially in CA1 pyramidals; broader role in vascular coupling and PNS
-- **Biological role:** Ca²⁺/calmodulin → nNOS → NO. NO diffuses freely across membranes (gas), enters presynaptic terminal, activates soluble guanylyl cyclase → cGMP → PKG. Originally proposed as the LTP-reinforcing retrograde signal (Hawkins, Schuman). Now thought to be one of *several* retrograde signals; necessity for LTP is debated.
-- **Sim status:** missing. Same architectural reasoning as J.16 — postsynaptic→presynaptic signaling is not part of the current pathway.
-- **Cluster:** J, Q (neurovascular)
-- **Prerequisites:** J.13
-- **Citation:** Kandel 6e Ch 14 p 315–316
-- **Behavioral validation:** N/A.
-
-### J.18 Long-term gene-expression-dependent plasticity (CREB, late LTP)
-- **System:** all neurons; particularly studied in hippocampal CA1 (LTP) and Aplysia sensory-motor synapse (Kandel)
-- **Biological role:** repeated or strong activation of cAMP/PKA → PKA enters nucleus → phosphorylates CREB → CREB activates transcription of "immediate early genes" (c-fos, zif268, BDNF) → protein synthesis → structural growth (new spines, new active zones) → late-phase LTP that lasts hours-days-permanently. The "long-term" half of memory consolidation. Cycloheximide / anisomycin block this; early LTP (≤1h) still occurs but late LTP fails.
-- **Sim status:** missing. We have no transcriptional state, no protein synthesis, no late-LTP tier of weights. *Implementation cost:* moderate — could be a per-synapse "consolidation" variable that slowly tracks recent plasticity events and modulates a weight floor that resists later LTD. The structural-plasticity machinery currently being added (axon pruning + synaptogenesis) is the closest infrastructure but operates on connectivity not weights. Long-term gene-expression consolidation is a separate axis. *This is one of the more important missing mechanisms for long-horizon memory experiments.*
-- **Cluster:** J, L
-- **Prerequisites:** J.14
-- **Citation:** Kandel 6e Ch 14 p 320–321
-- **Behavioral validation:** classical Aplysia long-term sensitization protocol — train for N spaced trials, measure 24h-later behavior; cycloheximide blocks late phase only.
-
-### J.19 Convergence of multiple modulators on same channels
-- **System:** all neurons receiving multiple modulatory inputs
-- **Biological role:** a single ion channel (e.g. KCNQ / M-current K⁺ channel) can be modulated by ACh (via Gq/PLC), 5-HT, NE, somatostatin, and others — sometimes additively, sometimes occlusively, sometimes with sign reversal. The same channel is the *integration point* for diverse modulatory inputs. This is *not* a redundancy: different modulators carry different *behavioral state* signals (arousal, attention, reward), and the channel sees their union.
-- **Sim status:** partial. The neuromodulator subsystem allows multiple modulators to target the same `excitability_drive` or `synaptic_gain` parameter — they are *summed* per default. Occlusive or sign-reversal interactions are not first-class (would require explicit dependent-modulator wiring). Most simple multi-NM experiments would work.
-- **Cluster:** C, J
-- **Prerequisites:** J.13
-- **Citation:** Kandel 6e Ch 14 p 318–319
-- **Behavioral validation:** add two NMs targeting the same parameter, verify additive concentration → effect; reproduce a published example like ACh+NE on cortical excitability.
-
-### J.20 Quantal release and the calcium-fourth-power dependence
-- **System:** all chemical synapses
-- **Biological role:** Katz showed transmitter is released in unitary "quanta" (one vesicle each). The number released per AP is binomially distributed — N release sites × probability p (governed by Ca²⁺ entry). Postsynaptic response at zero-current = mEPSC ≈ "amplitude of one quantum". P_release scales as roughly the **4th power** of presynaptic [Ca²⁺] (because synaptotagmin, the Ca²⁺ sensor, has 5 Ca²⁺-binding sites, ≥4 must bind cooperatively for fusion). High Ca²⁺-affinity synaptotagmin-1/2 mediates synchronous (~1 ms) release; lower-affinity Syt-7 mediates asynchronous release (~tens of ms).
-- **Sim status:** partial. STP `stp_U` captures release probability per AP; STP gain is *not* explicitly Ca²⁺-fourth-power. Quantal noise is implicit in spike-driven discrete events (one spike → one conductance increment ≈ one "quantum"-equivalent). Asynchronous release: not modeled.
-- **Cluster:** J
-- **Prerequisites:** J.03
-- **Citation:** Kandel 6e Ch 15 p 326–340 (esp. Katz; Dodge & Rahamimoff)
-- **Behavioral validation:** STP paired-pulse benchmark already exists. To validate Ca-4th-power, add Ca-channel blocker analog (scale STP gain) and verify P_release scales as gain^4.
-
-### J.21 SNARE complex (synaptobrevin/VAMP, syntaxin, SNAP-25)
-- **System:** every neuron's presynaptic terminal
-- **Biological role:** the molecular machine that fuses vesicle with plasma membrane. The four-helix SNARE bundle pulls vesicle and plasma membranes together. Synaptotagmin-1 is the Ca²⁺ sensor that triggers final fusion. Disruption (botulinum toxins cleave SNAREs; tetanus cleaves synaptobrevin) abolishes release.
-- **Sim status:** not-applicable. Vesicle fusion is abstracted; we don't model individual SNARE proteins. Toxin experiments (BoNT, TeNT) cannot be reproduced. STP captures *macroscopic* release dynamics; molecular machinery is below our level.
-- **Cluster:** J
-- **Prerequisites:** J.03, J.20
-- **Citation:** Kandel 6e Ch 15 p 340–350
-- **Behavioral validation:** N/A.
-
-### J.22 Synaptic vesicle pools (readily releasable, recycling, reserve)
-- **System:** every chemical synapse
-- **Biological role:** vesicles partition into three pools — RRP (~1% of total, docked at active zone, immediately fusible), recycling (~10–20%), reserve (~80%). Sustained high-frequency stimulation depletes RRP first; recycling pool refills it via endocytosis (clathrin- or kiss-and-run pathways). The pool kinetics dictate the time-course of synaptic depression and recovery — directly the substrate of STP.
-- **Sim status:** partial. STP `stp_tau_d` captures the *recovery time constant* of release after depletion. Multi-pool kinetics (RRP vs recycling) is not explicit; one effective "depletion → recovery" timescale per connection type.
-- **Cluster:** J
-- **Prerequisites:** J.03, J.21
-- **Citation:** Kandel 6e Ch 15 p 350–355
-- **Behavioral validation:** STP paired-pulse benchmark covers single-pool case. Multi-pool would require sustained-stimulation experiments.
-
-### J.23 Spontaneous miniature EPSCs / IPSCs (mPSCs)
-- **System:** every chemical synapse
-- **Biological role:** at rest, vesicles spontaneously fuse at low frequency (Hz), producing detectable single-quantum EPSCs / IPSCs. Originally used by Fatt & Katz as proof of quantal release. Recent work suggests spontaneous and evoked release may be partly *independent* (different vesicle pools, different SNARE complexes), with separate roles in homeostatic regulation and developmental signaling.
-- **Sim status:** partial. We have OU-noise background drive that *functionally* approximates spontaneous synaptic noise, but not in a per-synapse-event way. True per-synapse mEPSC events are missing — would need to add a low-rate Poisson event trigger per synapse independent of presynaptic AP firing. **Possibly worth adding** because spontaneous release is now thought to drive homeostatic synaptic scaling.
-- **Cluster:** J
-- **Prerequisites:** J.20, J.22
-- **Citation:** Kandel 6e Ch 15 p 326–328
-- **Behavioral validation:** record postsynaptic membrane in absence of stimulation, count discrete events per second, verify rate and amplitude match published mEPSC distributions.
-
----
-
-## Cluster C — Dopamine & neuromodulation (extended)
-
-Entries from Ch 16 (Neurotransmitters). Note: the project already implements a *declarative* neuromodulator framework (`sim/neuromodulators.py`) — adding any of the systems below means writing a `NeuromodulatorConfig` with the right baseline / decay / production rules / receptor target list. The framework exists; specific NMs need to be configured per task.
-
-### C.01 Glutamate — primary fast excitatory transmitter
-- **System:** ~80% of cortical synapses; pyramidal cells, granule cells (cerebellum), retinal photoreceptors, etc.
-- **Biological role:** the workhorse excitatory transmitter. Acts on AMPA + NMDA + kainate (ionotropic) and mGluR1–8 (metabotropic). Synthesized from glutamine via glutamine synthetase (mostly in astrocytes — glia again). Cleared from cleft by EAAT transporters on astrocytes (the glial Cluster Q again).
-- **Sim status:** implemented as the generic excitatory channel (AMPA + NMDA conductances). Glutamate-specific transporters and the astrocyte-mediated glutamate cycle are not modeled. Spillover-mediated mGluR effects (J.15) are missing.
-- **Cluster:** J (and C for mGluR)
-- **Citation:** Kandel 6e Ch 16 p 360–365
-- **Behavioral validation:** every working simulation; covered.
-
-### C.02 GABA — primary fast inhibitory transmitter
-- **System:** all CNS — basket / chandelier / Martinotti / SST / VIP interneurons; output projections of striatum (MSNs), cerebellum (Purkinje), thalamic reticular nucleus (TRN)
-- **Biological role:** synthesized from glutamate via GAD65/67. Acts on GABA-A (ionotropic Cl⁻; J.10), GABA-C (retina-specific), GABA-B (metabotropic, slow Gi-coupled). Cleared by GAT transporters. Inverted developmentally — in immature neurons GABA is *depolarizing* (Cl⁻ reversal above V_rest because of high intracellular Cl⁻ in immature neurons, KCC2 expression low until ~P14).
-- **Sim status:** implemented (`E_inh = -75 mV`). GABA-B (metabotropic, slow IPSP, presynaptic autoreceptor) is **missing** — would need an additional slower inhibitory channel pathway. Developmental Cl⁻ reversal switch is not modeled (we don't have a developmental clock).
-- **Cluster:** J, B, A (BG output), F (cerebellum)
-- **Citation:** Kandel 6e Ch 16 p 365–367
-- **Behavioral validation:** PING gamma + E/I balance benchmarks. GABA-B addition would need a paired-pulse depression assay at high firing rates.
-
-### C.03 Acetylcholine (ACh) — peripheral fast + central modulatory
-- **System:** all neuromuscular junctions (peripheral, fast — Cluster M); central cholinergic systems = nucleus basalis of Meynert (basal forebrain → cortex), septal nuclei (→ hippocampus), pedunculopontine (→ thalamus, brainstem). Striatal TANs (tonically active interneurons) are also cholinergic.
-- **Biological role (central):** modulates cortical state — high ACh = "attentive / cortical desynchronization", low ACh = "internal state / sleep". Drives slow-wave / REM transitions. Striatal ACh from TANs gates plasticity at corticostriatal synapses. Two receptor types: nAChR (ionotropic, Ch 12) and mAChR (M1–M5, metabotropic, Ch 14).
-- **Sim status:** partial. Striatal TANs are present as a region preset (`HH_STRIATAL_TAN`, `IZH2007_STRIATAL_TAN`) but not yet wired into a working ACh→plasticity cycle. Basal forebrain ACh as an *attention* / cortical-state modulator is not deployed in flagship runs but is straightforward to add via the NM framework.
-- **Cluster:** C, B (TANs), N (sleep modulation)
-- **Citation:** Kandel 6e Ch 16 p 367–371
-- **Behavioral validation:** add ACh modulator targeting cortical excitability. Stimulate "basal forebrain" pool, verify cortical desynchronization (decreased low-freq power, increased gamma).
-
-### C.04 Dopamine (DA) — reward / reinforcement / motor / WM
-- **System:** SNc → striatum (nigrostriatal motor), VTA → NAc + PFC + amygdala (mesolimbic / mesocortical reward + WM)
-- **Biological role:** reward prediction error signal (Schultz 1997) — *phasic* DA encodes RPE; *tonic* DA encodes motivational state. Receptors: D1-like (D1, D5; Gs, increase cAMP) and D2-like (D2, D3, D4; Gi, decrease cAMP). Cortico-striatal LTP requires D1 + glutamate coincidence; D2 gates the indirect-pathway. DA-system pathologies: Parkinson's (SNc death → akinesia), schizophrenia (excess striatal DA → hallucinations), addiction (NAc DA hijacking).
-- **Sim status:** **implemented** as the project's central NM. `current_reward_signal` drives plasticity via eligibility traces in `g11_bg_runner`. Asymmetric adaptive DA targeting (Item 4.7 in ROADMAP), surprise-LR-boost (4.8), and adaptive DA EMA gating (per-action DA) are all DA-specific implementations. Compartmentalized DA (per-action) is option 3 in the cheat-5 survey — open. **The DA system is the simulator's most fully developed NM.**
-- **Cluster:** C (primary), A, B
-- **Citation:** Kandel 6e Ch 16 p 371–376; Ch 43 (Reward / Addiction); Ch 38 (BG)
-- **Behavioral validation:** Phase B BG cascade benchmark (4.08 ± 0.49, 6-seed) covers DA-driven action selection. Schultz-type RPE signature: phasic DA on unpredicted reward, dip on omission — currently not directly replicated as a unit test.
-
-### C.05 Norepinephrine (NE) — arousal / vigilance / fight-or-flight
-- **System:** locus coeruleus (LC) → diffuse cortical, thalamic, hippocampal, hypothalamic, spinal projections
-- **Biological role:** tonic LC firing tracks behavioral arousal (low during sleep, high during stress). Phasic LC bursts on salient stimuli. Receptors: α1 (Gq), α2 (Gi, autoreceptor), β1/β2/β3 (Gs). Increases SNR by simultaneously suppressing background firing and enhancing selective response. Critical for memory consolidation in the hippocampus, attention in PFC.
-- **Sim status:** partial. NM framework supports it; one prior session (E.1) tested NE on the silent-motor task and found it insufficient (the silent-motor trap is upstream of NE modulation). **Could be added easily** — has not been deployed in the current flagship config. Yerkes-Dodson curve (inverted-U arousal-performance relationship) would be a natural validation.
-- **Cluster:** C
-- **Citation:** Kandel 6e Ch 16 p 376–380
-- **Behavioral validation:** add NE concentration; vary baseline; measure SNR (signal-induced firing rate change / background CV(ISI)). Should peak at intermediate NE.
-
-### C.06 Serotonin (5-HT) — mood / impulsivity / sleep
-- **System:** raphe nuclei → cortex, hippocampus, BG, thalamus
-- **Biological role:** receptors are *huge* family — 5-HT1A–F (Gi), 5-HT2A/B/C (Gq), 5-HT3 (ionotropic — the only one), 5-HT4–7 (Gs). Behaviorally: mood (target of SSRIs in depression), impulsivity (low 5-HT → high impulsivity), sleep architecture, satiety. In BG, 5-HT modulates DA function bidirectionally.
-- **Sim status:** missing entirely from current flagship. NM framework supports it; just hasn't been deployed.
-- **Cluster:** C
-- **Citation:** Kandel 6e Ch 16 p 376–380
-- **Behavioral validation:** none currently meaningful in our task set; would need a depression / anxiety / decision-making model.
-
-### C.07 Histamine — wakefulness
-- **System:** tuberomammillary nucleus (TMN) of hypothalamus → diffuse cortex
-- **Biological role:** TMN is the histaminergic equivalent of the LC — promotes wakefulness; H1 antagonists are sedating (older antihistamines).
-- **Sim status:** missing. Easy to add; minor priority unless modeling sleep-wake transitions (Cluster N).
-- **Cluster:** C, N
-- **Citation:** Kandel 6e Ch 16 p 380
-- **Behavioral validation:** N/A unless sleep-wake added.
-
-### C.08 Neuropeptides — slow modulators (50+ types)
-- **System:** colocalized with classical transmitters in many neurons (e.g. ChAT+VIP, GABA+NPY, GABA+SST, etc.)
-- **Biological role:** released at high firing rates (lower release probability than fast NTs; require strong stimulation). Diffuse over longer distances ("volume transmission"). Receptors are GPCRs. Examples: substance P (pain), NPY (feeding inhibition), CRH (stress), vasopressin / oxytocin (social bonding, parturition), enkephalin / dynorphin / β-endorphin (analgesia, reward), somatostatin (cortical inhibitory subtype marker), VIP (cortical disinhibitory subtype).
-- **Sim status:** missing as a class. Could be added via NM framework with high firing-rate-gated production rules. Most likely high-priority additions: SST and VIP for cortical interneuron diversity (B.01 follow-on); enkephalin/dynorphin for BG indirect-pathway modulation.
-- **Cluster:** C, B
-- **Citation:** Kandel 6e Ch 16 p 380–390
-- **Behavioral validation:** specific to chosen peptide.
-
-### C.09 Purinergic transmission (ATP and adenosine)
-- **System:** widespread; especially active in autonomic ganglia, glia signaling, vascular regulation
-- **Biological role:** ATP is co-released with classical NTs from many neurons; acts on P2X (ionotropic) and P2Y (metabotropic) receptors. Hydrolyzed extracellularly to adenosine, which acts on A1 (Gi, inhibitory; coffee blocks A1) and A2A (Gs, BG indirect pathway D2-MSN expressed). Ado/A2A antagonists (caffeine, istradefylline) are clinically useful for Parkinson's. Adenosine accumulation tracks "sleep pressure" — A1 builds up during waking, drops during sleep.
-- **Sim status:** missing. NM framework can model adenosine-as-sleep-pressure (production rule: integrate firing rate; decay during sleep gate). Would compose with sleep-replay infrastructure.
-- **Cluster:** C, N
-- **Citation:** Kandel 6e Ch 16 p 380
-- **Behavioral validation:** sleep-pressure model — verify adenosine concentration accumulates during simulated waking, drops during forced sleep replay.
-
-### C.10 Gases (NO, CO) — covered in J.17; cross-listed here
-- **System:** see J.17.
-- **Citation:** Kandel 6e Ch 16 p 388–389.
-
----
-
-## Cluster L — Development & critical periods
-
-Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience and the Refinement of Synaptic Connections). Many of these mechanisms are functionally analogous to project infrastructure (per-pathway plasticity gates, structural pruning, curriculum) but operate on different substrates than the textbook (no morphology, no developmental clock).
-
-### L.01 Target recognition / synaptic specificity (cell-adhesion molecules)
-- **System:** all developing CNS — visual system, autonomic ganglia, cortex, hippocampus, etc.
-- **Biological role:** axons select specific postsynaptic partners using a combinatorial code of cell-surface recognition molecules: cadherins (homophilic adhesion → "like binds like"), protocadherins (~60 isoforms, individually identifying), neurexin (presyn) ↔ neuroligin (postsyn) pairs, LRRTM family, SynCAMs, ephrins/Eph receptors (often *anti-adhesive*, sorting by gradient), semaphorins/plexins (axon guidance with carryover into synaptic targeting). The wiring of which-axon-finds-which-target is *not* random in real brains.
-- **Sim status:** missing entirely. Initial connectivity in the simulator is determined by `RegionPathway` declarations + density + spatial connectivity generators (see `sim/connectivity.py`); there is no molecular-recognition layer. This is fine *for a connectivity-as-fixed-prior* model — but in the patch-matrix striatum option (cheat-5 option 2), we'd want subsets of cortical pools to project to specific striatal pools, which is a hand-coded version of this targeting. **A real recognition-code mechanism would be a new system** — probably out of scope unless we want to model developmental wiring errors (autism-related neuroligin mutations).
-- **Cluster:** L (and B for the patch-matrix application)
-- **Prerequisites:** none (this *precedes* synapse function)
-- **Citation:** Kandel 6e Ch 48 p 1182–1192
-- **Behavioral validation:** would require a "wiring" benchmark — given a target connectivity matrix and a recognition-code, does our simulation produce the expected adjacency? Not testable in current architecture.
-
-### L.02 Synapse elimination by activity competition
-- **System:** NMJ (neonatal multi-innervation → 1:1 by P14), climbing fiber → Purkinje (1:1 in adult), cortex (massive overproduction → pruning to ~50% in adolescence)
-- **Biological role:** "use it or lose it" at the synapse level. When a postsynaptic cell is innervated by multiple presynaptic axons, the synapses that fire *coincidently* with the strongest axon (high-correlation = "winners") are stabilized; weaker / poorly-correlated synapses are eliminated. The final 1:1 pattern at NMJ + climbing-fiber emerges through this competition. In cortex, ~50% of overproduced synapses are pruned during adolescence; pruning failure is implicated in schizophrenia and autism.
-- **Sim status:** **partial — directly addressed by the structural-pruning option in cheat-5 survey** (option 1 in `docs/plans/2026-04-28-cheat5-real-options-survey.md`). The proposed mechanism — `cp_synapse_alive`, survival-score accumulation, prune when below threshold — is the project's analogue of biological synapse elimination. Once shipped, this entry's status becomes "implemented for the cheat-5 use case; not a general developmental mechanism." Currently **in active development** (see `docs/plans/2026-04-28-structural-plasticity-implementation.md`).
-- **Cluster:** L, B (the most likely first deployment)
-- **Prerequisites:** J.07–J.10 (synapse function), J.18 (long-term plasticity)
-- **Citation:** Kandel 6e Ch 48 p 1198–1205
-- **Behavioral validation:** Phase B + structural pruning Tier 2: 3-seed mean sum ≤ 4.5 → cheat #5 closed for real. Currently in Tier 1 / Tier 2.
-
-### L.03 Glia-mediated synapse pruning (complement C1q, C3 → microglia phagocytosis)
-- **System:** developing visual cortex, retinogeniculate refinement; ongoing in adult hippocampus
-- **Biological role:** astrocytes secrete TGF-β → induces complement protein C1q expression on weaker synapses → C1q tags → microglia recognize C3 → engulf and remove. The classical-immunity complement pathway is repurposed for synapse refinement. Excessive complement-mediated pruning is now thought to contribute to schizophrenia and Alzheimer's (synapse loss).
-- **Sim status:** missing. The functional outcome (eliminate weak synapses) is captured by L.02 / structural pruning. The *mechanism* (complement + microglia) is below our level of abstraction. We don't have glia (Cluster Q) at all.
-- **Cluster:** Q, L
-- **Prerequisites:** L.02, glia infrastructure
-- **Citation:** Kandel 6e Ch 48 p 1198–1205
-- **Behavioral validation:** N/A (would require glia model).
-
-### L.04 Critical periods (visual, language, social)
-- **System:** sensory cortex (V1 ocular dominance ~P21–P35 in mice / ~3 mo in humans), language areas, social-bonding circuits
-- **Biological role:** windows of heightened plasticity, after which rewiring becomes much harder. Opening: experience-dependent maturation of GABA-A inhibition (PV-cell maturation) raises the network out of low-inhibition "permissive" state. Closing: perineuronal nets (PNNs) condense around mature PV cells, physically restricting synapse change; myelin-associated inhibitors (Nogo, MAG) up-regulate. Reopening (Hensch et al.): chondroitinase digesting PNNs, or fluoxetine, can re-open critical periods in adult animals.
-- **Sim status:** **partial — functionally captured by the curriculum infrastructure**. The 2-phase curriculum in `g11_bg_runner` (warmup with cortex_to_d1 plastic + input layers frozen, then thaw input layers / freeze cortex) is a critical-period analogue — heightened plasticity for a window, then closure. The plasticity-gate substrate (`cp_plasticity_gain`) supports both opening and closing. **The infrastructure is exactly the right shape** for biological critical periods; we just don't model the molecular triggers (PV maturation, PNN deposition).
-- **Cluster:** L
-- **Prerequisites:** plasticity-gate infrastructure (already implemented)
-- **Citation:** Kandel 6e Ch 49 p 1210–1230
-- **Behavioral validation:** the curriculum experiments already validate the *functional* shape (warmup window → committed performance). To validate as a *biological* critical-period model would require: (a) PNN-analogue mechanism (slow accumulation of a "lock" variable that resists future plasticity gain), (b) reopening via simulated chondroitinase (zero out the lock variable). Stretch goal.
-
-### L.05 Spontaneous-activity-driven refinement (retinal waves, etc.)
-- **System:** developing retina, cochlea, spinal cord, hippocampus — *before* sensory experience
-- **Biological role:** even before eyes open or ears function, the developing nervous system generates spontaneous patterned activity (retinal waves: bursts of correlated activity that propagate across the retina at fixed velocities) that drives the refinement of downstream connections via NMDAR-dependent rules. The wave content matters — random noise wouldn't produce ocular dominance maps; coherent waves do. The brain is *self-organizing* its sensory representations before experience arrives.
-- **Sim status:** missing as a mechanism. We have OU noise as background; we don't have *patterned* spontaneous activity. Could be added by injecting structured noise patterns during a pretraining phase. **Likely useful** for the plastic-input-layer arc — a "developmental pretraining" via structured retinal-wave-like input might solve the cold-start problem that learned-perception had on 2026-04-26 without curriculum. Worth flagging as a future test.
-- **Cluster:** L, E (sensory)
-- **Prerequisites:** plasticity-gate infrastructure
-- **Citation:** Kandel 6e Ch 49 p 1218–1222
-- **Behavioral validation:** generate retinal-wave-like input → train sensory→cortex pathway during pretraining gate-open phase → freeze → verify cortex develops coherent receptive fields (analogue of orientation columns).
-
-### L.06 Activity-dependent refinement is general (NMDAR-dependent)
-- **System:** essentially every refinement in every system tested — visual, auditory, somatosensory, motor, BG
-- **Biological role:** the *common substrate* of refinement is NMDAR-dependent Hebbian plasticity: coincident pre/post → strengthening; uncorrelated → weakening / pruning. NMDAR antagonists block refinement in all systems. This is precisely the generalization that *Hebb's postulate* predicts.
-- **Sim status:** **implemented** (J.08 + STDP). The simulator's STDP is the algorithmic content of this principle. We use it pervasively (Phase B BG cascade, learned perception, hippocampus) — and the simulator's success on the perception arc validates the principle as deployed.
-- **Cluster:** L, J
-- **Prerequisites:** J.08
-- **Citation:** Kandel 6e Ch 49 p 1226–1230
-- **Behavioral validation:** STDP timing-curve benchmark (Bi & Poo 1998) — already passes.
-
----
-
-## Cluster J — Synapses & plasticity rules (continued from Ch 53)
-
-Ch 53 entries continue the J series — plasticity at the synaptic level, the substrate of implicit memory.
-
-### J.24 Habituation (presynaptic depression)
-- **System:** Aplysia gill-withdrawal; analogous in vertebrates
-- **Biological role:** repeated mild stimulation → progressive decrease in response amplitude. Mechanism: presynaptic Ca²⁺ entry decreases (Ca²⁺ channel inactivation); synaptic depression. Recovers with rest. Operationally indistinguishable in many cases from short-term synaptic depression (J.03 / J.22).
-- **Sim status:** partial. STP depression (`stp_tau_d`) captures the time-course. However, *long-term* habituation (after many spaced training sessions, lasts days) requires gene-expression changes (J.18) and is **missing**.
-- **Cluster:** J
-- **Prerequisites:** J.03
-- **Citation:** Kandel 6e Ch 53 p 1314–1320
-- **Behavioral validation:** STP paired-pulse depression benchmark covers short-term. Long-term habituation: not currently testable.
-
-### J.25 Sensitization (presynaptic facilitation, 5-HT-mediated)
-- **System:** Aplysia (5-HT from interneurons → presyn sensory terminal); analog in vertebrates (NE from LC enhances release at hippocampal afferents)
-- **Biological role:** noxious stimulus → 5-HT release → cAMP-PKA in presynaptic terminal → phosphorylation of K⁺ channels → broader AP → more Ca²⁺ entry → more transmitter release. Short-term (minutes); long-term (days) requires CREB-mediated transcription. Kandel's Nobel-winning work.
-- **Sim status:** partial. NM framework can implement 5-HT-driven gain modulation of release probability. Not currently deployed. Long-term sensitization (CREB-dependent): missing (J.18).
-- **Cluster:** C, J
-- **Prerequisites:** J.13, J.14
-- **Citation:** Kandel 6e Ch 53 p 1320–1325
-- **Behavioral validation:** Aplysia-like sensitization protocol — single shock primes a stronger response to subsequent gentle touch, decays in minutes.
-
-### J.26 Classical conditioning (Aplysia model)
-- **System:** Aplysia gill-withdrawal; mammalian eyeblink (cerebellar); fear conditioning (amygdala)
-- **Biological role:** activity-dependent presynaptic facilitation — the CS pathway gets selectively *more* facilitated than other pathways because Ca²⁺ entry from CS spike *coincides* with the 5-HT modulator pulse from US. Adenylyl cyclase is the *coincidence detector* (its activity is enhanced by Ca²⁺/calmodulin AND by Gs from 5-HT GPCR — the Gs-Ca²⁺ AND-gate).
-- **Sim status:** partial. The associative-conditioning experiment in `experiment/presets.py` does the functional equivalent — paired CS+US with STDP-driven weight change. The *mechanism* is different (we use Hebbian+reward at corticostriatal-like synapses) but the outcome matches.
-- **Cluster:** J, O (emotion)
-- **Prerequisites:** J.25
-- **Citation:** Kandel 6e Ch 53 p 1325–1330
-- **Behavioral validation:** existing `run_experiment_headless.py --preset associative` already validates the outcome (CS-on rate increase, weights 0.10 → 0.999, t=11.36).
-
-### J.27 Memory reconsolidation
-- **System:** all long-term memory systems
-- **Biological role:** reactivating a long-term memory makes it transiently labile — protein-synthesis inhibitors *during retrieval* erase the memory. Suggests retrieval re-stabilizes through the same gene-expression mechanism as initial storage. Therapeutic implication: PTSD treatment via reconsolidation blockade with propranolol.
-- **Sim status:** missing. Same dependency as J.18 — no transcriptional state means no reconsolidation. *Implementation cost:* moderate, paired with J.18.
-- **Cluster:** J, L
-- **Prerequisites:** J.18
-- **Citation:** Kandel 6e Ch 53 p 1330–1334
-- **Behavioral validation:** N/A.
-
-### J.28 LTP / LTD — long-term potentiation / depression
-- **System:** ubiquitous in vertebrate CNS; canonical in CA1 (Schaffer collateral → CA1 NMDAR-LTP), neocortex, BG, cerebellum
-- **Biological role:** the workhorse mammalian plasticity rule. **NMDAR-LTP**: high-frequency stim → NMDAR-driven postsynaptic Ca²⁺ → CaMKII activation → AMPA receptor insertion → larger EPSC at the same synapse. **NMDAR-LTD**: low-frequency stim → moderate Ca²⁺ → calcineurin (PP1) → AMPA removal. The Ca²⁺-amplitude switch (high → LTP, moderate → LTD) is the BCM-like substrate. **mGluR-LTD** (cerebellum, hippocampus): a *separate* LTD pathway via mGluR1/5 → Ca²⁺ release from stores → endocannabinoid retrograde signal (cerebellum). Both forms contribute to memory.
-- **Sim status:** **implemented** as STDP — the spike-timing version of NMDAR-LTP/LTD. The Ca²⁺ amplitude → sign-of-change mapping is implicit in the STDP kernel (`fused_stdp_weight_update`). Soft-bound LTP captured. mGluR-LTD specifically: missing (J.15).
-- **Cluster:** J
-- **Prerequisites:** J.08
-- **Citation:** Kandel 6e Ch 53 p 1314–1320 (also Ch 54 for hippocampal LTP detail)
-- **Behavioral validation:** STDP timing-curve benchmark (Bi & Poo 1998) — already passes for both LTP and LTD.
-
-### J.29 Spike-timing-dependent plasticity (STDP) as the temporal version of LTP/LTD
-- **System:** all NMDAR-bearing synapses
-- **Biological role:** when presynaptic spike *precedes* postsynaptic spike by ~10 ms → LTP; reverse → LTD. The asymmetric kernel emerged from observing that the post-spike's back-propagating AP unblocks NMDA Mg²⁺ block coincidently with active glutamate, while reverse pairing leaves Mg²⁺ blocked. Bi & Poo 1998 hippocampal cultures.
-- **Sim status:** **implemented** — `fused_stdp_weight_update` with asymmetric pre→post / post→pre kernels. STDP is the mainline plasticity rule of the simulator.
-- **Cluster:** J
-- **Prerequisites:** J.08, J.28
-- **Citation:** Kandel 6e Ch 53 p 1318–1320 (the principle); Bi & Poo 1998
-- **Behavioral validation:** Bi & Poo benchmark: kernel matches theory to 3e-8, full-sim verified at dt=±5, ±20 ms.
-
-### J.30 Local protein synthesis at synapses (CPEB / prion-like, mRNA in spines)
-- **System:** Aplysia and mammalian dendrites
-- **Biological role:** Kandel's Lasker / Nobel work. Some forms of long-term facilitation require *local* protein synthesis at the activated synapse — synapse-specific tagging via CPEB (cytoplasmic polyadenylation element binding protein), which has a prion-like self-templating domain. CPEB self-aggregates in the activated spine, becomes a stable mark, and locally drives translation of mRNAs already pre-positioned in dendrites. This is how the cell achieves **synapse specificity** in long-term memory — not all synapses on one cell get the same gene-expression boost.
-- **Sim status:** missing. Per-synapse late-LTP tagging would require: (a) per-synapse "synaptic tag" boolean, (b) cell-wide gene-expression product, (c) tag × product → stabilization. Cluster L / J.18 dependency.
-- **Cluster:** J, L
-- **Prerequisites:** J.18
-- **Citation:** Kandel 6e Ch 53 p 1325–1330
-- **Behavioral validation:** N/A.
-
-### O.01 Amygdala-mediated threat / fear conditioning
-- **System:** lateral amygdala (LA), basolateral amygdala (BLA), central amygdala (CeA)
-- **Biological role:** the mammalian implementation of Pavlovian threat conditioning. LA receives convergent CS (e.g., tone, from auditory thalamus + cortex) and US (shock, from somatosensory thalamus). Coincident input → NMDAR-LTP at LA synapses. CeA outputs to brain stem (freezing, autonomic responses). Extinction is *not* erasure — it's new inhibitory learning competing with the stored fear memory.
-- **Sim status:** missing. Project has no amygdala. Pavlovian conditioning experiment (`experiment/presets.py`) does the *behavior* (CS-US pairing → CS-driven response) but not the *circuit*. Adding an amygdala region would compose with the existing region framework.
-- **Cluster:** O (emotion / reward), J
-- **Prerequisites:** L.06, region framework
-- **Citation:** Kandel 6e Ch 53 p 1330–1335; Ch 42, 43
-- **Behavioral validation:** add amygdala region with CS+US convergence; verify CeA output drives behavior after pairing; verify extinction adds parallel inhibition rather than erasing LA→CeA weights.
-
----
-
-## Cluster I — Channels & intrinsic dynamics
-
-### I.01 Axon initial segment (AIS) — spike-trigger zone
-- **System:** all neurons (the unmyelinated 20–60 µm proximal axon segment)
-- **Biological role:** highest density of voltage-gated Na⁺ channels in the cell — orders of magnitude more than the soma — so the AIS has the lowest threshold and is where the AP is initiated. AIS length and Na-channel composition adapts on a timescale of hours (homeostatic plasticity of intrinsic excitability).
-- **Sim status:** missing as a distinct compartment. We model each neuron as point-like with one threshold (Izh / HH / AdEx); there is no spatial separation between integration site (soma) and trigger site (AIS). For most circuit-level dynamics this is fine, but for AIS plasticity (slow homeostatic changes to intrinsic excitability) the closest analogue is our `homeostasis_threshold_adapt_rate` parameter.
-- **Cluster:** I
-- **Prerequisites:** I (Hodgkin-Huxley-like AP machinery; covered in Ch 9-10)
-- **Citation:** Kandel 6e Ch 13 p 293–295
-- **Behavioral validation:** the homeostasis benchmark validates the *functional* outcome of AIS plasticity (perturbation +200 pA → 50 Hz → recovers to baseline within 1 s). Mechanism is at the threshold-adaptation layer, not the AIS layer.
-
----
-
-## Cluster G — Working memory / PFC / cortical integration
-
-### G.01 Spatial and temporal summation
-- **System:** all neurons; especially relevant for pyramidal cells with thousands of inputs
-- **Biological role:** EPSPs / IPSPs from many simultaneous (spatial) or sequential (temporal) inputs sum at the soma and axon initial segment. The cell's spike-or-no-spike output is the integrated summation crossing threshold. Membrane time constant (τ_m) and length constant (λ) determine the windows over which summation is effective.
-- **Sim status:** implemented at the single-compartment level. Each neuron integrates all inputs in one membrane equation per step — this is exact spatial summation. Temporal summation is captured by the conductance decay τ. Multi-compartment spatial summation (with passive cable decay across dendrites) is **not** implemented — dendrites are collapsed to a point neuron.
-- **Cluster:** G (and fundamental to all of I/J — covered here as the *integration* machinery)
-- **Prerequisites:** I (passive cable, AP)
-- **Citation:** Kandel 6e Ch 13 p 290–293
-- **Behavioral validation:** any working network simulation; covered.
-
-### G.02 Active dendrites — local computation, dendritic spikes
-- **System:** especially L5 pyramidal cells (large apical dendrite tree), hippocampal pyramids
-- **Biological role:** dendrites contain voltage-gated Na⁺, Ca²⁺, and HCN channels — supporting local AP generation (dendritic spikes), NMDA spikes (NMDAR-driven plateau potentials), and Ca²⁺ spikes at the apical tuft. These produce nonlinear summation rules (e.g. cluster of inputs on one branch ≫ scattered inputs on many branches), gain modulation by apical-basal coincidence (Larkum's two-layer model), and dendritic computation as a substrate for cortical hierarchical processing.
-- **Sim status:** missing. Single-compartment everywhere. This is one of the largest abstractions in the simulator. Our `g11_bg_runner` PFC region has recurrent connectivity in cluster G — but PFC neurons are point neurons, not L5 pyramidals. *Implications:* we cannot reproduce experiments where the apical-basal coincidence detection is the substrate (e.g. perceptual inference via L5 apical tuft activity, conscious access models). Compartmental neurons would be a major addition (~10× compute per neuron at minimum).
-- **Cluster:** G, I
-- **Prerequisites:** I (channel kinetics)
-- **Citation:** Kandel 6e Ch 13 p 293–298
-- **Behavioral validation:** would require multi-compartment model. Could replicate Larkum BAC firing experiment (basal+apical coincidence → bursts).
-
----
-
-## Cluster B — Striatal microcircuit & cortical interneuron diversity
-
-### B.01 GABAergic interneuron diversity (basket, chandelier, Martinotti, neurogliaform)
-- **System:** cortex (and analogous diversity in hippocampus, striatum)
-- **Biological role:** different inhibitory subtypes target different compartments of the postsynaptic pyramidal cell:
-  - **Basket cells** (PV+): perisomatic — control spike output, drive gamma
-  - **Chandelier cells** (PV+): axon initial segment — gate spike generation directly
-  - **Martinotti cells** (SST+): apical dendrites — gate dendritic Ca²⁺ events and feedback
-  - **Neurogliaform cells**: volume transmission of GABA, slow IPSPs via GABA-B too
-- **Sim status:** partial. We have one inhibitory class via `CORTICAL_FS_INTERNEURON` (PV-like fast-spiking) — corresponds best to basket cells. Chandelier / Martinotti / neurogliaform are not separately modeled. Implications: we cannot replicate experiments that require compartment-specific inhibition (e.g. Martinotti gating dendritic Ca²⁺ spikes). For the BG cascade, the relevant interneurons are TANs (already a preset) and FSIs (basket-equivalent) — both present.
-- **Cluster:** B (striatal); also covers cortical microcircuit
-- **Prerequisites:** I (interneuron neuron model), J.10 (GABA-A)
-- **Citation:** Kandel 6e Ch 13 p 290–292
-- **Behavioral validation:** PING gamma benchmark covers basket-equivalent behavior. To validate Martinotti would require active dendrites (missing).
-
----
-
-## Cluster M — Neuromuscular junction
-
-### M.01 Neuromuscular junction (NMJ) — overall structure
-- **System:** α-motor axon → skeletal muscle fiber motor end-plate
-- **Biological role:** the canonical "simple" chemical synapse — one motor axon innervates one site (end-plate) in adult mammals; presynaptic boutons sit in primary folds with active zones aligned to postsynaptic junctional folds (~10,000 receptors/µm² packed at fold crests); ~100 nm cleft (wider than CNS cleft) with basal lamina (collagen + AChE). Historically the Rosetta Stone for synaptic biophysics (Katz, 1950+).
-- **Sim status:** missing. No muscle output in the simulator; "motor neurons" in `g11_bg_runner` are just abstract spike-emitting populations whose firing rate represents action selection. There is no muscle, no contraction, no force.
-- **Cluster:** M (and H — motor & spinal output)
-- **Prerequisites:** I (channels & AP)
-- **Citation:** Kandel 6e Ch 12 p 254–256 (Fig 12-1)
-- **Behavioral validation:** add a 1D Hill-type muscle model fed by motor neuron spike trains; verify that twitch summation, tetanus, and length-tension curves match published data. Stretch goal — only meaningful once we want to model real motor output.
-
-### M.02 Nicotinic acetylcholine receptor (nAChR) — ionotropic
-- **System:** NMJ; also autonomic ganglia and CNS (less relevant to this simulator)
-- **Biological role:** pentameric ligand-gated cation channel (2α + β + γ + δ in muscle adult form). Two ACh binding sites required for opening; permeable to Na⁺ and K⁺ (and Ca²⁺ at lower conductance). Generates end-plate potential ~75 mV peak — well above the ~20 mV needed to trigger a muscle AP, so NMJ is normally "1:1 reliable" (no failures in healthy muscle). Suprathreshold safety factor distinguishes it from CNS synapses where summation is required.
-- **Sim status:** not-applicable directly. The simulator's generic excitatory synapse (`E_exc = 0 mV`) collapses the AMPA/nAChR/NMDA distinction into one phenomenological conductance + reversal pair. ACh as a peripheral fast transmitter is not a separate channel type. *If* we add NMJ + muscle, nAChR would need to be a real channel type (different reversal, kinetics, conductance from AMPA).
-- **Cluster:** M, J
-- **Prerequisites:** J.01, J.02
-- **Citation:** Kandel 6e Ch 12 p 256–270
-- **Behavioral validation:** N/A until M.01 added.
-
-### M.03 Acetylcholinesterase (AChE) — synaptic-cleft enzyme
-- **System:** NMJ basal lamina; also CNS cholinergic synapses
-- **Biological role:** hydrolyzes ACh into acetate + choline within ~1 ms of release, enforcing the "one-hit" rule that lets the postsynaptic conductance return to baseline between APs. Inhibitors (organophosphates, neostigmine — used clinically for myasthenia gravis) prolong receptor activation.
-- **Sim status:** not-applicable. The exponential conductance decay (`fused_conductance_decay_and_current`) phenomenologically captures the cumulative effect of unbinding + AChE clearance; we don't track enzymes.
-- **Cluster:** M, J
-- **Prerequisites:** M.02
-- **Citation:** Kandel 6e Ch 12 p 255
-- **Behavioral validation:** N/A.
-
-### M.04 End-plate potential / quantal release (foreshadowed; covered in Ch 15)
-- **System:** NMJ
-- **Biological role:** Katz showed that ACh is released in discrete *quanta* (each quantum ≈ contents of one synaptic vesicle, ~5,000 ACh molecules) — spontaneous miniature end-plate potentials (mEPPs) of ~0.5 mV occur at low frequency without stimulation; AP-evoked EPP equals the sum of N synchronously released quanta. Founded the vesicle hypothesis of release. **Detailed entry deferred to Ch 15.**
-- **Sim status:** not-applicable directly; STP `stp_U` parameter captures the "release probability per AP" abstraction.
-- **Cluster:** M, J
-- **Prerequisites:** J.03
-- **Citation:** Kandel 6e Ch 12 p 254 (introduction) → Ch 15 (full treatment)
-- **Behavioral validation:** see J.03 entry.
-
----
-
----
-# Catalog additions from Parts II, IV–IX (merged)
-
-Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; numbering continues from the existing Section IV entries (J.30, M.04, etc.).
-
-
-## Cluster A — additions
+**9 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
 
 ### A.01 Direct pathway — D1 MSN → GPi/SNr disinhibition (action gating)
+
 *[from Part V — Movement (Ch 30-39); renumbered from A.50]*
 
 - **System:** D1-receptor medium spiny neurons (substance P / dynorphin) in striatum → GABAergic projection to internal globus pallidus (GPi) and substantia nigra pars reticulata (SNr).
@@ -624,6 +96,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** D1-pool stimulation → GPi pause → thalamus burst → motor selection; matches `g11_bg_runner` cascade probe.
 
 ### A.02 Indirect pathway — D2 MSN → GPe → STN → GPi/SNr (action suppression)
+
 *[from Part V — Movement (Ch 30-39); renumbered from A.51]*
 
 - **System:** D2-receptor MSNs (enkephalin) → GABAergic projection to external globus pallidus (GPe) → GPe inhibits STN → STN excites GPi/SNr → increased tonic inhibition of thalamus.
@@ -635,6 +108,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** D2-pool stimulation → GPi increase → action suppressed; DA depletion → indirect dominant → reduced action initiation.
 
 ### A.03 Hyperdirect pathway — cortex → STN → GPi/SNr (rapid global brake)
+
 *[from Part V — Movement (Ch 30-39); renumbered from A.52]*
 
 - **System:** layer V corticofugal neurons → glutamatergic projection directly to STN → STN excites GPi/SNr → fast, broad thalamic inhibition.
@@ -646,6 +120,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Brief cortical pulse → fast STN burst → GPi burst → thalamic pause within ~10 ms; rapid stop-signal task analog.
 
 ### A.04 BG output disinhibition is selective — competitive WTA at GPi/SNr
+
 *[from Part V — Movement (Ch 30-39); renumbered from A.53]*
 
 - **System:** GPi/SNr GABAergic output neurons; tonic 40–80 Hz firing; receive focused inhibition from D1 MSNs of selected action and broad excitation from STN.
@@ -657,6 +132,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Two competing cortical inputs → only winning channel's thal pool fires; matches `g11_bg_runner` 6-seed flagship 4.26 ± 0.50.
 
 ### A.05 Reentrant cortico-BG-thalamo-cortical loops — parallel channels
+
 *[from Part V — Movement (Ch 30-39); renumbered from A.54]*
 
 - **System:** Alexander/DeLong scheme: motor / oculomotor / dorsolateral prefrontal / lateral orbitofrontal / anterior cingulate loops; topographically segregated through STR → GPi/SNr → thalamus → back to source cortex.
@@ -668,6 +144,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Anatomical: stimulating ACC-BG channel modulates orbitofrontal output without affecting motor channel.
 
 ### A.06 Cortico-striatal topography — sensorimotor / associative / limbic gradient
+
 *[from Part V — Movement (Ch 30-39); renumbered from A.55]*
 
 - **System:** dorsolateral STR (sensorimotor) ← motor cortex; central STR (associative) ← prefrontal; ventromedial STR (limbic) ← OFC, ACC, amygdala, hippocampus.
@@ -679,6 +156,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Lesion dorsolateral STR → motor deficit; lesion ventromedial STR → motivational deficit; lesion associative → cognitive deficit.
 
 ### A.07 Subcortical BG loops — superior colliculus, brainstem
+
 *[from Part V — Movement (Ch 30-39); renumbered from A.56]*
 
 - **System:** SNr → superior colliculus (saccades), → MLR / PPN (locomotion), → thalamus → brainstem CPGs.
@@ -690,6 +168,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** SNr → SC inactivation → saccade initiation deficit; analogous to BG → MLR for locomotion.
 
 ### A.08 BG conserved across 500 My vertebrate evolution
+
 *[from Part V — Movement (Ch 30-39); renumbered from A.57]*
 
 - **System:** lamprey, fish, amphibian, reptile, bird, mammal — all have STR, GPi-equivalent, SNr-equivalent, dopaminergic input.
@@ -701,6 +180,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Anatomical conservation evidence.
 
 ### A.09 Goal-directed vs habitual control — dorsomedial vs dorsolateral STR
+
 *[from Part V — Movement (Ch 30-39); renumbered from A.58]*
 
 - **System:** dorsomedial striatum (associative, goal-directed) vs dorsolateral striatum (sensorimotor, habitual).
@@ -717,7 +197,32 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 
 ## Cluster B — additions
 
+---
+
+## Cluster B — Striatal microcircuit & WTA
+
+**7 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
+### B.01 GABAergic interneuron diversity (basket, chandelier, Martinotti, neurogliaform)
+
+- **System:** cortex (and analogous diversity in hippocampus, striatum)
+- **Biological role:** different inhibitory subtypes target different compartments of the postsynaptic pyramidal cell:
+  - **Basket cells** (PV+): perisomatic — control spike output, drive gamma
+  - **Chandelier cells** (PV+): axon initial segment — gate spike generation directly
+  - **Martinotti cells** (SST+): apical dendrites — gate dendritic Ca²⁺ events and feedback
+  - **Neurogliaform cells**: volume transmission of GABA, slow IPSPs via GABA-B too
+- **Sim status:** partial. We have one inhibitory class via `CORTICAL_FS_INTERNEURON` (PV-like fast-spiking) — corresponds best to basket cells. Chandelier / Martinotti / neurogliaform are not separately modeled. Implications: we cannot replicate experiments that require compartment-specific inhibition (e.g. Martinotti gating dendritic Ca²⁺ spikes). For the BG cascade, the relevant interneurons are TANs (already a preset) and FSIs (basket-equivalent) — both present.
+- **Cluster:** B (striatal); also covers cortical microcircuit
+- **Prerequisites:** I (interneuron neuron model), J.10 (GABA-A)
+- **Citation:** Kandel 6e Ch 13 p 290–292
+- **Behavioral validation:** PING gamma benchmark covers basket-equivalent behavior. To validate Martinotti would require active dendrites (missing).
+
+---
+
+## Cluster M — Neuromuscular junction
+
 ### B.02 Medium spiny neuron (MSN) — >90% of striatum, GABAergic projection
+
 *[from Part V — Movement (Ch 30-39); renumbered from B.50]*
 
 - **System:** striatum; spiny dendritic morphology; bistable membrane (down-state ~−85 mV, up-state ~−55 mV).
@@ -729,6 +234,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** MSN silent at rest; cortex-stim → up-state → spike threshold met only at high coordinated drive.
 
 ### B.03 D1 vs D2 MSN segregation — opposing DA modulation
+
 *[from Part V — Movement (Ch 30-39); renumbered from B.51]*
 
 - **System:** D1 MSNs (Gs-coupled, ↑cAMP, substance P / dynorphin) vs D2 MSNs (Gi-coupled, ↓cAMP, enkephalin).
@@ -740,6 +246,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** DA application → D1 firing ↑, D2 firing ↓ in vitro; corresponding behavioral release vs suppression.
 
 ### B.04 MSN lateral inhibition — local GABA collaterals (cross-pool WTA)
+
 *[from Part V — Movement (Ch 30-39); renumbered from B.52]*
 
 - **System:** MSN axon collaterals form local GABAergic synapses on neighboring MSNs within striatum.
@@ -751,6 +258,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Single MSN spike → neighboring MSN IPSP; competitive selection in pool stimulation tests.
 
 ### B.05 Cholinergic tonically-active neuron (TAN) — striatal interneuron
+
 *[from Part V — Movement (Ch 30-39); renumbered from B.53]*
 
 - **System:** ~1–2% of striatal neurons; tonic 5–10 Hz firing; broadly arborized.
@@ -762,6 +270,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Salient cue → 200 ms TAN pause → permissive window for cortico-striatal plasticity.
 
 ### B.06 Fast-spiking PV+ interneuron — feedforward inhibition in STR
+
 *[from Part V — Movement (Ch 30-39); renumbered from B.54]*
 
 - **System:** ~1% of striatal neurons; parvalbumin+; receives strong cortical input; widely synapses on MSNs.
@@ -773,6 +282,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Cortical pulse → PV+ FS spike at ~3 ms latency → MSN IPSP at ~5 ms.
 
 ### B.07 Striatal patch / matrix compartments — limbic vs sensorimotor mosaic
+
 *[from Part V — Movement (Ch 30-39); renumbered from B.55]*
 
 - **System:** patch (striosome) ↔ ventral midbrain DA neurons (limbic) vs matrix ↔ thalamus / cortex (sensorimotor); developmentally distinct, identified by μ-opioid receptor / calbindin staining.
@@ -789,7 +299,106 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 
 ## Cluster C — additions
 
+---
+
+## Cluster C — Dopamine & neuromodulation
+
+**27 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
+### C.01 Glutamate — primary fast excitatory transmitter
+
+- **System:** ~80% of cortical synapses; pyramidal cells, granule cells (cerebellum), retinal photoreceptors, etc.
+- **Biological role:** the workhorse excitatory transmitter. Acts on AMPA + NMDA + kainate (ionotropic) and mGluR1–8 (metabotropic). Synthesized from glutamine via glutamine synthetase (mostly in astrocytes — glia again). Cleared from cleft by EAAT transporters on astrocytes (the glial Cluster Q again).
+- **Sim status:** implemented as the generic excitatory channel (AMPA + NMDA conductances). Glutamate-specific transporters and the astrocyte-mediated glutamate cycle are not modeled. Spillover-mediated mGluR effects (J.15) are missing.
+- **Cluster:** J (and C for mGluR)
+- **Citation:** Kandel 6e Ch 16 p 360–365
+- **Behavioral validation:** every working simulation; covered.
+
+### C.02 GABA — primary fast inhibitory transmitter
+
+- **System:** all CNS — basket / chandelier / Martinotti / SST / VIP interneurons; output projections of striatum (MSNs), cerebellum (Purkinje), thalamic reticular nucleus (TRN)
+- **Biological role:** synthesized from glutamate via GAD65/67. Acts on GABA-A (ionotropic Cl⁻; J.10), GABA-C (retina-specific), GABA-B (metabotropic, slow Gi-coupled). Cleared by GAT transporters. Inverted developmentally — in immature neurons GABA is *depolarizing* (Cl⁻ reversal above V_rest because of high intracellular Cl⁻ in immature neurons, KCC2 expression low until ~P14).
+- **Sim status:** implemented (`E_inh = -75 mV`). GABA-B (metabotropic, slow IPSP, presynaptic autoreceptor) is **missing** — would need an additional slower inhibitory channel pathway. Developmental Cl⁻ reversal switch is not modeled (we don't have a developmental clock).
+- **Cluster:** J, B, A (BG output), F (cerebellum)
+- **Citation:** Kandel 6e Ch 16 p 365–367
+- **Behavioral validation:** PING gamma + E/I balance benchmarks. GABA-B addition would need a paired-pulse depression assay at high firing rates.
+
+### C.03 Acetylcholine (ACh) — peripheral fast + central modulatory
+
+- **System:** all neuromuscular junctions (peripheral, fast — Cluster M); central cholinergic systems = nucleus basalis of Meynert (basal forebrain → cortex), septal nuclei (→ hippocampus), pedunculopontine (→ thalamus, brainstem). Striatal TANs (tonically active interneurons) are also cholinergic.
+- **Biological role (central):** modulates cortical state — high ACh = "attentive / cortical desynchronization", low ACh = "internal state / sleep". Drives slow-wave / REM transitions. Striatal ACh from TANs gates plasticity at corticostriatal synapses. Two receptor types: nAChR (ionotropic, Ch 12) and mAChR (M1–M5, metabotropic, Ch 14).
+- **Sim status:** partial. Striatal TANs are present as a region preset (`HH_STRIATAL_TAN`, `IZH2007_STRIATAL_TAN`) but not yet wired into a working ACh→plasticity cycle. Basal forebrain ACh as an *attention* / cortical-state modulator is not deployed in flagship runs but is straightforward to add via the NM framework.
+- **Cluster:** C, B (TANs), N (sleep modulation)
+- **Citation:** Kandel 6e Ch 16 p 367–371
+- **Behavioral validation:** add ACh modulator targeting cortical excitability. Stimulate "basal forebrain" pool, verify cortical desynchronization (decreased low-freq power, increased gamma).
+
+### C.04 Dopamine (DA) — reward / reinforcement / motor / WM
+
+- **System:** SNc → striatum (nigrostriatal motor), VTA → NAc + PFC + amygdala (mesolimbic / mesocortical reward + WM)
+- **Biological role:** reward prediction error signal (Schultz 1997) — *phasic* DA encodes RPE; *tonic* DA encodes motivational state. Receptors: D1-like (D1, D5; Gs, increase cAMP) and D2-like (D2, D3, D4; Gi, decrease cAMP). Cortico-striatal LTP requires D1 + glutamate coincidence; D2 gates the indirect-pathway. DA-system pathologies: Parkinson's (SNc death → akinesia), schizophrenia (excess striatal DA → hallucinations), addiction (NAc DA hijacking).
+- **Sim status:** **implemented** as the project's central NM. `current_reward_signal` drives plasticity via eligibility traces in `g11_bg_runner`. Asymmetric adaptive DA targeting (Item 4.7 in ROADMAP), surprise-LR-boost (4.8), and adaptive DA EMA gating (per-action DA) are all DA-specific implementations. Compartmentalized DA (per-action) is option 3 in the cheat-5 survey — open. **The DA system is the simulator's most fully developed NM.**
+- **Cluster:** C (primary), A, B
+- **Citation:** Kandel 6e Ch 16 p 371–376; Ch 43 (Reward / Addiction); Ch 38 (BG)
+- **Behavioral validation:** Phase B BG cascade benchmark (4.08 ± 0.49, 6-seed) covers DA-driven action selection. Schultz-type RPE signature: phasic DA on unpredicted reward, dip on omission — currently not directly replicated as a unit test.
+
+### C.05 Norepinephrine (NE) — arousal / vigilance / fight-or-flight
+
+- **System:** locus coeruleus (LC) → diffuse cortical, thalamic, hippocampal, hypothalamic, spinal projections
+- **Biological role:** tonic LC firing tracks behavioral arousal (low during sleep, high during stress). Phasic LC bursts on salient stimuli. Receptors: α1 (Gq), α2 (Gi, autoreceptor), β1/β2/β3 (Gs). Increases SNR by simultaneously suppressing background firing and enhancing selective response. Critical for memory consolidation in the hippocampus, attention in PFC.
+- **Sim status:** partial. NM framework supports it; one prior session (E.1) tested NE on the silent-motor task and found it insufficient (the silent-motor trap is upstream of NE modulation). **Could be added easily** — has not been deployed in the current flagship config. Yerkes-Dodson curve (inverted-U arousal-performance relationship) would be a natural validation.
+- **Cluster:** C
+- **Citation:** Kandel 6e Ch 16 p 376–380
+- **Behavioral validation:** add NE concentration; vary baseline; measure SNR (signal-induced firing rate change / background CV(ISI)). Should peak at intermediate NE.
+
+### C.06 Serotonin (5-HT) — mood / impulsivity / sleep
+
+- **System:** raphe nuclei → cortex, hippocampus, BG, thalamus
+- **Biological role:** receptors are *huge* family — 5-HT1A–F (Gi), 5-HT2A/B/C (Gq), 5-HT3 (ionotropic — the only one), 5-HT4–7 (Gs). Behaviorally: mood (target of SSRIs in depression), impulsivity (low 5-HT → high impulsivity), sleep architecture, satiety. In BG, 5-HT modulates DA function bidirectionally.
+- **Sim status:** missing entirely from current flagship. NM framework supports it; just hasn't been deployed.
+- **Cluster:** C
+- **Citation:** Kandel 6e Ch 16 p 376–380
+- **Behavioral validation:** none currently meaningful in our task set; would need a depression / anxiety / decision-making model.
+
+### C.07 Histamine — wakefulness
+
+- **System:** tuberomammillary nucleus (TMN) of hypothalamus → diffuse cortex
+- **Biological role:** TMN is the histaminergic equivalent of the LC — promotes wakefulness; H1 antagonists are sedating (older antihistamines).
+- **Sim status:** missing. Easy to add; minor priority unless modeling sleep-wake transitions (Cluster N).
+- **Cluster:** C, N
+- **Citation:** Kandel 6e Ch 16 p 380
+- **Behavioral validation:** N/A unless sleep-wake added.
+
+### C.08 Neuropeptides — slow modulators (50+ types)
+
+- **System:** colocalized with classical transmitters in many neurons (e.g. ChAT+VIP, GABA+NPY, GABA+SST, etc.)
+- **Biological role:** released at high firing rates (lower release probability than fast NTs; require strong stimulation). Diffuse over longer distances ("volume transmission"). Receptors are GPCRs. Examples: substance P (pain), NPY (feeding inhibition), CRH (stress), vasopressin / oxytocin (social bonding, parturition), enkephalin / dynorphin / β-endorphin (analgesia, reward), somatostatin (cortical inhibitory subtype marker), VIP (cortical disinhibitory subtype).
+- **Sim status:** missing as a class. Could be added via NM framework with high firing-rate-gated production rules. Most likely high-priority additions: SST and VIP for cortical interneuron diversity (B.01 follow-on); enkephalin/dynorphin for BG indirect-pathway modulation.
+- **Cluster:** C, B
+- **Citation:** Kandel 6e Ch 16 p 380–390
+- **Behavioral validation:** specific to chosen peptide.
+
+### C.09 Purinergic transmission (ATP and adenosine)
+
+- **System:** widespread; especially active in autonomic ganglia, glia signaling, vascular regulation
+- **Biological role:** ATP is co-released with classical NTs from many neurons; acts on P2X (ionotropic) and P2Y (metabotropic) receptors. Hydrolyzed extracellularly to adenosine, which acts on A1 (Gi, inhibitory; coffee blocks A1) and A2A (Gs, BG indirect pathway D2-MSN expressed). Ado/A2A antagonists (caffeine, istradefylline) are clinically useful for Parkinson's. Adenosine accumulation tracks "sleep pressure" — A1 builds up during waking, drops during sleep.
+- **Sim status:** missing. NM framework can model adenosine-as-sleep-pressure (production rule: integrate firing rate; decay during sleep gate). Would compose with sleep-replay infrastructure.
+- **Cluster:** C, N
+- **Citation:** Kandel 6e Ch 16 p 380
+- **Behavioral validation:** sleep-pressure model — verify adenosine concentration accumulates during simulated waking, drops during forced sleep replay.
+
+### C.10 Gases (NO, CO) — covered in J.17; cross-listed here
+
+- **System:** see J.17.
+- **Citation:** Kandel 6e Ch 16 p 388–389.
+
+---
+
+## Cluster L — Development & critical periods
+
+Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience and the Refinement of Synaptic Connections). Many of these mechanisms are functionally analogous to project infrastructure (per-pathway plasticity gates, structural pruning, curriculum) but operate on different substrates than the textbook (no morphology, no developmental clock).
+
 ### C.11 Endogenous opioid descending pain control
+
 *[from Part IV — Perception (Ch 17-29); renumbered from C.50]*
 
 - **System:** PAG → RVM → spinal dorsal horn (substantia gelatinosa)
@@ -801,6 +410,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** PAG stimulation analgesia; naloxone reversal of placebo.
 
 ### C.12 Gate-control theory (Aβ inhibition of C-fiber input)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from C.51]*
 
 - **System:** spinal dorsal horn, substantia gelatinosa
@@ -812,6 +422,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Aβ stim reduces nociceptive projection-neuron firing; TENS clinical analgesia.
 
 ### C.13 Peripheral / central sensitization (hyperalgesia, allodynia)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from C.52]*
 
 - **System:** nociceptor terminals + spinal dorsal horn
@@ -827,6 +438,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 ## Cluster G — Cortical integration touched by perception
 
 ### C.14 Locus Coeruleus Norepinephrine System — pontine NE source
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.50]*
 
 - **System:** Pontine nucleus (A6), the sole source of cortical/hippocampal/cerebellar NE.
@@ -838,6 +450,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Aston-Jones inverted-U: tonic-mode high baseline → exploration/labile attention; phasic-mode → focused attention with stimulus-locked bursts; very low → drowsy/inattentive.
 
 ### C.15 Dorsal/Median Raphe Serotonin System — midline 5-HT source
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.51]*
 
 - **System:** Pontine and midbrain raphe nuclei (B5-B9 groups); medullary B1-B4 separately handle descending pain/autonomic modulation.
@@ -849,6 +462,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Pharmacological: 5-HT reuptake blockade → reduced REM. Lesion of dorsal raphe DA → ~20% increase in total sleep.
 
 ### C.16 VTA / SNc Dopamine Origin Anatomy — A8/A9/A10 cell groups
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.52]*
 
 - **System:** Midbrain dopaminergic cell groups: A8 (retrorubral), A9 (SNc, → dorsal striatum, motor), A10 (VTA, → NAc, PFC, amygdala, hippo, "mesolimbic/mesocortical").
@@ -860,6 +474,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Lesion specificity — A9 ablation produces motor symptoms; selective A10/VTA lesion abolishes intracranial self-stimulation reward and conditioned place preference.
 
 ### C.17 Tuberomammillary Histamine System — sole brain histamine source
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.53]*
 
 - **System:** Posterior lateral hypothalamus (E1-E5); the only source of brain histamine.
@@ -871,6 +486,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** H1-antagonist administration → reduced cortical arousal, increased NREM propensity.
 
 ### C.18 Mesopontine Cholinergic Nuclei (PPT/LDT) — REM-on cholinergic
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.54]*
 
 - **System:** Pedunculopontine (PPT, Ch6) and laterodorsal tegmental (LDT, Ch5) nuclei in the pons.
@@ -882,6 +498,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Cholinergic agonist injection into pontine reticular formation triggers REM-like state; muscarinic antagonist suppresses REM.
 
 ### C.19 Basal Forebrain Cholinergic + GABAergic Arousal — cortical drive
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.55]*
 
 - **System:** Medial septum, diagonal band (Ch1-3), nucleus basalis of Meynert (Ch4); plus interleaved GABAergic and glutamatergic populations.
@@ -893,6 +510,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Optogenetic activation of basal forebrain ACh/GABA/glutamate populations → cortical desynchronization (arousal); bilateral lesion → coma despite intact monoamines.
 
 ### C.20 Tonic vs Phasic Monoamine Firing — pacemaker baseline + bursts
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.56]*
 
 - **System:** Generic property of monoaminergic neurons (LC, raphe, VTA, TMN).
@@ -904,6 +522,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** In-vitro slice recording: monoaminergic neurons spontaneously pacemaker-fire at ~1-5 Hz with characteristic AHP + slow depolarization to next spike. In-vivo: tonic baseline + phasic event-locked bursts.
 
 ### C.21 Volume-Transmission Neuromodulation — non-synaptic diffuse release
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.57]*
 
 - **System:** Monoamine + neuropeptide co-release from boutons-en-passant.
@@ -915,6 +534,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Microdialysis vs. fast-scan cyclic voltammetry — extrasynaptic monoamine concentration tracks population firing rather than individual release events.
 
 ### C.22 Dopamine Reward Prediction Error (Schultz RPE) — phasic DA encodes δ
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.58]*
 
 - **System:** A10/VTA → NAc + PFC + amygdala + hippocampus.
@@ -926,6 +546,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Three-trial paradigm: (a) unexpected reward → burst at reward; (b) trained CS+R → burst at CS, no burst at R; (c) trained CS but R omitted → dip at R-expected time. Currently only (a) is faithfully reproduced.
 
 ### C.23 Heterogeneous DA Subpopulations — reward, aversion, salience VTA cells
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.59]*
 
 - **System:** Subpopulations within A10/VTA distinguished by afferents, targets, and response polarity.
@@ -937,6 +558,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Single-unit recording in identified VTA cells with retrograde tracing → diversity of stimulus-response profiles correlated with projection target.
 
 ### C.24 Dopamine in Aversion — DA also encodes salience and warning
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.60]*
 
 - **System:** Subpopulation of VTA DA neurons activated by aversive stimuli (foot shock, air puff).
@@ -948,6 +570,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Recording during foot-shock or aversive Pavlovian conditioning shows DA increase in subset of VTA neurons, dip in others.
 
 ### C.25 NAc cAMP-CREB Pathway Adaptation — chronic-DA homeostasis
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.61]*
 
 - **System:** Nucleus accumbens medium spiny neurons; cAMP → PKA → CREB intracellular cascade.
@@ -959,6 +582,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Repeated morphine → reduced cAMP/PKA acutely, gradually restored despite continued drug, then *elevated* on naloxone — measurable as PKA-dependent phosphorylation timecourse.
 
 ### C.26 ΔFosB Sensitization Memory — long-lived transcription factor
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.62]*
 
 - **System:** NAc MSNs and other reward areas; truncated splice product of FosB gene.
@@ -970,6 +594,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Weeks-long viral overexpression of ΔFosB in NAc → enhanced cocaine self-administration and relapse-like behavior.
 
 ### C.27 Wanting vs Liking Dissociation — Berridge two-system reward
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from C.63]*
 
 - **System:** NAc and ventral pallidum hedonic hotspots vs. mesolimbic DA "wanting" system.
@@ -986,7 +611,14 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 
 ## Cluster D — additions
 
+---
+
+## Cluster D — Hippocampus & sequence learning
+
+**20 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
 ### D.01 Episodic memory — encoding / storage / retrieval / consolidation cycle
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.50]*
 
 - **System:** Medial temporal lobe (hippocampus + perirhinal + parahippocampal + entorhinal) interfacing with frontoparietal networks and association cortices.
@@ -998,6 +630,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Anterograde amnesia for new associations after MTL lesion with preserved working/skill memory (H.M.); retrieval-time hippocampal–cortical reactivation (iEEG word-pair studies).
 
 ### D.02 Relational binding / "memory space" — Eichenbaum–Cohen model
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.51]*
 
 - **System:** Hippocampus proper (CA1 output), with perirhinal item streams and parahippocampal context streams converging.
@@ -1009,6 +642,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Inference on overlapping experiences (transitive inference); selective deficit on configural learning after dorsal-HC lesion.
 
 ### D.03 Trisynaptic pathway — EC layer II → DG → CA3 → CA1 (indirect)
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.52]*
 
 - **System:** Entorhinal cortex layer II → perforant path → dentate gyrus granule cells → mossy fiber → CA3 pyramidal → Schaffer collateral → CA1 pyramidal → subiculum + EC deep layers (loop closure).
@@ -1020,6 +654,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Selective lesion at each stage produces distinct deficits (pattern separation, completion, output binding).
 
 ### D.04 Direct entorhinal pathway (temporoammonic) — EC layer III → CA1
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.53]*
 
 - **System:** EC layer III axons targeting *distal* apical dendrites of CA1 (parallel to trisynaptic input arriving at proximal Schaffer dendrites).
@@ -1031,6 +666,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Direct-pathway lesion impairs novelty detection but spares pattern completion.
 
 ### D.05 CA3 recurrent collaterals — autoassociative attractor substrate
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.54]*
 
 - **System:** CA3 pyramidal cells with extensive recurrent excitatory connections among themselves; LTP-modifiable.
@@ -1042,6 +678,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Partial-cue retrieval: stored "ABCDE" reactivated by partial "AB__" cue; lesion of CA3 recurrents impairs partial-cue recall but spares full-cue recall.
 
 ### D.06 Place cells — hippocampal spatial code (O'Keefe 1971)
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.55]*
 
 - **System:** CA1 and CA3 pyramidal cells; one-or-few place fields per cell; rate code.
@@ -1053,6 +690,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** (a) Stable place fields across sessions in same environment; (b) global remapping when room changes; (c) larger fields ventrally; (d) place-field instability after CaMKII-inhibitor or NMDAR-NR1 KO.
 
 ### D.07 Grid cells — medial entorhinal cortex periodic spatial code (Mosers 2005)
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.56]*
 
 - **System:** Medial EC layers II/III, dorsoventrally organized in 4 discrete modules with grid-spacing 40–100+ cm.
@@ -1064,6 +702,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Hexagonal autocorrelation of firing field; persistence in darkness; modular grid-spacing distribution; coherent rescaling under environment deformation.
 
 ### D.08 Head-direction cells — allocentric heading code
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.57]*
 
 - **System:** Presubiculum + medial EC; conjunctive grid+HD cells exist.
@@ -1075,6 +714,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Polar tuning curve to head direction; cue-rotation aligns ensemble.
 
 ### D.09 Border / object-vector cells
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.58]*
 
 - **System:** Medial EC; intermingled with grid + HD cells.
@@ -1086,6 +726,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Border cell tracks deformed wall; object-vector cell follows displaced landmark.
 
 ### D.10 Speed cells — running-speed code
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.59]*
 
 - **System:** Medial EC.
@@ -1097,6 +738,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Linear firing-rate-vs-speed regression.
 
 ### D.11 Time cells — temporal sequence code in CA1
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.60]*
 
 - **System:** CA1 pyramidal cells during structured delays (e.g., between trial events).
@@ -1108,6 +750,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Sequential firing tiling fixed delay; remapping when delay duration changes.
 
 ### D.12 Pattern separation — DG sparsifies overlapping inputs
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.61]*
 
 - **System:** DG granule cells (very sparse activity, ~2–5%) receive convergent EC perforant input on a much larger population than EC layer II.
@@ -1119,6 +762,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Discrimination of similar contexts in fear conditioning; selective DG silencing impairs near-pair discrimination but spares far-pair.
 
 ### D.13 Pattern completion — CA3 recurrents reconstruct full pattern from partial cue
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.62]*
 
 - **System:** CA3 recurrent collateral network (autoassociator) + Schaffer output.
@@ -1130,6 +774,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** CA3-NMDA-KO mice fail when 2 of 4 visual cues are removed (partial cue) but succeed with all 4 cues.
 
 ### D.14 Engram cells — sparse activity-tagged ensembles store specific memories (Tonegawa)
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.63]*
 
 - **System:** DG granule + CA1 pyramidal cells active during a specific experience; tagged via c-Fos/Arp-driven optogenetic actuators (ChR2 / iC1C2).
@@ -1141,6 +786,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** (a) Light-triggered freezing in neutral context after engram tag during conditioning; (b) optogenetic inhibition during natural cue blocks freezing; (c) false-memory paradigm.
 
 ### D.15 CA2 — social memory module
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.64]*
 
 - **System:** Small region between CA3 and CA1; receives strong vasopressin/oxytocin input from hypothalamus; outputs to ventral CA1.
@@ -1152,6 +798,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Three-chamber social novelty test; CA2 silencing.
 
 ### D.16 Place-field stability requires attention + D1/D5 dopamine + late-LTP
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.65]*
 
 - **System:** CA1 place cells; D1/D5 receptors on pyramidal cells; PKA cascade for late-LTP.
@@ -1163,6 +810,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** D1 antagonist disrupts long-term place-field stability with intact short-term formation.
 
 ### D.17 Hippocampal remapping — orthogonal codes for distinct environments
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.66]*
 
 - **System:** Population-level CA1/CA3 firing patterns.
@@ -1174,6 +822,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Population-vector correlation across environments ≈ 0; correlation within environment >> 0 across days.
 
 ### D.18 Theta rhythm — 4–12 Hz oscillation organizes encoding/retrieval phases
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.67]*
 
 - **System:** Septal pacemaker → HC; modulates LFP and gates CA1 firing phase. Phase-precession of place cells (firing phase advances as animal traverses field).
@@ -1185,6 +834,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** 4–12 Hz LFP power during locomotion; theta-phase precession of place cells.
 
 ### D.19 Sharp-wave ripples (SWRs) — replay in quiet wakefulness + NREM
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.68]*
 
 - **System:** CA3 self-organized population burst → CA1 ripple (140–200 Hz) propagating to deep EC → neocortex. Coordinated with cortical slow oscillations + thalamic spindles during NREM.
@@ -1196,6 +846,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** (a) Detected ripple bursts (140–200 Hz); (b) replay sequences match recent waking trajectories at 10–20× compression; (c) closed-loop ripple disruption during sleep impairs next-day spatial memory.
 
 ### D.20 Reactivation supports retrieval — cortical patterns recur during recall
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from D.69]*
 
 - **System:** HC retrieval-time activity drives reactivation of original cortical encoding patterns; iEEG word-pair recall shows HC-temporal-cortex coupling that re-instantiates encoding-time patterns.
@@ -1208,7 +859,14 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 
 ## Cluster E — additions
 
+---
+
+## Cluster E — Sensory perception & cortical encoding
+
+**22 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
 ### E.01 Sensory coding — labeled-line / modality specificity
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.50]*
 
 - **System:** general sensory pathways
@@ -1220,6 +878,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** electrical stimulation of a line evokes its modality regardless of stimulus.
 
 ### E.02 Receptive field — fundamental encoding unit
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.51]*
 
 - **System:** any sensory neuron (peripheral or central)
@@ -1231,6 +890,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** mapping responses across stimulus space.
 
 ### E.03 Population coding & vector averaging
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.52]*
 
 - **System:** cortical sensory + motor populations
@@ -1242,6 +902,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** decode angle from population vector; tuning-curve width vs. discrimination acuity.
 
 ### E.04 Topographic / somatotopic / retinotopic / tonotopic maps
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.53]*
 
 - **System:** S1, V1, A1 cortices and their thalamic relays
@@ -1253,6 +914,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** systematic shift of RF center across cortical surface; magnification factor.
 
 ### E.05 Lateral inhibition & center-surround antagonism
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.54]*
 
 - **System:** retina (bipolar / ganglion), DCN, cochlear nucleus
@@ -1264,6 +926,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Mach bands; contrast-response with surround; difference-of-Gaussians fits.
 
 ### E.06 Parallel pathways (ON/OFF, magno/parvo/konio)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.55]*
 
 - **System:** retina → LGN → V1
@@ -1275,6 +938,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** selective lesion → loss of motion vs. color; contrast sensitivity functions.
 
 ### E.07 Ganglion cell encoding & spike-rate code at optic nerve
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.56]*
 
 - **System:** retinal ganglion cells (~20 types)
@@ -1286,6 +950,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** RGC RF maps; type-specific tuning.
 
 ### E.08 V1 simple cells — oriented bar detectors
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.57]*
 
 - **System:** primary visual cortex layer 4
@@ -1297,6 +962,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** orientation tuning curve (~30° HWHH); spatial frequency tuning.
 
 ### E.09 V1 complex cells — phase-invariant orientation
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.58]*
 
 - **System:** V1 layers 2/3, 5
@@ -1308,6 +974,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** orientation tuning preserved as bar shifts within RF.
 
 ### E.10 Cortical columns & ocular dominance / orientation pinwheels
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.59]*
 
 - **System:** V1 (and S1 barrels, A1 frequency stripes)
@@ -1319,6 +986,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** electrode penetration shows constant feature; tangential traverse cycles features.
 
 ### E.11 Color opponency (red-green, blue-yellow, luminance)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.60]*
 
 - **System:** retina cone wiring → LGN parvo/konio → V1 blobs → V4
@@ -1330,6 +998,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** opponent afterimages; isoluminant chromatic gratings.
 
 ### E.12 Ventral "what" stream — object recognition (V1 → V2 → V4 → IT)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.61]*
 
 - **System:** occipitotemporal cortex
@@ -1341,6 +1010,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** IT lesions → agnosia; face cells in FFA; viewpoint invariance.
 
 ### E.13 Dorsal "where/how" stream — spatial vision & action (V1 → MT → MST → PPC)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.62]*
 
 - **System:** occipitoparietal cortex
@@ -1352,6 +1022,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** MT microstim biases motion judgment; PPC lesion → optic ataxia.
 
 ### E.14 Motion energy / direction selectivity (MT)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.63]*
 
 - **System:** middle temporal area (V5/MT)
@@ -1363,6 +1034,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** dot-coherence threshold ~5%; MT lesion → akinetopsia.
 
 ### E.15 Visual attention — top-down gain modulation
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.64]*
 
 - **System:** PPC + FEF → V4, MT, IT
@@ -1374,6 +1046,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** attended-location RT advantage; firing-rate gain in V4.
 
 ### E.16 Saccadic suppression & active vision
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.65]*
 
 - **System:** SC, FEF, V1
@@ -1385,6 +1058,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** stimuli flashed mid-saccade not perceived; remapping of RF before saccade.
 
 ### E.17 Auditory tonotopy & pitch coding (place + temporal)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.66]*
 
 - **System:** A1 / superior temporal gyrus
@@ -1396,6 +1070,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** A1 frequency map; pitch discrimination Weber fraction ~0.2%.
 
 ### E.18 Sound localization — ITD / ILD circuits
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.67]*
 
 - **System:** superior olivary complex (MSO/LSO) → IC
@@ -1407,6 +1082,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** spatial-tuning curves in ICX; psychophysical MAA ~1°.
 
 ### E.19 Olfactory glomerular map & combinatorial code
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.68]*
 
 - **System:** olfactory bulb glomeruli, mitral/tufted cells
@@ -1418,6 +1094,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** stereotyped glomerular map across animals; pattern decorrelation index.
 
 ### E.20 Somatosensory cortex (S1) — area 3b body map & feature columns
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.69]*
 
 - **System:** S1 (areas 3a, 3b, 1, 2)
@@ -1429,6 +1106,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** homunculus mapping; tactile orientation tuning.
 
 ### E.21 Constructive / inferential perception (Helmholtz unconscious inference)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.70]*
 
 - **System:** all cortical perceptual streams
@@ -1440,6 +1118,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** demonstration illusions (Kanizsa, Adelson checker); cue-combination experiments (Ernst & Banks).
 
 ### E.22 Multisensory integration
+
 *[from Part IV — Perception (Ch 17-29); renumbered from E.71]*
 
 - **System:** superior colliculus, STS, parietal cortex
@@ -1456,7 +1135,14 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 
 ## Cluster F — additions
 
+---
+
+## Cluster F — Cerebellum & error-correction
+
+**11 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
 ### F.01 Purkinje cell — sole output of cerebellar cortex
+
 *[from Part V — Movement (Ch 30-39); renumbered from F.50]*
 
 - **System:** cerebellar cortex molecular + Purkinje layer; massive flat dendritic tree; tonic inhibitory output to deep cerebellar nuclei (DCN).
@@ -1468,6 +1154,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Tonic 30–80 Hz simple spikes when PF input is balanced; CF event evokes characteristic complex spike; brief pause after CF.
 
 ### F.02 Granule cell + parallel fiber — divergent code
+
 *[from Part V — Movement (Ch 30-39); renumbered from F.51]*
 
 - **System:** granular layer (>50 billion granule cells in human cerebellum); axon bifurcates into long parallel fibers (PF) running along the folium, perpendicular to PC dendrites.
@@ -1479,6 +1166,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Sparse activity (~1–5% active at any moment); sparse-input vs dense-output recoding (distinct mossy patterns → orthogonal PF patterns).
 
 ### F.03 Mossy-fiber afferent system — pontine, spinal, vestibular input
+
 *[from Part V — Movement (Ch 30-39); renumbered from F.52]*
 
 - **System:** pontine nuclei (cerebro-cerebellar relay), spinocerebellar tracts, vestibular nuclei → granule layer rosettes.
@@ -1490,6 +1178,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Step input (e.g. limb perturbation) drives transient burst across granule layer.
 
 ### F.04 Climbing fiber — inferior olive single-cell teaching signal
+
 *[from Part V — Movement (Ch 30-39); renumbered from F.53]*
 
 - **System:** inferior olive (IO) → contralateral cerebellar cortex; one CF per Purkinje cell, wraps dendrites with ~hundreds of synapses.
@@ -1501,6 +1190,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Unexpected perturbation → IO complex spike rate ↑; perturbation becomes predictable → IO rate returns to baseline.
 
 ### F.05 PF→PC LTD (Marr-Albus-Ito) — sign-flipped, CF-gated plasticity
+
 *[from Part V — Movement (Ch 30-39); renumbered from F.54]*
 
 - **System:** parallel-fiber → Purkinje cell glutamatergic synapse; postsynaptic mGluR1 + Ca²⁺ from CF.
@@ -1512,6 +1202,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Eyeblink conditioning (F.57) — paired CS-US → blink prediction; unpaired → no learning.
 
 ### F.06 Deep cerebellar nuclei (DCN) — final cerebellar output
+
 *[from Part V — Movement (Ch 30-39); renumbered from F.55]*
 
 - **System:** dentate, interposed, fastigial nuclei; receive inhibitory PC input + excitatory MF/CF collaterals.
@@ -1523,6 +1214,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** PC inhibition → DCN pause → downstream effector burst.
 
 ### F.07 Forward / inverse internal models — predictive control
+
 *[from Part V — Movement (Ch 30-39); renumbered from F.56]*
 
 - **System:** cerebro-cerebellar recurrent loops (Strick); Purkinje activity correlates with predicted sensory consequences of motor commands.
@@ -1534,6 +1226,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Self-generated stimulus (subject moves) → attenuated cerebellar response; passive stimulus same magnitude → full response (Cullen vestibular paradigm).
 
 ### F.08 Eyeblink classical conditioning — canonical cerebellar learning task
+
 *[from Part V — Movement (Ch 30-39); renumbered from F.57]*
 
 - **System:** tone (CS) via mossy fiber → granule → PF; air puff (US) via climbing fiber from IO; blink output via interposed nucleus → red nucleus → motor.
@@ -1545,6 +1238,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Acquisition curve (probability and timing of CR vs trials); CS-alone trials probe CR without US; cerebellar lesion abolishes CR.
 
 ### F.09 VOR adaptation — gaze stabilization gain learning
+
 *[from Part V — Movement (Ch 30-39); renumbered from F.58]*
 
 - **System:** vestibulocerebellum (flocculus); vestibular MF input + retinal-slip CF input from IO.
@@ -1556,6 +1250,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Open-loop VOR gain measured before / after sustained slip → asymptotic gain change in correct direction.
 
 ### F.10 Cerebellar timing & motor coordination — interaction-torque compensation
+
 *[from Part V — Movement (Ch 30-39); renumbered from F.59]*
 
 - **System:** cerebellar cortex + interposed nucleus → red nucleus / motor cortex.
@@ -1567,6 +1262,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Two-joint reach: control compensates interaction torque; "lesioned" model shows shoulder perturbation when only elbow is commanded.
 
 ### F.11 Cerebellum-prefrontal nonmotor loops — cognitive role
+
 *[from Part V — Movement (Ch 30-39); renumbered from F.60]*
 
 - **System:** lateral cerebellum ↔ prefrontal / parietal cortex via pontine and thalamic relays (Strick rabies tracing).
@@ -1583,7 +1279,38 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 
 ## Cluster G — additions
 
+---
+
+## Cluster G — Working memory / PFC / cortical integration
+
+**20 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
+### G.01 Spatial and temporal summation
+
+- **System:** all neurons; especially relevant for pyramidal cells with thousands of inputs
+- **Biological role:** EPSPs / IPSPs from many simultaneous (spatial) or sequential (temporal) inputs sum at the soma and axon initial segment. The cell's spike-or-no-spike output is the integrated summation crossing threshold. Membrane time constant (τ_m) and length constant (λ) determine the windows over which summation is effective.
+- **Sim status:** implemented at the single-compartment level. Each neuron integrates all inputs in one membrane equation per step — this is exact spatial summation. Temporal summation is captured by the conductance decay τ. Multi-compartment spatial summation (with passive cable decay across dendrites) is **not** implemented — dendrites are collapsed to a point neuron.
+- **Cluster:** G (and fundamental to all of I/J — covered here as the *integration* machinery)
+- **Prerequisites:** I (passive cable, AP)
+- **Citation:** Kandel 6e Ch 13 p 290–293
+- **Behavioral validation:** any working network simulation; covered.
+
+### G.02 Active dendrites — local computation, dendritic spikes
+
+- **System:** especially L5 pyramidal cells (large apical dendrite tree), hippocampal pyramids
+- **Biological role:** dendrites contain voltage-gated Na⁺, Ca²⁺, and HCN channels — supporting local AP generation (dendritic spikes), NMDA spikes (NMDAR-driven plateau potentials), and Ca²⁺ spikes at the apical tuft. These produce nonlinear summation rules (e.g. cluster of inputs on one branch ≫ scattered inputs on many branches), gain modulation by apical-basal coincidence (Larkum's two-layer model), and dendritic computation as a substrate for cortical hierarchical processing.
+- **Sim status:** missing. Single-compartment everywhere. This is one of the largest abstractions in the simulator. Our `g11_bg_runner` PFC region has recurrent connectivity in cluster G — but PFC neurons are point neurons, not L5 pyramidals. *Implications:* we cannot reproduce experiments where the apical-basal coincidence detection is the substrate (e.g. perceptual inference via L5 apical tuft activity, conscious access models). Compartmental neurons would be a major addition (~10× compute per neuron at minimum).
+- **Cluster:** G, I
+- **Prerequisites:** I (channel kinetics)
+- **Citation:** Kandel 6e Ch 13 p 293–298
+- **Behavioral validation:** would require multi-compartment model. Could replicate Larkum BAC firing experiment (basal+apical coincidence → bursts).
+
+---
+
+## Cluster B — Striatal microcircuit & cortical interneuron diversity
+
 ### G.03 Object-based attention & feature binding
+
 *[from Part IV — Perception (Ch 17-29); renumbered from G.50]*
 
 - **System:** parietal + ventral cortex, gamma-band coherence
@@ -1595,6 +1322,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** same-object advantage; feature-binding errors under attention load (illusory conjunctions).
 
 ### G.04 Predictive / corollary discharge for perceptual stability
+
 *[from Part IV — Perception (Ch 17-29); renumbered from G.51]*
 
 - **System:** motor → sensory cortex (efference copy)
@@ -1610,6 +1338,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 ## Cluster J — Plasticity rules touched
 
 ### G.05 Posterior parietal cortex (PPC) — spatial planning, reach intention
+
 *[from Part V — Movement (Ch 30-39); renumbered from G.50]*
 
 - **System:** PPC areas LIP (saccades), PRR (reach), AIP (grasp).
@@ -1621,6 +1350,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Delay activity in PPC predicts upcoming reach target; lesion disrupts visually guided reach in extrapersonal space.
 
 ### G.06 PFC working memory — sustained delay-period activity
+
 *[from Part V — Movement (Ch 30-39); renumbered from G.51]*
 
 - **System:** dorsolateral PFC; recurrent excitation supports persistent firing across delay; modulated by D1.
@@ -1632,6 +1362,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Sustain firing during delay > baseline; lesion impairs delayed-match-to-sample.
 
 ### G.07 Pre-SMA / SMA medial premotor — internally generated sequences
+
 *[from Part V — Movement (Ch 30-39); renumbered from G.52]*
 
 - **System:** medial wall of frontal cortex; rostral pre-SMA = abstract sequence; caudal SMA-proper = movement sequence.
@@ -1647,6 +1378,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 ## Cluster K — Sensory transduction (motor-relevant)
 
 ### G.08 Working memory in prefrontal cortex — persistent activity for active maintenance
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.50]*
 
 - **System:** Dorsolateral and ventrolateral PFC; supported by parietal verbal/visuospatial stores and ascending DA from VTA/SNc.
@@ -1658,6 +1390,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Delay-period firing above baseline, content-specific (object vs location vs conjunction); D1-DA dependence of stable maintenance.
 
 ### G.09 Imagination / future simulation as constructive memory
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.51]*
 
 - **System:** Default-mode core: medial PFC, posterior cingulate / precuneus, retrosplenial, lateral parietal, lateral temporal, HC.
@@ -1669,6 +1402,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** HC-amnesic patients fail "imagine new picnic" task with markedly impoverished scene detail.
 
 ### G.10 Language as hierarchical symbolic system — phonemes / morphemes / words / syntax
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.52]*
 
 - **System:** Distributed cortical network, predominantly left hemisphere; anterior (production) and posterior (comprehension) zones plus connecting fasciculi.
@@ -1680,6 +1414,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Phonotactic discrimination (e.g., /zb/ illegal in English).
 
 ### G.11 Dual-stream model of language — dorsal sensorimotor + ventral semantic
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.53]*
 
 - **System:** Dorsal stream: posterior superior temporal → arcuate fasciculus → Broca's area (sensorimotor mapping for speech production). Ventral stream: superior + middle temporal → semantic interface (sound→meaning). Hickok & Poeppel.
@@ -1691,6 +1426,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Aphasia syndrome dissociation tables (Table 55-2): Broca speech labored/agrammatic; Wernicke fluent but paraphasic; conduction selectively repetition-impaired.
 
 ### G.12 Broca's area — speech production + grammatical processing + sensorimotor mapping
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.54]*
 
 - **System:** Left posterior inferior frontal gyrus (pars opercularis + triangularis); subjacent white matter; insula.
@@ -1702,6 +1438,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** "The girl that the boy is chasing is tall" comprehension fails (grammar-dependent); "The apple the girl ate was green" succeeds (semantically constrained).
 
 ### G.13 Wernicke's area — auditory-to-semantic mapping
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.55]*
 
 - **System:** Left posterior superior temporal gyrus + middle temporal gyrus; ventral-stream comprehension.
@@ -1713,6 +1450,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Fluent paraphasic output + comprehension deficit; selective conduction-aphasia spares fluency but loses repetition (arcuate fasciculus damage).
 
 ### G.14 Left-hemisphere dominance — even for sign language
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.56]*
 
 - **System:** Left-hemisphere language network active for spoken, written, AND signed language in deaf signers; bilingual learners' L2 cortical organization depends on age of acquisition (early L2 colocates with L1; late L2 recruits adjacent territory).
@@ -1728,6 +1466,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 ## Ch 56 — Decision-Making and Consciousness
 
 ### G.15 Signal-detection decision rule — threshold on noisy evidence
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.57]*
 
 - **System:** Sensory cortex supplies evidence; decision area applies criterion. Conceptual framework (Weber, Fechner, Green & Swets); ROC curve dissociates sensitivity (signal/noise separation) from policy (criterion).
@@ -1739,6 +1478,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** ROC curve from yes/no responses across signal strengths; criterion shifts with payoff structure.
 
 ### G.16 Drift-diffusion / bounded evidence accumulation — speed–accuracy trade-off
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.58]*
 
 - **System:** Sensory cortex (e.g., MT for motion) supplies noisy momentary evidence; accumulator integrates difference (right − left) over time; decision terminates when accumulator hits ±bound.
@@ -1750,6 +1490,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** RT distributions and choice accuracy fit by drift-diffusion model with one drift parameter per coherence + shared bound.
 
 ### G.17 LIP / parietal accumulator — neural correlate of decision variable
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.59]*
 
 - **System:** Lateral intraparietal area (LIP), medial intraparietal (MIP for reach), anterior intraparietal (AIP for grasp); also dorsolateral PFC. Persistent ramping firing during evidence accumulation; threshold reached just before saccade.
@@ -1761,6 +1502,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Mean firing rate ramps with coherence; common-threshold-at-saccade signature; dissociates LIP (decision) from MT (sensory).
 
 ### G.18 Probabilistic reasoning from symbols — logLR accumulation in LIP
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.60]*
 
 - **System:** Same LIP accumulator, but evidence comes from learned shape→reward associations rather than sensory motion. Each shape contributes its known logLR additively.
@@ -1772,6 +1514,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Choice probability as logistic function of summed shape-logLRs; LIP firing rate tracks running summed logLR.
 
 ### G.19 Affordance theory — knowledge as provisional commitment to action (Gibson / Shadlen)
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.61]*
 
 - **System:** Association cortices (parietal, temporal, prefrontal) where source modality (vision, audition) connects to target action system (gaze, reach, grasp).
@@ -1783,6 +1526,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Hemineglect (right parietal lesion) — patient does not "interrogate" left field, no awareness of deficit (vs hemianopsia where patient knows visual loss).
 
 ### G.20 Consciousness — arousal level + content access
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from G.62]*
 
 - **System:** Two dissociable phenomena: (1) level/arousal — brainstem reticular + thalamic systems gate sleep/wake/anesthesia; (2) content/access — selective gating of specific representations to a global workspace (frontoparietal network, Dehaene).
@@ -1795,7 +1539,14 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 
 ## Cluster H — additions
 
+---
+
+## Cluster H — Motor & spinal output
+
+**25 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
 ### H.01 Motor unit (α-motoneuron + muscle fibers it innervates) — Sherrington 1925
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.50]*
 
 - **System:** spinal/brainstem motor nucleus → ventral root → peripheral nerve → skeletal muscle fibers.
@@ -1807,6 +1558,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Single-fiber EMG twitch on suprathreshold MN spike; compound EMG amplitude proportional to active MN count.
 
 ### H.02 Twitch contraction & tetanic summation — force as f(spike rate)
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.51]*
 
 - **System:** muscle fiber sarcomere contraction in response to AP-evoked Ca²⁺ release.
@@ -1818,6 +1570,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Plot force vs MN firing rate → sigmoid; staircase summation as ISI shortens.
 
 ### H.03 Henneman size principle (orderly recruitment) — small → large
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.52]*
 
 - **System:** spinal motor pool with mixed slow / fast / fatigable units.
@@ -1829,6 +1582,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Ramp current to motor pool, log spike order; sequence should match assigned size index.
 
 ### H.04 Slow-twitch (type I) vs fast-twitch (type IIa/IIx) muscle fibers
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.53]*
 
 - **System:** myosin ATPase / mitochondrial / glycolytic biochemistry of muscle fiber.
@@ -1840,6 +1594,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Long-train fatigue: type I sustains, type IIx force decays.
 
 ### H.05 Force-length and force-velocity relations — sarcomere mechanics
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.54]*
 
 - **System:** actin-myosin cross-bridge geometry; series-elastic tendon.
@@ -1851,6 +1606,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Isometric force vs imposed length; isotonic force vs velocity match Hill hyperbola.
 
 ### H.06 Stretch reflex (monosynaptic Ia → α-MN) — myotatic reflex
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.55]*
 
 - **System:** muscle spindle Ia afferent → spinal α-motoneuron of homonymous muscle.
@@ -1862,6 +1618,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Tendon tap → ipsilateral homonymous burst at monosynaptic latency; no response with cut dorsal root.
 
 ### H.07 Reciprocal inhibition (Ia inhibitory interneuron) — antagonist relaxation
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.56]*
 
 - **System:** Ia afferent → glycinergic Ia-IN → α-MN of antagonist muscle.
@@ -1873,6 +1630,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Tendon tap to flexor → simultaneous suppression of extensor EMG.
 
 ### H.08 Renshaw cell recurrent inhibition — gain control on α-MN
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.57]*
 
 - **System:** α-MN axon collateral → glycinergic Renshaw cell → same and synergist α-MNs.
@@ -1884,6 +1642,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Direct ventral-root antidromic stimulation suppresses ongoing MN firing.
 
 ### H.09 Golgi tendon organ Ib reflex — autogenic inhibition
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.58]*
 
 - **System:** Ib afferent (force-sensitive, in tendon) → Ib interneuron → α-MN of homonymous muscle.
@@ -1895,6 +1654,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** High muscle tension → autogenic α-MN inhibition; reflex reverses sign during locomotion (state-dependent).
 
 ### H.10 γ-motoneuron / fusimotor drive — spindle sensitivity gain
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.59]*
 
 - **System:** γ-MN → intrafusal muscle fibers (bag / chain) inside spindle.
@@ -1906,6 +1666,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Dynamic γ-MN stimulation increases Ia phasic response to stretch.
 
 ### H.11 Flexion (withdrawal) reflex + crossed-extensor — polysynaptic protective
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.60]*
 
 - **System:** cutaneous nociceptor → spinal interneuron network → ipsilateral flexor MNs (withdraw) + contralateral extensor MNs (support).
@@ -1917,6 +1678,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Noxious heel stimulus → ipsi-flexor + contra-extensor co-activation.
 
 ### H.12 Spasticity / hyperreflexia after CNS lesion — descending pathway loss
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.61]*
 
 - **System:** corticospinal / reticulospinal tract lesion → loss of descending inhibition on spinal reflex circuits.
@@ -1928,6 +1690,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Velocity-dependent stretch resistance after corticospinal ablation; clonus on sustained stretch.
 
 ### H.13 Central pattern generator (CPG) for locomotion — Brown 1911
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.62]*
 
 - **System:** spinal interneuron network (lamprey: ~100 segments; mammal: lumbar enlargement).
@@ -1939,6 +1702,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Isolated spinal cord with neuroactive drug bath produces alternating flexor / extensor bursts; rhythm persists after deafferentation.
 
 ### H.14 Half-center model — mutually inhibiting flexor / extensor pools
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.63]*
 
 - **System:** two reciprocally inhibitory interneuron pools with intrinsic adaptation / "fatigue."
@@ -1950,6 +1714,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Pair of AdEx pools with strong cross-inhibition + spike-frequency adaptation → spontaneous alternating bursts at adaptation timescale.
 
 ### H.15 Mesencephalic locomotor region (MLR) / pedunculopontine nucleus (PPN) — locomotion initiation
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.64]*
 
 - **System:** midbrain MLR (cuneiform + PPN) → reticulospinal tract → spinal CPG.
@@ -1961,6 +1726,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Graded MLR stimulation → graded locomotor frequency; BG output ablation removes gait initiation.
 
 ### H.16 Voluntary motor cortex (M1) somatotopic map — Penfield homunculus
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.65]*
 
 - **System:** primary motor cortex layer V Betz cells → corticospinal tract.
@@ -1972,6 +1738,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Stim cortex_X → motor_X firing → "action X" emitted; lesion cortex_X disables action X.
 
 ### H.17 Population vector coding (Georgopoulos) — distributed direction code
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.66]*
 
 - **System:** M1 single-unit recordings during 2D / 3D arm reaching.
@@ -1983,6 +1750,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Compute Σ rᵢ · θᵢ across motor pool → matches commanded angle within ~10°.
 
 ### H.18 Mirror neurons (premotor F5 / parietal) — observation = execution
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.67]*
 
 - **System:** ventral premotor cortex F5 + inferior parietal lobule.
@@ -1994,6 +1762,7 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Same neurons fire on (a) executing reach to object, (b) observing reach by another agent.
 
 ### H.19 Premotor / SMA — sequential & rule-based action
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.68]*
 
 - **System:** dorsal/ventral premotor cortex + supplementary motor area (medial wall).
@@ -2024,6 +1793,7 @@ that:
 4. Validates against eyeblink conditioning or VOR adaptation as the smoke-test behavior.
 
 ### H.20 Brain-machine interface (BMI) decoder — population vector or Kalman
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.69]*
 
 - **System:** multi-electrode array in M1 / PMd / PPC; offline / online decoder maps spike rates → cursor / arm trajectory.
@@ -2035,6 +1805,7 @@ that:
 - **Behavioral validation:** Decoder applied to motor-pool spike train tracks intended action with > chance accuracy; performance improves with co-adaptation.
 
 ### H.21 Deep brain stimulation (DBS) — STN / GPi pulse train as Parkinson therapy
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.70]*
 
 - **System:** chronic implanted electrode at STN (most common) or GPi; ~130 Hz pulse train.
@@ -2050,6 +1821,7 @@ that:
 ## Cluster H — Posture (Ch 36)
 
 ### H.22 Postural control — equilibrium + orientation, multi-modal integration
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.71]*
 
 - **System:** somatosensory + vestibular + visual integration in brainstem (vestibular nuclei, reticular formation), cerebellum, BG, cortex.
@@ -2061,6 +1833,7 @@ that:
 - **Behavioral validation:** Platform-translation perturbation → automatic postural response within 100–150 ms; anticipatory postural adjustment precedes voluntary arm raise.
 
 ### H.23 Anticipatory postural adjustment (APA) — efference-copy-driven
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.72]*
 
 - **System:** SMA / PPC → spinal postural muscles in advance of voluntary movement.
@@ -2076,6 +1849,7 @@ that:
 ## Cluster H — Eye movement control (Ch 35)
 
 ### H.24 Saccade generator — pontine reticular formation burst circuit
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.73]*
 
 - **System:** paramedian pontine reticular formation (horizontal saccades) + rostral interstitial MLF (vertical); excitatory burst neurons (EBN), inhibitory burst neurons (IBN), omnipause neurons (OPN).
@@ -2087,6 +1861,7 @@ that:
 - **Behavioral validation:** OPN silence → EBN burst → MN burst → step displacement; saccade main sequence (peak velocity vs amplitude).
 
 ### H.25 Superior colliculus saccade map — topographic motor map
+
 *[from Part V — Movement (Ch 30-39); renumbered from H.74]*
 
 - **System:** intermediate / deep SC; topographic representation of saccade target relative to fovea.
@@ -2103,7 +1878,28 @@ that:
 
 ## Cluster I — additions
 
+---
+
+## Cluster I — Channels & intrinsic dynamics
+
+**23 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
+### I.01 Axon initial segment (AIS) — spike-trigger zone
+
+- **System:** all neurons (the unmyelinated 20–60 µm proximal axon segment)
+- **Biological role:** highest density of voltage-gated Na⁺ channels in the cell — orders of magnitude more than the soma — so the AIS has the lowest threshold and is where the AP is initiated. AIS length and Na-channel composition adapts on a timescale of hours (homeostatic plasticity of intrinsic excitability).
+- **Sim status:** missing as a distinct compartment. We model each neuron as point-like with one threshold (Izh / HH / AdEx); there is no spatial separation between integration site (soma) and trigger site (AIS). For most circuit-level dynamics this is fine, but for AIS plasticity (slow homeostatic changes to intrinsic excitability) the closest analogue is our `homeostasis_threshold_adapt_rate` parameter.
+- **Cluster:** I
+- **Prerequisites:** I (Hodgkin-Huxley-like AP machinery; covered in Ch 9-10)
+- **Citation:** Kandel 6e Ch 13 p 293–295
+- **Behavioral validation:** the homeostasis benchmark validates the *functional* outcome of AIS plasticity (perturbation +200 pA → 50 Hz → recovers to baseline within 1 s). Mechanism is at the threshold-adaptation layer, not the AIS layer.
+
+---
+
+## Cluster G — Working memory / PFC / cortical integration
+
 ### I.02 Hodgkin–Huxley action potential — canonical Na+/K+ kinetics
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.50]*
 
 - **System:** All excitable neurons; squid giant axon canonical model.
@@ -2115,6 +1911,7 @@ that:
 - **Behavioral validation:** AP waveform peak ≈ +40 mV, width ~1–2 ms at 37 °C; ENa reversal demonstrable by Na+ substitution; refractory period emerges from h-gate recovery time constant.
 
 ### I.03 Voltage-gated Na+ channel inactivation (h-gate / IFM motif)
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.51]*
 
 - **System:** All Na+-spiking neurons; especially refractory dynamics.
@@ -2126,6 +1923,7 @@ that:
 - **Behavioral validation:** Paired-pulse INa amplitude ratio < 1 at 5–15 ms intervals; recovery curve fittable to single exponential τ ≈ 5–10 ms.
 
 ### I.04 Voltage-gated Na+ channel α-subunit diversity (Nav1.1–1.9)
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.52]*
 
 - **System:** Distinct expression in interneurons, axon initial segments, nociceptors, cardiac/skeletal muscle.
@@ -2137,6 +1935,7 @@ that:
 - **Behavioral validation:** Knock-out simulation of Nav1.1 in interneurons should reduce inhibitory firing rate while sparing pyramidal AP threshold.
 
 ### I.05 Delayed-rectifier K+ channels (Kv1, Kv2)
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.53]*
 
 - **System:** Universal repolarizing current; squid axon canonical Kv.
@@ -2148,6 +1947,7 @@ that:
 - **Behavioral validation:** TEA application (parameter sweep g_K → 0) should broaden APs and abolish AHP.
 
 ### I.06 Kv3 fast-repolarizing channels — fast-spiking phenotype
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.54]*
 
 - **System:** Cortical FS GABAergic interneurons, cerebellar Purkinje neurons, auditory brainstem.
@@ -2159,6 +1959,7 @@ that:
 - **Behavioral validation:** FS neurons should sustain ~300+ Hz firing without rate adaptation under steady current; AP half-width < 0.5 ms.
 
 ### I.07 A-type transient K+ current (Kv4)
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.55]*
 
 - **System:** Dendrites and soma of pyramidal neurons; modulates AP threshold and back-propagation.
@@ -2170,6 +1971,7 @@ that:
 - **Behavioral validation:** Hyperpolarizing pre-pulse should produce a delay-to-first-spike that scales with pre-pulse duration.
 
 ### I.08 M-current / Kv7 / KCNQ — slow non-inactivating subthreshold K+
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.56]*
 
 - **System:** Cortical pyramidal cells, hippocampus, sympathetic ganglia.
@@ -2181,6 +1983,7 @@ that:
 - **Behavioral validation:** Spike-frequency adaptation across 200–500 ms during a step current; ACh (muscarinic agonist) → reduced adaptation, increased steady-state rate.
 
 ### I.09 Ih / HCN hyperpolarization-activated cyclic-nucleotide-gated channel
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.57]*
 
 - **System:** Cortical layer-5 pyramidal dendrites, thalamocortical relay, SAN-like pacemakers.
@@ -2192,6 +1995,7 @@ that:
 - **Behavioral validation:** Voltage sag in response to hyperpolarizing step (V approaches steady-state ~5–10 mV less negative than peak); rebound depolarization after IPSP termination.
 
 ### I.10 Persistent Na+ current (INaP)
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.58]*
 
 - **System:** Cortical pyramidal cells, SCN pacemaker neurons, dopaminergic SNc.
@@ -2203,6 +2007,7 @@ that:
 - **Behavioral validation:** Spontaneous firing in absence of synaptic input at 1–5 Hz; pharmacological block (g_NaP → 0) should silence pacemaker activity.
 
 ### I.11 High-voltage-activated Ca2+ channels (L-type Cav1, P/Q Cav2.1, N Cav2.2)
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.59]*
 
 - **System:** Soma, dendrites, presynaptic terminals.
@@ -2214,6 +2019,7 @@ that:
 - **Behavioral validation:** L-type plateau potentials should appear in MSN-like neurons (D1/D2) under sustained depolarization; abolished by nifedipine analog (g_Cav1 → 0).
 
 ### I.12 T-type Ca2+ channels (Cav3, LVA) — rebound bursting
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.60]*
 
 - **System:** Thalamic relay (TC) neurons, thalamic reticular (TRN), subset of cortex.
@@ -2225,6 +2031,7 @@ that:
 - **Behavioral validation:** Rebound burst (3–7 Na+ spikes) after release from −90 mV hyperpolarization in TC presets.
 
 ### I.13 Calcium-activated K+ channels — BK and SK (mAHP/sAHP)
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.61]*
 
 - **System:** Hippocampal pyramidal, cortical pyramidal, midbrain dopamine, cerebellar Purkinje.
@@ -2236,6 +2043,7 @@ that:
 - **Behavioral validation:** Apamin (SK block) simulation should abolish sAHP and increase steady-state firing; BK block should broaden AP and reduce fast AHP.
 
 ### I.14 Resting / leak K+ channels (K2P, inward rectifiers)
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.62]*
 
 - **System:** All neurons; especially glia (Kir4.1).
@@ -2247,6 +2055,7 @@ that:
 - **Behavioral validation:** RMP scales correctly with [K+]o (Goldman / Nernst); halothane (TREK opener) simulation should hyperpolarize and reduce excitability.
 
 ### I.15 Resting membrane potential — Goldman/Nernst equilibrium
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.63]*
 
 - **System:** All cells.
@@ -2258,6 +2067,7 @@ that:
 - **Behavioral validation:** Setting g_Na → 0 should drive Vm to ≈ −75 mV (E_K).
 
 ### I.16 Membrane capacitance Cm — passive integration time constant
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.64]*
 
 - **System:** Universal; lipid bilayer property ~1 µF/cm².
@@ -2269,6 +2079,7 @@ that:
 - **Behavioral validation:** Step-current voltage trajectory should rise as 1 − exp(−t/τ); FS neurons (low τ) should be coincidence detectors, RS (high τ) integrators.
 
 ### I.17 Cable equation, length constant λ — passive electrotonic spread
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.65]*
 
 - **System:** Dendrites and unmyelinated axons.
@@ -2280,6 +2091,7 @@ that:
 - **Behavioral validation:** N/A in current sim. Would require multi-compartment cable model to test.
 
 ### I.18 Axon initial segment (AIS) — high-density Nav, AP trigger zone
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.66]*
 
 - **System:** AIS of all projection neurons; ~20–50 µm from soma.
@@ -2291,6 +2103,7 @@ that:
 - **Behavioral validation:** N/A in current sim. Would require either an explicit AIS compartment or a per-neuron threshold that adapts to mean activity (~the existing homeostasis).
 
 ### I.19 Saltatory conduction — myelinated axon AP propagation
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.67]*
 
 - **System:** All myelinated axons (PNS Schwann, CNS oligodendrocyte).
@@ -2302,6 +2115,7 @@ that:
 - **Behavioral validation:** N/A. Demyelination simulation would require multi-compartment axon.
 
 ### I.20 Refractory periods — absolute and relative
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.68]*
 
 - **System:** All spiking neurons.
@@ -2313,6 +2127,7 @@ that:
 - **Behavioral validation:** Paired-pulse spike probability < 1 at 2–10 ms ISI; recovery curve sigmoid.
 
 ### I.21 Intrinsic firing patterns — RS, FS, IB, CH (regular, fast, intrinsic-bursting, chattering)
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.69]*
 
 - **System:** Cortex layer 2/3, layer 5; subcortical.
@@ -2324,6 +2139,7 @@ that:
 - **Behavioral validation:** F-I curve linearity (FS) vs adapting (RS); initial-burst signature (IB); 30+ Hz oscillation in CH cells under steady drive.
 
 ### I.22 Pacemaking via INaP + leak Na+ (e.g., SCN circadian)
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.70]*
 
 - **System:** Suprachiasmatic nucleus, SNc dopamine, GPe, locus coeruleus.
@@ -2335,6 +2151,7 @@ that:
 - **Behavioral validation:** Spontaneous firing 1–5 Hz with no input; firing rate scales with g_NaP parameter.
 
 ### I.23 Channelopathies — single-gene channel mutations cause disease
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from I.71]*
 
 - **System:** Brain, heart, muscle, peripheral nerve.
@@ -2351,7 +2168,320 @@ that:
 
 ## Cluster J — additions
 
+---
+
+## Cluster J — Synapses & plasticity rules
+
+**39 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
+### J.01 Chemical synaptic transmission (general framework)
+
+- **System:** all chemical synapses; CNS and PNS
+- **Biological role:** unidirectional signaling via vesicular release of neurotransmitter into a 20–40 nm synaptic cleft, binding to postsynaptic receptors that gate ion flux. Allows amplification (one vesicle → thousands of channels open), modulation, plasticity. The dominant signaling mode in the brain.
+- **Sim status:** implemented — `sim/bridge.py` synaptic conductance update + `sim/kernels.py` `fused_conductance_decay_and_current` model the postsynaptic effect; presynaptic AP triggers conductance increment in target. Synaptic cleft, exocytosis, and vesicle pool are abstracted away.
+- **Cluster:** J
+- **Prerequisites:** I (channels & AP), J.02 (receptor types)
+- **Citation:** Kandel 6e Ch 11 p 241–253
+- **Behavioral validation:** any working forward simulation already validates this — already covered by E/I balance benchmark (`run_benchmarks.py --benchmark ei-balance`).
+
+### J.02 Ionotropic vs metabotropic receptor distinction
+
+- **System:** all chemical synapses
+- **Biological role:** ionotropic receptors are ligand-gated ion channels — fast (ms-scale), direct conductance change. Metabotropic receptors are GPCRs — slow (100 ms–min), trigger second-messenger cascades (cAMP, IP3, DAG → PKA, PKC) that phosphorylate downstream effectors including channels themselves. The two-timescale architecture is what lets the brain combine fast computation with slow modulation.
+- **Sim status:** partial — ionotropic receptors are implemented (AMPA-like fast conductance, NMDA with voltage-dep Mg2+ block, GABA with `E_inh = -75 mV`). Metabotropic receptors are *abstracted* via the neuromodulator subsystem (`sim/neuromodulators.py`): we don't model GPCRs / cAMP / kinases literally, but the *functional outcome* — concentration-dependent modulation of synaptic gain, plasticity rate, excitability — is captured. The textbook framing is biophysical; ours is phenomenological. `[discrepancy: project doc treats neuromodulators as a peer mechanism to STDP, while textbook treats them as a *type of receptor signaling* — both views are valid; ours skips the molecular layer.]`
+- **Cluster:** J (ionotropic) + C (metabotropic / NM subsystem)
+- **Prerequisites:** J.01
+- **Citation:** Kandel 6e Ch 11 p 250–251 (Fig 11-9)
+- **Behavioral validation:** ionotropic — already in NMDA-Mg2+-block validation. Metabotropic — confirm DA / NE / 5-HT concentration changes alter target metric (e.g. STDP rate doubles when DA concentration doubles, with the right dose-response curve).
+
+### J.03 Active zone and synaptic vesicle pool
+
+- **System:** all chemical synapses
+- **Biological role:** transmitter is released from specialized presynaptic boutons containing 100–200 synaptic vesicles each, clustered at "active zones" with voltage-gated Ca²⁺ channels. AP-triggered Ca²⁺ entry triggers vesicle fusion (exocytosis) within ~1 ms.
+- **Sim status:** not-applicable at our level of abstraction — vesicle dynamics are absorbed into the short-term plasticity (STP) Tsodyks-Markram model: parameters `stp_U` (release probability), `stp_tau_d` (depletion recovery), `stp_tau_f` (facilitation) phenomenologically capture vesicle-pool depletion and recovery. We do not model individual vesicles or active zones. `[discrepancy: textbook describes vesicle counts and Ca²⁺-triggered fusion as the substrate; project STP fields are the closest functional equivalent. Note in CLAUDE.md: STP fields are global defaults plus per-connection-type variants.]`
+- **Cluster:** J
+- **Prerequisites:** J.01
+- **Citation:** Kandel 6e Ch 11 p 248–249 (Fig 11-7, 11-8)
+- **Behavioral validation:** STP paired-pulse ratio benchmark (`run_benchmarks.py --benchmark stp-paired-pulse`) — covers it.
+
+### J.04 Synaptic delay (~1 ms)
+
+- **System:** all chemical synapses
+- **Biological role:** the cumulative time for AP arrival, Ca²⁺ entry, vesicle fusion, transmitter diffusion across cleft, receptor binding, and channel gating — "usually 1 ms or less." Constrains how fast spike-based circuits can route information.
+- **Sim status:** partial — there is no explicit per-synapse propagation delay in the current code path; the synaptic conductance is incremented in the same step the presynaptic AP fires. With `dt=0.5 ms` (Izh) or `0.05 ms` (HH) the de-facto delay is one step. For most network behaviors at our scale this is acceptable; for tight timing experiments (millisecond-precise STDP windows, gamma phase-locking), per-synapse axonal delay would matter. *Future work:* per-synapse delay buffer (a small ring buffer keyed off current step).
+- **Cluster:** J
+- **Prerequisites:** J.01
+- **Citation:** Kandel 6e Ch 11 p 248 (Fig 11-8)
+- **Behavioral validation:** STDP-curve validation already passes at our timescales. To stress-test delay, run a polychrony / synfire-chain experiment and check that the simulated chain produces the expected delay profile.
+
+### J.05 Electrical synapses / gap junctions
+
+- **System:** primarily inhibitory interneurons (cortical FS networks), retina (bipolar / amacrine), olfactory bulb, glia; widespread in immature CNS.
+- **Biological role:** direct cytoplasmic coupling via connexon hemichannels (6 connexins each, 1.5–2 nm pore). Bidirectional, near-zero-delay current passage between two cells. Function: synchronize firing of populations (e.g. FS interneurons → gamma oscillations), rapid escape circuits (fish Mauthner cell, crayfish tail-flip), early developmental coupling, glial Ca²⁺ wave propagation.
+- **Sim status:** missing. Our gamma-oscillation benchmark (Kandel-cited PING mechanism, peak 27–45 Hz) reproduces gamma without electrical coupling, by E↔I delay tuning. The textbook describes gap-junctional electrical coupling among FS interneurons as a *complementary* mechanism that further sharpens synchrony. Adding gap junctions would shift the benchmark from "PING-only" to "PING+ING+gap-junctional" (closer to the *in vivo* mechanism). **Implementation cost:** moderate — would need a new `cp_gap_junction_coupling` matrix and a `V_post += g_gap * (V_pre - V_post)` term added to the conductance step.
+- **Cluster:** J (and indirectly E for retinal circuits, F for cerebellum where they exist on Purkinje axon collaterals)
+- **Prerequisites:** I (V dynamics), J.01
+- **Citation:** Kandel 6e Ch 11 p 241–248 (Fig 11-1, 11-4, 11-5)
+- **Behavioral validation:** gamma-oscillation peak with FS interneurons electrically coupled should be sharper (lower power outside the gamma band) than current PING-only baseline. Replicate Whittington & Traub 2003 in-silico.
+
+### J.06 Glial gap-junction networks (astrocyte Ca²⁺ waves)
+
+- **System:** astrocytes (CNS), Schwann cells (PNS myelin)
+- **Biological role:** astrocytes form a gap-junction-coupled syncytium across which Ca²⁺ waves propagate at 1–20 µm/s — orders of magnitude slower than APs. Function still partly unknown but implicated in metabolic coordination, neurovascular coupling, and slow modulation of nearby synapses (gliotransmission of glutamate, ATP, D-serine).
+- **Sim status:** missing. We have no glial cells at all. The simulator is purely neuronal.
+- **Cluster:** Q (Glia & neurovascular, added 2026-04-28 from this chapter)
+- **Prerequisites:** J.05 (gap junctions)
+- **Citation:** Kandel 6e Ch 11 p 248
+- **Behavioral validation:** would require co-simulation of glia + neurons — currently out of scope. Skipping for now.
+
+### J.07 AMPA receptor — fast excitatory cation channel
+
+- **System:** all glutamatergic synapses in the CNS
+- **Biological role:** primary mediator of fast excitatory synaptic transmission. Cation-permeable (Na⁺ in, K⁺ out), reverses near 0 mV. Decay τ ~2–5 ms. GluA1–GluA4 subunits; GluA2-lacking variants are Ca²⁺-permeable. Density / GluA2 editing is the substrate for synaptic-scaling homeostasis.
+- **Sim status:** implemented as the *generic* fast excitatory conductance (`E_exc = 0 mV`, exponential decay via `fused_conductance_decay_and_current`). We don't track AMPA explicitly as a named subtype, but the kinetics and reversal correspond. Synaptic scaling (Pillar 2.5 homeostasis) implicitly models AMPA-receptor density adjustment.
+- **Cluster:** J
+- **Prerequisites:** J.01, J.02
+- **Citation:** Kandel 6e Ch 13 p 277–280
+- **Behavioral validation:** baseline E/I balance benchmark already covers this — exc rate 1.78 Hz, inh rate 3.25 Hz, CV(ISI) 0.86 — consistent with cortical L2/3 driven by AMPA-like fast conductance.
+
+### J.08 NMDA receptor — voltage-dependent coincidence detector
+
+- **System:** all glutamatergic synapses; especially dense in CA1 hippocampus, neocortical L2/3
+- **Biological role:** ligand- AND voltage-gated; Mg²⁺ blocks the pore at resting V, unblocks above ~-40 mV. Highly Ca²⁺-permeable (~10× the AMPA Ca²⁺ flux). Slow kinetics (decay τ ~50–150 ms). The voltage-dependence makes it a coincidence detector for pre/post activity — the cellular substrate for Hebbian LTP. Subunit composition (GluN2A vs GluN2B) modulates kinetics; developmentally regulated. Hypofunction implicated in schizophrenia (NMDA antagonist ketamine produces psychotic symptoms).
+- **Sim status:** implemented — `fused_nmda_update_and_current` in `sim/kernels.py` models the voltage-dep Mg²⁺ block. Used as the Ca²⁺ source for STDP/LTP. Slow kinetics captured. Subunit composition (GluN2A/GluN2B) is *not* differentiated.
+- **Cluster:** J
+- **Prerequisites:** J.07
+- **Citation:** Kandel 6e Ch 13 p 281–286
+- **Behavioral validation:** STDP timing curve (Bi & Poo 1998) already passes, demonstrating NMDA-driven Ca²⁺-dependent LTP/LTD with correct timing windows.
+
+### J.09 Kainate receptor — third ionotropic glutamate receptor type
+
+- **System:** mossy-fiber → CA3, presynaptic modulation of inhibitory transmission, some cortical inhibitory interneurons
+- **Biological role:** ionotropic glutamate receptor with intermediate kinetics. Functions partly redundant with AMPA postsynaptically; more interesting role is presynaptic — kainate-mediated frequency-dependent facilitation/depression of release.
+- **Sim status:** missing as a distinct receptor. Subsumed into AMPA-like generic excitatory conductance. *Likely not worth adding* unless we model mossy-fiber-specific phenomena.
+- **Cluster:** J
+- **Prerequisites:** J.07
+- **Citation:** Kandel 6e Ch 13 p 277–278
+- **Behavioral validation:** would only be meaningful in a CA3 mossy-fiber-specific experiment.
+
+### J.10 GABA-A receptor — fast inhibitory Cl⁻ channel
+
+- **System:** ubiquitous in CNS — basket, chandelier, Martinotti, neurogliaform interneurons
+- **Biological role:** pentameric ligand-gated Cl⁻ channel (most common α1β2γ2). Reversal ~-75 mV in adult neurons (close to but slightly below V_rest), produces hyperpolarizing IPSP in most cells. **Shunting inhibition** is a separate effect: even when ΔV is small, opening Cl⁻ channels increases membrane conductance and divides the EPSP voltage by a factor — works without hyperpolarization. Allosterically modulated by benzodiazepines, barbiturates, alcohol, neurosteroids.
+- **Sim status:** implemented — `E_inh = -75 mV` with 0.7× propagation scaling (CLAUDE.md). Shunting inhibition is *implicitly* captured by the increase in membrane conductance during inhibitory current; works correctly in single-compartment but cannot reproduce *compartment-specific* shunting (e.g. perisomatic vs distal-dendritic shunting differ in real pyramidal cells).
+- **Cluster:** J
+- **Prerequisites:** J.01
+- **Citation:** Kandel 6e Ch 13 p 286–289
+- **Behavioral validation:** E/I balance benchmark (`run_benchmarks.py --benchmark ei-balance`) covers it. PING gamma benchmark also depends on functional GABA-A.
+
+### J.11 Glycine receptor — fast inhibitory Cl⁻ channel (mostly spinal)
+
+- **System:** brainstem, spinal cord (Renshaw cells, Ia inhibitory interneurons)
+- **Biological role:** functionally similar to GABA-A (Cl⁻-selective, fast IPSP) but pharmacologically distinct (strychnine-sensitive). Dominates inhibition in spinal motor circuits.
+- **Sim status:** not-applicable. We don't model spinal cord; abstractly any spinal "glycinergic" inhibition would be subsumed under our generic GABA-A inhibitory channel. Worth flagging if we add a spinal CPG cluster.
+- **Cluster:** H, J
+- **Prerequisites:** J.10
+- **Citation:** Kandel 6e Ch 13 p 286–289
+- **Behavioral validation:** N/A unless spinal added.
+
+### J.12 Postsynaptic density (PSD) — scaffolding & receptor anchoring
+
+- **System:** all glutamatergic synapses (PSD-95, Homer, Shank, GKAP family proteins)
+- **Biological role:** dense protein scaffold under the glutamatergic postsynaptic membrane that anchors AMPA + NMDA receptors at the right density and aligns them with presynaptic active zones. PSD-95 specifically anchors NMDA and stabilizes AMPA via TARPs. Plasticity mechanisms (LTP) rearrange the PSD to insert AMPA receptors. The PSD is one of the *protein bottlenecks* for synapse maintenance and plasticity.
+- **Sim status:** not-applicable. The simulator has weights but no scaffolding proteins. AMPA-receptor insertion / removal is captured *phenomenologically* by weight changes (STDP, synaptic scaling). This is the right level of abstraction for circuit-level dynamics; it cannot capture pathologies that disrupt PSD specifically (e.g. SHANK3 mutations in autism — Cluster P).
+- **Cluster:** J (with P implications)
+- **Prerequisites:** J.07, J.08
+- **Citation:** Kandel 6e Ch 13 p 280–281
+- **Behavioral validation:** N/A.
+
+### J.13 G-protein-coupled receptors (GPCRs) — metabotropic neurotransmitter receivers
+
+- **System:** every modulatory neurotransmitter system uses GPCRs — DA D1/D2/D3/D4/D5, NE α1/α2/β1/β2, 5-HT (most subtypes except 5-HT3), muscarinic AChR (M1–M5), GABA-B, mGluR1–8, opioid, neuropeptides, odorants, light (rhodopsin)
+- **Biological role:** seven-TM receptors that, on transmitter binding, activate a heterotrimeric G protein (Gα + Gβγ). Gα-GTP dissociates and activates a downstream effector (adenylyl cyclase, PLC, ion channel directly, etc.). Hundreds of GPCR genes — the largest receptor family. The **substrate of all neuromodulation in the brain.**
+- **Sim status:** not-applicable as molecular machinery. The neuromodulator subsystem (`sim/neuromodulators.py`) abstracts the entire chain "GPCR → G-protein → effector → ion channel modulation" into three target types (`synaptic_gain`, `plasticity_rate`, `excitability_drive`) that shortcut from concentration to functional outcome. The textbook framing is mechanistic; ours is phenomenological. **Trade-off:** we cannot model receptor-subtype heterogeneity (D1 vs D2, β1 vs β2 etc.) at the molecular level, but we *do* model their distinct concentration-effect curves via per-target sensitivity. Discrepancy with project doc: CLAUDE.md treats neuromodulators as a peer mechanism to STDP — the textbook makes clear they are a *different type of receptor*, not a different system.
+- **Cluster:** C, J
+- **Prerequisites:** J.02
+- **Citation:** Kandel 6e Ch 14 p 301–305
+- **Behavioral validation:** dose-response curve of any neuromodulator effect (DA→plasticity, NE→excitability) should match published data for that specific receptor subtype.
+
+### J.14 cAMP / PKA pathway
+
+- **System:** Gs-coupled GPCRs (D1, β-adrenergic, 5-HT4/6/7) and Gi (D2, α2, mu-opioid — inhibits cAMP)
+- **Biological role:** Gs activates adenylyl cyclase → cAMP → PKA. PKA phosphorylates a *huge* set of substrates: ion channels (K, Ca, HCN), receptors (AMPA Ser845 enhances function — substrate of LTP), CREB (transcription factor for long-term plasticity). cAMP is the most ubiquitous second messenger; PKA-CREB is the canonical "convert short-term experience to long-term memory" pathway (Kandel's Aplysia work).
+- **Sim status:** not-applicable. The pathway-specific phosphorylation of AMPA-Ser845 is captured by our STDP weight changes; CREB-driven transcription (the "consolidation" arc, hours timescale) is **missing entirely** — we have no transcriptional state in the simulator. *Implication:* we cannot model the early-LTP / late-LTP distinction (cycloheximide-blockable late phase) without adding a per-synapse "consolidated weight" tier with slow protein-synthesis kinetics.
+- **Cluster:** C, J, L (development & long-term plasticity)
+- **Prerequisites:** J.13
+- **Citation:** Kandel 6e Ch 14 p 305–311
+- **Behavioral validation:** would need a long-duration experiment showing weights persist over simulated "hours" with a protein-synthesis dependence — not currently testable.
+
+### J.15 PLC / IP3 / DAG / PKC pathway and intracellular Ca²⁺ release
+
+- **System:** Gq-coupled GPCRs (mGluR1/5, muscarinic M1/M3/M5, α1-adrenergic, 5-HT2)
+- **Biological role:** Gq → phospholipase C → cleaves PIP2 into IP3 + DAG. IP3 binds receptors on ER, releases stored Ca²⁺ into cytosol. DAG activates PKC (membrane-bound). The IP3-Ca²⁺ pathway is a *parallel* Ca²⁺ source to NMDA receptors and voltage-gated Ca²⁺ channels — important for forms of LTD (mGluR-LTD in cerebellum, hippocampus).
+- **Sim status:** not-applicable. We don't track intracellular Ca²⁺ at all — only the NMDA-derived Ca²⁺ that drives STDP, and that is encoded as an eligibility trace, not an explicit [Ca²⁺] variable. mGluR-LTD specifically would require a separate Ca²⁺ source.
+- **Cluster:** C, J, F (cerebellum LTD)
+- **Prerequisites:** J.13
+- **Citation:** Kandel 6e Ch 14 p 308–311
+- **Behavioral validation:** N/A unless cerebellum (Cluster F) is added.
+
+### J.16 Endocannabinoids — retrograde modulators of presynaptic release
+
+- **System:** widespread; especially abundant in hippocampus, cerebellum, cortex
+- **Biological role:** when a postsynaptic neuron is strongly depolarized, it synthesizes endocannabinoids (anandamide, 2-AG) on demand, which diffuse *backwards* across the synapse and bind presynaptic CB1 receptors, *reducing* transmitter release. Substrate of DSI (depolarization-induced suppression of inhibition) and DSE (suppression of excitation), and a form of LTD. Retrograde signaling — postsynaptic activity controls presynaptic strength.
+- **Sim status:** missing. Our STDP rule is the only mechanism by which postsynaptic activity influences synaptic strength, and it is *Hebbian* (weight-changing) rather than *modulatory* (release-probability changing). Adding eCB-LTD would require a per-synapse retrograde signal driven by postsynaptic Ca²⁺ that scales the effective release probability — touching the STP machinery from the postsynaptic side, which the current architecture doesn't support.
+- **Cluster:** J (with C-flavor as a modulatory mechanism)
+- **Prerequisites:** J.03 (STP — release probability), J.13 (GPCRs)
+- **Citation:** Kandel 6e Ch 14 p 313–315
+- **Behavioral validation:** induction of DSE in a hippocampal-like model: prolonged postsynaptic depolarization should suppress IPSCs from connected interneurons for ~10 s.
+
+### J.17 Nitric oxide (NO) — gaseous retrograde messenger
+
+- **System:** NMDAR-coupled, especially in CA1 pyramidals; broader role in vascular coupling and PNS
+- **Biological role:** Ca²⁺/calmodulin → nNOS → NO. NO diffuses freely across membranes (gas), enters presynaptic terminal, activates soluble guanylyl cyclase → cGMP → PKG. Originally proposed as the LTP-reinforcing retrograde signal (Hawkins, Schuman). Now thought to be one of *several* retrograde signals; necessity for LTP is debated.
+- **Sim status:** missing. Same architectural reasoning as J.16 — postsynaptic→presynaptic signaling is not part of the current pathway.
+- **Cluster:** J, Q (neurovascular)
+- **Prerequisites:** J.13
+- **Citation:** Kandel 6e Ch 14 p 315–316
+- **Behavioral validation:** N/A.
+
+### J.18 Long-term gene-expression-dependent plasticity (CREB, late LTP)
+
+- **System:** all neurons; particularly studied in hippocampal CA1 (LTP) and Aplysia sensory-motor synapse (Kandel)
+- **Biological role:** repeated or strong activation of cAMP/PKA → PKA enters nucleus → phosphorylates CREB → CREB activates transcription of "immediate early genes" (c-fos, zif268, BDNF) → protein synthesis → structural growth (new spines, new active zones) → late-phase LTP that lasts hours-days-permanently. The "long-term" half of memory consolidation. Cycloheximide / anisomycin block this; early LTP (≤1h) still occurs but late LTP fails.
+- **Sim status:** missing. We have no transcriptional state, no protein synthesis, no late-LTP tier of weights. *Implementation cost:* moderate — could be a per-synapse "consolidation" variable that slowly tracks recent plasticity events and modulates a weight floor that resists later LTD. The structural-plasticity machinery currently being added (axon pruning + synaptogenesis) is the closest infrastructure but operates on connectivity not weights. Long-term gene-expression consolidation is a separate axis. *This is one of the more important missing mechanisms for long-horizon memory experiments.*
+- **Cluster:** J, L
+- **Prerequisites:** J.14
+- **Citation:** Kandel 6e Ch 14 p 320–321
+- **Behavioral validation:** classical Aplysia long-term sensitization protocol — train for N spaced trials, measure 24h-later behavior; cycloheximide blocks late phase only.
+
+### J.19 Convergence of multiple modulators on same channels
+
+- **System:** all neurons receiving multiple modulatory inputs
+- **Biological role:** a single ion channel (e.g. KCNQ / M-current K⁺ channel) can be modulated by ACh (via Gq/PLC), 5-HT, NE, somatostatin, and others — sometimes additively, sometimes occlusively, sometimes with sign reversal. The same channel is the *integration point* for diverse modulatory inputs. This is *not* a redundancy: different modulators carry different *behavioral state* signals (arousal, attention, reward), and the channel sees their union.
+- **Sim status:** partial. The neuromodulator subsystem allows multiple modulators to target the same `excitability_drive` or `synaptic_gain` parameter — they are *summed* per default. Occlusive or sign-reversal interactions are not first-class (would require explicit dependent-modulator wiring). Most simple multi-NM experiments would work.
+- **Cluster:** C, J
+- **Prerequisites:** J.13
+- **Citation:** Kandel 6e Ch 14 p 318–319
+- **Behavioral validation:** add two NMs targeting the same parameter, verify additive concentration → effect; reproduce a published example like ACh+NE on cortical excitability.
+
+### J.20 Quantal release and the calcium-fourth-power dependence
+
+- **System:** all chemical synapses
+- **Biological role:** Katz showed transmitter is released in unitary "quanta" (one vesicle each). The number released per AP is binomially distributed — N release sites × probability p (governed by Ca²⁺ entry). Postsynaptic response at zero-current = mEPSC ≈ "amplitude of one quantum". P_release scales as roughly the **4th power** of presynaptic [Ca²⁺] (because synaptotagmin, the Ca²⁺ sensor, has 5 Ca²⁺-binding sites, ≥4 must bind cooperatively for fusion). High Ca²⁺-affinity synaptotagmin-1/2 mediates synchronous (~1 ms) release; lower-affinity Syt-7 mediates asynchronous release (~tens of ms).
+- **Sim status:** partial. STP `stp_U` captures release probability per AP; STP gain is *not* explicitly Ca²⁺-fourth-power. Quantal noise is implicit in spike-driven discrete events (one spike → one conductance increment ≈ one "quantum"-equivalent). Asynchronous release: not modeled.
+- **Cluster:** J
+- **Prerequisites:** J.03
+- **Citation:** Kandel 6e Ch 15 p 326–340 (esp. Katz; Dodge & Rahamimoff)
+- **Behavioral validation:** STP paired-pulse benchmark already exists. To validate Ca-4th-power, add Ca-channel blocker analog (scale STP gain) and verify P_release scales as gain^4.
+
+### J.21 SNARE complex (synaptobrevin/VAMP, syntaxin, SNAP-25)
+
+- **System:** every neuron's presynaptic terminal
+- **Biological role:** the molecular machine that fuses vesicle with plasma membrane. The four-helix SNARE bundle pulls vesicle and plasma membranes together. Synaptotagmin-1 is the Ca²⁺ sensor that triggers final fusion. Disruption (botulinum toxins cleave SNAREs; tetanus cleaves synaptobrevin) abolishes release.
+- **Sim status:** not-applicable. Vesicle fusion is abstracted; we don't model individual SNARE proteins. Toxin experiments (BoNT, TeNT) cannot be reproduced. STP captures *macroscopic* release dynamics; molecular machinery is below our level.
+- **Cluster:** J
+- **Prerequisites:** J.03, J.20
+- **Citation:** Kandel 6e Ch 15 p 340–350
+- **Behavioral validation:** N/A.
+
+### J.22 Synaptic vesicle pools (readily releasable, recycling, reserve)
+
+- **System:** every chemical synapse
+- **Biological role:** vesicles partition into three pools — RRP (~1% of total, docked at active zone, immediately fusible), recycling (~10–20%), reserve (~80%). Sustained high-frequency stimulation depletes RRP first; recycling pool refills it via endocytosis (clathrin- or kiss-and-run pathways). The pool kinetics dictate the time-course of synaptic depression and recovery — directly the substrate of STP.
+- **Sim status:** partial. STP `stp_tau_d` captures the *recovery time constant* of release after depletion. Multi-pool kinetics (RRP vs recycling) is not explicit; one effective "depletion → recovery" timescale per connection type.
+- **Cluster:** J
+- **Prerequisites:** J.03, J.21
+- **Citation:** Kandel 6e Ch 15 p 350–355
+- **Behavioral validation:** STP paired-pulse benchmark covers single-pool case. Multi-pool would require sustained-stimulation experiments.
+
+### J.23 Spontaneous miniature EPSCs / IPSCs (mPSCs)
+
+- **System:** every chemical synapse
+- **Biological role:** at rest, vesicles spontaneously fuse at low frequency (Hz), producing detectable single-quantum EPSCs / IPSCs. Originally used by Fatt & Katz as proof of quantal release. Recent work suggests spontaneous and evoked release may be partly *independent* (different vesicle pools, different SNARE complexes), with separate roles in homeostatic regulation and developmental signaling.
+- **Sim status:** partial. We have OU-noise background drive that *functionally* approximates spontaneous synaptic noise, but not in a per-synapse-event way. True per-synapse mEPSC events are missing — would need to add a low-rate Poisson event trigger per synapse independent of presynaptic AP firing. **Possibly worth adding** because spontaneous release is now thought to drive homeostatic synaptic scaling.
+- **Cluster:** J
+- **Prerequisites:** J.20, J.22
+- **Citation:** Kandel 6e Ch 15 p 326–328
+- **Behavioral validation:** record postsynaptic membrane in absence of stimulation, count discrete events per second, verify rate and amplitude match published mEPSC distributions.
+
+---
+
+## Cluster C — Dopamine & neuromodulation (extended)
+
+Entries from Ch 16 (Neurotransmitters). Note: the project already implements a *declarative* neuromodulator framework (`sim/neuromodulators.py`) — adding any of the systems below means writing a `NeuromodulatorConfig` with the right baseline / decay / production rules / receptor target list. The framework exists; specific NMs need to be configured per task.
+
+### J.24 Habituation (presynaptic depression)
+
+- **System:** Aplysia gill-withdrawal; analogous in vertebrates
+- **Biological role:** repeated mild stimulation → progressive decrease in response amplitude. Mechanism: presynaptic Ca²⁺ entry decreases (Ca²⁺ channel inactivation); synaptic depression. Recovers with rest. Operationally indistinguishable in many cases from short-term synaptic depression (J.03 / J.22).
+- **Sim status:** partial. STP depression (`stp_tau_d`) captures the time-course. However, *long-term* habituation (after many spaced training sessions, lasts days) requires gene-expression changes (J.18) and is **missing**.
+- **Cluster:** J
+- **Prerequisites:** J.03
+- **Citation:** Kandel 6e Ch 53 p 1314–1320
+- **Behavioral validation:** STP paired-pulse depression benchmark covers short-term. Long-term habituation: not currently testable.
+
+### J.25 Sensitization (presynaptic facilitation, 5-HT-mediated)
+
+- **System:** Aplysia (5-HT from interneurons → presyn sensory terminal); analog in vertebrates (NE from LC enhances release at hippocampal afferents)
+- **Biological role:** noxious stimulus → 5-HT release → cAMP-PKA in presynaptic terminal → phosphorylation of K⁺ channels → broader AP → more Ca²⁺ entry → more transmitter release. Short-term (minutes); long-term (days) requires CREB-mediated transcription. Kandel's Nobel-winning work.
+- **Sim status:** partial. NM framework can implement 5-HT-driven gain modulation of release probability. Not currently deployed. Long-term sensitization (CREB-dependent): missing (J.18).
+- **Cluster:** C, J
+- **Prerequisites:** J.13, J.14
+- **Citation:** Kandel 6e Ch 53 p 1320–1325
+- **Behavioral validation:** Aplysia-like sensitization protocol — single shock primes a stronger response to subsequent gentle touch, decays in minutes.
+
+### J.26 Classical conditioning (Aplysia model)
+
+- **System:** Aplysia gill-withdrawal; mammalian eyeblink (cerebellar); fear conditioning (amygdala)
+- **Biological role:** activity-dependent presynaptic facilitation — the CS pathway gets selectively *more* facilitated than other pathways because Ca²⁺ entry from CS spike *coincides* with the 5-HT modulator pulse from US. Adenylyl cyclase is the *coincidence detector* (its activity is enhanced by Ca²⁺/calmodulin AND by Gs from 5-HT GPCR — the Gs-Ca²⁺ AND-gate).
+- **Sim status:** partial. The associative-conditioning experiment in `experiment/presets.py` does the functional equivalent — paired CS+US with STDP-driven weight change. The *mechanism* is different (we use Hebbian+reward at corticostriatal-like synapses) but the outcome matches.
+- **Cluster:** J, O (emotion)
+- **Prerequisites:** J.25
+- **Citation:** Kandel 6e Ch 53 p 1325–1330
+- **Behavioral validation:** existing `run_experiment_headless.py --preset associative` already validates the outcome (CS-on rate increase, weights 0.10 → 0.999, t=11.36).
+
+### J.27 Memory reconsolidation
+
+- **System:** all long-term memory systems
+- **Biological role:** reactivating a long-term memory makes it transiently labile — protein-synthesis inhibitors *during retrieval* erase the memory. Suggests retrieval re-stabilizes through the same gene-expression mechanism as initial storage. Therapeutic implication: PTSD treatment via reconsolidation blockade with propranolol.
+- **Sim status:** missing. Same dependency as J.18 — no transcriptional state means no reconsolidation. *Implementation cost:* moderate, paired with J.18.
+- **Cluster:** J, L
+- **Prerequisites:** J.18
+- **Citation:** Kandel 6e Ch 53 p 1330–1334
+- **Behavioral validation:** N/A.
+
+### J.28 LTP / LTD — long-term potentiation / depression
+
+- **System:** ubiquitous in vertebrate CNS; canonical in CA1 (Schaffer collateral → CA1 NMDAR-LTP), neocortex, BG, cerebellum
+- **Biological role:** the workhorse mammalian plasticity rule. **NMDAR-LTP**: high-frequency stim → NMDAR-driven postsynaptic Ca²⁺ → CaMKII activation → AMPA receptor insertion → larger EPSC at the same synapse. **NMDAR-LTD**: low-frequency stim → moderate Ca²⁺ → calcineurin (PP1) → AMPA removal. The Ca²⁺-amplitude switch (high → LTP, moderate → LTD) is the BCM-like substrate. **mGluR-LTD** (cerebellum, hippocampus): a *separate* LTD pathway via mGluR1/5 → Ca²⁺ release from stores → endocannabinoid retrograde signal (cerebellum). Both forms contribute to memory.
+- **Sim status:** **implemented** as STDP — the spike-timing version of NMDAR-LTP/LTD. The Ca²⁺ amplitude → sign-of-change mapping is implicit in the STDP kernel (`fused_stdp_weight_update`). Soft-bound LTP captured. mGluR-LTD specifically: missing (J.15).
+- **Cluster:** J
+- **Prerequisites:** J.08
+- **Citation:** Kandel 6e Ch 53 p 1314–1320 (also Ch 54 for hippocampal LTP detail)
+- **Behavioral validation:** STDP timing-curve benchmark (Bi & Poo 1998) — already passes for both LTP and LTD.
+
+### J.29 Spike-timing-dependent plasticity (STDP) as the temporal version of LTP/LTD
+
+- **System:** all NMDAR-bearing synapses
+- **Biological role:** when presynaptic spike *precedes* postsynaptic spike by ~10 ms → LTP; reverse → LTD. The asymmetric kernel emerged from observing that the post-spike's back-propagating AP unblocks NMDA Mg²⁺ block coincidently with active glutamate, while reverse pairing leaves Mg²⁺ blocked. Bi & Poo 1998 hippocampal cultures.
+- **Sim status:** **implemented** — `fused_stdp_weight_update` with asymmetric pre→post / post→pre kernels. STDP is the mainline plasticity rule of the simulator.
+- **Cluster:** J
+- **Prerequisites:** J.08, J.28
+- **Citation:** Kandel 6e Ch 53 p 1318–1320 (the principle); Bi & Poo 1998
+- **Behavioral validation:** Bi & Poo benchmark: kernel matches theory to 3e-8, full-sim verified at dt=±5, ±20 ms.
+
+### J.30 Local protein synthesis at synapses (CPEB / prion-like, mRNA in spines)
+
+- **System:** Aplysia and mammalian dendrites
+- **Biological role:** Kandel's Lasker / Nobel work. Some forms of long-term facilitation require *local* protein synthesis at the activated synapse — synapse-specific tagging via CPEB (cytoplasmic polyadenylation element binding protein), which has a prion-like self-templating domain. CPEB self-aggregates in the activated spine, becomes a stable mark, and locally drives translation of mRNAs already pre-positioned in dendrites. This is how the cell achieves **synapse specificity** in long-term memory — not all synapses on one cell get the same gene-expression boost.
+- **Sim status:** missing. Per-synapse late-LTP tagging would require: (a) per-synapse "synaptic tag" boolean, (b) cell-wide gene-expression product, (c) tag × product → stabilization. Cluster L / J.18 dependency.
+- **Cluster:** J, L
+- **Prerequisites:** J.18
+- **Citation:** Kandel 6e Ch 53 p 1325–1330
+- **Behavioral validation:** N/A.
+
 ### J.31 Synaptic LTP/LTD as substrate for perceptual learning
+
 *[from Part IV — Perception (Ch 17-29); renumbered from J.50]*
 
 - **System:** sensory cortices (V1, S1, A1)
@@ -2372,6 +2502,7 @@ that:
 - **Discrepancy notes:** project doc treats `--learned-perception` as the perception arc; Kandel-grade perception involves transduction → parallel channels → topographic maps → hierarchical RFs → multisensory binding → predictive inference. The current arc compresses all of this to a single plastic projection from beacon→cortex.
 
 ### J.32 PF→PC LTD vs corticostriatal LTP/LTD — opposite-sign learning rules
+
 *[from Part V — Movement (Ch 30-39); renumbered from J.50]*
 
 - **System:** cerebellum (F.54) and striatum (O.51).
@@ -2412,6 +2543,7 @@ that:
 - B.52 (MSN lateral inhibition + cross-action cortex routing): real BG is anatomically dense in cross-action wiring at both cortex and striatum; project's same-action-only routing is a *principled choice* given v1/v2/v3.1/v4 NO-GO findings on cross-projections, but is anatomically a simplification.
 
 ### J.33 Implicit memory taxonomy — habituation / sensitization / classical / operant / priming / skill
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from J.50]*
 
 - **System:** Distributed: cerebellum (motor adaptation), BG (habit, stimulus-response), amygdala (fear conditioning), neocortex sensory areas (priming), Aplysia gill-withdrawal circuit (sensitization).
@@ -2423,6 +2555,7 @@ that:
 - **Behavioral validation:** Double dissociation: amnesic patients (H.M.) acquire mirror-tracing skill but cannot verbally recall sessions.
 
 ### J.34 Memory imperfections as features — schemas, gist, false memory
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from J.51]*
 
 - **System:** Distributed cortical schemas; HC-amygdala interactions for emotional gist.
@@ -2438,6 +2571,7 @@ that:
 ## Ch 54 — The Hippocampus and the Neural Basis of Explicit Memory Storage (PROJECT-CRITICAL)
 
 ### J.35 Schaffer collateral LTP — NMDA-dependent, postsynaptic, associative
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from J.52]*
 
 - **System:** CA3→CA1 synapse on proximal CA1 dendrites; AMPA + NMDA receptors; CaMKII / PKC / NO retrograde messenger; AMPA insertion at silent synapses.
@@ -2449,6 +2583,7 @@ that:
 - **Behavioral validation:** APV blockade abolishes LTP at Schaffer; CA1-NR1 KO mice show place fields but unstable across sessions.
 
 ### J.36 Mossy fiber LTP — presynaptic, NMDA-independent, nonassociative
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from J.53]*
 
 - **System:** DG granule → CA3 mossy fiber terminals; large boutons, presynaptic Ca²⁺-AC-cAMP-PKA cascade.
@@ -2460,6 +2595,7 @@ that:
 - **Behavioral validation:** APV does NOT block; PKA inhibitor H-89 does; LTP visible in EPSC under voltage-clamp.
 
 ### J.37 Direct perforant path LTP — mixed NMDAR + L-type Ca²⁺ channel
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from J.54]*
 
 - **System:** EC layer III → CA1 distal dendrites; partial APV block, completed by APV+nifedipine.
@@ -2471,6 +2607,7 @@ that:
 - **Behavioral validation:** APV partial block; APV+nifedipine full block.
 
 ### J.38 Late-LTP — protein synthesis, CREB, PKMζ, structural
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from J.55]*
 
 - **System:** Same CA3→CA1 synapse; ≥3 trains of 100 Hz tetanus; cAMP→PKA→MAPK→CREB-1 transcription; PKMζ translation; growth of new synaptic contacts.
@@ -2482,6 +2619,7 @@ that:
 - **Behavioral validation:** Anisomycin or PKA-inhibitor transgene blocks late-LTP and destabilizes place fields after ~1 hour while sparing initial formation.
 
 ### J.39 LTD in hippocampus — flexibility / saturation prevention
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from J.56]*
 
 - **System:** Low-frequency stimulation (1 Hz) of Schaffer collaterals; modest, prolonged Ca²⁺ rise activates phosphatases (PP1) instead of kinases.
@@ -2494,7 +2632,14 @@ that:
 
 ## Cluster K — additions
 
+---
+
+## Cluster K — Sensory transduction
+
+**15 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
 ### K.01 Phototransduction cascade — rods & cones (G-protein cascade)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.50]*
 
 - **System:** retinal photoreceptors (outer segments)
@@ -2506,6 +2651,7 @@ that:
 - **Behavioral validation:** intensity-response curve (Naka-Rushton), light/dark adaptation (~10^9 dynamic range), ~10 ms latency at high intensity vs ~300 ms scotopic.
 
 ### K.02 Phototransduction adaptation (Ca2+ feedback)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.51]*
 
 - **System:** photoreceptor outer segment
@@ -2517,6 +2663,7 @@ that:
 - **Behavioral validation:** Weber's law for incremental thresholds; recovery half-time after bleach.
 
 ### K.03 Hair cell mechanotransduction — tip-link / MET channel
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.52]*
 
 - **System:** cochlea (auditory) and vestibular hair cells
@@ -2528,6 +2675,7 @@ that:
 - **Behavioral validation:** sub-µm displacement threshold; phase-locking up to ~3 kHz; rapid (~ms) and slow (~10 ms) adaptation.
 
 ### K.04 Cochlear traveling wave & tonotopy
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.53]*
 
 - **System:** basilar membrane / organ of Corti
@@ -2539,6 +2687,7 @@ that:
 - **Behavioral validation:** characteristic frequency map; psychophysical critical bands.
 
 ### K.05 Outer hair cell electromotility (cochlear amplifier)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.54]*
 
 - **System:** outer hair cells (prestin)
@@ -2550,6 +2699,7 @@ that:
 - **Behavioral validation:** tuning curve sharpness Q10dB; otoacoustic emissions; compressive nonlinearity.
 
 ### K.06 Vestibular hair-cell directional sensitivity
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.55]*
 
 - **System:** semicircular canals + otolith organs (utricle, saccule)
@@ -2561,6 +2711,7 @@ that:
 - **Behavioral validation:** VOR gain ~1.0; sinusoidal head rotation phase; tilt → tonic firing change.
 
 ### K.07 Mechanoreceptor types & adaptation classes (Pacinian / Meissner / Merkel / Ruffini)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.56]*
 
 - **System:** glabrous + hairy skin
@@ -2572,6 +2723,7 @@ that:
 - **Behavioral validation:** two-point discrimination ≈1 mm fingertip; vibration JND; tactile frequency tuning by class.
 
 ### K.08 Piezo1 / Piezo2 mechanosensitive channels
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.57]*
 
 - **System:** somatosensory + visceral
@@ -2583,6 +2735,7 @@ that:
 - **Behavioral validation:** touch/proprioception loss in PIEZO2 KO; rapidly adapting current response to indentation ramp.
 
 ### K.09 Nociceptor classes & TRP channel transduction
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.58]*
 
 - **System:** Aδ + C fibers in skin / viscera
@@ -2594,6 +2747,7 @@ that:
 - **Behavioral validation:** thermal threshold ~43°C; capsaicin desensitization; QST psychophysics.
 
 ### K.10 Olfactory transduction (GPCR cAMP cascade)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.59]*
 
 - **System:** olfactory sensory neurons (OE)
@@ -2605,6 +2759,7 @@ that:
 - **Behavioral validation:** combinatorial activation maps in olfactory bulb glomeruli; concentration-response curves.
 
 ### K.11 Gustatory transduction (5 modalities, GPCR + ion-channel)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.60]*
 
 - **System:** taste receptor cells, taste buds
@@ -2616,6 +2771,7 @@ that:
 - **Behavioral validation:** modality-selective lesions; T1R/T2R KO loss of taste class.
 
 ### K.12 Proprioceptors (muscle spindle, GTO, joint receptors)
+
 *[from Part IV — Perception (Ch 17-29); renumbered from K.61]*
 
 - **System:** muscle / tendon / joint
@@ -2631,6 +2787,7 @@ that:
 ## Cluster E — Sensory perception & cortical encoding
 
 ### K.13 Muscle spindle Ia/II afferent — proprioception
+
 *[from Part V — Movement (Ch 30-39); renumbered from K.50]*
 
 - **System:** intrafusal fiber capsule with primary (Ia) and secondary (II) afferent endings.
@@ -2642,6 +2799,7 @@ that:
 - **Behavioral validation:** Ramp-and-hold stretch → Ia phasic+tonic, II tonic only.
 
 ### K.14 Golgi tendon organ Ib — force / tension
+
 *[from Part V — Movement (Ch 30-39); renumbered from K.51]*
 
 - **System:** encapsulated mechanoreceptor in series with collagen at musculotendinous junction.
@@ -2653,6 +2811,7 @@ that:
 - **Behavioral validation:** Force step → Ib firing rate proportional to active tension.
 
 ### K.15 Vestibular afferents — head linear / angular acceleration
+
 *[from Part V — Movement (Ch 30-39); renumbered from K.52]*
 
 - **System:** semicircular canals (angular), otolith organs (linear); hair-cell mechanoreceptors → vestibular ganglion.
@@ -2669,7 +2828,80 @@ that:
 
 ## Cluster L — additions
 
+---
+
+## Cluster L — Development & critical periods
+
+**23 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
+### L.01 Target recognition / synaptic specificity (cell-adhesion molecules)
+
+- **System:** all developing CNS — visual system, autonomic ganglia, cortex, hippocampus, etc.
+- **Biological role:** axons select specific postsynaptic partners using a combinatorial code of cell-surface recognition molecules: cadherins (homophilic adhesion → "like binds like"), protocadherins (~60 isoforms, individually identifying), neurexin (presyn) ↔ neuroligin (postsyn) pairs, LRRTM family, SynCAMs, ephrins/Eph receptors (often *anti-adhesive*, sorting by gradient), semaphorins/plexins (axon guidance with carryover into synaptic targeting). The wiring of which-axon-finds-which-target is *not* random in real brains.
+- **Sim status:** missing entirely. Initial connectivity in the simulator is determined by `RegionPathway` declarations + density + spatial connectivity generators (see `sim/connectivity.py`); there is no molecular-recognition layer. This is fine *for a connectivity-as-fixed-prior* model — but in the patch-matrix striatum option (cheat-5 option 2), we'd want subsets of cortical pools to project to specific striatal pools, which is a hand-coded version of this targeting. **A real recognition-code mechanism would be a new system** — probably out of scope unless we want to model developmental wiring errors (autism-related neuroligin mutations).
+- **Cluster:** L (and B for the patch-matrix application)
+- **Prerequisites:** none (this *precedes* synapse function)
+- **Citation:** Kandel 6e Ch 48 p 1182–1192
+- **Behavioral validation:** would require a "wiring" benchmark — given a target connectivity matrix and a recognition-code, does our simulation produce the expected adjacency? Not testable in current architecture.
+
+### L.02 Synapse elimination by activity competition
+
+- **System:** NMJ (neonatal multi-innervation → 1:1 by P14), climbing fiber → Purkinje (1:1 in adult), cortex (massive overproduction → pruning to ~50% in adolescence)
+- **Biological role:** "use it or lose it" at the synapse level. When a postsynaptic cell is innervated by multiple presynaptic axons, the synapses that fire *coincidently* with the strongest axon (high-correlation = "winners") are stabilized; weaker / poorly-correlated synapses are eliminated. The final 1:1 pattern at NMJ + climbing-fiber emerges through this competition. In cortex, ~50% of overproduced synapses are pruned during adolescence; pruning failure is implicated in schizophrenia and autism.
+- **Sim status:** **partial — directly addressed by the structural-pruning option in cheat-5 survey** (option 1 in `docs/plans/2026-04-28-cheat5-real-options-survey.md`). The proposed mechanism — `cp_synapse_alive`, survival-score accumulation, prune when below threshold — is the project's analogue of biological synapse elimination. Once shipped, this entry's status becomes "implemented for the cheat-5 use case; not a general developmental mechanism." Currently **in active development** (see `docs/plans/2026-04-28-structural-plasticity-implementation.md`).
+- **Cluster:** L, B (the most likely first deployment)
+- **Prerequisites:** J.07–J.10 (synapse function), J.18 (long-term plasticity)
+- **Citation:** Kandel 6e Ch 48 p 1198–1205
+- **Behavioral validation:** Phase B + structural pruning Tier 2: 3-seed mean sum ≤ 4.5 → cheat #5 closed for real. Currently in Tier 1 / Tier 2.
+
+### L.03 Glia-mediated synapse pruning (complement C1q, C3 → microglia phagocytosis)
+
+- **System:** developing visual cortex, retinogeniculate refinement; ongoing in adult hippocampus
+- **Biological role:** astrocytes secrete TGF-β → induces complement protein C1q expression on weaker synapses → C1q tags → microglia recognize C3 → engulf and remove. The classical-immunity complement pathway is repurposed for synapse refinement. Excessive complement-mediated pruning is now thought to contribute to schizophrenia and Alzheimer's (synapse loss).
+- **Sim status:** missing. The functional outcome (eliminate weak synapses) is captured by L.02 / structural pruning. The *mechanism* (complement + microglia) is below our level of abstraction. We don't have glia (Cluster Q) at all.
+- **Cluster:** Q, L
+- **Prerequisites:** L.02, glia infrastructure
+- **Citation:** Kandel 6e Ch 48 p 1198–1205
+- **Behavioral validation:** N/A (would require glia model).
+
+### L.04 Critical periods (visual, language, social)
+
+- **System:** sensory cortex (V1 ocular dominance ~P21–P35 in mice / ~3 mo in humans), language areas, social-bonding circuits
+- **Biological role:** windows of heightened plasticity, after which rewiring becomes much harder. Opening: experience-dependent maturation of GABA-A inhibition (PV-cell maturation) raises the network out of low-inhibition "permissive" state. Closing: perineuronal nets (PNNs) condense around mature PV cells, physically restricting synapse change; myelin-associated inhibitors (Nogo, MAG) up-regulate. Reopening (Hensch et al.): chondroitinase digesting PNNs, or fluoxetine, can re-open critical periods in adult animals.
+- **Sim status:** **partial — functionally captured by the curriculum infrastructure**. The 2-phase curriculum in `g11_bg_runner` (warmup with cortex_to_d1 plastic + input layers frozen, then thaw input layers / freeze cortex) is a critical-period analogue — heightened plasticity for a window, then closure. The plasticity-gate substrate (`cp_plasticity_gain`) supports both opening and closing. **The infrastructure is exactly the right shape** for biological critical periods; we just don't model the molecular triggers (PV maturation, PNN deposition).
+- **Cluster:** L
+- **Prerequisites:** plasticity-gate infrastructure (already implemented)
+- **Citation:** Kandel 6e Ch 49 p 1210–1230
+- **Behavioral validation:** the curriculum experiments already validate the *functional* shape (warmup window → committed performance). To validate as a *biological* critical-period model would require: (a) PNN-analogue mechanism (slow accumulation of a "lock" variable that resists future plasticity gain), (b) reopening via simulated chondroitinase (zero out the lock variable). Stretch goal.
+
+### L.05 Spontaneous-activity-driven refinement (retinal waves, etc.)
+
+- **System:** developing retina, cochlea, spinal cord, hippocampus — *before* sensory experience
+- **Biological role:** even before eyes open or ears function, the developing nervous system generates spontaneous patterned activity (retinal waves: bursts of correlated activity that propagate across the retina at fixed velocities) that drives the refinement of downstream connections via NMDAR-dependent rules. The wave content matters — random noise wouldn't produce ocular dominance maps; coherent waves do. The brain is *self-organizing* its sensory representations before experience arrives.
+- **Sim status:** missing as a mechanism. We have OU noise as background; we don't have *patterned* spontaneous activity. Could be added by injecting structured noise patterns during a pretraining phase. **Likely useful** for the plastic-input-layer arc — a "developmental pretraining" via structured retinal-wave-like input might solve the cold-start problem that learned-perception had on 2026-04-26 without curriculum. Worth flagging as a future test.
+- **Cluster:** L, E (sensory)
+- **Prerequisites:** plasticity-gate infrastructure
+- **Citation:** Kandel 6e Ch 49 p 1218–1222
+- **Behavioral validation:** generate retinal-wave-like input → train sensory→cortex pathway during pretraining gate-open phase → freeze → verify cortex develops coherent receptive fields (analogue of orientation columns).
+
+### L.06 Activity-dependent refinement is general (NMDAR-dependent)
+
+- **System:** essentially every refinement in every system tested — visual, auditory, somatosensory, motor, BG
+- **Biological role:** the *common substrate* of refinement is NMDAR-dependent Hebbian plasticity: coincident pre/post → strengthening; uncorrelated → weakening / pruning. NMDAR antagonists block refinement in all systems. This is precisely the generalization that *Hebb's postulate* predicts.
+- **Sim status:** **implemented** (J.08 + STDP). The simulator's STDP is the algorithmic content of this principle. We use it pervasively (Phase B BG cascade, learned perception, hippocampus) — and the simulator's success on the perception arc validates the principle as deployed.
+- **Cluster:** L, J
+- **Prerequisites:** J.08
+- **Citation:** Kandel 6e Ch 49 p 1226–1230
+- **Behavioral validation:** STDP timing-curve benchmark (Bi & Poo 1998) — already passes.
+
+---
+
+## Cluster J — Synapses & plasticity rules (continued from Ch 53)
+
+Ch 53 entries continue the J series — plasticity at the synaptic level, the substrate of implicit memory.
+
 ### L.07 Spinal CPG developmental specification — V0/V1/V2/V3 interneuron classes
+
 *[from Part V — Movement (Ch 30-39); renumbered from L.50]*
 
 - **System:** dorso-ventral patterning genes (Pax / Lim / Sim1 / Shox2) define interneuron identity in developing spinal cord.
@@ -2685,6 +2917,7 @@ that:
 ## Cluster H (continued) — BMI / record-stimulate
 
 ### L.08 Neural induction by the Spemann organizer — BMP-inhibitor signaling
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.60]*
 
 - **System:** embryonic ectoderm; dorsal blastopore lip / node organizer
@@ -2696,6 +2929,7 @@ that:
 - **Behavioral validation:** ectopic organizer transplant induces secondary neural axis (Spemann & Mangold 1924)
 
 ### L.09 Rostrocaudal patterning by Wnt / FGF / RA gradients — caudalization
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.61]*
 
 - **System:** neural plate / early neural tube
@@ -2707,6 +2941,7 @@ that:
 - **Behavioral validation:** RA exposure during gastrulation truncates rostral structures; Hox gene knockouts homeotically transform rhombomere identity
 
 ### L.10 Dorsoventral patterning by SHH / BMP opposing gradients
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.62]*
 
 - **System:** neural tube; floor plate (SHH source) vs roof plate (BMP source)
@@ -2718,6 +2953,7 @@ that:
 - **Behavioral validation:** floor-plate ablation eliminates motor neurons; ectopic SHH ventralizes dorsal cord
 
 ### L.11 Hindbrain rhombomere segmentation — Hox + Eph/ephrin repulsion
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.63]*
 
 - **System:** rhombencephalon; transient rhombomeres r1-r8
@@ -2729,6 +2965,7 @@ that:
 - **Behavioral validation:** Hox paralog group knockouts collapse rhombomere identity; Krox20 KO loses r3/r5
 
 ### L.12 Neurogenesis from radial-glia stem cells — symmetric vs asymmetric division
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.64]*
 
 - **System:** ventricular / subventricular zones of the developing neural tube
@@ -2740,6 +2977,7 @@ that:
 - **Behavioral validation:** Notch pathway perturbation collapses progenitor pool prematurely (early neuron differentiation, microcephaly)
 
 ### L.13 Neuronal migration along radial glia — laminar cortex assembly
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.65]*
 
 - **System:** developing neocortex; radial glia as scaffold
@@ -2751,6 +2989,7 @@ that:
 - **Behavioral validation:** *reeler* mouse: cortical layers inverted; lissencephaly in human reelin/DCX/LIS1 mutations
 
 ### L.14 Tangential interneuron migration — ganglionic-eminence origin
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.66]*
 
 - **System:** medial / caudal / lateral ganglionic eminences → cortex, hippocampus, olfactory bulb
@@ -2762,6 +3001,7 @@ that:
 - **Behavioral validation:** Dlx1/2 KO loses ganglionic-eminence-derived interneurons; cortex becomes hyperexcitable
 
 ### L.15 Neurotrophic-factor hypothesis — target-derived survival
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.67]*
 
 - **System:** developing PNS / CNS, NGF / BDNF / NT-3 / NT-4 + Trk receptors
@@ -2773,6 +3013,7 @@ that:
 - **Behavioral validation:** anti-NGF antibodies in neonates ablate sympathetic ganglia; Bax KO rescues ~all developmental death
 
 ### L.16 Programmed cell death (apoptosis) — caspase cascade & Bcl-2 family
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.68]*
 
 - **System:** all developing neurons
@@ -2784,6 +3025,7 @@ that:
 - **Behavioral validation:** caspase-3 KO mice have dramatic embryonic CNS hyperplasia
 
 ### L.17 Growth cone guidance — netrins, semaphorins, ephrins, slits
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.69]*
 
 - **System:** all extending axons during development
@@ -2795,6 +3037,7 @@ that:
 - **Behavioral validation:** netrin/DCC KO: commissural axons fail to cross midline; EphA KO: temporal retinal axons mis-target rostral tectum
 
 ### L.18 Topographic mapping by Eph/ephrin gradients (chemoaffinity)
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.70]*
 
 - **System:** retinotectal projection (canonical); also somatosensory, auditory tonotopy
@@ -2806,6 +3049,7 @@ that:
 - **Behavioral validation:** ephrin-A2/A5 double KO: distorted retinotectal map; activity blockade prevents map sharpening
 
 ### L.19 Critical period for ocular dominance — activity-dependent refinement
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.71]*
 
 - **System:** primary visual cortex (V1) layer IV; LGN inputs
@@ -2817,6 +3061,7 @@ that:
 - **Behavioral validation:** monocular deprivation in kittens during weeks 4-12 → permanent amblyopia; chondroitinase digestion of perineuronal nets reopens the window in adult rat (Pizzorusso 2002)
 
 ### L.20 Adult neurogenesis — dentate gyrus & subventricular zone
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.72]*
 
 - **System:** hippocampal DG (granule cells); SVZ → rostral migratory stream → olfactory bulb interneurons
@@ -2828,6 +3073,7 @@ that:
 - **Behavioral validation:** ablation of adult hippocampal neurogenesis impairs context discrimination and pattern separation tasks; running and enriched environment increase DG neurogenesis
 
 ### L.21 Neural-crest derivation of the PNS
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.73]*
 
 - **System:** neural crest → DRG sensory neurons, sympathetic & parasympathetic ganglia, enteric NS, Schwann cells, melanocytes, craniofacial skeleton
@@ -2841,6 +3087,7 @@ that:
 ## Cluster Q — Glia & repair
 
 ### L.22 Hormonal organization of sexually dimorphic nuclei
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from L.74]*
 
 - **System:** SRY → testis → testosterone (perinatal surge) → aromatized to estradiol in CNS → masculinized circuits (e.g. SDN-POA, BNST, song-control nuclei in birds)
@@ -2884,6 +3131,7 @@ the *initial conditions* of our simulated network — a network we
 declare via `BrainRegion`/`RegionPathway` rather than grow.
 
 ### L.23 Critical period for language — perceptual narrowing in first year
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from L.50]*
 
 - **System:** Auditory cortex + frontal speech areas; experience-dependent pruning of phonetic discriminability.
@@ -2896,7 +3144,70 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 
 ## Cluster N — additions
 
+---
+
+## Cluster M — Neuromuscular junction
+
+**4 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
+### M.01 Neuromuscular junction (NMJ) — overall structure
+
+- **System:** α-motor axon → skeletal muscle fiber motor end-plate
+- **Biological role:** the canonical "simple" chemical synapse — one motor axon innervates one site (end-plate) in adult mammals; presynaptic boutons sit in primary folds with active zones aligned to postsynaptic junctional folds (~10,000 receptors/µm² packed at fold crests); ~100 nm cleft (wider than CNS cleft) with basal lamina (collagen + AChE). Historically the Rosetta Stone for synaptic biophysics (Katz, 1950+).
+- **Sim status:** missing. No muscle output in the simulator; "motor neurons" in `g11_bg_runner` are just abstract spike-emitting populations whose firing rate represents action selection. There is no muscle, no contraction, no force.
+- **Cluster:** M (and H — motor & spinal output)
+- **Prerequisites:** I (channels & AP)
+- **Citation:** Kandel 6e Ch 12 p 254–256 (Fig 12-1)
+- **Behavioral validation:** add a 1D Hill-type muscle model fed by motor neuron spike trains; verify that twitch summation, tetanus, and length-tension curves match published data. Stretch goal — only meaningful once we want to model real motor output.
+
+### M.02 Nicotinic acetylcholine receptor (nAChR) — ionotropic
+
+- **System:** NMJ; also autonomic ganglia and CNS (less relevant to this simulator)
+- **Biological role:** pentameric ligand-gated cation channel (2α + β + γ + δ in muscle adult form). Two ACh binding sites required for opening; permeable to Na⁺ and K⁺ (and Ca²⁺ at lower conductance). Generates end-plate potential ~75 mV peak — well above the ~20 mV needed to trigger a muscle AP, so NMJ is normally "1:1 reliable" (no failures in healthy muscle). Suprathreshold safety factor distinguishes it from CNS synapses where summation is required.
+- **Sim status:** not-applicable directly. The simulator's generic excitatory synapse (`E_exc = 0 mV`) collapses the AMPA/nAChR/NMDA distinction into one phenomenological conductance + reversal pair. ACh as a peripheral fast transmitter is not a separate channel type. *If* we add NMJ + muscle, nAChR would need to be a real channel type (different reversal, kinetics, conductance from AMPA).
+- **Cluster:** M, J
+- **Prerequisites:** J.01, J.02
+- **Citation:** Kandel 6e Ch 12 p 256–270
+- **Behavioral validation:** N/A until M.01 added.
+
+### M.03 Acetylcholinesterase (AChE) — synaptic-cleft enzyme
+
+- **System:** NMJ basal lamina; also CNS cholinergic synapses
+- **Biological role:** hydrolyzes ACh into acetate + choline within ~1 ms of release, enforcing the "one-hit" rule that lets the postsynaptic conductance return to baseline between APs. Inhibitors (organophosphates, neostigmine — used clinically for myasthenia gravis) prolong receptor activation.
+- **Sim status:** not-applicable. The exponential conductance decay (`fused_conductance_decay_and_current`) phenomenologically captures the cumulative effect of unbinding + AChE clearance; we don't track enzymes.
+- **Cluster:** M, J
+- **Prerequisites:** M.02
+- **Citation:** Kandel 6e Ch 12 p 255
+- **Behavioral validation:** N/A.
+
+### M.04 End-plate potential / quantal release (foreshadowed; covered in Ch 15)
+
+- **System:** NMJ
+- **Biological role:** Katz showed that ACh is released in discrete *quanta* (each quantum ≈ contents of one synaptic vesicle, ~5,000 ACh molecules) — spontaneous miniature end-plate potentials (mEPPs) of ~0.5 mV occur at low frequency without stimulation; AP-evoked EPP equals the sum of N synchronously released quanta. Founded the vesicle hypothesis of release. **Detailed entry deferred to Ch 15.**
+- **Sim status:** not-applicable directly; STP `stp_U` parameter captures the "release probability per AP" abstraction.
+- **Cluster:** M, J
+- **Prerequisites:** J.03
+- **Citation:** Kandel 6e Ch 12 p 254 (introduction) → Ch 15 (full treatment)
+- **Behavioral validation:** see J.03 entry.
+
+---
+
+---
+# Catalog additions from Parts II, IV–IX (merged)
+
+Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; numbering continues from the existing Section IV entries (J.30, M.04, etc.).
+
+
+## Cluster A — additions
+
+---
+
+## Cluster N — Sleep & arousal
+
+**14 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
 ### N.01 Ascending Arousal System Architecture — parabrachial / PPT / basal forebrain
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.50]*
 
 - **System:** Glutamatergic neurons in dorsolateral pons (parabrachial + PPT) → basal forebrain → cortex; supplemented by monoamines (LC, raphe, TMN), orexin, ACh.
@@ -2908,6 +3219,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Animals with parabrachial-PPT lesions enter persistent coma; same animals with isolated LC or raphe lesions remain awake, just less alert.
 
 ### N.02 VLPO Sleep-Promoting Nucleus — GABA + galanin sleep ON-switch
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.51]*
 
 - **System:** Ventrolateral preoptic nucleus + median preoptic nucleus (anterior hypothalamus).
@@ -2919,6 +3231,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Lesion of VLPO → fragmented sleep with up to 50% loss of total sleep time; correlation with sleep fragmentation in elderly (postmortem VLPO galanin neuron count predicts antemortem fragmentation).
 
 ### N.03 Wake-Sleep Flip-Flop Switch — mutual-inhibition bistable
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.52]*
 
 - **System:** VLPO/MNPO ↔ ascending arousal system mutual inhibition.
@@ -2930,6 +3243,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Hypnogram measurement: healthy adults spend <5% of nighttime in transitional states.
 
 ### N.04 REM Flip-Flop (Subceruleus / vlPAG) — second pontine bistable
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.53]*
 
 - **System:** Subceruleus / sublaterodorsal area (REM-on glutamatergic) ↔ ventrolateral periaqueductal gray (REM-off GABA) — a separate flip-flop nested inside non-REM sleep.
@@ -2941,6 +3255,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Subceruleus lesion → REM atonia abolished (REM behavior disorder model); pontine cholinergic agonist → forced REM.
 
 ### N.05 Slow Oscillation (Up/Down States) — NREM cortical 0.5-1 Hz
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.54]*
 
 - **System:** Cortex-intrinsic; survives in isolated cortical slab.
@@ -2952,6 +3267,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Intracortical recording or surface EEG: 0.5-1 Hz slow waves with paired multi-unit Up/Down structure. Persists even with thalamus inactivated.
 
 ### N.06 Sleep Spindles (10-16 Hz) — thalamocortical reticular ↔ relay
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.55]*
 
 - **System:** Thalamic reticular nucleus (TRN) ↔ thalamocortical relay; T-type Ca²⁺ low-threshold spike mechanism.
@@ -2963,6 +3279,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** EEG: 10-16 Hz waxing/waning spindle bursts in N2; spindle density correlates with motor sequence task improvement after sleep.
 
 ### N.07 Hippocampal Sharp-Wave Ripples (SWRs) — NREM replay events ⭐
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.56]*
 
 - **System:** Hippocampal CA3/CA1 high-frequency (140-250 Hz) population bursts during NREM and quiet wakefulness.
@@ -2974,6 +3291,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Closed-loop SWR disruption (electrical stim triggered on detected ripple) during post-task sleep → impaired next-day spatial memory. Forward AND reverse replay observed in CA1.
 
 ### N.08 Adenosine Sleep Pressure — humoral homeostat ⭐
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.57]*
 
 - **System:** Brain-wide extracellular adenosine (ATP→ADP→AMP→adenosine accumulation during waking metabolism); A1 receptors inhibitory on wake-promoting neurons; A2A receptors excitatory on VLPO.
@@ -2985,6 +3303,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Sleep-deprivation rebound: animals/humans deprived of sleep pay back missed sleep with deeper N3; caffeine antagonizes this.
 
 ### N.09 Two-Process Model (Process-S × Process-C) — homeostatic × circadian
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.58]*
 
 - **System:** Sleep pressure (Process-S, adenosine-driven) interacts with circadian wake drive (Process-C, SCN-driven via DMH).
@@ -2996,6 +3315,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Forced-desynchrony protocol: subjects on non-24-hr schedules show separable circadian and homeostatic components in alertness and sleep propensity.
 
 ### N.10 Suprachiasmatic Nucleus Master Clock — BMAL1/CLOCK/PER/CRY loop
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.59]*
 
 - **System:** SCN (anterior hypothalamus, above optic chiasm); melanopsin retinal ganglion cell input.
@@ -3007,6 +3327,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Constant-dim-light free-run experiment: humans drift ~25.2 hr period; familial advanced sleep-phase syndrome (PER or CK1δ mutations) → ~22 hr period.
 
 ### N.11 Orexin / Hypocretin Stabilization — narcolepsy gene
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.60]*
 
 - **System:** Posterior lateral hypothalamus (~70K neurons in human); two peptides from same precursor.
@@ -3018,6 +3339,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Orexin-knockout mice + narcolepsy patients: same total sleep amount, but with frequent state transitions and REM-onset within minutes of sleep onset.
 
 ### N.12 Sleep-Dependent Memory Consolidation — Stickgold/Tononi ⭐
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.61]*
 
 - **System:** Cortical synapses; bidirectional change during sleep stages.
@@ -3029,6 +3351,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Sleep-vs-wake-after-training paradigms; sleep selective for task type (REM helps perceptual; N2 helps motor sequence); post-sleep PSD changes track baseline sleep.
 
 ### N.13 Glymphatic Clearance During Sleep — ECF expansion
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from N.62]*
 
 - **System:** Brain-wide CSF/ISF exchange via aquaporin-4-positive astrocytic endfeet around vessels.
@@ -3044,6 +3367,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 ## Cluster O — Emotion, Reward, Motivation (project-critical for Ch 41-43)
 
 ### N.14 Hippocampal–neocortical dialogue — systems consolidation
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from N.50]*
 
 - **System:** SWRs (HC) ↔ slow oscillations + spindles (neocortex); fronto-parietal targets receive HC-replay-locked input during NREM.
@@ -3056,7 +3380,28 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 
 ## Cluster O — additions
 
+---
+
+## Cluster O — Emotion, reward, motivation
+
+**19 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
+### O.01 Amygdala-mediated threat / fear conditioning
+
+- **System:** lateral amygdala (LA), basolateral amygdala (BLA), central amygdala (CeA)
+- **Biological role:** the mammalian implementation of Pavlovian threat conditioning. LA receives convergent CS (e.g., tone, from auditory thalamus + cortex) and US (shock, from somatosensory thalamus). Coincident input → NMDAR-LTP at LA synapses. CeA outputs to brain stem (freezing, autonomic responses). Extinction is *not* erasure — it's new inhibitory learning competing with the stored fear memory.
+- **Sim status:** missing. Project has no amygdala. Pavlovian conditioning experiment (`experiment/presets.py`) does the *behavior* (CS-US pairing → CS-driven response) but not the *circuit*. Adding an amygdala region would compose with the existing region framework.
+- **Cluster:** O (emotion / reward), J
+- **Prerequisites:** L.06, region framework
+- **Citation:** Kandel 6e Ch 53 p 1330–1335; Ch 42, 43
+- **Behavioral validation:** add amygdala region with CS+US convergence; verify CeA output drives behavior after pairing; verify extinction adds parallel inhibition rather than erasing LA→CeA weights.
+
+---
+
+## Cluster I — Channels & intrinsic dynamics
+
 ### O.02 Phasic dopamine = reward prediction error (Schultz) — TD learning signal
+
 *[from Part V — Movement (Ch 30-39); renumbered from O.50]*
 
 - **System:** ventral tegmental area (VTA) and substantia nigra pars compacta (SNc) DA neurons → striatum, NAcc, PFC.
@@ -3068,6 +3413,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Conditioning paradigm: DA burst initially on reward → transfers to CS; reward omission produces dip — see project's reward_ema_pre / surprise-LR-boost machinery.
 
 ### O.03 DA modulation of corticostriatal plasticity — three-factor rule
+
 *[from Part V — Movement (Ch 30-39); renumbered from O.51]*
 
 - **System:** glutamatergic cortex→MSN synapse + DA terminal at same dendritic spine.
@@ -3079,6 +3425,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Reward-paired action → cortex→D1 LTP; punishment-paired → LTD or D2 LTP.
 
 ### O.04 Goal-directed → habitual transition — DA + DLS plasticity
+
 *[from Part V — Movement (Ch 30-39); renumbered from O.52]*
 
 - **System:** dopamine-driven plasticity migrating from dorsomedial (early) to dorsolateral (late) striatum with overtraining.
@@ -3094,6 +3441,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 ## Cluster P — Disease (Parkinson, Huntington, Tourette, OCD)
 
 ### O.05 Hypothalamic Homeostatic Architecture — afferent/effector/feedback ⭐
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.50]*
 
 - **System:** Hypothalamus as 3-zone (preoptic/anterior, tuberal, posterior) coordination hub for survival behaviors.
@@ -3105,6 +3453,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Lesion studies: any single-zone lesion produces specific homeostatic dysregulation (e.g. preoptic → thermoregulation; PVN → autonomic; arcuate POMC → obesity).
 
 ### O.06 Arcuate POMC / AgRP / MC4R Feeding Loop — hunger/satiety ⭐
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.51]*
 
 - **System:** Arcuate nucleus → PVN → parabrachial nucleus.
@@ -3116,6 +3465,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Optogenetic AgRP stim → immediate feeding; chemogenetic POMC stim → satiety; MC4R-knockout → severe obesity.
 
 ### O.07 Leptin / Insulin Long-Term Energy Signals — adipose-feedback hormones
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.52]*
 
 - **System:** Adipose-derived leptin + pancreatic insulin → arcuate POMC/AgRP receptors + NTS receptors.
@@ -3127,6 +3477,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** ob/ob leptin-deficient mice → severe obesity, reversed by exogenous leptin. Diet-induced obese mice fail to reduce intake despite high endogenous leptin (leptin resistance).
 
 ### O.08 SFO/OVLT Thirst Circuit — osmolarity sensing
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.53]*
 
 - **System:** Subfornical organ + organum vasculosum laminae terminalis (circumventricular organs lacking BBB) → median preoptic + PVN.
@@ -3138,6 +3489,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** SFO optogenetic stim → sated mice begin drinking within seconds; lesion → adipsia.
 
 ### O.09 HPA Axis (CRH→ACTH→cortisol) — stress hormone cascade
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.54]*
 
 - **System:** PVN parvocellular CRH neurons → anterior pituitary corticotrophs (ACTH) → adrenal cortex (cortisol).
@@ -3149,6 +3501,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Dexamethasone suppression test; cortisol elevation to acute stressor; cortisol-circadian-blunting in major depression.
 
 ### O.10 Incentive Motivation Theory — deficiency adjusts reward value
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.55]*
 
 - **System:** AgRP neurons modulate reward value of food/cues; analogous logic for thirst, thermoregulation.
@@ -3160,6 +3513,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Place-preference paradigm: AgRP-stim in sated mouse + paired location → conditioned preference; demonstrates reward-value amplification.
 
 ### O.11 Drive Reduction Theory — deficiency is aversive ⭐
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.56]*
 
 - **System:** AgRP neuron activation is itself aversive; eating reduces aversion → "drive reduction" reward.
@@ -3171,6 +3525,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Two-chamber CPP test with optogenetic AgRP control demonstrates both the aversion (sated) and relief (fasted) signs.
 
 ### O.12 Amygdala Fear-Learning Circuit (LA/BLA/CeA) ⭐
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.57]*
 
 - **System:** Lateral amygdala (LA) receives sensory CS+US convergence from thalamus + cortex; basal/basolateral (BLA) for context; central amygdala (CeA) drives output → PAG (freezing), hypothalamus (autonomic), parabrachial (respiratory). Plus internal LA→BLA→CeA + intercalated cell circuitry.
@@ -3182,6 +3537,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Pavlovian tone-shock conditioning → freezing response abolished by LA lesion. Cued (LA-dependent) vs contextual (BLA + hippo-dependent) fear dissociates.
 
 ### O.13 Amygdala Reward / Appetitive Role — amygdala beyond fear
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.58]*
 
 - **System:** LA/BLA also encode appetitive stimulus-reward associations.
@@ -3193,6 +3549,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Reactivation of appetitive-tagged amygdala neurons elicits approach behavior even in absence of CS.
 
 ### O.14 Interoceptive Fear (CO₂ Panic) — independent of amygdala
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.59]*
 
 - **System:** Carotid body chemoreceptors + brainstem CO₂-sensing → presumably insula and brainstem alarm pathways (NOT amygdala).
@@ -3204,6 +3561,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** CO₂ inhalation in amygdala-lesion patients → panic equal-to-or-greater than controls.
 
 ### O.15 vmPFC ↔ Amygdala Top-Down Regulation — fear extinction
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.60]*
 
 - **System:** Ventromedial PFC + infralimbic cortex → BLA + intercalated cells.
@@ -3215,6 +3573,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Fear-extinction protocols: vmPFC inactivation → no extinction; vmPFC stimulation → accelerated extinction.
 
 ### O.16 NAc Reward Hub Architecture — VTA + cortical + hippo + amyg convergence
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.61]*
 
 - **System:** Nucleus accumbens (ventral striatum) MSNs receive VTA DA + glutamate from mPFC, hippocampus, BLA, lateral habenula, thalamus.
@@ -3226,6 +3585,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** NAc-shell vs core lesions dissociate Pavlovian-instrumental transfer (shell) from action-outcome learning (core).
 
 ### O.17 Brain Stimulation Reward (Olds-Milner) — self-stimulation as reward proxy
+
 *[from Part VI — Emotion/Reward (Ch 40-44); renumbered from O.62]*
 
 - **System:** Medial forebrain bundle electrode → activates VTA DA + adjacent reward fibers.
@@ -3260,6 +3620,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - O.50/O.51: complete absence of hypothalamic homeostatic drives; reward is exogenously defined rather than defended around setpoints.
 
 ### O.18 Reward-modulated stimulus–outcome learning — striatum/HC interaction
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from O.50]*
 
 - **System:** Ventral striatum (NAcc) for incremental S-R, hippocampus for configural/contextual variants; coupled by reciprocal HC↔striatum projections.
@@ -3271,6 +3632,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Configural-vs-elemental strategy switch correlates with HC–NAcc functional coupling (fMRI).
 
 ### O.19 Value-based decisions — vmPFC / OFC encode subjective value
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from O.51]*
 
 - **System:** Ventromedial PFC + orbitofrontal cortex represent expected subjective value; project to striatum and LIP/PFC accumulators. Value modulates drift rate of accumulator.
@@ -3283,7 +3645,14 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 
 ## Cluster P — additions
 
+---
+
+## Cluster P — Disease & neurodegeneration
+
+**37 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
 ### P.01 Parkinson disease — SNc DA neuron loss → indirect-pathway dominance
+
 *[from Part V — Movement (Ch 30-39); renumbered from P.50]*
 
 - **System:** progressive degeneration of nigrostriatal DA neurons; α-synuclein Lewy pathology.
@@ -3295,6 +3664,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Drop simulated DA → action initiation rate ↓, perseveration ↑; restore DA → recovery.
 
 ### P.02 Huntington disease — D2 MSN loss → direct-pathway dominance
+
 *[from Part V — Movement (Ch 30-39); renumbered from P.51]*
 
 - **System:** CAG-repeat expansion in HTT → preferential degeneration of D2 indirect-pathway MSNs early; later D1 MSNs and cortex.
@@ -3306,6 +3676,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Inactivate D2 MSN pools → involuntary action emission, reduced suppression of competitors.
 
 ### P.03 OCD / Tourette — pathologically dominant or intrusive option
+
 *[from Part V — Movement (Ch 30-39); renumbered from P.52]*
 
 - **System:** abnormal cortico-BG-thalamo-cortical loop activity; OCD = dominant compulsive option that wins selection repeatedly; Tourette = intrusion of nonselected motor option (tic).
@@ -3317,6 +3688,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 - **Behavioral validation:** Bias one action's MSN excitability → behavior locks; mirrors compulsion.
 
 ### P.04 Schizophrenia — failure to suppress nonselected options
+
 *[from Part V — Movement (Ch 30-39); renumbered from P.53]*
 
 - **System:** hyperdopaminergic mesolimbic + hypodopaminergic mesocortical; striatal DA dysregulation impairs filtering.
@@ -3332,6 +3704,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 ## Cluster G — Prefrontal / association cortex
 
 ### P.05 Hippocampal disorders of autobiographical memory
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from P.50]*
 
 - **System:** AD (Aβ → synaptic dysfunction → HC atrophy); schizophrenia (HC-PFC desynchrony, place-field over-rigidity, CA2 PV-interneuron loss); reduced Aβ rescues plasticity in mouse models.
@@ -3347,6 +3720,7 @@ declare via `BrainRegion`/`RegionPathway` rather than grow.
 ## Ch 55 — Language
 
 ### P.06 Agnosias as failures of interrogation, not sensation
+
 *[from Part VIII — Memory/Cognition (Ch 52, 54-56); renumbered from P.51]*
 
 - **System:** Hemineglect (right parietal), prosopagnosia (fusiform face area), achromatopsia (V4/V8), Wernicke aphasia (auditory-semantic).
@@ -3396,6 +3770,7 @@ A small bridge addition with high research leverage:
 - Cheap to build (~50 LOC bridge + thin runner glue), opens a whole class of episodic-memory experiments aligned with the "biology-grounded over engineered" project ethos.
 
 ### P.07 Myasthenia Gravis — autoimmune attack on muscle nicotinic AChR
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.50]*
 
 - **System:** Neuromuscular junction (skeletal muscle)
@@ -3407,6 +3782,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Repetitive 3 Hz stimulation of motor pool produces decremental EPSP train (1st > 5th); restored when receptor-density variable is increased mid-trial (AChE-inhibitor analog).
 
 ### P.08 Lambert-Eaton Myasthenic Syndrome — presynaptic VGCC autoimmunity
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.51]*
 
 - **System:** Presynaptic motor terminal
@@ -3418,6 +3794,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Lower `stp_U` on motor synapse → reduced first-pulse EPSP, but residual facilitation grows with high-frequency train (opposite of MG).
 
 ### P.09 Botulinum / Tetanus Toxin — SNARE cleavage at motor terminal
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.52]*
 
 - **System:** Presynaptic vesicle release
@@ -3429,6 +3806,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Setting motor-pathway weight=0 produces silent motor; selectively zeroing inhibitory pathways onto motoneurons produces tonic firing analog of tetanus.
 
 ### P.10 Amyotrophic Lateral Sclerosis (ALS) — progressive motor-neuron death
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.53]*
 
 - **System:** Upper + lower motor neurons
@@ -3440,6 +3818,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Gradually delete motor neurons in `motor_X` pools → motor output declines; surviving units' fan-in grows via structural plasticity until critical fraction lost → output collapses.
 
 ### P.11 Charcot-Marie-Tooth & Demyelinating Neuropathies — myelin loss
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.54]*
 
 - **System:** Peripheral nerve axons
@@ -3451,6 +3830,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Increase per-pathway conduction delay → temporal precision of spike-coincidence falls → STDP windows mistime → learning collapses.
 
 ### P.12 Spinal Muscular Atrophy (SMN1 deletion) — α-motoneuron death
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.55]*
 
 - **System:** Lower motor neurons (esp. spinal)
@@ -3462,6 +3842,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Suppress spawn of motor-pool neurons during construction → reduced motor output from birth.
 
 ### P.13 Focal-Onset Seizures — local hyperexcitable focus
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.56]*
 
 - **System:** Cortex (often hippocampus / temporal lobe)
@@ -3473,6 +3854,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** In a single brain region, scale `inh_weight_mean` → 0.3× and `exc_weight_mean` → 1.5×; observe synchronized population bursts (PDS-like) and propagation to neighboring regions through pathways.
 
 ### P.14 Generalized Seizures (Absence, Tonic-Clonic) — thalamocortical 3 Hz oscillation
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.57]*
 
 - **System:** Thalamocortical loop
@@ -3484,6 +3866,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Build TC↔TRN↔cortex loop, observe 3 Hz spike-wave discharge in EEG-analog (population rate FFT) when T-current gain is increased.
 
 ### P.15 Channelopathies — SCN1A/Dravet, KCNQ2, GABRG2 — monogenic epilepsies
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.58]*
 
 - **System:** Cortical/hippocampal interneurons (Dravet) or pyramidal neurons
@@ -3495,6 +3878,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Set Nav peak conductance to 50% in `cortical_FS_interneuron` pool only → FS firing drops → pyramidal disinhibition → spontaneous bursts.
 
 ### P.16 Kindling — activity-induced epileptogenesis
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.59]*
 
 - **System:** Limbic / hippocampal circuits
@@ -3506,6 +3890,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Repeated focal Poisson stimulus to a hippocampal region; track whether spontaneous synchronous bursts emerge in unstimulated test windows after N kindling sessions.
 
 ### P.17 Status Epilepticus & Excitotoxicity — sustained seizure → cell death
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.60]*
 
 - **System:** Hippocampus, cortex
@@ -3517,6 +3902,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** With Ca²⁺ pool added: drive prolonged firing >30 sim-min in CA1; observe progressive ablation of high-firing-rate pyramidals.
 
 ### P.18 Conversion / Functional Neurological Disorder — psychogenic motor/sensory deficit
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.61]*
 
 - **System:** Cortical "control" circuits without primary lesion
@@ -3528,6 +3914,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** N/A at current level of abstraction.
 
 ### P.19 Schizophrenia — Dopamine Hypothesis (excess striatal D2 signaling)
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.62]*
 
 - **System:** Mesolimbic DA projection (VTA → ventral striatum)
@@ -3539,6 +3926,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** In flagship g11 BG runner, set `neuromodulator.DA.baseline` 2× normal → expect indirect-pathway suppression (D2 inhibited) → motor disinhibition / spurious action selection (analog of "stimulus-driven false percepts").
 
 ### P.20 Schizophrenia — NMDA Hypofunction Hypothesis (glutamate)
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.63]*
 
 - **System:** Cortical / hippocampal glutamatergic synapses
@@ -3550,6 +3938,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Reduce NMDA conductance to 30% on FS interneurons only → measure cortical gamma power (40–80 Hz band) via existing `run_benchmarks.py --benchmark gamma-oscillations` → expect reduced gamma + altered E/I (project benchmark already exists for gamma!).
 
 ### P.21 Schizophrenia — Synaptic Pruning Hypothesis (adolescence)
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.64]*
 
 - **System:** Cortical synapse density (esp. PFC)
@@ -3561,6 +3950,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** In runs with PFC, increase pruning rate during a "developmental" pre-eval window → observe reduced PFC connectivity → working-memory tasks (delay match) degrade.
 
 ### P.22 Major Depressive Disorder — monoamine + HPA + structural
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.65]*
 
 - **System:** Limbic + monoamine systems (5-HT, NE, DA), HPA axis, hippocampus
@@ -3572,6 +3962,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Lower `5HT.baseline` and `DA.baseline` in g11 → reward-tracking (sum-of-reward) degrades; restore via SSRI-analog (raise 5-HT) over many sim-minutes.
 
 ### P.23 Bipolar Disorder — mood-state instability
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.66]*
 
 - **System:** Same as MDD but bistable
@@ -3583,6 +3974,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Add bistable DA / 5-HT toggle on multi-hour timescale; observe alternating phases of high reward-pursuit (mania) vs anhedonia (depression).
 
 ### P.24 Anxiety Disorders — amygdala fear-learning hyperactivity
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.67]*
 
 - **System:** Amygdala + PFC top-down inhibition
@@ -3594,6 +3986,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Run associative-conditioning preset on amygdala region; lower GABA-A conductance → CS-conditioned avoidance response over-trains and resists extinction.
 
 ### P.25 Autism — Synaptic Adhesion Genes (Neurexin / Neuroligin / SHANK)
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.68]*
 
 - **System:** Cortical excitatory & inhibitory synapses
@@ -3605,6 +3998,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Long-term — randomize a fraction of cortex→cortex pathway "compatibility codes" → reduced wiring specificity → reduced behavioral plasticity / sensory-specific responses.
 
 ### P.26 Fragile X Syndrome — FMR1 loss → exaggerated mGluR-LTD
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.69]*
 
 - **System:** Cortical/hippocampal synapses
@@ -3616,6 +4010,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Set LTD rate >> LTP rate globally → networks lose acquired patterns rapidly → Hebbian formation tasks fail.
 
 ### P.27 Rett Syndrome — MECP2 loss → broad transcriptional deregulation
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.70]*
 
 - **System:** Whole-brain (esp. cortex) — neuronal maturation halted
@@ -3627,6 +4022,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Freeze all structural plasticity + reduce synaptic-scaling rate after a "regression point" → behavioral capacities acquired earlier are lost.
 
 ### P.28 Tuberous Sclerosis (TSC1/TSC2) — mTOR-pathway dysregulation
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.71]*
 
 - **System:** Cortical neurons (with comorbid epilepsy + autism)
@@ -3638,6 +4034,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** N/A directly; phenocopy via increased excitability + heterotopic-position neurons in cortex.
 
 ### P.29 Parkinson's Disease — SNc dopamine neuron death
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.72]*
 
 - **System:** Nigrostriatal DA pathway
@@ -3649,6 +4046,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** In `g11_bg_runner`, set DA region size → 0 (or `nm_mgr.set_concentration("DA", 0)` + freeze production). Expect: indirect-pathway pools (str_D2_X, GPe → STN → GPi) dominate → motor pools fire less → moving-goal task reward sum collapses. Add L-DOPA analog (manual DA injection) → partial recovery.
 
 ### P.30 Alzheimer's Disease — amyloid + tau, hippocampal synapse loss
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.73]*
 
 - **System:** Hippocampus, entorhinal cortex, eventually neocortex
@@ -3660,6 +4058,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Train CA3 → CA1 associative memory; then progressively prune CA1 synapses + reduce ACh baseline → recall accuracy declines monotonically (analog of staged AD).
 
 ### P.31 Huntington's Disease — striatal MSN death (esp. D2 indirect-pathway)
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.74]*
 
 - **System:** Striatum (MSNs), then cortex
@@ -3671,6 +4070,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Progressively delete neurons in `str_D2_X` pools → indirect pathway weakens → involuntary motor activations (motor pools fire spontaneously without cortical drive). Quantify as motor-pool firing rate without sensory input.
 
 ### P.32 Familial ALS / Frontotemporal Dementia — TDP-43, C9ORF72, FUS
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.75]*
 
 - **System:** Motor neurons + frontal-temporal cortex
@@ -3682,6 +4082,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Combined ablation of motor pools + PFC region in g11 runner over time → behavioral disinhibition + motor failure.
 
 ### P.33 Prion Diseases — propagating misfolded protein
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.76]*
 
 - **System:** Variable (cortex for CJD, thalamus for FFI, cerebellum for kuru)
@@ -3693,6 +4094,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** N/A at current architecture.
 
 ### P.34 Spinocerebellar Ataxias / Polyglutamine Diseases — CAG-expansion family
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.77]*
 
 - **System:** Cerebellum (SCAs), basal ganglia (HD), spinal cord (SBMA)
@@ -3704,6 +4106,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Build cerebellar region; ablate Purkinje cells progressively → loss of motor-timing precision (use existing motor task).
 
 ### P.35 The Aging Brain — slow synapse loss, glial reactivity, neurogenesis decline
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.78]*
 
 - **System:** Whole brain (PFC, hippocampus most affected)
@@ -3715,6 +4118,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Linearly decay `reward_learning_rate` and increase pruning rate over a long run → previously fast-learning agent gradually slows in re-adapting to new goals.
 
 ### P.36 Stroke / Vascular Insult — focal ischemic lesion
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.79]*
 
 - **System:** Anywhere in vascular territory
@@ -3726,6 +4130,7 @@ A small bridge addition with high research leverage:
 - **Behavioral validation:** Delete all neurons within a sphere in motor cortex during a trained run → observe behavioral deficit + partial recovery as surround sprouts (existing structural plasticity).
 
 ### P.37 Excitotoxicity (general mechanism) — NMDA-mediated cell death
+
 *[from Part IX — Diseases (Ch 57-64); renumbered from P.80]*
 
 - **System:** Any glutamatergic circuit under metabolic stress
@@ -3754,7 +4159,14 @@ Items 1, 3, and 4 are small extensions of existing infrastructure and would unlo
 
 ## Cluster Q — additions
 
+---
+
+## Cluster Q — Glia & neurovascular
+
+**8 entries.** Numbering reflects discovery order across the textbook chapters where this cluster's mechanisms appear.
+
 ### Q.01 Oligodendrocyte / Schwann myelination
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from Q.50]*
 
 - **System:** CNS (oligodendrocyte) and PNS (Schwann); white matter and peripheral nerve.
@@ -3766,6 +4178,7 @@ Items 1, 3, and 4 are small extensions of existing infrastructure and would unlo
 - **Behavioral validation:** N/A in single-compartment model. Would require axonal compartments to validate conduction-velocity scaling.
 
 ### Q.02 Astrocyte K+ buffering and glutamate uptake
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from Q.51]*
 
 - **System:** Gray-matter neuropil; tripartite synapse.
@@ -3777,6 +4190,7 @@ Items 1, 3, and 4 are small extensions of existing infrastructure and would unlo
 - **Behavioral validation:** Sustained high-frequency firing should NOT accumulate extracellular K+ in current sim (it can't); a future validation would require [K+]o tracking.
 
 ### Q.03 Microglia — surveillance, synaptic pruning, immune response
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from Q.52]*
 
 - **System:** Resident myeloid cells throughout CNS.
@@ -3788,6 +4202,7 @@ Items 1, 3, and 4 are small extensions of existing infrastructure and would unlo
 - **Behavioral validation:** N/A in current sim. Pruning could be validated by an inactivity-tagged removal rule.
 
 ### Q.04 Astrocyte-mediated tripartite synapse (gliotransmission)
+
 *[from Part II — Cells & Channels (Ch 7-10); renumbered from Q.53]*
 
 - **System:** Neuropil; especially hippocampus, cortex.
@@ -3804,6 +4219,7 @@ End of Part II catalog (24 entries: 22 in Cluster I, 4 in Cluster Q;
 some entries cross-tagged to N, L, P, G, J, C).
 
 ### Q.05 Wallerian degeneration — distal-stump axon self-destruction
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from Q.60]*
 
 - **System:** any severed axon (PNS and CNS); SARM1 / NMNAT2 axis
@@ -3815,6 +4231,7 @@ some entries cross-tagged to N, L, P, G, J, C).
 - **Behavioral validation:** *Wlds* mutant mice show dramatically slowed distal-stump degeneration (weeks vs hours)
 
 ### Q.06 Schwann-cell-mediated PNS regeneration
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from Q.61]*
 
 - **System:** peripheral nerve; Schwann cells transition to repair phenotype after injury
@@ -3826,6 +4243,7 @@ some entries cross-tagged to N, L, P, G, J, C).
 - **Behavioral validation:** transected sciatic nerve recovers function over weeks; same lesion in optic nerve does not
 
 ### Q.07 CNS regeneration failure — myelin inhibitors (Nogo, MAG, OMgp) & glial scar
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from Q.62]*
 
 - **System:** central nervous system white matter; oligodendrocyte-derived inhibitors
@@ -3837,6 +4255,7 @@ some entries cross-tagged to N, L, P, G, J, C).
 - **Behavioral validation:** Nogo-A KO or anti-Nogo Ab modestly improves spinal-cord-injury recovery in rodent models; chondroitinase ABC dissolves perineuronal-net component of glial scar and improves recovery
 
 ### Q.08 Reactive gliosis & glial scar — astrocyte response to CNS injury
+
 *[from Part VII extras — Development (Ch 45-47, 50-51); renumbered from Q.63]*
 
 - **System:** astrocytes & microglia at any CNS lesion site
@@ -3848,3 +4267,6 @@ some entries cross-tagged to N, L, P, G, J, C).
 - **Behavioral validation:** GFAP/vimentin double KO reduces scar density, modestly improves regeneration
 
 ## Cluster L — sex differentiation (placed here as developmental)
+
+---
+
