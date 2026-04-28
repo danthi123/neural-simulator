@@ -522,6 +522,8 @@ reward = sign(intensity_after - intensity_before)  # ±1 / 0
 | **Option 2 (`--cross-projection-density 0.25`, multi-goal)** | 8.76 ± 2.54 (n=3) | 1.83 | 2.05 | 3.36/1.53 | **HIGH-VARIANCE PARTIAL** — seed 44 hit 5.88 (beats baseline) |
 | **Cluster B.1 + patch-matrix (`--enable-d1-d2-asymmetry`, multi-goal)** | **7.62 ± 1.23 (n=3)** | 1.81 | 2.42 | **1.92** | 1.46 | **PARTIAL SIGNAL** — variance halved, P2 catastrophe eliminated. First evidence cluster strategy works. |
 | Cluster B.1 alone (no cross) | 7.00 ± 0.52 (n=3) | 2.21 | 1.68 | 1.63 | 1.48 | non-regression confirmed (B.1 doesn't hurt baseline) |
+| **Cluster B.1+B.2 + patch-matrix (`--enable-striatal-fsis`)** | **8.44 ± 0.62 (n=3)** | 3.72 | 1.53 | 1.59 | 1.60 | **MIXED** — variance halved again (1.23 → 0.62), P1+P2+P3 (4.72) beats v3 baseline (4.89), but Phase 0 broken (3.72 vs 1.83) because FSIs broadcast pre-commitment. Phase-0 architectural issue. Proceeding to B.3. |
+| Cluster B.1+B.2 alone (no cross, retuned weight=2.0) | 9.50 ± 0.85 (n=3) | 4.15 | 1.60 | 2.01 | 1.74 | regression: B.2 hurts baseline cascade. Original weight=8.0 was 19.78 ± 2.28 (catastrophic). |
 
 - **v3 GO:** MSN cross-pool lateral inhibition (24 GABAergic pathways,
   `plastic=False`) is biology-grounded, harmless to flagship performance,

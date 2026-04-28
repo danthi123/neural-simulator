@@ -480,8 +480,18 @@ cheats actually *helps* learning.
   patch-matrix alone 8.76 ± 2.54. Variance halved, Phase 2 catastrophe
   eliminated (P2 mean 3.36 → 1.92, std 2.09 → 0.77). Still above v3
   baseline 7.08 ± 0.12; cheat-5 not fully closed by B.1 alone.
-  Continuing to B.2 (FSIs) + B.3 (TANs) as planned. See
-  [`research/findings/2026-04-28-cluster-b1-d1d2-asymmetry-results.md`](research/findings/2026-04-28-cluster-b1-d1d2-asymmetry-results.md).
+  See [`research/findings/2026-04-28-cluster-b1-d1d2-asymmetry-results.md`](research/findings/2026-04-28-cluster-b1-d1d2-asymmetry-results.md).
+- **Cluster B.2 (striatal FSIs, `--enable-striatal-fsis`) — MIXED (2026-04-28).**
+  Mean cheat-5 8.44 ± 0.62 (n=3) — slightly worse than B.1 alone (7.62)
+  but **variance keeps dropping** (2.54 → 1.23 → 0.62). Phase-decomposed:
+  Phases 1-3 BEAT v3 baseline (4.72 vs 4.89), Phase 0 is broken (3.72 vs
+  baseline 1.83) because FSIs broadcast too eagerly before agent commits
+  to a winner. Architectural issue: real FSIs have tonic baseline, burst
+  dynamics, high-pass filtering on cortex drive — our model has none.
+  Default str_fs_to_msn_weight retuned 8.0 → 2.0; cortex_to_str_fs_weight
+  may need 30 → 10 if full cluster doesn't fix Phase 0. Proceeding to B.3
+  (TANs) per unit-cluster strategy. See
+  [`research/findings/2026-04-28-cluster-b2-striatal-fsis-results.md`](research/findings/2026-04-28-cluster-b2-striatal-fsis-results.md).
 - **Biology probe at `research/probes/d1_d2_asymmetry_probe.py`** validates
   the implementation: D1 weights ↑ under +reward / ↓ under −reward; D2
   weights inverted. Runnable for any future regression check.
