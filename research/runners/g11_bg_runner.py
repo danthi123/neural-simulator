@@ -119,6 +119,8 @@ def build_bg_brain_regions(
     # learn to weaken/strengthen them appropriately.
     enable_bg_cross_projections: bool = False,
     cross_projection_weight: float = 5.0,  # weak vs same-action 25.0
+    cross_projection_density: float = 1.0,  # 1.0 = dense (24 cross-pathways); 0.25 = patch-matrix-like (6 of 24)
+    cross_projection_topology_seed: int = 0,  # deterministic pathway selection when density < 1.0
     # Goal-beacon perception (Item 1 Stage 1, 2026-04-27 skeleton).
     # Replaces direct (gx, gy) goal access with beacon sensors that detect
     # beacon strength + direction (modeling biological cue perception).
@@ -483,6 +485,16 @@ def build_bg_brain_regions(
     # independently — keep them frozen during phase 1+2 (don't accumulate
     # phase-0 motor bias), thaw post-goal-change in phase 3 so STDP+reward
     # can shape cross-action routing symmetrically.
+    # Patch-matrix sparsity (2026-04-28, option 2): if cross_projection_density < 1.0,
+    # randomly skip cross-pathways at build time to mirror real BG patch-matrix
+    # anatomy (~10-25% cross-projection density). Selection is deterministic
+    # given cross_projection_topology_seed so reruns reproduce the same topology.
+    import random as _random
+    _topology_rng = _random.Random(cross_projection_topology_seed)
+    _all_cross_pairs = [(c, s) for c in ACTION_NAMES for s in ACTION_NAMES if c != s]
+    _n_keep = max(0, int(round(len(_all_cross_pairs) * cross_projection_density)))
+    _selected_cross = set(_topology_rng.sample(_all_cross_pairs, _n_keep))
+
     for cortex_action in ACTION_NAMES:
         for str_action in ACTION_NAMES:
             same = (cortex_action == str_action)
@@ -490,7 +502,7 @@ def build_bg_brain_regions(
                 density = 1.0
                 weight = 25.0
                 gate = "cortex_to_d1"
-            elif enable_bg_cross_projections:
+            elif enable_bg_cross_projections and (cortex_action, str_action) in _selected_cross:
                 density = 1.0
                 weight = cross_projection_weight
                 gate = "bg_cross_projections"
@@ -970,6 +982,8 @@ def run_moving_goal_episode(
     pfc_to_cortex_weight: float = 8.0,
     enable_bg_cross_projections: bool = False,
     cross_projection_weight: float = 5.0,
+    cross_projection_density: float = 1.0,
+    cross_projection_topology_seed: int = 0,
     # v3 (2026-04-28) — see build_bg_brain_regions docstring.
     enable_bg_lateral_inhibition: bool = False,
     lateral_inhibition_density: float = 0.3,
@@ -1210,6 +1224,8 @@ def run_moving_goal_episode(
         pfc_to_cortex_weight=pfc_to_cortex_weight,
         enable_bg_cross_projections=enable_bg_cross_projections,
         cross_projection_weight=cross_projection_weight,
+        cross_projection_density=cross_projection_density,
+        cross_projection_topology_seed=cross_projection_topology_seed,
         enable_bg_lateral_inhibition=enable_bg_lateral_inhibition,
         lateral_inhibition_density=lateral_inhibition_density,
         lateral_inhibition_weight=lateral_inhibition_weight,
@@ -2297,6 +2313,12 @@ def main():
                     help="Cheat #5: enable cortex × str_D1 cross-projections (e.g. cortex_E → str_D1_W) at weak initial weight. Plasticity learns the right cross-strengths instead of hand-coded same-action-only.")
     ap.add_argument("--cross-projection-weight", type=float, default=5.0,
                     help="Initial weight for BG cross-projections (default 5.0 vs 25.0 same-action).")
+    ap.add_argument("--cross-projection-density", type=float, default=1.0,
+                    help="Cheat-5 option 2: pathway-level density of cross-projections at build time. "
+                         "1.0=dense (24 cross-pathways, current default); 0.25=patch-matrix-like (6 of 24).")
+    ap.add_argument("--cross-projection-topology-seed", type=int, default=0,
+                    help="Cheat-5 option 2: deterministic RNG seed for which cross-pathways survive when density<1.0. "
+                         "Vary independently from --seed to test topology-conditional reproducibility.")
     ap.add_argument("--bg-lateral-inhibition", action="store_true",
                     help="v3 (2026-04-28): add MSN cross-pool lateral inhibition (24 GABAergic pathways). Sharpens action selection regardless of cheat #5; required prerequisite for cross-projection closure.")
     ap.add_argument("--lateral-inhibition-density", type=float, default=0.3,
@@ -2459,6 +2481,8 @@ def main():
             enable_sensed_reward=args.sensed_reward,
             enable_bg_cross_projections=args.bg_cross_projections,
             cross_projection_weight=args.cross_projection_weight,
+            cross_projection_density=args.cross_projection_density,
+            cross_projection_topology_seed=args.cross_projection_topology_seed,
             bg_cross_thaw_step=args.bg_cross_thaw_step,
             bg_cross_phase3_gain=args.bg_cross_phase3_gain,
             enable_bg_lateral_inhibition=args.bg_lateral_inhibition,
