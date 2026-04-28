@@ -428,7 +428,7 @@ distance-based reward.** Reward computed from beacon-intensity gradient.
 **Biology-grounded (4.08) BEATS cheats-allowed (4.41)** — closing perception/reward
 cheats actually *helps* learning.
 
-**Cheat #5 — CLOSED 2026-04-28** (v3 GO, v3.1 NO-GO, v4 NO-GO):
+**Cheat #5 — ON HOLD pending biology buildout** (reframed 2026-04-28 afternoon; original "closed by design" framing was too quick):
 - **v3 (`--bg-lateral-inhibition`) — GO and shipped.** Adds MSN
   cross-pool lateral inhibition. 6-seed sum 4.26 ± 0.50 vs flagship
   baseline 4.08 (no regression). P1 (1.91) beats P0 (2.35) so
@@ -443,18 +443,41 @@ cheats actually *helps* learning.
   initial goal acquisition degrades), P1 6.46. Tier 3 (overnight 6-seed
   validation) skipped — Tier 2 was unanimous past the > 6.0 NO-GO
   threshold. See [`research/findings/2026-04-28-cheat5-v4-results.md`](research/findings/2026-04-28-cheat5-v4-results.md).
-- **Closure rationale:** cheat #5 is closed *by design*. v3 MSN
-  lateral inhibition + same-action-only cortex→striatum routing IS
-  the functional equivalent of biological winner-take-all in our
-  reduced model. Cross-projections at any non-zero weight, regardless
-  of training regime (adult thaw, developmental pre-training), corrupt
-  the cascade. Real BG is anatomically dense + functionally
-  same-action-dominant; our reduced model achieves the equivalent
-  functional outcome with a simpler substrate. **Not a punt — a
-  principled choice given the simulator's level of abstraction.**
-- **`--bg-cross-projections` and `--developmental-pretraining` remain
-  opt-in** for future experiments (e.g., adding structural plasticity)
-  but are NOT recommended for any current flagship configuration.
+- **Option 1 (`--enable-structural-pruning`) under multi-goal — NO-GO.**
+  3.2× worse than v3 baseline (22.46 vs 7.08, n=2; seed 42 hung).
+  Pruning didn't reshape the topology meaningfully.
+- **Option 2 (`--cross-projection-density 0.25`) under multi-goal —
+  HIGH VARIANCE, partial signal.** 3-seed mean 8.76 ± 2.54 vs
+  baseline 7.08 ± 0.12. Seed 44 actually *beat* baseline (5.88).
+  Phase 2 (the (1,6)→(1,1) transition) shows topology-luck signal —
+  std 2.09 across 3 seeds vs 0.22-0.46 on other phases. Sparse cross
+  topologies sometimes work, sometimes don't, with no mechanism to
+  consistently select useful pairs.
+- **Reframe (2026-04-28 afternoon):** cheat #5 is **ON HOLD pending
+  biology buildout**, not closed by design. Cross-projections aren't
+  fundamentally broken — they're under-constrained. Real BG carves
+  them via structural plasticity + closed-loop teaching + D1/D2
+  asymmetry + cholinergic plasticity gating + thalamo-cortical
+  feedback. The reduced model is missing all of this scaffolding.
+  See [`research/findings/2026-04-28-cheat5-post-v4-reframe.md`](research/findings/2026-04-28-cheat5-post-v4-reframe.md).
+- **Multi-goal eval correction:** all prior cheat-5 NO-GO calls (v1, v2,
+  v3.1, v4) used a single goal change at step 300 + 1500 stable steps.
+  That's a "static adult after one transition" test; cross-projections
+  are theoretically useful for *rapid action-pattern switching*. Now
+  using `--goal-schedule multi` (4 phases × 450 steps, 3 transitions)
+  for all cheat-5 evaluation.
+- **Cluster-based buildout strategy:** cheat-5 closure attempts now
+  proceed cluster-by-cluster per the strategy in
+  [`docs/plans/2026-04-28-cheat5-real-options-survey.md`](docs/plans/2026-04-28-cheat5-real-options-survey.md):
+  Cluster B (striatal microcircuit — D1/D2 asymmetry, FSIs, TANs) →
+  Cluster A (closed BG loop) → Cluster C (DA system) → Cluster D
+  (sequence learning) → Cluster E (connectivity refinement). Each
+  cluster has independent biological merit AND collectively might
+  shift cross-projection behavior.
+- **`--bg-cross-projections`, `--developmental-pretraining`,
+  `--enable-structural-pruning`, `--cross-projection-density` all
+  remain opt-in** for future experiments. NOT recommended for any
+  current flagship configuration.
 
 **Without sensed reward (perception arc only, 2026-04-27 night):**
 ```bash

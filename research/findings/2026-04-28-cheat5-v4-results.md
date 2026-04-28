@@ -1,4 +1,6 @@
-# Cheat #5 v4 — Developmental Pretraining: NO-GO. Cheat #5 closed by design (v3 lateral inhibition).
+# Cheat #5 v4 — Developmental Pretraining: NO-GO.
+
+> **Status update 2026-04-28 (afternoon):** the original "closed by design" framing in this document was reframed later the same day. Cheat #5 is now treated as **ON HOLD pending biology buildout** rather than closed. See [post-v4 status doc](2026-04-28-cheat5-post-v4-reframe.md) for the updated framing. The v4 results below stand as-is — they were correct — but the conclusion drawn from them was too quick.
 
 **Date:** 2026-04-28
 **Design:** [docs/plans/2026-04-28-cheat5-v4-design.md](../../docs/plans/2026-04-28-cheat5-v4-design.md) (commit `e6ce0ce`)

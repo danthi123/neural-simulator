@@ -509,37 +509,49 @@ intensity_after  = beacon_max_intensity / (1.0 + beacon_falloff * d_after)
 reward = sign(intensity_after - intensity_before)  # ±1 / 0
 ```
 
-**Cheat #5 — CLOSED 2026-04-28** (by-design, v3 lateral inhibition is the WTA equivalent):
+**Cheat #5 — ON HOLD pending biology buildout** (reframed 2026-04-28 afternoon):
 
 | Variant | n-seed avg | P0 | P1 | Verdict |
 |---|---:|---:|---:|---|
 | v1 (curriculum-staged cross-projections) | 10.87 (3-seed) | — | — | NEGATIVE — gate doesn't freeze synaptic transmission |
 | v2 (zero-init cross-projections) | 7.89 (3-seed) | 2.49 | 5.40 | NEGATIVE — thaw-time STDP corrupts converged policy |
 | **v3 (`--bg-lateral-inhibition`)** | **4.26 ± 0.50 (6-seed)** | 2.35 | 1.91 | **GO — no regression; permanent default** |
-| v3.1 (`... --bg-cross-projections` + adult thaw) | 8.92 ± 2.44 (6-seed) | 2.58 | 6.35 | NO-GO — phase-2 breaks |
-| **v4 (`... --developmental-pretraining`)** | 11.34 ± 1.85 (3-seed Tier 2) | 4.88 | 6.46 | **NO-GO — worse than v3.1; Tier 3 skipped** |
+| v3.1 (`... --bg-cross-projections` + adult thaw, single-goal) | 8.92 ± 2.44 (6-seed) | 2.58 | 6.35 | NO-GO — phase-2 breaks |
+| **v4 (`... --developmental-pretraining`, single-goal)** | 11.34 ± 1.85 (3-seed Tier 2) | 4.88 | 6.46 | **NO-GO — worse than v3.1** |
+| **Option 1 (`--enable-structural-pruning`, multi-goal)** | 22.46 ± 4.84 (n=2; seed 42 hung) | 4.0 | 7.5 | 6.7/4.3 (P2/P3) | **NO-GO — 3.2× worse than v3** |
+| **Option 2 (`--cross-projection-density 0.25`, multi-goal)** | 8.76 ± 2.54 (n=3) | 1.83 | 2.05 | 3.36/1.53 | **HIGH-VARIANCE PARTIAL** — seed 44 hit 5.88 (beats baseline) |
 
-- **v3 GO (2026-04-28):** MSN cross-pool lateral inhibition (24 GABAergic
-  pathways, `plastic=False`) is biology-grounded, harmless to flagship
-  performance, **shipped as a permanent default in the recommended
-  flagship config**.
-- **v3.1 NO-GO:** layering adult-learning cross-projections on top of v3
-  lateral inhibition still breaks phase-2 readaptation.
-- **v4 NO-GO:** pre-training cross-projections during a 5K-trial critical
-  period (all gates open) and freezing for eval is *worse* than v3.1,
-  even on Phase 0. Pretraining DID develop cross weights consistently
-  (mean ~11, std ~0.5 across all 3 seeds) — the topology, not the
-  training, is the limit.
-- **Cheat #5 is closed by design.** v3 MSN lateral inhibition + the
-  same-action-only cortex→striatum routing IS the functional equivalent
-  of biological winner-take-all in our reduced model. Real BG is
-  anatomically dense + functionally same-action-dominant; our reduced
-  model achieves the equivalent functional outcome with a simpler
-  substrate. Cross-projections at any non-zero weight, regardless of
-  training regime, corrupt the cascade. **Not a punt — a principled
-  choice given the simulator's level of abstraction.**
-- Findings: `2026-04-28-cheat5-v4-results.md`, `2026-04-28-cheat5-v3-results.md`,
-  `2026-04-28-cheat5-v2-NEGATIVE.md`, `2026-04-28-cheat5-v1-NEGATIVE.md`.
+- **v3 GO:** MSN cross-pool lateral inhibition (24 GABAergic pathways,
+  `plastic=False`) is biology-grounded, harmless to flagship performance,
+  **shipped as a permanent default in the recommended flagship config**.
+- **v3.1 + v4 NO-GO under single-goal eval:** various cross-projection
+  training regimes (adult thaw, developmental pretraining) all fail.
+- **Multi-goal methodological correction (2026-04-28 afternoon):** all
+  prior cheat-5 work used a single goal change at step 300 + 1500 stable
+  steps — a "static adult" test, not the dynamic switching scenario
+  cross-projections would actually be useful for. Switched to
+  `--goal-schedule multi` (4 phases × 450 steps, 3 transitions).
+- **Option 1 NO-GO under multi-goal:** structural pruning didn't reshape
+  topology meaningfully; results catastrophic.
+- **Option 2 partial signal under multi-goal:** sparse static topology
+  shows high variance (σ=2.54). Phase 2 (1,6→1,1) has σ=2.09 across
+  seeds — "topology luck" pattern. Seed 44 actually beat baseline at
+  5.88, suggesting cross-projections aren't fundamentally broken when
+  the right cross-pairs are present, just under-constrained without
+  surrounding biology to consistently select them.
+- **Reframe: cheat #5 is ON HOLD pending biology buildout, not closed by
+  design.** Cross-projections need a complete striatal microcircuit, a
+  closed BG loop, and a properly-structured DA system to behaviorally
+  pay off. Building these out is a multi-month research program organized
+  cluster-by-cluster:
+    - Cluster B: striatal microcircuit (D1/D2 asymmetry + FSIs + TANs)
+    - Cluster A: closed BG loop (thalamo-cortical feedback + hyperdirect)
+    - Cluster C: DA system completeness (tonic + compartmentalized)
+    - Cluster D: sequence-aware learning (hippo/PFC → striatum + replay)
+    - Cluster E: connectivity refinement (already most explored)
+- Findings: `2026-04-28-cheat5-post-v4-reframe.md`, `2026-04-28-cheat5-v4-results.md`,
+  `2026-04-28-cheat5-v3-results.md`, `2026-04-28-cheat5-v2-NEGATIVE.md`,
+  `2026-04-28-cheat5-v1-NEGATIVE.md`.
 
 **Recipe (current flagship — includes v3 lateral inhibition):**
 ```bash
