@@ -474,3 +474,32 @@ def test_pretraining_thaws_all_gates_at_start():
         assert key in summary, f"summary missing {key!r}: {summary!r}"
     assert summary["n_trials"] == 0
     assert summary["n_goal_changes"] == 0
+
+
+def test_pretraining_goal_sampling_respects_manhattan_3():
+    """Sampler must keep new goals at least Manhattan 3 from the start cell."""
+    from research.runners.g11_bg_runner import _sample_pretraining_goal
+    import random
+
+    rng = random.Random(42)
+    start_pos = (1, 1)
+    grid_size = 8
+    for _ in range(100):
+        gx, gy = _sample_pretraining_goal(rng, grid_size, start_pos, prev_goal=None)
+        assert 0 <= gx < grid_size and 0 <= gy < grid_size
+        manhattan = abs(gx - start_pos[0]) + abs(gy - start_pos[1])
+        assert manhattan >= 3, f"sampled goal ({gx},{gy}) at Manhattan {manhattan} from {start_pos}"
+
+
+def test_pretraining_goal_no_consecutive_repeats():
+    """Successive samples differ from the previous goal."""
+    from research.runners.g11_bg_runner import _sample_pretraining_goal
+    import random
+
+    rng = random.Random(42)
+    prev = None
+    for _ in range(50):
+        g = _sample_pretraining_goal(rng, 8, (1, 1), prev_goal=prev)
+        if prev is not None:
+            assert g != prev, f"sampler returned same goal {g} as previous"
+        prev = g

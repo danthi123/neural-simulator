@@ -670,6 +670,22 @@ _PRETRAINING_THAWED_GATES = (
 )
 
 
+def _sample_pretraining_goal(rng, grid_size, start_pos, prev_goal):
+    """Uniform random (gx, gy) on the grid with Manhattan >= 3 from start_pos
+    and != prev_goal. Re-samples on rejection. The grid is small enough
+    (8x8 → 16 valid cells given start (1,1)) that rejection sampling is
+    trivially fast."""
+    sx, sy = start_pos
+    while True:
+        gx = rng.randrange(grid_size)
+        gy = rng.randrange(grid_size)
+        if abs(gx - sx) + abs(gy - sy) < 3:
+            continue
+        if prev_goal is not None and (gx, gy) == prev_goal:
+            continue
+        return (gx, gy)
+
+
 def _run_pretraining_phase(
     bridge,
     cfg,
