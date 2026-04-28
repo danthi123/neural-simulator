@@ -76,7 +76,7 @@ function initWorld() {
   $("#world-load-run").addEventListener("click", () => {
     document.querySelector('nav button[data-tab="runs"]').click();
   });
-  $("#world-live-mode").addEventListener("click", openLiveModePicker);
+  $("#world-live-mode").addEventListener("click", toggleLiveMode);
   $("#world-play").addEventListener("click", play);
   $("#world-pause").addEventListener("click", pause);
   $("#world-speed").addEventListener("change", (e) => {
@@ -182,8 +182,32 @@ let _pickerRefreshInterval = null;
  *  World tab is active AND we're not currently attached to a run. Lets
  *  the step counts under each run_id update in real time without forcing
  *  the user to re-click "Live mode". */
+/** Toggle between Live mode (in-flight runs picker, auto-refreshing) and
+ *  the default past-runs list. Clicking the Live mode button while
+ *  already in Live mode returns to past runs (also detaches if currently
+ *  attached to a live run). */
+function toggleLiveMode() {
+  const liveActive = !!_pickerRefreshInterval || world.live;
+  if (liveActive) {
+    // Exit Live mode: detach if attached, stop picker refresh, restore
+    // past-runs list.
+    if (world.live) closeLiveSocket();
+    if (_pickerRefreshInterval) {
+      clearInterval(_pickerRefreshInterval);
+      _pickerRefreshInterval = null;
+    }
+    world._liveModeOpened = false;
+    document.getElementById("world-live-mode")?.classList.remove("active");
+    loadWorldRunList();
+  } else {
+    document.getElementById("world-live-mode")?.classList.add("active");
+    openLiveModePicker();
+  }
+}
+
 async function openLiveModePicker() {
   world._liveModeOpened = true;
+  document.getElementById("world-live-mode")?.classList.add("active");
   await refreshLivePicker(/* showHeading= */ true);
   // Set up the auto-refresh ticker (idempotent — clears any existing).
   if (_pickerRefreshInterval) clearInterval(_pickerRefreshInterval);
@@ -599,7 +623,10 @@ function handleLiveProgress(p) {
     world.liveRecentEvents = world.liveRecentEvents || [];
     world.liveRecentEvents.push({ t: p.timestamp, step: p.step });
     const cutoff = p.timestamp - 5;
-    while (world.liveRecentEvents.length > 1 && world.liveRecentEvents[0].t < cutoff) {
+    // Keep at least 2 events in the buffer — when --progress-print-interval
+    // is large (e.g. 20), events can arrive >5s apart and the cutoff would
+    // otherwise leave only 1 event, stalling the rate calc at 0.0.
+    while (world.liveRecentEvents.length > 2 && world.liveRecentEvents[0].t < cutoff) {
       world.liveRecentEvents.shift();
     }
     let stepsPerSec = 0;

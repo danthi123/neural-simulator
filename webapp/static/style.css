@@ -581,6 +581,12 @@ pre {
   min-height: 0;
 }
 
+#world-live-mode.active {
+  color: var(--accent);
+  background: var(--bg-3);
+  border-color: var(--accent);
+}
+
 #world-canvas-container {
   position: relative;
   background: var(--code-bg);
@@ -727,16 +733,26 @@ pre {
 
 /* Live mode badge + progress bar */
 .live-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   background: var(--accent-bad);
   color: var(--bg);
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 10px;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  margin-right: 8px;
+  line-height: 1;
   animation: pulse 1.6s ease-in-out infinite;
+}
+/* Live-mode toolbar group: badge + ETA + Detach. Inline-flex so all
+   three sit on the toolbar baseline with consistent spacing — fixes
+   the previous "live badge floats high, ETA misaligned" layout. */
+#live-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
 }
 @keyframes pulse {
   0%, 100% { opacity: 1; }
