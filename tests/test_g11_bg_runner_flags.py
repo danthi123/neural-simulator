@@ -746,3 +746,13 @@ def test_striatal_fsis_disabled_by_default():
     assert not any(r.name.startswith("str_FS_") for r in regions)
     assert not any(p.from_region.startswith("str_FS_") or p.to_region.startswith("str_FS_")
                    for p in pathways)
+
+
+def test_striatal_fsis_kwarg_accepted(tmp_out_path):
+    """Runner accepts enable_striatal_fsis without TypeError."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    run_moving_goal_episode(
+        out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+        enable_striatal_fsis=True,
+    )

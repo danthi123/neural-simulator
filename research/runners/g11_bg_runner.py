@@ -1195,6 +1195,11 @@ def run_moving_goal_episode(
     # Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry — D2-targeting
     # synapses' weight updates flip sign vs D1. Default off.
     enable_d1_d2_asymmetry: bool = False,
+    # Cluster B.2 (2026-04-28): striatal fast-spiking interneurons —
+    # 4 str_FS_X pools providing broadcast inhibition to all D1/D2 MSN
+    # pools. Default off. See
+    # docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md.
+    enable_striatal_fsis: bool = False,
     # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
     # Defaults match CoreSimConfig but can be overridden from the runner's
     # CLI / kwargs to tune the pruning aggressiveness for short pretraining
@@ -1297,6 +1302,7 @@ def run_moving_goal_episode(
         enable_bg_lateral_inhibition=enable_bg_lateral_inhibition,
         lateral_inhibition_density=lateral_inhibition_density,
         lateral_inhibition_weight=lateral_inhibition_weight,
+        enable_striatal_fsis=enable_striatal_fsis,
         enable_beacon_perception=enable_beacon_perception,
         n_beacon_sensors=n_beacon_sensors,
         beacon_to_goal_weight=beacon_to_goal_weight,
@@ -2437,6 +2443,10 @@ def main():
                     help="Cluster B.1: D1/D2 plasticity asymmetry — D2-targeting "
                          "synapses' weight updates flip sign vs D1. See "
                          "docs/plans/2026-04-28-cluster-b1-d1d2-asymmetry-implementation.md.")
+    ap.add_argument("--enable-striatal-fsis", action="store_true",
+                    help="Cluster B.2: striatal fast-spiking interneurons "
+                         "(broadcast inhibition). See "
+                         "docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md.")
     ap.add_argument("--pruning-alpha", type=float, default=None,
                     help="Cheat-5 option-1 pruning rate. Default: cfg.pruning_alpha (0.001 = conservative). "
                          "Try 0.05 for a 5K-trial pretraining smoke; 0.005 for 30K validation.")
@@ -2564,6 +2574,7 @@ def main():
             pretraining_steps_per_goal=args.pretraining_steps_per_goal,
             enable_structural_pruning=args.enable_structural_pruning,
             enable_d1_d2_asymmetry=args.enable_d1_d2_asymmetry,
+            enable_striatal_fsis=args.enable_striatal_fsis,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
             pruning_weight_floor=args.pruning_weight_floor,
