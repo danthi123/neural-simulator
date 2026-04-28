@@ -396,9 +396,25 @@ sensory cortex to mature before association cortex.
 
 ### Recommended configuration (current best 2026-04-27)
 
-The current best on 2-goal slow-change task uses sensory + hippocampus +
-PFC working memory + curriculum:
+There are now two recommended configs depending on whether biological
+realism is required:
 
+**Best biology-grounded (NEW BEST as of 2026-04-27 night):**
+```bash
+python -m research.runners.g11_bg_runner --moving-goal \
+    --hippocampus --learned-perception --pfc \
+    --beacon-perception --beacon-replaces-goal \
+    --cue-reflex --cue-reflex-replaces-heuristic \
+    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
+    --curriculum --curriculum-warmup-steps 600 \
+    --seed N --n-steps 1800
+```
+Sum 4.77 ± 0.42 (6-seed, p=0.00188, **18.9% over baseline**, 6/6 seeds beat).
+**Agent has NO direct (gx, gy) coordinate access anywhere.** Beacon
+perception + cue-following reflex replaces the heuristic + direct goal
+cell drive. Closes the two biggest biological cheats in the system.
+
+**Best with cheats (engineering shortcut version):**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
@@ -406,10 +422,14 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --curriculum --curriculum-warmup-steps 600 \
     --seed N --n-steps 1800
 ```
+Sum 4.41 ± 0.94 (6-seed, p=0.018, 25.0% over baseline). Uses heuristic
++ direct goal coords. Slightly better numerically but not biology-grounded.
 
-Performance (6-seed validated):
-- **2-goal (slow-change)**: sum 4.41 ± 0.94 — **25.0% improvement over baseline 5.88, 5/6 seeds beat baseline (p=0.018)**
-- **4-goal (fast-change)**: not tested with PFC; curriculum doesn't help fast-change in any variant
+Performance comparison (6-seed validated):
+- **Baseline (heuristic + direct goal coords)**: 5.88
+- **Best biology-grounded**: 4.77 (-18.9%, p=0.00188)
+- **Best with cheats**: 4.41 (-25.0%, p=0.018)
+- **4-goal (fast-change)**: curriculum doesn't help in any variant
 
 The PFC region adds 60 recurrent neurons modeling working memory, with
 plastic pathways `goal_cells → PFC → cortex_{N,E,S,W}`. Tagged with
