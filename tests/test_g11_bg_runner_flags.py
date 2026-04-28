@@ -527,3 +527,52 @@ def test_developmental_pretraining_kwargs_accepted(tmp_out_path):
     with open(tmp_out_path) as f:
         result = json.load(f)
     assert "phase_stats" in result
+
+
+def test_run_moving_goal_with_pretraining_smoke(tmp_out_path):
+    """End-to-end: tiny pretraining + tiny eval. Asserts cross-projection
+    weights moved during pretraining (the whole point of v4 — phase-0
+    cross-projection learning under varied goals)."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+
+    # Patch the pretraining helper so we can snapshot the synapse-weight array
+    # before/after the pretraining call. cp_connections.data is the canonical
+    # weight buffer for bridge.
+    import research.runners.g11_bg_runner as runner_mod
+    snapshots = {}
+    original = runner_mod._run_pretraining_phase
+
+    def wrapped(*args, **kwargs):
+        bridge = kwargs.get("bridge", args[0] if args else None)
+        snapshots["pre_weights"] = bridge.cp_connections.data.copy().get()
+        result = original(*args, **kwargs)
+        snapshots["post_pretraining_weights"] = bridge.cp_connections.data.copy().get()
+        return result
+
+    runner_mod._run_pretraining_phase = wrapped
+    try:
+        run_moving_goal_episode(
+            out_path=tmp_out_path, seed=42, n_steps=100, verbose=False,
+            enable_bg_cross_projections=True,
+            cross_projection_weight=0.0,
+            enable_bg_lateral_inhibition=True,
+            enable_curriculum=True, curriculum_warmup_steps=20,
+            enable_developmental_pretraining=True,
+            pretraining_n_goals=1,
+            pretraining_steps_per_goal=50,
+        )
+    finally:
+        runner_mod._run_pretraining_phase = original
+
+    pre = snapshots["pre_weights"]
+    post = snapshots["post_pretraining_weights"]
+    n_changed = (pre != post).sum()
+    assert n_changed > 0.01 * pre.size, (
+        f"pretraining didn't change any weights — synapse plasticity not flowing? "
+        f"{n_changed}/{pre.size} changed")
+
+    with open(tmp_out_path) as f:
+        result = json.load(f)
+    assert "phase_stats" in result
+    assert result["seed"] == 42

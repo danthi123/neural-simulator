@@ -725,14 +725,191 @@ def _run_pretraining_phase(
               f"thawed to 1.0; running {n_goals} goals × {steps_per_goal} steps each",
               flush=True)
 
-    # Trial loop lands in Task 5 (after CLI wiring is in place to call us
-    # via run_moving_goal_episode). For now, return a structured-but-empty
-    # summary so callers don't break.
+    # Capture cross-projection synapse indices once (constant after build) so
+    # we can compute weight stats at the end of pretraining. Empty if the
+    # gate isn't declared (e.g. --bg-cross-projections off).
+    cross_indices_cpu = []
+    if "bg_cross_projections" in getattr(bridge, "_plasticity_gate_to_synapses", {}):
+        cross_indices_cpu = list(bridge._plasticity_gate_to_synapses["bg_cross_projections"])
+
+    # Early-out: zero goals → nothing to drive. Useful for tests that only
+    # exercise the gate-thaw / signature path. Fall through to the summary.
+    if n_goals == 0 or steps_per_goal == 0:
+        return {
+            "n_trials": 0,
+            "n_goal_changes": 0,
+            "cross_weights_mean": float("nan"),
+            "cross_weights_std": float("nan"),
+        }
+
+    # Imports kept inside the helper to match the file's existing style and
+    # avoid touching the top-of-file import block (Task 5 constraint).
+    import random
+    import numpy as np
+    import cupy as cp
+
+    # Reconstruct GPU-index arrays for the regions we drive in the inner
+    # loop. The eval loop pre-caches these in run_moving_goal_episode; we
+    # rebuild here so the helper stays self-contained (no extra kwargs).
+    region_indices_cp = {}
+    for r in regions:
+        idx = list(bridge.region_manager.indices(r.name))
+        if idx:
+            region_indices_cp[r.name] = cp.asarray(idx, dtype=cp.int64)
+    motor_idx_per_action = {
+        a: region_indices_cp[f"motor_{a}"] for a in ACTION_NAMES
+    }
+
+    # Stimulus / readout window (mirrors eval). The fused dynamics
+    # accumulate in 0.5 ms ticks, so 100 ms = 200 sub-steps.
+    STIMULUS_MS = 100.0
+    READOUT_START_MS = 30.0
+    READOUT_END_MS = 100.0
+    n_stim_steps = int(STIMULUS_MS / cfg.dt_ms)
+    readout_start = int(READOUT_START_MS / cfg.dt_ms)
+    readout_end = int(READOUT_END_MS / cfg.dt_ms)
+    reward_hold_steps = 10  # matches eval default
+
+    # Action geometry (must mirror ACTION_DELTAS in run_moving_goal_episode)
+    ACTION_DELTAS = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # N, E, S, W
+
+    # Lock baseline tonic drives once. The eval loop re-sets these every
+    # trial as a defensive measure; for pretraining we accept the drift
+    # tradeoff in exchange for simpler code and equivalent biology (basal
+    # ganglia tonic drives are biologically slow-varying).
+    bridge.cp_external_input_current[:] = 0.0
+    for rn in [f"gpe_{a}" for a in ACTION_NAMES]:
+        bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
+    for rn in [f"gpi_{a}" for a in ACTION_NAMES]:
+        bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(110.0)
+    for rn in ["stn", "dopamine"]:
+        bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
+    for rn in [f"thal_{a}" for a in ACTION_NAMES]:
+        bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(300.0)
+
+    rng = random.Random(seed * 7919)  # deterministic, distinct from eval RNGs
+    # Action-selection RNG must NOT collide with the eval loop's per-step
+    # RNG seeds (which use seed*10000 + step). Use a different prime offset.
+    action_rng = np.random.default_rng(seed * 13_417)
+
+    prev_goal = None
+    n_goal_changes = 0
+    trial_counter = 0
+    x, y = start_pos
+
+    HEURISTIC_DRIVE_PA = cp.float32(800.0)
+
+    for goal_idx in range(n_goals):
+        gx, gy = _sample_pretraining_goal(rng, grid_size, start_pos, prev_goal)
+        prev_goal = (gx, gy)
+        n_goal_changes += 1
+        if verbose:
+            print(f"[g11 seed={seed}] pretraining goal {goal_idx + 1}/{n_goals}: "
+                  f"({gx},{gy})", flush=True)
+
+        # Reset agent to start at each new pretraining-goal episode
+        x, y = start_pos
+
+        for trial in range(steps_per_goal):
+            # ── Heuristic cortex drive: directly drive cortex_X for each
+            # goal-relative direction. Pretraining always uses the
+            # heuristic — no opt-in perception modes here. The point is to
+            # evolve weights under varied goals using the simplest possible
+            # input pathway.
+            #
+            # Zero cortex pools first so the prior trial's drive doesn't
+            # leak across direction transitions.
+            for a in ACTION_NAMES:
+                bridge.cp_external_input_current[region_indices_cp[f"cortex_{a}"]] = cp.float32(0.0)
+            if gy > y:
+                bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = HEURISTIC_DRIVE_PA
+            if gx > x:
+                bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = HEURISTIC_DRIVE_PA
+            if gy < y:
+                bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = HEURISTIC_DRIVE_PA
+            if gx < x:
+                bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = HEURISTIC_DRIVE_PA
+
+            # ── Run stimulus window and tally motor spikes
+            motor_counts = {a: 0 for a in ACTION_NAMES}
+            bridge.core_config.current_reward_signal = 0.0
+            for s in range(n_stim_steps):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+                bridge.runtime_state.current_time_ms = (
+                    bridge.runtime_state.current_time_step * cfg.dt_ms
+                )
+                if readout_start <= s < readout_end:
+                    firing = bridge.cp_firing_states.get().astype(bool)
+                    for a in ACTION_NAMES:
+                        motor_counts[a] += int(firing[motor_idx_per_action[a].get()].sum())
+
+            # ── Argmax action selection (random if all silent)
+            if max(motor_counts.values()) > 0:
+                action_idx = max(range(N_ACTIONS),
+                                 key=lambda i: motor_counts[ACTION_NAMES[i]])
+            else:
+                action_idx = int(action_rng.integers(0, N_ACTIONS))
+
+            # ── Position update + reward (Manhattan-delta only; sensed
+            # reward is an eval-time refinement and adds no value during
+            # pretraining where we just want weight evolution)
+            dist_before = abs(x - gx) + abs(y - gy)
+            dxa, dya = ACTION_DELTAS[action_idx]
+            new_x = int(np.clip(x + dxa, 0, grid_size - 1))
+            new_y = int(np.clip(y + dya, 0, grid_size - 1))
+            x, y = new_x, new_y
+            dist_after = abs(x - gx) + abs(y - gy)
+
+            if dist_after < dist_before:
+                reward = 1.0
+            elif dist_after > dist_before:
+                reward = -1.0
+            else:
+                reward = 0.0
+
+            # ── Reward signal hold: drive plasticity for reward_hold_steps
+            # extra sim ticks. This is the actual learning step — STDP
+            # eligibility built up during the stimulus window gets
+            # converted to weight updates here.
+            if abs(reward) > 0:
+                bridge.core_config.current_reward_signal = float(reward)
+                for _ in range(reward_hold_steps):
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+                    bridge.runtime_state.current_time_ms = (
+                        bridge.runtime_state.current_time_step * cfg.dt_ms
+                    )
+                bridge.core_config.current_reward_signal = 0.0
+
+            trial_counter += 1
+
+    # ── Cross-projection weight summary
+    if cross_indices_cpu:
+        cross_w = bridge.cp_connections.data[cp.asarray(cross_indices_cpu)].get()
+        if np.isnan(cross_w).any():
+            raise RuntimeError(
+                "pretraining produced NaN cross-projection weights — likely STDP "
+                "instability. Lower learning rate or shorten "
+                "pretraining_steps_per_goal."
+            )
+        cross_mean = float(cross_w.mean())
+        cross_std = float(cross_w.std())
+    else:
+        cross_mean = float("nan")
+        cross_std = float("nan")
+
+    if verbose:
+        print(f"[g11 seed={seed}] pretraining complete: {trial_counter} trials, "
+              f"{n_goal_changes} goal changes; cross weights mean={cross_mean:.3f} "
+              f"std={cross_std:.3f} -> handing off to eval (curriculum will freeze "
+              f"bg_cross_projections)", flush=True)
+
     return {
-        "n_trials": 0,
-        "n_goal_changes": 0,
-        "cross_weights_mean": float("nan"),
-        "cross_weights_std": float("nan"),
+        "n_trials": trial_counter,
+        "n_goal_changes": n_goal_changes,
+        "cross_weights_mean": cross_mean,
+        "cross_weights_std": cross_std,
     }
 
 
