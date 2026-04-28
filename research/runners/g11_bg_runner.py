@@ -111,6 +111,14 @@ def build_bg_brain_regions(
     pfc_internal_density: float = 0.2,  # recurrent connectivity for persistence
     goal_to_pfc_weight: float = 8.0,
     pfc_to_cortex_weight: float = 8.0,
+    # Cheat #5: BG cross-projections (2026-04-27).
+    # Default: cortex_X → str_D1_X only (same-action). Real biology has
+    # cross-projections (cortex_E might also project weakly to str_D1_W,
+    # learnable). With cross-projections enabled, all 16 cortex×D1 pairs
+    # exist, but with cross-projections starting weak. Plasticity should
+    # learn to weaken/strengthen them appropriately.
+    enable_bg_cross_projections: bool = False,
+    cross_projection_weight: float = 5.0,  # weak vs same-action 25.0
     # Goal-beacon perception (Item 1 Stage 1, 2026-04-27 skeleton).
     # Replaces direct (gx, gy) goal access with beacon sensors that detect
     # beacon strength + direction (modeling biological cue perception).
@@ -464,13 +472,18 @@ def build_bg_brain_regions(
     for cortex_action in ACTION_NAMES:
         for str_action in ACTION_NAMES:
             same = (cortex_action == str_action)
-            # Eliminate cross-projections to avoid confused multi-cortex drive.
-            # Each cortex_X projects ONLY to str_D1_X / str_D2_X.
-            # Learning-based redistribution can come later.
-            if not same:
+            if same:
+                density = 1.0
+                weight = 25.0
+            elif enable_bg_cross_projections:
+                # Cheat #5: include cross-projections (e.g. cortex_E → str_D1_W)
+                # at weak initial weight. Plasticity should learn the right
+                # cross-projection strengths from STDP+reward.
+                density = 1.0
+                weight = cross_projection_weight
+            else:
+                # Default: same-action only (the cheat we're considering removing)
                 continue
-            density = 1.0
-            weight = 25.0
             pathways.append(RegionPathway(
                 from_region=f"cortex_{cortex_action}",
                 to_region=f"str_D1_{str_action}",
@@ -623,6 +636,8 @@ def run_moving_goal_episode(
     pfc_internal_density: float = 0.2,
     goal_to_pfc_weight: float = 8.0,
     pfc_to_cortex_weight: float = 8.0,
+    enable_bg_cross_projections: bool = False,
+    cross_projection_weight: float = 5.0,
     enable_beacon_perception: bool = False,
     n_beacon_sensors: int = 8,
     beacon_to_goal_weight: float = 8.0,
@@ -637,6 +652,14 @@ def run_moving_goal_episode(
     landmark_max_intensity: float = 600.0,
     landmark_falloff: float = 1.0,
     landmarks_replace_place: bool = False,
+    # Cheat #4: sensed reward (2026-04-27).
+    # Default reward = +1 if Manhattan distance decreased, -1 if increased.
+    # This computes from raw (gx, gy, x, y) coordinates — a cheat. Sensed
+    # reward instead computes reward from beacon-intensity GRADIENT
+    # (intensity_after - intensity_before): the agent "feels warmer" as it
+    # approaches and "cooler" as it retreats. Same information content as
+    # distance-based, but operates on the agent's perceptual signal.
+    enable_sensed_reward: bool = False,
     # Cue-following reflex (Item 1 Stage 3, 2026-04-27).
     # Replaces the heuristic with a hand-tuned innate reflex that computes
     # cortex drive from beacon sensor activations. Models a real animal's
@@ -781,6 +804,8 @@ def run_moving_goal_episode(
         pfc_internal_density=pfc_internal_density,
         goal_to_pfc_weight=goal_to_pfc_weight,
         pfc_to_cortex_weight=pfc_to_cortex_weight,
+        enable_bg_cross_projections=enable_bg_cross_projections,
+        cross_projection_weight=cross_projection_weight,
         enable_beacon_perception=enable_beacon_perception,
         n_beacon_sensors=n_beacon_sensors,
         beacon_to_goal_weight=beacon_to_goal_weight,
@@ -1530,12 +1555,31 @@ def run_moving_goal_episode(
         goal_log.append((gx, gy))
         distance_log.append(dist_after)
 
-        if dist_after < dist_before:
-            reward = 1.0
-        elif dist_after > dist_before:
-            reward = -1.0
+        # Reward computation. Default uses Manhattan distance change (cheat:
+        # uses raw (gx, gy)). Sensed reward instead uses beacon-intensity
+        # gradient (the agent "feels warmer" as it approaches), which operates
+        # on the perceptual signal — biologically grounded.
+        if enable_sensed_reward and enable_beacon_perception:
+            # Compute beacon intensity at old vs new position
+            d_before = float(((gx - (x - dx)) ** 2 + (gy - (y - dy)) ** 2) ** 0.5) if not in_sleep else 0.0
+            d_after = float(((gx - x) ** 2 + (gy - y) ** 2) ** 0.5)
+            intensity_before = beacon_max_intensity / (1.0 + beacon_falloff * d_before)
+            intensity_after = beacon_max_intensity / (1.0 + beacon_falloff * d_after)
+            intensity_diff = intensity_after - intensity_before
+            # Threshold to avoid noise; sign-only output
+            if intensity_diff > 1e-3:
+                reward = 1.0
+            elif intensity_diff < -1e-3:
+                reward = -1.0
+            else:
+                reward = 0.0
         else:
-            reward = 0.0
+            if dist_after < dist_before:
+                reward = 1.0
+            elif dist_after > dist_before:
+                reward = -1.0
+            else:
+                reward = 0.0
         reward_log.append(float(reward))
 
         # Log successful (place, goal) tuples during wake for sleep-replay.
@@ -1740,6 +1784,12 @@ def main():
     ap.add_argument("--landmark-falloff", type=float, default=1.0)
     ap.add_argument("--landmarks-replace-place", action="store_true",
                     help="If set, place_cells receive ONLY landmark-derived input (no direct (x,y) cheat). True Stage 2 perception test.")
+    ap.add_argument("--sensed-reward", action="store_true",
+                    help="Cheat #4: compute reward from beacon-intensity gradient (sensed signal) instead of Manhattan distance change (cheat). Requires --beacon-perception.")
+    ap.add_argument("--bg-cross-projections", action="store_true",
+                    help="Cheat #5: enable cortex × str_D1 cross-projections (e.g. cortex_E → str_D1_W) at weak initial weight. Plasticity learns the right cross-strengths instead of hand-coded same-action-only.")
+    ap.add_argument("--cross-projection-weight", type=float, default=5.0,
+                    help="Initial weight for BG cross-projections (default 5.0 vs 25.0 same-action).")
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
@@ -1847,6 +1897,9 @@ def main():
             landmark_max_intensity=args.landmark_max_intensity,
             landmark_falloff=args.landmark_falloff,
             landmarks_replace_place=args.landmarks_replace_place,
+            enable_sensed_reward=args.sensed_reward,
+            enable_bg_cross_projections=args.bg_cross_projections,
+            cross_projection_weight=args.cross_projection_weight,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_cortex_lateral_inhibition=args.cortex_wta,
