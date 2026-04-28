@@ -1096,6 +1096,7 @@ def run_moving_goal_episode(
     enable_developmental_pretraining: bool = False,
     pretraining_n_goals: int = 10,
     pretraining_steps_per_goal: int = 3000,
+    enable_structural_pruning: bool = False,
     # Heuristic decay (Stage 6, 2026-04-27): scales the heuristic cortex
     # drive (800 pA per aligned pool) by this factor. Default 1.0 keeps
     # full heuristic. Set to 0.0 to disable heuristic entirely (tests
@@ -1280,6 +1281,7 @@ def run_moving_goal_episode(
     cfg.enable_conductance_noise = False
     cfg.enable_parameter_heterogeneity = False
     cfg.enable_structural_plasticity = False  # keep synapse count fixed (per-action DA mask depends on it)
+    cfg.enable_structural_pruning = enable_structural_pruning
 
     bridge = SimulationBridge(
         core_config=cfg, viz_config=VisualizationConfig(),
@@ -2306,6 +2308,11 @@ def main():
                     help="Trials per pretraining goal (default 3000). 10x3000=30K "
                          "default total; reduce for tier-2 smoke (e.g. 1000) or "
                          "tier-1 wiring check (e.g. 1 goal x 1000).")
+    ap.add_argument("--enable-structural-pruning", action="store_true",
+                    help="Cheat-5 option 1: experience-dependent synapse pruning during "
+                         "pretraining. Synapses with negative survival score AND low weight "
+                         "get permanently eliminated. See "
+                         "docs/plans/2026-04-28-structural-plasticity-design.md.")
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
@@ -2422,6 +2429,7 @@ def main():
             enable_developmental_pretraining=args.developmental_pretraining,
             pretraining_n_goals=args.pretraining_n_goals,
             pretraining_steps_per_goal=args.pretraining_steps_per_goal,
+            enable_structural_pruning=args.enable_structural_pruning,
             lateral_inhibition_density=args.lateral_inhibition_density,
             lateral_inhibition_weight=args.lateral_inhibition_weight,
             interactive_control_file=args.interactive_control_file,

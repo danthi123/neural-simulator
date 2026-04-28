@@ -611,3 +611,19 @@ def test_developmental_pretraining_warns_without_cross_projections(tmp_out_path,
     assert "warning" in captured.out.lower() or "warning" in captured.err.lower(), (
         "expected a warning about pretraining without cross-projections")
     assert "bg-cross-projections" in captured.out or "bg_cross_projections" in captured.out
+
+
+# ───────────────────── 2026-04-28: structural-pruning closure ─────────────────────
+
+
+def test_enable_structural_pruning_kwarg_accepted(tmp_out_path):
+    """The runner accepts the new pruning kwarg without TypeError."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    run_moving_goal_episode(
+        out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+        enable_bg_cross_projections=True,
+        enable_developmental_pretraining=True,
+        enable_structural_pruning=True,
+        pretraining_n_goals=0, pretraining_steps_per_goal=0,
+    )
