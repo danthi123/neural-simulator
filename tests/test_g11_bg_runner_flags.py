@@ -503,3 +503,27 @@ def test_pretraining_goal_no_consecutive_repeats():
         if prev is not None:
             assert g != prev, f"sampler returned same goal {g} as previous"
         prev = g
+
+
+def test_developmental_pretraining_kwargs_accepted(tmp_out_path):
+    """The runner should accept enable_developmental_pretraining + the two
+    integer kwargs without raising TypeError on signature mismatch. Use
+    n_goals=0 so the (still-stubbed) pretraining loop early-returns and the
+    standard eval still runs.
+
+    Note: --bg-cross-projections is enabled because the pretraining helper's
+    Task 2/3 validation hard-requires the bg_cross_projections gate to be
+    declared (the whole point of v4 pretraining). Task 7 will add a warning
+    path for the no-cross-projections case; this test stays on the happy path."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    run_moving_goal_episode(
+        out_path=tmp_out_path, seed=42, n_steps=40, verbose=False,
+        enable_bg_cross_projections=True,
+        enable_developmental_pretraining=True,
+        pretraining_n_goals=0,
+        pretraining_steps_per_goal=0,
+    )
+    with open(tmp_out_path) as f:
+        result = json.load(f)
+    assert "phase_stats" in result

@@ -899,6 +899,15 @@ def run_moving_goal_episode(
     # Plasticity gain for bg_cross_projections in phase 3. 1.0 = full plastic,
     # 0.5 = half-rate (slower than same-action), 0.0 = stay frozen.
     bg_cross_phase3_gain: float = 0.5,
+    # ─── v4 (2026-04-28): developmental pretraining ────────────────────
+    # Run a critical-period analog before the standard eval: N random
+    # goals × M trials per goal with all plasticity gates open. At the
+    # transition, the existing curriculum init naturally freezes
+    # bg_cross_projections (line 1220 of this file). See
+    # docs/plans/2026-04-28-cheat5-v4-design.md.
+    enable_developmental_pretraining: bool = False,
+    pretraining_n_goals: int = 10,
+    pretraining_steps_per_goal: int = 3000,
     # Heuristic decay (Stage 6, 2026-04-27): scales the heuristic cortex
     # drive (800 pA per aligned pool) by this factor. Default 1.0 keeps
     # full heuristic. Set to 0.0 to disable heuristic entirely (tests
@@ -1287,6 +1296,20 @@ def run_moving_goal_episode(
     # are frozen and only cortex_to_d1 is plastic. Cortex builds D1 mapping
     # under the heuristic teacher. In phase 2, cortex_to_d1 freezes and the
     # input layers thaw, learning their mappings with cortex as the locked target.
+
+    # v4 developmental pretraining (2026-04-28). Runs only if enabled.
+    # Inserted BEFORE curriculum init so the init's phase-1 gate values
+    # naturally freeze bg_cross_projections at eval start (line 1220).
+    pretraining_summary = None
+    if enable_developmental_pretraining:
+        pretraining_summary = _run_pretraining_phase(
+            bridge=bridge, cfg=cfg, regions=regions,
+            n_goals=pretraining_n_goals,
+            steps_per_goal=pretraining_steps_per_goal,
+            grid_size=grid_size, start_pos=start_pos,
+            seed=seed, verbose=verbose,
+        )
+
     available_gates = bridge.list_plasticity_gates() if enable_curriculum else []
     has_hippo_gate = enable_curriculum and "hippo_to_cortex" in available_gates
     has_cortex_gate = enable_curriculum and "cortex_to_d1" in available_gates
@@ -2063,6 +2086,18 @@ def main():
     ap.add_argument("--bg-cross-phase3-gain", type=float, default=0.5,
                     help="Plasticity gain for bg_cross_projections in phase 3. 1.0 = full plastic, "
                          "0.5 = half-rate (slower than same-action; default), 0.0 = stay frozen.")
+    # v4 (2026-04-28): developmental pretraining
+    ap.add_argument("--developmental-pretraining", action="store_true",
+                    help="v4 cheat-5 closure: run a critical-period analog "
+                         "(all plasticity gates open) on N random goals before "
+                         "the standard eval. Cross-projections freeze at eval "
+                         "start. Requires --bg-cross-projections.")
+    ap.add_argument("--pretraining-n-goals", type=int, default=10,
+                    help="Number of random goal positions during pretraining (default 10).")
+    ap.add_argument("--pretraining-steps-per-goal", type=int, default=3000,
+                    help="Trials per pretraining goal (default 3000). 10x3000=30K "
+                         "default total; reduce for tier-2 smoke (e.g. 1000) or "
+                         "tier-1 wiring check (e.g. 1 goal x 1000).")
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
@@ -2176,6 +2211,9 @@ def main():
             bg_cross_thaw_step=args.bg_cross_thaw_step,
             bg_cross_phase3_gain=args.bg_cross_phase3_gain,
             enable_bg_lateral_inhibition=args.bg_lateral_inhibition,
+            enable_developmental_pretraining=args.developmental_pretraining,
+            pretraining_n_goals=args.pretraining_n_goals,
+            pretraining_steps_per_goal=args.pretraining_steps_per_goal,
             lateral_inhibition_density=args.lateral_inhibition_density,
             lateral_inhibition_weight=args.lateral_inhibition_weight,
             interactive_control_file=args.interactive_control_file,
