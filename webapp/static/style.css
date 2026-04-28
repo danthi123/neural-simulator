@@ -14,6 +14,11 @@
   --border: #2a2f3d;
   --link: #93c5fd;
   --code-bg: #0a0c10;
+  /* Font stacks. Sans for descriptive copy/labels; mono for telemetry,
+     run IDs, numerics, and any data that benefits from fixed-width
+     alignment. Use these instead of hardcoding font-family lists. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", Consolas, "Courier New", monospace;
 }
 
 * { box-sizing: border-box; }
@@ -21,7 +26,7 @@ html, body { margin: 0; padding: 0; height: 100%; }
 body {
   background: var(--bg);
   color: var(--fg);
-  font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font: 14px/1.5 var(--font-sans);
   overflow: hidden;
 }
 
@@ -127,7 +132,7 @@ main {
 }
 .selection-bar #selection-count {
   color: var(--accent);
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
 }
 .ctrl-btn.bad {
   border-color: rgba(248, 113, 113, 0.4);
@@ -188,7 +193,7 @@ main {
 .trash-row.row-selected { background: rgba(110, 231, 183, 0.08); }
 .trash-row .row-body { flex: 1; min-width: 0; }
 .trash-row .name {
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
 }
 .trash-row .meta {
@@ -230,19 +235,19 @@ main {
 }
 .list-item:hover { background: var(--bg-2); }
 .list-item.active { background: var(--bg-3); border-left: 3px solid var(--accent); padding-left: 13px; }
-.list-item .name { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 12px; }
+.list-item .name { font-family: var(--font-mono); font-size: 12px; }
 .list-item .meta { font-size: 11px; color: var(--fg-dim); }
 
 .metric { display: inline-block; margin-right: 12px; }
 .metric .label { color: var(--fg-dim); margin-right: 4px; }
-.metric .value { color: var(--accent); font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+.metric .value { color: var(--accent); font-family: var(--font-mono); }
 .metric.warn .value { color: var(--accent-warn); }
 .metric.bad .value { color: var(--accent-bad); }
 
 .muted { color: var(--fg-dim); }
 
 pre, code {
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
 }
 pre {
@@ -373,7 +378,7 @@ pre {
   font-size: 22px;
   font-weight: 600;
   color: var(--accent);
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
 }
 .kpi-card .kpi-sub {
   margin-top: 4px;
@@ -402,7 +407,7 @@ pre {
 .activity-row:hover { background: var(--bg-3); }
 .activity-row:last-child { border-bottom: none; }
 .activity-row .name {
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   flex: 1;
   color: var(--fg);
@@ -419,7 +424,7 @@ pre {
   color: var(--fg-muted);
 }
 .activity-row .sum {
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   color: var(--accent);
   font-weight: 600;
   min-width: 48px;
@@ -464,7 +469,7 @@ pre {
   padding: 10px 12px;
   border-bottom: 1px solid var(--border);
   font-size: 12px;
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
 }
 .experiment-table tr:last-child td { border-bottom: none; }
 .experiment-table tr.expandable { cursor: pointer; }
@@ -491,7 +496,7 @@ pre {
   display: flex;
   justify-content: space-between;
   padding: 4px 0;
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
 }
 
 /* ─── Charts ────────────────────────────────────────────────────────── */
@@ -569,8 +574,17 @@ pre {
 }
 #tab-world .toolbar label select { border: none; padding: 0; }
 
-#tab-world #world-step-display {
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+/* Toolbar telemetry — run IDs, step counts, rate/ETA. Monospace so
+   they don't shimmy as digits change and align cleanly with each
+   other. Body sans-serif is for descriptive labels and copy. */
+#world-run-name,
+#world-step-display,
+#live-eta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.live-badge {
+  font-family: var(--font-sans);  /* keep "● LIVE" in the body sans */
 }
 
 .world-layout {
@@ -610,7 +624,7 @@ pre {
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 10px 14px;
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   min-width: 180px;
   pointer-events: none;
@@ -707,7 +721,7 @@ pre {
   padding: 6px 8px;
   border-radius: 4px;
   cursor: pointer;
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   display: flex;
   flex-direction: column;
@@ -808,7 +822,7 @@ pre {
 .ctrl-btn.active { background: var(--accent); color: var(--bg); }
 #world-canvas.interactive { cursor: crosshair; }
 #ctrl-status {
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   margin-left: auto;
 }
@@ -848,12 +862,12 @@ pre {
   padding: 2px 4px;
   color: var(--fg);
   font: inherit;
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   cursor: pointer;
 }
 .scrubber-step-label {
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--fg-dim);
   cursor: pointer;
@@ -877,7 +891,7 @@ pre {
   padding: 2px 6px;
   color: var(--fg);
   font: inherit;
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   text-align: center;
 }
@@ -914,7 +928,7 @@ pre {
   padding: 8px 10px;
   color: var(--fg);
   font: inherit;
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
 }
 #tab-launcher button[type=submit] {
@@ -935,7 +949,7 @@ pre {
   border-radius: 6px;
   padding: 12px;
   max-width: 1200px;
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.4;
   max-height: 600px;
