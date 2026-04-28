@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -252,6 +253,100 @@ def test_sidecar_404_when_missing(client):
 def test_sidecar_path_traversal_blocked(client):
     res = client.get("/api/runs/..%2Fserver.py/sidecar")
     assert res.status_code in (400, 404)
+
+
+def test_launch_returns_200_not_500(client, monkeypatch):
+    """Regression for: launch_run was sync `def`, dispatched to a worker
+    thread with no running event loop, asyncio.create_task raised
+    RuntimeError, endpoint returned 500 — but the subprocess HAD already
+    been spawned (orphaning it). Bug existed since Phase 1; uncaught
+    because earlier tests only checked endpoint structure, never an actual
+    POST that gets past Popen.
+
+    This test mocks subprocess.Popen + asyncio.create_task so it doesn't
+    touch the GPU but DOES go through the full request-handler code path
+    where the bug lived."""
+    from unittest.mock import MagicMock
+    import webapp.server as srv
+
+    fake_proc = MagicMock()
+    fake_proc.poll.return_value = None
+    fake_proc.stdout = MagicMock()
+    fake_proc.stdout.readline.return_value = b""
+    fake_proc.terminate = MagicMock()
+    fake_proc.kill = MagicMock()
+    fake_proc.wait = MagicMock(return_value=0)
+    fake_proc.returncode = None
+
+    monkeypatch.setattr(srv.subprocess, "Popen", lambda *a, **kw: fake_proc)
+    # asyncio.create_task needs a running loop. The TestClient does run a
+    # loop, so we don't replace it — but we DO want to verify our handler
+    # is async so the loop is reachable from inside it.
+    captured_tasks = []
+    real_create_task = srv.asyncio.create_task
+
+    def fake_create_task(coro):
+        # Close the coroutine to suppress the unawaited-coroutine warning,
+        # then return a mock task. We're not actually streaming stdout here.
+        coro.close()
+        return MagicMock()
+
+    monkeypatch.setattr(srv.asyncio, "create_task", fake_create_task)
+
+    try:
+        res = client.post("/api/runs/launch", json={
+            "preset": "smoke", "seed": 42, "extra_args": [],
+        })
+        assert res.status_code == 200, (
+            f"launch returned {res.status_code} (probably the sync-def regression "
+            f"is back). Body: {res.text[:300]}"
+        )
+        data = res.json()
+        assert "run_id" in data
+        assert "ws_url" in data
+        # The subprocess constructor was called once with the runner cmd.
+        assert fake_proc.terminate.call_count == 0  # not yet
+    finally:
+        # Cleanup: drop the fake from launched_runs
+        for rid in list(srv.launched_runs.keys()):
+            if srv.launched_runs[rid].proc is fake_proc:
+                srv.launched_runs.pop(rid)
+
+
+def test_launch_writes_sidecar_for_rerun(client, monkeypatch, tmp_path):
+    """Verify the sidecar `.cmd.json` is written on launch so the Re-run
+    button works for runs originating from this dashboard."""
+    from unittest.mock import MagicMock
+    import webapp.server as srv
+
+    # Redirect run output dir to tmp so we don't pollute findings/raw
+    fake_runs_dir = tmp_path / "raw"
+    fake_runs_dir.mkdir()
+    monkeypatch.setattr(srv, "RAW_RUNS_DIR", fake_runs_dir)
+
+    fake_proc = MagicMock()
+    fake_proc.poll.return_value = None
+    fake_proc.stdout = MagicMock()
+    monkeypatch.setattr(srv.subprocess, "Popen", lambda *a, **kw: fake_proc)
+    monkeypatch.setattr(srv.asyncio, "create_task", lambda coro: (coro.close(), MagicMock())[1])
+
+    res = client.post("/api/runs/launch", json={
+        "preset": "smoke", "seed": 99, "extra_args": ["--my-flag"],
+    })
+    assert res.status_code == 200
+    body = res.json()
+    out_path = Path(body["out_path"])
+    sidecar = out_path.with_suffix(".cmd.json")
+    assert sidecar.exists(), f"sidecar should be written next to {out_path}"
+    sidecar_data = json.loads(sidecar.read_text())
+    assert sidecar_data["preset"] == "smoke"
+    assert sidecar_data["seed"] == 99
+    assert "--my-flag" in sidecar_data["extra_args"]
+
+    # Cleanup
+    for rid in list(srv.launched_runs.keys()):
+        if srv.launched_runs[rid].proc is fake_proc:
+            srv.launched_runs.pop(rid)
 
 
 def test_control_endpoint_writes_state(client, tmp_path):

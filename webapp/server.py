@@ -270,7 +270,11 @@ RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
 
 
 @app.post("/api/runs/launch")
-def launch_run(req: LaunchRequest) -> JSONResponse:
+async def launch_run(req: LaunchRequest) -> JSONResponse:
+    """Spin up a runner subprocess. Must be `async def` because we use
+    `asyncio.create_task` for the stdout drainer — a sync def gets
+    dispatched to a worker thread with no running event loop, which
+    raises RuntimeError when trying to schedule the drainer."""
     if req.preset not in PRESETS:
         raise HTTPException(400, f"unknown preset; valid: {list(PRESETS)}")
     run_id = uuid.uuid4().hex[:12]
