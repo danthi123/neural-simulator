@@ -336,6 +336,49 @@ def test_bg_cross_curriculum_thaw(tmp_out_path):
     assert "phase_stats" in result, "runner produced output with bg_cross flags wired"
 
 
+def test_bg_lateral_inhibition_pathways():
+    """v3 (2026-04-28): when --bg-lateral-inhibition is on, the BG cascade
+    includes 24 cross-pool MSN-MSN inhibitory pathways:
+      str_D{1,2}_X → str_D{1,2}_Y for X != Y
+    4 actions × 3 cross targets × 2 (D1, D2) = 24. The MSN regions are
+    GABAergic (exc_fraction=0.05) so the projection IS inhibitory.
+    plastic=False (static lateral inhibition).
+    Default OFF — no pathways without the flag."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    _regions, no_inhib = build_bg_brain_regions(enable_bg_lateral_inhibition=False)
+    _regions, with_inhib = build_bg_brain_regions(enable_bg_lateral_inhibition=True)
+
+    def msn_lateral_count(pathways):
+        n = 0
+        for p in pathways:
+            from_d = p.from_region.startswith("str_D")
+            to_d = p.to_region.startswith("str_D")
+            if not (from_d and to_d):
+                continue
+            from_type = p.from_region.split("_")[1]   # D1 or D2
+            to_type = p.to_region.split("_")[1]
+            if from_type != to_type:
+                continue  # only same D-type cross-action lateral
+            from_action = p.from_region.split("_")[-1]
+            to_action = p.to_region.split("_")[-1]
+            if from_action != to_action:
+                n += 1
+        return n
+
+    assert msn_lateral_count(no_inhib) == 0, "default off"
+    assert msn_lateral_count(with_inhib) == 24, (
+        f"4 cortex × 3 cross × 2 (D1/D2) = 24; got {msn_lateral_count(with_inhib)}"
+    )
+
+    msn_laterals = [p for p in with_inhib
+                    if p.from_region.startswith("str_D")
+                    and p.to_region.startswith("str_D")
+                    and p.from_region.split("_")[-1] != p.to_region.split("_")[-1]
+                    and p.from_region.split("_")[1] == p.to_region.split("_")[1]]
+    assert all(not p.plastic for p in msn_laterals), "lateral inhibition is static"
+
+
 def test_bg_cross_projections_disabled_by_default():
     """When --bg-cross-projections is OFF, no cross-projection pathways exist
     at all. Same-action pathways still use the cortex_to_d1 gate."""

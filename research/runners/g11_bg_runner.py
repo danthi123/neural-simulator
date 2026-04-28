@@ -137,6 +137,17 @@ def build_bg_brain_regions(
     enable_landmarks: bool = False,
     n_landmark_sensors: int = 8,
     landmark_to_place_weight: float = 8.0,
+    # v3 (2026-04-28): MSN cross-pool lateral inhibition. Real BG sharpens
+    # action selection via GABAergic collaterals between MSNs (within and
+    # between action pools), striatal FS interneurons, and pallidal
+    # center-surround. v3 adds the cross-pool MSN→MSN piece (the simplest
+    # and most impactful). Without this, cross-projections (cheat #5)
+    # corrupt the cascade because there's nothing to suppress cross-talk.
+    # Static (plastic=False). MSN regions are GABAergic (exc_fraction=0.05)
+    # so the projection is inhibitory.
+    enable_bg_lateral_inhibition: bool = False,
+    lateral_inhibition_density: float = 0.3,
+    lateral_inhibition_weight: float = 2.0,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -498,6 +509,30 @@ def build_bg_brain_regions(
                 plasticity_gate=gate,
             ))
 
+    # v3 (2026-04-28): MSN cross-pool lateral inhibition.
+    # Adds str_D1_X → str_D1_Y and str_D2_X → str_D2_Y for X != Y. MSNs are
+    # GABAergic (exc_fraction=0.05), so these projections IS inhibitory —
+    # firing in pool X suppresses firing in pool Y, sharpening action
+    # selection. Real BG has GABAergic MSN collaterals plus FS interneurons
+    # for stronger feed-forward inhibition. v3 covers the MSN-collateral
+    # piece. FS interneurons + pallidal center-surround are v3.5 if needed.
+    # Static (plastic=False): lateral inhibition is a structural feature.
+    # 4 cortex actions × 3 cross targets × 2 (D1/D2) = 24 new pathways.
+    if enable_bg_lateral_inhibition:
+        for src_action in ACTION_NAMES:
+            for dst_action in ACTION_NAMES:
+                if src_action == dst_action:
+                    continue
+                for d_type in ("D1", "D2"):
+                    pathways.append(RegionPathway(
+                        from_region=f"str_{d_type}_{src_action}",
+                        to_region=f"str_{d_type}_{dst_action}",
+                        density=lateral_inhibition_density,
+                        weight_mean=lateral_inhibition_weight,
+                        weight_jitter=0.2,
+                        plastic=False,
+                    ))
+
     # Direct pathway: D1 -> GPi (inhibitory). Strong weight needed to overcome
     # GPi tonic firing (~30-75 Hz baseline).
     for action in ACTION_NAMES:
@@ -639,6 +674,10 @@ def run_moving_goal_episode(
     pfc_to_cortex_weight: float = 8.0,
     enable_bg_cross_projections: bool = False,
     cross_projection_weight: float = 5.0,
+    # v3 (2026-04-28) — see build_bg_brain_regions docstring.
+    enable_bg_lateral_inhibition: bool = False,
+    lateral_inhibition_density: float = 0.3,
+    lateral_inhibition_weight: float = 2.0,
     enable_beacon_perception: bool = False,
     n_beacon_sensors: int = 8,
     beacon_to_goal_weight: float = 8.0,
@@ -820,6 +859,9 @@ def run_moving_goal_episode(
         pfc_to_cortex_weight=pfc_to_cortex_weight,
         enable_bg_cross_projections=enable_bg_cross_projections,
         cross_projection_weight=cross_projection_weight,
+        enable_bg_lateral_inhibition=enable_bg_lateral_inhibition,
+        lateral_inhibition_density=lateral_inhibition_density,
+        lateral_inhibition_weight=lateral_inhibition_weight,
         enable_beacon_perception=enable_beacon_perception,
         n_beacon_sensors=n_beacon_sensors,
         beacon_to_goal_weight=beacon_to_goal_weight,
@@ -1829,6 +1871,12 @@ def main():
                     help="Cheat #5: enable cortex × str_D1 cross-projections (e.g. cortex_E → str_D1_W) at weak initial weight. Plasticity learns the right cross-strengths instead of hand-coded same-action-only.")
     ap.add_argument("--cross-projection-weight", type=float, default=5.0,
                     help="Initial weight for BG cross-projections (default 5.0 vs 25.0 same-action).")
+    ap.add_argument("--bg-lateral-inhibition", action="store_true",
+                    help="v3 (2026-04-28): add MSN cross-pool lateral inhibition (24 GABAergic pathways). Sharpens action selection regardless of cheat #5; required prerequisite for cross-projection closure.")
+    ap.add_argument("--lateral-inhibition-density", type=float, default=0.3,
+                    help="Density of MSN cross-pool inhibitory pathways (default 0.3).")
+    ap.add_argument("--lateral-inhibition-weight", type=float, default=2.0,
+                    help="Weight of MSN cross-pool inhibitory connections (default 2.0).")
     ap.add_argument("--bg-cross-thaw-step", type=int, default=-1,
                     help="Cheat #5 closure (2026-04-28): step at which bg_cross_projections "
                          "gate thaws to its phase-3 value. -1 = stay frozen. Recommended 1200 "
@@ -1949,6 +1997,9 @@ def main():
             cross_projection_weight=args.cross_projection_weight,
             bg_cross_thaw_step=args.bg_cross_thaw_step,
             bg_cross_phase3_gain=args.bg_cross_phase3_gain,
+            enable_bg_lateral_inhibition=args.bg_lateral_inhibition,
+            lateral_inhibition_density=args.lateral_inhibition_density,
+            lateral_inhibition_weight=args.lateral_inhibition_weight,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_cortex_lateral_inhibition=args.cortex_wta,
