@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-04-28 — Cheat #5 v3 GO + throughput investigation + webapp polish
+
+### Added
+- **Cheat #5 v3 (`--bg-lateral-inhibition`) — GO, permanent default.** MSN cross-pool lateral inhibition: 24 GABAergic pathways between striatal action pools (D1↔D1' and D2↔D2' for X≠Y), `plastic=False`. The missing winner-take-all biology of the BG cascade. 6-seed sum 4.26 ± 0.50 (no regression vs flagship 4.08); P1 (1.91) actually beats P0 (2.35) — readaptation improved. Added to recommended flagship config in CLAUDE.md, README.md, QUICKSTART.md, SCIENCE_ROADMAP.md. Finding: `research/findings/2026-04-28-cheat5-v3-results.md`.
+- **Cheat #5 v3.1 (cross-projections layered on v3 lateral inhibition) — NO-GO.** 6-seed sum 8.92 ± 2.44; P1=6.35 (2.5× P0). Phase-2 readaptation breaks even with proper lateral inhibition. Interpretation: cross-projection refinement is a developmental phenomenon, not adult learning. v4 (developmental pre-training) is the next attempt. Plan: `docs/plans/2026-04-28-cheat5-v3-lateral-inhibition.md` Task 4.
+- **GPU throughput investigation** — concurrency sweep, MPS daemon ruled out (Linux-only on RTX 3090/Windows host), motor-counting code fix REVERTED (no measurable improvement, n=1 showed -15%). Concurrency knee at 4-6 (4× hits 76% of 10× aggregate at 1.7× per-run speed). Finding: `research/findings/2026-04-28-throughput-investigation.md`.
+- **Webapp polish (UX pass)** — live mode toggle, top-bar layout, font consistency via `--font-sans`/`--font-mono` CSS vars, collapsible HUDs, runs page no-flicker, goal-change dots on live chart, no-cache static asset serving, Windows DETACHED_PROCESS subprocess detach so closing dashboard doesn't kill running launcher subprocesses.
+
+### Changed
+- **Webapp default `--progress-print-interval`** changed from `1` (always-on for live-viz) to `20` for non-interactive presets. `interactive_*` presets keep `1` for live attach. Reduces stdout pressure during background batches.
+- **Recommended flagship config now includes `--bg-lateral-inhibition`** by default. Backward compatible — flag is opt-in, off by default at the runner level, but the recommended/documented recipe ships with it on.
+
+### Negative results (kept opt-in)
+- **Cheat #5 v1 (curriculum-staged cross-projections)** — 3-seed mean 10.87. Plasticity gate freezes weight updates but not synaptic transmission; non-zero cross-projection weights disrupted BG disinhibition from step 0. Finding: `research/findings/2026-04-28-cheat5-v1-NEGATIVE.md`.
+- **Cheat #5 v2 (zero-init cross-projections)** — 3-seed mean 7.89. Zero-init fixed the structural-damage failure mode (P0=2.49, intact), but exposed a learning-dynamics failure mode (P1=5.40): thaw-time STDP corrupts the converged policy. Diagnosis pointed at missing MSN lateral inhibition → led to v3. Finding: `research/findings/2026-04-28-cheat5-v2-NEGATIVE.md`.
+
 ## [Unreleased] — 2026-04-27/28 — NEW BEST: 4 of 5 cheats closed + Phase C + Item 1
 
 ### Added

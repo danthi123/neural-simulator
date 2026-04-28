@@ -231,7 +231,7 @@ done
 
 ---
 
-## Task 4: v4 — multi-task developmental phase (only if v3.1 NEGATIVE)
+## Task 4: v4 — multi-task developmental phase (ACTIVE PATH, v3.1 NEGATIVE 2026-04-28)
 
 If v3.1 still fails after v3 lateral inhibition is healthy, the deeper interpretation is correct: **cross-projection refinement is a developmental phenomenon, not adult learning.** Real BG cross-connectivity is shaped by experience-dependent pruning during developmental critical periods, with the agent exposed to many tasks.
 
@@ -250,12 +250,12 @@ Plan deferred until v3.1 actually fails — premature to detail now.
 
 ## Done criteria (v3 + v3.1)
 
-- [ ] v3 Task 1: pathways + tests pass
-- [ ] v3 Task 2: 3-seed no-regression mean ≤ 4.5
-- [ ] v3.1 Task 3: 6-seed validation if smoke passes
-- [ ] If v3.1 GO: cheat #5 closed → propagate to all flagship docs
-- [ ] If v3.1 NO-GO: pivot to Task 4 (v4 developmental phase)
-- [ ] All findings written; INDEX updated; CHANGELOG updated
+- [x] v3 Task 1: pathways + tests pass
+- [x] v3 Task 2: 6-seed flagship + lateral inhibition mean **4.26 ± 0.50** (no regression vs 4.08 baseline). GO.
+- [x] v3.1 Task 3: 6-seed validation **8.92 ± 2.44 — NO-GO** (P1=6.35, 2.5× P0). Phase-2 readaptation breaks even with lateral inhibition.
+- [x] v3 ships as permanent flagship default (`--bg-lateral-inhibition` added to recommended config in CLAUDE.md, README.md, QUICKSTART.md, SCIENCE_ROADMAP.md)
+- [ ] **Active path: Task 4 (v4 developmental phase)** — cross-projection refinement framed as developmental, not adult learning
+- [x] Findings written: `2026-04-28-cheat5-v3-results.md`; INDEX updated; CHANGELOG updated 2026-04-28
 
 ---
 

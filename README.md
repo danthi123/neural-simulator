@@ -12,6 +12,7 @@ A high-performance spiking neural network simulator with real-time 3D OpenGL vis
 > - **Phase C plastic-input-layer arc** — per-pathway plasticity gating + real curriculum learning, hippocampus + sensory layer + PFC working memory all composing (4.41 sum, p=0.018, 25% over baseline)
 > - **Item 1 (perception arc complete)** — agent navigates from PERCEIVED beacon + landmark information with a cue-following reflex; **NO direct (gx, gy) AND NO direct (x, y) coordinate access anywhere** (4.56 sum, p=0.00819, 22.4% over baseline)
 > - **🎉 NEW BEST (overnight 2026-04-27/28): 4 of 5 cheats closed** — adds sensed reward (intensity gradient instead of distance) on top of the perception arc. **Biology-grounded version (4.08, p=0.00045, 30.6% over baseline) BEATS cheats-allowed (4.41).** 6/6 seeds. See [the milestone finding](research/findings/2026-04-27-NEW-BEST-4cheats-closed.md).
+> - **Cheat #5 v3 GO (2026-04-28):** `--bg-lateral-inhibition` (MSN cross-pool inhibition) is now a permanent recommended default — biology-grounded WTA selection, no regression (4.26 ± 0.50 sum). v3.1 (cross-projections layered on v3) NO-GO; v4 developmental pre-training is the next attempt. See [v3 results](research/findings/2026-04-28-cheat5-v3-results.md).
 >
 > **New here?** Start with [QUICKSTART.md](QUICKSTART.md) — running in 60 seconds.
 > Detailed session findings in [`research/findings/`](research/findings/) ([INDEX](research/findings/INDEX.md)).
@@ -362,6 +363,7 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --landmarks --landmarks-replace-place \
     --sensed-reward \
+    --bg-lateral-inhibition \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 \
     --seed 42 --n-steps 1800
@@ -407,16 +409,17 @@ many opt-in flags for biology-grounded learning experiments:
 
 ```bash
 # 🎉 Current best — 4 of 5 cheats closed, biology-grounded BEATS cheats-allowed
-# (p=0.00045, 30.6% over baseline; 6/6 seeds):
+# (p=0.00045, 30.6% over baseline; 6/6 seeds). Includes v3 lateral inhibition (default 2026-04-28):
 python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --landmarks --landmarks-replace-place \
     --sensed-reward \
+    --bg-lateral-inhibition \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 --seed N --n-steps 1800
-# → sum 4.08 (6-seed)
+# → sum 4.08 (6-seed flagship), 4.26 with v3 lateral inhibition (no regression)
 
 # Best with cheats kept on (engineering shortcut, p=0.018, 25% over baseline):
 python -m research.runners.g11_bg_runner --moving-goal \
@@ -434,7 +437,8 @@ Available capabilities (all opt-in):
 - **Cue-following reflex** (`--cue-reflex` `--cue-reflex-replaces-heuristic`) — innate sensorimotor wiring (replaces heuristic)
 - **Landmark sensors** (`--landmarks` `--landmarks-replace-place`) — fixed-position landmark for place cell self-organization
 - **Sensed reward** (`--sensed-reward`) — beacon-intensity gradient instead of ground-truth distance
-- **BG cross-projections** (`--bg-cross-projections`) — opt-in but NEGATIVE — breaks phase-1 readaptation. Kept for future experiments.
+- **BG lateral inhibition** (`--bg-lateral-inhibition`) — MSN cross-pool inhibition (24 GABAergic pathways). **GO 2026-04-28** — biology-grounded WTA selection, no regression vs flagship. Recommended permanent default.
+- **BG cross-projections** (`--bg-cross-projections`) — opt-in but NEGATIVE through v3.1 — breaks phase-2 readaptation. v4 developmental pre-training is the next attempt.
 - **Curriculum learning** (`--curriculum`) — staged plasticity via per-pathway gates
 - **Sleep replay** (`--sleep-replay-after-step N`) — NREM trajectory + REM random
 - **Cortex WTA, motor WTA, adaptive DA, surprise LR boost** — various modulation mechanisms

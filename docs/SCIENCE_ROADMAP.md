@@ -509,14 +509,32 @@ intensity_after  = beacon_max_intensity / (1.0 + beacon_falloff * d_after)
 reward = sign(intensity_after - intensity_before)  # ±1 / 0
 ```
 
-**Cheat #5 (BG cross-projections) — NEGATIVE.** Tested with
-`--bg-cross-projections` (learnable cortex_X → str_D1_Y all-to-all).
-Phase-1 readaptation broke (3-seed avg 8.40, much worse). Phase-0
-cortex_N/E activations reinforce cross-projections to all D1 pools,
-locking in a motor bias the agent can't unlearn on goal change.
-Kept opt-in for future experiments.
+**Cheat #5 progress (2026-04-28):**
 
-**Recipe (current flagship):**
+| Variant | 6-seed avg | P0 | P1 | Verdict |
+|---|---:|---:|---:|---|
+| v1 (curriculum-staged cross-projections) | 10.87 (3-seed) | — | — | NEGATIVE — gate doesn't freeze synaptic transmission |
+| v2 (zero-init cross-projections) | 7.89 (3-seed) | 2.49 | 5.40 | NEGATIVE — thaw-time STDP corrupts converged policy |
+| **v3 (`--bg-lateral-inhibition`)** | **4.26 ± 0.50** | 2.35 | 1.91 | **GO — no regression; permanent default** |
+| v3.1 (`--bg-lateral-inhibition --bg-cross-projections ...`) | 8.92 ± 2.44 | 2.58 | 6.35 | NO-GO — phase-2 readaptation breaks |
+
+- **v3 GO (2026-04-28):** MSN cross-pool lateral inhibition (24 GABAergic
+  pathways, `plastic=False`) is biology-grounded, harmless to flagship
+  performance, **shipped as a permanent default in the recommended
+  flagship config**. P1 (1.91) actually beats P0 (2.35), so readaptation
+  is improved.
+- **v3.1 NO-GO:** layering cross-projections on top of v3 lateral
+  inhibition still breaks phase-2 readaptation. Lateral inhibition wasn't
+  the missing piece for cross-projections.
+- **Interpretation:** cross-projection refinement is likely a
+  **developmental phenomenon, not adult learning** — STDP+reward on a
+  converged cascade can't shape useful cross-action structure from random
+  init even with all the local biology pieces in place. v4 (developmental
+  pre-training) is the next attempt.
+- Findings: `2026-04-28-cheat5-v3-results.md`,
+  `2026-04-28-cheat5-v2-NEGATIVE.md`, `2026-04-28-cheat5-v1-NEGATIVE.md`.
+
+**Recipe (current flagship — includes v3 lateral inhibition):**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
@@ -524,22 +542,28 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --landmarks --landmarks-replace-place \
     --sensed-reward \
+    --bg-lateral-inhibition \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 \
     --seed N --n-steps 1800
 ```
 
 Findings:
-- `2026-04-27-NEW-BEST-4cheats-closed.md` (the milestone)
+- `2026-04-27-NEW-BEST-4cheats-closed.md` (the original 4.08 milestone)
+- `2026-04-28-cheat5-v3-results.md` (v3 lateral inhibition GO; v3.1 cross NO-GO)
 
 ### 4.12 Open future directions
 
 The cheats inventory is now down to one structural item plus a list of
 larger architectural extensions:
 
-1. **Cheat #5 alternative architectures** — BG cross-projections need
-   their own plasticity gate, longer warmup, or curriculum-staged
-   release. Direct learning broke phase-1 readaptation.
+1. **Cheat #5 v4 — developmental pre-training** — v1 (curriculum-staged),
+   v2 (zero-init), v3.1 (with lateral inhibition) all NEGATIVE on adult
+   learning. The next attempt frames cross-projection refinement as a
+   **developmental phenomenon**: pre-train cross-projections across
+   multiple goal positions during a critical period, freeze at the end,
+   then evaluate. See [`docs/plans/2026-04-28-cheat5-v3-lateral-inhibition.md`](plans/2026-04-28-cheat5-v3-lateral-inhibition.md)
+   Task 4 for the plan.
 2. **Sleep-replay with proper trajectory content** — random and stale
    trajectory replay don't help. Recency-weighted, current-goal-only
    replay might. Infrastructure (NREM trajectory + REM random) added
@@ -562,3 +586,12 @@ larger architectural extensions:
 - Findings index added at [`research/findings/INDEX.md`](../research/findings/INDEX.md) — 2026-04-25.
 - QUICKSTART.md added 2026-04-27 — 60-second getting-started for new users.
 - Documentation overhaul aligning with PyTorch/Django/Rust Book patterns — 2026-04-28.
+- GPU throughput investigation (2026-04-28): concurrency knee at 4-6;
+  CUDA MPS Linux-only (RTX 3090/Windows host has no MPS path); motor-counting
+  code fix REVERTED (no measurable improvement). Webapp now defaults
+  `--progress-print-interval=20` for non-interactive launches. Finding:
+  `research/findings/2026-04-28-throughput-investigation.md`.
+- Webapp polish (2026-04-28): live mode toggle, top-bar layout, font
+  consistency via `--font-sans`/`--font-mono` CSS vars, collapsible HUDs,
+  runs page no-flicker, goal-change dots on live chart, no-cache static,
+  Windows DETACHED_PROCESS subprocess detach.
