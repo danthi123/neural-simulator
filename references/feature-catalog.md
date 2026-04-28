@@ -108,9 +108,49 @@ Entries from Ch 11 (Overview of Synaptic Transmission) onward.
 - **System:** astrocytes (CNS), Schwann cells (PNS myelin)
 - **Biological role:** astrocytes form a gap-junction-coupled syncytium across which Ca²⁺ waves propagate at 1–20 µm/s — orders of magnitude slower than APs. Function still partly unknown but implicated in metabolic coordination, neurovascular coupling, and slow modulation of nearby synapses (gliotransmission of glutamate, ATP, D-serine).
 - **Sim status:** missing. We have no glial cells at all. The simulator is purely neuronal.
-- **Cluster:** new — *Cluster Q: Glia and neurovascular* (proposed addition; updates the cluster table after this chapter).
+- **Cluster:** Q (Glia & neurovascular, added 2026-04-28 from this chapter)
 - **Prerequisites:** J.05 (gap junctions)
 - **Citation:** Kandel 6e Ch 11 p 248
 - **Behavioral validation:** would require co-simulation of glia + neurons — currently out of scope. Skipping for now.
+
+---
+
+## Cluster M — Neuromuscular junction
+
+### M.01 Neuromuscular junction (NMJ) — overall structure
+- **System:** α-motor axon → skeletal muscle fiber motor end-plate
+- **Biological role:** the canonical "simple" chemical synapse — one motor axon innervates one site (end-plate) in adult mammals; presynaptic boutons sit in primary folds with active zones aligned to postsynaptic junctional folds (~10,000 receptors/µm² packed at fold crests); ~100 nm cleft (wider than CNS cleft) with basal lamina (collagen + AChE). Historically the Rosetta Stone for synaptic biophysics (Katz, 1950+).
+- **Sim status:** missing. No muscle output in the simulator; "motor neurons" in `g11_bg_runner` are just abstract spike-emitting populations whose firing rate represents action selection. There is no muscle, no contraction, no force.
+- **Cluster:** M (and H — motor & spinal output)
+- **Prerequisites:** I (channels & AP)
+- **Citation:** Kandel 6e Ch 12 p 254–256 (Fig 12-1)
+- **Behavioral validation:** add a 1D Hill-type muscle model fed by motor neuron spike trains; verify that twitch summation, tetanus, and length-tension curves match published data. Stretch goal — only meaningful once we want to model real motor output.
+
+### M.02 Nicotinic acetylcholine receptor (nAChR) — ionotropic
+- **System:** NMJ; also autonomic ganglia and CNS (less relevant to this simulator)
+- **Biological role:** pentameric ligand-gated cation channel (2α + β + γ + δ in muscle adult form). Two ACh binding sites required for opening; permeable to Na⁺ and K⁺ (and Ca²⁺ at lower conductance). Generates end-plate potential ~75 mV peak — well above the ~20 mV needed to trigger a muscle AP, so NMJ is normally "1:1 reliable" (no failures in healthy muscle). Suprathreshold safety factor distinguishes it from CNS synapses where summation is required.
+- **Sim status:** not-applicable directly. The simulator's generic excitatory synapse (`E_exc = 0 mV`) collapses the AMPA/nAChR/NMDA distinction into one phenomenological conductance + reversal pair. ACh as a peripheral fast transmitter is not a separate channel type. *If* we add NMJ + muscle, nAChR would need to be a real channel type (different reversal, kinetics, conductance from AMPA).
+- **Cluster:** M, J
+- **Prerequisites:** J.01, J.02
+- **Citation:** Kandel 6e Ch 12 p 256–270
+- **Behavioral validation:** N/A until M.01 added.
+
+### M.03 Acetylcholinesterase (AChE) — synaptic-cleft enzyme
+- **System:** NMJ basal lamina; also CNS cholinergic synapses
+- **Biological role:** hydrolyzes ACh into acetate + choline within ~1 ms of release, enforcing the "one-hit" rule that lets the postsynaptic conductance return to baseline between APs. Inhibitors (organophosphates, neostigmine — used clinically for myasthenia gravis) prolong receptor activation.
+- **Sim status:** not-applicable. The exponential conductance decay (`fused_conductance_decay_and_current`) phenomenologically captures the cumulative effect of unbinding + AChE clearance; we don't track enzymes.
+- **Cluster:** M, J
+- **Prerequisites:** M.02
+- **Citation:** Kandel 6e Ch 12 p 255
+- **Behavioral validation:** N/A.
+
+### M.04 End-plate potential / quantal release (foreshadowed; covered in Ch 15)
+- **System:** NMJ
+- **Biological role:** Katz showed that ACh is released in discrete *quanta* (each quantum ≈ contents of one synaptic vesicle, ~5,000 ACh molecules) — spontaneous miniature end-plate potentials (mEPPs) of ~0.5 mV occur at low frequency without stimulation; AP-evoked EPP equals the sum of N synchronously released quanta. Founded the vesicle hypothesis of release. **Detailed entry deferred to Ch 15.**
+- **Sim status:** not-applicable directly; STP `stp_U` parameter captures the "release probability per AP" abstraction.
+- **Cluster:** M, J
+- **Prerequisites:** J.03
+- **Citation:** Kandel 6e Ch 12 p 254 (introduction) → Ch 15 (full treatment)
+- **Behavioral validation:** see J.03 entry.
 
 ---
