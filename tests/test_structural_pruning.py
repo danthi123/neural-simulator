@@ -178,3 +178,42 @@ def test_update_pruning_respects_prunable_indices():
     assert not alive[: nnz // 2].any(), "first half (in prunable set) pruned"
     assert alive[nnz // 2 :].all(), "second half (not in prunable set) protected"
     bridge.clear_simulation_state_and_gpu_memory()
+
+
+def test_pruned_synapse_stays_at_zero_after_simulation_steps():
+    """After pruning, even if other forces would push the weight up
+    (or down), the alive mask keeps it at zero across many sim steps.
+
+    Acts as a regression guard for the pruning invariant: once a synapse
+    is alive=False with weight=0 and plasticity_gain=0, no plasticity
+    pathway should reintroduce non-zero weight."""
+    pytest.importorskip("cupy")
+    from sim.config import CoreSimConfig
+
+    cfg = CoreSimConfig(
+        num_neurons=20,
+        enable_structural_pruning=True,
+        pruning_threshold=-0.5,
+        pruning_weight_floor=0.5,
+        enable_stdp=True,
+    )
+    bridge = _build_bridge(cfg)
+    nnz = int(bridge.cp_connections.nnz)
+    assert nnz >= 10, "test config must produce at least 10 synapses"
+    # Force-prune the first 10 synapses (alive=False, weight=0,
+    # plasticity_gain=0 — same end state as update_pruning would produce).
+    bridge.cp_synapse_alive[:10] = False
+    bridge.cp_connections.data[:10] = 0.0
+    if bridge.cp_plasticity_gain is not None:
+        bridge.cp_plasticity_gain[:10] = 0.0
+    # Run several sim steps; pruned weights must stay 0 even though the
+    # broader simulation pipeline (dynamics, STDP, etc.) is active.
+    for _ in range(20):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+    weights = bridge.cp_connections.data.get()
+    assert (weights[:10] == 0.0).all(), (
+        f"pruned synapse weights diverged from zero; "
+        f"max |w[:10]|={float(abs(weights[:10]).max()):.6e}"
+    )
+    bridge.clear_simulation_state_and_gpu_memory()
