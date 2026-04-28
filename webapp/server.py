@@ -315,6 +315,14 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
         Path(control_file).write_text("{}")
         extras.extend(["--interactive-control-file", control_file])
 
+    # Force per-step progress prints for ALL webapp-launched runs so live
+    # mode visualization animates step-by-step (not in 100-step jumps).
+    # Negligible overhead in the runner (sub-millisecond per print at
+    # ~100 steps/sec). Skip if the user explicitly set a different value.
+    base_extras = list(extras) + list(PRESETS[req.preset])
+    if not any(a == "--progress-print-interval" for a in base_extras):
+        extras.extend(["--progress-print-interval", "1"])
+
     cmd = [
         sys.executable, "-m", "research.runners.g11_bg_runner",
         *PRESETS[req.preset],
