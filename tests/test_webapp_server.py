@@ -222,6 +222,38 @@ def test_control_endpoint_400_for_non_interactive_run(client):
         launched_runs.pop(fake_id, None)
 
 
+def test_kill_endpoint_404_for_unknown_run(client):
+    res = client.post("/api/runs/launch/no_such_run/kill")
+    assert res.status_code == 404
+
+
+def test_kill_endpoint_already_done(client):
+    """Killing a run that has no live process returns 200 with status
+    'already_done', not an error. Lets the UI safely call kill on stale rows."""
+    from webapp.server import LaunchedRun, launched_runs
+    fake_id = "test_killed_already"
+    launched_runs[fake_id] = LaunchedRun(
+        run_id=fake_id, cmd=[], started_at=0.0, proc=None, returncode=0,
+    )
+    try:
+        res = client.post(f"/api/runs/launch/{fake_id}/kill")
+        assert res.status_code == 200
+        assert res.json()["status"] == "already_done"
+    finally:
+        launched_runs.pop(fake_id, None)
+
+
+def test_sidecar_404_when_missing(client):
+    """Re-run sidecar lookup returns 404 when sidecar file doesn't exist."""
+    res = client.get("/api/runs/this_run_has_no_sidecar.json/sidecar")
+    assert res.status_code == 404
+
+
+def test_sidecar_path_traversal_blocked(client):
+    res = client.get("/api/runs/..%2Fserver.py/sidecar")
+    assert res.status_code in (400, 404)
+
+
 def test_control_endpoint_writes_state(client, tmp_path):
     """When a run IS interactive, posting control writes to the control file
     and returns the merged state."""

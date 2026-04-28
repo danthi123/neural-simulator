@@ -420,6 +420,36 @@ pre {
   height: 220px;
   max-width: 480px;
 }
+
+.phase-motor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 8px;
+  padding: 8px;
+}
+.phase-motor-cell {
+  background: var(--code-bg);
+}
+.phase-motor-cell .chart-canvas {
+  height: 200px;
+  max-width: none;
+}
+
+.world-run-item .kill-btn {
+  background: transparent;
+  border: 1px solid var(--accent-bad);
+  color: var(--accent-bad);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  margin-top: 4px;
+  align-self: flex-start;
+}
+.world-run-item .kill-btn:hover {
+  background: var(--accent-bad);
+  color: var(--bg);
+}
 .chart-row.chart-narrow-wrap {
   display: flex;
   justify-content: flex-start;

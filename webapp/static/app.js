@@ -176,9 +176,11 @@ async function loadRunDetail(name, listItem) {
     if (!res.ok) throw new Error(`${res.status}`);
     const data = await res.json();
     const playBtn = el("button", { class: "play-in-world", onclick: () => openInWorld(name) }, "▶ Play in World viz");
+    const rerunBtn = el("button", { class: "play-in-world", style: "margin-left:8px", onclick: () => rerunFromSidecar(name) }, "↻ Re-run with same config");
     const distCanvas = el("canvas", { class: "chart-canvas" });
     const rewardCanvas = el("canvas", { class: "chart-canvas" });
-    const motorCanvas = el("canvas", { class: "chart-canvas chart-narrow" });
+    const heatmapCanvas = el("canvas", { class: "chart-canvas chart-narrow" });
+    const phaseMotorContainer = el("div", { class: "phase-motor-grid" });
     detail.replaceChildren(
       el("h2", {}, name),
       el("div", {}, [
@@ -187,21 +189,23 @@ async function loadRunDetail(name, listItem) {
         metric("grid_size", data.grid_size ?? 8),
         metric("sum_finalQ", computeSumFinalQ(data)),
       ]),
-      el("div", { style: "margin: 12px 0" }, playBtn),
+      el("div", { style: "margin: 12px 0" }, [playBtn, rerunBtn]),
       el("h3", {}, "Phase stats"),
       renderPhaseStats(data.phase_stats || []),
       el("h3", {}, "Distance over time"),
       el("div", { class: "chart-row" }, distCanvas),
       el("h3", {}, "Reward over time"),
       el("div", { class: "chart-row" }, rewardCanvas),
+      el("h3", {}, "Agent visit heatmap"),
+      el("div", { class: "chart-row chart-narrow-wrap" }, heatmapCanvas),
       el("h3", {}, "Action distribution per phase"),
-      el("div", { class: "chart-row chart-narrow-wrap" }, motorCanvas),
+      el("div", { class: "chart-row" }, phaseMotorContainer),
       el("h3", {}, "Raw JSON"),
       el("pre", {}, JSON.stringify(summarizeRunData(data), null, 2)),
     );
     // Charts must be rendered AFTER the canvas elements are in the DOM so
     // clientWidth/Height resolve to non-zero values for the dpr setup.
-    requestAnimationFrame(() => renderRunCharts(data, distCanvas, rewardCanvas, motorCanvas));
+    requestAnimationFrame(() => renderRunCharts(data, distCanvas, rewardCanvas, heatmapCanvas, phaseMotorContainer));
   } catch (e) {
     detail.replaceChildren(el("p", { class: "error" }, `Failed to load: ${e.message}`));
   }
@@ -214,9 +218,10 @@ function computeSumFinalQ(data) {
   return fqs.length ? fqs.reduce((a, b) => a + b, 0).toFixed(2) : "—";
 }
 
-/** Render the three run-detail charts: distance over time, reward over time,
- *  and per-phase action distribution bars. Phase boundaries shaded. */
-function renderRunCharts(data, distCanvas, rewardCanvas, motorCanvas) {
+/** Render the run-detail charts: distance over time, reward over time,
+ *  agent-visit heatmap, and per-phase action distribution bars. Phase
+ *  boundaries shaded. */
+function renderRunCharts(data, distCanvas, rewardCanvas, heatmapCanvas, phaseMotorContainer) {
   const phases = data.phase_stats || [];
   const phaseRanges = phases.map((ps, i) => ({
     start: ps.step_start ?? 0,
@@ -242,7 +247,7 @@ function renderRunCharts(data, distCanvas, rewardCanvas, motorCanvas) {
     { values: data.distance_log || [], color: P.accent, label: "distance" },
   ]);
 
-  // Reward over time — use a moving average over 50 steps for readability.
+  // Reward over time — moving average for readability.
   const rewardLog = data.reward_log || [];
   const window = 50;
   const rewardSmooth = [];
@@ -263,19 +268,164 @@ function renderRunCharts(data, distCanvas, rewardCanvas, motorCanvas) {
     { values: rewardSmooth, color: P.warn, label: "reward (avg)" },
   ]);
 
-  // Per-phase action distribution — stacked bars (one per phase)
-  const motorChart = makeBarChart(motorCanvas, {
-    title: "Action counts per phase (sum across all phases)",
-    labels: ["N", "E", "S", "W"],
-    colors: [P.accent, P.warn, P.bad, P.blue],
-  });
-  const totals = [0, 0, 0, 0];
-  for (const ps of phases) {
-    const ac = ps.action_counts || [];
-    for (let i = 0; i < 4; i++) totals[i] += ac[i] || 0;
+  // Agent visit heatmap — count time spent in each cell across the run.
+  // Reveals learned policy at a glance (orbits, direct paths, dead zones).
+  renderHeatmap(heatmapCanvas, data);
+
+  // Per-phase action distribution — one bar chart per phase.
+  // Replaces the previous single-totals chart so you can SEE how the
+  // action distribution shifted after each goal change.
+  phaseMotorContainer.replaceChildren();
+  for (let i = 0; i < phases.length; i++) {
+    const ps = phases[i];
+    const ac = ps.action_counts || [0, 0, 0, 0];
+    const sub = document.createElement("div");
+    sub.className = "phase-motor-cell";
+    const canvas = document.createElement("canvas");
+    canvas.className = "chart-canvas chart-narrow";
+    sub.appendChild(canvas);
+    phaseMotorContainer.appendChild(sub);
+    const goalLabel = ps.goal ? `(${ps.goal[0]},${ps.goal[1]})` : "?";
+    const chart = makeBarChart(canvas, {
+      title: `phase ${i} → goal ${goalLabel} (${ps.n_steps ?? "?"} steps)`,
+      labels: ["N", "E", "S", "W"],
+      colors: [P.accent, P.warn, P.bad, P.blue],
+    });
+    chart.updateData(ac);
   }
-  motorChart.updateData(totals);
 }
+
+/** Render a heatmap of agent visit counts on top of the gridworld layout.
+ *  Each cell is colored by visit frequency (log-scaled for visual range). */
+function renderHeatmap(canvas, data) {
+  const trajectory = data.trajectory || [];
+  const gridSize = data.grid_size || 8;
+  if (!trajectory.length) {
+    const ctx = canvas.getContext("2d");
+    canvas.width = 1; canvas.height = 1;
+    ctx.fillStyle = "#0a0c10";
+    ctx.fillRect(0, 0, 1, 1);
+    return;
+  }
+
+  // Count visits per cell
+  const counts = new Array(gridSize * gridSize).fill(0);
+  for (const [x, y] of trajectory) {
+    if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
+      counts[y * gridSize + x]++;
+    }
+  }
+  const maxC = Math.max(...counts);
+  if (maxC === 0) return;
+
+  // Render with high-DPI handling
+  const dpr = window.devicePixelRatio || 1;
+  const cssSize = Math.min(canvas.clientWidth || 360, 360);
+  const cellPx = Math.floor((cssSize - 24) / gridSize);
+  const padding = 14;
+  const w = padding * 2 + cellPx * gridSize;
+  const h = padding * 2 + cellPx * gridSize + 18;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = `${w}px`;
+  canvas.style.height = `${h}px`;
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = "#0a0c10";
+  ctx.fillRect(0, 0, w, h);
+
+  // Grid cells colored by visit count (log-scaled green ramp)
+  for (let y = 0; y < gridSize; y++) {
+    for (let x = 0; x < gridSize; x++) {
+      const c = counts[y * gridSize + x];
+      const intensity = c === 0 ? 0 : Math.log(1 + c) / Math.log(1 + maxC);
+      // y-flip so y=0 sits at the bottom (matches World tab convention)
+      const px = padding + x * cellPx;
+      const py = padding + (gridSize - 1 - y) * cellPx;
+      // Color: dark → green for visits, faintly transparent for never visited
+      ctx.fillStyle = intensity === 0
+        ? "#161922"
+        : `rgba(110, 231, 183, ${0.15 + intensity * 0.7})`;
+      ctx.fillRect(px, py, cellPx - 1, cellPx - 1);
+      // Show count if non-trivial
+      if (c > 0 && cellPx > 18) {
+        ctx.fillStyle = intensity > 0.6 ? "#0a0c10" : "#e3e6ea";
+        ctx.font = `${Math.max(8, Math.floor(cellPx * 0.32))}px ui-monospace, Consolas, monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(String(c), px + cellPx / 2, py + cellPx / 2);
+      }
+    }
+  }
+  // Legend / max
+  ctx.fillStyle = "#9aa3ad";
+  ctx.font = "10px sans-serif";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(
+    `Visits per cell · max=${maxC} · ${trajectory.length} total steps`,
+    padding,
+    padding + cellPx * gridSize + 4,
+  );
+}
+
+async function rerunFromSidecar(name) {
+  try {
+    const res = await fetch(`/api/runs/${encodeURIComponent(name)}/sidecar`);
+    if (!res.ok) {
+      if (res.status === 404) {
+        toast(
+          "No sidecar found — this run wasn't launched via the webapp. " +
+          "Re-run is only available for runs launched from this dashboard.",
+          { kind: "warn", duration: 6000 }
+        );
+        return;
+      }
+      throw new Error(`${res.status}`);
+    }
+    const sidecar = await res.json();
+    activateTab("launcher");
+    await new Promise((r) => setTimeout(r, 100));
+    // Prefill the form
+    const form = document.querySelector("#launch-form");
+    if (form) {
+      const presetSel = form.querySelector('select[name="preset"]');
+      if (presetSel && sidecar.preset) presetSel.value = sidecar.preset;
+      const seedInput = form.querySelector('input[name="seed"]');
+      if (seedInput && sidecar.seed != null) seedInput.value = sidecar.seed;
+      const extrasInput = form.querySelector('input[name="extra_args"]');
+      if (extrasInput) extrasInput.value = (sidecar.extra_args || []).join(" ");
+    }
+    toast(
+      `Loaded re-run config from ${name}: preset=${sidecar.preset}, seed=${sidecar.seed}. ` +
+      `Edit fields then click Launch to start.`,
+      { kind: "success", duration: 5000 }
+    );
+  } catch (e) {
+    toast(`Re-run failed: ${e.message}`, { kind: "error", duration: 6000 });
+  }
+}
+
+async function killLaunchedRun(runId) {
+  try {
+    const res = await fetch(`/api/runs/launch/${encodeURIComponent(runId)}/kill`, {
+      method: "POST",
+    });
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    toast(`Run ${runId}: ${data.status} (rc=${data.returncode})`, {
+      kind: data.status === "killed" ? "warn" : "info",
+      duration: 4000,
+    });
+    return data;
+  } catch (e) {
+    toast(`Kill failed: ${e.message}`, { kind: "error", duration: 6000 });
+    return null;
+  }
+}
+
+// Expose for console debugging
+window.killLaunchedRun = killLaunchedRun;
 
 /** Open a comparison view in the right detail panel: overlays distance
  *  curves of 2-3 selected runs on one chart for visual comparison. */

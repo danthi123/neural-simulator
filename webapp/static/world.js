@@ -114,12 +114,25 @@ async function openLiveModePicker() {
         ? ` step ${r.latest_progress.step}/${r.latest_progress.total}`
         : "";
       const name = document.createElement("div");
-      name.textContent = r.run_id;
+      name.textContent = r.run_id + (r.interactive ? " ★ interactive" : "");
       const small = document.createElement("div");
       small.className = "small";
       small.textContent = `${status}${progress} · elapsed ${Math.round(r.elapsed_sec)}s`;
       item.appendChild(name);
       item.appendChild(small);
+      // Kill button only for in-flight runs
+      if (r.running) {
+        const killBtn = document.createElement("button");
+        killBtn.className = "kill-btn";
+        killBtn.textContent = "✕ Kill";
+        killBtn.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          if (window.killLaunchedRun) await window.killLaunchedRun(r.run_id);
+          // Refresh the list after kill
+          setTimeout(() => openLiveModePicker(), 800);
+        });
+        item.appendChild(killBtn);
+      }
       item.addEventListener("click", () => attachLive(r.run_id, item));
       list.appendChild(item);
     }

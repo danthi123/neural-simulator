@@ -292,6 +292,26 @@ def launch_run(req: LaunchRequest) -> JSONResponse:
         *extras,
     ]
 
+    # Write a sidecar `.cmd.json` next to the run output so the dashboard
+    # can later offer a "Re-run" button. Records the preset, seed, extras,
+    # and full cmd. Skip the runtime control_file path from extras since
+    # that's per-run and shouldn't be reused.
+    cleanable_extras = [
+        a for a in req.extra_args
+        if not a.startswith("--interactive-control-file")
+    ]
+    sidecar_path = Path(out_path).with_suffix(".cmd.json")
+    try:
+        sidecar_path.write_text(json.dumps({
+            "preset": req.preset,
+            "seed": req.seed,
+            "extra_args": cleanable_extras,
+            "cmd": cmd,
+            "started_at": time.time(),
+        }, indent=2))
+    except OSError:
+        pass  # Best-effort; don't fail the launch on sidecar write failure.
+
     proc = subprocess.Popen(
         cmd,
         cwd=str(REPO_ROOT),
@@ -315,6 +335,51 @@ def launch_run(req: LaunchRequest) -> JSONResponse:
         "interactive": control_file is not None,
         "ws_url": f"/ws/runs/{run_id}",
     })
+
+
+@app.get("/api/runs/{name}/sidecar")
+def get_run_sidecar(name: str) -> JSONResponse:
+    """Return the launcher-recorded sidecar for a given run, if it exists.
+    Used by the Re-run button to prefill the launcher form."""
+    if "/" in name or "\\" in name or ".." in name:
+        raise HTTPException(400, "invalid run name")
+    sidecar_path = (RAW_RUNS_DIR / name).with_suffix(".cmd.json")
+    if not sidecar_path.is_file():
+        raise HTTPException(404, "no sidecar — run was not launched via webapp")
+    try:
+        return JSONResponse(json.loads(sidecar_path.read_text()))
+    except (OSError, json.JSONDecodeError) as e:
+        raise HTTPException(500, f"sidecar read failed: {e}")
+
+
+@app.post("/api/runs/launch/{run_id}/kill")
+def kill_run(run_id: str) -> JSONResponse:
+    """Terminate an in-flight run. Sends SIGTERM, escalates to SIGKILL after
+    5s if still alive. Returns 404 if unknown, 200 with status either way."""
+    run = launched_runs.get(run_id)
+    if not run:
+        raise HTTPException(404, "unknown run_id")
+    if run.proc is None or run.proc.poll() is not None:
+        return JSONResponse({
+            "run_id": run_id,
+            "status": "already_done",
+            "returncode": run.returncode,
+        })
+    try:
+        run.proc.terminate()
+        try:
+            run.proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            run.proc.kill()
+            run.proc.wait(timeout=2)
+        run.returncode = run.proc.returncode
+        return JSONResponse({
+            "run_id": run_id,
+            "status": "killed",
+            "returncode": run.returncode,
+        })
+    except Exception as e:
+        raise HTTPException(500, f"kill failed: {e}")
 
 
 class ControlUpdate(BaseModel):
