@@ -474,6 +474,17 @@ cheats actually *helps* learning.
   (sequence learning) → Cluster E (connectivity refinement). Each
   cluster has independent biological merit AND collectively might
   shift cross-projection behavior.
+- **Cluster B.1 (D1/D2 asymmetry, `--enable-d1-d2-asymmetry`) — PARTIAL
+  SIGNAL (2026-04-28).** First piece of empirical support for the
+  cluster strategy. Patch-matrix + B.1 multi-goal: 7.62 ± 1.23 (n=3) vs
+  patch-matrix alone 8.76 ± 2.54. Variance halved, Phase 2 catastrophe
+  eliminated (P2 mean 3.36 → 1.92, std 2.09 → 0.77). Still above v3
+  baseline 7.08 ± 0.12; cheat-5 not fully closed by B.1 alone.
+  Continuing to B.2 (FSIs) + B.3 (TANs) as planned. See
+  [`research/findings/2026-04-28-cluster-b1-d1d2-asymmetry-results.md`](research/findings/2026-04-28-cluster-b1-d1d2-asymmetry-results.md).
+- **Biology probe at `research/probes/d1_d2_asymmetry_probe.py`** validates
+  the implementation: D1 weights ↑ under +reward / ↓ under −reward; D2
+  weights inverted. Runnable for any future regression check.
 - **`--bg-cross-projections`, `--developmental-pretraining`,
   `--enable-structural-pruning`, `--cross-projection-density` all
   remain opt-in** for future experiments. NOT recommended for any
