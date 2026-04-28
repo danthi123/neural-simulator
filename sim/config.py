@@ -221,6 +221,16 @@ class CoreSimConfig:
     struct_plast_update_interval_steps: int = 100  # Update interval (for efficiency)
     struct_plast_activity_bias: float = 0.5  # Weight of co-activity vs random in formation [0=random, 1=fully activity-driven]
 
+    # ─── Structural plasticity (2026-04-28) ──────────────────────────
+    # Cheat #5 closure attempt #5 (option 1 of the post-v4 plan, see
+    # docs/plans/2026-04-28-structural-plasticity-design.md). Adds
+    # experience-dependent synapse pruning: synapses with negative
+    # survival score AND low weight get permanently eliminated.
+    enable_structural_pruning: bool = False
+    pruning_alpha: float = 0.001
+    pruning_threshold: float = -1.0
+    pruning_weight_floor: float = 1.0
+
     def __post_init__(self):
         """Validate configuration parameters after initialization."""
         # Initialize per-type STP defaults if not provided

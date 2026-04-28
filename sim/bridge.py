@@ -482,6 +482,17 @@ class SimulationBridge:
         else:
             self.cp_eligibility_trace = None
 
+        # Structural pruning (2026-04-28, cheat-5 option-1).
+        # Per-synapse alive mask + survival score for axon pruning. See
+        # docs/plans/2026-04-28-structural-plasticity-design.md. Default OFF
+        # for full backward compatibility with the flagship config.
+        if getattr(cfg, "enable_structural_pruning", False) and num_synapses > 0:
+            self.cp_synapse_alive = cp.ones(num_synapses, dtype=cp.bool_)
+            self.cp_synapse_survival = cp.zeros(num_synapses, dtype=cp.float32)
+        else:
+            self.cp_synapse_alive = None
+            self.cp_synapse_survival = None
+
         # Neuromodulator subsystem (Session E.1, opt-in).
         # When `enable_neuromodulator_subsystem` is True, allocate a
         # NeuromodulatorManager per the user's `neuromodulators` configs.
