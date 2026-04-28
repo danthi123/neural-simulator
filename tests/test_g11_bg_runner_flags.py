@@ -690,3 +690,59 @@ def test_d1_d2_asymmetry_kwarg_accepted(tmp_out_path):
         out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
         enable_d1_d2_asymmetry=True,
     )
+
+
+# ───────────────────── 2026-04-28: Cluster B.2 striatal FSIs ─────────────────────
+
+
+def test_striatal_fsis_default_off():
+    """When --enable-striatal-fsis is off, no str_FS_* regions exist."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    regions, pathways = build_bg_brain_regions(enable_striatal_fsis=False)
+    fs_regions = [r for r in regions if r.name.startswith("str_FS_")]
+    assert len(fs_regions) == 0, "FS regions should not exist when flag off"
+
+
+def test_striatal_fsis_pathways_built():
+    """When --enable-striatal-fsis is on:
+       - 4 str_FS_X regions added (one per action)
+       - 4 cortex_X → str_FS_X pathways added (excitatory drive)
+       - 32 str_FS_X → str_D{1,2}_Y pathways added (broadcast inhibition,
+         4 FS × 4 D-pool target × 2 D-types = 32). Includes same-action
+         (X→X) since real FSIs broadcast indiscriminately, not just to
+         non-self pools.
+    All FS-related pathways are plastic=False (static gating)."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    regions, pathways = build_bg_brain_regions(enable_striatal_fsis=True)
+
+    fs_regions = [r for r in regions if r.name.startswith("str_FS_")]
+    assert len(fs_regions) == 4, f"Expected 4 FS regions; got {len(fs_regions)}"
+    fs_names = sorted(r.name for r in fs_regions)
+    assert fs_names == ["str_FS_E", "str_FS_N", "str_FS_S", "str_FS_W"]
+
+    cortex_to_fs = [p for p in pathways
+                    if p.from_region.startswith("cortex_") and p.to_region.startswith("str_FS_")]
+    assert len(cortex_to_fs) == 4, \
+        f"Expected 4 cortex→FS pathways; got {len(cortex_to_fs)}"
+    for p in cortex_to_fs:
+        # Same action only: cortex_N→str_FS_N etc.
+        assert p.from_region.split("_")[1] == p.to_region.split("_")[2], \
+            f"cortex→FS pathway should be same-action; got {p.from_region}→{p.to_region}"
+        assert not p.plastic, "cortex→FS should be plastic=False"
+
+    fs_to_msn = [p for p in pathways
+                 if p.from_region.startswith("str_FS_")
+                 and (p.to_region.startswith("str_D1_") or p.to_region.startswith("str_D2_"))]
+    assert len(fs_to_msn) == 32, \
+        f"Expected 32 FS→MSN pathways (4 FS × 4 D-pool × 2 D-types); got {len(fs_to_msn)}"
+    for p in fs_to_msn:
+        assert not p.plastic, "FS→MSN broadcast inhibition should be plastic=False"
+
+
+def test_striatal_fsis_disabled_by_default():
+    """build_bg_brain_regions default: no FS regions or pathways."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    regions, pathways = build_bg_brain_regions()  # all defaults
+    assert not any(r.name.startswith("str_FS_") for r in regions)
+    assert not any(p.from_region.startswith("str_FS_") or p.to_region.startswith("str_FS_")
+                   for p in pathways)

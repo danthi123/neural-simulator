@@ -150,6 +150,21 @@ def build_bg_brain_regions(
     enable_bg_lateral_inhibition: bool = False,
     lateral_inhibition_density: float = 0.3,
     lateral_inhibition_weight: float = 2.0,
+    # Cluster B.2 (2026-04-28): striatal fast-spiking interneurons.
+    # Real BG striatum has ~1% PV-positive FSIs that provide fast convergent
+    # GABAergic broadcast inhibition. Different from v3 MSN-MSN lateral
+    # (slower, more local) — FSIs broadcast indiscriminately on a
+    # millisecond timescale to bias which action's MSN pool wins.
+    # Per-action FS pool receives same-action cortex drive, then inhibits
+    # ALL striatal MSN pools (D1+D2, every action including same-action).
+    # All FS pathways plastic=False (static gating, not plastic).
+    # NOTE: kwargs are prefixed `cortex_to_str_fs_*` / `str_fs_to_msn_*` to
+    # avoid collision with the cortex-WTA `cortex_to_fs_weight` (line 84)
+    # and `fs_to_cortex_weight` (line 85) — different microcircuit.
+    enable_striatal_fsis: bool = False,
+    n_striatal_fs_per_action: int = 5,
+    cortex_to_str_fs_weight: float = 30.0,
+    str_fs_to_msn_weight: float = 8.0,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -316,6 +331,23 @@ def build_bg_brain_regions(
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D2.name,
         ))
+
+    # Cluster B.2 (2026-04-28): striatal fast-spiking interneurons (FSIs).
+    # ~1% of striatal cells; PV-positive; broadcast inhibition. One small
+    # FS pool per action, all GABAergic (exc_fraction=0.0) so the outgoing
+    # synapses are auto-derived inhibitory by the bridge. No internal
+    # recurrence: FSIs just receive cortex drive and broadcast to all MSNs.
+    if enable_striatal_fsis:
+        for action in ACTION_NAMES:
+            regions.append(BrainRegion(
+                name=f"str_FS_{action}",
+                n_neurons=n_striatal_fs_per_action,
+                exc_fraction=0.0,  # all-inhibitory → outgoing synapses are inhibitory
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+            ))
 
     # Per-action BG output (GPe / GPi)
     for action in ACTION_NAMES:
@@ -541,6 +573,39 @@ def build_bg_brain_regions(
                         to_region=f"str_{d_type}_{dst_action}",
                         density=lateral_inhibition_density,
                         weight_mean=lateral_inhibition_weight,
+                        weight_jitter=0.2,
+                        plastic=False,
+                    ))
+
+    # Cluster B.2 (2026-04-28): striatal FSI pathways.
+    # (a) cortex_X → str_FS_X (excitatory, dense, plastic=False, same-action only).
+    #     FS pool gets driven only by its same-action cortex pool.
+    # (b) str_FS_X → str_D{1,2}_Y for ALL X, Y including X==Y (broadcast
+    #     inhibition; auto-derived inhibitory because str_FS regions have
+    #     exc_fraction=0.0). 4 FS × 4 D-pool target × 2 D-types = 32 paths.
+    #     Real FSIs broadcast indiscriminately, including back onto same-action
+    #     MSNs — no selective sparing, so the whole network sees a brief
+    #     suppression burst when any cortex pool drives strongly.
+    if enable_striatal_fsis:
+        # (a) cortex_X → str_FS_X (excitatory drive, same-action)
+        for cortex_action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"cortex_{cortex_action}",
+                to_region=f"str_FS_{cortex_action}",
+                density=1.0,
+                weight_mean=cortex_to_str_fs_weight,
+                weight_jitter=0.2,
+                plastic=False,
+            ))
+        # (b) str_FS_X → str_D{1,2}_Y broadcast (every FS to every MSN pool)
+        for fs_action in ACTION_NAMES:
+            for str_action in ACTION_NAMES:
+                for d_type in ("D1", "D2"):
+                    pathways.append(RegionPathway(
+                        from_region=f"str_FS_{fs_action}",
+                        to_region=f"str_{d_type}_{str_action}",
+                        density=1.0,  # dense within-pool
+                        weight_mean=str_fs_to_msn_weight,
                         weight_jitter=0.2,
                         plastic=False,
                     ))
