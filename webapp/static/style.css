@@ -88,6 +88,31 @@ main {
   font: inherit;
 }
 .toolbar button:hover { border-color: var(--accent); }
+.toolbar button:disabled { opacity: 0.4; cursor: not-allowed; }
+.toolbar .spacer { flex: 1; }
+.toolbar-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--fg-dim);
+  cursor: pointer;
+}
+.toolbar-input {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  color: var(--fg);
+  font: inherit;
+  font-size: 12px;
+  width: 160px;
+}
+.list-item.compare-selected {
+  background: var(--bg-3);
+  border-left: 3px solid var(--warn, var(--accent-warn));
+  padding-left: 13px;
+}
 
 .split {
   display: grid;
@@ -166,6 +191,27 @@ pre {
   margin: 12px 0;
   padding: 4px 16px;
   color: var(--fg-dim);
+}
+
+/* ─── Charts ────────────────────────────────────────────────────────── */
+.chart-row {
+  margin: 8px 0 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--code-bg);
+}
+.chart-canvas {
+  width: 100%;
+  height: 200px;
+  display: block;
+}
+.chart-canvas.chart-narrow {
+  height: 220px;
+  max-width: 480px;
+}
+.chart-row.chart-narrow-wrap {
+  display: flex;
+  justify-content: flex-start;
 }
 
 /* ─── World tab ─────────────────────────────────────────────────────── */

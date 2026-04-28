@@ -143,9 +143,17 @@ def list_runs() -> JSONResponse:
             data = json.loads(f.read_text())
         except Exception:
             continue
-        # Compute summary metrics
+        # Compute summary metrics. The runner records phase metrics under
+        # `final_quarter_mean_distance` (the canonical "finalQ" — mean
+        # Manhattan distance during the last quarter of each phase).
         phase_stats = data.get("phase_stats") or []
-        final_qs = [ps.get("finalQ") for ps in phase_stats if "finalQ" in ps]
+        final_qs = []
+        for ps in phase_stats:
+            v = ps.get("final_quarter_mean_distance")
+            if v is None:
+                v = ps.get("finalQ")  # legacy fallback
+            if v is not None:
+                final_qs.append(v)
         summary = {
             "name": f.name,
             "size_bytes": f.stat().st_size,

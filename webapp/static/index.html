@@ -23,6 +23,17 @@
       <div class="toolbar">
         <button id="refresh-runs">Refresh</button>
         <span class="muted" id="runs-count"></span>
+        <span class="spacer"></span>
+        <label class="toolbar-checkbox">
+          <input type="checkbox" id="filter-hide-smoke" checked>
+          Hide smokes
+        </label>
+        <label class="toolbar-checkbox">
+          <input type="checkbox" id="filter-hide-incomplete">
+          Hide incomplete
+        </label>
+        <input type="text" id="filter-search" placeholder="Filter by name…" class="toolbar-input">
+        <button id="compare-runs" disabled title="Pick 2-3 runs to compare">Compare 0</button>
       </div>
       <div class="split">
         <div class="list" id="runs-list">Loading…</div>
