@@ -54,7 +54,8 @@ Sections are appended as chapters are processed. Each section header lists the c
 - [Cluster B — Striatal microcircuit & cortical interneuron diversity](#cluster-b--striatal-microcircuit--cortical-interneuron-diversity) — Ch 13
 - [Cluster M — Neuromuscular junction](#cluster-m--neuromuscular-junction) — Ch 12
 - [Cluster C — Dopamine & neuromodulation (extended)](#cluster-c--dopamine--neuromodulation-extended) — Ch 14, 16
-- (pending) Cluster L — Development & critical periods — Ch 48, 49
+- [Cluster L — Development & critical periods](#cluster-l--development--critical-periods) — Ch 48, 49
+- [Cluster J — Synapses & plasticity rules (continued from Ch 53)](#cluster-j--synapses--plasticity-rules-continued-from-ch-53) — Ch 53 (LTP/LTD/STDP, habituation, sensitization)
 
 ---
 
@@ -350,6 +351,144 @@ Entries from Ch 16 (Neurotransmitters). Note: the project already implements a *
 ### C.10 Gases (NO, CO) — covered in J.17; cross-listed here
 - **System:** see J.17.
 - **Citation:** Kandel 6e Ch 16 p 388–389.
+
+---
+
+## Cluster L — Development & critical periods
+
+Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience and the Refinement of Synaptic Connections). Many of these mechanisms are functionally analogous to project infrastructure (per-pathway plasticity gates, structural pruning, curriculum) but operate on different substrates than the textbook (no morphology, no developmental clock).
+
+### L.01 Target recognition / synaptic specificity (cell-adhesion molecules)
+- **System:** all developing CNS — visual system, autonomic ganglia, cortex, hippocampus, etc.
+- **Biological role:** axons select specific postsynaptic partners using a combinatorial code of cell-surface recognition molecules: cadherins (homophilic adhesion → "like binds like"), protocadherins (~60 isoforms, individually identifying), neurexin (presyn) ↔ neuroligin (postsyn) pairs, LRRTM family, SynCAMs, ephrins/Eph receptors (often *anti-adhesive*, sorting by gradient), semaphorins/plexins (axon guidance with carryover into synaptic targeting). The wiring of which-axon-finds-which-target is *not* random in real brains.
+- **Sim status:** missing entirely. Initial connectivity in the simulator is determined by `RegionPathway` declarations + density + spatial connectivity generators (see `sim/connectivity.py`); there is no molecular-recognition layer. This is fine *for a connectivity-as-fixed-prior* model — but in the patch-matrix striatum option (cheat-5 option 2), we'd want subsets of cortical pools to project to specific striatal pools, which is a hand-coded version of this targeting. **A real recognition-code mechanism would be a new system** — probably out of scope unless we want to model developmental wiring errors (autism-related neuroligin mutations).
+- **Cluster:** L (and B for the patch-matrix application)
+- **Prerequisites:** none (this *precedes* synapse function)
+- **Citation:** Kandel 6e Ch 48 p 1182–1192
+- **Behavioral validation:** would require a "wiring" benchmark — given a target connectivity matrix and a recognition-code, does our simulation produce the expected adjacency? Not testable in current architecture.
+
+### L.02 Synapse elimination by activity competition
+- **System:** NMJ (neonatal multi-innervation → 1:1 by P14), climbing fiber → Purkinje (1:1 in adult), cortex (massive overproduction → pruning to ~50% in adolescence)
+- **Biological role:** "use it or lose it" at the synapse level. When a postsynaptic cell is innervated by multiple presynaptic axons, the synapses that fire *coincidently* with the strongest axon (high-correlation = "winners") are stabilized; weaker / poorly-correlated synapses are eliminated. The final 1:1 pattern at NMJ + climbing-fiber emerges through this competition. In cortex, ~50% of overproduced synapses are pruned during adolescence; pruning failure is implicated in schizophrenia and autism.
+- **Sim status:** **partial — directly addressed by the structural-pruning option in cheat-5 survey** (option 1 in `docs/plans/2026-04-28-cheat5-real-options-survey.md`). The proposed mechanism — `cp_synapse_alive`, survival-score accumulation, prune when below threshold — is the project's analogue of biological synapse elimination. Once shipped, this entry's status becomes "implemented for the cheat-5 use case; not a general developmental mechanism." Currently **in active development** (see `docs/plans/2026-04-28-structural-plasticity-implementation.md`).
+- **Cluster:** L, B (the most likely first deployment)
+- **Prerequisites:** J.07–J.10 (synapse function), J.18 (long-term plasticity)
+- **Citation:** Kandel 6e Ch 48 p 1198–1205
+- **Behavioral validation:** Phase B + structural pruning Tier 2: 3-seed mean sum ≤ 4.5 → cheat #5 closed for real. Currently in Tier 1 / Tier 2.
+
+### L.03 Glia-mediated synapse pruning (complement C1q, C3 → microglia phagocytosis)
+- **System:** developing visual cortex, retinogeniculate refinement; ongoing in adult hippocampus
+- **Biological role:** astrocytes secrete TGF-β → induces complement protein C1q expression on weaker synapses → C1q tags → microglia recognize C3 → engulf and remove. The classical-immunity complement pathway is repurposed for synapse refinement. Excessive complement-mediated pruning is now thought to contribute to schizophrenia and Alzheimer's (synapse loss).
+- **Sim status:** missing. The functional outcome (eliminate weak synapses) is captured by L.02 / structural pruning. The *mechanism* (complement + microglia) is below our level of abstraction. We don't have glia (Cluster Q) at all.
+- **Cluster:** Q, L
+- **Prerequisites:** L.02, glia infrastructure
+- **Citation:** Kandel 6e Ch 48 p 1198–1205
+- **Behavioral validation:** N/A (would require glia model).
+
+### L.04 Critical periods (visual, language, social)
+- **System:** sensory cortex (V1 ocular dominance ~P21–P35 in mice / ~3 mo in humans), language areas, social-bonding circuits
+- **Biological role:** windows of heightened plasticity, after which rewiring becomes much harder. Opening: experience-dependent maturation of GABA-A inhibition (PV-cell maturation) raises the network out of low-inhibition "permissive" state. Closing: perineuronal nets (PNNs) condense around mature PV cells, physically restricting synapse change; myelin-associated inhibitors (Nogo, MAG) up-regulate. Reopening (Hensch et al.): chondroitinase digesting PNNs, or fluoxetine, can re-open critical periods in adult animals.
+- **Sim status:** **partial — functionally captured by the curriculum infrastructure**. The 2-phase curriculum in `g11_bg_runner` (warmup with cortex_to_d1 plastic + input layers frozen, then thaw input layers / freeze cortex) is a critical-period analogue — heightened plasticity for a window, then closure. The plasticity-gate substrate (`cp_plasticity_gain`) supports both opening and closing. **The infrastructure is exactly the right shape** for biological critical periods; we just don't model the molecular triggers (PV maturation, PNN deposition).
+- **Cluster:** L
+- **Prerequisites:** plasticity-gate infrastructure (already implemented)
+- **Citation:** Kandel 6e Ch 49 p 1210–1230
+- **Behavioral validation:** the curriculum experiments already validate the *functional* shape (warmup window → committed performance). To validate as a *biological* critical-period model would require: (a) PNN-analogue mechanism (slow accumulation of a "lock" variable that resists future plasticity gain), (b) reopening via simulated chondroitinase (zero out the lock variable). Stretch goal.
+
+### L.05 Spontaneous-activity-driven refinement (retinal waves, etc.)
+- **System:** developing retina, cochlea, spinal cord, hippocampus — *before* sensory experience
+- **Biological role:** even before eyes open or ears function, the developing nervous system generates spontaneous patterned activity (retinal waves: bursts of correlated activity that propagate across the retina at fixed velocities) that drives the refinement of downstream connections via NMDAR-dependent rules. The wave content matters — random noise wouldn't produce ocular dominance maps; coherent waves do. The brain is *self-organizing* its sensory representations before experience arrives.
+- **Sim status:** missing as a mechanism. We have OU noise as background; we don't have *patterned* spontaneous activity. Could be added by injecting structured noise patterns during a pretraining phase. **Likely useful** for the plastic-input-layer arc — a "developmental pretraining" via structured retinal-wave-like input might solve the cold-start problem that learned-perception had on 2026-04-26 without curriculum. Worth flagging as a future test.
+- **Cluster:** L, E (sensory)
+- **Prerequisites:** plasticity-gate infrastructure
+- **Citation:** Kandel 6e Ch 49 p 1218–1222
+- **Behavioral validation:** generate retinal-wave-like input → train sensory→cortex pathway during pretraining gate-open phase → freeze → verify cortex develops coherent receptive fields (analogue of orientation columns).
+
+### L.06 Activity-dependent refinement is general (NMDAR-dependent)
+- **System:** essentially every refinement in every system tested — visual, auditory, somatosensory, motor, BG
+- **Biological role:** the *common substrate* of refinement is NMDAR-dependent Hebbian plasticity: coincident pre/post → strengthening; uncorrelated → weakening / pruning. NMDAR antagonists block refinement in all systems. This is precisely the generalization that *Hebb's postulate* predicts.
+- **Sim status:** **implemented** (J.08 + STDP). The simulator's STDP is the algorithmic content of this principle. We use it pervasively (Phase B BG cascade, learned perception, hippocampus) — and the simulator's success on the perception arc validates the principle as deployed.
+- **Cluster:** L, J
+- **Prerequisites:** J.08
+- **Citation:** Kandel 6e Ch 49 p 1226–1230
+- **Behavioral validation:** STDP timing-curve benchmark (Bi & Poo 1998) — already passes.
+
+---
+
+## Cluster J — Synapses & plasticity rules (continued from Ch 53)
+
+Ch 53 entries continue the J series — plasticity at the synaptic level, the substrate of implicit memory.
+
+### J.24 Habituation (presynaptic depression)
+- **System:** Aplysia gill-withdrawal; analogous in vertebrates
+- **Biological role:** repeated mild stimulation → progressive decrease in response amplitude. Mechanism: presynaptic Ca²⁺ entry decreases (Ca²⁺ channel inactivation); synaptic depression. Recovers with rest. Operationally indistinguishable in many cases from short-term synaptic depression (J.03 / J.22).
+- **Sim status:** partial. STP depression (`stp_tau_d`) captures the time-course. However, *long-term* habituation (after many spaced training sessions, lasts days) requires gene-expression changes (J.18) and is **missing**.
+- **Cluster:** J
+- **Prerequisites:** J.03
+- **Citation:** Kandel 6e Ch 53 p 1314–1320
+- **Behavioral validation:** STP paired-pulse depression benchmark covers short-term. Long-term habituation: not currently testable.
+
+### J.25 Sensitization (presynaptic facilitation, 5-HT-mediated)
+- **System:** Aplysia (5-HT from interneurons → presyn sensory terminal); analog in vertebrates (NE from LC enhances release at hippocampal afferents)
+- **Biological role:** noxious stimulus → 5-HT release → cAMP-PKA in presynaptic terminal → phosphorylation of K⁺ channels → broader AP → more Ca²⁺ entry → more transmitter release. Short-term (minutes); long-term (days) requires CREB-mediated transcription. Kandel's Nobel-winning work.
+- **Sim status:** partial. NM framework can implement 5-HT-driven gain modulation of release probability. Not currently deployed. Long-term sensitization (CREB-dependent): missing (J.18).
+- **Cluster:** C, J
+- **Prerequisites:** J.13, J.14
+- **Citation:** Kandel 6e Ch 53 p 1320–1325
+- **Behavioral validation:** Aplysia-like sensitization protocol — single shock primes a stronger response to subsequent gentle touch, decays in minutes.
+
+### J.26 Classical conditioning (Aplysia model)
+- **System:** Aplysia gill-withdrawal; mammalian eyeblink (cerebellar); fear conditioning (amygdala)
+- **Biological role:** activity-dependent presynaptic facilitation — the CS pathway gets selectively *more* facilitated than other pathways because Ca²⁺ entry from CS spike *coincides* with the 5-HT modulator pulse from US. Adenylyl cyclase is the *coincidence detector* (its activity is enhanced by Ca²⁺/calmodulin AND by Gs from 5-HT GPCR — the Gs-Ca²⁺ AND-gate).
+- **Sim status:** partial. The associative-conditioning experiment in `experiment/presets.py` does the functional equivalent — paired CS+US with STDP-driven weight change. The *mechanism* is different (we use Hebbian+reward at corticostriatal-like synapses) but the outcome matches.
+- **Cluster:** J, O (emotion)
+- **Prerequisites:** J.25
+- **Citation:** Kandel 6e Ch 53 p 1325–1330
+- **Behavioral validation:** existing `run_experiment_headless.py --preset associative` already validates the outcome (CS-on rate increase, weights 0.10 → 0.999, t=11.36).
+
+### J.27 Memory reconsolidation
+- **System:** all long-term memory systems
+- **Biological role:** reactivating a long-term memory makes it transiently labile — protein-synthesis inhibitors *during retrieval* erase the memory. Suggests retrieval re-stabilizes through the same gene-expression mechanism as initial storage. Therapeutic implication: PTSD treatment via reconsolidation blockade with propranolol.
+- **Sim status:** missing. Same dependency as J.18 — no transcriptional state means no reconsolidation. *Implementation cost:* moderate, paired with J.18.
+- **Cluster:** J, L
+- **Prerequisites:** J.18
+- **Citation:** Kandel 6e Ch 53 p 1330–1334
+- **Behavioral validation:** N/A.
+
+### J.28 LTP / LTD — long-term potentiation / depression
+- **System:** ubiquitous in vertebrate CNS; canonical in CA1 (Schaffer collateral → CA1 NMDAR-LTP), neocortex, BG, cerebellum
+- **Biological role:** the workhorse mammalian plasticity rule. **NMDAR-LTP**: high-frequency stim → NMDAR-driven postsynaptic Ca²⁺ → CaMKII activation → AMPA receptor insertion → larger EPSC at the same synapse. **NMDAR-LTD**: low-frequency stim → moderate Ca²⁺ → calcineurin (PP1) → AMPA removal. The Ca²⁺-amplitude switch (high → LTP, moderate → LTD) is the BCM-like substrate. **mGluR-LTD** (cerebellum, hippocampus): a *separate* LTD pathway via mGluR1/5 → Ca²⁺ release from stores → endocannabinoid retrograde signal (cerebellum). Both forms contribute to memory.
+- **Sim status:** **implemented** as STDP — the spike-timing version of NMDAR-LTP/LTD. The Ca²⁺ amplitude → sign-of-change mapping is implicit in the STDP kernel (`fused_stdp_weight_update`). Soft-bound LTP captured. mGluR-LTD specifically: missing (J.15).
+- **Cluster:** J
+- **Prerequisites:** J.08
+- **Citation:** Kandel 6e Ch 53 p 1314–1320 (also Ch 54 for hippocampal LTP detail)
+- **Behavioral validation:** STDP timing-curve benchmark (Bi & Poo 1998) — already passes for both LTP and LTD.
+
+### J.29 Spike-timing-dependent plasticity (STDP) as the temporal version of LTP/LTD
+- **System:** all NMDAR-bearing synapses
+- **Biological role:** when presynaptic spike *precedes* postsynaptic spike by ~10 ms → LTP; reverse → LTD. The asymmetric kernel emerged from observing that the post-spike's back-propagating AP unblocks NMDA Mg²⁺ block coincidently with active glutamate, while reverse pairing leaves Mg²⁺ blocked. Bi & Poo 1998 hippocampal cultures.
+- **Sim status:** **implemented** — `fused_stdp_weight_update` with asymmetric pre→post / post→pre kernels. STDP is the mainline plasticity rule of the simulator.
+- **Cluster:** J
+- **Prerequisites:** J.08, J.28
+- **Citation:** Kandel 6e Ch 53 p 1318–1320 (the principle); Bi & Poo 1998
+- **Behavioral validation:** Bi & Poo benchmark: kernel matches theory to 3e-8, full-sim verified at dt=±5, ±20 ms.
+
+### J.30 Local protein synthesis at synapses (CPEB / prion-like, mRNA in spines)
+- **System:** Aplysia and mammalian dendrites
+- **Biological role:** Kandel's Lasker / Nobel work. Some forms of long-term facilitation require *local* protein synthesis at the activated synapse — synapse-specific tagging via CPEB (cytoplasmic polyadenylation element binding protein), which has a prion-like self-templating domain. CPEB self-aggregates in the activated spine, becomes a stable mark, and locally drives translation of mRNAs already pre-positioned in dendrites. This is how the cell achieves **synapse specificity** in long-term memory — not all synapses on one cell get the same gene-expression boost.
+- **Sim status:** missing. Per-synapse late-LTP tagging would require: (a) per-synapse "synaptic tag" boolean, (b) cell-wide gene-expression product, (c) tag × product → stabilization. Cluster L / J.18 dependency.
+- **Cluster:** J, L
+- **Prerequisites:** J.18
+- **Citation:** Kandel 6e Ch 53 p 1325–1330
+- **Behavioral validation:** N/A.
+
+### O.01 Amygdala-mediated threat / fear conditioning
+- **System:** lateral amygdala (LA), basolateral amygdala (BLA), central amygdala (CeA)
+- **Biological role:** the mammalian implementation of Pavlovian threat conditioning. LA receives convergent CS (e.g., tone, from auditory thalamus + cortex) and US (shock, from somatosensory thalamus). Coincident input → NMDAR-LTP at LA synapses. CeA outputs to brain stem (freezing, autonomic responses). Extinction is *not* erasure — it's new inhibitory learning competing with the stored fear memory.
+- **Sim status:** missing. Project has no amygdala. Pavlovian conditioning experiment (`experiment/presets.py`) does the *behavior* (CS-US pairing → CS-driven response) but not the *circuit*. Adding an amygdala region would compose with the existing region framework.
+- **Cluster:** O (emotion / reward), J
+- **Prerequisites:** L.06, region framework
+- **Citation:** Kandel 6e Ch 53 p 1330–1335; Ch 42, 43
+- **Behavioral validation:** add amygdala region with CS+US convergence; verify CeA output drives behavior after pairing; verify extinction adds parallel inhibition rather than erasing LA→CeA weights.
 
 ---
 
