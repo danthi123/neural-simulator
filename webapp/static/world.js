@@ -845,6 +845,9 @@ function play() {
   $("#world-play").disabled = true;
   $("#world-pause").disabled = false;
   world.lastFrameTime = performance.now();
+  // Reset the fractional-step accumulator so a fresh play doesn't carry
+  // residue from a previous play session.
+  world._stepAccumulator = 0;
   tick();
 }
 
@@ -863,8 +866,21 @@ function tick() {
   const now = performance.now();
   const dt = (now - world.lastFrameTime) / 1000;
   world.lastFrameTime = now;
-  // Speed = steps per real second. Cap dt to prevent huge jumps after pause.
-  const stepsAdvance = Math.max(1, Math.floor(world.speed * Math.min(dt, 0.1)));
+  // Speed = steps per real second. Use a fractional accumulator so low
+  // speeds (0.01, 0.25, 0.5) work correctly. The previous implementation
+  // floored speed*dt then Math.max(1, ...)'d it, so any speed below ~60
+  // still advanced 1 step per frame (= 60 steps/sec at 60fps).
+  // Cap dt to prevent huge jumps after pause/tab-switch.
+  world._stepAccumulator = (world._stepAccumulator || 0) +
+    world.speed * Math.min(dt, 0.5);
+  const stepsAdvance = Math.floor(world._stepAccumulator);
+  if (stepsAdvance <= 0) {
+    // Not enough accumulated yet; render the current frame and try again.
+    renderFrame();
+    world.rafId = requestAnimationFrame(tick);
+    return;
+  }
+  world._stepAccumulator -= stepsAdvance;
   // In live mode the upper bound is the latest live step we've received,
   // not the saved-trajectory length. Manual playback in live mode walks
   // forward through the recorded history at the chosen speed; if it
