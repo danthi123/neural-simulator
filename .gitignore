@@ -74,3 +74,8 @@ tests/VALIDATION_SUITE_INDEX.md
 .DS_Store
 Thumbs.db
 webapp/runtime/
+
+# Reference textbook PDFs (large binaries; not source). The catalog
+# session reads them locally; only the extracted markdown catalogs
+# under references/ are committed.
+references/textbooks/**/*.pdf
