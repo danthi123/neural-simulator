@@ -93,6 +93,9 @@ function initWorld() {
   });
 
   setupScrubberStepLabel();
+  setupHudCollapse("overlay-toggle", "world-overlay", "hud-overlay-collapsed");
+  setupHudCollapse("legend-toggle", "world-legend", "hud-legend-collapsed");
+
   $("#scrubber-latest-btn")?.addEventListener("click", () => {
     if (!world.data) return;
     if (world.live) {
@@ -111,6 +114,26 @@ function initWorld() {
   });
 
   loadWorldRunList();
+}
+
+/** Wire the HUD collapse toggle button. Stores the collapsed state in
+ *  localStorage under the given key so it persists across reloads. */
+function setupHudCollapse(buttonId, panelId, storageKey) {
+  const btn = document.getElementById(buttonId);
+  const panel = document.getElementById(panelId);
+  if (!btn || !panel) return;
+  const apply = (collapsed) => {
+    panel.classList.toggle("hud-collapsed", collapsed);
+    btn.textContent = collapsed ? "+" : "−";
+    btn.setAttribute("title", collapsed ? "Expand" : "Collapse");
+    btn.setAttribute("aria-label", collapsed ? "Expand" : "Collapse");
+  };
+  apply(localStorage.getItem(storageKey) === "1");
+  btn.addEventListener("click", () => {
+    const next = !panel.classList.contains("hud-collapsed");
+    apply(next);
+    localStorage.setItem(storageKey, next ? "1" : "0");
+  });
 }
 
 /** Set up the click-to-edit step indicator below the scrubber. */

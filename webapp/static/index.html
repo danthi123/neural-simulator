@@ -114,14 +114,19 @@
         <div id="world-canvas-container">
           <canvas id="world-canvas"></canvas>
           <div id="world-overlay">
+            <button class="hud-collapse" id="overlay-toggle" aria-label="Collapse HUD" title="Collapse">−</button>
+            <div class="hud-body">
             <div class="overlay-row"><span class="muted">agent</span><span id="overlay-pos">—</span></div>
             <div class="overlay-row"><span class="muted">goal</span><span id="overlay-goal">—</span></div>
             <div class="overlay-row"><span class="muted">distance</span><span id="overlay-dist">—</span></div>
             <div class="overlay-row"><span class="muted">action</span><span id="overlay-action">—</span></div>
             <div class="overlay-row"><span class="muted">reward</span><span id="overlay-reward">—</span></div>
             <div class="overlay-row"><span class="muted">phase</span><span id="overlay-phase">—</span></div>
+            </div>
           </div>
           <div id="world-legend">
+            <button class="hud-collapse" id="legend-toggle" aria-label="Collapse legend" title="Collapse">−</button>
+            <div class="hud-body">
             <div class="legend-title">Legend</div>
             <div class="legend-row">
               <span class="legend-swatch swatch-agent"></span>
@@ -142,6 +147,7 @@
             <div class="legend-row">
               <span class="legend-swatch swatch-trail"></span>
               <span class="legend-text"><strong>Trail</strong> — fading yellow dots showing the agent's recent path</span>
+            </div>
             </div>
           </div>
         </div>

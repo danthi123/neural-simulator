@@ -639,6 +639,33 @@ pre {
   color: var(--accent);
 }
 
+/* Collapsible HUD toggle. The HUD parent has pointer-events: none so
+   clicks pass through to the canvas; the button overrides to be
+   clickable. When .hud-collapsed is set on the parent, .hud-body is
+   hidden and the panel shrinks to just the button. */
+.hud-collapse {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--fg-dim);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 3px;
+  pointer-events: auto;
+}
+.hud-collapse:hover {
+  color: var(--accent);
+  border-color: var(--border);
+}
+.hud-collapsed .hud-body { display: none; }
+.hud-collapsed { padding: 4px 8px; min-width: 0; max-width: none; }
+.hud-collapsed .hud-collapse { position: static; }
+
 /* Right-aligned legend explaining the symbols on the map. */
 #world-legend {
   position: absolute;
