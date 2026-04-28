@@ -342,8 +342,11 @@ python benchmark.py --quick
 # Full benchmark
 python benchmark.py --output benchmarks/results.json
 
-# Export profiling
-python -c "from sim import SimulationBridge, CoreSimConfig, GPUConfig; sim = ...; sim.export_profiling_report('prof.json')"
+# Run the flagship research runner
+python -m research.runners.g11_bg_runner --moving-goal --seed 42 --n-steps 1800
+
+# Run static cascade probe (validates BG architecture)
+python -m research.runners.g11_bg_runner --probe-action W
 
 # Check GPU memory
 nvidia-smi
@@ -371,22 +374,24 @@ viz/                           # OpenGL renderer / camera / picker / overlays
 ui/                            # DearPyGUI panels / callbacks / layout / plots
 experiment/                    # ExperimentEngine + StimulusManager + Readout + Training
 research/
-  runners/                     # 16 headless gate runners (g1..g11)
-  findings/                    # session-by-session findings (28+ markdown docs)
+  runners/                     # 12 headless gate runners (g1..g11)
+  findings/                    # session-by-session findings (60+ markdown docs)
   findings/raw/                # raw JSON output per gate run
   datasets/                    # synthetic datasets (e.g. tiny_patterns.npz)
 docs/
   SCIENCE_ROADMAP.md           # validation pillars + gate progression
   plans/                       # per-feature design docs (paired with findings)
-tests/                         # 41 test files
+tests/                         # 28 test files
   test_determinism.py          # RNG determinism (init + step)
   test_kernels_cpu.py          # CPU validation of fused kernels
   test_experiment_system.py    # experiment engine + stimulus manager
   test_neuromodulators.py      # neuromodulator subsystem
-  test_regions.py              # brain-region framework
+  test_regions.py              # brain-region framework + plasticity gates
   test_data_bus.py             # data-bus pub/sub
-  test_g{1..11}_runner_smoke.py # per-runner smoke tests
+  test_g{1,2,3,5,6,8,9}_runner_smoke.py  # per-runner smoke tests
+  test_g11_bg_runner_flags.py  # G11 PFC/perception/scaling flag tests
   test_plastic_mask.py         # per-synapse plastic freeze
+  test_plastic_mask_checkpoint.py  # plastic mask survives checkpoints
   ...
 benchmark.py                   # GPU throughput benchmark runner
 viz_benchmark.py               # visualization performance benchmark

@@ -6,13 +6,15 @@ A high-performance spiking neural network simulator with real-time 3D OpenGL vis
 ![CUDA](https://img.shields.io/badge/CUDA-CuPy-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-> **Project status (2026-04-27):** Active research codebase. Recent milestones:
+> **Project status (2026-04-28):** Active research codebase. Recent milestones:
 > - **Phase A preset audit** — 30 working biological presets across HH+Izh+AdEx with per-gate Q10 fix
 > - **Phase B basal-ganglia action selection** — silent-motor trap resolved, phase 1 finalQ 1.76 vs G9 baseline 6.74
 > - **Phase C plastic-input-layer arc** — per-pathway plasticity gating + real curriculum learning, hippocampus + sensory layer + PFC working memory all composing (4.41 sum, p=0.018, 25% over baseline)
-> - **🎉 Item 1 (perception arc, 2026-04-27 night)** — agent navigates from PERCEIVED beacon information with a cue-following reflex; **NO direct (gx, gy) coordinate access anywhere** (4.77 sum, p=0.00188, 18.9% over baseline). Closes the two biggest biological cheats in the system.
+> - **Item 1 (perception arc complete)** — agent navigates from PERCEIVED beacon + landmark information with a cue-following reflex; **NO direct (gx, gy) AND NO direct (x, y) coordinate access anywhere** (4.56 sum, p=0.00819, 22.4% over baseline)
+> - **🎉 NEW BEST (overnight 2026-04-27/28): 4 of 5 cheats closed** — adds sensed reward (intensity gradient instead of distance) on top of the perception arc. **Biology-grounded version (4.08, p=0.00045, 30.6% over baseline) BEATS cheats-allowed (4.41).** 6/6 seeds. See [the milestone finding](research/findings/2026-04-27-NEW-BEST-4cheats-closed.md).
 >
-> Detailed session findings in [`research/findings/`](research/findings/).
+> **New here?** Start with [QUICKSTART.md](QUICKSTART.md) — running in 60 seconds.
+> Detailed session findings in [`research/findings/`](research/findings/) ([INDEX](research/findings/INDEX.md)).
 > Multi-week perception arc plan: [`docs/plans/2026-04-27-perception-arc-plan.md`](docs/plans/2026-04-27-perception-arc-plan.md).
 
 ---
@@ -313,6 +315,8 @@ python neural-simulator.py
 
 ## Quick Start
 
+> **For a complete 60-second walkthrough see [QUICKSTART.md](QUICKSTART.md).**
+
 ### GUI mode
 
 ```bash
@@ -342,15 +346,22 @@ python run_benchmarks.py --benchmark stdp-timing
 python run_benchmarks.py --benchmark gamma-oscillations
 ```
 
-### Research-gate runner (Phase B BG action selection)
+### Research-gate runner (G11 BG cascade)
 
 ```bash
 # Static cascade probe (validates the architecture)
 python -m research.runners.g11_bg_runner --probe-action W
 
-# Moving-goal acid test (1800 steps, ~16 min)
-python -m research.runners.g11_bg_runner --moving-goal --seed 42 --n-steps 1800 \
-    --out research/findings/raw/g11_bg/g11_seed42.json
+# Flagship biology-grounded research run (1800 steps, ~16 min, 30.6% over baseline)
+python -m research.runners.g11_bg_runner --moving-goal \
+    --hippocampus --learned-perception --pfc \
+    --beacon-perception --beacon-replaces-goal \
+    --cue-reflex --cue-reflex-replaces-heuristic \
+    --landmarks --landmarks-replace-place \
+    --sensed-reward \
+    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
+    --curriculum --curriculum-warmup-steps 600 \
+    --seed 42 --n-steps 1800
 ```
 
 ---
@@ -385,37 +396,41 @@ Headless runners for the research-gate progression (G1 → G11). Each writes raw
 | G9   | `g9_runner.py` | Moving-goal RL with motor exploration | NO-GO at runner side (silent-motor trap) |
 | **G11** | **`g11_bg_runner.py`** | **BG cascade action selection + Phase C/Item 1 perception arc** | **GO 2026-04-27** — see below |
 
-### G11 status (2026-04-27)
+### G11 status (2026-04-27/28)
 
 `g11_bg_runner.py` has grown into the project's flagship runner. It supports
 many opt-in flags for biology-grounded learning experiments:
 
 ```bash
-# Best with cheats (engineering shortcut, p=0.018, 25% over baseline):
+# 🎉 Current best — 4 of 5 cheats closed, biology-grounded BEATS cheats-allowed
+# (p=0.00045, 30.6% over baseline; 6/6 seeds):
+python -m research.runners.g11_bg_runner --moving-goal \
+    --hippocampus --learned-perception --pfc \
+    --beacon-perception --beacon-replaces-goal \
+    --cue-reflex --cue-reflex-replaces-heuristic \
+    --landmarks --landmarks-replace-place \
+    --sensed-reward \
+    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
+    --curriculum --curriculum-warmup-steps 600 --seed N --n-steps 1800
+# → sum 4.08 (6-seed)
+
+# Best with cheats kept on (engineering shortcut, p=0.018, 25% over baseline):
 python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 --seed N --n-steps 1800
 # → sum 4.41 (6-seed)
-
-# 🎉 Best biology-grounded — NO direct coordinate access anywhere
-# (p=0.00188, 18.9% over baseline):
-python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception --pfc \
-    --beacon-perception --beacon-replaces-goal \
-    --cue-reflex --cue-reflex-replaces-heuristic \
-    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
-    --curriculum --curriculum-warmup-steps 600 --seed N --n-steps 1800
-# → sum 4.77 (6-seed)
 ```
 
 Available capabilities (all opt-in):
 - **Hippocampus** (`--hippocampus`) — place + goal cells with sparse Gaussian tuning
 - **Sensory layer** (`--learned-perception`) — 49 (dx, dy)-tuned cells learning position→action
 - **PFC working memory** (`--pfc`) — recurrent prefrontal region for persistent activity
-- **Beacon perception** (`--beacon-perception`) — 8 directional sensors detecting beacon (replaces direct goal coords)
-- **Cue-following reflex** (`--cue-reflex`) — innate sensorimotor wiring (replaces heuristic)
-- **Landmark sensors** (`--landmarks`) — fixed-position landmark for place cell self-organization
+- **Beacon perception** (`--beacon-perception` `--beacon-replaces-goal`) — 8 directional sensors detecting beacon, replaces direct goal coords
+- **Cue-following reflex** (`--cue-reflex` `--cue-reflex-replaces-heuristic`) — innate sensorimotor wiring (replaces heuristic)
+- **Landmark sensors** (`--landmarks` `--landmarks-replace-place`) — fixed-position landmark for place cell self-organization
+- **Sensed reward** (`--sensed-reward`) — beacon-intensity gradient instead of ground-truth distance
+- **BG cross-projections** (`--bg-cross-projections`) — opt-in but NEGATIVE — breaks phase-1 readaptation. Kept for future experiments.
 - **Curriculum learning** (`--curriculum`) — staged plasticity via per-pathway gates
 - **Sleep replay** (`--sleep-replay-after-step N`) — NREM trajectory + REM random
 - **Cortex WTA, motor WTA, adaptive DA, surprise LR boost** — various modulation mechanisms
@@ -533,7 +548,7 @@ bridge.export_profiling_report("profile.json")
 
 ## Testing
 
-41 test files in `tests/`. Highlights:
+28 test files in `tests/`. Highlights:
 
 ```bash
 # Full suite
@@ -565,7 +580,8 @@ pytest tests/test_data_bus.py -v
 
 | Document | Audience | Content |
 |----------|----------|---------|
-| [README.md](README.md) | First-time visitors | This file — overview, install, quick start |
+| **[QUICKSTART.md](QUICKSTART.md)** | **First-timers (start here!)** | **60-second TL;DR — install + GUI + flagship research run** |
+| [README.md](README.md) | All visitors | This file — overview, architecture, install, full reference |
 | [USER_GUIDE.md](USER_GUIDE.md) | End users | GUI walkthrough, panel-by-panel reference, plasticity tuning |
 | [CLAUDE.md](CLAUDE.md) | LLM agents working in repo | Module map, line numbers, gotchas, sub-system spec |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | New contributors | Dev setup, branching, code style, PR template |

@@ -7,9 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
-## [Unreleased] — 2026-04-27 — Phase C plastic-input-layer + Item 1 perception arc
+## [Unreleased] — 2026-04-27/28 — NEW BEST: 4 of 5 cheats closed + Phase C + Item 1
 
 ### Added
+- **🎉🎉🎉🎉 NEW BEST CONFIGURATION (2026-04-27/28 overnight) — 4 of 5 cheats closed, biology-grounded BEATS cheats-allowed**
+  - **Sensed reward** (cheat #4 closed): reward computed from beacon-intensity gradient instead of ground-truth Manhattan distance. Real animals don't have access to ground-truth distances — they sense whether a cue is getting stronger or weaker. `--sensed-reward` flag.
+  - **Result: sum 4.08, 6/6 seeds beat baseline 5.88, p=0.00045, 30.6% improvement.** Biology-grounded version (4.08) is *better* than cheats-allowed (4.41) — closing perception/reward cheats actually *helps* learning quality.
+  - **Cheat #5 (BG cross-projections) tested — NEGATIVE.** Learnable cortex_X → str_D1_Y all-to-all broke phase-1 readaptation (3-seed avg 8.40, much worse). Phase-0 cortex_N/E activations reinforce cross-projections to all D1 pools, locking in motor bias the agent can't unlearn. Kept opt-in (`--bg-cross-projections`) for future experiments.
+  - **Final cheats inventory:** 4 of 5 perception/reward cheats now closed. Only structural BG connectivity remains, plus minor items (discrete N/E/S/W actions, discrete time steps).
+  - Finding: `research/findings/2026-04-27-NEW-BEST-4cheats-closed.md`
+  - Recipe: `g11_bg_runner.py --moving-goal --hippocampus --learned-perception --pfc --beacon-perception --beacon-replaces-goal --cue-reflex --cue-reflex-replaces-heuristic --landmarks --landmarks-replace-place --sensed-reward --adaptive-da --adaptive-da-ema-decay-negative 0.7 --curriculum --curriculum-warmup-steps 600 --seed N --n-steps 1800`
+
 - **🎉🎉🎉 Item 1 PERCEPTION ARC COMPLETE (2026-04-27 night)** — agent navigates from PERCEIVED sensory information; ALL major coordinate cheats closed
   - **Stage 1: Goal-beacon perception** — replaces direct (gx, gy) goal cell access with 8 directional sensors detecting beacon strength × cosine alignment. Plastic beacon → goal_cells pathway (curriculum-gated). 6-seed: 5/6 beat baseline (5.36 vs 5.88, p=0.34).
   - **Stage 3: Cue-following reflex** — replaces the heuristic with non-plastic reflex computing cortex drive from direction-normalized beacon sensor pattern. Models innate phototaxis-like wiring. Combined with Stage 1: 6/6 seeds beat baseline (4.77 vs 5.88, **p=0.00188**, 18.9% improvement).
@@ -39,9 +47,10 @@ This is a research codebase; entries are organised chronologically rather than b
 - **TROUBLESHOOTING doc** (`research/runners/TROUBLESHOOTING.md`) — gotchas accumulated across sessions
 
 ### Changed
-- **Recommended config now distinguishes biology-grounded vs cheats-allowed**:
-  - Biology-grounded: `--hippocampus --learned-perception --pfc --beacon-perception --beacon-replaces-goal --cue-reflex --cue-reflex-replaces-heuristic --adaptive-da --adaptive-da-ema-decay-negative 0.7 --curriculum --curriculum-warmup-steps 600` (4.77, p=0.00188)
-  - Cheats-allowed: same minus beacon/reflex flags (4.41, p=0.018)
+- **Recommended flagship config (current best, biology-grounded BEATS cheats-allowed)**:
+  - Flagship: `--hippocampus --learned-perception --pfc --beacon-perception --beacon-replaces-goal --cue-reflex --cue-reflex-replaces-heuristic --landmarks --landmarks-replace-place --sensed-reward --adaptive-da --adaptive-da-ema-decay-negative 0.7 --curriculum --curriculum-warmup-steps 600` (**4.08, p=0.00045, 30.6% over baseline**)
+  - Cheats-allowed (older): same minus beacon/reflex/landmarks/sensed-reward flags (4.41, p=0.018)
+- QUICKSTART.md added — 60-second getting-started for new users
 - CLAUDE.md, SCIENCE_ROADMAP.md, INDEX.md, README.md all reflect the new state
 
 ## [Unreleased] — 2026-04-25 — Phase A presets + Phase B BG action selection

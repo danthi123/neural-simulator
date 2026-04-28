@@ -62,22 +62,22 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 9 modules, ~9.1K lines — core engine
-  bridge.py             # 5186 lines — SimulationBridge + GPU state orchestration
+sim/                    # 9 modules, ~9.4K lines — core engine
+  bridge.py             # 5347 lines — SimulationBridge + GPU state orchestration
   config.py             #  676 lines — all @dataclass configs
   enums.py              #  803 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  923 lines — spatial/WS/motif connection generators (GPU)
   kernels.py            #  314 lines — fused @cp.fuse() neuron + plasticity kernels
   profiles.py           #  432 lines — NEURAL_STRUCTURE_PROFILES + CONNECTIVITY_MOTIFS dicts
-  regions.py            #  328 lines — BrainRegion + RegionPathway + RegionManager
-  neuromodulators.py    #  355 lines — declarative neuromodulator subsystem
+  regions.py            #  350 lines — BrainRegion + RegionPathway + RegionManager
+  neuromodulators.py    #  430 lines — declarative neuromodulator subsystem
   data_bus.py           #   95 lines — DataChannel pub/sub for streaming sim data
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 16 headless runners (g1..g11) for research gates
-research/findings/      # session-by-session findings docs (28+ files)
-tests/                  # 41 test files (determinism, runners, kernels, plasticity, etc.)
+research/runners/       # 12 headless runners (g1..g11) for research gates
+research/findings/      # session-by-session findings docs (60+ files)
+tests/                  # 28 test files (determinism, runners, kernels, plasticity, etc.)
 ```
 
 ### Thread Model
@@ -87,10 +87,10 @@ tests/                  # 41 test files (determinism, runners, kernels, plastici
 
 ### Key Classes
 
-**SimulationBridge** (`sim/bridge.py:169`): Central simulation orchestrator
+**SimulationBridge** (`sim/bridge.py:170`): Central simulation orchestrator
 - Manages all GPU state arrays (CuPy)
-- Simulation stepping (`_run_one_simulation_step` at line 3550)
-- Initialization (`_initialize_simulation_data` at line 750)
+- Simulation stepping (`_run_one_simulation_step` at line 3655)
+- Initialization (`_initialize_simulation_data` at line 765)
 - Recording/playback to HDF5
 - Checkpoint save/restore
 - Profiling and performance monitoring
@@ -394,29 +394,38 @@ cortex frozen (or partial) + input layers thawed. Biologically: real
 critical periods close gradually, gated by neuromodulators, allowing
 sensory cortex to mature before association cortex.
 
-### Recommended configuration (current best 2026-04-27)
+### Recommended configuration (current best 2026-04-27/28)
 
-There are now two recommended configs depending on whether biological
-realism is required:
-
-**Best biology-grounded (CURRENT BEST as of 2026-04-27 night):**
+**🎉 Current flagship — 4 of 5 cheats closed, biology-grounded BEATS cheats-allowed:**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --landmarks --landmarks-replace-place \
+    --sensed-reward \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 \
     --seed N --n-steps 1800
 ```
-Sum 4.56 ± 0.70 (6-seed, p=0.00819, **22.4% over baseline**, 6/6 seeds beat).
-**Agent has NO direct (gx, gy), NO direct (x, y), AND NO heuristic.** All
-three major perception cheats closed. Beacon → goal_cells, cue-following
-reflex → cortex, landmark → place_cells. Only 3% behind cheats-allowed
-best — closing all coordinate cheats costs almost nothing.
+Sum 4.08 ± 0.49 (6-seed, p=0.00045, **30.6% over baseline**, 6/6 seeds beat).
+**Agent has NO direct (gx, gy), NO direct (x, y), NO heuristic, AND NO
+distance-based reward.** Reward computed from beacon-intensity gradient.
+**Biology-grounded (4.08) BEATS cheats-allowed (4.41)** — closing perception/reward
+cheats actually *helps* learning.
 
-**Best with cheats (engineering shortcut version):**
+**Cheat #5 (BG cross-projections, `--bg-cross-projections`) — NEGATIVE.**
+Phase-1 readaptation breaks (3-seed avg 8.40, much worse). Phase-0
+cortex_N/E activations reinforce cross-projections to all D1 pools, locking
+in motor bias. Kept opt-in for future experiments.
+
+**Without sensed reward (perception arc only, 2026-04-27 night):**
+```bash
+... (above without --sensed-reward)
+```
+Sum 4.56 ± 0.70 (6-seed, p=0.00819, 22.4% over baseline). Closes 3 of 5 cheats.
+
+**Best with cheats (engineering shortcut, no perception arc):**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
@@ -425,11 +434,12 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --seed N --n-steps 1800
 ```
 Sum 4.41 ± 0.94 (6-seed, p=0.018, 25.0% over baseline). Uses heuristic
-+ direct goal coords. Slightly better numerically but not biology-grounded.
++ direct goal coords + distance-based reward.
 
 Performance comparison (6-seed validated):
-- **Baseline (heuristic + direct goal coords)**: 5.88
-- **Best biology-grounded**: 4.77 (-18.9%, p=0.00188)
+- **Baseline**: 5.88
+- **★ Flagship (4 cheats closed)**: 4.08 (-30.6%, p=0.00045)
+- **Perception arc only (3 cheats closed)**: 4.56 (-22.4%, p=0.00819)
 - **Best with cheats**: 4.41 (-25.0%, p=0.018)
 - **4-goal (fast-change)**: curriculum doesn't help in any variant
 
@@ -474,7 +484,8 @@ The `--adaptive-da --adaptive-da-ema-decay-negative 0.7` config is kept opt-in b
 - `--motor-lateral-inhibition`: WTA microcircuit (FS interneurons). PARTIAL — exploitation+, readaptation−. Net negative when stacked with adaptive DA. Even DA-gated WTA doesn't help.
 - `--per-action-da`: hard eligibility gating (always ON). Same exploitation/exploration trade-off as WTA.
 - `--rpe-scaled-reward`: amplifies reward signal magnitude by RPE. Modest help, but `--surprise-lr-boost` is cleaner architecturally.
-- `--learned-perception`: replaces heuristic cortex drive with plastic sensory→cortex layer (49 neurons tuned to (dx, dy)). NEGATIVE — cold-start fails, agent stays at random walk for 1800 trials. Random initial weights produce no asymmetry for STDP+reward to amplify. Future: try with informed init.
+- `--learned-perception` (standalone, REPLACES heuristic): NEGATIVE in 2026-04-26 cold-start tests — random init produces no asymmetry for STDP+reward to amplify. **However, when combined with `--hippocampus`, `--pfc`, `--curriculum` and (since 2026-04-27) the perception arc flags, it composes successfully.** The flagship config uses it.
+- `--bg-cross-projections`: learnable cortex_X → str_D1_Y all-to-all. NEGATIVE — phase-1 readaptation breaks (3-seed avg 8.40, much worse). Phase-0 N/E activations lock in motor bias. Kept opt-in for future experiments with separate gate / longer warmup.
 - Combo flags: combining adaptive DA with WTA, or adaptive DA with LR boost, doesn't compose well. Mechanisms interfere through shared reward EMA. Use one, not both.
 
 ### Refinement findings (chronological)
@@ -502,7 +513,7 @@ Headless runners for the research-gate progression (G1 through G11). Each is inv
 | `g6_runner.py` | 2D gridworld | PARTIAL (gate metric needs redesign) |
 | `g8_runner.py` | (session 8 work) | — |
 | `g9_runner.py` | Moving-goal RL + motor exploration | NO-GO at runner-side |
-| `g11_bg_runner.py` | BG cascade action selection | **GO 2026-04-25** |
+| `g11_bg_runner.py` | BG cascade + perception arc + sensed reward + curriculum | **GO 2026-04-27/28 — flagship** |
 | `aggregate_seeds.py` | Cross-seed result rollup | utility |
 
 Findings docs in `research/findings/` document each session's outcome; **negative results are real findings** and stored alongside positives. A new runner should be added whenever a new architectural variant is being tested.

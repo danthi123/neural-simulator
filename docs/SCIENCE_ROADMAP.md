@@ -3,23 +3,32 @@
 Living document tracking scientific improvements to the neural simulator.
 Updated as features are implemented and validated.
 
-**Last updated:** 2026-04-27
+**Last updated:** 2026-04-28
 
-> **Recent arc (2026-04-20 → 2026-04-27):** the project pivoted from a flat
+> **Recent arc (2026-04-20 → 2026-04-28):** the project pivoted from a flat
 > "validate biology + optimise" agenda to an active research arc on
 > reward-driven learning in spiking circuits. The original Pillars (analysis,
-> bio benchmarks, performance) are largely DONE and are kept below as the
-> credibility floor. The current frontier is summarised in
-> [Pillar 4: Reward-Driven Learning Architecture](#pillar-4-reward-driven-learning-architecture)
-> below, which subsumes Sessions D–I (silent-motor trap arc), Phase A/B
-> (preset audit + BG cascade), and Phase C (plastic-input-layer arc + curriculum
-> learning). The 2026-04-25 acid test (74% improvement over G9 baseline) closed
-> Phase B. The 2026-04-26 plastic-input-layer arc hit an architectural ceiling
-> (7 NEGATIVE attempts) which was resolved on 2026-04-27 via per-pathway
-> plasticity gating + real curriculum learning (6/6 seeds beat baseline, 19.8%
-> improvement, p=0.02). See
-> [`research/findings/2026-04-27-plastic-input-layer-RESOLVED.md`](../research/findings/2026-04-27-plastic-input-layer-RESOLVED.md)
-> and [`research/findings/2026-04-27-overnight-summary.md`](../research/findings/2026-04-27-overnight-summary.md).
+> bio benchmarks, performance) are largely DONE and kept below as the
+> credibility floor. The current frontier — [Pillar 4: Reward-Driven
+> Learning Architecture](#pillar-4-reward-driven-learning-architecture) —
+> has now reached a major milestone:
+>
+> **As of 2026-04-28: 4 of 5 perception/reward cheats closed, agent navigates
+> from biologically-grounded sensory information, biology-grounded BEATS
+> cheats-allowed (4.08 vs 4.41, p=0.00045, 30.6% over baseline, 6/6 seeds).**
+>
+> Arc summary:
+> - **2026-04-25** Phase B BG cascade closes silent-motor trap (74% over G9 baseline)
+> - **2026-04-26** Plastic-input-layer ceiling hit (7 NEGATIVE attempts in one day)
+> - **2026-04-27 (early)** Phase C breakthrough: per-pathway plasticity gating + real curriculum (6/6 seeds, p=0.02)
+> - **2026-04-27 (mid)** PFC working memory composing (4.41, p=0.018)
+> - **2026-04-27 (night)** Item 1 perception arc complete: 3 of 5 cheats closed (4.56, p=0.00819)
+> - **2026-04-27/28 (overnight)** + sensed reward → **4 of 5 cheats closed** (4.08, p=0.00045)
+>
+> See [`research/findings/2026-04-27-NEW-BEST-4cheats-closed.md`](../research/findings/2026-04-27-NEW-BEST-4cheats-closed.md)
+> for the milestone, [`research/findings/2026-04-27-FULL-PERCEPTION-ARC-COMPLETE.md`](../research/findings/2026-04-27-FULL-PERCEPTION-ARC-COMPLETE.md)
+> for the perception-only step, and [`research/findings/INDEX.md`](../research/findings/INDEX.md)
+> for the full session-by-session arc.
 
 ---
 
@@ -404,26 +413,152 @@ DA handles fast-change better.
 - `2026-04-27-sleep-replay-infrastructure.md` (sleep replay neutral)
 - `2026-04-27-overnight-summary.md` (consolidated session summary)
 
-### 4.9 Open future directions
+### 4.9 PFC working memory (Item 3, 2026-04-27)
 
-1. **Sleep-replay with proper trajectory content** — random and stale
+**Status:** GO. Adding a recurrent prefrontal region on top of the
+hippocampus + sensory + curriculum stack gave a clean 6-seed win.
+
+| Variant | 6-seed avg sum | beats baseline | p-value |
+|---|---:|---|---:|
+| Baseline | 5.88 | reference | — |
+| Hippo + sensory + curriculum | 4.72 | 6/6 | 0.02 |
+| **+ PFC working memory** | **4.41** | **6/6** | **0.018** |
+
+PFC region is built declaratively via `BrainRegion` with internal
+recurrent connectivity (sparse glutamatergic loops). It receives
+goal-context input and projects forward through the cortex pools to
+the BG cascade.
+
+**Stage 2 delayed-response test (3-seed):** PFC's drop during goal
+silence is 17% smaller than no-PFC's drop (d=0.73, p=0.51) — preliminary
+indication of real persistent activity. 6-seed validation pending.
+
+Findings:
+- `2026-04-27-pfc-working-memory.md`
+- `2026-04-27-pfc-stage2-delayed-response.md`
+
+### 4.10 Item 1: Perception arc (2026-04-27 night)
+
+**Status:** **COMPLETE.** All three coordinate cheats closed — agent
+navigates from PERCEIVED beacon and landmark information with no direct
+(gx, gy) or (x, y) access anywhere.
+
+| Variant | 6-seed avg sum | beats baseline | p-value | Cheats closed |
+|---|---:|---|---:|---|
+| Baseline (all cheats) | 5.88 | reference | — | 0/5 |
+| Best WITH cheats | 4.41 | 6/6 | 0.018 | 0/5 |
+| Stage 1 (beacon only) | 5.36 | 5/6 | 0.342 | 1/5 |
+| Stage 1+3 (beacon + reflex) | 4.77 | 6/6 | 0.00188 | 2/5 |
+| **Stage 1+2+3 (full perception)** | **4.56** | **6/6** | **0.00819** | **3/5** |
+
+**Architecture:**
+
+```
+Goal at (gx,gy) emits beacon  →  8 directional beacon sensors (cosine tuning)
+   →  plastic beacon → goal_cells (curriculum-gated)
+   →  cue-following reflex → cortex_X drive (replaces heuristic)
+
+Landmark at fixed (lx,ly) emits cue  →  8 directional landmark sensors
+   →  plastic landmark → place_cells (curriculum-gated, self-organizes)
+```
+
+The agent's only source of "knowing where the goal is" is the beacon;
+its only source of "knowing where it is" is the landmark perception.
+These match what real animals use.
+
+**Recipe:**
+```bash
+python -m research.runners.g11_bg_runner --moving-goal \
+    --hippocampus --learned-perception --pfc \
+    --beacon-perception --beacon-replaces-goal \
+    --cue-reflex --cue-reflex-replaces-heuristic \
+    --landmarks --landmarks-replace-place \
+    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
+    --curriculum --curriculum-warmup-steps 600 \
+    --seed N --n-steps 1800
+```
+
+Findings:
+- `2026-04-27-FULL-PERCEPTION-ARC-COMPLETE.md` (the milestone)
+- `2026-04-27-stage3-full-perception-BREAKTHROUGH.md`
+- `2026-04-27-stage1-beacon-perception.md`
+- `docs/plans/2026-04-27-perception-arc-plan.md`
+
+### 4.11 NEW BEST: 4 of 5 cheats closed (2026-04-27/28 overnight)
+
+**Status:** **GO — STATISTICALLY SIGNIFICANT.** Adds **sensed reward**
+(beacon-intensity gradient instead of ground-truth distance) on top of
+the perception arc. The result is the new flagship.
+
+| Variant | 6-seed avg | beats baseline | p-value | Cheats closed |
+|---|---:|---|---:|---|
+| Baseline | 5.88 | reference | — | 0/5 |
+| Best WITH cheats | 4.41 | 6/6 | 0.018 | 0/5 |
+| Stage 1+2+3 (perception arc) | 4.56 | 6/6 | 0.00819 | 3/5 |
+| **★ + sensed reward** | **4.08** | **6/6** | **0.00045** | **4/5** |
+
+**The biology-grounded version (4.08) BEATS the cheats-allowed version
+(4.41).** Closing perception/reward cheats actually *helps* — likely
+because the new mechanisms add richer state information (gradient
+direction, sensor patterns) than coordinate access.
+
+**Sensed reward implementation:**
+```python
+intensity_before = beacon_max_intensity / (1.0 + beacon_falloff * d_before)
+intensity_after  = beacon_max_intensity / (1.0 + beacon_falloff * d_after)
+reward = sign(intensity_after - intensity_before)  # ±1 / 0
+```
+
+**Cheat #5 (BG cross-projections) — NEGATIVE.** Tested with
+`--bg-cross-projections` (learnable cortex_X → str_D1_Y all-to-all).
+Phase-1 readaptation broke (3-seed avg 8.40, much worse). Phase-0
+cortex_N/E activations reinforce cross-projections to all D1 pools,
+locking in a motor bias the agent can't unlearn on goal change.
+Kept opt-in for future experiments.
+
+**Recipe (current flagship):**
+```bash
+python -m research.runners.g11_bg_runner --moving-goal \
+    --hippocampus --learned-perception --pfc \
+    --beacon-perception --beacon-replaces-goal \
+    --cue-reflex --cue-reflex-replaces-heuristic \
+    --landmarks --landmarks-replace-place \
+    --sensed-reward \
+    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
+    --curriculum --curriculum-warmup-steps 600 \
+    --seed N --n-steps 1800
+```
+
+Findings:
+- `2026-04-27-NEW-BEST-4cheats-closed.md` (the milestone)
+
+### 4.12 Open future directions
+
+The cheats inventory is now down to one structural item plus a list of
+larger architectural extensions:
+
+1. **Cheat #5 alternative architectures** — BG cross-projections need
+   their own plasticity gate, longer warmup, or curriculum-staged
+   release. Direct learning broke phase-1 readaptation.
+2. **Sleep-replay with proper trajectory content** — random and stale
    trajectory replay don't help. Recency-weighted, current-goal-only
-   replay might. Needed: log only recent successful steps; replay only
-   matching current goal.
-2. **Working memory in PFC** — persistent activity for delayed-response
-   tasks. Tests temporal integration.
-3. **Spatial scaling** — 16x16+ grids. Tests that the architecture isn't
-   gridworld-specific.
-4. **Multi-modal sensory integration** — visual + proprioceptive layers
+   replay might. Infrastructure (NREM trajectory + REM random) added
+   2026-04-27; content quality is the bottleneck.
+3. **Multi-modal sensory integration** — visual + proprioceptive layers
    composing via separate plasticity gates.
-5. **Multiple sleep cycles + NREM/REM stages** — different replay rules
-   per stage.
-6. **Cerebellum** — timing, error correction, fine motor.
-7. **Distance-shaped reward** — current ±1 binary reward is sparse.
-   Continuous reward could improve learning quality.
+4. **Cerebellum** — timing, error correction, fine motor.
+5. **Larger task domains** — 16×16 grid recipe re-tuning (architecture
+   scales but recipe is 8×8-tuned), more goal positions, multi-step
+   plans.
+6. **Continuous time / continuous actions** — major architecture change.
+7. **Distance-shaped reward** — current ±1 binary is sparse; gradient-
+   magnitude scaling could improve learning quality (note: sensed-reward
+   already uses gradient direction; magnitude scaling would compose).
 
-### 4.10 Cross-cutting: doc / repo hygiene
+### 4.13 Cross-cutting: doc / repo hygiene
 - Module-split docs (CLAUDE.md, CONTRIBUTING.md) were stale (single-file
   era references) — refreshed 2026-04-25.
 - README architecture diagram added (Mermaid) — 2026-04-25.
 - Findings index added at [`research/findings/INDEX.md`](../research/findings/INDEX.md) — 2026-04-25.
+- QUICKSTART.md added 2026-04-27 — 60-second getting-started for new users.
+- Documentation overhaul aligning with PyTorch/Django/Rust Book patterns — 2026-04-28.
