@@ -641,8 +641,11 @@ pre {
 
 /* Collapsible HUD toggle. The HUD parent has pointer-events: none so
    clicks pass through to the canvas; the button overrides to be
-   clickable. When .hud-collapsed is set on the parent, .hud-body is
-   hidden and the panel shrinks to just the button. */
+   clickable. The button is always absolutely positioned at the
+   top-right corner regardless of collapsed state — only the panel
+   body hides on collapse. The button uses an explicit sans font so
+   the "−" / "+" glyphs render identically in both panels (the overlay
+   parent uses a mono font, the legend uses sans). */
 .hud-collapse {
   position: absolute;
   top: 4px;
@@ -651,7 +654,7 @@ pre {
   border: 1px solid transparent;
   color: var(--fg-dim);
   cursor: pointer;
-  font: inherit;
+  font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1;
   padding: 2px 6px;
@@ -663,17 +666,17 @@ pre {
   border-color: var(--border);
 }
 .hud-collapsed .hud-body { display: none; }
+/* Collapsed panel: shrinks vertically (only title row visible) but
+   keeps padding-right so the absolutely-positioned button has room
+   without overlapping the title text. */
 .hud-collapsed {
-  padding: 4px 10px;
+  padding-right: 32px;
   min-width: 0;
   max-width: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
 }
-.hud-collapsed .hud-collapse { position: static; }
-/* Title is visible in both states. When expanded, sits above the body
-   like a label; when collapsed, sits inline next to the toggle button. */
+/* Title is visible in both states. Sits at top-left as a label.
+   In collapsed state, it's the only visible content, so we drop
+   the bottom margin so the panel hugs the title row. */
 .hud-title {
   font-family: var(--font-sans);
   font-size: 11px;
@@ -685,7 +688,6 @@ pre {
   margin: 0 0 4px 0;
 }
 .hud-collapsed .hud-title {
-  display: inline;
   margin: 0;
 }
 
