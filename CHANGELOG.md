@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-04-27 — Phase C plastic-input-layer + Item 1 perception arc
+
+### Added
+- **🎉 Item 1 (perception arc, 2026-04-27 night) — agent navigates from PERCEIVED beacon information**
+  - **Stage 1: Goal-beacon perception** — replaces direct (gx, gy) goal cell access with 8 directional sensors detecting beacon strength × cosine alignment. Plastic beacon → goal_cells pathway (curriculum-gated). 6-seed: 5/6 beat baseline (5.36 vs 5.88, p=0.34).
+  - **Stage 3: Cue-following reflex** — replaces the heuristic with non-plastic reflex computing cortex drive from direction-normalized beacon sensor pattern. Models innate phototaxis-like wiring. Combined with Stage 1: 6/6 seeds beat baseline (4.77 vs 5.88, **p=0.00188**, 18.9% improvement). **Agent now has NO direct (gx, gy) coordinate access anywhere.**
+  - **Stage 2: Landmark-based place cell self-organization** — fixed-position landmark with 8 directional sensors + plastic landmark → place_cells pathway. Replaces direct (x, y) place cell access.
+  - Findings: `research/findings/2026-04-27-stage3-full-perception-BREAKTHROUGH.md`, `2026-04-27-stage1-beacon-perception.md`, `2026-04-27-perception-cheats-investigation.md`
+  - Plan: `docs/plans/2026-04-27-perception-arc-plan.md` (multi-week roadmap)
+
+- **PFC working memory region (Item 3, 2026-04-27)** — recurrent prefrontal cortex for working memory dynamics. 60 neurons, internal_density=0.2, plastic recurrent. Pathways: `goal_cells → PFC → cortex_{N,E,S,W}`. 6-seed: 5/6 beat baseline (4.41 vs 5.88, p=0.018, 25% improvement).
+
+- **Per-pathway plasticity gating (Phase C, 2026-04-27)** — biologically-grounded staged plasticity
+  - `RegionPathway.plasticity_gate: str | None` field tags pathways
+  - `cp_plasticity_gain` per-synapse array gates STDP/eligibility/Hebbian/synaptic-scaling
+  - Bridge methods: `set_plasticity_gate(name, value)`, `get_plasticity_gate_value()`, `list_plasticity_gates()`
+  - **NM-driven gates**: `target_type="plasticity_gate"` with `scope="gate:<name>"` lets NM concentrations drive gates
+  - 8 unit tests for gating semantics; 1 test for NM-driven gates
+  - Closed the 7-NEGATIVE plastic-input-layer arc that ran 2026-04-26
+
+- **Real curriculum learning** — phase 1 cortex_to_d1 plastic + input layers frozen; phase 2 cortex frozen + input layers plastic. Configurable warmup steps, smooth ramping, partial-freeze gain.
+
+- **Sleep-replay infrastructure** — NREM trajectory replay (logged successful (place, goal) tuples) + REM random replay alternation. Mechanism works; current task structure doesn't reward consolidation.
+
+- **Spatial scaling** — `--grid-size`, `--n-hippocampus-per-layer` for arbitrary grid sizes. Architecture scales to 16×16; recipe needs re-tuning for larger grids.
+
+- **g11_bg_runner CLI growth** — many opt-in flags: `--curriculum`, `--curriculum-warmup-steps`, `--curriculum-ramp-steps`, `--curriculum-phase2-cortex-gain`, `--pfc`, `--n-pfc`, `--beacon-perception`, `--beacon-replaces-goal`, `--cue-reflex`, `--cue-reflex-replaces-heuristic`, `--landmarks`, `--landmarks-replace-place`, `--sleep-replay-after-step`, `--sleep-nrem-rem-alternate`, `--goal-silence-after-step` (PFC delayed-response test), `--heuristic-decay-after-step` (heuristic-off validation)
+
+- **TROUBLESHOOTING doc** (`research/runners/TROUBLESHOOTING.md`) — gotchas accumulated across sessions
+
+### Changed
+- **Recommended config now distinguishes biology-grounded vs cheats-allowed**:
+  - Biology-grounded: `--hippocampus --learned-perception --pfc --beacon-perception --beacon-replaces-goal --cue-reflex --cue-reflex-replaces-heuristic --adaptive-da --adaptive-da-ema-decay-negative 0.7 --curriculum --curriculum-warmup-steps 600` (4.77, p=0.00188)
+  - Cheats-allowed: same minus beacon/reflex flags (4.41, p=0.018)
+- CLAUDE.md, SCIENCE_ROADMAP.md, INDEX.md, README.md all reflect the new state
+
 ## [Unreleased] — 2026-04-25 — Phase A presets + Phase B BG action selection
 
 ### Added

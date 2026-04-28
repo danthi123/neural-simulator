@@ -119,6 +119,16 @@ def build_bg_brain_regions(
     enable_beacon_perception: bool = False,
     n_beacon_sensors: int = 8,  # 8 directional sensors (cardinal + diagonal)
     beacon_to_goal_weight: float = 8.0,
+    # Landmark perception (Item 1 Stage 2, 2026-04-27).
+    # Adds landmark_sensors region perceiving a FIXED-position landmark
+    # (typically grid center). Used to self-organize place_cells via
+    # plastic landmark_sensors → place_cells pathway. With a known fixed
+    # landmark at L and 8 directional sensors, the (distance, bearing)
+    # to L uniquely identifies agent position — place cells can learn to
+    # fire at specific positions based on this multi-cell sensor pattern.
+    enable_landmarks: bool = False,
+    n_landmark_sensors: int = 8,
+    landmark_to_place_weight: float = 8.0,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -171,6 +181,22 @@ def build_bg_brain_regions(
         regions.append(BrainRegion(
             name="beacon_sensors",
             n_neurons=n_beacon_sensors,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+
+    # Landmark perception (Item 1 Stage 2, 2026-04-27). Fixed-position
+    # landmark with 8 directional sensors. Plastic landmark_sensors →
+    # place_cells pathway lets place cells self-organize from the unique
+    # (distance, bearing) pattern at each agent position. Replaces direct
+    # (x, y) place cell access with biologically-grounded localization.
+    if enable_landmarks:
+        regions.append(BrainRegion(
+            name="landmark_sensors",
+            n_neurons=n_landmark_sensors,
             exc_fraction=1.0,
             internal_density=0.0,
             exc_weight_mean=0.0, inh_weight_mean=0.0,
@@ -392,6 +418,18 @@ def build_bg_brain_regions(
             plasticity_gate="beacon_to_goal",
         ))
 
+    # Landmark → place cells pathway (Item 1 Stage 2, 2026-04-27).
+    # Plastic; place cells self-organize from landmark sensor patterns.
+    # Each unique (distance, bearing) to landmark gives a unique sensor
+    # activation pattern, so place cells learn to fire at specific positions.
+    if enable_landmarks and enable_hippocampus:
+        pathways.append(RegionPathway(
+            from_region="landmark_sensors", to_region="place_cells",
+            density=1.0, weight_mean=landmark_to_place_weight,
+            weight_jitter=0.2, plastic=True,
+            plasticity_gate="landmark_to_place",
+        ))
+
     # PFC working memory pathways (Item 3, 2026-04-27):
     #   goal_cells → PFC: goal info enters working memory
     #   PFC → cortex_X: PFC drives cortex selection across delays
@@ -591,6 +629,14 @@ def run_moving_goal_episode(
     beacon_max_intensity: float = 600.0,  # peak sensor drive (pA) when on top of beacon
     beacon_falloff: float = 1.0,           # intensity = peak / (1 + falloff*distance)
     beacon_replaces_goal: bool = False,    # if True, beacon→goal_cells is the ONLY goal info (true Stage 1 test)
+    # Landmark perception (Item 1 Stage 2, 2026-04-27).
+    enable_landmarks: bool = False,
+    n_landmark_sensors: int = 8,
+    landmark_to_place_weight: float = 8.0,
+    landmark_position: tuple = None,  # default to grid center
+    landmark_max_intensity: float = 600.0,
+    landmark_falloff: float = 1.0,
+    landmarks_replace_place: bool = False,
     # Cue-following reflex (Item 1 Stage 3, 2026-04-27).
     # Replaces the heuristic with a hand-tuned innate reflex that computes
     # cortex drive from beacon sensor activations. Models a real animal's
@@ -738,6 +784,9 @@ def run_moving_goal_episode(
         enable_beacon_perception=enable_beacon_perception,
         n_beacon_sensors=n_beacon_sensors,
         beacon_to_goal_weight=beacon_to_goal_weight,
+        enable_landmarks=enable_landmarks,
+        n_landmark_sensors=n_landmark_sensors,
+        landmark_to_place_weight=landmark_to_place_weight,
     )
 
     # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
@@ -782,6 +831,22 @@ def run_moving_goal_episode(
     else:
         beacon_pref_x = None
         beacon_pref_y = None
+
+    # Pre-compute landmark sensor preferred directions (Item 1 Stage 2).
+    # Same structure as beacon sensors; landmark is at fixed position.
+    if enable_landmarks:
+        landmark_pref_x = np.zeros(n_landmark_sensors, dtype=np.float32)
+        landmark_pref_y = np.zeros(n_landmark_sensors, dtype=np.float32)
+        for i in range(n_landmark_sensors):
+            angle = 2.0 * np.pi * i / n_landmark_sensors
+            landmark_pref_x[i] = np.cos(angle)
+            landmark_pref_y[i] = np.sin(angle)
+        # Default landmark position: grid center
+        if landmark_position is None:
+            landmark_position = (grid_size / 2.0, grid_size / 2.0)
+    else:
+        landmark_pref_x = None
+        landmark_pref_y = None
 
     cfg = CoreSimConfig()
     cfg.num_neurons = 0
@@ -1034,6 +1099,7 @@ def run_moving_goal_episode(
     has_cortex_gate = enable_curriculum and "cortex_to_d1" in available_gates
     has_sensory_gate = enable_curriculum and "sensory_to_cortex" in available_gates
     has_beacon_gate = enable_curriculum and "beacon_to_goal" in available_gates
+    has_landmark_gate = enable_curriculum and "landmark_to_place" in available_gates
     if enable_curriculum:
         # Phase 1: input plasticity OFF, cortex_to_d1 plasticity ON
         if has_hippo_gate:
@@ -1042,6 +1108,8 @@ def run_moving_goal_episode(
             bridge.set_plasticity_gate("sensory_to_cortex", 0.0)
         if has_beacon_gate:
             bridge.set_plasticity_gate("beacon_to_goal", 0.0)
+        if has_landmark_gate:
+            bridge.set_plasticity_gate("landmark_to_place", 0.0)
         if has_cortex_gate:
             bridge.set_plasticity_gate("cortex_to_d1", 1.0)
         if verbose:
@@ -1111,6 +1179,8 @@ def run_moving_goal_episode(
                     bridge.set_plasticity_gate("sensory_to_cortex", float(target_sensory))
                 if has_beacon_gate:
                     bridge.set_plasticity_gate("beacon_to_goal", float(target_sensory))
+                if has_landmark_gate:
+                    bridge.set_plasticity_gate("landmark_to_place", float(target_sensory))
                 if (last_logged_phase == 1 and target_hippo > 0.0):
                     last_logged_phase = 2
                     if verbose:
@@ -1128,6 +1198,8 @@ def run_moving_goal_episode(
                         bridge.set_plasticity_gate("sensory_to_cortex", float(curriculum_phase2_hippo_gain))
                     if has_beacon_gate:
                         bridge.set_plasticity_gate("beacon_to_goal", float(curriculum_phase2_hippo_gain))
+                    if has_landmark_gate:
+                        bridge.set_plasticity_gate("landmark_to_place", float(curriculum_phase2_hippo_gain))
                     if verbose:
                         print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 — "
                               f"cortex_to_d1={curriculum_phase2_cortex_gain:.2f}, "
@@ -1243,33 +1315,36 @@ def run_moving_goal_episode(
         # drive proportional to the integrated beacon strength in its
         # preferred cardinal direction. Models "approach attractive cue"
         # reflex like phototaxis. Non-plastic (innate sensorimotor wiring).
+        # Direction-normalized: reflex strength is independent of beacon
+        # distance (real biological reflexes operate on direction once
+        # stimulus is detected, not on absolute intensity).
         if enable_cue_reflex and enable_beacon_perception and not (in_sleep or in_goal_silence_step):
-            # Compute beacon perception signals (same as in beacon block)
             bdx = float(gx - x); bdy = float(gy - y)
             distance = (bdx * bdx + bdy * bdy) ** 0.5
             if distance > 1e-6:
                 bearing_x = bdx / distance
                 bearing_y = bdy / distance
-                intensity = beacon_max_intensity / (1.0 + beacon_falloff * distance)
-                sensor_act = intensity * np.maximum(0.0, beacon_pref_x * bearing_x + beacon_pref_y * bearing_y)
-                # Each cortex pool integrates sensors aligned with its direction
-                # cortex_N: weighted by sensor.y > 0 component
-                # cortex_E: weighted by sensor.x > 0 component, etc.
-                drive_N = float(np.sum(sensor_act * np.maximum(0, beacon_pref_y)))
-                drive_E = float(np.sum(sensor_act * np.maximum(0, beacon_pref_x)))
-                drive_S = float(np.sum(sensor_act * np.maximum(0, -beacon_pref_y)))
-                drive_W = float(np.sum(sensor_act * np.maximum(0, -beacon_pref_x)))
-                # Scale to match heuristic magnitude (~800 pA peak)
-                # max possible sum is ~peak_intensity * 3 sensors with positive component
-                scale = cue_reflex_strength / (beacon_max_intensity * 3.0)
-                if drive_N > 0:
-                    bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = cp.float32(drive_N * scale)
-                if drive_E > 0:
-                    bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = cp.float32(drive_E * scale)
-                if drive_S > 0:
-                    bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = cp.float32(drive_S * scale)
-                if drive_W > 0:
-                    bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = cp.float32(drive_W * scale)
+                # Direction-only sensor pattern: cosine alignment, half-rectified
+                sensor_dir = np.maximum(0.0, beacon_pref_x * bearing_x + beacon_pref_y * bearing_y)
+                # Normalize so total activation sums to 1 (direction representation)
+                total = sensor_dir.sum() + 1e-6
+                sensor_norm = sensor_dir / total
+                # Each cortex pool integrates sensors aligned with its cardinal direction
+                drive_N = float(np.sum(sensor_norm * np.maximum(0, beacon_pref_y)))
+                drive_E = float(np.sum(sensor_norm * np.maximum(0, beacon_pref_x)))
+                drive_S = float(np.sum(sensor_norm * np.maximum(0, -beacon_pref_y)))
+                drive_W = float(np.sum(sensor_norm * np.maximum(0, -beacon_pref_x)))
+                # Scale to match heuristic strength regardless of distance
+                # (the reflex is "go this direction at full strength" once
+                # the cue direction is detected, like phototaxis)
+                if drive_N > 1e-3:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = cp.float32(drive_N * cue_reflex_strength)
+                if drive_E > 1e-3:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = cp.float32(drive_E * cue_reflex_strength)
+                if drive_S > 1e-3:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = cp.float32(drive_S * cue_reflex_strength)
+                if drive_W > 1e-3:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = cp.float32(drive_W * cue_reflex_strength)
         # Sensory layer drive (opt-in, additive on top of heuristic).
         # Each sensory neuron i has preferred (dx_i, dy_i); rate = max * exp(-d²/2σ²)
         # The sensory→cortex pathway is plastic — agent learns mapping via STDP+reward.
@@ -1327,9 +1402,14 @@ def run_moving_goal_episode(
                 not enable_curriculum or step >= curriculum_warmup_steps
             )
         if hippo_active:
-            place_dsq = (hippo_pref_x - float(x)) ** 2 + (hippo_pref_y - float(y)) ** 2
-            place_drive = hippocampus_drive_max_pA * np.exp(-place_dsq / (2.0 * hippocampus_drive_sigma ** 2))
-            bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.asarray(place_drive, dtype=cp.float32)
+            if enable_landmarks and landmarks_replace_place:
+                # Stage 2: don't drive place_cells directly. They get input
+                # only via the plastic landmark_sensors → place_cells pathway.
+                pass
+            else:
+                place_dsq = (hippo_pref_x - float(x)) ** 2 + (hippo_pref_y - float(y)) ** 2
+                place_drive = hippocampus_drive_max_pA * np.exp(-place_dsq / (2.0 * hippocampus_drive_sigma ** 2))
+                bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.asarray(place_drive, dtype=cp.float32)
             # Goal cells silencing test (PFC Stage 2): during the silence
             # window, goal_cells are forced to 0 — tests whether PFC working
             # memory holds the goal info during the delay.
@@ -1353,6 +1433,33 @@ def run_moving_goal_episode(
             # without hippo noise.
             bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.float32(0.0)
             bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.float32(0.0)
+
+        # Landmark perception drive (Item 1 Stage 2, 2026-04-27).
+        # Drives landmark_sensors based on agent's bearing+distance to a
+        # FIXED landmark position. Each unique (distance, bearing) gives a
+        # unique sensor activation pattern, so place_cells can self-organize
+        # to fire at specific positions via the plastic landmark→place pathway.
+        if enable_landmarks:
+            in_goal_silence_step_lm = (goal_silence_after_step >= 0
+                                       and step >= goal_silence_after_step
+                                       and step < goal_silence_after_step + goal_silence_duration)
+            if in_sleep or in_goal_silence_step_lm:
+                bridge.cp_external_input_current[region_indices_cp["landmark_sensors"]] = cp.float32(0.0)
+            else:
+                lx, ly = landmark_position
+                ldx = float(lx - x); ldy = float(ly - y)
+                ldist = (ldx * ldx + ldy * ldy) ** 0.5
+                if ldist < 1e-6:
+                    sensor_act = np.full(n_landmark_sensors, landmark_max_intensity, dtype=np.float32)
+                else:
+                    bearing_x = ldx / ldist
+                    bearing_y = ldy / ldist
+                    intensity = landmark_max_intensity / (1.0 + landmark_falloff * ldist)
+                    cos_alignment = landmark_pref_x * bearing_x + landmark_pref_y * bearing_y
+                    sensor_act = intensity * np.maximum(0.0, cos_alignment)
+                bridge.cp_external_input_current[region_indices_cp["landmark_sensors"]] = (
+                    cp.asarray(sensor_act, dtype=cp.float32)
+                )
 
         # Beacon perception drive (Item 1 Stage 1, 2026-04-27).
         # The beacon emits intensity that falls off with distance from goal.
@@ -1621,6 +1728,18 @@ def main():
                     help="Peak reflex drive (pA) — matches heuristic strength by default.")
     ap.add_argument("--cue-reflex-replaces-heuristic", action="store_true",
                     help="If set with --cue-reflex, the heuristic is fully disabled; only reflex provides cortex drive.")
+    ap.add_argument("--landmarks", action="store_true",
+                    help="Item 1 Stage 2: enable fixed-position landmark with directional sensors. Plastic landmark_sensors → place_cells pathway lets place cells self-organize from sensor patterns.")
+    ap.add_argument("--n-landmark-sensors", type=int, default=8)
+    ap.add_argument("--landmark-to-place-weight", type=float, default=8.0)
+    ap.add_argument("--landmark-x", type=float, default=None,
+                    help="Landmark x position (default = grid_size/2)")
+    ap.add_argument("--landmark-y", type=float, default=None,
+                    help="Landmark y position (default = grid_size/2)")
+    ap.add_argument("--landmark-max-intensity", type=float, default=600.0)
+    ap.add_argument("--landmark-falloff", type=float, default=1.0)
+    ap.add_argument("--landmarks-replace-place", action="store_true",
+                    help="If set, place_cells receive ONLY landmark-derived input (no direct (x,y) cheat). True Stage 2 perception test.")
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
@@ -1721,6 +1840,13 @@ def main():
             enable_cue_reflex=args.cue_reflex,
             cue_reflex_strength=args.cue_reflex_strength,
             cue_reflex_replaces_heuristic=args.cue_reflex_replaces_heuristic,
+            enable_landmarks=args.landmarks,
+            n_landmark_sensors=args.n_landmark_sensors,
+            landmark_to_place_weight=args.landmark_to_place_weight,
+            landmark_position=(args.landmark_x, args.landmark_y) if args.landmark_x is not None and args.landmark_y is not None else None,
+            landmark_max_intensity=args.landmark_max_intensity,
+            landmark_falloff=args.landmark_falloff,
+            landmarks_replace_place=args.landmarks_replace_place,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_cortex_lateral_inhibition=args.cortex_wta,

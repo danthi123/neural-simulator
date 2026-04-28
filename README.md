@@ -6,7 +6,14 @@ A high-performance spiking neural network simulator with real-time 3D OpenGL vis
 ![CUDA](https://img.shields.io/badge/CUDA-CuPy-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-> **Project status (2026-04):** Active research codebase. Recent milestones: Phase A preset audit (30 working biological presets across HH+Izh+AdEx, per-gate Q10 fix), Phase B basal-ganglia action selection (silent-motor trap resolved, phase 1 finalQ 1.76 vs G9 baseline 6.74). Detailed session findings in [`research/findings/`](research/findings/).
+> **Project status (2026-04-27):** Active research codebase. Recent milestones:
+> - **Phase A preset audit** — 30 working biological presets across HH+Izh+AdEx with per-gate Q10 fix
+> - **Phase B basal-ganglia action selection** — silent-motor trap resolved, phase 1 finalQ 1.76 vs G9 baseline 6.74
+> - **Phase C plastic-input-layer arc** — per-pathway plasticity gating + real curriculum learning, hippocampus + sensory layer + PFC working memory all composing (4.41 sum, p=0.018, 25% over baseline)
+> - **🎉 Item 1 (perception arc, 2026-04-27 night)** — agent navigates from PERCEIVED beacon information with a cue-following reflex; **NO direct (gx, gy) coordinate access anywhere** (4.77 sum, p=0.00188, 18.9% over baseline). Closes the two biggest biological cheats in the system.
+>
+> Detailed session findings in [`research/findings/`](research/findings/).
+> Multi-week perception arc plan: [`docs/plans/2026-04-27-perception-arc-plan.md`](docs/plans/2026-04-27-perception-arc-plan.md).
 
 ---
 
@@ -376,7 +383,45 @@ Headless runners for the research-gate progression (G1 → G11). Each writes raw
 | G6   | `g6_runner.py` | 2D gridworld | PARTIAL — gate metric needs redesign |
 | G8   | `g8_runner.py` | Session 8 work | — |
 | G9   | `g9_runner.py` | Moving-goal RL with motor exploration | NO-GO at runner side (silent-motor trap) |
-| **G11** | **`g11_bg_runner.py`** | **BG cascade action selection** | **GO 2026-04-25** — phase 1 finalQ 1.76 vs G9 baseline 6.74 |
+| **G11** | **`g11_bg_runner.py`** | **BG cascade action selection + Phase C/Item 1 perception arc** | **GO 2026-04-27** — see below |
+
+### G11 status (2026-04-27)
+
+`g11_bg_runner.py` has grown into the project's flagship runner. It supports
+many opt-in flags for biology-grounded learning experiments:
+
+```bash
+# Best with cheats (engineering shortcut, p=0.018, 25% over baseline):
+python -m research.runners.g11_bg_runner --moving-goal \
+    --hippocampus --learned-perception --pfc \
+    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
+    --curriculum --curriculum-warmup-steps 600 --seed N --n-steps 1800
+# → sum 4.41 (6-seed)
+
+# 🎉 Best biology-grounded — NO direct coordinate access anywhere
+# (p=0.00188, 18.9% over baseline):
+python -m research.runners.g11_bg_runner --moving-goal \
+    --hippocampus --learned-perception --pfc \
+    --beacon-perception --beacon-replaces-goal \
+    --cue-reflex --cue-reflex-replaces-heuristic \
+    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
+    --curriculum --curriculum-warmup-steps 600 --seed N --n-steps 1800
+# → sum 4.77 (6-seed)
+```
+
+Available capabilities (all opt-in):
+- **Hippocampus** (`--hippocampus`) — place + goal cells with sparse Gaussian tuning
+- **Sensory layer** (`--learned-perception`) — 49 (dx, dy)-tuned cells learning position→action
+- **PFC working memory** (`--pfc`) — recurrent prefrontal region for persistent activity
+- **Beacon perception** (`--beacon-perception`) — 8 directional sensors detecting beacon (replaces direct goal coords)
+- **Cue-following reflex** (`--cue-reflex`) — innate sensorimotor wiring (replaces heuristic)
+- **Landmark sensors** (`--landmarks`) — fixed-position landmark for place cell self-organization
+- **Curriculum learning** (`--curriculum`) — staged plasticity via per-pathway gates
+- **Sleep replay** (`--sleep-replay-after-step N`) — NREM trajectory + REM random
+- **Cortex WTA, motor WTA, adaptive DA, surprise LR boost** — various modulation mechanisms
+
+See [`research/runners/TROUBLESHOOTING.md`](research/runners/TROUBLESHOOTING.md) for
+gotchas and `--help` for the full flag list.
 
 Negative results are real findings and stored in [`research/findings/`](research/findings/) alongside positives. Browse the directory for the full session-by-session arc.
 
@@ -529,6 +574,8 @@ pytest tests/test_data_bus.py -v
 | [docs/plans/](docs/plans/) | Implementers | Per-feature design docs, often paired with a finding |
 | [research/findings/INDEX.md](research/findings/INDEX.md) | Researchers | Index of all findings with verdicts |
 | [research/findings/](research/findings/) | Researchers | Session-by-session results, including negatives |
+| [research/runners/TROUBLESHOOTING.md](research/runners/TROUBLESHOOTING.md) | Anyone running experiments | Gotchas accumulated across sessions (3-seed unreliability, plasticity gate semantics, etc.) |
+| [docs/plans/2026-04-27-perception-arc-plan.md](docs/plans/2026-04-27-perception-arc-plan.md) | Researchers | Multi-week plan to remove all perception cheats |
 | [.claude/style.md](.claude/style.md) | LLM agents | Communication style for this codebase |
 
 ---
