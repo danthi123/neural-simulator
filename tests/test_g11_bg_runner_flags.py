@@ -398,3 +398,37 @@ def test_bg_cross_projections_disabled_by_default():
         f"got {len(cortex_to_str_paths)}"
     )
     assert all(p.plasticity_gate == "cortex_to_d1" for p in cortex_to_str_paths)
+
+
+def test_pretraining_raises_on_missing_gate():
+    """If a gate name we want to thaw is missing from bridge.list_plasticity_gates(),
+    the helper raises KeyError mentioning both the bad name AND the actual list of
+    available gates. Catches typos before pretraining wastes minutes of GPU time."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import _run_pretraining_phase
+
+    # Fake bridge: only has one of the gates we'd thaw
+    class _FakeBridge:
+        def list_plasticity_gates(self):
+            return ["cortex_to_d1"]  # missing all the others
+
+        def set_plasticity_gate(self, name, value):
+            raise AssertionError("should not be called when validation fails")
+
+    with pytest.raises(KeyError) as exc_info:
+        _run_pretraining_phase(
+            bridge=_FakeBridge(),
+            cfg=None,
+            regions=None,
+            n_goals=1,
+            steps_per_goal=10,
+            grid_size=8,
+            start_pos=(1, 1),
+            seed=42,
+            verbose=False,
+        )
+    msg = str(exc_info.value)
+    assert "bg_cross_projections" in msg or "sensory_to_cortex" in msg, (
+        "error should name at least one missing gate")
+    assert "cortex_to_d1" in msg, (
+        "error should list the actually-available gates so the user can spot the typo")
