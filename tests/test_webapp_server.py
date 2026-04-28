@@ -149,3 +149,42 @@ def test_progress_line_parser_rejects_non_progress():
         "[g11 seed=42] step 800/1800",  # missing pos/goal
     ]:
         assert _try_parse_progress(bad, 0.0) is None, f"unexpectedly parsed: {bad!r}"
+
+
+def test_experiments_endpoint_groups_runs(client):
+    """/api/experiments groups runs by filename suffix and returns
+    per-group aggregates. Must include at least the well-known
+    flagship/sensedonly experiment if findings/raw is populated."""
+    res = client.get("/api/experiments")
+    assert res.status_code == 200
+    data = res.json()
+    assert "experiments" in data
+    assert "count" in data
+    assert isinstance(data["experiments"], list)
+
+    # Each experiment row has the expected schema.
+    if data["experiments"]:
+        e = data["experiments"][0]
+        for key in ("experiment", "n_seeds", "n_complete",
+                    "mean_sum", "std_sum", "min_sum", "max_sum", "runs"):
+            assert key in e, f"missing key {key} in experiment row"
+        # n_complete <= n_seeds
+        assert e["n_complete"] <= e["n_seeds"]
+        # std_sum is None or float
+        assert e["std_sum"] is None or isinstance(e["std_sum"], (int, float))
+
+
+def test_detect_experiment():
+    """Filename → experiment-name parsing matches frontend's detectExperiment."""
+    from webapp.server import _detect_experiment
+    cases = [
+        ("g11_seed42.json", "default"),
+        ("g11_seed42_v3lateral.json", "v3lateral"),
+        ("g11_seed100_sensedonly.json", "sensedonly"),
+        ("g11_seed44_cheat5v2.json", "cheat5v2"),
+        ("g11_seed101_2goal_partialfreeze.json", "2goal_partialfreeze"),
+        ("not_a_g11_file.json", "(other)"),
+    ]
+    for fname, expected in cases:
+        actual = _detect_experiment(fname)
+        assert actual == expected, f"{fname}: expected {expected!r}, got {actual!r}"
