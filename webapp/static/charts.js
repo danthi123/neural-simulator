@@ -199,6 +199,22 @@ export function makeLineChart(canvas, opts = {}) {
         }
       }
       c.stroke();
+
+      // Per-series point markers (e.g. goal-change events on the live
+      // recent_dist line). Drawn on top of the line so they're visible.
+      if (Array.isArray(s.pointIndices) && s.pointIndices.length > 0) {
+        c.fillStyle = s.pointColor || PALETTE.warn;
+        c.strokeStyle = PALETTE.bg;
+        c.lineWidth = 1.5;
+        for (const i of s.pointIndices) {
+          const v = s.values[i];
+          if (v == null || !isFinite(v)) continue;
+          c.beginPath();
+          c.arc(xToPx(i), yToPx(v), 4, 0, Math.PI * 2);
+          c.fill();
+          c.stroke();
+        }
+      }
     }
 
     // Title (top-left). If multi-series with legend, render at far-left only;

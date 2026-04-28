@@ -39,8 +39,21 @@ FINDINGS_DIR = REPO_ROOT / "research" / "findings"
 RAW_RUNS_DIR = REPO_ROOT / "research" / "findings" / "raw" / "g11_bg"
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
+class NoCacheStaticFiles(StaticFiles):
+    """Disable browser caching of /static/* in dev so JS/CSS edits are
+    picked up on the next reload without a manual hard-refresh. The
+    research dashboard is single-user dev-only, so no perf cost matters."""
+
+    def file_response(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+        resp = super().file_response(*args, **kwargs)
+        resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        resp.headers["Pragma"] = "no-cache"
+        resp.headers["Expires"] = "0"
+        return resp
+
+
 app = FastAPI(title="Neural Simulator Research Dashboard")
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+app.mount("/static", NoCacheStaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -343,17 +356,23 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
     env = os.environ.copy()
     env["PYTHONIOENCODING"] = "utf-8"
 
-    # Detach the subprocess so it survives webapp restart. start_new_session
-    # is cross-platform (Windows: DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP;
-    # Unix: setsid). When parent dies, child becomes its own session leader
-    # and is no longer attached to our pipes.
+    # Detach the subprocess so it survives webapp restart. On Unix
+    # `start_new_session=True` is enough (setsid). On Windows we need
+    # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP — start_new_session
+    # alone only sets CREATE_NEW_PROCESS_GROUP and the child still dies
+    # when the console session goes (verified empirically 2026-04-28).
     popen_kwargs = dict(
         cwd=str(REPO_ROOT),
         stdout=log_handle,
         stderr=subprocess.STDOUT,
         env=env,
-        start_new_session=True,
     )
+    if sys.platform == "win32":
+        popen_kwargs["creationflags"] = (
+            subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
+        )
+    else:
+        popen_kwargs["start_new_session"] = True
     proc = subprocess.Popen(cmd, **popen_kwargs)
     log_handle.close()  # child has its own handle now
 

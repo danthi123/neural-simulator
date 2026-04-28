@@ -318,7 +318,7 @@ async function attachLive(runId, listItem) {
   if (row) {
     row.style.display = "block";
     world.liveChart = makeLineChart($("#world-livechart"), {
-      title: `recent_dist (rolling 100-step mean)`,
+      title: `Agent distance from goal — rolling 100-step mean (yellow dots = goal moved)`,
       yLabel: "distance",
       yMin: 0,
       yMax: 14,  // max Manhattan on 8x8 grid is 14
@@ -528,8 +528,26 @@ function scheduleLiveRender() {
       for (const pt of world.livePoints) {
         if (pt.step <= latest.step) distAt[pt.step] = pt.recent_dist;
       }
+      // Goal-change markers — dots on the line at each step where the goal
+      // differs from the previous event's goal. Lets the user visually
+      // correlate recent_dist climbs/falls with phase boundaries.
+      const goalChanges = [];
+      let prevGoal = null;
+      for (const pt of world.livePoints) {
+        const g = pt.goal;
+        if (prevGoal && (g[0] !== prevGoal[0] || g[1] !== prevGoal[1])) {
+          goalChanges.push(pt.step);
+        }
+        prevGoal = g;
+      }
       world.liveChart.updateData([
-        { values: distAt, color: P.accent, label: "recent_dist" },
+        {
+          values: distAt,
+          color: P.accent,
+          label: "recent_dist",
+          pointIndices: goalChanges,
+          pointColor: P.warn,
+        },
       ]);
     }
   });
