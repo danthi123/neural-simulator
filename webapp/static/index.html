@@ -120,6 +120,12 @@
       </div>
       <div class="scrubber-row">
         <input type="range" id="world-scrubber" min="0" max="0" value="0" step="1">
+        <div class="scrubber-meta">
+          <span id="scrubber-step-label" class="scrubber-step-label" title="Click to jump to a specific step">
+            <span id="scrubber-step-current">0</span> / <span id="scrubber-step-total">0</span>
+          </span>
+          <button id="scrubber-latest-btn" class="ctrl-btn" title="Jump to the latest simulated step">↦ Latest</button>
+        </div>
       </div>
       <div id="world-livechart-row" class="chart-row" style="display:none">
         <canvas id="world-livechart" class="chart-canvas"></canvas>

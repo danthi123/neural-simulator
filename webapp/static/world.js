@@ -79,10 +79,92 @@ function initWorld() {
   $("#world-scrubber").addEventListener("input", (e) => {
     if (!world.data) return;
     world.step = parseInt(e.target.value, 10);
+    // In live mode, manual scrubbing detaches the scrubber from following
+    // the latest live step. Click Latest to re-attach.
+    if (world.live) world.scrubberFollowsLatest = false;
     renderFrame();
+    updateScrubberStepLabel();
+  });
+
+  setupScrubberStepLabel();
+  $("#scrubber-latest-btn")?.addEventListener("click", () => {
+    if (!world.data) return;
+    if (world.live) {
+      // In live mode, "latest" = highest step we've seen so far. Re-enable
+      // auto-following so future progress events keep us at the latest.
+      world.scrubberFollowsLatest = true;
+      world.step = (world.livePoints.length
+        ? world.livePoints[world.livePoints.length - 1].step
+        : 0);
+    } else {
+      world.step = (world.data.trajectory || []).length - 1;
+    }
+    $("#world-scrubber").value = String(world.step);
+    renderFrame();
+    updateScrubberStepLabel();
   });
 
   loadWorldRunList();
+}
+
+/** Set up the click-to-edit step indicator below the scrubber. */
+function setupScrubberStepLabel() {
+  const label = document.getElementById("scrubber-step-label");
+  if (!label || label._bound) return;
+  label._bound = true;
+  label.addEventListener("click", () => {
+    if (!world.data) return;
+    const cur = world.step;
+    const max = scrubberMax();
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min = "0";
+    input.max = String(max);
+    input.step = "1";
+    input.value = String(cur);
+    input.className = "scrubber-step-input";
+    label.replaceWith(input);
+    input.focus();
+    input.select();
+    const commit = () => {
+      const v = parseInt(input.value, 10);
+      if (!isNaN(v)) {
+        const clamped = Math.max(0, Math.min(max, v));
+        world.step = clamped;
+        $("#world-scrubber").value = String(clamped);
+        if (world.live) world.scrubberFollowsLatest = false;
+        renderFrame();
+      }
+      input.replaceWith(label);
+      updateScrubberStepLabel();
+    };
+    input.addEventListener("blur", commit);
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") { commit(); ev.preventDefault(); }
+      else if (ev.key === "Escape") {
+        input.replaceWith(label);
+        updateScrubberStepLabel();
+      }
+    });
+  });
+}
+
+/** Maximum scrubber index for the currently-loaded data. */
+function scrubberMax() {
+  if (!world.data) return 0;
+  if (world.live) {
+    return world.livePoints.length
+      ? world.livePoints[world.livePoints.length - 1].step
+      : 0;
+  }
+  return (world.data.trajectory || []).length - 1;
+}
+
+function updateScrubberStepLabel() {
+  const cur = document.getElementById("scrubber-step-current");
+  const tot = document.getElementById("scrubber-step-total");
+  if (cur) cur.textContent = String(world.step);
+  if (tot) tot.textContent = String(scrubberMax());
 }
 
 /** Open a picker modal showing in-flight runs the server is tracking, and
@@ -163,14 +245,15 @@ async function attachLive(runId, listItem) {
   world.step = 0;
 
   // Hide irrelevant playback controls; show live-mode controls instead.
+  // Keep the scrubber row VISIBLE in live mode — user can scrub back to
+  // earlier moments while the run continues; "↦ Latest" snaps back.
   const pbControls = document.getElementById("playback-controls");
   const liveControls = document.getElementById("live-controls");
-  const scrubberRow = document.querySelector(".scrubber-row");
   const progressBar = document.getElementById("world-progress-bar");
   if (pbControls) pbControls.style.display = "none";
   if (liveControls) liveControls.style.display = "inline-flex";
-  if (scrubberRow) scrubberRow.style.display = "none";
   if (progressBar) progressBar.style.display = "block";
+  world.scrubberFollowsLatest = true;
   const detachBtn = document.getElementById("world-detach");
   if (detachBtn && !detachBtn._bound) {
     detachBtn.addEventListener("click", () => {
@@ -361,11 +444,9 @@ function closeLiveSocket() {
   // Restore playback controls visibility
   const pbControls = document.getElementById("playback-controls");
   const liveControls = document.getElementById("live-controls");
-  const scrubberRow = document.querySelector(".scrubber-row");
   const progressBar = document.getElementById("world-progress-bar");
   if (pbControls) pbControls.style.display = "inline-flex";
   if (liveControls) liveControls.style.display = "none";
-  if (scrubberRow) scrubberRow.style.display = "block";
   if (progressBar) {
     progressBar.style.display = "none";
     const fill = progressBar.querySelector(".progress-fill");
@@ -395,10 +476,15 @@ function handleLiveProgress(p) {
       goal: [p.goal[0], p.goal[1]],
     });
   }
-  world.step = p.step;
-  $("#world-scrubber").max = String(p.total);
-  $("#world-scrubber").value = String(p.step);
-  $("#world-step-display").textContent = `step ${p.step} / ${p.total}`;
+  // Scrubber max grows with the run. Value follows latest UNLESS the user
+  // has manually scrubbed back (scrubberFollowsLatest = false).
+  $("#world-scrubber").max = String(p.step);
+  if (world.scrubberFollowsLatest) {
+    world.step = p.step;
+    $("#world-scrubber").value = String(p.step);
+  }
+  $("#world-step-display").textContent = `step ${world.step} / ${p.total}`;
+  updateScrubberStepLabel();
 
   // Live progress bar
   const fill = document.querySelector("#world-progress-bar .progress-fill");
@@ -483,6 +569,7 @@ async function loadRun(name, listItem) {
     $("#world-step-display").textContent = `step 0 / ${total - 1}`;
     $("#world-run-name").textContent = name;
     renderFrame();
+    updateScrubberStepLabel();
   } catch (e) {
     $("#world-run-name").textContent = `Failed to load: ${e.message}`;
     world.data = null;

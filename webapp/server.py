@@ -140,7 +140,11 @@ def get_finding(name: str) -> PlainTextResponse:
 @app.get("/api/runs")
 def list_runs() -> JSONResponse:
     """List completed runs with summary (finalQ, sum, seed)."""
-    files = sorted(RAW_RUNS_DIR.glob("*.json"), reverse=True)
+    # Exclude sidecar `.cmd.json` files which are launcher metadata, not runs
+    files = sorted(
+        (f for f in RAW_RUNS_DIR.glob("*.json") if not f.name.endswith(".cmd.json")),
+        reverse=True,
+    )
     out = []
     for f in files:
         try:
@@ -618,7 +622,10 @@ def _detect_experiment(name: str) -> str:
 @app.get("/api/experiments")
 def list_experiments() -> JSONResponse:
     """Group runs by detected experiment, return per-experiment aggregates."""
-    files = sorted(RAW_RUNS_DIR.glob("*.json"), reverse=True)
+    files = sorted(
+        (f for f in RAW_RUNS_DIR.glob("*.json") if not f.name.endswith(".cmd.json")),
+        reverse=True,
+    )
     by_exp: dict[str, list[dict[str, Any]]] = {}
     for f in files:
         try:
