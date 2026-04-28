@@ -256,3 +256,70 @@ def test_goal_silence_smoke(tmp_out_path):
         result = json.load(f)
     # Just verify the run completed
     assert "phase_stats" in result
+
+
+# ───────────────────────── 2026-04-28: Cheat #5 closure ─────────────────────────
+
+
+def test_bg_cross_projections_use_separate_gate():
+    """Cross-projection cortex→D1/D2 pathways should be tagged with a distinct
+    plasticity gate ('bg_cross_projections') from same-action pathways
+    ('cortex_to_d1'). This lets the curriculum stage them independently —
+    same-action plastic in phase 1, cross-projections delayed to phase 3
+    (post-goal-change) so they don't accumulate phase-0 motor bias."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    regions, pathways = build_bg_brain_regions(enable_bg_cross_projections=True)
+
+    # Cortex → striatum pathways: 4 cortex pools × 4 D1 pools + 4 cortex × 4 D2 = 32
+    cortex_to_str_paths = [
+        p for p in pathways
+        if p.from_region.startswith("cortex_") and (
+            p.to_region.startswith("str_D1_") or p.to_region.startswith("str_D2_")
+        )
+    ]
+    assert len(cortex_to_str_paths) == 32, (
+        f"4 cortex × (4 D1 + 4 D2) = 32 paths; got {len(cortex_to_str_paths)}"
+    )
+
+    # Helper: extract action letter from a pool name like "cortex_N" or "str_D1_E"
+    def action_of(name: str) -> str:
+        return name.split("_")[-1]
+
+    same_action = [p for p in cortex_to_str_paths
+                   if action_of(p.from_region) == action_of(p.to_region)]
+    cross = [p for p in cortex_to_str_paths
+             if action_of(p.from_region) != action_of(p.to_region)]
+    # 4 same-action pairs × 2 (D1, D2) = 8 same-action paths
+    # 12 cross pairs × 2 (D1, D2) = 24 cross paths
+    assert len(same_action) == 8, f"expected 8 same-action paths; got {len(same_action)}"
+    assert len(cross) == 24, f"expected 24 cross paths; got {len(cross)}"
+
+    assert all(p.plasticity_gate == "cortex_to_d1" for p in same_action), (
+        "all same-action cortex→striatum paths should share the cortex_to_d1 gate"
+    )
+    assert all(p.plasticity_gate == "bg_cross_projections" for p in cross), (
+        "all cross-projection cortex→striatum paths should be on the "
+        "bg_cross_projections gate (introduced 2026-04-28 to close cheat #5)"
+    )
+
+
+def test_bg_cross_projections_disabled_by_default():
+    """When --bg-cross-projections is OFF, no cross-projection pathways exist
+    at all. Same-action pathways still use the cortex_to_d1 gate."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    regions, pathways = build_bg_brain_regions(enable_bg_cross_projections=False)
+
+    cortex_to_str_paths = [
+        p for p in pathways
+        if p.from_region.startswith("cortex_") and (
+            p.to_region.startswith("str_D1_") or p.to_region.startswith("str_D2_")
+        )
+    ]
+    # Only same-action: 4 cortex × 2 (D1, D2) = 8 paths total
+    assert len(cortex_to_str_paths) == 8, (
+        f"with cross-projections disabled, expected 8 same-action paths only; "
+        f"got {len(cortex_to_str_paths)}"
+    )
+    assert all(p.plasticity_gate == "cortex_to_d1" for p in cortex_to_str_paths)

@@ -464,37 +464,38 @@ def build_bg_brain_regions(
 
     # Cortex -> striatum (LEARNING site).
     # Each cortex_X projects strongly to its corresponding str_D1_X / str_D2_X
-    # AND weakly to other actions' striatum (cross-projection allows learning
-    # to redistribute action representations on goal change).
-    # Tagged with plasticity_gate="cortex_to_d1" so curriculum runners can
-    # freeze cortex→striatum once mature (and let upstream plastic input
-    # layers train against the locked downstream).
+    # AND (if enable_bg_cross_projections) weakly to other actions' striatum.
+    # Same-action paths are tagged with plasticity_gate="cortex_to_d1" so the
+    # curriculum can freeze cortex→striatum once mature.
+    # Cross-projections are tagged with plasticity_gate="bg_cross_projections"
+    # (separate gate, 2026-04-28) so the curriculum can stage them
+    # independently — keep them frozen during phase 1+2 (don't accumulate
+    # phase-0 motor bias), thaw post-goal-change in phase 3 so STDP+reward
+    # can shape cross-action routing symmetrically.
     for cortex_action in ACTION_NAMES:
         for str_action in ACTION_NAMES:
             same = (cortex_action == str_action)
             if same:
                 density = 1.0
                 weight = 25.0
+                gate = "cortex_to_d1"
             elif enable_bg_cross_projections:
-                # Cheat #5: include cross-projections (e.g. cortex_E → str_D1_W)
-                # at weak initial weight. Plasticity should learn the right
-                # cross-projection strengths from STDP+reward.
                 density = 1.0
                 weight = cross_projection_weight
+                gate = "bg_cross_projections"
             else:
-                # Default: same-action only (the cheat we're considering removing)
                 continue
             pathways.append(RegionPathway(
                 from_region=f"cortex_{cortex_action}",
                 to_region=f"str_D1_{str_action}",
                 density=density, weight_mean=weight, weight_jitter=0.2, plastic=True,
-                plasticity_gate="cortex_to_d1",
+                plasticity_gate=gate,
             ))
             pathways.append(RegionPathway(
                 from_region=f"cortex_{cortex_action}",
                 to_region=f"str_D2_{str_action}",
                 density=density, weight_mean=weight, weight_jitter=0.2, plastic=True,
-                plasticity_gate="cortex_to_d1",
+                plasticity_gate=gate,
             ))
 
     # Direct pathway: D1 -> GPi (inhibitory). Strong weight needed to overcome
