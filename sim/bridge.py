@@ -4346,6 +4346,11 @@ class SimulationBridge:
                     # interpretation (DA/NM gates the learning event itself).
                     if self.cp_plasticity_gain is not None:
                         weight_updates = weight_updates * self.cp_plasticity_gain[:actual_nnz]
+                    # Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry.
+                    # D2-targeting synapses move opposite to reward direction;
+                    # D1-targeting + everything else move with reward.
+                    if self.cp_d1_d2_sign is not None:
+                        weight_updates = weight_updates * self.cp_d1_d2_sign[:actual_nnz]
                     self.cp_connections.data += weight_updates
                     
                     # Clip to bounds (use STDP bounds if STDP is enabled, otherwise Hebbian bounds)

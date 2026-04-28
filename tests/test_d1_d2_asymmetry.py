@@ -24,6 +24,13 @@ def _build_bg_bridge(enable_d1_d2: bool):
         region_pathways=pathways,
         enable_d1_d2_asymmetry=enable_d1_d2,
     )
+    # Cortex→D1 weights are weight_mean=25 with Gaussian jitter sigma=0.2,
+    # so initial values can hit ~40+ in the tail. Set bounds well above
+    # that so clipping doesn't dominate the small reward delta in tests
+    # exercising the reward-modulated update path. See CLAUDE.md
+    # "STDP bounds gotcha".
+    cfg.stdp_w_max = 100.0
+    cfg.hebbian_max_weight = 100.0
     bridge = SimulationBridge(
         core_config=cfg,
         viz_config=VisualizationConfig(),
@@ -115,4 +122,61 @@ def test_non_d1_d2_synapses_have_sign_plus_one():
     signs_outside = bridge.cp_d1_d2_sign[mask_outside]
     assert (signs_outside == 1.0).all(), \
         f"Non-D1/D2 synapses must keep sign=+1, got {signs_outside.unique()}"
+    bridge.clear_simulation_state_and_gpu_memory()
+
+
+def test_d1_d2_sign_inverts_weight_change_under_reward():
+    """With enable_d1_d2_asymmetry on:
+       - D1-targeting synapses' weights move in the SAME direction as reward
+       - D2-targeting synapses' weights move in the OPPOSITE direction
+    With a fixed positive eligibility trace and positive reward, D1 weights
+    grow and D2 weights shrink."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+    bridge = _build_bg_bridge(enable_d1_d2=True)
+    nnz = int(bridge.cp_connections.nnz)
+
+    # Isolate the reward-modulated weight update path: disable other
+    # plasticity rules so the only weight change comes from
+    # effective_lr * RPE * eligibility * cp_d1_d2_sign. STDP, Hebbian,
+    # homeostasis, and structural plasticity all write to cp_connections
+    # and would mask the small reward delta we care about here.
+    bridge.core_config.enable_stdp = False
+    bridge.core_config.enable_hebbian_learning = False
+    bridge.core_config.enable_homeostasis = False
+    bridge.core_config.enable_structural_plasticity = False
+    bridge.core_config.enable_synaptic_scaling = False
+
+    # Set uniform positive eligibility on all synapses
+    bridge.cp_eligibility_trace[:nnz] = 1.0
+    # Save initial weights
+    w_before = bridge.cp_connections.data.copy()
+    # Apply reward (positive)
+    bridge.core_config.current_reward_signal = 1.0
+    bridge.core_config.reward_baseline = 0.0
+    bridge.core_config.reward_learning_rate = 0.01
+    bridge.core_config.enable_reward_modulation = True
+    bridge._run_one_simulation_step()
+    w_after = bridge.cp_connections.data
+    delta = w_after - w_before
+
+    # Find D1- and D2-targeted synapse indices
+    post = bridge.cp_connections.indices
+    d1_set = cp.asarray(
+        [n for action in ("N", "E", "S", "W") for n in bridge.region_manager.indices(f"str_D1_{action}")],
+        dtype=cp.int64,
+    )
+    d2_set = cp.asarray(
+        [n for action in ("N", "E", "S", "W") for n in bridge.region_manager.indices(f"str_D2_{action}")],
+        dtype=cp.int64,
+    )
+    d1_mask = cp.isin(post, d1_set)
+    d2_mask = cp.isin(post, d2_set)
+
+    if int(d1_mask.sum()) > 0:
+        assert (delta[d1_mask] >= 0).all(), \
+            f"D1 weights should grow under +reward; saw deltas {delta[d1_mask].min().get():.4f} to {delta[d1_mask].max().get():.4f}"
+    if int(d2_mask.sum()) > 0:
+        assert (delta[d2_mask] <= 0).all(), \
+            f"D2 weights should shrink under +reward; saw deltas {delta[d2_mask].min().get():.4f} to {delta[d2_mask].max().get():.4f}"
     bridge.clear_simulation_state_and_gpu_memory()
