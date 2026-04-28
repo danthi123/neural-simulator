@@ -678,6 +678,18 @@ def run_moving_goal_episode(
     enable_bg_lateral_inhibition: bool = False,
     lateral_inhibition_density: float = 0.3,
     lateral_inhibition_weight: float = 2.0,
+    # Interactive runtime control (2026-04-28). When set to a writable JSON
+    # file path, the runner polls the file at the start of each trial and
+    # applies the contents:
+    #   { "paused": bool, "goal": [gx, gy] | null, "inject_reward": float | null }
+    # - paused: blocks the trial loop until cleared
+    # - goal: overrides the scheduled goal (persistent until set again)
+    # - inject_reward: one-shot additive reward applied this trial; runner
+    #   clears it back to null after consuming
+    # Used by the webapp's World-tab live mode for click-to-teleport-goal,
+    # pause/resume, and reward-injection. Default None = no polling, no
+    # behavior change (ie. fully backwards compatible).
+    interactive_control_file: str = None,
     enable_beacon_perception: bool = False,
     n_beacon_sensors: int = 8,
     beacon_to_goal_weight: float = 8.0,
@@ -1340,7 +1352,46 @@ def run_moving_goal_episode(
             if has_hippo_gate:
                 bridge.set_plasticity_gate("hippo_to_cortex", float(curriculum_phase2_hippo_gain))
 
-        # Goal change
+        # Interactive runtime control (2026-04-28). Polls a JSON file every
+        # trial for paused / goal / inject_reward overrides from the webapp.
+        # See webapp/static/world.js for the click-to-control wiring.
+        manual_reward_injection = 0.0
+        if interactive_control_file:
+            try:
+                with open(interactive_control_file) as _cf:
+                    _ctrl = json.load(_cf)
+            except (FileNotFoundError, OSError, json.JSONDecodeError):
+                _ctrl = {}
+            # Pause loop — block while paused, re-reading the file periodically
+            while _ctrl.get("paused"):
+                time.sleep(0.1)
+                try:
+                    with open(interactive_control_file) as _cf:
+                        _ctrl = json.load(_cf)
+                except (FileNotFoundError, OSError, json.JSONDecodeError):
+                    break
+            # Goal override (persistent until set again)
+            _new_goal = _ctrl.get("goal")
+            if _new_goal is not None and len(_new_goal) == 2:
+                _ng = (int(_new_goal[0]), int(_new_goal[1]))
+                if (gx, gy) != _ng:
+                    gx, gy = _ng
+                    goal_change_steps.append(step)
+                    if verbose:
+                        print(f"[g11 seed={seed}] step {step}: INTERACTIVE GOAL "
+                              f"→ ({gx}, {gy})", flush=True)
+            # One-shot reward injection (consumed by clearing the field)
+            _inj = _ctrl.get("inject_reward")
+            if _inj is not None:
+                manual_reward_injection = float(_inj)
+                _ctrl["inject_reward"] = None
+                try:
+                    with open(interactive_control_file, "w") as _cf:
+                        json.dump(_ctrl, _cf)
+                except OSError:
+                    pass
+
+        # Goal change (scheduled)
         while (current_schedule_idx + 1 < len(goal_schedule_sorted)
                and step >= goal_schedule_sorted[current_schedule_idx + 1][0]):
             current_schedule_idx += 1
@@ -1661,6 +1712,15 @@ def run_moving_goal_episode(
                 reward = -1.0
             else:
                 reward = 0.0
+        # Interactive reward injection (2026-04-28): additive on top of
+        # the natural reward. Lets the user "click +reward" from the webapp
+        # to test conditioning / exploration in real time.
+        if manual_reward_injection != 0.0:
+            reward = float(reward) + manual_reward_injection
+            if verbose:
+                print(f"[g11 seed={seed}] step {step}: INTERACTIVE REWARD "
+                      f"injection {manual_reward_injection:+.2f} → reward={reward:+.2f}",
+                      flush=True)
         reward_log.append(float(reward))
 
         # Log successful (place, goal) tuples during wake for sleep-replay.
@@ -1877,6 +1937,12 @@ def main():
                     help="Density of MSN cross-pool inhibitory pathways (default 0.3).")
     ap.add_argument("--lateral-inhibition-weight", type=float, default=2.0,
                     help="Weight of MSN cross-pool inhibitory connections (default 2.0).")
+    ap.add_argument("--interactive-control-file", type=str, default=None,
+                    help="If set, runner polls this JSON file at the start of "
+                         "each trial for runtime control: paused (bool), "
+                         "goal ([gx, gy] override, persistent), inject_reward "
+                         "(one-shot additive). Used by webapp World-tab live "
+                         "mode for click-to-teleport-goal etc.")
     ap.add_argument("--bg-cross-thaw-step", type=int, default=-1,
                     help="Cheat #5 closure (2026-04-28): step at which bg_cross_projections "
                          "gate thaws to its phase-3 value. -1 = stay frozen. Recommended 1200 "
@@ -2000,6 +2066,7 @@ def main():
             enable_bg_lateral_inhibition=args.bg_lateral_inhibition,
             lateral_inhibition_density=args.lateral_inhibition_density,
             lateral_inhibition_weight=args.lateral_inhibition_weight,
+            interactive_control_file=args.interactive_control_file,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_cortex_lateral_inhibition=args.cortex_wta,

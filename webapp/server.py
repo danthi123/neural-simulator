@@ -69,6 +69,10 @@ class LaunchedRun:
     stdout_lines: list[str] = field(default_factory=list)
     progress_events: list[ProgressEvent] = field(default_factory=list)
     out_path: str | None = None
+    # If interactive launcher mode was used, this is the path to the JSON
+    # file the runner polls every trial for runtime control. Webapp writes
+    # to this file via POST /api/runs/launch/{id}/control.
+    control_file: str | None = None
 
 
 launched_runs: dict[str, LaunchedRun] = {}
@@ -202,6 +206,25 @@ PRESETS: dict[str, list[str]] = {
         "--curriculum", "--curriculum-warmup-steps", "600",
         "--n-steps", "1800",
     ],
+    # Interactive presets — webapp wires --interactive-control-file
+    # automatically. World-tab Live mode lets the user click in the grid
+    # to teleport the goal, pause/resume, inject rewards.
+    "interactive_flagship": [
+        "--moving-goal",
+        "--hippocampus", "--learned-perception", "--pfc",
+        "--beacon-perception", "--beacon-replaces-goal",
+        "--cue-reflex", "--cue-reflex-replaces-heuristic",
+        "--landmarks", "--landmarks-replace-place",
+        "--sensed-reward",
+        "--adaptive-da", "--adaptive-da-ema-decay-negative", "0.7",
+        "--curriculum", "--curriculum-warmup-steps", "600",
+        # Long n_steps so the user has time to interact.
+        "--n-steps", "3600",
+    ],
+    "interactive_baseline": [
+        "--moving-goal",
+        "--n-steps", "3600",
+    ],
     "flagship_with_cheat5": [
         "--moving-goal",
         "--hippocampus", "--learned-perception", "--pfc",
@@ -242,6 +265,10 @@ class LaunchRequest(BaseModel):
     out_filename: str | None = None  # if None, generated from preset+seed
 
 
+RUNTIME_DIR = Path(__file__).resolve().parent / "runtime"
+RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+
+
 @app.post("/api/runs/launch")
 def launch_run(req: LaunchRequest) -> JSONResponse:
     if req.preset not in PRESETS:
@@ -250,12 +277,19 @@ def launch_run(req: LaunchRequest) -> JSONResponse:
     out_filename = req.out_filename or f"g11_seed{req.seed}_{req.preset}_{run_id[:6]}.json"
     out_path = str(RAW_RUNS_DIR / out_filename)
 
+    extras = list(req.extra_args)
+    control_file: str | None = None
+    if req.preset.startswith("interactive_"):
+        control_file = str(RUNTIME_DIR / f"control_{run_id}.json")
+        Path(control_file).write_text("{}")
+        extras.extend(["--interactive-control-file", control_file])
+
     cmd = [
         sys.executable, "-m", "research.runners.g11_bg_runner",
         *PRESETS[req.preset],
         "--seed", str(req.seed),
         "--out", out_path,
-        *req.extra_args,
+        *extras,
     ]
 
     proc = subprocess.Popen(
@@ -268,7 +302,7 @@ def launch_run(req: LaunchRequest) -> JSONResponse:
 
     run = LaunchedRun(
         run_id=run_id, cmd=cmd, started_at=time.time(),
-        proc=proc, out_path=out_path,
+        proc=proc, out_path=out_path, control_file=control_file,
     )
     launched_runs[run_id] = run
 
@@ -277,7 +311,65 @@ def launch_run(req: LaunchRequest) -> JSONResponse:
         "run_id": run_id,
         "cmd": cmd,
         "out_path": out_path,
+        "control_file": control_file,
+        "interactive": control_file is not None,
         "ws_url": f"/ws/runs/{run_id}",
+    })
+
+
+class ControlUpdate(BaseModel):
+    """Body for POST /api/runs/launch/{run_id}/control. All fields optional;
+    the runner reads the file fresh on each trial, so partial updates work
+    by leaving fields unset (undefined → not changed)."""
+    paused: bool | None = None
+    goal: list[int] | None = None
+    inject_reward: float | None = None
+
+
+@app.post("/api/runs/launch/{run_id}/control")
+def update_run_control(run_id: str, body: ControlUpdate) -> JSONResponse:
+    """Write control state to the run's interactive control file. The runner
+    polls this file at the start of each trial and applies whatever's there.
+    Only available for runs launched with an `interactive_*` preset."""
+    run = launched_runs.get(run_id)
+    if not run:
+        raise HTTPException(404, "unknown run_id")
+    if not run.control_file:
+        raise HTTPException(
+            400,
+            "this run was not launched in interactive mode (use an "
+            "interactive_* preset to enable runtime control)"
+        )
+    # Merge into existing state (lets the user "pause" without clobbering goal)
+    try:
+        existing = json.loads(Path(run.control_file).read_text() or "{}")
+    except (json.JSONDecodeError, OSError):
+        existing = {}
+    update = body.model_dump(exclude_unset=True)
+    existing.update(update)
+    try:
+        Path(run.control_file).write_text(json.dumps(existing))
+    except OSError as e:
+        raise HTTPException(500, f"failed to write control file: {e}")
+    return JSONResponse({"control_file": run.control_file, "state": existing})
+
+
+@app.get("/api/runs/launch/{run_id}/control")
+def get_run_control(run_id: str) -> JSONResponse:
+    """Read the current interactive control state for a run."""
+    run = launched_runs.get(run_id)
+    if not run:
+        raise HTTPException(404, "unknown run_id")
+    if not run.control_file:
+        return JSONResponse({"interactive": False, "state": None})
+    try:
+        state = json.loads(Path(run.control_file).read_text() or "{}")
+    except (json.JSONDecodeError, OSError):
+        state = {}
+    return JSONResponse({
+        "interactive": True,
+        "control_file": run.control_file,
+        "state": state,
     })
 
 
@@ -315,6 +407,7 @@ def list_active_launches() -> JSONResponse:
             "started_at": run.started_at,
             "elapsed_sec": time.time() - run.started_at,
             "out_path": run.out_path,
+            "interactive": run.control_file is not None,
             "latest_progress": _progress_to_json(latest) if latest else None,
         })
     out.sort(key=lambda r: r["started_at"], reverse=True)

@@ -6,6 +6,7 @@ with a no-op subprocess (unset path).
 """
 from __future__ import annotations
 
+import json
 import os
 import sys
 
@@ -188,3 +189,67 @@ def test_detect_experiment():
     for fname, expected in cases:
         actual = _detect_experiment(fname)
         assert actual == expected, f"{fname}: expected {expected!r}, got {actual!r}"
+
+
+def test_interactive_presets_exposed(client):
+    """The interactive_* presets must be in the available list — they're
+    what wire the click-to-control flow in the World tab."""
+    res = client.get("/api/info")
+    assert res.status_code == 200
+    presets = res.json()["presets"]
+    assert "interactive_flagship" in presets
+    assert "interactive_baseline" in presets
+
+
+def test_control_endpoint_404_for_unknown_run(client):
+    res = client.post("/api/runs/launch/no_such_run/control", json={"paused": True})
+    assert res.status_code == 404
+
+
+def test_control_endpoint_400_for_non_interactive_run(client):
+    """Posting control to a non-interactive run must fail cleanly with 400,
+    not silently corrupt state. We simulate this by wiring up a fake
+    LaunchedRun without a control_file."""
+    from webapp.server import LaunchedRun, launched_runs
+    fake_id = "test_noninteractive"
+    launched_runs[fake_id] = LaunchedRun(
+        run_id=fake_id, cmd=[], started_at=0.0, control_file=None,
+    )
+    try:
+        res = client.post(f"/api/runs/launch/{fake_id}/control", json={"paused": True})
+        assert res.status_code == 400
+    finally:
+        launched_runs.pop(fake_id, None)
+
+
+def test_control_endpoint_writes_state(client, tmp_path):
+    """When a run IS interactive, posting control writes to the control file
+    and returns the merged state."""
+    from webapp.server import LaunchedRun, launched_runs
+    cf = tmp_path / "ctrl.json"
+    cf.write_text("{}")
+    fake_id = "test_interactive"
+    launched_runs[fake_id] = LaunchedRun(
+        run_id=fake_id, cmd=[], started_at=0.0, control_file=str(cf),
+    )
+    try:
+        # First update — set goal
+        res = client.post(f"/api/runs/launch/{fake_id}/control",
+                          json={"goal": [3, 5]})
+        assert res.status_code == 200
+        body = res.json()
+        assert body["state"]["goal"] == [3, 5]
+
+        # Second update — pause, but goal should be preserved (merge semantics)
+        res = client.post(f"/api/runs/launch/{fake_id}/control",
+                          json={"paused": True})
+        assert res.status_code == 200
+        merged = res.json()["state"]
+        assert merged["paused"] is True
+        assert merged["goal"] == [3, 5]
+
+        # File should match
+        on_disk = json.loads(cf.read_text())
+        assert on_disk == merged
+    finally:
+        launched_runs.pop(fake_id, None)

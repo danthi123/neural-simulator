@@ -128,7 +128,7 @@ async function openLiveModePicker() {
   }
 }
 
-function attachLive(runId, listItem) {
+async function attachLive(runId, listItem) {
   pause();
   closeLiveSocket();
   document.querySelectorAll("#world-runs-list .world-run-item").forEach((it) =>
@@ -163,7 +163,125 @@ function attachLive(runId, listItem) {
     });
     world.liveChart.updateData([{ values: [], color: P.accent, label: "recent_dist" }]);
   }
+  // Detect whether this run is interactive (was launched with an
+  // interactive_* preset). If so, show the control panel and wire the
+  // canvas click handler.
+  try {
+    const ctrlRes = await fetch(`/api/runs/launch/${runId}/control`);
+    if (ctrlRes.ok) {
+      const ctrl = await ctrlRes.json();
+      world.interactive = !!ctrl.interactive;
+    }
+  } catch {
+    world.interactive = false;
+  }
+  setupControlPanel();
   openLiveSocket(runId);
+}
+
+/** Show or hide the interactive control panel based on world.interactive,
+ *  wire button + canvas click handlers. */
+function setupControlPanel() {
+  const row = document.getElementById("world-control-row");
+  const canvas = $("#world-canvas");
+  if (!row || !canvas) return;
+  if (!world.interactive) {
+    row.style.display = "none";
+    canvas.classList.remove("interactive");
+    return;
+  }
+  row.style.display = "flex";
+  canvas.classList.add("interactive");
+
+  // Click in grid → teleport goal
+  if (!canvas._interactiveBound) {
+    canvas.addEventListener("click", onGridClick);
+    canvas._interactiveBound = true;
+  }
+  // Buttons (use event delegation; handlers are idempotent across re-attach)
+  const pauseBtn = document.getElementById("ctrl-pause-toggle");
+  if (pauseBtn && !pauseBtn._bound) {
+    pauseBtn.addEventListener("click", togglePause);
+    pauseBtn._bound = true;
+  }
+  const clearBtn = document.getElementById("ctrl-clear-goal-override");
+  if (clearBtn && !clearBtn._bound) {
+    clearBtn.addEventListener("click", () => sendControl({ goal: null }));
+    clearBtn._bound = true;
+  }
+  document.querySelectorAll("[data-reward]").forEach((btn) => {
+    if (btn._bound) return;
+    btn.addEventListener("click", () => {
+      const v = parseFloat(btn.dataset.reward);
+      sendControl({ inject_reward: v });
+    });
+    btn._bound = true;
+  });
+}
+
+function onGridClick(ev) {
+  if (!world.live || !world.interactive || !world.liveRunId) return;
+  const canvas = $("#world-canvas");
+  const rect = canvas.getBoundingClientRect();
+  // Same coordinate math as cellToPx but inverted: client px → grid cell.
+  const xPx = ev.clientX - rect.left - PADDING;
+  const yPx = ev.clientY - rect.top - PADDING;
+  const gridSize = worldGridSize();
+  const gx = Math.max(0, Math.min(gridSize - 1, Math.floor(xPx / CELL_PX)));
+  const gyFromTop = Math.floor(yPx / CELL_PX);
+  const gy = Math.max(0, Math.min(gridSize - 1, gridSize - 1 - gyFromTop));
+  sendControl({ goal: [gx, gy] });
+  flashCell(canvas, gx, gy);
+}
+
+let pauseState = false;
+async function togglePause() {
+  pauseState = !pauseState;
+  await sendControl({ paused: pauseState });
+  const btn = document.getElementById("ctrl-pause-toggle");
+  if (btn) {
+    btn.textContent = pauseState ? "▶ Resume" : "⏸ Pause";
+    btn.classList.toggle("active", pauseState);
+  }
+}
+
+async function sendControl(update) {
+  const status = document.getElementById("ctrl-status");
+  if (status) status.textContent = `control: sending ${JSON.stringify(update)}…`;
+  try {
+    const res = await fetch(`/api/runs/launch/${world.liveRunId}/control`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(update),
+    });
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    if (status) status.textContent = `control: ${JSON.stringify(data.state)}`;
+  } catch (e) {
+    if (status) status.textContent = `control error: ${e.message}`;
+  }
+}
+
+function flashCell(canvas, gx, gy) {
+  // Brief visual confirmation that the click was registered. Drawn as a
+  // ring expanding from the clicked cell.
+  const ctx = canvas.getContext("2d");
+  const [px, py] = cellToPx(gx, gy);
+  const start = performance.now();
+  function tick(now) {
+    const t = (now - start) / 400;
+    if (t > 1) return;
+    renderFrame();
+    ctx.save();
+    ctx.strokeStyle = `rgba(110, 231, 183, ${1 - t})`;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(px, py, 14 + t * 30, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 }
 
 function openLiveSocket(runId) {
@@ -193,8 +311,19 @@ function closeLiveSocket() {
   world.liveRunId = null;
   world.livePoints = [];
   world.liveChart = null;
-  const row = document.getElementById("world-livechart-row");
-  if (row) row.style.display = "none";
+  world.interactive = false;
+  pauseState = false;
+  const chartRow = document.getElementById("world-livechart-row");
+  if (chartRow) chartRow.style.display = "none";
+  const ctrlRow = document.getElementById("world-control-row");
+  if (ctrlRow) ctrlRow.style.display = "none";
+  const canvas = document.getElementById("world-canvas");
+  if (canvas) canvas.classList.remove("interactive");
+  const pauseBtn = document.getElementById("ctrl-pause-toggle");
+  if (pauseBtn) {
+    pauseBtn.textContent = "⏸ Pause";
+    pauseBtn.classList.remove("active");
+  }
 }
 
 /** A progress event covers ~100 sim steps. We extend the synthetic

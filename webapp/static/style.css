@@ -539,6 +539,48 @@ pre {
   background: var(--bg-2);
   border-top: 1px solid var(--border);
 }
+
+/* Interactive control panel — appears in Live mode for interactive_* presets */
+.control-row {
+  padding: 12px 16px;
+  background: var(--bg-2);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.control-title {
+  font-size: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.control-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.ctrl-btn {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+.ctrl-btn:hover { border-color: var(--accent); }
+.ctrl-btn.good:hover { border-color: var(--accent); background: rgba(110, 231, 183, 0.1); }
+.ctrl-btn.bad:hover { border-color: var(--accent-bad); background: rgba(248, 113, 113, 0.1); }
+.ctrl-btn.active { background: var(--accent); color: var(--bg); }
+#world-canvas.interactive { cursor: crosshair; }
+#ctrl-status {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 11px;
+  margin-left: auto;
+}
 #world-scrubber {
   width: 100%;
   accent-color: var(--accent);

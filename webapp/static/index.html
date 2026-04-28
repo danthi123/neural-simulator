@@ -114,6 +114,20 @@
       <div id="world-livechart-row" class="chart-row" style="display:none">
         <canvas id="world-livechart" class="chart-canvas"></canvas>
       </div>
+      <div id="world-control-row" class="control-row" style="display:none">
+        <div class="control-title">
+          <strong>Interactive control</strong>
+          <span class="muted">— click anywhere in the grid to teleport the goal</span>
+        </div>
+        <div class="control-buttons">
+          <button id="ctrl-pause-toggle" class="ctrl-btn">⏸ Pause</button>
+          <button class="ctrl-btn good" data-reward="1">+ Reward (treat)</button>
+          <button class="ctrl-btn good" data-reward="0.5">+ Half reward</button>
+          <button class="ctrl-btn bad" data-reward="-1">− Reward (punish)</button>
+          <button class="ctrl-btn" id="ctrl-clear-goal-override">Clear goal override</button>
+          <span class="muted" id="ctrl-status">control: idle</span>
+        </div>
+      </div>
     </section>
 
     <section id="tab-findings" class="tab">
@@ -139,6 +153,9 @@
             <option value="perception_only">perception_only — full perception arc, no sensed reward</option>
             <option value="baseline">baseline — minimal, no flags</option>
             <option value="smoke">smoke — 100 steps for quick check</option>
+            <option disabled>──── interactive (control via World tab) ────</option>
+            <option value="interactive_flagship">★ interactive_flagship — flagship config, 3600 steps, click grid to teleport goal</option>
+            <option value="interactive_baseline">interactive_baseline — minimal config + interactive control</option>
           </select>
         </label>
         <label>Seed
