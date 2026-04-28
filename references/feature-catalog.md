@@ -48,10 +48,12 @@ Clusters are stable identifiers (A, B, C, …) — names may be refined.
 
 Sections are appended as chapters are processed. Each section header lists the chapters from which entries were drawn.
 
-- [Synapses & plasticity rules (Cluster J)](#cluster-j--synapses--plasticity-rules) — Ch 11, 12, 13, 14, 15, 16, 53
-- [Channels & intrinsic dynamics (Cluster I)](#cluster-i--channels--intrinsic-dynamics) — Ch 8, 9, 10
-- [Neuromuscular junction (Cluster M)](#cluster-m--neuromuscular-junction) — Ch 12
-- [Development & critical periods (Cluster L)](#cluster-l--development--critical-periods) — Ch 48, 49
+- [Cluster J — Synapses & plasticity rules](#cluster-j--synapses--plasticity-rules) — Ch 11, 12, 13 (so far); Ch 14, 15, 16, 53 pending
+- [Cluster I — Channels & intrinsic dynamics](#cluster-i--channels--intrinsic-dynamics) — Ch 13 (AIS); Ch 8-10 pending
+- [Cluster G — Working memory / PFC / cortical integration](#cluster-g--working-memory--pfc--cortical-integration) — Ch 13
+- [Cluster B — Striatal microcircuit & cortical interneuron diversity](#cluster-b--striatal-microcircuit--cortical-interneuron-diversity) — Ch 13
+- [Cluster M — Neuromuscular junction](#cluster-m--neuromuscular-junction) — Ch 12
+- (pending) Cluster L — Development & critical periods — Ch 48, 49
 
 ---
 
@@ -112,6 +114,112 @@ Entries from Ch 11 (Overview of Synaptic Transmission) onward.
 - **Prerequisites:** J.05 (gap junctions)
 - **Citation:** Kandel 6e Ch 11 p 248
 - **Behavioral validation:** would require co-simulation of glia + neurons — currently out of scope. Skipping for now.
+
+### J.07 AMPA receptor — fast excitatory cation channel
+- **System:** all glutamatergic synapses in the CNS
+- **Biological role:** primary mediator of fast excitatory synaptic transmission. Cation-permeable (Na⁺ in, K⁺ out), reverses near 0 mV. Decay τ ~2–5 ms. GluA1–GluA4 subunits; GluA2-lacking variants are Ca²⁺-permeable. Density / GluA2 editing is the substrate for synaptic-scaling homeostasis.
+- **Sim status:** implemented as the *generic* fast excitatory conductance (`E_exc = 0 mV`, exponential decay via `fused_conductance_decay_and_current`). We don't track AMPA explicitly as a named subtype, but the kinetics and reversal correspond. Synaptic scaling (Pillar 2.5 homeostasis) implicitly models AMPA-receptor density adjustment.
+- **Cluster:** J
+- **Prerequisites:** J.01, J.02
+- **Citation:** Kandel 6e Ch 13 p 277–280
+- **Behavioral validation:** baseline E/I balance benchmark already covers this — exc rate 1.78 Hz, inh rate 3.25 Hz, CV(ISI) 0.86 — consistent with cortical L2/3 driven by AMPA-like fast conductance.
+
+### J.08 NMDA receptor — voltage-dependent coincidence detector
+- **System:** all glutamatergic synapses; especially dense in CA1 hippocampus, neocortical L2/3
+- **Biological role:** ligand- AND voltage-gated; Mg²⁺ blocks the pore at resting V, unblocks above ~-40 mV. Highly Ca²⁺-permeable (~10× the AMPA Ca²⁺ flux). Slow kinetics (decay τ ~50–150 ms). The voltage-dependence makes it a coincidence detector for pre/post activity — the cellular substrate for Hebbian LTP. Subunit composition (GluN2A vs GluN2B) modulates kinetics; developmentally regulated. Hypofunction implicated in schizophrenia (NMDA antagonist ketamine produces psychotic symptoms).
+- **Sim status:** implemented — `fused_nmda_update_and_current` in `sim/kernels.py` models the voltage-dep Mg²⁺ block. Used as the Ca²⁺ source for STDP/LTP. Slow kinetics captured. Subunit composition (GluN2A/GluN2B) is *not* differentiated.
+- **Cluster:** J
+- **Prerequisites:** J.07
+- **Citation:** Kandel 6e Ch 13 p 281–286
+- **Behavioral validation:** STDP timing curve (Bi & Poo 1998) already passes, demonstrating NMDA-driven Ca²⁺-dependent LTP/LTD with correct timing windows.
+
+### J.09 Kainate receptor — third ionotropic glutamate receptor type
+- **System:** mossy-fiber → CA3, presynaptic modulation of inhibitory transmission, some cortical inhibitory interneurons
+- **Biological role:** ionotropic glutamate receptor with intermediate kinetics. Functions partly redundant with AMPA postsynaptically; more interesting role is presynaptic — kainate-mediated frequency-dependent facilitation/depression of release.
+- **Sim status:** missing as a distinct receptor. Subsumed into AMPA-like generic excitatory conductance. *Likely not worth adding* unless we model mossy-fiber-specific phenomena.
+- **Cluster:** J
+- **Prerequisites:** J.07
+- **Citation:** Kandel 6e Ch 13 p 277–278
+- **Behavioral validation:** would only be meaningful in a CA3 mossy-fiber-specific experiment.
+
+### J.10 GABA-A receptor — fast inhibitory Cl⁻ channel
+- **System:** ubiquitous in CNS — basket, chandelier, Martinotti, neurogliaform interneurons
+- **Biological role:** pentameric ligand-gated Cl⁻ channel (most common α1β2γ2). Reversal ~-75 mV in adult neurons (close to but slightly below V_rest), produces hyperpolarizing IPSP in most cells. **Shunting inhibition** is a separate effect: even when ΔV is small, opening Cl⁻ channels increases membrane conductance and divides the EPSP voltage by a factor — works without hyperpolarization. Allosterically modulated by benzodiazepines, barbiturates, alcohol, neurosteroids.
+- **Sim status:** implemented — `E_inh = -75 mV` with 0.7× propagation scaling (CLAUDE.md). Shunting inhibition is *implicitly* captured by the increase in membrane conductance during inhibitory current; works correctly in single-compartment but cannot reproduce *compartment-specific* shunting (e.g. perisomatic vs distal-dendritic shunting differ in real pyramidal cells).
+- **Cluster:** J
+- **Prerequisites:** J.01
+- **Citation:** Kandel 6e Ch 13 p 286–289
+- **Behavioral validation:** E/I balance benchmark (`run_benchmarks.py --benchmark ei-balance`) covers it. PING gamma benchmark also depends on functional GABA-A.
+
+### J.11 Glycine receptor — fast inhibitory Cl⁻ channel (mostly spinal)
+- **System:** brainstem, spinal cord (Renshaw cells, Ia inhibitory interneurons)
+- **Biological role:** functionally similar to GABA-A (Cl⁻-selective, fast IPSP) but pharmacologically distinct (strychnine-sensitive). Dominates inhibition in spinal motor circuits.
+- **Sim status:** not-applicable. We don't model spinal cord; abstractly any spinal "glycinergic" inhibition would be subsumed under our generic GABA-A inhibitory channel. Worth flagging if we add a spinal CPG cluster.
+- **Cluster:** H, J
+- **Prerequisites:** J.10
+- **Citation:** Kandel 6e Ch 13 p 286–289
+- **Behavioral validation:** N/A unless spinal added.
+
+### J.12 Postsynaptic density (PSD) — scaffolding & receptor anchoring
+- **System:** all glutamatergic synapses (PSD-95, Homer, Shank, GKAP family proteins)
+- **Biological role:** dense protein scaffold under the glutamatergic postsynaptic membrane that anchors AMPA + NMDA receptors at the right density and aligns them with presynaptic active zones. PSD-95 specifically anchors NMDA and stabilizes AMPA via TARPs. Plasticity mechanisms (LTP) rearrange the PSD to insert AMPA receptors. The PSD is one of the *protein bottlenecks* for synapse maintenance and plasticity.
+- **Sim status:** not-applicable. The simulator has weights but no scaffolding proteins. AMPA-receptor insertion / removal is captured *phenomenologically* by weight changes (STDP, synaptic scaling). This is the right level of abstraction for circuit-level dynamics; it cannot capture pathologies that disrupt PSD specifically (e.g. SHANK3 mutations in autism — Cluster P).
+- **Cluster:** J (with P implications)
+- **Prerequisites:** J.07, J.08
+- **Citation:** Kandel 6e Ch 13 p 280–281
+- **Behavioral validation:** N/A.
+
+---
+
+## Cluster I — Channels & intrinsic dynamics
+
+### I.01 Axon initial segment (AIS) — spike-trigger zone
+- **System:** all neurons (the unmyelinated 20–60 µm proximal axon segment)
+- **Biological role:** highest density of voltage-gated Na⁺ channels in the cell — orders of magnitude more than the soma — so the AIS has the lowest threshold and is where the AP is initiated. AIS length and Na-channel composition adapts on a timescale of hours (homeostatic plasticity of intrinsic excitability).
+- **Sim status:** missing as a distinct compartment. We model each neuron as point-like with one threshold (Izh / HH / AdEx); there is no spatial separation between integration site (soma) and trigger site (AIS). For most circuit-level dynamics this is fine, but for AIS plasticity (slow homeostatic changes to intrinsic excitability) the closest analogue is our `homeostasis_threshold_adapt_rate` parameter.
+- **Cluster:** I
+- **Prerequisites:** I (Hodgkin-Huxley-like AP machinery; covered in Ch 9-10)
+- **Citation:** Kandel 6e Ch 13 p 293–295
+- **Behavioral validation:** the homeostasis benchmark validates the *functional* outcome of AIS plasticity (perturbation +200 pA → 50 Hz → recovers to baseline within 1 s). Mechanism is at the threshold-adaptation layer, not the AIS layer.
+
+---
+
+## Cluster G — Working memory / PFC / cortical integration
+
+### G.01 Spatial and temporal summation
+- **System:** all neurons; especially relevant for pyramidal cells with thousands of inputs
+- **Biological role:** EPSPs / IPSPs from many simultaneous (spatial) or sequential (temporal) inputs sum at the soma and axon initial segment. The cell's spike-or-no-spike output is the integrated summation crossing threshold. Membrane time constant (τ_m) and length constant (λ) determine the windows over which summation is effective.
+- **Sim status:** implemented at the single-compartment level. Each neuron integrates all inputs in one membrane equation per step — this is exact spatial summation. Temporal summation is captured by the conductance decay τ. Multi-compartment spatial summation (with passive cable decay across dendrites) is **not** implemented — dendrites are collapsed to a point neuron.
+- **Cluster:** G (and fundamental to all of I/J — covered here as the *integration* machinery)
+- **Prerequisites:** I (passive cable, AP)
+- **Citation:** Kandel 6e Ch 13 p 290–293
+- **Behavioral validation:** any working network simulation; covered.
+
+### G.02 Active dendrites — local computation, dendritic spikes
+- **System:** especially L5 pyramidal cells (large apical dendrite tree), hippocampal pyramids
+- **Biological role:** dendrites contain voltage-gated Na⁺, Ca²⁺, and HCN channels — supporting local AP generation (dendritic spikes), NMDA spikes (NMDAR-driven plateau potentials), and Ca²⁺ spikes at the apical tuft. These produce nonlinear summation rules (e.g. cluster of inputs on one branch ≫ scattered inputs on many branches), gain modulation by apical-basal coincidence (Larkum's two-layer model), and dendritic computation as a substrate for cortical hierarchical processing.
+- **Sim status:** missing. Single-compartment everywhere. This is one of the largest abstractions in the simulator. Our `g11_bg_runner` PFC region has recurrent connectivity in cluster G — but PFC neurons are point neurons, not L5 pyramidals. *Implications:* we cannot reproduce experiments where the apical-basal coincidence detection is the substrate (e.g. perceptual inference via L5 apical tuft activity, conscious access models). Compartmental neurons would be a major addition (~10× compute per neuron at minimum).
+- **Cluster:** G, I
+- **Prerequisites:** I (channel kinetics)
+- **Citation:** Kandel 6e Ch 13 p 293–298
+- **Behavioral validation:** would require multi-compartment model. Could replicate Larkum BAC firing experiment (basal+apical coincidence → bursts).
+
+---
+
+## Cluster B — Striatal microcircuit & cortical interneuron diversity
+
+### B.01 GABAergic interneuron diversity (basket, chandelier, Martinotti, neurogliaform)
+- **System:** cortex (and analogous diversity in hippocampus, striatum)
+- **Biological role:** different inhibitory subtypes target different compartments of the postsynaptic pyramidal cell:
+  - **Basket cells** (PV+): perisomatic — control spike output, drive gamma
+  - **Chandelier cells** (PV+): axon initial segment — gate spike generation directly
+  - **Martinotti cells** (SST+): apical dendrites — gate dendritic Ca²⁺ events and feedback
+  - **Neurogliaform cells**: volume transmission of GABA, slow IPSPs via GABA-B too
+- **Sim status:** partial. We have one inhibitory class via `CORTICAL_FS_INTERNEURON` (PV-like fast-spiking) — corresponds best to basket cells. Chandelier / Martinotti / neurogliaform are not separately modeled. Implications: we cannot replicate experiments that require compartment-specific inhibition (e.g. Martinotti gating dendritic Ca²⁺ spikes). For the BG cascade, the relevant interneurons are TANs (already a preset) and FSIs (basket-equivalent) — both present.
+- **Cluster:** B (striatal); also covers cortical microcircuit
+- **Prerequisites:** I (interneuron neuron model), J.10 (GABA-A)
+- **Citation:** Kandel 6e Ch 13 p 290–292
+- **Behavioral validation:** PING gamma benchmark covers basket-equivalent behavior. To validate Martinotti would require active dendrites (missing).
 
 ---
 
