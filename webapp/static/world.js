@@ -167,26 +167,64 @@ function updateScrubberStepLabel() {
   if (tot) tot.textContent = String(scrubberMax());
 }
 
+let _pickerRefreshInterval = null;
+
 /** Open a picker modal showing in-flight runs the server is tracking, and
- *  when one is chosen, attach the World tab as a live viewer for that run. */
+ *  when one is chosen, attach the World tab as a live viewer for that run.
+ *
+ *  Auto-refreshes every 2 seconds while the picker is visible AND the
+ *  World tab is active AND we're not currently attached to a run. Lets
+ *  the step counts under each run_id update in real time without forcing
+ *  the user to re-click "Live mode". */
 async function openLiveModePicker() {
+  await refreshLivePicker(/* showHeading= */ true);
+  // Set up the auto-refresh ticker (idempotent — clears any existing).
+  if (_pickerRefreshInterval) clearInterval(_pickerRefreshInterval);
+  _pickerRefreshInterval = setInterval(() => {
+    const tabActive = document.querySelector("#tab-world")?.classList.contains("active");
+    if (!tabActive || world.live) {
+      // Stop refreshing when leaving World tab or attached to a run.
+      clearInterval(_pickerRefreshInterval);
+      _pickerRefreshInterval = null;
+      return;
+    }
+    refreshLivePicker(/* showHeading= */ false).catch(() => {});
+  }, 2000);
+}
+
+async function refreshLivePicker(showHeading) {
   const list = $("#world-runs-list");
-  list.replaceChildren();
-  const heading = document.createElement("div");
-  heading.className = "muted";
-  heading.style.marginBottom = "8px";
-  heading.textContent = "Live runs (in-flight on this server):";
-  list.appendChild(heading);
+  if (showHeading) {
+    list.replaceChildren();
+    const heading = document.createElement("div");
+    heading.className = "muted";
+    heading.style.marginBottom = "8px";
+    heading.textContent = "Live runs (in-flight on this server):";
+    list.appendChild(heading);
+  }
 
   try {
     const res = await fetch("/api/runs/launch");
     const data = await res.json();
     if (!data.runs.length) {
-      const p = document.createElement("div");
-      p.className = "muted";
-      p.textContent = "No runs in flight. Launch one from the Launch tab.";
-      list.appendChild(p);
+      // Replace whole content (heading + content) on empty state
+      list.replaceChildren();
+      const heading = document.createElement("div");
+      heading.className = "muted";
+      heading.textContent = "No runs in flight. Launch one from the Launch tab.";
+      list.appendChild(heading);
       return;
+    }
+    // Smart re-render: keep heading, replace just the row entries so the
+    // user's scroll position + checkbox states are preserved across ticks.
+    const existingHeading = list.querySelector(".muted");
+    list.replaceChildren();
+    if (existingHeading || showHeading) {
+      const heading = document.createElement("div");
+      heading.className = "muted";
+      heading.style.marginBottom = "8px";
+      heading.textContent = "Live runs (in-flight on this server):";
+      list.appendChild(heading);
     }
     for (const r of data.runs) {
       const item = document.createElement("div");
@@ -450,10 +488,35 @@ function closeLiveSocket() {
   }
 }
 
-/** A progress event covers ~100 sim steps. We extend the synthetic
- *  trajectory with the new point and re-render. We don't have intermediate
- *  positions, so the agent visually jumps each tick (every ~100 steps).
- *  Phase 3 with in-process bridge will get per-step granularity. */
+/** A progress event represents 1 sim step (with --progress-print-interval=1
+ *  baked into the launcher) or every Nth step otherwise. State is updated
+ *  synchronously per event but RENDER calls are throttled via rAF so a
+ *  burst of buffered events on attach collapses into a single jump-to-
+ *  latest render — the agent appears at its current position immediately
+ *  rather than fast-forwarding through history. */
+let _liveRenderScheduled = false;
+
+function scheduleLiveRender() {
+  if (_liveRenderScheduled) return;
+  _liveRenderScheduled = true;
+  requestAnimationFrame(() => {
+    _liveRenderScheduled = false;
+    renderFrame();
+    // Chart redraw also throttled here (chart canvas is a separate canvas
+    // but same expense pattern).
+    if (world.liveChart && world.livePoints.length > 0) {
+      const latest = world.livePoints[world.livePoints.length - 1];
+      const distAt = new Array(latest.step + 1).fill(null);
+      for (const pt of world.livePoints) {
+        if (pt.step <= latest.step) distAt[pt.step] = pt.recent_dist;
+      }
+      world.liveChart.updateData([
+        { values: distAt, color: P.accent, label: "recent_dist" },
+      ]);
+    }
+  });
+}
+
 function handleLiveProgress(p) {
   if (!world.data) return;
   world.livePoints.push(p);
@@ -499,18 +562,9 @@ function handleLiveProgress(p) {
     eta.textContent = `${stepsPerSec.toFixed(1)} steps/s · ETA ${fmt}`;
   }
 
-  // Live chart: index by step so the x-axis aligns with run progress.
-  if (world.liveChart) {
-    const distAt = new Array(p.step + 1).fill(null);
-    for (const pt of world.livePoints) {
-      if (pt.step <= p.step) distAt[pt.step] = pt.recent_dist;
-    }
-    world.liveChart.updateData([
-      { values: distAt, color: P.accent, label: "recent_dist" },
-    ]);
-  }
-
-  renderFrame();
+  // Schedule a render. Coalesces burst-replays into a single redraw so
+  // attach is instant (jump-to-latest) instead of speed-replay.
+  scheduleLiveRender();
 }
 
 async function loadWorldRunList() {
