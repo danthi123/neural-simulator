@@ -85,7 +85,14 @@ const compareSet = selectionSet;
 
 async function loadRuns() {
   const list = $("#runs-list");
-  list.replaceChildren(document.createTextNode("Loading…"));
+  // Only show "Loading…" on the very first load (when the list is empty
+  // or still has the initial placeholder text). On periodic refreshes
+  // we keep the existing rows visible and let renderRunsList swap them
+  // in atomically — avoids the blank-list flicker the user reported.
+  const isFirstLoad = _allRuns.length === 0;
+  if (isFirstLoad) {
+    list.replaceChildren(document.createTextNode("Loading…"));
+  }
   try {
     const res = await fetch("/api/runs");
     const data = await res.json();
@@ -94,6 +101,7 @@ async function loadRuns() {
       const p = el("p", { class: "muted", style: "padding:16px" },
         "No runs yet — launch one from the Launch tab.");
       list.replaceChildren(p);
+      _allRuns = [];
       return;
     }
     data.runs.sort((a, b) => {
@@ -104,7 +112,11 @@ async function loadRuns() {
     _allRuns = data.runs;
     renderRunsList();
   } catch (e) {
-    list.replaceChildren(el("p", { class: "error" }, e.message));
+    // On refresh failure, keep the existing list visible — only show
+    // an error if this was the first load.
+    if (isFirstLoad) {
+      list.replaceChildren(el("p", { class: "error" }, e.message));
+    }
   }
 }
 
