@@ -164,7 +164,12 @@ def build_bg_brain_regions(
     enable_striatal_fsis: bool = False,
     n_striatal_fs_per_action: int = 5,
     cortex_to_str_fs_weight: float = 30.0,
-    str_fs_to_msn_weight: float = 8.0,
+    # Cluster B.2 retune (2026-04-28 evening): initial guess of 8.0 caused
+    # over-suppression — winner pool got suppressed by 35% (12.8 Hz drop)
+    # while loser only got 1.6 Hz drop. With density=1.0 and 4 FS source
+    # pools, effective inhibition was 32 (vs v3 lateral inhibition ~7).
+    # Lowering to 2.0 → effective ~8, comparable to v3 lateral.
+    str_fs_to_msn_weight: float = 2.0,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
