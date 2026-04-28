@@ -53,6 +53,7 @@ Sections are appended as chapters are processed. Each section header lists the c
 - [Cluster G — Working memory / PFC / cortical integration](#cluster-g--working-memory--pfc--cortical-integration) — Ch 13
 - [Cluster B — Striatal microcircuit & cortical interneuron diversity](#cluster-b--striatal-microcircuit--cortical-interneuron-diversity) — Ch 13
 - [Cluster M — Neuromuscular junction](#cluster-m--neuromuscular-junction) — Ch 12
+- [Cluster C — Dopamine & neuromodulation (extended)](#cluster-c--dopamine--neuromodulation-extended) — Ch 14, 16
 - (pending) Cluster L — Development & critical periods — Ch 48, 49
 
 ---
@@ -267,6 +268,88 @@ Entries from Ch 11 (Overview of Synaptic Transmission) onward.
 - **Prerequisites:** J.20, J.22
 - **Citation:** Kandel 6e Ch 15 p 326–328
 - **Behavioral validation:** record postsynaptic membrane in absence of stimulation, count discrete events per second, verify rate and amplitude match published mEPSC distributions.
+
+---
+
+## Cluster C — Dopamine & neuromodulation (extended)
+
+Entries from Ch 16 (Neurotransmitters). Note: the project already implements a *declarative* neuromodulator framework (`sim/neuromodulators.py`) — adding any of the systems below means writing a `NeuromodulatorConfig` with the right baseline / decay / production rules / receptor target list. The framework exists; specific NMs need to be configured per task.
+
+### C.01 Glutamate — primary fast excitatory transmitter
+- **System:** ~80% of cortical synapses; pyramidal cells, granule cells (cerebellum), retinal photoreceptors, etc.
+- **Biological role:** the workhorse excitatory transmitter. Acts on AMPA + NMDA + kainate (ionotropic) and mGluR1–8 (metabotropic). Synthesized from glutamine via glutamine synthetase (mostly in astrocytes — glia again). Cleared from cleft by EAAT transporters on astrocytes (the glial Cluster Q again).
+- **Sim status:** implemented as the generic excitatory channel (AMPA + NMDA conductances). Glutamate-specific transporters and the astrocyte-mediated glutamate cycle are not modeled. Spillover-mediated mGluR effects (J.15) are missing.
+- **Cluster:** J (and C for mGluR)
+- **Citation:** Kandel 6e Ch 16 p 360–365
+- **Behavioral validation:** every working simulation; covered.
+
+### C.02 GABA — primary fast inhibitory transmitter
+- **System:** all CNS — basket / chandelier / Martinotti / SST / VIP interneurons; output projections of striatum (MSNs), cerebellum (Purkinje), thalamic reticular nucleus (TRN)
+- **Biological role:** synthesized from glutamate via GAD65/67. Acts on GABA-A (ionotropic Cl⁻; J.10), GABA-C (retina-specific), GABA-B (metabotropic, slow Gi-coupled). Cleared by GAT transporters. Inverted developmentally — in immature neurons GABA is *depolarizing* (Cl⁻ reversal above V_rest because of high intracellular Cl⁻ in immature neurons, KCC2 expression low until ~P14).
+- **Sim status:** implemented (`E_inh = -75 mV`). GABA-B (metabotropic, slow IPSP, presynaptic autoreceptor) is **missing** — would need an additional slower inhibitory channel pathway. Developmental Cl⁻ reversal switch is not modeled (we don't have a developmental clock).
+- **Cluster:** J, B, A (BG output), F (cerebellum)
+- **Citation:** Kandel 6e Ch 16 p 365–367
+- **Behavioral validation:** PING gamma + E/I balance benchmarks. GABA-B addition would need a paired-pulse depression assay at high firing rates.
+
+### C.03 Acetylcholine (ACh) — peripheral fast + central modulatory
+- **System:** all neuromuscular junctions (peripheral, fast — Cluster M); central cholinergic systems = nucleus basalis of Meynert (basal forebrain → cortex), septal nuclei (→ hippocampus), pedunculopontine (→ thalamus, brainstem). Striatal TANs (tonically active interneurons) are also cholinergic.
+- **Biological role (central):** modulates cortical state — high ACh = "attentive / cortical desynchronization", low ACh = "internal state / sleep". Drives slow-wave / REM transitions. Striatal ACh from TANs gates plasticity at corticostriatal synapses. Two receptor types: nAChR (ionotropic, Ch 12) and mAChR (M1–M5, metabotropic, Ch 14).
+- **Sim status:** partial. Striatal TANs are present as a region preset (`HH_STRIATAL_TAN`, `IZH2007_STRIATAL_TAN`) but not yet wired into a working ACh→plasticity cycle. Basal forebrain ACh as an *attention* / cortical-state modulator is not deployed in flagship runs but is straightforward to add via the NM framework.
+- **Cluster:** C, B (TANs), N (sleep modulation)
+- **Citation:** Kandel 6e Ch 16 p 367–371
+- **Behavioral validation:** add ACh modulator targeting cortical excitability. Stimulate "basal forebrain" pool, verify cortical desynchronization (decreased low-freq power, increased gamma).
+
+### C.04 Dopamine (DA) — reward / reinforcement / motor / WM
+- **System:** SNc → striatum (nigrostriatal motor), VTA → NAc + PFC + amygdala (mesolimbic / mesocortical reward + WM)
+- **Biological role:** reward prediction error signal (Schultz 1997) — *phasic* DA encodes RPE; *tonic* DA encodes motivational state. Receptors: D1-like (D1, D5; Gs, increase cAMP) and D2-like (D2, D3, D4; Gi, decrease cAMP). Cortico-striatal LTP requires D1 + glutamate coincidence; D2 gates the indirect-pathway. DA-system pathologies: Parkinson's (SNc death → akinesia), schizophrenia (excess striatal DA → hallucinations), addiction (NAc DA hijacking).
+- **Sim status:** **implemented** as the project's central NM. `current_reward_signal` drives plasticity via eligibility traces in `g11_bg_runner`. Asymmetric adaptive DA targeting (Item 4.7 in ROADMAP), surprise-LR-boost (4.8), and adaptive DA EMA gating (per-action DA) are all DA-specific implementations. Compartmentalized DA (per-action) is option 3 in the cheat-5 survey — open. **The DA system is the simulator's most fully developed NM.**
+- **Cluster:** C (primary), A, B
+- **Citation:** Kandel 6e Ch 16 p 371–376; Ch 43 (Reward / Addiction); Ch 38 (BG)
+- **Behavioral validation:** Phase B BG cascade benchmark (4.08 ± 0.49, 6-seed) covers DA-driven action selection. Schultz-type RPE signature: phasic DA on unpredicted reward, dip on omission — currently not directly replicated as a unit test.
+
+### C.05 Norepinephrine (NE) — arousal / vigilance / fight-or-flight
+- **System:** locus coeruleus (LC) → diffuse cortical, thalamic, hippocampal, hypothalamic, spinal projections
+- **Biological role:** tonic LC firing tracks behavioral arousal (low during sleep, high during stress). Phasic LC bursts on salient stimuli. Receptors: α1 (Gq), α2 (Gi, autoreceptor), β1/β2/β3 (Gs). Increases SNR by simultaneously suppressing background firing and enhancing selective response. Critical for memory consolidation in the hippocampus, attention in PFC.
+- **Sim status:** partial. NM framework supports it; one prior session (E.1) tested NE on the silent-motor task and found it insufficient (the silent-motor trap is upstream of NE modulation). **Could be added easily** — has not been deployed in the current flagship config. Yerkes-Dodson curve (inverted-U arousal-performance relationship) would be a natural validation.
+- **Cluster:** C
+- **Citation:** Kandel 6e Ch 16 p 376–380
+- **Behavioral validation:** add NE concentration; vary baseline; measure SNR (signal-induced firing rate change / background CV(ISI)). Should peak at intermediate NE.
+
+### C.06 Serotonin (5-HT) — mood / impulsivity / sleep
+- **System:** raphe nuclei → cortex, hippocampus, BG, thalamus
+- **Biological role:** receptors are *huge* family — 5-HT1A–F (Gi), 5-HT2A/B/C (Gq), 5-HT3 (ionotropic — the only one), 5-HT4–7 (Gs). Behaviorally: mood (target of SSRIs in depression), impulsivity (low 5-HT → high impulsivity), sleep architecture, satiety. In BG, 5-HT modulates DA function bidirectionally.
+- **Sim status:** missing entirely from current flagship. NM framework supports it; just hasn't been deployed.
+- **Cluster:** C
+- **Citation:** Kandel 6e Ch 16 p 376–380
+- **Behavioral validation:** none currently meaningful in our task set; would need a depression / anxiety / decision-making model.
+
+### C.07 Histamine — wakefulness
+- **System:** tuberomammillary nucleus (TMN) of hypothalamus → diffuse cortex
+- **Biological role:** TMN is the histaminergic equivalent of the LC — promotes wakefulness; H1 antagonists are sedating (older antihistamines).
+- **Sim status:** missing. Easy to add; minor priority unless modeling sleep-wake transitions (Cluster N).
+- **Cluster:** C, N
+- **Citation:** Kandel 6e Ch 16 p 380
+- **Behavioral validation:** N/A unless sleep-wake added.
+
+### C.08 Neuropeptides — slow modulators (50+ types)
+- **System:** colocalized with classical transmitters in many neurons (e.g. ChAT+VIP, GABA+NPY, GABA+SST, etc.)
+- **Biological role:** released at high firing rates (lower release probability than fast NTs; require strong stimulation). Diffuse over longer distances ("volume transmission"). Receptors are GPCRs. Examples: substance P (pain), NPY (feeding inhibition), CRH (stress), vasopressin / oxytocin (social bonding, parturition), enkephalin / dynorphin / β-endorphin (analgesia, reward), somatostatin (cortical inhibitory subtype marker), VIP (cortical disinhibitory subtype).
+- **Sim status:** missing as a class. Could be added via NM framework with high firing-rate-gated production rules. Most likely high-priority additions: SST and VIP for cortical interneuron diversity (B.01 follow-on); enkephalin/dynorphin for BG indirect-pathway modulation.
+- **Cluster:** C, B
+- **Citation:** Kandel 6e Ch 16 p 380–390
+- **Behavioral validation:** specific to chosen peptide.
+
+### C.09 Purinergic transmission (ATP and adenosine)
+- **System:** widespread; especially active in autonomic ganglia, glia signaling, vascular regulation
+- **Biological role:** ATP is co-released with classical NTs from many neurons; acts on P2X (ionotropic) and P2Y (metabotropic) receptors. Hydrolyzed extracellularly to adenosine, which acts on A1 (Gi, inhibitory; coffee blocks A1) and A2A (Gs, BG indirect pathway D2-MSN expressed). Ado/A2A antagonists (caffeine, istradefylline) are clinically useful for Parkinson's. Adenosine accumulation tracks "sleep pressure" — A1 builds up during waking, drops during sleep.
+- **Sim status:** missing. NM framework can model adenosine-as-sleep-pressure (production rule: integrate firing rate; decay during sleep gate). Would compose with sleep-replay infrastructure.
+- **Cluster:** C, N
+- **Citation:** Kandel 6e Ch 16 p 380
+- **Behavioral validation:** sleep-pressure model — verify adenosine concentration accumulates during simulated waking, drops during forced sleep replay.
+
+### C.10 Gases (NO, CO) — covered in J.17; cross-listed here
+- **System:** see J.17.
+- **Citation:** Kandel 6e Ch 16 p 388–389.
 
 ---
 
