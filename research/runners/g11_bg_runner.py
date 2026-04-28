@@ -681,16 +681,11 @@ def _run_pretraining_phase(
     seed: int,
     verbose: bool = True,
 ) -> dict:
-    """Critical-period analog. Thaws ALL plasticity gates and runs the agent
-    through n_goals random goals for steps_per_goal trials each.
+    """Critical-period analog. Thaws ALL declared plasticity gates and runs
+    the agent through n_goals random goals for steps_per_goal trials each.
 
-    See docs/plans/2026-04-28-cheat5-v4-design.md for the full architecture.
-    Returns a summary dict with weight statistics — this is the only signal
-    the caller gets about how the pretraining went short of the eval result.
-
-    NOTE (2026-04-28, v4 initial): only the gate-validation skeleton is
-    implemented in this commit. Trial-loop wiring lands in Task 2.
-    """
+    Returns a summary dict: {n_trials, n_goal_changes, cross_weights_mean,
+    cross_weights_std}. See docs/plans/2026-04-28-cheat5-v4-design.md."""
     available = set(bridge.list_plasticity_gates())
     missing = [g for g in _PRETRAINING_THAWED_GATES
                if g not in available and _gate_required(g, regions)]
@@ -699,10 +694,30 @@ def _run_pretraining_phase(
             f"_run_pretraining_phase: gate(s) not declared on any pathway: "
             f"{missing!r}. Available: {sorted(available)!r}. "
             f"Either spell-check the gate name in build_bg_brain_regions, "
-            f"or enable the flag that adds the pathway (e.g. "
-            f"--learned-perception adds sensory_to_cortex)."
+            f"or enable the flag that adds the pathway."
         )
-    raise NotImplementedError("trial loop lands in Task 2")
+
+    # Thaw every gate that IS declared. Gates not declared (e.g. learned
+    # perception is off, so sensory_to_cortex doesn't exist) are silently
+    # skipped — the corresponding pathway just isn't there.
+    for gate in _PRETRAINING_THAWED_GATES:
+        if gate in available:
+            bridge.set_plasticity_gate(gate, 1.0)
+
+    if verbose:
+        print(f"[g11 seed={seed}] pretraining: all {len(available)} declared gates "
+              f"thawed to 1.0; running {n_goals} goals × {steps_per_goal} steps each",
+              flush=True)
+
+    # Trial loop lands in Task 5 (after CLI wiring is in place to call us
+    # via run_moving_goal_episode). For now, return a structured-but-empty
+    # summary so callers don't break.
+    return {
+        "n_trials": 0,
+        "n_goal_changes": 0,
+        "cross_weights_mean": float("nan"),
+        "cross_weights_std": float("nan"),
+    }
 
 
 def _gate_required(name: str, regions) -> bool:

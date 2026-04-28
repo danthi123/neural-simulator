@@ -432,3 +432,45 @@ def test_pretraining_raises_on_missing_gate():
         "error should name at least one missing gate")
     assert "cortex_to_d1" in msg, (
         "error should list the actually-available gates so the user can spot the typo")
+
+
+def test_pretraining_thaws_all_gates_at_start():
+    """After validation, the helper sets every (declared) gate to 1.0 via
+    set_plasticity_gate. This test uses a recording fake bridge to assert the
+    thaw calls happen with the correct values."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import _run_pretraining_phase
+
+    class _RecordingBridge:
+        def __init__(self):
+            self._values = {}
+            self.calls = []
+
+        def list_plasticity_gates(self):
+            return ["cortex_to_d1", "bg_cross_projections", "sensory_to_cortex"]
+
+        def set_plasticity_gate(self, name, value):
+            self._values[name] = value
+            self.calls.append((name, value))
+
+        def get_plasticity_gate_value(self, name):
+            return self._values.get(name, 1.0)
+
+    fb = _RecordingBridge()
+    summary = _run_pretraining_phase(
+        bridge=fb, cfg=None, regions=None,
+        n_goals=0,  # zero goals → skip the trial loop, just thaw + early-return
+        steps_per_goal=0,
+        grid_size=8, start_pos=(1, 1), seed=42, verbose=False,
+    )
+
+    # Every gate the bridge knows about should have been set to 1.0
+    for gate in ["cortex_to_d1", "bg_cross_projections", "sensory_to_cortex"]:
+        assert (gate, 1.0) in fb.calls, (
+            f"gate {gate!r} was not thawed to 1.0; calls={fb.calls}")
+
+    # Summary must have the documented keys
+    for key in ("n_trials", "n_goal_changes", "cross_weights_mean", "cross_weights_std"):
+        assert key in summary, f"summary missing {key!r}: {summary!r}"
+    assert summary["n_trials"] == 0
+    assert summary["n_goal_changes"] == 0
