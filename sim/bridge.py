@@ -1870,6 +1870,46 @@ class SimulationBridge:
             raise KeyError(name)
         return len(self._plasticity_gate_to_synapses[name])
 
+    def update_pruning(self, eligibility_trace, reward_signal, prunable_indices=None):
+        """Structural-plasticity step. Updates survival scores based on
+        reward-aligned eligibility, then prunes synapses meeting both
+        criteria: survival < pruning_threshold AND weight < pruning_weight_floor.
+
+        Pruned synapses get alive=False, weight=0. Forward dynamics + plasticity
+        respect the alive mask via cp_plasticity_gain[i] *= alive[i] (applied
+        here as a side effect, since cp_plasticity_gain is already used for
+        plasticity gating).
+
+        prunable_indices: optional cupy int64 array. If provided, only synapses
+        in this set are eligible for pruning. Used by the runner to restrict
+        pruning to cross-projection synapses only.
+
+        See docs/plans/2026-04-28-structural-plasticity-design.md.
+        """
+        import cupy as cp
+        if self.cp_synapse_alive is None:
+            return  # not enabled
+        # Update survival score for all synapses
+        delta = self.core_config.pruning_alpha * eligibility_trace * float(reward_signal)
+        self.cp_synapse_survival += delta.astype(cp.float32)
+        # Pruning rule
+        weights = self.cp_connections.data
+        prune_mask = (
+            (self.cp_synapse_survival < self.core_config.pruning_threshold) &
+            (weights < self.core_config.pruning_weight_floor) &
+            self.cp_synapse_alive
+        )
+        if prunable_indices is not None:
+            # Restrict to the prunable set: zero out mask outside of it
+            restricted = cp.zeros_like(prune_mask)
+            restricted[prunable_indices] = prune_mask[prunable_indices]
+            prune_mask = restricted
+        # Apply: alive=False, weight=0, plasticity_gain=0
+        self.cp_synapse_alive[prune_mask] = False
+        weights[prune_mask] = 0.0
+        if self.cp_plasticity_gain is not None:
+            self.cp_plasticity_gain[prune_mask] = 0.0
+
     def start_simulation(self):
         """Starts or restarts the simulation (called by sim_thread)."""
         if not self.is_initialized:

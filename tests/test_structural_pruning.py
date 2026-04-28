@@ -69,3 +69,112 @@ def test_structural_pruning_default_off():
     assert not hasattr(bridge, "cp_synapse_alive") or bridge.cp_synapse_alive is None
     assert not hasattr(bridge, "cp_synapse_survival") or bridge.cp_synapse_survival is None
     bridge.clear_simulation_state_and_gpu_memory()
+
+
+def test_update_pruning_increments_survival():
+    """update_pruning(eligibility, reward) updates survival in place by
+    alpha * eligibility * reward. Synapses with positive eligibility
+    when reward is positive accumulate positive survival; opposite for
+    negative reward."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+    from sim.config import CoreSimConfig
+
+    # alpha=1.0 for crisp test signal; W-S defaults yield non-empty connections.
+    cfg = CoreSimConfig(
+        num_neurons=20, enable_structural_pruning=True, pruning_alpha=1.0
+    )
+    bridge = _build_bridge(cfg)
+    nnz = int(bridge.cp_connections.nnz)
+    assert nnz > 0, "test config must produce a non-empty connection matrix"
+    # Set first half of synapses to eligibility +1, second half to -1
+    eligibility = cp.zeros(nnz, dtype=cp.float32)
+    eligibility[: nnz // 2] = 1.0
+    eligibility[nnz // 2 :] = -1.0
+    bridge.update_pruning(eligibility, reward_signal=1.0, prunable_indices=None)
+    # First half should now have positive survival; second half negative
+    surv = bridge.cp_synapse_survival.get()
+    assert (surv[: nnz // 2] == 1.0).all()
+    assert (surv[nnz // 2 :] == -1.0).all()
+    bridge.clear_simulation_state_and_gpu_memory()
+
+
+def test_update_pruning_eliminates_low_survival_low_weight():
+    """When survival is below threshold AND weight is below floor, the
+    synapse gets pruned: alive=False, weight=0."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+    from sim.config import CoreSimConfig
+
+    cfg = CoreSimConfig(
+        num_neurons=20,
+        enable_structural_pruning=True,
+        pruning_threshold=-0.5,
+        pruning_weight_floor=0.5,
+    )
+    bridge = _build_bridge(cfg)
+    nnz = int(bridge.cp_connections.nnz)
+    assert nnz >= 4, "test config must produce at least 4 synapses for quadrant split"
+    # Set first quarter to (low survival, low weight) — should prune
+    # Set second quarter to (low survival, high weight) — should NOT prune
+    # Set third quarter to (high survival, low weight) — should NOT prune
+    # Set fourth quarter to (high survival, high weight) — should NOT prune
+    bridge.cp_synapse_survival[: nnz // 4] = -1.0
+    bridge.cp_synapse_survival[nnz // 4 : nnz // 2] = -1.0
+    bridge.cp_synapse_survival[nnz // 2 : 3 * nnz // 4] = 1.0
+    bridge.cp_synapse_survival[3 * nnz // 4 :] = 1.0
+    bridge.cp_connections.data[: nnz // 4] = 0.1
+    bridge.cp_connections.data[nnz // 4 : nnz // 2] = 1.0
+    bridge.cp_connections.data[nnz // 2 : 3 * nnz // 4] = 0.1
+    bridge.cp_connections.data[3 * nnz // 4 :] = 1.0
+    bridge.update_pruning(
+        eligibility_trace=cp.zeros(nnz, dtype=cp.float32),
+        reward_signal=0.0,
+        prunable_indices=None,
+    )
+    alive = bridge.cp_synapse_alive.get()
+    assert not alive[: nnz // 4].any(), (
+        "first quarter (low surv + low weight) should be pruned"
+    )
+    assert alive[nnz // 4 : nnz // 2].all(), (
+        "second quarter (low surv + high weight) should survive"
+    )
+    assert alive[nnz // 2 : 3 * nnz // 4].all(), (
+        "third quarter (high surv + low weight) should survive"
+    )
+    assert alive[3 * nnz // 4 :].all(), "fourth quarter should survive"
+    weights = bridge.cp_connections.data.get()
+    assert (weights[: nnz // 4] == 0.0).all(), "pruned synapses must have weight==0"
+    bridge.clear_simulation_state_and_gpu_memory()
+
+
+def test_update_pruning_respects_prunable_indices():
+    """When prunable_indices is provided, only those synapses are eligible
+    for pruning; others are left alone even if they meet the criteria."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+    from sim.config import CoreSimConfig
+
+    cfg = CoreSimConfig(
+        num_neurons=20,
+        enable_structural_pruning=True,
+        pruning_threshold=-0.5,
+        pruning_weight_floor=0.5,
+    )
+    bridge = _build_bridge(cfg)
+    nnz = int(bridge.cp_connections.nnz)
+    assert nnz >= 2, "test config must produce at least 2 synapses for half split"
+    # Set all synapses to (low survival, low weight) — would prune everything if unprotected
+    bridge.cp_synapse_survival[:] = -1.0
+    bridge.cp_connections.data[:] = 0.1
+    # But only allow pruning of the first half
+    prunable = cp.arange(nnz // 2, dtype=cp.int64)
+    bridge.update_pruning(
+        eligibility_trace=cp.zeros(nnz, dtype=cp.float32),
+        reward_signal=0.0,
+        prunable_indices=prunable,
+    )
+    alive = bridge.cp_synapse_alive.get()
+    assert not alive[: nnz // 2].any(), "first half (in prunable set) pruned"
+    assert alive[nnz // 2 :].all(), "second half (not in prunable set) protected"
+    bridge.clear_simulation_state_and_gpu_memory()
