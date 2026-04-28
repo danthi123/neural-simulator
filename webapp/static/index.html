@@ -98,6 +98,29 @@
             <div class="overlay-row"><span class="muted">reward</span><span id="overlay-reward">—</span></div>
             <div class="overlay-row"><span class="muted">phase</span><span id="overlay-phase">—</span></div>
           </div>
+          <div id="world-legend">
+            <div class="legend-title">Legend</div>
+            <div class="legend-row">
+              <span class="legend-swatch swatch-agent"></span>
+              <span class="legend-text"><strong>Agent</strong> — yellow circle with heading arrow showing last action</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-swatch swatch-goal"></span>
+              <span class="legend-text"><strong>Goal beacon</strong> — green dot with halo; emits intensity field falling off with distance</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-swatch swatch-beacon-field"></span>
+              <span class="legend-text"><strong>Beacon intensity</strong> — green radial gradient around the goal (what beacon sensors detect)</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-swatch swatch-landmark"></span>
+              <span class="legend-text"><strong>Landmark</strong> — blue ring; fixed reference cue (only relevant if run used <code>--landmarks</code>)</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-swatch swatch-trail"></span>
+              <span class="legend-text"><strong>Trail</strong> — fading yellow dots showing the agent's recent path</span>
+            </div>
+          </div>
         </div>
         <div id="world-runlist">
           <h3>Pick a run</h3>

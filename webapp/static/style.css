@@ -529,6 +529,71 @@ pre {
   color: var(--accent);
 }
 
+/* Right-aligned legend explaining the symbols on the map. */
+#world-legend {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(14, 16, 20, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 11px;
+  max-width: 280px;
+  pointer-events: none;
+}
+#world-legend .legend-title {
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+#world-legend .legend-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 4px 0;
+}
+#world-legend .legend-swatch {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-top: 2px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+#world-legend .legend-swatch.swatch-agent {
+  background: var(--accent-warn);
+  border-color: var(--bg);
+}
+#world-legend .legend-swatch.swatch-goal {
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(110, 231, 183, 0.4);
+}
+#world-legend .legend-swatch.swatch-beacon-field {
+  background: radial-gradient(circle, rgba(110,231,183,0.6) 0%, rgba(110,231,183,0) 70%);
+  border: 1px solid var(--border);
+}
+#world-legend .legend-swatch.swatch-landmark {
+  background: transparent;
+  border: 2px solid rgba(147, 197, 253, 0.5);
+}
+#world-legend .legend-swatch.swatch-trail {
+  background: rgba(251, 191, 36, 0.4);
+}
+#world-legend .legend-text {
+  color: var(--fg);
+  line-height: 1.35;
+}
+#world-legend .legend-text code {
+  background: var(--bg-3);
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+
 #world-runlist {
   border-left: 1px solid var(--border);
   background: var(--bg-2);
