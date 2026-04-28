@@ -690,6 +690,14 @@ def run_moving_goal_episode(
     # pause/resume, and reward-injection. Default None = no polling, no
     # behavior change (ie. fully backwards compatible).
     interactive_control_file: str = None,
+    # Progress print frequency (steps). Default 100 keeps validation runs
+    # quiet; webapp interactive runs override to 1 so the dashboard's live
+    # mode can animate per-step instead of jumping every 100 steps.
+    progress_print_interval: int = 100,
+    # Optional throttle (ms) between trials. Lets a human watch the agent
+    # learn in real time without GPU saturation outpacing the eye. Default
+    # 0 = full speed.
+    trial_sleep_ms: float = 0.0,
     enable_beacon_perception: bool = False,
     n_beacon_sensors: int = 8,
     beacon_to_goal_weight: float = 8.0,
@@ -1801,13 +1809,17 @@ def run_moving_goal_episode(
             if enable_surprise_lr_boost:
                 bridge.core_config.reward_learning_rate = base_lr
 
-        if verbose and (step + 1) % 100 == 0:
+        if verbose and progress_print_interval > 0 and (step + 1) % progress_print_interval == 0:
             recent_dist = float(np.mean(distance_log[-100:]))
             print(f"[g11 seed={seed}] step {step+1}/{n_steps}  pos=({x},{y})  "
                   f"goal=({gx},{gy})  recent_dist={recent_dist:.2f}  "
                   f"actions={action_log[-100:].count(0):>3d}N/{action_log[-100:].count(1):>3d}E/"
                   f"{action_log[-100:].count(2):>3d}S/{action_log[-100:].count(3):>3d}W",
                   flush=True)
+
+        # Optional throttle for human-watchable speed in interactive mode.
+        if trial_sleep_ms > 0:
+            time.sleep(trial_sleep_ms / 1000.0)
 
     elapsed = time.time() - t0
     dist_arr = np.asarray(distance_log[1:])
@@ -1943,6 +1955,14 @@ def main():
                          "goal ([gx, gy] override, persistent), inject_reward "
                          "(one-shot additive). Used by webapp World-tab live "
                          "mode for click-to-teleport-goal etc.")
+    ap.add_argument("--progress-print-interval", type=int, default=100,
+                    help="Print a progress line every N steps (default 100). "
+                         "Webapp interactive mode sets this to 1 for per-step "
+                         "live animation.")
+    ap.add_argument("--trial-sleep-ms", type=float, default=0.0,
+                    help="Sleep this many ms between trials (default 0 = full "
+                         "speed). Use 50-200 to watch the agent learn at "
+                         "human-readable speed in interactive mode.")
     ap.add_argument("--bg-cross-thaw-step", type=int, default=-1,
                     help="Cheat #5 closure (2026-04-28): step at which bg_cross_projections "
                          "gate thaws to its phase-3 value. -1 = stay frozen. Recommended 1200 "
@@ -2067,6 +2087,8 @@ def main():
             lateral_inhibition_density=args.lateral_inhibition_density,
             lateral_inhibition_weight=args.lateral_inhibition_weight,
             interactive_control_file=args.interactive_control_file,
+            progress_print_interval=args.progress_print_interval,
+            trial_sleep_ms=args.trial_sleep_ms,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
             enable_cortex_lateral_inhibition=args.cortex_wta,

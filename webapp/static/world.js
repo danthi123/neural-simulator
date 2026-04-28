@@ -150,6 +150,7 @@ async function attachLive(runId, listItem) {
   world.live = true;
   world.liveRunId = runId;
   world.livePoints = [];
+  world.liveStartedAt = performance.now();
   // Use a synthetic data shape compatible with renderFrame()
   world.data = {
     grid_size: 8,
@@ -160,6 +161,25 @@ async function attachLive(runId, listItem) {
     phase_stats: [],
   };
   world.step = 0;
+
+  // Hide irrelevant playback controls; show live-mode controls instead.
+  const pbControls = document.getElementById("playback-controls");
+  const liveControls = document.getElementById("live-controls");
+  const scrubberRow = document.querySelector(".scrubber-row");
+  const progressBar = document.getElementById("world-progress-bar");
+  if (pbControls) pbControls.style.display = "none";
+  if (liveControls) liveControls.style.display = "inline-flex";
+  if (scrubberRow) scrubberRow.style.display = "none";
+  if (progressBar) progressBar.style.display = "block";
+  const detachBtn = document.getElementById("world-detach");
+  if (detachBtn && !detachBtn._bound) {
+    detachBtn.addEventListener("click", () => {
+      closeLiveSocket();
+      $("#world-run-name").textContent = "Detached. No run loaded.";
+    });
+    detachBtn._bound = true;
+  }
+
   $("#world-run-name").textContent = `LIVE: ${runId}`;
   const canvas = $("#world-canvas");
   resizeCanvas(canvas, 8);
@@ -169,7 +189,7 @@ async function attachLive(runId, listItem) {
   if (row) {
     row.style.display = "block";
     world.liveChart = makeLineChart($("#world-livechart"), {
-      title: `LIVE: ${runId} — recent_dist (last 100 steps)`,
+      title: `recent_dist (rolling 100-step mean)`,
       yLabel: "distance",
       yMin: 0,
       yMax: 14,  // max Manhattan on 8x8 grid is 14
@@ -324,6 +344,7 @@ function closeLiveSocket() {
   world.liveRunId = null;
   world.livePoints = [];
   world.liveChart = null;
+  world.liveStartedAt = null;
   world.interactive = false;
   pauseState = false;
   const chartRow = document.getElementById("world-livechart-row");
@@ -336,6 +357,19 @@ function closeLiveSocket() {
   if (pauseBtn) {
     pauseBtn.textContent = "⏸ Pause";
     pauseBtn.classList.remove("active");
+  }
+  // Restore playback controls visibility
+  const pbControls = document.getElementById("playback-controls");
+  const liveControls = document.getElementById("live-controls");
+  const scrubberRow = document.querySelector(".scrubber-row");
+  const progressBar = document.getElementById("world-progress-bar");
+  if (pbControls) pbControls.style.display = "inline-flex";
+  if (liveControls) liveControls.style.display = "none";
+  if (scrubberRow) scrubberRow.style.display = "block";
+  if (progressBar) {
+    progressBar.style.display = "none";
+    const fill = progressBar.querySelector(".progress-fill");
+    if (fill) fill.style.width = "0%";
   }
 }
 
@@ -365,6 +399,23 @@ function handleLiveProgress(p) {
   $("#world-scrubber").max = String(p.total);
   $("#world-scrubber").value = String(p.step);
   $("#world-step-display").textContent = `step ${p.step} / ${p.total}`;
+
+  // Live progress bar
+  const fill = document.querySelector("#world-progress-bar .progress-fill");
+  if (fill && p.total > 0) {
+    fill.style.width = `${(p.step / p.total * 100).toFixed(1)}%`;
+  }
+  // ETA: extrapolate from elapsed wall-clock + steps so far
+  const eta = document.getElementById("live-eta");
+  if (eta && world.liveStartedAt && p.step > 0) {
+    const elapsedMs = performance.now() - world.liveStartedAt;
+    const stepsPerSec = p.step / (elapsedMs / 1000);
+    const remaining = (p.total - p.step) / Math.max(0.01, stepsPerSec);
+    const fmt = remaining > 60
+      ? `${Math.round(remaining / 60)}m ${Math.round(remaining % 60)}s`
+      : `${Math.round(remaining)}s`;
+    eta.textContent = `${stepsPerSec.toFixed(1)} steps/s · ETA ${fmt}`;
+  }
 
   // Live chart: index by step so the x-axis aligns with run progress.
   if (world.liveChart) {

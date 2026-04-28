@@ -206,9 +206,11 @@ PRESETS: dict[str, list[str]] = {
         "--curriculum", "--curriculum-warmup-steps", "600",
         "--n-steps", "1800",
     ],
-    # Interactive presets — webapp wires --interactive-control-file
-    # automatically. World-tab Live mode lets the user click in the grid
-    # to teleport the goal, pause/resume, inject rewards.
+    # Interactive presets — webapp wires --interactive-control-file +
+    # per-step progress prints + a small throttle so the dashboard's
+    # live mode can animate per-step (not jumping every 100). World-tab
+    # Live mode lets the user click in the grid to teleport the goal,
+    # pause/resume, inject rewards.
     "interactive_flagship": [
         "--moving-goal",
         "--hippocampus", "--learned-perception", "--pfc",
@@ -220,10 +222,14 @@ PRESETS: dict[str, list[str]] = {
         "--curriculum", "--curriculum-warmup-steps", "600",
         # Long n_steps so the user has time to interact.
         "--n-steps", "3600",
+        "--progress-print-interval", "1",
+        "--trial-sleep-ms", "30",  # ~33 steps/sec — human-watchable
     ],
     "interactive_baseline": [
         "--moving-goal",
         "--n-steps", "3600",
+        "--progress-print-interval", "1",
+        "--trial-sleep-ms", "30",
     ],
     "flagship_with_cheat5": [
         "--moving-goal",

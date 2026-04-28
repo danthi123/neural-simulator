@@ -570,6 +570,36 @@ pre {
   border-top: 1px solid var(--border);
 }
 
+/* Live mode badge + progress bar */
+.live-badge {
+  display: inline-block;
+  background: var(--accent-bad);
+  color: var(--bg);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin-right: 8px;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.progress-bar {
+  height: 3px;
+  background: var(--bg-3);
+  position: relative;
+  overflow: hidden;
+}
+.progress-bar .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-warn) 100%);
+  width: 0%;
+  transition: width 0.3s ease-out;
+}
+
 /* Interactive control panel — appears in Live mode for interactive_* presets */
 .control-row {
   padding: 12px 16px;

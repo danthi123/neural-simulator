@@ -77,19 +77,29 @@
         <button id="world-live-mode">Live mode</button>
         <span id="world-run-name" class="muted">No run loaded</span>
         <span class="spacer"></span>
-        <button id="world-play">▶ Play</button>
-        <button id="world-pause" disabled>⏸ Pause</button>
-        <label>Speed
-          <select id="world-speed">
-            <option value="1">1×</option>
-            <option value="2">2×</option>
-            <option value="5" selected>5×</option>
-            <option value="10">10×</option>
-            <option value="30">30×</option>
-            <option value="100">100×</option>
-          </select>
-        </label>
+        <span id="playback-controls">
+          <button id="world-play">▶ Play</button>
+          <button id="world-pause" disabled>⏸ Pause</button>
+          <label>Speed
+            <select id="world-speed">
+              <option value="1">1×</option>
+              <option value="2">2×</option>
+              <option value="5" selected>5×</option>
+              <option value="10">10×</option>
+              <option value="30">30×</option>
+              <option value="100">100×</option>
+            </select>
+          </label>
+        </span>
+        <span id="live-controls" style="display:none">
+          <span id="live-status-badge" class="live-badge">● LIVE</span>
+          <span class="muted" id="live-eta">ETA —</span>
+          <button id="world-detach" class="ctrl-btn">↩ Detach</button>
+        </span>
         <span id="world-step-display" class="muted">step 0 / 0</span>
+      </div>
+      <div id="world-progress-bar" class="progress-bar" style="display:none">
+        <div class="progress-fill"></div>
       </div>
       <div class="world-layout">
         <div id="world-canvas-container">
