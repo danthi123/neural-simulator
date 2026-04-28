@@ -677,3 +677,16 @@ def test_pretraining_with_pruning_smoke(tmp_out_path):
     assert cross_total > 0, "test config should produce cross-projection synapses"
     assert cross_alive < cross_total, "pruning should eliminate at least 1 synapse"
     assert cross_alive > 0, "pruning should NOT eliminate everything"
+
+
+# ───────────────────── 2026-04-28: Cluster B.1 D1/D2 asymmetry ─────────────────────
+
+
+def test_d1_d2_asymmetry_kwarg_accepted(tmp_out_path):
+    """The runner accepts enable_d1_d2_asymmetry without TypeError."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    run_moving_goal_episode(
+        out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+        enable_d1_d2_asymmetry=True,
+    )

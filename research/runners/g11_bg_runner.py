@@ -1127,6 +1127,9 @@ def run_moving_goal_episode(
     pretraining_n_goals: int = 10,
     pretraining_steps_per_goal: int = 3000,
     enable_structural_pruning: bool = False,
+    # Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry — D2-targeting
+    # synapses' weight updates flip sign vs D1. Default off.
+    enable_d1_d2_asymmetry: bool = False,
     # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
     # Defaults match CoreSimConfig but can be overridden from the runner's
     # CLI / kwargs to tune the pruning aggressiveness for short pretraining
@@ -1321,6 +1324,7 @@ def run_moving_goal_episode(
     cfg.enable_parameter_heterogeneity = False
     cfg.enable_structural_plasticity = False  # keep synapse count fixed (per-action DA mask depends on it)
     cfg.enable_structural_pruning = enable_structural_pruning
+    cfg.enable_d1_d2_asymmetry = enable_d1_d2_asymmetry
     if pruning_alpha is not None:
         cfg.pruning_alpha = float(pruning_alpha)
     if pruning_threshold is not None:
@@ -2364,6 +2368,10 @@ def main():
                          "pretraining. Synapses with negative survival score AND low weight "
                          "get permanently eliminated. See "
                          "docs/plans/2026-04-28-structural-plasticity-design.md.")
+    ap.add_argument("--enable-d1-d2-asymmetry", action="store_true",
+                    help="Cluster B.1: D1/D2 plasticity asymmetry — D2-targeting "
+                         "synapses' weight updates flip sign vs D1. See "
+                         "docs/plans/2026-04-28-cluster-b1-d1d2-asymmetry-implementation.md.")
     ap.add_argument("--pruning-alpha", type=float, default=None,
                     help="Cheat-5 option-1 pruning rate. Default: cfg.pruning_alpha (0.001 = conservative). "
                          "Try 0.05 for a 5K-trial pretraining smoke; 0.005 for 30K validation.")
@@ -2490,6 +2498,7 @@ def main():
             pretraining_n_goals=args.pretraining_n_goals,
             pretraining_steps_per_goal=args.pretraining_steps_per_goal,
             enable_structural_pruning=args.enable_structural_pruning,
+            enable_d1_d2_asymmetry=args.enable_d1_d2_asymmetry,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
             pruning_weight_floor=args.pruning_weight_floor,
