@@ -184,8 +184,8 @@ def test_pause_on_reward_responds_to_negative_reward_via_abs():
     # Both should produce roughly equal pause magnitudes.
     assert pos < 1.0
     assert neg < 1.0
-    assert abs(pos - neg) < 0.05, (
-        f"Pause should be symmetric in |reward|: pos={pos:.3f} neg={neg:.3f}"
+    assert abs(pos - neg) < 1e-6, (
+        f"Pause should be bit-symmetric in |reward|: pos={pos:.6f} neg={neg:.6f}"
     )
 
 
