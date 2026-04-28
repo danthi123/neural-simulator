@@ -1,14 +1,15 @@
 """FastAPI server for the neural simulator research dashboard.
 
-Phase 1 surface:
+Phase 1 + 2 + 2.5 surface:
 - GET /                       → dashboard HTML
 - GET /api/findings           → list of all finding markdowns
 - GET /api/findings/{name}    → raw markdown body
 - GET /api/runs               → list completed runs (JSON files)
 - GET /api/runs/{name}        → run detail (parsed JSON)
 - POST /api/runs/launch       → kick off a new runner subprocess
+- GET /api/runs/launch        → list active in-flight runs (Phase 2.5)
 - GET /api/runs/launch/{id}   → poll status of a launched run
-- WS  /ws/runs/{id}           → stream stdout lines as they arrive
+- WS  /ws/runs/{id}           → stream stdout lines + parsed progress events
 
 Run:
     uvicorn webapp.server:app --reload --port 8765
@@ -18,6 +19,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import re
 import shlex
 import subprocess
 import sys
@@ -47,6 +49,17 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 @dataclass
+class ProgressEvent:
+    """A parsed progress line from a runner's stdout — Phase 2.5 live mode."""
+    step: int
+    total: int
+    pos: tuple[int, int]
+    goal: tuple[int, int]
+    recent_dist: float
+    timestamp: float
+
+
+@dataclass
 class LaunchedRun:
     run_id: str
     cmd: list[str]
@@ -54,10 +67,37 @@ class LaunchedRun:
     proc: subprocess.Popen[bytes] | None = None
     returncode: int | None = None
     stdout_lines: list[str] = field(default_factory=list)
+    progress_events: list[ProgressEvent] = field(default_factory=list)
     out_path: str | None = None
 
 
 launched_runs: dict[str, LaunchedRun] = {}
+
+
+# Match runner progress lines like:
+#   [g11 seed=42] step 800/1800  pos=(6,1)  goal=(1,6)  recent_dist=7.58  actions=...
+# The actions tail is optional and not parsed.
+_PROGRESS_RE = re.compile(
+    r"step\s+(\d+)/(\d+)\s+pos=\((-?\d+),(-?\d+)\)\s+goal=\((-?\d+),(-?\d+)\)"
+    r"\s+recent_dist=([\d.]+)"
+)
+
+
+def _try_parse_progress(line: str, now: float) -> ProgressEvent | None:
+    m = _PROGRESS_RE.search(line)
+    if not m:
+        return None
+    step, total, x, y, gx, gy, rd = m.groups()
+    try:
+        return ProgressEvent(
+            step=int(step), total=int(total),
+            pos=(int(x), int(y)),
+            goal=(int(gx), int(gy)),
+            recent_dist=float(rd),
+            timestamp=now,
+        )
+    except (TypeError, ValueError):
+        return None
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -121,8 +161,10 @@ def list_runs() -> JSONResponse:
     return JSONResponse({"runs": out, "count": len(out)})
 
 
-@app.get("/api/runs/{name}")
-def get_run(name: str) -> JSONResponse:
+# NOTE: this catch-all run-by-name route must come AFTER all the specific
+# `/api/runs/launch*` routes below — otherwise FastAPI matches by registration
+# order and `/api/runs/launch` would be treated as a run name lookup.
+def get_run_impl(name: str) -> JSONResponse:
     if "/" in name or "\\" in name or ".." in name:
         raise HTTPException(400, "invalid run name")
     f = RAW_RUNS_DIR / name
@@ -232,7 +274,9 @@ def launch_run(req: LaunchRequest) -> JSONResponse:
 
 
 async def _drain_stdout(run: LaunchedRun) -> None:
-    """Background task: drain subprocess stdout, save lines for tailers."""
+    """Background task: drain subprocess stdout, save lines for tailers,
+    and parse runner progress lines into structured events for live-mode
+    consumers."""
     if run.proc is None or run.proc.stdout is None:
         return
     loop = asyncio.get_event_loop()
@@ -242,7 +286,31 @@ async def _drain_stdout(run: LaunchedRun) -> None:
             break
         text = line.decode(errors="replace").rstrip("\r\n")
         run.stdout_lines.append(text)
+        ev = _try_parse_progress(text, time.time())
+        if ev is not None:
+            run.progress_events.append(ev)
     run.returncode = run.proc.wait()
+
+
+@app.get("/api/runs/launch")
+def list_active_launches() -> JSONResponse:
+    """Phase 2.5: list all in-flight (or recently-completed) runs known
+    to this server process. Lets the World tab discover runs to follow."""
+    out = []
+    for run in launched_runs.values():
+        is_running = run.proc is not None and run.proc.poll() is None
+        latest = run.progress_events[-1] if run.progress_events else None
+        out.append({
+            "run_id": run.run_id,
+            "running": is_running,
+            "returncode": run.returncode,
+            "started_at": run.started_at,
+            "elapsed_sec": time.time() - run.started_at,
+            "out_path": run.out_path,
+            "latest_progress": _progress_to_json(latest) if latest else None,
+        })
+    out.sort(key=lambda r: r["started_at"], reverse=True)
+    return JSONResponse({"runs": out, "count": len(out)})
 
 
 @app.get("/api/runs/launch/{run_id}")
@@ -259,12 +327,25 @@ def launch_status(run_id: str) -> JSONResponse:
         "elapsed_sec": time.time() - run.started_at,
         "stdout_line_count": len(run.stdout_lines),
         "tail": run.stdout_lines[-20:],
+        "progress_events": [_progress_to_json(p) for p in run.progress_events],
         "out_path": run.out_path,
     })
 
 
+def _progress_to_json(p: ProgressEvent) -> dict[str, Any]:
+    return {
+        "step": p.step, "total": p.total,
+        "pos": list(p.pos), "goal": list(p.goal),
+        "recent_dist": p.recent_dist,
+        "timestamp": p.timestamp,
+    }
+
+
 @app.websocket("/ws/runs/{run_id}")
 async def ws_run_stdout(websocket: WebSocket, run_id: str) -> None:
+    """Streams stdout lines AND parsed progress events as they arrive.
+    On connect, replays any progress events buffered so far so a new
+    subscriber sees the full trajectory the agent has covered."""
     await websocket.accept()
     run = launched_runs.get(run_id)
     if not run:
@@ -272,14 +353,27 @@ async def ws_run_stdout(websocket: WebSocket, run_id: str) -> None:
         await websocket.close()
         return
 
-    last_sent = 0
+    # Replay buffered progress events so a late-joining client gets the
+    # full trajectory the agent has already covered.
+    for p in run.progress_events:
+        await websocket.send_json({"type": "progress", **_progress_to_json(p)})
+
+    last_stdout = 0
+    last_progress = len(run.progress_events)
     try:
         while True:
-            cur = len(run.stdout_lines)
-            if cur > last_sent:
-                for line in run.stdout_lines[last_sent:cur]:
+            # Stream new stdout lines
+            cur_stdout = len(run.stdout_lines)
+            if cur_stdout > last_stdout:
+                for line in run.stdout_lines[last_stdout:cur_stdout]:
                     await websocket.send_json({"type": "stdout", "line": line})
-                last_sent = cur
+                last_stdout = cur_stdout
+            # Stream new progress events
+            cur_progress = len(run.progress_events)
+            if cur_progress > last_progress:
+                for p in run.progress_events[last_progress:cur_progress]:
+                    await websocket.send_json({"type": "progress", **_progress_to_json(p)})
+                last_progress = cur_progress
             if run.proc is not None and run.proc.poll() is not None:
                 await websocket.send_json({
                     "type": "done", "returncode": run.returncode,
@@ -315,3 +409,10 @@ def info() -> JSONResponse:
 @app.get("/", response_class=HTMLResponse)
 def index() -> FileResponse:
     return FileResponse(str(STATIC_DIR / "index.html"))
+
+
+# Register the catch-all run-by-name route LAST so /api/runs/launch* take
+# precedence (FastAPI matches by registration order).
+@app.get("/api/runs/{name}")
+def get_run(name: str) -> JSONResponse:
+    return get_run_impl(name)

@@ -28,6 +28,11 @@ let world = {
   speed: 5,
   rafId: null,
   lastFrameTime: 0,
+  // Live-mode state (Phase 2.5)
+  live: false,
+  liveRunId: null,
+  liveSocket: null,
+  livePoints: [],   // [{step, total, pos, goal, recent_dist}]
 };
 
 export function setupWorldTab() {
@@ -62,6 +67,7 @@ function initWorld() {
   $("#world-load-run").addEventListener("click", () => {
     document.querySelector('nav button[data-tab="runs"]').click();
   });
+  $("#world-live-mode").addEventListener("click", openLiveModePicker);
   $("#world-play").addEventListener("click", play);
   $("#world-pause").addEventListener("click", pause);
   $("#world-speed").addEventListener("change", (e) => {
@@ -74,6 +80,132 @@ function initWorld() {
   });
 
   loadWorldRunList();
+}
+
+/** Open a picker modal showing in-flight runs the server is tracking, and
+ *  when one is chosen, attach the World tab as a live viewer for that run. */
+async function openLiveModePicker() {
+  const list = $("#world-runs-list");
+  list.replaceChildren();
+  const heading = document.createElement("div");
+  heading.className = "muted";
+  heading.style.marginBottom = "8px";
+  heading.textContent = "Live runs (in-flight on this server):";
+  list.appendChild(heading);
+
+  try {
+    const res = await fetch("/api/runs/launch");
+    const data = await res.json();
+    if (!data.runs.length) {
+      const p = document.createElement("div");
+      p.className = "muted";
+      p.textContent = "No runs in flight. Launch one from the Launch tab.";
+      list.appendChild(p);
+      return;
+    }
+    for (const r of data.runs) {
+      const item = document.createElement("div");
+      item.className = "world-run-item";
+      const status = r.running ? "RUNNING" : `done (rc=${r.returncode})`;
+      const progress = r.latest_progress
+        ? ` step ${r.latest_progress.step}/${r.latest_progress.total}`
+        : "";
+      const name = document.createElement("div");
+      name.textContent = r.run_id;
+      const small = document.createElement("div");
+      small.className = "small";
+      small.textContent = `${status}${progress} · elapsed ${Math.round(r.elapsed_sec)}s`;
+      item.appendChild(name);
+      item.appendChild(small);
+      item.addEventListener("click", () => attachLive(r.run_id, item));
+      list.appendChild(item);
+    }
+  } catch (e) {
+    list.textContent = `Error: ${e.message}`;
+  }
+}
+
+function attachLive(runId, listItem) {
+  pause();
+  closeLiveSocket();
+  document.querySelectorAll("#world-runs-list .world-run-item").forEach((it) =>
+    it.classList.toggle("active", it === listItem),
+  );
+  world.live = true;
+  world.liveRunId = runId;
+  world.livePoints = [];
+  // Use a synthetic data shape compatible with renderFrame()
+  world.data = {
+    grid_size: 8,
+    trajectory: [],
+    goal_log: [],
+    action_log: [],
+    reward_log: [],
+    phase_stats: [],
+  };
+  world.step = 0;
+  $("#world-run-name").textContent = `LIVE: ${runId}`;
+  const canvas = $("#world-canvas");
+  resizeCanvas(canvas, 8);
+  renderFrame();
+  openLiveSocket(runId);
+}
+
+function openLiveSocket(runId) {
+  const proto = location.protocol === "https:" ? "wss:" : "ws:";
+  const ws = new WebSocket(`${proto}//${location.host}/ws/runs/${runId}`);
+  world.liveSocket = ws;
+  ws.onmessage = (ev) => {
+    let msg;
+    try { msg = JSON.parse(ev.data); } catch { return; }
+    if (msg.type === "progress") {
+      handleLiveProgress(msg);
+    } else if (msg.type === "done") {
+      $("#world-run-name").textContent = `LIVE (done, rc=${msg.returncode}): ${runId}`;
+    }
+  };
+  ws.onerror = () => {
+    $("#world-run-name").textContent = `LIVE (socket error): ${runId}`;
+  };
+}
+
+function closeLiveSocket() {
+  if (world.liveSocket) {
+    try { world.liveSocket.close(); } catch {}
+    world.liveSocket = null;
+  }
+  world.live = false;
+  world.liveRunId = null;
+  world.livePoints = [];
+}
+
+/** A progress event covers ~100 sim steps. We extend the synthetic
+ *  trajectory with the new point and re-render. We don't have intermediate
+ *  positions, so the agent visually jumps each tick (every ~100 steps).
+ *  Phase 3 with in-process bridge will get per-step granularity. */
+function handleLiveProgress(p) {
+  if (!world.data) return;
+  world.livePoints.push(p);
+  // Append the current pos to the synthetic trajectory; pad earlier steps
+  // with the same pos so the array length matches step count.
+  const traj = world.data.trajectory;
+  const goalLog = world.data.goal_log;
+  while (traj.length <= p.step) {
+    traj.push(p.pos);
+    goalLog.push(p.goal);
+  }
+  // Update phase_stats so the overlay shows the right phase number
+  if (!world.data.phase_stats.length || world.data.phase_stats.at(-1).goal[0] !== p.goal[0] || world.data.phase_stats.at(-1).goal[1] !== p.goal[1]) {
+    world.data.phase_stats.push({
+      step_start: p.step,
+      goal: [p.goal[0], p.goal[1]],
+    });
+  }
+  world.step = p.step;
+  $("#world-scrubber").max = String(p.total);
+  $("#world-scrubber").value = String(p.step);
+  $("#world-step-display").textContent = `step ${p.step} / ${p.total}`;
+  renderFrame();
 }
 
 async function loadWorldRunList() {
@@ -109,6 +241,7 @@ async function loadWorldRunList() {
 
 async function loadRun(name, listItem) {
   pause();
+  closeLiveSocket();
   $("#world-run-name").textContent = `Loading ${name}…`;
   document.querySelectorAll("#world-runs-list .world-run-item").forEach((it) =>
     it.classList.toggle("active", it === listItem),

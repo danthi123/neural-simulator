@@ -117,3 +117,35 @@ def test_launch_unknown_preset_rejected(client):
 def test_launch_status_unknown_id(client):
     res = client.get("/api/runs/launch/nonexistent_id")
     assert res.status_code == 404
+
+
+def test_active_launches_listing(client):
+    """Phase 2.5: GET /api/runs/launch lists in-flight runs (empty by default)."""
+    res = client.get("/api/runs/launch")
+    assert res.status_code == 200
+    data = res.json()
+    assert "runs" in data
+    assert "count" in data
+
+
+def test_progress_line_parser():
+    """Parser converts runner stdout into ProgressEvent."""
+    from webapp.server import _try_parse_progress
+    line = "[g11 seed=42] step 800/1800  pos=(6,1)  goal=(1,6)  recent_dist=7.58  actions= 21N/ 46E/ 20S/ 13W"
+    ev = _try_parse_progress(line, 0.0)
+    assert ev is not None
+    assert (ev.step, ev.total) == (800, 1800)
+    assert ev.pos == (6, 1)
+    assert ev.goal == (1, 6)
+    assert ev.recent_dist == 7.58
+
+
+def test_progress_line_parser_rejects_non_progress():
+    from webapp.server import _try_parse_progress
+    for bad in [
+        "",
+        "random output",
+        "[g11 seed=42] curriculum phase 1: cortex_to_d1 plastic",
+        "[g11 seed=42] step 800/1800",  # missing pos/goal
+    ]:
+        assert _try_parse_progress(bad, 0.0) is None, f"unexpectedly parsed: {bad!r}"
