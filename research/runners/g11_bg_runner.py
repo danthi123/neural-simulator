@@ -1205,6 +1205,12 @@ def run_moving_goal_episode(
     # pools. Default off. See
     # docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md.
     enable_striatal_fsis: bool = False,
+    # Cluster B.3 (2026-04-28): cholinergic interneurons (TANs). Adds an
+    # acetylcholine neuromodulator with the `pause_on_reward` rule that
+    # transiently drops corticostriatal plasticity_window_gate on salient
+    # reward events. Default off. See
+    # docs/plans/2026-04-28-cluster-b3-tans-implementation.md.
+    enable_tans: bool = False,
     # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
     # Defaults match CoreSimConfig but can be overridden from the runner's
     # CLI / kwargs to tune the pruning aggressiveness for short pretraining
@@ -1401,6 +1407,16 @@ def run_moving_goal_episode(
     cfg.enable_structural_plasticity = False  # keep synapse count fixed (per-action DA mask depends on it)
     cfg.enable_structural_pruning = enable_structural_pruning
     cfg.enable_d1_d2_asymmetry = enable_d1_d2_asymmetry
+    # Cluster B.3 (2026-04-28): cholinergic TANs. Turn the neuromod
+    # subsystem ON cumulatively (no other flag in this runner enables it
+    # today, but `|=` keeps it future-proof if one starts to) and append
+    # the default acetylcholine config to whatever the cfg already has.
+    if enable_tans:
+        from sim.neuromodulators import _default_acetylcholine_config
+        cfg.enable_neuromodulator_subsystem = True
+        cfg.neuromodulators = list(cfg.neuromodulators) + [
+            _default_acetylcholine_config()
+        ]
     if pruning_alpha is not None:
         cfg.pruning_alpha = float(pruning_alpha)
     if pruning_threshold is not None:
@@ -2452,6 +2468,11 @@ def main():
                     help="Cluster B.2: striatal fast-spiking interneurons "
                          "(broadcast inhibition). See "
                          "docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md.")
+    ap.add_argument("--enable-tans", action="store_true",
+                    help="Cluster B.3: cholinergic interneurons (TANs). Adds "
+                         "an acetylcholine neuromodulator that pauses on reward "
+                         "and gates corticostriatal plasticity windows. See "
+                         "docs/plans/2026-04-28-cluster-b3-tans-implementation.md.")
     ap.add_argument("--pruning-alpha", type=float, default=None,
                     help="Cheat-5 option-1 pruning rate. Default: cfg.pruning_alpha (0.001 = conservative). "
                          "Try 0.05 for a 5K-trial pretraining smoke; 0.005 for 30K validation.")
@@ -2580,6 +2601,7 @@ def main():
             enable_structural_pruning=args.enable_structural_pruning,
             enable_d1_d2_asymmetry=args.enable_d1_d2_asymmetry,
             enable_striatal_fsis=args.enable_striatal_fsis,
+            enable_tans=args.enable_tans,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
             pruning_weight_floor=args.pruning_weight_floor,
