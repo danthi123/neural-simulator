@@ -389,6 +389,18 @@ Key new infrastructure:
 - `cp_plasticity_gain` array — gates STDP, eligibility, Hebbian, synaptic scaling
 - NM-driven gates: `target_type="plasticity_gate", scope="gate:<name>"`
 
+> **GOTCHA — plasticity gate vs synaptic transmission (2026-04-28):**
+> `cp_plasticity_gain` and `set_plasticity_gate(...)` freeze weight UPDATES
+> only — STDP, eligibility, Hebbian, synaptic scaling. They do NOT freeze
+> synaptic CURRENT (`g_syn × (V - E)`). A frozen pathway with non-zero
+> `weight_mean` still injects current and affects forward dynamics. To
+> staged-introduce a new pathway without disrupting the system before
+> the thaw step, initialize it with `weight_mean=0.0` (then let STDP grow
+> it from zero after thaw) — OR add a runtime weight scale per gate
+> (small bridge change, not yet implemented). The cheat-5 v1 NEGATIVE
+> result (2026-04-28) was caused by missing this distinction; v2 fixes
+> it via zero-init.
+
 Curriculum: phase 1 cortex_to_d1 plastic + input layers frozen; phase 2
 cortex frozen (or partial) + input layers thawed. Biologically: real
 critical periods close gradually, gated by neuromodulators, allowing
