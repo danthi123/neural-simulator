@@ -4311,7 +4311,45 @@ class SimulationBridge:
                                 self.cp_eligibility_trace[stdp_active_indices] += weight_changes
 
                             self._mock_total_plasticity_events += stdp_active_indices.size
-            
+
+            # --- 4c0. Neuromodulator subsystem update (Session E.1, opt-in) ---
+            # Run NM production+decay BEFORE reward modulation so this step's
+            # reward signal drives this step's NM concentration changes (e.g.,
+            # pause_on_reward -> ACh pause -> plasticity_window_gate opens) AT
+            # THE SAME STEP. This is required for fast-dynamics gates
+            # (TAN/ACh) where the pause and the reward are the same event.
+            #
+            # Previously (pre-2026-04-28-bugfix), manager.step ran AFTER the
+            # reward block, which created a one-step lag: with single-pulse
+            # rewards, the gate never opened during the reward delivery.
+            # See research/findings/2026-04-28-cluster-b3-tans-results.md
+            # for the empirical regression that exposed this.
+            #
+            # Note: synaptic_gain and excitability_drive are read earlier in
+            # the step (around the synaptic conductance and total input
+            # current sections); those continue to use the previous step's
+            # NM concentrations. That one-step lag is biologically harmless
+            # for slow-dynamics modulators (DA tonic, NE) and matches the
+            # prior behavior — only the reward-time plasticity path is
+            # affected by this reordering.
+            if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                    and self.neuromodulator_manager is not None):
+                self.neuromodulator_manager.step(self)
+                # Propagate any NM-driven plasticity gate values to the
+                # bridge's per-pathway gain. Biological grounding:
+                # developmental NM ramps modulate critical periods; DA
+                # gates corticostriatal LTP; ACh gates attentional cortex
+                # plasticity. The gate value = NM concentration after
+                # baseline+sensitivity scaling (see compute_plasticity_gate_values).
+                if self._plasticity_gate_to_synapses:
+                    nm_gates = self.neuromodulator_manager.compute_plasticity_gate_values()
+                    for gate_name, gate_value in nm_gates.items():
+                        if gate_name in self._plasticity_gate_to_synapses:
+                            # Only update if value changed materially (avoid GPU writes)
+                            current = self._plasticity_gate_values.get(gate_name, 1.0)
+                            if abs(gate_value - current) > 1e-4:
+                                self.set_plasticity_gate(gate_name, gate_value)
+
             # --- 4c. C2: Reward-Modulated Plasticity (Three-Factor Learning) ---
             if _plasticity_gated and cfg.enable_reward_modulation and self.cp_eligibility_trace is not None and self.cp_connections.nnz > 0:
                 # Decay eligibility traces
@@ -4374,30 +4412,6 @@ class SimulationBridge:
                     significant_updates = cp.sum(cp.abs(weight_updates) > 1e-6)
                     if significant_updates > 0:
                         self._mock_total_plasticity_events += int(significant_updates.get())
-
-            # --- 4c2. Neuromodulator subsystem update (Session E.1, opt-in) ---
-            # Run AFTER reward modulation so this step's reward signal has
-            # been consumed by the legacy path AND has produced its effect on
-            # neuromodulator concentrations. The neuromodulator effects on
-            # synaptic gain / plasticity rate / excitability are then applied
-            # in the next step (since concentrations now reflect this step).
-            if (getattr(cfg, "enable_neuromodulator_subsystem", False)
-                    and self.neuromodulator_manager is not None):
-                self.neuromodulator_manager.step(self)
-                # Propagate any NM-driven plasticity gate values to the
-                # bridge's per-pathway gain. Biological grounding:
-                # developmental NM ramps modulate critical periods; DA
-                # gates corticostriatal LTP; ACh gates attentional cortex
-                # plasticity. The gate value = NM concentration after
-                # baseline+sensitivity scaling (see compute_plasticity_gate_values).
-                if self._plasticity_gate_to_synapses:
-                    nm_gates = self.neuromodulator_manager.compute_plasticity_gate_values()
-                    for gate_name, gate_value in nm_gates.items():
-                        if gate_name in self._plasticity_gate_to_synapses:
-                            # Only update if value changed materially (avoid GPU writes)
-                            current = self._plasticity_gate_values.get(gate_name, 1.0)
-                            if abs(gate_value - current) > 1e-4:
-                                self.set_plasticity_gate(gate_name, gate_value)
 
             # --- 4d. C3: Structural Plasticity (Synapse Formation/Elimination) ---
             # Freeze structural plasticity during experiments: synaptogenesis operates on

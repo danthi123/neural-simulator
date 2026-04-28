@@ -517,12 +517,73 @@ def _make_bridge_with_ach(set_ach_concentration: float):
 def test_bridge_blocks_reward_weight_updates_when_ach_at_baseline():
     """With ACh at tonic baseline (gate=0), reward-modulated weight updates
     should be ZERO. With ACh paused (gate~1), the same setup should produce
-    a measurable weight delta."""
+    a measurable weight delta.
+
+    Semantic note (post-2026-04-28-bugfix): the bridge step now runs
+    `manager.step()` BEFORE reward modulation, so the same step's reward
+    signal can drive the same step's NM concentration changes. This means
+    a config with `pause_on_reward` would have its ACh dragged DOWN during
+    the test step, opening the gate even when ACh started at baseline.
+    To isolate the gate mechanic itself (independent of the production
+    rule), this test uses an ACh config WITHOUT production rules and
+    pokes the concentration directly via set_concentration. The
+    pause_on_reward dynamics are exercised by the dedicated unit tests
+    above (test_pause_on_reward_*).
+    """
     pytest.importorskip("cupy")
     import cupy as cp
 
+    from sim import (
+        SimulationBridge,
+        CoreSimConfig,
+        VisualizationConfig,
+        RuntimeState,
+        GPUConfig,
+    )
+    from sim.enums import NeuronModel
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+    )
+
     def _delta_with_ach(ach_conc: float) -> float:
-        sb, cfg = _make_bridge_with_ach(ach_conc)
+        # Inline a minimal ACh config: same gate target but NO production
+        # rules. This pins ACh at whatever set_concentration assigns,
+        # because manager.step's only effect is decay toward baseline +
+        # production (which is zero here). Over one step, decay is
+        # negligible (dt=1ms vs decay_tau=500ms -> ~0.2% drift).
+        nm_no_production = NeuromodulatorConfig(
+            name="acetylcholine",
+            baseline=1.0,
+            decay_tau_ms=500.0,
+            concentration_min=0.0,
+            concentration_max=2.0,
+            targets=[
+                ModulatorTarget(target_type="plasticity_window_gate", scope="all")
+            ],
+            production_rules=[],  # KEY: no pause_on_reward, gate driven by set_concentration only
+        )
+        cfg = CoreSimConfig()
+        cfg.num_neurons = 50
+        cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+        cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+        cfg.dt_ms = 1.0
+        cfg.seed = 42
+        cfg.enable_neuromodulator_subsystem = True
+        cfg.enable_stdp = True
+        cfg.enable_reward_modulation = True
+        cfg.reward_learning_rate = 0.05
+        cfg.neuromodulators = [nm_no_production]
+
+        sb = SimulationBridge(
+            core_config=cfg,
+            viz_config=VisualizationConfig(),
+            runtime_state=RuntimeState(),
+            gpu_config=GPUConfig(),
+        )
+        sb.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+        sb._initialize_simulation_data(called_from_playback_init=False)
+
         # Set wide weight bounds so the post-update clip doesn't mask the
         # small reward-driven delta we're testing. Same trick B.1 uses.
         sb.core_config.stdp_w_min = -10.0
@@ -544,6 +605,8 @@ def test_bridge_blocks_reward_weight_updates_when_ach_at_baseline():
         sb.cp_eligibility_trace[:actual_nnz] = 0.5
         w_before = sb.cp_connections.data[:actual_nnz].copy()
         # Apply reward AFTER eligibility set-up. Pin ACh to the test value.
+        # Without pause_on_reward, set_concentration is the sole driver
+        # of the ACh state visited by the reward path this step.
         sb.neuromodulator_manager.set_concentration("acetylcholine", ach_conc)
         sb.core_config.current_reward_signal = 1.0
         sb.core_config.reward_baseline = 0.0
@@ -565,4 +628,84 @@ def test_bridge_blocks_reward_weight_updates_when_ach_at_baseline():
     # When ACh is paused, gate~1 should permit normal updates.
     assert permitted > 1e-4, (
         f"Expected nontrivial weight delta with ACh paused (gate=1), got {permitted:.6e}"
+    )
+
+
+# ---------- Regression: single-pulse reward must fire plasticity within step ----------
+
+
+def test_single_pulse_reward_fires_plasticity_within_step():
+    """Regression test for the 2026-04-28 step-order bug.
+
+    Setup: full default ACh config (with pause_on_reward production rule).
+    ACh starts at tonic baseline = 1.0 (gate = 0). A SINGLE-step reward
+    pulse arrives. The TAN gate must open within that same step so the
+    reward-modulated weight update is permitted.
+
+    Pre-fix behavior: `manager.step()` ran AFTER the reward block, so
+    the gate was read from the previous step's ACh (still at baseline,
+    gate = 0) -> weight_updates *= 0. The reward never produced any
+    learning. Then the next step's gate was open, but the reward was
+    already gone. Single-pulse rewards never trained the network.
+
+    Post-fix behavior: `manager.step()` runs BEFORE the reward block, so
+    the same step's reward drops ACh, opens the gate, and the reward
+    update goes through.
+
+    This test would have caught the empirical regression
+    (1800-step `--enable-tans` run with full Cluster B + multi-goal:
+    sum=19.76 vs baseline 9.50) before the runner ever shipped.
+    """
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    sb, cfg = _make_bridge_with_ach(set_ach_concentration=1.0)
+    # Wide weight bounds so the clip doesn't hide the reward-driven delta.
+    sb.core_config.stdp_w_min = -10.0
+    sb.core_config.stdp_w_max = 100.0
+    sb.core_config.hebbian_min_weight = -10.0
+    sb.core_config.hebbian_max_weight = 100.0
+    if sb.cp_eligibility_trace is None:
+        sb.clear_simulation_state_and_gpu_memory()
+        pytest.skip("eligibility trace not allocated")
+    actual_nnz = int(sb.cp_connections.nnz)
+    # Disable other plasticity to isolate the reward path.
+    sb.core_config.enable_stdp = False
+    sb.core_config.enable_hebbian_learning = False
+    sb.core_config.enable_homeostasis = False
+    sb.core_config.enable_structural_plasticity = False
+    sb.core_config.enable_synaptic_scaling = False
+    # Uniform positive eligibility -> a non-zero reward should produce a
+    # measurable weight delta IFF the gate opens.
+    sb.cp_eligibility_trace[:] = 0.0
+    sb.cp_eligibility_trace[:actual_nnz] = 0.5
+
+    # Snapshot weights, ensure ACh is exactly at baseline (gate = 0 a priori),
+    # then deliver one reward pulse.
+    sb.neuromodulator_manager.set_concentration("acetylcholine", 1.0)
+    w_before = sb.cp_connections.data[:actual_nnz].copy()
+    sb.core_config.current_reward_signal = 1.0
+    sb.core_config.reward_baseline = 0.0
+    sb._run_one_simulation_step()
+    sb.runtime_state.current_time_step += 1
+    w_after = sb.cp_connections.data[:actual_nnz]
+    delta = float(cp.sum(cp.abs(w_after - w_before)).get())
+
+    # ACh must have been pulled below baseline by pause_on_reward in the
+    # SAME step (i.e., before the reward block), opening the gate.
+    ach_after = sb.neuromodulator_manager.get_concentration("acetylcholine")
+    sb.clear_simulation_state_and_gpu_memory()
+
+    # Pre-fix invariant violated: delta would have been ~0 here.
+    assert delta > 1e-4, (
+        f"Single-pulse reward did NOT open the TAN gate within the same "
+        f"step (regression of the 2026-04-28 step-order bug). "
+        f"delta={delta:.6e}, ACh after step={ach_after:.4f}. "
+        f"Expected delta > 1e-4 indicating the gate opened and reward-driven "
+        f"weight updates flowed through."
+    )
+    # Sanity: ACh should be measurably below tonic baseline 1.0.
+    assert ach_after < 0.99, (
+        f"pause_on_reward should have dragged ACh below baseline within "
+        f"the step; got ACh={ach_after:.4f}"
     )
