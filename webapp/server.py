@@ -322,12 +322,19 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
     except OSError:
         pass  # Best-effort; don't fail the launch on sidecar write failure.
 
+    # Force UTF-8 stdout in the subprocess. Windows defaults to cp1252 which
+    # crashes on Unicode chars (em-dash, arrows) anywhere in runner prints.
+    # Bug surfaced 2026-04-28 when an INTERACTIVE GOAL → print killed a
+    # runner the moment the user clicked to teleport the goal.
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
     proc = subprocess.Popen(
         cmd,
         cwd=str(REPO_ROOT),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         bufsize=1,
+        env=env,
     )
 
     run = LaunchedRun(

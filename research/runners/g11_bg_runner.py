@@ -1307,7 +1307,7 @@ def run_moving_goal_episode(
                     if has_landmark_gate:
                         bridge.set_plasticity_gate("landmark_to_place", float(curriculum_phase2_hippo_gain))
                     if verbose:
-                        print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 — "
+                        print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 -- "
                               f"cortex_to_d1={curriculum_phase2_cortex_gain:.2f}, "
                               f"inputs={curriculum_phase2_hippo_gain:.2f}", flush=True)
 
@@ -1326,7 +1326,7 @@ def run_moving_goal_episode(
             bridge.set_plasticity_gate("bg_cross_projections", float(bg_cross_phase3_gain))
             bg_cross_thawed = True
             if verbose:
-                print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 3 — "
+                print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 3 -- "
                       f"bg_cross_projections gain={bg_cross_phase3_gain:.2f}",
                       flush=True)
 
@@ -1387,7 +1387,7 @@ def run_moving_goal_episode(
                     goal_change_steps.append(step)
                     if verbose:
                         print(f"[g11 seed={seed}] step {step}: INTERACTIVE GOAL "
-                              f"→ ({gx}, {gy})", flush=True)
+                              f"-> ({gx}, {gy})", flush=True)
             # One-shot reward injection (consumed by clearing the field)
             _inj = _ctrl.get("inject_reward")
             if _inj is not None:
@@ -1727,7 +1727,7 @@ def run_moving_goal_episode(
             reward = float(reward) + manual_reward_injection
             if verbose:
                 print(f"[g11 seed={seed}] step {step}: INTERACTIVE REWARD "
-                      f"injection {manual_reward_injection:+.2f} → reward={reward:+.2f}",
+                      f"injection {manual_reward_injection:+.2f} -> reward={reward:+.2f}",
                       flush=True)
         reward_log.append(float(reward))
 
@@ -2129,7 +2129,7 @@ def main():
     import cupy as cp
 
     print(f"\n{'='*72}")
-    print(f"  G11 BG Action Selection Module — Smoke Test")
+    print(f"  G11 BG Action Selection Module -- Smoke Test")
     print(f"{'='*72}\n", flush=True)
 
     regions, pathways = build_bg_brain_regions()
@@ -2200,7 +2200,7 @@ def main():
         rate_hz = spike_counts[list(idx)].sum() / r.n_neurons / (n_steps * cfg.dt_ms / 1000.0)
         print(f"    {r.name:<24s} ({r.izh_neuron_type or 'default':<32s}): {rate_hz:.1f} Hz")
 
-    print(f"\n  Smoke test PASSED — {len(regions)} regions, "
+    print(f"\n  Smoke test PASSED -- {len(regions)} regions, "
           f"{bridge.cp_connections.nnz} synapses initialized cleanly.")
 
     # ---- Phase B.T4 / T5: action selection probe ----
