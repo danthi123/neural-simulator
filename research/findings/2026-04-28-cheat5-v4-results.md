@@ -1,105 +1,109 @@
-# Cheat #5 v4 — Developmental Pretraining (results pending)
+# Cheat #5 v4 — Developmental Pretraining: NO-GO. Cheat #5 closed by design (v3 lateral inhibition).
 
 **Date:** 2026-04-28
 **Design:** [docs/plans/2026-04-28-cheat5-v4-design.md](../../docs/plans/2026-04-28-cheat5-v4-design.md) (commit `e6ce0ce`)
 **Plan:** [docs/plans/2026-04-28-cheat5-v4-implementation.md](../../docs/plans/2026-04-28-cheat5-v4-implementation.md)
 **Aggregator:** [scripts/analyze_cheat5_v4.py](../../scripts/analyze_cheat5_v4.py)
 
-> **Status:** WIP. Tier 1 wiring smoke PASSED. Tier 2 + Tier 3 pending. This file gets the verdict + numbers as they land.
+## TL;DR
 
-## TL;DR (TBD)
+| Approach | Mean sum (n=3 or 6) | Verdict |
+|---|---|---|
+| flagship baseline (v3 lateral) | 4.26 ± 0.50 (n=6) | **GO** (shipped 2026-04-28 morning) |
+| v3.1 cross-projections, adult thaw at step 1200 | 8.92 ± 2.44 (n=6) | NO-GO |
+| **v4 developmental pretraining** | **11.34 ± 1.85 (n=3)** | **NO-GO** |
 
-Will be one of:
-- **GO** — sum ≤ 4.1 with both phases ≤ 2.5; cheat #5 closed via developmental pretraining
-- **GO MARGINAL** — sum ≤ 4.5; closure-without-improvement
-- **PARTIAL** — sum 4.5–6.0; needs longer pretraining or more goals
-- **NO-GO v4** — sum > 6.0; cross-projections off-axis even developmentally; pivot to last-resort acknowledgment
+**Cheat #5 is now closed by design.** v3 lateral inhibition is the biology-grounded winner-take-all in our reduced model. Cross-projections — at any non-zero weight, regardless of training regime — corrupt the cascade. v4 confirms the pattern is robust across architectures.
 
-## Background
+## Tier 1 (wiring smoke) — PASS
 
-v3 lateral inhibition shipped (GO, 2026-04-28, sum 4.26 ± 0.50, no regression). v3.1 cross-projections still failed phase-2 readaptation (NO-GO, sum 8.92, P1=6.35 = 2.5× P0). Interpretation in [research/findings/2026-04-28-cheat5-v3-results.md](2026-04-28-cheat5-v3-results.md) was that adult STDP+reward on a converged BG cascade can't shape useful cross-projection structure — the refinement might be a developmental phenomenon.
+Single seed, 1 goal × 1000 trials of pretraining + 1800 eval. Confirmed the v4 pipeline works end-to-end.
 
-v4 tests that hypothesis: pre-train cross-projections under varied tasks during a "critical period" (all plasticity gates open), then freeze them at the start of eval and run the standard 1800-step moving-goal scenario.
+| Seed | Pretraining cross weights | P0 (goal=(6,6)) | P1 (goal=(1,6)) | Sum |
+|---|---|---|---|---|
+| 42 | mean=10.935 std=0.499 (no NaN) | 3.85 | 3.74 | 7.59 |
 
-## Architecture
+Wall-clock: 598s. Sum 7.59 isn't meaningful for the decision matrix — Tier 1 is a wiring check. Useful signal: cross-projections grew from 0 to mean 10.9 during pretraining (STDP+reward is exercising the cross-projection synapses as designed).
 
-[docs/plans/2026-04-28-cheat5-v4-design.md](../../docs/plans/2026-04-28-cheat5-v4-design.md) has the full design. Summary:
-- `--developmental-pretraining` runs 10 random goals × 3000 trials each (default), all gates open.
-- Goal sampling: uniform random with Manhattan ≥ 3 from start, no consecutive repeats.
-- After pretraining, the existing curriculum init at [g11_bg_runner.py:1220](../../research/runners/g11_bg_runner.py#L1220) naturally forces `bg_cross_projections=0.0` at eval start. No manual freeze needed.
-- Eval phase is the standard flagship: phase 1 (warmup 600) cortex_to_d1 plastic + sensory frozen; phase 2 cortex_to_d1 frozen + sensory thawed; bg_cross_projections frozen throughout.
+## Tier 2 (signal check) — NO-GO, decisive
 
-## Tier 1 — wiring smoke (PASSED)
-
-Single seed, 1 goal × 1000 trials of pretraining + 1800 eval.
-
-| Seed | Pretraining cross weights | Phase 0 (goal=(6,6)) | Phase 1 (goal=(1,6)) | Sum | Status |
-|---|---|---|---|---|---|
-| 42 | mean=10.935 std=0.499 (no NaN) | meanD=3.33 finalQ=3.85 | meanD=4.67 finalQ=3.74 | 7.59 | ✅ wiring OK |
-
-Pass criteria all met:
-- rc=0, eval ran 1800 steps to completion
-- "pretraining complete: 1000 trials, 1 goal changes" line present
-- cross weights summary not NaN
-- Agent visited goal cell during eval (positions cycled through (1,6)/(1,7)/(2,7) area)
-
-Sum 7.59 is not meaningful for the decision matrix — Tier 1's 1 goal × 1000 pretraining is a wiring check, not a real developmental phase. Useful signal: cross-projections grew from 0.0 to mean 10.9, confirming the helper is exercising STDP+reward on the cross-projection synapses as intended.
-
-Wall-clock: 598s (~10 min single-process).
-
-## Tier 2 — reduced smoke (PENDING)
-
-3 seeds (42, 43, 44), 5 goals × 1000 trials = 5K pretraining + 1800 eval each.
+3 seeds, 5 goals × 1000 trials = 5K pretraining + 1800 eval each. ~60 minutes per seed at 3-concurrent.
 
 | Seed | Pretraining cross weights | P0 finalQ | P1 finalQ | Sum |
 |---|---|---|---|---|
-| 42 | TBD | TBD | TBD | TBD |
-| 43 | TBD | TBD | TBD | TBD |
-| 44 | TBD | TBD | TBD | TBD |
-| **mean** | — | TBD | TBD | TBD ± TBD |
+| 42 | mean=11.093 std=0.632 | 4.63 | 5.18 | 9.81 |
+| 43 | mean=10.931 std=0.634 | 5.60 | **7.80** | **13.40** |
+| 44 | mean=11.003 std=0.518 | 4.41 | 6.39 | 10.80 |
+| **mean** | — | **4.88** | **6.46** | **11.34 ± 1.85** |
 
-**Verdict (TBD)**: ≤ 4.5 → proceed to Tier 3. 4.5–6 → review per-seed. > 6 → NO-GO v4.
+**All 3 seeds individually exceed the > 6.0 NO-GO threshold.** The decision matrix from the design doc:
 
-## Tier 3 — full validation (PENDING)
+| Eval-phase mean sum | Verdict | Action |
+|---|---|---|
+| ≤ 4.1 | GO | propagate, close cheat #5 |
+| 4.1–4.5 | GO MARGINAL | document closure-without-improvement |
+| 4.5–6.0 | PARTIAL | try longer pretraining or more goals |
+| > 6.0 | **NO-GO v4** | **pivot to last-resort closure-by-design** ← we are here |
 
-6 seeds (42, 43, 44, 100, 101, 102), 10 goals × 3000 trials = 30K pretraining + 1800 eval each.
+## Tier 3 — skipped
 
-| Seed | Pretraining cross weights | P0 finalQ | P1 finalQ | Sum |
-|---|---|---|---|---|
-| 42 | TBD | TBD | TBD | TBD |
-| 43 | TBD | TBD | TBD | TBD |
-| 44 | TBD | TBD | TBD | TBD |
-| 100 | TBD | TBD | TBD | TBD |
-| 101 | TBD | TBD | TBD | TBD |
-| 102 | TBD | TBD | TBD | TBD |
-| **mean** | — | TBD | TBD | TBD ± TBD |
+The plan called for Tier 3 (6 seeds × 30K pretraining, ~14h overnight) only if Tier 2 showed ≥ partial signal (≤ 4.5 mean). Tier 2 came in at 11.34 with all 3 seeds unanimous past the NO-GO line. Running Tier 3 would waste 14h on a known-bad outcome. Per the plan: "If v4 also fails: acknowledge cheat #5 is closed by design."
 
-**Verdict (TBD)**: per the decision matrix above.
+## Why v4 fails
 
-## Interpretation (TBD)
+The signal is consistent across all attempts:
 
-Will be filled in based on the final outcome:
+1. **v1/v2** (cross-projections, adult-only, multiple thaw schedules) — phase-2 readaptation breaks: 3-seed avg 8.40.
+2. **v3.1** (cross-projections + lateral inhibition, adult thaw at step 1200) — same pattern, 6-seed 8.92, P1=6.35 = 2.5× P0.
+3. **v4** (cross-projections developed during a 5K-trial critical period, then frozen for eval) — *worse*, 3-seed 11.34, both phases bad.
 
-**If GO**: cheat #5 is closed via developmental pretraining. The simulator now demonstrates two distinct learning regimes — developmental (high plasticity, varied experience) and adult (lower plasticity, task-specific) — beyond the immediate cheat #5 closure.
+The pretraining itself worked: cross-weights grew from 0 to mean ~11.0 with low variance across seeds (std ~0.5–0.6). Pretraining IS shaping the cross-projection synapses under varied experience. But the resulting connectivity, when frozen and exposed to the eval task, **degrades performance** — even Phase 0 (the initial goal acquisition that was always easy) drops from ~2 to ~5.
 
-**If MARGINAL/PARTIAL**: developmental pretraining shapes cross-projections, but the resulting weights don't drive better behavior than the same-action-only architecture. Useful negative finding: cross-projections are a *biological constraint we can satisfy* rather than a *behavioral lever*.
+Two interpretations, in increasing strength of evidence:
 
-**If NO-GO**: cross-projections are off-axis at this level of abstraction. Pivot to the last-resort plan — close cheat #5 *by design*, acknowledging same-action-only as the reduced-model equivalent of biological winner-take-all.
+1. **Cross-projection refinement requires structural plasticity, not just weight plasticity.** Real BG anatomy is not 4×4 fully connected — it's sparse and heterogeneous, refined by axon pruning and synaptic stabilization during development. Our model has the connectivity hard-coded; only weights move. Maybe weight-only refinement can never produce useful cross-action structure.
+2. **Cross-projections are off-axis at this level of abstraction.** Our reduced model already achieves winner-take-all action selection through (a) v3 MSN cross-pool lateral inhibition + (b) per-action argmax readout. Cross-projections add a noise channel that the mature cascade can't cleanly suppress, regardless of how they were trained. Same-action-only IS the functional equivalent of biological winner-take-all in this substrate.
+
+Hypothesis (2) is more parsimonious given three independent failed attempts and is the working interpretation going forward.
+
+## Closure: cheat #5 closed by design
+
+Per the design doc's "If v4 also fails" plan:
+
+> Last-resort plan: acknowledge cheat #5 is closed *by design* — same-action-only is the biological winner-take-all in our reduced model, with cross-projection development happening implicitly via the architecture. Document explicitly:
+> - Real BG anatomically dense, functionally same-action-dominant
+> - Our model: same-action-only structurally, equivalent functional behavior
+> - Closure rationale: identical functional outcome, simpler substrate
+>
+> This isn't a punt — it's a principled choice given the simulator's level of abstraction. v3 lateral inhibition + same-action structure ≈ functional equivalent of real BG's anatomically-dense + winner-take-all.
+
+**Decision: cheat #5 is closed.** v3 lateral inhibition (`--bg-lateral-inhibition`, shipped in flagship recommended config 2026-04-28 morning) IS the biology-grounded winner-take-all. The flagship eval result of 4.26 ± 0.50 (n=6, no regression) is the closing data point.
+
+Cross-projections (`--bg-cross-projections`, with or without `--developmental-pretraining`) remain opt-in for future experiments — e.g., if someone adds structural plasticity or wants to test other connectivity refinement mechanisms — but are NOT recommended for any current flagship configuration.
+
+## What ships from this finding
+
+- **No code reverts.** The v4 implementation (`_run_pretraining_phase`, `--developmental-pretraining`, conflict-flag check, warning) remains in the codebase as opt-in infrastructure. It works; it's just not useful for cheat #5 closure. Could be repurposed for pretraining other pathways.
+- **CLAUDE.md updated** to mark cheat #5 fully closed (v3 GO + v4 NO-GO).
+- **Recommended flagship config unchanged** from this morning's update (already includes `--bg-lateral-inhibition`).
+- **No follow-up plan needed** for cheat #5 itself. The next research priority moves to one of:
+  - Scaling (16×16 grid, larger BG)
+  - Replay (NREM/REM cycles)
+  - Multi-modal sensory integration
+  - Cerebellum / fine motor control
+  - Other items in `project_next_priorities.md`
 
 ## Files
 
-- Tier 1: `research/findings/raw/g11_bg/g11_seed42_flagship_6bcecf.json`
-- Tier 2: `research/findings/raw/g11_bg/g11_seed{42,43,44}_flagship_<id>.json` (TBD)
-- Tier 3: `research/findings/raw/g11_bg/g11_seed{42,43,44,100,101,102}_flagship_<id>.json` (TBD)
+- Tier 1 result: `research/findings/raw/g11_bg/g11_seed42_flagship_6bcecf.json`
+- Tier 2 results: `research/findings/raw/g11_bg/g11_seed{42,43,44}_flagship_{1b94af,c773ef,8ce983}.json`
 - Aggregator: `scripts/analyze_cheat5_v4.py`
-- Tier 3 launcher: `scripts/launch_cheat5_v4_tier3.sh`
+- Tier 3 launcher (unused): `scripts/launch_cheat5_v4_tier3.sh` (kept for reference; would only fire if a future variant needs full validation)
 
-## Updates needed (when verdict lands)
+## Updates propagated
 
-- [ ] CLAUDE.md "Cheat #5 progress (2026-04-28)" — add v4 result row
-- [ ] docs/SCIENCE_ROADMAP.md §4.7 — append v4 row
-- [ ] research/findings/INDEX.md — link this finding doc
-- [ ] CHANGELOG.md — add v4 entry to 2026-04-28
-- [ ] Memory: update `project_cheat5_v3_results.md` with v4 outcome OR add `project_cheat5_v4_results.md` + line to MEMORY.md
-- [ ] If GO: spawn follow-up task for pretrained-weight persistence (HDF5 save/load, deferred at design time)
-- [ ] If NO-GO: spawn follow-up task for the last-resort closure-by-design plan
+- [x] CLAUDE.md "Cheat #5 progress (2026-04-28)" — v4 NO-GO row added; cheat #5 marked closed
+- [x] docs/SCIENCE_ROADMAP.md §4.7 — v4 row appended, cheat #5 status flipped
+- [x] research/findings/INDEX.md — link added
+- [x] CHANGELOG.md — v4 NO-GO entry under 2026-04-28
+- [x] Memory: `project_cheat5_v3_results.md` updated with v4 outcome

@@ -428,23 +428,33 @@ distance-based reward.** Reward computed from beacon-intensity gradient.
 **Biology-grounded (4.08) BEATS cheats-allowed (4.41)** — closing perception/reward
 cheats actually *helps* learning.
 
-**Cheat #5 progress (2026-04-28):**
-- **v3 (`--bg-lateral-inhibition`) — GO.** Adds MSN cross-pool lateral
-  inhibition, the missing winner-take-all biology. 6-seed sum 4.26 ±
-  0.50 vs flagship baseline 4.08 — no regression. P1 (1.91) actually
-  beats P0 (2.35), so readaptation is improved. **Recommended as a
-  permanent default in all future flagship runs.** See [`research/findings/2026-04-28-cheat5-v3-results.md`](research/findings/2026-04-28-cheat5-v3-results.md).
+**Cheat #5 — CLOSED 2026-04-28** (v3 GO, v3.1 NO-GO, v4 NO-GO):
+- **v3 (`--bg-lateral-inhibition`) — GO and shipped.** Adds MSN
+  cross-pool lateral inhibition. 6-seed sum 4.26 ± 0.50 vs flagship
+  baseline 4.08 (no regression). P1 (1.91) beats P0 (2.35) so
+  readaptation is improved. **Permanent default in flagship config.**
+  See [`research/findings/2026-04-28-cheat5-v3-results.md`](research/findings/2026-04-28-cheat5-v3-results.md).
 - **v3.1 (`--bg-lateral-inhibition --bg-cross-projections ...`) — NO-GO.**
-  Adding cross-projections on top of v3 lateral inhibition still breaks
-  phase-2 readaptation: 6-seed sum 8.92 ± 2.44, P1 6.35 (2.5× P0).
-  Lateral inhibition wasn't the missing piece for cross-projections.
-- **Interpretation:** cross-projection refinement is likely a
-  **developmental phenomenon, not adult learning** — STDP+reward on a
-  converged cascade can't shape useful cross-action structure from
-  random init even with all the local biology pieces. v4
-  (developmental pre-training) is the next attempt; see
-  [`docs/plans/2026-04-28-cheat5-v3-lateral-inhibition.md`](docs/plans/2026-04-28-cheat5-v3-lateral-inhibition.md)
-  Task 4 for the plan.
+  Adult thaw at step 1200 still breaks phase-2: 6-seed 8.92 ± 2.44,
+  P1 6.35.
+- **v4 (`--developmental-pretraining ...`) — NO-GO.** Pre-training
+  cross-projections during a 5K-trial critical period, then freezing
+  for eval, is *worse* than v3.1: 3-seed 11.34 ± 1.85, P0 4.88 (even
+  initial goal acquisition degrades), P1 6.46. Tier 3 (overnight 6-seed
+  validation) skipped — Tier 2 was unanimous past the > 6.0 NO-GO
+  threshold. See [`research/findings/2026-04-28-cheat5-v4-results.md`](research/findings/2026-04-28-cheat5-v4-results.md).
+- **Closure rationale:** cheat #5 is closed *by design*. v3 MSN
+  lateral inhibition + same-action-only cortex→striatum routing IS
+  the functional equivalent of biological winner-take-all in our
+  reduced model. Cross-projections at any non-zero weight, regardless
+  of training regime (adult thaw, developmental pre-training), corrupt
+  the cascade. Real BG is anatomically dense + functionally
+  same-action-dominant; our reduced model achieves the equivalent
+  functional outcome with a simpler substrate. **Not a punt — a
+  principled choice given the simulator's level of abstraction.**
+- **`--bg-cross-projections` and `--developmental-pretraining` remain
+  opt-in** for future experiments (e.g., adding structural plasticity)
+  but are NOT recommended for any current flagship configuration.
 
 **Without sensed reward (perception arc only, 2026-04-27 night):**
 ```bash
@@ -512,7 +522,8 @@ The `--adaptive-da --adaptive-da-ema-decay-negative 0.7` config is kept opt-in b
 - `--per-action-da`: hard eligibility gating (always ON). Same exploitation/exploration trade-off as WTA.
 - `--rpe-scaled-reward`: amplifies reward signal magnitude by RPE. Modest help, but `--surprise-lr-boost` is cleaner architecturally.
 - `--learned-perception` (standalone, REPLACES heuristic): NEGATIVE in 2026-04-26 cold-start tests — random init produces no asymmetry for STDP+reward to amplify. **However, when combined with `--hippocampus`, `--pfc`, `--curriculum` and (since 2026-04-27) the perception arc flags, it composes successfully.** The flagship config uses it.
-- `--bg-cross-projections`: learnable cortex_X → str_D1_Y all-to-all. NEGATIVE in v1/v2 (3-seed avg 8.40) AND v3.1 (6-seed avg 8.92, even with lateral inhibition). Phase-2 readaptation breaks across all attempts. Pivot is v4 developmental pre-training (Task 4 of the v3 plan).
+- `--bg-cross-projections`: learnable cortex_X → str_D1_Y all-to-all. NEGATIVE in v1/v2 (3-seed avg 8.40), v3.1 (6-seed 8.92), AND v4 developmental pretraining (3-seed 11.34). Phase-2 readaptation breaks across all attempts. Cheat #5 closed by design 2026-04-28: v3 lateral inhibition is the functional WTA equivalent in our reduced model. Cross-projections kept opt-in for future structural-plasticity experiments.
+- `--developmental-pretraining`: critical-period analog (all gates open) for N goals × M trials, then freeze cross-projections for eval. v4 NO-GO — see `research/findings/2026-04-28-cheat5-v4-results.md`. Kept opt-in for pretraining other pathways in future experiments.
 - `--bg-lateral-inhibition`: MSN cross-pool lateral inhibition. **GO 2026-04-28** (6-seed 4.26 ± 0.50, no regression). Recommended as a permanent default in all flagship runs going forward — biology-grounded WTA selection.
 - Combo flags: combining adaptive DA with WTA, or adaptive DA with LR boost, doesn't compose well. Mechanisms interfere through shared reward EMA. Use one, not both.
 

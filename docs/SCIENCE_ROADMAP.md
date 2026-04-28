@@ -509,29 +509,36 @@ intensity_after  = beacon_max_intensity / (1.0 + beacon_falloff * d_after)
 reward = sign(intensity_after - intensity_before)  # ±1 / 0
 ```
 
-**Cheat #5 progress (2026-04-28):**
+**Cheat #5 — CLOSED 2026-04-28** (by-design, v3 lateral inhibition is the WTA equivalent):
 
-| Variant | 6-seed avg | P0 | P1 | Verdict |
+| Variant | n-seed avg | P0 | P1 | Verdict |
 |---|---:|---:|---:|---|
 | v1 (curriculum-staged cross-projections) | 10.87 (3-seed) | — | — | NEGATIVE — gate doesn't freeze synaptic transmission |
 | v2 (zero-init cross-projections) | 7.89 (3-seed) | 2.49 | 5.40 | NEGATIVE — thaw-time STDP corrupts converged policy |
-| **v3 (`--bg-lateral-inhibition`)** | **4.26 ± 0.50** | 2.35 | 1.91 | **GO — no regression; permanent default** |
-| v3.1 (`--bg-lateral-inhibition --bg-cross-projections ...`) | 8.92 ± 2.44 | 2.58 | 6.35 | NO-GO — phase-2 readaptation breaks |
+| **v3 (`--bg-lateral-inhibition`)** | **4.26 ± 0.50 (6-seed)** | 2.35 | 1.91 | **GO — no regression; permanent default** |
+| v3.1 (`... --bg-cross-projections` + adult thaw) | 8.92 ± 2.44 (6-seed) | 2.58 | 6.35 | NO-GO — phase-2 breaks |
+| **v4 (`... --developmental-pretraining`)** | 11.34 ± 1.85 (3-seed Tier 2) | 4.88 | 6.46 | **NO-GO — worse than v3.1; Tier 3 skipped** |
 
 - **v3 GO (2026-04-28):** MSN cross-pool lateral inhibition (24 GABAergic
   pathways, `plastic=False`) is biology-grounded, harmless to flagship
   performance, **shipped as a permanent default in the recommended
-  flagship config**. P1 (1.91) actually beats P0 (2.35), so readaptation
-  is improved.
-- **v3.1 NO-GO:** layering cross-projections on top of v3 lateral
-  inhibition still breaks phase-2 readaptation. Lateral inhibition wasn't
-  the missing piece for cross-projections.
-- **Interpretation:** cross-projection refinement is likely a
-  **developmental phenomenon, not adult learning** — STDP+reward on a
-  converged cascade can't shape useful cross-action structure from random
-  init even with all the local biology pieces in place. v4 (developmental
-  pre-training) is the next attempt.
-- Findings: `2026-04-28-cheat5-v3-results.md`,
+  flagship config**.
+- **v3.1 NO-GO:** layering adult-learning cross-projections on top of v3
+  lateral inhibition still breaks phase-2 readaptation.
+- **v4 NO-GO:** pre-training cross-projections during a 5K-trial critical
+  period (all gates open) and freezing for eval is *worse* than v3.1,
+  even on Phase 0. Pretraining DID develop cross weights consistently
+  (mean ~11, std ~0.5 across all 3 seeds) — the topology, not the
+  training, is the limit.
+- **Cheat #5 is closed by design.** v3 MSN lateral inhibition + the
+  same-action-only cortex→striatum routing IS the functional equivalent
+  of biological winner-take-all in our reduced model. Real BG is
+  anatomically dense + functionally same-action-dominant; our reduced
+  model achieves the equivalent functional outcome with a simpler
+  substrate. Cross-projections at any non-zero weight, regardless of
+  training regime, corrupt the cascade. **Not a punt — a principled
+  choice given the simulator's level of abstraction.**
+- Findings: `2026-04-28-cheat5-v4-results.md`, `2026-04-28-cheat5-v3-results.md`,
   `2026-04-28-cheat5-v2-NEGATIVE.md`, `2026-04-28-cheat5-v1-NEGATIVE.md`.
 
 **Recipe (current flagship — includes v3 lateral inhibition):**
@@ -551,6 +558,7 @@ python -m research.runners.g11_bg_runner --moving-goal \
 Findings:
 - `2026-04-27-NEW-BEST-4cheats-closed.md` (the original 4.08 milestone)
 - `2026-04-28-cheat5-v3-results.md` (v3 lateral inhibition GO; v3.1 cross NO-GO)
+- `2026-04-28-cheat5-v4-results.md` (v4 developmental pretraining NO-GO; cheat #5 closed by design)
 
 ### 4.12 Open future directions
 
