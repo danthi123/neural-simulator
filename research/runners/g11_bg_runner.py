@@ -1129,6 +1129,16 @@ def run_moving_goal_episode(
     runner-side interventions all failed to do), phase 1 finalQ should
     drop substantially below the G9 baseline of 6.74.
     """
+    # v4 (2026-04-28): conflict check. v4 keeps cross-projections frozen
+    # during eval; v3.1 thaws them at bg_cross_thaw_step. Both at once is
+    # meaningless. Fail loud instead of silent priority resolution.
+    if enable_developmental_pretraining and bg_cross_thaw_step >= 0:
+        raise ValueError(
+            "--developmental-pretraining (v4) is incompatible with "
+            "--bg-cross-thaw-step (v3.1). v4 keeps cross-projections frozen "
+            "throughout eval; v3.1 thaws them mid-eval. Use one or the other, "
+            f"not both. Got bg_cross_thaw_step={bg_cross_thaw_step}."
+        )
     import cupy as cp
     from sim import (
         SimulationBridge, CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig,

@@ -576,3 +576,21 @@ def test_run_moving_goal_with_pretraining_smoke(tmp_out_path):
         result = json.load(f)
     assert "phase_stats" in result
     assert result["seed"] == 42
+
+
+def test_developmental_pretraining_rejects_v3_1_thaw_conflict(tmp_out_path):
+    """v4 keeps cross-projections frozen during eval; v3.1 thaws them at
+    bg_cross_thaw_step. Both at once is meaningless. The runner should
+    raise ValueError early instead of silently doing one or the other."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    with pytest.raises(ValueError) as exc:
+        run_moving_goal_episode(
+            out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+            enable_bg_cross_projections=True,
+            enable_developmental_pretraining=True,
+            bg_cross_thaw_step=10,  # v3.1 mechanism — incompatible
+            pretraining_n_goals=0, pretraining_steps_per_goal=0,
+        )
+    assert "developmental-pretraining" in str(exc.value)
+    assert "bg_cross_thaw_step" in str(exc.value) or "bg-cross-thaw-step" in str(exc.value)
