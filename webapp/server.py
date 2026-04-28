@@ -653,13 +653,25 @@ def _read_new_lines(path: str, pos: int) -> tuple[int, list[str]]:
 
 
 def _process_alive(pid: int | None) -> bool:
-    """Check whether a pid is still running. Cross-platform via os.kill(pid, 0)."""
-    if pid is None:
+    """Check whether a pid is still running.
+
+    On Linux/Mac we use os.kill(pid, 0). On Windows os.kill can raise
+    SystemError ("WinError 87 — the parameter is incorrect") for stale
+    or recycled pids in a way that propagates through bare except
+    handlers and breaks uvicorn --reload. Use psutil.pid_exists if
+    available, which handles the bad-pid case cleanly. Fall back to
+    os.kill otherwise."""
+    if pid is None or pid <= 0:
         return False
     try:
-        os.kill(pid, 0)
+        import psutil  # type: ignore
+        return psutil.pid_exists(int(pid))
+    except ImportError:
+        pass
+    try:
+        os.kill(int(pid), 0)
         return True
-    except (OSError, ProcessLookupError):
+    except Exception:
         return False
 
 
@@ -757,6 +769,8 @@ def launch_status(run_id: str) -> JSONResponse:
         raise HTTPException(404, "unknown run_id")
     is_running = run.proc is not None and run.proc.poll() is None
     end_time = run.finished_at if run.finished_at is not None else time.time()
+    # Surface the launch command list so the frontend can detect feature
+    # flags (e.g. --landmarks) for live runs without re-parsing the sidecar.
     return JSONResponse({
         "run_id": run.run_id,
         "running": is_running,
@@ -767,6 +781,7 @@ def launch_status(run_id: str) -> JSONResponse:
         "tail": run.stdout_lines[-20:],
         "progress_events": [_progress_to_json(p) for p in run.progress_events],
         "out_path": run.out_path,
+        "cmd": list(run.cmd),
     })
 
 

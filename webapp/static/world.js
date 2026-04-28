@@ -48,6 +48,11 @@ let world = {
   liveSocket: null,
   livePoints: [],   // [{step, total, pos, goal, recent_dist}]
   liveChart: null,  // makeLineChart instance for live recent_dist
+  // Whether the currently-displayed run was launched with --landmarks. The
+  // landmark icon (blue ring at grid center) and the "Landmark" legend row
+  // are clutter for runs without this flag. Default true so the no-run-loaded
+  // empty state shows the full legend (preview of all icon meanings).
+  usedLandmarks: true,
 };
 
 export function setupWorldTab() {
@@ -382,6 +387,26 @@ async function attachLive(runId, listItem) {
   } catch {
     world.interactive = false;
   }
+  // Detect whether this live run was launched with --landmarks so the
+  // landmark icon + legend row can be hidden when the cue isn't actually
+  // in play. /api/runs/launch/{id} returns the full cmd list.
+  try {
+    const statusRes = await fetch(`/api/runs/launch/${runId}`);
+    if (statusRes.ok) {
+      const status = await statusRes.json();
+      const cmd = Array.isArray(status.cmd) ? status.cmd : [];
+      world.usedLandmarks = cmd.some(
+        (t) => typeof t === "string" && t.includes("landmarks"),
+      );
+    } else {
+      // Fallback if the endpoint isn't available — show by default so the
+      // user isn't silently missing the landmark cue.
+      world.usedLandmarks = true;
+    }
+  } catch {
+    world.usedLandmarks = true;
+  }
+  updateLegendVisibility();
   setupControlPanel();
   openLiveSocket(runId);
 }
@@ -521,6 +546,10 @@ function closeLiveSocket() {
   world.liveChart = null;
   world.liveStartedAt = null;
   world.interactive = false;
+  // Restore the legend to its full default state on detach so the user
+  // sees all icon meanings again (matches the no-run-loaded state).
+  world.usedLandmarks = true;
+  updateLegendVisibility();
   pauseState = false;
   // Defensive: ensure the picker auto-refresh is running so the runs
   // list keeps ticking after detach. Idempotent — openLiveModePicker
@@ -713,6 +742,15 @@ async function loadRun(name, listItem) {
     const data = await res.json();
     world.data = data;
     world.step = 0;
+    // Detect whether this saved run was launched with --landmarks. Runs
+    // without it shouldn't show the landmark icon or legend row (no
+    // landmark cue exists in the simulation). Older runs predating
+    // config_flags lack the field — treat as "no landmarks" so the legend
+    // is cleaner; users running landmarks-aware experiments will be on
+    // newer runs anyway.
+    world.usedLandmarks = (Array.isArray(data.config_flags) ? data.config_flags : [])
+      .some((f) => typeof f === "string" && f.includes("landmarks"));
+    updateLegendVisibility();
     const canvas = $("#world-canvas");
     resizeCanvas(canvas, data.grid_size || 8);
     const total = (data.trajectory || []).length;
@@ -823,6 +861,15 @@ function getStepReward(stepIdx) {
   return null;
 }
 
+/** Show or hide the "Landmark" row in the legend HUD based on whether the
+ *  current run was launched with --landmarks. The row has explicit id
+ *  `legend-landmark` so we don't depend on CSS :has() support. */
+function updateLegendVisibility() {
+  const row = document.getElementById("legend-landmark");
+  if (!row) return;
+  row.style.display = world.usedLandmarks ? "" : "none";
+}
+
 function renderFrame() {
   const canvas = $("#world-canvas");
   const ctx = canvas.getContext("2d");
@@ -853,8 +900,12 @@ function renderFrame() {
 
   // Landmark (assume at grid center if --landmarks was used; we don't have
   // explicit landmark logging in JSON yet, so we just show a faint marker
-  // at the center as a default visualization)
-  drawLandmark(ctx, gridSize, [Math.floor(gridSize / 2), Math.floor(gridSize / 2)]);
+  // at the center as a default visualization). Skipped entirely for runs
+  // that weren't launched with --landmarks — the icon would be misleading
+  // clutter (no landmark cue actually exists in the simulation).
+  if (world.usedLandmarks) {
+    drawLandmark(ctx, gridSize, [Math.floor(gridSize / 2), Math.floor(gridSize / 2)]);
+  }
 
   // Trajectory trail
   drawTrajectoryTrail(ctx, data.trajectory || [], step);
