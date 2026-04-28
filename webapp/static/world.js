@@ -265,18 +265,13 @@ async function refreshLivePicker(showHeading) {
   const list = $("#world-runs-list");
   if (showHeading) {
     list.replaceChildren();
-    const heading = document.createElement("div");
-    heading.className = "muted";
-    heading.style.marginBottom = "8px";
-    heading.textContent = "Live runs (in-flight on this server):";
-    list.appendChild(heading);
   }
 
   try {
     const res = await fetch("/api/runs/launch");
     const data = await res.json();
     if (!data.runs.length) {
-      // Replace whole content (heading + content) on empty state
+      // Replace whole content on empty state
       list.replaceChildren();
       const heading = document.createElement("div");
       heading.className = "muted";
@@ -284,17 +279,8 @@ async function refreshLivePicker(showHeading) {
       list.appendChild(heading);
       return;
     }
-    // Smart re-render: keep heading, replace just the row entries so the
-    // user's scroll position + checkbox states are preserved across ticks.
-    const existingHeading = list.querySelector(".muted");
+    // Re-render the row entries.
     list.replaceChildren();
-    if (existingHeading || showHeading) {
-      const heading = document.createElement("div");
-      heading.className = "muted";
-      heading.style.marginBottom = "8px";
-      heading.textContent = "Live runs (in-flight on this server):";
-      list.appendChild(heading);
-    }
     for (const r of data.runs) {
       const item = document.createElement("div");
       item.className = "world-run-item";

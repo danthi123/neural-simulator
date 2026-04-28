@@ -79,6 +79,10 @@ class LaunchedRun:
     started_at: float
     proc: subprocess.Popen[bytes] | None = None
     returncode: int | None = None
+    # Set when the subprocess exits (or, for orphan recovery, when we
+    # detect the orphan PID is dead). Used to freeze elapsed_sec for done
+    # runs so the live picker stops ticking once a run completes.
+    finished_at: float | None = None
     stdout_lines: list[str] = field(default_factory=list)
     progress_events: list[ProgressEvent] = field(default_factory=list)
     out_path: str | None = None
@@ -465,6 +469,8 @@ def kill_run(run_id: str) -> JSONResponse:
                 run.proc.kill()
                 run.proc.wait(timeout=2)
             run.returncode = run.proc.returncode
+            if run.finished_at is None:
+                run.finished_at = time.time()
             return JSONResponse({
                 "run_id": run_id, "status": "killed",
                 "returncode": run.returncode,
@@ -493,6 +499,8 @@ def kill_run(run_id: str) -> JSONResponse:
                 # Windows doesn't have SIGKILL; signal.SIGTERM already does TerminateProcess.
                 pass
         run.returncode = -15  # convention for SIGTERM-killed
+        if run.finished_at is None:
+            run.finished_at = time.time()
         return JSONResponse({
             "run_id": run_id, "status": "killed (orphan)",
             "returncode": run.returncode,
@@ -697,12 +705,21 @@ async def _drain_log(run: LaunchedRun) -> None:
                         if ev is not None:
                             run.progress_events.append(ev)
                 run.returncode = rc
+                if run.finished_at is None:
+                    run.finished_at = time.time()
                 break
         else:
             # Recovered orphan: no proc handle. Stop draining when the pid
             # is gone AND the log has been quiet for a few iterations.
             if not _process_alive(run.pid) and quiet_iters > 5:
                 run.returncode = 0  # we don't know the actual rc post-orphan
+                if run.finished_at is None:
+                    # Best-effort: use the log file's mtime when available
+                    # (closer to actual completion than time.time() now).
+                    try:
+                        run.finished_at = Path(run.log_file).stat().st_mtime
+                    except (OSError, TypeError):
+                        run.finished_at = time.time()
                 break
 
         await asyncio.sleep(0.2)
@@ -716,12 +733,15 @@ def list_active_launches() -> JSONResponse:
     for run in launched_runs.values():
         is_running = run.proc is not None and run.proc.poll() is None
         latest = run.progress_events[-1] if run.progress_events else None
+        # Freeze elapsed_sec for done runs so the live picker stops ticking
+        # once a run completes.
+        end_time = run.finished_at if run.finished_at is not None else time.time()
         out.append({
             "run_id": run.run_id,
             "running": is_running,
             "returncode": run.returncode,
             "started_at": run.started_at,
-            "elapsed_sec": time.time() - run.started_at,
+            "elapsed_sec": end_time - run.started_at,
             "out_path": run.out_path,
             "interactive": run.control_file is not None,
             "latest_progress": _progress_to_json(latest) if latest else None,
@@ -736,12 +756,13 @@ def launch_status(run_id: str) -> JSONResponse:
     if not run:
         raise HTTPException(404, "unknown run_id")
     is_running = run.proc is not None and run.proc.poll() is None
+    end_time = run.finished_at if run.finished_at is not None else time.time()
     return JSONResponse({
         "run_id": run.run_id,
         "running": is_running,
         "returncode": run.returncode,
         "started_at": run.started_at,
-        "elapsed_sec": time.time() - run.started_at,
+        "elapsed_sec": end_time - run.started_at,
         "stdout_line_count": len(run.stdout_lines),
         "tail": run.stdout_lines[-20:],
         "progress_events": [_progress_to_json(p) for p in run.progress_events],
