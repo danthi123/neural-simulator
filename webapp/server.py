@@ -424,3 +424,69 @@ def index() -> FileResponse:
 @app.get("/api/runs/{name}")
 def get_run(name: str) -> JSONResponse:
     return get_run_impl(name)
+
+
+# Auto-group runs by filename suffix and aggregate per-experiment.
+# `g11_seed42_v3lateral.json` → experiment "v3lateral".
+# Used by the Experiments tab; mirrors the frontend's detectExperiment helper
+# so users can hit /api/experiments and see the same grouping the UI shows.
+_EXP_SUFFIX_RE = re.compile(r"^g11_seed\d+(?:_(.+))?\.json$")
+
+
+def _detect_experiment(name: str) -> str:
+    m = _EXP_SUFFIX_RE.match(name)
+    if not m:
+        return "(other)"
+    return m.group(1) or "default"
+
+
+@app.get("/api/experiments")
+def list_experiments() -> JSONResponse:
+    """Group runs by detected experiment, return per-experiment aggregates."""
+    files = sorted(RAW_RUNS_DIR.glob("*.json"), reverse=True)
+    by_exp: dict[str, list[dict[str, Any]]] = {}
+    for f in files:
+        try:
+            data = json.loads(f.read_text())
+        except Exception:
+            continue
+        phase_stats = data.get("phase_stats") or []
+        final_qs = []
+        for ps in phase_stats:
+            v = ps.get("final_quarter_mean_distance") or ps.get("finalQ")
+            if v is not None:
+                final_qs.append(v)
+        sum_q = sum(final_qs) if final_qs else None
+        exp = _detect_experiment(f.name)
+        by_exp.setdefault(exp, []).append({
+            "name": f.name,
+            "seed": data.get("seed"),
+            "n_steps": data.get("n_steps"),
+            "sum_finalQ": sum_q,
+            "modified_unix": f.stat().st_mtime,
+        })
+
+    out = []
+    for exp, runs in by_exp.items():
+        sums = [r["sum_finalQ"] for r in runs if r["sum_finalQ"] is not None]
+        if sums:
+            mean_v = sum(sums) / len(sums)
+            var = sum((x - mean_v) ** 2 for x in sums) / max(1, len(sums) - 1)
+            std_v = var ** 0.5 if len(sums) > 1 else None
+            min_v = min(sums)
+            max_v = max(sums)
+        else:
+            mean_v = std_v = min_v = max_v = None
+        out.append({
+            "experiment": exp,
+            "n_seeds": len(runs),
+            "n_complete": len(sums),
+            "mean_sum": mean_v,
+            "std_sum": std_v,
+            "min_sum": min_v,
+            "max_sum": max_v,
+            "runs": sorted(runs, key=lambda r: r["seed"] or 0),
+        })
+
+    out.sort(key=lambda r: (r["mean_sum"] is None, r["mean_sum"] or 0))
+    return JSONResponse({"experiments": out, "count": len(out)})

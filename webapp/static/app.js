@@ -7,6 +7,12 @@
 
 import { setupWorldTab, loadRunIntoWorld } from "/static/world.js";
 import { makeLineChart, makeBarChart, PALETTE_EXPORT as P } from "/static/charts.js";
+import {
+  toast, loadState, saveState, showSkeleton,
+  registerShortcut, listShortcuts,
+  fmtRelTime, detectExperiment, categorizeExperiment,
+  mean, stdev,
+} from "/static/ui.js";
 
 // Switch to the World tab and load the given run
 function openInWorld(name) {
@@ -54,10 +60,18 @@ function setupTabs() {
       $$("section.tab").forEach((s) =>
         s.classList.toggle("active", s.id === `tab-${t}`),
       );
+      saveState({ activeTab: t });
       if (t === "findings" && !window._findingsLoaded) loadFindings();
       if (t === "info" && !window._infoLoaded) loadInfo();
+      if (t === "overview" && !window._overviewLoaded) loadOverview();
+      if (t === "experiments" && !window._experimentsLoaded) loadExperiments();
     });
   });
+}
+
+function activateTab(tabName) {
+  const btn = document.querySelector(`nav button[data-tab="${tabName}"]`);
+  if (btn) btn.click();
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -526,10 +540,25 @@ function setupLauncher() {
 
     const formData = new FormData(form);
     const extraStr = String(formData.get("extra_args") || "").trim();
+    const extras = extraStr ? extraStr.split(/\s+/) : [];
+
+    // Grid size + n_hippocampus_per_layer are exposed as separate fields
+    // because they're the most-asked-for custom-world knob. Threaded into
+    // extra_args (the runner's CLI). Skip when default (8 / 64) to keep the
+    // command line clean.
+    const gridSize = parseInt(formData.get("grid_size"), 10);
+    const nHippo = parseInt(formData.get("n_hippocampus_per_layer"), 10);
+    if (gridSize && gridSize !== 8) {
+      extras.push("--grid-size", String(gridSize));
+    }
+    if (nHippo && nHippo !== 64) {
+      extras.push("--n-hippocampus-per-layer", String(nHippo));
+    }
+
     const body = {
       preset: String(formData.get("preset")),
       seed: parseInt(formData.get("seed"), 10),
-      extra_args: extraStr ? extraStr.split(/\s+/) : [],
+      extra_args: extras,
     };
 
     try {
@@ -544,9 +573,11 @@ function setupLauncher() {
       appendStatus(out, `cmd: ${launch.cmd.join(" ")}`);
       appendStatus(out, `out: ${launch.out_path}`);
       appendStatus(out, `streaming WebSocket at ${launch.ws_url}…`);
+      toast(`Launched ${launch.run_id} (${body.preset}, seed ${body.seed})`, { kind: "success" });
       tailWebSocket(launch.ws_url, out);
     } catch (e) {
       appendError(out, `Launch failed: ${e.message}`);
+      toast(`Launch failed: ${e.message}`, { kind: "error", duration: 6000 });
     }
   });
 }
@@ -594,12 +625,351 @@ async function loadInfo() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
+// Overview tab — landing dashboard with KPIs, distribution, activity feeds.
+// ─────────────────────────────────────────────────────────────────────────
+async function loadOverview() {
+  window._overviewLoaded = true;
+  const kpiContainer = $("#overview-kpis");
+  const activityContainer = $("#overview-activity");
+  const findingsContainer = $("#overview-findings");
+  showSkeleton(kpiContainer, 4, "card");
+  showSkeleton(activityContainer, 8, "list");
+  showSkeleton(findingsContainer, 6, "list");
+
+  try {
+    const [runsRes, findingsRes, launchesRes] = await Promise.all([
+      fetch("/api/runs").then((r) => r.json()),
+      fetch("/api/findings").then((r) => r.json()),
+      fetch("/api/runs/launch").then((r) => r.json()),
+    ]);
+
+    renderOverviewKPIs(kpiContainer, runsRes.runs, findingsRes.findings, launchesRes.runs);
+    renderOverviewDistribution(runsRes.runs);
+    renderOverviewActivity(activityContainer, runsRes.runs);
+    renderOverviewFindings(findingsContainer, findingsRes.findings);
+  } catch (e) {
+    kpiContainer.replaceChildren(el("p", { class: "error" }, e.message));
+  }
+}
+
+function renderOverviewKPIs(container, runs, findings, launches) {
+  // Filter out smokes for headline metrics
+  const real = runs.filter((r) => !/smoke/i.test(r.name) && r.sum_finalQ != null);
+  const sums = real.map((r) => r.sum_finalQ);
+  const best = real.reduce((a, b) =>
+    a == null || b.sum_finalQ < a.sum_finalQ ? b : a, null);
+
+  const inFlight = (launches || []).filter((l) => l.running);
+  const meanSum = mean(sums);
+  const stdSum = stdev(sums);
+
+  container.replaceChildren(
+    kpiCard("Best run", best ? best.sum_finalQ.toFixed(2) : "—",
+      best ? best.name : "no completed runs",
+      best && best.sum_finalQ < 4.5 ? "kpi-card" : "kpi-card warn",
+      best ? () => activateTab("runs") : null),
+    kpiCard("Total runs", String(real.length),
+      `${runs.length - real.length} smokes excluded`),
+    kpiCard("Mean sum", meanSum != null ? meanSum.toFixed(2) : "—",
+      stdSum != null ? `± ${stdSum.toFixed(2)} std` : ""),
+    kpiCard("Findings", String(findings.length), "session-by-session"),
+    kpiCard("In-flight runs", String(inFlight.length),
+      inFlight.length ? "view in World tab" : "no runs running",
+      inFlight.length ? "kpi-card" : "kpi-card",
+      inFlight.length ? () => activateTab("world") : null),
+  );
+}
+
+function kpiCard(label, value, sub = "", cls = "kpi-card", onClick = null) {
+  const card = el("div", { class: cls }, [
+    el("div", { class: "kpi-label" }, label),
+    el("div", { class: "kpi-value" }, value),
+    el("div", { class: "kpi-sub" }, sub),
+  ]);
+  if (onClick) {
+    card.style.cursor = "pointer";
+    card.addEventListener("click", onClick);
+  }
+  return card;
+}
+
+function renderOverviewDistribution(runs) {
+  const real = runs.filter((r) => !/smoke/i.test(r.name) && r.sum_finalQ != null);
+  if (!real.length) return;
+  const sums = real.map((r) => r.sum_finalQ).sort((a, b) => a - b);
+
+  // Bin into 0.5 bins
+  const minB = Math.floor(Math.min(...sums));
+  const maxB = Math.ceil(Math.max(...sums));
+  const binSize = 0.5;
+  const nBins = Math.ceil((maxB - minB) / binSize);
+  const bins = new Array(nBins).fill(0);
+  for (const s of sums) {
+    let idx = Math.floor((s - minB) / binSize);
+    if (idx >= nBins) idx = nBins - 1;
+    if (idx < 0) idx = 0;
+    bins[idx]++;
+  }
+  const labels = bins.map((_, i) =>
+    (minB + i * binSize).toFixed(1));
+
+  const canvas = $("#overview-distribution");
+  // Color baseline (5.88), flagship (4.08), and current data
+  const baselineBin = Math.floor((5.88 - minB) / binSize);
+  const flagshipBin = Math.floor((4.08 - minB) / binSize);
+  const colors = bins.map((_, i) => {
+    if (i === flagshipBin) return P.accent;
+    if (i === baselineBin) return P.warn;
+    return "#5f6770";
+  });
+
+  const chart = makeBarChart(canvas, {
+    title: `Sum_finalQ distribution across ${real.length} runs (green=flagship 4.08, yellow=baseline 5.88)`,
+    labels,
+    colors,
+  });
+  chart.updateData(bins);
+}
+
+function renderOverviewActivity(container, runs) {
+  // Recent runs sorted by mtime
+  const recent = [...runs].sort((a, b) => (b.modified_unix || 0) - (a.modified_unix || 0)).slice(0, 12);
+  if (!recent.length) {
+    container.replaceChildren(el("p", { class: "muted" }, "No runs yet."));
+    return;
+  }
+  container.replaceChildren();
+  for (const r of recent) {
+    const exp = detectExperiment(r.name);
+    const cat = categorizeExperiment(exp);
+    const sumStr = r.sum_finalQ != null ? r.sum_finalQ.toFixed(2) : "—";
+    const row = el("div", { class: "activity-row" }, [
+      el("span", { class: "name" }, r.name),
+      el("span", { class: "badge", style: `background: ${cat.color}33; color: ${cat.color}` }, cat.category),
+      el("span", { class: "sum" }, sumStr),
+      el("span", { class: "ts" }, fmtRelTime(r.modified_unix)),
+    ]);
+    row.addEventListener("click", () => {
+      activateTab("runs");
+      // Slight delay to let the runs tab activate, then click that row
+      setTimeout(() => {
+        const item = Array.from(document.querySelectorAll("#runs-list .list-item"))
+          .find((i) => i.querySelector(".name")?.textContent === r.name);
+        if (item) {
+          item.scrollIntoView({ block: "center" });
+          item.click();
+        } else {
+          // Maybe filter is hiding it; show toast
+          toast(`Run not in current filter view: ${r.name}`, { kind: "warn" });
+        }
+      }, 150);
+    });
+    container.appendChild(row);
+  }
+}
+
+function renderOverviewFindings(container, findings) {
+  const recent = [...findings].slice(0, 10);
+  if (!recent.length) {
+    container.replaceChildren(el("p", { class: "muted" }, "No findings."));
+    return;
+  }
+  container.replaceChildren();
+  for (const f of recent) {
+    const row = el("div", { class: "activity-row" }, [
+      el("span", { class: "name" }, f.name),
+      el("span", { class: "ts" }, fmtRelTime(f.modified_unix)),
+    ]);
+    row.addEventListener("click", () => {
+      activateTab("findings");
+      setTimeout(() => {
+        const item = Array.from(document.querySelectorAll("#findings-list .list-item"))
+          .find((i) => i.querySelector(".name")?.textContent === f.name);
+        if (item) {
+          item.scrollIntoView({ block: "center" });
+          item.click();
+        }
+      }, 150);
+    });
+    container.appendChild(row);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Experiments tab — auto-group runs by filename suffix, show per-experiment
+// aggregates (mean ± std, n_seeds, distribution).
+// ─────────────────────────────────────────────────────────────────────────
+async function loadExperiments() {
+  window._experimentsLoaded = true;
+  const list = $("#experiments-list");
+  showSkeleton(list, 8, "list");
+  try {
+    const data = await fetch("/api/runs").then((r) => r.json());
+    renderExperiments(list, data.runs);
+  } catch (e) {
+    list.replaceChildren(el("p", { class: "error" }, e.message));
+  }
+}
+
+function renderExperiments(list, runs) {
+  const hideSmoke = $("#exp-hide-smoke")?.checked ?? true;
+  const onlyMulti = $("#exp-only-multi-seed")?.checked ?? true;
+
+  // Group by experiment name
+  const groups = new Map();
+  for (const r of runs) {
+    if (hideSmoke && /smoke/i.test(r.name)) continue;
+    const exp = detectExperiment(r.name);
+    if (!groups.has(exp)) groups.set(exp, []);
+    groups.get(exp).push(r);
+  }
+
+  // Compute aggregates
+  const expRows = [];
+  for (const [exp, runsInExp] of groups) {
+    if (onlyMulti && runsInExp.length < 2) continue;
+    const sums = runsInExp.map((r) => r.sum_finalQ).filter((v) => v != null);
+    const cat = categorizeExperiment(exp);
+    expRows.push({
+      name: exp,
+      category: cat.category,
+      color: cat.color,
+      n_seeds: runsInExp.length,
+      n_complete: sums.length,
+      mean_sum: mean(sums),
+      std_sum: stdev(sums),
+      min_sum: sums.length ? Math.min(...sums) : null,
+      max_sum: sums.length ? Math.max(...sums) : null,
+      runs: runsInExp,
+    });
+  }
+
+  // Sort by mean_sum ascending (best first), nulls last
+  expRows.sort((a, b) => {
+    if (a.mean_sum == null) return 1;
+    if (b.mean_sum == null) return -1;
+    return a.mean_sum - b.mean_sum;
+  });
+
+  if (!expRows.length) {
+    list.replaceChildren(el("p", { class: "muted" }, "No experiments match filters."));
+    return;
+  }
+
+  const head = el("tr", {}, [
+    el("th", {}, "experiment"),
+    el("th", {}, "category"),
+    el("th", {}, "seeds"),
+    el("th", {}, "mean ± std"),
+    el("th", {}, "min / max"),
+    el("th", {}, "vs flagship 4.08"),
+  ]);
+  const tbody = el("tbody");
+  for (const row of expRows) {
+    const meanStr = row.mean_sum != null ? row.mean_sum.toFixed(2) : "—";
+    const stdStr = row.std_sum != null ? `± ${row.std_sum.toFixed(2)}` : "";
+    const minMax = row.min_sum != null
+      ? `${row.min_sum.toFixed(2)} / ${row.max_sum.toFixed(2)}` : "—";
+    const delta = row.mean_sum != null
+      ? (row.mean_sum - 4.08).toFixed(2) : "—";
+    const deltaCls = row.mean_sum == null ? "" :
+      row.mean_sum < 4.08 ? "good" : "bad";
+
+    const tr = el("tr", { class: "expandable" }, [
+      el("td", {}, el("strong", {}, row.name)),
+      el("td", {}, el("span", {
+        class: "category-pill",
+        style: `background: ${row.color}33; color: ${row.color}`,
+      }, row.category)),
+      el("td", {}, String(row.n_seeds)),
+      el("td", {}, `${meanStr} ${stdStr}`),
+      el("td", {}, minMax),
+      el("td", { style: deltaCls === "good" ? "color: var(--accent)" : deltaCls === "bad" ? "color: var(--accent-bad)" : "" },
+        (deltaCls === "good" ? "" : "+") + delta),
+    ]);
+    let detail = null;
+    tr.addEventListener("click", () => {
+      if (detail && detail.parentNode) {
+        detail.remove();
+        detail = null;
+        return;
+      }
+      detail = el("tr", {}, el("td", { colspan: "6" }, renderExperimentDetail(row)));
+      tr.parentNode.insertBefore(detail, tr.nextSibling);
+    });
+    tbody.appendChild(tr);
+  }
+
+  list.replaceChildren(el("table", { class: "experiment-table" }, [
+    el("thead", {}, head),
+    tbody,
+  ]));
+}
+
+function renderExperimentDetail(expRow) {
+  const wrapper = el("div", { class: "experiment-detail" });
+  wrapper.appendChild(el("div", { class: "muted", style: "margin-bottom:8px" },
+    `${expRow.runs.length} run(s) — click a row above to collapse`));
+  for (const r of expRow.runs) {
+    const sumStr = r.sum_finalQ != null ? r.sum_finalQ.toFixed(2) : "—";
+    const seedRow = el("div", { class: "seed-row" }, [
+      el("span", {}, `seed ${r.seed ?? "?"}`),
+      el("span", {}, r.name),
+      el("strong", {}, sumStr),
+    ]);
+    seedRow.style.cursor = "pointer";
+    seedRow.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      activateTab("runs");
+      setTimeout(() => {
+        const item = Array.from(document.querySelectorAll("#runs-list .list-item"))
+          .find((i) => i.querySelector(".name")?.textContent === r.name);
+        if (item) {
+          item.scrollIntoView({ block: "center" });
+          item.click();
+        }
+      }, 150);
+    });
+    wrapper.appendChild(seedRow);
+  }
+  return wrapper;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
 // Bootstrap
 // ─────────────────────────────────────────────────────────────────────────
 setupTabs();
 setupLauncher();
 setupWorldTab();
 loadRuns();
+loadOverview();  // active tab on first load
+
+// Restore persisted state
+(() => {
+  const state = loadState();
+  if (state.hideSmoke !== undefined) {
+    const cb = $("#filter-hide-smoke");
+    if (cb) cb.checked = state.hideSmoke;
+  }
+  if (state.hideIncomplete !== undefined) {
+    const cb = $("#filter-hide-incomplete");
+    if (cb) cb.checked = state.hideIncomplete;
+  }
+  if (state.activeTab) {
+    const btn = document.querySelector(`nav button[data-tab="${state.activeTab}"]`);
+    if (btn) btn.click();
+  }
+})();
+
+// Persist filter changes
+$("#filter-hide-smoke")?.addEventListener("change",
+  () => saveState({ hideSmoke: $("#filter-hide-smoke").checked }));
+$("#filter-hide-incomplete")?.addEventListener("change",
+  () => saveState({ hideIncomplete: $("#filter-hide-incomplete").checked }));
+
+// Experiments tab filters
+$("#exp-hide-smoke")?.addEventListener("change", () => loadExperiments());
+$("#exp-only-multi-seed")?.addEventListener("change", () => loadExperiments());
 
 $("#refresh-runs").addEventListener("click", loadRuns);
 $("#refresh-findings").addEventListener("click", loadFindings);
@@ -615,3 +985,56 @@ setInterval(() => {
   const runsTabActive = document.querySelector("#tab-runs")?.classList.contains("active");
   if (runsTabActive) loadRuns();
 }, 10_000);
+
+// ─────────────────────────────────────────────────────────────────────────
+// Keyboard shortcuts
+// ─────────────────────────────────────────────────────────────────────────
+registerShortcut("r", () => {
+  if (document.querySelector("#tab-runs")?.classList.contains("active")) {
+    loadRuns();
+    toast("Refreshed runs", { kind: "info", duration: 1500 });
+  } else if (document.querySelector("#tab-findings")?.classList.contains("active")) {
+    loadFindings();
+    toast("Refreshed findings", { kind: "info", duration: 1500 });
+  } else if (document.querySelector("#tab-overview")?.classList.contains("active")) {
+    loadOverview();
+    toast("Refreshed overview", { kind: "info", duration: 1500 });
+  } else if (document.querySelector("#tab-experiments")?.classList.contains("active")) {
+    loadExperiments();
+    toast("Refreshed experiments", { kind: "info", duration: 1500 });
+  }
+}, "Refresh current tab");
+
+registerShortcut("/", () => {
+  const search = $("#filter-search");
+  if (search) {
+    activateTab("runs");
+    setTimeout(() => search.focus(), 100);
+  }
+}, "Focus search box");
+
+registerShortcut("esc", () => {
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  // Also clear comparison set if any
+  if (compareSet.size > 0) {
+    compareSet.clear();
+    $("#compare-runs").disabled = true;
+    $("#compare-runs").textContent = "Compare 0";
+    renderRunsList();
+  }
+}, "Blur input / clear comparison");
+
+// Number-key tab navigation: 1=Overview, 2=Runs, 3=Experiments, 4=World, 5=Findings, 6=Launch
+registerShortcut("1", () => activateTab("overview"), "Tab 1: Overview");
+registerShortcut("2", () => activateTab("runs"), "Tab 2: Runs");
+registerShortcut("3", () => activateTab("experiments"), "Tab 3: Experiments");
+registerShortcut("4", () => activateTab("world"), "Tab 4: World");
+registerShortcut("5", () => activateTab("findings"), "Tab 5: Findings");
+registerShortcut("6", () => activateTab("launcher"), "Tab 6: Launch");
+
+registerShortcut("?", () => {
+  const lines = listShortcuts()
+    .map(({ combo, description }) => `${combo.padEnd(8)} ${description}`)
+    .join("\n");
+  toast("Shortcuts:\n" + lines, { kind: "info", duration: 8000 });
+}, "Show shortcut help");

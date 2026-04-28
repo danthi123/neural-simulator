@@ -10,7 +10,9 @@
   <header>
     <h1>Neural Simulator <span class="muted">Research Dashboard</span></h1>
     <nav>
-      <button data-tab="runs" class="active">Runs</button>
+      <button data-tab="overview" class="active">Overview</button>
+      <button data-tab="runs">Runs</button>
+      <button data-tab="experiments">Experiments</button>
       <button data-tab="world">World</button>
       <button data-tab="findings">Findings</button>
       <button data-tab="launcher">Launch</button>
@@ -19,7 +21,33 @@
   </header>
 
   <main>
-    <section id="tab-runs" class="tab active">
+    <section id="tab-overview" class="tab active">
+      <div class="section-title">At a glance</div>
+      <div class="kpi-grid" id="overview-kpis"></div>
+      <div class="section-title">Result distribution (sum_finalQ)</div>
+      <div class="chart-row"><canvas id="overview-distribution" class="chart-canvas"></canvas></div>
+      <div class="section-title">Recent activity</div>
+      <div class="activity-feed" id="overview-activity"></div>
+      <div class="section-title">Latest findings</div>
+      <div class="activity-feed" id="overview-findings"></div>
+    </section>
+
+    <section id="tab-experiments" class="tab">
+      <div class="section-title">Experiments (auto-grouped from filename suffix)</div>
+      <div style="margin-bottom:12px">
+        <label class="toolbar-checkbox">
+          <input type="checkbox" id="exp-hide-smoke" checked>
+          Hide smokes
+        </label>
+        <label class="toolbar-checkbox">
+          <input type="checkbox" id="exp-only-multi-seed" checked>
+          Only experiments with ≥2 seeds
+        </label>
+      </div>
+      <div id="experiments-list"></div>
+    </section>
+
+    <section id="tab-runs" class="tab">
       <div class="toolbar">
         <button id="refresh-runs">Refresh</button>
         <span class="muted" id="runs-count"></span>
@@ -116,9 +144,24 @@
         <label>Seed
           <input type="number" name="seed" value="42">
         </label>
+        <div class="form-row">
+          <label>Grid size (8 = default, 12/16 = custom)
+            <input type="number" name="grid_size" min="4" max="32" value="8">
+          </label>
+          <label>n-hippocampus-per-layer (set to grid_size² when custom)
+            <input type="number" name="n_hippocampus_per_layer" min="16" max="1024" value="64">
+          </label>
+        </div>
         <label>Extra flags (space-separated, optional)
-          <input type="text" name="extra_args" placeholder="--something --foo bar">
+          <input type="text" name="extra_args" placeholder="--bg-lateral-inhibition --custom-flag value">
         </label>
+        <p class="muted" style="font-size:11px; margin: 0">
+          Custom grid sizes: the runner scales goal positions automatically, but the
+          recipe (warmup steps, weight strengths) is 8×8-tuned. At 16×16 the existing
+          flagship underperforms baseline (5.26 vs 4.44) per the
+          <a href="/api/findings/2026-04-27-16x16-scaling.md" target="_blank">2026-04-27 scaling finding</a>
+          — needs empirical re-tuning, not just a flag.
+        </p>
         <button type="submit">Launch</button>
       </form>
       <div id="launcher-output">
