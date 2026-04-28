@@ -663,8 +663,31 @@ pre {
   border-color: var(--border);
 }
 .hud-collapsed .hud-body { display: none; }
-.hud-collapsed { padding: 4px 8px; min-width: 0; max-width: none; }
+.hud-collapsed {
+  padding: 4px 10px;
+  min-width: 0;
+  max-width: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
 .hud-collapsed .hud-collapse { position: static; }
+/* Title is visible in both states. When expanded, sits above the body
+   like a label; when collapsed, sits inline next to the toggle button. */
+.hud-title {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin: 0 0 4px 0;
+}
+.hud-collapsed .hud-title {
+  display: inline;
+  margin: 0;
+}
 
 /* Right-aligned legend explaining the symbols on the map. */
 #world-legend {
@@ -678,14 +701,6 @@ pre {
   font-size: 11px;
   max-width: 280px;
   pointer-events: none;
-}
-#world-legend .legend-title {
-  font-weight: 600;
-  font-size: 11px;
-  color: var(--fg-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 6px;
 }
 #world-legend .legend-row {
   display: flex;
