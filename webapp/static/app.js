@@ -1,8 +1,17 @@
 // Neural Simulator — Research Dashboard frontend
 // Phase 1 vanilla JS. No build step. ES modules in the browser.
+// Phase 2 adds the World tab (2D playback) wired up via world.js.
 //
 // All dynamic content (filenames, markdown body, JSON values) is rendered
 // via textContent or escapeHTML — never via raw template-literal innerHTML.
+
+import { setupWorldTab, loadRunIntoWorld } from "/static/world.js";
+
+// Switch to the World tab and load the given run
+function openInWorld(name) {
+  document.querySelector('nav button[data-tab="world"]').click();
+  loadRunIntoWorld(name);
+}
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -107,6 +116,7 @@ async function loadRunDetail(name, listItem) {
     const res = await fetch(`/api/runs/${encodeURIComponent(name)}`);
     if (!res.ok) throw new Error(`${res.status}`);
     const data = await res.json();
+    const playBtn = el("button", { class: "play-in-world", onclick: () => openInWorld(name) }, "▶ Play in World viz");
     detail.replaceChildren(
       el("h2", {}, name),
       el("div", {}, [
@@ -114,6 +124,7 @@ async function loadRunDetail(name, listItem) {
         metric("n_steps", data.n_steps ?? "—"),
         metric("grid_size", data.grid_size ?? 8),
       ]),
+      el("div", { style: "margin: 12px 0" }, playBtn),
       el("h3", {}, "Phase stats"),
       renderPhaseStats(data.phase_stats || []),
       el("h3", {}, "Raw JSON"),
@@ -340,6 +351,7 @@ async function loadInfo() {
 // ─────────────────────────────────────────────────────────────────────────
 setupTabs();
 setupLauncher();
+setupWorldTab();
 loadRuns();
 
 $("#refresh-runs").addEventListener("click", loadRuns);

@@ -96,6 +96,19 @@ def test_static_assets_served(client):
     assert "background" in res.text  # something CSS-like
 
 
+def test_world_tab_assets_served(client):
+    """Phase 2 — world.js loads + index has the World tab markup."""
+    res = client.get("/static/world.js")
+    assert res.status_code == 200
+    assert "setupWorldTab" in res.text  # exported function
+
+    res = client.get("/")
+    assert res.status_code == 200
+    body = res.text
+    assert 'data-tab="world"' in body, "World tab nav button must be present"
+    assert 'id="world-canvas"' in body, "World canvas element must be present"
+
+
 def test_launch_unknown_preset_rejected(client):
     res = client.post("/api/runs/launch", json={"preset": "no_such_preset", "seed": 42})
     assert res.status_code == 400

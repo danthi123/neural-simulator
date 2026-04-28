@@ -168,6 +168,125 @@ pre {
   color: var(--fg-dim);
 }
 
+/* ─── World tab ─────────────────────────────────────────────────────── */
+#tab-world { display: none; flex-direction: column; height: 100%; }
+#tab-world.active { display: flex; }
+
+#tab-world .toolbar .spacer { flex: 1; }
+#tab-world .toolbar select,
+#tab-world .toolbar label {
+  background: var(--bg-3);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font: inherit;
+  font-size: 12px;
+}
+#tab-world .toolbar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+#tab-world .toolbar label select { border: none; padding: 0; }
+
+#tab-world #world-step-display {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+
+.world-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+#world-canvas-container {
+  position: relative;
+  background: var(--code-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+#world-canvas {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+  image-rendering: pixelated;
+}
+
+#world-overlay {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(14, 16, 20, 0.85);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 11px;
+  min-width: 180px;
+  pointer-events: none;
+}
+#world-overlay .overlay-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 2px 0;
+}
+#world-overlay .overlay-row span:last-child {
+  color: var(--accent);
+}
+
+#world-runlist {
+  border-left: 1px solid var(--border);
+  background: var(--bg-2);
+  padding: 12px 16px;
+  overflow-y: auto;
+}
+#world-runlist h3 {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+#world-runs-list .world-run-item {
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+#world-runs-list .world-run-item:hover { background: var(--bg-3); }
+#world-runs-list .world-run-item.active {
+  background: var(--bg-3);
+  border-left: 3px solid var(--accent);
+  padding-left: 5px;
+}
+#world-runs-list .world-run-item .small {
+  font-size: 10px;
+  color: var(--fg-dim);
+}
+
+.scrubber-row {
+  padding: 8px 16px;
+  background: var(--bg-2);
+  border-top: 1px solid var(--border);
+}
+#world-scrubber {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
 #tab-launcher { padding: 24px; overflow-y: auto; }
 #tab-launcher h2 { margin: 0 0 16px; }
 #tab-launcher form {

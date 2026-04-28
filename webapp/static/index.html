@@ -11,6 +11,7 @@
     <h1>Neural Simulator <span class="muted">Research Dashboard</span></h1>
     <nav>
       <button data-tab="runs" class="active">Runs</button>
+      <button data-tab="world">World</button>
       <button data-tab="findings">Findings</button>
       <button data-tab="launcher">Launch</button>
       <button data-tab="info">About</button>
@@ -28,6 +29,47 @@
         <div class="detail" id="run-detail">
           <p class="muted">Click a run to view details.</p>
         </div>
+      </div>
+    </section>
+
+    <section id="tab-world" class="tab">
+      <div class="toolbar">
+        <button id="world-load-run">Load run…</button>
+        <span id="world-run-name" class="muted">No run loaded</span>
+        <span class="spacer"></span>
+        <button id="world-play">▶ Play</button>
+        <button id="world-pause" disabled>⏸ Pause</button>
+        <label>Speed
+          <select id="world-speed">
+            <option value="1">1×</option>
+            <option value="2">2×</option>
+            <option value="5" selected>5×</option>
+            <option value="10">10×</option>
+            <option value="30">30×</option>
+            <option value="100">100×</option>
+          </select>
+        </label>
+        <span id="world-step-display" class="muted">step 0 / 0</span>
+      </div>
+      <div class="world-layout">
+        <div id="world-canvas-container">
+          <canvas id="world-canvas"></canvas>
+          <div id="world-overlay">
+            <div class="overlay-row"><span class="muted">agent</span><span id="overlay-pos">—</span></div>
+            <div class="overlay-row"><span class="muted">goal</span><span id="overlay-goal">—</span></div>
+            <div class="overlay-row"><span class="muted">distance</span><span id="overlay-dist">—</span></div>
+            <div class="overlay-row"><span class="muted">action</span><span id="overlay-action">—</span></div>
+            <div class="overlay-row"><span class="muted">reward</span><span id="overlay-reward">—</span></div>
+            <div class="overlay-row"><span class="muted">phase</span><span id="overlay-phase">—</span></div>
+          </div>
+        </div>
+        <div id="world-runlist">
+          <h3>Pick a run</h3>
+          <div id="world-runs-list" class="muted">Click "Load run…" or browse below.</div>
+        </div>
+      </div>
+      <div class="scrubber-row">
+        <input type="range" id="world-scrubber" min="0" max="0" value="0" step="1">
       </div>
     </section>
 
