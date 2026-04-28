@@ -630,8 +630,15 @@ function renderFrame() {
 
   // Update overlay
   updateOverlay(step, pos, goal);
-  $("#world-step-display").textContent = `step ${step} / ${traj.length - 1}`;
-  $("#world-scrubber").value = String(step);
+  // In live mode, the step display + scrubber are managed by
+  // handleLiveProgress (which knows the runner's actual n_steps from the
+  // progress event's `total` field). Don't overwrite with traj.length-1
+  // here — the trajectory is being built up incrementally and would show
+  // misleading "step N / N" values until the run completes.
+  if (!world.live) {
+    $("#world-step-display").textContent = `step ${step} / ${traj.length - 1}`;
+    $("#world-scrubber").value = String(step);
+  }
 }
 
 function drawBeaconField(ctx, gridSize, goal) {
