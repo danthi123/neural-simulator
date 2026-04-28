@@ -626,8 +626,10 @@ pre {
   padding: 10px 14px;
   font-family: var(--font-mono);
   font-size: 11px;
+  width: 180px;
   min-width: 180px;
   pointer-events: none;
+  box-sizing: border-box;
 }
 #world-overlay .overlay-row {
   display: flex;
@@ -641,11 +643,15 @@ pre {
 
 /* Collapsible HUD toggle. The HUD parent has pointer-events: none so
    clicks pass through to the canvas; the button overrides to be
-   clickable. The button is always absolutely positioned at the
-   top-right corner regardless of collapsed state — only the panel
-   body hides on collapse. The button uses an explicit sans font so
-   the "−" / "+" glyphs render identically in both panels (the overlay
-   parent uses a mono font, the legend uses sans). */
+   clickable. In the EXPANDED state the button is absolutely positioned
+   at the top-right corner so it sits over the title row without
+   shifting body content. In the COLLAPSED state the panel switches
+   to flex layout (see .hud-collapsed below) and the button becomes
+   position:static so it sits as a flex sibling of the title — that
+   way title + button share the same row and vertical center. The
+   button uses an explicit sans font so the "−" / "+" glyphs render
+   identically in both panels (the overlay parent uses a mono font,
+   the legend uses sans). */
 .hud-collapse {
   position: absolute;
   top: 4px;
@@ -665,18 +671,30 @@ pre {
   color: var(--accent);
   border-color: var(--border);
 }
-.hud-collapsed .hud-body { display: none; }
-/* Collapsed panel: shrinks vertically (only title row visible) but
-   keeps padding-right so the absolutely-positioned button has room
-   without overlapping the title text. */
+/* Collapsed panel: switch to flex row so the title and button render
+   as siblings in a single vertically-centered row. The body is hidden
+   (display: none below) so the only visible flex children are the
+   title and the button. Width is preserved via the panel's
+   min-width / width rules so collapsing does not shrink the panel. */
 .hud-collapsed {
-  padding-right: 32px;
-  min-width: 0;
-  max-width: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+}
+.hud-collapsed .hud-body { display: none; }
+.hud-collapsed .hud-collapse {
+  position: static;
+  margin: 0;
+  top: auto;
+  right: auto;
+}
+.hud-collapsed .hud-title {
+  margin: 0;
 }
 /* Title is visible in both states. Sits at top-left as a label.
-   In collapsed state, it's the only visible content, so we drop
-   the bottom margin so the panel hugs the title row. */
+   In collapsed state, it's a flex sibling of the button (margin
+   reset above) so they share a row and vertical center. */
 .hud-title {
   font-family: var(--font-sans);
   font-size: 11px;
@@ -686,9 +704,6 @@ pre {
   letter-spacing: 0.06em;
   display: block;
   margin: 0 0 4px 0;
-}
-.hud-collapsed .hud-title {
-  margin: 0;
 }
 
 /* Right-aligned legend explaining the symbols on the map. */
@@ -701,8 +716,11 @@ pre {
   border-radius: 6px;
   padding: 10px 14px;
   font-size: 11px;
+  width: 280px;
+  min-width: 280px;
   max-width: 280px;
   pointer-events: none;
+  box-sizing: border-box;
 }
 #world-legend .legend-row {
   display: flex;
