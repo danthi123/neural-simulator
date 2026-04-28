@@ -116,10 +116,12 @@ readaptation.
 
 - `research/runners/g11_bg_runner.py` — runner with `--sensed-reward`,
   `--bg-cross-projections` flags
-- `research/findings/raw/g11_bg/g11_seed{42,43,44,100,101,102}_allnocheats.json` —
-  6-seed validation data
 - `research/findings/raw/g11_bg/g11_seed{42,43,44,100,101,102}_sensedonly.json` —
-  ablation (only sensed reward, no perception arc)
+  6-seed flagship validation data (despite the legacy filename, this is the
+  full config — perception arc + sensed reward; verified 2026-04-28, see
+  [data correction](2026-04-28-flagship-4.08-data-correction.md))
+- `research/findings/raw/g11_bg/g11_seed{42,43,44}_allnocheats.json` —
+  3-seed naive-cross-projection NEGATIVE precursor (sum ~8.4); kept for trail
 
 ## Next steps
 
