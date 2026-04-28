@@ -79,3 +79,4 @@ webapp/runtime/
 # session reads them locally; only the extracted markdown catalogs
 # under references/ are committed.
 references/textbooks/**/*.pdf
+references/textbooks/**/*.txt
