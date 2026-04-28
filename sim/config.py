@@ -231,6 +231,13 @@ class CoreSimConfig:
     pruning_threshold: float = -1.0
     pruning_weight_floor: float = 1.0
 
+    # ─── Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry ─────────
+    # D1 MSNs LTP under +DA / LTD under -DA; D2 MSNs invert both signs.
+    # Implements via per-synapse sign multiplier on the reward-modulated
+    # weight update. See docs/plans/2026-04-28-cluster-b1-d1d2-asymmetry-
+    # implementation.md.
+    enable_d1_d2_asymmetry: bool = False
+
     def __post_init__(self):
         """Validate configuration parameters after initialization."""
         # Initialize per-type STP defaults if not provided

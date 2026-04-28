@@ -255,6 +255,13 @@ class SimulationBridge:
         self._plasticity_gate_indices_gpu = {}
         self._plasticity_gate_values = {}
 
+        # Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry.
+        # Per-synapse sign multiplier on the reward-modulated weight update.
+        # +1 for D1-targeting (and everything else), -1 for D2-targeting.
+        # None when enable_d1_d2_asymmetry is False (default).
+        # See docs/plans/2026-04-28-cluster-b1-d1d2-asymmetry-implementation.md.
+        self.cp_d1_d2_sign = None
+
         self.is_initialized = False
 
         self._mock_total_plasticity_events = 0
@@ -1771,6 +1778,31 @@ class SimulationBridge:
             self._plasticity_gate_indices_gpu = {}
             self._plasticity_gate_values = {}
             self.cp_plasticity_gain = None
+
+        # Cluster B.1 (2026-04-28): tag D2-targeting synapses with sign=-1.
+        # D1-targeting + everything else stays at +1 (default). The reward-
+        # modulated weight update will multiply by this sign so D2 synapses
+        # move opposite to reward direction. Only allocated when the flag is
+        # on and a region_manager is present (so we can resolve which post-
+        # neurons belong to str_D2_* regions).
+        if (getattr(self.core_config, "enable_d1_d2_asymmetry", False)
+                and self.region_manager is not None):
+            self.cp_d1_d2_sign = cp.ones(nnz, dtype=cp.float32)
+            # Collect post-neuron indices for all str_D2_* regions.
+            d2_post_indices: List[int] = []
+            for region in self.region_manager.regions():
+                if region.name.startswith("str_D2_"):
+                    d2_post_indices.extend(self.region_manager.indices(region.name))
+            if d2_post_indices:
+                d2_set_gpu = cp.asarray(
+                    np.asarray(d2_post_indices, dtype=np.int64)
+                )
+                # cp_connections.indices is the post-neuron column for each
+                # synapse in CSR data order. Mask synapses whose post is in D2.
+                d2_mask = cp.isin(self.cp_connections.indices, d2_set_gpu)
+                self.cp_d1_d2_sign[d2_mask] = -1.0
+        else:
+            self.cp_d1_d2_sign = None
 
         # Flip output trait to inhibitory if requested (enables lateral inhibition).
         if output_inhibitory_indices:
