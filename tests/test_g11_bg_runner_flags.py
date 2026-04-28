@@ -594,3 +594,20 @@ def test_developmental_pretraining_rejects_v3_1_thaw_conflict(tmp_out_path):
         )
     assert "developmental-pretraining" in str(exc.value)
     assert "bg_cross_thaw_step" in str(exc.value) or "bg-cross-thaw-step" in str(exc.value)
+
+
+def test_developmental_pretraining_warns_without_cross_projections(tmp_out_path, capsys):
+    """Pretraining without --bg-cross-projections is harmless but pointless
+    (the whole point is to develop cross-projection weights). Warn but proceed."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    run_moving_goal_episode(
+        out_path=tmp_out_path, seed=42, n_steps=20, verbose=True,
+        enable_developmental_pretraining=True,
+        enable_bg_cross_projections=False,  # the missing piece
+        pretraining_n_goals=0, pretraining_steps_per_goal=0,
+    )
+    captured = capsys.readouterr()
+    assert "warning" in captured.out.lower() or "warning" in captured.err.lower(), (
+        "expected a warning about pretraining without cross-projections")
+    assert "bg-cross-projections" in captured.out or "bg_cross_projections" in captured.out

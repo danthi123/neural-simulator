@@ -695,6 +695,7 @@ def _run_pretraining_phase(
     grid_size: int,
     start_pos,
     seed: int,
+    enable_bg_cross_projections: bool = True,
     verbose: bool = True,
 ) -> dict:
     """Critical-period analog. Thaws ALL declared plasticity gates and runs
@@ -704,7 +705,9 @@ def _run_pretraining_phase(
     cross_weights_std}. See docs/plans/2026-04-28-cheat5-v4-design.md."""
     available = set(bridge.list_plasticity_gates())
     missing = [g for g in _PRETRAINING_THAWED_GATES
-               if g not in available and _gate_required(g, regions)]
+               if g not in available
+               and _gate_required(g, regions,
+                                  enable_bg_cross_projections=enable_bg_cross_projections)]
     if missing:
         raise KeyError(
             f"_run_pretraining_phase: gate(s) not declared on any pathway: "
@@ -913,16 +916,24 @@ def _run_pretraining_phase(
     }
 
 
-def _gate_required(name: str, regions) -> bool:
+def _gate_required(name: str, regions, enable_bg_cross_projections: bool = True) -> bool:
     """Return True iff the gate must exist regardless of which flags are on.
 
     `regions` is accepted for forward-compatibility — Task 3 will inspect it
     to derive the full required-set from the active flag combination.
-    Currently unused; we hard-code the two gates that are always present
-    in the BG cascade. cortex_to_d1 always exists; bg_cross_projections is
-    the WHOLE POINT of v4 pretraining — fail loud if it's not tagged.
+    Currently unused; we hard-code the gates known to always exist or whose
+    presence is gated by a known flag.
+
+    `enable_bg_cross_projections` softens the bg_cross_projections requirement:
+    when False, that gate is not expected (--bg-cross-projections is off, so
+    the pathway isn't built). Pretraining still runs but won't shape any
+    cross-projection weights — Task 7 emits a warning at that path.
     """
-    return name in {"cortex_to_d1", "bg_cross_projections"}
+    if name == "cortex_to_d1":
+        return True
+    if name == "bg_cross_projections":
+        return enable_bg_cross_projections
+    return False
 
 
 def run_moving_goal_episode(
@@ -1138,6 +1149,14 @@ def run_moving_goal_episode(
             "--bg-cross-thaw-step (v3.1). v4 keeps cross-projections frozen "
             "throughout eval; v3.1 thaws them mid-eval. Use one or the other, "
             f"not both. Got bg_cross_thaw_step={bg_cross_thaw_step}."
+        )
+    if enable_developmental_pretraining and not enable_bg_cross_projections:
+        print(
+            "[g11 warning] --developmental-pretraining without "
+            "--bg-cross-projections: pretraining will run but won't shape any "
+            "bg_cross_projections gate (no cross pathways exist). Did you "
+            "mean to also pass --bg-cross-projections?",
+            flush=True,
         )
     import cupy as cp
     from sim import (
@@ -1494,7 +1513,9 @@ def run_moving_goal_episode(
             n_goals=pretraining_n_goals,
             steps_per_goal=pretraining_steps_per_goal,
             grid_size=grid_size, start_pos=start_pos,
-            seed=seed, verbose=verbose,
+            seed=seed,
+            enable_bg_cross_projections=enable_bg_cross_projections,
+            verbose=verbose,
         )
 
     available_gates = bridge.list_plasticity_gates() if enable_curriculum else []
