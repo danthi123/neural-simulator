@@ -2342,6 +2342,13 @@ def main():
                          "pretraining. Synapses with negative survival score AND low weight "
                          "get permanently eliminated. See "
                          "docs/plans/2026-04-28-structural-plasticity-design.md.")
+    ap.add_argument("--pruning-alpha", type=float, default=None,
+                    help="Cheat-5 option-1 pruning rate. Default: cfg.pruning_alpha (0.001 = conservative). "
+                         "Try 0.05 for a 5K-trial pretraining smoke; 0.005 for 30K validation.")
+    ap.add_argument("--pruning-threshold", type=float, default=None,
+                    help="Cheat-5 option-1: survival score below which pruning is eligible. Default: -1.0.")
+    ap.add_argument("--pruning-weight-floor", type=float, default=None,
+                    help="Cheat-5 option-1: weight below which pruning is eligible. Default: 1.0.")
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--motor-lateral-inhibition", action="store_true",
                     help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
@@ -2459,6 +2466,9 @@ def main():
             pretraining_n_goals=args.pretraining_n_goals,
             pretraining_steps_per_goal=args.pretraining_steps_per_goal,
             enable_structural_pruning=args.enable_structural_pruning,
+            pruning_alpha=args.pruning_alpha,
+            pruning_threshold=args.pruning_threshold,
+            pruning_weight_floor=args.pruning_weight_floor,
             lateral_inhibition_density=args.lateral_inhibition_density,
             lateral_inhibition_weight=args.lateral_inhibition_weight,
             interactive_control_file=args.interactive_control_file,
