@@ -232,6 +232,42 @@ Entries from Ch 11 (Overview of Synaptic Transmission) onward.
 - **Citation:** Kandel 6e Ch 14 p 318–319
 - **Behavioral validation:** add two NMs targeting the same parameter, verify additive concentration → effect; reproduce a published example like ACh+NE on cortical excitability.
 
+### J.20 Quantal release and the calcium-fourth-power dependence
+- **System:** all chemical synapses
+- **Biological role:** Katz showed transmitter is released in unitary "quanta" (one vesicle each). The number released per AP is binomially distributed — N release sites × probability p (governed by Ca²⁺ entry). Postsynaptic response at zero-current = mEPSC ≈ "amplitude of one quantum". P_release scales as roughly the **4th power** of presynaptic [Ca²⁺] (because synaptotagmin, the Ca²⁺ sensor, has 5 Ca²⁺-binding sites, ≥4 must bind cooperatively for fusion). High Ca²⁺-affinity synaptotagmin-1/2 mediates synchronous (~1 ms) release; lower-affinity Syt-7 mediates asynchronous release (~tens of ms).
+- **Sim status:** partial. STP `stp_U` captures release probability per AP; STP gain is *not* explicitly Ca²⁺-fourth-power. Quantal noise is implicit in spike-driven discrete events (one spike → one conductance increment ≈ one "quantum"-equivalent). Asynchronous release: not modeled.
+- **Cluster:** J
+- **Prerequisites:** J.03
+- **Citation:** Kandel 6e Ch 15 p 326–340 (esp. Katz; Dodge & Rahamimoff)
+- **Behavioral validation:** STP paired-pulse benchmark already exists. To validate Ca-4th-power, add Ca-channel blocker analog (scale STP gain) and verify P_release scales as gain^4.
+
+### J.21 SNARE complex (synaptobrevin/VAMP, syntaxin, SNAP-25)
+- **System:** every neuron's presynaptic terminal
+- **Biological role:** the molecular machine that fuses vesicle with plasma membrane. The four-helix SNARE bundle pulls vesicle and plasma membranes together. Synaptotagmin-1 is the Ca²⁺ sensor that triggers final fusion. Disruption (botulinum toxins cleave SNAREs; tetanus cleaves synaptobrevin) abolishes release.
+- **Sim status:** not-applicable. Vesicle fusion is abstracted; we don't model individual SNARE proteins. Toxin experiments (BoNT, TeNT) cannot be reproduced. STP captures *macroscopic* release dynamics; molecular machinery is below our level.
+- **Cluster:** J
+- **Prerequisites:** J.03, J.20
+- **Citation:** Kandel 6e Ch 15 p 340–350
+- **Behavioral validation:** N/A.
+
+### J.22 Synaptic vesicle pools (readily releasable, recycling, reserve)
+- **System:** every chemical synapse
+- **Biological role:** vesicles partition into three pools — RRP (~1% of total, docked at active zone, immediately fusible), recycling (~10–20%), reserve (~80%). Sustained high-frequency stimulation depletes RRP first; recycling pool refills it via endocytosis (clathrin- or kiss-and-run pathways). The pool kinetics dictate the time-course of synaptic depression and recovery — directly the substrate of STP.
+- **Sim status:** partial. STP `stp_tau_d` captures the *recovery time constant* of release after depletion. Multi-pool kinetics (RRP vs recycling) is not explicit; one effective "depletion → recovery" timescale per connection type.
+- **Cluster:** J
+- **Prerequisites:** J.03, J.21
+- **Citation:** Kandel 6e Ch 15 p 350–355
+- **Behavioral validation:** STP paired-pulse benchmark covers single-pool case. Multi-pool would require sustained-stimulation experiments.
+
+### J.23 Spontaneous miniature EPSCs / IPSCs (mPSCs)
+- **System:** every chemical synapse
+- **Biological role:** at rest, vesicles spontaneously fuse at low frequency (Hz), producing detectable single-quantum EPSCs / IPSCs. Originally used by Fatt & Katz as proof of quantal release. Recent work suggests spontaneous and evoked release may be partly *independent* (different vesicle pools, different SNARE complexes), with separate roles in homeostatic regulation and developmental signaling.
+- **Sim status:** partial. We have OU-noise background drive that *functionally* approximates spontaneous synaptic noise, but not in a per-synapse-event way. True per-synapse mEPSC events are missing — would need to add a low-rate Poisson event trigger per synapse independent of presynaptic AP firing. **Possibly worth adding** because spontaneous release is now thought to drive homeostatic synaptic scaling.
+- **Cluster:** J
+- **Prerequisites:** J.20, J.22
+- **Citation:** Kandel 6e Ch 15 p 326–328
+- **Behavioral validation:** record postsynaptic membrane in absence of stimulation, count discrete events per second, verify rate and amplitude match published mEPSC distributions.
+
 ---
 
 ## Cluster I — Channels & intrinsic dynamics
