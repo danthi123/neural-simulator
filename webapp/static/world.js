@@ -44,6 +44,12 @@ export function setupWorldTab() {
     if (btn.dataset.tab === "world") {
       btn.addEventListener("click", () => {
         if (!world._initialized) initWorld();
+        // If the user opened Live mode earlier in this session and then
+        // navigated away, the auto-refresh interval self-stopped. Restart
+        // it now so the step counts under each run_id resume ticking.
+        if (world._liveModeOpened && !_pickerRefreshInterval) {
+          openLiveModePicker();
+        }
       });
     }
   });
@@ -172,24 +178,28 @@ let _pickerRefreshInterval = null;
 /** Open a picker modal showing in-flight runs the server is tracking, and
  *  when one is chosen, attach the World tab as a live viewer for that run.
  *
- *  Auto-refreshes every 2 seconds while the picker is visible AND the
+ *  Auto-refreshes every 1 second while the picker is visible AND the
  *  World tab is active AND we're not currently attached to a run. Lets
  *  the step counts under each run_id update in real time without forcing
  *  the user to re-click "Live mode". */
 async function openLiveModePicker() {
+  world._liveModeOpened = true;
   await refreshLivePicker(/* showHeading= */ true);
   // Set up the auto-refresh ticker (idempotent — clears any existing).
   if (_pickerRefreshInterval) clearInterval(_pickerRefreshInterval);
   _pickerRefreshInterval = setInterval(() => {
     const tabActive = document.querySelector("#tab-world")?.classList.contains("active");
-    if (!tabActive || world.live) {
-      // Stop refreshing when leaving World tab or attached to a run.
+    if (!tabActive) {
+      // Only stop refreshing when leaving the World tab. When attached
+      // to a run, KEEP refreshing so the picker shows live step counts
+      // for all running runs (lets the user track the others without
+      // detaching).
       clearInterval(_pickerRefreshInterval);
       _pickerRefreshInterval = null;
       return;
     }
     refreshLivePicker(/* showHeading= */ false).catch(() => {});
-  }, 2000);
+  }, 1000);
 }
 
 async function refreshLivePicker(showHeading) {
@@ -462,10 +472,18 @@ function closeLiveSocket() {
   world.live = false;
   world.liveRunId = null;
   world.livePoints = [];
+  world.liveRecentEvents = [];
   world.liveChart = null;
   world.liveStartedAt = null;
   world.interactive = false;
   pauseState = false;
+  // Defensive: ensure the picker auto-refresh is running so the runs
+  // list keeps ticking after detach. Idempotent — openLiveModePicker
+  // clears any existing interval before starting a new one.
+  if (world._liveModeOpened &&
+      document.querySelector("#tab-world")?.classList.contains("active")) {
+    openLiveModePicker().catch(() => {});
+  }
   const chartRow = document.getElementById("world-livechart-row");
   if (chartRow) chartRow.style.display = "none";
   const ctrlRow = document.getElementById("world-control-row");
@@ -550,11 +568,29 @@ function handleLiveProgress(p) {
   if (fill && p.total > 0) {
     fill.style.width = `${(p.step / p.total * 100).toFixed(1)}%`;
   }
-  // ETA: extrapolate from elapsed wall-clock + steps so far
+  // ETA: extrapolate from a rolling 5-second window using SERVER-side
+  // timestamps. Browser-receive timestamps are wrong here because the
+  // server replays its full progress buffer on attach (so 900 events
+  // arrive in the same 100ms WebSocket burst). Using `p.timestamp`
+  // (Python time.time() at parse time, in seconds since epoch) means
+  // even the burst events have correct spacing, and the cutoff trims
+  // to "last 5 seconds of run wall-clock" rather than "last 5 seconds
+  // of browser wall-clock".
   const eta = document.getElementById("live-eta");
-  if (eta && world.liveStartedAt && p.step > 0) {
-    const elapsedMs = performance.now() - world.liveStartedAt;
-    const stepsPerSec = p.step / (elapsedMs / 1000);
+  if (eta && p.step > 0 && p.timestamp) {
+    world.liveRecentEvents = world.liveRecentEvents || [];
+    world.liveRecentEvents.push({ t: p.timestamp, step: p.step });
+    const cutoff = p.timestamp - 5;
+    while (world.liveRecentEvents.length > 1 && world.liveRecentEvents[0].t < cutoff) {
+      world.liveRecentEvents.shift();
+    }
+    let stepsPerSec = 0;
+    if (world.liveRecentEvents.length >= 2) {
+      const first = world.liveRecentEvents[0];
+      const last = world.liveRecentEvents[world.liveRecentEvents.length - 1];
+      const dt = last.t - first.t;
+      if (dt > 0) stepsPerSec = (last.step - first.step) / dt;
+    }
     const remaining = (p.total - p.step) / Math.max(0.01, stepsPerSec);
     const fmt = remaining > 60
       ? `${Math.round(remaining / 60)}m ${Math.round(remaining % 60)}s`
