@@ -268,6 +268,57 @@ class NeuromodulatorManager:
                 multiplier *= 1.0 + tgt.sensitivity * (conc - cfg.baseline)
         return float(max(0.0, multiplier))
 
+    def compute_plasticity_window_gate_multiplier(self) -> float:
+        """Aggregate plasticity_window_gate effects across all modulators (scope=all).
+
+        Inverse of plasticity_rate / plasticity_gate: HIGH concentration BLOCKS
+        plasticity, LOW concentration PERMITS it. Models BG TANs / cholinergic
+        gating of corticostriatal LTP — tonic ACh release suppresses
+        plasticity, brief pauses on salient events open transient plasticity
+        windows.
+
+        Effect formula per modulator: clip(1 - conc/baseline, 0, 1).
+            ACh at baseline -> gate = 0 (plasticity blocked)
+            ACh = 0 (full pause) -> gate = 1 (plasticity permitted)
+            ACh > baseline (overshoot) -> gate clamped to 0
+
+        Multiple modulators with this target combine multiplicatively, matching
+        the precedent of compute_synaptic_gain_multiplier.
+
+        Returns 1.0 when:
+            - subsystem disabled / manager not initialized (caller default),
+            - no modulator declares a plasticity_window_gate target,
+            - the modulator's baseline is 0 (no tonic level to escape).
+        i.e. the no-op default is "fully permitted" so existing flagship
+        configurations are bit-identical when ACh is not registered.
+
+        Only scope="all" is honored, matching the existing plasticity_rate
+        target's restriction. Other scopes are silently skipped.
+        """
+        multiplier = 1.0
+        any_target_found = False
+        for cfg in self._configs:
+            for tgt in cfg.targets:
+                if tgt.target_type != "plasticity_window_gate":
+                    continue
+                if tgt.scope != "all":
+                    continue
+                any_target_found = True
+                baseline = float(cfg.baseline)
+                if baseline <= 0.0:
+                    # No tonic level => no suppression to lift => permitted.
+                    continue
+                conc = self._concentrations[cfg.name]
+                gate = 1.0 - (conc / baseline)
+                # Clip to [0, 1] -- overshoot ACh blocks plasticity, full pause
+                # permits it. Sensitivity intentionally unused: the gate is
+                # purely a function of conc/baseline, matching the spec.
+                gate = max(0.0, min(1.0, gate))
+                multiplier *= gate
+        if not any_target_found:
+            return 1.0
+        return float(multiplier)
+
     def compute_plasticity_gate_values(self) -> dict:
         """Compute plasticity gate values driven by neuromodulator concentrations.
 

@@ -329,3 +329,240 @@ def test_pause_on_reward_ignores_missing_bridge_config():
     for _ in range(100):
         mgr.step(bridge=None)
     assert abs(mgr.get_concentration("acetylcholine") - 1.0) < 1e-6
+
+
+# ---------- Task 2: plasticity_window_gate target -- manager-level ----------
+
+
+def test_plasticity_window_gate_blocked_at_baseline_ach():
+    """ACh at tonic baseline (concentration == baseline) should yield gate ~ 0
+    (plasticity blocked while ACh is firing tonically)."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="acetylcholine",
+        baseline=1.0,
+        decay_tau_ms=500.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        targets=[ModulatorTarget(target_type="plasticity_window_gate", scope="all")],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    mgr.set_concentration("acetylcholine", 1.0)
+    gate = mgr.compute_plasticity_window_gate_multiplier()
+    assert abs(gate) < 1e-6, f"Expected gate ~ 0 at baseline ACh, got {gate}"
+
+
+def test_plasticity_window_gate_permitted_at_paused_ach():
+    """ACh at concentration=0 (full pause) should yield gate = 1.0 (full
+    plasticity)."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="acetylcholine",
+        baseline=1.0,
+        decay_tau_ms=500.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        targets=[ModulatorTarget(target_type="plasticity_window_gate", scope="all")],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    mgr.set_concentration("acetylcholine", 0.0)
+    gate = mgr.compute_plasticity_window_gate_multiplier()
+    assert abs(gate - 1.0) < 1e-6, f"Expected gate = 1.0 at fully-paused ACh, got {gate}"
+
+
+def test_plasticity_window_gate_clipped_below_zero():
+    """ACh above baseline (overshoot) should clip gate at 0, not go negative."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="acetylcholine",
+        baseline=1.0,
+        decay_tau_ms=500.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        targets=[ModulatorTarget(target_type="plasticity_window_gate", scope="all")],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    mgr.set_concentration("acetylcholine", 1.5)  # above baseline=1.0
+    gate = mgr.compute_plasticity_window_gate_multiplier()
+    assert gate == 0.0, f"Expected gate = 0 (clipped) at over-baseline ACh, got {gate}"
+
+
+def test_plasticity_window_gate_aggregates_multiplicatively():
+    """Multiple modulators with plasticity_window_gate targets should
+    combine multiplicatively (matches compute_synaptic_gain_multiplier
+    aggregation)."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import (
+        ModulatorTarget,
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+    )
+
+    # First modulator: baseline=1.0, conc=0.5 -> gate = 1 - 0.5/1.0 = 0.5
+    nm_a = NeuromodulatorConfig(
+        name="ach_a",
+        baseline=1.0,
+        decay_tau_ms=500.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        targets=[ModulatorTarget(target_type="plasticity_window_gate", scope="all")],
+    )
+    # Second modulator: baseline=1.0, conc=0.2 -> gate = 1 - 0.2/1.0 = 0.8
+    nm_b = NeuromodulatorConfig(
+        name="ach_b",
+        baseline=1.0,
+        decay_tau_ms=500.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        targets=[ModulatorTarget(target_type="plasticity_window_gate", scope="all")],
+    )
+    mgr = NeuromodulatorManager([nm_a, nm_b], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    mgr.set_concentration("ach_a", 0.5)
+    mgr.set_concentration("ach_b", 0.2)
+    gate = mgr.compute_plasticity_window_gate_multiplier()
+    # Expected: 0.5 * 0.8 = 0.4
+    assert abs(gate - 0.4) < 1e-6, (
+        f"Expected combined gate = 0.4 (0.5 * 0.8), got {gate}"
+    )
+
+
+def test_plasticity_window_gate_returns_one_when_no_targets():
+    """Manager with no plasticity_window_gate targets returns 1.0 (no-op)."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.neuromodulators import NeuromodulatorManager
+
+    mgr = NeuromodulatorManager([], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    # Empty manager (no modulators at all) -> default 1.0.
+    assert mgr.compute_plasticity_window_gate_multiplier() == 1.0
+
+
+# ---------- Task 2: plasticity_window_gate -- bridge integration ----------
+
+
+def _make_bridge_with_ach(set_ach_concentration: float):
+    """Build a small bridge with the ACh subsystem on for integration tests.
+
+    Mirrors tests/test_neuromodulators.py::_make_bridge but pre-registers
+    the default ACh config. Returns (sb, cfg).
+    """
+    pytest.importorskip("cupy")
+    from sim import (
+        SimulationBridge,
+        CoreSimConfig,
+        VisualizationConfig,
+        RuntimeState,
+        GPUConfig,
+    )
+    from sim.enums import NeuronModel
+    from sim.neuromodulators import _default_acetylcholine_config
+
+    cfg = CoreSimConfig()
+    cfg.num_neurons = 50
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.dt_ms = 1.0
+    cfg.seed = 42
+    cfg.enable_neuromodulator_subsystem = True
+    cfg.enable_stdp = True
+    cfg.enable_reward_modulation = True
+    cfg.reward_learning_rate = 0.05
+    cfg.neuromodulators = [_default_acetylcholine_config()]
+
+    sb = SimulationBridge(
+        core_config=cfg,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
+    )
+    sb.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    sb._initialize_simulation_data(called_from_playback_init=False)
+    # Override the just-initialized concentration to whatever the test wants.
+    sb.neuromodulator_manager.set_concentration("acetylcholine", set_ach_concentration)
+    return sb, cfg
+
+
+def test_bridge_blocks_reward_weight_updates_when_ach_at_baseline():
+    """With ACh at tonic baseline (gate=0), reward-modulated weight updates
+    should be ZERO. With ACh paused (gate~1), the same setup should produce
+    a measurable weight delta."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    def _delta_with_ach(ach_conc: float) -> float:
+        sb, cfg = _make_bridge_with_ach(ach_conc)
+        # Set wide weight bounds so the post-update clip doesn't mask the
+        # small reward-driven delta we're testing. Same trick B.1 uses.
+        sb.core_config.stdp_w_min = -10.0
+        sb.core_config.stdp_w_max = 100.0
+        sb.core_config.hebbian_min_weight = -10.0
+        sb.core_config.hebbian_max_weight = 100.0
+        if sb.cp_eligibility_trace is None:
+            sb.clear_simulation_state_and_gpu_memory()
+            pytest.skip("eligibility trace not allocated")
+        actual_nnz = int(sb.cp_connections.nnz)
+        # Set up: uniform positive eligibility, no STDP / Hebbian / structural
+        # writes to mask the small reward-driven delta.
+        sb.core_config.enable_stdp = False
+        sb.core_config.enable_hebbian_learning = False
+        sb.core_config.enable_homeostasis = False
+        sb.core_config.enable_structural_plasticity = False
+        sb.core_config.enable_synaptic_scaling = False
+        sb.cp_eligibility_trace[:] = 0.0
+        sb.cp_eligibility_trace[:actual_nnz] = 0.5
+        w_before = sb.cp_connections.data[:actual_nnz].copy()
+        # Apply reward AFTER eligibility set-up. Pin ACh to the test value.
+        sb.neuromodulator_manager.set_concentration("acetylcholine", ach_conc)
+        sb.core_config.current_reward_signal = 1.0
+        sb.core_config.reward_baseline = 0.0
+        sb._run_one_simulation_step()
+        sb.runtime_state.current_time_step += 1
+        w_after = sb.cp_connections.data[:actual_nnz]
+        # Sum of absolute weight deltas — robust to per-synapse sign.
+        delta = float(cp.sum(cp.abs(w_after - w_before)).get())
+        sb.clear_simulation_state_and_gpu_memory()
+        return delta
+
+    blocked = _delta_with_ach(1.0)   # at baseline -> gate = 0
+    permitted = _delta_with_ach(0.0)  # full pause -> gate = 1
+
+    # When ACh is at baseline, gate=0 should suppress all weight changes.
+    assert blocked < 1e-6, (
+        f"Expected ZERO weight delta with ACh at baseline (gate=0), got {blocked:.6e}"
+    )
+    # When ACh is paused, gate~1 should permit normal updates.
+    assert permitted > 1e-4, (
+        f"Expected nontrivial weight delta with ACh paused (gate=1), got {permitted:.6e}"
+    )

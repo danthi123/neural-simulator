@@ -4351,6 +4351,18 @@ class SimulationBridge:
                     # D1-targeting + everything else move with reward.
                     if self.cp_d1_d2_sign is not None:
                         weight_updates = weight_updates * self.cp_d1_d2_sign[:actual_nnz]
+                    # Cluster B.3 (2026-04-28): cholinergic (TAN) plasticity
+                    # window gate. When ACh is at tonic baseline the gate ~ 0
+                    # and reward-driven weight changes are suppressed; when
+                    # ACh pauses (concentration drops below baseline) the gate
+                    # rises toward 1 and weight changes are permitted. Scalar
+                    # multiplier; subsystem off / no plasticity_window_gate
+                    # targets -> returns 1.0 (no-op, bit-identical).
+                    if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                            and self.neuromodulator_manager is not None):
+                        tan_gate = self.neuromodulator_manager.compute_plasticity_window_gate_multiplier()
+                        if tan_gate != 1.0:
+                            weight_updates = weight_updates * tan_gate
                     self.cp_connections.data += weight_updates
                     
                     # Clip to bounds (use STDP bounds if STDP is enabled, otherwise Hebbian bounds)
