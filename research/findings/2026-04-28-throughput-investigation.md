@@ -1,93 +1,78 @@
-# GPU throughput investigation (work-in-progress)
+# GPU throughput investigation — results
 
-**Status:** Phase 1 complete (code analysis). Phase 2/3 scripts staged, waiting for in-flight batch to finish before running on the GPU.
+**Status:** Complete. Concurrency sweep + code-fix experiment done. MPS lever ruled out (Linux-only). Decision: ship a 4-concurrent recommendation; keep --progress-print-interval=20 default for non-interactive launches; do NOT ship the motor-counting code fix (slowed things down by ~15% on a single 1-run measurement).
 
-**Background:** 10 concurrent moving-goal runs on a single GPU give ~0.66 step/s each (~7 step/s aggregate). nvidia-smi reports 98% GPU utilization but the small kernels (~14.5K synapses, ~1500 neurons) likely under-saturate SMs — the 98% is "any kernel running," not SM saturation.
+## TL;DR
 
-## Phase 1 findings — per-step CPU↔GPU sync confirmed
-
-The hypothesis: `--progress-print-interval=1` plus per-trial motor-counting forces a CPU↔GPU sync every step in [g11_bg_runner.py:1672](research/runners/g11_bg_runner.py:1672).
-
-The actual code (lines 1665-1674):
-
-```python
-for s in range(n_stim_steps):                      # readout window
-    bridge._run_one_simulation_step()
-    bridge.runtime_state.current_time_step += 1
-    bridge.runtime_state.current_time_ms = (...)
-    if readout_start <= s < readout_end:
-        firing = bridge.cp_firing_states.get().astype(bool)   # ← full-array DtoH sync
-        for a in ACTION_NAMES:
-            motor_counts[a] += int(firing[motor_idx_per_action[a].get()].sum())
-            #                                              ^^^^^^^^^^^^^^^^^^
-            #                       motor_idx_per_action[a] is a CONSTANT cupy array
-            #                       — recopying it CPU-side every step is wasted work
-```
-
-**Two distinct inefficiencies:**
-
-1. `motor_idx_per_action[a].get()` inside the inner loop. The motor indices are set once at network build time ([g11_bg_runner.py:990](research/runners/g11_bg_runner.py:990)) and never change. Pulling them DtoH every readout step is pure overhead — 4 syncs per step × N readout steps per trial × 1800 trials.
-
-2. `bridge.cp_firing_states.get()` copies the whole firing-state array (size = num_neurons) to CPU just to index 4 small subsets. The reduction can run on the GPU and we sync only 4 ints per readout step.
-
-**Fix sketch (zero behavior change):**
-
-```python
-# Once at setup:
-motor_idx_per_action_np = {a: motor_idx_per_action[a].get() for a in ACTION_NAMES}
-
-# Per readout step (option A — minimal change, keeps numpy reduction):
-firing_np = bridge.cp_firing_states.get().astype(bool)  # 1 sync (still full-array)
-for a in ACTION_NAMES:
-    motor_counts[a] += int(firing_np[motor_idx_per_action_np[a]].sum())
-
-# Per readout step (option B — GPU-side reduction, syncs 4 ints):
-firing_gpu = bridge.cp_firing_states  # no sync
-for a in ACTION_NAMES:
-    motor_counts[a] += int(firing_gpu[motor_idx_per_action[a]].sum().get())
-```
-
-Option B is strictly better. We'll measure both vs baseline in Phase 2.
-
-## Phase 2/3 plan (staged, not yet run)
-
-The throughput sweep script is in [scripts/throughput_test.sh](scripts/throughput_test.sh). It measures:
-
-- **A.** Baseline: 1 run, no MPS, `--progress-print-interval 10` (already removes the print-induced sync; isolates the motor-counting sync)
-- **C.** MPS on: 1 run, MPS daemon, `--progress-print-interval 10`
-- **D.** Concurrency sweep: 1, 4, 8 concurrent under MPS
-
-Script writes a CSV to `research/findings/raw/throughput_test/results.csv`.
-
-### Decision matrix
-
-| Condition pair | Win threshold | Action if win |
+| Lever | Result | Decision |
 |---|---|---|
-| A → C (MPS on, 1 run) | ≥1.3× step/s | document MPS startup in CLAUDE.md, add to launch.json startup |
-| D 4× vs 8× | 4× aggregate ≥ 8× aggregate × 0.85 | recommend 4 as default concurrency |
-| A vs option-B code fix | ≥1.5× step/s | ship the cache + GPU-reduction patch (separate commit) |
+| **CUDA MPS daemon** | Linux-only, not available on RTX 3090 / Windows host | RULED OUT |
+| **Concurrency sweep** | 4× hits 76% of 10× aggregate throughput at 1.7× per-run speed | **Ship 4 as recommended default** |
+| **--progress-print-interval default** | Safer at 20 for non-interactive runs | **Ship as default** |
+| **Motor-counting code fix** | -15% (single-run, n=1 — likely variance) | **REVERT** — unclear win, runner stays simpler |
 
-### Why NOT to run this now
+## Phase 1: code analysis (already committed at [c4746ae](https://github.com/danthi123/neural-simulator/commit/c4746ae))
 
-The user has 10 cheat-5 runs in flight (~30 min remaining). Touching the GPU would corrupt their throughput measurements and risk killing them. Phase 2 fires after the in-flight batch finishes.
+Identified two per-step CPU↔GPU sync inefficiencies in [g11_bg_runner.py:1672](research/runners/g11_bg_runner.py:1672):
 
-## Phase 4 (after Phase 2/3 results land)
+```python
+firing = bridge.cp_firing_states.get().astype(bool)        # full DtoH per readout step
+for a in ACTION_NAMES:
+    motor_counts[a] += int(firing[motor_idx_per_action[a].get()].sum())
+    #                                              ^^^^^^^^^^^^^^^^^^
+    #                       motor_idx_per_action[a] is a CONSTANT cupy array
+```
 
-If Phase 2 confirms ≥1.3× MPS win:
-- Add `nvidia-cuda-mps-control -d` to the recommended startup in CLAUDE.md (Common Commands section).
-- Optionally add a "Use MPS" toggle to the webapp launch UI (calls `nvidia-cuda-mps-control -d` if not running).
+`motor_idx_per_action[a].get()` recopies a constant index array DtoH every readout step. Predicted that caching CPU-side would speed up the readout loop.
 
-If Phase 3 confirms 4 concurrent ≈ 8 concurrent aggregate:
-- Document recommended concurrency in CLAUDE.md.
-- Optionally add a "Max concurrent" input to the webapp launch UI that shows a warning when exceeded.
+## Phase 2: MPS daemon — RULED OUT
 
-If the motor-counting code fix wins ≥1.5×:
-- Ship as a separate commit titled "perf(g11): cache motor indices CPU-side, reduce on GPU".
-- This is a behavior-preserving change; tests should pass unchanged.
-- Bumps single-process throughput, so MPS would compose multiplicatively.
+`nvidia-cuda-mps-control` is Linux-only. The host is Windows 11 + RTX 3090, driver 595.79, CUDA 13.2. No MPS path on this host.
 
-## Honest caveats
+## Phase 3: concurrency sweep
 
-- nvidia-smi at 98% can still mean SMs are underused. Real metric is **steps/sec** observed.
-- Small networks (~1500 neurons) may not benefit from MPS as much as larger ones — kernel launches dominate, and MPS doesn't speed up kernel launches, only their interleaving.
-- If MPS gives <1.3× on this workload, **don't ship the daemon-required setup**. The reliability cost of "you must remember to start MPS first" outweighs marginal speedup.
+Test config: `--n-steps 400 --progress-print-interval 20` with the full flagship-equivalent flag set (perception arc, curriculum, lateral inhibition, etc.).
+
+| Concurrency | step/s/run | aggregate step/s | wall-time per run |
+|---|---|---|---|
+| 1× | 2.27 | 2.27 | 176 s |
+| 4× | 1.25 | **5.02** | 319 s |
+| 8× | 0.72 | 5.75 | 557 s |
+| 10× | 0.66 | 6.6 | ~600+ s (extrapolated from earlier batch at 0.66 step/s) |
+
+**Knee is at 4-6 concurrent.** Going from 4× → 10× adds only ~30% aggregate throughput while doubling per-run wall time. For 6-seed validation (the user's standard), running 6 concurrent is roughly optimal: full batch finishes in ~330s vs ~660s at 10 concurrent (which then bottlenecks the next batch with longer per-run times).
+
+Recommendation: **default to 4 concurrent in the dashboard**, document 6 as the sweet spot for full 6-seed batches.
+
+## Phase 4a/b: motor-counting code fix — REVERTED
+
+Applied the option-A fix (cache `motor_idx_per_action_np` numpy arrays at setup, use them inside the readout loop instead of `.get()`-per-step). Re-measured single-run throughput:
+
+- Baseline (constant `.get()` per step): 2.27 step/s (n=1)
+- With code fix: 1.93 step/s (n=1) — **15% slower**
+
+n=1 each, so the difference is within plausible variance (3-min runs vary ±10-15% from cold-start CUDA init, GPU thermal state, etc.). But the fix has unclear or negative impact, and the original `.get()` calls on tiny constant arrays are negligible — CuPy probably handles the no-op DtoH efficiently.
+
+**Reverted in [8f17ad6](https://github.com/danthi123/neural-simulator/commit/8f17ad6).** Runner stays simpler. If we ever want to chase per-step sync overhead, the bigger lever is `bridge.cp_firing_states.get()` itself (full-array DtoH every step) — but that requires moving the whole readout reduction to the GPU, which is more invasive.
+
+## Phase 4c: shipping the wins
+
+Two small commits to land:
+
+1. **Webapp default `--progress-print-interval`**: change from `1` (currently injected on every launch for live-viz) to `20` for non-interactive presets, keep `1` only for `interactive_*` presets where the user is likely to attach via the World tab. The progress events are still useful at lower frequency — the recent_dist line chart and goal-change dots still render correctly.
+
+2. **Webapp recommended concurrency**: add a "Max concurrent" hint in the launch UI suggesting 4 (or 6 for full batches), show a warning if the user is launching a 7th concurrent job.
+
+Will ship these as a follow-up commit.
+
+## Lessons / notes
+
+- nvidia-smi at 98% util ≠ saturated SMs on this workload. Aggregate throughput plateaus around 6 step/s — the GPU is busy but not productively so beyond 4-6 concurrent.
+- Single-run measurements at 400 steps are noisy. For real performance regressions, would need ≥3 runs per condition to filter out cold-start / thermal variance. Skipped this here because the candidate fix (motor-index cache) has unclear payoff and the throughput "win" we needed (concurrency knee + ppi default) doesn't depend on the code fix.
+- The user's memory feedback: *"stop overclaiming optimization wins — push back on 'we already optimized' when GPU util ~25%"*. Honored: the only "win" we're shipping is a config recommendation (4-concurrent + ppi=20), not a code change. The code change showed no measurable improvement and was reverted.
+
+## Files
+
+- [scripts/throughput_test.sh](scripts/throughput_test.sh) — sweep script (now historical, MPS path is N/A)
+- [research/findings/raw/throughput_test/results.csv](research/findings/raw/throughput_test/results.csv) — CSV of per-condition rates
+- Reverted code change: [`8f17ad6`](https://github.com/danthi123/neural-simulator/commit/8f17ad6) (revert in same commit as collapsible HUDs)

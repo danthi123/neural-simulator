@@ -1,0 +1,4 @@
+label,n_concurrent,elapsed_sec,per_run_steps,rate_per_run,rate_aggregate
+A_baseline_1,1,176,400,2.27,2.27
+B_concurrent_4,4,319,400,1.25,5.02
+C_concurrent_8,8,557,400,0.72,5.75

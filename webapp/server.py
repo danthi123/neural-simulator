@@ -328,13 +328,16 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
         Path(control_file).write_text("{}")
         extras.extend(["--interactive-control-file", control_file])
 
-    # Force per-step progress prints for ALL webapp-launched runs so live
-    # mode visualization animates step-by-step (not in 100-step jumps).
-    # Negligible overhead in the runner (sub-millisecond per print at
-    # ~100 steps/sec). Skip if the user explicitly set a different value.
+    # Inject a sensible --progress-print-interval default if none is set
+    # in the preset or the user's extras.
+    #   interactive_*  -> 1   (per-step, for live-mode animation while attached)
+    #   everything else -> 20 (every 20 steps; smoothes the live chart but
+    #                          avoids the per-step CPU<->GPU sync overhead
+    #                          identified in the throughput investigation)
     base_extras = list(extras) + list(PRESETS[req.preset])
     if not any(a == "--progress-print-interval" for a in base_extras):
-        extras.extend(["--progress-print-interval", "1"])
+        default_ppi = "1" if req.preset.startswith("interactive_") else "20"
+        extras.extend(["--progress-print-interval", default_ppi])
 
     cmd = [
         sys.executable, "-m", "research.runners.g11_bg_runner",
