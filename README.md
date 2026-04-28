@@ -131,21 +131,24 @@ graph TB
 
 ```mermaid
 flowchart LR
-    A[STP decay/recovery<br/>per-type if enabled] --> B[Synaptic conductance<br/>E_inh = -75mV<br/>0.7x propagation scale]
-    B --> C[Experiment stimulus<br/>injection<br/>if engine running]
-    C --> D[OU background noise]
-    D --> E[Neuron dynamics<br/>Izh / HH / AdEx<br/>fused kernels]
-    E --> F[Plasticity stack]
-    F --> F1[STDP weight update<br/>respects plastic mask]
-    F --> F2[Reward modulation<br/>eligibility + DA]
-    F --> F3[Hebbian / Homeostasis]
-    F --> F4[Structural<br/>activity-biased]
-    F1 --> G[Neuromodulator step<br/>concentration update<br/>+ effects applied next step]
-    F2 --> G
-    F3 --> G
-    F4 --> G
-    G --> H[Visualization update<br/>via DataChannel]
-    H --> I[Recording<br/>HDF5 if active]
+    A[1. STP decay/recovery<br/>per-type if enabled]
+    B[2. Synaptic conductance<br/>E_inh = -75mV<br/>0.7x propagation scale]
+    C[3. Experiment stimulus<br/>injection<br/>if engine running]
+    D[4. OU background noise]
+    E[5. Neuron dynamics<br/>Izh / HH / AdEx<br/>fused kernels]
+    F1[6. Hebbian LTP/LTD<br/>activity-dependent]
+    F2[7. STDP weight update<br/>respects plastic mask<br/>+ plasticity gates]
+    F3[8. Reward modulation<br/>eligibility × DA<br/>three-factor]
+    F4[9. Neuromodulator step<br/>concentration update<br/>+ gain/rate/drive effects]
+    F5[10. Structural plasticity<br/>activity-biased<br/>synapse formation]
+    F6[11. Homeostasis<br/>EMA threshold adapt]
+    H[12. Recording<br/>HDF5 if active]
+    I[Visualization<br/>via DataChannel]
+
+    A --> B --> C --> D --> E
+    E --> F1 --> F2 --> F3 --> F4 --> F5 --> F6
+    F6 --> H
+    F6 -.publishes.-> I
 ```
 
 ### Phase B — Basal-Ganglia Action Selection (resolved 2026-04-25)
@@ -240,7 +243,7 @@ When `cortex_N` drives, `str_D1_N` fires → `gpi_N` is silenced → `thal_N` is
 - **Spatial 3D connectivity** with distance-dependent probability and trait bias
 - **Watts–Strogatz** small-world topology
 - **Connectivity motifs** (region-specific patterns)
-- **Neural Structure Profiles**: 15 brain-region templates × 3 model variants (HH/Izh/AdEx) = 47 JSON profiles
+- **Neural Structure Profiles**: 16 brain-region templates × 3 model variants (HH/Izh/AdEx) = 47 JSON profiles in `simulation_profiles/`
 
 ### Brain-region framework (opt-in, `enable_brain_region_framework=True`)
 Declarative multi-region simulation. Each `BrainRegion` owns a contiguous neuron slice with its own internal connectivity. Cross-region pathways are declared (`from_region → to_region` with density, weight, plasticity flag). Supports neuromodulator gating per pathway. Enables PFC/Striatum/Thalamus/Motor on a single bridge without manual index bookkeeping.
@@ -394,7 +397,7 @@ Headless runners for the research-gate progression (G1 → G11). Each writes raw
 | G6   | `g6_runner.py` | 2D gridworld | PARTIAL — gate metric needs redesign |
 | G8   | `g8_runner.py` | Session 8 work | — |
 | G9   | `g9_runner.py` | Moving-goal RL with motor exploration | NO-GO at runner side (silent-motor trap) |
-| **G11** | **`g11_bg_runner.py`** | **BG cascade action selection + Phase C/Item 1 perception arc** | **GO 2026-04-27** — see below |
+| **G11** | **`g11_bg_runner.py`** | **BG cascade + perception arc + sensed reward + curriculum** | **GO 2026-04-27/28** — flagship — see below |
 
 ### G11 status (2026-04-27/28)
 
@@ -562,7 +565,7 @@ pytest tests/test_kernels_cpu.py -v
 
 # Per-runner smoke tests
 pytest tests/test_g1_runner_smoke.py -v
-pytest tests/test_g11_bg_runner.py -v   # if present
+pytest tests/test_g11_bg_runner_flags.py -v
 
 # Plasticity + freeze-mask correctness
 pytest tests/test_plastic_mask.py -v
