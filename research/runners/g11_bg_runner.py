@@ -706,9 +706,14 @@ def _run_pretraining_phase(
 
 
 def _gate_required(name: str, regions) -> bool:
-    # cortex_to_d1 always exists. bg_cross_projections is the WHOLE POINT
-    # of v4 pretraining — fail loud if it's not tagged. Other gates are
-    # conditional on opt-in flags; refined when wiring lands in Task 3.
+    """Return True iff the gate must exist regardless of which flags are on.
+
+    `regions` is accepted for forward-compatibility — Task 3 will inspect it
+    to derive the full required-set from the active flag combination.
+    Currently unused; we hard-code the two gates that are always present
+    in the BG cascade. cortex_to_d1 always exists; bg_cross_projections is
+    the WHOLE POINT of v4 pretraining — fail loud if it's not tagged.
+    """
     return name in {"cortex_to_d1", "bg_cross_projections"}
 
 

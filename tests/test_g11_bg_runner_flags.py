@@ -427,7 +427,7 @@ def test_pretraining_raises_on_missing_gate():
             seed=42,
             verbose=False,
         )
-    msg = str(exc_info.value)
+    msg = exc_info.value.args[0]
     assert "bg_cross_projections" in msg or "sensory_to_cortex" in msg, (
         "error should name at least one missing gate")
     assert "cortex_to_d1" in msg, (
