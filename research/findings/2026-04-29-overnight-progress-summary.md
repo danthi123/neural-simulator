@@ -107,12 +107,21 @@ Both override-able via runner kwargs for parameter sweeps.
 
 ### Status of running evals
 
-- **Cluster C v2 eval (briwtq7yh):** started 04:57, before the fix. First seed contaminated with broken cascade; subsequent seeds may use fixed cascade since each python invocation reloads source.
-- **Cluster E eval (b7vhij5sp):** queued after C v2, will use fixed cascade.
-- **No-heur eval (bh1w6rvdu):** queued; fixed cascade.
-- **FIX eval (bqlvyaog0):** new clean run with fixed cascade, baseline + A+C+E. Decisive test.
+- **Cluster C v2 eval (briwtq7yh) DONE (mixed code state):**
+  | Seed | Cv2 only | A+Cv2 | Note |
+  |---|---|---|---|
+  | 42 | 22.39 | 11.86 | Cv2-only contaminated (broken cascade); A+Cv2 fixed |
+  | 43 | 5.69 | 5.83 | Both fixed cascade |
+  | 44 | 5.57 | 6.56 | Both fixed cascade |
+  | **Mean (43+44)** | **5.63** | **6.20** | **Real fixed-cascade signal** |
 
-ETA: FIX eval done ~08:50.
+  **Compartmentalized DA (C v2) is the first cluster showing real cheat-5 signal.** Seeds 43/44 in fixed cascade drop from documented baseline ≈ 19.78 (broken) to ~5.63 (clean C v2). A+C v2 doesn't add much vs C v2 alone. ~70% improvement over broken-cascade baseline.
+
+- **Cluster E eval (b7vhij5sp):** running, started 05:56:40 with fixed cascade. ETA ~06:56.
+- **No-heur eval (bh1w6rvdu):** queued; will use fixed cascade.
+- **FIX eval (bqlvyaog0):** queued; clean baseline + A+C+E under fixed cascade. Will give the clean baseline number for proper comparison.
+
+Updated ETA: FIX eval done ~08:50.
 
 
 
