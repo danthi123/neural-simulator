@@ -7,7 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
-## [Unreleased] — 2026-04-29 — Catalog-driven remediation pass (12 fixes; 11 implemented + 1 design-doc deferral)
+## [Unreleased] — 2026-04-29 — Catalog remediation pass + Clusters A/C/D scaffolding
+
+### Added — Clusters A (closed BG loop) + C (tonic DA) + D (hippocampus trisynaptic loop)
+
+After the catalog-driven remediation pass (R items below), three opt-in clusters
+were scaffolded as the cheat-5 closure attempts continue:
+
+- **Cluster A — Closed BG loop (`2d8be00`).** New `--enable-cluster-a-closed-loop`
+  flag adds (a) cortex_X → stn hyperdirect (Nambu 2002, sparse 0.10, weight 3.0)
+  and (b) thal_X → cortex_X feedback (action-specific only, density 0.50, weight
+  5.0). Both static. Provides the post-synaptic activity / "teaching signal"
+  that's been flagged as missing for cross-projection learning. Plan:
+  `docs/plans/2026-04-29-cluster-a-closed-bg-loop-design.md`. 4 tests.
+  Cheat-5 multi-goal eval n=3 in progress.
+- **Cluster C v1 — Tonic DA (`01fddf4`).** New `--enable-tonic-da` flag registers
+  a `dopamine` neuromodulator (tonic baseline 0.5, decay_tau 200ms, plasticity_rate
+  sensitivity +1.0, from_reward production rule). Bridge reward-modulation block
+  switched to use (DA conc - DA baseline) as plasticity signal when DA registered;
+  legacy path kept when off. Unlocks B.3 ACh window-gating which was a no-op
+  without tonic DA-driven plasticity. Plan: `docs/plans/2026-04-29-cluster-c-tonic-da-design.md`.
+  3 tests + smoke pass.
+- **Cluster D v1 — Hippocampus trisynaptic loop (`3204c3e`).** New
+  `--enable-cluster-d-hippocampus` flag adds 5 regions (ec, dg, dg_fs, ca3, ca1)
+  with the canonical EC→DG→CA3→CA1 + EC→CA1 + CA3→CA3 wiring. DG sparsity via
+  feedforward inhibition (dg_fs). CA3 plastic recurrent autoassociator
+  (internal_density=0.30, plastic_internal=True). Mossy-fiber, perforant-path,
+  Schaffer-collateral pathways all wired. CA1 → place_cells provides additional
+  drive into existing perception arc when --hippocampus is also on. SWR generator
+  (v2) and engram tagging (v3) deferred. Plan:
+  `docs/plans/2026-04-29-cluster-d-hippocampus-design.md`. 6 tests + smoke pass
+  (50 regions, 1454 neurons, 82,270 synapses).
+
+### Eval status
+
+Three chained background evals (each 6 runs at 1800 steps multi-goal, seeds 42/43/44):
+1. Cluster A: baseline (no-A) vs +A (running)
+2. Combo: A+C+B.3 vs C-only (queued)
+3. Cluster D: D-only vs A+D (queued)
+
+Total 18 data points across 6 conditions. Findings docs to follow.
+
+
 
 ### Added — Catalog-driven remediation pass (Kandel 6e + supplemental texts)
 
