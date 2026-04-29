@@ -732,8 +732,10 @@ def test_striatal_fsis_pathways_built():
     assert len(cortex_to_fs) == 4, \
         f"Expected 4 cortex→FS pathways; got {len(cortex_to_fs)}"
     for p in cortex_to_fs:
-        # Same action only: cortex_N→str_PV_FSI_N etc.
-        assert p.from_region.split("_")[1] == p.to_region.split("_")[2], \
+        # Same action only: cortex_N→str_PV_FSI_N etc. After 2026-04-29
+        # rename str_FS_X → str_PV_FSI_X, the action suffix is at index -1
+        # (use split-from-end to be robust to the prefix length).
+        assert p.from_region.split("_")[-1] == p.to_region.split("_")[-1], \
             f"cortex→FS pathway should be same-action; got {p.from_region}→{p.to_region}"
         assert not p.plastic, "cortex→FS should be plastic=False"
 
