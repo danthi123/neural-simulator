@@ -466,13 +466,14 @@ cheats actually *helps* learning.
   are theoretically useful for *rapid action-pattern switching*. Now
   using `--goal-schedule multi` (4 phases × 450 steps, 3 transitions)
   for all cheat-5 evaluation.
-- **Cluster-based buildout strategy:** cheat-5 closure attempts now
-  proceed cluster-by-cluster per the strategy in
+- **Cluster-based buildout strategy:** cheat-5 closure attempts proceed
+  cluster-by-cluster per the strategy in
   [`docs/plans/2026-04-28-cheat5-real-options-survey.md`](docs/plans/2026-04-28-cheat5-real-options-survey.md):
-  Cluster B (striatal microcircuit — D1/D2 asymmetry, FSIs, TANs) →
-  Cluster A (closed BG loop) → Cluster C (DA system) → Cluster D
-  (sequence learning) → Cluster E (connectivity refinement). Each
-  cluster has independent biological merit AND collectively might
+  **Cluster B DONE (3/3)** — B.1 partial, B.2 mixed, B.3 null+infra
+  (2026-04-28). Next: Cluster A (closed BG loop — thalamo-cortical
+  feedback + hyperdirect pathway) → Cluster C (DA system completeness)
+  → Cluster D (sequence learning) → Cluster E (connectivity refinement).
+  Each cluster has independent biological merit AND collectively might
   shift cross-projection behavior.
 - **Cluster B.1 (D1/D2 asymmetry, `--enable-d1-d2-asymmetry`) — PARTIAL
   SIGNAL (2026-04-28).** First piece of empirical support for the
@@ -492,13 +493,37 @@ cheats actually *helps* learning.
   may need 30 → 10 if full cluster doesn't fix Phase 0. Proceeding to B.3
   (TANs) per unit-cluster strategy. See
   [`research/findings/2026-04-28-cluster-b2-striatal-fsis-results.md`](research/findings/2026-04-28-cluster-b2-striatal-fsis-results.md).
+- **Cluster B.3 (cholinergic TANs, `--enable-tans`) — NULL on cheat-5,
+  shipped as infrastructure (2026-04-28 evening).** Implementation correct
+  (47 unit tests pass, biology probe PASS), but TAN-on vs TAN-off is
+  statistically neutral at n=3 multi-goal: B.1+B.2 alone 18.02 ± 3.68 vs
+  +TANs 18.59 ± 2.64; patch-matrix variants 15.18 ± 3.44 vs 14.83 ± 3.83.
+  Reason: the plasticity_window_gate fires inside the reward-modulation
+  block, which is skipped when reward = 0 (between rewards). At reward
+  steps, pause_on_reward drops ACh and gate ≈ 1 → no suppression. Real
+  TAN function requires tonic DA-driven plasticity for ACh to gate; our
+  model has only phasic DA. Real win retained: bridge step-order bug fix
+  (`59dc1fc`) — `manager.step()` now runs BEFORE reward modulation,
+  correcting a one-step lag for fast-dynamics modulators. The
+  `pause_on_reward` rule, `plasticity_window_gate` target type, ACh
+  default config, `--enable-tans` CLI, and biology probe are kept as
+  reusable infrastructure for future tonic-DA experiments. **NOT
+  recommended in flagship configs.** See
+  [`research/findings/2026-04-28-cluster-b3-tans-results.md`](research/findings/2026-04-28-cluster-b3-tans-results.md).
+- **Methodology finding (2026-04-28 evening):** multi-goal benchmark is
+  regressed from documented baselines at seed 42 — v3 baseline 7.08 →
+  12.05 in current code; B.1+B.2 9.50 → 22.03; patch-matrix+B.1+B.2 8.44
+  → 18.87. P3 (after 3 transitions) shows the dominant regression.
+  Predates Cluster B.3 changes (bisect at 714bc29 reproduces 21.22 for
+  B.1+B.2 at seed 42). Future cluster work should use fresh
+  current-code baselines, not the historical numbers.
 - **Biology probe at `research/probes/d1_d2_asymmetry_probe.py`** validates
   the implementation: D1 weights ↑ under +reward / ↓ under −reward; D2
   weights inverted. Runnable for any future regression check.
 - **`--bg-cross-projections`, `--developmental-pretraining`,
-  `--enable-structural-pruning`, `--cross-projection-density` all
-  remain opt-in** for future experiments. NOT recommended for any
-  current flagship configuration.
+  `--enable-structural-pruning`, `--cross-projection-density`,
+  `--enable-tans` all remain opt-in** for future experiments. NOT
+  recommended for any current flagship configuration.
 
 **Without sensed reward (perception arc only, 2026-04-27 night):**
 ```bash
