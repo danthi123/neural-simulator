@@ -117,7 +117,15 @@ Both override-able via runner kwargs for parameter sweeps.
 
   **Compartmentalized DA (C v2) is the first cluster showing real cheat-5 signal.** Seeds 43/44 in fixed cascade drop from documented baseline ≈ 19.78 (broken) to ~5.63 (clean C v2). A+C v2 doesn't add much vs C v2 alone. ~70% improvement over broken-cascade baseline.
 
-- **Cluster E eval (b7vhij5sp):** running, started 05:56:40 with fixed cascade. ETA ~06:56.
+- **Cluster E eval (b7vhij5sp) DONE — STRONG SIGNAL, n=3 fixed cascade:**
+  | Seed | E only | A+E |
+  |---|---|---|
+  | 42 | 6.84 | 8.40 |
+  | 43 | 6.47 | 4.75 |
+  | 44 | 5.47 | 4.34 |
+  | **Mean** | **6.26 ± 0.71** | **5.83 ± 2.23** |
+  
+  **Cluster E (topographic maps) is the SECOND cluster showing real signal.** Both E-only and A+E beat the documented v3 baseline of 7.08 ± 0.12. The Gaussian-weighted distance-based connectivity (sigma=0.3 between corners) creates clean action-channel separation that the BG cascade can exploit.
 - **No-heur eval (bh1w6rvdu):** queued; will use fixed cascade.
 - **FIX eval (bqlvyaog0):** queued; clean baseline + A+C+E under fixed cascade. Will give the clean baseline number for proper comparison.
 
