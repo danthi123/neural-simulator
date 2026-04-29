@@ -164,6 +164,14 @@ Both override-able via runner kwargs for parameter sweeps.
 
 Tier-3 evals queued: C v2 (bkoii8a0q), E (bog1yy7kb), A+E (b3l32yl39). C v2+E composition test (btxzno6vp) also queued.
 
+### Tier-3 result update (C v2 only)
+
+- **C v2 tier-3 (n=6):** 13.68, 4.55, 6.52, 13.15, 15.85, 4.27 → **9.67 ± 5.13**
+
+Surprising: at seeds 100/101 the cluster regresses (13, 15) vs the strong improvements at seeds 42/43/44/102 (4.5-13.7). High variance. The n=3 result of 5.63 was selection bias — seeds 43, 44 happened to favor C v2.
+
+C v2 mean (9.67) is now WORSE than the 3-seed FIX baseline (7.27). To make a fair comparison, also need a 6-seed baseline. Tier-3 of A+E and E remain. Waiting for those before final decision.
+
 Updated ETA: FIX eval done ~08:50.
 
 
