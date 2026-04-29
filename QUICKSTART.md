@@ -16,7 +16,7 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
-    --landmarks --landmarks-replace-place \
+    --enable-landmark-sensor --landmarks-replace-place \
     --sensed-reward \
     --bg-lateral-inhibition \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \

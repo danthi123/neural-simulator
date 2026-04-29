@@ -232,7 +232,7 @@ PRESETS: dict[str, list[str]] = {
         "--hippocampus", "--learned-perception", "--pfc",
         "--beacon-perception", "--beacon-replaces-goal",
         "--cue-reflex", "--cue-reflex-replaces-heuristic",
-        "--landmarks", "--landmarks-replace-place",
+        "--enable-landmark-sensor", "--landmarks-replace-place",
         "--sensed-reward",
         "--adaptive-da", "--adaptive-da-ema-decay-negative", "0.7",
         "--curriculum", "--curriculum-warmup-steps", "600",
@@ -286,7 +286,7 @@ PRESETS: dict[str, list[str]] = {
         "--hippocampus", "--learned-perception", "--pfc",
         "--beacon-perception", "--beacon-replaces-goal",
         "--cue-reflex", "--cue-reflex-replaces-heuristic",
-        "--landmarks", "--landmarks-replace-place",
+        "--enable-landmark-sensor", "--landmarks-replace-place",
         "--sensed-reward",
         "--adaptive-da", "--adaptive-da-ema-decay-negative", "0.7",
         "--curriculum", "--curriculum-warmup-steps", "600",
@@ -306,7 +306,7 @@ PRESETS: dict[str, list[str]] = {
         "--hippocampus", "--learned-perception", "--pfc",
         "--beacon-perception", "--beacon-replaces-goal",
         "--cue-reflex", "--cue-reflex-replaces-heuristic",
-        "--landmarks", "--landmarks-replace-place",
+        "--enable-landmark-sensor", "--landmarks-replace-place",
         "--sensed-reward",
         "--bg-cross-projections", "--bg-cross-thaw-step", "1200", "--bg-cross-phase3-gain", "0.5",
         "--adaptive-da", "--adaptive-da-ema-decay-negative", "0.7",
@@ -318,7 +318,7 @@ PRESETS: dict[str, list[str]] = {
         "--hippocampus", "--learned-perception", "--pfc",
         "--beacon-perception", "--beacon-replaces-goal",
         "--cue-reflex", "--cue-reflex-replaces-heuristic",
-        "--landmarks", "--landmarks-replace-place",
+        "--enable-landmark-sensor", "--landmarks-replace-place",
         "--adaptive-da", "--adaptive-da-ema-decay-negative", "0.7",
         "--curriculum", "--curriculum-warmup-steps", "600",
         "--n-steps", "1800",
@@ -833,7 +833,8 @@ def launch_status(run_id: str) -> JSONResponse:
             run.finished_at = time.time()
     end_time = run.finished_at if run.finished_at is not None else time.time()
     # Surface the launch command list so the frontend can detect feature
-    # flags (e.g. --landmarks) for live runs without re-parsing the sidecar.
+    # flags (e.g. --enable-landmark-sensor / legacy --landmarks) for live
+    # runs without re-parsing the sidecar.
     return JSONResponse({
         "run_id": run.run_id,
         "running": is_running,

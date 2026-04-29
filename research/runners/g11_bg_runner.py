@@ -730,7 +730,7 @@ def build_bg_brain_regions(
     # Cortex -> striatum (LEARNING site).
     # Each cortex_X projects strongly to its corresponding str_D1_X / str_D2_X
     # AND (if enable_bg_cross_projections) weakly to other actions' striatum.
-    # Same-action paths are tagged with plasticity_gate="cortex_to_d1" so the
+    # Same-action paths are tagged with plasticity_gate="corticostriatal" so the
     # curriculum can freeze cortex→striatum once mature.
     # Cross-projections are tagged with plasticity_gate="bg_cross_projections"
     # (separate gate, 2026-04-28) so the curriculum can stage them
@@ -792,7 +792,7 @@ def build_bg_brain_regions(
             if same:
                 density = cortex_to_msn_density_same
                 weight = cortex_to_msn_weight_same
-                gate = "cortex_to_d1"
+                gate = "corticostriatal"
             elif enable_bg_cross_projections and (cortex_action, str_action) in _selected_cross:
                 density = cortex_to_msn_density_cross
                 weight = cross_projection_weight
@@ -961,7 +961,7 @@ def build_bg_brain_regions(
         pathways.append(RegionPathway(
             from_region=f"cortex_{action}", to_region=f"str_patch_{action}",
             density=cortex_to_msn_density_same, weight_mean=cortex_to_msn_weight_same,
-            weight_jitter=0.2, plastic=True, plasticity_gate="cortex_to_d1",
+            weight_jitter=0.2, plastic=True, plasticity_gate="corticostriatal",
         ))
         pathways.append(RegionPathway(
             from_region=f"str_patch_{action}", to_region="dopamine",
@@ -1183,7 +1183,7 @@ def _position_to_cortex_drive(x, y, n_cortex_per_action, grid_size,
 # thaws all of these; absence means a runner-side typo in plasticity_gate=
 # (or a flag that doesn't add the pathway). Error early before GPU work.
 _PRETRAINING_THAWED_GATES = (
-    "cortex_to_d1",
+    "corticostriatal",
     "sensory_to_cortex",
     "hippo_to_cortex",
     "beacon_to_goal",
@@ -1414,7 +1414,7 @@ def _run_pretraining_phase(
             # Structural pruning (cheat-5 option-1, 2026-04-28). Only fires
             # during pretraining when enable_structural_pruning is on. Restricted
             # to cross-projection synapses so we don't sparsify the same-action
-            # cortex_to_d1 routing. cp_eligibility_trace is allocated at capacity
+            # corticostriatal routing. cp_eligibility_trace is allocated at capacity
             # (which can exceed nnz to leave room for structural plasticity), so
             # we slice it down to nnz before handing to update_pruning.
             if cfg.enable_structural_pruning and bridge.cp_synapse_alive is not None:
@@ -1471,7 +1471,7 @@ def _gate_required(name: str, regions, enable_bg_cross_projections: bool = True)
     the pathway isn't built). Pretraining still runs but won't shape any
     cross-projection weights — Task 7 emits a warning at that path.
     """
-    if name == "cortex_to_d1":
+    if name == "corticostriatal":
         return True
     if name == "bg_cross_projections":
         return enable_bg_cross_projections
@@ -1682,7 +1682,7 @@ def run_moving_goal_episode(
     post_curriculum_heuristic_strength: float = 0.0,
     # Sleep-replay memory consolidation (Stage 7, 2026-04-27).
     # During sleep phases: no external goal, hippo cells fire in random
-    # replay patterns (modeling NREM sharp-wave ripples), cortex_to_d1
+    # replay patterns (modeling NREM sharp-wave ripples), corticostriatal
     # is thawed (consolidation), hippo_to_cortex is frozen (preserve
     # learned weights). The replayed hippo signal drives cortex pools
     # via the learned hippo→cortex weights, and STDP between cortex_X
@@ -2138,7 +2138,7 @@ def run_moving_goal_episode(
 
     # Curriculum: real plasticity gating (Stage 3, 2026-04-27).
     # The hippo→cortex pathways are tagged "hippo_to_cortex" and cortex→D1/D2
-    # are tagged "cortex_to_d1" in build_bg_brain_regions. We use these gates
+    # are tagged "corticostriatal" in build_bg_brain_regions. We use these gates
     # to implement true developmental staging:
     #   Phase 1 (warmup): cortex→D1 plastic, hippo→cortex frozen
     #     → cortex builds correct cortex→D1 mapping under heuristic alone
@@ -2155,10 +2155,10 @@ def run_moving_goal_episode(
     # This matches biology — critical periods close gradually via PV
     # maturation, not as step functions — and reduces variance from
     # abrupt cascade disruption.
-    # Curriculum gates: cortex_to_d1, hippo_to_cortex, sensory_to_cortex,
+    # Curriculum gates: corticostriatal, hippo_to_cortex, sensory_to_cortex,
     # beacon_to_goal. In phase 1, all input layers (hippo, sensory, beacon→goal)
-    # are frozen and only cortex_to_d1 is plastic. Cortex builds D1 mapping
-    # under the heuristic teacher. In phase 2, cortex_to_d1 freezes and the
+    # are frozen and only corticostriatal is plastic. Cortex builds D1 mapping
+    # under the heuristic teacher. In phase 2, corticostriatal freezes and the
     # input layers thaw, learning their mappings with cortex as the locked target.
 
     # v4 developmental pretraining (2026-04-28). Runs only if enabled.
@@ -2178,14 +2178,14 @@ def run_moving_goal_episode(
 
     available_gates = bridge.list_plasticity_gates() if enable_curriculum else []
     has_hippo_gate = enable_curriculum and "hippo_to_cortex" in available_gates
-    has_cortex_gate = enable_curriculum and "cortex_to_d1" in available_gates
+    has_cortex_gate = enable_curriculum and "corticostriatal" in available_gates
     has_sensory_gate = enable_curriculum and "sensory_to_cortex" in available_gates
     has_beacon_gate = enable_curriculum and "beacon_to_goal" in available_gates
     has_landmark_gate = enable_curriculum and "landmark_to_place" in available_gates
     has_bg_cross_gate = enable_curriculum and "bg_cross_projections" in available_gates
     bg_cross_thawed = False  # tracks the phase-3 thaw event for verbose logging
     if enable_curriculum:
-        # Phase 1: input plasticity OFF, cortex_to_d1 plasticity ON,
+        # Phase 1: input plasticity OFF, corticostriatal plasticity ON,
         # bg_cross_projections OFF (stays off until phase 3 if configured)
         if has_hippo_gate:
             bridge.set_plasticity_gate("hippo_to_cortex", 0.0)
@@ -2196,7 +2196,7 @@ def run_moving_goal_episode(
         if has_landmark_gate:
             bridge.set_plasticity_gate("landmark_to_place", 0.0)
         if has_cortex_gate:
-            bridge.set_plasticity_gate("cortex_to_d1", 1.0)
+            bridge.set_plasticity_gate("corticostriatal", 1.0)
         if has_bg_cross_gate:
             bridge.set_plasticity_gate("bg_cross_projections", 0.0)
         if verbose:
@@ -2206,7 +2206,7 @@ def run_moving_goal_episode(
                 "hippo_to_cortex" if has_hippo_gate else None,
                 "sensory_to_cortex" if has_sensory_gate else None,
             ]))
-            print(f"[g11 seed={seed}] curriculum phase 1: cortex_to_d1 plastic, "
+            print(f"[g11 seed={seed}] curriculum phase 1: corticostriatal plastic, "
                   f"input gates frozen [{gates_msg}]{ramp_msg}", flush=True)
     last_logged_phase = 1  # for verbose phase-2 announcement on first ramp tick
 
@@ -2259,7 +2259,7 @@ def run_moving_goal_episode(
             target_sensory = target_hippo  # input layers transition together
             if curriculum_ramp_steps > 0:
                 if has_cortex_gate:
-                    bridge.set_plasticity_gate("cortex_to_d1", float(target_cortex))
+                    bridge.set_plasticity_gate("corticostriatal", float(target_cortex))
                 if has_hippo_gate:
                     bridge.set_plasticity_gate("hippo_to_cortex", float(target_hippo))
                 if has_sensory_gate:
@@ -2278,7 +2278,7 @@ def run_moving_goal_episode(
                 if last_logged_phase == 1 and step >= curriculum_warmup_steps:
                     last_logged_phase = 2
                     if has_cortex_gate:
-                        bridge.set_plasticity_gate("cortex_to_d1", float(curriculum_phase2_cortex_gain))
+                        bridge.set_plasticity_gate("corticostriatal", float(curriculum_phase2_cortex_gain))
                     if has_hippo_gate:
                         bridge.set_plasticity_gate("hippo_to_cortex", float(curriculum_phase2_hippo_gain))
                     if has_sensory_gate:
@@ -2289,7 +2289,7 @@ def run_moving_goal_episode(
                         bridge.set_plasticity_gate("landmark_to_place", float(curriculum_phase2_hippo_gain))
                     if verbose:
                         print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 2 -- "
-                              f"cortex_to_d1={curriculum_phase2_cortex_gain:.2f}, "
+                              f"corticostriatal={curriculum_phase2_cortex_gain:.2f}, "
                               f"inputs={curriculum_phase2_hippo_gain:.2f}", flush=True)
 
         # Phase 3 (Cheat #5 closure, 2026-04-28): thaw bg_cross_projections.
@@ -2313,16 +2313,16 @@ def run_moving_goal_episode(
 
         # Sleep-replay phase (Stage 7, 2026-04-27): biological memory consolidation.
         # During sleep, hippo cells fire in random replay patterns (sharp-wave ripples),
-        # cortex_to_d1 is thawed (consolidation), hippo_to_cortex is frozen.
+        # corticostriatal is thawed (consolidation), hippo_to_cortex is frozen.
         # Hippo's already-learned weights drive cortex via existing connections;
         # STDP between cortex and D1 then consolidates the pattern.
         in_sleep = (sleep_replay_after_step >= 0
                    and step >= sleep_replay_after_step
                    and step < sleep_replay_after_step + sleep_replay_steps)
         if in_sleep:
-            # Set gates for consolidation: cortex_to_d1 plastic, hippo_to_cortex frozen
+            # Set gates for consolidation: corticostriatal plastic, hippo_to_cortex frozen
             if has_cortex_gate:
-                bridge.set_plasticity_gate("cortex_to_d1", 1.0)
+                bridge.set_plasticity_gate("corticostriatal", 1.0)
             if has_hippo_gate:
                 bridge.set_plasticity_gate("hippo_to_cortex", 0.0)
             if has_sensory_gate:
@@ -2330,14 +2330,14 @@ def run_moving_goal_episode(
             # Mark phase entry for verbose output
             if step == sleep_replay_after_step and verbose:
                 print(f"[g11 seed={seed}] step {step}: ENTERING SLEEP REPLAY "
-                      f"(cortex_to_d1=1, hippo/sensory frozen, replay rate={sleep_replay_rate_hz:.0f}Hz)",
+                      f"(corticostriatal=1, hippo/sensory frozen, replay rate={sleep_replay_rate_hz:.0f}Hz)",
                       flush=True)
         elif sleep_replay_after_step >= 0 and step == sleep_replay_after_step + sleep_replay_steps and verbose:
             print(f"[g11 seed={seed}] step {step}: EXITING SLEEP REPLAY",
                   flush=True)
             # Restore phase-2 gates
             if has_cortex_gate:
-                bridge.set_plasticity_gate("cortex_to_d1", float(curriculum_phase2_cortex_gain))
+                bridge.set_plasticity_gate("corticostriatal", float(curriculum_phase2_cortex_gain))
             if has_hippo_gate:
                 bridge.set_plasticity_gate("hippo_to_cortex", float(curriculum_phase2_hippo_gain))
 
@@ -2513,7 +2513,7 @@ def run_moving_goal_episode(
         # SLEEP REPLAY: drive place + goal cells to simulate sharp-wave
         # ripples. The replayed pattern, via existing learned hippo→cortex
         # weights, drives cortex pools, which then strengthens cortex→D1
-        # weights via STDP (cortex_to_d1 thawed).
+        # weights via STDP (corticostriatal thawed).
         # Trajectory replay (preferred): sample from successful_trajectories
         # log (built during wake from positive-reward steps). Models
         # biological replay of episodic memories. Falls back to random
@@ -2909,7 +2909,11 @@ def main():
                     help="Peak reflex drive (pA) — matches heuristic strength by default.")
     ap.add_argument("--cue-reflex-replaces-heuristic", action="store_true",
                     help="If set with --cue-reflex, the heuristic is fully disabled; only reflex provides cortex drive.")
-    ap.add_argument("--landmarks", action="store_true",
+    # Canonical name: --enable-landmark-sensor (the implementation is a sensor
+    # abstraction, not landmark-cell biology). --landmarks is the legacy alias
+    # kept for one release cycle (2026-04-29 Wave-1 rename).
+    ap.add_argument("--enable-landmark-sensor", "--landmarks", action="store_true",
+                    dest="enable_landmark_sensor",
                     help="Item 1 Stage 2: enable fixed-position landmark with directional sensors. Plastic landmark_sensors → place_cells pathway lets place cells self-organize from sensor patterns.")
     ap.add_argument("--n-landmark-sensors", type=int, default=8)
     ap.add_argument("--landmark-to-place-weight", type=float, default=8.0)
@@ -3110,7 +3114,7 @@ def main():
     ap.add_argument("--post-curriculum-heuristic-strength", type=float, default=0.0,
                     help="Heuristic strength after decay step (default 0.0 = full off).")
     ap.add_argument("--sleep-replay-after-step", type=int, default=-1,
-                    help="Step at which to enter sleep-replay phase (default -1 = no sleep). During sleep, hippo replays random place/goal patterns, cortex_to_d1 thaws for consolidation.")
+                    help="Step at which to enter sleep-replay phase (default -1 = no sleep). During sleep, hippo replays random place/goal patterns, corticostriatal thaws for consolidation.")
     ap.add_argument("--sleep-replay-steps", type=int, default=300,
                     help="Number of steps in sleep-replay phase.")
     ap.add_argument("--sleep-replay-rate-hz", type=float, default=200.0,
@@ -3162,7 +3166,7 @@ def main():
             enable_cue_reflex=args.cue_reflex,
             cue_reflex_strength=args.cue_reflex_strength,
             cue_reflex_replaces_heuristic=args.cue_reflex_replaces_heuristic,
-            enable_landmarks=args.landmarks,
+            enable_landmarks=args.enable_landmark_sensor,
             n_landmark_sensors=args.n_landmark_sensors,
             landmark_to_place_weight=args.landmark_to_place_weight,
             landmark_position=(args.landmark_x, args.landmark_y) if args.landmark_x is not None and args.landmark_y is not None else None,

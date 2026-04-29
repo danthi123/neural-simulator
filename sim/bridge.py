@@ -1960,6 +1960,33 @@ class SimulationBridge:
     # what controls it (a fixed schedule, a neuromodulator concentration, a
     # developmental clock) is up to the runner / experiment configuration.
 
+    # Deprecated gate-name aliases. Old name on the LEFT, canonical on the RIGHT.
+    # When a caller uses an old name, it's silently translated to the canonical
+    # form. Emit a one-time DeprecationWarning per (gate, frame) so the deprecation
+    # surfaces in CI logs without spamming every step.
+    _DEPRECATED_GATE_NAMES = {
+        # 2026-04-29 Wave-1 rename: cortex_to_d1 was applied to D1, D2, AND patch
+        # pathways — the name only described one of three. Use "corticostriatal".
+        "cortex_to_d1": "corticostriatal",
+    }
+
+    def _canonicalize_gate_name(self, name: str) -> str:
+        canonical = self._DEPRECATED_GATE_NAMES.get(name)
+        if canonical is None:
+            return name
+        if not hasattr(self, "_warned_deprecated_gates"):
+            self._warned_deprecated_gates = set()
+        if name not in self._warned_deprecated_gates:
+            import warnings
+            warnings.warn(
+                f"Plasticity gate name '{name}' is deprecated; use '{canonical}' instead. "
+                f"Old name will be removed in a future release.",
+                DeprecationWarning,
+                stacklevel=3,
+            )
+            self._warned_deprecated_gates.add(name)
+        return canonical
+
     def set_plasticity_gate(self, name: str, value: float) -> None:
         """Set the runtime plasticity gain for all synapses in pathways
         tagged with `name`.
@@ -1971,6 +1998,7 @@ class SimulationBridge:
         Raises KeyError if `name` was not declared on any pathway in the
         active wiring plan.
         """
+        name = self._canonicalize_gate_name(name)
         if name not in self._plasticity_gate_to_synapses:
             raise KeyError(
                 f"No plasticity gate named '{name}'. "
@@ -1987,6 +2015,7 @@ class SimulationBridge:
 
     def get_plasticity_gate_value(self, name: str) -> float:
         """Return the current plasticity gain for the named gate."""
+        name = self._canonicalize_gate_name(name)
         if name not in self._plasticity_gate_values:
             raise KeyError(name)
         return self._plasticity_gate_values[name]
@@ -1997,6 +2026,7 @@ class SimulationBridge:
 
     def plasticity_gate_synapse_count(self, name: str) -> int:
         """Return how many synapses are tagged with the named gate."""
+        name = self._canonicalize_gate_name(name)
         if name not in self._plasticity_gate_to_synapses:
             raise KeyError(name)
         return len(self._plasticity_gate_to_synapses[name])

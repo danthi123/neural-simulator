@@ -128,7 +128,7 @@ Final region/synapse counts (flagship smoke + Cluster B): 42 regions (was 30), 7
   - 8 unit tests for gating semantics; 1 test for NM-driven gates
   - Closed the 7-NEGATIVE plastic-input-layer arc that ran 2026-04-26
 
-- **Real curriculum learning** — phase 1 cortex_to_d1 plastic + input layers frozen; phase 2 cortex frozen + input layers plastic. Configurable warmup steps, smooth ramping, partial-freeze gain.
+- **Real curriculum learning** — phase 1 corticostriatal plastic + input layers frozen; phase 2 cortex frozen + input layers plastic. Configurable warmup steps, smooth ramping, partial-freeze gain. (Gate renamed from `cortex_to_d1` to `corticostriatal` 2026-04-29; old name aliased with deprecation warning for one release cycle.)
 
 - **Sleep-replay infrastructure** — NREM trajectory replay (logged successful (place, goal) tuples) + REM random replay alternation. Mechanism works; current task structure doesn't reward consolidation.
 

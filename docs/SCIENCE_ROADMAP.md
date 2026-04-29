@@ -379,7 +379,7 @@ seeds beat baseline.
    with `scope="gate:<name>"` lets neuromodulator concentrations drive
    gate values directly (DA-gated corticostriatal LTP, ACh-gated
    cortical attention, developmental NM ramps).
-3. **Real curriculum** — phase 1 cortex_to_d1 plastic + input layers
+3. **Real curriculum** — phase 1 corticostriatal plastic + input layers
    frozen; phase 2 cortex frozen (or partial) + input layers thawed.
 4. **Heuristic-decay infrastructure** — for testing whether learned
    weights can navigate without heuristic teacher.
@@ -472,7 +472,7 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
-    --landmarks --landmarks-replace-place \
+    --enable-landmark-sensor --landmarks-replace-place \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 \
     --seed N --n-steps 1800
@@ -563,7 +563,7 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
-    --landmarks --landmarks-replace-place \
+    --enable-landmark-sensor --landmarks-replace-place \
     --sensed-reward \
     --bg-lateral-inhibition \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \

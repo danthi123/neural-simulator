@@ -566,6 +566,49 @@ def test_set_plasticity_gate_unknown_name_raises():
         sb.set_plasticity_gate("not_a_real_gate", 0.5)
 
 
+def test_deprecated_gate_alias_translates_with_warning():
+    """Old gate names (e.g. cortex_to_d1) should be silently translated
+    to canonical names (corticostriatal) with a one-time DeprecationWarning.
+
+    Uses the ab_gate helper bridge but tests the alias translation by
+    monkey-patching the alias map to redirect ab_gate's deprecated name."""
+    import warnings
+    from sim.bridge import SimulationBridge
+    sb, _ = _make_bridge_with_gateable_pathway(seed=42)
+    # Monkey-patch the class-level alias map for this test only.
+    # (We can't use the production cortex_to_d1 → corticostriatal mapping
+    # here because the helper builds a synthetic ab_gate pathway, not a
+    # corticostriatal one. The behavior is the same either way.)
+    original_aliases = SimulationBridge._DEPRECATED_GATE_NAMES
+    try:
+        SimulationBridge._DEPRECATED_GATE_NAMES = {"old_name_for_ab": "ab_gate"}
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            # Set via deprecated name — should translate to canonical
+            sb.set_plasticity_gate("old_name_for_ab", 0.0)
+            assert sb.get_plasticity_gate_value("ab_gate") == 0.0
+            # Should also be readable via the deprecated name
+            assert sb.get_plasticity_gate_value("old_name_for_ab") == 0.0
+            # At least one DeprecationWarning emitted
+            assert any(
+                issubclass(w.category, DeprecationWarning)
+                and "old_name_for_ab" in str(w.message)
+                for w in caught
+            ), f"expected DeprecationWarning for old_name_for_ab; got {[str(w.message) for w in caught]}"
+    finally:
+        SimulationBridge._DEPRECATED_GATE_NAMES = original_aliases
+        # Reset the per-instance warned-set so other tests aren't affected
+        sb._warned_deprecated_gates = set()
+
+
+def test_canonical_cortex_to_d1_is_deprecated():
+    """The production cortex_to_d1 deprecation entry exists in the alias map."""
+    from sim.bridge import SimulationBridge
+    assert SimulationBridge._DEPRECATED_GATE_NAMES.get("cortex_to_d1") == "corticostriatal", (
+        "cortex_to_d1 should alias to corticostriatal as part of the 2026-04-29 Wave-1 rename"
+    )
+
+
 def test_no_gates_means_cp_plasticity_gain_is_none():
     """Backward compat: pathways without plasticity_gate don't allocate
     the gain array (stays None, plasticity update fast-paths skip)."""

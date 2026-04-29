@@ -264,7 +264,7 @@ def test_goal_silence_smoke(tmp_out_path):
 def test_bg_cross_projections_use_separate_gate():
     """Cross-projection cortex→D1/D2 pathways should be tagged with a distinct
     plasticity gate ('bg_cross_projections') from same-action pathways
-    ('cortex_to_d1'). This lets the curriculum stage them independently —
+    ('corticostriatal'). This lets the curriculum stage them independently —
     same-action plastic in phase 1, cross-projections delayed to phase 3
     (post-goal-change) so they don't accumulate phase-0 motor bias."""
     from research.runners.g11_bg_runner import build_bg_brain_regions
@@ -295,8 +295,8 @@ def test_bg_cross_projections_use_separate_gate():
     assert len(same_action) == 8, f"expected 8 same-action paths; got {len(same_action)}"
     assert len(cross) == 24, f"expected 24 cross paths; got {len(cross)}"
 
-    assert all(p.plasticity_gate == "cortex_to_d1" for p in same_action), (
-        "all same-action cortex→striatum paths should share the cortex_to_d1 gate"
+    assert all(p.plasticity_gate == "corticostriatal" for p in same_action), (
+        "all same-action cortex→striatum paths should share the corticostriatal gate"
     )
     assert all(p.plasticity_gate == "bg_cross_projections" for p in cross), (
         "all cross-projection cortex→striatum paths should be on the "
@@ -381,7 +381,7 @@ def test_bg_lateral_inhibition_pathways():
 
 def test_bg_cross_projections_disabled_by_default():
     """When --bg-cross-projections is OFF, no cross-projection pathways exist
-    at all. Same-action pathways still use the cortex_to_d1 gate."""
+    at all. Same-action pathways still use the corticostriatal gate."""
     from research.runners.g11_bg_runner import build_bg_brain_regions
 
     regions, pathways = build_bg_brain_regions(enable_bg_cross_projections=False)
@@ -397,7 +397,7 @@ def test_bg_cross_projections_disabled_by_default():
         f"with cross-projections disabled, expected 8 same-action paths only; "
         f"got {len(cortex_to_str_paths)}"
     )
-    assert all(p.plasticity_gate == "cortex_to_d1" for p in cortex_to_str_paths)
+    assert all(p.plasticity_gate == "corticostriatal" for p in cortex_to_str_paths)
 
 
 def test_pretraining_raises_on_missing_gate():
@@ -410,7 +410,7 @@ def test_pretraining_raises_on_missing_gate():
     # Fake bridge: only has one of the gates we'd thaw
     class _FakeBridge:
         def list_plasticity_gates(self):
-            return ["cortex_to_d1"]  # missing all the others
+            return ["corticostriatal"]  # missing all the others
 
         def set_plasticity_gate(self, name, value):
             raise AssertionError("should not be called when validation fails")
@@ -430,7 +430,7 @@ def test_pretraining_raises_on_missing_gate():
     msg = exc_info.value.args[0]
     assert "bg_cross_projections" in msg or "sensory_to_cortex" in msg, (
         "error should name at least one missing gate")
-    assert "cortex_to_d1" in msg, (
+    assert "corticostriatal" in msg, (
         "error should list the actually-available gates so the user can spot the typo")
 
 
@@ -447,7 +447,7 @@ def test_pretraining_thaws_all_gates_at_start():
             self.calls = []
 
         def list_plasticity_gates(self):
-            return ["cortex_to_d1", "bg_cross_projections", "sensory_to_cortex"]
+            return ["corticostriatal", "bg_cross_projections", "sensory_to_cortex"]
 
         def set_plasticity_gate(self, name, value):
             self._values[name] = value
@@ -465,7 +465,7 @@ def test_pretraining_thaws_all_gates_at_start():
     )
 
     # Every gate the bridge knows about should have been set to 1.0
-    for gate in ["cortex_to_d1", "bg_cross_projections", "sensory_to_cortex"]:
+    for gate in ["corticostriatal", "bg_cross_projections", "sensory_to_cortex"]:
         assert (gate, 1.0) in fb.calls, (
             f"gate {gate!r} was not thawed to 1.0; calls={fb.calls}")
 
@@ -1088,7 +1088,7 @@ def test_cluster_d_ca1_to_place_cells_only_with_hippocampus():
         "ca1 -> place_cells should be present when --hippocampus is also on"
 
     # And the existing landmark_sensors -> place_cells pathway is unchanged
-    # by Cluster D (when --landmarks + --hippocampus are also on).
+    # by Cluster D (when --enable-landmark-sensor + --hippocampus are also on).
     _, pathways_full = build_bg_brain_regions(
         enable_cluster_d_hippocampus=True,
         enable_hippocampus=True,
@@ -1099,7 +1099,7 @@ def test_cluster_d_ca1_to_place_cells_only_with_hippocampus():
         "Cluster D must not remove existing landmark_sensors -> place_cells"
     # And new landmark_sensors -> ec is added.
     assert ("landmark_sensors", "ec") in pairs_full, \
-        "Cluster D should add landmark_sensors -> ec when --landmarks is on"
+        "Cluster D should add landmark_sensors -> ec when --enable-landmark-sensor is on"
 
 
 def test_cluster_d_kwarg_accepted(tmp_out_path):

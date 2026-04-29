@@ -401,7 +401,7 @@ Key new infrastructure:
 > result (2026-04-28) was caused by missing this distinction; v2 fixes
 > it via zero-init.
 
-Curriculum: phase 1 cortex_to_d1 plastic + input layers frozen; phase 2
+Curriculum: phase 1 corticostriatal plastic + input layers frozen; phase 2
 cortex frozen (or partial) + input layers thawed. Biologically: real
 critical periods close gradually, gated by neuromodulators, allowing
 sensory cortex to mature before association cortex.
@@ -437,7 +437,7 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
-    --landmarks --landmarks-replace-place \
+    --enable-landmark-sensor --landmarks-replace-place \
     --sensed-reward \
     --bg-lateral-inhibition \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \

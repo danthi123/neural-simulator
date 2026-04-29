@@ -415,16 +415,19 @@ async function attachLive(runId, listItem) {
   } catch {
     world.interactive = false;
   }
-  // Detect whether this live run was launched with --landmarks so the
-  // landmark icon + legend row can be hidden when the cue isn't actually
-  // in play. /api/runs/launch/{id} returns the full cmd list.
+  // Detect whether this live run was launched with the landmark sensor
+  // (canonical flag --enable-landmark-sensor; legacy --landmarks aliased)
+  // so the landmark icon + legend row can be hidden when the cue isn't
+  // actually in play. /api/runs/launch/{id} returns the full cmd list.
   try {
     const statusRes = await fetch(`/api/runs/launch/${runId}`);
     if (statusRes.ok) {
       const status = await statusRes.json();
       const cmd = Array.isArray(status.cmd) ? status.cmd : [];
       world.usedLandmarks = cmd.some(
-        (t) => typeof t === "string" && t.includes("landmarks"),
+        (t) =>
+          typeof t === "string" &&
+          (t.includes("landmarks") || t.includes("landmark-sensor")),
       );
     } else {
       // Fallback if the endpoint isn't available — show by default so the

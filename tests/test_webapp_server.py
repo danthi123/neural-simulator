@@ -192,7 +192,7 @@ def test_progress_line_parser_rejects_non_progress():
     for bad in [
         "",
         "random output",
-        "[g11 seed=42] curriculum phase 1: cortex_to_d1 plastic",
+        "[g11 seed=42] curriculum phase 1: corticostriatal plastic",
         "[g11 seed=42] step 800/1800",  # missing pos/goal
     ]:
         assert _try_parse_progress(bad, 0.0) is None, f"unexpectedly parsed: {bad!r}"

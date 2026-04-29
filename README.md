@@ -361,7 +361,7 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
-    --landmarks --landmarks-replace-place \
+    --enable-landmark-sensor --landmarks-replace-place \
     --sensed-reward \
     --bg-lateral-inhibition \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
@@ -414,7 +414,7 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
-    --landmarks --landmarks-replace-place \
+    --enable-landmark-sensor --landmarks-replace-place \
     --sensed-reward \
     --bg-lateral-inhibition \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
@@ -435,7 +435,7 @@ Available capabilities (all opt-in):
 - **PFC working memory** (`--pfc`) — recurrent prefrontal region for persistent activity
 - **Beacon perception** (`--beacon-perception` `--beacon-replaces-goal`) — 8 directional sensors detecting beacon, replaces direct goal coords
 - **Cue-following reflex** (`--cue-reflex` `--cue-reflex-replaces-heuristic`) — innate sensorimotor wiring (replaces heuristic)
-- **Landmark sensors** (`--landmarks` `--landmarks-replace-place`) — fixed-position landmark for place cell self-organization
+- **Landmark sensors** (`--enable-landmark-sensor` `--landmarks-replace-place`; legacy alias `--landmarks`) — fixed-position landmark for place cell self-organization
 - **Sensed reward** (`--sensed-reward`) — beacon-intensity gradient instead of ground-truth distance
 - **BG lateral inhibition** (`--bg-lateral-inhibition`) — MSN cross-pool inhibition (24 GABAergic pathways). **GO 2026-04-28** — biology-grounded WTA selection, no regression vs flagship. Recommended permanent default.
 - **BG cross-projections** (`--bg-cross-projections`) — opt-in but NEGATIVE through v3.1 — breaks phase-2 readaptation. v4 developmental pre-training is the next attempt.
