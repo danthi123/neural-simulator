@@ -493,6 +493,17 @@ cheats actually *helps* learning.
   may need 30 → 10 if full cluster doesn't fix Phase 0. Proceeding to B.3
   (TANs) per unit-cluster strategy. See
   [`research/findings/2026-04-28-cluster-b2-striatal-fsis-results.md`](research/findings/2026-04-28-cluster-b2-striatal-fsis-results.md).
+  - **Taxonomy note (R2.3, 2026-04-29):** `str_FS_*` regions explicitly model
+    **PV-FSI** (parvalbumin-positive fast-spiking interneurons) — *one of
+    eight* distinct striatal GABAergic interneuron classes catalogued in
+    Tepper-2018: PV-FSI, NPY-LTS, NPY-NGF, CR, TH/THIN (4 subtypes), FAI,
+    SABI, plus the cholinergic ChI/TAN class. The classes are
+    **non-isomorphic to cortical taxonomy** (no chandelier-equivalent, no
+    Martinotti-equivalent in striatum). The catalog (Kandel ch. 8) earlier
+    misapplied cortical taxonomy to striatum; corrected per TK-2017
+    pp 157–158, 174 + Tepper-2018 pp 1–2, 11–12. Future cluster work could
+    add the remaining 7 classes (NPY-LTS for nitric-oxide signaling, etc.)
+    but PV-FSI alone covers the dominant feedforward-WTA function.
 - **Cluster B.3 (cholinergic TANs, `--enable-tans`) — NULL on cheat-5,
   shipped as infrastructure (2026-04-28 evening).** Implementation correct
   (47 unit tests pass, biology probe PASS), but TAN-on vs TAN-off is

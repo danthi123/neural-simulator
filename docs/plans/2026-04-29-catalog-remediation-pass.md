@@ -46,3 +46,19 @@ Catalog lines (`references/feature-catalog.md` on `catalog-build` branch):
 - All new neuromodulators (R3.6) opt-in via existing `NeuromodulatorConfig` framework; default off.
 - KIR2/Kv2 kernel (R3.9) is the only item that requires new GPU code; rest reuse existing primitives.
 - Final validation pass runs flagship smoke + all unit tests.
+
+## R3.12 — CA3 SWRs intrinsic, NREM as gate (forward-looking)
+
+The catalog (Bz Cycle 12 p. 344, Leinekugel et al. 2002) flagged that sharp-wave-ripple events (SWRs) are **intrinsic CA3 self-organized events** that *also* happen to occur preferentially during NREM. Specifically, sharp waves are present in fetal/neonatal hippocampus before any sleep-stage architecture exists; they persist in transplanted hippocampi cut off from all afferents; they emerge in CA3 slices in vitro.
+
+**Implication for any future SWR / replay implementation in this project:**
+
+- SWR generation must live in **CA3 region intrinsic dynamics** (recurrent excitation + adaptation thresholds), NOT in a bridge-level sleep-stage scheduler.
+- The role of NREM (slow oscillation up-states + spindle troughs) is to **gate** which SWRs have downstream effect — passive selection, not active generation.
+- Empirical validation: with the NREM scheduler disabled, the CA3 recurrent network should still produce intermittent sharp-wave-like population bursts during quiet rest. Re-enabling the slow-oscillation gate biases bursts toward Up-state troughs *passively* — no scheduler needs to impose this.
+
+The current project does not yet have a CA3 region, an SWR scheduler, or sleep-replay infrastructure. R3.12 is a **forward-looking framing fix**: when T1.B (SWR-driven sequential replay, biology-buildout-roadmap.md month 2) lands, it must place the SWR generator inside CA3 intrinsic dynamics, with NREM as a passive gate.
+
+This also informs Cluster D (hippocampal trisynaptic loop, T1.A, month 1): CA3 should be configured with sufficient recurrent density + spike-frequency adaptation to self-organize sharp-wave-like population bursts on its own.
+
+Flagging here so it isn't forgotten when sleep-replay work begins.
