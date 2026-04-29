@@ -469,7 +469,7 @@ These match what real animals use.
 **Recipe:**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception --pfc \
+    --hippocampus --learned-perception --enable-dlpfc-wm \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --enable-landmark-sensor --landmarks-replace-place \
@@ -560,7 +560,7 @@ reward = sign(intensity_after - intensity_before)  # ±1 / 0
 **Recipe (current flagship — includes v3 lateral inhibition):**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception --pfc \
+    --hippocampus --learned-perception --enable-dlpfc-wm \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --enable-landmark-sensor --landmarks-replace-place \

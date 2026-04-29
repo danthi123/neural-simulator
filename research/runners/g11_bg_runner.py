@@ -295,7 +295,7 @@ def build_bg_brain_regions(
     # PFC pyramidal preset has biophysical features for sustained firing.
     if enable_pfc:
         regions.append(BrainRegion(
-            name="pfc",
+            name="dlpfc_wm",
             n_neurons=n_pfc,
             exc_fraction=0.8,
             internal_density=pfc_internal_density,
@@ -708,25 +708,25 @@ def build_bg_brain_regions(
     # PFC working memory pathways (Item 3, 2026-04-27):
     #   goal_cells → PFC: goal info enters working memory
     #   PFC → cortex_X: PFC drives cortex selection across delays
-    # Both tagged with plasticity_gate="pfc_pathways" so curriculum can
+    # Both tagged with plasticity_gate="dlpfc_wm_pathways" so curriculum can
     # stage PFC learning. Internal PFC connectivity is plastic_internal=True
     # for recurrent learning (gated by "pfc_internal" if needed).
     if enable_pfc:
         if enable_hippocampus:
             # goal_cells → PFC for working memory of goal
             pathways.append(RegionPathway(
-                from_region="goal_cells", to_region="pfc",
+                from_region="goal_cells", to_region="dlpfc_wm",
                 density=0.5, weight_mean=goal_to_pfc_weight,
                 weight_jitter=0.2, plastic=True,
-                plasticity_gate="pfc_pathways",
+                plasticity_gate="dlpfc_wm_pathways",
             ))
         # PFC → cortex (action selection driven by working memory)
         for action in ACTION_NAMES:
             pathways.append(RegionPathway(
-                from_region="pfc", to_region=f"cortex_{action}",
+                from_region="dlpfc_wm", to_region=f"cortex_{action}",
                 density=0.5, weight_mean=pfc_to_cortex_weight,
                 weight_jitter=0.2, plastic=True,
-                plasticity_gate="pfc_pathways",
+                plasticity_gate="dlpfc_wm_pathways",
             ))
 
     # Cortex -> striatum (LEARNING site).
@@ -1210,7 +1210,7 @@ _PRETRAINING_THAWED_GATES = (
     "hippo_to_cortex",
     "beacon_to_goal",
     "landmark_to_place",
-    "pfc_pathways",
+    "dlpfc_wm_pathways",
     "bg_cross_projections",
 )
 
@@ -2906,10 +2906,18 @@ def main():
                     help="Initial mean weight for sensory→cortex pathway (default 10). Higher values let input layer drive cortex more strongly during phase 2.")
     ap.add_argument("--hippocampus-to-cortex-weight", type=float, default=10.0,
                     help="Initial mean weight for hippocampus→cortex pathway (default 10). Higher = stronger plastic input contribution.")
-    ap.add_argument("--pfc", action="store_true",
-                    help="Enable PFC working memory region (recurrent connectivity for persistent activity).")
-    ap.add_argument("--n-pfc", type=int, default=60,
-                    help="Number of PFC neurons (default 60).")
+    # Canonical: --enable-dlpfc-wm. The implementation is a single recurrent
+    # attractor modeling dlPFC working-memory persistent activity (catalog
+    # G.06 / G.08), not the whole prefrontal cortex (dlPFC + vmPFC + OFC + ACC).
+    # Legacy --pfc kept as alias for one release cycle (2026-04-29 Wave-1 #2).
+    ap.add_argument("--enable-dlpfc-wm", "--pfc", action="store_true",
+                    dest="pfc",
+                    help="Enable a dlPFC working-memory module (one recurrent "
+                         "attractor pool implementing persistent activity, NOT "
+                         "the whole prefrontal cortex). Catalog G.06 / G.08.")
+    ap.add_argument("--n-dlpfc-wm", "--n-pfc", type=int, default=60,
+                    dest="n_pfc",
+                    help="Number of dlPFC working-memory neurons (default 60).")
     ap.add_argument("--pfc-internal-density", type=float, default=0.2,
                     help="PFC recurrent connection density (default 0.2; higher = more persistent activity).")
     ap.add_argument("--goal-to-pfc-weight", type=float, default=8.0)

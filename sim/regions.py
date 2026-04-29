@@ -335,6 +335,10 @@ class RegionManager:
         "str_FS_E": "str_PV_FSI_E",
         "str_FS_S": "str_PV_FSI_S",
         "str_FS_W": "str_PV_FSI_W",
+        # 2026-04-29 Wave-1 rename #2: "pfc" was the whole prefrontal cortex
+        # claim; we model only dlPFC working-memory persistent activity
+        # (catalog G.06 / G.08). Renamed to "dlpfc_wm".
+        "pfc": "dlpfc_wm",
     }
 
     def _canonicalize_region_name(self, region_name: str) -> str:

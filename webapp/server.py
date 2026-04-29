@@ -229,7 +229,7 @@ def get_run_impl(name: str) -> JSONResponse:
 PRESETS: dict[str, list[str]] = {
     "flagship": [
         "--moving-goal",
-        "--hippocampus", "--learned-perception", "--pfc",
+        "--hippocampus", "--learned-perception", "--enable-dlpfc-wm",
         "--beacon-perception", "--beacon-replaces-goal",
         "--cue-reflex", "--cue-reflex-replaces-heuristic",
         "--enable-landmark-sensor", "--landmarks-replace-place",
@@ -283,7 +283,7 @@ PRESETS: dict[str, list[str]] = {
     # pause/resume, inject rewards.
     "interactive_flagship": [
         "--moving-goal",
-        "--hippocampus", "--learned-perception", "--pfc",
+        "--hippocampus", "--learned-perception", "--enable-dlpfc-wm",
         "--beacon-perception", "--beacon-replaces-goal",
         "--cue-reflex", "--cue-reflex-replaces-heuristic",
         "--enable-landmark-sensor", "--landmarks-replace-place",
@@ -303,7 +303,7 @@ PRESETS: dict[str, list[str]] = {
     ],
     "flagship_with_cheat5": [
         "--moving-goal",
-        "--hippocampus", "--learned-perception", "--pfc",
+        "--hippocampus", "--learned-perception", "--enable-dlpfc-wm",
         "--beacon-perception", "--beacon-replaces-goal",
         "--cue-reflex", "--cue-reflex-replaces-heuristic",
         "--enable-landmark-sensor", "--landmarks-replace-place",
@@ -315,7 +315,7 @@ PRESETS: dict[str, list[str]] = {
     ],
     "perception_only": [
         "--moving-goal",
-        "--hippocampus", "--learned-perception", "--pfc",
+        "--hippocampus", "--learned-perception", "--enable-dlpfc-wm",
         "--beacon-perception", "--beacon-replaces-goal",
         "--cue-reflex", "--cue-reflex-replaces-heuristic",
         "--enable-landmark-sensor", "--landmarks-replace-place",

@@ -434,7 +434,7 @@ for the full eval matrix (60+ runs across 14 conditions).
 **Earlier flagship (2026-04-27 — full perception arc + adaptive DA):**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception --pfc \
+    --hippocampus --learned-perception --enable-dlpfc-wm \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --enable-landmark-sensor --landmarks-replace-place \
@@ -591,7 +591,7 @@ Sum 4.56 ± 0.70 (6-seed, p=0.00819, 22.4% over baseline). Closes 3 of 5 cheats.
 **Best with cheats (engineering shortcut, no perception arc):**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception --pfc \
+    --hippocampus --learned-perception --enable-dlpfc-wm \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 \
     --seed N --n-steps 1800

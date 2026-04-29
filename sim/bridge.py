@@ -1965,9 +1965,14 @@ class SimulationBridge:
     # form. Emit a one-time DeprecationWarning per (gate, frame) so the deprecation
     # surfaces in CI logs without spamming every step.
     _DEPRECATED_GATE_NAMES = {
-        # 2026-04-29 Wave-1 rename: cortex_to_d1 was applied to D1, D2, AND patch
-        # pathways — the name only described one of three. Use "corticostriatal".
+        # 2026-04-29 Wave-1 rename #1: cortex_to_d1 was applied to D1, D2, AND
+        # patch pathways — the name only described one of three. Use
+        # "corticostriatal".
         "cortex_to_d1": "corticostriatal",
+        # 2026-04-29 Wave-1 rename #2: pfc_pathways follows the pfc -> dlpfc_wm
+        # rename. The implementation gates dlPFC working-memory recurrent + I/O
+        # plasticity, not all of prefrontal cortex.
+        "pfc_pathways": "dlpfc_wm_pathways",
     }
 
     def _canonicalize_gate_name(self, name: str) -> str:

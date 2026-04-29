@@ -13,7 +13,7 @@ python neural-simulator.py
 
 # 3. Or run the flagship research experiment headlessly:
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception --pfc \
+    --hippocampus --learned-perception --enable-dlpfc-wm \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --enable-landmark-sensor --landmarks-replace-place \
