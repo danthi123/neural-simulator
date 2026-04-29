@@ -4413,7 +4413,32 @@ class SimulationBridge:
                 if reward_prediction_error < 0.0:
                     aversive_scale = float(getattr(cfg, "reward_aversive_scale", 0.5))
                     reward_prediction_error = reward_prediction_error * aversive_scale
-                if abs(reward_prediction_error) > 1e-6:  # Only update if there's a reward signal
+
+                # Cluster C v1 (2026-04-29): tonic-DA path. When the
+                # neuromodulator subsystem is on AND a "dopamine" modulator
+                # is registered, use the DA concentration's deviation-from-
+                # baseline as the plasticity signal instead of the raw
+                # signed-scalar reward_prediction_error. DA's from_reward
+                # production rule handles the phasic dynamics; tonic baseline
+                # gives a non-zero plasticity signal between rewards (which
+                # ACh's plasticity_window_gate can then modulate). Falls back
+                # to legacy path when no DA modulator is registered.
+                da_signal = None
+                if (getattr(cfg, "enable_neuromodulator_subsystem", False)
+                        and self.neuromodulator_manager is not None):
+                    try:
+                        da_conc = self.neuromodulator_manager.get_concentration("dopamine")
+                        da_baseline = next(
+                            (c.baseline for c in self.neuromodulator_manager._configs
+                             if c.name == "dopamine"),
+                            None,
+                        )
+                        if da_baseline is not None:
+                            da_signal = float(da_conc) - float(da_baseline)
+                    except KeyError:
+                        da_signal = None  # dopamine not registered; legacy path
+                effective_signal = da_signal if da_signal is not None else reward_prediction_error
+                if abs(effective_signal) > 1e-6:  # Only update if there's a reward signal
                     # Effective lr is reward_learning_rate × neuromod plasticity_rate
                     # multiplier (subsystem off → multiplier 1.0, no change).
                     effective_reward_lr = cfg.reward_learning_rate
@@ -4428,7 +4453,7 @@ class SimulationBridge:
                     # Slice eligibility trace to match actual synapse count (trace array
                     # is pre-allocated to capacity which may exceed cp_connections.nnz).
                     actual_nnz = self.cp_connections.nnz
-                    weight_updates = effective_reward_lr * reward_prediction_error * self.cp_eligibility_trace[:actual_nnz]
+                    weight_updates = effective_reward_lr * effective_signal * self.cp_eligibility_trace[:actual_nnz]
                     # Per-pathway plasticity gain (Stage 1, 2026-04-27): gate
                     # the eligibility-to-weight conversion. A pathway frozen
                     # NOW won't accept reward-driven changes from past

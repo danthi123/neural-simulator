@@ -1381,6 +1381,7 @@ def run_moving_goal_episode(
     enable_tans: bool = False,
     enable_bg_neuropeptides: bool = False,  # R3.6: D1/D2 neuropeptide arms
     enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
+    enable_tonic_da: bool = False,  # Cluster C v1: dopamine as a real neuromodulator
     # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
     # Defaults match CoreSimConfig but can be overridden from the runner's
     # CLI / kwargs to tune the pruning aggressiveness for short pretraining
@@ -1602,6 +1603,18 @@ def run_moving_goal_episode(
             _default_dynorphin_config(),
             _default_substance_p_config(),
             _default_enkephalin_config(),
+        ]
+    # Cluster C v1 (2026-04-29): tonic dopamine via neuromodulator framework.
+    # Replaces signed-scalar reward modulation with a real DA concentration
+    # (tonic baseline + phasic activation/depression). Unlocks B.3 ACh
+    # window-gating (which is otherwise a no-op without tonic DA-driven
+    # plasticity to gate). Composes with --enable-tans and
+    # --enable-bg-neuropeptides.
+    if enable_tonic_da:
+        from sim.neuromodulators import _default_dopamine_config
+        cfg.enable_neuromodulator_subsystem = True
+        cfg.neuromodulators = list(cfg.neuromodulators) + [
+            _default_dopamine_config()
         ]
     if pruning_alpha is not None:
         cfg.pruning_alpha = float(pruning_alpha)
@@ -2670,6 +2683,14 @@ def main():
                          "Provides the teaching signal missing for "
                          "cross-projection learning. See "
                          "docs/plans/2026-04-29-cluster-a-closed-bg-loop-design.md.")
+    ap.add_argument("--enable-tonic-da", action="store_true",
+                    help="Cluster C v1 (2026-04-29): replace signed-scalar "
+                         "reward modulation with a real `dopamine` "
+                         "neuromodulator (tonic baseline + phasic "
+                         "activation/depression). Unlocks B.3 TANs by "
+                         "providing tonic DA-driven plasticity for ACh "
+                         "to gate. See "
+                         "docs/plans/2026-04-29-cluster-c-tonic-da-design.md.")
     ap.add_argument("--enable-tans", action="store_true",
                     help="Cluster B.3: cholinergic interneurons (TANs). Adds "
                          "an acetylcholine neuromodulator that pauses on reward "
@@ -2806,6 +2827,7 @@ def main():
             enable_tans=args.enable_tans,
             enable_bg_neuropeptides=args.enable_bg_neuropeptides,
             enable_cluster_a_closed_loop=args.enable_cluster_a_closed_loop,
+            enable_tonic_da=args.enable_tonic_da,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
             pruning_weight_floor=args.pruning_weight_floor,

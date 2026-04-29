@@ -905,6 +905,57 @@ def test_cluster_a_kwarg_accepted(tmp_out_path):
     )
 
 
+# ───────────────────── 2026-04-29: Cluster C v1 tonic DA ─────────────────────
+
+
+def test_cluster_c_tonic_da_kwarg_accepted(tmp_out_path):
+    """Runner accepts enable_tonic_da kwarg without error."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    run_moving_goal_episode(
+        out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+        enable_tonic_da=True,
+    )
+
+
+def test_default_dopamine_config_helper():
+    """_default_dopamine_config() returns a valid dopamine modulator."""
+    from sim.neuromodulators import _default_dopamine_config, NeuromodulatorConfig
+    cfg = _default_dopamine_config()
+    assert isinstance(cfg, NeuromodulatorConfig)
+    assert cfg.name == "dopamine"
+    assert cfg.baseline > 0.0  # tonic baseline
+    rate_targets = [t for t in cfg.targets if t.target_type == "plasticity_rate"]
+    assert len(rate_targets) >= 1
+    from_reward_rules = [r for r in cfg.production_rules if r.rule_type == "from_reward"]
+    assert len(from_reward_rules) >= 1
+
+
+def test_tonic_da_triggers_plasticity_rate_modulation():
+    """When DA is registered, plasticity_rate_multiplier deviates from 1.0
+    according to current DA concentration vs baseline."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+    from sim.neuromodulators import (
+        NeuromodulatorManager,
+        _default_dopamine_config,
+    )
+    cfg = _default_dopamine_config()
+    mgr = NeuromodulatorManager([cfg], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+    # At baseline (0.5), plasticity_rate ~= 1.0
+    mult_baseline = mgr.compute_plasticity_rate_multiplier()
+    assert abs(mult_baseline - 1.0) < 1e-3, f"At baseline, expected ~1.0; got {mult_baseline}"
+    # Set above baseline -> multiplier > 1
+    mgr.set_concentration("dopamine", 1.5)
+    mult_high = mgr.compute_plasticity_rate_multiplier()
+    assert mult_high > 1.5, f"DA above baseline should boost plasticity; got {mult_high}"
+    # Set below baseline -> multiplier < 1
+    mgr.set_concentration("dopamine", 0.0)
+    mult_low = mgr.compute_plasticity_rate_multiplier()
+    assert mult_low < 1.0, f"DA below baseline should reduce plasticity; got {mult_low}"
+
+
 # ───────────────────── 2026-04-29: R3.11 striosome (patch) split ─────────────────────
 
 

@@ -688,6 +688,62 @@ def _default_substance_p_config() -> NeuromodulatorConfig:
     )
 
 
+def _default_dopamine_config() -> NeuromodulatorConfig:
+    """Cluster C v1 (2026-04-29) — tonic dopamine baseline + phasic activation/depression.
+
+    Real DA has both tonic (baseline ~5 Hz spontaneous) AND phasic (bursts/dips
+    around reward events) dynamics. Our pre-Cluster-C design used a signed-scalar
+    `current_reward_signal` that conflated activation and depression. Cluster C
+    moves DA into the neuromodulator framework as a proper concentration so
+    (a) ACh window-gates have something to gate between rewards, and
+    (b) phasic deviations from tonic encode RPE biologically.
+
+    Defaults:
+        baseline = 0.5            # tonic DA, modest positive baseline
+        decay_tau_ms = 200        # phasic responses decay over ~200 ms
+        concentration_min = 0.0
+        concentration_max = 2.0   # cap at ~4x baseline
+
+    Targets:
+        plasticity_rate scope=all sensitivity=+1.0
+            Effective gain = 1 + (conc - baseline)
+            At baseline: 1.0 (no change)
+            Above baseline (e.g. 1.5): 2.0 (LTP gain)
+            Below baseline (e.g. 0.0): 0.5 (LTD gentler than full block)
+
+    Production rules:
+        from_reward sensitivity=+1.0 threshold=0.0
+            Positive reward -> DA above baseline (phasic activation)
+            Negative reward -> DA below baseline (phasic depression)
+            With Schultz98/16 magnitude asymmetry handled by R2.4
+            (cfg.reward_aversive_scale) in the bridge before the reward
+            signal hits this rule.
+
+    Combines with --enable-tans (B.3) and --enable-bg-neuropeptides (R3.6):
+    all three opt-in flags can compose.
+    """
+    return NeuromodulatorConfig(
+        name="dopamine",
+        baseline=0.5,
+        decay_tau_ms=200.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        targets=[
+            ModulatorTarget(
+                target_type="plasticity_rate", scope="all",
+                sensitivity=+1.0,
+            ),
+        ],
+        production_rules=[
+            ProductionRule(
+                rule_type="from_reward",
+                sensitivity=+1.0,
+                threshold=0.0,
+            ),
+        ],
+    )
+
+
 def _default_enkephalin_config() -> NeuromodulatorConfig:
     """Enkephalin: D2-driven, DOR receptor effects: raises DA and lowers
     ACh. Modeled as plasticity_rate boost (mirroring DA's effect on
