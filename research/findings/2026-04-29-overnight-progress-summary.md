@@ -61,7 +61,35 @@ C v2 subagent (`af7014d0f2011f204`) completed at `b3f5f87` — implementation, 6
 
 Aggregator: `python -m research.runners.aggregate_2026_04_29_evals`.
 
-## Combo eval — COMPLETE (4 of 8 conditions, ALL NULL)
+## Six-condition NULL pattern — ALL CLUSTERS HAVE NO EFFECT WITH HEURISTIC ON
+
+After Cluster D eval completed:
+
+| Condition | Seed 42 | Seed 43 | Seed 44 | Mean ± std |
+|---|---|---|---|---|
+| baseline (post-R) | 22.39 | 18.72 | 18.22 | **19.78 ± 2.28** |
+| + Cluster A | 22.39 | 18.72 | 18.22 | **19.78 ± 2.28** |
+| + Cluster C v1 only | 22.39 | 18.72 | 18.22 | **19.78 ± 2.28** |
+| A + C v1 + B.3 | 22.39 | 18.72 | 18.22 | **19.78 ± 2.28** |
+| + Cluster D only | 22.39 | 18.72 | 18.22 | **19.78 ± 2.28** |
+| A + D | 22.39 | 18.72 | 18.22 | **19.78 ± 2.28** |
+
+**ALL SIX BIT-IDENTICAL. 18 data points, zero variance across conditions.**
+
+This includes:
+- Cluster A's static cortex→stn / thal→cortex pathways
+- Cluster C v1's complete redefinition of the reward-modulation signal
+- Cluster B.3's plasticity_window_gate
+- Cluster D's 5 new regions (758 → 1454 neurons; +560 hippocampus pool)
+
+None of it shifts cheat-5 final-quarter behavior. The heuristic (800 pA cortex drive, default ON) is the deciding signal in the runner's argmax-of-motor-pool action selection. Cluster contributions are too weak to change motor pool ranking by phase end.
+
+Evals still running:
+- C v2 (compartmentalized DA) — likely null with heuristic
+- E (topographic maps) — likely null with heuristic
+- **no-heuristic diagnostic** — THE CRITICAL TEST
+
+
 
 After Cluster A null result, the combo eval added Cluster C v1 (tonic DA) and A+C v1+B.3 conditions. **ALL FOUR conditions produced bit-identical sums across all 3 seeds:**
 
