@@ -33,6 +33,8 @@ CONDITIONS = {
     "A + C v2": "g11_seed{seed}_clusterACv2.json",
     "+ Cluster E only": "g11_seed{seed}_clusterE.json",
     "A + E": "g11_seed{seed}_clusterAE.json",
+    "no-heuristic baseline": "g11_seed{seed}_noHeur_baseline.json",
+    "no-heuristic A+C+E": "g11_seed{seed}_noHeur_ACE.json",
 }
 SEEDS = [42, 43, 44]
 RAW_DIR = Path("research/findings/raw/g11_bg")
