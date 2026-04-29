@@ -8,20 +8,20 @@ The textbook catalog (Kandel 6e + 4 supplemental texts) flagged ~13 sim-level co
 
 ## Priority order (executed)
 
-| ID | Title | Tier | Status |
-|---|---|---|---|
-| R1.1 | Per-region E_inh override (MSN ~−60 mV, SNc DA ~−55 mV) | R1 | _in progress_ |
-| R1.2 | FSI cross-action wiring (replaces MSN→MSN as biologically-correct WTA) | R1 | _pending_ |
-| R3.5 | Sparse + decorrelated cortex→MSN (Bolam-2000) | R3 | _pending_ |
-| R3.10 | SNr→SNc disinhibition pathway (DA-burst driver) | R3 | _pending_ |
-| R3.7 | GPe split into PV+ (prototypic) / PV− (arkypallidal) | R3 | _pending_ |
-| R3.11 | Striosome/matrix split (limbic→striosome→SNc; matrix→SNr) | R3 | _pending_ |
-| R3.6 | D1 dynorphin/SP + D2 enkephalin neuropeptide arms | R3 | _pending_ |
-| R3.8 | GPi/SNr NaP + SK + Ih channel enable for tonic 40–80 Hz | R3 | _pending_ |
-| R2.4 | Tonic DA + aversive=phasic-depression coding (Schultz98/16) | R2 | _pending_ |
-| R3.9 | MSN KIR2/Kv2 voltage-dependent leak (Up/Down bistability) | R3 | _pending_ |
-| R2.3 | Striatal interneuron taxonomy doc clarification | R2 | _pending_ |
-| R3.12 | CA3 SWRs intrinsic, NREM as gate (framing fix) | R3 | _pending_ |
+| ID | Title | Tier | Commit | Status |
+|---|---|---|---|---|
+| R1.1 | Per-region E_inh override (MSN ~−60 mV, SNc DA ~−55 mV) | R1 | `82b3d0d` | DONE |
+| R1.2 | FSI cross-action wiring (replaces MSN→MSN as biologically-correct WTA) | R1 | `a1765b0` | DONE |
+| R3.5 | Sparse + decorrelated cortex→MSN (Bolam-2000) | R3 | `1521a9b` | DONE |
+| R3.10 | SNr→SNc disinhibition pathway (DA-burst driver) | R3 | `dfa9d15` | DONE |
+| R3.7 | GPe split into PV+ (prototypic) / PV− (arkypallidal) | R3 | `b359bb1` | DONE |
+| R3.11 | Striosome/matrix split (limbic→striosome→SNc; matrix→SNr) | R3 | `0e041e3` | DONE |
+| R3.8 | GPi/SNr NaP + SK + Ih channel enable for tonic 40–80 Hz | R3 | `35f1908` | DONE |
+| R2.3 | Striatal interneuron taxonomy doc clarification | R2 | `8461a03` | DONE |
+| R3.12 | CA3 SWRs intrinsic, NREM as gate (framing fix) | R3 | `8461a03` | DONE (deferred design note) |
+| R3.6 | D1 dynorphin/SP + D2 enkephalin neuropeptide arms | R3 | `bdb6452` | DONE |
+| R2.4 | Tonic DA + aversive=phasic-depression coding (Schultz98/16) | R2 | `23b38fc` | DONE |
+| R3.9 | MSN KIR2/Kv2 voltage-dependent leak (Up/Down bistability) | R3 | (this commit) | DEFERRED — design note only |
 
 ## Catalog citations
 
@@ -62,3 +62,33 @@ The current project does not yet have a CA3 region, an SWR scheduler, or sleep-r
 This also informs Cluster D (hippocampal trisynaptic loop, T1.A, month 1): CA3 should be configured with sufficient recurrent density + spike-frequency adaptation to self-organize sharp-wave-like population bursts on its own.
 
 Flagging here so it isn't forgotten when sleep-replay work begins.
+
+## R3.9 — MSN KIR2/Kv2 voltage-dependent leak (deferred design note)
+
+The catalog (PBR-160 ch 6 Wilson pp 100-104) flagged that biological MSN bistability rests on TWO voltage-dependent K⁺ currents — KIR2 (RMP clamp at -80 to -95 mV, IR ~20-60 MΩ) plus Kv-1.2/Kv-2.1 (deactivates ~-60 mV). Both deactivate near -60 mV, so input resistance peaks ~6× higher (~150-300 MΩ) at -60 mV. KIR2 is developmentally late (P25-P28 in rat).
+
+The current Izhikevich `IZH2007_STRIATAL_MSN` preset uses `b = -20.0` which approximates KIR2's contribution (subthreshold u tracks -(V-vr), pulls toward rest). The explicit IR-peak-at-(-60-mV) feature is NOT captured.
+
+**A faithful implementation would need a new fused kernel** in `sim/kernels.py`:
+
+```python
+@cp.fuse()
+def fused_msn_kir2_kv2_currents(v, kir2_g, kv2_g, E_K, **params):
+    # KIR2: inwardly-rectifying K+ — strong at hyperpolarized V, deactivates above ~-65 mV
+    kir2_activation = 1.0 / (1.0 + cp.exp((v - (-65.0)) / 5.0))
+    I_kir2 = kir2_g * kir2_activation * (v - E_K)
+    # Kv-1.2 / Kv-2.1: subthreshold-activated K+ — strong at -60 mV, deactivates above ~-50 mV
+    kv2_activation = 1.0 / (1.0 + cp.exp(-(v - (-58.0)) / 4.0))
+    I_kv2 = kv2_g * kv2_activation * (v - E_K)
+    return I_kir2 + I_kv2  # additive K+ leak
+```
+
+**Integration plan:**
+1. Add per-neuron `cp_kir2_g`, `cp_kv2_g` GPU arrays, populated for MSN regions only.
+2. Add `enable_kir2_kv2: bool = False` to CoreSimConfig.
+3. In bridge `_run_one_simulation_step`, after synaptic conductance, before neuron dynamics: subtract `fused_msn_kir2_kv2_currents` from `total_input_current_pA`.
+4. Add Up/Down bistability validation test: cortical input ramping should produce sharp Up-state transition near -60 mV.
+
+**Effort estimate:** 1-2 days for a focused kernel + bridge integration + tests. Roadmap T2.A-style work.
+
+This is the single largest deferral in the remediation pass. All other R items shipped at runner/config/preset level. Documented for future infrastructure work; for now, the existing Izh `b=-20` behaves close enough to the Down-state-stable MSN biology that further cluster work can proceed without it.

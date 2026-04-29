@@ -602,6 +602,20 @@ class DefaultIzhikevichParamsManager:
             # Medium spiny neuron — D1/D2 striatal projection neurons.
             # Down-state stable, ramping with cortical input. Up-state firing
             # rate moderate (~5-30 Hz). Wilson & Kawaguchi 1996, Mahon 2003.
+            #
+            # R3.9 (2026-04-29) catalog note (PBR-160 ch 6 Wilson):
+            # The biological MSN bistability rests on TWO voltage-dependent
+            # K+ currents — KIR2 (clamps RMP -80 to -95 mV, IR ~20-60 MOhm)
+            # and Kv-1.2/Kv-2.1 (deactivates ~-60 mV). Both deactivate near
+            # -60 mV → input resistance PEAKS 6× higher (~150-300 MOhm) at
+            # -60 mV, making the dendrite electrotonically compact at that
+            # potential. KIR2 is developmentally late (P25-P28 in rat).
+            # The negative b=-20 below approximates KIR2's contribution
+            # (subthreshold u tracks -(V-vr), pulls toward rest), but the
+            # explicit IR peak at -60 mV is not captured by Izhikevich.
+            # A faithful implementation requires a new fused kernel that
+            # blends KIR2 + Kv2 voltage-gated leaks; out of scope for this
+            # remediation pass. Documented in catalog-remediation-pass.md.
             "C": 50.0, "k": 1.0, "vr": -80.0, "vt": -25.0, "vpeak": 40.0,
             "a": 0.01, "b": -20.0, "c_reset": -55.0, "d_increment": 150.0,
         },
