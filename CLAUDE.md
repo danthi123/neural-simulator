@@ -515,7 +515,10 @@ strictly better for the cheat-5 multi-goal navigation benchmark.
   **Cluster C v2 DESIGNED (compartmentalized DA, 2026-04-29)** —
   fallback for if A/C v1/D evals don't close cheat-5; per-action DA
   channels with synapse action-tagging.
-  Future: Cluster E (connectivity refinement). Each cluster has
+  Future: more of Cluster E ("Sensory perception & cortical encoding"
+  per the catalog's authoritative naming — topographic maps was just
+  one aspect; full cluster also covers cortical columns, plastic
+  sensory→cortex, etc). Each cluster has
   independent biological merit AND collectively might shift
   cross-projection behavior.
 - **Cluster B.1 (D1/D2 asymmetry, `--enable-d1-d2-asymmetry`) — PARTIAL
