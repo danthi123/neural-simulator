@@ -164,13 +164,20 @@ Both override-able via runner kwargs for parameter sweeps.
 
 Tier-3 evals queued: C v2 (bkoii8a0q), E (bog1yy7kb), A+E (b3l32yl39). C v2+E composition test (btxzno6vp) also queued.
 
-### Tier-3 result update (C v2 only)
+### Tier-3 result updates
 
 - **C v2 tier-3 (n=6):** 13.68, 4.55, 6.52, 13.15, 15.85, 4.27 → **9.67 ± 5.13**
+- **E tier-3 (n=6):** 10.63, 5.66, 4.56, 9.44, 12.70, 4.96 → **7.99 ± 3.39**
 
-Surprising: at seeds 100/101 the cluster regresses (13, 15) vs the strong improvements at seeds 42/43/44/102 (4.5-13.7). High variance. The n=3 result of 5.63 was selection bias — seeds 43, 44 happened to favor C v2.
+**Both regress slightly vs 3-seed FIX baseline 7.27 ± 3.44, with high variance.** The n=3 advantages were partly selection bias.
 
-C v2 mean (9.67) is now WORSE than the 3-seed FIX baseline (7.27). To make a fair comparison, also need a 6-seed baseline. Tier-3 of A+E and E remain. Waiting for those before final decision.
+### Run-to-run non-determinism revealed
+
+Seed 42 E-only ran twice (b7vhij5sp 6.84, bog1yy7kb 10.63) with **bit-identical code, seed, flags, and goal schedule**, yet different sums. This indicates substantial run-to-run noise in the simulation — likely from CUDA atomic-op floating-point non-associativity in sparse-matrix accumulations.
+
+Implication: cheat-5 results have a noise floor independent of code changes. Reliable closure detection needs multiple trials per seed, not just multiple seeds. Tier-3 (n=6) sums likely have ±3-5 inherent noise per seed.
+
+Pending tier-3 (n=6): A+E, FIX baseline. Then C v2+E composition + A+E+C v2 triple (n=3 each). With FIX baseline at n=6, can finally do clean comparison. Earlier results assuming baseline 7.27 may be optimistic.
 
 Updated ETA: FIX eval done ~08:50.
 
