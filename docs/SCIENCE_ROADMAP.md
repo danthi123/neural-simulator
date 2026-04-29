@@ -565,7 +565,7 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --enable-landmark-sensor --landmarks-replace-place \
     --sensed-reward \
-    --bg-lateral-inhibition \
+    --enable-msn-lateral-inhibition \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 \
     --seed N --n-steps 1800

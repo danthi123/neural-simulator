@@ -245,7 +245,7 @@ PRESETS: dict[str, list[str]] = {
     # See research/findings/2026-04-29-overnight-FINAL.md.
     "biology_AE": [
         "--moving-goal",
-        "--bg-lateral-inhibition",
+        "--enable-msn-lateral-inhibition",
         "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
         "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
         "--n-steps", "1800",
@@ -253,7 +253,7 @@ PRESETS: dict[str, list[str]] = {
     # Same but with --goal-schedule multi for the harder 4-phase task.
     "biology_AE_multi": [
         "--moving-goal", "--goal-schedule", "multi",
-        "--bg-lateral-inhibition",
+        "--enable-msn-lateral-inhibition",
         "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
         "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
         "--n-steps", "1800",
@@ -262,7 +262,7 @@ PRESETS: dict[str, list[str]] = {
     # distance-based heuristic reward). Tests how low we can go with one cheat.
     "biology_AE_sensed": [
         "--moving-goal",
-        "--bg-lateral-inhibition",
+        "--enable-msn-lateral-inhibition",
         "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
         "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
         "--sensed-reward",
@@ -272,7 +272,7 @@ PRESETS: dict[str, list[str]] = {
     # against biology_AE. Single-goal default schedule.
     "biology_baseline": [
         "--moving-goal",
-        "--bg-lateral-inhibition",
+        "--enable-msn-lateral-inhibition",
         "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
         "--n-steps", "1800",
     ],

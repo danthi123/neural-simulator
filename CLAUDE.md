@@ -411,7 +411,7 @@ sensory cortex to mature before association cortex.
 **🎯 Biology-grounded flagship (NEW 2026-04-29) — A+E + deterministic single-goal:**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
-    --bg-lateral-inhibition \
+    --enable-msn-lateral-inhibition \
     --enable-d1-d2-asymmetry --enable-striatal-fsis \
     --enable-cluster-a-closed-loop --enable-cluster-e-topography \
     --deterministic \
@@ -439,7 +439,7 @@ python -m research.runners.g11_bg_runner --moving-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --enable-landmark-sensor --landmarks-replace-place \
     --sensed-reward \
-    --bg-lateral-inhibition \
+    --enable-msn-lateral-inhibition \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 \
     --seed N --n-steps 1800

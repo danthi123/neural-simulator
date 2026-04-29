@@ -2959,7 +2959,15 @@ def main():
     ap.add_argument("--cross-projection-topology-seed", type=int, default=0,
                     help="Cheat-5 option 2: deterministic RNG seed for which cross-pathways survive when density<1.0. "
                          "Vary independently from --seed to test topology-conditional reproducibility.")
-    ap.add_argument("--bg-lateral-inhibition", action="store_true",
+    # Canonical: --enable-msn-lateral-inhibition (specifies MSN-MSN, not BG-wide).
+    # Legacy --bg-lateral-inhibition kept as alias for one release cycle
+    # (2026-04-29 Wave-1 rename #8). Note: catalog B.04 supplemental flags
+    # this implementation as anatomically backwards — real cross-pool WTA in
+    # striatum is FSI feedforward, not MSN-MSN feedback (Wilson 2007 PBR-160
+    # ch 6). Kept as v3 default per 2026-04-28 evaluation; future biology
+    # buildout should replace with FSI-mediated form.
+    ap.add_argument("--enable-msn-lateral-inhibition", "--bg-lateral-inhibition",
+                    action="store_true", dest="bg_lateral_inhibition",
                     help="v3 (2026-04-28): add MSN cross-pool lateral inhibition (24 GABAergic pathways). Sharpens action selection regardless of cheat #5; required prerequisite for cross-projection closure.")
     ap.add_argument("--lateral-inhibition-density", type=float, default=0.3,
                     help="Density of MSN cross-pool inhibitory pathways (default 0.3).")
