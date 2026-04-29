@@ -238,6 +238,44 @@ PRESETS: dict[str, list[str]] = {
         "--curriculum", "--curriculum-warmup-steps", "600",
         "--n-steps", "1800",
     ],
+    # Biology-grounded minimal flagship (R-pass + Cluster B + Cluster A + E).
+    # 2026-04-29 deterministic single-goal n=6 result: 3.31 +/- 0.74, beats
+    # documented full flagship 4.08 +/- 0.49 by 19%. No --hippocampus,
+    # no --learned-perception, no --sensed-reward, no curriculum.
+    # See research/findings/2026-04-29-overnight-FINAL.md.
+    "biology_AE": [
+        "--moving-goal",
+        "--bg-lateral-inhibition",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
+        "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
+        "--n-steps", "1800",
+    ],
+    # Same but with --goal-schedule multi for the harder 4-phase task.
+    "biology_AE_multi": [
+        "--moving-goal", "--goal-schedule", "multi",
+        "--bg-lateral-inhibition",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
+        "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
+        "--n-steps", "1800",
+    ],
+    # Biology-grounded + --sensed-reward (gradient-based reward instead of
+    # distance-based heuristic reward). Tests how low we can go with one cheat.
+    "biology_AE_sensed": [
+        "--moving-goal",
+        "--bg-lateral-inhibition",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
+        "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
+        "--sensed-reward",
+        "--n-steps", "1800",
+    ],
+    # Plain biology baseline (R-pass + Cluster B only) for fair tier-4 comparison
+    # against biology_AE. Single-goal default schedule.
+    "biology_baseline": [
+        "--moving-goal",
+        "--bg-lateral-inhibition",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
+        "--n-steps", "1800",
+    ],
     # Interactive presets — webapp wires --interactive-control-file +
     # per-step progress prints + a small throttle so the dashboard's
     # live mode can animate per-step (not jumping every 100). World-tab
@@ -301,6 +339,11 @@ class LaunchRequest(BaseModel):
     seed: int = 42
     extra_args: list[str] = []
     out_filename: str | None = None  # if None, generated from preset+seed
+    # When True, set CUBLAS_WORKSPACE_CONFIG=:4096:8 in the subprocess env
+    # so cuBLAS picks deterministic algorithms. Tightens seed-to-seed noise
+    # floor at the cost of ~10-30% slowdown. Required for the cluster
+    # comparisons that don't otherwise rise above the run-to-run noise.
+    deterministic: bool = False
 
 
 RUNTIME_DIR = Path(__file__).resolve().parent / "runtime"
@@ -362,6 +405,10 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
     # Unicode chars (em-dash, arrows) in runner prints.
     env = os.environ.copy()
     env["PYTHONIOENCODING"] = "utf-8"
+    if req.deterministic:
+        # Must be set BEFORE the subprocess imports cupy/cuBLAS; setting it
+        # here in the env propagates to the child correctly.
+        env["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 
     # Detach the subprocess so it survives webapp restart. On Unix
     # `start_new_session=True` is enough (setsid). On Windows we need
@@ -398,6 +445,7 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
             "preset": req.preset,
             "seed": req.seed,
             "extra_args": cleanable_extras,
+            "deterministic": req.deterministic,
             "cmd": cmd,
             "pid": proc.pid,
             "log_file": log_file,
