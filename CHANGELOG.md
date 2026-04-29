@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-04-29 — Catalog-driven remediation pass (12 fixes; 11 implemented + 1 design-doc deferral)
+
+### Added — Catalog-driven remediation pass (Kandel 6e + supplemental texts)
+
+The textbook catalog session surfaced ~13 sim-level corrections. Plan: `docs/plans/2026-04-29-catalog-remediation-pass.md`.
+
+- **R1.1 per-region E_inh override (`82b3d0d`).** PBR-160 ch 6/11: striatal MSNs use ~−60 mV (depolarizing-but-shunting GABA_A near rest); SNc DA neurons use ~−55 mV (lacks KCC2 chloride exporter). Global default −75 mV is wrong for these regions. Added `BrainRegion.syn_reversal_potential_i_override` field; bridge allocates per-neuron `cp_syn_reversal_potential_i_per_neuron` array; fused conductance kernel accepts scalar OR per-neuron array. Runner overrides on str_D1_*, str_D2_*, dopamine. 8 new tests.
+- **R1.2 FSI cross-action wiring (`a1765b0`).** TK-2017 / Tepper-2018: paired recordings show MSN→MSN collaterals are weak (<0.5 mV IPSPs, ~14-25% conn prob); FSI→MSN feedforward is the dominant cross-pool WTA substrate. Rewired build_bg_brain_regions FSI loop: FS_X → MSN_Y for X≠Y only (24 paths, was 32 broadcast). Probe and tests updated.
+- **R3.5 sparse + decorrelated cortex→MSN (`1521a9b`).** Bolam-2000 / Kincaid 1998: density 1.0 was anatomically dense. Same-action density 1.0 → 0.20; cross-action density 1.0 → 0.10. Synapse-count smoke drop: 39172 → 31113.
+- **R3.10 SNr→SNc disinhibition (`dfa9d15`).** PBR-160 ch 11 Tepper & Lee: SNr collaterals onto SNc; the major in-vivo DA-burst driver. Adds 4 gpi_X → dopamine pathways (density 0.3, weight 2.0).
+- **R3.7 GPe PV+/PV− split (`b359bb1`).** Mallet 2008 / Kita 2007: GPe is heterogeneous. New gpe_arky_X (4-neuron arkypallidal subpool); D2 drives both subpools; arky → all str_FS_Y when FSIs enabled (Mallet 2012 stop-signal; 16 broadcast pathways). 3 new tests.
+- **R3.11 striosome (patch) / matrix split (`0e041e3`).** PBR-160 ch 9 Deniau: striosomes project to BOTH SNc and SNr; patch/matrix aligns with SNc/SNr at output level. New str_patch_X regions (8 D1-MSN-class neurons each, E_inh −60 mV via R1.1); cortex_X → patch (limbic placeholder); patch → dopamine (canonical SNc); patch → gpi (R3.11 SNr arm). 3 new tests.
+- **R3.8 GPi/SNr pacemaker channels (`35f1908`).** PBR-160 ch 9 Deniau: SNr 40-80 Hz tonic pacemaker rests on NaP + SK (firing precision; we use M-current as AHP analogue) + Ih (slow Ca spikes). Tuned HH_GPI_OUTPUT preset: g_NaP_max 0.12 → 0.4; g_h_max 0.05 → 0.15; g_M_max 0.4 → 1.0. Affects HH-mode users; runner default unchanged.
+- **R2.3 striatal interneuron taxonomy doc + R3.12 CA3 SWR framing (`8461a03`).** R2.3 (TK-2017 / Tepper-2018): clarified in CLAUDE.md that --enable-striatal-fsis models PV-FSI specifically, one of 8 distinct striatal GABAergic interneuron classes (non-isomorphic to cortex). R3.12 (Bz Cycle 12 / Leinekugel 2002): forward-looking design note — future SWR / replay must place generator inside CA3 intrinsic dynamics with NREM as passive gate, not a sleep-stage scheduler.
+- **R3.6 D1/D2 neuropeptide arms (`bdb6452`).** PBR-160 ch 16 McGinty: D1 → dynorphin (KOR plasticity-rate brake) + substance P (NK-1 ACh boost); D2 → enkephalin (DOR plasticity-rate boost). Added new ProductionRule type "from_region_firing" (reads firing-fraction EMA across source_regions) + 3 default neuropeptide configs + `--enable-bg-neuropeptides` CLI flag. 39 neuromod tests pass.
+- **R2.4 asymmetric aversive reward magnitude (`23b38fc`).** Schultz98 / Schultz16 / Fiorillo 2013: phasic DA aversive "activations" reflect physical-impact artifacts; underlying valence response is a depression below tonic, smaller magnitude than appetitive activations. Added `cfg.reward_aversive_scale: float = 0.5` (default 0.5 reflects observed ~50% magnitude); negative reward_prediction_error scaled by this factor before applying. Tunable per-experiment. 7 determinism tests pass.
+- **R3.9 MSN KIR2/Kv2 (`befc1d0`, design-doc deferral).** PBR-160 ch 6 Wilson: biological MSN bistability rests on KIR2 + Kv-1.2/Kv-2.1 dual currents producing 6× input-resistance peak at -60 mV. Existing Izh `b=-20` approximates KIR2 but doesn't capture the IR-peak feature. Single largest deferral in pass — requires new GPU kernel work (~1-2 days). Catalog ref + design sketch + integration plan documented in `2026-04-29-catalog-remediation-pass.md`.
+
+Final region/synapse counts (flagship smoke + Cluster B): 42 regions (was 30), 758 neurons (was 710), ~32K synapses (was ~41K — sparser cortex per Bolam). All 340 tests pass post-remediation.
+
 ## [Unreleased] — 2026-04-28 — Cheat #5 ON HOLD pending biology buildout (reframed) + throughput investigation + webapp polish
 
 ### Added
