@@ -48,8 +48,8 @@ def parse(file: Path) -> Optional[Dict]:
 
 
 def aggregate() -> None:
-    print("# Cheat-5 multi-goal eval — 6 conditions × 3 seeds (n=3)\n")
-    print("| Condition | Seed 42 | Seed 43 | Seed 44 | Mean ± std |")
+    print("# Cheat-5 multi-goal eval - 8 conditions x 3 seeds (n=3)\n")
+    print("| Condition | Seed 42 | Seed 43 | Seed 44 | Mean +/- std |")
     print("|---|---|---|---|---|")
     summary: List[Dict] = []
     for label, tmpl in CONDITIONS.items():
@@ -67,7 +67,7 @@ def aggregate() -> None:
         if len(complete) >= 2:
             m = statistics.mean(complete)
             s_ = statistics.stdev(complete) if len(complete) > 1 else 0.0
-            cell = f"{m:.2f} ± {s_:.2f}"
+            cell = f"{m:.2f} +/- {s_:.2f}"
             summary.append({"label": label, "mean": m, "std": s_})
         elif len(complete) == 1:
             cell = f"{complete[0]:.2f} (n=1)"
@@ -102,10 +102,10 @@ def aggregate() -> None:
     if baseline_entry and a_entry:
         delta_mean = a_entry["mean"] - baseline_entry["mean"]
         delta_std = a_entry["std"] - baseline_entry["std"]
-        print(f"baseline: {baseline_entry['mean']:.2f} ± {baseline_entry['std']:.2f}")
-        print(f"+ Cluster A: {a_entry['mean']:.2f} ± {a_entry['std']:.2f}")
-        print(f"Δ mean: {delta_mean:+.2f}")
-        print(f"Δ std: {delta_std:+.2f}")
+        print(f"baseline: {baseline_entry['mean']:.2f} +/- {baseline_entry['std']:.2f}")
+        print(f"+ Cluster A: {a_entry['mean']:.2f} +/- {a_entry['std']:.2f}")
+        print(f"delta mean: {delta_mean:+.2f}")
+        print(f"delta std: {delta_std:+.2f}")
         if delta_mean <= -1.0 and delta_std <= 0:
             verdict = "**GO** — tier-3 (6-seed) validation next"
         elif delta_mean <= 0.0:
