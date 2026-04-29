@@ -303,8 +303,10 @@ def build_bg_brain_regions(
     # Split into per-action pools so different inputs preferentially activate
     # different actions. This is a phenomenological substitute for what
     # learning would produce: differential cortex→striatum weights.
+    # Cluster C v2 (2026-04-29): action_index stamped on action-specific
+    # regions so cp_synapse_action_tag can resolve per-synapse DA targeting.
     n_cortex_per_action = n_cortex // N_ACTIONS
-    for action in ACTION_NAMES:
+    for action_idx, action in enumerate(ACTION_NAMES):
         regions.append(BrainRegion(
             name=f"cortex_{action}",
             n_neurons=n_cortex_per_action,
@@ -313,6 +315,7 @@ def build_bg_brain_regions(
             exc_weight_mean=0.0, inh_weight_mean=0.0,
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            action_index=action_idx,
         ))
 
     # Cortex WTA microcircuit (opt-in). Per-pool FS interneurons that mediate
@@ -321,7 +324,7 @@ def build_bg_brain_regions(
     # Goal: enforce clean pool selectivity even when plastic input layers
     # (hippocampus, learned-perception) add noisy drive across all 4 pools.
     if enable_cortex_lateral_inhibition:
-        for action in ACTION_NAMES:
+        for action_idx, action in enumerate(ACTION_NAMES):
             regions.append(BrainRegion(
                 name=f"cortex_FS_{action}",
                 n_neurons=n_cortex_fs_per_action,
@@ -330,6 +333,7 @@ def build_bg_brain_regions(
                 exc_weight_mean=0.0, inh_weight_mean=0.0,
                 weight_jitter=0.0, plastic_internal=False,
                 izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+                action_index=action_idx,
             ))
 
     # Per-action striatal pools (D1 direct, D2 indirect).
@@ -337,7 +341,7 @@ def build_bg_brain_regions(
     # strong cortex drive to escape the down-state and lateral inhibition
     # makes that even harder. Add it back later if action selection needs
     # sharpening.
-    for action in ACTION_NAMES:
+    for action_idx, action in enumerate(ACTION_NAMES):
         # Striatal MSNs: ECl ~−60 mV (PBR-160 ch 6, gramicidin perforated patch).
         # IPSPs are shunting near rest, hyperpolarizing only near AP threshold.
         regions.append(BrainRegion(
@@ -349,6 +353,7 @@ def build_bg_brain_regions(
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
             syn_reversal_potential_i_override=-60.0,
+            action_index=action_idx,
         ))
         regions.append(BrainRegion(
             name=f"str_D2_{action}",
@@ -359,6 +364,7 @@ def build_bg_brain_regions(
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D2.name,
             syn_reversal_potential_i_override=-60.0,
+            action_index=action_idx,
         ))
 
     # Cluster B.2 (2026-04-28): striatal fast-spiking interneurons (FSIs).
@@ -367,7 +373,7 @@ def build_bg_brain_regions(
     # synapses are auto-derived inhibitory by the bridge. No internal
     # recurrence: FSIs just receive cortex drive and broadcast to all MSNs.
     if enable_striatal_fsis:
-        for action in ACTION_NAMES:
+        for action_idx, action in enumerate(ACTION_NAMES):
             regions.append(BrainRegion(
                 name=f"str_FS_{action}",
                 n_neurons=n_striatal_fs_per_action,
@@ -376,6 +382,7 @@ def build_bg_brain_regions(
                 exc_weight_mean=0.0, inh_weight_mean=0.0,
                 weight_jitter=0.0, plastic_internal=False,
                 izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+                action_index=action_idx,
             ))
 
     # Per-action BG output (GPe / GPi)
@@ -387,7 +394,7 @@ def build_bg_brain_regions(
     # role per Mallet 2012). Sizes: PV+ at the original n_gpe_per_action
     # (10), PV- at n_gpe_arky_per_action (4) — consistent with Kita's
     # observation that PV-negative cells form ~1/3 of GPe.
-    for action in ACTION_NAMES:
+    for action_idx, action in enumerate(ACTION_NAMES):
         regions.append(BrainRegion(
             name=f"gpe_{action}",  # prototypic (PV+); existing alias preserved
             n_neurons=n_gpe_per_action,
@@ -396,6 +403,7 @@ def build_bg_brain_regions(
             exc_weight_mean=0.0, inh_weight_mean=0.0,
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_GPE_PACEMAKER.name,
+            action_index=action_idx,
         ))
         regions.append(BrainRegion(
             name=f"gpe_arky_{action}",  # arkypallidal (PV-); R3.7 new pool
@@ -405,6 +413,7 @@ def build_bg_brain_regions(
             exc_weight_mean=0.0, inh_weight_mean=0.0,
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_GPE_PACEMAKER.name,
+            action_index=action_idx,
         ))
         regions.append(BrainRegion(
             name=f"gpi_{action}",
@@ -414,6 +423,7 @@ def build_bg_brain_regions(
             exc_weight_mean=0.0, inh_weight_mean=0.0,
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_GPI_OUTPUT.name,
+            action_index=action_idx,
         ))
         # R3.11 (2026-04-29): striosome (patch) compartment.
         # Per PBR-160 ch 9 / ch 11: striosomes are D1-MSN-rich patches
@@ -433,6 +443,7 @@ def build_bg_brain_regions(
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
             syn_reversal_potential_i_override=-60.0,  # MSN GABA_A reversal (R1.1)
+            action_index=action_idx,
         ))
 
     # Single STN (excitatory, projects diffusely to all GPi)
@@ -447,7 +458,7 @@ def build_bg_brain_regions(
     ))
 
     # Per-action thalamic relay + motor cortex
-    for action in ACTION_NAMES:
+    for action_idx, action in enumerate(ACTION_NAMES):
         regions.append(BrainRegion(
             name=f"thal_{action}",
             n_neurons=n_thal_per_action,
@@ -456,6 +467,7 @@ def build_bg_brain_regions(
             exc_weight_mean=0.0, inh_weight_mean=0.0,
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_THALAMIC_RELAY.name,
+            action_index=action_idx,
         ))
         regions.append(BrainRegion(
             name=f"motor_{action}",
@@ -465,6 +477,7 @@ def build_bg_brain_regions(
             exc_weight_mean=0.0, inh_weight_mean=0.0,
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            action_index=action_idx,
         ))
 
     # Dopamine neurons (single pool, broadcasts via neuromodulator subsystem).
@@ -910,7 +923,7 @@ def build_bg_brain_regions(
     # this should sharpen action selection in cases where multiple cortex
     # pools drive simultaneously (currently the dominant random-fallback case).
     if enable_motor_lateral_inhibition:
-        for action in ACTION_NAMES:
+        for action_idx, action in enumerate(ACTION_NAMES):
             regions.append(BrainRegion(
                 name=f"motor_FS_{action}",
                 n_neurons=n_motor_fs_per_action,
@@ -919,6 +932,7 @@ def build_bg_brain_regions(
                 exc_weight_mean=0.0, inh_weight_mean=0.0,
                 weight_jitter=0.0, plastic_internal=False,
                 izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+                action_index=action_idx,
             ))
 
         # motor_X → motor_FS_X (excitatory drive — motor's own activity drives its FS)
@@ -1535,6 +1549,7 @@ def run_moving_goal_episode(
     enable_bg_neuropeptides: bool = False,  # R3.6: D1/D2 neuropeptide arms
     enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
     enable_tonic_da: bool = False,  # Cluster C v1: dopamine as a real neuromodulator
+    enable_compartmentalized_da: bool = False,  # Cluster C v2: per-action DA channels
     enable_cluster_d_hippocampus: bool = False,  # Cluster D v1: trisynaptic loop (ec+dg+ca3+ca1)
     # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
     # Defaults match CoreSimConfig but can be overridden from the runner's
@@ -1765,12 +1780,36 @@ def run_moving_goal_episode(
     # window-gating (which is otherwise a no-op without tonic DA-driven
     # plasticity to gate). Composes with --enable-tans and
     # --enable-bg-neuropeptides.
-    if enable_tonic_da:
+    #
+    # Precedence: when both --enable-tonic-da and --enable-compartmentalized-da
+    # are set, only the per-action channels are registered (the global
+    # `dopamine` modulator would double-count with the per-synapse path).
+    if enable_tonic_da and not enable_compartmentalized_da:
         from sim.neuromodulators import _default_dopamine_config
         cfg.enable_neuromodulator_subsystem = True
         cfg.neuromodulators = list(cfg.neuromodulators) + [
             _default_dopamine_config()
         ]
+
+    # Cluster C v2 (2026-04-29): compartmentalized DA — per-action channels.
+    # Registers 4 modulators (dopamine_N, dopamine_E, dopamine_S, dopamine_W),
+    # each targeting only synapses with matching action_index via
+    # scope='action:{idx}'. Production rule: from_action_specific_reward
+    # gates concentration update by last_selected_action. Implies tonic-DA
+    # at the per-action level (the single global dopamine modulator is NOT
+    # registered when this flag is on).
+    # See docs/plans/2026-04-29-cluster-c-v2-compartmentalized-da-design.md.
+    if enable_compartmentalized_da:
+        from sim.neuromodulators import _default_per_action_dopamine_config
+        cfg.enable_neuromodulator_subsystem = True
+        cfg.neuromodulators = list(cfg.neuromodulators) + [
+            _default_per_action_dopamine_config(action, idx)
+            for idx, action in enumerate(ACTION_NAMES)
+        ]
+        if verbose:
+            print(f"[g11 seed={seed}] Cluster C v2 compartmentalized DA: "
+                  f"4 modulators registered "
+                  f"(dopamine_{{{','.join(ACTION_NAMES)}}})")
     if pruning_alpha is not None:
         cfg.pruning_alpha = float(pruning_alpha)
     if pruning_threshold is not None:
@@ -2504,6 +2543,9 @@ def run_moving_goal_episode(
         else:
             action_idx = int(np.random.default_rng(seed * 10000 + step).integers(0, N_ACTIONS))
         action_log.append(action_idx)
+        # Cluster C v2 (2026-04-29): expose selected action so per-action DA
+        # production rules can fire only for the matching channel.
+        bridge.core_config.last_selected_action = int(action_idx)
 
         dx, dy = ACTION_DELTAS[action_idx]
         # During sleep, agent does not move (consolidation phase, no behavior)
@@ -2846,6 +2888,17 @@ def main():
                          "providing tonic DA-driven plasticity for ACh "
                          "to gate. See "
                          "docs/plans/2026-04-29-cluster-c-tonic-da-design.md.")
+    ap.add_argument("--enable-compartmentalized-da", action="store_true",
+                    help="Cluster C v2 (2026-04-29): replace single-channel "
+                         "DA with 4 per-action DA modulators "
+                         "(dopamine_{N,E,S,W}). Each targets only synapses "
+                         "with matching action_index; production rule fires "
+                         "only when last_selected_action matches. Implies "
+                         "tonic DA at the per-action level (the global "
+                         "`dopamine` modulator is NOT registered when this "
+                         "flag is on, even if --enable-tonic-da is set). "
+                         "See docs/plans/2026-04-29-cluster-c-v2-"
+                         "compartmentalized-da-design.md.")
     ap.add_argument("--enable-cluster-d-hippocampus", action="store_true",
                     help="Cluster D v1 (2026-04-29): hippocampus trisynaptic "
                          "loop. Adds 5 regions (ec, dg, dg_fs, ca3, ca1) and "
@@ -2992,6 +3045,7 @@ def main():
             enable_bg_neuropeptides=args.enable_bg_neuropeptides,
             enable_cluster_a_closed_loop=args.enable_cluster_a_closed_loop,
             enable_tonic_da=args.enable_tonic_da,
+            enable_compartmentalized_da=args.enable_compartmentalized_da,
             enable_cluster_d_hippocampus=args.enable_cluster_d_hippocampus,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
@@ -3073,6 +3127,21 @@ def main():
     cfg.enable_ou_process = False
     cfg.enable_conductance_noise = False
     cfg.enable_parameter_heterogeneity = False
+
+    # Cluster C v2 (2026-04-29) smoke compatibility: register per-action DA
+    # modulators if --enable-compartmentalized-da is set. Smoke run will
+    # exercise the registration path; reward modulation is disabled so the
+    # DA signal is not actually consumed but the array allocations and
+    # registration are validated.
+    if args.enable_compartmentalized_da:
+        from sim.neuromodulators import _default_per_action_dopamine_config
+        cfg.enable_neuromodulator_subsystem = True
+        cfg.neuromodulators = list(cfg.neuromodulators) + [
+            _default_per_action_dopamine_config(action, idx)
+            for idx, action in enumerate(ACTION_NAMES)
+        ]
+        print(f"  Cluster C v2: registered {len(ACTION_NAMES)} per-action DA modulators "
+              f"(dopamine_{{{','.join(ACTION_NAMES)}}})")
 
     print(f"  Initializing bridge...", flush=True)
     t0 = time.time()

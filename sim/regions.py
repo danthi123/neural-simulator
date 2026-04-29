@@ -96,6 +96,19 @@ class BrainRegion:
     # near-threshold) inhibition. SNc DA neurons lack KCC2 entirely.
     syn_reversal_potential_i_override: Optional[float] = None
 
+    # Cluster C v2 (2026-04-29): per-action DA compartmentalization.
+    # When a region is action-specific (cortex_X, str_D1_X, str_D2_X,
+    # gpi_X, thal_X, motor_X, etc), this is the action index in [0, N-1]
+    # corresponding to the action channel. None for global / non-action-
+    # specific regions (sensory, place_cells, stn, dopamine, hippocampus,
+    # PFC, etc.).
+    #
+    # Used by inject_explicit_wiring() to populate cp_synapse_action_tag
+    # so per-action DA modulators can target only synapses with their
+    # action_index. See docs/plans/2026-04-29-cluster-c-v2-compartmentalized-
+    # da-design.md.
+    action_index: Optional[int] = None
+
 
 @dataclass
 class RegionPathway:

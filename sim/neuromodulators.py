@@ -68,6 +68,12 @@ class ModulatorTarget:
         "plastic_only"      synapses with cp_synapse_plastic_mask == True
                             (synaptic_gain & plasticity_rate only)
         "gate:<name>"       plasticity-gate by name (plasticity_gate target only)
+        "action:<idx>"      synapses whose POST region action_index == idx,
+                            i.e. cp_synapse_action_tag == idx
+                            (plasticity_rate target only). Cluster C v2
+                            (2026-04-29): per-action DA targeting. Used
+                            by compute_per_synapse_plasticity_rate_multiplier
+                            and compute_per_synapse_da_signal.
 
     sensitivity: scaling factor in the effect formulas above.
         0.0 disables the target without removing it.
@@ -122,10 +128,23 @@ class ProductionRule:
             release (PBR-160 ch 16 McGinty). Requires `bridge.region_manager`
             and `bridge.cp_firing_states` to be available; if either is
             missing, emits 0 (graceful no-op).
+        "from_action_specific_reward"
+            Cluster C v2 (2026-04-29): per-action reward production.
+            Reads bridge.core_config.current_reward_signal AND
+            bridge.core_config.last_selected_action. When
+            last_selected_action == source_action, returns
+            sensitivity * (reward - reward_baseline); otherwise returns 0.
+            Requires `source_action` ∈ [0, N-1]. The runner is responsible
+            for setting last_selected_action each trial.
 
     sensitivity, threshold, window_ms: tunable per rule.
     source_regions: optional List[str] of region names; only used by
         rule_type="from_region_firing".
+    source_action: optional int action index; only used by
+        rule_type="from_action_specific_reward". -1 (default) means "any"
+        and the rule won't fire (since last_selected_action can be -1
+        between trials). Set to a real action index ∈ [0, N-1] for the
+        per-action DA modulator to fire only when that action is selected.
     """
 
     rule_type: str
@@ -133,6 +152,7 @@ class ProductionRule:
     threshold: float = 0.5
     window_ms: float = 500.0
     source_regions: List[str] = field(default_factory=list)
+    source_action: int = -1
 
 
 @dataclass
@@ -269,6 +289,10 @@ class NeuromodulatorManager:
 
         Returns a non-negative scalar to multiply STDP amplitudes / reward
         learning rate. Same formula as synaptic_gain.
+
+        Cluster C v2 note: targets with scope='action:N' are silently skipped
+        here -- they're per-synapse, handled by
+        compute_per_synapse_plasticity_rate_multiplier.
         """
         multiplier = 1.0
         for cfg in self._configs:
@@ -280,6 +304,123 @@ class NeuromodulatorManager:
                 conc = self._concentrations[cfg.name]
                 multiplier *= 1.0 + tgt.sensitivity * (conc - cfg.baseline)
         return float(max(0.0, multiplier))
+
+    # ----- Cluster C v2 (2026-04-29): per-synapse plasticity / DA helpers -----
+
+    def compute_per_synapse_plasticity_rate_multiplier(self, action_tag_array):
+        """Per-synapse plasticity rate multiplier for scope='action:N' targets.
+
+        Parameters:
+            action_tag_array: cp.ndarray int32 of shape (n_synapses,) where
+                tag[i] is the action_index of synapse i's POST region (∈
+                [0, N-1]) or -1 for global / non-action-specific synapses.
+
+        Returns:
+            None when no scope='action:N' plasticity_rate target is registered
+            (caller can skip per-synapse computation entirely).
+            Otherwise a cp.ndarray float32 of shape (n_synapses,) where
+            entry i = multiplicative product of (1 + s*(conc-baseline)) for
+            each registered scope='action:tag[i]' target. tag[i]=-1 maps
+            to a multiplier of 1.0 (no effect).
+
+        Compose with compute_plasticity_rate_multiplier (scope='all'): callers
+        typically multiply the scope-all scalar with this per-synapse array.
+        """
+        if self._cp is None or action_tag_array is None:
+            return None
+        cp = self._cp
+
+        # Build {action_idx: scalar_multiplier} from registered scope=action:N targets.
+        per_action: dict = {}
+        any_action_target = False
+        for cfg in self._configs:
+            for tgt in cfg.targets:
+                if tgt.target_type != "plasticity_rate":
+                    continue
+                if not tgt.scope.startswith("action:"):
+                    continue
+                try:
+                    a_idx = int(tgt.scope.split(":", 1)[1])
+                except ValueError:
+                    continue
+                any_action_target = True
+                conc = self._concentrations[cfg.name]
+                contribution = 1.0 + tgt.sensitivity * (conc - cfg.baseline)
+                per_action[a_idx] = per_action.get(a_idx, 1.0) * float(contribution)
+
+        if not any_action_target:
+            return None
+
+        # Map per_action dict to a per-synapse cupy array using fancy indexing.
+        # Build a small lookup table indexed by [tag + 1], with index 0 = tag -1.
+        # Determine max action index seen.
+        max_action = max(per_action.keys())
+        table = cp.ones(max_action + 2, dtype=cp.float32)  # index 0 = tag=-1
+        for a_idx, mult in per_action.items():
+            table[a_idx + 1] = max(0.0, float(mult))
+        # Clip negative tags to -1 → table[0]=1.0
+        # Tags above max_action default to 1.0 too (cap at 0).
+        tag_clipped = cp.clip(action_tag_array.astype(cp.int32), -1, max_action)
+        result = table[tag_clipped + 1]
+        return result
+
+    def compute_per_synapse_da_signal(self, action_tag_array,
+                                       action_modulator_names=None):
+        """Per-synapse DA signal (concentration - baseline) for compartmentalized DA.
+
+        Parameters:
+            action_tag_array: cp.ndarray int32 of shape (n_synapses,) where
+                tag[i] is the action_index of synapse i's POST region
+                (∈ [0, N-1]) or -1 for global / non-action-specific synapses.
+            action_modulator_names: optional list of N modulator names, one
+                per action index. Defaults to ['dopamine_N', 'dopamine_E',
+                'dopamine_S', 'dopamine_W']. Falls back to None for any name
+                that isn't registered.
+
+        Returns:
+            None if action_tag_array is None, no per-action DA modulators
+            are registered, or self._cp is None (subsystem off / pre-init).
+            Otherwise a cp.ndarray float32 of shape (n_synapses,) where
+            entry i = (conc[tag[i]] - baseline[tag[i]]) for each registered
+            per-action DA modulator. tag[i]=-1 maps to 0.0 (no plasticity
+            for non-action-tagged synapses).
+
+        Use case: Cluster C v2 reward modulation. Bridge multiplies eligibility
+        by this signal to apply per-action DA gating of weight updates.
+        """
+        if self._cp is None or action_tag_array is None:
+            return None
+        cp = self._cp
+
+        if action_modulator_names is None:
+            action_modulator_names = [
+                "dopamine_N", "dopamine_E", "dopamine_S", "dopamine_W",
+            ]
+
+        # Build per-action signal scalar table; missing modulators -> 0.0
+        n_actions = len(action_modulator_names)
+        signals = [0.0] * n_actions
+        any_registered = False
+        for a_idx, name in enumerate(action_modulator_names):
+            try:
+                cfg = self._config_by_name(name)
+            except KeyError:
+                continue
+            conc = self._concentrations[name]
+            signals[a_idx] = float(conc) - float(cfg.baseline)
+            any_registered = True
+
+        if not any_registered:
+            return None
+
+        # Lookup table: index 0 = tag=-1 (signal=0.0); index a_idx+1 = signal[a_idx]
+        table = cp.zeros(n_actions + 1, dtype=cp.float32)
+        for a_idx, sig in enumerate(signals):
+            table[a_idx + 1] = cp.float32(sig)
+
+        tag_clipped = cp.clip(action_tag_array.astype(cp.int32), -1, n_actions - 1)
+        result = table[tag_clipped + 1]
+        return result
 
     def compute_plasticity_window_gate_multiplier(self) -> float:
         """Aggregate plasticity_window_gate effects across all modulators (scope=all).
@@ -453,6 +594,21 @@ class NeuromodulatorManager:
             if bridge is None or not hasattr(bridge, "core_config"):
                 return 0.0
             cc = bridge.core_config
+            reward = float(getattr(cc, "current_reward_signal", 0.0))
+            baseline = float(getattr(cc, "reward_baseline", 0.0))
+            return rule.sensitivity * (reward - baseline)
+
+        if rt == "from_action_specific_reward":
+            # Cluster C v2 (2026-04-29): only fires when the agent's last
+            # selected action matches this rule's source_action. Implements
+            # per-action DA channel specificity (DA neurons targeting
+            # action-X synapses don't burst when action-Y was rewarded).
+            if bridge is None or not hasattr(bridge, "core_config"):
+                return 0.0
+            cc = bridge.core_config
+            last_action = int(getattr(cc, "last_selected_action", -1))
+            if last_action != int(rule.source_action):
+                return 0.0
             reward = float(getattr(cc, "current_reward_signal", 0.0))
             baseline = float(getattr(cc, "reward_baseline", 0.0))
             return rule.sensitivity * (reward - baseline)
@@ -739,6 +895,60 @@ def _default_dopamine_config() -> NeuromodulatorConfig:
                 rule_type="from_reward",
                 sensitivity=+1.0,
                 threshold=0.0,
+            ),
+        ],
+    )
+
+
+def _default_per_action_dopamine_config(action: str, action_index: int) -> NeuromodulatorConfig:
+    """Cluster C v2 (2026-04-29) — per-action DA modulator.
+
+    Replaces the single-channel `dopamine` modulator (Cluster C v1) with
+    one DA channel per action. Each modulator targets only synapses
+    whose POST region has matching action_index (via scope='action:N')
+    and produces concentration only when the agent's last selected
+    action matches (via rule_type='from_action_specific_reward').
+
+    The runner registers 4 of these (N, E, S, W) when
+    --enable-compartmentalized-da is on.
+
+    Defaults:
+        baseline = 0.5            # tonic DA per channel
+        decay_tau_ms = 200        # phasic responses decay over ~200 ms
+        concentration_min = 0.0
+        concentration_max = 2.0   # cap at ~4x baseline
+
+    Targets:
+        plasticity_rate scope=f"action:{action_index}" sensitivity=+1.0
+            Effective gain at synapses with tag=action_index:
+            1 + (conc - baseline). At baseline conc=0.5: gain=1.0.
+
+    Production rules:
+        from_action_specific_reward source_action=action_index sensitivity=+1.0
+            Fires only when bridge.core_config.last_selected_action ==
+            action_index, then adds (reward - reward_baseline) to conc.
+
+    See docs/plans/2026-04-29-cluster-c-v2-compartmentalized-da-design.md.
+    """
+    return NeuromodulatorConfig(
+        name=f"dopamine_{action}",
+        baseline=0.5,
+        decay_tau_ms=200.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        targets=[
+            ModulatorTarget(
+                target_type="plasticity_rate",
+                scope=f"action:{action_index}",
+                sensitivity=+1.0,
+            ),
+        ],
+        production_rules=[
+            ProductionRule(
+                rule_type="from_action_specific_reward",
+                sensitivity=+1.0,
+                threshold=0.0,
+                source_action=action_index,
             ),
         ],
     )

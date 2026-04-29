@@ -1110,3 +1110,270 @@ def test_cluster_d_kwarg_accepted(tmp_out_path):
         out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
         enable_cluster_d_hippocampus=True,
     )
+
+
+# ───────────────────── 2026-04-29: Cluster C v2 compartmentalized DA ─────────────────────
+
+
+def test_compartmentalized_da_4_modulators_registered():
+    """With --enable-compartmentalized-da, all 4 dopamine_{N,E,S,W} register
+    in the neuromodulator subsystem and the global `dopamine` is NOT registered."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+    from sim import (
+        SimulationBridge, CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig,
+    )
+    from sim.enums import NeuronModel
+    from sim.neuromodulators import _default_per_action_dopamine_config
+    from research.runners.g11_bg_runner import build_bg_brain_regions, ACTION_NAMES
+
+    regions, pathways = build_bg_brain_regions()
+    cfg = CoreSimConfig()
+    cfg.num_neurons = 0
+    cfg.dt_ms = 1.0
+    cfg.num_traits = 1
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.connections_per_neuron = 0
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = regions
+    cfg.region_pathways = pathways
+    cfg.enable_stdp = False
+    cfg.enable_reward_modulation = False
+    cfg.enable_neuromodulator_subsystem = True
+    cfg.neuromodulators = [
+        _default_per_action_dopamine_config(action, idx)
+        for idx, action in enumerate(ACTION_NAMES)
+    ]
+
+    bridge = SimulationBridge(
+        core_config=cfg, viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(), gpu_config=GPUConfig(),
+    )
+    bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    nm_names = bridge.neuromodulator_manager.modulator_names()
+    expected = {f"dopamine_{a}" for a in ACTION_NAMES}
+    assert expected.issubset(set(nm_names)), \
+        f"missing per-action DA modulators; have: {nm_names}"
+    # Global single 'dopamine' should NOT be registered when only v2 is on.
+    assert "dopamine" not in nm_names, \
+        f"global 'dopamine' should not coexist with per-action channels; have: {nm_names}"
+
+
+def test_synapse_action_tag_populated():
+    """cp_synapse_action_tag tags synapses by their POST region's action_index.
+    str_D1_N -> tag=0, str_D1_E -> tag=1, str_D1_S -> tag=2, str_D1_W -> tag=3.
+    Synapses targeting non-action-specific regions (sensory, place_cells, stn,
+    dopamine) get tag=-1.
+    """
+    pytest.importorskip("cupy")
+    import cupy as cp
+    from sim import (
+        SimulationBridge, CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig,
+    )
+    from sim.enums import NeuronModel
+    from research.runners.g11_bg_runner import build_bg_brain_regions, ACTION_NAMES
+
+    regions, pathways = build_bg_brain_regions(
+        enable_hippocampus=True,  # adds non-action regions
+        enable_learned_perception=True,  # adds sensory (non-action) region
+    )
+    cfg = CoreSimConfig()
+    cfg.num_neurons = 0
+    cfg.dt_ms = 1.0
+    cfg.num_traits = 1
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.connections_per_neuron = 0
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = regions
+    cfg.region_pathways = pathways
+    cfg.enable_stdp = False
+    cfg.enable_reward_modulation = False
+
+    bridge = SimulationBridge(
+        core_config=cfg, viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(), gpu_config=GPUConfig(),
+    )
+    bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    assert bridge.cp_synapse_action_tag is not None, \
+        "cp_synapse_action_tag should be allocated when region_manager is present"
+    nnz = bridge.cp_connections.nnz
+    assert bridge.cp_synapse_action_tag.shape[0] == nnz, \
+        f"action_tag size {bridge.cp_synapse_action_tag.shape[0]} != nnz {nnz}"
+
+    # Build maps: action_idx -> set of post-neuron indices for that action's regions.
+    rm = bridge.region_manager
+    post_to_action = {}
+    for region in rm.regions():
+        a_idx = getattr(region, "action_index", None)
+        if a_idx is None:
+            continue
+        for n_idx in rm.indices(region.name):
+            post_to_action[int(n_idx)] = int(a_idx)
+
+    post_neurons_cp = bridge.cp_connections.indices  # CSR column = post-neuron
+    post_neurons_np = post_neurons_cp.get()
+    tag_np = bridge.cp_synapse_action_tag.get()
+
+    # Spot-check: synapses where post is in post_to_action should have matching tag.
+    # Pick 200 random sample synapses; scan each.
+    import numpy as np
+    rng = np.random.default_rng(42)
+    sample_idx = rng.choice(nnz, size=min(200, nnz), replace=False)
+    for syn_idx in sample_idx:
+        post_neuron = int(post_neurons_np[syn_idx])
+        expected = post_to_action.get(post_neuron, -1)
+        actual = int(tag_np[syn_idx])
+        assert actual == expected, \
+            f"synapse {syn_idx} (post_neuron={post_neuron}): expected tag={expected}, got {actual}"
+
+    # Sanity: at least some synapses with tag=-1 (sensory, place_cells, stn, dopamine targets exist)
+    assert int((tag_np == -1).sum()) > 0, \
+        "expected some non-action-tagged synapses (e.g. targeting place_cells, stn, dopamine, etc)"
+    # Sanity: synapses tagged for each action exist
+    for a_idx in range(4):
+        assert int((tag_np == a_idx).sum()) > 0, \
+            f"expected some synapses tagged for action {a_idx}"
+
+
+def test_per_synapse_da_signal_targets_action_correctly():
+    """With dopamine_N at high concentration and others at baseline, only
+    synapses with tag=0 see elevated signal."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+    from sim.neuromodulators import (
+        NeuromodulatorManager,
+        _default_per_action_dopamine_config,
+    )
+    from research.runners.g11_bg_runner import ACTION_NAMES
+
+    configs = [
+        _default_per_action_dopamine_config(action, idx)
+        for idx, action in enumerate(ACTION_NAMES)
+    ]
+    mgr = NeuromodulatorManager(configs, dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=cp)
+
+    # Baseline: signal should be ~0.0 for all tags
+    tag_array = cp.asarray([-1, 0, 1, 2, 3, 0, 0, -1], dtype=cp.int32)
+    signal = mgr.compute_per_synapse_da_signal(tag_array)
+    assert signal is not None, "compute_per_synapse_da_signal returned None despite 4 modulators registered"
+    # All should be 0.0 at baseline
+    signal_np = signal.get()
+    assert all(abs(v) < 1e-3 for v in signal_np), f"At baseline, expected ~0.0; got {signal_np}"
+
+    # Boost dopamine_N
+    mgr.set_concentration("dopamine_N", 1.5)  # baseline=0.5, so signal=+1.0
+    signal = mgr.compute_per_synapse_da_signal(tag_array)
+    signal_np = signal.get()
+    # tag_array entries: [-1, 0, 1, 2, 3, 0, 0, -1]
+    # tag=0 -> dopamine_N elevated, signal ~ +1.0
+    # tag=-1 -> 0.0 (no action)
+    # tag in {1,2,3} -> still baseline, signal ~ 0.0
+    assert abs(signal_np[0] - 0.0) < 1e-3, f"tag=-1 should be 0.0; got {signal_np[0]}"
+    assert abs(signal_np[1] - 1.0) < 1e-3, f"tag=0 should be 1.0; got {signal_np[1]}"
+    assert abs(signal_np[2] - 0.0) < 1e-3, f"tag=1 should be 0.0; got {signal_np[2]}"
+    assert abs(signal_np[3] - 0.0) < 1e-3, f"tag=2 should be 0.0; got {signal_np[3]}"
+    assert abs(signal_np[4] - 0.0) < 1e-3, f"tag=3 should be 0.0; got {signal_np[4]}"
+    assert abs(signal_np[5] - 1.0) < 1e-3, f"tag=0 should be 1.0; got {signal_np[5]}"
+    assert abs(signal_np[6] - 1.0) < 1e-3, f"tag=0 should be 1.0; got {signal_np[6]}"
+    assert abs(signal_np[7] - 0.0) < 1e-3, f"tag=-1 should be 0.0; got {signal_np[7]}"
+
+
+def test_compartmentalized_da_kwarg_accepted(tmp_out_path):
+    """20-step smoke: runner accepts --enable-compartmentalized-da without
+    TypeError, registers 4 per-action DA modulators, and produces a valid result."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+
+    run_moving_goal_episode(
+        out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+        enable_compartmentalized_da=True,
+    )
+
+
+def test_compartmentalized_da_action_specific_reward_rule():
+    """from_action_specific_reward production rule fires only when
+    last_selected_action matches source_action."""
+    pytest.importorskip("cupy")
+    import cupy as cp
+
+    from sim.config import CoreSimConfig
+    from sim.neuromodulators import (
+        NeuromodulatorManager,
+        _default_per_action_dopamine_config,
+    )
+
+    cfg_da = _default_per_action_dopamine_config("N", 0)  # source_action=0
+    mgr = NeuromodulatorManager([cfg_da], dt_ms=1.0)
+    mgr.initialize(n_neurons=4, cp_module=cp)
+
+    class _Bridge:
+        def __init__(self):
+            self.core_config = CoreSimConfig()
+            self.core_config.current_reward_signal = 1.0
+            self.core_config.reward_baseline = 0.0
+            self.core_config.last_selected_action = 0  # matches!
+
+    b = _Bridge()
+    # At baseline (0.5), with reward=1.0 and last_action=0=source_action,
+    # one step should add (1.0 - 0.0)*sensitivity = +1.0 (capped by clipping).
+    initial = mgr.get_concentration("dopamine_N")
+    mgr.step(b)
+    after_match = mgr.get_concentration("dopamine_N")
+    assert after_match > initial, \
+        f"with last_action=source_action, concentration should rise; {initial} -> {after_match}"
+
+    # Reset
+    mgr.set_concentration("dopamine_N", 0.5)  # back to baseline
+    # Mismatched action: should NOT fire
+    b.core_config.last_selected_action = 2  # mismatch
+    initial2 = mgr.get_concentration("dopamine_N")
+    mgr.step(b)
+    after_mismatch = mgr.get_concentration("dopamine_N")
+    # With mismatch, only decay applies — concentration stays at baseline.
+    assert abs(after_mismatch - initial2) < 0.01, \
+        f"with last_action != source_action, no production; {initial2} -> {after_mismatch}"
+
+
+def test_compartmentalized_da_action_index_populated_on_regions():
+    """Action-specific regions (cortex_X, str_D1_X, str_D2_X, gpi_X, thal_X,
+    motor_X, etc) have action_index in [0, 3]; non-action regions (stn,
+    dopamine, sensory, place_cells) have action_index=None."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions, ACTION_NAMES
+    regions, _ = build_bg_brain_regions(
+        enable_hippocampus=True,
+        enable_learned_perception=True,
+        enable_motor_lateral_inhibition=True,
+        enable_cortex_lateral_inhibition=True,
+        enable_striatal_fsis=True,
+        enable_cluster_d_hippocampus=True,
+    )
+    by_name = {r.name: r for r in regions}
+
+    # Action-specific regions
+    for idx, action in enumerate(ACTION_NAMES):
+        for prefix in ("cortex_", "str_D1_", "str_D2_", "gpi_", "thal_",
+                       "motor_", "gpe_", "gpe_arky_", "str_patch_"):
+            name = f"{prefix}{action}"
+            assert name in by_name, f"region {name} not built"
+            assert by_name[name].action_index == idx, \
+                f"{name} action_index expected {idx}, got {by_name[name].action_index}"
+        # Optional regions only with their flags
+        for prefix in ("cortex_FS_", "motor_FS_", "str_FS_"):
+            name = f"{prefix}{action}"
+            if name in by_name:
+                assert by_name[name].action_index == idx, \
+                    f"{name} action_index expected {idx}, got {by_name[name].action_index}"
+
+    # Non-action-specific regions
+    for name in ("stn", "dopamine", "sensory", "place_cells", "goal_cells",
+                 "ec", "dg", "dg_fs", "ca3", "ca1"):
+        if name in by_name:
+            assert by_name[name].action_index is None, \
+                f"{name} action_index should be None; got {by_name[name].action_index}"

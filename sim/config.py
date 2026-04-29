@@ -185,6 +185,12 @@ class CoreSimConfig:
     reward_eligibility_tau_ms: float = 1000.0  # Eligibility trace decay (ms, typical: 500-2000ms)
     reward_baseline: float = 0.0           # Expected reward (for prediction error)
     current_reward_signal: float = 0.0     # Current reward value (updated externally or via task)
+    # Cluster C v2 (2026-04-29): last action selected by agent. Read by
+    # `from_action_specific_reward` production rule so per-action DA
+    # modulators only fire when the matching action is selected. -1 means
+    # "no action" (between trials, runner hasn't reported yet). Runners
+    # set this after each action selection.
+    last_selected_action: int = -1
     # R2.4 (2026-04-29): aversive-vs-appetitive magnitude asymmetry.
     # Schultz98/Schultz16/Fiorillo 2013: phasic DA "activations" to aversive
     # stimuli largely reflect physical-impact artifacts; the underlying

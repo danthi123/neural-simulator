@@ -269,6 +269,14 @@ class SimulationBridge:
         # See docs/plans/2026-04-28-cluster-b1-d1d2-asymmetry-implementation.md.
         self.cp_d1_d2_sign = None
 
+        # Cluster C v2 (2026-04-29): per-synapse action tag for compartmentalized DA.
+        # int32 array of length nnz; tag[i] = action_index of synapse i's
+        # POST region (∈ [0, N_ACTIONS-1]) or -1 for global / non-action-
+        # specific synapses. Populated in inject_explicit_wiring() based on
+        # BrainRegion.action_index of the post region.
+        # See docs/plans/2026-04-29-cluster-c-v2-compartmentalized-da-design.md.
+        self.cp_synapse_action_tag = None
+
         self.is_initialized = False
 
         self._mock_total_plasticity_events = 0
@@ -1834,6 +1842,31 @@ class SimulationBridge:
                 self.cp_d1_d2_sign[d2_mask] = -1.0
         else:
             self.cp_d1_d2_sign = None
+
+        # Cluster C v2 (2026-04-29): per-synapse action tag for compartmentalized
+        # DA. tag[i] = action_index of synapse i's POST region (∈ [0, N-1]) or
+        # -1 for global / non-action-specific synapses. Allocated whenever
+        # a region_manager is present so consumers (compute_per_synapse_da_signal)
+        # can rely on it; default -1 produces no effect under the v1 path.
+        # See docs/plans/2026-04-29-cluster-c-v2-compartmentalized-da-design.md.
+        if self.region_manager is not None:
+            self.cp_synapse_action_tag = cp.full(nnz, -1, dtype=cp.int32)
+            # Build per-action post-neuron index set; for each region with a
+            # non-None action_index, mark synapses whose post is in that region.
+            for region in self.region_manager.regions():
+                a_idx = getattr(region, "action_index", None)
+                if a_idx is None:
+                    continue
+                region_post = self.region_manager.indices(region.name)
+                if not region_post:
+                    continue
+                post_set_gpu = cp.asarray(
+                    np.asarray(region_post, dtype=np.int64)
+                )
+                mask = cp.isin(self.cp_connections.indices, post_set_gpu)
+                self.cp_synapse_action_tag[mask] = int(a_idx)
+        else:
+            self.cp_synapse_action_tag = None
 
         # Flip output trait to inhibitory if requested (enables lateral inhibition).
         if output_inhibitory_indices:
@@ -4423,22 +4456,49 @@ class SimulationBridge:
                 # gives a non-zero plasticity signal between rewards (which
                 # ACh's plasticity_window_gate can then modulate). Falls back
                 # to legacy path when no DA modulator is registered.
+                #
+                # Cluster C v2 (2026-04-29): when 4 per-action DA modulators
+                # (dopamine_{N,E,S,W}) are registered AND cp_synapse_action_tag
+                # is populated, use compartmentalized per-synapse DA signal
+                # instead of scalar. Each synapse i gets DA[tag[i]] - baseline
+                # so per-action DA channels target only their action's
+                # synapses.
                 da_signal = None
+                per_synapse_da = None  # cp.ndarray when v2 active; else None
                 if (getattr(cfg, "enable_neuromodulator_subsystem", False)
                         and self.neuromodulator_manager is not None):
-                    try:
-                        da_conc = self.neuromodulator_manager.get_concentration("dopamine")
-                        da_baseline = next(
-                            (c.baseline for c in self.neuromodulator_manager._configs
-                             if c.name == "dopamine"),
-                            None,
+                    # v2 takes precedence: check if 4 per-action DA modulators are registered.
+                    nm_names = self.neuromodulator_manager.modulator_names()
+                    per_action_names = ["dopamine_N", "dopamine_E", "dopamine_S", "dopamine_W"]
+                    if (all(n in nm_names for n in per_action_names)
+                            and self.cp_synapse_action_tag is not None):
+                        actual_nnz_for_da = self.cp_connections.nnz
+                        per_synapse_da = self.neuromodulator_manager.compute_per_synapse_da_signal(
+                            self.cp_synapse_action_tag[:actual_nnz_for_da],
+                            action_modulator_names=per_action_names,
                         )
-                        if da_baseline is not None:
-                            da_signal = float(da_conc) - float(da_baseline)
-                    except KeyError:
-                        da_signal = None  # dopamine not registered; legacy path
+                    else:
+                        # v1 path: single-channel "dopamine" scalar
+                        try:
+                            da_conc = self.neuromodulator_manager.get_concentration("dopamine")
+                            da_baseline = next(
+                                (c.baseline for c in self.neuromodulator_manager._configs
+                                 if c.name == "dopamine"),
+                                None,
+                            )
+                            if da_baseline is not None:
+                                da_signal = float(da_conc) - float(da_baseline)
+                        except KeyError:
+                            da_signal = None  # dopamine not registered; legacy path
                 effective_signal = da_signal if da_signal is not None else reward_prediction_error
-                if abs(effective_signal) > 1e-6:  # Only update if there's a reward signal
+                # Decide whether to enter the update path. With per_synapse_da,
+                # we always enter (the array can have nonzero entries even when
+                # the scalar effective_signal is zero, since per-action DA
+                # baselines/concentrations may differ).
+                update_path_active = (
+                    (per_synapse_da is not None) or (abs(effective_signal) > 1e-6)
+                )
+                if update_path_active:
                     # Effective lr is reward_learning_rate × neuromod plasticity_rate
                     # multiplier (subsystem off → multiplier 1.0, no change).
                     effective_reward_lr = cfg.reward_learning_rate
@@ -4453,7 +4513,19 @@ class SimulationBridge:
                     # Slice eligibility trace to match actual synapse count (trace array
                     # is pre-allocated to capacity which may exceed cp_connections.nnz).
                     actual_nnz = self.cp_connections.nnz
-                    weight_updates = effective_reward_lr * effective_signal * self.cp_eligibility_trace[:actual_nnz]
+                    if per_synapse_da is not None:
+                        # Cluster C v2: per-synapse DA signal. The per-synapse
+                        # multiplier from compute_per_synapse_plasticity_rate_multiplier
+                        # could also be applied here for additional scope-action targets,
+                        # but the canonical path is the DA concentration deviation
+                        # already encoded in per_synapse_da.
+                        weight_updates = (
+                            effective_reward_lr
+                            * per_synapse_da
+                            * self.cp_eligibility_trace[:actual_nnz]
+                        )
+                    else:
+                        weight_updates = effective_reward_lr * effective_signal * self.cp_eligibility_trace[:actual_nnz]
                     # Per-pathway plasticity gain (Stage 1, 2026-04-27): gate
                     # the eligibility-to-weight conversion. A pathway frozen
                     # NOW won't accept reward-driven changes from past
