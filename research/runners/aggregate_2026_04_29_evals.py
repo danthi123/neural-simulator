@@ -37,8 +37,11 @@ CONDITIONS = {
     "no-heuristic A+C+E": "g11_seed{seed}_noHeur_ACE.json",
     "FIXED cascade baseline": "g11_seed{seed}_FIX_baseline.json",
     "FIXED cascade A+C+E": "g11_seed{seed}_FIX_ACE.json",
+    "C v2 tier-3": "g11_seed{seed}_Cv2_tier3.json",
+    "E tier-3": "g11_seed{seed}_E_tier3.json",
+    "C v2 + E composition": "g11_seed{seed}_Cv2_E.json",
 }
-SEEDS = [42, 43, 44]
+SEEDS = [42, 43, 44, 100, 101, 102]  # tier-3 conditions use all 6; others use first 3
 RAW_DIR = Path("research/findings/raw/g11_bg")
 
 
@@ -54,9 +57,11 @@ def parse(file: Path) -> Optional[Dict]:
 
 
 def aggregate() -> None:
-    print("# Cheat-5 multi-goal eval - 8 conditions x 3 seeds (n=3)\n")
-    print("| Condition | Seed 42 | Seed 43 | Seed 44 | Mean +/- std |")
-    print("|---|---|---|---|---|")
+    print(f"# Cheat-5 multi-goal eval - {len(CONDITIONS)} conditions x up to {len(SEEDS)} seeds\n")
+    seed_headers = " | ".join(f"Seed {s}" for s in SEEDS)
+    seed_dividers = "|".join(["---"] * len(SEEDS))
+    print(f"| Condition | {seed_headers} | Mean +/- std |")
+    print(f"|---|{seed_dividers}|---|")
     summary: List[Dict] = []
     for label, tmpl in CONDITIONS.items():
         sums: List[Optional[float]] = []
@@ -80,7 +85,8 @@ def aggregate() -> None:
         else:
             cell = "PEND"
         seed_cells = [f"{s:.2f}" if s is not None else "PEND" for s in sums]
-        print(f"| {label} | {seed_cells[0]} | {seed_cells[1]} | {seed_cells[2]} | **{cell}** |")
+        seed_row = " | ".join(seed_cells)
+        print(f"| {label} | {seed_row} | **{cell}** |")
 
     print("\n## Per-phase mean (mean across seeds)\n")
     print("| Condition | P0 | P1 | P2 | P3 |")
