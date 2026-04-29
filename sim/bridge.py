@@ -277,6 +277,18 @@ class SimulationBridge:
         # See docs/plans/2026-04-29-cluster-c-v2-compartmentalized-da-design.md.
         self.cp_synapse_action_tag = None
 
+        # Cluster E v1 (2026-04-29): topographic neuron coordinates.
+        # cp_neuron_coords: cp.ndarray[float32, (n, k_dim)] where k_dim is
+        # max(coordinate_dim) across all regions. None if no region declares
+        # coordinates (default — backward compatible). Neurons in regions with
+        # smaller coordinate_dim or coordinate_dim=0 get NaN-padded entries.
+        # Populated by _initialize_simulation_data after the region manager
+        # is set up. Currently informational — pathway gen uses host-side
+        # numpy coordinates from RegionManager directly. Future GPU consumers
+        # can read this array.
+        # See docs/plans/2026-04-29-cluster-e-topographic-maps-design.md.
+        self.cp_neuron_coords = None
+
         self.is_initialized = False
 
         self._mock_total_plasticity_events = 0
@@ -949,6 +961,27 @@ class SimulationBridge:
                         self.cp_syn_reversal_potential_i_per_neuron[idx_arr] = float(override)
             else:
                 self.cp_syn_reversal_potential_i_per_neuron = cp.array([], dtype=cp.float32)
+
+            # Cluster E v1 (2026-04-29): allocate cp_neuron_coords if any region
+            # declares coordinate_dim > 0. NaN-padded for non-coordinate regions
+            # so consumers can detect "no coords" via cp.isnan check.
+            self.cp_neuron_coords = None
+            if n > 0 and self.region_manager is not None:
+                k_dim = self.region_manager.max_coordinate_dim()
+                if k_dim > 0:
+                    coords = np.full((n, k_dim), np.nan, dtype=np.float32)
+                    for region in self.region_manager.regions():
+                        if not region.coordinate_dim or region.coordinate_dim <= 0:
+                            continue
+                        region_coords = self.region_manager.coordinates(region.name)
+                        if not region_coords:
+                            continue
+                        idx_list = self.region_manager.indices(region.name)
+                        for local_i, global_i in enumerate(idx_list):
+                            pt = region_coords[local_i]
+                            for ax in range(min(len(pt), k_dim)):
+                                coords[global_i, ax] = float(pt[ax])
+                    self.cp_neuron_coords = cp.asarray(coords, dtype=cp.float32)
 
             # NMDA conductance (dual-exponential: g_nmda_slow - g_nmda_rise)
             self.cp_conductance_g_nmda = cp.zeros(n, dtype=cp.float32)

@@ -190,6 +190,17 @@ def build_bg_brain_regions(
     # place_cells/goal_cells regions or landmark_sensors -> place_cells.
     # See docs/plans/2026-04-29-cluster-d-hippocampus-design.md.
     enable_cluster_d_hippocampus: bool = False,
+    # Cluster E v1 (2026-04-29): topographic maps + distance-dependent
+    # connection probability. When enabled:
+    #   - cortex_X / str_D1_X / str_D2_X regions get 2D coordinates anchored
+    #     to a corner of the unit square (N=(0.5,1.0), E=(1.0,0.5),
+    #     S=(0.5,0.0), W=(0.0,0.5)).
+    #   - cortex_X -> str_D1_X / str_D2_X pathways are sampled with
+    #     Gaussian-weighted probability (sigma=0.3 by default).
+    # Default off — backward compatible.
+    # See docs/plans/2026-04-29-cluster-e-topographic-maps-design.md.
+    enable_cluster_e_topography: bool = False,
+    cluster_e_distance_sigma: float = 0.3,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -305,8 +316,25 @@ def build_bg_brain_regions(
     # learning would produce: differential cortex→striatum weights.
     # Cluster C v2 (2026-04-29): action_index stamped on action-specific
     # regions so cp_synapse_action_tag can resolve per-synapse DA targeting.
+    # Cluster E v1 (2026-04-29): topographic 2D coordinates per action
+    # corner of unit square when enable_cluster_e_topography is on.
     n_cortex_per_action = n_cortex // N_ACTIONS
+    # Cardinal-direction corners of the unit square (Cluster E v1).
+    _action_corner = {
+        "N": (0.5, 1.0),
+        "E": (1.0, 0.5),
+        "S": (0.5, 0.0),
+        "W": (0.0, 0.5),
+    }
+    _topo_kw = (
+        {"coordinate_dim": 2, "coordinate_extent": (1.0, 1.0)}
+        if enable_cluster_e_topography
+        else {}
+    )
     for action_idx, action in enumerate(ACTION_NAMES):
+        kw = dict(_topo_kw)
+        if enable_cluster_e_topography:
+            kw["coordinate_center"] = _action_corner[action]
         regions.append(BrainRegion(
             name=f"cortex_{action}",
             n_neurons=n_cortex_per_action,
@@ -316,6 +344,7 @@ def build_bg_brain_regions(
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
             action_index=action_idx,
+            **kw,
         ))
 
     # Cortex WTA microcircuit (opt-in). Per-pool FS interneurons that mediate
@@ -344,6 +373,11 @@ def build_bg_brain_regions(
     for action_idx, action in enumerate(ACTION_NAMES):
         # Striatal MSNs: ECl ~−60 mV (PBR-160 ch 6, gramicidin perforated patch).
         # IPSPs are shunting near rest, hyperpolarizing only near AP threshold.
+        # Cluster E v1: same per-action corner as cortex for topographic
+        # cortex_X -> str_D{1,2}_X mapping.
+        msn_kw = dict(_topo_kw)
+        if enable_cluster_e_topography:
+            msn_kw["coordinate_center"] = _action_corner[action]
         regions.append(BrainRegion(
             name=f"str_D1_{action}",
             n_neurons=n_striatum_per_action,
@@ -354,6 +388,7 @@ def build_bg_brain_regions(
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
             syn_reversal_potential_i_override=-60.0,
             action_index=action_idx,
+            **msn_kw,
         ))
         regions.append(BrainRegion(
             name=f"str_D2_{action}",
@@ -365,6 +400,7 @@ def build_bg_brain_regions(
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D2.name,
             syn_reversal_potential_i_override=-60.0,
             action_index=action_idx,
+            **msn_kw,
         ))
 
     # Cluster B.2 (2026-04-28): striatal fast-spiking interneurons (FSIs).
@@ -679,6 +715,16 @@ def build_bg_brain_regions(
     # maintain net excitatory drive given the sparser fan-in.
     cortex_to_msn_density_same = 0.20
     cortex_to_msn_density_cross = 0.10  # sparser still per Bolam
+    # Cluster E v1 (2026-04-29): when topography is on, cortex_X -> str_D{1,2}_X
+    # pathways carry distance_sigma so connections are Gaussian-weighted by
+    # 2D corner distance. Same-action pairs share the same corner (distance=0,
+    # full density); cross-action pairs are 1.0 unit apart (heavily attenuated
+    # at sigma=0.3). Falls back to uniform Bernoulli when the flag is off.
+    _cluster_e_sigma = (
+        float(cluster_e_distance_sigma)
+        if enable_cluster_e_topography
+        else None
+    )
     for cortex_action in ACTION_NAMES:
         for str_action in ACTION_NAMES:
             same = (cortex_action == str_action)
@@ -697,12 +743,14 @@ def build_bg_brain_regions(
                 to_region=f"str_D1_{str_action}",
                 density=density, weight_mean=weight, weight_jitter=0.2, plastic=True,
                 plasticity_gate=gate,
+                distance_sigma=_cluster_e_sigma,
             ))
             pathways.append(RegionPathway(
                 from_region=f"cortex_{cortex_action}",
                 to_region=f"str_D2_{str_action}",
                 density=density, weight_mean=weight, weight_jitter=0.2, plastic=True,
                 plasticity_gate=gate,
+                distance_sigma=_cluster_e_sigma,
             ))
 
     # v3 (2026-04-28): MSN cross-pool lateral inhibition.
@@ -1551,6 +1599,8 @@ def run_moving_goal_episode(
     enable_tonic_da: bool = False,  # Cluster C v1: dopamine as a real neuromodulator
     enable_compartmentalized_da: bool = False,  # Cluster C v2: per-action DA channels
     enable_cluster_d_hippocampus: bool = False,  # Cluster D v1: trisynaptic loop (ec+dg+ca3+ca1)
+    enable_cluster_e_topography: bool = False,  # Cluster E v1: 2D coords + Gaussian-weighted cortex->striatum
+    cluster_e_distance_sigma: float = 0.3,
     # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
     # Defaults match CoreSimConfig but can be overridden from the runner's
     # CLI / kwargs to tune the pruning aggressiveness for short pretraining
@@ -1656,6 +1706,8 @@ def run_moving_goal_episode(
         enable_striatal_fsis=enable_striatal_fsis,
         enable_cluster_a_closed_loop=enable_cluster_a_closed_loop,
         enable_cluster_d_hippocampus=enable_cluster_d_hippocampus,
+        enable_cluster_e_topography=enable_cluster_e_topography,
+        cluster_e_distance_sigma=cluster_e_distance_sigma,
         enable_beacon_perception=enable_beacon_perception,
         n_beacon_sensors=n_beacon_sensors,
         beacon_to_goal_weight=beacon_to_goal_weight,
@@ -2908,6 +2960,22 @@ def main():
                          "(adds ca1 -> place_cells readout) and --landmarks "
                          "(adds landmark_sensors -> ec). See "
                          "docs/plans/2026-04-29-cluster-d-hippocampus-design.md.")
+    ap.add_argument("--enable-cluster-e-topography", action="store_true",
+                    help="Cluster E v1 (2026-04-29): topographic maps + "
+                         "distance-dependent connection probability. "
+                         "cortex_X / str_D1_X / str_D2_X regions get 2D coords "
+                         "anchored to corners of unit square (N=(0.5,1.0), "
+                         "E=(1.0,0.5), S=(0.5,0.0), W=(0.0,0.5)); cortex_X -> "
+                         "str_D{1,2}_Y pathways are sampled with Gaussian-"
+                         "weighted probability (sigma=0.3 default, set via "
+                         "--cluster-e-distance-sigma). See "
+                         "docs/plans/2026-04-29-cluster-e-topographic-maps-design.md.")
+    ap.add_argument("--cluster-e-distance-sigma", type=float, default=0.3,
+                    help="Cluster E v1 Gaussian-kernel sigma for distance-"
+                         "weighted cortex -> striatum connectivity. Default 0.3 "
+                         "(at corner-to-corner distance ~1.0, cross-action prob "
+                         "drops to ~0.4%% of same-action). Larger -> looser "
+                         "spatial selectivity.")
     ap.add_argument("--enable-tans", action="store_true",
                     help="Cluster B.3: cholinergic interneurons (TANs). Adds "
                          "an acetylcholine neuromodulator that pauses on reward "
@@ -3047,6 +3115,8 @@ def main():
             enable_tonic_da=args.enable_tonic_da,
             enable_compartmentalized_da=args.enable_compartmentalized_da,
             enable_cluster_d_hippocampus=args.enable_cluster_d_hippocampus,
+            enable_cluster_e_topography=args.enable_cluster_e_topography,
+            cluster_e_distance_sigma=args.cluster_e_distance_sigma,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
             pruning_weight_floor=args.pruning_weight_floor,

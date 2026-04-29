@@ -1377,3 +1377,117 @@ def test_compartmentalized_da_action_index_populated_on_regions():
         if name in by_name:
             assert by_name[name].action_index is None, \
                 f"{name} action_index should be None; got {by_name[name].action_index}"
+
+
+# ───────────────────── 2026-04-29: Cluster E v1 topographic maps ─────────────────────
+
+
+def test_cluster_e_default_off():
+    """Default off: cortex_X / str_D1_X / str_D2_X have coordinate_dim=0."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    regions, _ = build_bg_brain_regions()  # default
+    by_name = {r.name: r for r in regions}
+    for action in ("N", "E", "S", "W"):
+        for prefix in ("cortex_", "str_D1_", "str_D2_"):
+            r = by_name[f"{prefix}{action}"]
+            assert r.coordinate_dim == 0, \
+                f"{r.name} coordinate_dim should be 0 by default; got {r.coordinate_dim}"
+            assert r.coordinate_extent is None
+            assert r.coordinate_center is None
+
+
+def test_cluster_e_coordinate_assignment():
+    """When --enable-cluster-e-topography is on, action-specific regions
+    (cortex_X, str_D1_X, str_D2_X) get 2D coords pinned to the corner of the
+    unit square corresponding to their action. Non-action regions stay at
+    coordinate_dim=0 (no coords)."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    regions, _ = build_bg_brain_regions(enable_cluster_e_topography=True)
+    by_name = {r.name: r for r in regions}
+
+    expected_corners = {
+        "N": (0.5, 1.0),
+        "E": (1.0, 0.5),
+        "S": (0.5, 0.0),
+        "W": (0.0, 0.5),
+    }
+    for action, corner in expected_corners.items():
+        for prefix in ("cortex_", "str_D1_", "str_D2_"):
+            r = by_name[f"{prefix}{action}"]
+            assert r.coordinate_dim == 2, f"{r.name} should have 2D coords"
+            assert r.coordinate_center == corner, (
+                f"{r.name} should be pinned to {corner}; got {r.coordinate_center}"
+            )
+
+    # Non-action regions (stn, dopamine) remain unstructured.
+    for name in ("stn", "dopamine"):
+        r = by_name[name]
+        assert r.coordinate_dim == 0, (
+            f"{name} should remain unstructured; got coordinate_dim={r.coordinate_dim}"
+        )
+
+
+def test_cluster_e_distance_sigma_pathways():
+    """Cluster E v1: cortex_X -> str_D1_X / str_D2_X pathways carry
+    distance_sigma=0.3 (default) when topography is on. Sane fallback to
+    None when off."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    # Off: all pathways have distance_sigma=None
+    _regions, no_topo = build_bg_brain_regions()
+    cortex_to_msn_off = [
+        p for p in no_topo
+        if p.from_region.startswith("cortex_")
+        and (p.to_region.startswith("str_D1_") or p.to_region.startswith("str_D2_"))
+    ]
+    assert all(p.distance_sigma is None for p in cortex_to_msn_off), (
+        "without --enable-cluster-e-topography, cortex->MSN distance_sigma must be None"
+    )
+
+    # On: all cortex -> MSN pathways have distance_sigma=0.3
+    _regions, with_topo = build_bg_brain_regions(enable_cluster_e_topography=True)
+    cortex_to_msn_on = [
+        p for p in with_topo
+        if p.from_region.startswith("cortex_")
+        and (p.to_region.startswith("str_D1_") or p.to_region.startswith("str_D2_"))
+    ]
+    assert len(cortex_to_msn_on) >= 8, "expected at least 8 same-action paths"
+    for p in cortex_to_msn_on:
+        assert p.distance_sigma == 0.3, (
+            f"cortex->MSN should carry distance_sigma=0.3; got {p.distance_sigma} "
+            f"on {p.from_region}->{p.to_region}"
+        )
+
+
+def test_cluster_e_custom_sigma_propagates():
+    """`cluster_e_distance_sigma` kwarg overrides default 0.3."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    _regions, pathways = build_bg_brain_regions(
+        enable_cluster_e_topography=True,
+        cluster_e_distance_sigma=0.7,
+    )
+    cortex_to_msn = [
+        p for p in pathways
+        if p.from_region.startswith("cortex_")
+        and (p.to_region.startswith("str_D1_") or p.to_region.startswith("str_D2_"))
+    ]
+    for p in cortex_to_msn:
+        assert p.distance_sigma == 0.7
+
+
+def test_cluster_e_kwarg_accepted(tmp_out_path):
+    """20-step smoke: runner accepts --enable-cluster-e-topography
+    end-to-end without crashing or producing an empty cascade."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    run_moving_goal_episode(
+        out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+        enable_cluster_e_topography=True,
+    )
+    with open(tmp_out_path) as f:
+        result = json.load(f)
+    assert "phase_stats" in result
+    assert len(result["motor_counts"]) == 20

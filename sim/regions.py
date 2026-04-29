@@ -22,9 +22,10 @@ See:
 
 from __future__ import annotations
 
+import math
 import random
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, List, Optional, Sequence, Tuple
 
 
 @dataclass
@@ -109,6 +110,34 @@ class BrainRegion:
     # da-design.md.
     action_index: Optional[int] = None
 
+    # Cluster E v1 (2026-04-29): topographic maps + distance-dependent
+    # connection probability. When coordinate_dim > 0, this region's neurons
+    # are deterministically assigned coordinates uniformly in coordinate_extent.
+    # Coordinates are then used by RegionPathway.distance_sigma to sample
+    # connections with Gaussian-weighted probability.
+    #
+    # coordinate_dim:
+    #   0 (default) = no coordinates, no topography. Backward-compatible —
+    #     pathways into/out of this region use uniform Bernoulli connectivity.
+    #   1 = 1D layout (e.g., a tonotopic axis or motor-strip line)
+    #   2 = 2D layout (e.g., retinotopic / somatotopic / motor-map sheet)
+    #
+    # coordinate_extent:
+    #   None (default) = unit extent (1.0,) or (1.0, 1.0) inferred from
+    #     coordinate_dim. Otherwise a tuple of length coordinate_dim giving
+    #     the per-axis extent. Coordinates are sampled uniformly from
+    #     [0, extent_k] on each axis k.
+    #
+    # See docs/plans/2026-04-29-cluster-e-topographic-maps-design.md.
+    coordinate_dim: int = 0
+    coordinate_extent: Optional[Tuple[float, ...]] = None
+    # Cluster E v1: optional explicit center for placing all neurons in this
+    # region at a single point in coordinate space. Useful when a region
+    # represents a discrete location on a larger map (e.g., cortex_N at the
+    # north corner of a unit square). When set, all neurons in this region
+    # share these coordinates. coordinate_dim must equal len(coordinate_center).
+    coordinate_center: Optional[Tuple[float, ...]] = None
+
 
 @dataclass
 class RegionPathway:
@@ -170,6 +199,18 @@ class RegionPathway:
     neuromodulator_gates: List[str] = field(default_factory=list)
     plasticity_gate: str = None
 
+    # Cluster E v1 (2026-04-29): distance-dependent connection probability.
+    # When set AND both source and target regions have coordinate_dim > 0,
+    # connections are sampled with Gaussian-weighted probability:
+    #     p(i, j) = density * exp(-||c_i - c_j||² / (2 * sigma²))
+    # where c_i, c_j are the source and target neurons' coordinates.
+    # When None (default) or either region lacks coordinates, falls back
+    # to uniform Bernoulli sampling with `density` (current behavior,
+    # backward compatible).
+    #
+    # See docs/plans/2026-04-29-cluster-e-topographic-maps-design.md.
+    distance_sigma: Optional[float] = None
+
 
 class RegionManager:
     """Owns per-region neuron-index allocation, inhibitory cell selection,
@@ -194,14 +235,22 @@ class RegionManager:
         self._indices: Dict[str, List[int]] = {}
         self._inhibitory: Dict[str, List[int]] = {}
         self._total_neurons: int = 0
+        # Cluster E v1: per-region neuron coordinates, list of tuples.
+        # Empty when coordinate_dim == 0 for that region.
+        self._coordinates: Dict[str, List[Tuple[float, ...]]] = {}
 
     def initialize(self, seed: int = 0) -> None:
         """Allocate contiguous index ranges for each region and pick
-        inhibitory cells deterministically from `seed`."""
+        inhibitory cells deterministically from `seed`. Also assigns
+        topographic coordinates when coordinate_dim > 0 (Cluster E v1)."""
         rng = random.Random(seed)
+        # Use a separate RNG for coordinates so adding/removing topography
+        # doesn't perturb inhibitory selection.
+        coord_rng = random.Random(seed ^ 0xC00D)
         cursor = 0
         self._indices = {}
         self._inhibitory = {}
+        self._coordinates = {}
         for region in self._regions:
             start = cursor
             end = cursor + int(region.n_neurons)
@@ -214,8 +263,55 @@ class RegionManager:
             inh_chosen = sorted(rng.sample(idx_list, n_inh)) if n_inh > 0 else []
             self._inhibitory[region.name] = inh_chosen
 
+            # Cluster E v1: assign coordinates if coordinate_dim > 0
+            if region.coordinate_dim and region.coordinate_dim > 0:
+                self._coordinates[region.name] = self._assign_coords(
+                    region, coord_rng,
+                )
+            else:
+                self._coordinates[region.name] = []
+
             cursor = end
         self._total_neurons = cursor
+
+    @staticmethod
+    def _assign_coords(region: BrainRegion,
+                        coord_rng: random.Random) -> List[Tuple[float, ...]]:
+        """Assign coordinates to all neurons in this region.
+
+        - If `coordinate_center` is set, all neurons share that point
+          (e.g., cortex_N pinned to the north corner of a unit square).
+        - Otherwise, neurons get coordinates sampled uniformly from
+          [0, extent_k] on each axis k. Default extent is 1.0 per axis.
+        """
+        k = int(region.coordinate_dim)
+        if k <= 0:
+            return []
+
+        if region.coordinate_center is not None:
+            center = tuple(float(c) for c in region.coordinate_center)
+            if len(center) != k:
+                raise ValueError(
+                    f"region {region.name!r}: coordinate_center has "
+                    f"length {len(center)} but coordinate_dim={k}"
+                )
+            return [center for _ in range(int(region.n_neurons))]
+
+        if region.coordinate_extent is None:
+            extent = tuple(1.0 for _ in range(k))
+        else:
+            extent = tuple(float(e) for e in region.coordinate_extent)
+            if len(extent) != k:
+                raise ValueError(
+                    f"region {region.name!r}: coordinate_extent has "
+                    f"length {len(extent)} but coordinate_dim={k}"
+                )
+
+        coords = []
+        for _ in range(int(region.n_neurons)):
+            pt = tuple(coord_rng.uniform(0.0, extent[ax]) for ax in range(k))
+            coords.append(pt)
+        return coords
 
     def total_neurons(self) -> int:
         return self._total_neurons
@@ -235,6 +331,28 @@ class RegionManager:
         sim.neuromodulators.NeuromodulatorManager.set_group_indices().
         """
         return {name: list(idx) for name, idx in self._indices.items()}
+
+    def coordinates(self, region_name: str) -> List[Tuple[float, ...]]:
+        """Returns per-neuron coordinates for a region (Cluster E v1).
+
+        Empty list if the region has coordinate_dim == 0. Otherwise returns
+        a list of tuples, one per neuron in this region (in the order they
+        appear in `indices(region_name)`).
+        """
+        if region_name not in self._coordinates:
+            raise KeyError(region_name)
+        return list(self._coordinates[region_name])
+
+    def max_coordinate_dim(self) -> int:
+        """Returns the maximum coordinate_dim across all regions, or 0 if
+        no region has topographic coordinates assigned (Cluster E v1).
+
+        The bridge uses this to size cp_neuron_coords. Regions with smaller
+        or zero coordinate_dim get NaN-padded entries.
+        """
+        if not self._regions:
+            return 0
+        return max(int(r.coordinate_dim or 0) for r in self._regions)
 
     def regions(self) -> List[BrainRegion]:
         return list(self._regions)
@@ -335,18 +453,49 @@ class RegionManager:
         }
 
     def _build_pathway(self, pw: RegionPathway, rng: random.Random) -> dict:
-        """Sparse Erdős-Rényi connectivity for a directed cross-region pathway."""
+        """Sparse Erdős-Rényi connectivity for a directed cross-region pathway.
+
+        When `distance_sigma` is set AND both regions have topographic
+        coordinates (coordinate_dim > 0), connections are sampled with
+        Gaussian-weighted probability:
+            p(i, j) = density * exp(-||c_i - c_j||² / (2 * sigma²))
+        Otherwise falls back to uniform Bernoulli with `density`.
+        """
         pre_idx = self._indices[pw.from_region]
         post_idx = self._indices[pw.to_region]
         if pw.density <= 0 or not pre_idx or not post_idx:
             return None
 
+        # Cluster E v1: distance-weighted sampling when sigma is set AND
+        # both regions have topographic coordinates.
+        use_dist = (
+            pw.distance_sigma is not None
+            and pw.distance_sigma > 0
+            and self._has_coords(pw.from_region)
+            and self._has_coords(pw.to_region)
+        )
+
+        pre_coords = self._coordinates.get(pw.from_region, []) if use_dist else []
+        post_coords = self._coordinates.get(pw.to_region, []) if use_dist else []
+        sigma = float(pw.distance_sigma) if use_dist else 0.0
+        two_sigma_sq = 2.0 * sigma * sigma if use_dist else 1.0
+
         pre_list: List[int] = []
         post_list: List[int] = []
         weights: List[float] = []
-        for pre in pre_idx:
-            for post in post_idx:
-                if rng.random() < pw.density:
+        for pre_local, pre in enumerate(pre_idx):
+            for post_local, post in enumerate(post_idx):
+                if use_dist:
+                    c_i = pre_coords[pre_local]
+                    c_j = post_coords[post_local]
+                    d2 = 0.0
+                    for ax in range(len(c_i)):
+                        delta = c_i[ax] - c_j[ax]
+                        d2 += delta * delta
+                    p = pw.density * math.exp(-d2 / two_sigma_sq)
+                else:
+                    p = pw.density
+                if rng.random() < p:
                     pre_list.append(int(pre))
                     post_list.append(int(post))
                     if pw.weight_jitter > 0:
@@ -370,3 +519,8 @@ class RegionManager:
             # Per-pathway plasticity gate name (runtime-controllable). None = always-on.
             "plasticity_gate": pw.plasticity_gate,
         }
+
+    def _has_coords(self, region_name: str) -> bool:
+        """Returns True if the named region has any topographic coordinates."""
+        coords = self._coordinates.get(region_name)
+        return bool(coords)

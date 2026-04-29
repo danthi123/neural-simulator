@@ -31,6 +31,71 @@ def _calculate_distances_3d_gpu(pos_i_cp, pos_neighbors_cp):
 
 
 # ---------------------------------------------------------------------------
+# Cluster E v1 (2026-04-29): distance-dependent connection probability
+# ---------------------------------------------------------------------------
+
+def gauss_distance_density(coords_pre, coords_post, density, sigma, rng=None):
+    """Per-pair Gaussian-weighted Bernoulli connection mask.
+
+    Returns a boolean ndarray of shape (n_pre, n_post) where entry (i, j) is
+    True iff a connection exists, sampled independently with probability:
+
+        p(i, j) = density * exp(-||c_i - c_j||² / (2 * sigma²))
+
+    Used by RegionManager._build_pathway when a RegionPathway declares
+    `distance_sigma` and both source/target regions have topographic
+    coordinates.
+
+    Args:
+        coords_pre: array-like (n_pre, k_dim) — pre-neuron coordinates.
+        coords_post: array-like (n_post, k_dim) — post-neuron coordinates.
+        density: float in (0, 1] — peak (zero-distance) connection probability.
+        sigma: float > 0 — Gaussian width of the connectivity kernel.
+        rng: optional numpy.random.Generator or numpy.random.RandomState; if
+            None, uses numpy's default rng.
+
+    Returns:
+        ndarray[bool, (n_pre, n_post)] — connection mask.
+
+    Note: this helper is CPU-side (numpy). Pathway generation in the bridge
+    happens on host before GPU upload, so a numpy implementation suffices for
+    Cluster E v1. A GPU port can follow if pathway gen ever becomes a bottleneck.
+    """
+    if sigma is None or sigma <= 0:
+        raise ValueError(f"gauss_distance_density: sigma must be > 0; got {sigma}")
+    if density <= 0:
+        return np.zeros((len(coords_pre), len(coords_post)), dtype=bool)
+
+    pre = np.asarray(coords_pre, dtype=np.float32)
+    post = np.asarray(coords_post, dtype=np.float32)
+    if pre.ndim == 1:
+        pre = pre.reshape(-1, 1)
+    if post.ndim == 1:
+        post = post.reshape(-1, 1)
+    if pre.shape[1] != post.shape[1]:
+        raise ValueError(
+            f"gauss_distance_density: coordinate dim mismatch "
+            f"(pre.shape={pre.shape}, post.shape={post.shape})"
+        )
+
+    # Pairwise squared distances: (n_pre, n_post)
+    diff = pre[:, None, :] - post[None, :, :]
+    d2 = np.sum(diff * diff, axis=2)
+    p = float(density) * np.exp(-d2 / (2.0 * float(sigma) * float(sigma)))
+    p = np.clip(p, 0.0, 1.0)
+
+    if rng is None:
+        u = np.random.rand(*p.shape)
+    elif hasattr(rng, "random"):
+        u = rng.random(p.shape)
+    else:
+        # numpy.random.RandomState
+        u = rng.rand(*p.shape)
+
+    return u < p
+
+
+# ---------------------------------------------------------------------------
 # GPU-vectorized spatial generator (Gumbel-max probabilistic sampling)
 # ---------------------------------------------------------------------------
 

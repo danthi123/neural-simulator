@@ -750,3 +750,239 @@ def test_freeze_thaw_cycle():
     assert delta_phase3 < 1e-5
 
     sb.clear_simulation_state_and_gpu_memory()
+
+
+# ───────────── Cluster E v1 (2026-04-29): topographic maps ─────────────
+
+
+def test_brain_region_coordinate_default():
+    """Default: BrainRegion has coordinate_dim=0 and no extent — backward compat."""
+    from sim.regions import BrainRegion
+
+    r = BrainRegion(name="PFC", n_neurons=20)
+    assert r.coordinate_dim == 0
+    assert r.coordinate_extent is None
+    assert r.coordinate_center is None
+
+
+def test_region_pathway_distance_sigma_default():
+    """Default: RegionPathway has distance_sigma=None — falls back to uniform."""
+    from sim.regions import RegionPathway
+
+    p = RegionPathway(from_region="A", to_region="B")
+    assert p.distance_sigma is None
+
+
+def test_brain_region_with_2d_coordinates():
+    """A region with coordinate_dim=2 + extent gets neuron coords assigned."""
+    from sim.regions import BrainRegion, RegionManager
+
+    r = BrainRegion(
+        name="cortex",
+        n_neurons=20,
+        coordinate_dim=2,
+        coordinate_extent=(1.0, 1.0),
+    )
+    mgr = RegionManager([r], [])
+    mgr.initialize(seed=42)
+    coords = mgr.coordinates("cortex")
+    assert len(coords) == 20
+    # All coords are 2D tuples within [0, 1] × [0, 1]
+    for pt in coords:
+        assert len(pt) == 2
+        assert 0.0 <= pt[0] <= 1.0
+        assert 0.0 <= pt[1] <= 1.0
+
+
+def test_brain_region_coordinate_center_pins_all_neurons():
+    """coordinate_center makes every neuron in the region share that point."""
+    from sim.regions import BrainRegion, RegionManager
+
+    r = BrainRegion(
+        name="cortex_N",
+        n_neurons=15,
+        coordinate_dim=2,
+        coordinate_center=(0.5, 1.0),
+    )
+    mgr = RegionManager([r], [])
+    mgr.initialize(seed=42)
+    coords = mgr.coordinates("cortex_N")
+    assert len(coords) == 15
+    for pt in coords:
+        assert pt == (0.5, 1.0)
+
+
+def test_max_coordinate_dim_zero_when_no_topography():
+    """max_coordinate_dim() returns 0 when no region has coords."""
+    from sim.regions import BrainRegion, RegionManager
+
+    mgr = RegionManager(
+        [BrainRegion(name="A", n_neurons=5),
+         BrainRegion(name="B", n_neurons=5)],
+        [],
+    )
+    mgr.initialize()
+    assert mgr.max_coordinate_dim() == 0
+
+
+def test_max_coordinate_dim_picks_largest_across_regions():
+    """max_coordinate_dim() returns the largest coordinate_dim across all regions."""
+    from sim.regions import BrainRegion, RegionManager
+
+    mgr = RegionManager(
+        [BrainRegion(name="A", n_neurons=5),  # no coords
+         BrainRegion(name="B", n_neurons=5, coordinate_dim=2,
+                     coordinate_center=(0.5, 0.5))],
+        [],
+    )
+    mgr.initialize()
+    assert mgr.max_coordinate_dim() == 2
+
+
+def test_distance_sigma_pathway_attenuates_far_targets():
+    """When distance_sigma is small, cross-action pathways drop far below
+    same-action density. This is the structural property Cluster E unlocks:
+    spatial selectivity from distance, not from explicit gating."""
+    from sim.regions import BrainRegion, RegionPathway, RegionManager
+
+    # Two cortex pools at unit-distance corners; their MSN targets at the
+    # same corners. Sigma=0.3 -> cross prob ≈ exp(-1/(2*0.09)) ≈ 0.0039
+    # multiplied by density. Same-action prob = density (distance 0).
+    regions = [
+        BrainRegion(name="cortex_N", n_neurons=20, coordinate_dim=2,
+                    coordinate_center=(0.0, 1.0)),
+        BrainRegion(name="cortex_S", n_neurons=20, coordinate_dim=2,
+                    coordinate_center=(0.0, 0.0)),
+        BrainRegion(name="msn_N", n_neurons=20, coordinate_dim=2,
+                    coordinate_center=(0.0, 1.0)),
+        BrainRegion(name="msn_S", n_neurons=20, coordinate_dim=2,
+                    coordinate_center=(0.0, 0.0)),
+    ]
+    pathways = [
+        RegionPathway(from_region="cortex_N", to_region="msn_N",
+                      density=0.5, weight_jitter=0.0, distance_sigma=0.3),
+        RegionPathway(from_region="cortex_N", to_region="msn_S",
+                      density=0.5, weight_jitter=0.0, distance_sigma=0.3),
+        RegionPathway(from_region="cortex_S", to_region="msn_N",
+                      density=0.5, weight_jitter=0.0, distance_sigma=0.3),
+        RegionPathway(from_region="cortex_S", to_region="msn_S",
+                      density=0.5, weight_jitter=0.0, distance_sigma=0.3),
+    ]
+    mgr = RegionManager(regions, pathways)
+    mgr.initialize(seed=42)
+    plan = mgr.build_wiring_plan(seed=42)
+
+    same_n = plan.get("pathway_cortex_N_to_msn_N", {}).get("count", 0)
+    same_s = plan.get("pathway_cortex_S_to_msn_S", {}).get("count", 0)
+    # Cross pairs are heavily attenuated; in 20*20=400 pairs at p~0.002 we
+    # expect ~0-2 connections — sometimes zero entirely.
+    cross_n_to_s = plan.get("pathway_cortex_N_to_msn_S", {}).get("count", 0)
+    cross_s_to_n = plan.get("pathway_cortex_S_to_msn_N", {}).get("count", 0)
+
+    # Same-action density 0.5 over 400 pairs -> ~200 expected.
+    assert same_n > 100, f"same-action cortex_N -> msn_N too sparse: {same_n}"
+    assert same_s > 100, f"same-action cortex_S -> msn_S too sparse: {same_s}"
+    # Cross-action should be at least 25× sparser at sigma=0.3 / dist=1.0.
+    assert cross_n_to_s < same_n / 10, (
+        f"cross attenuation too weak: same={same_n}, cross={cross_n_to_s}")
+    assert cross_s_to_n < same_s / 10
+
+
+def test_distance_sigma_falls_back_when_no_coords():
+    """When distance_sigma is set but regions lack coords, pathway gen falls
+    back to uniform Bernoulli — backward compat."""
+    from sim.regions import BrainRegion, RegionPathway, RegionManager
+
+    regions = [
+        BrainRegion(name="A", n_neurons=20),  # no coords
+        BrainRegion(name="B", n_neurons=20),
+    ]
+    pathways = [RegionPathway(
+        from_region="A", to_region="B",
+        density=0.5, weight_jitter=0.0,
+        distance_sigma=0.3,  # set, but ignored because no coords
+    )]
+    mgr = RegionManager(regions, pathways)
+    mgr.initialize(seed=42)
+    plan = mgr.build_wiring_plan(seed=42)
+    g = plan["pathway_A_to_B"]
+    # 20 * 20 * 0.5 = 200 expected, allow ±25%
+    assert 150 < g["count"] < 250
+
+
+def test_gauss_distance_density_helper():
+    """sim.connectivity.gauss_distance_density returns a per-pair Bernoulli
+    mask whose hit-rate decays with distance and scales with density."""
+    import numpy as np
+    from sim.connectivity import gauss_distance_density
+
+    rng = np.random.default_rng(42)
+    pre = np.tile(np.array([[0.0, 0.0]]), (200, 1))  # 200 at origin
+    near = np.tile(np.array([[0.0, 0.0]]), (200, 1))   # zero distance
+    far = np.tile(np.array([[1.0, 0.0]]), (200, 1))    # distance 1.0
+
+    mask_near = gauss_distance_density(pre, near, density=0.5, sigma=0.3, rng=rng)
+    mask_far = gauss_distance_density(pre, far, density=0.5, sigma=0.3, rng=rng)
+    rate_near = mask_near.mean()
+    rate_far = mask_far.mean()
+
+    # Distance 0 -> density preserved (~0.5).
+    assert 0.4 < rate_near < 0.6, f"near rate should be ~density=0.5; got {rate_near}"
+    # Distance 1.0 with sigma=0.3 -> p ≈ density * exp(-1/(2*0.09)) ≈ 0.002.
+    assert rate_far < 0.05, f"far rate should be heavily attenuated; got {rate_far}"
+    # Density factor preserved: a denser kernel produces a denser mask at d=0.
+    rng2 = np.random.default_rng(42)
+    mask_dense = gauss_distance_density(pre, near, density=0.9, sigma=0.3, rng=rng2)
+    assert mask_dense.mean() > rate_near, (
+        "higher density should yield more connections at d=0")
+
+
+def test_gauss_distance_density_rejects_bad_sigma():
+    """sigma must be > 0 — sigma=0 would divide by zero."""
+    import numpy as np
+    import pytest
+    from sim.connectivity import gauss_distance_density
+
+    pre = np.zeros((5, 2))
+    post = np.zeros((5, 2))
+    with pytest.raises(ValueError):
+        gauss_distance_density(pre, post, density=0.5, sigma=0.0)
+    with pytest.raises(ValueError):
+        gauss_distance_density(pre, post, density=0.5, sigma=-0.1)
+
+
+def test_bridge_allocates_neuron_coords_when_topography_on():
+    """When at least one region declares coordinate_dim > 0, the bridge
+    allocates cp_neuron_coords with shape (n, max_dim)."""
+    pytest.importorskip("cupy")
+    import numpy as np
+    from sim.regions import BrainRegion
+
+    sb, cfg = _make_bridge_with_regions(
+        brain_regions=[
+            BrainRegion(name="A", n_neurons=10, internal_density=0.0,
+                        coordinate_dim=2, coordinate_center=(0.0, 1.0)),
+            BrainRegion(name="B", n_neurons=8, internal_density=0.0,
+                        coordinate_dim=2, coordinate_center=(1.0, 0.0)),
+        ],
+    )
+    assert sb.cp_neuron_coords is not None
+    assert sb.cp_neuron_coords.shape == (18, 2)
+    coords_np = sb.cp_neuron_coords.get()
+    # First 10 neurons (A) at (0, 1)
+    assert np.allclose(coords_np[:10], np.array([[0.0, 1.0]]))
+    # Next 8 (B) at (1, 0)
+    assert np.allclose(coords_np[10:], np.array([[1.0, 0.0]]))
+    sb.clear_simulation_state_and_gpu_memory()
+
+
+def test_bridge_no_neuron_coords_when_topography_off():
+    """When no region declares coordinate_dim, cp_neuron_coords stays None."""
+    pytest.importorskip("cupy")
+    from sim.regions import BrainRegion
+
+    sb, cfg = _make_bridge_with_regions(
+        brain_regions=[BrainRegion(name="A", n_neurons=10, internal_density=0.0)],
+    )
+    assert sb.cp_neuron_coords is None
+    sb.clear_simulation_state_and_gpu_memory()
