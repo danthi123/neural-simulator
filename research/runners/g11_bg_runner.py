@@ -1,4 +1,4 @@
-"""G11: Basal-ganglia-style action selection module.
+"""G11: Basal ganglia action selection module.
 
 Phase B follow-up to the silent-motor trap arc (Sessions G/H/I, all NEGATIVE).
 The trap was diagnosed (V6) as a *reservoir-state bias problem* — random
@@ -6,15 +6,15 @@ hidden->motor weights on a shared reservoir naturally favor whichever motor
 the input pattern happens to align with. Argmax + reservoir bias = lock-in.
 
 Phase B fix (architectural): replace the shared-reservoir + argmax-readout
-with a real basal-ganglia-style circuit. Each motor has its own dedicated
-striatum_D1, striatum_D2, GPi, thalamus, and motor populations. Lateral
+with a per-action basal-ganglia cascade. Each motor has its own dedicated
+D1 MSN pool, D2 MSN pool, GPi, thalamus, and motor populations. Lateral
 inhibition between motor populations provides structural winner-take-all
 (no shared spike count to bias).
 
 Architecture:
     cortex ─-> str_D1[N,E,S,W]    str_D2[N,E,S,W]
                   │                     │
-              direct path          indirect path
+            direct pathway       indirect pathway
                   v                     v
               GPi[N,E,S,W] <-── STN <-── GPe[N,E,S,W]
                   │
@@ -24,8 +24,10 @@ Architecture:
                   v
               motor[N,E,S,W]   (lateral inhibition between)
 
-DA modulation: VTA/SNc DA neurons project to all striatal pools. DA enhances
-direct pathway (D1+ sensitivity) and suppresses indirect pathway (D2-).
+DA modulation: midbrain DA neurons (A9 SNc / A10 VTA, collapsed in this
+model) project to all striatal pools. DA enhances the direct pathway
+(D1-class receptor, Gs-coupled, LTP-biased) and suppresses the indirect
+pathway (D2-class receptor, Gi-coupled, LTD-biased). Per Kandel ch 43.
 
 Built on validated Phase A presets:
 - IZH2007_STRIATAL_MSN_D1 / D2 (rest=-80 mV down-state, fires when driven)

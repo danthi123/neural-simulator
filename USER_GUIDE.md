@@ -177,7 +177,8 @@ Visible when **Neuron Model = HODGKIN_HUXLEY**:
   - Ih: `g_h_max`, `E_h`
   - NaP: `g_NaP_max`
 - Kinetics:
-  - `hh_q10_factor` (Q10 scaling)
+  - `hh_q10_factor` (uniform Q10, applies to extended currents M/CaT/Ih/NaP only)
+  - `hh_q10_m`, `hh_q10_h`, `hh_q10_n` (per-gate Q10 for main Na+/K+/leak; defaults 3.0/1.5/1.5 since 2026-04-25)
   - `hh_temperature_celsius`
 - **External Drive Scale (HH, auto-tuned)**:
   - Scales the baseline HH DC input range.
@@ -250,7 +251,7 @@ Predefined profiles:
 - `HIPPOCAMPUS_CA3_RECURRENT` – CA3 with recurrent connectivity
 - `THALAMUS_TC_TRN` – Thalamocortical and reticular nuclei
 - `BASAL_GANGLIA_STRIATUM` – Striatal neurons
-- `BASAL_GANGLIA_STN_GPE` – Subthalamic nucleus and globus pallidus externa
+- `BASAL_GANGLIA_STN_GPE` – Subthalamic nucleus and globus pallidus externus
 - `CEREBELLAR_CORTEX_SIMPLE` – Cerebellar cortex (Purkinje cells, granule cells, basket cells)
 - `SPINAL_CORD_SEGMENT` – Spinal motor circuits
 - `GENERIC_UNSTRUCTURED` – Uniform population with no explicit brain region structure

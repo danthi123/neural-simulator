@@ -551,7 +551,7 @@ reward = sign(intensity_after - intensity_before)  # ±1 / 0
     - Cluster B: striatal microcircuit (D1/D2 asymmetry + FSIs + TANs)
     - Cluster A: closed BG loop (thalamo-cortical feedback + hyperdirect)
     - Cluster C: DA system completeness (tonic + compartmentalized)
-    - Cluster D: sequence-aware learning (hippo/PFC → striatum + replay)
+    - Cluster D: sequence-aware learning (hippocampus / PFC → striatum + replay)
     - Cluster E: connectivity refinement (already most explored)
 - Findings: `2026-04-28-cheat5-post-v4-reframe.md`, `2026-04-28-cheat5-v4-results.md`,
   `2026-04-28-cheat5-v3-results.md`, `2026-04-28-cheat5-v2-NEGATIVE.md`,

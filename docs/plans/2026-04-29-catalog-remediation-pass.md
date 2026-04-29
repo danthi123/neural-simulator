@@ -59,7 +59,7 @@ The catalog (Bz Cycle 12 p. 344, Leinekugel et al. 2002) flagged that sharp-wave
 
 The current project does not yet have a CA3 region, an SWR scheduler, or sleep-replay infrastructure. R3.12 is a **forward-looking framing fix**: when T1.B (SWR-driven sequential replay, biology-buildout-roadmap.md month 2) lands, it must place the SWR generator inside CA3 intrinsic dynamics, with NREM as a passive gate.
 
-This also informs Cluster D (hippocampal trisynaptic loop, T1.A, month 1): CA3 should be configured with sufficient recurrent density + spike-frequency adaptation to self-organize sharp-wave-like population bursts on its own.
+This also informs Cluster D (hippocampal trisynaptic pathway, T1.A, month 1): CA3 should be configured with sufficient recurrent density + spike-frequency adaptation to self-organize sharp-wave-like population bursts on its own.
 
 Flagging here so it isn't forgotten when sleep-replay work begins.
 

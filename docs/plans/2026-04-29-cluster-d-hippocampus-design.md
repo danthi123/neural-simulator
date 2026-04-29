@@ -6,7 +6,7 @@
 
 ## Architecture
 
-The biological hippocampus has the canonical Cajal "trisynaptic loop":
+The biological hippocampus has the canonical Cajal "trisynaptic pathway" (also written "trisynaptic circuit" / "trisynaptic loop" in older literature):
 
 ```
 EC (entorhinal cortex) → DG (dentate gyrus) → CA3 (recurrent autoassociator) → CA1 → output (subiculum/EC)
@@ -23,7 +23,7 @@ EC (entorhinal cortex) → DG (dentate gyrus) → CA3 (recurrent autoassociator)
 
 ## Proposed implementation
 
-### v1 (this design): minimal trisynaptic loop, no SWR yet
+### v1 (this design): minimal trisynaptic pathway, no SWR yet
 
 Three new regions per the canonical loop:
 

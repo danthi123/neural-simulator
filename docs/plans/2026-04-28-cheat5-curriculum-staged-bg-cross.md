@@ -235,12 +235,12 @@ Include per-seed table, t-test, vs-baseline comparison, vs-flagship (4.08) compa
 
 ## Task 5: Fallback experiment — inhibitory cross-projections (only if Task 3 fails)
 
-**Hypothesis:** the original NEGATIVE was caused by *uniform excitatory* cross-projections. In real BG, the indirect path (cortex → D2 → GPe → STN → GPi) cancels the bias from the direct path. Adding *inhibitory* cross-projections via D2 might balance.
+**Hypothesis:** the original NEGATIVE was caused by *uniform excitatory* cross-projections. In real BG, the indirect pathway (cortex → D2 → GPe → STN → GPi) cancels the bias from the direct pathway. Adding *inhibitory* cross-projections via D2 might balance.
 
 **Files:**
 - Modify: `research/runners/g11_bg_runner.py` (add `--bg-cross-d2-only` flag)
 
-Make cross-projections go ONLY to str_D2_Y (indirect, inhibitory net effect on action Y) rather than both D1 and D2. When cortex_N fires, it weakly inhibits actions E/S/W via the indirect path — symmetric, doesn't bias one action over others.
+Make cross-projections go ONLY to str_D2_Y (indirect, inhibitory net effect on action Y) rather than both D1 and D2. When cortex_N fires, it weakly inhibits actions E/S/W via the indirect pathway — symmetric, doesn't bias one action over others.
 
 Skip the detailed task breakdown unless Task 3 actually requires this fallback.
 

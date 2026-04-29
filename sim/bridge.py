@@ -1203,8 +1203,10 @@ class SimulationBridge:
             # are initialized with the default type, walk each region and
             # override the params for neurons in that region's slice using
             # the region's izh/hh/adex_neuron_type if specified. This lets
-            # e.g. striatum_D1 region use IZH2007_STRIATAL_MSN_D1 while
-            # motor region uses IZH2007_RS_CORTICAL_PYRAMIDAL.
+            # e.g. str_D1_X regions use IZH2007_STRIATAL_MSN_D1 while
+            # motor regions use IZH2007_RS_CORTICAL_PYRAMIDAL (a modeling
+            # shortcut — biologically motor neurons are α-motoneurons; we
+            # use cortical pyramidals as a stand-in until spinal CPGs land).
             if self.region_manager is not None:
                 self._apply_per_region_neuron_types(cfg, n)
 
@@ -1355,7 +1357,7 @@ class SimulationBridge:
             # Log GPU memory usage after initialization
             mem_stats = self._get_gpu_memory_info()
             self._log_console(
-                f"Simulation data initialized for {n} neurons (3D). Connections: {conn_count}. "
+                f"Simulation data initialized for {n} neurons (3D). Synapses: {conn_count}. "
                 f"GPU memory: {mem_stats['used_gb']:.1f}GB/{mem_stats['total_gb']:.1f}GB ({mem_stats['usage_percent']:.1f}%)"
             )
             self._check_gpu_memory_pressure()
@@ -1373,8 +1375,8 @@ class SimulationBridge:
 
         Phase B addition (2026-04-25): the brain-region framework
         previously assigned all neurons the same type (cfg.default_neuron_type_*).
-        For BG-style action selection circuits, each region needs its own
-        neuron type (striatum_D1 uses MSN_D1, GPe uses GPE_PACEMAKER, etc.).
+        For BG action-selection circuits, each region needs its own
+        neuron type (str_D1_X uses MSN_D1, GPe uses GPE_PACEMAKER, etc.).
 
         This method walks each region in cfg.brain_regions, looks up its
         index range from region_manager, and overrides cp_izh_* / cp_hh_*
@@ -1661,7 +1663,7 @@ class SimulationBridge:
                 # for STDP-based learning to function (random networks often have too few paths)
                 added = self.experiment_engine.ensure_inter_group_connectivity(self, cp)
                 if added > 0:
-                    self._log_to_ui(f"Injected {added} inter-group connections for experiment learning paths", "info")
+                    self._log_to_ui(f"Injected {added} inter-group synapses for experiment learning paths", "info")
                 self._log_to_ui(f"Experiment engine initialized: {self.experiment_config.name}", "info")
             except Exception as e:
                 self._log_to_ui(f"Failed to initialize experiment engine: {e}", "warning")

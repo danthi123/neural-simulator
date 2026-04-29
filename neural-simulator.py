@@ -520,7 +520,7 @@ class SimulationConfiguration:
         self.inhibitory_trait_index = 1 # Trait index designated as inhibitory (0-indexed)
         self.inhibitory_trait_indices = [] # Optional list of inhibitory trait indices (overrides inhibitory_trait_index if non-empty)
 
-        # Hebbian Learning / Long-Term Potentiation (LTP)
+        # Hebbian Learning Rule (produces LTP-like potentiation)
         self.enable_hebbian_learning = True # Enable Hebbian-like weight potentiation
         self.hebbian_learning_rate = 0.0005 # Learning rate for LTP
         self.hebbian_weight_decay = 0.00001 # Multiplicative weight decay factor per step

@@ -310,7 +310,7 @@ def create_gui_layout():
                         "cfg_hh_g_h_max": "Hyperpolarization-activated cation current (I_h).\nContributes to resting potential, sag response,\nand pacemaker activity. 0 = disabled.",
                         "cfg_hh_E_h": "I_h reversal potential (mixed Na+/K+).\nTypically -20 to -40 mV, depolarizing from rest.",
                         "cfg_hh_g_NaP_max": "Persistent sodium current conductance.\nNon-inactivating Na+ near threshold.\nAmplifies subthreshold inputs. 0 = disabled.",
-                        "cfg_hh_q10_factor": "Temperature coefficient for gating kinetics.\nRate multiplier per 10°C: phi = Q10^((T-6.3)/10).\nQ10=3 is standard for ion channels.",
+                        "cfg_hh_q10_factor": "Q10 for extended HH currents (M, CaT, Ih, NaP).\nMain Na+/K+/leak gates use per-gate Q10\n(q10_m=3.0, q10_h=q10_n=1.5) since 2026-04-25.\nphi = Q10^((T-6.3)/10). Q10=3 is standard for ion channels.",
                         "cfg_hh_temperature_celsius": "Simulation temperature for HH kinetics.\n6.3°C = original squid axon (Hodgkin & Huxley 1952).\n37°C = mammalian with ~28x faster kinetics.",
                     }
                     for desc_label, tag, fmt, def_val in ui_hh_params:
@@ -528,13 +528,13 @@ def create_gui_layout():
                 dpg.add_table_column(width_fixed=True, init_width_or_weight=label_col_width)
                 dpg.add_table_column(width_stretch=True)
                 add_parameter_table_row("Enable STDP:", dpg.add_checkbox, "cfg_enable_stdp", True, _update_sim_config_from_ui_and_signal_reset_needed,
-                    tooltip="Spike-Timing-Dependent Plasticity (Bi & Poo 2001).\nPre-before-post = LTP, post-before-pre = LTD.\nBiological Hebbian learning with precise timing.")
+                    tooltip="Spike-Timing-Dependent Plasticity (Bi & Poo 1998).\nPre-before-post = LTP, post-before-pre = LTD.\nBiological Hebbian learning with precise timing.")
                 add_parameter_table_row("STDP A+ (LTP amplitude, 0.005-0.02):", dpg.add_input_float, "cfg_stdp_a_plus", 0.01, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0,
                     tooltip="Maximum weight increase for causal (pre→post) pairing.\nLarger A+ = faster potentiation.\nA- > A+ gives net depression bias (stable).")
                 add_parameter_table_row("STDP A- (LTD amplitude, 0.005-0.02):", dpg.add_input_float, "cfg_stdp_a_minus", 0.0105, _update_sim_config_from_ui_and_signal_reset_needed, format="%.4f", min_value=0.0,
                     tooltip="Maximum weight decrease for anti-causal (post→pre) pairing.\nSlightly larger than A+ ensures net weight decrease\nfor random firing, preventing runaway excitation.")
                 add_parameter_table_row("STDP Tau+ (LTP time constant, ms):", dpg.add_input_float, "cfg_stdp_tau_plus_ms", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0,
-                    tooltip="Time window for LTP (pre-before-post).\n20ms matches cortical STDP data (Bi & Poo 2001).\nLarger tau = wider learning window.")
+                    tooltip="Time window for LTP (pre-before-post).\n20ms matches cortical STDP data (Bi & Poo 1998).\nLarger tau = wider learning window.")
                 add_parameter_table_row("STDP Tau- (LTD time constant, ms):", dpg.add_input_float, "cfg_stdp_tau_minus_ms", 20.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.1f", min_value=1.0,
                     tooltip="Time window for LTD (post-before-pre).\n20ms standard. Asymmetric tau+/tau- gives\ndifferent temporal sensitivity for LTP vs LTD.")
                 add_parameter_table_row("STDP Weight Min:", dpg.add_input_float, "cfg_stdp_w_min", 0.0, _update_sim_config_from_ui_and_signal_reset_needed, format="%.2f",

@@ -43,8 +43,8 @@ class NeuronType(Enum):
     HH_INFERIOR_OLIVE = "HH_INFERIOR_OLIVE"
     # BG completion (Phase A → B): missing presets identified during audit.
     HH_GPI_OUTPUT = "HH_GPI_OUTPUT"             # BG output gate, distinct from GPe
-    HH_STRIATAL_MSN_D1 = "HH_STRIATAL_MSN_D1"   # Direct pathway MSN (DA D1+ sensitive)
-    HH_STRIATAL_MSN_D2 = "HH_STRIATAL_MSN_D2"   # Indirect pathway MSN (DA D2- sensitive)
+    HH_STRIATAL_MSN_D1 = "HH_STRIATAL_MSN_D1"   # Direct pathway MSN (D1-class receptor; LTP-biased under +DA, Kandel ch 43)
+    HH_STRIATAL_MSN_D2 = "HH_STRIATAL_MSN_D2"   # Indirect pathway MSN (D2-class receptor; LTD-biased under +DA, Kandel ch 43)
     HH_STRIATAL_TAN = "HH_STRIATAL_TAN"          # Tonically Active Cholinergic Interneuron
     IZH2007_STRIATAL_MSN_D1 = "IZH2007_STRIATAL_MSN_D1"
     IZH2007_STRIATAL_MSN_D2 = "IZH2007_STRIATAL_MSN_D2"

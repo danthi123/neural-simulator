@@ -261,7 +261,7 @@ Plan deferred until v3.1 actually fails — premature to detail now.
 
 ## Why this matters
 
-Beyond cheat #5, **MSN lateral inhibition is missing biology** that we should have anyway. The cascade currently relies on the indirect path (D2→GPe→STN→GPi excitation) for cross-action suppression, which is a *coarse* mechanism. Real lateral inhibition is *fast, local, and selective*. Adding it:
+Beyond cheat #5, **MSN lateral inhibition is missing biology** that we should have anyway. The cascade currently relies on the indirect pathway (D2→GPe→STN→GPi excitation) for cross-action suppression, which is a *coarse* mechanism. Real lateral inhibition is *fast, local, and selective*. Adding it:
 - Sharpens action selection (less mushy motor-pool firing)
 - Improves robustness to noise
 - Enables future biology that depends on it (e.g., pattern separation in striatum, episodic memory consolidation)

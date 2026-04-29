@@ -262,9 +262,9 @@ def fused_homeostasis_update(neuron_activity_ema_in, fired_this_step_float, targ
 def fused_stdp_weight_update(delta_t, w_current, A_plus, A_minus, tau_plus, tau_minus, w_min, w_max):
     """Fused kernel for STDP weight update based on spike timing difference.
 
-    Implements classical asymmetric STDP window:
-    - delta_t > 0 (post-before-pre): LTP (potentiation)
-    - delta_t < 0 (pre-before-post): LTD (depression)
+    Implements classical asymmetric STDP window (Bi & Poo 1998):
+    - delta_t > 0 (pre-before-post, causal): LTP (potentiation)
+    - delta_t < 0 (post-before-pre, anti-causal): LTD (depression)
 
     Args:
         delta_t: Spike timing difference (t_post - t_pre) in ms
