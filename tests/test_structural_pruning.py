@@ -204,8 +204,8 @@ def test_pruned_synapse_stays_at_zero_after_simulation_steps():
     # plasticity_gain=0 — same end state as update_pruning would produce).
     bridge.cp_synapse_alive[:10] = False
     bridge.cp_connections.data[:10] = 0.0
-    if bridge.cp_plasticity_gain is not None:
-        bridge.cp_plasticity_gain[:10] = 0.0
+    if bridge.cp_plasticity_rate_gain is not None:
+        bridge.cp_plasticity_rate_gain[:10] = 0.0
     # Run several sim steps; pruned weights must stay 0 even though the
     # broader simulation pipeline (dynamics, STDP, etc.) is active.
     for _ in range(20):

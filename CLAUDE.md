@@ -386,11 +386,11 @@ and [`research/findings/2026-04-27-task-adaptive-curriculum.md`](research/findin
 Key new infrastructure:
 - `RegionPathway.plasticity_gate: str | None` — tag pathways for runtime gating
 - `bridge.set_plasticity_gate(name, value)` — freeze/thaw at runtime
-- `cp_plasticity_gain` array — gates STDP, eligibility, Hebbian, synaptic scaling
+- `cp_plasticity_rate_gain` array — gates STDP, eligibility, Hebbian, synaptic scaling (renamed from `cp_plasticity_gain` 2026-04-29; old name is a deprecated property alias)
 - NM-driven gates: `target_type="plasticity_gate", scope="gate:<name>"`
 
 > **GOTCHA — plasticity gate vs synaptic transmission (2026-04-28):**
-> `cp_plasticity_gain` and `set_plasticity_gate(...)` freeze weight UPDATES
+> `cp_plasticity_rate_gain` and `set_plasticity_gate(...)` freeze weight UPDATES
 > only — STDP, eligibility, Hebbian, synaptic scaling. They do NOT freeze
 > synaptic CURRENT (`g_syn × (V - E)`). A frozen pathway with non-zero
 > `weight_mean` still injects current and affects forward dynamics. To

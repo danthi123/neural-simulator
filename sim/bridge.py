@@ -249,7 +249,7 @@ class SimulationBridge:
         self.cp_synapse_plastic_mask = None
 
         # Per-pathway plasticity gating (Stage 1, 2026-04-27).
-        # cp_plasticity_gain: per-synapse float multiplier (1.0=full plasticity,
+        # cp_plasticity_rate_gain: per-synapse float multiplier (1.0=full plasticity,
         #   0.0=frozen). Default None when no pathway uses plasticity_gate.
         # _plasticity_gate_to_synapses: gate_name → list of synapse indices.
         # _plasticity_gate_indices_gpu: gate_name → cp.ndarray of indices.
@@ -257,7 +257,7 @@ class SimulationBridge:
         # Used by curriculum, developmental staging, and future
         # neuromodulator-gated learning windows. See sim/regions.py
         # RegionPathway.plasticity_gate docstring for biology.
-        self.cp_plasticity_gain = None
+        self.cp_plasticity_rate_gain = None
         self._plasticity_gate_to_synapses = {}
         self._plasticity_gate_indices_gpu = {}
         self._plasticity_gate_values = {}
@@ -1830,7 +1830,7 @@ class SimulationBridge:
             self.cp_synapse_plastic_mask = None
 
         # Per-pathway plasticity gates: build gate_name → synapse-indices map.
-        # Allocate cp_plasticity_gain only if any synapse is gated; otherwise
+        # Allocate cp_plasticity_rate_gain only if any synapse is gated; otherwise
         # leave None and the plasticity update paths skip gain multiplication.
         if any_gated:
             sorted_gates = [g for _, _, _, g in keyed]
@@ -1846,12 +1846,12 @@ class SimulationBridge:
             self._plasticity_gate_values = {n: 1.0 for n in gate_to_indices}
             # Default gain: 1.0 everywhere (full plasticity). Runners call
             # set_plasticity_gate(name, value) to alter at runtime.
-            self.cp_plasticity_gain = cp.ones(nnz, dtype=cp.float32)
+            self.cp_plasticity_rate_gain = cp.ones(nnz, dtype=cp.float32)
         else:
             self._plasticity_gate_to_synapses = {}
             self._plasticity_gate_indices_gpu = {}
             self._plasticity_gate_values = {}
-            self.cp_plasticity_gain = None
+            self.cp_plasticity_rate_gain = None
 
         # Cluster B.1 (2026-04-28): tag D2-targeting synapses with sign=-1.
         # D1-targeting + everything else stays at +1 (default). The reward-
@@ -1987,6 +1987,38 @@ class SimulationBridge:
             self._warned_deprecated_gates.add(name)
         return canonical
 
+    @property
+    def cp_plasticity_gain(self):
+        """DEPRECATED 2026-04-29 (Wave-1 rename #12). Use
+        `cp_plasticity_rate_gain` instead — the new name distinguishes the
+        continuous *rate* multiplier from the binary `cp_plasticity_window_gate`
+        driven by the neuromodulator system."""
+        if not hasattr(self, "_warned_cp_plasticity_gain"):
+            import warnings
+            warnings.warn(
+                "bridge.cp_plasticity_gain is deprecated; use "
+                "bridge.cp_plasticity_rate_gain instead. The new name "
+                "distinguishes the continuous rate multiplier from the binary "
+                "cp_plasticity_window_gate driven by the neuromodulator system.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            self._warned_cp_plasticity_gain = True
+        return self.cp_plasticity_rate_gain
+
+    @cp_plasticity_gain.setter
+    def cp_plasticity_gain(self, value):
+        if not hasattr(self, "_warned_cp_plasticity_gain"):
+            import warnings
+            warnings.warn(
+                "bridge.cp_plasticity_gain is deprecated; use "
+                "bridge.cp_plasticity_rate_gain instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            self._warned_cp_plasticity_gain = True
+        self.cp_plasticity_rate_gain = value
+
     def set_plasticity_gate(self, name: str, value: float) -> None:
         """Set the runtime plasticity gain for all synapses in pathways
         tagged with `name`.
@@ -2005,13 +2037,13 @@ class SimulationBridge:
                 f"Known gates: {list(self._plasticity_gate_to_synapses.keys())}"
             )
         self._plasticity_gate_values[name] = float(value)
-        if self.cp_plasticity_gain is None:
+        if self.cp_plasticity_rate_gain is None:
             return
         indices = self._plasticity_gate_indices_gpu[name]
         # Bound nnz vs gain length for safety against post-init capacity changes
-        nnz = self.cp_plasticity_gain.shape[0]
+        nnz = self.cp_plasticity_rate_gain.shape[0]
         if indices.size > 0 and int(indices.max()) < nnz:
-            self.cp_plasticity_gain[indices] = cp.float32(value)
+            self.cp_plasticity_rate_gain[indices] = cp.float32(value)
 
     def get_plasticity_gate_value(self, name: str) -> float:
         """Return the current plasticity gain for the named gate."""
@@ -2037,8 +2069,8 @@ class SimulationBridge:
         criteria: survival < pruning_threshold AND weight < pruning_weight_floor.
 
         Pruned synapses get alive=False, weight=0. Forward dynamics + plasticity
-        respect the alive mask via cp_plasticity_gain[i] *= alive[i] (applied
-        here as a side effect, since cp_plasticity_gain is already used for
+        respect the alive mask via cp_plasticity_rate_gain[i] *= alive[i] (applied
+        here as a side effect, since cp_plasticity_rate_gain is already used for
         plasticity gating).
 
         prunable_indices: optional cupy int64 array. If provided, only synapses
@@ -2068,8 +2100,8 @@ class SimulationBridge:
         # Apply: alive=False, weight=0, plasticity_gain=0
         self.cp_synapse_alive[prune_mask] = False
         weights[prune_mask] = 0.0
-        if self.cp_plasticity_gain is not None:
-            self.cp_plasticity_gain[prune_mask] = 0.0
+        if self.cp_plasticity_rate_gain is not None:
+            self.cp_plasticity_rate_gain[prune_mask] = 0.0
 
     def start_simulation(self):
         """Starts or restarts the simulation (called by sim_thread)."""
@@ -4320,8 +4352,8 @@ class SimulationBridge:
                         current_weights_active_syn = base_weights_data_array[active_synapse_indices_heb]
                         delta_weights = cfg.hebbian_learning_rate * (cfg.hebbian_max_weight - current_weights_active_syn)
                         # Per-pathway plasticity gain (Stage 1, 2026-04-27)
-                        if self.cp_plasticity_gain is not None:
-                            delta_weights = delta_weights * self.cp_plasticity_gain[active_synapse_indices_heb]
+                        if self.cp_plasticity_rate_gain is not None:
+                            delta_weights = delta_weights * self.cp_plasticity_rate_gain[active_synapse_indices_heb]
                         base_weights_data_array[active_synapse_indices_heb] += delta_weights
                         num_potentiation_events = active_synapse_indices_heb.size
 
@@ -4334,8 +4366,8 @@ class SimulationBridge:
                         # Per-pathway plasticity gain: decay rate scales with gain.
                         # gain=0 → no decay (frozen pathway preserves weights);
                         # gain=1 → full decay (current behavior).
-                        if self.cp_plasticity_gain is not None:
-                            gated_decay = cfg.hebbian_weight_decay * self.cp_plasticity_gain
+                        if self.cp_plasticity_rate_gain is not None:
+                            gated_decay = cfg.hebbian_weight_decay * self.cp_plasticity_rate_gain
                             self.cp_connections.data *= (1.0 - gated_decay)
                         else:
                             self.cp_connections.data *= (1.0 - cfg.hebbian_weight_decay)
@@ -4421,8 +4453,8 @@ class SimulationBridge:
                             # gain=1 → full plasticity. Multiplied with
                             # plastic_mask: a non-plastic synapse stays
                             # frozen regardless of gain.
-                            if self.cp_plasticity_gain is not None:
-                                gain_here = self.cp_plasticity_gain[stdp_active_indices]
+                            if self.cp_plasticity_rate_gain is not None:
+                                gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
                                 weight_changes_gated = (updated_weights - current_weights) * gain_here
                                 updated_weights = current_weights + weight_changes_gated
 
@@ -4596,8 +4628,8 @@ class SimulationBridge:
                     # NOW won't accept reward-driven changes from past
                     # eligibility; this is the standard 3-factor rule
                     # interpretation (DA/NM gates the learning event itself).
-                    if self.cp_plasticity_gain is not None:
-                        weight_updates = weight_updates * self.cp_plasticity_gain[:actual_nnz]
+                    if self.cp_plasticity_rate_gain is not None:
+                        weight_updates = weight_updates * self.cp_plasticity_rate_gain[:actual_nnz]
                     # Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry.
                     # D2-targeting synapses move opposite to reward direction;
                     # D1-targeting + everything else move with reward.
@@ -4852,8 +4884,8 @@ class SimulationBridge:
                     # Per-pathway plasticity gain (Stage 1, 2026-04-27): scale
                     # the deviation-from-1 by gain. gain=0 → identity (no
                     # synaptic scaling); gain=1 → full scaling.
-                    if self.cp_plasticity_gain is not None:
-                        effective_scales = 1.0 + (post_scales - 1.0) * self.cp_plasticity_gain
+                    if self.cp_plasticity_rate_gain is not None:
+                        effective_scales = 1.0 + (post_scales - 1.0) * self.cp_plasticity_rate_gain
                         self.cp_connections.data[:] = self.cp_connections.data * effective_scales
                     else:
                         self.cp_connections.data[:] = self.cp_connections.data * post_scales

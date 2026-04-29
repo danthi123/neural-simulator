@@ -534,10 +534,10 @@ def test_bridge_registers_plasticity_gate_from_wiring():
     assert sb.get_plasticity_gate_value("ab_gate") == 1.0
     # Synapse count tagged with the gate equals A→B pathway size (20×20)
     assert sb.plasticity_gate_synapse_count("ab_gate") == 400
-    # cp_plasticity_gain allocated and starts at 1.0
+    # cp_plasticity_rate_gain allocated and starts at 1.0
     import cupy as cp
-    assert sb.cp_plasticity_gain is not None
-    assert float(sb.cp_plasticity_gain.min()) == 1.0
+    assert sb.cp_plasticity_rate_gain is not None
+    assert float(sb.cp_plasticity_rate_gain.min()) == 1.0
 
 
 def test_set_plasticity_gate_updates_gain():
@@ -546,18 +546,18 @@ def test_set_plasticity_gate_updates_gain():
     import cupy as cp
     sb, _ = _make_bridge_with_gateable_pathway(seed=42)
     # Default
-    assert float(sb.cp_plasticity_gain.min()) == 1.0
+    assert float(sb.cp_plasticity_rate_gain.min()) == 1.0
     # Freeze
     sb.set_plasticity_gate("ab_gate", 0.0)
     assert sb.get_plasticity_gate_value("ab_gate") == 0.0
     # All gated synapses now 0; the gain array as a whole has min 0
-    assert float(sb.cp_plasticity_gain.min()) == 0.0
+    assert float(sb.cp_plasticity_rate_gain.min()) == 0.0
     # Tagged synapses are exactly the pathway count
     indices = sb._plasticity_gate_indices_gpu["ab_gate"]
-    assert int((sb.cp_plasticity_gain[indices] == 0.0).sum()) == 400
+    assert int((sb.cp_plasticity_rate_gain[indices] == 0.0).sum()) == 400
     # Thaw
     sb.set_plasticity_gate("ab_gate", 1.0)
-    assert float(sb.cp_plasticity_gain.min()) == 1.0
+    assert float(sb.cp_plasticity_rate_gain.min()) == 1.0
 
 
 def test_set_plasticity_gate_unknown_name_raises():
@@ -609,7 +609,7 @@ def test_canonical_cortex_to_d1_is_deprecated():
     )
 
 
-def test_no_gates_means_cp_plasticity_gain_is_none():
+def test_no_gates_means_cp_plasticity_rate_gain_is_none():
     """Backward compat: pathways without plasticity_gate don't allocate
     the gain array (stays None, plasticity update fast-paths skip)."""
     pytest.importorskip("cupy")
@@ -629,7 +629,7 @@ def test_no_gates_means_cp_plasticity_gain_is_none():
         ),
     ]
     sb, _ = _make_bridge_with_regions(regions, pathways, seed=42)
-    assert sb.cp_plasticity_gain is None
+    assert sb.cp_plasticity_rate_gain is None
     assert sb.list_plasticity_gates() == []
 
 
