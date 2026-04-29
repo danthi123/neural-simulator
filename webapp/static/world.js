@@ -53,6 +53,14 @@ let world = {
   // are clutter for runs without this flag. Default true so the no-run-loaded
   // empty state shows the full legend (preview of all icon meanings).
   usedLandmarks: true,
+  // Frozen-elapsed cache (client-side): {run_id: elapsed_sec_at_completion}.
+  // Belt-and-suspenders for the elapsed-tick-after-done bug. The server
+  // tries to set finished_at on completion, but if the drain_log task
+  // crashed / never ran, the API will return a ticking elapsed_sec.
+  // We cache the FIRST elapsed_sec we see for a run that's no-longer-running
+  // and display that value forever after. Cleared when a new run with the
+  // same run_id is observed (running=true again).
+  _elapsedFrozen: new Map(),
 };
 
 export function setupWorldTab() {
@@ -293,11 +301,31 @@ async function refreshLivePicker(showHeading) {
       const progress = r.latest_progress
         ? ` step ${r.latest_progress.step}/${r.latest_progress.total}`
         : "";
+      // Client-side elapsed-freeze: when a run transitions from running -> done,
+      // capture the FIRST elapsed_sec we observe (or use the value we last saw
+      // while running) and display that forever after. This is a workaround for
+      // the server-side bug where finished_at is occasionally not set, causing
+      // the API to return a ticking elapsed_sec. With this cache, the UI always
+      // shows a stable elapsed time regardless.
+      let displayElapsed = r.elapsed_sec;
+      if (r.running) {
+        // Track the latest elapsed while running so we have a value to freeze on
+        // when the run transitions to done.
+        world._elapsedFrozen.set(r.run_id, r.elapsed_sec);
+      } else {
+        // Done: prefer the cached frozen value if set; otherwise cache & freeze
+        // whatever the server reports right now (first observation of done).
+        if (world._elapsedFrozen.has(r.run_id)) {
+          displayElapsed = world._elapsedFrozen.get(r.run_id);
+        } else {
+          world._elapsedFrozen.set(r.run_id, r.elapsed_sec);
+        }
+      }
       const name = document.createElement("div");
       name.textContent = r.run_id + (r.interactive ? " ★ interactive" : "");
       const small = document.createElement("div");
       small.className = "small";
-      small.textContent = `${status}${progress} · elapsed ${Math.round(r.elapsed_sec)}s`;
+      small.textContent = `${status}${progress} · elapsed ${Math.round(displayElapsed)}s`;
       item.appendChild(name);
       item.appendChild(small);
       // Kill button only for in-flight runs
