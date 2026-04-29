@@ -707,10 +707,17 @@ def test_striatal_fsis_pathways_built():
     """When --enable-striatal-fsis is on:
        - 4 str_FS_X regions added (one per action)
        - 4 cortex_X → str_FS_X pathways added (excitatory drive)
-       - 32 str_FS_X → str_D{1,2}_Y pathways added (broadcast inhibition,
-         4 FS × 4 D-pool target × 2 D-types = 32). Includes same-action
-         (X→X) since real FSIs broadcast indiscriminately, not just to
-         non-self pools.
+       - 24 str_FS_X → str_D{1,2}_Y pathways added (CROSS-action feedforward
+         inhibition only, X != Y; 4 FS × 3 cross D-pool × 2 D-types = 24).
+
+    Biology rationale (TK-2017 pp 161–163; Tepper-2018 pp 8–9): MSN-MSN
+    collaterals deliver weak unitary IPSPs (<0.5 mV, 14-25% conn prob, high
+    failure rates), so MSN-MSN lateral inhibition is functionally weak.
+    FSI→MSN feedforward IPSPs are significantly larger and reliable, and
+    FSIs preferentially innervate other-action MSNs. R1.2 (2026-04-29) wired
+    FSIs to cross-action MSNs only — same-action (X→X) is omitted, since
+    real FSIs do not inhibit their own action channel's MSN pool.
+
     All FS-related pathways are plastic=False (static gating)."""
     from research.runners.g11_bg_runner import build_bg_brain_regions
     regions, pathways = build_bg_brain_regions(enable_striatal_fsis=True)
@@ -733,10 +740,38 @@ def test_striatal_fsis_pathways_built():
     fs_to_msn = [p for p in pathways
                  if p.from_region.startswith("str_FS_")
                  and (p.to_region.startswith("str_D1_") or p.to_region.startswith("str_D2_"))]
-    assert len(fs_to_msn) == 32, \
-        f"Expected 32 FS→MSN pathways (4 FS × 4 D-pool × 2 D-types); got {len(fs_to_msn)}"
+    assert len(fs_to_msn) == 24, \
+        f"Expected 24 FS→MSN pathways (4 FS × 3 cross D-pool × 2 D-types); got {len(fs_to_msn)}"
     for p in fs_to_msn:
-        assert not p.plastic, "FS→MSN broadcast inhibition should be plastic=False"
+        assert not p.plastic, "FS→MSN cross-action inhibition should be plastic=False"
+
+    # Catalog R1.2: FSI cross-action only — FS_X must NOT project back to
+    # str_D1_X or str_D2_X (its own action channel).
+    for p in fs_to_msn:
+        fs_action = p.from_region.split("_")[-1]   # str_FS_X → X
+        msn_action = p.to_region.split("_")[-1]    # str_D1_Y → Y
+        assert fs_action != msn_action, (
+            f"FSI within-action wiring leaked: {p.from_region}→{p.to_region}; "
+            f"per TK-2017/Tepper-2018, FSIs target cross-action MSNs only."
+        )
+
+    # And the inverse: each (fs_action, str_action, d_type) cross pair is present.
+    expected = {
+        (fs_a, str_a, d) for fs_a in ("N", "E", "S", "W")
+        for str_a in ("N", "E", "S", "W")
+        if fs_a != str_a
+        for d in ("D1", "D2")
+    }
+    found = {
+        (p.from_region.split("_")[-1],
+         p.to_region.split("_")[-1],
+         p.to_region.split("_")[1])
+        for p in fs_to_msn
+    }
+    assert found == expected, (
+        f"FSI cross-action pathway set mismatch.\n"
+        f"missing: {expected - found}\nextra: {found - expected}"
+    )
 
 
 def test_striatal_fsis_disabled_by_default():

@@ -1,24 +1,34 @@
-"""Cluster B.2 biology probe — verify striatal FSI broadcast inhibition.
+"""Cluster B.2 biology probe — verify striatal FSI cross-action inhibition.
+
+Updated for R1.2 rewire (2026-04-29): FSIs now target cross-action MSNs
+ONLY — FS_X does NOT inhibit str_D1_X / str_D2_X. Biology grounding:
+TK-2017 pp 161–163 + Tepper-2018 pp 8–9 — paired-recording studies show
+MSN-MSN collaterals are functionally weak (<0.5 mV unitary IPSPs, ~20%
+connection probability, high failure rates) while FSI→MSN feedforward
+inhibition is significantly larger and reliable. The FSI cross-action
+projection is the biologically dominant WTA substrate.
 
 Builds matched-seed pairs of minimal BG cascade bridges (baseline vs +FSIs),
 applies strong cortex_N drive plus weaker cortex_E drive plus direct MSN
 drive, and records str_D1_N / str_D1_E firing rates in 10 ms bins across
-5 seeds. Then computes peak / mean rate suppression with FSIs ON.
+5 seeds. The cross-action signature is then directly testable.
 
-Expected biological signature:
+Expected biological signature (R1.2 cross-action wiring):
 - Without FSIs, both str_D1 pools fire at their drive-determined rates;
   there is no fast circuit to suppress them.
-- With FSIs, the cortex_N drive recruits str_FS_N (verified at ~16 Hz peak)
-  which broadcasts inhibition to ALL str_D1 pools (including same-action
-  str_D1_N). The strongest peak-rate drop lands on str_D1_N (~35%) — that
-  pool was firing hardest when FS_N's burst arrived. str_D1_E also drops
-  but more modestly because its drive was weak to begin with.
+- With FSIs, cortex_N drive recruits str_FS_N. Because FSIs target
+  CROSS-action MSNs only, FS_N inhibits str_D1_E (loser pool) but NOT
+  str_D1_N (its own action channel). The signature is therefore
+  asymmetric: str_D1_E is suppressed more than str_D1_N — the opposite
+  of the previous broadcast wiring (R1.1) where str_D1_N took the
+  strongest hit.
 
 The signature is millisecond-scale and TRANSIENT — FS_N fires briefly at
-the start of the run, suppresses MSNs during that window, then mean rates
-re-equilibrate by the end. PASS criteria: (1) str_FS_N fires (pathway
-engaged), (2) at least one str_D1 pool's peak rate drops by >= 5 Hz with
-FSIs on.
+the start of the run, suppresses cross-action MSNs during that window,
+then mean rates re-equilibrate by the end. PASS criteria:
+  1. str_FS_N fires (pathway engaged).
+  2. str_D1_E peak rate drops by >= 5 Hz with FSIs on (cross-action hit).
+  3. str_D1_E peak drop > str_D1_N peak drop (cross > own; the WTA signature).
 
 Run:
     python -m research.probes.striatal_fsi_probe
@@ -28,7 +38,8 @@ Outputs:
 - research/findings/raw/striatal_fsi_probe/probe_results.json: structured
   data including per-seed traces.
 
-Plan: docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md Task 3.
+Plan: docs/plans/2026-04-29-catalog-remediation-pass.md (R1.2 row).
+Original plan: docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md.
 """
 
 from __future__ import annotations
@@ -428,21 +439,21 @@ def main() -> int:
         print(f"  Time to E-suppression: {t_supp_on:.0f} ms")
 
     # ---- Verdict ----------------------------------------------------------
-    # The biological signature of FSI broadcast inhibition is: MSN pools
-    # fire at a lower rate when FSIs are recruited and fire. Because real
-    # FSIs broadcast indiscriminately (same-action included), the strongest
-    # suppression actually lands on str_D1_N — the winner pool, where
-    # cortex_N was driving strongly enough to ALSO recruit str_FS_N, and
-    # str_FS_N then inhibits all MSN pools including its own action's.
+    # R1.2 cross-action wiring: FSIs target other-action MSNs only. The
+    # signature is therefore ASYMMETRIC: FS_N recruits during cortex_N
+    # drive and inhibits str_D1_E (cross), but does NOT directly inhibit
+    # str_D1_N (its own action channel). The expected pattern is:
     #
-    # str_D1_E (the "loser") sees suppression too, but cortex_E is weak
-    # enough that its MSN pool was firing only modestly to begin with —
-    # absolute Hz-drop is naturally smaller there.
+    #   - str_D1_E peak rate drops noticeably (>= 5 Hz) with FSIs on,
+    #     because FS_N broadcasts directly into str_D1_E (cross-action).
+    #   - str_D1_N peak rate is much less affected — there is no FS→MSN_N
+    #     pathway, so any change comes from indirect cascade routing
+    #     (D2→GPe→STN→GPi→thal→cortex), not the direct FSI hit.
     #
-    # We measure both pools and take the larger absolute peak-rate drop
-    # as the primary signal. PASS requires str_FS_N to actually be
-    # firing (sanity: pathway is engaged) AND ANY str_D1 pool's peak
-    # rate to drop by at least 5 Hz.
+    # The PASS gate therefore requires the cross-action signature:
+    #  1. str_FS_N fires (pathway engaged).
+    #  2. str_D1_E peak rate drops by >= 5 Hz with FSIs on.
+    #  3. str_D1_E peak drop > str_D1_N peak drop (cross > own).
     def _stats_for_pool(rates: dict, pool: str) -> tuple[float, float]:
         """Return (peak_hz, mean_hz) for the given pool, or (0,0)."""
         if pool not in rates or not rates[pool]:
@@ -463,67 +474,79 @@ def main() -> int:
     n_mean_drop = n_mean_off - n_mean_on
     e_peak_drop = e_peak_off - e_peak_on
     e_mean_drop = e_mean_off - e_mean_on
-    peak_drop_hz = max(n_peak_drop, e_peak_drop)  # primary metric
-    mean_drop_hz = max(n_mean_drop, e_mean_drop)
+    # Cross-action signature: E (cross-action target of FS_N) should drop more
+    # than N (own-action, which has NO direct FSI input under R1.2).
+    cross_minus_own_peak_drop = e_peak_drop - n_peak_drop
     peak_drop_pct = (
-        100.0 * peak_drop_hz / max(n_peak_off, e_peak_off)
-        if max(n_peak_off, e_peak_off) > 0 else 0.0
+        100.0 * e_peak_drop / e_peak_off
+        if e_peak_off > 0 else 0.0
     )
 
     print()
     print(f"  str_D1_N peak: {n_peak_off:.1f} Hz (no FSI) -> "
-          f"{n_peak_on:.1f} Hz (+FSI), delta = {n_peak_drop:+.1f} Hz")
+          f"{n_peak_on:.1f} Hz (+FSI), delta = {n_peak_drop:+.1f} Hz "
+          f"(own-action; FS_N has NO direct projection here under R1.2)")
     print(f"  str_D1_N mean: {n_mean_off:.1f} Hz (no FSI) -> "
           f"{n_mean_on:.1f} Hz (+FSI), delta = {n_mean_drop:+.1f} Hz")
     print(f"  str_D1_E peak: {e_peak_off:.1f} Hz (no FSI) -> "
-          f"{e_peak_on:.1f} Hz (+FSI), delta = {e_peak_drop:+.1f} Hz")
+          f"{e_peak_on:.1f} Hz (+FSI), delta = {e_peak_drop:+.1f} Hz "
+          f"(cross-action; FS_N projects directly here)")
     print(f"  str_D1_E mean: {e_mean_off:.1f} Hz (no FSI) -> "
           f"{e_mean_on:.1f} Hz (+FSI), delta = {e_mean_drop:+.1f} Hz")
+    print(f"  cross-vs-own peak drop delta (E - N): "
+          f"{cross_minus_own_peak_drop:+.1f} Hz "
+          f"(positive = cross-action WTA signature)")
     print(f"  (sanity) str_FS_N peak rate: {fs_n_peak:.1f} Hz "
-          "(must be >0 — broadcast pathway must be active)")
+          "(must be >0 — cortex→FS pathway must be active)")
 
-    # PASS criteria:
-    #  1. str_FS_N must actually fire — otherwise the broadcast pathway
-    #     isn't being exercised and any rate change is unrelated to FSIs.
-    #  2. ANY str_D1 pool's peak rate drops by >= 5 Hz with FSIs on.
-    #     (Peak captures the millisecond-scale broadcast inhibition; the
-    #     FS_N burst is brief, so mean rates may re-equilibrate by the
-    #     end of the window. Peak suppression is the dominant signature.)
+    # PASS criteria (R1.2 cross-action wiring):
+    #  1. str_FS_N must actually fire — sanity check that the cortex→FS
+    #     pathway is engaged.
+    #  2. str_D1_E peak rate drops by >= 5 Hz with FSIs on (cross hit).
+    #  3. str_D1_E peak drop strictly exceeds str_D1_N peak drop — the
+    #     cross-action signature distinguishes the new wiring from the
+    #     old broadcast wiring (which would have suppressed N more).
     PASS_PEAK_DROP_HZ = 5.0
     PASS_MEAN_DROP_HZ = 1.0  # informational only, not in PASS gate
     fs_engaged = fs_n_peak > 0.0
-    n_pool_passes = n_peak_drop >= PASS_PEAK_DROP_HZ
-    e_pool_passes = e_peak_drop >= PASS_PEAK_DROP_HZ
-    passed = fs_engaged and (n_pool_passes or e_pool_passes)
+    e_passes = e_peak_drop >= PASS_PEAK_DROP_HZ
+    cross_gt_own = cross_minus_own_peak_drop > 0.0
+    passed = fs_engaged and e_passes and cross_gt_own
     print()
     if passed:
-        which_pool = "str_D1_N" if n_pool_passes else "str_D1_E"
-        which_peak_drop = n_peak_drop if n_pool_passes else e_peak_drop
-        which_mean_drop = n_mean_drop if n_pool_passes else e_mean_drop
         print(
-            f"VERDICT: PASS - FSIs suppress MSN firing via broadcast inhibition "
-            f"({which_pool} peak -{which_peak_drop:.1f} Hz / {peak_drop_pct:.0f}%; "
-            f"mean delta {which_mean_drop:+.1f} Hz; "
+            f"VERDICT: PASS - FSIs suppress cross-action MSN firing "
+            f"(str_D1_E peak -{e_peak_drop:.1f} Hz / {peak_drop_pct:.0f}%; "
+            f"cross-vs-own delta {cross_minus_own_peak_drop:+.1f} Hz; "
             f"str_FS_N fired at {fs_n_peak:.0f} Hz peak)"
         )
     elif not fs_engaged:
         print(
-            "VERDICT: FAIL - str_FS_N never fired (broadcast pathway not engaged); "
-            "investigate cortex->FS wiring or FS neuron parameters"
+            "VERDICT: FAIL - str_FS_N never fired (cortex→FS pathway not engaged); "
+            "investigate cortex→FS wiring or FS neuron parameters"
+        )
+    elif not e_passes:
+        print(
+            f"VERDICT: FAIL - insufficient cross-action suppression "
+            f"(str_D1_E peak delta {e_peak_drop:+.1f} Hz; "
+            f"need >= {PASS_PEAK_DROP_HZ} Hz on str_D1_E)"
         )
     else:
         print(
-            f"VERDICT: FAIL - insufficient FSI suppression "
-            f"(best peak delta {peak_drop_hz:+.1f} Hz; "
-            f"need >= {PASS_PEAK_DROP_HZ} Hz peak drop on either D1_N or D1_E)"
+            f"VERDICT: FAIL - cross-action signature not present "
+            f"(cross_E_drop - own_N_drop = {cross_minus_own_peak_drop:+.1f} Hz; "
+            f"under R1.2, cross-action target should drop MORE than own-action). "
+            f"This may indicate the FSI is still wired same-action, or that "
+            f"indirect cascade routing dominates over the direct FSI hit."
         )
 
     # ---- Persist JSON -----------------------------------------------------
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     record = {
-        "probe": "striatal_fsi_broadcast_inhibition",
+        "probe": "striatal_fsi_cross_action_inhibition",
+        "wiring_version": "R1.2 (2026-04-29) — cross-action only",
         "plan": (
-            "docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md"
+            "docs/plans/2026-04-29-catalog-remediation-pass.md"
         ),
         "task": 3,
         "verdict": "PASS" if passed else "FAIL",
@@ -573,19 +596,19 @@ def main() -> int:
             else (t_supp_off - t_supp_on)
         ),
         "msn_suppression": {
-            "str_D1_N_peak_drop_hz": n_peak_drop,
+            "str_D1_N_peak_drop_hz": n_peak_drop,  # own-action (no direct FS input)
             "str_D1_N_mean_drop_hz": n_mean_drop,
-            "str_D1_E_peak_drop_hz": e_peak_drop,
+            "str_D1_E_peak_drop_hz": e_peak_drop,  # cross-action (FS_N projects here)
             "str_D1_E_mean_drop_hz": e_mean_drop,
-            "best_peak_drop_hz": peak_drop_hz,
-            "best_peak_drop_pct": peak_drop_pct,
-            "best_mean_drop_hz": mean_drop_hz,
+            "cross_minus_own_peak_drop_hz": cross_minus_own_peak_drop,
+            "cross_action_peak_drop_pct": peak_drop_pct,
             "fs_n_peak_hz": fs_n_peak,
             "fs_engaged": fs_engaged,
         },
         "pass_thresholds": {
-            "peak_drop_hz": PASS_PEAK_DROP_HZ,
+            "e_peak_drop_hz": PASS_PEAK_DROP_HZ,
             "fs_engaged_required": True,
+            "cross_gt_own_required": True,
         },
     }
     OUT_JSON.write_text(json.dumps(record, indent=2))

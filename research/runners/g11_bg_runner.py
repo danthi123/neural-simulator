@@ -590,15 +590,25 @@ def build_bg_brain_regions(
                         plastic=False,
                     ))
 
-    # Cluster B.2 (2026-04-28): striatal FSI pathways.
+    # Cluster B.2 (2026-04-28, R1.2 rewire 2026-04-29): striatal FSI pathways.
     # (a) cortex_X → str_FS_X (excitatory, dense, plastic=False, same-action only).
     #     FS pool gets driven only by its same-action cortex pool.
-    # (b) str_FS_X → str_D{1,2}_Y for ALL X, Y including X==Y (broadcast
+    # (b) str_FS_X → str_D{1,2}_Y for X != Y ONLY (cross-action feedforward
     #     inhibition; auto-derived inhibitory because str_FS regions have
-    #     exc_fraction=0.0). 4 FS × 4 D-pool target × 2 D-types = 32 paths.
-    #     Real FSIs broadcast indiscriminately, including back onto same-action
-    #     MSNs — no selective sparing, so the whole network sees a brief
-    #     suppression burst when any cortex pool drives strongly.
+    #     exc_fraction=0.0). 4 FS × 3 cross D-pool × 2 D-types = 24 paths.
+    #
+    # Biological grounding (Tepper-2018 pp 8–9; Tepper, Koós & Wilson, TK-2017
+    # pp 161–163): paired-recording studies show MSN→MSN collaterals deliver
+    # only ~0.5 mV unitary IPSPs at 14–25% connection probability with high
+    # failure rates and short-term depression — i.e., MSN-MSN lateral
+    # inhibition is functionally weak. By contrast, FSI→MSN feedforward
+    # IPSPs are significantly larger and more reliable, and FSIs preferentially
+    # innervate MSNs of OTHER action channels (cross-action). This makes the
+    # FSI cross-action projection the dominant biological substrate for the
+    # striatal WTA microcircuit. The previous (R1.1) within-action broadcast
+    # was anatomically inaccurate; we now restrict FS_X to MSN_Y for Y != X.
+    # The v3 `--bg-lateral-inhibition` MSN→MSN flag is now redundant with
+    # this cross-action FSI WTA but is kept opt-in for backward compatibility.
     if enable_striatal_fsis:
         # (a) cortex_X → str_FS_X (excitatory drive, same-action)
         for cortex_action in ACTION_NAMES:
@@ -610,9 +620,12 @@ def build_bg_brain_regions(
                 weight_jitter=0.2,
                 plastic=False,
             ))
-        # (b) str_FS_X → str_D{1,2}_Y broadcast (every FS to every MSN pool)
+        # (b) str_FS_X → str_D{1,2}_Y for X != Y only (cross-action WTA;
+        # FSIs do NOT inhibit their own action's MSN pool).
         for fs_action in ACTION_NAMES:
             for str_action in ACTION_NAMES:
+                if fs_action == str_action:
+                    continue  # skip within-action — FSIs target other channels
                 for d_type in ("D1", "D2"):
                     pathways.append(RegionPathway(
                         from_region=f"str_FS_{fs_action}",
