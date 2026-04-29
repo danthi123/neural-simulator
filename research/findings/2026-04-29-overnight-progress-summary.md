@@ -137,7 +137,32 @@ Both override-able via runner kwargs for parameter sweeps.
   **Interpretation:** Without the heuristic providing goal-direction cortex drive, the BG cascade has no signal to differentiate. Motor pools fall silent → random-fallback action selection → bit-identical seeds. The cascade NEEDS an external goal-direction input (heuristic, hippocampus/PFC, perception arc) to produce meaningful action selection. The clusters' role is to refine HOW the cascade translates direction into action — not to generate direction themselves. This matches biology: BG doesn't generate goals; it receives them from cortex.
   
   Cluster-with-heur signals (C v2, E) are the genuine cheat-5 closure path. The no-heur regime can't be evaluated meaningfully on this metric without adding hippocampus / perception inputs.
-- **FIX eval (bqlvyaog0):** queued; clean baseline + A+C+E under fixed cascade. Will give the clean baseline number for proper comparison.
+- **FIX eval (bqlvyaog0) DONE — CLEAN BASELINE + UNEXPECTED A+C+E REGRESSION:**
+  | Seed | FIX baseline | FIX A+C+E |
+  |---|---|---|
+  | 42 | 11.11 | 20.00 |
+  | 43 | 4.49 | 14.69 |
+  | 44 | 6.20 | 12.09 |
+  | **Mean** | **7.27 ± 3.44** | **15.59 ± 4.03** |
+  
+  **Clean fixed-cascade baseline: 7.27 ± 3.44.** Closely matches the documented v3 baseline of 7.08 ± 0.12. Confirms the cascade-fix restored expected behavior.
+  
+  **A+C v1+E REGRESSES dramatically (15.59 vs 7.27).** A and E individually help (E alone 6.26, A+E 5.83), but adding C v1 (tonic-DA scalar) on top creates destructive interference. Probable cause: C v1 replaces signed-scalar reward with DA-deviation, which together with A's static feedback and E's sparse cortex→MSN topology creates overly-restrictive plasticity. The mathematical interaction needs tuning.
+
+### Final cluster ranking (n=3 fixed cascade):
+
+| Config | Mean ± std | vs baseline (7.27) |
+|---|---|---|
+| A + E | 5.83 ± 2.23 | -1.44 (-20%) |
+| C v2 only (n=2 of 3) | 5.63 (5.69, 5.57) | -1.64 (-23%) |
+| E only | 6.26 ± 0.71 | -1.01 (-14%) |
+| A + C v2 | 8.08 ± 3.29 | +0.81 (+11%) — slight regression |
+| baseline (FIX) | 7.27 ± 3.44 | reference |
+| A + C v1 + E (FIX) | 15.59 ± 4.03 | +8.32 (+114%) — destructive |
+
+**Three configurations beat baseline:** A+E, C v2-only, E-only. Each warrants tier-3 (6-seed) validation.
+
+Tier-3 evals queued: C v2 (bkoii8a0q), E (bog1yy7kb), A+E (b3l32yl39). C v2+E composition test (btxzno6vp) also queued.
 
 Updated ETA: FIX eval done ~08:50.
 
