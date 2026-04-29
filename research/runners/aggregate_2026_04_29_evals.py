@@ -43,6 +43,8 @@ CONDITIONS = {
     "A + E tier-3": "g11_seed{seed}_AE_tier3.json",
     "A+E+C v2 triple": "g11_seed{seed}_AECv2.json",
     "FIX baseline tier-3": "g11_seed{seed}_baseline_tier3.json",
+    "FULL flagship": "g11_seed{seed}_fullflagship.json",
+    "FULL flagship + A+E": "g11_seed{seed}_fullflagship_AE.json",
 }
 SEEDS = [42, 43, 44, 100, 101, 102]  # tier-3 conditions use all 6; others use first 3
 RAW_DIR = Path("research/findings/raw/g11_bg")
