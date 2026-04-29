@@ -52,6 +52,19 @@ Same seed, same code, same flags, same goal schedule produced different sums in 
 
 Implication: cheat-5 metric noise floor exceeds typical cluster effect sizes. To reliably detect a 1-2 sum improvement, would need either (a) multiple trials per seed averaged, (b) tighter metrics less sensitive to step-by-step variation, or (c) deterministic CUDA settings (`CUBLAS_WORKSPACE_CONFIG`, `CUDA_LAUNCH_BLOCKING`, etc).
 
+## Full flagship multi-goal eval (n=3, post-FINAL)
+
+| Condition | Seed 42 | Seed 43 | Seed 44 | Mean ± std |
+|---|---|---|---|---|
+| FULL flagship | 24.93 | 29.99 | 22.42 | **25.78 ± 3.86** |
+| FULL + A+E | 26.12 | 28.54 | 29.55 | **28.07 ± 1.76** |
+
+Confirms the A+E pattern carries from minimal-flagship to full-flagship: **variance halved (1.76 vs 3.86 = -54% std)** with **mean +2.29** (regresses).
+
+Note multi-goal full flagship is significantly worse than minimal flagship (25.78 vs 7.41 baseline). This matches CLAUDE.md's note: "for multi-goal tasks, skip the curriculum entirely. The baseline broadcast DA (no curriculum, no hippo) handles fast-change better because cortex stays plastic." The full flagship's hippocampus + curriculum + perception arc are tuned for single-goal stability, hurting multi-goal re-adaptation.
+
+A deterministic single-goal eval (with `CUBLAS_WORKSPACE_CONFIG=:4096:8`) is now queued — this should give a cleaner cluster comparison in the regime where the documented "4.08" baseline lives.
+
 ## What the session shipped
 
 ### Catalog-driven remediation pass (12 items, 11 implemented + 1 design-doc deferral)
