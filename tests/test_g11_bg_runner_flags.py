@@ -975,8 +975,8 @@ def test_str_patch_targets_dopamine_and_gpi():
     patch_outs = [(p.from_region, p.to_region) for p in pathways
                   if p.from_region.startswith("str_patch_")]
     for action in ("N", "E", "S", "W"):
-        assert (f"str_patch_{action}", "dopamine") in patch_outs, \
-            f"missing str_patch_{action} -> dopamine (canonical striosome->SNc)"
+        assert (f"str_patch_{action}", "snc") in patch_outs, \
+            f"missing str_patch_{action} -> snc (canonical striosome->SNc)"
         assert (f"str_patch_{action}", f"gpi_{action}") in patch_outs, \
             f"missing str_patch_{action} -> gpi_{action} (striosome->SNr per Deniau)"
 
@@ -1372,7 +1372,7 @@ def test_compartmentalized_da_action_index_populated_on_regions():
                     f"{name} action_index expected {idx}, got {by_name[name].action_index}"
 
     # Non-action-specific regions
-    for name in ("stn", "dopamine", "sensory", "place_cells", "goal_cells",
+    for name in ("stn", "snc", "sensory", "place_cells", "goal_cells",
                  "ec", "dg", "dg_fs", "ca3", "ca1"):
         if name in by_name:
             assert by_name[name].action_index is None, \
@@ -1421,8 +1421,8 @@ def test_cluster_e_coordinate_assignment():
                 f"{r.name} should be pinned to {corner}; got {r.coordinate_center}"
             )
 
-    # Non-action regions (stn, dopamine) remain unstructured.
-    for name in ("stn", "dopamine"):
+    # Non-action regions (stn, snc) remain unstructured.
+    for name in ("stn", "snc"):
         r = by_name[name]
         assert r.coordinate_dim == 0, (
             f"{name} should remain unstructured; got coordinate_dim={r.coordinate_dim}"

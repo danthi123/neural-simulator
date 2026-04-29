@@ -550,20 +550,22 @@ def build_bg_brain_regions(
             action_index=action_idx,
         ))
 
-    # Dopamine neurons (single pool, broadcasts via neuromodulator subsystem).
-    # Anatomy note: this is the project's A9-equivalent — SNc dopaminergic
-    # neurons that drive nigrostriatal projections. The mesolimbic A10/VTA
-    # → NAc/PFC arms are NOT separately modeled; the single `dopamine`
-    # pool collapses A9 + A10 into one broadcast modulator. With Cluster
-    # C v2 (`--enable-compartmentalized-da`), per-action DA channels
-    # (dopamine_{N,E,S,W}) decompose this into per-action targeting,
-    # though still A9-typed.
+    # SNc dopamine neurons (single pool, broadcasts via neuromodulator subsystem).
+    # Anatomy note: this region is the project's A9-equivalent — SNc
+    # dopaminergic neurons that drive nigrostriatal projections. The
+    # mesolimbic A10/VTA → NAc/PFC arms are NOT separately modeled; the
+    # single `snc` pool collapses A9 + A10 into one broadcast modulator.
+    # With Cluster C v2 (`--enable-compartmentalized-da`), per-action DA
+    # channels (dopamine_{N,E,S,W}) decompose this into per-action
+    # targeting, though still A9-typed. The transmitter (`dopamine`
+    # neuromodulator) keeps its canonical chemistry name; only the
+    # *region* renamed from "dopamine" → "snc" 2026-04-29 (Wave-1 #3).
     # Catalog refs: Kandel 6e Ch 11 (DA system); PBR-160 ch 11 (Tepper & Lee).
     # SNc DA neurons lack KCC2 → ECl ~−55 mV (PBR-160 ch 11). GABA_A is
     # depolarizing or even excitatory at rest in adult SNc; override the
     # cortical-pyramidal default of −75 mV.
     regions.append(BrainRegion(
-        name="dopamine",
+        name="snc",
         n_neurons=n_dopamine,
         exc_fraction=1.0,
         internal_density=0.0,
@@ -951,7 +953,7 @@ def build_bg_brain_regions(
     # cortex_X -> str_patch_X: placeholder for limbic input (vmPFC/amygdala/
     # ventral hippocampus per PBR-160 ch 9). Plastic so patch can learn
     # cortical-to-patch mapping. Same density as matrix per Bolam.
-    # str_patch_X -> dopamine: canonical striosome->SNc projection driving
+    # str_patch_X -> snc: canonical striosome->SNc projection driving
     # phasic DA (Tepper & Lee PBR-160 ch 11 p 191).
     # str_patch_X -> gpi_X: secondary striosome->SNr projection (PBR-160
     # ch 9 Deniau p 160 — striosomes contribute substantial direct input
@@ -964,7 +966,7 @@ def build_bg_brain_regions(
             weight_jitter=0.2, plastic=True, plasticity_gate="corticostriatal",
         ))
         pathways.append(RegionPathway(
-            from_region=f"str_patch_{action}", to_region="dopamine",
+            from_region=f"str_patch_{action}", to_region="snc",
             density=0.4, weight_mean=2.5, weight_jitter=0.2, plastic=False,
         ))
         pathways.append(RegionPathway(
@@ -972,20 +974,20 @@ def build_bg_brain_regions(
             density=0.3, weight_mean=1.5, weight_jitter=0.2, plastic=False,
         ))
 
-    # R3.10 (2026-04-29): GPi/SNr -> dopamine collateral disinhibition
+    # R3.10 (2026-04-29): GPi/SNr -> snc collateral disinhibition
     # (PBR-160 ch 11 Tepper & Lee pp 192-193, 199; Tepper et al. 1995).
     # SNr GABA neurons project to SNc DA neurons via axon collaterals;
     # the major in-vivo drive of spontaneous DA burst firing is the
     # SNr -> SNc disinhibition (when D1-mediated SNr silencing releases
     # tonic GABA suppression of DA cells, DA neurons burst). Combined
-    # with R1.1 (E_inh = -55 mV on dopamine, since SNc lacks KCC2),
+    # with R1.1 (E_inh = -55 mV on the snc region, since SNc lacks KCC2),
     # this gives a biologically grounded substrate for phasic DA without
     # external injection. NOTE: in our cascade we conflate SNr with GPi
     # (both GABAergic BG output nuclei); this is the standard rodent vs
     # primate naming difference rather than a separate population.
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
-            from_region=f"gpi_{action}", to_region="dopamine",
+            from_region=f"gpi_{action}", to_region="snc",
             density=0.3, weight_mean=2.0, weight_jitter=0.2, plastic=False,
         ))
 
@@ -1331,7 +1333,7 @@ def _run_pretraining_phase(
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(120.0)
     for rn in [f"gpi_{a}" for a in ACTION_NAMES]:
         bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(110.0)
-    for rn in ["stn", "dopamine"]:
+    for rn in ["stn", "snc"]:
         bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
     for rn in [f"thal_{a}" for a in ACTION_NAMES]:
         bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(300.0)
@@ -2101,7 +2103,7 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(120.0)
     for region_name in [f"gpi_{a}" for a in ACTION_NAMES]:
         bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(110.0)
-    for region_name in ["stn", "dopamine"]:
+    for region_name in ["stn", "snc"]:
         bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(150.0)
     for region_name in [f"thal_{a}" for a in ACTION_NAMES]:
         bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(300.0)
@@ -2436,7 +2438,7 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
         for rn in [f"gpi_{a}" for a in ACTION_NAMES]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(110.0)
-        for rn in ["stn", "dopamine"]:
+        for rn in ["stn", "snc"]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
         for rn in [f"thal_{a}" for a in ACTION_NAMES]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(300.0)
@@ -3389,7 +3391,7 @@ def main():
             if idx:
                 # Lower baseline for GPi → easier to silence by D1 inhibition
                 bridge.cp_external_input_current[cp.asarray(idx, dtype=cp.int64)] = cp.float32(110.0)
-        for region_name in ["stn", "dopamine"]:
+        for region_name in ["stn", "snc"]:
             idx = list(bridge.region_manager.indices(region_name))
             if idx:
                 bridge.cp_external_input_current[cp.asarray(idx, dtype=cp.int64)] = cp.float32(150.0)
@@ -3428,7 +3430,7 @@ def main():
         for a in ACTION_NAMES:
             ordered_groups += [f"str_D1_{a}", f"str_D2_{a}", f"gpe_{a}",
                                 f"gpi_{a}", f"thal_{a}", f"motor_{a}"]
-        ordered_groups += ["stn", "dopamine"]
+        ordered_groups += ["stn", "snc"]
         for region_name in ordered_groups:
             r = next((reg for reg in regions if reg.name == region_name), None)
             if r is None:

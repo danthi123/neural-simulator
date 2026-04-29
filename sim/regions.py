@@ -316,12 +316,43 @@ class RegionManager:
     def total_neurons(self) -> int:
         return self._total_neurons
 
+    # Deprecated region-name aliases. Old name on the LEFT, canonical on the
+    # RIGHT. When a caller looks up a region by an old name, it's silently
+    # translated to the canonical form with a one-time DeprecationWarning.
+    # Useful for loading old sidecar JSONs that hard-coded region names.
+    _DEPRECATED_REGION_NAMES = {
+        # 2026-04-29 Wave-1 rename: "dopamine" was the modeled-region name
+        # (the project's A9-equivalent — SNc dopaminergic neurons). The
+        # transmitter modulator stays named "dopamine" (correct); the BG
+        # region is now named "snc". Per Cluster A.16 + glossary §SNc.
+        "dopamine": "snc",
+    }
+
+    def _canonicalize_region_name(self, region_name: str) -> str:
+        canonical = self._DEPRECATED_REGION_NAMES.get(region_name)
+        if canonical is None or canonical not in self._indices:
+            return region_name
+        if not hasattr(self, "_warned_deprecated_regions"):
+            self._warned_deprecated_regions = set()
+        if region_name not in self._warned_deprecated_regions:
+            import warnings
+            warnings.warn(
+                f"Region name '{region_name}' is deprecated; use '{canonical}' instead. "
+                f"Old name will be removed in a future release.",
+                DeprecationWarning,
+                stacklevel=3,
+            )
+            self._warned_deprecated_regions.add(region_name)
+        return canonical
+
     def indices(self, region_name: str) -> List[int]:
+        region_name = self._canonicalize_region_name(region_name)
         if region_name not in self._indices:
             raise KeyError(region_name)
         return list(self._indices[region_name])
 
     def inhibitory_indices(self, region_name: str) -> List[int]:
+        region_name = self._canonicalize_region_name(region_name)
         if region_name not in self._inhibitory:
             raise KeyError(region_name)
         return list(self._inhibitory[region_name])
