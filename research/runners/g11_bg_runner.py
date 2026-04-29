@@ -59,6 +59,7 @@ def build_bg_brain_regions(
     n_cortex: int = 100,
     n_striatum_per_action: int = 50,
     n_gpe_per_action: int = 10,
+    n_gpe_arky_per_action: int = 4,  # R3.7: arkypallidal (PV-) subpool
     n_gpi_per_action: int = 10,
     n_stn: int = 20,
     n_thal_per_action: int = 10,
@@ -359,10 +360,27 @@ def build_bg_brain_regions(
             ))
 
     # Per-action BG output (GPe / GPi)
+    # R3.7 (2026-04-29): GPe is split into PV+ (prototypic) and PV-
+    # (arkypallidal) subpools per Mallet 2008 / Kita 2007 (PBR-160 ch 7).
+    # gpe_X = prototypic (PV+), forming the canonical GPe -> STN/GPi/SNr
+    # projection. gpe_arky_X = arkypallidal (PV-), forming the
+    # GPe -> striatum feedback (broadcasts onto FSIs, "stop-signal"
+    # role per Mallet 2012). Sizes: PV+ at the original n_gpe_per_action
+    # (10), PV- at n_gpe_arky_per_action (4) — consistent with Kita's
+    # observation that PV-negative cells form ~1/3 of GPe.
     for action in ACTION_NAMES:
         regions.append(BrainRegion(
-            name=f"gpe_{action}",
+            name=f"gpe_{action}",  # prototypic (PV+); existing alias preserved
             n_neurons=n_gpe_per_action,
+            exc_fraction=0.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_GPE_PACEMAKER.name,
+        ))
+        regions.append(BrainRegion(
+            name=f"gpe_arky_{action}",  # arkypallidal (PV-); R3.7 new pool
+            n_neurons=n_gpe_arky_per_action,
             exc_fraction=0.0,
             internal_density=0.0,
             exc_weight_mean=0.0, inh_weight_mean=0.0,
@@ -654,7 +672,7 @@ def build_bg_brain_regions(
             density=1.0, weight_mean=15.0, weight_jitter=0.2, plastic=False,
         ))
 
-    # Indirect pathway: D2 -> GPe -> STN -> GPi
+    # Indirect pathway: D2 -> GPe (PV+) -> STN -> GPi
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
             from_region=f"str_D2_{action}", to_region=f"gpe_{action}",
@@ -664,6 +682,33 @@ def build_bg_brain_regions(
             from_region=f"gpe_{action}", to_region="stn",
             density=0.3, weight_mean=1.5, weight_jitter=0.2, plastic=False,
         ))
+
+    # R3.7 (2026-04-29): arkypallidal (PV-) GPe subpool. D2 also drives
+    # arky cells; arky projects back to striatal FSIs broadcasting a
+    # "stop signal" (Mallet 2012). Per Kita 2007 / Tepper-2018, PV-
+    # cells rarely collateralize to STN/GPi -- their canonical target
+    # is the striatum. Modeling as broadcast to all str_FS_Y so a single
+    # action's D2 activation can feedback-inhibit the entire striatal
+    # FSI population, halting ongoing motor commitments.
+    if enable_striatal_fsis:  # arky->FSI requires FSI population
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"str_D2_{action}", to_region=f"gpe_arky_{action}",
+                density=0.5, weight_mean=2.0, weight_jitter=0.2, plastic=False,
+            ))
+            for fs_action in ACTION_NAMES:
+                pathways.append(RegionPathway(
+                    from_region=f"gpe_arky_{action}", to_region=f"str_FS_{fs_action}",
+                    density=0.3, weight_mean=1.5, weight_jitter=0.2, plastic=False,
+                ))
+    else:
+        # Without FSI population, arky has no striatal target. Still
+        # receive D2 input so dynamics are correct; outputs are dropped.
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"str_D2_{action}", to_region=f"gpe_arky_{action}",
+                density=0.5, weight_mean=2.0, weight_jitter=0.2, plastic=False,
+            ))
 
     # STN -> all GPi (diffuse excitation; this is the "hyperdirect"-like
     # contribution that biases against premature action selection)
@@ -913,6 +958,9 @@ def _run_pretraining_phase(
     bridge.cp_external_input_current[:] = 0.0
     for rn in [f"gpe_{a}" for a in ACTION_NAMES]:
         bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
+    for rn in [f"gpe_arky_{a}" for a in ACTION_NAMES]:
+        if rn in region_indices_cp:
+            bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(120.0)
     for rn in [f"gpi_{a}" for a in ACTION_NAMES]:
         bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(110.0)
     for rn in ["stn", "dopamine"]:
@@ -1612,6 +1660,9 @@ def run_moving_goal_episode(
     bridge.cp_external_input_current[:] = 0.0
     for region_name in [f"gpe_{a}" for a in ACTION_NAMES]:
         bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(150.0)
+    for region_name in [f"gpe_arky_{a}" for a in ACTION_NAMES]:
+        if region_name in region_indices_cp:
+            bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(120.0)
     for region_name in [f"gpi_{a}" for a in ACTION_NAMES]:
         bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(110.0)
     for region_name in ["stn", "dopamine"]:

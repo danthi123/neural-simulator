@@ -793,6 +793,53 @@ def test_striatal_fsis_kwarg_accepted(tmp_out_path):
     )
 
 
+# ───────────────────── 2026-04-29: R3.7 GPe PV+/PV- split ─────────────────────
+
+
+def test_gpe_arky_regions_present_by_default():
+    """R3.7 (Mallet 2008 / Kita 2007): GPe split into PV+ (gpe_X) and PV-
+    (gpe_arky_X) subpools. The arkypallidal pool is unconditionally present
+    in the cascade; D2 drives both subpools."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    regions, _ = build_bg_brain_regions()
+    arky_names = {r.name for r in regions if r.name.startswith("gpe_arky_")}
+    assert arky_names == {"gpe_arky_N", "gpe_arky_E", "gpe_arky_S", "gpe_arky_W"}, \
+        f"Expected 4 gpe_arky_* regions; got {arky_names}"
+
+
+def test_d2_drives_both_gpe_subpools():
+    """D2 -> gpe_X (PV+) and D2 -> gpe_arky_X (PV-) per R3.7."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    _, pathways = build_bg_brain_regions()
+    d2_to_gpe = {(p.from_region, p.to_region) for p in pathways
+                 if p.from_region.startswith("str_D2_") and p.to_region.startswith("gpe_")}
+    for action in ("N", "E", "S", "W"):
+        assert (f"str_D2_{action}", f"gpe_{action}") in d2_to_gpe, \
+            f"missing D2 -> gpe_{action} (PV+ canonical)"
+        assert (f"str_D2_{action}", f"gpe_arky_{action}") in d2_to_gpe, \
+            f"missing D2 -> gpe_arky_{action} (PV- arkypallidal)"
+
+
+def test_gpe_arky_to_fsi_only_when_fsi_enabled():
+    """When --enable-striatal-fsis is on, gpe_arky_X broadcasts onto all
+    str_FS_Y (Mallet 2012 stop-signal). Without FSI population, no
+    arky->FS pathways are emitted."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    # FSI enabled -> arky -> FS broadcast pathways exist
+    _, pathways_with_fs = build_bg_brain_regions(enable_striatal_fsis=True)
+    arky_to_fs = [p for p in pathways_with_fs
+                  if p.from_region.startswith("gpe_arky_")
+                  and p.to_region.startswith("str_FS_")]
+    assert len(arky_to_fs) == 16, \
+        f"Expected 4 arky x 4 FS = 16 pathways; got {len(arky_to_fs)}"
+    # FSI disabled -> no arky -> FS pathways
+    _, pathways_no_fs = build_bg_brain_regions(enable_striatal_fsis=False)
+    arky_to_fs_off = [p for p in pathways_no_fs
+                      if p.from_region.startswith("gpe_arky_")
+                      and p.to_region.startswith("str_FS_")]
+    assert len(arky_to_fs_off) == 0
+
+
 # ───────────────────── 2026-04-28: Cluster B.3 cholinergic TANs ─────────────────────
 
 
