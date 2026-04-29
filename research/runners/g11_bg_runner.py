@@ -713,8 +713,27 @@ def build_bg_brain_regions(
     # cortex neuron synapsing every MSN). Re-tunable via runner kwarg
     # cortex_to_msn_density if needed; weight_mean kept at 25.0 to
     # maintain net excitatory drive given the sparser fan-in.
-    cortex_to_msn_density_same = 0.20
+    cortex_to_msn_density_same = float(locals().get("cortex_to_msn_density_same_override", 0.20))
     cortex_to_msn_density_cross = 0.10  # sparser still per Bolam
+    # R3.5 follow-up (2026-04-29 morning diagnostic): density 1.0 -> 0.20 reduced
+    # cortex->MSN drive ~5x, which empirically silenced motor pools (1798/1800
+    # trials all-zero motor counts at seed 42). To preserve effective drive
+    # while honoring Bolam-2000 "few synapses per pair" biology, scale weight
+    # inversely with density. Original (density=1.0, weight=25) -> default scaled
+    # weight at density=0.20 is 25/0.2 = 125. Override via cortex_to_msn_weight_override
+    # kwarg if needed.
+    if cortex_to_msn_density_same < 1.0:
+        # Scale weight to compensate density reduction. Original (density=1.0, weight=25)
+        # gives 25 weight-units per cortex-MSN pair on average. After R3.5's density=0.20,
+        # naive weight=25 gives 5 weight-units (5x weaker drive). Compensating gives
+        # weight = 25 / density = 125 at density 0.20.
+        cortex_to_msn_weight_same = 25.0 / cortex_to_msn_density_same
+    else:
+        cortex_to_msn_weight_same = 25.0
+    cortex_to_msn_weight_same = float(locals().get("cortex_to_msn_weight_same_override", cortex_to_msn_weight_same))
+    # When using sparse density (post-R3.5 default 0.20), scale weight to recover drive.
+    # Setting cortex_to_msn_weight_same_override=25.0 reverts to the broken
+    # weak-cascade behavior; setting density_same=1.0 reverts to pre-R3.5.
     # Cluster E v1 (2026-04-29): when topography is on, cortex_X -> str_D{1,2}_X
     # pathways carry distance_sigma so connections are Gaussian-weighted by
     # 2D corner distance. Same-action pairs share the same corner (distance=0,
@@ -730,7 +749,7 @@ def build_bg_brain_regions(
             same = (cortex_action == str_action)
             if same:
                 density = cortex_to_msn_density_same
-                weight = 25.0
+                weight = cortex_to_msn_weight_same
                 gate = "cortex_to_d1"
             elif enable_bg_cross_projections and (cortex_action, str_action) in _selected_cross:
                 density = cortex_to_msn_density_cross
@@ -899,7 +918,7 @@ def build_bg_brain_regions(
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
             from_region=f"cortex_{action}", to_region=f"str_patch_{action}",
-            density=cortex_to_msn_density_same, weight_mean=25.0,
+            density=cortex_to_msn_density_same, weight_mean=cortex_to_msn_weight_same,
             weight_jitter=0.2, plastic=True, plasticity_gate="cortex_to_d1",
         ))
         pathways.append(RegionPathway(
@@ -1790,8 +1809,14 @@ def run_moving_goal_episode(
     cfg.enable_reward_modulation = True
     cfg.reward_learning_rate = float(learning_rate)
     cfg.reward_eligibility_tau_ms = float(reward_eligibility_tau_ms)
-    # cortex->D1 weight_mean=25 needs w_max above that or soft-bound STDP collapses it
-    cfg.stdp_w_max = 30.0
+    # cortex->D1 weight_mean needs w_max above that or soft-bound STDP collapses it.
+    # When R3.5's density reduction triggers weight scaling (e.g. weight=125 at
+    # density=0.20), w_max must be ABOVE that — otherwise LTP events drive weights
+    # negative, collapsing the cascade silently. Recompute the post-R3.5 weight
+    # locally (mirrors build_bg_brain_regions logic).
+    _ctx_msn_density = 0.20  # R3.5 default
+    _ctx_msn_weight = (25.0 / _ctx_msn_density) if _ctx_msn_density < 1.0 else 25.0
+    cfg.stdp_w_max = max(30.0, _ctx_msn_weight * 1.2)
     cfg.enable_hebbian_learning = False
     cfg.enable_homeostasis = False
     cfg.enable_short_term_plasticity = False
