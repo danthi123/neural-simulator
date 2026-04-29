@@ -168,8 +168,14 @@ Tier-3 evals queued: C v2 (bkoii8a0q), E (bog1yy7kb), A+E (b3l32yl39). C v2+E co
 
 - **C v2 tier-3 (n=6):** 13.68, 4.55, 6.52, 13.15, 15.85, 4.27 → **9.67 ± 5.13**
 - **E tier-3 (n=6):** 10.63, 5.66, 4.56, 9.44, 12.70, 4.96 → **7.99 ± 3.39**
+- **C v2+E composition (n=3):** 17.33, 4.47, 8.17 → **9.99 ± 6.62**
+- **A+E tier-3 (n=6):** 10.73, 6.88, 6.18, 7.22, 6.89, 5.81 → **7.28 ± 1.76**
 
-**Both regress slightly vs 3-seed FIX baseline 7.27 ± 3.44, with high variance.** The n=3 advantages were partly selection bias.
+**A+E shows distinctive low variance** (1.76 vs E's 3.39 vs C v2's 5.13) at the same mean as FIX baseline 3-seed (7.27 ± 3.44). Per-phase distribution is also more uniform: A+E [P0=1.14, P1=2.20, P2=1.92, P3=2.03] vs baseline [1.60, 1.68, 1.18, 2.80]. P3 (post-3-transitions) drops 28%. P0 drops 29%. So A+E doesn't reduce the SUM but redistributes — more consistent across phases, less bad-luck at any single phase.
+
+This is a different KIND of cluster benefit: variance reduction rather than mean improvement. Whether it counts as cheat-5 closure depends on definition. If cheat-5 closure = "agent reliably navigates regardless of seed/phase," A+E shows GO signal. If it = "lower mean cumulative distance," current clusters don't deliver.
+
+**FIX baseline tier-3 (n=6) still pending** — this is the critical anchor. If baseline at n=6 also has tighter variance (std ~1-2), then A+E's variance reduction is illusory. If baseline has std 3-5, A+E's tight variance is real signal.
 
 ### Run-to-run non-determinism revealed
 
