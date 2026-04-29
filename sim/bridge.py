@@ -4399,8 +4399,20 @@ class SimulationBridge:
                     decay_factor
                 )
                 
-                # Apply reward modulation if reward signal is non-zero
+                # Apply reward modulation if reward signal is non-zero.
+                # R2.4 (2026-04-29): aversive-vs-appetitive magnitude
+                # asymmetry. Per Schultz98/Schultz16, aversive responses
+                # are observed as DEPRESSIONS below tonic DA, of smaller
+                # magnitude than appetitive activations. With the D1/D2
+                # sign array (R1.1), the qualitative asymmetry of LTP-vs-LTD
+                # already follows from the signed scalar; we additionally
+                # scale negative reward_prediction_error by the configured
+                # reward_aversive_scale (default 0.5) so the magnitude of
+                # negative-reward plasticity is reduced relative to positive.
                 reward_prediction_error = cfg.current_reward_signal - cfg.reward_baseline
+                if reward_prediction_error < 0.0:
+                    aversive_scale = float(getattr(cfg, "reward_aversive_scale", 0.5))
+                    reward_prediction_error = reward_prediction_error * aversive_scale
                 if abs(reward_prediction_error) > 1e-6:  # Only update if there's a reward signal
                     # Effective lr is reward_learning_rate × neuromod plasticity_rate
                     # multiplier (subsystem off → multiplier 1.0, no change).

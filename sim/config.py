@@ -185,6 +185,15 @@ class CoreSimConfig:
     reward_eligibility_tau_ms: float = 1000.0  # Eligibility trace decay (ms, typical: 500-2000ms)
     reward_baseline: float = 0.0           # Expected reward (for prediction error)
     current_reward_signal: float = 0.0     # Current reward value (updated externally or via task)
+    # R2.4 (2026-04-29): aversive-vs-appetitive magnitude asymmetry.
+    # Schultz98/Schultz16/Fiorillo 2013: phasic DA "activations" to aversive
+    # stimuli largely reflect physical-impact artifacts; the underlying
+    # valence response is a *depression* below tonic, smaller in magnitude
+    # than appetitive activations. Models this asymmetry by scaling
+    # negative reward_prediction_error by this factor (0.0 = aversive
+    # rewards do nothing; 1.0 = symmetric; default 0.5 reflects the
+    # ~50% magnitude observed in DA recordings).
+    reward_aversive_scale: float = 0.5
 
     # C2b: Neuromodulator subsystem (Session E.1)
     # Opt-in framework subsuming the legacy current_reward_signal path. When
