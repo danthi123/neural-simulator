@@ -342,6 +342,12 @@ def build_bg_brain_regions(
         if enable_cluster_e_topography
         else {}
     )
+    # cortex_{N,E,S,W}: per-action motor-cortex (M1-equivalent) pools.
+    # Anatomy: regular-spiking pyramidal neurons (RS preset). The "cortex_"
+    # prefix is project shorthand; biologically these stand in for primary
+    # motor cortex columns wired in topographic action channels (cf.
+    # Cluster E catalog, Kandel 6e Ch 38). Each pool drives the
+    # corresponding striatal D1/D2 channel (cortex -> str_d1_X / str_d2_X).
     for action_idx, action in enumerate(ACTION_NAMES):
         kw = dict(_topo_kw)
         if enable_cluster_e_topography:
@@ -416,6 +422,15 @@ def build_bg_brain_regions(
 
     # Cluster B.2 (2026-04-28): striatal fast-spiking interneurons (FSIs).
     # ~1% of striatal cells; PV-positive; broadcast inhibition. One small
+    # str_FS_{N,E,S,W}: per-action striatal fast-spiking interneurons.
+    # Strict naming: this is the **PV-FSI** class (parvalbumin-positive
+    # fast-spiking) — one of EIGHT distinct striatal GABAergic interneuron
+    # classes catalogued in Tepper-2018 (the others are NPY-LTS, NPY-NGF,
+    # CR, TH/THIN, FAI, SABI, plus the cholinergic ChI/TAN). The "str_FS"
+    # prefix in this codebase models PV-FSI specifically — it is NOT a
+    # generic "all striatal interneurons" pool. The class is named "FS"
+    # for its short-AP / high-rate firing (Tepper 2018 ch 8). Catalog
+    # ref: TK-2017 ch 8; Tepper 2018 §"Functional Significance".
     # FS pool per action, all GABAergic (exc_fraction=0.0) so the outgoing
     # synapses are auto-derived inhibitory by the bridge. No internal
     # recurrence: FSIs just receive cortex drive and broadcast to all MSNs.
@@ -462,6 +477,12 @@ def build_bg_brain_regions(
             izh_neuron_type=NeuronType.IZH2007_GPE_PACEMAKER.name,
             action_index=action_idx,
         ))
+        # gpi_{N,E,S,W}: BG-output complex per action (GPi/SNr in primates;
+        # predominantly SNr in rodents — internal-pallidal cells are sparse
+        # in rats/mice and SNr carries most output-nucleus work). Tonic
+        # 40-80 Hz GABAergic projection neurons. Disinhibition via direct
+        # pathway (D1 MSN -> GPi/SNr) is the canonical "go" mechanism.
+        # Catalog refs: Kandel 6e Ch 38 p 935-943; PBR-160 ch 9 Deniau.
         regions.append(BrainRegion(
             name=f"gpi_{action}",
             n_neurons=n_gpi_per_action,
@@ -528,6 +549,14 @@ def build_bg_brain_regions(
         ))
 
     # Dopamine neurons (single pool, broadcasts via neuromodulator subsystem).
+    # Anatomy note: this is the project's A9-equivalent — SNc dopaminergic
+    # neurons that drive nigrostriatal projections. The mesolimbic A10/VTA
+    # → NAc/PFC arms are NOT separately modeled; the single `dopamine`
+    # pool collapses A9 + A10 into one broadcast modulator. With Cluster
+    # C v2 (`--enable-compartmentalized-da`), per-action DA channels
+    # (dopamine_{N,E,S,W}) decompose this into per-action targeting,
+    # though still A9-typed.
+    # Catalog refs: Kandel 6e Ch 11 (DA system); PBR-160 ch 11 (Tepper & Lee).
     # SNc DA neurons lack KCC2 → ECl ~−55 mV (PBR-160 ch 11). GABA_A is
     # depolarizing or even excitatory at rest in adult SNc; override the
     # cortical-pyramidal default of −75 mV.

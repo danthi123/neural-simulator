@@ -185,6 +185,16 @@ class CoreSimConfig:
     reward_eligibility_tau_ms: float = 1000.0  # Eligibility trace decay (ms, typical: 500-2000ms)
     reward_baseline: float = 0.0           # Expected reward (for prediction error)
     current_reward_signal: float = 0.0     # Current reward value (updated externally or via task)
+    # NAMING NOTE (2026-04-29 catalog): `current_reward_signal` is a SIGNED SCALAR
+    # that conflates two biologically distinct DA responses (Schultz98/16):
+    #   (1) phasic activation above tonic DA (positive value); LTP via D1
+    #   (2) phasic depression below tonic DA (negative value); LTD via D1 / LTP via D2
+    # The receptor-level effect of (2) is NOT a sign-flipped (1). R2.4
+    # added `reward_aversive_scale` to handle the magnitude asymmetry, and
+    # Cluster C v1 (`--enable-tonic-da`) replaces this scalar with a real
+    # `dopamine` neuromodulator concentration (tonic + phasic deviations).
+    # The legacy scalar path remains for backward compatibility when the
+    # DA modulator isn't registered.
     # Cluster C v2 (2026-04-29): last action selected by agent. Read by
     # `from_action_specific_reward` production rule so per-action DA
     # modulators only fire when the matching action is selected. -1 means
