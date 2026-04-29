@@ -540,15 +540,25 @@ def build_bg_brain_regions(
     _n_keep = max(0, int(round(len(_all_cross_pairs) * cross_projection_density)))
     _selected_cross = set(_topology_rng.sample(_all_cross_pairs, _n_keep))
 
+    # R3.5 (2026-04-29): cortex->MSN density tightened to 0.20 (was 1.0)
+    # per Bolam-2000 / Kincaid 1998 (catalog ref). At our scale (25 cortex
+    # x 50 MSN per pool) density 0.20 ~ 5 cortex inputs per MSN, ~10 MSN
+    # targets per cortex axon — matches "sparse + decorrelated" biological
+    # convergence. Original density=1.0 was anatomically dense (every
+    # cortex neuron synapsing every MSN). Re-tunable via runner kwarg
+    # cortex_to_msn_density if needed; weight_mean kept at 25.0 to
+    # maintain net excitatory drive given the sparser fan-in.
+    cortex_to_msn_density_same = 0.20
+    cortex_to_msn_density_cross = 0.10  # sparser still per Bolam
     for cortex_action in ACTION_NAMES:
         for str_action in ACTION_NAMES:
             same = (cortex_action == str_action)
             if same:
-                density = 1.0
+                density = cortex_to_msn_density_same
                 weight = 25.0
                 gate = "cortex_to_d1"
             elif enable_bg_cross_projections and (cortex_action, str_action) in _selected_cross:
-                density = 1.0
+                density = cortex_to_msn_density_cross
                 weight = cross_projection_weight
                 gate = "bg_cross_projections"
             else:
