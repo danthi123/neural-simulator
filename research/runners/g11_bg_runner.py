@@ -238,7 +238,7 @@ def build_bg_brain_regions(
     # avoids cascade saturation that broke previous dense sensory encoding.
     if enable_hippocampus:
         regions.append(BrainRegion(
-            name="place_cells",
+            name="sensor_place_readout",
             n_neurons=n_hippocampus_per_layer,
             exc_fraction=1.0,
             internal_density=0.0,
@@ -247,7 +247,7 @@ def build_bg_brain_regions(
             izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
         ))
         regions.append(BrainRegion(
-            name="goal_cells",
+            name="ppc_goal_input",
             n_neurons=n_hippocampus_per_layer,
             exc_fraction=1.0,
             internal_density=0.0,
@@ -664,13 +664,13 @@ def build_bg_brain_regions(
     if enable_hippocampus:
         for action in ACTION_NAMES:
             pathways.append(RegionPathway(
-                from_region="place_cells", to_region=f"cortex_{action}",
+                from_region="sensor_place_readout", to_region=f"cortex_{action}",
                 density=1.0, weight_mean=hippocampus_to_cortex_weight,
                 weight_jitter=0.2, plastic=True,
                 plasticity_gate="hippo_to_cortex",
             ))
             pathways.append(RegionPathway(
-                from_region="goal_cells", to_region=f"cortex_{action}",
+                from_region="ppc_goal_input", to_region=f"cortex_{action}",
                 density=1.0, weight_mean=hippocampus_to_cortex_weight,
                 weight_jitter=0.2, plastic=True,
                 plasticity_gate="hippo_to_cortex",
@@ -687,7 +687,7 @@ def build_bg_brain_regions(
     # trial loop is updated.
     if enable_beacon_perception and enable_hippocampus:
         pathways.append(RegionPathway(
-            from_region="beacon_sensors", to_region="goal_cells",
+            from_region="beacon_sensors", to_region="ppc_goal_input",
             density=1.0, weight_mean=beacon_to_goal_weight,
             weight_jitter=0.2, plastic=True,
             plasticity_gate="beacon_to_goal",
@@ -699,7 +699,7 @@ def build_bg_brain_regions(
     # activation pattern, so place cells learn to fire at specific positions.
     if enable_landmarks and enable_hippocampus:
         pathways.append(RegionPathway(
-            from_region="landmark_sensors", to_region="place_cells",
+            from_region="landmark_sensors", to_region="sensor_place_readout",
             density=1.0, weight_mean=landmark_to_place_weight,
             weight_jitter=0.2, plastic=True,
             plasticity_gate="landmark_to_place",
@@ -715,7 +715,7 @@ def build_bg_brain_regions(
         if enable_hippocampus:
             # goal_cells → PFC for working memory of goal
             pathways.append(RegionPathway(
-                from_region="goal_cells", to_region="dlpfc_wm",
+                from_region="ppc_goal_input", to_region="dlpfc_wm",
                 density=0.5, weight_mean=goal_to_pfc_weight,
                 weight_jitter=0.2, plastic=True,
                 plasticity_gate="dlpfc_wm_pathways",
@@ -1156,7 +1156,7 @@ def build_bg_brain_regions(
         # only exists in that case). Coexists with landmark_sensors->place_cells.
         if enable_hippocampus:
             pathways.append(RegionPathway(
-                from_region="ca1", to_region="place_cells",
+                from_region="ca1", to_region="sensor_place_readout",
                 density=0.50, weight_mean=5.0, weight_jitter=0.2,
                 plastic=False,
             ))
@@ -2560,10 +2560,10 @@ def run_moving_goal_episode(
                 replay_gy = float(np.random.randint(0, grid_size))
             place_dsq = (hippo_pref_x - replay_x) ** 2 + (hippo_pref_y - replay_y) ** 2
             place_drive = hippocampus_drive_max_pA * np.exp(-place_dsq / (2.0 * hippocampus_drive_sigma ** 2))
-            bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.asarray(place_drive, dtype=cp.float32)
+            bridge.cp_external_input_current[region_indices_cp["sensor_place_readout"]] = cp.asarray(place_drive, dtype=cp.float32)
             goal_dsq = (hippo_pref_x - replay_gx) ** 2 + (hippo_pref_y - replay_gy) ** 2
             goal_drive = hippocampus_drive_max_pA * np.exp(-goal_dsq / (2.0 * hippocampus_drive_sigma ** 2))
-            bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.asarray(goal_drive, dtype=cp.float32)
+            bridge.cp_external_input_current[region_indices_cp["ppc_goal_input"]] = cp.asarray(goal_drive, dtype=cp.float32)
             hippo_active = False  # skip the normal-flow hippo drive below
         else:
             hippo_active = enable_hippocampus and (
@@ -2577,7 +2577,7 @@ def run_moving_goal_episode(
             else:
                 place_dsq = (hippo_pref_x - float(x)) ** 2 + (hippo_pref_y - float(y)) ** 2
                 place_drive = hippocampus_drive_max_pA * np.exp(-place_dsq / (2.0 * hippocampus_drive_sigma ** 2))
-                bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.asarray(place_drive, dtype=cp.float32)
+                bridge.cp_external_input_current[region_indices_cp["sensor_place_readout"]] = cp.asarray(place_drive, dtype=cp.float32)
             # Goal cells silencing test (PFC Stage 2): during the silence
             # window, goal_cells are forced to 0 — tests whether PFC working
             # memory holds the goal info during the delay.
@@ -2585,7 +2585,7 @@ def run_moving_goal_episode(
                               and step >= goal_silence_after_step
                               and step < goal_silence_after_step + goal_silence_duration)
             if in_goal_silence:
-                bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.float32(0.0)
+                bridge.cp_external_input_current[region_indices_cp["ppc_goal_input"]] = cp.float32(0.0)
             elif enable_beacon_perception and beacon_replaces_goal:
                 # Replace mode: don't drive goal_cells directly. The
                 # beacon → goal_cells pathway must learn to drive them
@@ -2594,13 +2594,13 @@ def run_moving_goal_episode(
             else:
                 goal_dsq = (hippo_pref_x - float(gx)) ** 2 + (hippo_pref_y - float(gy)) ** 2
                 goal_drive = hippocampus_drive_max_pA * np.exp(-goal_dsq / (2.0 * hippocampus_drive_sigma ** 2))
-                bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.asarray(goal_drive, dtype=cp.float32)
+                bridge.cp_external_input_current[region_indices_cp["ppc_goal_input"]] = cp.asarray(goal_drive, dtype=cp.float32)
         elif enable_hippocampus:
             # Curriculum phase 1: keep hippo neurons silent (zero drive) so they
             # don't fire and don't accumulate STDP eligibility. Cortex→D1 trains
             # without hippo noise.
-            bridge.cp_external_input_current[region_indices_cp["place_cells"]] = cp.float32(0.0)
-            bridge.cp_external_input_current[region_indices_cp["goal_cells"]] = cp.float32(0.0)
+            bridge.cp_external_input_current[region_indices_cp["sensor_place_readout"]] = cp.float32(0.0)
+            bridge.cp_external_input_current[region_indices_cp["ppc_goal_input"]] = cp.float32(0.0)
 
         # Landmark perception drive (Item 1 Stage 2, 2026-04-27).
         # Drives landmark_sensors based on agent's bearing+distance to a
@@ -3136,8 +3136,22 @@ def main():
                     help="Bias initial sensory->cortex weights by directional alignment (requires --learned-perception)")
     ap.add_argument("--informed-init-alpha", type=float, default=8.0,
                     help="Strength of positive-only directional prior (default 8.0; aligned weight ~24.5, orthogonal ~0.5)")
-    ap.add_argument("--hippocampus", action="store_true",
-                    help="Enable hippocampal module: 64 place cells + 64 goal cells with sparse Gaussian tuning, plastic to cortex")
+    # Canonical: --enable-place-goal-readout. The flag adds two abstract
+    # sensor-driven regions (sensor_place_readout, ppc_goal_input). Per
+    # glossary: the readout cells are NOT canonical allocentric place cells
+    # (sensor-driven, not allocentric per O'Keefe & Nadel 1978 criteria);
+    # the goal-encoding cells are anatomically PPC-like, not hippocampal.
+    # Legacy --hippocampus kept as alias for one release cycle (2026-04-29
+    # Wave-1 renames #4/#5/#6). For canonical hippocampus biology, use
+    # --enable-cluster-d-hippocampus (DG/CA3/CA1 trisynaptic pathway).
+    ap.add_argument("--enable-place-goal-readout", "--hippocampus",
+                    action="store_true", dest="hippocampus",
+                    help="Enable place-goal readout module: 64 sensor-driven "
+                         "place readout cells (sensor_place_readout) + 64 "
+                         "goal-vector cells (ppc_goal_input) with sparse "
+                         "Gaussian tuning, plastic to cortex. NOT canonical "
+                         "allocentric place cells; for that use "
+                         "--enable-cluster-d-hippocampus.")
     ap.add_argument("--da-gated-wta", action="store_true",
                     help="Scale motor FS->motor inhibition by reward-EMA gating_strength (the 'DA gate'). Requires --motor-lateral-inhibition + --adaptive-da")
     ap.add_argument("--goal-schedule", type=str, default="default",

@@ -358,7 +358,7 @@ python -m research.runners.g11_bg_runner --probe-action W
 
 # Flagship biology-grounded research run (1800 steps, ~16 min, 30.6% over baseline)
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception --enable-dlpfc-wm \
+    --enable-place-goal-readout --learned-perception --enable-dlpfc-wm \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --enable-landmark-sensor --landmarks-replace-place \
@@ -411,7 +411,7 @@ many opt-in flags for biology-grounded learning experiments:
 # 🎉 Current best — 4 of 5 cheats closed, biology-grounded BEATS cheats-allowed
 # (p=0.00045, 30.6% over baseline; 6/6 seeds). Includes v3 lateral inhibition (default 2026-04-28):
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception --enable-dlpfc-wm \
+    --enable-place-goal-readout --learned-perception --enable-dlpfc-wm \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --enable-landmark-sensor --landmarks-replace-place \
@@ -423,14 +423,14 @@ python -m research.runners.g11_bg_runner --moving-goal \
 
 # Best with cheats kept on (engineering shortcut, p=0.018, 25% over baseline):
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception --enable-dlpfc-wm \
+    --enable-place-goal-readout --learned-perception --enable-dlpfc-wm \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 --seed N --n-steps 1800
 # → sum 4.41 (6-seed)
 ```
 
 Available capabilities (all opt-in):
-- **Hippocampus** (`--hippocampus`) — place + goal cells with sparse Gaussian tuning
+- **Place + goal readout** (`--enable-place-goal-readout`; legacy alias `--hippocampus`) — sensor-driven place-readout cells (sensor_place_readout) + PPC-like goal-vector cells (ppc_goal_input) with sparse Gaussian tuning. Not canonical hippocampus biology — for that use `--enable-cluster-d-hippocampus` (DG/CA3/CA1 trisynaptic pathway).
 - **Sensory layer** (`--learned-perception`) — 49 (dx, dy)-tuned cells learning position→action
 - **dlPFC working memory** (`--enable-dlpfc-wm`; legacy alias `--pfc`) — recurrent dlPFC attractor pool implementing persistent activity (catalog G.06 / G.08)
 - **Beacon perception** (`--beacon-perception` `--beacon-replaces-goal`) — 8 directional sensors detecting beacon, replaces direct goal coords

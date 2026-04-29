@@ -1076,7 +1076,7 @@ def test_cluster_d_ca1_to_place_cells_only_with_hippocampus():
     # Cluster D alone: no ca1 -> place_cells (place_cells region absent).
     _, pathways_d_only = build_bg_brain_regions(enable_cluster_d_hippocampus=True)
     pairs_d_only = {(p.from_region, p.to_region) for p in pathways_d_only}
-    assert ("ca1", "place_cells") not in pairs_d_only, \
+    assert ("ca1", "sensor_place_readout") not in pairs_d_only, \
         "ca1 -> place_cells should be omitted when --enable-hippocampus is off"
 
     # Cluster D + hippocampus: readout pathway present.
@@ -1084,7 +1084,7 @@ def test_cluster_d_ca1_to_place_cells_only_with_hippocampus():
         enable_cluster_d_hippocampus=True, enable_hippocampus=True,
     )
     pairs_both = {(p.from_region, p.to_region) for p in pathways_both}
-    assert ("ca1", "place_cells") in pairs_both, \
+    assert ("ca1", "sensor_place_readout") in pairs_both, \
         "ca1 -> place_cells should be present when --hippocampus is also on"
 
     # And the existing landmark_sensors -> place_cells pathway is unchanged
@@ -1095,7 +1095,7 @@ def test_cluster_d_ca1_to_place_cells_only_with_hippocampus():
         enable_landmarks=True,
     )
     pairs_full = {(p.from_region, p.to_region) for p in pathways_full}
-    assert ("landmark_sensors", "place_cells") in pairs_full, \
+    assert ("landmark_sensors", "sensor_place_readout") in pairs_full, \
         "Cluster D must not remove existing landmark_sensors -> place_cells"
     # And new landmark_sensors -> ec is added.
     assert ("landmark_sensors", "ec") in pairs_full, \
@@ -1372,7 +1372,7 @@ def test_compartmentalized_da_action_index_populated_on_regions():
                     f"{name} action_index expected {idx}, got {by_name[name].action_index}"
 
     # Non-action-specific regions
-    for name in ("stn", "snc", "sensory", "place_cells", "goal_cells",
+    for name in ("stn", "snc", "sensory", "sensor_place_readout", "ppc_goal_input",
                  "ec", "dg", "dg_fs", "ca3", "ca1"):
         if name in by_name:
             assert by_name[name].action_index is None, \

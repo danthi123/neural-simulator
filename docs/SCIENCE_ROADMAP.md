@@ -396,7 +396,7 @@ indicators are unreliable; always validate with 6+ seeds.
 **Recommended config (2-goal slow-change):**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception \
+    --enable-place-goal-readout --learned-perception \
     --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
     --curriculum --curriculum-warmup-steps 600 \
     --curriculum-phase2-cortex-gain 0.2 \
@@ -469,7 +469,7 @@ These match what real animals use.
 **Recipe:**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception --enable-dlpfc-wm \
+    --enable-place-goal-readout --learned-perception --enable-dlpfc-wm \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --enable-landmark-sensor --landmarks-replace-place \
@@ -560,7 +560,7 @@ reward = sign(intensity_after - intensity_before)  # ±1 / 0
 **Recipe (current flagship — includes v3 lateral inhibition):**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
-    --hippocampus --learned-perception --enable-dlpfc-wm \
+    --enable-place-goal-readout --learned-perception --enable-dlpfc-wm \
     --beacon-perception --beacon-replaces-goal \
     --cue-reflex --cue-reflex-replaces-heuristic \
     --enable-landmark-sensor --landmarks-replace-place \

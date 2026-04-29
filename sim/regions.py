@@ -339,6 +339,12 @@ class RegionManager:
         # claim; we model only dlPFC working-memory persistent activity
         # (catalog G.06 / G.08). Renamed to "dlpfc_wm".
         "pfc": "dlpfc_wm",
+        # 2026-04-29 Wave-1 renames #5/#6: legacy --hippocampus regions are
+        # sensor-driven readout abstractions, not canonical hippocampus.
+        # Per glossary: place_cells are not allocentric per O'Keefe-Nadel
+        # 1978 criteria (sensor-driven); goal_cells are anatomically PPC-like.
+        "place_cells": "sensor_place_readout",
+        "goal_cells": "ppc_goal_input",
     }
 
     def _canonicalize_region_name(self, region_name: str) -> str:
