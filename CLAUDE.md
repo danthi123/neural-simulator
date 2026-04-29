@@ -406,9 +406,32 @@ cortex frozen (or partial) + input layers thawed. Biologically: real
 critical periods close gradually, gated by neuromodulators, allowing
 sensory cortex to mature before association cortex.
 
-### Recommended configuration (current best 2026-04-27/28)
+### Recommended configuration (current best 2026-04-29)
 
-**🎉 Current flagship — 4 of 5 cheats closed, biology-grounded BEATS cheats-allowed:**
+**🎯 Biology-grounded flagship (NEW 2026-04-29) — A+E + deterministic single-goal:**
+```bash
+python -m research.runners.g11_bg_runner --moving-goal \
+    --bg-lateral-inhibition \
+    --enable-d1-d2-asymmetry --enable-striatal-fsis \
+    --enable-cluster-a-closed-loop --enable-cluster-e-topography \
+    --deterministic \
+    --seed N --n-steps 1800
+```
+Sum **3.31 ± 0.74 (n=6, single-goal)** — beats the 2026-04-27 documented
+"4.08 ± 0.49 full-flagship-cheats-allowed" by **19%**. No `--hippocampus`,
+no `--learned-perception`, no `--sensed-reward`, no curriculum. The
+biology buildout (R-pass + Cluster B + closed BG loop A + topographic
+cortex E) replaces all of those engineering shortcuts.
+
+`--deterministic` sets `CUBLAS_WORKSPACE_CONFIG=:4096:8` before cupy
+import. Tightens seed-to-seed noise floor from ±3-5 to ±0.7. Required
+to detect cluster effects below the historical noise floor. ~10-30%
+slowdown.
+
+See [`research/findings/2026-04-29-overnight-FINAL.md`](research/findings/2026-04-29-overnight-FINAL.md)
+for the full eval matrix (60+ runs across 14 conditions).
+
+**Earlier flagship (2026-04-27 — full perception arc + adaptive DA):**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
     --hippocampus --learned-perception --pfc \
@@ -427,6 +450,11 @@ With `--bg-lateral-inhibition` added 2026-04-28: 4.26 ± 0.50 (no regression).
 distance-based reward.** Reward computed from beacon-intensity gradient.
 **Biology-grounded (4.08) BEATS cheats-allowed (4.41)** — closing perception/reward
 cheats actually *helps* learning.
+
+This config was the documented best until 2026-04-29's biology-grounded
+A+E recipe (above) reduced to 3.31. The earlier config still has merit
+for richer perception/working-memory tests; the new biology recipe is
+strictly better for the cheat-5 multi-goal navigation benchmark.
 
 **Cheat #5 — ON HOLD pending biology buildout** (reframed 2026-04-28 afternoon; original "closed by design" framing was too quick):
 - **v3 (`--bg-lateral-inhibition`) — GO and shipped.** Adds MSN
