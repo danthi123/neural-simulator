@@ -61,9 +61,24 @@ C v2 subagent (`af7014d0f2011f204`) completed at `b3f5f87` — implementation, 6
 
 Aggregator: `python -m research.runners.aggregate_2026_04_29_evals`.
 
-## Early result (n=1, seed 42 only)
+## Cluster A eval — COMPLETE (NULL RESULT)
 
-Bit-identical between baseline and +Cluster A: both sum to **22.39**. Action logs DIFFER (first divergence at step 1) but the agent ends up at identical positions in the final 25% of each phase. This means the metric is partially insensitive to mid-phase trajectory at seed 42 — could be a metric saturation issue, or could mean Cluster A genuinely doesn't help at this seed. n=2 + n=3 (seeds 43, 44) will clarify.
+n=3 eval done. **Cluster A is statistically a no-op:**
+
+| Condition | Seed 42 | Seed 43 | Seed 44 | Mean ± std |
+|---|---|---|---|---|
+| baseline (post-R) | 22.39 | 18.72 | 18.22 | **19.78 ± 2.28** |
+| + Cluster A | 22.39 | 18.72 | 18.22 | **19.78 ± 2.28** |
+
+All 12 final-quarter values are **bit-identical** across the no-A and +A runs at every seed. Trajectory logs do differ (first divergence at step 2 of seed 42; total 8 steps differ in 1801) but the agent's final-quarter end states are perfectly conserved. Cluster A's static pathways (cortex→stn weight 3.0, thal→cortex weight 5.0, both plastic=False) introduce mid-trial perturbations that don't reach the end-of-phase attractor.
+
+Likely cause: pathway weights are too weak relative to other drives (sensory, BG cascade output, OU noise). The static contribution is ~5% of total drive and doesn't alter end-state attractor. To rescue Cluster A: try plastic=True OR weights 5-10× stronger. Both are follow-up experiments.
+
+## Methodology footnote — multi-goal regression source
+
+The current-code baseline (19.78 ± 2.28) **exactly matches** the catalog's documented "v3 + B.1 + B.2 (weight 8.0, ORIGINAL — broken)" entry of 19.78 ± 2.28. The corrected (weight 2.0) sum was 9.50 ± 0.85 historically. Current code has str_fs_to_msn_weight=2.0 (correctly retuned) but R3.5's `cortex_to_msn_density: 1.0 → 0.20` reduces cortex→MSN drive by 5×, plausibly producing the same broken-cascade dynamics that weight=8.0 originally did.
+
+Net effect: R3.5 may have over-corrected. Per-MSN drive at density=0.20 + weight=25 ≈ 125 weight-units vs original ≈ 625 weight-units. To preserve effective drive while satisfying Bolam's "1-2 synapses per pair" biology, weight_mean should rise proportionally (e.g., ~125) when density drops to 0.20. Future cluster work should consider re-tuning OR accept 19.78 as the new baseline.
 
 ## Methodology notes
 
