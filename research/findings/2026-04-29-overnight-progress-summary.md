@@ -61,6 +61,32 @@ C v2 subagent (`af7014d0f2011f204`) completed at `b3f5f87` — implementation, 6
 
 Aggregator: `python -m research.runners.aggregate_2026_04_29_evals`.
 
+## Combo eval — COMPLETE (4 of 8 conditions, ALL NULL)
+
+After Cluster A null result, the combo eval added Cluster C v1 (tonic DA) and A+C v1+B.3 conditions. **ALL FOUR conditions produced bit-identical sums across all 3 seeds:**
+
+| Condition | Seed 42 | Seed 43 | Seed 44 | Mean ± std |
+|---|---|---|---|---|
+| baseline (post-R) | 22.39 | 18.72 | 18.22 | 19.78 ± 2.28 |
+| + Cluster A | 22.39 | 18.72 | 18.22 | 19.78 ± 2.28 |
+| + Cluster C v1 only | 22.39 | 18.72 | 18.22 | 19.78 ± 2.28 |
+| A + C v1 + B.3 | 22.39 | 18.72 | 18.22 | 19.78 ± 2.28 |
+
+This is striking. Even Cluster C v1 — which fundamentally changes the reward-modulation signal (DA concentration deviation vs raw reward) — has zero effect. The minimal-flagship `(--bg-lateral-inhibition --enable-d1-d2-asymmetry --enable-striatal-fsis)` cascade reaches an attractor that is **insensitive to forward-propagation perturbations and even to plasticity-signal redefinition**.
+
+### Diagnosis: heuristic dominance
+
+The runner's default heuristic (`--heuristic-strength 1.0`) injects **800 pA** into goal-direction cortex pools every step. This is overwhelming compared to cluster contributions (cortex→stn weight 3.0, thal→cortex weight 5.0, DA-modulated weight updates ~0.05 × reward × eligibility). With heuristic on, cortex firing is essentially forced by the goal direction — the BG cascade carries a heuristic-determined signal through to motor selection, but cluster work changes nothing visible.
+
+Action logs DO differ across conditions (~8/1801 steps for Cluster A), but the agent converges to identical final-quarter positions regardless — likely because the heuristic re-corrects any cluster-induced perturbation before the end of each phase.
+
+### Implications
+
+- The current minimal flagship config cannot test cheat-5 closure — heuristic dominates.
+- The queued **no-heuristic diagnostic** (--heuristic-strength 0.0, baseline + A+C+E variants) is the critical test. Without the heuristic, the BG cascade has to carry the goal-directed signal entirely.
+- If clusters help under no-heuristic, that's the cheat-5 closure signal.
+- If clusters DON'T help under no-heuristic either, then either (a) the BG cascade alone can't learn, or (b) deeper architectural changes (compartmental neurons, late-LTP, etc) are needed.
+
 ## Cluster A eval — COMPLETE (NULL RESULT)
 
 n=3 eval done. **Cluster A is statistically a no-op:**
