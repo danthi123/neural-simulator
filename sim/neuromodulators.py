@@ -112,14 +112,27 @@ class ProductionRule:
             as a salience floor — small fluctuations don't trigger pauses.
         "from_novelty"
             (Reserved for future ACh; emits 0 for now.)
+        "from_region_firing"
+            Reads mean firing rate across `source_regions` (using bridge's
+            cp_firing_states + region_manager.indices) and produces
+            `sensitivity * (rate_ema - threshold)` per step when above
+            threshold, else 0. Uses `window_ms` as the EMA tau for the
+            rate estimate. Models neuropeptide co-release: D1 MSNs firing
+            cause dynorphin/SP release; D2 MSNs firing cause enkephalin
+            release (PBR-160 ch 16 McGinty). Requires `bridge.region_manager`
+            and `bridge.cp_firing_states` to be available; if either is
+            missing, emits 0 (graceful no-op).
 
     sensitivity, threshold, window_ms: tunable per rule.
+    source_regions: optional List[str] of region names; only used by
+        rule_type="from_region_firing".
     """
 
     rule_type: str
     sensitivity: float = 1.0
     threshold: float = 0.5
     window_ms: float = 500.0
+    source_regions: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -510,6 +523,43 @@ class NeuromodulatorManager:
             # Reserved for future ACh
             return 0.0
 
+        if rt == "from_region_firing":
+            # R3.6 (2026-04-29): neuropeptide co-release driven by D1/D2 MSN
+            # firing. Reads mean firing rate across `source_regions`, maintains
+            # an EMA over `window_ms`, and produces sensitivity * (ema - threshold)
+            # when ema > threshold. PBR-160 ch 16 McGinty: D1 -> dynorphin/SP,
+            # D2 -> enkephalin co-release.
+            if bridge is None or not rule.source_regions:
+                return 0.0
+            rm = getattr(bridge, "region_manager", None)
+            firing = getattr(bridge, "cp_firing_states", None)
+            if rm is None or firing is None or self._cp is None:
+                return 0.0
+            # Compute current mean firing fraction across source regions
+            try:
+                indices = []
+                for region_name in rule.source_regions:
+                    region_idx = rm.indices(region_name)
+                    if region_idx is None or len(region_idx) == 0:
+                        continue
+                    indices.extend(list(region_idx))
+                if not indices:
+                    return 0.0
+                idx_cp = self._cp.asarray(indices, dtype=self._cp.int32)
+                # mean fraction firing this step (0.0 - 1.0)
+                rate = float(self._cp.mean(firing[idx_cp].astype(self._cp.float32)).get())
+            except Exception:
+                return 0.0
+            # EMA over window_ms (mirrors from_error_persistence pattern)
+            state = self._rule_state[cfg.name]
+            ema_alpha = self.dt_ms / max(rule.window_ms, 1e-9)
+            ema = state.get("rate_ema", 0.0)
+            ema = ema + ema_alpha * (rate - ema)
+            state["rate_ema"] = ema
+            if ema > rule.threshold:
+                return rule.sensitivity * (ema - rule.threshold) * (self.dt_ms / 1000.0)
+            return 0.0
+
         # Unknown rule type: silently no-op rather than crash. Future rules
         # are forward-compatible.
         return 0.0
@@ -554,6 +604,116 @@ def _default_acetylcholine_config() -> NeuromodulatorConfig:
                 rule_type="pause_on_reward",
                 sensitivity=-2.0,
                 threshold=0.0,
+            ),
+        ],
+    )
+
+
+# ----- R3.6 (2026-04-29): D1/D2 neuropeptide co-release configs -----
+# PBR-160 ch 16 (McGinty pp 273-280):
+# - D1 MSNs co-release dynorphin + substance P with GABA. Dynorphin -> KOR
+#   on Glu/DA terminals (suppresses release; homeostatic brake). Substance P
+#   -> NK-1 on cholinergic interneurons (raises ACh). Net: D1 firing closes
+#   a Glu/DA auto-regulatory loop AND drives ACh up.
+# - D2 MSNs co-release enkephalin with GABA. Enkephalin -> DOR on cholinergic
+#   interneurons (raises DA, lowers ACh). Net: D2 firing increases DA
+#   and lowers ACh — opposite of D1.
+# All three are opt-in (registered when --enable-bg-neuropeptides is set).
+# Defaults assume the BG cascade exposes str_D1_{N,E,S,W} and
+# str_D2_{N,E,S,W} regions (true under build_bg_brain_regions).
+
+
+def _default_dynorphin_config() -> NeuromodulatorConfig:
+    """Dynorphin: D1-driven, kappa-opioid suppressive of cortex->striatum
+    plasticity. Sensitivity -0.4 modulates plasticity_rate downward when
+    D1 firing rate EMA exceeds the threshold (homeostatic brake)."""
+    return NeuromodulatorConfig(
+        name="dynorphin",
+        baseline=0.0,
+        decay_tau_ms=2000.0,  # peptide neuromodulators decay slowly
+        concentration_min=0.0,
+        concentration_max=2.0,
+        targets=[
+            ModulatorTarget(
+                target_type="plasticity_rate", scope="all",
+                sensitivity=-0.4,
+            ),
+        ],
+        production_rules=[
+            ProductionRule(
+                rule_type="from_region_firing",
+                sensitivity=2.0,
+                threshold=0.05,  # ema firing-fraction threshold (~5%)
+                window_ms=500.0,
+                source_regions=[
+                    "str_D1_N", "str_D1_E", "str_D1_S", "str_D1_W",
+                ],
+            ),
+        ],
+    )
+
+
+def _default_substance_p_config() -> NeuromodulatorConfig:
+    """Substance P: D1-driven, NK-1 receptor on TANs raises ACh. Sensitivity
+    +0.5 boosts plasticity_window_gate's effective baseline (i.e., raises
+    ACh further when D1 fires).
+
+    Note: in our framework this is implemented via excitability_drive on
+    the ACh-modulated population. With ACh modulator already wired
+    (--enable-tans), we avoid double-modulation by routing SP -> ACh via
+    excitability_drive(scope=all)."""
+    return NeuromodulatorConfig(
+        name="substance_p",
+        baseline=0.0,
+        decay_tau_ms=1500.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        targets=[
+            ModulatorTarget(
+                target_type="excitability_drive", scope="all",
+                sensitivity=20.0,  # pA depolarization at unit concentration
+            ),
+        ],
+        production_rules=[
+            ProductionRule(
+                rule_type="from_region_firing",
+                sensitivity=2.0,
+                threshold=0.05,
+                window_ms=500.0,
+                source_regions=[
+                    "str_D1_N", "str_D1_E", "str_D1_S", "str_D1_W",
+                ],
+            ),
+        ],
+    )
+
+
+def _default_enkephalin_config() -> NeuromodulatorConfig:
+    """Enkephalin: D2-driven, DOR receptor effects: raises DA and lowers
+    ACh. Modeled as plasticity_rate boost (mirroring DA's effect on
+    cortex->striatum LTP). Per McGinty Fig 5 (p 280), this is the
+    indirect-pathway counterbalance to dynorphin's D1 brake."""
+    return NeuromodulatorConfig(
+        name="enkephalin",
+        baseline=0.0,
+        decay_tau_ms=2000.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        targets=[
+            ModulatorTarget(
+                target_type="plasticity_rate", scope="all",
+                sensitivity=+0.3,  # opposite sign from dynorphin
+            ),
+        ],
+        production_rules=[
+            ProductionRule(
+                rule_type="from_region_firing",
+                sensitivity=2.0,
+                threshold=0.05,
+                window_ms=500.0,
+                source_regions=[
+                    "str_D2_N", "str_D2_E", "str_D2_S", "str_D2_W",
+                ],
             ),
         ],
     )

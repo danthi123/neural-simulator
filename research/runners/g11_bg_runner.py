@@ -1352,6 +1352,7 @@ def run_moving_goal_episode(
     # reward events. Default off. See
     # docs/plans/2026-04-28-cluster-b3-tans-implementation.md.
     enable_tans: bool = False,
+    enable_bg_neuropeptides: bool = False,  # R3.6: D1/D2 neuropeptide arms
     # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
     # Defaults match CoreSimConfig but can be overridden from the runner's
     # CLI / kwargs to tune the pruning aggressiveness for short pretraining
@@ -1557,6 +1558,21 @@ def run_moving_goal_episode(
         cfg.enable_neuromodulator_subsystem = True
         cfg.neuromodulators = list(cfg.neuromodulators) + [
             _default_acetylcholine_config()
+        ]
+    # R3.6 (2026-04-29): D1/D2 neuropeptide arms — dynorphin (D1, KOR
+    # plasticity-rate brake), substance P (D1, NK-1 ACh boost), enkephalin
+    # (D2, DOR plasticity-rate boost). All three opt-in together.
+    if enable_bg_neuropeptides:
+        from sim.neuromodulators import (
+            _default_dynorphin_config,
+            _default_substance_p_config,
+            _default_enkephalin_config,
+        )
+        cfg.enable_neuromodulator_subsystem = True
+        cfg.neuromodulators = list(cfg.neuromodulators) + [
+            _default_dynorphin_config(),
+            _default_substance_p_config(),
+            _default_enkephalin_config(),
         ]
     if pruning_alpha is not None:
         cfg.pruning_alpha = float(pruning_alpha)
@@ -2612,6 +2628,12 @@ def main():
                     help="Cluster B.2: striatal fast-spiking interneurons "
                          "(broadcast inhibition). See "
                          "docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md.")
+    ap.add_argument("--enable-bg-neuropeptides", action="store_true",
+                    help="R3.6 (2026-04-29): D1/D2 neuropeptide co-release. "
+                         "Registers dynorphin (D1, KOR plasticity-rate brake), "
+                         "substance P (D1, NK-1 ACh boost), and enkephalin "
+                         "(D2, DOR plasticity-rate boost) neuromodulators. "
+                         "Per PBR-160 ch 16 McGinty.")
     ap.add_argument("--enable-tans", action="store_true",
                     help="Cluster B.3: cholinergic interneurons (TANs). Adds "
                          "an acetylcholine neuromodulator that pauses on reward "
@@ -2746,6 +2768,7 @@ def main():
             enable_d1_d2_asymmetry=args.enable_d1_d2_asymmetry,
             enable_striatal_fsis=args.enable_striatal_fsis,
             enable_tans=args.enable_tans,
+            enable_bg_neuropeptides=args.enable_bg_neuropeptides,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
             pruning_weight_floor=args.pruning_weight_floor,
