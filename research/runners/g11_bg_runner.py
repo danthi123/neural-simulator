@@ -1162,6 +1162,26 @@ def build_bg_brain_regions(
     return regions, pathways
 
 
+def _warn_motor_lateral_inhibition_deprecated(value: bool) -> bool:
+    """Emit a one-time DeprecationWarning if --motor-lateral-inhibition was
+    used. The flag is NEGATIVE on cheat-5 (2026-04-26 evaluation) and the
+    biology is wrong (real motor-pool WTA = spinal Renshaw, not cortical-FS).
+    Slated for removal in a future cleanup."""
+    if value:
+        import warnings
+        warnings.warn(
+            "--motor-lateral-inhibition is DEPRECATED (NEGATIVE on cheat-5 "
+            "evaluation; biology is wrong — real motor-pool WTA is spinal "
+            "Renshaw inhibition per Kandel ch 35, not cortical-FS-like "
+            "inhibition). Slated for removal in a future cleanup. If you "
+            "need motor-WTA dynamics, plan to use spinal Renshaw modeling "
+            "instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+    return value
+
+
 def _position_to_cortex_drive(x, y, n_cortex_per_action, grid_size,
                                 rate_peak=400.0, rate_floor=50.0, sigma=1.5):
     """Map (x,y) position to per-action cortex drive amplitudes.
@@ -1873,10 +1893,10 @@ def run_moving_goal_episode(
     # today, but `|=` keeps it future-proof if one starts to) and append
     # the default acetylcholine config to whatever the cfg already has.
     if enable_tans:
-        from sim.neuromodulators import _default_acetylcholine_config
+        from sim.neuromodulators import _default_acetylcholine_tan_config
         cfg.enable_neuromodulator_subsystem = True
         cfg.neuromodulators = list(cfg.neuromodulators) + [
-            _default_acetylcholine_config()
+            _default_acetylcholine_tan_config()
         ]
     # R3.6 (2026-04-29): D1/D2 neuropeptide arms — dynorphin (D1, KOR
     # plasticity-rate brake), substance P (D1, NK-1 ACh boost), enkephalin
@@ -3049,8 +3069,9 @@ def main():
                          "spatial selectivity.")
     ap.add_argument("--enable-tans", action="store_true",
                     help="Cluster B.3: cholinergic interneurons (TANs). Adds "
-                         "an acetylcholine neuromodulator that pauses on reward "
-                         "and gates corticostriatal plasticity windows. See "
+                         "an acetylcholine_tan neuromodulator (the striatal-TAN-"
+                         "specific ACh source) that pauses on reward and gates "
+                         "corticostriatal plasticity windows. See "
                          "docs/plans/2026-04-28-cluster-b3-tans-implementation.md.")
     ap.add_argument("--pruning-alpha", type=float, default=None,
                     help="Cheat-5 option-1 pruning rate. Default: cfg.pruning_alpha (0.001 = conservative). "
@@ -3060,8 +3081,18 @@ def main():
     ap.add_argument("--pruning-weight-floor", type=float, default=None,
                     help="Cheat-5 option-1: weight below which pruning is eligible. Default: 1.0.")
     ap.add_argument("--out", type=str, default=None)
-    ap.add_argument("--motor-lateral-inhibition", action="store_true",
-                    help="Enable FS-mediated motor pool lateral inhibition (WTA microcircuit)")
+    # DEPRECATED 2026-04-29 (Wave-1 rename master plan #11). NEGATIVE on
+    # cheat-5 evaluation; biology is wrong (real motor-pool WTA is via spinal
+    # Renshaw cells / reciprocal inhibition per Kandel ch 35, not cortical-FS-
+    # like inhibition). Slated for removal in a future cleanup. The
+    # motor_FS_X regions and motor_X→motor_FS_X→motor_Y plumbing remain for
+    # archival reproducibility of 2026-04-26 findings.
+    ap.add_argument("--motor-lateral-inhibition", "--enable-motor-pool-wta",
+                    action="store_true", dest="motor_lateral_inhibition",
+                    help="DEPRECATED (NEGATIVE on cheat-5; slated for removal). "
+                         "Enable FS-mediated motor pool lateral inhibition "
+                         "(WTA microcircuit). Real motor-pool WTA biology is "
+                         "spinal Renshaw, not cortical-FS-like inhibition.")
     ap.add_argument("--cortex-wta", action="store_true",
                     help="Enable cortex-level WTA: per-pool FS interneurons enforce one-cortex-pool-wins. Tools plastic input layers (hippocampus, learned-perception) to coexist with heuristic.")
     ap.add_argument("--per-action-da", action="store_true",
@@ -3204,7 +3235,7 @@ def main():
             progress_print_interval=args.progress_print_interval,
             trial_sleep_ms=args.trial_sleep_ms,
             goal_schedule=goal_schedule,
-            enable_motor_lateral_inhibition=args.motor_lateral_inhibition,
+            enable_motor_lateral_inhibition=_warn_motor_lateral_inhibition_deprecated(args.motor_lateral_inhibition),
             enable_cortex_lateral_inhibition=args.cortex_wta,
             enable_per_action_da_targeting=args.per_action_da,
             enable_adaptive_per_action_da=args.adaptive_da,

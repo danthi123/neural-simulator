@@ -644,7 +644,7 @@ The `--adaptive-da --adaptive-da-ema-decay-negative 0.7` config is kept opt-in b
 
 ### Other refinement variants (all opt-in, none beat the recommended configs)
 
-- `--motor-lateral-inhibition`: WTA microcircuit (FS interneurons). PARTIAL — exploitation+, readaptation−. Net negative when stacked with adaptive DA. Even DA-gated WTA doesn't help.
+- `--motor-lateral-inhibition`: **DEPRECATED 2026-04-29 (Wave-1 rename #11; slated for removal).** WTA microcircuit (FS interneurons). PARTIAL — exploitation+, readaptation−. Net negative when stacked with adaptive DA. Even DA-gated WTA doesn't help. Real motor-pool WTA biology is spinal Renshaw inhibition (Kandel ch 35), not cortical-FS-like inhibition; future motor-WTA work should explicitly model spinal Renshaw cells. Emits DeprecationWarning when used.
 - `--per-action-da`: hard eligibility gating (always ON). Same exploitation/exploration trade-off as WTA.
 - `--rpe-scaled-reward`: amplifies reward signal magnitude by RPE. Modest help, but `--surprise-lr-boost` is cleaner architecturally.
 - `--learned-perception` (standalone, REPLACES heuristic): NEGATIVE in 2026-04-26 cold-start tests — random init produces no asymmetry for STDP+reward to amplify. **However, when combined with `--hippocampus`, `--pfc`, `--curriculum` and (since 2026-04-27) the perception arc flags, it composes successfully.** The flagship config uses it.

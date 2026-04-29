@@ -724,13 +724,19 @@ class NeuromodulatorManager:
 # ----- Default config helpers -----
 
 
-def _default_acetylcholine_config() -> NeuromodulatorConfig:
-    """Default acetylcholine (ACh) neuromodulator config for BG TANs.
+def _default_acetylcholine_tan_config() -> NeuromodulatorConfig:
+    """Default striatal-TAN acetylcholine (ACh) neuromodulator config.
 
-    Models tonically active cholinergic interneurons that pause briefly on
-    salient events (reward, novelty), opening a transient corticostriatal
-    plasticity window. See Cluster B.3 plan
+    Models tonically active cholinergic interneurons (TANs / ChIs) that
+    pause briefly on salient events (reward, novelty), opening a transient
+    corticostriatal plasticity window. See Cluster B.3 plan
     (`docs/plans/2026-04-28-cluster-b3-tans-implementation.md`).
+
+    Naming note (2026-04-29 Wave-1 rename #10): the modulator is named
+    "acetylcholine_tan" to specify the source population. The brain has
+    multiple ACh sources (basal forebrain Ch1-Ch4, brainstem PPN/LDT) —
+    none of which are modeled here. When those are added, separate
+    modulators (e.g. "acetylcholine_basal_forebrain") will be needed.
 
     Defaults:
         baseline = 1.0           # tonic ACh release ("plasticity off")
@@ -747,7 +753,7 @@ def _default_acetylcholine_config() -> NeuromodulatorConfig:
     register this config when `--enable-tans` is set (Task 3).
     """
     return NeuromodulatorConfig(
-        name="acetylcholine",
+        name="acetylcholine_tan",
         baseline=1.0,
         decay_tau_ms=500.0,
         concentration_min=0.0,
@@ -763,6 +769,29 @@ def _default_acetylcholine_config() -> NeuromodulatorConfig:
             ),
         ],
     )
+
+
+def _default_acetylcholine_config() -> NeuromodulatorConfig:
+    """DEPRECATED 2026-04-29 (Wave-1 rename #10). Use
+    `_default_acetylcholine_tan_config()` — the modulator now reflects the
+    striatal-TAN source population (one of multiple ACh sources in the brain).
+    Returns a config equivalent to the new function but with a deprecation
+    warning and the old name "acetylcholine" preserved for backward compat
+    with any external callers / saved configs.
+    """
+    import warnings
+    warnings.warn(
+        "_default_acetylcholine_config() is deprecated; use "
+        "_default_acetylcholine_tan_config() instead. The modulator name has "
+        "also changed from 'acetylcholine' to 'acetylcholine_tan' to specify "
+        "the source population. Old name will be removed in a future release.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    cfg = _default_acetylcholine_tan_config()
+    # Preserve the old name for callers that lookup by name post-injection.
+    cfg.name = "acetylcholine"
+    return cfg
 
 
 # ----- R3.6 (2026-04-29): D1/D2 neuropeptide co-release configs -----

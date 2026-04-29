@@ -80,17 +80,22 @@ def test_acetylcholine_neuromod_declared_with_pause_rule():
     assert config.targets[0].scope == "all"
 
 
-def test_default_acetylcholine_config_helper():
+def test_default_acetylcholine_tan_config_helper():
     """The runner should not need to inline the ACh config; a helper
-    returns a sensible default that we can register directly."""
+    returns a sensible default that we can register directly.
+
+    Renamed 2026-04-29 (Wave-1 #10): the helper is now
+    `_default_acetylcholine_tan_config()` and the modulator name is
+    `"acetylcholine_tan"` to specify the source population (striatal TANs;
+    distinct from basal-forebrain or brainstem ACh sources)."""
     from sim.neuromodulators import (
         NeuromodulatorConfig,
-        _default_acetylcholine_config,
+        _default_acetylcholine_tan_config,
     )
 
-    cfg = _default_acetylcholine_config()
+    cfg = _default_acetylcholine_tan_config()
     assert isinstance(cfg, NeuromodulatorConfig)
-    assert cfg.name == "acetylcholine"
+    assert cfg.name == "acetylcholine_tan"
     # Tonic baseline > 0 (the "ACh is normally on" state).
     assert cfg.baseline > 0.0
     # Has at least one pause_on_reward rule with negative sensitivity.
