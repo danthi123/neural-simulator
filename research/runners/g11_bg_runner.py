@@ -682,6 +682,23 @@ def build_bg_brain_regions(
             density=1.0, weight_mean=8.0, weight_jitter=0.2, plastic=False,
         ))
 
+    # R3.10 (2026-04-29): GPi/SNr -> dopamine collateral disinhibition
+    # (PBR-160 ch 11 Tepper & Lee pp 192-193, 199; Tepper et al. 1995).
+    # SNr GABA neurons project to SNc DA neurons via axon collaterals;
+    # the major in-vivo drive of spontaneous DA burst firing is the
+    # SNr -> SNc disinhibition (when D1-mediated SNr silencing releases
+    # tonic GABA suppression of DA cells, DA neurons burst). Combined
+    # with R1.1 (E_inh = -55 mV on dopamine, since SNc lacks KCC2),
+    # this gives a biologically grounded substrate for phasic DA without
+    # external injection. NOTE: in our cascade we conflate SNr with GPi
+    # (both GABAergic BG output nuclei); this is the standard rodent vs
+    # primate naming difference rather than a separate population.
+    for action in ACTION_NAMES:
+        pathways.append(RegionPathway(
+            from_region=f"gpi_{action}", to_region="dopamine",
+            density=0.3, weight_mean=2.0, weight_jitter=0.2, plastic=False,
+        ))
+
     # Thalamus -> motor cortex (excitatory). Very strong weight needed
     # because thal pool is small (10 cells) and we need ~50 Hz motor output
     # from ~24 Hz thal input.
