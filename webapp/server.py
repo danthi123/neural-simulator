@@ -746,7 +746,15 @@ def list_active_launches() -> JSONResponse:
         is_running = run.proc is not None and run.proc.poll() is None
         latest = run.progress_events[-1] if run.progress_events else None
         # Freeze elapsed_sec for done runs so the live picker stops ticking
-        # once a run completes.
+        # once a run completes. Belt-and-suspenders: if drain_log somehow
+        # missed setting finished_at (task crashed, race on shutdown, etc.)
+        # but the run is no longer running, set it lazily here. Use the log
+        # file's mtime when available — closer to actual completion than now.
+        if not is_running and run.finished_at is None:
+            try:
+                run.finished_at = Path(run.log_file).stat().st_mtime if run.log_file else time.time()
+            except (OSError, TypeError):
+                run.finished_at = time.time()
         end_time = run.finished_at if run.finished_at is not None else time.time()
         out.append({
             "run_id": run.run_id,
@@ -768,6 +776,13 @@ def launch_status(run_id: str) -> JSONResponse:
     if not run:
         raise HTTPException(404, "unknown run_id")
     is_running = run.proc is not None and run.proc.poll() is None
+    # Belt-and-suspenders: lazy-set finished_at if drain_log missed it.
+    # See list_active_launches comment.
+    if not is_running and run.finished_at is None:
+        try:
+            run.finished_at = Path(run.log_file).stat().st_mtime if run.log_file else time.time()
+        except (OSError, TypeError):
+            run.finished_at = time.time()
     end_time = run.finished_at if run.finished_at is not None else time.time()
     # Surface the launch command list so the frontend can detect feature
     # flags (e.g. --landmarks) for live runs without re-parsing the sidecar.

@@ -130,6 +130,51 @@ def test_active_launches_listing(client):
     assert "count" in data
 
 
+def test_elapsed_sec_freezes_on_done_runs(client):
+    """Regression for the 'elapsed counter ticks even after run completes'
+    bug: when a run is no longer running but has no finished_at set
+    (e.g. drain_log task crashed or never started), the API endpoint must
+    lazy-set finished_at so subsequent calls return a stable elapsed_sec.
+    """
+    import time
+    from webapp import server as srv
+    # Inject a synthetic LaunchedRun that's already done but missing finished_at.
+    run_id = "test_elapsed_freeze_synthetic"
+    started = time.time() - 10.0  # 10 seconds ago
+    fake = srv.LaunchedRun(
+        run_id=run_id, cmd=[], started_at=started,
+        proc=None, returncode=0, log_file=None, pid=None,
+    )
+    assert fake.finished_at is None, "test setup expects finished_at unset"
+    srv.launched_runs[run_id] = fake
+    try:
+        # First call: lazy-sets finished_at. elapsed_sec ~ 10s.
+        res1 = client.get("/api/runs/launch")
+        assert res1.status_code == 200
+        run1 = next(r for r in res1.json()["runs"] if r["run_id"] == run_id)
+        elapsed1 = run1["elapsed_sec"]
+        assert run1["running"] is False
+        # Second call ~50ms later: must return the SAME elapsed_sec (frozen).
+        time.sleep(0.05)
+        res2 = client.get("/api/runs/launch")
+        run2 = next(r for r in res2.json()["runs"] if r["run_id"] == run_id)
+        # Allow tiny jitter from log mtime if log_file existed; we set log_file=None
+        # so the fallback is time.time(). Both calls should produce the same value
+        # because finished_at is now set on the in-memory object.
+        assert abs(run2["elapsed_sec"] - elapsed1) < 0.01, (
+            f"elapsed_sec ticked: {elapsed1:.3f} -> {run2['elapsed_sec']:.3f}"
+        )
+        # Same regression on /api/runs/launch/{id}.
+        res3 = client.get(f"/api/runs/launch/{run_id}")
+        assert res3.status_code == 200
+        elapsed3 = res3.json()["elapsed_sec"]
+        time.sleep(0.05)
+        res4 = client.get(f"/api/runs/launch/{run_id}")
+        assert abs(res4.json()["elapsed_sec"] - elapsed3) < 0.01
+    finally:
+        srv.launched_runs.pop(run_id, None)
+
+
 def test_progress_line_parser():
     """Parser converts runner stdout into ProgressEvent."""
     from webapp.server import _try_parse_progress
