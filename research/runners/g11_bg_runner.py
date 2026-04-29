@@ -41,12 +41,23 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
 from typing import Dict, List, Tuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+
+# ───────────────────────────────────────────────────────────────────────
+# CUDA determinism (must be set BEFORE cupy/cuBLAS init).
+# Triggered by --deterministic flag in argv. Tightens seed-to-seed noise
+# floor (per the 2026-04-29 finding that A+E single-goal det gave
+# 3.31 +/- 0.74 vs documented 4.08 +/- 0.49 — same code, +/-3-5 noise
+# without determinism). ~10-30% slowdown.
+# ───────────────────────────────────────────────────────────────────────
+if "--deterministic" in sys.argv:
+    os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 import numpy as np
 
@@ -3038,6 +3049,13 @@ def main():
                     help="Scale motor FS->motor inhibition by reward-EMA gating_strength (the 'DA gate'). Requires --motor-lateral-inhibition + --adaptive-da")
     ap.add_argument("--goal-schedule", type=str, default="default",
                     help="'default' = (6,6) -> (1,6) at step 300. 'multi' = 4 goal changes across the corners.")
+    ap.add_argument("--deterministic", action="store_true",
+                    help="Set CUBLAS_WORKSPACE_CONFIG=:4096:8 BEFORE cupy import for "
+                         "deterministic cuBLAS algos. Tightens seed-to-seed noise "
+                         "(2026-04-29 result: A+E det single-goal 3.31 +/- 0.74 vs "
+                         "non-det 7.28 +/- 1.76 multi-goal). ~10-30% slowdown. "
+                         "Note: this flag is read at module-import time (top of file), "
+                         "not parsed here — argparse just suppresses 'unrecognized arg'.")
     ap.add_argument("--rpe-scaled-reward", action="store_true",
                     help="Scale reward by prediction error: delivered = reward + alpha * (reward - reward_ema). Surprise gets amplified.")
     ap.add_argument("--rpe-alpha", type=float, default=1.0)
