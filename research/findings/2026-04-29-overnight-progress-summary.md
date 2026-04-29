@@ -61,7 +61,60 @@ C v2 subagent (`af7014d0f2011f204`) completed at `b3f5f87` — implementation, 6
 
 Aggregator: `python -m research.runners.aggregate_2026_04_29_evals`.
 
-## Six-condition NULL pattern — ALL CLUSTERS HAVE NO EFFECT WITH HEURISTIC ON
+## ★ ROOT CAUSE FOUND + FIX SHIPPED (`3d3402f`) — BROKEN BG CASCADE
+
+After observing the 6-condition NULL pattern, dug into motor count distributions and found the smoking gun:
+
+```
+baseline seed 42 1800-step trial: 1798/1800 trials (99.9%) ALL-ZERO motor counts
++A seed 42:                       1799/1800 (99.9%) all-zero
+A+D seed 42:                      1800/1800 (100%) all-zero
+```
+
+**Action selection was 99.9% random fallback** (`np.random.default_rng(seed * 10000 + step).integers(0, N_ACTIONS)`), not BG-cascade-driven. The BG cascade was functionally silent. That's why all conditions produced bit-identical action sequences — they all hit the same RNG with the same seed+step.
+
+### Diagnosis
+
+The catalog R-pass's R3.5 (cortex→MSN density 1.0 → 0.20) reduced effective drive ~5× without compensating the synapse weight. AND the runner's hardcoded `cfg.stdp_w_max=30.0` was tuned for the original `weight_mean=25` — with a now-too-weak cascade, plasticity events drove weights to zero (soft-bound STDP collapse).
+
+Net: cortex couldn't drive D1 strongly enough to inhibit GPi, GPi never released thalamus, motor pools never fired, action selection fell to random fallback. The post-R-pass "baseline" of 19.78 ± 2.28 was an **artifact of the broken cascade**, NOT a real measurement of any cluster's contribution.
+
+### Fix (`3d3402f`)
+
+```python
+# Compensate density drop in cortex→MSN weight
+if cortex_to_msn_density_same < 1.0:
+    cortex_to_msn_weight_same = 25.0 / cortex_to_msn_density_same  # → 125 at d=0.20
+else:
+    cortex_to_msn_weight_same = 25.0
+
+# Raise stdp_w_max to allow soft-bound STDP to operate without collapsing weights
+cfg.stdp_w_max = max(30.0, scaled_weight * 1.2)  # → 150 at weight=125
+```
+
+Both override-able via runner kwargs for parameter sweeps.
+
+### Verification
+
+100-step smoke at seed 42, multi-goal, full Cluster B (no Cluster A/C/D):
+
+| Metric | Pre-fix | Post-fix |
+|---|---|---|
+| All-zero motor counts | 98% | 47% |
+| Phase 0 finalQ | 5.41 | **1.40** |
+
+**73% reduction in phase-0 final-quarter mean distance.** The cascade is alive again. Cluster comparisons can now meaningfully run.
+
+### Status of running evals
+
+- **Cluster C v2 eval (briwtq7yh):** started 04:57, before the fix. First seed contaminated with broken cascade; subsequent seeds may use fixed cascade since each python invocation reloads source.
+- **Cluster E eval (b7vhij5sp):** queued after C v2, will use fixed cascade.
+- **No-heur eval (bh1w6rvdu):** queued; fixed cascade.
+- **FIX eval (bqlvyaog0):** new clean run with fixed cascade, baseline + A+C+E. Decisive test.
+
+ETA: FIX eval done ~08:50.
+
+
 
 After Cluster D eval completed:
 
