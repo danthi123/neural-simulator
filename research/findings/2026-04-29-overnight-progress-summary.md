@@ -25,29 +25,30 @@ Plan: [`docs/plans/2026-04-29-catalog-remediation-pass.md`](../../docs/plans/202
 
 340 tests pass post-remediation.
 
-### 2. New clusters (3 scaffolded + 2 designed)
+### 2. New clusters (4 scaffolded + 1 designed)
 
 | Commit | Cluster | Status |
 |---|---|---|
 | `2d8be00` | A — closed BG loop (`--enable-cluster-a-closed-loop`) | scaffolded; eval running |
 | `01fddf4` | C v1 — tonic DA (`--enable-tonic-da`) | scaffolded; eval running |
 | `3204c3e` | D v1 — hippocampus trisynaptic loop (`--enable-cluster-d-hippocampus`) | scaffolded; eval running |
-| `1128e68` | C v2 — compartmentalized DA | designed; subagent implementing in parallel |
+| `b3f5f87` | C v2 — compartmentalized DA (`--enable-compartmentalized-da`) | scaffolded; eval queued |
 | `dd14fed` | E — topographic maps | designed; deferred |
 
 ## What's running
 
-Three chained background evals (each 6 runs × 1800 steps × multi-goal × 3 seeds):
+Four chained background evals (each 6 runs × 1800 steps × multi-goal × 3 seeds):
 
-1. **Cluster A eval** (`by1dv294e`) — baseline (no-A) vs +A, started 02:10. Currently on seed 43 no-A. ETA done ~03:25.
+1. **Cluster A eval** (`by1dv294e`) — baseline (no-A) vs +A, started 02:10. ETA done ~03:25.
 2. **Combo eval** (`bki1vpptr`) — A+C+B.3 vs C-only, chained. ETA start ~03:25, done ~04:25.
 3. **Cluster D eval** (`b6hu3ndsf`) — D-only vs A+D, chained. ETA start ~04:25, done ~05:25.
+4. **C v2 eval** (`briwtq7yh`) — C v2 only vs A+C v2, chained. ETA start ~05:25, done ~06:25.
 
-Plus the C v2 subagent (`af7014d0f2011f204`) working on the compartmentalized DA implementation in parallel.
+C v2 subagent (`af7014d0f2011f204`) completed at `b3f5f87` — implementation, 6 new tests, 50-step smoke all PASS.
 
-## Eval matrix at completion (18 data points)
+## Eval matrix at completion (24 data points)
 
-6 conditions × 3 seeds (42, 43, 44):
+8 conditions × 3 seeds (42, 43, 44):
 
 - baseline (post-remediation, no Cluster A/C/D)
 - +A (closed loop)
@@ -55,6 +56,8 @@ Plus the C v2 subagent (`af7014d0f2011f204`) working on the compartmentalized DA
 - A + C v1 + B.3 (full triple)
 - +D (hippocampus)
 - A + D (closed loop + hippocampus)
+- +C v2 (compartmentalized DA)
+- A + C v2 (closed loop + per-action DA)
 
 Aggregator: `python -m research.runners.aggregate_2026_04_29_evals`.
 
