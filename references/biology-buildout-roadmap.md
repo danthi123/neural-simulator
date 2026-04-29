@@ -1,10 +1,10 @@
 # Biology Buildout Roadmap
 
-This document organizes the ~323 mechanism entries in [`feature-catalog.md`](feature-catalog.md) into a prioritized implementation roadmap for the next 6–18 months. It is a *strategy* document — the catalog is the encyclopedia; this is which pages to act on, in what order, and why.
+This document organizes the ~375 mechanism entries in [`feature-catalog.md`](feature-catalog.md) into a prioritized implementation roadmap for the next 6–18 months. It is a *strategy* document — the catalog is the encyclopedia; this is which pages to act on, in what order, and why.
 
-**Last updated:** 2026-04-28 (initial draft post-merge of Section IV + parallel subagent passes).
+**Last updated:** 2026-04-29 (post second enrichment pass — added Tier 0 quick wins surfaced by the supplemental texts).
 
-**Source:** Kandel et al., *Principles of Neural Science*, 6th edition (2021). Approximately 1,500 pages of textbook surveyed.
+**Sources:** Kandel et al., *Principles of Neural Science*, 6th edition (2021), plus 12 specialty texts (full inventory in [`textbooks/README.md`](textbooks/README.md)) — Marr 1969, Albus 1971, Hesslow 2013, Hesslow & Yeo 2002 chapter (cerebellum); Bolam 2000, Tepper & Koos 2017, Tepper 2018, Tepper/Abercrombie/Bolam 2007 PBR vol 160 (basal ganglia); O'Keefe & Nadel 1978 (hippocampus); Buzsáki 2006 (rhythms); Sutton & Barto 2018, Schultz 1998 + Hollerman & Schultz 1998 + Schultz 2016 NRN + Schultz 2016 *J. Neural Transm.* (RL + reward).
 
 ---
 
@@ -31,6 +31,79 @@ The roadmap orders mechanisms by a weighted combination of:
 3. **Cost** (effort to implement, vs. reusing existing infrastructure).
 4. **Validation tractability** (does the textbook give a clear behavioral signature we can replicate?).
 5. **Substrate alignment** (does the mechanism map cleanly onto existing project primitives — `BrainRegion`, `NeuromodulatorConfig`, plasticity gates — or does it require new substrate?).
+
+---
+
+## Tier 0 — One-config-edit quick wins (week 0–2)
+
+Surfaced by the second enrichment pass (Schultz 2016, Hesslow & Yeo 2002, Tepper/Bolam 2007 PBR vol 160). Each is hours-to-days of work, no new infrastructure. **Do these before Tier 1 starts** — they fix latent biological errors that other tiers compound.
+
+### T0.A — Fix `cfg.E_inh` per region (MSN GABA reversal)
+
+**What:** Replace the global `cfg.E_inh = -75 mV` with a per-region override:
+- MSN (D1, D2 in striatum): `E_inh = -60 mV` (depolarizing at rest, shunting near threshold)
+- SNc DA neurons: `E_inh = -55 mV` (lack KCC2; near firing threshold)
+- Cortical pyramidals + most others: keep `-75 mV`
+
+**Why:** Wilson ch 6 of PBR-160 (B.14, augmented B.02) nails E_GABA at MSN = −60 mV; SNc DA neurons lack KCC2 entirely (B.15). Project's global value is correct for cortical pyramidals but **fundamentally wrong** for striatum and DA neurons. Affects STDP windows, the sign of GABA action on DA bursts, and the realism of MSN dendritic input integration.
+
+**Substrate:**
+- Add `BrainRegion.E_inh_override: float | None` field.
+- Plumb through `sim/bridge.py` synaptic conductance update — currently uses scalar `cfg.E_inh`; needs per-neuron lookup keyed by region.
+- One-time migration: set override on the BG region declarations in `g11_bg_runner.build_bg_brain_regions()`.
+
+**Validation:**
+- Re-run flagship 6-seed flagship config; compare to baseline 4.08. Acceptable if equal-or-better; document any regression.
+- Re-run gamma-oscillation benchmark (cortex-only) — should be unchanged.
+- Verify `MSN ← inhibitory input` produces shunting-with-mild-depolarization rather than hyperpolarization.
+
+**Catalog entries:** B.14 MSN GABA-A reversal, B.15 SNc DA E_Cl.
+
+**Estimated effort:** 1 day (substrate + tests); 1 day for flagship re-validation.
+
+### T0.B — Add `gpe_X → gpi_X` perisomatic inhibition pathway
+
+**What:** Wire the missing GPe → GPi/SNr inhibitory projection that the textbook cascade has but the simulator's flagship currently lacks. Per-action. Weight ~3× the str_d1→gpi value (anatomical potency: perisomatic vs distal-dendritic). Conduction delay set to be ~9 ms shorter than striatonigral.
+
+**Why:** Nambu ch 8 of PBR-160 (A.14, B.16): striatal terminals on GPi/SNr go to distal dendrites (~70%); GPe terminals cluster perisomatically (~15% but high somatic-veto potency). Conduction velocities: striatonigral 1.4 m/s vs pallidonigral 4 m/s. **GPe input arrives 9 ms before striatal D1 input AND has 3× more somatic veto power per synapse.** The flagship cascade currently has no such projection — adding it would replicate the canonical in-vivo three-phase GPi response (early STN excitation → mid striatal inhibition → late indirect-pathway excitation) that Alexander & DeLong's textbook model leaves implicit.
+
+**Substrate:**
+- Add `RegionPathway` entries for `gpe_X → gpi_X` (each action). All inhibitory, GABAergic.
+- If T0.A is in: use the GPi-region E_inh override.
+- Calibrate weight against existing str_d1→gpi by sweep.
+
+**Validation:**
+- Inject a brief transient cortical pulse; verify GPi response shows the three-phase signature on a peristimulus time histogram.
+- Re-run flagship 6-seed config; should not regress.
+
+**Catalog entries:** A.14 perisomatic GPe→GPi, A.02 indirect pathway, B.16 conduction velocity asymmetry.
+
+**Estimated effort:** 2–3 days (config + sweep + validation).
+
+### T0.C — Compose `--surprise-lr-boost` + `--adaptive-da` instead of treating as alternatives
+
+**What:** Change the recommended-config table in CLAUDE.md to compose both flags by default, rather than presenting them as alternatives. Run a 6-seed validation to confirm the composition is no worse than the better alternative on its own (and possibly better).
+
+**Why:** Schultz 2016 NRN (C.32) frames phasic DA as **two distinct components**:
+- **Component 1** (60–90 ms latency, salience-blind detection of any unexpected event)
+- **Component 2** (150–300 ms latency, utility-RPE)
+
+The project's flags map onto these directly:
+- `--surprise-lr-boost` is functionally **Component-1 analog** (valence-blind LR scalar on |RPE|, applied to ANY surprise event — explains its task-robustness across slow/fast change)
+- `--adaptive-da --adaptive-da-ema-decay-negative 0.7` is functionally **Component-2 analog** (slow positive ramp, fast negative dip — biology-grounded by Schultz's omission-dip vs acquisition-burst data)
+
+Currently the recommended-config table presents these as alternatives ("use one, not both"). **Biology says they should compose**: Component 1 sets the LR magnitude on any salient deviation; Component 2 sets the directional value-update target. Combo flag was tested previously and didn't compose well — but that test was before adaptive-DA's asymmetric variant was tuned, so worth retesting.
+
+**Substrate:** No code change. Just a 6-seed run with both flags on.
+
+**Validation:**
+- 6-seed flagship + both flags on. Compare against current flagship 4.08.
+- If composed result ≤ 4.08: ship as new flagship.
+- If composed result > 4.08: document as NEGATIVE (still surfaces a `[discrepancy]` between Schultz-biology and project-empirics worth flagging; current alternative-treatment is empirically defensible even if biologically less faithful).
+
+**Catalog entries:** C.32 two-component DA, C.04 DA primary, C.22 RPE.
+
+**Estimated effort:** 0.5 day setup + 4–8h compute for 6-seed run.
 
 ---
 
@@ -161,19 +234,30 @@ These need a specific new component but compose with existing architecture.
 - CF-gated PF→PC LTD kernel: `Δw_pf = -η_lr × pf_active × cf_active`. **New fused kernel.**
 - Inferior olive as special pacemaker region (~1–10 Hz tonic, switching to bursts on errors). Existing region framework + `IZH2007_INFERIOR_OLIVE` preset.
 - Deep cerebellar nuclei as output region.
+- **Nucleo-olivary feedback** (F.18): DCN → IO inhibition. Without this, training does not extinguish on its own. **Often omitted in simulator implementations of Marr-Albus** — flag it as a required component of the implementation, not an optional refinement.
+- **Three distinct mossy-fiber input streams** (F.03): vestibular/reticular, cortico-pontine (efference copy), spinocerebellar (proprioception). Declare as separate `mossy_*` source regions, not a monolithic pool.
+- **Basket/stellate-b plasticity** (F.16): without bidirectional weight rules, all PCs converge to silent over long training. Albus 1971 §IV.D–E argues PF→basket synapses must use the same CF-gated rule as PF→PC.
+- **Intrinsic PC timer** (F.17, optional in v1): mGluR1-coupled slow Ca²⁺ + KCa cascade. Hesslow's 2013 evidence suggests adaptive CR timing requires this; first version can ship without and see if the timing benchmark passes on LTD alone.
 
 **Why mid-priority:**
 - Cluster F is fully missing (presets exist but no circuit).
 - Unlocks: eyeblink conditioning (canonical), VOR adaptation, smooth-pursuit, forward-model experiments — all distinct experiments with established benchmarks.
 - Uses existing region framework + one new kernel; not architecturally invasive.
 
-**Validation:**
-- **Eyeblink conditioning**: pair tone (CS, MF input) with airpuff (US, CF input) → after N trials, PC activity is suppressed in response to tone, releasing DCN to drive blink. Acquisition curves match published rabbit data (Thompson 1986).
-- **VOR adaptation**: reverse-prism goggles for N trials → PC LTD adapts the VOR gain.
+**Validation suite (sharpened by Hesslow & Yeo 2002 chapter):**
 
-**Catalog entries:** F.01 Marr-Albus, F.02 PF→PC LTD, F.03 climbing-fiber error signal, F.04 deep nuclei output, F.05 eyeblink validation.
+1. **Eyeblink acquisition**: pair tone (CS, MF input) with airpuff (US, CF input) → after N trials, PC activity is suppressed in response to tone, releasing DCN to drive blink. Acquisition curves match published rabbit data (Thompson 1986).
+2. **CR/UR double-dissociation gate** (F.06, F.08 — sharpest validation criterion): AIP lesion drops both CR and UR slightly; cortical (HVI) lesion drops CR but **raises UR amplitude** (because cortex inhibits AIP). **Single-pool cerebellar models fail this; only PC→DCN inhibition + DCN→motor excitation passes.** Make this a hard gate — implementations that don't pass don't ship.
+3. **Reversible-inactivation triple-test** (F.20): use existing `set_plasticity_gate` infrastructure to (a) block AIP plasticity during acquisition → no learning after unblock, (b) block AIP during extinction → no extinction either, (c) block efferents (BC) → learning proceeds normally. Three orthogonal tests pin the learning site to the cerebellar somata.
+4. **VOR adaptation**: reverse-prism goggles for N trials → PC LTD adapts the VOR gain.
+5. **Trace conditioning + hippocampus** (F.22, NEW Cluster F↔D bridge): cerebellum bridges CS-US gaps up to ~500 ms alone; longer traces require hippocampus. After T1.A is in, test that adding hippocampal input lets CR acquire on traces > 500 ms.
+6. **Adaptive CR latency** (F.24): a single brief MF pulse should evoke a normally-timed (~200 ms) PC pause. If the Marr-Albus + LTD-only implementation can't reproduce this, F.17 (intrinsic PC timer) becomes mandatory.
 
-**Estimated effort:** 4–6 weeks.
+**Six hippocampus-dependent paradigms** (F.23) are downstream validation targets once T1.A + T2.A are both shipped: trace conditioning, discrimination reversal, latent inhibition, conditional discrimination, sensory preconditioning, blocking. Each is a separate experiment.
+
+**Catalog entries:** F.01 Marr-Albus, F.02 (codon), F.03 MF stream split, F.04 climbing-fiber error signal, F.05 PF→PC LTD with sign discrepancy, F.06 DCN, F.08 eyeblink protocol, F.16 basket/stellate plasticity, F.17 intrinsic PC timer, F.18 nucleo-olivary feedback, F.20 reversible-inactivation methodology, F.22 trace conditioning, F.23 six HC paradigms, F.24 adaptive CR latency.
+
+**Estimated effort:** 5–7 weeks (was 4–6; the validation suite is broader and the nucleo-olivary loop is a hard requirement).
 
 ### T2.B — Topographic maps in `BrainRegion` (Cluster E + I)
 
@@ -354,12 +438,16 @@ A few "biology benchmarks" that span multiple clusters and would validate the mo
 
 | Target | Clusters | Why it matters |
 |---|---|---|
+| **CR/UR double-dissociation** | F (cerebellum) | Sharp gate (Hesslow & Yeo 2002 §pp 108-109, 114-116): cortical lesion drops CR but RAISES UR; AIP lesion drops both. Single-pool cerebellar models fail. Required for T2.A acceptance. |
+| **Three-phase GPi response** | A (BG cascade) | Adding T0.B GPe→GPi pathway should produce the canonical early-STN / mid-striatal / late-indirect signature in GPi PSTH after a transient cortical pulse. Validates the pathway timing. |
 | **Eyeblink conditioning** | F (cerebellum) + J (PF→PC LTD) | Canonical cerebellar-learning benchmark; clean acquisition + extinction curves available |
 | **Ocular dominance plasticity** | E (cortex) + L (critical period) + Q (astrocyte K⁺?) | Hubel-Wiesel deprivation paradigm; tests both topographic maps and critical-period machinery |
 | **Spatial memory + replay** | D (hippocampus) + N (sleep) + J (LTP consolidation) | Tests T1.A + T1.B integration; replicates Girardeau ripple-disruption result |
 | **Inception of false memory** | D (engram) + J (LTP) + O (reward) | Tonegawa optogenetic paradigm; tests T1.C engram-tagging API |
 | **Parkinson's BG dysfunction** | A (BG) + C (DA) + P (disease) | Already on roadmap (T1.D); validates BG cascade against canonical clinical model |
 | **Pavlovian fear conditioning + extinction** | O (amygdala) + J (LTP) + G (vmPFC) | Tests T2.E amygdala module |
+| **Trace conditioning bridges F + D** | F (cerebellum) + D (hippocampus) | After T1.A + T2.A both ship, CR should acquire on CS-US gaps > 500 ms only when hippocampus is connected. F.22 + F.23. |
+| **Cue-shift transfer** | C (DA) + A (BG) | Schultz 1998: DA bursts gradually transfer from reward time to cue time over learning. Currently NOT reproduced (project has only the burst-on-unexpected-reward sign). T2.D (compartmentalized DA) + adding a critic population (C.30) needed; or PPN (C.33). |
 
 ---
 
@@ -367,19 +455,22 @@ A few "biology benchmarks" that span multiple clusters and would validate the mo
 
 A practical 12-month sequencing that respects dependencies:
 
-| Month | Work | Tier |
+| Week / month | Work | Tier |
 |---|---|---|
-| 1 | T1.A hippocampal trisynaptic loop | T1 |
-| 2 | T1.B SWR-driven replay | T1 |
-| 2 | T1.C engram-tagging API (parallel; small) | T1 |
-| 3 | T1.D disease smoke tests (parallel; small) | T1 |
-| 3 | T1.E homeostatic drives (parallel) | T1 |
-| 4–5 | T2.A cerebellum microcircuit | T2 |
-| 6 | T2.B topographic maps | T2 |
-| 7 | T2.D compartmentalized DA (cheat-5 option 3, in parallel with structural pruning option 1 if active) | T2 |
-| 8–9 | T2.C mechanoreceptor front-end | T2 |
-| 10 | T2.E amygdala valence | T2 |
-| 11–12 | Integration + validation passes | — |
+| Week 0–1 | T0.A E_inh per region + T0.B GPe→GPi pathway | T0 |
+| Week 1–2 | T0.C compose surprise-LR + adaptive-DA (validation only) | T0 |
+| Month 1 | T1.A hippocampal trisynaptic loop | T1 |
+| Month 2 | T1.B SWR-driven replay | T1 |
+| Month 2 | T1.C engram-tagging API (parallel; small) | T1 |
+| Month 3 | T1.D disease smoke tests (parallel; small) | T1 |
+| Month 3 | T1.E homeostatic drives (parallel) | T1 |
+| Month 4–5 | T2.A cerebellum microcircuit (with sharpened validation suite) | T2 |
+| Month 6 | T2.B topographic maps | T2 |
+| Month 7 | T2.D compartmentalized DA (cheat-5 option 3) | T2 |
+| Month 8–9 | T2.C mechanoreceptor front-end | T2 |
+| Month 10 | T2.E amygdala valence | T2 |
+| Month 11 | Trace-conditioning F↔D bridge experiment + cue-shift validation | — |
+| Month 12 | Integration + validation passes | — |
 
 After month 12, the simulator should have:
 
