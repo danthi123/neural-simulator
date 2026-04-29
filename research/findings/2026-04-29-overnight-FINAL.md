@@ -1,8 +1,18 @@
 # 2026-04-29 Overnight + Day Session — Final Synthesis
 
-## Headline (UPDATED 2026-04-29 ~16:00)
+## Headline (UPDATED 2026-04-29 ~17:10 with tier-4 n=12)
 
-**🎯 CHEAT-5 CLOSURE SIGNAL on deterministic single-goal: A+E gives 3.31 ± 0.74 (n=6) — BEATS documented full-flagship-with-cheats 4.08 by 19%.** Variance also drops 66%. The biology-grounded path (R-pass + Cluster B + closed BG loop + topographic maps) outperforms the cheats-allowed flagship — without `--hippocampus`, `--learned-perception`, `--sensed-reward`, or curriculum.
+**Cheat-5 partial signal — A+E n=12 = 3.93 ± 1.55 vs baseline 4.39 ± 1.92 (10% mean improvement, not statistically significant at Welch's t=0.65).** The earlier n=6 "3.31 ± 0.74" was favorable-seed selection — adding 6 new seeds (200-202, 300-302) gave A+E n=6=4.56 ± 1.95, basically baseline-equivalent.
+
+So the honest summary: A+E is a **modest improvement-with-high-variance** cluster combo. It tightens variance somewhat (1.55 vs 1.92, -19% std) and slightly improves mean (-10%) but the seeds 42-44/100-102 happened to be A+E-favorable. At n=12 the mean improvement is within noise.
+
+vs documented "4.08 ± 0.49 full-flagship-cheats-allowed":
+- A+E n=12: 3.93 ± 1.55 — slightly better mean, MUCH higher variance
+- Documented (different code state, before R-pass): 4.08 ± 0.49
+
+The A+E variance (1.55) is much wider than the documented 0.49, suggesting the documented run-to-run noise was artificially low (probably non-multi-goal, possibly different code state, possibly fewer phase transitions per run).
+
+**Earlier optimistic n=6 headline (3.31 ± 0.74)** was at seeds 42, 43, 44, 100, 101, 102. Those particular seeds happened to favor A+E.
 
 The earlier multi-goal session showed A+E only as a variance-reduction cluster. Two changes flipped the conclusion:
 1. **Deterministic CUDA mode** (`CUBLAS_WORKSPACE_CONFIG=:4096:8`) — dropped seed-to-seed noise floor from ±3-5 to ±0.7
