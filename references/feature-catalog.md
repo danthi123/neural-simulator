@@ -95,6 +95,8 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Citation:** Kandel 6e Ch 38 p 935–943.
 - **Behavioral validation:** D1-pool stimulation → GPi pause → thalamus burst → motor selection; matches `g11_bg_runner` cascade probe.
 - **Supplemental:** D1 MSN axons innervate the proximal somatodendritic compartment of GPi/SNr output neurons in a *basket-like* pattern, with large boutons selectively concentrated on the proximal regions (Bolam-2000 p 535, "In the output nuclei, pallidal neurons give rise to large synaptic boutons that selectively innervate the proximal regions of basal ganglia output neurons, often in a basket-like manner"). The corticostriatal terminals that drive D1 MSNs synapse on the *heads* of dendritic spines, while DA terminals contact the *necks* of the same spines — placing DA in an ideal position to gate cortical input to each spine independently (Bolam-2000 pp 529–531, Fig 2B,D). The current single-compartment MSN model collapses spine-level head/neck modulation; faithful reproduction would require dendritic compartments with separate AMPA/NMDA-bearing spine heads and DA-receptor-bearing necks.
+- **Supplemental:** PBR-160 ch 16 (McGinty pp 273–280) clarifies the neuropeptide phenotype of the *direct* (striatonigral) pathway: D1 MSNs co-release **dynorphin + substance P (PPD/SP)** alongside GABA. Dynorphin acts on presynaptic κ-opioid receptors (KORs) on glutamatergic and dopaminergic terminals to *suppress* DA + glutamate release — a homeostatic brake against runaway D1 activity (McGinty Fig 5, p 280). Substance P acts on NK-1 receptors expressed predominantly by cholinergic interneurons, *increasing* striatal ACh release. Net effect: D1-MSN activation does not just inhibit GPi/SNr — it also closes a local DA + Glu auto-regulatory loop and excites cholinergic interneurons. **Sim implication:** the simulator's D1 cascade currently models the GABAergic disinhibition only; modeling the dynorphin/SP arms would require neuromodulator subsystem entries for KOR (suppressive) and NK-1 (cholinergic-excitatory). Maps to declarative neuromodulator framework (sim/neuromodulators.py).
+- **Supplemental (anatomy):** PBR-160 ch 9 (Deniau et al. pp 158–160) — striatonigral conduction velocity is **the slowest of all long-range BG GABAergic projections**, ~1.4 m/s, antidromic latency ~10 ms. Pallidonigral conduction velocity is ~4 m/s (~3× faster). The simulator's `cortex_X → str_d1_X → gpi_X` cascade implicitly assumes uniform conduction; adding axonal-delay differentiation between striatal vs pallidal inputs to GPi/SNr would let phasic GPe input arrive *before* the slower D1 gate, matching the in-vivo three-phase response sequence (early STN excitation → striatal-mediated inhibition → late STN excitation; PBR-160 ch 7 Fig 6).
 
 ### A.02 Indirect pathway — D2 MSN → GPe → STN → GPi/SNr (action suppression)
 
@@ -108,6 +110,8 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Citation:** Kandel 6e Ch 38 p 935–943, p 952–956.
 - **Behavioral validation:** D2-pool stimulation → GPi increase → action suppressed; DA depletion → indirect dominant → reduced action initiation.
 - **Supplemental:** Bolam emphasizes the indirect pathway is more complex than the canonical D2→GPe→STN→GPi triad. Single-cell labelling (Kita & Kitai 1994; Bevan et al. 1998) shows that *individual* GPe neurons collateralize into multiple BG nuclei: a typical GPe neuron innervates GPe locally (~92–294 boutons), STN (~41–274 boutons), GPi/EP (~108–130 boutons), AND SNr/SNc (Bolam-2000 Fig 4 legend, p 537). A subset (~25%) also projects back to striatum (see new entry A.10). The simulator's `gpe_X → stn` is therefore one of several collateral targets per GPe cell, not a dedicated projection. **[discrepancy: per-action GPe pool with single downstream target oversimplifies; real GPe neurons broadcast to all caudal BG nuclei simultaneously].**
+- **Supplemental:** PBR-160 ch 16 (McGinty pp 273–276) fixes the *indirect* (striatopallidal) pathway peptide phenotype: D2 MSNs co-release **enkephalin** (PPE-derived) alongside GABA. Enkephalin binds δ-opioid receptors (DORs) expressed by *cholinergic interneurons* and µ-opioid receptors (MORs) clustered in striosomes. Enkephalin acts via DORs to *increase* DA release and *inhibit* ACh release — opposing the dynorphin/D1 effect. **Sim implication:** the D1/D2 split in `g11_bg_runner` captures only the GABA arm; the opposing neuropeptide arms (D1: KOR↓DA, NK-1↑ACh; D2: DOR↑DA, MOR various) provide a slower, second-order contrast that may help stabilize action selection without explicit homeostatic terms.
+- **Supplemental:** PBR-160 ch 7 (Kita pp 113–115) — striatopallidal axons make ~100–250 boutons each (small/medium, ~<1 µm), distributed sparsely along GPe dendrites. Each individual stria→GPe axon evokes only **<10 pA unitary IPSCs** at the GPe soma (ch 7 Fig 4). The Str:GPe neuron ratio is **~60:1** (rat). Together this means GPe inhibition only emerges when *many* synchronously-firing striatal MSNs converge — directly validating the simulator's per-action-pool synchronization design but suggesting the per-pool MSN count should be larger (currently 25/action) to capture the threshold-like cooperative gating.
 
 ### A.03 Hyperdirect pathway — cortex → STN → GPi/SNr (rapid global brake)
 
@@ -133,6 +137,8 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Citation:** Kandel 6e Ch 38 p 939–942 (Mink 1996, Redgrave selection model).
 - **Behavioral validation:** Two competing cortical inputs → only winning channel's thal pool fires; matches `g11_bg_runner` 6-seed flagship 4.26 ± 0.50.
 - **Supplemental:** Bolam-2000 Fig 3E and pp 535–537 demonstrate that individual GPi/SNr/STN output neurons receive *convergent synaptic input from both globus pallidus (GP, sensorimotor/associative) AND ventral pallidum (VP, limbic)* in zones of overlap. Output dendrites are oriented to cross functional boundaries defined by these inputs. The selection at GPi is therefore not a pure motor competition — limbic and motor-associative information are integrated at the level of individual output neurons. This composes naturally with the project's v3 MSN lateral inhibition (cheat #5 closure) but suggests a future extension where motor-channel GPi neurons also receive limbic inputs from a ventral-pallidum analog.
+- **Supplemental — intrinsic pacemaker biophysics (PBR-160 ch 9, Deniau et al. pp 157–158):** SNr GABAergic projection neurons are *autonomous pacemakers* — they fire 40–80 Hz tonically *with all fast synaptic transmission blocked*. The pacemaker rests on three mechanisms: (1) a **slowly-inactivating, voltage-dependent TTX-sensitive Na⁺ current** that drives subthreshold depolarization toward AP threshold; (2) a **TTX-insensitive cation current** (partly Na⁺-mediated) contributing to the pacemaker drive; (3) **SK channels** (small-conductance Ca²⁺-activated K⁺) coupled to o-conotoxin-GVIA-sensitive Cav2.2 currents — these set the AHP and thereby the *precision* (regularity) of firing. SK blockade by apamin reduces firing precision. SNr also expresses Ih and can generate slow Ca²⁺ spikes from below −60 mV. **Sim implication:** the project's `HH_GPI_OUTPUT` preset uses a generic HH framework. Faithful 40–80 Hz tonic SNr/GPi behavior would benefit from explicit persistent Na (`hh_NaP`) + SK channel + Ih in the preset. The simulator already exposes `fused_hh_NaP_current_update` and `fused_hh_h_current_update` kernels — these should be enabled for SNr/GPi.
+- **Supplemental — striatal vs pallidal targeting on GPi/SNr (PBR-160 ch 8 Nambu pp 137–139, Fig 2):** synaptic terminals on individual GPi neurons differ systematically by *origin*: striatal GABA terminals contact **distal dendrites** (~70% of all inputs), GPe GABA terminals contact **soma + proximal dendrites** (~15%), STN glutamate terminals are **uniformly distributed on soma + dendrites** (~10%). Same pattern in SNr (PBR-160 ch 9 p 159). This is exactly opposite of the simulator's single-compartment assumption (all inputs sum at the soma). The functional consequence is that GPe-mediated inhibition has **much stronger somatic veto power** per synapse than striatal inhibition — under normal conditions, GPe disynaptic disinhibition (cortex → GPe → GPi/SNr) can override the slower striatal direct pathway. The simulator's flagship cascade omits GPe→GPi/SNr altogether; adding `gpe_X → gpi_X` with high relative weight (perisomatic-equivalent) and `str_d1_X → gpi_X` with lower per-synapse weight (distal-dendrite-equivalent) would replicate the distal/proximal asymmetry. **[discrepancy: single-compartment GPi can't represent compartment-specific input strengths; current cascade models distal striatal pathway only].**
 
 ### A.05 Reentrant cortico-BG-thalamo-cortical loops — parallel channels
 
@@ -204,6 +210,7 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Prerequisites:** A.02 (GPe), B.06 (FSI population — currently missing).
 - **Citation:** Bolam-2000 pp 533–538, Table 1; Kita & Kitai 1994; Bevan et al. 1998; TK-2017 p 161 ("FSIs receive GABAergic input from at least two different neuron populations in the GPe, PV+ and PV−").
 - **Behavioral validation:** GPe-stim → 5–10 ms FSI spike → MSN IPSP at 8–15 ms; pallidal lesion / inactivation → MSN hyperexcitability and altered timing of striatal output.
+- **Supplemental:** PBR-160 ch 7 (Kita pp 112–114, Fig 2C) confirms and extends the Bolam-2000 finding: in monkey GPe, **the GPe→Str projection arises predominantly from PV-negative GPe neurons** (sparse-spiny dendrites, often immunoreactive for preproenkephalin mRNA), forming about ~1/3 of all GPe cells. PV-positive GPe neurons (large aspiny, discoidal dendrites parallel to Str/GPe border) form the canonical GPe→GPi/STN/SNr projection. **In monkey** (but not rat), the two cell types appear to be more strictly segregated: PV-negative GPe→Str neurons rarely collateralize, while PV-positive cells do. This is the anatomical antecedent of the now-canonical **prototypic (PV+) vs arkypallidal (PV−)** classification that Mallet et al. 2008 later formalized — Kita 2007 already shows the morphological + neurochemical split. **Sim implication:** if the project adds GPe→Str feedback (currently missing in `g11_bg_runner`), splitting the GPe pool into a PV+ subpool projecting to STN/GPi/SNr and a PV− subpool projecting only to striatal FSIs would be more biologically grounded than a single mixed pool.
 
 ### A.11 Pallidal convergence on BG output — GP+VP integration on individual SNr/STN/SNc neurons
 - **System:** Single SNr, STN, and SNc neurons receive convergent input from BOTH globus pallidus (GP, sensorimotor/associative — via dorsal striatum) AND ventral pallidum (VP, limbic — via nucleus accumbens). Double anterograde tracing reveals topographically segregated fields with overlapping zones; in the overlap zones, individual output neurons are contacted by GP and VP boutons simultaneously, often perisomatically (Bolam-2000 pp 535–537, Fig 3E).
@@ -224,6 +231,55 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Behavioral validation:** In vivo paired MSN recordings show low spike correlation between neighbours despite shared cortical region of origin; manipulations that increase cortical input sharing reduce MSN ensemble discriminability.
 
 ---
+
+### A.13 GPe cell-type heterogeneity — prototypic (PV+) vs arkypallidal (PV−), two firing modes
+- **System:** GPe contains at least two morphologically + neurochemically + physiologically distinct projection neuron subtypes (Kita & Kitai 1994; Kita 1996; Cooper & Stanford 2000; reviewed PBR-160 ch 7 Kita pp 111–114).
+  - **PV+ "prototypic" GPe neurons:** ~2/3 of GPe; large aspiny soma with discoidal dendritic field oriented parallel to the Str/GPe border; project to STN, GPi, SNr (multi-target collateralization). High-frequency tonic firing (~30–80 Hz) interspersed with spontaneous pauses ("HFD-pause" pattern in vivo). Membrane: weak Ih, no rebound Ca²⁺ spike, no spike accommodation (PBR-160 ch 7 p 112).
+  - **PV− "arkypallidal" GPe neurons:** ~1/3 of GPe; sparsely-spiny radiating dendrites, often preproenkephalin-mRNA-positive. **Project predominantly back to striatum** (pallidostriatal feedback — see A.10), targeting striatal interneurons (FSI, SOM/NOS) selectively. Low-frequency, bursty firing in vivo. Membrane: prominent Ih, prominent rebound Ca²⁺ spike, no spike accommodation.
+  - In monkey, the two subtypes are **strictly segregated by projection target** — PV− cells exclusively → Str, PV+ cells exclusively → STN/GPi/SNr (Kita et al. 1999, ch 7 p 111). In rat, segregation is partial (~25% of GPe cells collateralize to Str on the way to STN/GPi).
+  - This is the anatomical antecedent of the now-canonical Mallet et al. 2008 "prototypic vs arkypallidal" classification, with the same projection pattern but additional in-vivo firing dynamics across cortical UP/DOWN states.
+- **Biological role:** PV+ pool is the canonical indirect-pathway relay (Str-D2→GPe→STN→GPi). PV− pool implements *pallidostriatal feedback inhibition* — fast disynaptic gating of striatal output through FSI/LTS interneurons (A.10). The two subtypes have **opposite cortical-state-dependent firing**: in awake/cortical-desync states PV+ fires, in slow-wave/cortical-sync states PV− fires (Mallet et al. 2008, postdating Kita 2007 but consistent with the morphological/intrinsic split documented here).
+- **Sim status:** **missing.** `g11_bg_runner` GPe regions are single uniform pools driven by D2 MSNs; no PV+/PV− split. Adding two GPe subpools per action with different downstream targets (PV+_X → STN/GPi_X; PV−_X → str_fsi_X — the latter requires a striatal FSI pool, currently also missing per B.04 augmentation) would restore the bidirectional cortex–striatum–GPe loop.
+- **Cluster:** A primary; B secondary.
+- **Prerequisites:** A.10 (pallidostriatal feedback), B.06 (FSI pool). Possibly new HH preset for arkypallidal cell with prominent Ih + rebound Ca²⁺.
+- **Citation:** PBR-160 ch 7 (Kita) pp 111–114, Fig 2; ch 6 p 92 (Wilson summary). Kita & Kitai 1994 J. Comp. Neurol. 351:519–533; Mallet et al. 2008 J. Neurosci. 28:4795 (later confirmation).
+- **Behavioral validation:** Optogenetic activation of PV+ GPe → motor inhibition; activation of PV− GPe → MSN disinhibition. Asymmetric responses to dopamine depletion match Parkinson's clinical pattern.
+
+### A.14 SNr + GPi receive perisomatic GPe inhibition vs distal striatal inhibition — input compartmentalization
+- **System:** Synaptic terminals on individual GPi/SNr neurons are systematically segregated by anatomical origin: **GPe GABAergic boutons cluster perisomatically + on proximal dendrites** (~15% of synapses but high local potency); **striatal D1-MSN GABAergic boutons populate distal dendrites** (~70% of synapses, low per-synapse potency); **STN glutamatergic boutons distribute uniformly across soma and dendrites** (~10%) (PBR-160 ch 8 Nambu Fig 2 p 138; ch 9 Deniau et al. p 159). GPe boutons are larger, contain pleomorphic vesicles + multiple mitochondria; striatal boutons are smaller with fewer mitochondria.
+- **Biological role:** GPe inhibition has *much stronger somatic veto* per synapse than striatal inhibition because of perisomatic targeting — a single GPe bouton can reset GPi spike timing (PBR-160 ch 7 Fig 5; ch 8 p 137–139). The functional consequence is that the GPi/SNr pacemaker (40–80 Hz tonic, A.04 supplemental) is preferentially gated *first* by GPe input, *then* modulated by distal striatal input. The classical "direct pathway opens the gate by inhibiting GPi/SNr" picture is anatomically incomplete — a stronger and faster gating arrives via cortex → STN → GPe → GPi (Nambu's three-phase response sequence in PBR-160 ch 7 Fig 6: early STN excitation → 50–100 ms striatal inhibition → late STN-mediated late excitation).
+- **Sim status:** **partial — direct path implemented, GPe→GPi/SNr missing.** `g11_bg_runner` per-action `str_d1_X → gpi_X → thal_X → motor_X` lacks the parallel `gpe_X → gpi_X` projection that should have *higher unitary weight* than the direct striatonigral path. Adding `gpe_X → gpi_X` with `weight_mean` ~3× the str_d1→gpi value would replicate the perisomatic/distal asymmetry under the single-compartment approximation. Single-compartment can't fully reproduce the spatial effect, but per-pathway weight scaling is an adequate functional surrogate.
+- **Cluster:** A primary; B secondary.
+- **Prerequisites:** A.02 (GPe), A.04 (BG output).
+- **Citation:** PBR-160 ch 8 (Nambu) pp 137–139, Fig 2; ch 9 (Deniau et al.) p 159; Smith et al. 1994; Shink & Smith 1995.
+- **Behavioral validation:** Brief GPe stim → ~3 ms GPi IPSP that can reset spike phase (ch 7 Fig 5); striatal stim → 8–15 ms IPSP with weaker spike-resetting power.
+
+### A.15 GABA-A subunit composition is region-specific in BG — α1β2γ2 dominant, α2/α3 in striatum
+- **System:** PBR-160 ch 13 (Boyes & Bolam) Tables 1–2 pp 232–233 enumerate GABA_A receptor subunit expression across all BG nuclei in rat (in-situ hybridization + immunohistochemistry):
+  - **Striatum (MSNs):** primarily **α2 + α3** (medium spiny neurons specifically); β2/β3 + γ2 throughout. PV+ FSI and CR interneurons express **α1**. Cholinergic interneurons express **α3**.
+  - **GPe + GPi/EP:** strongly **α1 + β2/β3 + γ2** (the "BZ-I subtype" — high-affinity for benzodiazepines). Very little α2, β1, or γ1.
+  - **STN:** **α1β2/β3γ2** dominates. (Same as the most common combination in mammalian brain.)
+  - **SNr:** strong **α1β2/β3γ2**, similar to GP.
+  - **SNc DA neurons:** **α3 dominates**, with α4 and γ3 also present — *no α1*. This is the only BG nucleus where α1 is *not* the dominant α subunit.
+  - **GABA_A receptors are concentrated at synaptic specializations** with ~220–440× enrichment over extrasynaptic sites (Fujiyama 2000, ch 13 p 233).
+- **Biological role:** Subunit composition controls IPSC kinetics (α1 → fastest decay, ~5 ms; α2/α3 → slower, ~15–30 ms) and benzodiazepine pharmacology. The MSN α2/α3 → slower decay pattern means striatal IPSCs have ~3× longer duration than pallidal IPSCs at otherwise identical conductance — a substantial effect for STDP timing windows. SNc α3 + α4 + γ3 (without α1) means SNc DA neurons have distinct sensitivity to GABA_A modulators (clinically relevant — e.g., benzodiazepines have weaker effect on DA cells).
+- **Sim status:** **missing — uniform GABA_A kinetics across all regions.** `CoreSimConfig` has a single `gaba_a_decay_tau` field; per-region overrides are not currently exposed. Adding per-region `gaba_a_decay_tau_per_region` (MSN ~15 ms, GPe/GPi/SNr ~5 ms, SNc ~20 ms) would substantially change phase relationships in the cascade — particularly STDP timing in cortex→MSN learning, since the slower MSN IPSC widens the post-pre window.
+- **Cluster:** A primary; B, J (plasticity) secondary.
+- **Prerequisites:** none (small config extension).
+- **Citation:** PBR-160 ch 13 (Boyes & Bolam) pp 232–235, Tables 1–2; Pirker 2000; Fritschy & Möhler 1995; Schwarzer 2001; Waldvogel 1999.
+- **Behavioral validation:** α1-selective agonist zolpidem differentially modulates GP/SNr (strong) vs MSN (weak) firing; consistent with subunit map.
+
+### A.16 STN intrinsic biophysics — pacemaker + Cav3 short rebound + Cav1.2/1.3 long plateau
+- **System:** STN projection neurons fire autonomously at 5–15 Hz in slice without synaptic input (PBR-160 ch 10 Bevan et al. pp 175–176). The pacemaker depends on persistent + resurgent Na⁺ currents. Spike precision is set by **SK channels** (small-conductance Ca²⁺-activated K⁺) coupled to **Cav2.2** (ω-conotoxin-GIVA-sensitive). On hyperpolarization to ~−80 mV, STN neurons exhibit **two distinct rebound modes**:
+  - **~75% of STN cells:** short rebound burst (<100 ms) driven by **Cav3 (T-type) low-threshold Ca²⁺ spike** with riding Na⁺ APs.
+  - **~25% of STN cells:** long rebound burst (several hundred ms) driven by additional **Cav1.2/1.3 (L-type) plateau potential** — dihydropyridine-sensitive.
+  - Both classes have a **hyperpolarization sag** mediated by **Ih (HCN)** that restores autonomous activity after sustained inhibition.
+- **Biological role:** Combined with GPe→STN GABAergic input (perisomatic, fast — see Bevan 1998), the STN architecture creates a **rebound-burst gate**: inhibitory input from GPe doesn't simply silence STN — by deinactivating Cav3 + Cav1.2/1.3, GPe input *transiently amplifies* STN response to subsequent excitatory cortical inputs (PBR-160 ch 10 abstract p 173 and pp 176–178). This is a non-trivial paradoxical mechanism that the canonical D2→GPe→STN→GPi indirect pathway model omits.
+- **Sim status:** **missing — only generic AdEx/Izh STN preset.** The simulator has `IZH2007_STN_BURST` (parameter set tuned for fast bursts) but does not implement the dual Cav3 + Cav1.2/1.3 + Ih mechanism. Adding the existing `fused_hh_h_current_update`, `fused_hh_NaP_current_update`, and a new `fused_hh_caT_current_update` (T-type Ca²⁺) for an HH-STN preset would produce post-inhibitory rebound bursts. Functionally this changes the indirect pathway from a pure suppressive route to a *delayed-amplification* route — phase-2 readaptation behavior (currently the Achilles heel of cross-projection variants per cheat-5 attempts) might benefit from STN rebound dynamics that reset cleanly after goal change.
+- **Cluster:** A primary; I (intrinsic neuron model) secondary.
+- **Prerequisites:** I.* extension for T-type Ca²⁺.
+- **Citation:** PBR-160 ch 10 (Bevan et al.) pp 175–177, Fig 3; Beurrier et al. 1999; Hallworth et al. 2003; Bevan et al. 2002; Otsuka et al. 2001.
+- **Behavioral validation:** GPe inactivation → STN spike rate falls but rebound bursts emerge; cortical pulse during/after GPe burst → STN response amplified vs same pulse without preceding GPe input.
 
 ---
 
@@ -283,6 +339,53 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Citation:** TK-2017 pp 171–173 §VIII; Tepper-2018 pp 11; Bennett & Bolam 1993; Wu & Parent 2000; Garas et al. 2017 J. Comp. Neurol. 526:877–898.
 - **Behavioral validation:** species-comparison data; lacking single-cell physiology in primate.
 
+### B.14 MSN GABA_A reversal is depolarized — shunting inhibition + KCC2 dependence
+- **System:** Direct measurement of GABA_A reversal in striatal MSNs (gramicidin perforated patch, preserving native [Cl⁻]ᵢ): **E_GABA = −60 mV in mature rat MSN** (PBR-160 ch 6 Wilson p 104, citing Kööset al. 2004 + Gustafson et al. 2005). This is *positive* to RMP (−85 mV) and *negative* to threshold (−50 mV). MSN GABA_A IPSPs are therefore **depolarizing at rest** (at RMP, GABA opens Cl⁻ channels, Cl⁻ flows out, membrane depolarizes by ~10–15 mV) and **hyperpolarizing-by-shunt near threshold**. Critically, E_GABA aligns with the *peak of MSN dendritic input resistance* (the −60 mV minimum-K⁺-current voltage) so GABA_A IPSPs in dendrites preferentially *linearize* the I-V curve and shrink the electrotonic length constant (PBR-160 ch 6 Fig 8).
+- **Biological role:** The seemingly anomalous depolarizing GABA in MSN was historically interpreted as immature (developmental) or pathological. Wilson 2007 establishes it as a **functional design feature**: dendritic Sp-Sp inhibition (a) *escapes* the KIR2 hyperpolarized voltage trap by depolarizing toward −60 mV, (b) *removes* the Up/Down nonlinearity locally, (c) *shunts* the dendrite preventing AP back-propagation, and (d) *shortens* the dendritic length constant so distal inputs become more effective. This is fundamentally different from the cortical model where GABA_A is purely hyperpolarizing.
+- **Sim status:** **missing — `cfg.E_inh = -75 mV` global default.** The simulator's `CoreSimConfig` uses a uniform inhibitory reversal of −75 mV across all regions; striatal MSNs need −60 mV, cortical pyramids need −75 mV, SNc DA needs ~−55 mV (next entry B.15). One-line per-region override `E_inh_per_region` would correctly model MSN shunting inhibition. **This is a small change with large downstream effects:** STDP windows depend on actual postsynaptic voltage trajectory, which is qualitatively different under shunting vs hyperpolarizing inhibition.
+- **Cluster:** B primary; A, J (plasticity) secondary.
+- **Prerequisites:** none (config extension).
+- **Citation:** PBR-160 ch 6 (Wilson) pp 104–106, Figs 6, 8; Köös et al. 2004 J. Neurosci. 24:7916; Gustafson et al. 2005 J. Neurophysiol. 95:737; Misgeld et al. 1982; Bracci & Panzeri 2006.
+- **Behavioral validation:** MSN whole-cell IPSC reversal at −60 mV; GABA_A application produces depolarizing IPSP at RMP that switches to hyperpolarizing at threshold.
+
+### B.15 SNc DA neurons lack KCC2 — depolarized E_Cl, GABA disinhibition cascade
+- **System:** SNc dopaminergic neurons **do not express KCC2**, the K⁺/Cl⁻ co-transporter that sets a low [Cl⁻]ᵢ in mature CNS neurons (Gulácsi et al. 2003; PBR-160 ch 11 Tepper & Lee p 199). As a consequence, ECl in SNc DA neurons is significantly more depolarized than in SNr GABA neurons or in MSNs — closer to ~−55 mV, near AP threshold.
+- **Biological role:** GABA_A IPSPs in DA neurons are *only weakly hyperpolarizing* and frequently *shunting near threshold*. The canonical "striatum inhibits SNr/GPi which disinhibits thalamus" picture works because SNr cells *do* express KCC2 (E_Cl ~−75 mV) and are strongly inhibited by GABA. But **DA cells with depolarized E_Cl are remarkably resistant to direct striatal/pallidal GABA inhibition**. Instead, the dominant route by which BG modulates DA firing is **disynaptic disinhibition via SNr→SNc axon collaterals**: striatum inhibits SNr GABA cells → SNr collateral release on DA cells decreases → DA cells *burst*. PBR-160 ch 11 pp 192–195 documents this through GPe lesion / GABA_A blockade experiments: blocking SNr GABA_A → DA cells switch to burst mode regardless of starting pattern. This is the principal mechanism for **phasic DA bursts during cue-evoked reward signals** (overlaid on glutamate from PPN/STN that triggers individual bursts).
+- **Sim status:** **missing — DA region in `g11_bg_runner` has no SNr→SNc collateral disinhibition pathway.** Currently DA in the cascade is driven by reward signal injection. Adding an explicit `snr_X → snc` GABAergic projection that, when SNr is inhibited by D1 MSNs, releases SNc → produces DA burst, would create *biologically grounded* phasic DA from action selection — without manual reward-signal injection. This composes with the plastic-input-layer arc: cortex → str_d1_X → snr_X (inhibition) → snc (disinhibition) → DA burst → eligibility trace converted to weight change *exactly when the action wins*, automatically.
+- **Cluster:** B primary (mechanism); A, C (DA) secondary.
+- **Prerequisites:** per-region E_inh override (B.14 prerequisite); SNr→SNc projection in `build_bg_brain_regions`.
+- **Citation:** PBR-160 ch 11 (Tepper & Lee) pp 192–195, 199; Gulácsi et al. 2003 J. Neurosci. 23:8237; Tepper et al. 1995 J. Neurosci. 15:3092; Paladini et al. 1999.
+- **Behavioral validation:** Local SNr GABA_A blockade in vivo → DA cells switch to bursting; salient-cue → striatal D1 burst → SNr pause → DA burst (the reward prediction error pathway).
+
+### B.16 Striatonigral conduction is the slowest in BG — 1.4 m/s vs 4 m/s pallidonigral
+- **System:** PBR-160 ch 11 (Tepper & Lee) pp 191–192 quantifies conduction velocities of the major BG GABAergic projections measured by antidromic activation:
+  - **Striatonigral (D1 MSN → SNr/GPi):** ~1.4 m/s, antidromic latency ~10 ms (Ryan et al. 1986). Slowest in the BG.
+  - **Pallidonigral (GPe → SNr/SNc):** ~4 m/s, latency ~1 ms. ~3× faster.
+  - **Nigronigral collaterals (SNr → SNc):** ~3–4 m/s, latency ~1–2 ms.
+  - **Striatum spontaneous firing rate:** <1 Hz (very low); striatonigral neurons fire only during cortical Up states.
+  - **GPe spontaneous rate:** ~50 Hz tonic (PV+ subtype).
+  - **SNr spontaneous rate:** ~30 Hz tonic.
+- **Biological role:** The 10-ms striatonigral latency vs 1-ms pallidonigral latency means **GPe input to SNr/GPi arrives ~9 ms before striatal input** during a cortical pulse. Combined with the perisomatic targeting of GPe (vs distal targeting of striatal — A.14), GPe gating actually dominates *first*; striatal D1 input arrives later but on already-modulated SNr neurons. The classical Albin/DeLong direct/indirect-pathway model treats both as instantaneous; the in-vivo three-phase response to cortical stimulation (early excitation → inhibition → late excitation; PBR-160 ch 7 Fig 6) is the actual time-course.
+- **Sim status:** **missing — no axonal conduction delays on cross-region projections.** The simulator's `RegionPathway` has no `conduction_delay_ms` parameter; all pathway transmission is one-step. Adding a per-pathway delay (1 ms for pallidonigral, 10 ms for striatonigral, etc.) would let the cascade reproduce the in-vivo three-phase response.
+- **Cluster:** B primary; A secondary.
+- **Prerequisites:** Engine-level support for axonal delays on `RegionPathway`.
+- **Citation:** PBR-160 ch 11 (Tepper & Lee) pp 191–192; Ryan et al. 1986; Kita & Kitai 1991; Celada et al. 1999; Deniau et al. 1978.
+- **Behavioral validation:** Cortical electrical pulse → in-vivo SNr response: 4–6 ms early excitation (via STN), 10–20 ms inhibition (striatal D1), 30–60 ms late excitation (indirect path via STN); the simulator currently produces a single combined response with no temporal structure.
+
+### B.17 Sp-Sp dendritic inhibition removes Up/Down nonlinearity — voltage-dependent dendritic linearization
+- **System:** Wilson's central insight (PBR-160 ch 6 pp 96, 105–107) is that the principal *functional* role of MSN-MSN recurrent collateral inhibition is **not WTA** (B.04 confirms this is weak) but **dendritic linearization**. The mechanism (Fig 7, 8):
+  - Sp-Sp synapses are made on the *spiny region* of dendrites (40% on shafts, 48% on spine necks; only 12% on soma) — exactly the locations where KIR2 and Kv-2 K⁺ currents make the dendrite electrotonically nonlinear.
+  - Each individual Sp-Sp IPSP is small at the soma (<0.5 mV) but **~10 mV at the synapse** (Fig 7).
+  - The reversal potential of Sp-Sp inhibition (~−60 mV; B.14) sits exactly at the *peak* of MSN dendritic input resistance (the voltage where K⁺ currents are minimized).
+  - Therefore Sp-Sp synaptic conductance, when turned on, *exactly cancels* the voltage-dependent K⁺ contribution, **flattening the I-V curve and removing the Up/Down state nonlinearity** (Fig 8).
+  - Quantitatively: ~9 quanta distributed across one 220-µm dendrite (~20% of the local Sp-Sp synapses active simultaneously) is enough to make the entire dendrite electrotonically compact (<2 length constants over its whole voltage range).
+- **Biological role:** This is a **second style of synaptic integration** in striatum, complementary to the canonical sparse phasic mode. When few MSNs are active → Sp-Sp inhibition is sparse → dendrites are nonlinear → MSN integrates sparsely + thresholds via Up/Down → discrete activity episodes. When many MSNs are active → Sp-Sp inhibition saturates → dendrites linearize → MSN integrates continuously → graded firing of the entire population. Two regimes from one circuit. Wilson concludes (p 107): "the striatal network may possess two different styles of synaptic integration; one characterized by very sparse activity ... and one in which many neurons are engaged, and firing of individual neurons is continuously distributed over a wide range."
+- **Sim status:** **missing — single-compartment MSN cannot exhibit dendritic linearization.** The simulator's `IZH2007_STRIATAL_MSN_D1/D2` presets are point neurons with no dendrite. Capturing the regime-switching behavior would require either (a) explicit multi-compartment MSN with KIR2 + Kv2 + dendritic GABA_A, or (b) a phenomenological switch that increases effective gain when total MSN activity exceeds a threshold (cheaper but less mechanistic). This is one of the more interesting *predictions* of the Wilson 2007 chapter that the simulator could test.
+- **Cluster:** B primary; A secondary; I (multi-compartment).
+- **Prerequisites:** multi-compartment MSN model (currently absent); KIR2 + Kv-2 fused kernels.
+- **Citation:** PBR-160 ch 6 (Wilson) pp 96, 100–107, Figs 7, 8; Plenz 2003 Trends Neurosci 26:436; Bracci & Panzeri 2006 J. Neurophysiol. 95:1285.
+- **Behavioral validation:** Population recording of MSNs during sparse vs dense behavioral epochs; sparse-mode MSNs show bimodal Up/Down distributions, dense-mode MSNs show continuous voltage distributions. Pharmacological MSN-MSN GABA_A blockade should *increase* the bimodality even in dense regimes.
+
 ## Cluster B — additions
 
 ---
@@ -322,6 +425,13 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Citation:** Kandel 6e Ch 38 p 933–938.
 - **Behavioral validation:** MSN silent at rest; cortex-stim → up-state → spike threshold met only at high coordinated drive.
 - **Supplemental:** MSN dendritic spines have a stereotyped two-input architecture: corticostriatal terminals form *asymmetric* synapses on the spine *head* (AMPA + NMDA, AMPA GluR2/3 and NMDA NR1 colocalized within the synaptic specialization — Bolam-2000 Fig 2B,C, p 530), while DA terminals from SNc form *symmetric* synapses on the spine *neck* with D1 or D2 receptors localized both at the synapse and extrasynaptically (Bolam-2000 Fig 2D–F, pp 530–531). GABAergic terminals are also found on spine necks. Each MSN spine is thus a gated three-input integration unit (cortex × DA × GABA). The current single-compartment MSN cannot reproduce per-spine modulation; a future multi-compartment MSN would expose per-spine DA gating as an experimental knob.
+- **Supplemental — quantitative synaptic budget (PBR-160 ch 6 Wilson, pp 92–95):** an individual MSN receives:
+  - **~10,000 asymmetric (glutamatergic) synapses** — ~95% on dendritic spine heads, mostly cortical + intralaminar thalamic (parafascicular thalamic input is the exception — terminates on dendritic *shafts*, not spines).
+  - **~2,500 symmetric (mostly GABAergic) synapses**, of which ~325 are dopaminergic (Roberts 2002) and ~300 cholinergic; the remaining **~1,875 are GABAergic** distributed across FSI, LTS/SOM/NOS, and Sp-Sp recurrent collaterals.
+  - Of those GABAergic synapses, the **MSN-MSN (recurrent) synapses are quantitatively dominant**: each MSN receives ~1,200 Sp-Sp synapses arising from ~400 different nearby Sp cells (i.e., each upstream MSN contributes ~3 synapses on average — small bouton count is why each is functionally weak). FSI→MSN synapses are far fewer (~6 per FSI on the target MSN soma, ~2–4 FSIs converging on each MSN — total ~12–24 FSI synapses) but individually 6× stronger.
+  - Excitation/inhibition ratio measured during the *Up state* in vivo is **~2–5× excitation-dominant** (reversal potential of Up state is between −10 and −20 mV vs ECl at ~−60 mV; Wilson & Kawaguchi 1996, ch 6 Fig 5). This contrasts with cortical pyramidal cells where Up-state excitation/inhibition is roughly equal. **Implication:** striatal Up states are excitation-driven (cortical+thalamic synchrony lifts the cell over KIR2's voltage barrier); inhibition in striatum is *not* the gate for entering Up state, it is the modulator of dendritic electrotonic structure and AP timing.
+- **Supplemental — KIR2 + Up/Down state mechanism (PBR-160 ch 6 Wilson pp 100–104):** MSN bistability is generated by *two voltage-dependent K⁺ currents*, not by recurrent inhibition: (1) **KIR2 (Kv-inwardly-rectifying)** active at hyperpolarized potentials clamps RMP to −80 to −95 mV with input resistance 20–60 MΩ; (2) **Kv-1.2/Kv-2.1** subthreshold-activated K⁺ currents active above −60 mV. Both deactivate around −60 mV → **input resistance peaks ~6× higher (~150–300 MΩ) at −60 mV** (ch 6 Fig 6). Membrane time constant similarly peaks at −60 mV. KIR2 is *developmentally late* — not fully expressed until **postnatal day 25–28** in rat (ch 6 p 104, citing Tepper et al. 1998), so juvenile-slice MSNs and adult-MSN computational models without KIR2 cannot reproduce Up/Down bistability. **Sim implication:** the project's `IZH2007_STRIATAL_MSN` preset uses a 9-parameter Izh-2007 model that approximates the rest-near-threshold sparsity, but does *not* implement explicit KIR2 + Kv-2 voltage-dependent leak. Adding a KIR2-equivalent fused kernel would make MSN dendritic effectiveness voltage-dependent (the Wilson key insight: at −60 mV the dendrite is electrotonically compact, so inhibition acts everywhere; at hyperpolarized or threshold-near voltages, dendrites elongate to 2–4 length constants and only proximal synapses count).
+- **Supplemental — GABA_A reversal potential is depolarizing-but-shunting (PBR-160 ch 6 pp 104–106, ch 11 pp 192–193):** measured GABA_A reversal in striatal MSNs (gramicidin perforated patch) is ~−60 mV — *positive* to RMP (−85 mV) but *negative* to spike threshold (~−50 mV). This means GABA_A IPSPs in MSNs are **depolarizing IPSPs** when measured from rest, and only become hyperpolarizing near AP threshold. The functional consequence: GABA inhibition in striatum is primarily *shunting* (conductance increase) rather than hyperpolarizing — and remarkably, the GABA reversal sits exactly at the **point of maximum dendritic input resistance** (ch 6 Fig 6/8), so inhibition selectively *removes the KIR2-induced nonlinearity* and linearizes the dendrite. **Sim implication:** the project's `E_inh = -75 mV` (CoreSimConfig default) is reasonable for cortical pyramids but **wrong for striatal MSNs** — striatal MSNs should use `E_inh ≈ -60 mV`. This is a one-line config override per region and would produce qualitatively different striatal dynamics (depolarizing IPSPs near rest, shunting near threshold). The same applies to dopaminergic SNc neurons (ch 11 p 199): DA neurons lack the **KCC2 chloride exporter**, so their ECl is even more depolarized than MSNs — closer to −55 mV — making GABA_A in DA neurons depolarizing or even excitatory at rest.
 
 ### B.03 D1 vs D2 MSN segregation — opposing DA modulation
 
@@ -335,6 +445,12 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Citation:** Kandel 6e Ch 38 p 935–940 (Surmeier).
 - **Behavioral validation:** DA application → D1 firing ↑, D2 firing ↓ in vitro; corresponding behavioral release vs suppression.
 - **Supplemental:** Bolam-2000 (p 529) confirms the D1 (substance P / dynorphin / projects to GPi+SNr) vs D2 (enkephalin / projects to GPe) segregation. Kincaid 1998 and Bolam emphasize that corticostriatal terminals contact spines giving rise to both pathways (a single cortical axon's terminals can be presynaptic to D1 or D2 MSN spines — the two populations sample the *same* cortical pool, not different ones). This validates the simulator's per-action `cortex_X → str_d1_X / str_d2_X` arrangement where the same cortex pool projects to both pools.
+- **Supplemental — neuropeptide co-transmission (PBR-160 ch 16 McGinty pp 273–280, Fig 1):** the D1/D2 dichotomy extends beyond DA receptor signaling to a complete neurochemical program:
+  - **D1 MSNs:** preprodynorphin (PPD → dynorphin) + preprotachykinin (PPT → substance P, neurokinin A); project to GPi/SNr (direct pathway).
+  - **D2 MSNs:** preproenkephalin (PPE → met/leu-enkephalin); project to GPe (indirect pathway).
+  - Dynorphin → KORs on cortical Glu + nigrostriatal DA terminals → presynaptic *suppression* of Glu and DA (negative feedback against D1 activation). Substance P → NK-1 on cholinergic + somatostatin/GABA interneurons → *increases* ACh release.
+  - Enkephalin → DORs on cholinergic interneurons → *decreases* ACh release. MORs (in striosomes/patches) → various.
+  - **Functional asymmetry:** D1 activation triggers SP/dynorphin-mediated ACh-release *increase* + DA-release *suppression*; D2 activation triggers enkephalin-mediated ACh-release *decrease*. Net result: D1 vs D2 push the local cholinergic tone in opposite directions, on top of the canonical Go/NoGo GABA balance. **Sim implication:** if/when the simulator instantiates a TAN/ChI population (B.05 currently has presets but unused), declaring NK-1 (excitation from D1 SP) and DOR (inhibition from D2 enk) as neuromodulator targets on the ChI pool would create a biologically grounded D1/D2 → ChI dynamic without ad-hoc terms. Maps directly to Cluster C.08 (neuropeptides).
 
 ### B.04 MSN lateral inhibition — local GABA collaterals (cross-pool WTA)
 
@@ -348,6 +464,12 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Citation:** Kandel 6e Ch 38 p 935 (Silberberg & Bolam 2015).
 - **Behavioral validation:** Single MSN spike → neighboring MSN IPSP; competitive selection in pool stimulation tests.
 - **Supplemental:** Specialty literature reports MSN-MSN lateral inhibition is functionally weak: paired recordings show low connection probability (~14–25% within axonal field), small unitary IPSPs (<0.5 mV), high failure rates, and short-term depression (TK-2017 pp 160–162 citing Czubayko & Plenz 2002, Tunstall et al. 2002, Koós et al. 2004, Tecuapetla et al. 2009). FSI→MSN feedforward IPSPs are *significantly larger and more reliable* than MSN→MSN feedback IPSPs under the same conditions, due to FSI-MSN synapses being more proximal and more numerous (TK-2017 p 163). **The implication for v3 lateral inhibition (`--bg-lateral-inhibition`): the dominant biological substrate of cross-pool WTA is feedforward FSI inhibition, NOT MSN collateral inhibition.** v3 currently encodes the WTA as direct MSN→MSN inhibition. This is a *functional* equivalent (closes cheat #5 by design) but is anatomically backwards. A future v3-bis: add a per-action FSI pool that is excited by cortex_X and inhibits str_d1_Y / str_d2_Y (Y ≠ X) — this would match the dominant WTA substrate in the literature. (TK-2017 pp 161–163; Tepper-2018 pp 8–9.)
+- **Supplemental — Wilson 2007 quantitative dissection (PBR-160 ch 6 pp 96–103):** the entire chapter is essentially a re-evaluation of the WTA hypothesis for striatum. Key quantitative findings strengthening the prior B.04 correction:
+  - **Connection probability** for MSN→MSN within an axonal field (~400 µm diameter): ~**16–17%** (Tunstall 2002, Taverna 2004, Venance 2004; ch 6 p 99).
+  - **Reciprocal connections are at chance level** (1/36 in random distribution; observed 1/38 — Taverna 2004) — *no* preferred bidirectional coupling that would let competing groups form.
+  - **Quantal analysis (Koós et al. 2004):** unitary FSI→MSN and MSN→MSN synapses have *identical* per-quantum conductance (~630 pS) and quantal release probability (>0.5). The strength asymmetry comes entirely from (a) **release-site count** — FSI axon makes 6 (avg) up to 18 sites per target MSN; Sp-Sp axon averages 3 sites — and (b) **synapse location** — FSI axon makes clusters on the MSN *soma*, Sp-Sp axon makes scattered en-passant contacts on **proximal dendritic spines** (40%) and spiny dendrites (48%). Soma-located inhibition has 2–3× larger somatic IPSP amplitude than dendritic.
+  - **Wilson's strong conclusion (p 107):** "Mutual inhibition does not produce strong competitive interactions that could be responsible for low background activity, phasic firing, or sparse striatal movement-related activity." Rather, MSN-MSN inhibition acts in the *dendrite* — locally *very* large IPSP (~10 mV at synapse, decays to ~0.5 mV at soma) — and primarily **counteracts the KIR2 electrotonic nonlinearity** rather than implementing WTA per se.
+  - **Implication for v3 lateral inhibition:** v3 (`--bg-lateral-inhibition`) shipped as the WTA mechanism in `g11_bg_runner` flagship. The Wilson data confirm that v3 is a *functional* equivalent (2026-04-28 6-seed result 4.26 ± 0.50, GO) but reinforces that the *anatomical* WTA substrate is FSI feedforward, not Sp-Sp feedback. A future v3-bis: per-action FSI pool (excited by cortex_X, inhibits str_d1_Y for Y≠X) targeting MSN soma directly. Wilson Fig 6/7/8 + p 100 also rules out "connectivity groups" (preassigned competing subnetworks) as a way to rescue the WTA hypothesis — for an average connectivity of 1/6, even 6 disjoint groups only raise across-group connectivity to 1/5, asymptotically approaching 1/6 as group count grows.
 
 ### B.05 Cholinergic tonically-active neuron (TAN) — striatal interneuron
 
@@ -361,6 +483,7 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Citation:** Kandel 6e Ch 38 p 935–938.
 - **Behavioral validation:** Salient cue → 200 ms TAN pause → permissive window for cortico-striatal plasticity.
 - **Supplemental:** TK-2017 and Tepper-2018 add that ChIs/TANs are not just DA/plasticity gates: they drive a **disynaptic inhibition of MSNs** via nicotinic excitation of GABAergic interneurons. Specifically: ChI spike → α4β2-nicotinic excitation of NPY-NGF interneurons → GABA_A-slow IPSC on MSN (decay τ ≈ 120 ms — see new B.09 below); and ChI spike → nicotinic excitation of FAIs → fast facilitating IPSC on MSN (new B.11). The classic "TAN pause → cortico-striatal plasticity window" framing is therefore incomplete — the pause also lifts a *long-lasting GABA-A-slow blanket inhibition* of MSNs. (TK-2017 pp 167, 171–172; Tepper-2018 pp 2–6.) Implication: the simulator's existing TAN preset, if instantiated, would need an output pathway via at least an NGF-equivalent population to capture the disynaptic ChI→IN→MSN inhibition, not a direct ChI→MSN connection.
+- **Supplemental — substance P / NK-1 driver (PBR-160 ch 16 McGinty Fig 1, pp 274–278):** ChIs in the striatum are **the dominant NK-1-receptor-expressing population** (Kaneko 1993, cited McGinty p 274). Direct-pathway D1 MSNs release substance P from local axon collaterals → SP binds NK-1 on neighboring ChIs → ChIs depolarize and release ACh. This forms an **open-loop excitation chain D1 → ChI** that operates on a slower timescale (peptide volume transmission) than the canonical Glu→ChI cortical drive. McGinty Fig 5 (p 280) and pp 277–278 also implicate ChI involvement in dopamine-induced locomotor/sensitization behavior — knockout of ChIs (Kaneko 2000 immunotoxin study) abolishes both D1 SP-mediated PPD induction *and* D2 antagonist (eticlopride)-mediated PPE induction, indicating ChIs are an obligatory relay for *both* D1- and D2-driven peptide gene expression. **Sim implication:** the existing `IZH2007_STRIATAL_TAN` preset is currently un-used in `g11_bg_runner`. To capture the full direct-pathway dynamics, instantiating a TAN pool driven by `str_d1_X → tan_X` (NK-1 mediated, slow) in addition to the canonical thalamic CM/Pf input would be a self-contained extension. The runner-side change is small; the new biology is the SP→NK-1→ACh delay loop modulating striatal plasticity gating from within the indirect-pathway side.
 
 ### B.06 Fast-spiking PV+ interneuron — feedforward inhibition in STR
 
@@ -393,6 +516,8 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 
 ---
 - **Supplemental:** Bolam-2000 does not give patch/matrix detailed treatment but confirms the developmentally distinct compartments and notes their differential dopaminergic innervation (patch ↔ ventral midbrain DA → limbic; matrix ↔ thalamus / cortex → sensorimotor). TK-2017 and Tepper-2018 don't add patch/matrix detail beyond what Kandel covers — the specialty BG literature treats striatal microcircuitry as relatively patch/matrix-agnostic at the interneuronal level (i.e., FSIs, LTS, NGFs, etc. are found in both compartments). No new constraints for the simulator beyond the existing entry.
+- **Supplemental — striosomes also project to SNr (PBR-160 ch 9 Deniau et al. p 160):** the long-standing dogma that striatonigral projections originate "exclusively from striatal matrix" has been corrected. Single-cell labeling and neurotoxic targeting of striosomal neurons reveal that **striosomes contribute substantial direct input to SNr in addition to their canonical SNc target**. A subset of D1 MSNs in striosomes co-projects to both SNc (DA cells, the classical striosomal projection) and SNr (GABA output cells). Functionally this means striosomes can directly bias BG output — not just modulate DA via SNc — as well as inject limbic information into the SNr-thalamic motor channel. PBR-160 ch 11 p 191 (Tepper & Lee) further notes that **major input to SNc dopaminergic neurons arises from striatal patch (striosome) compartment** while **GABAergic SNr neurons receive input from striatal matrix** — i.e., the patch/matrix split aligns with the SNc/SNr split at the output level. **Sim implication:** if/when the simulator adds a striosomal pool (currently missing), declaring it as projecting to both SNc and SNr (with limbic input source) creates the substrate for the "limbic gates the motor channel" effect that A.11 already flags as missing.
+- **Supplemental — SNc DA neuron has *depolarized* GABA_A reversal (PBR-160 ch 11 Tepper & Lee pp 192–193, 199):** SNc dopaminergic neurons **lack KCC2** (the chloride exporter that maintains hyperpolarizing E_Cl in mature CNS neurons; Gulácsi et al. 2003 cited p 199). Their ECl is consequently several mV more *depolarized* than SNr GABA neurons. This creates a paradoxical asymmetry: stimulation of striatum or pallidum *inhibits* SNr GABA neurons (canonical) but produces only *weak inhibition* of SNc DA neurons; meanwhile, blocking SNr GABA_A receptors triggers DA *burst firing* via release of SNr→SNc tonic disinhibition (axon collaterals of SNr projection cells onto SNc dopamine neurons; Tepper et al. 1995). The **major drive to spontaneous DA burst firing in vivo is the SNr→SNc axon-collateral inhibition**, and disinhibition through GPe→SNr is the dominant route by which pallidal activity controls phasic DA. **Sim implication:** the simulator's `dopamine` region in `g11_bg_runner` currently uses generic excitatory drive; modeling SNr_X → DA disynaptic disinhibition (via SNr collaterals) would let DA bursts emerge *naturally* from the cascade rather than being injected manually. Maps to Cluster C (DA prediction error).
 
 ## Cluster O — Reward / dopamine
 
@@ -413,6 +538,34 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Prerequisites:** existing NM subsystem; existing reward-EMA mechanism in `--adaptive-da`.
 - **Citation:** Sutton & Barto §11.3 (pp. 260–262, esp. Fig. 11.2 algorithm box); Schwartz (1993) for original R-learning derivation, cited S&B p. 264.
 - **Behavioral validation:** Run g11 moving-goal task with three reward-baseline configurations: (i) absolute reward (no subtraction; baseline `--no-adaptive-da`); (ii) `--adaptive-da` symmetric EMA; (iii) explicit R-learning `R̄` (slow EMA, β ≪ α). Acceptance: under continuing-task setup (no episode boundaries), config (iii) should match or exceed (ii) on summed reward across goal transitions. Currently (ii) is in flagship; (i) is the documented baseline.
+
+### O.22 Striatal action-value coding — strict definition, A_left vs A_right neurons
+*[from Schultz 2016 J. Neural Transm. §§"Action value", "Pure reward", "Conjoint reward and action" pp. 686–688]*
+
+- **System:** Caudate nucleus + putamen + nucleus accumbens, primarily phasically active medium spiny neurons.
+- **Biological role:** Schultz16-JNT documents that the striatum is **the** structure that biologically realizes the **machine-learning concept of action value**. Strict definition (from Sutton & Barto 1998, reproduced in Schultz16-JNT p. 687): action value `Q(s, a)` for a specific action `a` "needs to be coded for each action by separate neurons irrespective of the action being chosen." Striatal neurons satisfy this empirically (Samejima et al. 2005; Lau & Glimcher 2008; Ito & Doya 2009; Kim et al. 2009; Seo et al. 2012, all cited Schultz16-JNT pp. 687–688): subgroups of MSNs **fire selectively for the value of one specific action (e.g. left arm movement) regardless of which action the animal actually chooses**. Schultz16-JNT's basic decision model (p. 688): the dopamine RPE signal updates synaptic weights at active cortex→striatum synapses (via the three-factor rule with eligibility traces); striatal action-value neurons feed a downstream "competitive decision mechanism" (= argmax-with-noise selector). Striatum also encodes **subjective rather than objective value** (Cromwell et al. 2005), reward delays (Roesch et al. 2009), and previous-trial outcomes (Histed et al. 2009). And **social reward**: a fraction of striatal neurons fire only when *a specific agent* (self vs conspecific) acts to deliver a reward (Báez-Mendoza et al. 2013).
+- **Sim status:** **partial — the structure is there but not the explicit Q(s,a) readout.** The project's BG cascade has per-action `str_D1_X` populations (X ∈ {N, E, S, W} for moving-goal). These are functionally action-coding because each pool is recipient of a specific cortex→D1 subset. **However**, the project does not enforce or measure the Sutton-Barto strict-action-value criterion: that an `A_left` neuron should fire to the value of leftward action *whether or not the animal chose left*. The project's per-action readout is from spike counts during the choice phase, conflating action-value and action-execution. Lateral inhibition (cheat-5 v3 `--bg-lateral-inhibition`) further entangles action values across pools.
+- **Cluster:** O primary, A secondary (BG), G secondary (decisions).
+- **Prerequisites:** A.x (striatum), C.22 (RPE), C.32 (two-component DA), O.20 (GPI control structure).
+- **Citation:** Schultz16-JNT pp. 686–688 §§"Pure reward", "Conjoint reward and action", "Action value", "Reward learning"; Samejima et al. 2005 (Fig. 4c in Schultz16-JNT p. 687); Báez-Mendoza et al. 2013 (Fig. 5, social reward).
+- **Behavioral validation:** Implement a **forced-choice trial** variant in `g11_bg_runner`: on a fraction of trials, inject motor exploration noise heavily into one specific motor pool to force a specific action choice independent of cortex→D1 weights. Measure firing of `str_D1_left` during forced-right trials. The strict action-value criterion says `str_D1_left` should still encode the *would-be value* of left, even though the animal went right. Currently the project does not produce that signal — `str_D1_X` activity is largely chosen-action activity, not value-of-X-irrespective-of-choice. This is a measurable gap and a concrete validation criterion.
+
+### O.23 Three reward functions — reinforcer, goal/value, emotion
+*[from Schultz 2016 NRN p. 1 Introduction]*
+
+- **System:** Behavioral / functional taxonomy applied to the same reward stimulus.
+- **Biological role:** A reward has three distinct behavioral functions, dissociable in experiment (Schultz16-NRN p. 1):
+  1. **Positive reinforcer** — induces learning. Operationalized by reinforcement-learning paradigms (operant conditioning, Pavlovian transfer). Substrate: DA × eligibility-trace plasticity.
+  2. **Goal object for approach + economic choice** — assigns value to options for selection. Operationalized by binary-choice tasks revealing transitive subjective preferences and certainty equivalents. Substrate: DA-encoded utility (C.34) + striatum action-value (O.22) + OFC/vmPFC scalar value (O.19).
+  3. **Emotion** — produces pleasure / desire. Operationalized weakly in animals (taste reactivity, place preference) but not quantitatively. Substrate: NOT phasic DA (DA is the teaching signal, not the hedonic signal — see C.24, C.27). Hedonic "liking" depends on opioid/cannabinoid hotspots in NAc (Berridge).
+  Schultz16's key methodological claim (p. 1): functions 1 and 2 can be quantitatively studied via behavioral tasks, function 3 cannot, so neuroscience of reward should focus on 1 and 2. Function 3 is the "wanting vs liking" / hedonic axis covered in C.27.
+- **Sim status:** **partial.** Project cleanly implements function 1 (positive reinforcer via `current_reward_signal × eligibility_trace × STDP`). Partially implements function 2 (per-action eligibility gating gives action-value-like behavior, but no separable subjective-value readout for choice; argmax + WTA approximate the choice mechanism). Does not implement function 3 (no hedonic axis, no opioid hotspot machinery; this is appropriate for the project's scope but worth noting in a feature catalog).
+- **Cluster:** O primary, C secondary.
+- **Prerequisites:** C.04 (DA), C.27 (wanting vs liking), O.19 (subjective value).
+- **Citation:** Schultz16-NRN p. 1 Introduction; cross-references C.27 (Berridge) for function 3.
+- **Behavioral validation:** N/A as a single mechanism — this is a taxonomic frame for grouping the C/O entries above. Useful as a project-level documentation point: "the simulator implements reward function 1 fully, function 2 partially, and explicitly does not address function 3."
+
+---
 
 ---
 
@@ -453,6 +606,55 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Prerequisites:** C.28 (TD error), C.29 (eligibility traces).
 - **Citation:** Sutton & Barto §6.1 "TD Prediction" (pp. 143–148); §7.1 "n-Step TD Prediction" (pp. 168–172); §7.10 "Conclusions" (p. 190 — "eligibility traces in conjunction with TD errors provide an efficient, incremental way of shifting between Monte Carlo and TD"); HS98 entire paper as the empirical case for bootstrapping.
 - **Behavioral validation:** N/A — this is a theoretical entry that documents a mapping. The empirical validation is C.28's cue-shift criterion, which a non-bootstrapping architecture cannot satisfy.
+
+### C.32 Two-component DA response — detection (Component 1) + utility-RPE (Component 2)
+*[from Schultz 2016 NRN review, integrated with Schultz 2016 J. Neural Transm.]*
+
+- **System:** Same A8/A9/A10 midbrain DA cell groups as in C.04, C.16, C.22 — but parsed as a **temporally compound burst** rather than a single phasic event.
+- **Biological role:** The phasic dopamine burst on a salient/rewarding stimulus consists of **two sequential components**:
+  - **Component 1 (detection / salience):** latency 60–90 ms, duration 50–100 ms. Unselective — fires to any sufficiently intense, novel, generalizable, or contextually-rewarded stimulus, including aversive stimuli, conditioned inhibitors, and unrewarded probes. Graded by physical intensity, reward generalization (similarity to known reward cues), reward context (rewarded vs unrewarded session), and novelty. Implements the salience term of the Pearce-Hall (1980) attentional learning rule. Functionally: amplifies learning rate and downstream sensory gain on any "potentially important" event before identification.
+  - **Component 2 (value / utility RPE):** latency 150–300 ms (clearly separated in demanding tasks like dot-motion discrimination, Schultz16-JNT Fig. 1a). Graded by **subjective utility** (not raw reward) — follows the inflected convex-then-concave utility function measured by certainty-equivalent fractile procedure on equiprobable risky gambles. Tracks reward, risk-discounting, delay-discounting, and arithmetic sum of positive + negative outcomes. Implements `δ = r̂(t) − P(t−1)` over a learned utility function `u(r)`.
+  - The two components operate on a **10-ms-precision temporal structure**: the value information of Component 2 cannot be read out before Component 1 finishes, and stimulant drugs that prolong extrasynaptic DA *smear* Component 1 into Component 2 and create a "false value signal" — proposed mechanism for stimulant addiction and psychiatric pathology of DA.
+- **Sim status:** **partial — accidental implementation across two CLI flags.** The project's `--surprise-lr-boost` (LR multiplier × `(1 + α|RPE|)`) and `--adaptive-da --adaptive-da-ema-decay-negative 0.7` (asymmetric per-action eligibility gating) are functionally Component-1 and Component-2 analogs respectively. They were discovered empirically and currently treated as alternatives in the recommended-config table; biology says they should compose. The combination has not been validated and the project notes that "combining adaptive DA with WTA, or adaptive DA with LR boost, doesn't compose well" (CLAUDE.md "Other refinement variants") — but that's an empirical interaction with shared reward EMA; the principled biological prescription is that Component 1 should drive a global LR with the *raw* surprise (no EMA), while Component 2 should drive eligibility with the EMA-tracked utility error. Rewriting `--adaptive-da` to share the EMA only for Component 2 and leaving Component 1 raw-surprise-driven would be a one-flag-rewrite test.
+- **Cluster:** C primary, O secondary.
+- **Prerequisites:** C.04 (DA), C.22 (RPE), C.20 (tonic-phasic).
+- **Citation:** Schultz16-NRN pp. 4–11 §§"The initial component: detection", "The main component: valuation"; Schultz16-JNT pp. 681–682 §"Two phasic response components", Fig. 1a.
+- **Behavioral validation:** Replicate Nomoto et al. 2010's dot-motion discrimination paradigm in `g11_bg_runner` — vary stimulus discriminability so Component 1 stays constant (detection) while Component 2 varies with reward probability (value). Currently impossible because the simulator has only one DA channel. **Specific instrumentation criterion:** measure the firing rate of the dopamine pool (or `current_reward_signal` proxy) at 60–90 ms after stimulus onset (should be uniform across reward conditions) vs at 150–300 ms (should track reward probability monotonically). Project does not currently emit a time-resolved DA signal — adding one would be the first concrete step.
+
+### C.33 Pedunculopontine nucleus (PPN) — sensory + reward input to DA neurons
+*[from Schultz 2016 J. Neural Transm. §"Pedunculopontine nucleus" pp. 684–686]*
+
+- **System:** Brainstem (mesopontine) cholinergic + glutamatergic nucleus. Major projection: **PPN → SNc DA, SNr (substantia nigra pars reticulata), GPi, STN**. Inputs: cortex (via internal globus pallidus and STN), thalamus, cerebellum, spinal cord, contralateral PPN. Already partially indexed in **C.18 Mesopontine Cholinergic Nuclei (PPT/LDT) — REM-on cholinergic** but the *reward* function is distinct and not covered there.
+- **Biological role:** PPN neurons show heterogeneous activity: some fire to sensory stimuli, some to saccadic eye movements, some to reward-predicting stimuli (sustained activations until reward delivery), some to reward delivery itself. PPN neurons differentiate reward magnitude (higher firing for larger predicted reward) but **do NOT fire bidirectional reward prediction errors** the way DA neurons do. PPN reward responses are not depressed by reward omission. **Functional role inferred from anatomy + lesion:** PPN supplies "components" of the DA RPE signal — electrical PPN stimulation activates 20–40% of DA neurons; PPN inactivation by local anesthetic in behaving rats reduces DA prediction-error responses to conditioned cues (Pan & Hyland 2005, cited Schultz16-JNT p. 685). Both glutamate and acetylcholine are involved in PPN→DA excitation. Latencies of stimulus responses are slightly shorter in PPN than in DA neurons — consistent with PPN being a **driver / contributor**, not a follower, of the early DA detection component (Component 1).
+- **Sim status:** **missing.** The simulator's BG cascade in `g11_bg_runner.build_bg_brain_regions` does not include PPN. There is no upstream sensory/reward driver of the dopamine pool other than `current_reward_signal` event-injection. **Implication:** the project cannot model the *dynamics* of how a reward-predicting cue becomes able to drive DA — biologically PPN is a candidate substrate of that learned drive (along with striatum and STN). Adding a small PPN region (e.g. 30–50 neurons) projecting to the dopamine pool, receiving sensory cue inputs, with plastic synapses gated by reward delivery, would let the project model the **cue-shift transfer** dynamic that is the canonical Schultz signature still missing from the project (see C.22 supplemental, "Currently the project reproduces only sign (a)…").
+- **Cluster:** C primary, A secondary (BG).
+- **Prerequisites:** C.16 (VTA/SNc), C.18 (PPT/LDT — anatomical overlap), C.22 (RPE).
+- **Citation:** Schultz16-JNT pp. 684–686 §"Pedunculopontine nucleus"; Kobayashi & Okada 2007; Okada et al. 2009; Pan & Hyland 2005; Hong & Hikosaka 2014 (all cited by Schultz16-JNT).
+- **Behavioral validation:** PPN inactivation should **specifically degrade the cue-evoked DA burst** (Component 1 + transferred Component 2) without abolishing the unconditioned-reward DA burst. In `g11_bg_runner`, this is testable: simulate a PPN ablation by zeroing PPN→DA projection, run a Pavlovian conditioning protocol, expect normal initial-trial reward-evoked DA but failure of cue-DA acquisition across trials.
+
+### C.34 DA codes economic utility u(x) — nonlinear, inflected, risk-sensitive
+*[from Schultz 2016 NRN §§"Subjective reward value", "Utility" pp. 6–9; Schultz 2016 J. Neural Transm. §"Formal economic utility" pp. 684–685]*
+
+- **System:** Same DA neurons as C.04/C.22 — but the *response amplitude curve* is the focus.
+- **Biological role:** When physical reward amount is varied, DA Component 2 amplitude does **not** increase linearly — it follows the **inflected utility function u(x)** the same animal reveals through behavioral choices on equiprobable risky gambles (Stauffer et al. 2014). Concretely: u(x) is **convex (progressively increasing)** at small reward amounts (animal shows risk-seeking on small gambles), **concave (progressively flattening)** at large amounts (animal shows risk-aversion on large gambles), with an inflection point in between. DA Component 2 reproduces this shape (Schultz16-NRN Fig. 4d). Tested directly with binary equiprobable gambles, the higher of the two gamble outcomes elicits non-monotonically varying positive RPE responses that match u(x). Schultz16's strong claim: "the phasic dopamine reward prediction-error response can be specified as a **utility prediction-error signal** … dopamine responses seem to represent a physical correlate for utility" (Schultz16-NRN p. 9).
+- **Sim status:** **missing as a feature, irrelevant for current tasks.** Project tasks are binary-reward (moving-goal, BG cascade). For these, DA-codes-utility vs DA-codes-reward is observationally identical. **Becomes critical** for any future risk-sensitive choice tasks (binary-gamble selection, two-arm bandit with variance differences, delay-discounting tasks). One-line implementation: insert a `utility_fn(reward)` callable in `current_reward_signal` computation. Default `lambda r: r` preserves current behavior; `lambda r: np.sign(r) * np.power(np.abs(r), α)` with α<1 gives the concave (risk-averse) regime, two-piece convex/concave gives the full inflected curve.
+- **Cluster:** C primary, O secondary (decisions).
+- **Prerequisites:** C.22 (RPE), O.19 (subjective value).
+- **Citation:** Schultz16-NRN pp. 6–9 §§"Subjective reward value", "Utility"; Schultz16-JNT pp. 684–685 §"Formal economic utility"; Stauffer et al. 2014 (cited in both); Caraco et al. 1980; Kagel et al. 1995.
+- **Behavioral validation:** Run a binary-gamble selection task in `g11_bg_runner`. Measure DA pool activation amplitude as a function of reward delivered. Plot DA-amplitude vs reward-amount. With current linear `reward = +1 / -1`, this is degenerate. With a graded reward (e.g. `reward ∝ inverse_distance_to_goal`) this should reveal whatever utility curve the project implicitly imposes — currently linear, biology says inflected.
+
+### C.35 Stimulant drugs smear Component 1 into Component 2 — drug-action mechanism
+*[from Schultz 2016 NRN p. 10 BOX 2; Schultz 2016 NRN §"Correct behaviour based on late component"]*
+
+- **System:** Pharmacological action of dopamine reuptake inhibitors (cocaine, amphetamine, methylphenidate) on the temporal structure of phasic DA bursts.
+- **Biological role:** The two-component DA response operates on a "narrow timescale that requires unaltered, precise processing in the 10 ms range" (Schultz16-NRN p. 9). Stimulant drugs prolong extrasynaptic DA concentration after a phasic burst (DAT block → impaired reuptake → DA persists in extracellular space for hundreds of ms instead of <100 ms). Schultz16's mechanistic proposal: this prolongation causes **Component 1 (detection) to overlap with Component 2 (value)**, so postsynaptic plasticity machinery cannot distinguish "detected something" from "this was rewarding." The downstream MSNs receive a fused signal that they treat as Component-2-strength value information for any salient stimulus, biasing learning toward whatever cue triggered Component 1 — including conditioned-aversion cues, novelty cues, and physical-impact cues that biology designs Component 1 to *not* commit value to. This is offered as a candidate **mechanism for stimulant addiction** distinct from the simpler "high tonic DA → euphoria" account.
+- **Sim status:** **missing — and currently impossible to model.** The project's `current_reward_signal` is event-triggered with no internal Component 1/Component 2 temporal structure to smear. The `NeuromodulatorConfig.decay_tau_ms` field could in principle model DA reuptake — setting a longer tau would produce a smeared signal — but without distinct C1 and C2 production rules there's no smearing of one onto the other. This is therefore a future-feature that depends on first implementing C.32 (two-component DA response) as distinct mechanisms.
+- **Cluster:** C primary, P secondary (disease — addiction).
+- **Prerequisites:** C.32 (two-component DA), C.21 (volume transmission).
+- **Citation:** Schultz16-NRN p. 10 §"Correct behaviour based on late component" + BOX 2 "Drug actions".
+- **Behavioral validation:** With C.32 implemented, model a "stimulant" condition by extending `decay_tau_ms` of the salience-Component-1 modulator. Predicted phenotype: increased weight changes for novel/physically-intense-but-unrewarded stimuli; impaired cue-shift transfer (because Component 1 cannot decouple from Component 2 across learning); preserved behavior on already-learned tasks (Component 2 still functions, but driven by smeared Component 1).
+
+---
 
 ---
 
@@ -496,6 +698,14 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Citation:** Kandel 6e Ch 16 p 371–376; Ch 43 (Reward / Addiction); Ch 38 (BG)
 - **Behavioral validation:** Phase B BG cascade benchmark (4.08 ± 0.49, 6-seed) covers DA-driven action selection. Schultz-type RPE signature: phasic DA on unpredicted reward, dip on omission — currently not directly replicated as a unit test.
 - **Supplemental:** Schultz98 frames DA as a *3-component* signal: (1) a prediction-independent **alerting** component to salient onsets, (2) a learned **reward-prediction** component that transfers from primary reward to the earliest reward-predicting cue across trials, and (3) the **prediction error** (Schultz98 pp. 1–4, "Summary 2: effective stimuli"; Eqs. 1–2 p. 11). Of these, the simulator implements only (3), and only positively (the cue-shift dynamic of (2) is the canonical Schultz signature; see C.22). Schultz98 also distinguishes **two functions** of DA on different timescales: phasic burst-encoded RPE (10s–100s of ms) and tonic ambient ~5–10 nM extracellular concentration that *enables* striatal/cortical processing on a 10s–100s of seconds scale (Schultz98 pp. 19–21, "Dopamine reward signal vs. parkinsonian deficits"). The project's `current_reward_signal` collapses both into one event-triggered scalar — closing this gap is feasible with the existing NM subsystem (`baseline + decay_tau_ms + concentration_min/max`) without any new GPU code.
+- **Supplemental — the two-component DA framework (Schultz16-NRN):** Schultz's 2016 review **revises** the 3-component scheme of Schultz98 into a cleaner **two-component** picture, which is what the project should target for biological fidelity:
+  - **Component 1 — initial detection / unselective activation.** Latency 60–90 ms, duration 50–100 ms; "unselectively detects any potential reward (including stimuli that turn out to be aversive or neutral)" (Schultz16-NRN p. 183 Abstract; pp. 4–6 §"The initial component: detection"; Schultz16-JNT p. 681 §"Two phasic response components"). Sensitivity is graded by **physical intensity, reward context, reward generalization, and novelty** — i.e. it is a multi-flavored salience signal, not a value signal. Boosted by stimulus intensity (Schultz16-NRN Fig. 3a, p. 4); by being presented in a rewarded context (Schultz16-NRN Fig. 3b, p. 4 "increasing the probability that the animal will receive a reward… increases the incidence of dopamine activations to unrewarded stimuli"); by physical resemblance to known rewards (Fig. 3c, p. 4); and by novelty (Fig. 3d, p. 5). Component 1 is **transient**: "lasts only until the subsequent value component conveys the accurate reward value information" (Schultz16-NRN p. 9).
+  - **Component 2 — value / utility prediction error.** Begins during Component 1 but extends to ~150–300 ms latency in demanding tasks (Schultz16-NRN Fig. 2c–e; Schultz16-JNT Fig. 1a "second dopamine response component begins later, at latencies around 250 ms… varies with reward value"). This is the canonical Schultz RPE — "the fully developed main response component codes utility… the phasic dopamine reward prediction-error response can be specified as a utility prediction-error signal" (Schultz16-NRN p. 9, "The main component: valuation").
+  - **Why this matters for the project — direct mapping to the existing flagship config:**
+    - The project's `--surprise-lr-boost` mechanism (`(1 + α × |reward - reward_ema|) × reward_learning_rate`) **is a Component-1 analog**: an unselective salience-driven scalar that scales the global plasticity rate on any large RPE magnitude, regardless of valence. This is what Component 1 is biologically — multisensory, valence-blind, salience-graded. The mechanism's robustness across slow- and fast-change tasks (`research/findings/2026-04-26-surprise-lr-boost.md`) is consistent with Component 1's role: rapid detection that does not commit to value before identification.
+    - The project's `--adaptive-da --adaptive-da-ema-decay-negative 0.7` mechanism **is a Component-2 analog**: it gates eligibility per-action based on a slow positive / fast negative reward EMA, which mirrors the Component-2 utility-tracking dynamics. The asymmetry (slow positive τ~10, fast negative τ~3) is biology-grounded: phasic depressions on omission are sharper and shorter than activations on acquisition — see Schultz16-NRN p. 9 "the second response component persists throughout the resulting behaviour" and the omission-dip data preserved from Schultz98.
+  - **Open work:** the project does NOT currently model the two components as distinct mechanisms running in parallel — `current_reward_signal` is a single scalar. A faithful Schultz16 implementation would have a fast-onset salience pulse (Component 1) gating learning rate, and a slower value-tracking pulse (Component 2) gating eligibility — composing the two existing CLI flags in a principled way rather than as alternatives. See new entry **C.32 Two-component DA response** for the dedicated mechanism.
+- **Supplemental — three reward functions (Schultz16-NRN p. 1):** rewards have three behavioral functions: (1) **positive reinforcers** that induce learning, (2) **goal objects** for approach behavior and economic choice, (3) **emotion** (pleasure/desire). Functions 1 and 2 are quantitatively assessable in animals; function 3 is hard to test. The project's `current_reward_signal` exclusively implements function 1, partially implements function 2 (via per-action eligibility), and does not address function 3.
 
 ### C.05 Norepinephrine (NE) — arousal / vigilance / fight-or-flight
 
@@ -506,6 +716,7 @@ For navigation, search the file for `## Cluster <X>` to find all section heading
 - **Citation:** Kandel 6e Ch 16 p 376–380
 - **Behavioral validation:** add NE concentration; vary baseline; measure SNR (signal-induced firing rate change / background CV(ISI)). Should peak at intermediate NE.
 - **Supplemental:** Schultz98 (pp. 18–19, "Comparisons with other projection systems / Noradrenaline") contrasts LC-NE with VTA/SNc-DA: NE neurons respond to a much wider range of arousing stimuli (including aversive ones), discriminate poorly between appetitive and neutral events, and **track familiarity / change rather than reward valence**. Critically, NE responses appear and disappear faster than DA (Aston-Jones et al. 1997: NE neurons reverse target preference *before* behavioral reversal completes, whereas DA tracks the RPE itself). This is the empirical grounding for the project's existing **surprise-LR-boost** mechanism (`(1 + α × |RPE|) × reward_learning_rate`, see C.22 supplement) — by amplifying the global plasticity rate on unexpected outcomes regardless of valence, surprise-LR-boost is functionally an LC-NE signal layered on top of the DA RPE channel, not a reshaping of DA itself. Adding a declared NE modulator with `from_error_persistence` production rule and `plasticity_rate` target type would make this explicit rather than implicit.
+- **Supplemental — Component-1 DA shares mechanism with LC-NE:** Schultz16-NRN connects DA's initial unselective component to the broader monoaminergic salience-detection family (pp. 4–7, §"Salience"). Both DA Component 1 and LC-NE phasic bursts respond to physical, novelty, and motivational salience without committing to valence. The Pearce-Hall attentional learning rule (Schultz16-NRN p. 6, Pearce & Hall 1980) — "surprise salience derived from reward prediction errors enhances the learning rate" — is given by Schultz as the formal model that **both** Component-1 DA and LC-NE bursts plausibly implement. This justifies the project's existing identification of `--surprise-lr-boost` as functionally an LC-NE signal layered onto DA: biologically these are **distinct populations carrying overlapping salience information**, and modeling them as separate `NeuromodulatorConfig` entries (one DA-Component-1, one NE) with shared `from_error_persistence` production rules and `plasticity_rate` target type would correctly factor what the simulator currently fuses into a single LR multiplier.
 
 ### C.06 Serotonin (5-HT) — mood / impulsivity / sleep
 
@@ -678,6 +889,7 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
 - **Citation:** Kandel 6e Ch 40 pp 1001-1002 (Fig 40-12).
 - **Behavioral validation:** In-vitro slice recording: monoaminergic neurons spontaneously pacemaker-fire at ~1-5 Hz with characteristic AHP + slow depolarization to next spike. In-vivo: tonic baseline + phasic event-locked bursts.
 - **Supplemental:** Schultz98 §"Dopamine reward signal vs. parkinsonian deficits" (pp. 19–21) is the locus classicus for the **tonic-phasic dual function**: (a) phasic short bursts (50–110 ms latency, ~200 ms duration; Schultz98 p. 6 "Homogeneous character of responses") report RPE; (b) tonic 1–5 Hz pacemaker firing maintains a 5–10 nM ambient extracellular DA concentration that activates high-affinity D2 receptors in their high-affinity state and is **necessary for striatal plasticity itself** (Calabresi et al. 1992a, 1997 cited p. 21 — D2 antagonists or D2 knockout abolish posttetanic depression). Implication: a project that wants Schultz-grade fidelity must run *both* a tonic concentration variable that maintains plasticity competence *and* a phasic burst that scales eligibility-trace × DA. The project currently fuses both into one transient scalar — explicitly, in the `current_reward_signal` design any plasticity that requires "DA presence" is conditioned on the same event that delivers the teaching signal, conflating Schultz's two axes.
+- **Supplemental — phasic structure is itself two-tier (Schultz16-NRN, Schultz16-JNT):** Schultz's 2016 work **further decomposes the phasic burst** into the two-component sequence (Component 1 detection 60–90 ms, Component 2 value 150–300 ms; Schultz16-JNT p. 681). The "phasic burst" is therefore not a unitary event but a two-sub-event temporal structure operating "on a narrow timescale that requires unaltered, precise processing in the 10 ms range" (Schultz16-NRN p. 9). Stimulant drugs that prolong DA concentrations cause Component 1 to **smear into and overlap** Component 2, generating "a false value signal for postsynaptic neurons" — Schultz16-NRN proposes this as a mechanistic substrate for stimulant addiction and psychiatric disorder dynamics (p. 10, BOX 2). For the project: any future model of psychotropic-drug effects on the DA system should preserve the two sub-phases, because their *temporal separation* is the carrier of value information.
 
 ### C.21 Volume-Transmission Neuromodulation — non-synaptic diffuse release
 
@@ -705,6 +917,8 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
 - **Behavioral validation:** Three-trial paradigm: (a) unexpected reward → burst at reward; (b) trained CS+R → burst at CS, no burst at R; (c) trained CS but R omitted → dip at R-expected time. Currently only (a) is faithfully reproduced.
 - **Supplemental — the single most important RPE augment:** HS98 is the **direct experimental validation criterion** the simulator could replicate. Two monkeys, novel-picture-pair learning trials. (i) **Cue-shift across learning**: 50% of DA neurons activated by reward during initial learning trials; activations dropped to 12% in familiar trials *only after the 2-of-4 learning criterion was reached*. Mean reward activation peaks at ~193% above baseline in trials 1–2 with novel pictures, declining toward 90–110% as task is learned (HS98 pp. 305–306, Figs. 3–5). The transfer is *graded* with learning rate, *not binary* — slow-learned pairs retain reward responses for tens of trials, fast-learned pairs lose them within ~2 trials. (ii) **Reward-omission dip**: 70% of neurons (28/40) showed a depression at 99 ± 29 ms after the time the reward would have been delivered, lasting 401 ± 36 ms (HS98 p. 305, Fig. 6a). (iii) **Temporal prediction error**: when reward delivered 0.5 s late, neurons depressed at the *original* reward time AND activated at the *new* reward time; when delivered 0.5 s early, neurons activated at the new time but did NOT depress at the original time (the early arrival cancels the prediction). HS98 pp. 305–306, Fig. 6b. **Validation criterion for the simulator**: in a `g11_bg_runner` variant, instrument the dopamine pool firing rate against a 2-cue Pavlovian schedule. **Currently the project reproduces only sign (i, partially) — it lacks the cue-shift transfer** because the predictive cue itself never acquires DA-burst-evoking power. This is the canonical signature; reproducing it requires the value-function critic of an actor-critic architecture (see new entry C.30 Actor-Critic mapping). Schultz98 §"Temporal difference learning" (Eq. 6, p. 12) gives the math: the cue-shift falls out of `r̂(t) = r(t) + γP(t) − P(t−1)` automatically once a learned prediction `P(t−1)` exists.
 - **Supplemental — algorithmic mapping for adaptive-DA and surprise-LR-boost:** Schultz98 Eq. 6a (p. 12) is `r̂(t) = r(t) − P(t−1)`, the effective reinforcement at reward time. The project's `--adaptive-da --adaptive-da-ema-decay-negative 0.7` sets up an **asymmetric per-action `P(t−1)`** by EMA: the slow-positive (τ~10) tau is the analog of `P(t−1)` settling toward `r(t)` after consistent delivery (= r̂→0, "commit"); the fast-negative (τ~3) tau is the analog of `P(t−1)` collapsing fast when `r(t)` drops (= negative r̂, "explore"). This is **functionally the Rescorla-Wagner / TD(0) update with an asymmetric learning rate on the value estimate**. The asymmetry is biology-grounded: Schultz98 p. 6 reports DA depressions on omission are sharper and more transient than the buildup of activations on acquisition. Spelling this out in the catalog gives the AI/RL audience the algebraic isomorphism they need.
+- **Supplemental — the RPE is specifically a UTILITY prediction error (Schultz16-NRN, Schultz16-JNT):** the canonical refinement that Schultz16 makes to the 1997/1998 RPE statement is that the second component codes **economic utility u(x)**, not raw reward magnitude. Concretely, the dopamine Component 2 follows the **nonlinear curvature of the behavioral utility function** measured by certainty-equivalent fractile procedures with binary equiprobable gambles (Schultz16-NRN Fig. 4c–d, p. 8; Schultz16-JNT Fig. 2, p. 684). The function is **convex (risk-seeking) at low amounts, concave (risk-averse) at high amounts** — an inflected utility function (Stauffer et al. 2014 cited Schultz16-JNT p. 685). DA tracks this curve, not a linear reward axis. Mapping to the project: the simulator's `current_reward_signal` is a linear scalar — there is no nonlinear utility transformation between physical reward and RPE. For most simulator tasks this is fine because rewards are binary or near-binary. But if the project ever runs **risk-sensitive choice tasks** (the obvious next step beyond moving-goal navigation), modeling DA as RPE-on-`reward_amount` will systematically underestimate phasic activations at low amounts and overestimate them at high amounts; a `utility_fn(reward)` bottleneck before computing the RPE would be the principled fix and is a one-line bridge change.
+- **Supplemental — temporal-prediction-error component (Schultz16-NRN p. 4):** the initial detection component is itself "sensitive to the time of stimulus occurrence and thus codes a temporal-event prediction error" (Schultz16-NRN p. 4). This is the **temporal** axis Schultz98 §"Temporal difference learning" derives mathematically. The project's `current_reward_signal` event-trigger contains no model of *when* a reward should arrive, so a temporally-late-but-otherwise-correct reward generates the same teaching signal as a temporally-perfect one. A phase-dependent reward expectation (e.g. the dwell-time in `g11_bg_runner.moving_goal`) could supply this for free — the omission-dip and late-arrival depression-then-activation patterns from Schultz98 Fig. 6b would then be reproducible.
 
 ### C.23 Heterogeneous DA Subpopulations — reward, aversion, salience VTA cells
 
@@ -717,6 +931,7 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
 - **Prerequisites:** C.52 (VTA), C.58 (RPE).
 - **Citation:** Kandel 6e Ch 43 pp 1068-1069.
 - **Behavioral validation:** Single-unit recording in identified VTA cells with retrograde tracing → diversity of stimulus-response profiles correlated with projection target.
+- **Supplemental — Schultz16 narrows the diversity claim:** Schultz16-NRN §"Dopamine diversity" (pp. 12–13) argues that the **phasic** RPE responses of dopamine neurons are remarkably similar across the population, with only **graded — not categorical — differences** between medial/lateral and dorsal/ventral midbrain subgroups (Schultz16-NRN p. 12; Schultz16-JNT p. 681 "70–90% of dopamine neurons, is very similar in latency across the dopamine neuronal population, and shows only graded rather than categorical differences"). Apparent categorical differences (e.g. Matsumoto & Hikosaka's reward vs salience subpopulations) are reinterpreted as **varying sensitivities to Component 1 drivers** (physical intensity, reward generalization, reward context) rather than as anatomically distinct value vs salience encoders. **Diversity in DA neurons is real, but it is overwhelmingly in the slow / tonic / non-phasic dimensions — morphology, neurochemistry, projection target, slow ramping with risk or reward proximity** — not in the phasic teaching signal. Implication for the project's cheat-5 v3.1 / v4 cross-projection failures: a single broadcast phasic DA may actually be the **biologically faithful** abstraction; the missing differentiation is plausibly in tonic-DA + projection-target-specific receptor effects, not in the phasic RPE itself.
 
 ### C.24 Dopamine in Aversion — DA also encodes salience and warning
 
@@ -730,6 +945,7 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
 - **Citation:** Kandel 6e Ch 43 pp 1068-1069.
 - **Behavioral validation:** Recording during foot-shock or aversive Pavlovian conditioning shows DA increase in subset of VTA neurons, dip in others.
 - **Supplemental:** Schultz98 (pp. 3–4, "Activation by primary appetitive stimuli", "Activation-depression with response generalization", and §"Effective stimuli for dopamine neurons" pp. 6–7 Fig. 5) reports only ~14% of DA neurons activated by primary aversive stimuli and only 11% activated by conditioned aversive stimuli, and even those tend to be the same neurons that respond to rewards. Generalization-based activations are smaller in magnitude than reward-conditioned-stimulus activations, and dopamine activations to aversive cues *fail to generalize when behavior is avoidance* (Mirenowicz & Schultz 1996). The interpretation in Schultz98 is that DA is **predominantly an appetitive/alerting signal**, not a salience signal — the residual aversive activations reflect physical similarity to appetitive cues rather than valence-free salience. This contradicts a strict "DA = salience" reading and supports the project's signed-reward design (positive vs negative `current_reward_signal`) **with the caveat** that the magnitude asymmetry biology reports (much stronger appetitive than aversive responses) is not currently modeled — phasic responses to negative reward should be *weaker* than phasic responses to positive reward of equal magnitude, not symmetric.
+- **Supplemental — Schultz16 re-argues this strongly: aversive activations are likely PHYSICAL IMPACT, not aversiveness:** Schultz16-NRN §"Unlikely aversive activation" (pp. 11–12) and Schultz16-JNT §"Confounded aversive activations" (pp. 682–683) sharpen the case made in Schultz98. The strongest evidence: Fiorillo et al. 2013a,b independently varied physical intensity and aversiveness of bitter solutions (denatonium). At low concentration (1 mM), denatonium produced **substantial dopamine activation**; at 10× concentration (10 mM, much more aversive) the activation was **replaced by depression** — the depression "undercutting" the activation reflects negative value, while the activation itself reflects physical liquid-impact (Schultz16-JNT Fig. 1c, p. 682). Concretely: positive correlations of DA with physical intensity, **negative correlations with aversiveness**. Schultz16's interpretation: "phasic dopamine activations by aversive stimuli seem to constitute the initial, unselective dopamine response component driven by physical impact, and possibly boosted by reward context and reward generalization, rather than reflecting a straightforward aversive response" (Schultz16-NRN p. 12). For the project's signed-reward design: if you want biologically faithful aversive coding, the **negative `current_reward_signal` should produce a phasic DEPRESSION below tonic baseline, not a sign-flipped activation** — these are observably different at the postsynaptic plasticity level (a depression below baseline produces opposite-sign LTD via D2 vs the LTP-via-D1 produced by an activation). Currently the simulator's signed-scalar reward conflates these.
 
 ### C.25 NAc cAMP-CREB Pathway Adaptation — chronic-DA homeostasis
 
@@ -769,6 +985,7 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
 - **Behavioral validation:** Sucrose hedonic taste reactions intact in DA-knockout mice; "wanting"-type lever pressing is abolished.
 
 ---
+- **Supplemental — Schultz16 reconciliation with incentive-salience theory:** Schultz16-NRN §"Salience" (pp. 12–13) explicitly addresses Berridge's incentive-salience hypothesis. Schultz argues the two views **are not mutually exclusive**: "incentive salience concerns dopamine's influences on behaviour, whereas prediction-error coding concerns the properties of the dopamine prediction-error signal itself, which can have many functions. Indeed, a prediction-error signal can support both learning and efficient performance" (Schultz16-NRN p. 13). The Component-1/Component-2 split clarifies the dispute: Component 1 (detection / salience) is what Berridge-style incentive-salience theories grasp at, Component 2 (value / utility RPE) is what TD-learning theories grasp at, and both are real properties of the same neuronal burst. The project does not currently model "wanting" as separable from "learning" — both are mediated by the same `current_reward_signal × eligibility_trace` machinery. Adding a Component-1-style detection pulse that drives transient performance enhancement (membrane depolarization, attentional gain) without writing eligibility traces would be a clean implementation of the Berridge "wanting" dimension on top of the current RPE substrate.
 
 ## Cluster N — Sleep, Arousal, Replay (project-critical for Ch 44)
 
@@ -1596,7 +1813,281 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
   feedback, IO continues firing at baseline regardless of CR
   acquisition and PF→PC weights diverge.
 
+### F.19 Brainstem eyeblink reflex circuit — UR substrate the CR converges onto
+- **System:** trigeminal afferents (Vp / Vo / Vi / Vc subdivisions) →
+  premotor "blink" area (rostral Vo + caudal Vp + reticular) → o.o.
+  motoneurons in facial (VIIth) nucleus + r.b. motoneurons in accessory
+  abducens (AccVI) + l.p. inhibition via contralateral oculomotor (III).
+  Two parallel pathways: Path 1 (disynaptic, R1 ~6–7 ms) and Path 2
+  (polysynaptic via Vi/Vc/upper spinal cord, R2 >15 ms).
+- **Biological role:** Generates the protective eyeblink/NM
+  unconditioned response (UR) to corneal/periocular stimulation. The
+  CR converges onto this same final common path via cerebellar AIP →
+  red nucleus → premotor blink area / motoneurons (Holstege & Tan 1988).
+  Lateralised: ipsilateral CR; corneal US transferred to contralateral
+  eye after unilateral cerebellar lesion conditions normally on that
+  side (McCormick et al. 1982a). The premotor blink area coordinates
+  o.o. closure + r.b. retraction + l.p. inhibition simultaneously to
+  produce a complete blink.
+- **Sim status:** **missing**. No brainstem reflex module exists. T2.A
+  cerebellar microcircuit should declare a small `brainstem_blink`
+  region (5–10 motoneurons + premotor pool) with cerebellar AIP
+  projections AND direct trigeminal-afferent CS/US drives, so that
+  pre-conditioning UR baseline can be measured.
+- **Cluster:** F primary; H (motor plant) secondary.
+- **Prerequisites:** F.06 (DCN), F.04 (climbing fibre via IO), and a
+  trigeminal afferent input region.
+- **Citation:** Hesslow & Yeo 2002 §"Eyelid Blink and NMR Response" pp
+  89–94; §"Premotor Blink Area" pp 91–94; §"Lesions of Cerebellar
+  Efferent Pathways" p 109.
+- **Behavioral validation:** Pre-conditioning, periocular shock evokes
+  a UR with two EMG components R1 (6–7 ms) and R2 (>15 ms). After
+  conditioning, the CR latency is intermediate (~CS-US interval before
+  US onset). Cerebellar AIP lesion abolishes CR but UR survives with
+  slightly depressed amplitude (CR/UR dissociation gate).
+
+### F.20 Reversible cerebellar inactivation — gold-standard learning-vs-performance assay
+- **System:** AIP cold-block / muscimol / lidocaine / CNQX infusion;
+  alternatively TTX in brachium conjunctivum (cerebellar efferent
+  block).
+- **Biological role:** Decisive methodology that distinguishes
+  *learning* sites from *performance* sites. If conditioning trials
+  given during inactivation produce no CR after the inactivation is
+  lifted → the inactivated structure was necessary for *acquisition*.
+  If CRs appear immediately after lifting → the structure was only
+  necessary for performance. Critical control: showing that
+  *extinction* is also blocked during inactivation rules out
+  state-dependent learning. Krupa & Thompson 1995 dissociation: AIP
+  somata inactivation prevents acquisition; cerebellar efferent
+  (brachium conjunctivum) inactivation does not — places the learning
+  site within the cerebellum, not downstream.
+- **Sim status:** **missing**. The simulator's `set_plasticity_gate`
+  infrastructure already supports per-pathway freeze; what's missing
+  is a runner-side abstraction "mute region X for K trials, then
+  unmute and resume" that mirrors a reversible-inactivation experiment.
+  Trivial extension to `g11_bg_runner` style.
+- **Cluster:** F primary; J (plasticity validation) secondary.
+- **Prerequisites:** F.06, F.08, plus existing plasticity-gate
+  infrastructure.
+- **Citation:** Hesslow & Yeo 2002 §"Reversible Cerebellar Inactivations"
+  pp 116–117; Welsh & Harvey 1991 (negative); Clark et al. 1992; Nordholm
+  et al. 1993; Krupa et al. 1993; Krupa & Thompson 1995; Ramnani & Yeo
+  1996; Hardiman et al. 1996; Attwell et al. 1999a/b (CNQX cortical block).
+- **Behavioral validation:** Mute AIP for first 100 conditioning trials,
+  then unmute for next 100. Acquisition curve over the second block
+  should track an animal that started fresh (no carry-over learning).
+  Compare with cerebellar-efferent mute (downstream-of-AIP region) for
+  same number of trials → second-block acquisition should be *fast*
+  (carry-over learning intact). The dissociation is the validation.
+
+### F.21 Microzone — olivo-cortico-nucleo-olivary processing module
+- **System:** parasagittal strip of cerebellar cortex (~few hundred PCs,
+  parallel to PC dendritic plane, transverse to folium) sharing a
+  common climbing-fibre input from one olivary subregion + a common
+  output to one DCN subregion + an inhibitory return projection from
+  that DCN subregion to the same olivary subregion.
+- **Biological role:** The canonical cerebellar processing unit.
+  Voogd's zones A/B/C/D/Y subdivide laterally; each zone splits into
+  microzones with shared climbing-fibre receptive fields. Hesslow & Yeo
+  2002 propose every cerebellar function — motor, autonomic, cognitive
+  — uses the same olivo-cortico-nucleo-olivary module replicated across
+  the cerebellum. Microzones are NOT independent: parallel fibres run
+  *across* microzones along the folium, so PF→PC LTD in one microzone
+  can affect downstream PCs in adjacent microzones. But CF teaching
+  is microzone-private. This gives the architecture an interesting
+  asymmetry: shared substrate, private supervision. For eyeblink: AIP
+  receives convergent input from C1, C3, Y zones; eye-blink microzones
+  in HVI cluster ipsilaterally with face-receptive-field CFs from
+  rostral DAO + rostral PO.
+- **Sim status:** **missing**. The cluster F closure plan does not
+  declare microzones explicitly. T2.A should structure the cerebellar
+  cortex region as `[microzone_0, microzone_1, ..., microzone_N]` each
+  with:
+  - own IO subgroup (say 5–10 IO cells) → CF projection to its PCs;
+  - own AIP subgroup (5–10 DCN cells) ← PC inhibition from its PCs;
+  - GABAergic AIP→IO return projection within the microzone;
+  - shared GC pool (parallel fibres cross all microzones in a folium).
+- **Cluster:** F primary.
+- **Prerequisites:** F.01, F.04, F.06, F.18.
+- **Citation:** Hesslow & Yeo 2002 §"Cerebellar Cortex: Zones and
+  Microzones" pp 100–101; §"Olivo-Cortico-Nuclear Module" pp 101–103;
+  Andersson & Hesslow 1987a (microzone-respecting nucleo-olivary).
+- **Behavioral validation:** Two adjacent microzones controlling
+  antagonistic muscles should NOT inhibit each other through the
+  nucleo-olivary loop (Andersson & Hesslow 1987a — IO cells projecting
+  to a microzone are inhibited by *that* microzone's AIP cells, not by
+  adjacent antagonist-microzone AIP cells). Test: train microzone A on
+  CS₁→US₁; verify microzone B's IO firing during US₂ is unaffected.
+
+### F.22 Trace conditioning — hippocampus-dependent CS-US bridging
+- **System:** hippocampus (CA1 + CA3) + entorhinal cortex →
+  pontine nuclei → mossy fibre → cerebellum. Adds a sustained CS-bridge
+  signal during the CS-free trace interval.
+- **Biological role:** When CS terminates before US onset (trace gap >
+  0), the cerebellum must associate a CS-driven signal with a US
+  delivered hundreds of ms later. The cerebellum can *itself* bridge
+  up to ~500 ms (F.17 intrinsic PC timer + Svensson & Ivarsson 1999 —
+  single 0.2 ms MF pulse evokes normally-timed CR). For longer
+  traces, hippocampectomised rabbits fail entirely (Moyer et al. 1990
+  — 500 ms trace abolishes learning; 300 ms learns normally; H.M.-class
+  amnesics fail traces but learn delay normally). Berger et al.
+  1976/1980/1983 documented hippocampal CR-correlated activity that
+  *precedes* the overt CR by hundreds of ms — consistent with the
+  hippocampus generating a sustained CS-trace signal that is then fed
+  into the cerebellum via pontine nuclei.
+- **Sim status:** **missing**. Bridges Cluster F and Cluster D
+  (hippocampus). Implementation requires a hippocampal region that
+  receives CS input and produces sustained activity for a learnable
+  trace-window duration, projecting to pontine MF.
+- **Cluster:** F primary; D (hippocampus) secondary.
+- **Prerequisites:** F.08 (delay eyeblink), hippocampal region (existing).
+- **Citation:** Hesslow & Yeo 2002 §"Trace Conditioning" p 133;
+  Solomon et al. 1986; Moyer et al. 1990; Weiskrantz & Warrington 1979.
+- **Behavioral validation:** CS-US gap parameter sweep: with intact
+  hippocampus, learning succeeds for traces 0–800 ms; with
+  hippocampus muted, learning succeeds for 0–~500 ms then collapses.
+  Delay conditioning (no gap, US during CS) is unaffected by hippo
+  ablation. (Two-axis validation: delay vs trace × hippo vs no-hippo
+  → 2×2 factorial with sharp predictions.)
+
+### F.23 Hippocampus-dependent classical-conditioning paradigms — six-pack
+- **System:** hippocampus + pontine MF channel + cerebellar CCC module.
+  Each paradigm requires an intact hippocampus on top of the cerebellar
+  CCC for normal learning.
+- **Biological role:** Six classical-conditioning phenomena where
+  hippocampal lesions impair acquisition or extinction even though
+  delay eyeblink itself is intact (Hesslow & Yeo 2002 pp 132–135):
+  (1) **Trace conditioning** (CS terminates before US, gap > ~500 ms);
+  (2) **Discrimination reversal** (CS+ ↔ CS- contingencies swapped
+  mid-training; hippo subjects fail to drop responses to new CS-);
+  (3) **Latent inhibition** (CS-alone pre-exposures slow subsequent
+  acquisition; absent in hippo lesions — Solomon & Moore 1975);
+  (4) **Conditional discrimination** (CS reinforced *only if* preceded
+  by gating stimulus S; lost in hippo lesions — Ross et al. 1984; Daum
+  et al. 1991); (5) **Sensory preconditioning** (S₁ paired with S₂
+  pre-training, then S₂ paired with US; S₁ subsequently elicits CR
+  via S₁→S₂→US chain; lost without hippo — Port et al. 1987);
+  (6) **Blocking** (Kamin: prior CS₁→US training prevents CS₂
+  acquisition in CS₁+CS₂ compound; lost without hippo — Solomon 1977).
+  The shared theme: hippocampus is required when the task involves
+  more than one contingency, contextual gating, or pre-association
+  among stimuli — a "preprocessing" role that delivers a refined CS
+  signal to the cerebellum.
+- **Sim status:** **missing**. Each is a distinct behavioural validation
+  for a hippocampus + cerebellum combined model. Blocking is the most
+  mechanistically grounded — Kim et al. 1998 confirmed nucleo-olivary
+  GABA pathway, but Solomon 1977 shows hippocampus also required,
+  unresolved interaction.
+- **Cluster:** F primary; D (hippocampus) secondary; O (associative /
+  contextual learning) tertiary.
+- **Prerequisites:** F.08, F.18, F.22, hippocampal region.
+- **Citation:** Hesslow & Yeo 2002 §"Role of the Hippocampus" pp 132–135;
+  Solomon & Moore 1975 (latent inhibition); Solomon 1977 (blocking);
+  Ross et al. 1984 (conditional discrimination); Port et al. 1987
+  (sensory preconditioning); Orr & Berger 1985 (discrimination
+  reversal); Kim et al. 1998 (blocking via nucleo-olivary).
+- **Behavioral validation:** Each of the six paradigms is a separate
+  validation gate. Minimum viable test: blocking. Train CS₁→US to
+  asymptote; switch to CS₁+CS₂→US compound for N trials; probe CS₂
+  alone — intact model: CR rate to CS₂ near zero (blocked); hippo or
+  IO-GABA-disabled model: CR rate to CS₂ near baseline acquisition
+  rate.
+
+### F.24 Adaptive CR latency from frequency-coded CS — cerebellar after-MF timing
+- **System:** cerebellar cortex (specifically the intrinsic PC timing
+  mechanism, F.17) operating on MF/PF inputs delivered at variable
+  frequency.
+- **Biological role:** When stimulation frequency of either a peripheral
+  CS or direct MCP/MF stimulation increases from 50 Hz to 100 Hz, the
+  CR latency *immediately shortens* (well before any plasticity could
+  re-tune); with continued training at the new frequency, latency
+  gradually re-adapts to the original CS-US-anchored value (Svensson et
+  al. 1997). Same effect for peripheral and MF-direct stimulation —
+  proves the timing transformation occurs *after* the MF stage, in the
+  cortex. This is a direct prediction of an intrinsic PC timer model
+  (F.17): higher input frequency → larger Ca²⁺ load on the timer →
+  faster timer trigger; slow plasticity then retunes the latency
+  setpoint.
+- **Sim status:** **missing**. Requires F.17 intrinsic timer + a runner
+  that sweeps CS frequency mid-session.
+- **Cluster:** F primary; J (plasticity timing) secondary.
+- **Prerequisites:** F.17 (intrinsic PC timer), F.08.
+- **Citation:** Hesslow & Yeo 2002 §"Information Processing in the CS
+  Pathway" p 127; Svensson et al. 1997.
+- **Behavioral validation:** Train to asymptotic 50 Hz CS-evoked CR
+  with peak ~250 ms post-CS-onset (CS-US = 300 ms). Switch to 100 Hz
+  CS without changing CS-US interval. Predict: first-block CRs peak
+  ~150–200 ms (latency shortened); after 100+ trials at 100 Hz, peak
+  re-tunes back toward 250 ms. Reverse switch should produce mirror
+  effect.
+
+### F.25 Cortico-rubral plasticity (Tsukahara) — alternative non-cerebellar substrate
+- **System:** cerebral peduncle → corticorubral fibres → red nucleus.
+  Tsukahara's leg-flexion conditioning paradigm uses sub-threshold
+  cerebral-peduncle stimulation (CS) paired with peripheral forelimb
+  shock (US); over ~7–10 days, the threshold for evoking forelimb
+  flexion via CS drops, attributed to *axonal sprouting* at corticorubral
+  synapses (Tsukahara et al. 1981; Oda et al. 1988 — fast-rising EPSP
+  develops; Pananceau et al. 1996 — interposito-rubral plasticity in
+  variant paradigm).
+- **Biological role:** A non-cerebellar plasticity that can support an
+  associative learning task with similar surface phenomenology to
+  classical conditioning (acquisition + extinction). Hesslow & Yeo
+  2002 flag this as evidence that *some* skeletal conditioning
+  paradigms recruit non-cerebellar substrates, but with three
+  important differences from eyeblink: (a) no adaptive timing (CR has
+  same latency as CS-evoked response), (b) much slower acquisition
+  (~120 trials/day × 7–10 days vs <200 trials total for eyeblink),
+  (c) plasticity mechanism is structural (axonal sprouting), not
+  synaptic. Inclusion in the catalog is partly cautionary: NOT every
+  conditioning result implicates the cerebellum.
+- **Sim status:** **missing**. Probably out of scope for T2.A
+  cerebellar microcircuit, but documented as the alternative against
+  which "cerebellar-essential" claims should be validated.
+- **Cluster:** F primary (as a *contrast*); H (motor plant) secondary.
+- **Prerequisites:** N/A — separate substrate.
+- **Citation:** Hesslow & Yeo 2002 §"Conditioning-Induced Plasticity in
+  Other Motor Structures" pp 130–132; Tsukahara et al. 1981; Oda et
+  al. 1988; Pananceau et al. 1996.
+- **Behavioral validation:** A simulator runner using Tsukahara
+  cortico-rubral plasticity (axonal sprouting analogue) on a leg-flexion
+  task should reproduce: (1) acquisition over ~1000 trials; (2) no
+  adaptive timing — CR latency = CS-evoked-response latency; (3) same
+  paradigm on eyeblink should fail (or behave differently).
+
 ---
+
+End of patch.
+
+---
+- **Supplemental:** Hesslow & Yeo 2002 §"Nucleo-Olivary Inhibition" pp
+  130–131 develops the nucleo-olivary loop as more than just a
+  CR-extinction mechanism — it also explains **Kamin blocking**. After
+  training to CS₁, the AIP-driven CR inhibits the IO (Hesslow & Ivarsson
+  1996 — direct measurement: US-elicited IO excitation is inversely
+  proportional to the size of a preceding CR). When CS₂ is added in
+  compound CS₁+CS₂ trials, the established CR₁ now inhibits IO before
+  the US arrives, so no CF teaching signal reaches the cerebellum, and
+  CS₂ never acquires PF→PC association. Kim et al. 1998 confirmed
+  mechanistically: **GABA-receptor blocker injection into the IO
+  abolishes blocking** — the nucleo-olivary GABAergic projection is
+  *the* substrate. **For the simulator:** an eyeblink runner with
+  nucleo-olivary feedback enabled should automatically reproduce
+  Kamin blocking on a CS₁→CS₁+CS₂ paradigm; without the feedback, CS₂
+  will acquire normally. This is a quantitative behavioural validation.
+  `[note: Solomon 1977 reports hippocampal lesions ALSO abolish blocking,
+  suggesting a higher-order behavioural-control mechanism may interact
+  with the IO substrate; Hesslow & Yeo flag this as unresolved p 131.]`
+- **Supplemental:** Hesslow & Yeo 2002 §"Nucleo-Olivary Inhibition" p
+  130 explicit positive-feedback argument: a hypothetical *excitatory*
+  nucleo-olivary projection would close a positive-feedback loop
+  (CF→PC depression → DCN disinhibition → ↑ excite IO → ↑ CF). Positive
+  feedback is unstable; the GABAergic (negative) projection is required
+  for closed-loop stability. **For the simulator:** if the simulator's
+  default neuromodulator subsystem accidentally inverted the sign on
+  this projection, the CR-acquisition runner would diverge unboundedly
+  in IO firing rate. Worth a unit test: assert
+  `assert sign(nucleo_olivary_weight) < 0` after wiring.
 
 ## Cluster F — Cerebellum & error-correction
 
@@ -1625,6 +2116,18 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
   This is important for the simulator: a single-compartment PC with
   intrinsic pacemaker current (Ih + persistent Na) reproduces tonic
   output without PF drive, which `HH_CEREBELLAR_PURKINJE` should match.
+- **Supplemental:** Hesslow & Yeo 2002 §"Neuronal Architecture" pp 97–99
+  give the canonical numbers used throughout the 2002 chapter: PCs fire
+  simple spikes 50–100 Hz with a strong intrinsic spike-generating
+  mechanism (PCs fire at high rates "even when inputs are totally absent"
+  — p 100). Each climbing-fibre burst is one PC complex spike (CS) of
+  1–4 spikes followed by a 15–30 ms simple-spike pause (the "inactivation
+  response" of Granit & Phillips 1956); CS peak Ca²⁺ plateau lasts up to
+  several hundred ms in the dendrites (p 99). **For the simulator:** the
+  simple-spike pause must outlive the immediate CS by at least 15–30 ms
+  for any downstream readout to register; if an HH PC preset under-shoots
+  this pause length, downstream DCN disinhibition will be too brief to
+  drive a behavioural CR.
 
 ### F.02 Granule cell + parallel fiber — divergent code
 
@@ -1704,6 +2207,33 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
   cleanly onto our existing reward/training engine — CS = MF pattern,
   US = CF burst, CR = PC pause; the IO-as-error-signal framing is
   what most modern eyeblink simulations use.
+- **Supplemental:** Hesslow & Yeo 2002 §"Afferent Systems" p 99 quantifies:
+  IO firing is normally "around 1 Hz, with a maximal rate of about 10 Hz,
+  but only for very brief periods". Each CF makes "as many as 10 branches,
+  each of which contacts a single Purkinje cell" — confirms the 1:CF ↔ ~10
+  PCs structure used in Marr's geometric arguments. The CF→PC contact is
+  "extensive synaptic contacts" producing a complex spike that is a
+  *massive* depolarisation, not just a single EPSP — important for any
+  simulator that models the CF as a single point-synapse: it must be
+  amplified ~10-fold or modelled as a multi-synapse cluster. §"Olivary
+  Lesion" pp 128–129 documents that olivary inactivation/lesion *also*
+  causes a rise in tonic PC simple-spike firing and a virtual shutdown of
+  cerebellar output (Colin et al. 1980; Montarolo et al. 1982) — i.e. the
+  CF normally has a *general tonic suppressive influence* on PC excitability
+  on top of its phasic teaching role. Removing IO ≠ just removing the
+  teaching signal; it disinhibits PCs and silences DCN downstream. This is
+  why olive lesions immediately abolish CRs (Yeo et al. 1986; Welsh & Harvey
+  1998) rather than producing gradual extinction. **For the simulator:**
+  the IO must contribute a tonic excitability term to PCs, not only spike-
+  triggered teaching events; otherwise IO ablation will fail to reproduce
+  the observed immediate CR loss.
+- **Supplemental:** Hesslow & Yeo 2002 §"IO oscillation" p 100 cites
+  Llinás & Yarom 1981 / Llinás & Welsh 1993 noting IO neurons are
+  electrotonically coupled by gap junctions (Sotelo et al. 1974) AND have
+  intrinsic ~10 Hz oscillatory membrane properties. Functional implication:
+  the IO can synchronise small assemblies of PCs in a phase-coordinated
+  manner, not just deliver independent error signals. Largely orthogonal
+  to eyeblink conditioning but relevant for any cerebellar timing module.
 
 ### F.05 PF→PC LTD (Marr-Albus-Ito) — sign-flipped, CF-gated plasticity
 
@@ -1775,6 +2305,23 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
   n=2000: 119; n=5000: 47. **For the simulator:** if a runner uses a
   small reservoir (e.g. 200 PCs × 200 events ≈ 40K patterns), this
   validates that one PC can hold ~200 distinct CR memories.
+- **Supplemental:** Hesslow & Yeo 2002 §"Conclusions" p 136 explicitly
+  notes the *direct* evidence for PF→PC LTD as the conditioning substrate
+  is weak. Of the four CCC-model assumptions, they conclude (point 4, p
+  136): "The US pathway may be through the climbing fibers. This central
+  assumption of the CCC model is **less well supported** than the others.
+  It is based on theoretical considerations and also on the fact that
+  climbing fiber activation can induce plasticity in coactivated parallel
+  fiber-Purkinje cell synapses. At present, there is little direct evidence
+  that the US is transmitted by climbing fibers." The 2013 paper
+  compresses this to a one-line caveat; the 2002 chapter spends pp 128–130
+  reviewing why olive lesion/inactivation evidence (which would seem to
+  test the CF=US hypothesis directly) is in fact uninformative because IO
+  inactivation removes both the putative teaching signal AND the tonic
+  excitability drive to PCs. `[discrepancy: the canonical "CF carries the
+  US, PF→PC LTD encodes the CR" story is widely simulated but the direct
+  empirical evidence — beyond in-vitro LTD demonstrations — is weaker
+  than commonly assumed.]`
 
 ### F.06 Deep cerebellar nuclei (DCN) — final cerebellar output
 
@@ -1787,6 +2334,59 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
 - **Prerequisites:** F.50.
 - **Citation:** Kandel 6e Ch 37 p 911–917.
 - **Behavioral validation:** PC inhibition → DCN pause → downstream effector burst.
+- **Supplemental:** Hesslow & Yeo 2002 §"Lesions of the Cerebellar Nuclei
+  Abolish NMR Conditioning" pp 105–106 establishes the **anterior
+  interpositus nucleus (AIP)** specifically — not the dentate, fastigial,
+  or posterior interpositus — as the critical DCN region for eyeblink/NMR
+  conditioning. Yeo et al. 1985a tested all four nuclei with discrete
+  lesions; only AIP lesion abolishes CRs to both auditory and visual CSs.
+  AIP lesions are confirmed effective with kainic-acid (fibre-sparing)
+  lesions (Lavond et al. 1985) — i.e. it is AIP somata, not fibres of
+  passage, that matter. **For the simulator:** the cerebellar microcircuit
+  closure in T2.A should explicitly partition the DCN into AIP / posterior
+  interpositus / dentate / fastigial regions, and connect only AIP to the
+  red nucleus → blink-control pathway; collapsing the DCN into a single
+  pool will obscure the lesion specificity that defines the model.
+- **Supplemental:** Hesslow & Yeo 2002 §"Lesions of Cerebellar Efferent
+  Pathways" p 109 specifies the AIP→red-nucleus→rubrobulbar-tract
+  pathway as essential for CR expression (McCormick et al. 1982b;
+  Rosenfield & Moore 1983; Rosenfield et al. 1985); the alternative
+  fastigial→vestibular/reticular and dentate→ventrolateral-thalamus→motor-
+  cortex routes are NOT required. Mauk & Thompson 1987 confirmed via
+  rostral decerebration: thalamus and forebrain are not necessary. **For
+  the simulator:** the minimal cerebellar→motor wiring is
+  `AIP → red_nucleus → facial_nucleus_VII / accessory_abducens_VI`.
+- **Supplemental:** Hesslow & Yeo 2002 §"Cerebellar Lesions and
+  Excitability Changes" pp 108–109 gives the **CR / UR dissociation**
+  argument: AIP lesions remove tonic excitatory drive on the eyeblink
+  circuitry and slightly DEPRESS the UR (Welsh & Harvey 1989; Bracha et
+  al. 1994), whereas cortical lobule HVI lesions remove PC inhibition of
+  AIP, DISINHIBIT the eyeblink circuitry, and *increase* UR amplitudes
+  (Yeo & Hardiman 1992; Gruart & Yeo 1995) — yet HVI lesions also abolish
+  the CR. UR up + CR down with cortical lesions is strong evidence
+  *against* the "performance deficit only" hypothesis: if the cerebellum
+  only modulated reflex excitability without storing memory, raising UR
+  excitability should also raise CR excitability, but it doesn't. **For
+  the simulator:** an honest cerebellar runner should reproduce this
+  double dissociation — AIP ablation should drop both CR and UR; cortical
+  ablation should drop CR and *raise* UR amplitude; only the BG-style
+  fully-shared-engine model would fail this test.
+- **Supplemental:** Mauk's two-site (cortical + nuclear) plasticity
+  model, presented in Hesslow & Yeo 2002 pp 108–109, 113: cortical
+  lesions in trained subjects abolish the long-latency adaptive CR but
+  unmask a **short-latency, CS-driven response** that cannot be
+  extinguished and whose timing does not adapt to the CS-US interval
+  (Perrett et al. 1993; Perrett & Mauk 1995). H&Y interpret this as
+  evidence for a slower MF→AIP synaptic plasticity that learns the CS-US
+  contingency (without timing), normally masked by Purkinje-cell
+  inhibition. The cerebellar cortex then *sculpts* the temporal envelope
+  of this short-latency response into a timed CR. Medina & Mauk 1999
+  formalize this as a two-site model. **For the simulator:** the T2.A
+  microcircuit should include MF collateral → AIP synapses with their
+  own slower plasticity rule (e.g. mossy-fibre LTP gated by an AIP-level
+  reinforcement signal) in addition to PF→PC LTD, and the runner's
+  ablation tests should produce short-latency unadaptive responses when
+  the cortex is removed.
 
 ### F.07 Forward / inverse internal models — predictive control
 
@@ -1849,6 +2449,106 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
   to put the plastic synapse (PF→PC vs DCN nuclear plasticity) is a
   live debate. Implementing both and ablating one or the other in the
   runner would be a publishable contribution.
+- **Supplemental:** Hesslow & Yeo 2002 §"Eyelid Blink and NMR Response
+  in Rabbits" pp 89–94 documents the **brainstem reflex circuitry**
+  underlying the UR (and the substrate the CR converges onto). The
+  external eyelid blink is mediated by the orbicularis oculi (o.o.)
+  muscle innervated by the *facial (VIIth) nucleus*; the NM response
+  is driven by retraction of the eyeball via the retractor bulbi (r.b.)
+  muscle innervated by the *accessory abducens (AccVI) nucleus*. Upper
+  eyelid position is the *balance* of o.o. (VIIth nerve) closure vs
+  levator palpebrae (l.p.) muscle innervated by the contralateral III
+  oculomotor nucleus — so a complete blink requires both excitation of
+  VIIth + AccVI motoneurons AND inhibition of contralateral III
+  motoneurons. Trigeminal afferents enter via Vp (principal) and Vsp
+  (spinal: Vo / Vi / Vc subdivisions); van Ham & Yeo 1996a found
+  periorbital afferents project mainly to Vc + dorsal-horn C1; corneal
+  afferents to ventral Vi + caudal Vc. **For the simulator:** the
+  minimal reflex efferent stage is `(Vp/Vi/Vc) → (premotor blink area
+  in VpVo) → (VII + AccVI motoneurons)` plus a contralateral inhibitory
+  branch to III. Collapsing this into a single "motor neuron" loses the
+  lateralisation the chapter treats as essential.
+- **Supplemental:** Hesslow & Yeo 2002 §"Premotor Blink Area" pp 91–94
+  identify a discrete **premotor "blink" area** in rostral Vo + adjacent
+  Vp + reticular formation (van Ham & Yeo 1996b) that simultaneously
+  drives o.o. + AccVI motoneurons + inhibits l.p. Two pathways are
+  distinguished: **Path 1** (R1 component, ~6–7 ms latency, disynaptic)
+  and **Path 2** (R2 component, polysynaptic, >15 ms latency through
+  caudal Vi/Vc/upper spinal). The cerebellum (via red nucleus → blink
+  area, Holstege & Tan 1988) modulates *both* pathways. **For the
+  simulator:** if reproducing both UR and CR EMG records, model two
+  parallel routes (a fast disynaptic and a slow polysynaptic) so that
+  cerebellar gain modulation reproduces the differential UR latency
+  effects.
+- **Supplemental:** Hesslow & Yeo 2002 §"CS and US Pathways" pp 123–127
+  document the **mossy-fibre stimulus substitution** results that prove
+  the CS pathway. Steinmetz et al. 1986a/1989 — pontine nuclei or middle
+  cerebellar peduncle (MCP) electrical stimulation can substitute as CS;
+  unpaired pontine CS produces extinction, confirming the response is a
+  true CR. Hesslow et al. 1999 (in decerebrate ferret) demonstrated
+  *immediate transfer* — after firmly establishing a forelimb CS, MCP
+  stimulation immediately elicits a normally-timed CR. Crucially, with
+  lidocaine block of the MCP ventral to the stimulation site,
+  forelimb-CS CRs disappear but MCP-CS CRs persist — ruling out
+  antidromic activation of pontine inputs as the mechanism. **For the
+  simulator:** the MF → cerebellum path is the privileged CS channel;
+  the simulator's `mossy_*` source regions can be driven by either a
+  peripheral sensory channel or directly with a synthetic spike train
+  and the cerebellar microcircuit should produce equivalent CRs.
+- **Supplemental:** Hesslow & Yeo 2002 §"Information Processing in CS
+  Pathway" pp 126–127 documents the **cerebellar temporal bridge**:
+  Svensson & Ivarsson 1999 showed that after training to a 300-ms
+  forelimb CS, replacing with a *single 0.2 ms MF-stimulation pulse*
+  evokes a normally-timed CR adaptively timed to the US — the cerebellum
+  by itself bridges the CS-US interval. The *initial* part of the CS is
+  sufficient. Trace-conditioning experiments show this bridging
+  capacity has a ceiling around 500 ms of CS-US gap; beyond that, the
+  hippocampus is required (Moyer et al. 1990 — hippocampectomised rabbits
+  fail trace conditioning when trace > 500 ms but learn fine when <300
+  ms). **For the simulator:** an honest cerebellar microcircuit should
+  generate adaptive timing for CS-US 100–500 ms from a brief CS pulse;
+  the F.17 intrinsic-PC-timer mechanism is the leading candidate substrate.
+- **Supplemental:** Hesslow & Yeo 2002 §"Information Processing in CS
+  Pathway" p 127 documents **frequency-coded CR latency**: Svensson et al.
+  1997 — increasing the stimulation frequency of either a peripheral or
+  MCP CS from 50 Hz to 100 Hz produces an *immediate reduction* in CR
+  latency; with continued training at the new frequency, latency
+  gradually re-adapts back to the originally-timed envelope. Same effect
+  for peripheral and MCP CS, proving the timing is computed *after* the
+  MF stage. **For the simulator:** a runner that switches CS frequency
+  in the middle of a session should reproduce the immediate-shift +
+  slow-readapt pattern; this is a validation gate stronger than simple
+  acquisition of a CR.
+- **Supplemental:** Hesslow & Yeo 2002 §"Cerebellar Cortex Lesions" pp
+  106–107 documents the **bilateral vs unilateral lesion** dissociation
+  (Gruart & Yeo 1995): unilateral HVI cortical lesions in highly
+  overtrained rabbits produce CR deficits that recover with retraining,
+  but bilateral HVI cortical lesions produce sustained low CR rates
+  with no recovery, AND the few residual CRs are highly variable in
+  latency-to-peak — i.e. timing accuracy never recovers. This pairs with
+  Ivarsson & Hesslow 1993's electrophysiology showing eyeblink control
+  via *decussating* output pathways from both hemispheres. **For the
+  simulator:** mirroring the cerebellar microcircuit on both sides (with
+  contralateral motor projections) is required to reproduce the
+  unilateral-recoverable / bilateral-permanent dissociation.
+- **Supplemental:** Hesslow & Yeo 2002 §"Reversible Cerebellar
+  Inactivations" pp 116–117 — the **reversible-inactivation methodology**
+  is the strongest single line of evidence that the cerebellum is the
+  *learning* site, not merely a performance site. Conditioning trials
+  given during AIP cold-block / lidocaine / muscimol inactivation
+  (Clark et al. 1992; Nordholm et al. 1993; Krupa et al. 1993; Ramnani
+  & Yeo 1996; Hardiman et al. 1996) produce no learning: when the block
+  is lifted, animals must learn from scratch. The Welsh & Harvey 1991
+  contrary report failed to replicate. Critically, *extinction* is also
+  blocked by AIP inactivation (Ramnani & Yeo 1996; Hardiman et al. 1996),
+  ruling out simple performance / state-dependent-learning explanations.
+  Krupa & Thompson 1995 — TTX inactivation of the cerebellar EFFERENTS
+  in the brachium conjunctivum *does not* prevent learning; only
+  inactivation of the cerebellum itself does. **For the simulator:**
+  reversible-inactivation is the gold-standard validation pattern for any
+  cerebellar runner — the runner should support muting AIP (or PCs, or
+  IO) during training and showing that no plasticity accumulates, then
+  un-muting and showing that learning starts from baseline.
 
 ### F.09 VOR adaptation — gaze stabilization gain learning
 
@@ -1897,6 +2597,29 @@ Entries from Ch 48 (Formation and Elimination of Synapses) and Ch 49 (Experience
 - **Behavioral validation:** Lateral-cerebellum lesion impairs sequence prediction in non-motor working-memory task.
 
 ---
+- **Supplemental:** Hesslow & Yeo 2002 §"Cerebellar Cortex: Zones and
+  Microzones" + §"Olivo-Cortico-Nuclear Module" pp 100–103 establish the
+  modern microzone view that EVERY cerebellar function — motor and
+  non-motor — uses the same processing module: an *olivo-cortico-nucleo-
+  olivary loop*. Voogd's original four zones (A medial / B / C / D
+  lateral) project to fastigial / vestibular / interpositus / dentate
+  respectively; in lobules IV–V the C zone subdivides into C1, C2, C3
+  with additional Cx and Y. **The C1 + C3 + Y zones receive climbing
+  fibres from the dorsal accessory olive (DAO) and project to anterior
+  interpositus.** Each cortical zone is further subdivided into
+  microzones (parasagittal strips, parallel to PC dendrites) — each
+  microzone contains PCs that all receive the *same olivary input* with
+  *the same somatosensory receptive field*, controlling a single muscle
+  or muscle group. This gives a topographic motor map at the microzone
+  level. **For the simulator:** the cluster F microcircuit should
+  declare microzones explicitly: each microzone is a small (~hundred)
+  population of PCs with a shared CF source (one IO subzone) and a
+  shared AIP target subzone. Cross-microzone connectivity through PFs
+  is geometrically defined: PFs run *across* microzones along the
+  folium, but PCs within a microzone share CF input — i.e. PFs cross
+  many microzones, CFs do not. This is what makes the cerebellum a
+  large set of independent perceptrons sharing a parallel-fibre
+  substrate.
 
 ## Cluster A — Closed BG action-selection loop (project flagship)
 
@@ -4041,6 +4764,10 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Behavioral validation:** Conditioning paradigm: DA burst initially on reward → transfers to CS; reward omission produces dip — see project's reward_ema_pre / surprise-LR-boost machinery.
 - **Supplemental — explicit RL-theory mapping:** S&B Ch 6.1 (p. 144) gives TD(0) as `V(S_t) ← V(S_t) + α[R_{t+1} + γV(S_{t+1}) − V(S_t)]`. The bracketed quantity is the **TD error δ_t = R_{t+1} + γV(S_{t+1}) − V(S_t)** — this is exactly the dopamine RPE. Schultz98 derives the same formula independently (Eq. 6, p. 12) as the "effective reinforcement signal" of a TD algorithm with discount factor γ. The project's `current_reward_signal` is currently *not* TD-error: it is `r(t)` directly (no `V(s)` learned, no bootstrapped `V(s′)`). This is why the project reproduces sign (a) — burst on unexpected reward — but not signs (b) cue-transfer and (c) omission-dip of the canonical Schultz triplet (see C.22). **To close this gap algorithmically requires a separable critic**: a population whose readout is `V(s)` and whose pathways learn from the same TD-error δ that drives the actor (see new entry C.30 Actor-Critic). The simplest version is a single linear readout from a "value cortex" that is updated by the same `δ` used for STDP gating; this is one bridge change, no new kernels.
 - **Supplemental — Rescorla-Wagner mapping:** S&B Ch 14 (Psychology, in this in-progress edition placeholder, but the math is given in Ch 6.1 and developed historically in Schultz98 p. 11): the Rescorla-Wagner rule `ΔV = αβ(λ − V)` is mathematically identical to TD with discount factor γ = 0 collapsed to a single trial — the "λ − V" error term is `R − V(s)`, an immediate reward minus the current prediction. The project's reward-baseline asymmetric EMA in `--adaptive-da` IS Rescorla-Wagner-with-asymmetric-learning-rates. This is the cleanest classical-conditioning-to-RL bridge and should be cited explicitly when documenting the adaptive-DA mechanism.
+- **Supplemental — utility-PE upgrade and two-component framework (Schultz16-NRN, Schultz16-JNT):** Schultz's 2016 reviews update the canonical Schultz97 statement in two important ways that the project should be aware of:
+  1. The phasic burst is a **two-component sequence**: Component 1 (60–90 ms latency, unselective detection / salience), Component 2 (~150–300 ms latency, utility-coded value RPE). Schultz16-NRN Figs. 2 & 5; Schultz16-JNT Fig. 1a. These map onto the project's `--surprise-lr-boost` (Component-1 analog) and `--adaptive-da --adaptive-da-ema-decay-negative 0.7` (Component-2 analog) mechanisms — see C.04 Supplemental for the full mapping argument.
+  2. The error is on **utility u(x) not raw reward r(x)**: Schultz16-NRN Fig. 4c–d shows DA Component 2 follows the inflected (convex-then-concave) utility curve measured behaviorally with risky-reward fractile procedures. For the moving-goal task this distinction is invisible (binary reward), but any risk-sensitive task in the project's future should insert a utility transform.
+- **Supplemental — Pearce-Hall attentional learning rate ↔ surprise-LR-boost:** Schultz16-NRN p. 6 explicitly identifies the initial DA component as the biological substrate of the **Pearce-Hall (1980)** attentional learning rule, in which "surprise salience derived from reward prediction errors enhances the learning rate." This is the textbook label for what the project's `--surprise-lr-boost` does. Citing Pearce & Hall 1980 directly (alongside the Schultz16 reinterpretation) gives the mechanism a 45-year theoretical lineage that pre-dates the project's empirical discovery of its utility.
 
 ### O.03 DA modulation of corticostriatal plasticity — three-factor rule
 
@@ -4054,6 +4781,8 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Citation:** Kandel 6e Ch 38 p 947–950 (Surmeier 2009).
 - **Behavioral validation:** Reward-paired action → cortex→D1 LTP; punishment-paired → LTD or D2 LTP.
 - **Supplemental:** Schultz98 §"Possible learning mechanisms using the dopamine signal" (pp. 14–17) gives the **two canonical implementations** of the 3-factor rule that the project's eligibility-trace machinery faithfully reproduces. (i) `Δw = η · r̂ · i · o` — postsynaptic plasticity gated by DA at coincident pre+post activity (Schultz98 Eq. 8, p. 14). (ii) `Δw = η · r̂ · h(i,o)` where `h(i,o)` is an **eligibility trace of conjoint pre/post activity that outlasts the events themselves** (Schultz98 Eq. 9, p. 15). This is exactly the project's design — STDP traces decay over ~1 s and are gated by `current_reward_signal` × `cp_plasticity_gain`. Schultz98 names "prolonged calcium concentration changes, CaMKII formation, and sustained striatal/cortical activity" as the candidate biological substrates (p. 15). Worth citing in the catalog so the AI audience sees the mapping `current_reward_signal × eligibility_trace × STDP` ↔ `r̂ × h(i,o)` is not coincidental but Schultz's own proposal. Sutton & Barto (1981, cited Schultz98 p. 15) is the source of the "eligibility trace" concept itself; S&B Ch 7 (pp. 167–195) is the modern treatment.
+- **Supplemental — D1 vs D2 differential plasticity confirmed (Schultz16-NRN p. 10):** the three-factor rule the project implements is biologically substantiated by **opposite-sign plasticity at D1 vs D2 MSNs** under positive vs negative DA. Schultz16-NRN p. 10 cites optogenetic dissociation: "dopamine prolongs transitions to excitatory membrane up states in D1 receptor-expressing striatal direct pathway neurons, but reduces membrane up states and prolongs membrane down states in D2 receptor-expressing striatal indirect pathway neurons" (Schultz16-NRN p. 10, citing Hernandez-Lopez et al. 2000, Surmeier et al. 2007). The project's BG cascade includes both `str_D1_X` and `str_D2_X` populations per action; per-pathway plasticity gating already exists for `cortex_to_d1`. **Open infrastructure:** the symmetric `cortex_to_d2` pathway should be wired with **opposite-sign DA modulation** of plasticity — currently both D1 and D2 cortex-to-striatum projections receive the same sign of `current_reward_signal × eligibility_trace`, but biologically D2 LTP requires DA *dip*, D1 LTP requires DA *burst*. This is one bridge change (sign flip on D2-pathway STDP gating) that would add biological fidelity at near-zero cost.
+- **Supplemental — striatum has its own reward neurons (Schultz16-JNT pp. 685–688):** Schultz16-JNT documents that striatal MSNs themselves carry rich reward-related signaling beyond the DA-driven plasticity story: "All groups of striatal neurons process reward information without reflecting sensory stimulus components or movements" (Schultz16-JNT p. 686 §"Pure reward"); some striatal neurons code subjective value (preference-driven) rather than objective amount; some fire to reward prediction errors directly. This means the cortico-striatal three-factor rule is operating in a *target population that is itself reward-tuned*, not a value-neutral substrate. The project's `str_D1_X` populations are currently value-neutral readouts of cortex; a faithful upgrade would have a small fraction of striatal neurons with intrinsic reward-prediction-error sensitivity in addition to the cortex-driven action coding. See new entry **O.22 Striatal action-value coding**.
 
 ### O.04 Goal-directed → habitual transition — DA + DLS plasticity
 
@@ -4275,6 +5004,12 @@ Entries merged from 7 parallel subagent passes. Entries are grouped by cluster; 
 - **Prerequisites:** explicit value-coding region declaration.
 - **Citation:** Kandel 6e Ch 56 pp 1406–1409.
 - **Behavioral validation:** vmPFC fMRI BOLD ∝ subjective value; lesions cause reversal-learning deficits and intransitive preferences.
+- **Supplemental — DA also codes subjective value, not just OFC (Schultz16-NRN pp. 6–8; Schultz16-JNT pp. 683–685):** the canonical reading of O.19 is that vmPFC/OFC owns the subjective-value representation. Schultz16-NRN/JNT show that **dopamine neurons themselves code subjective value**, evidenced by:
+  - Higher DA activations to the **preferred** of two equal-amount juices (Schultz16-NRN p. 7, blackcurrant vs orange juice in monkeys).
+  - DA tracks **risk-discounted** subjective value (risk-seekers show enhanced DA to risky cues, risk-avoiders show reduced DA — Schultz16-JNT p. 684, Lak et al. 2014).
+  - DA tracks **delay-discounted** subjective value (Schultz16-NRN Fig. 4a; Schultz16-JNT pp. 683–684, hyperbolic decay).
+  - DA tracks the **arithmetic sum** of positive and negative subjective values when reward is mixed with aversive (Schultz16-NRN Supplementary S2; Schultz16-JNT p. 684).
+  Implication for the project: subjective value is **not** localized to one region — it is computed by the DA system itself and broadcast. The current flagship's reliance on a single `current_reward_signal` scalar is therefore not just a TD-error stand-in; it is also performing subjective-value encoding. If the project ever instantiates a vmPFC/OFC region for explicit value coding (as roadmapped), it should receive DA *as input* (Component-2 utility signal), not just exist as a parallel value computation.
 
 ## Cluster P — additions
 
