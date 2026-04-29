@@ -470,11 +470,26 @@ cheats actually *helps* learning.
   cluster-by-cluster per the strategy in
   [`docs/plans/2026-04-28-cheat5-real-options-survey.md`](docs/plans/2026-04-28-cheat5-real-options-survey.md):
   **Cluster B DONE (3/3)** — B.1 partial, B.2 mixed, B.3 null+infra
-  (2026-04-28). Next: Cluster A (closed BG loop — thalamo-cortical
-  feedback + hyperdirect pathway) → Cluster C (DA system completeness)
-  → Cluster D (sequence learning) → Cluster E (connectivity refinement).
-  Each cluster has independent biological merit AND collectively might
-  shift cross-projection behavior.
+  (2026-04-28). **Catalog R-pass DONE (11/12 + 1 deferred, 2026-04-29)** —
+  12 biology corrections from Kandel 6e + supplemental texts (per-region
+  E_inh, FSI cross-action, GPe split, striosome split, neuropeptide arms,
+  asymmetric reward, etc).
+  **Cluster A SCAFFOLDED (`--enable-cluster-a-closed-loop`, 2026-04-29)** —
+  closed BG loop (cortex→stn hyperdirect + thal→cortex feedback). Eval
+  in progress.
+  **Cluster C v1 SCAFFOLDED (`--enable-tonic-da`, 2026-04-29)** — tonic
+  DA via neuromodulator framework (replaces signed-scalar reward
+  modulation when registered). Unlocks B.3 ACh window-gating.
+  **Cluster D v1 SCAFFOLDED (`--enable-cluster-d-hippocampus`, 2026-04-29)**
+  — trisynaptic loop EC→DG→CA3→CA1 with FFi-mediated DG sparsity, plastic
+  CA3 recurrent autoassociator, Schaffer CA3→CA1, CA1→place_cells readout.
+  Eval in progress.
+  **Cluster C v2 DESIGNED (compartmentalized DA, 2026-04-29)** —
+  fallback for if A/C v1/D evals don't close cheat-5; per-action DA
+  channels with synapse action-tagging.
+  Future: Cluster E (connectivity refinement). Each cluster has
+  independent biological merit AND collectively might shift
+  cross-projection behavior.
 - **Cluster B.1 (D1/D2 asymmetry, `--enable-d1-d2-asymmetry`) — PARTIAL
   SIGNAL (2026-04-28).** First piece of empirical support for the
   cluster strategy. Patch-matrix + B.1 multi-goal: 7.62 ± 1.23 (n=3) vs
