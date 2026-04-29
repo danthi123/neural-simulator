@@ -412,7 +412,7 @@ sensory cortex to mature before association cortex.
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
     --enable-msn-lateral-inhibition \
-    --enable-d1-d2-asymmetry --enable-striatal-fsis \
+    --enable-d1-d2-asymmetry --enable-striatal-pv-fsi \
     --enable-cluster-a-closed-loop --enable-cluster-e-topography \
     --deterministic \
     --seed N --n-steps 1800

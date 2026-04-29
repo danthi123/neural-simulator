@@ -424,7 +424,7 @@ def build_bg_brain_regions(
 
     # Cluster B.2 (2026-04-28): striatal fast-spiking interneurons (FSIs).
     # ~1% of striatal cells; PV-positive; broadcast inhibition. One small
-    # str_FS_{N,E,S,W}: per-action striatal fast-spiking interneurons.
+    # str_PV_FSI_{N,E,S,W}: per-action striatal fast-spiking interneurons.
     # Strict naming: this is the **PV-FSI** class (parvalbumin-positive
     # fast-spiking) — one of EIGHT distinct striatal GABAergic interneuron
     # classes catalogued in Tepper-2018 (the others are NPY-LTS, NPY-NGF,
@@ -439,7 +439,7 @@ def build_bg_brain_regions(
     if enable_striatal_fsis:
         for action_idx, action in enumerate(ACTION_NAMES):
             regions.append(BrainRegion(
-                name=f"str_FS_{action}",
+                name=f"str_PV_FSI_{action}",
                 n_neurons=n_striatal_fs_per_action,
                 exc_fraction=0.0,  # all-inhibitory → outgoing synapses are inhibitory
                 internal_density=0.0,
@@ -841,9 +841,9 @@ def build_bg_brain_regions(
                     ))
 
     # Cluster B.2 (2026-04-28, R1.2 rewire 2026-04-29): striatal FSI pathways.
-    # (a) cortex_X → str_FS_X (excitatory, dense, plastic=False, same-action only).
+    # (a) cortex_X → str_PV_FSI_X (excitatory, dense, plastic=False, same-action only).
     #     FS pool gets driven only by its same-action cortex pool.
-    # (b) str_FS_X → str_D{1,2}_Y for X != Y ONLY (cross-action feedforward
+    # (b) str_PV_FSI_X → str_D{1,2}_Y for X != Y ONLY (cross-action feedforward
     #     inhibition; auto-derived inhibitory because str_FS regions have
     #     exc_fraction=0.0). 4 FS × 3 cross D-pool × 2 D-types = 24 paths.
     #
@@ -860,17 +860,17 @@ def build_bg_brain_regions(
     # The v3 `--bg-lateral-inhibition` MSN→MSN flag is now redundant with
     # this cross-action FSI WTA but is kept opt-in for backward compatibility.
     if enable_striatal_fsis:
-        # (a) cortex_X → str_FS_X (excitatory drive, same-action)
+        # (a) cortex_X → str_PV_FSI_X (excitatory drive, same-action)
         for cortex_action in ACTION_NAMES:
             pathways.append(RegionPathway(
                 from_region=f"cortex_{cortex_action}",
-                to_region=f"str_FS_{cortex_action}",
+                to_region=f"str_PV_FSI_{cortex_action}",
                 density=1.0,
                 weight_mean=cortex_to_str_fs_weight,
                 weight_jitter=0.2,
                 plastic=False,
             ))
-        # (b) str_FS_X → str_D{1,2}_Y for X != Y only (cross-action WTA;
+        # (b) str_PV_FSI_X → str_D{1,2}_Y for X != Y only (cross-action WTA;
         # FSIs do NOT inhibit their own action's MSN pool).
         for fs_action in ACTION_NAMES:
             for str_action in ACTION_NAMES:
@@ -878,7 +878,7 @@ def build_bg_brain_regions(
                     continue  # skip within-action — FSIs target other channels
                 for d_type in ("D1", "D2"):
                     pathways.append(RegionPathway(
-                        from_region=f"str_FS_{fs_action}",
+                        from_region=f"str_PV_FSI_{fs_action}",
                         to_region=f"str_{d_type}_{str_action}",
                         density=1.0,  # dense within-pool
                         weight_mean=str_fs_to_msn_weight,
@@ -909,7 +909,7 @@ def build_bg_brain_regions(
     # arky cells; arky projects back to striatal FSIs broadcasting a
     # "stop signal" (Mallet 2012). Per Kita 2007 / Tepper-2018, PV-
     # cells rarely collateralize to STN/GPi -- their canonical target
-    # is the striatum. Modeling as broadcast to all str_FS_Y so a single
+    # is the striatum. Modeling as broadcast to all str_PV_FSI_Y so a single
     # action's D2 activation can feedback-inhibit the entire striatal
     # FSI population, halting ongoing motor commitments.
     if enable_striatal_fsis:  # arky->FSI requires FSI population
@@ -920,7 +920,7 @@ def build_bg_brain_regions(
             ))
             for fs_action in ACTION_NAMES:
                 pathways.append(RegionPathway(
-                    from_region=f"gpe_arky_{action}", to_region=f"str_FS_{fs_action}",
+                    from_region=f"gpe_arky_{action}", to_region=f"str_PV_FSI_{fs_action}",
                     density=0.3, weight_mean=1.5, weight_jitter=0.2, plastic=False,
                 ))
     else:
@@ -1667,7 +1667,7 @@ def run_moving_goal_episode(
     # synapses' weight updates flip sign vs D1. Default off.
     enable_d1_d2_asymmetry: bool = False,
     # Cluster B.2 (2026-04-28): striatal fast-spiking interneurons —
-    # 4 str_FS_X pools providing broadcast inhibition to all D1/D2 MSN
+    # 4 str_PV_FSI_X pools providing broadcast inhibition to all D1/D2 MSN
     # pools. Default off. See
     # docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md.
     enable_striatal_fsis: bool = False,
@@ -3016,9 +3016,18 @@ def main():
                     help="Cluster B.1: D1/D2 plasticity asymmetry — D2-targeting "
                          "synapses' weight updates flip sign vs D1. See "
                          "docs/plans/2026-04-28-cluster-b1-d1d2-asymmetry-implementation.md.")
-    ap.add_argument("--enable-striatal-fsis", action="store_true",
-                    help="Cluster B.2: striatal fast-spiking interneurons "
-                         "(broadcast inhibition). See "
+    # Canonical: --enable-striatal-pv-fsi (specifies PV+ FSI; per Tepper-2018
+    # this is one of EIGHT distinct striatal GABAergic interneuron classes —
+    # NPY-LTS, NPY-NGF, CR, TH/THIN, FAI, SABI, ChI/TAN are NOT modeled).
+    # Legacy --enable-striatal-fsis kept as alias for one release cycle
+    # (2026-04-29 Wave-1 rename #9). Region naming: str_PV_FSI_X (canonical)
+    # with str_PV_FSI_X retained as a region-name alias via RegionManager.
+    ap.add_argument("--enable-striatal-pv-fsi", "--enable-striatal-fsis",
+                    action="store_true", dest="enable_striatal_fsis",
+                    help="Cluster B.2: striatal PV-FSI fast-spiking interneurons "
+                         "(broadcast inhibition). One of 8 striatal GABAergic "
+                         "interneuron classes per Tepper-2018; the others are NOT "
+                         "modeled. See "
                          "docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md.")
     ap.add_argument("--enable-bg-neuropeptides", action="store_true",
                     help="R3.6 (2026-04-29): D1/D2 neuropeptide co-release. "

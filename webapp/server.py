@@ -246,7 +246,7 @@ PRESETS: dict[str, list[str]] = {
     "biology_AE": [
         "--moving-goal",
         "--enable-msn-lateral-inhibition",
-        "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-pv-fsi",
         "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
         "--n-steps", "1800",
     ],
@@ -254,7 +254,7 @@ PRESETS: dict[str, list[str]] = {
     "biology_AE_multi": [
         "--moving-goal", "--goal-schedule", "multi",
         "--enable-msn-lateral-inhibition",
-        "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-pv-fsi",
         "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
         "--n-steps", "1800",
     ],
@@ -263,7 +263,7 @@ PRESETS: dict[str, list[str]] = {
     "biology_AE_sensed": [
         "--moving-goal",
         "--enable-msn-lateral-inhibition",
-        "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-pv-fsi",
         "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
         "--sensed-reward",
         "--n-steps", "1800",
@@ -273,7 +273,7 @@ PRESETS: dict[str, list[str]] = {
     "biology_baseline": [
         "--moving-goal",
         "--enable-msn-lateral-inhibition",
-        "--enable-d1-d2-asymmetry", "--enable-striatal-fsis",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-pv-fsi",
         "--n-steps", "1800",
     ],
     # Interactive presets — webapp wires --interactive-control-file +

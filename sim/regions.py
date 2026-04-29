@@ -321,11 +321,20 @@ class RegionManager:
     # translated to the canonical form with a one-time DeprecationWarning.
     # Useful for loading old sidecar JSONs that hard-coded region names.
     _DEPRECATED_REGION_NAMES = {
-        # 2026-04-29 Wave-1 rename: "dopamine" was the modeled-region name
+        # 2026-04-29 Wave-1 rename #3: "dopamine" was the modeled-region name
         # (the project's A9-equivalent — SNc dopaminergic neurons). The
         # transmitter modulator stays named "dopamine" (correct); the BG
         # region is now named "snc". Per Cluster A.16 + glossary §SNc.
         "dopamine": "snc",
+        # 2026-04-29 Wave-1 rename #9: striatal FS regions are PV-FSI specifically
+        # (one of eight distinct striatal GABAergic interneuron classes per
+        # Tepper-2018: PV-FSI, NPY-(P)LTS, NPY-NGF, CR, TH/THIN, FAI, SABI).
+        # Old name "str_FS_X" suggested cortical-FS biology; new name
+        # "str_PV_FSI_X" disambiguates from cortex_FS_X (PV+ basket).
+        "str_FS_N": "str_PV_FSI_N",
+        "str_FS_E": "str_PV_FSI_E",
+        "str_FS_S": "str_PV_FSI_S",
+        "str_FS_W": "str_PV_FSI_W",
     }
 
     def _canonicalize_region_name(self, region_name: str) -> str:
