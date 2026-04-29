@@ -443,13 +443,21 @@ class DefaultHodgkinHuxleyParams:
     GPI_OUTPUT = REALISTIC_L5_PYRAMIDAL_RS_37C.copy()
     GPI_OUTPUT.update({
         # Bevan & Wilson 1999, Hashimoto 2003: GPi tonic 60-80 Hz at rest.
+        # R3.8 (2026-04-29): tuned NaP + Ih + SK-equivalent (M-current) per
+        # PBR-160 ch 9 Deniau pp 157-158. SNr/GPi 40-80 Hz autonomous
+        # pacemaker rests on (1) slowly-inactivating TTX-sensitive NaP,
+        # (2) some Ih (slow Ca spikes below -60 mV), (3) SK channels
+        # coupled to Cav2.2 — apamin reduces firing precision. Our
+        # framework has no explicit SK; we use the M-current (g_M) as
+        # an AHP proxy. Earlier values were too conservative for the
+        # biology — apamin-sensitive AHP is large in SNr.
         "g_Na_max": 80.0,
         "g_K_max": 18.0,    # Stronger K than GPe — allows higher tonic rate
         "g_CaT_max": 0.0,
-        "g_h_max": 0.05,    # Minimal Ih
+        "g_h_max": 0.15,    # was 0.05 — Ih supports slow spikes per Deniau
         "E_h": -35.0,
-        "g_M_max": 0.4,     # Modest AHP
-        "g_NaP_max": 0.12,  # Modest NaP for tonic excitation
+        "g_M_max": 1.0,     # was 0.4 — SK-equivalent AHP (firing precision)
+        "g_NaP_max": 0.4,   # was 0.12 — strong NaP pacemaker drive
         "E_L": -64.0,       # Slightly more depolarized than GPe (higher tonic rate)
         "v_rest_hh": -60.0,
     })
