@@ -840,6 +840,41 @@ def test_gpe_arky_to_fsi_only_when_fsi_enabled():
     assert len(arky_to_fs_off) == 0
 
 
+# ───────────────────── 2026-04-29: R3.11 striosome (patch) split ─────────────────────
+
+
+def test_str_patch_regions_present_by_default():
+    """R3.11: str_patch_X regions exist unconditionally (4 actions)."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    regions, _ = build_bg_brain_regions()
+    patch_names = {r.name for r in regions if r.name.startswith("str_patch_")}
+    assert patch_names == {"str_patch_N", "str_patch_E", "str_patch_S", "str_patch_W"}
+
+
+def test_str_patch_targets_dopamine_and_gpi():
+    """Per PBR-160 ch 9/11: striosomes project to BOTH SNc (DA) and SNr (gpi).
+    R3.11 wires str_patch_X -> dopamine and str_patch_X -> gpi_X."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    _, pathways = build_bg_brain_regions()
+    patch_outs = [(p.from_region, p.to_region) for p in pathways
+                  if p.from_region.startswith("str_patch_")]
+    for action in ("N", "E", "S", "W"):
+        assert (f"str_patch_{action}", "dopamine") in patch_outs, \
+            f"missing str_patch_{action} -> dopamine (canonical striosome->SNc)"
+        assert (f"str_patch_{action}", f"gpi_{action}") in patch_outs, \
+            f"missing str_patch_{action} -> gpi_{action} (striosome->SNr per Deniau)"
+
+
+def test_str_patch_uses_msn_e_inh_override():
+    """str_patch_X regions inherit MSN class E_inh override (-60 mV) per R1.1."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    regions, _ = build_bg_brain_regions()
+    patch_regions = [r for r in regions if r.name.startswith("str_patch_")]
+    for r in patch_regions:
+        assert r.syn_reversal_potential_i_override == -60.0, \
+            f"{r.name} should have E_inh override = -60 mV (MSN class)"
+
+
 # ───────────────────── 2026-04-28: Cluster B.3 cholinergic TANs ─────────────────────
 
 

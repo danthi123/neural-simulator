@@ -60,6 +60,7 @@ def build_bg_brain_regions(
     n_striatum_per_action: int = 50,
     n_gpe_per_action: int = 10,
     n_gpe_arky_per_action: int = 4,  # R3.7: arkypallidal (PV-) subpool
+    n_str_patch_per_action: int = 8,  # R3.11: striosome (patch) subpool
     n_gpi_per_action: int = 10,
     n_stn: int = 20,
     n_thal_per_action: int = 10,
@@ -396,6 +397,25 @@ def build_bg_brain_regions(
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_GPI_OUTPUT.name,
         ))
+        # R3.11 (2026-04-29): striosome (patch) compartment.
+        # Per PBR-160 ch 9 / ch 11: striosomes are D1-MSN-rich patches
+        # that project to BOTH SNc (canonical, drives DA) and SNr (gpi)
+        # in addition to the matrix-pathway. The patch/matrix split
+        # aligns with SNc/SNr at the output level. Real input is limbic
+        # (vmPFC, amygdala, ventral hippocampus); we use cortex_X as a
+        # placeholder until a limbic source is added (Cluster O work).
+        # E_inh override -60 mV is inherited via the same MSN-class
+        # convention applied to str_D1/D2.
+        regions.append(BrainRegion(
+            name=f"str_patch_{action}",
+            n_neurons=n_str_patch_per_action,
+            exc_fraction=0.05,  # MSN is GABAergic with sparse glutamatergic spillover
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
+            syn_reversal_potential_i_override=-60.0,  # MSN GABA_A reversal (R1.1)
+        ))
 
     # Single STN (excitatory, projects diffusely to all GPi)
     regions.append(BrainRegion(
@@ -725,6 +745,31 @@ def build_bg_brain_regions(
         pathways.append(RegionPathway(
             from_region=f"gpi_{action}", to_region=f"thal_{action}",
             density=1.0, weight_mean=8.0, weight_jitter=0.2, plastic=False,
+        ))
+
+    # R3.11 (2026-04-29): striosome (patch) pathways.
+    # cortex_X -> str_patch_X: placeholder for limbic input (vmPFC/amygdala/
+    # ventral hippocampus per PBR-160 ch 9). Plastic so patch can learn
+    # cortical-to-patch mapping. Same density as matrix per Bolam.
+    # str_patch_X -> dopamine: canonical striosome->SNc projection driving
+    # phasic DA (Tepper & Lee PBR-160 ch 11 p 191).
+    # str_patch_X -> gpi_X: secondary striosome->SNr projection (PBR-160
+    # ch 9 Deniau p 160 — striosomes contribute substantial direct input
+    # to SNr in addition to the canonical SNc target). Smaller weight
+    # than matrix's str_D1->gpi to reflect minor contribution.
+    for action in ACTION_NAMES:
+        pathways.append(RegionPathway(
+            from_region=f"cortex_{action}", to_region=f"str_patch_{action}",
+            density=cortex_to_msn_density_same, weight_mean=25.0,
+            weight_jitter=0.2, plastic=True, plasticity_gate="cortex_to_d1",
+        ))
+        pathways.append(RegionPathway(
+            from_region=f"str_patch_{action}", to_region="dopamine",
+            density=0.4, weight_mean=2.5, weight_jitter=0.2, plastic=False,
+        ))
+        pathways.append(RegionPathway(
+            from_region=f"str_patch_{action}", to_region=f"gpi_{action}",
+            density=0.3, weight_mean=1.5, weight_jitter=0.2, plastic=False,
         ))
 
     # R3.10 (2026-04-29): GPi/SNr -> dopamine collateral disinhibition
