@@ -25,10 +25,12 @@ from typing import Dict, List, Optional
 CONDITIONS = {
     "baseline (post-R)": "g11_seed{seed}_clusterB_postR.json",
     "+ Cluster A": "g11_seed{seed}_clusterA.json",
-    "+ Cluster C only": "g11_seed{seed}_clusterC.json",
-    "A + C + B.3": "g11_seed{seed}_combo_ACB3.json",
+    "+ Cluster C v1 only": "g11_seed{seed}_clusterC.json",
+    "A + C v1 + B.3": "g11_seed{seed}_combo_ACB3.json",
     "+ Cluster D only": "g11_seed{seed}_clusterD.json",
     "A + D": "g11_seed{seed}_clusterAD.json",
+    "+ Cluster C v2 only": "g11_seed{seed}_clusterCv2.json",
+    "A + C v2": "g11_seed{seed}_clusterACv2.json",
 }
 SEEDS = [42, 43, 44]
 RAW_DIR = Path("research/findings/raw/g11_bg")
