@@ -1004,3 +1004,109 @@ def test_tans_kwarg_accepted(tmp_out_path):
         out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
         enable_tans=True,
     )
+
+
+# ───────────────────── 2026-04-29: Cluster D v1 hippocampus trisynaptic loop ─────────────────────
+
+
+_CLUSTER_D_REGIONS = ("ec", "dg", "dg_fs", "ca3", "ca1")
+
+
+def test_cluster_d_default_off():
+    """No ec/dg/dg_fs/ca3/ca1 regions exist when --enable-cluster-d-hippocampus is off."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    regions, pathways = build_bg_brain_regions()  # default: flag off
+    region_names = {r.name for r in regions}
+    for name in _CLUSTER_D_REGIONS:
+        assert name not in region_names, \
+            f"region {name!r} should not exist when --enable-cluster-d-hippocampus is off"
+
+
+def test_cluster_d_regions_present():
+    """All 5 trisynaptic-loop regions present when --enable-cluster-d-hippocampus is on."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    regions, _ = build_bg_brain_regions(enable_cluster_d_hippocampus=True)
+    region_names = {r.name for r in regions}
+    for name in _CLUSTER_D_REGIONS:
+        assert name in region_names, f"missing {name!r} when Cluster D is on"
+    # Spec sizes (per docs/plans/2026-04-29-cluster-d-hippocampus-design.md).
+    by_name = {r.name: r for r in regions}
+    assert by_name["ec"].n_neurons == 80
+    assert by_name["dg"].n_neurons == 200
+    assert by_name["dg_fs"].n_neurons == 60
+    assert by_name["ca3"].n_neurons == 100
+    assert by_name["ca1"].n_neurons == 120
+    # CA3 must be the autoassociator: dense recurrent collaterals.
+    assert by_name["ca3"].internal_density == 0.30
+    # DG fs is all-inhibitory (auto-derived inhibitory outputs).
+    assert by_name["dg_fs"].exc_fraction == 0.0
+
+
+def test_cluster_d_trisynaptic_pathways():
+    """Core trisynaptic-loop pathways present: ec->dg, dg->ca3, ca3->ca1."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    _, pathways = build_bg_brain_regions(enable_cluster_d_hippocampus=True)
+    pairs = {(p.from_region, p.to_region) for p in pathways}
+    assert ("ec", "dg") in pairs, "missing perforant path ec -> dg"
+    assert ("dg", "ca3") in pairs, "missing mossy fibers dg -> ca3"
+    assert ("ca3", "ca1") in pairs, "missing Schaffer collaterals ca3 -> ca1"
+    # Direct cortical bypass.
+    assert ("ec", "ca1") in pairs, "missing direct bypass ec -> ca1"
+
+
+def test_cluster_d_dg_ffi():
+    """DG feedforward inhibition mechanism present: ec->dg_fs and dg_fs->dg.
+    These two paths together produce DG sparsity by recruiting fast-spiking
+    inhibition in proportion to EC drive."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    _, pathways = build_bg_brain_regions(enable_cluster_d_hippocampus=True)
+    pairs = {(p.from_region, p.to_region) for p in pathways}
+    assert ("ec", "dg_fs") in pairs, "missing ec -> dg_fs (FFi recruitment)"
+    assert ("dg_fs", "dg") in pairs, "missing dg_fs -> dg (FFi to granule cells)"
+    # Both should be static (FFi is structural, not learned).
+    by_pair = {(p.from_region, p.to_region): p for p in pathways}
+    assert by_pair[("ec", "dg_fs")].plastic is False, "ec -> dg_fs should be static"
+    assert by_pair[("dg_fs", "dg")].plastic is False, "dg_fs -> dg should be static"
+
+
+def test_cluster_d_ca1_to_place_cells_only_with_hippocampus():
+    """ca1 -> place_cells exists only when --enable-hippocampus is also on
+    (place_cells region only exists in that case)."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    # Cluster D alone: no ca1 -> place_cells (place_cells region absent).
+    _, pathways_d_only = build_bg_brain_regions(enable_cluster_d_hippocampus=True)
+    pairs_d_only = {(p.from_region, p.to_region) for p in pathways_d_only}
+    assert ("ca1", "place_cells") not in pairs_d_only, \
+        "ca1 -> place_cells should be omitted when --enable-hippocampus is off"
+
+    # Cluster D + hippocampus: readout pathway present.
+    _, pathways_both = build_bg_brain_regions(
+        enable_cluster_d_hippocampus=True, enable_hippocampus=True,
+    )
+    pairs_both = {(p.from_region, p.to_region) for p in pathways_both}
+    assert ("ca1", "place_cells") in pairs_both, \
+        "ca1 -> place_cells should be present when --hippocampus is also on"
+
+    # And the existing landmark_sensors -> place_cells pathway is unchanged
+    # by Cluster D (when --landmarks + --hippocampus are also on).
+    _, pathways_full = build_bg_brain_regions(
+        enable_cluster_d_hippocampus=True,
+        enable_hippocampus=True,
+        enable_landmarks=True,
+    )
+    pairs_full = {(p.from_region, p.to_region) for p in pathways_full}
+    assert ("landmark_sensors", "place_cells") in pairs_full, \
+        "Cluster D must not remove existing landmark_sensors -> place_cells"
+    # And new landmark_sensors -> ec is added.
+    assert ("landmark_sensors", "ec") in pairs_full, \
+        "Cluster D should add landmark_sensors -> ec when --landmarks is on"
+
+
+def test_cluster_d_kwarg_accepted(tmp_out_path):
+    """Runner accepts enable_cluster_d_hippocampus without TypeError; runs ~20 steps."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    run_moving_goal_episode(
+        out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+        enable_cluster_d_hippocampus=True,
+    )

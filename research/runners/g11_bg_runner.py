@@ -173,6 +173,23 @@ def build_bg_brain_regions(
     # pools, effective inhibition was 32 (vs v3 lateral inhibition ~7).
     # Lowering to 2.0 → effective ~8, comparable to v3 lateral.
     str_fs_to_msn_weight: float = 2.0,
+    # Cluster D v1 (2026-04-29): hippocampus trisynaptic loop.
+    # Adds 5 regions (ec, dg, dg_fs, ca3, ca1) and ~10 pathways implementing
+    # the canonical Cajal trisynaptic loop:
+    #   sensory + landmark_sensors -> ec
+    #   ec -> dg (perforant path), ec -> dg_fs (FFi recruitment)
+    #   dg_fs -> dg (strong feedforward inhibition for sparsity)
+    #   ec -> ca1 (direct cortical bypass)
+    #   dg -> ca3 (mossy fibers; sparse but strong)
+    #   ca3 -> ca3 (recurrent autoassociator; via region.internal_density)
+    #   ca3 -> ca1 (Schaffer collaterals)
+    #   ca1 -> place_cells (readout into existing perception arc, when
+    #     enable_hippocampus is on; otherwise CA1 still exists but its
+    #     readout pathway into place_cells is omitted).
+    # Composition: ADDS to existing perception arc; does NOT replace
+    # place_cells/goal_cells regions or landmark_sensors -> place_cells.
+    # See docs/plans/2026-04-29-cluster-d-hippocampus-design.md.
+    enable_cluster_d_hippocampus: bool = False,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -464,6 +481,66 @@ def build_bg_brain_regions(
         izh_neuron_type=NeuronType.IZH2007_DOPAMINE.name,
         syn_reversal_potential_i_override=-55.0,
     ))
+
+    # Cluster D v1 (2026-04-29): hippocampus trisynaptic loop.
+    # Five new regions implementing the canonical Cajal loop. See
+    # docs/plans/2026-04-29-cluster-d-hippocampus-design.md.
+    #   ec (entorhinal cortex stub) — receives sensory + landmark, projects
+    #     to DG, CA1; bridges perception to hippocampus proper.
+    #   dg (dentate gyrus) — pattern separation via FFi-driven sparsity;
+    #     internal_density=0 (no recurrence — DG granule cells fire sparsely).
+    #   dg_fs — fast-spiking interneurons providing strong feedforward
+    #     inhibition (exc_fraction=0.0 → outputs auto-derived inhibitory).
+    #   ca3 — pattern completion; recurrent autoassociator core
+    #     (internal_density=0.30 generates the dense recurrent collaterals).
+    #   ca1 — readout integrating direct EC input + CA3 output; projects
+    #     into existing place_cells region when enable_hippocampus is on.
+    if enable_cluster_d_hippocampus:
+        regions.append(BrainRegion(
+            name="ec",
+            n_neurons=80,
+            exc_fraction=0.8,
+            internal_density=0.05,
+            exc_weight_mean=0.3, inh_weight_mean=0.8,
+            weight_jitter=0.2, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="dg",
+            n_neurons=200,
+            exc_fraction=0.95,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="dg_fs",
+            n_neurons=60,
+            exc_fraction=0.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+        ))
+        regions.append(BrainRegion(
+            name="ca3",
+            n_neurons=100,
+            exc_fraction=0.85,
+            internal_density=0.30,  # dense recurrent autoassociator
+            exc_weight_mean=1.5, inh_weight_mean=2.0,
+            weight_jitter=0.2, plastic_internal=True,  # recurrent CA3 plasticity
+            izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="ca1",
+            n_neurons=120,
+            exc_fraction=0.85,
+            internal_density=0.05,
+            exc_weight_mean=0.3, inh_weight_mean=0.8,
+            weight_jitter=0.2, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
 
     # ---- Pathways (cross-region projections) ----
 
@@ -882,6 +959,82 @@ def build_bg_brain_regions(
                     density=1.0, weight_mean=fs_to_cortex_weight, weight_jitter=0.2,
                     plastic=False,
                 ))
+
+    # ---- Cluster D v1 (2026-04-29): hippocampus trisynaptic loop pathways ----
+    # See docs/plans/2026-04-29-cluster-d-hippocampus-design.md.
+    # Pathways added when --enable-cluster-d-hippocampus is on:
+    #   sensory -> ec (perceptual entry; only if --learned-perception)
+    #   landmark_sensors -> ec (only if --landmarks; landmark_sensors region
+    #     only exists in that case)
+    #   ec -> dg (perforant path; main excitatory drive to DG)
+    #   ec -> dg_fs (FFi recruitment)
+    #   dg_fs -> dg (strong feedforward inhibition for sparsity)
+    #   ec -> ca1 (direct cortical bypass)
+    #   dg -> ca3 (mossy fibers; sparse but strong)
+    #   ca3 -> ca3 (recurrent autoassociator — handled by region.internal_density)
+    #   ca3 -> ca1 (Schaffer collaterals)
+    #   ca1 -> place_cells (readout; only if --hippocampus, since place_cells
+    #     region only exists then; coexists with landmark_sensors->place_cells)
+    if enable_cluster_d_hippocampus:
+        # sensory -> ec (only when learned-perception layer exists)
+        if enable_learned_perception:
+            pathways.append(RegionPathway(
+                from_region="sensory", to_region="ec",
+                density=0.40, weight_mean=4.0, weight_jitter=0.2,
+                plastic=True, plasticity_gate="sensory_to_ec",
+            ))
+        # landmark_sensors -> ec (only when landmark_sensors region exists)
+        if enable_landmarks:
+            pathways.append(RegionPathway(
+                from_region="landmark_sensors", to_region="ec",
+                density=0.40, weight_mean=4.0, weight_jitter=0.2,
+                plastic=True, plasticity_gate="sensory_to_ec",
+            ))
+        # ec -> dg (perforant path)
+        pathways.append(RegionPathway(
+            from_region="ec", to_region="dg",
+            density=0.40, weight_mean=6.0, weight_jitter=0.2,
+            plastic=True, plasticity_gate="ec_to_dg",
+        ))
+        # ec -> dg_fs (FFi recruitment, static)
+        pathways.append(RegionPathway(
+            from_region="ec", to_region="dg_fs",
+            density=0.40, weight_mean=5.0, weight_jitter=0.2,
+            plastic=False,
+        ))
+        # dg_fs -> dg (strong feedforward inhibition; static)
+        pathways.append(RegionPathway(
+            from_region="dg_fs", to_region="dg",
+            density=1.00, weight_mean=6.0, weight_jitter=0.2,
+            plastic=False,
+        ))
+        # ec -> ca1 (direct cortical bypass)
+        pathways.append(RegionPathway(
+            from_region="ec", to_region="ca1",
+            density=0.30, weight_mean=3.0, weight_jitter=0.2,
+            plastic=True, plasticity_gate="ec_to_ca1",
+        ))
+        # dg -> ca3 (mossy fibers)
+        pathways.append(RegionPathway(
+            from_region="dg", to_region="ca3",
+            density=0.10, weight_mean=8.0, weight_jitter=0.2,
+            plastic=True, plasticity_gate="dg_to_ca3",
+        ))
+        # ca3 -> ca3 recurrent: handled via ca3 region.internal_density=0.30 above.
+        # ca3 -> ca1 (Schaffer collaterals)
+        pathways.append(RegionPathway(
+            from_region="ca3", to_region="ca1",
+            density=0.30, weight_mean=4.0, weight_jitter=0.2,
+            plastic=True, plasticity_gate="ca3_to_ca1",
+        ))
+        # ca1 -> place_cells: only when --hippocampus is on (place_cells region
+        # only exists in that case). Coexists with landmark_sensors->place_cells.
+        if enable_hippocampus:
+            pathways.append(RegionPathway(
+                from_region="ca1", to_region="place_cells",
+                density=0.50, weight_mean=5.0, weight_jitter=0.2,
+                plastic=False,
+            ))
 
     return regions, pathways
 
@@ -1382,6 +1535,7 @@ def run_moving_goal_episode(
     enable_bg_neuropeptides: bool = False,  # R3.6: D1/D2 neuropeptide arms
     enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
     enable_tonic_da: bool = False,  # Cluster C v1: dopamine as a real neuromodulator
+    enable_cluster_d_hippocampus: bool = False,  # Cluster D v1: trisynaptic loop (ec+dg+ca3+ca1)
     # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
     # Defaults match CoreSimConfig but can be overridden from the runner's
     # CLI / kwargs to tune the pruning aggressiveness for short pretraining
@@ -1486,6 +1640,7 @@ def run_moving_goal_episode(
         lateral_inhibition_weight=lateral_inhibition_weight,
         enable_striatal_fsis=enable_striatal_fsis,
         enable_cluster_a_closed_loop=enable_cluster_a_closed_loop,
+        enable_cluster_d_hippocampus=enable_cluster_d_hippocampus,
         enable_beacon_perception=enable_beacon_perception,
         n_beacon_sensors=n_beacon_sensors,
         beacon_to_goal_weight=beacon_to_goal_weight,
@@ -2691,6 +2846,15 @@ def main():
                          "providing tonic DA-driven plasticity for ACh "
                          "to gate. See "
                          "docs/plans/2026-04-29-cluster-c-tonic-da-design.md.")
+    ap.add_argument("--enable-cluster-d-hippocampus", action="store_true",
+                    help="Cluster D v1 (2026-04-29): hippocampus trisynaptic "
+                         "loop. Adds 5 regions (ec, dg, dg_fs, ca3, ca1) and "
+                         "~10 pathways implementing the canonical Cajal loop "
+                         "(EC -> DG -> CA3 -> CA1 + EC -> CA1 direct + CA3 "
+                         "recurrent autoassociator). Composes with --hippocampus "
+                         "(adds ca1 -> place_cells readout) and --landmarks "
+                         "(adds landmark_sensors -> ec). See "
+                         "docs/plans/2026-04-29-cluster-d-hippocampus-design.md.")
     ap.add_argument("--enable-tans", action="store_true",
                     help="Cluster B.3: cholinergic interneurons (TANs). Adds "
                          "an acetylcholine neuromodulator that pauses on reward "
@@ -2828,6 +2992,7 @@ def main():
             enable_bg_neuropeptides=args.enable_bg_neuropeptides,
             enable_cluster_a_closed_loop=args.enable_cluster_a_closed_loop,
             enable_tonic_da=args.enable_tonic_da,
+            enable_cluster_d_hippocampus=args.enable_cluster_d_hippocampus,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
             pruning_weight_floor=args.pruning_weight_floor,
