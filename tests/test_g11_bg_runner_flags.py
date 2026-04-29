@@ -840,6 +840,71 @@ def test_gpe_arky_to_fsi_only_when_fsi_enabled():
     assert len(arky_to_fs_off) == 0
 
 
+# ───────────────────── 2026-04-29: Cluster A closed BG loop ─────────────────────
+
+
+def test_cluster_a_default_off():
+    """No cortex->stn or thal->cortex pathways unless --enable-cluster-a-closed-loop."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    _, pathways = build_bg_brain_regions()  # default
+    cortex_to_stn = [p for p in pathways
+                     if p.from_region.startswith("cortex_")
+                     and p.to_region == "stn"]
+    thal_to_cortex = [p for p in pathways
+                      if p.from_region.startswith("thal_")
+                      and p.to_region.startswith("cortex_")]
+    assert len(cortex_to_stn) == 0
+    assert len(thal_to_cortex) == 0
+
+
+def test_cluster_a_hyperdirect_pathways_built():
+    """--enable-cluster-a-closed-loop adds 4 cortex_X -> stn pathways
+    (hyperdirect; one per action)."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    _, pathways = build_bg_brain_regions(enable_cluster_a_closed_loop=True)
+    cortex_to_stn = [p for p in pathways
+                     if p.from_region.startswith("cortex_")
+                     and p.to_region == "stn"]
+    # Filter to base-pool cortex_X (not cortex_FS_X if cortex lateral inhib were on)
+    base_cortex_to_stn = [p for p in cortex_to_stn
+                          if p.from_region in {"cortex_N", "cortex_E", "cortex_S", "cortex_W"}]
+    assert len(base_cortex_to_stn) == 4
+    for p in base_cortex_to_stn:
+        assert p.density == 0.10
+        assert p.weight_mean == 3.0
+        assert p.plastic is False
+
+
+def test_cluster_a_thal_to_cortex_pathways_built():
+    """--enable-cluster-a-closed-loop adds 4 thal_X -> cortex_X pathways
+    (closed loop, action-specific only — no cross-action feedback)."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    _, pathways = build_bg_brain_regions(enable_cluster_a_closed_loop=True)
+    thal_to_cortex = [p for p in pathways
+                      if p.from_region.startswith("thal_")
+                      and p.to_region.startswith("cortex_")
+                      and p.to_region in {"cortex_N", "cortex_E", "cortex_S", "cortex_W"}]
+    assert len(thal_to_cortex) == 4
+    for p in thal_to_cortex:
+        thal_action = p.from_region.split("_")[-1]
+        cortex_action = p.to_region.split("_")[-1]
+        assert thal_action == cortex_action, \
+            f"Cluster A is action-specific; thal_{thal_action} should NOT project to cortex_{cortex_action}"
+        assert p.density == 0.50
+        assert p.weight_mean == 5.0
+        assert p.plastic is False
+
+
+def test_cluster_a_kwarg_accepted(tmp_out_path):
+    """Runner accepts enable_cluster_a_closed_loop kwarg without error."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    run_moving_goal_episode(
+        out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+        enable_cluster_a_closed_loop=True,
+    )
+
+
 # ───────────────────── 2026-04-29: R3.11 striosome (patch) split ─────────────────────
 
 

@@ -61,6 +61,7 @@ def build_bg_brain_regions(
     n_gpe_per_action: int = 10,
     n_gpe_arky_per_action: int = 4,  # R3.7: arkypallidal (PV-) subpool
     n_str_patch_per_action: int = 8,  # R3.11: striosome (patch) subpool
+    enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
     n_gpi_per_action: int = 10,
     n_stn: int = 20,
     n_thal_per_action: int = 10,
@@ -798,6 +799,32 @@ def build_bg_brain_regions(
             density=1.0, weight_mean=20.0, weight_jitter=0.2, plastic=False,
         ))
 
+    # Cluster A (2026-04-29): closed BG loop.
+    # (a) Hyperdirect pathway: cortex_X -> stn (Nambu 2002). ~30% of cortex
+    #     pyramids project directly to STN, bypassing striatum. Sparse
+    #     excitatory drive provides a fast global "stop" signal that
+    #     biases against premature action commitment when multiple
+    #     cortex pools fire simultaneously. Static (plastic=False) since
+    #     anatomical projection is genetically specified, not learned.
+    # (b) Thalamo-cortical feedback: thal_X -> cortex_X. Closes the
+    #     cortex -> BG -> thal -> cortex loop. Action-specific (not
+    #     cross-action) per VA/VL topographic organization. Provides the
+    #     post-synaptic activity that lets STDP shape useful cross-action
+    #     weights (the "teaching signal" missing for cross-projection
+    #     learning per CLAUDE.md cheat-5 reframe). Static.
+    if enable_cluster_a_closed_loop:
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"cortex_{action}", to_region="stn",
+                density=0.10, weight_mean=3.0, weight_jitter=0.2,
+                plastic=False,
+            ))
+            pathways.append(RegionPathway(
+                from_region=f"thal_{action}", to_region=f"cortex_{action}",
+                density=0.50, weight_mean=5.0, weight_jitter=0.2,
+                plastic=False,
+            ))
+
     # ---- Motor lateral inhibition (opt-in) ----
     # FS interneuron sub-pool per motor pool. Each motor_X drives its own
     # motor_FS_X (excitatory), which in turn inhibits the other 3 motor pools.
@@ -1353,6 +1380,7 @@ def run_moving_goal_episode(
     # docs/plans/2026-04-28-cluster-b3-tans-implementation.md.
     enable_tans: bool = False,
     enable_bg_neuropeptides: bool = False,  # R3.6: D1/D2 neuropeptide arms
+    enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
     # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
     # Defaults match CoreSimConfig but can be overridden from the runner's
     # CLI / kwargs to tune the pruning aggressiveness for short pretraining
@@ -1456,6 +1484,7 @@ def run_moving_goal_episode(
         lateral_inhibition_density=lateral_inhibition_density,
         lateral_inhibition_weight=lateral_inhibition_weight,
         enable_striatal_fsis=enable_striatal_fsis,
+        enable_cluster_a_closed_loop=enable_cluster_a_closed_loop,
         enable_beacon_perception=enable_beacon_perception,
         n_beacon_sensors=n_beacon_sensors,
         beacon_to_goal_weight=beacon_to_goal_weight,
@@ -2634,6 +2663,13 @@ def main():
                          "substance P (D1, NK-1 ACh boost), and enkephalin "
                          "(D2, DOR plasticity-rate boost) neuromodulators. "
                          "Per PBR-160 ch 16 McGinty.")
+    ap.add_argument("--enable-cluster-a-closed-loop", action="store_true",
+                    help="Cluster A (2026-04-29): closed BG loop. Adds "
+                         "cortex_X -> stn (hyperdirect, sparse) and "
+                         "thal_X -> cortex_X (action-specific feedback). "
+                         "Provides the teaching signal missing for "
+                         "cross-projection learning. See "
+                         "docs/plans/2026-04-29-cluster-a-closed-bg-loop-design.md.")
     ap.add_argument("--enable-tans", action="store_true",
                     help="Cluster B.3: cholinergic interneurons (TANs). Adds "
                          "an acetylcholine neuromodulator that pauses on reward "
@@ -2769,6 +2805,7 @@ def main():
             enable_striatal_fsis=args.enable_striatal_fsis,
             enable_tans=args.enable_tans,
             enable_bg_neuropeptides=args.enable_bg_neuropeptides,
+            enable_cluster_a_closed_loop=args.enable_cluster_a_closed_loop,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
             pruning_weight_floor=args.pruning_weight_floor,
