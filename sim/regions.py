@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass, field
-from typing import Dict, List, Sequence
+from typing import Dict, List, Optional, Sequence
 
 
 @dataclass
@@ -86,6 +86,15 @@ class BrainRegion:
     izh_neuron_type: str = None
     hh_neuron_type: str = None
     adex_neuron_type: str = None
+
+    # Per-region GABA_A reversal potential override in mV. None = use global
+    # cfg.syn_reversal_potential_i. Used to model regions with different
+    # chloride homeostasis (e.g., striatal MSNs ~−60 mV per PBR-160 ch 6;
+    # SNc DA ~−55 mV per ch 11). MSNs lack the deep negative ECl seen in
+    # cortical pyramidals: gramicidin perforated patch measurements give
+    # ~-60 mV, producing shunting (depolarizing-near-rest, hyperpolarizing-
+    # near-threshold) inhibition. SNc DA neurons lack KCC2 entirely.
+    syn_reversal_potential_i_override: Optional[float] = None
 
 
 @dataclass

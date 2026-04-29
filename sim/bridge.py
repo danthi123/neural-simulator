@@ -225,10 +225,17 @@ class SimulationBridge:
         self.cp_hh_C_m = None; self.cp_hh_g_Na_max = None; self.cp_hh_g_K_max = None; self.cp_hh_g_L = None
         self.cp_hh_E_Na = None; self.cp_hh_E_K = None; self.cp_hh_E_L = None; self.cp_hh_v_peak = None
 
-        self.cp_neuron_firing_thresholds = None 
-        self.cp_neuron_activity_ema = None      
+        self.cp_neuron_firing_thresholds = None
+        self.cp_neuron_activity_ema = None
 
-        self.cp_connections = None 
+        # Per-neuron GABA_A reversal potential (mV). Defaults to a uniform
+        # cfg.syn_reversal_potential_i; regions may override via
+        # BrainRegion.syn_reversal_potential_i_override (e.g., striatal MSNs
+        # use −60 mV per PBR-160 ch 6; SNc DA uses −55 mV per ch 11).
+        # Allocated by _initialize_simulation_data once num_neurons is known.
+        self.cp_syn_reversal_potential_i_per_neuron = None
+
+        self.cp_connections = None
 
         self.cp_stp_u = None 
         self.cp_stp_x = None 
@@ -912,6 +919,29 @@ class SimulationBridge:
             self.cp_neuron_type_ids = cp.zeros(n, dtype=cp.int32) if n > 0 else cp.array([], dtype=cp.int32)  # Will be populated per neuron
             self.cp_conductance_g_e = cp.zeros(n, dtype=cp.float32)
             self.cp_conductance_g_i = cp.zeros(n, dtype=cp.float32)
+
+            # Per-neuron inhibitory reversal potential. Defaults to global config
+            # value; regions can override via BrainRegion.syn_reversal_potential_i_override
+            # (e.g., striatal MSNs use −60 mV per PBR-160 ch 6; SNc DA uses
+            # −55 mV per ch 11). The fused conductance kernel broadcasts this
+            # array element-wise against per-neuron membrane potential.
+            if n > 0:
+                self.cp_syn_reversal_potential_i_per_neuron = cp.full(
+                    n, cfg.syn_reversal_potential_i, dtype=cp.float32
+                )
+                if self.region_manager is not None:
+                    for region in self.region_manager.regions():
+                        override = getattr(region, "syn_reversal_potential_i_override", None)
+                        if override is None:
+                            continue
+                        idx_list = self.region_manager.indices(region.name)
+                        if not idx_list:
+                            continue
+                        idx_arr = cp.asarray(idx_list, dtype=cp.int32)
+                        self.cp_syn_reversal_potential_i_per_neuron[idx_arr] = float(override)
+            else:
+                self.cp_syn_reversal_potential_i_per_neuron = cp.array([], dtype=cp.float32)
+
             # NMDA conductance (dual-exponential: g_nmda_slow - g_nmda_rise)
             self.cp_conductance_g_nmda = cp.zeros(n, dtype=cp.float32)
             self.cp_conductance_g_nmda_rise = cp.zeros(n, dtype=cp.float32)
@@ -1625,6 +1655,7 @@ class SimulationBridge:
             'cp_hh_C_m','cp_hh_g_Na_max','cp_hh_g_K_max','cp_hh_g_L',
             'cp_hh_E_Na','cp_hh_E_K','cp_hh_E_L', 'cp_hh_v_peak',
             'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
+            'cp_syn_reversal_potential_i_per_neuron',
             'cp_stp_u','cp_stp_x',
             'cp_ou_current'  # OU process state for background noise
         ]
@@ -3867,9 +3898,18 @@ class SimulationBridge:
             decay_e = self._cached_decay_e
             decay_i = self._cached_decay_i
 
+            # E_inh: per-neuron array (R1.1, PBR-160) when allocated; else global scalar.
+            # Per-neuron override lets regions like striatal MSNs (~−60 mV) and SNc DA
+            # (~−55 mV) deviate from the cortical-pyramidal default of −75 mV.
+            E_inh_to_use = (
+                self.cp_syn_reversal_potential_i_per_neuron
+                if self.cp_syn_reversal_potential_i_per_neuron is not None
+                else cfg.syn_reversal_potential_i
+            )
+
             self.cp_conductance_g_e, self.cp_conductance_g_i, synaptic_current_I_syn_pA = fused_conductance_decay_and_current(
                 self.cp_conductance_g_e, self.cp_conductance_g_i, decay_e, decay_i,
-                self.cp_membrane_potential_v, cfg.syn_reversal_potential_e, cfg.syn_reversal_potential_i
+                self.cp_membrane_potential_v, cfg.syn_reversal_potential_e, E_inh_to_use
             )
 
             g_e_increase = None  # Track for NMDA input

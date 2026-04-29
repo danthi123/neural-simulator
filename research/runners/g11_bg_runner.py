@@ -318,6 +318,8 @@ def build_bg_brain_regions(
     # makes that even harder. Add it back later if action selection needs
     # sharpening.
     for action in ACTION_NAMES:
+        # Striatal MSNs: ECl ~−60 mV (PBR-160 ch 6, gramicidin perforated patch).
+        # IPSPs are shunting near rest, hyperpolarizing only near AP threshold.
         regions.append(BrainRegion(
             name=f"str_D1_{action}",
             n_neurons=n_striatum_per_action,
@@ -326,6 +328,7 @@ def build_bg_brain_regions(
             exc_weight_mean=0.0, inh_weight_mean=0.0,
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
+            syn_reversal_potential_i_override=-60.0,
         ))
         regions.append(BrainRegion(
             name=f"str_D2_{action}",
@@ -335,6 +338,7 @@ def build_bg_brain_regions(
             exc_weight_mean=0.0, inh_weight_mean=0.0,
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D2.name,
+            syn_reversal_potential_i_override=-60.0,
         ))
 
     # Cluster B.2 (2026-04-28): striatal fast-spiking interneurons (FSIs).
@@ -407,7 +411,10 @@ def build_bg_brain_regions(
             izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
         ))
 
-    # Dopamine neurons (single pool, broadcasts via neuromodulator subsystem)
+    # Dopamine neurons (single pool, broadcasts via neuromodulator subsystem).
+    # SNc DA neurons lack KCC2 → ECl ~−55 mV (PBR-160 ch 11). GABA_A is
+    # depolarizing or even excitatory at rest in adult SNc; override the
+    # cortical-pyramidal default of −75 mV.
     regions.append(BrainRegion(
         name="dopamine",
         n_neurons=n_dopamine,
@@ -416,6 +423,7 @@ def build_bg_brain_regions(
         exc_weight_mean=0.0, inh_weight_mean=0.0,
         weight_jitter=0.0, plastic_internal=False,
         izh_neuron_type=NeuronType.IZH2007_DOPAMINE.name,
+        syn_reversal_potential_i_override=-55.0,
     ))
 
     # ---- Pathways (cross-region projections) ----
