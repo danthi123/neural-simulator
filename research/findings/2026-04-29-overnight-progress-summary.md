@@ -126,7 +126,17 @@ Both override-able via runner kwargs for parameter sweeps.
   | **Mean** | **6.26 ± 0.71** | **5.83 ± 2.23** |
   
   **Cluster E (topographic maps) is the SECOND cluster showing real signal.** Both E-only and A+E beat the documented v3 baseline of 7.08 ± 0.12. The Gaussian-weighted distance-based connectivity (sigma=0.3 between corners) creates clean action-channel separation that the BG cascade can exploit.
-- **No-heur eval (bh1w6rvdu):** queued; will use fixed cascade.
+- **No-heur eval (bh1w6rvdu) DONE — both 19.78 ± 2.28 (bit-identical to broken-cascade baseline):**
+  | Seed | no-heur baseline | no-heur A+C+E |
+  |---|---|---|
+  | 42 | 22.39 | 22.39 |
+  | 43 | 18.72 | 18.72 |
+  | 44 | 18.22 | 18.22 |
+  | **Mean** | **19.78 ± 2.28** | **19.78 ± 2.28** |
+  
+  **Interpretation:** Without the heuristic providing goal-direction cortex drive, the BG cascade has no signal to differentiate. Motor pools fall silent → random-fallback action selection → bit-identical seeds. The cascade NEEDS an external goal-direction input (heuristic, hippocampus/PFC, perception arc) to produce meaningful action selection. The clusters' role is to refine HOW the cascade translates direction into action — not to generate direction themselves. This matches biology: BG doesn't generate goals; it receives them from cortex.
+  
+  Cluster-with-heur signals (C v2, E) are the genuine cheat-5 closure path. The no-heur regime can't be evaluated meaningfully on this metric without adding hippocampus / perception inputs.
 - **FIX eval (bqlvyaog0):** queued; clean baseline + A+C+E under fixed cascade. Will give the clean baseline number for proper comparison.
 
 Updated ETA: FIX eval done ~08:50.
