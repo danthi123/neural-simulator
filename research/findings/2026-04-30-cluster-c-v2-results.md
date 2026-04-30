@@ -65,7 +65,20 @@ Three plausible mechanisms (would need controlled experiments to disambiguate):
    "credit assignment" handle that C v2 adds doesn't compose with our
    non-channelized cortex inputs.
 
-## Cluster-stacking ceiling: 8 attempts now NEUTRAL or NEGATIVE past A+E
+## Single-goal det follow-up (n=6 each)
+
+| Cond | Mean | Std | Welch t | Verdict |
+|---|---|---|---|---|
+| A+E (single-goal) | 3.82 | 1.48 | reference | acid-test |
+| **A+E+C v2 (single-goal)** | **5.56** | **1.67** | **t=+1.91** | **NEGATIVE** |
+| A+E single-goal (doc 2026-04-29) | 3.31 | 0.74 | — | ★ ceiling |
+
+C v2 hurts the single-goal benchmark more than multi-goal proportionally.
+Per-phase: AECv2 phase 0 (3.93 mean across seeds) is much worse than AE
+phase 0 (~1.84 mean) — supports failure mode #1: compartmentalized DA
+prevents off-policy credit assignment during initial goal acquisition.
+
+## Cluster-stacking ceiling: 9 attempts now NEUTRAL or NEGATIVE past A+E
 
 | Stack | n | Mean | Std | vs A+E | Verdict |
 |---|---|---|---|---|---|
@@ -79,9 +92,11 @@ Three plausible mechanisms (would need controlled experiments to disambiguate):
 | A+E+F v2 | 6 | 24.88 | 3.07 | +17.91 | NEGATIVE |
 | A+E+D (sleep) | 6 | 29.32 | 6.95 | +22.35 | NEGATIVE |
 | A+E+D+v2 | 6 | 27.68 | 4.78 | +20.71 | PARTIAL |
-| **A+E+C v2** | **6** | **9.26** | **3.91** | **+2.29** | **NEGATIVE** |
+| **A+E+C v2** (multi) | **6** | **9.26** | **3.91** | **+2.29** | **NEGATIVE** |
+| **A+E+C v2** (single) | **6** | **5.56** | **1.67** | (+1.74 vs single AE 3.82) | **NEGATIVE** |
 
-**Eight cluster-stacking attempts past A+E. None help.** Five hurt.
+**Nine cluster-stacking attempts past A+E. None help.** Five hurt; one
+PARTIAL (D v2: variance reduction without ceiling break); rest NEUTRAL.
 
 The cluster strategy was: build out missing biology (A, B, C, D, E, F)
 incrementally, expecting each cluster to add complementary capacity.
