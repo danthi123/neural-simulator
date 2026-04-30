@@ -1947,6 +1947,11 @@ def run_moving_goal_episode(
     # the goal. Provides hindsight credit assignment for sparse-goal
     # generalization. Default off.
     enable_her: bool = False,
+    # Recency-weighted replay (2026-04-30): exponential bias toward newest
+    # successful_trajectories during NREM. Addresses the "stale replay"
+    # bottleneck flagged in SCIENCE_ROADMAP §4.7 (older entries are from
+    # goals that no longer apply). Default off.
+    enable_recency_weighted_replay: bool = False,
     # PFC Stage 2: delayed-response test. Silence goal_cells during a delay
     # window to test whether PFC maintains goal info via persistent activity.
     # If PFC works as working memory, agent should still navigate toward goal
@@ -2878,6 +2883,20 @@ def run_moving_goal_episode(
                     # sleep window is longer than the trajectory buffer.
                     traj_idx = (n_traj - 1) - (sleep_step_idx % n_traj)
                     replay_x, replay_y, replay_gx, replay_gy = successful_trajectories[traj_idx]
+                elif enable_recency_weighted_replay:
+                    # Recency-weighted replay (2026-04-30): bias sampling toward
+                    # the newest trajectories with exponential weighting:
+                    # P(idx) ∝ exp((idx - 0) / tau). Newest = highest probability.
+                    # Tau set so the oldest entry is weighted ~e^(-3) ≈ 5% relative
+                    # to the newest. Addresses the SCIENCE_ROADMAP §4.7 note that
+                    # "stale trajectory replay doesn't help" — older trajectories
+                    # were sampled from goals that no longer apply.
+                    n_traj = len(successful_trajectories)
+                    tau = max(1.0, n_traj / 3.0)
+                    weights = np.exp((np.arange(n_traj) - (n_traj - 1)) / tau)
+                    weights /= weights.sum()
+                    idx = int(np.random.choice(n_traj, p=weights))
+                    replay_x, replay_y, replay_gx, replay_gy = successful_trajectories[idx]
                 else:
                     # Forward random sampling (original behavior).
                     idx = int(np.random.randint(0, len(successful_trajectories)))
@@ -3835,6 +3854,13 @@ def main():
                          "Provides hindsight credit assignment for sparse-goal "
                          "generalization. Composes with sleep replay; the "
                          "expanded buffer feeds the existing replay drive.")
+    ap.add_argument("--enable-recency-weighted-replay", action="store_true",
+                    help="Recency-weighted sleep replay sampling: bias toward "
+                         "newest successful_trajectories with exponential "
+                         "weighting (tau = n_traj/3). Addresses the "
+                         "stale-replay bottleneck for multi-goal tasks where "
+                         "older entries are from goals that no longer apply. "
+                         "Mutually exclusive with --enable-reverse-replay.")
     ap.add_argument("--goal-silence-after-step", type=int, default=-1,
                     help="PFC Stage 2 delayed-response test: silence goal_cells AND heuristic at this step. PFC working memory should maintain goal info.")
     ap.add_argument("--goal-silence-duration", type=int, default=0,
@@ -4016,6 +4042,7 @@ def main():
             sleep_nrem_rem_alternate=args.sleep_nrem_rem_alternate,
             enable_reverse_replay=args.enable_reverse_replay,
             enable_her=args.enable_her,
+            enable_recency_weighted_replay=args.enable_recency_weighted_replay,
             goal_silence_after_step=args.goal_silence_after_step,
             goal_silence_duration=args.goal_silence_duration,
         )
