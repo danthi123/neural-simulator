@@ -214,6 +214,16 @@ def build_bg_brain_regions(
     # See docs/plans/2026-04-29-cluster-e-topographic-maps-design.md.
     enable_cluster_e_topography: bool = False,
     cluster_e_distance_sigma: float = 0.3,
+    # Cluster F v1: Marr-Albus-Ito cerebellar microcircuit. Adds 11 regions
+    # (mossy_state, granule, purkinje_{N,E,S,W}, dcn_aip_{N,E,S,W},
+    # inferior_olive) and ~25 pathways implementing state -> mossy -> granule
+    # PF -> Purkinje -> DCN -inhibitory-> motor + IO -> Purkinje teaching.
+    # Composes with Cluster A (closed BG loop): cerebellar DCN provides
+    # additive contribution to motor pools alongside thal_X drive. v1 uses
+    # reward-modulated STDP on PF->PC; full CF-gated LTD deferred to v2.
+    # Default off — backward compatible.
+    # See docs/plans/2026-04-29-cluster-f-cerebellum-design.md.
+    enable_cluster_f_cerebellum: bool = False,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -633,6 +643,72 @@ def build_bg_brain_regions(
             exc_weight_mean=0.3, inh_weight_mean=0.8,
             weight_jitter=0.2, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
+
+    # Cluster F v1 (2026-04-29): Marr-Albus-Ito cerebellar microcircuit.
+    # Five region types per the catalog (F.01-F.06):
+    #   mossy_state     — single MF input pool (v2 splits into 3 streams F.03)
+    #   granule         — sparse expansion code, ~3-5% active (Marr §3, Albus §IV.A)
+    #   purkinje_X      — per-action PC pool; tonic 30-80 Hz; PF input modulates rate
+    #   dcn_aip_X       — per-action AIP-equivalent; tonic 40 Hz; PC pause -> disinhibition
+    #   inferior_olive  — sparse ~1 Hz; CF teaching signal (v1 driven by Δd>0 trigger)
+    # Per-action structure (X in {N,E,S,W}) mirrors the BG cascade for clean
+    # composition with Cluster A. The granule->purkinje pathway is the
+    # learning site (PF->PC plasticity).
+    if enable_cluster_f_cerebellum:
+        regions.append(BrainRegion(
+            name="mossy_state",
+            n_neurons=60,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="granule",
+            n_neurons=250,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            # Granule cells are small and fire briefly. RS preset is fine for v1
+            # (sparse expansion code is determined by topology, not intrinsic dynamics).
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        for action in ACTION_NAMES:
+            # Per-action Purkinje pool. v1 uses FS-style preset for high
+            # firing rate (PCs fire 30-80 Hz); proper HH_CEREBELLAR_PURKINJE
+            # preset would be more accurate but requires HH dt scaling.
+            regions.append(BrainRegion(
+                name=f"purkinje_{action}",
+                n_neurons=60,
+                exc_fraction=0.0,  # PCs are GABAergic onto DCN (output is inhibitory)
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+            ))
+            # Per-action DCN (AIP-equivalent). Tonic firing 40 Hz; PC inhibition
+            # silences this pool, releasing the motor drive. exc_fraction=1.0
+            # because DCN -> motor projection is excitatory.
+            regions.append(BrainRegion(
+                name=f"dcn_aip_{action}",
+                n_neurons=30,
+                exc_fraction=1.0,
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
+        regions.append(BrainRegion(
+            name="inferior_olive",
+            n_neurons=20,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
         ))
 
     # ---- Pathways (cross-region projections) ----
@@ -1161,6 +1237,86 @@ def build_bg_brain_regions(
                 plastic=False,
             ))
 
+    # Cluster F v1 pathways (2026-04-29). Marr-Albus forward path + IO teaching.
+    # Total: ~25 pathways across the cerebellar microcircuit.
+    if enable_cluster_f_cerebellum:
+        # State input -> mossy_state. Drive mossy fibers from existing place /
+        # goal-vector regions when available; fall back to cortex_X if neither
+        # plastic-perception flag is on. v1 uses a simple union of available
+        # state-bearing sources to keep the cerebellum learning regardless
+        # of which other clusters are enabled.
+        _state_sources = []
+        if enable_hippocampus:
+            _state_sources.append("sensor_place_readout")
+            _state_sources.append("ppc_goal_input")
+        if enable_learned_perception:
+            _state_sources.append("sensory")
+        if not _state_sources:
+            # Bare-cerebellum mode (no other input flags): pull from cortex
+            # pools as proxy state; not biologically pure but lets the
+            # cerebellum still receive SOMETHING during smoke tests.
+            for action in ACTION_NAMES:
+                _state_sources.append(f"cortex_{action}")
+        for src in _state_sources:
+            pathways.append(RegionPathway(
+                from_region=src, to_region="mossy_state",
+                density=0.5, weight_mean=4.0, weight_jitter=0.2,
+                plastic=False,
+            ))
+        # mossy_state -> granule: sparse expansion (Marr's codon coding).
+        # Density 0.05 means each granule receives ~3 mossy inputs (matches
+        # Marr's "4-5 claws per granule" prediction).
+        pathways.append(RegionPathway(
+            from_region="mossy_state", to_region="granule",
+            density=0.05, weight_mean=8.0, weight_jitter=0.2,
+            plastic=False,
+        ))
+        # granule -> purkinje_X (parallel fiber, all-to-all density 0.30,
+        # plastic). THIS IS THE LEARNING SITE. v1 uses reward-modulated STDP
+        # via the existing infrastructure, tagged with "cerebellum_pf_pc"
+        # gate so curriculum can stage cerebellar learning. Initial weight
+        # 1.0 is small so PCs aren't dominated by PF drive at start; learning
+        # shapes which granule patterns drive which PC pool.
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region="granule", to_region=f"purkinje_{action}",
+                density=0.30, weight_mean=1.0, weight_jitter=0.3,
+                plastic=True, plasticity_gate="cerebellum_pf_pc",
+            ))
+        # purkinje_X -> dcn_aip_X (same-action only, INHIBITORY; PCs are
+        # GABAergic). High weight (15.0) so PC firing strongly silences DCN.
+        # plastic=False in v1 (Mauk's two-site plasticity deferred to v2).
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"purkinje_{action}", to_region=f"dcn_aip_{action}",
+                density=0.5, weight_mean=15.0, weight_jitter=0.2,
+                plastic=False,
+            ))
+        # dcn_aip_X -> motor_X (same-action only, EXCITATORY; additive
+        # contribution alongside thal_X drive). Weight 8.0 keeps the
+        # cerebellar contribution comparable to the BG drive without
+        # overwhelming it. plastic=False.
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"dcn_aip_{action}", to_region=f"motor_{action}",
+                density=0.3, weight_mean=8.0, weight_jitter=0.2,
+                plastic=False,
+            ))
+        # inferior_olive -> purkinje_X (climbing fiber, sparse 1:few; v1
+        # doesn't model the strict 1:1 PC:CF ratio). High weight (50.0) so
+        # each CF event evokes a strong PC complex spike. v1 uses the
+        # existing reward-modulation path: when the runner injects current
+        # to inferior_olive on a Δd>0 step, IO neurons fire, the resulting
+        # CF + recent PF coactivation registers in the eligibility trace,
+        # and a negative reward signal at that moment yields LTD-like
+        # weight changes on the active PF→PC synapses.
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region="inferior_olive", to_region=f"purkinje_{action}",
+                density=0.05, weight_mean=50.0, weight_jitter=0.2,
+                plastic=False,
+            ))
+
     return regions, pathways
 
 
@@ -1684,6 +1840,7 @@ def run_moving_goal_episode(
     enable_cluster_d_hippocampus: bool = False,  # Cluster D v1: trisynaptic loop (ec+dg+ca3+ca1)
     enable_cluster_e_topography: bool = False,  # Cluster E v1: 2D coords + Gaussian-weighted cortex->striatum
     cluster_e_distance_sigma: float = 0.3,
+    enable_cluster_f_cerebellum: bool = False,  # Cluster F v1: Marr-Albus cerebellar microcircuit
     # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
     # Defaults match CoreSimConfig but can be overridden from the runner's
     # CLI / kwargs to tune the pruning aggressiveness for short pretraining
@@ -1792,6 +1949,7 @@ def run_moving_goal_episode(
         enable_cluster_d_hippocampus=enable_cluster_d_hippocampus,
         enable_cluster_e_topography=enable_cluster_e_topography,
         cluster_e_distance_sigma=cluster_e_distance_sigma,
+        enable_cluster_f_cerebellum=enable_cluster_f_cerebellum,
         enable_beacon_perception=enable_beacon_perception,
         n_beacon_sensors=n_beacon_sensors,
         beacon_to_goal_weight=beacon_to_goal_weight,
@@ -2443,6 +2601,17 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
         for rn in [f"thal_{a}" for a in ACTION_NAMES]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(300.0)
+        # Cluster F (cerebellum) baseline drives. Inferior olive baseline
+        # gives ~1 Hz spontaneous firing (Hesslow & Yeo 2002 §"Afferent
+        # Systems" p 99); CF burst on negative-reward step is set below
+        # after reward computation. DCN baseline gives tonic 40 Hz output
+        # (so PC silence releases motor drive). Purkinje baseline drives
+        # tonic simple-spike firing (~30-80 Hz) per F.01 Cerminara & Rawson.
+        if enable_cluster_f_cerebellum:
+            bridge.cp_external_input_current[region_indices_cp["inferior_olive"]] = cp.float32(80.0)
+            for a in ACTION_NAMES:
+                bridge.cp_external_input_current[region_indices_cp[f"dcn_aip_{a}"]] = cp.float32(180.0)
+                bridge.cp_external_input_current[region_indices_cp[f"purkinje_{a}"]] = cp.float32(120.0)
         # Cortex drives — both heuristic AND learned perception can be active
         # simultaneously (additive). The heuristic represents innate
         # sensorimotor primitives; the sensory layer learns refined
@@ -2737,6 +2906,18 @@ def run_moving_goal_episode(
                       f"injection {manual_reward_injection:+.2f} -> reward={reward:+.2f}",
                       flush=True)
         reward_log.append(float(reward))
+
+        # Cluster F v1: climbing-fiber teaching signal. When the just-completed
+        # action increased Manhattan distance (reward < 0), bump inferior_olive
+        # drive to evoke a CF burst that propagates to PCs as complex spikes.
+        # The next bridge.step() will see this elevated drive; combined with
+        # recent PF activity in the eligibility trace and the active negative
+        # reward, this yields LTD-like weight changes on the active PF→PC
+        # synapses. v2 will add proper CF-gated LTD with explicit anti-
+        # Hebbian rule rather than relying on the existing reward-modulation
+        # path. See docs/plans/2026-04-29-cluster-f-cerebellum-design.md.
+        if enable_cluster_f_cerebellum and reward < 0:
+            bridge.cp_external_input_current[region_indices_cp["inferior_olive"]] = cp.float32(450.0)
 
         # Log successful (place, goal) tuples during wake for sleep-replay.
         # When reward > 0 (agent moved toward goal), the (place_before, goal)
@@ -3112,6 +3293,20 @@ def main():
                          "(at corner-to-corner distance ~1.0, cross-action prob "
                          "drops to ~0.4%% of same-action). Larger -> looser "
                          "spatial selectivity.")
+    ap.add_argument("--enable-cluster-f-cerebellum", action="store_true",
+                    help="Cluster F v1 (2026-04-29): Marr-Albus-Ito cerebellar "
+                         "microcircuit. Adds 11 regions (mossy_state, granule, "
+                         "purkinje_{N,E,S,W}, dcn_aip_{N,E,S,W}, "
+                         "inferior_olive) and ~25 pathways implementing the "
+                         "MF -> GC -> PF -> PC -> DCN -> motor forward path "
+                         "plus IO -> PC climbing-fiber teaching signal. "
+                         "DCN_aip_X provides additive contribution to motor_X "
+                         "alongside thal_X drive. The granule->purkinje_X "
+                         "pathway is the learning site (gate "
+                         "'cerebellum_pf_pc'). v1 uses reward-modulated STDP "
+                         "via the existing infrastructure; full CF-gated LTD "
+                         "deferred to v2. See "
+                         "docs/plans/2026-04-29-cluster-f-cerebellum-design.md.")
     ap.add_argument("--enable-tans", action="store_true",
                     help="Cluster B.3: cholinergic interneurons (TANs). Adds "
                          "an acetylcholine_tan neuromodulator (the striatal-TAN-"
@@ -3290,6 +3485,7 @@ def main():
             enable_compartmentalized_da=args.enable_compartmentalized_da,
             enable_cluster_d_hippocampus=args.enable_cluster_d_hippocampus,
             enable_cluster_e_topography=args.enable_cluster_e_topography,
+            enable_cluster_f_cerebellum=args.enable_cluster_f_cerebellum,
             cluster_e_distance_sigma=args.cluster_e_distance_sigma,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
