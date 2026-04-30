@@ -3125,6 +3125,62 @@ def run_moving_goal_episode(
     return results
 
 
+def _emit_webapp_sidecar_and_redirect_stdout(args) -> None:
+    """Redirect stdout/stderr to a log file under webapp/runtime/ AND
+    write a sidecar matching the webapp's launch format so the
+    dashboard's Live-picker orphan-scan discovers this run and supports
+    attach (live progress + trajectory replay) as if it had been
+    launched via the webapp.
+
+    Why dup2 rather than open(...).write: cupy / cuDNN / our own
+    `print()` calls all write to file descriptor 1 / 2 directly. A
+    Python-level `sys.stdout = ...` reassignment doesn't catch those.
+    dup2 redirects at the OS level so every subsequent write — Python
+    and native — goes to the log file.
+
+    Sidecar fields mirror webapp/server.py launch_run sidecar so the
+    same orphan-recovery code path handles both flavors.
+    """
+    import os as _os
+    import sys as _sys
+    import time as _time
+    import uuid as _uuid
+    import json as _json
+    from pathlib import Path as _Path
+    run_id = _uuid.uuid4().hex[:12]
+    repo_root = _Path(__file__).resolve().parents[2]
+    runtime_dir = repo_root / "webapp" / "runtime"
+    runtime_dir.mkdir(parents=True, exist_ok=True)
+    log_path = runtime_dir / f"run_{run_id}.log"
+    log_handle = open(log_path, "w", buffering=1)  # line-buffered
+    _os.dup2(log_handle.fileno(), 1)  # stdout
+    _os.dup2(log_handle.fileno(), 2)  # stderr
+    # Resolve the eventual out path so the sidecar lives next to it
+    out_path = args.out or f"research/findings/raw/g11_bg/g11_seed{args.seed}.json"
+    if not _os.path.isabs(out_path):
+        out_path = str((repo_root / out_path).resolve())
+    sidecar_path = _Path(out_path).with_suffix(".cmd.json")
+    sidecar_path.parent.mkdir(parents=True, exist_ok=True)
+    sidecar = {
+        "run_id": run_id,
+        "preset": "g11_bg_runner",
+        "seed": args.seed,
+        "extra_args": [a for a in _sys.argv[1:] if a != "--emit-webapp-sidecar"],
+        "deterministic": getattr(args, "deterministic", False),
+        "cmd": [_sys.executable, "-m", "research.runners.g11_bg_runner", *_sys.argv[1:]],
+        "pid": _os.getpid(),
+        "log_file": str(log_path),
+        "control_file": getattr(args, "interactive_control_file", None),
+        "out_path": out_path,
+        "started_at": _time.time(),
+        "runner_kind": "single",
+    }
+    sidecar_path.write_text(_json.dumps(sidecar, indent=2))
+    print(f"[g11_bg_runner] webapp sidecar: {sidecar_path}")
+    print(f"[g11_bg_runner] log: {log_path}")
+    print(f"[g11_bg_runner] run_id={run_id} pid={_os.getpid()}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true",
@@ -3475,7 +3531,22 @@ def main():
                     help="PFC Stage 2 delayed-response test: silence goal_cells AND heuristic at this step. PFC working memory should maintain goal info.")
     ap.add_argument("--goal-silence-duration", type=int, default=0,
                     help="How long to keep goal_cells/heuristic silenced.")
+    # Webapp discovery: when this runner is launched directly via the
+    # terminal, the dashboard's Live picker can't see it because the
+    # standard /api/runs/launch path is what builds the sidecar +
+    # log file. With --emit-webapp-sidecar we dup2 stdout/stderr to a
+    # log file in webapp/runtime/ AND write a sidecar matching the
+    # webapp's format, so the orphan-scan picks the run up. The runner
+    # already emits "PROGRESS step=..." lines, so the picker can
+    # attach + render the live trajectory like any webapp-launched run.
+    ap.add_argument("--emit-webapp-sidecar", action="store_true",
+                    help="Redirect stdout to webapp/runtime/run_<id>.log "
+                         "and write a sidecar so the dashboard's Live "
+                         "picker discovers + can attach to this run.")
     args = ap.parse_args()
+
+    if args.emit_webapp_sidecar:
+        _emit_webapp_sidecar_and_redirect_stdout(args)
 
     if args.moving_goal:
         out_path = args.out or f"research/findings/raw/g11_bg/g11_seed{args.seed}.json"
