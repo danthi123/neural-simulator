@@ -3766,17 +3766,20 @@ def main():
     ap.add_argument("--goal-silence-duration", type=int, default=0,
                     help="How long to keep goal_cells/heuristic silenced.")
     # Webapp discovery: when this runner is launched directly via the
-    # terminal, the dashboard's Live picker can't see it because the
-    # standard /api/runs/launch path is what builds the sidecar +
-    # log file. With --emit-webapp-sidecar we dup2 stdout/stderr to a
-    # log file in webapp/runtime/ AND write a sidecar matching the
-    # webapp's format, so the orphan-scan picks the run up. The runner
-    # already emits "PROGRESS step=..." lines, so the picker can
-    # attach + render the live trajectory like any webapp-launched run.
-    ap.add_argument("--emit-webapp-sidecar", action="store_true",
-                    help="Redirect stdout to webapp/runtime/run_<id>.log "
-                         "and write a sidecar so the dashboard's Live "
-                         "picker discovers + can attach to this run.")
+    # terminal, the dashboard's Live picker discovers the run via the
+    # sidecar + redirected stdout. ON by default since 2026-04-30; pass
+    # --no-emit-webapp-sidecar to opt out (e.g. headless eval batches
+    # that don't want webapp/runtime/ files to accumulate).
+    ap.add_argument("--emit-webapp-sidecar", action="store_true", default=True,
+                    help="(default ON 2026-04-30) Redirect stdout to "
+                         "webapp/runtime/run_<id>.log and write a sidecar "
+                         "so the dashboard's Live picker discovers + can "
+                         "attach to this run.")
+    ap.add_argument("--no-emit-webapp-sidecar", action="store_false",
+                    dest="emit_webapp_sidecar",
+                    help="Disable webapp sidecar emission. Use for headless "
+                         "eval batches where the webapp/runtime/ log files "
+                         "would just accumulate without ever being viewed.")
     args = ap.parse_args()
 
     if args.emit_webapp_sidecar:

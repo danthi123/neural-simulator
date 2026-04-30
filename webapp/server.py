@@ -599,9 +599,26 @@ def _scan_for_orphans() -> int:
        but pause + kill still work via control_file + pid.
 
     Returns the number of newly-recovered runs (for logging).
+
+    Performance: skips sidecars older than 24h (their PIDs would be
+    stale — not worth the psutil.Process query cost). Sorts newest
+    first so the freshest in-flight runs are picked up first.
     """
     new_count = 0
-    for sidecar_path in RAW_RUNS_DIR.glob("*.cmd.json"):
+    cutoff = time.time() - 86400.0  # 24h
+    sidecars = sorted(
+        RAW_RUNS_DIR.glob("*.cmd.json"),
+        key=lambda p: p.stat().st_mtime if p.exists() else 0,
+        reverse=True,
+    )
+    for sidecar_path in sidecars:
+        # Skip ancient sidecars to keep scan latency bounded (was hanging
+        # the periodic 30s scan when hundreds of overnight files accumulated)
+        try:
+            if sidecar_path.stat().st_mtime < cutoff:
+                continue
+        except OSError:
+            continue
         try:
             sidecar = json.loads(sidecar_path.read_text())
         except (OSError, json.JSONDecodeError):

@@ -180,14 +180,25 @@ def run_replicated_multi_goal(
     total_neurons = rmgr.total_neurons()
 
     # ---- 3. Build CoreSimConfig ----
+    # Config aligned with g11_bg_runner.py (single runner) so plasticity-
+    # sensitive evals reproduce. 2026-04-30 audit found the replicated runner
+    # had several config divergences from the single runner that, combined
+    # with the reward-signal timing bug, made F v2 look NEGATIVE when it was
+    # actually NEUTRAL. Fix:
+    #   - dt_ms: 0.5 -> 1.0 (matches single; halves sim-step count per ms,
+    #     cuts wall-clock, matches single's eligibility/STDP time constants)
+    #   - enable_short_term_plasticity: True -> False (single doesn't use STP)
+    #   - enable_ou_process: True -> False (single doesn't use OU noise)
+    #   - enable_parameter_heterogeneity: True -> False (single uses fixed params)
+    # See research/findings/2026-04-30-fv2-correction-replicated-runner-bug.md.
     cfg = CoreSimConfig(
         num_neurons=total_neurons,
         enable_brain_region_framework=False,  # we inject manually
     )
-    cfg.dt_ms = 0.5
+    cfg.dt_ms = 1.0
     cfg.enable_stdp = True
     cfg.enable_reward_modulation = True
-    cfg.enable_short_term_plasticity = True
+    cfg.enable_short_term_plasticity = False
     cfg.enable_d1_d2_asymmetry = enable_d1_d2_asymmetry
     cfg.reward_learning_rate = reward_learning_rate
     cfg.reward_baseline = 0.0
@@ -201,8 +212,9 @@ def run_replicated_multi_goal(
     cfg.enable_hebbian_learning = False  # eval runs don't use Hebbian
     cfg.enable_homeostasis = False
     cfg.enable_synaptic_scaling = False
-    cfg.enable_ou_process = True
-    cfg.enable_parameter_heterogeneity = True
+    cfg.enable_ou_process = False
+    cfg.enable_conductance_noise = False
+    cfg.enable_parameter_heterogeneity = False
 
     sb = SimulationBridge(
         core_config=cfg,
@@ -357,8 +369,20 @@ def run_replicated_multi_goal(
                 sb.cp_external_input_current[region_indices_union[f"dcn_aip_{a}"]] = cp.float32(180.0)
                 sb.cp_external_input_current[region_indices_union[f"purkinje_{a}"]] = cp.float32(120.0)
 
-    # Per-synapse reward override array
+    # Per-synapse reward override array. Initialized to zeros — first env
+    # step has no prior reward to apply, so weight_updates = lr * 0 *
+    # eligibility = 0. Subsequent env steps overwrite this with per-replica
+    # rewards in the env-step tail.
     sb.cp_per_synapse_reward_override = cp.zeros(nnz, dtype=cp.float32)
+    # Reward signal stays at 1.0 across the whole eval. The bridge's
+    # update_path_active gate triggers on |effective_signal| > 1e-6;
+    # cp_per_synapse_reward_override then REPLACES the scalar effective_signal
+    # with the per-synapse value (per-replica reward, with cerebellum F v2
+    # CF-gated overrides if enabled). Setting the signal once at boot
+    # (instead of toggling per-step like the prior code did) is what makes
+    # the replicated runner do ~200 weight updates per env step, matching
+    # the single runner. See block comment in the env-step loop.
+    cfg.current_reward_signal = 1.0
     # F v2: cache cerebellum_pf_pc gate mask for CF-gated LTD signaling.
     # When v2 is on, these synapses see -1.0 (LTD) when their replica's
     # reward is negative, 0 otherwise — decoupled from the global reward.
@@ -439,10 +463,23 @@ def run_replicated_multi_goal(
             cortex_letter = ACTION_NAMES[action_dir]
             sb.cp_external_input_current[cortex_idx_per_replica[cortex_letter][r]] = HEURISTIC_DRIVE_PA
 
-        # Run stimulus window with reward signal = 0 (eligibility builds up)
-        cfg.current_reward_signal = 0.0
-        # Reset per-synapse reward to 0 during stim window so no weight updates
-        sb.cp_per_synapse_reward_override[:] = cp.float32(0.0)
+        # Stim window timing (matches g11_bg_runner.py for plasticity parity).
+        # Bug-fix 2026-04-30: previously zeroed cfg.current_reward_signal AND
+        # cp_per_synapse_reward_override at the start of each stim window,
+        # which made update_path_active=False during all 200 stim sim steps.
+        # Net: only ONE weight-update sim step per env step (the explicit
+        # modulation step at the end), vs the single runner's ~200 weight
+        # updates per env step. For plasticity-sensitive evals (notably
+        # Cluster F v2's CF-gated LTD), this catastrophized cheat-5 — F v2
+        # looked NEGATIVE on replicated (21.77 ± 2.35) but is actually
+        # NEUTRAL on single (7.20 ± 2.75). See
+        # research/findings/2026-04-30-fv2-correction-replicated-runner-bug.md.
+        #
+        # The fix: leave cfg.current_reward_signal=1.0 (set once before the
+        # loop) and let cp_per_synapse_reward_override carry the actual
+        # per-replica signed reward across all 200 stim steps. The override
+        # was set in the *previous* env step's tail (matches single runner's
+        # "previous step's reward applies to current step's stim window").
 
         # Vectorized motor readout: accumulate firing counts on GPU, ONE
         # .get() call per stim window. counts_gpu shape: [N_REPLICAS, N_ACTIONS]
@@ -517,13 +554,11 @@ def run_replicated_multi_goal(
                 if rewards_this_step[r] < 0:
                     sb.cp_external_input_current[io_idx_per_replica[r]] = cp.float32(450.0)
 
-        # One reward-modulation step (the stim window had reward=0; now apply
-        # per-replica reward). Use reward_signal=1.0 so the bridge's
-        # multiplicative reward path remains active; the per-synapse override
-        # carries the actual per-replica signed reward.
-        cfg.current_reward_signal = 1.0
-        sb._run_one_simulation_step()
-        bridge_step_count += 1
+        # NOTE: prior version ran ONE additional sim step here with
+        # cfg.current_reward_signal=1.0. That's no longer needed — the
+        # override + reward signal stay set across the next env step's
+        # stim window, matching single-runner timing. See block comment
+        # at the top of the env-step loop.
 
     elapsed = time.time() - t_start
     if verbose:
