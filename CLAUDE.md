@@ -538,6 +538,21 @@ strictly better for the cheat-5 multi-goal navigation benchmark.
   hurts D stacks, v2 mitigates the damage but doesn't fix the underlying
   content-quality bottleneck. **Opt-in only; do not stack on flagship.**
   See [`research/findings/2026-04-30-cluster-d-v2-results.md`](research/findings/2026-04-30-cluster-d-v2-results.md).
+  **Cluster C v2 SHIPPED + NEGATIVE (`--enable-compartmentalized-da`, 2026-04-30)**
+  — per-action DA channels (4 modulators dopamine_{N,E,S,W}). 6-seed
+  tier-3: A+E baseline 7.18 ± 1.58 vs A+E+C v2 9.26 ± 3.91 (Δmean=+2.08,
+  Δstd=+2.33). Welch t=+1.21 in the wrong direction; 4/6 seeds hurt
+  (worst seed 101: 7.91 → 16.31). Likely failure modes: noisy action
+  selection prevents off-policy credit; phase transitions desynchronize
+  per-action DA channels; cortex inputs aren't channelized so the
+  per-synapse DA tag doesn't compose. **Opt-in only; do not stack on
+  flagship.** See [`research/findings/2026-04-30-cluster-c-v2-results.md`](research/findings/2026-04-30-cluster-c-v2-results.md).
+  **Cluster-stacking strategy empirically falsified (2026-04-30):**
+  8 attempts past A+E (A+D, A+D+E, A+F, A+E+F, A+F v2, A+E+F v2, A+E+D
+  with sleep, A+E+D+v2, A+E+C v2), all NEUTRAL or NEGATIVE. A+E
+  (6.97 ± 0.83) is the robust operational ceiling. Future work needs
+  (a) scaling, (b) harder benchmarks, or (c) interactive eval framework
+  — not more clusters.
   **Cluster C v2 DESIGNED (compartmentalized DA, 2026-04-29)** —
   fallback for if A/C v1/D evals don't close cheat-5; per-action DA
   channels with synapse action-tagging.
