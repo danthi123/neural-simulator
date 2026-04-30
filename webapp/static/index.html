@@ -151,6 +151,44 @@
             </div>
             </div>
           </div>
+          <!-- Bottom-left run-stats HUD. Mirrors AGENT/LEGEND structure but
+               anchored at bottom: collapses DOWNWARD (body hidden, title
+               row remains at the bottom). Title sits on grid row 2 so it
+               stays visible when the body row is hidden via .hud-collapsed.
+          -->
+          <div id="world-runhud">
+            <span class="hud-title">Run</span>
+            <button class="hud-collapse" id="runhud-toggle" aria-label="Collapse run HUD" title="Collapse">−</button>
+            <div class="hud-body">
+              <div class="runhud-section">
+                <div class="runhud-row"><span class="muted">name</span><span id="runhud-name">—</span></div>
+                <div class="runhud-row"><span class="muted">seed</span><span id="runhud-seed">—</span></div>
+                <div class="runhud-row"><span class="muted">step</span><span id="runhud-step">—</span></div>
+                <div class="runhud-row"><span class="muted">elapsed</span><span id="runhud-elapsed">—</span></div>
+              </div>
+              <div class="runhud-divider"></div>
+              <div class="runhud-section">
+                <div class="runhud-row"><span class="muted">pos</span><span id="runhud-pos">—</span></div>
+                <div class="runhud-row"><span class="muted">goal</span><span id="runhud-goal">—</span></div>
+                <div class="runhud-row"><span class="muted">dist</span><span id="runhud-dist">—</span></div>
+                <div class="runhud-row"><span class="muted">phase</span><span id="runhud-phase">—</span></div>
+                <div class="runhud-row"><span class="muted">action</span><span id="runhud-action">—</span></div>
+                <div class="runhud-row"><span class="muted">reward</span><span id="runhud-reward">—</span></div>
+              </div>
+              <div class="runhud-divider"></div>
+              <div class="runhud-section">
+                <div class="runhud-row"><span class="muted">finalQ (cur)</span><span id="runhud-finalq-cur">—</span></div>
+                <div class="runhud-row"><span class="muted">finalQ (all)</span><span id="runhud-finalq-all">—</span></div>
+                <div class="runhud-row"><span class="muted">sum</span><span id="runhud-finalq-sum">—</span></div>
+                <div class="runhud-row"><span class="muted">mean dist</span><span id="runhud-mean-dist">—</span></div>
+                <div class="runhud-row"><span class="muted">at goal</span><span id="runhud-at-goal">—</span></div>
+              </div>
+              <div class="runhud-divider"></div>
+              <div class="runhud-section">
+                <div class="runhud-row"><span class="muted">flags</span><span id="runhud-flags">—</span></div>
+              </div>
+            </div>
+          </div>
         </div>
         <div id="world-runlist">
           <h3>Pick a run</h3>

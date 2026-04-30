@@ -755,6 +755,87 @@ pre {
   font-size: 10px;
 }
 
+/* Bottom-left run-stats HUD. Mirrors AGENT/LEGEND aesthetic (semi-transparent
+   dark, white text, mono-friendly numbers) but is anchored at the BOTTOM of
+   the canvas viewport so collapsing hides the body downward — the title row
+   remains visible at the bottom-left while the body folds away.
+
+   Implementation note: the existing top-anchored HUDs put title in grid row 1
+   and body in row 2 (body grows DOWN from header). For the bottom-anchored
+   variant we flip that — title in row 2 and body in row 1 (body sits ABOVE
+   header) — so when .hud-collapsed hides the body, the title stays at the
+   bottom-left where the panel was anchored. */
+#world-runhud {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(14, 16, 20, 0.85);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 11px;
+  width: 240px;
+  min-width: 240px;
+  max-width: 240px;
+  pointer-events: none;
+  box-sizing: border-box;
+  /* Title (row 2) + collapse button (row 1 col 2 by absolute placement) +
+     body (row 1, both cols). Body above title so collapsing folds the
+     body away leaving the bottom-anchored title visible. */
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 6px;
+  /* Cap height so very tall content (e.g. flags string) doesn't push the
+     HUD up off the canvas — body scrolls if needed. */
+  max-height: calc(100% - 24px);
+  overflow: hidden;
+}
+/* Title sits on row 2 (bottom of the HUD) — opposite of the top HUDs. */
+#world-runhud .hud-title {
+  grid-column: 1;
+  grid-row: 2;
+}
+/* Collapse button on row 2 col 2, next to the title at the bottom. */
+#world-runhud .hud-collapse {
+  grid-column: 2;
+  grid-row: 2;
+}
+/* Body on row 1 — above the title. Hidden by .hud-collapsed (inherited). */
+#world-runhud .hud-body {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+#world-runhud .runhud-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 2px 0;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px;
+}
+#world-runhud .runhud-row span:last-child {
+  color: var(--accent);
+  text-align: right;
+  word-break: break-word;
+}
+#world-runhud .runhud-row .muted {
+  color: var(--fg-dim);
+  font-family: var(--ui-font, inherit);
+}
+#world-runhud .runhud-section {
+  display: flex;
+  flex-direction: column;
+}
+#world-runhud .runhud-divider {
+  border-top: 1px solid var(--border);
+  margin: 4px 0;
+  opacity: 0.6;
+}
+
 #world-runlist {
   border-left: 1px solid var(--border);
   background: var(--bg-2);

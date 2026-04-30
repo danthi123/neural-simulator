@@ -120,6 +120,7 @@ function initWorld() {
   setupScrubberStepLabel();
   setupHudCollapse("overlay-toggle", "world-overlay", "hud-overlay-collapsed");
   setupHudCollapse("legend-toggle", "world-legend", "hud-legend-collapsed");
+  setupHudCollapse("runhud-toggle", "world-runhud", "hud-runhud-collapsed");
 
   $("#scrubber-latest-btn")?.addEventListener("click", () => {
     if (!world.data) return;
@@ -359,6 +360,9 @@ async function attachLive(runId, listItem) {
   world.liveRunId = runId;
   world.livePoints = [];
   world.liveStartedAt = performance.now();
+  // Live mode uses runId for the HUD's "name" field; clear any saved-run
+  // name that lingered from a prior loadRun().
+  world._loadedRunName = null;
   // Use a synthetic data shape compatible with renderFrame()
   world.data = {
     grid_size: 8,
@@ -773,6 +777,10 @@ async function loadRun(name, listItem) {
     const data = await res.json();
     world.data = data;
     world.step = 0;
+    // Stash the filename so the RUN HUD can show it. The saved JSON itself
+    // doesn't include its own name, so we capture it on load. Cleared on
+    // attachLive() / closeLiveSocket() to avoid stale display.
+    world._loadedRunName = name;
     // Detect whether this saved run was launched with --landmarks. Runs
     // without it shouldn't show the landmark icon or legend row (no
     // landmark cue exists in the simulation). Older runs predating
@@ -951,6 +959,10 @@ function renderFrame() {
 
   // Update overlay
   updateOverlay(step, pos, goal);
+  // RUN HUD shows run-level identity + aggregate stats. Updated here so
+  // it stays in sync with the scrubber for saved runs and with live
+  // progress events for live runs.
+  updateRunHUD();
   // In live mode, the step display + scrubber are managed by
   // handleLiveProgress (which knows the runner's actual n_steps from the
   // progress event's `total` field). Don't overwrite with traj.length-1
@@ -1075,6 +1087,164 @@ function updateOverlay(step, pos, goal) {
   const r = getStepReward(step);
   $("#overlay-reward").textContent = r != null ? r.toFixed(1) : "—";
   $("#overlay-phase").textContent = String(getCurrentPhaseIndex(step));
+}
+
+/** Format an elapsed seconds value as a compact duration string. */
+function formatElapsed(sec) {
+  if (sec == null || isNaN(sec)) return "—";
+  const s = Math.max(0, Math.round(sec));
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  if (m < 60) return `${m}m ${r}s`;
+  const h = Math.floor(m / 60);
+  const rm = m % 60;
+  return `${h}h ${rm}m`;
+}
+
+/** Compact rendering of a config_flags array. Strips known no-op flags
+ *  and the leading "--" so the string fits in a 240px-wide HUD. Returns
+ *  null when nothing meaningful is left. */
+function compactFlags(flags) {
+  if (!Array.isArray(flags) || flags.length === 0) return null;
+  // Drop value tokens (everything after a flag that doesn't start with --)
+  // and turn the remaining flag names into a comma-joined short list.
+  const out = [];
+  for (let i = 0; i < flags.length; i++) {
+    const t = flags[i];
+    if (typeof t !== "string") continue;
+    if (!t.startsWith("--")) continue;
+    out.push(t.replace(/^--/, ""));
+  }
+  if (out.length === 0) return null;
+  return out.join(", ");
+}
+
+/** Pull the current run's name + seed + n_steps from saved data when
+ *  available, or fall back to the live runId / progress. Returns an
+ *  object with possibly-null fields — caller renders "—" when null. */
+function getRunIdentity() {
+  const data = world.data;
+  const out = {
+    name: null,
+    seed: null,
+    n_steps: null,
+    config_flags: null,
+  };
+  if (world.live) {
+    out.name = world.liveRunId || null;
+    // Live runs may have a `total` from the latest progress event.
+    const last = world.livePoints && world.livePoints.length
+      ? world.livePoints[world.livePoints.length - 1]
+      : null;
+    if (last && last.total) out.n_steps = last.total;
+    // Seed isn't surfaced in the live progress payload — leave null.
+    return out;
+  }
+  if (!data) return out;
+  out.name = world._loadedRunName || null;
+  out.seed = data.seed != null ? data.seed : null;
+  out.n_steps = data.n_steps != null ? data.n_steps : null;
+  out.config_flags = Array.isArray(data.config_flags) ? data.config_flags : null;
+  return out;
+}
+
+/** Update the bottom-left RUN HUD. Called from renderFrame() (saved-mode
+ *  scrubbing) and from handleLiveProgress() / refreshLivePicker() (live).
+ *  Each field gracefully shows "—" when the underlying data isn't
+ *  available (e.g. live runs have no phase_stats yet). */
+function updateRunHUD() {
+  const setText = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val == null || val === "" ? "—" : String(val);
+  };
+
+  const data = world.data;
+  const ident = getRunIdentity();
+  const step = world.step;
+
+  // Identity row
+  setText("runhud-name", ident.name);
+  setText("runhud-seed", ident.seed);
+  if (ident.n_steps != null) {
+    setText("runhud-step", `${step} / ${ident.n_steps}`);
+  } else {
+    setText("runhud-step", `${step}`);
+  }
+
+  // Elapsed
+  if (world.live) {
+    if (world.liveStartedAt != null) {
+      const sec = (performance.now() - world.liveStartedAt) / 1000;
+      setText("runhud-elapsed", formatElapsed(sec));
+    } else {
+      setText("runhud-elapsed", "—");
+    }
+  } else if (data && data.elapsed_seconds != null) {
+    setText("runhud-elapsed", formatElapsed(data.elapsed_seconds));
+  } else {
+    setText("runhud-elapsed", "—");
+  }
+
+  // Per-step state
+  const traj = (data && data.trajectory) || [];
+  const pos = traj[step] || null;
+  const goal = getCurrentGoal(step);
+  setText("runhud-pos", pos ? `(${pos[0]},${pos[1]})` : null);
+  setText("runhud-goal", goal ? `(${goal[0]},${goal[1]})` : null);
+  if (pos && goal) {
+    setText(
+      "runhud-dist",
+      Math.abs(pos[0] - goal[0]) + Math.abs(pos[1] - goal[1]),
+    );
+  } else {
+    setText("runhud-dist", null);
+  }
+  setText("runhud-phase", data ? String(getCurrentPhaseIndex(step)) : null);
+  const a = getStepAction(step);
+  setText("runhud-action", a != null ? actionName(a) : null);
+  const r = getStepReward(step);
+  setText("runhud-reward", r != null ? r.toFixed(2) : null);
+
+  // Aggregates from phase_stats / top-level
+  const ps = (data && data.phase_stats) || [];
+  // Per-phase finalQ values — saved runs only (live phase_stats are synthetic
+  // and lack final_quarter_mean_distance).
+  const finalQs = [];
+  for (const p of ps) {
+    let v = p.final_quarter_mean_distance;
+    if (v == null) v = p.finalQ;
+    if (v != null) finalQs.push(v);
+  }
+  if (finalQs.length > 0) {
+    const phaseIdx = Math.max(0, Math.min(ps.length - 1, getCurrentPhaseIndex(step) - 1));
+    const cur = finalQs[phaseIdx];
+    setText("runhud-finalq-cur", cur != null ? cur.toFixed(2) : null);
+    setText(
+      "runhud-finalq-all",
+      "[" + finalQs.map((v) => v.toFixed(2)).join(", ") + "]",
+    );
+    const sum = finalQs.reduce((a, b) => a + b, 0);
+    setText("runhud-finalq-sum", sum.toFixed(2));
+  } else {
+    setText("runhud-finalq-cur", null);
+    setText("runhud-finalq-all", null);
+    setText("runhud-finalq-sum", null);
+  }
+
+  if (data && data.mean_distance_overall != null) {
+    setText("runhud-mean-dist", data.mean_distance_overall.toFixed(2));
+  } else {
+    setText("runhud-mean-dist", null);
+  }
+  if (data && data.n_steps_at_goal != null) {
+    setText("runhud-at-goal", String(data.n_steps_at_goal));
+  } else {
+    setText("runhud-at-goal", null);
+  }
+
+  // Flags
+  setText("runhud-flags", compactFlags(ident.config_flags));
 }
 
 function play() {
