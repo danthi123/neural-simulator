@@ -544,6 +544,22 @@ pre {
   background: var(--accent-bad);
   color: var(--bg);
 }
+.world-run-item .pause-btn {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  margin-top: 4px;
+  margin-right: 4px;
+  align-self: flex-start;
+}
+.world-run-item .pause-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
 .chart-row.chart-narrow-wrap {
   display: flex;
   justify-content: flex-start;

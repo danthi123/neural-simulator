@@ -282,8 +282,15 @@ async function openLiveModePicker() {
 
 async function refreshLivePicker(showHeading) {
   const list = $("#world-runs-list");
+  // Track existing item nodes by run_id so we can update them in place
+  // (avoids the "buttons flash" on every 1s refresh tick that came from
+  // replaceChildren + rebuild). New items are appended; obsolete items
+  // are removed.
+  if (!list._itemsByRunId) list._itemsByRunId = new Map();
   if (showHeading) {
+    // Fresh open: wipe DOM AND tracked items together so we rebuild from scratch.
     list.replaceChildren();
+    list._itemsByRunId.clear();
   }
 
   try {
@@ -292,89 +299,121 @@ async function refreshLivePicker(showHeading) {
     if (!data.runs.length) {
       // Replace whole content on empty state
       list.replaceChildren();
+      list._itemsByRunId.clear();
       const heading = document.createElement("div");
       heading.className = "muted";
       heading.textContent = "No runs in flight. Launch one from the Launch tab.";
       list.appendChild(heading);
       return;
     }
-    // Re-render the row entries.
-    list.replaceChildren();
+    const seenIds = new Set();
     for (const r of data.runs) {
-      const item = document.createElement("div");
-      item.className = "world-run-item";
+      seenIds.add(r.run_id);
+      let item = list._itemsByRunId.get(r.run_id);
+      const isNewItem = !item;
+
+      // Compute the display strings (always, since they may have changed)
       const status = r.running ? "RUNNING" : `done (rc=${r.returncode})`;
       const progress = r.latest_progress
         ? ` step ${r.latest_progress.step}/${r.latest_progress.total}`
         : "";
       // Client-side elapsed-freeze: when a run transitions from running -> done,
       // capture the FIRST elapsed_sec we observe (or use the value we last saw
-      // while running) and display that forever after. This is a workaround for
-      // the server-side bug where finished_at is occasionally not set, causing
-      // the API to return a ticking elapsed_sec. With this cache, the UI always
-      // shows a stable elapsed time regardless.
+      // while running) and display that forever after. Workaround for server-side
+      // bug where finished_at is occasionally not set, causing the API to return
+      // a ticking elapsed_sec.
       let displayElapsed = r.elapsed_sec;
       if (r.running) {
-        // Track the latest elapsed while running so we have a value to freeze on
-        // when the run transitions to done.
         world._elapsedFrozen.set(r.run_id, r.elapsed_sec);
       } else {
-        // Done: prefer the cached frozen value if set; otherwise cache & freeze
-        // whatever the server reports right now (first observation of done).
         if (world._elapsedFrozen.has(r.run_id)) {
           displayElapsed = world._elapsedFrozen.get(r.run_id);
         } else {
           world._elapsedFrozen.set(r.run_id, r.elapsed_sec);
         }
       }
-      const name = document.createElement("div");
-      name.textContent = r.run_id + (r.interactive ? " ★ interactive" : "");
-      const small = document.createElement("div");
-      small.className = "small";
-      small.textContent = `${status}${progress} · elapsed ${Math.round(displayElapsed)}s`;
-      item.appendChild(name);
-      item.appendChild(small);
-      // Pause + Kill buttons only for in-flight runs
-      if (r.running) {
+      const smallText = `${status}${progress} · elapsed ${Math.round(displayElapsed)}s`;
+
+      if (isNewItem) {
+        // Build all child elements ONCE for new items
+        item = document.createElement("div");
+        item.className = "world-run-item";
+        item._runId = r.run_id;
+        list._itemsByRunId.set(r.run_id, item);
+
+        const name = document.createElement("div");
+        name.className = "run-name";
+        name.textContent = r.run_id + (r.interactive ? " ★ interactive" : "");
+        item.appendChild(name);
+
+        const small = document.createElement("div");
+        small.className = "small";
+        small.textContent = smallText;
+        item.appendChild(small);
+        item._small = small;
+
+        item.addEventListener("click", () => attachLive(r.run_id, item));
+      } else {
+        // Existing item: only update text in place
+        if (item._small.textContent !== smallText) {
+          item._small.textContent = smallText;
+        }
+      }
+
+      // Pause + Kill buttons: present iff running. Create on first running tick;
+      // remove if the run transitions to done.
+      const wasRunning = !!item._pauseBtn;
+      if (r.running && !wasRunning) {
         // Pause/resume toggle. Sets paused=true|false in the run's
         // interactive control file; runner polls and sleeps at env-step
         // boundaries while paused. Useful for freeing GPU for other work
         // without killing the run.
         const pauseBtn = document.createElement("button");
-        pauseBtn.className = "kill-btn";  // reuse kill-btn styling
-        pauseBtn.style.marginRight = "4px";
-        pauseBtn.style.background = "#1c5";  // green-ish, distinct from kill red
-        const refreshPauseLabel = (paused) => {
+        pauseBtn.className = "pause-btn";
+        const setLabel = (paused) => {
           pauseBtn.textContent = paused ? "▶ Resume" : "⏸ Pause";
           pauseBtn.title = paused
             ? "Click to resume this run"
             : "Click to pause this run (frees GPU; resume later without losing progress)";
         };
-        // Probe current state via GET /control
-        fetch(`/api/runs/launch/${r.run_id}/control`)
-          .then((res) => (res.ok ? res.json() : null))
-          .then((state) => refreshPauseLabel(!!(state && state.paused)))
-          .catch(() => refreshPauseLabel(false));
+        const cached = world._pauseStateCache && world._pauseStateCache.get(r.run_id);
+        // Synchronous initial label from cache (or default to Pause) so the
+        // button never renders empty.
+        setLabel(cached === true);
+        // Refresh from server only if we don't have a recent cached state.
+        if (cached == null) {
+          fetch(`/api/runs/launch/${r.run_id}/control`)
+            .then((res) => (res.ok ? res.json() : null))
+            .then((state) => {
+              const paused = !!(state && state.paused);
+              if (!world._pauseStateCache) world._pauseStateCache = new Map();
+              world._pauseStateCache.set(r.run_id, paused);
+              setLabel(paused);
+            })
+            .catch(() => {});
+        }
         pauseBtn.addEventListener("click", async (ev) => {
           ev.stopPropagation();
-          // Toggle: read, flip, write
-          let paused = false;
+          const current = !!(world._pauseStateCache && world._pauseStateCache.get(r.run_id));
+          const next = !current;
+          // Optimistic update: flip label immediately
+          if (!world._pauseStateCache) world._pauseStateCache = new Map();
+          world._pauseStateCache.set(r.run_id, next);
+          setLabel(next);
           try {
-            const res = await fetch(`/api/runs/launch/${r.run_id}/control`);
-            if (res.ok) {
-              const state = await res.json();
-              paused = !!state.paused;
-            }
-          } catch { /* default false */ }
-          const next = !paused;
-          await fetch(`/api/runs/launch/${r.run_id}/control`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paused: next }),
-          });
-          refreshPauseLabel(next);
+            await fetch(`/api/runs/launch/${r.run_id}/control`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paused: next }),
+            });
+          } catch (e) {
+            // Roll back on failure
+            world._pauseStateCache.set(r.run_id, current);
+            setLabel(current);
+          }
         });
         item.appendChild(pauseBtn);
+        item._pauseBtn = pauseBtn;
 
         const killBtn = document.createElement("button");
         killBtn.className = "kill-btn";
@@ -382,13 +421,37 @@ async function refreshLivePicker(showHeading) {
         killBtn.addEventListener("click", async (ev) => {
           ev.stopPropagation();
           if (window.killLaunchedRun) await window.killLaunchedRun(r.run_id);
-          // Refresh the list after kill
           setTimeout(() => openLiveModePicker(), 800);
         });
         item.appendChild(killBtn);
+        item._killBtn = killBtn;
+      } else if (!r.running && wasRunning) {
+        // Transitioned to done: remove buttons
+        if (item._pauseBtn) {
+          item._pauseBtn.remove();
+          item._pauseBtn = null;
+        }
+        if (item._killBtn) {
+          item._killBtn.remove();
+          item._killBtn = null;
+        }
       }
-      item.addEventListener("click", () => attachLive(r.run_id, item));
-      list.appendChild(item);
+
+      // Append new items at the end. Existing items already in the DOM stay
+      // in place (no re-append needed).
+      if (isNewItem) {
+        list.appendChild(item);
+      }
+    }
+
+    // Remove items for runs that have disappeared from the API response
+    for (const [runId, item] of list._itemsByRunId.entries()) {
+      if (!seenIds.has(runId)) {
+        item.remove();
+        list._itemsByRunId.delete(runId);
+        world._elapsedFrozen.delete(runId);
+        if (world._pauseStateCache) world._pauseStateCache.delete(runId);
+      }
     }
   } catch (e) {
     list.textContent = `Error: ${e.message}`;
