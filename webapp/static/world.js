@@ -898,6 +898,170 @@ function getCurrentPhaseIndex(stepIdx) {
   return 1;
 }
 
+/** Return [start, end) bounds for phase index p (0-indexed). end is the
+ *  next phase's step_start, or n_steps for the final phase, or +Infinity
+ *  if the run length is unknown (live, before total is known). */
+function getPhaseBounds(p) {
+  const ps = (world.data && world.data.phase_stats) || [];
+  if (p < 0 || p >= ps.length) return [0, 0];
+  const start = ps[p].step_start || 0;
+  let end;
+  if (ps[p].step_end != null) {
+    end = ps[p].step_end;
+  } else if (p + 1 < ps.length) {
+    end = ps[p + 1].step_start || start;
+  } else {
+    // Last phase, no explicit end. Saved runs always have step_end; this
+    // path is hit only in live mode, where the current phase's end is
+    // either the run's total (if known) or unbounded.
+    const data = world.data;
+    end = (data && data.n_steps != null) ? data.n_steps : Infinity;
+  }
+  return [start, end];
+}
+
+/** Phase index (0-based) that step i belongs to, or -1 if before phase 0. */
+function getPhaseIndexForStep(i) {
+  const ps = (world.data && world.data.phase_stats) || [];
+  for (let p = ps.length - 1; p >= 0; p--) {
+    if (i >= (ps[p].step_start || 0)) return p;
+  }
+  return -1;
+}
+
+/** Compute aggregates as of step N from the trajectory walked from 0 to N
+ *  inclusive. Replaces v2's habit of reading the whole-run pre-computed
+ *  phase_stats / mean_distance_overall / n_steps_at_goal directly — those
+ *  always show end-of-run values regardless of scrub position. The new
+ *  walker matches the scrubber so saved-mode is "what the agent had seen
+ *  by step N" and live-mode populates as the run progresses.
+ *
+ *  Conventions (small but documented):
+ *  - Walks trajectory[0..N] inclusive (N+1 samples). That mildly differs
+ *    from the runner's `dist_arr = distance_log[1:]` which skips the
+ *    initial step. The end-of-run agreement is within rounding (see
+ *    verification in commit message).
+ *  - Phase membership uses phase_stats step_start <= i < step_end (or
+ *    next phase's step_start, or n_steps for the open final phase in
+ *    live mode).
+ *  - Distance for step i uses the phase's goal (phase_stats[p].goal),
+ *    not goal_log[i] directly. This sidesteps a one-step lag in goal_log
+ *    at phase boundaries (goal_log[step_start] still has the OLD goal;
+ *    goal_log[step_start+1] has the new goal). Using the phase's goal
+ *    gives results that match the runner's per-phase aggregates.
+ *  - Falls back to getCurrentGoal(i) when phase_stats is empty (defensive
+ *    — saved runs always have phase_stats, but no harm).
+ *
+ *  Returns:
+ *  - mean_dist: average Manhattan distance over [0, N], or null if no
+ *    trajectory.
+ *  - n_at_goal: count of steps in [0, N] where distance was 0.
+ *  - finalQs: per-phase final-quarter-mean values for phases [0..cur]
+ *    that have ≥ MIN_FINALQ_SAMPLES samples in their last-25% window
+ *    AS OF step N. Phases without enough samples yet are OMITTED from
+ *    the array — caller decides how to render.
+ *  - finalQs_phase: 1:1 with finalQs, the 0-based phase index for each.
+ *    Used by caller to know which phase corresponds to which value.
+ *  - sum_finalQ: sum of finalQs values.
+ *  - current_finalQ: the running finalQ for the CURRENT phase (the one
+ *    containing step N), or null if not enough samples yet.
+ *  - current_phase_idx: 0-based phase that step N is in, for caller
+ *    correlation with the unfiltered phase_stats list.
+ */
+const MIN_FINALQ_SAMPLES = 10;
+
+function computeAggregatesAtStep(N) {
+  const data = world.data;
+  const traj = (data && data.trajectory) || [];
+  if (!traj.length) {
+    return { mean_dist: null, n_at_goal: 0, finalQs: [], finalQs_phase: [],
+             sum_finalQ: 0, current_finalQ: null, current_phase_idx: -1 };
+  }
+  // Clamp N to actual trajectory bounds. Defensive — scrubberMax should
+  // already enforce this, but live mode's trajectory is built up
+  // incrementally so a paranoid clamp is cheap insurance.
+  const lastIdx = Math.max(0, Math.min(N, traj.length - 1));
+  const ps = (data && data.phase_stats) || [];
+  const curPhase = getPhaseIndexForStep(lastIdx);
+
+  // Pre-compute distance + phase for every walked step.
+  const dists = new Array(lastIdx + 1);
+  const phases = new Array(lastIdx + 1);
+  let sumDist = 0;
+  let nAtGoal = 0;
+  for (let i = 0; i <= lastIdx; i++) {
+    const pos = traj[i];
+    if (!pos) { dists[i] = null; phases[i] = -1; continue; }
+    // Resolve goal: prefer the containing phase's goal so phase-boundary
+    // off-by-ones don't leak into the per-phase aggregate. Fall back to
+    // goal_log via getCurrentGoal if no phase info available.
+    const phaseIdx = getPhaseIndexForStep(i);
+    let goal = null;
+    if (phaseIdx >= 0 && ps[phaseIdx] && ps[phaseIdx].goal) {
+      goal = ps[phaseIdx].goal;
+    } else {
+      goal = getCurrentGoal(i);
+    }
+    if (!goal) { dists[i] = null; phases[i] = phaseIdx; continue; }
+    const d = Math.abs(pos[0] - goal[0]) + Math.abs(pos[1] - goal[1]);
+    dists[i] = d;
+    phases[i] = phaseIdx;
+    sumDist += d;
+    if (d === 0) nAtGoal++;
+  }
+
+  const meanDist = (lastIdx + 1) > 0 ? sumDist / (lastIdx + 1) : null;
+
+  // Per-phase finalQ. For each phase p in [0..curPhase], take its last 25%
+  // window CLAMPED to step N. Skip phases with fewer than MIN_FINALQ_SAMPLES
+  // in that window (== running value not yet meaningful).
+  const finalQs = [];
+  const finalQsPhase = [];
+  let currentFinalQ = null;
+  for (let p = 0; p <= curPhase; p++) {
+    const [pStart, pEnd] = getPhaseBounds(p);
+    // Effective end = phase_end OR step N+1, whichever is smaller.
+    // (N+1 because we want steps i <= N to be eligible.)
+    const effEnd = Math.min(pEnd, lastIdx + 1);
+    const phaseLen = effEnd - pStart;
+    if (phaseLen <= 0) continue;
+    // Last-25% window. Use Math.floor(phaseLen * 3 / 4) to match the
+    // runner's `len(p_dist)*3//4` exactly.
+    const winStart = pStart + Math.floor(phaseLen * 3 / 4);
+    let winSum = 0;
+    let winN = 0;
+    for (let i = winStart; i < effEnd; i++) {
+      if (dists[i] != null) {
+        winSum += dists[i];
+        winN++;
+      }
+    }
+    const isCurrent = (p === curPhase);
+    if (winN < MIN_FINALQ_SAMPLES) {
+      // Hide-when-too-few-samples: don't emit a value for this phase.
+      // For the current phase that's not yet 75% elapsed, also leave
+      // currentFinalQ as null so caller renders "—".
+      if (isCurrent) currentFinalQ = null;
+      continue;
+    }
+    const v = winSum / winN;
+    finalQs.push(v);
+    finalQsPhase.push(p);
+    if (isCurrent) currentFinalQ = v;
+  }
+  const sumFinalQ = finalQs.reduce((a, b) => a + b, 0);
+
+  return {
+    mean_dist: meanDist,
+    n_at_goal: nAtGoal,
+    finalQs,
+    finalQs_phase: finalQsPhase,
+    sum_finalQ: sumFinalQ,
+    current_finalQ: currentFinalQ,
+    current_phase_idx: curPhase,
+  };
+}
+
 function actionName(idx) {
   return ["N", "E", "S", "W"][idx] ?? "?";
 }
@@ -1249,47 +1413,39 @@ function updateRunHUD() {
   const r = getStepReward(step);
   setText("runhud-reward", r != null ? r.toFixed(2) : null);
 
-  // Aggregates from phase_stats / top-level. Live mode legitimately has
-  // none of these — the synthetic `world.data` is built up incrementally
-  // from progress events and the upstream events don't include
-  // action_log / reward_log / phase_stats with finalQ aggregates. Wiring
-  // those would require server-side changes to the progress event schema
-  // (or to compute aggregates client-side from the live trajectory),
-  // which is out of scope for this PR. Live runs show "—" for all
-  // aggregate fields below; that's expected.
-  const ps = (data && data.phase_stats) || [];
-  // Per-phase finalQ values — saved runs only (live phase_stats are synthetic
-  // and lack final_quarter_mean_distance).
-  const finalQs = [];
-  for (const p of ps) {
-    let v = p.final_quarter_mean_distance;
-    if (v == null) v = p.finalQ;
-    if (v != null) finalQs.push(v);
-  }
-  if (finalQs.length > 0) {
-    const phaseIdx = Math.max(0, Math.min(ps.length - 1, getCurrentPhaseIndex(step) - 1));
-    const cur = finalQs[phaseIdx];
-    setText("runhud-finalq-cur", cur != null ? cur.toFixed(2) : null);
+  // Aggregates — computed AS OF step N (saved or live). v3 walks the
+  // trajectory + per-phase goals to recompute these every render, instead
+  // of v2's approach of reading whole-run pre-computed phase_stats /
+  // mean_distance_overall (which made saved scrubbing show end-of-run
+  // values regardless of position, and made live show all "—" because
+  // the synthetic world.data has empty phase_stats for the upcoming
+  // phases).
+  if (data && Array.isArray(data.trajectory) && data.trajectory.length > 0) {
+    const agg = computeAggregatesAtStep(step);
     setText(
-      "runhud-finalq-all",
-      "[" + finalQs.map((v) => v.toFixed(2)).join(", ") + "]",
+      "runhud-finalq-cur",
+      agg.current_finalQ != null ? agg.current_finalQ.toFixed(2) : null,
     );
-    const sum = finalQs.reduce((a, b) => a + b, 0);
-    setText("runhud-finalq-sum", sum.toFixed(2));
+    if (agg.finalQs.length > 0) {
+      setText(
+        "runhud-finalq-all",
+        "[" + agg.finalQs.map((v) => v.toFixed(2)).join(", ") + "]",
+      );
+      setText("runhud-finalq-sum", agg.sum_finalQ.toFixed(2));
+    } else {
+      setText("runhud-finalq-all", null);
+      setText("runhud-finalq-sum", null);
+    }
+    setText(
+      "runhud-mean-dist",
+      agg.mean_dist != null ? agg.mean_dist.toFixed(2) : null,
+    );
+    setText("runhud-at-goal", String(agg.n_at_goal));
   } else {
     setText("runhud-finalq-cur", null);
     setText("runhud-finalq-all", null);
     setText("runhud-finalq-sum", null);
-  }
-
-  if (data && data.mean_distance_overall != null) {
-    setText("runhud-mean-dist", data.mean_distance_overall.toFixed(2));
-  } else {
     setText("runhud-mean-dist", null);
-  }
-  if (data && data.n_steps_at_goal != null) {
-    setText("runhud-at-goal", String(data.n_steps_at_goal));
-  } else {
     setText("runhud-at-goal", null);
   }
 
