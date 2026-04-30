@@ -1941,6 +1941,12 @@ def run_moving_goal_episode(
     # index instead of random sampling. Biologically grounded as TD-style
     # backward credit assignment. Default off — backward compatible.
     enable_reverse_replay: bool = False,
+    # Hindsight Experience Replay (Andrychowicz 2017). Logs
+    # (old_pos, current_pos) tuples to successful_trajectories every
+    # `her_lag_steps`, treating the achieved position as if it had been
+    # the goal. Provides hindsight credit assignment for sparse-goal
+    # generalization. Default off.
+    enable_her: bool = False,
     # PFC Stage 2: delayed-response test. Silence goal_cells during a delay
     # window to test whether PFC maintains goal info via persistent activity.
     # If PFC works as working memory, agent should still navigate toward goal
@@ -2403,6 +2409,13 @@ def run_moving_goal_episode(
     # recent experience, not arbitrary old episodes.
     successful_trajectories: List = []
     SUCCESSFUL_TRAJ_MAX = 200
+    # HER lag buffer: stores (x, y) from `her_lag_steps` ago so we can
+    # construct hindsight tuples (old_pos, current_pos_as_goal). 50 steps
+    # is the reach distance on an 8x8 grid (max Manhattan ≈ 14, ~3 steps
+    # per goal change typical, so ~50-step lookahead spans a meaningful
+    # chunk of trajectory).
+    her_lag_buffer = []
+    her_lag_steps = 50
 
     # Curriculum: real plasticity gating (Stage 3, 2026-04-27).
     # The hippo→cortex pathways are tagged "place_goal_to_cortex" and cortex→D1/D2
@@ -3096,6 +3109,27 @@ def run_moving_goal_episode(
             if len(successful_trajectories) > SUCCESSFUL_TRAJ_MAX:
                 # Drop oldest to keep memory bounded
                 successful_trajectories.pop(0)
+
+        # HER (Hindsight Experience Replay, Andrychowicz 2017): also log
+        # (place, position-N-steps-later) tuples as if the achieved later
+        # position were the goal. Provides hindsight credit assignment:
+        # "this trajectory leading to position X would have been optimal
+        # IF X had been the goal." Generalizes spatial knowledge across
+        # goals; biological correlate is mental simulation/imagination.
+        # Default off — backward compatible.
+        if enable_her and not in_sleep:
+            # Append a hindsight tuple where the goal is the agent's position
+            # k steps in the future (after the trajectory has actually visited
+            # that position). To do this we lag-buffer the wake trajectory and
+            # append (x_old, y_old, x_now, y_now) when the lag fires.
+            her_lag_buffer.append((x, y))
+            if len(her_lag_buffer) > her_lag_steps:
+                old_x, old_y = her_lag_buffer.pop(0)
+                # Skip degenerate cases where position didn't change
+                if (old_x, old_y) != (x, y):
+                    successful_trajectories.append((old_x, old_y, x, y))
+                    if len(successful_trajectories) > SUCCESSFUL_TRAJ_MAX:
+                        successful_trajectories.pop(0)
 
         if abs(reward) > 0:
             # Capture EMA BEFORE update (= the agent's prediction at this step)
@@ -3793,6 +3827,14 @@ def main():
                          "sharp-wave ripples. Composes with "
                          "--enable-cluster-d-hippocampus and "
                          "--enable-cluster-d-v2-swr.")
+    ap.add_argument("--enable-her", action="store_true",
+                    help="Hindsight Experience Replay (Andrychowicz 2017): "
+                         "log (old_pos, current_pos) tuples to "
+                         "successful_trajectories every 50 steps, treating "
+                         "the achieved position as if it had been the goal. "
+                         "Provides hindsight credit assignment for sparse-goal "
+                         "generalization. Composes with sleep replay; the "
+                         "expanded buffer feeds the existing replay drive.")
     ap.add_argument("--goal-silence-after-step", type=int, default=-1,
                     help="PFC Stage 2 delayed-response test: silence goal_cells AND heuristic at this step. PFC working memory should maintain goal info.")
     ap.add_argument("--goal-silence-duration", type=int, default=0,
@@ -3973,6 +4015,7 @@ def main():
             sleep_replay_rate_hz=args.sleep_replay_rate_hz,
             sleep_nrem_rem_alternate=args.sleep_nrem_rem_alternate,
             enable_reverse_replay=args.enable_reverse_replay,
+            enable_her=args.enable_her,
             goal_silence_after_step=args.goal_silence_after_step,
             goal_silence_duration=args.goal_silence_duration,
         )
