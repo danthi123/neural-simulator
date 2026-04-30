@@ -70,6 +70,11 @@ class ProgressEvent:
     goal: tuple[int, int]
     recent_dist: float
     timestamp: float
+    # Per-step action + reward (added 2026-04-29 for live-mode HUD).
+    # action is the index 0-3 (NESW); -1 means "not parsed from this line"
+    # (older runners or progress lines that predate the action= field).
+    action: int = -1
+    reward: float = 0.0
 
 
 @dataclass
@@ -113,6 +118,11 @@ _PROGRESS_RE = re.compile(
     r"step\s+(\d+)/(\d+)\s+pos=\((-?\d+),(-?\d+)\)\s+goal=\((-?\d+),(-?\d+)\)"
     r"\s+recent_dist=([\d.]+)"
 )
+# Optional per-step action + reward fields, appended after recent_dist.
+# Format: " action=N reward=+1.00" (action letter NESW, reward signed float).
+# Both fields are optional for backward compat with older runner versions.
+_PROGRESS_ACTION_RE = re.compile(r"action=([NESW?])\s+reward=([-+]?[\d.]+)")
+_ACTION_LETTER_TO_IDX = {"N": 0, "E": 1, "S": 2, "W": 3}
 
 
 def _try_parse_progress(line: str, now: float) -> ProgressEvent | None:
@@ -121,7 +131,7 @@ def _try_parse_progress(line: str, now: float) -> ProgressEvent | None:
         return None
     step, total, x, y, gx, gy, rd = m.groups()
     try:
-        return ProgressEvent(
+        ev = ProgressEvent(
             step=int(step), total=int(total),
             pos=(int(x), int(y)),
             goal=(int(gx), int(gy)),
@@ -130,6 +140,17 @@ def _try_parse_progress(line: str, now: float) -> ProgressEvent | None:
         )
     except (TypeError, ValueError):
         return None
+    # Try to parse the optional action + reward fields. Older runners
+    # don't emit these — leave the dataclass defaults (action=-1, reward=0.0).
+    am = _PROGRESS_ACTION_RE.search(line)
+    if am:
+        action_letter, reward_str = am.groups()
+        ev.action = _ACTION_LETTER_TO_IDX.get(action_letter, -1)
+        try:
+            ev.reward = float(reward_str)
+        except ValueError:
+            pass
+    return ev
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -855,6 +876,8 @@ def _progress_to_json(p: ProgressEvent) -> dict[str, Any]:
         "pos": list(p.pos), "goal": list(p.goal),
         "recent_dist": p.recent_dist,
         "timestamp": p.timestamp,
+        "action": p.action,
+        "reward": p.reward,
     }
 
 

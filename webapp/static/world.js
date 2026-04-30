@@ -119,7 +119,9 @@ function initWorld() {
 
   setupScrubberStepLabel();
   setupHudCollapse("legend-toggle", "world-legend", "hud-legend-collapsed");
-  setupHudCollapse("runhud-toggle", "world-runhud", "hud-runhud-collapsed");
+  // RUN HUD: collapsed by default (lots of fields, takes up canvas real
+  // estate; user can expand once they want detailed run stats).
+  setupHudCollapse("runhud-toggle", "world-runhud", "hud-runhud-collapsed", true);
 
   $("#scrubber-latest-btn")?.addEventListener("click", () => {
     if (!world.data) return;
@@ -142,8 +144,10 @@ function initWorld() {
 }
 
 /** Wire the HUD collapse toggle button. Stores the collapsed state in
- *  localStorage under the given key so it persists across reloads. */
-function setupHudCollapse(buttonId, panelId, storageKey) {
+ *  localStorage under the given key so it persists across reloads.
+ *  defaultCollapsed (default false) controls what's shown when the user
+ *  has no prior preference in localStorage. */
+function setupHudCollapse(buttonId, panelId, storageKey, defaultCollapsed = false) {
   const btn = document.getElementById(buttonId);
   const panel = document.getElementById(panelId);
   if (!btn || !panel) return;
@@ -153,7 +157,9 @@ function setupHudCollapse(buttonId, panelId, storageKey) {
     btn.setAttribute("title", collapsed ? "Expand" : "Collapse");
     btn.setAttribute("aria-label", collapsed ? "Expand" : "Collapse");
   };
-  apply(localStorage.getItem(storageKey) === "1");
+  const stored = localStorage.getItem(storageKey);
+  const initial = stored == null ? defaultCollapsed : stored === "1";
+  apply(initial);
   btn.addEventListener("click", () => {
     const next = !panel.classList.contains("hud-collapsed");
     apply(next);
@@ -672,9 +678,18 @@ function handleLiveProgress(p) {
   // with the same pos so the array length matches step count.
   const traj = world.data.trajectory;
   const goalLog = world.data.goal_log;
+  const actionLog = world.data.action_log;
+  const rewardLog = world.data.reward_log;
   while (traj.length <= p.step) {
     traj.push(p.pos);
     goalLog.push(p.goal);
+    // Per-step action + reward populated from progress event when present
+    // (runner emits them at progress_print_interval). When --progress-print-
+    // interval > 1 we get sparse events; intermediate steps are padded with
+    // the most recent values rather than null so the HUD shows something
+    // rather than "—" while the next event arrives.
+    actionLog.push(typeof p.action === "number" && p.action >= 0 ? p.action : null);
+    rewardLog.push(typeof p.reward === "number" ? p.reward : null);
   }
   // Update phase_stats so the overlay shows the right phase number
   if (!world.data.phase_stats.length || world.data.phase_stats.at(-1).goal[0] !== p.goal[0] || world.data.phase_stats.at(-1).goal[1] !== p.goal[1]) {
@@ -1287,6 +1302,10 @@ const _BORING_FLAGS = new Set([
  *  comma-joined short list. Returns null when nothing meaningful is left. */
 function compactFlags(flags) {
   if (!Array.isArray(flags) || flags.length === 0) return null;
+  // Use a Set to dedupe — when both a webapp preset and `extra_args` pass
+  // the same --flag (e.g. --moving-goal), it shows up twice in cmd; dedupe
+  // for HUD readability while preserving first-occurrence order.
+  const seen = new Set();
   const out = [];
   for (let i = 0; i < flags.length; i++) {
     const t = flags[i];
@@ -1294,6 +1313,8 @@ function compactFlags(flags) {
     if (!t.startsWith("--")) continue;
     const name = t.replace(/^--/, "");
     if (_BORING_FLAGS.has(name)) continue;
+    if (seen.has(name)) continue;
+    seen.add(name);
     out.push(name);
   }
   if (out.length === 0) return null;

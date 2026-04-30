@@ -2818,8 +2818,15 @@ def run_moving_goal_episode(
 
         if verbose and progress_print_interval > 0 and (step + 1) % progress_print_interval == 0:
             recent_dist = float(np.mean(distance_log[-100:]))
+            # Per-step action + reward surfaced for live-mode HUD (parsed by
+            # webapp ProgressEvent regex). action_log[step] is the action just
+            # taken at this step; reward_log[step] is the reward observed.
+            _last_action_idx = action_log[step] if step < len(action_log) else -1
+            _action_letter = "NESW"[_last_action_idx] if 0 <= _last_action_idx < 4 else "?"
+            _last_reward = float(reward_log[step]) if step < len(reward_log) else 0.0
             print(f"[g11 seed={seed}] step {step+1}/{n_steps}  pos=({x},{y})  "
                   f"goal=({gx},{gy})  recent_dist={recent_dist:.2f}  "
+                  f"action={_action_letter}  reward={_last_reward:+.2f}  "
                   f"actions={action_log[-100:].count(0):>3d}N/{action_log[-100:].count(1):>3d}E/"
                   f"{action_log[-100:].count(2):>3d}S/{action_log[-100:].count(3):>3d}W",
                   flush=True)
