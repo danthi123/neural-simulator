@@ -806,13 +806,24 @@ async def _drain_log(run: LaunchedRun) -> None:
         await asyncio.sleep(0.2)
 
 
+def _is_run_alive(run) -> bool:
+    """True if the launched run is still active. Handles both freshly-spawned
+    runs (proc handle, use poll()) and orphan-recovered runs (proc=None,
+    only the PID survives — check OS process state)."""
+    if run.proc is not None:
+        return run.proc.poll() is None
+    if run.pid is not None:
+        return _process_alive(run.pid)
+    return False
+
+
 @app.get("/api/runs/launch")
 def list_active_launches() -> JSONResponse:
     """Phase 2.5: list all in-flight (or recently-completed) runs known
     to this server process. Lets the World tab discover runs to follow."""
     out = []
     for run in launched_runs.values():
-        is_running = run.proc is not None and run.proc.poll() is None
+        is_running = _is_run_alive(run)
         latest = run.progress_events[-1] if run.progress_events else None
         # Freeze elapsed_sec for done runs so the live picker stops ticking
         # once a run completes. Belt-and-suspenders: if drain_log somehow
@@ -844,7 +855,7 @@ def launch_status(run_id: str) -> JSONResponse:
     run = launched_runs.get(run_id)
     if not run:
         raise HTTPException(404, "unknown run_id")
-    is_running = run.proc is not None and run.proc.poll() is None
+    is_running = _is_run_alive(run)
     # Belt-and-suspenders: lazy-set finished_at if drain_log missed it.
     # See list_active_launches comment.
     if not is_running and run.finished_at is None:
