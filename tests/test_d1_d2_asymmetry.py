@@ -24,13 +24,14 @@ def _build_bg_bridge(enable_d1_d2: bool):
         region_pathways=pathways,
         enable_d1_d2_asymmetry=enable_d1_d2,
     )
-    # Cortex→D1 weights are weight_mean=25 with Gaussian jitter sigma=0.2,
-    # so initial values can hit ~40+ in the tail. Set bounds well above
-    # that so clipping doesn't dominate the small reward delta in tests
-    # exercising the reward-modulated update path. See CLAUDE.md
-    # "STDP bounds gotcha".
-    cfg.stdp_w_max = 100.0
-    cfg.hebbian_max_weight = 100.0
+    # Cortex→D1 weights are weight_mean=25/density (R3.5 auto-scale).
+    # With density=0.20 default, weight_mean=125; with sigma=0.2 jitter
+    # tail can hit ~225. Set bounds well above that so clipping doesn't
+    # dominate the small reward delta in tests exercising the reward-
+    # modulated update path. See CLAUDE.md "STDP bounds gotcha" and
+    # the runner's stdp_w_max = max(30, ctx_msn_weight*1.2) idiom.
+    cfg.stdp_w_max = 300.0
+    cfg.hebbian_max_weight = 300.0
     bridge = SimulationBridge(
         core_config=cfg,
         viz_config=VisualizationConfig(),
