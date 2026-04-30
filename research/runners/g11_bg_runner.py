@@ -1841,6 +1841,15 @@ def run_moving_goal_episode(
     enable_cluster_e_topography: bool = False,  # Cluster E v1: 2D coords + Gaussian-weighted cortex->striatum
     cluster_e_distance_sigma: float = 0.3,
     enable_cluster_f_cerebellum: bool = False,  # Cluster F v1: Marr-Albus cerebellar microcircuit
+    # Cluster F v2 (2026-04-30): CF-gated anti-Hebbian LTD per Albus 1971
+    # §IV.C eq.4. v1 used the global reward signal for PF→PC plasticity
+    # (cerebellum and BG learned redundantly from the same signal). v2
+    # decouples: cerebellum_pf_pc synapses see -1.0 only when IO is active
+    # (CF event), 0.0 otherwise — global reward propagates only to non-
+    # cerebellum synapses. Per Albus, cerebellum should ONLY weaken on
+    # CF events, never strengthen on positive reward. Requires
+    # enable_cluster_f_cerebellum=True. Default OFF.
+    enable_cluster_f_v2: bool = False,
     # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
     # Defaults match CoreSimConfig but can be overridden from the runner's
     # CLI / kwargs to tune the pruning aggressiveness for short pretraining
@@ -2173,6 +2182,28 @@ def run_moving_goal_episode(
 
     # DA-gated WTA: pre-compute FS->motor synapse indices and save baseline weights.
     # Per-trial we'll scale these weights by gating_strength to make WTA adaptive.
+    # Cluster F v2: cache cerebellum_pf_pc synapse indices for the per-synapse
+    # reward override path. When enabled, these synapses get the CF-gated
+    # signal (-1.0 on CF event, 0.0 otherwise) instead of the global reward.
+    cerebellum_pf_pc_indices = None
+    cerebellum_pf_pc_mask = None  # GPU bool array
+    if enable_cluster_f_v2 and enable_cluster_f_cerebellum:
+        gate_to_syns = getattr(bridge, "_plasticity_gate_to_synapses", {})
+        cere_idx_list = gate_to_syns.get("cerebellum_pf_pc")
+        if cere_idx_list:
+            cerebellum_pf_pc_indices = cp.asarray(np.asarray(cere_idx_list, dtype=np.int64))
+            actual_nnz = bridge.cp_connections.nnz
+            cerebellum_pf_pc_mask = cp.zeros(actual_nnz, dtype=cp.bool_)
+            cerebellum_pf_pc_mask[cerebellum_pf_pc_indices] = True
+            if verbose:
+                print(f"[g11 seed={seed}] Cluster F v2 enabled: "
+                      f"{len(cere_idx_list)} cerebellum_pf_pc synapses tagged for CF-gated LTD",
+                      flush=True)
+        elif verbose:
+            print(f"[g11 seed={seed}] WARNING: --enable-cluster-f-v2 set but no "
+                  f"cerebellum_pf_pc gate found. Did you forget --enable-cluster-f-cerebellum?",
+                  flush=True)
+
     fs_to_motor_indices = None
     fs_to_motor_baseline_weights = None
     if enable_da_gated_wta and enable_motor_lateral_inhibition:
@@ -2978,6 +3009,24 @@ def run_moving_goal_episode(
                 delivered_reward = float(reward)
             bridge.core_config.current_reward_signal = delivered_reward
 
+            # Cluster F v2 (2026-04-30): CF-gated LTD per Albus 1971 §IV.C eq.4.
+            # Decouples cerebellum_pf_pc plasticity from the global reward signal.
+            # PF→PC synapses see -1.0 only when IO is active (CF event = reward<0
+            # in our task model), 0.0 otherwise. Non-cerebellum synapses see the
+            # delivered_reward as before. The bridge's reward modulation step
+            # uses cp_per_synapse_reward_override when set, replacing the scalar.
+            if cerebellum_pf_pc_mask is not None:
+                actual_nnz = bridge.cp_connections.nnz
+                # Per-synapse override array: default = global reward
+                override = cp.full(actual_nnz, delivered_reward, dtype=cp.float32)
+                # Cerebellum synapses get CF-gated signal
+                cf_signal = -1.0 if delivered_reward < 0 else 0.0
+                override[cerebellum_pf_pc_mask[:actual_nnz]] = cf_signal
+                bridge.cp_per_synapse_reward_override = override
+            elif bridge.cp_per_synapse_reward_override is not None:
+                # Defensive: clear stale override if v2 wasn't actually wired up
+                bridge.cp_per_synapse_reward_override = None
+
             # Surprise-boosted learning rate (opt-in): NE-like fast meta-modulation.
             # When |RPE| is high, temporarily boost reward_learning_rate. Restored
             # after reward hold. Decoupled from per-action DA gating mechanism.
@@ -3307,6 +3356,16 @@ def main():
                          "via the existing infrastructure; full CF-gated LTD "
                          "deferred to v2. See "
                          "docs/plans/2026-04-29-cluster-f-cerebellum-design.md.")
+    ap.add_argument("--enable-cluster-f-v2", action="store_true",
+                    help="Cluster F v2 (2026-04-30): CF-gated anti-Hebbian LTD "
+                         "per Albus 1971 §IV.C eq.4. Decouples cerebellum_pf_pc "
+                         "plasticity from the global reward signal — PF→PC "
+                         "synapses see -1.0 ONLY when IO is active (CF event), "
+                         "0.0 otherwise. Per Albus, cerebellum should weaken "
+                         "PF synapses on error events but never strengthen "
+                         "on positive reward. Requires "
+                         "--enable-cluster-f-cerebellum. See "
+                         "research/findings/2026-04-29-cluster-f-results.md.")
     ap.add_argument("--enable-tans", action="store_true",
                     help="Cluster B.3: cholinergic interneurons (TANs). Adds "
                          "an acetylcholine_tan neuromodulator (the striatal-TAN-"
@@ -3486,6 +3545,7 @@ def main():
             enable_cluster_d_hippocampus=args.enable_cluster_d_hippocampus,
             enable_cluster_e_topography=args.enable_cluster_e_topography,
             enable_cluster_f_cerebellum=args.enable_cluster_f_cerebellum,
+            enable_cluster_f_v2=args.enable_cluster_f_v2,
             cluster_e_distance_sigma=args.cluster_e_distance_sigma,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,

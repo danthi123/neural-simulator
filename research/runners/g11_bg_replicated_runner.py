@@ -101,6 +101,7 @@ def run_replicated_multi_goal(
     enable_cluster_a_closed_loop: bool = False,
     enable_cluster_e_topography: bool = False,
     enable_cluster_f_cerebellum: bool = False,
+    enable_cluster_f_v2: bool = False,  # CF-gated LTD per Albus 1971 §IV.C
     enable_cluster_d_hippocampus: bool = False,
     enable_tonic_da: bool = False,
     enable_tans: bool = False,
@@ -108,6 +109,13 @@ def run_replicated_multi_goal(
     # Plasticity
     reward_learning_rate: float = 0.01,
     weight_jitter: float = 0.05,  # per-replica weight initial jitter
+    # Pause-on-demand control file. When the file at this path exists and
+    # contains JSON {"paused": true}, the runner sleeps at env-step boundaries
+    # until the flag flips to false (or the file is deleted). Lets the user
+    # pause without killing — e.g. to free the GPU for other work — and
+    # resume later without losing progress. Default None disables polling.
+    pause_flag_path: str | None = None,
+    pause_poll_interval: float = 2.0,
     verbose: bool = True,
 ) -> dict:
     """Run N independent g11 multi-goal eval replicas in a single process.
@@ -351,6 +359,20 @@ def run_replicated_multi_goal(
 
     # Per-synapse reward override array
     sb.cp_per_synapse_reward_override = cp.zeros(nnz, dtype=cp.float32)
+    # F v2: cache cerebellum_pf_pc gate mask for CF-gated LTD signaling.
+    # When v2 is on, these synapses see -1.0 (LTD) when their replica's
+    # reward is negative, 0 otherwise — decoupled from the global reward.
+    cerebellum_pf_pc_mask = None
+    if enable_cluster_f_v2 and enable_cluster_f_cerebellum:
+        gate_to_syns = getattr(sb, "_plasticity_gate_to_synapses", {})
+        cere_idx_list = gate_to_syns.get("cerebellum_pf_pc")
+        if cere_idx_list:
+            cerebellum_pf_pc_mask = cp.zeros(nnz, dtype=cp.bool_)
+            cerebellum_pf_pc_mask[cp.asarray(np.asarray(cere_idx_list, dtype=np.int64))] = True
+            if verbose:
+                print(f"[replicated] F v2 enabled: {len(cere_idx_list)} cerebellum_pf_pc synapses tagged for CF-gated LTD")
+        elif verbose:
+            print("[replicated] WARNING: --enable-cluster-f-v2 set but no cerebellum_pf_pc gate found")
     # Per-replica synapse-index masks for the reward override
     pre_global = sb.cp_connections.indptr  # CSR row pointer; pre-neuron i has row [indptr[i]:indptr[i+1]]
     # Each synapse's "owner" is its pre-neuron's replica. Build a per-synapse replica-id array.
@@ -371,7 +393,32 @@ def run_replicated_multi_goal(
     if verbose:
         print(f"[replicated] starting {n_steps}-step eval, {n_replicas} replicas (n_per_replica={n_per_replica})")
 
+    def _check_paused() -> None:
+        """Poll pause_flag_path; sleep here if {"paused": true}."""
+        if pause_flag_path is None:
+            return
+        printed = False
+        while True:
+            try:
+                with open(pause_flag_path) as f:
+                    state = json.load(f)
+            except (FileNotFoundError, OSError, json.JSONDecodeError):
+                return
+            if not state.get("paused"):
+                if printed and verbose:
+                    print(f"[replicated] resumed at env-step {step}", flush=True)
+                return
+            if not printed and verbose:
+                print(f"[replicated] PAUSED at env-step {step} "
+                      f"(touch {pause_flag_path} with paused=false to resume)",
+                      flush=True)
+                printed = True
+            time.sleep(pause_poll_interval)
+
     for step in range(n_steps):
+        # Pause check (does nothing if pause_flag_path is None)
+        _check_paused()
+
         # Goal change (scheduled, applies to all replicas)
         while (current_phase_idx + 1 < len(goal_schedule)
                and step >= goal_schedule[current_phase_idx + 1][0]):
@@ -451,6 +498,18 @@ def run_replicated_multi_goal(
         # Apply per-synapse reward signal: each replica's synapses get its reward
         rewards_gpu = cp.asarray(np.asarray(rewards_this_step, dtype=np.float32))
         sb.cp_per_synapse_reward_override = rewards_gpu[pre_replica]
+
+        # Cluster F v2: CF-gated LTD per Albus 1971 §IV.C eq.4. Cerebellum
+        # synapses see -1.0 when their replica's reward<0 (CF event proxy),
+        # 0.0 otherwise — decoupled from the global per-replica reward signal.
+        if cerebellum_pf_pc_mask is not None:
+            cf_per_replica = cp.where(rewards_gpu < 0, -1.0, 0.0).astype(cp.float32)
+            cf_per_synapse = cf_per_replica[pre_replica]
+            sb.cp_per_synapse_reward_override = cp.where(
+                cerebellum_pf_pc_mask,
+                cf_per_synapse,
+                sb.cp_per_synapse_reward_override,
+            )
 
         # Cluster F: bump IO drive for replicas with negative reward
         if enable_cluster_f_cerebellum:
@@ -564,9 +623,19 @@ def main() -> int:
     ap.add_argument("--enable-cluster-a-closed-loop", action="store_true")
     ap.add_argument("--enable-cluster-e-topography", action="store_true")
     ap.add_argument("--enable-cluster-f-cerebellum", action="store_true")
+    ap.add_argument("--enable-cluster-f-v2", action="store_true",
+                    help="CF-gated anti-Hebbian LTD per Albus 1971 §IV.C eq.4. "
+                         "Decouples cerebellum_pf_pc plasticity from global reward.")
     ap.add_argument("--enable-cluster-d-hippocampus", action="store_true")
     ap.add_argument("--reward-lr", type=float, default=0.01)
     ap.add_argument("--weight-jitter", type=float, default=0.05)
+    ap.add_argument("--pause-flag-path", type=str, default=None,
+                    help='Path to a JSON control file. While {"paused": true}, '
+                         'the runner sleeps at env-step boundaries until flipped '
+                         'to false or deleted. Lets you pause for gaming etc. '
+                         'without losing progress.')
+    ap.add_argument("--pause-poll-interval", type=float, default=2.0,
+                    help="How often (sec) to re-check pause_flag_path while paused.")
     ap.add_argument("-q", "--quiet", action="store_true")
     args = ap.parse_args()
 
@@ -585,9 +654,12 @@ def main() -> int:
         enable_cluster_a_closed_loop=args.enable_cluster_a_closed_loop,
         enable_cluster_e_topography=args.enable_cluster_e_topography,
         enable_cluster_f_cerebellum=args.enable_cluster_f_cerebellum,
+        enable_cluster_f_v2=args.enable_cluster_f_v2,
         enable_cluster_d_hippocampus=args.enable_cluster_d_hippocampus,
         reward_learning_rate=args.reward_lr,
         weight_jitter=args.weight_jitter,
+        pause_flag_path=args.pause_flag_path,
+        pause_poll_interval=args.pause_poll_interval,
         verbose=not args.quiet,
     ) else 1
 
