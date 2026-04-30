@@ -268,6 +268,14 @@ class SimulationBridge:
         # None when enable_d1_d2_asymmetry is False (default).
         # See docs/plans/2026-04-28-cluster-b1-d1d2-asymmetry-implementation.md.
         self.cp_d1_d2_sign = None
+        # Per-synapse reward signal override (E.3 batched-replica framework).
+        # When None (default), reward modulation uses the scalar
+        # cfg.current_reward_signal globally. When set to a cp.float32 array
+        # of shape (nnz,), each synapse's reward update uses its own value
+        # instead — lets a replicated runner give each replica's synapse
+        # block its own per-step reward. Composes with cp_d1_d2_sign and
+        # cp_plasticity_rate_gain (those still multiply afterward).
+        self.cp_per_synapse_reward_override = None
 
         # Cluster C v2 (2026-04-29): per-synapse action tag for compartmentalized DA.
         # int32 array of length nnz; tag[i] = action_index of synapse i's
@@ -1877,6 +1885,11 @@ class SimulationBridge:
                 self.cp_d1_d2_sign[d2_mask] = -1.0
         else:
             self.cp_d1_d2_sign = None
+
+        # E.3 batched-replica: clear any stale per-synapse reward override.
+        # If a runner was using it pre-inject, the size won't match new nnz;
+        # the runner is responsible for repopulating after inject if needed.
+        self.cp_per_synapse_reward_override = None
 
         # Cluster C v2 (2026-04-29): per-synapse action tag for compartmentalized
         # DA. tag[i] = action_index of synapse i's POST region (∈ [0, N-1]) or
@@ -4636,6 +4649,19 @@ class SimulationBridge:
                         weight_updates = (
                             effective_reward_lr
                             * per_synapse_da
+                            * self.cp_eligibility_trace[:actual_nnz]
+                        )
+                    elif self.cp_per_synapse_reward_override is not None:
+                        # E.3 batched-replica framework: each replica gets its
+                        # own reward signal via this per-synapse override array.
+                        # Replaces the scalar effective_signal with a per-synapse
+                        # value (each replica's synapse block populated with that
+                        # replica's reward_prediction_error). Subsequent multipliers
+                        # (cp_d1_d2_sign, cp_plasticity_rate_gain, tan_gate)
+                        # still apply normally.
+                        weight_updates = (
+                            effective_reward_lr
+                            * self.cp_per_synapse_reward_override[:actual_nnz]
                             * self.cp_eligibility_trace[:actual_nnz]
                         )
                     else:
