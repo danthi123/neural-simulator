@@ -911,6 +911,17 @@ def list_active_launches() -> JSONResponse:
             except (OSError, TypeError):
                 run.finished_at = time.time()
         end_time = run.finished_at if run.finished_at is not None else time.time()
+        # `attachable` = the run streams telemetry to the webapp via its
+        # log file. Webapp-launched runs always do; raw-spawned runs that
+        # emitted a sidecar don't (log_file=None) and clicking them in
+        # the picker would just open an empty live viewer. Frontend uses
+        # this to disable the click-to-attach gesture for batch runs.
+        # `interactive` = supports full per-trial control (goal override,
+        # reward injection, pause). `pause_only` = only pause is supported
+        # (replicated runner). Mutually exclusive in practice.
+        attachable = run.log_file is not None
+        pause_only = run.control_file is not None and not attachable
+        interactive = run.control_file is not None and attachable
         out.append({
             "run_id": run.run_id,
             "running": is_running,
@@ -918,7 +929,9 @@ def list_active_launches() -> JSONResponse:
             "started_at": run.started_at,
             "elapsed_sec": end_time - run.started_at,
             "out_path": run.out_path,
-            "interactive": run.control_file is not None,
+            "interactive": interactive,
+            "pause_only": pause_only,
+            "attachable": attachable,
             "latest_progress": _progress_to_json(latest) if latest else None,
         })
     out.sort(key=lambda r: r["started_at"], reverse=True)

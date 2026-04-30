@@ -343,7 +343,16 @@ async function refreshLivePicker(showHeading) {
 
         const name = document.createElement("div");
         name.className = "run-name";
-        name.textContent = r.run_id + (r.interactive ? " ★ interactive" : "");
+        // Badge logic:
+        //   ★ interactive → full per-trial control (goal/reward override + pause)
+        //   ↻ batch       → raw-spawned runner that only emits a sidecar; no
+        //                   live telemetry, no attach. Pause/kill still work.
+        //   (none)        → standard webapp-launched batch run; attachable but
+        //                   no control file.
+        let badge = "";
+        if (r.interactive) badge = " ★ interactive";
+        else if (r.pause_only) badge = " ↻ batch (pause only)";
+        name.textContent = r.run_id + badge;
         item.appendChild(name);
 
         const small = document.createElement("div");
@@ -352,7 +361,16 @@ async function refreshLivePicker(showHeading) {
         item.appendChild(small);
         item._small = small;
 
-        item.addEventListener("click", () => attachLive(r.run_id, item));
+        // Only wire click-to-attach for runs that actually stream telemetry.
+        // Non-attachable runs (raw-spawned replicated batch) get a hover hint
+        // explaining why; clicking does nothing.
+        if (r.attachable !== false) {
+          item.addEventListener("click", () => attachLive(r.run_id, item));
+          item.style.cursor = "pointer";
+        } else {
+          item.style.cursor = "default";
+          item.title = "Raw-spawned runner — no live telemetry. Pause and Kill still work.";
+        }
       } else {
         // Existing item: only update text in place
         if (item._small.textContent !== smallText) {
