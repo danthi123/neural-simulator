@@ -517,14 +517,17 @@ strictly better for the cheat-5 multi-goal navigation benchmark.
   multi-goal det: AF 7.37 ± 1.83, AEF 8.02 ± 1.81 (vs baseline 7.77 ± 3.33).
   Std reduction ~45% but no mean improvement.
   See [`research/findings/2026-04-29-cluster-f-results.md`](research/findings/2026-04-29-cluster-f-results.md).
-  **Cluster F v2 SHIPPED + NO-GO (`--enable-cluster-f-v2`, 2026-04-30)**
-  — CF-gated anti-Hebbian LTD per Albus 1971 §IV.C eq.4 (decoupled from
-  global reward). 6-seed eval: AFv2 21.77 ± 2.35, AEFv2 24.88 ± 3.07 —
-  3× WORSE than baseline (Welch t +8.4 / +9.3). Likely the ~64-PF reduced
-  model can't absorb anti-Hebbian LTD that real cerebellum spreads across
-  ~150K PFs. Implementation correct (47 unit tests pass, biology probe ok)
-  but mechanism breaks at our scale. **Do not stack F v2 on flagship.**
-  See [`research/findings/2026-04-30-cluster-f-v2-results.md`](research/findings/2026-04-30-cluster-f-v2-results.md).
+  **Cluster F v2 SHIPPED + NEUTRAL** (`--enable-cluster-f-v2`, 2026-04-30,
+  status corrected later same day)
+  — CF-gated anti-Hebbian LTD per Albus 1971 §IV.C eq.4. Initial 6-seed
+  replicated-runner eval showed AFv2 21.77 ± 2.35, AEFv2 24.88 ± 3.07
+  (NO-GO). **Re-run on single runner shows A+F v2 = 7.20 ± 2.75, A+E+F v2 =
+  8.14 ± 3.46 (n=6 each) — NEUTRAL vs A+E baseline 7.18 ± 1.58.** The
+  replicated runner has a reward-modulation timing bug (~200× fewer weight
+  updates per reward) that catastrophizes plasticity-sensitive evals.
+  Implementation is correct (47 tests pass, biology probe verifies sign).
+  **Opt-in safe; do not use replicated runner for plasticity evals until
+  fixed.** See [`research/findings/2026-04-30-fv2-correction-replicated-runner-bug.md`](research/findings/2026-04-30-fv2-correction-replicated-runner-bug.md).
   **Cluster D v2 SHIPPED + PARTIAL (`--enable-cluster-d-v2-swr`, 2026-04-30)**
   — SWR-gated CA3 plasticity. Replaces D v1's implicit CA3 internal_density
   with an explicit ca3→ca3 RegionPathway tagged `ca3_swr_burst`; runner

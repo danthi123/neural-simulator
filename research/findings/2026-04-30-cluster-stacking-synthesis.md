@@ -1,5 +1,14 @@
 # 2026-04-30 — Cluster-stacking strategy empirically falsified — synthesis
 
+> **CORRECTION 2026-04-30 (later):** The two F v2 entries listed below as
+> "NEGATIVE" were caused by a replicated-runner bug, not by F v2 itself.
+> Single-runner re-eval shows A+F v2 = 7.20 ± 2.75 and A+E+F v2 = 8.14 ± 3.46
+> (both NEUTRAL vs A+E baseline 7.18 ± 1.58). See
+> [`2026-04-30-fv2-correction-replicated-runner-bug.md`](2026-04-30-fv2-correction-replicated-runner-bug.md).
+> Net: 7 NEUTRAL/PARTIAL, 3 NEGATIVE (down from 5). Cluster-stacking
+> falsification still holds — A+E remains the ceiling — but less dramatic.
+
+
 **TL;DR:** 9 cluster-stacking attempts past A+E (the operational ceiling
 at 6.97 ± 0.83 multi-goal det / 3.31 ± 0.74 single-goal det) all NEUTRAL
 or NEGATIVE. Five hurt cheat-5 outright; one (D v2) gives a variance

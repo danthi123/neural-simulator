@@ -1,5 +1,18 @@
 # 2026-04-30 — Cluster F v2 (CF-gated anti-Hebbian LTD): NEGATIVE — 3× worse than baseline
 
+> **CORRECTION 2026-04-30 (later same day):** This NEGATIVE finding was
+> caused by a bug in `g11_bg_replicated_runner.py`, NOT by Cluster F v2
+> itself. The replicated runner does ~200× fewer weight updates per
+> reward event than the single runner (see
+> [`2026-04-30-fv2-correction-replicated-runner-bug.md`](2026-04-30-fv2-correction-replicated-runner-bug.md)).
+> Re-running the same conditions on `g11_bg_runner.py` (single runner)
+> gives A+F v2 = 7.20 ± 2.75 (n=6) and A+E+F v2 = 8.14 ± 3.46 (n=6) —
+> NEUTRAL relative to A+E baseline (7.18 ± 1.58). F v2 mechanism is
+> correctly implemented; the prior NEGATIVE result was a runner artifact.
+> The numbers below remain as recorded but should be interpreted as
+> "replicated runner with the timing bug" rather than as F v2 properties.
+
+
 **Run:** `g11_bg_replicated_runner.py` multi-goal deterministic, n=6 seeds × 2 conditions = 12 replicas in 2 processes (~34 min total wall-clock via batched-replica framework, vs ~70 min if subprocess-spawned). `CUBLAS_WORKSPACE_CONFIG=:4096:8`.
 
 **Hypothesis (going in):** F v1 was NEUTRAL (per [`2026-04-29-cluster-f-results.md`](2026-04-29-cluster-f-results.md)). The cerebellar pathway was *implemented* — granule cells, parallel fibers, Purkinje cells, climbing fibers — but the PF→PC plasticity was driven by the same global reward signal as everything else. Per Albus 1971 §IV.C eq.4, real cerebellar LTD is **anti-Hebbian and gated by climbing-fiber complex spikes**, not by reward. Decoupling the two was hypothesized to release F's contribution: the cerebellum should learn faster motor-error corrections orthogonal to the reward-driven cortico-striatal trace.

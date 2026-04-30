@@ -234,6 +234,14 @@ def build_bg_brain_regions(
     # Default off — backward compatible.
     # See docs/plans/2026-04-29-cluster-f-cerebellum-design.md.
     enable_cluster_f_cerebellum: bool = False,
+    # Number of cerebellar granule cells. Default 250 implements Marr's
+    # sparse-expansion code at ~3-5% activity in our reduced model. Real
+    # cerebellum has ~50M granule cells per hemisphere with ~150K
+    # parallel-fiber inputs per Purkinje cell. The 250-cell setup breaks
+    # Albus 1971's anti-Hebbian LTD calibration (F v2 NO-GO 2026-04-30).
+    # Scaling experiment 2026-04-30: n_granule=1000-5000 tests whether
+    # F v2 becomes viable at closer-to-biological scale.
+    n_granule: int = 250,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -694,7 +702,7 @@ def build_bg_brain_regions(
         ))
         regions.append(BrainRegion(
             name="granule",
-            n_neurons=250,
+            n_neurons=n_granule,
             exc_fraction=1.0,
             internal_density=0.0,
             exc_weight_mean=0.0, inh_weight_mean=0.0,
@@ -1879,6 +1887,7 @@ def run_moving_goal_episode(
     enable_cluster_e_topography: bool = False,  # Cluster E v1: 2D coords + Gaussian-weighted cortex->striatum
     cluster_e_distance_sigma: float = 0.3,
     enable_cluster_f_cerebellum: bool = False,  # Cluster F v1: Marr-Albus cerebellar microcircuit
+    n_granule: int = 250,  # Cerebellar granule cells (scaling test for F v2)
     # Cluster F v2 (2026-04-30): CF-gated anti-Hebbian LTD per Albus 1971
     # §IV.C eq.4. v1 used the global reward signal for PF→PC plasticity
     # (cerebellum and BG learned redundantly from the same signal). v2
@@ -1998,6 +2007,7 @@ def run_moving_goal_episode(
         enable_cluster_e_topography=enable_cluster_e_topography,
         cluster_e_distance_sigma=cluster_e_distance_sigma,
         enable_cluster_f_cerebellum=enable_cluster_f_cerebellum,
+        n_granule=n_granule,
         enable_beacon_perception=enable_beacon_perception,
         n_beacon_sensors=n_beacon_sensors,
         beacon_to_goal_weight=beacon_to_goal_weight,
@@ -3614,6 +3624,14 @@ def main():
                          "(at corner-to-corner distance ~1.0, cross-action prob "
                          "drops to ~0.4%% of same-action). Larger -> looser "
                          "spatial selectivity.")
+    ap.add_argument("--n-granule", type=int, default=250,
+                    help="Cerebellar granule cell count. Default 250 implements "
+                         "Marr's sparse-expansion code in our reduced model. "
+                         "Real cerebellum has ~50M granule cells per hemisphere "
+                         "with ~150K parallel-fiber inputs per Purkinje cell. "
+                         "Scaling experiment 2026-04-30: 1000-5000 tests "
+                         "whether F v2 (Albus 1971 anti-Hebbian LTD) becomes "
+                         "viable at closer-to-biological scale.")
     ap.add_argument("--enable-cluster-f-cerebellum", action="store_true",
                     help="Cluster F v1 (2026-04-29): Marr-Albus-Ito cerebellar "
                          "microcircuit. Adds 11 regions (mossy_state, granule, "
@@ -3881,6 +3899,7 @@ def main():
             enable_cluster_e_topography=args.enable_cluster_e_topography,
             enable_cluster_f_cerebellum=args.enable_cluster_f_cerebellum,
             enable_cluster_f_v2=args.enable_cluster_f_v2,
+            n_granule=args.n_granule,
             cluster_e_distance_sigma=args.cluster_e_distance_sigma,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
