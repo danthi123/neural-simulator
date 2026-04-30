@@ -308,7 +308,7 @@ PRESETS: dict[str, list[str]] = {
         "--cue-reflex", "--cue-reflex-replaces-heuristic",
         "--enable-landmark-sensor", "--landmarks-replace-place",
         "--sensed-reward",
-        "--bg-cross-projections", "--bg-cross-thaw-step", "1200", "--bg-cross-phase3-gain", "0.5",
+        "--enable-corticostriatal-cross", "--bg-cross-thaw-step", "1200", "--bg-cross-phase3-gain", "0.5",
         "--adaptive-da", "--adaptive-da-ema-decay-negative", "0.7",
         "--curriculum", "--curriculum-warmup-steps", "600",
         "--n-steps", "1800",

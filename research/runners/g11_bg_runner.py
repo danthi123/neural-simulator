@@ -73,7 +73,7 @@ def build_bg_brain_regions(
     n_striatum_per_action: int = 50,
     n_gpe_per_action: int = 10,
     n_gpe_arky_per_action: int = 4,  # R3.7: arkypallidal (PV-) subpool
-    n_str_patch_per_action: int = 8,  # R3.11: striosome (patch) subpool
+    n_str_striosome_per_action: int = 8,  # R3.11: striosome (patch) subpool
     enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
     n_gpi_per_action: int = 10,
     n_stn: int = 20,
@@ -187,11 +187,11 @@ def build_bg_brain_regions(
     # Lowering to 2.0 → effective ~8, comparable to v3 lateral.
     str_fs_to_msn_weight: float = 2.0,
     # Cluster D v1 (2026-04-29): hippocampus trisynaptic loop.
-    # Adds 5 regions (ec, dg, dg_fs, ca3, ca1) and ~10 pathways implementing
+    # Adds 5 regions (ec, dg, dg_pv_basket, ca3, ca1) and ~10 pathways implementing
     # the canonical Cajal trisynaptic loop:
     #   sensory + landmark_sensors -> ec
-    #   ec -> dg (perforant path), ec -> dg_fs (FFi recruitment)
-    #   dg_fs -> dg (strong feedforward inhibition for sparsity)
+    #   ec -> dg (perforant path), ec -> dg_pv_basket (FFi recruitment)
+    #   dg_pv_basket -> dg (strong feedforward inhibition for sparsity)
     #   ec -> ca1 (direct cortical bypass)
     #   dg -> ca3 (mossy fibers; sparse but strong)
     #   ca3 -> ca3 (recurrent autoassociator; via region.internal_density)
@@ -505,8 +505,8 @@ def build_bg_brain_regions(
         # E_inh override -60 mV is inherited via the same MSN-class
         # convention applied to str_D1/D2.
         regions.append(BrainRegion(
-            name=f"str_patch_{action}",
-            n_neurons=n_str_patch_per_action,
+            name=f"str_striosome_{action}",
+            n_neurons=n_str_striosome_per_action,
             exc_fraction=0.05,  # MSN is GABAergic with sparse glutamatergic spillover
             internal_density=0.0,
             exc_weight_mean=0.0, inh_weight_mean=0.0,
@@ -582,7 +582,7 @@ def build_bg_brain_regions(
     #     to DG, CA1; bridges perception to hippocampus proper.
     #   dg (dentate gyrus) — pattern separation via FFi-driven sparsity;
     #     internal_density=0 (no recurrence — DG granule cells fire sparsely).
-    #   dg_fs — fast-spiking interneurons providing strong feedforward
+    #   dg_pv_basket — fast-spiking interneurons providing strong feedforward
     #     inhibition (exc_fraction=0.0 → outputs auto-derived inhibitory).
     #   ca3 — pattern completion; recurrent autoassociator core
     #     (internal_density=0.30 generates the dense recurrent collaterals).
@@ -608,7 +608,7 @@ def build_bg_brain_regions(
             izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
         ))
         regions.append(BrainRegion(
-            name="dg_fs",
+            name="dg_pv_basket",
             n_neurons=60,
             exc_fraction=0.0,
             internal_density=0.0,
@@ -659,7 +659,7 @@ def build_bg_brain_regions(
     # Place cells provide spatial context (where am I), goal cells provide
     # task context (where do I want to be). Together they should learn
     # the full position-action mapping.
-    # Tagged with plasticity_gate="hippo_to_cortex" so runners can
+    # Tagged with plasticity_gate="place_goal_to_cortex" so runners can
     # implement curriculum: freeze during cortex-warmup, thaw later.
     if enable_hippocampus:
         for action in ACTION_NAMES:
@@ -667,13 +667,13 @@ def build_bg_brain_regions(
                 from_region="sensor_place_readout", to_region=f"cortex_{action}",
                 density=1.0, weight_mean=hippocampus_to_cortex_weight,
                 weight_jitter=0.2, plastic=True,
-                plasticity_gate="hippo_to_cortex",
+                plasticity_gate="place_goal_to_cortex",
             ))
             pathways.append(RegionPathway(
                 from_region="ppc_goal_input", to_region=f"cortex_{action}",
                 density=1.0, weight_mean=hippocampus_to_cortex_weight,
                 weight_jitter=0.2, plastic=True,
-                plasticity_gate="hippo_to_cortex",
+                plasticity_gate="place_goal_to_cortex",
             ))
 
     # Beacon perception pathway (Item 1 Stage 1 skeleton, 2026-04-27).
@@ -710,7 +710,7 @@ def build_bg_brain_regions(
     #   PFC → cortex_X: PFC drives cortex selection across delays
     # Both tagged with plasticity_gate="dlpfc_wm_pathways" so curriculum can
     # stage PFC learning. Internal PFC connectivity is plastic_internal=True
-    # for recurrent learning (gated by "pfc_internal" if needed).
+    # for recurrent learning (gated by "dlpfc_wm_recurrent" if needed).
     if enable_pfc:
         if enable_hippocampus:
             # goal_cells → PFC for working memory of goal
@@ -734,7 +734,7 @@ def build_bg_brain_regions(
     # AND (if enable_bg_cross_projections) weakly to other actions' striatum.
     # Same-action paths are tagged with plasticity_gate="corticostriatal" so the
     # curriculum can freeze cortex→striatum once mature.
-    # Cross-projections are tagged with plasticity_gate="bg_cross_projections"
+    # Cross-projections are tagged with plasticity_gate="corticostriatal_cross"
     # (separate gate, 2026-04-28) so the curriculum can stage them
     # independently — keep them frozen during phase 1+2 (don't accumulate
     # phase-0 motor bias), thaw post-goal-change in phase 3 so STDP+reward
@@ -798,7 +798,7 @@ def build_bg_brain_regions(
             elif enable_bg_cross_projections and (cortex_action, str_action) in _selected_cross:
                 density = cortex_to_msn_density_cross
                 weight = cross_projection_weight
-                gate = "bg_cross_projections"
+                gate = "corticostriatal_cross"
             else:
                 continue
             pathways.append(RegionPathway(
@@ -950,27 +950,27 @@ def build_bg_brain_regions(
         ))
 
     # R3.11 (2026-04-29): striosome (patch) pathways.
-    # cortex_X -> str_patch_X: placeholder for limbic input (vmPFC/amygdala/
+    # cortex_X -> str_striosome_X: placeholder for limbic input (vmPFC/amygdala/
     # ventral hippocampus per PBR-160 ch 9). Plastic so patch can learn
     # cortical-to-patch mapping. Same density as matrix per Bolam.
-    # str_patch_X -> snc: canonical striosome->SNc projection driving
+    # str_striosome_X -> snc: canonical striosome->SNc projection driving
     # phasic DA (Tepper & Lee PBR-160 ch 11 p 191).
-    # str_patch_X -> gpi_X: secondary striosome->SNr projection (PBR-160
+    # str_striosome_X -> gpi_X: secondary striosome->SNr projection (PBR-160
     # ch 9 Deniau p 160 — striosomes contribute substantial direct input
     # to SNr in addition to the canonical SNc target). Smaller weight
     # than matrix's str_D1->gpi to reflect minor contribution.
     for action in ACTION_NAMES:
         pathways.append(RegionPathway(
-            from_region=f"cortex_{action}", to_region=f"str_patch_{action}",
+            from_region=f"cortex_{action}", to_region=f"str_striosome_{action}",
             density=cortex_to_msn_density_same, weight_mean=cortex_to_msn_weight_same,
             weight_jitter=0.2, plastic=True, plasticity_gate="corticostriatal",
         ))
         pathways.append(RegionPathway(
-            from_region=f"str_patch_{action}", to_region="snc",
+            from_region=f"str_striosome_{action}", to_region="snc",
             density=0.4, weight_mean=2.5, weight_jitter=0.2, plastic=False,
         ))
         pathways.append(RegionPathway(
-            from_region=f"str_patch_{action}", to_region=f"gpi_{action}",
+            from_region=f"str_striosome_{action}", to_region=f"gpi_{action}",
             density=0.3, weight_mean=1.5, weight_jitter=0.2, plastic=False,
         ))
 
@@ -1092,8 +1092,8 @@ def build_bg_brain_regions(
     #   landmark_sensors -> ec (only if --landmarks; landmark_sensors region
     #     only exists in that case)
     #   ec -> dg (perforant path; main excitatory drive to DG)
-    #   ec -> dg_fs (FFi recruitment)
-    #   dg_fs -> dg (strong feedforward inhibition for sparsity)
+    #   ec -> dg_pv_basket (FFi recruitment)
+    #   dg_pv_basket -> dg (strong feedforward inhibition for sparsity)
     #   ec -> ca1 (direct cortical bypass)
     #   dg -> ca3 (mossy fibers; sparse but strong)
     #   ca3 -> ca3 (recurrent autoassociator — handled by region.internal_density)
@@ -1121,15 +1121,15 @@ def build_bg_brain_regions(
             density=0.40, weight_mean=6.0, weight_jitter=0.2,
             plastic=True, plasticity_gate="ec_to_dg",
         ))
-        # ec -> dg_fs (FFi recruitment, static)
+        # ec -> dg_pv_basket (FFi recruitment, static)
         pathways.append(RegionPathway(
-            from_region="ec", to_region="dg_fs",
+            from_region="ec", to_region="dg_pv_basket",
             density=0.40, weight_mean=5.0, weight_jitter=0.2,
             plastic=False,
         ))
-        # dg_fs -> dg (strong feedforward inhibition; static)
+        # dg_pv_basket -> dg (strong feedforward inhibition; static)
         pathways.append(RegionPathway(
-            from_region="dg_fs", to_region="dg",
+            from_region="dg_pv_basket", to_region="dg",
             density=1.00, weight_mean=6.0, weight_jitter=0.2,
             plastic=False,
         ))
@@ -1207,11 +1207,11 @@ def _position_to_cortex_drive(x, y, n_cortex_per_action, grid_size,
 _PRETRAINING_THAWED_GATES = (
     "corticostriatal",
     "sensory_to_cortex",
-    "hippo_to_cortex",
+    "place_goal_to_cortex",
     "beacon_to_goal",
     "landmark_to_place",
     "dlpfc_wm_pathways",
-    "bg_cross_projections",
+    "corticostriatal_cross",
 )
 
 
@@ -1277,8 +1277,8 @@ def _run_pretraining_phase(
     # we can compute weight stats at the end of pretraining. Empty if the
     # gate isn't declared (e.g. --bg-cross-projections off).
     cross_indices_cpu = []
-    if "bg_cross_projections" in getattr(bridge, "_plasticity_gate_to_synapses", {}):
-        cross_indices_cpu = list(bridge._plasticity_gate_to_synapses["bg_cross_projections"])
+    if "corticostriatal_cross" in getattr(bridge, "_plasticity_gate_to_synapses", {}):
+        cross_indices_cpu = list(bridge._plasticity_gate_to_synapses["corticostriatal_cross"])
 
     # Early-out: zero goals → nothing to drive. Useful for tests that only
     # exercise the gate-thaw / signature path. Fall through to the summary.
@@ -1440,7 +1440,7 @@ def _run_pretraining_phase(
             # (which can exceed nnz to leave room for structural plasticity), so
             # we slice it down to nnz before handing to update_pruning.
             if cfg.enable_structural_pruning and bridge.cp_synapse_alive is not None:
-                cross_idx_list = bridge._plasticity_gate_to_synapses.get("bg_cross_projections")
+                cross_idx_list = bridge._plasticity_gate_to_synapses.get("corticostriatal_cross")
                 if cross_idx_list:
                     nnz = int(bridge.cp_connections.nnz)
                     bridge.update_pruning(
@@ -1470,7 +1470,7 @@ def _run_pretraining_phase(
         print(f"[g11 seed={seed}] pretraining complete: {trial_counter} trials, "
               f"{n_goal_changes} goal changes; cross weights mean={cross_mean:.3f} "
               f"std={cross_std:.3f} -> handing off to eval (curriculum will freeze "
-              f"bg_cross_projections)", flush=True)
+              f"corticostriatal_cross)", flush=True)
 
     return {
         "n_trials": trial_counter,
@@ -1495,7 +1495,7 @@ def _gate_required(name: str, regions, enable_bg_cross_projections: bool = True)
     """
     if name == "corticostriatal":
         return True
-    if name == "bg_cross_projections":
+    if name == "corticostriatal_cross":
         return enable_bg_cross_projections
     return False
 
@@ -1641,7 +1641,7 @@ def run_moving_goal_episode(
     curriculum_phase2_cortex_gain: float = 0.0,
     curriculum_phase2_hippo_gain: float = 1.0,
     # Cheat #5 closure (2026-04-28): cross-projections (cortex_X → str_D1_Y / str_D2_Y
-    # for X != Y) are tagged with a separate plasticity gate "bg_cross_projections"
+    # for X != Y) are tagged with a separate plasticity gate "corticostriatal_cross"
     # so the curriculum can stage them later than same-action pathways. The
     # naive approach (cross-projections on same gate as same-action) failed
     # 2026-04-27 because phase-0 motor activations reinforced cross-projections
@@ -1748,9 +1748,10 @@ def run_moving_goal_episode(
     if enable_developmental_pretraining and not enable_bg_cross_projections:
         print(
             "[g11 warning] --developmental-pretraining without "
-            "--bg-cross-projections: pretraining will run but won't shape any "
-            "bg_cross_projections gate (no cross pathways exist). Did you "
-            "mean to also pass --bg-cross-projections?",
+            "--enable-corticostriatal-cross: pretraining will run but won't shape any "
+            "corticostriatal_cross gate (no cross pathways exist). Did you "
+            "mean to also pass --enable-corticostriatal-cross "
+            "(or its legacy alias --bg-cross-projections)?",
             flush=True,
         )
     import cupy as cp
@@ -2159,7 +2160,7 @@ def run_moving_goal_episode(
     SUCCESSFUL_TRAJ_MAX = 200
 
     # Curriculum: real plasticity gating (Stage 3, 2026-04-27).
-    # The hippo→cortex pathways are tagged "hippo_to_cortex" and cortex→D1/D2
+    # The hippo→cortex pathways are tagged "place_goal_to_cortex" and cortex→D1/D2
     # are tagged "corticostriatal" in build_bg_brain_regions. We use these gates
     # to implement true developmental staging:
     #   Phase 1 (warmup): cortex→D1 plastic, hippo→cortex frozen
@@ -2199,18 +2200,18 @@ def run_moving_goal_episode(
         )
 
     available_gates = bridge.list_plasticity_gates() if enable_curriculum else []
-    has_hippo_gate = enable_curriculum and "hippo_to_cortex" in available_gates
+    has_hippo_gate = enable_curriculum and "place_goal_to_cortex" in available_gates
     has_cortex_gate = enable_curriculum and "corticostriatal" in available_gates
     has_sensory_gate = enable_curriculum and "sensory_to_cortex" in available_gates
     has_beacon_gate = enable_curriculum and "beacon_to_goal" in available_gates
     has_landmark_gate = enable_curriculum and "landmark_to_place" in available_gates
-    has_bg_cross_gate = enable_curriculum and "bg_cross_projections" in available_gates
+    has_bg_cross_gate = enable_curriculum and "corticostriatal_cross" in available_gates
     bg_cross_thawed = False  # tracks the phase-3 thaw event for verbose logging
     if enable_curriculum:
         # Phase 1: input plasticity OFF, corticostriatal plasticity ON,
         # bg_cross_projections OFF (stays off until phase 3 if configured)
         if has_hippo_gate:
-            bridge.set_plasticity_gate("hippo_to_cortex", 0.0)
+            bridge.set_plasticity_gate("place_goal_to_cortex", 0.0)
         if has_sensory_gate:
             bridge.set_plasticity_gate("sensory_to_cortex", 0.0)
         if has_beacon_gate:
@@ -2220,12 +2221,12 @@ def run_moving_goal_episode(
         if has_cortex_gate:
             bridge.set_plasticity_gate("corticostriatal", 1.0)
         if has_bg_cross_gate:
-            bridge.set_plasticity_gate("bg_cross_projections", 0.0)
+            bridge.set_plasticity_gate("corticostriatal_cross", 0.0)
         if verbose:
             ramp_msg = (f", ramp={curriculum_ramp_steps}" if curriculum_ramp_steps > 0
                        else " (abrupt)")
             gates_msg = ", ".join(filter(None, [
-                "hippo_to_cortex" if has_hippo_gate else None,
+                "place_goal_to_cortex" if has_hippo_gate else None,
                 "sensory_to_cortex" if has_sensory_gate else None,
             ]))
             print(f"[g11 seed={seed}] curriculum phase 1: corticostriatal plastic, "
@@ -2283,7 +2284,7 @@ def run_moving_goal_episode(
                 if has_cortex_gate:
                     bridge.set_plasticity_gate("corticostriatal", float(target_cortex))
                 if has_hippo_gate:
-                    bridge.set_plasticity_gate("hippo_to_cortex", float(target_hippo))
+                    bridge.set_plasticity_gate("place_goal_to_cortex", float(target_hippo))
                 if has_sensory_gate:
                     bridge.set_plasticity_gate("sensory_to_cortex", float(target_sensory))
                 if has_beacon_gate:
@@ -2302,7 +2303,7 @@ def run_moving_goal_episode(
                     if has_cortex_gate:
                         bridge.set_plasticity_gate("corticostriatal", float(curriculum_phase2_cortex_gain))
                     if has_hippo_gate:
-                        bridge.set_plasticity_gate("hippo_to_cortex", float(curriculum_phase2_hippo_gain))
+                        bridge.set_plasticity_gate("place_goal_to_cortex", float(curriculum_phase2_hippo_gain))
                     if has_sensory_gate:
                         bridge.set_plasticity_gate("sensory_to_cortex", float(curriculum_phase2_hippo_gain))
                     if has_beacon_gate:
@@ -2326,7 +2327,7 @@ def run_moving_goal_episode(
             has_bg_cross_gate and not bg_cross_thawed
             and bg_cross_thaw_step >= 0 and step >= bg_cross_thaw_step
         ):
-            bridge.set_plasticity_gate("bg_cross_projections", float(bg_cross_phase3_gain))
+            bridge.set_plasticity_gate("corticostriatal_cross", float(bg_cross_phase3_gain))
             bg_cross_thawed = True
             if verbose:
                 print(f"[g11 seed={seed}] step {step}: CURRICULUM PHASE 3 -- "
@@ -2346,7 +2347,7 @@ def run_moving_goal_episode(
             if has_cortex_gate:
                 bridge.set_plasticity_gate("corticostriatal", 1.0)
             if has_hippo_gate:
-                bridge.set_plasticity_gate("hippo_to_cortex", 0.0)
+                bridge.set_plasticity_gate("place_goal_to_cortex", 0.0)
             if has_sensory_gate:
                 bridge.set_plasticity_gate("sensory_to_cortex", 0.0)
             # Mark phase entry for verbose output
@@ -2361,7 +2362,7 @@ def run_moving_goal_episode(
             if has_cortex_gate:
                 bridge.set_plasticity_gate("corticostriatal", float(curriculum_phase2_cortex_gain))
             if has_hippo_gate:
-                bridge.set_plasticity_gate("hippo_to_cortex", float(curriculum_phase2_hippo_gain))
+                bridge.set_plasticity_gate("place_goal_to_cortex", float(curriculum_phase2_hippo_gain))
 
         # Interactive runtime control (2026-04-28). Polls a JSON file every
         # trial for paused / goal / inject_reward overrides from the webapp.
@@ -2957,7 +2958,12 @@ def main():
                     help="If set, place_cells receive ONLY landmark-derived input (no direct (x,y) cheat). True Stage 2 perception test.")
     ap.add_argument("--sensed-reward", action="store_true",
                     help="Cheat #4: compute reward from beacon-intensity gradient (sensed signal) instead of Manhattan distance change (cheat). Requires --beacon-perception.")
-    ap.add_argument("--bg-cross-projections", action="store_true",
+    # Canonical: --enable-corticostriatal-cross (specifies cortex→striatum
+    # cross-action, not BG-internal cross). Legacy --bg-cross-projections kept
+    # as alias for one release cycle (2026-04-29 Wave-2 rename #19).
+    # Currently NEGATIVE on cheat-5 evaluation; on hold pending biology buildout.
+    ap.add_argument("--enable-corticostriatal-cross", "--bg-cross-projections",
+                    action="store_true", dest="bg_cross_projections",
                     help="Cheat #5: enable cortex × str_D1 cross-projections (e.g. cortex_E → str_D1_W) at weak initial weight. Plasticity learns the right cross-strengths instead of hand-coded same-action-only.")
     ap.add_argument("--cross-projection-weight", type=float, default=5.0,
                     help="Initial weight for BG cross-projections (default 5.0 vs 25.0 same-action).")
@@ -3037,7 +3043,12 @@ def main():
                          "interneuron classes per Tepper-2018; the others are NOT "
                          "modeled. See "
                          "docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md.")
-    ap.add_argument("--enable-bg-neuropeptides", action="store_true",
+    # Canonical: --enable-msn-co-release (more specific — D1 co-releases
+    # dynorphin + substance P with GABA, D2 co-releases enkephalin with GABA).
+    # Legacy --enable-bg-neuropeptides kept as alias for one release cycle
+    # (2026-04-29 Wave-2 rename #25).
+    ap.add_argument("--enable-msn-co-release", "--enable-bg-neuropeptides",
+                    action="store_true", dest="enable_bg_neuropeptides",
                     help="R3.6 (2026-04-29): D1/D2 neuropeptide co-release. "
                          "Registers dynorphin (D1, KOR plasticity-rate brake), "
                          "substance P (D1, NK-1 ACh boost), and enkephalin "
@@ -3071,7 +3082,7 @@ def main():
                          "compartmentalized-da-design.md.")
     ap.add_argument("--enable-cluster-d-hippocampus", action="store_true",
                     help="Cluster D v1 (2026-04-29): hippocampus trisynaptic "
-                         "loop. Adds 5 regions (ec, dg, dg_fs, ca3, ca1) and "
+                         "loop. Adds 5 regions (ec, dg, dg_pv_basket, ca3, ca1) and "
                          "~10 pathways implementing the canonical Cajal loop "
                          "(EC -> DG -> CA3 -> CA1 + EC -> CA1 direct + CA3 "
                          "recurrent autoassociator). Composes with --hippocampus "
@@ -3120,8 +3131,14 @@ def main():
                          "Enable FS-mediated motor pool lateral inhibition "
                          "(WTA microcircuit). Real motor-pool WTA biology is "
                          "spinal Renshaw, not cortical-FS-like inhibition.")
-    ap.add_argument("--cortex-wta", action="store_true",
-                    help="Enable cortex-level WTA: per-pool FS interneurons enforce one-cortex-pool-wins. Tools plastic input layers (hippocampus, learned-perception) to coexist with heuristic.")
+    # Canonical: --enable-m1-pv-basket. Implementation is per-pool FS+ basket
+    # cells (cortical PV+ basket biology, Kandel ch 17). Legacy --cortex-wta
+    # kept as alias for one release cycle (2026-04-29 Wave-2 rename #24).
+    # NB: cortex_FS_X regions remain on the legacy name pending #23 (Wave-2;
+    # paired with broader cortical interneuron taxonomy expansion).
+    ap.add_argument("--enable-m1-pv-basket", "--cortex-wta", action="store_true",
+                    dest="cortex_wta",
+                    help="Enable M1-level PV+ basket-cell WTA: per-pool FS interneurons enforce one-cortex-pool-wins. Tools plastic input layers (place_goal_readout, learned-perception) to coexist with heuristic.")
     ap.add_argument("--per-action-da", action="store_true",
                     help="Enable per-action dopamine targeting (hard): reward only credits chosen action's cortex->D1 synapses")
     ap.add_argument("--adaptive-da", action="store_true",

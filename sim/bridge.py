@@ -1973,6 +1973,18 @@ class SimulationBridge:
         # rename. The implementation gates dlPFC working-memory recurrent + I/O
         # plasticity, not all of prefrontal cortex.
         "pfc_pathways": "dlpfc_wm_pathways",
+        # 2026-04-29 Wave-2 rename #20: hippo_to_cortex follows the
+        # place_cells -> sensor_place_readout + goal_cells -> ppc_goal_input
+        # renames. The gate covers both place + goal readout, neither of
+        # which is canonical hippocampus.
+        "hippo_to_cortex": "place_goal_to_cortex",
+        # 2026-04-29 Wave-2 rename #21: pfc_internal follows pfc -> dlpfc_wm.
+        # Gate covers internal recurrent connectivity of the dlPFC WM region.
+        "pfc_internal": "dlpfc_wm_recurrent",
+        # 2026-04-29 Wave-2 rename #19: bg_cross_projections is more specifically
+        # the corticostriatal cross-action gate (cortex_X -> str_D1/D2_Y for X!=Y),
+        # not BG-internal cross.
+        "bg_cross_projections": "corticostriatal_cross",
     }
 
     def _canonicalize_gate_name(self, name: str) -> str:

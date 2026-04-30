@@ -345,6 +345,18 @@ class RegionManager:
         # 1978 criteria (sensor-driven); goal_cells are anatomically PPC-like.
         "place_cells": "sensor_place_readout",
         "goal_cells": "ppc_goal_input",
+        # 2026-04-29 Wave-2 rename #22: DG basket cells are PV+ specifically
+        # (Kandel ch 54). Old name "dg_fs" suggested generic fast-spiking
+        # but the Cluster D DG inhibitory pool is canonically PV+ basket.
+        "dg_fs": "dg_pv_basket",
+        # 2026-04-29 Wave-3 rename #31: cosmetic. Both "patch" and "striosome"
+        # are accepted in modern literature (Bolam 2000, PBR-160 ch 9).
+        # Renaming to canonical scientific term while keeping "patch" as
+        # the legacy alias for sidecar JSON compatibility.
+        "str_patch_N": "str_striosome_N",
+        "str_patch_E": "str_striosome_E",
+        "str_patch_S": "str_striosome_S",
+        "str_patch_W": "str_striosome_W",
     }
 
     def _canonicalize_region_name(self, region_name: str) -> str:

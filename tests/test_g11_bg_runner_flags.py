@@ -298,7 +298,7 @@ def test_bg_cross_projections_use_separate_gate():
     assert all(p.plasticity_gate == "corticostriatal" for p in same_action), (
         "all same-action cortex→striatum paths should share the corticostriatal gate"
     )
-    assert all(p.plasticity_gate == "bg_cross_projections" for p in cross), (
+    assert all(p.plasticity_gate == "corticostriatal_cross" for p in cross), (
         "all cross-projection cortex→striatum paths should be on the "
         "bg_cross_projections gate (introduced 2026-04-28 to close cheat #5)"
     )
@@ -428,7 +428,7 @@ def test_pretraining_raises_on_missing_gate():
             verbose=False,
         )
     msg = exc_info.value.args[0]
-    assert "bg_cross_projections" in msg or "sensory_to_cortex" in msg, (
+    assert "corticostriatal_cross" in msg or "sensory_to_cortex" in msg, (
         "error should name at least one missing gate")
     assert "corticostriatal" in msg, (
         "error should list the actually-available gates so the user can spot the typo")
@@ -447,7 +447,7 @@ def test_pretraining_thaws_all_gates_at_start():
             self.calls = []
 
         def list_plasticity_gates(self):
-            return ["corticostriatal", "bg_cross_projections", "sensory_to_cortex"]
+            return ["corticostriatal", "corticostriatal_cross", "sensory_to_cortex"]
 
         def set_plasticity_gate(self, name, value):
             self._values[name] = value
@@ -465,7 +465,7 @@ def test_pretraining_thaws_all_gates_at_start():
     )
 
     # Every gate the bridge knows about should have been set to 1.0
-    for gate in ["corticostriatal", "bg_cross_projections", "sensory_to_cortex"]:
+    for gate in ["corticostriatal", "corticostriatal_cross", "sensory_to_cortex"]:
         assert (gate, 1.0) in fb.calls, (
             f"gate {gate!r} was not thawed to 1.0; calls={fb.calls}")
 
@@ -610,7 +610,7 @@ def test_developmental_pretraining_warns_without_cross_projections(tmp_out_path,
     captured = capsys.readouterr()
     assert "warning" in captured.out.lower() or "warning" in captured.err.lower(), (
         "expected a warning about pretraining without cross-projections")
-    assert "bg-cross-projections" in captured.out or "bg_cross_projections" in captured.out
+    assert "bg-cross-projections" in captured.out or "corticostriatal_cross" in captured.out
 
 
 # ───────────────────── 2026-04-28: structural-pruning closure ─────────────────────
@@ -644,7 +644,7 @@ def test_pretraining_with_pruning_smoke(tmp_out_path):
         bridge = kwargs.get("bridge", args[0] if args else None)
         result = original(*args, **kwargs)
         if bridge.cp_synapse_alive is not None:
-            cross = bridge._plasticity_gate_to_synapses.get("bg_cross_projections")
+            cross = bridge._plasticity_gate_to_synapses.get("corticostriatal_cross")
             if cross:
                 idx = cp.asarray(list(cross), dtype=cp.int64)
                 snapshots["cross_alive_count"] = int(bridge.cp_synapse_alive[idx].sum())
@@ -961,33 +961,33 @@ def test_tonic_da_triggers_plasticity_rate_modulation():
 # ───────────────────── 2026-04-29: R3.11 striosome (patch) split ─────────────────────
 
 
-def test_str_patch_regions_present_by_default():
-    """R3.11: str_patch_X regions exist unconditionally (4 actions)."""
+def test_str_striosome_regions_present_by_default():
+    """R3.11: str_striosome_X regions exist unconditionally (4 actions)."""
     from research.runners.g11_bg_runner import build_bg_brain_regions
     regions, _ = build_bg_brain_regions()
-    patch_names = {r.name for r in regions if r.name.startswith("str_patch_")}
-    assert patch_names == {"str_patch_N", "str_patch_E", "str_patch_S", "str_patch_W"}
+    patch_names = {r.name for r in regions if r.name.startswith("str_striosome_")}
+    assert patch_names == {"str_striosome_N", "str_striosome_E", "str_striosome_S", "str_striosome_W"}
 
 
-def test_str_patch_targets_dopamine_and_gpi():
+def test_str_striosome_targets_dopamine_and_gpi():
     """Per PBR-160 ch 9/11: striosomes project to BOTH SNc (DA) and SNr (gpi).
-    R3.11 wires str_patch_X -> dopamine and str_patch_X -> gpi_X."""
+    R3.11 wires str_striosome_X -> dopamine and str_striosome_X -> gpi_X."""
     from research.runners.g11_bg_runner import build_bg_brain_regions
     _, pathways = build_bg_brain_regions()
     patch_outs = [(p.from_region, p.to_region) for p in pathways
-                  if p.from_region.startswith("str_patch_")]
+                  if p.from_region.startswith("str_striosome_")]
     for action in ("N", "E", "S", "W"):
-        assert (f"str_patch_{action}", "snc") in patch_outs, \
-            f"missing str_patch_{action} -> snc (canonical striosome->SNc)"
-        assert (f"str_patch_{action}", f"gpi_{action}") in patch_outs, \
-            f"missing str_patch_{action} -> gpi_{action} (striosome->SNr per Deniau)"
+        assert (f"str_striosome_{action}", "snc") in patch_outs, \
+            f"missing str_striosome_{action} -> snc (canonical striosome->SNc)"
+        assert (f"str_striosome_{action}", f"gpi_{action}") in patch_outs, \
+            f"missing str_striosome_{action} -> gpi_{action} (striosome->SNr per Deniau)"
 
 
-def test_str_patch_uses_msn_e_inh_override():
-    """str_patch_X regions inherit MSN class E_inh override (-60 mV) per R1.1."""
+def test_str_striosome_uses_msn_e_inh_override():
+    """str_striosome_X regions inherit MSN class E_inh override (-60 mV) per R1.1."""
     from research.runners.g11_bg_runner import build_bg_brain_regions
     regions, _ = build_bg_brain_regions()
-    patch_regions = [r for r in regions if r.name.startswith("str_patch_")]
+    patch_regions = [r for r in regions if r.name.startswith("str_striosome_")]
     for r in patch_regions:
         assert r.syn_reversal_potential_i_override == -60.0, \
             f"{r.name} should have E_inh override = -60 mV (MSN class)"
@@ -1011,7 +1011,7 @@ def test_tans_kwarg_accepted(tmp_out_path):
 # ───────────────────── 2026-04-29: Cluster D v1 hippocampus trisynaptic loop ─────────────────────
 
 
-_CLUSTER_D_REGIONS = ("ec", "dg", "dg_fs", "ca3", "ca1")
+_CLUSTER_D_REGIONS = ("ec", "dg", "dg_pv_basket", "ca3", "ca1")
 
 
 def test_cluster_d_default_off():
@@ -1035,13 +1035,13 @@ def test_cluster_d_regions_present():
     by_name = {r.name: r for r in regions}
     assert by_name["ec"].n_neurons == 80
     assert by_name["dg"].n_neurons == 200
-    assert by_name["dg_fs"].n_neurons == 60
+    assert by_name["dg_pv_basket"].n_neurons == 60
     assert by_name["ca3"].n_neurons == 100
     assert by_name["ca1"].n_neurons == 120
     # CA3 must be the autoassociator: dense recurrent collaterals.
     assert by_name["ca3"].internal_density == 0.30
     # DG fs is all-inhibitory (auto-derived inhibitory outputs).
-    assert by_name["dg_fs"].exc_fraction == 0.0
+    assert by_name["dg_pv_basket"].exc_fraction == 0.0
 
 
 def test_cluster_d_trisynaptic_pathways():
@@ -1063,12 +1063,12 @@ def test_cluster_d_dg_ffi():
     from research.runners.g11_bg_runner import build_bg_brain_regions
     _, pathways = build_bg_brain_regions(enable_cluster_d_hippocampus=True)
     pairs = {(p.from_region, p.to_region) for p in pathways}
-    assert ("ec", "dg_fs") in pairs, "missing ec -> dg_fs (FFi recruitment)"
-    assert ("dg_fs", "dg") in pairs, "missing dg_fs -> dg (FFi to granule cells)"
+    assert ("ec", "dg_pv_basket") in pairs, "missing ec -> dg_fs (FFi recruitment)"
+    assert ("dg_pv_basket", "dg") in pairs, "missing dg_fs -> dg (FFi to granule cells)"
     # Both should be static (FFi is structural, not learned).
     by_pair = {(p.from_region, p.to_region): p for p in pathways}
-    assert by_pair[("ec", "dg_fs")].plastic is False, "ec -> dg_fs should be static"
-    assert by_pair[("dg_fs", "dg")].plastic is False, "dg_fs -> dg should be static"
+    assert by_pair[("ec", "dg_pv_basket")].plastic is False, "ec -> dg_fs should be static"
+    assert by_pair[("dg_pv_basket", "dg")].plastic is False, "dg_fs -> dg should be static"
 
 
 def test_cluster_d_ca1_to_place_cells_only_with_hippocampus():
@@ -1361,7 +1361,7 @@ def test_compartmentalized_da_action_index_populated_on_regions():
     # Action-specific regions
     for idx, action in enumerate(ACTION_NAMES):
         for prefix in ("cortex_", "str_D1_", "str_D2_", "gpi_", "thal_",
-                       "motor_", "gpe_", "gpe_arky_", "str_patch_"):
+                       "motor_", "gpe_", "gpe_arky_", "str_striosome_"):
             name = f"{prefix}{action}"
             assert name in by_name, f"region {name} not built"
             assert by_name[name].action_index == idx, \
@@ -1375,7 +1375,7 @@ def test_compartmentalized_da_action_index_populated_on_regions():
 
     # Non-action-specific regions
     for name in ("stn", "snc", "sensory", "sensor_place_readout", "ppc_goal_input",
-                 "ec", "dg", "dg_fs", "ca3", "ca1"):
+                 "ec", "dg", "dg_pv_basket", "ca3", "ca1"):
         if name in by_name:
             assert by_name[name].action_index is None, \
                 f"{name} action_index should be None; got {by_name[name].action_index}"
