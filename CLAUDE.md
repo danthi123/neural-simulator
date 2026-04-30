@@ -512,6 +512,19 @@ strictly better for the cheat-5 multi-goal navigation benchmark.
   — trisynaptic loop EC→DG→CA3→CA1 with FFi-mediated DG sparsity, plastic
   CA3 recurrent autoassociator, Schaffer CA3→CA1, CA1→place_cells readout.
   Eval in progress.
+  **Cluster F v1 SHIPPED + NEUTRAL (`--enable-cluster-f-cerebellum`, 2026-04-29)**
+  — Marr-Albus-Ito cerebellar microcircuit, reward-gated PF→PC LTD. Cheat-5
+  multi-goal det: AF 7.37 ± 1.83, AEF 8.02 ± 1.81 (vs baseline 7.77 ± 3.33).
+  Std reduction ~45% but no mean improvement.
+  See [`research/findings/2026-04-29-cluster-f-results.md`](research/findings/2026-04-29-cluster-f-results.md).
+  **Cluster F v2 SHIPPED + NO-GO (`--enable-cluster-f-v2`, 2026-04-30)**
+  — CF-gated anti-Hebbian LTD per Albus 1971 §IV.C eq.4 (decoupled from
+  global reward). 6-seed eval: AFv2 21.77 ± 2.35, AEFv2 24.88 ± 3.07 —
+  3× WORSE than baseline (Welch t +8.4 / +9.3). Likely the ~64-PF reduced
+  model can't absorb anti-Hebbian LTD that real cerebellum spreads across
+  ~150K PFs. Implementation correct (47 unit tests pass, biology probe ok)
+  but mechanism breaks at our scale. **Do not stack F v2 on flagship.**
+  See [`research/findings/2026-04-30-cluster-f-v2-results.md`](research/findings/2026-04-30-cluster-f-v2-results.md).
   **Cluster C v2 DESIGNED (compartmentalized DA, 2026-04-29)** —
   fallback for if A/C v1/D evals don't close cheat-5; per-action DA
   channels with synapse action-tagging.
