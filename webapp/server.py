@@ -390,11 +390,15 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
     out_path = str(RAW_RUNS_DIR / out_filename)
 
     extras = list(req.extra_args)
-    control_file: str | None = None
-    if req.preset.startswith("interactive_"):
-        control_file = str(RUNTIME_DIR / f"control_{run_id}.json")
-        Path(control_file).write_text("{}")
-        extras.extend(["--interactive-control-file", control_file])
+    # Always create a control file so EVERY run can be paused/resumed.
+    # Previously gated to interactive_* presets only, but the pause
+    # capability is generally useful (free GPU for other work without
+    # losing run progress). Goal-override / inject-reward fields still
+    # only really matter for interactive_* runs but are harmless extras
+    # for non-interactive runs.
+    control_file = str(RUNTIME_DIR / f"control_{run_id}.json")
+    Path(control_file).write_text("{}")
+    extras.extend(["--interactive-control-file", control_file])
 
     # Inject a sensible --progress-print-interval default if none is set
     # in the preset or the user's extras.

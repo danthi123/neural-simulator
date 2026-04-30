@@ -334,8 +334,48 @@ async function refreshLivePicker(showHeading) {
       small.textContent = `${status}${progress} · elapsed ${Math.round(displayElapsed)}s`;
       item.appendChild(name);
       item.appendChild(small);
-      // Kill button only for in-flight runs
+      // Pause + Kill buttons only for in-flight runs
       if (r.running) {
+        // Pause/resume toggle. Sets paused=true|false in the run's
+        // interactive control file; runner polls and sleeps at env-step
+        // boundaries while paused. Useful for freeing GPU for other work
+        // without killing the run.
+        const pauseBtn = document.createElement("button");
+        pauseBtn.className = "kill-btn";  // reuse kill-btn styling
+        pauseBtn.style.marginRight = "4px";
+        pauseBtn.style.background = "#1c5";  // green-ish, distinct from kill red
+        const refreshPauseLabel = (paused) => {
+          pauseBtn.textContent = paused ? "▶ Resume" : "⏸ Pause";
+          pauseBtn.title = paused
+            ? "Click to resume this run"
+            : "Click to pause this run (frees GPU; resume later without losing progress)";
+        };
+        // Probe current state via GET /control
+        fetch(`/api/runs/launch/${r.run_id}/control`)
+          .then((res) => (res.ok ? res.json() : null))
+          .then((state) => refreshPauseLabel(!!(state && state.paused)))
+          .catch(() => refreshPauseLabel(false));
+        pauseBtn.addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          // Toggle: read, flip, write
+          let paused = false;
+          try {
+            const res = await fetch(`/api/runs/launch/${r.run_id}/control`);
+            if (res.ok) {
+              const state = await res.json();
+              paused = !!state.paused;
+            }
+          } catch { /* default false */ }
+          const next = !paused;
+          await fetch(`/api/runs/launch/${r.run_id}/control`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paused: next }),
+          });
+          refreshPauseLabel(next);
+        });
+        item.appendChild(pauseBtn);
+
         const killBtn = document.createElement("button");
         killBtn.className = "kill-btn";
         killBtn.textContent = "✕ Kill";

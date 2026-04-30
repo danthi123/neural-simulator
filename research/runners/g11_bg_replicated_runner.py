@@ -629,11 +629,19 @@ def main() -> int:
     ap.add_argument("--enable-cluster-d-hippocampus", action="store_true")
     ap.add_argument("--reward-lr", type=float, default=0.01)
     ap.add_argument("--weight-jitter", type=float, default=0.05)
-    ap.add_argument("--pause-flag-path", type=str, default=None,
+    # Pause-on-demand control file. Accepts BOTH names:
+    # - --interactive-control-file: the canonical name used by g11_bg_runner.py
+    #   and the webapp's launcher. Allows pause + (in non-replicated runs)
+    #   goal override / reward injection.
+    # - --pause-flag-path: replicated-runner-only legacy alias.
+    # Both route to the same dest. While {"paused": true} the runner
+    # sleeps at env-step boundaries until flipped to false or deleted.
+    ap.add_argument("--interactive-control-file", "--pause-flag-path",
+                    type=str, default=None, dest="pause_flag_path",
                     help='Path to a JSON control file. While {"paused": true}, '
-                         'the runner sleeps at env-step boundaries until flipped '
-                         'to false or deleted. Lets you pause for gaming etc. '
-                         'without losing progress.')
+                         'runner sleeps at env-step boundaries until flipped '
+                         'to false or deleted. Lets you pause without losing '
+                         'progress.')
     ap.add_argument("--pause-poll-interval", type=float, default=2.0,
                     help="How often (sec) to re-check pause_flag_path while paused.")
     ap.add_argument("-q", "--quiet", action="store_true")
