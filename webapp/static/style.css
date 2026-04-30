@@ -529,32 +529,32 @@ pre {
   max-width: none;
 }
 
-.world-run-item .kill-btn {
-  background: transparent;
-  border: 1px solid var(--accent-bad);
-  color: var(--accent-bad);
+.world-run-item .run-item-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+.world-run-item .kill-btn,
+.world-run-item .pause-btn {
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 10px;
   cursor: pointer;
-  margin-top: 4px;
-  align-self: flex-start;
+  background: transparent;
+}
+.world-run-item .kill-btn {
+  border: 1px solid var(--accent-bad);
+  color: var(--accent-bad);
 }
 .world-run-item .kill-btn:hover {
   background: var(--accent-bad);
   color: var(--bg);
 }
 .world-run-item .pause-btn {
-  background: transparent;
   border: 1px solid var(--accent);
   color: var(--accent);
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 10px;
-  cursor: pointer;
-  margin-top: 4px;
-  margin-right: 4px;
-  align-self: flex-start;
 }
 .world-run-item .pause-btn:hover {
   background: var(--accent);

@@ -361,9 +361,12 @@ async function refreshLivePicker(showHeading) {
       }
 
       // Pause + Kill buttons: present iff running. Create on first running tick;
-      // remove if the run transitions to done.
+      // remove if the run transitions to done. Wrapped in a flex row so
+      // Pause sits on the left and Kill on the right, in the same row.
       const wasRunning = !!item._pauseBtn;
       if (r.running && !wasRunning) {
+        const btnRow = document.createElement("div");
+        btnRow.className = "run-item-buttons";
         // Pause/resume toggle. Sets paused=true|false in the run's
         // interactive control file; runner polls and sleeps at env-step
         // boundaries while paused. Useful for freeing GPU for other work
@@ -412,7 +415,7 @@ async function refreshLivePicker(showHeading) {
             setLabel(current);
           }
         });
-        item.appendChild(pauseBtn);
+        btnRow.appendChild(pauseBtn);
         item._pauseBtn = pauseBtn;
 
         const killBtn = document.createElement("button");
@@ -423,18 +426,18 @@ async function refreshLivePicker(showHeading) {
           if (window.killLaunchedRun) await window.killLaunchedRun(r.run_id);
           setTimeout(() => openLiveModePicker(), 800);
         });
-        item.appendChild(killBtn);
+        btnRow.appendChild(killBtn);
         item._killBtn = killBtn;
+        item.appendChild(btnRow);
+        item._btnRow = btnRow;
       } else if (!r.running && wasRunning) {
-        // Transitioned to done: remove buttons
-        if (item._pauseBtn) {
-          item._pauseBtn.remove();
-          item._pauseBtn = null;
+        // Transitioned to done: remove the whole button row in one shot
+        if (item._btnRow) {
+          item._btnRow.remove();
+          item._btnRow = null;
         }
-        if (item._killBtn) {
-          item._killBtn.remove();
-          item._killBtn = null;
-        }
+        item._pauseBtn = null;
+        item._killBtn = null;
       }
 
       // Append new items at the end. Existing items already in the DOM stay

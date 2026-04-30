@@ -601,6 +601,61 @@ def run_replicated_multi_goal(
     }
 
 
+def _emit_webapp_sidecar(args) -> None:
+    """Write a `.cmd.json` sidecar in the format the webapp's
+    /api/runs orphan-scan expects, so a raw-spawned replicated runner
+    is visible in the dashboard's Live picker.
+
+    Sidecar fields (mirror webapp/server.py launch_run sidecar):
+    - run_id: short hex generated here
+    - cmd: sys.argv (resolved python + args)
+    - pid: this process
+    - log_file: None — replicated runner doesn't redirect stdout, so the
+      webapp displays the entry but can't tail it. Acceptable: pause and
+      kill still work; progress events just won't stream to the picker.
+    - control_file: pause-flag-path if any (so webapp shows pause button)
+    - out_path: the resolved out-path of the FIRST replica seed (the
+      sidecar lives next to it so the webapp's run-listing finds it).
+    - started_at: now.
+
+    File location: next to the first seed's output, named
+    `<first_seed_basename>.cmd.json` so the webapp's RAW_RUNS_DIR.glob
+    picks it up.
+    """
+    import uuid
+    run_id = uuid.uuid4().hex[:12]
+    # Resolve first seed's out path — same format string as run_replicated
+    first_seed = args.seeds[0]
+    out_path = args.out_template.replace("SEED", str(first_seed))
+    if not os.path.isabs(out_path):
+        # Webapp expects absolute; resolve relative to CWD just like
+        # the webapp launcher does.
+        out_path = os.path.abspath(out_path)
+    sidecar_path = Path(out_path).with_suffix(".cmd.json")
+    sidecar_path.parent.mkdir(parents=True, exist_ok=True)
+    sidecar = {
+        "run_id": run_id,
+        "preset": "replicated",  # synthetic; not a real preset
+        "seed": first_seed,
+        "extra_args": [a for a in sys.argv[1:] if a != "--emit-webapp-sidecar"],
+        "deterministic": bool(args.deterministic),
+        "cmd": [sys.executable, "-m", "research.runners.g11_bg_replicated_runner", *sys.argv[1:]],
+        "pid": os.getpid(),
+        "log_file": None,
+        "control_file": args.pause_flag_path,
+        "out_path": out_path,
+        "started_at": time.time(),
+        # Distinguishing tag so the webapp can render this differently
+        # if desired (e.g. show "REPLICATED" badge). Unknown keys are
+        # ignored by the existing recovery code.
+        "runner_kind": "replicated",
+        "n_replicas": len(args.seeds),
+        "all_seeds": list(args.seeds),
+    }
+    sidecar_path.write_text(json.dumps(sidecar, indent=2))
+    print(f"[replicated_runner] webapp sidecar: {sidecar_path} (run_id={run_id} pid={os.getpid()})", flush=True)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--seeds", type=int, nargs="+", required=True,
@@ -645,7 +700,21 @@ def main() -> int:
     ap.add_argument("--pause-poll-interval", type=float, default=2.0,
                     help="How often (sec) to re-check pause_flag_path while paused.")
     ap.add_argument("-q", "--quiet", action="store_true")
+    # Webapp discovery: when this runner is launched directly via the
+    # terminal (not via the webapp's /api/runs/launch endpoint), the
+    # webapp's "Live mode" run picker can't see it. Writing a sidecar
+    # `.cmd.json` next to the per-seed output file with our PID lets
+    # the webapp's periodic orphan-scan pick us up and surface the
+    # process in the picker (where it can be killed or paused like any
+    # other run). Off by default to keep raw `python -m` invocations
+    # silent; enable for any run you want visible in the dashboard.
+    ap.add_argument("--emit-webapp-sidecar", action="store_true",
+                    help="Write a webapp-compatible sidecar so /api/runs "
+                         "orphan-scan picks up this raw-spawned runner.")
     args = ap.parse_args()
+
+    if args.emit_webapp_sidecar:
+        _emit_webapp_sidecar(args)
 
     return 0 if run_replicated_multi_goal(
         seeds=args.seeds,

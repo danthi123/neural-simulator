@@ -586,14 +586,21 @@ def kill_run(run_id: str) -> JSONResponse:
 # Orphan-run recovery on server startup
 # ─────────────────────────────────────────────────────────────────────────
 
-@app.on_event("startup")
-async def recover_orphan_runs() -> None:
-    """Scan sidecar `.cmd.json` files for runs whose pid is still alive.
-    Rebuild LaunchedRun entries for them so the dashboard's Live picker
-    can attach. Survives uvicorn --reload restarts.
+def _scan_for_orphans() -> int:
+    """Scan sidecar `.cmd.json` files for runs whose pid is still alive
+    and not yet in launched_runs. Reconstruct LaunchedRun entries for
+    them so the dashboard's Live picker can list (and pause/kill) them.
 
-    Sidecars whose pid is dead are ignored (run already completed).
-    Sidecars whose log file is missing are skipped."""
+    Two flavors of sidecar are accepted:
+    1. log_file is set (webapp-launched runs) — tail the log to seed
+       progress_events and continue draining.
+    2. log_file is None (raw-spawned runs that emit a sidecar via
+       --emit-webapp-sidecar) — list-only: no log, no progress events,
+       but pause + kill still work via control_file + pid.
+
+    Returns the number of newly-recovered runs (for logging).
+    """
+    new_count = 0
     for sidecar_path in RAW_RUNS_DIR.glob("*.cmd.json"):
         try:
             sidecar = json.loads(sidecar_path.read_text())
@@ -605,11 +612,17 @@ async def recover_orphan_runs() -> None:
         pid = sidecar.get("pid")
         if not pid or not _process_alive(pid):
             continue
-        log_file = sidecar.get("log_file")
-        if not log_file or not Path(log_file).exists():
+        # Defend against PID reuse: a sidecar's pid must belong to a
+        # python process whose create_time matches the sidecar's
+        # started_at. Without this check, recycled PIDs (Firefox, Claude,
+        # etc.) get listed as live runs every server restart.
+        if not _orphan_pid_belongs_to_runner(pid, sidecar.get("started_at")):
             continue
-        # Reconstruct the LaunchedRun. We don't have the Popen handle
-        # (proc=None) but we have everything else needed for tail + kill.
+        log_file = sidecar.get("log_file")
+        # log_file=None is now legal (raw-spawned runners). Skip only if
+        # log_file is set but the file is missing (corrupt/moved sidecar).
+        if log_file and not Path(log_file).exists():
+            continue
         run = LaunchedRun(
             run_id=run_id,
             cmd=sidecar.get("cmd", []),
@@ -621,28 +634,50 @@ async def recover_orphan_runs() -> None:
             pid=pid,
         )
         launched_runs[run_id] = run
-        # Resume tailing the log file from current end (not start) so
-        # we don't replay the entire history. New progress events will
-        # arrive as the runner continues.
-        try:
-            run.log_pos = Path(log_file).stat().st_size
-        except OSError:
-            run.log_pos = 0
-        # Replay progress events by also reading from start? We need them
-        # for the WebSocket replay-on-attach. Compromise: re-read from
-        # start NOW to seed progress_events, then continue tailing.
-        try:
-            new_pos, lines = _read_new_lines(log_file, 0)
-            for line in lines:
-                run.stdout_lines.append(line)
-                ev = _try_parse_progress(line, time.time())
-                if ev is not None:
-                    run.progress_events.append(ev)
-            run.log_pos = new_pos
-        except Exception:
-            pass
-        asyncio.create_task(_drain_log(run))
-        print(f"[webapp] recovered orphan run {run_id} (pid={pid})", flush=True)
+        if log_file:
+            # Webapp-launched orphan: resume from log start to seed progress.
+            try:
+                new_pos, lines = _read_new_lines(log_file, 0)
+                for line in lines:
+                    run.stdout_lines.append(line)
+                    ev = _try_parse_progress(line, time.time())
+                    if ev is not None:
+                        run.progress_events.append(ev)
+                run.log_pos = new_pos
+            except Exception:
+                run.log_pos = 0
+            asyncio.create_task(_drain_log(run))
+        # else: raw-spawned (no log). Skip drain_log; entry is still
+        # listable + killable + pausable.
+        new_count += 1
+        flavor = "raw-spawned" if not log_file else "webapp-launched"
+        print(f"[webapp] discovered {flavor} run {run_id} (pid={pid})", flush=True)
+    return new_count
+
+
+@app.on_event("startup")
+async def recover_orphan_runs() -> None:
+    """Initial orphan scan at server start. Periodic re-scan is in
+    `_periodic_orphan_scan` below."""
+    n = _scan_for_orphans()
+    if n:
+        print(f"[webapp] startup: recovered {n} orphan runs", flush=True)
+
+
+@app.on_event("startup")
+async def _periodic_orphan_scan() -> None:
+    """Re-scan for orphan sidecars every 30s. Picks up runs spawned via
+    raw `python -m research.runners.g11_bg_replicated_runner --emit-webapp-sidecar`
+    (or any other process that drops a sidecar) without requiring a
+    server restart."""
+    async def _loop():
+        while True:
+            await asyncio.sleep(30)
+            try:
+                _scan_for_orphans()
+            except Exception as e:
+                print(f"[webapp] periodic orphan scan failed: {e}", flush=True)
+    asyncio.create_task(_loop())
 
 
 class ControlUpdate(BaseModel):
@@ -746,6 +781,42 @@ def _process_alive(pid: int | None) -> bool:
         return True
     except Exception:
         return False
+
+
+def _orphan_pid_belongs_to_runner(pid: int | None, sidecar_started_at: float | None) -> bool:
+    """Validate that a sidecar's PID is plausibly the same process the
+    sidecar was written for, not a recycled PID belonging to an unrelated
+    application. Two checks:
+
+    1. Process name starts with "python" (case-insensitive). Filters out
+       PIDs reused by Firefox, Claude, etc.
+    2. Process create_time is within ±10 seconds of the sidecar's
+       started_at. Filters out the rare case of one Python process
+       inheriting a recycled PID from another Python process.
+
+    Falls open (returns True) if psutil is unavailable or the process
+    can't be inspected — the strict check is best-effort, not a hard
+    gate. _process_alive must already be true before calling this.
+    """
+    if pid is None:
+        return False
+    try:
+        import psutil  # type: ignore
+    except ImportError:
+        return True  # No psutil → keep prior behavior
+    try:
+        proc = psutil.Process(int(pid))
+        name = (proc.name() or "").lower()
+        if not name.startswith("python"):
+            return False
+        if sidecar_started_at is not None:
+            create_time = proc.create_time()
+            if abs(create_time - float(sidecar_started_at)) > 10.0:
+                return False
+        return True
+    except (psutil.NoSuchProcess, psutil.AccessDenied, ValueError):
+        # No process at that pid (race) or can't inspect — be permissive
+        return True
 
 
 async def _drain_log(run: LaunchedRun) -> None:
