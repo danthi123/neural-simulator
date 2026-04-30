@@ -525,6 +525,19 @@ strictly better for the cheat-5 multi-goal navigation benchmark.
   ~150K PFs. Implementation correct (47 unit tests pass, biology probe ok)
   but mechanism breaks at our scale. **Do not stack F v2 on flagship.**
   See [`research/findings/2026-04-30-cluster-f-v2-results.md`](research/findings/2026-04-30-cluster-f-v2-results.md).
+  **Cluster D v2 SHIPPED + PARTIAL (`--enable-cluster-d-v2-swr`, 2026-04-30)**
+  — SWR-gated CA3 plasticity. Replaces D v1's implicit CA3 internal_density
+  with an explicit ca3→ca3 RegionPathway tagged `ca3_swr_burst`; runner
+  flips the gate between 1.0 (open) and 0.1 (suppressed) every 7th sleep
+  step (~14% duty cycle, NREM ripple rate per Buzsaki 2015). Original
+  endogenous-burst design pivoted to scheduled windows after empirical
+  verification that 220 pA into CA3 doesn't produce sustained firing at
+  our scale. 6-seed tier-3: A+E+D 29.32 ± 6.95 → A+E+D+v2 27.68 ± 4.78
+  (Δmean=-1.64, std cut 31%, Welch t=-0.48 not significant at n=6).
+  Both stacks are still ~4× worse than A+E alone (6.97) — sleep replay
+  hurts D stacks, v2 mitigates the damage but doesn't fix the underlying
+  content-quality bottleneck. **Opt-in only; do not stack on flagship.**
+  See [`research/findings/2026-04-30-cluster-d-v2-results.md`](research/findings/2026-04-30-cluster-d-v2-results.md).
   **Cluster C v2 DESIGNED (compartmentalized DA, 2026-04-29)** —
   fallback for if A/C v1/D evals don't close cheat-5; per-action DA
   channels with synapse action-tagging.
