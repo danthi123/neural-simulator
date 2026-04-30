@@ -230,16 +230,56 @@ def run_replicated_multi_goal(
     )
     sb.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
 
-    # Stash region_manager so the bridge can use it for d1_d2_sign tagging
-    # in inject_explicit_wiring. This is the per-replica region_manager
-    # (not template) — it covers ALL replicas' regions via the original
-    # template's index space repeated N times.
-    # IMPORTANT: the bridge's d1_d2_sign tagging walks region_manager.regions()
-    # and tags synapses whose post is in str_D2_*. Under replication, str_D2_X
-    # is the union of all replicas' str_D2_X blocks. Build a shadow
-    # RegionManager that has the union indices for the bridge.
-    # For now, set region_manager=None on the bridge and tag d1_d2_sign manually.
-    sb.region_manager = None
+    # Build a shadow RegionManager whose indices() return the UNION across
+    # all replicas (since regions are structurally identical). This lets the
+    # bridge's _apply_per_region_neuron_types fire — without it, every
+    # neuron in every replica uses the default Izhikevich preset instead
+    # of the per-region biology (MSN_D1, FS_INTERNEURON, GPE_PACEMAKER,
+    # HIPPO_PYRAMIDAL, etc.). Bug-fix 2026-04-30: this was a TODO that was
+    # silently homogenizing cell types in every replicated run, causing
+    # systematic ~2× lower means than the single runner across all
+    # conditions (replicated A+E ~3.4 vs single ~7.0).
+    class _ShadowRegionManager:
+        """Minimal RegionManager that returns union-of-replicas indices.
+        Implements just the methods bridge code actually calls."""
+        def __init__(self, regions, replicas, neurons_per_replica):
+            self._regions = regions
+            self._replicas = replicas
+            self._n_per_replica = neurons_per_replica
+            # Pre-compute union indices per region from template
+            self._tmpl_idx = {
+                r.name: list(rmgr_template.indices(r.name)) for r in regions
+            }
+            self._tmpl_inh_idx = {
+                r.name: list(rmgr_template.inhibitory_indices(r.name))
+                for r in regions
+            }
+
+        def regions(self):
+            return list(self._regions)
+
+        def indices(self, region_name):
+            base = self._tmpl_idx.get(region_name, [])
+            out = []
+            for r_cfg in self._replicas:
+                shift = r_cfg.replica_id * self._n_per_replica
+                out.extend(i + shift for i in base)
+            return out
+
+        def inhibitory_indices(self, region_name):
+            base = self._tmpl_inh_idx.get(region_name, [])
+            out = []
+            for r_cfg in self._replicas:
+                shift = r_cfg.replica_id * self._n_per_replica
+                out.extend(i + shift for i in base)
+            return out
+
+    sb.region_manager = _ShadowRegionManager(regions, replicas, n_per_replica)
+    # cfg.brain_regions also needs to be set for _apply_per_region_neuron_types
+    # to walk them; the bridge uses cfg.brain_regions, not region_manager.regions(),
+    # for the iteration. Set it without flipping enable_brain_region_framework
+    # (which would change the wiring path).
+    cfg.brain_regions = list(regions)
     sb._initialize_simulation_data(called_from_playback_init=False)
 
     # ---- 4. Inject the replicated wiring ----
@@ -288,7 +328,13 @@ def run_replicated_multi_goal(
     elif goal_schedule_kind == "default":
         goal_schedule = [(0, (6, 6)), (300, (1, 6))]
     else:  # multi
-        goal_schedule = [(0, (6, 6)), (450, (6, 1)), (900, (1, 1)), (1350, (1, 6))]
+        # Aligned 2026-04-30 to match g11_bg_runner.py ordering exactly:
+        # (6,6) → (1,6) → (1,1) → (6,1). Previous order (clockwise vs
+        # counter-clockwise) caused systematic ~2× lower means in
+        # replicated vs single because the replicated phase 1 transition
+        # was shorter (corner-to-adjacent-corner = 5 manhattan vs the
+        # single's diagonal = 10 manhattan).
+        goal_schedule = [(0, (6, 6)), (450, (1, 6)), (900, (1, 1)), (1350, (6, 1))]
     goal_change_steps = [s for s, _ in goal_schedule[1:]]
 
     gxs = [goal_schedule[0][1][0]] * n_replicas
