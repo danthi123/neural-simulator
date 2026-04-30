@@ -251,8 +251,10 @@ def test_e_inh_override_runner_assignment():
         assert d2.syn_reversal_potential_i_override == -60.0, (
             f"str_D2_{action}: expected -60, got {d2.syn_reversal_potential_i_override}"
         )
-    # SNc DA
-    da = by_name["dopamine"]
+    # SNc DA — the runner's BG builder names this region "snc" (substantia
+    # nigra pars compacta). Earlier code used "dopamine" but the catalog
+    # R-pass standardized on the anatomical name.
+    da = by_name["snc"]
     assert da.syn_reversal_potential_i_override == -55.0
     # Spot-check a region that should NOT have the override
     cortex_n = by_name["cortex_N"]
