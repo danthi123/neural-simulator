@@ -132,6 +132,7 @@ def run_replicated_multi_goal(
     from sim import (
         SimulationBridge, CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig,
     )
+    from sim.enums import NeuronModel
     from sim.regions import RegionManager
     from sim.replicas import (
         ReplicaConfig, ReplicaManager, replicate_wiring_plan_with_seeds,
@@ -180,36 +181,41 @@ def run_replicated_multi_goal(
     total_neurons = rmgr.total_neurons()
 
     # ---- 3. Build CoreSimConfig ----
-    # Config aligned with g11_bg_runner.py (single runner) so plasticity-
-    # sensitive evals reproduce. 2026-04-30 audit found the replicated runner
-    # had several config divergences from the single runner that, combined
-    # with the reward-signal timing bug, made F v2 look NEGATIVE when it was
-    # actually NEUTRAL. Fix:
-    #   - dt_ms: 0.5 -> 1.0 (matches single; halves sim-step count per ms,
-    #     cuts wall-clock, matches single's eligibility/STDP time constants)
-    #   - enable_short_term_plasticity: True -> False (single doesn't use STP)
-    #   - enable_ou_process: True -> False (single doesn't use OU noise)
-    #   - enable_parameter_heterogeneity: True -> False (single uses fixed params)
-    # See research/findings/2026-04-30-fv2-correction-replicated-runner-bug.md.
+    # Config aligned with g11_bg_runner.py (single runner) — all knobs that
+    # affect plasticity, learning rate, eligibility traces, or weight bounds
+    # mirror the single runner's setup. 2026-04-30 audit: several config
+    # divergences plus a reward-signal timing bug made F v2 look NEGATIVE on
+    # replicated when it's actually NEUTRAL on single. See
+    # research/findings/2026-04-30-fv2-correction-replicated-runner-bug.md.
     cfg = CoreSimConfig(
         num_neurons=total_neurons,
-        enable_brain_region_framework=False,  # we inject manually
+        enable_brain_region_framework=False,  # we inject the wiring manually below
     )
+    # Note: cfg.num_neurons MUST stay at total_neurons (not 0). The single
+    # runner sets it to 0 because its enable_brain_region_framework=True
+    # populates it from cfg.brain_regions. We're injecting wiring manually,
+    # so we set it explicitly above.
     cfg.dt_ms = 1.0
+    cfg.seed = base_seed
+    cfg.num_traits = 1
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.connections_per_neuron = 0
     cfg.enable_stdp = True
     cfg.enable_reward_modulation = True
     cfg.enable_short_term_plasticity = False
     cfg.enable_d1_d2_asymmetry = enable_d1_d2_asymmetry
-    cfg.reward_learning_rate = reward_learning_rate
+    cfg.reward_learning_rate = float(reward_learning_rate)
     cfg.reward_baseline = 0.0
-    # Match g11_bg_runner's stdp_w_max idiom: density 0.20, weight 125 -> 150
-    cfg.stdp_w_max = 200.0  # extra headroom for jitter tail
+    cfg.reward_eligibility_tau_ms = 500.0  # single runner uses 500, default is 1000
+    # Match single runner's stdp_w_max idiom: density 0.20, weight 125 -> 150
+    # (post-R3.5 cortex->MSN auto-scale). Single computes this dynamically
+    # via max(30.0, _ctx_msn_weight * 1.2). Hard-code the same answer here
+    # since the formula is stable for our default cortex->MSN weight=25.
+    cfg.stdp_w_max = max(30.0, (25.0 / 0.20) * 1.2)  # = 150
     cfg.hebbian_max_weight = 200.0
-    # Disable structural plasticity in v1 — it grows nnz during the run,
-    # which would require dynamic resizing of cp_per_synapse_reward_override.
-    # The g11 evals don't use structural plasticity anyway (it's pretraining-only).
     cfg.enable_structural_plasticity = False
-    cfg.enable_hebbian_learning = False  # eval runs don't use Hebbian
+    cfg.enable_hebbian_learning = False
     cfg.enable_homeostasis = False
     cfg.enable_synaptic_scaling = False
     cfg.enable_ou_process = False

@@ -173,6 +173,13 @@ def replicate_wiring_plan(
         # Forward any pathway metadata (E.2 RegionPathway emits this)
         if "neuromodulator_gates" in group:
             out[group_name]["neuromodulator_gates"] = list(group["neuromodulator_gates"])
+        # Forward plasticity_gate (per-pathway runtime-controllable gate).
+        # Bug-fix 2026-04-30: this used to be silently dropped during
+        # replication, causing replicated F v2 evals to lose the
+        # `cerebellum_pf_pc` gate the runner depends on for CF-gated LTD.
+        # See research/findings/2026-04-30-fv2-correction-replicated-runner-bug.md
+        if "plasticity_gate" in group and group["plasticity_gate"]:
+            out[group_name]["plasticity_gate"] = group["plasticity_gate"]
 
     return out
 
@@ -230,5 +237,7 @@ def replicate_wiring_plan_with_seeds(
         }
         if "neuromodulator_gates" in group:
             out[group_name]["neuromodulator_gates"] = list(group["neuromodulator_gates"])
+        if "plasticity_gate" in group and group["plasticity_gate"]:
+            out[group_name]["plasticity_gate"] = group["plasticity_gate"]
 
     return out

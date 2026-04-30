@@ -1934,6 +1934,13 @@ def run_moving_goal_episode(
     # and REM (random replay, faster). NREM cycle dominates first half, REM
     # second half, modeling sleep-stage progression.
     sleep_nrem_rem_alternate: bool = False,
+    # Reverse-order trajectory replay during NREM (2026-04-30). Real CA1/CA3
+    # ripples replay trajectories in reverse time order during NREM (Foster
+    # & Wilson 2006, Diba & Buzsaki 2007). When enabled, the runner indexes
+    # the successful_trajectories buffer from newest-to-oldest by sleep step
+    # index instead of random sampling. Biologically grounded as TD-style
+    # backward credit assignment. Default off — backward compatible.
+    enable_reverse_replay: bool = False,
     # PFC Stage 2: delayed-response test. Silence goal_cells during a delay
     # window to test whether PFC maintains goal info via persistent activity.
     # If PFC works as working memory, agent should still navigate toward goal
@@ -2843,8 +2850,25 @@ def run_moving_goal_episode(
             in_rem_phase = sleep_nrem_rem_alternate and sleep_progress >= 0.5
             if successful_trajectories and not in_rem_phase:
                 # NREM: trajectory replay from logged successful steps
-                idx = int(np.random.randint(0, len(successful_trajectories)))
-                replay_x, replay_y, replay_gx, replay_gy = successful_trajectories[idx]
+                if enable_reverse_replay:
+                    # Reverse-order replay (Foster & Wilson 2006, Diba & Buzsaki 2007):
+                    # during NREM ripples, real CA1/CA3 replay trajectories in reverse
+                    # time order — last-position-before-goal replayed first, working
+                    # backward to start. Biologically grounded as TD-style backward
+                    # credit assignment: the goal "sends signal back" through the
+                    # trajectory. Implementation: walk successful_trajectories from
+                    # newest to oldest, indexing by sleep progress.
+                    n_traj = len(successful_trajectories)
+                    sleep_step_idx = step - sleep_replay_after_step
+                    # Map sleep_step_idx to a position in successful_trajectories:
+                    # idx 0 -> newest, idx (n_traj-1) -> oldest. Cycle through if
+                    # sleep window is longer than the trajectory buffer.
+                    traj_idx = (n_traj - 1) - (sleep_step_idx % n_traj)
+                    replay_x, replay_y, replay_gx, replay_gy = successful_trajectories[traj_idx]
+                else:
+                    # Forward random sampling (original behavior).
+                    idx = int(np.random.randint(0, len(successful_trajectories)))
+                    replay_x, replay_y, replay_gx, replay_gy = successful_trajectories[idx]
                 replay_x = float(replay_x); replay_y = float(replay_y)
                 replay_gx = float(replay_gx); replay_gy = float(replay_gy)
             else:
@@ -3761,6 +3785,14 @@ def main():
                     help="Replay drive rate (Hz) — biologically: sharp-wave ripples ~150-250Hz.")
     ap.add_argument("--sleep-nrem-rem-alternate", action="store_true",
                     help="Alternate between NREM (trajectory replay, first half) and REM (random replay, second half) during sleep.")
+    ap.add_argument("--enable-reverse-replay", action="store_true",
+                    help="Reverse-order trajectory replay during NREM "
+                         "(Foster & Wilson 2006). Replays successful "
+                         "trajectories newest-to-oldest by sleep step index, "
+                         "modeling TD-style backward credit assignment via "
+                         "sharp-wave ripples. Composes with "
+                         "--enable-cluster-d-hippocampus and "
+                         "--enable-cluster-d-v2-swr.")
     ap.add_argument("--goal-silence-after-step", type=int, default=-1,
                     help="PFC Stage 2 delayed-response test: silence goal_cells AND heuristic at this step. PFC working memory should maintain goal info.")
     ap.add_argument("--goal-silence-duration", type=int, default=0,
@@ -3940,6 +3972,7 @@ def main():
             sleep_replay_steps=args.sleep_replay_steps,
             sleep_replay_rate_hz=args.sleep_replay_rate_hz,
             sleep_nrem_rem_alternate=args.sleep_nrem_rem_alternate,
+            enable_reverse_replay=args.enable_reverse_replay,
             goal_silence_after_step=args.goal_silence_after_step,
             goal_silence_duration=args.goal_silence_duration,
         )
