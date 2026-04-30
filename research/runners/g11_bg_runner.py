@@ -3191,6 +3191,15 @@ def run_moving_goal_episode(
             "mean_distance": float(p_dist.mean()),
             "final_quarter_mean_distance": float(p_dist[len(p_dist)*3//4:].mean())
                 if len(p_dist) >= 4 else float(p_dist.mean()),
+            # Adaptation-speed metric (2026-04-30): mean Manhattan distance
+            # over the FIRST quarter of the phase, after the goal change.
+            # final_quarter measures asymptotic skill; first_quarter measures
+            # how quickly the agent re-adapts. Useful for testing whether
+            # mechanisms (replay, fast-credit-assignment) help adaptation
+            # vs steady-state navigation. Both shipped so post-hoc analyses
+            # don't need to recompute from distance_log.
+            "first_quarter_mean_distance": float(p_dist[:len(p_dist)//4].mean())
+                if len(p_dist) >= 4 else float(p_dist.mean()),
             "n_steps_at_goal": int((p_dist == 0).sum()),
             "n_steps": len(p_dist),
             "action_counts": [int((np.asarray(p_actions) == a).sum())
@@ -3770,6 +3779,53 @@ def main():
         elif args.goal_schedule == "curriculum":
             flip = max(1200, args.curriculum_warmup_steps + 600)
             goal_schedule = [(0, far), (flip, far_west)]
+        elif args.goal_schedule == "random":
+            # Harder benchmark (2026-04-30): 4 phases × 450 steps, but goals
+            # are sampled uniformly at random per phase (excluding start
+            # position). NOTE empirically: random is actually EASIER than
+            # the fixed-corner `multi` schedule because corner goals have
+            # ~10 Manhattan from start (1,1) while random uniform averages
+            # ~5.5. Kept for reference; not the harder benchmark.
+            rng = np.random.default_rng(args.seed)
+            goal_schedule = [(0, far)]
+            for phase_start in (450, 900, 1350):
+                while True:
+                    gx = int(rng.integers(0, gs))
+                    gy = int(rng.integers(0, gs))
+                    if (gx, gy) != (1, 1) and (gx, gy) != goal_schedule[-1][1]:
+                        break
+                goal_schedule.append((phase_start, (gx, gy)))
+        elif args.goal_schedule == "multi-fast":
+            # Harder benchmark (2026-04-30): same 4 corner goals as multi,
+            # but transitions every 225 steps instead of 450 — agent has
+            # half the adaptation budget per phase. Total still 1800 steps
+            # (8 phases of 225, cycling through the 4 corners twice).
+            seq = [far, far_west, sw, far_se]
+            goal_schedule = []
+            for i in range(8):
+                goal_schedule.append((i * 225, seq[i % 4]))
+        elif args.goal_schedule == "random-far":
+            # Harder benchmark (2026-04-30): random goals constrained to
+            # be at least Manhattan-8 from the previous goal (or start
+            # pos for phase 0). Forces long transitions like the corner
+            # goals do, but with novel positions each phase.
+            rng = np.random.default_rng(args.seed)
+            prev = (1, 1)  # start pos for phase 0
+            goal_schedule = []
+            for phase_start in (0, 450, 900, 1350):
+                attempts = 0
+                while True:
+                    attempts += 1
+                    gx = int(rng.integers(0, gs))
+                    gy = int(rng.integers(0, gs))
+                    manhattan = abs(gx - prev[0]) + abs(gy - prev[1])
+                    if manhattan >= 8 and (gx, gy) != prev:
+                        break
+                    if attempts > 1000:
+                        gx, gy = (gs - 2, gs - 2)  # fallback
+                        break
+                goal_schedule.append((phase_start, (gx, gy)))
+                prev = (gx, gy)
         else:
             goal_schedule = [(0, far), (300, far_west)]
         run_moving_goal_episode(

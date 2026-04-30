@@ -112,9 +112,46 @@ Wilson 2006), recency-weighted sampling, current-goal-only filtering.
   multi-goal, replay is replaying *stale* trajectories. Reverse order
   doesn't fix staleness.
 
+## Pivot B attempted (2026-04-30): different benchmarks/metrics
+
+Three harder-benchmark variants tested at A+E (n=3-6 each, sleep replay off):
+
+| Schedule | Sum mean | Per-phase | Phases | Note |
+|---|---|---|---|---|
+| multi (corner, 4×450) — current | 8.45 | **2.11** | 4 | reference |
+| random (uniform, 4×450) | 6.16 | 1.54 | 4 | EASIER (random ~5.5 vs corner ~10 from start) |
+| multi-fast (corner, 8×225) | 11.05 | 1.38 | 8 | per-phase EASIER (sum bigger because more phases) |
+| random-far (≥8 manhattan, 4×450) | 7.69 | 1.92 | 4 | similar to multi |
+
+**Per-phase, the existing `multi` is already the hardest of the 4.** Corner
+goals' long trajectories give the metric more room to accumulate distance.
+The harder-benchmark hypothesis didn't pan out.
+
+Adaptation-speed metric (first-quarter instead of final-quarter, computed
+post-hoc from distance_log; now also emitted directly in phase_stats):
+
+| Cond (multi) | First-Q sum | Final-Q sum |
+|---|---|---|
+| A+E | 8.13 ± 2.29 | 7.18 ± 1.58 |
+| A+E+C v2 | 10.36 ± 2.04 | 9.26 ± 3.91 |
+| Δ (v2 - AE) | +2.23 | +2.08 |
+
+**C v2 hurts adaptation speed by the same amount as it hurts asymptotic
+skill.** The biology buildouts don't help on adaptation-speed metric either.
+
+So Pivot B as tried (different schedules + different metrics) doesn't reveal
+hidden cluster benefits. The cluster-stacking falsification is robust across
+multiple eval framings.
+
 ## Recommendation
 
-**Pivot B (harder benchmark) > Pivot A (scaling) > Pivot C (replay content).**
+**Pivot A (scaling) > Pivot B (more benchmark variations) > Pivot C (replay content).**
+
+After Pivot B's null result, scaling becomes the highest expected-value
+pivot remaining. The mechanism-level claims (cerebellar PF expansion, CA3
+recurrent autoassociator, compartmentalized DA per striatal patch) are
+explicitly scale-arguments. Testing them at biological scale (5-10× our
+current ~1500 neurons) is the next falsifiable experiment.
 
 Pivot B has the highest expected value: it would tell us whether
 biology buildouts are inherently insufficient or whether the benchmark
