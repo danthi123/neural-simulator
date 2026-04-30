@@ -198,6 +198,9 @@ class NeuromodulatorManager:
         self._rule_state: dict[str, dict] = {}
         # Optional cached group indices: {group_name: list[int]}
         self._group_indices: dict[str, list[int]] = {}
+        # Optional cached replica block indices: {replica_id: list[int]}
+        # Used by E.3 batched-replica framework for scope="replica:N".
+        self._replica_indices: dict[int, list[int]] = {}
 
     def initialize(self, n_neurons: int, cp_module) -> None:
         self._cp = cp_module
@@ -258,6 +261,22 @@ class NeuromodulatorManager:
         self._group_indices = {
             str(name): [int(i) for i in indices]
             for name, indices in group_dict.items()
+        }
+
+    def set_replica_indices(self, replica_dict: dict) -> None:
+        """Register replica blocks so target scopes like 'replica:N' work.
+
+        Used by the batched-replica framework (Session E.3): each replica
+        is a contiguous slice of the global neuron-index space, and
+        ModulatorTarget(scope='replica:0') affects only block 0's
+        neurons. Independent of group_indices (groups still work
+        within a single replica via name-based lookup).
+
+        replica_dict: {replica_id (int): list_of_int_indices}.
+        """
+        self._replica_indices = {
+            int(rid): [int(i) for i in indices]
+            for rid, indices in replica_dict.items()
         }
 
     # ----- Effect computation -----
@@ -564,6 +583,24 @@ class NeuromodulatorManager:
                 elif tgt.scope.startswith("group:"):
                     gname = tgt.scope.split(":", 1)[1]
                     indices = self._group_indices.get(gname)
+                    if not indices:
+                        continue
+                    idx_arr = cp.asarray(indices, dtype=cp.int32)
+                    mask = cp.zeros(self._n_neurons, dtype=cp.bool_)
+                    mask[idx_arr] = True
+                    drive = drive + cp.where(
+                        mask,
+                        cp.float32(value),
+                        cp.float32(0.0),
+                    )
+                elif tgt.scope.startswith("replica:"):
+                    # E.3: per-replica block scope. Resolves via
+                    # set_replica_indices(); skip if not yet registered.
+                    try:
+                        rid = int(tgt.scope.split(":", 1)[1])
+                    except ValueError:
+                        continue
+                    indices = self._replica_indices.get(rid)
                     if not indices:
                         continue
                     idx_arr = cp.asarray(indices, dtype=cp.int32)
