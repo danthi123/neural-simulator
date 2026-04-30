@@ -611,39 +611,6 @@ pre {
   image-rendering: pixelated;
 }
 
-#world-overlay {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(14, 16, 20, 0.85);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 10px 14px;
-  font-size: 11px;
-  width: 180px;
-  min-width: 180px;
-  pointer-events: none;
-  box-sizing: border-box;
-  /* Grid layout: title fills row 1 col 1, button takes auto width col 2,
-     body spans both columns on row 2. align-items: center vertically
-     centers title + button on row 1. Same layout in collapsed state —
-     only the body's display flips off. */
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  column-gap: 10px;
-  row-gap: 6px;
-}
-#world-overlay .overlay-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  margin: 2px 0;
-}
-#world-overlay .overlay-row span:last-child {
-  color: var(--accent);
-}
-
 /* Collapsible HUD toggle. The HUD parent has pointer-events: none so
    clicks pass through to the canvas; the button overrides to be
    clickable. The panel uses CSS grid (1fr auto, align-items center)
@@ -755,19 +722,13 @@ pre {
   font-size: 10px;
 }
 
-/* Bottom-left run-stats HUD. Mirrors AGENT/LEGEND aesthetic (semi-transparent
-   dark, white text, mono-friendly numbers) but is anchored at the BOTTOM of
-   the canvas viewport so collapsing hides the body downward — the title row
-   remains visible at the bottom-left while the body folds away.
-
-   Implementation note: the existing top-anchored HUDs put title in grid row 1
-   and body in row 2 (body grows DOWN from header). For the bottom-anchored
-   variant we flip that — title in row 2 and body in row 1 (body sits ABOVE
-   header) — so when .hud-collapsed hides the body, the title stays at the
-   bottom-left where the panel was anchored. */
+/* Top-left run-stats HUD. Replaces the previous AGENT overlay; same
+   top-anchored layout pattern as #world-legend — title on row 1 (visible
+   when collapsed), body on row 2 (hidden by .hud-collapsed). Folds
+   upward into the title at top: 12px when collapsed. */
 #world-runhud {
   position: absolute;
-  bottom: 12px;
+  top: 12px;
   left: 12px;
   background: rgba(14, 16, 20, 0.85);
   border: 1px solid var(--border);
@@ -779,33 +740,23 @@ pre {
   max-width: 240px;
   pointer-events: none;
   box-sizing: border-box;
-  /* Title (row 2) + collapse button (row 1 col 2 by absolute placement) +
-     body (row 1, both cols). Body above title so collapsing folds the
-     body away leaving the bottom-anchored title visible. */
+  /* Same grid layout as the top-anchored HUDs: title + button on row 1
+     (vertically centered via align-items), body on row 2 spanning both
+     columns. The default .hud-title / .hud-collapse / .hud-body rules
+     above already place each child on the right grid cell. */
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
   column-gap: 10px;
   row-gap: 6px;
-  /* Cap height so very tall content (e.g. flags string) doesn't push the
-     HUD up off the canvas — body scrolls if needed. */
+  /* Cap height so very tall content (e.g. flags string) doesn't push past
+     the canvas bottom — body scrolls if needed. */
   max-height: calc(100% - 24px);
   overflow: hidden;
 }
-/* Title sits on row 2 (bottom of the HUD) — opposite of the top HUDs. */
-#world-runhud .hud-title {
-  grid-column: 1;
-  grid-row: 2;
-}
-/* Collapse button on row 2 col 2, next to the title at the bottom. */
-#world-runhud .hud-collapse {
-  grid-column: 2;
-  grid-row: 2;
-}
-/* Body on row 1 — above the title. Hidden by .hud-collapsed (inherited). */
+/* Body scrolls if content overflows. Inherits grid-column / grid-row from
+   the default .hud-body rule (row 2, both columns). */
 #world-runhud .hud-body {
-  grid-column: 1 / -1;
-  grid-row: 1;
   overflow-y: auto;
   max-height: 60vh;
 }

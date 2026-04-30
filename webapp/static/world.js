@@ -118,7 +118,6 @@ function initWorld() {
   });
 
   setupScrubberStepLabel();
-  setupHudCollapse("overlay-toggle", "world-overlay", "hud-overlay-collapsed");
   setupHudCollapse("legend-toggle", "world-legend", "hud-legend-collapsed");
   setupHudCollapse("runhud-toggle", "world-runhud", "hud-runhud-collapsed");
 
@@ -422,12 +421,15 @@ async function attachLive(runId, listItem) {
   // Detect whether this live run was launched with the landmark sensor
   // (canonical flag --enable-landmark-sensor; legacy --landmarks aliased)
   // so the landmark icon + legend row can be hidden when the cue isn't
-  // actually in play. /api/runs/launch/{id} returns the full cmd list.
+  // actually in play. ALSO stash the cmd argv for the RUN HUD's flags +
+  // seed fields. /api/runs/launch/{id} returns the full cmd list.
+  world._liveCmd = null;
   try {
     const statusRes = await fetch(`/api/runs/launch/${runId}`);
     if (statusRes.ok) {
       const status = await statusRes.json();
       const cmd = Array.isArray(status.cmd) ? status.cmd : [];
+      world._liveCmd = cmd;
       world.usedLandmarks = cmd.some(
         (t) =>
           typeof t === "string" &&
@@ -581,6 +583,7 @@ function closeLiveSocket() {
   world.liveChart = null;
   world.liveStartedAt = null;
   world.interactive = false;
+  world._liveCmd = null;
   // Restore the legend to its full default state on detach so the user
   // sees all icon meanings again (matches the no-run-loaded state).
   world.usedLandmarks = true;
@@ -781,14 +784,29 @@ async function loadRun(name, listItem) {
     // doesn't include its own name, so we capture it on load. Cleared on
     // attachLive() / closeLiveSocket() to avoid stale display.
     world._loadedRunName = name;
-    // Detect whether this saved run was launched with --landmarks. Runs
-    // without it shouldn't show the landmark icon or legend row (no
-    // landmark cue exists in the simulation). Older runs predating
-    // config_flags lack the field — treat as "no landmarks" so the legend
-    // is cleaner; users running landmarks-aware experiments will be on
-    // newer runs anyway.
-    world.usedLandmarks = (Array.isArray(data.config_flags) ? data.config_flags : [])
-      .some((f) => typeof f === "string" && f.includes("landmarks"));
+    // Fetch the sidecar to recover the launch cmd. The main /api/runs/{name}
+    // payload does NOT include config_flags or cmd, so the only reliable way
+    // to populate the RUN HUD's flags + (fallback) seed fields is via the
+    // sidecar's `cmd` argv list. Older runs may not have a sidecar — fall
+    // back gracefully.
+    world._loadedSidecar = null;
+    try {
+      const scRes = await fetch(`/api/runs/${encodeURIComponent(name)}/sidecar`);
+      if (scRes.ok) world._loadedSidecar = await scRes.json();
+    } catch {
+      // Older runs without a sidecar — leave null; HUD will show "—".
+    }
+    // Detect whether this saved run was launched with the landmark sensor.
+    // Prefer the sidecar's cmd (canonical source); fall back to data.config_flags
+    // for any runs whose sidecar load failed but main JSON still has flags
+    // (older code path).
+    const sidecarCmd = (world._loadedSidecar && Array.isArray(world._loadedSidecar.cmd))
+      ? world._loadedSidecar.cmd : null;
+    const flagSource = sidecarCmd
+      || (Array.isArray(data.config_flags) ? data.config_flags : []);
+    world.usedLandmarks = flagSource.some(
+      (f) => typeof f === "string" && (f.includes("landmarks") || f.includes("landmark-sensor")),
+    );
     updateLegendVisibility();
     const canvas = $("#world-canvas");
     resizeCanvas(canvas, data.grid_size || 8);
@@ -957,11 +975,11 @@ function renderFrame() {
   const pos = traj[step];
   if (pos) drawAgent(ctx, pos, getStepAction(step));
 
-  // Update overlay
-  updateOverlay(step, pos, goal);
-  // RUN HUD shows run-level identity + aggregate stats. Updated here so
-  // it stays in sync with the scrubber for saved runs and with live
-  // progress events for live runs.
+  // RUN HUD shows run-level identity + per-step state + aggregate stats.
+  // Updated here so it stays in sync with the scrubber for saved runs and
+  // with live progress events for live runs. (Replaces the old AGENT
+  // overlay — its agent/goal/distance/action/reward/phase fields are
+  // covered by the RUN HUD's middle section.)
   updateRunHUD();
   // In live mode, the step display + scrubber are managed by
   // handleLiveProgress (which knows the runner's actual n_steps from the
@@ -1073,22 +1091,6 @@ function drawAgent(ctx, pos, action) {
   ctx.restore();
 }
 
-function updateOverlay(step, pos, goal) {
-  $("#overlay-pos").textContent = pos ? `(${pos[0]},${pos[1]})` : "—";
-  $("#overlay-goal").textContent = goal ? `(${goal[0]},${goal[1]})` : "—";
-  if (pos && goal) {
-    const d = Math.abs(pos[0] - goal[0]) + Math.abs(pos[1] - goal[1]);
-    $("#overlay-dist").textContent = String(d);
-  } else {
-    $("#overlay-dist").textContent = "—";
-  }
-  const a = getStepAction(step);
-  $("#overlay-action").textContent = a != null ? actionName(a) : "—";
-  const r = getStepReward(step);
-  $("#overlay-reward").textContent = r != null ? r.toFixed(1) : "—";
-  $("#overlay-phase").textContent = String(getCurrentPhaseIndex(step));
-}
-
 /** Format an elapsed seconds value as a compact duration string. */
 function formatElapsed(sec) {
   if (sec == null || isNaN(sec)) return "—";
@@ -1102,34 +1104,65 @@ function formatElapsed(sec) {
   return `${h}h ${rm}m`;
 }
 
-/** Compact rendering of a config_flags array. Strips known no-op flags
- *  and the leading "--" so the string fits in a 240px-wide HUD. Returns
- *  null when nothing meaningful is left. */
+/** Boring boilerplate flags injected by the launcher / runner harness that
+ *  add no information about the experiment's research config — filtered out
+ *  of the displayed flags string so the HUD focuses on the interesting bits
+ *  (cluster flags, perception arc flags, etc). */
+const _BORING_FLAGS = new Set([
+  "seed",
+  "n-steps",
+  "out",
+  "progress-print-interval",
+]);
+
+/** Compact rendering of a flags-bearing array. Accepts either a `cmd`-style
+ *  list (full argv, e.g. `["python", "-m", "research.runners.g11_bg_runner",
+ *  "--moving-goal", "--seed", "42", ...]`) or a pre-filtered config_flags
+ *  list. Drops value tokens (anything not starting with `--`), strips the
+ *  leading `--`, filters out boring launcher boilerplate, and returns a
+ *  comma-joined short list. Returns null when nothing meaningful is left. */
 function compactFlags(flags) {
   if (!Array.isArray(flags) || flags.length === 0) return null;
-  // Drop value tokens (everything after a flag that doesn't start with --)
-  // and turn the remaining flag names into a comma-joined short list.
   const out = [];
   for (let i = 0; i < flags.length; i++) {
     const t = flags[i];
     if (typeof t !== "string") continue;
     if (!t.startsWith("--")) continue;
-    out.push(t.replace(/^--/, ""));
+    const name = t.replace(/^--/, "");
+    if (_BORING_FLAGS.has(name)) continue;
+    out.push(name);
   }
   if (out.length === 0) return null;
   return out.join(", ");
 }
 
-/** Pull the current run's name + seed + n_steps from saved data when
- *  available, or fall back to the live runId / progress. Returns an
- *  object with possibly-null fields — caller renders "—" when null. */
+/** Parse `--seed N` from a cmd argv list. Returns null when not found. */
+function parseSeedFromCmd(cmd) {
+  if (!Array.isArray(cmd)) return null;
+  for (let i = 0; i < cmd.length - 1; i++) {
+    if (cmd[i] === "--seed") {
+      const v = parseInt(cmd[i + 1], 10);
+      if (!isNaN(v)) return v;
+    }
+  }
+  return null;
+}
+
+/** Pull the current run's name + seed + n_steps + cmd from saved data /
+ *  sidecar when available, or fall back to the live runId / progress / cmd.
+ *  The `cmd` field holds the full launch argv list (e.g. `["python", "-m",
+ *  "research.runners.g11_bg_runner", "--seed", "42", ...]`) and is the
+ *  canonical source for both seed and flags — `data.config_flags` is NOT
+ *  present in the /api/runs/{name} payload (it only appears in the runs-list
+ *  summary), so we go through the sidecar instead. Returns an object with
+ *  possibly-null fields — caller renders "—" when null. */
 function getRunIdentity() {
   const data = world.data;
   const out = {
     name: null,
     seed: null,
     n_steps: null,
-    config_flags: null,
+    cmd: null,
   };
   if (world.live) {
     out.name = world.liveRunId || null;
@@ -1138,14 +1171,24 @@ function getRunIdentity() {
       ? world.livePoints[world.livePoints.length - 1]
       : null;
     if (last && last.total) out.n_steps = last.total;
-    // Seed isn't surfaced in the live progress payload — leave null.
+    // Cmd was fetched + stashed at attachLive time. Seed is parsed from it
+    // (the live progress payload doesn't surface seed directly).
+    out.cmd = Array.isArray(world._liveCmd) ? world._liveCmd : null;
+    if (out.cmd) out.seed = parseSeedFromCmd(out.cmd);
     return out;
   }
   if (!data) return out;
   out.name = world._loadedRunName || null;
-  out.seed = data.seed != null ? data.seed : null;
   out.n_steps = data.n_steps != null ? data.n_steps : null;
-  out.config_flags = Array.isArray(data.config_flags) ? data.config_flags : null;
+  // Sidecar `cmd` is the canonical source for flags. Saved JSON's `seed`
+  // is also reliable when present, but fall back to parsing cmd otherwise.
+  const sc = world._loadedSidecar;
+  out.cmd = (sc && Array.isArray(sc.cmd)) ? sc.cmd : null;
+  if (data.seed != null) {
+    out.seed = data.seed;
+  } else if (out.cmd) {
+    out.seed = parseSeedFromCmd(out.cmd);
+  }
   return out;
 }
 
@@ -1206,7 +1249,14 @@ function updateRunHUD() {
   const r = getStepReward(step);
   setText("runhud-reward", r != null ? r.toFixed(2) : null);
 
-  // Aggregates from phase_stats / top-level
+  // Aggregates from phase_stats / top-level. Live mode legitimately has
+  // none of these — the synthetic `world.data` is built up incrementally
+  // from progress events and the upstream events don't include
+  // action_log / reward_log / phase_stats with finalQ aggregates. Wiring
+  // those would require server-side changes to the progress event schema
+  // (or to compute aggregates client-side from the live trajectory),
+  // which is out of scope for this PR. Live runs show "—" for all
+  // aggregate fields below; that's expected.
   const ps = (data && data.phase_stats) || [];
   // Per-phase finalQ values — saved runs only (live phase_stats are synthetic
   // and lack final_quarter_mean_distance).
@@ -1243,8 +1293,11 @@ function updateRunHUD() {
     setText("runhud-at-goal", null);
   }
 
-  // Flags
-  setText("runhud-flags", compactFlags(ident.config_flags));
+  // Flags — derived from sidecar cmd (saved runs) or live launch cmd
+  // (live runs). compactFlags handles both shapes (it skips value tokens
+  // and the leading executable / -m / module-path). Filters out boring
+  // launcher boilerplate (--seed, --n-steps, --out, --progress-print-interval).
+  setText("runhud-flags", compactFlags(ident.cmd));
 }
 
 function play() {

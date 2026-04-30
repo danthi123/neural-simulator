@@ -113,18 +113,6 @@
       <div class="world-layout">
         <div id="world-canvas-container">
           <canvas id="world-canvas"></canvas>
-          <div id="world-overlay">
-            <span class="hud-title">Agent</span>
-            <button class="hud-collapse" id="overlay-toggle" aria-label="Collapse HUD" title="Collapse">−</button>
-            <div class="hud-body">
-            <div class="overlay-row"><span class="muted">agent</span><span id="overlay-pos">—</span></div>
-            <div class="overlay-row"><span class="muted">goal</span><span id="overlay-goal">—</span></div>
-            <div class="overlay-row"><span class="muted">distance</span><span id="overlay-dist">—</span></div>
-            <div class="overlay-row"><span class="muted">action</span><span id="overlay-action">—</span></div>
-            <div class="overlay-row"><span class="muted">reward</span><span id="overlay-reward">—</span></div>
-            <div class="overlay-row"><span class="muted">phase</span><span id="overlay-phase">—</span></div>
-            </div>
-          </div>
           <div id="world-legend">
             <span class="hud-title">Legend</span>
             <button class="hud-collapse" id="legend-toggle" aria-label="Collapse legend" title="Collapse">−</button>
@@ -151,10 +139,12 @@
             </div>
             </div>
           </div>
-          <!-- Bottom-left run-stats HUD. Mirrors AGENT/LEGEND structure but
-               anchored at bottom: collapses DOWNWARD (body hidden, title
-               row remains at the bottom). Title sits on grid row 2 so it
-               stays visible when the body row is hidden via .hud-collapsed.
+          <!-- Top-left run-stats HUD. Replaces the previous AGENT overlay
+               (its per-step fields agent/goal/distance/action/reward/phase
+               are now covered by the RUN HUD's middle section). Standard
+               top-anchored layout: title on grid row 1, body on row 2 —
+               collapse hides the body so only the title row remains
+               visible at top: 12px (same direction as LEGEND).
           -->
           <div id="world-runhud">
             <span class="hud-title">Run</span>
