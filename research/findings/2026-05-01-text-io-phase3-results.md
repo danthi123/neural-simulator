@@ -251,6 +251,70 @@ Compounding factors:
    was useful" from "this association was harmful". A more biologically
    realistic schedule would be reward-on-correct only.
 
+## Update: Delta-from-baseline eval (Kandel ch 25 response physiology)
+
+When R4/R5 produced eval results IDENTICAL to R2b, we proved the
+trained language→cortex weights have negligible influence on absolute
+cortex_X firing — the cascade always outputs cortex_N as winner.
+
+Insight: real cortical readouts use **response Δ over baseline**, not
+absolute firing. We changed the eval to:
+1. Phase A: reset, run with NO input. Measure baseline cortex_X spikes.
+2. Phase B: reset, drive language_input(word). Measure cortex_X spikes.
+3. Predict: cortex_X with the largest **delta** (B - A).
+
+**First delta-eval run (W→A only changed): 35.0% (1.4× chance!)** — agent
+clearly differentiates "north" → ΔN=+2 win, "west" → ΔW=+6 win. Two of
+four words mapped correctly.
+
+**Second delta-eval run (I→W also changed): W→A dropped to 17.5%, I→W
+stayed at 25%.** The W→A baseline measurements changed dramatically
+between runs (cortex_N baseline went from 15 spikes to 33 spikes for
+the same "north" word), revealing that **delta-eval is state-dependent**:
+running I→W phase first changes the cascade's resting state, which
+changes the baseline subtraction, which changes the predicted action.
+
+**Honest assessment**: trained weights produce SMALL differential
+responses but they're below the cascade's noise floor. Sometimes the
+delta wins (R5 W→A only: 35%), sometimes it doesn't (R5 full delta:
+17.5%). The trained signal is real but not robust.
+
+## What's actually needed (architectural, not regime)
+
+The fundamental obstacle is the cascade's structural cortex_N bias
+generating activity ~3× stronger than language→cortex's contribution
+even after non-zero init + 200 trials of contrastive supervision. The
+real fixes require deeper architectural changes:
+
+### 1. Cascade rebalancing (cluster A/E redesign)
+
+Cortex_N's 2× spontaneous firing originates in cluster A (closed BG
+loop) and/or cluster E (topography). Re-tuning these so cortex_X are
+genuinely symmetric at baseline would let language drive dominate.
+Risk: may break K v2 (which currently scores 2.87 with this cascade).
+
+### 2. Direct language pathway (bypass BG cascade)
+
+Instead of language_input → cortex_X → motor, route language
+language_input → PFC → motor_X directly, bypassing cortex_X. PFC NMDA
+bistability (which gives K v2 its stability) could hold word
+representations independently of cortex_X cascade dynamics. This
+matches biology — Wernicke's area projects to Broca's via arcuate
+fasciculus, not directly to motor cortex.
+
+### 3. Massively scaled training (1000s of trials per word)
+
+Real biological language learning takes thousands of repetitions per
+word. 200 supervised trials × 4 words = 50 per word is laughably few.
+A 50× larger run (~10,000 trials, ~5 hours) might overcome the noise
+floor. But this is fighting the architecture, not aligning with it.
+
+### 4. Larger language regions (1024+ neurons each)
+
+Current language_input/output have 256 neurons. Real Wernicke/Broca
+have ~10⁵ neurons. With more neurons, sparse coding can produce
+stronger differential drive to cortex_X via more synapses per token.
+
 ## Recommended next steps
 
 ## Caveats / known issues
