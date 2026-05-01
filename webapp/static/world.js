@@ -553,27 +553,36 @@ async function attachLive(runId, listItem) {
   // so the landmark icon + legend row can be hidden when the cue isn't
   // actually in play. ALSO stash the cmd argv for the RUN HUD's flags +
   // seed fields. /api/runs/launch/{id} returns the full cmd list.
+  //
+  // Reset to false BEFORE the async fetch so attaching to a new run
+  // that doesn't use landmarks immediately hides the icon, even if the
+  // fetch is slow or fails. Only flip to true on confirmed landmark args.
   world._liveCmd = null;
+  world.usedLandmarks = false;
+  updateLegendVisibility();
   try {
     const statusRes = await fetch(`/api/runs/launch/${runId}`);
     if (statusRes.ok) {
       const status = await statusRes.json();
       const cmd = Array.isArray(status.cmd) ? status.cmd : [];
       world._liveCmd = cmd;
+      // Match the canonical landmark flags exactly (token equality), not
+      // substring containment. Substring containment was triggering on
+      // unrelated args (e.g. anything containing the literal substring
+      // "landmark") and was overly permissive for other contexts.
       world.usedLandmarks = cmd.some(
         (t) =>
-          typeof t === "string" &&
-          (t.includes("landmarks") || t.includes("landmark-sensor")),
+          t === "--enable-landmark-sensor" ||
+          t === "--landmarks" ||
+          t === "--landmarks-replace-place",
       );
-    } else {
-      // Fallback if the endpoint isn't available — show by default so the
-      // user isn't silently missing the landmark cue.
-      world.usedLandmarks = true;
+      updateLegendVisibility();
     }
   } catch {
-    world.usedLandmarks = true;
+    // On fetch error, leave usedLandmarks=false (already set above). If a
+    // run that needed landmarks gets the icon hidden, that's better than
+    // showing it spuriously on every run.
   }
-  updateLegendVisibility();
   setupControlPanel();
   openLiveSocket(runId);
 }
