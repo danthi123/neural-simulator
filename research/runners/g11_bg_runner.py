@@ -248,6 +248,23 @@ def build_bg_brain_regions(
     # Scaling experiment 2026-04-30: n_granule=1000-5000 tests whether
     # F v2 becomes viable at closer-to-biological scale.
     n_granule: int = 250,
+    # Cluster K v1 (2026-05-01): visual cortex hierarchy.
+    # Adds retina (32x32 ON/OFF) → V1_simple (Hubel & Wiesel 1962 simple cells,
+    # orientation-tuned via Gabor RF) → V1_complex (phase-pooled) → V2 → IT
+    # (Felleman & Van Essen 1991 ventral-stream hierarchy). For v1, regions
+    # are built but image rendering + drive injection happen outside this
+    # function (in the runner step loop). Default off — backward compatible.
+    # See sim/visual_cortex.py and docs/plans/2026-05-01-cluster-k-visual-cortex-hierarchy.md.
+    # Sizes are reduced from the visual_cortex.py defaults to keep the
+    # gridworld model tractable: 8 orient × 2 freq × 8x8 pos = 1024 V1
+    # simple, vs 8192 in the full module.
+    enable_visual_cortex: bool = False,
+    visual_n_orientations: int = 8,
+    visual_n_frequencies: int = 2,
+    visual_n_positions_per_dim: int = 8,
+    visual_image_size: int = 32,  # retina spatial dim (32x32 pixels)
+    visual_n_v2: int = 256,
+    visual_n_it: int = 64,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -1379,6 +1396,106 @@ def build_bg_brain_regions(
                 density=0.05, weight_mean=50.0, weight_jitter=0.2,
                 plastic=False,
             ))
+
+    # ─── Cluster K v1: visual cortex hierarchy (Hubel & Wiesel 1962, Felleman
+    # & Van Essen 1991). Retina is driven externally by the runner via image
+    # rendering + cp_external_input_current. V1_simple receives sparse Gabor-
+    # initialized weights post-build via apply_v1_gabor_weights().
+    # V1_simple → V1_complex pools per-orientation (phase invariance).
+    # V2 → IT learn via STDP. v1 does NOT yet wire IT → cortex_X — feeding
+    # the visual stream into action selection requires separate validation
+    # and is deferred to v2.
+    if enable_visual_cortex:
+        n_retina = 2 * visual_image_size * visual_image_size  # 2*32*32 = 2048
+        n_v1_simple = (visual_n_orientations * visual_n_frequencies
+                       * visual_n_positions_per_dim * visual_n_positions_per_dim)
+        n_v1_complex = (visual_n_orientations
+                        * visual_n_positions_per_dim * visual_n_positions_per_dim)
+        n_v2 = visual_n_v2
+        n_it = visual_n_it
+
+        regions.append(BrainRegion(
+            name="retina",
+            n_neurons=n_retina,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="cortex_v1_simple",
+            n_neurons=n_v1_simple,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="cortex_v1_complex",
+            n_neurons=n_v1_complex,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="cortex_v2",
+            n_neurons=n_v2,
+            exc_fraction=0.8,
+            internal_density=0.05,
+            exc_weight_mean=2.0, inh_weight_mean=4.0,
+            weight_jitter=0.2, plastic_internal=True,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="cortex_it",
+            n_neurons=n_it,
+            exc_fraction=0.8,
+            internal_density=0.10,
+            exc_weight_mean=2.0, inh_weight_mean=4.0,
+            weight_jitter=0.2, plastic_internal=True,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+
+        # retina → V1_simple. Plastic so STDP can refine weights from
+        # whatever Gabor init we apply post-build (or from random init in
+        # v1 minimal mode). Tagged so the runner can freeze it after a
+        # critical-period developmental phase.
+        pathways.append(RegionPathway(
+            from_region="retina", to_region="cortex_v1_simple",
+            density=0.05,           # sparse: Gabor RF is local, not all-to-all
+            weight_mean=0.5, weight_jitter=0.5,
+            plastic=True,
+            plasticity_gate="visual_cortex_v1",
+        ))
+        # V1_simple → V1_complex: phase pooling (max across frequency + phase
+        # within each orientation × position). Implemented as a wide fixed
+        # pathway; the bridge averages activity, so this approximates max-
+        # pooling at the rate level. plastic=False to lock the pooling.
+        pathways.append(RegionPathway(
+            from_region="cortex_v1_simple", to_region="cortex_v1_complex",
+            density=visual_n_frequencies / float(n_v1_simple),  # roughly N_freq cells per complex cell
+            weight_mean=2.0, weight_jitter=0.0,
+            plastic=False,
+        ))
+        # V1_complex → V2: ventral stream. Plastic so V2 learns higher-order
+        # features (combinations of orientations/positions).
+        pathways.append(RegionPathway(
+            from_region="cortex_v1_complex", to_region="cortex_v2",
+            density=0.10, weight_mean=1.0, weight_jitter=0.5,
+            plastic=True,
+            plasticity_gate="visual_cortex_v2",
+        ))
+        # V2 → IT: object/category-level. Plastic.
+        pathways.append(RegionPathway(
+            from_region="cortex_v2", to_region="cortex_it",
+            density=0.20, weight_mean=1.5, weight_jitter=0.5,
+            plastic=True,
+            plasticity_gate="visual_cortex_it",
+        ))
 
     return regions, pathways
 
