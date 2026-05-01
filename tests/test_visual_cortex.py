@@ -408,6 +408,30 @@ def test_visual_cortex_neurons_fire_when_retina_driven():
     )
 
 
+def test_it_to_cortex_pathway_wired_when_visual_cortex_on():
+    """When --enable-visual-cortex, four IT->cortex_{N,E,S,W} pathways
+    must be present, all plastic, gated 'visual_cortex_action', and
+    initialized at weight_mean=0 so they don't disrupt motor selection
+    until the curriculum opens the gate."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    regions, pathways = build_bg_brain_regions(enable_visual_cortex=True)
+    by_edge = {(p.from_region, p.to_region): p for p in pathways}
+
+    for action in ["N", "E", "S", "W"]:
+        key = ("cortex_it", f"cortex_{action}")
+        assert key in by_edge, f"Missing IT->cortex_{action} pathway"
+        p = by_edge[key]
+        assert p.plastic is True, f"IT->cortex_{action} should be plastic"
+        assert p.plasticity_gate == "visual_cortex_action", (
+            f"IT->cortex_{action} should be on visual_cortex_action gate"
+        )
+        assert p.weight_mean == 0.0, (
+            f"IT->cortex_{action} should init at zero so it doesn't drive "
+            f"motor selection before curriculum opens the gate"
+        )
+
+
 def test_visual_cortex_plasticity_gates_set():
     """Plastic visual cortex pathways are tagged with plasticity_gate
     so the runner can implement critical-period freeze."""

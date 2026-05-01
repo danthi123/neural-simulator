@@ -265,6 +265,8 @@ def build_bg_brain_regions(
     visual_image_size: int = 32,  # retina spatial dim (32x32 pixels)
     visual_n_v2: int = 256,
     visual_n_it: int = 64,
+    # Cluster K v2 (2026-05-01): IT → cortex_X action-selection density
+    visual_it_to_cortex_density: float = 0.5,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -1496,6 +1498,24 @@ def build_bg_brain_regions(
             plastic=True,
             plasticity_gate="visual_cortex_it",
         ))
+        # IT → cortex_{N,E,S,W} action selection (Cluster K v2, 2026-05-01).
+        # Initialized at weight_mean=0.0 to avoid disrupting cascade dynamics
+        # before the visual cortex has learned anything. STDP+reward grow
+        # weights from zero post-warmup. Plasticity gate
+        # "visual_cortex_action" can be opened (set to 1.0) by the runner
+        # after a critical-period warmup, mimicking real visuomotor
+        # development where V1/V2/IT mature first then visuomotor wiring
+        # follows. weight_jitter=0.0 keeps every synapse at exactly 0
+        # weight at init.
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region="cortex_it", to_region=f"cortex_{action}",
+                density=visual_it_to_cortex_density,
+                weight_mean=0.0,  # zero init — STDP+reward grows post-warmup
+                weight_jitter=0.0,
+                plastic=True,
+                plasticity_gate="visual_cortex_action",
+            ))
 
     return regions, pathways
 
@@ -2046,6 +2066,15 @@ def run_moving_goal_episode(
     visual_n_v2: int = 256,
     visual_n_it: int = 64,
     visual_drive_max_pA: float = 200.0,
+    # Cluster K v2 (2026-05-01)
+    visual_receptive_field_radius: int = 4,
+    visual_v1_weight_scale: float = 10.0,
+    visual_it_to_cortex_density: float = 0.5,
+    # Steps before IT -> cortex_X gate opens. Mimics critical-period
+    # closure: V1/V2/IT mature first, then visuomotor wiring follows.
+    # 0 = open from start (no critical period); -1 = stay closed forever
+    # (visual cortex passive observer).
+    visual_cortex_action_warmup_steps: int = 600,
     # Cluster F v2 (2026-04-30): CF-gated anti-Hebbian LTD per Albus 1971
     # §IV.C eq.4. v1 used the global reward signal for PF→PC plasticity
     # (cerebellum and BG learned redundantly from the same signal). v2
@@ -2198,6 +2227,7 @@ def run_moving_goal_episode(
         visual_image_size=visual_image_size,
         visual_n_v2=visual_n_v2,
         visual_n_it=visual_n_it,
+        visual_it_to_cortex_density=visual_it_to_cortex_density,
         enable_beacon_perception=enable_beacon_perception,
         n_beacon_sensors=n_beacon_sensors,
         beacon_to_goal_weight=beacon_to_goal_weight,
@@ -2380,6 +2410,35 @@ def run_moving_goal_episode(
     )
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
     bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    # Cluster K v2 (2026-05-01): apply Gabor pre-init to V1 simple cells
+    # so the visual cortex starts with biology-correct orientation tuning
+    # rather than random weights. Must happen AFTER bridge init (CSR exists)
+    # but BEFORE region_indices_cp is built since the call may grow nnz.
+    # Also freeze IT -> cortex_X gate at 0 so the visual stream doesn't
+    # disrupt motor selection during the critical period.
+    if enable_visual_cortex:
+        from sim.visual_cortex import apply_v1_gabor_weights
+        n_gabor = apply_v1_gabor_weights(
+            bridge,
+            n_orientations=visual_n_orientations,
+            n_frequencies=visual_n_frequencies,
+            n_positions_per_dim=visual_n_positions_per_dim,
+            retina_size=visual_image_size,
+            receptive_field_radius=visual_receptive_field_radius,
+            weight_scale=visual_v1_weight_scale,
+        )
+        if verbose:
+            print(f"[g11 seed={seed}] Cluster K v2: applied {n_gabor} Gabor "
+                  f"weights to retina -> cortex_v1_simple", flush=True)
+        # Freeze IT -> cortex_X until critical-period close (warmup)
+        try:
+            bridge.set_plasticity_gate("visual_cortex_action", 0.0)
+            if verbose:
+                print(f"[g11 seed={seed}] Cluster K v2: visual_cortex_action "
+                      f"gate frozen until warmup", flush=True)
+        except KeyError:
+            pass  # No IT -> cortex_X synapses if visual cortex regions absent
 
     # Pre-cache region indices (cupy arrays for fast per-step indexing)
     region_indices_cp = {}
@@ -2740,7 +2799,26 @@ def run_moving_goal_episode(
     # not just the reward-hold sub-step). Initialized to 1.0 (full WTA on first trial
     # before any reward feedback exists).
     current_gating_strength = 1.0
+    visual_cortex_action_gate_opened = False
     for step in range(n_steps):
+        # Cluster K v2 visual cortex critical-period close: open the
+        # IT -> cortex_X gate at the configured warmup step. Mimics real
+        # visuomotor development: V1/V2/IT mature first (sensory critical
+        # period), then visuomotor wiring matures via STDP+reward.
+        if (enable_visual_cortex
+                and not visual_cortex_action_gate_opened
+                and visual_cortex_action_warmup_steps >= 0
+                and step >= visual_cortex_action_warmup_steps):
+            try:
+                bridge.set_plasticity_gate("visual_cortex_action", 1.0)
+                visual_cortex_action_gate_opened = True
+                if verbose:
+                    print(f"[g11 seed={seed}] step {step}: Cluster K v2 "
+                          f"visual_cortex_action gate OPENED (warmup="
+                          f"{visual_cortex_action_warmup_steps})", flush=True)
+            except KeyError:
+                pass  # Gate not present (no IT -> cortex synapses)
+
         # Curriculum gate update — for ramp mode, update every step during
         # the ramp window; for abrupt mode, only at the warmup boundary.
         # Sensory and hippo input layers share phase-2 gain (they're peer
@@ -3976,19 +4054,33 @@ def main():
                          "corticostriatal plasticity windows. See "
                          "docs/plans/2026-04-28-cluster-b3-tans-implementation.md.")
     ap.add_argument("--enable-visual-cortex", action="store_true",
-                    help="Cluster K v1 (2026-05-01): visual cortex hierarchy "
-                         "(Hubel-Wiesel 1962, Felleman & Van Essen 1991). Adds "
-                         "retina (32x32 ON/OFF) -> V1_simple (8 orient x 2 freq "
-                         "x 8x8 pos = 1024) -> V1_complex (512, phase-pooled) -> "
-                         "V2 (256, plastic) -> IT (64, plastic) regions and "
-                         "pathways. Env step loop renders the gridworld as a "
-                         "32x32 image and drives the retina each step. v1 does "
-                         "NOT yet wire IT -> cortex_X for action selection — "
-                         "visual stream runs alongside existing perception "
-                         "without affecting motor output. Future v2: gated "
-                         "IT -> cortex_X with critical-period curriculum + "
-                         "Gabor pre-init. See sim/visual_cortex.py and "
-                         "docs/plans/2026-05-01-cluster-k-visual-cortex-hierarchy.md.")
+                    help="Cluster K v2 (2026-05-01): visual cortex hierarchy "
+                         "(Hubel-Wiesel 1962, Felleman & Van Essen 1991). "
+                         "Adds retina (32x32 ON/OFF) -> V1_simple (Gabor pre-"
+                         "init via apply_v1_gabor_weights, 1024 cells) -> "
+                         "V1_complex (512, phase-pooled) -> V2 (256, plastic) "
+                         "-> IT (64, plastic) -> cortex_{N,E,S,W} (action "
+                         "selection, plastic, gated visual_cortex_action). "
+                         "Env step loop renders the gridworld as a 32x32 image "
+                         "each step and drives the retina. The IT -> cortex "
+                         "pathway is initialized at zero weight and frozen "
+                         "until --visual-cortex-action-warmup-steps; STDP+"
+                         "reward then grows the visuomotor weights from zero. "
+                         "Mimics real visual development (sensory critical "
+                         "period -> visuomotor maturation). Compose with or "
+                         "without --heuristic-single-pool / perception arc.")
+    ap.add_argument("--visual-cortex-action-warmup-steps", type=int, default=600,
+                    help="Cluster K v2: steps before the IT -> cortex_X "
+                         "plasticity gate opens. Default 600. 0 = open from "
+                         "start (no critical period); -1 = stay closed forever "
+                         "(visual cortex passive observer, doesn't drive "
+                         "action).")
+    ap.add_argument("--visual-v1-weight-scale", type=float, default=10.0,
+                    help="Cluster K v2: multiplier on Gabor weights when "
+                         "applied to retina -> V1_simple. Default 10.0. The "
+                         "Gabor cosine values are in [-1, 1]; weight_scale=10 "
+                         "gives roughly 10pA per active pixel, comparable to "
+                         "other plastic pathways.")
     ap.add_argument("--pruning-alpha", type=float, default=None,
                     help="Cheat-5 option-1 pruning rate. Default: cfg.pruning_alpha (0.001 = conservative). "
                          "Try 0.05 for a 5K-trial pretraining smoke; 0.005 for 30K validation.")
@@ -4259,6 +4351,8 @@ def main():
             enable_cluster_f_v2=args.enable_cluster_f_v2,
             n_granule=args.n_granule,
             enable_visual_cortex=args.enable_visual_cortex,
+            visual_cortex_action_warmup_steps=args.visual_cortex_action_warmup_steps,
+            visual_v1_weight_scale=args.visual_v1_weight_scale,
             cluster_e_distance_sigma=args.cluster_e_distance_sigma,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
