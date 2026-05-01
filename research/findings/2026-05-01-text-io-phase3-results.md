@@ -92,11 +92,49 @@ After training, present fresh trials WITHOUT supervisor clamps:
 
 Reports accuracy + confusion matrix for both regimes.
 
-## Smoke test results (n=100 train + n=40 eval)
+## Smoke test results — chance-level despite Gabor + scale increases
 
-Training: 100 image→word pairs + 100 word→action pairs (213 sec).
+Three training configurations tested:
 
-Evaluation: **chance-level accuracy** at this training scale.
+| Config | Train pairs | Gabor V1 | I→W acc | W→A acc | Time | Diagnostic |
+|---|---|---|---|---|---|---|
+| Baseline | 100+100 | OFF | 22.5% | 27.5% | 213s | initial |
+| Gabor | 200+200 | ON | 20.0% | 22.5% | 394s | **N-bias emerges** |
+| Scale-only (TBD) | 500+500 | OFF | TBD | TBD | ~17min | running |
+
+**All chance-level (≈25%).** Both Gabor and 2× scale failed to push
+performance above chance. The Gabor 200-pair confusion matrix reveals
+a critical diagnostic: every direction word predicts cortex_N most often
+(N=7, 7, 6, 9 out of 10 trials across north/east/south/west). The agent
+has a strong N-dominance bias rather than learned word-action mappings.
+
+```
+W → A confusion (Gabor 200-pair, rows = word, columns = predicted action):
+              N    E    S    W
+north         7    1    1    1   ← correct
+east          7    0    0    3   ← wrong
+south         6    1    2    1   ← wrong
+west          9    0    1    0   ← wrong
+```
+
+## Diagnosis (revised)
+
+**The supervisor-clamp regime has a fundamental cross-contamination
+problem.** When training trial 1 supervises cortex_N for "north", STDP
+grows north_pattern → cortex_N. But NMDA-mediated bistability in the
+visual cortex regions causes cortex_N to maintain elevated activity
+into trial 2 (~100 ms gap is shorter than NMDA τ of 100ms). When trial 2
+clamps cortex_E for "east", STDP also grows east_pattern → cortex_N
+because cortex_N is still firing. Across many trials, cortex_N
+accumulates inputs from ALL language_input patterns.
+
+The Gabor pre-init makes this WORSE because V1 firing reliably ramps up
+cortex_N (whichever cortex region happens to receive the strongest
+upstream signal from the BG cascade defaults). At chance-level training,
+random V1 fires noise that averages out; structured V1 amplifies the bias.
+
+This isn't a "needs more training" problem — more training reinforces the
+bias. It's a **regime design problem**.
 
 | Regime | Accuracy | Chance | Notes |
 |---|---|---|---|
@@ -200,39 +238,64 @@ you> quit
 [exit]
 ```
 
-## What's next — directly implied by chance-level smoke result
+## What's actually needed — fixing the regime
 
-These should be done in order before claiming "functional textual training".
+Empirically, the current "clamp post-synaptic + tonic reward" regime
+**doesn't differentiate associations**. Three architectural changes
+the regime needs (in order of expected impact):
 
-### Tier 1 — quick fixes that may already be enough
+### 1. Inter-trial reset (~1 hour to implement)
 
-1. **Fix Gabor pre-init resize bug.** The K v2 breakthrough (2.87 at 16×16)
-   relied on Gabor pre-init. Without it, V1/V2/IT fire on noise. Worth
-   1-2 hours of bridge-debug to make `apply_v1_gabor_weights` work in the
-   text-io build. (TODO at line ~75 of `text_train.py`.)
+Between training trials, run a 50-100 ms "blank" period where
+`cp_external_input_current[:] = 0` and `current_reward_signal = 0`.
+This lets NMDA-mediated cortex bistability decay before the next
+clamp. Current behavior likely cross-contaminates STDP across trials.
 
-2. **5×–10× larger training set (1000+1000 pairs ~30-60 min).** Real
-   biological language acquisition takes thousands of repetitions; 100 is
-   far too few. Most likely the chance-level result is just sample size.
+### 2. Reward gating on correct response (medium effort)
 
-3. **Restrict supervisor clamp temporally.** Currently we clamp the
-   supervisor across the entire 100ms stim window. Real instructive
-   signals are brief (~10-20 ms). Shorter clamps may give STDP a cleaner
-   "learn this association" signal.
+Instead of tonic +1 reward during the supervisor clamp, run a brief
+"unclamped readout" first: drive the input (image or token), let the
+neural state respond NATURALLY, observe whether language_output (or
+cortex_X) matches the target. Apply +1 reward ONLY if correct, 0 or
+-1 if wrong. This is closer to how real STDP+reward learns — only
+strengthen connections that produced correct behavior.
 
-### Tier 2 — architectural improvements
+### 3. Curriculum: 4-token vocab first (small effort)
 
-4. **Reward-on-correct only.** Tonic +1 reward during training trials
-   doesn't teach. Try: reward = +1 when language_output's natural
-   activity (without clamp) matches target, else 0.
+Currently the vocabulary has 29 tokens and 8 direction synonyms. STDP
+has to disambiguate 8 patterns mapped to 4 actions. Start with 4 tokens
+(just "north"/"east"/"south"/"west") before introducing synonyms.
 
-5. **Pre-train the supervisor channel.** Run training without supervisor
-   clamp first to let STDP+reward simply amplify whatever weak co-firings
-   exist. Then add supervisor.
+### 4. Bigger language_input drive
 
-6. **Curriculum.** Start with 4-token vocabulary (just N/E/S/W). Once
-   stable, expand. Currently we go straight to 8-direction-synonym
-   vocabulary which may be too entropic.
+Currently 200pA × 10% sparsity ≈ 20 active neurons × 0 weight = 0pA
+into cortex_X. Even after STDP grows weights, the natural drive may
+not exceed BG cascade defaults. Try drive=500pA with weight_init>0
+(start at small positive instead of zero).
+
+### 5. Different supervised paradigm
+
+Drop the post-synaptic clamp entirely. Instead, gate STDP plasticity
+based on which trial type is active. The plasticity_gate infrastructure
+already supports this — we'd need a new "supervisor signal" that gates
+ONLY the relevant pathway (e.g., only enable
+language_input_to_cortex_N gate when training "north", disable others).
+
+## Status (honest assessment)
+
+The text I/O **infrastructure is functional and tested** (39 unit/integ
+tests pass). The agent CAN take a token in, run simulation, read out a
+token. The bridge `set_token_drive` and `read_language_output` work
+correctly. Pathways are wired. Embeddings are deterministic.
+
+**What doesn't work yet: the supervised training regime.** Above-chance
+accuracy requires regime improvements (1-5 above), not more compute on
+the current regime. None of these are conceptually hard, but they
+require careful experimentation.
+
+**This is a clean stopping point**: infrastructure is stable, the
+problem is well-localized, and the next investment (regime redesign)
+can happen in a fresh session with clear context.
 2. **Fix Gabor pre-init** so V1 has biology-correct orientation tuning.
    This should significantly accelerate IT → language_output learning.
 3. **Multi-token sequences** for real sentences. Requires temporal
