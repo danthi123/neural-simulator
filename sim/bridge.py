@@ -2073,6 +2073,98 @@ class SimulationBridge:
             self._warned_cp_plasticity_gain = True
         self.cp_plasticity_rate_gain = value
 
+    def set_token_drive(
+        self,
+        token: str,
+        drive_pA: float = 200.0,
+        sparsity: float = 0.1,
+        region_name: str = "language_input",
+    ) -> int:
+        """Inject a sparse current pattern representing `token` into the
+        language_input region (or another named region).
+
+        Used by the text I/O training pipeline and interactive mode. The
+        token's deterministic embedding (sim.text_embeddings.embed) maps
+        to a sparse {0, drive_pA} vector via vocab_to_drive_pattern.
+
+        Args:
+            token: vocabulary word (lowercased internally).
+            drive_pA: input current for active neurons.
+            sparsity: fraction of neurons activated (default 0.1 = 10%).
+            region_name: which region to drive. Default 'language_input'.
+
+        Returns: count of neurons activated.
+
+        Raises:
+            RuntimeError if region_manager is None or region not found.
+        """
+        from sim.text_embeddings import vocab_to_drive_pattern
+
+        if self.region_manager is None:
+            raise RuntimeError(
+                "set_token_drive: bridge.region_manager is None. "
+                "Brain-region framework must be enabled."
+            )
+        try:
+            indices = list(self.region_manager.indices(region_name))
+        except Exception as e:
+            raise RuntimeError(
+                f"set_token_drive: region '{region_name}' not found: {e}"
+            ) from None
+        if not indices:
+            raise RuntimeError(
+                f"set_token_drive: region '{region_name}' has no neurons"
+            )
+
+        n = len(indices)
+        drive = vocab_to_drive_pattern(
+            token, n_neurons=n, drive_max_pA=drive_pA, sparsity=sparsity,
+        )
+        idx_cp = cp.asarray(indices, dtype=cp.int64)
+        self.cp_external_input_current[idx_cp] = cp.asarray(drive, dtype=cp.float32)
+        return int(np.sum(drive > 0))
+
+    def read_language_output(
+        self,
+        spike_counts,
+        n_steps: int,
+        top_k: int = 1,
+        vocab=None,
+        region_name: str = "language_output",
+    ):
+        """Decode language_output region's recent firing pattern to the
+        nearest token(s) in the vocabulary.
+
+        Args:
+            spike_counts: (n_neurons,) np.ndarray or cp.ndarray of spike
+                counts accumulated over the readout window. Caller is
+                responsible for tallying these via the env loop.
+            n_steps: number of sub-steps the spike_counts span (used for
+                normalization to firing rate).
+            top_k: number of tokens to return (default 1).
+            vocab: list of candidate tokens. Defaults to text_embeddings.DEFAULT_VOCAB.
+            region_name: which region's spike counts (default 'language_output').
+
+        Returns: list of `top_k` tokens, ranked by cosine similarity.
+        """
+        from sim.text_embeddings import nearest_token
+
+        if self.region_manager is None:
+            raise RuntimeError(
+                "read_language_output: bridge.region_manager is None"
+            )
+        # spike_counts may be a cupy array; convert to numpy.
+        if hasattr(spike_counts, "get"):
+            sc = spike_counts.get()
+        else:
+            sc = np.asarray(spike_counts)
+        if n_steps <= 0:
+            n_steps = 1
+        # Mean firing rate normalization (units don't matter for cosine
+        # similarity but make the activity vector independent of run length)
+        activity = (sc.astype(np.float32) / float(n_steps))
+        return nearest_token(activity, vocab=vocab, k=top_k, dim=int(activity.size))
+
     def set_pathway_weights(
         self,
         pathway_name: str,
