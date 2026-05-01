@@ -94,15 +94,23 @@ Reports accuracy + confusion matrix for both regimes.
 
 ## Smoke test results — chance-level despite Gabor + scale increases
 
-Five training configurations tested. **Cortex_N dominance is structural,
-not regime-dependent:**
+Six training regimes tested. **All converge to ~25%/12.5% with cortex_N
+dominance — the trained weights have negligible influence on eval:**
 
-| Config | Train | Gabor V1 | Reset | I→W acc | W→A acc | Time | Diagnostic |
-|---|---|---|---|---|---|---|---|
-| 1a Baseline | 100+100 | OFF | OFF | 22.5% | 27.5% | 213s | initial |
-| 1b Scale | 500+500 | OFF | OFF | 22.5% | 25.0% | ~17min | scale doesn't help |
-| 2a Gabor | 200+200 | ON | OFF | 20.0% | 22.5% | 394s | N-bias emerges |
-| 2b Gabor+reset | 200+200 | ON | ON | 25.0% | **12.5%** | 606s | **catastrophic N-bias** |
+| Regime | Train | Gabor | Reset | Contrast | Init | I→W | W→A | Diagnostic |
+|---|---|---|---|---|---|---|---|---|
+| R1a Baseline | 100+100 | OFF | OFF | OFF | zero | 22.5% | 27.5% | initial |
+| R1b Scale | 500+500 | OFF | OFF | OFF | zero | 22.5% | 25.0% | scale fails |
+| R2a Gabor | 200+200 | ON | OFF | OFF | zero | 20.0% | 22.5% | N-bias emerges |
+| R2b Gabor+reset | 200+200 | ON | ON | OFF | zero | 25.0% | **12.5%** | catastrophic N-bias |
+| R4 Contrastive | 200+200 | ON | ON | ON | zero | 25.0% | 12.5% | **identical to R2b** |
+| R5 Non-zero init | 200+200 | ON | ON | ON | **2.0** | 25.0% | 12.5% | **identical to R4** |
+| R3 Embodied | 100ep×30 | ON | per-step | OFF | 2.0 | TBD | TBD | running (~90min) |
+
+**Smoking gun (R4 ≡ R2b ≡ R5 result):** Three completely different
+training regimes produce IDENTICAL eval confusion matrices. Same
+predictions, same counts. This proves trained weights aren't affecting
+eval at all — the cascade dynamics determine the cortex_X output.
 
 Regime 2b (Gabor + inter-trial reset) made W→A *worse than chance*
 (12.5% vs 25% chance). Confusion matrix shows total cortex_N capture:
