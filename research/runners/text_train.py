@@ -182,10 +182,21 @@ def run_text_training(
     if verbose:
         print(f"\n[text_train] Regime 1: image -> word ({n_image_word_pairs} pairs)",
               flush=True)
+    n_reset_steps = 100  # 50 ms inter-trial blank — lets NMDA decay
     for trial in range(n_image_word_pairs):
         img, target_word, ap, gp = make_supervised_pair_image_word(rng, grid_size)
-        # Drive retina
+
+        # ─── INTER-TRIAL RESET ───
+        # Zero all input current and reward; run a brief blank period so
+        # NMDA-mediated cortex bistability decays. Without this, activity
+        # from trial N persists into trial N+1, cross-contaminating STDP.
         bridge.cp_external_input_current[:] = 0.0
+        bridge.core_config.current_reward_signal = 0.0
+        for _ in range(n_reset_steps):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+
+        # ─── TRAINING TRIAL ───
         retina_drive = image_to_retina_drive(img, drive_max_pA=drive_pA)
         bridge.cp_external_input_current[retina_idx] = cp.asarray(retina_drive, dtype=cp.float32)
         # Clamp language_output to target word's pattern (supervisor signal)
@@ -194,9 +205,7 @@ def run_text_training(
             drive_max_pA=target_clamp_pA, sparsity=0.1,
         )
         bridge.cp_external_input_current[lang_output_idx] = cp.asarray(target_drive, dtype=cp.float32)
-        # Reward
         bridge.core_config.current_reward_signal = float(reward_value)
-        # Run stim window
         for _ in range(stim_steps_per_pair):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
@@ -212,10 +221,16 @@ def run_text_training(
     for trial in range(n_word_action_pairs):
         word = word_choices[trial % len(word_choices)]
         action = {"north": "N", "east": "E", "south": "S", "west": "W"}[word]
+
+        # ─── INTER-TRIAL RESET ───
         bridge.cp_external_input_current[:] = 0.0
-        # Drive language_input via the token
+        bridge.core_config.current_reward_signal = 0.0
+        for _ in range(n_reset_steps):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+
+        # ─── TRAINING TRIAL ───
         bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=0.1)
-        # Drive corresponding cortex_X strongly (supervisor)
         bridge.cp_external_input_current[cortex_idx_per_action[action]] = cp.float32(
             target_clamp_pA
         )

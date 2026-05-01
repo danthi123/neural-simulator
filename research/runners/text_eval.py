@@ -63,6 +63,7 @@ def evaluate_image_to_word(
     correct = 0
     confusion = {w: {w2: 0 for w2 in ["north", "east", "south", "west"]}
                  for w in ["north", "east", "south", "west"]}
+    n_reset_steps = 100  # match training inter-trial reset
 
     for trial in range(n_trials):
         # Random fresh image
@@ -73,11 +74,17 @@ def evaluate_image_to_word(
                 break
         target_word = _direction_from_positions((ax, ay), (gx, gy))
 
+        # Inter-trial reset
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.core_config.current_reward_signal = 0.0
+        for _ in range(n_reset_steps):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+
         img = render_gridworld_to_image(
             agent_pos=(int(ax), int(ay)), goal_pos=(int(gx), int(gy)),
             grid_size=grid_size, image_size=32,
         )
-        bridge.cp_external_input_current[:] = 0.0
         bridge.cp_external_input_current[retina_idx] = cp.asarray(
             image_to_retina_drive(img, drive_max_pA=drive_pA),
             dtype=cp.float32,
@@ -148,13 +155,18 @@ def evaluate_word_to_action(
     confusion = {w: {a: 0 for a in ACTION_NAMES}
                  for w in ["north", "east", "south", "west"]}
 
+    n_reset_steps = 100  # match training inter-trial reset
     for word in ["north", "east", "south", "west"]:
         target_action = WORD_TO_ACTION[word]
         for trial in range(n_trials_per_word):
+            # Inter-trial reset
             bridge.cp_external_input_current[:] = 0.0
-            bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=0.1)
-            # NO supervisor clamp on cortex_X
             bridge.core_config.current_reward_signal = 0.0
+            for _ in range(n_reset_steps):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+            # Apply token drive (NO supervisor clamp on cortex)
+            bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=0.1)
 
             spike_counts = {a: 0 for a in ACTION_NAMES}
             for s in range(stim_steps_per_trial):
