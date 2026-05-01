@@ -18,7 +18,17 @@ import { makeLineChart, PALETTE_EXPORT as P } from "/static/charts.js";
 const $ = (sel) => document.querySelector(sel);
 
 // Configuration
-const CELL_PX = 56;   // pixels per grid cell
+// Cell pixel size scales inversely with grid size so the canvas stays
+// roughly the same total dimensions regardless of grid_size. Default 8x8
+// uses 56 (unchanged from original); 16x16 → 28; 32x32 → 14. Floor at 14
+// to keep cell labels legible.
+const CELL_PX_DEFAULT = 56;       // pixels per grid cell at 8x8
+const TARGET_CONTENT_PX = 8 * CELL_PX_DEFAULT;  // = 448
+const CELL_PX_FLOOR = 14;
+function cellPxFor(gridSize) {
+  const g = gridSize > 0 ? gridSize : 8;
+  return Math.max(CELL_PX_FLOOR, Math.min(CELL_PX_DEFAULT, Math.floor(TARGET_CONTENT_PX / g)));
+}
 const PADDING = 24;   // canvas padding
 const TRAIL_LEN = 30; // trajectory trail samples
 
@@ -651,8 +661,9 @@ function onGridClick(ev) {
   const xPx = ev.clientX - rect.left - PADDING;
   const yPx = ev.clientY - rect.top - PADDING;
   const gridSize = worldGridSize();
-  const gx = Math.max(0, Math.min(gridSize - 1, Math.floor(xPx / CELL_PX)));
-  const gyFromTop = Math.floor(yPx / CELL_PX);
+  const cell = cellPxFor(gridSize);
+  const gx = Math.max(0, Math.min(gridSize - 1, Math.floor(xPx / cell)));
+  const gyFromTop = Math.floor(yPx / cell);
   const gy = Math.max(0, Math.min(gridSize - 1, gridSize - 1 - gyFromTop));
   sendControl({ goal: [gx, gy] });
   flashCell(canvas, gx, gy);
@@ -690,6 +701,7 @@ function flashCell(canvas, gx, gy) {
   // Brief visual confirmation that the click was registered. Drawn as a
   // ring expanding from the clicked cell.
   const ctx = canvas.getContext("2d");
+  const s = iconScale();
   const [px, py] = cellToPx(gx, gy);
   const start = performance.now();
   function tick(now) {
@@ -698,9 +710,9 @@ function flashCell(canvas, gx, gy) {
     renderFrame();
     ctx.save();
     ctx.strokeStyle = `rgba(110, 231, 183, ${1 - t})`;
-    ctx.lineWidth = 3;
+    ctx.lineWidth = Math.max(1, 3 * s);
     ctx.beginPath();
-    ctx.arc(px, py, 14 + t * 30, 0, Math.PI * 2);
+    ctx.arc(px, py, (14 + t * 30) * s, 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
     requestAnimationFrame(tick);
@@ -999,7 +1011,8 @@ async function loadRun(name, listItem) {
 }
 
 function resizeCanvas(canvas, gridSize) {
-  const size = gridSize * CELL_PX + PADDING * 2;
+  const cell = cellPxFor(gridSize);
+  const size = gridSize * cell + PADDING * 2;
   canvas.width = size;
   canvas.height = size;
   canvas.style.width = `${size}px`;
@@ -1014,36 +1027,44 @@ function drawEmptyGrid(canvas, gridSize) {
 }
 
 function drawGrid(ctx, gridSize) {
+  const cell = cellPxFor(gridSize);
   ctx.strokeStyle = C.border;
   ctx.lineWidth = 1;
   for (let i = 0; i <= gridSize; i++) {
-    const off = PADDING + i * CELL_PX + 0.5;
+    const off = PADDING + i * cell + 0.5;
     ctx.beginPath();
     ctx.moveTo(PADDING, off);
-    ctx.lineTo(PADDING + gridSize * CELL_PX, off);
+    ctx.lineTo(PADDING + gridSize * cell, off);
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(off, PADDING);
-    ctx.lineTo(off, PADDING + gridSize * CELL_PX);
+    ctx.lineTo(off, PADDING + gridSize * cell);
     ctx.stroke();
   }
-  // Faint cell coordinates
+  // Faint cell coordinates — only label every Nth cell when grid is dense
+  // so the small cells don't get cluttered.
   ctx.fillStyle = C.fgMuted;
-  ctx.font = "10px ui-monospace, Consolas, monospace";
+  const labelFontPx = cell >= 28 ? 10 : 8;
+  ctx.font = `${labelFontPx}px ui-monospace, Consolas, monospace`;
   ctx.textBaseline = "top";
+  const labelStride = cell >= 28 ? 1 : (cell >= 18 ? 2 : 4);
   for (let x = 0; x < gridSize; x++) {
-    ctx.fillText(String(x), PADDING + x * CELL_PX + 4, PADDING + 2);
+    if (x % labelStride !== 0) continue;
+    ctx.fillText(String(x), PADDING + x * cell + 2, PADDING + 1);
   }
   for (let y = 0; y < gridSize; y++) {
-    ctx.fillText(String(y), PADDING + 2, PADDING + y * CELL_PX + 12);
+    if (y % labelStride !== 0) continue;
+    ctx.fillText(String(y), PADDING + 1, PADDING + y * cell + (cell >= 18 ? 12 : 6));
   }
 }
 
 function cellToPx(x, y) {
   // Grid (x, y) → canvas pixel center. Y is flipped so y=0 is at the bottom.
+  const g = worldGridSize();
+  const cell = cellPxFor(g);
   return [
-    PADDING + x * CELL_PX + CELL_PX / 2,
-    PADDING + (worldGridSize() - 1 - y) * CELL_PX + CELL_PX / 2,
+    PADDING + x * cell + cell / 2,
+    PADDING + (g - 1 - y) * cell + cell / 2,
   ];
 }
 
@@ -1334,52 +1355,62 @@ function renderFrame() {
 function drawBeaconField(ctx, gridSize, goal) {
   // Continuous radial gradient — more biological than per-cell shading.
   // Mirrors the runner's beacon model: intensity = 1 / (1 + falloff*d).
+  const cell = cellPxFor(gridSize);
   const [gx, gy] = goal;
   const [cx, cy] = cellToPx(gx, gy);
-  const maxRadius = Math.hypot(gridSize * CELL_PX, gridSize * CELL_PX);
+  const maxRadius = Math.hypot(gridSize * cell, gridSize * cell);
   const grad = ctx.createRadialGradient(cx, cy, 4, cx, cy, maxRadius);
   grad.addColorStop(0, "rgba(110, 231, 183, 0.30)");
   grad.addColorStop(0.15, "rgba(110, 231, 183, 0.16)");
   grad.addColorStop(0.4, "rgba(110, 231, 183, 0.05)");
   grad.addColorStop(1, "rgba(110, 231, 183, 0.0)");
   ctx.fillStyle = grad;
-  ctx.fillRect(PADDING, PADDING, gridSize * CELL_PX, gridSize * CELL_PX);
+  ctx.fillRect(PADDING, PADDING, gridSize * cell, gridSize * cell);
+}
+
+function iconScale() {
+  // Scale icons proportionally to cell size so a 16x16 grid (28px cells)
+  // shrinks all radii to 50% of the 8x8 (56px) default.
+  return cellPxFor(worldGridSize()) / CELL_PX_DEFAULT;
 }
 
 function drawLandmark(ctx, gridSize, lm) {
+  const s = iconScale();
   const [px, py] = cellToPx(lm[0], lm[1]);
   ctx.save();
   ctx.strokeStyle = "rgba(147, 197, 253, 0.5)";
-  ctx.lineWidth = 1;
+  ctx.lineWidth = Math.max(1, 1 * s);
   ctx.beginPath();
-  ctx.arc(px, py, 14, 0, Math.PI * 2);
+  ctx.arc(px, py, 14 * s, 0, Math.PI * 2);
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(px, py, 5, 0, Math.PI * 2);
+  ctx.arc(px, py, 5 * s, 0, Math.PI * 2);
   ctx.fillStyle = "rgba(147, 197, 253, 0.4)";
   ctx.fill();
   ctx.restore();
 }
 
 function drawGoal(ctx, goal) {
+  const s = iconScale();
   const [px, py] = cellToPx(goal[0], goal[1]);
   ctx.save();
   // Pulsing core
   ctx.fillStyle = C.accent;
   ctx.beginPath();
-  ctx.arc(px, py, 8, 0, Math.PI * 2);
+  ctx.arc(px, py, 8 * s, 0, Math.PI * 2);
   ctx.fill();
   // Halo
   ctx.strokeStyle = "rgba(110, 231, 183, 0.7)";
-  ctx.lineWidth = 2;
+  ctx.lineWidth = Math.max(1, 2 * s);
   ctx.beginPath();
-  ctx.arc(px, py, 18, 0, Math.PI * 2);
+  ctx.arc(px, py, 18 * s, 0, Math.PI * 2);
   ctx.stroke();
   ctx.restore();
 }
 
 function drawTrajectoryTrail(ctx, trajectory, step) {
   if (!trajectory || trajectory.length === 0) return;
+  const s = iconScale();
   const start = Math.max(0, step - TRAIL_LEN);
   ctx.save();
   for (let i = start; i < step; i++) {
@@ -1387,38 +1418,40 @@ function drawTrajectoryTrail(ctx, trajectory, step) {
     const [px, py] = cellToPx(trajectory[i][0], trajectory[i][1]);
     ctx.fillStyle = `rgba(251, 191, 36, ${0.06 + a * 0.34})`;
     ctx.beginPath();
-    ctx.arc(px, py, 4 + a * 2, 0, Math.PI * 2);
+    ctx.arc(px, py, (4 + a * 2) * s, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.restore();
 }
 
 function drawAgent(ctx, pos, action) {
+  const s = iconScale();
   const [px, py] = cellToPx(pos[0], pos[1]);
   ctx.save();
   // Body
   ctx.fillStyle = C.accentWarn;
   ctx.strokeStyle = C.codeBg;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = Math.max(1, 2 * s);
   ctx.beginPath();
-  ctx.arc(px, py, 11, 0, Math.PI * 2);
+  ctx.arc(px, py, 11 * s, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
   // Action arrow (heading the agent just went)
   if (action != null) {
     const dx = [0, 1, 0, -1][action] || 0; // N E S W → x delta
     const dy = [1, 0, -1, 0][action] || 0; // y up = N
-    const tipX = px + dx * 18;
-    const tipY = py - dy * 18; // canvas y is flipped
+    const arrowLen = 18 * s;
+    const tipX = px + dx * arrowLen;
+    const tipY = py - dy * arrowLen; // canvas y is flipped
     ctx.strokeStyle = C.accentWarn;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = Math.max(1, 2 * s);
     ctx.beginPath();
     ctx.moveTo(px, py);
     ctx.lineTo(tipX, tipY);
     ctx.stroke();
     // Arrowhead
     const ang = Math.atan2(tipY - py, tipX - px);
-    const ah = 5;
+    const ah = 5 * s;
     ctx.beginPath();
     ctx.moveTo(tipX, tipY);
     ctx.lineTo(tipX - ah * Math.cos(ang - Math.PI / 6), tipY - ah * Math.sin(ang - Math.PI / 6));
