@@ -156,10 +156,21 @@ export function fmtBytes(b) {
 export function detectExperiment(name) {
   // Strip extension
   const stem = name.replace(/\.json$/i, "");
-  // Match the seed segment
-  const m = stem.match(/^g11_seed\d+(?:_(.+))?$/);
-  if (!m) return "(other)";
-  return m[1] || "default";
+  // Legacy g11_seed-prefix style (e.g. g11_seed42_v3lateral)
+  let m = stem.match(/^g11_seed\d+(?:_(.+))?$/);
+  if (m) return m[1] || "default";
+  // 2026-05-01: modern *_seed42-suffix naming (e.g. clusterG_Gfv2nmda_seed100,
+  // k_v2_stress_16x16_seed42, text_eval_R6_pfc_bypass_seed42).
+  m = stem.match(/^(.+?)_seed\d+(?:_[a-f0-9]{6})?$/);
+  if (m) return m[1];
+  // Smoke / test files (no seed) — keep their full name as the experiment
+  if (stem.endsWith("_smoke") || stem.endsWith("_test")) return stem;
+  // Modern files without seed suffix (e.g. text_eval_R6_pfc_bypass)
+  // Recognized as their own experiment if they have a recognizable prefix.
+  if (/^(text_eval|text_train|traj_train|k_v2|cluster|stress|no_heuristic)/.test(stem)) {
+    return stem;
+  }
+  return "(other)";
 }
 
 /**
