@@ -492,7 +492,9 @@ async function attachLive(runId, listItem) {
   // Live mode uses runId for the HUD's "name" field; clear any saved-run
   // name that lingered from a prior loadRun().
   world._loadedRunName = null;
-  // Use a synthetic data shape compatible with renderFrame()
+  // Use a synthetic data shape compatible with renderFrame(). grid_size
+  // is updated below from the run's cmd args (--grid-size N) once we
+  // fetch them; default 8 matches g11_bg_runner.
   world.data = {
     grid_size: 8,
     trajectory: [],
@@ -577,6 +579,20 @@ async function attachLive(runId, listItem) {
           t === "--landmarks-replace-place",
       );
       updateLegendVisibility();
+
+      // Parse --grid-size N from cmd so the canvas resizes correctly for
+      // non-default grid sizes (e.g. 16x16 stress tests). Default 8 matches
+      // g11_bg_runner. Apply BEFORE the WebSocket opens so the first frame
+      // renders at the correct size.
+      let gridFromCmd = 8;
+      const gIdx = cmd.findIndex((t) => t === "--grid-size");
+      if (gIdx >= 0 && gIdx + 1 < cmd.length) {
+        const parsed = parseInt(cmd[gIdx + 1], 10);
+        if (parsed > 0 && parsed <= 64) gridFromCmd = parsed;
+      }
+      if (world.data) world.data.grid_size = gridFromCmd;
+      const canvas2 = $("#world-canvas");
+      if (canvas2) resizeCanvas(canvas2, gridFromCmd);
     }
   } catch {
     // On fetch error, leave usedLandmarks=false (already set above). If a
