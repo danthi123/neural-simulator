@@ -199,6 +199,83 @@ def test_visual_cortex_pathways_wired():
     )
 
 
+def test_visual_cortex_neurons_fire_when_retina_driven():
+    """Integration test: when retina is driven by a rendered gridworld
+    image, V1_simple neurons receive non-zero synaptic input and at
+    least some fire (rate > 0). Validates that the wiring is functional
+    end-to-end from retina drive → V1_simple firing. Skipped if cupy
+    is unavailable."""
+    pytest.importorskip("cupy")
+
+    import cupy as cp
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.bridge import SimulationBridge
+    from sim.regions import RegionManager
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    from sim.visual_cortex import render_gridworld_to_image, image_to_retina_drive
+
+    # Minimal config — visual cortex only, no BG cascade noise
+    regions, pathways = build_bg_brain_regions(enable_visual_cortex=True)
+
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = list(regions)
+    cfg.region_pathways = list(pathways)
+    cfg.dt_ms = 0.5
+    cfg.seed = 42
+
+    bridge = SimulationBridge(
+        core_config=cfg,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
+    )
+    bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    # Find retina + V1_simple index ranges
+    rm = bridge.region_manager
+    retina_idx = list(rm.indices("retina"))
+    v1_idx = list(rm.indices("cortex_v1_simple"))
+    assert len(retina_idx) > 0
+    assert len(v1_idx) > 0
+
+    retina_idx_cp = cp.asarray(retina_idx, dtype=cp.int64)
+    v1_idx_cp = cp.asarray(v1_idx, dtype=cp.int64)
+
+    # Render a gridworld image and drive retina
+    img = render_gridworld_to_image(
+        agent_pos=(2, 3), goal_pos=(5, 5), grid_size=8, image_size=32,
+    )
+    drive = image_to_retina_drive(img, drive_max_pA=200.0)
+    bridge.cp_external_input_current[:] = 0.0
+    bridge.cp_external_input_current[retina_idx_cp] = cp.asarray(drive, dtype=cp.float32)
+
+    # Step 100 ms (200 sub-steps at dt=0.5ms) — long enough for V1 to receive
+    # and integrate post-synaptic current from retina spikes.
+    v1_total_spikes = 0
+    retina_total_spikes = 0
+    for _ in range(200):
+        bridge._run_one_simulation_step()
+        firing = bridge.cp_firing_states
+        retina_total_spikes += int(firing[retina_idx_cp].sum().get())
+        v1_total_spikes += int(firing[v1_idx_cp].sum().get())
+
+    # Retina must fire (it's directly driven by image current)
+    assert retina_total_spikes > 0, (
+        f"Retina did not fire under image drive: {retina_total_spikes} spikes "
+        f"across {len(retina_idx)} neurons over 200 sub-steps"
+    )
+    # V1_simple must receive enough input to fire at least sometimes.
+    # With sparse density=0.05 and weight_mean=0.5, some V1 cells should
+    # cross threshold. (Random init may give some near-silent V1 cells but
+    # not all should be silent.)
+    assert v1_total_spikes > 0, (
+        f"V1_simple did not fire despite {retina_total_spikes} retina spikes — "
+        f"retina → V1_simple wiring is broken or weights are too small"
+    )
+
+
 def test_visual_cortex_plasticity_gates_set():
     """Plastic visual cortex pathways are tagged with plasticity_gate
     so the runner can implement critical-period freeze."""
