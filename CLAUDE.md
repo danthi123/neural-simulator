@@ -408,7 +408,7 @@ sensory cortex to mature before association cortex.
 
 ### Recommended configuration (current best 2026-05-01)
 
-**🎯 BIGGEST BREAKTHROUGH 2026-05-01: Cluster G + NMDA = 2.00 ± 0.00 (n=6).**
+**🎯 BIGGEST BREAKTHROUGH 2026-05-01: Cluster G v2.5 — per-region NMDA on cortex+motor+PFC = 2.00 ± 0.00 (n=6).**
 
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
@@ -419,16 +419,24 @@ python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --d
     --seed N --n-steps 1800
 ```
 
-**A+E + G NMDA: 2.00 ± 0.00 (n=6, multi-goal det)** — **60% improvement** over
+**A+E + G v2.5: 2.00 ± 0.00 (n=6, multi-goal det)** — **60% improvement** over
 A+E single-pool (5.02), **56% over F v2 best (4.55)**, **51% over the
 documented cheats-allowed perception-arc flagship (4.08)**. ~49% of total
 1800 steps spent AT the goal across all seeds. Welch t = -22.67 vs F v2,
 p < 1e-15 — the most statistically significant cheat-5 result to date.
 
-NMDA-mediated PFC bistability (Wang 2002) stabilizes goal representation
-across goal-change transitions. F v2 (cerebellum) doesn't compose — NMDA
-already gives a deterministic attractor. Use A+E+G+NMDA WITHOUT F v2 as
-the simplest strongest config.
+`--enable-pfc-nmda` enables NMDA per-region: dlpfc_wm + cortex_{N,E,S,W} +
+motor_{N,E,S,W} (9 regions, 200 neurons total). Biology source: Wang 2002
++ Kandel ch 12 — cortical pyramidals across the neocortex express NMDA-NR2
+receptors. v2.5 KEEPS NMDA OFF on hippocampus, BG, cerebellum. The original
+v1 used global NMDA (every region) which gave the same 2.00 result alone
+but BROKE D-stacks (22.41, 1020% worse) due to runaway recurrent excitation
+in CA3. v2.5 fixes that: D v1 stack now gives 3.34 ± 0.64.
+
+F v2 (cerebellum) doesn't compose — NMDA already gives a deterministic
+attractor. Use the v2.5 config WITHOUT F v2 as the simplest strongest
+config. To stack D v1 (hippocampus), expect 3.34 — still much better than
+cheats-allowed flagship.
 
 See [`research/findings/2026-05-01-cluster-g-nmda-breakthrough.md`](research/findings/2026-05-01-cluster-g-nmda-breakthrough.md).
 
