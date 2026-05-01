@@ -261,13 +261,23 @@
       <form id="launch-form">
         <label>Preset
           <select name="preset">
-            <option value="flagship">flagship — 4-cheats-closed (recommended)</option>
+            <option disabled>──── 2026-05-01 BREAKTHROUGHS ────</option>
+            <option value="flagship_k_v2_visual">★★ flagship_k_v2_visual — Cluster K v2 visual cortex 16×16 (2.87±0.19, perception-only, NO heuristic)</option>
+            <option value="flagship_k_v2_24x24">flagship_k_v2_24x24 — K v2 at 24×24 (2.87±0.22, grid-invariant)</option>
+            <option value="flagship_g_v25">★ flagship_g_v25 — Cluster G v2.5 NMDA (2.00±0.00 with heuristic)</option>
+            <option value="interactive_k_v2_visual">★ interactive_k_v2_visual — K v2 visual cortex, 3600 steps, click grid to teleport goal</option>
+            <option disabled>──── earlier flagship configs ────</option>
+            <option value="flagship">flagship — 4-cheats-closed (perception arc, 4.08±0.49)</option>
             <option value="flagship_with_cheat5">flagship_with_cheat5 — adds curriculum-staged BG cross-projections</option>
             <option value="perception_only">perception_only — full perception arc, no sensed reward</option>
+            <option value="biology_AE">biology_AE — A+E composite (3.31±0.74 single-goal)</option>
+            <option value="biology_AE_multi">biology_AE_multi — A+E with --goal-schedule multi</option>
+            <option value="biology_AE_sensed">biology_AE_sensed — A+E with sensed-reward only</option>
+            <option value="biology_baseline">biology_baseline — R-pass + Cluster B baseline</option>
             <option value="baseline">baseline — minimal, no flags</option>
             <option value="smoke">smoke — 100 steps for quick check</option>
             <option disabled>──── interactive (control via World tab) ────</option>
-            <option value="interactive_flagship">★ interactive_flagship — flagship config, 3600 steps, click grid to teleport goal</option>
+            <option value="interactive_flagship">interactive_flagship — flagship config, 3600 steps, click grid to teleport goal</option>
             <option value="interactive_baseline">interactive_baseline — minimal config + interactive control</option>
           </select>
         </label>
@@ -286,11 +296,12 @@
           <input type="text" name="extra_args" placeholder="--bg-lateral-inhibition --custom-flag value">
         </label>
         <p class="muted" style="font-size:11px; margin: 0">
-          Custom grid sizes: the runner scales goal positions automatically, but the
-          recipe (warmup steps, weight strengths) is 8×8-tuned. At 16×16 the existing
-          flagship underperforms baseline (5.26 vs 4.44) per the
-          <a href="/api/findings/2026-04-27-16x16-scaling.md" target="_blank">2026-04-27 scaling finding</a>
-          — needs empirical re-tuning, not just a flag.
+          Grid scaling: the legacy <code>flagship</code> recipe is 8×8-tuned. As of
+          2026-05-01, <code>flagship_k_v2_visual</code> achieves 2.87±0.19 at 16×16
+          and 2.87±0.22 at 24×24 perception-only — Cluster K v2 visual cortex is
+          grid-invariant. See
+          <a href="/api/findings/2026-05-01-cluster-k-v2-breakthrough.md" target="_blank">K v2 breakthrough</a>
+          and <a href="/api/findings/2026-05-01-cluster-g-grid-scaling.md" target="_blank">grid scaling</a> findings.
         </p>
         <button type="submit">Launch</button>
       </form>
