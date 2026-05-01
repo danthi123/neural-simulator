@@ -111,13 +111,38 @@ now the highest-priority architectural work.
 
 ## Recommended next steps (priority order)
 
-### 1. Quick wins (1-2 hours): retest with curriculum + informed init
+### 1. Quick wins (1-2 hours): retest with curriculum + informed init — TESTED, NEGATIVE
 
-Re-run Tier 0 with `--curriculum --curriculum-warmup-steps 600
---enable-learned-perception-informed-init`. If this brings the 16×16
-result down to ~6-8, the architecture is salvageable with hyperparam
-tuning. If still >12, the perception bottleneck is fundamental and
-v2 work is required.
+Re-run Tier 0 with `--curriculum --curriculum-warmup-steps 600 --informed-init`:
+
+| Config | Sum | Std | Phase 0 finalQ | Phase 3 finalQ |
+|---|---|---|---|---|
+| Tier 0 (no curr / no informed) | 15.47 | 7.06 | ~2-4 | ~3-7 |
+| **+ curriculum + informed-init** | **35.42** | **4.16** | **~0.55** | **6-25 (catastrophic)** |
+
+Curriculum + informed-init *helped* Phase 0 dramatically (0.53-0.56,
+near-perfect goal-locking) but *catastrophically broke* Phase 1+
+(after the first goal change). The mechanism: curriculum freezes
+cortex→D1 plasticity at step 600, locking in the Phase 0 winning
+pattern. When the goal moves at step 450, cortex is frozen at the
+old selectivity and can't adapt.
+
+8×8 perception arc baseline (4.08 ± 0.49) also used curriculum but
+worked because Phase 0 reaches goal in ~30 steps and the agent has
+~420 steps of phase-1 selectivity practice before the goal change at
+step 450. At 16×16, Phase 0 takes ~150 steps to reach goal, leaves
+only ~300 steps of practice, then cortex freezes — adapted to a
+half-formed pattern.
+
+**This NEGATIVE quick-win result strengthens the conclusion**: the
+perception bottleneck is fundamental at scale. Cluster K v2 (visual
+cortex with learned IT → cortex_X) is now the unambiguous next step.
+
+Possible salvage hyperparams to try (low priority):
+- `--curriculum-phase2-cortex-gain 0.2` — partial freeze, lets cortex
+  keep adapting at 20% rate post-warmup
+- Drop curriculum entirely AND add `--adaptive-da --adaptive-da-ema-decay-negative 0.7`
+  to match the 4.08 ± 0.49 8×8 working config exactly
 
 ### 2. Tier 1 — Cluster K v2 (multi-day, high payoff)
 
