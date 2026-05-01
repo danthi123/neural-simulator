@@ -2073,6 +2073,120 @@ class SimulationBridge:
             self._warned_cp_plasticity_gain = True
         self.cp_plasticity_rate_gain = value
 
+    def set_pathway_weights(
+        self,
+        pathway_name: str,
+        pre_indices,
+        post_indices,
+        weights,
+        add_missing: bool = False,
+    ) -> int:
+        """Overwrite weights for specific (pre, post) edges in cp_connections.
+
+        Used by post-build pathway initialization (e.g. Gabor pre-init for
+        V1 simple cells in Cluster K v2) and any future helper that needs
+        to install hand-computed weights into a pre-built CSR.
+
+        Args:
+            pathway_name: informational tag for logging — does NOT need to
+                match any registered pathway. Each call is treated
+                independently.
+            pre_indices: (N,) array of int global pre-neuron indices.
+            post_indices: (N,) array of int global post-neuron indices.
+            weights: (N,) array of float32 weights to install.
+            add_missing: if False (default), raises ValueError when any
+                (pre, post) pair is not in the existing CSR. If True,
+                missing edges are added (requires CSR rebuild).
+
+        Returns: count of edges updated.
+
+        Raises:
+            ValueError: if any (pre, post) is missing and add_missing=False.
+            RuntimeError: if cp_connections is None.
+        """
+        import cupyx.scipy.sparse as csp
+
+        if self.cp_connections is None:
+            raise RuntimeError(
+                f"set_pathway_weights('{pathway_name}'): cp_connections is None. "
+                f"Call _initialize_simulation_data first."
+            )
+        pre_np = np.asarray(pre_indices, dtype=np.int64)
+        post_np = np.asarray(post_indices, dtype=np.int64)
+        w_np = np.asarray(weights, dtype=np.float32)
+        if pre_np.shape != post_np.shape or pre_np.shape != w_np.shape:
+            raise ValueError(
+                f"set_pathway_weights('{pathway_name}'): shape mismatch — "
+                f"pre {pre_np.shape}, post {post_np.shape}, weights {w_np.shape}"
+            )
+        n_input = int(pre_np.size)
+        if n_input == 0:
+            return 0
+
+        # Pull CSR structure to host once (small cost vs N edge lookups)
+        indptr = self.cp_connections.indptr.get()
+        indices = self.cp_connections.indices.get()
+        data = self.cp_connections.data.get()
+
+        # Build a dict: (pre, post) -> data index. O(nnz) one-time cost.
+        # For each row r, iterate indices[indptr[r]:indptr[r+1]].
+        pair_to_idx = {}
+        n_rows = int(self.cp_connections.shape[0])
+        for r in range(n_rows):
+            start = int(indptr[r])
+            end = int(indptr[r + 1])
+            for off in range(start, end):
+                pair_to_idx[(int(r), int(indices[off]))] = off
+
+        n_updated = 0
+        missing_pairs = []
+        for i in range(n_input):
+            key = (int(pre_np[i]), int(post_np[i]))
+            if key in pair_to_idx:
+                data[pair_to_idx[key]] = float(w_np[i])
+                n_updated += 1
+            else:
+                missing_pairs.append(key)
+
+        if missing_pairs and not add_missing:
+            head = missing_pairs[:5]
+            raise ValueError(
+                f"set_pathway_weights('{pathway_name}'): {len(missing_pairs)} "
+                f"of {n_input} (pre, post) pairs not found in CSR. "
+                f"First few: {head}. Set add_missing=True to add them."
+            )
+
+        # Push updated data back to GPU
+        self.cp_connections.data = cp.asarray(data, dtype=cp.float32)
+
+        if missing_pairs and add_missing:
+            # Rebuild CSR with new edges. Use sum_duplicates to merge if
+            # any input pair already exists (shouldn't happen here since
+            # those went into n_updated, but be safe).
+            new_pre = np.array([p for p, _ in missing_pairs], dtype=np.int64)
+            new_post = np.array([q for _, q in missing_pairs], dtype=np.int64)
+            new_w = np.array(
+                [float(w_np[i]) for i, key in enumerate(
+                    zip(pre_np.tolist(), post_np.tolist())) if key in missing_pairs],
+                dtype=np.float32,
+            )
+            # Concatenate and rebuild
+            existing_coo = self.cp_connections.tocoo(copy=False)
+            all_pre = cp.concatenate([existing_coo.row, cp.asarray(new_pre)])
+            all_post = cp.concatenate([existing_coo.col, cp.asarray(new_post)])
+            all_w = cp.concatenate([existing_coo.data, cp.asarray(new_w)])
+            n = self.core_config.num_neurons
+            coo = csp.coo_matrix((all_w, (all_pre, all_post)), shape=(n, n))
+            self.cp_connections = coo.tocsr()
+            self.cp_connections.sum_duplicates()
+            self._synapse_count = int(self.cp_connections.nnz)
+            self._synapse_capacity = self._synapse_count
+
+        # Invalidate caches that depend on connectivity / weights
+        self._invalidate_coo_cache()
+
+        return n_updated
+
     def set_plasticity_gate(self, name: str, value: float) -> None:
         """Set the runtime plasticity gain for all synapses in pathways
         tagged with `name`.
