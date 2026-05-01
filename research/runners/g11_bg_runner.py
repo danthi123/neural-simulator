@@ -128,6 +128,12 @@ def build_bg_brain_regions(
     pfc_internal_density: float = 0.2,  # recurrent connectivity for persistence
     goal_to_pfc_weight: float = 8.0,
     pfc_to_cortex_weight: float = 8.0,
+    # Cluster G v2 (2026-05-01): when True, the dlpfc_wm region gets
+    # BrainRegion.enable_nmda=True so NMDA-mediated bistability applies
+    # ONLY to PFC neurons, not globally. Composes with cfg.enable_nmda
+    # via the bridge's cp_nmda_neuron_mask. Recommended over global NMDA
+    # when stacking with hippocampus / cerebellum / etc.
+    pfc_enable_nmda: bool = False,
     # Cheat #5: BG cross-projections (2026-04-27).
     # Default: cortex_X → str_D1_X only (same-action). Real biology has
     # cross-projections (cortex_E might also project weakly to str_D1_W,
@@ -342,6 +348,10 @@ def build_bg_brain_regions(
             izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
             # IZH2007_HIPPO_PYRAMIDAL works for PFC-style dynamics; can switch
             # to dedicated PFC preset (HH_PFC_PYRAMIDAL) for full biophysics.
+            # Cluster G v2: tag PFC for NMDA-mediated bistability (Wang 2002)
+            # only when pfc_enable_nmda is set. Other regions keep enable_nmda=False
+            # so global cfg.enable_nmda only activates NMDA dynamics here.
+            enable_nmda=bool(pfc_enable_nmda),
         ))
 
     # Sensory layer (opt-in): position-tuned input neurons feeding cortex.
@@ -2025,6 +2035,7 @@ def run_moving_goal_episode(
         pfc_internal_density=pfc_internal_density,
         goal_to_pfc_weight=goal_to_pfc_weight,
         pfc_to_cortex_weight=pfc_to_cortex_weight,
+        pfc_enable_nmda=enable_pfc_nmda,
         enable_bg_cross_projections=enable_bg_cross_projections,
         cross_projection_weight=cross_projection_weight,
         cross_projection_density=cross_projection_density,

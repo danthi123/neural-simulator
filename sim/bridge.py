@@ -191,6 +191,11 @@ class SimulationBridge:
         self.cp_conductance_g_e = None
         self.cp_conductance_g_i = None
         self.cp_conductance_g_nmda = None
+        # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
+        # in regions with BrainRegion.enable_nmda=True, 0.0 otherwise).
+        # When None, NMDA applies globally per cfg.enable_nmda — backward
+        # compatible. Set in _build_per_neuron_nmda_mask after region init.
+        self.cp_nmda_neuron_mask = None
         self.cp_conductance_g_nmda_rise = None
         self.cp_external_input_current = None 
         self.cp_firing_states = None        
@@ -994,6 +999,25 @@ class SimulationBridge:
             # NMDA conductance (dual-exponential: g_nmda_slow - g_nmda_rise)
             self.cp_conductance_g_nmda = cp.zeros(n, dtype=cp.float32)
             self.cp_conductance_g_nmda_rise = cp.zeros(n, dtype=cp.float32)
+            # Cluster G v2 (2026-05-01): per-neuron NMDA mask. 1.0 for
+            # neurons in regions with BrainRegion.enable_nmda=True, 0.0
+            # for all others. When the region_manager doesn't tag any
+            # region with enable_nmda=True, mask is left as None and NMDA
+            # applies globally per cfg.enable_nmda (v1 backward compat).
+            if self.region_manager is not None:
+                nmda_regions = [r for r in self.region_manager.regions()
+                                if getattr(r, "enable_nmda", False)]
+                if nmda_regions:
+                    mask = cp.zeros(n, dtype=cp.float32)
+                    for r in nmda_regions:
+                        idx = list(self.region_manager.indices(r.name))
+                        if idx:
+                            mask[cp.asarray(idx, dtype=cp.int64)] = 1.0
+                    self.cp_nmda_neuron_mask = mask
+                    self._log_console(
+                        f"NMDA per-region mask: {len(nmda_regions)} regions enabled "
+                        f"({sum(int(r.n_neurons) for r in nmda_regions)} neurons)",
+                    )
             self.cp_refractory_timers = cp.zeros(n, dtype=cp.int32)
             self.cp_neuron_activity_ema = cp.zeros(n, dtype=cp.float32) 
             self.cp_viz_activity_timers = cp.zeros(n, dtype=cp.int32) 
@@ -4143,6 +4167,12 @@ class SimulationBridge:
                     g_nmda_increase = g_e_increase * cfg.nmda_ratio
                     self.cp_conductance_g_nmda += g_nmda_increase
                     self.cp_conductance_g_nmda_rise += g_nmda_increase
+                # Cluster G v2 (2026-05-01): apply per-neuron NMDA mask if
+                # any region opted into NMDA. Without mask: NMDA applies
+                # globally (v1 behavior). With mask: only neurons in
+                # regions with enable_nmda=True receive NMDA current.
+                if self.cp_nmda_neuron_mask is not None:
+                    I_nmda = I_nmda * self.cp_nmda_neuron_mask
                 total_input_current_pA = total_input_current_pA + I_nmda
 
             # --- 2.5. Update OU Process & Inject Background Noise ---

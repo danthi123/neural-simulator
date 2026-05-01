@@ -97,6 +97,20 @@ class BrainRegion:
     # near-threshold) inhibition. SNc DA neurons lack KCC2 entirely.
     syn_reversal_potential_i_override: Optional[float] = None
 
+    # Cluster G v2 (2026-05-01): per-region NMDA enable. When True, this
+    # region's neurons participate in NMDA-mediated dynamics (Wang 2002
+    # bistability). When False (default), this region's neurons do NOT get
+    # NMDA conductance even if cfg.enable_nmda is True globally.
+    #
+    # Motivation: cfg.enable_nmda + cfg.nmda_ratio are global. v1 turning
+    # them on for "PFC working memory" actually applies to all regions,
+    # destabilizing hippocampus (D v1, D v2 SWR) and other recurrent
+    # circuits (~11x worse cheat-5 results when D + global NMDA stacked).
+    # Per-region NMDA: PFC has it on, hippocampus + cerebellum + cortex
+    # do not. Biology source: Wang 2002 says PFC has elevated NMDA-NR2B
+    # specifically; other cortical areas have less.
+    enable_nmda: bool = False
+
     # Cluster C v2 (2026-04-29): per-action DA compartmentalization.
     # When a region is action-specific (cortex_X, str_D1_X, str_D2_X,
     # gpi_X, thal_X, motor_X, etc), this is the action index in [0, N-1]
