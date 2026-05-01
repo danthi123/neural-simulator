@@ -94,13 +94,67 @@ Reports accuracy + confusion matrix for both regimes.
 
 ## Smoke test results — chance-level despite Gabor + scale increases
 
-Three training configurations tested:
+Five training configurations tested. **Cortex_N dominance is structural,
+not regime-dependent:**
 
-| Config | Train pairs | Gabor V1 | I→W acc | W→A acc | Time | Diagnostic |
-|---|---|---|---|---|---|---|
-| Baseline | 100+100 | OFF | 22.5% | 27.5% | 213s | initial |
-| Gabor | 200+200 | ON | 20.0% | 22.5% | 394s | **N-bias emerges** |
-| Scale-only (TBD) | 500+500 | OFF | TBD | TBD | ~17min | running |
+| Config | Train | Gabor V1 | Reset | I→W acc | W→A acc | Time | Diagnostic |
+|---|---|---|---|---|---|---|---|
+| 1a Baseline | 100+100 | OFF | OFF | 22.5% | 27.5% | 213s | initial |
+| 1b Scale | 500+500 | OFF | OFF | 22.5% | 25.0% | ~17min | scale doesn't help |
+| 2a Gabor | 200+200 | ON | OFF | 20.0% | 22.5% | 394s | N-bias emerges |
+| 2b Gabor+reset | 200+200 | ON | ON | 25.0% | **12.5%** | 606s | **catastrophic N-bias** |
+
+Regime 2b (Gabor + inter-trial reset) made W→A *worse than chance*
+(12.5% vs 25% chance). Confusion matrix shows total cortex_N capture:
+
+```
+W→A confusion (Regime 2b):
+              N    E    S    W
+north         5    3    0    2   ← partial signal
+east          9    0    0    1   ← total miss
+south         9    1    0    0   ← total miss
+west          8    2    0    0   ← total miss
+```
+
+Every word now predicts cortex_N most often. The agent literally never
+picks cortex_S or cortex_W during eval. **This is structural, not a
+training problem** — it persists across 5 different training configs.
+
+## Diagnostic: cascade has built-in N-bias (text_diag_cascade_bias.py)
+
+To localize the issue, ran 3 tests on an UNTRAINED bridge (no STDP, no
+training trials, just raw cascade dynamics):
+
+```
+TEST 1: NO INPUT (spontaneous activity, last 100ms):
+  cortex_N: 23 spikes  ← 2× higher than others
+  cortex_E: 11 spikes
+  cortex_S:  8 spikes
+  cortex_W: 12 spikes
+
+TEST 2: EQUAL 100pA drive to all 4 cortex_X:
+  cortex_N: 68 spikes (29.3%)  ← still highest
+  cortex_E: 61 spikes (26.3%)
+  cortex_S: 48 spikes (20.7%)
+  cortex_W: 55 spikes (23.7%)
+
+TEST 3: language_input drive only (untrained):
+  word='north' → winner=N
+  word='east'  → winner=N  ← wrong
+  word='south' → winner=S  ← right by accident
+  word='west'  → winner=N  ← wrong
+```
+
+**Root cause**: the BG cascade is structurally asymmetric. Even with NO
+training and equal drive, cortex_N fires more than cortex_S. STDP
+training amplifies this: trials reinforce "any input → cortex_N"
+because cortex_N fires the most, regardless of language_input pattern.
+
+The asymmetry likely originates from cluster A (closed BG loop) and/or
+cluster E (topography) — both add directional structure to the cascade.
+This was invisible during K v2 evaluation because the heuristic / visual
+cortex provides differential input that overrides the bias. Without
+that differential input (text-only eval), the bias dominates.
 
 **All chance-level (≈25%).** Both Gabor and 2× scale failed to push
 performance above chance. The Gabor 200-pair confusion matrix reveals
