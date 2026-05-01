@@ -159,13 +159,31 @@ def evaluate_word_to_action(
     for word in ["north", "east", "south", "west"]:
         target_action = WORD_TO_ACTION[word]
         for trial in range(n_trials_per_word):
-            # Inter-trial reset
+            # ─── Phase A: BASELINE measurement ───
+            # Reset, then run with NO input. Measure spontaneous cortex_X.
+            # This subtracts cascade default bias (cortex_N 2x higher etc.)
+            # so we measure the DELTA caused by language_input.
             bridge.cp_external_input_current[:] = 0.0
             bridge.core_config.current_reward_signal = 0.0
             for _ in range(n_reset_steps):
                 bridge._run_one_simulation_step()
                 bridge.runtime_state.current_time_step += 1
-            # Apply token drive (NO supervisor clamp on cortex)
+            baseline_counts = {a: 0 for a in ACTION_NAMES}
+            for s in range(stim_steps_per_trial):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+                if s >= 60:
+                    firing = bridge.cp_firing_states
+                    for a in ACTION_NAMES:
+                        baseline_counts[a] += int(firing[cortex_idx[a]].sum().get())
+
+            # ─── Phase B: LANGUAGE-DRIVEN measurement ───
+            # Reset, drive language_input, measure cortex_X again
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.core_config.current_reward_signal = 0.0
+            for _ in range(n_reset_steps):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
             bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=0.1)
 
             spike_counts = {a: 0 for a in ACTION_NAMES}
@@ -177,7 +195,12 @@ def evaluate_word_to_action(
                     for a in ACTION_NAMES:
                         spike_counts[a] += int(firing[cortex_idx[a]].sum().get())
 
-            predicted = max(spike_counts, key=lambda a: spike_counts[a])
+            # ─── DELTA selection: which cortex_X had the largest INCREASE
+            # over its own baseline? This subtracts the cascade's structural
+            # N-bias and reveals language-driven differential response. ───
+            delta_counts = {a: spike_counts[a] - baseline_counts[a]
+                            for a in ACTION_NAMES}
+            predicted = max(delta_counts, key=lambda a: delta_counts[a])
             confusion[word][predicted] += 1
             if predicted == target_action:
                 correct += 1
@@ -185,7 +208,8 @@ def evaluate_word_to_action(
 
         if verbose:
             print(f"  [eval W->A] word={word} target={target_action} "
-                  f"counts={confusion[word]}", flush=True)
+                  f"baseline={baseline_counts} drive={spike_counts} "
+                  f"delta={delta_counts}", flush=True)
 
     accuracy = correct / max(total, 1)
     return {
