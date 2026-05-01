@@ -225,16 +225,39 @@ def test_detect_experiment():
     """Filename → experiment-name parsing matches frontend's detectExperiment."""
     from webapp.server import _detect_experiment
     cases = [
+        # Legacy g11_seed-prefix style
         ("g11_seed42.json", "default"),
         ("g11_seed42_v3lateral.json", "v3lateral"),
         ("g11_seed100_sensedonly.json", "sensedonly"),
         ("g11_seed44_cheat5v2.json", "cheat5v2"),
         ("g11_seed101_2goal_partialfreeze.json", "2goal_partialfreeze"),
+        # Modern seed-suffix naming (2026-05-01)
+        ("clusterG_Gfv2nmda_seed100.json", "clusterG_Gfv2nmda"),
+        ("k_v2_stress_16x16_seed42.json", "k_v2_stress_16x16"),
+        ("text_eval_R5_delta_seed42.json", "text_eval_R5_delta"),
+        ("no_heuristic_16x16_seed44.json", "no_heuristic_16x16"),
+        ("stress_24x24_seed43.json", "stress_24x24"),
+        # Smoke test files (no seed)
+        ("clusterF_smoke.json", "clusterF_smoke"),
+        ("text_eval_smoke.json", "text_eval_smoke"),
+        # Truly unknown
         ("not_a_g11_file.json", "(other)"),
+        ("random_other_thing.json", "(other)"),
     ]
     for fname, expected in cases:
         actual = _detect_experiment(fname)
         assert actual == expected, f"{fname}: expected {expected!r}, got {actual!r}"
+
+
+def test_new_presets_exposed(client):
+    """2026-05-01: G v2.5 + K v2 + text-io presets must be exposed via API."""
+    res = client.get("/api/info")
+    assert res.status_code == 200
+    presets = res.json()["presets"]
+    assert "flagship_g_v25" in presets, "G v2.5 NMDA flagship preset missing"
+    assert "flagship_k_v2_visual" in presets, "K v2 visual cortex preset missing"
+    assert "flagship_k_v2_24x24" in presets, "K v2 24x24 preset missing"
+    assert "interactive_k_v2_visual" in presets, "interactive K v2 preset missing"
 
 
 def test_interactive_presets_exposed(client):

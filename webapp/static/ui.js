@@ -169,7 +169,53 @@ export function detectExperiment(name) {
 export function categorizeExperiment(experimentName) {
   const e = experimentName.toLowerCase();
   if (e.includes("baseline") || e === "default") return { category: "baseline", color: "#9aa3ad" };
-  if (e.includes("cheat5") || e.includes("v3lateral") || e.includes("v3.1"))
+  // 2026-05-01 NEW CATEGORIES (priority order: most-specific first)
+  // Cluster K v2 visual cortex (Hubel-Wiesel + Felleman-Van Essen)
+  if (e.includes("k_v2") || e.includes("kv2") || e.includes("visual_cortex") ||
+      e.includes("visual-cortex") || e.includes("retina"))
+    return { category: "Cluster K visual cortex", color: "#34d399" };
+  // Text I/O / language regions (Wernicke/Broca-like)
+  if (e.includes("text_io") || e.includes("text_eval") || e.includes("text_train") ||
+      e.includes("text-io") || e.includes("language") ||
+      e.includes("embodied") || e.includes("contrastive") ||
+      e.includes("pfc_bypass") || e.includes("pfc-bypass") ||
+      e.includes("nonzero_init") || e.includes("delta"))
+    return { category: "Text I/O training", color: "#a78bfa" };
+  // Cluster G NMDA flagship (Wang 2002 PFC bistability)
+  if (e.includes("nmda") || e.includes("g_v25") || e.includes("gv25") ||
+      e.includes("clusterg") || e.includes("cluster_g"))
+    return { category: "Cluster G NMDA", color: "#10b981" };
+  // Grid scaling stress tests
+  if (e.includes("16x16") || e.includes("24x24") || e.includes("32x32") ||
+      e.includes("stress_16") || e.includes("stress_24") ||
+      e.includes("grid_") || e.includes("scaling"))
+    return { category: "Grid scaling", color: "#22d3ee" };
+  // No-heuristic / Tier 0 honest tests (no shortcuts allowed)
+  if (e.includes("no_heuristic") || e.includes("noheuristic") || e.includes("tier0"))
+    return { category: "Tier 0 honest test", color: "#f59e0b" };
+  // Trajectory / imitation training
+  if (e.includes("traj_train") || e.includes("trajectory") ||
+      e.includes("imitation"))
+    return { category: "Trajectory training", color: "#a78bfa" };
+  // Cluster F cerebellum (Marr-Albus-Ito)
+  if (e.includes("clusterf") || e.includes("cluster_f") || e.includes("cerebell"))
+    return { category: "Cluster F cerebellum", color: "#fb7185" };
+  // Cluster D hippocampus (trisynaptic + SWR)
+  if (e.includes("clusterd") || e.includes("cluster_d") || e.includes("hippo_swr") ||
+      e.includes("d_v2_swr"))
+    return { category: "Cluster D hippocampus", color: "#f472b6" };
+  // Cluster B striatal interneurons (D1/D2/PV-FSI/TANs)
+  if (e.includes("clusterb") || e.includes("cluster_b") || e.includes("d1d2") ||
+      e.includes("striatal_fs") || e.includes("tans"))
+    return { category: "Cluster B striatum", color: "#fda4af" };
+  // Cluster A (closed BG loop) / Cluster E (topography) composite
+  if (e.includes("clustera") || e.includes("cluster_a") || e.includes("clustere") ||
+      e.includes("cluster_e") || e.includes("clusterae") || e.includes("cluster_ae") ||
+      e.includes("ae_") || e.startsWith("ae"))
+    return { category: "Cluster A/E", color: "#86efac" };
+  // PRE-EXISTING CATEGORIES
+  if (e.includes("cheat5") || e.includes("v3lateral") || e.includes("v3.1") ||
+      e.includes("v4dev"))
     return { category: "cheat #5", color: "#fbbf24" };
   if (e.includes("sensed") || e.includes("allnocheats"))
     return { category: "flagship", color: "#6ee7b7" };

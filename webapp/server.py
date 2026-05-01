@@ -352,6 +352,59 @@ PRESETS: dict[str, list[str]] = {
         "--moving-goal",
         "--n-steps", "100",
     ],
+    # ─── 2026-05-01 NEW PRESETS ───────────────────────────────────────
+    # G v2.5 flagship: NMDA on PFC + cortex_X + motor_X gives perfect
+    # 2.00 ± 0.00 on cheat-5 multi-goal det at 8x8/16x16/24x24 (with
+    # heuristic). 60% improvement over A+E single-pool baseline (5.02).
+    # See research/findings/2026-05-01-cluster-g-nmda-breakthrough.md.
+    "flagship_g_v25": [
+        "--moving-goal", "--goal-schedule", "multi", "--deterministic",
+        "--enable-msn-lateral-inhibition",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-pv-fsi",
+        "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
+        "--heuristic-single-pool",
+        "--enable-dlpfc-wm", "--enable-pfc-nmda",
+        "--n-steps", "1800",
+    ],
+    # K v2 visual cortex (Cluster K v2): perception-only at 16x16,
+    # 2.87 ± 0.19 (n=6) — biology-grounded, NO heuristic. 5.4× better
+    # than perception arc (15.47). Closes 4 of 5 original cheats.
+    # See research/findings/2026-05-01-cluster-k-v2-breakthrough.md.
+    "flagship_k_v2_visual": [
+        "--moving-goal", "--goal-schedule", "multi", "--deterministic",
+        "--enable-msn-lateral-inhibition",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-pv-fsi",
+        "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
+        "--enable-dlpfc-wm", "--enable-pfc-nmda",
+        "--enable-visual-cortex", "--visual-cortex-action-warmup-steps", "600",
+        "--grid-size", "16",
+        "--n-steps", "1800",
+    ],
+    # K v2 visual cortex at 24x24: confirms grid invariance.
+    # 2.87 ± 0.22 (n=3) on 9× larger grid.
+    "flagship_k_v2_24x24": [
+        "--moving-goal", "--goal-schedule", "multi", "--deterministic",
+        "--enable-msn-lateral-inhibition",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-pv-fsi",
+        "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
+        "--enable-dlpfc-wm", "--enable-pfc-nmda",
+        "--enable-visual-cortex", "--visual-cortex-action-warmup-steps", "600",
+        "--grid-size", "24",
+        "--n-steps", "1800",
+    ],
+    # Interactive K v2 visual cortex — for live-mode dashboard demos.
+    "interactive_k_v2_visual": [
+        "--moving-goal", "--goal-schedule", "multi", "--deterministic",
+        "--enable-msn-lateral-inhibition",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-pv-fsi",
+        "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
+        "--enable-dlpfc-wm", "--enable-pfc-nmda",
+        "--enable-visual-cortex", "--visual-cortex-action-warmup-steps", "600",
+        "--grid-size", "16",
+        "--n-steps", "3600",
+        "--progress-print-interval", "1",
+        "--trial-sleep-ms", "30",
+    ],
 }
 
 
@@ -1278,16 +1331,33 @@ def trash_incomplete() -> JSONResponse:
 
 # Auto-group runs by filename suffix and aggregate per-experiment.
 # `g11_seed42_v3lateral.json` → experiment "v3lateral".
+# `clusterG_Gfv2nmda_seed100.json` → experiment "clusterG_Gfv2nmda".
+# `k_v2_stress_16x16_seed42.json` → experiment "k_v2_stress_16x16".
+# `text_eval_R5_delta_seed42.json` → experiment "text_eval_R5_delta".
 # Used by the Experiments tab; mirrors the frontend's detectExperiment helper
 # so users can hit /api/experiments and see the same grouping the UI shows.
 _EXP_SUFFIX_RE = re.compile(r"^g11_seed\d+(?:_(.+))?\.json$")
+# Extended pattern (2026-05-01): runs whose seed appears at the END of
+# the filename (modern naming convention for cluster / stress / text-io
+# runners). The leading group (group 1) is the experiment name.
+_EXP_PREFIX_RE = re.compile(r"^(.+?)_seed\d+(?:_[a-f0-9]{6})?\.json$")
 
 
 def _detect_experiment(name: str) -> str:
+    # Try legacy g11_seed-prefix style first.
     m = _EXP_SUFFIX_RE.match(name)
-    if not m:
-        return "(other)"
-    return m.group(1) or "default"
+    if m:
+        return m.group(1) or "default"
+    # Then modern *_seed42-suffix style (e.g. clusterG_Gfv2nmda_seed100,
+    # k_v2_stress_16x16_seed42, text_eval_R5_delta_seed42).
+    m = _EXP_PREFIX_RE.match(name)
+    if m:
+        return m.group(1)
+    # Special case: pure descriptive smoke files (e.g. clusterF_smoke.json,
+    # text_eval_smoke.json). Recognized via suffix.
+    if name.endswith("_smoke.json") or name.endswith("_test.json"):
+        return name[:-5]
+    return "(other)"
 
 
 @app.get("/api/experiments")
