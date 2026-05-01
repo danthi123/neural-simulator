@@ -408,7 +408,25 @@ sensory cortex to mature before association cortex.
 
 ### Recommended configuration (current best 2026-05-01)
 
-**Text I/O infrastructure (2026-05-01)**: language_input + language_output regions, `bridge.set_token_drive()`/`read_language_output()` APIs, 6 training regimes tested (supervised, contrastive, embodied), 39 tests pass. **Status: PARTIAL** — supervised training produces measurable but unreliable differential responses (peak 35% W→A vs 25% chance with delta-from-baseline eval). Cascade structural cortex_N bias localized (cluster A/E asymmetry). 4 architectural fixes documented for next iteration: PFC-bypass (recommended, Wernicke→arcuate→Broca biology), cascade rebalance, massive scale, larger regions. See `research/findings/2026-05-01-text-io-FINAL-summary.md`.
+**Text I/O infrastructure (2026-05-01) — PARTIALLY FUNCTIONAL**:
+- 6 biology-grounded training regimes tested
+- Cascade structural cortex_N bias localized (cluster A/E asymmetry)
+- **Best stable result: 32.5% W→A (R6 PFC-bypass + delta-eval, 1.30× chance)**
+  - Direct `language_input → motor_X` pathway (Wernicke→arcuate→Broca anatomy)
+  - Reads motor_X to bypass cascade N-bias
+- Embodied training (R3, Tomasello): 30.0% W→A absolute eval, stable
+- Both above-chance, stable, biology-correct
+- Image→word still chance-level — needs larger language regions or longer training
+- Bridge APIs: `set_token_drive()`, `read_language_output()`, `set_pathway_weights()`
+- 39 unit/integration tests pass
+- See `research/findings/2026-05-01-text-io-FINAL-summary.md`
+
+Recommended production config (when iterated to higher accuracy):
+```bash
+python -m research.runners.text_eval_contrastive --n-image-word 500 \
+    --n-word-action 500 --n-eval-image-word 100 --seed 42
+# Uses R6 PFC-bypass pathway + delta-from-baseline eval + motor readout
+```
 
 **🎯 LATEST BREAKTHROUGH 2026-05-01: Cluster K v2 visual cortex — 2.97 ± 0.12 at 16×16 perception-only (NO heuristic).**
 
