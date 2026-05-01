@@ -509,11 +509,23 @@ def run_replicated_multi_goal(
         # Set baseline drives for all replicas
         set_baseline_drives()
 
-        # Per-replica heuristic cortex drive
+        # Per-replica heuristic cortex drive. Aligned 2026-04-30 with
+        # g11_bg_runner.py: drive ALL cortex pools whose direction reduces
+        # Manhattan distance, not just one. For diagonal goals, this drives
+        # 2 cortex pools simultaneously, forcing the BG cascade to arbitrate.
+        # Previous behavior (drive ONE heuristic-chosen pool) made the task
+        # ~50% easier by sidestepping arbitration — was the dominant cause
+        # of the replicated-vs-single ~2× gap on cheat-5 multi-goal det.
         for r in range(n_replicas):
-            action_dir = _heuristic_action(xs[r], ys[r], gxs[r], gys[r], rngs[r])
-            cortex_letter = ACTION_NAMES[action_dir]
-            sb.cp_external_input_current[cortex_idx_per_replica[cortex_letter][r]] = HEURISTIC_DRIVE_PA
+            x_r, y_r, gx_r, gy_r = xs[r], ys[r], gxs[r], gys[r]
+            if gy_r > y_r:
+                sb.cp_external_input_current[cortex_idx_per_replica["N"][r]] = HEURISTIC_DRIVE_PA
+            if gx_r > x_r:
+                sb.cp_external_input_current[cortex_idx_per_replica["E"][r]] = HEURISTIC_DRIVE_PA
+            if gy_r < y_r:
+                sb.cp_external_input_current[cortex_idx_per_replica["S"][r]] = HEURISTIC_DRIVE_PA
+            if gx_r < x_r:
+                sb.cp_external_input_current[cortex_idx_per_replica["W"][r]] = HEURISTIC_DRIVE_PA
 
         # Stim window timing (matches g11_bg_runner.py for plasticity parity).
         # Bug-fix 2026-04-30: previously zeroed cfg.current_reward_signal AND

@@ -1952,6 +1952,12 @@ def run_moving_goal_episode(
     # bottleneck flagged in SCIENCE_ROADMAP §4.7 (older entries are from
     # goals that no longer apply). Default off.
     enable_recency_weighted_replay: bool = False,
+    # 2026-04-30 probe: when True, heuristic drives only ONE cortex pool
+    # (random choice among manhattan-reducing directions) instead of all
+    # valid directions. Matches g11_bg_replicated_runner's heuristic.
+    # Investigating whether this is the source of the replicated-vs-single
+    # discrepancy.
+    heuristic_single_pool: bool = False,
     # PFC Stage 2: delayed-response test. Silence goal_cells during a delay
     # window to test whether PFC maintains goal info via persistent activity.
     # If PFC works as working memory, agent should still navigate toward goal
@@ -2788,14 +2794,31 @@ def run_moving_goal_episode(
             h_strength = heuristic_strength
         h_drive = cp.float32(800.0 * h_strength)
         if h_strength > 0:
-            if gy > y:
-                bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = h_drive
-            if gx > x:
-                bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = h_drive
-            if gy < y:
-                bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = h_drive
-            if gx < x:
-                bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = h_drive
+            if heuristic_single_pool:
+                # Replicated-runner-style: drive ONE cortex pool only (chosen
+                # randomly among the directions that would shrink Manhattan).
+                # 2026-04-30 probe: investigating whether multi-pool heuristic
+                # is what makes single runner ~2x worse than replicated.
+                cands = []
+                if gy > y: cands.append("N")
+                if gx > x: cands.append("E")
+                if gy < y: cands.append("S")
+                if gx < x: cands.append("W")
+                if cands:
+                    pick = cands[np.random.randint(0, len(cands))]
+                    bridge.cp_external_input_current[region_indices_cp[f"cortex_{pick}"]] = h_drive
+            else:
+                # Original multi-pool: drive every cortex pool whose direction
+                # reduces Manhattan distance. For diagonal goals, this drives
+                # 2 pools simultaneously, forcing BG arbitration.
+                if gy > y:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_N"]] = h_drive
+                if gx > x:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_E"]] = h_drive
+                if gy < y:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_S"]] = h_drive
+                if gx < x:
+                    bridge.cp_external_input_current[region_indices_cp["cortex_W"]] = h_drive
 
         # Cue-following reflex (Item 1 Stage 3, 2026-04-27).
         # Innate reflex: computes cortex drive from beacon sensor activations
@@ -3854,6 +3877,10 @@ def main():
                          "Provides hindsight credit assignment for sparse-goal "
                          "generalization. Composes with sleep replay; the "
                          "expanded buffer feeds the existing replay drive.")
+    ap.add_argument("--heuristic-single-pool", action="store_true",
+                    help="Probe flag: heuristic drives ONE cortex pool "
+                         "(replicated-style) instead of all manhattan-reducing "
+                         "directions. Investigating cross-runner discrepancy.")
     ap.add_argument("--enable-recency-weighted-replay", action="store_true",
                     help="Recency-weighted sleep replay sampling: bias toward "
                          "newest successful_trajectories with exponential "
@@ -4043,6 +4070,7 @@ def main():
             enable_reverse_replay=args.enable_reverse_replay,
             enable_her=args.enable_her,
             enable_recency_weighted_replay=args.enable_recency_weighted_replay,
+            heuristic_single_pool=args.heuristic_single_pool,
             goal_silence_after_step=args.goal_silence_after_step,
             goal_silence_duration=args.goal_silence_duration,
         )
