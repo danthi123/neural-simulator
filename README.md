@@ -11,8 +11,10 @@ A high-performance spiking neural network simulator with real-time 3D OpenGL vis
 > - **Phase B basal-ganglia action selection** — silent-motor trap resolved, phase 1 finalQ 1.76 vs G9 baseline 6.74
 > - **Phase C plastic-input-layer arc** — per-pathway plasticity gating + real curriculum learning, hippocampus + sensory layer + PFC working memory all composing (4.41 sum, p=0.018, 25% over baseline)
 > - **Item 1 (perception arc complete)** — agent navigates from PERCEIVED beacon + landmark information with a cue-following reflex; **NO direct (gx, gy) AND NO direct (x, y) coordinate access anywhere** (4.56 sum, p=0.00819, 22.4% over baseline)
-> - **🎉 NEW BEST (overnight 2026-04-27/28): 4 of 5 cheats closed** — adds sensed reward (intensity gradient instead of distance) on top of the perception arc. **Biology-grounded version (4.08, p=0.00045, 30.6% over baseline) BEATS cheats-allowed (4.41).** 6/6 seeds. See [the milestone finding](research/findings/2026-04-27-NEW-BEST-4cheats-closed.md).
-> - **Cheat #5 v3 GO (2026-04-28):** `--bg-lateral-inhibition` (MSN cross-pool inhibition) is now a permanent recommended default — biology-grounded WTA selection, no regression (4.26 ± 0.50 sum). v3.1 (cross-projections layered on v3) NO-GO; v4 developmental pre-training is the next attempt. See [v3 results](research/findings/2026-04-28-cheat5-v3-results.md).
+> - **🎉 4 of 5 cheats closed (2026-04-27/28):** sensed reward + perception arc, biology-grounded **4.08 BEATS cheats-allowed 4.41**, 6/6 seeds, p=0.00045. See [milestone finding](research/findings/2026-04-27-NEW-BEST-4cheats-closed.md).
+> - **🎉🎉 Cluster G v2.5 NMDA (2026-05-01):** Wang-2002 cortex+motor+PFC NMDA = **2.00 ± 0.00** (n=6) on cheat-5 multi-goal det at 8×8, 16×16, AND 24×24 — grid-invariant. 60% improvement over A+E baseline (5.02). [breakthrough finding](research/findings/2026-05-01-cluster-g-nmda-breakthrough.md).
+> - **🎉🎉 Cluster K v2 visual cortex (2026-05-01):** retina → V1 (Gabor pre-init, Hubel-Wiesel 1962) → V1c → V2 → IT → cortex_X. Pure-perception 16×16 (NO heuristic, NO beacon, NO place cells, NO landmark) = **2.87 ± 0.19** (n=6); 24×24 = **2.87 ± 0.22** (n=3, grid-invariant). Beats 8×8 perception-arc baseline on 4× larger grid. **Closes 4 of 5 original cheats via biology-correct visual cortex.** [breakthrough finding](research/findings/2026-05-01-cluster-k-v2-breakthrough.md).
+> - **Text I/O (2026-05-01, PARTIAL):** Wernicke/Broca-like language regions, 6 biology-grounded training regimes. Best: R6 PFC-bypass (Geschwind) with delta-from-baseline eval (Kandel ch 25) = **32.5% W→A** (1.30× chance). Infrastructure ready (39 tests pass). See [final summary](research/findings/2026-05-01-text-io-FINAL-summary.md).
 >
 > **New here?** Start with [QUICKSTART.md](QUICKSTART.md) — running in 60 seconds.
 > Detailed session findings in [`research/findings/`](research/findings/) ([INDEX](research/findings/INDEX.md)).
@@ -556,7 +558,7 @@ bridge.export_profiling_report("profile.json")
 
 ## Testing
 
-28 test files in `tests/`. Highlights:
+40 test files in `tests/`. Highlights:
 
 ```bash
 # Full suite

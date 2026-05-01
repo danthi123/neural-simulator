@@ -374,14 +374,14 @@ viz/                           # OpenGL renderer / camera / picker / overlays
 ui/                            # DearPyGUI panels / callbacks / layout / plots
 experiment/                    # ExperimentEngine + StimulusManager + Readout + Training
 research/
-  runners/                     # 12 headless gate runners (g1..g11)
-  findings/                    # session-by-session findings (60+ markdown docs)
+  runners/                     # 26 headless runners (g1..g11 + cluster + text + k_v2)
+  findings/                    # session-by-session findings (93+ markdown docs)
   findings/raw/                # raw JSON output per gate run
   datasets/                    # synthetic datasets (e.g. tiny_patterns.npz)
 docs/
   SCIENCE_ROADMAP.md           # validation pillars + gate progression
   plans/                       # per-feature design docs (paired with findings)
-tests/                         # 28 test files
+tests/                         # 40 test files
   test_determinism.py          # RNG determinism (init + step)
   test_kernels_cpu.py          # CPU validation of fused kernels
   test_experiment_system.py    # experiment engine + stimulus manager

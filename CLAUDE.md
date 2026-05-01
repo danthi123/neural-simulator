@@ -62,22 +62,25 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 9 modules, ~9.4K lines — core engine
-  bridge.py             # 5347 lines — SimulationBridge + GPU state orchestration
-  config.py             #  676 lines — all @dataclass configs
-  enums.py              #  803 lines — NeuronType (50+ presets), enums, default param managers
-  connectivity.py       #  923 lines — spatial/WS/motif connection generators (GPU)
+sim/                    # 13 modules, ~11.8K lines — core engine
+  bridge.py             # 6037 lines — SimulationBridge + GPU state orchestration
+  config.py             #  718 lines — all @dataclass configs
+  enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
+  connectivity.py       #  988 lines — spatial/WS/motif connection generators (GPU)
   kernels.py            #  314 lines — fused @cp.fuse() neuron + plasticity kernels
   profiles.py           #  432 lines — NEURAL_STRUCTURE_PROFILES + CONNECTIVITY_MOTIFS dicts
-  regions.py            #  350 lines — BrainRegion + RegionPathway + RegionManager
-  neuromodulators.py    #  430 lines — declarative neuromodulator subsystem
+  regions.py            #  602 lines — BrainRegion + RegionPathway + RegionManager
+  neuromodulators.py    # 1051 lines — declarative neuromodulator subsystem
   data_bus.py           #   95 lines — DataChannel pub/sub for streaming sim data
+  replicas.py           #  243 lines — replicated wiring (multi-bridge support)
+  text_embeddings.py    #  147 lines — token embeddings for language regions (2026-05-01)
+  visual_cortex.py      #  310 lines — Gabor RFs + retina rendering (Cluster K v2, 2026-05-01)
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 12 headless runners (g1..g11) for research gates
-research/findings/      # session-by-session findings docs (60+ files)
-tests/                  # 28 test files (determinism, runners, kernels, plasticity, etc.)
+research/runners/       # 26 headless runners (g1..g11 + cluster/text/k_v2/etc) for research
+research/findings/      # session-by-session findings docs (93+ files)
+tests/                  # 40 test files (determinism, runners, kernels, plasticity, etc.)
 ```
 
 ### Thread Model
@@ -89,8 +92,8 @@ tests/                  # 28 test files (determinism, runners, kernels, plastici
 
 **SimulationBridge** (`sim/bridge.py:170`): Central simulation orchestrator
 - Manages all GPU state arrays (CuPy)
-- Simulation stepping (`_run_one_simulation_step` at line 3655)
-- Initialization (`_initialize_simulation_data` at line 765)
+- Simulation stepping (`_run_one_simulation_step` at line 4210)
+- Initialization (`_initialize_simulation_data` at line 823)
 - Recording/playback to HDF5
 - Checkpoint save/restore
 - Profiling and performance monitoring
