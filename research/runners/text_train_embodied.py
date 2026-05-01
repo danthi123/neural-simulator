@@ -1,0 +1,308 @@
+"""Embodied text training — biology-grounded alternative to text_train.py.
+
+Instead of artificial supervisor clamping, the agent learns text↔action
+associations as a SIDE EFFECT of doing the gridworld navigation task.
+This mirrors how children learn language: not via direct supervision,
+but through cross-modal binding during meaningful action (Tomasello).
+
+During each navigation step:
+1. Render image (K v2 visual cortex sees it)
+2. Drive language_input with the target word (Manhattan-greedy direction)
+   — like an external speaker giving the instruction
+3. Drive language_output with the target word (modest current, not clamp)
+   — like the agent's "inner speech" co-activating during the action
+4. Run the stim window. Agent's BG cascade selects an action naturally.
+5. Reward = +1 if Manhattan distance decreased (real environment reward)
+6. Agent moves; repeat
+
+STDP+reward then carves out:
+- Visuomotor (retina → ... → cortex_X) — already known to work via K v2
+- Language input → action (language_input → cortex_X) — strengthens when
+  agent correctly acts on the spoken instruction
+- Visual → language output (IT → language_output) — strengthens when
+  the agent successfully reaches the goal it was looking at
+
+Real reward signal (action-contingent) replaces tonic supervision.
+Same architecture as K v2 navigation; language piggybacks on the same
+reinforcement signal.
+
+Per Kandel ch 60 (language) and Tomasello (joint attention): word↔percept
+binding requires temporal contiguity AND behavioral relevance. Pure
+Hebbian without behavioral grounding produces sterile associations.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import time
+from pathlib import Path
+
+import numpy as np
+
+
+ACTION_NAMES = ["N", "E", "S", "W"]
+ACTION_DELTAS = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+WORD_FOR_ACTION = {"N": "north", "E": "east", "S": "south", "W": "west"}
+
+
+def _direction_from_positions(agent_pos, goal_pos) -> str:
+    ax, ay = agent_pos
+    gx, gy = goal_pos
+    dx, dy = gx - ax, gy - ay
+    if abs(dx) >= abs(dy):
+        return "east" if dx > 0 else ("west" if dx < 0 else "north")
+    else:
+        return "north" if dy > 0 else ("south" if dy < 0 else "east")
+
+
+def _manhattan(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+
+def run_embodied_text_training(
+    out_stats: str | None = None,
+    seed: int = 42,
+    n_episodes: int = 50,
+    steps_per_episode: int = 30,  # ~30 steps × 50 episodes = 1500 navigation steps
+    grid_size: int = 8,
+    stim_steps_per_step: int = 200,  # 100ms at dt=0.5
+    reset_steps: int = 100,           # 50ms inter-step reset
+    # Drive levels
+    retina_drive_pA: float = 200.0,
+    lang_input_drive_pA: float = 200.0,
+    lang_output_coactive_pA: float = 150.0,  # MODEST — doesn't clamp, just biases
+    verbose: bool = True,
+):
+    """Embodied training: navigate gridworld with language inputs/outputs
+    coactive during each step. Real reward from environment.
+
+    Returns: bridge, stats dict.
+    """
+    import cupy as cp
+
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.bridge import SimulationBridge
+    from sim.visual_cortex import (
+        apply_v1_gabor_weights,
+        render_gridworld_to_image,
+        image_to_retina_drive,
+    )
+    from sim.text_embeddings import vocab_to_drive_pattern
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    rng = np.random.default_rng(seed)
+
+    regions, pathways = build_bg_brain_regions(
+        enable_striatal_fsis=True,
+        enable_cluster_a_closed_loop=True,
+        enable_cluster_e_topography=True,
+        enable_pfc=True,
+        pfc_enable_nmda=True,
+        enable_visual_cortex=True,
+        enable_text_io=True,
+    )
+
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = list(regions)
+    cfg.region_pathways = list(pathways)
+    cfg.dt_ms = 0.5
+    cfg.seed = seed
+    cfg.enable_nmda = True
+    cfg.nmda_ratio = 0.5
+    cfg.enable_structural_plasticity = False  # avoid CSR-grow bug
+
+    bridge = SimulationBridge(
+        core_config=cfg,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
+    )
+    bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    n_gabor = apply_v1_gabor_weights(
+        bridge,
+        n_orientations=8, n_frequencies=2, n_positions_per_dim=8,
+        retina_size=32, receptive_field_radius=4, weight_scale=10.0,
+    )
+    if verbose:
+        print(f"[embodied] Gabor: {n_gabor} edges installed")
+
+    # Open all relevant gates
+    for gate in [
+        "visual_cortex_v1", "visual_cortex_v2", "visual_cortex_it",
+        "visual_cortex_action",
+        "language_input_to_cortex", "language_input_to_pfc",
+        "it_to_language_output", "cortex_to_language_output",
+    ]:
+        try:
+            bridge.set_plasticity_gate(gate, 1.0)
+        except KeyError:
+            pass
+
+    # Cache region indices
+    retina_idx = cp.asarray(
+        list(bridge.region_manager.indices("retina")), dtype=cp.int64
+    )
+    lang_input_idx = cp.asarray(
+        list(bridge.region_manager.indices("language_input")), dtype=cp.int64
+    )
+    lang_output_idx = cp.asarray(
+        list(bridge.region_manager.indices("language_output")), dtype=cp.int64
+    )
+    cortex_idx_per_action = {
+        a: cp.asarray(list(bridge.region_manager.indices(f"cortex_{a}")),
+                      dtype=cp.int64)
+        for a in ACTION_NAMES
+    }
+    n_lang_output = int(lang_output_idx.size)
+
+    epoch_stats = []
+    t_start = time.time()
+    n_total_steps = 0
+    n_correct_moves = 0
+
+    for episode in range(n_episodes):
+        # Random start + goal
+        while True:
+            x, y = int(rng.integers(0, grid_size)), int(rng.integers(0, grid_size))
+            gx, gy = int(rng.integers(0, grid_size)), int(rng.integers(0, grid_size))
+            if (x, y) != (gx, gy):
+                break
+
+        for step in range(steps_per_episode):
+            d_before = _manhattan((x, y), (gx, gy))
+            if d_before == 0:
+                # Reached goal — start fresh episode
+                break
+
+            target_word = _direction_from_positions((x, y), (gx, gy))
+
+            # ─── Inter-step reset ───
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.core_config.current_reward_signal = 0.0
+            for _ in range(reset_steps):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+
+            # ─── Apply embodied drive ───
+            # Visual: render image, drive retina
+            img = render_gridworld_to_image(
+                agent_pos=(x, y), goal_pos=(gx, gy),
+                grid_size=grid_size, image_size=32,
+            )
+            bridge.cp_external_input_current[retina_idx] = cp.asarray(
+                image_to_retina_drive(img, drive_max_pA=retina_drive_pA),
+                dtype=cp.float32,
+            )
+            # Language input: drive with target word (like external speaker)
+            in_drive = vocab_to_drive_pattern(
+                target_word,
+                n_neurons=int(lang_input_idx.size),
+                drive_max_pA=lang_input_drive_pA,
+                sparsity=0.1,
+            )
+            bridge.cp_external_input_current[lang_input_idx] = cp.asarray(
+                in_drive, dtype=cp.float32,
+            )
+            # Language output: MODEST coactivation (not clamp)
+            # Models inner speech / motor word planning during action
+            out_drive = vocab_to_drive_pattern(
+                target_word,
+                n_neurons=n_lang_output,
+                drive_max_pA=lang_output_coactive_pA,
+                sparsity=0.1,
+            )
+            bridge.cp_external_input_current[lang_output_idx] = cp.asarray(
+                out_drive, dtype=cp.float32,
+            )
+
+            # ─── Run stim window, observe motor ───
+            motor_counts = {a: 0 for a in ACTION_NAMES}
+            bridge.core_config.current_reward_signal = 0.0  # reward AT END only
+            for s in range(stim_steps_per_step):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+                if 60 <= s < stim_steps_per_step:  # readout window
+                    firing = bridge.cp_firing_states
+                    for a in ACTION_NAMES:
+                        motor_counts[a] += int(firing[cortex_idx_per_action[a]].sum().get())
+
+            # ─── Action selection (argmax over cortex_X firing) ───
+            chosen = max(motor_counts, key=lambda a: motor_counts[a])
+            dx, dy = ACTION_DELTAS[ACTION_NAMES.index(chosen)]
+            new_x = max(0, min(grid_size - 1, x + dx))
+            new_y = max(0, min(grid_size - 1, y + dy))
+            d_after = _manhattan((new_x, new_y), (gx, gy))
+
+            # Real reward: did the move reduce Manhattan distance?
+            reward = 1.0 if d_after < d_before else (-0.5 if d_after > d_before else 0.0)
+            bridge.core_config.current_reward_signal = float(reward)
+
+            # Brief reward-application window (eligibility traces × reward → STDP)
+            for _ in range(20):  # 10ms reward window
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+
+            x, y = new_x, new_y
+            n_total_steps += 1
+            if reward > 0:
+                n_correct_moves += 1
+
+        if verbose and (episode + 1) % 10 == 0:
+            print(f"  [ep {episode+1}/{n_episodes}] "
+                  f"correct_moves={n_correct_moves}/{n_total_steps}="
+                  f"{100*n_correct_moves/max(1,n_total_steps):.1f}%",
+                  flush=True)
+
+    elapsed = time.time() - t_start
+    epoch_stats.append({
+        "regime": "embodied_navigation_training",
+        "n_episodes": n_episodes,
+        "steps_per_episode": steps_per_episode,
+        "n_total_steps": n_total_steps,
+        "n_correct_moves": n_correct_moves,
+        "correct_move_rate": n_correct_moves / max(1, n_total_steps),
+        "elapsed_seconds": elapsed,
+    })
+    if verbose:
+        print(f"\n[embodied] Training complete in {elapsed:.1f}s "
+              f"({n_total_steps} steps, "
+              f"{100*n_correct_moves/max(1,n_total_steps):.1f}% correct)",
+              flush=True)
+
+    if out_stats:
+        Path(out_stats).parent.mkdir(parents=True, exist_ok=True)
+        Path(out_stats).write_text(json.dumps({
+            "seed": seed,
+            "grid_size": grid_size,
+            "n_neurons": int(cfg.num_neurons),
+            "epoch_stats": epoch_stats,
+        }, indent=2))
+
+    return bridge, epoch_stats
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--n-episodes", type=int, default=50)
+    ap.add_argument("--steps-per-episode", type=int, default=30)
+    ap.add_argument("--grid-size", type=int, default=8)
+    ap.add_argument("--out-stats", type=str, default=None)
+    ap.add_argument("--quiet", action="store_true")
+    args = ap.parse_args()
+
+    run_embodied_text_training(
+        out_stats=args.out_stats,
+        seed=args.seed,
+        n_episodes=args.n_episodes,
+        steps_per_episode=args.steps_per_episode,
+        grid_size=args.grid_size,
+        verbose=not args.quiet,
+    )
+
+
+if __name__ == "__main__":
+    main()
