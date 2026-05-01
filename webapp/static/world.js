@@ -63,6 +63,10 @@ let world = {
   // are clutter for runs without this flag. Default true so the no-run-loaded
   // empty state shows the full legend (preview of all icon meanings).
   usedLandmarks: true,
+  // Whether the currently-displayed run was launched with --enable-visual-cortex
+  // (Cluster K v2). When true, the retina visualizer panel is shown next to
+  // the world canvas, rendering the 32×32 ON/OFF image V1 simple cells process.
+  usedVisualCortex: false,
   // Frozen-elapsed cache (client-side): {run_id: elapsed_sec_at_completion}.
   // Belt-and-suspenders for the elapsed-tick-after-done bug. The server
   // tries to set finished_at on completion, but if the drain_log task
@@ -588,7 +592,12 @@ async function attachLive(runId, listItem) {
           t === "--landmarks" ||
           t === "--landmarks-replace-place",
       );
+      // Cluster K v2 (2026-05-01): show retina visualizer when run uses
+      // --enable-visual-cortex. Token-exact match so unrelated args
+      // containing "visual" don't trigger.
+      world.usedVisualCortex = cmd.some((t) => t === "--enable-visual-cortex");
       updateLegendVisibility();
+      updateRetinaPanelVisibility();
 
       // Parse --grid-size N from cmd so the canvas resizes correctly for
       // non-default grid sizes (e.g. 16x16 stress tests). Default 8 matches
@@ -755,6 +764,9 @@ function closeLiveSocket() {
   // sees all icon meanings again (matches the no-run-loaded state).
   world.usedLandmarks = true;
   updateLegendVisibility();
+  // Hide retina panel — only relevant during a visual-cortex run
+  world.usedVisualCortex = false;
+  updateRetinaPanelVisibility();
   pauseState = false;
   // Defensive: ensure the picker auto-refresh is running so the runs
   // list keeps ticking after detach. Idempotent — openLiveModePicker
@@ -994,7 +1006,12 @@ async function loadRun(name, listItem) {
     world.usedLandmarks = flagSource.some(
       (f) => typeof f === "string" && (f.includes("landmarks") || f.includes("landmark-sensor")),
     );
+    // Cluster K v2: visual cortex retina viz toggle (2026-05-01)
+    world.usedVisualCortex = flagSource.some(
+      (f) => typeof f === "string" && f === "--enable-visual-cortex",
+    );
     updateLegendVisibility();
+    updateRetinaPanelVisibility();
     const canvas = $("#world-canvas");
     resizeCanvas(canvas, data.grid_size || 8);
     const total = (data.trajectory || []).length;
@@ -1287,6 +1304,118 @@ function updateLegendVisibility() {
   row.style.display = world.usedLandmarks ? "" : "none";
 }
 
+/* ─── Retina visualizer (Cluster K v2, 2026-05-01) ──────────────────────
+ * Mirrors sim.visual_cortex.render_gridworld_to_image to give the user
+ * a live view of what V1 simple cells process. Renders a 32×32 RGBA
+ * pixel image: ON channel (agent + goal) as green, OFF channel
+ * (grid edges) as red. Upscales to 160×160 with image-rendering:pixelated
+ * for crisp pixel boundaries.
+ */
+function updateRetinaPanelVisibility() {
+  const panel = document.getElementById("world-retina-panel");
+  if (!panel) return;
+  panel.style.display = world.usedVisualCortex ? "grid" : "none";
+}
+
+function renderRetina(agentPos, goalPos, gridSize) {
+  const canvas = document.getElementById("world-retina-canvas");
+  if (!canvas || !world.usedVisualCortex) return;
+  const IMG = 32;  // matches sim.visual_cortex.render_gridworld_to_image default
+  const ctx = canvas.getContext("2d");
+  const imageData = ctx.createImageData(IMG, IMG);
+
+  // Precompute pixel-per-cell (mirrors Python: image_size // grid_size)
+  const pxPerCell = Math.floor(IMG / gridSize);
+
+  // Initialize: dark background
+  for (let i = 0; i < IMG * IMG; i++) {
+    imageData.data[i * 4] = 10;        // R (codeBg)
+    imageData.data[i * 4 + 1] = 12;    // G
+    imageData.data[i * 4 + 2] = 16;    // B
+    imageData.data[i * 4 + 3] = 255;   // A
+  }
+
+  // OFF channel: edges along grid lines (red). Mirrors:
+  //   for i in range(0, image_size, pixels_per_cell):
+  //       image[1, i, :] = 0.3   (row)
+  //       image[1, :, i] = 0.3   (col)
+  for (let i = 0; i < IMG; i += pxPerCell) {
+    for (let j = 0; j < IMG; j++) {
+      // Row at y=i
+      if (i < IMG) {
+        const idxR = (i * IMG + j) * 4;
+        imageData.data[idxR + 0] = Math.max(imageData.data[idxR + 0], 80);  // R
+        imageData.data[idxR + 1] = Math.max(imageData.data[idxR + 1], 30);  // G
+        imageData.data[idxR + 2] = Math.max(imageData.data[idxR + 2], 30);  // B
+      }
+      // Col at x=i
+      if (i < IMG) {
+        const idxC = (j * IMG + i) * 4;
+        imageData.data[idxC + 0] = Math.max(imageData.data[idxC + 0], 80);
+        imageData.data[idxC + 1] = Math.max(imageData.data[idxC + 1], 30);
+        imageData.data[idxC + 2] = Math.max(imageData.data[idxC + 2], 30);
+      }
+    }
+  }
+
+  // Goal: dimmer ON block (Python: max with 0.5 in 3x3 neighborhood)
+  if (goalPos) {
+    const [gx, gy] = goalPos;
+    const gPx = gx * pxPerCell + Math.floor(pxPerCell / 2);
+    const gPy = gy * pxPerCell + Math.floor(pxPerCell / 2);
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        const px = gPx + dx;
+        const py = gPy + dy;
+        if (px >= 0 && px < IMG && py >= 0 && py < IMG) {
+          const idx = (py * IMG + px) * 4;
+          // ON = green, value 0.5 → ~127
+          imageData.data[idx + 0] = Math.max(imageData.data[idx + 0], 30);
+          imageData.data[idx + 1] = Math.max(imageData.data[idx + 1], 130);
+          imageData.data[idx + 2] = Math.max(imageData.data[idx + 2], 60);
+        }
+      }
+    }
+  }
+
+  // Agent: bright ON spot (Python: 1.0 at center, 0.7 in 3x3)
+  if (agentPos) {
+    const [ax, ay] = agentPos;
+    const aPx = ax * pxPerCell + Math.floor(pxPerCell / 2);
+    const aPy = ay * pxPerCell + Math.floor(pxPerCell / 2);
+    // Center pixel = 1.0
+    if (aPx >= 0 && aPx < IMG && aPy >= 0 && aPy < IMG) {
+      const idx = (aPy * IMG + aPx) * 4;
+      imageData.data[idx + 0] = 251;   // accentWarn-ish yellow
+      imageData.data[idx + 1] = 191;
+      imageData.data[idx + 2] = 36;
+    }
+    // Neighborhood = 0.7
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        if (dx === 0 && dy === 0) continue;
+        const px = aPx + dx;
+        const py = aPy + dy;
+        if (px >= 0 && px < IMG && py >= 0 && py < IMG) {
+          const idx = (py * IMG + px) * 4;
+          imageData.data[idx + 0] = Math.max(imageData.data[idx + 0], 175);
+          imageData.data[idx + 1] = Math.max(imageData.data[idx + 1], 130);
+          imageData.data[idx + 2] = Math.max(imageData.data[idx + 2], 25);
+        }
+      }
+    }
+  }
+
+  // Draw to a tiny offscreen canvas, then upscale to the visible 160×160
+  const tmp = document.createElement("canvas");
+  tmp.width = IMG;
+  tmp.height = IMG;
+  tmp.getContext("2d").putImageData(imageData, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(tmp, 0, 0, canvas.width, canvas.height);
+}
+
 function renderFrame() {
   const canvas = $("#world-canvas");
   const ctx = canvas.getContext("2d");
@@ -1334,6 +1463,11 @@ function renderFrame() {
   const traj = data.trajectory || [];
   const pos = traj[step];
   if (pos) drawAgent(ctx, pos, getStepAction(step));
+
+  // Cluster K v2: update retina visualizer if --enable-visual-cortex
+  if (world.usedVisualCortex) {
+    renderRetina(pos, goal, gridSize);
+  }
 
   // RUN HUD shows run-level identity + per-step state + aggregate stats.
   // Updated here so it stays in sync with the scrubber for saved runs and

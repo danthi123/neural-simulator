@@ -671,6 +671,32 @@ pre {
   grid-row: 2;
 }
 
+/* Retina visualizer (Cluster K v2 — 2026-05-01) — shows the 32×32 ON/OFF
+   image V1 simple cells process. Positioned bottom-left under the map.
+   Toggled by world.usedVisualCortex flag in world.js. */
+#world-retina-panel {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(14, 16, 20, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 11px;
+  display: grid;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 5;
+}
+#world-retina-panel .hud-title {
+  color: var(--accent);
+  font-weight: 600;
+}
+#world-retina-panel .hud-body {
+  max-width: 220px;
+  line-height: 1.4;
+}
+
 /* Right-aligned legend explaining the symbols on the map. */
 #world-legend {
   position: absolute;

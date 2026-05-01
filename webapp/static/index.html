@@ -113,6 +113,22 @@
       <div class="world-layout">
         <div id="world-canvas-container">
           <canvas id="world-canvas"></canvas>
+          <!-- Retina visualizer (Cluster K v2): shows the 32x32 ON/OFF
+               image V1 simple cells process. Only displayed for runs
+               launched with --enable-visual-cortex. Renders client-side
+               via the same render_gridworld_to_image logic the runner
+               uses to drive the retina region. Hidden by default;
+               toggled by world.usedVisualCortex flag. -->
+          <div id="world-retina-panel" style="display:none;">
+            <span class="hud-title">Retina (V1 input — 32×32 ON/OFF)</span>
+            <canvas id="world-retina-canvas" width="160" height="160"
+                    style="image-rendering:pixelated;background:#0a0c10;border:1px solid #2a2f3d;border-radius:4px;"></canvas>
+            <div class="hud-body" style="font-size:11px;color:#5f6770;">
+              ON channel = green (agent + goal). OFF channel = red (grid edges).
+              Hubel-Wiesel V1 simple cells project Gabor RFs over this
+              32×32 retinal image (Felleman & Van Essen 1991).
+            </div>
+          </div>
           <div id="world-legend">
             <span class="hud-title">Legend</span>
             <button class="hud-collapse" id="legend-toggle" aria-label="Collapse legend" title="Collapse">−</button>
