@@ -53,11 +53,15 @@ def repl_loop(bridge, grid_size: int = 8, stim_steps: int = 200,
     lang_output_idx = cp.asarray(
         list(bridge.region_manager.indices("language_output")), dtype=cp.int64
     )
-    cortex_idx = {
-        a: cp.asarray(list(bridge.region_manager.indices(f"cortex_{a}")),
+    # R6 production: read motor_X (not cortex_X) — motor_X has direct
+    # language_input pathway that bypasses cascade N-bias (Wernicke→
+    # arcuate→Broca anatomy per Kandel ch 60).
+    motor_idx = {
+        a: cp.asarray(list(bridge.region_manager.indices(f"motor_{a}")),
                       dtype=cp.int64)
         for a in ["N", "E", "S", "W"]
     }
+    cortex_idx = motor_idx  # alias retained from earlier API
 
     print("\n" + "=" * 60)
     print("INTERACTIVE TEXT CHAT (v1)")
@@ -104,30 +108,55 @@ def repl_loop(bridge, grid_size: int = 8, stim_steps: int = 200,
                     and 0 <= gx < grid_size and 0 <= gy < grid_size):
                 print(f"agent> [coords must be in 0..{grid_size-1}]")
                 continue
+            # R6 production: delta-from-baseline eval (Kandel ch 25)
+            from sim.text_embeddings import embed
+            DIRECTIONS = ["north", "east", "south", "west"]
+            target_embeddings = np.stack([embed(t, dim=int(lang_output_idx.size))
+                                            for t in DIRECTIONS])
+
+            # Phase A: baseline (no input)
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.core_config.current_reward_signal = 0.0
+            for _ in range(100):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+            baseline_spikes = cp.zeros(int(lang_output_idx.size), dtype=cp.int32)
+            for s in range(stim_steps):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+                if s >= 60:
+                    baseline_spikes += bridge.cp_firing_states[lang_output_idx].astype(cp.int32)
+
+            # Phase B: image-driven
             img = render_gridworld_to_image(
                 agent_pos=(ax, ay), goal_pos=(gx, gy),
                 grid_size=grid_size, image_size=32,
             )
             bridge.cp_external_input_current[:] = 0.0
+            for _ in range(100):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
             bridge.cp_external_input_current[retina_idx] = cp.asarray(
                 image_to_retina_drive(img, drive_max_pA=drive_pA),
                 dtype=cp.float32,
             )
-            bridge.core_config.current_reward_signal = 0.0
-
             spike_counts = cp.zeros(int(lang_output_idx.size), dtype=cp.int32)
             for s in range(stim_steps):
                 bridge._run_one_simulation_step()
                 bridge.runtime_state.current_time_step += 1
-                if s >= 60:  # skip 30ms onset
+                if s >= 60:
                     spike_counts += bridge.cp_firing_states[lang_output_idx].astype(cp.int32)
-            top3 = bridge.read_language_output(
-                spike_counts=spike_counts,
-                n_steps=stim_steps - 60,
-                top_k=3,
-                vocab=["north", "east", "south", "west"],
-            )
-            print(f"agent> {top3[0]} (other guesses: {', '.join(top3[1:])})")
+
+            # Delta + cosine
+            delta = (spike_counts - baseline_spikes).get().astype(np.float32)
+            sims = []
+            for emb in target_embeddings:
+                denom = np.linalg.norm(delta) * np.linalg.norm(emb)
+                sims.append(float(np.dot(delta, emb) / denom) if denom > 1e-8 else 0.0)
+            top3_idx = np.argsort(-np.array(sims))[:3]
+            top3 = [DIRECTIONS[int(i)] for i in top3_idx]
+            print(f"agent> {top3[0]} (other guesses: {', '.join(top3[1:])})  "
+                  f"sims={[round(sims[i], 2) for i in top3_idx]}")
             continue
 
         # Otherwise: treat as direction word
@@ -138,10 +167,29 @@ def repl_loop(bridge, grid_size: int = 8, stim_steps: int = 200,
             continue
 
         target_action = WORD_TO_ACTION[word]
-        bridge.cp_external_input_current[:] = 0.0
-        bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=0.1)
-        bridge.core_config.current_reward_signal = 0.0
 
+        # R6 production: delta-from-baseline + motor_X readout
+        # Phase A: baseline
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.core_config.current_reward_signal = 0.0
+        for _ in range(100):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        baseline_counts = {a: 0 for a in ["N", "E", "S", "W"]}
+        for s in range(stim_steps):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+            if s >= 60:
+                firing = bridge.cp_firing_states
+                for a in ["N", "E", "S", "W"]:
+                    baseline_counts[a] += int(firing[motor_idx[a]].sum().get())
+
+        # Phase B: language-driven
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(100):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=0.1)
         spike_counts = {a: 0 for a in ["N", "E", "S", "W"]}
         for s in range(stim_steps):
             bridge._run_one_simulation_step()
@@ -149,11 +197,14 @@ def repl_loop(bridge, grid_size: int = 8, stim_steps: int = 200,
             if s >= 60:
                 firing = bridge.cp_firing_states
                 for a in ["N", "E", "S", "W"]:
-                    spike_counts[a] += int(firing[cortex_idx[a]].sum().get())
-        predicted = max(spike_counts, key=lambda a: spike_counts[a])
+                    spike_counts[a] += int(firing[motor_idx[a]].sum().get())
+        delta_counts = {a: spike_counts[a] - baseline_counts[a]
+                        for a in ["N", "E", "S", "W"]}
+        predicted = max(delta_counts, key=lambda a: delta_counts[a])
         word_guess = ACTION_TO_WORD[predicted]
         match = "(matches expected)" if predicted == target_action else "(differs from expected!)"
-        print(f"agent> would go {word_guess} {match}  cortex_X spikes: {spike_counts}")
+        print(f"agent> would go {word_guess} {match}  "
+              f"motor_X delta: {delta_counts}")
 
 
 def main():
