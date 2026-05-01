@@ -279,6 +279,10 @@ def build_bg_brain_regions(
     # developmental pruning starts from dense connectivity)
     text_input_to_cortex_weight: float = 2.0,
     text_input_to_cortex_jitter: float = 0.5,
+    # PFC-bypass: direct language_input → motor_X (Kandel ch 60 anatomy)
+    text_input_to_motor_density: float = 0.30,
+    text_input_to_motor_weight: float = 3.0,
+    text_input_to_motor_jitter: float = 0.5,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -1608,6 +1612,26 @@ def build_bg_brain_regions(
                 weight_jitter=0.0,
                 plastic=True,
                 plasticity_gate="cortex_to_language_output",
+            ))
+
+        # ─── PFC-bypass: language_input → motor_X DIRECT ───
+        # Biology source: Kandel ch 60 + Geschwind disconnection model.
+        # Real anatomy: Wernicke's (auditory comprehension) → arcuate
+        # fasciculus → Broca's (motor planning) → primary motor cortex.
+        # Our cortex_X is more like cingulate/parietal action-selection,
+        # which is BG-cascade biased (cortex_N dominates from cluster A/E
+        # feedback). To bypass cascade bias for instructed action, we
+        # provide a direct language_input → motor_X pathway.
+        # Plastic, gated separately so the regime can disable cortex
+        # involvement and force PFC bypass.
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region="language_input", to_region=f"motor_{action}",
+                density=text_input_to_motor_density,
+                weight_mean=text_input_to_motor_weight,
+                weight_jitter=text_input_to_motor_jitter,
+                plastic=True,
+                plasticity_gate="language_input_to_motor",
             ))
 
     return regions, pathways

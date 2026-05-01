@@ -166,15 +166,21 @@ def evaluate_word_to_action(
     verbose: bool = True,
 ):
     """Drive language_input with each direction word; observe which
-    cortex_X has the highest firing rate. Did the agent learn the
-    word-action mapping?"""
+    motor_X has the highest firing rate. Did the agent learn the
+    word-action mapping?
+
+    Reads MOTOR_X (not cortex_X). With PFC-bypass, language_input has
+    direct trained pathway to motor_X that's not subject to cascade
+    cortex_N dominance.
+    """
     import cupy as cp
 
-    cortex_idx = {
-        a: cp.asarray(list(bridge.region_manager.indices(f"cortex_{a}")),
+    motor_idx = {
+        a: cp.asarray(list(bridge.region_manager.indices(f"motor_{a}")),
                       dtype=cp.int64)
         for a in ACTION_NAMES
     }
+    cortex_idx = motor_idx  # alias so existing code paths use motor
 
     correct = 0
     total = 0
