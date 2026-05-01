@@ -45,14 +45,63 @@ ACTION_DELTAS = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 WORD_FOR_ACTION = {"N": "north", "E": "east", "S": "south", "W": "west"}
 
 
-def _direction_from_positions(agent_pos, goal_pos) -> str:
+def _direction_from_positions(agent_pos, goal_pos, rng=None) -> str:
+    """Direction from agent to goal. Random tie-break when |dx|==|dy|
+    (otherwise the >= bias systematically over-represents east/west,
+    causing the 2026-05-01 confusion matrix per-word imbalance:
+    east/west get 28.5% each of training trials, north/south only 21%).
+    """
     ax, ay = agent_pos
     gx, gy = goal_pos
     dx, dy = gx - ax, gy - ay
-    if abs(dx) >= abs(dy):
+    if abs(dx) > abs(dy):
+        return "east" if dx > 0 else "west"
+    if abs(dy) > abs(dx):
+        return "north" if dy > 0 else "south"
+    # Tie: random axis, deterministic per (rng) so training is reproducible
+    if rng is None:
         return "east" if dx > 0 else ("west" if dx < 0 else "north")
-    else:
-        return "north" if dy > 0 else ("south" if dy < 0 else "east")
+    if rng.random() < 0.5:
+        # x-axis wins
+        return "east" if dx > 0 else ("west" if dx < 0 else "north")
+    return "north" if dy > 0 else ("south" if dy < 0 else "east")
+
+
+def _sample_balanced_start_goal(rng, grid_size: int):
+    """Sample a (start, goal) pair such that the target direction is
+    uniformly distributed across {north, east, south, west}. Eliminates
+    the geometric bias that over-represents east/west when |dx|==|dy|.
+
+    Strategy: pre-choose target direction uniformly; then sample agent
+    position; then place goal in the chosen direction (with valid offset).
+    """
+    DIRECTIONS = ["north", "east", "south", "west"]
+    target = DIRECTIONS[int(rng.integers(0, 4))]
+    # Pre-choose offsets that strictly satisfy |dy|>|dx| (N/S) or |dx|>|dy| (E/W)
+    while True:
+        ax = int(rng.integers(0, grid_size))
+        ay = int(rng.integers(0, grid_size))
+        if target in ("east", "west"):
+            # |dx| > |dy|: pick gx with required sign, gy close to ay
+            sign = 1 if target == "east" else -1
+            # dx must be >= 1 in sign direction. dy must satisfy |dy| < |dx|.
+            for _ in range(50):
+                dx_mag = int(rng.integers(1, grid_size))
+                dy = int(rng.integers(-(dx_mag - 1), dx_mag))  # |dy| < |dx|
+                gx = ax + sign * dx_mag
+                gy = ay + dy
+                if 0 <= gx < grid_size and 0 <= gy < grid_size:
+                    return (ax, ay), (gx, gy), target
+        else:  # north / south
+            sign = 1 if target == "north" else -1
+            for _ in range(50):
+                dy_mag = int(rng.integers(1, grid_size))
+                dx = int(rng.integers(-(dy_mag - 1), dy_mag))
+                gx = ax + dx
+                gy = ay + sign * dy_mag
+                if 0 <= gx < grid_size and 0 <= gy < grid_size:
+                    return (ax, ay), (gx, gy), target
+        # If we couldn't place a valid goal in 50 tries, resample agent.
 
 
 def _manhattan(a, b):
@@ -164,12 +213,14 @@ def run_embodied_text_training(
     n_correct_moves = 0
 
     for episode in range(n_episodes):
-        # Random start + goal
-        while True:
-            x, y = int(rng.integers(0, grid_size)), int(rng.integers(0, grid_size))
-            gx, gy = int(rng.integers(0, grid_size)), int(rng.integers(0, grid_size))
-            if (x, y) != (gx, gy):
-                break
+        # Balanced sampling: cycle through 4 directions so each gets equal
+        # episodes. Counteracts the geometric bias where random (start, goal)
+        # over-represents east/west by ~7pp due to |dx|>=|dy| tie-breaking.
+        # See diagnostic in 2026-05-01-text-io-FINAL-summary.md.
+        (start, goal, target_dir) = _sample_balanced_start_goal(rng, grid_size)
+        x, y = start
+        gx, gy = goal
+        episode_target = target_dir
 
         for step in range(steps_per_episode):
             d_before = _manhattan((x, y), (gx, gy))
@@ -177,7 +228,7 @@ def run_embodied_text_training(
                 # Reached goal — start fresh episode
                 break
 
-            target_word = _direction_from_positions((x, y), (gx, gy))
+            target_word = _direction_from_positions((x, y), (gx, gy), rng=rng)
 
             # ─── Inter-step reset ───
             bridge.cp_external_input_current[:] = 0.0

@@ -22,13 +22,49 @@ WORD_TO_ACTION = {"north": "N", "east": "E", "south": "S", "west": "W"}
 
 
 def _direction_from_positions(agent_pos, goal_pos) -> str:
+    """Direction from agent to goal. Strict comparison (no >= bias on
+    ties); ties default to north/south to balance the geometric over-
+    representation of east/west — for fair eval we use balanced
+    sampling instead (see _sample_balanced_eval_pair)."""
     ax, ay = agent_pos
     gx, gy = goal_pos
     dx, dy = gx - ax, gy - ay
-    if abs(dx) >= abs(dy):
-        return "east" if dx > 0 else ("west" if dx < 0 else "north")
-    else:
-        return "north" if dy > 0 else ("south" if dy < 0 else "east")
+    if abs(dx) > abs(dy):
+        return "east" if dx > 0 else "west"
+    if abs(dy) > abs(dx):
+        return "north" if dy > 0 else "south"
+    # tie — fallback (shouldn't happen with balanced sampler since
+    # _sample_balanced_eval_pair guarantees |dx|≠|dy|)
+    return "east" if dx > 0 else ("west" if dx < 0 else "north")
+
+
+def _sample_balanced_eval_pair(rng, grid_size: int):
+    """Sample (start, goal, target_word) such that target_word is uniformly
+    distributed across {north, east, south, west}. Avoids the |dx|>=|dy|
+    tie-break bias that over-represents east/west by ~7pp."""
+    DIRECTIONS = ["north", "east", "south", "west"]
+    target = DIRECTIONS[int(rng.integers(0, 4))]
+    while True:
+        ax = int(rng.integers(0, grid_size))
+        ay = int(rng.integers(0, grid_size))
+        if target in ("east", "west"):
+            sign = 1 if target == "east" else -1
+            for _ in range(50):
+                dx_mag = int(rng.integers(1, grid_size))
+                dy = int(rng.integers(-(dx_mag - 1), dx_mag))
+                gx = ax + sign * dx_mag
+                gy = ay + dy
+                if 0 <= gx < grid_size and 0 <= gy < grid_size:
+                    return (ax, ay), (gx, gy), target
+        else:
+            sign = 1 if target == "north" else -1
+            for _ in range(50):
+                dy_mag = int(rng.integers(1, grid_size))
+                dx = int(rng.integers(-(dy_mag - 1), dy_mag))
+                gx = ax + dx
+                gy = ay + sign * dy_mag
+                if 0 <= gx < grid_size and 0 <= gy < grid_size:
+                    return (ax, ay), (gx, gy), target
 
 
 def evaluate_image_to_word(
@@ -73,13 +109,9 @@ def evaluate_image_to_word(
                                     for t in DIRECTIONS])  # (4, n_lang_output)
 
     for trial in range(n_trials):
-        # Random fresh image
-        while True:
-            ax, ay = rng.integers(0, grid_size, size=2)
-            gx, gy = rng.integers(0, grid_size, size=2)
-            if (ax, ay) != (gx, gy):
-                break
-        target_word = _direction_from_positions((ax, ay), (gx, gy))
+        # Balanced eval sample: each direction gets equal trials
+        # (otherwise |dx|>=|dy| tie-break biases toward east/west by ~7pp)
+        (ax, ay), (gx, gy), target_word = _sample_balanced_eval_pair(rng, grid_size)
 
         # ─── Phase A: BASELINE language_output activity (no input) ───
         bridge.cp_external_input_current[:] = 0.0
