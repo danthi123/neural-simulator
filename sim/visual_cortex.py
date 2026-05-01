@@ -218,3 +218,93 @@ def image_to_retina_drive(
     used by build_v1_simple_weights."""
     flat = image.flatten().astype(np.float32) * drive_max_pA
     return flat
+
+
+def apply_v1_gabor_weights(
+    bridge,
+    n_orientations: int = N_ORIENTATIONS,
+    n_frequencies: int = N_FREQUENCIES,
+    n_positions_per_dim: int = V1_POSITIONS_PER_DIM,
+    retina_size: int = RETINA_SIZE,
+    receptive_field_radius: int = 4,
+    weight_scale: float = 1.0,
+) -> int:
+    """Overwrite retina → cortex_v1_simple weights with Gabor receptive
+    fields. Replaces the random-init pathway weights.
+
+    Must be called AFTER `bridge._initialize_simulation_data()` — the CSR
+    must exist. Calls `bridge.set_pathway_weights()` under the hood with
+    `add_missing=True` so the full Gabor-shaped pathway is installed
+    regardless of the regions framework's initial density.
+
+    Args:
+        bridge: SimulationBridge with region_manager populated.
+        n_orientations, n_frequencies, n_positions_per_dim, retina_size,
+            receptive_field_radius: must match the values used when
+            constructing the regions (so V1_simple cell layout matches).
+        weight_scale: multiplier applied to all Gabor weights. Default 1.0
+            keeps the [-1, 1] Gabor-cosine range; bump to e.g. 5.0 to make
+            V1_simple drive comparable to other plastic pathways
+            (weight_mean ~5 in the BG cascade).
+
+    Returns: count of synapses installed/updated.
+
+    Raises:
+        RuntimeError if region_manager is None or required regions missing.
+    """
+    if bridge.region_manager is None:
+        raise RuntimeError(
+            "apply_v1_gabor_weights: bridge.region_manager is None. "
+            "Brain-region framework must be enabled."
+        )
+
+    # Get global index offsets for retina + V1_simple
+    retina_global = list(bridge.region_manager.indices("retina"))
+    v1_global = list(bridge.region_manager.indices("cortex_v1_simple"))
+
+    if not retina_global:
+        raise RuntimeError("apply_v1_gabor_weights: 'retina' region not found")
+    if not v1_global:
+        raise RuntimeError("apply_v1_gabor_weights: 'cortex_v1_simple' region not found")
+
+    n_retina_expected = 2 * retina_size * retina_size
+    n_v1_expected = (n_orientations * n_frequencies
+                     * n_positions_per_dim * n_positions_per_dim)
+    if len(retina_global) != n_retina_expected:
+        raise RuntimeError(
+            f"apply_v1_gabor_weights: retina region has {len(retina_global)} "
+            f"neurons, expected {n_retina_expected} for "
+            f"retina_size={retina_size}"
+        )
+    if len(v1_global) != n_v1_expected:
+        raise RuntimeError(
+            f"apply_v1_gabor_weights: cortex_v1_simple has {len(v1_global)} "
+            f"neurons, expected {n_v1_expected} for "
+            f"n_orient={n_orientations}, n_freq={n_frequencies}, "
+            f"n_pos={n_positions_per_dim}"
+        )
+
+    # Build relative-index Gabor weights
+    rel_pre, rel_post, weights = build_v1_simple_weights(
+        n_orientations=n_orientations,
+        n_frequencies=n_frequencies,
+        n_positions_per_dim=n_positions_per_dim,
+        retina_size=retina_size,
+        receptive_field_radius=receptive_field_radius,
+    )
+
+    # Translate to global indices
+    retina_offset = int(retina_global[0])
+    v1_offset = int(v1_global[0])
+    global_pre = (rel_pre + retina_offset).astype(np.int64)
+    global_post = (rel_post + v1_offset).astype(np.int64)
+    scaled_weights = (weights * float(weight_scale)).astype(np.float32)
+
+    n_updated = bridge.set_pathway_weights(
+        pathway_name="retina_to_v1_simple_gabor",
+        pre_indices=global_pre,
+        post_indices=global_post,
+        weights=scaled_weights,
+        add_missing=True,
+    )
+    return n_updated

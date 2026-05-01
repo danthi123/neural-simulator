@@ -2160,17 +2160,24 @@ class SimulationBridge:
         self.cp_connections.data = cp.asarray(data, dtype=cp.float32)
 
         if missing_pairs and add_missing:
-            # Rebuild CSR with new edges. Use sum_duplicates to merge if
-            # any input pair already exists (shouldn't happen here since
-            # those went into n_updated, but be safe).
-            new_pre = np.array([p for p, _ in missing_pairs], dtype=np.int64)
-            new_post = np.array([q for _, q in missing_pairs], dtype=np.int64)
-            new_w = np.array(
-                [float(w_np[i]) for i, key in enumerate(
-                    zip(pre_np.tolist(), post_np.tolist())) if key in missing_pairs],
-                dtype=np.float32,
-            )
-            # Concatenate and rebuild
+            # Count adds toward the return value
+            n_updated += len(missing_pairs)
+            # Rebuild CSR with new edges.
+            # Build per-missing arrays in the order they appeared in inputs
+            new_pre_list = []
+            new_post_list = []
+            new_w_list = []
+            missing_set = set(missing_pairs)
+            for i in range(n_input):
+                key = (int(pre_np[i]), int(post_np[i]))
+                if key in missing_set:
+                    new_pre_list.append(key[0])
+                    new_post_list.append(key[1])
+                    new_w_list.append(float(w_np[i]))
+            new_pre = np.array(new_pre_list, dtype=np.int64)
+            new_post = np.array(new_post_list, dtype=np.int64)
+            new_w = np.array(new_w_list, dtype=np.float32)
+
             existing_coo = self.cp_connections.tocoo(copy=False)
             all_pre = cp.concatenate([existing_coo.row, cp.asarray(new_pre)])
             all_post = cp.concatenate([existing_coo.col, cp.asarray(new_post)])
@@ -2179,8 +2186,52 @@ class SimulationBridge:
             coo = csp.coo_matrix((all_w, (all_pre, all_post)), shape=(n, n))
             self.cp_connections = coo.tocsr()
             self.cp_connections.sum_duplicates()
-            self._synapse_count = int(self.cp_connections.nnz)
-            self._synapse_capacity = self._synapse_count
+            new_nnz = int(self.cp_connections.nnz)
+
+            # Invalidate caches BEFORE rebuilding conn_types: the cached COO
+            # is from before the CSR rebuild and must not be reused.
+            self._invalidate_coo_cache()
+
+            # Resize synapse-indexed arrays to match the grown CSR. Mirrors
+            # the pattern in inject_explicit_wiring: reinit STP / eligibility /
+            # pulse timers / conn type / plastic mask / plasticity gain to
+            # the new size. NB: this DOES wipe in-flight STP state,
+            # eligibility traces, etc. — only safe at init time, not during
+            # a running simulation.
+            if new_nnz != self._synapse_count:
+                self._synapse_count = new_nnz
+                self._synapse_capacity = new_nnz
+                if self.core_config.enable_short_term_plasticity:
+                    self.cp_stp_x = cp.ones(new_nnz, dtype=cp.float32)
+                    self.cp_stp_u = cp.full(new_nnz, self.core_config.stp_U,
+                                             dtype=cp.float32)
+                if self.core_config.enable_reward_modulation:
+                    self.cp_eligibility_trace = cp.zeros(new_nnz, dtype=cp.float32)
+                if self.cp_synapse_pulse_timers is not None:
+                    self.cp_synapse_pulse_timers = cp.zeros(new_nnz, dtype=cp.int32)
+                    self.cp_synapse_pulse_progress = cp.zeros(new_nnz,
+                                                              dtype=cp.float32)
+                # Per-synapse conn type rebuilt from the new CSR
+                self.cp_synapse_conn_type = None
+                if (self.core_config.enable_per_type_stp
+                        and self.core_config.enable_short_term_plasticity
+                        and new_nnz > 0):
+                    self._build_synapse_conn_type_array(self.core_config)
+                # Plastic mask: new edges default to non-plastic (False)
+                if hasattr(self, "cp_plastic_mask") and self.cp_plastic_mask is not None:
+                    if self.cp_plastic_mask.shape[0] != new_nnz:
+                        old_mask = self.cp_plastic_mask
+                        new_mask = cp.zeros(new_nnz, dtype=cp.bool_)
+                        new_mask[:old_mask.shape[0]] = old_mask
+                        self.cp_plastic_mask = new_mask
+                # Plasticity rate gain: new edges default to 1.0
+                if (hasattr(self, "cp_plasticity_rate_gain")
+                        and self.cp_plasticity_rate_gain is not None):
+                    if self.cp_plasticity_rate_gain.shape[0] != new_nnz:
+                        old_gain = self.cp_plasticity_rate_gain
+                        new_gain = cp.ones(new_nnz, dtype=cp.float32)
+                        new_gain[:old_gain.shape[0]] = old_gain
+                        self.cp_plasticity_rate_gain = new_gain
 
         # Invalidate caches that depend on connectivity / weights
         self._invalidate_coo_cache()
