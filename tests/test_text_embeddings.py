@@ -127,8 +127,10 @@ def test_text_io_regions_on_adds_two_language_regions():
 
 
 def test_text_io_pathways_wired_to_cortex():
-    """language_input -> cortex_{N,E,S,W} pathways are added (zero-init,
-    plastic, gated 'language_input_to_cortex')."""
+    """language_input -> cortex_{N,E,S,W} pathways are added (plastic,
+    gated 'language_input_to_cortex'). Non-zero default weight_mean
+    (per Kandel ch 53 — developmental pruning starts from dense, not
+    zero, connectivity)."""
     from research.runners.g11_bg_runner import build_bg_brain_regions
 
     regions, pathways = build_bg_brain_regions(enable_text_io=True)
@@ -140,7 +142,9 @@ def test_text_io_pathways_wired_to_cortex():
         p = by_edge[key]
         assert p.plastic is True
         assert p.plasticity_gate == "language_input_to_cortex"
-        assert p.weight_mean == 0.0
+        # Non-zero baseline (developmental dense init) so STDP has activity
+        # to refine; opt-in to zero via text_input_to_cortex_weight=0.0.
+        assert p.weight_mean > 0.0
 
 
 def test_text_io_with_visual_cortex_adds_it_to_language_output():

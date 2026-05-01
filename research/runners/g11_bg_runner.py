@@ -275,6 +275,10 @@ def build_bg_brain_regions(
     text_input_to_pfc_weight: float = 2.0,
     text_input_to_cortex_density: float = 0.20,
     text_it_to_output_density: float = 0.20,
+    # Non-zero default init for language-to-cortex (per Kandel ch 53,
+    # developmental pruning starts from dense connectivity)
+    text_input_to_cortex_weight: float = 2.0,
+    text_input_to_cortex_jitter: float = 0.5,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -1561,13 +1565,20 @@ def build_bg_brain_regions(
                 plasticity_gate="language_input_to_pfc",
             ))
 
-        # language_input → cortex_X (word-to-action learning, zero init)
+        # language_input → cortex_X (word-to-action learning).
+        # Per Kandel ch 53 (developmental pruning), the brain starts with
+        # DENSE connectivity that gets pruned via experience, not zero
+        # weights that grow. Non-zero init lets each token's pattern have
+        # SOME initial differential drive to cortex_X; STDP then refines
+        # which connections to strengthen vs. weaken. This counteracts
+        # the cascade's structural N-bias (cortex_N fires 2x more at init,
+        # so language with zero weights can't compete).
         for action in ACTION_NAMES:
             pathways.append(RegionPathway(
                 from_region="language_input", to_region=f"cortex_{action}",
                 density=text_input_to_cortex_density,
-                weight_mean=0.0,  # STDP+reward grows from zero
-                weight_jitter=0.0,
+                weight_mean=text_input_to_cortex_weight,  # non-zero default
+                weight_jitter=text_input_to_cortex_jitter,
                 plastic=True,
                 plasticity_gate="language_input_to_cortex",
             ))
