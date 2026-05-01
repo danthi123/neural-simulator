@@ -110,8 +110,9 @@ def evaluate_image_to_word(
         confusion[target_word][predicted] += 1
 
         if verbose and (trial + 1) % 25 == 0:
+            tag = "OK" if is_correct else "WRONG"
             print(f"  [eval I->W] {trial+1}/{n_trials}  target={target_word} "
-                  f"got={predicted} {'✓' if is_correct else '✗'} "
+                  f"got={predicted} {tag} "
                   f"acc-so-far={correct}/{trial+1}={100*correct/(trial+1):.1f}%",
                   flush=True)
 
