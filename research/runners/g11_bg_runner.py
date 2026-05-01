@@ -1717,6 +1717,14 @@ def run_moving_goal_episode(
     pfc_internal_density: float = 0.2,
     goal_to_pfc_weight: float = 8.0,
     pfc_to_cortex_weight: float = 8.0,
+    # Cluster G v1 (2026-05-01): Wang 2002 NMDA-mediated PFC working memory.
+    # When True, enables global NMDA with elevated 0.5 NMDA:AMPA ratio
+    # (Wang 2002 calibration for PFC pyramidals). Combined with --enable-pfc,
+    # gives the dlpfc_wm region true persistent activity for delayed-
+    # response tasks. NOTE: NMDA is currently a global cfg flag, so this
+    # affects all regions, not just PFC. Future work: per-region NMDA
+    # ratio override. See docs/plans/2026-05-01-cluster-g-pfc-wm-wang2002.md.
+    enable_pfc_nmda: bool = False,
     enable_bg_cross_projections: bool = False,
     cross_projection_weight: float = 5.0,
     cross_projection_density: float = 1.0,
@@ -2131,6 +2139,15 @@ def run_moving_goal_episode(
     cfg.enable_structural_plasticity = False  # keep synapse count fixed (per-action DA mask depends on it)
     cfg.enable_structural_pruning = enable_structural_pruning
     cfg.enable_d1_d2_asymmetry = enable_d1_d2_asymmetry
+    # Cluster G v1 (2026-05-01): Wang 2002 NMDA-mediated PFC working memory.
+    # NMDA is global (affects all regions); ratio elevated to PFC-typical 0.5
+    # per Wang 2002. Future work: per-region NMDA ratio override for
+    # biologically-correct PFC-only NMDA dominance.
+    if enable_pfc_nmda:
+        cfg.enable_nmda = True
+        cfg.nmda_ratio = 0.5  # Wang 2002 PFC calibration (default 0.4)
+        # nmda_tau_decay (100 ms) and nmda_tau_rise (3 ms) keep their
+        # CoreSimConfig defaults — already match Wang 2002.
     # Cluster B.3 (2026-04-28): cholinergic TANs. Turn the neuromod
     # subsystem ON cumulatively (no other flag in this runner enables it
     # today, but `|=` keeps it future-proof if one starts to) and append
@@ -3532,6 +3549,13 @@ def main():
                     help="PFC recurrent connection density (default 0.2; higher = more persistent activity).")
     ap.add_argument("--goal-to-pfc-weight", type=float, default=8.0)
     ap.add_argument("--pfc-to-cortex-weight", type=float, default=8.0)
+    ap.add_argument("--enable-pfc-nmda", action="store_true",
+                    help="Cluster G v1 (Wang 2002, 2026-05-01): NMDA-mediated "
+                         "recurrent excitation for PFC working memory. "
+                         "Globally enables NMDA with elevated 0.5 NMDA:AMPA "
+                         "ratio (PFC pyramidal calibration). Combined with "
+                         "--enable-dlpfc-wm, gives true persistent activity "
+                         "for delayed-response tasks. Default off.")
     ap.add_argument("--beacon-perception", action="store_true",
                     help="Item 1 Stage 1: enable beacon_sensors region with directional tuning. Sensors are driven each step based on perceived beacon strength + bearing.")
     ap.add_argument("--n-beacon-sensors", type=int, default=8,
@@ -3989,6 +4013,7 @@ def main():
             pfc_internal_density=args.pfc_internal_density,
             goal_to_pfc_weight=args.goal_to_pfc_weight,
             pfc_to_cortex_weight=args.pfc_to_cortex_weight,
+            enable_pfc_nmda=args.enable_pfc_nmda,
             enable_beacon_perception=args.beacon_perception,
             n_beacon_sensors=args.n_beacon_sensors,
             beacon_to_goal_weight=args.beacon_to_goal_weight,
