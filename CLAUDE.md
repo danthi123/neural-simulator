@@ -406,9 +406,35 @@ cortex frozen (or partial) + input layers thawed. Biologically: real
 critical periods close gradually, gated by neuromodulators, allowing
 sensory cortex to mature before association cortex.
 
-### Recommended configuration (current best 2026-04-29)
+### Recommended configuration (current best 2026-04-30)
 
-**🎯 Biology-grounded flagship (NEW 2026-04-29) — A+E + deterministic single-goal:**
+**🎯 BREAKTHROUGH 2026-04-30: `--heuristic-single-pool` beats every prior flagship.**
+
+```bash
+python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
+    --enable-msn-lateral-inhibition --enable-d1-d2-asymmetry --enable-striatal-pv-fsi \
+    --enable-cluster-a-closed-loop --enable-cluster-e-topography \
+    --heuristic-single-pool \
+    --seed N --n-steps 1800
+```
+**A+E single-pool: 5.02 ± 0.59 (n=6, multi-goal det)** — 28% improvement
+over the documented 6.97 ± 0.83 A+E ceiling, 41% std reduction. 6/6 seeds
+beat baseline, 6/6 beat A+E, 0 phase catastrophes. Found by systematic
+investigation of the persistent ~50% gap between single and replicated
+runners; multi-pool heuristic was creating BG-cascade arbitration noise.
+
+**Important caveat:** the multi-pool heuristic was the default for the
+two months prior (since cluster work began), so all prior cluster
+"NULL" findings (B.1/B.2/B.3, A, C v1/v2, D v1/v2, F v1/v2, HER, recency
+replay, RPE, surprise-LR) used a contaminated baseline. Many may have
+real signal under `--heuristic-single-pool`; **all cluster results need
+revisiting**.
+
+See [`research/findings/2026-04-30-single-pool-heuristic-breakthrough.md`](research/findings/2026-04-30-single-pool-heuristic-breakthrough.md).
+
+---
+
+**Biology-grounded flagship (2026-04-29) — A+E + deterministic single-goal:**
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal \
     --enable-msn-lateral-inhibition \
