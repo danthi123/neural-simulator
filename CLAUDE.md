@@ -408,9 +408,31 @@ sensory cortex to mature before association cortex.
 
 ### Recommended configuration (current best 2026-05-01)
 
-**🎯 BIGGEST BREAKTHROUGH 2026-05-01: Cluster G v2.5 — per-region NMDA on cortex+motor+PFC = 2.00 ± 0.00 (n=6).**
+**🎯 LATEST BREAKTHROUGH 2026-05-01: Cluster K v2 visual cortex — 2.97 ± 0.12 at 16×16 perception-only (NO heuristic).**
 
 ```bash
+# G v2.5 + K v2 — biology-grounded, perception only, scales to 16×16:
+python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
+    --enable-msn-lateral-inhibition --enable-d1-d2-asymmetry --enable-striatal-pv-fsi \
+    --enable-cluster-a-closed-loop --enable-cluster-e-topography \
+    --enable-dlpfc-wm --enable-pfc-nmda \
+    --enable-visual-cortex --visual-cortex-action-warmup-steps 600 \
+    --grid-size 16 --seed N --n-steps 1800
+```
+
+**G v2.5 + K v2 visual-only at 16×16: 2.97 ± 0.12 (n=3)** — closes 4 of
+5 original cheats (heuristic, (gx,gy), (x,y), beacon). 5.2× better than
+Tier 0 vanilla perception arc at 16×16 (15.47 ± 7.06). Beats the
+documented 8×8 perception arc baseline (4.08 ± 0.49) on a 4× larger grid.
+38% of 1800 steps spent AT the goal. See
+[`research/findings/2026-05-01-cluster-k-v2-breakthrough.md`](research/findings/2026-05-01-cluster-k-v2-breakthrough.md).
+
+---
+
+**Earlier breakthrough 2026-05-01: Cluster G v2.5 — per-region NMDA on cortex+motor+PFC = 2.00 ± 0.00 (n=6, with heuristic).**
+
+```bash
+# G v2.5 with heuristic (8×8/16×16/24×24 all hit 2.00):
 python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
     --enable-msn-lateral-inhibition --enable-d1-d2-asymmetry --enable-striatal-pv-fsi \
     --enable-cluster-a-closed-loop --enable-cluster-e-topography \
