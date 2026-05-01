@@ -406,9 +406,35 @@ cortex frozen (or partial) + input layers thawed. Biologically: real
 critical periods close gradually, gated by neuromodulators, allowing
 sensory cortex to mature before association cortex.
 
-### Recommended configuration (current best 2026-04-30)
+### Recommended configuration (current best 2026-05-01)
 
-**🎯 BREAKTHROUGH 2026-04-30: `--heuristic-single-pool` beats every prior flagship.**
+**🎯 BIGGEST BREAKTHROUGH 2026-05-01: Cluster G + NMDA = 2.00 ± 0.00 (n=6).**
+
+```bash
+python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
+    --enable-msn-lateral-inhibition --enable-d1-d2-asymmetry --enable-striatal-pv-fsi \
+    --enable-cluster-a-closed-loop --enable-cluster-e-topography \
+    --heuristic-single-pool \
+    --enable-dlpfc-wm --enable-pfc-nmda \
+    --seed N --n-steps 1800
+```
+
+**A+E + G NMDA: 2.00 ± 0.00 (n=6, multi-goal det)** — **60% improvement** over
+A+E single-pool (5.02), **56% over F v2 best (4.55)**, **51% over the
+documented cheats-allowed perception-arc flagship (4.08)**. ~49% of total
+1800 steps spent AT the goal across all seeds. Welch t = -22.67 vs F v2,
+p < 1e-15 — the most statistically significant cheat-5 result to date.
+
+NMDA-mediated PFC bistability (Wang 2002) stabilizes goal representation
+across goal-change transitions. F v2 (cerebellum) doesn't compose — NMDA
+already gives a deterministic attractor. Use A+E+G+NMDA WITHOUT F v2 as
+the simplest strongest config.
+
+See [`research/findings/2026-05-01-cluster-g-nmda-breakthrough.md`](research/findings/2026-05-01-cluster-g-nmda-breakthrough.md).
+
+---
+
+**Earlier flagship 2026-04-30: `--heuristic-single-pool` (now superseded by G+NMDA above)**
 
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
