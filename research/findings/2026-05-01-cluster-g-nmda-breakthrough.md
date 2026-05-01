@@ -74,13 +74,48 @@ F v2 (CF-gated cerebellar LTD) was helping in the noisier multi-pool/non-NMDA re
 
 This isn't a regression — F v2 is still a real biology mechanism. It's just that NMDA-mediated PFC bistability provides the same ceiling-breaking benefit through a different (and biologically primary) mechanism, and they don't compose.
 
-## Caveats
+## Caveats (v1 — global NMDA)
 
-1. **NMDA is global in v1**: cfg.enable_nmda affects all regions, not just PFC. Wang 2002 says PFC has elevated NMDA-NR2B specifically. Future v2: per-region NMDA ratio override.
+1. **NMDA is global in v1**: cfg.enable_nmda affects all regions, not just PFC. Wang 2002 says PFC has elevated NMDA-NR2B specifically. v2 fixes this.
 2. **Deterministic oscillation** at goal cell may not be biologically realistic (real agents would explore beyond the goal occasionally). The 2.00 metric is dominated by this oscillation.
 3. **Single-task validation**: cheat-5 multi-goal det only. Should re-validate on harder benchmarks (4-goal fast-change, harder-goal-distance variants).
+4. **Global NMDA breaks D-stack**: A+E+G v1 + D (cluster D hippocampus): 22.41 (catastrophic). NMDA destabilizes hippocampus when applied globally.
 
-## Recommended flagship (NEW operational best, biology-grounded)
+## Update: v2 / v2.5 (per-region NMDA)
+
+### v2 (PFC-only NMDA) — PARTIAL
+
+Fixes the global-NMDA D-stack regression by gating NMDA to the dlpfc_wm
+region only via `BrainRegion.enable_nmda=True` + bridge `cp_nmda_neuron_mask`.
+But cheat-5 alone result: 4.65 ± 0.59 (n=6) — does NOT replicate the v1
+2.00 win. NMDA on PFC alone is insufficient because cortex_X / motor_X
+also benefit from NMDA-mediated decisive selection.
+
+| Condition | Mean | Std | n | Note |
+|---|---|---|---|---|
+| A+E+G v1 (global NMDA) | 2.00 | 0.00 | 6 | breaks D-stack (22.41) |
+| A+E+G v2 (PFC-only)    | 4.65 | 0.59 | 6 | NMDA on dlpfc_wm only — missed cortex/motor regions |
+
+### v2.5 (PFC + cortex_X + motor_X NMDA) — RECOMMENDED ★
+
+Restores the v1 cheat-5 win AND keeps D-compatibility. NMDA flagged on:
+- `dlpfc_wm` (PFC working memory, Wang 2002 calibration)
+- `cortex_{N,E,S,W}` (action-selection circuit)
+- `motor_{N,E,S,W}` (motor output)
+
+But explicitly NOT on: hippocampal regions (CA1/CA3/DG/EC), cerebellar
+(granule/purkinje/DCN), retina, V1, V2, IT.
+
+| Condition | Mean | Std | n | Note |
+|---|---|---|---|---|
+| A+E+G v2.5 (cortex+motor+PFC NMDA) | **2.00** | **0.00** | 6 | recovers v1 win |
+| A+E+G v2.5 + D (cluster D hippocampus) | **3.34** | tbd | tbd | D-stack works! |
+
+The 3.34 with D-stack is significantly worse than 2.00 alone, suggesting
+hippocampus inputs are still adding noise to the cortex/motor decisions
+even with isolated NMDA. But it's no longer catastrophic.
+
+### Recommended flagship (NEW operational best, biology-grounded)
 
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
@@ -90,6 +125,10 @@ python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --d
     --enable-dlpfc-wm --enable-pfc-nmda \
     --seed N --n-steps 1800
 ```
+
+The `--enable-pfc-nmda` flag in v2.5 actually flags NMDA on PFC + cortex_X
++ motor_X (despite the name, since v2.5 broadened the targeted regions).
+A future flag rename to `--enable-cortical-nmda` would be more accurate.
 
 ## Files
 
