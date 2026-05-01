@@ -1,33 +1,45 @@
 # 2026-05-01 — Cluster K v2 BREAKTHROUGH: visual cortex beats perception arc at scale
 
 **Headline:** Pure-perception 16×16 stress with Cluster K v2 (visual cortex)
-ONLY (no beacon, no landmark, no place cells, no heuristic): **2.97 ± 0.12
-(n=3)**.
+ONLY (no beacon, no landmark, no place cells, no heuristic): **2.869 ± 0.186
+(n=6)**.
 
-This is **5.2× better than Tier 0 vanilla perception arc (15.47 ± 7.06)**,
+This is **5.4× better than Tier 0 vanilla perception arc (15.47 ± 7.06)**,
 and even better than the **8×8 perception arc baseline (4.08 ± 0.49)** —
-on a 4× larger grid. Within 50% of the heuristic upper bound (2.00).
+on a 4× larger grid. Within 43% of the heuristic upper bound (2.00).
 
 ## Result table
 
 | Config | Grid | Sum | Std | n_at_goal | Notes |
 |---|---|---|---|---|---|
 | Heuristic + G v2.5 | 16×16 | 2.00 | 0.00 | 49% | upper bound (cheat) |
-| **K v2 visual only** | **16×16** | **2.97** | **0.12** | **38%** | **★ this result** |
+| Heuristic + G v2.5 | 24×24 | 2.00 | 0.00 | 47% | upper bound (cheat) |
+| **K v2 visual only** | **16×16** (n=6) | **2.869** | **0.186** | **38.2%** | **★** |
+| **K v2 visual only** | **24×24** (n=3) | **2.867** | **0.222** | **37.5%** | **★ — generalizes!** |
 | 8×8 perception arc reference | 8×8 | 4.08 | 0.49 | — | prior best at scale |
 | Tier 0 vanilla perception arc | 16×16 | 15.47 | 7.06 | 3.9% | bottlenecked |
 | Tier 0 + curriculum + informed | 16×16 | 35.42 | 4.16 | — | curriculum freezes too early |
 | Tier 0 + adaptive-da | 16×16 | 24.22 | 14.31 | — | broadcast on noisy signal |
 
-## Per-seed breakdown
+**Visual cortex is grid-size-invariant.** 16×16 and 24×24 give statistically
+identical results (2.869 vs 2.867). This is the same property heuristic +
+G v2.5 has, but achieved via genuine biology-grounded perception rather
+than direct coordinate access. Mean distance grows (1.06 → 1.69) because
+Phase 0 traversal is longer at 24×24, but final-quarter convergence is
+invariant.
+
+## Per-seed breakdown (n=6)
 
 | Seed | Phase 0 finalQ | Phase 1 finalQ | Phase 2 finalQ | Phase 3 finalQ | Sum | Mean dist | n at goal |
 |---|---|---|---|---|---|---|---|
-| 42 | 0.690 | 0.593 | 0.867 | 0.708 | 2.858 | 1.038 | 698/1800 |
-| 43 | 0.655 | 0.761 | 0.858 | 0.823 | 3.097 | 1.087 | 678/1800 |
-| 44 | 0.655 | 0.681 | 0.947 | 0.664 | 2.947 | 1.072 | 684/1800 |
-| **mean** | 0.667 | 0.678 | 0.891 | 0.732 | **2.968** | 1.065 | **686.7** |
-| **stdev** | | | | | **0.121** | 0.025 | 9.5 |
+| 42 | 0.690 | 0.593 | 0.867 | 0.708 | 2.858 | 1.038 | 698/1800 (38.8%) |
+| 43 | 0.655 | 0.761 | 0.858 | 0.823 | 3.097 | 1.087 | 678/1800 (37.7%) |
+| 44 | 0.655 | 0.681 | 0.947 | 0.664 | 2.947 | 1.072 | 684/1800 (38.0%) |
+| 100 | 0.584 | 0.584 | 0.717 | 0.646 | 2.531 | 1.017 | 707/1800 (39.3%) |
+| 101 | 0.628 | 0.690 | 0.779 | 0.788 | 2.885 | 1.058 | 683/1800 (37.9%) |
+| 102 | 0.752 | 0.743 | 0.735 | 0.664 | 2.894 | 1.069 | 680/1800 (37.8%) |
+| **mean** | 0.661 | 0.675 | 0.817 | 0.716 | **2.869** | 1.057 | **688.3 (38.2%)** |
+| **stdev** | | | | | **0.186** | 0.025 | 11.4 |
 
 The **0.12 std** is remarkable — comparable to the heuristic-on result's
 0.00 std. Phase 0 finalQ around 0.67 means the agent is consistently
