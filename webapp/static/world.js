@@ -770,6 +770,17 @@ function scheduleLiveRender() {
       for (const pt of world.livePoints) {
         if (pt.step <= latest.step) distAt[pt.step] = pt.recent_dist;
       }
+      // Forward-fill nulls so the chart draws a continuous line across
+      // gaps (e.g. when --progress-print-interval > 1 makes events sparse).
+      // Without this, the chart's line-drawing code resets started=false
+      // on every null, leaving isolated points with no connecting line.
+      {
+        let last = null;
+        for (let i = 0; i < distAt.length; i++) {
+          if (distAt[i] != null) last = distAt[i];
+          else if (last != null) distAt[i] = last;
+        }
+      }
       // Goal-change markers — dots on the line at each step where the goal
       // differs from the previous event's goal. Lets the user visually
       // correlate recent_dist climbs/falls with phase boundaries.
