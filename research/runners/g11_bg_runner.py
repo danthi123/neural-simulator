@@ -2031,6 +2031,21 @@ def run_moving_goal_episode(
     cluster_e_distance_sigma: float = 0.3,
     enable_cluster_f_cerebellum: bool = False,  # Cluster F v1: Marr-Albus cerebellar microcircuit
     n_granule: int = 250,  # Cerebellar granule cells (scaling test for F v2)
+    # Cluster K v1 (2026-05-01): visual cortex hierarchy.
+    # Adds retina (32x32 ON/OFF) → V1_simple → V1_complex → V2 → IT regions.
+    # When True, the env step loop renders the gridworld as a 32x32 image and
+    # drives the retina each step (before the stim window). v1 does NOT yet
+    # wire IT → cortex_X for action selection — visual stream runs alongside
+    # existing perception (heuristic / beacon / hippocampus / etc.) without
+    # affecting motor output. Future v2: gated IT → cortex_X with curriculum.
+    enable_visual_cortex: bool = False,
+    visual_n_orientations: int = 8,
+    visual_n_frequencies: int = 2,
+    visual_n_positions_per_dim: int = 8,
+    visual_image_size: int = 32,
+    visual_n_v2: int = 256,
+    visual_n_it: int = 64,
+    visual_drive_max_pA: float = 200.0,
     # Cluster F v2 (2026-04-30): CF-gated anti-Hebbian LTD per Albus 1971
     # §IV.C eq.4. v1 used the global reward signal for PF→PC plasticity
     # (cerebellum and BG learned redundantly from the same signal). v2
@@ -2176,6 +2191,13 @@ def run_moving_goal_episode(
         cluster_e_distance_sigma=cluster_e_distance_sigma,
         enable_cluster_f_cerebellum=enable_cluster_f_cerebellum,
         n_granule=n_granule,
+        enable_visual_cortex=enable_visual_cortex,
+        visual_n_orientations=visual_n_orientations,
+        visual_n_frequencies=visual_n_frequencies,
+        visual_n_positions_per_dim=visual_n_positions_per_dim,
+        visual_image_size=visual_image_size,
+        visual_n_v2=visual_n_v2,
+        visual_n_it=visual_n_it,
         enable_beacon_perception=enable_beacon_perception,
         n_beacon_sensors=n_beacon_sensors,
         beacon_to_goal_weight=beacon_to_goal_weight,
@@ -3208,6 +3230,37 @@ def run_moving_goal_episode(
                     cp.asarray(sensor_act, dtype=cp.float32)
                 )
 
+        # Cluster K v1 retina drive (2026-05-01).
+        # Render the gridworld as a 32x32 ON/OFF image and inject as input
+        # current to the retina region. This activates the V1 → V2 → IT
+        # ventral stream alongside other perception. v1 doesn't yet wire
+        # IT → cortex_X — the visual cortex runs but doesn't influence
+        # action selection. Future v2: gated IT → cortex_X with curriculum.
+        if enable_visual_cortex:
+            from sim.visual_cortex import (
+                render_gridworld_to_image,
+                image_to_retina_drive,
+            )
+            in_goal_silence_step_vc = (
+                goal_silence_after_step >= 0
+                and step >= goal_silence_after_step
+                and step < goal_silence_after_step + goal_silence_duration
+            )
+            if in_sleep or in_goal_silence_step_vc:
+                # Sleep / goal-silence: blank retina (no visual input)
+                bridge.cp_external_input_current[region_indices_cp["retina"]] = cp.float32(0.0)
+            else:
+                img = render_gridworld_to_image(
+                    agent_pos=(int(x), int(y)),
+                    goal_pos=(int(gx), int(gy)),
+                    grid_size=int(grid_size),
+                    image_size=int(visual_image_size),
+                )
+                drive = image_to_retina_drive(img, drive_max_pA=float(visual_drive_max_pA))
+                bridge.cp_external_input_current[region_indices_cp["retina"]] = (
+                    cp.asarray(drive, dtype=cp.float32)
+                )
+
         # Run stimulus window and tally motor spikes
         motor_counts = {a: 0 for a in ACTION_NAMES}
         bridge.core_config.current_reward_signal = 0.0
@@ -3922,6 +3975,20 @@ def main():
                          "specific ACh source) that pauses on reward and gates "
                          "corticostriatal plasticity windows. See "
                          "docs/plans/2026-04-28-cluster-b3-tans-implementation.md.")
+    ap.add_argument("--enable-visual-cortex", action="store_true",
+                    help="Cluster K v1 (2026-05-01): visual cortex hierarchy "
+                         "(Hubel-Wiesel 1962, Felleman & Van Essen 1991). Adds "
+                         "retina (32x32 ON/OFF) -> V1_simple (8 orient x 2 freq "
+                         "x 8x8 pos = 1024) -> V1_complex (512, phase-pooled) -> "
+                         "V2 (256, plastic) -> IT (64, plastic) regions and "
+                         "pathways. Env step loop renders the gridworld as a "
+                         "32x32 image and drives the retina each step. v1 does "
+                         "NOT yet wire IT -> cortex_X for action selection — "
+                         "visual stream runs alongside existing perception "
+                         "without affecting motor output. Future v2: gated "
+                         "IT -> cortex_X with critical-period curriculum + "
+                         "Gabor pre-init. See sim/visual_cortex.py and "
+                         "docs/plans/2026-05-01-cluster-k-visual-cortex-hierarchy.md.")
     ap.add_argument("--pruning-alpha", type=float, default=None,
                     help="Cheat-5 option-1 pruning rate. Default: cfg.pruning_alpha (0.001 = conservative). "
                          "Try 0.05 for a 5K-trial pretraining smoke; 0.005 for 30K validation.")
@@ -4191,6 +4258,7 @@ def main():
             enable_cluster_f_cerebellum=args.enable_cluster_f_cerebellum,
             enable_cluster_f_v2=args.enable_cluster_f_v2,
             n_granule=args.n_granule,
+            enable_visual_cortex=args.enable_visual_cortex,
             cluster_e_distance_sigma=args.cluster_e_distance_sigma,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
