@@ -65,6 +65,13 @@ def evaluate_image_to_word(
                  for w in ["north", "east", "south", "west"]}
     n_reset_steps = 100  # match training inter-trial reset
 
+    # Pre-cache embedding vectors for the 4 cardinal direction tokens
+    # so we can do baseline-subtracted nearest-token decoding.
+    from sim.text_embeddings import embed
+    DIRECTIONS = ["north", "east", "south", "west"]
+    target_embeddings = np.stack([embed(t, dim=int(lang_output_idx.size))
+                                    for t in DIRECTIONS])  # (4, n_lang_output)
+
     for trial in range(n_trials):
         # Random fresh image
         while True:
@@ -74,7 +81,20 @@ def evaluate_image_to_word(
                 break
         target_word = _direction_from_positions((ax, ay), (gx, gy))
 
-        # Inter-trial reset
+        # ─── Phase A: BASELINE language_output activity (no input) ───
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.core_config.current_reward_signal = 0.0
+        for _ in range(n_reset_steps):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        baseline_spikes = cp.zeros(int(lang_output_idx.size), dtype=cp.int32)
+        for s in range(stim_steps_per_trial):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+            if s >= 60:
+                baseline_spikes += bridge.cp_firing_states[lang_output_idx].astype(cp.int32)
+
+        # ─── Phase B: image-driven measurement ───
         bridge.cp_external_input_current[:] = 0.0
         bridge.core_config.current_reward_signal = 0.0
         for _ in range(n_reset_steps):
@@ -103,13 +123,19 @@ def evaluate_image_to_word(
                 firing = bridge.cp_firing_states[lang_output_idx]
                 spike_counts += firing.astype(cp.int32)
 
-        # Decode
-        predicted = bridge.read_language_output(
-            spike_counts=spike_counts,
-            n_steps=stim_steps_per_trial - 60,
-            top_k=1,
-            vocab=["north", "east", "south", "west"],
-        )[0]
+        # ─── Delta decoding: subtract baseline spikes, then cosine-match
+        # to direction embeddings. Baseline-subtraction reveals the
+        # image-driven RESPONSE rather than absolute activity. ───
+        delta_spikes = (spike_counts - baseline_spikes).get().astype(np.float32)
+        # Cosine similarity to each direction embedding
+        sims = []
+        for emb in target_embeddings:
+            denom = np.linalg.norm(delta_spikes) * np.linalg.norm(emb)
+            if denom < 1e-8:
+                sims.append(0.0)
+            else:
+                sims.append(float(np.dot(delta_spikes, emb) / denom))
+        predicted = DIRECTIONS[int(np.argmax(sims))]
 
         is_correct = predicted == target_word
         if is_correct:
