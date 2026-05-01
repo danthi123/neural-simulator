@@ -409,6 +409,11 @@ def build_bg_brain_regions(
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
             action_index=action_idx,
+            # Cluster G v2.5: cortical pyramidals naturally express NMDA
+            # receptors (Wang 2002 calibration applies). Enable when
+            # pfc_enable_nmda is set so cortex_X + dlpfc_wm both get NMDA-
+            # mediated bistability while hippocampus/cerebellum stay AMPA-only.
+            enable_nmda=bool(pfc_enable_nmda),
             **kw,
         ))
 
@@ -594,6 +599,9 @@ def build_bg_brain_regions(
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
             action_index=action_idx,
+            # Cluster G v2.5: motor cortex pyramidals also express NMDA;
+            # included for consistency with cortex_X enable_nmda.
+            enable_nmda=bool(pfc_enable_nmda),
         ))
 
     # SNc dopamine neurons (single pool, broadcasts via neuromodulator subsystem).
