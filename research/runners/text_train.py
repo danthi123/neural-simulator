@@ -133,15 +133,17 @@ def run_text_training(
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
     bridge._initialize_simulation_data(called_from_playback_init=False)
 
-    # Skip Gabor pre-init for now: the resize-after-add path has a
-    # cross-array shape bug in some configurations. V1 simple cells
-    # use random init weights instead. STDP+reward will still drive
-    # downstream learning (V2/IT/cortex), even if V1 isn't orientation-
-    # tuned. TODO: fix resize and re-enable apply_v1_gabor_weights.
-    _ = apply_v1_gabor_weights  # silence unused import
+    # Apply Gabor pre-init for V1 — works because we disabled structural
+    # plasticity above. Without this, V1 fires on noise and IT can't
+    # learn useful representations.
+    n_gabor = apply_v1_gabor_weights(
+        bridge,
+        n_orientations=8, n_frequencies=2, n_positions_per_dim=8,
+        retina_size=32, receptive_field_radius=4, weight_scale=10.0,
+    )
     if verbose:
-        print(f"[text_train] Gabor pre-init disabled "
-              f"(bridge resize bug, see TODO)", flush=True)
+        print(f"[text_train] Gabor weights: {n_gabor} edges installed",
+              flush=True)
 
     # Open all gates so STDP+reward can grow weights everywhere
     for gate in [
