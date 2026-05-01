@@ -267,6 +267,14 @@ def build_bg_brain_regions(
     visual_n_it: int = 64,
     # Cluster K v2 (2026-05-01): IT → cortex_X action-selection density
     visual_it_to_cortex_density: float = 0.5,
+    # Text I/O (2026-05-01)
+    enable_text_io: bool = False,
+    text_n_input_neurons: int = 256,
+    text_n_output_neurons: int = 256,
+    text_input_to_pfc_density: float = 0.20,
+    text_input_to_pfc_weight: float = 2.0,
+    text_input_to_cortex_density: float = 0.20,
+    text_it_to_output_density: float = 0.20,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -1517,6 +1525,80 @@ def build_bg_brain_regions(
                 plasticity_gate="visual_cortex_action",
             ))
 
+    # ─── Text I/O regions (2026-05-01). Wernicke-area-like input region
+    # receives token embeddings; Broca-area-like output region produces
+    # action-driving + visualizable activity. Both plastic recurrent.
+    # See sim/text_embeddings.py and docs/plans/2026-05-01-text-interaction-design.md.
+    if enable_text_io:
+        regions.append(BrainRegion(
+            name="language_input",
+            n_neurons=text_n_input_neurons,
+            exc_fraction=0.8,
+            internal_density=0.05,
+            exc_weight_mean=2.0, inh_weight_mean=4.0,
+            weight_jitter=0.2, plastic_internal=True,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="language_output",
+            n_neurons=text_n_output_neurons,
+            exc_fraction=0.8,
+            internal_density=0.10,
+            exc_weight_mean=2.0, inh_weight_mean=4.0,
+            weight_jitter=0.2, plastic_internal=True,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+
+        # language_input → PFC (so words enter working memory)
+        # Only if PFC region exists
+        if enable_pfc:
+            pathways.append(RegionPathway(
+                from_region="language_input", to_region="dlpfc_wm",
+                density=text_input_to_pfc_density,
+                weight_mean=text_input_to_pfc_weight,
+                weight_jitter=0.5,
+                plastic=True,
+                plasticity_gate="language_input_to_pfc",
+            ))
+
+        # language_input → cortex_X (word-to-action learning, zero init)
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region="language_input", to_region=f"cortex_{action}",
+                density=text_input_to_cortex_density,
+                weight_mean=0.0,  # STDP+reward grows from zero
+                weight_jitter=0.0,
+                plastic=True,
+                plasticity_gate="language_input_to_cortex",
+            ))
+
+        # IT → language_output (image-to-word learning, zero init).
+        # Only when visual cortex is also enabled — without IT there's
+        # no upstream signal to drive the readout.
+        if enable_visual_cortex:
+            pathways.append(RegionPathway(
+                from_region="cortex_it", to_region="language_output",
+                density=text_it_to_output_density,
+                weight_mean=0.0,
+                weight_jitter=0.0,
+                plastic=True,
+                plasticity_gate="it_to_language_output",
+            ))
+
+        # cortex_X → language_output (action verbalization, zero init).
+        # Lets the agent "say what it just did" — STDP+reward grows
+        # weights when the supervisor clamps the appropriate word output
+        # while a cortex_X is active.
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"cortex_{action}", to_region="language_output",
+                density=0.10,
+                weight_mean=0.0,
+                weight_jitter=0.0,
+                plastic=True,
+                plasticity_gate="cortex_to_language_output",
+            ))
+
     return regions, pathways
 
 
@@ -2075,6 +2157,17 @@ def run_moving_goal_episode(
     # 0 = open from start (no critical period); -1 = stay closed forever
     # (visual cortex passive observer).
     visual_cortex_action_warmup_steps: int = 600,
+    # Text I/O (2026-05-01): language_input + language_output regions for
+    # bidirectional text training and dialogue. Driven externally via
+    # bridge.set_token_drive() and read via bridge.read_language_output().
+    # See sim/text_embeddings.py and docs/plans/2026-05-01-text-interaction-design.md.
+    enable_text_io: bool = False,
+    text_n_input_neurons: int = 256,
+    text_n_output_neurons: int = 256,
+    text_input_to_pfc_density: float = 0.20,
+    text_input_to_pfc_weight: float = 2.0,
+    text_input_to_cortex_density: float = 0.20,
+    text_it_to_output_density: float = 0.20,
     # Cluster F v2 (2026-04-30): CF-gated anti-Hebbian LTD per Albus 1971
     # §IV.C eq.4. v1 used the global reward signal for PF→PC plasticity
     # (cerebellum and BG learned redundantly from the same signal). v2

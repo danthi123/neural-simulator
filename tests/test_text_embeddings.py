@@ -101,6 +101,84 @@ def test_vocab_to_drive_pattern():
     assert np.allclose(drive, drive2)
 
 
+def test_text_io_regions_off_by_default():
+    """Without --enable-text-io, build_bg_brain_regions does not emit
+    language_input / language_output. Backward-compat check."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    regions, pathways = build_bg_brain_regions()
+    region_names = {r.name for r in regions}
+    assert "language_input" not in region_names
+    assert "language_output" not in region_names
+
+
+def test_text_io_regions_on_adds_two_language_regions():
+    """With --enable-text-io, language_input + language_output regions added
+    with default 256-neuron sizes."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    regions, pathways = build_bg_brain_regions(enable_text_io=True)
+    by_name = {r.name: r for r in regions}
+
+    assert "language_input" in by_name
+    assert "language_output" in by_name
+    assert by_name["language_input"].n_neurons == 256
+    assert by_name["language_output"].n_neurons == 256
+
+
+def test_text_io_pathways_wired_to_cortex():
+    """language_input -> cortex_{N,E,S,W} pathways are added (zero-init,
+    plastic, gated 'language_input_to_cortex')."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    regions, pathways = build_bg_brain_regions(enable_text_io=True)
+    by_edge = {(p.from_region, p.to_region): p for p in pathways}
+
+    for action in ["N", "E", "S", "W"]:
+        key = ("language_input", f"cortex_{action}")
+        assert key in by_edge, f"Missing language_input -> cortex_{action}"
+        p = by_edge[key]
+        assert p.plastic is True
+        assert p.plasticity_gate == "language_input_to_cortex"
+        assert p.weight_mean == 0.0
+
+
+def test_text_io_with_visual_cortex_adds_it_to_language_output():
+    """With both --enable-text-io and --enable-visual-cortex, the
+    cortex_it -> language_output pathway is wired (image-to-word)."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    regions, pathways = build_bg_brain_regions(
+        enable_text_io=True,
+        enable_visual_cortex=True,
+    )
+    by_edge = {(p.from_region, p.to_region): p for p in pathways}
+
+    key = ("cortex_it", "language_output")
+    assert key in by_edge
+    p = by_edge[key]
+    assert p.plastic is True
+    assert p.plasticity_gate == "it_to_language_output"
+    assert p.weight_mean == 0.0
+
+
+def test_text_io_action_to_language_output_pathways():
+    """Verbal-of-action pathways (cortex_X -> language_output) are wired
+    so the agent can learn to verbalize what it just did."""
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+
+    regions, pathways = build_bg_brain_regions(enable_text_io=True)
+    by_edge = {(p.from_region, p.to_region): p for p in pathways}
+
+    for action in ["N", "E", "S", "W"]:
+        key = (f"cortex_{action}", "language_output")
+        assert key in by_edge
+        p = by_edge[key]
+        assert p.plastic is True
+        assert p.plasticity_gate == "cortex_to_language_output"
+        assert p.weight_mean == 0.0
+
+
 def test_vocab_to_drive_pattern_different_tokens_differ():
     """Different tokens produce different drive patterns (different
     active neuron sets in expectation)."""
