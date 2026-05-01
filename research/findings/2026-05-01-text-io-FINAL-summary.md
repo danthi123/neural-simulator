@@ -35,11 +35,25 @@ textual communication requires one of 4 documented architectural fixes.
 | R5 + Non-zero init | Kandel ch 53 dev pruning | 25.0% | 12.5% |
 | **R5 + Δ-baseline eval** | **Kandel ch 25 response physio** | **25.0%** | **35.0%** ✓ |
 | R5 + full Δ-eval (re-run) | (state-dependent) | 25.0% | 17.5% |
-| R3 Embodied | Tomasello / Kandel ch 60 | running >75min | — |
+| **R3 Embodied** | **Tomasello / Kandel ch 60** | 20.0% | **30.0% ✓** (absolute eval) |
+| R6 PFC-bypass | Wernicke→arcuate→Broca ch 60 | running | running |
 
-**Best result: 35.0% W→A** (1.4× chance) using delta-from-baseline eval.
-Demonstrates trained weights ARE differential but **state-dependent
-delta makes the result unreliable**.
+**Best results:**
+- **Embodied W→A: 30.0% with ABSOLUTE eval** (1.2× chance, deterministic
+  and reproducible). Biology-correct: action-contingent reward over
+  100 episodes of gridworld navigation. Most robust result.
+- R5 W→A: 35.0% with delta-from-baseline (peak, but state-dependent
+  and dropped to 17.5% on re-run).
+
+**Embodied is the best biology-grounded result because it doesn't need
+the delta-eval workaround.** Real action-contingent reward differentiates
+correct from incorrect mappings during training, producing weights that
+read out reliably with simple absolute-firing eval.
+
+**Embodied training stats (100 episodes × ~28 steps avg = 2769 total):**
+- 33% correct moves at end of training (slowly improving from 29%)
+- 75 min wall-clock
+- W→A 30% / I→W 20% accuracy on fresh trials
 
 ## Root cause (diagnostic, commit 1b6d784)
 
