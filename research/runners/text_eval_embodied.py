@@ -38,6 +38,14 @@ def main():
                     help="sub-steps per env step during stim window (default 100 = 50ms)")
     ap.add_argument("--reset-steps", type=int, default=100,
                     help="inter-step reset sub-steps (default 100 = 50ms = 1 NMDA tau)")
+    # Auto-checkpoint after training so we can re-eval same bridge later
+    # with different methodologies (e.g., compare interleaved vs block eval).
+    ap.add_argument("--save-checkpoint", action="store_true",
+                    help="save bridge state after training to <out-stats>.h5 "
+                    "for later re-evaluation with text_reeval.py")
+    ap.add_argument("--no-save-checkpoint", dest="save_checkpoint",
+                    action="store_false")
+    ap.set_defaults(save_checkpoint=True)
     args = ap.parse_args()
 
     print("=" * 60)
@@ -91,10 +99,25 @@ def main():
             "training_stats": train_stats,
             "image_to_word_eval": iw_result,
             "word_to_action_eval": wa_result,
+            "config": {
+                "retina_drive_pA": args.retina_drive_pA,
+                "lang_input_drive_pA": args.lang_input_drive_pA,
+                "lang_output_coactive_pA": args.lang_output_coactive_pA,
+                "stim_steps_per_step": args.stim_steps_per_step,
+                "reset_steps": args.reset_steps,
+            },
         }
         Path(args.out_stats).parent.mkdir(parents=True, exist_ok=True)
         Path(args.out_stats).write_text(json.dumps(out, indent=2, default=str))
         print(f"\n  Saved: {args.out_stats}")
+
+        if args.save_checkpoint:
+            ckpt_path = Path(args.out_stats).with_suffix(".simstate.h5")
+            try:
+                bridge.save_checkpoint(str(ckpt_path))
+                print(f"  Saved checkpoint: {ckpt_path}")
+            except Exception as e:
+                print(f"  WARNING: checkpoint save failed: {e}")
 
 
 if __name__ == "__main__":
