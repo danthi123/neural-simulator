@@ -46,6 +46,7 @@ def load_bridge(checkpoint_path: str):
 
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
+    from sim.visual_cortex import apply_v1_gabor_weights
     from research.runners.g11_bg_runner import build_bg_brain_regions
 
     regions, pathways = build_bg_brain_regions(
@@ -76,6 +77,18 @@ def load_bridge(checkpoint_path: str):
     )
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
     bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    # Install gabor edges so post-init synapse count matches the saved
+    # checkpoint's count (training does this BEFORE the run, and the
+    # checkpoint state is post-training so it reflects gabor edges baked
+    # in via STDP changes). Without this, load_checkpoint would replace
+    # cp_connections with a 245318-synapse matrix while STP/eligibility
+    # arrays remain sized for 174726 — index errors at first sim step.
+    apply_v1_gabor_weights(
+        bridge,
+        n_orientations=8, n_frequencies=2, n_positions_per_dim=8,
+        retina_size=32, receptive_field_radius=4, weight_scale=10.0,
+    )
 
     bridge.load_checkpoint(checkpoint_path)
     return bridge
