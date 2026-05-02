@@ -42,6 +42,13 @@ def main():
                     help="enable per-connection-type STP (Tier 1.5 revert; "
                     "default off for speed, but the 2026-05-02 partial-T1 "
                     "regression suggests it may matter for language pathway)")
+    # Reward shaping (2026-05-02): adjust LTP/LTD asymmetry
+    ap.add_argument("--correct-move-reward", type=float, default=1.0,
+                    help="reward for moves that reduce Manhattan distance (default +1.0)")
+    ap.add_argument("--wrong-move-reward", type=float, default=-0.5,
+                    help="reward for moves that increase Manhattan distance (default -0.5; "
+                    "set to 0 to eliminate negative LTP/LTD asymmetry that may cause "
+                    "directional learning reversal as observed for 'south' in PID 39408)")
     # Auto-checkpoint after training so we can re-eval same bridge later
     # with different methodologies (e.g., compare interleaved vs block eval).
     ap.add_argument("--save-checkpoint", action="store_true",
@@ -72,6 +79,8 @@ def main():
         retina_drive_pA=args.retina_drive_pA,
         lang_input_drive_pA=args.lang_input_drive_pA,
         lang_output_coactive_pA=args.lang_output_coactive_pA,
+        correct_move_reward=args.correct_move_reward,
+        wrong_move_reward=args.wrong_move_reward,
         verbose=True,
     )
 

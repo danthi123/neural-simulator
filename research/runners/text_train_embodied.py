@@ -132,6 +132,17 @@ def run_embodied_text_training(
     retina_drive_pA: float = 200.0,
     lang_input_drive_pA: float = 200.0,
     lang_output_coactive_pA: float = 150.0,  # MODEST — doesn't clamp, just biases
+    # Reward shaping (2026-05-02 fix). The default -0.5 wrong-move penalty
+    # creates asymmetric LTP/LTD pressure: with cascade at ~30% correct,
+    # 70% of moves get LTD (-0.5) vs 30% getting LTP (+1.0). Aggregate LTD
+    # magnitude per move = 0.7*0.5 = 0.35 vs LTP magnitude = 0.3*1.0 = 0.30.
+    # LTD pressure exceeds LTP, biasing some directions toward REVERSED
+    # learning (observed for "south" in the PID 39408 weight diagnostic).
+    # Setting wrong_move_reward=0 (no penalty) makes plasticity pressure
+    # purely positive, eliminating the reversal direction. Trade-off:
+    # less exploration pressure (no incentive to avoid wrong moves).
+    correct_move_reward: float = 1.0,
+    wrong_move_reward: float = -0.5,
     verbose: bool = True,
 ):
     """Embodied training: navigate gridworld with language inputs/outputs
@@ -346,7 +357,8 @@ def run_embodied_text_training(
             d_after = _manhattan((new_x, new_y), (gx, gy))
 
             # Real reward: did the move reduce Manhattan distance?
-            reward = 1.0 if d_after < d_before else (-0.5 if d_after > d_before else 0.0)
+            reward = (correct_move_reward if d_after < d_before
+                      else (wrong_move_reward if d_after > d_before else 0.0))
             bridge.core_config.current_reward_signal = float(reward)
 
             # Brief reward-application window (eligibility traces × reward → STDP)
