@@ -1,7 +1,21 @@
 # Training-speedup playbook
 
-**Status:** Tier 1 = scheduled (implement after current 300-ep finishes).
-Tier 2 + Tier 3 = documented for future iteration.
+**Status (updated 2026-05-02):**
+- **Tier 1 = PARTIAL.** 1.1 (stim_steps 200→100) and 1.5 (per_type_stp=False) shipped
+  and validated. **1.2 (reset_steps 100→50) REVERTED** — caused 300-ep R3+R6 regression
+  to 20%/20% from 32.5%/30% baseline (NMDA τ=100ms requires full reset for trial isolation;
+  see `2026-05-01-text-io-300ep-tier1-REGRESSION.md`).
+- **Tier 2.6 (heterogeneity disable) = NOT SAFE.** Smoke test 2026-05-02: disabling
+  `enable_parameter_heterogeneity` (alongside `enable_ou_process`) collapsed correct-moves
+  from 30%+ baseline to 2.4%. All-zero language_output spikes; agent always emits "north".
+  Pure Izh parameters → pathological synchrony; per-neuron variation is load-bearing for
+  breaking lockstep.
+- **Tier 1.3 aggressive form (full OU disable) = NOT SAFE.** Same smoke test: disabling
+  `enable_ou_process` removed spontaneous activity STDP needs for pre-synaptic spike
+  events outside the explicit-input window. Conservative form (gate OU on
+  `current_reward_signal != 0 OR cp_external_input_current.any()`) still viable but
+  requires a code change in `sim/bridge.py`, not just a config flag.
+- Tier 2 (other items) + Tier 3 = documented for future iteration.
 
 **Baseline:** ~5.06 ms wall-clock per sub-step on ~5000 neurons + ~200K
 synapses (single RTX 3090, no batching). Empirically: 100-episode
@@ -26,17 +40,33 @@ Target: **1.8-2× speedup**, all low-risk.
 **Risk:** Low — but verify accuracy unchanged on smoke test.
 **Speedup:** ~1.4× on stim window (62% of total step), ~1.25× overall.
 
-### 1.2 Halve `reset_steps` (100 → 50)
+### 1.2 Halve `reset_steps` (100 → 50) — REVERTED 2026-05-02
 **File:** same
 **Rationale:** NMDA τ=100ms; 50ms is 0.5τ, leaving ~37% of activity at trial start. With per-region NMDA mask (only PFC+cortex_X+motor_X), the residual is minimal.
 **Risk:** Medium — might re-introduce some cortex_N bleedover. Test for word-discrimination preservation on smoke.
 **Speedup:** ~1.2× on reset window.
+**RESULT:** **NEGATIVE.** 300-ep R3+R6 + Tier 1 (with 1.2 active) regressed to 20% / 20%
+W→A / I→W vs 32.5% / 30% baseline. Training-phase correct-moves still climbed to
+38.5% (visuomotor pathway learned), but language pathway readout came out garbled —
+the 50ms reset left ~40% NMDA bleedover, which over 9000 env steps compounded into
+systematically scrambled language→cortex weights. Smoke (5 ep × 10 steps) didn't
+catch it because contamination only matters at scale and across many trials.
+**Reverted.** See `research/findings/2026-05-01-text-io-300ep-tier1-REGRESSION.md`.
 
-### 1.3 Skip OU noise during silent reset windows
+### 1.3 Skip OU noise during silent reset windows — DEFERRED (aggressive form unsafe)
 **File:** `sim/bridge.py` `_run_one_simulation_step`
 **Rationale:** OU noise is computed every step but during reset (zero input, zero reward) we don't care — the goal is just to let dynamics decay. Could gate OU computation on `current_reward_signal != 0 OR cp_external_input_current.any()`.
-**Risk:** Low — only affects training reset windows.
+**Risk:** Low (conservative gated form). HIGH (aggressive form: full disable).
 **Speedup:** ~1.05-1.1×.
+**RESULT (aggressive form, 2026-05-02):** **NEGATIVE.** Disabling
+`enable_ou_process = False` entirely (paired with heterogeneity disable in same
+smoke) collapsed correct-moves to 2.4% (from 30%+). OU provides spontaneous
+activity STDP needs for pre-synaptic spike events outside the explicit-input
+window. Without it, the network has no random fluctuations to seed cortex_X
+firing during stim windows where retina input is sparse — STDP eligibility
+traces don't form on the right pre-post pairings.
+**Conservative gated form remains viable** but requires `sim/bridge.py`
+code change (not just config flag). DEFERRED until Tier 2 batch.
 
 ### 1.4 Set `OPENGL_AVAILABLE=False` for headless training
 **File:** `sim/bridge.py` (already gated by this flag)
@@ -127,14 +157,25 @@ During stim windows where retina drives V1 (forward sweep), V1's recurrent self-
 
 **Effort:** 3 days.
 
-### 2.6 Disable per-neuron heterogeneity for text training
+### 2.6 Disable per-neuron heterogeneity for text training — NOT SAFE (2026-05-02)
 The CV~0.3-0.4 per-neuron parameter heterogeneity adds 4-array memory accesses per neuron per step. Text training may not need this realism.
 
 **Speedup estimate:** 1.05-1.1× (small but free).
 
-**Risk:** Low (just a config flag).
+**Risk:** ~~Low (just a config flag)~~ **HIGH — empirically falsified.**
 
-**Effort:** trivial.
+**Effort:** ~~trivial~~ DO NOT TRY.
+
+**RESULT (2026-05-02):** **NEGATIVE.** Smoke test with
+`enable_parameter_heterogeneity = False` (paired with OU disable in same smoke):
+correct-moves collapsed from 30%+ baseline to 2.4%. All-zero language_output
+spike counts; agent emits "north" every trial regardless of input.
+Diagnosis: pure Izh parameters across the network → pathological synchrony.
+Real cortex relies on per-neuron CV ~0.3-0.4 to break lockstep firing patterns;
+without it, the BG cascade collapses into one-or-zero global oscillator modes
+instead of forming distinct per-action winning pools. Heterogeneity is
+load-bearing infrastructure, not optional realism.
+**Reverted.** Cautionary comment added in `research/runners/text_train_embodied.py`.
 
 ### Combined Tier 2 estimate
 On top of Tier 1: another 2-3× → total 4-6× from baseline.
