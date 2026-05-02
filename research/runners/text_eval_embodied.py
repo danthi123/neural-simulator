@@ -49,6 +49,17 @@ def main():
                     help="reward for moves that increase Manhattan distance (default -0.5; "
                     "set to 0 to eliminate negative LTP/LTD asymmetry that may cause "
                     "directional learning reversal as observed for 'south' in PID 39408)")
+    # Eval-time drives (2026-05-02): the v2 reeval sweep showed that
+    # increasing language_input drive at eval time from 200 to 500 pA
+    # surfaced W->A signal: 32% at d500/r100 vs 27% at default d200.
+    # Stronger drive helps language signal overcome cascade structural
+    # noise during eval. These default to the original 200 pA for
+    # backwards compatibility but can be raised for better readout.
+    ap.add_argument("--eval-iw-drive-pA", type=float, default=200.0,
+                    help="retina drive at I->W eval (default 200)")
+    ap.add_argument("--eval-wa-drive-pA", type=float, default=200.0,
+                    help="language_input drive at W->A eval (default 200; "
+                    "v2 reeval sweep showed 500 surfaces signal hidden at 200)")
     # Auto-checkpoint after training so we can re-eval same bridge later
     # with different methodologies (e.g., compare interleaved vs block eval).
     ap.add_argument("--save-checkpoint", action="store_true",
@@ -89,6 +100,7 @@ def main():
     print("=" * 60)
     iw_result = evaluate_image_to_word(
         bridge, n_trials=args.n_eval_image_word, grid_size=args.grid_size,
+        drive_pA=args.eval_iw_drive_pA,
     )
     print(f"\n  Accuracy: {iw_result['correct']}/{iw_result['n_trials']} "
           f"= {iw_result['accuracy']:.1%}")
@@ -99,6 +111,7 @@ def main():
     print("=" * 60)
     wa_result = evaluate_word_to_action(
         bridge, n_trials_per_word=args.n_eval_word_action,
+        drive_pA=args.eval_wa_drive_pA,
     )
     print(f"\n  Accuracy: {wa_result['correct']}/{wa_result['n_trials']} "
           f"= {wa_result['accuracy']:.1%}")
