@@ -116,9 +116,13 @@ def run_embodied_text_training(
     grid_size: int = 8,
     # Tier 1 speedups (2026-05-01, see docs/plans/2026-05-01-training-speedups.md):
     # - stim_steps 200→100: 50ms is enough for STDP (window ~20ms, eligibility τ=500ms)
-    # - reset_steps 100→50: 25ms NMDA decay (0.25τ) — relies on per-region NMDA mask
-    stim_steps_per_step: int = 100,  # 50ms at dt=0.5 (was 200/100ms)
-    reset_steps: int = 50,            # 25ms inter-step reset (was 100/50ms)
+    # - reset_steps stays at 100: a previous attempt at 50ms (0.5τ NMDA) caused a
+    #   regression (300-ep run 2026-05-01: I→W/W→A both dropped to 20% from 30%
+    #   baseline). With per-region NMDA on PFC+cortex+motor, residual activity
+    #   from one step contaminates the next step's STDP pairing window, scrambling
+    #   the trained language→cortex weights. See findings doc.
+    stim_steps_per_step: int = 100,  # 50ms at dt=0.5 (was 200/100ms — Tier 1 KEEP)
+    reset_steps: int = 100,           # 50ms inter-step reset (REVERTED from 50)
     # Drive levels
     retina_drive_pA: float = 200.0,
     lang_input_drive_pA: float = 200.0,
