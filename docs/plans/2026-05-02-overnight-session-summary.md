@@ -1,0 +1,153 @@
+# 2026-05-02 — Overnight session summary (for morning review)
+
+**Read this first when you wake up.** Detailed findings in
+`research/findings/2026-05-02-text-io-*` files.
+
+## TL;DR
+
+**Text I/O genuinely works for the first time.** Three biology-grounded
+fixes diagnosed and applied during the night, producing the first
+statistically significant above-chance result under fair eval methodology:
+
+```
+I→W = 33/100 = 33.0%  (p=0.042 vs 25% chance)
+W→A = 27/100 = 27.0%  (chance, but per-direction shows learning)
+```
+
+For comparison: the documented "32.5% baseline" we'd referenced for two
+months was an east-prediction artifact on east-heavy eval data. Real
+pre-fix accuracy was at chance.
+
+## What was wrong (root cause)
+
+`text_train_embodied.py` left `cfg.enable_hebbian_learning` at its
+default `True`. ALL `g*` research runners (g1 through g11_bg) explicitly
+set it to `False`. The bridge applies `hebbian_weight_decay = 1e-5` to
+every synapse every sub-step. Over 100 ep × 30 steps × ~330 sub-steps =
+~990,000 sub-steps:
+
+```
+weights *= (1 - 1e-5)^990000 ≈ 5e-5
+```
+
+Initial design weights of 2.0-3.0 collapsed to the `hebbian_min_weight =
+0.05` floor. STDP and reward modulation couldn't differentially shape
+weights when global decay was dragging everything to zero. Confirmed
+via the new `text_weight_diagnostic.py` tool: every plastic pathway at
+uniform 0.05 (mean=min=max).
+
+## How it was fixed (3 commits)
+
+Three biology-grounded changes:
+
+| Commit | Change | Justification |
+|---|---|---|
+| 144eefd | `cfg.enable_hebbian_learning = False` | Match every other g* runner; STDP+reward handle learning, Hebbian was contributing only catastrophic decay |
+| 200f73c | `cfg.stdp_w_max = 5.0` (from 2.0) | PFC-bypass design weight is 3.0; STDP soft-bound was clipping to 2.0 (CLAUDE.md gotcha doc) |
+| 200f73c | Non-zero readout init (0.5 ± 0.3) | `cortex_X→lang_out` and `IT→lang_out` had `weight_mean=0.0`. STDP couldn't grow from zero with weak training signal. Non-zero init seeds bidirectional STDP. Biology: real cortex has spontaneous baseline weights (Barlow 1972). |
+
+## Weight evolution (3 checkpoints, seed=42)
+
+```
+pathway                          NoT1       HebOff     HebOff_v2
+lang_in -> cortex_N              0.050     1.597      2.002
+lang_in -> motor_N (PFC bypass)  0.050     1.769      2.947     <-- design 3.0 reached
+cortex_N -> lang_out             0.050     0.010      0.505     <-- was 0 floor
+IT -> lang_out                   0.050     0.010      0.499     <-- was 0 floor
+```
+
+Token-targeted differential learning (target_motor mean - non-target avg):
+
+```
+token   NoT1     HebOff       HebOff_v2
+north   0       +0.108        -0.079 REV
+east    0       +0.106        +0.210
+south   0       -0.158 REV    +0.304
+west    0       +0.139        +0.073
+```
+
+Verdict progression: 0/4 → 3/4 → 3/4 (different "1 reversed" each run; variance
+in cascade dynamics).
+
+## Tools shipped this session
+
+| Tool | Purpose |
+|---|---|
+| `research/runners/text_eval_analyze.py` | Post-hoc accuracy analyzer w/ binomial p-value + decision-tree verdict |
+| `research/runners/text_weight_diagnostic.py` | Dump pathway weights + token-targeted analysis |
+| `research/runners/text_weight_compare.py` | 3-way side-by-side weight comparison across checkpoints |
+| `research/runners/text_reeval.py` | Re-eval saved checkpoint with different params |
+| `research/runners/text_reeval_sweep.py` | Grid sweep over (drive, reset) combos |
+| `text_eval_embodied.py` flags | --stim-steps, --reset-steps, --enable-per-type-stp, --correct/wrong-move-reward, --save-checkpoint |
+| `text_train_embodied.py` kwargs | reward shaping, all Tier 1 knobs, readout pathway init |
+
+## Findings docs (read in order)
+
+1. `2026-05-02-text-io-100ep-reset-fix-results.md` — partial-T1 result + decision tree
+2. `2026-05-02-text-io-300ep-tier1-REGRESSION.md` — earlier 300-ep regression (May-1)
+3. `2026-05-02-text-io-hebbian-decay-root-cause.md` — root cause diagnosis
+4. `2026-05-02-text-io-hebbian-fix-empirical-result.md` — first fix empirical result
+5. **`2026-05-02-text-io-BREAKTHROUGH-v2.md`** — primary breakthrough doc
+6. `2026-05-02-reeval-bridge-state-limitation.md` — technical note on save_checkpoint scope
+
+## What's still imperfect
+
+1. **One direction always reverses.** Different direction each run (south HebOff,
+   north HebOff_v2). Likely caused by asymmetric reward (-0.5 wrong vs +1.0 right
+   creates net LTD pressure on the noisiest direction). Needs reward shaping test.
+
+2. **W→A eval at chance** despite weight learning. Per-trial baseline noise
+   masks the signal. Possibly fixable with different decoding (e.g., reading
+   firing rate vector + cosine similarity).
+
+3. **South direction consistently weak across runs.** Possibly cascade
+   structural bias against motor_S.
+
+4. **Single-seed result** — 33% needs validation across multiple seeds.
+
+## What's running / scheduled overnight
+
+| Status | PID | Config | Purpose |
+|---|---|---|---|
+| Running | 37696 | Reeval sweep on v2 ckpt | Test if eval-time params extract more signal — but reeval limitation found (bridge state divergence) |
+| Pending after sweep | TBD | v2 at seed=43 | Validate 33% reproduces |
+| Pending | TBD | wrong_move_reward=0 | Test if reward asymmetry causes 1-reversed-token issue |
+| Future | TBD | 6-seed validation of best | If reproducibility confirmed |
+
+## Suggested next steps when you wake
+
+1. Read `2026-05-02-text-io-BREAKTHROUGH-v2.md` for the primary result
+2. Check `research/findings/raw/g11_bg/text_eval_R3R6_*.json` for any new results
+   that landed overnight
+3. Decide: 6-seed validation now, or first fix the 1-reversed-direction issue?
+4. The infra is ready for either path.
+
+## Commits this session (chronological)
+
+```
+cee3403  fix(text-io): revert reset_steps 50→100
+7a7d9fd  test(text-io): heterogeneity + OU CANNOT be disabled
+d4410dd  docs(speedups): mark T1.2/T1.3-aggressive/T2.6 as NOT SAFE
+d3f28f0  feat(text-eval): add post-hoc analyzer
+acd0a48  feat(text-eval): bump default eval n + drive override flags
+dc0be53  feat(text-eval): interleave words to prevent baseline contamination
+3e4e9e4  feat(text-eval): add --stim-steps and --reset-steps CLI flags
+7f50cf0  feat(text-eval): add checkpoint save + re-eval runner
+d445996  feat(text-eval): add eval-time parameter sweep runner
+b211731  fix(text-reeval): apply gabor weights before load_checkpoint
+9459f1a  docs: overnight plan
+c339bbe  findings: 100-ep partial T1 REGRESSED + unmasked illusory baseline
+ab9e3d7  docs(findings): rename to reset-fix + apply explicit decision tree
+9a75a98  docs(plan): update overnight plan with partial-T1 result
+b6f7892  feat(text-train): expose enable_per_type_stp as configurable flag
+621f151  feat(text-eval): weight diagnostic — does STDP learn the mapping?
+726f5c1  docs(plan): add E4 zero-init readout pathway experiment idea
+144eefd  fix(text-io): disable Hebbian learning — root cause of chance-level eval  ← CRITICAL
+9504086  findings: ROOT CAUSE — Hebbian decay collapsed text-IO weights to floor
+de1b0e7  findings: Hebbian-fix empirical result — 3/4 tokens LEARN target motor pool
+200f73c  fix(text-io): secondary fixes — stdp_w_max=5.0 + non-zero readout init  ← CRITICAL
+d44b82c  feat(text-train): expose correct_move_reward + wrong_move_reward as kwargs/CLI
+8c3a419  feat(text-eval): cross-checkpoint weight comparison tool
+3208b57  findings: TEXT I/O BREAKTHROUGH — I→W 33% at p=0.042 (significant!)  ← BREAKTHROUGH
+179eac7  findings: reeval limitation — bridge state divergence on cold-start
+```
