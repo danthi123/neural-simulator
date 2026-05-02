@@ -38,6 +38,10 @@ def main():
                     help="sub-steps per env step during stim window (default 100 = 50ms)")
     ap.add_argument("--reset-steps", type=int, default=100,
                     help="inter-step reset sub-steps (default 100 = 50ms = 1 NMDA tau)")
+    ap.add_argument("--enable-per-type-stp", action="store_true",
+                    help="enable per-connection-type STP (Tier 1.5 revert; "
+                    "default off for speed, but the 2026-05-02 partial-T1 "
+                    "regression suggests it may matter for language pathway)")
     # Auto-checkpoint after training so we can re-eval same bridge later
     # with different methodologies (e.g., compare interleaved vs block eval).
     ap.add_argument("--save-checkpoint", action="store_true",
@@ -64,6 +68,7 @@ def main():
         grid_size=args.grid_size,
         stim_steps_per_step=args.stim_steps_per_step,
         reset_steps=args.reset_steps,
+        enable_per_type_stp=args.enable_per_type_stp,
         retina_drive_pA=args.retina_drive_pA,
         lang_input_drive_pA=args.lang_input_drive_pA,
         lang_output_coactive_pA=args.lang_output_coactive_pA,

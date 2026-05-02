@@ -121,8 +121,13 @@ def run_embodied_text_training(
     #   baseline). With per-region NMDA on PFC+cortex+motor, residual activity
     #   from one step contaminates the next step's STDP pairing window, scrambling
     #   the trained language→cortex weights. See findings doc.
+    # - 2026-05-02: even partial Tier 1 (stim=100, reset=100, per-type-stp=False)
+    #   regressed to chance under balanced sampling. Whether stim=100 alone or
+    #   per-type-stp=False is the cause is being investigated; both now
+    #   configurable.
     stim_steps_per_step: int = 100,  # 50ms at dt=0.5 (was 200/100ms — Tier 1 KEEP)
     reset_steps: int = 100,           # 50ms inter-step reset (REVERTED from 50)
+    enable_per_type_stp: bool = False,  # Tier 1.5 default; pass True for revert
     # Drive levels
     retina_drive_pA: float = 200.0,
     lang_input_drive_pA: float = 200.0,
@@ -167,10 +172,11 @@ def run_embodied_text_training(
     cfg.enable_nmda = True
     cfg.nmda_ratio = 0.5
     cfg.enable_structural_plasticity = False  # avoid CSR-grow bug
-    # Tier 1: per-type STP disabled. Only one trait pair (E→E) is active in
-    # text training; per-type STP just adds a cp_synapse_conn_type lookup
-    # per step with no benefit here.
-    cfg.enable_per_type_stp = False
+    # Tier 1: per-type STP disabled by default. Only one trait pair (E→E) is
+    # active in text training; per-type STP just adds a cp_synapse_conn_type
+    # lookup per step with no benefit here. (Configurable as of 2026-05-02 to
+    # support full Tier 1 ablation experiments.)
+    cfg.enable_per_type_stp = enable_per_type_stp
     # Tested-and-reverted (2026-05-02 smoke):
     # - cfg.enable_ou_process = False    → BROKE NETWORK (correct-moves 2.4%
     #   vs 30%+ baseline). OU provides spontaneous activity that STDP needs
