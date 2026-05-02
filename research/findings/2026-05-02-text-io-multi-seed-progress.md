@@ -4,7 +4,7 @@ This doc tracks the multi-seed validation of the v2 breakthrough config
 (Hebbian off + stdp_w_max=5 + readout init=0.5). Updated as each seed
 completes. Final summary will be a separate finalized doc.
 
-## Headline status
+## Headline status (FINAL — 6 seeds)
 
 | Seed | Status | I→W | W→A | Tokens learned | Training-time corr |
 |---|---|---|---|---|---|
@@ -13,30 +13,34 @@ completes. Final summary will be a separate finalized doc.
 | 44 | DONE | 27.0% (p=0.36) | 26.0% | 3/4 | 43.5% |
 | 100 | DONE | 25.0% (p=0.55) | **32.0% (p=0.067)** | 3/4 | 35.8% |
 | 101 | DONE | 21.0% (p=0.85) | 28.0% (p=0.28) | 3/4 | 38.8% |
+| 102 | DONE | 21.0% (p=0.85) | 29.0% (p=0.21) | 3/4 | 37.8% |
 
-## 🎉 5-seed cumulative result (n=500 trials per metric)
+## 🎉 6-seed cumulative result (n=600 trials per metric)
 
 ```
-I→W: 131/500 = 26.2%  (p=0.285, not significant)
-W→A: 142/500 = 28.4%  (p=0.044) ← STATISTICALLY SIGNIFICANT
+I→W: 152/600 = 25.3%  (p=0.444, NOT significant — high variance)
+W→A: 171/600 = 28.5%  (p=0.027) ← STATISTICALLY SIGNIFICANT (more than at 5 seeds)
 ```
 
-**The W→A (word-to-action) capability is genuinely above chance** at
-5-seed n=500 cumulative. The Hebbian + stdp_w_max + readout-init
-combination produces reliable above-chance text-instructed action
-selection.
+**The W→A (word-to-action / PFC-bypass) capability is robustly above chance.**
+Six independent seeds, n=600 cumulative trials, p=0.027 vs 25% chance.
+This is the most rigorous demonstration of working text I/O in the
+project to date.
 
-I→W is more variable — single seeds range 21-33%. Cumulative trend is
-positive but not statistically distinguishable from chance at n=500.
-Some directions learn well (north 54.5% in seed=44, east 45.5% in
-seed=42) but seed-to-seed which direction is "lucky" varies, washing
-out the average.
+**I→W (image-to-word readout) is high-variance.** Per-seed range:
+21%-33%. With more seeds, it trends to ~chance (25.3% mean). Single
+seeds occasionally reach significance (seed=42 at 33%) but the
+direction that learns varies (seed=42 east, seed=44 north, seed=102
+north, etc.). On average, no consistent above-chance signal.
 
-**Three seeds had at least one metric individually significant or
-marginal:**
-- seed=42: I→W p=0.042 (significant)
-- seed=100: W→A p=0.067 (marginal)
-- (cumulative W→A across all 5: p=0.044, significant)
+This dissociation between W→A (significant) and I→W (variable) maps
+to the network architecture:
+- W→A uses lang_input → motor_X PFC-bypass (direct, single-step)
+- I→W uses image → retina → V1 → V2 → IT → language_output
+  (multi-step pathway with multiple plastic stages)
+
+The longer pathway has more variance points where STDP can fail to
+differentiate cleanly. PFC-bypass's directness is its reliability.
 
 **Variance across seeds is significant.** Seed=42's 33% may be favorable
 variance; seed=43 returned to chance. With n=2 averaging 29% I→W (still
