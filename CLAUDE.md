@@ -411,25 +411,70 @@ sensory cortex to mature before association cortex.
 
 ### Recommended configuration (current best 2026-05-01)
 
-**Text I/O infrastructure (2026-05-01) — PARTIALLY FUNCTIONAL**:
-- 6 biology-grounded training regimes tested
-- Cascade structural cortex_N bias localized (cluster A/E asymmetry)
-- **Best stable result: 32.5% W→A (R6 PFC-bypass + delta-eval, 1.30× chance)**
-  - Direct `language_input → motor_X` pathway (Wernicke→arcuate→Broca anatomy)
-  - Reads motor_X to bypass cascade N-bias
-- Embodied training (R3, Tomasello): 30.0% W→A absolute eval, stable
-- Both above-chance, stable, biology-correct
-- Image→word still chance-level — needs larger language regions or longer training
-- Bridge APIs: `set_token_drive()`, `read_language_output()`, `set_pathway_weights()`
-- 39 unit/integration tests pass
-- See `research/findings/2026-05-01-text-io-FINAL-summary.md`
+**Text I/O infrastructure (2026-05-02) — STATISTICALLY SIGNIFICANT W→A.**
 
-Recommended production config (when iterated to higher accuracy):
-```bash
-python -m research.runners.text_eval_contrastive --n-image-word 500 \
-    --n-word-action 500 --n-eval-image-word 100 --seed 42
-# Uses R6 PFC-bypass pathway + delta-from-baseline eval + motor readout
+**Critical correction:** the previously documented "32.5% W→A baseline" was an
+EAST-PREDICTION ARTIFACT on east-heavy eval data, not real learning. The
+balanced-sampling fix at d961940 (May-1 19:33) was committed AFTER the baseline
+file (May-1 19:22), so all prior text-IO accuracy comparisons used a biased
+distribution that masked a Hebbian-decay bug. See
+[`research/findings/2026-05-02-text-io-hebbian-decay-root-cause.md`](research/findings/2026-05-02-text-io-hebbian-decay-root-cause.md).
+
+**Three biology-grounded fixes (2026-05-02 commits 144eefd + 200f73c)** restored
+real plasticity. Validated across 6 independent seeds (n=600 per metric):
+
 ```
+W→A (word → action via PFC-bypass): 171/600 = 28.5%  (p=0.027) ← SIGNIFICANT
+I→W (image → word readout):         152/600 = 25.3%  (p=0.444) high variance
+```
+
+The 28.5% W→A is the most rigorous demonstration of working text I/O in the
+project to date. Per-direction: east 6/6 LEARN, west 6/6 positive,
+south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
+
+The three fixes:
+1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
+   weight decay (1e-5/sub-step × 990K sub-steps = 5e-5 multiplier) was
+   collapsing all weights from 2-3 design values down to 0.05 floor.
+2. `cfg.stdp_w_max = 5.0` — STDP soft-bound was clipping PFC-bypass design
+   weight (3.0) at default cap (2.0). CLAUDE.md gotcha (see STDP bounds note
+   above).
+3. Non-zero readout pathway init (0.5±0.3) — `cortex_X→language_output` and
+   `IT→language_output` were initialized at 0.0; STDP couldn't grow from
+   scratch with weak training signal. Non-zero seed lets STDP bidirectionally
+   adjust. Biology: real cortex has spontaneous baseline weights (Barlow 1972).
+
+5 followup architectural variations all NEGATIVE (confirming 28.5% is real
+ceiling under current 100-ep config): reward shaping, stronger drives,
+drive=500 reeval, bigger motor pools (10→30), longer training (100→200 ep).
+See `2026-05-02-FINAL-overnight-summary.md`.
+
+Bridge APIs: `set_token_drive()`, `read_language_output()`, `set_pathway_weights()`,
+`save_checkpoint()` (does NOT save firing thresholds, STP, eligibility — see
+`2026-05-02-reeval-bridge-state-limitation.md`).
+
+Validated production config (use `--seed 42` and others 43, 44, 100, 101, 102
+for 6-seed validation):
+```bash
+python -m research.runners.text_eval_embodied \
+    --n-episodes 100 --steps-per-episode 30 --seed 42 \
+    --stim-steps-per-step 200 --reset-steps 100 \
+    --out-stats research/findings/raw/g11_bg/text_eval_R3R6_100ep_HebOff_v2_seed42.json
+# Uses v2 config: Hebbian off + stdp_w_max=5 + readout init=0.5
+# Auto-saves checkpoint to .simstate.h5
+```
+
+Diagnostic tools shipped 2026-05-02:
+- `research/runners/text_eval_analyze.py` — accuracy + binomial p-value
+- `research/runners/text_weight_diagnostic.py` — pathway weights + token-targeted
+- `research/runners/text_weight_compare.py` — cross-checkpoint comparison
+- `research/runners/text_reeval.py` — load checkpoint + re-eval (with caveat:
+  cold-start state divergence — not a substitute for in-vivo post-training eval)
+
+Pushing beyond 28.5%: requires deeper architectural changes than tested here.
+Candidates: cascade N-bias compensation (reduce cluster_a/e weight to cortex_N),
+different decoding (cosine on motor population vector), curriculum (visuomotor
+training first → enable text I/O), or pretrained language pathways.
 
 **🎯 LATEST BREAKTHROUGH 2026-05-01: Cluster K v2 visual cortex — 2.97 ± 0.12 at 16×16 perception-only (NO heuristic).**
 
