@@ -204,9 +204,20 @@ Lineup: stronger lang_input drive (200->400), longer training
 ### Step 4+ (architectural experiments): TENTATIVE
 
 Each ~75-90 min. Sequential overnight queue:
-- E1 (~02:50): stronger lang_input drive (400 pA)
+- E1 (~02:50): stronger lang_input drive (400 pA, 300 pA coactive)
 - E2 (~04:25): longer training (200 ep) at default drive
 - E3 (~06:00): combined: stronger drive + longer training
+
+Architectural insight to test in followups:
+- **Zero-init readout pathways:** `cortex_X -> language_output` (4 paths)
+  and `IT -> language_output` are weight_mean=0.0 by design. STDP must
+  grow from scratch. With weak training signal (~30% correct moves,
+  giving sparse partial reward), growth is slow. Future experiment E4:
+  small non-zero init (e.g., 0.5) so STDP can both LTP correct pairs
+  and LTD wrong ones from the start. Biology-grounded: real cortex has
+  spontaneous-baseline connections, not true zero. Reference:
+  Barlow 1972 ("single neurons" doctrine) -- spontaneous baseline
+  activity reflects pre-existing latent connectivity.
 
 Each saves checkpoint, uses new defaults (interleaved eval, n=100).
 
