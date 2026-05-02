@@ -114,8 +114,11 @@ def run_embodied_text_training(
     n_episodes: int = 50,
     steps_per_episode: int = 30,  # ~30 steps × 50 episodes = 1500 navigation steps
     grid_size: int = 8,
-    stim_steps_per_step: int = 200,  # 100ms at dt=0.5
-    reset_steps: int = 100,           # 50ms inter-step reset
+    # Tier 1 speedups (2026-05-01, see docs/plans/2026-05-01-training-speedups.md):
+    # - stim_steps 200→100: 50ms is enough for STDP (window ~20ms, eligibility τ=500ms)
+    # - reset_steps 100→50: 25ms NMDA decay (0.25τ) — relies on per-region NMDA mask
+    stim_steps_per_step: int = 100,  # 50ms at dt=0.5 (was 200/100ms)
+    reset_steps: int = 50,            # 25ms inter-step reset (was 100/50ms)
     # Drive levels
     retina_drive_pA: float = 200.0,
     lang_input_drive_pA: float = 200.0,
@@ -160,6 +163,10 @@ def run_embodied_text_training(
     cfg.enable_nmda = True
     cfg.nmda_ratio = 0.5
     cfg.enable_structural_plasticity = False  # avoid CSR-grow bug
+    # Tier 1: per-type STP disabled. Only one trait pair (E→E) is active in
+    # text training; per-type STP just adds a cp_synapse_conn_type lookup
+    # per step with no benefit here.
+    cfg.enable_per_type_stp = False
 
     bridge = SimulationBridge(
         core_config=cfg,
