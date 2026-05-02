@@ -14,15 +14,27 @@ seed=42: I→W = 33/100 = 33.0%  (p=0.042 vs 25% chance)
          W→A = 27/100 = 27.0%
 ```
 
-3-seed validation done by morning:
+5-seed validation in progress by morning (4 done, seed=101 in flight):
 ```
-seed=42: I→W 33%, W→A 27%, 3/4 tokens learned, training 29.6%
-seed=43: I→W 25%, W→A 29%, 2/4 tokens learned, training 38.2%
-seed=44: I→W 27%, W→A 26%, 3/4 tokens learned, training 43.5%
-Mean:    I→W 28.3%, W→A 27.3% — above chance trend, n=3 too small
-         to confirm significance. Need 5-6 seeds.
-seed=100: in flight (PID 50928, ETA 08:18)
+seed=42:  I→W 33% (p=0.042), W→A 27%,    3/4 learned, training 29.6%
+seed=43:  I→W 25%,           W→A 29%,    2/4 learned, training 38.2%
+seed=44:  I→W 27%,           W→A 26%,    3/4 learned, training 43.5%
+seed=100: I→W 25%,           W→A 32% (p=0.067), 3/4 learned, training 35.8%
+seed=101: in flight (PID 18000, ETA ~09:11)
+
+4-seed cumulative (n=400 trials per metric):
+  I→W: 110/400 = 27.5%, p=0.137 (trending)
+  W→A: 114/400 = 28.5%, p=0.060 (near significance)
+
+5-seed cumulative will be available at ~09:15.
 ```
+
+**Two seeds reached individual significance/marginal:**
+- seed=42 I→W p=0.042 (significant)
+- seed=100 W→A p=0.067 (marginal)
+
+The "lucky direction" varies per seed but at least one metric shows
+above-chance signal in every seed.
 
 For comparison: the documented "32.5% baseline" we'd referenced for two
 months was an east-prediction artifact on east-heavy eval data. Real
