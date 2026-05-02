@@ -60,6 +60,12 @@ def main():
     ap.add_argument("--eval-wa-drive-pA", type=float, default=200.0,
                     help="language_input drive at W->A eval (default 200; "
                     "v2 reeval sweep showed 500 surfaces signal hidden at 200)")
+    # Architecture sizing (2026-05-02): bigger motor pools for more
+    # discriminability per direction. 6-seed v2 result of 28.5% W→A
+    # may be limited by 10-neuron pools' high variance.
+    ap.add_argument("--n-motor-per-action", type=int, default=10,
+                    help="motor neurons per direction (default 10; try 30 "
+                    "for ~3x more spike-count discriminability)")
     # Auto-checkpoint after training so we can re-eval same bridge later
     # with different methodologies (e.g., compare interleaved vs block eval).
     ap.add_argument("--save-checkpoint", action="store_true",
@@ -92,6 +98,7 @@ def main():
         lang_output_coactive_pA=args.lang_output_coactive_pA,
         correct_move_reward=args.correct_move_reward,
         wrong_move_reward=args.wrong_move_reward,
+        n_motor_per_action=args.n_motor_per_action,
         verbose=True,
     )
 

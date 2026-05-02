@@ -143,6 +143,13 @@ def run_embodied_text_training(
     # less exploration pressure (no incentive to avoid wrong moves).
     correct_move_reward: float = 1.0,
     wrong_move_reward: float = -0.5,
+    # Architecture sizing (2026-05-02). The default 10-neuron motor pools
+    # may be too small to discriminate clean spike-count signals from
+    # cascade noise. Real M1 has thousands of neurons per body part
+    # (Penfield homunculus 1937). Bigger pools = more spike count
+    # differential, less variance. Pass n_motor_per_action=30 (or higher)
+    # to test architectural capacity hypothesis.
+    n_motor_per_action: int = 10,
     verbose: bool = True,
 ):
     """Embodied training: navigate gridworld with language inputs/outputs
@@ -172,6 +179,7 @@ def run_embodied_text_training(
         pfc_enable_nmda=True,
         enable_visual_cortex=True,
         enable_text_io=True,
+        n_motor_per_action=n_motor_per_action,
         # 2026-05-02 secondary fix: small non-zero init for readout
         # pathways. Original 0.0 init left these pathways at the
         # synaptic floor (0.01) after training — STDP couldn't grow them
