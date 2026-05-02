@@ -28,12 +28,20 @@ From the overnight diagnostic:
 
 1. **Weights saturate by 100 ep** (200-ep test gave identical weights — `2026-05-02-longer-training-NEGATIVE.md`)
 2. **Cascade quality is poor** (training-time correct moves ~30%)
-3. **North direction structurally REVERSED** in 4/6 seeds (cluster A/E N-bias)
-4. **I→W eval high variance per seed** (different "lucky" direction each)
+3. **High per-seed variance in language pathway formation.** Not structural
+   N-bias — across 6 seeds, the per-direction means are: north -0.016
+   (near zero), east +0.128, south +0.079, west +0.072. North only
+   "appears" reversed in 4/6 seeds because it's HIGH VARIANCE around zero.
+   On average it's not biased; it's unstable.
+4. **I→W eval also high variance per seed** (different "lucky" direction each)
 
 The cascade quality (#2) is the LEVERAGE POINT. With cascade at ~30% correct,
 STDP gets a noisy training signal — even perfect plasticity machinery can't
 extract differential learning from a near-chance source.
+
+The variance problem (#3, #4) means ~150-200 trials per metric per seed isn't
+enough to reliably detect 5-10pp learning effects. We need either lower-variance
+training or more evaluation per seed (or both).
 
 If cascade reached 60%+ correct moves, the language pathway would see:
 - Clean motor_X firing patterns aligned with target words
@@ -69,28 +77,27 @@ allow.
 Risk: low — uses existing plasticity gate infrastructure, doesn't change
 underlying network.
 
-**Option B: Cascade N-bias compensation via motor lateral inhibition**
+**Option B: Variance reduction — motor lateral inhibition + multi-baseline eval**
 
 Biology source: cortical FS interneurons + spinal Renshaw cells produce
 lateral inhibition between competing motor commands (Kandel ch 35).
-Penfield homunculus shows isolated body-part representations.
+Lateral inhibition sharpens selection AND reduces variance.
 
 Concrete plan:
-- Add motor_FS_X regions (FS interneurons, exc_fraction=0.0)
-- Pathways: motor_X → motor_FS_X (excitatory), motor_FS_X → motor_Y for Y≠X (inhibitory)
-- This creates WTA microcircuit: when motor_N fires, motor_FS_N fires,
-  suppressing motor_E/S/W
-- The flag `--enable-motor-lateral-inhibition` already exists in
-  build_bg_brain_regions but is currently DEPRECATED ("PARTIAL — net negative
-  when stacked with adaptive DA"). Resurrect for text training context.
+- Resurrect `--enable-motor-lateral-inhibition` infrastructure for text
+  training context (it exists but is DEPRECATED — "PARTIAL — net negative
+  when stacked with adaptive DA" — but text doesn't use adaptive DA)
+- Pathways: motor_X → motor_FS_X (excitatory), motor_FS_X → motor_Y for
+  Y≠X (inhibitory). This creates WTA microcircuit per pool
+- Combine with multi-baseline averaging in eval (3-5 baseline windows per
+  trial, average) for cleaner per-trial reference
 
-Effort: 1 day (mostly testing).
-Expected impact: **fixes north reversal** (4/6 → ~5/6 LEARN). Could push
-W→A from 28.5% to ~35%.
+Effort: 1-2 days (mostly testing).
+Expected impact: **per-seed variance halved**, north reversal becomes rare.
+Could push W→A from 28.5% to ~33-35%, with much lower per-seed std.
 
-Risk: low. Reusable infrastructure. The earlier deprecation was for
-navigation context where DA-gating interfered; text training has different
-dynamics.
+Risk: low-medium. Reusable infrastructure. The earlier deprecation was for
+navigation+DA context which doesn't apply here.
 
 ### Tier 2: Medium leverage, biology-grounded, moderate effort
 
