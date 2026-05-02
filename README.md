@@ -60,7 +60,7 @@ graph TB
         VIZ_INT["renderer.py<br/>camera.py<br/>picker.py<br/>overlays.py"]
     end
 
-    subgraph SIM["sim/ — Core Engine"]
+    subgraph SIM["sim/ — Core Engine (13 modules)"]
         BRIDGE["bridge.py<br/>SimulationBridge<br/>(GPU state + step loop)"]
         CFG["config.py<br/>CoreSimConfig<br/>+ all dataclasses"]
         KERN["kernels.py<br/>@cp.fuse() Izh / HH / AdEx<br/>STDP / STP / NMDA"]
@@ -70,6 +70,9 @@ graph TB
         REG["regions.py<br/>BrainRegion + Pathway<br/>+ RegionManager"]
         NM["neuromodulators.py<br/>declarative DA / NE / 5-HT<br/>concentration dynamics"]
         BUS["data_bus.py<br/>DataChannel pub/sub"]
+        REPL["replicas.py<br/>multi-bridge replicated wiring"]
+        VC["visual_cortex.py<br/>Hubel-Wiesel V1 Gabor RFs<br/>retina rendering"]
+        TXT["text_embeddings.py<br/>token I/O for<br/>Wernicke/Broca regions"]
     end
 
     subgraph EXP["experiment/ — Stimulus + Training"]
@@ -128,6 +131,7 @@ graph TB
     class BRIDGE,CFG,KERN,CONN,ENUMS,PROF,REG,NM,BUS sim
     class ENG,STIM,READ,TRAIN,GROUPS,PRESETS exp
     class JSON,H5_CHK,H5_REC persist
+    class REPL,VC,TXT sim
 ```
 
 ### Per-step pipeline (in `SimulationBridge._run_one_simulation_step`)
@@ -208,6 +212,63 @@ flowchart TB
 ```
 
 When `cortex_N` drives, `str_D1_N` fires → `gpi_N` is silenced → `thal_N` is released → `motor_N` fires. Other actions' GPi remain tonically firing and keep their thalami suppressed. **Selection emerges from independent disinhibition gates, not a shared argmax.**
+
+### Cluster K v2 — Visual cortex ventral stream (Hubel-Wiesel + Felleman-Van Essen, 2026-05-01)
+
+Biology-grounded perception that closes 4 of 5 original cheats. Pure-perception 16×16 = **2.87 ± 0.19 (n=6)**, 24×24 = **2.87 ± 0.22 (n=3)** — grid-invariant. Beats 8×8 perception-arc baseline (4.08) on a 4× larger grid.
+
+```mermaid
+flowchart LR
+    IMG["gridworld state<br/>(agent, goal positions)"]
+    RET["retina<br/>32×32 ON/OFF<br/>2048 neurons"]
+    V1S["cortex_v1_simple<br/>8 orient × 2 freq × 8x8 pos<br/>1024 cells, Gabor pre-init<br/>Hubel-Wiesel 1962"]
+    V1C["cortex_v1_complex<br/>8 × 8x8 = 512<br/>phase-pooled (invariant)"]
+    V2["cortex_v2<br/>256 plastic recurrent"]
+    IT["cortex_it<br/>64 plastic recurrent<br/>Tanaka 1996"]
+    CTX["cortex_{N,E,S,W}<br/>action selection<br/>(BG cascade input)"]
+
+    IMG -->|"render_gridworld_to_image"| RET
+    RET ==>|"~70K Gabor edges<br/>apply_v1_gabor_weights"| V1S
+    V1S -->|"phase pooling<br/>fixed weights"| V1C
+    V1C ==>|"plastic, gate visual_cortex_v2"| V2
+    V2 ==>|"plastic, gate visual_cortex_it"| IT
+    IT ==>|"plastic, gated visual_cortex_action<br/>zero-init, STDP+reward grows post-warmup"| CTX
+
+    style RET fill:#fef3c7
+    style V1S fill:#dcfce7
+    style V1C fill:#dcfce7
+    style V2 fill:#bbf7d0
+    style IT fill:#86efac
+    style CTX fill:#f3e8ff
+```
+
+V1 simple cells get pre-initialized Gabor receptive fields (orientation + spatial frequency tuned). V1 complex cells phase-pool. V2 and IT learn higher-level features via STDP+reward. The IT → cortex_X pathway starts at zero weight and is gated by a critical-period curriculum (default warmup = 600 steps), mirroring real visual development.
+
+### Wernicke/Broca-like text I/O (2026-05-01, partial functional)
+
+Bidirectional token interaction. Best stable result: R3+R6 combined (embodied training + PFC-bypass) gives **I→W 32.5% / W→A 30%** on the 4-direction vocabulary. Per Kandel ch 60 + Geschwind disconnection model:
+
+```mermaid
+flowchart LR
+    USRIN["user text<br/>(north / east / show 1 1 6 6)"]
+    LIN["language_input<br/>256 plastic<br/>Wernicke-like<br/>sparse-coded tokens"]
+    PFC["dlpfc_wm<br/>NMDA bistability<br/>working memory"]
+    CTX2["cortex_{N,E,S,W}<br/>+<br/>motor_{N,E,S,W}<br/>(Broca→M1 direct)"]
+    LOUT["language_output<br/>256 plastic<br/>action verbalization"]
+    USROUT["agent text out<br/>(top-k delta-baseline<br/>cosine match)"]
+
+    USRIN -->|"set_token_drive<br/>200 pA × sparse 10%"| LIN
+    LIN ==>|"plastic"| PFC
+    LIN ==>|"plastic, gated"| CTX2
+    PFC ==>|"plastic"| CTX2
+    CTX2 -->|"K v2 IT visual feedback<br/>+ motor activity"| LOUT
+    LOUT -->|"read_language_output<br/>delta-from-baseline<br/>Kandel ch 25"| USROUT
+
+    style LIN fill:#a78bfa
+    style LOUT fill:#a78bfa
+    style PFC fill:#c4b5fd
+    style CTX2 fill:#f3e8ff
+```
 
 ---
 
