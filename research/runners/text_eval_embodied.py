@@ -66,6 +66,10 @@ def main():
     ap.add_argument("--n-motor-per-action", type=int, default=10,
                     help="motor neurons per direction (default 10; try 30 "
                     "for ~3x more spike-count discriminability)")
+    ap.add_argument("--text-n-input-neurons", type=int, default=256,
+                    help="language_input region size (default 256; try 512)")
+    ap.add_argument("--text-n-output-neurons", type=int, default=256,
+                    help="language_output region size (default 256; try 512)")
     # Auto-checkpoint after training so we can re-eval same bridge later
     # with different methodologies (e.g., compare interleaved vs block eval).
     ap.add_argument("--save-checkpoint", action="store_true",
@@ -99,6 +103,8 @@ def main():
         correct_move_reward=args.correct_move_reward,
         wrong_move_reward=args.wrong_move_reward,
         n_motor_per_action=args.n_motor_per_action,
+        text_n_input_neurons=args.text_n_input_neurons,
+        text_n_output_neurons=args.text_n_output_neurons,
         verbose=True,
     )
 

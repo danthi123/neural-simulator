@@ -150,6 +150,12 @@ def run_embodied_text_training(
     # differential, less variance. Pass n_motor_per_action=30 (or higher)
     # to test architectural capacity hypothesis.
     n_motor_per_action: int = 10,
+    # Language region sizing. Default 256 supports ~26 active neurons
+    # per token at 0.1 sparsity. Larger regions allow more distinct
+    # token patterns and richer recurrent dynamics, similar to real
+    # Wernicke/Broca cortex (~10^5+ neurons each).
+    text_n_input_neurons: int = 256,
+    text_n_output_neurons: int = 256,
     verbose: bool = True,
 ):
     """Embodied training: navigate gridworld with language inputs/outputs
@@ -180,6 +186,8 @@ def run_embodied_text_training(
         enable_visual_cortex=True,
         enable_text_io=True,
         n_motor_per_action=n_motor_per_action,
+        text_n_input_neurons=text_n_input_neurons,
+        text_n_output_neurons=text_n_output_neurons,
         # 2026-05-02 secondary fix: small non-zero init for readout
         # pathways. Original 0.0 init left these pathways at the
         # synaptic floor (0.01) after training — STDP couldn't grow them
