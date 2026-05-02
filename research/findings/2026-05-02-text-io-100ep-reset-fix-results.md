@@ -1,6 +1,26 @@
-# 2026-05-02 — 100-ep R3+R6 + partial Tier 1: REGRESSED. Reveals prior baseline was illusory.
+# 2026-05-02 — 100-ep R3+R6 reset-fix run: REGRESSED. Reveals prior baseline was illusory.
 
-**TL;DR:** 100-ep R3+R6 run at seed=42 with partial Tier 1 (stim_steps=100, reset_steps=100, per-type-stp=False) regressed to **20% I→W / 25% W→A** vs prior baseline 32.5% / 30%. **Critical finding:** the predicted-class distribution is now BALANCED (north 10/east 9/south 11/west 10 for I→W) thanks to balanced direction sampling in training. The drop in headline accuracy is not a regression in capability — it's an unmasking. The 32.5% baseline was an artifact of east-prediction bias on an east-heavy eval distribution (the prior baseline file `text_eval_R3_R6_combined.json` predates the d961940 balanced-sampling fix). The trained network never genuinely learned the language-action mapping; it just had a tendency to predict "east" that happened to score >25% on a biased test.
+**Test config:** 100-ep R3+R6 seed=42, balanced sampling + reset_steps=100 (cee3403 fix kept) + remaining partial Tier 1 (stim_steps=100, per-type-stp=False).
+
+**TL;DR:** Result **20.0% I→W / 25.0% W→A** -- bracket "20-28% (still regressed)" per the configured decision tree. Action: revert Tier 1.1 (stim 200→100). **Already launched** (PID 22124, ETA ~03:10).
+
+**Critical reframe:** the predicted-class distribution is now BALANCED (N:10 E:9 S:11 W:10 for I→W) thanks to balanced direction sampling. The drop in headline accuracy from the prior 32.5% baseline is not a regression in CAPABILITY — it's an UNMASKING. The 32.5% was an artifact of east-prediction bias on an east-heavy eval distribution (the prior baseline file `text_eval_R3_R6_combined.json` predates the d961940 balanced-sampling fix at May-1 19:22 vs the fix at May-1 19:33). The trained network never genuinely learned the language-action mapping; it just had a tendency to predict "east" that happened to score >25% on a biased test.
+
+## Decision-tree application
+
+Per the established thresholds:
+
+```
+result accuracy (max of I->W, W->A): 25.0%
+  >= 35%: WIN -- not us
+  28-35%: matching/improving baseline -- not us
+  20-28%: STILL REGRESSED -- this is our bracket
+          Action: also revert Tier 1.1 (stim 200->100). Stim window may
+                  also matter for STDP pre-post pairing in language pathway.
+  <20%: deeper bisect needed -- not us
+```
+
+**This is exactly the action being taken now.** PID 22124 launched at 01:36 with `--stim-steps-per-step 200 --reset-steps 100` (full Tier 1 revert on stim, reset already at 100). ETA ~03:10. Saves checkpoint for downstream weight diagnostic + reeval sweep.
 
 ## Headline numbers
 
@@ -75,7 +95,23 @@ The partial-T1 run can't distinguish these because both apply. The next run (ful
 ## Repro / files
 
 - This result: `research/findings/raw/g11_bg/text_eval_R3_R6_100ep_partialT1.json`
+  - (Internal naming used "partialT1" for the reset-fix run; this doc uses
+    "reset-fix" externally per the user-specified decision-tree convention.)
 - Log: `research/findings/raw/g11_bg/R3R6_100ep_partialT1.log`
-- Analyzer output (commit reference): d3f28f0 with run JSON
+- PID file (archived after completion): `research/findings/raw/g11_bg/R3R6_100ep_partialT1.pid.done`
+- Analyzer module: `research/runners/text_eval_analyze.py` (commit d3f28f0)
 - Comparison baseline: `research/findings/raw/g11_bg/text_eval_R3_R6_combined.json`
-- Next run: `research/findings/raw/g11_bg/text_eval_R3R6_100ep_NoT1_seed42.json` (ETA 03:10)
+- In-flight followup (full Tier 1 revert, --stim-steps-per-step 200):
+  `research/findings/raw/g11_bg/text_eval_R3R6_100ep_NoT1_seed42.json` (ETA ~03:10)
+  PID 22124. Will save checkpoint to `text_eval_R3R6_100ep_NoT1_seed42.simstate.h5`.
+
+## Followup pipeline (when 22124 completes)
+
+1. Run `text_eval_analyze` on the result JSON
+2. Run `text_weight_diagnostic` on the saved checkpoint -- does STDP
+   actually differentiate language→motor weights for the 4 directions?
+   If yes: methodology-side problem. Run `text_reeval_sweep` over
+   (drive_pA, n_reset_steps) to find best readout config.
+   If no: training-side problem. Architectural changes needed (stronger
+   drive, longer training, bigger language regions, etc.).
+3. Document, commit, push, iterate.
