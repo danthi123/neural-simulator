@@ -31,6 +31,13 @@ def main():
     ap.add_argument("--retina-drive-pA", type=float, default=200.0)
     ap.add_argument("--lang-input-drive-pA", type=float, default=200.0)
     ap.add_argument("--lang-output-coactive-pA", type=float, default=150.0)
+    # Stim window + reset overrides (validated config: stim=100, reset=100;
+    # the 2026-05-01 regression doc shows reset=50 breaks language pathway
+    # at scale via NMDA bleedover; do NOT use reset < 100 for >100 ep runs)
+    ap.add_argument("--stim-steps-per-step", type=int, default=100,
+                    help="sub-steps per env step during stim window (default 100 = 50ms)")
+    ap.add_argument("--reset-steps", type=int, default=100,
+                    help="inter-step reset sub-steps (default 100 = 50ms = 1 NMDA tau)")
     args = ap.parse_args()
 
     print("=" * 60)
@@ -39,12 +46,16 @@ def main():
     print(f"  drives: retina={args.retina_drive_pA} "
           f"lang_in={args.lang_input_drive_pA} "
           f"lang_out_coact={args.lang_output_coactive_pA} pA")
+    print(f"  stim_steps={args.stim_steps_per_step} "
+          f"reset_steps={args.reset_steps}")
     print("=" * 60)
     bridge, train_stats = run_embodied_text_training(
         seed=args.seed,
         n_episodes=args.n_episodes,
         steps_per_episode=args.steps_per_episode,
         grid_size=args.grid_size,
+        stim_steps_per_step=args.stim_steps_per_step,
+        reset_steps=args.reset_steps,
         retina_drive_pA=args.retina_drive_pA,
         lang_input_drive_pA=args.lang_input_drive_pA,
         lang_output_coactive_pA=args.lang_output_coactive_pA,
