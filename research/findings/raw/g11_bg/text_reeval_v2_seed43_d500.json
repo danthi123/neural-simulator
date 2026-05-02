@@ -1,0 +1,76 @@
+{
+  "regime": "embodied_reeval",
+  "checkpoint": "research\\findings\\raw\\g11_bg\\text_eval_R3R6_100ep_HebOff_v2_seed43.simstate.h5",
+  "image_to_word_eval": {
+    "n_trials": 100,
+    "correct": 25,
+    "accuracy": 0.25,
+    "confusion_matrix": {
+      "north": {
+        "north": 6,
+        "east": 7,
+        "south": 4,
+        "west": 5
+      },
+      "east": {
+        "north": 4,
+        "east": 6,
+        "south": 9,
+        "west": 3
+      },
+      "south": {
+        "north": 8,
+        "east": 1,
+        "south": 8,
+        "west": 8
+      },
+      "west": {
+        "north": 9,
+        "east": 7,
+        "south": 10,
+        "west": 5
+      }
+    }
+  },
+  "word_to_action_eval": {
+    "n_trials": 100,
+    "correct": 27,
+    "accuracy": 0.27,
+    "confusion_matrix": {
+      "north": {
+        "N": 7,
+        "E": 9,
+        "S": 9,
+        "W": 0
+      },
+      "east": {
+        "N": 6,
+        "E": 10,
+        "S": 2,
+        "W": 7
+      },
+      "south": {
+        "N": 13,
+        "E": 6,
+        "S": 4,
+        "W": 2
+      },
+      "west": {
+        "N": 4,
+        "E": 9,
+        "S": 6,
+        "W": 6
+      }
+    },
+    "interleave_words": true,
+    "n_reset_steps": 100
+  },
+  "eval_config": {
+    "drive_pA": 500.0,
+    "n_reset_steps": 100,
+    "interleave_words": true,
+    "n_eval_image_word": 100,
+    "n_eval_word_action": 25,
+    "seed": 1
+  }
+}
