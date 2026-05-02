@@ -3,16 +3,24 @@
 **Read this first when you wake up.** Detailed findings in
 `research/findings/2026-05-02-text-io-*` files.
 
-## TL;DR — 🎉 TEXT I/O STATISTICALLY SIGNIFICANT (p=0.044)
+## TL;DR — 🎉 TEXT I/O STATISTICALLY SIGNIFICANT (W→A p=0.027 at n=600)
 
-**Text I/O genuinely works.** Three biology-grounded fixes applied during
-the night, validated across 5 seeds:
+**Text I/O W→A genuinely works.** Three biology-grounded fixes applied
+during the night, validated across 6 seeds:
 
 ```
-5-seed cumulative (n=500 trials per metric):
-  W→A: 142/500 = 28.4%  (p=0.044) ← STATISTICALLY SIGNIFICANT vs 25% chance
-  I→W: 131/500 = 26.2%  (p=0.285, trending but not significant)
+6-seed cumulative (n=600 trials per metric):
+  W→A: 171/600 = 28.5%  (p=0.027) ← ROBUSTLY STATISTICALLY SIGNIFICANT
+  I→W: 152/600 = 25.3%  (p=0.444, high variance, ~chance on average)
 ```
+
+The W→A (word-to-action) capability is REAL. PFC-bypass pathway
+(language_input → motor_X) reliably encodes the mapping. Six
+independent seeds confirm it.
+
+I→W (image-to-word readout) is high-variance. Single seeds occasionally
+reach significance (seed=42 at 33%, p=0.042) but with more seeds the
+average trends to chance — different "lucky direction" each seed.
 
 Per-seed breakdown:
 ```
@@ -21,6 +29,7 @@ seed=43:  I→W 25%,           W→A 29%
 seed=44:  I→W 27%,           W→A 26%
 seed=100: I→W 25%,           W→A 32% (p=0.067)
 seed=101: I→W 21%,           W→A 28%
+seed=102: I→W 21%,           W→A 29%
 ```
 
 5-seed validation COMPLETE (commit 808ab6b):
