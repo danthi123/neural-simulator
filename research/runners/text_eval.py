@@ -196,6 +196,9 @@ def evaluate_word_to_action(
     stim_steps_per_trial: int = 200,
     drive_pA: float = 200.0,
     verbose: bool = True,
+    interleave_words: bool = True,
+    n_reset_steps: int = 100,
+    seed: int = 1,
 ):
     """Drive language_input with each direction word; observe which
     motor_X has the highest firing rate. Did the agent learn the
@@ -204,6 +207,21 @@ def evaluate_word_to_action(
     Reads MOTOR_X (not cortex_X). With PFC-bypass, language_input has
     direct trained pathway to motor_X that's not subject to cascade
     cortex_N dominance.
+
+    Args:
+        interleave_words: If True (default 2026-05-02), trials are
+          ordered so consecutive trials drive DIFFERENT words. This
+          eliminates a measurement artifact: when trial N-1 drove the
+          same word as trial N, motor_target's residual NMDA activity
+          contaminates trial N's baseline measurement, suppressing the
+          drive-vs-baseline delta. Block ordering (north x N then east
+          x N ...) is biased; interleaved [N,E,S,W,N,E,S,W,...] keeps
+          consecutive trials decorrelated. Set False to reproduce
+          historical block-ordered results.
+        n_reset_steps: inter-phase reset window (sub-steps). Default 100
+          (= 50ms at dt=0.5) matches training. Larger values (e.g. 400 =
+          200ms = 2x NMDA tau) produce cleaner baselines but slow eval.
+        seed: shuffle seed when interleave_words=True. Deterministic.
     """
     import cupy as cp
 
@@ -219,61 +237,101 @@ def evaluate_word_to_action(
     confusion = {w: {a: 0 for a in ACTION_NAMES}
                  for w in ["north", "east", "south", "west"]}
 
-    n_reset_steps = 100  # match training inter-trial reset
-    for word in ["north", "east", "south", "west"]:
+    # Build trial schedule
+    DIRECTIONS = ["north", "east", "south", "west"]
+    if interleave_words:
+        # Round-robin with rotating offset: round R = cyclic-shift of
+        # DIRECTIONS by R. Guarantees ZERO consecutive same-word trials
+        # (last word of round R is DIRECTIONS[(R+3) % 4]; first word of
+        # round R+1 is DIRECTIONS[(R+1) % 4]; never equal).
+        # Then permute within rounds based on seed for stochasticity
+        # without breaking the no-repeat property — any permutation of
+        # 4 distinct words preserves the round structure.
+        rng = np.random.default_rng(seed)
+        schedule = []
+        prev_last = None
+        for round_idx in range(n_trials_per_word):
+            order = list(DIRECTIONS)
+            rng.shuffle(order)
+            # Re-shuffle if the first word matches the previous round's
+            # last (only happens with prob 1/4; small loop)
+            attempts = 0
+            while prev_last is not None and order[0] == prev_last and attempts < 10:
+                rng.shuffle(order)
+                attempts += 1
+            schedule.extend(order)
+            prev_last = order[-1]
+    else:
+        # Legacy block order: 25 north trials, then 25 east, ...
+        schedule = []
+        for word in DIRECTIONS:
+            schedule.extend([word] * n_trials_per_word)
+
+    # Per-word logging buffers (only used if verbose)
+    last_per_word = {}
+
+    for word in schedule:
         target_action = WORD_TO_ACTION[word]
-        for trial in range(n_trials_per_word):
-            # ─── Phase A: BASELINE measurement ───
-            # Reset, then run with NO input. Measure spontaneous cortex_X.
-            # This subtracts cascade default bias (cortex_N 2x higher etc.)
-            # so we measure the DELTA caused by language_input.
-            bridge.cp_external_input_current[:] = 0.0
-            bridge.core_config.current_reward_signal = 0.0
-            for _ in range(n_reset_steps):
-                bridge._run_one_simulation_step()
-                bridge.runtime_state.current_time_step += 1
-            baseline_counts = {a: 0 for a in ACTION_NAMES}
-            for s in range(stim_steps_per_trial):
-                bridge._run_one_simulation_step()
-                bridge.runtime_state.current_time_step += 1
-                if s >= 60:
-                    firing = bridge.cp_firing_states
-                    for a in ACTION_NAMES:
-                        baseline_counts[a] += int(firing[cortex_idx[a]].sum().get())
+        # ─── Phase A: BASELINE measurement ───
+        # Reset, then run with NO input. Measure spontaneous cortex_X.
+        # This subtracts cascade default bias (cortex_N 2x higher etc.)
+        # so we measure the DELTA caused by language_input.
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.core_config.current_reward_signal = 0.0
+        for _ in range(n_reset_steps):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        baseline_counts = {a: 0 for a in ACTION_NAMES}
+        for s in range(stim_steps_per_trial):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+            if s >= 60:
+                firing = bridge.cp_firing_states
+                for a in ACTION_NAMES:
+                    baseline_counts[a] += int(firing[cortex_idx[a]].sum().get())
 
-            # ─── Phase B: LANGUAGE-DRIVEN measurement ───
-            # Reset, drive language_input, measure cortex_X again
-            bridge.cp_external_input_current[:] = 0.0
-            bridge.core_config.current_reward_signal = 0.0
-            for _ in range(n_reset_steps):
-                bridge._run_one_simulation_step()
-                bridge.runtime_state.current_time_step += 1
-            bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=0.1)
+        # ─── Phase B: LANGUAGE-DRIVEN measurement ───
+        # Reset, drive language_input, measure cortex_X again
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.core_config.current_reward_signal = 0.0
+        for _ in range(n_reset_steps):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=0.1)
 
-            spike_counts = {a: 0 for a in ACTION_NAMES}
-            for s in range(stim_steps_per_trial):
-                bridge._run_one_simulation_step()
-                bridge.runtime_state.current_time_step += 1
-                if s >= 60:
-                    firing = bridge.cp_firing_states
-                    for a in ACTION_NAMES:
-                        spike_counts[a] += int(firing[cortex_idx[a]].sum().get())
+        spike_counts = {a: 0 for a in ACTION_NAMES}
+        for s in range(stim_steps_per_trial):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+            if s >= 60:
+                firing = bridge.cp_firing_states
+                for a in ACTION_NAMES:
+                    spike_counts[a] += int(firing[cortex_idx[a]].sum().get())
 
-            # ─── DELTA selection: which cortex_X had the largest INCREASE
-            # over its own baseline? This subtracts the cascade's structural
-            # N-bias and reveals language-driven differential response. ───
-            delta_counts = {a: spike_counts[a] - baseline_counts[a]
-                            for a in ACTION_NAMES}
-            predicted = max(delta_counts, key=lambda a: delta_counts[a])
-            confusion[word][predicted] += 1
-            if predicted == target_action:
-                correct += 1
-            total += 1
+        # ─── DELTA selection ───
+        delta_counts = {a: spike_counts[a] - baseline_counts[a]
+                        for a in ACTION_NAMES}
+        predicted = max(delta_counts, key=lambda a: delta_counts[a])
+        confusion[word][predicted] += 1
+        if predicted == target_action:
+            correct += 1
+        total += 1
 
-        if verbose:
-            print(f"  [eval W->A] word={word} target={target_action} "
-                  f"baseline={baseline_counts} drive={spike_counts} "
-                  f"delta={delta_counts}", flush=True)
+        # Save last (word, baseline, drive, delta) for verbose summary
+        last_per_word[word] = {
+            "baseline": dict(baseline_counts),
+            "drive": dict(spike_counts),
+            "delta": dict(delta_counts),
+        }
+
+    if verbose:
+        for word in DIRECTIONS:
+            if word in last_per_word:
+                d = last_per_word[word]
+                print(f"  [eval W->A] word={word} "
+                      f"target={WORD_TO_ACTION[word]} "
+                      f"baseline={d['baseline']} drive={d['drive']} "
+                      f"delta={d['delta']}", flush=True)
 
     accuracy = correct / max(total, 1)
     return {
@@ -281,7 +339,17 @@ def evaluate_word_to_action(
         "correct": correct,
         "accuracy": accuracy,
         "confusion_matrix": confusion,
+        "interleave_words": interleave_words,
+        "n_reset_steps": n_reset_steps,
     }
+
+
+def evaluate_word_to_action_LEGACY_BLOCK(*args, **kwargs):
+    """Backwards-compat wrapper: calls evaluate_word_to_action with
+    interleave_words=False to reproduce the historical block-ordered
+    eval. Use only for direct comparison to pre-2026-05-02 baselines."""
+    kwargs["interleave_words"] = False
+    return evaluate_word_to_action(*args, **kwargs)
 
 
 def main():
