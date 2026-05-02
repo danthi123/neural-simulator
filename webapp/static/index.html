@@ -24,6 +24,13 @@
     <section id="tab-overview" class="tab active">
       <div class="section-title">At a glance</div>
       <div class="kpi-grid" id="overview-kpis"></div>
+      <!-- 2026-05-01: in-flight detached runs (launched via Start-Process,
+           writing *.pid + *.log under research/findings/raw/g11_bg/).
+           Auto-refreshes every 5s. Hidden when no detached runs are active. -->
+      <div id="overview-inflight-section" style="display:none;">
+        <div class="section-title">In-flight training runs</div>
+        <div id="overview-inflight"></div>
+      </div>
       <div class="section-title">Result distribution (sum_finalQ)</div>
       <div class="chart-row"><canvas id="overview-distribution" class="chart-canvas"></canvas></div>
       <div class="section-title">Recent activity</div>

@@ -1110,6 +1110,120 @@ def info() -> JSONResponse:
     })
 
 
+# ─── In-flight detached-run monitor (2026-05-01) ────────────────────────
+# Detached runs (launched via PowerShell Start-Process to survive Claude
+# restart) write a *.pid + *.log file under research/findings/raw/g11_bg/.
+# This endpoint scans for those, tails the log, and reports progress.
+
+import re as _re
+_DETACHED_PROGRESS_RE = _re.compile(
+    r"\[ep\s+(\d+)/(\d+)\]\s+correct_moves=(\d+)/(\d+)=([\d.]+)%"
+)
+_GENERIC_STEP_RE = _re.compile(
+    r"step\s+(\d+)/(\d+)\s+pos=\((-?\d+),(-?\d+)\)\s+goal=\((-?\d+),(-?\d+)\)"
+)
+
+
+def _check_pid_alive(pid: int) -> bool:
+    """Return True if PID is currently a running process (Windows)."""
+    try:
+        # Windows: tasklist, fast and reliable
+        import subprocess
+        r = subprocess.run(
+            ["tasklist", "/FI", f"PID eq {pid}", "/FO", "CSV", "/NH"],
+            capture_output=True, text=True, timeout=2,
+        )
+        return f'"{pid}"' in r.stdout or str(pid) in r.stdout
+    except Exception:
+        return False
+
+
+def _parse_log_progress(log_path: Path) -> dict | None:
+    """Tail the log file, find the most recent progress marker, return its
+    parsed values + estimated completion."""
+    if not log_path.exists():
+        return None
+    try:
+        size = log_path.stat().st_size
+        # Read last 8KB to find the latest progress line
+        with log_path.open("rb") as f:
+            f.seek(max(0, size - 8192))
+            tail_bytes = f.read()
+        tail = tail_bytes.decode("utf-8", errors="ignore")
+    except Exception:
+        return None
+
+    last_match = None
+    for m in _DETACHED_PROGRESS_RE.finditer(tail):
+        last_match = m
+    if last_match is None:
+        # Fall back to generic per-step format from g11_bg_runner
+        for m in _GENERIC_STEP_RE.finditer(tail):
+            last_match = m
+        if last_match is None:
+            return None
+        step, total, x, y, gx, gy = (int(g) for g in last_match.groups())
+        return {
+            "kind": "step",
+            "step": step,
+            "total": total,
+            "fraction": step / max(1, total),
+            "pos": [x, y],
+            "goal": [gx, gy],
+        }
+
+    ep_done, ep_total, correct, n_steps, accuracy = last_match.groups()
+    return {
+        "kind": "embodied_episode",
+        "episode": int(ep_done),
+        "episodes_total": int(ep_total),
+        "fraction": int(ep_done) / max(1, int(ep_total)),
+        "n_steps": int(n_steps),
+        "correct_moves": int(correct),
+        "correct_pct": float(accuracy),
+    }
+
+
+@app.get("/api/inflight")
+def list_inflight_runs() -> JSONResponse:
+    """List in-flight detached training runs (Start-Process launches with
+    *.pid + *.log files)."""
+    inflight = []
+    for pid_file in sorted(RAW_RUNS_DIR.glob("*.pid")):
+        try:
+            pid = int(pid_file.read_text().strip())
+        except Exception:
+            continue
+        log_file = pid_file.with_suffix(".log")
+        result_json = pid_file.with_name(
+            pid_file.stem.replace(".pid", "")
+        ).with_suffix(".json")
+        # Try multiple naming conventions for the result file
+        candidate_results = [
+            RAW_RUNS_DIR / f"text_eval_{pid_file.stem}.json",
+            RAW_RUNS_DIR / f"{pid_file.stem}.json",
+        ]
+        result_path = next((p for p in candidate_results if p.exists()), None)
+
+        alive = _check_pid_alive(pid)
+        progress = _parse_log_progress(log_file)
+        log_mtime = log_file.stat().st_mtime if log_file.exists() else None
+        log_size = log_file.stat().st_size if log_file.exists() else 0
+
+        inflight.append({
+            "name": pid_file.stem,
+            "pid": pid,
+            "alive": alive,
+            "log_file": log_file.name if log_file.exists() else None,
+            "log_size_kb": round(log_size / 1024, 1),
+            "log_mtime": log_mtime,
+            "progress": progress,
+            "result_file": result_path.name if result_path else None,
+            "completed": result_path is not None,
+        })
+    return JSONResponse({"inflight": inflight, "count": len(inflight)})
+
+
 # ─────────────────────────────────────────────────────────────────────────
 # Frontend
 # ─────────────────────────────────────────────────────────────────────────

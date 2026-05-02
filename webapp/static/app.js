@@ -859,6 +859,71 @@ async function loadOverview() {
   } catch (e) {
     kpiContainer.replaceChildren(el("p", { class: "error" }, e.message));
   }
+
+  // 2026-05-01: in-flight detached-run monitor. Polls /api/inflight every
+  // 5s and shows a progress card per active detached run. Hidden when no
+  // runs are in flight (returned count == 0).
+  refreshInflightPanel();
+  if (!window._inflightInterval) {
+    window._inflightInterval = setInterval(refreshInflightPanel, 5000);
+  }
+}
+
+async function refreshInflightPanel() {
+  const section = document.getElementById("overview-inflight-section");
+  const container = document.getElementById("overview-inflight");
+  if (!section || !container) return;
+  try {
+    const res = await fetch("/api/inflight").then((r) => r.json());
+    const runs = res.inflight || [];
+    if (runs.length === 0) {
+      section.style.display = "none";
+      return;
+    }
+    section.style.display = "";
+    container.replaceChildren();
+    for (const r of runs) {
+      const p = r.progress || {};
+      const fraction = p.fraction || 0;
+      const pct = Math.round(fraction * 100);
+      const stateBadge = r.alive
+        ? el("span", { class: "badge", style: "background:#10b98133;color:#10b981" }, "running")
+        : (r.completed
+            ? el("span", { class: "badge", style: "background:#6ee7b733;color:#6ee7b7" }, "completed")
+            : el("span", { class: "badge", style: "background:#fb718533;color:#fb7185" }, "stopped"));
+
+      let progressLine;
+      if (p.kind === "embodied_episode") {
+        progressLine = `episode ${p.episode}/${p.episodes_total} · ` +
+                       `${p.correct_moves}/${p.n_steps} correct moves (${p.correct_pct}%)`;
+      } else if (p.kind === "step") {
+        progressLine = `step ${p.step}/${p.total} · pos=(${p.pos.join(',')}) · goal=(${p.goal.join(',')})`;
+      } else {
+        progressLine = "no progress markers yet";
+      }
+
+      const card = el("div", { class: "activity-row inflight-row",
+                               style: "display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:6px;margin-bottom:8px;" }, [
+        el("div", {}, [
+          el("div", { style: "font-weight:600;font-family:ui-monospace,Consolas,monospace;" }, r.name),
+          el("div", { class: "small muted" }, [
+            el("span", {}, progressLine),
+            el("span", { style: "margin-left:8px;color:var(--fg-muted)" },
+               `pid=${r.pid} · log=${r.log_size_kb}KB`),
+          ]),
+          // Progress bar
+          el("div", { style: "background:#2a2f3d;height:4px;border-radius:2px;margin-top:6px;overflow:hidden;" }, [
+            el("div", { style: `background:#6ee7b7;height:100%;width:${pct}%;transition:width 0.5s;` }),
+          ]),
+        ]),
+        el("div", { style: "font-family:ui-monospace,Consolas,monospace;font-size:14px;color:var(--accent);" }, `${pct}%`),
+        stateBadge,
+      ]);
+      container.appendChild(card);
+    }
+  } catch (e) {
+    // Silent failure — endpoint may not exist on older webapp builds
+  }
 }
 
 function renderOverviewKPIs(container, runs, findings, launches) {
