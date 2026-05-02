@@ -237,6 +237,23 @@ def evaluate_word_to_action(
     confusion = {w: {a: 0 for a in ACTION_NAMES}
                  for w in ["north", "east", "south", "west"]}
 
+    # Multi-decoder counters (2026-05-02): test alternative decoders alongside
+    # default delta-from-baseline. The 6-seed v2 result of W->A 28.5%
+    # (p=0.027) may be limited by the argmax-of-delta decoder losing signal
+    # from differentiated weights. Test these decoders inline:
+    correct_drive_only = 0
+    correct_ratio = 0
+    correct_zscore = 0
+    correct_clipped = 0
+    confusion_drive_only = {w: {a: 0 for a in ACTION_NAMES}
+                            for w in ["north", "east", "south", "west"]}
+    confusion_ratio = {w: {a: 0 for a in ACTION_NAMES}
+                       for w in ["north", "east", "south", "west"]}
+    confusion_zscore = {w: {a: 0 for a in ACTION_NAMES}
+                        for w in ["north", "east", "south", "west"]}
+    confusion_clipped = {w: {a: 0 for a in ACTION_NAMES}
+                         for w in ["north", "east", "south", "west"]}
+
     # Build trial schedule
     DIRECTIONS = ["north", "east", "south", "west"]
     if interleave_words:
@@ -308,7 +325,7 @@ def evaluate_word_to_action(
                 for a in ACTION_NAMES:
                     spike_counts[a] += int(firing[cortex_idx[a]].sum().get())
 
-        # ─── DELTA selection ───
+        # ─── DELTA selection (default decoder) ───
         delta_counts = {a: spike_counts[a] - baseline_counts[a]
                         for a in ACTION_NAMES}
         predicted = max(delta_counts, key=lambda a: delta_counts[a])
@@ -316,6 +333,49 @@ def evaluate_word_to_action(
         if predicted == target_action:
             correct += 1
         total += 1
+
+        # ─── Alternative decoders (computed alongside, no extra cost) ───
+        # 1. drive_only: argmax of raw drive counts (ignore baseline)
+        pred_drive = max(spike_counts, key=lambda a: spike_counts[a])
+        if pred_drive == target_action:
+            correct_drive_only += 1
+        confusion_drive_only[word][pred_drive] += 1
+
+        # 2. ratio: argmax of drive/baseline ratio (multiplicative, robust to
+        #    additive baseline noise; sensitive to relative spike rate change)
+        ratio_counts = {
+            a: (spike_counts[a] + 1) / (baseline_counts[a] + 1)
+            for a in ACTION_NAMES
+        }
+        pred_ratio = max(ratio_counts, key=lambda a: ratio_counts[a])
+        if pred_ratio == target_action:
+            correct_ratio += 1
+        confusion_ratio[word][pred_ratio] += 1
+
+        # 3. zscore_delta: normalize delta by baseline mean across pools
+        #    (pseudo-Z; full Z would need baseline std from multiple windows)
+        baseline_mean = sum(baseline_counts.values()) / 4.0
+        zscore_counts = {
+            a: (spike_counts[a] - baseline_counts[a]) / max(1.0, baseline_mean)
+            for a in ACTION_NAMES
+        }
+        pred_zscore = max(zscore_counts, key=lambda a: zscore_counts[a])
+        if pred_zscore == target_action:
+            correct_zscore += 1
+        confusion_zscore[word][pred_zscore] += 1
+
+        # 4. delta_clipped: like delta but clip negative values to 0 (only
+        #    pools with above-baseline drive count for argmax)
+        delta_clipped = {a: max(0, delta_counts[a]) for a in ACTION_NAMES}
+        # If all zeros, fall back to drive
+        pred_clipped = (
+            max(delta_clipped, key=lambda a: delta_clipped[a])
+            if any(v > 0 for v in delta_clipped.values())
+            else pred_drive
+        )
+        if pred_clipped == target_action:
+            correct_clipped += 1
+        confusion_clipped[word][pred_clipped] += 1
 
         # Save last (word, baseline, drive, delta) for verbose summary
         last_per_word[word] = {
@@ -341,6 +401,30 @@ def evaluate_word_to_action(
         "confusion_matrix": confusion,
         "interleave_words": interleave_words,
         "n_reset_steps": n_reset_steps,
+        # Multi-decoder results (2026-05-02): tests alternative decoders
+        # alongside default delta-from-baseline.
+        "alternative_decoders": {
+            "drive_only": {
+                "correct": correct_drive_only,
+                "accuracy": correct_drive_only / max(total, 1),
+                "confusion": confusion_drive_only,
+            },
+            "ratio": {
+                "correct": correct_ratio,
+                "accuracy": correct_ratio / max(total, 1),
+                "confusion": confusion_ratio,
+            },
+            "zscore": {
+                "correct": correct_zscore,
+                "accuracy": correct_zscore / max(total, 1),
+                "confusion": confusion_zscore,
+            },
+            "clipped": {
+                "correct": correct_clipped,
+                "accuracy": correct_clipped / max(total, 1),
+                "confusion": confusion_clipped,
+            },
+        },
     }
 
 
