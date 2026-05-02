@@ -172,6 +172,18 @@ def run_embodied_text_training(
     cfg.enable_nmda = True
     cfg.nmda_ratio = 0.5
     cfg.enable_structural_plasticity = False  # avoid CSR-grow bug
+    # CRITICAL FIX (2026-05-02): disable Hebbian learning. Default is True
+    # but ALL g* runners (g1-g11_bg) explicitly disable it. Without this,
+    # the global hebbian_weight_decay (1e-5 per sub-step) compounds over
+    # ~990K sub-steps in 100 ep training: (1-1e-5)^990000 ≈ 5e-5, driving
+    # ALL weights from initial 2-3 down to hebbian_min_weight floor (0.05).
+    # Weight diagnostic on text_eval_R3R6_100ep_NoT1_seed42.simstate.h5
+    # confirmed: every plastic pathway at uniform 0.05 across all 4 directions
+    # (no learning, just collapse). Disabling Hebbian eliminates the decay
+    # while preserving STDP+reward modulation for the actual learning.
+    # This was the silent cause of chance-level text I/O results since
+    # 2026-05-01.
+    cfg.enable_hebbian_learning = False
     # Tier 1: per-type STP disabled by default. Only one trait pair (E→E) is
     # active in text training; per-type STP just adds a cp_synapse_conn_type
     # lookup per step with no benefit here. (Configurable as of 2026-05-02 to
