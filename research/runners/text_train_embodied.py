@@ -161,6 +161,16 @@ def run_embodied_text_training(
         pfc_enable_nmda=True,
         enable_visual_cortex=True,
         enable_text_io=True,
+        # 2026-05-02 secondary fix: small non-zero init for readout
+        # pathways. Original 0.0 init left these pathways at the
+        # synaptic floor (0.01) after training — STDP couldn't grow them
+        # from scratch with the weak training signal (~30% correct moves
+        # giving sparse reward). Non-zero init lets STDP both strengthen
+        # correct pairings (LTP) and weaken wrong ones (LTD) bidirectionally.
+        text_cortex_to_output_weight=0.5,
+        text_cortex_to_output_jitter=0.3,
+        text_it_to_output_weight=0.5,
+        text_it_to_output_jitter=0.3,
     )
 
     cfg = CoreSimConfig()
@@ -184,6 +194,17 @@ def run_embodied_text_training(
     # This was the silent cause of chance-level text I/O results since
     # 2026-05-01.
     cfg.enable_hebbian_learning = False
+    # SECONDARY FIX (2026-05-02): raise stdp_w_max from default 2.0 to 5.0.
+    # The PFC-bypass pathway (lang_input -> motor_X) has weight_mean=3.0
+    # by design. STDP rule is soft-bound (Δw_LTP = A_plus × (w_max - w) ×
+    # exp(...)); when current weight (3.0) > stdp_w_max (2.0), every
+    # "LTP" event is NEGATIVE → pulls weights down to 2.0. Confirmed by
+    # weight diagnostic on Hebbian-off run: PFC-bypass clipped at exactly
+    # 2.0 max. CLAUDE.md documents this gotcha:
+    # "set cfg.stdp_w_max above your design weights (e.g. cortex→D1 in
+    # Phase B uses weight_mean=25 → set stdp_w_max=30)".
+    # 5.0 leaves comfortable headroom over the 3.0 design weight.
+    cfg.stdp_w_max = 5.0
     # Tier 1: per-type STP disabled by default. Only one trait pair (E→E) is
     # active in text training; per-type STP just adds a cp_synapse_conn_type
     # lookup per step with no benefit here. (Configurable as of 2026-05-02 to

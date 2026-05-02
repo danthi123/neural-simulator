@@ -283,6 +283,16 @@ def build_bg_brain_regions(
     text_input_to_motor_density: float = 0.30,
     text_input_to_motor_weight: float = 3.0,
     text_input_to_motor_jitter: float = 0.5,
+    # Readout pathway initial weights (2026-05-02 fix). Default 0.0 was
+    # the original design (STDP grows from scratch) but with weak training
+    # signal, growth doesn't happen — the pathways stayed at floor in the
+    # 100-ep Hebbian-off test. Small non-zero init lets STDP both LTP
+    # correct pairings and LTD wrong ones. Biology source: real cortical
+    # synapses have spontaneous baseline weights, not absolute zero.
+    text_cortex_to_output_weight: float = 0.0,
+    text_it_to_output_weight: float = 0.0,
+    text_cortex_to_output_jitter: float = 0.0,
+    text_it_to_output_jitter: float = 0.0,
 ):
     """Returns list of BrainRegion + list of RegionPathway for the BG circuit.
 
@@ -1587,29 +1597,33 @@ def build_bg_brain_regions(
                 plasticity_gate="language_input_to_cortex",
             ))
 
-        # IT → language_output (image-to-word learning, zero init).
+        # IT → language_output (image-to-word learning).
         # Only when visual cortex is also enabled — without IT there's
         # no upstream signal to drive the readout.
+        # 2026-05-02: small non-zero init via text_it_to_output_weight kwarg
+        # (default 0.0 preserves prior behavior; pass >0 to seed STDP).
         if enable_visual_cortex:
             pathways.append(RegionPathway(
                 from_region="cortex_it", to_region="language_output",
                 density=text_it_to_output_density,
-                weight_mean=0.0,
-                weight_jitter=0.0,
+                weight_mean=text_it_to_output_weight,
+                weight_jitter=text_it_to_output_jitter,
                 plastic=True,
                 plasticity_gate="it_to_language_output",
             ))
 
-        # cortex_X → language_output (action verbalization, zero init).
+        # cortex_X → language_output (action verbalization).
         # Lets the agent "say what it just did" — STDP+reward grows
         # weights when the supervisor clamps the appropriate word output
         # while a cortex_X is active.
+        # 2026-05-02: small non-zero init via text_cortex_to_output_weight
+        # kwarg (default 0.0 preserves prior behavior).
         for action in ACTION_NAMES:
             pathways.append(RegionPathway(
                 from_region=f"cortex_{action}", to_region="language_output",
                 density=0.10,
-                weight_mean=0.0,
-                weight_jitter=0.0,
+                weight_mean=text_cortex_to_output_weight,
+                weight_jitter=text_cortex_to_output_jitter,
                 plastic=True,
                 plasticity_gate="cortex_to_language_output",
             ))
