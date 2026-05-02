@@ -157,4 +157,57 @@ These would NOT be implemented overnight -- documented for morning discussion.
 
 Updates appended below as each step completes.
 
-### Step 1 status: PENDING (waiting for current 100-ep eval to finish)
+### Step 1 (partial-T1 / "reset-fix" run): COMPLETE 01:34
+
+PID 51184. Result: I->W 8/40 = 20.0%, W->A 10/40 = 25.0%.
+Verdict per decision tree: 20-28% bracket -> "also revert Tier 1.1 (stim 200->100)".
+
+**Critical reframe:** the prior "32.5% baseline" was an east-prediction
+artifact (the May-1 19:22 baseline file predates the d961940 balanced-
+sampling fix at May-1 19:33). Predictions in this run are now BALANCED
+(N:10 E:9 S:11 W:10) -- the network never genuinely learned the
+language-action mapping; it had a tendency to predict "east" that
+scored well on east-heavy eval distribution. With balanced sampling,
+accuracy collapses to chance.
+
+Implications:
+- The "30% baseline" cannot be trusted as a reference point.
+- Functional textual training is FURTHER from working than we thought.
+- Architectural changes are now justified.
+
+Findings: `research/findings/2026-05-02-text-io-100ep-reset-fix-results.md`
+(commit ab9e3d7).
+
+### Step 2 (full Tier 1 revert): IN FLIGHT
+
+PID 22124, launched 01:36:08 with `--stim-steps-per-step 200 --reset-steps 100`.
+Currently at ep 70/100 = 28.6% correct moves (climbing slowly from 24.9% at ep 30).
+ETA ~02:42.
+
+Will save checkpoint to `text_eval_R3R6_100ep_NoT1_seed42.simstate.h5`. This
+is the FIRST trained-bridge checkpoint we'll have (auto-save was added in
+7f50cf0, after baseline + partial-T1 runs).
+
+### Step 3 (weight diagnostic): SCHEDULED for ~02:45
+
+Run `text_weight_diagnostic.py` on the saved checkpoint. Answers:
+"Did STDP actually differentiate language->motor weights for the 4
+directions, regardless of eval accuracy?"
+
+If YES: methodology is the bottleneck; run reeval sweep + try higher
+eval drive without retraining.
+
+If NO: training is the bottleneck; architectural changes needed.
+Lineup: stronger lang_input drive (200->400), longer training
+(100->200 ep), bigger language regions.
+
+### Step 4+ (architectural experiments): TENTATIVE
+
+Each ~75-90 min. Sequential overnight queue:
+- E1 (~02:50): stronger lang_input drive (400 pA)
+- E2 (~04:25): longer training (200 ep) at default drive
+- E3 (~06:00): combined: stronger drive + longer training
+
+Each saves checkpoint, uses new defaults (interleaved eval, n=100).
+
+User wakes to multiple data points + clear path forward.
