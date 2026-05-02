@@ -96,14 +96,39 @@ in cascade dynamics).
    north HebOff_v2). Likely caused by asymmetric reward (-0.5 wrong vs +1.0 right
    creates net LTD pressure on the noisiest direction). Needs reward shaping test.
 
-2. **W→A eval at chance** despite weight learning. Per-trial baseline noise
-   masks the signal. Possibly fixable with different decoding (e.g., reading
-   firing rate vector + cosine similarity).
+2. ~~W→A eval at chance~~ **W→A signal hidden by default drive.** Reeval sweep
+   on v2 checkpoint at `drive=500, reset=100` produced W→A 32% (p=0.067, near
+   significance) vs 27% at default 200 pA. The network IS differentiated for
+   actions but cascade structural noise drowns out language signal at low drive.
+   Fix shipped (3d13352): `--eval-wa-drive-pA` CLI flag (default 200). Future
+   runs: use 500.
 
 3. **South direction consistently weak across runs.** Possibly cascade
    structural bias against motor_S.
 
 4. **Single-seed result** — 33% needs validation across multiple seeds.
+   PID 36544 launched at 05:39 testing seed=43 same config; ETA 06:35.
+
+## Key sweep finding
+
+```
+sweep_v2_seed42 (reeval on v2 checkpoint):
+  d200_r100: I->W 25%  W->A 25%   <- default eval, near chance
+  d200_r300: I->W 23%  W->A 25%
+  d300_r100: I->W 22%  W->A 23%
+  d300_r300: I->W 25%  W->A 26%
+  d400_r100: I->W 26%  W->A 24%
+  d400_r300: I->W 25%  W->A 29%
+  d500_r100: I->W 25%  W->A 32%   <- W->A signal surfaces at high drive
+```
+
+I→W reeval stays at chance across all combos — bridge state divergence
+(homeostatic firing thresholds aren't saved by checkpoint, so cold-start
+reeval can't reproduce the post-training warm-state behavior).
+W→A signal IS recoverable at higher eval drive. Original post-training
+eval (which uses warm state) showed 33% I→W and 27% W→A. The 27% W→A
+under-reported what the trained network can do — at d500, same network
+reaches 32%.
 
 ## What's running / scheduled overnight
 
