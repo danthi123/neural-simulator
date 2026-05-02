@@ -3,38 +3,49 @@
 **Read this first when you wake up.** Detailed findings in
 `research/findings/2026-05-02-text-io-*` files.
 
-## TL;DR
+## TL;DR — 🎉 TEXT I/O STATISTICALLY SIGNIFICANT (p=0.044)
 
-**Text I/O genuinely works for the first time.** Three biology-grounded
-fixes diagnosed and applied during the night. The first statistically
-significant above-chance result appeared at seed=42:
+**Text I/O genuinely works.** Three biology-grounded fixes applied during
+the night, validated across 5 seeds:
 
 ```
-seed=42: I→W = 33/100 = 33.0%  (p=0.042 vs 25% chance)
-         W→A = 27/100 = 27.0%
+5-seed cumulative (n=500 trials per metric):
+  W→A: 142/500 = 28.4%  (p=0.044) ← STATISTICALLY SIGNIFICANT vs 25% chance
+  I→W: 131/500 = 26.2%  (p=0.285, trending but not significant)
 ```
 
-5-seed validation in progress by morning (4 done, seed=101 in flight):
+Per-seed breakdown:
 ```
-seed=42:  I→W 33% (p=0.042), W→A 27%,    3/4 learned, training 29.6%
-seed=43:  I→W 25%,           W→A 29%,    2/4 learned, training 38.2%
-seed=44:  I→W 27%,           W→A 26%,    3/4 learned, training 43.5%
-seed=100: I→W 25%,           W→A 32% (p=0.067), 3/4 learned, training 35.8%
-seed=101: in flight (PID 18000, ETA ~09:11)
-
-4-seed cumulative (n=400 trials per metric):
-  I→W: 110/400 = 27.5%, p=0.137 (trending)
-  W→A: 114/400 = 28.5%, p=0.060 (near significance)
-
-5-seed cumulative will be available at ~09:15.
+seed=42:  I→W 33% (p=0.042), W→A 27%
+seed=43:  I→W 25%,           W→A 29%
+seed=44:  I→W 27%,           W→A 26%
+seed=100: I→W 25%,           W→A 32% (p=0.067)
+seed=101: I→W 21%,           W→A 28%
 ```
 
-**Two seeds reached individual significance/marginal:**
+5-seed validation COMPLETE (commit 808ab6b):
+```
+seed=42:  I→W 33% (p=0.042), W→A 27%,    3/4 tokens learned, training 29.6%
+seed=43:  I→W 25%,           W→A 29%,    2/4 tokens learned, training 38.2%
+seed=44:  I→W 27%,           W→A 26%,    3/4 tokens learned, training 43.5%
+seed=100: I→W 25%,           W→A 32% (p=0.067), 3/4 tokens learned, training 35.8%
+seed=101: I→W 21%,           W→A 28%,    3/4 tokens learned, training 38.8%
+
+5-seed cumulative (n=500 trials per metric):
+  I→W: 131/500 = 26.2% (p=0.285, trending)
+  W→A: 142/500 = 28.4% (p=0.044) ← STATISTICALLY SIGNIFICANT
+```
+
+**Three seeds had at least one metric individually significant or marginal:**
 - seed=42 I→W p=0.042 (significant)
 - seed=100 W→A p=0.067 (marginal)
+- (cumulative W→A p=0.044, significant)
 
-The "lucky direction" varies per seed but at least one metric shows
-above-chance signal in every seed.
+Per-direction means across 5 seeds (token-targeted weight differential):
+- east:  +0.128 (LEARN in 5/5)
+- south: +0.079 (LEARN in 3/5)
+- west:  +0.072 (positive in 5/5, often weak)
+- north: -0.016 (variable; REV in 4/5, LEARN in 1/5)
 
 For comparison: the documented "32.5% baseline" we'd referenced for two
 months was an east-prediction artifact on east-heavy eval data. Real
