@@ -171,6 +171,14 @@ def run_embodied_text_training(
     # text training; per-type STP just adds a cp_synapse_conn_type lookup
     # per step with no benefit here.
     cfg.enable_per_type_stp = False
+    # Tested-and-reverted (2026-05-02 smoke):
+    # - cfg.enable_ou_process = False    → BROKE NETWORK (correct-moves 2.4%
+    #   vs 30%+ baseline). OU provides spontaneous activity that STDP needs
+    #   for pre-synaptic spike events outside the explicit-input window.
+    # - cfg.enable_parameter_heterogeneity = False → BROKE NETWORK (paired
+    #   with the OU disable). Pure Izh parameters → pathological sync;
+    #   real cortex relies on per-neuron variation to break lockstep.
+    # See: 2026-05-02 smoke at correct_moves=2.4%, all-zero language_output spikes.
 
     bridge = SimulationBridge(
         core_config=cfg,
