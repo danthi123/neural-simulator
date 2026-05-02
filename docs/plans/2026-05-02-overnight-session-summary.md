@@ -6,17 +6,47 @@
 ## TL;DR
 
 **Text I/O genuinely works for the first time.** Three biology-grounded
-fixes diagnosed and applied during the night, producing the first
-statistically significant above-chance result under fair eval methodology:
+fixes diagnosed and applied during the night. The first statistically
+significant above-chance result appeared at seed=42:
 
 ```
-I→W = 33/100 = 33.0%  (p=0.042 vs 25% chance)
-W→A = 27/100 = 27.0%  (chance, but per-direction shows learning)
+seed=42: I→W = 33/100 = 33.0%  (p=0.042 vs 25% chance)
+         W→A = 27/100 = 27.0%
+```
+
+3-seed validation done by morning:
+```
+seed=42: I→W 33%, W→A 27%, 3/4 tokens learned, training 29.6%
+seed=43: I→W 25%, W→A 29%, 2/4 tokens learned, training 38.2%
+seed=44: I→W 27%, W→A 26%, 3/4 tokens learned, training 43.5%
+Mean:    I→W 28.3%, W→A 27.3% — above chance trend, n=3 too small
+         to confirm significance. Need 5-6 seeds.
+seed=100: in flight (PID 50928, ETA 08:18)
 ```
 
 For comparison: the documented "32.5% baseline" we'd referenced for two
 months was an east-prediction artifact on east-heavy eval data. Real
 pre-fix accuracy was at chance.
+
+## Critical structural finding
+
+**North is REVERSED in ALL 3 seeds tested** (-0.079, -0.138, -0.094 in
+weight diagnostic). East and West LEARN in all 3 seeds. South varies.
+
+This is structural, not noise. Cascade has documented N-bias:
+"cortex_N fires 2x more at init" (g11_bg_runner.py line 1578). Without
+compensation, motor_N fires for non-north targets too, so STDP can't
+grow the "north-active → motor_N" differential preference. **Architectural
+fix needed for north** — proposed candidates documented in multi-seed-
+progress findings doc.
+
+**I→W vs W→A dissociation found:** seed=44 has north REVERSED in W→A
+(weight diag) but north got 54.5% in I→W eval. Different pathways:
+- I→W uses cortex_X → lang_out and IT → lang_out
+- W→A uses lang_input → cortex_X + lang_input → motor_X PFC-bypass
+
+Biology-consistent (Geschwind 1965 disconnection model: Wernicke vs
+Broca anatomically separable).
 
 ## What was wrong (root cause)
 
