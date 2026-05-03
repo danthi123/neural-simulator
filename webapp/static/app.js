@@ -2729,6 +2729,32 @@ function setupKeyboardShortcuts() {
         if (navBtns[idx]) navBtns[idx].click();
         break;
       }
+      case "Escape": {
+        // ESC closes any open Brain panel (pinned info / log tail)
+        let closed = false;
+        const logPane = document.getElementById("brain-log-pane");
+        if (logPane && logPane.style.display !== "none") {
+          logPane.style.display = "none";
+          closed = true;
+        }
+        const infoPanel = document.querySelector(".brain3d-info-panel");
+        if (infoPanel && infoPanel.style.display !== "none") {
+          infoPanel.style.display = "none";
+          closed = true;
+        }
+        const trashDrawer = document.getElementById("trash-drawer");
+        if (trashDrawer && trashDrawer.style.display !== "none") {
+          trashDrawer.style.display = "none";
+          closed = true;
+        }
+        const runDrawer = document.getElementById("brain3d-runs-drawer");
+        if (runDrawer && runDrawer.style.display !== "none") {
+          runDrawer.style.display = "none";
+          closed = true;
+        }
+        if (closed) e.preventDefault();
+        break;
+      }
     }
   });
 }
@@ -2743,6 +2769,7 @@ function showKeyboardHelp() {
     "Display:",
     "  t          Toggle dark / light theme",
     "  r          Refresh current view",
+    "  Esc        Close open panels (info, log, drawer)",
     "  ?          Show this help",
     "",
     "Brain / World viewers:",
