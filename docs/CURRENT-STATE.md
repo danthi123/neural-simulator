@@ -7,7 +7,7 @@ This document is the **authoritative current-state reference**.
 Update it whenever capabilities change. For the journey of how we
 got here, see `research/findings/`.
 
-**Last meaningful update:** 2026-05-02
+**Last meaningful update:** 2026-05-03 (SWR investigation in flight)
 
 ---
 
@@ -240,20 +240,34 @@ maximum reproducibility (sets `CUBLAS_WORKSPACE_CONFIG`).
 
 ## Active research directions
 
-Current open experiments (as of 2026-05-02):
+Current open experiments (as of 2026-05-03):
 
-1. **Distributed motor pool architecture (Pulvermüller G.20)**
-   — running. 8 motor sub-pools at 45° intervals with cosine-tuned
-   thal pathways and population vector decoding. Tests whether
-   labeled-line motor pools are the bottleneck for the 28.5% W→A
-   ceiling.
+1. **SWR Phase 3 replay investigation** — IN FLIGHT.
+   Implemented via `text_train_curriculum --phase3-replays N`. n=3
+   seeds (42, 43, 44) consistently show **W→A drops ~6 pp vs
+   baseline** (22% mean vs 28.5% baseline, p<0.01 at n=3). I→W is
+   noise-dominated. Per-direction analysis shows the cascade's
+   natural N-bias is amplified by replay distribution. 4-seed batch
+   (44/100/101/102) running overnight; H1 balanced-replay test
+   (`--phase3-balanced-directions`) and H4 PFC bypass isolation
+   experiment queued automatically afterward.
+   Findings: `research/findings/2026-05-03-swr-multiseed-result.md`.
+   Auto-summary: `research/findings/2026-05-03-swr-multiseed-summary.md`.
 
-2. **Sharp-wave-ripple consolidation (Wilson-McNaughton 1994)**
-   — implementation ready. Replays recent (token, action) tuples
-   during sleep windows. Composes with both labeled-line and
-   distributed-pool architectures.
+2. **PFC bypass isolation (H4)** — runner shipped, eval queued.
+   `text_pfc_bypass_isolation.py` tests the upper bound of the
+   `language_input → motor_X` pathway in isolation (no cascade).
+   If isolation gives 80%+, cascade interference is the bottleneck;
+   if ~28%, the architecture itself caps W→A.
 
-Detailed roadmap: `docs/plans/2026-05-02-text-io-next-directions-biology-grounded.md`.
+3. **Distributed motor pool architecture (Pulvermüller G.20)**
+   — implemented. 8 motor sub-pools at 45° intervals with
+   cosine-tuned thal pathways and population vector decoding. Tested
+   2026-05-02 at n=1, didn't beat 28.5% baseline.
+
+Detailed roadmap:
+* `docs/plans/2026-05-03-autonomous-overnight-plan.md` (current)
+* `docs/plans/2026-05-02-text-io-next-directions-biology-grounded.md`
 
 ---
 
