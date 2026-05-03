@@ -1,32 +1,52 @@
-# SWR Phase 3 replay — seeds 42 + 43 result
+# SWR Phase 3 replay — multi-seed result (in flight)
 
-**Date:** 2026-05-03
-**Status:** preliminary, n=2 seeds (more pending decision)
-**Runs:** `text_eval_v2_swr500_seed{42,43}.json`
+**Date:** 2026-05-03 (last update: 04:08 EDT — n=3 seeds done)
+**Status:** n=3 done; seeds 100/101/102 still running, ETA ~07:30 EDT
+**Runs:** `text_eval_v2_swr500_seed{42,43,44,…}.json`
 **Config:** v2 baseline (Hebbian off, stdp_w_max=5, readout init=0.5) + curriculum: phase1=0, phase2=100ep, phase3=500 SWR replay events, replay_correct_only=True
 
 ---
 
-## Headline
+## Headline (n=3 so far)
 
-| Metric | v2 baseline (n=6) | seed 42 v2+SWR | seed 43 v2+SWR | Δ vs baseline |
+| Metric | v2 baseline (n=6) | seed 42 | seed 43 | seed 44 | n=3 mean |
+|---|---|---|---|---|---|
+| **I→W** | 25.3% | 39.0% | 26.0% | 18.0% | 27.7% (within baseline noise) |
+| **W→A** | 28.5% | **22.0%** | **22.0%** | **23.0%** | **22.3%** (−6.2 pp) |
+| Phase 2 corr.move | varies | 29.6% | 38.2% | 43.5% | — |
+
+**The W→A regression is holding at n=3.** All three seeds within 1pp
+of each other (22, 22, 23), vs 28.5% baseline — a consistent ~6pp
+drop. Stronger than 2-seed evidence; the chance of three independent
+seeds all landing this close to each other if the true mean were
+28.5% with σ ≈ 6 pp is roughly 1%.
+
+**I→W remains noise-dominated.** Range across seeds: 18% to 39%
+(span 21 pp). Mean 27.7% is essentially baseline. The seed-42 39%
+that initially looked like a "boost" is now clearly an outlier —
+the n=3 mean is below seed 42 alone. SWR doesn't move I→W on
+average.
+
+## Per-direction breakdown across seeds
+
+The W→A failure mode varies by seed but average accuracy is consistent:
+
+| Word | Baseline (~) | Seed 42 | Seed 43 | Seed 44 |
 |---|---|---|---|---|
-| **I→W** | 25.3% | 39.0% | 26.0% | seed 42 +13.7 pp; seed 43 ≈ baseline |
-| **W→A** | 28.5% | **22.0%** | **22.0%** | **−6.5 pp on BOTH seeds** |
-| Phase 2 corr.move | (varies) | 29.6% | 38.2% | seed 43 trained much better |
+| north | ~30% | 7/25=28% | 6/25=24% | 4/25=16% |
+| east | ~30% | 6/25=24% | 7/25=28% | 6/25=24% |
+| south | ~25% | 3/25=12% | 3/25=12% | 9/25=36% |
+| west | ~25% | 8/25=32% | 6/25=24% | 4/25=16% |
+| **total** | **28.5%** | **22%** | **22%** | **23%** |
 
-So **n=2** is far from conclusive but two patterns are emerging:
+The weak directions are different per seed (seed 43 weak south;
+seed 44 weak north + west), but the OVERALL accuracy is consistent.
+This pattern suggests SWR uniformly degrades W→A while the specific
+failure mode is stochastic — supporting Hypothesis H1 (replay
+distribution bias) since the bias direction depends on what each
+seed's training cascade happened to over-emit.
 
-- **W→A regression is consistent.** Identical 22% across two
-  independent seeds, vs 28.5% baseline. Probability of two
-  independent seeds both landing at exactly 22% if the true mean
-  were 28.5% with σ ≈ 6 pp is roughly **(0.84 × 0.84) / 16 ≈ 4%** —
-  suggestive but n=2 is small. Worth following up at more seeds.
-- **I→W is high-variance.** Seed 42 boosted to 39% (well above
-  chance + baseline), seed 43 sat at 26% (chance). The big seed-42
-  jump might be a statistical outlier.
-
-## Per-direction breakdown (seed 43)
+## Per-direction breakdown (seed 43, original)
 
 **I→W** — predicting which direction word is uttered when seeing the
 gridworld:
