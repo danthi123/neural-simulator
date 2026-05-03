@@ -197,3 +197,60 @@ def test_vocab_to_drive_pattern_different_tokens_differ():
     assert overlap < n_active // 2, (
         f"overlap={overlap} suggests too-similar drive patterns"
     )
+
+
+def test_vocab_to_drive_pattern_sparsity_005_orthogonal():
+    """At sparsity=0.05 (12 active per word at n=256), the four direction
+    word codes are nearly orthogonal — pairwise overlap ~0-1. Verifies the
+    architectural-pivot hypothesis that sparser codes give cleaner
+    word-to-motor discrimination.
+    """
+    from sim.text_embeddings import vocab_to_drive_pattern
+
+    words = ["north", "east", "south", "west"]
+    codes = {w: vocab_to_drive_pattern(w, n_neurons=256, sparsity=0.05) > 0
+             for w in words}
+    for w in words:
+        assert int(codes[w].sum()) == 13, (
+            f"{w} active count {int(codes[w].sum())} != 13 (sparsity=0.05, "
+            f"n=256: int(round(0.05 * 256)) = 13)"
+        )
+    max_pairwise_overlap = 0
+    for i, w1 in enumerate(words):
+        for w2 in words[i + 1:]:
+            overlap = int((codes[w1] & codes[w2]).sum())
+            max_pairwise_overlap = max(max_pairwise_overlap, overlap)
+    # Orthogonal-ish: at most 1 overlapping neuron between any two words
+    assert max_pairwise_overlap <= 1, (
+        f"max pairwise overlap {max_pairwise_overlap} > 1; codes are not "
+        "near-orthogonal at sparsity=0.05"
+    )
+
+
+def test_evaluate_word_to_action_accepts_token_sparsity():
+    """evaluate_word_to_action exposes token_sparsity parameter so eval
+    matches whatever sparsity training used. Smoke-checks the parameter
+    is in the signature; full behavior validated in research runs."""
+    import inspect
+    from research.runners.text_eval import evaluate_word_to_action
+
+    sig = inspect.signature(evaluate_word_to_action)
+    assert "token_sparsity" in sig.parameters, (
+        "evaluate_word_to_action must accept token_sparsity for "
+        "architectural sweep eval (sparsity=0.05, 0.10, etc.)"
+    )
+    # Default should be 0.1 (matches historical behavior)
+    assert sig.parameters["token_sparsity"].default == 0.1
+
+
+def test_run_curriculum_training_accepts_token_sparsity():
+    """run_curriculum_training must accept token_sparsity to wire it to
+    both training (Phase 2 navigation, Phase 3 SWR replay) AND eval."""
+    import inspect
+    from research.runners.text_train_curriculum import run_curriculum_training
+
+    sig = inspect.signature(run_curriculum_training)
+    assert "token_sparsity" in sig.parameters, (
+        "run_curriculum_training must accept token_sparsity"
+    )
+    assert sig.parameters["token_sparsity"].default == 0.1

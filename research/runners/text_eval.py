@@ -199,6 +199,7 @@ def evaluate_word_to_action(
     interleave_words: bool = True,
     n_reset_steps: int = 100,
     seed: int = 1,
+    token_sparsity: float = 0.1,
 ):
     """Drive language_input with each direction word; observe which
     motor_X has the highest firing rate. Did the agent learn the
@@ -222,6 +223,9 @@ def evaluate_word_to_action(
           (= 50ms at dt=0.5) matches training. Larger values (e.g. 400 =
           200ms = 2x NMDA tau) produce cleaner baselines but slow eval.
         seed: shuffle seed when interleave_words=True. Deterministic.
+        token_sparsity: fraction of language_input neurons activated per
+          word (default 0.1 matches v2 baseline). Use 0.05 for orthogonal
+          (~zero overlap) word codes — must match training-time sparsity.
     """
     import cupy as cp
     import math
@@ -359,7 +363,7 @@ def evaluate_word_to_action(
         for _ in range(n_reset_steps):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
-        bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=0.1)
+        bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=token_sparsity)
 
         if distributed_motor_pop:
             drive_subpool = {sfx: 0 for _, sfx in SUBPOOL_THETA}

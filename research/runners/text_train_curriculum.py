@@ -169,6 +169,8 @@ def _run_navigation_loop(
     phase_label: str = "",
     # Phase 2 only — record waking experiences for Phase 3 SWR replay
     experience_buffer: list | None = None,
+    # Sparse-coding sparsity for token drive (0.1 default; 0.05 = orthogonal)
+    token_sparsity: float = 0.1,
     verbose: bool = True,
 ):
     """Inner training loop. Same as run_embodied_text_training but
@@ -238,7 +240,7 @@ def _run_navigation_loop(
                     target_word,
                     n_neurons=n_lang_input,
                     drive_max_pA=lang_input_drive_pA,
-                    sparsity=0.1,
+                    sparsity=token_sparsity,
                 )
                 bridge.cp_external_input_current[lang_input_idx] = cp.asarray(
                     in_drive, dtype=cp.float32,
@@ -247,7 +249,7 @@ def _run_navigation_loop(
                     target_word,
                     n_neurons=n_lang_output,
                     drive_max_pA=lang_output_coactive_pA,
-                    sparsity=0.1,
+                    sparsity=token_sparsity,
                 )
                 bridge.cp_external_input_current[lang_output_idx] = cp.asarray(
                     out_drive, dtype=cp.float32,
@@ -319,6 +321,7 @@ def _run_swr_replay_phase(
     motor_replay_drive_pA: float = 50.0,
     only_correct_experiences: bool = True,
     balanced_directions: bool = False,
+    token_sparsity: float = 0.1,
     verbose: bool = True,
 ):
     """Phase 3: SWR-style consolidation replay.
@@ -484,14 +487,14 @@ def _run_swr_replay_phase(
         # Drive language_input + language_output (replay the waking pattern)
         in_drive = vocab_to_drive_pattern(
             token, n_neurons=n_lang_input,
-            drive_max_pA=lang_input_drive_pA, sparsity=0.1,
+            drive_max_pA=lang_input_drive_pA, sparsity=token_sparsity,
         )
         bridge.cp_external_input_current[lang_input_idx] = cp.asarray(
             in_drive, dtype=cp.float32,
         )
         out_drive = vocab_to_drive_pattern(
             token, n_neurons=n_lang_output,
-            drive_max_pA=lang_output_coactive_pA, sparsity=0.1,
+            drive_max_pA=lang_output_coactive_pA, sparsity=token_sparsity,
         )
         bridge.cp_external_input_current[lang_output_idx] = cp.asarray(
             out_drive, dtype=cp.float32,
@@ -563,6 +566,8 @@ def run_curriculum_training(
     # Distributed motor pool option
     enable_distributed_motor_pop: bool = False,
     n_motor_pop_per_subpool: int = 5,
+    # Sparse-coding sparsity for token drive (0.1 default; 0.05 = orthogonal)
+    token_sparsity: float = 0.1,
     save_phase1_checkpoint: bool = True,
     verbose: bool = True,
 ):
@@ -717,6 +722,7 @@ def run_curriculum_training(
         lang_output_coactive_pA=lang_output_coactive_pA,
         experience_buffer=experience_buffer,
         phase_label="P2",
+        token_sparsity=token_sparsity,
         verbose=verbose,
     )
 
@@ -780,6 +786,7 @@ def run_curriculum_training(
             lang_output_coactive_pA=lang_output_coactive_pA,
             only_correct_experiences=phase3_only_correct,
             balanced_directions=phase3_balanced_directions,
+            token_sparsity=token_sparsity,
             verbose=verbose,
         )
         p3_elapsed = time.time() - t_phase3_start
@@ -851,6 +858,12 @@ def main():
                     "instead of 4 labeled motor_X pools")
     ap.add_argument("--n-motor-pop-per-subpool", type=int, default=5,
                     help="neurons per sub-pool (default 5; 8x5=40)")
+    ap.add_argument("--token-sparsity", type=float, default=0.1,
+                    help="fraction of language_input neurons activated per "
+                    "word (default 0.1, ~26 active at n=256). Try 0.05 for "
+                    "near-orthogonal codes (12-13 active at n=256, "
+                    "pairwise overlap ~0). Eval and training use this same "
+                    "value to stay consistent.")
     ap.add_argument("--no-save-checkpoint", dest="save_checkpoint",
                     action="store_false")
     ap.set_defaults(save_checkpoint=True)
@@ -886,6 +899,7 @@ def main():
         text_n_output_neurons=args.text_n_output_neurons,
         enable_distributed_motor_pop=args.enable_distributed_motor_pop,
         n_motor_pop_per_subpool=args.n_motor_pop_per_subpool,
+        token_sparsity=args.token_sparsity,
         save_phase1_checkpoint=args.save_checkpoint,
         verbose=True,
     )
@@ -905,10 +919,12 @@ def main():
     print(f"  Confusion: {iw_result['confusion_matrix']}", flush=True)
 
     print("\n" + "=" * 60)
-    print(f"EVAL: word -> action ({args.n_eval_word_action} per word)")
+    print(f"EVAL: word -> action ({args.n_eval_word_action} per word, "
+          f"token_sparsity={args.token_sparsity})")
     print("=" * 60, flush=True)
     wa_result = evaluate_word_to_action(
         bridge, n_trials_per_word=args.n_eval_word_action,
+        token_sparsity=args.token_sparsity,
     )
     print(f"\n  Accuracy: {wa_result['correct']}/{wa_result['n_trials']} "
           f"= {wa_result['accuracy']:.1%}")
@@ -933,6 +949,7 @@ def main():
                 "n_motor_per_action": args.n_motor_per_action,
                 "text_n_input_neurons": args.text_n_input_neurons,
                 "text_n_output_neurons": args.text_n_output_neurons,
+                "token_sparsity": args.token_sparsity,
             },
         }
         Path(args.out_stats).parent.mkdir(parents=True, exist_ok=True)

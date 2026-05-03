@@ -70,6 +70,7 @@ def run_pfc_bypass_isolation(
     text_n_output_neurons: int = 256,
     enable_distributed_motor_pop: bool = False,
     n_motor_pop_per_subpool: int = 5,
+    token_sparsity: float = 0.1,
     verbose: bool = True,
 ):
     """Run the H4 PFC bypass isolation experiment.
@@ -193,6 +194,7 @@ def run_pfc_bypass_isolation(
         motor_replay_drive_pA=motor_replay_drive_pA,
         only_correct_experiences=True,
         balanced_directions=False,  # buffer is already balanced by construction
+        token_sparsity=token_sparsity,
         verbose=verbose,
     )
     elapsed = time.time() - t_start
@@ -235,6 +237,9 @@ def main():
     ap.add_argument("--enable-distributed-motor-pop", action="store_true",
                     default=False)
     ap.add_argument("--n-motor-pop-per-subpool", type=int, default=5)
+    ap.add_argument("--token-sparsity", type=float, default=0.1,
+                    help="fraction of language_input neurons activated per "
+                    "word (default 0.1). Try 0.05 for orthogonal codes.")
     args = ap.parse_args()
 
     bridge, train_stats = run_pfc_bypass_isolation(
@@ -250,6 +255,7 @@ def main():
         text_n_output_neurons=args.text_n_output_neurons,
         enable_distributed_motor_pop=args.enable_distributed_motor_pop,
         n_motor_pop_per_subpool=args.n_motor_pop_per_subpool,
+        token_sparsity=args.token_sparsity,
         verbose=True,
     )
 
@@ -268,10 +274,12 @@ def main():
     print(f"  Confusion: {iw_result['confusion_matrix']}", flush=True)
 
     print("\n" + "=" * 60)
-    print(f"EVAL: word -> action ({args.n_eval_word_action} per word)")
+    print(f"EVAL: word -> action ({args.n_eval_word_action} per word, "
+          f"token_sparsity={args.token_sparsity})")
     print("=" * 60, flush=True)
     wa_result = evaluate_word_to_action(
         bridge, n_trials_per_word=args.n_eval_word_action,
+        token_sparsity=args.token_sparsity,
     )
     print(f"\n  Accuracy: {wa_result['correct']}/{wa_result['n_trials']} "
           f"= {wa_result['accuracy']:.1%}")
@@ -295,6 +303,7 @@ def main():
                 "n_motor_per_action": args.n_motor_per_action,
                 "text_n_input_neurons": args.text_n_input_neurons,
                 "text_n_output_neurons": args.text_n_output_neurons,
+                "token_sparsity": args.token_sparsity,
             },
         }
         from pathlib import Path

@@ -1,0 +1,11314 @@
+{
+  "name": "expert_8x8_n200",
+  "grid_size": 8,
+  "n_trajectories": 200,
+  "max_steps_per_trajectory": 30,
+  "seed": 42,
+  "policy": "manhattan_greedy",
+  "trajectories": [
+    {
+      "trajectory_id": 0,
+      "goal": [
+        4,
+        3
+      ],
+      "start": [
+        1,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 1,
+      "goal": [
+        3,
+        3
+      ],
+      "start": [
+        0,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 2,
+      "goal": [
+        2,
+        6
+      ],
+      "start": [
+        4,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 3,
+      "goal": [
+        5,
+        4
+      ],
+      "start": [
+        1,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 4,
+      "goal": [
+        3,
+        1
+      ],
+      "start": [
+        4,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 5,
+      "goal": [
+        4,
+        7
+      ],
+      "start": [
+        1,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 6,
+      "goal": [
+        1,
+        2
+      ],
+      "start": [
+        3,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 7,
+      "goal": [
+        5,
+        0
+      ],
+      "start": [
+        4,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 8,
+      "goal": [
+        3,
+        5
+      ],
+      "start": [
+        4,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 9,
+      "goal": [
+        3,
+        4
+      ],
+      "start": [
+        4,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 10,
+      "goal": [
+        7,
+        1
+      ],
+      "start": [
+        3,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 11,
+      "goal": [
+        6,
+        7
+      ],
+      "start": [
+        1,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 12,
+      "goal": [
+        2,
+        7
+      ],
+      "start": [
+        4,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 13,
+      "goal": [
+        3,
+        2
+      ],
+      "start": [
+        1,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 14,
+      "goal": [
+        1,
+        5
+      ],
+      "start": [
+        7,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 15,
+      "goal": [
+        6,
+        3
+      ],
+      "start": [
+        2,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 16,
+      "goal": [
+        3,
+        3
+      ],
+      "start": [
+        7,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 17,
+      "goal": [
+        3,
+        1
+      ],
+      "start": [
+        1,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 18,
+      "goal": [
+        7,
+        3
+      ],
+      "start": [
+        3,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 19,
+      "goal": [
+        1,
+        6
+      ],
+      "start": [
+        3,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 20,
+      "goal": [
+        1,
+        3
+      ],
+      "start": [
+        6,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 21,
+      "goal": [
+        1,
+        7
+      ],
+      "start": [
+        7,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 22,
+      "goal": [
+        2,
+        6
+      ],
+      "start": [
+        6,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 23,
+      "goal": [
+        0,
+        5
+      ],
+      "start": [
+        3,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 24,
+      "goal": [
+        6,
+        1
+      ],
+      "start": [
+        1,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 25,
+      "goal": [
+        4,
+        6
+      ],
+      "start": [
+        5,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 26,
+      "goal": [
+        7,
+        1
+      ],
+      "start": [
+        1,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 27,
+      "goal": [
+        2,
+        7
+      ],
+      "start": [
+        5,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 28,
+      "goal": [
+        2,
+        4
+      ],
+      "start": [
+        1,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 29,
+      "goal": [
+        4,
+        0
+      ],
+      "start": [
+        4,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 30,
+      "goal": [
+        7,
+        6
+      ],
+      "start": [
+        4,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 31,
+      "goal": [
+        0,
+        4
+      ],
+      "start": [
+        6,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 32,
+      "goal": [
+        2,
+        2
+      ],
+      "start": [
+        2,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 33,
+      "goal": [
+        5,
+        6
+      ],
+      "start": [
+        0,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 34,
+      "goal": [
+        4,
+        3
+      ],
+      "start": [
+        7,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 35,
+      "goal": [
+        4,
+        5
+      ],
+      "start": [
+        4,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 36,
+      "goal": [
+        4,
+        0
+      ],
+      "start": [
+        4,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 37,
+      "goal": [
+        6,
+        1
+      ],
+      "start": [
+        5,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 38,
+      "goal": [
+        5,
+        6
+      ],
+      "start": [
+        0,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 39,
+      "goal": [
+        2,
+        3
+      ],
+      "start": [
+        6,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 40,
+      "goal": [
+        4,
+        3
+      ],
+      "start": [
+        0,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 41,
+      "goal": [
+        2,
+        1
+      ],
+      "start": [
+        3,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 42,
+      "goal": [
+        0,
+        3
+      ],
+      "start": [
+        2,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 43,
+      "goal": [
+        6,
+        3
+      ],
+      "start": [
+        6,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 44,
+      "goal": [
+        7,
+        0
+      ],
+      "start": [
+        3,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 45,
+      "goal": [
+        7,
+        2
+      ],
+      "start": [
+        7,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 46,
+      "goal": [
+        3,
+        4
+      ],
+      "start": [
+        4,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 47,
+      "goal": [
+        5,
+        1
+      ],
+      "start": [
+        4,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 48,
+      "goal": [
+        6,
+        6
+      ],
+      "start": [
+        3,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 49,
+      "goal": [
+        0,
+        5
+      ],
+      "start": [
+        6,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 50,
+      "goal": [
+        6,
+        5
+      ],
+      "start": [
+        7,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 51,
+      "goal": [
+        6,
+        2
+      ],
+      "start": [
+        0,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 52,
+      "goal": [
+        5,
+        6
+      ],
+      "start": [
+        7,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 53,
+      "goal": [
+        0,
+        0
+      ],
+      "start": [
+        1,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 54,
+      "goal": [
+        2,
+        7
+      ],
+      "start": [
+        2,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 55,
+      "goal": [
+        1,
+        2
+      ],
+      "start": [
+        5,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 56,
+      "goal": [
+        3,
+        1
+      ],
+      "start": [
+        6,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 57,
+      "goal": [
+        0,
+        6
+      ],
+      "start": [
+        1,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 58,
+      "goal": [
+        7,
+        2
+      ],
+      "start": [
+        6,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 59,
+      "goal": [
+        4,
+        5
+      ],
+      "start": [
+        7,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 60,
+      "goal": [
+        6,
+        5
+      ],
+      "start": [
+        3,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 61,
+      "goal": [
+        4,
+        5
+      ],
+      "start": [
+        3,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 62,
+      "goal": [
+        3,
+        1
+      ],
+      "start": [
+        4,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 63,
+      "goal": [
+        7,
+        7
+      ],
+      "start": [
+        7,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 64,
+      "goal": [
+        3,
+        4
+      ],
+      "start": [
+        3,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 65,
+      "goal": [
+        5,
+        5
+      ],
+      "start": [
+        5,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 66,
+      "goal": [
+        4,
+        3
+      ],
+      "start": [
+        4,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 67,
+      "goal": [
+        1,
+        2
+      ],
+      "start": [
+        3,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 68,
+      "goal": [
+        4,
+        3
+      ],
+      "start": [
+        1,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 69,
+      "goal": [
+        4,
+        0
+      ],
+      "start": [
+        0,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 70,
+      "goal": [
+        7,
+        7
+      ],
+      "start": [
+        4,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 71,
+      "goal": [
+        1,
+        1
+      ],
+      "start": [
+        4,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 72,
+      "goal": [
+        3,
+        6
+      ],
+      "start": [
+        1,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 73,
+      "goal": [
+        4,
+        0
+      ],
+      "start": [
+        4,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 74,
+      "goal": [
+        1,
+        2
+      ],
+      "start": [
+        3,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 75,
+      "goal": [
+        4,
+        0
+      ],
+      "start": [
+        7,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 76,
+      "goal": [
+        4,
+        2
+      ],
+      "start": [
+        3,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 77,
+      "goal": [
+        4,
+        4
+      ],
+      "start": [
+        0,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 78,
+      "goal": [
+        1,
+        0
+      ],
+      "start": [
+        7,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 79,
+      "goal": [
+        7,
+        1
+      ],
+      "start": [
+        2,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 80,
+      "goal": [
+        0,
+        7
+      ],
+      "start": [
+        4,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 81,
+      "goal": [
+        7,
+        6
+      ],
+      "start": [
+        6,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 82,
+      "goal": [
+        4,
+        7
+      ],
+      "start": [
+        4,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 83,
+      "goal": [
+        6,
+        1
+      ],
+      "start": [
+        4,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 84,
+      "goal": [
+        7,
+        4
+      ],
+      "start": [
+        1,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 85,
+      "goal": [
+        1,
+        4
+      ],
+      "start": [
+        3,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 86,
+      "goal": [
+        7,
+        2
+      ],
+      "start": [
+        4,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 87,
+      "goal": [
+        3,
+        3
+      ],
+      "start": [
+        7,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 88,
+      "goal": [
+        2,
+        7
+      ],
+      "start": [
+        6,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 89,
+      "goal": [
+        0,
+        2
+      ],
+      "start": [
+        1,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 90,
+      "goal": [
+        5,
+        6
+      ],
+      "start": [
+        6,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 91,
+      "goal": [
+        6,
+        1
+      ],
+      "start": [
+        3,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 92,
+      "goal": [
+        0,
+        5
+      ],
+      "start": [
+        4,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 93,
+      "goal": [
+        1,
+        6
+      ],
+      "start": [
+        2,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 94,
+      "goal": [
+        4,
+        0
+      ],
+      "start": [
+        4,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 95,
+      "goal": [
+        7,
+        4
+      ],
+      "start": [
+        6,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 96,
+      "goal": [
+        1,
+        3
+      ],
+      "start": [
+        6,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 97,
+      "goal": [
+        3,
+        5
+      ],
+      "start": [
+        7,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 98,
+      "goal": [
+        7,
+        0
+      ],
+      "start": [
+        0,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 99,
+      "goal": [
+        7,
+        4
+      ],
+      "start": [
+        2,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 100,
+      "goal": [
+        5,
+        1
+      ],
+      "start": [
+        3,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 101,
+      "goal": [
+        1,
+        3
+      ],
+      "start": [
+        6,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 102,
+      "goal": [
+        2,
+        0
+      ],
+      "start": [
+        6,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 103,
+      "goal": [
+        6,
+        7
+      ],
+      "start": [
+        3,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 104,
+      "goal": [
+        3,
+        7
+      ],
+      "start": [
+        0,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 105,
+      "goal": [
+        6,
+        4
+      ],
+      "start": [
+        5,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 106,
+      "goal": [
+        5,
+        3
+      ],
+      "start": [
+        0,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 107,
+      "goal": [
+        2,
+        2
+      ],
+      "start": [
+        0,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 108,
+      "goal": [
+        5,
+        3
+      ],
+      "start": [
+        2,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 109,
+      "goal": [
+        1,
+        7
+      ],
+      "start": [
+        6,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 110,
+      "goal": [
+        1,
+        7
+      ],
+      "start": [
+        6,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 111,
+      "goal": [
+        5,
+        6
+      ],
+      "start": [
+        2,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 112,
+      "goal": [
+        7,
+        3
+      ],
+      "start": [
+        3,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 113,
+      "goal": [
+        4,
+        5
+      ],
+      "start": [
+        6,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 114,
+      "goal": [
+        5,
+        2
+      ],
+      "start": [
+        6,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 115,
+      "goal": [
+        5,
+        6
+      ],
+      "start": [
+        1,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 116,
+      "goal": [
+        2,
+        7
+      ],
+      "start": [
+        1,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 117,
+      "goal": [
+        6,
+        0
+      ],
+      "start": [
+        4,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 118,
+      "goal": [
+        0,
+        2
+      ],
+      "start": [
+        5,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 119,
+      "goal": [
+        5,
+        2
+      ],
+      "start": [
+        6,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 120,
+      "goal": [
+        1,
+        4
+      ],
+      "start": [
+        2,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 121,
+      "goal": [
+        1,
+        5
+      ],
+      "start": [
+        4,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 122,
+      "goal": [
+        6,
+        0
+      ],
+      "start": [
+        0,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 123,
+      "goal": [
+        6,
+        2
+      ],
+      "start": [
+        0,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 124,
+      "goal": [
+        6,
+        6
+      ],
+      "start": [
+        5,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 125,
+      "goal": [
+        0,
+        5
+      ],
+      "start": [
+        1,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 126,
+      "goal": [
+        6,
+        1
+      ],
+      "start": [
+        5,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 127,
+      "goal": [
+        1,
+        6
+      ],
+      "start": [
+        6,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 128,
+      "goal": [
+        3,
+        5
+      ],
+      "start": [
+        1,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 129,
+      "goal": [
+        2,
+        1
+      ],
+      "start": [
+        3,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 130,
+      "goal": [
+        5,
+        5
+      ],
+      "start": [
+        7,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 131,
+      "goal": [
+        4,
+        0
+      ],
+      "start": [
+        7,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 132,
+      "goal": [
+        1,
+        1
+      ],
+      "start": [
+        5,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 133,
+      "goal": [
+        7,
+        1
+      ],
+      "start": [
+        2,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 134,
+      "goal": [
+        5,
+        5
+      ],
+      "start": [
+        7,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 135,
+      "goal": [
+        4,
+        2
+      ],
+      "start": [
+        6,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 136,
+      "goal": [
+        2,
+        1
+      ],
+      "start": [
+        4,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 137,
+      "goal": [
+        4,
+        2
+      ],
+      "start": [
+        0,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 138,
+      "goal": [
+        1,
+        0
+      ],
+      "start": [
+        1,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 139,
+      "goal": [
+        2,
+        7
+      ],
+      "start": [
+        2,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 140,
+      "goal": [
+        3,
+        3
+      ],
+      "start": [
+        4,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 141,
+      "goal": [
+        6,
+        6
+      ],
+      "start": [
+        7,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 142,
+      "goal": [
+        7,
+        5
+      ],
+      "start": [
+        4,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 143,
+      "goal": [
+        3,
+        7
+      ],
+      "start": [
+        6,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 144,
+      "goal": [
+        0,
+        5
+      ],
+      "start": [
+        5,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 145,
+      "goal": [
+        7,
+        0
+      ],
+      "start": [
+        2,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 146,
+      "goal": [
+        7,
+        1
+      ],
+      "start": [
+        3,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 147,
+      "goal": [
+        2,
+        1
+      ],
+      "start": [
+        3,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 148,
+      "goal": [
+        4,
+        0
+      ],
+      "start": [
+        6,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 149,
+      "goal": [
+        5,
+        2
+      ],
+      "start": [
+        0,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 150,
+      "goal": [
+        6,
+        7
+      ],
+      "start": [
+        5,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 151,
+      "goal": [
+        5,
+        4
+      ],
+      "start": [
+        5,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 152,
+      "goal": [
+        5,
+        2
+      ],
+      "start": [
+        7,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 153,
+      "goal": [
+        2,
+        4
+      ],
+      "start": [
+        1,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 154,
+      "goal": [
+        4,
+        7
+      ],
+      "start": [
+        5,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 155,
+      "goal": [
+        5,
+        6
+      ],
+      "start": [
+        7,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 156,
+      "goal": [
+        2,
+        1
+      ],
+      "start": [
+        7,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 157,
+      "goal": [
+        5,
+        7
+      ],
+      "start": [
+        7,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            7
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 158,
+      "goal": [
+        3,
+        1
+      ],
+      "start": [
+        5,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 159,
+      "goal": [
+        7,
+        3
+      ],
+      "start": [
+        4,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 160,
+      "goal": [
+        7,
+        2
+      ],
+      "start": [
+        2,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 161,
+      "goal": [
+        2,
+        5
+      ],
+      "start": [
+        4,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 162,
+      "goal": [
+        5,
+        5
+      ],
+      "start": [
+        7,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 163,
+      "goal": [
+        1,
+        2
+      ],
+      "start": [
+        6,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 164,
+      "goal": [
+        2,
+        4
+      ],
+      "start": [
+        0,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 165,
+      "goal": [
+        4,
+        3
+      ],
+      "start": [
+        4,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 166,
+      "goal": [
+        2,
+        2
+      ],
+      "start": [
+        4,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 167,
+      "goal": [
+        0,
+        4
+      ],
+      "start": [
+        0,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 168,
+      "goal": [
+        4,
+        7
+      ],
+      "start": [
+        7,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 169,
+      "goal": [
+        6,
+        7
+      ],
+      "start": [
+        2,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 170,
+      "goal": [
+        5,
+        6
+      ],
+      "start": [
+        5,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 171,
+      "goal": [
+        5,
+        3
+      ],
+      "start": [
+        5,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 172,
+      "goal": [
+        3,
+        2
+      ],
+      "start": [
+        4,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 173,
+      "goal": [
+        5,
+        3
+      ],
+      "start": [
+        2,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 174,
+      "goal": [
+        1,
+        6
+      ],
+      "start": [
+        7,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            0
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 175,
+      "goal": [
+        4,
+        5
+      ],
+      "start": [
+        6,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 176,
+      "goal": [
+        4,
+        1
+      ],
+      "start": [
+        3,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 177,
+      "goal": [
+        5,
+        5
+      ],
+      "start": [
+        1,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 178,
+      "goal": [
+        2,
+        5
+      ],
+      "start": [
+        0,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            0
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 179,
+      "goal": [
+        5,
+        7
+      ],
+      "start": [
+        6,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 180,
+      "goal": [
+        6,
+        4
+      ],
+      "start": [
+        5,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 181,
+      "goal": [
+        2,
+        6
+      ],
+      "start": [
+        0,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 182,
+      "goal": [
+        0,
+        7
+      ],
+      "start": [
+        1,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 183,
+      "goal": [
+        0,
+        2
+      ],
+      "start": [
+        6,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 184,
+      "goal": [
+        4,
+        4
+      ],
+      "start": [
+        3,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            4
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 185,
+      "goal": [
+        7,
+        5
+      ],
+      "start": [
+        4,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 186,
+      "goal": [
+        5,
+        2
+      ],
+      "start": [
+        6,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 187,
+      "goal": [
+        7,
+        3
+      ],
+      "start": [
+        7,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 188,
+      "goal": [
+        2,
+        1
+      ],
+      "start": [
+        4,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 189,
+      "goal": [
+        6,
+        5
+      ],
+      "start": [
+        0,
+        1
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 190,
+      "goal": [
+        0,
+        1
+      ],
+      "start": [
+        5,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            5,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 191,
+      "goal": [
+        0,
+        0
+      ],
+      "start": [
+        2,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            0,
+            1
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 192,
+      "goal": [
+        4,
+        3
+      ],
+      "start": [
+        2,
+        7
+      ],
+      "steps": [
+        {
+          "state": [
+            2,
+            7
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            7
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 193,
+      "goal": [
+        4,
+        3
+      ],
+      "start": [
+        0,
+        5
+      ],
+      "steps": [
+        {
+          "state": [
+            0,
+            5
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 1,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 194,
+      "goal": [
+        2,
+        7
+      ],
+      "start": [
+        1,
+        2
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            3
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            4
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            5
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            6
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 195,
+      "goal": [
+        5,
+        4
+      ],
+      "start": [
+        7,
+        4
+      ],
+      "steps": [
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            4
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 196,
+      "goal": [
+        0,
+        1
+      ],
+      "start": [
+        5,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            2
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 197,
+      "goal": [
+        3,
+        2
+      ],
+      "start": [
+        5,
+        3
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            3
+          ],
+          "action": 3,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            3
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            4,
+            2
+          ],
+          "action": 3,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 198,
+      "goal": [
+        7,
+        3
+      ],
+      "start": [
+        5,
+        6
+      ],
+      "steps": [
+        {
+          "state": [
+            5,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            6,
+            6
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            6
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            5
+          ],
+          "action": 2,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            7,
+            4
+          ],
+          "action": 2,
+          "reward": 1.0
+        }
+      ]
+    },
+    {
+      "trajectory_id": 199,
+      "goal": [
+        3,
+        2
+      ],
+      "start": [
+        1,
+        0
+      ],
+      "steps": [
+        {
+          "state": [
+            1,
+            0
+          ],
+          "action": 0,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            1,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            2,
+            1
+          ],
+          "action": 1,
+          "reward": 1.0
+        },
+        {
+          "state": [
+            3,
+            1
+          ],
+          "action": 0,
+          "reward": 1.0
+        }
+      ]
+    }
+  ]
+}
