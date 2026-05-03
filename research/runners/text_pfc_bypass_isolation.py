@@ -98,6 +98,11 @@ def run_pfc_bypass_isolation(
         print(f"  Skipping Phase 1 + Phase 2 (no cascade training)")
         print("=" * 60, flush=True)
 
+    # Match the curriculum runner's bridge setup EXACTLY so this is a
+    # like-for-like architecture comparison. Critical: the v2 readout
+    # pathway init weights (text_cortex_to_output_weight=0.5 + jitter)
+    # are part of what makes text I/O work at all — without them STDP
+    # can't grow the readout from 0.
     regions, pathways = build_bg_brain_regions(
         enable_striatal_fsis=True,
         enable_cluster_a_closed_loop=True,
@@ -109,44 +114,44 @@ def run_pfc_bypass_isolation(
         n_motor_per_action=n_motor_per_action,
         text_n_input_neurons=text_n_input_neurons,
         text_n_output_neurons=text_n_output_neurons,
+        text_cortex_to_output_weight=0.5,
+        text_cortex_to_output_jitter=0.3,
+        text_it_to_output_weight=0.5,
+        text_it_to_output_jitter=0.3,
         enable_distributed_motor_pop=enable_distributed_motor_pop,
         n_motor_pop_per_subpool=n_motor_pop_per_subpool,
     )
 
     cfg = CoreSimConfig()
-    cfg.simulation_dt = 0.5
-    cfg.heterogeneity_seed = seed
-    cfg.ou_seed = seed
     cfg.enable_brain_region_framework = True
-    cfg.brain_regions = regions
-    cfg.region_pathways = pathways
-    cfg.enable_msn_lateral_inhibition = True
-    cfg.enable_d1_d2_asymmetry = True
-    cfg.enable_striatal_pv_fsi = True
+    cfg.brain_regions = list(regions)
+    cfg.region_pathways = list(pathways)
+    cfg.dt_ms = 0.5
+    cfg.seed = seed
+    cfg.enable_nmda = True
+    cfg.nmda_ratio = 0.5
+    cfg.enable_structural_plasticity = False
+    cfg.enable_per_type_stp = False
     # v2 critical fixes (2026-05-02)
     cfg.enable_hebbian_learning = False
     cfg.stdp_w_max = 5.0
 
-    runtime_state = RuntimeState()
-    runtime_state.actual_seed_used = seed
-
     bridge = SimulationBridge(
         core_config=cfg,
-        runtime_state=runtime_state,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
         gpu_config=GPUConfig(),
-        visualization_config=VisualizationConfig(),
     )
+    bridge.runtime_state.max_delay_steps = int(
+        cfg.max_synaptic_delay_ms / cfg.dt_ms
+    )
+    bridge._initialize_simulation_data(called_from_playback_init=False)
 
-    # Initialize neurons + connections (build_wiring_plan resolves region indices)
-    bridge.initialize_simulation()
-
-    # V1 Gabor weights (same as v2 baseline — just for parity, even though
-    # we don't drive retina here)
-    try:
-        apply_v1_gabor_weights(bridge)
-    except Exception as e:
-        if verbose:
-            print(f"[warn] V1 Gabor init failed: {e}", flush=True)
+    apply_v1_gabor_weights(
+        bridge,
+        n_orientations=8, n_frequencies=2, n_positions_per_dim=8,
+        retina_size=32, receptive_field_radius=4, weight_scale=10.0,
+    )
 
     # Force language gates open from the start
     _set_language_gates(bridge, 1.0, verbose=verbose)
