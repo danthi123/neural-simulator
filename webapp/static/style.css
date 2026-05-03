@@ -2326,3 +2326,42 @@ pre {
     gap: 6px;
   }
 }
+
+/* ───────────────────────────────────────────────────────────────────────
+   Findings tab — recent badge + reference section header (2026-05-03)
+   ─────────────────────────────────────────────────────────────────────── */
+.finding-recent-badge {
+  display: inline-block;
+  background: rgba(110, 231, 183, 0.18);
+  color: #6ee7b7;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 1px 5px;
+  border-radius: 3px;
+  vertical-align: 1px;
+}
+[data-theme="light"] .finding-recent-badge {
+  color: #047857;
+  background: rgba(5, 150, 105, 0.15);
+}
+.list-item.is-recent .name {
+  /* Subtle left-border accent for recent files */
+}
+.list-item.is-reference {
+  background: var(--bg-3);
+}
+.list-item.is-reference:hover {
+  background: var(--bg-2);
+}
+.findings-section-header {
+  padding: 8px 16px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-dim);
+  background: var(--bg-3);
+  border-top: 2px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}

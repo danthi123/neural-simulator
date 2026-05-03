@@ -791,13 +791,9 @@ function selectLiveRun(name) {
 
 async function pollLive() {
   try {
-    const [inflightRes, ] = await Promise.all([
-      fetch("/api/inflight").then((r) => r.json()),
-    ]);
+    const inflightRes = await fetch("/api/inflight").then((r) => r.json());
     const allRuns = (inflightRes.inflight || []).filter((r) => r.alive);
     liveRunsList = allRuns;
-
-    // Update the live-run picker UI (if present)
     refreshLiveRunPicker();
 
     if (!allRuns.length) {
@@ -807,8 +803,6 @@ async function pollLive() {
       return;
     }
 
-    // Default selection: first alive run if nothing is selected, OR if
-    // the previously-selected run no longer exists.
     if (!liveSelectedName || !allRuns.find((r) => r.name === liveSelectedName)) {
       liveSelectedName = allRuns[0].name;
       liveTrajectory = [];
@@ -816,22 +810,31 @@ async function pollLive() {
     }
 
     const r = allRuns.find((rr) => rr.name === liveSelectedName) || allRuns[0];
-    const p = r.progress || {};
 
-    // Append the latest known progress as a "synthetic step" to the
-    // trajectory. We don't have per-step trajectory data for these
-    // detached runs (they don't yet write step-by-step JSON), but we
-    // can build a coarse-grained timeline from progress markers so the
-    // scrubber works.
-    appendLiveStep(r, p);
+    // 2026-05-03 fix: rebuild the trajectory from the FULL log, not just
+    // from the single-most-recent progress entry. This gives the
+    // scrubber proper granularity — one trajectory sample per logged
+    // progress line (every 10 eps for embodied, every 100 events for
+    // SWR replay, every step for navigation).
+    if (r.log_file) {
+      try {
+        const logText = await fetch(`/api/runs/launch/log/${encodeURIComponent(r.log_file)}`)
+          .then((r2) => r2.ok ? r2.text() : "");
+        rebuildTrajectoryFromLog(logText, r);
+      } catch (logErr) {
+        appendLiveStep(r, r.progress || {});
+      }
+    } else {
+      appendLiveStep(r, r.progress || {});
+    }
 
-    // Render the latest step (if scrubber isn't manually held back)
-    if (!livePlaying || replayStep === liveTrajectory.length - 1) {
+    if (livePlaying) {
       replayStep = Math.max(0, liveTrajectory.length - 1);
       renderLiveStep(replayStep);
     }
     syncScrubberToLive();
-    // HUD label
+
+    const p = r.progress || {};
     const liveLabel = document.getElementById("brain3d-live-label");
     if (liveLabel) {
       let txt = `${r.name} · `;
@@ -845,11 +848,99 @@ async function pollLive() {
         txt += "(no progress markers yet)";
       }
       txt += ` · ${liveTrajectory.length} timeline samples`;
+      if (!livePlaying) txt += ` · ⏸ paused at sample ${replayStep}`;
       liveLabel.textContent = txt;
     }
-  } catch (e) {
-    /* ignore poll errors — keep showing last frame */
+  } catch (pollErr) {
+    /* ignore — keep showing last frame */
   }
+}
+
+// Re-parse the full log text to rebuild liveTrajectory. Cheap at 1Hz
+// polling: regex over 32KB of log = sub-millisecond. Uses matchAll()
+// to iterate matches.
+const _LOG_EP_RE     = /\[(?:P\d\s+)?ep\s+(\d+)\/(\d+)\]\s+correct_moves=(\d+)\/(\d+)=([\d.]+)%/g;
+const _LOG_SWR_RE    = /\[(?:P\d\s+)?[Ss][Ww][Rr](?:\s+ev)?\]?\s+(\d+)\/(\d+)/g;
+const _LOG_STEP_RE   = /step\s+(\d+)\/(\d+)\s+pos=\((-?\d+),(-?\d+)\)\s+goal=\((-?\d+),(-?\d+)\)(?:\s+action=([NESW?]))?(?:\s+reward=([-+]?[\d.]+))?/g;
+const _LOG_PHASE_RE  = /^={3,}\s*PHASE\s+(\d+):\s+(.+?)\s+(\d+)\s+(?:episodes|events)/gm;
+
+function rebuildTrajectoryFromLog(logText, run) {
+  const samples = [];
+
+  // First pass: collect phase headers so each progress sample gets
+  // tagged with the correct phase number.
+  const phases = [];
+  for (const m of logText.matchAll(_LOG_PHASE_RE)) {
+    phases.push({ pos: m.index, num: +m[1], label: m[2].trim(), total: +m[3] });
+  }
+  function phaseAt(pos) {
+    let cur = null;
+    for (const ph of phases) { if (ph.pos <= pos) cur = ph; else break; }
+    return cur;
+  }
+
+  // Embodied episode markers (Phase 2 of curriculum, or text_eval_embodied)
+  for (const m of logText.matchAll(_LOG_EP_RE)) {
+    const ph = phaseAt(m.index);
+    samples.push({
+      pos: m.index,
+      progress: {
+        kind: "embodied_episode",
+        episode: +m[1], episodes_total: +m[2],
+        correct_moves: +m[3], n_steps: +m[4], correct_pct: +m[5],
+        fraction: (+m[1]) / Math.max(1, +m[2]),
+        phase_num: ph?.num, phase_label: ph?.label,
+      },
+    });
+  }
+
+  // SWR replay markers
+  for (const m of logText.matchAll(_LOG_SWR_RE)) {
+    const ph = phaseAt(m.index);
+    samples.push({
+      pos: m.index,
+      progress: {
+        kind: "swr_replay",
+        ev: +m[1], ev_total: +m[2],
+        fraction: (+m[1]) / Math.max(1, +m[2]),
+        phase_num: ph?.num, phase_label: ph?.label,
+      },
+    });
+  }
+
+  // Per-step navigation markers (g11_bg_runner)
+  for (const m of logText.matchAll(_LOG_STEP_RE)) {
+    samples.push({
+      pos: m.index,
+      progress: {
+        kind: "step",
+        step: +m[1], total: +m[2],
+        pos: [+m[3], +m[4]], goal: [+m[5], +m[6]],
+        action: m[7] ? "NESW".indexOf(m[7]) : -1,
+        reward: m[8] ? +m[8] : 0,
+        fraction: (+m[1]) / Math.max(1, +m[2]),
+      },
+    });
+  }
+
+  samples.sort((a, b) => a.pos - b.pos);
+  const capped = samples.length > 5000 ? samples.slice(samples.length - 5000) : samples;
+  liveTrajectory = capped.map((s) => ({
+    ts: Date.now() / 1000,
+    name: run.name,
+    progress: s.progress,
+  }));
+}
+
+// 2026-05-03 — public hook to skip to the latest live trajectory sample
+// and re-engage auto-follow. Wired to the "Latest" button in the Brain
+// scrubber row.
+function liveJumpToLatest() {
+  if (!liveMode) return;
+  livePlaying = true;
+  replayStep = Math.max(0, liveTrajectory.length - 1);
+  renderLiveStep(replayStep);
+  syncScrubberToLive();
 }
 
 // Track whether the user is letting playback follow live or paused on
@@ -1009,6 +1100,7 @@ export function brain3dSetSpeed(s) { return setSpeed(s); }
 export function brain3dStartLive() { return startLiveMode(); }
 export function brain3dStopLive() { return stopLiveMode(); }
 export function brain3dSelectLiveRun(name) { return selectLiveRun(name); }
+export function brain3dJumpToLatest() { return liveJumpToLatest(); }
 export function brain3dFlyToPreset(name) { return flyCamera(name); }
 export function brain3dFitCamera() { return fitCameraToScene(); }
 export function brain3dSetPathwayKindVisible(kind, visible) {

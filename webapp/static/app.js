@@ -257,6 +257,73 @@ let _lastClickedRunIndex = -1; // for shift-click range selection
 // Backwards-compatibility alias for the openComparisonView code path.
 const compareSet = selectionSet;
 
+// ─────────────────────────────────────────────────────────────────────────
+// Browser notifications for run completion (2026-05-03)
+//
+// When a run that was previously alive transitions to alive=false, fire
+// a Notification (if permission granted) so the user gets a desktop
+// alert without having to keep the tab open.
+// ─────────────────────────────────────────────────────────────────────────
+const _previousLiveRunNames = new Set();
+let _notificationPermission = null;
+
+function initNotifications() {
+  if (!("Notification" in window)) {
+    _notificationPermission = "unsupported";
+    return;
+  }
+  _notificationPermission = Notification.permission;
+}
+
+function requestNotificationPermissionIfNeeded() {
+  if (_notificationPermission === "granted" ||
+      _notificationPermission === "denied" ||
+      _notificationPermission === "unsupported") return;
+  Notification.requestPermission().then((p) => {
+    _notificationPermission = p;
+    if (p === "granted") {
+      toast("Browser notifications enabled — you'll be alerted when runs finish.",
+        { kind: "success" });
+    }
+  });
+}
+
+function notifyRunCompleted(name, completed) {
+  if (_notificationPermission !== "granted") return;
+  try {
+    const title = completed ? `✓ Run completed: ${name}` : `■ Run stopped: ${name}`;
+    const body = completed
+      ? "Click to open in the dashboard."
+      : "The run terminated without completion.";
+    const n = new Notification(title, { body, tag: name });
+    n.onclick = () => {
+      window.focus();
+      const isText = name.startsWith("text_eval_") || name.startsWith("text_io_");
+      const fullName = name + (name.endsWith(".json") ? "" : ".json");
+      openRunInViewer(fullName, isText ? "language" : "world");
+      n.close();
+    };
+  } catch (e) {
+    toast(`Run finished: ${name}`, { kind: "success" });
+  }
+}
+
+function checkForCompletedRuns(inflightList) {
+  const currentAliveNames = new Set();
+  for (const r of inflightList) {
+    if (r.alive) currentAliveNames.add(r.name);
+  }
+  for (const prev of _previousLiveRunNames) {
+    if (!currentAliveNames.has(prev)) {
+      const rec = inflightList.find((r) => r.name === prev);
+      const completed = rec ? !!rec.completed : false;
+      notifyRunCompleted(prev, completed);
+    }
+  }
+  _previousLiveRunNames.clear();
+  for (const n of currentAliveNames) _previousLiveRunNames.add(n);
+}
+
 // 2026-05-03 — refresh the type-filter chips' counts based on the
 // current full run list. Called after each /api/runs fetch.
 function refreshRunsChipCounts() {
@@ -281,6 +348,8 @@ async function refreshRunsLivePanel() {
     const res = await fetch("/api/inflight");
     if (!res.ok) throw new Error(`${res.status}`);
     const data = await res.json();
+    // Diff against previously-alive set to detect completion -> notify
+    checkForCompletedRuns(data.inflight || []);
     const runs = (data.inflight || []).filter((r) => r.alive);
     if (!runs.length) {
       wrap.style.display = "none";
@@ -1485,15 +1554,33 @@ function renderFindingsList() {
     list.appendChild(el("p", { class: "muted" }, "No matching findings."));
     return;
   }
+  // Render dated findings first, then a separator, then reference docs.
+  let lastWasReference = false;
+  let renderedSeparator = false;
   for (const f of filtered) {
+    if (f.is_reference && !lastWasReference && renderedSeparator === false) {
+      // Insert section header to separate reference docs from chronological findings
+      const sep = el("div", { class: "findings-section-header" },
+        "📌 Reference docs (no date)");
+      list.appendChild(sep);
+      renderedSeparator = true;
+    }
+    lastWasReference = !!f.is_reference;
     // Strip date prefix and .md suffix for shorter display name
     const display = f.name.replace(/\.md$/, "").replace(/^\d{4}-\d{2}-\d{2}-/, "");
-    const item = el("div", { class: "list-item" }, [
-      el("div", { class: "name" }, display),
+    const dateText = f.date || "no date";
+    // Recent badge for findings within the last 3 days
+    const recentBadge = f.is_recent
+      ? el("span", { class: "finding-recent-badge", title: "modified within last 3 days" }, "RECENT")
+      : null;
+    const item = el("div", {
+      class: "list-item" + (f.is_reference ? " is-reference" : "") + (f.is_recent ? " is-recent" : ""),
+    }, [
+      el("div", { class: "name" }, [display, recentBadge && " ", recentBadge].filter(Boolean)),
       el("div", { class: "meta" }, [
         el("span", { class: "finding-tag" }, f.tag),
         " · ",
-        el("span", {}, f.name.slice(0, 10)), // date prefix
+        el("span", {}, dateText),
       ]),
     ]);
     item.addEventListener("click", () => loadFindingDetail(f.name, item));
@@ -1644,6 +1731,9 @@ function setupLauncher() {
     const preset = String(formData.get("preset"));
 
     appendStatus(out, `Submitting ${seeds.length} run${seeds.length === 1 ? "" : "s"} (seeds ${seeds.join(", ")})…`);
+    // First time launching from this session — ask for notification
+    // permission so the user gets desktop alerts when long runs finish.
+    requestNotificationPermissionIfNeeded();
 
     const body0 = { preset, extra_args: extras };
 
@@ -1849,6 +1939,18 @@ function setupBrain3DControls(mod) {
   livePicker?.addEventListener("change", (e) => {
     const name = e.target.value;
     if (name) mod.brain3dSelectLiveRun(name);
+  });
+  // Jump to latest live sample (re-engage auto-follow)
+  $("#brain3d-latest")?.addEventListener("click", () => {
+    const st = mod.brain3dGetState();
+    if (st.liveMode) {
+      mod.brain3dJumpToLatest();
+    } else if (st.replayLoaded) {
+      // In replay mode, jump to last step
+      mod.brain3dRenderStep(st.replayTotal - 1);
+      const sl = $("#brain3d-scrubber");
+      if (sl) sl.value = String(st.replayTotal - 1);
+    }
   });
   // Camera preset selector
   $("#brain3d-camera-preset")?.addEventListener("change", (e) => {
@@ -2130,7 +2232,14 @@ async function refreshInflightPanel() {
   if (!section || !container) return;
   try {
     const res = await fetch("/api/inflight").then((r) => r.json());
-    const runs = res.inflight || [];
+    // 2026-05-03: only show actually-running runs in the Home in-flight
+    // panel. Completed runs hang around in /api/inflight (they have
+    // .pid files) but don't belong in a "live" panel; they appear in
+    // the regular Runs tab instead.
+    const allRuns = res.inflight || [];
+    // Detect completion -> notify (same as Runs-tab live panel)
+    checkForCompletedRuns(allRuns);
+    const runs = allRuns.filter((r) => r.alive);
     if (runs.length === 0) {
       section.style.display = "none";
       return;
@@ -2489,6 +2598,7 @@ function renderExperimentDetail(expRow) {
 setupThemeToggle();  // 2026-05-02: applies persisted theme before first paint
 setupMobileNav();    // 2026-05-02: hamburger menu for <900px viewports
 setupKeyboardShortcuts(); // 2026-05-03: arrows, space, r, t, ?
+initNotifications();      // 2026-05-03: browser-notification readiness
 setupTabs();
 setupLauncher();
 setupWorldTab();

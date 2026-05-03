@@ -158,17 +158,64 @@ def _try_parse_progress(line: str, now: float) -> ProgressEvent | None:
 # ─────────────────────────────────────────────────────────────────────────
 
 
+_DATE_PREFIX_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})-")
+
+
 @app.get("/api/findings")
 def list_findings() -> JSONResponse:
-    files = sorted(FINDINGS_DIR.glob("*.md"), reverse=True)
+    """List findings markdowns. Sorted by parsed YYYY-MM-DD date prefix
+    descending (newest first). Findings without a date prefix
+    (INDEX.md, PHASE_B_QUICK_REFERENCE.md, etc.) are flagged as
+    `is_reference=true` and sorted to the BOTTOM of the list — they're
+    not chronological session findings, they're reference docs.
+
+    Each entry includes:
+      * `date`: parsed ISO date or null
+      * `is_reference`: true if no date prefix found
+      * `is_recent`: true if mtime is within last 3 days (UI highlight)
+    """
+    files = list(FINDINGS_DIR.glob("*.md"))
+    now = time.time()
     out = []
     for f in files:
+        m = _DATE_PREFIX_RE.match(f.name)
+        date_iso = None
+        if m:
+            try:
+                date_iso = f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
+            except Exception:
+                pass
+        mtime = f.stat().st_mtime
         out.append({
             "name": f.name,
             "size_bytes": f.stat().st_size,
-            "modified_unix": f.stat().st_mtime,
+            "modified_unix": mtime,
+            "date": date_iso,
+            "is_reference": date_iso is None,
+            "is_recent": (now - mtime) < (3 * 24 * 3600),
         })
+    # Sort: dated entries first (most recent date first), undated entries
+    # last (alphabetically). Tiebreaker for same-date: mtime descending so
+    # the most-recently-edited file wins.
+    def sort_key(e):
+        if e["date"]:
+            # Negative date_str so sorted ASC gives newest first;
+            # but Python tuples sort lexicographically, so just invert.
+            # Use is_reference=False (0) before True (1) so undated go last.
+            return (0, _negate_iso_date(e["date"]), -e["modified_unix"])
+        else:
+            return (1, e["name"].lower())
+    out.sort(key=sort_key)
     return JSONResponse({"findings": out, "count": len(out)})
+
+
+def _negate_iso_date(iso: str) -> str:
+    """Return a string that sorts ASC inversely to the ISO date — so
+    "2026-05-03" sorts before "2026-05-02". Used to put newest first
+    while keeping the sort key a simple ascending comparison.
+    Implementation: subtract each digit from 9.
+    """
+    return "".join(str(9 - int(c)) if c.isdigit() else c for c in iso)
 
 
 @app.get("/api/findings/{name}")
