@@ -2030,6 +2030,8 @@ function setupBrain3DControls(mod) {
     mod.brain3dSetPathwayKindVisible("da", e.target.checked));
   $("#brain3d-only-flowing")?.addEventListener("change", (e) =>
     mod.brain3dSetOnlyFlowing(e.target.checked));
+  $("#brain3d-pulses")?.addEventListener("change", (e) =>
+    mod.brain3dSetPulsesEnabled(e.target.checked));
   // Help button
   $("#brain3d-help")?.addEventListener("click", () => {
     alert(

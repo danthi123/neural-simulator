@@ -410,6 +410,163 @@ function setupOrbitControls() {
   controls.update();
 }
 
+// ─── Traveling pulse particles (2026-05-03) ────────────────────────────
+//
+// Phase 3 of the original 3D viz design: render visible "spikes" flowing
+// along synaptic pathway curves. When a region fires, particles spawn
+// at its edge and travel along the pathway curve to the post-region.
+//
+// Implementation: one shared THREE.Points mesh with a pool of MAX_PULSES
+// particles. Each frame:
+//   1. Advance each live particle along its pathway curve (age += dt/life)
+//   2. Update positions[]/colors[] BufferAttributes
+//   3. Spawn new particles from pathways whose pre-region just activated
+//
+// Particle color = neurotransmitter (matches pathway color):
+//   excitatory = blue, inhibitory = red, dopamine = magenta, ach = green
+//
+// Spawn rate is proportional to fromAct * 5 particles/sec/pathway when
+// active. Lifetime = 1.0s (matches a typical 1-5ms propagation_delay
+// scaled up for visibility — these are "metaphorical" spikes, not
+// time-accurate).
+
+const MAX_PULSES = 2000;
+let pulsePoints = null;          // THREE.Points
+let pulsePositions = null;       // Float32Array, MAX_PULSES * 3
+let pulseColors = null;          // Float32Array, MAX_PULSES * 3
+let pulseAlphas = null;          // Float32Array, MAX_PULSES
+let pulseStates = null;          // Array of {curve, age, life, color}|null per slot
+
+function setupPulseParticles() {
+  pulsePositions = new Float32Array(MAX_PULSES * 3);
+  pulseColors = new Float32Array(MAX_PULSES * 3);
+  pulseAlphas = new Float32Array(MAX_PULSES);
+  pulseStates = new Array(MAX_PULSES).fill(null);
+  // Initialize positions far off-screen so dead slots aren't visible.
+  for (let i = 0; i < MAX_PULSES; i++) {
+    pulsePositions[i * 3 + 0] = 1e6;
+    pulsePositions[i * 3 + 1] = 1e6;
+    pulsePositions[i * 3 + 2] = 1e6;
+    pulseAlphas[i] = 0;
+  }
+  const geom = new THREE.BufferGeometry();
+  geom.setAttribute("position", new THREE.BufferAttribute(pulsePositions, 3));
+  geom.setAttribute("color", new THREE.BufferAttribute(pulseColors, 3));
+  geom.setAttribute("aAlpha", new THREE.BufferAttribute(pulseAlphas, 1));
+  // Vertex + fragment shader so we can fade per-particle via aAlpha.
+  // Additive blending makes overlapping particles glow.
+  const mat = new THREE.ShaderMaterial({
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    vertexShader: `
+      attribute float aAlpha;
+      varying float vAlpha;
+      varying vec3 vColor;
+      void main() {
+        vAlpha = aAlpha;
+        vColor = color;
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = 14.0 * (1.0 + aAlpha) * (50.0 / -mv.z);
+        gl_Position = projectionMatrix * mv;
+      }
+    `,
+    fragmentShader: `
+      varying float vAlpha;
+      varying vec3 vColor;
+      void main() {
+        // Soft circular sprite via distance-from-center
+        vec2 d = gl_PointCoord - vec2(0.5);
+        float r = length(d);
+        if (r > 0.5) discard;
+        float falloff = 1.0 - r * 2.0;
+        falloff = falloff * falloff;
+        gl_FragColor = vec4(vColor, vAlpha * falloff);
+      }
+    `,
+    vertexColors: true,
+  });
+  pulsePoints = new THREE.Points(geom, mat);
+  scene.add(pulsePoints);
+}
+
+const KIND_COLOR_VEC = {
+  exc: new THREE.Color(0x60a5fa),
+  inh: new THREE.Color(0xf87171),
+  da:  new THREE.Color(0xd946ef),
+  ach: new THREE.Color(0xa3e635),
+};
+
+function spawnPulse(pathwayLine, intensity) {
+  // Find a free slot (state == null or age >= 1)
+  let slot = -1;
+  for (let i = 0; i < MAX_PULSES; i++) {
+    if (pulseStates[i] == null) { slot = i; break; }
+  }
+  if (slot === -1) return;
+  const color = KIND_COLOR_VEC[pathwayLine.kind] || KIND_COLOR_VEC.exc;
+  pulseStates[slot] = {
+    curve: pathwayLine.curve,
+    age: 0,
+    life: 0.6 + Math.random() * 0.4,  // 0.6-1.0s travel time
+    intensity: Math.min(1.0, intensity),
+  };
+  pulseColors[slot * 3 + 0] = color.r;
+  pulseColors[slot * 3 + 1] = color.g;
+  pulseColors[slot * 3 + 2] = color.b;
+  pulseAlphas[slot] = intensity;
+}
+
+function stepPulses(dt) {
+  if (!pulsePoints) return;
+  let dirtyPos = false;
+  let dirtyAlpha = false;
+  const _tmp = new THREE.Vector3();
+  for (let i = 0; i < MAX_PULSES; i++) {
+    const st = pulseStates[i];
+    if (st == null) continue;
+    st.age += dt / st.life;
+    if (st.age >= 1.0) {
+      pulseStates[i] = null;
+      pulseAlphas[i] = 0;
+      pulsePositions[i * 3 + 0] = 1e6;
+      pulsePositions[i * 3 + 1] = 1e6;
+      pulsePositions[i * 3 + 2] = 1e6;
+      dirtyPos = true; dirtyAlpha = true;
+      continue;
+    }
+    // Position along curve at param t=st.age
+    st.curve.getPoint(st.age, _tmp);
+    pulsePositions[i * 3 + 0] = _tmp.x;
+    pulsePositions[i * 3 + 1] = _tmp.y;
+    pulsePositions[i * 3 + 2] = _tmp.z;
+    // Alpha rises quickly then fades — bell curve
+    const t = st.age;
+    const fade = Math.sin(t * Math.PI);
+    pulseAlphas[i] = st.intensity * fade;
+    dirtyPos = true; dirtyAlpha = true;
+  }
+  if (dirtyPos) pulsePoints.geometry.attributes.position.needsUpdate = true;
+  if (dirtyAlpha) pulsePoints.geometry.attributes.aAlpha.needsUpdate = true;
+}
+
+function spawnPulsesForActiveFlows(dt) {
+  // Each frame, randomly spawn particles for pathways whose
+  // pre-region is active. Spawn rate proportional to fromAct.
+  // Honors the user's pathway visibility toggles.
+  for (const p of pathwayLines) {
+    if (pathwayVisible[p.kind] === false) continue;
+    const fromAct = regionActivity[p.fromKey] || 0;
+    if (fromAct < 0.1) continue;
+    // Expected spawns per second = fromAct * 6 (a "lit" region emits
+    // ~6 visible spikes per second along each outgoing pathway)
+    const spawnsPerSec = fromAct * 6;
+    if (Math.random() < spawnsPerSec * dt) {
+      spawnPulse(p, fromAct);
+    }
+  }
+}
+
 // ─── Camera presets (2026-05-03) ───────────────────────────────────────
 //
 // Named viewpoints that fly the camera to a specific subsystem. Each
@@ -502,6 +659,11 @@ function setOnlyFlowing(value) {
   onlyFlowing = !!value;
   applyPathwayVisibility();
 }
+let pulsesEnabled = true;
+function setPulsesEnabled(value) {
+  pulsesEnabled = !!value;
+  if (pulsePoints) pulsePoints.visible = pulsesEnabled;
+}
 function applyPathwayVisibility() {
   for (const p of pathwayLines) {
     const kindOn = pathwayVisible[p.kind] !== false;
@@ -536,8 +698,12 @@ function fitCameraToScene(padding = 1.4) {
 function startAnimation() {
   if (animationActive) return;
   animationActive = true;
+  let _lastFrameTime = performance.now();
   const tick = () => {
     if (!animationActive) return;
+    const now = performance.now();
+    const dt = Math.min(0.1, (now - _lastFrameTime) / 1000);  // cap at 100ms
+    _lastFrameTime = now;
     // Smoothly lerp emissiveIntensity toward target. Update regionActivity
     // to track the displayed (post-lerp) activation level — the tooltip
     // and info panel read from regionActivity, NOT regionTargets, so the
@@ -564,6 +730,13 @@ function startAnimation() {
       const flowingFilter = onlyFlowing ? (flow > 0.05) : true;
       p.line.visible = kindOn && flowingFilter;
       p.mat.opacity = p.baseOpacity + flow * 0.7;
+    }
+    // 2026-05-03: traveling pulse particles — spawn from active
+    // pathways, advance live ones along their curves. Skip the work
+    // when the user has toggled them off (saves ~1ms/frame).
+    if (pulsesEnabled) {
+      spawnPulsesForActiveFlows(dt);
+      stepPulses(dt);
     }
     // 2026-05-03: dynamic label visibility based on camera distance.
     // When zoomed far out, the labels overlap into a single illegible
@@ -1235,6 +1408,7 @@ export async function initBrain3D({ canvasContainer: container } = {}) {
   createPathways();
   setupOrbitControls();
   setupInteraction();
+  setupPulseParticles();
   // Auto-fit the camera to the scene bounds so the whole brain is framed
   // on first paint regardless of region layout changes.
   fitCameraToScene();
@@ -1274,6 +1448,7 @@ export function brain3dSetPathwayKindVisible(kind, visible) {
   return setPathwayKindVisible(kind, visible);
 }
 export function brain3dSetOnlyFlowing(value) { return setOnlyFlowing(value); }
+export function brain3dSetPulsesEnabled(value) { return setPulsesEnabled(value); }
 export function brain3dListPresets() { return CAMERA_PRESETS; }
 export function brain3dGetState() {
   return {
