@@ -284,3 +284,52 @@ def test_run_curriculum_training_accepts_dt_ms():
     sig = inspect.signature(run_curriculum_training)
     assert "dt_ms" in sig.parameters
     assert sig.parameters["dt_ms"].default == 0.5  # match sim's tuned value
+
+
+def test_minimal_isolation_builds_clean_arch():
+    """Minimal isolation arch has only language_input + motor_X regions
+    (no cascade, no PFC, no retina). Decisive test for cascade-as-cause
+    hypothesis.
+    """
+    from research.runners.text_minimal_isolation import build_minimal_brain_regions
+
+    regions, pathways = build_minimal_brain_regions()
+    region_names = {r.name for r in regions}
+
+    # Required regions
+    assert "language_input" in region_names
+    for action in ("N", "E", "S", "W"):
+        assert f"motor_{action}" in region_names
+
+    # Excluded regions (this is the whole point — no cascade)
+    excluded = {"cortex_N", "cortex_E", "cortex_S", "cortex_W",
+                "str_D1_N", "gpi_N", "thal_N", "snc",
+                "retina", "cortex_v1_simple", "cortex_it",
+                "dlpfc_wm", "language_output"}
+    for name in excluded:
+        assert name not in region_names, (
+            f"Minimal arch should not include {name} (defeats the purpose)"
+        )
+
+    # Total neurons should be modest
+    total = sum(r.n_neurons for r in regions)
+    assert total < 500, f"Minimal arch too large: {total} neurons"
+
+
+def test_minimal_isolation_pathway_only_language_to_motor():
+    """The ONE pathway in minimal arch is language_input -> motor_X
+    (4 separate, plastic, gated)."""
+    from research.runners.text_minimal_isolation import build_minimal_brain_regions
+
+    regions, pathways = build_minimal_brain_regions()
+
+    # 4 language->motor pathways only
+    by_edge = {(p.from_region, p.to_region): p for p in pathways}
+    for action in ("N", "E", "S", "W"):
+        key = ("language_input", f"motor_{action}")
+        assert key in by_edge, f"Missing language_input->motor_{action}"
+        assert by_edge[key].plastic is True
+        assert by_edge[key].plasticity_gate == "language_input_to_motor"
+
+    # No other pathway types
+    assert len(pathways) == 4, f"Expected exactly 4 pathways, got {len(pathways)}"
