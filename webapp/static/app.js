@@ -110,6 +110,9 @@ function setupTabs() {
         s.classList.toggle("active", s.id === `tab-${t}`),
       );
       saveState({ activeTab: t });
+      // 2026-05-03: update URL hash for deep linking. Format:
+      //   #tab=brain&run=foo.json (run is optional; preserved from prior state)
+      updateUrlHash({ tab: t });
       // Dispatch to the tab's onActivate hook (registry-driven).
       const entry = TAB_BY_ID[t];
       if (entry?.onActivate) entry.onActivate();
@@ -123,6 +126,69 @@ function setupTabs() {
     });
   });
 }
+
+// ─────────────────────────────────────────────────────────────────────────
+// URL deep links (2026-05-03)
+//
+// Format: #tab=<id>&run=<filename>&step=<n>
+// On load: read hash, activate tab, optionally load a specific run.
+// On tab change: update hash. On run load: update hash with run name.
+//
+// Use cases:
+//   - Share a specific 3D brain view: copy the URL
+//   - Bookmark "the seed 42 SWR run in 3D" and reopen
+//   - Browser back/forward navigates between recently-viewed tabs
+// ─────────────────────────────────────────────────────────────────────────
+
+function parseUrlHash() {
+  const hash = window.location.hash.replace(/^#/, "");
+  const out = {};
+  for (const part of hash.split("&")) {
+    const [k, v] = part.split("=");
+    if (k && v != null) out[decodeURIComponent(k)] = decodeURIComponent(v);
+  }
+  return out;
+}
+
+function updateUrlHash(updates) {
+  const cur = parseUrlHash();
+  Object.assign(cur, updates);
+  // Drop empty values for cleaner URLs
+  const parts = [];
+  for (const [k, v] of Object.entries(cur)) {
+    if (v != null && v !== "") parts.push(`${encodeURIComponent(k)}=${encodeURIComponent(v)}`);
+  }
+  const newHash = parts.length ? `#${parts.join("&")}` : "";
+  if (newHash !== window.location.hash) {
+    // history.replaceState avoids polluting browser history with every
+    // tab click. Use pushState only on explicit "Open in viewer" actions.
+    history.replaceState(null, "", newHash || window.location.pathname);
+  }
+}
+
+// Apply a parsed URL hash by activating the right tab and (optionally)
+// loading a specific run into the appropriate viewer.
+function applyUrlHash() {
+  const params = parseUrlHash();
+  if (!params.tab) return;
+  const tabBtn = document.querySelector(`nav button[data-tab="${params.tab}"]`);
+  if (!tabBtn) return;
+  tabBtn.click();
+  if (params.run) {
+    // Use the cross-tab opener — picks the right viewer for the tab+run.
+    const targetViewer = params.tab === "brain" ? "brain"
+                       : params.tab === "world" ? "world"
+                       : params.tab === "language" ? "language"
+                       : null;
+    if (targetViewer) {
+      // Slight delay so the tab activation completes first
+      setTimeout(() => openRunInViewer(params.run, targetViewer), 200);
+    }
+  }
+}
+
+// Listen for back/forward navigation
+window.addEventListener("hashchange", applyUrlHash);
 
 // ─────────────────────────────────────────────────────────────────────────
 // Theme toggle (dark/light, 2026-05-02)
@@ -294,6 +360,7 @@ function openRunInViewer(name, viewer) {
     case "world":
       activateTab("world");
       loadRunIntoWorld(name);
+      updateUrlHash({ tab: "world", run: name });
       break;
     case "brain":
       activateTab("brain");
@@ -302,6 +369,7 @@ function openRunInViewer(name, viewer) {
         const mod = await getBrain3D();
         mod.brain3dLoadRun(name);
       });
+      updateUrlHash({ tab: "brain", run: name });
       break;
     case "language":
       activateTab("language");
@@ -315,6 +383,7 @@ function openRunInViewer(name, viewer) {
           if (target) target.click();
         }, 200);
       });
+      updateUrlHash({ tab: "language", run: name });
       break;
     case "stats":
     default:
@@ -326,6 +395,7 @@ function openRunInViewer(name, viewer) {
           row.querySelector(".name")?.textContent === name);
         if (target) target.querySelector(".row-body")?.click();
       }, 50);
+      updateUrlHash({ tab: "runs", run: name });
       break;
   }
 }
@@ -922,6 +992,46 @@ function makeKpiCard(title, value, sub) {
   return card;
 }
 
+// Per-direction accuracy bars — extracts the diagonal cell / row sum
+// for each row label, displayed as horizontal bars. Faster to scan than
+// the confusion matrix when the user just wants "which direction is
+// the cascade biased toward?".
+function renderPerDirectionBreakdown(title, matrix, rowLabels, colLabels) {
+  const wrapper = el("div", { class: "per-dir-wrapper" });
+  wrapper.appendChild(el("h4", {}, title));
+  if (!matrix) {
+    wrapper.appendChild(el("p", { class: "muted" }, "(no data)"));
+    return wrapper;
+  }
+  const rows = el("div", { class: "per-dir-rows" });
+  for (const rLabel of rowLabels) {
+    const row = matrix[rLabel] || {};
+    const total = colLabels.reduce((s, c) => s + Number(row[c] || 0), 0);
+    // Find the column matching this row by first-letter prefix
+    // (north→N, east→E, etc.) — works for both word→action where
+    // labels differ AND image→word where they match.
+    const matchCol = colLabels.find((c) =>
+      c[0]?.toLowerCase() === rLabel[0]?.toLowerCase()) || rowLabels[0];
+    const correct = Number(row[matchCol] || 0);
+    const acc = total > 0 ? correct / total : 0;
+    const pct = (acc * 100).toFixed(0);
+    const aboveChance = acc > 0.30; // 25% chance + 5pp margin
+    const fillBar = el("div", {
+      class: "per-dir-fill" + (aboveChance ? " above" : ""),
+      style: `width: ${Math.round(acc * 100)}%`,
+    });
+    const chanceMark = el("div", { class: "per-dir-chance", title: "25% chance" });
+    rows.appendChild(el("div", { class: "per-dir-row" }, [
+      el("div", { class: "per-dir-label" }, rLabel),
+      el("div", { class: "per-dir-bar" }, [chanceMark, fillBar]),
+      el("div", { class: "per-dir-pct" + (aboveChance ? " above" : "") },
+        `${correct}/${total} = ${pct}%`),
+    ]));
+  }
+  wrapper.appendChild(rows);
+  return wrapper;
+}
+
 function renderConfusionMatrix(title, matrix, rowLabels, colLabels, chanceColor = true) {
   if (!matrix) return el("p", { class: "muted" }, `No ${title} data.`);
   const wrapper = el("div", { class: "confusion-wrapper" });
@@ -1137,6 +1247,23 @@ async function loadLanguageDetail(name, listItem) {
       ));
     }
     wrapper.appendChild(statsRow);
+    // 2026-05-03: per-direction breakdown bars. Surfaces the cascade-N-bias
+    // pattern more readably than a confusion matrix — at a glance the user
+    // can see "north 80%, east 45%, south 30%, west 12%".
+    if (data.image_to_word_eval?.confusion_matrix) {
+      wrapper.appendChild(renderPerDirectionBreakdown(
+        "Image → Word per-direction accuracy",
+        data.image_to_word_eval.confusion_matrix,
+        LANG_DIRS, LANG_DIRS,
+      ));
+    }
+    if (data.word_to_action_eval?.confusion_matrix) {
+      wrapper.appendChild(renderPerDirectionBreakdown(
+        "Word → Action per-direction accuracy",
+        data.word_to_action_eval.confusion_matrix,
+        LANG_DIRS, ACTION_DIRS,
+      ));
+    }
     // Confusion matrices side-by-side
     const matrixRow = el("div", { class: "confusion-row" });
     matrixRow.appendChild(renderConfusionMatrix(
@@ -2474,7 +2601,9 @@ function showKeyboardHelp() {
   alert(msg);
 }
 
-// Restore persisted state
+// Restore persisted state. URL hash takes precedence over localStorage,
+// so a shared link like #tab=brain&run=foo.json overrides the stored
+// last-active-tab.
 (() => {
   const state = loadState();
   if (state.hideSmoke !== undefined) {
@@ -2485,6 +2614,13 @@ function showKeyboardHelp() {
     const cb = $("#filter-hide-incomplete");
     if (cb) cb.checked = state.hideIncomplete;
   }
+  // 1) URL hash wins
+  const urlParams = parseUrlHash();
+  if (urlParams.tab) {
+    applyUrlHash();
+    return;
+  }
+  // 2) Fall back to persisted activeTab
   if (state.activeTab) {
     const btn = document.querySelector(`nav button[data-tab="${state.activeTab}"]`);
     if (btn) btn.click();
