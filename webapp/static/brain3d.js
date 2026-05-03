@@ -256,10 +256,38 @@ function setupInteraction() {
   const dom = renderer.domElement;
   dom.addEventListener("mousemove", onPointerMove);
   dom.addEventListener("click", onClick);
+  dom.addEventListener("dblclick", onDoubleClick);
   dom.addEventListener("mouseleave", () => {
     hoveredKey = null;
     tooltipEl.style.display = "none";
   });
+}
+
+// Double-click a region to focus the camera on it (zoom in close).
+// Camera moves toward the region so it's the dominant subject.
+function onDoubleClick(ev) {
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(pickableMeshes, false);
+  if (hits.length === 0) return;
+  const mesh = hits[0].object;
+  const target = mesh.position.clone();
+  // Position camera on a 3/4 angle from current direction, ~6 units away
+  const offset = camera.position.clone().sub(controls.target).normalize().multiplyScalar(6);
+  const newPos = target.clone().add(offset);
+  // Smooth fly using existing flyCamera infra — register a transient preset
+  CAMERA_PRESETS.__focused__ = {
+    label: "Focus",
+    position: [newPos.x, newPos.y, newPos.z],
+    target: [target.x, target.y, target.z],
+  };
+  flyCamera("__focused__", 600);
+  // Also pin the info panel for the doubly-clicked region
+  pinnedKey = mesh.userData.name;
+  populateInfoPanel(infoPanelEl, mesh.userData.info, pinnedKey);
+  infoPanelEl.style.display = "";
 }
 
 function onPointerMove(ev) {
@@ -673,7 +701,9 @@ function applyPathwayVisibility() {
 
 // Auto-fit camera to scene bounds. Computes the bounding box of all
 // region meshes, places the camera so the whole thing is framed.
-function fitCameraToScene(padding = 1.4) {
+// padding=1.1 gives a tighter view so regions are larger on first
+// load; user can zoom out manually to see the whole scene.
+function fitCameraToScene(padding = 1.1) {
   const box = new THREE.Box3();
   for (const mesh of pickableMeshes) {
     const meshBox = new THREE.Box3().setFromObject(mesh);
