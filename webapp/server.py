@@ -405,6 +405,65 @@ PRESETS: dict[str, list[str]] = {
         "--progress-print-interval", "1",
         "--trial-sleep-ms", "30",
     ],
+    # ─── 2026-05-02 Text I/O presets (use research.runners.text_eval_embodied) ──
+    # text_io_v2_baseline — current best W→A breakthrough.
+    # 28.5% W→A across 6 seeds (n=600, p=0.027 vs chance). Hebbian off,
+    # stdp_w_max=5, readout init=0.5. See:
+    # research/findings/2026-05-02-text-io-formal-writeup.md.
+    "text_io_v2_baseline": [
+        "--n-episodes", "100", "--steps-per-episode", "30",
+        "--stim-steps-per-step", "200", "--reset-steps", "100",
+    ],
+    # text_io_v2_smoke — 10-episode smoke test for verifying the runner
+    # without committing to ~50 minutes per seed.
+    "text_io_v2_smoke": [
+        "--n-episodes", "10", "--steps-per-episode", "30",
+        "--stim-steps-per-step", "200", "--reset-steps", "100",
+    ],
+    # text_io_distributed_motor_pop — Pulvermüller G.20 architecture.
+    # 8 motor sub-pools at 45° intervals with cosine-tuned thal pathways
+    # and population-vector decoding. Tests whether labeled-line motor
+    # pools were the bottleneck for the 28.5% W→A ceiling. Result so far
+    # (seed 42): I→W 22%, W→A 28% — within v2 range.
+    "text_io_distributed_motor_pop": [
+        "--n-episodes", "100", "--steps-per-episode", "30",
+        "--stim-steps-per-step", "200", "--reset-steps", "100",
+        "--enable-distributed-motor-pop",
+        "--n-motor-pop-per-subpool", "5",
+    ],
+    # text_io_motor_cross_coupling — 90°-adjacency cross-coupling tested
+    # 2026-05-02. Result: 29% I→W, 22% W→A. NEGATIVE on W→A direction.
+    # Kept as a documented baseline.
+    "text_io_motor_cross_coupling": [
+        "--n-episodes", "100", "--steps-per-episode", "30",
+        "--stim-steps-per-step", "200", "--reset-steps", "100",
+        "--enable-motor-cross-coupling",
+        "--motor-cross-coupling-weight", "0.5",
+        "--motor-cross-coupling-density", "0.3",
+    ],
+}
+
+
+# Per-preset runner module override. If a preset is missing here, the
+# launcher uses research.runners.g11_bg_runner (the navigation flagship).
+# Text I/O presets dispatch to text_eval_embodied which has its own
+# CLI surface (--out-stats instead of --out, no --moving-goal etc).
+PRESET_RUNNERS: dict[str, str] = {
+    "text_io_v2_baseline":           "research.runners.text_eval_embodied",
+    "text_io_v2_smoke":              "research.runners.text_eval_embodied",
+    "text_io_distributed_motor_pop": "research.runners.text_eval_embodied",
+    "text_io_motor_cross_coupling":  "research.runners.text_eval_embodied",
+}
+
+
+# Per-preset output-flag override. The text_eval_embodied runner writes
+# its stats JSON via --out-stats (g11_bg_runner uses --out for its trial
+# JSON). Defaults to "--out".
+PRESET_OUTPUT_FLAG: dict[str, str] = {
+    "text_io_v2_baseline":           "--out-stats",
+    "text_io_v2_smoke":              "--out-stats",
+    "text_io_distributed_motor_pop": "--out-stats",
+    "text_io_motor_cross_coupling":  "--out-stats",
 }
 
 
@@ -439,7 +498,17 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
     if req.preset not in PRESETS:
         raise HTTPException(400, f"unknown preset; valid: {list(PRESETS)}")
     run_id = uuid.uuid4().hex[:12]
-    out_filename = req.out_filename or f"g11_seed{req.seed}_{req.preset}_{run_id[:6]}.json"
+    # Resolve which runner module + output flag this preset uses.
+    # Defaults to g11_bg_runner / --out for navigation presets; text I/O
+    # presets dispatch to text_eval_embodied / --out-stats.
+    runner_module = PRESET_RUNNERS.get(req.preset, "research.runners.g11_bg_runner")
+    output_flag = PRESET_OUTPUT_FLAG.get(req.preset, "--out")
+    is_text_io = req.preset.startswith("text_io_")
+
+    out_filename = req.out_filename or (
+        f"text_io_seed{req.seed}_{req.preset}_{run_id[:6]}.json" if is_text_io
+        else f"g11_seed{req.seed}_{req.preset}_{run_id[:6]}.json"
+    )
     out_path = str(RAW_RUNS_DIR / out_filename)
 
     extras = list(req.extra_args)
@@ -449,26 +518,31 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
     # losing run progress). Goal-override / inject-reward fields still
     # only really matter for interactive_* runs but are harmless extras
     # for non-interactive runs.
-    control_file = str(RUNTIME_DIR / f"control_{run_id}.json")
-    Path(control_file).write_text("{}")
-    extras.extend(["--interactive-control-file", control_file])
+    # Text I/O runners do not currently support --interactive-control-file
+    # so we skip the control file for those presets.
+    control_file = None
+    if not is_text_io:
+        control_file = str(RUNTIME_DIR / f"control_{run_id}.json")
+        Path(control_file).write_text("{}")
+        extras.extend(["--interactive-control-file", control_file])
 
     # Inject a sensible --progress-print-interval default if none is set
-    # in the preset or the user's extras.
+    # in the preset or the user's extras. Text I/O runners don't have
+    # this flag so skip it for them.
     #   interactive_*  -> 1   (per-step, for live-mode animation while attached)
     #   everything else -> 20 (every 20 steps; smoothes the live chart but
     #                          avoids the per-step CPU<->GPU sync overhead
     #                          identified in the throughput investigation)
     base_extras = list(extras) + list(PRESETS[req.preset])
-    if not any(a == "--progress-print-interval" for a in base_extras):
+    if not is_text_io and not any(a == "--progress-print-interval" for a in base_extras):
         default_ppi = "1" if req.preset.startswith("interactive_") else "20"
         extras.extend(["--progress-print-interval", default_ppi])
 
     cmd = [
-        sys.executable, "-m", "research.runners.g11_bg_runner",
+        sys.executable, "-m", runner_module,
         *PRESETS[req.preset],
         "--seed", str(req.seed),
-        "--out", out_path,
+        output_flag, out_path,
         *extras,
     ]
 
