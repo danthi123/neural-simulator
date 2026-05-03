@@ -1218,11 +1218,9 @@ function setSpeed(stepsPerSec) {
 function startLiveMode() {
   liveMode = true;
   if (livePollHandle) clearInterval(livePollHandle);
-  // Hide mini gridworld + agent HUD when entering live mode — those
-  // are only meaningful for replay of completed navigation runs.
-  if (miniGridCanvas) miniGridCanvas.style.display = "none";
-  const hud = document.getElementById("brain3d-agent-state");
-  if (hud) hud.style.display = "none";
+  // Don't pre-hide the mini gridworld — renderLiveStep will show it
+  // when the run emits per-step pos/goal data (navigation runs) and
+  // hide it otherwise (text I/O / SWR / curriculum runs).
   pollLive();
   livePollHandle = setInterval(pollLive, 1000);
 }
@@ -1452,8 +1450,39 @@ function renderLiveStep(step) {
     bumpActivity("snc", 0.4);
   } else if (p.kind === "step") {
     activateVisualPathway(true);
-    const actIdx = (p.step || 0) % 4;
+    // Use the actual action from the log line (parsed to 0..3 by the
+    // regex). When the runner logs `action=N reward=+1`, we now drive
+    // the cascade for THAT specific action rather than a stand-in.
+    const actIdx = (p.action != null && p.action >= 0)
+      ? p.action
+      : ((p.step || 0) % 4);
     activateAction(actIdx);
+    if (p.reward != null) activateReward(p.reward);
+  }
+  // 2026-05-03 — render the mini gridworld + agent HUD for live
+  // navigation runs (kind=step) which carry pos/goal/action/reward in
+  // each log line. Live curriculum/SWR runs don't carry per-step grid
+  // position so they stay hidden.
+  if (p.kind === "step" && Array.isArray(p.pos) && Array.isArray(p.goal)) {
+    const synthT = {
+      pos: p.pos,
+      goal: p.goal,
+      action: p.action != null ? p.action : -1,
+      reward: p.reward != null ? p.reward : 0,
+    };
+    // Build a synthetic trajectory array for the trail — last few live
+    // samples that also have pos data.
+    const trailFromLive = liveTrajectory
+      .slice(0, step + 1)
+      .map((s) => Array.isArray(s.progress?.pos) ? s.progress.pos : null)
+      .filter(Boolean);
+    renderMiniGridworld(synthT, trailFromLive, trailFromLive.length - 1, null);
+    updateAgentStateHud(synthT);
+  } else {
+    // Hide the gridworld inset for kinds without pos data
+    if (miniGridCanvas) miniGridCanvas.style.display = "none";
+    const hud = document.getElementById("brain3d-agent-state");
+    if (hud) hud.style.display = "none";
   }
 }
 
