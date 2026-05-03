@@ -433,25 +433,54 @@
       </div>
     </section>
 
+    <!-- 2026-05-02 reworked: About tab now auto-loads docs/CURRENT-STATE.md
+         (the authoritative project state) instead of dumping API JSON.
+         Falls back to the JSON if the markdown can't be loaded. -->
     <section id="tab-info" class="tab">
-      <h2>About</h2>
-      <pre id="info-output">Loading…</pre>
-      <h3>Phase 1 surface</h3>
-      <ul>
-        <li>List + browse completed runs (sortable by sum-finalQ)</li>
-        <li>Inspect run details (per-trial finalQ, motor counts, phase stats)</li>
-        <li>Read research findings (markdown rendering via the browser's text view)</li>
-        <li>Launch new runners from preset configs with live stdout tail</li>
-      </ul>
-      <h3>Phase 2 (planned)</h3>
-      <ul>
-        <li>Three.js viz of the agent in its 2D gridworld with beacon/landmark fields</li>
-        <li>Live region activity feed via the bridge's DataBus (in-process)</li>
-      </ul>
-      <h3>Phase 3 (planned)</h3>
-      <ul>
-        <li>PyBullet 3D world + agent body with camera; pixel-level vision</li>
-      </ul>
+      <div class="info-wrapper">
+        <div class="info-section">
+          <h2>About this project</h2>
+          <p class="muted">
+            Brain-inspired AI that learns by spike timing, not gradient
+            descent. ~5,000 neurons across 50+ regions, ~175,000 synapses,
+            with biology-grounded plasticity (STDP + reward modulation).
+          </p>
+        </div>
+
+        <div class="info-section">
+          <div class="section-title">Quick links</div>
+          <div class="quick-link-grid">
+            <a class="quick-link-card" href="/api/findings/../../README.md" target="_blank">
+              <div class="quick-link-title">README</div>
+              <div class="quick-link-desc muted">Project overview, what works today, latest validated result</div>
+            </a>
+            <a class="quick-link-card" href="/api/current_state" target="_blank">
+              <div class="quick-link-title">CURRENT-STATE.md</div>
+              <div class="quick-link-desc muted">Authoritative snapshot — capabilities, architecture, performance, limitations</div>
+            </a>
+            <a class="quick-link-card" href="/api/biology" target="_blank">
+              <div class="quick-link-title">biology.md</div>
+              <div class="quick-link-desc muted">Plain-language neuroscience tour with Kandel + 12 specialty refs</div>
+            </a>
+            <a class="quick-link-card" href="/api/frontend_guide" target="_blank">
+              <div class="quick-link-title">Frontend dev guide</div>
+              <div class="quick-link-desc muted">How to add tabs, endpoints, visualizations</div>
+            </a>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="section-title">Current state</div>
+          <div id="info-current-state" class="markdown info-current-state">
+            <p class="muted">Loading docs/CURRENT-STATE.md…</p>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="section-title">System info</div>
+          <pre id="info-output" class="info-system-pre">Loading…</pre>
+        </div>
+      </div>
     </section>
   </main>
 

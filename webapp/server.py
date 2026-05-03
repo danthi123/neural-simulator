@@ -1674,6 +1674,43 @@ def list_text_io_runs() -> JSONResponse:
     return JSONResponse({"runs": out, "count": len(out), "aggregate": agg})
 
 
+@app.get("/api/current_state", response_class=PlainTextResponse)
+def get_current_state() -> str:
+    """Serve docs/CURRENT-STATE.md as plain text. Used by the About tab.
+    Returns 404 if the file is missing."""
+    path = REPO_ROOT / "docs" / "CURRENT-STATE.md"
+    if not path.is_file():
+        raise HTTPException(404, "docs/CURRENT-STATE.md not found")
+    return path.read_text(encoding="utf-8")
+
+
+@app.get("/api/biology", response_class=PlainTextResponse)
+def get_biology() -> str:
+    """Serve docs/biology.md as plain text."""
+    path = REPO_ROOT / "docs" / "biology.md"
+    if not path.is_file():
+        raise HTTPException(404, "docs/biology.md not found")
+    return path.read_text(encoding="utf-8")
+
+
+@app.get("/api/frontend_guide", response_class=PlainTextResponse)
+def get_frontend_guide() -> str:
+    """Serve docs/webapp-frontend-guide.md as plain text."""
+    path = REPO_ROOT / "docs" / "webapp-frontend-guide.md"
+    if not path.is_file():
+        raise HTTPException(404, "docs/webapp-frontend-guide.md not found")
+    return path.read_text(encoding="utf-8")
+
+
+@app.get("/api/readme", response_class=PlainTextResponse)
+def get_readme() -> str:
+    """Serve README.md as plain text."""
+    path = REPO_ROOT / "README.md"
+    if not path.is_file():
+        raise HTTPException(404, "README.md not found")
+    return path.read_text(encoding="utf-8")
+
+
 @app.get("/api/text_io_runs/{name}")
 def get_text_io_run_detail(name: str) -> JSONResponse:
     """Full text I/O run JSON, with the same path-traversal guard as

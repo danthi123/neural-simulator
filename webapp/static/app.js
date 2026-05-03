@@ -1287,12 +1287,31 @@ function appendError(out, text) {
 // ─────────────────────────────────────────────────────────────────────────
 async function loadInfo() {
   window._infoLoaded = true;
-  try {
-    const res = await fetch("/api/info");
-    const data = await res.json();
-    $("#info-output").textContent = JSON.stringify(data, null, 2);
-  } catch (e) {
-    $("#info-output").textContent = `Error: ${e.message}`;
+  // Load CURRENT-STATE.md and the system info JSON in parallel.
+  const [csRes, infoRes] = await Promise.allSettled([
+    fetch("/api/current_state").then((r) => r.ok ? r.text() : Promise.reject(r.status)),
+    fetch("/api/info").then((r) => r.json()),
+  ]);
+
+  const csEl = $("#info-current-state");
+  if (csRes.status === "fulfilled") {
+    const wrapper = el("div", { class: "markdown" });
+    wrapper.innerHTML = renderMarkdown(csRes.value);
+    csEl.replaceChildren(wrapper);
+  } else {
+    csEl.replaceChildren(
+      el("p", { class: "error" }, `Failed to load CURRENT-STATE.md: ${csRes.reason}`),
+      el("p", { class: "muted" },
+        "The file may not exist on this deployment. " +
+        "On a checkout, see docs/CURRENT-STATE.md."),
+    );
+  }
+
+  const sysEl = $("#info-output");
+  if (infoRes.status === "fulfilled") {
+    sysEl.textContent = JSON.stringify(infoRes.value, null, 2);
+  } else {
+    sysEl.textContent = `Error: ${infoRes.reason?.message || infoRes.reason}`;
   }
 }
 
