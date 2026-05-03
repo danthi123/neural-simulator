@@ -99,6 +99,41 @@ Master logs:
 
 ---
 
+## Performance findings (autonomous overnight 2026-05-03 PM)
+
+Step profiling via the existing `GPUConfig.enable_step_profiler` shows
+the simulator is **88% GPU compute, 12% Python orchestration** (single-
+process estimate). My earlier "Python launch overhead is the bottleneck,
+CUDA Graphs would give 2-3x" was wrong — it would only give ~1.1x.
+
+Real speedup options:
+1. **Parallel seeds**: validated at 1.7x effective via 3 GPU processes.
+   Already in use.
+2. **Bigger dt (0.5 → 1.0 ms)**: smoke test running in parallel with
+   sweep. If stable, free 2x.
+3. **Algorithmic micro-opts in hot phases**:
+   - t_dyn (29%): the Izhikevich block has ~15 small kernel launches
+     for spike detection / refractory / reset. The
+     `if fired_indices.size > 0` forces a GPU-CPU sync. Replacing
+     with `cp.where(fired, reset_val, v_new)` masking pattern avoids
+     the sync. Maybe 5-10% on t_dyn.
+   - t_plast (25%): per-pathway STDP iteration could batch all
+     plastic pathways into one fused kernel. Maybe 10% on t_plast.
+   - t_syn (17%): COO conversion is cached correctly under
+     `enable_structural_plasticity=False` (our default). Sparse
+     mat-vec itself is the cost.
+4. **Sparse format optimization** (deeper work, weeks): hybrid ELL/COO
+   format for better coalescing. Potential 1.3-1.5x on t_syn + t_stp
+   together.
+
+CUDA Graphs / mega-kernel / C++ rewrite: low ROI given the compute-
+bound profile. Defer.
+
+Tools shipped:
+- `python -m research.runners.profile_step` — re-runnable section profile
+- `python -m research.runners.bench_parallel_gpu` — parallel-process
+  GPU sharing benchmark
+
 ## What I deferred
 
 * **Hebbian decay fix** — significant code change (sim/bridge.py
