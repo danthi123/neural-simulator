@@ -1707,6 +1707,32 @@ function parseSeedInput(s) {
   });
 }
 
+// 2026-05-03 — show estimated runtime under the preset dropdown so the
+// user knows what they're committing to before clicking Launch.
+function setupPresetHint() {
+  const sel = document.getElementById("launch-preset-select");
+  const hint = document.getElementById("launch-preset-hint");
+  if (!sel || !hint) return;
+  function update() {
+    const opt = sel.selectedOptions[0];
+    if (!opt) { hint.textContent = ""; return; }
+    const etaMin = opt.dataset.etaMin;
+    if (!etaMin) { hint.textContent = ""; return; }
+    const seedInput = document.querySelector('input[name="seed"]');
+    const seedStr = seedInput?.value || "42";
+    let nSeeds = 1;
+    try { nSeeds = parseSeedInput(seedStr).length; } catch { nSeeds = 1; }
+    const totalMin = parseInt(etaMin, 10) * Math.max(1, nSeeds);
+    const totalText = totalMin >= 60
+      ? `~${(totalMin / 60).toFixed(1)} hours`
+      : `~${totalMin} min`;
+    hint.textContent = `Estimated: ${etaMin} min/seed × ${nSeeds} seed${nSeeds === 1 ? "" : "s"} = ${totalText} total`;
+  }
+  sel.addEventListener("change", update);
+  document.querySelector('input[name="seed"]')?.addEventListener("input", update);
+  update();  // initial paint
+}
+
 function setupLauncher() {
   const form = $("#launch-form");
   const out = $("#launcher-output");
@@ -1954,6 +1980,21 @@ function setupBrain3DControls(mod) {
   livePicker?.addEventListener("change", (e) => {
     const name = e.target.value;
     if (name) mod.brain3dSelectLiveRun(name);
+  });
+  // Step-jump input — type a step number and press Enter to jump.
+  $("#brain3d-step-jump")?.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    const v = parseInt(e.target.value, 10);
+    if (isNaN(v)) return;
+    const sl = $("#brain3d-scrubber");
+    const max = parseInt(sl?.max ?? "0", 10) || 0;
+    const clamped = Math.max(0, Math.min(max, v));
+    if (sl) {
+      sl.value = String(clamped);
+      sl.dispatchEvent(new Event("input"));
+    }
+    e.target.value = "";  // clear after jump for next entry
   });
   // Jump to latest live sample (re-engage auto-follow)
   $("#brain3d-latest")?.addEventListener("click", () => {
@@ -2630,6 +2671,7 @@ setupKeyboardShortcuts(); // 2026-05-03: arrows, space, r, t, ?
 initNotifications();      // 2026-05-03: browser-notification readiness
 setupTabs();
 setupLauncher();
+setupPresetHint();
 setupWorldTab();
 loadRuns();
 loadOverview();  // active tab on first load

@@ -378,6 +378,8 @@
           <button id="brain3d-play" class="ctrl-btn">▶ Play</button>
           <input type="range" id="brain3d-scrubber" min="0" max="0" value="0" step="1" style="flex:1;">
           <button id="brain3d-latest" class="ctrl-btn" title="Jump to latest sample (live mode auto-follow)">↦ Latest</button>
+          <!-- Direct step-jump input: type N + Enter to jump to step N. -->
+          <input type="number" id="brain3d-step-jump" class="toolbar-input" style="width:72px;" placeholder="Step #" min="0" title="Jump to step number — type then press Enter">
           <span id="brain3d-step-label" class="muted">step 0 / 0</span>
           <label class="scrubber-speed-label">
             Speed
@@ -534,29 +536,31 @@
       <h2>Launch a runner</h2>
       <form id="launch-form">
         <label>Preset
-          <select name="preset">
+          <select name="preset" id="launch-preset-select">
             <option disabled>──── NAVIGATION (gridworld) ────</option>
-            <option value="flagship_k_v2_visual">★★ flagship_k_v2_visual — Cluster K v2 visual cortex 16×16 (2.87±0.19, perception-only, NO heuristic)</option>
-            <option value="flagship_k_v2_24x24">flagship_k_v2_24x24 — K v2 at 24×24 (2.87±0.22, grid-invariant)</option>
-            <option value="flagship_g_v25">★ flagship_g_v25 — Cluster G v2.5 NMDA (2.00±0.00 with heuristic)</option>
-            <option value="interactive_k_v2_visual">★ interactive_k_v2_visual — K v2, 3600 steps, click grid to teleport goal</option>
-            <option value="flagship">flagship — 4-cheats-closed (perception arc, 4.08±0.49)</option>
-            <option value="flagship_with_cheat5">flagship_with_cheat5 — adds curriculum-staged BG cross-projections</option>
-            <option value="perception_only">perception_only — full perception arc, no sensed reward</option>
-            <option value="biology_AE">biology_AE — A+E composite (3.31±0.74 single-goal)</option>
-            <option value="biology_AE_multi">biology_AE_multi — A+E with --goal-schedule multi</option>
-            <option value="biology_AE_sensed">biology_AE_sensed — A+E with sensed-reward only</option>
-            <option value="biology_baseline">biology_baseline — R-pass + Cluster B baseline</option>
-            <option value="baseline">baseline — minimal, no flags</option>
-            <option value="smoke">smoke — 100 steps for quick check</option>
-            <option value="interactive_flagship">interactive_flagship — flagship config + interactive control</option>
-            <option value="interactive_baseline">interactive_baseline — minimal + interactive control</option>
+            <option value="flagship_k_v2_visual" data-eta-min="15">★★ flagship_k_v2_visual — Cluster K v2 visual cortex 16×16 (2.87±0.19, perception-only, NO heuristic) [~15min]</option>
+            <option value="flagship_k_v2_24x24" data-eta-min="20">flagship_k_v2_24x24 — K v2 at 24×24 (2.87±0.22, grid-invariant) [~20min]</option>
+            <option value="flagship_g_v25" data-eta-min="15">★ flagship_g_v25 — Cluster G v2.5 NMDA (2.00±0.00 with heuristic) [~15min]</option>
+            <option value="interactive_k_v2_visual" data-eta-min="30">★ interactive_k_v2_visual — K v2, 3600 steps, click grid to teleport goal [interactive ~30min]</option>
+            <option value="flagship" data-eta-min="15">flagship — 4-cheats-closed (perception arc, 4.08±0.49) [~15min]</option>
+            <option value="flagship_with_cheat5" data-eta-min="15">flagship_with_cheat5 — adds curriculum-staged BG cross-projections [~15min]</option>
+            <option value="perception_only" data-eta-min="15">perception_only — full perception arc, no sensed reward [~15min]</option>
+            <option value="biology_AE" data-eta-min="15">biology_AE — A+E composite (3.31±0.74 single-goal) [~15min]</option>
+            <option value="biology_AE_multi" data-eta-min="15">biology_AE_multi — A+E with --goal-schedule multi [~15min]</option>
+            <option value="biology_AE_sensed" data-eta-min="15">biology_AE_sensed — A+E with sensed-reward only [~15min]</option>
+            <option value="biology_baseline" data-eta-min="15">biology_baseline — R-pass + Cluster B baseline [~15min]</option>
+            <option value="baseline" data-eta-min="15">baseline — minimal, no flags [~15min]</option>
+            <option value="smoke" data-eta-min="1">smoke — 100 steps for quick check [~1min]</option>
+            <option value="interactive_flagship" data-eta-min="30">interactive_flagship — flagship config + interactive control [interactive ~30min]</option>
+            <option value="interactive_baseline" data-eta-min="30">interactive_baseline — minimal + interactive control [interactive ~30min]</option>
             <option disabled>──── TEXT I/O (language) ────</option>
-            <option value="text_io_v2_baseline">★ text_io_v2_baseline — current best (28.5% W→A, p=0.027 across 6 seeds)</option>
-            <option value="text_io_v2_smoke">text_io_v2_smoke — 10-episode smoke (~5 min) for quick verification</option>
-            <option value="text_io_distributed_motor_pop">text_io_distributed_motor_pop — Pulvermüller G.20, 8-direction motor cosine tuning</option>
-            <option value="text_io_motor_cross_coupling">text_io_motor_cross_coupling — 90° adjacency cross-coupling (NEGATIVE 22% W→A)</option>
+            <option value="text_io_v2_baseline" data-eta-min="55">★ text_io_v2_baseline — current best (28.5% W→A, p=0.027 across 6 seeds) [~55min]</option>
+            <option value="text_io_v2_smoke" data-eta-min="5">text_io_v2_smoke — 10-episode smoke for quick verification [~5min]</option>
+            <option value="text_io_distributed_motor_pop" data-eta-min="55">text_io_distributed_motor_pop — Pulvermüller G.20, 8-direction motor cosine tuning [~55min]</option>
+            <option value="text_io_motor_cross_coupling" data-eta-min="55">text_io_motor_cross_coupling — 90° adjacency cross-coupling (NEGATIVE 22% W→A) [~55min]</option>
           </select>
+          <!-- ETA hint shown on preset change -->
+          <div id="launch-preset-hint" class="muted" style="font-size:11px;margin-top:4px;"></div>
         </label>
         <label>Seed(s)
           <!-- 2026-05-03: multi-seed input. Accepts a single seed (42)
