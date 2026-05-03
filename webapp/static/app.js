@@ -1654,8 +1654,12 @@ async function refreshInflightPanel() {
             : el("span", { class: "badge", style: "background:#fb718533;color:#fb7185" }, "stopped"));
 
       let progressLine;
-      if (p.kind === "embodied_episode") {
-        progressLine = `episode ${p.episode}/${p.episodes_total} · ` +
+      if (p.kind === "swr_replay") {
+        const phasePrefix = p.phase_num ? `Phase ${p.phase_num} SWR · ` : "SWR · ";
+        progressLine = `${phasePrefix}event ${p.ev}/${p.ev_total}`;
+      } else if (p.kind === "embodied_episode") {
+        const phasePrefix = p.phase_num ? `Phase ${p.phase_num} · ` : "";
+        progressLine = `${phasePrefix}episode ${p.episode}/${p.episodes_total} · ` +
                        `${p.correct_moves}/${p.n_steps} correct moves (${p.correct_pct}%)`;
       } else if (p.kind === "step") {
         progressLine = `step ${p.step}/${p.total} · pos=(${p.pos.join(',')}) · goal=(${p.goal.join(',')})`;
