@@ -2458,3 +2458,24 @@ pre {
     margin-right: 4px;
   }
 }
+
+/* ───────────────────────────────────────────────────────────────────────
+   Language tab — aggregate per-direction breakdown (2026-05-03)
+   Wraps the existing .per-dir-rows in a card-style container.
+   ─────────────────────────────────────────────────────────────────────── */
+.lang-per-dir-aggregate {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin: 0 0 16px;
+}
+.lang-per-dir-aggregate .section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-dim);
+  margin: 0 0 10px;
+  border: none;
+  padding: 0;
+}

@@ -1790,6 +1790,12 @@ def list_text_io_runs() -> JSONResponse:
         reverse=True,
     )
     out = []
+    # 2026-05-03: collect per-direction values across all runs for the
+    # aggregate breakdown displayed in the Language tab. Each entry is
+    # the accuracy for {word: predicted_action == word's letter} on
+    # that run.
+    per_dir_w2a = {"north": [], "east": [], "south": [], "west": []}
+    per_dir_i2w = {"north": [], "east": [], "south": [], "west": []}
     for f in files:
         try:
             data = json.loads(f.read_text())
@@ -1805,6 +1811,28 @@ def list_text_io_runs() -> JSONResponse:
             v = ts[0].get("correct_move_rate")
             if v is not None:
                 correct_move_rate = float(v)
+        # Per-direction accuracy for this run
+        run_per_dir_w2a = {}
+        wa_cm = wa.get("confusion_matrix") or {}
+        for word in ("north", "east", "south", "west"):
+            row = wa_cm.get(word, {}) or {}
+            target = word[0].upper()
+            total = sum(int(v) for v in row.values())
+            correct = int(row.get(target, 0))
+            acc = correct / total if total > 0 else None
+            run_per_dir_w2a[word] = acc
+            if acc is not None:
+                per_dir_w2a[word].append(acc)
+        run_per_dir_i2w = {}
+        iw_cm = iw.get("confusion_matrix") or {}
+        for word in ("north", "east", "south", "west"):
+            row = iw_cm.get(word, {}) or {}
+            total = sum(int(v) for v in row.values())
+            correct = int(row.get(word, 0))
+            acc = correct / total if total > 0 else None
+            run_per_dir_i2w[word] = acc
+            if acc is not None:
+                per_dir_i2w[word].append(acc)
         out.append({
             "name": f.name,
             "size_bytes": f.stat().st_size,
@@ -1816,9 +1844,11 @@ def list_text_io_runs() -> JSONResponse:
             "i2w_accuracy": iw.get("accuracy"),
             "i2w_correct": iw.get("correct"),
             "i2w_n_trials": iw.get("n_trials"),
+            "i2w_per_direction": run_per_dir_i2w,
             "w2a_accuracy": wa.get("accuracy"),
             "w2a_correct": wa.get("correct"),
             "w2a_n_trials": wa.get("n_trials"),
+            "w2a_per_direction": run_per_dir_w2a,
             "correct_move_rate": correct_move_rate,
         })
     # Aggregate stats across the entire collection.
@@ -1831,6 +1861,15 @@ def list_text_io_runs() -> JSONResponse:
             agg[f"{key}_mean"] = mean_v
             agg[f"{key}_std"] = var ** 0.5 if len(vals) > 1 else None
             agg[f"{key}_n"] = len(vals)
+    # Per-direction aggregates
+    agg["w2a_per_direction_mean"] = {
+        d: (sum(vals) / len(vals)) if vals else None
+        for d, vals in per_dir_w2a.items()
+    }
+    agg["i2w_per_direction_mean"] = {
+        d: (sum(vals) / len(vals)) if vals else None
+        for d, vals in per_dir_i2w.items()
+    }
     return JSONResponse({"runs": out, "count": len(out), "aggregate": agg})
 
 

@@ -1228,6 +1228,42 @@ function renderLanguageKpis(agg, runs) {
     String(runs.length),
     `${new Set(runs.map(r => r.seed).filter(s => s != null)).size} unique seeds`,
   ));
+
+  // 2026-05-03: per-direction aggregate breakdown — surface "south
+  // weak in seed 43, north weak in seed 44" patterns at a glance.
+  // Inserted below the headline KPI cards.
+  const perDir = agg.w2a_per_direction_mean;
+  if (perDir && Object.values(perDir).some((v) => v != null)) {
+    const wrap = el("div", { class: "lang-per-dir-aggregate" });
+    wrap.appendChild(el("div", { class: "section-title" },
+      `W→A per-direction across ${runs.length} runs`));
+    const matrix = {
+      north: { N: 0 }, east: { E: 0 }, south: { S: 0 }, west: { W: 0 },
+    };
+    // Synthesize a fake "matrix" for renderPerDirectionBreakdown by
+    // using the means as if they were correct/total counts.
+    // Easier: render bars manually.
+    const rows = el("div", { class: "per-dir-rows" });
+    for (const word of ["north", "east", "south", "west"]) {
+      const acc = perDir[word];
+      const pct = acc != null ? (acc * 100).toFixed(0) : "—";
+      const aboveChance = acc != null && acc > 0.30;
+      const fillBar = el("div", {
+        class: "per-dir-fill" + (aboveChance ? " above" : ""),
+        style: `width: ${acc != null ? Math.round(acc * 100) : 0}%`,
+      });
+      const chanceMark = el("div", { class: "per-dir-chance",
+                                     title: "25% chance" });
+      rows.appendChild(el("div", { class: "per-dir-row" }, [
+        el("div", { class: "per-dir-label" }, word),
+        el("div", { class: "per-dir-bar" }, [chanceMark, fillBar]),
+        el("div", { class: "per-dir-pct" + (aboveChance ? " above" : "") },
+          `${pct}%`),
+      ]));
+    }
+    wrap.appendChild(rows);
+    kpis.parentNode.insertBefore(wrap, kpis.nextSibling);
+  }
 }
 
 function renderLanguageList(runs) {
