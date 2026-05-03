@@ -156,6 +156,12 @@ def run_embodied_text_training(
     # Wernicke/Broca cortex (~10^5+ neurons each).
     text_n_input_neurons: int = 256,
     text_n_output_neurons: int = 256,
+    # Motor cross-coupling (2026-05-02). Models Pulvermüller distributed
+    # action-word coding (G.20 in language-mechanisms-additions.md).
+    # Adds excitatory N↔E, E↔S, S↔W, W↔N coupling (adjacent directions).
+    enable_motor_cross_coupling: bool = False,
+    motor_cross_coupling_weight: float = 0.5,
+    motor_cross_coupling_density: float = 0.3,
     verbose: bool = True,
 ):
     """Embodied training: navigate gridworld with language inputs/outputs
@@ -188,6 +194,9 @@ def run_embodied_text_training(
         n_motor_per_action=n_motor_per_action,
         text_n_input_neurons=text_n_input_neurons,
         text_n_output_neurons=text_n_output_neurons,
+        enable_motor_cross_coupling=enable_motor_cross_coupling,
+        motor_cross_coupling_weight=motor_cross_coupling_weight,
+        motor_cross_coupling_density=motor_cross_coupling_density,
         # 2026-05-02 secondary fix: small non-zero init for readout
         # pathways. Original 0.0 init left these pathways at the
         # synaptic floor (0.01) after training — STDP couldn't grow them

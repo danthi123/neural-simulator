@@ -70,6 +70,14 @@ def main():
                     help="language_input region size (default 256; try 512)")
     ap.add_argument("--text-n-output-neurons", type=int, default=256,
                     help="language_output region size (default 256; try 512)")
+    # Distributed motor coding (G.20 Pulvermüller, 2026-05-02)
+    ap.add_argument("--enable-motor-cross-coupling", action="store_true",
+                    help="add excitatory cross-coupling between adjacent motor "
+                    "pools (N<->E, E<->S, S<->W, W<->N). Models distributed M1 tuning.")
+    ap.add_argument("--motor-cross-coupling-weight", type=float, default=0.5,
+                    help="weight of motor cross-coupling pathways (default 0.5)")
+    ap.add_argument("--motor-cross-coupling-density", type=float, default=0.3,
+                    help="density of motor cross-coupling pathways (default 0.3)")
     # Auto-checkpoint after training so we can re-eval same bridge later
     # with different methodologies (e.g., compare interleaved vs block eval).
     ap.add_argument("--save-checkpoint", action="store_true",
@@ -105,6 +113,9 @@ def main():
         n_motor_per_action=args.n_motor_per_action,
         text_n_input_neurons=args.text_n_input_neurons,
         text_n_output_neurons=args.text_n_output_neurons,
+        enable_motor_cross_coupling=args.enable_motor_cross_coupling,
+        motor_cross_coupling_weight=args.motor_cross_coupling_weight,
+        motor_cross_coupling_density=args.motor_cross_coupling_density,
         verbose=True,
     )
 

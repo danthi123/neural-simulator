@@ -88,6 +88,18 @@ def build_bg_brain_regions(
     # Lower values (10/5) leave FS pool subthreshold and inhibition is dead.
     motor_to_fs_weight: float = 50.0,
     fs_to_motor_weight: float = 20.0,
+    # Distributed motor coding (2026-05-02). Adds excitatory cross-coupling
+    # between motor pools at ADJACENT cardinal directions (N↔E, E↔S, S↔W,
+    # W↔N — 90° angular distance). Opposite directions (N↔S, E↔W) get NO
+    # coupling. Models real M1's overlapping somatotopy (Penfield 1937
+    # homunculus has fuzzy boundaries) and Pulvermüller's distributed
+    # action-word coding (1999/2005). Weight is small (~0.5) to soften
+    # the labeled-line architecture without dissolving pool selectivity.
+    # Hypothesis: 28.5% W→A ceiling is partly due to rigid 4-pool argmax;
+    # smoother tuning may extract more signal.
+    enable_motor_cross_coupling: bool = False,
+    motor_cross_coupling_weight: float = 0.5,
+    motor_cross_coupling_density: float = 0.3,
     # Cortex-level WTA (Phase B follow-up to plastic-input-layer cold-start).
     # Adds per-pool FS interneurons that mediate cross-pool inhibition.
     # Mirrors motor WTA pattern. Goal: enforce one-cortex-pool-wins regardless
@@ -1238,6 +1250,35 @@ def build_bg_brain_regions(
                     density=1.0, weight_mean=fs_to_motor_weight, weight_jitter=0.2,
                     plastic=False,
                 ))
+
+    # ---- Motor cross-coupling (opt-in, 2026-05-02) ----
+    # Models distributed/overlapping somatotopy in M1 (Penfield 1937 fuzzy
+    # boundaries; Pulvermüller 1999 distributed action-word neurons).
+    # Adds excitatory connections between motor pools at adjacent cardinal
+    # directions (90° angular distance: N↔E, E↔S, S↔W, W↔N).
+    # Opposite directions (N↔S, E↔W at 180°) get NO coupling — they're
+    # antagonistic, like agonist/antagonist muscle pairs in real motor
+    # control.
+    # Hypothesis: rigid 4-pool argmax architecture is the bottleneck for
+    # text I/O accuracy. Softer cross-pool tuning lets motor population
+    # encode direction more like real M1 (continuous tuning curves) than
+    # discrete labeled lines.
+    if enable_motor_cross_coupling:
+        # Adjacent direction pairs (90° apart). N↔E adjacent, etc.
+        ADJACENT_PAIRS = [
+            ("N", "E"), ("E", "N"),
+            ("E", "S"), ("S", "E"),
+            ("S", "W"), ("W", "S"),
+            ("W", "N"), ("N", "W"),
+        ]
+        for src, tgt in ADJACENT_PAIRS:
+            pathways.append(RegionPathway(
+                from_region=f"motor_{src}", to_region=f"motor_{tgt}",
+                density=motor_cross_coupling_density,
+                weight_mean=motor_cross_coupling_weight,
+                weight_jitter=0.2,
+                plastic=False,  # Static — represents inherited tuning structure
+            ))
 
     # Cortex WTA pathways (opt-in). Mirror of motor WTA structure.
     if enable_cortex_lateral_inhibition:
