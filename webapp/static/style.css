@@ -7,7 +7,16 @@
  * is kept defined for future use but is no longer applied anywhere by
  * default — body inherits mono and per-element overrides are removed.
  */
+/* ───────────────────────────────────────────────────────────────────────
+   Theme system (2026-05-02)
+   :root          → defaults to dark theme variables
+   [data-theme="light"]  → light theme overrides
+
+   To toggle from JS: document.documentElement.dataset.theme = 'light' | 'dark'
+   The choice is persisted to localStorage by app.js.
+   ─────────────────────────────────────────────────────────────────────── */
 :root {
+  /* Dark theme (default). */
   --bg: #0e1014;
   --bg-2: #161922;
   --bg-3: #1d2230;
@@ -25,6 +34,45 @@
      lists in CSS or JS. */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", Consolas, "Courier New", monospace;
+}
+
+[data-theme="light"] {
+  /* Light theme. Picks lighter neutrals that preserve relative contrast.
+     Same accent green/yellow/red hues — they were tuned for dark bg, but
+     they still read clearly on light. */
+  --bg: #f7f8fa;
+  --bg-2: #ffffff;
+  --bg-3: #eef1f5;
+  --fg: #1a1d22;
+  --fg-dim: #4b5563;
+  --fg-muted: #94a3b8;
+  --accent: #059669;        /* darker green — readable on white */
+  --accent-warn: #d97706;
+  --accent-bad: #dc2626;
+  --border: #e2e8f0;
+  --link: #2563eb;
+  --code-bg: #f1f5f9;
+}
+
+/* Honor the OS-level prefers-color-scheme when no explicit theme is set
+   (i.e. before app.js applies the persisted preference). Users on macOS
+   "auto" / Windows "light" mode get light-on-load even though we default
+   the variables to dark. JS will fall back to the stored choice on load. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: #f7f8fa;
+    --bg-2: #ffffff;
+    --bg-3: #eef1f5;
+    --fg: #1a1d22;
+    --fg-dim: #4b5563;
+    --fg-muted: #94a3b8;
+    --accent: #059669;
+    --accent-warn: #d97706;
+    --accent-bad: #dc2626;
+    --border: #e2e8f0;
+    --link: #2563eb;
+    --code-bg: #f1f5f9;
+  }
 }
 
 * { box-sizing: border-box; }
@@ -1250,3 +1298,215 @@ pre {
   text-decoration: none;
 }
 .lang-detail-links a:hover { text-decoration: underline; }
+
+/* ───────────────────────────────────────────────────────────────────────
+   Theme toggle button (header right edge, 2026-05-02)
+   ─────────────────────────────────────────────────────────────────────── */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover {
+  background: var(--bg-3);
+  border-color: var(--accent);
+  transform: rotate(15deg);
+}
+.theme-toggle:active { transform: scale(0.95); }
+.theme-toggle-icon {
+  line-height: 1;
+  display: inline-block;
+}
+
+/* Mobile nav toggle (hamburger). Hidden by default; revealed by mobile
+   media query below. */
+.nav-mobile-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg);
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.nav-mobile-toggle:hover {
+  background: var(--bg-3);
+  border-color: var(--accent);
+}
+
+/* ───────────────────────────────────────────────────────────────────────
+   Responsive breakpoints (2026-05-02)
+
+   Three tiers:
+   - desktop (default, >=900px): existing horizontal nav, full layouts
+   - tablet  (768-899px): tighter spacing, full nav still horizontal but
+                          allow overflow-x scroll
+   - mobile  (<768px):    stack header, nav becomes a vertical drawer
+                          revealed by hamburger
+   ─────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+  /* Tighten the kpi grid earlier than auto-fill default. */
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  /* Tablet: nav can scroll horizontally if it overflows. */
+  header {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  header h1 {
+    font-size: 14px;
+    flex-shrink: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  header h1 .muted { display: none; }
+  nav {
+    overflow-x: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  nav button {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Mobile: hamburger replaces the inline nav. */
+  .nav-mobile-toggle { display: flex; }
+  nav {
+    display: none;
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--border);
+    padding: 8px;
+    gap: 4px;
+    z-index: 10;
+    overflow-y: auto;
+    max-height: calc(100vh - 56px);
+  }
+  nav.nav-open { display: flex; }
+  nav button {
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    border-radius: 6px;
+  }
+
+  header {
+    position: relative;
+  }
+  header h1 { font-size: 13px; }
+
+  /* Stack split panels (Runs detail, Findings detail, Language detail) */
+  .split {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+  }
+  .split .list,
+  .split .detail {
+    height: auto;
+    max-height: 50vh;
+  }
+  #tab-language .split {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  /* Confusion matrices side-by-side become stacked */
+  .confusion-row { grid-template-columns: 1fr; }
+
+  /* Toolbar: wrap controls onto multiple lines on tiny screens */
+  .toolbar {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 12px;
+  }
+
+  /* Overview KPI grid: 1 or 2 columns on tiny screens */
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .kpi-card { padding: 10px 12px; }
+  .kpi-card .kpi-value { font-size: 18px; }
+
+  /* Tab section padding */
+  #tab-info, #tab-brain, #tab-language { padding: 12px 14px; }
+  #tab-launcher { padding: 12px 14px; }
+
+  /* World tab — hide the runlist sidebar on mobile and rely on Load
+     run modal instead. */
+  .world-layout {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 1fr auto;
+  }
+  #world-runlist {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  /* Hide some chrome on mobile to save space */
+  header h1 .muted { display: none; }
+  .toolbar-checkbox span { font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  /* Smallest screens: collapse further */
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  header h1 {
+    font-size: 12px;
+  }
+  nav button { font-size: 13px; padding: 12px 14px; }
+  .info-card { padding: 12px 14px; }
+}
+
+/* ───────────────────────────────────────────────────────────────────────
+   Light theme overrides for elements that hardcode RGBA backgrounds
+   ─────────────────────────────────────────────────────────────────────── */
+[data-theme="light"] .confusion-cell.diag {
+  /* Diagonal cells use a hardcoded blue rgba in the JS — boost contrast
+     so the gradient still reads on light background. */
+}
+[data-theme="light"] .confusion-cell {
+  /* Text on light cells should be dark when intensity is high. The JS
+     handles this; no override needed here. */
+}
+[data-theme="light"] body {
+  /* Soften the contrast on light theme */
+  color: var(--fg);
+}
+[data-theme="light"] .lang-cell.above-chance {
+  color: #15803d; /* darker green for legibility on light */
+}

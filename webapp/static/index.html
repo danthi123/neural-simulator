@@ -9,7 +9,12 @@
 <body>
   <header>
     <h1>Neural Simulator <span class="muted">Research Dashboard</span></h1>
-    <nav>
+    <!-- Mobile-only nav toggle. Hidden by CSS at >=900px viewports. -->
+    <button id="nav-mobile-toggle" class="nav-mobile-toggle"
+            aria-label="Toggle navigation menu" aria-expanded="false">
+      <span class="nav-mobile-icon">☰</span>
+    </button>
+    <nav id="nav-tabs">
       <button data-tab="overview" class="active">Home</button>
       <button data-tab="launcher">Lab</button>
       <button data-tab="runs">Runs</button>
@@ -20,6 +25,11 @@
       <button data-tab="findings">Findings</button>
       <button data-tab="info">About</button>
     </nav>
+    <!-- Theme toggle. Click cycles dark <-> light; persisted in localStorage. -->
+    <button id="theme-toggle" class="theme-toggle"
+            aria-label="Toggle dark/light theme" title="Toggle theme">
+      <span class="theme-toggle-icon">🌙</span>
+    </button>
   </header>
 
   <main>

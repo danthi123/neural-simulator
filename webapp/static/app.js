@@ -66,7 +66,67 @@ function setupTabs() {
       if (t === "overview" && !window._overviewLoaded) loadOverview();
       if (t === "experiments" && !window._experimentsLoaded) loadExperiments();
       if (t === "language" && !window._languageLoaded) loadLanguage();
+      // Auto-collapse the mobile menu when a tab is picked.
+      const navEl = document.getElementById("nav-tabs");
+      const toggleBtn = document.getElementById("nav-mobile-toggle");
+      if (navEl?.classList.contains("nav-open")) {
+        navEl.classList.remove("nav-open");
+        toggleBtn?.setAttribute("aria-expanded", "false");
+      }
     });
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Theme toggle (dark/light, 2026-05-02)
+//
+// Reads localStorage["theme"] on load. Falls back to (a) explicit
+// document.documentElement.dataset.theme set by another script,
+// (b) prefers-color-scheme media query handled in CSS, (c) the dark
+// default in :root.
+// ─────────────────────────────────────────────────────────────────────────
+function setupThemeToggle() {
+  const root = document.documentElement;
+  const btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  const iconEl = btn.querySelector(".theme-toggle-icon");
+
+  // Apply persisted theme before first paint.
+  const saved = localStorage.getItem("theme");
+  if (saved === "light" || saved === "dark") {
+    root.dataset.theme = saved;
+  }
+  updateThemeIcon();
+
+  btn.addEventListener("click", () => {
+    const cur = root.dataset.theme || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    const next = cur === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    localStorage.setItem("theme", next);
+    updateThemeIcon();
+  });
+
+  function updateThemeIcon() {
+    const cur = root.dataset.theme || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    if (iconEl) iconEl.textContent = cur === "dark" ? "☀" : "🌙";
+    btn.title = cur === "dark" ? "Switch to light theme" : "Switch to dark theme";
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Mobile nav toggle (2026-05-02)
+//
+// At <900px viewports, the nav collapses behind a hamburger ☰ button.
+// Clicking the button reveals it; clicking a tab collapses it (handled
+// in setupTabs above).
+// ─────────────────────────────────────────────────────────────────────────
+function setupMobileNav() {
+  const btn = document.getElementById("nav-mobile-toggle");
+  const navEl = document.getElementById("nav-tabs");
+  if (!btn || !navEl) return;
+  btn.addEventListener("click", () => {
+    const open = navEl.classList.toggle("nav-open");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
   });
 }
 
@@ -1496,6 +1556,8 @@ function renderExperimentDetail(expRow) {
 // ─────────────────────────────────────────────────────────────────────────
 // Bootstrap
 // ─────────────────────────────────────────────────────────────────────────
+setupThemeToggle();  // 2026-05-02: applies persisted theme before first paint
+setupMobileNav();    // 2026-05-02: hamburger menu for <900px viewports
 setupTabs();
 setupLauncher();
 setupWorldTab();
