@@ -57,7 +57,9 @@ def main():
     print("\n# Orchestrator processes")
     for label, pid_file in [
         ("Master 4-seed batch", RAW_DIR / "run_swr_remaining.master.orchestrator-pid"),
-        ("Waiter (4-seed → H4 → H1 chain)", RAW_DIR / "wait_h4_h1.orchestrator-pid"),
+        ("Waiter (4-seed -> H4 -> H1 chain)", RAW_DIR / "wait_h4_h1.orchestrator-pid"),
+        ("Waiter (H1 -> arch sweep)", RAW_DIR / "wait_arch_sweep.orchestrator-pid"),
+        ("Waiter (arch -> auto-followup)", RAW_DIR / "wait_followup.orchestrator-pid"),
     ]:
         if pid_file.exists():
             try:
@@ -93,7 +95,7 @@ def main():
             print(f"  {pf.stem}: PID {pid} {'ALIVE' if alive else 'DEAD'} "
                   f"(log {fmt_age(log_age)} ago)")
             if tail:
-                print(f"    └─ {tail[:120]}")
+                print(f"    -- {tail[:120]}")
         except Exception as e:
             print(f"  {pf.name}: ERROR ({e})")
 
@@ -113,7 +115,7 @@ def main():
                 last = lines[-1] if lines else "(empty)"
                 age = file_age_seconds(log_path)
                 print(f"  {label} ({fmt_age(age)} ago):")
-                print(f"    └─ {last[:120]}")
+                print(f"    -- {last[:120]}")
             except Exception as e:
                 print(f"  {label}: ERROR ({e})")
         else:
