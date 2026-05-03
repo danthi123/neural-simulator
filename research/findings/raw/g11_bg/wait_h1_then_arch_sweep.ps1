@@ -62,3 +62,4 @@ if (Test-Path $pidFile) {
 
 "" | Out-File -Append $waitLog
 "=== ARCH SWEEP CHAIN COMPLETE at $(Get-Date) ===" | Out-File -Append $waitLog
+"(separate auto-followup waiter polls for arch sweep marker independently)" | Out-File -Append $waitLog
