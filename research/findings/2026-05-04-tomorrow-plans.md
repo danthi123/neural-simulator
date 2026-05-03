@@ -117,6 +117,36 @@ Master logs:
   (= 4000 events, ~880k sub-steps comparable to Phase 2). Tomorrow's
   call: maybe 1-seed sanity check first.
 
+## Permuted-label control test — definitive chance check
+
+The ABSOLUTE FIRST experiment for tomorrow should be:
+
+```bash
+# Conceptual — implementation needed
+# At eval time, shuffle (token -> target_action) mapping
+# Run W->A on existing v2 baseline checkpoints with shuffled labels
+# If accuracy stays at ~28%, the system has NO real learning
+```
+
+This is a definitive test. The permuted-label accuracy on a network
+with REAL word-action learning should drop to 25% (chance) since the
+labels no longer match what the network learned.
+
+If permuted accuracy stays at 28%, our 28% baseline is purely
+architectural bias (cascade always slightly favors N/E direction
+predictions, regardless of input word). All "learning" we measured
+is illusory.
+
+If permuted drops to 18-22%, then there IS real learning at 28%
+(just very weak above chance), and the right path is "more training,
+better architecture" not "abandon and rebuild."
+
+Implementation: extend text_reeval.py with --permute-labels flag.
+Run 6 seeds × ~8 min eval = ~50 min total. Quick decisive test.
+
+This must be the FIRST experiment because everything else depends
+on whether we have any real signal at all.
+
 ## H4 INVERSION — important
 
 The H4 result (n=4 mean 23%, BELOW chance 25%) says paired-stim
