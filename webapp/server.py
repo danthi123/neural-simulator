@@ -1674,6 +1674,38 @@ def list_text_io_runs() -> JSONResponse:
     return JSONResponse({"runs": out, "count": len(out), "aggregate": agg})
 
 
+PLANS_DIR = REPO_ROOT / "docs" / "plans"
+
+
+@app.get("/api/plans")
+def list_plans() -> JSONResponse:
+    """List all design / architecture decision record markdowns from
+    docs/plans/. Powers the Plans tab. Same shape as /api/findings.
+    """
+    if not PLANS_DIR.is_dir():
+        return JSONResponse({"plans": [], "count": 0})
+    plans = []
+    for f in sorted(PLANS_DIR.glob("*.md"), reverse=True):
+        plans.append({
+            "name": f.name,
+            "size_bytes": f.stat().st_size,
+            "modified_unix": f.stat().st_mtime,
+        })
+    return JSONResponse({"plans": plans, "count": len(plans)})
+
+
+@app.get("/api/plans/{name}", response_class=PlainTextResponse)
+def get_plan(name: str) -> str:
+    """Return raw markdown body for a plan doc. Same path-traversal guard
+    as /api/findings/{name}."""
+    if "/" in name or "\\" in name or ".." in name:
+        raise HTTPException(400, "invalid name")
+    f = PLANS_DIR / name
+    if not f.is_file():
+        raise HTTPException(404, "not found")
+    return f.read_text(encoding="utf-8")
+
+
 @app.get("/api/current_state", response_class=PlainTextResponse)
 def get_current_state() -> str:
     """Serve docs/CURRENT-STATE.md as plain text. Used by the About tab.

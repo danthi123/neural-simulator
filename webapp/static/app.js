@@ -84,6 +84,7 @@ const TAB_REGISTRY = [
   { id: "brain",       label: "Brain",       order: 60, onActivate: null /* placeholder, no JS yet */ },
   { id: "language",    label: "Language",    order: 70, onActivate: () => { if (!window._languageLoaded) loadLanguage(); } },
   { id: "findings",    label: "Findings",    order: 80, onActivate: () => { if (!window._findingsLoaded) loadFindings(); } },
+  { id: "plans",       label: "Plans",       order: 85, onActivate: () => { if (!window._plansLoaded) loadPlans(); } },
   { id: "info",        label: "About",       order: 90, onActivate: () => { if (!window._infoLoaded) loadInfo(); } },
 ];
 
@@ -1063,6 +1064,83 @@ async function loadFindings() {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// Plans tab — architecture decision records from docs/plans/
+//
+// 2026-05-02. Same shape as Findings but pulled from /api/plans. Plans
+// are forward-looking design docs while findings are backward-looking
+// experimental results. Demonstrates the TAB_REGISTRY-based extensibility
+// pattern: the entire tab was added by appending one TAB_REGISTRY entry,
+// one HTML section, two backend endpoints (/api/plans + /api/plans/{name}),
+// and three JS functions.
+// ─────────────────────────────────────────────────────────────────────────
+
+let _plansCache = [];
+let _plansSearch = "";
+
+async function loadPlans() {
+  window._plansLoaded = true;
+  const list = $("#plans-list");
+  list.replaceChildren(document.createTextNode("Loading…"));
+  try {
+    const res = await fetch("/api/plans");
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    _plansCache = data.plans;
+    renderPlansList();
+  } catch (e) {
+    list.replaceChildren(el("p", { class: "error" }, e.message));
+  }
+}
+
+function renderPlansList() {
+  const list = $("#plans-list");
+  list.replaceChildren();
+  let filtered = _plansCache;
+  if (_plansSearch) {
+    const needle = _plansSearch.toLowerCase();
+    filtered = filtered.filter((p) => p.name.toLowerCase().includes(needle));
+  }
+  $("#plans-count").textContent = `${filtered.length} of ${_plansCache.length} plans`;
+  if (!filtered.length) {
+    list.appendChild(el("p", { class: "muted" }, "No matching plans."));
+    return;
+  }
+  for (const p of filtered) {
+    // Strip date prefix and -design.md suffix for display.
+    const display = p.name
+      .replace(/\.md$/, "")
+      .replace(/-design$/, "")
+      .replace(/-implementation$/, " (impl)")
+      .replace(/^\d{4}-\d{2}-\d{2}-/, "");
+    const dateStr = p.name.slice(0, 10);
+    const item = el("div", { class: "list-item" }, [
+      el("div", { class: "name" }, display),
+      el("div", { class: "meta" }, [dateStr]),
+    ]);
+    item.addEventListener("click", () => loadPlanDetail(p.name, item));
+    list.appendChild(item);
+  }
+}
+
+async function loadPlanDetail(name, listItem) {
+  const detail = $("#plan-detail");
+  detail.replaceChildren(el("p", { class: "muted" }, `Loading ${name}…`));
+  $$("#plans-list .list-item").forEach((it) =>
+    it.classList.toggle("active", it === listItem),
+  );
+  try {
+    const res = await fetch(`/api/plans/${encodeURIComponent(name)}`);
+    if (!res.ok) throw new Error(`${res.status}`);
+    const text = await res.text();
+    const wrapper = el("div", { class: "markdown" });
+    wrapper.innerHTML = renderMarkdown(text);
+    detail.replaceChildren(wrapper);
+  } catch (e) {
+    detail.replaceChildren(el("p", { class: "error" }, `Failed to load: ${e.message}`));
+  }
+}
+
 function renderFindingChips() {
   const row = $("#findings-chip-row");
   if (!row) return;
@@ -1760,6 +1838,20 @@ $("#findings-search")?.addEventListener("input", (e) => {
   _findingsSearchTimer = setTimeout(() => {
     _findingsSearch = e.target.value.trim();
     if (_findingsCache.length > 0) renderFindingsList();
+  }, 100);
+});
+
+// Plans tab: refresh + search input
+$("#refresh-plans")?.addEventListener("click", () => {
+  window._plansLoaded = false;
+  loadPlans();
+});
+let _plansSearchTimer = null;
+$("#plans-search")?.addEventListener("input", (e) => {
+  clearTimeout(_plansSearchTimer);
+  _plansSearchTimer = setTimeout(() => {
+    _plansSearch = e.target.value.trim();
+    if (_plansCache.length > 0) renderPlansList();
   }, 100);
 });
 

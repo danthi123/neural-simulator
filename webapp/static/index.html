@@ -23,6 +23,7 @@
       <button data-tab="brain">Brain</button>
       <button data-tab="language">Language</button>
       <button data-tab="findings">Findings</button>
+      <button data-tab="plans">Plans</button>
       <button data-tab="info">About</button>
     </nav>
     <!-- Theme toggle. Click cycles dark <-> light; persisted in localStorage. -->
@@ -430,6 +431,26 @@
       </form>
       <div id="launcher-output">
         <p class="muted">Launches will stream stdout here.</p>
+      </div>
+    </section>
+
+    <!-- 2026-05-02: Plans tab — surfaces architecture decision records
+         from docs/plans/ (55+ design docs). Demonstrates the new
+         TAB_REGISTRY-based extensibility pattern: this whole tab was
+         added by appending one entry to TAB_REGISTRY in app.js,
+         adding the section here, and adding the loadPlans() loader.
+         Powered by /api/plans + /api/plans/{name}. -->
+    <section id="tab-plans" class="tab">
+      <div class="toolbar">
+        <button id="refresh-plans">Refresh</button>
+        <input type="text" id="plans-search" placeholder="Search plans…" class="toolbar-input">
+        <span class="muted" id="plans-count"></span>
+      </div>
+      <div class="split">
+        <div class="list" id="plans-list">Loading…</div>
+        <div class="detail" id="plan-detail">
+          <p class="muted">Click a plan to read it.</p>
+        </div>
       </div>
     </section>
 
