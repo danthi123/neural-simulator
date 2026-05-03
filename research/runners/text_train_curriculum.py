@@ -318,6 +318,7 @@ def _run_swr_replay_phase(
     lang_output_coactive_pA: float,
     motor_replay_drive_pA: float = 50.0,
     only_correct_experiences: bool = True,
+    balanced_directions: bool = False,
     verbose: bool = True,
 ):
     """Phase 3: SWR-style consolidation replay.
@@ -338,12 +339,23 @@ def _run_swr_replay_phase(
     Optionally filters to only_correct_experiences (more stable) or replays
     all (more biology-faithful — replay includes failures too).
 
+    2026-05-03: balanced_directions flag (H1 test). When True, the replay
+    sampler draws an equal number of events from each direction word,
+    instead of uniform-random over the buffer. The 2-seed v2+SWR result
+    showed a consistent W->A regression (22% vs baseline 28.5%) which
+    might be caused by replay-distribution bias toward N/E (the cascade's
+    natural majority in training). Balanced sampling tests that hypothesis.
+    See research/findings/2026-05-03-swr-2seed-result.md.
+
     Args:
         experience_buffer: list of dicts with token, action, correct_move
         n_replay_events: total replay events
         only_correct_experiences: if True, sample only from correct moves
             (cleaner consolidation signal). If False, replay all events
             with their original reward.
+        balanced_directions: if True, draw n_replay_events / 4 from each
+            of the 4 direction words (N/E/S/W). Falls back to uniform
+            sampling for any direction with zero buffer events.
     """
     from sim.text_embeddings import vocab_to_drive_pattern
 
@@ -362,11 +374,46 @@ def _run_swr_replay_phase(
     else:
         buffer = list(experience_buffer)
 
+    # 2026-05-03 (H1): if balanced_directions, build a per-direction replay
+    # plan that draws an equal number of events from each of N/E/S/W.
+    # We pre-compute the sample list so each direction gets exactly its
+    # share regardless of buffer skew.
+    direction_buffer = {"north": [], "east": [], "south": [], "west": []}
+    for e in buffer:
+        # Map token (which is the direction word) to a bucket. Some events
+        # might use different conventions, but the buffer's token field
+        # is the direction word.
+        tok = e.get("token")
+        if tok in direction_buffer:
+            direction_buffer[tok].append(e)
+    sampled_events = None
+    if balanced_directions:
+        per_dir = n_replay_events // 4
+        # If a direction has no events, sample from the global buffer
+        # to avoid wasted slots.
+        sampled_events = []
+        for dirname in ("north", "east", "south", "west"):
+            pool = direction_buffer[dirname] if direction_buffer[dirname] else buffer
+            for _ in range(per_dir):
+                sampled_events.append(pool[int(rng.integers(0, len(pool)))])
+        # Pad to exactly n_replay_events (rounding remainder)
+        while len(sampled_events) < n_replay_events:
+            sampled_events.append(buffer[int(rng.integers(0, len(buffer)))])
+        # Shuffle so the directions don't replay in blocks
+        rng.shuffle(sampled_events)
+
     if verbose:
         n_correct = sum(1 for e in experience_buffer if e["correct_move"])
-        print(f"[curriculum] Phase 3 SWR replay: {n_replay_events} events from "
-              f"buffer of {len(experience_buffer)} (correct={n_correct}, "
-              f"replay_correct_only={only_correct_experiences})", flush=True)
+        if balanced_directions:
+            counts = {d: len(direction_buffer[d]) for d in direction_buffer}
+            print(f"[curriculum] Phase 3 SWR BALANCED replay: {n_replay_events} events "
+                  f"({n_replay_events//4}/dir) from buffer of {len(experience_buffer)} "
+                  f"(correct={n_correct}); per-direction buffer sizes: {counts}",
+                  flush=True)
+        else:
+            print(f"[curriculum] Phase 3 SWR replay: {n_replay_events} events from "
+                  f"buffer of {len(experience_buffer)} (correct={n_correct}, "
+                  f"replay_correct_only={only_correct_experiences})", flush=True)
 
     # Cache region indices
     rm = bridge.region_manager
@@ -415,8 +462,14 @@ def _run_swr_replay_phase(
     n_replays = 0
 
     for event_idx in range(n_replay_events):
-        # Sample a random recent experience
-        event = buffer[int(rng.integers(0, len(buffer)))]
+        # Sample the next replay event. In default mode this is
+        # uniform-random from the buffer (which inherits the cascade's
+        # natural N-bias). In balanced mode, the pre-computed
+        # sampled_events list draws equally from N/E/S/W and shuffles.
+        if sampled_events is not None:
+            event = sampled_events[event_idx]
+        else:
+            event = buffer[int(rng.integers(0, len(buffer)))]
         token = event["token"]
         action = event["action"]
         reward = event["reward"]
@@ -489,6 +542,7 @@ def run_curriculum_training(
     phase2_episodes: int = 100,
     phase3_replays: int = 0,  # 0 = skip Phase 3 SWR replay (default)
     phase3_only_correct: bool = True,
+    phase3_balanced_directions: bool = False,  # H1 test (2026-05-03)
     steps_per_episode: int = 30,
     grid_size: int = 8,
     # Tier 1 / config (matches v2 baseline)
@@ -704,6 +758,7 @@ def run_curriculum_training(
             lang_input_drive_pA=lang_input_drive_pA,
             lang_output_coactive_pA=lang_output_coactive_pA,
             only_correct_experiences=phase3_only_correct,
+            balanced_directions=phase3_balanced_directions,
             verbose=verbose,
         )
         p3_elapsed = time.time() - t_phase3_start
@@ -717,6 +772,7 @@ def run_curriculum_training(
             "n_replay_events": n_replayed,
             "buffer_size": len(experience_buffer),
             "only_correct": phase3_only_correct,
+            "balanced_directions": phase3_balanced_directions,
             "elapsed_seconds": p3_elapsed,
         })
 
@@ -745,6 +801,14 @@ def main():
     ap.add_argument("--phase3-replay-all", dest="phase3_only_correct",
                     action="store_false",
                     help="phase 3 replays all experiences including failures")
+    ap.add_argument("--phase3-balanced-directions", action="store_true",
+                    default=False,
+                    help="(H1, 2026-05-03) phase 3 draws equal events from "
+                    "each of N/E/S/W rather than uniform-random over the "
+                    "buffer. Tests whether the W->A regression observed at "
+                    "n=2 with default (frequency-weighted) replay is caused "
+                    "by N/E-biased replay distribution. See "
+                    "research/findings/2026-05-03-swr-2seed-result.md")
     ap.add_argument("--steps-per-episode", type=int, default=30)
     ap.add_argument("--grid-size", type=int, default=8)
     ap.add_argument("--n-eval-image-word", type=int, default=100)
@@ -786,6 +850,7 @@ def main():
         phase2_episodes=args.phase2_episodes,
         phase3_replays=args.phase3_replays,
         phase3_only_correct=args.phase3_only_correct,
+        phase3_balanced_directions=args.phase3_balanced_directions,
         steps_per_episode=args.steps_per_episode,
         grid_size=args.grid_size,
         stim_steps_per_step=args.stim_steps_per_step,
