@@ -95,4 +95,34 @@ foreach ($v in $variants) {
 }
 
 "" | Out-File -Append $masterLog
+"--- H4 dose-normalization test (1000 events/dir, ~70 min) at $(Get-Date) ---" | Out-File -Append $masterLog
+
+# Bonus: H4 plasticity-dose test as 6th pseudo-variant. Tests whether
+# H4's "below chance" result (n=4, 23% mean) is a plasticity-dose
+# artifact. Uses text_pfc_bypass_isolation runner with --n-events-per-dir 1000.
+$h4DoseLog = "$outDir/h4_dose_test_seed42.log"
+$h4DoseErrFile = "$outDir/h4_dose_test_seed42.log.err"
+$h4DosePidFile = "$outDir/h4_dose_test_seed42.pid"
+$h4DoseOutStats = "$outDir/text_eval_h4_dose1000_seed42.json"
+
+$doseProc = Start-Process -FilePath "python.exe" -ArgumentList @(
+    "-m", "research.runners.text_pfc_bypass_isolation",
+    "--seed", "42",
+    "--n-events-per-direction", "1000",
+    "--stim-steps-per-step", "200",
+    "--reset-steps", "100",
+    "--out-stats", $h4DoseOutStats
+) -RedirectStandardOutput $h4DoseLog -RedirectStandardError $h4DoseErrFile -PassThru -NoNewWindow
+
+$doseProc.Id | Out-File -FilePath $h4DosePidFile -Encoding ASCII
+"H4 dose test launched as PID $($doseProc.Id)" | Out-File -Append $masterLog
+
+$doseProc.WaitForExit()
+"H4 dose test finished (exit $($doseProc.ExitCode)) at $(Get-Date)" | Out-File -Append $masterLog
+
+if (Test-Path $h4DosePidFile) {
+    Move-Item -Path $h4DosePidFile -Destination "$h4DosePidFile.done" -Force
+}
+
+"" | Out-File -Append $masterLog
 "=== ARCH SWEEP SEED 42 COMPLETE at $(Get-Date) ===" | Out-File -Append $masterLog
