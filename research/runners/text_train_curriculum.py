@@ -727,6 +727,26 @@ def run_curriculum_training(
               f"{p2_correct}/{p2_steps} = {p2_rate:.1%} correct moves "
               f"({p2_elapsed:.0f}s)", flush=True)
 
+    # 2026-05-03: per-direction buffer composition. Tells us which direction
+    # the cascade naturally over-emits during Phase 2, which directly
+    # determines the SWR replay distribution. Useful for diagnosing whether
+    # H1 (balanced replay) is needed: if the buffer is N/E/S/W skewed, H1
+    # should help.
+    buffer_per_direction = {"north": 0, "east": 0, "south": 0, "west": 0}
+    if experience_buffer:
+        for ev in experience_buffer:
+            tok = ev.get("token")
+            if tok in buffer_per_direction:
+                buffer_per_direction[tok] += 1
+    if verbose and experience_buffer:
+        total = sum(buffer_per_direction.values())
+        print(f"[curriculum] Phase 2 buffer composition: "
+              f"north={buffer_per_direction['north']} ({100 * buffer_per_direction['north'] / max(1, total):.0f}%) "
+              f"east={buffer_per_direction['east']} ({100 * buffer_per_direction['east'] / max(1, total):.0f}%) "
+              f"south={buffer_per_direction['south']} ({100 * buffer_per_direction['south'] / max(1, total):.0f}%) "
+              f"west={buffer_per_direction['west']} ({100 * buffer_per_direction['west'] / max(1, total):.0f}%)",
+              flush=True)
+
     epoch_stats.append({
         "phase": 2,
         "regime": "text_io_on_trained_cascade",
@@ -735,6 +755,7 @@ def run_curriculum_training(
         "n_correct_moves": p2_correct,
         "correct_move_rate": p2_rate,
         "elapsed_seconds": p2_elapsed,
+        "buffer_per_direction": buffer_per_direction,
     })
 
     # ─────────────────────────────────────────────────────────────────
