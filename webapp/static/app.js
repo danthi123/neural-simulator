@@ -1436,6 +1436,34 @@ function renderMarkdown(src) {
 // ─────────────────────────────────────────────────────────────────────────
 // Launcher tab
 // ─────────────────────────────────────────────────────────────────────────
+// 2026-05-03: parse a multi-seed input string. See setupLauncher() for
+// supported syntaxes. Returns a deduped sorted-by-input-order array of
+// integer seeds.
+function parseSeedInput(s) {
+  if (!s) return [];
+  const out = [];
+  for (const part of s.split(/[,\s]+/).filter(Boolean)) {
+    const m = part.match(/^(\d+)\s*-\s*(\d+)$/);
+    if (m) {
+      const lo = parseInt(m[1], 10);
+      const hi = parseInt(m[2], 10);
+      if (!isNaN(lo) && !isNaN(hi) && lo <= hi && hi - lo < 200) {
+        for (let v = lo; v <= hi; v++) out.push(v);
+      }
+    } else {
+      const v = parseInt(part, 10);
+      if (!isNaN(v)) out.push(v);
+    }
+  }
+  // Dedup while preserving first-seen order
+  const seen = new Set();
+  return out.filter((v) => {
+    if (seen.has(v)) return false;
+    seen.add(v);
+    return true;
+  });
+}
+
 function setupLauncher() {
   const form = $("#launch-form");
   const out = $("#launcher-output");
@@ -1443,7 +1471,6 @@ function setupLauncher() {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     out.replaceChildren();
-    appendStatus(out, "Submitting…");
 
     const formData = new FormData(form);
     const extraStr = String(formData.get("extra_args") || "").trim();
@@ -1462,25 +1489,62 @@ function setupLauncher() {
       extras.push("--n-hippocampus-per-layer", String(nHippo));
     }
 
-    const body = {
-      preset: String(formData.get("preset")),
-      seed: parseInt(formData.get("seed"), 10),
-      extra_args: extras,
-    };
+    // 2026-05-03: parse multi-seed input. Accepts:
+    //   "42"            -> [42]
+    //   "42,43,44"      -> [42, 43, 44]
+    //   "42-47"         -> [42, 43, 44, 45, 46, 47]
+    //   "42, 43, 100-102" -> [42, 43, 100, 101, 102]
+    const seedStr = String(formData.get("seed") || "").trim();
+    const seeds = parseSeedInput(seedStr);
+    if (!seeds.length) {
+      appendError(out, "Invalid seed input. Use e.g. 42 or 42,43,44 or 42-47.");
+      return;
+    }
+    const preset = String(formData.get("preset"));
 
+    appendStatus(out, `Submitting ${seeds.length} run${seeds.length === 1 ? "" : "s"} (seeds ${seeds.join(", ")})…`);
+
+    const body0 = { preset, extra_args: extras };
+
+    // Sequentially POST /api/runs/launch for each seed. Sequential
+    // (rather than parallel) avoids overloading the backend's process
+    // spawner and lets us stream stdout for each launch.
+    let lastWsUrl = null;
+    for (const seed of seeds) {
+      try {
+        const res = await fetch("/api/runs/launch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...body0, seed }),
+        });
+        if (!res.ok) throw new Error(`${res.status}`);
+        const launch = await res.json();
+        appendStatus(out, `Launched seed ${seed} (run_id=${launch.run_id})`);
+        appendStatus(out, `  out: ${launch.out_path}`);
+        toast(`Launched ${preset} seed ${seed}`, { kind: "success" });
+        lastWsUrl = launch.ws_url;
+      } catch (e) {
+        appendError(out, `Launch seed ${seed} failed: ${e.message}`);
+      }
+    }
+    appendStatus(out, "All launches submitted.");
+    if (lastWsUrl && seeds.length === 1) {
+      appendStatus(out, `Streaming stdout for the run via WebSocket…`);
+      tailWebSocket(lastWsUrl, out);
+    } else if (seeds.length > 1) {
+      appendStatus(out, "Browse runs (or check Brain tab Live mode picker) to follow individual progress.");
+    }
+    return;
+    /* unreachable — original try/catch retained below for legacy path */
     try {
+      // legacy single-launch fallback (no longer reached; see seed parser above)
       const res = await fetch("/api/runs/launch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ ...body0, seed: seeds[0] }),
       });
       if (!res.ok) throw new Error(`${res.status}`);
       const launch = await res.json();
-      appendStatus(out, `Launched run_id=${launch.run_id}`);
-      appendStatus(out, `cmd: ${launch.cmd.join(" ")}`);
-      appendStatus(out, `out: ${launch.out_path}`);
-      appendStatus(out, `streaming WebSocket at ${launch.ws_url}…`);
-      toast(`Launched ${launch.run_id} (${body.preset}, seed ${body.seed})`, { kind: "success" });
       tailWebSocket(launch.ws_url, out);
     } catch (e) {
       appendError(out, `Launch failed: ${e.message}`);
@@ -1645,6 +1709,24 @@ function setupBrain3DControls(mod) {
     const name = e.target.value;
     if (name) mod.brain3dSelectLiveRun(name);
   });
+  // Camera preset selector
+  $("#brain3d-camera-preset")?.addEventListener("change", (e) => {
+    const preset = e.target.value;
+    if (preset) {
+      mod.brain3dFlyToPreset(preset);
+      // Reset to default option after fly so picking the same one again works
+      setTimeout(() => { e.target.value = ""; }, 100);
+    }
+  });
+  // Pathway visibility toggles
+  $("#brain3d-pw-exc")?.addEventListener("change", (e) =>
+    mod.brain3dSetPathwayKindVisible("exc", e.target.checked));
+  $("#brain3d-pw-inh")?.addEventListener("change", (e) =>
+    mod.brain3dSetPathwayKindVisible("inh", e.target.checked));
+  $("#brain3d-pw-da")?.addEventListener("change", (e) =>
+    mod.brain3dSetPathwayKindVisible("da", e.target.checked));
+  $("#brain3d-only-flowing")?.addEventListener("change", (e) =>
+    mod.brain3dSetOnlyFlowing(e.target.checked));
   // Help button
   $("#brain3d-help")?.addEventListener("click", () => {
     alert(
@@ -2265,11 +2347,132 @@ function renderExperimentDetail(expRow) {
 // ─────────────────────────────────────────────────────────────────────────
 setupThemeToggle();  // 2026-05-02: applies persisted theme before first paint
 setupMobileNav();    // 2026-05-02: hamburger menu for <900px viewports
+setupKeyboardShortcuts(); // 2026-05-03: arrows, space, r, t, ?
 setupTabs();
 setupLauncher();
 setupWorldTab();
 loadRuns();
 loadOverview();  // active tab on first load
+
+// ─────────────────────────────────────────────────────────────────────────
+// Keyboard shortcuts (2026-05-03)
+// ─────────────────────────────────────────────────────────────────────────
+function setupKeyboardShortcuts() {
+  document.addEventListener("keydown", (e) => {
+    // Ignore when user is typing in an input/textarea/select.
+    const tag = (e.target.tagName || "").toUpperCase();
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || e.target.isContentEditable) {
+      return;
+    }
+    // Ignore when modifier keys are held (avoids breaking browser shortcuts)
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+    const activeTabBtn = document.querySelector("nav button.active");
+    const activeTab = activeTabBtn?.dataset.tab;
+
+    switch (e.key) {
+      case "?":
+        e.preventDefault();
+        showKeyboardHelp();
+        break;
+      case "t":
+      case "T":
+        // Toggle theme
+        e.preventDefault();
+        document.getElementById("theme-toggle")?.click();
+        break;
+      case "r":
+      case "R":
+        // Refresh current view
+        e.preventDefault();
+        if (activeTab === "runs") loadRuns();
+        else if (activeTab === "findings") loadFindings();
+        else if (activeTab === "language") {
+          window._languageLoaded = false; loadLanguage();
+        } else if (activeTab === "plans") {
+          window._plansLoaded = false; loadPlans();
+        } else if (activeTab === "overview") {
+          window._overviewLoaded = false; loadOverview();
+        }
+        break;
+      case " ":
+        // Play/pause in Brain or World tab
+        if (activeTab === "brain") {
+          e.preventDefault();
+          $("#brain3d-play")?.click();
+        } else if (activeTab === "world") {
+          e.preventDefault();
+          const btn = $("#world-play");
+          if (btn && !btn.disabled) btn.click();
+        }
+        break;
+      case "ArrowLeft":
+      case "ArrowRight": {
+        // Scrub backward / forward in Brain or World tab
+        const delta = e.key === "ArrowRight" ? 1 : -1;
+        const stepSize = e.shiftKey ? 10 : 1;
+        if (activeTab === "brain") {
+          const sl = $("#brain3d-scrubber");
+          if (sl) {
+            const cur = parseInt(sl.value, 10) || 0;
+            const max = parseInt(sl.max, 10) || 0;
+            const next = Math.max(0, Math.min(max, cur + delta * stepSize));
+            sl.value = String(next);
+            sl.dispatchEvent(new Event("input"));
+            e.preventDefault();
+          }
+        } else if (activeTab === "world") {
+          const sl = $("#world-scrubber");
+          if (sl) {
+            const cur = parseInt(sl.value, 10) || 0;
+            const max = parseInt(sl.max, 10) || 0;
+            const next = Math.max(0, Math.min(max, cur + delta * stepSize));
+            sl.value = String(next);
+            sl.dispatchEvent(new Event("input"));
+            e.preventDefault();
+          }
+        }
+        break;
+      }
+      case "1": case "2": case "3": case "4":
+      case "5": case "6": case "7": case "8":
+      case "9": {
+        // Number keys jump to nth tab
+        e.preventDefault();
+        const idx = parseInt(e.key, 10) - 1;
+        const navBtns = $$("nav button");
+        if (navBtns[idx]) navBtns[idx].click();
+        break;
+      }
+    }
+  });
+}
+
+function showKeyboardHelp() {
+  const msg = [
+    "Keyboard shortcuts",
+    "",
+    "Tab navigation:",
+    "  1..9       Jump to nth tab (Home / Lab / Runs / ...)",
+    "",
+    "Display:",
+    "  t          Toggle dark / light theme",
+    "  r          Refresh current view",
+    "  ?          Show this help",
+    "",
+    "Brain / World viewers:",
+    "  Space      Play / pause replay",
+    "  ←/→        Scrub backward / forward 1 step",
+    "  Shift+←/→  Scrub 10 steps",
+    "",
+    "Brain 3D scene:",
+    "  Drag       Orbit camera",
+    "  Right-drag Pan",
+    "  Scroll     Zoom",
+    "  Click      Pin region info panel",
+  ].join("\n");
+  alert(msg);
+}
 
 // Restore persisted state
 (() => {

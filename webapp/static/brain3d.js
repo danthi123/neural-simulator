@@ -409,6 +409,128 @@ function setupOrbitControls() {
   controls.update();
 }
 
+// ─── Camera presets (2026-05-03) ───────────────────────────────────────
+//
+// Named viewpoints that fly the camera to a specific subsystem. Each
+// preset is { name, position, target } in scene coordinates. The
+// transition is a smooth 800ms cubic-eased animation (not snap).
+
+const CAMERA_PRESETS = {
+  overview: {
+    label: "Whole brain",
+    position: [20, 12, 20],
+    target: [0, 0, 0],
+  },
+  bg_cascade: {
+    label: "BG cascade",
+    // Look down +Y axis at the BG region; centered between cortex and motor
+    position: [3.5, 14, 8],
+    target: [3.5, -1.5, 0],
+  },
+  vision: {
+    // Pan to the left (sensory in -> IT)
+    label: "Vision pathway",
+    position: [-12, 8, 12],
+    target: [-7, 1.5, 0],
+  },
+  motor: {
+    // Right side: thalamus + motor
+    label: "Action output",
+    position: [14, 8, 8],
+    target: [7, 0.5, 0],
+  },
+  hippocampus: {
+    // Look at the trisynaptic loop (off in +Z)
+    label: "Hippocampus",
+    position: [3, 8, 16],
+    target: [2.5, -1, 7],
+  },
+  language: {
+    // Top: PFC + language pathways
+    label: "Language + PFC",
+    position: [-1, 14, 12],
+    target: [-1.5, 4.5, 2],
+  },
+  top_down: {
+    label: "Top-down",
+    position: [0, 30, 0.01],
+    target: [0, 0, 0],
+  },
+};
+
+function flyCamera(preset, durationMs = 800) {
+  const p = CAMERA_PRESETS[preset];
+  if (!p) return;
+  const startPos = camera.position.clone();
+  const startTarget = controls.target.clone();
+  const endPos = new THREE.Vector3(...p.position);
+  const endTarget = new THREE.Vector3(...p.target);
+  const t0 = performance.now();
+  function step() {
+    const t = (performance.now() - t0) / durationMs;
+    if (t >= 1) {
+      camera.position.copy(endPos);
+      controls.target.copy(endTarget);
+      controls.update();
+      return;
+    }
+    // Cubic ease-in-out
+    const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    camera.position.lerpVectors(startPos, endPos, e);
+    controls.target.lerpVectors(startTarget, endTarget, e);
+    controls.update();
+    requestAnimationFrame(step);
+  }
+  step();
+}
+
+// ─── Pathway type toggles (2026-05-03) ─────────────────────────────────
+//
+// Each pathway has a kind ("exc" / "inh" / "da" / "ach"). The user can
+// toggle whole categories on/off, and additionally choose to show only
+// pathways with flowing activity.
+
+const pathwayVisible = { exc: true, inh: true, da: true, ach: true };
+let onlyFlowing = false;
+
+function setPathwayKindVisible(kind, visible) {
+  pathwayVisible[kind] = !!visible;
+  applyPathwayVisibility();
+}
+function setOnlyFlowing(value) {
+  onlyFlowing = !!value;
+  applyPathwayVisibility();
+}
+function applyPathwayVisibility() {
+  for (const p of pathwayLines) {
+    const kindOn = pathwayVisible[p.kind] !== false;
+    p.line.visible = kindOn;
+  }
+}
+
+// Auto-fit camera to scene bounds. Computes the bounding box of all
+// region meshes, places the camera so the whole thing is framed.
+function fitCameraToScene(padding = 1.4) {
+  const box = new THREE.Box3();
+  for (const mesh of pickableMeshes) {
+    const meshBox = new THREE.Box3().setFromObject(mesh);
+    box.union(meshBox);
+  }
+  if (box.isEmpty()) return;
+  const size = new THREE.Vector3();
+  const center = new THREE.Vector3();
+  box.getSize(size);
+  box.getCenter(center);
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const fov = camera.fov * (Math.PI / 180);
+  const distance = (maxDim / 2 / Math.tan(fov / 2)) * padding;
+  // Place camera at a 3/4 perspective: above + right + in-front
+  const dir = new THREE.Vector3(0.7, 0.5, 0.7).normalize();
+  camera.position.copy(center).addScaledVector(dir, distance);
+  controls.target.copy(center);
+  controls.update();
+}
+
 // ─── Animation ─────────────────────────────────────────────────────────
 function startAnimation() {
   if (animationActive) return;
@@ -433,9 +555,13 @@ function startAnimation() {
       regionActivity[name] = Math.max(0, Math.min(1.0, (mat.emissiveIntensity - baseE) / 5.0));
     }
     for (const p of pathwayLines) {
+      const kindOn = pathwayVisible[p.kind] !== false;
       const fromAct = regionActivity[p.fromKey] || 0;
       const toAct = regionActivity[p.toKey] || 0;
       const flow = Math.max(fromAct, toAct);
+      // "Only flowing" mode: hide pathway when its endpoints are quiet.
+      const flowingFilter = onlyFlowing ? (flow > 0.05) : true;
+      p.line.visible = kindOn && flowingFilter;
       p.mat.opacity = p.baseOpacity + flow * 0.7;
     }
     updatePinnedActivity();
@@ -851,6 +977,9 @@ export async function initBrain3D({ canvasContainer: container } = {}) {
   createPathways();
   setupOrbitControls();
   setupInteraction();
+  // Auto-fit the camera to the scene bounds so the whole brain is framed
+  // on first paint regardless of region layout changes.
+  fitCameraToScene();
   startAnimation();
 
   // Resize observer — keep the canvas filling its container
@@ -880,6 +1009,13 @@ export function brain3dSetSpeed(s) { return setSpeed(s); }
 export function brain3dStartLive() { return startLiveMode(); }
 export function brain3dStopLive() { return stopLiveMode(); }
 export function brain3dSelectLiveRun(name) { return selectLiveRun(name); }
+export function brain3dFlyToPreset(name) { return flyCamera(name); }
+export function brain3dFitCamera() { return fitCameraToScene(); }
+export function brain3dSetPathwayKindVisible(kind, visible) {
+  return setPathwayKindVisible(kind, visible);
+}
+export function brain3dSetOnlyFlowing(value) { return setOnlyFlowing(value); }
+export function brain3dListPresets() { return CAMERA_PRESETS; }
 export function brain3dGetState() {
   return {
     initialized: !!renderer,

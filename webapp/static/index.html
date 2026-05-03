@@ -334,11 +334,31 @@
           3D Brain
           <span class="muted" id="brain3d-run-name">No run loaded</span>
           <span class="spacer"></span>
+          <!-- Camera preset dropdown — fly to specific subsystems -->
+          <select id="brain3d-camera-preset" class="toolbar-input" style="width:auto;" title="Fly camera to a preset view">
+            <option value="">Camera…</option>
+            <option value="overview">Whole brain</option>
+            <option value="bg_cascade">BG cascade</option>
+            <option value="vision">Vision pathway</option>
+            <option value="motor">Action output</option>
+            <option value="hippocampus">Hippocampus</option>
+            <option value="language">Language + PFC</option>
+            <option value="top_down">Top-down</option>
+          </select>
           <!-- Live run picker (hidden by default; revealed when Live mode active) -->
           <select id="brain3d-live-picker" class="toolbar-input" style="display:none;width:auto;" title="Pick which live run to follow"></select>
           <button id="brain3d-load" class="ctrl-btn">Load run…</button>
           <button id="brain3d-live" class="ctrl-btn">Live mode</button>
           <button id="brain3d-help" class="ctrl-btn" title="What am I looking at?">?</button>
+        </div>
+        <!-- Pathway visibility toggles -->
+        <div class="brain3d-toggles">
+          <span class="muted" style="font-size:11px;">Show pathways:</span>
+          <label class="toolbar-checkbox"><input type="checkbox" id="brain3d-pw-exc" checked><span class="brain3d-pw-exc">excitatory</span></label>
+          <label class="toolbar-checkbox"><input type="checkbox" id="brain3d-pw-inh" checked><span class="brain3d-pw-inh">inhibitory</span></label>
+          <label class="toolbar-checkbox"><input type="checkbox" id="brain3d-pw-da" checked><span class="brain3d-pw-da">dopamine</span></label>
+          <span class="spacer"></span>
+          <label class="toolbar-checkbox"><input type="checkbox" id="brain3d-only-flowing">only show <em>flowing</em> pathways</label>
         </div>
         <div id="brain3d-host"></div>
         <div id="brain3d-live-label" class="muted" style="margin-top:6px;font-size:11px;display:none;"></div>
@@ -525,9 +545,17 @@
             <option value="text_io_motor_cross_coupling">text_io_motor_cross_coupling — 90° adjacency cross-coupling (NEGATIVE 22% W→A)</option>
           </select>
         </label>
-        <label>Seed
-          <input type="number" name="seed" value="42">
+        <label>Seed(s)
+          <!-- 2026-05-03: multi-seed input. Accepts a single seed (42)
+               or comma-separated list (42,43,44) or range (42-47).
+               Each seed launches a separate run sequentially. -->
+          <input type="text" name="seed" value="42" placeholder="e.g. 42 or 42,43,44 or 42-47">
         </label>
+        <p class="muted" style="font-size:11px; margin: 0">
+          Single seed (<code>42</code>), comma list (<code>42,43,44</code>),
+          or range (<code>42-47</code>). Each launches a separate detached run.
+          The 6-seed validation set is <code>42,43,44,100,101,102</code>.
+        </p>
         <div class="form-row">
           <label>Grid size (8 = default, 12/16 = custom)
             <input type="number" name="grid_size" min="4" max="32" value="8">

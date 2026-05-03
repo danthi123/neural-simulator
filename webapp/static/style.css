@@ -2211,3 +2211,35 @@ pre {
     max-height: 50vh;
   }
 }
+
+/* ───────────────────────────────────────────────────────────────────────
+   Brain 3D — pathway toggle row (2026-05-03)
+   ─────────────────────────────────────────────────────────────────────── */
+.brain3d-toggles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  flex-wrap: wrap;
+}
+.brain3d-toggles .toolbar-checkbox {
+  cursor: pointer;
+  user-select: none;
+}
+.brain3d-toggles input[type="checkbox"] {
+  margin-right: 4px;
+}
+.brain3d-toggles em {
+  font-style: italic;
+  color: var(--accent-warn);
+}
+
+@media (max-width: 768px) {
+  .brain3d-toggles { gap: 8px; }
+  .brain3d-toggles .spacer { display: none; }
+}
