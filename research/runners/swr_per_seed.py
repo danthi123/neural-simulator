@@ -57,24 +57,24 @@ def main():
             path = RAW_DIR / pat.format(seed=seed)
             acc = acc_for(path)
             rows_data[seed][label] = acc
-            row.append(f"{100*acc:.0f}%" if acc is not None else "—")
+            row.append(f"{100*acc:.0f}%" if acc is not None else "-")
         print("| " + " | ".join(row) + " |")
-    # Mean ± std footer
-    means_row = ["**mean ± std**"]
+    # Mean +/- std footer
+    means_row = ["**mean +/- std**"]
     for label, _ in CONDITIONS:
         accs = [rows_data[s][label] for s in SEEDS if rows_data[s][label] is not None]
         if not accs:
-            means_row.append("—")
+            means_row.append("-")
         else:
             m = statistics.mean(accs) * 100
             s = (statistics.stdev(accs) if len(accs) > 1 else 0) * 100
-            means_row.append(f"**{m:.1f}% ± {s:.1f}%** (n={len(accs)})")
+            means_row.append(f"**{m:.1f}% +/- {s:.1f}%** (n={len(accs)})")
     print("| " + " | ".join(means_row) + " |")
 
     print()
     print("## Per-seed delta vs baseline")
     print()
-    print("| seed | v2+SWR Δ | H1 balanced Δ | H4 isolation Δ |")
+    print("| seed | v2+SWR delta | H1 balanced delta | H4 isolation delta |")
     print("|---|---|---|---|")
     for seed in SEEDS:
         base = rows_data[seed]["v2 baseline"]
@@ -85,7 +85,7 @@ def main():
         for cond in ("v2 + SWR default", "v2 + SWR balanced", "H4 PFC isolation"):
             v = rows_data[seed][cond]
             if v is None:
-                cells.append("—")
+                cells.append("n/a")
             else:
                 d = (v - base) * 100
                 sign = "+" if d >= 0 else ""
@@ -107,7 +107,7 @@ def main():
         m = statistics.mean(diffs) * 100
         s = (statistics.stdev(diffs) if len(diffs) > 1 else 0) * 100
         print(f"n={len(base_swr_pairs)}")
-        print(f"mean Δ (SWR - baseline): {m:+.2f}pp ± {s:.2f}pp")
+        print(f"mean delta (SWR - baseline): {m:+.2f}pp +/- {s:.2f}pp")
         if len(diffs) > 1 and s > 0:
             t = (m / 100) / ((s / 100) / (len(diffs) ** 0.5))
             print(f"paired t-statistic: {t:.2f}")
