@@ -1510,3 +1510,60 @@ pre {
 [data-theme="light"] .lang-cell.above-chance {
   color: #15803d; /* darker green for legibility on light */
 }
+
+/* ───────────────────────────────────────────────────────────────────────
+   Filter chips (Findings tab category filter, 2026-05-02)
+   ─────────────────────────────────────────────────────────────────────── */
+.filter-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+}
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  color: var(--fg-dim);
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+}
+.filter-chip:hover {
+  background: var(--bg-2);
+  color: var(--fg);
+}
+.filter-chip.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.filter-chip-count {
+  font-size: 10px;
+  opacity: 0.85;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+.filter-chip.active .filter-chip-count {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* Finding row tag pill */
+.finding-tag {
+  display: inline-block;
+  background: var(--bg-3);
+  color: var(--fg-dim);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  margin-right: 4px;
+}

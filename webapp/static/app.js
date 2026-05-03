@@ -50,6 +50,45 @@ function el(tag, attrs = {}, children = []) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
+// Tab registry (2026-05-02)
+// ─────────────────────────────────────────────────────────────────────────
+// Single source of truth for tab metadata. Adding a new tab requires:
+//   1. Add an entry to this TAB_REGISTRY array
+//   2. Add the matching <section id="tab-{id}" class="tab"> to index.html
+//   3. (optional) Add a `<button data-tab="{id}">{label}</button>` to nav
+//      OR set `autoNavButton: true` to inject it on bootstrap
+//
+// Each entry: { id, label, onActivate, autoNavButton, order }
+//   - id: matches HTML <section id="tab-{id}"> AND nav <button data-tab="{id}">
+//   - label: text shown in the nav button
+//   - onActivate(): called the FIRST time the tab is activated. Set up
+//                   data fetches, register live subscriptions, etc.
+//                   Called only once unless tab refreshes via _loaded flag.
+//   - order: sort order for nav rendering (smaller = leftmost)
+//
+// Adding a new visualization (e.g. "neural-3d"):
+//   1. Append to TAB_REGISTRY:
+//        { id: "neural-3d", label: "Brain (Live)", order: 65,
+//          onActivate: () => { if (!window._neural3dLoaded) loadNeural3D(); } }
+//   2. Add <section id="tab-neural-3d" class="tab">…</section> to HTML
+//   3. Implement loadNeural3D() in this file or a separate module
+//
+// See: docs/webapp-frontend-guide.md for full architecture.
+// ─────────────────────────────────────────────────────────────────────────
+const TAB_REGISTRY = [
+  { id: "overview",    label: "Home",        order: 10, onActivate: () => { if (!window._overviewLoaded) loadOverview(); } },
+  { id: "launcher",    label: "Lab",         order: 20, onActivate: null /* setup in setupLauncher() */ },
+  { id: "runs",        label: "Runs",        order: 30, onActivate: null /* loaded eagerly */ },
+  { id: "experiments", label: "Experiments", order: 40, onActivate: () => { if (!window._experimentsLoaded) loadExperiments(); } },
+  { id: "world",       label: "World",       order: 50, onActivate: null /* setupWorldTab() */ },
+  { id: "brain",       label: "Brain",       order: 60, onActivate: null /* placeholder, no JS yet */ },
+  { id: "language",    label: "Language",    order: 70, onActivate: () => { if (!window._languageLoaded) loadLanguage(); } },
+  { id: "findings",    label: "Findings",    order: 80, onActivate: () => { if (!window._findingsLoaded) loadFindings(); } },
+  { id: "info",        label: "About",       order: 90, onActivate: () => { if (!window._infoLoaded) loadInfo(); } },
+];
+
+const TAB_BY_ID = Object.fromEntries(TAB_REGISTRY.map((t) => [t.id, t]));
+
 // Tab switching
 // ─────────────────────────────────────────────────────────────────────────
 function setupTabs() {
@@ -61,11 +100,9 @@ function setupTabs() {
         s.classList.toggle("active", s.id === `tab-${t}`),
       );
       saveState({ activeTab: t });
-      if (t === "findings" && !window._findingsLoaded) loadFindings();
-      if (t === "info" && !window._infoLoaded) loadInfo();
-      if (t === "overview" && !window._overviewLoaded) loadOverview();
-      if (t === "experiments" && !window._experimentsLoaded) loadExperiments();
-      if (t === "language" && !window._languageLoaded) loadLanguage();
+      // Dispatch to the tab's onActivate hook (registry-driven).
+      const entry = TAB_BY_ID[t];
+      if (entry?.onActivate) entry.onActivate();
       // Auto-collapse the mobile menu when a tab is picked.
       const navEl = document.getElementById("nav-tabs");
       const toggleBtn = document.getElementById("nav-mobile-toggle");
@@ -968,6 +1005,49 @@ async function loadLanguageDetail(name, listItem) {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// Findings tab — chronological session findings (109+ markdown docs)
+//
+// 2026-05-02: added search box + auto-derived category chips because
+// 100+ findings is too many to navigate as a flat list.
+// ─────────────────────────────────────────────────────────────────────────
+
+let _findingsCache = [];
+let _findingsActiveTag = null;
+let _findingsSearch = "";
+
+// Category-tag classifier. Patterns are case-insensitive substring matches
+// on the filename. First match wins; "uncategorized" is the fallback. Ordered
+// so cluster letters resolve before generic "session" tags.
+const FINDING_TAG_PATTERNS = [
+  { tag: "🌟 Breakthrough", pat: /breakthrough|BREAKTHROUGH/i },
+  { tag: "Cluster A", pat: /cluster-?a(-|\b)/i },
+  { tag: "Cluster B", pat: /cluster-?b(-|\b)/i },
+  { tag: "Cluster C", pat: /cluster-?c(-|\b)/i },
+  { tag: "Cluster D", pat: /cluster-?d(-|\b)/i },
+  { tag: "Cluster E", pat: /cluster-?e(-|\b)/i },
+  { tag: "Cluster F", pat: /cluster-?f(-|\b)/i },
+  { tag: "Cluster G", pat: /cluster-?g(-|\b)/i },
+  { tag: "Cluster K", pat: /cluster-?k(-|\b)/i },
+  { tag: "Text I/O", pat: /text-?io|text-?eval|word.action|i.w/i },
+  { tag: "Perception arc", pat: /perception|sensed-reward|landmark|beacon|cue-reflex/i },
+  { tag: "Cheat closure", pat: /cheat-?\d|cheat\d/i },
+  { tag: "Phase B (BG)", pat: /phase-b|bg-acid|bg-cascade/i },
+  { tag: "Plastic input", pat: /plastic-input|input-layer/i },
+  { tag: "Adaptive DA", pat: /adaptive-da|asym-da|surprise-lr/i },
+  { tag: "Curriculum", pat: /curriculum/i },
+  { tag: "Hippocampus", pat: /hippocampus|swr|sharp-wave|trisynaptic/i },
+  { tag: "G-gate", pat: /g\d+|g11|g9|g7|g6/i },
+  { tag: "Negative", pat: /negative|NEGATIVE|null-|NULL/i },
+];
+
+function classifyFinding(name) {
+  for (const { tag, pat } of FINDING_TAG_PATTERNS) {
+    if (pat.test(name)) return tag;
+  }
+  return "Other";
+}
+
 async function loadFindings() {
   window._findingsLoaded = true;
   const list = $("#findings-list");
@@ -975,17 +1055,73 @@ async function loadFindings() {
   try {
     const res = await fetch("/api/findings");
     const data = await res.json();
-    $("#findings-count").textContent = `${data.count} findings`;
-    list.replaceChildren();
-    for (const f of data.findings) {
-      const item = el("div", { class: "list-item" }, [
-        el("div", { class: "name" }, f.name),
-      ]);
-      item.addEventListener("click", () => loadFindingDetail(f.name, item));
-      list.appendChild(item);
-    }
+    _findingsCache = data.findings.map((f) => ({ ...f, tag: classifyFinding(f.name) }));
+    renderFindingChips();
+    renderFindingsList();
   } catch (e) {
     list.replaceChildren(el("p", { class: "error" }, e.message));
+  }
+}
+
+function renderFindingChips() {
+  const row = $("#findings-chip-row");
+  if (!row) return;
+  row.replaceChildren();
+  // Count findings per tag.
+  const counts = {};
+  for (const f of _findingsCache) {
+    counts[f.tag] = (counts[f.tag] || 0) + 1;
+  }
+  // "All" chip first, then tags sorted by count descending.
+  const tags = ["All", ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])];
+  for (const tag of tags) {
+    const isAll = tag === "All";
+    const isActive = (_findingsActiveTag == null && isAll) || _findingsActiveTag === tag;
+    const count = isAll ? _findingsCache.length : counts[tag];
+    const chip = el("button", {
+      class: "filter-chip" + (isActive ? " active" : ""),
+    }, [
+      tag,
+      el("span", { class: "filter-chip-count" }, String(count)),
+    ]);
+    chip.addEventListener("click", () => {
+      _findingsActiveTag = isAll ? null : tag;
+      renderFindingChips();
+      renderFindingsList();
+    });
+    row.appendChild(chip);
+  }
+}
+
+function renderFindingsList() {
+  const list = $("#findings-list");
+  list.replaceChildren();
+  let filtered = _findingsCache;
+  if (_findingsActiveTag != null) {
+    filtered = filtered.filter((f) => f.tag === _findingsActiveTag);
+  }
+  if (_findingsSearch) {
+    const needle = _findingsSearch.toLowerCase();
+    filtered = filtered.filter((f) => f.name.toLowerCase().includes(needle));
+  }
+  $("#findings-count").textContent = `${filtered.length} of ${_findingsCache.length} findings`;
+  if (!filtered.length) {
+    list.appendChild(el("p", { class: "muted" }, "No matching findings."));
+    return;
+  }
+  for (const f of filtered) {
+    // Strip date prefix and .md suffix for shorter display name
+    const display = f.name.replace(/\.md$/, "").replace(/^\d{4}-\d{2}-\d{2}-/, "");
+    const item = el("div", { class: "list-item" }, [
+      el("div", { class: "name" }, display),
+      el("div", { class: "meta" }, [
+        el("span", { class: "finding-tag" }, f.tag),
+        " · ",
+        el("span", {}, f.name.slice(0, 10)), // date prefix
+      ]),
+    ]);
+    item.addEventListener("click", () => loadFindingDetail(f.name, item));
+    list.appendChild(item);
   }
 }
 
@@ -1596,6 +1732,16 @@ $("#refresh-findings").addEventListener("click", loadFindings);
 $("#refresh-language")?.addEventListener("click", () => {
   window._languageLoaded = false;
   loadLanguage();
+});
+
+// Findings search input — debounced re-render on every keystroke
+let _findingsSearchTimer = null;
+$("#findings-search")?.addEventListener("input", (e) => {
+  clearTimeout(_findingsSearchTimer);
+  _findingsSearchTimer = setTimeout(() => {
+    _findingsSearch = e.target.value.trim();
+    if (_findingsCache.length > 0) renderFindingsList();
+  }, 100);
 });
 
 $("#filter-hide-smoke")?.addEventListener("change", renderRunsList);

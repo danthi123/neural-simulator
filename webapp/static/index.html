@@ -265,8 +265,12 @@
     <section id="tab-findings" class="tab">
       <div class="toolbar">
         <button id="refresh-findings">Refresh</button>
+        <input type="text" id="findings-search" placeholder="Search findings…" class="toolbar-input">
         <span class="muted" id="findings-count"></span>
       </div>
+      <!-- 2026-05-02: filter chips. Auto-derived from filename patterns
+           by collectFindingTags() in app.js. Click to filter. -->
+      <div class="filter-chip-row" id="findings-chip-row"></div>
       <div class="split">
         <div class="list" id="findings-list">Loading…</div>
         <div class="detail" id="finding-detail">
