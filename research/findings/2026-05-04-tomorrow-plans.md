@@ -117,35 +117,53 @@ Master logs:
   (= 4000 events, ~880k sub-steps comparable to Phase 2). Tomorrow's
   call: maybe 1-seed sanity check first.
 
-## Permuted-label control test — definitive chance check
+## Permuted-label control — DONE during overnight, NEGATIVE result
 
-The ABSOLUTE FIRST experiment for tomorrow should be:
+✅ Already run via `python -m research.runners.permuted_label_check`.
+No GPU required — purely confusion-matrix arithmetic.
 
-```bash
-# Conceptual — implementation needed
-# At eval time, shuffle (token -> target_action) mapping
-# Run W->A on existing v2 baseline checkpoints with shuffled labels
-# If accuracy stays at ~28%, the system has NO real learning
-```
+**Result: 0/25 evaluations had TRUE labeled mapping as the BEST of
+24 permutations.** Architecture has 8pp of structure above chance,
+but it's randomly oriented per-seed not aligned with task labels.
 
-This is a definitive test. The permuted-label accuracy on a network
-with REAL word-action learning should drop to 25% (chance) since the
-labels no longer match what the network learned.
+The 28.5% W->A is NOT real word-action learning. Task labels are
+arbitrary from the architecture's perspective.
 
-If permuted accuracy stays at 28%, our 28% baseline is purely
-architectural bias (cascade always slightly favors N/E direction
-predictions, regardless of input word). All "learning" we measured
-is illusory.
+See `research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`.
 
-If permuted drops to 18-22%, then there IS real learning at 28%
-(just very weak above chance), and the right path is "more training,
-better architecture" not "abandon and rebuild."
+### Implication for tomorrow
 
-Implementation: extend text_reeval.py with --permute-labels flag.
-Run 6 seeds × ~8 min eval = ~50 min total. Quick decisive test.
+The arch sweep tonight is still useful — it tests "can architecture
+learn at all" on top of v2. If a variant's 6-seed validation shows
+**aligned ratio >= 4/6** (TRUE mapping is best of 24), we have REAL
+learning emerging. Expected by chance: 1/24 per seed = 25% × 6
+binomial → ~ 0.7% chance of 4+ alignment by random.
 
-This must be the FIRST experiment because everything else depends
-on whether we have any real signal at all.
+But if all variants stay at 0/6 aligned, the architecture
+fundamentally can't learn word-action mapping. Tomorrow should
+investigate WHY the structure is mis-aligned:
+
+1. **Increase language drive 5-10x** vs cascade drive. Maybe
+   cascade firing during eval drowns out language-driven activity.
+   Quick CLI test: --lang-input-drive-pA 1000 (vs default 200).
+
+2. **Raise stdp_w_max to 10** to allow more weight differentiation.
+   Quick code change in text_train_curriculum's CoreSimConfig.
+
+3. **Lengthen Phase 2 to 500 episodes** (vs default 100). Maybe
+   100 ep isn't enough for STDP to differentiate words.
+
+4. **Re-enable Hebbian with fixed decay**. Hebbian co-firing IS
+   biology; the fix shouldn't be disabling it. Need a non-decaying
+   Hebbian rule or much smaller decay rate.
+
+5. **Bigger embedding dim (1024)** with proportionally smaller
+   sparsity. 26 active per word at 256 dim might be too coarse
+   for the readout pathway to differentiate.
+
+Priority: 1 first (cheapest test, just CLI). If 1 produces
+aligned >= 4/6, that's the fix. If not, try 2. If 2 doesn't, the
+issue is more architectural and we need to think harder.
 
 ## H4 INVERSION — important
 
