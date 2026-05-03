@@ -1601,3 +1601,93 @@ def list_experiments() -> JSONResponse:
 
     out.sort(key=lambda r: (r["mean_sum"] is None, r["mean_sum"] or 0))
     return JSONResponse({"experiments": out, "count": len(out)})
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Text I/O endpoints (2026-05-02)
+#
+# Text I/O experiments record different metrics than navigation runs:
+# image_to_word_eval / word_to_action_eval blocks with confusion matrices,
+# rather than per-phase finalQ Manhattan distances. The Runs/Experiments
+# tabs filter these out via sum_finalQ heuristic; text I/O needs its own
+# surface.
+# ─────────────────────────────────────────────────────────────────────────
+
+
+def _is_text_io_run(name: str) -> bool:
+    """Filename heuristic for text I/O runs. Used by both list endpoints."""
+    return name.startswith("text_eval_") or name.startswith("text_io_")
+
+
+@app.get("/api/text_io_runs")
+def list_text_io_runs() -> JSONResponse:
+    """List text I/O run JSONs (text_eval_* / text_io_*) with W→A and I→W
+    accuracies + confusion matrices. Powers the Language tab.
+    """
+    files = sorted(
+        (f for f in RAW_RUNS_DIR.glob("*.json")
+         if not f.name.endswith(".cmd.json") and _is_text_io_run(f.name)),
+        reverse=True,
+    )
+    out = []
+    for f in files:
+        try:
+            data = json.loads(f.read_text())
+        except Exception:
+            continue
+        iw = data.get("image_to_word_eval") or {}
+        wa = data.get("word_to_action_eval") or {}
+        # Many older text_eval_*.json files predate the embodied training
+        # stats block. Be defensive.
+        ts = data.get("training_stats") or []
+        correct_move_rate = None
+        if ts and isinstance(ts, list):
+            v = ts[0].get("correct_move_rate")
+            if v is not None:
+                correct_move_rate = float(v)
+        out.append({
+            "name": f.name,
+            "size_bytes": f.stat().st_size,
+            "modified_unix": f.stat().st_mtime,
+            "regime": data.get("regime"),
+            "seed": data.get("seed"),
+            "n_episodes": data.get("n_episodes"),
+            "steps_per_episode": data.get("steps_per_episode"),
+            "i2w_accuracy": iw.get("accuracy"),
+            "i2w_correct": iw.get("correct"),
+            "i2w_n_trials": iw.get("n_trials"),
+            "w2a_accuracy": wa.get("accuracy"),
+            "w2a_correct": wa.get("correct"),
+            "w2a_n_trials": wa.get("n_trials"),
+            "correct_move_rate": correct_move_rate,
+        })
+    # Aggregate stats across the entire collection.
+    agg = {"n_runs": len(out)}
+    for key in ("i2w_accuracy", "w2a_accuracy"):
+        vals = [r[key] for r in out if r[key] is not None]
+        if vals:
+            mean_v = sum(vals) / len(vals)
+            var = sum((v - mean_v) ** 2 for v in vals) / max(1, len(vals) - 1)
+            agg[f"{key}_mean"] = mean_v
+            agg[f"{key}_std"] = var ** 0.5 if len(vals) > 1 else None
+            agg[f"{key}_n"] = len(vals)
+    return JSONResponse({"runs": out, "count": len(out), "aggregate": agg})
+
+
+@app.get("/api/text_io_runs/{name}")
+def get_text_io_run_detail(name: str) -> JSONResponse:
+    """Full text I/O run JSON, with the same path-traversal guard as
+    /api/runs/{name}.
+    """
+    if "/" in name or "\\" in name or ".." in name:
+        raise HTTPException(400, "invalid name")
+    f = RAW_RUNS_DIR / name
+    if not f.is_file():
+        raise HTTPException(404, "not found")
+    if not _is_text_io_run(name):
+        raise HTTPException(400, "not a text I/O run")
+    try:
+        data = json.loads(f.read_text())
+    except Exception as e:
+        raise HTTPException(500, f"failed to parse: {e}")
+    return JSONResponse(data)

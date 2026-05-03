@@ -65,6 +65,7 @@ function setupTabs() {
       if (t === "info" && !window._infoLoaded) loadInfo();
       if (t === "overview" && !window._overviewLoaded) loadOverview();
       if (t === "experiments" && !window._experimentsLoaded) loadExperiments();
+      if (t === "language" && !window._languageLoaded) loadLanguage();
     });
   });
 }
@@ -641,6 +642,272 @@ function renderPhaseStats(stats) {
 // ─────────────────────────────────────────────────────────────────────────
 // Findings tab
 // ─────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
+// Language tab (text I/O results — confusion matrices, W→A / I→W accuracy)
+//
+// 2026-05-02. Surfaces all text_eval_*.json files so the text I/O
+// experiments aren't buried in the generic Runs tab (which is keyed off
+// gridworld navigation's sum_finalQ metric and doesn't render confusion
+// matrices). Powered by /api/text_io_runs.
+// ─────────────────────────────────────────────────────────────────────────
+
+const LANG_DIRS = ["north", "east", "south", "west"];
+const ACTION_DIRS = ["N", "E", "S", "W"];
+
+function fmtPercent(v, digits = 1) {
+  if (v == null) return "—";
+  return (100 * v).toFixed(digits) + "%";
+}
+
+function makeKpiCard(title, value, sub) {
+  const card = el("div", { class: "kpi-card" });
+  card.appendChild(el("div", { class: "kpi-label" }, title));
+  card.appendChild(el("div", { class: "kpi-value" }, value));
+  if (sub) card.appendChild(el("div", { class: "kpi-sub muted" }, sub));
+  return card;
+}
+
+function renderConfusionMatrix(title, matrix, rowLabels, colLabels, chanceColor = true) {
+  if (!matrix) return el("p", { class: "muted" }, `No ${title} data.`);
+  const wrapper = el("div", { class: "confusion-wrapper" });
+  wrapper.appendChild(el("h4", {}, title));
+  const table = el("table", { class: "confusion-matrix" });
+  const thead = el("thead", {}, [
+    el("tr", {}, [
+      el("th", {}, ""),
+      ...colLabels.map((c) => el("th", {}, c)),
+      el("th", {}, "Σ"),
+    ]),
+  ]);
+  table.appendChild(thead);
+  const tbody = el("tbody");
+  // Compute per-row total and global max for color scaling.
+  let maxCell = 1;
+  for (const r of rowLabels) {
+    const row = matrix[r] || {};
+    for (const c of colLabels) {
+      const v = Number(row[c] || 0);
+      if (v > maxCell) maxCell = v;
+    }
+  }
+  for (const r of rowLabels) {
+    const row = matrix[r] || {};
+    let total = 0;
+    const trChildren = [el("th", {}, r)];
+    for (const c of colLabels) {
+      const v = Number(row[c] || 0);
+      total += v;
+      const isDiag = (r[0]?.toLowerCase() === c[0]?.toLowerCase());
+      // Bin color: diagonal gets blue scale, off-diagonal gets gray scale.
+      // Lighter = higher count.
+      const intensity = Math.min(1.0, v / maxCell);
+      const cell = el("td", {
+        class: "confusion-cell" + (isDiag ? " diag" : ""),
+        style: chanceColor
+          ? `background: rgba(${isDiag ? "59,130,246" : "203,213,225"}, ${intensity * 0.85}); color: ${intensity > 0.4 ? "#0a0e1a" : "#cbd5e1"}`
+          : ``,
+      }, String(v));
+      trChildren.push(cell);
+    }
+    trChildren.push(el("td", { class: "confusion-total muted" }, String(total)));
+    tbody.appendChild(el("tr", {}, trChildren));
+  }
+  table.appendChild(tbody);
+  wrapper.appendChild(table);
+  return wrapper;
+}
+
+let _langSortKey = "modified_unix";
+let _langSortDir = -1;
+let _langCache = null;
+
+async function loadLanguage() {
+  window._languageLoaded = true;
+  const list = $("#language-list");
+  const kpis = $("#language-kpis");
+  list.replaceChildren(document.createTextNode("Loading…"));
+  kpis.replaceChildren();
+  try {
+    const res = await fetch("/api/text_io_runs");
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    _langCache = data;
+    $("#language-count").textContent = `${data.count} text I/O runs`;
+    renderLanguageKpis(data.aggregate, data.runs);
+    renderLanguageList(data.runs);
+  } catch (e) {
+    list.replaceChildren(el("p", { class: "error" }, e.message));
+  }
+}
+
+function renderLanguageKpis(agg, runs) {
+  const kpis = $("#language-kpis");
+  kpis.replaceChildren();
+  if (!runs || !runs.length) {
+    kpis.appendChild(el("p", { class: "muted" }, "No text I/O runs yet."));
+    return;
+  }
+  // I→W card
+  const i2wMean = agg.i2w_accuracy_mean;
+  const i2wStd = agg.i2w_accuracy_std;
+  const i2wN = agg.i2w_accuracy_n;
+  kpis.appendChild(makeKpiCard(
+    "Image → Word (I→W)",
+    fmtPercent(i2wMean),
+    i2wN ? `±${fmtPercent(i2wStd)} across ${i2wN} runs · chance = 25%` : "—",
+  ));
+  // W→A card
+  const w2aMean = agg.w2a_accuracy_mean;
+  const w2aStd = agg.w2a_accuracy_std;
+  const w2aN = agg.w2a_accuracy_n;
+  kpis.appendChild(makeKpiCard(
+    "Word → Action (W→A)",
+    fmtPercent(w2aMean),
+    w2aN ? `±${fmtPercent(w2aStd)} across ${w2aN} runs · chance = 25%` : "—",
+  ));
+  // Best W→A so far
+  const bestW2A = runs.reduce((b, r) =>
+    (r.w2a_accuracy != null && (!b || r.w2a_accuracy > b.w2a_accuracy)) ? r : b, null);
+  kpis.appendChild(makeKpiCard(
+    "Best W→A",
+    bestW2A ? fmtPercent(bestW2A.w2a_accuracy) : "—",
+    bestW2A ? `seed ${bestW2A.seed} · ${bestW2A.name.replace(/^text_eval_/, "").slice(0, 40)}` : "—",
+  ));
+  // n_runs total
+  kpis.appendChild(makeKpiCard(
+    "Total runs",
+    String(runs.length),
+    `${new Set(runs.map(r => r.seed).filter(s => s != null)).size} unique seeds`,
+  ));
+}
+
+function renderLanguageList(runs) {
+  const list = $("#language-list");
+  list.replaceChildren();
+  if (!runs.length) {
+    list.appendChild(el("p", { class: "muted" }, "No runs."));
+    return;
+  }
+  // Header row with sortable columns.
+  const header = el("div", { class: "list-header" });
+  const cols = [
+    { key: "name", label: "name", flex: 2 },
+    { key: "seed", label: "seed", flex: 0.5 },
+    { key: "i2w_accuracy", label: "I→W", flex: 0.7 },
+    { key: "w2a_accuracy", label: "W→A", flex: 0.7 },
+    { key: "correct_move_rate", label: "corr.move", flex: 0.7 },
+    { key: "modified_unix", label: "mod", flex: 0.8 },
+  ];
+  for (const col of cols) {
+    const cell = el("div", {
+      class: "list-header-cell" + (_langSortKey === col.key ? " active" : ""),
+      style: `flex: ${col.flex}`,
+    }, [
+      col.label + (_langSortKey === col.key ? (_langSortDir > 0 ? " ↑" : " ↓") : ""),
+    ]);
+    cell.addEventListener("click", () => {
+      if (_langSortKey === col.key) _langSortDir *= -1;
+      else { _langSortKey = col.key; _langSortDir = -1; }
+      renderLanguageList(runs);
+    });
+    header.appendChild(cell);
+  }
+  list.appendChild(header);
+  // Sorted rows.
+  const sorted = [...runs].sort((a, b) => {
+    let av = a[_langSortKey], bv = b[_langSortKey];
+    if (av == null && bv == null) return 0;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    if (typeof av === "string") return _langSortDir * av.localeCompare(bv);
+    return _langSortDir * (av - bv);
+  });
+  for (const r of sorted) {
+    const item = el("div", { class: "list-item lang-row" });
+    item.appendChild(el("div", { class: "lang-cell name", style: "flex: 2" }, [
+      el("div", { class: "name" }, r.name.replace(/\.json$/, "")),
+    ]));
+    item.appendChild(el("div", { class: "lang-cell", style: "flex: 0.5" }, [r.seed != null ? String(r.seed) : "—"]));
+    item.appendChild(el("div", {
+      class: "lang-cell" + (r.w2a_accuracy != null && r.i2w_accuracy > 0.30 ? " above-chance" : ""),
+      style: "flex: 0.7",
+    }, [fmtPercent(r.i2w_accuracy)]));
+    item.appendChild(el("div", {
+      class: "lang-cell" + (r.w2a_accuracy != null && r.w2a_accuracy > 0.30 ? " above-chance" : ""),
+      style: "flex: 0.7",
+    }, [fmtPercent(r.w2a_accuracy)]));
+    item.appendChild(el("div", { class: "lang-cell", style: "flex: 0.7" }, [fmtPercent(r.correct_move_rate)]));
+    item.appendChild(el("div", { class: "lang-cell muted", style: "flex: 0.8" }, [
+      fmtRelTime(new Date(r.modified_unix * 1000)),
+    ]));
+    item.addEventListener("click", () => loadLanguageDetail(r.name, item));
+    list.appendChild(item);
+  }
+}
+
+async function loadLanguageDetail(name, listItem) {
+  const detail = $("#language-detail");
+  detail.replaceChildren(el("p", { class: "muted" }, `Loading ${name}…`));
+  $$("#language-list .list-item").forEach((it) =>
+    it.classList.toggle("active", it === listItem),
+  );
+  try {
+    const res = await fetch(`/api/text_io_runs/${encodeURIComponent(name)}`);
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    const wrapper = el("div", { class: "lang-detail" });
+    wrapper.appendChild(el("h3", {}, name.replace(/\.json$/, "")));
+    // Headline stats
+    const statsRow = el("div", { class: "kpi-grid lang-detail-kpis" });
+    statsRow.appendChild(makeKpiCard(
+      "I→W",
+      fmtPercent(data.image_to_word_eval?.accuracy),
+      `${data.image_to_word_eval?.correct ?? "—"}/${data.image_to_word_eval?.n_trials ?? "—"} trials`,
+    ));
+    statsRow.appendChild(makeKpiCard(
+      "W→A",
+      fmtPercent(data.word_to_action_eval?.accuracy),
+      `${data.word_to_action_eval?.correct ?? "—"}/${data.word_to_action_eval?.n_trials ?? "—"} trials`,
+    ));
+    statsRow.appendChild(makeKpiCard(
+      "Seed",
+      String(data.seed ?? "—"),
+      `${data.regime ?? "—"} · ${data.n_episodes ?? "—"} episodes`,
+    ));
+    if (data.training_stats?.[0]?.correct_move_rate != null) {
+      statsRow.appendChild(makeKpiCard(
+        "Training corr.move",
+        fmtPercent(data.training_stats[0].correct_move_rate),
+        `${data.training_stats[0].n_correct_moves}/${data.training_stats[0].n_total_steps}`,
+      ));
+    }
+    wrapper.appendChild(statsRow);
+    // Confusion matrices side-by-side
+    const matrixRow = el("div", { class: "confusion-row" });
+    matrixRow.appendChild(renderConfusionMatrix(
+      "Image → Word confusion",
+      data.image_to_word_eval?.confusion_matrix,
+      LANG_DIRS, LANG_DIRS,
+    ));
+    matrixRow.appendChild(renderConfusionMatrix(
+      "Word → Action confusion",
+      data.word_to_action_eval?.confusion_matrix,
+      LANG_DIRS, ACTION_DIRS,
+    ));
+    wrapper.appendChild(matrixRow);
+    // Raw JSON link
+    const links = el("div", { class: "lang-detail-links" });
+    links.appendChild(el("a", {
+      href: `/api/text_io_runs/${encodeURIComponent(name)}`,
+      target: "_blank",
+    }, ["View raw JSON →"]));
+    wrapper.appendChild(links);
+    detail.replaceChildren(wrapper);
+  } catch (e) {
+    detail.replaceChildren(el("p", { class: "error" }, `Failed to load: ${e.message}`));
+  }
+}
+
 async function loadFindings() {
   window._findingsLoaded = true;
   const list = $("#findings-list");
@@ -846,13 +1113,15 @@ async function loadOverview() {
   showSkeleton(findingsContainer, 6, "list");
 
   try {
-    const [runsRes, findingsRes, launchesRes] = await Promise.all([
+    // 2026-05-02: include text_io_runs so the W→A breakthrough card has data
+    const [runsRes, findingsRes, launchesRes, textIoRes] = await Promise.all([
       fetch("/api/runs").then((r) => r.json()),
       fetch("/api/findings").then((r) => r.json()),
       fetch("/api/runs/launch").then((r) => r.json()),
+      fetch("/api/text_io_runs").then((r) => r.json()).catch(() => ({ runs: [], aggregate: {} })),
     ]);
 
-    renderOverviewKPIs(kpiContainer, runsRes.runs, findingsRes.findings, launchesRes.runs);
+    renderOverviewKPIs(kpiContainer, runsRes.runs, findingsRes.findings, launchesRes.runs, textIoRes);
     renderOverviewDistribution(runsRes.runs);
     renderOverviewActivity(activityContainer, runsRes.runs);
     renderOverviewFindings(findingsContainer, findingsRes.findings);
@@ -926,7 +1195,7 @@ async function refreshInflightPanel() {
   }
 }
 
-function renderOverviewKPIs(container, runs, findings, launches) {
+function renderOverviewKPIs(container, runs, findings, launches, textIoRes) {
   // Filter out smokes for headline metrics
   const real = runs.filter((r) => !/smoke/i.test(r.name) && r.sum_finalQ != null);
   const sums = real.map((r) => r.sum_finalQ);
@@ -937,19 +1206,34 @@ function renderOverviewKPIs(container, runs, findings, launches) {
   const meanSum = mean(sums);
   const stdSum = stdev(sums);
 
+  // 2026-05-02: pull text I/O W→A best from the new endpoint
+  const textIoRuns = (textIoRes?.runs) || [];
+  const bestW2A = textIoRuns.reduce((b, r) =>
+    (r.w2a_accuracy != null && (!b || r.w2a_accuracy > b.w2a_accuracy)) ? r : b, null);
+  const w2aMean = textIoRes?.aggregate?.w2a_accuracy_mean;
+  const w2aN = textIoRes?.aggregate?.w2a_accuracy_n || 0;
+
   container.replaceChildren(
-    kpiCard("Best run", best ? best.sum_finalQ.toFixed(2) : "—",
-      best ? best.name : "no completed runs",
+    // ── Headline navigation card ─────────────────────────────────
+    kpiCard("Best navigation run",
+      best ? best.sum_finalQ.toFixed(2) + " mean dist" : "—",
+      best ? "click to view in Runs" : "no completed runs",
       best && best.sum_finalQ < 4.5 ? "kpi-card" : "kpi-card warn",
       best ? () => activateTab("runs") : null),
-    kpiCard("Total runs", String(real.length),
-      `${runs.length - real.length} smokes excluded`),
-    kpiCard("Mean sum", meanSum != null ? meanSum.toFixed(2) : "—",
-      stdSum != null ? `± ${stdSum.toFixed(2)} std` : ""),
-    kpiCard("Findings", String(findings.length), "session-by-session"),
+    // ── Headline language card ───────────────────────────────────
+    kpiCard("Best W→A (text I/O)",
+      bestW2A ? (100 * bestW2A.w2a_accuracy).toFixed(1) + "%" : "—",
+      bestW2A ? `seed ${bestW2A.seed} · click to view in Language tab` : "no text I/O runs",
+      bestW2A && bestW2A.w2a_accuracy > 0.27 ? "kpi-card" : "kpi-card warn",
+      bestW2A ? () => activateTab("language") : null),
+    kpiCard("Mean nav sum", meanSum != null ? meanSum.toFixed(2) : "—",
+      stdSum != null ? `± ${stdSum.toFixed(2)} std (${real.length} runs)` : ""),
+    kpiCard("Mean W→A", w2aMean != null ? (100 * w2aMean).toFixed(1) + "%" : "—",
+      w2aN ? `${w2aN} text I/O runs · chance = 25%` : "no data"),
+    kpiCard("Total findings", String(findings.length), "session-by-session"),
     kpiCard("In-flight runs", String(inFlight.length),
       inFlight.length ? "view in World tab" : "no runs running",
-      inFlight.length ? "kpi-card" : "kpi-card",
+      "kpi-card",
       inFlight.length ? () => activateTab("world") : null),
   );
 }
@@ -1247,6 +1531,10 @@ $("#exp-only-multi-seed")?.addEventListener("change", () => loadExperiments());
 
 $("#refresh-runs").addEventListener("click", loadRuns);
 $("#refresh-findings").addEventListener("click", loadFindings);
+$("#refresh-language")?.addEventListener("click", () => {
+  window._languageLoaded = false;
+  loadLanguage();
+});
 
 $("#filter-hide-smoke")?.addEventListener("change", renderRunsList);
 $("#filter-hide-incomplete")?.addEventListener("change", renderRunsList);

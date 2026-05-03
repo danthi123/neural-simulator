@@ -10,12 +10,14 @@
   <header>
     <h1>Neural Simulator <span class="muted">Research Dashboard</span></h1>
     <nav>
-      <button data-tab="overview" class="active">Overview</button>
+      <button data-tab="overview" class="active">Home</button>
+      <button data-tab="launcher">Lab</button>
       <button data-tab="runs">Runs</button>
       <button data-tab="experiments">Experiments</button>
       <button data-tab="world">World</button>
+      <button data-tab="brain">Brain</button>
+      <button data-tab="language">Language</button>
       <button data-tab="findings">Findings</button>
-      <button data-tab="launcher">Launch</button>
       <button data-tab="info">About</button>
     </nav>
   </header>
@@ -259,6 +261,103 @@
         <div class="list" id="findings-list">Loading…</div>
         <div class="detail" id="finding-detail">
           <p class="muted">Click a finding to read it.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2026-05-02: Brain tab — placeholder for the 3D WebGL/Three.js
+         visualization designed in docs/plans/2026-05-02-webapp-3d-
+         visualization-design.md. Will eventually render all 50+ brain
+         regions with live spike events, traveling pulses on synaptic
+         pathways, and plasticity overlays. Phase 1 implementation
+         pending. -->
+    <section id="tab-brain" class="tab">
+      <div class="section-title">3D Brain Visualization</div>
+      <div class="info-card">
+        <h3>Coming soon</h3>
+        <p>
+          A WebGL 3D rendering of the full simulator: ~5,000 neurons across
+          50+ brain regions, ~175,000 synapses, with real-time spike events,
+          signal propagation along pathways, and plasticity overlays.
+        </p>
+        <p>
+          Read the architectural decisions in
+          <a href="/api/findings/../plans/2026-05-02-webapp-3d-visualization-design.md"
+             onclick="this.href='/static/redirect-design.html'; return true;">
+            the design doc</a>
+          (also at <code>docs/plans/2026-05-02-webapp-3d-visualization-design.md</code>).
+        </p>
+      </div>
+      <div class="section-title">Planned features</div>
+      <div class="brain-features-grid">
+        <div class="info-card">
+          <h4>Anatomically-inspired layout</h4>
+          <p class="muted">
+            Sensory in (retina) on the left; motor out on the right. Cortex
+            on top, subcortical below. The 4-action BG cascade laid out as
+            parallel lanes (cortex_N → str_D1_N → ... → motor_N).
+          </p>
+        </div>
+        <div class="info-card">
+          <h4>Color-coded by function</h4>
+          <p class="muted">
+            Visual cortex: blue gradient. Striatum direct/indirect: red/orange.
+            Thalamus: cyan. PFC: teal. Hippocampus: pink. Dopamine: magenta.
+            Colorblind-aware.
+          </p>
+        </div>
+        <div class="info-card">
+          <h4>Traveling action potentials</h4>
+          <p class="muted">
+            When a region fires, particles spawn at its edge and travel
+            along synaptic pathway curves to the post-region, with timing
+            matching the configured propagation_delay_ms. Color codes
+            neurotransmitter type (glutamate, GABA, dopamine, ACh).
+          </p>
+        </div>
+        <div class="info-card">
+          <h4>Plasticity overlay</h4>
+          <p class="muted">
+            Pathway color saturation tracks current weight magnitude.
+            Reward events flash gold across all eligible pathways,
+            visualizing the dopamine moment.
+          </p>
+        </div>
+        <div class="info-card">
+          <h4>Drill-in to neurons</h4>
+          <p class="muted">
+            Click a region to fly the camera in. Individual neurons
+            appear as instanced glowing dots with per-spike streaming
+            from the bridge data bus.
+          </p>
+        </div>
+        <div class="info-card">
+          <h4>Live & replay modes</h4>
+          <p class="muted">
+            Same renderer reads either a WebSocket stream from a
+            currently-running simulator or a recorded HDF5 file from a
+            past run.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2026-05-02: Language tab — surfaces text I/O experiment results.
+         Shows aggregate I→W and W→A accuracies across all text_eval_*
+         JSON files, with per-run drill-in to confusion matrices.
+         Powered by /api/text_io_runs. -->
+    <section id="tab-language" class="tab">
+      <div class="toolbar">
+        <button id="refresh-language">Refresh</button>
+        <span class="muted" id="language-count"></span>
+      </div>
+      <div class="section-title">Aggregate text I/O performance</div>
+      <div class="kpi-grid" id="language-kpis"></div>
+      <div class="section-title">Per-run results</div>
+      <div class="split">
+        <div class="list" id="language-list">Loading…</div>
+        <div class="detail" id="language-detail">
+          <p class="muted">Click a run to view confusion matrices.</p>
         </div>
       </div>
     </section>

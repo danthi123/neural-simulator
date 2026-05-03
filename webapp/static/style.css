@@ -1079,3 +1079,174 @@ pre {
 
 #tab-info { padding: 24px; overflow-y: auto; }
 #tab-info h2, #tab-info h3 { margin: 16px 0 8px; }
+
+/* ─────────────────────────────────────────────────────────────────────
+   Brain tab (3D viz placeholder, 2026-05-02)
+   ───────────────────────────────────────────────────────────────────── */
+#tab-brain {
+  padding: 24px;
+  overflow-y: auto;
+}
+.info-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin: 12px 0;
+}
+.info-card h3 {
+  margin: 0 0 10px;
+  color: var(--accent);
+}
+.info-card h4 {
+  margin: 0 0 6px;
+  color: var(--fg);
+  font-size: 14px;
+}
+.info-card p {
+  margin: 6px 0;
+  line-height: 1.5;
+}
+.brain-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.brain-features-grid .info-card {
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   Language tab (text I/O confusion matrices, 2026-05-02)
+   ───────────────────────────────────────────────────────────────────── */
+#tab-language {
+  padding: 16px 24px;
+  overflow-y: auto;
+}
+#tab-language .split {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 16px;
+  height: calc(100vh - 360px);
+  min-height: 400px;
+}
+#language-list {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow-y: auto;
+  font-size: 11px;
+}
+.list-header {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-dim);
+  background: var(--bg-3);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.list-header-cell {
+  cursor: pointer;
+  user-select: none;
+}
+.list-header-cell:hover { color: var(--accent); }
+.list-header-cell.active { color: var(--accent); }
+.lang-row {
+  display: flex;
+  gap: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--bg-2);
+  font-size: 11px;
+}
+.lang-cell {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.lang-cell.name {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.lang-cell.above-chance {
+  color: #4ade80; /* green for above-chance */
+  font-weight: 600;
+}
+#language-detail {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  overflow-y: auto;
+}
+.lang-detail h3 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  word-break: break-all;
+}
+.lang-detail-kpis {
+  margin-bottom: 16px;
+}
+.confusion-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0;
+}
+@media (max-width: 1100px) {
+  .confusion-row {
+    grid-template-columns: 1fr;
+  }
+}
+.confusion-wrapper h4 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--fg-dim);
+}
+.confusion-matrix {
+  border-collapse: collapse;
+  font-size: 11px;
+  width: 100%;
+}
+.confusion-matrix th,
+.confusion-matrix td {
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.confusion-matrix thead th {
+  background: var(--bg-3);
+  font-weight: 600;
+  color: var(--fg-dim);
+}
+.confusion-matrix tbody th {
+  background: var(--bg-3);
+  font-weight: 600;
+  text-align: right;
+  padding-right: 10px;
+}
+.confusion-cell.diag {
+  font-weight: 700;
+}
+.confusion-total {
+  font-style: italic;
+  color: var(--fg-dim);
+}
+.lang-detail-links {
+  margin-top: 16px;
+  font-size: 11px;
+}
+.lang-detail-links a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.lang-detail-links a:hover { text-decoration: underline; }
