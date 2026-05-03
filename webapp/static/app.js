@@ -2032,6 +2032,8 @@ function setupBrain3DControls(mod) {
     mod.brain3dSetOnlyFlowing(e.target.checked));
   $("#brain3d-pulses")?.addEventListener("change", (e) =>
     mod.brain3dSetPulsesEnabled(e.target.checked));
+  $("#brain3d-bloom")?.addEventListener("change", (e) =>
+    mod.brain3dSetBloomEnabled(e.target.checked));
   // Help button
   $("#brain3d-help")?.addEventListener("click", () => {
     alert(

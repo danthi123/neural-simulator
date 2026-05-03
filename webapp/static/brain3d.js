@@ -28,6 +28,11 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+// Bloom postprocessing — emissive regions and pulse particles glow.
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
 // ─── Module state ──────────────────────────────────────────────────────
 let layout = null;
@@ -95,6 +100,9 @@ async function loadLayout() {
   return res.json();
 }
 
+let composer = null;
+let bloomEnabled = true;
+
 function createScene(width, height) {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0a0e1a);
@@ -112,6 +120,21 @@ function createScene(width, height) {
   renderer.setSize(width, height);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.2;
+
+  // Bloom postprocessing — glow on emissive materials and additive
+  // particles. UnrealBloomPass picks up bright regions and blurs them
+  // outward, giving the "active region is glowing" aesthetic.
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(
+    new THREE.Vector2(width, height),
+    0.6,    // strength
+    0.8,    // radius
+    0.15,   // threshold
+  );
+  composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+  composer.bloomPass = bloom;
 
   // CSS2D label renderer (overlay)
   labelRenderer = new CSS2DRenderer();
@@ -781,7 +804,11 @@ function startAnimation() {
     }
     updatePinnedActivity();
     controls.update();
-    renderer.render(scene, camera);
+    if (bloomEnabled && composer) {
+      composer.render();
+    } else {
+      renderer.render(scene, camera);
+    }
     labelRenderer.render(scene, camera);
     animationId = requestAnimationFrame(tick);
   };
@@ -1454,8 +1481,13 @@ export async function initBrain3D({ canvasContainer: container } = {}) {
     camera.updateProjectionMatrix();
     renderer.setSize(w2, h2);
     labelRenderer.setSize(w2, h2);
+    if (composer) composer.setSize(w2, h2);
   });
   ro.observe(container);
+}
+
+function setBloomEnabled(value) {
+  bloomEnabled = !!value;
 }
 
 export function brain3dLoadRun(name) { return loadRun(name); }
@@ -1479,6 +1511,7 @@ export function brain3dSetPathwayKindVisible(kind, visible) {
 }
 export function brain3dSetOnlyFlowing(value) { return setOnlyFlowing(value); }
 export function brain3dSetPulsesEnabled(value) { return setPulsesEnabled(value); }
+export function brain3dSetBloomEnabled(value) { return setBloomEnabled(value); }
 export function brain3dListPresets() { return CAMERA_PRESETS; }
 export function brain3dGetState() {
   return {
