@@ -2365,3 +2365,39 @@ pre {
   border-bottom: 1px solid var(--border);
   font-weight: 600;
 }
+
+/* ───────────────────────────────────────────────────────────────────────
+   Brain 3D — mini gridworld inset + agent state HUD (2026-05-03)
+   ─────────────────────────────────────────────────────────────────────── */
+.brain3d-minigrid {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 160px;
+  height: 160px;
+  z-index: 20;
+  border: 1px solid rgba(110, 231, 183, 0.4);
+  border-radius: 6px;
+  background: #0a0e1a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  image-rendering: pixelated;
+}
+.brain3d-agent-state {
+  margin-top: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: ui-monospace, Consolas, monospace;
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .brain3d-minigrid {
+    width: 100px;
+    height: 100px;
+    top: 8px;
+    left: 8px;
+  }
+}

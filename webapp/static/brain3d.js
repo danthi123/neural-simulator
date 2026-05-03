@@ -679,6 +679,12 @@ async function loadRun(name, listItem) {
     const traj = replayData.trajectory || [];
     replayTotal = traj.length;
     replayStep = 0;
+    // Hide mini grid + agent HUD if this run has no trajectory (text I/O)
+    if (traj.length === 0 || !traj[0]?.pos) {
+      if (miniGridCanvas) miniGridCanvas.style.display = "none";
+      const hud = document.getElementById("brain3d-agent-state");
+      if (hud) hud.style.display = "none";
+    }
     // Detect features used
     replayData._usedVisualCortex = (replayData.config_flags || []).some(
       (f) => f === "--enable-visual-cortex");
@@ -707,26 +713,170 @@ function renderReplayStep(step) {
   const traj = replayData.trajectory || [];
   if (step < 0 || step >= traj.length) return;
   replayStep = step;
-  const t = traj[step];
+
+  // The runner serializes per-step data as parallel arrays:
+  //   trajectory[i]  = [x, y]      agent position
+  //   goal_log[i]    = [gx, gy]    goal at step i
+  //   action_log[i]  = action idx  (0=N, 1=E, 2=S, 3=W)
+  //   reward_log[i]  = reward
+  // Build a unified `t` object with the keys the rest of the code uses.
+  const pos = traj[step];
+  const goalAt = (replayData.goal_log && replayData.goal_log[step])
+                 || replayData.goal_pos;
+  const action = replayData.action_log ? replayData.action_log[step] : -1;
+  const reward = replayData.reward_log ? replayData.reward_log[step] : 0;
+  const t = {
+    pos: Array.isArray(pos) ? pos : null,
+    goal: Array.isArray(goalAt) ? goalAt : null,
+    action: typeof action === "number" ? action : -1,
+    reward: typeof reward === "number" ? reward : 0,
+  };
+
   clearAllActivity();
-  // Visual pathway always shows some activity if vision is used
   activateVisualPathway(replayData._usedVisualCortex);
-  // Animate the action (action index in trajectory: 0=N,1=E,2=S,3=W)
   if (t.action != null && t.action >= 0) activateAction(t.action);
-  // Reward
   if (t.reward != null) activateReward(t.reward);
-  // Goal pursuit
   if (t.pos && t.goal) {
     const d = Math.abs(t.pos[0] - t.goal[0]) + Math.abs(t.pos[1] - t.goal[1]);
     activateGoalDrive(d);
   }
-  // Hippocampus on episode boundaries
   activateHippocampusEpisode(step / Math.max(1, replayTotal));
-  // Update UI
   const scrubber = document.getElementById("brain3d-scrubber");
   const stepLabel = document.getElementById("brain3d-step-label");
   if (scrubber) scrubber.value = String(step);
   if (stepLabel) stepLabel.textContent = `step ${step} / ${replayTotal - 1}`;
+  // Mini gridworld + agent HUD — pass our reconstructed `t` plus access
+  // to the previous trajectory slice for the trail.
+  renderMiniGridworld(t, traj, step, replayData);
+  updateAgentStateHud(t);
+}
+
+// ─── Mini gridworld inset (2026-05-03) ─────────────────────────────────
+//
+// Small 2D canvas overlay (top-left of the 3D scene) that shows the
+// current agent position, goal, and recent trail when replaying a
+// navigation run. Reuses the same conventions as the World tab —
+// agent=yellow circle, goal=green dot, trail=fading yellow path.
+//
+// Hidden when no run is loaded or when the loaded run has no
+// trajectory data (e.g. text I/O runs).
+
+let miniGridCanvas = null;
+let miniGridCtx = null;
+
+function ensureMiniGridCanvas() {
+  if (miniGridCanvas) return;
+  miniGridCanvas = document.createElement("canvas");
+  miniGridCanvas.className = "brain3d-minigrid";
+  miniGridCanvas.width = 160;
+  miniGridCanvas.height = 160;
+  canvasContainer.appendChild(miniGridCanvas);
+  miniGridCtx = miniGridCanvas.getContext("2d");
+}
+
+function renderMiniGridworld(t, traj, step, runData) {
+  if (!t || !t.pos || !t.goal) {
+    if (miniGridCanvas) miniGridCanvas.style.display = "none";
+    return;
+  }
+  ensureMiniGridCanvas();
+  miniGridCanvas.style.display = "";
+  const ctx = miniGridCtx;
+  const w = miniGridCanvas.width;
+  const h = miniGridCanvas.height;
+  // Determine grid size — prefer explicit grid_size from runData, else
+  // derive from max coordinates seen in trajectory + goal.
+  const gridSize = (runData && runData.grid_size)
+    ? runData.grid_size
+    : Math.max(8, Math.max(t.pos[0], t.goal[0], t.pos[1], t.goal[1]) + 1);
+  const cell = Math.floor(Math.min(w, h) / gridSize);
+  const padX = (w - cell * gridSize) / 2;
+  const padY = (h - cell * gridSize) / 2;
+
+  // Background + grid lines
+  ctx.fillStyle = "#0a0e1a";
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = "#1a2030";
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= gridSize; i++) {
+    ctx.beginPath();
+    ctx.moveTo(padX + i * cell, padY);
+    ctx.lineTo(padX + i * cell, padY + cell * gridSize);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(padX, padY + i * cell);
+    ctx.lineTo(padX + cell * gridSize, padY + i * cell);
+    ctx.stroke();
+  }
+
+  // Trail — last 12 positions, fading. Each trajectory entry is [x,y].
+  const trailLen = Math.min(12, step);
+  for (let i = 1; i <= trailLen; i++) {
+    const tp = traj[step - i];
+    if (!Array.isArray(tp) || tp.length < 2) continue;
+    const a = 0.6 * (1 - i / trailLen);
+    ctx.fillStyle = `rgba(251, 191, 36, ${a.toFixed(3)})`;
+    ctx.beginPath();
+    ctx.arc(padX + tp[0] * cell + cell / 2,
+            padY + tp[1] * cell + cell / 2,
+            Math.max(2, cell * 0.18), 0, 2 * Math.PI);
+    ctx.fill();
+  }
+
+  // Goal — green dot with halo
+  const gx = padX + t.goal[0] * cell + cell / 2;
+  const gy = padY + t.goal[1] * cell + cell / 2;
+  ctx.fillStyle = "rgba(110, 231, 183, 0.25)";
+  ctx.beginPath();
+  ctx.arc(gx, gy, cell * 0.7, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.fillStyle = "#6ee7b7";
+  ctx.beginPath();
+  ctx.arc(gx, gy, cell * 0.3, 0, 2 * Math.PI);
+  ctx.fill();
+
+  // Agent — yellow circle
+  const ax = padX + t.pos[0] * cell + cell / 2;
+  const ay = padY + t.pos[1] * cell + cell / 2;
+  ctx.fillStyle = "#fbbf24";
+  ctx.beginPath();
+  ctx.arc(ax, ay, cell * 0.35, 0, 2 * Math.PI);
+  ctx.fill();
+  // Action arrow if present
+  if (t.action != null && t.action >= 0) {
+    const dirs = [[0, -1], [1, 0], [0, 1], [-1, 0]]; // N/E/S/W
+    const [dx, dy] = dirs[t.action] || [0, 0];
+    ctx.strokeStyle = "#0a0e1a";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(ax + dx * cell * 0.4, ay + dy * cell * 0.4);
+    ctx.stroke();
+  }
+}
+
+function updateAgentStateHud(t) {
+  const hud = document.getElementById("brain3d-agent-state");
+  if (!hud) return;
+  if (!t || !t.pos) {
+    hud.style.display = "none";
+    return;
+  }
+  hud.style.display = "";
+  const dist = t.goal
+    ? Math.abs(t.pos[0] - t.goal[0]) + Math.abs(t.pos[1] - t.goal[1])
+    : null;
+  const actionLetter = t.action != null && t.action >= 0
+    ? "NESW"[t.action] : "—";
+  const rewardSign = t.reward > 0 ? "+" : "";
+  const parts = [
+    `pos=(${t.pos[0]}, ${t.pos[1]})`,
+    t.goal ? `goal=(${t.goal[0]}, ${t.goal[1]})` : null,
+    dist != null ? `dist=${dist}` : null,
+    `action=${actionLetter}`,
+    t.reward != null ? `reward=${rewardSign}${t.reward}` : null,
+  ].filter(Boolean);
+  hud.textContent = parts.join(" · ");
 }
 
 function play() {
@@ -762,6 +912,11 @@ function setSpeed(stepsPerSec) {
 function startLiveMode() {
   liveMode = true;
   if (livePollHandle) clearInterval(livePollHandle);
+  // Hide mini gridworld + agent HUD when entering live mode — those
+  // are only meaningful for replay of completed navigation runs.
+  if (miniGridCanvas) miniGridCanvas.style.display = "none";
+  const hud = document.getElementById("brain3d-agent-state");
+  if (hud) hud.style.display = "none";
   pollLive();
   livePollHandle = setInterval(pollLive, 1000);
 }

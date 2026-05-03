@@ -361,6 +361,10 @@
           <label class="toolbar-checkbox"><input type="checkbox" id="brain3d-only-flowing">only show <em>flowing</em> pathways</label>
         </div>
         <div id="brain3d-host"></div>
+        <!-- Agent state HUD: pos / goal / dist / action / reward at the
+             current scrubber step. Hidden when no run loaded or run has
+             no trajectory data (e.g. text I/O runs). -->
+        <div id="brain3d-agent-state" class="brain3d-agent-state muted" style="display:none;"></div>
         <div id="brain3d-live-label" class="muted" style="margin-top:6px;font-size:11px;display:none;"></div>
         <div class="brain3d-scrubber-row">
           <button id="brain3d-play" class="ctrl-btn">▶ Play</button>
