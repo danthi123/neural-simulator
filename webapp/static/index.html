@@ -4,6 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Neural Simulator — Research Dashboard</title>
+  <!-- 2026-05-03: defeat browser caching of JS/CSS so dashboard
+       updates appear without needing a hard refresh (Ctrl+F5). The
+       static assets are small (~80KB total) so re-fetching every load
+       is cheap. The Three.js library is still cached because it's
+       loaded via the importmap from unpkg with an immutable version. -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <link rel="stylesheet" href="/static/style.css">
   <!-- Three.js via importmap (no build step). Loaded from unpkg CDN.
        brain3d.js imports `three` and `three/addons/...` and resolves

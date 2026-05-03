@@ -1445,7 +1445,18 @@ def list_inflight_runs() -> JSONResponse:
 
 @app.get("/", response_class=HTMLResponse)
 def index() -> FileResponse:
-    return FileResponse(str(STATIC_DIR / "index.html"))
+    # Disable caching of the root HTML so users always get the latest
+    # version pointing at the latest JS/CSS. /static/* assets are
+    # already no-cache via NoCacheStaticFiles, but the root HTML was
+    # being cached by the browser separately.
+    return FileResponse(
+        str(STATIC_DIR / "index.html"),
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+        },
+    )
 
 
 # Register the catch-all run-by-name route LAST so /api/runs/launch* take
