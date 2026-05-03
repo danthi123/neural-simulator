@@ -1,6 +1,7 @@
 # Quick Start — Neural Simulator in 60 Seconds
 
-> **Goal:** get you to a running simulation as fast as possible. Total time: ~60 seconds after you have CUDA + Python.
+> **Goal:** get you to a running simulation as fast as possible. Total
+> time: ~60 seconds after you have CUDA + Python.
 
 ## TL;DR
 
@@ -8,111 +9,148 @@
 # 1. Install
 pip install -r requirements.txt
 
-# 2. Run the GUI (recommended for first-timers)
-python neural-simulator.py
-
-# 3. Or run the flagship research experiment headlessly:
-python -m research.runners.g11_bg_runner --moving-goal \
-    --enable-place-goal-readout --learned-perception --enable-dlpfc-wm \
-    --beacon-perception --beacon-replaces-goal \
-    --cue-reflex --cue-reflex-replaces-heuristic \
-    --enable-landmark-sensor --landmarks-replace-place \
-    --sensed-reward \
-    --enable-msn-lateral-inhibition \
-    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
-    --curriculum --curriculum-warmup-steps 600 \
-    --seed 42 --n-steps 1800
-```
-
-## What you just ran
-
-Option 3 above runs our **biology-grounded learning agent** — a spiking
-neural network that learns to navigate a 2D gridworld using only:
-- **Goal-beacon perception** (8 directional sensors detect a beacon — replaces direct goal coords)
-- **Landmark perception** (8 directional sensors to a fixed cue — replaces direct (x,y))
-- **Hippocampal place + goal cells** (self-organize from sensors, not coordinates)
-- **Prefrontal cortex** (recurrent working memory for goal context)
-- **Innate cue-following reflex** (direction-only, like phototaxis in real animals — replaces hand-coded heuristic)
-- **Sensed reward** (beacon-intensity gradient — replaces ground-truth distance reward)
-- **Curriculum learning** (cortex matures, then input layers train via per-pathway plasticity gates)
-
-It's the result of weeks of architectural work to close 4 of 5 "magic GPS"
-cheats real animals don't have. **6/6 seeds beat baseline by 30.6%
-with this config (p=0.00045)** — biology-grounded actually beats the
-cheats-allowed version (4.08 vs 4.41 sum).
-
-## Three things to try next
-
-### A. I want to see it learn (visual)
-
-```bash
+# 2. Run the GUI with live 3D visualization
 python neural-simulator.py
 ```
 
-Then in the GUI:
-1. Open the **Experiment & Stimulus System** panel
-2. Choose preset: "Pavlovian Conditioning" or "RL"
-3. Click **Start**
-4. Watch neurons fire in 3D in real-time
-
-→ See **[USER_GUIDE.md](USER_GUIDE.md)** for the full GUI walkthrough.
-
-### B. I'm a researcher / I want to read findings
-
-→ **[research/findings/INDEX.md](research/findings/INDEX.md)** — all results
-chronologically, including negatives.
-
-The most exciting recent ones:
-- 🎉 [Item 1: Full Perception Arc Complete](research/findings/2026-04-27-FULL-PERCEPTION-ARC-COMPLETE.md)
-  (4.56 sum, p=0.00819) — agent navigates without coordinate cheats
-- 🎉 [PFC Working Memory](research/findings/2026-04-27-pfc-working-memory.md)
-  (4.41 sum, p=0.018) — recurrent prefrontal region adds value
-- 🎉 [Plastic-Input-Layer Arc Resolved](research/findings/2026-04-27-plastic-input-layer-RESOLVED.md)
-  (4.72 sum, p=0.02) — closed a 7-NEGATIVE architectural arc
-
-### C. I'm a developer / I want to build on this
-
-```bash
-# Run the test suite
-pytest tests/ -v
-
-# Read the architecture
-cat CLAUDE.md  # or open in your editor
-```
-
-Key files:
-- **[sim/bridge.py](sim/bridge.py)** — main simulation engine (`SimulationBridge` class)
-- **[sim/regions.py](sim/regions.py)** — declarative brain region framework
-- **[sim/neuromodulators.py](sim/neuromodulators.py)** — DA/NE/ACh subsystem
-- **[research/runners/g11_bg_runner.py](research/runners/g11_bg_runner.py)** — flagship runner with all opt-in flags
-
-→ See **[CONTRIBUTING.md](CONTRIBUTING.md)** for dev setup, code style, PR template.
+That's it. The GUI loads with a working brain — neurons firing, synapses
+pulsing, agent navigating a gridworld. Click anywhere in the gridworld
+to teleport the goal; watch the brain reorient.
 
 ## Requirements
 
-- **Python** 3.8+
-- **NVIDIA GPU** with CUDA support
-- **CuPy** (matched to your CUDA version)
-- ~2 GB GPU memory minimum (10K neurons), 20+ GB for 100K+ networks
+- **Python 3.8+**
+- **NVIDIA GPU** with CUDA support (RTX 3090 ideal; runs on smaller GPUs)
+- **CuPy** matching your CUDA version (`pip install cupy-cuda12x` or
+  `cupy-cuda11x`)
+- ~6 GB GPU memory for default configurations
 
-See **[README.md](README.md)** for full installation details.
+If you don't have CUDA, you can browse the code and read findings docs,
+but the simulator itself needs GPU.
+
+## Three things to try
+
+### 1. The flagship navigation experiment
+
+Watch the agent learn to navigate using only its simulated retina (no
+shortcuts, no direct goal coordinates):
+
+```bash
+python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
+    --enable-msn-lateral-inhibition --enable-d1-d2-asymmetry \
+    --enable-striatal-pv-fsi --enable-cluster-a-closed-loop \
+    --enable-cluster-e-topography --enable-dlpfc-wm --enable-pfc-nmda \
+    --enable-visual-cortex --visual-cortex-action-warmup-steps 600 \
+    --grid-size 16 --seed 42 --n-steps 1800 \
+    --out research/findings/raw/g11_bg/quickstart_navigation.json
+```
+
+Takes ~10 min on RTX 3090. The agent should reach mean Manhattan
+distance ~3 to goal by the end (38% of timesteps spent at goal).
+
+### 2. The text-to-action experiment
+
+Test the statistically validated word→action capability (28.5% W→A,
+p=0.027 across 6 seeds):
+
+```bash
+python -m research.runners.text_eval_embodied \
+    --n-episodes 100 --steps-per-episode 30 --seed 42 \
+    --stim-steps-per-step 200 --reset-steps 100 \
+    --out-stats research/findings/raw/g11_bg/quickstart_textio.json
+```
+
+Takes ~50 min. Result printed at end: I→W and W→A accuracy with
+per-direction breakdown.
+
+To reproduce the full 6-seed validation:
+
+```bash
+for seed in 42 43 44 100 101 102; do
+    python -m research.runners.text_eval_embodied \
+        --n-episodes 100 --steps-per-episode 30 --seed $seed \
+        --stim-steps-per-step 200 --reset-steps 100 \
+        --out-stats research/findings/raw/g11_bg/quickstart_seed${seed}.json
+done
+
+python -m research.runners.text_io_meta_analysis
+```
+
+### 3. Interactive control via the webapp
+
+```bash
+# Start the webapp (separate terminal)
+uvicorn webapp.server:app --host 127.0.0.1 --port 8765
+
+# Open browser to http://127.0.0.1:8765
+```
+
+Browse runs, launch experiments, view 3D visualization, monitor
+in-flight training jobs.
+
+## What you just ran (in plain language)
+
+The flagship experiment trains a spiking neural network with:
+
+- **A retina** (32×32 ON + 32×32 OFF cells) — sees the gridworld image
+- **Visual cortex (V1, V2, IT)** — extracts edges, shapes, object identities
+  from the retinal image
+- **Premotor cortex** (4 pools, one per direction) — competes for action
+- **Basal ganglia** (D1/D2 striatum, GPe, GPi, thalamus) — selects one
+  action from the competing options
+- **Motor cortex** (4 pools) — fires the chosen action
+- **Prefrontal cortex** (working memory) — holds the goal across delays
+- **Dopamine midbrain** — reinforces successful actions
+
+The agent learns from **dopamine-modulated spike-timing plasticity** only.
+No backpropagation. No symbolic optimization. Same learning rules real
+brains use (Schultz 1998, Bi & Poo 1998).
+
+After 1800 simulation steps (~10 min wall time on RTX 3090), the agent
+goes from random behavior to consistent goal-seeking — comparable
+trajectories to animals on similar tasks.
+
+For the deep technical view, see [docs/CURRENT-STATE.md](docs/CURRENT-STATE.md).
+For the biology view, see [docs/biology.md](docs/biology.md).
+
+## Common operations
+
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run a smoke test of any runner
+python -m research.runners.g11_bg_runner --n-steps 200 --seed 42
+
+# Analyze a result file
+python -m research.runners.text_eval_analyze <result.json>
+
+# Cross-checkpoint weight comparison
+python -m research.runners.text_weight_compare \
+    label1:diag1.json label2:diag2.json
+
+# Aggregate text I/O experiments meta-analysis
+python -m research.runners.text_io_meta_analysis
+```
 
 ## Troubleshooting
 
-If something doesn't work:
-1. **GPU not detected?** → check `nvidia-smi` shows your card
-2. **Import errors?** → `pip install -r requirements.txt --upgrade`
-3. **g11 runner fails?** → check **[research/runners/TROUBLESHOOTING.md](research/runners/TROUBLESHOOTING.md)** for known gotchas
-4. **Tests fail?** → most tests need GPU; if GPU works but tests don't, file an issue
+**"CUDA out of memory"** — Reduce `--n-steps` or use smaller grid
+(`--grid-size 8`). Default config uses ~1.3 GB.
 
-## Next steps
+**"No CuPy available"** — Install matching version: `pip install
+cupy-cuda12x` (for CUDA 12) or `pip install cupy-cuda11x` (for CUDA 11).
 
-| If you want to... | Go to... |
-|---|---|
-| Use the GUI | [USER_GUIDE.md](USER_GUIDE.md) |
-| Run experiments programmatically | [README.md#programmable-api](README.md#programmable-api) |
-| Read all the research | [research/findings/INDEX.md](research/findings/INDEX.md) |
-| See the project's scientific arc | [docs/SCIENCE_ROADMAP.md](docs/SCIENCE_ROADMAP.md) |
-| Contribute code | [CONTRIBUTING.md](CONTRIBUTING.md) |
-| Understand the architecture | [README.md#system-architecture](README.md#system-architecture) + [CLAUDE.md](CLAUDE.md) |
-| Build on the research-runner framework | [research/runners/](research/runners/) + [TROUBLESHOOTING.md](research/runners/TROUBLESHOOTING.md) |
+**Visualization runs slowly** — Disable visualization for headless
+runs (no `python neural-simulator.py`, just runners).
+
+**Window doesn't open on Linux** — Need OpenGL drivers. On WSL2,
+use `pyopengl` with `LIBGL_ALWAYS_SOFTWARE=1` for software rendering.
+
+## Where to next
+
+- See **[README.md](README.md)** for project overview
+- See **[docs/CURRENT-STATE.md](docs/CURRENT-STATE.md)** for what works today
+- See **[docs/biology.md](docs/biology.md)** for the neuroscience
+- See **[USER_GUIDE.md](USER_GUIDE.md)** for detailed configuration options
+- See **[CONTRIBUTING.md](CONTRIBUTING.md)** to extend the codebase
