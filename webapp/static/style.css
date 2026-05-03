@@ -1796,3 +1796,91 @@ pre {
   .brain-run-actions { flex-wrap: wrap; }
   #brain-log-output { max-height: 250px; font-size: 10px; }
 }
+
+/* ───────────────────────────────────────────────────────────────────────
+   Brain tab — 3D Three.js scene (2026-05-03)
+   ─────────────────────────────────────────────────────────────────────── */
+#brain3d-host {
+  width: 100%;
+  height: 540px;
+  background: #0a0e1a;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+.brain3d-label {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 9px;
+  color: rgba(227, 230, 234, 0.7);
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+[data-theme="light"] .brain3d-label {
+  color: rgba(229, 231, 235, 0.85);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+}
+.brain3d-scrubber-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 16px;
+  padding: 8px 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.brain3d-scrubber-row input[type="range"] {
+  flex: 1;
+}
+.brain3d-scrubber-row .ctrl-btn {
+  flex-shrink: 0;
+  min-width: 80px;
+}
+.brain3d-drawer {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin: 10px 0;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.brain3d-drawer .section-title {
+  padding: 10px 14px;
+  margin: 0;
+  background: var(--bg-3);
+  border-bottom: 1px solid var(--border);
+}
+.brain3d-drawer .list-item {
+  padding: 8px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--bg-2);
+}
+.brain3d-drawer .list-item:hover {
+  background: var(--bg-3);
+}
+
+/* Theme overrides for the 3D scene background — use the dark navy
+   even in light mode so glow effects still pop. */
+[data-theme="light"] #brain3d-host {
+  background: #0a0e1a;
+  border-color: #cbd5e1;
+}
+
+@media (max-width: 768px) {
+  #brain3d-host {
+    height: 360px;
+  }
+  .brain3d-scrubber-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .brain3d-scrubber-row input[type="range"] {
+    width: 100%;
+    flex-basis: 100%;
+    order: 10;
+  }
+}

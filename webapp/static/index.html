@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Neural Simulator — Research Dashboard</title>
   <link rel="stylesheet" href="/static/style.css">
+  <!-- Three.js via importmap (no build step). Loaded from unpkg CDN.
+       brain3d.js imports `three` and `three/addons/...` and resolves
+       them via this importmap. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
 <body>
   <header>
@@ -288,10 +299,55 @@
          pending. -->
     <section id="tab-brain" class="tab">
       <div class="brain-wrapper">
-        <!-- Live monitor: in-flight runs panel. Polls /api/inflight every
-             2s and renders a card per active run with progress, log size,
-             and a "Watch" button that opens a WebSocket log tail. -->
+        <!-- 3D visualization (2026-05-03). Replay mode: load any
+             completed run and scrub through its trajectory; region
+             brightness is synthesized from action+reward+config flags
+             at each step. Live mode: poll /api/inflight every 1s and
+             show the active phase via a stylized activity pattern.
+             Three.js loaded via importmap from unpkg (no build step).
+             See brain3d.js for the full scene module. -->
         <div class="section-title">
+          3D Brain
+          <span class="muted" id="brain3d-run-name">No run loaded</span>
+          <span class="spacer"></span>
+          <button id="brain3d-load" class="ctrl-btn">Load run…</button>
+          <button id="brain3d-live" class="ctrl-btn">Live mode</button>
+          <button id="brain3d-help" class="ctrl-btn" title="What am I looking at?">?</button>
+        </div>
+        <div id="brain3d-host"></div>
+        <div id="brain3d-live-label" class="muted" style="margin-top:6px;font-size:11px;display:none;"></div>
+        <div class="brain3d-scrubber-row">
+          <button id="brain3d-play" class="ctrl-btn">▶ Play</button>
+          <input type="range" id="brain3d-scrubber" min="0" max="0" value="0" step="1" style="flex:1;">
+          <span id="brain3d-step-label" class="muted">step 0 / 0</span>
+          <label class="scrubber-speed-label">
+            Speed
+            <select id="brain3d-speed">
+              <option value="1">1/s</option>
+              <option value="3">3/s</option>
+              <option value="5" selected>5/s</option>
+              <option value="10">10/s</option>
+              <option value="20">20/s</option>
+              <option value="60">60/s</option>
+            </select>
+          </label>
+        </div>
+
+        <!-- Run picker drawer (revealed by Load run...) -->
+        <div id="brain3d-runs-drawer" class="brain3d-drawer" style="display:none;">
+          <div class="section-title">
+            Pick a run to replay
+            <span class="spacer"></span>
+            <button id="brain3d-runs-close" class="ctrl-btn">✕ Close</button>
+          </div>
+          <div id="brain3d-runs-list" class="muted">Loading runs…</div>
+        </div>
+
+        <!-- Live runs panel (in-flight monitoring). Polls /api/inflight
+             every 2s and renders a card per active run with progress,
+             log size, and a "Watch logs" button. Below the 3D scene so
+             users can see both at once. -->
+        <div class="section-title" style="margin-top:24px;">
           Live runs
           <span class="muted" id="brain-live-count">0 in flight</span>
           <span class="spacer"></span>
@@ -311,25 +367,34 @@
           <pre id="brain-log-output">…</pre>
         </div>
 
-        <!-- 3D viz placeholder (Phase 1 ships separately). The live monitor
-             above is the action-oriented part of this tab; the placeholder
-             below documents what the 3D viz will look like when shipped. -->
-        <div class="section-title">3D visualization (coming soon)</div>
+        <!-- About the 3D viz (Phase 1 implementation, 2026-05-03). The
+             scene is fully interactive — orbit camera, scrub through
+             completed run trajectories, watch in-flight runs animate.
+             Region brightness is currently synthesized from action+reward
+             at each step; per-region firing-rate instrumentation in the
+             bridge is the planned Phase 2. -->
+        <div class="section-title">About the 3D visualization</div>
         <div class="info-card">
-          <h3>WebGL/Three.js 3D rendering of the brain</h3>
           <p>
-            ~5,000 neurons across 50+ brain regions, ~175,000 synapses,
-            with real-time spike events, signal propagation along
-            pathways, and plasticity overlays. Architectural decisions
-            documented in the
-            <a href="/api/plans/2026-05-02-webapp-3d-visualization-design.md"
-               target="_blank">design doc</a>
-            (also via the Plans tab).
+            Each glowing sphere is a brain region; size proportional to
+            log(neuron count). Color coded by functional family — sensory
+            green, V1/V2/IT blue gradient, premotor purple, striatum
+            direct/indirect red/orange, pallidum amber, thalamus cyan,
+            motor yellow, PFC teal, hippocampus pink, dopamine magenta.
+          </p>
+          <p>
+            Lines between regions are declared synaptic pathways — blue
+            for excitatory (glutamate), red for inhibitory (GABA),
+            magenta for dopamine. They brighten when their pre- or
+            post-region is active.
           </p>
           <p class="muted">
-            Until the 3D viz ships, use the World tab for 2D gridworld
-            replay, the Live runs panel above for in-flight progress,
-            and the Language tab for text I/O confusion matrices.
+            Activity is currently <em>synthesized</em> from action +
+            reward at each replay step (e.g. action=N lights up
+            cortex_N → str_D1_N → motor_N). Phase 2 will replace this
+            with per-region firing rates recorded by the bridge. See
+            the <a href="/api/plans/2026-05-02-webapp-3d-visualization-design.md" target="_blank">full design doc</a>
+            for the roadmap.
           </p>
         </div>
         <div class="brain-features-grid">

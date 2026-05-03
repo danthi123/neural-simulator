@@ -6,6 +6,15 @@
 // via textContent or escapeHTML — never via raw template-literal innerHTML.
 
 import { setupWorldTab, loadRunIntoWorld } from "/static/world.js";
+// 2026-05-03: 3D brain visualization. Lazy-imported on first activation
+// of the Brain tab so users who never visit it don't pay the Three.js
+// download cost (~600KB minified from CDN).
+let _brain3dModule = null;
+async function getBrain3D() {
+  if (_brain3dModule) return _brain3dModule;
+  _brain3dModule = await import("/static/brain3d.js");
+  return _brain3dModule;
+}
 import { makeLineChart, makeBarChart, PALETTE_EXPORT as P } from "/static/charts.js";
 import {
   toast, loadState, saveState, showSkeleton,
@@ -1395,6 +1404,106 @@ function activateBrainTab() {
       if (_brainTabActive) refreshBrainLive();
     }, 2000);
   }
+  // Lazy-init the 3D scene on first Brain-tab activation.
+  initBrain3DOnce();
+}
+
+let _brain3dInitialized = false;
+async function initBrain3DOnce() {
+  if (_brain3dInitialized) return;
+  _brain3dInitialized = true;
+  const host = document.getElementById("brain3d-host");
+  if (!host) return;
+  try {
+    const mod = await getBrain3D();
+    await mod.initBrain3D({ canvasContainer: host });
+    setupBrain3DControls(mod);
+  } catch (e) {
+    host.replaceChildren(el("p", { class: "error" },
+      `3D viz failed to load: ${e.message}. Check browser console for details.`));
+  }
+}
+
+function setupBrain3DControls(mod) {
+  // Play / pause
+  $("#brain3d-play")?.addEventListener("click", () => {
+    const st = mod.brain3dGetState();
+    if (st.replayPlaying) mod.brain3dPause();
+    else mod.brain3dPlay();
+  });
+  // Scrubber
+  $("#brain3d-scrubber")?.addEventListener("input", (e) => {
+    const step = parseInt(e.target.value, 10);
+    if (!isNaN(step)) mod.brain3dRenderStep(step);
+  });
+  // Speed
+  $("#brain3d-speed")?.addEventListener("change", (e) => {
+    const s = parseInt(e.target.value, 10);
+    if (!isNaN(s)) mod.brain3dSetSpeed(s);
+  });
+  // Load run drawer
+  $("#brain3d-load")?.addEventListener("click", async () => {
+    const drawer = $("#brain3d-runs-drawer");
+    drawer.style.display = "";
+    const list = $("#brain3d-runs-list");
+    list.replaceChildren(document.createTextNode("Loading…"));
+    try {
+      const res = await fetch("/api/runs");
+      const data = await res.json();
+      // Filter to navigation runs (text I/O runs don't have trajectory)
+      const navRuns = (data.runs || []).filter(
+        (r) => !/^text_eval_/.test(r.name) && !/^text_io_/.test(r.name) && r.sum_finalQ != null
+      );
+      list.replaceChildren();
+      for (const r of navRuns.slice(0, 80)) {
+        const item = el("div", { class: "list-item" }, [
+          el("div", { class: "name" }, r.name),
+          el("div", { class: "meta muted" }, [
+            `seed ${r.seed} · sum=${r.sum_finalQ?.toFixed(2) ?? "—"} · phases=${r.n_phases}`,
+          ]),
+        ]);
+        item.addEventListener("click", () => {
+          mod.brain3dLoadRun(r.name);
+          drawer.style.display = "none";
+        });
+        list.appendChild(item);
+      }
+    } catch (e) {
+      list.replaceChildren(el("p", { class: "error" }, e.message));
+    }
+  });
+  $("#brain3d-runs-close")?.addEventListener("click", () => {
+    $("#brain3d-runs-drawer").style.display = "none";
+  });
+  // Live mode
+  $("#brain3d-live")?.addEventListener("click", () => {
+    const liveLabel = $("#brain3d-live-label");
+    const st = mod.brain3dGetState();
+    if (st.liveMode) {
+      mod.brain3dStopLive();
+      if (liveLabel) liveLabel.style.display = "none";
+      $("#brain3d-live").textContent = "Live mode";
+    } else {
+      mod.brain3dStartLive();
+      if (liveLabel) liveLabel.style.display = "";
+      $("#brain3d-live").textContent = "Stop live";
+    }
+  });
+  // Help button
+  $("#brain3d-help")?.addEventListener("click", () => {
+    alert(
+      "3D Brain Viz controls:\n\n" +
+      "• Drag with left mouse to orbit camera\n" +
+      "• Right-click drag to pan\n" +
+      "• Scroll to zoom\n\n" +
+      "• Load run... — pick a completed run; scrubber moves through trajectory\n" +
+      "• Play / pause — auto-advance scrubber at the selected speed\n" +
+      "• Live mode — animate based on currently in-flight run\n\n" +
+      "Region color = functional family. Brightness = synthesized\n" +
+      "activation from action+reward. Pathway lines brighten when\n" +
+      "their endpoints are active."
+    );
+  });
 }
 
 // Stop polling when user navigates away from the Brain tab. setupTabs()
