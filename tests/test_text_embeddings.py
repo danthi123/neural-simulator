@@ -274,3 +274,13 @@ def test_run_curriculum_training_accepts_hebbian_overrides():
     # None means "use sim.config default" — preserves backward compat
     assert sig.parameters["hebbian_weight_decay"].default is None
     assert sig.parameters["hebbian_learning_rate"].default is None
+
+
+def test_run_curriculum_training_accepts_dt_ms():
+    """dt-ms override allows halving sub-step count for speedup tests."""
+    import inspect
+    from research.runners.text_train_curriculum import run_curriculum_training
+
+    sig = inspect.signature(run_curriculum_training)
+    assert "dt_ms" in sig.parameters
+    assert sig.parameters["dt_ms"].default == 0.5  # match sim's tuned value

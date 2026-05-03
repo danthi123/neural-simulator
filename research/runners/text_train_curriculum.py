@@ -576,6 +576,10 @@ def run_curriculum_training(
     hebbian_weight_decay: float | None = None,
     hebbian_learning_rate: float | None = None,
     stdp_w_max: float = 5.0,
+    # Simulation dt (default 0.5ms = sim's tuned value). Tests with
+    # dt=1.0 ms halve sub-step count for ~2x speedup IF Izhikevich
+    # numerical stability holds.
+    dt_ms: float = 0.5,
     save_phase1_checkpoint: bool = True,
     verbose: bool = True,
 ):
@@ -614,7 +618,7 @@ def run_curriculum_training(
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions)
     cfg.region_pathways = list(pathways)
-    cfg.dt_ms = 0.5
+    cfg.dt_ms = dt_ms
     cfg.seed = seed
     cfg.enable_nmda = True
     cfg.nmda_ratio = 0.5
@@ -891,6 +895,12 @@ def main():
                     help="STDP soft-bound max weight (v2 default 5.0). "
                     "Try 10.0 to allow more weight differentiation between "
                     "word-action pairings.")
+    ap.add_argument("--dt-ms", type=float, default=0.5,
+                    help="Simulation dt in milliseconds (default 0.5). "
+                    "Setting dt=1.0 halves sub-step count for ~2x speed "
+                    "but Izh Euler integration may be marginally stable. "
+                    "Pair with halved --stim-steps-per-step and "
+                    "--reset-steps to keep simulated time constant.")
     ap.add_argument("--no-save-checkpoint", dest="save_checkpoint",
                     action="store_false")
     ap.set_defaults(save_checkpoint=True)
@@ -931,6 +941,7 @@ def main():
         hebbian_weight_decay=args.hebbian_weight_decay,
         hebbian_learning_rate=args.hebbian_learning_rate,
         stdp_w_max=args.stdp_w_max,
+        dt_ms=args.dt_ms,
         save_phase1_checkpoint=args.save_checkpoint,
         verbose=True,
     )
