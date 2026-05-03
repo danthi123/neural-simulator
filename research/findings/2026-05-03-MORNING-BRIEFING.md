@@ -69,29 +69,40 @@ Active-runs badge (top-left of header) shows current count.
 | v2 baseline | 6 | **28.5% ± 2.1** | reference |
 | v2 + SWR (default) | **6** | **24.3% ± 2.4** | paired-t = -6.37 (highly significant regression) |
 | v2 + SWR balanced (H1) | 0 | — | running |
-| PFC isolation (H4) | 3 | **24.7% ± 6.7** | early signal: high variance, near-chance |
+| PFC isolation (H4) | 4 | **23.0% ± 6.5** | **BELOW chance — paired-stim alone is insufficient** |
 
-H4 per-seed: 42=30%, 43=27%, 44=17%, 100=?, 101=?, 102=?
+H4 per-seed: 42=30%, 43=27%, 44=17%, 100=18%, 101=?, 102=?
 
-### Surprise: H4 has MUCH higher variance than v2+SWR
+### Surprise (UPDATED): H4 isolation is BELOW chance
 
 Where v2+SWR is consistently regressed (24% across all 6 seeds, std 2.4),
-H4 PFC bypass isolation is consistently random — 17%, 27%, 30% so far.
-This isn't an "architecture limit" so much as "training procedure can't
-reliably differentiate words via direct language→motor without cascade
-support."
+H4 PFC bypass isolation is consistently RANDOM and ~chance — 17%, 18%,
+27%, 30%. **n=4 mean = 23.0% which is BELOW 25% chance.**
 
-Implication: the **paired-stim training itself** isn't producing word-
-discriminative weight changes. Each seed's initial cascade biases (which
-direction's cortex pool fires most spontaneously) dominate the eval
-outcome. STDP can't overcome the bias in 400 paired-stim events.
+This INVERTS the original H4 hypothesis. The hypothesis was "cascade
+interferes; remove cascade and bypass isolated training will reveal
+the architecture's true potential." Reality: removing cascade
+training (Phase 1+2) makes things WORSE, not better. The cascade is
+HELPING, not hurting.
 
-Per-seed confusion matrix highlights:
+What Phase 2 episodic training does that paired-stim doesn't:
+1. Co-activates cascade with language drive in environmental context
+2. Provides REAL negative-reward feedback (-0.5 for wrong moves);
+   H4 paired-stim only has +1.0 rewards (no contrast)
+3. Builds an experience buffer for SWR consolidation (irrelevant for H4
+   since it uses a synthetic balanced buffer)
+4. Generates seed-dependent cascade activity that creates fine-grained
+   plasticity opportunities the paired-stim regime doesn't replicate
+
+**Per-seed confusion matrix highlights:**
 - Seed 42 H4: north and east have IDENTICAL count vectors (4,8,6,7) —
   motor pool can't distinguish. Probability of identical multinomial
-  outcome ~1e-3.
+  outcome ~1e-3 by chance.
 - Seed 44 H4: east-bias dominates ALL 4 words (11/9/9/8 east-predictions
-  for north/east/south/west) — the cascade's spontaneous E-firing wins.
+  for north/east/south/west) — cascade's spontaneous E-firing wins.
+- Seed 100 H4: south-bias dominates (8 north→south, 9 east→south,
+  10 west→south) plus E predicts (10 east→north). Different bias per
+  seed, all worse than chance.
 
 ### Architectural pivot — sweep on seed 42 (auto-launches after H1)
 
