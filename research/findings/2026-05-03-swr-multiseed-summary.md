@@ -11,7 +11,7 @@ Each cell shows `I=<i2w>/W=<w2a>` accuracy. Mean ± std taken across available s
 | v2 baseline | I=33.0/W=27.0 | I=25.0/W=29.0 | I=27.0/W=26.0 | I=25.0/W=32.0 | I=21.0/W=28.0 | I=21.0/W=29.0 | I=25.3%±4.5/W=28.5%±2.1 |
 | v2 + SWR (default) | I=39.0/W=22.0 | I=26.0/W=22.0 | I=18.0/W=23.0 | I=22.0/W=28.0 | I=30.0/W=25.0 | I=27.0/W=26.0 | I=27.0%±7.2/W=24.3%±2.4 |
 | v2 + SWR balanced | — | — | — | — | — | — | — |
-| PFC isolation (H4) | — | — | — | — | — | — | — |
+| PFC isolation (H4) | I=22.0/W=30.0 | — | — | — | — | — | I=22.0%±0.0/W=30.0%±0.0 |
 
 
 ### v2 baseline — W->A per direction
@@ -31,3 +31,12 @@ Each cell shows `I=<i2w>/W=<w2a>` accuracy. Mean ± std taken across available s
 | east | 24.0% | 28.0% | 24.0% | 28.0% | 24.0% | 28.0% | **26.0%** |
 | south | 12.0% | 12.0% | 36.0% | 20.0% | 24.0% | 36.0% | **23.3%** |
 | west | 32.0% | 24.0% | 16.0% | 36.0% | 28.0% | 20.0% | **26.0%** |
+
+### PFC isolation (H4) — W->A per direction
+
+| direction | seed 42 | seed 43 | seed 44 | seed 100 | seed 101 | seed 102 | mean |
+|---|---|---|---|---|---|---|---|
+| north | 16.0% | — | — | — | — | — | **16.0%** |
+| east | 32.0% | — | — | — | — | — | **32.0%** |
+| south | 44.0% | — | — | — | — | — | **44.0%** |
+| west | 28.0% | — | — | — | — | — | **28.0%** |
