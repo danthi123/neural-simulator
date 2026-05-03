@@ -95,6 +95,30 @@
         <button id="trash-incomplete-btn" class="ctrl-btn" title="Move all runs without a complete phase_stats into the trash">🗑 Trash incomplete</button>
         <button id="open-trash-btn" class="ctrl-btn" title="View trashed runs">Trash (<span id="trash-count">0</span>)</button>
       </div>
+      <!-- 2026-05-03 type-filter chips. The Runs tab is the single source
+           of truth for all runs; chips narrow to the run type. Each row
+           gets viewer-affinity buttons (Brain / World / Language) that
+           open the run in the appropriate visualization tab. -->
+      <div class="filter-chip-row" id="runs-type-chips">
+        <button class="filter-chip active" data-type="all">All <span class="filter-chip-count" id="chip-all-count">0</span></button>
+        <button class="filter-chip" data-type="navigation">Navigation <span class="filter-chip-count" id="chip-nav-count">0</span></button>
+        <button class="filter-chip" data-type="language">Text I/O <span class="filter-chip-count" id="chip-lang-count">0</span></button>
+        <span class="spacer"></span>
+        <span class="muted" style="font-size:11px;">Click an icon next to a run to open it in that viewer:</span>
+        <span class="filter-chip-legend"><span class="row-viewer-btn" style="cursor:default;pointer-events:none;">🌍</span> 2D World</span>
+        <span class="filter-chip-legend"><span class="row-viewer-btn" style="cursor:default;pointer-events:none;">🧠</span> 3D Brain</span>
+        <span class="filter-chip-legend"><span class="row-viewer-btn" style="cursor:default;pointer-events:none;">💬</span> Language</span>
+      </div>
+      <!-- Live runs panel (in-flight monitoring). Surfaced at the top of
+           the Runs tab so all runs (live + completed) are visible in one
+           place. -->
+      <div id="runs-live-panel-wrap" style="display:none;">
+        <div class="section-title" style="padding: 8px 20px;">
+          🔴 Active runs
+          <span class="muted" id="runs-live-count">0 in flight</span>
+        </div>
+        <div id="runs-live-panel" style="padding: 0 20px 12px;"></div>
+      </div>
       <div id="selection-bar" class="selection-bar" style="display:none">
         <span><strong id="selection-count">0</strong> selected</span>
         <button id="bulk-trash-btn" class="ctrl-btn bad">🗑 Trash selected</button>
@@ -310,6 +334,8 @@
           3D Brain
           <span class="muted" id="brain3d-run-name">No run loaded</span>
           <span class="spacer"></span>
+          <!-- Live run picker (hidden by default; revealed when Live mode active) -->
+          <select id="brain3d-live-picker" class="toolbar-input" style="display:none;width:auto;" title="Pick which live run to follow"></select>
           <button id="brain3d-load" class="ctrl-btn">Load run…</button>
           <button id="brain3d-live" class="ctrl-btn">Live mode</button>
           <button id="brain3d-help" class="ctrl-btn" title="What am I looking at?">?</button>

@@ -191,6 +191,47 @@ let _lastClickedRunIndex = -1; // for shift-click range selection
 // Backwards-compatibility alias for the openComparisonView code path.
 const compareSet = selectionSet;
 
+// 2026-05-03 — refresh the type-filter chips' counts based on the
+// current full run list. Called after each /api/runs fetch.
+function refreshRunsChipCounts() {
+  const all = _allRuns.filter((r) => !/_smoke/i.test(r.name));
+  const nav = all.filter((r) => classifyRun(r) === "navigation");
+  const lang = all.filter((r) => classifyRun(r) === "language");
+  const a = $("#chip-all-count"); if (a) a.textContent = String(all.length);
+  const n = $("#chip-nav-count"); if (n) n.textContent = String(nav.length);
+  const l = $("#chip-lang-count"); if (l) l.textContent = String(lang.length);
+}
+
+// Live runs panel at the top of the Runs tab. Same idea as the Brain
+// tab's live monitor but lives in the Runs tab where all run-related
+// activity is centralized. Reuses renderBrainRunCard() (which is
+// generic — name/progress/state agnostic to which tab hosts it).
+async function refreshRunsLivePanel() {
+  const wrap = $("#runs-live-panel-wrap");
+  const container = $("#runs-live-panel");
+  const counter = $("#runs-live-count");
+  if (!wrap || !container) return;
+  try {
+    const res = await fetch("/api/inflight");
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    const runs = (data.inflight || []).filter((r) => r.alive);
+    if (!runs.length) {
+      wrap.style.display = "none";
+      return;
+    }
+    wrap.style.display = "";
+    counter.textContent = runs.length === 1 ? "1 active" : `${runs.length} active`;
+    container.replaceChildren();
+    for (const r of runs) {
+      container.appendChild(renderBrainRunCard(r));
+    }
+  } catch (e) {
+    container.replaceChildren(el("p", { class: "error" },
+      `Failed to load live runs: ${e.message}`));
+  }
+}
+
 async function loadRuns() {
   const list = $("#runs-list");
   // Only show "Loading…" on the very first load (when the list is empty
@@ -219,6 +260,8 @@ async function loadRuns() {
     });
     _allRuns = data.runs;
     renderRunsList();
+    refreshRunsChipCounts();
+    refreshRunsLivePanel();
   } catch (e) {
     // On refresh failure, keep the existing list visible — only show
     // an error if this was the first load.
@@ -228,16 +271,82 @@ async function loadRuns() {
   }
 }
 
+// 2026-05-03: Run-type classifier and per-row viewer buttons.
+//
+// All runs are unified in the Runs tab; from each row, the user can
+// open the run in any compatible viewer (Brain 3D / World 2D /
+// Language confusion matrix / Stats). The buttons that appear depend
+// on what data the run has — text I/O runs don't have a trajectory,
+// so World/Brain replay isn't useful for them; navigation runs don't
+// have confusion matrices, so Language isn't useful.
+
+function classifyRun(r) {
+  const name = r.name || "";
+  if (name.startsWith("text_eval_") || name.startsWith("text_io_")) return "language";
+  if (/_smoke/i.test(name)) return "smoke";
+  return "navigation";
+}
+
+// Activate target tab AND load the named run into its viewer.
+// Single helper called by per-row Brain / World / Language buttons.
+function openRunInViewer(name, viewer) {
+  switch (viewer) {
+    case "world":
+      activateTab("world");
+      loadRunIntoWorld(name);
+      break;
+    case "brain":
+      activateTab("brain");
+      // brain3d module is lazy-loaded; ensure it's initialized first
+      initBrain3DOnce().then(async () => {
+        const mod = await getBrain3D();
+        mod.brain3dLoadRun(name);
+      });
+      break;
+    case "language":
+      activateTab("language");
+      window._languageLoaded = false;  // force reload
+      loadLanguage().then(() => {
+        // Find the row for this run and click it
+        setTimeout(() => {
+          const rows = $$("#language-list .lang-row");
+          const target = rows.find((row) =>
+            row.querySelector(".name")?.textContent === name.replace(/\.json$/, ""));
+          if (target) target.click();
+        }, 200);
+      });
+      break;
+    case "stats":
+    default:
+      activateTab("runs");
+      // Find row in the run list and click it to open detail
+      setTimeout(() => {
+        const rows = $$("#runs-list .list-item");
+        const target = rows.find((row) =>
+          row.querySelector(".name")?.textContent === name);
+        if (target) target.querySelector(".row-body")?.click();
+      }, 50);
+      break;
+  }
+}
+
+// Make the helper accessible from world.js etc. without ESM circular import.
+window.openRunInViewer = openRunInViewer;
+
 function renderRunsList() {
   const list = $("#runs-list");
   const hideSmoke = $("#filter-hide-smoke")?.checked ?? true;
   const hideIncomplete = $("#filter-hide-incomplete")?.checked ?? false;
   const search = ($("#filter-search")?.value ?? "").trim().toLowerCase();
+  // 2026-05-03: type-filter chips ("All", "Navigation", "Text I/O").
+  const typeFilter = window._runsTypeFilter || "all";
 
   const filtered = _allRuns.filter((r) => {
     if (hideSmoke && /smoke/i.test(r.name)) return false;
     if (hideIncomplete && r.sum_finalQ == null) return false;
     if (search && !r.name.toLowerCase().includes(search)) return false;
+    if (typeFilter === "navigation" && classifyRun(r) !== "navigation") return false;
+    if (typeFilter === "language" && classifyRun(r) !== "language") return false;
     return true;
   });
 
@@ -248,6 +357,7 @@ function renderRunsList() {
   filtered.forEach((r, idx) => {
     const sumStr = r.sum_finalQ != null ? r.sum_finalQ.toFixed(2) : "—";
     const isSelected = selectionSet.has(r.name);
+    const runType = classifyRun(r);
     const checkbox = el("input", {
       type: "checkbox",
       class: "row-checkbox",
@@ -258,21 +368,59 @@ function renderRunsList() {
       ev.stopPropagation();
       toggleSelection(r.name);
     });
+    // Type pill (small badge to the left of the name)
+    const typePill = el("span", {
+      class: `run-type-pill type-${runType}`,
+      title: runType === "navigation" ? "Navigation gridworld run"
+            : runType === "language" ? "Text I/O language run"
+            : "Smoke test (short verification)",
+    }, runType === "navigation" ? "NAV" : runType === "language" ? "LANG" : "SMK");
     const body = el("div", { class: "row-body" }, [
-      el("div", { class: "name" }, r.name),
+      el("div", { class: "name" }, [typePill, " ", r.name]),
       el("div", { class: "meta" }, [
-        metric("sum", sumStr),
+        runType === "navigation" ? metric("sum", sumStr) : metric("type", "text I/O"),
         metric("seed", r.seed ?? "—"),
-        metric("phases", r.n_phases),
-      ]),
+        runType === "navigation" ? metric("phases", r.n_phases) : null,
+      ].filter(Boolean)),
     ]);
+    // Per-run viewer buttons. Clicking a button activates the target
+    // tab and loads the run there. Only show buttons compatible with
+    // the run's data shape.
+    const viewerBtns = el("div", { class: "row-viewers" });
+    if (runType === "navigation") {
+      const worldBtn = el("button", {
+        class: "row-viewer-btn", title: "Open in 2D World replay",
+      }, "🌍");
+      worldBtn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        openRunInViewer(r.name, "world");
+      });
+      viewerBtns.appendChild(worldBtn);
+
+      const brainBtn = el("button", {
+        class: "row-viewer-btn", title: "Open in 3D Brain visualization",
+      }, "🧠");
+      brainBtn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        openRunInViewer(r.name, "brain");
+      });
+      viewerBtns.appendChild(brainBtn);
+    } else if (runType === "language") {
+      const langBtn = el("button", {
+        class: "row-viewer-btn", title: "Open Language confusion matrices",
+      }, "💬");
+      langBtn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        openRunInViewer(r.name, "language");
+      });
+      viewerBtns.appendChild(langBtn);
+    }
     const item = el("div", {
       class: "list-item" + (isSelected ? " row-selected" : ""),
       dataset: { name: r.name, idx: String(idx) },
-    }, [checkbox, body]);
+    }, [checkbox, body, viewerBtns]);
     body.addEventListener("click", (ev) => {
       if (ev.shiftKey) {
-        // Shift-click: toggle range from last clicked index
         if (_lastClickedRunIndex >= 0) {
           const lo = Math.min(_lastClickedRunIndex, idx);
           const hi = Math.max(_lastClickedRunIndex, idx);
@@ -1475,19 +1623,27 @@ function setupBrain3DControls(mod) {
   $("#brain3d-runs-close")?.addEventListener("click", () => {
     $("#brain3d-runs-drawer").style.display = "none";
   });
-  // Live mode
+  // Live mode + live-run picker
+  const livePicker = $("#brain3d-live-picker");
   $("#brain3d-live")?.addEventListener("click", () => {
     const liveLabel = $("#brain3d-live-label");
     const st = mod.brain3dGetState();
     if (st.liveMode) {
       mod.brain3dStopLive();
       if (liveLabel) liveLabel.style.display = "none";
+      if (livePicker) livePicker.style.display = "none";
       $("#brain3d-live").textContent = "Live mode";
     } else {
       mod.brain3dStartLive();
       if (liveLabel) liveLabel.style.display = "";
+      if (livePicker) livePicker.style.display = "";
       $("#brain3d-live").textContent = "Stop live";
     }
+  });
+  // When user picks a different live run from the dropdown, retarget.
+  livePicker?.addEventListener("change", (e) => {
+    const name = e.target.value;
+    if (name) mod.brain3dSelectLiveRun(name);
   });
   // Help button
   $("#brain3d-help")?.addEventListener("click", () => {
@@ -1526,11 +1682,17 @@ async function refreshBrainLive() {
     const res = await fetch("/api/inflight");
     if (!res.ok) throw new Error(`${res.status}`);
     const data = await res.json();
-    const runs = data.inflight || [];
+    // 2026-05-03: only show actually-running runs in the "Live" panel.
+    // Previously this showed all entries with a *.pid file regardless of
+    // alive state, so completed runs lingered as if still in flight.
+    // Completed runs are now visible via the Runs tab (with their result
+    // file accessible) — that's the correct surface for them.
+    const allRuns = data.inflight || [];
+    const runs = allRuns.filter((r) => r.alive);
     counter.textContent = runs.length === 1 ? "1 in flight" : `${runs.length} in flight`;
     if (!runs.length) {
       container.replaceChildren(el("p", { class: "muted" },
-        "No detached runs in flight. Launch one from the Lab tab to see it here."));
+        "No active runs. Launch one from the Lab tab to see it here."));
       return;
     }
     container.replaceChildren();
@@ -2170,6 +2332,27 @@ $("#plans-search")?.addEventListener("input", (e) => {
 $("#filter-hide-smoke")?.addEventListener("change", renderRunsList);
 $("#filter-hide-incomplete")?.addEventListener("change", renderRunsList);
 $("#filter-search")?.addEventListener("input", renderRunsList);
+
+// Type-filter chips (All / Navigation / Text I/O)
+$$("#runs-type-chips .filter-chip").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    const t = chip.dataset.type;
+    if (!t) return;
+    window._runsTypeFilter = t;
+    $$("#runs-type-chips .filter-chip").forEach((c) =>
+      c.classList.toggle("active", c === chip));
+    renderRunsList();
+  });
+});
+
+// Auto-refresh the live runs panel + chip counts every 5s while the
+// Runs tab is the active tab. Polls /api/inflight + /api/runs.
+setInterval(() => {
+  const runsTab = document.querySelector("nav button[data-tab='runs'].active");
+  if (runsTab) {
+    refreshRunsLivePanel();
+  }
+}, 5000);
 $("#bulk-compare-btn")?.addEventListener("click", openComparisonView);
 $("#bulk-trash-btn")?.addEventListener("click", trashSelected);
 $("#selection-clear-btn")?.addEventListener("click", clearSelection);

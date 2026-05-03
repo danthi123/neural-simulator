@@ -1884,3 +1884,330 @@ pre {
     order: 10;
   }
 }
+
+/* ───────────────────────────────────────────────────────────────────────
+   Runs tab — type chips + viewer buttons (2026-05-03)
+   The Runs tab is the central hub for all runs (live + completed).
+   Each row gets viewer-affinity buttons that load the run in the
+   appropriate viewer (Brain 3D / World 2D / Language confusion).
+   ─────────────────────────────────────────────────────────────────────── */
+
+#runs-type-chips {
+  /* Sit right under the toolbar; same .filter-chip styles as Findings. */
+  align-items: center;
+  gap: 8px;
+}
+.filter-chip-legend {
+  font-size: 11px;
+  color: var(--fg-dim);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.filter-chip-legend .row-viewer-btn {
+  font-size: 14px;
+  padding: 1px 4px;
+  background: transparent;
+  border: 1px dashed var(--border);
+}
+
+/* Per-row viewer affinity buttons */
+.row-viewers {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: auto;
+  align-items: center;
+}
+.row-viewer-btn {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background 0.1s, border-color 0.1s, transform 0.1s;
+}
+.row-viewer-btn:hover {
+  background: var(--bg-2);
+  border-color: var(--accent);
+  transform: scale(1.08);
+}
+.row-viewer-btn:active {
+  transform: scale(0.95);
+}
+
+/* Run-type pill (NAV / LANG / SMK) */
+.run-type-pill {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+  margin-right: 6px;
+  vertical-align: 1px;
+  font-family: ui-monospace, Consolas, monospace;
+}
+.run-type-pill.type-navigation {
+  background: rgba(168, 85, 247, 0.18);
+  color: #c084fc;
+}
+.run-type-pill.type-language {
+  background: rgba(6, 182, 212, 0.18);
+  color: #67e8f9;
+}
+.run-type-pill.type-smoke {
+  background: rgba(120, 113, 108, 0.2);
+  color: #a8a29e;
+}
+[data-theme="light"] .run-type-pill.type-navigation { color: #7c3aed; background: rgba(168, 85, 247, 0.15); }
+[data-theme="light"] .run-type-pill.type-language { color: #0891b2; background: rgba(6, 182, 212, 0.15); }
+[data-theme="light"] .run-type-pill.type-smoke { color: #57534e; background: rgba(168, 162, 158, 0.2); }
+
+/* Live runs panel inside Runs tab — same card style as Brain tab,
+   different host. */
+#runs-live-panel-wrap {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+}
+#runs-live-panel .brain-run-card {
+  margin-bottom: 8px;
+}
+
+/* Adjust .list-item to accommodate new viewer buttons */
+.list-item {
+  align-items: center;
+}
+.list-item .row-body {
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  #runs-type-chips .filter-chip-legend { display: none; }
+  .row-viewer-btn { width: 24px; height: 24px; font-size: 12px; }
+}
+
+/* ───────────────────────────────────────────────────────────────────────
+   Brain 3D — hover tooltip + click-pinned info panel (2026-05-03)
+   ─────────────────────────────────────────────────────────────────────── */
+
+.brain3d-tooltip {
+  position: absolute;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(110, 231, 183, 0.4);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: #e3e6ea;
+  pointer-events: none;
+  z-index: 30;
+  max-width: 280px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  font-family: ui-monospace, Consolas, monospace;
+}
+.brain3d-tip-title {
+  font-weight: 700;
+  font-size: 13px;
+  color: #6ee7b7;
+  margin-bottom: 2px;
+}
+.brain3d-tip-fn {
+  color: #93c5fd;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.brain3d-tip-stats {
+  display: flex;
+  gap: 10px;
+  font-size: 10px;
+  color: #9aa3ad;
+  flex-wrap: wrap;
+}
+.brain3d-tip-act {
+  color: #fbbf24;
+  font-weight: 600;
+}
+.brain3d-tip-hint {
+  font-size: 9px;
+  margin-top: 4px;
+  color: #5f6770;
+  font-style: italic;
+}
+
+.brain3d-info-panel {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 320px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(110, 231, 183, 0.4);
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: #e3e6ea;
+  font-size: 12px;
+  z-index: 25;
+  max-height: calc(100% - 24px);
+  overflow-y: auto;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  font-family: ui-monospace, Consolas, monospace;
+}
+.brain3d-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.brain3d-panel-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: #6ee7b7;
+}
+.brain3d-panel-subtitle {
+  font-size: 10px;
+  color: #9aa3ad;
+  margin-top: 2px;
+  word-break: break-word;
+}
+.brain3d-panel-close {
+  background: transparent;
+  border: 1px solid #2a2f3d;
+  color: #9aa3ad;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.brain3d-panel-close:hover {
+  border-color: #f87171;
+  color: #f87171;
+}
+.brain3d-panel-fn {
+  background: rgba(147, 197, 253, 0.1);
+  color: #93c5fd;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  display: inline-block;
+}
+.brain3d-panel-desc {
+  line-height: 1.5;
+  margin-bottom: 10px;
+  color: #cbd5e1;
+}
+.brain3d-panel-act {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 10px;
+  align-items: center;
+  margin: 10px 0;
+}
+.brain3d-panel-act-label {
+  grid-column: 1 / -1;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #9aa3ad;
+  letter-spacing: 0.05em;
+}
+.brain3d-panel-act-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.brain3d-panel-act-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6ee7b7, #fbbf24);
+  width: 0%;
+  transition: width 0.15s ease;
+}
+.brain3d-panel-act-value {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fbbf24;
+  font-variant-numeric: tabular-nums;
+}
+.brain3d-panel-section {
+  margin-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 10px;
+}
+.brain3d-panel-section-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #9aa3ad;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+.brain3d-panel-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 11px;
+}
+.brain3d-panel-list li {
+  padding: 2px 0;
+  color: #cbd5e1;
+}
+.brain3d-panel-list li.muted {
+  color: #5f6770;
+  font-style: italic;
+}
+.brain3d-pw-exc {
+  color: #60a5fa;
+  font-weight: 600;
+}
+.brain3d-pw-inh {
+  color: #f87171;
+  font-weight: 600;
+}
+.brain3d-pw-da {
+  color: #d946ef;
+  font-weight: 600;
+}
+.brain3d-pw-ach {
+  color: #a3e635;
+  font-weight: 600;
+}
+
+/* Light theme overrides — the 3D scene background stays dark, but the
+   tooltip/panel use light backgrounds matching the rest of the UI when
+   theme=light. */
+[data-theme="light"] .brain3d-tooltip,
+[data-theme="light"] .brain3d-info-panel {
+  background: rgba(255, 255, 255, 0.96);
+  color: #1a1d22;
+  border-color: #cbd5e1;
+}
+[data-theme="light"] .brain3d-tip-title,
+[data-theme="light"] .brain3d-panel-title { color: #047857; }
+[data-theme="light"] .brain3d-tip-fn,
+[data-theme="light"] .brain3d-panel-fn { color: #2563eb; background: rgba(37, 99, 235, 0.08); }
+[data-theme="light"] .brain3d-panel-desc { color: #1e293b; }
+[data-theme="light"] .brain3d-panel-list li { color: #1e293b; }
+[data-theme="light"] .brain3d-tip-stats { color: #475569; }
+[data-theme="light"] .brain3d-tip-act,
+[data-theme="light"] .brain3d-panel-act-value { color: #d97706; }
+[data-theme="light"] .brain3d-panel-act-bar { background: rgba(0, 0, 0, 0.06); }
+
+@media (max-width: 768px) {
+  .brain3d-info-panel {
+    width: calc(100% - 24px);
+    max-height: 50vh;
+  }
+}
