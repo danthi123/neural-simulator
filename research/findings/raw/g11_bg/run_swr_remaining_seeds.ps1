@@ -3,6 +3,9 @@
 # This script: 44, 100, 101, 102 — sequentially, ~70 min each = ~5h total.
 # Run detached so it survives terminal close.
 
+# NOTE: master orchestrator PID is written to *.orchestrator-pid (NOT *.pid)
+# so it doesn't appear in the webapp's inflight panel — that scanner globs
+# for *.pid files and treats every match as a training run.
 $seeds = @(44, 100, 101, 102)
 $outDir = "research/findings/raw/g11_bg"
 $masterLog = "$outDir/run_swr_remaining.master.log"

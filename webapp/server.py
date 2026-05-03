@@ -1401,9 +1401,18 @@ def get_log_tail(log_name: str) -> str:
 @app.get("/api/inflight")
 def list_inflight_runs() -> JSONResponse:
     """List in-flight detached training runs (Start-Process launches with
-    *.pid + *.log files)."""
+    *.pid + *.log files).
+
+    2026-05-03: filters out *.master.pid orchestrator-shepherd pids
+    written by multi-seed runner scripts. They aren't training runs;
+    they're bookkeeping for the run-coordinator process. Their actual
+    work (the training subprocess) registers its own *.pid file.
+    """
     inflight = []
     for pid_file in sorted(RAW_RUNS_DIR.glob("*.pid")):
+        # Skip orchestrator-shepherd pids (not training runs)
+        if pid_file.name.endswith(".master.pid"):
+            continue
         try:
             pid = int(pid_file.read_text().strip())
         except Exception:
