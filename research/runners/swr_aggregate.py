@@ -27,14 +27,18 @@ CONDITIONS = {
     "v2 + SWR (default)":  "text_eval_v2_swr500_seed{seed}.json",
     "v2 + SWR balanced":   "text_eval_h1_balanced_seed{seed}.json",
     "PFC isolation (H4)":  "text_eval_h4_isolation_seed{seed}.json",
-    # Architectural sweep variants (2026-05-03 evening) — pivoting from
-    # SWR replay tuning to structural changes after H4 hits architecture
-    # limit at 28%.
-    "arch motor50":              "text_eval_arch_motor50_seed{seed}.json",
-    "arch sparse005":            "text_eval_arch_sparse005_seed{seed}.json",
-    "arch lang512":              "text_eval_arch_lang512_seed{seed}.json",
-    "arch motor50+sparse005":    "text_eval_arch_motor50_sparse005_seed{seed}.json",
-    "arch lang512+motor50":      "text_eval_arch_lang512_motor50_seed{seed}.json",
+    "H4 dose (1000/dir)":  "text_eval_h4_dose1000_seed{seed}.json",
+    # Fundamentals sweep (2026-05-03 afternoon) — pivoting from
+    # v2-tweak structural changes to biology-correct fundamentals
+    # after permuted-label control showed 0/29 aligned in v2-variant
+    # evals. Tests Hebbian re-enable + reduced decay, stronger drive,
+    # higher stdp_w_max.
+    "fund heb_only":                   "text_eval_arch_heb_only_seed{seed}.json",
+    "fund drive_5x":                   "text_eval_arch_drive_5x_seed{seed}.json",
+    "fund stdp_wmax_10":               "text_eval_arch_stdp_wmax_10_seed{seed}.json",
+    "fund heb_drive":                  "text_eval_arch_heb_drive_seed{seed}.json",
+    "fund heb_stdp":                   "text_eval_arch_heb_stdp_seed{seed}.json",
+    "fund drive_stdp":                 "text_eval_arch_drive_stdp_seed{seed}.json",
 }
 
 DEFAULT_SEEDS = [42, 43, 44, 100, 101, 102]

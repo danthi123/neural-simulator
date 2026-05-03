@@ -568,6 +568,14 @@ def run_curriculum_training(
     n_motor_pop_per_subpool: int = 5,
     # Sparse-coding sparsity for token drive (0.1 default; 0.05 = orthogonal)
     token_sparsity: float = 0.1,
+    # Plasticity overrides (default = v2 baseline values)
+    # 2026-05-03: exposed for fundamentals sweep — Hebbian re-enable
+    # with reduced decay tests biology-correct learning vs the v2
+    # disable-it shortcut.
+    enable_hebbian_learning: bool = False,
+    hebbian_weight_decay: float | None = None,
+    hebbian_learning_rate: float | None = None,
+    stdp_w_max: float = 5.0,
     save_phase1_checkpoint: bool = True,
     verbose: bool = True,
 ):
@@ -612,9 +620,13 @@ def run_curriculum_training(
     cfg.nmda_ratio = 0.5
     cfg.enable_structural_plasticity = False
     cfg.enable_per_type_stp = enable_per_type_stp
-    # v2 fixes
-    cfg.enable_hebbian_learning = False
-    cfg.stdp_w_max = 5.0
+    # v2 fixes (overridable via kwargs for the fundamentals sweep)
+    cfg.enable_hebbian_learning = enable_hebbian_learning
+    cfg.stdp_w_max = stdp_w_max
+    if hebbian_weight_decay is not None:
+        cfg.hebbian_weight_decay = hebbian_weight_decay
+    if hebbian_learning_rate is not None:
+        cfg.hebbian_learning_rate = hebbian_learning_rate
 
     bridge = SimulationBridge(
         core_config=cfg,
@@ -864,6 +876,21 @@ def main():
                     "near-orthogonal codes (12-13 active at n=256, "
                     "pairwise overlap ~0). Eval and training use this same "
                     "value to stay consistent.")
+    ap.add_argument("--enable-hebbian", dest="enable_hebbian_learning",
+                    action="store_true", default=False,
+                    help="re-enable Hebbian learning (v2 default disables "
+                    "it because of weight-decay collapse, but the right "
+                    "biology-correct fix is to reduce decay, not disable). "
+                    "Pair with --hebbian-weight-decay 1e-7 (100x lower).")
+    ap.add_argument("--hebbian-weight-decay", type=float, default=None,
+                    help="override Hebbian weight decay rate (sim default "
+                    "1e-5). Try 1e-7 for biology-correct slow decay.")
+    ap.add_argument("--hebbian-learning-rate", type=float, default=None,
+                    help="override Hebbian learning rate (sim default 5e-4).")
+    ap.add_argument("--stdp-w-max", type=float, default=5.0,
+                    help="STDP soft-bound max weight (v2 default 5.0). "
+                    "Try 10.0 to allow more weight differentiation between "
+                    "word-action pairings.")
     ap.add_argument("--no-save-checkpoint", dest="save_checkpoint",
                     action="store_false")
     ap.set_defaults(save_checkpoint=True)
@@ -900,6 +927,10 @@ def main():
         enable_distributed_motor_pop=args.enable_distributed_motor_pop,
         n_motor_pop_per_subpool=args.n_motor_pop_per_subpool,
         token_sparsity=args.token_sparsity,
+        enable_hebbian_learning=args.enable_hebbian_learning,
+        hebbian_weight_decay=args.hebbian_weight_decay,
+        hebbian_learning_rate=args.hebbian_learning_rate,
+        stdp_w_max=args.stdp_w_max,
         save_phase1_checkpoint=args.save_checkpoint,
         verbose=True,
     )

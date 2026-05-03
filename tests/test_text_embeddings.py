@@ -254,3 +254,23 @@ def test_run_curriculum_training_accepts_token_sparsity():
         "run_curriculum_training must accept token_sparsity"
     )
     assert sig.parameters["token_sparsity"].default == 0.1
+
+
+def test_run_curriculum_training_accepts_hebbian_overrides():
+    """Fundamentals sweep needs to override v2's enable_hebbian_learning=False
+    + stdp_w_max=5 + hebbian_weight_decay defaults via kwargs."""
+    import inspect
+    from research.runners.text_train_curriculum import run_curriculum_training
+
+    sig = inspect.signature(run_curriculum_training)
+    for param in ("enable_hebbian_learning", "hebbian_weight_decay",
+                  "hebbian_learning_rate", "stdp_w_max"):
+        assert param in sig.parameters, (
+            f"run_curriculum_training must accept {param} for fundamentals sweep"
+        )
+    # Defaults should match the v2 baseline
+    assert sig.parameters["enable_hebbian_learning"].default is False
+    assert sig.parameters["stdp_w_max"].default == 5.0
+    # None means "use sim.config default" — preserves backward compat
+    assert sig.parameters["hebbian_weight_decay"].default is None
+    assert sig.parameters["hebbian_learning_rate"].default is None
