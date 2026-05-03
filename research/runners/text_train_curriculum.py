@@ -167,6 +167,8 @@ def _run_navigation_loop(
     lang_output_coactive_pA: float = 0.0,
     drive_language: bool = False,
     phase_label: str = "",
+    # Phase 2 only — record waking experiences for Phase 3 SWR replay
+    experience_buffer: list | None = None,
     verbose: bool = True,
 ):
     """Inner training loop. Same as run_embodied_text_training but
@@ -278,6 +280,18 @@ def _run_navigation_loop(
                 bridge._run_one_simulation_step()
                 bridge.runtime_state.current_time_step += 1
 
+            # Record experience for Phase 3 replay (only when language is
+            # active i.e. Phase 2). Records (token, action_chosen, reward,
+            # was_correct) — full tuple so replay can reinforce successful
+            # pairings differently from failed ones.
+            if experience_buffer is not None and drive_language:
+                experience_buffer.append({
+                    "token": target_word,
+                    "action": chosen,
+                    "reward": float(reward),
+                    "correct_move": (reward > 0),
+                })
+
             x, y = new_x, new_y
             n_total_steps += 1
             if reward > 0:
@@ -292,11 +306,189 @@ def _run_navigation_loop(
     return n_total_steps, n_correct_moves
 
 
+def _run_swr_replay_phase(
+    bridge,
+    cp,
+    rng,
+    experience_buffer: list,
+    n_replay_events: int,
+    stim_steps_per_step: int,
+    reset_steps: int,
+    lang_input_drive_pA: float,
+    lang_output_coactive_pA: float,
+    motor_replay_drive_pA: float = 50.0,
+    only_correct_experiences: bool = True,
+    verbose: bool = True,
+):
+    """Phase 3: SWR-style consolidation replay.
+
+    Re-presents recent (token, action) tuples from the experience buffer
+    to consolidate language-pathway weights via offline replay.
+    Loosely models hippocampal sharp-wave-ripple consolidation
+    (Wilson & McNaughton 1994; Buzsáki 1986+) without requiring full
+    Cluster D infrastructure.
+
+    For each replay event:
+    1. Reset
+    2. Drive language_input + language_output with token pattern (as in waking)
+    3. Drive motor_X (or motor_pop_θ for distributed) for the correct action
+    4. Run shorter stim window (compressed time, ~50ms vs waking 100ms)
+    5. Apply +1 reward to reinforce STDP for correct pairings
+
+    Optionally filters to only_correct_experiences (more stable) or replays
+    all (more biology-faithful — replay includes failures too).
+
+    Args:
+        experience_buffer: list of dicts with token, action, correct_move
+        n_replay_events: total replay events
+        only_correct_experiences: if True, sample only from correct moves
+            (cleaner consolidation signal). If False, replay all events
+            with their original reward.
+    """
+    from sim.text_embeddings import vocab_to_drive_pattern
+
+    if not experience_buffer:
+        if verbose:
+            print("[curriculum] Phase 3: empty experience buffer, skipping replay")
+        return 0
+
+    # Filter buffer per option
+    if only_correct_experiences:
+        buffer = [e for e in experience_buffer if e["correct_move"]]
+        if not buffer:
+            if verbose:
+                print("[curriculum] Phase 3: no correct moves to replay, skipping")
+            return 0
+    else:
+        buffer = list(experience_buffer)
+
+    if verbose:
+        n_correct = sum(1 for e in experience_buffer if e["correct_move"])
+        print(f"[curriculum] Phase 3 SWR replay: {n_replay_events} events from "
+              f"buffer of {len(experience_buffer)} (correct={n_correct}, "
+              f"replay_correct_only={only_correct_experiences})", flush=True)
+
+    # Cache region indices
+    rm = bridge.region_manager
+    lang_input_idx = cp.asarray(list(rm.indices("language_input")), dtype=cp.int64)
+    lang_output_idx = cp.asarray(list(rm.indices("language_output")), dtype=cp.int64)
+    n_lang_input = int(lang_input_idx.size)
+    n_lang_output = int(lang_output_idx.size)
+
+    # Detect labeled-line vs distributed motor architecture
+    distributed_motor_pop = False
+    try:
+        rm.indices("motor_N")
+    except KeyError:
+        try:
+            rm.indices("motor_pop_N")
+            distributed_motor_pop = True
+        except KeyError:
+            pass
+
+    if distributed_motor_pop:
+        # Cosine-tuned drive scheme matching the architecture's tuning
+        SUBPOOL_THETA = [
+            (0, "E"), (45, "NE"), (90, "N"), (135, "NW"),
+            (180, "W"), (225, "SW"), (270, "S"), (315, "SE"),
+        ]
+        ACTION_THETA = {"N": 90, "E": 0, "S": 270, "W": 180}
+        import math
+        subpool_idx = {
+            sfx: cp.asarray(list(rm.indices(f"motor_pop_{sfx}")), dtype=cp.int64)
+            for theta, sfx in SUBPOOL_THETA
+        }
+        # Per-action drive pattern: cos-weighted across sub-pools
+        action_subpool_drive = {}
+        for action, theta_a in ACTION_THETA.items():
+            action_subpool_drive[action] = {}
+            for theta_p, sfx in SUBPOOL_THETA:
+                d = ((theta_a - theta_p + 180) % 360) - 180
+                cos_w = max(0.0, math.cos(math.radians(d)))
+                action_subpool_drive[action][sfx] = cos_w
+    else:
+        motor_idx = {
+            a: cp.asarray(list(rm.indices(f"motor_{a}")), dtype=cp.int64)
+            for a in ACTION_NAMES
+        }
+
+    n_replays = 0
+
+    for event_idx in range(n_replay_events):
+        # Sample a random recent experience
+        event = buffer[int(rng.integers(0, len(buffer)))]
+        token = event["token"]
+        action = event["action"]
+        reward = event["reward"]
+
+        # Inter-trial reset
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.core_config.current_reward_signal = 0.0
+        for _ in range(reset_steps):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+
+        # Drive language_input + language_output (replay the waking pattern)
+        in_drive = vocab_to_drive_pattern(
+            token, n_neurons=n_lang_input,
+            drive_max_pA=lang_input_drive_pA, sparsity=0.1,
+        )
+        bridge.cp_external_input_current[lang_input_idx] = cp.asarray(
+            in_drive, dtype=cp.float32,
+        )
+        out_drive = vocab_to_drive_pattern(
+            token, n_neurons=n_lang_output,
+            drive_max_pA=lang_output_coactive_pA, sparsity=0.1,
+        )
+        bridge.cp_external_input_current[lang_output_idx] = cp.asarray(
+            out_drive, dtype=cp.float32,
+        )
+
+        # Drive motor pool for the chosen action — gives the post-synaptic
+        # firing pattern that STDP needs to pair with language drive.
+        # SMALL drive (~50pA) so endogenous cascade dynamics still play
+        # role; this is a "nudge" toward the recorded action.
+        if distributed_motor_pop:
+            for sfx, weight in action_subpool_drive[action].items():
+                if weight > 0.01:
+                    bridge.cp_external_input_current[subpool_idx[sfx]] += (
+                        weight * motor_replay_drive_pA
+                    )
+        else:
+            bridge.cp_external_input_current[motor_idx[action]] += (
+                motor_replay_drive_pA
+            )
+
+        # Compressed stim window (half of waking — biology says replay is
+        # 10-20× compressed but at our scale, half is enough).
+        compressed_stim = max(50, stim_steps_per_step // 2)
+        bridge.core_config.current_reward_signal = 0.0
+        for _ in range(compressed_stim):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+
+        # Apply reward — reinforce the (token, action) pairing
+        bridge.core_config.current_reward_signal = float(reward)
+        for _ in range(20):  # reward window
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+
+        n_replays += 1
+
+        if verbose and (event_idx + 1) % 100 == 0:
+            print(f"  [P3 SWR] {event_idx+1}/{n_replay_events} replayed",
+                  flush=True)
+
+    return n_replays
+
+
 def run_curriculum_training(
     out_stats: str | None = None,
     seed: int = 42,
     phase1_episodes: int = 200,
     phase2_episodes: int = 100,
+    phase3_replays: int = 0,  # 0 = skip Phase 3 SWR replay (default)
+    phase3_only_correct: bool = True,
     steps_per_episode: int = 30,
     grid_size: int = 8,
     # Tier 1 / config (matches v2 baseline)
@@ -314,6 +506,9 @@ def run_curriculum_training(
     n_motor_per_action: int = 10,
     text_n_input_neurons: int = 256,
     text_n_output_neurons: int = 256,
+    # Distributed motor pool option
+    enable_distributed_motor_pop: bool = False,
+    n_motor_pop_per_subpool: int = 5,
     save_phase1_checkpoint: bool = True,
     verbose: bool = True,
 ):
@@ -344,6 +539,8 @@ def run_curriculum_training(
         text_cortex_to_output_jitter=0.3,
         text_it_to_output_weight=0.5,
         text_it_to_output_jitter=0.3,
+        enable_distributed_motor_pop=enable_distributed_motor_pop,
+        n_motor_pop_per_subpool=n_motor_pop_per_subpool,
     )
 
     cfg = CoreSimConfig()
@@ -447,6 +644,9 @@ def run_curriculum_training(
     _set_language_gates(bridge, 1.0, verbose=verbose)
     # Visuomotor gates remain open (continued co-learning)
 
+    # Allocate experience buffer if Phase 3 is enabled
+    experience_buffer = [] if phase3_replays > 0 else None
+
     t_phase2_start = time.time()
     p2_steps, p2_correct = _run_navigation_loop(
         bridge, cp, rng,
@@ -461,6 +661,7 @@ def run_curriculum_training(
         drive_language=True,
         lang_input_drive_pA=lang_input_drive_pA,
         lang_output_coactive_pA=lang_output_coactive_pA,
+        experience_buffer=experience_buffer,
         phase_label="P2",
         verbose=verbose,
     )
@@ -482,10 +683,48 @@ def run_curriculum_training(
         "elapsed_seconds": p2_elapsed,
     })
 
+    # ─────────────────────────────────────────────────────────────────
+    # PHASE 3 (optional): SWR-style consolidation replay
+    # ─────────────────────────────────────────────────────────────────
+    if phase3_replays > 0 and experience_buffer:
+        if verbose:
+            print("\n" + "=" * 60)
+            print(f"PHASE 3: SWR replay consolidation — {phase3_replays} events")
+            print(f"  Language gates remain UNFROZEN. Replay biases STDP "
+                  f"toward recent (token, action) pairings.")
+            print("=" * 60, flush=True)
+
+        t_phase3_start = time.time()
+        n_replayed = _run_swr_replay_phase(
+            bridge, cp, rng,
+            experience_buffer=experience_buffer,
+            n_replay_events=phase3_replays,
+            stim_steps_per_step=stim_steps_per_step,
+            reset_steps=reset_steps,
+            lang_input_drive_pA=lang_input_drive_pA,
+            lang_output_coactive_pA=lang_output_coactive_pA,
+            only_correct_experiences=phase3_only_correct,
+            verbose=verbose,
+        )
+        p3_elapsed = time.time() - t_phase3_start
+        if verbose:
+            print(f"\n[curriculum] Phase 3 complete: {n_replayed} replays "
+                  f"({p3_elapsed:.0f}s)", flush=True)
+
+        epoch_stats.append({
+            "phase": 3,
+            "regime": "swr_replay_consolidation",
+            "n_replay_events": n_replayed,
+            "buffer_size": len(experience_buffer),
+            "only_correct": phase3_only_correct,
+            "elapsed_seconds": p3_elapsed,
+        })
+
     total_elapsed = time.time() - t_start
     if verbose:
         print(f"\n[curriculum] Total training: {total_elapsed:.0f}s "
-              f"({phase1_episodes + phase2_episodes} ep)", flush=True)
+              f"({phase1_episodes + phase2_episodes} ep + "
+              f"{phase3_replays} replays)", flush=True)
 
     return bridge, epoch_stats
 
@@ -497,6 +736,15 @@ def main():
                     help="visuomotor-only training (default 200)")
     ap.add_argument("--phase2-episodes", type=int, default=100,
                     help="text-IO training on trained cascade (default 100)")
+    ap.add_argument("--phase3-replays", type=int, default=0,
+                    help="SWR consolidation replays after phase 2 (default 0 "
+                    "= skip Phase 3). Try 500 for ~5x phase 2's plastic events.")
+    ap.add_argument("--phase3-only-correct", action="store_true", default=True,
+                    help="phase 3 replays only correct (token, action) pairs "
+                    "(default True for cleaner consolidation)")
+    ap.add_argument("--phase3-replay-all", dest="phase3_only_correct",
+                    action="store_false",
+                    help="phase 3 replays all experiences including failures")
     ap.add_argument("--steps-per-episode", type=int, default=30)
     ap.add_argument("--grid-size", type=int, default=8)
     ap.add_argument("--n-eval-image-word", type=int, default=100)
@@ -512,6 +760,12 @@ def main():
     ap.add_argument("--n-motor-per-action", type=int, default=10)
     ap.add_argument("--text-n-input-neurons", type=int, default=256)
     ap.add_argument("--text-n-output-neurons", type=int, default=256)
+    # Distributed motor pool option (Pulvermüller G.20, 2026-05-02)
+    ap.add_argument("--enable-distributed-motor-pop", action="store_true",
+                    help="use 8 motor_pop sub-pools at 45deg intervals "
+                    "instead of 4 labeled motor_X pools")
+    ap.add_argument("--n-motor-pop-per-subpool", type=int, default=5,
+                    help="neurons per sub-pool (default 5; 8x5=40)")
     ap.add_argument("--no-save-checkpoint", dest="save_checkpoint",
                     action="store_false")
     ap.set_defaults(save_checkpoint=True)
@@ -530,6 +784,8 @@ def main():
         seed=args.seed,
         phase1_episodes=args.phase1_episodes,
         phase2_episodes=args.phase2_episodes,
+        phase3_replays=args.phase3_replays,
+        phase3_only_correct=args.phase3_only_correct,
         steps_per_episode=args.steps_per_episode,
         grid_size=args.grid_size,
         stim_steps_per_step=args.stim_steps_per_step,
@@ -542,6 +798,8 @@ def main():
         n_motor_per_action=args.n_motor_per_action,
         text_n_input_neurons=args.text_n_input_neurons,
         text_n_output_neurons=args.text_n_output_neurons,
+        enable_distributed_motor_pop=args.enable_distributed_motor_pop,
+        n_motor_pop_per_subpool=args.n_motor_pop_per_subpool,
         save_phase1_checkpoint=args.save_checkpoint,
         verbose=True,
     )
