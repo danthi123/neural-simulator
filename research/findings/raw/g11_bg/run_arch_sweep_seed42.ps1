@@ -1,34 +1,57 @@
 # Architectural sweep — seed 42 only, exploration tier.
-# Runs after H1 finishes. Tests 3 high-information architectural changes:
+# Runs after H1 finishes. Tests 5 high-information architectural changes:
 #
-# A. n-motor-per-action 50  (motor pool SNR — population readout variance)
-# B. token-sparsity 0.05    (orthogonal word codes — eliminates code overlap)
-# C. A + B combined
+# A. motor50: --n-motor-per-action 50
+#    Motor pool size 10 -> 50. Population-rate readout has lower variance
+#    with larger population. If 28% ceiling is motor SNR, A breaks it.
+# B. sparse005: --token-sparsity 0.05
+#    12-13 active per word (vs 26 at default 0.1). Pairwise overlap drops
+#    from 2-3 to 0-1. If 28% ceiling is code overlap interfering with
+#    discrimination, B breaks it.
+# C. lang512: --text-n-input-neurons 512 --text-n-output-neurons 512
+#    Doubles language region capacity. More distinct dimensions for STDP
+#    to sculpt word-specific weight patterns.
+# D. motor50_sparse005: A + B
+#    Combined upstream (orthogonal codes) + downstream (motor SNR). If
+#    these bottlenecks compound, D > max(A, B).
+# E. lang512_motor50: B + C
+#    Bigger regions throughout. Tests whether "scale wins".
 #
-# All run with v2 baseline config (Hebbian off, stdp_w_max=5, readout init 0.5)
-# and standard 100-episode Phase 2 (no Phase 3 SWR — testing pure
-# architectural deltas, not consolidation).
+# All run with v2 baseline config (Hebbian off, stdp_w_max=5, readout
+# init 0.5) and standard phase1=0, phase2=100, phase3=0 (no SWR — pure
+# architectural deltas).
 #
 # If any variant gives W->A >= 35% on seed 42 (vs baseline 27%), that
-# variant warrants full 6-seed validation on the next batch run.
+# variant warrants full 6-seed validation in the next batch.
 
 $outDir = "research/findings/raw/g11_bg"
 $masterLog = "$outDir/run_arch_sweep_seed42.master.log"
 
 "=== Architectural sweep (seed 42) started $(Get-Date) ===" | Out-File -FilePath $masterLog
 "" | Out-File -Append $masterLog
-"Variant A: n-motor-per-action 50 (motor pool SNR)" | Out-File -Append $masterLog
-"Variant B: token-sparsity 0.05 (orthogonal codes)" | Out-File -Append $masterLog
-"Variant C: A + B combined" | Out-File -Append $masterLog
+"Variant A: motor50 (--n-motor-per-action 50)" | Out-File -Append $masterLog
+"Variant B: sparse005 (--token-sparsity 0.05)" | Out-File -Append $masterLog
+"Variant C: lang512 (--text-n-input-neurons 512 --text-n-output-neurons 512)" | Out-File -Append $masterLog
+"Variant D: motor50_sparse005 (A + B combined)" | Out-File -Append $masterLog
+"Variant E: lang512_motor50 (B + C combined)" | Out-File -Append $masterLog
 "" | Out-File -Append $masterLog
 "All variants: 100 ep phase2, v2 config (Hebbian off, stdp_w_max=5, readout 0.5)" | Out-File -Append $masterLog
 
 $variants = @(
     @{ Name = "motor50"; Args = @("--n-motor-per-action", "50") },
     @{ Name = "sparse005"; Args = @("--token-sparsity", "0.05") },
+    @{ Name = "lang512"; Args = @(
+            "--text-n-input-neurons", "512",
+            "--text-n-output-neurons", "512"
+        ) },
     @{ Name = "motor50_sparse005"; Args = @(
             "--n-motor-per-action", "50",
             "--token-sparsity", "0.05"
+        ) },
+    @{ Name = "lang512_motor50"; Args = @(
+            "--text-n-input-neurons", "512",
+            "--text-n-output-neurons", "512",
+            "--n-motor-per-action", "50"
         ) }
 )
 
