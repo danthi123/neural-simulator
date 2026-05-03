@@ -432,6 +432,30 @@ The 28.5% W→A is the most rigorous demonstration of working text I/O in the
 project to date. Per-direction: east 6/6 LEARN, west 6/6 positive,
 south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 
+> **🚨 CRITICAL CAVEAT (2026-05-03 ~08:10 EDT, autonomous overnight):
+> Permuted-label control test shows the 28.5% is NOT real word-action
+> learning.** Across all 25 prior text I/O eval files (baseline / v2+SWR /
+> H4 / curriculum / dpop / BigLang / BigMotor / NoLTD / NoT1 / xcouple /
+> multidec / 200ep), **0/25 had the TRUE labeled mapping as the BEST of
+> 24 permutations.** Best permutations consistently score 30-37% (8pp
+> above chance) but the structure is randomly oriented per-seed, not
+> aligned with task labels.
+>
+> The architecture has cascade-driven structural noise that produces
+> 28-33% accuracy on SOME mapping per seed, but the mapping is
+> arbitrary not learned. The 28.5% is barely-above-chance noise that
+> happens to coincide with true labels marginally above mean (1/24).
+>
+> See [`research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`](research/findings/2026-05-03-permuted-label-control-NEGATIVE.md)
+> and `research/runners/permuted_label_check.py` for full analysis.
+>
+> The W→A binomial p=0.027 is technically correct but doesn't measure
+> what we thought. It measures whether the network has ANY structure
+> above chance, NOT whether that structure aligns with task labels.
+> Tomorrow's pivot: investigate why structure is unaligned, NOT
+> which procedure is "best." Real word-action learning requires
+> aligned ratio ≥ 4/6.
+
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
    weight decay (1e-5/sub-step × 990K sub-steps = 5e-5 multiplier) was
