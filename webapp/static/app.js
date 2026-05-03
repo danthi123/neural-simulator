@@ -322,6 +322,21 @@ function checkForCompletedRuns(inflightList) {
   }
   _previousLiveRunNames.clear();
   for (const n of currentAliveNames) _previousLiveRunNames.add(n);
+  // 2026-05-03: update the global "live runs" badge in the nav so
+  // users see active runs from any tab.
+  updateActiveRunsBadge(currentAliveNames.size);
+}
+
+function updateActiveRunsBadge(n) {
+  const badge = document.getElementById("active-runs-badge");
+  const count = document.getElementById("active-runs-count");
+  if (!badge || !count) return;
+  if (n > 0) {
+    count.textContent = String(n);
+    badge.style.display = "";
+  } else {
+    badge.style.display = "none";
+  }
 }
 
 // 2026-05-03 — refresh the type-filter chips' counts based on the
@@ -1952,6 +1967,10 @@ function setupBrain3DControls(mod) {
       if (sl) sl.value = String(st.replayTotal - 1);
     }
   });
+  // Reset camera (re-fits to full scene)
+  $("#brain3d-reset-camera")?.addEventListener("click", () => {
+    mod.brain3dFitCamera();
+  });
   // Camera preset selector
   $("#brain3d-camera-preset")?.addEventListener("change", (e) => {
     const preset = e.target.value;
@@ -2201,15 +2220,19 @@ async function loadOverview() {
   showSkeleton(findingsContainer, 6, "list");
 
   try {
-    // 2026-05-02: include text_io_runs so the W→A breakthrough card has data
-    const [runsRes, findingsRes, launchesRes, textIoRes] = await Promise.all([
+    // 2026-05-02: include text_io_runs for the W→A KPI
+    // 2026-05-03: include /api/inflight (detached runs) so the In-flight
+    // KPI counts BOTH foreground and detached runs
+    const [runsRes, findingsRes, launchesRes, textIoRes, inflightRes] = await Promise.all([
       fetch("/api/runs").then((r) => r.json()),
       fetch("/api/findings").then((r) => r.json()),
       fetch("/api/runs/launch").then((r) => r.json()),
       fetch("/api/text_io_runs").then((r) => r.json()).catch(() => ({ runs: [], aggregate: {} })),
+      fetch("/api/inflight").then((r) => r.json()).catch(() => ({ inflight: [] })),
     ]);
 
-    renderOverviewKPIs(kpiContainer, runsRes.runs, findingsRes.findings, launchesRes.runs, textIoRes);
+    renderOverviewKPIs(kpiContainer, runsRes.runs, findingsRes.findings,
+                       launchesRes.runs, textIoRes, inflightRes.inflight);
     renderOverviewDistribution(runsRes.runs);
     renderOverviewActivity(activityContainer, runsRes.runs);
     renderOverviewFindings(findingsContainer, findingsRes.findings);
@@ -2294,14 +2317,20 @@ async function refreshInflightPanel() {
   }
 }
 
-function renderOverviewKPIs(container, runs, findings, launches, textIoRes) {
+function renderOverviewKPIs(container, runs, findings, launches, textIoRes, inflight) {
   // Filter out smokes for headline metrics
   const real = runs.filter((r) => !/smoke/i.test(r.name) && r.sum_finalQ != null);
   const sums = real.map((r) => r.sum_finalQ);
   const best = real.reduce((a, b) =>
     a == null || b.sum_finalQ < a.sum_finalQ ? b : a, null);
 
-  const inFlight = (launches || []).filter((l) => l.running);
+  // 2026-05-03: combine foreground launches with detached runs.
+  // /api/runs/launch only knows about webapp-launched (POST) runs.
+  // /api/inflight tracks detached runs (PowerShell Start-Process).
+  const fgLive = (launches || []).filter((l) => l.running);
+  const detachedLive = (inflight || []).filter((r) => r.alive);
+  const totalLive = fgLive.length + detachedLive.length;
+  const inFlight = { length: totalLive };  // shape-compat with old code below
   const meanSum = mean(sums);
   const stdSum = stdev(sums);
 
@@ -2605,6 +2634,11 @@ setupWorldTab();
 loadRuns();
 loadOverview();  // active tab on first load
 
+// Active-runs badge click — jump to Runs tab so user sees the live panel
+document.getElementById("active-runs-badge")?.addEventListener("click", () => {
+  activateTab("runs");
+});
+
 // ─────────────────────────────────────────────────────────────────────────
 // Keyboard shortcuts (2026-05-03)
 // ─────────────────────────────────────────────────────────────────────────
@@ -2796,17 +2830,33 @@ $("#filter-hide-smoke")?.addEventListener("change", renderRunsList);
 $("#filter-hide-incomplete")?.addEventListener("change", renderRunsList);
 $("#filter-search")?.addEventListener("input", renderRunsList);
 
-// Type-filter chips (All / Navigation / Text I/O)
+// Type-filter chips (All / Navigation / Text I/O) — selection
+// persisted in localStorage so reload restores the chosen filter.
 $$("#runs-type-chips .filter-chip").forEach((chip) => {
   chip.addEventListener("click", () => {
     const t = chip.dataset.type;
     if (!t) return;
     window._runsTypeFilter = t;
+    saveState({ runsTypeFilter: t });
     $$("#runs-type-chips .filter-chip").forEach((c) =>
       c.classList.toggle("active", c === chip));
     renderRunsList();
   });
 });
+
+// Restore the persisted type-filter chip on first paint.
+(() => {
+  const state = loadState();
+  if (state.runsTypeFilter) {
+    window._runsTypeFilter = state.runsTypeFilter;
+    const chip = document.querySelector(
+      `#runs-type-chips .filter-chip[data-type="${state.runsTypeFilter}"]`);
+    if (chip) {
+      $$("#runs-type-chips .filter-chip").forEach((c) =>
+        c.classList.toggle("active", c === chip));
+    }
+  }
+})();
 
 // Auto-refresh the live runs panel + chip counts every 5s while the
 // Runs tab is the active tab. Polls /api/inflight + /api/runs.

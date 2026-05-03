@@ -50,6 +50,7 @@ let pinnedKey = null;          // clicked = pinned in info panel
 let tooltipEl = null;          // floating tooltip div
 let infoPanelEl = null;        // pinned info panel (right-side)
 let usePlainLabels = true;     // toggle: friendly display_name vs technical key
+let _lastLabelOpacity = 1;     // last applied label opacity (for change detection)
 
 // Replay state
 let replayData = null;       // {trajectory, phase_stats, ...} from /api/runs/{name}
@@ -563,6 +564,17 @@ function startAnimation() {
       const flowingFilter = onlyFlowing ? (flow > 0.05) : true;
       p.line.visible = kindOn && flowingFilter;
       p.mat.opacity = p.baseOpacity + flow * 0.7;
+    }
+    // 2026-05-03: dynamic label visibility based on camera distance.
+    // When zoomed far out, the labels overlap into a single illegible
+    // blob; fade them out so the regions remain visible. When close,
+    // show all. Threshold: 22 = "fully readable", 40 = "fully hidden".
+    const camDist = camera.position.distanceTo(controls.target);
+    const labelOpacity = Math.max(0, Math.min(1, 1 - (camDist - 22) / 18));
+    if (Math.abs(labelOpacity - _lastLabelOpacity) > 0.05) {
+      _lastLabelOpacity = labelOpacity;
+      const labels = canvasContainer.querySelectorAll(".brain3d-label");
+      labels.forEach((l) => { l.style.opacity = String(labelOpacity); });
     }
     updatePinnedActivity();
     controls.update();

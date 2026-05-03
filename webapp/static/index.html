@@ -25,6 +25,13 @@
             aria-label="Toggle navigation menu" aria-expanded="false">
       <span class="nav-mobile-icon">☰</span>
     </button>
+    <!-- Active-run badge: pulsing green dot in the header showing how
+         many detached runs are currently alive. Click to jump to Runs
+         tab (which surfaces the live panel). 2026-05-03. -->
+    <span id="active-runs-badge" class="active-runs-badge" title="Click to view live runs" style="display:none;">
+      <span class="active-runs-dot"></span>
+      <span id="active-runs-count">0</span> live
+    </span>
     <nav id="nav-tabs">
       <button data-tab="overview" class="active">Home</button>
       <button data-tab="launcher">Lab</button>
@@ -345,6 +352,7 @@
             <option value="language">Language + PFC</option>
             <option value="top_down">Top-down</option>
           </select>
+          <button id="brain3d-reset-camera" class="ctrl-btn" title="Reset camera to fit the whole scene">⟲ Reset</button>
           <!-- Live run picker (hidden by default; revealed when Live mode active) -->
           <select id="brain3d-live-picker" class="toolbar-input" style="display:none;width:auto;" title="Pick which live run to follow"></select>
           <button id="brain3d-load" class="ctrl-btn">Load run…</button>
