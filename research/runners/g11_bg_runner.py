@@ -100,6 +100,21 @@ def build_bg_brain_regions(
     enable_motor_cross_coupling: bool = False,
     motor_cross_coupling_weight: float = 0.5,
     motor_cross_coupling_density: float = 0.3,
+    # Full distributed motor pool (Pulvermüller G.20, 2026-05-02). Replaces
+    # 4 separate motor_X pools (10 neurons each, total 40) with 8 sub-pools
+    # at 45° angular intervals (5 neurons each, total 40 — same neuron count).
+    # See docs/plans/2026-05-02-distributed-motor-pool-design.md.
+    # Sub-pools: motor_pop_E (0°), motor_pop_NE (45°), motor_pop_N (90°),
+    #   motor_pop_NW (135°), motor_pop_W (180°), motor_pop_SW (225°),
+    #   motor_pop_S (270°), motor_pop_SE (315°).
+    # Cosine-tuned pathways: each thal_X / cortex_X drives motor_pop_θ
+    # with weight scaled by max(0, cos(θ_X - θ)).
+    # Action selection / W->A eval: population vector decoding
+    # (Georgopoulos 1986).
+    # Default OFF for backwards compat. Incompatible with
+    # enable_motor_lateral_inhibition (FS inhibition assumes 4 pools).
+    enable_distributed_motor_pop: bool = False,
+    n_motor_pop_per_subpool: int = 5,  # 8 sub-pools × 5 = 40 (matches default)
     # Cortex-level WTA (Phase B follow-up to plastic-input-layer cold-start).
     # Adds per-pool FS interneurons that mediate cross-pool inhibition.
     # Mirrors motor WTA pattern. Goal: enforce one-cortex-pool-wins regardless
@@ -647,19 +662,43 @@ def build_bg_brain_regions(
             izh_neuron_type=NeuronType.IZH2007_THALAMIC_RELAY.name,
             action_index=action_idx,
         ))
-        regions.append(BrainRegion(
-            name=f"motor_{action}",
-            n_neurons=n_motor_per_action,
-            exc_fraction=1.0,
-            internal_density=0.0,
-            exc_weight_mean=0.0, inh_weight_mean=0.0,
-            weight_jitter=0.0, plastic_internal=False,
-            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
-            action_index=action_idx,
-            # Cluster G v2.5: motor cortex pyramidals also express NMDA;
-            # included for consistency with cortex_X enable_nmda.
-            enable_nmda=bool(pfc_enable_nmda),
-        ))
+        # Default: 4 labeled motor pools (motor_N/E/S/W). Skipped when
+        # distributed-motor-pop is enabled (replaced with 8 sub-pools below).
+        if not enable_distributed_motor_pop:
+            regions.append(BrainRegion(
+                name=f"motor_{action}",
+                n_neurons=n_motor_per_action,
+                exc_fraction=1.0,
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+                action_index=action_idx,
+                # Cluster G v2.5: motor cortex pyramidals also express NMDA;
+                # included for consistency with cortex_X enable_nmda.
+                enable_nmda=bool(pfc_enable_nmda),
+            ))
+
+    # Distributed motor pool (Pulvermüller G.20, 2026-05-02). 8 sub-pools at
+    # 45° angular intervals, n_motor_pop_per_subpool neurons each.
+    # See docs/plans/2026-05-02-distributed-motor-pool-design.md
+    if enable_distributed_motor_pop:
+        # Sub-pool angles in degrees: E, NE, N, NW, W, SW, S, SE
+        for theta_deg, suffix in [
+            (0, "E"), (45, "NE"), (90, "N"), (135, "NW"),
+            (180, "W"), (225, "SW"), (270, "S"), (315, "SE"),
+        ]:
+            regions.append(BrainRegion(
+                name=f"motor_pop_{suffix}",
+                n_neurons=n_motor_pop_per_subpool,
+                exc_fraction=1.0,
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+                action_index=None,  # Not action-specific in the labeled-line sense
+                enable_nmda=bool(pfc_enable_nmda),
+            ))
 
     # SNc dopamine neurons (single pool, broadcasts via neuromodulator subsystem).
     # Anatomy note: this region is the project's A9-equivalent — SNc
@@ -1180,11 +1219,41 @@ def build_bg_brain_regions(
     # Thalamus -> motor cortex (excitatory). Very strong weight needed
     # because thal pool is small (10 cells) and we need ~50 Hz motor output
     # from ~24 Hz thal input.
-    for action in ACTION_NAMES:
-        pathways.append(RegionPathway(
-            from_region=f"thal_{action}", to_region=f"motor_{action}",
-            density=1.0, weight_mean=20.0, weight_jitter=0.2, plastic=False,
-        ))
+    if not enable_distributed_motor_pop:
+        # Default: per-action labeled-line pathway.
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"thal_{action}", to_region=f"motor_{action}",
+                density=1.0, weight_mean=20.0, weight_jitter=0.2, plastic=False,
+            ))
+    else:
+        # Distributed motor pool: cosine-tuned thal_X -> motor_pop_θ.
+        # Each thal_X drives all 8 motor_pop sub-pools but with weight scaled
+        # by max(0, cos(θ_X - θ)). Adjacent sub-pools (45° away) get 0.707x;
+        # perpendicular (90°) get 0; opposite get 0 (cosine clamped negative).
+        import math as _math
+        ACTION_THETA_DEG = {"N": 90, "E": 0, "S": 270, "W": 180}
+        SUBPOOL_THETA = [
+            (0, "E"), (45, "NE"), (90, "N"), (135, "NW"),
+            (180, "W"), (225, "SW"), (270, "S"), (315, "SE"),
+        ]
+        for action in ACTION_NAMES:
+            theta_x = ACTION_THETA_DEG[action]
+            for theta_y, suffix in SUBPOOL_THETA:
+                # Angular distance (signed) — wrap to [-180, 180]
+                d = ((theta_x - theta_y + 180) % 360) - 180
+                cos_w = _math.cos(_math.radians(d))
+                if cos_w <= 0.01:  # Skip pathways with negligible weight
+                    continue
+                # Strong base weight (20.0) scaled by cosine tuning.
+                pathways.append(RegionPathway(
+                    from_region=f"thal_{action}",
+                    to_region=f"motor_pop_{suffix}",
+                    density=1.0,
+                    weight_mean=20.0 * cos_w,
+                    weight_jitter=0.2,
+                    plastic=False,
+                ))
 
     # Cluster A (2026-04-29): closed BG loop.
     # (a) Hyperdirect pathway: cortex_X -> stn (Nambu 2002). ~30% of cortex
@@ -1679,15 +1748,35 @@ def build_bg_brain_regions(
         # provide a direct language_input → motor_X pathway.
         # Plastic, gated separately so the regime can disable cortex
         # involvement and force PFC bypass.
-        for action in ACTION_NAMES:
-            pathways.append(RegionPathway(
-                from_region="language_input", to_region=f"motor_{action}",
-                density=text_input_to_motor_density,
-                weight_mean=text_input_to_motor_weight,
-                weight_jitter=text_input_to_motor_jitter,
-                plastic=True,
-                plasticity_gate="language_input_to_motor",
-            ))
+        if not enable_distributed_motor_pop:
+            for action in ACTION_NAMES:
+                pathways.append(RegionPathway(
+                    from_region="language_input", to_region=f"motor_{action}",
+                    density=text_input_to_motor_density,
+                    weight_mean=text_input_to_motor_weight,
+                    weight_jitter=text_input_to_motor_jitter,
+                    plastic=True,
+                    plasticity_gate="language_input_to_motor",
+                ))
+        else:
+            # Distributed motor pool: language_input projects to ALL 8
+            # sub-pools with PLASTIC weights. STDP+reward sculpts which
+            # neurons fire for which token. Initial weight is uniform
+            # across sub-pools (token-token contrast emerges via training).
+            # Same total density as labeled-line: 0.30 × 4 pools = 1.20
+            # spread across 8 sub-pools = 0.15 per sub-pool to match.
+            SUBPOOL_SUFFIXES = ["E", "NE", "N", "NW", "W", "SW", "S", "SE"]
+            per_subpool_density = text_input_to_motor_density * 4.0 / 8.0
+            for suffix in SUBPOOL_SUFFIXES:
+                pathways.append(RegionPathway(
+                    from_region="language_input",
+                    to_region=f"motor_pop_{suffix}",
+                    density=per_subpool_density,
+                    weight_mean=text_input_to_motor_weight,
+                    weight_jitter=text_input_to_motor_jitter,
+                    plastic=True,
+                    plasticity_gate="language_input_to_motor",
+                ))
 
     return regions, pathways
 

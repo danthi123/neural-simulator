@@ -78,6 +78,16 @@ def main():
                     help="weight of motor cross-coupling pathways (default 0.5)")
     ap.add_argument("--motor-cross-coupling-density", type=float, default=0.3,
                     help="density of motor cross-coupling pathways (default 0.3)")
+    # Full distributed motor pool (G.20, 2026-05-02)
+    ap.add_argument("--enable-distributed-motor-pop", action="store_true",
+                    help="replace 4 motor_X pools with 8 motor_pop_theta sub-pools "
+                    "at 45deg intervals. Cosine-tuned thal->motor pathway, "
+                    "all-to-all plastic lang_input->motor pathway, population "
+                    "vector decoding for W->A. Tests Pulvermuller distributed "
+                    "action-word coding (G.20).")
+    ap.add_argument("--n-motor-pop-per-subpool", type=int, default=5,
+                    help="neurons per sub-pool (default 5; 8 sub-pools x 5 = 40 "
+                    "matches 4-pool default)")
     # Auto-checkpoint after training so we can re-eval same bridge later
     # with different methodologies (e.g., compare interleaved vs block eval).
     ap.add_argument("--save-checkpoint", action="store_true",
@@ -116,6 +126,8 @@ def main():
         enable_motor_cross_coupling=args.enable_motor_cross_coupling,
         motor_cross_coupling_weight=args.motor_cross_coupling_weight,
         motor_cross_coupling_density=args.motor_cross_coupling_density,
+        enable_distributed_motor_pop=args.enable_distributed_motor_pop,
+        n_motor_pop_per_subpool=args.n_motor_pop_per_subpool,
         verbose=True,
     )
 

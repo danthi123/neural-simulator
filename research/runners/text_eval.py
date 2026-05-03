@@ -224,13 +224,49 @@ def evaluate_word_to_action(
         seed: shuffle seed when interleave_words=True. Deterministic.
     """
     import cupy as cp
+    import math
 
-    motor_idx = {
-        a: cp.asarray(list(bridge.region_manager.indices(f"motor_{a}")),
-                      dtype=cp.int64)
-        for a in ACTION_NAMES
-    }
-    cortex_idx = motor_idx  # alias so existing code paths use motor
+    # Detect architecture: labeled motor_X pools (default) or distributed
+    # motor_pop_θ sub-pools (Pulvermüller G.20, 2026-05-02).
+    rm = bridge.region_manager
+    distributed_motor_pop = False
+    try:
+        rm.indices("motor_N")
+    except KeyError:
+        try:
+            rm.indices("motor_pop_N")
+            distributed_motor_pop = True
+        except KeyError:
+            pass
+
+    if distributed_motor_pop:
+        # 8 sub-pools at 45° intervals. Population vector decoding.
+        SUBPOOL_THETA = [
+            (0, "E"), (45, "NE"), (90, "N"), (135, "NW"),
+            (180, "W"), (225, "SW"), (270, "S"), (315, "SE"),
+        ]
+        subpool_idx = {
+            suffix: cp.asarray(
+                list(rm.indices(f"motor_pop_{suffix}")), dtype=cp.int64
+            )
+            for theta, suffix in SUBPOOL_THETA
+        }
+        # Cardinal projection weights: each (cardinal, subpool) pair.
+        ACTION_THETA = {"N": 90, "E": 0, "S": 270, "W": 180}
+        cardinal_proj = {a: {} for a in ACTION_NAMES}
+        for action, theta_a in ACTION_THETA.items():
+            for theta_p, suffix in SUBPOOL_THETA:
+                d = ((theta_a - theta_p + 180) % 360) - 180
+                cos_w = max(0.0, math.cos(math.radians(d)))
+                cardinal_proj[action][suffix] = cos_w
+        # cortex_idx unused in distributed-motor path (we don't read motor_X)
+        cortex_idx = None
+    else:
+        motor_idx = {
+            a: cp.asarray(list(rm.indices(f"motor_{a}")), dtype=cp.int64)
+            for a in ACTION_NAMES
+        }
+        cortex_idx = motor_idx  # alias so existing code paths use motor
 
     correct = 0
     total = 0
@@ -298,14 +334,23 @@ def evaluate_word_to_action(
         for _ in range(n_reset_steps):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
-        baseline_counts = {a: 0 for a in ACTION_NAMES}
+
+        if distributed_motor_pop:
+            baseline_subpool = {sfx: 0 for _, sfx in SUBPOOL_THETA}
+        else:
+            baseline_counts = {a: 0 for a in ACTION_NAMES}
+
         for s in range(stim_steps_per_trial):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
             if s >= 60:
                 firing = bridge.cp_firing_states
-                for a in ACTION_NAMES:
-                    baseline_counts[a] += int(firing[cortex_idx[a]].sum().get())
+                if distributed_motor_pop:
+                    for _, sfx in SUBPOOL_THETA:
+                        baseline_subpool[sfx] += int(firing[subpool_idx[sfx]].sum().get())
+                else:
+                    for a in ACTION_NAMES:
+                        baseline_counts[a] += int(firing[cortex_idx[a]].sum().get())
 
         # ─── Phase B: LANGUAGE-DRIVEN measurement ───
         # Reset, drive language_input, measure cortex_X again
@@ -316,14 +361,37 @@ def evaluate_word_to_action(
             bridge.runtime_state.current_time_step += 1
         bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=0.1)
 
-        spike_counts = {a: 0 for a in ACTION_NAMES}
+        if distributed_motor_pop:
+            drive_subpool = {sfx: 0 for _, sfx in SUBPOOL_THETA}
+        else:
+            spike_counts = {a: 0 for a in ACTION_NAMES}
+
         for s in range(stim_steps_per_trial):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
             if s >= 60:
                 firing = bridge.cp_firing_states
-                for a in ACTION_NAMES:
-                    spike_counts[a] += int(firing[cortex_idx[a]].sum().get())
+                if distributed_motor_pop:
+                    for _, sfx in SUBPOOL_THETA:
+                        drive_subpool[sfx] += int(firing[subpool_idx[sfx]].sum().get())
+                else:
+                    for a in ACTION_NAMES:
+                        spike_counts[a] += int(firing[cortex_idx[a]].sum().get())
+
+        # If distributed motor pool, project sub-pool counts onto cardinal
+        # actions via cosine-weighted population vector. This produces
+        # baseline_counts and spike_counts in the same per-cardinal format
+        # that the rest of the eval expects.
+        if distributed_motor_pop:
+            baseline_counts = {a: 0.0 for a in ACTION_NAMES}
+            spike_counts = {a: 0.0 for a in ACTION_NAMES}
+            for action in ACTION_NAMES:
+                for sfx, w in cardinal_proj[action].items():
+                    baseline_counts[action] += baseline_subpool[sfx] * w
+                    spike_counts[action] += drive_subpool[sfx] * w
+            # Round to int for downstream code that may expect ints
+            baseline_counts = {a: int(round(v)) for a, v in baseline_counts.items()}
+            spike_counts = {a: int(round(v)) for a, v in spike_counts.items()}
 
         # ─── DELTA selection (default decoder) ───
         delta_counts = {a: spike_counts[a] - baseline_counts[a]

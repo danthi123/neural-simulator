@@ -162,6 +162,11 @@ def run_embodied_text_training(
     enable_motor_cross_coupling: bool = False,
     motor_cross_coupling_weight: float = 0.5,
     motor_cross_coupling_density: float = 0.3,
+    # Full distributed motor pool (Pulvermüller G.20, 2026-05-02). Replaces
+    # 4 motor_X pools with 8 motor_pop_θ sub-pools at 45° intervals.
+    # See docs/plans/2026-05-02-distributed-motor-pool-design.md
+    enable_distributed_motor_pop: bool = False,
+    n_motor_pop_per_subpool: int = 5,
     verbose: bool = True,
 ):
     """Embodied training: navigate gridworld with language inputs/outputs
@@ -197,6 +202,8 @@ def run_embodied_text_training(
         enable_motor_cross_coupling=enable_motor_cross_coupling,
         motor_cross_coupling_weight=motor_cross_coupling_weight,
         motor_cross_coupling_density=motor_cross_coupling_density,
+        enable_distributed_motor_pop=enable_distributed_motor_pop,
+        n_motor_pop_per_subpool=n_motor_pop_per_subpool,
         # 2026-05-02 secondary fix: small non-zero init for readout
         # pathways. Original 0.0 init left these pathways at the
         # synaptic floor (0.01) after training — STDP couldn't grow them
