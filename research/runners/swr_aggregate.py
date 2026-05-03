@@ -27,6 +27,14 @@ CONDITIONS = {
     "v2 + SWR (default)":  "text_eval_v2_swr500_seed{seed}.json",
     "v2 + SWR balanced":   "text_eval_h1_balanced_seed{seed}.json",
     "PFC isolation (H4)":  "text_eval_h4_isolation_seed{seed}.json",
+    # Architectural sweep variants (2026-05-03 evening) — pivoting from
+    # SWR replay tuning to structural changes after H4 hits architecture
+    # limit at 28%.
+    "arch motor50":              "text_eval_arch_motor50_seed{seed}.json",
+    "arch sparse005":            "text_eval_arch_sparse005_seed{seed}.json",
+    "arch lang512":              "text_eval_arch_lang512_seed{seed}.json",
+    "arch motor50+sparse005":    "text_eval_arch_motor50_sparse005_seed{seed}.json",
+    "arch lang512+motor50":      "text_eval_arch_lang512_motor50_seed{seed}.json",
 }
 
 DEFAULT_SEEDS = [42, 43, 44, 100, 101, 102]
