@@ -71,6 +71,7 @@ def run_pfc_bypass_isolation(
     enable_distributed_motor_pop: bool = False,
     n_motor_pop_per_subpool: int = 5,
     token_sparsity: float = 0.1,
+    dt_ms: float = 0.5,
     verbose: bool = True,
 ):
     """Run the H4 PFC bypass isolation experiment.
@@ -127,7 +128,7 @@ def run_pfc_bypass_isolation(
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions)
     cfg.region_pathways = list(pathways)
-    cfg.dt_ms = 0.5
+    cfg.dt_ms = dt_ms
     cfg.seed = seed
     cfg.enable_nmda = True
     cfg.nmda_ratio = 0.5
@@ -240,6 +241,11 @@ def main():
     ap.add_argument("--token-sparsity", type=float, default=0.1,
                     help="fraction of language_input neurons activated per "
                     "word (default 0.1). Try 0.05 for orthogonal codes.")
+    ap.add_argument("--dt-ms", type=float, default=0.5,
+                    help="Simulation dt in milliseconds (default 0.5). "
+                    "dt=1.0 halves sub-step count for ~2x speedup if "
+                    "Izh Euler stable. Pair with halved --stim-steps-per-step "
+                    "and --reset-steps.")
     args = ap.parse_args()
 
     bridge, train_stats = run_pfc_bypass_isolation(
@@ -256,6 +262,7 @@ def main():
         enable_distributed_motor_pop=args.enable_distributed_motor_pop,
         n_motor_pop_per_subpool=args.n_motor_pop_per_subpool,
         token_sparsity=args.token_sparsity,
+        dt_ms=args.dt_ms,
         verbose=True,
     )
 

@@ -154,9 +154,12 @@ switch ($winner) {
     }
 }
 
-# 6-seed validation in parallel-3 (seed 42 already done)
-$seeds = @(43, 44, 100, 101, 102)
-"Validating $winner on seeds $($seeds -join ',') (seed 42 already done)" | Out-File -Append $logFile
+# 6-seed validation in parallel-3 — RE-RUN seed 42 too at dt=1.0 since
+# the sweep variant ran it at dt=0.5 (would mix dt levels in the 6-seed
+# comparison). Adds ~13 min wall (1 extra seed at dt=1.0 in parallel-3),
+# saves messiness of mixed-dt analysis.
+$seeds = @(42, 43, 44, 100, 101, 102)
+"Validating $winner on ALL 6 seeds at dt=1.0 (re-running seed 42 for clean comparison)" | Out-File -Append $logFile
 "Parallelism: 3 seeds at a time" | Out-File -Append $logFile
 
 $parallelism = 3
@@ -170,11 +173,15 @@ for ($i = 0; $i -lt $seeds.Count; $i += $parallelism) {
     $procs = @()
     for ($j = $i; $j -le $batchEnd; $j++) {
         $seed = $seeds[$j]
-        $sLogFile = "$outDir/arch_$winner.seed$seed.log"
-        $sErrFile = "$outDir/arch_$winner.seed$seed.log.err"
-        $sPidFile = "$outDir/arch_$winner.seed$seed.pid"
-        $sOutStats = "$outDir/text_eval_arch_$winner`_seed$seed.json"
+        # Use dt1 suffix so dt=1.0 followup outputs don't overwrite the
+        # sweep's dt=0.5 seed 42 result. Both coexist for comparison.
+        $sLogFile = "$outDir/arch_$winner`_dt1.seed$seed.log"
+        $sErrFile = "$outDir/arch_$winner`_dt1.seed$seed.log.err"
+        $sPidFile = "$outDir/arch_$winner`_dt1.seed$seed.pid"
+        $sOutStats = "$outDir/text_eval_arch_$winner`_dt1_seed$seed.json"
 
+        # dt=1.0 with halved stim/reset (validated 2026-05-03 14:58 EDT
+        # on seed 42, ~2x speedup, dynamics stable, W->A 28% in baseline range)
         $procArgs = @(
             '-m', 'research.runners.text_train_curriculum',
             '--seed', "$seed",
@@ -182,8 +189,9 @@ for ($i = 0; $i -lt $seeds.Count; $i += $parallelism) {
             '--phase2-episodes', '100',
             '--phase3-replays', '0',
             '--steps-per-episode', '30',
-            '--stim-steps-per-step', '200',
-            '--reset-steps', '100',
+            '--stim-steps-per-step', '100',
+            '--reset-steps', '50',
+            '--dt-ms', '1.0',
             '--out-stats', $sOutStats
         ) + $argsForVariant
 
@@ -208,10 +216,15 @@ for ($i = 0; $i -lt $seeds.Count; $i += $parallelism) {
 "" | Out-File -Append $logFile
 "=== AUTO-FOLLOWUP COMPLETE for winner=$winner at $(Get-Date) ===" | Out-File -Append $logFile
 
-# Final aligned summary across 6 seeds
+# Final aligned summary across 6 seeds (dt=1.0 followup runs)
 "" | Out-File -Append $logFile
 "--- Final aligned summary at $(Get-Date) ---" | Out-File -Append $logFile
-& python -m research.runners.permuted_label_check --pattern "text_eval_arch_$winner`_seed*.json" 2>&1 | Out-File -Append $logFile
+& python -m research.runners.permuted_label_check --pattern "text_eval_arch_$winner`_dt1_seed*.json" 2>&1 | Out-File -Append $logFile
+
+# Also report the original dt=0.5 seed 42 result for comparison
+"" | Out-File -Append $logFile
+"--- Original sweep seed 42 (dt=0.5) for comparison ---" | Out-File -Append $logFile
+& python -m research.runners.permuted_label_check --pattern "text_eval_arch_$winner`_seed42.json" 2>&1 | Out-File -Append $logFile
 
 if (Test-Path $pidFile) {
     Move-Item -Path $pidFile -Destination "$pidFile.done" -Force
