@@ -1190,8 +1190,26 @@ def info() -> JSONResponse:
 # This endpoint scans for those, tails the log, and reports progress.
 
 import re as _re
+# Embodied training progress markers. Matches BOTH the old format
+# (`[ep N/M] correct_moves=K/L=X.X%`) emitted by text_eval_embodied
+# and the curriculum format (`[P2 ep N/M] correct_moves=K/L=X.X%`)
+# emitted by text_train_curriculum (the SWR-replay-aware runner).
 _DETACHED_PROGRESS_RE = _re.compile(
-    r"\[ep\s+(\d+)/(\d+)\]\s+correct_moves=(\d+)/(\d+)=([\d.]+)%"
+    r"\[(?:P\d\s+)?ep\s+(\d+)/(\d+)\]\s+correct_moves=(\d+)/(\d+)=([\d.]+)%"
+)
+# Curriculum phase marker (line like "PHASE 2: Text I/O training - 100 episodes").
+# Captured separately so the inflight panel can show which phase is
+# currently running.
+_CURRICULUM_PHASE_RE = _re.compile(
+    # Phase 1/2 say "episodes", Phase 3 SWR says "events".
+    r"^={3,}\s*PHASE\s+(\d+):\s+(.+?)\s+(\d+)\s+(?:episodes|events)",
+    _re.MULTILINE,
+)
+# Phase 3 SWR replay progress. Logged as "[P3 SWR] 100/500 replayed"
+# by text_train_curriculum's _run_swr_replay_phase. Older format
+# `[swr ev 100/500]` is also accepted for backward compatibility.
+_SWR_PROGRESS_RE = _re.compile(
+    r"\[(?:P\d\s+)?[Ss][Ww][Rr](?:\s+ev)?\]?\s+(\d+)/(\d+)"
 )
 _GENERIC_STEP_RE = _re.compile(
     r"step\s+(\d+)/(\d+)\s+pos=\((-?\d+),(-?\d+)\)\s+goal=\((-?\d+),(-?\d+)\)"
@@ -1227,16 +1245,65 @@ def _parse_log_progress(log_path: Path) -> dict | None:
     except Exception:
         return None
 
-    last_match = None
+    # Try in priority order: SWR > embodied episode > generic step. Always
+    # take the LAST match in the tail (most recent progress).
+
+    # 1. Curriculum phase header — informational, not a progress %.
+    last_phase = None
+    for m in _CURRICULUM_PHASE_RE.finditer(tail):
+        last_phase = m
+    phase_info = None
+    if last_phase:
+        phase_num, phase_label, phase_total = last_phase.groups()
+        phase_info = {
+            "phase_num": int(phase_num),
+            "phase_label": phase_label.strip(),
+            "phase_episodes_total": int(phase_total),
+        }
+
+    # 2. Phase 3 SWR replay progress (highest priority — it's the latest
+    #    phase, and the embodied episode markers from Phase 2 will still
+    #    be in the tail buffer).
+    last_swr = None
+    for m in _SWR_PROGRESS_RE.finditer(tail):
+        last_swr = m
+    if last_swr:
+        ev, ev_total = (int(g) for g in last_swr.groups())
+        out = {
+            "kind": "swr_replay",
+            "ev": ev,
+            "ev_total": ev_total,
+            "fraction": ev / max(1, ev_total),
+        }
+        if phase_info:
+            out.update(phase_info)
+        return out
+
+    # 3. Embodied episode markers (Phase 2 of curriculum, or text_eval_embodied).
+    last_ep = None
     for m in _DETACHED_PROGRESS_RE.finditer(tail):
-        last_match = m
-    if last_match is None:
-        # Fall back to generic per-step format from g11_bg_runner
-        for m in _GENERIC_STEP_RE.finditer(tail):
-            last_match = m
-        if last_match is None:
-            return None
-        step, total, x, y, gx, gy = (int(g) for g in last_match.groups())
+        last_ep = m
+    if last_ep:
+        ep_done, ep_total, correct, n_steps, accuracy = last_ep.groups()
+        out = {
+            "kind": "embodied_episode",
+            "episode": int(ep_done),
+            "episodes_total": int(ep_total),
+            "fraction": int(ep_done) / max(1, int(ep_total)),
+            "n_steps": int(n_steps),
+            "correct_moves": int(correct),
+            "correct_pct": float(accuracy),
+        }
+        if phase_info:
+            out.update(phase_info)
+        return out
+
+    # 4. Generic per-step format from g11_bg_runner.
+    last_step = None
+    for m in _GENERIC_STEP_RE.finditer(tail):
+        last_step = m
+    if last_step:
+        step, total, x, y, gx, gy = (int(g) for g in last_step.groups())
         return {
             "kind": "step",
             "step": step,
@@ -1246,16 +1313,42 @@ def _parse_log_progress(log_path: Path) -> dict | None:
             "goal": [gx, gy],
         }
 
-    ep_done, ep_total, correct, n_steps, accuracy = last_match.groups()
-    return {
-        "kind": "embodied_episode",
-        "episode": int(ep_done),
-        "episodes_total": int(ep_total),
-        "fraction": int(ep_done) / max(1, int(ep_total)),
-        "n_steps": int(n_steps),
-        "correct_moves": int(correct),
-        "correct_pct": float(accuracy),
-    }
+    return None
+
+
+@app.get("/api/runs/launch/log/{log_name}", response_class=PlainTextResponse)
+def get_log_tail(log_name: str) -> str:
+    """Serve the last ~32KB of an in-flight run's log file. Powers the
+    Brain tab's "Watch logs" pane. Two log sources are supported:
+
+    1. Detached run logs at research/findings/raw/g11_bg/{name}.log
+       (created by PowerShell Start-Process launches).
+    2. Webapp-launched run logs at webapp/runtime/run_{run_id}.log
+       (created via /api/runs/launch).
+
+    Path-traversal guarded — name must not contain '/', '\\', or '..',
+    and it must end with '.log'.
+    """
+    if "/" in log_name or "\\" in log_name or ".." in log_name:
+        raise HTTPException(400, "invalid log name")
+    if not log_name.endswith(".log"):
+        raise HTTPException(400, "log files must end in .log")
+    candidates = [
+        RAW_RUNS_DIR / log_name,
+        RUNTIME_DIR / log_name,
+    ]
+    f = next((c for c in candidates if c.is_file()), None)
+    if f is None:
+        raise HTTPException(404, "log not found")
+    # Read the last 32KB (or the whole thing if smaller).
+    try:
+        size = f.stat().st_size
+        with f.open("rb") as fh:
+            fh.seek(max(0, size - 32 * 1024))
+            tail = fh.read()
+        return tail.decode("utf-8", errors="replace")
+    except Exception as e:
+        raise HTTPException(500, f"failed to read log: {e}")
 
 
 @app.get("/api/inflight")

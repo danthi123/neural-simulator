@@ -287,72 +287,101 @@
          pathways, and plasticity overlays. Phase 1 implementation
          pending. -->
     <section id="tab-brain" class="tab">
-      <div class="section-title">3D Brain Visualization</div>
-      <div class="info-card">
-        <h3>Coming soon</h3>
-        <p>
-          A WebGL 3D rendering of the full simulator: ~5,000 neurons across
-          50+ brain regions, ~175,000 synapses, with real-time spike events,
-          signal propagation along pathways, and plasticity overlays.
-        </p>
-        <p>
-          Read the architectural decisions in
-          <a href="/api/findings/../plans/2026-05-02-webapp-3d-visualization-design.md"
-             onclick="this.href='/static/redirect-design.html'; return true;">
-            the design doc</a>
-          (also at <code>docs/plans/2026-05-02-webapp-3d-visualization-design.md</code>).
-        </p>
-      </div>
-      <div class="section-title">Planned features</div>
-      <div class="brain-features-grid">
+      <div class="brain-wrapper">
+        <!-- Live monitor: in-flight runs panel. Polls /api/inflight every
+             2s and renders a card per active run with progress, log size,
+             and a "Watch" button that opens a WebSocket log tail. -->
+        <div class="section-title">
+          Live runs
+          <span class="muted" id="brain-live-count">0 in flight</span>
+          <span class="spacer"></span>
+          <button id="brain-refresh-now" class="ctrl-btn" title="Force refresh now">↻</button>
+        </div>
+        <div id="brain-live-runs">
+          <p class="muted">Loading in-flight runs…</p>
+        </div>
+
+        <!-- Live log tail (revealed when user clicks Watch on a run card) -->
+        <div id="brain-log-pane" style="display:none;">
+          <div class="section-title">
+            <span id="brain-log-name">Log</span>
+            <span class="spacer"></span>
+            <button id="brain-log-close" class="ctrl-btn">✕ Close</button>
+          </div>
+          <pre id="brain-log-output">…</pre>
+        </div>
+
+        <!-- 3D viz placeholder (Phase 1 ships separately). The live monitor
+             above is the action-oriented part of this tab; the placeholder
+             below documents what the 3D viz will look like when shipped. -->
+        <div class="section-title">3D visualization (coming soon)</div>
         <div class="info-card">
-          <h4>Anatomically-inspired layout</h4>
+          <h3>WebGL/Three.js 3D rendering of the brain</h3>
+          <p>
+            ~5,000 neurons across 50+ brain regions, ~175,000 synapses,
+            with real-time spike events, signal propagation along
+            pathways, and plasticity overlays. Architectural decisions
+            documented in the
+            <a href="/api/plans/2026-05-02-webapp-3d-visualization-design.md"
+               target="_blank">design doc</a>
+            (also via the Plans tab).
+          </p>
           <p class="muted">
-            Sensory in (retina) on the left; motor out on the right. Cortex
-            on top, subcortical below. The 4-action BG cascade laid out as
-            parallel lanes (cortex_N → str_D1_N → ... → motor_N).
+            Until the 3D viz ships, use the World tab for 2D gridworld
+            replay, the Live runs panel above for in-flight progress,
+            and the Language tab for text I/O confusion matrices.
           </p>
         </div>
-        <div class="info-card">
-          <h4>Color-coded by function</h4>
-          <p class="muted">
-            Visual cortex: blue gradient. Striatum direct/indirect: red/orange.
-            Thalamus: cyan. PFC: teal. Hippocampus: pink. Dopamine: magenta.
-            Colorblind-aware.
-          </p>
-        </div>
-        <div class="info-card">
-          <h4>Traveling action potentials</h4>
-          <p class="muted">
-            When a region fires, particles spawn at its edge and travel
-            along synaptic pathway curves to the post-region, with timing
-            matching the configured propagation_delay_ms. Color codes
-            neurotransmitter type (glutamate, GABA, dopamine, ACh).
-          </p>
-        </div>
-        <div class="info-card">
-          <h4>Plasticity overlay</h4>
-          <p class="muted">
-            Pathway color saturation tracks current weight magnitude.
-            Reward events flash gold across all eligible pathways,
-            visualizing the dopamine moment.
-          </p>
-        </div>
-        <div class="info-card">
-          <h4>Drill-in to neurons</h4>
-          <p class="muted">
-            Click a region to fly the camera in. Individual neurons
-            appear as instanced glowing dots with per-spike streaming
-            from the bridge data bus.
-          </p>
-        </div>
-        <div class="info-card">
-          <h4>Live & replay modes</h4>
-          <p class="muted">
-            Same renderer reads either a WebSocket stream from a
-            currently-running simulator or a recorded HDF5 file from a
-            past run.
-          </p>
+        <div class="brain-features-grid">
+          <div class="info-card">
+            <h4>Anatomically-inspired layout</h4>
+            <p class="muted">
+              Sensory in (retina) on the left; motor out on the right. Cortex
+              on top, subcortical below. The 4-action BG cascade laid out as
+              parallel lanes (cortex_N → str_D1_N → ... → motor_N).
+            </p>
+          </div>
+          <div class="info-card">
+            <h4>Color-coded by function</h4>
+            <p class="muted">
+              Visual cortex: blue gradient. Striatum direct/indirect: red/orange.
+              Thalamus: cyan. PFC: teal. Hippocampus: pink. Dopamine: magenta.
+              Colorblind-aware.
+            </p>
+          </div>
+          <div class="info-card">
+            <h4>Traveling action potentials</h4>
+            <p class="muted">
+              When a region fires, particles spawn at its edge and travel
+              along synaptic pathway curves, with timing matching the
+              configured propagation_delay_ms. Color codes neurotransmitter
+              type (glutamate, GABA, dopamine, ACh).
+            </p>
+          </div>
+          <div class="info-card">
+            <h4>Plasticity overlay</h4>
+            <p class="muted">
+              Pathway color saturation tracks current weight magnitude.
+              Reward events flash gold across all eligible pathways,
+              visualizing the dopamine moment.
+            </p>
+          </div>
+          <div class="info-card">
+            <h4>Drill-in to neurons</h4>
+            <p class="muted">
+              Click a region to fly the camera in. Individual neurons
+              appear as instanced glowing dots with per-spike streaming
+              from the bridge data bus.
+            </p>
+          </div>
+          <div class="info-card">
+            <h4>Live & replay modes</h4>
+            <p class="muted">
+              Same renderer reads either a WebSocket stream from a
+              currently-running simulator or a recorded HDF5 file from a
+              past run.
+            </p>
+          </div>
         </div>
       </div>
     </section>

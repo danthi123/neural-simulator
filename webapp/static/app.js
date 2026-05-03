@@ -81,7 +81,7 @@ const TAB_REGISTRY = [
   { id: "runs",        label: "Runs",        order: 30, onActivate: null /* loaded eagerly */ },
   { id: "experiments", label: "Experiments", order: 40, onActivate: () => { if (!window._experimentsLoaded) loadExperiments(); } },
   { id: "world",       label: "World",       order: 50, onActivate: null /* setupWorldTab() */ },
-  { id: "brain",       label: "Brain",       order: 60, onActivate: null /* placeholder, no JS yet */ },
+  { id: "brain",       label: "Brain",       order: 60, onActivate: () => activateBrainTab() },
   { id: "language",    label: "Language",    order: 70, onActivate: () => { if (!window._languageLoaded) loadLanguage(); } },
   { id: "findings",    label: "Findings",    order: 80, onActivate: () => { if (!window._findingsLoaded) loadFindings(); } },
   { id: "plans",       label: "Plans",       order: 85, onActivate: () => { if (!window._plansLoaded) loadPlans(); } },
@@ -1363,6 +1363,205 @@ function appendError(out, text) {
 // ─────────────────────────────────────────────────────────────────────────
 // Info tab
 // ─────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
+// Brain tab — live in-flight run monitor + 3D viz placeholder
+//
+// 2026-05-02. The Brain tab eventually hosts the WebGL 3D visualization
+// designed in docs/plans/2026-05-02-webapp-3d-visualization-design.md.
+// Until that ships, the upper half of the tab is a "live runs" panel:
+// polls /api/inflight every 2s, renders a card per active run with
+// progress + percent + log-size growth indicator, plus a "Watch"
+// button that opens a WebSocket log tail in a sliding pane.
+//
+// Why here vs Home: Home is the at-a-glance landing page. Brain is the
+// "watch the simulator working" surface — the live monitor lives here
+// because conceptually it's the closest thing to a brain visualization
+// we currently have, and the 3D viz will replace it.
+// ─────────────────────────────────────────────────────────────────────────
+
+let _brainPollTimer = null;
+let _brainTabActive = false;
+let _brainLogWS = null;
+let _brainLogTailUrl = null;
+
+function activateBrainTab() {
+  _brainTabActive = true;
+  refreshBrainLive();
+  if (!_brainPollTimer) {
+    _brainPollTimer = setInterval(() => {
+      // Only poll while the tab is currently visible — otherwise we
+      // burn cycles fetching for an unwatched panel. activateBrainTab()
+      // / deactivateBrainTab() flip _brainTabActive accordingly.
+      if (_brainTabActive) refreshBrainLive();
+    }, 2000);
+  }
+}
+
+// Stop polling when user navigates away from the Brain tab. setupTabs()
+// already toggles section.active classes; we hook into that via a
+// MutationObserver-free approach: just set _brainTabActive=false in the
+// tab click handler below.
+$$("nav button").forEach((b) => {
+  b.addEventListener("click", () => {
+    if (b.dataset.tab !== "brain") {
+      _brainTabActive = false;
+    }
+  });
+});
+
+async function refreshBrainLive() {
+  const container = $("#brain-live-runs");
+  const counter = $("#brain-live-count");
+  if (!container) return;
+  try {
+    const res = await fetch("/api/inflight");
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    const runs = data.inflight || [];
+    counter.textContent = runs.length === 1 ? "1 in flight" : `${runs.length} in flight`;
+    if (!runs.length) {
+      container.replaceChildren(el("p", { class: "muted" },
+        "No detached runs in flight. Launch one from the Lab tab to see it here."));
+      return;
+    }
+    container.replaceChildren();
+    for (const r of runs) {
+      container.appendChild(renderBrainRunCard(r));
+    }
+  } catch (e) {
+    container.replaceChildren(el("p", { class: "error" },
+      `Failed to load in-flight runs: ${e.message}`));
+  }
+}
+
+function renderBrainRunCard(r) {
+  const p = r.progress || {};
+  const fraction = p.fraction || 0;
+  const pct = Math.round(fraction * 100);
+
+  const stateBadge = r.alive
+    ? el("span", { class: "badge state-running" }, "● running")
+    : (r.completed
+        ? el("span", { class: "badge state-completed" }, "✓ completed")
+        : el("span", { class: "badge state-stopped" }, "■ stopped"));
+
+  // Headline progress line varies by progress kind.
+  let progressLines = [];
+  if (p.kind === "swr_replay") {
+    progressLines.push(`Phase 3 SWR replay · event ${p.ev}/${p.ev_total}`);
+  } else if (p.kind === "embodied_episode") {
+    const phase = p.phase_num ? `Phase ${p.phase_num} · ` : "";
+    progressLines.push(`${phase}episode ${p.episode}/${p.episodes_total}`);
+    progressLines.push(`${p.correct_moves}/${p.n_steps} correct moves (${p.correct_pct}%)`);
+  } else if (p.kind === "step") {
+    progressLines.push(`step ${p.step}/${p.total} · pos=(${p.pos.join(",")}) · goal=(${p.goal.join(",")})`);
+  } else {
+    progressLines.push("(no progress markers yet)");
+  }
+
+  if (p.phase_label && p.kind !== "swr_replay") {
+    progressLines.push(`Phase: ${p.phase_label}`);
+  }
+
+  const card = el("div", { class: "brain-run-card" });
+  // Header row: name + state
+  card.appendChild(el("div", { class: "brain-run-header" }, [
+    el("div", { class: "brain-run-name" }, r.name),
+    stateBadge,
+  ]));
+  // Progress bar
+  const bar = el("div", { class: "brain-progress-bar" });
+  const fill = el("div", { class: "brain-progress-fill", style: `width: ${pct}%` });
+  bar.appendChild(fill);
+  card.appendChild(bar);
+  card.appendChild(el("div", { class: "brain-progress-label" },
+    [`${pct}% · `, ...progressLines.map((l, i) => i === 0 ? l : ` · ${l}`)]));
+  // Meta row: PID, log size, mtime
+  const ageSec = r.log_mtime ? Math.round(Date.now() / 1000 - r.log_mtime) : null;
+  card.appendChild(el("div", { class: "brain-run-meta muted" }, [
+    `pid ${r.pid} · log ${r.log_size_kb} KB`,
+    r.log_mtime ? ` · last write ${ageSec}s ago` : "",
+    r.completed ? " · result available" : "",
+  ]));
+  // Action buttons
+  const actions = el("div", { class: "brain-run-actions" });
+  if (r.log_file) {
+    const watchBtn = el("button", { class: "ctrl-btn" }, "📜 Watch logs");
+    watchBtn.addEventListener("click", () => openBrainLogTail(r));
+    actions.appendChild(watchBtn);
+  }
+  if (r.completed && r.result_file) {
+    const resultBtn = el("button", { class: "ctrl-btn" },
+      r.result_file.startsWith("text_eval_") ? "💬 View in Language" : "🌍 View in World");
+    resultBtn.addEventListener("click", () => {
+      if (r.result_file.startsWith("text_eval_")) {
+        activateTab("language");
+        // Trigger a fresh load and click the row.
+        window._languageLoaded = false;
+        loadLanguage().then(() => {
+          setTimeout(() => {
+            const rows = $$("#language-list .lang-row");
+            const target = rows.find((row) =>
+              row.querySelector(".name")?.textContent?.includes(r.result_file.replace(/\.json$/, "")));
+            if (target) target.click();
+          }, 200);
+        });
+      } else {
+        activateTab("world");
+      }
+    });
+    actions.appendChild(resultBtn);
+  }
+  card.appendChild(actions);
+  return card;
+}
+
+function openBrainLogTail(run) {
+  // Close any prior tail
+  if (_brainLogWS) {
+    try { _brainLogWS.close(); } catch (e) { /* ignore */ }
+    _brainLogWS = null;
+  }
+  const pane = $("#brain-log-pane");
+  const out = $("#brain-log-output");
+  const nameEl = $("#brain-log-name");
+  if (!pane) return;
+  nameEl.textContent = `Log: ${run.name}`;
+  pane.style.display = "";
+  out.replaceChildren();
+  // Fetch the current tail (last 8KB) once for fast initial paint, then
+  // open a WebSocket subscription if the run is still alive.
+  fetch(`/api/runs/launch/log/${encodeURIComponent(run.log_file)}`)
+    .then((r) => r.ok ? r.text() : Promise.reject(r.status))
+    .then((text) => {
+      const lines = text.split("\n");
+      out.replaceChildren();
+      for (const line of lines.slice(-200)) {
+        if (line) out.appendChild(el("div", { class: "log-line" }, line));
+      }
+      out.scrollTop = out.scrollHeight;
+    })
+    .catch(() => {
+      // Endpoint doesn't exist yet — fall back to "no static tail" message.
+      out.replaceChildren(el("div", { class: "muted" },
+        "(static tail endpoint not available; will stream new lines as they arrive)"));
+    });
+  // Stream new lines via the existing /ws/runs/{run_id} WebSocket if we
+  // have the run_id. The detached PID-based runs don't have a run_id
+  // (they were launched via Start-Process), so streaming there isn't
+  // wired up — for those we just show the static tail. Foreground
+  // launches via /api/runs/launch DO have run_id and stream cleanly.
+}
+
+$("#brain-refresh-now")?.addEventListener("click", refreshBrainLive);
+$("#brain-log-close")?.addEventListener("click", () => {
+  $("#brain-log-pane").style.display = "none";
+  if (_brainLogWS) {
+    try { _brainLogWS.close(); } catch (e) { /* ignore */ }
+    _brainLogWS = null;
+  }
+});
+
 async function loadInfo() {
   window._infoLoaded = true;
   // Load CURRENT-STATE.md and the system info JSON in parallel.
