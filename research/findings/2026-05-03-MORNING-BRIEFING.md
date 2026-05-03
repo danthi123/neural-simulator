@@ -1,8 +1,31 @@
 # Morning briefing — autonomous SWR investigation
 
 **Generated:** 2026-05-03 ~05:45 EDT (autonomous)
+**Updated:** 2026-05-03 ~08:15 EDT
 **For:** waking-up user
 **Status:** mid-investigation
+
+---
+
+## 🚨 BIG FINDING — read this first
+
+Permuted-label control across 25 prior text-IO eval files shows
+**0/25 had the TRUE labeled mapping as the best of 24 permutations.**
+The 28.5% W->A baseline is NOT real word-action learning. The
+architecture has structure (best permutation = 32-37%) but it's
+randomly oriented per-seed, not aligned with task labels.
+
+This means:
+- The whole text I/O system has been at chance ± 8pp seed-dependent
+  bias since the May 2 "breakthrough."
+- The v2 baseline 28.5% / v2+SWR 24.3% / H4 23% comparisons are all
+  measuring noise, not real learning.
+- Tonight's experiments (H1, arch sweep, auto-followup) still useful
+  because they test "can architecture learn at all" — but if all
+  variants stay 0/6 aligned, we know the current arch can't do it.
+
+**Tool:** `python -m research.runners.permuted_label_check`
+**Findings doc:** `research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`
 
 ---
 
