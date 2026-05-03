@@ -757,6 +757,11 @@ function startAnimation() {
     const now = performance.now();
     const dt = Math.min(0.1, (now - _lastFrameTime) / 1000);  // cap at 100ms
     _lastFrameTime = now;
+    // 2026-05-03: process any scheduled (delayed) bumps. This is what
+    // makes the cascade animations appear as waves propagating through
+    // the network — bumps queued by activateAction()/activateVisualPathway()
+    // /etc with delays land here on their target frame.
+    processScheduledBumps();
     // Smoothly lerp emissiveIntensity toward target. Update regionActivity
     // to track the displayed (post-lerp) activation level — the tooltip
     // and info panel read from regionActivity, NOT regionTargets, so the
@@ -828,76 +833,96 @@ function stopAnimation() {
 
 const ACTION_SUFFIX = ["N", "E", "S", "W"];
 
+// 2026-05-03: Cascade timing constants. Each stage of a propagation
+// chain is delayed by these millisecond offsets so the user sees the
+// wave traveling through the network. Real biology operates at ~5x
+// faster than this; the values here are scaled for visibility.
+const T_CORTEX_TO_STR     = 60;   // cortex_X -> str_D1/D2_X
+const T_STR_TO_GP         = 120;  // str -> gpe/gpi
+const T_GP_TO_THAL        = 200;  // gpi -> thal (action gating)
+const T_THAL_TO_MOTOR     = 280;  // thal -> motor cortex
+const T_VISUAL_STAGE      = 70;   // retina -> V1 simple -> V1 complex -> V2 -> IT
+const T_DA_BURST          = 120;  // post-action SNc dopamine burst onset
+const T_DA_TO_D1_LTP      = 180;  // SNc -> D1 plasticity broadcast
+const T_HIPPO_STAGE       = 60;   // EC -> DG -> CA3 -> CA1 -> place
+
 function activateAction(actionIdx, gain = 1.0) {
   if (actionIdx < 0 || actionIdx > 3) return;
   const sfx = ACTION_SUFFIX[actionIdx];
-  // Premotor cortex: strongest activation
+  // ── BG cascade — visible wave from cortex to motor ──
+  // t=0: premotor cortex initiates (already received drive from IT)
   bumpActivity(`cortex_${sfx}`, 1.0 * gain);
-  // Direct pathway (D1) wins
-  bumpActivity(`str_D1_${sfx}`, 0.9 * gain);
-  // Indirect pathway (D2) competes
+  // t=T_CORTEX_TO_STR: striatum receives the action proposal
+  bumpActivityDelayed(`str_D1_${sfx}`, 0.9 * gain, T_CORTEX_TO_STR);
+  // Indirect pathway D2 receives drive too — competing actions get NoGo
   for (const o of ACTION_SUFFIX) {
-    if (o !== sfx) bumpActivity(`str_D2_${o}`, 0.4 * gain);
+    if (o !== sfx) {
+      bumpActivityDelayed(`str_D2_${o}`, 0.4 * gain, T_CORTEX_TO_STR);
+    }
   }
-  // Pallidum cascade
-  bumpActivity(`gpi_${sfx}`, 0.35 * gain);   // actually inhibited; show muted
-  bumpActivity(`gpe_${sfx}`, 0.6 * gain);
-  bumpActivity("stn", 0.5 * gain);
-  // Thalamus released by D1 inhibition of GPi
-  bumpActivity(`thal_${sfx}`, 0.95 * gain);
-  // Motor cortex fires
-  bumpActivity(`motor_${sfx}`, 1.0 * gain);
+  // t=T_STR_TO_GP: D1 inhibits GPi (gate opens); D2 inhibits GPe
+  bumpActivityDelayed(`gpe_${sfx}`, 0.6 * gain, T_STR_TO_GP);
+  bumpActivityDelayed("stn", 0.5 * gain, T_STR_TO_GP - 20);  // hyperdirect arrives slightly first
+  bumpActivityDelayed(`gpi_${sfx}`, 0.35 * gain, T_STR_TO_GP);  // GPi briefly shows the inhibition
+  // t=T_GP_TO_THAL: thalamus released, fires
+  bumpActivityDelayed(`thal_${sfx}`, 0.95 * gain, T_GP_TO_THAL);
+  // t=T_THAL_TO_MOTOR: motor cortex fires
+  bumpActivityDelayed(`motor_${sfx}`, 1.0 * gain, T_THAL_TO_MOTOR);
 }
 
 function activateReward(reward, hasDopamine = true) {
   if (!hasDopamine) return;
   if (reward > 0) {
-    // SNc burst
-    bumpActivity("snc", Math.min(1.0, 0.5 + reward * 0.5));
-    // Reward-flash all D1 (LTP) — gentle, just shows DA broadcast
-    for (const sfx of ACTION_SUFFIX) bumpActivity(`str_D1_${sfx}`, 0.3);
+    // SNc bursts AFTER the action (positive RPE — outcome better than expected).
+    bumpActivityDelayed("snc", Math.min(1.0, 0.5 + reward * 0.5), T_DA_BURST);
+    // Then DA broadcasts to all D1 (this is the LTP / "tag this synapse" signal)
+    for (const sfx of ACTION_SUFFIX) {
+      bumpActivityDelayed(`str_D1_${sfx}`, 0.3, T_DA_TO_D1_LTP);
+    }
   } else if (reward < 0) {
-    // SNc dip — show dim activation
-    bumpActivity("snc", 0.15);
+    // SNc dips below baseline — model as a small activation visible briefly
+    bumpActivityDelayed("snc", 0.15, T_DA_BURST);
   }
 }
 
 function activateVisualPathway(usedVisualCortex) {
-  // When visual cortex is enabled, retina/V1/V2/IT carry the load.
-  // Animate as a steady flow during navigation.
+  // Visual cascade flows retina → V1simple → V1complex → V2 → IT in
+  // sequence. Each stage adds ~70ms of delay (scaled up from biology
+  // for visibility).
   if (!usedVisualCortex) return;
   bumpActivity("retina", 0.7);
-  bumpActivity("cortex_v1_simple", 0.5);
-  bumpActivity("cortex_v1_complex", 0.4);
-  bumpActivity("cortex_v2", 0.3);
-  bumpActivity("cortex_it", 0.25);
+  bumpActivityDelayed("cortex_v1_simple", 0.5, T_VISUAL_STAGE * 1);
+  bumpActivityDelayed("cortex_v1_complex", 0.4, T_VISUAL_STAGE * 2);
+  bumpActivityDelayed("cortex_v2", 0.3, T_VISUAL_STAGE * 3);
+  bumpActivityDelayed("cortex_it", 0.25, T_VISUAL_STAGE * 4);
 }
 
 function activateLanguagePathway(usedTextIO) {
   if (!usedTextIO) return;
-  // During text I/O training, language_input is driven; PFC and cortex
-  // pools receive activation; motor pools receive PFC-bypass drive.
+  // Language input arrives, then drives both PFC (working memory) and
+  // motor cortex via the PFC bypass (Wernicke -> arcuate -> Broca -> M1).
   bumpActivity("language_input", 0.8);
-  bumpActivity("dlpfc_wm", 0.5);
+  bumpActivityDelayed("dlpfc_wm", 0.5, 100);
 }
 
 function activateGoalDrive(distToGoal) {
-  // PFC working memory — held active when goal is far (still-pursuing).
+  // PFC sustained throughout — represents the held-in-mind goal. Not
+  // delayed because the goal is "always there" once perceived.
   if (distToGoal == null) return;
   const drive = Math.min(1.0, distToGoal / 8.0);
   bumpActivity("dlpfc_wm", 0.3 + drive * 0.4);
 }
 
 function activateHippocampusEpisode(stepFraction) {
-  // Periodic burst at episode boundaries — synthetic, matches the role
-  // of CA3 pattern completion at trial onset.
+  // Trisynaptic-loop wave: EC -> DG -> CA3 -> CA1 -> place_cells
+  // Visible as a propagating wave through the hippocampal formation.
   const phase = (stepFraction * 5) % 1;
   if (phase < 0.1) {
     bumpActivity("ec", 0.5);
-    bumpActivity("dg", 0.4);
-    bumpActivity("ca3", 0.35);
-    bumpActivity("ca1", 0.3);
-    bumpActivity("place_cells", 0.25);
+    bumpActivityDelayed("dg", 0.4, T_HIPPO_STAGE * 1);
+    bumpActivityDelayed("ca3", 0.35, T_HIPPO_STAGE * 2);
+    bumpActivityDelayed("ca1", 0.3, T_HIPPO_STAGE * 3);
+    bumpActivityDelayed("place_cells", 0.25, T_HIPPO_STAGE * 4);
   }
 }
 
@@ -906,8 +931,47 @@ function bumpActivity(name, amount) {
   regionTargets[name] = Math.min(1.0, regionTargets[name] + amount);
 }
 
+// 2026-05-03 — DELAYED activations. Schedules a bump at `delayMs` from
+// now so the user sees the cascade propagate as a wave through the
+// network rather than every region lighting up simultaneously.
+//
+// The animation tick processes _scheduledBumps each frame, applying
+// any whose `when` <= performance.now(). Items linger across step
+// changes (intentional — lets the wave continue to play out even when
+// the user moves the scrubber rapidly).
+const _scheduledBumps = [];
+
+function bumpActivityDelayed(name, amount, delayMs) {
+  if (delayMs <= 0) {
+    bumpActivity(name, amount);
+    return;
+  }
+  _scheduledBumps.push({
+    name, amount,
+    when: performance.now() + delayMs,
+  });
+}
+
+function processScheduledBumps() {
+  if (!_scheduledBumps.length) return;
+  const now = performance.now();
+  // In-place filter: apply due bumps, keep pending ones
+  let writeIdx = 0;
+  for (let i = 0; i < _scheduledBumps.length; i++) {
+    const b = _scheduledBumps[i];
+    if (b.when <= now) {
+      bumpActivity(b.name, b.amount);
+    } else {
+      _scheduledBumps[writeIdx++] = b;
+    }
+  }
+  _scheduledBumps.length = writeIdx;
+}
+
 function clearAllActivity() {
   for (const k of Object.keys(regionTargets)) regionTargets[k] = 0;
+  // Keep _scheduledBumps — let any in-flight cascade continue. Without
+  // this, scrubbing would interrupt visible waves.
 }
 
 // ─── Replay ────────────────────────────────────────────────────────────
