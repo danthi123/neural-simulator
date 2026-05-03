@@ -110,6 +110,27 @@ Master logs:
   noted in the H4 results doc as a measurement artifact, but a real
   bug investigation would trace the random state through the
   bridge to see if there's an aliasing issue.
+* **H4 plasticity-dose normalization** — H4 isolation has 11x FEWER
+  total plasticity sub-steps than v2 Phase 2 (88k vs 960k). This is
+  a key methodological flaw in the H4 design. To make H4 a fair
+  upper-bound test, re-run with --n-events-per-direction 1000
+  (= 4000 events, ~880k sub-steps comparable to Phase 2). Tomorrow's
+  call: maybe 1-seed sanity check first.
+
+## H4 INVERSION — important
+
+The H4 result (n=4 mean 23%, BELOW chance 25%) says paired-stim
+isolation training CAN'T learn word-action discrimination on its
+own. This INVERTS the original cascade-as-interference hypothesis.
+
+Key methodological caveat (above): H4 was 11x under-trained vs
+Phase 2. So the inversion conclusion needs the 1000-event test
+to confirm. If H4 with 1000 events/dir still hits ≤chance, the
+inversion is real and we know episodic context is essential. If
+H4 with 1000 events climbs to ~28% baseline, then plasticity dose
+was the issue and the original hypothesis is partly redeemed.
+
+This re-run should be the FIRST experiment tomorrow.
 
 ## My honest assessment
 
