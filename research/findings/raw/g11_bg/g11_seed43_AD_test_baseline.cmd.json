@@ -1,0 +1,38 @@
+{
+  "run_id": "9d60291d9255",
+  "preset": "baseline",
+  "seed": 43,
+  "extra_args": [
+    "--enable-msn-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-pv-fsi",
+    "--goal-schedule",
+    "multi",
+    "--deterministic"
+  ],
+  "cmd": [
+    "c:\\python312\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "1800",
+    "--seed",
+    "43",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed43_AD_test_baseline.json",
+    "--enable-msn-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-pv-fsi",
+    "--goal-schedule",
+    "multi",
+    "--deterministic",
+    "--progress-print-interval",
+    "1"
+  ],
+  "pid": 40500,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_9d60291d9255.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed43_AD_test_baseline.json",
+  "started_at": 1777505849.1755304
+}

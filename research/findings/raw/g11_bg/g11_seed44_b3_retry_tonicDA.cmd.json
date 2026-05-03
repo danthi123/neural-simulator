@@ -1,0 +1,42 @@
+{
+  "run_id": "ad737ff6e35f",
+  "preset": "baseline",
+  "seed": 44,
+  "extra_args": [
+    "--bg-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-fsis",
+    "--enable-tans",
+    "--enable-tonic-da",
+    "--goal-schedule",
+    "multi",
+    "--deterministic"
+  ],
+  "cmd": [
+    "c:\\python312\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "1800",
+    "--seed",
+    "44",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed44_b3_retry_tonicDA.json",
+    "--bg-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-fsis",
+    "--enable-tans",
+    "--enable-tonic-da",
+    "--goal-schedule",
+    "multi",
+    "--deterministic",
+    "--progress-print-interval",
+    "1"
+  ],
+  "pid": 36804,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_ad737ff6e35f.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed44_b3_retry_tonicDA.json",
+  "started_at": 1777503074.424726
+}

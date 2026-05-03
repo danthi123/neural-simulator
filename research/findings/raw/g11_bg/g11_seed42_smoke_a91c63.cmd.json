@@ -1,0 +1,25 @@
+{
+  "run_id": "a91c639902c9",
+  "preset": "smoke",
+  "seed": 42,
+  "extra_args": [],
+  "cmd": [
+    "C:\\Users\\dant123\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "100",
+    "--seed",
+    "42",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_smoke_a91c63.json",
+    "--progress-print-interval",
+    "20"
+  ],
+  "pid": 12345,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_a91c639902c9.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_smoke_a91c63.json",
+  "started_at": 1777378484.4516096
+}

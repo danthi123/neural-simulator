@@ -1,0 +1,38 @@
+{
+  "run_id": "e846f64c0907",
+  "preset": "baseline",
+  "seed": 101,
+  "extra_args": [
+    "--bg-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-fsis",
+    "--goal-schedule",
+    "multi",
+    "--deterministic"
+  ],
+  "cmd": [
+    "c:\\python312\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "1800",
+    "--seed",
+    "101",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed101_step4_multidet_baseline.json",
+    "--bg-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-fsis",
+    "--goal-schedule",
+    "multi",
+    "--deterministic",
+    "--progress-print-interval",
+    "1"
+  ],
+  "pid": 37632,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_e846f64c0907.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed101_step4_multidet_baseline.json",
+  "started_at": 1777498758.126207
+}

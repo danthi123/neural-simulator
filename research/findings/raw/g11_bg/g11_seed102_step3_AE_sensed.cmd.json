@@ -1,0 +1,40 @@
+{
+  "run_id": "9e6b93eefbf4",
+  "preset": "baseline",
+  "seed": 102,
+  "extra_args": [
+    "--bg-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-fsis",
+    "--enable-cluster-a-closed-loop",
+    "--enable-cluster-e-topography",
+    "--sensed-reward",
+    "--deterministic"
+  ],
+  "cmd": [
+    "c:\\python312\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "1800",
+    "--seed",
+    "102",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed102_step3_AE_sensed.json",
+    "--bg-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-fsis",
+    "--enable-cluster-a-closed-loop",
+    "--enable-cluster-e-topography",
+    "--sensed-reward",
+    "--deterministic",
+    "--progress-print-interval",
+    "1"
+  ],
+  "pid": 16120,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_9e6b93eefbf4.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed102_step3_AE_sensed.json",
+  "started_at": 1777496918.6200838
+}

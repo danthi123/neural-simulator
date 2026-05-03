@@ -1,0 +1,79 @@
+{
+  "regime": "embodied",
+  "seed": 42,
+  "n_episodes": 100,
+  "steps_per_episode": 30,
+  "training_stats": [
+    {
+      "regime": "embodied_navigation_training",
+      "n_episodes": 100,
+      "steps_per_episode": 30,
+      "n_total_steps": 2773,
+      "n_correct_moves": 907,
+      "correct_move_rate": 0.32708258204111074,
+      "elapsed_seconds": 4014.368544816971
+    }
+  ],
+  "image_to_word_eval": {
+    "n_trials": 40,
+    "correct": 13,
+    "accuracy": 0.325,
+    "confusion_matrix": {
+      "north": {
+        "north": 1,
+        "east": 6,
+        "south": 1,
+        "west": 2
+      },
+      "east": {
+        "north": 4,
+        "east": 8,
+        "south": 3,
+        "west": 1
+      },
+      "south": {
+        "north": 1,
+        "east": 3,
+        "south": 1,
+        "west": 0
+      },
+      "west": {
+        "north": 3,
+        "east": 2,
+        "south": 1,
+        "west": 3
+      }
+    }
+  },
+  "word_to_action_eval": {
+    "n_trials": 40,
+    "correct": 12,
+    "accuracy": 0.3,
+    "confusion_matrix": {
+      "north": {
+        "N": 4,
+        "E": 3,
+        "S": 0,
+        "W": 3
+      },
+      "east": {
+        "N": 1,
+        "E": 4,
+        "S": 4,
+        "W": 1
+      },
+      "south": {
+        "N": 2,
+        "E": 3,
+        "S": 3,
+        "W": 2
+      },
+      "west": {
+        "N": 3,
+        "E": 2,
+        "S": 4,
+        "W": 1
+      }
+    }
+  }
+}

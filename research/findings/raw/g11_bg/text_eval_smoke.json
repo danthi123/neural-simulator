@@ -1,0 +1,76 @@
+{
+  "seed": 42,
+  "n_image_word_train": 100,
+  "n_word_action_train": 100,
+  "image_to_word_eval": {
+    "n_trials": 40,
+    "correct": 9,
+    "accuracy": 0.225,
+    "confusion_matrix": {
+      "north": {
+        "north": 5,
+        "east": 2,
+        "south": 3,
+        "west": 0
+      },
+      "east": {
+        "north": 5,
+        "east": 1,
+        "south": 7,
+        "west": 3
+      },
+      "south": {
+        "north": 4,
+        "east": 0,
+        "south": 1,
+        "west": 0
+      },
+      "west": {
+        "north": 1,
+        "east": 4,
+        "south": 2,
+        "west": 2
+      }
+    }
+  },
+  "word_to_action_eval": {
+    "n_trials": 40,
+    "correct": 11,
+    "accuracy": 0.275,
+    "confusion_matrix": {
+      "north": {
+        "N": 5,
+        "E": 1,
+        "S": 3,
+        "W": 1
+      },
+      "east": {
+        "N": 6,
+        "E": 2,
+        "S": 1,
+        "W": 1
+      },
+      "south": {
+        "N": 3,
+        "E": 3,
+        "S": 4,
+        "W": 0
+      },
+      "west": {
+        "N": 4,
+        "E": 3,
+        "S": 3,
+        "W": 0
+      }
+    }
+  },
+  "training_stats": [
+    {
+      "regime": "training_complete",
+      "n_image_word_pairs": 100,
+      "n_word_action_pairs": 100,
+      "elapsed_seconds": 213.36385011672974,
+      "n_synapses": 171574
+    }
+  ]
+}

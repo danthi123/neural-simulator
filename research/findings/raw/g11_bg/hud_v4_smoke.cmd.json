@@ -1,0 +1,35 @@
+{
+  "run_id": "6e1ffbd1e6fd",
+  "preset": "baseline",
+  "seed": 42,
+  "extra_args": [
+    "--moving-goal",
+    "--n-steps",
+    "60",
+    "--progress-print-interval",
+    "2"
+  ],
+  "deterministic": false,
+  "cmd": [
+    "c:\\python312\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "1800",
+    "--seed",
+    "42",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\hud_v4_smoke.json",
+    "--moving-goal",
+    "--n-steps",
+    "60",
+    "--progress-print-interval",
+    "2"
+  ],
+  "pid": 42088,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_6e1ffbd1e6fd.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\hud_v4_smoke.json",
+  "started_at": 1777515717.6894023
+}

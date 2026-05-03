@@ -1,0 +1,35 @@
+{
+  "run_id": "d9de8b11113b",
+  "preset": "baseline",
+  "seed": 42,
+  "extra_args": [
+    "--moving-goal",
+    "--n-steps",
+    "3000"
+  ],
+  "deterministic": false,
+  "cmd": [
+    "c:\\python312\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "1800",
+    "--seed",
+    "42",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\pausebtn_test.json",
+    "--moving-goal",
+    "--n-steps",
+    "3000",
+    "--interactive-control-file",
+    "E:\\Documents\\Projects\\sim\\webapp\\runtime\\control_d9de8b11113b.json",
+    "--progress-print-interval",
+    "20"
+  ],
+  "pid": 44344,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_d9de8b11113b.log",
+  "control_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\control_d9de8b11113b.json",
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\pausebtn_test.json",
+  "started_at": 1777527271.3412182
+}

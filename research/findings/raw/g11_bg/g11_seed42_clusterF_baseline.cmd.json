@@ -1,0 +1,39 @@
+{
+  "run_id": "a075965c144e",
+  "preset": "baseline",
+  "seed": 42,
+  "extra_args": [
+    "--enable-msn-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-pv-fsi",
+    "--goal-schedule",
+    "multi",
+    "--deterministic"
+  ],
+  "deterministic": false,
+  "cmd": [
+    "c:\\python312\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "1800",
+    "--seed",
+    "42",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_clusterF_baseline.json",
+    "--enable-msn-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-pv-fsi",
+    "--goal-schedule",
+    "multi",
+    "--deterministic",
+    "--progress-print-interval",
+    "20"
+  ],
+  "pid": 45180,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_a075965c144e.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_clusterF_baseline.json",
+  "started_at": 1777516476.8151977
+}

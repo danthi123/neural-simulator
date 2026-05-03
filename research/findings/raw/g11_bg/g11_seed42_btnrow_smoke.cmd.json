@@ -1,0 +1,33 @@
+{
+  "run_id": "39719e72c1cd",
+  "preset": "baseline",
+  "seed": 42,
+  "extra_args": [
+    "--n-steps",
+    "5000"
+  ],
+  "deterministic": false,
+  "cmd": [
+    "c:\\python312\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "1800",
+    "--seed",
+    "42",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_btnrow_smoke.json",
+    "--n-steps",
+    "5000",
+    "--interactive-control-file",
+    "E:\\Documents\\Projects\\sim\\webapp\\runtime\\control_39719e72c1cd.json",
+    "--progress-print-interval",
+    "20"
+  ],
+  "pid": 11872,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_39719e72c1cd.log",
+  "control_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\control_39719e72c1cd.json",
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_btnrow_smoke.json",
+  "started_at": 1777528348.2233257
+}

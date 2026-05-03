@@ -1,0 +1,38 @@
+{
+  "run_id": "743f5cdfc670",
+  "preset": "baseline",
+  "seed": 201,
+  "extra_args": [
+    "--bg-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-fsis",
+    "--enable-cluster-a-closed-loop",
+    "--enable-cluster-e-topography",
+    "--deterministic"
+  ],
+  "cmd": [
+    "c:\\python312\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "1800",
+    "--seed",
+    "201",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed201_tier4_det_AE.json",
+    "--bg-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-fsis",
+    "--enable-cluster-a-closed-loop",
+    "--enable-cluster-e-topography",
+    "--deterministic",
+    "--progress-print-interval",
+    "1"
+  ],
+  "pid": 44672,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_743f5cdfc670.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed201_tier4_det_AE.json",
+  "started_at": 1777493694.2656553
+}

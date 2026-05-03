@@ -1,0 +1,43 @@
+{
+  "run_id": "030a14ed3a6f",
+  "preset": "baseline",
+  "seed": 42,
+  "extra_args": [
+    "--enable-msn-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-pv-fsi",
+    "--enable-cluster-a-closed-loop",
+    "--enable-cluster-f-cerebellum",
+    "--goal-schedule",
+    "multi",
+    "--deterministic"
+  ],
+  "deterministic": false,
+  "cmd": [
+    "c:\\python312\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "1800",
+    "--seed",
+    "42",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_clusterF_AF.json",
+    "--enable-msn-lateral-inhibition",
+    "--enable-d1-d2-asymmetry",
+    "--enable-striatal-pv-fsi",
+    "--enable-cluster-a-closed-loop",
+    "--enable-cluster-f-cerebellum",
+    "--goal-schedule",
+    "multi",
+    "--deterministic",
+    "--progress-print-interval",
+    "20"
+  ],
+  "pid": 47816,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_030a14ed3a6f.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_clusterF_AF.json",
+  "started_at": 1777516478.2168314
+}

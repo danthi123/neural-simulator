@@ -1,0 +1,32 @@
+{
+  "run_id": "a5915fb5f009",
+  "preset": "smoke",
+  "seed": 99,
+  "extra_args": [
+    "--moving-goal",
+    "--n-steps",
+    "500"
+  ],
+  "cmd": [
+    "c:\\python312\\python.exe",
+    "-m",
+    "research.runners.g11_bg_runner",
+    "--moving-goal",
+    "--n-steps",
+    "100",
+    "--seed",
+    "99",
+    "--out",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed99_smoke_a5915f.json",
+    "--moving-goal",
+    "--n-steps",
+    "500",
+    "--progress-print-interval",
+    "1"
+  ],
+  "pid": 42596,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_a5915fb5f009.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed99_smoke_a5915f.json",
+  "started_at": 1777368508.8639555
+}

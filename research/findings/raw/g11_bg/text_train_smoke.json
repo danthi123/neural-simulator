@@ -1,0 +1,15 @@
+{
+  "seed": 42,
+  "grid_size": 8,
+  "n_neurons": 5234,
+  "stim_steps_per_pair": 200,
+  "epoch_stats": [
+    {
+      "regime": "training_complete",
+      "n_image_word_pairs": 5,
+      "n_word_action_pairs": 5,
+      "elapsed_seconds": 15.364966630935669,
+      "n_synapses": 171830
+    }
+  ]
+}
