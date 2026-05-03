@@ -1239,11 +1239,25 @@ async function loadLanguageDetail(name, listItem) {
       String(data.seed ?? "—"),
       `${data.regime ?? "—"} · ${data.n_episodes ?? "—"} episodes`,
     ));
-    if (data.training_stats?.[0]?.correct_move_rate != null) {
+    // 2026-05-03: For curriculum runs (phase 1 / 2 / 3), the meaningful
+    // training rate is Phase 2 (text I/O training on trained cascade).
+    // Phase 1 + Phase 3 may have 0 episodes for the v2-baseline+SWR
+    // configuration, which previously made this card show "0.0% 0/0".
+    // Pick the phase with the most episodes — that's the active
+    // training phase regardless of whether it's a curriculum run or
+    // legacy text_eval_embodied run.
+    const tsList = data.training_stats || [];
+    const trainingPhase = tsList.reduce(
+      (best, t) => (t && (t.n_total_steps || 0) > (best?.n_total_steps || 0) ? t : best),
+      null,
+    );
+    if (trainingPhase?.correct_move_rate != null && trainingPhase.n_total_steps > 0) {
+      const phaseLabel = trainingPhase.phase ? `Phase ${trainingPhase.phase}` : "Training";
       statsRow.appendChild(makeKpiCard(
-        "Training corr.move",
-        fmtPercent(data.training_stats[0].correct_move_rate),
-        `${data.training_stats[0].n_correct_moves}/${data.training_stats[0].n_total_steps}`,
+        `${phaseLabel} corr.move`,
+        fmtPercent(trainingPhase.correct_move_rate),
+        `${trainingPhase.n_correct_moves}/${trainingPhase.n_total_steps}` +
+          (trainingPhase.elapsed_seconds ? ` · ${(trainingPhase.elapsed_seconds / 60).toFixed(1)} min` : ""),
       ));
     }
     wrapper.appendChild(statsRow);
