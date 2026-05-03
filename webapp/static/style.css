@@ -1205,8 +1205,12 @@ pre {
 }
 .list-header-cell:hover { color: var(--accent); }
 .list-header-cell.active { color: var(--accent); }
-.lang-row {
+/* .list-item.lang-row needed to outrank the generic .list-item rule
+   that sets flex-direction: column (declared later in the stylesheet). */
+.list-item.lang-row {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 8px;
   padding: 6px 12px;
   cursor: pointer;

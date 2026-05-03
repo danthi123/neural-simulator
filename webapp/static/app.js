@@ -936,7 +936,7 @@ function renderLanguageList(runs) {
     }, [fmtPercent(r.w2a_accuracy)]));
     item.appendChild(el("div", { class: "lang-cell", style: "flex: 0.7" }, [fmtPercent(r.correct_move_rate)]));
     item.appendChild(el("div", { class: "lang-cell muted", style: "flex: 0.8" }, [
-      fmtRelTime(new Date(r.modified_unix * 1000)),
+      fmtRelTime(r.modified_unix),
     ]));
     item.addEventListener("click", () => loadLanguageDetail(r.name, item));
     list.appendChild(item);

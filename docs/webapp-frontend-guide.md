@@ -7,6 +7,132 @@ without breaking what's already there.
 
 ---
 
+## Screenshot tour
+
+A quick visual tour of every tab, the theme system, and the mobile
+breakpoints. Screenshots live in `docs/images/webapp/` and are
+captured against the running webapp at `localhost:8765`.
+
+### Home (default landing tab)
+
+![Home tab — KPIs, in-flight runs panel, result distribution chart](images/webapp/01-home.png)
+
+KPI cards across the top show the best navigation run, best W→A
+text-I/O accuracy, mean nav sum, mean W→A, total findings, and
+in-flight run count. Each card is click-through to the relevant tab.
+The in-flight panel below shows live progress for any detached runs.
+
+### Brain (live monitor + 3D viz placeholder)
+
+![Brain tab — live in-flight run with progress bar](images/webapp/02-brain-live-monitor.png)
+
+The Brain tab is the "watch the simulator working" surface. The Live
+runs panel polls `/api/inflight` every 2 seconds; each card shows
+state badge, progress bar, current phase, and per-kind detail
+(episode N/M for embodied training, event N/M for SWR replay, step
+N/M for navigation). Below the live monitor, the planned features for
+the upcoming Three.js 3D rendering are documented in card grid.
+
+![Brain log tail — Watch logs button reveals the streaming output](images/webapp/03-brain-log-tail.png)
+
+Clicking **Watch logs** on a run card slides open a log pane that
+fetches the last 32 KB of the run's `.log` file via
+`/api/runs/launch/log/{name}`. Useful for watching curriculum phase
+transitions and SWR replay progress in real time.
+
+### Language (text I/O results)
+
+![Language tab list view — sortable per-run table](images/webapp/04-language-list.png)
+
+Aggregate I→W and W→A KPIs across all `text_eval_*.json` runs, with
+chance baseline (25%) and best-run highlights. Per-run table is
+sortable on every column; above-chance values (>30%) are highlighted
+green.
+
+![Language tab detail — confusion matrices for the selected run](images/webapp/05-language-detail.png)
+
+Clicking a row reveals the run's I→W and W→A confusion matrices side
+by side, with intensity-scaled blue cells (diagonal bolded). Headline
+KPIs and training-phase corr-move rate appear above.
+
+### Plans
+
+![Plans tab — design doc at docs/plans/2026-05-02-webapp-3d-visualization-design.md](images/webapp/06-plans.png)
+
+Browses all 55+ architecture decision records and design docs in
+`docs/plans/`. Search box, click-through markdown rendering. Same
+shape as the Findings tab but for forward-looking plans rather than
+backward-looking experimental results.
+
+### Findings (chronological with chip filtering)
+
+![Findings tab — auto-derived category chips at top, search, per-row tags](images/webapp/07-findings.png)
+
+109+ research findings are auto-categorized into 18 chips
+(Cluster A/B/.../K, Text I/O, Perception arc, Cheat closure,
+Breakthrough, Negative, etc.). Click a chip to filter; combined with
+the search box. Each row shows its primary tag pill + date prefix.
+
+### About
+
+![About tab — Quick links + auto-loaded CURRENT-STATE.md](images/webapp/08-about.png)
+
+Quick-link cards to README, CURRENT-STATE.md, biology.md, and the
+frontend dev guide. Below them, the full CURRENT-STATE.md content is
+auto-loaded as rendered markdown — anyone visiting can see exactly
+what the simulator does today without digging through `docs/`.
+
+### Lab (launcher)
+
+![Lab tab — preset launcher with grouped Navigation / Text I/O presets](images/webapp/09-lab.png)
+
+Preset selector now grouped by experiment type (Navigation /
+Text I/O). Seed input, grid-size override, hippocampus-per-layer,
+extra flags. Below the form, launch stdout streams via the WebSocket
+endpoint.
+
+### Runs
+
+![Runs tab — sortable list of all completed run JSONs](images/webapp/10-runs.png)
+
+Generic list of all completed runs (combination of navigation
+gridworld and text I/O). Hide-smoke / hide-incomplete toggles, name
+filter, bulk select for compare, trash drawer. The text I/O runs are
+also surfaced cleanly via the Language tab.
+
+### World (2D gridworld replay)
+
+![World tab — 2D gridworld replay with run HUD on left, picker on right](images/webapp/11-world.png)
+
+Replay mode for navigation runs: load a run, scrub through steps,
+watch the agent move. Live mode connects to a currently-running
+detached run and animates per-step. Click anywhere in the grid (with
+an interactive_* preset) to teleport the goal.
+
+### Light theme
+
+![Home tab in light theme — same layout, light neutrals](images/webapp/12-home-light.png)
+
+The theme toggle button (sun/moon icon, header right edge) cycles
+between dark and light themes. Choice persisted to `localStorage`.
+`prefers-color-scheme` is honored before any JS runs to avoid the
+dark-flash problem.
+
+### Mobile (≤768px viewport)
+
+![Mobile home view — KPIs in 2-column grid, hamburger menu icon top right](images/webapp/13-mobile-home.png)
+
+KPI grid collapses to 2 columns. Header collapses (subtitle hidden).
+Splits stack vertically. Toolbars wrap.
+
+![Mobile menu open — vertical tab drawer](images/webapp/14-mobile-nav-open.png)
+
+The hamburger button reveals all 9 tabs as a vertical drawer. Tapping
+a tab auto-collapses the menu. Same nav as desktop, just a different
+layout.
+
+---
+
 ## TL;DR
 
 The frontend is a vanilla-JS dashboard at `webapp/static/`. To add a
