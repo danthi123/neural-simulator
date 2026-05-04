@@ -1328,6 +1328,14 @@ const _LOG_EP_RE     = /\[(?:P\d\s+)?ep\s+(\d+)\/(\d+)\]\s+correct_moves=(\d+)\/
 const _LOG_SWR_RE    = /\[(?:P\d\s+)?[Ss][Ww][Rr](?:\s+ev)?\]?\s+(\d+)\/(\d+)/g;
 const _LOG_STEP_RE   = /step\s+(\d+)\/(\d+)\s+pos=\((-?\d+),(-?\d+)\)\s+goal=\((-?\d+),(-?\d+)\)(?:\s+action=([NESW?]))?(?:\s+reward=([-+]?[\d.]+))?/g;
 const _LOG_PHASE_RE  = /^={3,}\s*PHASE\s+(\d+):\s+(.+?)\s+(\d+)\s+(?:episodes|events)/gm;
+// Paired-stim runners (text_pfc_bypass_isolation, text_minimal_isolation)
+// log "[isolation] N/M events" or "[minimal-iso] N/M events".
+const _LOG_PAIRED_STIM_RE = /\[(?:isolation|minimal-iso)\]\s+(\d+)\/(\d+)\s+events/g;
+// Tier-1 universal structured progress format. Captures the JSON
+// payload after `[PROGRESS] `. Future-proof: any runner using
+// sim.progress.emit_progress() shows up here without needing
+// brain3d.js changes.
+const _LOG_PROGRESS_JSON_RE = /\[PROGRESS\]\s+(\{[^\n]*\})/g;
 
 function rebuildTrajectoryFromLog(logText, run) {
   const samples = [];
@@ -1386,6 +1394,56 @@ function rebuildTrajectoryFromLog(logText, run) {
         fraction: (+m[1]) / Math.max(1, +m[2]),
       },
     });
+  }
+
+  // Paired-stim isolation markers (H4, minimal-iso)
+  for (const m of logText.matchAll(_LOG_PAIRED_STIM_RE)) {
+    const ph = phaseAt(m.index);
+    samples.push({
+      pos: m.index,
+      progress: {
+        kind: "paired_stim",
+        ev: +m[1], ev_total: +m[2],
+        fraction: (+m[1]) / Math.max(1, +m[2]),
+        phase_num: ph?.num, phase_label: ph?.label,
+      },
+    });
+  }
+
+  // Tier-1 universal structured progress events. Each is one self-
+  // describing JSON payload — whatever fields the runner emitted
+  // pass through verbatim to renderLiveStep.
+  for (const m of logText.matchAll(_LOG_PROGRESS_JSON_RE)) {
+    try {
+      const evt = JSON.parse(m[1]);
+      // Map to the legacy frontend kinds where they overlap, so the
+      // existing renderLiveStep dispatch keeps working.
+      const out = { ...evt };
+      if (evt.current != null && evt.total != null) {
+        out.fraction = evt.current / Math.max(1, evt.total);
+      }
+      // Backward-compat field aliases for the 3D viz dispatch
+      if (evt.kind === "training") {
+        out.kind = "embodied_episode";
+        out.episode = evt.current;
+        out.episodes_total = evt.total;
+        out.correct_moves = evt.correct_moves;
+        out.n_steps = evt.n_steps;
+        out.correct_pct = evt.correct_pct;
+      } else if (evt.kind === "replay") {
+        // Could be SWR replay or paired-stim — choose by phase
+        if (evt.phase && /SWR|swr/.test(evt.phase)) {
+          out.kind = "swr_replay";
+        } else {
+          out.kind = "paired_stim";
+        }
+        out.ev = evt.current;
+        out.ev_total = evt.total;
+      }
+      samples.push({ pos: m.index, progress: out });
+    } catch (e) {
+      // malformed JSON — skip this event, don't break parsing
+    }
   }
 
   samples.sort((a, b) => a.pos - b.pos);
@@ -1448,6 +1506,18 @@ function renderLiveStep(step) {
     const actIdx = (p.ev || 0) % 4;
     activateAction(actIdx, 0.5);
     bumpActivity("snc", 0.5);
+  } else if (p.kind === "paired_stim") {
+    // Paired-stim isolation (H4 PFC bypass, minimal language->motor).
+    // Drive language_input + motor_X directly. No cascade involvement
+    // in minimal arch; for H4 the cascade exists but stays quiet.
+    activateLanguagePathway(true);
+    const actIdx = (p.ev || 0) % 4;
+    // motor pool fires (and FS interneurons if visible — they share
+    // the family color in 3D viz, so the bump shows up)
+    activateAction(actIdx, 0.7);
+    // Light reward signal — paired-stim uses +1 always for synthetic
+    // buffers, so dopamine bursts steady-low
+    bumpActivity("snc", 0.3);
   } else if (p.kind === "embodied_episode") {
     activateVisualPathway(true);
     activateLanguagePathway(true);
