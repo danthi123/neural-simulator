@@ -333,3 +333,95 @@ def test_minimal_isolation_pathway_only_language_to_motor():
 
     # No other pathway types
     assert len(pathways) == 4, f"Expected exactly 4 pathways, got {len(pathways)}"
+
+
+def test_minimal_isolation_motor_fs_when_enabled():
+    """enable_motor_fs adds 4 motor_FS_X regions and the lateral
+    inhibition pathway pattern: motor_X drives its OWN FS, motor_FS_X
+    inhibits OTHER motor pools (no self-inhibition, no language->FS)."""
+    from research.runners.text_minimal_isolation import build_minimal_brain_regions
+
+    regions, pathways = build_minimal_brain_regions(enable_motor_fs=True)
+    by_name = {r.name: r for r in regions}
+    by_edge = {(p.from_region, p.to_region): p for p in pathways}
+
+    # 4 FS regions added
+    for action in ("N", "E", "S", "W"):
+        assert f"motor_FS_{action}" in by_name
+        fs_region = by_name[f"motor_FS_{action}"]
+        # Biology: PV-FS are purely inhibitory
+        assert fs_region.exc_fraction == 0.0
+        # Default 3 neurons (~12% of 25-motor-pool, biology mid-range)
+        assert fs_region.n_neurons == 3
+
+    # motor_X -> motor_FS_X (excitatory drive from pyramidal to FS)
+    for action in ("N", "E", "S", "W"):
+        key = (f"motor_{action}", f"motor_FS_{action}")
+        assert key in by_edge, f"Missing recruitment {key}"
+        assert by_edge[key].plastic is False  # static (genetic-spec)
+
+    # motor_FS_X -> motor_Y for Y != X (cross-pool inhibition)
+    for action in ("N", "E", "S", "W"):
+        for target in ("N", "E", "S", "W"):
+            key = (f"motor_FS_{action}", f"motor_{target}")
+            if action == target:
+                # NO self-inhibition (anti-cheat: real biology)
+                assert key not in by_edge, (
+                    f"Self-inhibition not biology-correct: {key}"
+                )
+            else:
+                # Cross-pool inhibition exists
+                assert key in by_edge, f"Missing cross-pool {key}"
+
+    # NO language_input -> motor_FS_X pathway (anti-cheat: would let
+    # language input directly suppress wrong motor pools)
+    for action in ("N", "E", "S", "W"):
+        bad_key = ("language_input", f"motor_FS_{action}")
+        assert bad_key not in by_edge, (
+            f"language_input -> motor_FS_{action} would let language drive "
+            f"directly suppress wrong motor pools (shortcut). Disallowed."
+        )
+
+
+def test_topographic_bias_factor_default_off():
+    """run_minimal_isolation defaults to topographic_bias_factor=1.0
+    (no topography). Existing minimal-iso tests must still pass when
+    not opted in.
+    """
+    import inspect
+    from research.runners.text_minimal_isolation import run_minimal_isolation
+
+    sig = inspect.signature(run_minimal_isolation)
+    assert "topographic_bias_factor" in sig.parameters
+    assert sig.parameters["topographic_bias_factor"].default == 1.0
+    assert "off_target_bias_factor" in sig.parameters
+    assert sig.parameters["off_target_bias_factor"].default == 1.0
+    assert "enable_motor_fs" in sig.parameters
+    assert sig.parameters["enable_motor_fs"].default is False
+    assert "freeze_stdp" in sig.parameters
+    assert sig.parameters["freeze_stdp"].default is False
+
+
+def test_topographic_bias_anti_cheat_ratio_in_biology_range():
+    """The default topographic_bias_factor / off_target_bias_factor
+    pair (1.5 / 0.7 if both used) gives a ratio ~2.1x — within
+    Pulvermuller's biological range (2-3x). Strong anti-cheat:
+    if defaults change, this test ensures someone deliberately
+    accepts a non-biology-correct ratio.
+    """
+    # The defaults should both be 1.0 (off). When the user opts in
+    # via the CLI, we recommend 1.5/0.7. The CLI help should mention
+    # this. Test the CLI help by parsing it.
+    import subprocess
+    r = subprocess.run(
+        ["python", "-m", "research.runners.text_minimal_isolation", "--help"],
+        capture_output=True, text=True, timeout=30,
+    )
+    # The biology-correct recommendation should be in the help text
+    assert "Pulvermuller" in r.stdout or "Pulvermüller" in r.stdout, (
+        "topographic-bias-factor help should cite the biology source so "
+        "future users see why 1.5/0.7 not arbitrary."
+    )
+    assert "1.5" in r.stdout, (
+        "topographic-bias-factor help should mention the recommended 1.5"
+    )

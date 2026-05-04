@@ -55,11 +55,31 @@ def build_minimal_brain_regions(
     text_input_to_motor_density: float = 0.30,
     text_input_to_motor_weight: float = 3.0,
     text_input_to_motor_jitter: float = 0.5,
+    enable_motor_fs: bool = False,
+    n_motor_fs_per_action: int = 3,
+    motor_to_fs_weight: float = 2.0,
+    fs_to_motor_weight: float = 2.0,
 ):
     """Build a minimal language->motor architecture for isolation tests.
 
     Returns (regions, pathways) tuple compatible with the brain-region
     framework.
+
+    Args:
+        enable_motor_fs: add motor_FS_X interneuron pools providing
+            cross-pool lateral inhibition (PV-FS in real motor cortex).
+            Each motor_X drives its own motor_FS_X (excitatory), which
+            inhibits the OTHER 3 motor pools (no self-inhibition). This
+            is biology-grounded: real PV-FS interneurons provide
+            ~10-15% of cortical population, mediating winner-takes-most
+            competition without absolute veto. See Vogels et al 2011,
+            Hofer et al 2011.
+        n_motor_fs_per_action: FS interneurons per pool (default 3 ~12%
+            of 25-neuron motor pool; biology range 10-15%).
+        motor_to_fs_weight: excitatory drive from motor pyramidal to FS.
+        fs_to_motor_weight: inhibitory weight from FS to other motor
+            pools. Equal to motor_to_fs by default (graded competition,
+            not absolute WTA).
     """
     from sim.regions import BrainRegion, RegionPathway
     from sim.enums import NeuronType
@@ -103,7 +123,154 @@ def build_minimal_brain_regions(
             plasticity_gate="language_input_to_motor",
         ))
 
+    # Motor lateral inhibition via PV-FS interneurons (biology-grounded)
+    if enable_motor_fs:
+        for action in ACTION_NAMES:
+            regions.append(BrainRegion(
+                name=f"motor_FS_{action}",
+                n_neurons=n_motor_fs_per_action,
+                exc_fraction=0.0,  # purely inhibitory
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+            ))
+        for action in ACTION_NAMES:
+            # motor_X excites its own FS pool (not language_input -> FS:
+            # FS recruitment must come from motor activity itself, not
+            # language input directly, to prevent "language drive
+            # directly suppresses wrong motor pools" shortcut)
+            pathways.append(RegionPathway(
+                from_region=f"motor_{action}", to_region=f"motor_FS_{action}",
+                density=0.5,
+                weight_mean=motor_to_fs_weight,
+                weight_jitter=0.3,
+                plastic=False,  # static recruitment (genetic-spec, not learned)
+            ))
+            # motor_FS_X inhibits the OTHER motor pools (no self-inhibition)
+            for target_action in ACTION_NAMES:
+                if target_action == action:
+                    continue
+                pathways.append(RegionPathway(
+                    from_region=f"motor_FS_{action}",
+                    to_region=f"motor_{target_action}",
+                    density=0.5,
+                    weight_mean=fs_to_motor_weight,
+                    weight_jitter=0.3,
+                    plastic=False,  # static inhibitory specification
+                ))
+
     return regions, pathways
+
+
+def apply_topographic_bias(
+    bridge,
+    topographic_factor: float = 1.5,
+    off_target_factor: float = 0.7,
+    n_lang_input: int = 256,
+    sparsity: float = 0.1,
+    verbose: bool = True,
+):
+    """Apply biology-grounded topographic bias to language_input -> motor_X
+    weights. Models the somatotopic Wernicke->motor projection that real
+    cortex develops via early Hebbian co-firing (Pulvermüller 2001-2003,
+    Hauk et al 2004).
+
+    For each word w with active neuron set A_w (the same set that
+    vocab_to_drive_pattern returns):
+        weights[A_w -> motor_target(w)] *= topographic_factor
+        weights[A_w -> motor_other]     *= off_target_factor
+
+    With default 1.5 / 0.7, the ratio between target and off-target is
+    ~2.1x — squarely within Pulvermüller's reported biology range
+    (2-3x).
+
+    With baseline weight=3.0, topographic_factor=1.5 gives target init
+    of 4.5 — well below stdp_w_max=5.0, leaving STDP room to grow OR
+    shrink. Off-target init of 2.1 has even more headroom.
+
+    Args:
+        bridge: initialized SimulationBridge (after _initialize_simulation_data)
+        topographic_factor: multiplier for weights from active neurons
+            of word w to motor_target(w). Default 1.5 (mid-biology).
+        off_target_factor: multiplier for weights from active neurons
+            of word w to other motor pools. Default 0.7.
+        n_lang_input: language_input region size. Used to compute the
+            same drive pattern as the eval/training pipeline.
+        sparsity: same sparsity used for token drive elsewhere.
+
+    Returns:
+        dict with applied edge counts per pathway, for verification.
+    """
+    import numpy as np
+    from sim.text_embeddings import vocab_to_drive_pattern
+
+    if bridge.region_manager is None:
+        raise RuntimeError("apply_topographic_bias: region_manager is None")
+
+    rm = bridge.region_manager
+    lang_input_indices = list(rm.indices("language_input"))
+    n_lang = len(lang_input_indices)
+    if n_lang != n_lang_input:
+        raise ValueError(
+            f"apply_topographic_bias: bridge has {n_lang} language_input "
+            f"neurons but caller specified {n_lang_input}"
+        )
+
+    word_to_action = {"north": "N", "east": "E", "south": "S", "west": "W"}
+    actions = ["N", "E", "S", "W"]
+
+    # Extract current CSR weights once (avoids per-pathway pull)
+    indptr = bridge.cp_connections.indptr.get()
+    indices = bridge.cp_connections.indices.get()
+    data = bridge.cp_connections.data.get()
+
+    # Pre-compute (pre, post) -> data index for fast lookup
+    pair_to_idx = {}
+    n_rows = int(bridge.cp_connections.shape[0])
+    for r in range(n_rows):
+        start = int(indptr[r])
+        end = int(indptr[r + 1])
+        for off in range(start, end):
+            pair_to_idx[(r, int(indices[off]))] = off
+
+    summary = {}
+    for word, target_action in word_to_action.items():
+        # Active language_input neurons for this word
+        drive = vocab_to_drive_pattern(word, n_neurons=n_lang_input,
+                                        sparsity=sparsity)
+        local_active = np.where(drive > 0)[0]
+        global_active = [lang_input_indices[i] for i in local_active]
+
+        for action in actions:
+            motor_indices = list(rm.indices(f"motor_{action}"))
+            factor = (topographic_factor if action == target_action
+                      else off_target_factor)
+
+            n_changed = 0
+            for src in global_active:
+                for dst in motor_indices:
+                    key = (src, dst)
+                    if key in pair_to_idx:
+                        idx = pair_to_idx[key]
+                        data[idx] = float(data[idx]) * factor
+                        n_changed += 1
+            summary[f"{word}->motor_{action}"] = {
+                "factor": factor,
+                "edges_modified": n_changed,
+            }
+
+    # Push back to GPU
+    import cupy as cp
+    bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
+
+    if verbose:
+        print(f"[topographic-bias] Applied factor={topographic_factor:.2f}/"
+              f"{off_target_factor:.2f} to language_input -> motor_X")
+        for k, v in summary.items():
+            print(f"  {k}: x{v['factor']:.2f} on {v['edges_modified']} edges")
+
+    return summary
 
 
 def run_minimal_isolation(
@@ -122,6 +289,12 @@ def run_minimal_isolation(
     text_input_to_motor_jitter: float = 0.5,
     stdp_w_max: float = 5.0,
     enable_hebbian: bool = False,
+    # Biology-grounded additions (2026-05-03)
+    enable_motor_fs: bool = False,
+    n_motor_fs_per_action: int = 3,
+    topographic_bias_factor: float = 1.0,  # 1.0 = off (uniform random)
+    off_target_bias_factor: float = 1.0,   # 1.0 = off (uniform random)
+    freeze_stdp: bool = False,             # anti-cheat control: skip STDP
     verbose: bool = True,
 ):
     """Run the minimal isolation experiment. Returns (bridge, stats)."""
@@ -137,10 +310,18 @@ def run_minimal_isolation(
         print("=" * 60)
         print(f"MINIMAL LANGUAGE->MOTOR ISOLATION (seed={seed})")
         print(f"  n_lang_input={n_lang_input}, motor_per_action={n_motor_per_action}")
-        print(f"  Total: {n_lang_input + 4*n_motor_per_action} neurons")
+        total_neurons = (n_lang_input + 4 * n_motor_per_action +
+                         (4 * n_motor_fs_per_action if enable_motor_fs else 0))
+        print(f"  Total: {total_neurons} neurons")
         print(f"  {n_events_per_direction} paired-stim events per direction")
         print(f"  dt={dt_ms}ms, stim={stim_steps_per_step}, reset={reset_steps}")
         print(f"  enable_hebbian={enable_hebbian}, stdp_w_max={stdp_w_max}")
+        print(f"  enable_motor_fs={enable_motor_fs} (n_fs_per_action="
+              f"{n_motor_fs_per_action})")
+        print(f"  topographic_bias: target={topographic_bias_factor:.2f}, "
+              f"off={off_target_bias_factor:.2f} "
+              f"(1.0/1.0 = no topography)")
+        print(f"  freeze_stdp={freeze_stdp} (anti-cheat control)")
         print("=" * 60, flush=True)
 
     regions, pathways = build_minimal_brain_regions(
@@ -148,6 +329,8 @@ def run_minimal_isolation(
         n_motor_per_action=n_motor_per_action,
         text_input_to_motor_weight=text_input_to_motor_weight,
         text_input_to_motor_jitter=text_input_to_motor_jitter,
+        enable_motor_fs=enable_motor_fs,
+        n_motor_fs_per_action=n_motor_fs_per_action,
     )
 
     cfg = CoreSimConfig()
@@ -172,6 +355,30 @@ def run_minimal_isolation(
         cfg.max_synaptic_delay_ms / cfg.dt_ms
     )
     bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    # Apply topographic bias if requested (must come AFTER init, before
+    # training, so STDP can refine from the biased starting point).
+    if topographic_bias_factor != 1.0 or off_target_bias_factor != 1.0:
+        apply_topographic_bias(
+            bridge,
+            topographic_factor=topographic_bias_factor,
+            off_target_factor=off_target_bias_factor,
+            n_lang_input=n_lang_input,
+            sparsity=token_sparsity,
+            verbose=verbose,
+        )
+
+    # Anti-cheat control: freeze STDP via plasticity gate. Tests whether
+    # topographic bias alone (without learning) solves the task.
+    if freeze_stdp:
+        try:
+            bridge.set_plasticity_gate("language_input_to_motor", 0.0)
+            if verbose:
+                print("[freeze_stdp] STDP frozen on language_input_to_motor "
+                      "(anti-cheat control)", flush=True)
+        except Exception as e:
+            print(f"[freeze_stdp] WARNING: could not freeze gate: {e}",
+                  flush=True)
 
     # Build synthetic balanced experience buffer
     DIRECTIONS = ["north", "east", "south", "west"]
@@ -283,6 +490,26 @@ def main():
     ap.add_argument("--text-input-to-motor-jitter", type=float, default=0.5)
     ap.add_argument("--stdp-w-max", type=float, default=5.0)
     ap.add_argument("--enable-hebbian", action="store_true", default=False)
+    # Biology-grounded additions (2026-05-03)
+    ap.add_argument("--enable-motor-fs", action="store_true", default=False,
+                    help="add motor PV-FS interneurons providing cross-pool "
+                    "lateral inhibition (3 FS neurons per pool by default)")
+    ap.add_argument("--n-motor-fs-per-action", type=int, default=3,
+                    help="FS interneurons per motor pool (default 3 ~12%% "
+                    "of 25-neuron pool, biology range 10-15%%)")
+    ap.add_argument("--topographic-bias-factor", type=float, default=1.0,
+                    help="multiplier for weights from word's active neurons "
+                    "to its target motor pool. 1.0 = no topography (random). "
+                    "1.5 = mid-biology range (Pulvermuller 2001-2003 ratio "
+                    "~2-3x). Pair with --off-target-bias-factor < 1.0.")
+    ap.add_argument("--off-target-bias-factor", type=float, default=1.0,
+                    help="multiplier for weights from word's active neurons "
+                    "to NON-target motor pools. 1.0 = no topography. 0.7 "
+                    "with topographic-bias-factor=1.5 gives ratio ~2.1x.")
+    ap.add_argument("--freeze-stdp", action="store_true", default=False,
+                    help="anti-cheat control: freeze STDP on the language_"
+                    "input_to_motor pathway. Combined with topographic bias, "
+                    "tests whether the prior alone solves the task.")
     args = ap.parse_args()
 
     bridge, train_stats = run_minimal_isolation(
@@ -300,6 +527,11 @@ def main():
         text_input_to_motor_jitter=args.text_input_to_motor_jitter,
         stdp_w_max=args.stdp_w_max,
         enable_hebbian=args.enable_hebbian,
+        enable_motor_fs=args.enable_motor_fs,
+        n_motor_fs_per_action=args.n_motor_fs_per_action,
+        topographic_bias_factor=args.topographic_bias_factor,
+        off_target_bias_factor=args.off_target_bias_factor,
+        freeze_stdp=args.freeze_stdp,
         verbose=True,
     )
 
@@ -339,6 +571,11 @@ def main():
                 "text_input_to_motor_weight": args.text_input_to_motor_weight,
                 "stdp_w_max": args.stdp_w_max,
                 "enable_hebbian": args.enable_hebbian,
+                "enable_motor_fs": args.enable_motor_fs,
+                "n_motor_fs_per_action": args.n_motor_fs_per_action,
+                "topographic_bias_factor": args.topographic_bias_factor,
+                "off_target_bias_factor": args.off_target_bias_factor,
+                "freeze_stdp": args.freeze_stdp,
             },
         }
         from pathlib import Path
