@@ -50,9 +50,26 @@ const $$ = (sel) => Array.from(document.querySelectorAll(sel));
  * Legacy kinds (retained for backward compat):
  *   "swr_replay", "paired_stim", "embodied_episode", "step"
  */
+function _formatEta(seconds) {
+  if (!seconds || seconds <= 0) return "";
+  if (seconds < 60) return `${Math.round(seconds)}s`;
+  if (seconds < 3600) return `${Math.round(seconds / 60)}m`;
+  const h = Math.floor(seconds / 3600);
+  const m = Math.round((seconds % 3600) / 60);
+  return `${h}h${m}m`;
+}
+
 function formatProgressLine(p) {
   if (!p || !p.kind) return "(no progress markers yet)";
   const phasePrefix = p.phase ? `${p.phase} · ` : (p.phase_num ? `Phase ${p.phase_num} · ` : "");
+
+  // Sweep-level (experiment_runner): X of N runs done across all conditions
+  if (p.kind === "sweep") {
+    const unit = p.unit || "runs";
+    const pct = p.total > 0 ? ((p.current / p.total) * 100).toFixed(1) : "?";
+    const eta = p.eta_seconds ? ` · ETA ${_formatEta(p.eta_seconds)}` : "";
+    return `${phasePrefix}sweep · ${p.current}/${p.total} ${unit} (${pct}%)${eta}`;
+  }
 
   // Tier-1 universal kinds first
   if (p.kind === "training") {

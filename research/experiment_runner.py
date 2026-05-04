@@ -202,6 +202,23 @@ def run_experiment(cfg: ExperimentConfig, master_log: Path) -> Dict[str, Any]:
     log(f"Seeds: {cfg.seeds}")
     log(f"Parallelism: {cfg.parallelism}")
 
+    # Sweep-level pid file so the webapp's /api/inflight can surface this
+    # as a sweep-tier inflight entry. Filename intentionally NOT ending in
+    # `.master.pid` (those are filtered out by the legacy bookkeeping
+    # filter); use `.sweep.pid` instead.
+    sweep_pid_file = cfg.output_dir / f"{cfg.name}.sweep.pid"
+    sweep_log_file = cfg.output_dir / f"{cfg.name}.sweep.log"
+    sweep_pid_file.write_text(str(os.getpid()), encoding="ascii")
+
+    # Mirror master log to the sweep.log file so the webapp's inflight
+    # log_file convention (basename match) finds it.
+    def sweep_log(msg: str) -> None:
+        ts = time.strftime("%Y-%m-%d %H:%M:%S")
+        with sweep_log_file.open("a", encoding="utf-8") as f:
+            f.write(f"[{ts}] {msg}\n")
+
+    sweep_log(f"=== {cfg.name} started ===")
+
     # Build full run plan (condition × seed)
     plan: List[tuple[Condition, int]] = []
     for cond in cfg.conditions:
@@ -209,6 +226,39 @@ def run_experiment(cfg: ExperimentConfig, master_log: Path) -> Dict[str, Any]:
             plan.append((cond, seed))
     total = len(plan)
     log(f"Total runs: {total}")
+
+    # Emit initial sweep [PROGRESS] event so webapp shows sweep-level
+    # progress instead of just per-child cycling.
+    try:
+        from sim.progress import emit_progress
+    except ImportError:
+        emit_progress = None
+
+    sweep_started_at = time.time()
+
+    def _emit_sweep_progress(current_done: int) -> None:
+        if emit_progress is None:
+            return
+        elapsed = time.time() - sweep_started_at
+        # Mirror to sweep.log so /api/inflight's log-tail parser sees it
+        rate = current_done / elapsed if elapsed > 0 and current_done > 0 else 0
+        eta = (total - current_done) / rate if rate > 0 else 0
+        line = (
+            f'[PROGRESS] {{"kind": "sweep", "current": {current_done}, '
+            f'"total": {total}, "phase": "{cfg.name}", "unit": "runs", '
+            f'"elapsed_seconds": {elapsed:.1f}, "eta_seconds": {eta:.1f}}}'
+        )
+        with sweep_log_file.open("a", encoding="utf-8") as f:
+            f.write(line + "\n")
+        # Also stdout for direct stdout-capture flows
+        emit_progress(
+            "sweep", current_done, total,
+            phase=cfg.name, unit="runs",
+            elapsed_seconds=elapsed,
+            eta_seconds=eta,
+        )
+
+    _emit_sweep_progress(0)
 
     succeeded: List[Dict[str, Any]] = []
     failed: List[Dict[str, Any]] = []
@@ -250,12 +300,24 @@ def run_experiment(cfg: ExperimentConfig, master_log: Path) -> Dict[str, Any]:
                 failed.append(entry)
                 log(f"  {h.log_prefix} FAILED (exit {rc})")
 
+        # After each batch, emit updated sweep progress
+        _emit_sweep_progress(len(succeeded) + len(failed))
+
     # Summary
     log("")
     log(f"Summary: {len(succeeded)}/{total} succeeded, "
         f"{len(failed)}/{total} failed")
     log("")
     log(f"=== {cfg.name} COMPLETE ===")
+    sweep_log(f"=== {cfg.name} COMPLETE ===")
+
+    # Final sweep progress (100%)
+    _emit_sweep_progress(total)
+
+    # Move sweep pid to .done so /api/inflight stops listing it as alive.
+    if sweep_pid_file.exists():
+        done = sweep_pid_file.with_suffix(sweep_pid_file.suffix + ".done")
+        sweep_pid_file.replace(done)
 
     return {
         "name": cfg.name,

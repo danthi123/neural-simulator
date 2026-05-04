@@ -1525,6 +1525,22 @@ function renderLiveStep(step) {
     // Light reward signal — paired-stim uses +1 always for synthetic
     // buffers, so dopamine bursts steady-low
     bumpActivity("snc", 0.3);
+  } else if (p.kind === "eval") {
+    // W->A eval phase (e.g., evaluate_word_to_action). Drives
+    // language_input → motor_X with each word; cycles through
+    // N/E/S/W actions deterministically. No cascade, no reward.
+    activateLanguagePathway(true);
+    const actIdx = (p.current || 0) % 4;
+    activateAction(actIdx, 0.6);
+    // No dopamine pulse during eval — readonly measurement
+  } else if (p.kind === "sweep") {
+    // Sweep-level meta progress from experiment_runner. Lightly
+    // pulse the cortex+language family so user sees "something is
+    // running" even while a child run is between phases. The active
+    // child run's own progress (kind=eval/replay) drives the main
+    // animation; sweep is just a "still alive" backdrop.
+    activateLanguagePathway(true);
+    bumpActivity("snc", 0.15);
   } else if (p.kind === "embodied_episode") {
     activateVisualPathway(true);
     activateLanguagePathway(true);

@@ -1462,15 +1462,26 @@ def list_inflight_runs() -> JSONResponse:
     work (the training subprocess) registers its own *.pid file.
     """
     inflight = []
+    # Two flavors of pid file:
+    # 1. {name}.pid — single training/eval run (per-seed-per-condition)
+    # 2. {name}.sweep.pid — experiment_runner sweep orchestrator (covers
+    #    multiple child runs). Surfaces sweep-level progress for the
+    #    user instead of just the active child's per-trial cycle.
+    # 3. {name}.master.pid — legacy orchestrator-shepherd; still filtered.
     for pid_file in sorted(RAW_RUNS_DIR.glob("*.pid")):
-        # Skip orchestrator-shepherd pids (not training runs)
+        # Skip legacy orchestrator-shepherd pids (not training runs)
         if pid_file.name.endswith(".master.pid"):
             continue
         try:
             pid = int(pid_file.read_text().strip())
         except Exception:
             continue
-        log_file = pid_file.with_suffix(".log")
+        is_sweep = pid_file.name.endswith(".sweep.pid")
+        # Sweep pids use {name}.sweep.log; per-run pids use {name}.log
+        if is_sweep:
+            log_file = pid_file.with_suffix(".log")  # name.sweep.pid -> name.sweep.log
+        else:
+            log_file = pid_file.with_suffix(".log")
         result_json = pid_file.with_name(
             pid_file.stem.replace(".pid", "")
         ).with_suffix(".json")
@@ -1496,7 +1507,11 @@ def list_inflight_runs() -> JSONResponse:
             "progress": progress,
             "result_file": result_path.name if result_path else None,
             "completed": result_path is not None,
+            "is_sweep": is_sweep,
         })
+    # Sort sweep entries first so the dashboard shows sweep-level
+    # progress at the top rather than the cycling per-child cards.
+    inflight.sort(key=lambda r: (not r.get("is_sweep"), r.get("name", "")))
     return JSONResponse({"inflight": inflight, "count": len(inflight)})
 
 
