@@ -128,7 +128,7 @@ function createScene(width, height) {
   composer.addPass(new RenderPass(scene, camera));
   const bloom = new UnrealBloomPass(
     new THREE.Vector2(width, height),
-    0.6,    // strength
+    0.3,    // strength (reduced 50% from 0.6 — 2026-05-04)
     0.8,    // radius
     0.15,   // threshold
   );
