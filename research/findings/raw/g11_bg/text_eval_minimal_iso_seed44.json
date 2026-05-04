@@ -1,0 +1,183 @@
+{
+  "regime": "minimal_language_motor_isolation",
+  "seed": 44,
+  "n_events_per_direction": 1000,
+  "n_total_events": 4000,
+  "training_stats": [
+    {
+      "phase": 1,
+      "regime": "minimal_language_motor_isolation",
+      "n_total_events": 4000,
+      "n_per_direction": 1000,
+      "elapsed_seconds": 8057.042535543442
+    }
+  ],
+  "word_to_action_eval": {
+    "n_trials": 100,
+    "correct": 21,
+    "accuracy": 0.21,
+    "confusion_matrix": {
+      "north": {
+        "N": 7,
+        "E": 6,
+        "S": 6,
+        "W": 6
+      },
+      "east": {
+        "N": 7,
+        "E": 5,
+        "S": 7,
+        "W": 6
+      },
+      "south": {
+        "N": 10,
+        "E": 7,
+        "S": 5,
+        "W": 3
+      },
+      "west": {
+        "N": 2,
+        "E": 15,
+        "S": 4,
+        "W": 4
+      }
+    },
+    "interleave_words": true,
+    "n_reset_steps": 50,
+    "alternative_decoders": {
+      "drive_only": {
+        "correct": 24,
+        "accuracy": 0.24,
+        "confusion": {
+          "north": {
+            "N": 7,
+            "E": 7,
+            "S": 1,
+            "W": 10
+          },
+          "east": {
+            "N": 5,
+            "E": 8,
+            "S": 6,
+            "W": 6
+          },
+          "south": {
+            "N": 8,
+            "E": 7,
+            "S": 6,
+            "W": 4
+          },
+          "west": {
+            "N": 1,
+            "E": 20,
+            "S": 1,
+            "W": 3
+          }
+        }
+      },
+      "ratio": {
+        "correct": 22,
+        "accuracy": 0.22,
+        "confusion": {
+          "north": {
+            "N": 6,
+            "E": 6,
+            "S": 7,
+            "W": 6
+          },
+          "east": {
+            "N": 6,
+            "E": 5,
+            "S": 7,
+            "W": 7
+          },
+          "south": {
+            "N": 8,
+            "E": 6,
+            "S": 7,
+            "W": 4
+          },
+          "west": {
+            "N": 4,
+            "E": 12,
+            "S": 5,
+            "W": 4
+          }
+        }
+      },
+      "zscore": {
+        "correct": 21,
+        "accuracy": 0.21,
+        "confusion": {
+          "north": {
+            "N": 7,
+            "E": 6,
+            "S": 6,
+            "W": 6
+          },
+          "east": {
+            "N": 7,
+            "E": 5,
+            "S": 7,
+            "W": 6
+          },
+          "south": {
+            "N": 10,
+            "E": 7,
+            "S": 5,
+            "W": 3
+          },
+          "west": {
+            "N": 2,
+            "E": 15,
+            "S": 4,
+            "W": 4
+          }
+        }
+      },
+      "clipped": {
+        "correct": 20,
+        "accuracy": 0.2,
+        "confusion": {
+          "north": {
+            "N": 6,
+            "E": 6,
+            "S": 6,
+            "W": 7
+          },
+          "east": {
+            "N": 7,
+            "E": 5,
+            "S": 7,
+            "W": 6
+          },
+          "south": {
+            "N": 11,
+            "E": 6,
+            "S": 5,
+            "W": 3
+          },
+          "west": {
+            "N": 2,
+            "E": 15,
+            "S": 4,
+            "W": 4
+          }
+        }
+      }
+    }
+  },
+  "config": {
+    "n_lang_input": 256,
+    "n_motor_per_action": 25,
+    "lang_input_drive_pA": 200.0,
+    "motor_replay_drive_pA": 50.0,
+    "stim_steps_per_step": 100,
+    "reset_steps": 50,
+    "token_sparsity": 0.1,
+    "dt_ms": 1.0,
+    "text_input_to_motor_weight": 3.0,
+    "stdp_w_max": 5.0,
+    "enable_hebbian": false
+  }
+}
