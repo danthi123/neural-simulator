@@ -41,14 +41,24 @@ if (-not (Test-Path $outDir)) {
 Get-Process python -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 Start-Sleep -Seconds 2
 
-# Step 2: launch webapp on port 8765
-"Step 2: launching webapp on port 8765" | Out-File -Append $launchLog
+# Step 2: launch webapp on port 8765 (LAN-accessible via 0.0.0.0 so the
+# user can load the dashboard from a phone on the same network).
+# Find LAN IP for the launch log so user knows the URL.
+$lanIp = (Get-NetIPAddress -AddressFamily IPv4 -PrefixOrigin Dhcp,Manual `
+    -ErrorAction SilentlyContinue |
+    Where-Object { $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' -and $_.InterfaceAlias -notlike '*Default Switch*' } |
+    Select-Object -First 1 -ExpandProperty IPAddress)
+"Step 2: launching webapp on port 8765 (LAN-bound 0.0.0.0)" | Out-File -Append $launchLog
 $webProc = Start-Process -FilePath "C:\python312\python.exe" `
     -ArgumentList "-m","uvicorn","webapp.server:app",
-                  "--host","127.0.0.1","--port","8765",
+                  "--host","0.0.0.0","--port","8765",
                   "--log-level","warning" `
     -WindowStyle Hidden -PassThru
 "Webapp launched as PID $($webProc.Id)" | Out-File -Append $launchLog
+if ($lanIp) {
+    "  http://localhost:8765 (this machine)" | Out-File -Append $launchLog
+    "  http://$lanIp:8765 (other devices on LAN, e.g. phone)" | Out-File -Append $launchLog
+}
 Start-Sleep -Seconds 5
 
 # Step 3: launch bio_sanity_check sweep
