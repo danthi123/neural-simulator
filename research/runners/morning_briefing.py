@@ -180,12 +180,45 @@ def _chain_status() -> dict:
         stage = "unknown"
         next_step = "No clear chain stage detected"
 
+    # Stall detection: check if any progress log was updated in last 30 min.
+    # If we're "running" but nothing has updated, the chain may be stalled.
+    stall_warning = None
+    now = datetime.now()
+    if stage in ("minimal_iso_running", "biology_sweep_running", "A1_running",
+                 "B1_running"):
+        # Find newest progress log
+        log_patterns = ["minimal_iso_seed*.log", "biology_*_seed*.log",
+                        "minbio_*_seed*.log", "sanity_check_*_seed*.log"]
+        newest_log = None
+        newest_mtime = None
+        for pat in log_patterns:
+            for p in raw.glob(pat):
+                if p.name.endswith(".err") or p.name.endswith(".pid") or \
+                        p.name.endswith(".pid.done"):
+                    continue
+                try:
+                    mtime = datetime.fromtimestamp(p.stat().st_mtime)
+                    if newest_mtime is None or mtime > newest_mtime:
+                        newest_mtime = mtime
+                        newest_log = p
+                except OSError:
+                    continue
+        if newest_mtime is not None:
+            mins_since_update = (now - newest_mtime).total_seconds() / 60
+            if mins_since_update > 30:
+                stall_warning = (
+                    f"WARNING: No log updates in {mins_since_update:.1f} min "
+                    f"(newest: {newest_log.name if newest_log else 'unknown'}). "
+                    f"Chain may be stalled."
+                )
+
     return {
         "stage": stage,
         "verdict": verdict,
         "next_step": next_step,
         "minimal_iso_done": minimal_iso_done,
         "biology_complete": biology_complete,
+        "stall_warning": stall_warning,
     }
 
 
@@ -262,6 +295,8 @@ def main():
     if cs['verdict']:
         print(f"  Verdict: {cs['verdict']} (A=aligned>=4/6, A_weak=2-3/6, B=0-1/6)")
     print(f"  Next: {cs['next_step']}")
+    if cs.get('stall_warning'):
+        print(f"  {cs['stall_warning']}")
 
     # 1. Git commits
     commits = _git_recent_commits(args.since)
