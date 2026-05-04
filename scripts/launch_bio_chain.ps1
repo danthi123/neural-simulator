@@ -93,7 +93,7 @@ if ($aggOutput -match "Real word-action learning achieved") {
 if ($bioVerdict -eq "eval_works") {
     "" | Out-File -Append $launchLog
     "Eval works at biological scale -> launching proof-of-concept STDP training." | Out-File -Append $launchLog
-    "Step 7: bio_proof_of_concept at $(Get-Date)" | Out-File -Append $launchLog
+    "Step 7: bio_proof_of_concept at $(Get-Date) (parallel=3, 6 seeds x 2 conds = 12 runs)" | Out-File -Append $launchLog
     $pocProc = Start-Process -FilePath "C:\python312\python.exe" `
         -ArgumentList "-m","research.experiment_runner",
                       "experiments/bio_proof_of_concept.yaml" `
@@ -104,13 +104,69 @@ if ($bioVerdict -eq "eval_works") {
     $pocProc.WaitForExit()
     "bio_proof_of_concept finished (exit $($pocProc.ExitCode)) at $(Get-Date)" | Out-File -Append $launchLog
 
-    # Aggregate
+    # Aggregate PoC results + parse verdict
     "" | Out-File -Append $launchLog
     "Step 8: aggregating bio_proof_of_concept" | Out-File -Append $launchLog
     $pocOut = & "C:\python312\python.exe" -m research.result_aggregator `
         --config bio_proof_of_concept `
         --out "$findingsDir/2026-05-04-bio-proof-of-concept-results.md" 2>&1
     "$pocOut" | Out-File -Append $launchLog
+
+    # Stage 3: autonomous decision based on PoC verdict
+    $pocVerdict = "unknown"
+    if ($pocOut -match "Real word-action learning achieved") {
+        $pocVerdict = "stdp_works_at_bio"
+    } elseif ($pocOut -match "Partial signal") {
+        $pocVerdict = "stdp_partial"
+    } elseif ($pocOut -match "No real learning") {
+        $pocVerdict = "stdp_fails_at_bio"
+    }
+    "" | Out-File -Append $launchLog
+    "POC VERDICT: $pocVerdict" | Out-File -Append $launchLog
+
+    if ($pocVerdict -eq "stdp_works_at_bio") {
+        # SUCCESS: cortical canon (and maybe biology fix) enables W->A
+        # at bio scale with STDP. Multi-seed already done at 6 seeds.
+        # No further auto-experiment needed; this is the headline result.
+        "" | Out-File -Append $launchLog
+        "STDP works at biological scale. Headline finding documented." | Out-File -Append $launchLog
+        "No further auto-experiments. Manual review for next directions:" | Out-File -Append $launchLog
+        "  - scale-up validation (lang=4096, motor=1000)" | Out-File -Append $launchLog
+        "  - harder benchmark (longer training, larger vocabulary)" | Out-File -Append $launchLog
+        "  - ablations (canon vs biology fix vs scale)" | Out-File -Append $launchLog
+    } elseif ($pocVerdict -eq "stdp_partial") {
+        # MIXED: some seeds align. Run additional seeds OR sparse-code variation
+        # to clarify. Auto-launching b3 gradient is premature.
+        "" | Out-File -Append $launchLog
+        "Partial signal. Stopping for manual review (more seeds vs sparser codes vs B3 gradient)." | Out-File -Append $launchLog
+    } elseif ($pocVerdict -eq "stdp_fails_at_bio") {
+        # FAILURE: STDP can't find the mapping even at bio scale with biology fix.
+        # Auto-launch B3 (supervised gradient) at bio scale to test
+        # "is plasticity rule the bottleneck?"
+        "" | Out-File -Append $launchLog
+        "STDP fails at biological scale. Launching B3 (supervised gradient) at bio scale" | Out-File -Append $launchLog
+        "to test if ANY learning rule succeeds here." | Out-File -Append $launchLog
+        "Step 9: bio_b3_gradient at $(Get-Date)" | Out-File -Append $launchLog
+        $b3Proc = Start-Process -FilePath "C:\python312\python.exe" `
+            -ArgumentList "-m","research.experiment_runner",
+                          "experiments/bio_b3_gradient.yaml" `
+            -RedirectStandardOutput "$outDir/bio_b3_gradient.stdout.log" `
+            -RedirectStandardError "$outDir/bio_b3_gradient.stderr.log" `
+            -WindowStyle Hidden -PassThru
+        "bio_b3_gradient launched as PID $($b3Proc.Id)" | Out-File -Append $launchLog
+        $b3Proc.WaitForExit()
+        "bio_b3_gradient finished (exit $($b3Proc.ExitCode)) at $(Get-Date)" | Out-File -Append $launchLog
+
+        "" | Out-File -Append $launchLog
+        "Step 10: aggregating bio_b3_gradient" | Out-File -Append $launchLog
+        $b3Out = & "C:\python312\python.exe" -m research.result_aggregator `
+            --config b3_supervised_gradient `
+            --out "$findingsDir/2026-05-04-bio-b3-gradient-results.md" 2>&1
+        "$b3Out" | Out-File -Append $launchLog
+    } else {
+        "" | Out-File -Append $launchLog
+        "PoC verdict $pocVerdict not actionable for auto-chain. Stopping." | Out-File -Append $launchLog
+    }
 } elseif ($bioVerdict -eq "eval_broken") {
     "" | Out-File -Append $launchLog
     "Eval broken even at bio scale -> deeper investigation needed." | Out-File -Append $launchLog

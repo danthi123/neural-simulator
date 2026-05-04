@@ -1,0 +1,70 @@
+# Biological-scale supervised gradient learning (B3 at bio scale).
+#
+# CONDITIONAL FALLBACK: only fires if bio_proof_of_concept gives
+# 0-2/6 aligned across both conditions (i.e., STDP+R-STDP fails at
+# biological scale despite cortical canon + biology fix).
+#
+# This tests the "plasticity rule is the bottleneck" hypothesis. If
+# supervised gradient learning succeeds where STDP fails, then:
+#   - The architecture CAN represent the mapping (eval works,
+#     dynamics support discrimination)
+#   - But STDP+R-STDP can't FIND the right weights under noisy
+#     paired-stim training
+#   - Future work: find a biology-grounded learning rule that
+#     better approximates supervised gradient (e.g., dendritic
+#     compartmentalization with apical-basal feedback per Bono &
+#     Clopath 2017, or three-factor with eligibility per
+#     Frémaux & Gerstner 2016)
+#
+# Memory budget at parallel=2: ~5 GB VRAM (gradient updates need
+# more memory than STDP for the rolling-window accumulator).
+# Conservative for the first multi-seed gradient run at bio scale.
+#
+# Estimated runtime: ~80-100 min/seed (gradient is slower than STDP
+# per event due to per-event CSR mutation + GPU push).
+#
+# Total: 3 conditions × 3 seeds = 9 runs / parallel-2 = ~5 batches
+# × ~90 min = ~7.5 hours. Long, but only if PoC fails.
+
+name: bio-b3-gradient
+runner: research.runners.b3_supervised_gradient
+output_dir: research/findings/raw/g11_bg
+parallelism: 2
+
+seeds: [42, 43, 44]
+
+base_args:
+  # b3_supervised_gradient.py doesn't have a --biological flag yet;
+  # we pass the bio architecture sizes directly. NMDA / recurrence
+  # settings come from BrainRegion defaults (which are bio-canon
+  # defaults: exc_fraction=0.8, internal_density=0.1) — the minimal
+  # builder explicitly overrides these to non-bio values, but we'd
+  # need to call build_biological_brain_regions to get bio config
+  # for B3. For now, run with current behavior (minimal builder)
+  # so the test still produces a B3 baseline at biological N. If
+  # this fails, the next step is to wire --biological into b3.
+  n-lang-input: 2048
+  n-motor-per-action: 500
+  n-motor-fs-per-action: 60
+  n-events-per-direction: 1000
+  stim-steps-per-event: 50
+  reset-steps: 50
+  learning-rate: 1e-3
+
+conditions:
+  # Gradient only, no biology fix
+  - name: bio_grad_vanilla
+    args: {}
+
+  # Gradient + biology fix (topographic prior + motor PV-FSI)
+  - name: bio_grad_with_topo_fs
+    args:
+      apply-topographic-bias: true
+      enable-motor-fs: true
+
+  # Gradient + topographic prior alone (no FS)
+  - name: bio_grad_with_topo
+    args:
+      apply-topographic-bias: true
+
+out_stats_template: "text_eval_b3_bio_{name}_seed{seed}.json"
