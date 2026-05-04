@@ -211,9 +211,18 @@ def _chain_status() -> dict:
     now = datetime.now()
     if stage in ("minimal_iso_running", "biology_sweep_running", "A1_running",
                  "B1_running"):
-        # Find newest progress log
-        log_patterns = ["minimal_iso_seed*.log", "biology_*_seed*.log",
-                        "minbio_*_seed*.log", "sanity_check_*_seed*.log"]
+        # Find newest progress log. Note: biology sweep uses DOT separators
+        # in filenames (biology_fs_only.seed42.log) while minimal-iso uses
+        # underscores; the patterns cover both.
+        log_patterns = [
+            "minimal_iso_seed*.log",
+            "biology_*_seed*.log",          # underscored (older convention)
+            "biology_*.seed*.log",          # dot-separated (run_biology_sweep.ps1)
+            "minbio_*_seed*.log",
+            "minbio_*.seed*.log",
+            "sanity_check_*_seed*.log",
+            "sanity_check_*.seed*.log",
+        ]
         newest_log = None
         newest_mtime = None
         for pat in log_patterns:
