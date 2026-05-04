@@ -50,18 +50,26 @@ def hand_build_perfect_weights(
     sparsity: float = 0.1,
     target_weight: float = 8.0,
     off_target_weight: float = 0.0,
+    mode: str = "perfect",
     verbose: bool = True,
 ):
-    """For each word w, set language_input -> motor_X weights to 1 (max)
-    on edges leading to motor_correct(w), and 0 on edges leading to
-    motor_other(w). Any pre-existing edges between language_input and
-    motor pools are wiped first.
+    """Hand-build language_input -> motor_X weights for sanity-check eval.
 
-    This is the IDEAL weight pattern for the task: every active language
-    neuron drives ONLY the correct motor pool. If the eval can't detect
-    a winner here, no learning rule can possibly help.
+    Mode determines the weight pattern:
+      - "perfect": each word's active src -> correct motor_X = high,
+        off-target = 0. Tests "can the eval detect a known-correct mapping?"
+        Expected verdict: aligned >= 4/6.
+      - "wrong": each word's active src -> WRONG motor_X (rotated by 1) = high,
+        TRUE motor = 0. Tests "does the eval correctly reject a known-wrong
+        mapping?" Expected verdict: aligned 0/6 with best-permutation = TRUE
+        rotated by 1 (e.g. "ESWN" or similar).
+      - "random": all language_input -> motor_X edges set to random uniform
+        weight ~ U[0, target_weight]. Tests "what does the eval do under
+        no learning?" Expected verdict: aligned ~chance.
+      - "wipe": all language_input -> motor_X edges wiped to 0. Tests
+        "does eval handle silent motor pools?" Expected: degenerate.
 
-    Returns a summary dict with edge counts per (word, action).
+    Returns a summary dict with edge counts per (word, action) and the mode.
     """
     import cupy as cp
     from sim.text_embeddings import vocab_to_drive_pattern
@@ -80,6 +88,11 @@ def hand_build_perfect_weights(
 
     word_to_action = {"north": "N", "east": "E", "south": "S", "west": "W"}
     actions = ["N", "E", "S", "W"]
+
+    # For mode="wrong", rotate target by 1 (north -> E, east -> S, etc.)
+    if mode == "wrong":
+        rotated = {"north": "E", "east": "S", "south": "W", "west": "N"}
+        word_to_action = rotated
 
     motor_indices = {a: set(rm.indices(f"motor_{a}")) for a in actions}
     all_motor_indices = set()
@@ -107,9 +120,35 @@ def hand_build_perfect_weights(
         print(f"[sanity-check] Wiped {n_wiped} language_input -> motor_X "
               f"edges to {off_target_weight}", flush=True)
 
-    # Step 2: for each (word, src in active), set src -> motor_correct
-    # edges to target_weight. Off-target edges stay wiped (0).
-    summary = {}
+    if mode == "wipe":
+        # All edges already wiped; nothing more to do.
+        bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
+        if verbose:
+            print(f"[sanity-check] Mode=wipe: all language->motor edges = 0",
+                  flush=True)
+        return {"mode": "wipe", "n_wiped": n_wiped}
+
+    if mode == "random":
+        # All language->motor edges get U[0, target_weight] random weights.
+        rng = np.random.default_rng(0)
+        for src in lang_input_indices:
+            start = int(indptr[src])
+            end = int(indptr[src + 1])
+            for off in range(start, end):
+                dst = int(indices[off])
+                if dst in all_motor_indices:
+                    data[off] = float(rng.uniform(0, target_weight))
+        bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
+        if verbose:
+            print(f"[sanity-check] Mode=random: all language->motor edges "
+                  f"~ U[0, {target_weight}]", flush=True)
+        return {"mode": "random", "target_weight_max": target_weight,
+                "n_edges": n_wiped}
+
+    # mode in ("perfect", "wrong"): for each (word, src in active),
+    # set src -> motor_target edges to target_weight. Off-target edges
+    # stay wiped (0).
+    summary = {"mode": mode}
     for word, target_action in word_to_action.items():
         drive = vocab_to_drive_pattern(word, n_neurons=n_lang_input,
                                         sparsity=sparsity)
@@ -180,10 +219,19 @@ def run_sanity_check(
     stim_steps_per_step: int = 100,
     reset_steps: int = 50,
     dt_ms: float = 1.0,
+    mode: str = "perfect",
     verbose: bool = True,
 ):
-    """Run the sanity check: build minimal arch, hand-build perfect
-    weights, evaluate. Returns the eval result dict.
+    """Run the sanity check: build minimal arch, hand-build weights per
+    mode, evaluate. Returns the eval result dict.
+
+    Modes:
+      - "perfect": ideal weights (each word -> correct motor). Expected
+        verdict: aligned >= 4/6.
+      - "wrong": rotated weights (each word -> wrong motor). Expected:
+        TRUE-mapping accuracy = 0%; best permutation = rotated.
+      - "random": uniform random weights. Expected: ~chance accuracy.
+      - "wipe": all language->motor edges = 0. Expected: degenerate.
     """
     import cupy as cp
     from sim.config import (
@@ -194,9 +242,9 @@ def run_sanity_check(
 
     if verbose:
         print("=" * 60)
-        print(f"EVAL SANITY CHECK (seed={seed})")
-        print(f"  Hand-built perfect language_input -> motor_X weights")
-        print(f"  NO training, NO STDP — directly evaluate ideal weights")
+        print(f"EVAL SANITY CHECK (seed={seed}, mode={mode})")
+        print(f"  Hand-built language_input -> motor_X weights ({mode} pattern)")
+        print(f"  NO training, NO STDP — directly evaluate weights")
         print(f"  Target weight: {target_weight} (off-target: 0.0)")
         print("=" * 60, flush=True)
 
@@ -233,13 +281,14 @@ def run_sanity_check(
     )
     bridge._initialize_simulation_data(called_from_playback_init=False)
 
-    # Hand-build perfect weights
+    # Hand-build weights per mode
     weight_summary = hand_build_perfect_weights(
         bridge,
         n_lang_input=n_lang_input,
         sparsity=token_sparsity,
         target_weight=target_weight,
         off_target_weight=0.0,
+        mode=mode,
         verbose=verbose,
     )
 
@@ -312,6 +361,13 @@ def main():
     ap.add_argument("--stim-steps-per-step", type=int, default=100)
     ap.add_argument("--reset-steps", type=int, default=50)
     ap.add_argument("--dt-ms", type=float, default=1.0)
+    ap.add_argument("--mode", type=str, default="perfect",
+                    choices=["perfect", "wrong", "random", "wipe"],
+                    help="Weight pattern. 'perfect' = ideal mapping (expected "
+                    "aligned >= 4/6); 'wrong' = rotated mapping (expected "
+                    "TRUE-acc=0%%, best perm = rotated); 'random' = uniform "
+                    "random (expected ~chance); 'wipe' = all zero edges "
+                    "(degenerate baseline).")
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
 
@@ -326,32 +382,55 @@ def main():
         stim_steps_per_step=args.stim_steps_per_step,
         reset_steps=args.reset_steps,
         dt_ms=args.dt_ms,
+        mode=args.mode,
         verbose=True,
     )
+
+    # Persist mode in the result for aggregation downstream
+    result["mode"] = args.mode
 
     if args.out_stats:
         Path(args.out_stats).parent.mkdir(parents=True, exist_ok=True)
         Path(args.out_stats).write_text(json.dumps(result, indent=2))
         print(f"\n  Saved: {args.out_stats}", flush=True)
 
-    # Print verdict
+    # Print verdict per mode
     acc = result["word_to_action_eval"]["accuracy"]
     print("\n" + "=" * 60)
-    if acc >= 0.5:
-        print(f"VERDICT: Eval methodology appears SOUND.")
-        print(f"  Hand-built perfect weights -> {acc:.1%} accuracy.")
-        print(f"  If real learning gives 0/N, the issue is plasticity, not eval.")
-    elif acc >= 0.3:
-        print(f"VERDICT: Eval methodology PARTIAL — sub-threshold for")
-        print(f"  perfect weights ({acc:.1%}). May indicate dynamics ")
-        print(f"  issues (firing rate, synaptic time constants) rather")
-        print(f"  than eval logic itself.")
-    else:
-        print(f"VERDICT: Eval methodology BROKEN. Hand-built perfect ")
-        print(f"  weights give only {acc:.1%}. The eval cannot detect ")
-        print(f"  the learned mapping even when perfectly encoded.")
-        print(f"  Investigate: drive currents, motor pool dynamics, ")
-        print(f"  measurement window, baseline subtraction.")
+    if args.mode == "perfect":
+        if acc >= 0.5:
+            print(f"VERDICT (perfect mode): Eval methodology appears SOUND.")
+            print(f"  Hand-built perfect weights -> {acc:.1%} accuracy.")
+            print(f"  If real learning gives 0/N, the issue is plasticity, not eval.")
+        elif acc >= 0.3:
+            print(f"VERDICT (perfect mode): Eval methodology PARTIAL —")
+            print(f"  sub-threshold for perfect weights ({acc:.1%}). May indicate")
+            print(f"  dynamics issues (firing rate, synaptic time constants)")
+            print(f"  rather than eval logic itself.")
+        else:
+            print(f"VERDICT (perfect mode): Eval methodology BROKEN.")
+            print(f"  Hand-built perfect weights give only {acc:.1%}. The eval")
+            print(f"  cannot detect the learned mapping even when perfectly encoded.")
+            print(f"  Investigate: drive currents, motor pool dynamics,")
+            print(f"  measurement window, baseline subtraction.")
+    elif args.mode == "wrong":
+        if acc <= 0.10:
+            print(f"VERDICT (wrong mode): Eval correctly REJECTS wrong mapping.")
+            print(f"  TRUE-mapping accuracy = {acc:.1%}.")
+            print(f"  Best permutation (in result) reveals the rotated mapping.")
+        else:
+            print(f"VERDICT (wrong mode): UNEXPECTED — {acc:.1%} TRUE accuracy.")
+            print(f"  May indicate eval is not actually responsive to weights.")
+    elif args.mode == "random":
+        if 0.10 <= acc <= 0.45:
+            print(f"VERDICT (random mode): Eval gives near-chance ({acc:.1%}) on")
+            print(f"  random weights, as expected.")
+        else:
+            print(f"VERDICT (random mode): UNEXPECTED — {acc:.1%} on random.")
+            print(f"  Could indicate hidden bias in eval scoring.")
+    elif args.mode == "wipe":
+        print(f"VERDICT (wipe mode): {acc:.1%} accuracy with no edges.")
+        print(f"  Pure measurement noise; should be near random or all-N (cascade default).")
     print("=" * 60, flush=True)
 
 

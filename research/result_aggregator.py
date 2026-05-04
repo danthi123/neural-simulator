@@ -154,13 +154,16 @@ BUILTIN_CONFIGS: Dict[str, Dict[str, Any]] = {
             "+Combo weak (both halved)":  "text_eval_minbio_combo_weak_seed{seed}.json",
         },
     },
-    # Eval methodology sanity check: hand-built perfect language->motor
-    # weights, no training. Tests whether eval can detect a known-correct
-    # mapping. Auto-launched if biology sweep gives 0/6 across all conds.
+    # Eval methodology sanity check: hand-built language->motor weights
+    # in 4 patterns, no training. Tests whether eval can detect known
+    # mappings + correctly reject wrong ones. Auto-launched if biology
+    # sweep gives 0/6 across all conditions.
     "sanity_check": {
         "conditions": {
-            "density 0.30 (matches default)":    "text_eval_sanity_check_density030_seed{seed}.json",
-            "density 1.0 (full connectivity)":   "text_eval_sanity_check_density100_seed{seed}.json",
+            "perfect, density 0.30":      "text_eval_sanity_check_density030_seed{seed}.json",
+            "perfect, density 1.0":       "text_eval_sanity_check_density100_seed{seed}.json",
+            "wrong-mapping (control)":    "text_eval_sanity_check_density030_wrong_seed{seed}.json",
+            "random weights (control)":   "text_eval_sanity_check_density030_random_seed{seed}.json",
         },
     },
     # B-branch follow-ups (only fire if biology_sweep gives 0/6)

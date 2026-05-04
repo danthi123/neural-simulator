@@ -94,6 +94,8 @@ def test_sanity_check_yaml_parseable():
     cfg = ExperimentConfig.from_yaml(yaml_path)
     assert cfg.name == "eval-sanity-check"
     assert cfg.runner == "research.runners.eval_sanity_check"
-    assert len(cfg.conditions) == 2
+    # 4 conditions: 2 perfect (density 030/100) + wrong + random controls
+    assert len(cfg.conditions) == 4
     cond_names = {c.name for c in cfg.conditions}
-    assert cond_names == {"density030", "density100"}
+    assert cond_names == {"density030", "density100",
+                          "density030_wrong", "density030_random"}

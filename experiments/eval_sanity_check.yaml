@@ -1,34 +1,40 @@
 # Eval sanity check — B-branch fallback if biology_sweep gives 0/6 across all
-# conditions. Hand-builds PERFECT language_input -> motor_X weights, runs the
-# same evaluation methodology used in the entire text-IO investigation,
-# and reports aligned ratio.
+# conditions. Hand-builds language_input -> motor_X weights in different
+# patterns and runs the same evaluation methodology used in the entire
+# text-IO investigation. Reports aligned ratio for each pattern.
 #
-# Outcome interpretations:
-#   aligned >= 4/6: eval methodology is SOUND. The 0/6 streak in real
-#     experiments is driven by plasticity inadequacy (STDP can't find
-#     this weight pattern under noisy paired-stim training).
+# Outcome interpretations (per condition):
+#   perfect:
+#     aligned >= 4/6 → eval methodology SOUND. The 0/6 streak in real
+#       experiments is plasticity-driven (STDP can't find this weight
+#       pattern under noisy paired-stim training).
+#     aligned 0-1/6 → eval methodology BROKEN. We've been chasing a
+#       phantom signal. Investigate drive currents, dynamics, baseline.
 #
-#   aligned 0-1/6: eval methodology is BROKEN. Hand-built perfect
-#     weights cannot be detected by the eval — we've been chasing
-#     a phantom signal across 25+ runs. Investigate drive currents,
-#     motor pool dynamics, baseline subtraction.
+#   wrong:
+#     TRUE-acc 0% AND best_perm = rotated → eval correctly REJECTS wrong.
+#     TRUE-acc > 25% → eval has hidden bias or isn't responsive to weights.
 #
-# Note: this YAML is auto-launched by wait_biology_then_decide.ps1
-# under verdict B. Can also be run manually:
+#   random:
+#     accuracy near 25% (chance) → eval is unbiased.
+#     accuracy >> 25% on random weights → eval has structural bias.
+#
+#   wipe:
+#     accuracy near 25% or biased toward one pool → measures dynamics-only
+#     "default" behavior of the architecture absent any input weights.
+#
+# This config also tests density 1.0 (full connectivity) variants to
+# eliminate "did random init create the right edges" as a confound.
+#
+# Auto-launched by wait_biology_then_decide.ps1 under verdict B.
+# Manual usage:
 #   python -m research.experiment_runner experiments/eval_sanity_check.yaml
-#
-# Single-seed quick-test:
-#   python -m research.runners.eval_sanity_check --seed 42
 
 name: eval-sanity-check
 runner: research.runners.eval_sanity_check
 output_dir: research/findings/raw/g11_bg
 parallelism: 3
 
-# 6 seeds tests robustness to random init of the lang_input -> motor_X
-# random connectivity (each seed has different edge structure; we wipe
-# and reset only existing edges, so different seeds test different
-# "effective densities").
 seeds: [42, 43, 44, 100, 101, 102]
 
 base_args:
@@ -42,16 +48,31 @@ base_args:
   dt-ms: 1.0
 
 conditions:
-  # Default minimal-arch density (0.30) — most realistic test that
-  # matches what would be used in an actual successful run.
+  # Default minimal-arch density (0.30) with PERFECT mode — most realistic
+  # test that matches what would be used in an actual successful run.
   - name: density030
     args:
       text-input-to-motor-density: 0.30
+      mode: perfect
 
-  # Full connectivity (1.0) — eliminates "did random init create the
-  # right edges" as a confound. PURE eval-logic test.
+  # Full connectivity (1.0) PERFECT — eliminates "did random init create
+  # the right edges" as a confound. PURE eval-logic test.
   - name: density100
     args:
       text-input-to-motor-density: 1.0
+      mode: perfect
+
+  # WRONG mapping at default density — control: tests if eval correctly
+  # rejects a known-wrong mapping. TRUE-acc should be 0%.
+  - name: density030_wrong
+    args:
+      text-input-to-motor-density: 0.30
+      mode: wrong
+
+  # RANDOM weights — control: tests if eval gives near-chance on random.
+  - name: density030_random
+    args:
+      text-input-to-motor-density: 0.30
+      mode: random
 
 out_stats_template: "text_eval_sanity_check_{name}_seed{seed}.json"

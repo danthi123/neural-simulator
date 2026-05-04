@@ -165,9 +165,12 @@ def test_followup_configs_present():
     assert len(minbio) == 4
     assert any("topo_weak" in v for v in minbio.values())
     assert any("topo_strong" in v for v in minbio.values())
-    # sanity_check: 2 density conditions
+    # sanity_check: 4 conditions (perfect x 2 densities + wrong + random controls)
     sc = BUILTIN_CONFIGS["sanity_check"]["conditions"]
-    assert len(sc) == 2
+    assert len(sc) == 4
+    assert any("perfect" in k for k in sc.keys())
+    assert any("wrong" in k for k in sc.keys())
+    assert any("random" in k for k in sc.keys())
     # b4 has its own seed list (long training, 3 seeds)
     assert BUILTIN_CONFIGS["b4_long_training"].get("seeds") == [42, 43, 44]
 
