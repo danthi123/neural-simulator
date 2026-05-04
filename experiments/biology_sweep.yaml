@@ -1,0 +1,58 @@
+# Biology-grounded sweep — Tier-2 experiment runner config.
+#
+# Replaces research/findings/raw/g11_bg/run_biology_sweep.ps1 (2-stage,
+# 200+ lines of PowerShell) with this single declarative YAML.
+#
+# Usage:
+#   python -m research.experiment_runner experiments/biology_sweep.yaml
+
+name: biology-sweep
+runner: research.runners.text_minimal_isolation
+output_dir: research/findings/raw/g11_bg
+parallelism: 3
+
+# 6 seeds × 4 conditions = 24 runs; in parallel-3 = 8 batches.
+seeds: [42, 43, 44, 100, 101, 102]
+
+# Args common to every run (Pulvermüller-mid-biology defaults stay off
+# unless a condition turns them on).
+base_args:
+  n-events-per-direction: 1000
+  stim-steps-per-step: 100
+  reset-steps: 50
+  dt-ms: 1.0
+
+conditions:
+  # Condition 1: cascade-free baseline (current minimal-iso). Random
+  # init, STDP only, no FS. Tests "can the architecture learn anything
+  # in isolation" — the result that runs ahead of this sweep tells us
+  # this directly. Including for completeness if we re-run.
+  - name: baseline
+    args: {}
+
+  # Condition 2: +FS only. Motor PV-FS lateral inhibition with random
+  # init. Tests "is competition between motor pools the missing
+  # ingredient?"
+  - name: fs_only
+    args:
+      enable-motor-fs: true
+
+  # Condition 3: +Topo only. Topographic prior with random STDP. Tests
+  # "is biology-correct connectivity prior the missing ingredient?"
+  - name: topo_only
+    args:
+      topographic-bias-factor: 1.5
+      off-target-bias-factor: 0.7
+
+  # Condition 4: +Topo +FS combined. The full biology-grounded fix
+  # (topographic Wernicke→motor + cortical FS lateral inhibition).
+  # Hypothesis: real word-action learning emerges here.
+  - name: topo_fs
+    args:
+      topographic-bias-factor: 1.5
+      off-target-bias-factor: 0.7
+      enable-motor-fs: true
+
+# Output filenames will be e.g. text_eval_topo_fs_seed42.json,
+# text_eval_baseline_seed42.json, etc.
+out_stats_template: "text_eval_biology_{name}_seed{seed}.json"
