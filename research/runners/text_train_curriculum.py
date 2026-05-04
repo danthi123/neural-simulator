@@ -304,6 +304,14 @@ def _run_navigation_loop(
             print(f"  [{phase_label} ep {episode+1}/{n_episodes}] "
                   f"correct_moves={n_correct_moves}/{n_total_steps}={pct:.1f}%",
                   flush=True)
+            # Tier-1 universal progress event
+            from sim.progress import emit_progress
+            emit_progress(
+                "training", episode + 1, n_episodes,
+                phase=phase_label, unit="episodes",
+                correct_moves=n_correct_moves, n_steps=n_total_steps,
+                correct_pct=round(pct, 1),
+            )
 
     return n_total_steps, n_correct_moves
 
@@ -534,6 +542,12 @@ def _run_swr_replay_phase(
         if verbose and (event_idx + 1) % 100 == 0:
             print(f"  [P3 SWR] {event_idx+1}/{n_replay_events} replayed",
                   flush=True)
+            # Tier-1 universal progress event
+            from sim.progress import emit_progress
+            emit_progress(
+                "replay", event_idx + 1, n_replay_events,
+                phase="P3 SWR", unit="events",
+            )
 
     return n_replays
 

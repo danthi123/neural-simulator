@@ -454,6 +454,14 @@ def run_minimal_isolation(
             elapsed = time.time() - t_start
             print(f"  [minimal-iso] {event_idx+1}/{len(synthetic_buffer)} events "
                   f"({elapsed:.0f}s)", flush=True)
+            # Tier-1 universal progress event for webapp
+            from sim.progress import emit_progress
+            emit_progress(
+                "replay", event_idx + 1, len(synthetic_buffer),
+                phase="paired-stim", unit="events",
+                label="minimal-isolation",
+                elapsed_seconds=elapsed,
+            )
 
     elapsed = time.time() - t_start
     if verbose:

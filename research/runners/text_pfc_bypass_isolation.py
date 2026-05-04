@@ -203,6 +203,12 @@ def run_pfc_bypass_isolation(
     if verbose:
         print(f"\n[isolation] Training complete: {n_replayed} events "
               f"({elapsed:.0f}s)", flush=True)
+        # Tier-1 universal completion event
+        from sim.progress import emit_progress
+        emit_progress(
+            "phase", phase="training-complete", label="H4-isolation",
+            n_replayed=n_replayed, elapsed_seconds=elapsed,
+        )
 
     training_stats = [{
         "phase": 1,

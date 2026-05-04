@@ -180,6 +180,13 @@ def evaluate_image_to_word(
                   f"got={predicted} {tag} "
                   f"acc-so-far={correct}/{trial+1}={100*correct/(trial+1):.1f}%",
                   flush=True)
+            # Tier-1 universal progress event
+            from sim.progress import emit_progress
+            emit_progress(
+                "eval", trial + 1, n_trials,
+                phase="I->W", unit="trials",
+                correct=correct, accuracy=round(correct / (trial + 1), 4),
+            )
 
     accuracy = correct / max(n_trials, 1)
     return {
@@ -405,6 +412,16 @@ def evaluate_word_to_action(
         if predicted == target_action:
             correct += 1
         total += 1
+
+        # Tier-1 universal progress event (every 25 trials)
+        if verbose and total % 25 == 0:
+            from sim.progress import emit_progress
+            n_total_trials = 4 * n_trials_per_word
+            emit_progress(
+                "eval", total, n_total_trials,
+                phase="W->A", unit="trials",
+                correct=correct, accuracy=round(correct / total, 4),
+            )
 
         # ─── Alternative decoders (computed alongside, no extra cost) ───
         # 1. drive_only: argmax of raw drive counts (ignore baseline)

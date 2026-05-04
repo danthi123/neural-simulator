@@ -1297,8 +1297,14 @@ async function pollLive() {
     const liveLabel = document.getElementById("brain3d-live-label");
     if (liveLabel) {
       let txt = `${r.name} · `;
-      if (p.kind === "swr_replay") {
+      // Use the universal formatter from app.js if available; falls back
+      // to legacy kind-by-kind dispatch for older runners during migration.
+      if (typeof formatProgressLine === "function") {
+        txt += formatProgressLine(p);
+      } else if (p.kind === "swr_replay") {
         txt += `Phase ${p.phase_num} SWR · event ${p.ev}/${p.ev_total}`;
+      } else if (p.kind === "paired_stim") {
+        txt += `Paired-stim · event ${p.ev}/${p.ev_total}`;
       } else if (p.kind === "embodied_episode") {
         txt += `Phase ${p.phase_num} · ep ${p.episode}/${p.episodes_total} · ${p.correct_pct}%`;
       } else if (p.kind === "step") {

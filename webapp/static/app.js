@@ -32,6 +32,75 @@ function openInWorld(name) {
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
+/**
+ * Format a progress event into a human-readable headline line.
+ *
+ * Handles both the Tier-1 universal format (sim.progress.emit_progress)
+ * and legacy kinds. New kinds are added by extending this single function
+ * — no other frontend changes needed.
+ *
+ * Tier-1 universal kinds:
+ *   "training" — episode-based (curriculum Phase 1/2)
+ *   "replay"   — paired-stim or SWR-style replay events
+ *   "eval"     — evaluation trial (W->A, I->W)
+ *   "step"     — per-step gridworld navigation
+ *   "phase"    — phase boundary marker (no progress %)
+ *   "complete" — final completion + result
+ *
+ * Legacy kinds (retained for backward compat):
+ *   "swr_replay", "paired_stim", "embodied_episode", "step"
+ */
+function formatProgressLine(p) {
+  if (!p || !p.kind) return "(no progress markers yet)";
+  const phasePrefix = p.phase ? `${p.phase} · ` : (p.phase_num ? `Phase ${p.phase_num} · ` : "");
+
+  // Tier-1 universal kinds first
+  if (p.kind === "training") {
+    const unit = p.unit || "episodes";
+    return `${phasePrefix}${unit.replace(/s$/, '')} ${p.current}/${p.total}`;
+  }
+  if (p.kind === "replay") {
+    const unit = p.unit || "events";
+    return `${phasePrefix}replay · ${unit.replace(/s$/, '')} ${p.current}/${p.total}`;
+  }
+  if (p.kind === "eval") {
+    const unit = p.unit || "trials";
+    return `${phasePrefix}eval · ${unit.replace(/s$/, '')} ${p.current}/${p.total}`;
+  }
+  if (p.kind === "phase") {
+    return `${p.phase || p.label || "phase"} starting`;
+  }
+  if (p.kind === "complete") {
+    const acc = (p.result && p.result.accuracy != null)
+      ? ` · acc ${(100*p.result.accuracy).toFixed(1)}%` : "";
+    return `complete${acc}`;
+  }
+
+  // Legacy kinds (still emitted by older runners during migration)
+  if (p.kind === "swr_replay") {
+    return `${phasePrefix}SWR · event ${p.ev}/${p.ev_total}`;
+  }
+  if (p.kind === "paired_stim") {
+    return `Paired-stim · event ${p.ev}/${p.ev_total}`;
+  }
+  if (p.kind === "embodied_episode") {
+    return `${phasePrefix}episode ${p.episode}/${p.episodes_total}`;
+  }
+  if (p.kind === "step") {
+    if (p.pos && p.goal) {
+      return `step ${p.step || p.current}/${p.total} · pos=(${p.pos.join(",")}) · goal=(${p.goal.join(",")})`;
+    }
+    return `step ${p.step || p.current}/${p.total}`;
+  }
+
+  // Generic fallback for unknown kinds — derive display from current/total
+  if (p.current !== undefined && p.total !== undefined) {
+    const unit = p.unit ? ` ${p.unit}` : "";
+    return `${phasePrefix}${p.kind} · ${p.current}/${p.total}${unit}`;
+  }
+  return `(${p.kind})`;
+}
+
 function escapeHTML(s) {
   if (s == null) return "";
   return String(s).replace(/[&<>"']/g, (c) => ({
@@ -2141,21 +2210,18 @@ function renderBrainRunCard(r) {
         ? el("span", { class: "badge state-completed" }, "✓ completed")
         : el("span", { class: "badge state-stopped" }, "■ stopped"));
 
-  // Headline progress line varies by progress kind.
+  // Headline progress line varies by progress kind. Tier-1 universal
+  // format (sim.progress.emit_progress) uses kinds:
+  //   training, replay, eval, step, phase, complete
+  // Legacy kinds also handled: swr_replay, paired_stim, embodied_episode.
   let progressLines = [];
-  if (p.kind === "swr_replay") {
-    progressLines.push(`Phase 3 SWR replay · event ${p.ev}/${p.ev_total}`);
-  } else if (p.kind === "embodied_episode") {
-    const phase = p.phase_num ? `Phase ${p.phase_num} · ` : "";
-    progressLines.push(`${phase}episode ${p.episode}/${p.episodes_total}`);
-    progressLines.push(`${p.correct_moves}/${p.n_steps} correct moves (${p.correct_pct}%)`);
-  } else if (p.kind === "step") {
-    progressLines.push(`step ${p.step}/${p.total} · pos=(${p.pos.join(",")}) · goal=(${p.goal.join(",")})`);
-  } else {
-    progressLines.push("(no progress markers yet)");
+  progressLines.push(formatProgressLine(p));
+  if (p.correct_moves !== undefined && p.correct_moves !== null) {
+    const total = p.n_steps || p.episodes_total || 1;
+    progressLines.push(`${p.correct_moves}/${total} correct moves (${p.correct_pct}%)`);
   }
 
-  if (p.phase_label && p.kind !== "swr_replay") {
+  if (p.phase_label && p.kind !== "swr_replay" && p.kind !== "paired_stim" && p.kind !== "replay") {
     progressLines.push(`Phase: ${p.phase_label}`);
   }
 
@@ -2360,18 +2426,10 @@ async function refreshInflightPanel() {
             ? el("span", { class: "badge", style: "background:#6ee7b733;color:#6ee7b7" }, "completed")
             : el("span", { class: "badge", style: "background:#fb718533;color:#fb7185" }, "stopped"));
 
-      let progressLine;
-      if (p.kind === "swr_replay") {
-        const phasePrefix = p.phase_num ? `Phase ${p.phase_num} SWR · ` : "SWR · ";
-        progressLine = `${phasePrefix}event ${p.ev}/${p.ev_total}`;
-      } else if (p.kind === "embodied_episode") {
-        const phasePrefix = p.phase_num ? `Phase ${p.phase_num} · ` : "";
-        progressLine = `${phasePrefix}episode ${p.episode}/${p.episodes_total} · ` +
-                       `${p.correct_moves}/${p.n_steps} correct moves (${p.correct_pct}%)`;
-      } else if (p.kind === "step") {
-        progressLine = `step ${p.step}/${p.total} · pos=(${p.pos.join(',')}) · goal=(${p.goal.join(',')})`;
-      } else {
-        progressLine = "no progress markers yet";
+      let progressLine = formatProgressLine(p);
+      if (p.correct_moves !== undefined && p.correct_moves !== null) {
+        const total = p.n_steps || p.episodes_total || 1;
+        progressLine += ` · ${p.correct_moves}/${total} correct (${p.correct_pct}%)`;
       }
 
       const card = el("div", { class: "activity-row inflight-row",

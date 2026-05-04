@@ -1258,6 +1258,12 @@ _CURRICULUM_PHASE_RE = _re.compile(
 _SWR_PROGRESS_RE = _re.compile(
     r"\[(?:P\d\s+)?[Ss][Ww][Rr](?:\s+ev)?\]?\s+(\d+)/(\d+)"
 )
+# Paired-stim runners (text_pfc_bypass_isolation, text_minimal_isolation)
+# log progress as "[isolation] 100/400 events" or "[minimal-iso] 250/4000 events".
+# Matches either format; reuses the swr_replay panel kind for display.
+_PAIRED_STIM_PROGRESS_RE = _re.compile(
+    r"\[(?:isolation|minimal-iso)\]\s+(\d+)/(\d+)\s+events"
+)
 _GENERIC_STEP_RE = _re.compile(
     r"step\s+(\d+)/(\d+)\s+pos=\((-?\d+),(-?\d+)\)\s+goal=\((-?\d+),(-?\d+)\)"
 )
@@ -1292,8 +1298,38 @@ def _parse_log_progress(log_path: Path) -> dict | None:
     except Exception:
         return None
 
-    # Try in priority order: SWR > embodied episode > generic step. Always
-    # take the LAST match in the tail (most recent progress).
+    # Try in priority order: structured [PROGRESS] events first; then
+    # legacy formats (SWR > paired-stim > embodied > step). Always take
+    # the LAST match in the tail (most recent progress).
+
+    # 0. Universal structured progress (sim.progress.emit_progress).
+    #    Future-proof: any runner using emit_progress() shows up here
+    #    without needing webapp changes.
+    try:
+        from sim.progress import parse_last_progress
+        evt = parse_last_progress(tail)
+        if evt is not None:
+            # Webapp uses kind/current/total/phase/extras as-is.
+            # Add `kind`-aware aliases for legacy frontend compat.
+            out = dict(evt)
+            # Backwards-compat aliases for older frontend code paths
+            if "current" in evt and "total" in evt:
+                out["fraction"] = evt["current"] / max(1, evt["total"])
+            if evt.get("kind") == "training":
+                out["episode"] = evt.get("current")
+                out["episodes_total"] = evt.get("total")
+                out["correct_pct"] = evt.get("correct_pct")
+                out["correct_moves"] = evt.get("correct_moves")
+                out["n_steps"] = evt.get("n_steps")
+            elif evt.get("kind") == "replay":
+                out["ev"] = evt.get("current")
+                out["ev_total"] = evt.get("total")
+            elif evt.get("kind") == "eval":
+                out["trial"] = evt.get("current")
+                out["trials_total"] = evt.get("total")
+            return out
+    except Exception:
+        pass  # fall through to legacy parsing
 
     # 1. Curriculum phase header — informational, not a progress %.
     last_phase = None
@@ -1318,6 +1354,23 @@ def _parse_log_progress(log_path: Path) -> dict | None:
         ev, ev_total = (int(g) for g in last_swr.groups())
         out = {
             "kind": "swr_replay",
+            "ev": ev,
+            "ev_total": ev_total,
+            "fraction": ev / max(1, ev_total),
+        }
+        if phase_info:
+            out.update(phase_info)
+        return out
+
+    # 2b. Paired-stim isolation progress (H4 PFC bypass, minimal isolation).
+    #     Log format: "[isolation] N/M events" or "[minimal-iso] N/M events".
+    last_paired = None
+    for m in _PAIRED_STIM_PROGRESS_RE.finditer(tail):
+        last_paired = m
+    if last_paired:
+        ev, ev_total = (int(g) for g in last_paired.groups())
+        out = {
+            "kind": "paired_stim",
             "ev": ev,
             "ev_total": ev_total,
             "fraction": ev / max(1, ev_total),

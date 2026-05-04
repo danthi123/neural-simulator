@@ -3829,6 +3829,18 @@ def run_moving_goal_episode(
                   f"actions={action_log[-100:].count(0):>3d}N/{action_log[-100:].count(1):>3d}E/"
                   f"{action_log[-100:].count(2):>3d}S/{action_log[-100:].count(3):>3d}W",
                   flush=True)
+            # Tier-1 universal progress event
+            try:
+                from sim.progress import emit_progress
+                emit_progress(
+                    "step", step + 1, n_steps,
+                    phase=f"seed={seed}", unit="steps",
+                    pos=[int(x), int(y)], goal=[int(gx), int(gy)],
+                    recent_dist=round(float(recent_dist), 2),
+                    action=_action_letter, reward=round(_last_reward, 2),
+                )
+            except Exception:
+                pass
 
         # Optional throttle for human-watchable speed in interactive mode.
         if trial_sleep_ms > 0:
