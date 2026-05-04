@@ -167,3 +167,59 @@ def test_no_stall_warning_when_log_fresh(tmp_path: Path, monkeypatch):
     cs = _chain_status()
     assert cs["stage"] == "minimal_iso_running"
     assert cs["stall_warning"] is None
+
+
+def test_read_waiter_text_handles_utf16_le_with_bom(tmp_path: Path, monkeypatch):
+    """Waiter log written by PowerShell Out-File defaults to UTF-16 LE.
+    The reader must decode it correctly even though our other code uses
+    UTF-8."""
+    raw = _setup_raw_dir(tmp_path)
+    text_content = "=== Wait-biology-then-decide started 2026-05-04 ===\nVERDICT: A\n"
+    # PowerShell-style: UTF-16 LE with BOM
+    raw_bytes = b"\xff\xfe" + text_content.encode("utf-16-le")
+    (raw / "wait_biology_then_decide.log").write_bytes(raw_bytes)
+
+    _patch_cwd(monkeypatch, tmp_path)
+    from research.runners.morning_briefing import _read_waiter_text
+    out = _read_waiter_text()
+    # Should be cleanly decoded (no replacement chars, no null bytes)
+    assert "Wait-biology-then-decide" in out
+    assert "VERDICT: A" in out
+    assert "\x00" not in out
+    assert "�" not in out
+
+
+def test_read_waiter_text_handles_utf8(tmp_path: Path, monkeypatch):
+    """If the log is UTF-8 (e.g. someone manually edited it or
+    Out-File was overridden), the reader should still work."""
+    raw = _setup_raw_dir(tmp_path)
+    text_content = "=== Wait-biology-then-decide started ===\nVERDICT: B\n"
+    (raw / "wait_biology_then_decide.log").write_text(text_content,
+                                                       encoding="utf-8")
+
+    _patch_cwd(monkeypatch, tmp_path)
+    from research.runners.morning_briefing import _read_waiter_text
+    out = _read_waiter_text()
+    assert "Wait-biology-then-decide" in out
+    assert "VERDICT: B" in out
+
+
+def test_chain_status_parses_verdict_from_utf16_le_log(tmp_path: Path,
+                                                        monkeypatch):
+    """End-to-end: waiter writes UTF-16 LE log with VERDICT line; chain
+    status correctly parses it."""
+    raw = _setup_raw_dir(tmp_path)
+    for seed in (42, 43, 44, 100, 101, 102):
+        (raw / f"minimal_iso_seed{seed}.pid.done").write_text(f"{seed}")
+    _make_log(raw / "biology-sweep.master.log",
+              "=== biology-sweep COMPLETE ===\n", mtime_minutes_ago=5)
+    # UTF-16 LE waiter log with VERDICT
+    text = "Polling complete\nVERDICT: A\nLaunching follow-up\n"
+    raw_bytes = b"\xff\xfe" + text.encode("utf-16-le")
+    (raw / "wait_biology_then_decide.log").write_bytes(raw_bytes)
+
+    _patch_cwd(monkeypatch, tmp_path)
+    from research.runners.morning_briefing import _chain_status
+    cs = _chain_status()
+    # Verdict should be parsed despite UTF-16 LE encoding
+    assert cs["verdict"] == "A"
