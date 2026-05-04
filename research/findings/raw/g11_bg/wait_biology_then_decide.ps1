@@ -111,6 +111,48 @@ if ($verdict -eq "A") {
         $scOutput = & python -m research.result_aggregator --config sanity_check `
             --out research/findings/2026-05-04-eval-sanity-check-results.md 2>&1
         "$scOutput" | Out-File -Append $waitLog
+
+        # B1 -> B2 chain extension: if B1 verdict shows "Real word-action
+        # learning achieved" (i.e., perfect mode aligned >= 4/6), the eval
+        # is sound and the bottleneck is plasticity. Auto-launch B2
+        # (sparse codes) to test sparse-code-overlap hypothesis.
+        $b1Verdict = "unknown"
+        if ($scOutput -match "Real word-action learning achieved") {
+            $b1Verdict = "eval_sound"
+        } elseif ($scOutput -match "Partial signal") {
+            $b1Verdict = "eval_partial"
+        } elseif ($scOutput -match "No real learning") {
+            $b1Verdict = "eval_broken"
+        }
+        "" | Out-File -Append $waitLog
+        "B1 VERDICT: $b1Verdict" | Out-File -Append $waitLog
+
+        if ($b1Verdict -eq "eval_sound") {
+            "Eval is sound -> bottleneck is plasticity. Launching B2 (sparse codes)." | Out-File -Append $waitLog
+            $b2Path = "experiments/b2_sparse_codes.yaml"
+            if (Test-Path $b2Path) {
+                $b2Proc = Start-Process -FilePath "python.exe" -ArgumentList @(
+                    "-m", "research.experiment_runner", $b2Path
+                ) -RedirectStandardOutput "$outDir/b2_sparse_codes.stdout.log" `
+                  -RedirectStandardError "$outDir/b2_sparse_codes.stderr.log" `
+                  -PassThru -NoNewWindow
+                "Launched b2_sparse_codes as PID $($b2Proc.Id)" | Out-File -Append $waitLog
+                $b2Proc.WaitForExit()
+                "b2_sparse_codes finished (exit $($b2Proc.ExitCode)) at $(Get-Date)" | Out-File -Append $waitLog
+
+                "" | Out-File -Append $waitLog
+                "--- Aggregating b2_sparse_codes results ---" | Out-File -Append $waitLog
+                $b2Output = & python -m research.result_aggregator --config b2_sparse_codes `
+                    --out research/findings/2026-05-04-b2-sparse-codes-results.md 2>&1
+                "$b2Output" | Out-File -Append $waitLog
+            } else {
+                "ERROR: $b2Path not found. Skipping B2." | Out-File -Append $waitLog
+            }
+        } elseif ($b1Verdict -eq "eval_broken") {
+            "Eval methodology BROKEN -> stopping chain. Manual review needed." | Out-File -Append $waitLog
+        } else {
+            "B1 verdict not actionable for auto-chain. Stopping; manual review." | Out-File -Append $waitLog
+        }
     } else {
         "ERROR: $followupPath not found. Skipping B-branch." | Out-File -Append $waitLog
     }
