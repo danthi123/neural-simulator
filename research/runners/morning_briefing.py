@@ -91,6 +91,104 @@ def _waiter_status() -> str:
         return "(waiter log unreadable)"
 
 
+def _chain_status() -> dict:
+    """Detect where we are in the autonomous decision chain.
+
+    Returns:
+        {
+            "stage": "minimal_iso_running" | "biology_sweep_running" |
+                     "biology_sweep_done" | "A1_running" | "A1_done" |
+                     "B1_running" | "B1_done" | "unknown",
+            "verdict": "A" | "A_weak" | "B" | None,
+            "next_step": short string describing what's expected next
+        }
+    """
+    raw = Path("research/findings/raw/g11_bg")
+    if not raw.exists():
+        return {"stage": "unknown", "verdict": None,
+                "next_step": "raw findings dir not found"}
+
+    waiter_log = raw / "wait_biology_then_decide.log"
+    biology_master = raw / "biology-sweep.master.log"
+    biology_master_alt = raw / "run_biology_sweep.master.log"
+    minbio_master = raw / "minimum-biology.master.log"
+    sanity_log = raw / "eval_sanity_check.log"
+
+    # Parse verdict if present
+    verdict = None
+    if waiter_log.exists():
+        try:
+            text = waiter_log.read_text(encoding="utf-8", errors="replace")
+            for line in reversed(text.split("\n")):
+                if line.startswith("VERDICT:"):
+                    v = line.split(":", 1)[1].strip()
+                    verdict = v if v != "unknown" else None
+                    break
+        except OSError:
+            pass
+
+    # Detect stage
+    biology_master_text = ""
+    for p in (biology_master, biology_master_alt):
+        if p.exists():
+            try:
+                biology_master_text = p.read_text(encoding="utf-8",
+                                                   errors="replace")
+                break
+            except OSError:
+                pass
+
+    biology_complete = (
+        "BIOLOGY SWEEP COMPLETE" in biology_master_text or
+        "biology-sweep COMPLETE" in biology_master_text or
+        "ALL BATCHES COMPLETE" in biology_master_text
+    )
+
+    # Check minimal_iso done count
+    minimal_iso_done = sum(1 for _ in raw.glob("minimal_iso_seed*.pid.done"))
+
+    if minbio_master.exists():
+        try:
+            minbio_text = minbio_master.read_text(encoding="utf-8",
+                                                    errors="replace")
+            minbio_complete = "minimum-biology COMPLETE" in minbio_text
+        except OSError:
+            minbio_complete = False
+        stage = "A1_done" if minbio_complete else "A1_running"
+        next_step = ("Next: review minimum_biology results, propose A2 "
+                     "(cascade reintroduction)" if minbio_complete
+                     else "A1 (minimum biology dose-response) running")
+    elif sanity_log.exists():
+        stage = "B1_running"
+        next_step = "B1 (eval sanity check) running"
+        # Could also check for completion marker
+    elif biology_complete and verdict:
+        stage = "biology_sweep_done"
+        next_step = (f"Verdict {verdict}; A1/B1 should be launching shortly "
+                     f"(or has finished, check log)")
+    elif biology_master_text:
+        stage = "biology_sweep_running"
+        next_step = "Biology sweep running; verdict TBD"
+    elif minimal_iso_done >= 6:
+        stage = "minimal_iso_done_pre_biology"
+        next_step = "Minimal-iso done, biology sweep should launch"
+    elif minimal_iso_done > 0:
+        stage = "minimal_iso_running"
+        next_step = (f"Minimal-iso batch ({minimal_iso_done}/6 done); biology "
+                     "sweep auto-launches when batch 2 completes")
+    else:
+        stage = "unknown"
+        next_step = "No clear chain stage detected"
+
+    return {
+        "stage": stage,
+        "verdict": verdict,
+        "next_step": next_step,
+        "minimal_iso_done": minimal_iso_done,
+        "biology_complete": biology_complete,
+    }
+
+
 def _experiment_progress(label_prefix: str = "minimal_iso") -> dict[str, str]:
     """For each {label_prefix}_seed*.log file, return last [PROGRESS] line."""
     out = {}
@@ -154,6 +252,16 @@ def main():
     print(f"MORNING BRIEFING - {datetime.now():%Y-%m-%d %H:%M:%S}")
     print(f"Since: {args.since}")
     print("=" * 70)
+
+    # 0. Chain status (one-glance current state)
+    cs = _chain_status()
+    print(f"\n## Autonomous chain status")
+    print(f"  Stage: {cs['stage']}")
+    print(f"  Minimal-iso done: {cs['minimal_iso_done']}/6")
+    print(f"  Biology sweep complete: {cs['biology_complete']}")
+    if cs['verdict']:
+        print(f"  Verdict: {cs['verdict']} (A=aligned>=4/6, A_weak=2-3/6, B=0-1/6)")
+    print(f"  Next: {cs['next_step']}")
 
     # 1. Git commits
     commits = _git_recent_commits(args.since)
