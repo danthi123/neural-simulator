@@ -29,15 +29,15 @@ retina. The agent locates a goal, picks a direction, moves, gets a
 reward signal, and learns. After 1800 steps on a 16×16 grid, the agent
 spends 38% of its time at the goal — well above random behavior.
 
-**Word-action mapping (under investigation).** Originally claimed at
-28.5% accuracy across 6 seeds, p=0.027. The 2026-05-03 permuted-label
-control test revealed this is *not* real word-action learning — across
-45+ runs spanning every variant tested, the TRUE labeled mapping is
-NEVER the best of 24 permutations of (token → action). The architecture
-has structure above chance but it's seed-dependent and unaligned with
-task labels. A biology-grounded investigation (topographic Wernicke →
-motor priors + motor PV-FS lateral inhibition) is the active research
-question. See `research/findings/2026-05-03-architecture-fundamentally-cant-align.md`.
+**Word-action mapping (under investigation).** A 2026-05-03 permuted-label
+control falsified the previously-claimed "28.5% W→A" result: across 45+
+runs spanning every variant tested, the TRUE labeled mapping was NEVER
+the best of 24 permutations of (token → action). The architecture
+produces structure above chance, but it's seed-dependent and unaligned
+with task labels. A biology-grounded investigation (topographic
+Wernicke→motor priors + motor PV-FS lateral inhibition) is the active
+research question. See
+[`research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`](research/findings/2026-05-03-permuted-label-control-NEGATIVE.md).
 
 **Visualizes its own brain.** Live 3D OpenGL view of every neuron
 firing, every synapse pulsing, with click-to-teleport-goal interactive
@@ -68,7 +68,7 @@ is itself the contribution.
 | **Move** | Motor cortex pools fire, agent moves on grid | ✅ Working |
 | **Learn from reward** | Dopamine modulates spike-timing plasticity | ✅ Working |
 | **Hold goals in mind** | Prefrontal cortex working memory (NMDA bistability) | ✅ Working |
-| **Understand words** | Language input → motor cortex via Wernicke→Broca pathway | ⚠️ 28.5% accuracy is *not real learning* per 2026-05-03 permuted-label control — under active biology-grounded investigation |
+| **Understand words** | Language input → motor cortex via Wernicke→Broca pathway | ⚠️ Under investigation — see [permuted-label control finding](research/findings/2026-05-03-permuted-label-control-NEGATIVE.md) |
 | **Speak** | Cortex/visual cortex → language output | ⚠️ Partial (high variance) |
 | **Remember & dream** | Hippocampus + sharp-wave-ripple replay | ⚠️ Implemented, integration pending |
 
@@ -79,24 +79,19 @@ is itself the contribution.
 ```bash
 git clone https://github.com/danthi123/neural-simulator
 cd neural-simulator
+pip install -r requirements.txt   # CuPy + DearPyGUI + PyOpenGL + h5py + ...
 python neural-simulator.py        # GUI mode with live 3D viz
 ```
 
-Or run a research experiment headless:
+Or run the navigation flagship headless (current best on 16×16 perception-only):
 
 ```bash
-# Watch the agent navigate, no language training
-python -m research.runners.g11_bg_runner --moving-goal --deterministic \
-    --enable-msn-lateral-inhibition --enable-d1-d2-asymmetry \
+python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
+    --enable-msn-lateral-inhibition --enable-d1-d2-asymmetry --enable-striatal-pv-fsi \
     --enable-cluster-a-closed-loop --enable-cluster-e-topography \
-    --enable-dlpfc-wm --enable-pfc-nmda --enable-visual-cortex \
+    --enable-dlpfc-wm --enable-pfc-nmda \
+    --enable-visual-cortex --visual-cortex-action-warmup-steps 600 \
     --grid-size 16 --seed 42 --n-steps 1800
-
-# Test the text-to-action capability (28.5% W→A baseline)
-python -m research.runners.text_eval_embodied \
-    --n-episodes 100 --steps-per-episode 30 --seed 42 \
-    --stim-steps-per-step 200 --reset-steps 100 \
-    --out-stats results.json
 ```
 
 Full setup in [QUICKSTART.md](QUICKSTART.md).
@@ -185,22 +180,66 @@ For the deep technical view, see [docs/biology.md](docs/biology.md).
 ```
 neural-simulator/
 ├── README.md              ← you are here
+├── QUICKSTART.md          ← 60-second setup
+├── neural-simulator.py    ← GUI host + main entry point
+├── benchmark.py           ← GPU throughput benchmark
+├── viz_benchmark.py       ← visualization performance benchmark
+├── run_benchmarks.py      ← biological validation suite
+├── run_experiment_headless.py
+├── run_parameter_sweep.py
+├── requirements.txt
 ├── docs/
 │   ├── CURRENT-STATE.md   ← what works today, technical details
 │   ├── biology.md         ← what biology we model, plain language
 │   ├── plans/             ← architecture decision records
 │   └── project-history-archive.md  ← prior README content (preserved)
 ├── sim/                   ← engine: bridge, regions, kernels, plasticity
+├── experiment/            ← ExperimentEngine + Stimulus + Readout + Training
+├── experiments/           ← YAML configs for autonomous sweeps
 ├── research/
-│   ├── runners/           ← experiment scripts (g1-g11, text_*)
-│   └── findings/          ← chronological session findings
+│   ├── runners/           ← experiment scripts (g1-g11, text_*, k_v2)
+│   ├── findings/          ← chronological session findings
+│   ├── experiment_runner.py ← YAML-driven sweep orchestrator
+│   └── result_aggregator.py ← cross-condition rollup + verdict line
 ├── references/
 │   ├── feature-catalog.md ← biology mechanism encyclopedia (375+ entries)
 │   └── glossary.md
-├── tests/                 ← pytest test suite
+├── webapp/                ← FastAPI dashboard (server.py + static/)
+├── simulation_profiles/   ← 47 brain-region JSON profiles
+├── tests/                 ← pytest test suite (40+ files)
 ├── viz/                   ← 3D OpenGL rendering
 └── ui/                    ← DearPyGUI controls
 ```
+
+---
+
+## How autonomous research runs
+
+The project ships a YAML-driven experiment runner so the operator can
+queue overnight sweeps without writing one-off scripts. Each YAML file
+declares conditions (CLI flag combinations) × seeds; runs emit a
+universal `[PROGRESS] {json}` event format and write per-run JSON
+outputs.
+
+```bash
+# Run a sweep (anti-cheat controls + biology variants)
+python -m research.experiment_runner experiments/biology_sweep.yaml
+
+# Aggregate results with a verdict line
+python -m research.result_aggregator biology_sweep
+
+# Morning summary of any overnight run
+python -m research.runners.morning_briefing --short
+```
+
+Built-in YAMLs in `experiments/`: `biology_sweep`, `minimum_biology`
+(dose-response), `eval_sanity_check` (eval-methodology validator),
+`b2_sparse_codes`, `b4_long_training`. The pre-staged decision chain
+auto-launches the appropriate follow-up based on the verdict line.
+
+A 7-8x speedup stack (`dt=1.0` + parallel-3 GPU sharing +
+`cfg.fast_spike_reset`) ships with the runner; a 6-seed minimal-arch
+batch finishes in ~45-55 minutes on an RTX 3090.
 
 ---
 
@@ -220,14 +259,15 @@ See [`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md) for the configuration
 and [`research/findings/2026-05-01-cluster-k-v2-breakthrough.md`](research/findings/2026-05-01-cluster-k-v2-breakthrough.md)
 for the breakthrough writeup.
 
-**Word→action mapping is currently UNDER INVESTIGATION** — earlier
-"28.5% accuracy" claim was debunked by a permuted-label control test
-on 2026-05-03 (the structure was real but seed-dependent and not
-aligned with N/E/S/W labels). A biology-grounded sweep (topographic
-Wernicke→motor prior + motor PV-FS lateral inhibition) is in flight
-to test whether biology fixes break the alignment streak. Pre-staged
-decision chain auto-launches the appropriate follow-up based on
-outcome. See [`research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`](research/findings/2026-05-03-permuted-label-control-NEGATIVE.md).
+**Word→action mapping is UNDER INVESTIGATION.** A 2026-05-03
+permuted-label control falsified the prior "28.5% W→A, p=0.027"
+claim — across 45+ runs, the TRUE labeled mapping was never the best
+of 24 permutations. The architecture has structure above chance but
+it's seed-dependent and unaligned with N/E/S/W labels. A
+biology-grounded sweep (topographic Wernicke→motor prior + motor
+PV-FS lateral inhibition) is in flight; the pre-staged decision chain
+auto-launches the appropriate follow-up based on outcome. See
+[`research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`](research/findings/2026-05-03-permuted-label-control-NEGATIVE.md).
 
 ---
 
