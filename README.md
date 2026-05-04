@@ -29,12 +29,15 @@ retina. The agent locates a goal, picks a direction, moves, gets a
 reward signal, and learns. After 1800 steps on a 16×16 grid, the agent
 spends 38% of its time at the goal — well above random behavior.
 
-**Learns word-action mapping.** Show the agent the word "north" and
-its motor cortex fires more in the north-direction pool than in the
-south, east, or west pools. Cross-validated across 6 independent
-training runs (n=600 trials, **p=0.027** vs chance) — the first
-statistically significant text-instructed action selection in the
-project under fair eval methodology.
+**Word-action mapping (under investigation).** Originally claimed at
+28.5% accuracy across 6 seeds, p=0.027. The 2026-05-03 permuted-label
+control test revealed this is *not* real word-action learning — across
+45+ runs spanning every variant tested, the TRUE labeled mapping is
+NEVER the best of 24 permutations of (token → action). The architecture
+has structure above chance but it's seed-dependent and unaligned with
+task labels. A biology-grounded investigation (topographic Wernicke →
+motor priors + motor PV-FS lateral inhibition) is the active research
+question. See `research/findings/2026-05-03-architecture-fundamentally-cant-align.md`.
 
 **Visualizes its own brain.** Live 3D OpenGL view of every neuron
 firing, every synapse pulsing, with click-to-teleport-goal interactive
@@ -65,7 +68,7 @@ is itself the contribution.
 | **Move** | Motor cortex pools fire, agent moves on grid | ✅ Working |
 | **Learn from reward** | Dopamine modulates spike-timing plasticity | ✅ Working |
 | **Hold goals in mind** | Prefrontal cortex working memory (NMDA bistability) | ✅ Working |
-| **Understand words** | Language input → motor cortex via Wernicke→Broca pathway | ✅ Working (28.5%, p=0.027) |
+| **Understand words** | Language input → motor cortex via Wernicke→Broca pathway | ⚠️ 28.5% accuracy is *not real learning* per 2026-05-03 permuted-label control — under active biology-grounded investigation |
 | **Speak** | Cortex/visual cortex → language output | ⚠️ Partial (high variance) |
 | **Remember & dream** | Hippocampus + sharp-wave-ripple replay | ⚠️ Implemented, integration pending |
 

@@ -240,6 +240,34 @@
       "neurons": 10,
       "description": "Primary motor cortex for WEST. When this pool fires more than the others, the agent moves one cell west."
     },
+    "motor_FS_N": {
+      "x":   9.5, "y":  2.7, "z":  3.0, "r": 0.4, "family": "interneuron",
+      "display_name": "Motor FS N (PV-FSI)",
+      "function": "Inhibits competing motor pools",
+      "neurons": 3,
+      "description": "Parvalbumin-positive fast-spiking interneurons recruited by motor_N. When motor_N fires, these inhibit motor_E/S/W (cross-pool only, no self-inhibition). Biology: Vogels et al 2011; Hofer et al 2011. ~10-15% of cortical population. Provides graded competition not absolute WTA."
+    },
+    "motor_FS_E": {
+      "x":   9.5, "y":  2.7, "z":  1.0, "r": 0.4, "family": "interneuron",
+      "display_name": "Motor FS E (PV-FSI)",
+      "function": "Inhibits competing motor pools",
+      "neurons": 3,
+      "description": "PV-FSI for motor_E. Cross-pool inhibition to motor_N/S/W."
+    },
+    "motor_FS_S": {
+      "x":   9.5, "y":  2.7, "z": -1.0, "r": 0.4, "family": "interneuron",
+      "display_name": "Motor FS S (PV-FSI)",
+      "function": "Inhibits competing motor pools",
+      "neurons": 3,
+      "description": "PV-FSI for motor_S. Cross-pool inhibition to motor_N/E/W."
+    },
+    "motor_FS_W": {
+      "x":   9.5, "y":  2.7, "z": -3.0, "r": 0.4, "family": "interneuron",
+      "display_name": "Motor FS W (PV-FSI)",
+      "function": "Inhibits competing motor pools",
+      "neurons": 3,
+      "description": "PV-FSI for motor_W. Cross-pool inhibition to motor_N/E/S."
+    },
     "snc": {
       "x":   4.0, "y": -5.0, "z":  0.0, "r": 0.8, "family": "dopamine",
       "display_name": "SNc (Dopamine)",
@@ -323,7 +351,8 @@
     "hippocampus_dg":  "#ec4899",
     "hippocampus_ca3": "#be185d",
     "hippocampus_ca1": "#831843",
-    "place":           "#f9a8d4"
+    "place":           "#f9a8d4",
+    "interneuron":     "#9ca3af"
   },
   "_pathway_descriptions": {
     "exc": "Excitatory (glutamate). Increases firing in the post-region.",
@@ -412,6 +441,24 @@
     { "from": "cortex_it",         "to": "ec",                "kind": "exc", "label": "Visual cortex -> EC" },
     { "from": "dlpfc_wm",          "to": "ec",                "kind": "exc", "label": "Working memory -> EC" },
     { "from": "ca1",               "to": "dlpfc_wm",          "kind": "exc", "label": "Memory -> working memory" },
-    { "from": "place_cells",       "to": "dlpfc_wm",          "kind": "exc", "label": "Spatial -> working memory" }
+    { "from": "place_cells",       "to": "dlpfc_wm",          "kind": "exc", "label": "Spatial -> working memory" },
+
+    {"_comment": "2026-05-03 evening: motor PV-FSI lateral inhibition (biology sweep, --enable-motor-fs). Each motor pool drives its own FS interneurons; FS inhibits the OTHER 3 motor pools (no self-inhibition). Vogels et al 2011, Hofer et al 2011."},
+    { "from": "motor_N",           "to": "motor_FS_N",        "kind": "exc", "label": "Recruit FS N" },
+    { "from": "motor_E",           "to": "motor_FS_E",        "kind": "exc", "label": "Recruit FS E" },
+    { "from": "motor_S",           "to": "motor_FS_S",        "kind": "exc", "label": "Recruit FS S" },
+    { "from": "motor_W",           "to": "motor_FS_W",        "kind": "exc", "label": "Recruit FS W" },
+    { "from": "motor_FS_N",        "to": "motor_E",           "kind": "inh", "label": "Cross-pool inhib N->E" },
+    { "from": "motor_FS_N",        "to": "motor_S",           "kind": "inh", "label": "Cross-pool inhib N->S" },
+    { "from": "motor_FS_N",        "to": "motor_W",           "kind": "inh", "label": "Cross-pool inhib N->W" },
+    { "from": "motor_FS_E",        "to": "motor_N",           "kind": "inh", "label": "Cross-pool inhib E->N" },
+    { "from": "motor_FS_E",        "to": "motor_S",           "kind": "inh", "label": "Cross-pool inhib E->S" },
+    { "from": "motor_FS_E",        "to": "motor_W",           "kind": "inh", "label": "Cross-pool inhib E->W" },
+    { "from": "motor_FS_S",        "to": "motor_N",           "kind": "inh", "label": "Cross-pool inhib S->N" },
+    { "from": "motor_FS_S",        "to": "motor_E",           "kind": "inh", "label": "Cross-pool inhib S->E" },
+    { "from": "motor_FS_S",        "to": "motor_W",           "kind": "inh", "label": "Cross-pool inhib S->W" },
+    { "from": "motor_FS_W",        "to": "motor_N",           "kind": "inh", "label": "Cross-pool inhib W->N" },
+    { "from": "motor_FS_W",        "to": "motor_E",           "kind": "inh", "label": "Cross-pool inhib W->E" },
+    { "from": "motor_FS_W",        "to": "motor_S",           "kind": "inh", "label": "Cross-pool inhib W->S" }
   ]
 }

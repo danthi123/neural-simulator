@@ -452,9 +452,27 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 > The W→A binomial p=0.027 is technically correct but doesn't measure
 > what we thought. It measures whether the network has ANY structure
 > above chance, NOT whether that structure aligns with task labels.
-> Tomorrow's pivot: investigate why structure is unaligned, NOT
-> which procedure is "best." Real word-action learning requires
-> aligned ratio ≥ 4/6.
+> Real word-action learning requires aligned ratio ≥ 4/6.
+>
+> **Investigation arc (2026-05-03 evening):**
+> 1. Decisive cascade test: minimal architecture (`text_minimal_isolation.py`)
+>    with NO cascade — just `language_input → motor_X`. If THIS aligns,
+>    cascade is the dominant interference.
+> 2. Biology-grounded sweep (`run_biology_sweep.ps1`): tests three
+>    biology fixes (topographic prior 1.5/0.7 matching Pulvermüller
+>    2001-2003 cortical somatotopy; PV-FS lateral inhibition between
+>    motor pools per Vogels 2011 / Hofer 2011; combined). Anti-cheat
+>    control runs FIRST: topographic prior + STDP frozen — if alignment
+>    occurs without learning, prior is too strong.
+> 3. Tools shipped:
+>    - `permuted_label_check.py` — definitive learning-vs-noise tool
+>    - `unaligned_pattern_analysis.py` — cross-condition structural
+>      bias analyzer (showed pattern is seed-dependent, +3pp motor_E
+>      cascade bias)
+>    - `text_minimal_isolation.py` — minimal arch + biology helpers
+>      (`apply_topographic_bias`, `enable_motor_fs`)
+>    - `biology_sweep_summary.py` — auto-aggregates 4 conditions into
+>      comparable headline table
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian

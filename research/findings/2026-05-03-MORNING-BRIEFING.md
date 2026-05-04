@@ -1,31 +1,56 @@
 # Morning briefing — autonomous SWR investigation
 
 **Generated:** 2026-05-03 ~05:45 EDT (autonomous)
-**Updated:** 2026-05-03 ~08:15 EDT
+**Updated:** 2026-05-03 ~21:00 EDT (final state before user wake-up)
 **For:** waking-up user
-**Status:** mid-investigation
+**Status:** mid-investigation, biology-grounded sweep queued
+
+---
+
+## What you'll see when you read this
+
+Tonight's autonomous run produced:
+1. **A major negative finding** (45+ runs, 0 aligned — see below)
+2. **2x speedup validated** (dt=1.0 stable, ~6x total with parallel-3)
+3. **A profiling correction** (simulator is compute-bound, not Python-bound)
+4. **A biology-grounded follow-up sweep in flight** (the decisive next test)
+
+If results landed before you woke up:
+```bash
+python -m research.runners.biology_sweep_summary
+```
+Single command, full results table, automatic verdict.
 
 ---
 
 ## 🚨 BIG FINDING — read this first
 
-Permuted-label control across 25 prior text-IO eval files shows
-**0/25 had the TRUE labeled mapping as the best of 24 permutations.**
+Permuted-label control across 45+ text-IO eval files shows
+**0/45 had the TRUE labeled mapping as the best of 24 permutations.**
 The 28.5% W->A baseline is NOT real word-action learning. The
 architecture has structure (best permutation = 32-37%) but it's
-randomly oriented per-seed, not aligned with task labels.
+seed-dependent and not aligned with task labels.
 
-This means:
-- The whole text I/O system has been at chance ± 8pp seed-dependent
-  bias since the May 2 "breakthrough."
-- The v2 baseline 28.5% / v2+SWR 24.3% / H4 23% comparisons are all
-  measuring noise, not real learning.
-- Tonight's experiments (H1, arch sweep, auto-followup) still useful
-  because they test "can architecture learn at all" — but if all
-  variants stay 0/6 aligned, we know the current arch can't do it.
+This holds across:
+- v2 baseline (6 seeds, 0/6 aligned)
+- v2+SWR default (6 seeds, 0/6)
+- v2+SWR balanced / H1 (6 seeds, 0/6)
+- H4 PFC isolation (6 seeds, 0/6)
+- H4 dose-1000 (1 seed, 0/1)
+- 6 fundamentals variants on seed 42 (each 0/1: heb_only, drive_5x,
+  stdp_wmax_10, heb_drive, heb_stdp, drive_stdp)
 
-**Tool:** `python -m research.runners.permuted_label_check`
-**Findings doc:** `research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`
+**Tools:**
+- `python -m research.runners.permuted_label_check` — definitive learn-vs-noise
+- `python -m research.runners.unaligned_pattern_analysis` — cross-condition structure
+- `python -m research.runners.biology_sweep_summary` — biology sweep results (when in)
+
+**Findings docs:**
+- `research/findings/2026-05-03-architecture-fundamentally-cant-align.md` (consolidated)
+- `research/findings/2026-05-03-permuted-label-control-NEGATIVE.md` (initial finding)
+- `research/findings/2026-05-03-unaligned-structure-pattern.md` (cross-condition)
+- `research/findings/2026-05-03-step-profile-results.md` (perf correction)
+- `research/findings/2026-05-03-dt1ms-speedup-validated.md` (speedup)
 
 ---
 

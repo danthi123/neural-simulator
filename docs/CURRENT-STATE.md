@@ -67,6 +67,21 @@ must come through the visual pathway.
 **Best result:** **28.5% accuracy across 6 seeds, n=600 trials,
 p=0.027** vs 25% chance baseline.
 
+> **🚨 CRITICAL CAVEAT (2026-05-03 evening, autonomous overnight):
+> Permuted-label control test shows the 28.5% is NOT real word-action
+> learning.** Across 45+ runs spanning baseline / v2+SWR / v2+SWR-balanced
+> (H1) / H4 PFC isolation / fundamentals sweep (heb_only, drive_5x,
+> stdp_wmax_10, heb_drive, heb_stdp, drive_stdp) / H4 dose-1000 — **0/45
+> had the TRUE labeled mapping as the BEST of 24 permutations.** The
+> binomial p=0.027 measures whether the network has ANY structure above
+> chance, not whether that structure aligns with task labels. Best
+> permutations score 30-37% (8pp above chance) but are seed-dependent
+> and arbitrary, not aligned with N/E/S/W. See
+> [`research/findings/2026-05-03-architecture-fundamentally-cant-align.md`](../research/findings/2026-05-03-architecture-fundamentally-cant-align.md)
+> for the full analysis. **A biology-grounded sweep (topographic prior
+> 1.5/0.7 + motor PV-FS lateral inhibition) is in flight to test if
+> biology fixes can break the 0/N alignment streak.**
+
 **How it works (in plain language):** the agent's "ears" hear a word
 (language_input region with sparse pattern coding). The word activates
 specific cortex pools via the language→cortex pathway, AND directly
