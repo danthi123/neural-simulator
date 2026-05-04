@@ -454,25 +454,46 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 > above chance, NOT whether that structure aligns with task labels.
 > Real word-action learning requires aligned ratio ≥ 4/6.
 >
-> **Investigation arc (2026-05-03 evening):**
-> 1. Decisive cascade test: minimal architecture (`text_minimal_isolation.py`)
->    with NO cascade — just `language_input → motor_X`. If THIS aligns,
->    cascade is the dominant interference.
-> 2. Biology-grounded sweep (`run_biology_sweep.ps1`): tests three
->    biology fixes (topographic prior 1.5/0.7 matching Pulvermüller
->    2001-2003 cortical somatotopy; PV-FS lateral inhibition between
->    motor pools per Vogels 2011 / Hofer 2011; combined). Anti-cheat
->    control runs FIRST: topographic prior + STDP frozen — if alignment
->    occurs without learning, prior is too strong.
-> 3. Tools shipped:
+> **Investigation arc (2026-05-03 evening → 2026-05-04 ongoing):**
+> 1. Decisive cascade test (DONE): minimal architecture
+>    (`text_minimal_isolation.py`) with NO cascade — just
+>    `language_input → motor_X` — gives mean 16.7% (BELOW chance) at 3
+>    seeds. **Cascade-as-cause hypothesis FALSIFIED.** The cascade was
+>    a weak DAMPENER on seed-dependent random structure, not its source.
+>    See [`research/findings/2026-05-04-minimal-isolation-INVERSION.md`](research/findings/2026-05-04-minimal-isolation-INVERSION.md).
+> 2. Biology-grounded sweep (IN FLIGHT): tests three biology fixes
+>    (topographic prior 1.5/0.7 matching Pulvermüller 2001-2003 cortical
+>    somatotopy; PV-FS lateral inhibition between motor pools per Vogels
+>    2011 / Hofer 2011; combined). Anti-cheat control runs FIRST:
+>    topographic prior + STDP frozen — if alignment occurs without
+>    learning, prior is too strong. Run via `python -m
+>    research.experiment_runner experiments/biology_sweep.yaml`.
+> 3. Pre-staged A/B follow-up decision chain
+>    (`research/findings/raw/g11_bg/wait_biology_then_decide.ps1`)
+>    auto-launches:
+>    - Outcome A (any condition aligned ≥ 4/6):
+>      `experiments/minimum_biology.yaml` — dose-response on biology dose
+>    - Outcome B (all 0-1/6): `research/runners/eval_sanity_check.py` —
+>      hand-built PERFECT weights, tests if eval methodology itself works
+>    Tier-2 fallbacks if needed: `experiments/b2_sparse_codes.yaml` +
+>    `experiments/b4_long_training.yaml`.
+> 4. Tools shipped:
 >    - `permuted_label_check.py` — definitive learning-vs-noise tool
 >    - `unaligned_pattern_analysis.py` — cross-condition structural
 >      bias analyzer (showed pattern is seed-dependent, +3pp motor_E
 >      cascade bias)
 >    - `text_minimal_isolation.py` — minimal arch + biology helpers
->      (`apply_topographic_bias`, `enable_motor_fs`)
->    - `biology_sweep_summary.py` — auto-aggregates 4 conditions into
->      comparable headline table
+>      (`apply_topographic_bias`, `enable_motor_fs`, `freeze_stdp`)
+>    - `eval_sanity_check.py` — eval methodology validation via hand-built
+>      perfect weights
+>    - `sim/progress.py` — universal `[PROGRESS] {json}` event format
+>    - `research/experiment_runner.py` — YAML-driven sweep orchestrator
+>    - `research/result_aggregator.py` — cross-condition aggregation +
+>      verdict line (built-in configs: biology, minimum_biology,
+>      sanity_check, b2_sparse_codes, b4_long_training)
+>    - 7-8x speedup stack: dt=1.0 + parallel-3 GPU sharing +
+>      `cfg.fast_spike_reset` (cp.where masked-update). See
+>      [`research/findings/2026-05-04-perf-speedup-stack.md`](research/findings/2026-05-04-perf-speedup-stack.md).
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
