@@ -58,7 +58,7 @@ Then press **Apply Changes & Reset Sim** to use the tuned values.
 
 ## 2. Architecture Overview
 
-The simulator is split into focused packages (was once a monolithic `neural-simulator.py`, now refactored):
+The simulator is split into focused packages (was once a monolithic `neural-simulator.py`, now refactored — `neural-simulator.py` is now the 2.2K-line GUI host, with the engine living in 13 modules under `sim/` totalling ~11.8K lines):
 
 - **Simulation core**: `SimulationBridge` in `sim/bridge.py` manages all GPU
   arrays, connectivity, neuron dynamics, and stepping. Configs are
@@ -74,6 +74,12 @@ The simulator is split into focused packages (was once a monolithic `neural-simu
   multi-region simulations with `BrainRegion` + `RegionPathway`.
 - **Neuromodulator subsystem** (`sim/neuromodulators.py`, opt-in): declarative
   concentration dynamics for DA / NE / 5-HT with receptor-effect targets.
+- **Replicas + text I/O + visual cortex** (`sim/replicas.py`,
+  `sim/text_embeddings.py`, `sim/visual_cortex.py`): replicated wiring
+  for multi-bridge runs, token-embedding language regions, and Cluster K v2
+  Gabor-RF visual cortex.
+- **Progress events** (`sim/progress.py`): universal `[PROGRESS] {json}`
+  event format consumed by the experiment runner and webapp.
 - **Experiment system** (`experiment/` package): `ExperimentEngine`,
   `StimulusManager`, `ReadoutEngine`, `TrainingProtocolEngine`. Drives
   multi-phase experiments with stimulus injection and reward/eligibility
@@ -82,8 +88,16 @@ The simulator is split into focused packages (was once a monolithic `neural-simu
   monitoring.
 - **Visualization** (`viz/` package): PyOpenGL-based 3D point cloud of neurons
   with synapse lines and optional synaptic pulse effects.
-- **Research runners** (`research/runners/`): headless gate experiments
-  (G1 → G11). See [README.md#research-runners](README.md#research-runners).
+- **Webapp** (`webapp/` package): FastAPI + uvicorn dashboard for live
+  monitoring, run history, and launcher control.
+- **Research runners** (`research/runners/`): 26+ headless runners for
+  research-gate experiments (G1 → G11) plus text I/O, perception, and
+  diagnostic tools (`text_eval_*`, `permuted_label_check.py`,
+  `eval_sanity_check.py`, `morning_briefing.py`, etc).
+  See [README.md#research-runners](README.md#research-runners).
+- **Sweep orchestration** (`research/experiment_runner.py`,
+  `research/result_aggregator.py`): YAML-driven cross-condition
+  experiments with built-in verdict aggregation.
 
 ---
 
@@ -472,10 +486,41 @@ python -m research.runners.g11_bg_runner --moving-goal --seed 42 --n-steps 1800
 
 # Phase B static cascade probe
 python -m research.runners.g11_bg_runner --probe-action W
+
+# Text I/O training + eval (word → action via PFC bypass)
+python -m research.runners.text_train_embodied --seed 42
+python -m research.runners.text_eval_embodied --seed 42
+
+# Diagnostic: is the W→A signal real or random structure?
+python -m research.runners.permuted_label_check <eval_file.json>
+
+# Eval methodology validation via hand-built perfect weights
+python -m research.runners.eval_sanity_check --seed 42
+
+# Morning briefing — summarize overnight runs
+python -m research.runners.morning_briefing
 ```
 
 See [README.md#research-runners](README.md#research-runners) for the full
 runner status table.
+
+### 9.5 YAML-driven sweeps
+
+For multi-condition experiments with built-in cross-condition aggregation:
+
+```bash
+# Run a YAML sweep
+python -m research.experiment_runner experiments/biology_sweep.yaml
+
+# Aggregate cross-condition results with verdict line
+python -m research.result_aggregator <output_dir>
+```
+
+Built-in configs cover biology, minimum_biology, sanity_check,
+b2_sparse_codes, and b4_long_training. Throughput on the 7-8x speedup
+stack (dt=1.0 + parallel-3 GPU sharing + `cfg.fast_spike_reset`) brings a
+6-seed batch from ~6 hours down to ~45-55 minutes. See
+`research/findings/2026-05-04-perf-speedup-stack.md`.
 
 ---
 
@@ -588,6 +633,28 @@ shared argmax.
 
 See `research/findings/2026-04-25-phase-b-acid-test-real-win.md` for the
 full diagnosis.
+
+### 12.1 Current navigation flagship (2026-05-01)
+
+Phase B was the foundation. The current navigation flagship adds Cluster
+A (closed BG loop), Cluster E (cortical topography), Cluster G v2.5
+(per-region NMDA on cortex/motor/PFC), and Cluster K v2 (Gabor-RF visual
+cortex):
+
+```bash
+python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
+    --enable-msn-lateral-inhibition --enable-d1-d2-asymmetry --enable-striatal-pv-fsi \
+    --enable-cluster-a-closed-loop --enable-cluster-e-topography \
+    --enable-dlpfc-wm --enable-pfc-nmda \
+    --enable-visual-cortex --visual-cortex-action-warmup-steps 600 \
+    --grid-size 16 --seed N --n-steps 1800
+```
+
+Result at 16×16 perception-only (no heuristic, no direct goal coords):
+**2.97 ± 0.12 (n=3)**. Beats the documented 8×8 perception arc baseline
+(4.08 ± 0.49) on a 4× larger grid; closes 4 of 5 original cheats. See
+[CLAUDE.md](../CLAUDE.md) "Recommended configuration (current best
+2026-05-01)" and `research/findings/2026-05-01-cluster-k-v2-breakthrough.md`.
 
 ---
 
