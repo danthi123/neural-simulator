@@ -68,7 +68,7 @@ if ($aggOutput -match "Real word-action learning achieved") {
 "VERDICT: $verdict" | Out-File -Append $waitLog
 
 if ($verdict -eq "A") {
-    "Outcome A: real learning achieved. Launching minimum_biology sweep." | Out-File -Append $waitLog
+    "Outcome A: real learning achieved. Launching minimum_biology sweep (24 runs)." | Out-File -Append $waitLog
     $followupPath = "experiments/minimum_biology.yaml"
     if (Test-Path $followupPath) {
         $proc = Start-Process -FilePath "python.exe" -ArgumentList @(
@@ -79,26 +79,40 @@ if ($verdict -eq "A") {
         "Launched minimum_biology as PID $($proc.Id)" | Out-File -Append $waitLog
         $proc.WaitForExit()
         "minimum_biology finished (exit $($proc.ExitCode)) at $(Get-Date)" | Out-File -Append $waitLog
+
+        # Auto-aggregate minimum_biology results
+        "" | Out-File -Append $waitLog
+        "--- Aggregating minimum_biology results ---" | Out-File -Append $waitLog
+        $minbioOutput = & python -m research.result_aggregator --config minimum_biology `
+            --out research/findings/2026-05-04-minimum-biology-results.md 2>&1
+        "$minbioOutput" | Out-File -Append $waitLog
     } else {
         "ERROR: $followupPath not found. Skipping A-branch follow-up." | Out-File -Append $waitLog
     }
 } elseif ($verdict -eq "A_weak") {
     "Outcome A_weak: partial signal. Documenting + waiting for user." | Out-File -Append $waitLog
 } elseif ($verdict -eq "B") {
-    "Outcome B: no real learning across any condition. Running eval sanity check." | Out-File -Append $waitLog
-    $sanityScript = "research.runners.eval_sanity_check"
-    $proc = Start-Process -FilePath "python.exe" -ArgumentList @(
-        "-m", $sanityScript,
-        "--out-stats", "$outDir/text_eval_sanity_check_seed42.json"
-    ) -RedirectStandardOutput "$outDir/eval_sanity_check.log" `
-      -RedirectStandardError "$outDir/eval_sanity_check.log.err" `
-      -PassThru -NoNewWindow -ErrorAction SilentlyContinue
-    if ($proc) {
-        "Launched eval_sanity_check as PID $($proc.Id)" | Out-File -Append $waitLog
+    "Outcome B: no real learning across any condition. Running eval sanity check (6 seeds x 2 densities)." | Out-File -Append $waitLog
+    $followupPath = "experiments/eval_sanity_check.yaml"
+    if (Test-Path $followupPath) {
+        $proc = Start-Process -FilePath "python.exe" -ArgumentList @(
+            "-m", "research.experiment_runner", $followupPath
+        ) -RedirectStandardOutput "$outDir/eval_sanity_check.stdout.log" `
+          -RedirectStandardError "$outDir/eval_sanity_check.stderr.log" `
+          -PassThru -NoNewWindow
+        "Launched eval_sanity_check sweep as PID $($proc.Id)" | Out-File -Append $waitLog
         $proc.WaitForExit()
-        "eval_sanity_check finished (exit $($proc.ExitCode)) at $(Get-Date)" | Out-File -Append $waitLog
+        "eval_sanity_check sweep finished (exit $($proc.ExitCode)) at $(Get-Date)" | Out-File -Append $waitLog
+
+        # Auto-aggregate sanity_check results so the user sees the verdict
+        # in the waiter log without running result_aggregator manually.
+        "" | Out-File -Append $waitLog
+        "--- Aggregating sanity_check results ---" | Out-File -Append $waitLog
+        $scOutput = & python -m research.result_aggregator --config sanity_check `
+            --out research/findings/2026-05-04-eval-sanity-check-results.md 2>&1
+        "$scOutput" | Out-File -Append $waitLog
     } else {
-        "ERROR: eval_sanity_check runner not found. Skipping B-branch." | Out-File -Append $waitLog
+        "ERROR: $followupPath not found. Skipping B-branch." | Out-File -Append $waitLog
     }
 } else {
     "Unknown verdict; manual review needed." | Out-File -Append $waitLog
