@@ -7,6 +7,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-05-03/04 — Permuted-label control debunks 28.5% W→A + autonomous-arc tooling
+
+### Critical correction
+- **Permuted-label control test — NEGATIVE.** Across 25 prior text I/O
+  eval files (baseline / v2+SWR / H4 / curriculum / dpop / BigLang /
+  BigMotor / NoLTD / NoT1 / xcouple / multidec / 200ep), 0/25 had the
+  TRUE labeled mapping ranked best of 24 permutations. Best permutations
+  consistently score 30-37% (8pp above chance), but the structure is
+  randomly oriented per-seed, NOT aligned with task labels. The
+  previously-documented 28.5% W→A "validated" result is structure above
+  chance, not aligned word→action learning. The W→A binomial p=0.027
+  is technically correct but doesn't measure aligned learning — only
+  the presence of *some* above-chance structure. Real learning requires
+  aligned ratio ≥ 4/6 across seeds. Finding:
+  `research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`.
+- **Cascade-as-cause hypothesis FALSIFIED.** Minimal-isolation test
+  (`text_minimal_isolation.py`, 2026-05-04): minimal architecture
+  (`language_input → motor_X` with NO cascade) gives mean 16.7% (BELOW
+  chance) at 3 seeds. Cascade was a weak DAMPENER on seed-dependent
+  random structure, not its source. Finding:
+  `research/findings/2026-05-04-minimal-isolation-INVERSION.md`.
+
+### Added — autonomous-arc tooling
+- **`research/runners/permuted_label_check.py`** — definitive
+  learning-vs-noise tool: ranks the true labeled mapping against all 24
+  symbol permutations. Use as the gate for any text I/O claim.
+- **`research/runners/eval_sanity_check.py`** — eval methodology
+  validation via hand-built perfect weights. Tests whether the eval
+  methodology itself works before debating architectural changes.
+- **`research/runners/morning_briefing.py`** — summarizes overnight
+  background runs into a single status report.
+- **`research/runners/text_minimal_isolation.py`** — minimal architecture
+  + biology helpers (`apply_topographic_bias`, `enable_motor_fs`,
+  `freeze_stdp`) for testing biology fixes in isolation.
+- **`research/runners/unaligned_pattern_analysis.py`** — cross-condition
+  structural-bias analyzer; surfaces seed-dependent +3pp motor_E
+  cascade bias.
+- **`sim/progress.py`** — universal `[PROGRESS] {json}` event format
+  consumed by experiment runner and webapp.
+- **`research/experiment_runner.py`** — YAML-driven sweep orchestrator
+  with built-in configs (biology, minimum_biology, sanity_check,
+  b2_sparse_codes, b4_long_training).
+- **`research/result_aggregator.py`** — cross-condition aggregation +
+  verdict line.
+- **Pre-staged decision chain**
+  (`research/findings/raw/g11_bg/wait_biology_then_decide.ps1`) —
+  auto-launches outcome-A vs outcome-B follow-ups based on biology
+  sweep alignment ratio.
+- **7-8× speedup stack shipped.** dt=1.0 + parallel-3 GPU sharing +
+  `cfg.fast_spike_reset` (cp.where masked-update). Brings 6-seed
+  batches from ~6h down to ~45-55 min. Finding:
+  `research/findings/2026-05-04-perf-speedup-stack.md`.
+- **Autonomous-runs skill** — guides multi-hour autonomous overnight
+  arcs with quick-win prioritization, internal trade-off debate, and
+  continuation through eval cycles.
+
+### In-flight (2026-05-04)
+- Biology-grounded sweep testing topographic prior (Pulvermüller
+  2001-2003), PV-FS lateral inhibition between motor pools (Vogels 2011
+  / Hofer 2011), and combined. Anti-cheat control runs first with STDP
+  frozen — if alignment occurs without learning, prior is too strong.
+  Tier-2 fallbacks (`b2_sparse_codes.yaml`, `b4_long_training.yaml`)
+  pre-staged.
+
 ## [Unreleased] — 2026-04-29 — Catalog remediation pass + Clusters A/C/D scaffolding
 
 ### Added — Clusters A (closed BG loop) + C (tonic DA) + D (hippocampus trisynaptic loop)
