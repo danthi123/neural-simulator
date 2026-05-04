@@ -362,7 +362,9 @@ def main():
 
     # 6. Aggregator verdicts (always shown, even in --short)
     print(f"\n## Aggregator verdicts")
-    for cfg in ["biology", "minimum_biology", "sanity_check"]:
+    for cfg in ["biology", "minimum_biology", "sanity_check",
+                "b2_sparse_codes", "b3_supervised_gradient",
+                "b4_long_training"]:
         v = _aggregator_verdict(cfg)
         if v:
             # Truncate long verdicts
