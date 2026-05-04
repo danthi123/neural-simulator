@@ -1,0 +1,212 @@
+{
+  "regime": "pfc_bypass_isolation",
+  "seed": 102,
+  "n_events_per_direction": 100,
+  "n_total_events": 400,
+  "training_stats": [
+    {
+      "phase": 1,
+      "regime": "pfc_bypass_isolation",
+      "n_total_events": 400,
+      "n_per_direction": 100,
+      "elapsed_seconds": 292.65965509414673
+    }
+  ],
+  "image_to_word_eval": {
+    "n_trials": 100,
+    "correct": 32,
+    "accuracy": 0.32,
+    "confusion_matrix": {
+      "north": {
+        "north": 8,
+        "east": 4,
+        "south": 5,
+        "west": 5
+      },
+      "east": {
+        "north": 4,
+        "east": 6,
+        "south": 8,
+        "west": 4
+      },
+      "south": {
+        "north": 7,
+        "east": 3,
+        "south": 12,
+        "west": 3
+      },
+      "west": {
+        "north": 8,
+        "east": 11,
+        "south": 6,
+        "west": 6
+      }
+    }
+  },
+  "word_to_action_eval": {
+    "n_trials": 100,
+    "correct": 22,
+    "accuracy": 0.22,
+    "confusion_matrix": {
+      "north": {
+        "N": 4,
+        "E": 4,
+        "S": 9,
+        "W": 8
+      },
+      "east": {
+        "N": 9,
+        "E": 6,
+        "S": 3,
+        "W": 7
+      },
+      "south": {
+        "N": 11,
+        "E": 3,
+        "S": 7,
+        "W": 4
+      },
+      "west": {
+        "N": 6,
+        "E": 9,
+        "S": 5,
+        "W": 5
+      }
+    },
+    "interleave_words": true,
+    "n_reset_steps": 100,
+    "alternative_decoders": {
+      "drive_only": {
+        "correct": 18,
+        "accuracy": 0.18,
+        "confusion": {
+          "north": {
+            "N": 3,
+            "E": 4,
+            "S": 11,
+            "W": 7
+          },
+          "east": {
+            "N": 7,
+            "E": 5,
+            "S": 6,
+            "W": 7
+          },
+          "south": {
+            "N": 10,
+            "E": 2,
+            "S": 7,
+            "W": 6
+          },
+          "west": {
+            "N": 6,
+            "E": 7,
+            "S": 9,
+            "W": 3
+          }
+        }
+      },
+      "ratio": {
+        "correct": 21,
+        "accuracy": 0.21,
+        "confusion": {
+          "north": {
+            "N": 4,
+            "E": 5,
+            "S": 7,
+            "W": 9
+          },
+          "east": {
+            "N": 7,
+            "E": 6,
+            "S": 3,
+            "W": 9
+          },
+          "south": {
+            "N": 9,
+            "E": 5,
+            "S": 7,
+            "W": 4
+          },
+          "west": {
+            "N": 4,
+            "E": 13,
+            "S": 4,
+            "W": 4
+          }
+        }
+      },
+      "zscore": {
+        "correct": 22,
+        "accuracy": 0.22,
+        "confusion": {
+          "north": {
+            "N": 4,
+            "E": 4,
+            "S": 9,
+            "W": 8
+          },
+          "east": {
+            "N": 9,
+            "E": 6,
+            "S": 3,
+            "W": 7
+          },
+          "south": {
+            "N": 11,
+            "E": 3,
+            "S": 7,
+            "W": 4
+          },
+          "west": {
+            "N": 6,
+            "E": 9,
+            "S": 5,
+            "W": 5
+          }
+        }
+      },
+      "clipped": {
+        "correct": 21,
+        "accuracy": 0.21,
+        "confusion": {
+          "north": {
+            "N": 4,
+            "E": 4,
+            "S": 8,
+            "W": 9
+          },
+          "east": {
+            "N": 10,
+            "E": 5,
+            "S": 4,
+            "W": 6
+          },
+          "south": {
+            "N": 9,
+            "E": 4,
+            "S": 7,
+            "W": 5
+          },
+          "west": {
+            "N": 6,
+            "E": 9,
+            "S": 5,
+            "W": 5
+          }
+        }
+      }
+    }
+  },
+  "config": {
+    "lang_input_drive_pA": 200.0,
+    "lang_output_coactive_pA": 150.0,
+    "motor_replay_drive_pA": 50.0,
+    "stim_steps_per_step": 200,
+    "reset_steps": 100,
+    "n_motor_per_action": 10,
+    "text_n_input_neurons": 256,
+    "text_n_output_neurons": 256,
+    "token_sparsity": 0.1
+  }
+}

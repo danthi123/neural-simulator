@@ -1,0 +1,230 @@
+{
+  "regime": "curriculum_embodied",
+  "seed": 42,
+  "phase1_episodes": 0,
+  "phase2_episodes": 100,
+  "steps_per_episode": 30,
+  "training_stats": [
+    {
+      "phase": 1,
+      "regime": "visuomotor_only",
+      "n_episodes": 0,
+      "n_total_steps": 0,
+      "n_correct_moves": 0,
+      "correct_move_rate": 0.0,
+      "elapsed_seconds": 0.003997325897216797
+    },
+    {
+      "phase": 2,
+      "regime": "text_io_on_trained_cascade",
+      "n_episodes": 100,
+      "n_total_steps": 2125,
+      "n_correct_moves": 630,
+      "correct_move_rate": 0.2964705882352941,
+      "elapsed_seconds": 4526.823538064957,
+      "buffer_per_direction": {
+        "north": 0,
+        "east": 0,
+        "south": 0,
+        "west": 0
+      }
+    }
+  ],
+  "image_to_word_eval": {
+    "n_trials": 100,
+    "correct": 25,
+    "accuracy": 0.25,
+    "confusion_matrix": {
+      "north": {
+        "north": 4,
+        "east": 5,
+        "south": 6,
+        "west": 7
+      },
+      "east": {
+        "north": 6,
+        "east": 6,
+        "south": 5,
+        "west": 5
+      },
+      "south": {
+        "north": 11,
+        "east": 4,
+        "south": 5,
+        "west": 5
+      },
+      "west": {
+        "north": 8,
+        "east": 8,
+        "south": 5,
+        "west": 10
+      }
+    }
+  },
+  "word_to_action_eval": {
+    "n_trials": 100,
+    "correct": 19,
+    "accuracy": 0.19,
+    "confusion_matrix": {
+      "north": {
+        "N": 2,
+        "E": 5,
+        "S": 11,
+        "W": 7
+      },
+      "east": {
+        "N": 9,
+        "E": 8,
+        "S": 6,
+        "W": 2
+      },
+      "south": {
+        "N": 5,
+        "E": 9,
+        "S": 5,
+        "W": 6
+      },
+      "west": {
+        "N": 6,
+        "E": 9,
+        "S": 6,
+        "W": 4
+      }
+    },
+    "interleave_words": true,
+    "n_reset_steps": 100,
+    "alternative_decoders": {
+      "drive_only": {
+        "correct": 28,
+        "accuracy": 0.28,
+        "confusion": {
+          "north": {
+            "N": 1,
+            "E": 9,
+            "S": 11,
+            "W": 4
+          },
+          "east": {
+            "N": 2,
+            "E": 12,
+            "S": 9,
+            "W": 2
+          },
+          "south": {
+            "N": 2,
+            "E": 8,
+            "S": 8,
+            "W": 7
+          },
+          "west": {
+            "N": 3,
+            "E": 11,
+            "S": 4,
+            "W": 7
+          }
+        }
+      },
+      "ratio": {
+        "correct": 19,
+        "accuracy": 0.19,
+        "confusion": {
+          "north": {
+            "N": 3,
+            "E": 5,
+            "S": 11,
+            "W": 6
+          },
+          "east": {
+            "N": 7,
+            "E": 10,
+            "S": 4,
+            "W": 4
+          },
+          "south": {
+            "N": 6,
+            "E": 8,
+            "S": 3,
+            "W": 8
+          },
+          "west": {
+            "N": 8,
+            "E": 8,
+            "S": 6,
+            "W": 3
+          }
+        }
+      },
+      "zscore": {
+        "correct": 19,
+        "accuracy": 0.19,
+        "confusion": {
+          "north": {
+            "N": 2,
+            "E": 5,
+            "S": 11,
+            "W": 7
+          },
+          "east": {
+            "N": 9,
+            "E": 8,
+            "S": 6,
+            "W": 2
+          },
+          "south": {
+            "N": 5,
+            "E": 9,
+            "S": 5,
+            "W": 6
+          },
+          "west": {
+            "N": 6,
+            "E": 9,
+            "S": 6,
+            "W": 4
+          }
+        }
+      },
+      "clipped": {
+        "correct": 22,
+        "accuracy": 0.22,
+        "confusion": {
+          "north": {
+            "N": 2,
+            "E": 7,
+            "S": 10,
+            "W": 6
+          },
+          "east": {
+            "N": 6,
+            "E": 10,
+            "S": 7,
+            "W": 2
+          },
+          "south": {
+            "N": 5,
+            "E": 8,
+            "S": 5,
+            "W": 7
+          },
+          "west": {
+            "N": 5,
+            "E": 8,
+            "S": 7,
+            "W": 5
+          }
+        }
+      }
+    }
+  },
+  "config": {
+    "retina_drive_pA": 200.0,
+    "lang_input_drive_pA": 1000.0,
+    "lang_output_coactive_pA": 150.0,
+    "stim_steps_per_step": 200,
+    "reset_steps": 100,
+    "n_motor_per_action": 10,
+    "text_n_input_neurons": 256,
+    "text_n_output_neurons": 256,
+    "token_sparsity": 0.1
+  }
+}

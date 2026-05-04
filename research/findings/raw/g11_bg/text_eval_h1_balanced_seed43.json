@@ -1,0 +1,239 @@
+{
+  "regime": "curriculum_embodied",
+  "seed": 43,
+  "phase1_episodes": 0,
+  "phase2_episodes": 100,
+  "steps_per_episode": 30,
+  "training_stats": [
+    {
+      "phase": 1,
+      "regime": "visuomotor_only",
+      "n_episodes": 0,
+      "n_total_steps": 0,
+      "n_correct_moves": 0,
+      "correct_move_rate": 0.0,
+      "elapsed_seconds": 0.0029938220977783203
+    },
+    {
+      "phase": 2,
+      "regime": "text_io_on_trained_cascade",
+      "n_episodes": 100,
+      "n_total_steps": 2178,
+      "n_correct_moves": 831,
+      "correct_move_rate": 0.38154269972451793,
+      "elapsed_seconds": 2446.9379272460938,
+      "buffer_per_direction": {
+        "north": 566,
+        "east": 939,
+        "south": 324,
+        "west": 349
+      }
+    },
+    {
+      "phase": 3,
+      "regime": "swr_replay_consolidation",
+      "n_replay_events": 500,
+      "buffer_size": 2178,
+      "only_correct": true,
+      "balanced_directions": true,
+      "elapsed_seconds": 368.4766266345978
+    }
+  ],
+  "image_to_word_eval": {
+    "n_trials": 100,
+    "correct": 25,
+    "accuracy": 0.25,
+    "confusion_matrix": {
+      "north": {
+        "north": 7,
+        "east": 4,
+        "south": 5,
+        "west": 6
+      },
+      "east": {
+        "north": 6,
+        "east": 5,
+        "south": 7,
+        "west": 4
+      },
+      "south": {
+        "north": 6,
+        "east": 6,
+        "south": 7,
+        "west": 6
+      },
+      "west": {
+        "north": 11,
+        "east": 5,
+        "south": 9,
+        "west": 6
+      }
+    }
+  },
+  "word_to_action_eval": {
+    "n_trials": 100,
+    "correct": 22,
+    "accuracy": 0.22,
+    "confusion_matrix": {
+      "north": {
+        "N": 6,
+        "E": 9,
+        "S": 7,
+        "W": 3
+      },
+      "east": {
+        "N": 7,
+        "E": 7,
+        "S": 5,
+        "W": 6
+      },
+      "south": {
+        "N": 6,
+        "E": 9,
+        "S": 3,
+        "W": 7
+      },
+      "west": {
+        "N": 6,
+        "E": 7,
+        "S": 6,
+        "W": 6
+      }
+    },
+    "interleave_words": true,
+    "n_reset_steps": 100,
+    "alternative_decoders": {
+      "drive_only": {
+        "correct": 19,
+        "accuracy": 0.19,
+        "confusion": {
+          "north": {
+            "N": 5,
+            "E": 14,
+            "S": 6,
+            "W": 0
+          },
+          "east": {
+            "N": 8,
+            "E": 7,
+            "S": 9,
+            "W": 1
+          },
+          "south": {
+            "N": 2,
+            "E": 16,
+            "S": 5,
+            "W": 2
+          },
+          "west": {
+            "N": 4,
+            "E": 9,
+            "S": 10,
+            "W": 2
+          }
+        }
+      },
+      "ratio": {
+        "correct": 22,
+        "accuracy": 0.22,
+        "confusion": {
+          "north": {
+            "N": 6,
+            "E": 7,
+            "S": 6,
+            "W": 6
+          },
+          "east": {
+            "N": 8,
+            "E": 3,
+            "S": 7,
+            "W": 7
+          },
+          "south": {
+            "N": 7,
+            "E": 6,
+            "S": 4,
+            "W": 8
+          },
+          "west": {
+            "N": 5,
+            "E": 7,
+            "S": 4,
+            "W": 9
+          }
+        }
+      },
+      "zscore": {
+        "correct": 22,
+        "accuracy": 0.22,
+        "confusion": {
+          "north": {
+            "N": 6,
+            "E": 9,
+            "S": 7,
+            "W": 3
+          },
+          "east": {
+            "N": 7,
+            "E": 7,
+            "S": 5,
+            "W": 6
+          },
+          "south": {
+            "N": 6,
+            "E": 9,
+            "S": 3,
+            "W": 7
+          },
+          "west": {
+            "N": 6,
+            "E": 7,
+            "S": 6,
+            "W": 6
+          }
+        }
+      },
+      "clipped": {
+        "correct": 23,
+        "accuracy": 0.23,
+        "confusion": {
+          "north": {
+            "N": 7,
+            "E": 9,
+            "S": 7,
+            "W": 2
+          },
+          "east": {
+            "N": 6,
+            "E": 7,
+            "S": 7,
+            "W": 5
+          },
+          "south": {
+            "N": 6,
+            "E": 10,
+            "S": 3,
+            "W": 6
+          },
+          "west": {
+            "N": 5,
+            "E": 7,
+            "S": 7,
+            "W": 6
+          }
+        }
+      }
+    }
+  },
+  "config": {
+    "retina_drive_pA": 200.0,
+    "lang_input_drive_pA": 200.0,
+    "lang_output_coactive_pA": 150.0,
+    "stim_steps_per_step": 200,
+    "reset_steps": 100,
+    "n_motor_per_action": 10,
+    "text_n_input_neurons": 256,
+    "text_n_output_neurons": 256,
+    "token_sparsity": 0.1
+  }
+}
