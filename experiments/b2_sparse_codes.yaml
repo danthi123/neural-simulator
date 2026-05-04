@@ -1,0 +1,55 @@
+# B2 — sparse-code orthogonality test. B-branch follow-up if eval
+# sanity check (B1) shows eval is sound but biology sweep was 0/6.
+#
+# Tests the hypothesis: sparse-code overlap is fundamentally too high
+# at sparsity=0.1 (25 active per word, ~6-9 overlap between word
+# pairs with random Gaussian embedding).
+#
+# Sparsity 0.05 gives ~13 active per word (~2-3 overlap; near-orthogonal).
+# Sparsity 0.02 gives ~5 active per word (~0-1 overlap; effectively
+# orthogonal but possibly under-driven).
+#
+# Already wired: --token-sparsity flag exists in text_minimal_isolation.
+#
+# Usage (manual):
+#   python -m research.experiment_runner experiments/b2_sparse_codes.yaml
+
+name: b2-sparse-codes
+runner: research.runners.text_minimal_isolation
+output_dir: research/findings/raw/g11_bg
+parallelism: 3
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  n-events-per-direction: 1000
+  stim-steps-per-step: 100
+  reset-steps: 50
+  dt-ms: 1.0
+
+conditions:
+  # Default sparsity baseline (matches biology_sweep baseline). Included
+  # for direct comparison without confounds.
+  - name: sparsity_010
+    args:
+      token-sparsity: 0.10
+
+  # Near-orthogonal codes (~2-3 overlap)
+  - name: sparsity_005
+    args:
+      token-sparsity: 0.05
+
+  # Near-fully-orthogonal codes (~0-1 overlap)
+  - name: sparsity_002
+    args:
+      token-sparsity: 0.02
+
+  # Combine sparse codes with topographic prior — the biology fix that
+  # might still help even with reduced overlap
+  - name: sparsity_005_topo
+    args:
+      token-sparsity: 0.05
+      topographic-bias-factor: 1.5
+      off-target-bias-factor: 0.7
+
+out_stats_template: "text_eval_b2_{name}_seed{seed}.json"

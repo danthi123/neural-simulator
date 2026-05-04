@@ -1,0 +1,54 @@
+# B4 — long-training dose-response. B-branch follow-up: tests
+# whether the 0/N alignment is a training-dose issue (too few
+# events per direction).
+#
+# Default biology_sweep uses 1000 events/direction (4000 total,
+# ~30 minutes per seed at dt=1.0 + fast_spike_reset). This sweep
+# tests dose-response: does 5x events make alignment cleaner?
+# Does 10x?
+#
+# 10x events x 6 seeds = 60K events x 6 = 360K events, 5-7 hours of
+# GPU under parallel-3. Run overnight after current batches finish.
+#
+# Includes the topographic-bias prior so we test a likely-best
+# config rather than vanilla random (the latter we already know
+# fails at 1000 events).
+#
+# Usage:
+#   python -m research.experiment_runner experiments/b4_long_training.yaml
+
+name: b4-long-training
+runner: research.runners.text_minimal_isolation
+output_dir: research/findings/raw/g11_bg
+parallelism: 3
+
+# Reduce to 3 seeds for the longest condition to keep total time
+# manageable. 10x training already takes ~5 hours/seed; 6 seeds
+# would be 30 hours sequentially.
+seeds: [42, 43, 44]
+
+base_args:
+  stim-steps-per-step: 100
+  reset-steps: 50
+  dt-ms: 1.0
+  topographic-bias-factor: 1.5
+  off-target-bias-factor: 0.7
+  enable-motor-fs: true
+
+conditions:
+  # Baseline at 1000 events (matches biology_sweep, biology fix on)
+  - name: dose_1x
+    args:
+      n-events-per-direction: 1000
+
+  # 5x training — one direction worth of overnight time
+  - name: dose_5x
+    args:
+      n-events-per-direction: 5000
+
+  # 10x training — multi-overnight if needed
+  - name: dose_10x
+    args:
+      n-events-per-direction: 10000
+
+out_stats_template: "text_eval_b4_{name}_seed{seed}.json"

@@ -163,6 +163,25 @@ BUILTIN_CONFIGS: Dict[str, Dict[str, Any]] = {
             "density 1.0 (full connectivity)":   "text_eval_sanity_check_density100_seed{seed}.json",
         },
     },
+    # B-branch follow-ups (only fire if biology_sweep gives 0/6)
+    # B2: sparse-code orthogonality test
+    "b2_sparse_codes": {
+        "conditions": {
+            "sparsity 0.10 (default)":              "text_eval_b2_sparsity_010_seed{seed}.json",
+            "sparsity 0.05 (~2-3 overlap)":         "text_eval_b2_sparsity_005_seed{seed}.json",
+            "sparsity 0.02 (~0-1 overlap)":         "text_eval_b2_sparsity_002_seed{seed}.json",
+            "sparsity 0.05 + topo bias":            "text_eval_b2_sparsity_005_topo_seed{seed}.json",
+        },
+    },
+    # B4: long-training dose response
+    "b4_long_training": {
+        "conditions": {
+            "1x dose (1000 events/dir)":   "text_eval_b4_dose_1x_seed{seed}.json",
+            "5x dose (5000 events/dir)":   "text_eval_b4_dose_5x_seed{seed}.json",
+            "10x dose (10000 events/dir)": "text_eval_b4_dose_10x_seed{seed}.json",
+        },
+        "seeds": [42, 43, 44],  # B4 uses fewer seeds (each run is 5+ hours)
+    },
 }
 
 
@@ -323,16 +342,22 @@ def main():
     ap.add_argument("--pattern", action="append", default=None,
                     help="Custom condition label=pattern (repeatable). "
                          "E.g. --pattern 'mine=text_eval_my_*_seed{seed}.json'")
-    ap.add_argument("--seeds", type=int, nargs="+",
-                    default=[42, 43, 44, 100, 101, 102])
+    ap.add_argument("--seeds", type=int, nargs="+", default=None,
+                    help="Explicit seed list. If omitted, uses config-level "
+                         "seeds when present, else default [42,43,44,100,101,102].")
     ap.add_argument("--raw-dir", type=Path, default=RAW_DIR)
     ap.add_argument("--out", type=Path, default=None,
                     help="Output markdown path (default: stdout)")
     ap.add_argument("--title", default="Result aggregation")
     args = ap.parse_args()
 
+    # Default seed list (fallback if neither --seeds nor config-level seeds set)
+    DEFAULT_SEEDS = [42, 43, 44, 100, 101, 102]
+
     if args.config:
         conditions = BUILTIN_CONFIGS[args.config]["conditions"]
+        # Per-config seed override (e.g. b4_long_training uses [42,43,44])
+        config_seeds = BUILTIN_CONFIGS[args.config].get("seeds")
     elif args.pattern:
         conditions = {}
         for spec in args.pattern:
@@ -340,12 +365,21 @@ def main():
                 raise ValueError(f"--pattern spec must be label=glob, got: {spec}")
             label, pat = spec.split("=", 1)
             conditions[label.strip()] = pat.strip()
+        config_seeds = None
     else:
         ap.error("must provide --config or one or more --pattern")
 
+    # Resolve seed list: --seeds wins, then config seeds, then default
+    if args.seeds is not None:
+        seeds = args.seeds
+    elif config_seeds is not None:
+        seeds = config_seeds
+    else:
+        seeds = DEFAULT_SEEDS
+
     cfg = AggregateConfig(
         conditions=conditions,
-        seeds=args.seeds,
+        seeds=seeds,
         raw_dir=args.raw_dir,
     )
     rs = ResultSet.load(cfg)
