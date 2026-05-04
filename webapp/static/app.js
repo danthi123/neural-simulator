@@ -101,6 +101,72 @@ function formatProgressLine(p) {
   return `(${p.kind})`;
 }
 
+/**
+ * Diff-update a list of run cards in a container without flicker.
+ *
+ * Replacing the entire container DOM (replaceChildren + appendAll) on
+ * every poll causes visible flicker — cards disappear and reappear
+ * even when the underlying runs haven't changed. This helper preserves
+ * card DOM nodes across polls when the run is still present:
+ *
+ *   - For each run still active: keep the existing card's <div> in place,
+ *     replace only its inner children. The card's parent->child relation
+ *     and DOM position don't change, so the user sees no flicker.
+ *   - For each new run: create a new card and append.
+ *   - For each card whose run is no longer present: remove it.
+ *
+ * Cards must be identifiable by run.name. The helper attaches a
+ * `data-run-name` attribute on each card so it can find them on the
+ * next poll.
+ *
+ * @param {Element} container - the parent DOM node
+ * @param {Array<{name: string}>} runs - the current run list
+ * @param {(run) => Element} renderCard - factory that returns a fresh
+ *     card for a given run. The card's children + className will be
+ *     transplanted into any existing card with the same run name.
+ */
+function diffUpdateRunCards(container, runs, renderCard) {
+  // Map existing cards by run name
+  const existing = new Map();
+  for (const child of Array.from(container.children)) {
+    const name = child.getAttribute && child.getAttribute("data-run-name");
+    if (name) existing.set(name, child);
+  }
+
+  const seen = new Set();
+  for (const r of runs) {
+    seen.add(r.name);
+    const newCard = renderCard(r);
+    newCard.setAttribute("data-run-name", r.name);
+
+    const existingCard = existing.get(r.name);
+    if (existingCard) {
+      // In-place update: move the new card's children into the existing
+      // card's slot. The existing <div> stays where it is in the parent,
+      // so no flicker. Class names also synced (running -> completed).
+      existingCard.replaceChildren(...Array.from(newCard.children));
+      if (existingCard.className !== newCard.className) {
+        existingCard.className = newCard.className;
+      }
+      // Sync any other attributes that might change (e.g. style)
+      const newStyle = newCard.getAttribute("style");
+      if (newStyle && newStyle !== existingCard.getAttribute("style")) {
+        existingCard.setAttribute("style", newStyle);
+      }
+    } else {
+      // Brand new run — append the new card directly
+      container.appendChild(newCard);
+    }
+  }
+
+  // Remove cards whose runs are no longer in the active list
+  for (const [name, child] of existing) {
+    if (!seen.has(name)) {
+      child.remove();
+    }
+  }
+}
+
 function escapeHTML(s) {
   if (s == null) return "";
   return String(s).replace(/[&<>"']/g, (c) => ({
@@ -441,10 +507,8 @@ async function refreshRunsLivePanel() {
     }
     wrap.style.display = "";
     counter.textContent = runs.length === 1 ? "1 active" : `${runs.length} active`;
-    container.replaceChildren();
-    for (const r of runs) {
-      container.appendChild(renderBrainRunCard(r));
-    }
+    // Diff-update — preserves cards in place, no flicker on poll.
+    diffUpdateRunCards(container, runs, renderBrainRunCard);
   } catch (e) {
     container.replaceChildren(el("p", { class: "error" },
       `Failed to load live runs: ${e.message}`));
@@ -2189,10 +2253,10 @@ async function refreshBrainLive() {
         "No active runs. Launch one from the Lab tab to see it here."));
       return;
     }
-    container.replaceChildren();
-    for (const r of runs) {
-      container.appendChild(renderBrainRunCard(r));
-    }
+    // Diff-update — preserves cards in place, no flicker on poll.
+    // Empty-state placeholder text from a prior tick is removed because
+    // it has no data-run-name; the helper drops it as a stale child.
+    diffUpdateRunCards(container, runs, renderBrainRunCard);
   } catch (e) {
     container.replaceChildren(el("p", { class: "error" },
       `Failed to load in-flight runs: ${e.message}`));
@@ -2415,45 +2479,45 @@ async function refreshInflightPanel() {
       return;
     }
     section.style.display = "";
-    container.replaceChildren();
-    for (const r of runs) {
-      const p = r.progress || {};
-      const fraction = p.fraction || 0;
-      const pct = Math.round(fraction * 100);
-      const stateBadge = r.alive
-        ? el("span", { class: "badge", style: "background:#10b98133;color:#10b981" }, "running")
-        : (r.completed
-            ? el("span", { class: "badge", style: "background:#6ee7b733;color:#6ee7b7" }, "completed")
-            : el("span", { class: "badge", style: "background:#fb718533;color:#fb7185" }, "stopped"));
-
-      let progressLine = formatProgressLine(p);
-      if (p.correct_moves !== undefined && p.correct_moves !== null) {
-        const total = p.n_steps || p.episodes_total || 1;
-        progressLine += ` · ${p.correct_moves}/${total} correct (${p.correct_pct}%)`;
-      }
-
-      const card = el("div", { class: "activity-row inflight-row",
-                               style: "display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:6px;margin-bottom:8px;" }, [
-        el("div", {}, [
-          el("div", { style: "font-weight:600;font-family:ui-monospace,Consolas,monospace;" }, r.name),
-          el("div", { class: "small muted" }, [
-            el("span", {}, progressLine),
-            el("span", { style: "margin-left:8px;color:var(--fg-muted)" },
-               `pid=${r.pid} · log=${r.log_size_kb}KB`),
-          ]),
-          // Progress bar
-          el("div", { style: "background:#2a2f3d;height:4px;border-radius:2px;margin-top:6px;overflow:hidden;" }, [
-            el("div", { style: `background:#6ee7b7;height:100%;width:${pct}%;transition:width 0.5s;` }),
-          ]),
-        ]),
-        el("div", { style: "font-family:ui-monospace,Consolas,monospace;font-size:14px;color:var(--accent);" }, `${pct}%`),
-        stateBadge,
-      ]);
-      container.appendChild(card);
-    }
+    // Diff-update — preserves cards in place, no flicker on poll.
+    diffUpdateRunCards(container, runs, renderOverviewInflightCard);
   } catch (e) {
     // Silent failure — endpoint may not exist on older webapp builds
   }
+}
+
+function renderOverviewInflightCard(r) {
+  const p = r.progress || {};
+  const fraction = p.fraction || 0;
+  const pct = Math.round(fraction * 100);
+  const stateBadge = r.alive
+    ? el("span", { class: "badge", style: "background:#10b98133;color:#10b981" }, "running")
+    : (r.completed
+        ? el("span", { class: "badge", style: "background:#6ee7b733;color:#6ee7b7" }, "completed")
+        : el("span", { class: "badge", style: "background:#fb718533;color:#fb7185" }, "stopped"));
+
+  let progressLine = formatProgressLine(p);
+  if (p.correct_moves !== undefined && p.correct_moves !== null) {
+    const total = p.n_steps || p.episodes_total || 1;
+    progressLine += ` · ${p.correct_moves}/${total} correct (${p.correct_pct}%)`;
+  }
+
+  return el("div", { class: "activity-row inflight-row",
+                     style: "display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:6px;margin-bottom:8px;" }, [
+    el("div", {}, [
+      el("div", { style: "font-weight:600;font-family:ui-monospace,Consolas,monospace;" }, r.name),
+      el("div", { class: "small muted" }, [
+        el("span", {}, progressLine),
+        el("span", { style: "margin-left:8px;color:var(--fg-muted)" },
+           `pid=${r.pid} · log=${r.log_size_kb}KB`),
+      ]),
+      el("div", { style: "background:#2a2f3d;height:4px;border-radius:2px;margin-top:6px;overflow:hidden;" }, [
+        el("div", { style: `background:#6ee7b7;height:100%;width:${pct}%;transition:width 0.5s;` }),
+      ]),
+    ]),
+    el("div", { style: "font-family:ui-monospace,Consolas,monospace;font-size:14px;color:var(--accent);" }, `${pct}%`),
+    stateBadge,
+  ]);
 }
 
 function renderOverviewKPIs(container, runs, findings, launches, textIoRes, inflight) {
