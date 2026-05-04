@@ -7,7 +7,7 @@ This document is the **authoritative current-state reference**.
 Update it whenever capabilities change. For the journey of how we
 got here, see `research/findings/`.
 
-**Last meaningful update:** 2026-05-03 (SWR investigation in flight)
+**Last meaningful update:** 2026-05-04 (biology-grounded sweep in flight + speedup stack shipped)
 
 ---
 
@@ -216,6 +216,22 @@ erodes weights over hundreds of thousands of simulation steps. STDP
 - ~6 ms per simulation sub-step on RTX 3090
 - 100-episode text training run: ~50 minutes (with stim_steps=200)
 - 1800-step navigation run: ~15 minutes
+- **6-seed minimal-arch batch:** ~45-55 minutes (was ~6 hours pre-2026-05-03)
+
+### Speedup stack (shipped 2026-05-03)
+
+Three stacked optimizations on minimal architecture (~7-8x total):
+
+| Layer | Speedup | Mechanism |
+|---|---|---|
+| dt = 0.5 → 1.0 ms | ~2x | substep count halved, dynamics still stable |
+| Parallel-3 GPU sharing | ~1.7x | 3 procs at ~70% efficiency each |
+| `fast_spike_reset` (cp.where masked-update) | 1.29x | eliminates per-step GPU-CPU sync in spike-reset |
+
+Numerical equivalence verified at `tests/test_fast_spike_reset.py`.
+Default `cfg.fast_spike_reset = False` for backward compatibility;
+opt-in via `--fast-spike-reset` (or default-on in modern runners).
+Full writeup: [`research/findings/2026-05-04-perf-speedup-stack.md`](../research/findings/2026-05-04-perf-speedup-stack.md).
 
 ### Memory
 
@@ -255,34 +271,65 @@ maximum reproducibility (sets `CUBLAS_WORKSPACE_CONFIG`).
 
 ## Active research directions
 
-Current open experiments (as of 2026-05-03):
+Current open experiments (as of 2026-05-04 ~00:30 EDT autonomous):
 
-1. **SWR Phase 3 replay investigation** — IN FLIGHT.
-   Implemented via `text_train_curriculum --phase3-replays N`. n=3
-   seeds (42, 43, 44) consistently show **W→A drops ~6 pp vs
-   baseline** (22% mean vs 28.5% baseline, p<0.01 at n=3). I→W is
-   noise-dominated. Per-direction analysis shows the cascade's
-   natural N-bias is amplified by replay distribution. 4-seed batch
-   (44/100/101/102) running overnight; H1 balanced-replay test
-   (`--phase3-balanced-directions`) and H4 PFC bypass isolation
-   experiment queued automatically afterward.
-   Findings: `research/findings/2026-05-03-swr-multiseed-result.md`.
-   Auto-summary: `research/findings/2026-05-03-swr-multiseed-summary.md`.
+1. **Biology-grounded sweep on minimal isolation arch** — IN FLIGHT.
+   The 0/N alignment finding (permuted-label control 2026-05-03) is
+   architectural, not a tuning issue. Testing whether two
+   biology-grounded fixes break the streak: topographic Wernicke→motor
+   prior (1.5/0.7 ratio per Pulvermüller 2001-2003) + cortical
+   PV-FSI lateral inhibition (~12% of motor pool per Vogels 2011).
+   4 conditions (baseline / +FS only / +Topo only / +Topo+FS) ×
+   6 seeds = 24 runs in parallel-3 (~3 hours). Auto-launches when
+   minimal-iso batch 2 finishes. See
+   `experiments/biology_sweep.yaml` and
+   `research/findings/2026-05-04-biology-sweep-followup-plan.md`.
 
-2. **PFC bypass isolation (H4)** — runner shipped, eval queued.
-   `text_pfc_bypass_isolation.py` tests the upper bound of the
-   `language_input → motor_X` pathway in isolation (no cascade).
-   If isolation gives 80%+, cascade interference is the bottleneck;
-   if ~28%, the architecture itself caps W→A.
+2. **Minimal-isolation INVERSION finding (2026-05-03 evening)**
+   The cascade-as-cause hypothesis is FALSIFIED. With cascade
+   stripped (no cluster_a, no cluster_e, no PFC, no visuomotor —
+   just language_input → motor_X under paired-stim training),
+   alignment ratio is 0/3 not 4/6. The cascade was a weak DAMPENER
+   on seed-dependent random structure, not its source. See
+   `research/findings/2026-05-04-minimal-isolation-INVERSION.md`.
 
-3. **Distributed motor pool architecture (Pulvermüller G.20)**
+3. **Pre-staged A/B follow-up decision chain.** A PowerShell
+   waiter polls for biology-sweep completion, runs the result
+   aggregator, and auto-launches the appropriate next experiment:
+   - Outcome A (≥ 4/6 aligned): `minimum_biology.yaml` —
+     dose-response (weak topo, minimal FS, strong topo, combo half)
+   - Outcome B (0-1/6): `eval_sanity_check.py` — hand-built
+     PERFECT weights, tests if the eval methodology itself works
+   - Tier-2 fallbacks pre-staged: `b2_sparse_codes.yaml` +
+     `b4_long_training.yaml` (sparse-code overlap + dose-response)
+
+4. **Distributed motor pool architecture (Pulvermüller G.20)**
    — implemented. 8 motor sub-pools at 45° intervals with
    cosine-tuned thal pathways and population vector decoding. Tested
-   2026-05-02 at n=1, didn't beat 28.5% baseline.
+   2026-05-02 at n=1, didn't beat the (now-debunked) 28.5% baseline.
+   No clear path forward without first establishing real W→A.
+
+### New tooling shipped 2026-05-03
+
+- `sim/progress.py` — universal `[PROGRESS] {json}` event format.
+  All runners emit structured progress (kind, current, total, phase,
+  elapsed_seconds). Webapp parses for live progress display.
+- `research/experiment_runner.py` — YAML-driven experiment orchestrator
+  replacing per-experiment PowerShell scripts. Parallel-N batching,
+  master log + COMPLETE marker, auto pid management.
+- `research/result_aggregator.py` — parameterized cross-condition
+  result rollup with permuted-label aligned ratio + verdict line.
+  Built-in configs: swr-investigation, fundamentals, biology,
+  minimum_biology, sanity_check, b2_sparse_codes, b4_long_training.
+- `research/runners/profile_step.py --arch {v2|minimal}` — section
+  profiler for hot-path identification.
+- `research/runners/bench_parallel_gpu.py` — parallel-process GPU
+  contention benchmark.
 
 Detailed roadmap:
-* `docs/plans/2026-05-03-autonomous-overnight-plan.md` (current)
-* `docs/plans/2026-05-02-text-io-next-directions-biology-grounded.md`
+* `docs/plans/2026-05-03-autonomous-overnight-plan.md`
+* `research/findings/2026-05-04-biology-sweep-followup-plan.md`
+* `research/findings/2026-05-04-perf-speedup-stack.md`
 
 ---
 
