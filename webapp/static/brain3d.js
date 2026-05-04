@@ -1514,16 +1514,22 @@ function renderLiveStep(step) {
     activateAction(actIdx, 0.5);
     bumpActivity("snc", 0.5);
   } else if (p.kind === "paired_stim") {
-    // Paired-stim isolation (H4 PFC bypass, minimal language->motor).
-    // Drive language_input + motor_X directly. No cascade involvement
-    // in minimal arch; for H4 the cascade exists but stays quiet.
+    // Legacy paired_stim kind (older runners). Field names: ev/ev_total.
     activateLanguagePathway(true);
     const actIdx = (p.ev || 0) % 4;
-    // motor pool fires (and FS interneurons if visible — they share
-    // the family color in 3D viz, so the bump shows up)
     activateAction(actIdx, 0.7);
-    // Light reward signal — paired-stim uses +1 always for synthetic
-    // buffers, so dopamine bursts steady-low
+    bumpActivity("snc", 0.3);
+  } else if (p.kind === "replay") {
+    // Universal "replay" kind — emitted by text_minimal_isolation +
+    // text_train_curriculum during paired-stim training (the BULK of
+    // each run's wall time, ~70min/seed at bio scale). Field names:
+    // current/total/phase/label. Without this branch the 3D viz sat
+    // dark during the entire training phase.
+    activateLanguagePathway(true);
+    const actIdx = (p.current || 0) % 4;
+    activateAction(actIdx, 0.7);
+    // Steady-low dopamine — paired-stim uses +1 always for synthetic
+    // buffers, so DA pulses don't vary much.
     bumpActivity("snc", 0.3);
   } else if (p.kind === "eval") {
     // W->A eval phase (e.g., evaluate_word_to_action). Drives
