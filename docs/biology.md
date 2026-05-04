@@ -355,14 +355,25 @@ biology has overlapping representations.
 ### What we found
 
 After many architectural variations:
-- Pure STDP + reward modulation can learn word→action mapping
-- 28.5% accuracy across 6 seeds (p=0.027 vs 25% chance)
-- This is statistically real but practically modest
-- The labeled-line architecture appears to be the bottleneck
+- Pure STDP + reward modulation produces 28.5% W→A accuracy across 6
+  seeds (p=0.027 vs 25% chance) — but a permuted-label control test
+  (2026-05-03) showed this is structure above chance, NOT aligned
+  word→action learning. Across 25 prior eval files, 0/25 had the true
+  labeled mapping ranked best of 24 permutations; best-permutation
+  scores cluster at 30-37% but the orientation is randomly seeded,
+  not task-aligned.
+- The current architecture has cascade-driven structural noise that
+  yields some 28-33%-accurate mapping per seed, but the mapping is
+  arbitrary, not learned. See
+  `research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`.
+- The minimal-isolation test (2026-05-04) falsified the
+  cascade-as-cause hypothesis (mean 16.7% at 3 seeds, BELOW chance);
+  the cascade was a weak dampener on seed-dependent random structure,
+  not its source.
 
-Currently testing distributed motor coding (8 sub-pools at 45°
-intervals with cosine tuning) to see if Pulvermüller's overlapping
-representation hypothesis holds.
+Currently testing biology-grounded fixes (topographic prior per
+Pulvermüller 2001-2003, PV-FS lateral inhibition between motor pools
+per Vogels 2011) to see if real word→action learning emerges.
 
 ---
 
