@@ -2012,3 +2012,50 @@ def get_text_io_run_detail(name: str) -> JSONResponse:
     except Exception as e:
         raise HTTPException(500, f"failed to parse: {e}")
     return JSONResponse(data)
+
+
+@app.get("/api/chain")
+def get_chain_status() -> JSONResponse:
+    """Return current autonomous decision-chain status as JSON.
+
+    Reuses morning_briefing._chain_status() so the webapp and CLI tool
+    are always in sync. Useful for the dashboard's chain-status panel.
+    """
+    try:
+        from research.runners.morning_briefing import _chain_status
+        cs = _chain_status()
+    except Exception as e:
+        return JSONResponse({"stage": "error", "error": str(e)}, status_code=500)
+
+    # Augment with waiter log tail for inline preview
+    try:
+        from research.runners.morning_briefing import _waiter_status
+        cs["waiter_log_tail"] = _waiter_status()
+    except Exception:
+        cs["waiter_log_tail"] = None
+
+    # Add aggregator verdicts for all relevant configs
+    verdicts = {}
+    try:
+        from research.result_aggregator import (
+            BUILTIN_CONFIGS, AggregateConfig, ResultSet,
+        )
+        for cfg_name in ("biology", "minimum_biology", "sanity_check"):
+            try:
+                conds = BUILTIN_CONFIGS[cfg_name]["conditions"]
+                seeds = BUILTIN_CONFIGS[cfg_name].get(
+                    "seeds", [42, 43, 44, 100, 101, 102]
+                )
+                cfg = AggregateConfig(conditions=conds, seeds=seeds)
+                rs = ResultSet.load(cfg)
+                v = rs.verdict()
+                # Strip markdown asterisks for compact display
+                v = v.replace("**", "")
+                verdicts[cfg_name] = v
+            except Exception:
+                verdicts[cfg_name] = None
+    except Exception:
+        verdicts = {}
+    cs["aggregator_verdicts"] = verdicts
+
+    return JSONResponse(cs)

@@ -79,16 +79,42 @@ def _python_processes() -> list[dict]:
         return []
 
 
-def _waiter_status() -> str:
-    """Return last 10 lines of the wait_biology_then_decide log."""
+def _read_waiter_text() -> str:
+    """Read the waiter log, handling both UTF-8 and UTF-16 LE encodings.
+
+    PowerShell's Out-File defaults to UTF-16 LE on Windows; the waiter
+    .ps1 writes the log this way. Try UTF-16 first, fall back to UTF-8.
+    """
     log = Path("research/findings/raw/g11_bg/wait_biology_then_decide.log")
     if not log.exists():
-        return "(waiter log not found)"
+        return ""
+    raw = log.read_bytes()
+    # UTF-16 LE BOM
+    if raw.startswith(b"\xff\xfe"):
+        try:
+            return raw.decode("utf-16-le", errors="replace").lstrip("﻿")
+        except Exception:
+            pass
+    # No BOM: detect via null-byte heuristic (every other char is null in UTF-16 ASCII)
+    if len(raw) >= 4 and raw[1] == 0 and raw[3] == 0:
+        try:
+            return raw.decode("utf-16-le", errors="replace")
+        except Exception:
+            pass
+    # Fall back to UTF-8
     try:
-        lines = log.read_text(encoding="utf-8", errors="replace").strip().split("\n")
-        return "\n".join(lines[-10:])
-    except OSError:
-        return "(waiter log unreadable)"
+        return raw.decode("utf-8", errors="replace")
+    except Exception:
+        return ""
+
+
+def _waiter_status() -> str:
+    """Return last 10 lines of the wait_biology_then_decide log."""
+    text = _read_waiter_text()
+    if not text:
+        return "(waiter log not found)"
+    lines = text.strip().split("\n")
+    return "\n".join(lines[-10:])
 
 
 def _chain_status() -> dict:
@@ -114,18 +140,17 @@ def _chain_status() -> dict:
     minbio_master = raw / "minimum-biology.master.log"
     sanity_log = raw / "eval_sanity_check.log"
 
-    # Parse verdict if present
+    # Parse verdict if present (uses _read_waiter_text to handle UTF-16 LE
+    # PowerShell encoding correctly).
     verdict = None
     if waiter_log.exists():
-        try:
-            text = waiter_log.read_text(encoding="utf-8", errors="replace")
-            for line in reversed(text.split("\n")):
-                if line.startswith("VERDICT:"):
-                    v = line.split(":", 1)[1].strip()
-                    verdict = v if v != "unknown" else None
-                    break
-        except OSError:
-            pass
+        text = _read_waiter_text()
+        for line in reversed(text.split("\n")):
+            line = line.strip()
+            if line.startswith("VERDICT:"):
+                v = line.split(":", 1)[1].strip()
+                verdict = v if v != "unknown" else None
+                break
 
     # Detect stage
     biology_master_text = ""
