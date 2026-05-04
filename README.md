@@ -152,13 +152,14 @@ For the deep technical view, see [docs/biology.md](docs/biology.md).
 
 - **Navigation:** 38% time at goal on 16×16 grid (perception only,
   no shortcuts) — see [docs/CURRENT-STATE.md](docs/CURRENT-STATE.md)
-- **Word→action mapping:** 28.5% W→A (p=0.027) across 6 seeds for
-  4-direction vocabulary
 - **Multi-region cascading:** 50+ brain regions, ~175,000 synapses,
   fully connected through biology-grounded pathways
 - **Real-time visualization:** every neuron + synapse rendered in 3D
 - **Reproducibility:** all RNG sources seeded, deterministic mode
   available
+- **Performance:** ~7-8x speedup vs original (dt=1.0 + parallel-3 GPU
+  sharing + cp.where masked-update spike-reset). 6-seed minimal-arch
+  batch in ~45-55 min. See [`research/findings/2026-05-04-perf-speedup-stack.md`](research/findings/2026-05-04-perf-speedup-stack.md).
 
 ### Modest results
 
@@ -205,20 +206,28 @@ neural-simulator/
 
 ## Latest validated result
 
-**Word→action mapping with biology-grounded learning rules** — the
-first rigorous demonstration in this project that pure spike-timing
-plasticity + reward modulation can encode language-action associations.
+**Navigation on 16×16 gridworld with biology-grounded perception** —
+agent reaches goal 38% of the time using only retinal input, no
+shortcuts (no direct (x,y) access, no heuristic, no distance reward).
 
 ```
-Configuration: v2 baseline (Hebbian off, stdp_w_max=5, readout init=0.5)
-Validation:    6 independent seeds, n=100 trials each = 600 cumulative
-Result:        171/600 correct = 28.5%  (p=0.027 vs 25% chance)
+Configuration: A+E + G v2.5 + Cluster K v2 visual cortex
+Validation:    6 independent seeds, 1800 steps each
+Result:        Mean 2.87 ± 0.19 Manhattan distance to goal
 ```
 
-Paper-style writeup: [`research/findings/2026-05-02-text-io-formal-writeup.md`](research/findings/2026-05-02-text-io-formal-writeup.md)
+See [`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md) for the configuration
+and [`research/findings/2026-05-01-cluster-k-v2-breakthrough.md`](research/findings/2026-05-01-cluster-k-v2-breakthrough.md)
+for the breakthrough writeup.
 
-Full snapshot of project capabilities + architecture:
-[`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md)
+**Word→action mapping is currently UNDER INVESTIGATION** — earlier
+"28.5% accuracy" claim was debunked by a permuted-label control test
+on 2026-05-03 (the structure was real but seed-dependent and not
+aligned with N/E/S/W labels). A biology-grounded sweep (topographic
+Wernicke→motor prior + motor PV-FS lateral inhibition) is in flight
+to test whether biology fixes break the alignment streak. Pre-staged
+decision chain auto-launches the appropriate follow-up based on
+outcome. See [`research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`](research/findings/2026-05-03-permuted-label-control-NEGATIVE.md).
 
 ---
 
