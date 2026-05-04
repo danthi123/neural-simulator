@@ -143,6 +143,26 @@ BUILTIN_CONFIGS: Dict[str, Dict[str, Any]] = {
             "+Topo +FS":                      "text_eval_biology_topo_fs_seed{seed}.json",
         },
     },
+    # Post-biology-sweep follow-ups (auto-launched by
+    # wait_biology_then_decide.ps1 when biology sweep aligns >= 4/6).
+    # Identifies minimum sufficient biology dose.
+    "minimum_biology": {
+        "conditions": {
+            "+Topo weak (1.3/0.8)":       "text_eval_minbio_topo_weak_seed{seed}.json",
+            "+FS minimal (1 PV-FSI)":     "text_eval_minbio_fs_minimal_seed{seed}.json",
+            "+Topo strong (2.0/0.5)":     "text_eval_minbio_topo_strong_seed{seed}.json",
+            "+Combo weak (both halved)":  "text_eval_minbio_combo_weak_seed{seed}.json",
+        },
+    },
+    # Eval methodology sanity check: hand-built perfect language->motor
+    # weights, no training. Tests whether eval can detect a known-correct
+    # mapping. Auto-launched if biology sweep gives 0/6 across all conds.
+    "sanity_check": {
+        "conditions": {
+            "density 0.30 (matches default)":    "text_eval_sanity_check_density030_seed{seed}.json",
+            "density 1.0 (full connectivity)":   "text_eval_sanity_check_density100_seed{seed}.json",
+        },
+    },
 }
 
 
@@ -298,7 +318,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                   formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--config", choices=sorted(BUILTIN_CONFIGS.keys()),
-                    help="Built-in config (swr-investigation, fundamentals, biology)")
+                    help="Built-in config (swr-investigation, fundamentals, "
+                         "biology, minimum_biology, sanity_check)")
     ap.add_argument("--pattern", action="append", default=None,
                     help="Custom condition label=pattern (repeatable). "
                          "E.g. --pattern 'mine=text_eval_my_*_seed{seed}.json'")
