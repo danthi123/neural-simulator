@@ -4463,16 +4463,46 @@ class SimulationBridge:
                 not_in_refractory = (self.cp_refractory_timers <= 0)
                 current_spike_thresholds = self.cp_neuron_firing_thresholds if cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None else self.cp_izh_vpeak
                 fired_this_step = (v_new >= current_spike_thresholds) & not_in_refractory
-                fired_indices = cp.where(fired_this_step)[0]
 
-                if fired_indices.size > 0:
-                    v_new[fired_indices] = self.cp_izh_c_reset[fired_indices] 
-                    u_new[fired_indices] += self.cp_izh_d_increment[fired_indices] 
-                    self.cp_refractory_timers[fired_indices] = cfg.refractory_period_steps 
+                if getattr(cfg, "fast_spike_reset", False):
+                    # Fast path: cp.where masked-update. No GPU-CPU sync,
+                    # no fancy-index assignment. Numerically equivalent to
+                    # legacy for the Izhikevich model. Biggest win on
+                    # small networks where launch overhead dominates.
+                    # See tests/test_fast_spike_reset.py for verification.
+                    v_new = cp.where(fired_this_step, self.cp_izh_c_reset, v_new)
+                    u_new = cp.where(fired_this_step,
+                                      u_new + self.cp_izh_d_increment, u_new)
+                    # Refractory: fired -> period_steps - 1 (matches legacy
+                    # off-by-one: legacy sets to N then decrements to N-1
+                    # via the unconditional decrement). Non-fired with
+                    # timer > 0 decrement; otherwise stay 0.
+                    new_refractory_for_fired = cp.int32(max(0, cfg.refractory_period_steps - 1))
+                    new_refractory_for_unfired = cp.maximum(
+                        self.cp_refractory_timers - cp.int32(1),
+                        cp.int32(0),
+                    )
+                    self.cp_refractory_timers[:] = cp.where(
+                        fired_this_step,
+                        new_refractory_for_fired,
+                        new_refractory_for_unfired,
+                    )
+                    self.cp_membrane_potential_v[:] = v_new
+                    self.cp_recovery_variable_u[:] = u_new
+                else:
+                    # Legacy path: fancy-index assignment + GPU-CPU sync at
+                    # `fired_indices.size > 0`. Bit-identical to historical
+                    # behavior. Default kept for backward compatibility.
+                    fired_indices = cp.where(fired_this_step)[0]
 
-                self.cp_membrane_potential_v[:] = v_new
-                self.cp_recovery_variable_u[:] = u_new
-                self.cp_refractory_timers[self.cp_refractory_timers > 0] -= 1 
+                    if fired_indices.size > 0:
+                        v_new[fired_indices] = self.cp_izh_c_reset[fired_indices]
+                        u_new[fired_indices] += self.cp_izh_d_increment[fired_indices]
+                        self.cp_refractory_timers[fired_indices] = cfg.refractory_period_steps
+
+                    self.cp_membrane_potential_v[:] = v_new
+                    self.cp_recovery_variable_u[:] = u_new
+                    self.cp_refractory_timers[self.cp_refractory_timers > 0] -= 1
 
             elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
                 total_input_current_uA_density_equivalent = total_input_current_pA * 1e-6

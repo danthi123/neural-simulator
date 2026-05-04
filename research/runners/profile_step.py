@@ -34,6 +34,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--steps", type=int, default=1500)
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--arch", choices=["v2", "minimal"], default="v2",
+                    help="Architecture to profile. v2 = 5234 neurons "
+                    "(text I/O, full cascade). minimal = ~356 neurons "
+                    "(language_input + motor_X only, cascade-free; "
+                    "matches the biology sweep target arch).")
     args = ap.parse_args()
 
     t0 = time.time()
@@ -42,26 +47,31 @@ def main():
         CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig,
     )
     from sim.bridge import SimulationBridge
-    from research.runners.g11_bg_runner import build_bg_brain_regions
 
-    print("Building text-IO architecture (5234 neurons, ~175k synapses)...")
-    regions, pathways = build_bg_brain_regions(
-        enable_striatal_fsis=True,
-        enable_cluster_a_closed_loop=True,
-        enable_cluster_e_topography=True,
-        enable_pfc=True,
-        pfc_enable_nmda=True,
-        enable_visual_cortex=True,
-        enable_text_io=True,
-    )
+    if args.arch == "minimal":
+        from research.runners.text_minimal_isolation import build_minimal_brain_regions
+        print("Building MINIMAL architecture (cascade-free, ~356 neurons)...")
+        regions, pathways = build_minimal_brain_regions()
+    else:
+        from research.runners.g11_bg_runner import build_bg_brain_regions
+        print("Building v2 text-IO architecture (5234 neurons, ~175k synapses)...")
+        regions, pathways = build_bg_brain_regions(
+            enable_striatal_fsis=True,
+            enable_cluster_a_closed_loop=True,
+            enable_cluster_e_topography=True,
+            enable_pfc=True,
+            pfc_enable_nmda=True,
+            enable_visual_cortex=True,
+            enable_text_io=True,
+        )
 
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions)
     cfg.region_pathways = list(pathways)
-    cfg.dt_ms = 0.5
+    cfg.dt_ms = 0.5 if args.arch == "v2" else 1.0  # match production
     cfg.seed = args.seed
-    cfg.enable_nmda = True
+    cfg.enable_nmda = (args.arch == "v2")  # minimal arch doesn't use NMDA
     cfg.nmda_ratio = 0.5
     cfg.enable_structural_plasticity = False
     cfg.enable_per_type_stp = False

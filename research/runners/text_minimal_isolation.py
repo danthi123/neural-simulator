@@ -295,6 +295,10 @@ def run_minimal_isolation(
     topographic_bias_factor: float = 1.0,  # 1.0 = off (uniform random)
     off_target_bias_factor: float = 1.0,   # 1.0 = off (uniform random)
     freeze_stdp: bool = False,             # anti-cheat control: skip STDP
+    # Performance: fast-path spike reset (no GPU-CPU sync). 1.29x on
+    # minimal arch under 4-way contention. Numerical equivalence verified
+    # at tests/test_fast_spike_reset.py.
+    fast_spike_reset: bool = True,
     verbose: bool = True,
 ):
     """Run the minimal isolation experiment. Returns (bridge, stats)."""
@@ -344,6 +348,7 @@ def run_minimal_isolation(
     cfg.enable_per_type_stp = False
     cfg.enable_hebbian_learning = enable_hebbian
     cfg.stdp_w_max = stdp_w_max
+    cfg.fast_spike_reset = fast_spike_reset
 
     bridge = SimulationBridge(
         core_config=cfg,
@@ -518,6 +523,11 @@ def main():
                     help="anti-cheat control: freeze STDP on the language_"
                     "input_to_motor pathway. Combined with topographic bias, "
                     "tests whether the prior alone solves the task.")
+    ap.add_argument("--no-fast-spike-reset", dest="fast_spike_reset",
+                    action="store_false", default=True,
+                    help="disable the fast spike-reset optimization "
+                    "(cp.where masked-update, no GPU-CPU sync). Default "
+                    "is enabled for ~1.3x speedup on minimal arch.")
     args = ap.parse_args()
 
     bridge, train_stats = run_minimal_isolation(
@@ -540,6 +550,7 @@ def main():
         topographic_bias_factor=args.topographic_bias_factor,
         off_target_bias_factor=args.off_target_bias_factor,
         freeze_stdp=args.freeze_stdp,
+        fast_spike_reset=args.fast_spike_reset,
         verbose=True,
     )
 

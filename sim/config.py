@@ -178,6 +178,12 @@ class CoreSimConfig:
     stdp_w_min: float = 0.0                # Minimum synaptic weight
     stdp_w_max: float = 2.0                # Maximum synaptic weight
     stdp_only_nearest_spike: bool = True   # Use only nearest spike pairs (more efficient)
+    # Performance: fast spike-reset path that avoids the GPU-CPU sync at
+    # `if fired_indices.size > 0`. Uses cp.where masked-update instead of
+    # fancy-index assignment. Numerically equivalent for the Izhikevich
+    # path; biggest win on small networks where launch overhead dominates.
+    # Default False so existing runs are bit-identical; opt-in via this flag.
+    fast_spike_reset: bool = False
 
     # C2: Reward-Modulated Plasticity (Three-factor learning rule) - Izhikevich 2007
     enable_reward_modulation: bool = True  # Enabled by default for reinforcement learning
