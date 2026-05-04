@@ -1,0 +1,75 @@
+# B3 — supervised gradient learning. B-branch tier-2 fallback if biology
+# sweep gives 0/6 AND eval_sanity_check (B1) confirms the eval is sound.
+#
+# Tests whether ANY learning rule (not just biology-grounded ones) can
+# align the word -> action mapping under this minimal architecture.
+# Replaces STDP with a delta-rule supervised update on the
+# language_input -> motor_X weights. STDP is frozen via plasticity gate
+# so the gradient is the sole teacher.
+#
+# Three conditions x 3 seeds = 9 runs. Gradient training is slower than
+# STDP (each event runs a full forward stim window of 50 sub-steps),
+# so we use 3 seeds instead of 6.
+#
+# Outcome interpretations (per condition):
+#   - vanilla (gradient only):
+#     >= 4/6 aligned (seeds align >= 60%): biology rules ARE the
+#       bottleneck. Pursue alternative learning rules.
+#     0-1/6: gradient also fails, architecture is the issue.
+#   - with_topo (gradient + topographic bias):
+#     If aligned >> vanilla: biology prior + supervised credit
+#       compose well; topographic helps even gradient.
+#     If aligned == vanilla: prior provides no extra benefit beyond
+#       supervised credit.
+#   - with_topo_fs (gradient + biology fix combined):
+#     The strongest test — combined supervised + full biology fixes.
+#
+# Manual usage:
+#   python -m research.experiment_runner experiments/b3_supervised_gradient.yaml
+#
+# Auto-launched by the autonomous decision chain when:
+#   biology_sweep verdict == "B" AND
+#   eval_sanity_check verdict == "perfect mode aligned >= 4/6"
+
+name: b3-supervised-gradient
+runner: research.runners.b3_supervised_gradient
+output_dir: research/findings/raw/g11_bg
+parallelism: 3
+
+seeds: [42, 43, 44]
+
+base_args:
+  n-events-per-direction: 1000
+  learning-rate: 0.001
+  stim-steps-per-event: 50
+  reset-steps: 50
+  token-sparsity: 0.1
+  dt-ms: 1.0
+  push-to-gpu-every: 64
+  n-eval-per-word: 25
+
+conditions:
+  # Vanilla: gradient learning only, no biology priors. Decisive test
+  # of whether ANY learning rule succeeds at this architecture's scale.
+  - name: vanilla
+    args: {}
+
+  # Gradient + topographic prior. Tests whether supervised credit +
+  # biology-grounded inductive bias compose better than either alone.
+  - name: with_topo
+    args:
+      apply-topographic-bias: true
+      topographic-bias-factor: 1.5
+      off-target-bias-factor: 0.7
+
+  # Gradient + topographic + motor PV-FS lateral inhibition. Combined
+  # supervised credit + full biology fix from the biology sweep.
+  - name: with_topo_fs
+    args:
+      apply-topographic-bias: true
+      topographic-bias-factor: 1.5
+      off-target-bias-factor: 0.7
+      enable-motor-fs: true
+      n-motor-fs-per-action: 3
+
+out_stats_template: "text_eval_b3_{name}_seed{seed}.json"
