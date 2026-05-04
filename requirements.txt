@@ -1,12 +1,22 @@
 # To install these dependencies, run the following command in your terminal:
 # pip install -r requirements.txt
 
+# Core simulator dependencies
 cupy-cuda11x # Or cupy-cuda12x, or another version matching your CUDA installation
 numpy
 h5py
 dearpygui
 PyOpenGL
 PyOpenGL_accelerate
+
+# Experiment runner (YAML-driven autonomous sweeps in experiments/*.yaml)
+pyyaml>=6.0
+
+# Webapp dashboard (webapp/server.py + static/)
+# These are optional for headless / GUI-only use; required for the FastAPI dashboard
+fastapi>=0.115
+uvicorn[standard]>=0.34
+pydantic>=2.0
 
 # For CuPy, you need to install the version compatible with your CUDA toolkit.
 # Replace 'XXX' with your CUDA version (e.g., 11x for CUDA 11.x, 12x for CUDA 12.x).
