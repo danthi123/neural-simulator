@@ -102,6 +102,73 @@ function formatProgressLine(p) {
 }
 
 /**
+ * Sticky-alive filter — debounces transient `alive=false` reports.
+ *
+ * Why: webapp's _check_pid_alive uses Windows `tasklist /FI "PID eq N"`
+ * which is mostly reliable but occasionally returns "no match" for an
+ * actually-running PID (especially under GPU contention or when the
+ * subprocess was just spawned). When that hiccup happens during a poll,
+ * the `.filter(r => r.alive)` would drop a real running run out of the
+ * inflight list, the empty-state branch would trigger, all the cards
+ * would be wiped to a "No active runs" placeholder, and the next poll
+ * would re-add them. Visible flicker.
+ *
+ * Fix: maintain a per-run "last seen alive at" timestamp. A run reported
+ * as alive=false is still treated as alive if it was reported alive
+ * within the last `stickySec` seconds (default 15s).
+ *
+ * Truly-dead runs leave the panel after stickySec. The empty-state
+ * branch only triggers when ALL runs have been alive=false for >stickySec.
+ */
+const _aliveRunMemory = new Map(); // name -> last_alive_unix_seconds
+
+function filterAliveSticky(allRuns, stickySec) {
+  if (stickySec === undefined) stickySec = 15;
+  const now = Date.now() / 1000;
+  const result = [];
+  // First pass: update memory for runs reporting alive
+  const seenNames = new Set();
+  for (const r of allRuns) {
+    seenNames.add(r.name);
+    if (r.alive) {
+      _aliveRunMemory.set(r.name, now);
+    }
+  }
+  // Second pass: emit runs that are alive OR were alive recently
+  for (const r of allRuns) {
+    if (r.alive) {
+      result.push(r);
+    } else {
+      const lastAlive = _aliveRunMemory.get(r.name);
+      if (lastAlive && now - lastAlive < stickySec) {
+        // Sticky — recently alive, treat as still running
+        result.push(r);
+      } else {
+        // Truly dead — stop tracking
+        _aliveRunMemory.delete(r.name);
+      }
+    }
+  }
+  // Clean up memory for runs no longer in the API response at all
+  // (e.g. completed → removed from .pid scanner)
+  for (const name of Array.from(_aliveRunMemory.keys())) {
+    if (!seenNames.has(name)) {
+      const lastAlive = _aliveRunMemory.get(name);
+      if (lastAlive && now - lastAlive >= stickySec) {
+        _aliveRunMemory.delete(name);
+      }
+    }
+  }
+  return result;
+}
+
+// Expose so brain3d.js (separate module) can use the same sticky-alive
+// behavior in its 3D Live mode picker. Kept on window so the script
+// load order doesn't matter.
+window.filterAliveSticky = filterAliveSticky;
+
+
+/**
  * Diff-update a list of run cards in a container without flicker.
  *
  * Replacing the entire container DOM (replaceChildren + appendAll) on
@@ -500,7 +567,8 @@ async function refreshRunsLivePanel() {
     const data = await res.json();
     // Diff against previously-alive set to detect completion -> notify
     checkForCompletedRuns(data.inflight || []);
-    const runs = (data.inflight || []).filter((r) => r.alive);
+    // Sticky-alive — debounces transient tasklist hiccups (15s grace).
+    const runs = filterAliveSticky(data.inflight || []);
     if (!runs.length) {
       wrap.style.display = "none";
       return;
@@ -2246,7 +2314,8 @@ async function refreshBrainLive() {
     // Completed runs are now visible via the Runs tab (with their result
     // file accessible) — that's the correct surface for them.
     const allRuns = data.inflight || [];
-    const runs = allRuns.filter((r) => r.alive);
+    // Sticky-alive — debounces transient tasklist hiccups (15s grace).
+    const runs = filterAliveSticky(allRuns);
     counter.textContent = runs.length === 1 ? "1 in flight" : `${runs.length} in flight`;
     if (!runs.length) {
       container.replaceChildren(el("p", { class: "muted" },
@@ -2473,7 +2542,8 @@ async function refreshInflightPanel() {
     const allRuns = res.inflight || [];
     // Detect completion -> notify (same as Runs-tab live panel)
     checkForCompletedRuns(allRuns);
-    const runs = allRuns.filter((r) => r.alive);
+    // Sticky-alive — debounces transient tasklist hiccups (15s grace).
+    const runs = filterAliveSticky(allRuns);
     if (runs.length === 0) {
       section.style.display = "none";
       return;

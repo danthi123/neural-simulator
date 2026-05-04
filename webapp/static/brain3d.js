@@ -1251,7 +1251,14 @@ function selectLiveRun(name) {
 async function pollLive() {
   try {
     const inflightRes = await fetch("/api/inflight").then((r) => r.json());
-    const allRuns = (inflightRes.inflight || []).filter((r) => r.alive);
+    // Sticky-alive — debounces transient tasklist hiccups so the 3D
+    // viz doesn't clear activity + flash "No active runs" between
+    // polls when the PID-alive check momentarily fails. Falls back
+    // to plain `.alive` filter if app.js hasn't loaded yet.
+    const stickyFilter = (typeof window !== "undefined" && window.filterAliveSticky)
+      ? window.filterAliveSticky
+      : (list) => list.filter((r) => r.alive);
+    const allRuns = stickyFilter(inflightRes.inflight || []);
     liveRunsList = allRuns;
     refreshLiveRunPicker();
 
