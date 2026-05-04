@@ -199,6 +199,28 @@ BUILTIN_CONFIGS: Dict[str, Dict[str, Any]] = {
         },
         "seeds": [42, 43, 44],
     },
+    # Biological-scale eval sanity check: same modes as `sanity_check`
+    # but with cortical canon (Lefort 2009 recurrence + 80E/20I + Wang
+    # 2002 NMDA bistability) + ~10x larger N. If perfect mode aligns
+    # >= 4/6 here but 0/6 at minimal scale, the original B1 broken-eval
+    # finding was an "architecture too minimal" issue, not an eval bug.
+    "bio_sanity_check": {
+        "conditions": {
+            "bio perfect, density 0.30":     "text_eval_sanity_check_bio_density030_seed{seed}.json",
+            "bio perfect, density 1.0":      "text_eval_sanity_check_bio_density100_seed{seed}.json",
+            "bio wrong-mapping (control)":   "text_eval_sanity_check_bio_density030_wrong_seed{seed}.json",
+            "bio random weights (control)":  "text_eval_sanity_check_bio_density030_random_seed{seed}.json",
+        },
+    },
+    # Biological-scale STDP training proof-of-concept (single seed).
+    # CONDITIONAL: only run after bio_sanity_check passes.
+    "bio_proof_of_concept": {
+        "conditions": {
+            "bio_baseline (canon, no fix)":  "text_eval_bio_bio_baseline_seed{seed}.json",
+            "bio_topo_fs (canon + biology)": "text_eval_bio_bio_topo_fs_seed{seed}.json",
+        },
+        "seeds": [42],
+    },
 }
 
 

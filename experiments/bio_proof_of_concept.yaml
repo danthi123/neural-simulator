@@ -1,0 +1,65 @@
+# Biological-scale STDP training, single-seed proof-of-concept.
+#
+# CONDITIONAL on bio_sanity_check passing (perfect mode aligns >= 4/6
+# at biological scale). If sanity check fails, do NOT run this — the
+# eval methodology issue must be fixed first.
+#
+# This is a quick-look at whether biology fixes (Pulvermuller
+# topographic prior + Vogels PV-FSI lateral inhibition) work at
+# biological scale, where the cortical canon (recurrence + E/I + NMDA)
+# is in place. Compare against the biology sweep's 0/N alignment streak
+# at minimal scale.
+#
+# 2 conditions x 1 seed = 2 runs at parallel=1.
+#
+# Estimated runtime per run: ~70-90 min (4000 events at biological
+# scale, ~24ms/substep × 170 substeps/event × 4000 events = ~16K sec).
+# Total: ~2.5 hours.
+#
+# Expected outcomes:
+#   - bio_baseline (no fix) aligned >= 4/6 (single seed: 4/4 trials
+#     align at TRUE labels): cortical canon ALONE enables W->A learning.
+#     Strong scientific finding — the biology sweep's 0/N streak was
+#     architecture-scale-limited.
+#   - bio_topo_fs aligned >= 4/4 with MARGIN: biology fix is additive
+#     on top of canon.
+#   - Both 0-1/4: even with biology canon + biology fix, learning fails.
+#     Then plasticity rule itself is the bottleneck (B3 supervised
+#     gradient becomes the next experiment).
+#
+# Single-seed is a coarse signal but cheap. If results look promising,
+# follow-up with multi-seed validation.
+#
+# Usage (after bio_sanity_check passes):
+#   python -m research.experiment_runner experiments/bio_proof_of_concept.yaml
+
+name: bio-proof-of-concept
+runner: research.runners.text_minimal_isolation
+output_dir: research/findings/raw/g11_bg
+parallelism: 1
+
+seeds: [42]  # single-seed proof-of-concept; multi-seed validation later
+
+base_args:
+  biological: true             # cortical canon + auto-bumped sizes
+  n-events-per-direction: 1000  # matches biology sweep training dose
+  stim-steps-per-step: 100
+  reset-steps: 50
+  dt-ms: 1.0
+  n-eval-word-action: 25
+
+conditions:
+  # Cortical canon alone (recurrence + E/I + NMDA), no biology fix.
+  # Tests "does cortical canon alone enable W->A?"
+  - name: bio_baseline
+    args: {}
+
+  # Cortical canon + Pulvermuller topographic prior + Vogels motor PV-FSI.
+  # Tests "is the biology fix additive on canon?"
+  - name: bio_topo_fs
+    args:
+      enable-motor-fs: true
+      topographic-bias-factor: 1.5
+      off-target-bias-factor: 0.7
+
+out_stats_template: "text_eval_bio_{name}_seed{seed}.json"

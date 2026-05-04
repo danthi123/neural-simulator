@@ -1,0 +1,80 @@
+# Biological-scale eval sanity check.
+#
+# Prerequisite: 2026-05-04 minimal-iso B1 found that hand-built perfect
+# weights at N=25 motor neurons + no recurrence give 25% TRUE accuracy
+# (chance) — eval is broken at minimal scale. See
+# research/findings/2026-05-04-eval-methodology-BROKEN.md.
+#
+# This config tests whether biological-scale architecture (cortical
+# canon: recurrent excitation + E/I balance + NMDA bistability + ~10x
+# larger pools) makes the eval methodology work.
+#
+# Architecture per the --biological flag:
+#   - language_input: 2048 neurons (4x current Wernicke), internal
+#     density 0.05, exc_fraction 0.8, plastic_internal=False
+#   - motor_X (per action): 500 neurons (Schieber 2001 / Rathelot 2009
+#     motor sub-pool size), internal_density 0.10 (Lefort 2009 cortical
+#     recurrence), exc_fraction 0.8 (real cortex 80E/20I)
+#   - NMDA enabled (Wang 2002 bistability)
+#   - Total: ~4048 neurons, ~1.5M synapses, ~1-2 GB GPU peak
+#
+# Estimated runtime per run: 6-10 min (no training, just eval).
+# Total: 4 modes x 6 seeds = 24 runs at parallel=1 = ~3 hours.
+#
+# Expected outcomes:
+#   - perfect mode aligned >= 4/6 -> eval works at bio scale ->
+#     proceed to full STDP training experiments at bio scale.
+#   - perfect mode 0-1/6 -> deeper eval methodology problem;
+#     architecture-scaling didn't fix it. Investigate eval scoring,
+#     drive currents, measurement window directly.
+#
+# Single-process (parallel: 1) because each run uses ~1-2 GB GPU and
+# the user requested max-scale single runs on RTX 3090 / 24 GB VRAM.
+#
+# Usage (after reboot for clean GPU state):
+#   python -m research.experiment_runner experiments/bio_sanity_check.yaml
+
+name: bio-sanity-check
+runner: research.runners.eval_sanity_check
+output_dir: research/findings/raw/g11_bg
+parallelism: 1
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  biological: true             # cortical canon + auto-bumped sizes
+  n-eval-per-word: 25
+  stim-steps-per-step: 100
+  reset-steps: 50
+  dt-ms: 1.0
+  target-weight: 8.0
+
+conditions:
+  # Default density 0.30 (matches biology sweep arch). Population
+  # vector should resolve cleanly with N=500 motor neurons.
+  - name: bio_density030
+    args:
+      text-input-to-motor-density: 0.30
+      mode: perfect
+
+  # Full connectivity (1.0). 2048 lang x 500 motor x 4 actions x 1.0 =
+  # 4.1M synapses on lang->motor pathways alone. Within budget but
+  # the densest. Tests pure eval-logic.
+  - name: bio_density100
+    args:
+      text-input-to-motor-density: 1.0
+      mode: perfect
+
+  # Wrong-mapping control. Should show TRUE-acc=0%, best_perm=rotated.
+  - name: bio_density030_wrong
+    args:
+      text-input-to-motor-density: 0.30
+      mode: wrong
+
+  # Random-weights control. Should show ~chance (25%).
+  - name: bio_density030_random
+    args:
+      text-input-to-motor-density: 0.30
+      mode: random
+
+out_stats_template: "text_eval_sanity_check_{name}_seed{seed}.json"

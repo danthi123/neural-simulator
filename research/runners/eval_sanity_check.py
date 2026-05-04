@@ -223,6 +223,10 @@ def run_sanity_check(
     reset_steps: int = 50,
     dt_ms: float = 1.0,
     mode: str = "perfect",
+    biological: bool = False,
+    enable_nmda: bool = False,
+    ou_tau_ms: float = 15.0,
+    ou_std_current_pA: float = 100.0,
     verbose: bool = True,
 ):
     """Run the sanity check: build minimal arch, hand-build weights per
@@ -241,24 +245,41 @@ def run_sanity_check(
         CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig,
     )
     from sim.bridge import SimulationBridge
-    from research.runners.text_minimal_isolation import build_minimal_brain_regions
+    from research.runners.text_minimal_isolation import (
+        build_minimal_brain_regions, build_biological_brain_regions,
+    )
 
     if verbose:
+        arch_name = "BIOLOGICAL" if biological else "MINIMAL"
         print("=" * 60)
-        print(f"EVAL SANITY CHECK (seed={seed}, mode={mode})")
+        print(f"EVAL SANITY CHECK (seed={seed}, mode={mode}, arch={arch_name})")
         print(f"  Hand-built language_input -> motor_X weights ({mode} pattern)")
         print(f"  NO training, NO STDP — directly evaluate weights")
         print(f"  Target weight: {target_weight} (off-target: 0.0)")
+        print(f"  n_lang={n_lang_input}, n_motor_per_action={n_motor_per_action}")
+        if biological:
+            print(f"  Cortical canon ENABLED: recurrence + E/I + NMDA={enable_nmda}")
+            print(f"  ou_tau_ms={ou_tau_ms}, ou_std_pA={ou_std_current_pA}")
         print("=" * 60, flush=True)
 
-    regions, pathways = build_minimal_brain_regions(
-        n_lang_input=n_lang_input,
-        n_motor_per_action=n_motor_per_action,
-        text_input_to_motor_density=text_input_to_motor_density,
-        text_input_to_motor_weight=3.0,  # baseline; will be overwritten
-        text_input_to_motor_jitter=0.5,
-        enable_motor_fs=False,  # eval-only test, no FS
-    )
+    if biological:
+        regions, pathways = build_biological_brain_regions(
+            n_lang_input=n_lang_input,
+            n_motor_per_action=n_motor_per_action,
+            text_input_to_motor_density=text_input_to_motor_density,
+            text_input_to_motor_weight=3.0,  # baseline; overwritten
+            text_input_to_motor_jitter=0.5,
+            enable_motor_fs=False,  # sanity-eval doesn't use FS
+        )
+    else:
+        regions, pathways = build_minimal_brain_regions(
+            n_lang_input=n_lang_input,
+            n_motor_per_action=n_motor_per_action,
+            text_input_to_motor_density=text_input_to_motor_density,
+            text_input_to_motor_weight=3.0,  # baseline; overwritten
+            text_input_to_motor_jitter=0.5,
+            enable_motor_fs=False,
+        )
 
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -266,7 +287,9 @@ def run_sanity_check(
     cfg.region_pathways = list(pathways)
     cfg.dt_ms = dt_ms
     cfg.seed = seed
-    cfg.enable_nmda = False
+    cfg.enable_nmda = enable_nmda
+    cfg.ou_tau_ms = ou_tau_ms
+    cfg.ou_std_current_pA = ou_std_current_pA
     cfg.enable_structural_plasticity = False
     cfg.enable_per_type_stp = False
     cfg.enable_hebbian_learning = False
@@ -371,8 +394,29 @@ def main():
                     "TRUE-acc=0%%, best perm = rotated); 'random' = uniform "
                     "random (expected ~chance); 'wipe' = all zero edges "
                     "(degenerate baseline).")
+    ap.add_argument("--biological", action="store_true", default=False,
+                    help="use biological-scale architecture: motor pools "
+                    "with recurrent E + E/I balance + NMDA bistability + "
+                    "larger N. Auto-bumps lang/motor sizes if user defaults "
+                    "(n_lang=2048, n_motor=500). Wang 2002 + Lefort 2009.")
+    ap.add_argument("--enable-nmda", action="store_true", default=False,
+                    help="enable NMDA synapses globally. Auto-on with "
+                    "--biological.")
+    ap.add_argument("--ou-tau-ms", type=float, default=15.0,
+                    help="OU noise correlation time. Default 15ms; set "
+                    "50-100ms for slower biological cortical noise.")
+    ap.add_argument("--ou-std-current-pA", type=float, default=100.0,
+                    help="OU noise amplitude pA. Default 100.")
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
+
+    # --biological auto-bumps sizes + enables NMDA if user used minimal defaults
+    if args.biological:
+        if args.n_lang_input == 256:
+            args.n_lang_input = 2048
+        if args.n_motor_per_action == 25:
+            args.n_motor_per_action = 500
+        args.enable_nmda = True
 
     result = run_sanity_check(
         seed=args.seed,
@@ -386,6 +430,10 @@ def main():
         reset_steps=args.reset_steps,
         dt_ms=args.dt_ms,
         mode=args.mode,
+        biological=args.biological,
+        enable_nmda=args.enable_nmda,
+        ou_tau_ms=args.ou_tau_ms,
+        ou_std_current_pA=args.ou_std_current_pA,
         verbose=True,
     )
 

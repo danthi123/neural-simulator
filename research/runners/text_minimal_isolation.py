@@ -163,6 +163,126 @@ def build_minimal_brain_regions(
     return regions, pathways
 
 
+def build_biological_brain_regions(
+    n_lang_input: int = 2048,
+    n_motor_per_action: int = 500,
+    text_input_to_motor_density: float = 0.30,
+    text_input_to_motor_weight: float = 3.0,
+    text_input_to_motor_jitter: float = 0.5,
+    enable_motor_fs: bool = False,
+    n_motor_fs_per_action: int = 60,
+    motor_to_fs_weight: float = 2.0,
+    fs_to_motor_weight: float = 2.0,
+    motor_internal_density: float = 0.10,
+    motor_exc_fraction: float = 0.8,
+    motor_exc_weight_mean: float = 2.0,
+    motor_inh_weight_mean: float = 4.0,
+    lang_internal_density: float = 0.05,
+    lang_exc_fraction: float = 0.8,
+):
+    """Biological-scale architecture with cortical canon ENABLED.
+
+    vs build_minimal_brain_regions: motor pools have recurrent
+    excitation + E/I balance + larger N. Specifically:
+      - n_motor_per_action: 500 (vs 25). Schieber 2001 / Rathelot 2009
+        estimate motor cortex sub-pools at 100-500 neurons per action.
+      - motor exc_fraction: 0.8 (vs 1.0 pure-exc). Real cortex is 80E/20I.
+      - motor internal_density: 0.10 (vs 0.0). Lefort 2009 estimates
+        cortical recurrent connectivity at 10-20%.
+      - motor exc_weight: 2.0, inh_weight: 4.0 (vs 0.0). Recurrent E
+        amplifies signal; local I prevents runaway.
+      - n_lang_input: 2048 (vs 256). Wernicke-area scale.
+
+    Combined with cfg.enable_nmda=True (Wang 2002 NMDA bistability),
+    these motor pools should produce attractor dynamics — transient
+    differential drive locks into sustained differential firing.
+
+    Memory budget at default sizes:
+      - 2048 + 4*500 = 4048 neurons
+      - lang->motor synapses: 2048 * 500 * 0.30 * 4 = 1.23M
+      - motor recurrence: 500 * 500 * 0.10 * 4 = 100K (E/E + E/I + I/E)
+      - lang internal recurrence: 2048 * 2048 * 0.05 = 209K
+      - Total: ~1.55M synapses. Estimated ~1-2 GB GPU at peak.
+        Single-process fit comfortably in RTX 3090 24 GB.
+
+    Returns (regions, pathways) tuple.
+    """
+    from sim.regions import BrainRegion, RegionPathway
+    from sim.enums import NeuronType
+
+    ACTION_NAMES = ["N", "E", "S", "W"]
+    regions = []
+    pathways = []
+
+    # Language input region — biological-scale Wernicke-like
+    regions.append(BrainRegion(
+        name="language_input",
+        n_neurons=n_lang_input,
+        exc_fraction=lang_exc_fraction,
+        internal_density=lang_internal_density,
+        exc_weight_mean=2.0, inh_weight_mean=4.0,
+        weight_jitter=0.2, plastic_internal=False,  # frozen for clean test
+        izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+    ))
+
+    # Motor pools — cortical canon: recurrent excitation + E/I balance
+    for action in ACTION_NAMES:
+        regions.append(BrainRegion(
+            name=f"motor_{action}",
+            n_neurons=n_motor_per_action,
+            exc_fraction=motor_exc_fraction,
+            internal_density=motor_internal_density,
+            exc_weight_mean=motor_exc_weight_mean,
+            inh_weight_mean=motor_inh_weight_mean,
+            weight_jitter=0.2, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+
+    # language_input -> motor_X (the pathway being tested)
+    for action in ACTION_NAMES:
+        pathways.append(RegionPathway(
+            from_region="language_input", to_region=f"motor_{action}",
+            density=text_input_to_motor_density,
+            weight_mean=text_input_to_motor_weight,
+            weight_jitter=text_input_to_motor_jitter,
+            plastic=True,
+            plasticity_gate="language_input_to_motor",
+        ))
+
+    # Motor lateral inhibition via PV-FSI (Vogels 2011 / Hofer 2011) —
+    # biological 12% of motor pool size.
+    if enable_motor_fs:
+        for action in ACTION_NAMES:
+            regions.append(BrainRegion(
+                name=f"motor_FS_{action}",
+                n_neurons=n_motor_fs_per_action,
+                exc_fraction=0.0,
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+            ))
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"motor_{action}", to_region=f"motor_FS_{action}",
+                density=0.5,
+                weight_mean=motor_to_fs_weight,
+                weight_jitter=0.3, plastic=False,
+            ))
+            for target_action in ACTION_NAMES:
+                if target_action == action:
+                    continue
+                pathways.append(RegionPathway(
+                    from_region=f"motor_FS_{action}",
+                    to_region=f"motor_{target_action}",
+                    density=0.5,
+                    weight_mean=fs_to_motor_weight,
+                    weight_jitter=0.3, plastic=False,
+                ))
+
+    return regions, pathways
+
+
 def apply_topographic_bias(
     bridge,
     topographic_factor: float = 1.5,
@@ -299,6 +419,13 @@ def run_minimal_isolation(
     # minimal arch under 4-way contention. Numerical equivalence verified
     # at tests/test_fast_spike_reset.py.
     fast_spike_reset: bool = True,
+    # Biological-scale architecture (2026-05-04). When True, uses
+    # build_biological_brain_regions: cortical canon (recurrence + E/I +
+    # NMDA) + larger N. See function docstring for parameter details.
+    biological: bool = False,
+    enable_nmda: bool = False,
+    ou_tau_ms: float = 15.0,
+    ou_std_current_pA: float = 100.0,
     verbose: bool = True,
 ):
     """Run the minimal isolation experiment. Returns (bridge, stats)."""
@@ -326,16 +453,30 @@ def run_minimal_isolation(
               f"off={off_target_bias_factor:.2f} "
               f"(1.0/1.0 = no topography)")
         print(f"  freeze_stdp={freeze_stdp} (anti-cheat control)")
+        if biological:
+            print(f"  BIOLOGICAL ARCH: cortical canon (recurrence + E/I + NMDA)")
+            print(f"  enable_nmda={enable_nmda}, ou_tau_ms={ou_tau_ms}, "
+                  f"ou_std_current_pA={ou_std_current_pA}")
         print("=" * 60, flush=True)
 
-    regions, pathways = build_minimal_brain_regions(
-        n_lang_input=n_lang_input,
-        n_motor_per_action=n_motor_per_action,
-        text_input_to_motor_weight=text_input_to_motor_weight,
-        text_input_to_motor_jitter=text_input_to_motor_jitter,
-        enable_motor_fs=enable_motor_fs,
-        n_motor_fs_per_action=n_motor_fs_per_action,
-    )
+    if biological:
+        regions, pathways = build_biological_brain_regions(
+            n_lang_input=n_lang_input,
+            n_motor_per_action=n_motor_per_action,
+            text_input_to_motor_weight=text_input_to_motor_weight,
+            text_input_to_motor_jitter=text_input_to_motor_jitter,
+            enable_motor_fs=enable_motor_fs,
+            n_motor_fs_per_action=n_motor_fs_per_action,
+        )
+    else:
+        regions, pathways = build_minimal_brain_regions(
+            n_lang_input=n_lang_input,
+            n_motor_per_action=n_motor_per_action,
+            text_input_to_motor_weight=text_input_to_motor_weight,
+            text_input_to_motor_jitter=text_input_to_motor_jitter,
+            enable_motor_fs=enable_motor_fs,
+            n_motor_fs_per_action=n_motor_fs_per_action,
+        )
 
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -343,7 +484,9 @@ def run_minimal_isolation(
     cfg.region_pathways = list(pathways)
     cfg.dt_ms = dt_ms
     cfg.seed = seed
-    cfg.enable_nmda = False  # not needed for minimal arch
+    cfg.enable_nmda = enable_nmda
+    cfg.ou_tau_ms = ou_tau_ms
+    cfg.ou_std_current_pA = ou_std_current_pA
     cfg.enable_structural_plasticity = False
     cfg.enable_per_type_stp = False
     cfg.enable_hebbian_learning = enable_hebbian
@@ -528,7 +671,39 @@ def main():
                     help="disable the fast spike-reset optimization "
                     "(cp.where masked-update, no GPU-CPU sync). Default "
                     "is enabled for ~1.3x speedup on minimal arch.")
+    # Biological-scale architecture (2026-05-04). When --biological is set,
+    # the runner uses build_biological_brain_regions and bumps default sizes:
+    # n_lang_input=2048, n_motor_per_action=500, n_motor_fs_per_action=60.
+    # Override individual sizes by passing the relevant flags after --biological.
+    ap.add_argument("--biological", action="store_true", default=False,
+                    help="use biological-scale architecture (cortical canon: "
+                    "recurrent excitation + E/I balance + larger N). "
+                    "Auto-bumps lang/motor/FS sizes; enables NMDA. See "
+                    "build_biological_brain_regions docstring.")
+    ap.add_argument("--enable-nmda", action="store_true", default=False,
+                    help="enable NMDA synapses globally (Wang 2002 "
+                    "bistability). Auto-set when --biological. Defaults off.")
+    ap.add_argument("--ou-tau-ms", type=float, default=15.0,
+                    help="OU noise correlation time. Default 15ms (synaptic-"
+                    "timescale). Set 50-100ms for slower biological cortical "
+                    "noise (alpha/beta-scale).")
+    ap.add_argument("--ou-std-current-pA", type=float, default=100.0,
+                    help="OU noise amplitude. Default 100pA (CoreSimConfig "
+                    "default).")
     args = ap.parse_args()
+
+    # --biological auto-bumps sizes if user didn't override them
+    if args.biological:
+        if args.n_lang_input == 256:
+            args.n_lang_input = 2048
+        if args.n_motor_per_action == 25:
+            args.n_motor_per_action = 500
+        if args.n_motor_fs_per_action == 3:
+            args.n_motor_fs_per_action = 60
+        # NMDA is integral to biological motor pool dynamics (Wang 2002).
+        # Auto-enable unless user explicitly opts out (no opt-out flag yet,
+        # so just force on when --biological).
+        args.enable_nmda = True
 
     bridge, train_stats = run_minimal_isolation(
         seed=args.seed,
@@ -551,6 +726,10 @@ def main():
         off_target_bias_factor=args.off_target_bias_factor,
         freeze_stdp=args.freeze_stdp,
         fast_spike_reset=args.fast_spike_reset,
+        biological=args.biological,
+        enable_nmda=args.enable_nmda,
+        ou_tau_ms=args.ou_tau_ms,
+        ou_std_current_pA=args.ou_std_current_pA,
         verbose=True,
     )
 
