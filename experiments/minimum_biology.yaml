@@ -1,0 +1,66 @@
+# Minimum-biology sweep — A-branch follow-up to biology_sweep.yaml.
+#
+# Fires automatically when biology_sweep gives aligned >= 4/6 in any
+# condition. Goal: identify the MINIMUM SUFFICIENT biology dose.
+#
+# If the previous sweep showed +Topo+FS at 6/6 but +Topo only and
+# +FS only at 0/6, BOTH biology fixes are required. If +Topo alone
+# gives >= 4/6, FS may be redundant. This sweep tests dose-response:
+#  - weaker topo (1.3/0.8 vs 1.5/0.7) — does it still align?
+#  - smaller FS pool (1 neuron vs 3) — minimum WTA strength?
+#  - stronger topo (2.0/0.5) — does increasing dose help, plateau, or hurt?
+#
+# Important for biology grounding: too-strong fixes are not
+# biology-grounded. Real Wernicke→motor topography is gradient,
+# not all-or-nothing. Real PV-FSI cells are sparse (~5-10% of
+# striatum); fewer is more biological.
+#
+# Usage (manual or auto via wait_biology_then_decide.ps1):
+#   python -m research.experiment_runner experiments/minimum_biology.yaml
+
+name: minimum-biology
+runner: research.runners.text_minimal_isolation
+output_dir: research/findings/raw/g11_bg
+parallelism: 3
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  n-events-per-direction: 1000
+  stim-steps-per-step: 100
+  reset-steps: 50
+  dt-ms: 1.0
+
+conditions:
+  # Half-strength topography. If still aligns >= 4/6, biology dose
+  # is forgiving and even mild priors suffice.
+  - name: topo_weak
+    args:
+      topographic-bias-factor: 1.3
+      off-target-bias-factor: 0.8
+
+  # Reduced FS pool (1 PV-FSI per action vs 3). Tests minimum
+  # lateral-inhibition strength. Biology: real striatal PV-FSI
+  # are 1-5% of total population.
+  - name: fs_minimal
+    args:
+      enable-motor-fs: true
+      n-motor-fs-per-action: 1
+
+  # Stronger topography (2.0/0.5 vs 1.5/0.7). Tests if increasing
+  # dose monotonically helps or saturates/over-fits.
+  - name: topo_strong
+    args:
+      topographic-bias-factor: 2.0
+      off-target-bias-factor: 0.5
+
+  # Topo+FS at HALF dose. Tests if combination compensates for
+  # individual weakness.
+  - name: combo_weak
+    args:
+      topographic-bias-factor: 1.3
+      off-target-bias-factor: 0.8
+      enable-motor-fs: true
+      n-motor-fs-per-action: 1
+
+out_stats_template: "text_eval_minbio_{name}_seed{seed}.json"
