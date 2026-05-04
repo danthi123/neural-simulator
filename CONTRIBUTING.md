@@ -359,7 +359,7 @@ black neural-simulator.py sim/ experiment/ tests/
 
 ```
 neural-simulator.py            # GUI host + main entry point (2.2K lines)
-sim/                           # Core engine package (9 modules, ~9.1K lines)
+sim/                           # Core engine package (13 modules, ~11.8K lines)
   __init__.py                  # public API: SimulationBridge, configs, enums
   bridge.py                    # SimulationBridge — GPU state + step loop
   config.py                    # @dataclass configs (CoreSimConfig etc.)
@@ -370,18 +370,27 @@ sim/                           # Core engine package (9 modules, ~9.1K lines)
   regions.py                   # BrainRegion, RegionPathway, RegionManager
   neuromodulators.py           # declarative DA/NE/5-HT subsystem
   data_bus.py                  # DataChannel pub/sub
+  replicas.py                  # replicated wiring (multi-bridge support)
+  text_embeddings.py           # token embeddings for language regions
+  visual_cortex.py             # Gabor RFs + retina (Cluster K v2)
+  progress.py                  # universal [PROGRESS] {json} event format
 viz/                           # OpenGL renderer / camera / picker / overlays
 ui/                            # DearPyGUI panels / callbacks / layout / plots
 experiment/                    # ExperimentEngine + StimulusManager + Readout + Training
+experiments/                   # YAML configs for autonomous sweeps
 research/
-  runners/                     # 26 headless runners (g1..g11 + cluster + text + k_v2)
-  findings/                    # session-by-session findings (93+ markdown docs)
+  runners/                     # 26+ headless runners (g1..g11 + cluster + text + k_v2 + permuted_label_check + morning_briefing)
+  findings/                    # session-by-session findings (100+ markdown docs)
   findings/raw/                # raw JSON output per gate run
   datasets/                    # synthetic datasets (e.g. tiny_patterns.npz)
+  experiment_runner.py         # YAML-driven sweep orchestrator
+  result_aggregator.py         # cross-condition rollup + verdict line
 docs/
+  CURRENT-STATE.md             # what works today, technical details
   SCIENCE_ROADMAP.md           # validation pillars + gate progression
   plans/                       # per-feature design docs (paired with findings)
-tests/                         # 40 test files
+webapp/                        # FastAPI dashboard (server.py + static/)
+tests/                         # 40+ test files
   test_determinism.py          # RNG determinism (init + step)
   test_kernels_cpu.py          # CPU validation of fused kernels
   test_experiment_system.py    # experiment engine + stimulus manager
@@ -392,6 +401,11 @@ tests/                         # 40 test files
   test_g11_bg_runner_flags.py  # G11 PFC/perception/scaling flag tests
   test_plastic_mask.py         # per-synapse plastic freeze
   test_plastic_mask_checkpoint.py  # plastic mask survives checkpoints
+  test_progress.py             # universal [PROGRESS] event format
+  test_experiment_runner.py    # YAML sweep runner
+  test_result_aggregator.py    # cross-condition aggregator + verdict
+  test_eval_sanity_check.py    # eval methodology validator (perfect-weight)
+  test_fast_spike_reset.py     # cp.where masked-update spike reset (perf)
   ...
 benchmark.py                   # GPU throughput benchmark runner
 viz_benchmark.py               # visualization performance benchmark
