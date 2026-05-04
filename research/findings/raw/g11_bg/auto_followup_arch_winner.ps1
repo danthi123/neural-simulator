@@ -94,7 +94,7 @@ $winnerOutput = & python -c $winnerScript 2>&1
 
 $winnerLine = $winnerOutput | Where-Object { $_ -match '^WINNER:' } | Select-Object -First 1
 if (-not $winnerLine) {
-    "No variant results yet — exiting" | Out-File -Append $logFile
+    "No variant results yet - exiting" | Out-File -Append $logFile
     if (Test-Path $pidFile) {
         Move-Item -Path $pidFile -Destination "$pidFile.done" -Force
     }
@@ -109,7 +109,7 @@ $winnerAligned = [int]$parts[3]
 
 if ($winnerAcc -lt 0.32 -and $winnerAligned -eq 0) {
     "Winner accuracy $([Math]::Round(100 * $winnerAcc, 1))% < 32% threshold AND not aligned." | Out-File -Append $logFile
-    "All variants within noise — manual review needed before committing GPU time" | Out-File -Append $logFile
+    "All variants within noise - manual review needed before committing GPU time" | Out-File -Append $logFile
     if (Test-Path $pidFile) {
         Move-Item -Path $pidFile -Destination "$pidFile.done" -Force
     }
@@ -117,9 +117,9 @@ if ($winnerAcc -lt 0.32 -and $winnerAligned -eq 0) {
 }
 
 if ($winnerAligned -eq 1) {
-    "Winner is ALIGNED at seed 42 — running 6-seed validation to confirm real learning" | Out-File -Append $logFile
+    "Winner is ALIGNED at seed 42 - running 6-seed validation to confirm real learning" | Out-File -Append $logFile
 } else {
-    "Winner clears 32% but not aligned — running 6-seed validation anyway" | Out-File -Append $logFile
+    "Winner clears 32% but not aligned - running 6-seed validation anyway" | Out-File -Append $logFile
 }
 
 # Map winner name back to CLI args
@@ -146,7 +146,7 @@ switch ($winner) {
         $argsForVariant = @('--lang-input-drive-pA', '1000', '--stdp-w-max', '10')
     }
     default {
-        "Unknown winner: $winner — exiting" | Out-File -Append $logFile
+        "Unknown winner: $winner - exiting" | Out-File -Append $logFile
         if (Test-Path $pidFile) {
             Move-Item -Path $pidFile -Destination "$pidFile.done" -Force
         }
@@ -154,7 +154,7 @@ switch ($winner) {
     }
 }
 
-# 6-seed validation in parallel-3 — RE-RUN seed 42 too at dt=1.0 since
+# 6-seed validation in parallel-3 - RE-RUN seed 42 too at dt=1.0 since
 # the sweep variant ran it at dt=0.5 (would mix dt levels in the 6-seed
 # comparison). Adds ~13 min wall (1 extra seed at dt=1.0 in parallel-3),
 # saves messiness of mixed-dt analysis.
