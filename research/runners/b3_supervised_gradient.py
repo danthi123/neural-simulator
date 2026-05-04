@@ -222,6 +222,10 @@ def run_supervised_gradient(
     expected_max_firing_per_neuron: float = 0.10,
     push_to_gpu_every: int = 64,
     fast_spike_reset: bool = True,
+    biological: bool = False,
+    enable_nmda: bool = False,
+    ou_tau_ms: float = 15.0,
+    ou_std_current_pA: float = 100.0,
     verbose: bool = True,
 ):
     """Train minimal architecture via supervised delta-rule gradient.
@@ -238,7 +242,8 @@ def run_supervised_gradient(
     # mutate"). build_minimal_brain_regions / apply_topographic_bias are
     # pure helpers and importing them is fine — they don't carry state.
     from research.runners.text_minimal_isolation import (
-        build_minimal_brain_regions, apply_topographic_bias as _apply_topo,
+        build_minimal_brain_regions, build_biological_brain_regions,
+        apply_topographic_bias as _apply_topo,
     )
 
     rng = np.random.default_rng(seed)
@@ -262,15 +267,26 @@ def run_supervised_gradient(
         print(f"  push_to_gpu_every={push_to_gpu_every} events")
         print("=" * 60, flush=True)
 
-    regions, pathways = build_minimal_brain_regions(
-        n_lang_input=n_lang_input,
-        n_motor_per_action=n_motor_per_action,
-        text_input_to_motor_density=text_input_to_motor_density,
-        text_input_to_motor_weight=text_input_to_motor_weight,
-        text_input_to_motor_jitter=text_input_to_motor_jitter,
-        enable_motor_fs=enable_motor_fs,
-        n_motor_fs_per_action=n_motor_fs_per_action,
-    )
+    if biological:
+        regions, pathways = build_biological_brain_regions(
+            n_lang_input=n_lang_input,
+            n_motor_per_action=n_motor_per_action,
+            text_input_to_motor_density=text_input_to_motor_density,
+            text_input_to_motor_weight=text_input_to_motor_weight,
+            text_input_to_motor_jitter=text_input_to_motor_jitter,
+            enable_motor_fs=enable_motor_fs,
+            n_motor_fs_per_action=n_motor_fs_per_action,
+        )
+    else:
+        regions, pathways = build_minimal_brain_regions(
+            n_lang_input=n_lang_input,
+            n_motor_per_action=n_motor_per_action,
+            text_input_to_motor_density=text_input_to_motor_density,
+            text_input_to_motor_weight=text_input_to_motor_weight,
+            text_input_to_motor_jitter=text_input_to_motor_jitter,
+            enable_motor_fs=enable_motor_fs,
+            n_motor_fs_per_action=n_motor_fs_per_action,
+        )
 
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -278,7 +294,9 @@ def run_supervised_gradient(
     cfg.region_pathways = list(pathways)
     cfg.dt_ms = dt_ms
     cfg.seed = seed
-    cfg.enable_nmda = False
+    cfg.enable_nmda = enable_nmda
+    cfg.ou_tau_ms = ou_tau_ms
+    cfg.ou_std_current_pA = ou_std_current_pA
     cfg.enable_structural_plasticity = False
     cfg.enable_per_type_stp = False
     cfg.enable_hebbian_learning = False
@@ -493,6 +511,15 @@ def main():
     ap.add_argument("--no-fast-spike-reset", dest="fast_spike_reset",
                     action="store_false", default=True,
                     help="Disable cp.where masked-update spike reset.")
+    ap.add_argument("--biological", action="store_true", default=False,
+                    help="Use biological-scale architecture (cortical canon: "
+                    "recurrent E + E/I balance + larger N + NMDA bistability). "
+                    "Auto-bumps n-lang-input=2048, n-motor-per-action=500, "
+                    "n-motor-fs-per-action=60. Wang 2002 + Lefort 2009.")
+    ap.add_argument("--enable-nmda", action="store_true", default=False,
+                    help="Enable NMDA synapses globally. Auto-on with --biological.")
+    ap.add_argument("--ou-tau-ms", type=float, default=15.0)
+    ap.add_argument("--ou-std-current-pA", type=float, default=100.0)
     ap.add_argument("--n-eval-per-word", type=int, default=25,
                     help="W->A eval trials per word (default 25, same "
                     "as text_minimal_isolation).")
@@ -503,6 +530,16 @@ def main():
                     help="Eval inter-trial reset window (default 50).")
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
+
+    # --biological auto-bumps sizes + enables NMDA
+    if args.biological:
+        if args.n_lang_input == 256:
+            args.n_lang_input = 2048
+        if args.n_motor_per_action == 25:
+            args.n_motor_per_action = 500
+        if args.n_motor_fs_per_action == 3:
+            args.n_motor_fs_per_action = 60
+        args.enable_nmda = True
 
     bridge, train_stats = run_supervised_gradient(
         seed=args.seed,
@@ -528,6 +565,10 @@ def main():
         expected_max_firing_per_neuron=args.expected_max_firing_per_neuron,
         push_to_gpu_every=args.push_to_gpu_every,
         fast_spike_reset=args.fast_spike_reset,
+        biological=args.biological,
+        enable_nmda=args.enable_nmda,
+        ou_tau_ms=args.ou_tau_ms,
+        ou_std_current_pA=args.ou_std_current_pA,
         verbose=True,
     )
 

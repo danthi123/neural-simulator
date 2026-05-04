@@ -34,18 +34,11 @@ parallelism: 2
 seeds: [42, 43, 44]
 
 base_args:
-  # b3_supervised_gradient.py doesn't have a --biological flag yet;
-  # we pass the bio architecture sizes directly. NMDA / recurrence
-  # settings come from BrainRegion defaults (which are bio-canon
-  # defaults: exc_fraction=0.8, internal_density=0.1) — the minimal
-  # builder explicitly overrides these to non-bio values, but we'd
-  # need to call build_biological_brain_regions to get bio config
-  # for B3. For now, run with current behavior (minimal builder)
-  # so the test still produces a B3 baseline at biological N. If
-  # this fails, the next step is to wire --biological into b3.
-  n-lang-input: 2048
-  n-motor-per-action: 500
-  n-motor-fs-per-action: 60
+  # --biological flag wired into b3_supervised_gradient.py 2026-05-04
+  # evening (initial chain run was on minimal builder; restarted with
+  # canon enabled for fair comparison vs PoC). Auto-bumps sizes +
+  # enables NMDA + uses build_biological_brain_regions.
+  biological: true
   n-events-per-direction: 1000
   stim-steps-per-event: 50
   reset-steps: 50
