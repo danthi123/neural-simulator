@@ -28,7 +28,7 @@ to teleport the goal; watch the brain reorient.
 If you don't have CUDA, you can browse the code and read findings docs,
 but the simulator itself needs GPU.
 
-## Three things to try
+## Four things to try
 
 ### 1. The flagship navigation experiment
 
