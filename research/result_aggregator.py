@@ -185,6 +185,20 @@ BUILTIN_CONFIGS: Dict[str, Dict[str, Any]] = {
         },
         "seeds": [42, 43, 44],  # B4 uses fewer seeds (each run is 5+ hours)
     },
+    # B3: supervised gradient learning on language_input -> motor weights.
+    # Decisive "is the architecture even capable" test — replaces STDP
+    # with a delta-rule update so the only question is what's possible
+    # given the topology + dynamics. Fires when biology gives 0/6 AND
+    # eval_sanity_check confirms the eval is sound. 3 conditions x 3
+    # seeds (gradient training is slower than STDP).
+    "b3_supervised_gradient": {
+        "conditions": {
+            "gradient (vanilla)":          "text_eval_b3_vanilla_seed{seed}.json",
+            "gradient + topo bias":        "text_eval_b3_with_topo_seed{seed}.json",
+            "gradient + topo + motor FS":  "text_eval_b3_with_topo_fs_seed{seed}.json",
+        },
+        "seeds": [42, 43, 44],
+    },
 }
 
 
@@ -341,7 +355,9 @@ def main():
                                   formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--config", choices=sorted(BUILTIN_CONFIGS.keys()),
                     help="Built-in config (swr-investigation, fundamentals, "
-                         "biology, minimum_biology, sanity_check)")
+                         "biology, minimum_biology, sanity_check, "
+                         "b2_sparse_codes, b3_supervised_gradient, "
+                         "b4_long_training)")
     ap.add_argument("--pattern", action="append", default=None,
                     help="Custom condition label=pattern (repeatable). "
                          "E.g. --pattern 'mine=text_eval_my_*_seed{seed}.json'")
