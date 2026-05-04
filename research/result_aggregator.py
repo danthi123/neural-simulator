@@ -408,6 +408,9 @@ def main():
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(report, encoding="utf-8")
         print(f"Wrote {args.out} ({len(report)} bytes)")
+        # Also echo the verdict line to stdout so downstream chain
+        # consumers (waiters, monitoring) can grep without reading the file.
+        print(f"Headline: {rs.verdict()}")
     else:
         print(report)
 

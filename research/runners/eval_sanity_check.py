@@ -176,8 +176,11 @@ def hand_build_perfect_weights(
     bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
 
     if verbose:
-        print(f"[sanity-check] Set perfect weights:", flush=True)
+        print(f"[sanity-check] Set {mode} weights:", flush=True)
         for k, v in summary.items():
+            if not isinstance(v, dict):
+                # Skip non-edge entries like "mode": "perfect"
+                continue
             print(f"  {k}: {v['edges_set']} edges @ w={v['weight']:.1f} "
                   f"({v['n_active_src']} src x {v['n_target_motor']} dst)",
                   flush=True)
