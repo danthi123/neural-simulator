@@ -208,8 +208,15 @@ def run_three_factor(
     for a in ["N","E","S","W"]:
         all_motor_set |= motor_idx_set[a]
 
-    # Edge list: (src, dst, idx, motor_action) for lang->motor edges only
-    edges: List[Tuple[int, int, int, str]] = []
+    # Edge list: build as parallel numpy arrays for vectorized updates.
+    # CRITICAL: the naive python-loop version (1.23M edges × 4000 events
+    # × O(set lookups)) takes 20+ hours/seed. Vectorized numpy is ~100x
+    # faster — must run as numpy arrays, never python loops over edges.
+    edge_src_l: List[int] = []
+    edge_dst_l: List[int] = []
+    edge_off_l: List[int] = []
+    edge_action_l: List[int] = []  # 0=N, 1=E, 2=S, 3=W
+    ACTION_TO_IDX = {"N": 0, "E": 1, "S": 2, "W": 3}
     for src in lang_input_idx:
         s = int(indptr[src])
         e_end = int(indptr[src + 1])
@@ -217,14 +224,33 @@ def run_three_factor(
             dst = int(indices[off])
             for a in ["N","E","S","W"]:
                 if dst in motor_idx_set[a]:
-                    edges.append((src, dst, off, a))
+                    edge_src_l.append(src)
+                    edge_dst_l.append(dst)
+                    edge_off_l.append(off)
+                    edge_action_l.append(ACTION_TO_IDX[a])
                     break
 
-    if verbose:
-        print(f"  {len(edges)} language->motor edges to learn", flush=True)
+    edge_src = np.asarray(edge_src_l, dtype=np.int32)
+    edge_dst = np.asarray(edge_dst_l, dtype=np.int32)
+    edge_off = np.asarray(edge_off_l, dtype=np.int64)
+    edge_action = np.asarray(edge_action_l, dtype=np.int8)
+    n_edges = len(edge_src)
 
-    # Eligibility trace per edge (numpy, on host for simplicity)
-    eligibility = np.zeros(len(edges), dtype=np.float32)
+    # Build neuron-id -> "is in lang_input" / "is in motor_X" boolean masks
+    # for O(1) np-vectorized lookups. n_neurons is the bridge's full neuron
+    # count (cortical canon adds inh + recurrence, so total > lang+motor).
+    n_neurons = int(bridge.cp_membrane_potential_v.shape[0])
+    is_lang = np.zeros(n_neurons, dtype=bool)
+    is_lang[np.asarray(lang_input_idx, dtype=np.int32)] = True
+    motor_action_of_neuron = -np.ones(n_neurons, dtype=np.int8)
+    for a, idx_list in motor_idx.items():
+        motor_action_of_neuron[np.asarray(idx_list, dtype=np.int32)] = ACTION_TO_IDX[a]
+
+    if verbose:
+        print(f"  {n_edges} language->motor edges to learn (vectorized)", flush=True)
+
+    # Eligibility trace per edge (numpy, on host)
+    eligibility = np.zeros(n_edges, dtype=np.float32)
     decay_per_step = np.exp(-dt_ms / eligibility_decay_tau)
 
     # Build event buffer (balanced)
@@ -267,54 +293,61 @@ def run_three_factor(
             cp.asarray(lang_input_idx, dtype=cp.int64)
         ] = cp.asarray(drive, dtype=cp.float32)
 
-        # Forward-prop + count motor spikes per pool over the window
-        motor_spike_counts = {a: 0 for a in ["N","E","S","W"]}
-        # Track which lang neurons were active for this token
-        lang_active_set = set()
-        for k, v in enumerate(drive):
-            if v > 0:
-                lang_active_set.add(lang_input_idx[k])
+        # Track which lang neurons were active for this token (numpy mask)
+        lang_active_mask = np.zeros(n_neurons, dtype=bool)
+        active_local = np.where(drive > 0)[0]
+        active_global = np.asarray(lang_input_idx, dtype=np.int32)[active_local]
+        lang_active_mask[active_global] = True
 
-        # Track post-active (any motor neuron spiking)
-        post_active_set = set()
+        # Forward-prop. Accumulate spike counts on GPU (single sync at end)
+        # to avoid the 50× per-step GPU->CPU stalls of the naive loop.
+        motor_spike_count_gpu = cp.zeros(4, dtype=cp.int32)
+        post_active_mask_gpu = cp.zeros(n_neurons, dtype=bool)
+        # Pre-build motor index arrays on GPU once (per event; could move
+        # outside loop but small constant)
+        motor_idx_gpu = {a: cp.asarray(motor_idx[a], dtype=cp.int64)
+                         for a in ["N","E","S","W"]}
+        ACTION_LIST = ["N","E","S","W"]
         for _ in range(stim_steps_per_event):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
-            # Read fired this step (cp.bool)
-            fired = bridge.cp_firing_states.get()
-            for a in ["N","E","S","W"]:
-                count = int(fired[motor_idx[a]].sum())
-                motor_spike_counts[a] += count
-                if count > 0:
-                    for n in motor_idx[a]:
-                        if fired[n]:
-                            post_active_set.add(n)
+            fired = bridge.cp_firing_states  # cupy bool array
+            for a_i, a in enumerate(ACTION_LIST):
+                cnt = fired[motor_idx_gpu[a]].sum()
+                motor_spike_count_gpu[a_i] += cnt
+            # Mark any neuron that fired as post-active (cumulative OR)
+            post_active_mask_gpu |= fired
 
-        # Three-factor update: pre × post × DA[motor_pool]
-        # DA: +1 for target, -1 for non-target IF that pool fired
-        # (false-positive penalty), 0 if pool didn't fire (no signal).
-        da = {a: 0.0 for a in ["N","E","S","W"]}
-        da[target_action] = +1.0
-        for a in ["N","E","S","W"]:
-            if a != target_action and motor_spike_counts[a] > target_low:
-                da[a] = -1.0  # this pool fired but shouldn't have
+        # Single GPU->CPU sync per event
+        motor_spike_counts_arr = motor_spike_count_gpu.get()
+        post_active_mask = post_active_mask_gpu.get()
 
-        # Update eligibility (decay) + accumulate pre×post
+        # Three-factor: DA per motor pool. +1 for target, -1 for non-target
+        # that fired (false-positive penalty), 0 otherwise.
+        da_per_action = np.zeros(4, dtype=np.float32)
+        target_a = ACTION_TO_IDX[target_action]
+        da_per_action[target_a] = +1.0
+        for a_i in range(4):
+            if a_i != target_a and motor_spike_counts_arr[a_i] > target_low:
+                da_per_action[a_i] = -1.0
+
+        # Vectorized eligibility update: edges where src is lang-active
+        # AND dst is post-active get +1; all decay by tau.
         eligibility *= decay_per_step
-        for i, (src, dst, off, action) in enumerate(edges):
-            if src in lang_active_set and dst in post_active_set:
-                eligibility[i] += 1.0
+        active_edges_mask = (lang_active_mask[edge_src]
+                             & post_active_mask[edge_dst])
+        eligibility[active_edges_mask] += 1.0
 
-        # Apply weight update
-        for i, (src, dst, off, action) in enumerate(edges):
-            if eligibility[i] > 0 and da[action] != 0:
-                delta = learning_rate * eligibility[i] * da[action]
-                new_w = data[off] + delta
-                data[off] = max(weight_min, min(weight_max, new_w))
+        # Vectorized weight update: Δw = lr × eligibility × DA[action]
+        edge_da = da_per_action[edge_action]  # per-edge DA (numpy fancy-index)
+        update_mask = (eligibility > 0) & (edge_da != 0)
+        delta = learning_rate * eligibility[update_mask] * edge_da[update_mask]
+        new_w = data[edge_off[update_mask]] + delta
+        data[edge_off[update_mask]] = np.clip(new_w, weight_min, weight_max)
 
         # Track rolling correctness
-        winner = max(motor_spike_counts.items(), key=lambda kv: kv[1])[0]
-        if winner == target_action:
+        winner_a = int(np.argmax(motor_spike_counts_arr))
+        if winner_a == target_a:
             correct_recent += 1
         n_recent += 1
 
