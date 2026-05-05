@@ -134,6 +134,41 @@ def _chain_status() -> dict:
         return {"stage": "unknown", "verdict": None,
                 "next_step": "raw findings dir not found"}
 
+    findings = Path("research/findings")
+
+    # 2026-05-05: W→A verdict landed (both classical 3-factor AND
+    # magnitude-graded DA below dendritic-learning decision gate).
+    # Take precedence over older chain stages — this is the canonical
+    # "next decision is dendritic learning vs pivot away from W→A".
+    verdict_doc = findings / "2026-05-05-W-to-A-VERDICT-global-scalar-feedback-fails.md"
+    if verdict_doc.exists():
+        graded_master = raw / "bio-three-factor-graded-da.master.log"
+        graded_complete = False
+        if graded_master.exists():
+            try:
+                txt = graded_master.read_text(encoding="utf-8",
+                                                errors="replace")
+                graded_complete = "bio-three-factor-graded-da COMPLETE" in txt
+            except OSError:
+                pass
+        # Match the dict shape main() expects (with new key for
+        # minimal_iso_done / biology_complete) so the formatter doesn't
+        # KeyError on the early-return branch.
+        return {
+            "stage": "W_to_A_verdict_landed",
+            "verdict": "global_scalar_DA_fails",
+            "minimal_iso_done": 6,
+            "biology_complete": True,
+            "stall_warning": None,
+            "next_step": (
+                "User decision pending: (1) apical-basal dendritic "
+                "learning [1.5-2 mo, design doc shipped], "
+                "(2) predictive coding [2-3 mo], or "
+                "(3) pivot away from W→A. "
+                f"graded-DA chain complete={graded_complete}."
+            ),
+        }
+
     waiter_log = raw / "wait_biology_then_decide.log"
     biology_master = raw / "biology-sweep.master.log"
     biology_master_alt = raw / "run_biology_sweep.master.log"
