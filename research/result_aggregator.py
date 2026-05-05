@@ -259,6 +259,14 @@ BUILTIN_CONFIGS: Dict[str, Dict[str, Any]] = {
         },
         "seeds": [200, 201, 202, 300, 301, 302],
     },
+    # Magnitude-graded DA test — fires CONDITIONAL on classical 3-factor
+    # failing at tf_with_topo_fs. Tests whether sign-only DA was the
+    # bottleneck (replace with magnitude-graded as in Schultz 1998).
+    "bio_three_factor_graded_da": {
+        "conditions": {
+            "graded-DA 3-factor with topo + FS": "text_eval_3factor_tfg_with_topo_fs_seed{seed}.json",
+        },
+    },
 }
 
 

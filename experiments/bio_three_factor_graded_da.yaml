@@ -1,0 +1,50 @@
+# Magnitude-graded DA three-factor — cheap probe of the
+# scalar-DA-is-bottleneck hypothesis.
+#
+# CONDITIONAL FOLLOWUP: fires only if classical three-factor (sign DA)
+# fails at tf_with_topo_fs (verdict 0-2/6 aligned). 1-line algorithmic
+# change: DA = (target - actual) / max_rate instead of sign(target - actual).
+#
+# Expected outcomes:
+#   tfg_with_topo_fs aligns >= 4/6: scalar SIGN-ONLY DA was the
+#     bottleneck, not biology-plausibility. Magnitude-graded DA stays
+#     within Schultz 1998 (DA bursts scale with RPE magnitude
+#     experimentally). Strong scientific finding.
+#
+#   tfg_with_topo_fs 0-2/6: even magnitude-graded DA can't bridge the
+#     gap. Headline becomes: "global scalar feedback in any form is
+#     insufficient. Need richer per-region feedback (apical-basal
+#     dendritic learning) or different topology (predictive coding)."
+#
+# Architecture: same as bio_three_factor (biological + biology fix).
+# Only --da-mode flag changes.
+#
+# 6 seeds × 1 condition (only the critical topo_fs configuration) = 6 runs
+# at parallel=6 = 1 batch ~50min total.
+
+name: bio-three-factor-graded-da
+runner: research.runners.bio_three_factor
+output_dir: research/findings/raw/g11_bg
+parallelism: 6
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  biological: true
+  fp16-synapse-state: true
+  n-events-per-direction: 1000
+  stim-steps-per-event: 50
+  reset-steps: 50
+  learning-rate: 1e-3
+  eligibility-decay-tau: 50.0
+  da-mode: graded
+
+conditions:
+  # Only the topo_fs condition (where gradient got 3/3 perfect, classical
+  # 3-factor got 0/6). If graded DA bridges the gap here, ship.
+  - name: tfg_with_topo_fs
+    args:
+      apply-topographic-bias: true
+      enable-motor-fs: true
+
+out_stats_template: "text_eval_3factor_{name}_seed{seed}.json"

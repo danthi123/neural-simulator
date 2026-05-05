@@ -153,6 +153,7 @@ def run_three_factor(
     ou_std_current_pA: float = 100.0,
     gpu_eligibility: bool = True,  # Phase 1: keep eligibility/edges on GPU
     fp16_synapse_state: bool = False,  # Phase 2: FP16 cp_eligibility_trace
+    da_mode: str = "sign",  # "sign" (classical), "graded" (magnitude DA)
     verbose: bool = True,
 ):
     """Three-factor learning at language_input -> motor_X synapses.
@@ -420,14 +421,31 @@ def run_three_factor(
         else:
             post_active_mask = post_active_mask_gpu.get()  # bring to CPU
 
-        # Three-factor: DA per motor pool. +1 for target, -1 for non-target
-        # that fired (false-positive penalty), 0 otherwise.
+        # DA per motor pool. Two modes:
+        #   "sign" (classical 3-factor, Fremaux & Gerstner 2016):
+        #     +1 for target, -1 for non-target that fired (false-positive
+        #     penalty), 0 otherwise. Direction-only signal.
+        #   "graded" (Schultz 1998 — DA scales with deviation magnitude):
+        #     da[a] = (target_rate - actual_rate) / target_high.
+        #     Magnitude carries error info that scalar sign discards.
+        #     Tests "is sign-only the bottleneck?" hypothesis.
         target_a = ACTION_TO_IDX[target_action]
         da_per_action = xp.zeros(4, dtype=xp.float32)
-        da_per_action[target_a] = 1.0
-        for a_i in range(4):
-            if a_i != target_a and motor_spike_counts_arr[a_i] > target_low:
-                da_per_action[a_i] = -1.0
+        if da_mode == "graded":
+            # Target rate = full rate for target_a, target_low for others
+            for a_i in range(4):
+                target_rate = float(target_high if a_i == target_a else target_low)
+                actual_rate = float(motor_spike_counts_arr[a_i])
+                # Normalize by target_high so |da| <= ~1 in typical cases
+                da_val = (target_rate - actual_rate) / max(1.0, target_high)
+                # Clip to [-1, +1] to keep consistent with sign mode magnitude
+                da_per_action[a_i] = max(-1.0, min(1.0, da_val))
+        else:
+            # Classical sign-only DA
+            da_per_action[target_a] = 1.0
+            for a_i in range(4):
+                if a_i != target_a and motor_spike_counts_arr[a_i] > target_low:
+                    da_per_action[a_i] = -1.0
 
         # Three-factor eligibility + weight update via pure function.
         # On gpu_eligibility=True, this mutates bridge.cp_connections.data
@@ -529,6 +547,13 @@ def main():
                     "future synapse-side state). Voltages stay FP32. Honest "
                     "expected gain: 1.05-1.15x (we use sparse SpMV, no Tensor "
                     "Cores). Validate via tests/test_fp16_drift.py first.")
+    ap.add_argument("--da-mode", type=str, default="sign",
+                    choices=["sign", "graded"],
+                    help="DA signal mode. 'sign' = classical 3-factor +1/-1/0 "
+                    "(Fremaux & Gerstner 2016). 'graded' = magnitude-graded "
+                    "Schultz 1998 — DA scales with target-actual deviation, "
+                    "preserving error magnitude info. Tests if scalar-sign "
+                    "DA is the bottleneck.")
     ap.add_argument("--n-eval-per-word", type=int, default=25)
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
@@ -562,6 +587,7 @@ def main():
         enable_nmda=args.enable_nmda,
         gpu_eligibility=args.gpu_eligibility,
         fp16_synapse_state=args.fp16_synapse_state,
+        da_mode=args.da_mode,
         verbose=True,
     )
 

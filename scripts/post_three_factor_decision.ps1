@@ -129,15 +129,43 @@ if ($alignedN -ge 4) {
     "  - DA-scheme ablation (sign-only vs magnitude-graded)" | Out-File -Append $logFile
 
 } else {
-    # FAILURE PATH
+    # FAILURE PATH — classical sign-DA failed
     "" | Out-File -Append $logFile
-    "DECISION: tf_with_topo_fs aligned 0/$totalN -> failure" | Out-File -Append $logFile
-    "Scalar-DA credit assignment INSUFFICIENT for this task." | Out-File -Append $logFile
-    "Headline finding: biology-plausible rules with global RPE alone" | Out-File -Append $logFile
-    "  cannot match supervised gradient. Need richer biology:" | Out-File -Append $logFile
-    "  - Apical-basal dendritic learning (Bono & Clopath 2017)" | Out-File -Append $logFile
-    "  - Or predictive coding (Rao & Ballard 1999)" | Out-File -Append $logFile
-    "Neither currently implemented; STOPPING for manual research direction." | Out-File -Append $logFile
+    "DECISION: tf_with_topo_fs aligned 0/$totalN -> classical 3-factor fails." | Out-File -Append $logFile
+    "Auto-launching graded-DA probe (cheapest follow-up, 1-line algorithmic change)" | Out-File -Append $logFile
+    "to test 'is sign-only DA the bottleneck, or is global feedback fundamentally insufficient?'" | Out-File -Append $logFile
+
+    $gradedProc = Start-Process -FilePath "python.exe" `
+        -ArgumentList "-u","-m","research.experiment_runner",
+                      "experiments/bio_three_factor_graded_da.yaml" `
+        -RedirectStandardOutput "$outDir/bio_three_factor_graded_da.stdout.log" `
+        -RedirectStandardError "$outDir/bio_three_factor_graded_da.stderr.log" `
+        -WindowStyle Hidden -PassThru
+    "Graded-DA probe launched as PID $($gradedProc.Id)" | Out-File -Append $logFile
+    $gradedProc.WaitForExit()
+    "Graded-DA finished (exit $($gradedProc.ExitCode)) at $(Get-Date)" | Out-File -Append $logFile
+
+    # Aggregate graded-DA results
+    "" | Out-File -Append $logFile
+    "Aggregating graded-DA results..." | Out-File -Append $logFile
+    $gradedOut = & "C:\python312\python.exe" -m research.result_aggregator `
+        --config bio_three_factor_graded_da `
+        --out "$findingsDir/2026-05-05-bio-three-factor-graded-da-results.md" 2>&1
+    "$gradedOut" | Out-File -Append $logFile
+
+    # Headline based on graded-DA verdict
+    if ($gradedOut -match "Real word-action learning achieved") {
+        "" | Out-File -Append $logFile
+        "*** HEADLINE: scalar SIGN-ONLY DA was the bottleneck. ***" | Out-File -Append $logFile
+        "*** Magnitude-graded DA (Schultz 1998) preserves biology and works. ***" | Out-File -Append $logFile
+    } else {
+        "" | Out-File -Append $logFile
+        "*** HEADLINE: even graded-DA insufficient. Global scalar feedback ***" | Out-File -Append $logFile
+        "*** in any form cannot match gradient at this task. Need: ***" | Out-File -Append $logFile
+        "***   - Apical-basal dendritic learning (Bono & Clopath 2017) ***" | Out-File -Append $logFile
+        "***   - Or predictive coding (Rao & Ballard 1999) ***" | Out-File -Append $logFile
+        "*** Neither currently implemented; STOPPING for manual research direction. ***" | Out-File -Append $logFile
+    }
 }
 
 "" | Out-File -Append $logFile
