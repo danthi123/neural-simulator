@@ -4365,6 +4365,13 @@ def main():
                          "Gabor cosine values are in [-1, 1]; weight_scale=10 "
                          "gives roughly 10pA per active pixel, comparable to "
                          "other plastic pathways.")
+    ap.add_argument("--visual-image-size", type=int, default=32,
+                    help="Retina spatial dimension (default 32, gives 32x32 "
+                         "image = 1024 pixels per channel × 2 channels = 2048 "
+                         "retina neurons). MUST be >= grid_size or "
+                         "render_gridworld_to_image will fail with "
+                         "pixels_per_cell=0. For grid_size > 32, set this to "
+                         "match grid_size (e.g. --grid-size 64 --visual-image-size 64).")
     ap.add_argument("--pruning-alpha", type=float, default=None,
                     help="Cheat-5 option-1 pruning rate. Default: cfg.pruning_alpha (0.001 = conservative). "
                          "Try 0.05 for a 5K-trial pretraining smoke; 0.005 for 30K validation.")
@@ -4637,6 +4644,7 @@ def main():
             enable_visual_cortex=args.enable_visual_cortex,
             visual_cortex_action_warmup_steps=args.visual_cortex_action_warmup_steps,
             visual_v1_weight_scale=args.visual_v1_weight_scale,
+            visual_image_size=args.visual_image_size,
             cluster_e_distance_sigma=args.cluster_e_distance_sigma,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,

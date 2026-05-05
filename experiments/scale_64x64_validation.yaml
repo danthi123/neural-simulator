@@ -1,0 +1,41 @@
+# 64×64 navigation 6-seed validation — does the architecture scale
+# beyond 32×32 (2.57 ± 0.11)?
+#
+# Random walk on 64×64 ~42 expected (Manhattan diameter ~125).
+# 32×32 result: 2.57 ± 0.11
+# Predicted 64×64 if scaling holds: 3.5-5.0
+# 64×64 wall-clock: probably 15-25 min/seed (4× more cells than 32×32)
+#
+# 6 seeds × 1 condition = 6 runs at parallel=3 ≈ 60-90 min total.
+
+name: scale-64x64-validation
+runner: research.runners.g11_bg_runner
+output_dir: research/findings/raw/g11_bg
+parallelism: 3
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  moving-goal: true
+  goal-schedule: multi
+  deterministic: true
+  enable-msn-lateral-inhibition: true
+  enable-d1-d2-asymmetry: true
+  enable-striatal-pv-fsi: true
+  enable-cluster-a-closed-loop: true
+  enable-cluster-e-topography: true
+  enable-dlpfc-wm: true
+  enable-pfc-nmda: true
+  enable-visual-cortex: true
+  visual-cortex-action-warmup-steps: 600
+  grid-size: 64
+  n-hippocampus-per-layer: 256  # ~grid_size² for one cell per position; default 64 was too small for 64x64
+  visual-image-size: 64  # MUST be >= grid_size; default 32 gave pixels_per_cell=0
+  n-steps: 1800
+
+conditions:
+  - name: scale64
+    args: {}
+
+out_stats_template: "scale_64x64_validation_{name}_seed{seed}.json"
+out_arg_name: "out"
