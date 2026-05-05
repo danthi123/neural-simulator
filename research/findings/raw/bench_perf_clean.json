@@ -1,0 +1,49 @@
+{
+  "results": [
+    {
+      "label": "baseline_fp32_cpu_eligibility_seed42",
+      "config": {
+        "label": "baseline_fp32_cpu_eligibility",
+        "apply_topographic_bias": true,
+        "enable_motor_fs": true,
+        "gpu_eligibility": false,
+        "fp16": false
+      },
+      "wall_seconds": 282.56142354011536,
+      "sec_per_event": 0.7064035588502884,
+      "eval_accuracy": 0.27,
+      "exit_code": 0,
+      "stdout_tail": "E': 25, 'S': 16, 'W': -7}\n  [eval W->A] word=west target=W baseline={'N': 92, 'E': 65, 'S': 52, 'W': 98} drive={'N': 102, 'E': 81, 'S': 86, 'W': 77} delta={'N': 10, 'E': 16, 'S': 34, 'W': -21}\n\n  Accuracy: 27/100 = 27.0%\n  Confusion: {'north': {'N': 8, 'E': 6, 'S': 6, 'W': 5}, 'east': {'N': 6, 'E': 7, 'S': 6, 'W': 6}, 'south': {'N': 5, 'E': 6, 'S': 6, 'W': 8}, 'west': {'N': 4, 'E': 10, 'S': 5, 'W': 6}}\n\n  Saved: research\\findings\\raw\\g11_bg\\bench_baseline_fp32_cpu_eligibility_seed42_seed42.json\n"
+    },
+    {
+      "label": "phase1_gpu_eligibility_seed42",
+      "config": {
+        "label": "phase1_gpu_eligibility",
+        "apply_topographic_bias": true,
+        "enable_motor_fs": true,
+        "gpu_eligibility": true,
+        "fp16": false
+      },
+      "wall_seconds": 268.2921679019928,
+      "sec_per_event": 0.670730419754982,
+      "eval_accuracy": 0.26,
+      "exit_code": 0,
+      "stdout_tail": ": -5, 'E': 25, 'S': 16, 'W': -8}\n  [eval W->A] word=west target=W baseline={'N': 92, 'E': 65, 'S': 52, 'W': 98} drive={'N': 103, 'E': 81, 'S': 86, 'W': 77} delta={'N': 11, 'E': 16, 'S': 34, 'W': -21}\n\n  Accuracy: 26/100 = 26.0%\n  Confusion: {'north': {'N': 8, 'E': 6, 'S': 6, 'W': 5}, 'east': {'N': 6, 'E': 7, 'S': 6, 'W': 6}, 'south': {'N': 5, 'E': 6, 'S': 6, 'W': 8}, 'west': {'N': 4, 'E': 10, 'S': 6, 'W': 5}}\n\n  Saved: research\\findings\\raw\\g11_bg\\bench_phase1_gpu_eligibility_seed42_seed42.json\n"
+    },
+    {
+      "label": "phase2_gpu_eligibility_fp16_seed42",
+      "config": {
+        "label": "phase2_gpu_eligibility_fp16",
+        "apply_topographic_bias": true,
+        "enable_motor_fs": true,
+        "gpu_eligibility": true,
+        "fp16": true
+      },
+      "wall_seconds": 263.29412317276,
+      "sec_per_event": 0.6582353079319,
+      "eval_accuracy": 0.26,
+      "exit_code": 0,
+      "stdout_tail": " 'E': 25, 'S': 16, 'W': -8}\n  [eval W->A] word=west target=W baseline={'N': 92, 'E': 65, 'S': 52, 'W': 98} drive={'N': 103, 'E': 81, 'S': 86, 'W': 77} delta={'N': 11, 'E': 16, 'S': 34, 'W': -21}\n\n  Accuracy: 26/100 = 26.0%\n  Confusion: {'north': {'N': 8, 'E': 6, 'S': 6, 'W': 5}, 'east': {'N': 6, 'E': 7, 'S': 6, 'W': 6}, 'south': {'N': 5, 'E': 6, 'S': 6, 'W': 8}, 'west': {'N': 4, 'E': 10, 'S': 6, 'W': 5}}\n\n  Saved: research\\findings\\raw\\g11_bg\\bench_phase2_gpu_eligibility_fp16_seed42_seed42.json\n"
+    }
+  ]
+}
