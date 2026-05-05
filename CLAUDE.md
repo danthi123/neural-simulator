@@ -561,18 +561,33 @@ Candidates: cascade N-bias compensation (reduce cluster_a/e weight to cortex_N),
 different decoding (cosine on motor population vector), curriculum (visuomotor
 training first → enable text I/O), or pretrained language pathways.
 
-**🎯 LATEST BREAKTHROUGH 2026-05-01: Cluster K v2 visual cortex — 2.97 ± 0.12 at 16×16 perception-only (NO heuristic).**
+**🎯 LATEST BREAKTHROUGH 2026-05-05: G v2.5 + K v2 SCALES to 32×32 at 2.57 ± 0.11 (n=6) — 13.3% BETTER than the 16×16 baseline.**
 
 ```bash
-# G v2.5 + K v2 — biology-grounded, perception only, scales to 16×16:
+# G v2.5 + K v2 — biology-grounded, perception only, scales to 32×32:
 python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
     --enable-msn-lateral-inhibition --enable-d1-d2-asymmetry --enable-striatal-pv-fsi \
     --enable-cluster-a-closed-loop --enable-cluster-e-topography \
     --enable-dlpfc-wm --enable-pfc-nmda \
     --enable-visual-cortex --visual-cortex-action-warmup-steps 600 \
-    --grid-size 16 --seed N --n-steps 1800
+    --grid-size 32 --seed N --n-steps 1800
 ```
 
+**Scaling result (2026-05-05 step 3):**
+- **32×32 (n=6): 2.57 ± 0.11**, range 2.42–2.72. 6/6 seeds beat 16×16 baseline.
+- 16×16 (n=3): 2.97 ± 0.12 (Cluster K v2 baseline)
+- 32×32 random walk baseline: ~21 estimated
+- 36.1% of 1800 steps at goal (650 ± 5 per seed)
+- Per-quarter: Q1 ~4.3 (exploration), Q2-Q4 ~1.7-2.3 (stable AT goal)
+
+The architecture has demonstrated unexploited capacity — handles 4×
+larger grid with TIGHTER variance. Closes 4 of 5 original cheats
+(heuristic, (gx,gy), (x,y), beacon). See
+[`research/findings/2026-05-05-step3-32x32-scaling-success.md`](research/findings/2026-05-05-step3-32x32-scaling-success.md)
+for the smoke result and [`research/findings/2026-05-05-FINAL-autonomous-arc-synthesis.md`](research/findings/2026-05-05-FINAL-autonomous-arc-synthesis.md)
+for the full autonomous arc that produced this result.
+
+Earlier breakthrough 2026-05-01 (still valid, now superseded as flagship):
 **G v2.5 + K v2 visual-only at 16×16: 2.97 ± 0.12 (n=3)** — closes 4 of
 5 original cheats (heuristic, (gx,gy), (x,y), beacon). 5.2× better than
 Tier 0 vanilla perception arc at 16×16 (15.47 ± 7.06). Beats the

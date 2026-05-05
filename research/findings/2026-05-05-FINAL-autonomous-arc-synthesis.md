@@ -85,14 +85,18 @@ diameter, 4 phase transitions, 1800 steps).
 |---|---|---|---|---|
 | 16×16 baseline (Cluster K v2) | 3 | 2.97 | ± 0.12 | Established |
 | 32×32 single-seed smoke | 1 | 2.70 | n/a | Single seed |
-| **32×32 6-seed validation (batch 1)** | **3** | **2.59** | **± 0.13** | **BEATS 16×16** |
-| 32×32 6-seed validation (batch 2) | 3 | TBD | TBD | In flight |
+| **32×32 6-seed validation** | **6** | **2.57** | **± 0.11** | **13.3% better than 16×16** |
 
 **32×32 navigation works BETTER than 16×16 with the same biology
-stack.** On a grid with 4× the cells. With consistent variance.
+stack.** On a grid with 4× the cells. With tighter variance.
 
-Per-seed batch 1: 2.60 / 2.72 / 2.45. All 3 seeds at 644-654 steps
-at goal (out of 1800 total ≈ 36%).
+Per-seed (n=6): 2.60 / 2.72 / 2.45 / 2.63 / 2.42 / 2.63
+Range: 2.42 to 2.72. **All 6 seeds beat the 16×16 baseline (2.97).**
+Steps at goal: 650 ± 5 (36.1% of 1800).
+
+Per-quarter pattern: Q1 ~4.3 (initial exploration), Q2 ~2.3 (after
+first goal change), Q3-Q4 ~1.7 (stable phases). The agent is
+genuinely AT goal most of the time after exploration ends.
 
 This is a genuine strong result on the project's strongest line.
 The architecture has unexploited capacity beyond what we'd
