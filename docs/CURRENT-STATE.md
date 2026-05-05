@@ -7,7 +7,7 @@ This document is the **authoritative current-state reference**.
 Update it whenever capabilities change. For the journey of how we
 got here, see `research/findings/`.
 
-**Last meaningful update:** 2026-05-04 (biology-grounded sweep in flight + speedup stack shipped)
+**Last meaningful update:** 2026-05-05 (three-factor learning rule sweep in flight; Phase 1 GPU-port + Phase 2 FP16 + parallel=6 perf stack shipped & GPU-validated)
 
 ---
 
@@ -218,20 +218,32 @@ erodes weights over hundreds of thousands of simulation steps. STDP
 - 1800-step navigation run: ~15 minutes
 - **6-seed minimal-arch batch:** ~45-55 minutes (was ~6 hours pre-2026-05-03)
 
-### Speedup stack (shipped 2026-05-03)
+### Speedup stack (shipped 2026-05-03 through 2026-05-05)
 
-Three stacked optimizations on minimal architecture (~7-8x total):
+Layered optimizations across multiple shipping waves:
 
-| Layer | Speedup | Mechanism |
-|---|---|---|
-| dt = 0.5 → 1.0 ms | ~2x | substep count halved, dynamics still stable |
-| Parallel-3 GPU sharing | ~1.7x | 3 procs at ~70% efficiency each |
-| `fast_spike_reset` (cp.where masked-update) | 1.29x | eliminates per-step GPU-CPU sync in spike-reset |
+| Layer | Date | Speedup | Mechanism |
+|---|---|---|---|
+| dt = 0.5 → 1.0 ms | 2026-05-03 | ~2x | substep count halved, dynamics still stable |
+| Parallel-3 GPU sharing | 2026-05-03 | ~1.7x | 3 procs at ~70% efficiency each |
+| `fast_spike_reset` (cp.where masked-update) | 2026-05-03 | 1.29x | eliminates per-step GPU-CPU sync in spike-reset |
+| Three-factor GPU-port (Phase 1) | 2026-05-05 | ~2x (3-factor only) | eliminates per-event 6 MB CSR round-trip |
+| **`cfg.fp16_synapse_state`** | 2026-05-05 | 1.05-1.15x | fp16 storage for `cp_eligibility_trace` (validated <1mV drift) |
+| **Parallel=6** (use VRAM headroom) | 2026-05-05 | ~3x sweep throughput | 30-50% GPU util at parallel=2 → bumped per user observation |
 
-Numerical equivalence verified at `tests/test_fast_spike_reset.py`.
-Default `cfg.fast_spike_reset = False` for backward compatibility;
-opt-in via `--fast-spike-reset` (or default-on in modern runners).
-Full writeup: [`research/findings/2026-05-04-perf-speedup-stack.md`](../research/findings/2026-05-04-perf-speedup-stack.md).
+Numerical equivalence + drift verified at:
+- `tests/test_fast_spike_reset.py` (6 tests, dt path)
+- `tests/test_three_factor_update.py` (7 tests, GPU-port logic)
+- `tests/test_fp16_drift.py` (4 tests, voltage drift <1mV over 1000 steps)
+
+Default flags (all opt-in for backward compat):
+- `cfg.fast_spike_reset = False` (default-on in modern runners)
+- `cfg.fp16_synapse_state = False` (validated, ship default-on after sweep)
+- `gpu_eligibility = True` in three_factor runner
+
+Honest perf-roadmap: `research/findings/2026-05-05-perf-roadmap.md`.
+Cloud H100 deploy: `docs/plans/2026-05-05-cloud-h100-deployment.md`
+(~$2/hr for 6-8× sweep throughput, ready for activation).
 
 ### Memory
 

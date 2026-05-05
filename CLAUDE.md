@@ -494,6 +494,13 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 >    - 7-8x speedup stack: dt=1.0 + parallel-3 GPU sharing +
 >      `cfg.fast_spike_reset` (cp.where masked-update). See
 >      [`research/findings/2026-05-04-perf-speedup-stack.md`](research/findings/2026-05-04-perf-speedup-stack.md).
+>    - 2026-05-05 perf wave 2: three-factor GPU-port (Phase 1, ~2× on
+>      3-factor runner), `cfg.fp16_synapse_state` for FP16 eligibility
+>      (validated <1mV voltage drift over 1000 steps), parallel=6 in
+>      YAMLs (was parallel=2 with GPU at 30-50% util). Cloud H100
+>      deploy ready at `scripts/deploy_to_cloud.sh` (~$2/hr, 6-8×
+>      sweep throughput vs local 3090). Full roadmap:
+>      [`research/findings/2026-05-05-perf-roadmap.md`](research/findings/2026-05-05-perf-roadmap.md).
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian

@@ -1,0 +1,49 @@
+# Three-factor validation sweep — fires CONDITIONAL on bio_three_factor
+# tf_with_topo_fs aligning >= 4/6 (i.e., three-factor matched gradient).
+#
+# This is the "n=6 confirmation" sweep. If three-factor + biology fix
+# really does match gradient, this sweep should give 5-6/6 aligned at
+# tf_with_topo_fs across seeds [200, 201, 202, 300, 301, 302] — fresh
+# seeds we haven't used before, eliminating contamination from the
+# original 3-factor sweep's seed pool.
+#
+# Design choices:
+#   - Fresh seeds (200s, 300s) — no contamination with 3-factor sweep seeds
+#   - Same architecture (biological), same biology fix
+#   - parallel=6 (uses VRAM headroom from user's observation)
+#
+# Memory budget: bio scale at parallel=6 = ~12 GB peak (well within 24GB).
+#
+# Estimated runtime: 18 runs / parallel=6 = 3 batches × ~50 min = ~2.5 hours.
+
+name: bio-three-factor-validation
+runner: research.runners.bio_three_factor
+output_dir: research/findings/raw/g11_bg
+parallelism: 6
+
+seeds: [200, 201, 202, 300, 301, 302]
+
+base_args:
+  biological: true
+  fp16-synapse-state: true   # validated: 1.0mV drift over 1000 steps
+  n-events-per-direction: 1000
+  stim-steps-per-event: 50
+  reset-steps: 50
+  learning-rate: 1e-3
+  eligibility-decay-tau: 50.0
+
+conditions:
+  # Replicate the 3 conditions from bio_three_factor at fresh seeds.
+  - name: tfv_vanilla
+    args: {}
+
+  - name: tfv_with_topo_fs
+    args:
+      apply-topographic-bias: true
+      enable-motor-fs: true
+
+  - name: tfv_with_topo
+    args:
+      apply-topographic-bias: true
+
+out_stats_template: "text_eval_3factor_{name}_seed{seed}.json"

@@ -247,6 +247,18 @@ BUILTIN_CONFIGS: Dict[str, Dict[str, Any]] = {
             "3-factor with topo only":  "text_eval_3factor_tf_with_topo_seed{seed}.json",
         },
     },
+    # Three-factor validation sweep — fresh seeds (200s/300s), fires
+    # CONDITIONAL on tf_with_topo_fs aligning >= 4/6 in the original
+    # sweep. Note: distinct condition names (tfv_*) and seeds, so this
+    # aggregator config doesn't overlap with bio_three_factor.
+    "bio_three_factor_validation": {
+        "conditions": {
+            "3-factor vanilla (val)":         "text_eval_3factor_tfv_vanilla_seed{seed}.json",
+            "3-factor with topo + FS (val)":  "text_eval_3factor_tfv_with_topo_fs_seed{seed}.json",
+            "3-factor with topo only (val)":  "text_eval_3factor_tfv_with_topo_seed{seed}.json",
+        },
+        "seeds": [200, 201, 202, 300, 301, 302],
+    },
 }
 
 
