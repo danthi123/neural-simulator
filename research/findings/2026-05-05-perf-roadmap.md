@@ -41,8 +41,12 @@ and `bio_b3_validation.yaml`. Expected wall-clock: chain finishes in
 
 **1.2 GPU-port three-factor (Phase 1, this session).** Eliminates
 per-event 6 MB PCIe round-trip on the 3-factor runner. **Shipped
-commit `a3187e4`** with 7 unit tests passing. Expected speedup ~2×
-on the 3-factor runner specifically.
+commit `a3187e4`** with 7 unit tests passing. ~~Expected speedup ~2×.~~
+**MEASURED 1.05× (5% faster) under clean GPU-idle conditions on
+2026-05-05** — see [`2026-05-05-perf-wave2-VERDICT.md`](2026-05-05-perf-wave2-VERDICT.md).
+The eligibility update is <10% of total runtime; dense Izhikevich +
+synaptic-CSR kernels dominate at biological canon. Real, but smaller
+than projected. Default kept as `gpu_eligibility=True`.
 
 ### Tier 2 — modest wins, scope manageable
 
@@ -55,8 +59,10 @@ halves bandwidth on the spike-propagation kernel which IS bandwidth-
 bound for sparse mat-vec.
 
 Status: `cfg.fp16_synapse_state` flag added; eligibility allocation
-plumbed; `tests/test_fp16_drift.py` scaffolded but GPU tests gated
-until current chain frees the GPU. **Not yet validated under load.**
+plumbed; `tests/test_fp16_drift.py` validated <1mV voltage drift over
+1000 steps. **MEASURED 1.07× cumulative with phase 1 (= 2pp on top of
+phase 1's 5%) under clean conditions on 2026-05-05.** Flag kept as
+opt-in default-False; researchers can flip for long sweeps.
 
 **2.2 Async CUDA streams.** Currently each `bridge._run_one_simulation_step()`
 synchronizes between kernel launches. Moving to a stream-per-pathway
