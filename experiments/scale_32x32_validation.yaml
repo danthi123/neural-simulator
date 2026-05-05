@@ -1,0 +1,40 @@
+# 32×32 navigation 6-seed validation — confirms the smoke result
+# (single seed at 2.70 mean Manhattan, 17:35 EDT 2026-05-05).
+#
+# 16×16 baseline: 2.97 ± 0.12 (Cluster K v2, n=3)
+# 32×32 single-seed: 2.70 (this validation tests if it generalizes)
+#
+# 6 seeds × 1 condition = 6 runs at parallel=3 ≈ 30-40 min.
+#
+# Pass criterion: mean across 6 seeds < 4.0, std < 1.5. Beats 16×16
+# baseline at a 4× larger grid.
+
+name: scale-32x32-validation
+runner: research.runners.g11_bg_runner
+output_dir: research/findings/raw/g11_bg
+parallelism: 3
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  moving-goal: true
+  goal-schedule: multi
+  deterministic: true
+  enable-msn-lateral-inhibition: true
+  enable-d1-d2-asymmetry: true
+  enable-striatal-pv-fsi: true
+  enable-cluster-a-closed-loop: true
+  enable-cluster-e-topography: true
+  enable-dlpfc-wm: true
+  enable-pfc-nmda: true
+  enable-visual-cortex: true
+  visual-cortex-action-warmup-steps: 600
+  grid-size: 32
+  n-steps: 1800
+
+conditions:
+  - name: scale32
+    args: {}
+
+out_stats_template: "scale_32x32_validation_{name}_seed{seed}.json"
+out_arg_name: "out"  # g11_bg_runner uses --out, not --out-stats

@@ -88,6 +88,9 @@ class ExperimentConfig:
     base_args: Dict[str, Any]
     conditions: List[Condition]
     out_stats_template: str = "text_eval_{name}_seed{seed}.json"
+    out_arg_name: str = "out-stats"  # CLI flag name for output path. Most
+                                     # bio runners use --out-stats; g11_bg_runner
+                                     # uses --out. Set per-runner in YAML.
     pre_check: Optional[Dict[str, Any]] = None  # {condition: ..., assert_aligned_lt: 1}
     post_check: Optional[Dict[str, Any]] = None  # similar
 
@@ -106,6 +109,7 @@ class ExperimentConfig:
             conditions=conds,
             out_stats_template=data.get("out_stats_template",
                                         "text_eval_{name}_seed{seed}.json"),
+            out_arg_name=data.get("out_arg_name", "out-stats"),
             pre_check=data.get("pre_check"),
             post_check=data.get("post_check"),
         )
@@ -135,6 +139,7 @@ def _run_single(
     output_dir: Path,
     log_prefix: str,
     out_stats_path: Path,
+    out_arg_name: str = "out-stats",
 ) -> subprocess.Popen:
     """Launch one runner subprocess. Returns the Popen handle.
     Caller is responsible for waiting + cleanup."""
@@ -149,7 +154,7 @@ def _run_single(
     # don't appear in the log file until the buffer fills. Caused 13+
     # min of "no progress visible" on bio_three_factor 2026-05-05.
     cli = ["python", "-u", "-m", runner_module] + _build_cli_args(full_args)
-    cli += ["--out-stats", str(out_stats_path)]
+    cli += [f"--{out_arg_name}", str(out_stats_path)]
 
     log_fp = log_file.open("w", encoding="utf-8")
     err_fp = err_file.open("w", encoding="utf-8")
@@ -285,6 +290,7 @@ def run_experiment(cfg: ExperimentConfig, master_log: Path) -> Dict[str, Any]:
                 h = _run_single(
                     cfg.runner, seed, args, cfg.output_dir,
                     log_prefix, out_stats,
+                    out_arg_name=cfg.out_arg_name,
                 )
                 handles.append(h)
                 log(f"  launched {log_prefix} as PID {h.proc.pid}")
