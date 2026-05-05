@@ -119,8 +119,12 @@ if ($alignedN -ge 4) {
         --out "$findingsDir/2026-05-05-bio-three-factor-validation-results.md" 2>&1
     "$valOut" | Out-File -Append $logFile
 
-} elseif ($alignedN -ge 1) {
-    # PARTIAL PATH
+} elseif ($alignedN -ge 2) {
+    # PARTIAL PATH (2-3 aligned — real but weak signal worth ablation)
+    # NOTE: threshold raised from >=1 to >=2 on 2026-05-05. Project's
+    # architecture-noise floor produces ~1/6 random alignments per
+    # condition (seed 101 in particular consistently aligns from
+    # random init). 1/6 is therefore indistinguishable from FAILURE.
     "" | Out-File -Append $logFile
     "DECISION: tf_with_topo_fs aligned $alignedN/$totalN -> partial" | Out-File -Append $logFile
     "Three-factor weaker than gradient (which got 3/3 same condition)." | Out-File -Append $logFile
@@ -129,6 +133,8 @@ if ($alignedN -ge 4) {
     "  - DA-scheme ablation (sign-only vs magnitude-graded)" | Out-File -Append $logFile
 
 } else {
+    # FAILURE PATH (0-1 aligned). 1/6 is noise floor (architecture
+    # produces ~1/6 random alignments from seed 101 init).
     # FAILURE PATH — classical sign-DA failed
     "" | Out-File -Append $logFile
     "DECISION: tf_with_topo_fs aligned 0/$totalN -> classical 3-factor fails." | Out-File -Append $logFile
