@@ -212,14 +212,40 @@ BUILTIN_CONFIGS: Dict[str, Dict[str, Any]] = {
             "bio random weights (control)":  "text_eval_sanity_check_bio_density030_random_seed{seed}.json",
         },
     },
-    # Biological-scale STDP training proof-of-concept (single seed).
-    # CONDITIONAL: only run after bio_sanity_check passes.
+    # Biological-scale STDP training proof-of-concept.
     "bio_proof_of_concept": {
         "conditions": {
             "bio_baseline (canon, no fix)":  "text_eval_bio_bio_baseline_seed{seed}.json",
             "bio_topo_fs (canon + biology)": "text_eval_bio_bio_topo_fs_seed{seed}.json",
         },
-        "seeds": [42],
+    },
+    # B3 supervised gradient at biological scale (the bio version of B3,
+    # with cortical canon enabled and bumped sizes).
+    "bio_b3_gradient": {
+        "conditions": {
+            "B3 vanilla (canon, no fix)":         "text_eval_b3_bio_bio_grad_vanilla_seed{seed}.json",
+            "B3 with topo + FS":                  "text_eval_b3_bio_bio_grad_with_topo_fs_seed{seed}.json",
+            "B3 with topo only":                  "text_eval_b3_bio_bio_grad_with_topo_seed{seed}.json",
+        },
+        "seeds": [42, 43, 44],
+    },
+    # B3 multi-seed validation (6 seeds, runs are *_v_seed{seed}.json).
+    "bio_b3_validation": {
+        "conditions": {
+            "B3 vanilla":           "text_eval_b3_bio_bio_grad_vanilla_v_seed{seed}.json",
+            "B3 with topo + FS":    "text_eval_b3_bio_bio_grad_with_topo_fs_v_seed{seed}.json",
+            "B3 with topo only":    "text_eval_b3_bio_bio_grad_with_topo_v_seed{seed}.json",
+        },
+    },
+    # Three-factor learning rule (Fremaux & Gerstner 2016) at bio scale.
+    # The scientific test: can a biology-plausible rule match what
+    # supervised gradient achieves?
+    "bio_three_factor": {
+        "conditions": {
+            "3-factor vanilla":         "text_eval_3factor_tf_vanilla_seed{seed}.json",
+            "3-factor with topo + FS":  "text_eval_3factor_tf_with_topo_fs_seed{seed}.json",
+            "3-factor with topo only":  "text_eval_3factor_tf_with_topo_seed{seed}.json",
+        },
     },
 }
 

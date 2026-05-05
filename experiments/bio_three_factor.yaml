@@ -1,0 +1,52 @@
+# Three-factor learning rule (Frémaux & Gerstner 2016) at biological scale.
+#
+# THE scientific question for this arc: "Can a biology-grounded learning
+# rule achieve what supervised gradient achieves?"
+#
+# If yes → STDP failed but biology-grounded rules CAN work; project's
+#   continued biological-fidelity research direction is validated.
+# If no → biology-grounded rules with global scalar feedback are
+#   insufficient; need fundamentally different framework (predictive
+#   coding, dendritic learning, evolved local rules).
+#
+# Three-factor: Δw = lr × eligibility[pre,post] × dopamine[motor]
+# - Eligibility: pre × post coincidence with NMDA-tau decay
+# - Dopamine: SIGN of (target - actual) per motor pool, not magnitude
+#   (synapses can't read remote firing rates; only global RPE)
+#
+# Architecture: same as B3 (biological cortical canon).
+#
+# 6 seeds × 3 conditions = 18 runs at parallel=2 ≈ 7 hours.
+#
+# Usage (manually after B3 v2 validates):
+#   python -m research.experiment_runner experiments/bio_three_factor.yaml
+
+name: bio-three-factor
+runner: research.runners.bio_three_factor
+output_dir: research/findings/raw/g11_bg
+parallelism: 2
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  biological: true
+  n-events-per-direction: 1000
+  stim-steps-per-event: 50
+  reset-steps: 50
+  learning-rate: 1e-3
+  eligibility-decay-tau: 50.0
+
+conditions:
+  - name: tf_vanilla
+    args: {}
+
+  - name: tf_with_topo_fs
+    args:
+      apply-topographic-bias: true
+      enable-motor-fs: true
+
+  - name: tf_with_topo
+    args:
+      apply-topographic-bias: true
+
+out_stats_template: "text_eval_3factor_{name}_seed{seed}.json"

@@ -1,0 +1,50 @@
+# Multi-seed validation of B3 result.
+#
+# Context: B3 v2 (gradient + cortical canon) gave 5/8 aligned at 3 seeds.
+# This is well above the 4/9 threshold for "gradient works at bio scale"
+# but n=3/condition is too thin for confident claims about which condition
+# matters most.
+#
+# This sweep doubles the seeds to 6 × 3 conditions = 18 runs at parallel=2.
+# Total wall time: ~9 batches × ~45 min = ~7 hours.
+#
+# Expected:
+#   bio_grad_vanilla: 2-3/6 aligned (extrapolating 1/3 from B3 v2)
+#   bio_grad_with_topo_fs: 5-6/6 aligned (extrapolating 3/3)
+#   bio_grad_with_topo: 3-4/6 aligned (extrapolating 1/2)
+#
+# If the topo_fs alignment ratio persists, that's a robust positive
+# result and the biology fix (Pulvermuller topographic prior + Vogels
+# PV-FSI) is necessary alongside gradient learning.
+#
+# Usage (after B3 v2 completes; can run sequentially):
+#   python -m research.experiment_runner experiments/bio_b3_validation.yaml
+
+name: bio-b3-validation
+runner: research.runners.b3_supervised_gradient
+output_dir: research/findings/raw/g11_bg
+parallelism: 2
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  biological: true
+  n-events-per-direction: 1000
+  stim-steps-per-event: 50
+  reset-steps: 50
+  learning-rate: 1e-3
+
+conditions:
+  - name: bio_grad_vanilla_v
+    args: {}
+
+  - name: bio_grad_with_topo_fs_v
+    args:
+      apply-topographic-bias: true
+      enable-motor-fs: true
+
+  - name: bio_grad_with_topo_v
+    args:
+      apply-topographic-bias: true
+
+out_stats_template: "text_eval_b3_bio_{name}_seed{seed}.json"
