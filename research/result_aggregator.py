@@ -267,6 +267,15 @@ BUILTIN_CONFIGS: Dict[str, Dict[str, Any]] = {
             "graded-DA 3-factor with topo + FS": "text_eval_3factor_tfg_with_topo_fs_seed{seed}.json",
         },
     },
+    # Validation of magnitude-graded DA at fresh seeds (200s/300s).
+    # Fires CONDITIONAL on graded-DA probe aligning >= 4/6.
+    "bio_three_factor_graded_da_validation": {
+        "conditions": {
+            "graded-DA + topo + FS (val)": "text_eval_3factor_tfgv_with_topo_fs_seed{seed}.json",
+            "graded-DA + topo only (val)": "text_eval_3factor_tfgv_with_topo_seed{seed}.json",
+        },
+        "seeds": [200, 201, 202, 300, 301, 302],
+    },
 }
 
 

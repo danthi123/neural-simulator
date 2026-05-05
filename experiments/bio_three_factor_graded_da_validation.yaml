@@ -1,0 +1,43 @@
+# Magnitude-graded DA validation — fires CONDITIONAL on graded-DA probe
+# aligning >= 4/6 in original sweep (i.e., sign-only DA was the
+# bottleneck, magnitude-graded fixes it).
+#
+# Fresh seeds (200s/300s) to confirm the result isn't seed-pool
+# contamination from the original 6-seed probe.
+#
+# 6 seeds × 2 conditions = 12 runs at parallel=6 = 2 batches × ~50min
+# = ~1.5 hours.
+
+name: bio-three-factor-graded-da-validation
+runner: research.runners.bio_three_factor
+output_dir: research/findings/raw/g11_bg
+parallelism: 6
+
+seeds: [200, 201, 202, 300, 301, 302]
+
+base_args:
+  biological: true
+  fp16-synapse-state: true
+  n-events-per-direction: 1000
+  stim-steps-per-event: 50
+  reset-steps: 50
+  learning-rate: 1e-3
+  eligibility-decay-tau: 50.0
+  da-mode: graded
+
+conditions:
+  # Replicate at fresh seeds.
+  - name: tfgv_with_topo_fs
+    args:
+      apply-topographic-bias: true
+      enable-motor-fs: true
+
+  # Plus a topo-only ablation: does the FS interneuron matter once
+  # we have graded DA? (FS provides lateral inhibition / WTA among
+  # motor pools; with magnitude DA, the per-pool error already encodes
+  # which is winning, so FS may be redundant.)
+  - name: tfgv_with_topo
+    args:
+      apply-topographic-bias: true
+
+out_stats_template: "text_eval_3factor_{name}_seed{seed}.json"

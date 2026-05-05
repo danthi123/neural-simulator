@@ -153,18 +153,38 @@ if ($alignedN -ge 4) {
         --out "$findingsDir/2026-05-05-bio-three-factor-graded-da-results.md" 2>&1
     "$gradedOut" | Out-File -Append $logFile
 
-    # Headline based on graded-DA verdict
+    # Headline based on graded-DA verdict + auto-extend chain
     if ($gradedOut -match "Real word-action learning achieved") {
         "" | Out-File -Append $logFile
         "*** HEADLINE: scalar SIGN-ONLY DA was the bottleneck. ***" | Out-File -Append $logFile
         "*** Magnitude-graded DA (Schultz 1998) preserves biology and works. ***" | Out-File -Append $logFile
+        "" | Out-File -Append $logFile
+        "Auto-launching graded-DA validation (fresh seeds 200s/300s)..." | Out-File -Append $logFile
+        $valProc = Start-Process -FilePath "python.exe" `
+            -ArgumentList "-u","-m","research.experiment_runner",
+                          "experiments/bio_three_factor_graded_da_validation.yaml" `
+            -RedirectStandardOutput "$outDir/bio_three_factor_graded_da_validation.stdout.log" `
+            -RedirectStandardError "$outDir/bio_three_factor_graded_da_validation.stderr.log" `
+            -WindowStyle Hidden -PassThru
+        "Validation launched as PID $($valProc.Id)" | Out-File -Append $logFile
+        $valProc.WaitForExit()
+        "Validation finished (exit $($valProc.ExitCode))" | Out-File -Append $logFile
+
+        $valOut = & "C:\python312\python.exe" -m research.result_aggregator `
+            --config bio_three_factor_graded_da `
+            --out "$findingsDir/2026-05-05-bio-three-factor-graded-da-validation-results.md" 2>&1
+        "$valOut" | Out-File -Append $logFile
     } else {
         "" | Out-File -Append $logFile
         "*** HEADLINE: even graded-DA insufficient. Global scalar feedback ***" | Out-File -Append $logFile
-        "*** in any form cannot match gradient at this task. Need: ***" | Out-File -Append $logFile
-        "***   - Apical-basal dendritic learning (Bono & Clopath 2017) ***" | Out-File -Append $logFile
-        "***   - Or predictive coding (Rao & Ballard 1999) ***" | Out-File -Append $logFile
-        "*** Neither currently implemented; STOPPING for manual research direction. ***" | Out-File -Append $logFile
+        "*** in any form cannot match gradient at this task. ***" | Out-File -Append $logFile
+        "*** ***" | Out-File -Append $logFile
+        "*** Recommended next direction: APICAL-BASAL DENDRITIC LEARNING ***" | Out-File -Append $logFile
+        "*** (Bono & Clopath 2017). See design doc:                       ***" | Out-File -Append $logFile
+        "***   docs/plans/2026-05-05-dendritic-learning-design.md         ***" | Out-File -Append $logFile
+        "*** Estimated scope: 1.5-2 months focused engineering.           ***" | Out-File -Append $logFile
+        "*** ***" | Out-File -Append $logFile
+        "*** STOPPING for manual research direction. ***" | Out-File -Append $logFile
     }
 }
 
