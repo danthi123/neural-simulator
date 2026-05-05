@@ -24,7 +24,9 @@
 name: bio-three-factor
 runner: research.runners.bio_three_factor
 output_dir: research/findings/raw/g11_bg
-parallelism: 2
+parallelism: 6  # 2026-05-05: bumped from 2. Bio-scale uses ~2GB/proc;
+                # 6 procs = 12GB peak, well within RTX 3090 24GB.
+                # User noted GPU stays at 30-50% util at parallel=2.
 
 seeds: [42, 43, 44, 100, 101, 102]
 

@@ -522,10 +522,18 @@ class SimulationBridge:
             self.cp_stp_x = None
             self.cp_stp_u = None
 
-        # Eligibility traces for reward modulation
+        # Eligibility traces for reward modulation. dtype=float16 when
+        # cfg.fp16_synapse_state to save bandwidth on the synapse-side
+        # plasticity ops. Compute auto-promotes to fp32 in cupy operators
+        # (any fp16 op vs fp32 scalar promotes), so kernels still run at
+        # fp32 — only storage shrinks.
+        synapse_dtype = cp.float16 if cfg.fp16_synapse_state else cp.float32
         if cfg.enable_reward_modulation and num_synapses > 0:
-            self._log_console(f"Initializing eligibility traces for {num_synapses} synapses (capacity: {capacity})...")
-            self.cp_eligibility_trace = cp.zeros(capacity, dtype=cp.float32)
+            self._log_console(
+                f"Initializing eligibility traces for {num_synapses} synapses "
+                f"(capacity: {capacity}, dtype: {synapse_dtype.__name__})..."
+            )
+            self.cp_eligibility_trace = cp.zeros(capacity, dtype=synapse_dtype)
         else:
             self.cp_eligibility_trace = None
 

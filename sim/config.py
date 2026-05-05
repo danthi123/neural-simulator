@@ -185,6 +185,23 @@ class CoreSimConfig:
     # Default False so existing runs are bit-identical; opt-in via this flag.
     fast_spike_reset: bool = False
 
+    # Performance: FP16 mixed-precision for synaptic state (eligibility
+    # traces + connection weights). Voltages and recovery vars stay FP32
+    # because spiking integration needs higher precision near threshold.
+    #
+    # Honest expected gain: 1.05-1.15x. Sparse mat-vec (CSR SpMV) is
+    # bandwidth-bound, so halving the bytes per element gives ~1.5x on
+    # that step. But integration kernels dominate total time and they
+    # stay FP32. Real gains come from more parallel processes (use VRAM
+    # headroom) more than from FP16 — but FP16 stacks with parallelism.
+    #
+    # Numerical risk: weight precision drops from 7 decimal digits (FP32)
+    # to 3 (FP16). For STDP at typical step sizes (1e-3 to 1e-2), this
+    # accumulates noise of ~0.5% per 1000 events. Acceptable for our
+    # task (final accuracy stable at ±2% normally) but validate via
+    # tests/test_fp16_drift.py before relying on results.
+    fp16_synapse_state: bool = False
+
     # C2: Reward-Modulated Plasticity (Three-factor learning rule) - Izhikevich 2007
     enable_reward_modulation: bool = True  # Enabled by default for reinforcement learning
     reward_learning_rate: float = 0.01     # Modulation strength (typical: 0.001-0.05)

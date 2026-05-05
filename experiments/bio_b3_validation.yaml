@@ -23,7 +23,8 @@
 name: bio-b3-validation
 runner: research.runners.b3_supervised_gradient
 output_dir: research/findings/raw/g11_bg
-parallelism: 2
+parallelism: 6  # 2026-05-05: bumped from 2 to use VRAM headroom (was
+                # only ~5GB used out of 24GB at parallel=2)
 
 seeds: [42, 43, 44, 100, 101, 102]
 
