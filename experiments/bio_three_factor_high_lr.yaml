@@ -1,0 +1,37 @@
+# Three-factor learning rate sweep — does 5x learning rate move 3-factor
+# from 1/6 aligned (noise floor) toward the dendritic-learning decision
+# gate (>=4/6)?
+#
+# Step 2 of the post-verdict plan: before pivoting on dendritic learning
+# (1.5-2 mo investment), validate whether 3-factor's failure is
+# fundamental or just under-tuned. If 5x LR moves to 3+/6 aligned, the
+# rule has more headroom than the verdict suggests. If still 0-1/6 even
+# with 5x LR, the rule is genuinely inadequate.
+#
+# 3 seeds × 2 conditions = 6 runs at parallel=3 ≈ 25 min.
+
+name: bio-three-factor-high-lr
+runner: research.runners.bio_three_factor
+output_dir: research/findings/raw/g11_bg
+parallelism: 3
+
+seeds: [42, 43, 44]
+
+base_args:
+  biological: true
+  n-events-per-direction: 1000
+  stim-steps-per-event: 50
+  reset-steps: 50
+  eligibility-decay-tau: 50.0
+  apply-topographic-bias: true
+  enable-motor-fs: true
+
+conditions:
+  - name: tf_lr_5x
+    args:
+      learning-rate: 5e-3
+  - name: tf_lr_10x
+    args:
+      learning-rate: 1e-2
+
+out_stats_template: "text_eval_3factor_{name}_seed{seed}.json"
