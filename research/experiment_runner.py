@@ -144,7 +144,11 @@ def _run_single(
     pid_file = output_dir / f"{log_prefix}.pid"
 
     full_args = {"seed": seed, **args}
-    cli = ["python", "-m", runner_module] + _build_cli_args(full_args)
+    # -u: unbuffered stdout/stderr. Without this, Python block-buffers
+    # when stdout is a file, so [PROGRESS] events + per-event prints
+    # don't appear in the log file until the buffer fills. Caused 13+
+    # min of "no progress visible" on bio_three_factor 2026-05-05.
+    cli = ["python", "-u", "-m", runner_module] + _build_cli_args(full_args)
     cli += ["--out-stats", str(out_stats_path)]
 
     log_fp = log_file.open("w", encoding="utf-8")

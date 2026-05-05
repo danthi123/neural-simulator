@@ -274,7 +274,10 @@ def run_three_factor(
     t_start = time.time()
     correct_recent = 0
     n_recent = 0
+    # Debug timing for first 5 events to surface bottlenecks
+    DEBUG_FIRST_N = 5
     for event_idx, event in enumerate(buffer):
+        ev_start = time.time() if event_idx < DEBUG_FIRST_N else 0
         token = event["token"]
         target_action = event["action"]
 
@@ -351,12 +354,17 @@ def run_three_factor(
             correct_recent += 1
         n_recent += 1
 
+        if event_idx < DEBUG_FIRST_N and verbose:
+            print(f"  [3factor DEBUG] event {event_idx}: "
+                  f"{time.time() - ev_start:.2f}s", flush=True)
+
         # Periodically push weights back to GPU
         if (event_idx + 1) % push_to_gpu_every == 0:
             bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
             elapsed = time.time() - t_start
             rolling_acc = correct_recent / n_recent if n_recent else 0
-            if verbose and (event_idx + 1) % 250 == 0:
+            # Print every 50 events (was 250) to surface stalls earlier
+            if verbose and (event_idx + 1) % 50 == 0:
                 print(f"  [3factor] {event_idx+1}/{len(buffer)} events "
                       f"({elapsed:.0f}s) rolling_acc={rolling_acc:.1%}",
                       flush=True)
