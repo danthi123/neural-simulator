@@ -501,6 +501,21 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 >      deploy ready at `scripts/deploy_to_cloud.sh` (~$2/hr, 6-8×
 >      sweep throughput vs local 3090). Full roadmap:
 >      [`research/findings/2026-05-05-perf-roadmap.md`](research/findings/2026-05-05-perf-roadmap.md).
+> 5. **🚨 2026-05-05 FINAL VERDICT: global scalar feedback fails at
+>    biological scale.** Both classical sign-only DA (1/6 at
+>    `tf_with_topo_fs`) AND magnitude-graded DA Schultz-1998-style
+>    (0/6 at `tfg_with_topo_fs`) fall below dendritic-learning
+>    decision gate. Gradient (B3 supervised) under identical
+>    architecture: 3/3 PERFECT. Architecture is sufficient; the
+>    credit-assignment rule is the bottleneck. See
+>    [`research/findings/2026-05-05-W-to-A-VERDICT-global-scalar-feedback-fails.md`](research/findings/2026-05-05-W-to-A-VERDICT-global-scalar-feedback-fails.md)
+>    for full chronology + three options for next direction
+>    (apical-basal dendritic learning, predictive coding, or pivot
+>    away from W→A). Design doc for option 1 at
+>    [`docs/plans/2026-05-05-dendritic-learning-design.md`](docs/plans/2026-05-05-dendritic-learning-design.md)
+>    (1.5-2 month scope). **Pending user decision before kicking off
+>    Week 1 multi-compartment kernel work** — scope is large enough
+>    to warrant explicit greenlight.
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
