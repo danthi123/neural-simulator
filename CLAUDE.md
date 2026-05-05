@@ -411,7 +411,7 @@ sensory cortex to mature before association cortex.
 
 ### Recommended configuration (current best 2026-05-01)
 
-**Text I/O infrastructure (2026-05-02) — STATISTICALLY SIGNIFICANT W→A.**
+**Text I/O infrastructure (2026-05-02) — ~~STATISTICALLY SIGNIFICANT W→A~~ SUPERSEDED 2026-05-05.** See the [W→A verdict](research/findings/2026-05-05-W-to-A-VERDICT-global-scalar-feedback-fails.md): the "28.5% W→A" reported below failed the permuted-label control (2026-05-03) and was not aligned with task labels. Three subsequent investigations (3-factor with classical sign-only DA: 1/6, 3-factor with magnitude-graded DA: 0/6, B3 supervised gradient: 3/3 PERFECT) confirmed that global scalar feedback in any form cannot match per-region gradient at biological-scale W→A. Section retained below for historical context.
 
 **Critical correction:** the previously documented "32.5% W→A baseline" was an
 EAST-PREDICTION ARTIFACT on east-heavy eval data, not real learning. The
