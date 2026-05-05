@@ -207,6 +207,7 @@ def evaluate_word_to_action(
     n_reset_steps: int = 100,
     seed: int = 1,
     token_sparsity: float = 0.1,
+    orthogonal_cues: bool = False,
 ):
     """Drive language_input with each direction word; observe which
     motor_X has the highest firing rate. Did the agent learn the
@@ -370,7 +371,17 @@ def evaluate_word_to_action(
         for _ in range(n_reset_steps):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
-        bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=token_sparsity)
+        if orthogonal_cues:
+            # Cue index from WORD_TO_ACTION key order. MUST match the
+            # _VOCAB_ORDER used at training time in bio_three_factor.py.
+            _vocab_order = list(WORD_TO_ACTION.keys())
+            bridge.set_token_drive(
+                word, drive_pA=drive_pA, sparsity=token_sparsity,
+                orthogonal_cue_idx=_vocab_order.index(word),
+                n_orthogonal_cues=len(_vocab_order),
+            )
+        else:
+            bridge.set_token_drive(word, drive_pA=drive_pA, sparsity=token_sparsity)
 
         if distributed_motor_pop:
             drive_subpool = {sfx: 0 for _, sfx in SUBPOOL_THETA}

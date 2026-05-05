@@ -154,6 +154,10 @@ def run_three_factor(
     gpu_eligibility: bool = True,  # Phase 1: keep eligibility/edges on GPU
     fp16_synapse_state: bool = False,  # Phase 2: FP16 cp_eligibility_trace
     da_mode: str = "sign",  # "sign" (classical), "graded" (magnitude DA)
+    orthogonal_cues: bool = False,  # 2026-05-05: replace random hash codes
+                                    # with non-overlapping banded codes
+                                    # to test input-encoding-ambiguity
+                                    # hypothesis (see step 2 design doc)
     verbose: bool = True,
 ):
     """Three-factor learning at language_input -> motor_X synapses.
@@ -187,7 +191,26 @@ def run_three_factor(
         build_minimal_brain_regions, build_biological_brain_regions,
         apply_topographic_bias as _apply_topo,
     )
-    from sim.text_embeddings import vocab_to_drive_pattern
+    from sim.text_embeddings import vocab_to_drive_pattern, orthogonal_drive_pattern
+
+    # Vocab order for orthogonal-cue mode. Index = cue band assignment.
+    _VOCAB_ORDER = ["north", "east", "south", "west"]
+
+    def _drive_for_token(token: str) -> np.ndarray:
+        """Encode a token into a drive vector. Branches on orthogonal_cues."""
+        if orthogonal_cues:
+            cue_idx = _VOCAB_ORDER.index(token)
+            return orthogonal_drive_pattern(
+                cue_idx=cue_idx,
+                n_cues=len(_VOCAB_ORDER),
+                n_neurons=n_lang_input,
+                drive_max_pA=lang_input_drive_pA,
+                sparsity=token_sparsity,
+            )
+        return vocab_to_drive_pattern(
+            token, n_neurons=n_lang_input,
+            drive_max_pA=lang_input_drive_pA, sparsity=token_sparsity,
+        )
 
     rng = np.random.default_rng(seed)
 
@@ -258,6 +281,7 @@ def run_three_factor(
             off_target_factor=off_target_bias_factor,
             n_lang_input=n_lang_input,
             sparsity=token_sparsity,
+            orthogonal_cues=orthogonal_cues,
             verbose=verbose,
         )
 
@@ -379,10 +403,7 @@ def run_three_factor(
             bridge.runtime_state.current_time_step += 1
 
         # Drive language_input
-        drive = vocab_to_drive_pattern(
-            token, n_neurons=len(lang_input_idx),
-            drive_max_pA=lang_input_drive_pA, sparsity=token_sparsity,
-        )
+        drive = _drive_for_token(token)
         bridge.cp_external_input_current[
             cp.asarray(lang_input_idx, dtype=cp.int64)
         ] = cp.asarray(drive, dtype=cp.float32)
@@ -554,6 +575,13 @@ def main():
                     "Schultz 1998 — DA scales with target-actual deviation, "
                     "preserving error magnitude info. Tests if scalar-sign "
                     "DA is the bottleneck.")
+    ap.add_argument("--orthogonal-cues", action="store_true", default=False,
+                    help="Replace SHA-256-hashed sparse codes with "
+                    "non-overlapping banded codes (cue 0 → neurons 0..n_active, "
+                    "cue 1 → neurons stride..stride+n_active, etc). Tests "
+                    "whether the W→A 3-factor failure is caused by input "
+                    "encoding ambiguity (overlapping codes confuse scalar "
+                    "DA). 2026-05-05 step 2 experiment.")
     ap.add_argument("--n-eval-per-word", type=int, default=25)
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
@@ -588,6 +616,7 @@ def main():
         gpu_eligibility=args.gpu_eligibility,
         fp16_synapse_state=args.fp16_synapse_state,
         da_mode=args.da_mode,
+        orthogonal_cues=args.orthogonal_cues,
         verbose=True,
     )
 
@@ -600,6 +629,7 @@ def main():
         bridge, n_trials_per_word=args.n_eval_per_word,
         stim_steps_per_trial=100, n_reset_steps=50,
         token_sparsity=args.token_sparsity,
+        orthogonal_cues=args.orthogonal_cues,
     )
     print(f"\n  Accuracy: {wa_result['correct']}/{wa_result['n_trials']} "
           f"= {wa_result['accuracy']:.1%}", flush=True)

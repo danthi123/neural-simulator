@@ -289,6 +289,7 @@ def apply_topographic_bias(
     off_target_factor: float = 0.7,
     n_lang_input: int = 256,
     sparsity: float = 0.1,
+    orthogonal_cues: bool = False,
     verbose: bool = True,
 ):
     """Apply biology-grounded topographic bias to language_input -> motor_X
@@ -323,7 +324,7 @@ def apply_topographic_bias(
         dict with applied edge counts per pathway, for verification.
     """
     import numpy as np
-    from sim.text_embeddings import vocab_to_drive_pattern
+    from sim.text_embeddings import vocab_to_drive_pattern, orthogonal_drive_pattern
 
     if bridge.region_manager is None:
         raise RuntimeError("apply_topographic_bias: region_manager is None")
@@ -339,6 +340,11 @@ def apply_topographic_bias(
 
     word_to_action = {"north": "N", "east": "E", "south": "S", "west": "W"}
     actions = ["N", "E", "S", "W"]
+    # Stable index for orthogonal-cue mode. MUST match _VOCAB_ORDER in
+    # bio_three_factor.py so the topographic prior boosts the same
+    # neurons that vocab_to_drive_pattern_orthogonal will activate at
+    # eval/training time.
+    word_to_idx = {w: i for i, w in enumerate(word_to_action.keys())}
 
     # Extract current CSR weights once (avoids per-pathway pull)
     indptr = bridge.cp_connections.indptr.get()
@@ -356,9 +362,18 @@ def apply_topographic_bias(
 
     summary = {}
     for word, target_action in word_to_action.items():
-        # Active language_input neurons for this word
-        drive = vocab_to_drive_pattern(word, n_neurons=n_lang_input,
-                                        sparsity=sparsity)
+        # Active language_input neurons for this word. Encoder MUST
+        # match what bio_three_factor uses at training/eval time.
+        if orthogonal_cues:
+            drive = orthogonal_drive_pattern(
+                cue_idx=word_to_idx[word],
+                n_cues=len(word_to_action),
+                n_neurons=n_lang_input,
+                sparsity=sparsity,
+            )
+        else:
+            drive = vocab_to_drive_pattern(word, n_neurons=n_lang_input,
+                                            sparsity=sparsity)
         local_active = np.where(drive > 0)[0]
         global_active = [lang_input_indices[i] for i in local_active]
 

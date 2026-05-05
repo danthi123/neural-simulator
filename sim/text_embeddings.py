@@ -145,3 +145,61 @@ def vocab_to_drive_pattern(
     drive = np.zeros(n_neurons, dtype=np.float32)
     drive[top_idx] = drive_max_pA
     return drive
+
+
+def orthogonal_drive_pattern(
+    cue_idx: int,
+    n_cues: int = 4,
+    n_neurons: int = 256,
+    drive_max_pA: float = 200.0,
+    sparsity: float = 0.1,
+) -> np.ndarray:
+    """Non-overlapping banded drive pattern for cue indexing.
+
+    Unlike vocab_to_drive_pattern (which uses SHA-256-hashed Gaussian
+    embeddings → top components, producing arbitrary overlap between
+    different tokens' codes), this function gives each cue a UNIQUE
+    contiguous band of `n_active = sparsity * n_neurons` neurons,
+    spaced so that cues are MAXIMALLY separable in input space.
+
+    Layout for n_cues=4, n_neurons=256, sparsity=0.1:
+      cue_idx=0: neurons 0..24    active   (gap 25..63)
+      cue_idx=1: neurons 64..88   active   (gap 89..127)
+      cue_idx=2: neurons 128..152 active   (gap 153..191)
+      cue_idx=3: neurons 192..216 active   (gap 217..255)
+
+    Args:
+        cue_idx: 0-indexed cue identifier (must be < n_cues).
+        n_cues: total number of distinct cues.
+        n_neurons: language_input region size.
+        drive_max_pA: per-active-neuron drive in pA.
+        sparsity: fraction of neurons active per cue (default 0.1).
+
+    Returns:
+        np.ndarray of shape (n_neurons,) with drive_max_pA on
+        n_active neurons in cue_idx's band, 0 elsewhere.
+
+    Use case: 2026-05-05 step 2 W→A experiment — tests whether the
+    3-factor failure (1/6 aligned) is caused by input-encoding
+    ambiguity (overlapping codes confuse scalar-feedback credit
+    assignment) versus a fundamental rule limitation (in which case
+    dendritic learning is needed).
+    """
+    if cue_idx < 0 or cue_idx >= n_cues:
+        raise ValueError(
+            f"orthogonal_drive_pattern: cue_idx={cue_idx} out of range "
+            f"[0, {n_cues})"
+        )
+    n_active = max(1, int(round(sparsity * n_neurons)))
+    stride = n_neurons // n_cues
+    if n_active > stride:
+        raise ValueError(
+            f"orthogonal_drive_pattern: n_active={n_active} > stride="
+            f"{stride} (n_neurons={n_neurons} / n_cues={n_cues}); "
+            f"reduce sparsity or n_cues to ensure non-overlapping bands"
+        )
+    drive = np.zeros(n_neurons, dtype=np.float32)
+    start = cue_idx * stride
+    end = start + n_active
+    drive[start:end] = drive_max_pA
+    return drive

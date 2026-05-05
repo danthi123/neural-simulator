@@ -1,0 +1,43 @@
+# Orthogonal-cues 3-factor sweep — does removing input encoding
+# ambiguity rescue 3-factor learning?
+#
+# Step 2 of the post-verdict plan, fallback if high-LR sweep shows
+# rule isn't LR-limited.
+#
+# Replaces SHA-256-hashed sparse codes (which produce 2-3 neuron
+# overlap between cue pairs) with non-overlapping banded codes
+# (cue 0 → neurons 0-25, cue 1 → 64-89, etc., 0 overlap by
+# construction). Same architecture, same rule, same biology canon.
+#
+# Outcomes:
+#   4-6/6 aligned: W→A failure was input ambiguity. Cheap fix; no
+#     dendritic learning needed for this task.
+#   2-3/6 aligned: partial improvement; rule + encoding both matter.
+#   0-1/6 aligned: encoding isn't the bottleneck; rule is genuinely
+#     inadequate. Dendritic learning still warranted.
+#
+# 6 seeds × 1 condition = 6 runs at parallel=3 ≈ 50 min.
+
+name: bio-three-factor-orthogonal
+runner: research.runners.bio_three_factor
+output_dir: research/findings/raw/g11_bg
+parallelism: 3
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  biological: true
+  n-events-per-direction: 1000
+  stim-steps-per-event: 50
+  reset-steps: 50
+  learning-rate: 1e-3
+  eligibility-decay-tau: 50.0
+  apply-topographic-bias: true
+  enable-motor-fs: true
+  orthogonal-cues: true
+
+conditions:
+  - name: tf_orthogonal
+    args: {}
+
+out_stats_template: "text_eval_3factor_{name}_seed{seed}.json"

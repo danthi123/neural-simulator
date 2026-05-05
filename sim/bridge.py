@@ -2087,6 +2087,8 @@ class SimulationBridge:
         drive_pA: float = 200.0,
         sparsity: float = 0.1,
         region_name: str = "language_input",
+        orthogonal_cue_idx: int = None,
+        n_orthogonal_cues: int = 4,
     ) -> int:
         """Inject a sparse current pattern representing `token` into the
         language_input region (or another named region).
@@ -2100,13 +2102,22 @@ class SimulationBridge:
             drive_pA: input current for active neurons.
             sparsity: fraction of neurons activated (default 0.1 = 10%).
             region_name: which region to drive. Default 'language_input'.
+            orthogonal_cue_idx: when not None, USE orthogonal_drive_pattern
+                with this cue_idx instead of the default hash-based
+                vocab_to_drive_pattern. The `token` argument is then
+                ignored (the cue is identified solely by its index).
+                Use case: 2026-05-05 step 2 W→A experiment testing
+                whether input-encoding ambiguity is the bottleneck for
+                3-factor learning.
+            n_orthogonal_cues: total cue count (only used in orthogonal
+                mode). Determines the band stride.
 
         Returns: count of neurons activated.
 
         Raises:
             RuntimeError if region_manager is None or region not found.
         """
-        from sim.text_embeddings import vocab_to_drive_pattern
+        from sim.text_embeddings import vocab_to_drive_pattern, orthogonal_drive_pattern
 
         if self.region_manager is None:
             raise RuntimeError(
@@ -2125,9 +2136,16 @@ class SimulationBridge:
             )
 
         n = len(indices)
-        drive = vocab_to_drive_pattern(
-            token, n_neurons=n, drive_max_pA=drive_pA, sparsity=sparsity,
-        )
+        if orthogonal_cue_idx is not None:
+            drive = orthogonal_drive_pattern(
+                cue_idx=orthogonal_cue_idx,
+                n_cues=n_orthogonal_cues,
+                n_neurons=n, drive_max_pA=drive_pA, sparsity=sparsity,
+            )
+        else:
+            drive = vocab_to_drive_pattern(
+                token, n_neurons=n, drive_max_pA=drive_pA, sparsity=sparsity,
+            )
         idx_cp = cp.asarray(indices, dtype=cp.int64)
         self.cp_external_input_current[idx_cp] = cp.asarray(drive, dtype=cp.float32)
         return int(np.sum(drive > 0))
