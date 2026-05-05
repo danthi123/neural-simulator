@@ -22,6 +22,12 @@ from __future__ import annotations
 
 import pytest
 
+try:
+    import cupy as _cp  # noqa: F401
+    _HAS_CUPY = True
+except Exception:
+    _HAS_CUPY = False
+
 
 def test_fp16_synapse_state_flag_default_off():
     """The flag is opt-in. Default must be False so existing runs are
@@ -40,8 +46,8 @@ def test_fp16_synapse_state_flag_settable():
 
 
 @pytest.mark.skipif(
-    True,  # GPU-required, gated until current chain finishes
-    reason="GPU benchmark — gated until bio_three_factor chain completes",
+    not _HAS_CUPY,
+    reason="GPU-only test (requires CuPy + CUDA-capable GPU)",
 )
 def test_fp16_eligibility_dtype_matches_flag():
     """When cfg.fp16_synapse_state=True, cp_eligibility_trace is float16.
@@ -87,8 +93,8 @@ def test_fp16_eligibility_dtype_matches_flag():
 
 
 @pytest.mark.skipif(
-    True,  # GPU-required, gated until current chain finishes
-    reason="GPU benchmark — gated until bio_three_factor chain completes",
+    not _HAS_CUPY,
+    reason="GPU-only test (requires CuPy + CUDA-capable GPU)",
 )
 def test_fp16_voltage_trajectory_drift_within_tolerance():
     """Run 1000 steps with FP16 vs FP32 eligibility, compare voltages.

@@ -152,6 +152,7 @@ def run_three_factor(
     ou_tau_ms: float = 15.0,
     ou_std_current_pA: float = 100.0,
     gpu_eligibility: bool = True,  # Phase 1: keep eligibility/edges on GPU
+    fp16_synapse_state: bool = False,  # Phase 2: FP16 cp_eligibility_trace
     verbose: bool = True,
 ):
     """Three-factor learning at language_input -> motor_X synapses.
@@ -235,6 +236,7 @@ def run_three_factor(
     cfg.enable_hebbian_learning = False
     cfg.stdp_w_max = max(weight_max + 1.0, 5.0)
     cfg.fast_spike_reset = fast_spike_reset
+    cfg.fp16_synapse_state = fp16_synapse_state
 
     bridge = SimulationBridge(
         core_config=cfg,
@@ -522,6 +524,11 @@ def main():
                     help="CPU-mode fallback: keep eligibility/edges as numpy "
                     "arrays on host. Default uses GPU (~2x faster, no host "
                     "round-trips). Use --no-gpu-eligibility for debugging.")
+    ap.add_argument("--fp16-synapse-state", action="store_true", default=False,
+                    help="Opt-in FP16 storage for cp_eligibility_trace (and "
+                    "future synapse-side state). Voltages stay FP32. Honest "
+                    "expected gain: 1.05-1.15x (we use sparse SpMV, no Tensor "
+                    "Cores). Validate via tests/test_fp16_drift.py first.")
     ap.add_argument("--n-eval-per-word", type=int, default=25)
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
@@ -554,6 +561,7 @@ def main():
         biological=args.biological,
         enable_nmda=args.enable_nmda,
         gpu_eligibility=args.gpu_eligibility,
+        fp16_synapse_state=args.fp16_synapse_state,
         verbose=True,
     )
 

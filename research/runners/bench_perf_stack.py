@@ -63,6 +63,8 @@ def _run_one_bench(
         cli.append("--enable-motor-fs")
     if not config.get("gpu_eligibility", True):
         cli.append("--no-gpu-eligibility")
+    if config.get("fp16"):
+        cli.append("--fp16-synapse-state")
 
     t0 = time.time()
     proc = subprocess.run(cli, capture_output=True, text=True)
@@ -105,16 +107,22 @@ def main():
         n_events = 400  # 100/dir × 4 dirs
         seeds = [42]
 
-    # Configs to benchmark
+    # Configs to benchmark — each row is a perf-stack layer.
+    # Strategy: keep ONLY the change-of-interest different from the
+    # prior row, so each speedup attribution is clean.
     configs = [
+        # Baseline: pre-Phase-1 (CPU eligibility, FP32 everywhere)
         {"label": "baseline_fp32_cpu_eligibility",
          "apply_topographic_bias": True, "enable_motor_fs": True,
          "gpu_eligibility": False, "fp16": False},
+        # +Phase 1: GPU-resident eligibility (no host round-trip)
         {"label": "phase1_gpu_eligibility",
          "apply_topographic_bias": True, "enable_motor_fs": True,
          "gpu_eligibility": True, "fp16": False},
-        # Phase 2 (FP16) requires bridge config edit; deferred until
-        # bench harness validates Phase 1 first
+        # +Phase 2: FP16 synapse state on top of Phase 1
+        {"label": "phase2_gpu_eligibility_fp16",
+         "apply_topographic_bias": True, "enable_motor_fs": True,
+         "gpu_eligibility": True, "fp16": True},
     ]
 
     results = []
