@@ -4021,6 +4021,54 @@ def run_moving_goal_episode(
             float(swr_burst_count) / swr_sleep_steps if swr_sleep_steps > 0 else 0.0
         ),
     }
+    # Tier 2.2: post-nav language eval suite. Runs only when embodied
+    # language was active during nav. Tests:
+    #   W->A: drive direction word → motor pool fires correctly
+    #   I->W: present visual scene → language_output emits direction word
+    if embodied_language and enable_text_io:
+        try:
+            from research.runners.text_eval import (
+                evaluate_word_to_action, evaluate_image_to_word,
+            )
+            # Freeze plasticity for eval phase
+            for gate_name in ("language_input_to_cortex",
+                              "language_input_to_motor",
+                              "it_to_language_output",
+                              "cortex_to_language_output",
+                              "language_input_to_pfc"):
+                try:
+                    bridge.set_plasticity_gate(gate_name, 0.0)
+                except KeyError:
+                    pass
+            if verbose:
+                print(f"\n[g11 seed={seed}] Tier 2.2 EVAL: word -> action",
+                      flush=True)
+            wa_result = evaluate_word_to_action(
+                bridge, n_trials_per_word=25, stim_steps_per_trial=100,
+                n_reset_steps=50, token_sparsity=0.1, verbose=False,
+            )
+            results["tier22_word_to_action"] = wa_result
+            if verbose:
+                print(f"  W->A accuracy: {wa_result['accuracy']:.1%}",
+                      flush=True)
+            if verbose:
+                print(f"\n[g11 seed={seed}] Tier 2.2 EVAL: image -> word",
+                      flush=True)
+            iw_result = evaluate_image_to_word(
+                bridge, n_trials=100, grid_size=int(grid_size),
+                stim_steps_per_trial=200, drive_pA=200.0, seed=seed,
+                verbose=False,
+            )
+            results["tier22_image_to_word"] = iw_result
+            if verbose:
+                print(f"  I->W accuracy: {iw_result['accuracy']:.1%}",
+                      flush=True)
+        except Exception as e:
+            if verbose:
+                print(f"[g11 seed={seed}] Tier 2.2 eval failed: {e}",
+                      flush=True)
+            results["tier22_eval_error"] = str(e)
+
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(results, f, indent=2)
