@@ -182,6 +182,15 @@ def run_three_factor(
                                             # Range [0, 1]. 0 = no co-fire
                                             # (default v1/v2). 0.2 = 20%
                                             # of trials present both.
+    pre_shape_events: int = 0,  # Tier 2.1 v6 (Tomasello fast-mapping
+                                 # 2023 protocol): events of solo region
+                                 # drive BEFORE paired training. Each
+                                 # word presented alone for N events,
+                                 # each motor pool driven alone for N
+                                 # events, gates open in both phases.
+                                 # Cell assemblies form via internal
+                                 # recurrence + Hebbian. Then standard
+                                 # paired training. 0 = disabled.
     verbose: bool = True,
 ):
     """Three-factor learning at language_input -> motor_X synapses.
@@ -472,6 +481,67 @@ def run_three_factor(
     if verbose:
         print(f"\n  Synthetic buffer: {len(buffer)} events", flush=True)
 
+    # Tier 2.1 v6: two-stage curriculum (Tomasello fast-mapping 2023).
+    # Pre-shape language_input + motor pools INDEPENDENTLY before paired
+    # training. Each region develops stable cell assemblies via internal
+    # recurrence + Hebbian. Then a single paired event suffices to bind.
+    # Plasticity gates stay OPEN during pre-shape (intra-region STDP +
+    # any cross-region eligibility that fires through topographic prior).
+    if pre_shape_events > 0 and embodied_hebbian:
+        if verbose:
+            print(f"\n  Pre-shape phase: {pre_shape_events} events solo "
+                  f"per region (Tomasello two-stage protocol)", flush=True)
+
+        # Phase 1a: drive each language_input pattern alone (no motor teacher)
+        if synonym_mode:
+            from research.runners.text_eval import SYNONYM_GROUPS as _SG
+            preshape_words = [w for ws in _SG.values() for w in ws]
+        else:
+            preshape_words = ["north", "east", "south", "west"]
+        ps_buffer = []
+        for w in preshape_words:
+            for _ in range(pre_shape_events):
+                ps_buffer.append({"token": w, "phase": "lang_solo"})
+        for a in ["N", "E", "S", "W"]:
+            for _ in range(pre_shape_events):
+                ps_buffer.append({"token": None, "action": a, "phase": "motor_solo"})
+        rng.shuffle(ps_buffer)
+        if verbose:
+            print(f"  Pre-shape buffer: {len(ps_buffer)} events", flush=True)
+
+        for ps_idx, ps_event in enumerate(ps_buffer):
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(reset_steps):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+
+            if ps_event["phase"] == "lang_solo":
+                # Drive language_input alone (also language_output for
+                # auto-association during solo)
+                drive = _drive_for_token(ps_event["token"])
+                bridge.cp_external_input_current[
+                    cp.asarray(lang_input_idx, dtype=cp.int64)
+                ] = cp.asarray(drive, dtype=cp.float32)
+                if embodied_hebbian:
+                    bridge.cp_external_input_current[
+                        cp.asarray(lang_output_idx, dtype=cp.int64)
+                    ] = cp.asarray(drive, dtype=cp.float32)
+            else:
+                # Drive motor target alone (no language)
+                target_motor_arr = cp.asarray(
+                    motor_idx[ps_event["action"]], dtype=cp.int64)
+                bridge.cp_external_input_current[target_motor_arr] = float(
+                    embodied_motor_teacher_pA
+                )
+
+            for _ in range(stim_steps_per_event):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+
+            if verbose and (ps_idx + 1) % 100 == 0:
+                print(f"  [pre-shape] {ps_idx+1}/{len(ps_buffer)} solo events",
+                      flush=True)
+
     # Per-action expected firing-rate target (one-hot, but soft thresholded)
     expected_max_per_neuron = 0.10  # per text_minimal_isolation defaults
     target_high = expected_max_per_neuron * stim_steps_per_event * 1.0   # max
@@ -741,6 +811,13 @@ def main():
                     "of trials present 'north' AND 'up' together. Forces "
                     "shared input representation via Hebbian co-firing "
                     "between word codes.")
+    ap.add_argument("--pre-shape-events", type=int, default=0,
+                    help="Tier 2.1 v6 (Tomasello fast-mapping protocol): "
+                    "events of solo region drive BEFORE paired training. "
+                    "Each word presented alone for N events; each motor "
+                    "pool driven alone for N events. Cell assemblies "
+                    "form via internal recurrence + STDP. Then standard "
+                    "paired training. 0 = disabled (default). Try 100-300.")
     ap.add_argument("--n-eval-per-word", type=int, default=25)
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
@@ -780,6 +857,7 @@ def main():
         embodied_motor_teacher_pA=args.embodied_motor_teacher_pA,
         synonym_mode=args.synonym_mode,
         synonym_cofire_fraction=args.synonym_cofire_fraction,
+        pre_shape_events=args.pre_shape_events,
         verbose=True,
     )
 
