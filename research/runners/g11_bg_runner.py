@@ -2358,8 +2358,17 @@ def run_moving_goal_episode(
     # the navigating agent's perception/action stream. Requires
     # enable_text_io=True for the language regions.
     embodied_language: bool = False,
-    embodied_language_drive_pA: float = 200.0,
+    embodied_language_drive_pA: float = 80.0,  # Lower than Tier 1's 200pA
+                                                # because nav has competing
+                                                # retina+BG drives. 200 was
+                                                # disruptive (smoke result).
     embodied_language_goal_radius: int = 3,
+    embodied_language_every_n_steps: int = 5,  # Sporadic drive (not every
+                                                # step) — real biology pairs
+                                                # language with experience
+                                                # episodically, not at every
+                                                # microsecond. Drive once
+                                                # per N steps.
     # Cluster F v2 (2026-04-30): CF-gated anti-Hebbian LTD per Albus 1971
     # §IV.C eq.4. v1 used the global reward signal for PF→PC plasticity
     # (cerebellum and BG learned redundantly from the same signal). v2
@@ -3653,7 +3662,11 @@ def run_moving_goal_episode(
         # action stream so STDP at lang↔motor and lang↔IT pathways
         # binds words to embodied concepts via Pulvermüller-style
         # somatotopic Hebbian co-firing.
-        if embodied_language and enable_text_io and not in_sleep:
+        # Drive sporadically (every Nth step) and at moderate amplitude
+        # (80pA vs nav's 100-200pA from retina + BG) so language drive
+        # supplements rather than dominates nav.
+        if (embodied_language and enable_text_io and not in_sleep
+                and step % max(1, int(embodied_language_every_n_steps)) == 0):
             from sim.text_embeddings import vocab_to_drive_pattern
             lang_in_indices_cp = region_indices_cp.get("language_input")
             lang_out_indices_cp = region_indices_cp.get("language_output")
@@ -4542,13 +4555,20 @@ def main():
                     "lang↔IT pathways binds words to embodied concepts via "
                     "Pulvermüller somatotopic semantics. Requires "
                     "--enable-text-io.")
-    ap.add_argument("--embodied-language-drive-pA", type=float, default=200.0,
+    ap.add_argument("--embodied-language-drive-pA", type=float, default=80.0,
                     help="Drive amplitude for language regions during "
-                    "embodied training (default 200, matches Tier 1 baseline).")
+                    "embodied training (default 80pA — moderate, "
+                    "supplements rather than dominates nav). Tier 1 used "
+                    "200pA but in isolation; here nav has 100-200pA "
+                    "retina + BG inputs running concurrently.")
     ap.add_argument("--embodied-language-goal-radius", type=int, default=3,
                     help="Manhattan distance threshold within which agent "
                     "is considered to 'perceive' the goal (drives 'goal' "
                     "word teacher). Default 3.")
+    ap.add_argument("--embodied-language-every-n-steps", type=int, default=5,
+                    help="Drive language regions every N steps (default 5). "
+                    "Sporadic — biology pairs language with experience "
+                    "episodically, not at every microsecond.")
     ap.add_argument("--pruning-alpha", type=float, default=None,
                     help="Cheat-5 option-1 pruning rate. Default: cfg.pruning_alpha (0.001 = conservative). "
                          "Try 0.05 for a 5K-trial pretraining smoke; 0.005 for 30K validation.")
@@ -4826,6 +4846,7 @@ def main():
             embodied_language=args.embodied_language,
             embodied_language_drive_pA=args.embodied_language_drive_pA,
             embodied_language_goal_radius=args.embodied_language_goal_radius,
+            embodied_language_every_n_steps=args.embodied_language_every_n_steps,
             cluster_e_distance_sigma=args.cluster_e_distance_sigma,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
