@@ -2347,6 +2347,19 @@ def run_moving_goal_episode(
     text_input_to_pfc_weight: float = 2.0,
     text_input_to_cortex_density: float = 0.20,
     text_it_to_output_density: float = 0.20,
+    # Tier 2.2 (2026-05-06): embodied-language during navigation.
+    # Pulvermüller somatotopic semantics applied to the navigating
+    # agent. When agent executes action a, drive language_input[word(a)] +
+    # language_output[word(a)] simultaneously → STDP at lang↔motor
+    # pathways binds word to action via embodied co-firing. When
+    # agent perceives goal (within N cells), drive language_input["goal"] +
+    # language_output["goal"] → STDP at lang↔IT pathways binds word
+    # to visual concept. Same paradigm as Tier 1+2.1 but applied to
+    # the navigating agent's perception/action stream. Requires
+    # enable_text_io=True for the language regions.
+    embodied_language: bool = False,
+    embodied_language_drive_pA: float = 200.0,
+    embodied_language_goal_radius: int = 3,
     # Cluster F v2 (2026-04-30): CF-gated anti-Hebbian LTD per Albus 1971
     # §IV.C eq.4. v1 used the global reward signal for PF→PC plasticity
     # (cerebellum and BG learned redundantly from the same signal). v2
@@ -2506,6 +2519,13 @@ def run_moving_goal_episode(
         enable_landmarks=enable_landmarks,
         n_landmark_sensors=n_landmark_sensors,
         landmark_to_place_weight=landmark_to_place_weight,
+        enable_text_io=enable_text_io,
+        text_n_input_neurons=text_n_input_neurons,
+        text_n_output_neurons=text_n_output_neurons,
+        text_input_to_pfc_density=text_input_to_pfc_density,
+        text_input_to_pfc_weight=text_input_to_pfc_weight,
+        text_input_to_cortex_density=text_input_to_cortex_density,
+        text_it_to_output_density=text_it_to_output_density,
     )
 
     # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
@@ -2711,6 +2731,23 @@ def run_moving_goal_episode(
                       f"gate frozen until warmup", flush=True)
         except KeyError:
             pass  # No IT -> cortex_X synapses if visual cortex regions absent
+
+    # Tier 2.2 (2026-05-06): open language plasticity gates for embodied
+    # language training during nav. Same set of gates that were declared
+    # in build_bg_brain_regions when enable_text_io=True.
+    if embodied_language and enable_text_io:
+        for gate_name in ("language_input_to_cortex",
+                          "language_input_to_motor",
+                          "it_to_language_output",
+                          "cortex_to_language_output",
+                          "language_input_to_pfc"):
+            try:
+                bridge.set_plasticity_gate(gate_name, 1.0)
+                if verbose:
+                    print(f"[g11 seed={seed}] embodied-language: gate "
+                          f"'{gate_name}' open for nav training", flush=True)
+            except KeyError:
+                pass  # Gate may not exist depending on enable_pfc etc.
 
     # Pre-cache region indices (cupy arrays for fast per-step indexing)
     region_indices_cp = {}
@@ -3611,6 +3648,78 @@ def run_moving_goal_episode(
                     cp.asarray(drive, dtype=cp.float32)
                 )
 
+        # Tier 2.2 (2026-05-06): embodied-language during nav. Drive
+        # language regions simultaneously with the agent's perception/
+        # action stream so STDP at lang↔motor and lang↔IT pathways
+        # binds words to embodied concepts via Pulvermüller-style
+        # somatotopic Hebbian co-firing.
+        if embodied_language and enable_text_io and not in_sleep:
+            from sim.text_embeddings import vocab_to_drive_pattern
+            lang_in_indices_cp = region_indices_cp.get("language_input")
+            lang_out_indices_cp = region_indices_cp.get("language_output")
+            if lang_in_indices_cp is not None and lang_out_indices_cp is not None:
+                # Action labeling (A→W direction): use the previously-
+                # executed action as the teacher signal. At step t we
+                # know action_(t-1) — agent just moved that direction.
+                # During step t's forward-prop, motor pool of action_(t-1)
+                # has lingering activity from the previous step (NMDA tau)
+                # plus current spontaneous baseline. Drive language with
+                # the corresponding word.
+                if step > 0 and len(action_log) > 0:
+                    prev_action_idx = action_log[-1]
+                    if 0 <= prev_action_idx < 4:
+                        action_letter = "NESW"[prev_action_idx]
+                        word = {"N": "north", "E": "east",
+                                "S": "south", "W": "west"}[action_letter]
+                        n_lang_in = int(lang_in_indices_cp.size)
+                        n_lang_out = int(lang_out_indices_cp.size)
+                        in_drive = vocab_to_drive_pattern(
+                            word, n_neurons=n_lang_in,
+                            drive_max_pA=float(embodied_language_drive_pA),
+                            sparsity=0.1,
+                        )
+                        out_drive = vocab_to_drive_pattern(
+                            word, n_neurons=n_lang_out,
+                            drive_max_pA=float(embodied_language_drive_pA),
+                            sparsity=0.1,
+                        )
+                        bridge.cp_external_input_current[lang_in_indices_cp] = (
+                            cp.asarray(in_drive, dtype=cp.float32)
+                        )
+                        bridge.cp_external_input_current[lang_out_indices_cp] = (
+                            cp.asarray(out_drive, dtype=cp.float32)
+                        )
+
+                # Goal perception (W→I direction): if agent is within
+                # goal radius, drive language_input["goal"] +
+                # language_output["goal"]. Same paradigm: co-active
+                # language + IT (which is firing on visual goal cue) →
+                # STDP binds word to visual concept.
+                dist_to_goal = abs(int(x) - int(gx)) + abs(int(y) - int(gy))
+                if dist_to_goal <= int(embodied_language_goal_radius):
+                    n_lang_in = int(lang_in_indices_cp.size)
+                    n_lang_out = int(lang_out_indices_cp.size)
+                    g_in = vocab_to_drive_pattern(
+                        "goal", n_neurons=n_lang_in,
+                        drive_max_pA=float(embodied_language_drive_pA),
+                        sparsity=0.1,
+                    )
+                    g_out = vocab_to_drive_pattern(
+                        "goal", n_neurons=n_lang_out,
+                        drive_max_pA=float(embodied_language_drive_pA),
+                        sparsity=0.1,
+                    )
+                    # Add to existing language drive (if action drive
+                    # already set above, this combines via max)
+                    cur_in = bridge.cp_external_input_current[lang_in_indices_cp]
+                    cur_out = bridge.cp_external_input_current[lang_out_indices_cp]
+                    bridge.cp_external_input_current[lang_in_indices_cp] = (
+                        cp.maximum(cur_in, cp.asarray(g_in, dtype=cp.float32))
+                    )
+                    bridge.cp_external_input_current[lang_out_indices_cp] = (
+                        cp.maximum(cur_out, cp.asarray(g_out, dtype=cp.float32))
+                    )
+
         # Run stimulus window and tally motor spikes
         motor_counts = {a: 0 for a in ACTION_NAMES}
         bridge.core_config.current_reward_signal = 0.0
@@ -4372,6 +4481,26 @@ def main():
                          "render_gridworld_to_image will fail with "
                          "pixels_per_cell=0. For grid_size > 32, set this to "
                          "match grid_size (e.g. --grid-size 64 --visual-image-size 64).")
+    ap.add_argument("--enable-text-io", action="store_true", default=False,
+                    help="Enable text I/O regions (language_input + "
+                    "language_output) for bidirectional text training. "
+                    "Required for --embodied-language.")
+    ap.add_argument("--embodied-language", action="store_true", default=False,
+                    help="Tier 2.2 (2026-05-06): drive language regions "
+                    "during navigation in sync with agent's perception/action. "
+                    "When agent executes action a, drive language_input + "
+                    "language_output with word(a). When agent perceives goal, "
+                    "drive language with 'goal'. STDP at lang↔motor and "
+                    "lang↔IT pathways binds words to embodied concepts via "
+                    "Pulvermüller somatotopic semantics. Requires "
+                    "--enable-text-io.")
+    ap.add_argument("--embodied-language-drive-pA", type=float, default=200.0,
+                    help="Drive amplitude for language regions during "
+                    "embodied training (default 200, matches Tier 1 baseline).")
+    ap.add_argument("--embodied-language-goal-radius", type=int, default=3,
+                    help="Manhattan distance threshold within which agent "
+                    "is considered to 'perceive' the goal (drives 'goal' "
+                    "word teacher). Default 3.")
     ap.add_argument("--pruning-alpha", type=float, default=None,
                     help="Cheat-5 option-1 pruning rate. Default: cfg.pruning_alpha (0.001 = conservative). "
                          "Try 0.05 for a 5K-trial pretraining smoke; 0.005 for 30K validation.")
@@ -4645,6 +4774,10 @@ def main():
             visual_cortex_action_warmup_steps=args.visual_cortex_action_warmup_steps,
             visual_v1_weight_scale=args.visual_v1_weight_scale,
             visual_image_size=args.visual_image_size,
+            enable_text_io=args.enable_text_io,
+            embodied_language=args.embodied_language,
+            embodied_language_drive_pA=args.embodied_language_drive_pA,
+            embodied_language_goal_radius=args.embodied_language_goal_radius,
             cluster_e_distance_sigma=args.cluster_e_distance_sigma,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
