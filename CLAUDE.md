@@ -530,6 +530,24 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 >    [`docs/plans/2026-05-05-embodied-language-3tier-design.md`](docs/plans/2026-05-05-embodied-language-3tier-design.md).
 >    Use `--biological --embodied-hebbian --apply-topographic-bias
 >    --enable-motor-fs --n-events-per-direction 200` on bio_three_factor.
+> 7. **🎉 2026-05-06 TIER 2.1 BREAKTHROUGH: 8-word synonym vocabulary
+>    works via scale-up.** 6-seed validation: **W→A 5/6 aligned, A→W 6/6
+>    aligned** with synonym pairs {north,up}, {east,right}, {south,down},
+>    {west,left}. A→W mean 63.7% — actually OUTPERFORMS Tier 1's 45%.
+>    Solved by scaling architecture: n_lang_input 2048→4096,
+>    n_motor_per_action 500→1000, n_motor_fs_per_action 60→120.
+>    Total ~12K neurons, ~5M synapses, ~6GB GPU. **Capacity hypothesis
+>    confirmed**: bigger motor pools give STDP enough room for
+>    functional sub-populations within each motor_X (different synonyms
+>    activate different sub-pops, no winner-take-all). v1-v6 with small
+>    arch (500 motor neurons) all failed; v4 with scale-up
+>    succeeds. User's VRAM headroom reminder + Nord-inspired
+>    "more capacity wins" insight both validated. See
+>    [`research/findings/2026-05-06-Tier2.1-BREAKTHROUGH-synonym-binding-via-scale.md`](research/findings/2026-05-06-Tier2.1-BREAKTHROUGH-synonym-binding-via-scale.md).
+>    Use `--biological --embodied-hebbian --synonym-mode
+>    --apply-topographic-bias --enable-motor-fs
+>    --n-events-per-direction 400 --n-lang-input 4096
+>    --n-motor-per-action 1000 --n-motor-fs-per-action 120`.
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
