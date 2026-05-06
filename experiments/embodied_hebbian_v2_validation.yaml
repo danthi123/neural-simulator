@@ -1,0 +1,34 @@
+# Tier 1 embodied-Hebbian v2 — 6-seed validation with Fix A+B
+#
+# Smoke at seed 42 showed A->W aligned to NESW (39% true = best, 0pp
+# excess). W->A still 5pp excess. Validate across 6 seeds with 200
+# events/dir (2x smoke) for slightly more training:
+#
+# Pass criteria:
+#   A->W aligned >=4/6: bidirectional binding works, user->sim viable
+#   W->A aligned >=4/6: forward direction works, sim->user readable
+#   Both >=4/6: full Tier 1 success
+#
+# 6 seeds × 1 condition = 6 runs at parallel=3 ≈ 60-90 min total.
+
+name: embodied-hebbian-v2-validation
+runner: research.runners.bio_three_factor
+output_dir: research/findings/raw/g11_bg
+parallelism: 3
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  biological: true
+  n-events-per-direction: 200
+  stim-steps-per-event: 50
+  reset-steps: 50
+  apply-topographic-bias: true
+  enable-motor-fs: true
+  embodied-hebbian: true
+
+conditions:
+  - name: embodied_v2
+    args: {}
+
+out_stats_template: "text_eval_embodied_v2_{name}_seed{seed}.json"

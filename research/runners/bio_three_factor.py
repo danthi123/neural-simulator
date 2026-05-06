@@ -244,6 +244,11 @@ def run_three_factor(
             n_motor_fs_per_action=n_motor_fs_per_action,
             enable_language_output=embodied_hebbian,
             n_lang_output=n_lang_input,  # match input size for symmetric encoding
+            # Bumped 0.5 → 2.0 to match forward pathway strength.
+            # Tier 1 smoke showed 0.5 was too weak vs language_output
+            # internal noise, leaving STDP unable to differentiate
+            # motor inputs above architectural N-bias floor.
+            motor_to_language_output_weight=2.0,
         )
     else:
         regions, pathways = build_minimal_brain_regions(
@@ -292,6 +297,12 @@ def run_three_factor(
             n_lang_input=n_lang_input,
             sparsity=token_sparsity,
             orthogonal_cues=orthogonal_cues,
+            # In embodied-Hebbian mode, also apply reciprocal prior:
+            # motor_X edges to "X-encoded" neurons in language_output
+            # boosted, off-target reduced. Without this, A→W direction
+            # has no per-action specificity to start from.
+            apply_reciprocal=embodied_hebbian,
+            n_lang_output=n_lang_input if embodied_hebbian else 256,
             verbose=verbose,
         )
 

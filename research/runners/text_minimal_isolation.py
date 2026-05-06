@@ -322,6 +322,8 @@ def apply_topographic_bias(
     n_lang_input: int = 256,
     sparsity: float = 0.1,
     orthogonal_cues: bool = False,
+    apply_reciprocal: bool = False,  # Tier 1: also bias motor → language_output
+    n_lang_output: int = 256,
     verbose: bool = True,
 ):
     """Apply biology-grounded topographic bias to language_input -> motor_X
@@ -427,13 +429,71 @@ def apply_topographic_bias(
                 "edges_modified": n_changed,
             }
 
+    # Reciprocal direction: motor_X → language_output (Tier 1).
+    # Same Pulvermüller-style somatotopic prior, just inverse direction:
+    # motor_N edges to "north"-encoded neurons in language_output get
+    # boosted; off-target reduced. Without this, motor pools project
+    # uniformly and language_output can't differentiate inputs above
+    # the architectural N-bias floor.
+    if apply_reciprocal:
+        try:
+            lang_output_indices = list(rm.indices("language_output"))
+        except Exception as e:
+            raise RuntimeError(
+                f"apply_topographic_bias(apply_reciprocal=True): "
+                f"language_output region not found. Builder must be "
+                f"called with enable_language_output=True. ({e})"
+            )
+        if len(lang_output_indices) != n_lang_output:
+            raise ValueError(
+                f"apply_topographic_bias: bridge has {len(lang_output_indices)} "
+                f"language_output neurons but caller specified {n_lang_output}"
+            )
+
+        for word, target_action in word_to_action.items():
+            # Active language_output neurons for this word — same
+            # encoding as eval/training time.
+            if orthogonal_cues:
+                drive = orthogonal_drive_pattern(
+                    cue_idx=word_to_idx[word],
+                    n_cues=len(word_to_action),
+                    n_neurons=n_lang_output,
+                    sparsity=sparsity,
+                )
+            else:
+                drive = vocab_to_drive_pattern(word, n_neurons=n_lang_output,
+                                                sparsity=sparsity)
+            local_active = np.where(drive > 0)[0]
+            global_active = [lang_output_indices[i] for i in local_active]
+
+            for action in actions:
+                motor_indices = list(rm.indices(f"motor_{action}"))
+                # If this action's motor is the target for this word,
+                # boost its edges to the word's lang_output neurons.
+                # Otherwise, dampen.
+                factor = (topographic_factor if action == target_action
+                          else off_target_factor)
+                n_changed = 0
+                for src in motor_indices:  # motor neuron is pre
+                    for dst in global_active:  # lang_output is post
+                        key = (src, dst)
+                        if key in pair_to_idx:
+                            idx = pair_to_idx[key]
+                            data[idx] = float(data[idx]) * factor
+                            n_changed += 1
+                summary[f"motor_{action}->{word}"] = {
+                    "factor": factor,
+                    "edges_modified": n_changed,
+                }
+
     # Push back to GPU
     import cupy as cp
     bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
 
     if verbose:
         print(f"[topographic-bias] Applied factor={topographic_factor:.2f}/"
-              f"{off_target_factor:.2f} to language_input -> motor_X")
+              f"{off_target_factor:.2f} to language_input -> motor_X"
+              f"{' + motor_X -> language_output (reciprocal)' if apply_reciprocal else ''}")
         for k, v in summary.items():
             print(f"  {k}: x{v['factor']:.2f} on {v['edges_modified']} edges")
 
