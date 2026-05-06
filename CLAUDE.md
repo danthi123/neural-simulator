@@ -513,9 +513,23 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 >    (apical-basal dendritic learning, predictive coding, or pivot
 >    away from W→A). Design doc for option 1 at
 >    [`docs/plans/2026-05-05-dendritic-learning-design.md`](docs/plans/2026-05-05-dendritic-learning-design.md)
->    (1.5-2 month scope). **Pending user decision before kicking off
->    Week 1 multi-compartment kernel work** — scope is large enough
->    to warrant explicit greenlight.
+>    (1.5-2 month scope).
+> 6. **🎉 2026-05-06 TIER 1 BREAKTHROUGH (~6 hours after the verdict):**
+>    embodied-Hebbian co-firing produces bidirectional word↔motor binding.
+>    6-seed validation: **W→A 5/6 aligned, A→W 6/6 aligned** (mean 38%/45%,
+>    +0pp excess on 11/12 condition×seed pairs). Compare to 3-factor
+>    1/6 (noise floor) — 6× improvement just from changing the training
+>    paradigm (no rule change, no rewrite). User↔sim language
+>    communication achievable at 4-word vocabulary level: type "north"
+>    → motor_N activates AND motor_N activates → language_output
+>    produces "north". Dendritic learning rewrite (1.5-2 mo) is no
+>    longer urgent for the W→A goal. See
+>    [`research/findings/2026-05-06-Tier1-BREAKTHROUGH-bidirectional-binding.md`](research/findings/2026-05-06-Tier1-BREAKTHROUGH-bidirectional-binding.md)
+>    for full result + Tier 2 plan (20-30 word vocab, two-word phrases,
+>    ~1 month). 3-tier roadmap at
+>    [`docs/plans/2026-05-05-embodied-language-3tier-design.md`](docs/plans/2026-05-05-embodied-language-3tier-design.md).
+>    Use `--biological --embodied-hebbian --apply-topographic-bias
+>    --enable-motor-fs --n-events-per-direction 200` on bio_three_factor.
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
