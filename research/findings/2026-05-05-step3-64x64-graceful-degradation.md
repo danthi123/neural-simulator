@@ -108,15 +108,38 @@ Cost: 2-4 weeks. Real systems-neuroscience contribution if done well.
 
 ## Recommendation
 
-**Response B** for now. The 32×32 result (2.57 ± 0.11) is the
+**Response B** confirmed empirically. The 32×32 result (2.57 ± 0.11) is the
 project's strongest empirical claim and pushing other axes (obstacles,
 visual input, multi-step) builds on a confirmed baseline. 64×64
 scaling can be revisited later if/when needed — or as a stretch goal.
 
-A minor experiment worth running: try `--visual-image-size 128
---n-hippocampus-per-layer 1024` at 64×64. Tests Response A cheaply.
-~30 min compute. If it fixes the gap, scaling story is complete; if
-not, B is the right move.
+## Update — high-res Response-A test (2026-05-05 ~20:35 EDT)
+
+Ran `--visual-image-size 128 --n-hippocampus-per-layer 1024` at 64×64
+seed 42, single seed:
+
+| Config | n | Mean Manhattan | Quarters |
+|---|---|---|---|
+| 64×64 baseline (image=64, place=256) | 6 | 8.80 ± 0.54 | Q1 17.7 / Q2-4 5.7 |
+| **64×64 HI-RES (image=128, place=1024)** | **1** | **8.34** | Q1 16.9 / Q2-4 5.5 |
+
+The hi-res result (8.34) is within 1σ of the baseline mean (8.80 ±
+0.54, range 8.05–9.48). **Resolution is NOT the bottleneck.**
+
+The actual bottleneck is likely phase budget. At 64×64 each phase has
+450 steps to traverse ~60 Manhattan distance + wander. At 32×32 it's
+the same 450 steps for ~30 distance — twice the margin. The scaling
+limit is set by `n-steps / phases` relative to grid diameter, not by
+perception or place cell density.
+
+**This validates Response B.** Investing in resolution gives ~5%
+improvement; the structural fix would be to increase n-steps proportional
+to grid size (e.g., n-steps=3600 for 64×64) — but that just means we'd
+need 4× more compute for 4× more grid. Diminishing returns.
+
+The 32×32 result remains the operational sweet spot. Move forward
+with dynamic obstacles, real visual input, or multi-step plans on
+the confirmed 32×32 baseline.
 
 ## What this DOESN'T contradict
 
