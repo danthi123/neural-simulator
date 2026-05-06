@@ -158,6 +158,14 @@ def run_three_factor(
                                     # with non-overlapping banded codes
                                     # to test input-encoding-ambiguity
                                     # hypothesis (see step 2 design doc)
+    embodied_hebbian: bool = False,  # 2026-05-05: Tier 1 — embodied
+                                     # Hebbian word↔motor binding via
+                                     # simultaneous teacher signals on
+                                     # language_input + language_output
+                                     # + motor target. No scalar reward;
+                                     # co-activity drives STDP.
+    embodied_motor_teacher_pA: float = 300.0,  # external current to target
+                                                # motor pool during training
     verbose: bool = True,
 ):
     """Three-factor learning at language_input -> motor_X synapses.
@@ -234,6 +242,8 @@ def run_three_factor(
             text_input_to_motor_jitter=text_input_to_motor_jitter,
             enable_motor_fs=enable_motor_fs,
             n_motor_fs_per_action=n_motor_fs_per_action,
+            enable_language_output=embodied_hebbian,
+            n_lang_output=n_lang_input,  # match input size for symmetric encoding
         )
     else:
         regions, pathways = build_minimal_brain_regions(
@@ -285,12 +295,26 @@ def run_three_factor(
             verbose=verbose,
         )
 
-    # Freeze STDP (we apply our own three-factor rule manually)
-    try:
-        bridge.set_plasticity_gate("language_input_to_motor", 0.0)
-    except Exception as e:
+    # Plasticity gate setup. In 3-factor mode, freeze (we apply our own
+    # rule manually). In embodied-Hebbian mode, KEEP OPEN so bridge's
+    # built-in STDP fires naturally on co-active pre+post.
+    if not embodied_hebbian:
+        try:
+            bridge.set_plasticity_gate("language_input_to_motor", 0.0)
+        except Exception as e:
+            if verbose:
+                print(f"WARNING: could not freeze gate: {e}", flush=True)
+    else:
+        # Open both gates explicitly (1.0 default but be explicit)
+        try:
+            bridge.set_plasticity_gate("language_input_to_motor", 1.0)
+            bridge.set_plasticity_gate("motor_to_language_output", 1.0)
+        except Exception as e:
+            if verbose:
+                print(f"WARNING: could not open gate: {e}", flush=True)
         if verbose:
-            print(f"WARNING: could not freeze gate: {e}", flush=True)
+            print("  embodied-Hebbian mode: bridge STDP will fire on "
+                  "co-active synapses; no custom 3-factor update.", flush=True)
 
     # GPU port: when gpu_eligibility is True, all eligibility, edge,
     # and mask arrays live on GPU and weight updates happen in-place
@@ -316,6 +340,17 @@ def run_three_factor(
     rm = bridge.region_manager
     lang_input_idx = list(rm.indices("language_input"))
     motor_idx = {a: list(rm.indices(f"motor_{a}")) for a in ["N","E","S","W"]}
+    # Embodied Hebbian: language_output region only exists if enabled.
+    if embodied_hebbian:
+        try:
+            lang_output_idx = list(rm.indices("language_output"))
+        except Exception:
+            raise RuntimeError(
+                "embodied_hebbian=True but language_output region not "
+                "found. Builder must be called with enable_language_output=True."
+            )
+    else:
+        lang_output_idx = None
     motor_idx_set = {a: set(motor_idx[a]) for a in ["N","E","S","W"]}
     all_motor_set = set()
     for a in ["N","E","S","W"]:
@@ -408,6 +443,21 @@ def run_three_factor(
             cp.asarray(lang_input_idx, dtype=cp.int64)
         ] = cp.asarray(drive, dtype=cp.float32)
 
+        # Embodied-Hebbian teachers: drive language_output (output teacher)
+        # AND elevate motor target (action teacher) so all 3 sites co-fire.
+        # Bridge's STDP fires automatically on plastic synapses in co-active
+        # pre+post pairs. No custom rule needed.
+        if embodied_hebbian:
+            # language_output teacher: same word pattern (auto-association)
+            bridge.cp_external_input_current[
+                cp.asarray(lang_output_idx, dtype=cp.int64)
+            ] = cp.asarray(drive, dtype=cp.float32)
+            # motor teacher: elevated current to target motor pool
+            target_motor_arr = cp.asarray(motor_idx[target_action], dtype=cp.int64)
+            bridge.cp_external_input_current[target_motor_arr] += float(
+                embodied_motor_teacher_pA
+            )
+
         # Track which lang neurons were active for this token.
         # Mask lives on chosen backend; computed once per event.
         lang_active_mask = xp.zeros(n_neurons, dtype=bool)
@@ -468,25 +518,26 @@ def run_three_factor(
                 if a_i != target_a and motor_spike_counts_arr[a_i] > target_low:
                     da_per_action[a_i] = -1.0
 
-        # Three-factor eligibility + weight update via pure function.
-        # On gpu_eligibility=True, this mutates bridge.cp_connections.data
-        # directly — no host round-trip per event.
-        update_eligibility_and_weights(
-            eligibility=eligibility,
-            weights_data=data,
-            edge_src=edge_src,
-            edge_dst=edge_dst,
-            edge_off=edge_off,
-            edge_action=edge_action,
-            lang_active_mask=lang_active_mask,
-            post_active_mask=post_active_mask,
-            da_per_action=da_per_action,
-            decay_per_step=decay_per_step,
-            learning_rate=learning_rate,
-            weight_min=weight_min,
-            weight_max=weight_max,
-            xp=xp,
-        )
+        # Three-factor eligibility + weight update — SKIPPED in embodied
+        # Hebbian mode (bridge's built-in STDP already fires during forward-
+        # prop in the co-active synapses).
+        if not embodied_hebbian:
+            update_eligibility_and_weights(
+                eligibility=eligibility,
+                weights_data=data,
+                edge_src=edge_src,
+                edge_dst=edge_dst,
+                edge_off=edge_off,
+                edge_action=edge_action,
+                lang_active_mask=lang_active_mask,
+                post_active_mask=post_active_mask,
+                da_per_action=da_per_action,
+                decay_per_step=decay_per_step,
+                learning_rate=learning_rate,
+                weight_min=weight_min,
+                weight_max=weight_max,
+                xp=xp,
+            )
 
         # Track rolling correctness
         winner_a = int(np.argmax(motor_spike_counts_arr))
@@ -528,6 +579,21 @@ def run_three_factor(
     if verbose:
         print(f"\n  Training complete: {len(buffer)} events ({elapsed:.0f}s)",
               flush=True)
+
+    # Post-training: freeze plasticity gates so eval doesn't perturb
+    # learned weights. Critical-period style: training was the open
+    # window; eval is the adult phase.
+    if embodied_hebbian:
+        try:
+            bridge.set_plasticity_gate("language_input_to_motor", 0.0)
+            bridge.set_plasticity_gate("motor_to_language_output", 0.0)
+            if verbose:
+                print("  embodied-Hebbian: plasticity gates frozen for eval.",
+                      flush=True)
+        except Exception as e:
+            if verbose:
+                print(f"WARNING: could not freeze gates post-training: {e}",
+                      flush=True)
 
     return bridge, [{
         "regime": "bio_three_factor",
@@ -582,6 +648,19 @@ def main():
                     "whether the W→A 3-factor failure is caused by input "
                     "encoding ambiguity (overlapping codes confuse scalar "
                     "DA). 2026-05-05 step 2 experiment.")
+    ap.add_argument("--embodied-hebbian", action="store_true", default=False,
+                    help="Tier 1 — embodied Hebbian word↔motor binding via "
+                    "simultaneous teacher signals on language_input + "
+                    "language_output + motor target. Bridge's built-in STDP "
+                    "fires on co-active synapses; no scalar reward. Adds "
+                    "language_output region + reciprocal motor → "
+                    "language_output pathway. Tests Pulvermüller 2001-2012 "
+                    "embodied semantics paradigm.")
+    ap.add_argument("--embodied-motor-teacher-pA", type=float, default=300.0,
+                    help="External current pushed to target motor pool "
+                    "during embodied trial. Default 300pA = strong teacher. "
+                    "Higher = faster convergence; lower = more biological "
+                    "(weaker reliance on external signal).")
     ap.add_argument("--n-eval-per-word", type=int, default=25)
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
@@ -617,6 +696,8 @@ def main():
         fp16_synapse_state=args.fp16_synapse_state,
         da_mode=args.da_mode,
         orthogonal_cues=args.orthogonal_cues,
+        embodied_hebbian=args.embodied_hebbian,
+        embodied_motor_teacher_pA=args.embodied_motor_teacher_pA,
         verbose=True,
     )
 
@@ -635,12 +716,97 @@ def main():
           f"= {wa_result['accuracy']:.1%}", flush=True)
     print(f"  Confusion: {wa_result['confusion_matrix']}", flush=True)
 
+    # Embodied-Hebbian Tier 1: also evaluate action → word (A→W)
+    aw_result = None
+    if args.embodied_hebbian:
+        import cupy as cp_eval
+        print("\n" + "=" * 60)
+        print(f"EVAL: action -> word (Tier 1 A→W, {args.n_eval_per_word} per action)")
+        print("=" * 60, flush=True)
+        rm_eval = bridge.region_manager
+        lang_output_idx = list(rm_eval.indices("language_output"))
+        motor_idx_eval = {a: list(rm_eval.indices(f"motor_{a}"))
+                          for a in ["N", "E", "S", "W"]}
+        ACTION_TO_WORD = {"N": "north", "E": "east", "S": "south", "W": "west"}
+        WORDS = ["north", "east", "south", "west"]
+        confusion_aw = {a: {w: 0 for w in WORDS} for a in ["N", "E", "S", "W"]}
+        correct_aw = 0
+        total_aw = 0
+        for action in ["N", "E", "S", "W"]:
+            for trial in range(args.n_eval_per_word):
+                # Reset
+                bridge.cp_external_input_current[:] = 0.0
+                for _ in range(50):
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+                # Drive motor pool
+                target_arr = cp_eval.asarray(motor_idx_eval[action], dtype=cp_eval.int64)
+                bridge.cp_external_input_current[target_arr] = float(
+                    args.embodied_motor_teacher_pA
+                )
+                # Forward — accumulate language_output spikes
+                lang_out_arr = cp_eval.asarray(lang_output_idx, dtype=cp_eval.int64)
+                lang_out_spike_count = cp_eval.zeros(len(lang_output_idx), dtype=cp_eval.int32)
+                for _ in range(100):
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+                    fired = bridge.cp_firing_states
+                    lang_out_spike_count += fired[lang_out_arr].astype(cp_eval.int32)
+                # Convert to numpy for cosine match
+                activity = lang_out_spike_count.get().astype(np.float32)
+                if activity.sum() > 0:
+                    from sim.text_embeddings import (
+                        nearest_token, vocab_to_drive_pattern,
+                        orthogonal_drive_pattern,
+                    )
+                    # Match against word patterns. Use the SAME encoding the
+                    # network was trained on.
+                    best_word, best_score = None, -1
+                    for w_idx, w in enumerate(WORDS):
+                        if args.orthogonal_cues:
+                            template = orthogonal_drive_pattern(
+                                cue_idx=w_idx, n_cues=len(WORDS),
+                                n_neurons=len(lang_output_idx),
+                                sparsity=args.token_sparsity,
+                            )
+                        else:
+                            template = vocab_to_drive_pattern(
+                                w, n_neurons=len(lang_output_idx),
+                                sparsity=args.token_sparsity,
+                            )
+                        # Cosine similarity (template active sites vs activity)
+                        norm_t = float(np.linalg.norm(template))
+                        norm_a = float(np.linalg.norm(activity))
+                        if norm_t > 0 and norm_a > 0:
+                            score = float(np.dot(template, activity)) / (norm_t * norm_a)
+                        else:
+                            score = 0.0
+                        if score > best_score:
+                            best_score, best_word = score, w
+                    pred = best_word
+                else:
+                    pred = WORDS[0]  # default if silent
+                confusion_aw[action][pred] += 1
+                total_aw += 1
+                if pred == ACTION_TO_WORD[action]:
+                    correct_aw += 1
+        aw_acc = correct_aw / max(total_aw, 1)
+        print(f"\n  A→W Accuracy: {correct_aw}/{total_aw} = {aw_acc:.1%}", flush=True)
+        print(f"  A→W Confusion: {confusion_aw}", flush=True)
+        aw_result = {
+            "n_trials": total_aw,
+            "correct": correct_aw,
+            "accuracy": aw_acc,
+            "confusion_matrix": confusion_aw,
+        }
+
     if args.out_stats:
         out = {
-            "regime": "bio_three_factor",
+            "regime": "bio_three_factor" + ("_embodied" if args.embodied_hebbian else ""),
             "seed": args.seed,
             "training_stats": train_stats,
             "word_to_action_eval": wa_result,
+            "action_to_word_eval": aw_result,
             "config": {
                 "biological": args.biological,
                 "n_lang_input": args.n_lang_input,
@@ -651,6 +817,9 @@ def main():
                 "enable_motor_fs": args.enable_motor_fs,
                 "enable_nmda": args.enable_nmda,
                 "token_sparsity": args.token_sparsity,
+                "embodied_hebbian": args.embodied_hebbian,
+                "embodied_motor_teacher_pA": args.embodied_motor_teacher_pA,
+                "orthogonal_cues": args.orthogonal_cues,
             },
         }
         Path(args.out_stats).parent.mkdir(parents=True, exist_ok=True)

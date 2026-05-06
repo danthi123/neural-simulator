@@ -179,6 +179,11 @@ def build_biological_brain_regions(
     motor_inh_weight_mean: float = 4.0,
     lang_internal_density: float = 0.05,
     lang_exc_fraction: float = 0.8,
+    enable_language_output: bool = False,
+    n_lang_output: int = 2048,
+    motor_to_language_output_density: float = 0.30,
+    motor_to_language_output_weight: float = 0.5,
+    motor_to_language_output_jitter: float = 0.3,
 ):
     """Biological-scale architecture with cortical canon ENABLED.
 
@@ -248,6 +253,33 @@ def build_biological_brain_regions(
             plastic=True,
             plasticity_gate="language_input_to_motor",
         ))
+
+    # Optional language_output region + reciprocal motor → language_output
+    # pathway. Enables Tier 1 embodied Hebbian binding: when motor pool fires,
+    # language_output develops the corresponding word pattern via STDP.
+    # Biological basis: Felleman & Van Essen 1991 reciprocal cortical
+    # connectivity; Broca's area is interleaved with premotor cortex
+    # (Pulvermüller 2003). When motor pattern executes, premotor activity
+    # propagates to linguistic representation.
+    if enable_language_output:
+        regions.append(BrainRegion(
+            name="language_output",
+            n_neurons=n_lang_output,
+            exc_fraction=lang_exc_fraction,
+            internal_density=lang_internal_density,
+            exc_weight_mean=2.0, inh_weight_mean=4.0,
+            weight_jitter=0.2, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"motor_{action}", to_region="language_output",
+                density=motor_to_language_output_density,
+                weight_mean=motor_to_language_output_weight,
+                weight_jitter=motor_to_language_output_jitter,
+                plastic=True,
+                plasticity_gate="motor_to_language_output",
+            ))
 
     # Motor lateral inhibition via PV-FSI (Vogels 2011 / Hofer 2011) —
     # biological 12% of motor pool size.
