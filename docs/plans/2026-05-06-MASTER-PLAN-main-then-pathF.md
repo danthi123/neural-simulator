@@ -630,6 +630,68 @@ learning loop breaks pretrained knowledge):
 
 # Decision log
 
-This section will be appended to as autonomous decisions are made.
+## 2026-05-06 ~17:30 EDT — Tier 2.2 v1 disrupted nav
 
-(Empty at plan creation.)
+**Issue:** First Tier 2.2 implementation drove language regions
+every step at 200pA. At 16×16 grid, nav degraded from baseline
+1.03 to 6.50 (6× worse), at_goal dropped from 695 to 1/1800 steps.
+
+**Diagnosis:** Language drive too strong + too frequent. Language
+input → cortex_X → motor pathway propagated language activity
+into motor pools, distorting BG cascade action selection.
+
+**Decision:** Reduce drive amplitude and frequency.
+- 200pA → 80pA (supplements rather than dominates)
+- Every step → every 5 steps (sporadic, biologically plausible)
+
+**Biological justification:** Real language acquisition is
+EPISODIC, not continuous. Children hear words paired with
+specific actions/scenes occasionally, not at every microsecond
+of motor command. Pulvermüller's framework specifies co-firing
+at MOMENTS of word-action coincidence.
+
+**Outcome:** v2 preserved nav (1.05 vs 1.03 baseline) but W→A
+13%, I→W 25% with strong directional bias (all words → one
+wrong direction).
+
+## 2026-05-06 ~17:55 EDT — Tier 2.2 v3: warmup gate
+
+**Issue:** v2 with sporadic drive preserved nav but bound
+language to wrong actions.
+
+**Diagnosis:** Random-walk phase (early nav, before agent
+learns to navigate) was binding language to random actions.
+~360 sporadic events in random walk dominated the bindings
+even after agent learned competent nav.
+
+**Decision:** Add `--embodied-language-warmup-steps 600`.
+Skip embodied-language until nav has converged. Mirrors child
+language acquisition: words heard during INTENTIONAL action,
+not random flailing.
+
+**Biological justification:** Children don't learn "go" until
+they can already locomote intentionally. Vocabulary acquisition
+follows competent action production.
+
+**Outcome:** v3 preserved nav (1.02), W→A 26% (single seed),
+"west" → W bound perfectly (25/25). Other directions still
+biased. Single seed insufficient to evaluate.
+
+**Next:** 6-seed validation at 32×32 (validated baseline) to
+see if pattern holds across seeds.
+
+## 2026-05-06 ~18:20 EDT — Phase 1.3 scope reduction
+
+**Discovery:** Sleep replay infrastructure already exists in
+g11_bg_runner (`--sleep-replay-after-step`, `--sleep-replay-steps`).
+Cluster D v2 SWR-gated plasticity already shipped.
+
+**Decision:** Phase 1.3 budget reduces from "1-2 weeks
+implementation" to "primarily validation + minor wiring."
+The infrastructure for hippocampus → cortex consolidation
+exists; need to:
+1. Validate it actually transfers patterns (Phase 1.3 main task)
+2. Add post-sleep retention test
+3. Wire it into Phase 1.4 catastrophic forgetting eval
+
+This shrinks Phase 1.3 from 1-2 weeks to ~1 week.
