@@ -145,7 +145,7 @@ def evaluate_image_to_word(
 
     correct = 0
     confusion = {w: {w2: 0 for w2 in ["north", "east", "south", "west"]}
-                 for w in (list(get_extended_word_to_action(synonym_vocab_size).keys()) if synonym_mode else ["north", "east", "south", "west"])}
+                 for w in ["north", "east", "south", "west"]}
     n_reset_steps = 100  # match training inter-trial reset
 
     # Pre-cache embedding vectors for the 4 cardinal direction tokens
