@@ -721,7 +721,7 @@ def main():
     if args.embodied_hebbian:
         import cupy as cp_eval
         print("\n" + "=" * 60)
-        print(f"EVAL: action -> word (Tier 1 A→W, {args.n_eval_per_word} per action)")
+        print(f"EVAL: action -> word (Tier 1 A->W, {args.n_eval_per_word} per action)")
         print("=" * 60, flush=True)
         rm_eval = bridge.region_manager
         lang_output_idx = list(rm_eval.indices("language_output"))
@@ -791,8 +791,8 @@ def main():
                 if pred == ACTION_TO_WORD[action]:
                     correct_aw += 1
         aw_acc = correct_aw / max(total_aw, 1)
-        print(f"\n  A→W Accuracy: {correct_aw}/{total_aw} = {aw_acc:.1%}", flush=True)
-        print(f"  A→W Confusion: {confusion_aw}", flush=True)
+        print(f"\n  A->W Accuracy: {correct_aw}/{total_aw} = {aw_acc:.1%}", flush=True)
+        print(f"  A->W Confusion: {confusion_aw}", flush=True)
         aw_result = {
             "n_trials": total_aw,
             "correct": correct_aw,
