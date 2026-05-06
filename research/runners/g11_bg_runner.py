@@ -2369,6 +2369,12 @@ def run_moving_goal_episode(
                                                 # episodically, not at every
                                                 # microsecond. Drive once
                                                 # per N steps.
+    embodied_language_warmup_steps: int = 600,  # Skip language drive until
+                                                # nav has converged. Real
+                                                # children hear words during
+                                                # intentional action, not
+                                                # random flailing. Bind only
+                                                # to "successful" actions.
     # Cluster F v2 (2026-04-30): CF-gated anti-Hebbian LTD per Albus 1971
     # §IV.C eq.4. v1 used the global reward signal for PF→PC plasticity
     # (cerebellum and BG learned redundantly from the same signal). v2
@@ -3666,6 +3672,7 @@ def run_moving_goal_episode(
         # (80pA vs nav's 100-200pA from retina + BG) so language drive
         # supplements rather than dominates nav.
         if (embodied_language and enable_text_io and not in_sleep
+                and step >= int(embodied_language_warmup_steps)
                 and step % max(1, int(embodied_language_every_n_steps)) == 0):
             from sim.text_embeddings import vocab_to_drive_pattern
             lang_in_indices_cp = region_indices_cp.get("language_input")
@@ -4569,6 +4576,11 @@ def main():
                     help="Drive language regions every N steps (default 5). "
                     "Sporadic — biology pairs language with experience "
                     "episodically, not at every microsecond.")
+    ap.add_argument("--embodied-language-warmup-steps", type=int, default=600,
+                    help="Skip embodied-language until step N (default 600). "
+                    "Lets nav converge first; language binds to 'intentional' "
+                    "actions, not random walk. Mirrors child language "
+                    "acquisition: words are heard during competent action.")
     ap.add_argument("--pruning-alpha", type=float, default=None,
                     help="Cheat-5 option-1 pruning rate. Default: cfg.pruning_alpha (0.001 = conservative). "
                          "Try 0.05 for a 5K-trial pretraining smoke; 0.005 for 30K validation.")
@@ -4847,6 +4859,7 @@ def main():
             embodied_language_drive_pA=args.embodied_language_drive_pA,
             embodied_language_goal_radius=args.embodied_language_goal_radius,
             embodied_language_every_n_steps=args.embodied_language_every_n_steps,
+            embodied_language_warmup_steps=args.embodied_language_warmup_steps,
             cluster_e_distance_sigma=args.cluster_e_distance_sigma,
             pruning_alpha=args.pruning_alpha,
             pruning_threshold=args.pruning_threshold,
