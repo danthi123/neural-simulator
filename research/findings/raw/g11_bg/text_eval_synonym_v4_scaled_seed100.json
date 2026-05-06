@@ -1,0 +1,348 @@
+{
+  "regime": "bio_three_factor_embodied",
+  "seed": 100,
+  "training_stats": [
+    {
+      "regime": "bio_three_factor",
+      "n_total_events": 1600,
+      "n_per_direction": 400,
+      "elapsed_seconds": 3493.911337375641
+    }
+  ],
+  "word_to_action_eval": {
+    "n_trials": 200,
+    "correct": 68,
+    "accuracy": 0.34,
+    "confusion_matrix": {
+      "north": {
+        "N": 14,
+        "E": 6,
+        "S": 2,
+        "W": 3
+      },
+      "up": {
+        "N": 6,
+        "E": 7,
+        "S": 5,
+        "W": 7
+      },
+      "east": {
+        "N": 8,
+        "E": 5,
+        "S": 7,
+        "W": 5
+      },
+      "right": {
+        "N": 5,
+        "E": 4,
+        "S": 6,
+        "W": 10
+      },
+      "south": {
+        "N": 9,
+        "E": 5,
+        "S": 7,
+        "W": 4
+      },
+      "down": {
+        "N": 8,
+        "E": 7,
+        "S": 7,
+        "W": 3
+      },
+      "west": {
+        "N": 1,
+        "E": 2,
+        "S": 3,
+        "W": 19
+      },
+      "left": {
+        "N": 2,
+        "E": 9,
+        "S": 8,
+        "W": 6
+      }
+    },
+    "interleave_words": true,
+    "n_reset_steps": 50,
+    "alternative_decoders": {
+      "drive_only": {
+        "correct": 83,
+        "accuracy": 0.415,
+        "confusion": {
+          "north": {
+            "N": 15,
+            "E": 7,
+            "S": 2,
+            "W": 1
+          },
+          "up": {
+            "N": 6,
+            "E": 8,
+            "S": 7,
+            "W": 4
+          },
+          "east": {
+            "N": 1,
+            "E": 13,
+            "S": 4,
+            "W": 7
+          },
+          "right": {
+            "N": 1,
+            "E": 8,
+            "S": 9,
+            "W": 7
+          },
+          "south": {
+            "N": 4,
+            "E": 4,
+            "S": 11,
+            "W": 6
+          },
+          "down": {
+            "N": 7,
+            "E": 7,
+            "S": 7,
+            "W": 4
+          },
+          "west": {
+            "N": 0,
+            "E": 5,
+            "S": 3,
+            "W": 17
+          },
+          "left": {
+            "N": 3,
+            "E": 12,
+            "S": 4,
+            "W": 6
+          }
+        }
+      },
+      "ratio": {
+        "correct": 65,
+        "accuracy": 0.325,
+        "confusion": {
+          "north": {
+            "N": 13,
+            "E": 5,
+            "S": 4,
+            "W": 3
+          },
+          "up": {
+            "N": 6,
+            "E": 7,
+            "S": 5,
+            "W": 7
+          },
+          "east": {
+            "N": 8,
+            "E": 5,
+            "S": 7,
+            "W": 5
+          },
+          "right": {
+            "N": 5,
+            "E": 4,
+            "S": 6,
+            "W": 10
+          },
+          "south": {
+            "N": 10,
+            "E": 5,
+            "S": 6,
+            "W": 4
+          },
+          "down": {
+            "N": 8,
+            "E": 5,
+            "S": 9,
+            "W": 3
+          },
+          "west": {
+            "N": 1,
+            "E": 2,
+            "S": 4,
+            "W": 18
+          },
+          "left": {
+            "N": 7,
+            "E": 7,
+            "S": 7,
+            "W": 4
+          }
+        }
+      },
+      "zscore": {
+        "correct": 68,
+        "accuracy": 0.34,
+        "confusion": {
+          "north": {
+            "N": 14,
+            "E": 6,
+            "S": 2,
+            "W": 3
+          },
+          "up": {
+            "N": 6,
+            "E": 7,
+            "S": 5,
+            "W": 7
+          },
+          "east": {
+            "N": 8,
+            "E": 5,
+            "S": 7,
+            "W": 5
+          },
+          "right": {
+            "N": 5,
+            "E": 4,
+            "S": 6,
+            "W": 10
+          },
+          "south": {
+            "N": 9,
+            "E": 5,
+            "S": 7,
+            "W": 4
+          },
+          "down": {
+            "N": 8,
+            "E": 7,
+            "S": 7,
+            "W": 3
+          },
+          "west": {
+            "N": 1,
+            "E": 2,
+            "S": 3,
+            "W": 19
+          },
+          "left": {
+            "N": 2,
+            "E": 9,
+            "S": 8,
+            "W": 6
+          }
+        }
+      },
+      "clipped": {
+        "correct": 68,
+        "accuracy": 0.34,
+        "confusion": {
+          "north": {
+            "N": 14,
+            "E": 6,
+            "S": 2,
+            "W": 3
+          },
+          "up": {
+            "N": 6,
+            "E": 7,
+            "S": 5,
+            "W": 7
+          },
+          "east": {
+            "N": 7,
+            "E": 5,
+            "S": 8,
+            "W": 5
+          },
+          "right": {
+            "N": 5,
+            "E": 4,
+            "S": 6,
+            "W": 10
+          },
+          "south": {
+            "N": 9,
+            "E": 5,
+            "S": 7,
+            "W": 4
+          },
+          "down": {
+            "N": 8,
+            "E": 7,
+            "S": 7,
+            "W": 3
+          },
+          "west": {
+            "N": 1,
+            "E": 2,
+            "S": 3,
+            "W": 19
+          },
+          "left": {
+            "N": 2,
+            "E": 9,
+            "S": 8,
+            "W": 6
+          }
+        }
+      }
+    }
+  },
+  "action_to_word_eval": {
+    "n_trials": 100,
+    "correct": 71,
+    "accuracy": 0.71,
+    "confusion_matrix": {
+      "N": {
+        "north": 17,
+        "up": 1,
+        "east": 1,
+        "right": 1,
+        "south": 0,
+        "down": 1,
+        "west": 3,
+        "left": 1
+      },
+      "E": {
+        "north": 0,
+        "up": 0,
+        "east": 22,
+        "right": 1,
+        "south": 0,
+        "down": 1,
+        "west": 1,
+        "left": 0
+      },
+      "S": {
+        "north": 0,
+        "up": 2,
+        "east": 2,
+        "right": 6,
+        "south": 8,
+        "down": 1,
+        "west": 5,
+        "left": 1
+      },
+      "W": {
+        "north": 1,
+        "up": 0,
+        "east": 2,
+        "right": 1,
+        "south": 0,
+        "down": 0,
+        "west": 21,
+        "left": 0
+      }
+    }
+  },
+  "config": {
+    "biological": true,
+    "n_lang_input": 4096,
+    "n_motor_per_action": 1000,
+    "learning_rate": 0.001,
+    "eligibility_decay_tau": 50.0,
+    "apply_topographic_bias": true,
+    "enable_motor_fs": true,
+    "enable_nmda": true,
+    "token_sparsity": 0.1,
+    "embodied_hebbian": true,
+    "embodied_motor_teacher_pA": 300.0,
+    "orthogonal_cues": false
+  }
+}
