@@ -1,0 +1,40 @@
+# Tier 2.1 robustness — 12-word vocabulary at scaled architecture
+#
+# Tests whether v4 scale-up paradigm (which solved 8-word synonyms)
+# extends to 12 words. Adds short-form direction labels (n, e, s, w)
+# as 3rd synonym per action.
+#
+# Vocab: {N: [north, up, n], E: [east, right, e],
+#         S: [south, down, s], W: [west, left, w]}
+# Each synonym gets ~133 trials per direction (vs 200 in 8-word v4).
+#
+# 6 seeds × 1 condition = 6 runs at parallel=2 ≈ 290 min.
+
+name: embodied-tier2-v4-12word
+runner: research.runners.bio_three_factor
+output_dir: research/findings/raw/g11_bg
+parallelism: 2
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  biological: true
+  n-events-per-direction: 600  # bumped from 400 to compensate for extra
+                                # synonym (each synonym ~200 trials)
+  stim-steps-per-event: 50
+  reset-steps: 50
+  apply-topographic-bias: true
+  enable-motor-fs: true
+  embodied-hebbian: true
+  synonym-mode: true
+  synonym-vocab-size: 12
+  # Same scale-up as v4 (validated)
+  n-lang-input: 4096
+  n-motor-per-action: 1000
+  n-motor-fs-per-action: 120
+
+conditions:
+  - name: scaled_12w
+    args: {}
+
+out_stats_template: "text_eval_synonym_12w_{name}_seed{seed}.json"

@@ -28,6 +28,39 @@ SYNONYM_GROUPS = {
     "S": ["south", "down"],
     "W": ["west", "left"],
 }
+
+# Tier 2.1 robustness: 12-word vocab (3 synonyms per action). Tests
+# whether scale-up paradigm generalizes beyond 8 words. Adds
+# abbreviated cardinal directions ("n", "e", "s", "w") as third
+# synonym per group.
+SYNONYM_GROUPS_12 = {
+    "N": ["north", "up", "n"],
+    "E": ["east", "right", "e"],
+    "S": ["south", "down", "s"],
+    "W": ["west", "left", "w"],
+}
+EXTENDED_WORD_TO_ACTION_12 = {
+    word: action
+    for action, words in SYNONYM_GROUPS_12.items()
+    for word in words
+}
+
+
+def get_synonym_groups(vocab_size: int = 8) -> dict:
+    """Return SYNONYM_GROUPS for the requested vocab size.
+
+    vocab_size=8: {N:[north,up], E:[east,right], S:[south,down], W:[west,left]}
+    vocab_size=12: adds short forms {N:[..., n], ...}
+    """
+    if vocab_size == 12:
+        return SYNONYM_GROUPS_12
+    return SYNONYM_GROUPS
+
+
+def get_extended_word_to_action(vocab_size: int = 8) -> dict:
+    if vocab_size == 12:
+        return EXTENDED_WORD_TO_ACTION_12
+    return EXTENDED_WORD_TO_ACTION
 EXTENDED_WORD_TO_ACTION = {
     word: action
     for action, words in SYNONYM_GROUPS.items()
@@ -112,7 +145,7 @@ def evaluate_image_to_word(
 
     correct = 0
     confusion = {w: {w2: 0 for w2 in ["north", "east", "south", "west"]}
-                 for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
+                 for w in (list(get_extended_word_to_action(synonym_vocab_size).keys()) if synonym_mode else ["north", "east", "south", "west"])}
     n_reset_steps = 100  # match training inter-trial reset
 
     # Pre-cache embedding vectors for the 4 cardinal direction tokens
@@ -223,6 +256,7 @@ def evaluate_word_to_action(
     token_sparsity: float = 0.1,
     orthogonal_cues: bool = False,
     synonym_mode: bool = False,
+    synonym_vocab_size: int = 8,
 ):
     """Drive language_input with each direction word; observe which
     motor_X has the highest firing rate. Did the agent learn the
@@ -298,7 +332,7 @@ def evaluate_word_to_action(
     correct = 0
     total = 0
     confusion = {w: {a: 0 for a in ACTION_NAMES}
-                 for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
+                 for w in (list(get_extended_word_to_action(synonym_vocab_size).keys()) if synonym_mode else ["north", "east", "south", "west"])}
 
     # Multi-decoder counters (2026-05-02): test alternative decoders alongside
     # default delta-from-baseline. The 6-seed v2 result of W->A 28.5%
@@ -309,20 +343,21 @@ def evaluate_word_to_action(
     correct_zscore = 0
     correct_clipped = 0
     confusion_drive_only = {w: {a: 0 for a in ACTION_NAMES}
-                            for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
+                            for w in (list(get_extended_word_to_action(synonym_vocab_size).keys()) if synonym_mode else ["north", "east", "south", "west"])}
     confusion_ratio = {w: {a: 0 for a in ACTION_NAMES}
-                       for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
+                       for w in (list(get_extended_word_to_action(synonym_vocab_size).keys()) if synonym_mode else ["north", "east", "south", "west"])}
     confusion_zscore = {w: {a: 0 for a in ACTION_NAMES}
-                        for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
+                        for w in (list(get_extended_word_to_action(synonym_vocab_size).keys()) if synonym_mode else ["north", "east", "south", "west"])}
     confusion_clipped = {w: {a: 0 for a in ACTION_NAMES}
-                         for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
+                         for w in (list(get_extended_word_to_action(synonym_vocab_size).keys()) if synonym_mode else ["north", "east", "south", "west"])}
 
     # Build trial schedule
     if synonym_mode:
-        # 8-word vocab in synonym mode: north/up/east/right/south/down/west/left.
-        # Each word presented n_trials_per_word times.
-        DIRECTIONS = list(EXTENDED_WORD_TO_ACTION.keys())
-        word_to_action_local = EXTENDED_WORD_TO_ACTION
+        # 8 or 12 word vocab in synonym mode. Each word presented
+        # n_trials_per_word times.
+        EWA = get_extended_word_to_action(synonym_vocab_size)
+        DIRECTIONS = list(EWA.keys())
+        word_to_action_local = EWA
     else:
         DIRECTIONS = ["north", "east", "south", "west"]
         word_to_action_local = WORD_TO_ACTION

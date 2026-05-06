@@ -191,6 +191,11 @@ def run_three_factor(
                                  # Cell assemblies form via internal
                                  # recurrence + Hebbian. Then standard
                                  # paired training. 0 = disabled.
+    synonym_vocab_size: int = 8,  # Tier 2.1 robustness: vocab size in
+                                   # synonym mode. 8 = 4 actions × 2
+                                   # synonyms (default). 12 = 4 × 3.
+                                   # Tests scaling beyond initial
+                                   # 8-word success.
     verbose: bool = True,
 ):
     """Three-factor learning at language_input -> motor_X synapses.
@@ -448,11 +453,12 @@ def run_three_factor(
         # If synonym_cofire_fraction > 0, that fraction of trials
         # presents BOTH synonyms simultaneously (creates shared input
         # representation via input-input Hebbian co-firing).
-        from research.runners.text_eval import SYNONYM_GROUPS
+        from research.runners.text_eval import get_synonym_groups
+        SYN = get_synonym_groups(synonym_vocab_size)
         DIRECTIONS = ["N", "E", "S", "W"]  # actions, not words
         buffer = []
         for action in DIRECTIONS:
-            synonyms = SYNONYM_GROUPS[action]
+            synonyms = SYN[action]
             for trial_idx in range(n_events_per_direction):
                 # Decide if this trial is a co-fire trial
                 if (synonym_cofire_fraction > 0.0 and
@@ -494,7 +500,8 @@ def run_three_factor(
 
         # Phase 1a: drive each language_input pattern alone (no motor teacher)
         if synonym_mode:
-            from research.runners.text_eval import SYNONYM_GROUPS as _SG
+            from research.runners.text_eval import get_synonym_groups
+            _SG = get_synonym_groups(synonym_vocab_size)
             preshape_words = [w for ws in _SG.values() for w in ws]
         else:
             preshape_words = ["north", "east", "south", "west"]
@@ -818,6 +825,12 @@ def main():
                     "pool driven alone for N events. Cell assemblies "
                     "form via internal recurrence + STDP. Then standard "
                     "paired training. 0 = disabled (default). Try 100-300.")
+    ap.add_argument("--synonym-vocab-size", type=int, default=8,
+                    choices=[8, 12],
+                    help="Tier 2.1 robustness: synonym vocab size. "
+                    "8 = 4 actions x 2 synonyms (default, validated). "
+                    "12 = 4 actions x 3 synonyms (adds short forms n/e/s/w). "
+                    "Tests scaling beyond initial 8-word success.")
     ap.add_argument("--n-eval-per-word", type=int, default=25)
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
@@ -858,6 +871,7 @@ def main():
         synonym_mode=args.synonym_mode,
         synonym_cofire_fraction=args.synonym_cofire_fraction,
         pre_shape_events=args.pre_shape_events,
+        synonym_vocab_size=args.synonym_vocab_size,
         verbose=True,
     )
 
@@ -872,6 +886,7 @@ def main():
         token_sparsity=args.token_sparsity,
         orthogonal_cues=args.orthogonal_cues,
         synonym_mode=args.synonym_mode,
+        synonym_vocab_size=args.synonym_vocab_size,
     )
     print(f"\n  Accuracy: {wa_result['correct']}/{wa_result['n_trials']} "
           f"= {wa_result['accuracy']:.1%}", flush=True)
@@ -888,14 +903,15 @@ def main():
         lang_output_idx = list(rm_eval.indices("language_output"))
         motor_idx_eval = {a: list(rm_eval.indices(f"motor_{a}"))
                           for a in ["N", "E", "S", "W"]}
-        # In synonym_mode, A→W eval matches against 8-word vocab; correct
+        # In synonym_mode, A→W eval matches against extended vocab; correct
         # if predicted word's action == motor's action (either synonym OK).
         if args.synonym_mode:
             from research.runners.text_eval import (
-                EXTENDED_WORD_TO_ACTION, SYNONYM_GROUPS,
+                get_extended_word_to_action, get_synonym_groups,
             )
-            WORDS = list(EXTENDED_WORD_TO_ACTION.keys())
-            WORD_TO_ACTION_AW = EXTENDED_WORD_TO_ACTION
+            EWA = get_extended_word_to_action(args.synonym_vocab_size)
+            WORDS = list(EWA.keys())
+            WORD_TO_ACTION_AW = EWA
         else:
             WORDS = ["north", "east", "south", "west"]
             WORD_TO_ACTION_AW = {"north": "N", "east": "E",
