@@ -20,6 +20,20 @@ import numpy as np
 ACTION_NAMES = ["N", "E", "S", "W"]
 WORD_TO_ACTION = {"north": "N", "east": "E", "south": "S", "west": "W"}
 
+# Tier 2.1: synonym groups. When synonym_mode=True, each trial picks a
+# random word from the action's synonym group; eval tests all 8 words.
+SYNONYM_GROUPS = {
+    "N": ["north", "up"],
+    "E": ["east", "right"],
+    "S": ["south", "down"],
+    "W": ["west", "left"],
+}
+EXTENDED_WORD_TO_ACTION = {
+    word: action
+    for action, words in SYNONYM_GROUPS.items()
+    for word in words
+}
+
 
 def _direction_from_positions(agent_pos, goal_pos) -> str:
     """Direction from agent to goal. Strict comparison (no >= bias on
@@ -98,7 +112,7 @@ def evaluate_image_to_word(
 
     correct = 0
     confusion = {w: {w2: 0 for w2 in ["north", "east", "south", "west"]}
-                 for w in ["north", "east", "south", "west"]}
+                 for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
     n_reset_steps = 100  # match training inter-trial reset
 
     # Pre-cache embedding vectors for the 4 cardinal direction tokens
@@ -208,6 +222,7 @@ def evaluate_word_to_action(
     seed: int = 1,
     token_sparsity: float = 0.1,
     orthogonal_cues: bool = False,
+    synonym_mode: bool = False,
 ):
     """Drive language_input with each direction word; observe which
     motor_X has the highest firing rate. Did the agent learn the
@@ -283,7 +298,7 @@ def evaluate_word_to_action(
     correct = 0
     total = 0
     confusion = {w: {a: 0 for a in ACTION_NAMES}
-                 for w in ["north", "east", "south", "west"]}
+                 for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
 
     # Multi-decoder counters (2026-05-02): test alternative decoders alongside
     # default delta-from-baseline. The 6-seed v2 result of W->A 28.5%
@@ -294,16 +309,23 @@ def evaluate_word_to_action(
     correct_zscore = 0
     correct_clipped = 0
     confusion_drive_only = {w: {a: 0 for a in ACTION_NAMES}
-                            for w in ["north", "east", "south", "west"]}
+                            for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
     confusion_ratio = {w: {a: 0 for a in ACTION_NAMES}
-                       for w in ["north", "east", "south", "west"]}
+                       for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
     confusion_zscore = {w: {a: 0 for a in ACTION_NAMES}
-                        for w in ["north", "east", "south", "west"]}
+                        for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
     confusion_clipped = {w: {a: 0 for a in ACTION_NAMES}
-                         for w in ["north", "east", "south", "west"]}
+                         for w in (list(EXTENDED_WORD_TO_ACTION.keys()) if synonym_mode else ["north", "east", "south", "west"])}
 
     # Build trial schedule
-    DIRECTIONS = ["north", "east", "south", "west"]
+    if synonym_mode:
+        # 8-word vocab in synonym mode: north/up/east/right/south/down/west/left.
+        # Each word presented n_trials_per_word times.
+        DIRECTIONS = list(EXTENDED_WORD_TO_ACTION.keys())
+        word_to_action_local = EXTENDED_WORD_TO_ACTION
+    else:
+        DIRECTIONS = ["north", "east", "south", "west"]
+        word_to_action_local = WORD_TO_ACTION
     if interleave_words:
         # Round-robin with rotating offset: round R = cyclic-shift of
         # DIRECTIONS by R. Guarantees ZERO consecutive same-word trials
@@ -336,7 +358,7 @@ def evaluate_word_to_action(
     last_per_word = {}
 
     for word in schedule:
-        target_action = WORD_TO_ACTION[word]
+        target_action = word_to_action_local[word]
         # ─── Phase A: BASELINE measurement ───
         # Reset, then run with NO input. Measure spontaneous cortex_X.
         # This subtracts cascade default bias (cortex_N 2x higher etc.)
@@ -489,7 +511,7 @@ def evaluate_word_to_action(
             if word in last_per_word:
                 d = last_per_word[word]
                 print(f"  [eval W->A] word={word} "
-                      f"target={WORD_TO_ACTION[word]} "
+                      f"target={word_to_action_local[word]} "
                       f"baseline={d['baseline']} drive={d['drive']} "
                       f"delta={d['delta']}", flush=True)
 

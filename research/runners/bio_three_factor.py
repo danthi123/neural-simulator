@@ -166,6 +166,13 @@ def run_three_factor(
                                      # co-activity drives STDP.
     embodied_motor_teacher_pA: float = 300.0,  # external current to target
                                                 # motor pool during training
+    synonym_mode: bool = False,  # Tier 2.1: train on 8-word vocab where
+                                  # each action has 2 synonyms. Tests
+                                  # whether embodied Hebbian binding
+                                  # generalizes — both "north" and "up"
+                                  # should bind to motor_N when trained
+                                  # together. Doubles vocab without
+                                  # adding new actions.
     verbose: bool = True,
 ):
     """Three-factor learning at language_input -> motor_X synapses.
@@ -415,14 +422,29 @@ def run_three_factor(
     decay_per_step = float(np.exp(-dt_ms / eligibility_decay_tau))
 
     # Build event buffer (balanced)
-    DIRECTIONS = ["north","east","south","west"]
-    DIR_TO_ACTION = {"north":"N","east":"E","south":"S","west":"W"}
-    buffer = []
-    for direction in DIRECTIONS:
-        a = DIR_TO_ACTION[direction]
-        for _ in range(n_events_per_direction):
-            buffer.append({"token": direction, "action": a})
-    rng.shuffle(buffer)
+    if synonym_mode:
+        # Tier 2.1: each trial picks a random synonym for the target
+        # direction. With synonym_groups[target] = [primary, alt],
+        # ~50% of trials use primary and ~50% alt. Both bind to same
+        # motor via embodied Hebbian co-firing.
+        from research.runners.text_eval import SYNONYM_GROUPS
+        DIRECTIONS = ["N", "E", "S", "W"]  # actions, not words
+        buffer = []
+        for action in DIRECTIONS:
+            synonyms = SYNONYM_GROUPS[action]
+            for _ in range(n_events_per_direction):
+                token = synonyms[rng.integers(0, len(synonyms))]
+                buffer.append({"token": token, "action": action})
+        rng.shuffle(buffer)
+    else:
+        DIRECTIONS = ["north","east","south","west"]
+        DIR_TO_ACTION = {"north":"N","east":"E","south":"S","west":"W"}
+        buffer = []
+        for direction in DIRECTIONS:
+            a = DIR_TO_ACTION[direction]
+            for _ in range(n_events_per_direction):
+                buffer.append({"token": direction, "action": a})
+        rng.shuffle(buffer)
 
     if verbose:
         print(f"\n  Synthetic buffer: {len(buffer)} events", flush=True)
@@ -672,6 +694,13 @@ def main():
                     "during embodied trial. Default 300pA = strong teacher. "
                     "Higher = faster convergence; lower = more biological "
                     "(weaker reliance on external signal).")
+    ap.add_argument("--synonym-mode", action="store_true", default=False,
+                    help="Tier 2.1: train on 8-word vocab (4 actions x 2 "
+                    "synonyms each: {N: [north, up], E: [east, right], "
+                    "S: [south, down], W: [west, left]}). Each trial picks "
+                    "a random synonym; both should bind to the same motor "
+                    "via embodied Hebbian co-firing. Doubles vocab without "
+                    "adding new actions.")
     ap.add_argument("--n-eval-per-word", type=int, default=25)
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
@@ -709,6 +738,7 @@ def main():
         orthogonal_cues=args.orthogonal_cues,
         embodied_hebbian=args.embodied_hebbian,
         embodied_motor_teacher_pA=args.embodied_motor_teacher_pA,
+        synonym_mode=args.synonym_mode,
         verbose=True,
     )
 
@@ -722,6 +752,7 @@ def main():
         stim_steps_per_trial=100, n_reset_steps=50,
         token_sparsity=args.token_sparsity,
         orthogonal_cues=args.orthogonal_cues,
+        synonym_mode=args.synonym_mode,
     )
     print(f"\n  Accuracy: {wa_result['correct']}/{wa_result['n_trials']} "
           f"= {wa_result['accuracy']:.1%}", flush=True)
@@ -738,8 +769,19 @@ def main():
         lang_output_idx = list(rm_eval.indices("language_output"))
         motor_idx_eval = {a: list(rm_eval.indices(f"motor_{a}"))
                           for a in ["N", "E", "S", "W"]}
+        # In synonym_mode, A→W eval matches against 8-word vocab; correct
+        # if predicted word's action == motor's action (either synonym OK).
+        if args.synonym_mode:
+            from research.runners.text_eval import (
+                EXTENDED_WORD_TO_ACTION, SYNONYM_GROUPS,
+            )
+            WORDS = list(EXTENDED_WORD_TO_ACTION.keys())
+            WORD_TO_ACTION_AW = EXTENDED_WORD_TO_ACTION
+        else:
+            WORDS = ["north", "east", "south", "west"]
+            WORD_TO_ACTION_AW = {"north": "N", "east": "E",
+                                 "south": "S", "west": "W"}
         ACTION_TO_WORD = {"N": "north", "E": "east", "S": "south", "W": "west"}
-        WORDS = ["north", "east", "south", "west"]
         confusion_aw = {a: {w: 0 for w in WORDS} for a in ["N", "E", "S", "W"]}
         correct_aw = 0
         total_aw = 0
@@ -799,7 +841,10 @@ def main():
                     pred = WORDS[0]  # default if silent
                 confusion_aw[action][pred] += 1
                 total_aw += 1
-                if pred == ACTION_TO_WORD[action]:
+                # In synonym_mode, correct if pred's action == motor's action
+                # (either synonym OK). In default mode, exact word match.
+                pred_action = WORD_TO_ACTION_AW.get(pred, None)
+                if pred_action == action:
                     correct_aw += 1
         aw_acc = correct_aw / max(total_aw, 1)
         print(f"\n  A->W Accuracy: {correct_aw}/{total_aw} = {aw_acc:.1%}", flush=True)
