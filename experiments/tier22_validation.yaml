@@ -1,0 +1,45 @@
+# Tier 2.2 — embodied-language during nav, 6-seed validation at 32×32
+#
+# v3 config: 80pA drive every 5 steps, warmup 600.
+# Single-seed smoke at 16×16 showed:
+#   - nav preserved (1.02 vs 1.03 baseline)
+#   - W→A 26%, "west" perfectly aligned (25/25)
+#   - I→W 25%, all predicting "north" (broken)
+#
+# 6-seed at 32×32 gives proper Phase 1.1 validation. Pass criteria:
+#   - W→A ≥ 4/6 aligned to NESW (group level via permuted-label)
+#   - 32×32 nav within 1σ of baseline (2.57 ± 0.11)
+#   - I→W shows some signal (≥ 1 direction beating chance)
+
+name: tier22-validation
+runner: research.runners.g11_bg_runner
+output_dir: research/findings/raw/g11_bg
+parallelism: 2
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  moving-goal: true
+  goal-schedule: multi
+  deterministic: true
+  enable-msn-lateral-inhibition: true
+  enable-d1-d2-asymmetry: true
+  enable-striatal-pv-fsi: true
+  enable-cluster-a-closed-loop: true
+  enable-cluster-e-topography: true
+  enable-dlpfc-wm: true
+  enable-pfc-nmda: true
+  enable-visual-cortex: true
+  visual-cortex-action-warmup-steps: 600
+  enable-text-io: true
+  embodied-language: true
+  embodied-language-warmup-steps: 600
+  grid-size: 32
+  n-steps: 1800
+
+conditions:
+  - name: tier22
+    args: {}
+
+out_stats_template: "tier22_seed{seed}.json"
+out_arg_name: "out"
