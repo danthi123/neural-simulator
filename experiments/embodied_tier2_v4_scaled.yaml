@@ -1,0 +1,45 @@
+# Tier 2.1 v4 — scaled-up architecture for synonym binding
+#
+# Conditional fallback if v3 (cofire 0.3) doesn't pass permuted-label.
+# Hypothesis: STDP winner-take-all in v1/v2 was caused by limited
+# motor-pool capacity (500 neurons fighting for two synonym codes).
+# Scaling up the network gives STDP more parameters to develop
+# sub-populations naturally — one "north"-biased cluster, one
+# "up"-biased cluster, both within motor_N action.
+#
+# Uses 24GB VRAM headroom: ~6336 neurons → ~12,288 neurons (~2x).
+# Synapses ~3M → ~13M (~4x). Memory ~1.6GB → ~6GB (still fits).
+#
+# Same paradigm as v2 (no cofire). Tests pure capacity hypothesis.
+# If v4 also fails, capacity isn't the issue — needs explicit cofire
+# OR cluster structure (Nord-inspired, ~1 week impl).
+#
+# 6 seeds × 1 condition = 6 runs at parallel=2 ≈ 90-120 min total.
+# (parallel=2 because each proc uses ~6GB; 3 wouldn't fit at 24GB)
+
+name: embodied-tier2-v4-scaled
+runner: research.runners.bio_three_factor
+output_dir: research/findings/raw/g11_bg
+parallelism: 2
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  biological: true
+  n-events-per-direction: 400  # 200 events per synonym (matches v2)
+  stim-steps-per-event: 50
+  reset-steps: 50
+  apply-topographic-bias: true
+  enable-motor-fs: true
+  embodied-hebbian: true
+  synonym-mode: true
+  # Scale-up: 2x neurons across all language + motor regions
+  n-lang-input: 4096       # was 2048
+  n-motor-per-action: 1000 # was 500
+  n-motor-fs-per-action: 120  # was 60 (12% of motor)
+
+conditions:
+  - name: scaled
+    args: {}
+
+out_stats_template: "text_eval_synonym_v4_{name}_seed{seed}.json"
