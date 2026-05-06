@@ -173,6 +173,15 @@ def run_three_factor(
                                   # should bind to motor_N when trained
                                   # together. Doubles vocab without
                                   # adding new actions.
+    synonym_cofire_fraction: float = 0.0,  # Tier 2.1 fallback: fraction
+                                            # of synonym_mode trials where
+                                            # BOTH synonyms drive together
+                                            # (creates shared input
+                                            # representation via Hebbian
+                                            # co-firing between codes).
+                                            # Range [0, 1]. 0 = no co-fire
+                                            # (default v1/v2). 0.2 = 20%
+                                            # of trials present both.
     verbose: bool = True,
 ):
     """Three-factor learning at language_input -> motor_X synapses.
@@ -427,14 +436,28 @@ def run_three_factor(
         # direction. With synonym_groups[target] = [primary, alt],
         # ~50% of trials use primary and ~50% alt. Both bind to same
         # motor via embodied Hebbian co-firing.
+        # If synonym_cofire_fraction > 0, that fraction of trials
+        # presents BOTH synonyms simultaneously (creates shared input
+        # representation via input-input Hebbian co-firing).
         from research.runners.text_eval import SYNONYM_GROUPS
         DIRECTIONS = ["N", "E", "S", "W"]  # actions, not words
         buffer = []
         for action in DIRECTIONS:
             synonyms = SYNONYM_GROUPS[action]
-            for _ in range(n_events_per_direction):
-                token = synonyms[rng.integers(0, len(synonyms))]
-                buffer.append({"token": token, "action": action})
+            for trial_idx in range(n_events_per_direction):
+                # Decide if this trial is a co-fire trial
+                if (synonym_cofire_fraction > 0.0 and
+                        rng.random() < synonym_cofire_fraction):
+                    # Co-fire: both synonyms drive together. Token list.
+                    buffer.append({
+                        "token": synonyms,  # list, signals co-fire
+                        "action": action,
+                        "cofire": True,
+                    })
+                else:
+                    token = synonyms[rng.integers(0, len(synonyms))]
+                    buffer.append({"token": token, "action": action,
+                                    "cofire": False})
         rng.shuffle(buffer)
     else:
         DIRECTIONS = ["north","east","south","west"]
@@ -470,8 +493,15 @@ def run_three_factor(
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
 
-        # Drive language_input
-        drive = _drive_for_token(token)
+        # Drive language_input. If cofire trial (synonym_mode + cofire),
+        # OR the two synonym drive vectors together — both word codes
+        # active simultaneously, creating shared representation via
+        # input-input Hebbian co-firing.
+        if event.get("cofire", False) and isinstance(token, list):
+            drives = [_drive_for_token(t) for t in token]
+            drive = np.maximum.reduce(drives)  # max combine — both active
+        else:
+            drive = _drive_for_token(token)
         bridge.cp_external_input_current[
             cp.asarray(lang_input_idx, dtype=cp.int64)
         ] = cp.asarray(drive, dtype=cp.float32)
@@ -480,8 +510,11 @@ def run_three_factor(
         # AND elevate motor target (action teacher) so all 3 sites co-fire.
         # Bridge's STDP fires automatically on plastic synapses in co-active
         # pre+post pairs. No custom rule needed.
+        # In co-fire trials, language_output also gets BOTH synonym
+        # patterns (max-combined) so output STDP also binds both codes.
         if embodied_hebbian:
-            # language_output teacher: same word pattern (auto-association)
+            # language_output teacher: same drive as language_input (which
+            # may be cofire-combined). Identical pattern at both sites.
             bridge.cp_external_input_current[
                 cp.asarray(lang_output_idx, dtype=cp.int64)
             ] = cp.asarray(drive, dtype=cp.float32)
@@ -701,6 +734,13 @@ def main():
                     "a random synonym; both should bind to the same motor "
                     "via embodied Hebbian co-firing. Doubles vocab without "
                     "adding new actions.")
+    ap.add_argument("--synonym-cofire-fraction", type=float, default=0.0,
+                    help="Tier 2.1 fallback: fraction of synonym_mode "
+                    "trials where BOTH synonyms drive simultaneously. "
+                    "Range [0, 1]. 0 = no co-fire (default). 0.2 = 20% "
+                    "of trials present 'north' AND 'up' together. Forces "
+                    "shared input representation via Hebbian co-firing "
+                    "between word codes.")
     ap.add_argument("--n-eval-per-word", type=int, default=25)
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
@@ -739,6 +779,7 @@ def main():
         embodied_hebbian=args.embodied_hebbian,
         embodied_motor_teacher_pA=args.embodied_motor_teacher_pA,
         synonym_mode=args.synonym_mode,
+        synonym_cofire_fraction=args.synonym_cofire_fraction,
         verbose=True,
     )
 
