@@ -1,0 +1,68 @@
+{
+  "seed": 42,
+  "stats": {
+    "n_awake_events": 400,
+    "n_sleep_phases": 25,
+    "n_total_swr_events": 2500,
+    "wall_clock_seconds": 1529.7781417369843
+  },
+  "consolidation_proof": {
+    "name": "consolidation_proof",
+    "pre_silence_acc": 0.32,
+    "hippo_off_acc": 0.3,
+    "ratio": 0.9375,
+    "pass": true,
+    "pre_confusion": {
+      "north": {
+        "N": 7,
+        "E": 9,
+        "S": 5,
+        "W": 4
+      },
+      "east": {
+        "N": 8,
+        "E": 8,
+        "S": 5,
+        "W": 4
+      },
+      "south": {
+        "N": 5,
+        "E": 5,
+        "S": 8,
+        "W": 7
+      },
+      "west": {
+        "N": 7,
+        "E": 2,
+        "S": 7,
+        "W": 9
+      }
+    },
+    "hippo_off_confusion": {
+      "north": {
+        "N": 8,
+        "E": 5,
+        "S": 6,
+        "W": 6
+      },
+      "east": {
+        "N": 8,
+        "E": 6,
+        "S": 5,
+        "W": 6
+      },
+      "south": {
+        "N": 8,
+        "E": 3,
+        "S": 9,
+        "W": 5
+      },
+      "west": {
+        "N": 2,
+        "E": 11,
+        "S": 5,
+        "W": 7
+      }
+    }
+  }
+}
