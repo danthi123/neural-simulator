@@ -184,6 +184,18 @@ def build_biological_brain_regions(
     motor_to_language_output_density: float = 0.30,
     motor_to_language_output_weight: float = 0.5,
     motor_to_language_output_jitter: float = 0.3,
+    # Tier 2.3 (opt-in, design at
+    # docs/plans/2026-05-06-Tier2.3-two-word-phrases-design.md):
+    # add a PFC verb pool that holds verb context (~500ms NMDA
+    # bistability) for compositional 2-word phrases like "go north".
+    # Default OFF for full backward compatibility.
+    enable_dlpfc_verb: bool = False,
+    n_dlpfc_verb: int = 200,
+    dlpfc_verb_internal_density: float = 0.15,
+    dlpfc_verb_exc_weight_mean: float = 3.0,
+    dlpfc_verb_inh_weight_mean: float = 4.0,
+    lang_to_dlpfc_verb_density: float = 0.30,
+    lang_to_dlpfc_verb_weight: float = 2.0,
 ):
     """Biological-scale architecture with cortical canon ENABLED.
 
@@ -281,7 +293,41 @@ def build_biological_brain_regions(
                 plasticity_gate="motor_to_language_output",
             ))
 
-    # Motor lateral inhibition via PV-FSI (Vogels 2011 / Hofer 2011) —
+    # Tier 2.3 PFC verb pool. Sub-region of dlPFC for verb-context
+    # representation. NMDA-bistable for ~500ms persistent activity
+    # (Wang 2002; Goldman-Rakic 1995 working memory). Holds verb
+    # ("go") while next word ("north") arrives, allowing
+    # compositional binding via co-firing.
+    #
+    # Architecture per design (docs/plans/2026-05-06-Tier2.3-two-
+    # word-phrases-design.md): 200 neurons, exc_fraction 0.8,
+    # internal_density 0.15 (high recurrence for working memory),
+    # plastic_internal=False (frozen recurrence; only the input
+    # pathway is plastic).
+    if enable_dlpfc_verb:
+        regions.append(BrainRegion(
+            name="dlpfc_verb",
+            n_neurons=n_dlpfc_verb,
+            exc_fraction=0.8,
+            internal_density=dlpfc_verb_internal_density,
+            exc_weight_mean=dlpfc_verb_exc_weight_mean,
+            inh_weight_mean=dlpfc_verb_inh_weight_mean,
+            weight_jitter=0.2, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        # language_input -> dlpfc_verb (plastic, gated). Verb words
+        # in language_input drive dlpfc_verb; STDP at this pathway
+        # binds specific verb codes to PFC pool activation.
+        pathways.append(RegionPathway(
+            from_region="language_input", to_region="dlpfc_verb",
+            density=lang_to_dlpfc_verb_density,
+            weight_mean=lang_to_dlpfc_verb_weight,
+            weight_jitter=0.5,
+            plastic=True,
+            plasticity_gate="language_input_to_dlpfc_verb",
+        ))
+
+    # Motor lateral inhibition via PV-FSI (Vogels 2011 / Hofer 2011) -
     # biological 12% of motor pool size.
     if enable_motor_fs:
         for action in ACTION_NAMES:
