@@ -24,13 +24,29 @@ Usage:
         --n-test-per-word 25 \\
         --out-stats research/findings/raw/g11_bg/consol_syn_seed42.json
 
-Wall-clock: ~30-45 min single seed RTX 3090. Use --smoke flag
-(reduced events) to validate the runner end-to-end in ~5 min before
-committing to a full run.
+Wall-clock (corrected 2026-05-07 EDT after empirical observation):
+- --smoke         ~21 min/seed (50 events/word x 4 words, 50 SWR
+                  events/cycle, 12 chunks total; eval 10 trials/word)
+- --medium        ~80 min/seed (200 events/word, 100 SWR, 50 chunks)
+- default (full)  ~6.5 HOURS/seed (400 events/word, 200 SWR, 100
+                  chunks; each chunk + sleep ~3.7 min at Tier 2.1
+                  v4 scale-up arch with NMDA enabled)
 
-Note: NOT EXECUTED in this autonomous arc — implementation only.
-First validation run is left for the user or the next autonomous
-window since the chat_synonym_demo seed 42 currently has the GPU.
+Original design plan estimate of 30-45 min for full was wrong by
+5-9x. The miscalculation: I scaled wall-clock with awake events
+linearly but didn't account for SWR events per chunk (50 -> 200 =
+4x more) AND chunk count (12 -> 100 = 8x more). Total work ~32x
+more than smoke. Multi-seed full (3 seeds) = ~19 hours; killed
+mid-seed-42 on first attempt.
+
+Recommendation:
+- --smoke   for runner validation (~21 min)
+- --medium  for quick multi-seed (~4 hrs / 3 seeds)
+- default   only for overnight or multi-day validation runs
+
+Smoke validated 2026-05-07: seed 42 retention 111% overall (hippo-OFF
+higher than pre-silence). See
+research/findings/2026-05-07-consolidation-synonym-smoke-seed42.md.
 """
 from __future__ import annotations
 
@@ -62,6 +78,7 @@ def run_consolidation_synonym_training(
     n_motor_fs_per_action: int = 120,
     swr_drive_pA: float = 100.0,
     smoke: bool = False,
+    medium: bool = False,
     verbose: bool = True,
 ):
     """Train Tier 2.1 synonym vocab with hippocampus consolidation.
@@ -90,9 +107,20 @@ def run_consolidation_synonym_training(
     from research.runners.consolidation_trainer import run_swr_replay_phase
 
     if smoke:
-        # Reduced for fast smoke validation (~5 min)
+        # Reduced for fast smoke validation (~21 min/seed empirically;
+        # initially documented "~5 min" but Tier 2.1 v4 arch with NMDA
+        # is heavier than the Tier 1 smoke equivalent)
         n_awake_events_per_word = min(n_awake_events_per_word, 50)
         n_sleep_swr_events = min(n_sleep_swr_events, 50)
+    elif medium:
+        # Medium mode (added 2026-05-07): a feasible multi-seed config
+        # between smoke (~21 min) and default full (~6.5 HOURS). 200
+        # events/word + 100 SWR events/cycle + 50 chunks = ~80 min/seed,
+        # so 3-seed validation completes in ~4 hrs. Useful when you want
+        # more training than smoke but can't justify a multi-day full
+        # run.
+        n_awake_events_per_word = min(n_awake_events_per_word, 200)
+        n_sleep_swr_events = min(n_sleep_swr_events, 100)
 
     rng = np.random.default_rng(seed)
 
@@ -259,6 +287,7 @@ def run_full(
     n_motor_fs_per_action: int = 120,
     n_test_per_word: int = 25,
     smoke: bool = False,
+    medium: bool = False,
     verbose: bool = True,
 ) -> Dict[str, Any]:
     """End-to-end: train + pre-silence eval + hippo-OFF eval.
@@ -278,6 +307,7 @@ def run_full(
         n_motor_per_action=n_motor_per_action,
         n_motor_fs_per_action=n_motor_fs_per_action,
         smoke=smoke,
+        medium=medium,
         verbose=verbose,
     )
 
@@ -441,9 +471,17 @@ def main():
     ap.add_argument("--n-motor-fs-per-action", type=int, default=120)
     ap.add_argument("--n-test-per-word", type=int, default=25)
     ap.add_argument("--smoke", action="store_true",
-                    help="Reduce events for fast (~5 min) validation")
+                    help="Smoke mode: 50 events/word, 50 SWR events, "
+                         "12 chunks (~21 min/seed)")
+    ap.add_argument("--medium", action="store_true",
+                    help="Medium mode: 200 events/word, 100 SWR events, "
+                         "50 chunks (~80 min/seed). Feasible for 3-seed "
+                         "validation in ~4 hrs vs default's ~19 hrs")
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
+
+    if args.smoke and args.medium:
+        ap.error("--smoke and --medium are mutually exclusive")
 
     result = run_full(
         seed=args.seed,
@@ -455,6 +493,7 @@ def main():
         n_motor_fs_per_action=args.n_motor_fs_per_action,
         n_test_per_word=args.n_test_per_word,
         smoke=args.smoke,
+        medium=args.medium,
         verbose=True,
     )
 

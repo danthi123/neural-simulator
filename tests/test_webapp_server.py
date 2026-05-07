@@ -136,6 +136,7 @@ def test_launch_skips_live_mode_flags_for_overridden_runners(client):
         "chat_synonym_demo",
         "consolidation_synonym",
         "consolidation_synonym_smoke",
+        "consolidation_synonym_medium",
         "phase_1_4_forgetting",
         "phase_1_3_consolidation",
         "phase_1_5_unified",

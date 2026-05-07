@@ -542,7 +542,11 @@ PRESETS: dict[str, list[str]] = {
     # vocab with hippocampus, alternates awake/sleep, then tests
     # whether cortex retains both primary AND synonym words after
     # hippocampus lesion. Validates CLS theory at synonym scale.
-    # ~30-45 min single seed at default config; --smoke takes ~5 min.
+    # WALL-CLOCK CORRECTED 2026-05-07:
+    #   --smoke:  ~21 min/seed (12 chunks, 50+50 events)
+    #   --medium: ~80 min/seed (50 chunks, 200+100 events)
+    #   default:  ~6.5 HOURS/seed (100 chunks, 400+200 events) -- only
+    #             use for overnight or multi-day runs
     # Design: docs/plans/2026-05-07-Phase1.3-Tier2.1-combined-design.md
     "consolidation_synonym": [
         "--n-awake-events-per-word", "400",
@@ -550,11 +554,17 @@ PRESETS: dict[str, list[str]] = {
         "--consolidation-interval", "4",
         "--n-test-per-word", "25",
     ],
-    # Same as above but with --smoke (reduced events) for fast end-to-end
-    # validation that the runner / webapp / hippo-OFF eval all wire up.
+    # Smoke mode: ~21 min/seed for runner validation.
     "consolidation_synonym_smoke": [
         "--smoke",
         "--n-test-per-word", "10",
+    ],
+    # Medium mode: ~80 min/seed -- feasible for 3-seed multi-seed in
+    # ~4 hrs vs default's ~19 hrs. Recommended for first-pass multi-seed
+    # validation.
+    "consolidation_synonym_medium": [
+        "--medium",
+        "--n-test-per-word", "20",
     ],
     # NOTE: phase_2_1_abc / phase_2_2_shakespeare presets exist only on
     # the path-f-hybrid branch (cortex_pretraining.py is not on main).
@@ -583,8 +593,9 @@ PRESET_RUNNERS: dict[str, str] = {
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
     "chat_synonym_demo":      "research.runners.chat_synonym_demo",
-    "consolidation_synonym":       "research.runners.consolidation_synonym_trainer",
-    "consolidation_synonym_smoke": "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym":        "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_smoke":  "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_medium": "research.runners.consolidation_synonym_trainer",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
@@ -605,8 +616,9 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
     "chat_synonym_demo":      "--out-stats",
-    "consolidation_synonym":       "--out-stats",
-    "consolidation_synonym_smoke": "--out-stats",
+    "consolidation_synonym":        "--out-stats",
+    "consolidation_synonym_smoke":  "--out-stats",
+    "consolidation_synonym_medium": "--out-stats",
     # phase_2_* presets removed -- see PRESETS dict comment above.
 }
 
