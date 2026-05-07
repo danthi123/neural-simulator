@@ -1162,3 +1162,68 @@ pushed to GitHub origin/path-f-hybrid; main untouched.
 
 When Phase 1.5 6-seed completes, will switch to path-f-hybrid and
 implement BPTT + ABC toy task per Phase 2.1 design.
+
+## 2026-05-07 05:18 EDT -- Phase 2.1 ABC TASK PASSES
+
+2-layer SNN (3 -> 32 -> 3) on ABCABC... cycle. 100 epochs,
+lr=0.005. Loss 3.51 -> 0.0013 (100% reduction). BPTT + ATan
+surrogate validated end-to-end.
+
+## 2026-05-07 05:46-06:32 EDT -- Phase 2.2 Tiny Shakespeare GPU
+
+Smoke (50 epochs): 4-layer SNN 66->128->128->66, loss 14.1 -> 2.24
+(84% reduction, 41.5s).
+Long (200 epochs): 66->256->256->66, loss 12.18 -> 1.016 (92%, 11min).
+Checkpoint saved at research/findings/raw/path_f/shakespeare_pretrained.npz.
+
+## 2026-05-07 06:42 EDT -- Phase 2.3a NEGATIVE: pretraining doesn't transfer
+
+Phase 2.3a (Option A adapter) result:
+- Pretrained: **22% W->A** (BELOW chance 25%)
+- Random:    **28% W->A** (slightly above chance)
+- Phase 1.4 BRANCH A baseline: 33% W->A
+
+**Pretraining HURTS by 6pp vs random at this toy scale.**
+
+Diagnosis: next-char pretraining captures phonetic patterns. The
+direction words north/east/south/west are similarly-structured
+English 4-5 char words -> SNN features cosine 0.65-0.80, too
+similar for motor pool differentiation. Cortex pretraining needs
+WORD-LEVEL semantics for word-action transfer, not char-level.
+
+Real-world reference: Project Nord (Path F inspiration) used
+1.088B params + FineWeb-Edu (~9.67M samples) + 27K steps + ~$400.
+Our Phase 2.2: ~134K params + Tiny Shakespeare (1.1MB) + 200 epochs.
+We're ~4 orders smaller in params; toy scale doesn't transfer.
+
+### Strategic implication
+
+- Phase 1.4 BRANCH A (biology-grounded continual learning) **STANDS**
+- Phase 2.3a Option A is NEGATIVE at toy scale
+- Phase 2.3b/c options unlikely to help at this scale (same root cause)
+- Path F's full thesis requires ~1000x larger pretraining
+
+### Decision
+
+**Pause Phase 2 work.** Phase 2 INFRASTRUCTURE is validated end-to-end
+(BPTT correct, 4-layer SNN learns Tiny Shakespeare, save/load works).
+The PRETRAINED-CORTEX-HELPS-CONTINUAL thesis at TOY SCALE is FALSIFIED.
+At Project Nord scale, this might still hold.
+
+For full Path F demo (Phase 2.4 conversational), would need:
+- Larger pretraining (10x+ scale, word-level objective), OR
+- Accept Phase 1.4 BRANCH A as the primary continual-learning result
+  + build conversational demo on Phase 1.4 architecture using larger
+  Tier 1/2.1 vocab (already tested up to 12 words at scale-up arch)
+
+### Solid validated foundations preserved
+
+- Phase 1.4 BRANCH A: 5/6 PASS, mean 103% retention -- continual learning works
+- Phase 2.1 ABC task: 100% loss reduction -- BPTT correct
+- Phase 2.2 Tiny Shakespeare: 92% loss reduction -- 4-layer SNN learns
+- 27 unit tests on path-f-hybrid; 35+ on main
+- Save/load + backend abstraction infrastructure ready for scale-up
+
+The autonomous arc reaches a natural pause: both branches have
+validated foundational milestones. Phase 2.3 negative is a real
+finding that informs future scale-up decisions.
