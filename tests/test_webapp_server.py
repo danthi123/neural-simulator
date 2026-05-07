@@ -121,6 +121,62 @@ def test_launch_status_unknown_id(client):
     assert res.status_code == 404
 
 
+def test_launch_skips_live_mode_flags_for_overridden_runners(client):
+    """Regression test 2026-05-07: launches with non-g11_bg_runner runners
+    (chat_demo, chat_continual_demo, phase_1_3/4/5, tier_2_3, text_io_*)
+    must NOT inject --interactive-control-file or --progress-print-interval.
+    Those runners reject these flags as 'unrecognized arguments' and the
+    subprocess fails before producing output.
+
+    See: webapp/server.py supports_live_mode = preset not in PRESET_RUNNERS.
+    """
+    presets_without_live_mode = [
+        "chat_demo",
+        "chat_continual_demo",
+        "phase_1_4_forgetting",
+        "phase_1_3_consolidation",
+        "phase_1_5_unified",
+        "tier_2_3_phrases",
+        "text_io_v2_smoke",
+    ]
+    for preset in presets_without_live_mode:
+        res = client.post(
+            "/api/runs/launch",
+            json={"preset": preset, "seed": 999, "extra_args": []},
+        )
+        assert res.status_code == 200, f"{preset} launch failed: {res.text}"
+        cmd = res.json()["cmd"]
+        assert "--interactive-control-file" not in cmd, (
+            f"{preset} got --interactive-control-file (runner doesn't accept it)"
+        )
+        assert "--progress-print-interval" not in cmd, (
+            f"{preset} got --progress-print-interval (runner doesn't accept it)"
+        )
+        # Cleanup: kill the spawned subprocess so the test is hermetic.
+        run_id = res.json()["run_id"]
+        client.post(f"/api/runs/launch/{run_id}/kill")
+
+
+def test_launch_keeps_live_mode_flags_for_g11_runners(client):
+    """Regression test 2026-05-07: g11_bg_runner presets MUST still receive
+    live-mode flags. Smoke + flagship + interactive_* are the canonical
+    g11 presets — verifies the gate isn't over-eager."""
+    res = client.post(
+        "/api/runs/launch",
+        json={"preset": "smoke", "seed": 999, "extra_args": []},
+    )
+    assert res.status_code == 200, res.text
+    cmd = res.json()["cmd"]
+    assert "--interactive-control-file" in cmd, (
+        "smoke (g11_bg_runner preset) lost live-mode flag injection"
+    )
+    assert "--progress-print-interval" in cmd, (
+        "smoke (g11_bg_runner preset) lost progress-print-interval injection"
+    )
+    run_id = res.json()["run_id"]
+    client.post(f"/api/runs/launch/{run_id}/kill")
+
+
 def test_active_launches_listing(client):
     """Phase 2.5: GET /api/runs/launch lists in-flight runs (empty by default)."""
     res = client.get("/api/runs/launch")
