@@ -510,6 +510,108 @@ def build_biological_brain_regions(
     return regions, pathways
 
 
+def set_awake_gates(bridge, enable_lang_to_motor: bool = True):
+    """Phase 1.3 -- switch bridge to AWAKE mode plasticity gates.
+
+    Awake mode plasticity (memory encoding):
+    - language_input -> motor: ON (direct route plastic)
+    - motor -> language_output: ON (Tier 1 reciprocal)
+    - language_input -> dlpfc_verb: ON (Tier 2.3 if present)
+    - lang_to_ec: ON (cortex -> hippo encoding)
+    - ec_to_dg, dg_to_ca3, ec_to_ca1, ca3_to_ca1: ON (forward path)
+    - ca3_swr_burst: OFF (no recurrent learning awake)
+    - ca1_to_motor: OFF (no consolidation awake)
+    - ca1_to_lang_out: OFF (no consolidation awake)
+
+    Args:
+        bridge: SimulationBridge with brain-region framework on.
+        enable_lang_to_motor: if False, freezes the direct
+            language_input -> motor pathway too. Use this when you
+            want to FORCE all motor learning to come via the
+            hippocampal route (rare; mostly for ablation studies).
+    """
+    awake_gates = {
+        "language_input_to_motor": 1.0 if enable_lang_to_motor else 0.0,
+        "motor_to_language_output": 1.0,
+        "language_input_to_dlpfc_verb": 1.0,  # Tier 2.3
+        "lang_to_ec": 1.0,
+        "ec_to_dg": 1.0,
+        "dg_to_ca3": 1.0,
+        "ec_to_ca1": 1.0,
+        "ca3_to_ca1": 1.0,
+        "ca3_swr_burst": 0.0,    # OFF awake
+        "ca1_to_motor": 0.0,     # OFF awake
+        "ca1_to_lang_out": 0.0,  # OFF awake
+    }
+    for gate, value in awake_gates.items():
+        try:
+            bridge.set_plasticity_gate(gate, value)
+        except Exception:
+            pass  # gate may not exist if pathway not built
+
+
+def set_sleep_gates(bridge):
+    """Phase 1.3 -- switch bridge to SLEEP mode plasticity gates.
+
+    Sleep mode plasticity (consolidation, transfer to cortex):
+    - language_input -> motor: OFF (don't disturb cortex via direct)
+    - motor -> language_output: OFF
+    - language_input -> dlpfc_verb: OFF
+    - lang_to_ec, ec_to_dg, ec_to_ca1, ca3_to_ca1: OFF (encoding off)
+    - ca3_swr_burst: ON (recurrent autoassociator sharpens)
+    - ca1_to_motor: ON (consolidation pathway plastic)
+    - ca1_to_lang_out: ON (consolidation for bidirectional)
+
+    During sleep:
+    - CA3 fires SWR-style replay bursts (~150Hz, 100ms windows)
+    - Replayed patterns drive CA1
+    - CA1 -> motor / lang_out STDP transfers patterns to cortex
+    - Cortex internal recurrence amplifies transferred patterns
+    - Direct lang -> motor frozen so cortex isn't simultaneously
+      retrained by the awake-time route
+    """
+    sleep_gates = {
+        "language_input_to_motor": 0.0,
+        "motor_to_language_output": 0.0,
+        "language_input_to_dlpfc_verb": 0.0,
+        "lang_to_ec": 0.0,
+        "ec_to_dg": 0.0,
+        "dg_to_ca3": 0.0,
+        "ec_to_ca1": 0.0,
+        "ca3_to_ca1": 1.0,        # rebuilt forward path stays open
+        "ca3_swr_burst": 1.0,     # ON during sleep
+        "ca1_to_motor": 1.0,      # ON during sleep
+        "ca1_to_lang_out": 1.0,   # ON during sleep
+    }
+    for gate, value in sleep_gates.items():
+        try:
+            bridge.set_plasticity_gate(gate, value)
+        except Exception:
+            pass
+
+
+def freeze_all_gates(bridge):
+    """Set all known plasticity gates to 0. Used before evaluation
+    so weights don't drift during the eval window."""
+    for gate in (
+        "language_input_to_motor",
+        "motor_to_language_output",
+        "language_input_to_dlpfc_verb",
+        "lang_to_ec",
+        "ec_to_dg",
+        "dg_to_ca3",
+        "ec_to_ca1",
+        "ca3_to_ca1",
+        "ca3_swr_burst",
+        "ca1_to_motor",
+        "ca1_to_lang_out",
+    ):
+        try:
+            bridge.set_plasticity_gate(gate, 0.0)
+        except Exception:
+            pass
+
+
 def build_tier_2_3_action_gate(
     sensitivity: float = 0.01,
     decay_tau_ms: float = 300.0,

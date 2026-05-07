@@ -179,5 +179,109 @@ def test_custom_hippo_sizes():
         assert r.n_neurons == expected
 
 
+def test_gate_helpers_importable():
+    """The 3 gate-management helpers should be importable."""
+    from research.runners.text_minimal_isolation import (
+        set_awake_gates, set_sleep_gates, freeze_all_gates,
+    )
+    assert callable(set_awake_gates)
+    assert callable(set_sleep_gates)
+    assert callable(freeze_all_gates)
+
+
+def test_gate_helpers_handle_missing_gates_gracefully():
+    """When a gate doesn't exist (e.g., hippocampus disabled),
+    helpers should silently skip rather than raise."""
+    from research.runners.text_minimal_isolation import (
+        set_awake_gates, set_sleep_gates, freeze_all_gates,
+    )
+
+    class MockBridge:
+        def __init__(self):
+            self.gates = {}
+
+        def set_plasticity_gate(self, name, value):
+            # Simulate "gate doesn't exist" by raising for unknown gates
+            valid = {"language_input_to_motor",
+                     "motor_to_language_output"}
+            if name not in valid:
+                raise KeyError(name)
+            self.gates[name] = value
+
+    b = MockBridge()
+    # Should not raise even though most gates raise KeyError
+    set_awake_gates(b)
+    set_sleep_gates(b)
+    freeze_all_gates(b)
+    # The two valid gates should have been set
+    assert "language_input_to_motor" in b.gates
+    assert "motor_to_language_output" in b.gates
+
+
+def test_set_awake_gates_full_state():
+    """When all gates exist, set_awake_gates produces the expected
+    awake-state values."""
+    from research.runners.text_minimal_isolation import set_awake_gates
+
+    class TrackingBridge:
+        def __init__(self):
+            self.gates = {}
+
+        def set_plasticity_gate(self, name, value):
+            self.gates[name] = value
+
+    b = TrackingBridge()
+    set_awake_gates(b)
+    # Awake mode: encoding ON, consolidation OFF
+    assert b.gates["language_input_to_motor"] == 1.0
+    assert b.gates["motor_to_language_output"] == 1.0
+    assert b.gates["lang_to_ec"] == 1.0
+    assert b.gates["ec_to_dg"] == 1.0
+    assert b.gates["ca3_swr_burst"] == 0.0  # OFF awake
+    assert b.gates["ca1_to_motor"] == 0.0   # OFF awake
+    assert b.gates["ca1_to_lang_out"] == 0.0  # OFF awake
+
+
+def test_set_sleep_gates_full_state():
+    """When all gates exist, set_sleep_gates produces the expected
+    sleep-state values."""
+    from research.runners.text_minimal_isolation import set_sleep_gates
+
+    class TrackingBridge:
+        def __init__(self):
+            self.gates = {}
+
+        def set_plasticity_gate(self, name, value):
+            self.gates[name] = value
+
+    b = TrackingBridge()
+    set_sleep_gates(b)
+    # Sleep mode: encoding OFF, consolidation ON
+    assert b.gates["language_input_to_motor"] == 0.0
+    assert b.gates["motor_to_language_output"] == 0.0
+    assert b.gates["lang_to_ec"] == 0.0
+    assert b.gates["ec_to_dg"] == 0.0
+    assert b.gates["ca3_swr_burst"] == 1.0  # ON during sleep
+    assert b.gates["ca1_to_motor"] == 1.0   # ON during sleep
+    assert b.gates["ca1_to_lang_out"] == 1.0  # ON during sleep
+
+
+def test_freeze_all_sets_zero():
+    """freeze_all_gates sets every known gate to 0."""
+    from research.runners.text_minimal_isolation import freeze_all_gates
+
+    class TrackingBridge:
+        def __init__(self):
+            self.gates = {}
+
+        def set_plasticity_gate(self, name, value):
+            self.gates[name] = value
+
+    b = TrackingBridge()
+    freeze_all_gates(b)
+    for v in b.gates.values():
+        assert v == 0.0
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
