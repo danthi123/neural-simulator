@@ -529,23 +529,13 @@ PRESETS: dict[str, list[str]] = {
     "chat_continual_demo": [
         "--train-events", "200", "--n-test-per-word", "10",
     ],
-    # Phase 2.1 ABC task (path-f-hybrid). Surrogate-grad BPTT
-    # validation. ~2 sec CPU. 100% loss reduction.
-    "phase_2_1_abc": [
-        "--task", "abc", "--T", "30", "--hidden", "32",
-        "--epochs", "100", "--batch-size", "16", "--lr", "0.005",
-        "--n-train-samples", "200", "--print-every", "10",
-    ],
-    # Phase 2.2 Tiny Shakespeare GPU pretraining (path-f-hybrid).
-    # 4-layer SNN, 92% loss reduction at 200 epochs (~11 min RTX 3090).
-    # Saves checkpoint for Phase 2.3 use.
-    "phase_2_2_shakespeare": [
-        "--task", "shakespeare", "--T", "32",
-        "--hidden-layers", "256,256", "--epochs", "200",
-        "--batch-size", "32", "--lr", "0.003",
-        "--n-train-samples", "2000", "--print-every", "10",
-        "--backend", "auto",
-    ],
+    # NOTE: phase_2_1_abc / phase_2_2_shakespeare presets exist only on
+    # the path-f-hybrid branch (cortex_pretraining.py is not on main).
+    # Run from that branch:
+    #     git checkout path-f-hybrid
+    #     python -m research.runners.cortex_pretraining --task abc ...
+    # Not exposed via this launcher to avoid silent module-not-found
+    # failures on main.
 }
 
 
@@ -565,8 +555,7 @@ PRESET_RUNNERS: dict[str, str] = {
     "tier_2_3_phrases":       "research.runners.phrase_trainer",
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
-    "phase_2_1_abc":          "research.runners.cortex_pretraining",
-    "phase_2_2_shakespeare":  "research.runners.cortex_pretraining",
+    # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
 
@@ -585,8 +574,7 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "tier_2_3_phrases":       "--out-stats",
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
-    "phase_2_1_abc":          "--out-stats",
-    "phase_2_2_shakespeare":  "--out-stats",
+    # phase_2_* presets removed -- see PRESETS dict comment above.
 }
 
 
