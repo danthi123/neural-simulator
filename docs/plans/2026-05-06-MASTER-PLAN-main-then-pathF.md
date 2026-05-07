@@ -1075,3 +1075,62 @@ That's "single-word vocabulary with synonyms + continual learning"
 
 **Sweep completion ETA ~05:21.** Will let events_double finish for
 the "does more training help" data point, then proceed.
+
+## 2026-05-07 04:27 EDT -- Sweep batch 2 done: events_double NEGATIVE
+
+events_double seed 42: phrase 34% (vs baseline 36%). Slightly
+WORSE. Per-direction:
+- baseline 42: N28 E16 S40 W60 (36%)
+- events_double 42: N36 E20 S40 W40 (34%)
+
+More STDP training did NOT improve phrase composition. Combined
+with the gate_off finding (action_gate fully inert across all 3
+seeds), this confirms:
+
+**Tier 2.3 architecture is fundamentally at its limit at ~40%
+phrase mean. No parameter tuning fixes this.**
+
+The bottleneck is architectural:
+- action_gate mechanism is inert at design parameters
+- doubling training events doesn't help
+- PFC NMDA bistability + direct lang->motor pathway produces
+  partial composition (40% mean) but doesn't generalize
+
+Per design Sec 4 alternatives:
+- Option B: inhibitory PFC -> motor pathway
+- Option C: PFC -> striatum cascade modulation
+- Tier 3: dendritic learning (1.5-2 month project)
+
+These all require substantial new code. Per master plan and the
+"3-failed-attempts" iron law, **stopping here on Tier 2.3** and
+moving to Phase 1.5 + Phase 2.1 is the right call.
+
+Batch 3 (events_double seeds 43, 44) ETA 05:00. Will wait for
+completeness then proceed.
+
+## Strategic state at this point
+
+**What works (validated):**
+- Phase 1.4: BRANCH A confirmed (5/6 PASS, mean 103% retention)
+- Tier 1: 5/6 + 6/6 (4-word binding)
+- Tier 2.1: 5/6 + 6/6 (8-word + 12-word synonym binding)
+
+**Partial:**
+- Tier 2.2: 0/6 binding (parked)
+- Tier 2.3: ~40% phrase composition (architecture-limited)
+- Phase 1.3: implemented but GPU-untested
+
+**Pre-staged for next phases:**
+- Phase 1.5 unified eval suite (4 benchmarks, 6-seed YAML ready)
+- Phase 2.1 surrogate-grad design + branch creation procedure
+  documented
+- Phase 1.3 6-seed YAML if we revisit consolidation
+
+**Path forward:**
+1. Phase 1.5 unified eval (single-seed smoke first, then 6-seed)
+2. Phase 2.1 path-f-hybrid branch creation + surrogate-grad
+   scaffolding
+3. Phase 2.2 cortex pretraining on Tiny Shakespeare
+4. Phase 2.3 wire continual-learning loop (uses Phase 1.4
+   architecture)
+5. Phase 2.4 first conversational demo
