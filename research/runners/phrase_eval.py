@@ -96,7 +96,9 @@ def evaluate_phrase(
                 bridge._run_one_simulation_step()
                 bridge.runtime_state.current_time_step += 1
             # Stage 2: drive direction; PFC bistability holds verb context.
-            # Count motor pool spikes for the response.
+            # Count motor pool spikes for the response. Only count during
+            # the direction-drive window -- Stage 3 spikes are decay noise
+            # that would dilute the per-direction signal.
             dir_drive = _drive_for(direction)
             bridge.cp_external_input_current[:] = 0.0
             bridge.cp_external_input_current[lang_input_arr] = dir_drive
@@ -107,14 +109,13 @@ def evaluate_phrase(
                 fired = bridge.cp_firing_states
                 for a_i, a in enumerate(ACTIONS):
                     motor_spike_counts[a_i] += fired[motor_arr[a]].sum()
-            # Stage 3: observe with no input; PFC may still be active
+            # Stage 3: settle (no input, no spike counting). Allows PFC
+            # NMDA bistability to decay before next trial without
+            # contaminating motor spike counts.
             bridge.cp_external_input_current[:] = 0.0
             for _ in range(final_observe_ms):
                 bridge._run_one_simulation_step()
                 bridge.runtime_state.current_time_step += 1
-                fired = bridge.cp_firing_states
-                for a_i, a in enumerate(ACTIONS):
-                    motor_spike_counts[a_i] += fired[motor_arr[a]].sum()
             counts = motor_spike_counts.get()
             predicted = ACTIONS[int(np.argmax(counts))]
             confusion[direction][predicted] += 1
