@@ -790,3 +790,57 @@ clear rationale.
 **Next:** wait for v3 Phase A eval result. If >= 33%, launch
 6-seed validation. If still 25%, deeper investigation needed
 (maybe topographic_bias_factor or similar).
+
+## 2026-05-06 22:30-22:42 EDT -- v3 PASS + Phase 1.3 implemented
+
+**v3 single-seed PASS:**
+- Phase A primary W->A: 33.0% (matches validated Tier 1 baseline)
+- Phase B retention W->A: 38.0% (UP from 33%, retention 115%)
+- Synonym new learning: 26.0%
+- Verdict: BRANCH A -- biology-grounded continual learning works
+
+**6-seed validation launched 22:33 EDT** (PID 33940 master, 6 seeds
+in 3 batches at parallel=2). ETA ~66 min completion (~23:39 EDT).
+
+**Phase 1.3 implementation landed during the 6-seed wait:**
+- Builder: extended `build_biological_brain_regions` with optional
+  `enable_hippocampus_consolidation=True` flag. Adds 5 regions
+  (ec/dg/dg_pv_basket/ca3/ca1) and 12 pathways including KEY
+  ADDITIONS: 4 ca1 -> motor pathways with `ca1_to_motor`
+  plasticity gate, plus optional ca1 -> language_output gated
+  `ca1_to_lang_out`.
+- Gate helpers: `set_awake_gates()`, `set_sleep_gates()`,
+  `freeze_all_gates()`. Awake = encoding ON, consolidation OFF.
+  Sleep = encoding OFF, consolidation ON. Freeze = all 0 for eval.
+- consolidation_trainer.py: full awake/sleep alternation runner.
+  `run_swr_replay_phase()` drives CA3 with SWR-style bursts
+  (~150Hz, 100ms windows, 15% sparse pattern). Default config:
+  4 awake chunks of 200 events/word + 4 sleep phases of 200
+  SWR events each.
+- consolidation_eval.py: `evaluate_with_hippo_off()` silences
+  ec/dg/ca3/ca1 with -200pA, runs W->A. `evaluate_consolidation_proof()`
+  computes hippo-off / pre-silence ratio. Pass: ratio >= 0.5.
+- run_full() end-to-end wrapper.
+- 6-seed validation YAML.
+- 15 unit tests (all CPU, no GPU).
+
+**Total Phase 1.3 cost:** ~10 commits, ~700 lines of code, ~12 min
+of writing time during the 1.4 6-seed wait.
+
+**Phase 1 status (post Phase 1.3):**
+- Phase 1.1 Tier 2.2: PARKED (binding 0/6 at v3)
+- Phase 1.2 Tier 2.3: IMPLEMENTED (smoke pending)
+- Phase 1.3: IMPLEMENTED (smoke pending)
+- Phase 1.4: v3 PASS single-seed; 6-seed in flight
+- Phase 1.5: 4/6 benchmarks live (multimodality + composition
+  pending Tier 2.2 / 2.3 smokes)
+
+**Next steps after 6-seed completes:**
+- If Branch A (>=4/6 retention >=80%):
+  - Launch Tier 2.3 smoke (--seed 42 from phrase_trainer.py)
+  - Defer Phase 1.3 smoke (still useful but not urgent)
+- If Branch B (50-80%):
+  - Launch Phase 1.3 smoke (test consolidation as mitigation)
+- If Branch C (<50%):
+  - Phase 1.3 smoke + mitigation design
+- If crash: diagnose, restart
