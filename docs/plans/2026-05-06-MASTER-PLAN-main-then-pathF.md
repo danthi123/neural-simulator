@@ -1011,3 +1011,67 @@ Decision tree at:
 If full 6-seed mean phrase ~40%, will launch parameter sweep
 (`experiments/tier_2_3_parameter_sweep.yaml`) to identify which
 config raises phrase accuracy.
+
+## 2026-05-07 03:50 EDT -- Tier 2.3 sweep: action_gate is INERT
+
+Critical diagnostic during gate_off sweep run:
+
+**gate_off seeds 42 + 43 phrase per-direction MATCH baseline EXACTLY.**
+
+- Baseline seed 42: N28 E16 S40 W60 (36% mean)
+- gate_off seed 42: N28 E16 S40 W60 (identical)
+- Baseline seed 43: N40 E44 S40 W52 (44% mean)
+- gate_off seed 43: N40 E44 S40 W52 (identical)
+
+Conclusion: **action_gate at drive_pA=50 + sensitivity=0.01 +
+threshold=0.05 is a NO-OP**. The from_region_firing rule emits
+~5e-7 per step at typical PFC firing rates -- too small to build
+up motor excitability boost. The 39.8% phrase mean comes from PFC
+NMDA bistability + direct lang->motor pathway alone.
+
+This is a SCIENCE finding, not a bug -- the rule mechanism is
+exactly what the design specified, but the parameters are too
+conservative for the dynamics at our scale.
+
+**Reassessment per systematic-debugging iron law (3 failed
+attempts):**
+
+Tries so far:
+1. Tier 2.3 v1 single-seed smoke: phrase 36% (PARTIAL)
+2. Tier 2.3 6-seed: mean 40% (PARTIAL)
+3. Tier 2.3 sweep gate_off: identical to baseline (NO EFFECT)
+
+3 attempts at same architecture. Iron law says STOP and reassess.
+
+**Architecture-level options (per design Sec 4):**
+- Option B: inhibitory PFC -> motor pathway (verb context RELEASES
+  inhibition, doesn't boost excitability)
+- Option C: PFC -> striatum cascade modulation (use existing BG
+  dynamics for gating)
+- Tier 3: dendritic learning (1.5-2 month project per existing design)
+
+**Master plan reminder:** "If Tier 2.3 fails, decision becomes:
+stop at Tier 2.2 ceiling OR move to Tier 3 dendritic learning.
+Tier 1+2.2 alone gives a real working interface."
+
+Tier 2.2 also failed (parked 0/6 binding), but we have:
+- Tier 1: 5/6 + 6/6 (4-word binding)
+- Tier 2.1: 5/6 + 6/6 (8-word + 12-word synonyms)
+- Phase 1.4: BRANCH A (continual learning preserved)
+
+That's "single-word vocabulary with synonyms + continual learning"
+-- substantial capability for Path F's conversational sim foundation.
+
+**STRATEGIC DECISION:**
+- ACCEPT Tier 2.3 partial as a real finding (~40% phrase, 0/6 at
+  50% threshold, action_gate mechanism inert at default config)
+- DEFER Tier 2.3 fixes (Options B/C/dendritic) until path-f-hybrid
+  cortex pretraining lands -- those bigger changes warrant a
+  fresh attempt
+- PROCEED to Phase 1.5 unified eval suite GPU run
+  (sequential_expansion + retention_over_time + interference +
+  long_tail at 6 seeds each) using validated Tier 1 architecture
+- Then begin Phase 2.1 path-f-hybrid branch creation
+
+**Sweep completion ETA ~05:21.** Will let events_double finish for
+the "does more training help" data point, then proceed.
