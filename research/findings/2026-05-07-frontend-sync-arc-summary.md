@@ -185,3 +185,12 @@ f19ae0e fix: webapp -- remove phase_2_* presets
 - **`uvicorn --reload` on Windows is unreliable.** WatchFiles often
   doesn't pick up edits; manual kill + restart is more reliable. Worth
   a project memo somewhere.
+
+- **`__pycache__` survives kill+restart on Windows.** Symptom: source
+  has the new preset, `grep` confirms, but `/api/info` returns the
+  old list. Fix: clear `webapp/__pycache__/` (and adjacent module
+  `__pycache__/` dirs) before restart. Hit this twice in this arc
+  (once with chat_synonym_demo presets, once with consolidation_synonym
+  presets). The autonomous-runs skill principle #9 now documents this
+  Windows-specific gotcha. Defensive default for any preset / endpoint
+  change: kill + clear pycache + restart fresh.
