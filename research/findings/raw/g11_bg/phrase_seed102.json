@@ -1,0 +1,88 @@
+{
+  "seed": 102,
+  "stats": {
+    "per_type_count": {
+      "phrase": 200,
+      "direction_only": 100,
+      "verb_only": 30
+    }
+  },
+  "phrase": {
+    "name": "phrase",
+    "accuracy": 0.43,
+    "n_correct": 43,
+    "n_total": 100,
+    "per_direction": {
+      "north": 0.32,
+      "east": 0.48,
+      "south": 0.36,
+      "west": 0.56
+    },
+    "confusion": {
+      "north": {
+        "N": 8,
+        "E": 7,
+        "S": 3,
+        "W": 7
+      },
+      "east": {
+        "N": 6,
+        "E": 12,
+        "S": 3,
+        "W": 4
+      },
+      "south": {
+        "N": 8,
+        "E": 1,
+        "S": 9,
+        "W": 7
+      },
+      "west": {
+        "N": 3,
+        "E": 6,
+        "S": 2,
+        "W": 14
+      }
+    },
+    "pass": false
+  },
+  "direction_only": {
+    "name": "direction_only",
+    "accuracy": 0.31,
+    "confusion": {
+      "north": {
+        "N": 6,
+        "E": 11,
+        "S": 4,
+        "W": 4
+      },
+      "east": {
+        "N": 4,
+        "E": 10,
+        "S": 2,
+        "W": 9
+      },
+      "south": {
+        "N": 11,
+        "E": 2,
+        "S": 5,
+        "W": 7
+      },
+      "west": {
+        "N": 3,
+        "E": 5,
+        "S": 7,
+        "W": 10
+      }
+    },
+    "pass": true
+  },
+  "verb_only": {
+    "name": "verb_only",
+    "mean_max_motor_rate_hz": 4.5988,
+    "pct_trials_below_threshold": 0.96,
+    "quiet_threshold_hz": 5.0,
+    "pass": true
+  },
+  "all_pass": false
+}

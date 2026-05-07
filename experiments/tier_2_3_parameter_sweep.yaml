@@ -3,31 +3,29 @@ runner: research.runners.phrase_trainer
 output_dir: research/findings/raw/g11_bg
 parallelism: 2
 
-# Tier 2.3 parameter sweep -- activates IF 6-seed shows phrase
-# accuracy stuck at 30-45% (architecture works but composition
-# inconsistent across directions).
+# Tier 2.3 parameter sweep (focused 2-condition version).
 #
-# Hypotheses (per Tier 2.3 design Sec 7):
+# 6-seed validation showed mean phrase 39.8% (+/- 4.6%), 0/6 at
+# 50% threshold. Tight variance suggests systematic issue, not
+# seed-variance. Per design Sec 7, two most-informative tests:
 #
-# H1: action_gate drive_pA mistuned. Default 50pA may be either
-#     too weak (motor teacher 300pA dominates) or too strong
-#     (action_gate distorts motor selection). Test 0 (disable),
-#     10 (weak), 100 (strong).
+# H1: action_gate is hurting (drive_pA=0 disables it). If phrase
+#     accuracy then matches direction-only (~42%), action_gate
+#     mechanism IS the issue and needs replacing (per design
+#     options B/C: inhibitory pathway or striatum modulation).
 #
-# H2: verb_drive_ms too short. Default 100ms may not establish
-#     PFC NMDA bistability. Try 200ms.
+# H2: more phrase events for STDP (n=400 doubled). If phrase
+#     reaches 50%+ with more training, STDP at
+#     language_input -> dlpfc_verb is under-trained, not
+#     mechanism issue.
 #
-# H3: STDP at lang -> dlpfc_verb under-trained. Default 200 phrase
-#     events. Try 400 (doubled) for more verb-binding.
+# Baseline already in main 6-seed; reuse those results for compare.
 #
-# 5 conditions x 3 seeds = 15 runs at parallel=2 ~ 7-8 batches
-# x 35min = ~4 hours. If this is too long, drop to 3-condition
-# minimum: H1_off, H1_strong, H3_double.
+# 2 conditions x 3 seeds = 6 runs at parallel=2 ~ 1h 15min.
 
-seeds: [42, 43, 44]  # 3 seeds per condition (compute budget)
+seeds: [42, 43, 44]
 
 base_args:
-  n-phrase-events: 200
   n-direction-only-events: 100
   n-verb-only-events: 30
   n-lang-input: 2048
@@ -38,29 +36,12 @@ base_args:
   n-verb-only-test: 25
 
 conditions:
-  # Baseline (matches main 6-seed validation; should give ~40%)
-  - name: baseline
-    args: {}
-  # H1a: action_gate disabled (drive_pA=0). Tests whether action_gate
-  # is HURTING phrase composition. If phrase >= direction-only acc,
-  # action_gate is the issue.
+  # H1: action_gate disabled (drive_pA=0)
   - name: gate_off
     args:
+      n-phrase-events: 200
       action-gate-drive-pA: 0.0
-  # H1b: action_gate weak (10pA). Tests whether smaller boost helps.
-  - name: gate_weak
-    args:
-      action-gate-drive-pA: 10.0
-  # H1c: action_gate strong (100pA). Tests whether stronger boost
-  # makes verb context dominant enough.
-  - name: gate_strong
-    args:
-      action-gate-drive-pA: 100.0
-  # H2: longer verb drive for PFC NMDA bistability
-  - name: verb_long
-    args:
-      verb-drive-ms: 200
-  # H3: more phrase events for STDP (doubled)
+  # H2: more STDP events (doubled)
   - name: events_double
     args:
       n-phrase-events: 400
