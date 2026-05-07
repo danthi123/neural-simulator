@@ -571,6 +571,24 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 >    (`research/runners/continual_eval_suite.py`); 35 unit tests
 >    across new code. Master plan at
 >    [`docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md`](docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md).
+> 9. **🎉 2026-05-07 PHASE 2.1 ABC TASK PASSES (path-f-hybrid branch).**
+>    Surrogate-gradient BPTT validated at toy scale: 2-layer SNN
+>    (3 -> 32 LIF -> 3 LIF) trained on ABC sequence task achieves
+>    100% loss reduction (3.51 -> 0.0013) in 100 epochs.
+>    Implementation on `path-f-hybrid` branch (NOT main):
+>    `sim/surrogate_grad.py` (ATan + fast_sigmoid CuPy),
+>    `sim/bptt_snn.py` (numpy reference forward + backward unroll
+>    with hard-reset surrogate gradient + recurrent chain rule),
+>    `research/runners/cortex_pretraining.py` (numpy BPTT trainer).
+>    11 unit tests pass. Confirmed BPTT framework correctness.
+>    Next (Phase 2.2): CuPy GPU port, 4-layer architecture, Tiny
+>    Shakespeare corpus, ~5-10K training steps. Phase 2.3 will
+>    wire the pretrained cortex back into the biology-grounded
+>    Phase 1.4 BRANCH A architecture for continual learning.
+>    Master plan at
+>    [`docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md`](docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md);
+>    Phase 2.1 design at
+>    [`docs/plans/2026-05-06-Phase-2.1-surrogate-grad-design.md`](docs/plans/2026-05-06-Phase-2.1-surrogate-grad-design.md).
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
