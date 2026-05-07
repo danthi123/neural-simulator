@@ -215,9 +215,18 @@ def benchmark_retention_over_time(args, rng):
 
     # Run silent steps (no input drive). Tests whether STDP/Hebbian
     # decay or background noise erodes learned weights over time.
-    print(f"  [TIME] {silence_steps} silent steps", flush=True)
+    # Freeze plasticity gates first to isolate "passive retention" --
+    # otherwise OU-noise-driven correlated spikes could trigger STDP
+    # drift, confounding the test of weight stability vs active drift.
+    print(f"  [TIME] {silence_steps} silent steps "
+          f"(plasticity frozen)", flush=True)
     t0 = time.time()
     import cupy as cp
+    for gate in ("language_input_to_motor", "motor_to_language_output"):
+        try:
+            bridge.set_plasticity_gate(gate, 0.0)
+        except Exception:
+            pass
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(silence_steps):
         bridge._run_one_simulation_step()
