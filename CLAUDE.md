@@ -605,6 +605,36 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 >    validates the full backprop-pretraining stack. Phase 2.3 next:
 >    wire pretrained cortex back into Phase 1.4 BRANCH A
 >    architecture for continual learning.
+> 11. **🎉 2026-05-07 PHASE 1.3 CONSOLIDATION CONFIRMED.** Hippocampus
+>    -> cortex memory transfer via SWR sleep replay validated at
+>    single-seed smoke. Architecture: 5 hippo regions (ec/dg/
+>    dg_pv_basket/ca3/ca1) + 12 pathways including ca1 -> motor_X
+>    consolidation pathways. Awake/sleep gate alternation:
+>    awake = encoding ON, consolidation OFF; sleep = encoding OFF,
+>    ca3_swr_burst + ca1_to_motor ON, direct lang->motor frozen.
+>    **Result: hippo-OFF retention 94%** (pre-silence W->A 32%,
+>    hippo-OFF W->A 30%, ratio 0.94 >> 0.50 threshold). Memory
+>    truly consolidated to cortex -- McClelland 1995 / Buzsaki
+>    2013 complementary learning systems theory empirically
+>    validated. 25min wall clock on RTX 3090. 6-seed validation
+>    in flight. See [`research/findings/2026-05-07-Phase-1.3-CONSOLIDATION-CONFIRMED.md`](research/findings/2026-05-07-Phase-1.3-CONSOLIDATION-CONFIRMED.md).
+>    Use `--enable-hippocampus-consolidation` flag in the
+>    biological_brain_regions builder + run via
+>    `research.runners.consolidation_trainer`.
+> 12. **2026-05-07 Phase 2.3a NEGATIVE finding (path-f-hybrid).**
+>    Pretrained cortex (Phase 2.2 next-char SNN, loss 1.016) used
+>    as adapter feature extractor for Bridge: 22% W->A vs 28% with
+>    random SNN init. Both sub-baseline (Phase 1.4 was 33%).
+>    Char-level next-char features don't transfer to word-action
+>    binding -- direction words too phonetically similar (cosine
+>    0.65-0.80). Project Nord (Path F inspiration) at 1.088B
+>    params + FineWeb-Edu solves this; our toy 134K-param scale
+>    is ~4 orders too small. Phase 2 INFRASTRUCTURE validated; Phase
+>    2 SCIENCE thesis at toy scale FALSIFIED. See
+>    [`research/findings/2026-05-07-Phase-2.3a-NEGATIVE-next-char-features.md`](research/findings/2026-05-07-Phase-2.3a-NEGATIVE-next-char-features.md).
+>    For full conversational sim: scale Phase 2 ~1000x OR build
+>    on Phase 1.4+1.3 biology-grounded foundation alone (10-30 word
+>    vocab achievable).
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
