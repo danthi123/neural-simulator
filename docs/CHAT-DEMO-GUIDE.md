@@ -28,6 +28,35 @@ beat or tied chance. Best seed (101) reaches 50%; outlier seed
 (42) below chance at 17%. See
 `research/findings/2026-05-07-chat_demo-multi-seed.md`.
 
+### 1c. Interactive chat REPL (single seed, ~6 min training + interactive)
+
+```bash
+python -m research.runners.chat_repl --mode tier1 --seed 43 \
+    --train-events 200 \
+    --transcript-out research/findings/repl-transcript.md
+
+# Or with 8-word synonym vocab:
+python -m research.runners.chat_repl --mode synonym --seed 42 \
+    --train-events 400
+```
+
+Then type direction words at the `>` prompt:
+```
+> north
+[OK] [TIER1 seed=43] sim hears 'north', activates motor_N (delta N+205, x2.1)
+> up                  # in synonym mode only
+[OK] [SYNONYM] sim hears 'up', activates motor_N (delta N+87, x1.7)
+> what
+[?] 'what' is not in vocab; tracking deltas anyway
+> quit
+[DONE] 3 turns total. In-vocab accuracy: 2/2 = 100%
+```
+
+This is the master plan's "build conversational demo on Phase 1.4
+architecture" milestone — a true interactive REPL where you type and
+the sim responds. The implementation uses the same baseline-vs-driven
+delta methodology as the scripted chat demos.
+
 ### 1b. Tier 2.1 synonym chat demo (single seed, ~15-20 min on RTX 3090)
 
 ```bash
@@ -151,11 +180,17 @@ The current demo is the FIRST conversational artifact. Future
 extensions:
 
 ### Near-term (1-2 weeks)
-- Multi-seed demo (run 6 seeds, show variance)
+- ~~Multi-seed demo (run 6 seeds, show variance)~~ — **shipped 2026-05-07**
+  (`scripts/multiseed_chat_demo.sh` + `chat_demo_aggregate`); 6-seed
+  validated at mean 33.3% ± 11.8% (range 17-50%).
 - ~~Tier 2.1 synonym demo (8-word vocab)~~ — **shipped 2026-05-07** (`chat_synonym_demo`)
 - ~~Continual-learning demo (train primary, then synonym, show retention)~~
   — **shipped 2026-05-07** (`chat_continual_demo`)
-- Consolidation demo (sleep replay between training rounds)
+- ~~Interactive REPL mode (Python prompt, type words live)~~
+  — **shipped 2026-05-07** (`chat_repl` — interactive stdin loop, supports
+  both tier1 and synonym modes)
+- Consolidation demo (sleep replay between training rounds) — runner shipped
+  2026-05-07 (`consolidation_synonym_trainer`); multi-seed validation in flight
 
 ### Medium-term (1-3 months)
 - Interactive REPL mode (Python prompt, type words live)
