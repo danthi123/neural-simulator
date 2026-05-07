@@ -100,7 +100,17 @@ def chat_turn(
 ):
     """Single chat turn: user types a word, sim predicts motor action.
 
-    Returns dict with motor spike counts, predicted action, confidence.
+    Uses BASELINE-VS-DRIVEN delta methodology (matches the validated
+    Phase 1.4 BRANCH A evaluate_word_to_action):
+    1. Phase A baseline: reset, run with NO input, count motor spikes
+       (this is the cascade-driven background activity per pool)
+    2. Phase B driven: reset, drive language_input, count motor spikes
+    3. Delta = driven - baseline. argmax(delta) = predicted action.
+
+    Without baseline subtraction, cascade asymmetry would dominate
+    the prediction (e.g., motor_S has higher baseline = always wins).
+
+    Returns dict with motor delta counts, predicted action, confidence.
     """
     import cupy as cp
     from sim.text_embeddings import vocab_to_drive_pattern
@@ -112,48 +122,66 @@ def chat_turn(
     motor_arr = {a: cp.asarray(motor_idx[a], dtype=cp.int64)
                  for a in ["N", "E", "S", "W"]}
     n_lang_in = len(lang_input_idx)
+    lang_input_arr = cp.asarray(lang_input_idx, dtype=cp.int64)
 
-    # Reset
+    # ─── Phase A: BASELINE (no input) ───
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(reset_steps):
         bridge._run_one_simulation_step()
         bridge.runtime_state.current_time_step += 1
-
-    # Drive language_input with the word's sparse pattern
-    drive = vocab_to_drive_pattern(
-        user_word, n_neurons=n_lang_in,
-        drive_max_pA=drive_pA, sparsity=sparsity,
-    )
-    bridge.cp_external_input_current[
-        cp.asarray(lang_input_idx, dtype=cp.int64)
-    ] = cp.asarray(drive, dtype=cp.float32)
-
-    # Count motor pool spikes
-    motor_counts = cp.zeros(4, dtype=cp.int32)
+    baseline_counts = cp.zeros(4, dtype=cp.int32)
     for _ in range(stim_steps):
         bridge._run_one_simulation_step()
         bridge.runtime_state.current_time_step += 1
         fired = bridge.cp_firing_states
         for a_i, a in enumerate(["N", "E", "S", "W"]):
-            motor_counts[a_i] += fired[motor_arr[a]].sum()
+            baseline_counts[a_i] += fired[motor_arr[a]].sum()
 
-    counts = motor_counts.get()
-    predicted_idx = int(np.argmax(counts))
+    # ─── Phase B: DRIVEN (word input) ───
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(reset_steps):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+    drive = vocab_to_drive_pattern(
+        user_word, n_neurons=n_lang_in,
+        drive_max_pA=drive_pA, sparsity=sparsity,
+    )
+    bridge.cp_external_input_current[lang_input_arr] = \
+        cp.asarray(drive, dtype=cp.float32)
+    drive_counts = cp.zeros(4, dtype=cp.int32)
+    for _ in range(stim_steps):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+        fired = bridge.cp_firing_states
+        for a_i, a in enumerate(["N", "E", "S", "W"]):
+            drive_counts[a_i] += fired[motor_arr[a]].sum()
+
+    # Delta = driven - baseline; argmax of delta = prediction
+    bl = baseline_counts.get()
+    dr = drive_counts.get()
+    delta = dr - bl
+    predicted_idx = int(np.argmax(delta))
     predicted_action = ["N", "E", "S", "W"][predicted_idx]
     predicted_direction = ACTION_TO_DIRECTION[predicted_action]
 
-    # Confidence: ratio of winner to runner-up
-    sorted_counts = np.sort(counts)[::-1]
-    confidence = (sorted_counts[0] / max(sorted_counts[1], 1)
-                  if len(sorted_counts) > 1 else float("inf"))
+    # Confidence: ratio of winner delta to runner-up delta
+    sorted_delta = np.sort(delta)[::-1]
+    if sorted_delta[1] > 0:
+        confidence = float(sorted_delta[0] / sorted_delta[1])
+    else:
+        confidence = float("inf") if sorted_delta[0] > 0 else 1.0
 
     return {
         "user_word": user_word,
-        "motor_counts": {a: int(counts[i])
+        "baseline_counts": {a: int(bl[i])
+                             for i, a in enumerate(["N", "E", "S", "W"])},
+        "drive_counts": {a: int(dr[i])
+                          for i, a in enumerate(["N", "E", "S", "W"])},
+        "delta_counts": {a: int(delta[i])
                           for i, a in enumerate(["N", "E", "S", "W"])},
         "predicted_action": predicted_action,
         "predicted_direction": predicted_direction,
-        "confidence_ratio": float(confidence),
+        "confidence_ratio": confidence,
         "correct": (predicted_direction == user_word),
     }
 
@@ -191,10 +219,11 @@ def run_demo(
 
             if verbose:
                 marker = "[OK]" if result["correct"] else "[X]"
+                d = result["delta_counts"]
                 print(f"  {marker} You: {word} -> Sim: "
                       f"{result['predicted_direction']} "
-                      f"(motor counts: {result['motor_counts']}, "
-                      f"confidence x{result['confidence_ratio']:.1f})")
+                      f"(delta N{d['N']:+d} E{d['E']:+d} S{d['S']:+d} "
+                      f"W{d['W']:+d}, confidence x{result['confidence_ratio']:.1f})")
             transcript.append({
                 "type": "turn",
                 "round": round_n,
@@ -248,12 +277,12 @@ def write_transcript_md(transcript: List[dict], path: str,
         elif entry["type"] == "turn":
             r = entry["result"]
             marker = "[OK]" if r["correct"] else "[X]"
-            mc = r["motor_counts"]
+            d = r["delta_counts"]
             md.append(
                 f"  {marker} You: {r['user_word']:<6} -> "
                 f"Sim: {r['predicted_direction']:<6} "
-                f"(N{mc['N']:3d} E{mc['E']:3d} S{mc['S']:3d} "
-                f"W{mc['W']:3d}, confidence x{r['confidence_ratio']:.1f})\n"
+                f"(delta N{d['N']:+4d} E{d['E']:+4d} S{d['S']:+4d} "
+                f"W{d['W']:+4d}, x{r['confidence_ratio']:.1f})\n"
             )
         elif entry["type"] == "summary":
             md.append(f"\nAccuracy: {entry['correct']}/{entry['total']} "
