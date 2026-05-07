@@ -529,6 +529,14 @@ PRESETS: dict[str, list[str]] = {
     "chat_continual_demo": [
         "--train-events", "200", "--n-test-per-word", "10",
     ],
+    # Tier 2.1 8-word synonym chat demo. Both "north" and "up" map to
+    # motor_N. Built on Tier 2.1 BREAKTHROUGH 2026-05-06 (W->A 5/6 +
+    # A->W 6/6 aligned, A->W mean 63.7%). Uses v4 scale-up arch
+    # (n_lang=4096, n_motor=1000). ~10 min single seed RTX 3090.
+    # See research/findings/2026-05-06-Tier2.1-BREAKTHROUGH-synonym-binding-via-scale.md.
+    "chat_synonym_demo": [
+        "--train-events", "400",
+    ],
     # NOTE: phase_2_1_abc / phase_2_2_shakespeare presets exist only on
     # the path-f-hybrid branch (cortex_pretraining.py is not on main).
     # Run from that branch:
@@ -555,6 +563,7 @@ PRESET_RUNNERS: dict[str, str] = {
     "tier_2_3_phrases":       "research.runners.phrase_trainer",
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
+    "chat_synonym_demo":      "research.runners.chat_synonym_demo",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
@@ -574,6 +583,7 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "tier_2_3_phrases":       "--out-stats",
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
+    "chat_synonym_demo":      "--out-stats",
     # phase_2_* presets removed -- see PRESETS dict comment above.
 }
 

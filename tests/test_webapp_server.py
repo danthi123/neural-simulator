@@ -133,6 +133,7 @@ def test_launch_skips_live_mode_flags_for_overridden_runners(client):
     presets_without_live_mode = [
         "chat_demo",
         "chat_continual_demo",
+        "chat_synonym_demo",
         "phase_1_4_forgetting",
         "phase_1_3_consolidation",
         "phase_1_5_unified",
