@@ -276,6 +276,17 @@ BUILTIN_CONFIGS: Dict[str, Dict[str, Any]] = {
         },
         "seeds": [200, 201, 202, 300, 301, 302],
     },
+    # Phase 1.4 catastrophic forgetting eval. Output JSONs include
+    # the standard 'word_to_action_eval' keys for both Phase A
+    # baseline and Phase B retention checkpoints. The aggregator
+    # treats each phase as a separate 'condition' for the same seed
+    # so we get a side-by-side comparison.
+    "continual_forgetting": {
+        "conditions": {
+            "Phase A primary (baseline)":  "forgetting_seed{seed}.json",
+        },
+        "seeds": [42, 43, 44, 100, 101, 102],
+    },
 }
 
 
