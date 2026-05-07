@@ -163,17 +163,39 @@ def main():
                   f"**{pass_threshold_count}/{n_total}**\n")
         md.append("\n## Verdict\n\n")
         if n_valid < n_total:
-            md.append(f"[~] **PRELIMINARY** ({n_valid}/{n_total} seeds "
-                      f"complete). Final verdict pending remaining seeds.\n\n")
-            # Show preliminary direction based on what we have
-            if n_pass_80 == n_valid:
-                md.append("Direction: trending BRANCH A (all completed "
-                          "seeds at >= 80% retention).\n")
-            elif n_pass_50 == n_valid:
-                md.append("Direction: trending BRANCH B (all completed "
-                          "seeds at >= 50% retention).\n")
+            # Even at partial: if threshold ALREADY met (>= pass_count
+            # at 80%), BRANCH A is mathematically confirmed regardless
+            # of remaining seeds.
+            if n_pass_80 >= pass_threshold_count:
+                md.append(f"[OK] **BRANCH A CONFIRMED** at "
+                          f"{n_pass_80}/{n_total} >= 80% retention "
+                          f"(threshold {pass_threshold_count}/{n_total} "
+                          f"met early). Remaining {n_total - n_valid} "
+                          f"seeds in flight.\n\n")
+                md.append("Next: proceed to Phase 1.2 Tier 2.3 once "
+                          "remaining seeds confirm and GPU frees.\n")
+            elif n_pass_50 >= pass_threshold_count and \
+                 n_total - n_valid + n_pass_80 < pass_threshold_count:
+                # Even if all remaining seeds PASS, can't reach 80%
+                # threshold -> at best BRANCH B
+                md.append(f"[~] **BRANCH B (likely)**: "
+                          f"{n_pass_80}/{n_total} at >= 80%, max possible "
+                          f"= {n_pass_80 + (n_total - n_valid)}/{n_total} "
+                          f"< {pass_threshold_count} threshold. Mean "
+                          f"retention >= 50% suggests moderate forgetting.\n")
+                md.append("\nNext: design + implement Phase 1.4b mitigations.\n")
             else:
-                md.append("Direction: mixed; some seeds at <50% retention.\n")
+                md.append(f"[~] **PRELIMINARY** ({n_valid}/{n_total} "
+                          f"seeds complete). Final verdict pending "
+                          f"remaining seeds.\n\n")
+                if n_pass_80 == n_valid:
+                    md.append("Direction: trending BRANCH A (all "
+                              "completed seeds at >= 80% retention).\n")
+                elif n_pass_50 == n_valid:
+                    md.append("Direction: trending BRANCH B (all "
+                              "completed seeds at >= 50% retention).\n")
+                else:
+                    md.append("Direction: mixed.\n")
         elif n_pass_80 >= pass_threshold_count:
             md.append(f"[OK] **BRANCH A**: catastrophic forgetting NOT "
                       f"occurring under standard test. Biology-grounded "
