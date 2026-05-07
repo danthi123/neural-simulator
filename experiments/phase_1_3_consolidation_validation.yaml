@@ -1,0 +1,38 @@
+name: phase-1-3-consolidation-validation
+runner: research.runners.consolidation_trainer
+output_dir: research/findings/raw/g11_bg
+parallelism: 2
+
+# Phase 1.3 6-seed validation -- hippocampus consolidation.
+# Pre-staged 2026-05-06; activate after Phase 1.4 v3 6-seed result.
+#
+# Trains Tier 1 vocab with awake/sleep alternation:
+#   - 4 chunks of awake events (200 per word total)
+#   - 4 sleep phases of 200 SWR events each
+# Then runs consolidation_proof (hippo-OFF eval).
+#
+# Pass criterion: >= 4/6 seeds with consolidation_proof.ratio >= 0.5.
+# That is: cortex retains >= 50% of pre-silence W->A accuracy when
+# hippocampus is silenced. Strong evidence cortex consolidated
+# patterns from sleep replay.
+#
+# Wall clock per seed: ~25-30 min (4 awake chunks + 4 sleep phases
+# + 2 evals). 6 seeds at parallel=2 ~ 90 min total.
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  n-awake-events-per-word: 200
+  n-sleep-swr-events: 200
+  consolidation-interval: 4
+  n-lang-input: 2048
+  n-motor-per-action: 500
+  n-motor-fs-per-action: 60
+  n-test-per-word: 25
+
+conditions:
+  - name: consolidation
+    args: {}
+
+out_stats_template: "consolidation_seed{seed}.json"
+out_arg_name: "out-stats"
