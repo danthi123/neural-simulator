@@ -1,0 +1,83 @@
+{
+  "seed": 42,
+  "benchmarks_requested": [
+    "sequential_expansion",
+    "retention_over_time",
+    "interference",
+    "long_tail"
+  ],
+  "benchmarks": [
+    {
+      "name": "sequential_expansion",
+      "score": 1.0,
+      "pass": true,
+      "details": {
+        "primary_a_acc": 0.33,
+        "primary_b_acc": 0.38,
+        "retention_pct": 115.15151515151514
+      },
+      "wall_clock_s": 875.7254316806793
+    },
+    {
+      "name": "retention_over_time",
+      "score": 1.0,
+      "pass": true,
+      "details": {
+        "pre_acc": 0.33,
+        "post_acc": 0.43,
+        "retention_pct": 130.3030303030303,
+        "silence_steps": 5000
+      },
+      "wall_clock_s": 549.612105846405
+    },
+    {
+      "name": "interference",
+      "score": 0.265,
+      "pass": false,
+      "details": {
+        "mean_acc": 0.265,
+        "min_word_acc": 0.12,
+        "n_above_chance": 4,
+        "per_word_acc": {
+          "north": 0.32,
+          "up": 0.36,
+          "east": 0.16,
+          "right": 0.28,
+          "south": 0.24,
+          "down": 0.12,
+          "west": 0.4,
+          "left": 0.24
+        }
+      },
+      "wall_clock_s": 530.2837047576904
+    },
+    {
+      "name": "long_tail",
+      "score": 0.21000000000000002,
+      "pass": "False",
+      "details": {
+        "common_acc": 0.32,
+        "rare_acc": 0.21000000000000002,
+        "common_events": 200,
+        "rare_events": 10,
+        "per_word": {
+          "north": 0.4,
+          "up": 0.32,
+          "east": 0.32,
+          "right": 0.28,
+          "south": 0.28,
+          "down": 0.08,
+          "west": 0.28,
+          "left": 0.16
+        }
+      },
+      "wall_clock_s": 546.1697959899902
+    }
+  ],
+  "aggregate": {
+    "score": 0.61875,
+    "all_pass": false,
+    "n_completed": 4,
+    "n_total": 4
+  }
+}
