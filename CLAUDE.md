@@ -548,6 +548,29 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 >    --apply-topographic-bias --enable-motor-fs
 >    --n-events-per-direction 400 --n-lang-input 4096
 >    --n-motor-per-action 1000 --n-motor-fs-per-action 120`.
+> 8. **🎉 2026-05-07 PHASE 1.4 BRANCH A CONFIRMED — biology-grounded
+>    continual learning validated.** 6-seed catastrophic forgetting
+>    eval (`research/runners/continual_forgetting_eval.py`): train
+>    Tier 1 4-word vocab, then train 4 NEW synonym vocab, measure
+>    primary retention. **5/6 PASS at >= 80% retention, mean 103%
+>    (+/- 19%).** Path F's foundational premise validated: synonym
+>    training preserves (often improves) primary bindings via shared
+>    motor pool reinforcement. Architecture (standard Tier 1:
+>    n_lang_input=2048, n_motor=500, NMDA=True). See
+>    [`research/findings/2026-05-07-Phase-1.4-v3-6seed-FINAL.md`](research/findings/2026-05-07-Phase-1.4-v3-6seed-FINAL.md).
+>    Critical fix during arc: `enable_nmda=True` is required (default
+>    False; v2 baseline collapsed to 25% chance without it).
+>    Implementation infrastructure landed during the 6-seed wait:
+>    Tier 2.3 PFC verb pool builder + phrase trainer + 3-condition
+>    eval (`research/runners/phrase_trainer.py`,
+>    `research/runners/phrase_eval.py`); Phase 1.3 hippocampus
+>    consolidation builder + awake/sleep gate helpers + trainer +
+>    hippo-OFF eval (`research/runners/consolidation_trainer.py`,
+>    `research/runners/consolidation_eval.py`); Phase 1.5 unified
+>    eval suite dispatcher with 4 benchmarks
+>    (`research/runners/continual_eval_suite.py`); 35 unit tests
+>    across new code. Master plan at
+>    [`docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md`](docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md).
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
