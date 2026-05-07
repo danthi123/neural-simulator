@@ -9,7 +9,8 @@ Built on the validated Tier 2.1 6-seed result:
   - A->W mean 63.7% (BEATS Tier 1 mean 45%)
   - Architecture: n_lang_input=4096, n_motor_per_action=1000,
     n_motor_fs_per_action=120 (~12K neurons, ~5M synapses, ~6GB GPU)
-  - 400 events/word training (~10 min single seed RTX 3090)
+  - 400 events/word training (~15-20 min single seed RTX 3090; varies
+    with 16-turn eval phase)
 
 See: research/findings/2026-05-06-Tier2.1-BREAKTHROUGH-synonym-binding-via-scale.md
 

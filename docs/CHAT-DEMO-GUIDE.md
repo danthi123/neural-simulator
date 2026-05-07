@@ -26,7 +26,7 @@ via embodied Hebbian co-firing (no backprop). Then runs 12 turns
 Phase 1.4 BRANCH A). Chance baseline is 25%. Best seeds (43) reach
 ~45%.
 
-### 1b. Tier 2.1 synonym chat demo (single seed, ~10 min on RTX 3090)
+### 1b. Tier 2.1 synonym chat demo (single seed, ~15-20 min on RTX 3090)
 
 ```bash
 python -m research.runners.chat_synonym_demo \

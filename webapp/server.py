@@ -532,7 +532,8 @@ PRESETS: dict[str, list[str]] = {
     # Tier 2.1 8-word synonym chat demo. Both "north" and "up" map to
     # motor_N. Built on Tier 2.1 BREAKTHROUGH 2026-05-06 (W->A 5/6 +
     # A->W 6/6 aligned, A->W mean 63.7%). Uses v4 scale-up arch
-    # (n_lang=4096, n_motor=1000). ~10 min single seed RTX 3090.
+    # (n_lang=4096, n_motor=1000). ~15-20 min single seed RTX 3090
+    # (Tier 2.1 v4 is significantly heavier than Tier 1).
     # See research/findings/2026-05-06-Tier2.1-BREAKTHROUGH-synonym-binding-via-scale.md.
     "chat_synonym_demo": [
         "--train-events", "400",
