@@ -589,6 +589,22 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 >    [`docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md`](docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md);
 >    Phase 2.1 design at
 >    [`docs/plans/2026-05-06-Phase-2.1-surrogate-grad-design.md`](docs/plans/2026-05-06-Phase-2.1-surrogate-grad-design.md).
+> 10. **🎉 2026-05-07 PHASE 2.2 TINY SHAKESPEARE GPU TRAINING WORKS
+>    (path-f-hybrid).** 4-layer SNN (66->128->128->66) trained on
+>    Tiny Shakespeare via surrogate-grad BPTT on GPU (CuPy):
+>    - 50 epochs, batch 32, T=32, 500 samples
+>    - Loss 14.1 -> 2.24 (84% reduction; perplexity ~9.4 vs chance 66)
+>    - Wall clock 41.5s on RTX 3090
+>    Implementation on path-f-hybrid:
+>    `sim/bptt_snn_gpu.py` (CuPy/numpy backend abstraction, validated
+>    numerical equivalence at fp32 tolerance) + `sim/char_tokenizer.py`
+>    (66-char vocab from corpus, one-hot encoding, make_seq_dataset
+>    for next-char prediction). 27 unit tests pass on path-f-hybrid.
+>    Init notes: first layer std=2.0 (one-hot drive needs strong
+>    weights), subsequent std=0.5 (sparse spike input). Phase 2.2
+>    validates the full backprop-pretraining stack. Phase 2.3 next:
+>    wire pretrained cortex back into Phase 1.4 BRANCH A
+>    architecture for continual learning.
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
