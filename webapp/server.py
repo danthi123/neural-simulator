@@ -488,6 +488,64 @@ PRESETS: dict[str, list[str]] = {
         "--motor-cross-coupling-weight", "0.5",
         "--motor-cross-coupling-density", "0.3",
     ],
+    # ─── 2026-05-06/07: Phase 1.3, 1.4, 1.5, Tier 2.3, chat demos ────
+    # Phase 1.4 catastrophic forgetting eval. Validated 6-seed
+    # (5/6 PASS, mean 103% retention) -- BRANCH A.
+    # See research/findings/2026-05-07-Phase-1.4-v3-6seed-FINAL.md.
+    "phase_1_4_forgetting": [
+        "--phase-a-events", "200", "--phase-b-events", "200",
+        "--n-eval-per-word", "25",
+    ],
+    # Phase 1.3 hippocampus consolidation (McClelland/Buzsaki CLS).
+    # Validated 3/3 PASS, mean 96% hippo-OFF retention.
+    # See research/findings/2026-05-07-Phase-1.3-3seed-CONFIRMED.md.
+    "phase_1_3_consolidation": [
+        "--n-awake-events-per-word", "100", "--n-sleep-swr-events", "100",
+        "--consolidation-interval", "4", "--n-test-per-word", "25",
+    ],
+    # Phase 1.5 unified continual-learning eval suite. 4 benchmarks
+    # (sequential_expansion + retention_over_time + interference +
+    # long_tail). Smoke: 2/4 PASS, aggregate 0.62.
+    "phase_1_5_unified": [
+        "--benchmarks", "sequential_expansion", "retention_over_time",
+        "interference", "long_tail",
+        "--events-per-word", "200", "--n-eval-per-word", "25",
+        "--silence-steps", "5000",
+    ],
+    # Tier 2.3 PFC verb pool + compositional 2-word phrase trainer.
+    # Architecture-limited at 41% phrase composition (sweep confirmed
+    # action_gate is inert at default config).
+    "tier_2_3_phrases": [
+        "--n-phrase-events", "200", "--n-direction-only-events", "100",
+        "--n-verb-only-events", "30", "--n-test-per-direction", "25",
+    ],
+    # Chat demo: 4-direction Tier 1 with chat-transcript output.
+    # ~6 min single seed. Accuracy ~33-45%/seed (Phase 1.4 baseline).
+    "chat_demo": [
+        "--train-events", "200",
+    ],
+    # Chat-transcript Phase 1.4 BRANCH A continual learning demo.
+    # Trains primaries + synonyms; tests retention.
+    "chat_continual_demo": [
+        "--train-events", "200", "--n-test-per-word", "10",
+    ],
+    # Phase 2.1 ABC task (path-f-hybrid). Surrogate-grad BPTT
+    # validation. ~2 sec CPU. 100% loss reduction.
+    "phase_2_1_abc": [
+        "--task", "abc", "--T", "30", "--hidden", "32",
+        "--epochs", "100", "--batch-size", "16", "--lr", "0.005",
+        "--n-train-samples", "200", "--print-every", "10",
+    ],
+    # Phase 2.2 Tiny Shakespeare GPU pretraining (path-f-hybrid).
+    # 4-layer SNN, 92% loss reduction at 200 epochs (~11 min RTX 3090).
+    # Saves checkpoint for Phase 2.3 use.
+    "phase_2_2_shakespeare": [
+        "--task", "shakespeare", "--T", "32",
+        "--hidden-layers", "256,256", "--epochs", "200",
+        "--batch-size", "32", "--lr", "0.003",
+        "--n-train-samples", "2000", "--print-every", "10",
+        "--backend", "auto",
+    ],
 }
 
 
@@ -500,6 +558,15 @@ PRESET_RUNNERS: dict[str, str] = {
     "text_io_v2_smoke":              "research.runners.text_eval_embodied",
     "text_io_distributed_motor_pop": "research.runners.text_eval_embodied",
     "text_io_motor_cross_coupling":  "research.runners.text_eval_embodied",
+    # 2026-05-06/07 Phase 1.3, 1.4, 1.5, Tier 2.3, chat demos
+    "phase_1_4_forgetting":   "research.runners.continual_forgetting_eval",
+    "phase_1_3_consolidation": "research.runners.consolidation_trainer",
+    "phase_1_5_unified":      "research.runners.continual_eval_suite",
+    "tier_2_3_phrases":       "research.runners.phrase_trainer",
+    "chat_demo":              "research.runners.chat_demo",
+    "chat_continual_demo":    "research.runners.chat_continual_demo",
+    "phase_2_1_abc":          "research.runners.cortex_pretraining",
+    "phase_2_2_shakespeare":  "research.runners.cortex_pretraining",
 }
 
 
@@ -511,6 +578,15 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "text_io_v2_smoke":              "--out-stats",
     "text_io_distributed_motor_pop": "--out-stats",
     "text_io_motor_cross_coupling":  "--out-stats",
+    # 2026-05-06/07 Phase 1.3-1.5, Tier 2.3, chat demos all use --out-stats
+    "phase_1_4_forgetting":   "--out-stats",
+    "phase_1_3_consolidation": "--out-stats",
+    "phase_1_5_unified":      "--out-stats",
+    "tier_2_3_phrases":       "--out-stats",
+    "chat_demo":              "--out-stats",
+    "chat_continual_demo":    "--out-stats",
+    "phase_2_1_abc":          "--out-stats",
+    "phase_2_2_shakespeare":  "--out-stats",
 }
 
 
