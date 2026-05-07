@@ -1,4 +1,4 @@
-"""Phase 1.4 — Catastrophic forgetting eval suite.
+"""Phase 1.4 -- Catastrophic forgetting eval suite.
 
 THE foundational test for Path F's premise: does biology-grounded
 continual learning preserve old knowledge when learning new?
@@ -11,17 +11,17 @@ Test design (sequential vocabulary expansion):
    exposure to primaries. STDP at lang_input -> motor and motor ->
    lang_output pathways gets new patterns.
 4. Eval after Phase B: measure W->A on:
-   - Primaries (north/east/south/west) — RETENTION TEST
-   - Synonyms (up/right/down/left) — NEW LEARNING TEST
+   - Primaries (north/east/south/west) -- RETENTION TEST
+   - Synonyms (up/right/down/left) -- NEW LEARNING TEST
 5. (Optional) Phase C: sleep consolidation simulation.
-6. Re-eval — does retention recover to baseline?
+6. Re-eval -- does retention recover to baseline?
 
 Pass criteria:
-- After Phase B, primary retention ≥ 50% of original (catastrophic
+- After Phase B, primary retention >= 50% of original (catastrophic
   forgetting NOT happening)
-- After Phase B, synonym new learning ≥ 30% accuracy (basic learning
+- After Phase B, synonym new learning >= 30% accuracy (basic learning
   works)
-- (If C runs) After sleep, primary retention ≥ 80% of original
+- (If C runs) After sleep, primary retention >= 80% of original
 
 Saves retention curves to JSON; produces matplotlib plot if available.
 """
@@ -69,6 +69,9 @@ def main():
     ap.add_argument("--n-motor-per-action", type=int, default=500)
     ap.add_argument("--n-motor-fs-per-action", type=int, default=60)
     ap.add_argument("--out-stats", type=str, default=None)
+    ap.add_argument("--skip-sanity-check", action="store_true",
+                    help="Disable Phase A baseline sanity check "
+                         "(default: abort if Phase A below chance)")
     args = ap.parse_args()
 
     # Reuse bio_three_factor's training infrastructure
@@ -89,7 +92,7 @@ def main():
         "checkpoints": [],  # list of {checkpoint_name, eval_results}
     }
 
-    # ─── PHASE A: Primary training ───
+    # --- PHASE A: Primary training ---
     print(f"\n--- PHASE A: train {len(PRIMARY_WORDS)} primary words "
           f"({args.phase_a_events} events/word) ---", flush=True)
     t0 = time.time()
@@ -108,7 +111,7 @@ def main():
     )
     print(f"  Phase A training complete ({time.time()-t0:.0f}s)", flush=True)
 
-    # ─── EVAL after Phase A ───
+    # --- EVAL after Phase A ---
     print("\n--- EVAL after Phase A: primary words ---", flush=True)
     wa_a = evaluate_word_to_action(
         bridge, n_trials_per_word=args.n_eval_per_word,
@@ -122,7 +125,40 @@ def main():
         "primary_wa": wa_a,
     })
 
-    # ─── PHASE B: Synonym training ───
+    # --- Phase A sanity check ---
+    # If Phase A baseline is below chance (25% for 4 actions),
+    # there's no learning to retain -- skip Phase B and report.
+    # This catches arch bugs early (saves ~30 min of Phase B compute).
+    # v1 smoke (2026-05-06 21:33) hit this: scale-up arch with
+    # 4-word vocab gave 14% Phase A and we wasted 18 min on Phase B
+    # before realizing the arch was wrong.
+    if wa_a["accuracy"] < 0.25 and not args.skip_sanity_check:
+        print("\n" + "=" * 60)
+        print("  [!] SANITY CHECK FAIL: Phase A baseline below chance")
+        print(f"  Phase A W->A: {wa_a['accuracy']:.1%} < 25% (chance)")
+        print("  Aborting before Phase B (would be meaningless).")
+        print("  Diagnosis: architecture mismatch, insufficient events,")
+        print("  or seed-specific failure. Recommended actions:")
+        print("    - Reduce n-lang-input/n-motor-per-action (try 2048/500)")
+        print("    - Increase phase-a-events (try 400+)")
+        print("    - Try a different seed")
+        print("=" * 60, flush=True)
+        retention["sanity_check_failed"] = True
+        retention["metrics"] = {
+            "primary_a_acc": wa_a["accuracy"],
+            "primary_b_acc": None,
+            "synonym_b_acc": None,
+            "retention_pct": None,
+            "abort_reason": "phase_a_below_chance",
+        }
+        if args.out_stats:
+            Path(args.out_stats).parent.mkdir(parents=True, exist_ok=True)
+            Path(args.out_stats).write_text(json.dumps(retention,
+                indent=2, default=str))
+            print(f"Saved (early abort): {args.out_stats}", flush=True)
+        return  # exit main() without running Phase B
+
+    # --- PHASE B: Synonym training ---
     # Continue training on same bridge with synonym vocab. The
     # bridge's STDP traces persist; new training adds onto existing
     # weights.
@@ -132,7 +168,7 @@ def main():
           "We train ONLY synonyms, no primaries, and check if "
           "primary retention degrades.", flush=True)
 
-    # Custom Phase B training — present synonyms only
+    # Custom Phase B training -- present synonyms only
     # We need to do this manually because run_three_factor doesn't
     # support "continue training on different vocab on existing bridge."
     import cupy as cp
@@ -204,7 +240,7 @@ def main():
 
     print(f"  Phase B training complete ({time.time()-t0:.0f}s)", flush=True)
 
-    # ─── EVAL after Phase B ───
+    # --- EVAL after Phase B ---
     print("\n--- EVAL after Phase B: primary words (RETENTION) ---", flush=True)
     wa_primary_after_b = evaluate_word_to_action(
         bridge, n_trials_per_word=args.n_eval_per_word,
@@ -232,7 +268,7 @@ def main():
         "synonym_wa": wa_synonym,
     })
 
-    # ─── Compute retention metrics ───
+    # --- Compute retention metrics ---
     primary_a_acc = wa_a["accuracy"]
     primary_b_acc = wa_primary_after_b["accuracy"]
     synonym_b_acc = wa_synonym["accuracy"]
@@ -251,15 +287,15 @@ def main():
     print(f"  Synonym new-learning accuracy:   {synonym_b_acc:.1%}")
     print()
     if retention_pct >= 80:
-        print("  ✅ RETENTION GOOD (≥80%): biology-grounded continual "
+        print("  [OK] RETENTION GOOD (>=80%): biology-grounded continual "
               "learning preserves old patterns")
     elif retention_pct >= 50:
-        print("  ⚠️  RETENTION MODERATE (50-80%): some drift, not "
+        print("  [!]?  RETENTION MODERATE (50-80%): some drift, not "
               "catastrophic")
     else:
-        print("  ❌ CATASTROPHIC FORGETTING (<50%): biology-grounded "
+        print("  [X] CATASTROPHIC FORGETTING (<50%): biology-grounded "
               "STDP alone insufficient for continual learning")
-    print(f"  (Path F's premise requires retention ≥80% for continual learning claim)")
+    print(f"  (Path F's premise requires retention >=80% for continual learning claim)")
     print("=" * 60, flush=True)
 
     retention["metrics"] = {
