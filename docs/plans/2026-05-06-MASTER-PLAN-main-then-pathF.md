@@ -844,3 +844,31 @@ of writing time during the 1.4 6-seed wait.
 - If Branch C (<50%):
   - Phase 1.3 smoke + mitigation design
 - If crash: diagnose, restart
+
+## 2026-05-06 23:25-23:40 EDT -- 6-seed BATCH 1 COMPLETE: 2/2 PASS
+
+Batch 1 results (seeds 42 + 43):
+
+| Seed | Phase A | Phase B | Retention | Synonym | Status |
+|---|---|---|---|---|---|
+| 42 | 33.0% | 38.0% | 115% | 26.0% | PASS (>= 80%) |
+| 43 | 45.0% | 38.0% | 84%  | 29.5% | PASS (>= 80%) |
+
+Mean retention: 100% (+/- 22%). Both seeds at >= 80%. Trending BRANCH A.
+
+Batch 1 wall clock: 52 min (vs single-seed v3 ~25 min). Slowness
+attributed to GPU sharing (parallel=2) -- each process at ~50%
+bandwidth, plus per-step .get() sync overhead in synonym eval.
+
+Batch 2 (seeds 44 + 100) launched 23:25, in Phase A eval at 23:40.
+Batch 3 ETA ~01:09 EDT (1.5 hr from now).
+
+Need 4/6 at >= 80% to declare BRANCH A. With 2/2 already PASS,
+need >= 2/4 of remaining seeds. Trending positive.
+
+Action: forgetting_summarize.py fixed for partial-result reporting
+(commit c264bfa). When all 6 done, will run full summarizer + post
+findings doc + decide path forward.
+
+While 6-seed runs, parallel work continues: Tier 2.3 + Phase 1.3
+already fully implemented (modulo GPU validation).
