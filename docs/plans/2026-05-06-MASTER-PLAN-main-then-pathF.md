@@ -748,3 +748,45 @@ ensures progression continues without user intervention.
 
 **Next:** wait for Phase 1.4 smoke result, follow decision
 tree to next phase.
+
+## 2026-05-06 ~21:30-22:10 EDT -- Phase 1.4 smoke iteration v1->v2->v3
+
+Three smoke runs needed to nail down the correct config:
+
+**v1 (scale-up arch):** Phase A primary W->A 14% -- BELOW 25% chance.
+Architecture mismatch: scale-up (4096/1000/120) was for 8-word
+synonyms; with 4-word vocab, motor pools didn't get enough
+discriminative training. Killed at 21:33.
+KEY POSITIVE despite the bug: primary retention went from 14%
+post-A to 18% post-B (129% retention ratio). Synonym training
+actually IMPROVED primary accuracy. No catastrophic forgetting
+visible at v1.
+
+**v2 (standard arch, no NMDA):** Phase A primary W->A 25%
+(exactly chance). Better than v1 but still ~8pp below validated
+Tier 1 baseline of 33%. Diagnosis: BREAKTHROUGH config used
+enable_nmda=True; my call was missing it (defaulted to False).
+NMDA bistability is the critical training mechanism for embodied
+Hebbian binding -- without it motor pools don't develop
+attractor dynamics. Killed at 22:00.
+
+**v3 (standard arch + NMDA):** in flight (PID 27368, started
+22:00:58). Expect Phase A ~33-45% per Tier 1 baseline.
+
+**Pre-staged during wait (parallel work):**
+- Phase A sanity check (auto-abort if below chance, saves 30 min)
+- Phase 1.5 dispatcher unit tests (6 tests passing)
+- Tier 2.3 PFC verb pool builder + 7 unit tests (opt-in)
+- Tier 2.3 action_gate neuromodulator helper + 3 unit tests
+- forgetting_summarize tool + 6 unit tests
+- Master plan decision log updates (this entry)
+
+**Lesson:** copy ALL config from validated baseline JSON. NMDA
+looked like an architectural detail but was the critical
+training mechanism. Future continual-learning tests should
+follow validated baselines exactly, then deviate only with
+clear rationale.
+
+**Next:** wait for v3 Phase A eval result. If >= 33%, launch
+6-seed validation. If still 25%, deeper investigation needed
+(maybe topographic_bias_factor or similar).
