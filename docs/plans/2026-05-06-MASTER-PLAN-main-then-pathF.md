@@ -1227,3 +1227,64 @@ For full Path F demo (Phase 2.4 conversational), would need:
 The autonomous arc reaches a natural pause: both branches have
 validated foundational milestones. Phase 2.3 negative is a real
 finding that informs future scale-up decisions.
+
+## 2026-05-07 ~15:30-17:30 EDT — Frontend-sync arc + conversational demos
+
+**Trigger:** User asked "have you been keeping the frontend updated to
+allow access to new features and capabilities?" — exposed a gap:
+~16 hours of autonomous work shipped 8+ runners but the webapp
+launcher had only 4 entries.
+
+**Skill hardening:**
+- autonomous-runs principle #10 added: "Frontend stays in sync with
+  backend capabilities" — backend + frontend = single unit of work
+- Principle #9 expanded with Windows uvicorn pycache-survives-restart
+  lesson (hit twice during this arc; documented mitigation)
+- References existing `keep-webapp-current` and `sync-documentation`
+  project skills as periodic-sweep recommendations
+
+**New conversational artifacts shipped (all dashboard-launchable):**
+- `chat_synonym_demo` (Tier 2.1 8-word synonym chat)
+- `chat_demo_aggregate` (multi-seed aggregator, all 3 demo types)
+- `consolidation_synonym_trainer` (Phase 1.3 + Tier 2.1 combined CLS test)
+- `chat_repl` (interactive REPL — master plan's "build conversational
+  demo on Phase 1.4 architecture" milestone)
+- `scripts/multiseed_chat_demo.sh` (N-seed launcher via webapp API)
+
+**End-to-end validations:**
+- chat_synonym_demo seed 42: 25%/50%/0% (single-seed; small-sample
+  variance below Tier 2.1 6-seed mean; runner validated end-to-end)
+- chat_demo 6-seed: mean 33.3% ± 11.8% (range 17-50%; matches Phase 1.4
+  baseline; documented numbers in CHAT-DEMO-GUIDE corrected)
+- consolidation_synonym smoke seed 42: 32.5% pre-silence / 36.25%
+  hippo-OFF (retention 111.5%); runner validated; per-word parsing
+  bug caught + fixed
+
+**Webapp bugs caught + fixed by skill audit:**
+- phase_2_* presets pointed to path-f-hybrid runner (would fail on main)
+- Live-mode flag injection broke 6 new runners (unrecognized arguments)
+- Per-word accuracy parsing in consolidation_synonym (per_word_accuracy
+  field doesn't exist; use confusion_matrix)
+
+**In flight at session end:**
+- Multi-seed consolidation_synonym (3 seeds × ~80 min = ~4 hrs)
+
+**Doc-sync drift fixed:** CLAUDE.md line counts, class line numbers,
+file counts (sim/ 13→15 modules, runners 26→57, findings 93→177,
+tests 40→57).
+
+**Status of master plan items:**
+- Phase 1.4 BRANCH A: still validated (5/6 PASS, mean 103%)
+- Phase 1.5 smoke: launched earlier in this arc but multi-seed deferred
+- Phase 1.3 + Tier 2.1 combined: NEW design plan + runner (smoke
+  validated, multi-seed in flight)
+- "Build conversational demo on Phase 1.4 architecture": chat_repl
+  ships interactive REPL; chat_synonym_demo ships scripted 8-word demo;
+  chat_continual_demo ships continual-learning demo
+
+Total: 26+ commits, all pushed (origin + gitea), wiki sync done with
+n8n auto-ingest. 33 webapp tests + 5 new aggregator tests passing.
+
+Findings: `research/findings/2026-05-07-frontend-sync-arc-summary.md`
+captures the full arc; individual demo findings in
+`research/findings/2026-05-07-{chat-demo-multi-seed,chat-synonym-demo-seed42,consolidation-synonym-smoke-seed42}.md`.
