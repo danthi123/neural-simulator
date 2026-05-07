@@ -6,11 +6,11 @@ continual learning preserve old knowledge when learning new?
 Test design (sequential vocabulary expansion):
 1. Phase A: train 4 primary direction words (north/east/south/west)
    to motor pools via embodied Hebbian (Tier 1 paradigm).
-2. Eval after Phase A: measure W→A on ALL 4 primary words.
+2. Eval after Phase A: measure W->A on ALL 4 primary words.
 3. Phase B: train 4 NEW synonym words (up/right/down/left), no
-   exposure to primaries. STDP at lang_input → motor and motor →
+   exposure to primaries. STDP at lang_input -> motor and motor ->
    lang_output pathways gets new patterns.
-4. Eval after Phase B: measure W→A on:
+4. Eval after Phase B: measure W->A on:
    - Primaries (north/east/south/west) — RETENTION TEST
    - Synonyms (up/right/down/left) — NEW LEARNING TEST
 5. (Optional) Phase C: sleep consolidation simulation.
@@ -108,7 +108,7 @@ def main():
         stim_steps_per_trial=100, n_reset_steps=50, token_sparsity=0.1,
         verbose=False,
     )
-    print(f"  W→A on primary: {wa_a['accuracy']:.1%}", flush=True)
+    print(f"  W->A on primary: {wa_a['accuracy']:.1%}", flush=True)
     print(f"  Confusion: {wa_a['confusion_matrix']}", flush=True)
     retention["checkpoints"].append({
         "name": "after_phase_a",
@@ -204,7 +204,7 @@ def main():
         stim_steps_per_trial=100, n_reset_steps=50, token_sparsity=0.1,
         verbose=False,
     )
-    print(f"  W→A on primary AFTER B: {wa_primary_after_b['accuracy']:.1%}",
+    print(f"  W->A on primary AFTER B: {wa_primary_after_b['accuracy']:.1%}",
           flush=True)
     print(f"    (was {wa_a['accuracy']:.1%} after Phase A)", flush=True)
 
@@ -217,7 +217,7 @@ def main():
         synonym_mode=True, synonym_vocab_size=8,
         verbose=False,
     )
-    print(f"  W→A on synonym vocab: {wa_synonym['accuracy']:.1%}", flush=True)
+    print(f"  W->A on synonym vocab: {wa_synonym['accuracy']:.1%}", flush=True)
 
     retention["checkpoints"].append({
         "name": "after_phase_b",
@@ -240,7 +240,7 @@ def main():
     print("=" * 60)
     print(f"  Primary accuracy after Phase A:  {primary_a_acc:.1%}")
     print(f"  Primary accuracy after Phase B:  {primary_b_acc:.1%}")
-    print(f"  Retention ratio (post-A→post-B): {retention_pct:.0f}%")
+    print(f"  Retention ratio (post-A->post-B): {retention_pct:.0f}%")
     print(f"  Synonym new-learning accuracy:   {synonym_b_acc:.1%}")
     print()
     if retention_pct >= 80:
