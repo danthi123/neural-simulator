@@ -1,0 +1,33 @@
+name: phase-1-3-consolidation-3seed-fast
+runner: research.runners.consolidation_trainer
+output_dir: research/findings/raw/g11_bg
+parallelism: 2
+
+# Phase 1.3 reduced 3-seed validation at smoke-scale params.
+#
+# Original 6-seed at full scale (n_awake=200, n_sleep=200) was
+# taking ~3 hours/seed = 9+ hours total. Killed at chunk 17/50.
+#
+# Reduced version uses smoke-scale params (n_awake=100, n_sleep=100)
+# which validated consolidation at 94% retention in single seed.
+# 3 seeds at parallel=2 ~ 50 min total -- manageable.
+#
+# Pass criterion: >= 2/3 seeds with hippo-OFF retention >= 50%.
+
+seeds: [42, 43, 44]
+
+base_args:
+  n-awake-events-per-word: 100
+  n-sleep-swr-events: 100
+  consolidation-interval: 4
+  n-lang-input: 2048
+  n-motor-per-action: 500
+  n-motor-fs-per-action: 60
+  n-test-per-word: 25
+
+conditions:
+  - name: consolidation_fast
+    args: {}
+
+out_stats_template: "consolidation_fast_seed{seed}.json"
+out_arg_name: "out-stats"
