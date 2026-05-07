@@ -1,0 +1,39 @@
+name: tier-2-3-phrase-validation
+runner: research.runners.phrase_trainer
+output_dir: research/findings/raw/g11_bg
+parallelism: 2
+
+# Phase 1.2 Tier 2.3 6-seed validation -- compositional 2-word phrases.
+# Pre-staged 2026-05-06; activate after Phase 1.4 v3 lands Branch A
+# (>= 4/6 seeds retention >= 80%).
+#
+# Vocab: 1 verb ("go") + 4 directions = 4 phrases ("go north" etc.)
+# Mixed curriculum: 60% phrase / 30% direction-only / 10% verb-only.
+#
+# Pass criteria (per design):
+#   - Phrase >= 4/6 seeds correctly execute "go [dir]" -> motor
+#   - Direction-only >= 4/6 seeds preserve Tier 1 W->A binding
+#   - Verb-only >= 4/6 seeds keep motor pools quiet (>= 80% trials < 5Hz)
+#
+# Wall clock: standard arch ~13 min train + ~3 min tests = ~16 min/seed.
+# 6 seeds at parallel=2 ~ 50 min total.
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  n-phrase-events: 200
+  n-direction-only-events: 100
+  n-verb-only-events: 30
+  n-lang-input: 2048
+  n-motor-per-action: 500
+  n-motor-fs-per-action: 60
+  n-dlpfc-verb: 200
+  n-test-per-direction: 25
+  n-verb-only-test: 25
+
+conditions:
+  - name: phrase
+    args: {}
+
+out_stats_template: "phrase_seed{seed}.json"
+out_arg_name: "out-stats"
