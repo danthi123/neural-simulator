@@ -1,0 +1,27 @@
+{
+  "run_id": "608e0aa7edb3",
+  "preset": "chat_demo",
+  "seed": 97,
+  "extra_args": [],
+  "deterministic": false,
+  "cmd": [
+    "C:\\python312\\python.exe",
+    "-m",
+    "research.runners.chat_demo",
+    "--train-events",
+    "200",
+    "--seed",
+    "97",
+    "--out-stats",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed97_chat_demo_608e0a.json",
+    "--interactive-control-file",
+    "E:\\Documents\\Projects\\sim\\webapp\\runtime\\control_608e0aa7edb3.json",
+    "--progress-print-interval",
+    "20"
+  ],
+  "pid": 31072,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_608e0aa7edb3.log",
+  "control_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\control_608e0aa7edb3.json",
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed97_chat_demo_608e0a.json",
+  "started_at": 1778183290.8707507
+}

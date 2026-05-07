@@ -1,0 +1,68 @@
+{
+  "n_seeds": 6,
+  "demo_types": [
+    "tier1"
+  ],
+  "seeds": [
+    100,
+    101,
+    102,
+    42,
+    43,
+    44
+  ],
+  "accuracy_mean": 0.3333333333333333,
+  "accuracy_std": 0.11785113019775792,
+  "accuracy_min": 0.16666666666666666,
+  "accuracy_max": 0.5,
+  "per_seed": [
+    {
+      "path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed100_chat_demo_07f220.json",
+      "seed": 100,
+      "demo_type": "tier1",
+      "accuracy": 0.3333333333333333,
+      "correct": 4,
+      "total": 12
+    },
+    {
+      "path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed101_chat_demo_a01477.json",
+      "seed": 101,
+      "demo_type": "tier1",
+      "accuracy": 0.5,
+      "correct": 6,
+      "total": 12
+    },
+    {
+      "path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed102_chat_demo_8d0bba.json",
+      "seed": 102,
+      "demo_type": "tier1",
+      "accuracy": 0.3333333333333333,
+      "correct": 4,
+      "total": 12
+    },
+    {
+      "path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_chat_demo_f3ad59.json",
+      "seed": 42,
+      "demo_type": "tier1",
+      "accuracy": 0.16666666666666666,
+      "correct": 2,
+      "total": 12
+    },
+    {
+      "path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed43_chat_demo_824a7a.json",
+      "seed": 43,
+      "demo_type": "tier1",
+      "accuracy": 0.4166666666666667,
+      "correct": 5,
+      "total": 12
+    },
+    {
+      "path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed44_chat_demo_be2916.json",
+      "seed": 44,
+      "demo_type": "tier1",
+      "accuracy": 0.25,
+      "correct": 3,
+      "total": 12
+    }
+  ]
+}

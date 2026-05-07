@@ -22,9 +22,11 @@ via embodied Hebbian co-firing (no backprop). Then runs 12 turns
 - Motor pool spike counts (per cardinal)
 - Confidence ratio
 
-**Expected accuracy:** ~33-45% per seed (validated across 6 seeds in
-Phase 1.4 BRANCH A). Chance baseline is 25%. Best seeds (43) reach
-~45%.
+**Expected accuracy:** ~33% mean ± 12% std across 6 seeds (range
+17-50%, validated 2026-05-07). Chance baseline is 25%. 5/6 seeds
+beat or tied chance. Best seed (101) reaches 50%; outlier seed
+(42) below chance at 17%. See
+`research/findings/2026-05-07-chat_demo-multi-seed.md`.
 
 ### 1b. Tier 2.1 synonym chat demo (single seed, ~15-20 min on RTX 3090)
 
