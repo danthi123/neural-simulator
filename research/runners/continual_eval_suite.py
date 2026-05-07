@@ -521,10 +521,16 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--events-per-word", type=int, default=200)
     ap.add_argument("--n-eval-per-word", type=int, default=25)
-    ap.add_argument("--n-lang-input", type=int, default=4096,
-                    help="Tier 2.1 v4 scale-up arch")
-    ap.add_argument("--n-motor-per-action", type=int, default=1000)
-    ap.add_argument("--n-motor-fs-per-action", type=int, default=120)
+    # Standard Tier 1 arch (validated 5/6 + 6/6).
+    # For interference benchmark (8-word synonym), scale-up arch
+    # (4096/1000/120) gives better baseline -- override at CLI:
+    #   --n-lang-input 4096 --n-motor-per-action 1000 \
+    #   --n-motor-fs-per-action 120
+    ap.add_argument("--n-lang-input", type=int, default=2048,
+                    help="Standard Tier 1 arch (default). For 8-word "
+                         "interference test, override to 4096.")
+    ap.add_argument("--n-motor-per-action", type=int, default=500)
+    ap.add_argument("--n-motor-fs-per-action", type=int, default=60)
     ap.add_argument("--silence-steps", type=int, default=5000,
                     help="Silent steps for retention_over_time")
     ap.add_argument("--out-stats", type=str, required=True)

@@ -35,11 +35,11 @@ from pathlib import Path
 
 import numpy as np
 
-# Direction words — Phase A vocab
+# Direction words -- Phase A vocab
 PRIMARY_WORDS = ["north", "east", "south", "west"]
 PRIMARY_TO_ACTION = {"north": "N", "east": "E", "south": "S", "west": "W"}
 
-# Synonym words — Phase B vocab (same actions, new word forms)
+# Synonym words -- Phase B vocab (same actions, new word forms)
 SYNONYM_WORDS = ["up", "right", "down", "left"]
 SYNONYM_TO_ACTION = {"up": "N", "right": "E", "down": "S", "left": "W"}
 
@@ -57,10 +57,17 @@ def main():
     ap.add_argument("--enable-sleep-consolidation", action="store_true",
                     help="Phase C: SWR-style replay between phases")
     ap.add_argument("--n-eval-per-word", type=int, default=25)
-    ap.add_argument("--n-lang-input", type=int, default=4096,
-                    help="Tier 2.1 v4 scale-up arch (validated 5/6 + 6/6)")
-    ap.add_argument("--n-motor-per-action", type=int, default=1000)
-    ap.add_argument("--n-motor-fs-per-action", type=int, default=120)
+    # Tier 1 standard arch (validated 5/6 + 6/6 in
+    # 2026-05-06-Tier1-BREAKTHROUGH-bidirectional-binding.md;
+    # mean W->A 33-45% across 6 seeds).
+    # NOTE: Phase 1.4 v1 (smoke 2026-05-06 20:31 EDT) used scale-up
+    # arch (4096/1000/120) and Phase A baseline collapsed to 14% --
+    # below chance. Scale-up was for Tier 2.1 8-word synonyms; for
+    # 4-word vocab in v2 we use standard arch matching Tier 1.
+    ap.add_argument("--n-lang-input", type=int, default=2048,
+                    help="Standard arch matching Tier 1 v2 (validated)")
+    ap.add_argument("--n-motor-per-action", type=int, default=500)
+    ap.add_argument("--n-motor-fs-per-action", type=int, default=60)
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
 

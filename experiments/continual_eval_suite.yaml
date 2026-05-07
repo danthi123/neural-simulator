@@ -28,9 +28,10 @@ base_args:
     - long_tail
   events-per-word: 200
   n-eval-per-word: 25
-  n-lang-input: 4096
-  n-motor-per-action: 1000
-  n-motor-fs-per-action: 120
+  # Standard Tier 1 arch (matches validated 5/6 + 6/6 baseline).
+  n-lang-input: 2048
+  n-motor-per-action: 500
+  n-motor-fs-per-action: 60
   silence-steps: 5000
 
 conditions:
