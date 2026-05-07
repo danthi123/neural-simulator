@@ -88,6 +88,7 @@ def benchmark_sequential_expansion(args, rng):
         n_motor_fs_per_action=args.n_motor_fs_per_action,
         biological=True,
         enable_motor_fs=True,
+        enable_nmda=True,  # Tier 1 BREAKTHROUGH config
         apply_topographic_bias=True,
         embodied_hebbian=True,
         synonym_mode=False,
@@ -199,6 +200,7 @@ def benchmark_retention_over_time(args, rng):
         n_motor_fs_per_action=args.n_motor_fs_per_action,
         biological=True,
         enable_motor_fs=True,
+        enable_nmda=True,  # Tier 1 BREAKTHROUGH config
         apply_topographic_bias=True,
         embodied_hebbian=True,
         synonym_mode=False,
@@ -285,6 +287,7 @@ def benchmark_interference(args, rng):
         n_motor_fs_per_action=args.n_motor_fs_per_action,
         biological=True,
         enable_motor_fs=True,
+        enable_nmda=True,  # Tier 1 BREAKTHROUGH config
         apply_topographic_bias=True,
         embodied_hebbian=True,
         synonym_mode=True,         # 8-word interleaved
@@ -379,6 +382,7 @@ def benchmark_long_tail(args, rng):
         n_motor_fs_per_action=args.n_motor_fs_per_action,
         biological=True,
         enable_motor_fs=True,
+        enable_nmda=True,  # Tier 1 BREAKTHROUGH config
         apply_topographic_bias=True,
         embodied_hebbian=True,
         synonym_mode=False,

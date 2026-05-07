@@ -104,6 +104,7 @@ def main():
         n_motor_fs_per_action=args.n_motor_fs_per_action,
         biological=True,
         enable_motor_fs=True,
+        enable_nmda=True,  # Tier 1 BREAKTHROUGH config -- v2 missed this
         apply_topographic_bias=True,
         embodied_hebbian=True,
         synonym_mode=False,  # Phase A uses primary words only
