@@ -538,6 +538,24 @@ PRESETS: dict[str, list[str]] = {
     "chat_synonym_demo": [
         "--train-events", "400",
     ],
+    # Phase 1.3 + Tier 2.1 combined consolidation test. Trains synonym
+    # vocab with hippocampus, alternates awake/sleep, then tests
+    # whether cortex retains both primary AND synonym words after
+    # hippocampus lesion. Validates CLS theory at synonym scale.
+    # ~30-45 min single seed at default config; --smoke takes ~5 min.
+    # Design: docs/plans/2026-05-07-Phase1.3-Tier2.1-combined-design.md
+    "consolidation_synonym": [
+        "--n-awake-events-per-word", "400",
+        "--n-sleep-swr-events", "200",
+        "--consolidation-interval", "4",
+        "--n-test-per-word", "25",
+    ],
+    # Same as above but with --smoke (reduced events) for fast end-to-end
+    # validation that the runner / webapp / hippo-OFF eval all wire up.
+    "consolidation_synonym_smoke": [
+        "--smoke",
+        "--n-test-per-word", "10",
+    ],
     # NOTE: phase_2_1_abc / phase_2_2_shakespeare presets exist only on
     # the path-f-hybrid branch (cortex_pretraining.py is not on main).
     # Run from that branch:
@@ -565,6 +583,8 @@ PRESET_RUNNERS: dict[str, str] = {
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
     "chat_synonym_demo":      "research.runners.chat_synonym_demo",
+    "consolidation_synonym":       "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_smoke": "research.runners.consolidation_synonym_trainer",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
@@ -585,6 +605,8 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
     "chat_synonym_demo":      "--out-stats",
+    "consolidation_synonym":       "--out-stats",
+    "consolidation_synonym_smoke": "--out-stats",
     # phase_2_* presets removed -- see PRESETS dict comment above.
 }
 
