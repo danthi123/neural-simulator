@@ -872,3 +872,45 @@ findings doc + decide path forward.
 
 While 6-seed runs, parallel work continues: Tier 2.3 + Phase 1.3
 already fully implemented (modulo GPU validation).
+
+## 2026-05-07 00:15-00:41 EDT -- 6-seed BATCH 2 done: 4/6 status
+
+Batch 2 results (seeds 44 + 100):
+
+| Seed | Phase A | Phase B | Retention | Status |
+|---|---|---|---|---|
+| 44  | 36.0% | 28.0% | 78%  | MODERATE (just below 80%) |
+| 100 | 34.0% | 44.0% | 129% | PASS (>= 80%) |
+
+**Cumulative 4/6:**
+
+| Seed | Retention | Status |
+|---|---|---|
+| 42 | 115% | PASS |
+| 43 | 84% | PASS |
+| 44 | 78% | MODERATE |
+| 100 | 129% | PASS |
+| 101 | (in flight) | -- |
+| 102 | (in flight) | -- |
+
+**Mean retention: 102% (+/- 25%)**. 3/6 PASS, 4/6 above 50%.
+Need 4/6 PASS for full BRANCH A.
+
+**Important nuance:** seed 44 is the only seed showing real
+interference (Phase A 36% -> Phase B 28%). All others either
+improved or stayed stable. Detail of seed 44:
+- Phase A: north 44%, east 28%, south 24%, west 48%
+- Phase B: north 32%, east 28%, south 32%, west 20%
+- West pool got disrupted during synonym "left" training
+  (paradoxically, since "left" maps to motor_W).
+
+Pattern: 2 of 4 completed seeds saw primaries IMPROVE during
+Phase B, 1 stayed stable, 1 saw real interference. Mixed behavior
+suggests Branch B / mitigations could help the "interference"
+seeds while preserving the gains in others.
+
+**Branch C definitively ruled out** (no catastrophic forgetting:
+all completed seeds well above 50%).
+
+Batch 3 ETA ~01:05 EDT. Will determine Branch A (>= 4/6 PASS) vs
+Branch B (3/6 PASS, mostly trending positive).
