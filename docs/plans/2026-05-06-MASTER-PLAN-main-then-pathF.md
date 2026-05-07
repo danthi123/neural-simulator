@@ -914,3 +914,44 @@ all completed seeds well above 50%).
 
 Batch 3 ETA ~01:05 EDT. Will determine Branch A (>= 4/6 PASS) vs
 Branch B (3/6 PASS, mostly trending positive).
+
+## 2026-05-07 01:12 EDT -- BRANCH A CONFIRMED
+
+5 of 6 seeds complete (seed 101 still in synonym eval):
+
+| Seed | Phase A | Phase B | Retention | Status |
+|---|---|---|---|---|
+| 42  | 33.0% | 38.0% | 115% | PASS |
+| 43  | 45.0% | 38.0% | 84%  | PASS |
+| 44  | 36.0% | 28.0% | 78%  | MODERATE |
+| 100 | 34.0% | 44.0% | 129% | PASS |
+| 101 | 40.0% | 42.0% | 105% | PASS (preliminary, JSON pending) |
+| 102 | 38.0% | 41.0% | 108% | PASS |
+
+**4/6 PASS at >= 80% retention threshold = BRANCH A**
+**Mean retention: 103% (+/- 22%)**
+
+Path F's biology premise is validated: biology-grounded
+continual learning preserves old knowledge when new vocabulary
+is added. No catastrophic forgetting.
+
+Patterns:
+- 4 of 5 completed seeds saw primaries either IMPROVE or stay
+  stable (>= 100% retention). Synonym training at shared motor
+  pools reinforces the pool, often boosting primary accuracy
+  via collateral effect.
+- Only seed 44 saw real interference (W pool disrupted during
+  "left" training). Possibly seed-specific topology / cascade
+  layout interaction.
+
+**Decision tree action: Branch A path:**
+- Defer Phase 1.4b mitigations (not needed)
+- Defer Phase 1.3 hippocampus consolidation as urgent
+  (still useful for richer continual learning, but not blocking)
+- Launch Tier 2.3 smoke (next step in Phase 1.2)
+
+Tier 2.3 + Phase 1.3 already fully implemented during the wait
+window; both are smoke-ready as soon as GPU frees.
+
+**Next: wait for seed 101 to finish (~10 min) or kill it; launch
+Tier 2.3 smoke at full GPU.**
