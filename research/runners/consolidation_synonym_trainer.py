@@ -297,12 +297,25 @@ def run_full(
     )
     pre_acc = pre_eval["accuracy"]
 
-    # Split primary vs synonym accuracy from per-word stats
-    pre_per_word = pre_eval.get("per_word_accuracy", {})
+    # Split primary vs synonym accuracy from confusion matrix.
+    # evaluate_word_to_action returns confusion_matrix[word][action] = count;
+    # per-word accuracy = confusion[word][correct_action] / sum(confusion[word]).
     primary_words = ["north", "east", "south", "west"]
     synonym_words = ["up", "right", "down", "left"]
-    pre_primary = float(np.mean([pre_per_word.get(w, 0.0) for w in primary_words]))
-    pre_synonym = float(np.mean([pre_per_word.get(w, 0.0) for w in synonym_words]))
+    word_to_action = {"north": "N", "up": "N", "east": "E", "right": "E",
+                       "south": "S", "down": "S", "west": "W", "left": "W"}
+
+    def _per_word_acc(eval_result, word):
+        cm = eval_result.get("confusion_matrix", {}).get(word, {})
+        total = sum(cm.values())
+        if total == 0:
+            return 0.0
+        return cm.get(word_to_action[word], 0) / total
+
+    pre_per_word = {w: _per_word_acc(pre_eval, w)
+                    for w in primary_words + synonym_words}
+    pre_primary = float(np.mean([pre_per_word[w] for w in primary_words]))
+    pre_synonym = float(np.mean([pre_per_word[w] for w in synonym_words]))
 
     if verbose:
         print(f"  Pre-silence overall: {pre_acc:.1%}")
@@ -355,11 +368,10 @@ def run_full(
             bridge.cp_external_input_current[hippo_arr] = 0.0
 
     post_acc = post_eval["accuracy"]
-    post_per_word = post_eval.get("per_word_accuracy", {})
-    post_primary = float(np.mean([post_per_word.get(w, 0.0)
-                                    for w in primary_words]))
-    post_synonym = float(np.mean([post_per_word.get(w, 0.0)
-                                    for w in synonym_words]))
+    post_per_word = {w: _per_word_acc(post_eval, w)
+                     for w in primary_words + synonym_words}
+    post_primary = float(np.mean([post_per_word[w] for w in primary_words]))
+    post_synonym = float(np.mean([post_per_word[w] for w in synonym_words]))
 
     overall_ratio = (post_acc / pre_acc) if pre_acc > 0 else 0.0
     primary_ratio = (post_primary / pre_primary) if pre_primary > 0 else 0.0
