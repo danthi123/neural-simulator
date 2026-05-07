@@ -196,6 +196,21 @@ def build_biological_brain_regions(
     dlpfc_verb_inh_weight_mean: float = 4.0,
     lang_to_dlpfc_verb_density: float = 0.30,
     lang_to_dlpfc_verb_weight: float = 2.0,
+    # Phase 1.3 (opt-in, design at
+    # docs/plans/2026-05-06-Phase-1.3-consolidation-design.md):
+    # add hippocampus regions + ca1 -> motor / language_output
+    # consolidation pathways. Enables hippocampus -> cortex
+    # transfer during sleep replay. Default OFF.
+    enable_hippocampus_consolidation: bool = False,
+    n_ec: int = 80,
+    n_dg: int = 200,
+    n_dg_pv_basket: int = 60,
+    n_ca3: int = 100,
+    n_ca1: int = 120,
+    ca1_to_motor_density: float = 0.20,
+    ca1_to_motor_weight: float = 2.0,
+    ca1_to_lang_out_density: float = 0.20,
+    ca1_to_lang_out_weight: float = 2.0,
 ):
     """Biological-scale architecture with cortical canon ENABLED.
 
@@ -326,6 +341,140 @@ def build_biological_brain_regions(
             plastic=True,
             plasticity_gate="language_input_to_dlpfc_verb",
         ))
+
+    # Phase 1.3 hippocampus consolidation regions + pathways.
+    # Implements the trisynaptic loop EC -> DG -> CA3 -> CA1 plus
+    # ec -> ca1 direct bypass (per Cluster D v1 architecture, see
+    # research/runners/g11_bg_runner.py:741+ for the validated
+    # specs). The KEY ADDITION over Cluster D is ca1 -> motor and
+    # ca1 -> language_output consolidation pathways with their own
+    # plasticity_gate, so sleep replay can drive cortex updates
+    # while awake training uses the direct lang -> motor route.
+    #
+    # Biology source: Buzsaki & Moser 2013 (CA1 readout via Schaffer
+    # collaterals); McClelland et al 1995 (complementary learning
+    # systems theory: hippocampus stores fast, cortex consolidates
+    # slow, sleep replay drives transfer).
+    if enable_hippocampus_consolidation:
+        regions.append(BrainRegion(
+            name="ec",
+            n_neurons=n_ec, exc_fraction=0.8,
+            internal_density=0.05,
+            exc_weight_mean=0.3, inh_weight_mean=0.8,
+            weight_jitter=0.2, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="dg",
+            n_neurons=n_dg, exc_fraction=0.95,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="dg_pv_basket",
+            n_neurons=n_dg_pv_basket, exc_fraction=0.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+        ))
+        # CA3 with explicit recurrent pathway (SWR-gated). The
+        # recurrent self-loop is added as a tagged pathway below
+        # rather than internal_density, so plasticity can be gated
+        # ON during ripple bursts and OFF otherwise (Cluster D v2
+        # SWR-gated CA3 plasticity, Buzsaki 2015 ~150Hz ripples).
+        regions.append(BrainRegion(
+            name="ca3",
+            n_neurons=n_ca3, exc_fraction=0.85,
+            internal_density=0.0,  # rewired as explicit pathway
+            exc_weight_mean=1.5, inh_weight_mean=2.0,
+            weight_jitter=0.2, plastic_internal=True,
+            izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="ca1",
+            n_neurons=n_ca1, exc_fraction=0.85,
+            internal_density=0.05,
+            exc_weight_mean=0.3, inh_weight_mean=0.8,
+            weight_jitter=0.2, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
+        # Trisynaptic loop pathways
+        # language_input -> ec (cortex -> hippo)
+        pathways.append(RegionPathway(
+            from_region="language_input", to_region="ec",
+            density=0.30, weight_mean=4.0, weight_jitter=0.2,
+            plastic=True, plasticity_gate="lang_to_ec",
+        ))
+        # ec -> dg (perforant path)
+        pathways.append(RegionPathway(
+            from_region="ec", to_region="dg",
+            density=0.40, weight_mean=6.0, weight_jitter=0.2,
+            plastic=True, plasticity_gate="ec_to_dg",
+        ))
+        # ec -> dg_pv_basket and dg_pv_basket -> dg (FFi for sparsity)
+        pathways.append(RegionPathway(
+            from_region="ec", to_region="dg_pv_basket",
+            density=0.40, weight_mean=5.0, weight_jitter=0.2,
+            plastic=False,
+        ))
+        pathways.append(RegionPathway(
+            from_region="dg_pv_basket", to_region="dg",
+            density=1.0, weight_mean=6.0, weight_jitter=0.2,
+            plastic=False,
+        ))
+        # dg -> ca3 (mossy fibers)
+        pathways.append(RegionPathway(
+            from_region="dg", to_region="ca3",
+            density=0.10, weight_mean=8.0, weight_jitter=0.2,
+            plastic=True, plasticity_gate="dg_to_ca3",
+        ))
+        # ec -> ca1 (direct cortical bypass)
+        pathways.append(RegionPathway(
+            from_region="ec", to_region="ca1",
+            density=0.30, weight_mean=3.0, weight_jitter=0.2,
+            plastic=True, plasticity_gate="ec_to_ca1",
+        ))
+        # ca3 -> ca3 recurrent (SWR-gated; awake = OFF, sleep = ON)
+        pathways.append(RegionPathway(
+            from_region="ca3", to_region="ca3",
+            density=0.30, weight_mean=1.5, weight_jitter=0.2,
+            plastic=True, plasticity_gate="ca3_swr_burst",
+        ))
+        # ca3 -> ca1 (Schaffer collaterals)
+        pathways.append(RegionPathway(
+            from_region="ca3", to_region="ca1",
+            density=0.30, weight_mean=4.0, weight_jitter=0.2,
+            plastic=True, plasticity_gate="ca3_to_ca1",
+        ))
+        # *** Phase 1.3 KEY ADDITIONS: consolidation pathways ***
+        # ca1 -> motor (per-action). Sleep replay drives motor
+        # plasticity through this pathway, transferring hippo
+        # patterns to cortex. Plasticity gated separately so
+        # awake training keeps cortex pure (only direct lang ->
+        # motor route is plastic awake; only ca1 -> motor is
+        # plastic during sleep).
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region="ca1", to_region=f"motor_{action}",
+                density=ca1_to_motor_density,
+                weight_mean=ca1_to_motor_weight,
+                weight_jitter=0.3, plastic=True,
+                plasticity_gate="ca1_to_motor",
+            ))
+        # ca1 -> language_output: same logic for the bidirectional
+        # binding pathway (motor -> lang_output in Tier 1; here
+        # we add hippo -> lang_output for consolidation).
+        if enable_language_output:
+            pathways.append(RegionPathway(
+                from_region="ca1", to_region="language_output",
+                density=ca1_to_lang_out_density,
+                weight_mean=ca1_to_lang_out_weight,
+                weight_jitter=0.3, plastic=True,
+                plasticity_gate="ca1_to_lang_out",
+            ))
 
     # Motor lateral inhibition via PV-FSI (Vogels 2011 / Hofer 2011) -
     # biological 12% of motor pool size.
