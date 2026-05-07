@@ -378,6 +378,9 @@ def run_full(
     n_motor_per_action: int = 500,
     n_motor_fs_per_action: int = 60,
     n_dlpfc_verb: int = 200,
+    action_gate_drive_pA: float = 50.0,
+    verb_drive_ms: int = 100,
+    direction_drive_ms: int = 100,
     n_test_per_direction: int = 25,
     n_verb_only_test: int = 25,
     verbose: bool = True,
@@ -397,6 +400,9 @@ def run_full(
         n_motor_per_action=n_motor_per_action,
         n_motor_fs_per_action=n_motor_fs_per_action,
         n_dlpfc_verb=n_dlpfc_verb,
+        action_gate_drive_pA=action_gate_drive_pA,
+        verb_drive_ms=verb_drive_ms,
+        direction_drive_ms=direction_drive_ms,
         verbose=verbose,
     )
 
@@ -463,6 +469,16 @@ def main():
     ap.add_argument("--n-dlpfc-verb", type=int, default=200)
     ap.add_argument("--n-test-per-direction", type=int, default=25)
     ap.add_argument("--n-verb-only-test", type=int, default=25)
+    # Tier 2.3 tuning parameters (per Sec 7 of design)
+    ap.add_argument("--action-gate-drive-pA", type=float, default=50.0,
+                    help="Per-motor-pool current boost when PFC verb "
+                         "context is active. 50pA default; try 0/10/100/200 "
+                         "for tuning.")
+    ap.add_argument("--verb-drive-ms", type=int, default=100,
+                    help="Stage 1 verb drive duration. Longer values give "
+                         "PFC more time to establish NMDA bistability.")
+    ap.add_argument("--direction-drive-ms", type=int, default=100,
+                    help="Stage 2 direction drive duration.")
     ap.add_argument("--train-only", action="store_true",
                     help="Skip post-train tests; output stats only")
     ap.add_argument("--out-stats", type=str, default=None,
@@ -479,6 +495,9 @@ def main():
             n_motor_per_action=args.n_motor_per_action,
             n_motor_fs_per_action=args.n_motor_fs_per_action,
             n_dlpfc_verb=args.n_dlpfc_verb,
+            action_gate_drive_pA=args.action_gate_drive_pA,
+            verb_drive_ms=args.verb_drive_ms,
+            direction_drive_ms=args.direction_drive_ms,
             verbose=True,
         )
         result = {"seed": args.seed, "stats": stats}
@@ -492,6 +511,9 @@ def main():
             n_motor_per_action=args.n_motor_per_action,
             n_motor_fs_per_action=args.n_motor_fs_per_action,
             n_dlpfc_verb=args.n_dlpfc_verb,
+            action_gate_drive_pA=args.action_gate_drive_pA,
+            verb_drive_ms=args.verb_drive_ms,
+            direction_drive_ms=args.direction_drive_ms,
             n_test_per_direction=args.n_test_per_direction,
             n_verb_only_test=args.n_verb_only_test,
             verbose=True,

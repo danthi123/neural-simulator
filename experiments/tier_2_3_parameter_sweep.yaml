@@ -5,25 +5,29 @@ parallelism: 2
 
 # Tier 2.3 parameter sweep -- activates IF 6-seed shows phrase
 # accuracy stuck at 30-45% (architecture works but composition
-# doesn't generalize across all 4 directions).
+# inconsistent across directions).
 #
-# Tests three hypotheses for why phrase composition fails:
+# Hypotheses (per Tier 2.3 design Sec 7):
 #
-# H1: action_gate drive_pA too weak. Default 50pA may be too small
-#     vs 300pA motor teacher. Try 100pA and 200pA.
+# H1: action_gate drive_pA mistuned. Default 50pA may be either
+#     too weak (motor teacher 300pA dominates) or too strong
+#     (action_gate distorts motor selection). Test 0 (disable),
+#     10 (weak), 100 (strong).
 #
-# H2: verb_drive_ms too short. Default 100ms may not establish PFC
-#     NMDA bistability. Try 200ms.
+# H2: verb_drive_ms too short. Default 100ms may not establish
+#     PFC NMDA bistability. Try 200ms.
 #
 # H3: STDP at lang -> dlpfc_verb under-trained. Default 200 phrase
-#     events. Try 400 (doubled) to see if more verb-binding helps.
+#     events. Try 400 (doubled) for more verb-binding.
 #
-# Each condition tests one hypothesis. If any condition shows >= 50%
-# phrase accuracy at >= 4/6 seeds, that's the fix.
+# 5 conditions x 3 seeds = 15 runs at parallel=2 ~ 7-8 batches
+# x 35min = ~4 hours. If this is too long, drop to 3-condition
+# minimum: H1_off, H1_strong, H3_double.
 
 seeds: [42, 43, 44]  # 3 seeds per condition (compute budget)
 
 base_args:
+  n-phrase-events: 200
   n-direction-only-events: 100
   n-verb-only-events: 30
   n-lang-input: 2048
@@ -34,23 +38,32 @@ base_args:
   n-verb-only-test: 25
 
 conditions:
-  # H1: stronger action_gate drive (would need code change to expose
-  # via CLI -- defer if needed)
-  # NOTE: action_gate drive_pA is currently a python-level kwarg
-  # in build_tier_2_3_action_gate(). To sweep it we'd need to expose
-  # via CLI flag. For now this YAML focuses on H2 + H3 which are
-  # already CLI-exposed.
-  - name: phrase_baseline
+  # Baseline (matches main 6-seed validation; should give ~40%)
+  - name: baseline
+    args: {}
+  # H1a: action_gate disabled (drive_pA=0). Tests whether action_gate
+  # is HURTING phrase composition. If phrase >= direction-only acc,
+  # action_gate is the issue.
+  - name: gate_off
     args:
-      n-phrase-events: 200
-      # default verb_drive_ms=100, default action_gate drive_pA=50
-  - name: phrase_double_events
+      action-gate-drive-pA: 0.0
+  # H1b: action_gate weak (10pA). Tests whether smaller boost helps.
+  - name: gate_weak
     args:
-      n-phrase-events: 400  # H3: more STDP per phrase
-  - name: phrase_short
+      action-gate-drive-pA: 10.0
+  # H1c: action_gate strong (100pA). Tests whether stronger boost
+  # makes verb context dominant enough.
+  - name: gate_strong
     args:
-      n-phrase-events: 100  # check whether shorter helps (sometimes
-                             # less interference)
+      action-gate-drive-pA: 100.0
+  # H2: longer verb drive for PFC NMDA bistability
+  - name: verb_long
+    args:
+      verb-drive-ms: 200
+  # H3: more phrase events for STDP (doubled)
+  - name: events_double
+    args:
+      n-phrase-events: 400
 
 out_stats_template: "phrase_sweep_{name}_seed{seed}.json"
 out_arg_name: "out-stats"
