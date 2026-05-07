@@ -615,6 +615,13 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
     runner_module = PRESET_RUNNERS.get(req.preset, "research.runners.g11_bg_runner")
     output_flag = PRESET_OUTPUT_FLAG.get(req.preset, "--out")
     is_text_io = req.preset.startswith("text_io_")
+    # Live-mode flags (--interactive-control-file, --progress-print-interval)
+    # are only accepted by g11_bg_runner. Any preset that overrides
+    # PRESET_RUNNERS away from g11_bg_runner can't take them — those runners
+    # would reject the flags with "unrecognized arguments". Smoke test
+    # 2026-05-07 caught chat_demo / chat_continual_demo / Phase 1.3-1.5 /
+    # Tier 2.3 all failing this way.
+    supports_live_mode = (req.preset not in PRESET_RUNNERS) and not is_text_io
 
     out_filename = req.out_filename or (
         f"text_io_seed{req.seed}_{req.preset}_{run_id[:6]}.json" if is_text_io
@@ -629,23 +636,24 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
     # losing run progress). Goal-override / inject-reward fields still
     # only really matter for interactive_* runs but are harmless extras
     # for non-interactive runs.
-    # Text I/O runners do not currently support --interactive-control-file
-    # so we skip the control file for those presets.
+    # Only g11_bg_runner accepts --interactive-control-file. Skip it for
+    # any preset routed to a different runner (text I/O, chat demos,
+    # phase 1.3/1.4/1.5 evals, tier 2.3 phrase trainer, etc.).
     control_file = None
-    if not is_text_io:
+    if supports_live_mode:
         control_file = str(RUNTIME_DIR / f"control_{run_id}.json")
         Path(control_file).write_text("{}")
         extras.extend(["--interactive-control-file", control_file])
 
     # Inject a sensible --progress-print-interval default if none is set
-    # in the preset or the user's extras. Text I/O runners don't have
-    # this flag so skip it for them.
+    # in the preset or the user's extras. Only g11_bg_runner has this
+    # flag; skip it for text I/O / chat / phase / tier runners.
     #   interactive_*  -> 1   (per-step, for live-mode animation while attached)
     #   everything else -> 20 (every 20 steps; smoothes the live chart but
     #                          avoids the per-step CPU<->GPU sync overhead
     #                          identified in the throughput investigation)
     base_extras = list(extras) + list(PRESETS[req.preset])
-    if not is_text_io and not any(a == "--progress-print-interval" for a in base_extras):
+    if supports_live_mode and not any(a == "--progress-print-interval" for a in base_extras):
         default_ppi = "1" if req.preset.startswith("interactive_") else "20"
         extras.extend(["--progress-print-interval", default_ppi])
 
