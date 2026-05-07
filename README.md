@@ -94,6 +94,24 @@ python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --d
     --grid-size 16 --seed 42 --n-steps 1800
 ```
 
+Or talk to the sim — type a direction word and watch the motor pool
+activate (Tier 1 4-word vocab, ~6 min single seed):
+
+```bash
+python -m research.runners.chat_demo --seed 43 --train-events 200
+```
+
+Or with synonyms — both `north` and `up` activate motor_N (Tier 2.1
+8-word vocab, ~10 min single seed):
+
+```bash
+python -m research.runners.chat_synonym_demo --seed 42 --train-events 400
+```
+
+See [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) for all
+conversational demos (Tier 1 / Tier 2.1 synonym / Phase 1.4 continual
+learning).
+
 Full setup in [QUICKSTART.md](QUICKSTART.md).
 
 ---
