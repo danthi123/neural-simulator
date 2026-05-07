@@ -208,14 +208,20 @@ def run_demo(
 
     correct_total = 0
     total_turns = 0
+    # Per-direction tracking (added 2026-05-07): enables aggregator to
+    # surface which directions are well-bound vs not at the seed level.
+    correct_per_word = {w: 0 for w in DIRECTIONS}
+    total_per_word = {w: 0 for w in DIRECTIONS}
     for round_n in range(1, 4):
         transcript.append({"type": "section",
                             "text": f"Round {round_n}/3"})
         for word in DIRECTIONS:
             result = chat_turn(bridge, word)
             total_turns += 1
+            total_per_word[word] += 1
             if result["correct"]:
                 correct_total += 1
+                correct_per_word[word] += 1
 
             if verbose:
                 marker = "[OK]" if result["correct"] else "[X]"
@@ -231,16 +237,26 @@ def run_demo(
             })
 
     accuracy = correct_total / total_turns
+    per_word_accuracy = {
+        w: correct_per_word[w] / total_per_word[w] if total_per_word[w] else 0.0
+        for w in DIRECTIONS
+    }
 
     if verbose:
         print(f"\n[DEMO] Accuracy: {correct_total}/{total_turns} = "
               f"{accuracy:.1%}")
+        print("[DEMO] Per-direction:", "  ".join(
+            f"{w}: {correct_per_word[w]}/{total_per_word[w]}"
+            for w in DIRECTIONS))
 
     transcript.append({
         "type": "summary",
         "accuracy": accuracy,
         "correct": correct_total,
         "total": total_turns,
+        "per_word_accuracy": per_word_accuracy,
+        "correct_per_word": correct_per_word,
+        "total_per_word": total_per_word,
     })
 
     if transcript_out:
@@ -252,6 +268,9 @@ def run_demo(
         "accuracy": accuracy,
         "correct": correct_total,
         "total": total_turns,
+        "per_word_accuracy": per_word_accuracy,
+        "correct_per_word": correct_per_word,
+        "total_per_word": total_per_word,
         "transcript": transcript,
     }
 

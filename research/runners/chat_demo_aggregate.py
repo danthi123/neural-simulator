@@ -84,6 +84,11 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
             entry["accuracy"] = data.get("accuracy", 0.0)
             entry["correct"] = data.get("correct", 0)
             entry["total"] = data.get("total", 0)
+            # Per-direction accuracy (added 2026-05-07; older chat_demo
+            # output JSONs won't have these fields, default to empty).
+            entry["per_word_accuracy"] = data.get("per_word_accuracy", {})
+            entry["correct_per_word"] = data.get("correct_per_word", {})
+            entry["total_per_word"] = data.get("total_per_word", {})
 
         per_seed.append(entry)
 
@@ -119,6 +124,27 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
             "primary_acc_std": _safe_std(prim),
             "synonym_acc_mean": _safe_mean(syn),
             "synonym_acc_std": _safe_std(syn),
+        }
+
+    # Tier 1 per-direction aggregation (added 2026-05-07): surfaces
+    # which directions are reliably bound vs noisy across seeds.
+    tier1_seeds = [s for s in per_seed if s["demo_type"] == "tier1"]
+    if tier1_seeds and any(s.get("per_word_accuracy") for s in tier1_seeds):
+        directions = ["north", "east", "south", "west"]
+        per_dir_acc = {d: [] for d in directions}
+        for s in tier1_seeds:
+            pwa = s.get("per_word_accuracy", {})
+            for d in directions:
+                if d in pwa:
+                    per_dir_acc[d].append(pwa[d])
+        summary["tier1_per_direction"] = {
+            d: {
+                "mean": _safe_mean(per_dir_acc[d]),
+                "std": _safe_std(per_dir_acc[d]),
+                "n_seeds": len(per_dir_acc[d]),
+            }
+            for d in directions
+            if per_dir_acc[d]
         }
 
     # Continual-specific aggregation
@@ -157,6 +183,16 @@ def write_findings_md(summary: dict[str, Any], out_path: str, label: str):
                   f"**{s['primary_acc_mean']:.1%}** ± {s['primary_acc_std']:.1%}\n")
         md.append(f"- Synonym words (up/right/down/left):    "
                   f"**{s['synonym_acc_mean']:.1%}** ± {s['synonym_acc_std']:.1%}\n\n")
+
+    if "tier1_per_direction" in summary:
+        md.append("## Tier 1 per-direction split (across seeds)\n\n")
+        md.append("| Direction | Mean | Std | N seeds |\n|---|---|---|---|\n")
+        for d in ["north", "east", "south", "west"]:
+            if d in summary["tier1_per_direction"]:
+                stats = summary["tier1_per_direction"][d]
+                md.append(f"| {d} | {stats['mean']:.1%} | "
+                          f"{stats['std']:.1%} | {stats['n_seeds']} |\n")
+        md.append("\n")
 
     if "continual_demo" in summary:
         c = summary["continual_demo"]
@@ -200,7 +236,9 @@ def main():
                     help="Display label for the findings doc title")
     args = ap.parse_args()
 
-    # Expand globs
+    # Expand globs. Filter out launcher sidecars (.cmd.json) which the
+    # webapp dashboard creates next to each run -- those don't have
+    # 'accuracy' / 'seed' fields and mixing them in produces 0% noise.
     paths = []
     for p in args.paths:
         matched = sorted(glob.glob(p))
@@ -208,9 +246,10 @@ def main():
             paths.extend(matched)
         else:
             paths.append(p)  # let json.load fail with a clear error
+    paths = [p for p in paths if not p.endswith(".cmd.json")]
 
     if not paths:
-        print("[FAIL] No result paths matched.")
+        print("[FAIL] No result paths matched (after filtering out .cmd.json sidecars).")
         return 2
 
     print(f"[AGGREGATE] {len(paths)} files:")
