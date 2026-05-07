@@ -146,27 +146,49 @@ def main():
         std_ret = statistics.stdev(retentions) if len(retentions) > 1 else 0
         n_pass_80 = sum(1 for r in retentions if r >= 80)
         n_pass_50 = sum(1 for r in retentions if r >= 50)
+        n_total = len(args.seeds)
+        n_valid = len(valid)
+        # 4/6 threshold scales for partial results -- use proportion:
+        # need 2/3 seeds at threshold to declare branch.
+        pass_threshold_count = max(1, int(round(n_total * 2 / 3)))
         md.append("\n## Aggregate\n\n")
-        md.append(f"- Valid seeds: **{len(valid)}/{len(args.seeds)}**\n")
+        md.append(f"- Valid seeds: **{n_valid}/{n_total}**\n")
         md.append(f"- Mean retention: **{mean_ret:.0f}%** "
                   f"(+/- {std_ret:.0f}%)\n")
         md.append(f"- Seeds passing 80% threshold: "
-                  f"**{n_pass_80}/{len(args.seeds)}**\n")
+                  f"**{n_pass_80}/{n_total}**\n")
         md.append(f"- Seeds passing 50% threshold: "
-                  f"**{n_pass_50}/{len(args.seeds)}**\n")
+                  f"**{n_pass_50}/{n_total}**\n")
+        md.append(f"- Pass threshold for branch verdict: "
+                  f"**{pass_threshold_count}/{n_total}**\n")
         md.append("\n## Verdict\n\n")
-        if n_pass_80 >= 4:
-            md.append("[OK] **BRANCH A**: catastrophic forgetting NOT "
-                      "occurring under standard test. Biology-grounded "
-                      "continual learning preserves old knowledge "
-                      "(>= 4/6 retention >= 80%).\n")
+        if n_valid < n_total:
+            md.append(f"[~] **PRELIMINARY** ({n_valid}/{n_total} seeds "
+                      f"complete). Final verdict pending remaining seeds.\n\n")
+            # Show preliminary direction based on what we have
+            if n_pass_80 == n_valid:
+                md.append("Direction: trending BRANCH A (all completed "
+                          "seeds at >= 80% retention).\n")
+            elif n_pass_50 == n_valid:
+                md.append("Direction: trending BRANCH B (all completed "
+                          "seeds at >= 50% retention).\n")
+            else:
+                md.append("Direction: mixed; some seeds at <50% retention.\n")
+        elif n_pass_80 >= pass_threshold_count:
+            md.append(f"[OK] **BRANCH A**: catastrophic forgetting NOT "
+                      f"occurring under standard test. Biology-grounded "
+                      f"continual learning preserves old knowledge "
+                      f"(>= {pass_threshold_count}/{n_total} retention "
+                      f">= 80%).\n")
             md.append("\nNext: proceed to Phase 1.2 Tier 2.3 or Phase 2.1.\n")
-        elif n_pass_50 >= 4:
-            md.append("[~] **BRANCH B**: moderate forgetting. Some "
-                      "retention loss but not catastrophic. Phase 1.4b "
-                      "mitigations (heterosynaptic LTD, replay-based "
-                      "interleaving, sleep consolidation) recommended "
-                      "before Phase 2.\n")
+        elif n_pass_50 >= pass_threshold_count:
+            md.append(f"[~] **BRANCH B**: moderate forgetting. Some "
+                      f"retention loss but not catastrophic ("
+                      f">= {pass_threshold_count}/{n_total} at >= 50%, "
+                      f"< {pass_threshold_count}/{n_total} at >= 80%). "
+                      f"Phase 1.4b mitigations (heterosynaptic LTD, "
+                      f"replay-based interleaving, sleep consolidation) "
+                      f"recommended before Phase 2.\n")
             md.append("\nNext: design + implement Phase 1.4b. "
                       "See docs/plans/2026-05-06-Phase-1.4-decision-tree.md.\n")
         else:
