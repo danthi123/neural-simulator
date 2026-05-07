@@ -288,6 +288,55 @@ def run_consolidation_training(
     }
 
 
+def run_full(
+    seed: int = 42,
+    n_awake_events_per_word: int = 200,
+    n_sleep_swr_events: int = 200,
+    consolidation_interval: int = 4,
+    n_lang_input: int = 2048,
+    n_motor_per_action: int = 500,
+    n_motor_fs_per_action: int = 60,
+    n_test_per_word: int = 25,
+    verbose: bool = True,
+) -> Dict[str, Any]:
+    """End-to-end Phase 1.3: train with awake/sleep alternation +
+    run consolidation proof. Returns unified JSON-friendly dict.
+    """
+    from research.runners.consolidation_eval import (
+        evaluate_consolidation_proof,
+    )
+    bridge, stats = run_consolidation_training(
+        seed=seed,
+        n_awake_events_per_word=n_awake_events_per_word,
+        n_sleep_swr_events=n_sleep_swr_events,
+        consolidation_interval=consolidation_interval,
+        n_lang_input=n_lang_input,
+        n_motor_per_action=n_motor_per_action,
+        n_motor_fs_per_action=n_motor_fs_per_action,
+        verbose=verbose,
+    )
+    if verbose:
+        print("\n=== CONSOLIDATION PROOF ===", flush=True)
+    result = evaluate_consolidation_proof(
+        bridge, n_trials_per_word=n_test_per_word, verbose=verbose,
+    )
+    if verbose:
+        passed = result.get("pass", False)
+        print("\n" + "=" * 60)
+        print(f"PHASE 1.3 SEED {seed}: "
+              f"{'[OK] CONSOLIDATION CONFIRMED' if passed else '[X] FAIL'}")
+        if "ratio" in result:
+            print(f"  Pre-silence W->A: {result['pre_silence_acc']:.1%}")
+            print(f"  Hippo-OFF W->A:   {result['hippo_off_acc']:.1%}")
+            print(f"  Ratio:            {result['ratio']:.0%}")
+        print("=" * 60, flush=True)
+    return {
+        "seed": seed,
+        "stats": stats,
+        "consolidation_proof": result,
+    }
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -298,27 +347,42 @@ def main():
     ap.add_argument("--n-lang-input", type=int, default=2048)
     ap.add_argument("--n-motor-per-action", type=int, default=500)
     ap.add_argument("--n-motor-fs-per-action", type=int, default=60)
+    ap.add_argument("--n-test-per-word", type=int, default=25)
+    ap.add_argument("--train-only", action="store_true",
+                    help="Skip consolidation proof; output stats only")
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
 
-    bridge, stats = run_consolidation_training(
-        seed=args.seed,
-        n_awake_events_per_word=args.n_awake_events_per_word,
-        n_sleep_swr_events=args.n_sleep_swr_events,
-        consolidation_interval=args.consolidation_interval,
-        n_lang_input=args.n_lang_input,
-        n_motor_per_action=args.n_motor_per_action,
-        n_motor_fs_per_action=args.n_motor_fs_per_action,
-        verbose=True,
-    )
+    if args.train_only:
+        bridge, stats = run_consolidation_training(
+            seed=args.seed,
+            n_awake_events_per_word=args.n_awake_events_per_word,
+            n_sleep_swr_events=args.n_sleep_swr_events,
+            consolidation_interval=args.consolidation_interval,
+            n_lang_input=args.n_lang_input,
+            n_motor_per_action=args.n_motor_per_action,
+            n_motor_fs_per_action=args.n_motor_fs_per_action,
+            verbose=True,
+        )
+        result = {"seed": args.seed, "stats": stats}
+    else:
+        result = run_full(
+            seed=args.seed,
+            n_awake_events_per_word=args.n_awake_events_per_word,
+            n_sleep_swr_events=args.n_sleep_swr_events,
+            consolidation_interval=args.consolidation_interval,
+            n_lang_input=args.n_lang_input,
+            n_motor_per_action=args.n_motor_per_action,
+            n_motor_fs_per_action=args.n_motor_fs_per_action,
+            n_test_per_word=args.n_test_per_word,
+            verbose=True,
+        )
 
-    print(f"\nTraining stats: {stats}", flush=True)
     if args.out_stats:
         Path(args.out_stats).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.out_stats).write_text(json.dumps({
-            "seed": args.seed,
-            "stats": stats,
-        }, indent=2, default=str))
+        Path(args.out_stats).write_text(json.dumps(
+            result, indent=2, default=str
+        ))
         print(f"Saved: {args.out_stats}", flush=True)
 
 
