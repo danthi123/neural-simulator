@@ -369,6 +369,87 @@ def run_phrase_training(
     return bridge, stats
 
 
+def run_full(
+    seed: int = 42,
+    n_phrase_events: int = 200,
+    n_direction_only_events: int = 100,
+    n_verb_only_events: int = 30,
+    n_lang_input: int = 2048,
+    n_motor_per_action: int = 500,
+    n_motor_fs_per_action: int = 60,
+    n_dlpfc_verb: int = 200,
+    n_test_per_direction: int = 25,
+    n_verb_only_test: int = 25,
+    verbose: bool = True,
+) -> Dict[str, Any]:
+    """End-to-end: train + run all 3 test conditions. Returns unified
+    JSON-friendly dict suitable for committing as 6-seed input."""
+    from research.runners.phrase_eval import (
+        evaluate_phrase, evaluate_direction_only, evaluate_verb_only,
+    )
+
+    bridge, stats = run_phrase_training(
+        seed=seed,
+        n_phrase_events=n_phrase_events,
+        n_direction_only_events=n_direction_only_events,
+        n_verb_only_events=n_verb_only_events,
+        n_lang_input=n_lang_input,
+        n_motor_per_action=n_motor_per_action,
+        n_motor_fs_per_action=n_motor_fs_per_action,
+        n_dlpfc_verb=n_dlpfc_verb,
+        verbose=verbose,
+    )
+
+    if verbose:
+        print("\n=== PHRASE TEST ===", flush=True)
+    res_phrase = evaluate_phrase(
+        bridge, n_trials_per_direction=n_test_per_direction,
+        verbose=verbose,
+    )
+    if verbose:
+        print(f"  Phrase acc: {res_phrase['accuracy']:.1%}, "
+              f"pass={res_phrase['pass']}", flush=True)
+        print(f"  Per-direction: {res_phrase['per_direction']}", flush=True)
+
+    if verbose:
+        print("\n=== DIRECTION-ONLY TEST (Tier 1 compat) ===", flush=True)
+    res_dir = evaluate_direction_only(
+        bridge, n_trials_per_direction=n_test_per_direction,
+        verbose=verbose,
+    )
+    if verbose:
+        print(f"  Direction-only acc: {res_dir['accuracy']:.1%}, "
+              f"pass={res_dir['pass']}", flush=True)
+
+    if verbose:
+        print("\n=== VERB-ONLY TEST (anti-action) ===", flush=True)
+    res_verb = evaluate_verb_only(
+        bridge, n_trials=n_verb_only_test, verbose=verbose,
+    )
+    if verbose:
+        print(f"  Verb-only mean max rate: "
+              f"{res_verb['mean_max_motor_rate_hz']:.1f} Hz, "
+              f"% quiet: {res_verb['pct_trials_below_threshold']:.0%}, "
+              f"pass={res_verb['pass']}", flush=True)
+
+    all_pass = (res_phrase["pass"] and res_dir["pass"]
+                and res_verb["pass"])
+    if verbose:
+        print("\n" + "=" * 60)
+        print(f"TIER 2.3 SEED {seed}: "
+              f"{'[OK] ALL 3 PASS' if all_pass else '[X] FAIL'}")
+        print("=" * 60, flush=True)
+
+    return {
+        "seed": seed,
+        "stats": stats,
+        "phrase": res_phrase,
+        "direction_only": res_dir,
+        "verb_only": res_verb,
+        "all_pass": all_pass,
+    }
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -380,28 +461,47 @@ def main():
     ap.add_argument("--n-motor-per-action", type=int, default=500)
     ap.add_argument("--n-motor-fs-per-action", type=int, default=60)
     ap.add_argument("--n-dlpfc-verb", type=int, default=200)
+    ap.add_argument("--n-test-per-direction", type=int, default=25)
+    ap.add_argument("--n-verb-only-test", type=int, default=25)
+    ap.add_argument("--train-only", action="store_true",
+                    help="Skip post-train tests; output stats only")
     ap.add_argument("--out-stats", type=str, default=None,
-                    help="JSON output path for training stats")
+                    help="JSON output path for training+test stats")
     args = ap.parse_args()
 
-    bridge, stats = run_phrase_training(
-        seed=args.seed,
-        n_phrase_events=args.n_phrase_events,
-        n_direction_only_events=args.n_direction_only_events,
-        n_verb_only_events=args.n_verb_only_events,
-        n_lang_input=args.n_lang_input,
-        n_motor_per_action=args.n_motor_per_action,
-        n_motor_fs_per_action=args.n_motor_fs_per_action,
-        n_dlpfc_verb=args.n_dlpfc_verb,
-        verbose=True,
-    )
+    if args.train_only:
+        bridge, stats = run_phrase_training(
+            seed=args.seed,
+            n_phrase_events=args.n_phrase_events,
+            n_direction_only_events=args.n_direction_only_events,
+            n_verb_only_events=args.n_verb_only_events,
+            n_lang_input=args.n_lang_input,
+            n_motor_per_action=args.n_motor_per_action,
+            n_motor_fs_per_action=args.n_motor_fs_per_action,
+            n_dlpfc_verb=args.n_dlpfc_verb,
+            verbose=True,
+        )
+        result = {"seed": args.seed, "stats": stats}
+    else:
+        result = run_full(
+            seed=args.seed,
+            n_phrase_events=args.n_phrase_events,
+            n_direction_only_events=args.n_direction_only_events,
+            n_verb_only_events=args.n_verb_only_events,
+            n_lang_input=args.n_lang_input,
+            n_motor_per_action=args.n_motor_per_action,
+            n_motor_fs_per_action=args.n_motor_fs_per_action,
+            n_dlpfc_verb=args.n_dlpfc_verb,
+            n_test_per_direction=args.n_test_per_direction,
+            n_verb_only_test=args.n_verb_only_test,
+            verbose=True,
+        )
 
     if args.out_stats:
         Path(args.out_stats).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.out_stats).write_text(json.dumps({
-            "seed": args.seed,
-            "stats": stats,
-        }, indent=2, default=str))
+        Path(args.out_stats).write_text(json.dumps(
+            result, indent=2, default=str
+        ))
         print(f"\nSaved stats: {args.out_stats}", flush=True)
 
 
