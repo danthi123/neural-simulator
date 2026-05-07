@@ -110,5 +110,47 @@ def test_dlpfc_verb_composes_with_language_output():
     assert len(motor_to_lang_out) == 4
 
 
+def test_action_gate_builder_default():
+    """build_tier_2_3_action_gate returns a config with 4 motor targets
+    and a from_region_firing rule on dlpfc_verb."""
+    from research.runners.text_minimal_isolation import (
+        build_tier_2_3_action_gate,
+    )
+    nm = build_tier_2_3_action_gate()
+    assert nm.name == "action_gate"
+    assert nm.decay_tau_ms == 300.0
+    assert len(nm.targets) == 4
+    target_scopes = {t.scope for t in nm.targets}
+    assert target_scopes == {
+        "group:motor_N", "group:motor_E",
+        "group:motor_S", "group:motor_W",
+    }
+    for t in nm.targets:
+        assert t.target_type == "excitability_drive"
+    assert len(nm.production_rules) == 1
+    rule = nm.production_rules[0]
+    assert rule.rule_type == "from_region_firing"
+    assert rule.source_regions == ["dlpfc_verb"]
+
+
+def test_action_gate_custom_drive():
+    """drive_pA parameter changes the per-target sensitivity."""
+    from research.runners.text_minimal_isolation import (
+        build_tier_2_3_action_gate,
+    )
+    nm = build_tier_2_3_action_gate(drive_pA=100.0)
+    for t in nm.targets:
+        assert t.sensitivity == 100.0
+
+
+def test_action_gate_custom_decay():
+    """decay_tau_ms parameter changes the working-memory timescale."""
+    from research.runners.text_minimal_isolation import (
+        build_tier_2_3_action_gate,
+    )
+    nm = build_tier_2_3_action_gate(decay_tau_ms=500.0)
+    assert nm.decay_tau_ms == 500.0
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

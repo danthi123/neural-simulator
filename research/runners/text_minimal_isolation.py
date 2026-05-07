@@ -361,6 +361,69 @@ def build_biological_brain_regions(
     return regions, pathways
 
 
+def build_tier_2_3_action_gate(
+    sensitivity: float = 0.01,
+    decay_tau_ms: float = 300.0,
+    drive_pA: float = 50.0,
+    rate_threshold: float = 0.05,
+):
+    """Build the Tier 2.3 'action_gate' neuromodulator config.
+
+    This neuromodulator implements the verb-context-required-for-action
+    gating mechanism per design. dlpfc_verb activity drives a modulator
+    that boosts excitability of all 4 motor pools. Without verb context,
+    motor pools are quieter; with it, they fire normally.
+
+    Mechanism:
+    - rule_type='from_region_firing' on dlpfc_verb -> emit signal
+      proportional to (dlpfc_verb mean firing - threshold)
+    - target_type='excitability_drive' on motor_{N,E,S,W} group scope
+    - decay_tau_ms=300 matches NMDA-aligned working memory timescale
+      (verb context 'go' should boost motor for ~300ms while next
+      direction word arrives)
+
+    Biology: PFC -> motor cortex modulation is well-attested; PFC
+    excitability biases premotor / M1 firing thresholds via direct
+    glutamatergic projections. Goldman-Rakic 1995, Wang 2002 NMDA
+    bistability in PFC; Miller & Cohen 2001 PFC top-down control.
+
+    Returns:
+        NeuromodulatorConfig with the 4-target action_gate spec.
+        Caller must include this in cfg.neuromodulators when
+        cfg.enable_neuromodulator_subsystem=True.
+
+    Compatible with build_biological_brain_regions(enable_dlpfc_verb=True).
+    """
+    from sim.neuromodulators import (
+        NeuromodulatorConfig, ModulatorTarget, ProductionRule,
+    )
+    targets = []
+    for action in ["N", "E", "S", "W"]:
+        targets.append(ModulatorTarget(
+            target_type="excitability_drive",
+            scope=f"group:motor_{action}",
+            sensitivity=drive_pA,
+        ))
+    rules = [
+        ProductionRule(
+            rule_type="from_region_firing",
+            sensitivity=sensitivity,
+            threshold=rate_threshold,
+            window_ms=200.0,  # EMA tau for PFC firing rate
+            source_regions=["dlpfc_verb"],
+        ),
+    ]
+    return NeuromodulatorConfig(
+        name="action_gate",
+        baseline=0.0,
+        decay_tau_ms=decay_tau_ms,
+        concentration_min=0.0,
+        concentration_max=1.0,
+        targets=targets,
+        production_rules=rules,
+    )
+
+
 def apply_topographic_bias(
     bridge,
     topographic_factor: float = 1.5,
