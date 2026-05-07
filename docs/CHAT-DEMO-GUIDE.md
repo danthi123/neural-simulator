@@ -26,6 +26,32 @@ via embodied Hebbian co-firing (no backprop). Then runs 12 turns
 Phase 1.4 BRANCH A). Chance baseline is 25%. Best seeds (43) reach
 ~45%.
 
+### 1b. Tier 2.1 synonym chat demo (single seed, ~10 min on RTX 3090)
+
+```bash
+python -m research.runners.chat_synonym_demo \
+    --seed 42 \
+    --train-events 400 \
+    --transcript-out research/findings/chat-synonym-demo-result.md
+```
+
+Trains Tier 2.1 v4 scale-up arch (n_lang=4096, n_motor=1000,
+n_motor_fs=120) on 8-word synonym vocab: {north,up}, {east,right},
+{south,down}, {west,left}. Type "north" OR "up" -> motor_N activates.
+
+Then runs 16 turns (2 rounds x 8 words), separately tracking:
+- PRI (primary words: north, east, south, west)
+- SYN (synonym words: up, right, down, left)
+- Per-motor accuracy
+
+**Validated 6-seed (2026-05-06):** W->A 5/6 aligned, A->W 6/6 aligned,
+A->W mean 63.7%. Demonstrates capacity-driven binding: bigger motor
+pools (1000 vs Tier 1's 500) give STDP enough room for functional
+sub-populations within each motor_X (different synonyms activate
+different sub-pops, no winner-take-all).
+
+See `research/findings/2026-05-06-Tier2.1-BREAKTHROUGH-synonym-binding-via-scale.md`.
+
 ### 2. Phase 1.4 catastrophic forgetting test (~25 min single seed)
 
 ```bash
@@ -124,8 +150,9 @@ extensions:
 
 ### Near-term (1-2 weeks)
 - Multi-seed demo (run 6 seeds, show variance)
-- Tier 2.1 synonym demo (8-word vocab)
-- Continual-learning demo (train primary, then synonym, show retention)
+- ~~Tier 2.1 synonym demo (8-word vocab)~~ — **shipped 2026-05-07** (`chat_synonym_demo`)
+- ~~Continual-learning demo (train primary, then synonym, show retention)~~
+  — **shipped 2026-05-07** (`chat_continual_demo`)
 - Consolidation demo (sleep replay between training rounds)
 
 ### Medium-term (1-3 months)
