@@ -1,0 +1,34 @@
+name: continual-forgetting-validation
+runner: research.runners.continual_forgetting_eval
+output_dir: research/findings/raw/g11_bg
+parallelism: 2
+
+# Phase 1.4 6-seed validation — catastrophic forgetting benchmark.
+# Pre-staged 2026-05-06; launch when smoke (PID 33756) confirms protocol.
+#
+# Test: train 4 primaries (north/east/south/west), then train 4 synonyms
+# (up/right/down/left) ONLY, eval primary retention.
+# Pass criteria:
+#   - retention_pct >= 80% in >= 4/6 seeds = biology-grounded continual learning works
+#   - retention_pct 50-80% = moderate forgetting, may need mitigation
+#   - retention_pct <  50% = catastrophic forgetting, Phase 1.4b mitigations needed
+#
+# Wall clock: ~55 min/seed at Tier 2.1 v4 scale-up. 6 seeds parallel=2 ~ 165 min.
+# Run ETA: ~3 hours total.
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  phase-a-events: 200
+  phase-b-events: 200
+  n-eval-per-word: 25
+  n-lang-input: 4096
+  n-motor-per-action: 1000
+  n-motor-fs-per-action: 120
+
+conditions:
+  - name: forgetting
+    args: {}
+
+out_stats_template: "forgetting_seed{seed}.json"
+out_arg_name: "out-stats"

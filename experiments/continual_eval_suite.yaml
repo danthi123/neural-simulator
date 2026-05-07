@@ -1,0 +1,41 @@
+name: continual-eval-suite
+runner: research.runners.continual_eval_suite
+output_dir: research/findings/raw/continual_eval
+parallelism: 2
+
+# Phase 1.5 unified continual-learning eval suite — 6-seed run.
+# Pre-staged 2026-05-06.
+#
+# Runs 4 of 6 implemented benchmarks (multimodality + composition stubbed
+# pending Tier 2.2 / 2.3):
+#   - sequential_expansion (Phase 1.4 retention test)
+#   - retention_over_time (silent-step retention)
+#   - interference (interleaved 8-word vocab)
+#   - long_tail (4 common + 4 rare words)
+#
+# Aggregate score = mean of completed benchmark scores. Pass if >= 0.7.
+#
+# Wall clock: each benchmark ~55 min, 4 benchmarks * 6 seeds parallel=2 ~ 11 hours.
+# Run with parallel=2 to avoid GPU memory pressure (each run uses ~2-3GB VRAM).
+
+seeds: [42, 43, 44, 100, 101, 102]
+
+base_args:
+  benchmarks:
+    - sequential_expansion
+    - retention_over_time
+    - interference
+    - long_tail
+  events-per-word: 200
+  n-eval-per-word: 25
+  n-lang-input: 4096
+  n-motor-per-action: 1000
+  n-motor-fs-per-action: 120
+  silence-steps: 5000
+
+conditions:
+  - name: full_suite
+    args: {}
+
+out_stats_template: "continual_eval_seed{seed}.json"
+out_arg_name: "out-stats"
