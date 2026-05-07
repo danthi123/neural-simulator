@@ -695,3 +695,56 @@ exists; need to:
 3. Wire it into Phase 1.4 catastrophic forgetting eval
 
 This shrinks Phase 1.3 from 1-2 weeks to ~1 week.
+
+## 2026-05-06 ~20:30 EDT — Phase 1.4 smoke launch + parallel pre-staging
+
+**Status:** Phase 1.4 catastrophic forgetting smoke launched
+(PID 33756, ETA ~21:25 EDT). Used parallel time during the
+~55min wait to pre-stage downstream work.
+
+**Pre-staged artifacts (all committed to main):**
+
+1. `research/runners/continual_eval_suite.py` -- Phase 1.5
+   unified eval dispatcher. 4 of 6 benchmarks live:
+   - sequential_expansion (wraps Phase 1.4 logic)
+   - retention_over_time (silent-step retention with frozen
+     plasticity to isolate passive retention)
+   - interference (interleaved 8-word vocab)
+   - long_tail (4 common + 4 rare words at 20:1 frequency
+     ratio)
+   - multimodality (stub, depends on Tier 2.2)
+   - composition (stub, depends on Tier 2.3)
+
+2. `experiments/continual_forgetting_validation.yaml` --
+   Phase 1.4 6-seed validation YAML, ready to launch when
+   smoke confirms protocol.
+
+3. `experiments/continual_eval_suite.yaml` -- Phase 1.5
+   4-benchmark suite x 6 seeds.
+
+4. `docs/plans/2026-05-06-Phase-1.4-decision-tree.md` --
+   pre-codified next-step branching based on smoke result
+   (Branch A >=80%, B 50-80%, C <50%, D crash). Defines
+   default action if user unavailable.
+
+5. `docs/plans/2026-05-06-Phase-1.3-consolidation-design.md`
+   -- detailed Phase 1.3 implementation design. Reuses
+   Cluster D infrastructure; adds ca1->motor and
+   ca1->language_output consolidation pathways. Sleep loop
+   alternates encoding (awake) and consolidation (sleep)
+   plasticity gates. Three eval modes specified: standard
+   W->A, hippo-OFF (consolidation proof), sleep-recovery.
+
+6. `docs/plans/2026-05-06-Phase-2.1-surrogate-grad-design.md`
+   -- detailed Phase 2.1 design for path-f-hybrid branch.
+   Manual BPTT with ATan surrogate gradient (Zenke 2018),
+   T=20 unrolled timesteps, 4-layer SNN cortex stack. Toy
+   task: predict next token in ABCABC... sequence.
+
+**Decision:** Pre-staging everything makes the autonomous
+arc more robust to context switching and provides clear
+go-paths regardless of Phase 1.4 outcome. The decision tree
+ensures progression continues without user intervention.
+
+**Next:** wait for Phase 1.4 smoke result, follow decision
+tree to next phase.
