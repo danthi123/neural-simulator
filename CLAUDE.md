@@ -62,9 +62,9 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 13 modules, ~11.8K lines — core engine
-  bridge.py             # 6037 lines — SimulationBridge + GPU state orchestration
-  config.py             #  718 lines — all @dataclass configs
+sim/                    # 15 modules, ~12.3K lines — core engine
+  bridge.py             # 6093 lines — SimulationBridge + GPU state orchestration
+  config.py             #  741 lines — all @dataclass configs
   enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  988 lines — spatial/WS/motif connection generators (GPU)
   kernels.py            #  314 lines — fused @cp.fuse() neuron + plasticity kernels
@@ -73,14 +73,16 @@ sim/                    # 13 modules, ~11.8K lines — core engine
   neuromodulators.py    # 1051 lines — declarative neuromodulator subsystem
   data_bus.py           #   95 lines — DataChannel pub/sub for streaming sim data
   replicas.py           #  243 lines — replicated wiring (multi-bridge support)
-  text_embeddings.py    #  147 lines — token embeddings for language regions (2026-05-01)
+  text_embeddings.py    #  205 lines — token embeddings for language regions (2026-05-01)
   visual_cortex.py      #  310 lines — Gabor RFs + retina rendering (Cluster K v2, 2026-05-01)
+  bioparameter.py       #  231 lines — biological parameter helpers
+  progress.py           #  147 lines — universal [PROGRESS] event format (2026-05-04)
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 26 headless runners (g1..g11 + cluster/text/k_v2/etc) for research
-research/findings/      # session-by-session findings docs (93+ files)
-tests/                  # 40 test files (determinism, runners, kernels, plasticity, etc.)
+research/runners/       # 57 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/etc) for research
+research/findings/      # session-by-session findings docs (177+ files)
+tests/                  # 57 test files (determinism, runners, kernels, plasticity, etc.)
 ```
 
 ### Thread Model
@@ -92,8 +94,8 @@ tests/                  # 40 test files (determinism, runners, kernels, plastici
 
 **SimulationBridge** (`sim/bridge.py:170`): Central simulation orchestrator
 - Manages all GPU state arrays (CuPy)
-- Simulation stepping (`_run_one_simulation_step` at line 4210)
-- Initialization (`_initialize_simulation_data` at line 823)
+- Simulation stepping (`_run_one_simulation_step` at line 4236)
+- Initialization (`_initialize_simulation_data` at line 831)
 - Recording/playback to HDF5
 - Checkpoint save/restore
 - Profiling and performance monitoring
@@ -108,9 +110,9 @@ tests/                  # 40 test files (determinism, runners, kernels, plastici
   - HH numerical stability: dt auto-adjusts to 0.05ms when HH model selected
   - **Per-gate Q10**: `hh_q10_m=3.0`, `hh_q10_h=hh_q10_n=1.5` (fixed 2026-04-25 — uniform Q10=3 over-compressed dynamics at 37°C; see Phase A below)
   - **STDP bounds gotcha**: `stdp_w_max=2.0` default. The STDP rule is **soft-bound** (`Δw_LTP = A_plus * (w_max - w) * exp(...)`) so when `weight_mean > stdp_w_max`, every "LTP" event is strongly negative and weights collapse to w_max within ms. Set `cfg.stdp_w_max` above your design weights (e.g. cortex→D1 in Phase B uses `weight_mean=25` → set `stdp_w_max=30`).
-- `VisualizationConfig` (line 292): OpenGL rendering and camera parameters
-- `RuntimeState` (line 312): Mutable execution state (running, paused, time tracking)
-- `GPUConfig` (line 327): GPU features, memory management, recording modes
+- `VisualizationConfig` (line 357): OpenGL rendering and camera parameters
+- `RuntimeState` (line 377): Mutable execution state (running, paused, time tracking)
+- `GPUConfig` (line 392): GPU features, memory management, recording modes
 - Experiment configs (lines 440–619): `StimulusPattern`, `StimulusChannel`, `NeuronGroup`, `ReadoutConfig`, `TrainingConfig`, `ExperimentPhase`, `ExperimentConfig`
 
 ### GPU Array Naming Conventions
