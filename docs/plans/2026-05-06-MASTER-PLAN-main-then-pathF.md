@@ -955,3 +955,59 @@ window; both are smoke-ready as soon as GPU frees.
 
 **Next: wait for seed 101 to finish (~10 min) or kill it; launch
 Tier 2.3 smoke at full GPU.**
+
+## 2026-05-07 01:14 EDT -- Phase 1.4 v3 FINAL 6/6: 5 PASS BRANCH A
+
+All 6 seeds complete. Final verdict: **BRANCH A CONFIRMED**.
+
+| Seed | Phase A | Phase B | Retention | Status |
+|---|---|---|---|---|
+| 42  | 33.0% | 38.0% | 115% | PASS |
+| 43  | 45.0% | 38.0% | 84%  | PASS |
+| 44  | 36.0% | 28.0% | 78%  | MODERATE |
+| 100 | 34.0% | 44.0% | 129% | PASS |
+| 101 | 40.0% | 42.0% | 105% | PASS |
+| 102 | 38.0% | 41.0% | 108% | PASS |
+
+5/6 PASS, mean 103% (+/- 19%).
+
+## 2026-05-07 01:36 EDT -- Tier 2.3 single-seed smoke
+
+Seed 42:
+- Phrase: 36% (FAIL, threshold 50%) -- per-dir N28 E16 S40 W60
+- Direction-only: 42% (PASS, Tier 1 compat preserved)
+- Verb-only: 100% quiet (PASS, anti-action works)
+
+Mixed result. 2/4 directions clearly aligned (south, west). Smoke
+proves architecture wires correctly; phrase composition mechanism
+is partial.
+
+Smoke findings doc:
+[`research/findings/2026-05-07-Tier-2.3-smoke-PARTIAL.md`](research/findings/2026-05-07-Tier-2.3-smoke-PARTIAL.md)
+
+## 2026-05-07 02:16 EDT -- Tier 2.3 6-seed BATCH 1 done
+
+Seeds 42 + 43:
+
+| Seed | Phrase | Per-direction | Dir-only | Verb-only | All Pass |
+|---|---|---|---|---|---|
+| 42 | 36% | N28 E16 S40 W60 | 42% | 100% quiet | NO |
+| 43 | 44% | N40 E44 S40 W52 | 47% | 100% quiet | NO |
+
+Direction-only and verb-only pass for both seeds. Phrase below
+50% threshold for both, but seed 43 shows more uniform per-direction
+distribution (40-52%) suggesting the architecture CAN compose all
+directions but inconsistently across seeds.
+
+Mean batch 1 phrase: 40%. Sub-threshold, but consistent direction-
+only PASS shows Tier 1 backward compat preserved. **Trending Branch
+T2.3-B (parameter tuning needed).**
+
+Batch 2 in flight (seeds 44, 100), batch 3 pending.
+
+Decision tree at:
+[`docs/plans/2026-05-07-Tier-2.3-decision-tree.md`](docs/plans/2026-05-07-Tier-2.3-decision-tree.md)
+
+If full 6-seed mean phrase ~40%, will launch parameter sweep
+(`experiments/tier_2_3_parameter_sweep.yaml`) to identify which
+config raises phrase accuracy.
