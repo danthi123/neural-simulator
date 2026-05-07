@@ -1134,3 +1134,31 @@ completeness then proceed.
 4. Phase 2.3 wire continual-learning loop (uses Phase 1.4
    architecture)
 5. Phase 2.4 first conversational demo
+
+## 2026-05-07 05:04-05:08 EDT -- Sweep COMPLETE + Phase 2.1 scaffolding landed
+
+Sweep final (3 seeds each):
+
+| Condition | Mean Phrase | Notes |
+|---|---|---|
+| baseline (drive_pA=50) | 41% | original |
+| gate_off (drive_pA=0) | 41% | identical to baseline (action_gate inert) |
+| events_double (n=400) | 41% | same mean, slight per-direction shift but no gain |
+
+All 3 conditions at 41% mean. Tier 2.3 ceiling decisively at ~40%.
+Architecture-level redesign or Tier 3 dendritic learning are the
+only paths to 50%+ phrase composition.
+
+**Phase 1.5 single-seed smoke launched** (PID 1352, ~100min ETA).
+
+**Phase 2.1 path-f-hybrid branch CREATED** with scaffolding:
+- `sim/surrogate_grad.py`: ATan + fast_sigmoid surrogates,
+  cross_entropy + softmax_grad helpers
+- `tests/test_surrogate_grad.py`: 5 unit tests (all pass)
+- `research/runners/cortex_pretraining.py`: scaffolding stub
+
+Per autonomous heuristic ("pre-stage parallel branches"). Branch
+pushed to GitHub origin/path-f-hybrid; main untouched.
+
+When Phase 1.5 6-seed completes, will switch to path-f-hybrid and
+implement BPTT + ABC toy task per Phase 2.1 design.
