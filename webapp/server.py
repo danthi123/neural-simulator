@@ -589,6 +589,22 @@ PRESETS: dict[str, list[str]] = {
         "--vocab-size", "12",
         "--n-test-per-word", "20",
     ],
+    # 12-word vocab + SCALED-UP motor pools (n_motor=2000 vs default 1000).
+    # Per Tier 2.1 BREAKTHROUGH: "bigger motor pools give STDP enough room
+    # for functional sub-populations". 8-word had 2 sub-pops per motor_X;
+    # 12-word needs 3, may exceed 1000-neuron capacity. This preset doubles
+    # n_motor + n_motor_fs to test whether scale-up lifts primary retention.
+    # ~22K neurons, ~28M synapses, ~5 GB GPU. Wall clock ~150-170 min/seed
+    # at medium config (~1.5x slower per step due to bigger motor matrices).
+    # Per user 2026-05-08 EDT: "Feel free to scale up the sim if that's
+    # needed as well, we have headroom for more neurons/synapses."
+    "consolidation_synonym_12word_scaled_medium": [
+        "--medium",
+        "--vocab-size", "12",
+        "--n-motor-per-action", "2000",
+        "--n-motor-fs-per-action", "240",
+        "--n-test-per-word", "20",
+    ],
     # NOTE: phase_2_1_abc / phase_2_2_shakespeare presets exist only on
     # the path-f-hybrid branch (cortex_pretraining.py is not on main).
     # Run from that branch:
@@ -616,11 +632,12 @@ PRESET_RUNNERS: dict[str, str] = {
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
     "chat_synonym_demo":      "research.runners.chat_synonym_demo",
-    "consolidation_synonym":                "research.runners.consolidation_synonym_trainer",
-    "consolidation_synonym_smoke":          "research.runners.consolidation_synonym_trainer",
-    "consolidation_synonym_medium":         "research.runners.consolidation_synonym_trainer",
-    "consolidation_synonym_medium_strict":  "research.runners.consolidation_synonym_trainer",
-    "consolidation_synonym_12word_medium":  "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym":                       "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_smoke":                 "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_medium":                "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_medium_strict":         "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_12word_medium":         "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_12word_scaled_medium":  "research.runners.consolidation_synonym_trainer",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
@@ -641,11 +658,12 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
     "chat_synonym_demo":      "--out-stats",
-    "consolidation_synonym":                "--out-stats",
-    "consolidation_synonym_smoke":          "--out-stats",
-    "consolidation_synonym_medium":         "--out-stats",
-    "consolidation_synonym_medium_strict":  "--out-stats",
-    "consolidation_synonym_12word_medium":  "--out-stats",
+    "consolidation_synonym":                       "--out-stats",
+    "consolidation_synonym_smoke":                 "--out-stats",
+    "consolidation_synonym_medium":                "--out-stats",
+    "consolidation_synonym_medium_strict":         "--out-stats",
+    "consolidation_synonym_12word_medium":         "--out-stats",
+    "consolidation_synonym_12word_scaled_medium":  "--out-stats",
     # phase_2_* presets removed -- see PRESETS dict comment above.
 }
 
