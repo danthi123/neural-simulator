@@ -508,11 +508,16 @@ def run_full(
     synonym_pass = synonym_ratio >= 0.60
     if primary_pass and synonym_pass:
         verdict = "GO"
-    elif primary_pass:
-        verdict = "PARTIAL (primary consolidates, synonym does not)"
+    elif primary_pass and not synonym_pass:
+        verdict = "PARTIAL (primary >= 80% but synonym < 60% -- " \
+                  "synonym sub-pop binding doesn't consolidate)"
+    elif synonym_pass and not primary_pass:
+        verdict = "PARTIAL (synonym >= 60% but primary < 80% -- " \
+                  "synonym binding survives but primary degrades; " \
+                  "may indicate synonym training interferes with primary)"
     else:
-        verdict = "NO-GO (architectural insight: Tier 2.1 sub-pop binding " \
-                  "doesn't survive consolidation)"
+        verdict = "NO-GO (both primary < 80% and synonym < 60% -- " \
+                  "consolidation insufficient at this config)"
 
     if verbose:
         print(f"\n  Hippo-OFF overall: {post_acc:.1%}")
