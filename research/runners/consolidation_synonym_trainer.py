@@ -350,6 +350,15 @@ def run_full(
         verbose=verbose,
     )
 
+    # Resolve synonym_groups for this vocab size (single source of truth
+    # for per-word eval split below).
+    if vocab_size == 16:
+        synonym_groups = SYNONYM_GROUPS_16
+    elif vocab_size == 12:
+        synonym_groups = SYNONYM_GROUPS_12
+    else:  # vocab_size == 8
+        synonym_groups = SYNONYM_GROUPS_8
+
     if verbose:
         print(f"\n=== PRE-SILENCE EVAL (synonym mode, "
               f"vocab_size={vocab_size}) ===", flush=True)
@@ -370,33 +379,13 @@ def run_full(
     # Split primary vs synonym accuracy from confusion matrix.
     # evaluate_word_to_action returns confusion_matrix[word][action] = count;
     # per-word accuracy = confusion[word][correct_action] / sum(confusion[word]).
-    primary_words = ["north", "east", "south", "west"]
-    if vocab_size == 16:
-        synonym_words = ["up", "right", "down", "left",
-                          "n", "e", "s", "w",
-                          "↑", "→", "↓", "←"]
-        word_to_action = {
-            "north": "N", "up": "N", "n": "N", "↑": "N",
-            "east": "E", "right": "E", "e": "E", "→": "E",
-            "south": "S", "down": "S", "s": "S", "↓": "S",
-            "west": "W", "left": "W", "w": "W", "←": "W",
-        }
-    elif vocab_size == 12:
-        synonym_words = ["up", "right", "down", "left", "n", "e", "s", "w"]
-        word_to_action = {
-            "north": "N", "up": "N", "n": "N",
-            "east": "E", "right": "E", "e": "E",
-            "south": "S", "down": "S", "s": "S",
-            "west": "W", "left": "W", "w": "W",
-        }
-    else:  # vocab_size == 8
-        synonym_words = ["up", "right", "down", "left"]
-        word_to_action = {
-            "north": "N", "up": "N",
-            "east": "E", "right": "E",
-            "south": "S", "down": "S",
-            "west": "W", "left": "W",
-        }
+    # Derive primary/synonym word lists from synonym_groups (single source of
+    # truth) -- avoids duplicating per-vocab-size lookup tables.
+    primary_words = [synonym_groups[a][0] for a in ["N", "E", "S", "W"]]
+    synonym_words = [w for a in ["N", "E", "S", "W"]
+                     for w in synonym_groups[a][1:]]
+    word_to_action = {w: a for a, words in synonym_groups.items()
+                      for w in words}
 
     def _per_word_acc(eval_result, word):
         cm = eval_result.get("confusion_matrix", {}).get(word, {})
