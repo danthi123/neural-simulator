@@ -143,6 +143,7 @@ def test_launch_skips_live_mode_flags_for_overridden_runners(client):
         "phase_1_4_forgetting",
         "phase_1_3_consolidation",
         "phase_1_5_unified",
+        "phase_1_5_unified_scaled",
         "tier_2_3_phrases",
         "text_io_v2_smoke",
     ]

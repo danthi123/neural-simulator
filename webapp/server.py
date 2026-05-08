@@ -505,12 +505,30 @@ PRESETS: dict[str, list[str]] = {
     ],
     # Phase 1.5 unified continual-learning eval suite. 4 benchmarks
     # (sequential_expansion + retention_over_time + interference +
-    # long_tail). Smoke: 2/4 PASS, aggregate 0.62.
+    # long_tail). Smoke at default Tier 1 arch: 2/4 PASS, aggregate 0.62.
+    # interference + long_tail need 8-word vocab capacity (per
+    # 2026-05-08 capacity hypothesis findings) -- Tier 1 default arch
+    # (2048/500/60) overflows with 8 words. Use phase_1_5_unified_scaled
+    # for proper validation.
     "phase_1_5_unified": [
         "--benchmarks", "sequential_expansion", "retention_over_time",
         "interference", "long_tail",
         "--events-per-word", "200", "--n-eval-per-word", "25",
         "--silence-steps", "5000",
+    ],
+    # Phase 1.5 at Tier 2.1 v4 scale-up arch (4096/1000/120). Per 2026-05-08
+    # capacity hypothesis: 8-word vocab benchmarks (interference, long_tail)
+    # need scale-up arch to pass. Default arch only supports 4-word cleanly.
+    # Wall clock ~160 min/seed (4 benchmarks at scaled arch sequentially).
+    # Master plan named milestone: Phase 1.5 unified eval suite.
+    "phase_1_5_unified_scaled": [
+        "--benchmarks", "sequential_expansion", "retention_over_time",
+        "interference", "long_tail",
+        "--events-per-word", "200", "--n-eval-per-word", "25",
+        "--silence-steps", "5000",
+        "--n-lang-input", "4096",
+        "--n-motor-per-action", "1000",
+        "--n-motor-fs-per-action", "120",
     ],
     # Tier 2.3 PFC verb pool + compositional 2-word phrase trainer.
     # Architecture-limited at 41% phrase composition (sweep confirmed
@@ -627,7 +645,8 @@ PRESET_RUNNERS: dict[str, str] = {
     # 2026-05-06/07 Phase 1.3, 1.4, 1.5, Tier 2.3, chat demos
     "phase_1_4_forgetting":   "research.runners.continual_forgetting_eval",
     "phase_1_3_consolidation": "research.runners.consolidation_trainer",
-    "phase_1_5_unified":      "research.runners.continual_eval_suite",
+    "phase_1_5_unified":         "research.runners.continual_eval_suite",
+    "phase_1_5_unified_scaled":  "research.runners.continual_eval_suite",
     "tier_2_3_phrases":       "research.runners.phrase_trainer",
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
@@ -653,7 +672,8 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     # 2026-05-06/07 Phase 1.3-1.5, Tier 2.3, chat demos all use --out-stats
     "phase_1_4_forgetting":   "--out-stats",
     "phase_1_3_consolidation": "--out-stats",
-    "phase_1_5_unified":      "--out-stats",
+    "phase_1_5_unified":         "--out-stats",
+    "phase_1_5_unified_scaled":  "--out-stats",
     "tier_2_3_phrases":       "--out-stats",
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
