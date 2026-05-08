@@ -1,0 +1,24 @@
+{
+  "run_id": "44e35689ca75",
+  "preset": "consolidation_synonym_medium",
+  "seed": 42,
+  "extra_args": [],
+  "deterministic": false,
+  "cmd": [
+    "C:\\python312\\python.exe",
+    "-m",
+    "research.runners.consolidation_synonym_trainer",
+    "--medium",
+    "--n-test-per-word",
+    "20",
+    "--seed",
+    "42",
+    "--out-stats",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_consolidation_synonym_medium_44e356.json"
+  ],
+  "pid": 33116,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_44e35689ca75.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_consolidation_synonym_medium_44e356.json",
+  "started_at": 1778194922.6476052
+}

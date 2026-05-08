@@ -1,0 +1,88 @@
+{
+  "n_seeds": 3,
+  "demo_types": [
+    "consolidation_synonym"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "accuracy_mean": 0.36041666666666666,
+  "accuracy_std": 0.01909406539564932,
+  "accuracy_min": 0.34375,
+  "accuracy_max": 0.38125,
+  "per_seed": [
+    {
+      "path": "research/findings/raw/g11_bg/g11_seed42_consolidation_synonym_medium_44e356.json",
+      "seed": 42,
+      "demo_type": "consolidation_synonym",
+      "pre_overall": 0.36875,
+      "pre_primary": 0.46249999999999997,
+      "pre_synonym": 0.275,
+      "post_overall": 0.38125,
+      "post_primary": 0.425,
+      "post_synonym": 0.33749999999999997,
+      "retention_overall": 1.0338983050847457,
+      "retention_primary": 0.918918918918919,
+      "retention_synonym": 1.227272727272727,
+      "primary_pass": true,
+      "synonym_pass": true,
+      "verdict": "GO",
+      "accuracy": 0.38125
+    },
+    {
+      "path": "research/findings/raw/g11_bg/g11_seed43_consolidation_synonym_medium_4183c9.json",
+      "seed": 43,
+      "demo_type": "consolidation_synonym",
+      "pre_overall": 0.375,
+      "pre_primary": 0.5625,
+      "pre_synonym": 0.1875,
+      "post_overall": 0.35625,
+      "post_primary": 0.47500000000000003,
+      "post_synonym": 0.23750000000000002,
+      "retention_overall": 0.9500000000000001,
+      "retention_primary": 0.8444444444444446,
+      "retention_synonym": 1.2666666666666668,
+      "primary_pass": true,
+      "synonym_pass": true,
+      "verdict": "GO",
+      "accuracy": 0.35625
+    },
+    {
+      "path": "research/findings/raw/g11_bg/g11_seed44_consolidation_synonym_medium_af0178.json",
+      "seed": 44,
+      "demo_type": "consolidation_synonym",
+      "pre_overall": 0.31875,
+      "pre_primary": 0.4625,
+      "pre_synonym": 0.175,
+      "post_overall": 0.34375,
+      "post_primary": 0.45,
+      "post_synonym": 0.23750000000000002,
+      "retention_overall": 1.0784313725490198,
+      "retention_primary": 0.9729729729729729,
+      "retention_synonym": 1.3571428571428574,
+      "primary_pass": true,
+      "synonym_pass": true,
+      "verdict": "GO",
+      "accuracy": 0.34375
+    }
+  ],
+  "consolidation_synonym": {
+    "n_seeds": 3,
+    "overall_retention_mean": 1.0207765592112552,
+    "overall_retention_std": 0.06521341522096985,
+    "primary_retention_mean": 0.9121121121121122,
+    "primary_retention_std": 0.06453406174731353,
+    "synonym_retention_mean": 1.2836940836940838,
+    "synonym_retention_std": 0.06658838003803898,
+    "n_primary_pass": 3,
+    "n_synonym_pass": 3,
+    "n_go_verdict": 3,
+    "verdicts": [
+      "GO",
+      "GO",
+      "GO"
+    ]
+  }
+}

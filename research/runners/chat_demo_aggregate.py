@@ -60,11 +60,36 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
             entry["synonym_accuracy"] = data["synonym_accuracy"]
             entry["per_action_correct"] = data.get("per_action_correct", {})
             entry["per_action_total"] = data.get("per_action_total", {})
-        elif ("retention_ratio" in data or "retention" in data
+        elif "verdict" in data and "retention" in data and isinstance(
+                data.get("retention"), dict
+        ):
+            # consolidation_synonym_trainer (Phase 1.3 + Tier 2.1 combined).
+            # Retention is a dict {overall, primary, synonym, primary_pass,
+            # synonym_pass}. Distinct from chat_continual_demo's flat schema.
+            entry["demo_type"] = "consolidation_synonym"
+            ret = data["retention"]
+            pre = data.get("pre_silence", {})
+            post = data.get("hippo_off", {})
+            entry["pre_overall"] = pre.get("accuracy", 0.0)
+            entry["pre_primary"] = pre.get("primary_acc", 0.0)
+            entry["pre_synonym"] = pre.get("synonym_acc", 0.0)
+            entry["post_overall"] = post.get("accuracy", 0.0)
+            entry["post_primary"] = post.get("primary_acc", 0.0)
+            entry["post_synonym"] = post.get("synonym_acc", 0.0)
+            entry["retention_overall"] = ret.get("overall", 0.0)
+            entry["retention_primary"] = ret.get("primary", 0.0)
+            entry["retention_synonym"] = ret.get("synonym", 0.0)
+            entry["primary_pass"] = ret.get("primary_pass", False)
+            entry["synonym_pass"] = ret.get("synonym_pass", False)
+            entry["verdict"] = data.get("verdict", "")
+            entry["accuracy"] = entry["post_overall"]
+        elif ("retention_ratio" in data
+              or (isinstance(data.get("retention"), (int, float))
+                  and data.get("retention") > 0)
               or "primary_post_b" in data or "primary_b_acc" in data):
             # chat_continual_demo writes either {primary_post_a, primary_post_b,
             # retention_ratio, synonym_learning} OR {primary_a_acc, primary_b_acc,
-            # retention, synonym_acc} depending on its version. Accept both.
+            # retention, synonym_acc} (scalar) depending on version.
             entry["demo_type"] = "continual"
             entry["primary_post_a"] = (
                 data.get("primary_post_a") or data.get("primary_a_acc") or 0.0
@@ -72,9 +97,9 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
             entry["primary_post_b"] = (
                 data.get("primary_post_b") or data.get("primary_b_acc") or 0.0
             )
-            entry["retention_ratio"] = (
-                data.get("retention_ratio") or data.get("retention") or 0.0
-            )
+            ret_val = data.get("retention_ratio") or data.get("retention") or 0.0
+            # Defensive: if retention is unexpectedly a dict here, fall back to 0
+            entry["retention_ratio"] = ret_val if isinstance(ret_val, (int, float)) else 0.0
             entry["synonym_learning"] = (
                 data.get("synonym_learning") or data.get("synonym_acc") or 0.0
             )
@@ -160,6 +185,28 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
             "n_pass_above_80": sum(1 for r in ret if r >= 0.80),
         }
 
+    # consolidation_synonym aggregation (Phase 1.3 + Tier 2.1 combined).
+    # Reports primary + synonym retention separately + pass counts.
+    cs_seeds = [s for s in per_seed if s["demo_type"] == "consolidation_synonym"]
+    if cs_seeds:
+        prim_ret = [s["retention_primary"] for s in cs_seeds]
+        syn_ret = [s["retention_synonym"] for s in cs_seeds]
+        ovr_ret = [s["retention_overall"] for s in cs_seeds]
+        summary["consolidation_synonym"] = {
+            "n_seeds": len(cs_seeds),
+            "overall_retention_mean": _safe_mean(ovr_ret),
+            "overall_retention_std": _safe_std(ovr_ret),
+            "primary_retention_mean": _safe_mean(prim_ret),
+            "primary_retention_std": _safe_std(prim_ret),
+            "synonym_retention_mean": _safe_mean(syn_ret),
+            "synonym_retention_std": _safe_std(syn_ret),
+            "n_primary_pass": sum(1 for s in cs_seeds if s["primary_pass"]),
+            "n_synonym_pass": sum(1 for s in cs_seeds if s["synonym_pass"]),
+            "n_go_verdict": sum(1 for s in cs_seeds
+                                  if s["verdict"].startswith("GO")),
+            "verdicts": [s["verdict"] for s in cs_seeds],
+        }
+
     return summary
 
 
@@ -203,6 +250,20 @@ def write_findings_md(summary: dict[str, Any], out_path: str, label: str):
         md.append(f"- Seeds passing >= 80% retention: "
                   f"{c['n_pass_above_80']}/{c['n_seeds']}\n\n")
 
+    if "consolidation_synonym" in summary:
+        cs = summary["consolidation_synonym"]
+        md.append("## Phase 1.3 + Tier 2.1 combined consolidation\n\n")
+        md.append(f"- N seeds: {cs['n_seeds']}\n")
+        md.append(f"- Overall retention: **{cs['overall_retention_mean']:.1%}** "
+                  f"± {cs['overall_retention_std']:.1%}\n")
+        md.append(f"- **Primary retention: {cs['primary_retention_mean']:.1%}** "
+                  f"± {cs['primary_retention_std']:.1%} "
+                  f"({cs['n_primary_pass']}/{cs['n_seeds']} >= 80% threshold)\n")
+        md.append(f"- **Synonym retention: {cs['synonym_retention_mean']:.1%}** "
+                  f"± {cs['synonym_retention_std']:.1%} "
+                  f"({cs['n_synonym_pass']}/{cs['n_seeds']} >= 60% threshold)\n")
+        md.append(f"- GO verdicts: {cs['n_go_verdict']}/{cs['n_seeds']}\n\n")
+
     md.append("---\n\n## Per-seed table\n\n")
     md.append("| Seed | Accuracy | Notes |\n|---|---|---|\n")
     for s in summary["per_seed"]:
@@ -212,6 +273,10 @@ def write_findings_md(summary: dict[str, Any], out_path: str, label: str):
             notes_parts.append(f"SYN={s['synonym_accuracy']:.1%}")
         if s["demo_type"] == "continual":
             notes_parts.append(f"retention={s['retention_ratio']:.1%}")
+        if s["demo_type"] == "consolidation_synonym":
+            notes_parts.append(f"PRI ret={s['retention_primary']:.0%}")
+            notes_parts.append(f"SYN ret={s['retention_synonym']:.0%}")
+            notes_parts.append(s['verdict'][:8])
         notes = ", ".join(notes_parts) if notes_parts else "-"
         md.append(f"| {s['seed']} | {s['accuracy']:.1%} | {notes} |\n")
     md.append("\n")
@@ -275,6 +340,16 @@ def main():
         print(f"  Retention: {c['retention_mean']:.1%} +/- "
               f"{c['retention_std']:.1%}  "
               f"({c['n_pass_above_80']}/{c['n_seeds']} pass >= 80%)")
+    if "consolidation_synonym" in summary:
+        cs = summary["consolidation_synonym"]
+        print(f"  Phase 1.3 + Tier 2.1 combined:")
+        print(f"    Primary retention: {cs['primary_retention_mean']:.1%} +/- "
+              f"{cs['primary_retention_std']:.1%}  "
+              f"({cs['n_primary_pass']}/{cs['n_seeds']} pass >= 80%)")
+        print(f"    Synonym retention: {cs['synonym_retention_mean']:.1%} +/- "
+              f"{cs['synonym_retention_std']:.1%}  "
+              f"({cs['n_synonym_pass']}/{cs['n_seeds']} pass >= 60%)")
+        print(f"    GO verdicts: {cs['n_go_verdict']}/{cs['n_seeds']}")
 
     if args.out:
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
