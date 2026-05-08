@@ -85,28 +85,39 @@ def _load_or_train_tier1(seed: int, n_train_events: int, verbose: bool):
     return bridge
 
 
-def _load_or_train_synonym(seed: int, n_train_events: int, verbose: bool):
-    """Train Tier 2.1 v4 scale-up synonym architecture (8-word vocab)."""
+def _load_or_train_synonym(seed: int, n_train_events: int, verbose: bool,
+                             vocab_size: int = 8,
+                             n_motor_per_action: int = 1000,
+                             n_motor_fs_per_action: int = 120):
+    """Train Tier 2.1 scale-up synonym architecture.
+
+    vocab_size=8: validated 3/3 GO (n_motor=1000)
+    vocab_size=12: PARTIAL at default n_motor=1000, GO at n_motor=2000
+                   (capacity hypothesis; per 2026-05-08 finding)
+    vocab_size=16: tested only at n_motor=2000 (master plan extension)
+    """
     from research.runners.bio_three_factor import run_three_factor
 
     if verbose:
-        print(f"[TRAINING] Tier 2.1 v4 scale-up architecture "
-              f"(seed={seed}, n_events={n_train_events})", flush=True)
+        print(f"[TRAINING] Tier 2.1 scale-up architecture "
+              f"(seed={seed}, n_events={n_train_events}, "
+              f"vocab={vocab_size}, n_motor={n_motor_per_action})",
+              flush=True)
         t0 = time.time()
 
     bridge, _ = run_three_factor(
         seed=seed,
         n_events_per_direction=n_train_events,
         n_lang_input=4096,
-        n_motor_per_action=1000,
-        n_motor_fs_per_action=120,
+        n_motor_per_action=n_motor_per_action,
+        n_motor_fs_per_action=n_motor_fs_per_action,
         biological=True,
         enable_motor_fs=True,
         enable_nmda=True,
         apply_topographic_bias=True,
         embodied_hebbian=True,
         synonym_mode=True,
-        synonym_vocab_size=8,
+        synonym_vocab_size=vocab_size,
         verbose=False,
     )
 
@@ -210,12 +221,33 @@ def chat_inference(
 VOCAB_TIER1 = {"north", "east", "south", "west"}
 VOCAB_SYNONYM = {"north", "east", "south", "west",
                   "up", "right", "down", "left"}
+VOCAB_SYNONYM_12 = VOCAB_SYNONYM | {"n", "e", "s", "w"}
+VOCAB_SYNONYM_16 = VOCAB_SYNONYM_12 | {"↑", "→", "↓", "←"}
+
 WORD_TO_ACTION_SYNONYM = {
     "north": "N", "up": "N",
     "east": "E", "right": "E",
     "south": "S", "down": "S",
     "west": "W", "left": "W",
 }
+WORD_TO_ACTION_SYNONYM_12 = {**WORD_TO_ACTION_SYNONYM,
+    "n": "N", "e": "E", "s": "S", "w": "W"}
+WORD_TO_ACTION_SYNONYM_16 = {**WORD_TO_ACTION_SYNONYM_12,
+    "↑": "N", "→": "E", "↓": "S", "←": "W"}
+
+
+def _vocab_for_mode(mode: str):
+    """Return (vocab_set, word_to_action_dict) for a chat_repl mode."""
+    if mode == "tier1":
+        return VOCAB_TIER1, {"north": "N", "east": "E",
+                              "south": "S", "west": "W"}
+    if mode == "synonym":
+        return VOCAB_SYNONYM, WORD_TO_ACTION_SYNONYM
+    if mode == "synonym12":
+        return VOCAB_SYNONYM_12, WORD_TO_ACTION_SYNONYM_12
+    if mode == "synonym16":
+        return VOCAB_SYNONYM_16, WORD_TO_ACTION_SYNONYM_16
+    raise ValueError(f"unknown mode: {mode}")
 
 
 def _load_bridge_from_checkpoint(checkpoint_path: str, mode: str, seed: int,
@@ -296,27 +328,35 @@ def run_repl(mode: str, seed: int, n_train_events: int,
     print(f"Quit with 'quit', 'exit', or Ctrl-D.")
     print("=" * 60, flush=True)
 
+    vocab, _ = _vocab_for_mode(mode)
+    mode_label = mode.upper()
+
     if load_bridge:
         bridge = _load_bridge_from_checkpoint(load_bridge, mode, seed,
                                                 verbose=True)
-        if mode == "tier1":
-            vocab = VOCAB_TIER1
-            mode_label = "TIER1"
-        elif mode == "synonym":
-            vocab = VOCAB_SYNONYM
-            mode_label = "SYNONYM"
-        else:
-            raise ValueError(f"unknown mode: {mode}")
     elif mode == "tier1":
         bridge = _load_or_train_tier1(seed, n_train_events, verbose=True)
-        vocab = VOCAB_TIER1
-        mode_label = "TIER1"
         if save_bridge:
             _save_bridge_checkpoint(bridge, save_bridge, verbose=True)
     elif mode == "synonym":
-        bridge = _load_or_train_synonym(seed, n_train_events, verbose=True)
-        vocab = VOCAB_SYNONYM
-        mode_label = "SYNONYM"
+        bridge = _load_or_train_synonym(seed, n_train_events, verbose=True,
+                                          vocab_size=8)
+        if save_bridge:
+            _save_bridge_checkpoint(bridge, save_bridge, verbose=True)
+    elif mode == "synonym12":
+        # 12-word: capacity boundary at default arch -- use scaled (n_motor=2000)
+        bridge = _load_or_train_synonym(seed, n_train_events, verbose=True,
+                                          vocab_size=12,
+                                          n_motor_per_action=2000,
+                                          n_motor_fs_per_action=240)
+        if save_bridge:
+            _save_bridge_checkpoint(bridge, save_bridge, verbose=True)
+    elif mode == "synonym16":
+        # 16-word: only tested at scaled arch (n_motor=2000)
+        bridge = _load_or_train_synonym(seed, n_train_events, verbose=True,
+                                          vocab_size=16,
+                                          n_motor_per_action=2000,
+                                          n_motor_fs_per_action=240)
         if save_bridge:
             _save_bridge_checkpoint(bridge, save_bridge, verbose=True)
     else:
@@ -351,11 +391,8 @@ def run_repl(mode: str, seed: int, n_train_events: int,
             conf = result["confidence_ratio"]
 
             in_vocab = line in vocab
-            expected_action = (
-                WORD_TO_ACTION_SYNONYM.get(line) if mode == "synonym"
-                else {"north": "N", "east": "E",
-                      "south": "S", "west": "W"}.get(line)
-            )
+            _, word_to_action = _vocab_for_mode(mode)
+            expected_action = word_to_action.get(line)
             is_correct = (in_vocab and pred_action == expected_action)
             if is_correct:
                 correct += 1
@@ -420,14 +457,24 @@ def run_repl(mode: str, seed: int, n_train_events: int,
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--mode", choices=["tier1", "synonym"], default="tier1",
-                    help="Architecture mode (tier1=4-word, synonym=8-word)")
+    ap.add_argument("--mode",
+                    choices=["tier1", "synonym", "synonym12", "synonym16"],
+                    default="tier1",
+                    help="Architecture mode: "
+                         "tier1=4-word (validated 5/6+6/6); "
+                         "synonym=8-word (validated 5/6+6/6, 3/3 GO at "
+                         "consolidation); "
+                         "synonym12=12-word (PARTIAL at default arch; "
+                         "REPL uses scaled n_motor=2000 per capacity "
+                         "hypothesis); "
+                         "synonym16=16-word (master plan extension, "
+                         "Unicode arrows ↑→↓← as 4th synonym)")
     ap.add_argument("--seed", type=int, default=43,
                     help="Random seed (43 is the documented best Tier 1 seed; "
                          "42 is best Tier 2.1 single-seed)")
     ap.add_argument("--train-events", type=int, default=None,
                     help="Events per word during training (default: "
-                         "200 for tier1, 400 for synonym)")
+                         "200 for tier1, 400 for synonym, 200 for synonym12/16)")
     ap.add_argument("--transcript-out", type=str, default=None,
                     help="Save transcript to this markdown file at exit")
     ap.add_argument("--save-bridge", type=str, default=None,
@@ -444,7 +491,12 @@ def main():
     args = ap.parse_args()
 
     if args.train_events is None:
-        args.train_events = 200 if args.mode == "tier1" else 400
+        if args.mode == "tier1":
+            args.train_events = 200
+        elif args.mode == "synonym":
+            args.train_events = 400  # Tier 2.1 BREAKTHROUGH validated config
+        else:  # synonym12, synonym16
+            args.train_events = 200  # Per consolidation_synonym medium
 
     if args.load_bridge and args.save_bridge:
         ap.error("--load-bridge and --save-bridge are mutually exclusive "
