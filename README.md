@@ -108,6 +108,23 @@ Or with synonyms — both `north` and `up` activate motor_N (Tier 2.1
 python -m research.runners.chat_synonym_demo --seed 42 --train-events 400
 ```
 
+Or interactive REPL with checkpoint save (train once, reload instantly
+in future sessions):
+
+```bash
+# First time: train + save (~6 min for tier1, ~10-20 min for synonym)
+python -m research.runners.chat_repl --mode tier1 --seed 43 \
+    --save-bridge simulation_checkpoints_h5/repl_tier1.simstate.h5
+
+# Subsequent sessions: load saved bridge (~30 sec, REPL ready)
+python -m research.runners.chat_repl --mode tier1 --seed 43 \
+    --load-bridge simulation_checkpoints_h5/repl_tier1.simstate.h5
+
+# Or 16-word vocab with Unicode arrows:
+python -m research.runners.chat_repl --mode synonym16 --seed 42
+# Type ↑ or "north" or "up" or "n" → all activate motor_N
+```
+
 See [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) for all
 conversational demos (Tier 1 / Tier 2.1 synonym / Phase 1.4 continual
 learning).
@@ -277,15 +294,36 @@ See [`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md) for the configuration
 and [`research/findings/2026-05-01-cluster-k-v2-breakthrough.md`](research/findings/2026-05-01-cluster-k-v2-breakthrough.md)
 for the breakthrough writeup.
 
-**Word→action mapping is UNDER INVESTIGATION.** A 2026-05-03
-permuted-label control falsified the prior "28.5% W→A, p=0.027"
-claim — across 45+ runs, the TRUE labeled mapping was never the best
-of 24 permutations. The architecture has structure above chance but
-it's seed-dependent and unaligned with N/E/S/W labels. A
-biology-grounded sweep (topographic Wernicke→motor prior + motor
-PV-FS lateral inhibition) is in flight; the pre-staged decision chain
-auto-launches the appropriate follow-up based on outcome. See
-[`research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`](research/findings/2026-05-03-permuted-label-control-NEGATIVE.md).
+**Word→action mapping was UNDER INVESTIGATION as of 2026-05-03**
+(permuted-label control falsified the prior 28.5% claim). Resolved
+on 2026-05-06 by changing the training paradigm to embodied Hebbian
+co-firing — Tier 1 BREAKTHROUGH (W→A 5/6 + A→W 6/6 aligned), Tier 2.1
+BREAKTHROUGH (8-word + 12-word synonyms 5/6 + 6/6 aligned). The
+permuted-label control was the right anti-cheat — it caught a real
+problem with the previous training approach.
+
+**Continual learning + sleep consolidation validated multi-seed
+(2026-05-08):**
+- Phase 1.4 BRANCH A: 5/6 PASS, mean 103% retention (no catastrophic
+  forgetting when learning new vocab)
+- 8-word Phase 1.3 + Tier 2.1 combined: **3/3 GO** at multi-seed
+  + 3-seed strict anti-cheat IDENTICAL to non-strict (cortex truly
+  retains binding post-consolidation)
+- 12-word vocab: **2/3 GO at default arch, 1 partial; capacity
+  hypothesis confirmed** at scaled arch (n_motor=2000) — seed 43
+  primary retention lifted from 71% to 100%
+
+This characterizes the architecture's empirical capability: the
+biology-grounded continual learning works at multi-seed, sleep
+consolidation transfers binding to cortex genuinely (anti-cheat
+validated), and motor pool capacity scales linearly with vocab size.
+
+See [`research/findings/2026-05-08-Phase1.3-Tier2.1-12word-scaled-CAPACITY-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-12word-scaled-CAPACITY-CONFIRMED.md)
+for the most recent finding,
+[`research/findings/2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md)
+for the anti-cheat 3-seed result, and
+[`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) for the
+capacity scaling table.
 
 ---
 
