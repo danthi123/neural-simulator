@@ -1288,3 +1288,43 @@ n8n auto-ingest. 33 webapp tests + 5 new aggregator tests passing.
 Findings: `research/findings/2026-05-07-frontend-sync-arc-summary.md`
 captures the full arc; individual demo findings in
 `research/findings/2026-05-07-{chat-demo-multi-seed,chat-synonym-demo-seed42,consolidation-synonym-smoke-seed42}.md`.
+
+## 2026-05-08 ~01:00-04:00 EDT — Phase 1.3 + Tier 2.1 combined CONFIRMED 3/3 GO + anti-cheat
+
+**Multi-seed validation:** consolidation_synonym_medium 3 seeds (42, 43, 44):
+- Mean primary retention: 91.2% +/- 6.5% (3/3 >= 80%)
+- Mean synonym retention: 128.4% +/- 6.7% (3/3 >= 60%)
+- Verdict: 3/3 GO unanimous
+
+CLS theory (McClelland 1995, Buzsaki 2013) confirmed at synonym scale.
+Sleep replay transfers Tier 2.1 8-word synonym vocab from hippo to
+cortex; post-lesion cortex retains the binding cleanly.
+
+**Anti-cheat single-seed:** `--strict-silence` flag added (10x silencing
+current + zero ca1->cortex pathway weights at eval). Seed 42 strict
+result IDENTICAL to non-strict (overall/primary/synonym = 38.1% /
+42.5% / 33.8%; retention 103% / 92% / 123%). Hypothesis A (eval-noise
+artifact) FALSIFIED; hypothesis B (cortex truly retains) CONFIRMED.
+
+This is the strongest possible validation of Phase 1.3's CLS mechanism.
+Path F's premise that biology-grounded mechanisms suffice for
+continual learning is now empirically solid for both:
+- 4-word vocab (Phase 1.3: 3/3 PASS, mean 96% retention)
+- 8-word synonym vocab (Phase 1.3 + Tier 2.1: 3/3 GO, mean 91% primary
+  + 128% synonym retention, anti-cheat validated)
+
+**Wall-clock learnings:**
+- Default full config (400 events/word, 200 SWR/cycle, 100 chunks)
+  takes ~6.5 HRS/seed -- much longer than the design plan's "30-45 min"
+  estimate. Compounding effect: SWR events per chunk (4x) AND chunk
+  count (8x) = 32x total work scaling vs smoke.
+- Added `--medium` mode (200 events/word, 100 SWR/cycle, 50 chunks)
+  at ~115 min/seed = feasible 3-seed multi-seed in ~6 hrs.
+- Default kept for overnight/multi-day runs.
+
+Findings:
+- 3-seed GO: `research/findings/2026-05-08-Phase1.3-Tier2.1-combined-3seed-CONFIRMED.md`
+- Anti-cheat: `research/findings/2026-05-08-Phase1.3-Tier2.1-anti-cheat-CONFIRMED.md`
+- Wall-clock correction: `research/findings/2026-05-07-consolidation-synonym-wall-clock-correction.md`
+
+CLAUDE.md entry #13 updated with both results.

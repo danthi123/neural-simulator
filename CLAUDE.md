@@ -637,29 +637,39 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 >    For full conversational sim: scale Phase 2 ~1000x OR build
 >    on Phase 1.4+1.3 biology-grounded foundation alone (10-30 word
 >    vocab achievable).
-> 13. **🎉 2026-05-08 Phase 1.3 + Tier 2.1 COMBINED CONFIRMED 3/3 GO.**
->    Multi-seed (medium config, 200 events/word): unanimous PASS at
->    both thresholds. **Mean primary retention 91.2% +/- 6.5%
+> 13. **🎉 2026-05-08 Phase 1.3 + Tier 2.1 COMBINED CONFIRMED 3/3 GO
+>    + ANTI-CHEAT VALIDATED.** Multi-seed (medium config, 200 events/word):
+>    unanimous PASS at both thresholds. **Mean primary retention 91.2% +/- 6.5%
 >    (3/3 >= 80%), mean synonym retention 128.4% +/- 6.7% (3/3 >= 60%).**
 >    CLS theory generalizes from Phase 1.3's 4-word Tier 1 result to
 >    Tier 2.1's 8-word vocab with synonym sub-population structure.
 >    Architecture: Tier 2.1 v4 scale-up (n_lang=4096, n_motor=1000) +
->    hippocampus consolidation. Sleep replay consolidates synonym
->    sub-population structure into cortex; post-lesion (hippo-OFF)
->    cortex retains the binding cleanly. Synonym retention exceeding
->    100% across all 3 seeds is striking -- consistent with two
->    hypotheses: (A) pre-silence eval has noise from active hippo
->    (set_plasticity_gate freezes UPDATES not transmission), or
->    (B) cortex-only is sufficient post-consolidation. Anti-cheat
->    follow-up: remove hippo PATHWAYS to distinguish. Per-seed wall
->    clock ~115 min (medium); 3-seed total ~6 hrs. Use
->    `consolidation_synonym_medium` webapp preset or
->    `bash scripts/multiseed_chat_demo.sh consolidation_synonym_medium
->    42 43 44`. Findings:
->    [`research/findings/2026-05-08-Phase1.3-Tier2.1-combined-3seed-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-combined-3seed-CONFIRMED.md).
+>    hippocampus consolidation. Per-seed wall clock ~115 min (medium);
+>    3-seed total ~6 hrs.
+>
+>    **Anti-cheat single-seed (`--strict-silence`):** 10x stronger hippo
+>    silencing (-2000 pA) + zeroing 194,461 ca1->cortex edges at eval
+>    produces IDENTICAL retention numbers (38.1% / 42.5% / 33.8% =
+>    overall/primary/synonym, retention 103.4% / 91.9% / 122.7%).
+>    **Hypothesis B (cortex truly retains pattern post-consolidation)
+>    confirmed.** Hypothesis A (eval-noise from imperfect silencing)
+>    FALSIFIED. Sleep replay genuinely transfers W->A binding into
+>    cortex internal recurrence; cortex doesn't need hippo at all
+>    post-consolidation. Use `consolidation_synonym_medium_strict`
+>    webapp preset for the anti-cheat eval.
+>
+>    Standout: word `down` improved 4x post-strict-silence (10% pre to
+>    50% hippo-OFF). Without hippo input, cortex correctly produces
+>    motor_S much more often -- suggests hippo input was actively
+>    HURTING down's binding; cortex has cleaner pattern.
+>
+>    Findings:
+>    [`research/findings/2026-05-08-Phase1.3-Tier2.1-combined-3seed-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-combined-3seed-CONFIRMED.md)
+>    + [`research/findings/2026-05-08-Phase1.3-Tier2.1-anti-cheat-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-anti-cheat-CONFIRMED.md).
 >    Master plan section Phase 1.3: "This is THE mechanism that
 >    makes continual learning possible without catastrophic
->    forgetting at scale" -- empirically confirmed at synonym scale.
+>    forgetting at scale" -- empirically confirmed at synonym scale
+>    + anti-cheat validated.
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
