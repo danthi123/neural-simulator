@@ -647,16 +647,19 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 >    hippocampus consolidation. Per-seed wall clock ~115 min (medium);
 >    3-seed total ~6 hrs.
 >
->    **Anti-cheat single-seed (`--strict-silence`):** 10x stronger hippo
->    silencing (-2000 pA) + zeroing 194,461 ca1->cortex edges at eval
->    produces IDENTICAL retention numbers (38.1% / 42.5% / 33.8% =
->    overall/primary/synonym, retention 103.4% / 91.9% / 122.7%).
->    **Hypothesis B (cortex truly retains pattern post-consolidation)
->    confirmed.** Hypothesis A (eval-noise from imperfect silencing)
->    FALSIFIED. Sleep replay genuinely transfers W->A binding into
->    cortex internal recurrence; cortex doesn't need hippo at all
->    post-consolidation. Use `consolidation_synonym_medium_strict`
->    webapp preset for the anti-cheat eval.
+>    **Anti-cheat 3-seed (`--strict-silence`, 2026-05-08):** 10x stronger
+>    hippo silencing (-2000 pA) + zeroing ~194k ca1->cortex edges per
+>    seed produces IDENTICAL retention to non-strict across all 3 seeds:
+>    seed 42 pri 91.9% / syn 122.7% (matches non-strict EXACTLY); seed 43
+>    84.4% / 126.7% (matches); seed 44 97.3% / 135.7% (matches). 3/3 GO
+>    unanimous. **Hypothesis B (cortex truly retains pattern post-consolidation)
+>    CONFIRMED at 3-seed.** Hypothesis A (eval-noise from imperfect
+>    silencing) FALSIFIED at 3-seed. Sleep replay genuinely transfers
+>    W->A binding into cortex internal recurrence (motor<->motor,
+>    motor<->lang_output, topographic prior, FS lateral inhibition);
+>    cortex doesn't need hippo at all post-consolidation. Use
+>    `consolidation_synonym_medium_strict` webapp preset for the
+>    anti-cheat eval.
 >
 >    Standout: word `down` improved 4x post-strict-silence (10% pre to
 >    50% hippo-OFF). Without hippo input, cortex correctly produces
@@ -665,11 +668,15 @@ south 4/6 LEARN, north 4/6 REVERSED (cascade structural N-bias).
 >
 >    Findings:
 >    [`research/findings/2026-05-08-Phase1.3-Tier2.1-combined-3seed-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-combined-3seed-CONFIRMED.md)
->    + [`research/findings/2026-05-08-Phase1.3-Tier2.1-anti-cheat-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-anti-cheat-CONFIRMED.md).
+>    (3-seed GO),
+>    [`research/findings/2026-05-08-Phase1.3-Tier2.1-anti-cheat-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-anti-cheat-CONFIRMED.md)
+>    (single-seed anti-cheat),
+>    [`research/findings/2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md)
+>    (3-seed strict anti-cheat).
 >    Master plan section Phase 1.3: "This is THE mechanism that
 >    makes continual learning possible without catastrophic
 >    forgetting at scale" -- empirically confirmed at synonym scale
->    + anti-cheat validated.
+>    + 3-seed anti-cheat validated.
 
 The three fixes:
 1. `cfg.enable_hebbian_learning = False` (matches every g* runner) — Hebbian
