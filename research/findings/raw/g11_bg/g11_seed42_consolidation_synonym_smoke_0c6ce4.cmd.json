@@ -1,0 +1,29 @@
+{
+  "run_id": "0c6ce4b39500",
+  "preset": "consolidation_synonym_smoke",
+  "seed": 42,
+  "extra_args": [
+    "--vocab-size",
+    "12"
+  ],
+  "deterministic": false,
+  "cmd": [
+    "C:\\python312\\python.exe",
+    "-m",
+    "research.runners.consolidation_synonym_trainer",
+    "--smoke",
+    "--n-test-per-word",
+    "10",
+    "--seed",
+    "42",
+    "--out-stats",
+    "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_consolidation_synonym_smoke_0c6ce4.json",
+    "--vocab-size",
+    "12"
+  ],
+  "pid": 10380,
+  "log_file": "E:\\Documents\\Projects\\sim\\webapp\\runtime\\run_0c6ce4b39500.log",
+  "control_file": null,
+  "out_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\g11_bg\\g11_seed42_consolidation_synonym_smoke_0c6ce4.json",
+  "started_at": 1778241403.791818
+}
