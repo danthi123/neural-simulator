@@ -596,6 +596,19 @@ PRESETS: dict[str, list[str]] = {
         "--strict-silence",
         "--n-test-per-word", "20",
     ],
+    # 16-word vocab extension at scaled arch (n_motor=2000). Adds Unicode
+    # arrows (↑→↓←) as 4th synonym per action. Tests whether the 2026-05-08
+    # capacity hypothesis (bigger motor pools enable more sub-pops per
+    # action) extends to 4 sub-pops per motor_X. Per master plan section
+    # "Larger Tier 2.1 vocab (16-30 words)". Wall clock similar to
+    # 12word_scaled (~3.5 hr/seed at scaled arch with 1600 vocab events).
+    "consolidation_synonym_16word_scaled_medium": [
+        "--medium",
+        "--vocab-size", "16",
+        "--n-motor-per-action", "2000",
+        "--n-motor-fs-per-action", "240",
+        "--n-test-per-word", "20",
+    ],
     # 12-word vocab extension (adds n/e/s/w abbreviations as 3rd synonym
     # per action). Tests whether CLS theory still holds at richer vocabulary
     # scale than the 8-word validated result. Same architecture as 8-word;
@@ -657,6 +670,7 @@ PRESET_RUNNERS: dict[str, str] = {
     "consolidation_synonym_medium_strict":         "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_12word_medium":         "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_12word_scaled_medium":  "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_16word_scaled_medium":  "research.runners.consolidation_synonym_trainer",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
@@ -684,6 +698,7 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "consolidation_synonym_medium_strict":         "--out-stats",
     "consolidation_synonym_12word_medium":         "--out-stats",
     "consolidation_synonym_12word_scaled_medium":  "--out-stats",
+    "consolidation_synonym_16word_scaled_medium":  "--out-stats",
     # phase_2_* presets removed -- see PRESETS dict comment above.
 }
 

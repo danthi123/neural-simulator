@@ -72,8 +72,14 @@ SYNONYM_GROUPS_12 = {
     "S": ["south", "down", "s"],
     "W": ["west", "left", "w"],
 }
+SYNONYM_GROUPS_16 = {
+    "N": ["north", "up", "n", "↑"],
+    "E": ["east", "right", "e", "→"],
+    "S": ["south", "down", "s", "↓"],
+    "W": ["west", "left", "w", "←"],
+}
 # Default to 8-word for backwards compatibility (yesterday's 3/3 GO + anti-cheat
-# results were 8-word). Use --vocab-size 12 for the 12-word extension.
+# results were 8-word). Use --vocab-size 12/16 for extensions.
 SYNONYM_GROUPS = SYNONYM_GROUPS_8
 
 
@@ -135,12 +141,14 @@ def run_consolidation_synonym_training(
     rng = np.random.default_rng(seed)
 
     # Select synonym group dict by vocab_size. Validates against text_eval.
-    if vocab_size == 12:
+    if vocab_size == 16:
+        synonym_groups = SYNONYM_GROUPS_16
+    elif vocab_size == 12:
         synonym_groups = SYNONYM_GROUPS_12
     elif vocab_size == 8:
         synonym_groups = SYNONYM_GROUPS_8
     else:
-        raise ValueError(f"vocab_size must be 8 or 12, got {vocab_size}")
+        raise ValueError(f"vocab_size must be 8, 12, or 16, got {vocab_size}")
 
     if verbose:
         print("=" * 60)
@@ -363,7 +371,17 @@ def run_full(
     # evaluate_word_to_action returns confusion_matrix[word][action] = count;
     # per-word accuracy = confusion[word][correct_action] / sum(confusion[word]).
     primary_words = ["north", "east", "south", "west"]
-    if vocab_size == 12:
+    if vocab_size == 16:
+        synonym_words = ["up", "right", "down", "left",
+                          "n", "e", "s", "w",
+                          "↑", "→", "↓", "←"]
+        word_to_action = {
+            "north": "N", "up": "N", "n": "N", "↑": "N",
+            "east": "E", "right": "E", "e": "E", "→": "E",
+            "south": "S", "down": "S", "s": "S", "↓": "S",
+            "west": "W", "left": "W", "w": "W", "←": "W",
+        }
+    elif vocab_size == 12:
         synonym_words = ["up", "right", "down", "left", "n", "e", "s", "w"]
         word_to_action = {
             "north": "N", "up": "N", "n": "N",
@@ -586,9 +604,11 @@ def main():
                          "pathway weights at eval time. Tests whether "
                          "the >100%% synonym retention finding is real "
                          "cortex retention or eval-noise artifact.")
-    ap.add_argument("--vocab-size", type=int, choices=[8, 12], default=8,
-                    help="Synonym vocab size: 8 (default, validated) or "
-                         "12 (extension test, adds n/e/s/w abbreviations)")
+    ap.add_argument("--vocab-size", type=int, choices=[8, 12, 16], default=8,
+                    help="Synonym vocab size: 8 (default, validated 3/3 GO), "
+                         "12 (adds n/e/s/w abbreviations, validated 2/3 GO at "
+                         "default arch + capacity boundary), or 16 (adds "
+                         "Unicode arrows, master plan extension)")
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
 

@@ -45,19 +45,41 @@ EXTENDED_WORD_TO_ACTION_12 = {
     for word in words
 }
 
+# Tier 2.1 16-word: 4 synonyms per action. Adds Unicode arrows as 4th
+# synonym -- tests whether hash-based vocab_to_drive_pattern handles
+# non-ASCII tokens cleanly + extends per-motor sub-population count
+# from 3 (12-word) to 4 (16-word). Per master plan section
+# "Larger Tier 2.1 vocab (16-30 words)".
+SYNONYM_GROUPS_16 = {
+    "N": ["north", "up", "n", "↑"],     # ↑
+    "E": ["east", "right", "e", "→"],   # →
+    "S": ["south", "down", "s", "↓"],   # ↓
+    "W": ["west", "left", "w", "←"],    # ←
+}
+EXTENDED_WORD_TO_ACTION_16 = {
+    word: action
+    for action, words in SYNONYM_GROUPS_16.items()
+    for word in words
+}
+
 
 def get_synonym_groups(vocab_size: int = 8) -> dict:
     """Return SYNONYM_GROUPS for the requested vocab size.
 
-    vocab_size=8: {N:[north,up], E:[east,right], S:[south,down], W:[west,left]}
+    vocab_size=8:  {N:[north,up], E:[east,right], S:[south,down], W:[west,left]}
     vocab_size=12: adds short forms {N:[..., n], ...}
+    vocab_size=16: adds Unicode arrows {N:[..., ↑], E:[..., →], ...}
     """
+    if vocab_size == 16:
+        return SYNONYM_GROUPS_16
     if vocab_size == 12:
         return SYNONYM_GROUPS_12
     return SYNONYM_GROUPS
 
 
 def get_extended_word_to_action(vocab_size: int = 8) -> dict:
+    if vocab_size == 16:
+        return EXTENDED_WORD_TO_ACTION_16
     if vocab_size == 12:
         return EXTENDED_WORD_TO_ACTION_12
     return EXTENDED_WORD_TO_ACTION
