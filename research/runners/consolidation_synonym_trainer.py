@@ -59,13 +59,22 @@ from typing import Any, Dict
 import numpy as np
 
 
-# Synonym groups — must match research.runners.text_eval.get_synonym_groups(8)
-SYNONYM_GROUPS = {
+# Synonym groups — must match research.runners.text_eval.get_synonym_groups()
+SYNONYM_GROUPS_8 = {
     "N": ["north", "up"],
     "E": ["east", "right"],
     "S": ["south", "down"],
     "W": ["west", "left"],
 }
+SYNONYM_GROUPS_12 = {
+    "N": ["north", "up", "n"],
+    "E": ["east", "right", "e"],
+    "S": ["south", "down", "s"],
+    "W": ["west", "left", "w"],
+}
+# Default to 8-word for backwards compatibility (yesterday's 3/3 GO + anti-cheat
+# results were 8-word). Use --vocab-size 12 for the 12-word extension.
+SYNONYM_GROUPS = SYNONYM_GROUPS_8
 
 
 def run_consolidation_synonym_training(
@@ -79,6 +88,7 @@ def run_consolidation_synonym_training(
     swr_drive_pA: float = 100.0,
     smoke: bool = False,
     medium: bool = False,
+    vocab_size: int = 8,
     verbose: bool = True,
 ):
     """Train Tier 2.1 synonym vocab with hippocampus consolidation.
@@ -124,11 +134,20 @@ def run_consolidation_synonym_training(
 
     rng = np.random.default_rng(seed)
 
+    # Select synonym group dict by vocab_size. Validates against text_eval.
+    if vocab_size == 12:
+        synonym_groups = SYNONYM_GROUPS_12
+    elif vocab_size == 8:
+        synonym_groups = SYNONYM_GROUPS_8
+    else:
+        raise ValueError(f"vocab_size must be 8 or 12, got {vocab_size}")
+
     if verbose:
         print("=" * 60)
         print(f"CONSOLIDATION SYNONYM TRAINER (Phase 1.3 + Tier 2.1, "
               f"seed={seed})")
-        print(f"  Vocab: {SYNONYM_GROUPS}")
+        print(f"  Vocab size: {vocab_size}")
+        print(f"  Vocab: {synonym_groups}")
         print(f"  Awake events/word: {n_awake_events_per_word}")
         print(f"  Sleep SWR events: {n_sleep_swr_events}")
         print(f"  Consolidation interval: every {consolidation_interval} "
@@ -191,7 +210,7 @@ def run_consolidation_synonym_training(
     # Build awake training buffer with synonym mode
     # Each trial picks a random synonym for the target action.
     awake_buffer = []
-    for action, synonyms in SYNONYM_GROUPS.items():
+    for action, synonyms in synonym_groups.items():
         for _ in range(n_awake_events_per_word):
             token = synonyms[rng.integers(0, len(synonyms))]
             awake_buffer.append({"token": token, "action": action})
@@ -272,8 +291,8 @@ def run_consolidation_synonym_training(
         "n_sleep_phases": n_sleep_phases_run,
         "n_total_swr_events": n_sleep_phases_run * n_sleep_swr_events,
         "wall_clock_seconds": time.time() - t0,
-        "vocab_size": 8,
-        "synonym_groups": SYNONYM_GROUPS,
+        "vocab_size": vocab_size,
+        "synonym_groups": synonym_groups,
     }
 
 
@@ -289,6 +308,7 @@ def run_full(
     smoke: bool = False,
     medium: bool = False,
     strict_silence: bool = False,
+    vocab_size: int = 8,
     verbose: bool = True,
 ) -> Dict[str, Any]:
     """End-to-end: train + pre-silence eval + hippo-OFF eval.
@@ -318,13 +338,15 @@ def run_full(
         n_motor_fs_per_action=n_motor_fs_per_action,
         smoke=smoke,
         medium=medium,
+        vocab_size=vocab_size,
         verbose=verbose,
     )
 
     if verbose:
-        print("\n=== PRE-SILENCE EVAL (synonym mode) ===", flush=True)
+        print(f"\n=== PRE-SILENCE EVAL (synonym mode, "
+              f"vocab_size={vocab_size}) ===", flush=True)
 
-    # Pre-silence: hippo present, eval on all 8 synonyms
+    # Pre-silence: hippo present, eval on all synonyms
     pre_eval = evaluate_word_to_action(
         bridge,
         n_trials_per_word=n_test_per_word,
@@ -332,7 +354,7 @@ def run_full(
         n_reset_steps=50,
         token_sparsity=0.1,
         synonym_mode=True,
-        synonym_vocab_size=8,
+        synonym_vocab_size=vocab_size,
         verbose=verbose,
     )
     pre_acc = pre_eval["accuracy"]
@@ -341,9 +363,22 @@ def run_full(
     # evaluate_word_to_action returns confusion_matrix[word][action] = count;
     # per-word accuracy = confusion[word][correct_action] / sum(confusion[word]).
     primary_words = ["north", "east", "south", "west"]
-    synonym_words = ["up", "right", "down", "left"]
-    word_to_action = {"north": "N", "up": "N", "east": "E", "right": "E",
-                       "south": "S", "down": "S", "west": "W", "left": "W"}
+    if vocab_size == 12:
+        synonym_words = ["up", "right", "down", "left", "n", "e", "s", "w"]
+        word_to_action = {
+            "north": "N", "up": "N", "n": "N",
+            "east": "E", "right": "E", "e": "E",
+            "south": "S", "down": "S", "s": "S",
+            "west": "W", "left": "W", "w": "W",
+        }
+    else:  # vocab_size == 8
+        synonym_words = ["up", "right", "down", "left"]
+        word_to_action = {
+            "north": "N", "up": "N",
+            "east": "E", "right": "E",
+            "south": "S", "down": "S",
+            "west": "W", "left": "W",
+        }
 
     def _per_word_acc(eval_result, word):
         cm = eval_result.get("confusion_matrix", {}).get(word, {})
@@ -447,7 +482,7 @@ def run_full(
                 n_reset_steps=50,
                 token_sparsity=0.1,
                 synonym_mode=True,
-                synonym_vocab_size=8,
+                synonym_vocab_size=vocab_size,
                 verbose=verbose,
             )
         finally:
@@ -497,6 +532,7 @@ def run_full(
         "smoke": smoke,
         "medium": medium,
         "strict_silence": strict_silence,
+        "vocab_size": vocab_size,
         "stats": stats,
         "pre_silence": {
             "accuracy": pre_acc,
@@ -545,6 +581,9 @@ def main():
                          "pathway weights at eval time. Tests whether "
                          "the >100%% synonym retention finding is real "
                          "cortex retention or eval-noise artifact.")
+    ap.add_argument("--vocab-size", type=int, choices=[8, 12], default=8,
+                    help="Synonym vocab size: 8 (default, validated) or "
+                         "12 (extension test, adds n/e/s/w abbreviations)")
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
 
@@ -563,6 +602,7 @@ def main():
         smoke=args.smoke,
         medium=args.medium,
         strict_silence=args.strict_silence,
+        vocab_size=args.vocab_size,
         verbose=True,
     )
 
