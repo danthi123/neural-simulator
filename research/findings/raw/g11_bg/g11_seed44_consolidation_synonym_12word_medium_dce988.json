@@ -1,0 +1,82 @@
+{
+  "seed": 44,
+  "smoke": false,
+  "medium": true,
+  "strict_silence": false,
+  "vocab_size": 12,
+  "stats": {
+    "n_awake_events": 800,
+    "n_sleep_phases": 50,
+    "n_total_swr_events": 5000,
+    "wall_clock_seconds": 6120.631669044495,
+    "vocab_size": 12,
+    "synonym_groups": {
+      "N": [
+        "north",
+        "up",
+        "n"
+      ],
+      "E": [
+        "east",
+        "right",
+        "e"
+      ],
+      "S": [
+        "south",
+        "down",
+        "s"
+      ],
+      "W": [
+        "west",
+        "left",
+        "w"
+      ]
+    }
+  },
+  "pre_silence": {
+    "accuracy": 0.32083333333333336,
+    "primary_acc": 0.475,
+    "synonym_acc": 0.24375000000000002,
+    "per_word": {
+      "north": 0.65,
+      "east": 0.25,
+      "south": 0.5,
+      "west": 0.5,
+      "up": 0.45,
+      "right": 0.2,
+      "down": 0.2,
+      "left": 0.15,
+      "n": 0.15,
+      "e": 0.25,
+      "s": 0.3,
+      "w": 0.25
+    }
+  },
+  "hippo_off": {
+    "accuracy": 0.32916666666666666,
+    "primary_acc": 0.45,
+    "synonym_acc": 0.26875,
+    "per_word": {
+      "north": 0.4,
+      "east": 0.5,
+      "south": 0.35,
+      "west": 0.55,
+      "up": 0.2,
+      "right": 0.3,
+      "down": 0.3,
+      "left": 0.4,
+      "n": 0.2,
+      "e": 0.2,
+      "s": 0.2,
+      "w": 0.35
+    }
+  },
+  "retention": {
+    "overall": 1.025974025974026,
+    "primary": 0.9473684210526316,
+    "synonym": 1.1025641025641024,
+    "primary_pass": true,
+    "synonym_pass": true
+  },
+  "verdict": "GO"
+}
