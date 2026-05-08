@@ -288,12 +288,22 @@ def run_full(
     n_test_per_word: int = 25,
     smoke: bool = False,
     medium: bool = False,
+    strict_silence: bool = False,
     verbose: bool = True,
 ) -> Dict[str, Any]:
     """End-to-end: train + pre-silence eval + hippo-OFF eval.
 
     Returns unified JSON-friendly dict with retention ratio for both
     overall accuracy and primary-vs-synonym split.
+
+    strict_silence (anti-cheat, added 2026-05-08): when True, the
+    hippo-OFF eval uses a 10x stronger silencing current (-2000 pA
+    instead of -200 pA) AND zeros all ca1->cortex pathway weights at
+    eval time (restored after). This tests whether the surprising
+    >100% synonym retention finding from 2026-05-07 is due to:
+    (A) noise from imperfect hippo silencing (would drop with strict)
+    (B) cortex truly retains the pattern post-consolidation
+        (would stay with strict)
     """
     from research.runners.consolidation_eval import evaluate_with_hippo_off
     from research.runners.text_eval import evaluate_word_to_action
@@ -375,7 +385,54 @@ def run_full(
     else:
         hippo_arr = cp.asarray(hippo_indices, dtype=cp.int64)
         original_step = bridge._run_one_simulation_step
-        silence_pA = -200.0
+        # Default silencing -200 pA; --strict-silence uses 10x for the
+        # anti-cheat test that fully suppresses any residual hippo firing.
+        silence_pA = -2000.0 if strict_silence else -200.0
+
+        # Anti-cheat: also zero ca1->cortex pathway weights so that even
+        # if some hippo neuron fires (silencing imperfect), no signal can
+        # propagate via these synapses. Save originals + restore after.
+        saved_csr_data = None
+        n_zeroed = 0
+        if strict_silence:
+            ca1_idx = []
+            try:
+                idx = rm.indices("ca1")
+                if idx is not None:
+                    ca1_idx = list(idx)
+            except Exception:
+                pass
+
+            cortex_targets = []
+            for region_name in ["motor_N", "motor_E", "motor_S", "motor_W",
+                                "language_output"]:
+                try:
+                    idx = rm.indices(region_name)
+                    if idx is not None:
+                        cortex_targets.extend(list(idx))
+                except Exception:
+                    pass
+
+            if ca1_idx and cortex_targets and bridge.cp_connections is not None:
+                cortex_set = set(cortex_targets)
+                # Save original CSR data (small cost vs full rebuild)
+                saved_csr_data = bridge.cp_connections.data.copy()
+                # Zero edges from ca1 sources to cortex targets
+                indptr_h = bridge.cp_connections.indptr.get()
+                indices_h = bridge.cp_connections.indices.get()
+                data_h = bridge.cp_connections.data.get()
+                for r in ca1_idx:
+                    start = int(indptr_h[r])
+                    end = int(indptr_h[r + 1])
+                    for off in range(start, end):
+                        if int(indices_h[off]) in cortex_set:
+                            data_h[off] = 0.0
+                            n_zeroed += 1
+                bridge.cp_connections.data = cp.asarray(data_h, dtype=cp.float32)
+                if verbose:
+                    print(f"  [STRICT-SILENCE] zeroed {n_zeroed} "
+                          f"ca1->cortex edges + 10x silencing current",
+                          flush=True)
 
         def silenced_step():
             bridge.cp_external_input_current[hippo_arr] = float(silence_pA)
@@ -396,6 +453,9 @@ def run_full(
         finally:
             bridge._run_one_simulation_step = original_step
             bridge.cp_external_input_current[hippo_arr] = 0.0
+            # Restore zeroed pathway weights if we modified them
+            if saved_csr_data is not None:
+                bridge.cp_connections.data = saved_csr_data
 
     post_acc = post_eval["accuracy"]
     post_per_word = {w: _per_word_acc(post_eval, w)
@@ -435,6 +495,8 @@ def run_full(
     return {
         "seed": seed,
         "smoke": smoke,
+        "medium": medium,
+        "strict_silence": strict_silence,
         "stats": stats,
         "pre_silence": {
             "accuracy": pre_acc,
@@ -477,6 +539,12 @@ def main():
                     help="Medium mode: 200 events/word, 100 SWR events, "
                          "50 chunks (~80 min/seed). Feasible for 3-seed "
                          "validation in ~4 hrs vs default's ~19 hrs")
+    ap.add_argument("--strict-silence", action="store_true",
+                    help="Anti-cheat eval mode: 10x stronger hippo "
+                         "silencing (-2000 pA) AND zero ca1->cortex "
+                         "pathway weights at eval time. Tests whether "
+                         "the >100%% synonym retention finding is real "
+                         "cortex retention or eval-noise artifact.")
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
 
@@ -494,6 +562,7 @@ def main():
         n_test_per_word=args.n_test_per_word,
         smoke=args.smoke,
         medium=args.medium,
+        strict_silence=args.strict_silence,
         verbose=True,
     )
 

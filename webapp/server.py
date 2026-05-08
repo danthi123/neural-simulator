@@ -566,6 +566,17 @@ PRESETS: dict[str, list[str]] = {
         "--medium",
         "--n-test-per-word", "20",
     ],
+    # Anti-cheat variant of medium: also 10x stronger hippo silencing +
+    # zero ca1->cortex pathway weights at eval time. Tests whether the
+    # 2026-05-08 "synonym retention >100%" finding is real cortex retention
+    # or eval-time noise artifact from imperfect hippo silencing.
+    # Same wall-clock as medium (~80 min/seed); training identical, only
+    # eval differs.
+    "consolidation_synonym_medium_strict": [
+        "--medium",
+        "--strict-silence",
+        "--n-test-per-word", "20",
+    ],
     # NOTE: phase_2_1_abc / phase_2_2_shakespeare presets exist only on
     # the path-f-hybrid branch (cortex_pretraining.py is not on main).
     # Run from that branch:
@@ -593,9 +604,10 @@ PRESET_RUNNERS: dict[str, str] = {
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
     "chat_synonym_demo":      "research.runners.chat_synonym_demo",
-    "consolidation_synonym":        "research.runners.consolidation_synonym_trainer",
-    "consolidation_synonym_smoke":  "research.runners.consolidation_synonym_trainer",
-    "consolidation_synonym_medium": "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym":               "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_smoke":         "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_medium":        "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_medium_strict": "research.runners.consolidation_synonym_trainer",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
@@ -616,9 +628,10 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
     "chat_synonym_demo":      "--out-stats",
-    "consolidation_synonym":        "--out-stats",
-    "consolidation_synonym_smoke":  "--out-stats",
-    "consolidation_synonym_medium": "--out-stats",
+    "consolidation_synonym":               "--out-stats",
+    "consolidation_synonym_smoke":         "--out-stats",
+    "consolidation_synonym_medium":        "--out-stats",
+    "consolidation_synonym_medium_strict": "--out-stats",
     # phase_2_* presets removed -- see PRESETS dict comment above.
 }
 
