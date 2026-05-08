@@ -59,26 +59,17 @@ from typing import Any, Dict
 import numpy as np
 
 
-# Synonym groups — must match research.runners.text_eval.get_synonym_groups()
-SYNONYM_GROUPS_8 = {
-    "N": ["north", "up"],
-    "E": ["east", "right"],
-    "S": ["south", "down"],
-    "W": ["west", "left"],
-}
-SYNONYM_GROUPS_12 = {
-    "N": ["north", "up", "n"],
-    "E": ["east", "right", "e"],
-    "S": ["south", "down", "s"],
-    "W": ["west", "left", "w"],
-}
-SYNONYM_GROUPS_16 = {
-    "N": ["north", "up", "n", "↑"],
-    "E": ["east", "right", "e", "→"],
-    "S": ["south", "down", "s", "↓"],
-    "W": ["west", "left", "w", "←"],
-}
-# Default to 8-word for backwards compatibility (yesterday's 3/3 GO + anti-cheat
+# Synonym groups: imported from text_eval (single source of truth).
+# Re-exported here at module level so existing code using
+# consolidation_synonym_trainer.SYNONYM_GROUPS_N continues to work.
+# Per regression test test_synonym_consistency.py, these MUST stay in sync;
+# importing instead of duplicating eliminates drift risk entirely.
+from research.runners.text_eval import (
+    SYNONYM_GROUPS as SYNONYM_GROUPS_8,
+    SYNONYM_GROUPS_12,
+    SYNONYM_GROUPS_16,
+)
+# Default 8-word for backwards compatibility (yesterday's 3/3 GO + anti-cheat
 # results were 8-word). Use --vocab-size 12/16 for extensions.
 SYNONYM_GROUPS = SYNONYM_GROUPS_8
 
