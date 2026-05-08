@@ -157,6 +157,26 @@ params) would be needed.
 | Tier 2.1 12-word vocab | 5/6 + 6/6 aligned | Tier 2.1 BREAKTHROUGH |
 | Continual learning | 5/6 PASS, 103% retention | Phase 1.4 BRANCH A |
 | Memory consolidation | 3/3 PASS, 96% retention | Phase 1.3 |
+| 8-word + consolidation | **3/3 GO**, pri 91% / syn 128% | 2026-05-08 |
+| 8-word strict anti-cheat | **3/3** identical to non-strict | 2026-05-08 |
+| 12-word + consolidation (default arch) | 2/3 GO PARTIAL | 2026-05-08 (capacity edge) |
+| 12-word + consolidation (scaled arch) | seed 43 GO (pri 100%, syn 138%) | 2026-05-08 (multi-seed in flight) |
+
+### Capacity scaling table (motor pool size vs vocab size)
+
+| Vocab | Sub-pops/motor_X | Default arch (n_motor=1000) | Scaled arch (n_motor=2000) |
+|---|---|---|---|
+| 4-word | 1 | ✅ 5/6 + 6/6 | not needed |
+| 8-word (synonyms) | 2 | ✅ 5/6 + 6/6 | also passes |
+| 12-word (3 synonyms) | 3 | ⚠️ 2/3 PARTIAL (capacity edge) | ✅ seed 43 GO |
+| 16-word (4 synonyms) | 4 | not tested (predicted FAIL) | available (not yet validated) |
+
+**Key insight (Tier 2.1 BREAKTHROUGH 2026-05-06, capacity hypothesis
+empirically confirmed 2026-05-08):** as vocab size grows, each motor_X
+needs to differentiate more sub-populations. The motor pool capacity
+must scale with vocab size for clean binding. n_motor=1000 supports up
+to ~3 sub-pops (8-word fine, 12-word edge); n_motor=2000 supports
+4+ sub-pops (12-word clean, 16-word in test).
 
 ### Documented limits
 
