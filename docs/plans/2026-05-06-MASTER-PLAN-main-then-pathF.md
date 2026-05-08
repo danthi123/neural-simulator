@@ -1328,3 +1328,58 @@ Findings:
 - Wall-clock correction: `research/findings/2026-05-07-consolidation-synonym-wall-clock-correction.md`
 
 CLAUDE.md entry #13 updated with both results.
+
+## 2026-05-08 ~14:00-19:00 EDT — 12-word vocab extension + capacity hypothesis CONFIRMED
+
+**Multi-seed 12-word default config (3 seeds):**
+- seed 42: pri 86.1%, syn 93.5%, GO
+- seed 43: pri 71.1% FAIL, syn 95.1%, PARTIAL
+- seed 44: pri 94.7%, syn 110.3%, GO
+- Mean: pri 84.0% +/- 12.0%, syn 99.6% +/- 9.2%
+- 2/3 GO -- defines capacity boundary at default n_motor=1000 with 12-word
+
+**Scaled-up seed 43 (n_motor=2000):**
+- Primary retention: 71.1% -> 100.0% (+28.9pp)
+- Synonym retention: 95.1% -> 138.2% (+43.1pp)
+- PARTIAL -> clean GO
+
+Capacity hypothesis from Tier 2.1 BREAKTHROUGH validated at 12-word:
+bigger motor pools give STDP enough room for the 3 sub-populations
+per motor_X that 12-word vocab requires.
+
+**Multi-seed scaled 12-word in flight:** seeds 42 + 44 launched at
+scaled arch; if both also pass, 3/3 scaled GO confirms capacity
+hypothesis at multi-seed.
+
+**Infrastructure shipped during this arc (per user direction "make
+better use of free time during runs"):**
+- Phase 1.5 multi-seed launcher (`scripts/multiseed_phase_1_5.sh`)
+  + aggregator (`research/runners/phase_1_5_aggregate.py`) + scaled
+  preset (`phase_1_5_unified_scaled`)
+- 16-word vocab support (Unicode arrows ↑→↓← as 4th synonym, master
+  plan section "Larger Tier 2.1 vocab (16-30 words)")
+- chat_repl --save-bridge / --load-bridge (eliminates ~6 min training
+  delay on subsequent REPL sessions)
+- chat_repl modes synonym12 + synonym16
+- 51 tests across 4 test files
+
+**Path forward (post-scaled-12word completion):**
+1. Aggregate + findings doc (immediate)
+2. 16-word smoke single seed (~2 hrs at scaled arch; cheap capacity
+   probe at next vocab tier)
+3. If 16-word smoke GO: 16-word multi-seed scaled (~10 hrs, 3 seeds)
+4. Phase 1.5 multi-seed at scaled arch (~12-16 hrs, master plan
+   named milestone; uses scaled arch since interference + long_tail
+   need 8-word capacity)
+5. If 16-word smoke PARTIAL/FAIL: defines next capacity boundary,
+   document and continue to Phase 1.5
+
+**Path F empirical pillars (cumulative):**
+1. Phase 1.4 BRANCH A: 5/6 PASS, mean 103% retention (no catastrophic
+   forgetting)
+2. 8-word Phase 1.3+Tier 2.1: 3/3 GO (CLS theory at synonym scale)
+3. 8-word strict anti-cheat 3-seed: identical to non-strict (cortex
+   truly retains, not eval artifact)
+4. 12-word default 3-seed: 2/3 GO PARTIAL (defines capacity boundary)
+5. 12-word scaled single-seed: GO at n_motor=2000 (capacity hypothesis)
+6. 12-word scaled multi-seed: in flight
