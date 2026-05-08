@@ -218,23 +218,107 @@ WORD_TO_ACTION_SYNONYM = {
 }
 
 
+def _load_bridge_from_checkpoint(checkpoint_path: str, mode: str, seed: int,
+                                   verbose: bool = True):
+    """Load a previously-trained bridge from an HDF5 checkpoint.
+
+    Reuses the standard build/init path then loads weights from disk.
+    Per CLAUDE.md gotcha: save_checkpoint doesn't preserve firing
+    thresholds, STP, eligibility -- but for inference (REPL chat),
+    weights are what matter; dynamic state self-recovers in a few
+    timesteps of free-running.
+    """
+    from sim.config import (
+        CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig,
+    )
+    from sim.bridge import SimulationBridge
+
+    if verbose:
+        print(f"[LOAD] Reading bridge state from {checkpoint_path}",
+              flush=True)
+        t0 = time.time()
+
+    # Re-build bridge with the same config (mode determines arch)
+    if mode == "tier1":
+        bridge = _load_or_train_tier1(seed, n_train_events=0, verbose=False)
+    elif mode == "synonym":
+        bridge = _load_or_train_synonym(seed, n_train_events=0, verbose=False)
+    else:
+        raise ValueError(f"unknown mode: {mode}")
+
+    # Now overlay weights from the checkpoint.
+    bridge.load_checkpoint(checkpoint_path)
+
+    if verbose:
+        print(f"[LOAD] complete ({time.time() - t0:.0f}s)", flush=True)
+
+    # Re-freeze plasticity gates (load_checkpoint may have reset them)
+    try:
+        bridge.set_plasticity_gate("language_input_to_motor", 0.0)
+        bridge.set_plasticity_gate("motor_to_language_output", 0.0)
+    except Exception:
+        pass
+
+    return bridge
+
+
+def _save_bridge_checkpoint(bridge, checkpoint_path: str, verbose: bool = True):
+    """Save the trained bridge state for fast reload in future sessions."""
+    from pathlib import Path
+
+    if verbose:
+        print(f"[SAVE] Writing bridge state to {checkpoint_path}",
+              flush=True)
+        t0 = time.time()
+
+    Path(checkpoint_path).parent.mkdir(parents=True, exist_ok=True)
+    bridge.save_checkpoint(checkpoint_path)
+
+    if verbose:
+        print(f"[SAVE] complete ({time.time() - t0:.0f}s)", flush=True)
+
+
 def run_repl(mode: str, seed: int, n_train_events: int,
-             transcript_out: str = None):
-    """Train + interactive REPL loop."""
+             transcript_out: str = None,
+             load_bridge: str = None,
+             save_bridge: str = None):
+    """Train + interactive REPL loop.
+
+    If load_bridge is given, skip training and load from checkpoint.
+    If save_bridge is given (and we DID train), save the trained bridge
+    for future use. Combined: training takes ~6-20 min depending on
+    mode; checkpoint reload takes ~10-30 sec, making subsequent
+    interactive sessions effectively instant.
+    """
     print("=" * 60)
     print(f"BIOLOGY-GROUNDED CHAT REPL — mode={mode}, seed={seed}")
     print(f"Type a direction word; sim activates the motor pool.")
     print(f"Quit with 'quit', 'exit', or Ctrl-D.")
     print("=" * 60, flush=True)
 
-    if mode == "tier1":
+    if load_bridge:
+        bridge = _load_bridge_from_checkpoint(load_bridge, mode, seed,
+                                                verbose=True)
+        if mode == "tier1":
+            vocab = VOCAB_TIER1
+            mode_label = "TIER1"
+        elif mode == "synonym":
+            vocab = VOCAB_SYNONYM
+            mode_label = "SYNONYM"
+        else:
+            raise ValueError(f"unknown mode: {mode}")
+    elif mode == "tier1":
         bridge = _load_or_train_tier1(seed, n_train_events, verbose=True)
         vocab = VOCAB_TIER1
         mode_label = "TIER1"
+        if save_bridge:
+            _save_bridge_checkpoint(bridge, save_bridge, verbose=True)
     elif mode == "synonym":
         bridge = _load_or_train_synonym(seed, n_train_events, verbose=True)
         vocab = VOCAB_SYNONYM
         mode_label = "SYNONYM"
+        if save_bridge:
+            _save_bridge_checkpoint(bridge, save_bridge, verbose=True)
     else:
         raise ValueError(f"unknown mode: {mode}")
 
@@ -346,16 +430,33 @@ def main():
                          "200 for tier1, 400 for synonym)")
     ap.add_argument("--transcript-out", type=str, default=None,
                     help="Save transcript to this markdown file at exit")
+    ap.add_argument("--save-bridge", type=str, default=None,
+                    help="Save the trained bridge state to this HDF5 path "
+                         "after training. Future sessions can reload with "
+                         "--load-bridge to skip ~6 min of training.")
+    ap.add_argument("--load-bridge", type=str, default=None,
+                    help="Load a previously-saved bridge state instead of "
+                         "training. Skips the ~6 min training phase and "
+                         "starts the REPL in ~10-30 sec. Per CLAUDE.md "
+                         "save_checkpoint gotcha: doesn't preserve firing "
+                         "thresholds / STP / eligibility -- but for "
+                         "inference (REPL chat), weights are sufficient.")
     args = ap.parse_args()
 
     if args.train_events is None:
         args.train_events = 200 if args.mode == "tier1" else 400
+
+    if args.load_bridge and args.save_bridge:
+        ap.error("--load-bridge and --save-bridge are mutually exclusive "
+                 "(saving overwrites a checkpoint that was just loaded)")
 
     run_repl(
         mode=args.mode,
         seed=args.seed,
         n_train_events=args.train_events,
         transcript_out=args.transcript_out,
+        load_bridge=args.load_bridge,
+        save_bridge=args.save_bridge,
     )
     return 0
 

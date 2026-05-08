@@ -31,13 +31,19 @@ beat or tied chance. Best seed (101) reaches 50%; outlier seed
 ### 1c. Interactive chat REPL (single seed, ~6 min training + interactive)
 
 ```bash
+# First time: train + save the bridge
 python -m research.runners.chat_repl --mode tier1 --seed 43 \
     --train-events 200 \
-    --transcript-out research/findings/repl-transcript.md
+    --save-bridge simulation_checkpoints_h5/chat_tier1_seed43.simstate.h5
+
+# Future sessions: load the saved bridge (skips ~6 min training, starts in ~30 sec)
+python -m research.runners.chat_repl --mode tier1 --seed 43 \
+    --load-bridge simulation_checkpoints_h5/chat_tier1_seed43.simstate.h5
 
 # Or with 8-word synonym vocab:
 python -m research.runners.chat_repl --mode synonym --seed 42 \
-    --train-events 400
+    --train-events 400 \
+    --save-bridge simulation_checkpoints_h5/chat_synonym_seed42.simstate.h5
 ```
 
 Then type direction words at the `>` prompt:
@@ -56,6 +62,14 @@ This is the master plan's "build conversational demo on Phase 1.4
 architecture" milestone — a true interactive REPL where you type and
 the sim responds. The implementation uses the same baseline-vs-driven
 delta methodology as the scripted chat demos.
+
+**Checkpoint save/load** (added 2026-05-08): use `--save-bridge`
+on first run to persist the trained network state, then `--load-bridge`
+on subsequent runs to skip the ~6 min training phase. This makes the
+demo near-instant after the first invocation. Per CLAUDE.md gotcha:
+`save_checkpoint` doesn't preserve firing thresholds / STP / eligibility,
+but for inference (REPL chat), weights are sufficient — dynamic state
+self-recovers in a few timesteps.
 
 ### 1b. Tier 2.1 synonym chat demo (single seed, ~15-20 min on RTX 3090)
 
