@@ -313,7 +313,8 @@ def _save_bridge_checkpoint(bridge, checkpoint_path: str, verbose: bool = True):
 def run_repl(mode: str, seed: int, n_train_events: int,
              transcript_out: str = None,
              load_bridge: str = None,
-             save_bridge: str = None):
+             save_bridge: str = None,
+             scripted_words: list = None):
     """Train + interactive REPL loop.
 
     If load_bridge is given, skip training and load from checkpoint.
@@ -321,6 +322,10 @@ def run_repl(mode: str, seed: int, n_train_events: int,
     for future use. Combined: training takes ~6-20 min depending on
     mode; checkpoint reload takes ~10-30 sec, making subsequent
     interactive sessions effectively instant.
+
+    If scripted_words is given (a list of words), run those instead of
+    interactive stdin -- useful for CI / regression tests / batch
+    eval. Exits after processing the list.
     """
     print("=" * 60)
     print(f"BIOLOGY-GROUNDED CHAT REPL — mode={mode}, seed={seed}")
@@ -363,19 +368,32 @@ def run_repl(mode: str, seed: int, n_train_events: int,
         raise ValueError(f"unknown mode: {mode}")
 
     print(f"\nReady. Vocab: {sorted(vocab)}")
-    print(f"Type a word and press Enter.\n", flush=True)
+    if scripted_words is None:
+        print(f"Type a word and press Enter.\n", flush=True)
+    else:
+        print(f"[SCRIPTED] running {len(scripted_words)} predefined words.",
+              flush=True)
 
     transcript = []
     n_turns = 0
     correct = 0
+    scripted_iter = iter(scripted_words) if scripted_words else None
 
     try:
         while True:
-            try:
-                line = input("> ").strip().lower()
-            except (EOFError, KeyboardInterrupt):
-                print("\n[EOF]", flush=True)
-                break
+            if scripted_iter is not None:
+                try:
+                    line = next(scripted_iter).strip().lower()
+                    print(f"> {line}", flush=True)
+                except StopIteration:
+                    print("[SCRIPTED COMPLETE]", flush=True)
+                    break
+            else:
+                try:
+                    line = input("> ").strip().lower()
+                except (EOFError, KeyboardInterrupt):
+                    print("\n[EOF]", flush=True)
+                    break
 
             if not line:
                 continue
@@ -468,7 +486,7 @@ def main():
                          "REPL uses scaled n_motor=2000 per capacity "
                          "hypothesis); "
                          "synonym16=16-word (master plan extension, "
-                         "Unicode arrows ↑→↓← as 4th synonym)")
+                         "Unicode arrows up/right/down/left as 4th synonym)")
     ap.add_argument("--seed", type=int, default=43,
                     help="Random seed (43 is the documented best Tier 1 seed; "
                          "42 is best Tier 2.1 single-seed)")
@@ -488,6 +506,10 @@ def main():
                          "save_checkpoint gotcha: doesn't preserve firing "
                          "thresholds / STP / eligibility -- but for "
                          "inference (REPL chat), weights are sufficient.")
+    ap.add_argument("--scripted-words", type=str, default=None,
+                    help="Comma-separated word list to process instead of "
+                         "interactive stdin. Useful for CI / regression / "
+                         "batch eval. Example: --scripted-words 'north,up,east,right'")
     args = ap.parse_args()
 
     if args.train_events is None:
@@ -502,6 +524,13 @@ def main():
         ap.error("--load-bridge and --save-bridge are mutually exclusive "
                  "(saving overwrites a checkpoint that was just loaded)")
 
+    scripted_words = None
+    if args.scripted_words:
+        scripted_words = [w.strip() for w in args.scripted_words.split(",")
+                          if w.strip()]
+        if not scripted_words:
+            ap.error("--scripted-words got an empty list")
+
     run_repl(
         mode=args.mode,
         seed=args.seed,
@@ -509,6 +538,7 @@ def main():
         transcript_out=args.transcript_out,
         load_bridge=args.load_bridge,
         save_bridge=args.save_bridge,
+        scripted_words=scripted_words,
     )
     return 0
 
