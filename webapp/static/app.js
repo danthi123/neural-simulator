@@ -85,12 +85,26 @@ function formatProgressLine(p) {
     return `${phasePrefix}eval · ${unit.replace(/s$/, '')} ${p.current}/${p.total}`;
   }
   if (p.kind === "phase") {
-    return `${p.phase || p.label || "phase"} starting`;
+    // 2026-05-09: surface n_completed/n_total when present (continual_eval
+    // and other multi-phase suites). The current/total fields carry
+    // "phases done before this one" / "total phases planned".
+    const counter = (p.current != null && p.total != null && p.total > 1)
+      ? ` (${p.current + 1}/${p.total})` : "";
+    const unit = p.unit ? ` ${p.unit.replace(/s$/, '')}` : "";
+    return `${p.phase || p.label || "phase"}${unit} starting${counter}`;
   }
   if (p.kind === "complete") {
+    // For continual_eval and other multi-phase suites, p.current/total
+    // mean "phases now done / total planned". Score field also surfaced
+    // when present (e.g. continual_eval emits score+passed per benchmark).
+    const counter = (p.current != null && p.total != null && p.total > 1)
+      ? ` (${p.current}/${p.total})` : "";
+    const score = (p.score != null) ? ` · score ${p.score.toFixed(2)}` : "";
+    const passMark = (p.passed != null) ? (p.passed ? " ✓" : " ✗") : "";
     const acc = (p.result && p.result.accuracy != null)
       ? ` · acc ${(100*p.result.accuracy).toFixed(1)}%` : "";
-    return `complete${acc}`;
+    const phase = p.phase ? `${p.phase} ` : "";
+    return `${phase}complete${counter}${score}${passMark}${acc}`;
   }
 
   // Legacy kinds (still emitted by older runners during migration)
