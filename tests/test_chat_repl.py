@@ -112,3 +112,61 @@ def test_synonym_groups_match_canonical_lookup():
     eta_16 = te.get_extended_word_to_action(16)
     for word, action in WORD_TO_ACTION_SYNONYM_16.items():
         assert eta_16[word] == action
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# _parse_learn_command — Track 3 online vocab learning (2026-05-09)
+# ─────────────────────────────────────────────────────────────────────────
+
+
+def test_parse_learn_command_basic():
+    """The basic 'learn <word> <N|E|S|W>' form works."""
+    from research.runners.chat_repl import _parse_learn_command
+    assert _parse_learn_command("learn ahead N") == ("ahead", "N")
+    assert _parse_learn_command("learn back S") == ("back", "S")
+    assert _parse_learn_command("learn rightward E") == ("rightward", "E")
+
+
+def test_parse_learn_command_word_aliases():
+    """Action can be a direction word, a synonym, or a Unicode arrow."""
+    from research.runners.chat_repl import _parse_learn_command
+    # Full direction names
+    assert _parse_learn_command("learn ahead north") == ("ahead", "N")
+    assert _parse_learn_command("learn back south") == ("back", "S")
+    # Synonyms (matches existing Tier 2.1 mapping)
+    assert _parse_learn_command("learn forward up") == ("forward", "N")
+    assert _parse_learn_command("learn lefty left") == ("lefty", "W")
+    # Unicode arrows (matches Tier 2.3 16-word mapping)
+    assert _parse_learn_command("learn whatever ↑") == ("whatever", "N")
+
+
+def test_parse_learn_command_case_and_whitespace():
+    """Word lowercases, action handles mixed case + extra whitespace."""
+    from research.runners.chat_repl import _parse_learn_command
+    assert _parse_learn_command("LEARN HELLO E") == ("hello", "E")
+    assert _parse_learn_command("learn  TheWord  W") == ("theword", "W")
+    assert _parse_learn_command("  learn nice n  ") == ("nice", "N")
+
+
+def test_parse_learn_command_rejects_bad_input():
+    """Invalid inputs return None — caller can show usage hint."""
+    from research.runners.chat_repl import _parse_learn_command
+    # Missing args
+    assert _parse_learn_command("learn") is None
+    assert _parse_learn_command("learn ahead") is None
+    # Wrong command verb
+    assert _parse_learn_command("teach ahead N") is None
+    # Bad action
+    assert _parse_learn_command("learn ahead nope") is None
+    assert _parse_learn_command("learn ahead 5") is None
+    # Empty word (in practice unreachable through split, but defensive)
+    assert _parse_learn_command("learn  N") is None or \
+           _parse_learn_command("learn  N") == ("n", "N")  # split eats blanks
+
+
+def test_parse_learn_command_does_not_match_chat_inputs():
+    """A user typing 'north' or 'east' shouldn't accidentally invoke learn."""
+    from research.runners.chat_repl import _parse_learn_command
+    assert _parse_learn_command("north") is None
+    assert _parse_learn_command("east up") is None  # only 2 tokens
+    assert _parse_learn_command("learnsomething weird") is None  # not 'learn '

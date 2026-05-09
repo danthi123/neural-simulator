@@ -216,6 +216,175 @@ def chat_inference(
     }
 
 
+# ─── Online vocab learning (Track 3 scaffolding, 2026-05-09) ─────────
+
+
+def _parse_learn_command(line: str):
+    """Parse a 'learn <word> <action>' REPL command.
+
+    Returns (word, action) on success, None on parse failure. Strips
+    whitespace and lowercases word; uppercases action; validates action
+    is one of N/E/S/W.
+
+    Examples:
+        'learn ahead N'         -> ('ahead', 'N')
+        'learn ahead north'     -> ('ahead', 'N')   # word form ok
+        'learn forward up'      -> ('forward', 'N') # synonyms accepted
+        'learn  HELLO  e '      -> ('hello', 'E')   # trim + case
+        'learn'                 -> None             # missing args
+        'learn ahead'           -> None             # missing action
+        'learn ahead nope'      -> None             # bad action
+    """
+    parts = line.strip().split()
+    if len(parts) < 3 or parts[0].lower() != "learn":
+        return None
+    word = parts[1].strip().lower()
+    action_raw = parts[2].strip().lower()
+    # Accept N/E/S/W directly OR full direction names OR synonym words
+    action_aliases = {
+        "n": "N", "north": "N", "up": "N", "↑": "N",
+        "e": "E", "east":  "E", "right": "E", "→": "E",
+        "s": "S", "south": "S", "down": "S", "↓": "S",
+        "w": "W", "west":  "W", "left": "W", "←": "W",
+    }
+    action = action_aliases.get(action_raw)
+    if action is None:
+        return None
+    if not word:
+        return None
+    return (word, action)
+
+
+def learn_word_pairing(bridge, word: str, target_action: str,
+                       n_events: int = 50, stim_steps_per_event: int = 100,
+                       reset_steps: int = 50, drive_pA: float = 200.0,
+                       teacher_pA: float = 1500.0, sparsity: float = 0.1,
+                       verbose: bool = True):
+    """Online embodied-Hebbian binding of a NEW word to an existing motor pool.
+
+    Runs ``n_events`` paired co-firing events on the already-trained bridge:
+      - Drive language_input with the new word's drive pattern
+      - Drive language_output with the same pattern (output teacher)
+      - Drive motor_<target_action> with elevated current (action teacher)
+      - Step the bridge so STDP fires on co-active synapses
+
+    The bridge's plastic ``language_input_to_motor`` and (if present)
+    ``motor_to_language_output`` gates are temporarily opened, then
+    re-frozen on exit. This lets the existing population codes reach
+    new bindings without disturbing inference-time stability.
+
+    Args:
+        bridge: trained SimulationBridge (post chat_repl init)
+        word: new vocabulary word to bind
+        target_action: one of "N", "E", "S", "W"
+        n_events: number of paired events (50 is a moderate dose;
+            empirically gives a ~detectable binding without dramatically
+            shifting existing bindings on the same motor pool)
+        stim_steps_per_event: forward-prop steps per event
+        reset_steps: free-running steps between events to clear
+            transient state
+        drive_pA: peak drive on language input + output sites
+        teacher_pA: motor-pool teacher current (must be high enough to
+            drive motor_X spikes regardless of upstream)
+        sparsity: fraction of language_input neurons activated by the
+            word's drive pattern
+        verbose: log progress every 10 events
+
+    Returns:
+        dict with summary stats (n_events_run, target_action, gates_opened)
+    """
+    import cupy as cp
+    from sim.text_embeddings import vocab_to_drive_pattern
+
+    if target_action not in ("N", "E", "S", "W"):
+        raise ValueError(f"target_action must be N/E/S/W, got {target_action!r}")
+
+    rm = bridge.region_manager
+    lang_input_idx = list(rm.indices("language_input"))
+    motor_idx = list(rm.indices(f"motor_{target_action}"))
+    lang_input_arr = cp.asarray(lang_input_idx, dtype=cp.int64)
+    motor_arr = cp.asarray(motor_idx, dtype=cp.int64)
+    n_lang_in = len(lang_input_idx)
+
+    # language_output is optional — only present if bridge was trained with
+    # embodied_hebbian=True (which chat_repl always does, but defensive).
+    try:
+        lang_output_idx = list(rm.indices("language_output"))
+        lang_output_arr = cp.asarray(lang_output_idx, dtype=cp.int64)
+        n_lang_out = len(lang_output_idx)
+        has_output = True
+    except Exception:
+        has_output = False
+        n_lang_out = 0
+
+    # Drive pattern for the new word — same scheme as inference path.
+    drive_in = vocab_to_drive_pattern(
+        word, n_neurons=n_lang_in,
+        drive_max_pA=drive_pA, sparsity=sparsity,
+    )
+    drive_in_gpu = cp.asarray(drive_in, dtype=cp.float32)
+    if has_output:
+        drive_out = vocab_to_drive_pattern(
+            word, n_neurons=n_lang_out,
+            drive_max_pA=drive_pA, sparsity=sparsity,
+        )
+        drive_out_gpu = cp.asarray(drive_out, dtype=cp.float32)
+
+    # Open plasticity gates for the duration of learning.
+    gates_opened = []
+    for gate_name in ("language_input_to_motor", "motor_to_language_output"):
+        try:
+            bridge.set_plasticity_gate(gate_name, 1.0)
+            gates_opened.append(gate_name)
+        except Exception:
+            pass
+
+    if verbose:
+        print(f"[LEARN] '{word}' -> motor_{target_action} | "
+              f"{n_events} events | gates open: {gates_opened}",
+              flush=True)
+        t0 = time.time()
+
+    try:
+        for ev in range(n_events):
+            # Reset between events: zero drive, free-run to clear transients
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(reset_steps):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+
+            # Drive language_input + language_output + motor_TARGET
+            bridge.cp_external_input_current[lang_input_arr] = drive_in_gpu
+            if has_output:
+                bridge.cp_external_input_current[lang_output_arr] = drive_out_gpu
+            bridge.cp_external_input_current[motor_arr] += float(teacher_pA)
+
+            # Forward-prop — STDP fires on plastic synapses with co-active pre+post
+            for _ in range(stim_steps_per_event):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+
+            if verbose and (ev + 1) % 10 == 0:
+                print(f"  [LEARN] {ev + 1}/{n_events} events", flush=True)
+    finally:
+        # Re-freeze gates regardless of exception
+        for gate_name in gates_opened:
+            try:
+                bridge.set_plasticity_gate(gate_name, 0.0)
+            except Exception:
+                pass
+
+    if verbose:
+        print(f"[LEARN] complete ({time.time() - t0:.0f}s)", flush=True)
+
+    return {
+        "word": word,
+        "target_action": target_action,
+        "n_events_run": n_events,
+        "gates_opened": gates_opened,
+    }
+
+
 # ─── REPL ─────────────────────────────────────────────────────────────
 
 VOCAB_TIER1 = {"north", "east", "south", "west"}
@@ -314,7 +483,9 @@ def run_repl(mode: str, seed: int, n_train_events: int,
              transcript_out: str = None,
              load_bridge: str = None,
              save_bridge: str = None,
-             scripted_words: list = None):
+             scripted_words: list = None,
+             allow_learn: bool = False,
+             learn_n_events: int = 50):
     """Train + interactive REPL loop.
 
     If load_bridge is given, skip training and load from checkpoint.
@@ -326,10 +497,18 @@ def run_repl(mode: str, seed: int, n_train_events: int,
     If scripted_words is given (a list of words), run those instead of
     interactive stdin -- useful for CI / regression tests / batch
     eval. Exits after processing the list.
+
+    If ``allow_learn`` is True (per --learn), the REPL recognizes
+    ``learn <word> <action>`` commands which run an online embodied-
+    Hebbian binding session of ``learn_n_events`` paired events, then
+    automatically test the new binding. Default OFF — learning during
+    the REPL is opt-in because it can perturb existing bindings.
     """
     print("=" * 60)
     print(f"BIOLOGY-GROUNDED CHAT REPL — mode={mode}, seed={seed}")
     print(f"Type a direction word; sim activates the motor pool.")
+    if allow_learn:
+        print(f"Online learning: ON. Type 'learn <word> <action>' to bind a new word.")
     print(f"Quit with 'quit', 'exit', or Ctrl-D.")
     print("=" * 60, flush=True)
 
@@ -400,6 +579,44 @@ def run_repl(mode: str, seed: int, n_train_events: int,
             if line in ("quit", "exit", "q"):
                 print("[QUIT]", flush=True)
                 break
+
+            # Online learn command (only when --learn was passed)
+            if allow_learn and line.startswith("learn "):
+                parsed = _parse_learn_command(line)
+                if parsed is None:
+                    print("  [?] usage: learn <word> <action>  "
+                          "(action = N/E/S/W or north/east/south/west or "
+                          "up/right/down/left)", flush=True)
+                    continue
+                new_word, target = parsed
+                # Run the binding session, then auto-test the new word
+                learn_word_pairing(bridge, new_word, target,
+                                   n_events=learn_n_events, verbose=True)
+                test_result = chat_inference(bridge, new_word)
+                td = test_result["delta_counts"]
+                pred_a = test_result["predicted_action"]
+                conf = test_result["confidence_ratio"]
+                bound_ok = (pred_a == target)
+                marker = "[OK]" if bound_ok else "[X] "
+                print(f"  {marker} [LEARN-TEST] '{new_word}' -> "
+                      f"motor_{pred_a} (target motor_{target}) "
+                      f"(delta N{td['N']:+d} E{td['E']:+d} "
+                      f"S{td['S']:+d} W{td['W']:+d}, x{conf:.1f})",
+                      flush=True)
+                transcript.append({
+                    "turn": n_turns + 1,
+                    "user_word": f"learn {new_word} {target}",
+                    "is_learn_command": True,
+                    "learned_word": new_word,
+                    "target_action": target,
+                    "predicted_action": pred_a,
+                    "confidence": conf,
+                    "delta": td,
+                    "bound_correctly": bound_ok,
+                    "n_events_run": learn_n_events,
+                })
+                n_turns += 1
+                continue
 
             n_turns += 1
             result = chat_inference(bridge, line)
@@ -510,6 +727,19 @@ def main():
                     help="Comma-separated word list to process instead of "
                          "interactive stdin. Useful for CI / regression / "
                          "batch eval. Example: --scripted-words 'north,up,east,right'")
+    ap.add_argument("--learn", action="store_true",
+                    help="Enable online vocabulary learning. The REPL will "
+                         "recognize 'learn <word> <action>' commands and "
+                         "run an embodied-Hebbian binding session that adds "
+                         "the new word to the existing motor pool, then "
+                         "auto-tests the binding. Default OFF (learning "
+                         "during chat is opt-in because new bindings can "
+                         "perturb existing ones).")
+    ap.add_argument("--learn-events", type=int, default=50,
+                    help="Number of paired co-firing events per learn "
+                         "command (default 50). Higher values give a "
+                         "stronger binding but risk perturbing existing "
+                         "vocab on the same motor pool.")
     args = ap.parse_args()
 
     if args.train_events is None:
@@ -539,6 +769,8 @@ def main():
         load_bridge=args.load_bridge,
         save_bridge=args.save_bridge,
         scripted_words=scripted_words,
+        allow_learn=args.learn,
+        learn_n_events=args.learn_events,
     )
     return 0
 
