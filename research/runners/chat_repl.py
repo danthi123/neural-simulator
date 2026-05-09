@@ -216,6 +216,53 @@ def chat_inference(
     }
 
 
+# ─── Dialog state (Track 3 layer 3, 2026-05-09) ───────────────────────
+
+# Inverse-action lookup. Used by `:opposite` to flip the last predicted
+# action; biologically tests whether the network has learned
+# anti-correlation between opposing motor pools (motor_N vs motor_S etc.).
+ACTION_OPPOSITE = {"N": "S", "S": "N", "E": "W", "W": "E"}
+
+# Canonical primary direction word per action — used to echo the inverted
+# action back to the user as a word ("opposite of north was south").
+ACTION_TO_PRIMARY_WORD = {"N": "north", "E": "east", "S": "south", "W": "west"}
+
+# Recognized dialog verbs. Prefix `:` to disambiguate from vocab words.
+DIALOG_VERBS = {"again", "opposite", "history", "forget"}
+
+
+def _parse_dialog_command(line: str):
+    """Parse a `:verb [args]` dialog command.
+
+    Returns a dict like {"verb": "again"} on success, None otherwise.
+    `:history` may include an integer count (clamped to [1, 50]; default 5).
+
+    Uses the `:` prefix to clearly separate dialog state commands from
+    vocab inputs and the existing unprefixed `learn` command.
+    """
+    s = line.strip()
+    if not s.startswith(":"):
+        return None
+    body = s[1:].strip()
+    if not body:
+        return None
+    parts = body.split()
+    verb = parts[0].lower()
+    if verb not in DIALOG_VERBS:
+        return None
+    out = {"verb": verb}
+    if verb == "history":
+        # Optional count argument
+        n = 5  # default
+        if len(parts) >= 2:
+            try:
+                n = int(parts[1])
+            except ValueError:
+                n = 5  # fallback on junk
+        out["n"] = max(1, min(50, n))
+    return out
+
+
 # ─── Online vocab learning (Track 3 scaffolding, 2026-05-09) ─────────
 
 
@@ -579,6 +626,67 @@ def run_repl(mode: str, seed: int, n_train_events: int,
             if line in ("quit", "exit", "q"):
                 print("[QUIT]", flush=True)
                 break
+
+            # Dialog state commands (Track 3 layer 3, 2026-05-09).
+            # `:` prefix disambiguates from vocab words and the unprefixed
+            # `learn` command. Always available — no flag gate.
+            dialog = _parse_dialog_command(line)
+            if dialog is not None:
+                verb = dialog["verb"]
+                if verb == "forget":
+                    transcript = []
+                    n_turns = 0
+                    correct = 0
+                    print("  [:forget] history cleared", flush=True)
+                    continue
+                if verb == "history":
+                    n_show = min(dialog.get("n", 5), len(transcript))
+                    if n_show == 0:
+                        print("  [:history] no turns yet", flush=True)
+                        continue
+                    print(f"  [:history] last {n_show} of {len(transcript)} turns:",
+                          flush=True)
+                    for t in transcript[-n_show:]:
+                        if t.get("is_learn_command"):
+                            print(f"    learn  {t.get('learned_word')}-> "
+                                  f"motor_{t.get('target_action')} "
+                                  f"({'OK' if t.get('bound_correctly') else 'X'})",
+                                  flush=True)
+                        else:
+                            mark = "OK" if t.get("correct") else \
+                                ("?" if not t.get("in_vocab") else "X")
+                            print(f"    [{mark}] {t.get('user_word', '?'):<8} "
+                                  f"-> motor_{t.get('predicted_action', '?')}",
+                                  flush=True)
+                    continue
+                if verb == "again":
+                    # Find the last vocab/inference turn (skip learn cmds)
+                    last = next((t for t in reversed(transcript)
+                                  if not t.get("is_learn_command")), None)
+                    if last is None:
+                        print("  [:again] no prior word to repeat", flush=True)
+                        continue
+                    line = last["user_word"]
+                    print(f"  [:again] repeating '{line}'", flush=True)
+                    # fall through to the regular inference path below
+                elif verb == "opposite":
+                    # Find the last predicted action and invert it
+                    last = next((t for t in reversed(transcript)
+                                  if not t.get("is_learn_command")), None)
+                    if last is None:
+                        print("  [:opposite] no prior action to invert",
+                              flush=True)
+                        continue
+                    last_action = last.get("predicted_action")
+                    if last_action not in ACTION_OPPOSITE:
+                        print(f"  [:opposite] last action {last_action!r} "
+                              f"has no inverse", flush=True)
+                        continue
+                    inverse_action = ACTION_OPPOSITE[last_action]
+                    line = ACTION_TO_PRIMARY_WORD[inverse_action]
+                    print(f"  [:opposite] last predicted motor_{last_action}; "
+                          f"asking for opposite via '{line}'", flush=True)
+                    # fall through to the regular inference path below
 
             # Online learn command (only when --learn was passed)
             if allow_learn and line.startswith("learn "):

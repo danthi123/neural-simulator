@@ -170,3 +170,68 @@ def test_parse_learn_command_does_not_match_chat_inputs():
     assert _parse_learn_command("north") is None
     assert _parse_learn_command("east up") is None  # only 2 tokens
     assert _parse_learn_command("learnsomething weird") is None  # not 'learn '
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Dialog state commands (Track 3 layer 3, 2026-05-09)
+# ─────────────────────────────────────────────────────────────────────────
+
+
+def test_parse_dialog_command_recognized_verbs():
+    """Each : -prefixed verb returns a structured dialog command."""
+    from research.runners.chat_repl import _parse_dialog_command
+    assert _parse_dialog_command(":again") == {"verb": "again"}
+    assert _parse_dialog_command(":opposite") == {"verb": "opposite"}
+    assert _parse_dialog_command(":history") == {"verb": "history", "n": 5}
+    assert _parse_dialog_command(":forget") == {"verb": "forget"}
+
+
+def test_parse_dialog_command_history_with_n():
+    """':history N' returns the requested count clamped to a sane range."""
+    from research.runners.chat_repl import _parse_dialog_command
+    assert _parse_dialog_command(":history 10") == {"verb": "history", "n": 10}
+    assert _parse_dialog_command(":history 1")  == {"verb": "history", "n": 1}
+    # Clamped to [1, 50] so we don't print megabytes
+    assert _parse_dialog_command(":history 0")["n"] == 1
+    assert _parse_dialog_command(":history 999")["n"] == 50
+    # Junk N falls back to default 5
+    assert _parse_dialog_command(":history nope")["n"] == 5
+
+
+def test_parse_dialog_command_rejects_non_dialog():
+    """Plain words and other inputs return None."""
+    from research.runners.chat_repl import _parse_dialog_command
+    assert _parse_dialog_command("again") is None       # missing colon
+    assert _parse_dialog_command("north") is None       # vocab word
+    assert _parse_dialog_command(":") is None           # bare colon
+    assert _parse_dialog_command(":unknownverb") is None  # unrecognized verb
+    assert _parse_dialog_command("learn ahead N") is None  # learn is unprefixed
+
+
+def test_parse_dialog_command_case_and_whitespace():
+    """Whitespace + case insensitive on the verb."""
+    from research.runners.chat_repl import _parse_dialog_command
+    assert _parse_dialog_command("  :AGAIN  ") == {"verb": "again"}
+    assert _parse_dialog_command(":Opposite") == {"verb": "opposite"}
+    assert _parse_dialog_command(":HISTORY 3") == {"verb": "history", "n": 3}
+
+
+def test_action_inverse_table():
+    """Each NESW action maps to its opposite."""
+    from research.runners.chat_repl import ACTION_OPPOSITE
+    assert ACTION_OPPOSITE["N"] == "S"
+    assert ACTION_OPPOSITE["S"] == "N"
+    assert ACTION_OPPOSITE["E"] == "W"
+    assert ACTION_OPPOSITE["W"] == "E"
+    # Closed under inverse
+    for a in ("N", "E", "S", "W"):
+        assert ACTION_OPPOSITE[ACTION_OPPOSITE[a]] == a
+
+
+def test_action_to_canonical_word():
+    """Each action maps to a canonical primary direction word for echo."""
+    from research.runners.chat_repl import ACTION_TO_PRIMARY_WORD
+    assert ACTION_TO_PRIMARY_WORD["N"] == "north"
+    assert ACTION_TO_PRIMARY_WORD["E"] == "east"
+    assert ACTION_TO_PRIMARY_WORD["S"] == "south"
+    assert ACTION_TO_PRIMARY_WORD["W"] == "west"
