@@ -111,47 +111,76 @@ wait_for_drain
 # === Step 2: launch long_tail_relaxed ===
 LT_OUT=$(run_preset "phase_1_5_long_tail_relaxed" "$SEED" | tail -1)
 
-# === Step 3: capture verdict ===
+# === Step 3: chat_speak_demo (Track 3 layer 4 GPU smoke) ===
+wait_for_drain
+SPEAK_OUT=$(run_preset "chat_speak_demo" "$SEED" | tail -1)
+
+# === Step 4: capture verdicts + write findings doc ===
 echo
 echo "=== chain results ==="
 python -c "
 import json
+
+# long_tail_relaxed
+print()
+print('=== long_tail_relaxed seed ${SEED} ===')
 data = json.load(open(r'${LT_OUT}'))
 b = data['benchmarks'][0]
-print('long_tail_relaxed seed ${SEED}:')
 print(f'  score: {b[\"score\"]}')
 print(f'  pass:  {b[\"pass\"]}')
 det = b.get('details', {})
 common = det.get('common_acc', 0)
 rare = det.get('rare_acc', 0)
-print(f'  common_acc (200 events): {common}')
-print(f'  rare_acc (50 events at relaxed ratio): {rare}')
-print()
+print(f'  common_acc: {common}')
+print(f'  rare_acc:   {rare}')
 print(f'  vs prior (rare-ratio=20, 300pA teacher):')
 print(f'    rare_acc: 0.17 -> {rare}  (delta {rare - 0.17:+.3f})')
 print(f'    threshold (>=0.30): {\"PASS\" if rare >= 0.30 else \"FAIL\"}')
+LT_PASS = rare >= 0.30
+
+# chat_speak_demo (Track 3 layer 4)
+print()
+print('=== chat_speak_demo seed ${SEED} (A2W generative decoder) ===')
+data = json.load(open(r'${SPEAK_OUT}'))
+print(f'  W->A regression baseline:    {data[\"accuracy\"]:.1%}')
+print(f'  A->W speak accuracy:         {data[\"speak_accuracy\"]:.1%}')
+print(f'  verdict:                     {data[\"verdict\"]}')
+print(f'  per-action (A->W):')
+for r in data.get('speak_results', []):
+    mark = '[OK]' if r['correct'] else '[X] '
+    print(f'    {mark} motor_{r[\"target_action\"]} -> {r[\"predicted_word\"]!r:<10}  expected {r[\"expected_word\"]!r}')
 "
 
-# === Step 4: write findings doc ===
+# Write findings doc
 cat > "$RESULTS_MD" <<MARKDOWN
 # ${TODAY} — Phase 1.5 followup chain results
 
 Auto-fired by \`scripts/chain_phase_1_5_followups.sh\` after the
 n_motor=2000 interference test drained. Tests the second hypothesis
 (long_tail rare-word binding fails due to dose+teacher rather than
-architecture).
+architecture) AND the deferred Track 3 layer 4 GPU smoke (:speak
+generative decoder, validated A2W direction at Tier 1).
 
 ## long_tail_relaxed seed ${SEED}
 
-Result JSON: ${LT_OUT}
+Result JSON: \`${LT_OUT}\`
 
-See JSON for per-word breakdown + common/rare comparison.
+## chat_speak_demo (Track 3 layer 4) seed ${SEED}
+
+Result JSON: \`${SPEAK_OUT}\`
+
+See per-action breakdown in the JSON for which motor pools the
+network can correctly decode back to their canonical words. Tier 1
+BREAKTHROUGH validated A2W mean 45-63% across 6 seeds; this is a
+single-seed reproduction of the same direction validating the
+generative_inference primitive.
 
 ## Related
 
 - 2026-05-09-Phase-1.5-multi-seed-FINAL.md (the 3-seed batch result)
 - 2026-05-09-Phase-1.5-v400-interference-REFUTED.md (first hypothesis refuted)
 - (this iteration) n_motor=2000 interference test result
+- docs/plans/2026-05-09-Track-3-conversational-scaffolding-progress.md
 MARKDOWN
 
 echo

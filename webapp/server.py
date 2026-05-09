@@ -627,6 +627,18 @@ PRESETS: dict[str, list[str]] = {
         "--learn-events", "50",
         "--new-words", "ahead:N,back:S",
     ],
+    # Track 3 generative decoder demo (2026-05-09). Inverse of chat_demo:
+    # tests A→W direction via :speak / generative_inference. Trains
+    # Tier 1 bridge, regression-checks W→A as baseline, then drives
+    # motor_<action> for each of NESW + reads language_output to decode
+    # to a vocab word via cosine similarity. Validates the layer 4
+    # primitive shipped in commit a675fa1. Verdict: GO if A→W >= 50%
+    # AND W→A regression intact (>= 25% chance baseline). Tier 1
+    # BREAKTHROUGH validated A→W mean 45-63% (6/6 aligned). Wall clock
+    # ~10 min single seed.
+    "chat_speak_demo": [
+        "--train-events", "200",
+    ],
     # Phase 1.3 + Tier 2.1 combined consolidation test. Trains synonym
     # vocab with hippocampus, alternates awake/sleep, then tests
     # whether cortex retains both primary AND synonym words after
@@ -740,6 +752,7 @@ PRESET_RUNNERS: dict[str, str] = {
     "chat_continual_demo":    "research.runners.chat_continual_demo",
     "chat_synonym_demo":      "research.runners.chat_synonym_demo",
     "chat_learn_demo":        "research.runners.chat_learn_demo",
+    "chat_speak_demo":        "research.runners.chat_speak_demo",
     "consolidation_synonym":                       "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_smoke":                 "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_medium":                "research.runners.consolidation_synonym_trainer",
@@ -773,6 +786,7 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "chat_continual_demo":    "--out-stats",
     "chat_synonym_demo":      "--out-stats",
     "chat_learn_demo":        "--out-stats",
+    "chat_speak_demo":        "--out-stats",
     "consolidation_synonym":                       "--out-stats",
     "consolidation_synonym_smoke":                 "--out-stats",
     "consolidation_synonym_medium":                "--out-stats",
