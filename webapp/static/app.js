@@ -1655,9 +1655,31 @@ let _findingsSearch = "";
 
 // Category-tag classifier. Patterns are case-insensitive substring matches
 // on the filename. First match wins; "uncategorized" is the fallback. Ordered
-// so cluster letters resolve before generic "session" tags.
+// so the most-prominent recent categories (breakthroughs, phases, tiers)
+// resolve before older/generic ones (clusters, gates).
+//
+// 2026-05-09: added Phase 1.3/1.4/1.5/2.x and Tier 1/2.1/2.2/2.3 + capacity
+// patterns to surface the Path F continual-learning arc and the
+// path-f-hybrid surrogate-grad work that dominates recent findings.
 const FINDING_TAG_PATTERNS = [
+  // Headline tag — wins regardless of phase/tier (breakthroughs are the
+  // story; the phase/tier tag is in the doc title anyway).
   { tag: "🌟 Breakthrough", pat: /breakthrough|BREAKTHROUGH/i },
+  // Phases (master plan). Path F continual-learning + hybrid arcs.
+  { tag: "Phase 1.3 (consolidation)", pat: /phase-?1\.3|consolidation-(synonym|trainer|eval|CONFIRMED)/i },
+  { tag: "Phase 1.4 (continual)",     pat: /phase-?1\.4|continual-forgetting|catastrophic-forgetting|BRANCH-?A/i },
+  { tag: "Phase 1.5 (eval suite)",    pat: /phase-?1\.5/i },
+  { tag: "Phase 2 (path-f-hybrid)",   pat: /phase-?2(\.\d|\b)|path-?f|surrogate-grad|bptt|shakespeare/i },
+  // Tiers (embodied language scaffolding).
+  { tag: "Tier 1 (4-word)",           pat: /tier-?1\b|tier1\b/i },
+  { tag: "Tier 2.1 (synonyms)",       pat: /tier-?2\.1|tier2\.1|synonym-binding/i },
+  { tag: "Tier 2.2 (visual)",         pat: /tier-?2\.2|tier2\.2|visual-binding/i },
+  { tag: "Tier 2.3 (phrases)",        pat: /tier-?2\.3|tier2\.3|phrase-/i },
+  // Cross-cutting recent themes.
+  { tag: "Capacity scaling",          pat: /capacity-hypothesis|capacity-rule|scaled-(arch|medium)|n-?motor.*(\d{3,})/i },
+  { tag: "Multi-seed",                pat: /multi-?seed|\d-?seed-(GO|CONFIRMED|PARTIAL|FINAL)/i },
+  { tag: "Anti-cheat",                pat: /anti-cheat|strict-anti|permuted-label|sanity-check/i },
+  // Older clusters (kept for the historical clean-perception arc).
   { tag: "Cluster A", pat: /cluster-?a(-|\b)/i },
   { tag: "Cluster B", pat: /cluster-?b(-|\b)/i },
   { tag: "Cluster C", pat: /cluster-?c(-|\b)/i },
