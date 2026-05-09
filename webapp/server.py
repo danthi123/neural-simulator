@@ -530,6 +530,33 @@ PRESETS: dict[str, list[str]] = {
         "--n-motor-per-action", "1000",
         "--n-motor-fs-per-action", "120",
     ],
+    # 2026-05-09 follow-up: same suite at Tier 2.1's VALIDATED training
+    # dose (400 events/word, matching the BREAKTHROUGH config) instead of
+    # the 200 that was failing on interference (0.34 score at seed 42).
+    # Hypothesis (research/findings/2026-05-09-Phase-1.5-interference-
+    # undertraining-hypothesis.md): the interference benchmark needs at
+    # least the validated event count to lift above 0.5. Wall clock
+    # ~280-320 min/seed (2x the events doubles training time roughly).
+    "phase_1_5_unified_scaled_v400": [
+        "--benchmarks", "sequential_expansion", "retention_over_time",
+        "interference", "long_tail",
+        "--events-per-word", "400", "--n-eval-per-word", "25",
+        "--silence-steps", "5000",
+        "--n-lang-input", "4096",
+        "--n-motor-per-action", "1000",
+        "--n-motor-fs-per-action", "120",
+    ],
+    # Even more targeted: just the interference benchmark at 400 events/
+    # word, for fast hypothesis confirmation (~70 min single seed vs the
+    # full ~5 hr suite).
+    "phase_1_5_interference_only_v400": [
+        "--benchmarks", "interference",
+        "--events-per-word", "400", "--n-eval-per-word", "25",
+        "--silence-steps", "5000",
+        "--n-lang-input", "4096",
+        "--n-motor-per-action", "1000",
+        "--n-motor-fs-per-action", "120",
+    ],
     # Tier 2.3 PFC verb pool + compositional 2-word phrase trainer.
     # Architecture-limited at 41% phrase composition (sweep confirmed
     # action_gate is inert at default config).
@@ -671,8 +698,10 @@ PRESET_RUNNERS: dict[str, str] = {
     # 2026-05-06/07 Phase 1.3, 1.4, 1.5, Tier 2.3, chat demos
     "phase_1_4_forgetting":   "research.runners.continual_forgetting_eval",
     "phase_1_3_consolidation": "research.runners.consolidation_trainer",
-    "phase_1_5_unified":         "research.runners.continual_eval_suite",
-    "phase_1_5_unified_scaled":  "research.runners.continual_eval_suite",
+    "phase_1_5_unified":                  "research.runners.continual_eval_suite",
+    "phase_1_5_unified_scaled":           "research.runners.continual_eval_suite",
+    "phase_1_5_unified_scaled_v400":      "research.runners.continual_eval_suite",
+    "phase_1_5_interference_only_v400":   "research.runners.continual_eval_suite",
     "tier_2_3_phrases":       "research.runners.phrase_trainer",
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
@@ -700,8 +729,10 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     # 2026-05-06/07 Phase 1.3-1.5, Tier 2.3, chat demos all use --out-stats
     "phase_1_4_forgetting":   "--out-stats",
     "phase_1_3_consolidation": "--out-stats",
-    "phase_1_5_unified":         "--out-stats",
-    "phase_1_5_unified_scaled":  "--out-stats",
+    "phase_1_5_unified":                  "--out-stats",
+    "phase_1_5_unified_scaled":           "--out-stats",
+    "phase_1_5_unified_scaled_v400":      "--out-stats",
+    "phase_1_5_interference_only_v400":   "--out-stats",
     "tier_2_3_phrases":       "--out-stats",
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
