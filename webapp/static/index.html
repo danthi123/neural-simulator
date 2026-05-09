@@ -603,6 +603,7 @@
             <option value="phase_1_5_unified_scaled" data-eta-min="180">★ phase_1_5_unified_scaled — same at Tier 2.1 scaled arch (interference + long_tail need 8-word capacity) [~180min]</option>
             <option value="phase_1_5_unified_scaled_v400" data-eta-min="300">phase_1_5_unified_scaled_v400 — full suite at validated 400 events/word (interference under-training hypothesis test) [~300min]</option>
             <option value="phase_1_5_interference_only_v400" data-eta-min="70">phase_1_5_interference_only_v400 — interference benchmark only at 400 events/word (~70min single seed; fast hypothesis confirmation)</option>
+            <option value="phase_1_5_long_tail_relaxed" data-eta-min="50">phase_1_5_long_tail_relaxed — long_tail with rare-ratio=4 (50 events) + 1500pA motor teacher (relaxed few-shot; tests if 17% rare-word failure was dose+teacher, not architecture) [~50min]</option>
             <option disabled>──── COMPOSITIONAL (Tier 2.3, architecture-limited) ────</option>
             <option value="tier_2_3_phrases" data-eta-min="60">tier_2_3_phrases — 2-word phrase composition; ARCHITECTURE-LIMITED at ~40% [~60min]</option>
           </select>

@@ -362,7 +362,10 @@ def benchmark_long_tail(args, rng):
     from sim.text_embeddings import vocab_to_drive_pattern
 
     common_events = args.events_per_word
-    rare_events = max(1, args.events_per_word // 20)
+    # 2026-05-09: rare-event ratio is now configurable via
+    # --long-tail-rare-ratio (default 20 preserves prior behavior).
+    rare_ratio = getattr(args, "long_tail_rare_ratio", 20)
+    rare_events = max(1, args.events_per_word // rare_ratio)
     common_words = ["north", "east", "south", "west"]
     rare_words = ["up", "right", "down", "left"]
     word_to_action = {**{w: w[0].upper() for w in common_words},
@@ -426,7 +429,11 @@ def benchmark_long_tail(args, rng):
             cp.asarray(lang_output_idx, dtype=cp.int64)
         ] = cp.asarray(drive, dtype=cp.float32)
         target = cp.asarray(motor_idx[ev["action"]], dtype=cp.int64)
-        bridge.cp_external_input_current[target] += 300.0
+        # 2026-05-09: rare-word motor teacher current configurable via
+        # --long-tail-rare-teacher-pA. Default 300 (preserves prior
+        # behavior) but standard run_three_factor training uses ~1500.
+        teacher_pA = getattr(args, "long_tail_rare_teacher_pA", 300.0)
+        bridge.cp_external_input_current[target] += float(teacher_pA)
         for _ in range(50):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
@@ -537,6 +544,23 @@ def main():
     ap.add_argument("--n-motor-fs-per-action", type=int, default=60)
     ap.add_argument("--silence-steps", type=int, default=5000,
                     help="Silent steps for retention_over_time")
+    # 2026-05-09: long_tail rare-word dose ratio. Default 20 means rare
+    # words get events_per_word // 20 events (e.g. 10 events at 200, 20
+    # at 400). Per the seed 42 FINAL finding: rare-word binding fails
+    # at 17% accuracy with this dose. Lowering the divisor to 4 gives
+    # 50 events per rare word at events_per_word=200 — still few-shot
+    # but biologically defensible (~13s of speech vs 3s).
+    ap.add_argument("--long-tail-rare-ratio", type=int, default=20,
+                    help="long_tail benchmark rare-word dose divisor. "
+                         "rare_events = events_per_word // ratio. "
+                         "Default 20 (very few-shot). Lower to 4 for "
+                         "moderate few-shot (~13s of speech).")
+    ap.add_argument("--long-tail-rare-teacher-pA", type=float, default=300.0,
+                    help="long_tail benchmark rare-word motor teacher "
+                         "current. Default 300 pA (much weaker than the "
+                         "~1500 pA used in run_three_factor for common "
+                         "training; possibly the binding-failure cause). "
+                         "Raise to 1500 to match standard training.")
     ap.add_argument("--out-stats", type=str, required=True)
     args = ap.parse_args()
 

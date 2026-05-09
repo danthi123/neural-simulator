@@ -557,6 +557,21 @@ PRESETS: dict[str, list[str]] = {
         "--n-motor-per-action", "1000",
         "--n-motor-fs-per-action", "120",
     ],
+    # 2026-05-09 follow-up: relaxed long_tail few-shot dose. Per seed
+    # 42 FINAL finding (long_tail at 17%, rare-word binding fails at
+    # 10 events): test whether rare-word binding works at 50 events
+    # (rare-ratio=4, ~13s of speech) AND with motor teacher matching
+    # the standard 1500 pA. Both knobs may be needed.
+    "phase_1_5_long_tail_relaxed": [
+        "--benchmarks", "long_tail",
+        "--events-per-word", "200", "--n-eval-per-word", "25",
+        "--long-tail-rare-ratio", "4",
+        "--long-tail-rare-teacher-pA", "1500",
+        "--silence-steps", "5000",
+        "--n-lang-input", "4096",
+        "--n-motor-per-action", "1000",
+        "--n-motor-fs-per-action", "120",
+    ],
     # Tier 2.3 PFC verb pool + compositional 2-word phrase trainer.
     # Architecture-limited at 41% phrase composition (sweep confirmed
     # action_gate is inert at default config).
@@ -702,6 +717,7 @@ PRESET_RUNNERS: dict[str, str] = {
     "phase_1_5_unified_scaled":           "research.runners.continual_eval_suite",
     "phase_1_5_unified_scaled_v400":      "research.runners.continual_eval_suite",
     "phase_1_5_interference_only_v400":   "research.runners.continual_eval_suite",
+    "phase_1_5_long_tail_relaxed":        "research.runners.continual_eval_suite",
     "tier_2_3_phrases":       "research.runners.phrase_trainer",
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
@@ -733,6 +749,7 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "phase_1_5_unified_scaled":           "--out-stats",
     "phase_1_5_unified_scaled_v400":      "--out-stats",
     "phase_1_5_interference_only_v400":   "--out-stats",
+    "phase_1_5_long_tail_relaxed":        "--out-stats",
     "tier_2_3_phrases":       "--out-stats",
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
