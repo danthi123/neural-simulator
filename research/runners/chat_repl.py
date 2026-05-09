@@ -228,7 +228,178 @@ ACTION_OPPOSITE = {"N": "S", "S": "N", "E": "W", "W": "E"}
 ACTION_TO_PRIMARY_WORD = {"N": "north", "E": "east", "S": "south", "W": "west"}
 
 # Recognized dialog verbs. Prefix `:` to disambiguate from vocab words.
-DIALOG_VERBS = {"again", "opposite", "history", "forget"}
+# Includes :speak (Track 3 layer 4 generative decoder, A→W direction).
+DIALOG_VERBS = {"again", "opposite", "history", "forget", "speak"}
+
+# Reusable action-alias map for both :learn and :speak commands. Maps
+# any of (N/E/S/W, full direction names, synonyms, Unicode arrows) to
+# the canonical action letter.
+ACTION_ALIASES = {
+    "n": "N", "north": "N", "up": "N", "↑": "N",
+    "e": "E", "east":  "E", "right": "E", "→": "E",
+    "s": "S", "south": "S", "down": "S", "↓": "S",
+    "w": "W", "west":  "W", "left": "W", "←": "W",
+}
+
+
+def _parse_speak_command(line: str):
+    """Parse `:speak <action>` — Track 3 layer 4 generative decoder.
+
+    Returns the canonical action letter ("N"/"E"/"S"/"W") on success,
+    None otherwise. Action accepts the same aliases as :learn:
+    direction letters, full direction names, synonyms, Unicode arrows.
+
+    The :speak command drives motor_<action> and reads language_output,
+    decoding the resulting spike pattern to a word via cosine similarity
+    against known vocab drive patterns. Tests the A→W (action→word)
+    direction validated at Tier 2.1 BREAKTHROUGH (mean A→W 63.7%).
+    """
+    s = line.strip()
+    if not s.startswith(":"):
+        return None
+    body = s[1:].strip()
+    parts = body.split()
+    if len(parts) < 2:
+        return None
+    if parts[0].lower() != "speak":
+        return None
+    action_raw = parts[1].strip().lower()
+    return ACTION_ALIASES.get(action_raw)
+
+
+def _cosine_similarity(a, b) -> float:
+    """Cosine similarity between two 1D numpy arrays.
+
+    Returns 0.0 if either vector has zero norm (avoids div by zero).
+    Used by the generative decoder to rank vocab words by how well
+    each word's drive pattern matches the network's language_output
+    spike pattern.
+    """
+    import numpy as np
+    a = np.asarray(a, dtype=np.float32)
+    b = np.asarray(b, dtype=np.float32)
+    na = float(np.linalg.norm(a))
+    nb = float(np.linalg.norm(b))
+    if na == 0.0 or nb == 0.0:
+        return 0.0
+    return float(np.dot(a, b) / (na * nb))
+
+
+def _rank_words_by_similarity(spike_pattern, word_patterns: dict):
+    """Rank vocab words by cosine similarity to the spike pattern.
+
+    Args:
+        spike_pattern: 1D numpy-like array — the network's
+            language_output activity for the current motor drive.
+        word_patterns: dict mapping word -> 1D drive pattern (same
+            length as spike_pattern). Drive patterns produced by
+            sim.text_embeddings.vocab_to_drive_pattern().
+
+    Returns:
+        list of (word, similarity) tuples, sorted descending by
+        similarity. Top-1 = "spoken" word; full list = ranking.
+    """
+    rankings = [(w, _cosine_similarity(spike_pattern, p))
+                for w, p in word_patterns.items()]
+    rankings.sort(key=lambda x: -x[1])
+    return rankings
+
+
+def generative_inference(bridge, target_action: str,
+                         vocab_words=None,
+                         stim_steps: int = 100,
+                         reset_steps: int = 50,
+                         motor_drive_pA: float = 1500.0,
+                         drive_max_pA: float = 200.0,
+                         sparsity: float = 0.1,
+                         top_k: int = 4):
+    """Generative decoder: action → word (A→W direction).
+
+    Drives motor_<target_action> with elevated current, reads the
+    resulting language_output activity (delta vs baseline), and decodes
+    to a word via cosine similarity against known vocab drive patterns.
+
+    Inverse of chat_inference. The W→A path validates "given a word,
+    pick the right motor"; this A→W path validates "given an action,
+    produce the right word". Both are biologically grounded — they
+    travel in opposite directions through the same plastic synapses
+    that embodied-Hebbian co-firing strengthened during training.
+
+    Returns:
+        dict with:
+          target_action: input action letter
+          predicted_word: top-1 ranked word
+          confidence: top-1 similarity / runner-up similarity
+          rankings: list of (word, similarity) sorted desc
+          delta: 1D numpy array of language_output spike deltas
+    """
+    import cupy as cp
+    import numpy as np
+    from sim.text_embeddings import vocab_to_drive_pattern
+
+    if target_action not in ("N", "E", "S", "W"):
+        raise ValueError(f"target_action must be N/E/S/W, got {target_action!r}")
+
+    rm = bridge.region_manager
+    motor_idx = list(rm.indices(f"motor_{target_action}"))
+    motor_arr = cp.asarray(motor_idx, dtype=cp.int64)
+    lang_out_idx = list(rm.indices("language_output"))
+    lang_out_arr = cp.asarray(lang_out_idx, dtype=cp.int64)
+    n_lang_out = len(lang_out_idx)
+
+    # Phase A: baseline (no input)
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(reset_steps):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+    baseline = cp.zeros(n_lang_out, dtype=cp.int32)
+    for _ in range(stim_steps):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+        baseline += bridge.cp_firing_states[lang_out_arr].astype(cp.int32)
+
+    # Phase B: drive motor_<action>, read language_output
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(reset_steps):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+    bridge.cp_external_input_current[motor_arr] = float(motor_drive_pA)
+    drive_counts = cp.zeros(n_lang_out, dtype=cp.int32)
+    for _ in range(stim_steps):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+        drive_counts += bridge.cp_firing_states[lang_out_arr].astype(cp.int32)
+
+    delta = (drive_counts - baseline).get().astype(np.float32)
+
+    # Decode by cosine similarity to known vocab patterns
+    if vocab_words is None:
+        vocab_words = ["north", "east", "south", "west"]
+    word_patterns = {
+        w: vocab_to_drive_pattern(
+            w, n_neurons=n_lang_out,
+            drive_max_pA=drive_max_pA, sparsity=sparsity,
+        )
+        for w in vocab_words
+    }
+    rankings = _rank_words_by_similarity(delta, word_patterns)
+    rankings = rankings[:top_k]
+
+    # Confidence: top-1 / top-2 ratio (Inf if top-2 is non-positive)
+    if len(rankings) >= 2 and rankings[1][1] > 0:
+        confidence = rankings[0][1] / rankings[1][1]
+    elif rankings and rankings[0][1] > 0:
+        confidence = float("inf")
+    else:
+        confidence = 1.0
+
+    return {
+        "target_action": target_action,
+        "predicted_word": rankings[0][0] if rankings else None,
+        "confidence": confidence,
+        "rankings": rankings,
+        "delta": delta,
+    }
 
 
 def _parse_dialog_command(line: str):
@@ -687,6 +858,49 @@ def run_repl(mode: str, seed: int, n_train_events: int,
                     print(f"  [:opposite] last predicted motor_{last_action}; "
                           f"asking for opposite via '{line}'", flush=True)
                     # fall through to the regular inference path below
+                elif verb == "speak":
+                    # Track 3 layer 4 — A→W generative decoder.
+                    # The verb's action arg was already parsed via
+                    # _parse_dialog_command's basic dispatch; re-parse
+                    # via _parse_speak_command for the full alias map.
+                    target_action = _parse_speak_command(line)
+                    if target_action is None:
+                        print("  [:speak] usage: :speak <action>  "
+                              "(N/E/S/W or north/east/south/west or "
+                              "synonyms)", flush=True)
+                        continue
+                    speak_result = generative_inference(
+                        bridge, target_action,
+                        vocab_words=sorted(vocab),
+                    )
+                    rankings = speak_result["rankings"]
+                    pred_word = speak_result["predicted_word"]
+                    conf = speak_result["confidence"]
+                    expected_word = ACTION_TO_PRIMARY_WORD.get(target_action)
+                    is_correct = (
+                        pred_word == expected_word
+                        or word_to_action.get(pred_word) == target_action
+                    )
+                    marker = "[OK]" if is_correct else "[X] "
+                    rank_str = " ".join(
+                        f"{w}={s:.2f}" for w, s in rankings[:4]
+                    )
+                    print(f"  {marker} [SPEAK] motor_{target_action} "
+                          f"-> '{pred_word}' (top-1={rankings[0][1]:.2f}, "
+                          f"conf x{conf:.1f})", flush=True)
+                    print(f"      rankings: {rank_str}", flush=True)
+                    transcript.append({
+                        "turn": n_turns + 1,
+                        "user_word": f":speak {target_action}",
+                        "is_speak_command": True,
+                        "target_action": target_action,
+                        "predicted_word": pred_word,
+                        "confidence": conf,
+                        "rankings": [(w, float(s)) for w, s in rankings[:4]],
+                        "speak_correct": is_correct,
+                    })
+                    n_turns += 1
+                    continue
 
             # Online learn command (only when --learn was passed)
             if allow_learn and line.startswith("learn "):

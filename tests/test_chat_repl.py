@@ -235,3 +235,96 @@ def test_action_to_canonical_word():
     assert ACTION_TO_PRIMARY_WORD["E"] == "east"
     assert ACTION_TO_PRIMARY_WORD["S"] == "south"
     assert ACTION_TO_PRIMARY_WORD["W"] == "west"
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Generative decoder — Track 3 layer 4 (action → word, A→W direction)
+# ─────────────────────────────────────────────────────────────────────────
+
+
+def test_parse_speak_command_basic():
+    """':speak <action>' parses cleanly with action aliases."""
+    from research.runners.chat_repl import _parse_speak_command
+    assert _parse_speak_command(":speak N") == "N"
+    assert _parse_speak_command(":speak E") == "E"
+    # Word aliases (same as :learn action-aliases for consistency)
+    assert _parse_speak_command(":speak north") == "N"
+    assert _parse_speak_command(":speak east") == "E"
+    assert _parse_speak_command(":speak up") == "N"  # synonym alias
+    assert _parse_speak_command(":speak right") == "E"
+    assert _parse_speak_command(":speak down") == "S"
+    assert _parse_speak_command(":speak left") == "W"
+    # Unicode arrows
+    assert _parse_speak_command(":speak ↑") == "N"
+
+
+def test_parse_speak_command_case_and_whitespace():
+    """Whitespace + case insensitive on action."""
+    from research.runners.chat_repl import _parse_speak_command
+    assert _parse_speak_command("  :SPEAK N  ") == "N"
+    assert _parse_speak_command(":Speak East") == "E"
+
+
+def test_parse_speak_command_rejects_bad_input():
+    """Bad inputs return None — caller can show usage."""
+    from research.runners.chat_repl import _parse_speak_command
+    assert _parse_speak_command(":speak") is None       # missing action
+    assert _parse_speak_command("speak N") is None      # missing colon
+    assert _parse_speak_command(":speak nope") is None  # bad action
+    assert _parse_speak_command(":speak 5") is None     # bad action
+    assert _parse_speak_command(":otherverb N") is None  # not :speak
+
+
+def test_cosine_similarity_basic():
+    """_cosine_similarity is correct on simple vectors."""
+    import numpy as np
+    from research.runners.chat_repl import _cosine_similarity
+    # Identical vectors → 1.0
+    a = np.array([1.0, 2.0, 3.0])
+    assert abs(_cosine_similarity(a, a) - 1.0) < 1e-6
+    # Orthogonal → 0.0
+    b = np.array([1.0, 0.0])
+    c = np.array([0.0, 1.0])
+    assert abs(_cosine_similarity(b, c)) < 1e-6
+    # Opposite → -1.0
+    d = np.array([1.0, 1.0])
+    assert abs(_cosine_similarity(d, -d) - (-1.0)) < 1e-6
+    # Zero vector → 0.0 (defined that way to avoid div by zero)
+    z = np.array([0.0, 0.0, 0.0])
+    assert _cosine_similarity(z, a) == 0.0
+    assert _cosine_similarity(a, z) == 0.0
+
+
+def test_cosine_similarity_nonnegative_drive_patterns():
+    """Realistic case: drive patterns are nonneg sparse vectors."""
+    import numpy as np
+    from research.runners.chat_repl import _cosine_similarity
+    # Two sparse patterns with partial overlap
+    p1 = np.zeros(100)
+    p1[:10] = 1.0  # active in first 10 neurons
+    p2 = np.zeros(100)
+    p2[5:15] = 1.0  # active in 5-15
+    sim = _cosine_similarity(p1, p2)
+    # Overlap = 5 active neurons; ||p1|| = sqrt(10), ||p2|| = sqrt(10)
+    # sim = 5 / (sqrt(10) * sqrt(10)) = 0.5
+    assert abs(sim - 0.5) < 1e-6
+
+
+def test_rank_words_by_similarity():
+    """_rank_words_by_similarity produces a sorted list with best match first."""
+    import numpy as np
+    from research.runners.chat_repl import _rank_words_by_similarity
+    # Spike pattern matches "north" perfectly, partially "up"
+    spike = np.zeros(100)
+    spike[:10] = 1.0
+    word_patterns = {
+        "north": spike.copy(),       # identical → sim 1.0
+        "up": np.concatenate([spike[:5], np.zeros(95)]),  # partial
+        "south": np.zeros(100),      # zero — sim 0.0
+    }
+    rankings = _rank_words_by_similarity(spike, word_patterns)
+    # Top match is "north", "up" second, "south" last
+    assert rankings[0][0] == "north"
+    assert abs(rankings[0][1] - 1.0) < 1e-6
+    assert rankings[1][0] == "up"
+    assert rankings[2][0] == "south"
