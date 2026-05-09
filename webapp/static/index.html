@@ -568,6 +568,26 @@
             <option value="text_io_v2_smoke" data-eta-min="5">text_io_v2_smoke — 10-episode smoke for quick verification [~5min]</option>
             <option value="text_io_distributed_motor_pop" data-eta-min="55">text_io_distributed_motor_pop — Pulvermüller G.20, 8-direction motor cosine tuning [~55min]</option>
             <option value="text_io_motor_cross_coupling" data-eta-min="55">text_io_motor_cross_coupling — 90° adjacency cross-coupling (NEGATIVE 22% W→A) [~55min]</option>
+            <option disabled>──── CHAT DEMOS (conversational, validated 2026-05-07/08) ────</option>
+            <option value="chat_demo" data-eta-min="6">★ chat_demo — Tier 1 4-word chat (north/east/south/west); 6-seed mean 33.3%±11.8% [~6min]</option>
+            <option value="chat_synonym_demo" data-eta-min="20">★ chat_synonym_demo — Tier 2.1 8-word with synonyms (up/right/down/left); validated 5/6+6/6 aligned [~20min]</option>
+            <option value="chat_continual_demo" data-eta-min="25">chat_continual_demo — Phase 1.4 BRANCH A continual-learning chat (train primary then synonyms, test retention) [~25min]</option>
+            <option disabled>──── CONSOLIDATION (Phase 1.3 + Tier 2.1, validated 2026-05-08) ────</option>
+            <option value="consolidation_synonym_smoke" data-eta-min="21">consolidation_synonym_smoke — quick runner validation (50 events/word) [~21min]</option>
+            <option value="consolidation_synonym_medium" data-eta-min="115">★ consolidation_synonym_medium — 8-word, 3/3 GO 91%/128% retention [~115min]</option>
+            <option value="consolidation_synonym_medium_strict" data-eta-min="115">consolidation_synonym_medium_strict — anti-cheat (10× silencing + zero ca1→cortex); 3/3 identical to non-strict [~115min]</option>
+            <option value="consolidation_synonym_12word_medium" data-eta-min="115">consolidation_synonym_12word_medium — 12-word default arch (2/3 GO PARTIAL, capacity edge) [~115min]</option>
+            <option value="consolidation_synonym_12word_scaled_medium" data-eta-min="220">★ consolidation_synonym_12word_scaled_medium — 12-word at scaled n_motor=2000; 3/3 GO 95%/115% retention [~220min]</option>
+            <option value="consolidation_synonym_16word_scaled_medium" data-eta-min="220">consolidation_synonym_16word_scaled_medium — 16-word with Unicode arrows (capacity rule extension test) [~220min]</option>
+            <option disabled>──── CONTINUAL LEARNING (Phase 1.4) ────</option>
+            <option value="phase_1_4_forgetting" data-eta-min="25">★ phase_1_4_forgetting — catastrophic forgetting eval; 5/6 PASS mean 103% retention (BRANCH A) [~25min]</option>
+            <option disabled>──── HIPPOCAMPUS (Phase 1.3) ────</option>
+            <option value="phase_1_3_consolidation" data-eta-min="25">phase_1_3_consolidation — sleep replay consolidation; 3/3 PASS mean 96% hippo-OFF retention [~25min]</option>
+            <option disabled>──── EVAL SUITE (Phase 1.5) ────</option>
+            <option value="phase_1_5_unified" data-eta-min="100">phase_1_5_unified — 4-benchmark continual-learning suite at default arch (2/4 PASS at smoke) [~100min]</option>
+            <option value="phase_1_5_unified_scaled" data-eta-min="180">★ phase_1_5_unified_scaled — same at Tier 2.1 scaled arch (interference + long_tail need 8-word capacity) [~180min]</option>
+            <option disabled>──── COMPOSITIONAL (Tier 2.3, architecture-limited) ────</option>
+            <option value="tier_2_3_phrases" data-eta-min="60">tier_2_3_phrases — 2-word phrase composition; ARCHITECTURE-LIMITED at ~40% [~60min]</option>
           </select>
           <!-- ETA hint shown on preset change -->
           <div id="launch-preset-hint" class="muted" style="font-size:11px;margin-top:4px;"></div>
