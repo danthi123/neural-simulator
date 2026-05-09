@@ -588,6 +588,29 @@ PRESETS: dict[str, list[str]] = {
         "--n-motor-per-action", "1000",
         "--n-motor-fs-per-action", "120",
     ],
+    # 2026-05-09 Outcome-A combined preset (per
+    # docs/plans/2026-05-09-Phase-1.5-decision-tree.md). Pre-staged for
+    # the case where BOTH hypothesis tests pass:
+    #   - n_motor=2000 fixes interference (capacity rule extends)
+    #   - long_tail rare-ratio=4 + teacher=1500 fixes few-shot
+    # Combines all 4 benchmarks at the validated dose (events_per_word=400)
+    # AND the scaled-up arch (n_motor=2000) AND the relaxed long_tail
+    # config. If single-seed smoke at this preset clears the master
+    # plan threshold (>=0.70 mean), 3-seed multi-seed becomes the
+    # Phase 1.5 milestone validation run. Wall clock estimate ~5-6 hr
+    # single seed (4 benchmarks × ~1-1.5 hr each at 2x neurons + 2x
+    # events).
+    "phase_1_5_unified_combined": [
+        "--benchmarks", "sequential_expansion", "retention_over_time",
+        "interference", "long_tail",
+        "--events-per-word", "400", "--n-eval-per-word", "25",
+        "--silence-steps", "5000",
+        "--n-lang-input", "4096",
+        "--n-motor-per-action", "2000",
+        "--n-motor-fs-per-action", "240",
+        "--long-tail-rare-ratio", "4",
+        "--long-tail-rare-teacher-pA", "1500",
+    ],
     # Tier 2.3 PFC verb pool + compositional 2-word phrase trainer.
     # Architecture-limited at 41% phrase composition (sweep confirmed
     # action_gate is inert at default config).
@@ -747,6 +770,7 @@ PRESET_RUNNERS: dict[str, str] = {
     "phase_1_5_interference_only_v400":          "research.runners.continual_eval_suite",
     "phase_1_5_interference_only_n_motor_2000":  "research.runners.continual_eval_suite",
     "phase_1_5_long_tail_relaxed":               "research.runners.continual_eval_suite",
+    "phase_1_5_unified_combined":                "research.runners.continual_eval_suite",
     "tier_2_3_phrases":       "research.runners.phrase_trainer",
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
@@ -781,6 +805,7 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "phase_1_5_interference_only_v400":          "--out-stats",
     "phase_1_5_interference_only_n_motor_2000":  "--out-stats",
     "phase_1_5_long_tail_relaxed":               "--out-stats",
+    "phase_1_5_unified_combined":                "--out-stats",
     "tier_2_3_phrases":       "--out-stats",
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
