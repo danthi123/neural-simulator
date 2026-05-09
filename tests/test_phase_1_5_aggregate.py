@@ -127,3 +127,52 @@ def test_aggregate_filters_cmd_json(tmp_path):
 def test_aggregate_empty_raises(tmp_path):
     with pytest.raises(ValueError, match="No result files"):
         aggregate([])
+
+
+def test_aggregate_handles_string_pass_field_from_numpy_bug(tmp_path):
+    """Regression: pre-fix continual_eval_suite emitted long_tail with
+    'pass': 'False' (string) instead of false (bool) due to numpy.bool_ +
+    json.dumps(default=str). The aggregator must coerce string-bools
+    correctly so the master plan threshold check isn't fooled by the
+    Python truthiness of the non-empty string 'False'.
+
+    See research/findings/2026-05-09-Phase-1.5-seed42-FINAL-FAIL.md and
+    the bug fix in continual_eval_suite.py + phase_1_5_aggregate.py.
+    """
+    payload = {
+        "seed": 42,
+        "benchmarks": [
+            {"name": "sequential_expansion", "score": 0.88,
+             "pass": True, "details": {}},  # bool — correct
+            {"name": "long_tail", "score": 0.17,
+             "pass": "False", "details": {}},  # STRING — pre-fix bug
+        ],
+        "aggregate": {"score": 0.525, "all_pass": False},
+    }
+    paths = [_write(tmp_path, "g11_seed42_phase_1_5.json", payload)]
+    s = aggregate(paths)
+    # long_tail should be n_pass=0 (string "False" coerced to bool False)
+    lt = s["benchmarks"]["long_tail"]
+    assert lt["n_pass"] == 0
+    assert lt["pass_rate"] == 0.0
+    # sequential should still be n_pass=1 (real bool True)
+    se = s["benchmarks"]["sequential_expansion"]
+    assert se["n_pass"] == 1
+    assert se["pass_rate"] == 1.0
+
+
+def test_aggregate_handles_string_true_pass_field(tmp_path):
+    """Coercion also handles the affirmative case ('True' string)."""
+    payload = {
+        "seed": 42,
+        "benchmarks": [
+            {"name": "long_tail", "score": 0.50,
+             "pass": "True", "details": {}},
+        ],
+        "aggregate": {"score": 0.50, "all_pass": True},
+    }
+    paths = [_write(tmp_path, "g11_seed42_phase_1_5.json", payload)]
+    s = aggregate(paths)
+    lt = s["benchmarks"]["long_tail"]
+    assert lt["n_pass"] == 1
+    assert lt["pass_rate"] == 1.0

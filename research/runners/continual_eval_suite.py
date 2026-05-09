@@ -472,7 +472,15 @@ def benchmark_long_tail(args, rng):
     return {
         "name": "long_tail",
         "score": score,
-        "pass": rare_acc >= 0.30,
+        # 2026-05-09: explicit bool() cast — np.mean returns numpy.float64,
+        # so `rare_acc >= 0.30` is numpy.bool_, which json.dumps(default=str)
+        # serializes as the STRING "False"/"True" (not native JSON
+        # `false`/`true`). The string is then truthy on read, masking the
+        # actual fail and causing phase_1_5_aggregate to report 100%
+        # pass when the per-seed JSONs all said False. See
+        # 2026-05-09-Phase-1.5-seed42-FINAL-FAIL.md for the failure
+        # pattern this masked.
+        "pass": bool(rare_acc >= 0.30),
         "details": {
             "common_acc": float(common_acc),
             "rare_acc": float(rare_acc),

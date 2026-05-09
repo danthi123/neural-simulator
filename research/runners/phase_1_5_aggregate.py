@@ -65,10 +65,22 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
     for s in per_seed:
         for b in s["benchmarks"]:
             name = b.get("name", "unknown")
+            # 2026-05-09: defensive coercion — older Phase 1.5 result
+            # JSONs have "pass": "False" (STRING) instead of false (bool)
+            # for the long_tail benchmark, due to a numpy.bool_ +
+            # json.dumps(default=str) bug in continual_eval_suite (fixed
+            # in same commit). Without this coercion the aggregator
+            # reports a falsely-passing benchmark because Python truthiness
+            # treats the non-empty string "False" as True.
+            raw_pass = b.get("pass", False)
+            if isinstance(raw_pass, str):
+                pass_bool = raw_pass.strip().lower() in ("true", "1", "yes")
+            else:
+                pass_bool = bool(raw_pass)
             per_benchmark.setdefault(name, []).append({
                 "seed": s["seed"],
                 "score": b.get("score", 0.0),
-                "pass": b.get("pass", False),
+                "pass": pass_bool,
                 "details": b.get("details", {}),
             })
 

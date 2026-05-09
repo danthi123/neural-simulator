@@ -1,0 +1,138 @@
+{
+  "n_seeds": 3,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "benchmarks": {
+    "sequential_expansion": {
+      "n_seeds": 3,
+      "score_mean": 0.9506094997898277,
+      "score_std": 0.05945723159780669,
+      "score_min": 0.8846153846153846,
+      "score_max": 1.0,
+      "n_pass": 3,
+      "pass_rate": 1.0,
+      "per_seed": [
+        {
+          "seed": 42,
+          "score": 0.8846153846153846,
+          "pass": true
+        },
+        {
+          "seed": 43,
+          "score": 0.9672131147540983,
+          "pass": true
+        },
+        {
+          "seed": 44,
+          "score": 1.0,
+          "pass": true
+        }
+      ]
+    },
+    "retention_over_time": {
+      "n_seeds": 3,
+      "score_mean": 0.9441992433795713,
+      "score_std": 0.07019653944831923,
+      "score_min": 0.8653846153846154,
+      "score_max": 1.0,
+      "n_pass": 3,
+      "pass_rate": 1.0,
+      "per_seed": [
+        {
+          "seed": 42,
+          "score": 0.8653846153846154,
+          "pass": true
+        },
+        {
+          "seed": 43,
+          "score": 0.9672131147540983,
+          "pass": true
+        },
+        {
+          "seed": 44,
+          "score": 1.0,
+          "pass": true
+        }
+      ]
+    },
+    "interference": {
+      "n_seeds": 3,
+      "score_mean": 0.39333333333333337,
+      "score_std": 0.052519837521962424,
+      "score_min": 0.34,
+      "score_max": 0.445,
+      "n_pass": 0,
+      "pass_rate": 0.0,
+      "per_seed": [
+        {
+          "seed": 42,
+          "score": 0.34,
+          "pass": false
+        },
+        {
+          "seed": 43,
+          "score": 0.395,
+          "pass": false
+        },
+        {
+          "seed": 44,
+          "score": 0.445,
+          "pass": false
+        }
+      ]
+    },
+    "long_tail": {
+      "n_seeds": 3,
+      "score_mean": 0.22666666666666668,
+      "score_std": 0.055075705472861024,
+      "score_min": 0.17,
+      "score_max": 0.28,
+      "n_pass": 0,
+      "pass_rate": 0.0,
+      "per_seed": [
+        {
+          "seed": 42,
+          "score": 0.17,
+          "pass": false
+        },
+        {
+          "seed": 43,
+          "score": 0.28,
+          "pass": false
+        },
+        {
+          "seed": 44,
+          "score": 0.23,
+          "pass": false
+        }
+      ]
+    }
+  },
+  "overall": {
+    "aggregate_score_mean": 0.6287021857923497,
+    "aggregate_score_std": 0.3742520396282863,
+    "n_active_benchmarks": 4,
+    "n_benchmarks_majority_pass": 2,
+    "master_plan_pass": false
+  },
+  "per_seed_aggregates": [
+    {
+      "seed": 42,
+      "agg_score": 0.565,
+      "all_pass": false
+    },
+    {
+      "seed": 43,
+      "agg_score": 0.6523565573770491,
+      "all_pass": false
+    },
+    {
+      "seed": 44,
+      "agg_score": 0.66875,
+      "all_pass": false
+    }
+  ]
+}
