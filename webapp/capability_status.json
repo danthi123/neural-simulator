@@ -64,6 +64,13 @@
       "metric": "v200 0.340 -> v400 0.345; failure is architectural not dose-bound",
       "doc": "2026-05-09-Phase-1.5-v400-interference-REFUTED.md",
       "date": "2026-05-09"
+    },
+    {
+      "name": "Phase 1.5 n_motor=2000 interference — capacity hypothesis refuted",
+      "status": "NEGATIVE",
+      "metric": "v400 + n=2000 score 0.390 (+0.045 vs n=1000); below 0.50 threshold; both tunable levers fail",
+      "doc": "2026-05-09-Phase-1.5-n_motor_2000-interference-REFUTED.md",
+      "date": "2026-05-09"
     }
   ],
   "capacity_rule": {
