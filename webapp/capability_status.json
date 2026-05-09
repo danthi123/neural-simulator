@@ -50,6 +50,20 @@
       "metric": "3/3 GO unanimous, mean 95.5% / 115.0%",
       "doc": "2026-05-09-Phase1.3-Tier2.1-12word-scaled-3seed-CONFIRMED.md",
       "date": "2026-05-09"
+    },
+    {
+      "name": "Phase 1.5 unified suite — sequential regime sound",
+      "status": "BOUNDARY",
+      "metric": "2/4 PASS multi-seed: sequential 0.95 + retention 0.94 (both 3/3); interference 0.39 + long_tail 0.23 fail",
+      "doc": "2026-05-09-Phase-1.5-multi-seed-FINAL.md",
+      "date": "2026-05-09"
+    },
+    {
+      "name": "Phase 1.5 v400 interference — under-training hypothesis refuted",
+      "status": "NEGATIVE",
+      "metric": "v200 0.340 -> v400 0.345; failure is architectural not dose-bound",
+      "doc": "2026-05-09-Phase-1.5-v400-interference-REFUTED.md",
+      "date": "2026-05-09"
     }
   ],
   "capacity_rule": {

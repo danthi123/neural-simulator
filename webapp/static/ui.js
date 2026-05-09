@@ -241,6 +241,35 @@ export function categorizeExperiment(experimentName) {
   if (e.includes("ada") || e.includes("perda") || e.includes("wta") || e.includes("lrboost") ||
       e.includes("rpe") || e.includes("surprise"))
     return { category: "Phase B refinement", color: "#fcd34d" };
+  // 2026-05-09: post-Phase-1.4-BRANCH-A capability arc. Recent
+  // experiment families that were falling through to "other".
+  if (e.includes("phase_1_5") || e.includes("phase-1-5") ||
+      e.includes("interference") || e.includes("long_tail") ||
+      e.includes("sequential_expansion") || e.includes("retention_over_time"))
+    return { category: "Phase 1.5 eval suite", color: "#fb923c" };  // orange
+  if (e.includes("phase_1_4") || e.includes("phase-1-4") ||
+      e.includes("continual_forgetting") || e.includes("forgetting") ||
+      e.includes("branch_a") || e.includes("branch-a"))
+    return { category: "Phase 1.4 BRANCH A", color: "#34d399" };  // green
+  if (e.includes("phase_1_3") || e.includes("phase-1-3") ||
+      e.includes("consolidation"))
+    return { category: "Phase 1.3 consolidation", color: "#67e8f9" };  // cyan
+  if (e.includes("phase_2") || e.includes("phase-2") ||
+      e.includes("path_f") || e.includes("path-f") ||
+      e.includes("surrogate") || e.includes("bptt") ||
+      e.includes("shakespeare"))
+    return { category: "Phase 2 (path-f-hybrid)", color: "#a78bfa" };  // purple
+  if (e.includes("tier_2_3") || e.includes("tier2.3") ||
+      e.includes("phrase"))
+    return { category: "Tier 2.3 phrases", color: "#fde68a" };  // pale yellow
+  if (e.includes("tier_2_1") || e.includes("tier2.1") ||
+      e.includes("synonym") || e.includes("12word") ||
+      e.includes("16word"))
+    return { category: "Tier 2.1 / capacity", color: "#fbbf24" };  // amber
+  if (e.includes("chat_demo") || e.includes("chat_synonym_demo") ||
+      e.includes("chat_continual_demo") || e.includes("chat_learn_demo") ||
+      e.includes("chat_speak_demo"))
+    return { category: "Track 3 chat demos", color: "#f472b6" };  // pink
   if (e.includes("smoke") || e.includes("test")) return { category: "smoke", color: "#5f6770" };
   return { category: "other", color: "#9aa3ad" };
 }
