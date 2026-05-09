@@ -80,9 +80,9 @@ sim/                    # 15 modules, ~12.3K lines — core engine
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 57 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/etc) for research
-research/findings/      # session-by-session findings docs (177+ files)
-tests/                  # 57 test files (determinism, runners, kernels, plasticity, etc.)
+research/runners/       # 60 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/etc) for research
+research/findings/      # session-by-session findings docs (200+ files)
+tests/                  # 61 test files (determinism, runners, kernels, plasticity, etc.)
 ```
 
 ### Thread Model
