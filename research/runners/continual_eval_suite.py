@@ -555,11 +555,38 @@ def main():
         "benchmarks": [],
     }
 
+    # 2026-05-09: emit structured [PROGRESS] events alongside the
+    # human-readable lines so the webapp inflight panel + 3D Brain
+    # live mode auto-render without per-benchmark frontend code (per
+    # sim/progress.py migration note). Both the legacy
+    # "--- Running benchmark: NAME ---" + "[OK] NAME: score=..." lines
+    # and the new [PROGRESS] events appear; the webapp prefers the
+    # structured format when present.
+    from sim.progress import emit_progress
+
+    n_total_planned = sum(1 for b in args.benchmarks if b in BENCHMARK_REGISTRY)
+    n_completed_so_far = 0
+
     for name in args.benchmarks:
         if name not in BENCHMARK_REGISTRY:
             print(f"  [!]  Unknown benchmark: {name}", flush=True)
             continue
         print(f"\n--- Running benchmark: {name} ---", flush=True)
+        # Phase marker — frontend formatProgressLine renders as
+        # "<phase> starting"; brain3d formatProgressLine renders the
+        # same. Carries n_completed_so_far + n_total so the inflight
+        # bar can show benchmark progress fraction even if the next
+        # benchmark hasn't reported its sub-progress yet.
+        emit_progress(
+            "phase",
+            current=n_completed_so_far,
+            total=n_total_planned,
+            phase=name,
+            unit="benchmarks",
+            label=f"continual_eval_{name}",
+            current_benchmark=name,
+            within_benchmark="start",
+        )
         t0 = time.time()
         try:
             result = BENCHMARK_REGISTRY[name](args, rng)
@@ -568,6 +595,23 @@ def main():
             status = "[OK]" if result["pass"] else "[X]"
             print(f"  {status} {name}: score={result['score']:.2f} "
                   f"pass={result['pass']} ({time.time()-t0:.0f}s)", flush=True)
+            n_completed_so_far += 1
+            # Completion marker — score+pass make it into the structured
+            # event so the panel can show per-benchmark verdict at a
+            # glance without parsing the human-readable line separately.
+            emit_progress(
+                "complete",
+                current=n_completed_so_far,
+                total=n_total_planned,
+                phase=name,
+                unit="benchmarks",
+                label=f"continual_eval_{name}",
+                current_benchmark=name,
+                within_benchmark="end",
+                score=float(result["score"]),
+                passed=bool(result["pass"]),
+                wall_clock_s=int(time.time() - t0),
+            )
         except Exception as e:
             print(f"  ? {name} crashed: {e}", flush=True)
             import traceback
@@ -579,6 +623,21 @@ def main():
                 "details": {"error": str(e)},
                 "wall_clock_s": time.time() - t0,
             })
+            # Emit a "complete" with error so the panel doesn't stall
+            emit_progress(
+                "complete",
+                current=n_completed_so_far,
+                total=n_total_planned,
+                phase=name,
+                unit="benchmarks",
+                label=f"continual_eval_{name}",
+                current_benchmark=name,
+                within_benchmark="end",
+                score=0.0,
+                passed=False,
+                error=str(e)[:200],
+                wall_clock_s=int(time.time() - t0),
+            )
 
     # Aggregate
     completed = [b for b in results["benchmarks"]

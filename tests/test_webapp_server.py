@@ -769,6 +769,46 @@ def test_parse_log_progress_continual_eval_all_done(tmp_path):
     assert p["fraction"] == 1.0
 
 
+def test_parse_log_progress_continual_eval_structured_progress(tmp_path):
+    """continual_eval_suite now ALSO emits structured [PROGRESS] events
+    via sim.progress.emit_progress (added 2026-05-09 for future-proofing).
+    The universal parser path #0 should catch these and surface a richer
+    event than the legacy regex would, including current_benchmark,
+    within_benchmark=start/end, score, passed.
+    """
+    from webapp.server import _parse_log_progress
+
+    log = tmp_path / "ces.log"
+    # Simulate continual_eval_suite output: mixed legacy lines + new
+    # [PROGRESS] events. The universal parser MUST find the latest
+    # structured event regardless of the legacy lines around it.
+    log.write_text(
+        '\n--- Running benchmark: sequential_expansion ---\n'
+        '[PROGRESS] {"kind":"phase","current":0,"total":4,"phase":"sequential_expansion",'
+        '"unit":"benchmarks","label":"continual_eval_sequential_expansion",'
+        '"current_benchmark":"sequential_expansion","within_benchmark":"start"}\n'
+        '  [OK] sequential_expansion: score=0.95 pass=True (1830s)\n'
+        '[PROGRESS] {"kind":"complete","current":1,"total":4,"phase":"sequential_expansion",'
+        '"unit":"benchmarks","label":"continual_eval_sequential_expansion",'
+        '"current_benchmark":"sequential_expansion","within_benchmark":"end",'
+        '"score":0.95,"passed":true,"wall_clock_s":1830}\n'
+        '\n--- Running benchmark: retention_over_time ---\n'
+        '[PROGRESS] {"kind":"phase","current":1,"total":4,"phase":"retention_over_time",'
+        '"unit":"benchmarks","current_benchmark":"retention_over_time","within_benchmark":"start"}\n'
+        '  ... still running ...\n',
+        encoding="utf-8",
+    )
+    p = _parse_log_progress(log)
+    assert p is not None
+    # Universal path #0 wins — kind reflects the LATEST structured event
+    # (phase=retention_over_time start), with current_benchmark intact.
+    assert p["kind"] == "phase"
+    assert p["current_benchmark"] == "retention_over_time"
+    assert p["within_benchmark"] == "start"
+    # Universal parser also derives fraction from current/total
+    assert p["fraction"] == 0.25  # 1 of 4
+
+
 def test_parse_log_progress_continual_eval_handles_failed_benchmark(tmp_path):
     """[X] (failed) benchmark counts as a completed benchmark for progress."""
     from webapp.server import _parse_log_progress
