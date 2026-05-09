@@ -1343,6 +1343,13 @@ const _LOG_PAIRED_STIM_RE = /\[(?:isolation|minimal-iso)\]\s+(\d+)\/(\d+)\s+even
 // sim.progress.emit_progress() shows up here without needing
 // brain3d.js changes.
 const _LOG_PROGRESS_JSON_RE = /\[PROGRESS\]\s+(\{[^\n]*\})/g;
+// continual_eval_suite (Phase 1.5) benchmark markers. Added 2026-05-09
+// after user reported "3D vis isn't showing activity for live run".
+//   Start: "--- Running benchmark: NAME ---"
+//   End:   "  [OK] NAME: score=0.87 pass=True (1911s)"  (or "[X]" for fail)
+const _LOG_CES_BENCH_START_RE = /---\s*Running benchmark:\s*(\w+)\s*---/g;
+const _LOG_CES_BENCH_END_RE =
+  /\[(OK|X)\]\s+(\w+):\s+score=([-\d.]+)\s+pass=(True|False)\s+\((\d+)s\)/g;
 
 function rebuildTrajectoryFromLog(logText, run) {
   const samples = [];
@@ -1413,6 +1420,36 @@ function rebuildTrajectoryFromLog(logText, run) {
         ev: +m[1], ev_total: +m[2],
         fraction: (+m[1]) / Math.max(1, +m[2]),
         phase_num: ph?.num, phase_label: ph?.label,
+      },
+    });
+  }
+
+  // continual_eval_suite (Phase 1.5) benchmark markers. Each START
+  // marker creates a sample tagged with the benchmark name + 0% within-
+  // benchmark progress; each END marker creates a 100% within-benchmark
+  // sample with the score+pass details so the scrubber walks through
+  // each benchmark's entry/exit. Added 2026-05-09.
+  const cesEnds = [...logText.matchAll(_LOG_CES_BENCH_END_RE)];
+  for (const m of logText.matchAll(_LOG_CES_BENCH_START_RE)) {
+    samples.push({
+      pos: m.index,
+      progress: {
+        kind: "continual_eval",
+        current_benchmark: m[1],
+        within_benchmark: "start",
+      },
+    });
+  }
+  for (const m of cesEnds) {
+    samples.push({
+      pos: m.index,
+      progress: {
+        kind: "continual_eval",
+        current_benchmark: m[2],
+        within_benchmark: "end",
+        score: parseFloat(m[3]),
+        pass: (m[4] === "True"),
+        wall_clock_s: parseInt(m[5], 10),
       },
     });
   }
@@ -1563,6 +1600,62 @@ function renderLiveStep(step) {
       : ((p.step || 0) % 4);
     activateAction(actIdx);
     if (p.reward != null) activateReward(p.reward);
+  } else if (p.kind === "continual_eval") {
+    // Phase 1.5 continual_eval_suite (added 2026-05-09 after user
+    // reported "3D vis isn't showing activity for live run"). Each
+    // benchmark exercises the language→motor pathway over an 8-word
+    // synonym vocab. Activity pattern depends on which benchmark is
+    // running — they have distinct biological signatures:
+    activateLanguagePathway(true);
+    const benchName = p.current_benchmark || "";
+    if (benchName === "interference") {
+      // Interleaved 8-word training — all 4 motor pools activate
+      // continuously since the network is binding multiple words
+      // simultaneously. Cycle quickly through actions to convey "all
+      // four are firing".
+      const t = Math.floor(Date.now() / 200);
+      activateAction(t % 4, 0.7);
+      activateAction((t + 2) % 4, 0.5);  // opposite pool also lit
+      bumpActivity("snc", 0.3);
+    } else if (benchName === "retention_over_time") {
+      // Train then silence then retest. During silence, plasticity is
+      // frozen so DA + cortex stay quiet; only background recurrence.
+      // We can't tell train vs silence vs eval from log alone, so use
+      // a slow cycle with low overall activity.
+      const t = Math.floor(Date.now() / 500);
+      activateAction(t % 4, 0.5);
+      bumpActivity("snc", 0.2);
+    } else if (benchName === "sequential_expansion") {
+      // Train 4-word, expand to 8-word, eval all 8. Active language
+      // + cycling actions.
+      const t = Math.floor(Date.now() / 300);
+      activateAction(t % 4, 0.6);
+      bumpActivity("snc", 0.35);
+    } else if (benchName === "long_tail") {
+      // Imbalanced frequency: 4 common + 4 rare words. Common motor
+      // pools activate more; cycle weighted toward N/E.
+      const t = Math.floor(Date.now() / 400);
+      const idx = t % 8;
+      // Bias toward first 2 actions (common words) by sampling 0,1
+      // more often than 2,3
+      const actIdx = idx < 5 ? (idx % 2) : ((idx % 2) + 2);
+      activateAction(actIdx, 0.55);
+      bumpActivity("snc", 0.3);
+    } else {
+      // Unknown benchmark — generic language activity
+      const t = Math.floor(Date.now() / 400);
+      activateAction(t % 4, 0.5);
+      bumpActivity("snc", 0.25);
+    }
+    // If end-of-benchmark: brief "score" pulse — strong for pass,
+    // muted for fail. Visual feedback that a milestone landed.
+    if (p.within_benchmark === "end") {
+      if (p.pass) {
+        bumpActivity("snc", 0.9);  // big DA pulse on pass
+      } else {
+        bumpActivity("snc", 0.2);
+      }
+    }
   }
   // 2026-05-03 — render the mini gridworld + agent HUD for live
   // navigation runs (kind=step) which carry pos/goal/action/reward in
