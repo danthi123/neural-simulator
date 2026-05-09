@@ -440,6 +440,175 @@ pre {
 .kpi-card.warn .kpi-value { color: var(--accent-warn); }
 .kpi-card.bad .kpi-value { color: var(--accent-bad); }
 
+/* ─── Capability status panel (Home tab, 2026-05-09) ───────────────── */
+#overview-capability {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.capability-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.capability-headline {
+  /* Span all columns when multi-column layout is active */
+  grid-column: 1 / -1;
+  border-left: 3px solid var(--accent);
+}
+.capability-tier {
+  color: var(--fg-dim);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.capability-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: 6px;
+}
+.capability-result {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.capability-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.capability-badge.ok {
+  background: #10b98133;
+  color: #10b981;
+}
+.capability-metrics {
+  color: var(--fg-dim);
+  font-size: 12px;
+}
+.capability-summary {
+  color: var(--fg);
+  font-size: 12px;
+  margin: 8px 0 4px 0;
+  line-height: 1.5;
+}
+.capability-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--fg-dim);
+  margin-top: 6px;
+}
+.capability-link {
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.capability-link:hover { text-decoration: underline; }
+
+/* Pillars list */
+.capability-pillar-list {
+  list-style: decimal inside;
+  padding-left: 0;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.capability-pillar-item { padding: 2px 0; }
+.capability-pillar-status {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-right: 6px;
+  text-transform: uppercase;
+}
+.capability-pillar-status.status-validated {
+  background: #10b98133;
+  color: #10b981;
+}
+.capability-pillar-status.status-boundary {
+  background: #f59e0b33;
+  color: #f59e0b;
+}
+.capability-pillar-status.status-predicted {
+  background: #6366f133;
+  color: #818cf8;
+}
+.capability-pillar-status.status-negative {
+  background: #ef444433;
+  color: #ef4444;
+}
+.capability-pillar-name { color: var(--fg); }
+.capability-pillar-metric { color: var(--fg-dim); }
+.capability-pillar-date { color: var(--fg-dim); font-size: 10px; }
+
+/* Capacity table */
+.capability-rule-text {
+  color: var(--fg-dim);
+  font-size: 11px;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+.capability-capacity-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.capability-capacity-table th,
+.capability-capacity-table td {
+  padding: 4px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.capability-capacity-table th {
+  color: var(--fg-dim);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 10px;
+}
+.capability-status-cell {
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.capability-status-cell.status-validated { color: #10b981; }
+.capability-status-cell.status-boundary { color: #f59e0b; }
+.capability-status-cell.status-predicted { color: #818cf8; }
+
+/* Phase status */
+.capability-phase-row {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  padding: 3px 0;
+  align-items: baseline;
+}
+.capability-phase-label {
+  color: var(--fg-dim);
+  min-width: 56px;
+  font-size: 11px;
+}
+.capability-phase-value { color: var(--fg); }
+.capability-phase-doc {
+  margin-top: 8px;
+  font-size: 11px;
+}
+
 .activity-feed {
   background: var(--bg-2);
   border: 1px solid var(--border);

@@ -631,3 +631,109 @@ def test_control_endpoint_writes_state(client, tmp_path):
         assert on_disk == merged
     finally:
         launched_runs.pop(fake_id, None)
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Capability status endpoint (added 2026-05-09)
+# ─────────────────────────────────────────────────────────────────────────
+
+
+def test_capability_status_returns_json(client):
+    """The /api/capability-status endpoint should return parseable JSON
+    matching the documented shape (headline + pillars + capacity_rule +
+    phase_status). Backed by webapp/capability_status.json."""
+    res = client.get("/api/capability-status")
+    assert res.status_code == 200
+    data = res.json()
+    # Top-level keys present
+    assert "as_of" in data
+    assert "headline" in data
+    assert "pillars" in data
+    assert "capacity_rule" in data
+    assert "phase_status" in data
+
+
+def test_capability_status_headline_shape(client):
+    """Headline should have tier + result + finding_doc fields so the UI
+    can render the headline card without conditionals on missing keys."""
+    res = client.get("/api/capability-status")
+    data = res.json()
+    headline = data.get("headline")
+    if headline is None:
+        pytest.skip("no headline configured in capability_status.json")
+    assert "tier" in headline
+    assert "result" in headline
+    assert "finding_doc" in headline
+
+
+def test_capability_status_pillars_have_status(client):
+    """Each pillar should have name + status + metric. Status is one of
+    VALIDATED/BOUNDARY/PREDICTED/NEGATIVE so the UI can color-code badges."""
+    res = client.get("/api/capability-status")
+    data = res.json()
+    pillars = data.get("pillars") or []
+    assert len(pillars) >= 1, "expect at least one empirical pillar documented"
+    valid_statuses = {"VALIDATED", "BOUNDARY", "PREDICTED", "NEGATIVE"}
+    for p in pillars:
+        assert "name" in p
+        assert "status" in p
+        assert p["status"] in valid_statuses, f"unknown pillar status: {p['status']}"
+        assert "metric" in p
+
+
+def test_capability_status_capacity_rule_table(client):
+    """Capacity rule should have a numerical table the UI can render."""
+    res = client.get("/api/capability-status")
+    data = res.json()
+    rule = data.get("capacity_rule")
+    if rule is None:
+        pytest.skip("no capacity rule configured")
+    assert "rule" in rule
+    rows = rule.get("rows") or []
+    assert len(rows) >= 1
+    for r in rows:
+        # Each row needs the columns the UI table renders
+        for k in ("vocab", "subpops", "n_motor", "neurons_per_subpop", "status"):
+            assert k in r, f"capacity rule row missing key: {k}"
+
+
+def test_capability_status_phase_status(client):
+    """Phase status should at least name the active phase so the UI's
+    'Active:' line is never blank."""
+    res = client.get("/api/capability-status")
+    data = res.json()
+    ps = data.get("phase_status")
+    if ps is None:
+        pytest.skip("no phase_status configured")
+    assert "active" in ps and ps["active"], "active phase must be non-empty"
+
+
+def test_capability_status_handles_missing_file(client, monkeypatch, tmp_path):
+    """If capability_status.json is missing, the endpoint should return a
+    stub with _warning rather than 500-ing — the dashboard should still
+    render on a fresh checkout."""
+    # Re-import inside the test so we can monkey-patch Path resolution
+    import webapp.server as srv
+    real_resolve = srv.Path
+
+    # Point the endpoint at a temp dir without the JSON file
+    fake_static = tmp_path / "static"
+    fake_static.mkdir()
+    fake_server_dir = tmp_path
+    monkeypatch.setattr(srv, "Path",
+                        lambda *a, **k: real_resolve(*a, **k))
+    # Easier path: temporarily move the real JSON aside
+    real_path = real_resolve(srv.__file__).parent / "capability_status.json"
+    backup = None
+    if real_path.exists():
+        backup = real_path.read_bytes()
+        real_path.unlink()
+    try:
+        res = client.get("/api/capability-status")
+        assert res.status_code == 200
+        data = res.json()
+        assert "_warning" in data
+        assert data["headline"] is None
+    finally:
+        if backup is not None:
+            real_path.write_bytes(backup)

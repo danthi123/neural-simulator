@@ -2520,16 +2520,20 @@ async function loadOverview() {
     // 2026-05-02: include text_io_runs for the W→A KPI
     // 2026-05-03: include /api/inflight (detached runs) so the In-flight
     // KPI counts BOTH foreground and detached runs
-    const [runsRes, findingsRes, launchesRes, textIoRes, inflightRes] = await Promise.all([
+    // 2026-05-09: include /api/capability-status for the new capability
+    // status panel (Path F pillars, capacity rule, phase status).
+    const [runsRes, findingsRes, launchesRes, textIoRes, inflightRes, capabilityRes] = await Promise.all([
       fetch("/api/runs").then((r) => r.json()),
       fetch("/api/findings").then((r) => r.json()),
       fetch("/api/runs/launch").then((r) => r.json()),
       fetch("/api/text_io_runs").then((r) => r.json()).catch(() => ({ runs: [], aggregate: {} })),
       fetch("/api/inflight").then((r) => r.json()).catch(() => ({ inflight: [] })),
+      fetch("/api/capability-status").then((r) => r.json()).catch(() => null),
     ]);
 
     renderOverviewKPIs(kpiContainer, runsRes.runs, findingsRes.findings,
                        launchesRes.runs, textIoRes, inflightRes.inflight);
+    renderOverviewCapability(capabilityRes);
     renderOverviewDistribution(runsRes.runs);
     renderOverviewActivity(activityContainer, runsRes.runs);
     renderOverviewFindings(findingsContainer, findingsRes.findings);
@@ -2667,6 +2671,128 @@ function kpiCard(label, value, sub = "", cls = "kpi-card", onClick = null) {
     card.addEventListener("click", onClick);
   }
   return card;
+}
+
+// 2026-05-09: Capability status panel — read-only summary of latest
+// validated capability + Path F empirical pillars + capacity scaling rule
+// + active phase. Reads from /api/capability-status which serves
+// webapp/capability_status.json (manual source of truth, updated when
+// major milestones land). Hidden if endpoint returns null/empty.
+function renderOverviewCapability(data) {
+  const section = document.getElementById("overview-capability-section");
+  const container = document.getElementById("overview-capability");
+  const asOfSpan = document.getElementById("capability-as-of");
+  if (!section || !container) return;
+  if (!data || !data.headline) {
+    section.style.display = "none";
+    return;
+  }
+  section.style.display = "";
+  if (asOfSpan) asOfSpan.textContent = data.as_of ? `· as of ${data.as_of}` : "";
+
+  const h = data.headline || {};
+  const headline = el("div", { class: "capability-card capability-headline" }, [
+    el("div", { class: "capability-tier" }, "★ Latest validated capability"),
+    el("div", { class: "capability-title" }, h.tier || "—"),
+    el("div", { class: "capability-result" }, [
+      el("span", { class: "capability-badge ok" }, h.result || ""),
+      el("span", { class: "capability-metrics" }, h.metrics ? "· " + h.metrics : ""),
+    ]),
+    h.summary ? el("div", { class: "capability-summary" }, h.summary) : null,
+    el("div", { class: "capability-meta" }, [
+      h.wall_clock ? el("span", {}, "wall clock: " + h.wall_clock) : null,
+      h.finding_doc
+        ? el("a", { href: "#", class: "capability-link",
+                    onclick: (e) => {
+                      e.preventDefault();
+                      activateTab("findings");
+                      setTimeout(() => {
+                        const item = Array.from(document.querySelectorAll("#findings-list .list-item"))
+                          .find((i) => i.querySelector(".name")?.textContent === h.finding_doc);
+                        if (item) { item.scrollIntoView({ block: "center" }); item.click(); }
+                      }, 150);
+                    } }, "→ open finding")
+        : null,
+    ].filter(Boolean)),
+  ].filter(Boolean));
+
+  // Pillars list
+  const pillars = data.pillars || [];
+  const pillarsEl = pillars.length
+    ? el("div", { class: "capability-card capability-pillars" }, [
+        el("div", { class: "capability-tier" }, "Path F empirical pillars (cumulative)"),
+        el("ol", { class: "capability-pillar-list" },
+          pillars.map((p) => el("li", { class: "capability-pillar-item" }, [
+            el("span", { class: "capability-pillar-status status-" + (p.status || "").toLowerCase() }, p.status || ""),
+            el("span", { class: "capability-pillar-name" }, p.name || ""),
+            p.metric ? el("span", { class: "capability-pillar-metric" }, " — " + p.metric) : null,
+            p.date ? el("span", { class: "capability-pillar-date" }, " (" + p.date + ")") : null,
+          ].filter(Boolean))),
+        ),
+      ])
+    : null;
+
+  // Capacity rule table
+  const capRule = data.capacity_rule || null;
+  const capRuleEl = capRule
+    ? el("div", { class: "capability-card capability-capacity" }, [
+        el("div", { class: "capability-tier" }, "Capacity scaling rule (empirical)"),
+        el("div", { class: "capability-rule-text" }, capRule.rule || ""),
+        el("table", { class: "capability-capacity-table" }, [
+          el("thead", {}, [
+            el("tr", {}, [
+              el("th", {}, "Vocab"),
+              el("th", {}, "Sub-pops/motor_X"),
+              el("th", {}, "n_motor"),
+              el("th", {}, "Neurons/sub-pop"),
+              el("th", {}, "Status"),
+            ]),
+          ]),
+          el("tbody", {},
+            (capRule.rows || []).map((r) => el("tr", {}, [
+              el("td", {}, r.vocab),
+              el("td", {}, String(r.subpops)),
+              el("td", {}, String(r.n_motor)),
+              el("td", {}, String(r.neurons_per_subpop)),
+              el("td", { class: "capability-status-cell status-" + (r.status || "").toLowerCase() }, r.status || ""),
+            ])),
+          ),
+        ]),
+      ])
+    : null;
+
+  // Phase status — what's running, what's next
+  const ps = data.phase_status || null;
+  const phaseEl = ps
+    ? el("div", { class: "capability-card capability-phase" }, [
+        el("div", { class: "capability-tier" }, "Master plan position"),
+        el("div", { class: "capability-phase-row" }, [
+          el("span", { class: "capability-phase-label" }, "Active:"),
+          el("span", { class: "capability-phase-value" }, ps.active || "—"),
+        ]),
+        ps.next ? el("div", { class: "capability-phase-row" }, [
+          el("span", { class: "capability-phase-label" }, "Next:"),
+          el("span", { class: "capability-phase-value muted" }, ps.next),
+        ]) : null,
+        ps.after_next ? el("div", { class: "capability-phase-row" }, [
+          el("span", { class: "capability-phase-label" }, "After:"),
+          el("span", { class: "capability-phase-value muted" }, ps.after_next),
+        ]) : null,
+        ps.master_plan ? el("div", { class: "capability-phase-doc" }, [
+          el("a", { href: "#", onclick: (e) => {
+            e.preventDefault();
+            activateTab("plans");
+            setTimeout(() => {
+              const item = Array.from(document.querySelectorAll("#plans-list .list-item"))
+                .find((i) => i.querySelector(".name")?.textContent?.endsWith(ps.master_plan.split("/").pop()));
+              if (item) { item.scrollIntoView({ block: "center" }); item.click(); }
+            }, 150);
+          } }, "→ master plan"),
+        ]) : null,
+      ].filter(Boolean))
+    : null;
+
+  container.replaceChildren(...[headline, pillarsEl, capRuleEl, phaseEl].filter(Boolean));
 }
 
 function renderOverviewDistribution(runs) {

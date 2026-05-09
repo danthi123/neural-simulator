@@ -2207,6 +2207,35 @@ def get_readme() -> str:
     return path.read_text(encoding="utf-8")
 
 
+@app.get("/api/capability-status")
+def get_capability_status() -> JSONResponse:
+    """Project capability snapshot for the Home tab.
+
+    Reads the JSON source-of-truth at ``webapp/capability_status.json``,
+    which is updated manually when significant milestones land
+    (per autonomous-runs skill principle #10 — frontend stays in sync
+    with shipped capability). Falls back to a minimal stub if the file
+    is missing so the dashboard still renders on a fresh checkout.
+    """
+    path = Path(__file__).resolve().parent / "capability_status.json"
+    if not path.is_file():
+        return JSONResponse(
+            {
+                "as_of": None,
+                "headline": None,
+                "pillars": [],
+                "capacity_rule": None,
+                "phase_status": None,
+                "_warning": "capability_status.json not found",
+            }
+        )
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        raise HTTPException(500, f"capability_status.json malformed: {e}")
+    return JSONResponse(data)
+
+
 @app.get("/api/text_io_runs/{name}")
 def get_text_io_run_detail(name: str) -> JSONResponse:
     """Full text I/O run JSON, with the same path-traversal guard as

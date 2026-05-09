@@ -70,6 +70,20 @@
         <div class="section-title">In-flight training runs</div>
         <div id="overview-inflight"></div>
       </div>
+      <!-- 2026-05-09: Capability status panel. Read-only summary of the
+           latest validated capability + Path F empirical pillars + capacity
+           scaling rule + active phase. Backed by /api/capability-status
+           which serves webapp/capability_status.json (manual source of
+           truth, updated when major milestones land). Per autonomous-runs
+           skill principle #10. -->
+      <div id="overview-capability-section" style="display:none;">
+        <div class="section-title">
+          Project capability status
+          <span id="capability-as-of" class="muted"
+                style="font-size:11px;font-weight:normal;margin-left:8px;"></span>
+        </div>
+        <div id="overview-capability"></div>
+      </div>
       <div class="section-title">Result distribution (sum_finalQ)</div>
       <div class="chart-row"><canvas id="overview-distribution" class="chart-canvas"></canvas></div>
       <div class="section-title">Recent activity</div>
