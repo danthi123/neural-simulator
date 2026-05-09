@@ -556,6 +556,14 @@ PRESETS: dict[str, list[str]] = {
     "chat_synonym_demo": [
         "--train-events", "400",
     ],
+    # NOTE: chat_repl --learn (Track 3 online vocab learning) is a CLI-only
+    # feature for now. The launcher only hosts batch-runner presets that
+    # emit JSON stats; chat_repl --scripted-words emits a markdown
+    # transcript instead. To exercise --learn, run from CLI:
+    #   python -m research.runners.chat_repl --mode tier1 --seed 43 \
+    #     --learn --scripted-words "north,learn ahead N,ahead"
+    # A dedicated chat_learn_demo runner that emits JSON stats is parked
+    # for a future iteration alongside dialog state + generative decoder.
     # Phase 1.3 + Tier 2.1 combined consolidation test. Trains synonym
     # vocab with hippocampus, alternates awake/sleep, then tests
     # whether cortex retains both primary AND synonym words after
