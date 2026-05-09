@@ -64,10 +64,10 @@
     ]
   },
   "phase_status": {
-    "active": "Phase 1.5 multi-seed at scaled arch (4 benchmarks × 3 seeds, ~9 hrs)",
-    "next": "16-word smoke (~3.5 hrs single-seed)",
-    "after_next": "Phase 2.2b 10M-param overnight training (~14 hrs)",
-    "after_after": "Phase 2.3b transfer test (~3-6 hrs)",
+    "active": "Phase 1.5 multi-seed seed 42 in flight (3/4 benchmarks done; interference partial 0.34 below threshold; v400 hypothesis chain pre-staged)",
+    "next": "After Phase 1.5: v400 interference confirmation (~70 min single seed) — hypothesis chain auto-fires when batch drains",
+    "after_next": "16-word smoke (~3.5 hrs single-seed) OR Phase 1.5 v400 multi-seed if hypothesis confirmed",
+    "after_after": "Phase 2.2b 10M-param overnight training (~14 hrs)",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
     "resumption_plan": "docs/plans/2026-05-09-Phase-2-resumption-plan.md"
   }

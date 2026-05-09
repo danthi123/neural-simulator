@@ -303,27 +303,34 @@ permuted-label control was the right anti-cheat — it caught a real
 problem with the previous training approach.
 
 **Continual learning + sleep consolidation validated multi-seed
-(2026-05-08):**
+(2026-05-08 → 2026-05-09):**
 - Phase 1.4 BRANCH A: 5/6 PASS, mean 103% retention (no catastrophic
   forgetting when learning new vocab)
 - 8-word Phase 1.3 + Tier 2.1 combined: **3/3 GO** at multi-seed
   + 3-seed strict anti-cheat IDENTICAL to non-strict (cortex truly
   retains binding post-consolidation)
-- 12-word vocab: **2/3 GO at default arch, 1 partial; capacity
-  hypothesis confirmed** at scaled arch (n_motor=2000) — seed 43
-  primary retention lifted from 71% to 100%
+- 12-word vocab default arch: **2/3 GO PARTIAL** (defines capacity
+  boundary; seed 43 fails at 71% primary)
+- 12-word vocab **scaled arch** (n_motor=2000): **3/3 GO unanimous**
+  multi-seed (mean primary 95.5%, mean synonym 115.0%) — capacity
+  hypothesis confirmed at multi-seed (2026-05-09)
+- Phase 1.5 unified 4-benchmark suite at scaled arch: in flight at
+  2026-05-09. Seed 42 partial: sequential_expansion 0.88 ✓,
+  retention_over_time 0.87 ✓, **interference 0.34 ✗** (under-trained
+  at events_per_word=200 vs validated 400; hypothesis test
+  pre-staged at preset `phase_1_5_interference_only_v400`).
 
 This characterizes the architecture's empirical capability: the
-biology-grounded continual learning works at multi-seed, sleep
-consolidation transfers binding to cortex genuinely (anti-cheat
-validated), and motor pool capacity scales linearly with vocab size.
+biology-grounded continual learning works at multi-seed (4/8/12-word
+vocab tiers), sleep consolidation transfers binding to cortex
+genuinely (anti-cheat validated), and motor pool capacity scales
+linearly with vocab size (rule: ~333 neurons per sub-population).
 
-See [`research/findings/2026-05-08-Phase1.3-Tier2.1-12word-scaled-CAPACITY-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-12word-scaled-CAPACITY-CONFIRMED.md)
-for the most recent finding,
-[`research/findings/2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md)
-for the anti-cheat 3-seed result, and
-[`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) for the
-capacity scaling table.
+See:
+- [`research/findings/2026-05-09-Phase1.3-Tier2.1-12word-scaled-3seed-CONFIRMED.md`](research/findings/2026-05-09-Phase1.3-Tier2.1-12word-scaled-3seed-CONFIRMED.md) (12-word multi-seed)
+- [`research/findings/2026-05-09-Phase-1.5-interference-undertraining-hypothesis.md`](research/findings/2026-05-09-Phase-1.5-interference-undertraining-hypothesis.md) (Phase 1.5 partial + hypothesis)
+- [`research/findings/2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md) (anti-cheat)
+- [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) (capacity scaling table)
 
 ---
 
