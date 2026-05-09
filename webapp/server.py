@@ -557,6 +557,22 @@ PRESETS: dict[str, list[str]] = {
         "--n-motor-per-action", "1000",
         "--n-motor-fs-per-action", "120",
     ],
+    # 2026-05-09 (post-v400-REFUTED): the v400 hypothesis was tested
+    # and produced essentially no change (0.340 -> 0.345). Failure is
+    # architectural, not dose-bound. Next hypothesis: same n_motor=2000
+    # scale-up that lifted 12-word vocab from 2/3 PARTIAL to 3/3 GO at
+    # the capacity hypothesis arc (commit ffbac1c). Tests whether
+    # interleaved 8-word training has a per-word capacity bottleneck
+    # at the standard 1000 motor neurons. ~80-100 min single seed at
+    # 2x neurons (slower per step due to bigger motor matrices).
+    "phase_1_5_interference_only_n_motor_2000": [
+        "--benchmarks", "interference",
+        "--events-per-word", "400", "--n-eval-per-word", "25",
+        "--silence-steps", "5000",
+        "--n-lang-input", "4096",
+        "--n-motor-per-action", "2000",
+        "--n-motor-fs-per-action", "240",
+    ],
     # 2026-05-09 follow-up: relaxed long_tail few-shot dose. Per seed
     # 42 FINAL finding (long_tail at 17%, rare-word binding fails at
     # 10 events): test whether rare-word binding works at 50 events
@@ -715,9 +731,10 @@ PRESET_RUNNERS: dict[str, str] = {
     "phase_1_3_consolidation": "research.runners.consolidation_trainer",
     "phase_1_5_unified":                  "research.runners.continual_eval_suite",
     "phase_1_5_unified_scaled":           "research.runners.continual_eval_suite",
-    "phase_1_5_unified_scaled_v400":      "research.runners.continual_eval_suite",
-    "phase_1_5_interference_only_v400":   "research.runners.continual_eval_suite",
-    "phase_1_5_long_tail_relaxed":        "research.runners.continual_eval_suite",
+    "phase_1_5_unified_scaled_v400":             "research.runners.continual_eval_suite",
+    "phase_1_5_interference_only_v400":          "research.runners.continual_eval_suite",
+    "phase_1_5_interference_only_n_motor_2000":  "research.runners.continual_eval_suite",
+    "phase_1_5_long_tail_relaxed":               "research.runners.continual_eval_suite",
     "tier_2_3_phrases":       "research.runners.phrase_trainer",
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
@@ -747,9 +764,10 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "phase_1_3_consolidation": "--out-stats",
     "phase_1_5_unified":                  "--out-stats",
     "phase_1_5_unified_scaled":           "--out-stats",
-    "phase_1_5_unified_scaled_v400":      "--out-stats",
-    "phase_1_5_interference_only_v400":   "--out-stats",
-    "phase_1_5_long_tail_relaxed":        "--out-stats",
+    "phase_1_5_unified_scaled_v400":             "--out-stats",
+    "phase_1_5_interference_only_v400":          "--out-stats",
+    "phase_1_5_interference_only_n_motor_2000":  "--out-stats",
+    "phase_1_5_long_tail_relaxed":               "--out-stats",
     "tier_2_3_phrases":       "--out-stats",
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
