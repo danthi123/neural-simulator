@@ -708,6 +708,85 @@ def test_capability_status_phase_status(client):
     assert "active" in ps and ps["active"], "active phase must be non-empty"
 
 
+def test_inflight_includes_webapp_launched_runs(client, tmp_path):
+    """Bug fix 2026-05-09: /api/inflight must merge launched_runs (POST
+    /api/runs/launch) with the PID-file scan, otherwise webapp-launched
+    runs are invisible in both the Home in-flight panel and the Runs
+    tab "Live runs" panel."""
+    from webapp.server import launched_runs, LaunchedRun
+    fake_id = "test_inflight_merge_xyz"
+    log_path = tmp_path / "fake_run.log"
+    log_path.write_text("mock log\n", encoding="utf-8")
+    out_path = tmp_path / "fake_run.json"  # doesn't exist yet (still running)
+    fake_run = LaunchedRun(
+        run_id=fake_id,
+        cmd=["python", "-m", "fake.runner"],
+        started_at=0.0,
+        proc=None,        # no real process
+        pid=None,         # treat as not-alive (poll returns False, pid None)
+        log_file=str(log_path),
+        out_path=str(out_path),
+    )
+    launched_runs[fake_id] = fake_run
+    try:
+        res = client.get("/api/inflight")
+        assert res.status_code == 200
+        data = res.json()
+        # Find the entry for our fake run
+        webapp_entries = [r for r in data["inflight"]
+                          if r.get("source") == "webapp_launch"
+                          and r.get("run_id") == fake_id]
+        assert len(webapp_entries) == 1, (
+            f"webapp-launched run not in /api/inflight; "
+            f"got entries: {data['inflight']}")
+        entry = webapp_entries[0]
+        assert entry["name"] == "fake_run"  # from out_path.stem
+        assert entry["log_file"] == "fake_run.log"
+        assert entry["completed"] is False
+        # alive = False because proc=None and pid=None
+        assert entry["alive"] is False
+    finally:
+        launched_runs.pop(fake_id, None)
+
+
+def test_inflight_dedup_webapp_run_with_pid_file(client, tmp_path, monkeypatch):
+    """If a webapp-launched run somehow also has a PID file with the
+    same PID, dedup so the same run isn't rendered twice in the panel."""
+    from webapp.server import launched_runs, LaunchedRun
+    import webapp.server as srv
+
+    # Stub the PID-file scan dir so we don't pollute real run files
+    fake_raw_dir = tmp_path / "raw"
+    fake_raw_dir.mkdir()
+    fake_pid = 999999  # very unlikely to collide with real processes
+    pid_file = fake_raw_dir / "shared_pid_run.pid"
+    pid_file.write_text(str(fake_pid))
+    monkeypatch.setattr(srv, "RAW_RUNS_DIR", fake_raw_dir)
+
+    fake_id = "dedup_test_id"
+    fake_run = LaunchedRun(
+        run_id=fake_id,
+        cmd=["python", "-m", "fake.runner"],
+        started_at=0.0,
+        proc=None,
+        pid=fake_pid,  # SAME pid as the PID file
+        log_file=None,
+        out_path=None,
+    )
+    launched_runs[fake_id] = fake_run
+    try:
+        res = client.get("/api/inflight")
+        data = res.json()
+        # Should see exactly ONE entry for this PID (from the PID file scan,
+        # NOT the webapp_launch entry — dedup skips the launched_runs side)
+        matching = [r for r in data["inflight"] if r.get("pid") == fake_pid]
+        assert len(matching) == 1
+        # And it should NOT have source=webapp_launch (PID file wins)
+        assert matching[0].get("source") != "webapp_launch"
+    finally:
+        launched_runs.pop(fake_id, None)
+
+
 def test_capability_status_handles_missing_file(client, monkeypatch, tmp_path):
     """If capability_status.json is missing, the endpoint should return a
     stub with _warning rather than 500-ing — the dashboard should still

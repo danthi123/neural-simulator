@@ -1721,6 +1721,61 @@ def list_inflight_runs() -> JSONResponse:
             "completed": result_path is not None,
             "is_sweep": is_sweep,
         })
+    # 2026-05-09: also include webapp-launched runs (POST /api/runs/launch)
+    # in the same response so the live panels (Home in-flight + Runs tab
+    # "Live runs") surface BOTH detached PID-file launches AND webapp-
+    # launched runs. Without this, a user who launches via the dashboard
+    # sees no live indicator anywhere — the run is reachable only via
+    # /api/runs/launch, which doesn't feed the panels.
+    seen_pids = {r.get("pid") for r in inflight if r.get("pid") is not None}
+    for run_id, run in launched_runs.items():
+        # Dedup: if a webapp launch also created a PID file (rare),
+        # skip the launched-runs entry to avoid double-rendering.
+        if run.pid is not None and run.pid in seen_pids:
+            continue
+        # Determine alive: prefer subprocess.poll() result; fall back to
+        # PID alive check for orphan-recovery cases where proc=None.
+        if run.proc is not None:
+            running = (run.proc.poll() is None)
+        elif run.pid is not None:
+            running = _check_pid_alive(run.pid)
+        else:
+            running = False
+        # Build inflight-shaped entry. Reuse _parse_log_progress so the
+        # frontend gets the same progress shape as detached runs.
+        log_path = Path(run.log_file) if run.log_file else None
+        progress = _parse_log_progress(log_path) if log_path else None
+        log_size = (log_path.stat().st_size
+                    if (log_path and log_path.exists()) else 0)
+        log_mtime = (log_path.stat().st_mtime
+                     if (log_path and log_path.exists()) else None)
+        out_path = Path(run.out_path) if run.out_path else None
+        result_exists = bool(out_path and out_path.exists())
+        # Use the output JSON's basename (without .json) as the display
+        # name so the live panel shows e.g. "g11_seed42_phase_1_5_..."
+        # rather than the opaque run_id hex.
+        if out_path:
+            display_name = out_path.stem
+        else:
+            display_name = f"webapp-{run_id[:8]}"
+        inflight.append({
+            "name": display_name,
+            "pid": run.pid if run.pid is not None else 0,
+            "alive": running,
+            "log_file": log_path.name if log_path and log_path.exists() else None,
+            "log_size_kb": round(log_size / 1024, 1),
+            "log_mtime": log_mtime,
+            "progress": progress,
+            "result_file": out_path.name if out_path and result_exists else None,
+            "completed": result_exists and not running,
+            "is_sweep": False,
+            # Mark the source so the frontend can offer launch-specific
+            # actions (kill via /api/runs/launch/{id}/kill, attach,
+            # control). Detached runs leave this field absent.
+            "source": "webapp_launch",
+            "run_id": run_id,
+        })
+
     # Sort sweep entries first so the dashboard shows sweep-level
     # progress at the top rather than the cycling per-child cards.
     inflight.sort(key=lambda r: (not r.get("is_sweep"), r.get("name", "")))
