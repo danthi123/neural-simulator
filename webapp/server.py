@@ -1479,6 +1479,14 @@ _PAIRED_STIM_PROGRESS_RE = _re.compile(
 _GENERIC_STEP_RE = _re.compile(
     r"step\s+(\d+)/(\d+)\s+pos=\((-?\d+),(-?\d+)\)\s+goal=\((-?\d+),(-?\d+)\)"
 )
+# continual_eval_suite progress markers (added 2026-05-09 after user reported
+# "0% · no progress markers yet" for Phase 1.5 multi-seed).
+# Start marker:  "--- Running benchmark: NAME ---"
+# End marker:    "  [OK] NAME: score=0.87 pass=True (1911s)"  (or "[X]" for fail)
+_CES_BENCH_START_RE = _re.compile(r"---\s*Running benchmark:\s*(\w+)\s*---")
+_CES_BENCH_END_RE = _re.compile(
+    r"\[(OK|X)\]\s+(\w+):\s+score=([-\d.]+)\s+pass=(True|False)\s+\((\d+)s\)"
+)
 
 
 def _check_pid_alive(pid: int) -> bool:
@@ -1502,9 +1510,13 @@ def _parse_log_progress(log_path: Path) -> dict | None:
         return None
     try:
         size = log_path.stat().st_size
-        # Read last 8KB to find the latest progress line
+        # Read last 32KB to find the latest progress line — multi-benchmark
+        # runners (continual_eval_suite) print >8KB between completion
+        # markers, so the smaller window misses earlier completed
+        # benchmarks. 32KB is enough for a 4-benchmark suite even with
+        # long inter-benchmark output.
         with log_path.open("rb") as f:
-            f.seek(max(0, size - 8192))
+            f.seek(max(0, size - 32 * 1024))
             tail_bytes = f.read()
         tail = tail_bytes.decode("utf-8", errors="ignore")
     except Exception:
@@ -1608,6 +1620,53 @@ def _parse_log_progress(log_path: Path) -> dict | None:
         }
         if phase_info:
             out.update(phase_info)
+        return out
+
+    # 3b. continual_eval_suite — multi-benchmark suite. Counts completion
+    # markers ("[OK] NAME: ... pass=...") and finds the latest "Running
+    # benchmark: NAME" line. Reports fraction = completed/started (under-
+    # estimates while a benchmark is in flight; jumps to 1.0 on final
+    # completion). Added 2026-05-09 after user reported "0% · no progress
+    # markers yet" for Phase 1.5 multi-seed runs.
+    bench_starts = list(_CES_BENCH_START_RE.finditer(tail))
+    bench_ends = list(_CES_BENCH_END_RE.finditer(tail))
+    if bench_starts:
+        latest_start = bench_starts[-1]
+        current_bench = latest_start.group(1)
+        # Completed = number of [OK]/[X] end markers we've seen.
+        # Started = number of "Running benchmark:" markers we've seen
+        # (>=completed since the start always precedes the end).
+        n_completed = len(bench_ends)
+        n_started = len(bench_starts)
+        # Per-benchmark scores from end markers, surfaced for the panel.
+        completed_results = [
+            {
+                "name": m.group(2),
+                "score": float(m.group(3)),
+                "pass": (m.group(4) == "True"),
+                "wall_clock_s": int(m.group(5)),
+            }
+            for m in bench_ends
+        ]
+        # Estimated total — Phase 1.5 default is 4 benchmarks, but accept
+        # any value if more starts have been seen.
+        n_total_est = max(4, n_started)
+        # If we've seen N completions and the (N+1)th start, the in-flight
+        # benchmark is N+1. Treat it as "halfway done" so the bar moves
+        # rather than sitting flat between completions.
+        if n_started > n_completed:
+            fraction = (n_completed + 0.5) / max(1, n_total_est)
+        else:
+            fraction = n_completed / max(1, n_total_est)
+        out = {
+            "kind": "continual_eval",
+            "current_benchmark": current_bench,
+            "n_completed": n_completed,
+            "n_started": n_started,
+            "n_total_est": n_total_est,
+            "fraction": min(1.0, fraction),
+            "completed_results": completed_results,
+        }
         return out
 
     # 4. Generic per-step format from g11_bg_runner.

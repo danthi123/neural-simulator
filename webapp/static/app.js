@@ -109,6 +109,17 @@ function formatProgressLine(p) {
     }
     return `step ${p.step || p.current}/${p.total}`;
   }
+  // continual_eval_suite (Phase 1.5 etc.). Reports completed/started
+  // benchmark counts plus the currently-running benchmark name. Added
+  // 2026-05-09 after user reported "0% · no progress markers yet".
+  if (p.kind === "continual_eval") {
+    const cur = p.current_benchmark || "?";
+    const passLine = (p.completed_results || [])
+      .map((r) => `${r.name}=${r.score.toFixed(2)}${r.pass ? "✓" : "✗"}`)
+      .join(" ");
+    const passed = passLine ? ` [${passLine}]` : "";
+    return `benchmark ${p.n_started}/${p.n_total_est} · running ${cur}${passed}`;
+  }
 
   // Generic fallback for unknown kinds — derive display from current/total
   if (p.current !== undefined && p.total !== undefined) {

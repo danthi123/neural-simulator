@@ -708,6 +708,92 @@ def test_capability_status_phase_status(client):
     assert "active" in ps and ps["active"], "active phase must be non-empty"
 
 
+def test_parse_log_progress_continual_eval_partial(tmp_path):
+    """continual_eval_suite logs: 2 benchmarks completed, 3rd in flight.
+
+    User-reported bug 2026-05-09: 'It shows 0% · (no progress markers yet)'
+    on a Phase 1.5 multi-seed run. The runner emits human-readable
+    benchmark markers; _parse_log_progress was only matching navigation-
+    runner step lines.
+    """
+    from webapp.server import _parse_log_progress
+
+    log = tmp_path / "ces.log"
+    log.write_text(
+        "boot logging...\n"
+        "\n--- Running benchmark: sequential_expansion ---\n"
+        "  Pre-silence: 53%\n"
+        "  Post-silence: 51%\n"
+        "  [OK] sequential_expansion: score=0.95 pass=True (1830s)\n"
+        "\n--- Running benchmark: retention_over_time ---\n"
+        "    Train done (980s)\n"
+        "    Pre-silence: 52.0%\n"
+        "    Post-silence: 45.0%\n"
+        "  [OK] retention_over_time: score=0.87 pass=True (1911s)\n"
+        "\n--- Running benchmark: interference ---\n"
+        "  [INT] Train interleaved 8-word vocab\n"
+        "  ... still running ...\n",
+        encoding="utf-8",
+    )
+    p = _parse_log_progress(log)
+    assert p is not None
+    assert p["kind"] == "continual_eval"
+    assert p["n_completed"] == 2  # sequential_expansion + retention_over_time
+    assert p["n_started"] == 3    # +interference now running
+    assert p["current_benchmark"] == "interference"
+    # Fraction = (2 + 0.5) / 4 = 0.625 (interference is "half done")
+    assert abs(p["fraction"] - 0.625) < 0.01
+    # Per-benchmark results surfaced for the panel
+    names = [r["name"] for r in p["completed_results"]]
+    assert names == ["sequential_expansion", "retention_over_time"]
+    assert p["completed_results"][1]["score"] == 0.87
+    assert p["completed_results"][1]["pass"] is True
+
+
+def test_parse_log_progress_continual_eval_all_done(tmp_path):
+    """Final completion: all 4 benchmarks done, fraction = 1.0."""
+    from webapp.server import _parse_log_progress
+
+    log = tmp_path / "ces.log"
+    body = []
+    for name in ("sequential_expansion", "retention_over_time",
+                 "interference", "long_tail"):
+        body.append(f"\n--- Running benchmark: {name} ---\n")
+        body.append(f"  [OK] {name}: score=0.85 pass=True (1500s)\n")
+    log.write_text("".join(body), encoding="utf-8")
+
+    p = _parse_log_progress(log)
+    assert p["kind"] == "continual_eval"
+    assert p["n_completed"] == 4
+    assert p["n_started"] == 4
+    assert p["fraction"] == 1.0
+
+
+def test_parse_log_progress_continual_eval_handles_failed_benchmark(tmp_path):
+    """[X] (failed) benchmark counts as a completed benchmark for progress."""
+    from webapp.server import _parse_log_progress
+
+    log = tmp_path / "ces.log"
+    log.write_text(
+        "\n--- Running benchmark: sequential_expansion ---\n"
+        "  [OK] sequential_expansion: score=0.95 pass=True (1830s)\n"
+        "\n--- Running benchmark: retention_over_time ---\n"
+        "  [X] retention_over_time: score=0.65 pass=False (1900s)\n"
+        "\n--- Running benchmark: interference ---\n"
+        "  ... in flight ...\n",
+        encoding="utf-8",
+    )
+    p = _parse_log_progress(log)
+    assert p["kind"] == "continual_eval"
+    assert p["n_completed"] == 2
+    assert p["n_started"] == 3
+    assert p["current_benchmark"] == "interference"
+    # Failed benchmark still appears in completed_results with pass=False
+    failed = [r for r in p["completed_results"] if not r["pass"]]
+    assert len(failed) == 1
+    assert failed[0]["name"] == "retention_over_time"
+
+
 def test_inflight_includes_webapp_launched_runs(client, tmp_path):
     """Bug fix 2026-05-09: /api/inflight must merge launched_runs (POST
     /api/runs/launch) with the PID-file scan, otherwise webapp-launched
