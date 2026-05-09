@@ -314,11 +314,18 @@ problem with the previous training approach.
 - 12-word vocab **scaled arch** (n_motor=2000): **3/3 GO unanimous**
   multi-seed (mean primary 95.5%, mean synonym 115.0%) — capacity
   hypothesis confirmed at multi-seed (2026-05-09)
-- Phase 1.5 unified 4-benchmark suite at scaled arch: in flight at
-  2026-05-09. Seed 42 partial: sequential_expansion 0.88 ✓,
-  retention_over_time 0.87 ✓, **interference 0.34 ✗** (under-trained
-  at events_per_word=200 vs validated 400; hypothesis test
-  pre-staged at preset `phase_1_5_interference_only_v400`).
+- Phase 1.5 unified 4-benchmark suite at scaled arch (3-seed FINAL,
+  2026-05-09): mean **0.629 ± 0.056** — **FAIL** at master plan
+  threshold (>= 0.70). Two robust patterns:
+  - **2/4 PASS** all 3 seeds (sequential_expansion mean 0.95,
+    retention_over_time mean 0.94) — foundation for sequential
+    continual learning sound at scaled arch
+  - **2/4 FAIL** all 3 seeds (interference mean 0.39, long_tail
+    mean 0.23) — interleaved 8-word + few-shot rare-word are
+    distinct hard-problem clusters
+  - Under-training hypothesis tested at v400 events/word: **REFUTED**
+    (0.340 → 0.345, no change). Failure is architectural not dose-bound.
+  - Architecture-ceiling hypothesis (n_motor=2000) currently testing.
 
 This characterizes the architecture's empirical capability: the
 biology-grounded continual learning works at multi-seed (4/8/12-word

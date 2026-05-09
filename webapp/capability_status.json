@@ -64,10 +64,10 @@
     ]
   },
   "phase_status": {
-    "active": "Phase 1.5 multi-seed seed 42 in flight (3/4 benchmarks done; interference partial 0.34 below threshold; v400 hypothesis chain pre-staged)",
-    "next": "After Phase 1.5: v400 interference confirmation (~70 min single seed) — hypothesis chain auto-fires when batch drains",
-    "after_next": "16-word smoke (~3.5 hrs single-seed) OR Phase 1.5 v400 multi-seed if hypothesis confirmed",
-    "after_after": "Phase 2.2b 10M-param overnight training (~14 hrs)",
+    "active": "Phase 1.5 architecture-ceiling investigation: n_motor=2000 interference test in flight (~80-100 min). v400 hypothesis REFUTED (0.340->0.345 no change); testing whether capacity scale-up that fixed 12-word also fixes 8-word interleaved interference.",
+    "next": "After n_motor=2000: long_tail_relaxed test auto-chained (~50 min) — second hypothesis (rare-word binding fails on dose+teacher vs architecture)",
+    "after_next": "After both hypotheses tested: master plan strategic decision — demote Phase 1.5 to tier report vs invest more architecture testing; OR pivot to Phase 2.2b 10M-param overnight",
+    "after_after": "Track 3 :speak GPU smoke (after all Phase 1.5 hypothesis tests drain GPU)",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
     "resumption_plan": "docs/plans/2026-05-09-Phase-2-resumption-plan.md"
   }
