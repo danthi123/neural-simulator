@@ -556,14 +556,19 @@ PRESETS: dict[str, list[str]] = {
     "chat_synonym_demo": [
         "--train-events", "400",
     ],
-    # NOTE: chat_repl --learn (Track 3 online vocab learning) is a CLI-only
-    # feature for now. The launcher only hosts batch-runner presets that
-    # emit JSON stats; chat_repl --scripted-words emits a markdown
-    # transcript instead. To exercise --learn, run from CLI:
-    #   python -m research.runners.chat_repl --mode tier1 --seed 43 \
-    #     --learn --scripted-words "north,learn ahead N,ahead"
-    # A dedicated chat_learn_demo runner that emits JSON stats is parked
-    # for a future iteration alongside dialog state + generative decoder.
+    # Track 3 online vocab learning demo (2026-05-09). Trains Tier 1
+    # primaries, runs baseline accuracy test, learns 2 NEW words via
+    # embodied-Hebbian co-firing (chat_repl.learn_word_pairing), tests
+    # the new bindings, then re-tests primaries to check for catastrophic
+    # forgetting. Verdict: GO if binding_rate >= 50% AND retention >= 80%.
+    # Wall clock ~9-10 min single seed (6 min train + 2 learns of 50
+    # events + 4-direction × 2-round tests + 2 binding tests).
+    # See chat_repl.py learn_word_pairing for the learning primitive.
+    "chat_learn_demo": [
+        "--train-events", "200",
+        "--learn-events", "50",
+        "--new-words", "ahead:N,back:S",
+    ],
     # Phase 1.3 + Tier 2.1 combined consolidation test. Trains synonym
     # vocab with hippocampus, alternates awake/sleep, then tests
     # whether cortex retains both primary AND synonym words after
@@ -672,6 +677,7 @@ PRESET_RUNNERS: dict[str, str] = {
     "chat_demo":              "research.runners.chat_demo",
     "chat_continual_demo":    "research.runners.chat_continual_demo",
     "chat_synonym_demo":      "research.runners.chat_synonym_demo",
+    "chat_learn_demo":        "research.runners.chat_learn_demo",
     "consolidation_synonym":                       "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_smoke":                 "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_medium":                "research.runners.consolidation_synonym_trainer",
@@ -700,6 +706,7 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "chat_demo":              "--out-stats",
     "chat_continual_demo":    "--out-stats",
     "chat_synonym_demo":      "--out-stats",
+    "chat_learn_demo":        "--out-stats",
     "consolidation_synonym":                       "--out-stats",
     "consolidation_synonym_smoke":                 "--out-stats",
     "consolidation_synonym_medium":                "--out-stats",

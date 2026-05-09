@@ -83,6 +83,26 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
             entry["synonym_pass"] = ret.get("synonym_pass", False)
             entry["verdict"] = data.get("verdict", "")
             entry["accuracy"] = entry["post_overall"]
+        elif data.get("demo_kind") == "chat_learn_demo":
+            # Track 3 chat_learn_demo (2026-05-09): exercises the
+            # learn_word_pairing primitive end-to-end. We surface the
+            # binding success rate and the primary retention ratio so
+            # multi-seed aggregation can answer "does online learning
+            # work AND not break existing bindings?".
+            entry["demo_type"] = "chat_learn"
+            entry["accuracy"] = data.get("accuracy", 0.0)  # post-learn primaries
+            entry["primary_baseline_accuracy"] = data.get(
+                "primary_baseline_accuracy", 0.0)
+            entry["primary_post_learn_accuracy"] = data.get(
+                "primary_post_learn_accuracy", 0.0)
+            entry["primary_retention_ratio"] = data.get(
+                "primary_retention_ratio", 0.0)
+            entry["learn_binding_rate"] = data.get(
+                "learn_binding_rate", 0.0)
+            entry["new_words"] = data.get("new_words", [])
+            entry["learn_results"] = data.get("learn_results", [])
+            entry["go"] = bool(data.get("go", False))
+            entry["verdict"] = data.get("verdict", "")
         elif ("retention_ratio" in data
               or (isinstance(data.get("retention"), (int, float))
                   and data.get("retention") > 0)
@@ -205,6 +225,27 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
             "n_go_verdict": sum(1 for s in cs_seeds
                                   if s["verdict"].startswith("GO")),
             "verdicts": [s["verdict"] for s in cs_seeds],
+        }
+
+    # chat_learn_demo aggregation (Track 3 online vocab learning, 2026-05-09).
+    # Reports binding rate + primary retention separately so multi-seed runs
+    # surface "does online learning generalize, AND not break existing
+    # bindings?" Both must pass for an overall GO verdict.
+    cl_seeds = [s for s in per_seed if s["demo_type"] == "chat_learn"]
+    if cl_seeds:
+        binding = [s["learn_binding_rate"] for s in cl_seeds]
+        retention = [s["primary_retention_ratio"] for s in cl_seeds]
+        summary["chat_learn_demo"] = {
+            "n_seeds": len(cl_seeds),
+            "binding_rate_mean": _safe_mean(binding),
+            "binding_rate_std":  _safe_std(binding),
+            "primary_retention_mean": _safe_mean(retention),
+            "primary_retention_std":  _safe_std(retention),
+            # Pass thresholds match the runner's GO criterion.
+            "n_binding_pass":   sum(1 for r in binding   if r >= 0.50),
+            "n_retention_pass": sum(1 for r in retention if r >= 0.80),
+            "n_go_verdict":     sum(1 for s in cl_seeds  if s["go"]),
+            "verdicts":         [s["verdict"] for s in cl_seeds],
         }
 
     return summary

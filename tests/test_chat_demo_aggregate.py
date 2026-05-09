@@ -107,3 +107,116 @@ def test_aggregate_empty_raises(tmp_path):
     """Empty input raises ValueError."""
     with pytest.raises(ValueError, match="No result files"):
         aggregate([])
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# chat_learn_demo branch (Track 3 online vocab learning, 2026-05-09)
+# ─────────────────────────────────────────────────────────────────────────
+
+
+def test_aggregate_chat_learn_demo_basic(tmp_path):
+    """chat_learn_demo JSONs route to the chat_learn aggregation block."""
+    paths = [
+        _write(tmp_path, "g11_seed42_chat_learn.json", {
+            "seed": 42,
+            "demo_kind": "chat_learn_demo",
+            "accuracy": 0.875,
+            "primary_baseline_accuracy": 1.00,
+            "primary_post_learn_accuracy": 0.875,
+            "primary_retention_ratio": 0.875,
+            "learn_binding_rate": 1.0,
+            "go": True,
+            "verdict": "GO",
+            "new_words": [["ahead", "N"], ["back", "S"]],
+            "learn_results": [
+                {"word": "ahead", "target": "N", "predicted": "N",
+                 "bound_ok": True, "confidence": 4.2,
+                 "delta_counts": {"N": 12, "E": 1, "S": 0, "W": 1}},
+                {"word": "back", "target": "S", "predicted": "S",
+                 "bound_ok": True, "confidence": 3.7,
+                 "delta_counts": {"N": 0, "E": 0, "S": 8, "W": 1}},
+            ],
+        }),
+        _write(tmp_path, "g11_seed43_chat_learn.json", {
+            "seed": 43,
+            "demo_kind": "chat_learn_demo",
+            "accuracy": 0.625,
+            "primary_baseline_accuracy": 0.75,
+            "primary_post_learn_accuracy": 0.625,
+            "primary_retention_ratio": 0.83,
+            "learn_binding_rate": 0.5,
+            "go": True,
+            "verdict": "GO",
+            "new_words": [["ahead", "N"], ["back", "S"]],
+            "learn_results": [
+                {"word": "ahead", "target": "N", "predicted": "N",
+                 "bound_ok": True},
+                {"word": "back", "target": "S", "predicted": "E",
+                 "bound_ok": False},
+            ],
+        }),
+        _write(tmp_path, "g11_seed44_chat_learn.json", {
+            "seed": 44,
+            "demo_kind": "chat_learn_demo",
+            "accuracy": 0.50,
+            "primary_baseline_accuracy": 0.875,
+            "primary_post_learn_accuracy": 0.50,
+            "primary_retention_ratio": 0.57,
+            "learn_binding_rate": 1.0,
+            "go": False,
+            "verdict": "NO-GO",
+        }),
+    ]
+    s = aggregate(paths)
+    assert s["n_seeds"] == 3
+    assert s["demo_types"] == ["chat_learn"]
+    assert "chat_learn_demo" in s
+    cl = s["chat_learn_demo"]
+    assert cl["n_seeds"] == 3
+    # Binding rate mean: (1.0 + 0.5 + 1.0) / 3 = 0.833
+    assert abs(cl["binding_rate_mean"] - 0.833) < 0.01
+    # Primary retention mean: (0.875 + 0.83 + 0.57) / 3 = 0.758
+    assert abs(cl["primary_retention_mean"] - 0.758) < 0.01
+    # 3 seeds passed binding (>=0.5), 2 passed retention (>=0.8)
+    assert cl["n_binding_pass"] == 3
+    assert cl["n_retention_pass"] == 2
+    assert cl["n_go_verdict"] == 2  # seeds 42 + 43
+
+
+def test_chat_learn_demo_distinguishes_from_tier1(tmp_path):
+    """A run with demo_kind set goes to chat_learn, NOT tier1."""
+    paths = [
+        _write(tmp_path, "g11_seed42_chat_learn.json", {
+            "seed": 42,
+            "demo_kind": "chat_learn_demo",
+            "accuracy": 0.5,
+            "primary_baseline_accuracy": 0.5,
+            "primary_post_learn_accuracy": 0.5,
+            "primary_retention_ratio": 1.0,
+            "learn_binding_rate": 0.5,
+            "go": True,
+            "verdict": "GO",
+        }),
+    ]
+    s = aggregate(paths)
+    assert s["demo_types"] == ["chat_learn"]
+    # Make sure it didn't accidentally route to tier1 demo type
+    assert "chat_learn_demo" in s
+    assert "tier1_per_direction" not in s
+
+
+def test_chat_learn_demo_handles_missing_optional_fields(tmp_path):
+    """Old chat_learn JSONs without all fields don't crash the aggregator."""
+    paths = [
+        _write(tmp_path, "g11_seed42_chat_learn.json", {
+            "seed": 42,
+            "demo_kind": "chat_learn_demo",
+            # Only the required-for-tag field; everything else default-0
+        }),
+    ]
+    s = aggregate(paths)
+    assert s["n_seeds"] == 1
+    cl = s["chat_learn_demo"]
+    assert cl["binding_rate_mean"] == 0.0
+    assert cl["primary_retention_mean"] == 0.0
+    assert cl["n_go_verdict"] == 0
