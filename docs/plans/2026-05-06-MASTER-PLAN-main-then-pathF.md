@@ -351,40 +351,87 @@ For Path F's premise to hold, we need:
 
 ---
 
-## Phase 1.5 — Continual-learning eval suite (~3-5 days)
+## Phase 1.5 — Continual-learning eval suite (~3-5 days) — **DEMOTED to TIER REPORT (2026-05-09)**
 
-### Goal
+### Status
+
+**Status as of 2026-05-09:** Phase 1.5 multi-seed completed, mean
+aggregate **0.629 ± 0.056** (3 seeds × 4 benchmarks at scaled arch
+n_motor=1000). Below 0.70 threshold; **demoted from milestone gate
+to tier report**.
+
+Three hypothesis tests run after multi-seed FAIL:
+- v400 events_per_word: 0.340→0.345 (REFUTED, +0.005)
+- n_motor=2000: 0.345→0.390 (REFUTED, +0.045)
+- long_tail relaxed dose+teacher: 0.170→0.260 (REFUTED, +0.090)
+
+All 3 levers produce small but sub-threshold lifts. Outcome D per
+the 2026-05-09 decision tree. Two architectural ceilings characterized:
+
+- **interleaved 8-word training** plateaus at ~0.39 across the
+  (events_per_word, n_motor) lever sweep. Per-word bimodal pattern
+  (some words bind, others don't) consistent across all 3 tests
+  suggests drive-pattern collision under sparse encoding.
+- **few-shot rare-word binding** at 50 events plateaus at ~0.26
+  (vs 0.30 threshold). 50 events ≈ 13s of speech — biology has
+  the same limit at this scale.
+
+Both clusters are real research challenges parked for future work,
+not failures of the validated foundation.
+
+### What ACTUALLY validated (the tier report)
+
+- ✓ sequential_expansion: 3/3 PASS (mean 0.95) — vocab GROWTH works
+- ✓ retention_over_time: 3/3 PASS (mean 0.94) — consolidation works
+- ✗ interference: architectural ceiling 0.34-0.39
+- ✗ long_tail: few-shot ceiling 0.17-0.26
+
+The Phase 1.4 BRANCH A + Phase 1.3 + Tier 2.1 12-word scaled
+foundation REMAINS validated for SEQUENTIAL continual learning.
+
+### Strategic implication
+
+Phase 1.5 demotion does NOT block Phase 2. Phase 2 tests an
+orthogonal mechanism (gradient-based pretraining for character-level
+language modeling) that doesn't depend on biology-grounded
+interleaved + few-shot performance.
+
+**Active master plan milestone after demote: Phase 2.2b 10M-param
+overnight on path-f-hybrid branch** per the resumption plan
+addendum.
+
+### Documentation trail
+
+- `2026-05-09-Phase-1.5-RETROSPECTIVE.md` — consolidated retrospective
+- `docs/plans/2026-05-09-Phase-1.5-decision-tree.md` — strategy
+- `docs/plans/2026-05-09-Phase-2-resumption-plan-addendum.md` — pivot
+
+### Original goal (kept for reference)
 
 Unified benchmark suite for continual learning, used as regression check during
 Phase 2 development.
 
-### Components
+### Original components
 
-1. **Sequential learning:** Phase 1.4 sequential expansion test
-2. **Interference test:** Phase 1.4 interleaved vs sequential
-3. **Long-tail test:** Phase 1.4 imbalanced frequency
-4. **Retention over time:** Train, wait N silence steps, retest
+1. **Sequential learning:** Phase 1.4 sequential expansion test [SHIPPED, 3/3 PASS]
+2. **Interference test:** Phase 1.4 interleaved vs sequential [SHIPPED, 0/3 ceiling]
+3. **Long-tail test:** Phase 1.4 imbalanced frequency [SHIPPED, 0/3 ceiling]
+4. **Retention over time:** Train, wait N silence steps, retest [SHIPPED, 3/3 PASS]
 5. **Multi-modality interaction:** Train word→motor (Tier 1), word→percept
-   (Tier 2.2), do both still work?
+   (Tier 2.2), do both still work? [PARKED — depends on Tier 2.2]
 6. **Compositional preservation:** Train phrases (Tier 2.3), do single-word
-   bindings still work?
+   bindings still work? [PARKED — Tier 2.3 architecture-limited at 41%]
 
-### Implementation
+### Original implementation (shipped)
 
-`research/runners/continual_eval.py` — single runner that executes all 6
-benchmarks against a model checkpoint.
+`research/runners/continual_eval_suite.py` — single runner that executes
+all 6 benchmarks (4 active, 2 placeholder) against a model checkpoint.
 
-### Pass criteria
+### Original pass criteria
 
 Each test produces a retention score [0, 1]. Aggregate score (mean) ≥ 0.7
-for "biology-grounded continual learning works" claim.
-
-### Deliverables
-
-- continual_eval.py
-- Standard benchmark output format
-- Baseline measurement against current main branch state
-- Findings doc
+for "biology-grounded continual learning works" claim. **Result: 0.629
+across active benchmarks; demoted to tier report.**
 
 ---
 
