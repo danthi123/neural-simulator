@@ -193,11 +193,24 @@ def run_demo(
     verbose: bool = True,
 ):
     """Full demo: train, then 4-direction conversation."""
+    # 2026-05-09: emit_progress so webapp inflight panel + 3D viz show
+    # live progress (was "0% no markers")
+    from sim.progress import emit_progress
+    import time
+
+    emit_progress("phase", current=0, total=2, phase="training",
+                  unit="phases", label="chat_demo")
+    t0 = time.time()
     bridge = train_chat_bridge(
         seed=seed, n_events_per_word=n_train_events, verbose=verbose,
     )
+    emit_progress("complete", current=1, total=2, phase="training",
+                  unit="phases", label="chat_demo",
+                  wall_clock_s=int(time.time() - t0))
 
-    # Run "conversation" -- 1 turn per direction, repeated 3 times
+    # Run "conversation" -- 1 turn per direction, repeated 3 times = 12 turns
+    emit_progress("phase", current=1, total=2, phase="W2A_eval",
+                  unit="phases", label="chat_demo")
     transcript = []
     transcript.append({"type": "header",
                         "text": "Chat demo on biology-grounded foundation"})
@@ -208,6 +221,7 @@ def run_demo(
 
     correct_total = 0
     total_turns = 0
+    n_total_turns = 12  # 3 rounds × 4 directions
     # Per-direction tracking (added 2026-05-07): enables aggregator to
     # surface which directions are well-bound vs not at the seed level.
     correct_per_word = {w: 0 for w in DIRECTIONS}
@@ -222,6 +236,11 @@ def run_demo(
             if result["correct"]:
                 correct_total += 1
                 correct_per_word[word] += 1
+            # Per-turn eval progress (every turn so live progress is smooth)
+            emit_progress("eval", current=total_turns, total=n_total_turns,
+                          phase="W2A_eval", unit="turns",
+                          label="chat_demo",
+                          correct_pct=round(100 * correct_total / total_turns, 1))
 
             if verbose:
                 marker = "[OK]" if result["correct"] else "[X]"

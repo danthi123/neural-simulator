@@ -126,26 +126,47 @@ def evaluate_a_to_w(bridge, vocab_words=None, verbose: bool = True) -> dict:
 
 def run_chat_speak_demo(seed: int = 42, n_train_events: int = 200,
                         verbose: bool = True) -> dict:
+    # 2026-05-09: emit structured [PROGRESS] events so the webapp inflight
+    # panel + 3D Brain live mode show real progress (not "0% no markers").
+    # Same fix pattern shipped for continual_eval_suite tonight.
+    from sim.progress import emit_progress
+
     print(f"\n=== chat_speak_demo (seed={seed}) ===", flush=True)
     print(f"  Tier 1 4-word vocab: {DIRECTIONS}", flush=True)
     print(f"  train_events={n_train_events}\n", flush=True)
 
+    # 3 phases: training, W2A regression, A2W speak
+    emit_progress("phase", current=0, total=3, phase="training",
+                  unit="phases", label="chat_speak_demo")
     t0 = time.time()
     bridge = train_chat_bridge(seed=seed, n_events_per_word=n_train_events,
                                 verbose=verbose)
     train_sec = time.time() - t0
+    emit_progress("complete", current=1, total=3, phase="training",
+                  unit="phases", label="chat_speak_demo",
+                  wall_clock_s=int(train_sec))
 
     # Phase B: W->A regression baseline
     print(f"\n[PHASE B] W->A regression check (chat_demo path)", flush=True)
+    emit_progress("phase", current=1, total=3, phase="W2A_regression",
+                  unit="phases", label="chat_speak_demo")
     w2a = evaluate_w_to_a_baseline(bridge, n_rounds=2, verbose=verbose)
     print(f"  W->A accuracy: {w2a['accuracy']:.1%} ({w2a['correct']}/{w2a['total']})",
           flush=True)
+    emit_progress("complete", current=2, total=3, phase="W2A_regression",
+                  unit="phases", label="chat_speak_demo",
+                  score=float(w2a['accuracy']))
 
     # Phase C: A->W via generative_inference (the new layer 4 primitive)
     print(f"\n[PHASE C] A->W generative decoder (:speak primitive)", flush=True)
+    emit_progress("phase", current=2, total=3, phase="A2W_speak",
+                  unit="phases", label="chat_speak_demo")
     a2w = evaluate_a_to_w(bridge, verbose=verbose)
     print(f"  A->W accuracy: {a2w['accuracy']:.1%} ({a2w['correct']}/{a2w['total']})",
           flush=True)
+    emit_progress("complete", current=3, total=3, phase="A2W_speak",
+                  unit="phases", label="chat_speak_demo",
+                  score=float(a2w['accuracy']))
 
     # Verdict: GO if A->W >= 50% AND W->A regression intact (>= 25% chance baseline)
     speak_pass = a2w["accuracy"] >= 0.50
