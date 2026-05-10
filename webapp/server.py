@@ -786,6 +786,34 @@ PRESETS: dict[str, list[str]] = {
         "--n-motor-fs-per-action", "720",
         "--n-test-per-word", "10",
     ],
+    # 2026-05-10 (continued): if 64-word fits, push higher to find true
+    # encoding-wall ceiling. 96+ uses numbered variants (north_05, ...)
+    # added to base 64-word vocab. Architecture stays at n_motor=6000
+    # (validated to fit at 64-word at 16 GB VRAM); the failure mode at
+    # higher vocab will be lang_input encoding collision (10% sparse
+    # over 4096 = 410 active per word; 96 words × 410 = 39K vs 4096
+    # capacity = 10× overlap), not VRAM OOM.
+    "consolidation_synonym_96word_scaled_smoke": [
+        "--smoke",
+        "--vocab-size", "96",
+        "--n-motor-per-action", "6000",
+        "--n-motor-fs-per-action", "720",
+        "--n-test-per-word", "5",
+    ],
+    "consolidation_synonym_128word_scaled_smoke": [
+        "--smoke",
+        "--vocab-size", "128",
+        "--n-motor-per-action", "6000",
+        "--n-motor-fs-per-action", "720",
+        "--n-test-per-word", "5",
+    ],
+    "consolidation_synonym_256word_scaled_smoke": [
+        "--smoke",
+        "--vocab-size", "256",
+        "--n-motor-per-action", "6000",
+        "--n-motor-fs-per-action", "720",
+        "--n-test-per-word", "3",
+    ],
     # 12-word vocab extension (adds n/e/s/w abbreviations as 3rd synonym
     # per action). Tests whether CLS theory still holds at richer vocabulary
     # scale than the 8-word validated result. Same architecture as 8-word;
@@ -861,6 +889,9 @@ PRESET_RUNNERS: dict[str, str] = {
     "consolidation_synonym_32word_scaled_smoke":   "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_48word_scaled_smoke":   "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_64word_scaled_smoke":   "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_96word_scaled_smoke":   "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_128word_scaled_smoke":  "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_256word_scaled_smoke":  "research.runners.consolidation_synonym_trainer",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
@@ -902,6 +933,9 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "consolidation_synonym_32word_scaled_smoke":   "--out-stats",
     "consolidation_synonym_48word_scaled_smoke":   "--out-stats",
     "consolidation_synonym_64word_scaled_smoke":   "--out-stats",
+    "consolidation_synonym_96word_scaled_smoke":   "--out-stats",
+    "consolidation_synonym_128word_scaled_smoke":  "--out-stats",
+    "consolidation_synonym_256word_scaled_smoke":  "--out-stats",
     # phase_2_* presets removed -- see PRESETS dict comment above.
 }
 

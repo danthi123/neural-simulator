@@ -141,6 +141,54 @@ EXTENDED_WORD_TO_ACTION_64 = {
     for word in words
 }
 
+# 2026-05-10 (continued): higher vocab tiers (96/128/256) for finding
+# encoding-wall ceiling. At sparse 10% over 4096-neuron lang_input,
+# each word activates ~410 neurons; 96 words active = ~39K active
+# neurons across vocab vs 4096 capacity = ~10× overlap. Predicted
+# degradation visible at 96+ as the hash-based drive patterns collide
+# more frequently than they're separated.
+#
+# Generated programmatically by appending numbered variants (north_5,
+# north_6, ...) to the 64-word base. Each variant gets a unique
+# SHA-256 hash → unique drive pattern, but overlap with primary
+# words grows.
+
+def _extend_with_numbered(base_groups: dict, target_per_action: int) -> dict:
+    """Append numbered variants ('north_5', 'north_6', ...) to each
+    action group until reaching target_per_action synonyms."""
+    out = {a: list(words) for a, words in base_groups.items()}
+    primaries = {"N": "north", "E": "east", "S": "south", "W": "west"}
+    for a, words in out.items():
+        prim = primaries[a]
+        i = 1
+        while len(words) < target_per_action:
+            candidate = f"{prim}_{i:02d}"
+            if candidate not in words:
+                words.append(candidate)
+            i += 1
+    return out
+
+SYNONYM_GROUPS_96 = _extend_with_numbered(SYNONYM_GROUPS_64, 24)
+EXTENDED_WORD_TO_ACTION_96 = {
+    word: action
+    for action, words in SYNONYM_GROUPS_96.items()
+    for word in words
+}
+
+SYNONYM_GROUPS_128 = _extend_with_numbered(SYNONYM_GROUPS_64, 32)
+EXTENDED_WORD_TO_ACTION_128 = {
+    word: action
+    for action, words in SYNONYM_GROUPS_128.items()
+    for word in words
+}
+
+SYNONYM_GROUPS_256 = _extend_with_numbered(SYNONYM_GROUPS_64, 64)
+EXTENDED_WORD_TO_ACTION_256 = {
+    word: action
+    for action, words in SYNONYM_GROUPS_256.items()
+    for word in words
+}
+
 
 def get_synonym_groups(vocab_size: int = 8) -> dict:
     """Return SYNONYM_GROUPS for the requested vocab size.
@@ -153,6 +201,12 @@ def get_synonym_groups(vocab_size: int = 8) -> dict:
     vocab_size=48: adds derived forms (-ward, -bound, -side, etc.)
     vocab_size=64: adds nautical/movement terms (port/starboard, ascend, etc.)
     """
+    if vocab_size == 256:
+        return SYNONYM_GROUPS_256
+    if vocab_size == 128:
+        return SYNONYM_GROUPS_128
+    if vocab_size == 96:
+        return SYNONYM_GROUPS_96
     if vocab_size == 64:
         return SYNONYM_GROUPS_64
     if vocab_size == 48:
@@ -169,6 +223,12 @@ def get_synonym_groups(vocab_size: int = 8) -> dict:
 
 
 def get_extended_word_to_action(vocab_size: int = 8) -> dict:
+    if vocab_size == 256:
+        return EXTENDED_WORD_TO_ACTION_256
+    if vocab_size == 128:
+        return EXTENDED_WORD_TO_ACTION_128
+    if vocab_size == 96:
+        return EXTENDED_WORD_TO_ACTION_96
     if vocab_size == 64:
         return EXTENDED_WORD_TO_ACTION_64
     if vocab_size == 48:

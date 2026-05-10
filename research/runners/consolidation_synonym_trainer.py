@@ -598,13 +598,13 @@ def main():
                          "the >100%% synonym retention finding is real "
                          "cortex retention or eval-noise artifact.")
     ap.add_argument("--vocab-size", type=int,
-                    choices=[8, 12, 16, 24, 32, 48, 64], default=8,
-                    help="Synonym vocab size: 8 (default, validated 3/3 GO), "
-                         "12 (adds n/e/s/w, 2/3 GO at default arch + boundary, "
-                         "3/3 GO at scaled arch), 16 (adds Unicode arrows, "
-                         "smoke GO at scaled), or 24/32/48/64 (find-the-ceiling "
-                         "tiers, 2026-05-10 — multilingual + derived forms; "
-                         "predicted OOM at 64-word on 24 GB 3090)")
+                    choices=[8, 12, 16, 24, 32, 48, 64, 96, 128, 256],
+                    default=8,
+                    help="Synonym vocab size. 8 (default, 3/3 GO), 12 "
+                         "(2/3 default 3/3 scaled), 16 (smoke GO scaled). "
+                         "24/32/48/64: multilingual + derived forms. "
+                         "96/128/256: numbered variants (north_05, ...) "
+                         "for testing encoding-collision wall.")
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
 
