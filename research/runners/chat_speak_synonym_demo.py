@@ -194,7 +194,10 @@ def run_chat_speak_synonym_demo(seed: int = 42,
                                   n_motor_fs_per_action: int = 120,
                                   verbose: bool = True,
                                   temperature: float = 0.0,
-                                  enable_stp: bool = True) -> dict:
+                                  enable_stp: bool = False) -> dict:
+    """2026-05-10: enable_stp default flipped from True to False.
+    3-seed validation showed 3.28x speedup AND higher accuracy with
+    STP off. See research/findings/2026-05-10-stp-default-flip.md."""
     """Tier 2.1 8-word :speak demo: train scale-up bridge, then A->W."""
     # Structured progress events for live webapp + brain3d
     from sim.progress import emit_progress

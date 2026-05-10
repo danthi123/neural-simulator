@@ -1,0 +1,225 @@
+{
+  "seed": 44,
+  "demo_kind": "chat_speak_synonym_demo",
+  "vocab_size": 8,
+  "n_train_events": 400,
+  "n_lang_input": 4096,
+  "n_motor_per_action": 1000,
+  "n_motor_fs_per_action": 120,
+  "accuracy": 0.5625,
+  "correct": 9,
+  "total": 16,
+  "per_word_accuracy": {
+    "north": 1.0,
+    "up": 0.0,
+    "east": 1.0,
+    "right": 0.0,
+    "south": 1.0,
+    "down": 0.0,
+    "west": 1.0,
+    "left": 0.5
+  },
+  "speak_accuracy": 1.0,
+  "speak_primary_accuracy": 1.0,
+  "speak_synonym_accuracy": 0.0,
+  "speak_correct": 4,
+  "speak_total": 4,
+  "speak_results": [
+    {
+      "target_action": "N",
+      "expected_words": [
+        "north",
+        "up"
+      ],
+      "primary_word": "north",
+      "synonym_word": "up",
+      "predicted_word": "north",
+      "any_correct": true,
+      "primary_correct": true,
+      "synonym_correct": false,
+      "confidence": 1.6819230769230769,
+      "rankings": [
+        [
+          "north",
+          0.2967403906317417
+        ],
+        [
+          "up",
+          0.17642922836554503
+        ],
+        [
+          "down",
+          0.15824344636478885
+        ],
+        [
+          "left",
+          0.14901484057336034
+        ],
+        [
+          "right",
+          0.14548625600604945
+        ],
+        [
+          "south",
+          0.10830040325823456
+        ],
+        [
+          "east",
+          0.10565396483275138
+        ],
+        [
+          "west",
+          0.0852967461751885
+        ]
+      ]
+    },
+    {
+      "target_action": "E",
+      "expected_words": [
+        "east",
+        "right"
+      ],
+      "primary_word": "east",
+      "synonym_word": "right",
+      "predicted_word": "east",
+      "any_correct": true,
+      "primary_correct": true,
+      "synonym_correct": false,
+      "confidence": 1.0,
+      "rankings": [
+        [
+          "east",
+          -0.058974600756003324
+        ],
+        [
+          "west",
+          -0.11472606971293409
+        ],
+        [
+          "south",
+          -0.1352844238908023
+        ],
+        [
+          "down",
+          -0.16847397025422514
+        ],
+        [
+          "up",
+          -0.17239399541525935
+        ],
+        [
+          "right",
+          -0.18720297935694408
+        ],
+        [
+          "left",
+          -0.19817904980783982
+        ],
+        [
+          "north",
+          -0.3003610390054645
+        ]
+      ]
+    },
+    {
+      "target_action": "S",
+      "expected_words": [
+        "south",
+        "down"
+      ],
+      "primary_word": "south",
+      "synonym_word": "down",
+      "predicted_word": "south",
+      "any_correct": true,
+      "primary_correct": true,
+      "synonym_correct": false,
+      "confidence": 1.0,
+      "rankings": [
+        [
+          "south",
+          -0.04485820390482764
+        ],
+        [
+          "west",
+          -0.11152380757575488
+        ],
+        [
+          "north",
+          -0.14222633093065823
+        ],
+        [
+          "up",
+          -0.15284309134310145
+        ],
+        [
+          "left",
+          -0.15829494128462634
+        ],
+        [
+          "down",
+          -0.16967687361868708
+        ],
+        [
+          "right",
+          -0.1760851884622339
+        ],
+        [
+          "east",
+          -0.2785225794687806
+        ]
+      ]
+    },
+    {
+      "target_action": "W",
+      "expected_words": [
+        "west",
+        "left"
+      ],
+      "primary_word": "west",
+      "synonym_word": "left",
+      "predicted_word": "west",
+      "any_correct": true,
+      "primary_correct": true,
+      "synonym_correct": false,
+      "confidence": null,
+      "rankings": [
+        [
+          "west",
+          0.04292786985603033
+        ],
+        [
+          "north",
+          -0.04498541481645008
+        ],
+        [
+          "east",
+          -0.0685536570903491
+        ],
+        [
+          "left",
+          -0.07884138189244785
+        ],
+        [
+          "up",
+          -0.10596356546161735
+        ],
+        [
+          "down",
+          -0.11681243888928515
+        ],
+        [
+          "right",
+          -0.1198052315589866
+        ],
+        [
+          "south",
+          -0.22548822270781943
+        ]
+      ]
+    }
+  ],
+  "verdict": "GO",
+  "go": true,
+  "wall_clock_sec": 504.42500853538513,
+  "train_sec": 487.5334367752075
+}

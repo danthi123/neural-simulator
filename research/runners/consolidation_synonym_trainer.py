@@ -199,6 +199,10 @@ def run_consolidation_synonym_training(
     # over 1000 steps in 2026-05-05 perf wave 2. Currently off by default
     # here until tomorrow's benchmarking arc validates against multi-seed
     # binding accuracy at current arch tiers. Tomorrow: enable + benchmark.
+    # 2026-05-10: STP disabled by default (was True). 3-seed validation
+    # showed STP-off is 3.28x faster AND more accurate (A2W 100% vs 87.5%).
+    # See research/findings/2026-05-10-stp-default-flip.md.
+    cfg.enable_short_term_plasticity = False
 
     bridge = SimulationBridge(
         core_config=cfg,

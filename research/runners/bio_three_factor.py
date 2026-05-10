@@ -147,13 +147,21 @@ def run_three_factor(
     n_motor_fs_per_action: int = 3,
     push_to_gpu_every: int = 64,
     fast_spike_reset: bool = True,
-    enable_stp: bool = True,
-                                          # 2026-05-10: STP is 57% of
-                                          # inner-loop step time. Default
-                                          # True preserves prior behavior;
-                                          # set False for ~2.86x speedup,
-                                          # pending multi-seed accuracy
-                                          # validation.
+    enable_stp: bool = False,
+                                          # 2026-05-10: 3-seed validation
+                                          # (chat_speak_synonym_demo seeds
+                                          # 42/43/44) showed STP-disabled
+                                          # is BOTH 3.28x faster AND more
+                                          # accurate (A2W primary 100% vs
+                                          # 87.5% with STP). STP modeled
+                                          # millisecond synaptic fatigue
+                                          # which depressed binding during
+                                          # repeated co-firing — a bug
+                                          # for stable language-motor
+                                          # binding, not a feature.
+                                          # Default flipped 2026-05-10
+                                          # commit (this commit). Set
+                                          # True to recover prior behavior.
     freeze_plasticity_during_reset: bool = False,
                                           # 2026-05-10 perf optimization #3:
                                           # zero plasticity gain during reset_steps.
