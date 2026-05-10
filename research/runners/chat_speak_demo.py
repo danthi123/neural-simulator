@@ -88,15 +88,25 @@ def evaluate_w_to_a_baseline(bridge, n_rounds: int = 2, verbose: bool = True) ->
     }
 
 
-def evaluate_a_to_w(bridge, vocab_words=None, verbose: bool = True) -> dict:
-    """Run :speak / generative_inference on each of N/E/S/W; compare to expected."""
+def evaluate_a_to_w(bridge, vocab_words=None, verbose: bool = True,
+                     temperature: float = 0.0,
+                     rng_seed: int = None) -> dict:
+    """Run :speak / generative_inference on each of N/E/S/W; compare to expected.
+
+    Args:
+        temperature: 0 (default) = strict argmax for repro testing.
+            >0 = softmax sampling. See generative_inference for details.
+    """
     if vocab_words is None:
         vocab_words = list(DIRECTIONS)
     speak_results = []
     correct = 0
     for action in ("N", "E", "S", "W"):
         expected_word = ACTION_TO_DIRECTION[action]
-        result = generative_inference(bridge, action, vocab_words=vocab_words)
+        result = generative_inference(
+            bridge, action, vocab_words=vocab_words,
+            temperature=temperature, rng_seed=rng_seed,
+        )
         pred = result["predicted_word"]
         rankings = [(w, float(s)) for w, s in result["rankings"]]
         ok = (pred == expected_word)
@@ -125,7 +135,8 @@ def evaluate_a_to_w(bridge, vocab_words=None, verbose: bool = True) -> dict:
 
 
 def run_chat_speak_demo(seed: int = 42, n_train_events: int = 200,
-                        verbose: bool = True) -> dict:
+                        verbose: bool = True,
+                        temperature: float = 0.0) -> dict:
     # 2026-05-09: emit structured [PROGRESS] events so the webapp inflight
     # panel + 3D Brain live mode show real progress (not "0% no markers").
     # Same fix pattern shipped for continual_eval_suite tonight.
@@ -161,7 +172,11 @@ def run_chat_speak_demo(seed: int = 42, n_train_events: int = 200,
     print(f"\n[PHASE C] A->W generative decoder (:speak primitive)", flush=True)
     emit_progress("phase", current=2, total=3, phase="A2W_speak",
                   unit="phases", label="chat_speak_demo")
-    a2w = evaluate_a_to_w(bridge, verbose=verbose)
+    a2w = evaluate_a_to_w(
+        bridge, verbose=verbose,
+        temperature=temperature,
+        rng_seed=(seed if temperature > 0 else None),
+    )
     print(f"  A->W accuracy: {a2w['accuracy']:.1%} ({a2w['correct']}/{a2w['total']})",
           flush=True)
     emit_progress("complete", current=3, total=3, phase="A2W_speak",
@@ -213,12 +228,18 @@ def main():
                     help="JSON stats output path (matches chat_demo schema)")
     ap.add_argument("--quiet", action="store_true",
                     help="Suppress per-turn logging")
+    ap.add_argument("--temperature", type=float, default=0.0,
+                    help="Softmax sampling temperature for :speak. "
+                         "0 (default) = strict argmax, matches all prior "
+                         "multi-seed validations. 0.01-0.05 = sampling "
+                         "with primary preference.")
     args = ap.parse_args()
 
     result = run_chat_speak_demo(
         seed=args.seed,
         n_train_events=args.train_events,
         verbose=not args.quiet,
+        temperature=args.temperature,
     )
 
     if args.out_stats:
