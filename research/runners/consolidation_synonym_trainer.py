@@ -195,6 +195,11 @@ def run_consolidation_synonym_training(
     cfg.enable_hebbian_learning = False
     cfg.stdp_w_max = 5.0
     cfg.fast_spike_reset = True
+    # FP16 eligibility traces for plasticity bandwidth savings. Validated
+    # 2026-05-05 perf wave 2 at <1mV voltage drift over 1000 steps; flipped
+    # on by default 2026-05-10 for ~1.2-1.5x speedup on plasticity-heavy
+    # training. Saves 60-120 MB VRAM at 30M-synapse arch.
+    cfg.fp16_synapse_state = True
 
     bridge = SimulationBridge(
         core_config=cfg,

@@ -152,7 +152,12 @@ def run_three_factor(
     ou_tau_ms: float = 15.0,
     ou_std_current_pA: float = 100.0,
     gpu_eligibility: bool = True,  # Phase 1: keep eligibility/edges on GPU
-    fp16_synapse_state: bool = False,  # Phase 2: FP16 cp_eligibility_trace
+    fp16_synapse_state: bool = True,  # Phase 2: FP16 cp_eligibility_trace
+                                          # (validated <1mV voltage drift over
+                                          # 1000 steps in 2026-05-05 perf wave 2;
+                                          # default flipped to True 2026-05-10
+                                          # for ~1.2-1.5x speedup on
+                                          # plasticity-heavy training)
     da_mode: str = "sign",  # "sign" (classical), "graded" (magnitude DA)
     orthogonal_cues: bool = False,  # 2026-05-05: replace random hash codes
                                     # with non-overlapping banded codes
