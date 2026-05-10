@@ -68,6 +68,11 @@ from research.runners.text_eval import (
     SYNONYM_GROUPS as SYNONYM_GROUPS_8,
     SYNONYM_GROUPS_12,
     SYNONYM_GROUPS_16,
+    SYNONYM_GROUPS_24,
+    SYNONYM_GROUPS_32,
+    SYNONYM_GROUPS_48,
+    SYNONYM_GROUPS_64,
+    get_synonym_groups,
 )
 # Default 8-word for backwards compatibility (yesterday's 3/3 GO + anti-cheat
 # results were 8-word). Use --vocab-size 12/16 for extensions.
@@ -132,14 +137,22 @@ def run_consolidation_synonym_training(
     rng = np.random.default_rng(seed)
 
     # Select synonym group dict by vocab_size. Validates against text_eval.
-    if vocab_size == 16:
-        synonym_groups = SYNONYM_GROUPS_16
-    elif vocab_size == 12:
-        synonym_groups = SYNONYM_GROUPS_12
-    elif vocab_size == 8:
-        synonym_groups = SYNONYM_GROUPS_8
-    else:
-        raise ValueError(f"vocab_size must be 8, 12, or 16, got {vocab_size}")
+    # 2026-05-10: extended to 24/32/48/64-word find-the-ceiling tiers.
+    try:
+        synonym_groups = get_synonym_groups(vocab_size)
+    except (KeyError, ValueError):
+        raise ValueError(
+            f"vocab_size {vocab_size} not supported. "
+            f"Valid: 8, 12, 16, 24, 32, 48, 64."
+        )
+    # Verify text_eval returned the requested size (defensive against
+    # mis-sized fallback to 8-word).
+    actual_size = sum(len(v) for v in synonym_groups.values())
+    if actual_size != vocab_size:
+        raise ValueError(
+            f"text_eval.get_synonym_groups({vocab_size}) returned {actual_size} "
+            f"words; vocab tier dispatcher needs update"
+        )
 
     if verbose:
         print("=" * 60)
@@ -584,11 +597,14 @@ def main():
                          "pathway weights at eval time. Tests whether "
                          "the >100%% synonym retention finding is real "
                          "cortex retention or eval-noise artifact.")
-    ap.add_argument("--vocab-size", type=int, choices=[8, 12, 16], default=8,
+    ap.add_argument("--vocab-size", type=int,
+                    choices=[8, 12, 16, 24, 32, 48, 64], default=8,
                     help="Synonym vocab size: 8 (default, validated 3/3 GO), "
-                         "12 (adds n/e/s/w abbreviations, validated 2/3 GO at "
-                         "default arch + capacity boundary), or 16 (adds "
-                         "Unicode arrows, master plan extension)")
+                         "12 (adds n/e/s/w, 2/3 GO at default arch + boundary, "
+                         "3/3 GO at scaled arch), 16 (adds Unicode arrows, "
+                         "smoke GO at scaled), or 24/32/48/64 (find-the-ceiling "
+                         "tiers, 2026-05-10 — multilingual + derived forms; "
+                         "predicted OOM at 64-word on 24 GB 3090)")
     ap.add_argument("--out-stats", type=str, default=None)
     args = ap.parse_args()
 
