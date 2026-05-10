@@ -128,8 +128,12 @@ def evaluate_a_to_w_synonym(bridge, verbose: bool = True) -> dict:
         primary_word = expected_synonyms[0]
         synonym_word = expected_synonyms[1]
         # Rank all 8 words; whichever has highest cosine to the post-drive
-        # language_output delta is "what the network said"
-        result = generative_inference(bridge, action, vocab_words=ALL_WORDS)
+        # language_output delta is "what the network said". top_k=8 to
+        # keep the full ranking in the JSON (default top_k=4 would truncate
+        # to top-4 of 8 — top-1 is correct either way, but the full list
+        # is useful for diagnosing primary-vs-synonym preference).
+        result = generative_inference(bridge, action, vocab_words=ALL_WORDS,
+                                       top_k=8)
         pred = result["predicted_word"]
         rankings = [(w, float(s)) for w, s in result["rankings"]]
 
