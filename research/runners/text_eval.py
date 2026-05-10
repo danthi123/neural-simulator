@@ -62,6 +62,85 @@ EXTENDED_WORD_TO_ACTION_16 = {
     for word in words
 }
 
+# 2026-05-10: find-the-ceiling vocab tiers per user directive
+# "start very high on the scale to test for failure". Per derived
+# capacity rule, vocab_size N requires ~(N/4)*333 motor neurons:
+#   24-word: 5 sub-pops/action × 333 = ~2000 motor (fits at scaled arch)
+#   32-word: 8 sub-pops/action × 333 = ~2667 motor (n_motor=3000)
+#   48-word: 12 sub-pops/action × 333 = ~4000 motor (n_motor=4000)
+#   64-word: 16 sub-pops/action × 333 = ~5333 motor (n_motor=6000;
+#           predicted to OOM on 24GB 3090)
+# Synonyms include localizations (Spanish, German, French) + alt forms
+# + abbreviations. Hash-based vocab_to_drive_pattern handles all
+# UTF-8 strings cleanly (validated on Unicode arrows in 16-word).
+
+SYNONYM_GROUPS_24 = {
+    "N": ["north", "up", "n", "↑", "norte", "nord"],
+    "E": ["east", "right", "e", "→", "este", "ost"],
+    "S": ["south", "down", "s", "↓", "sur", "süd"],
+    "W": ["west", "left", "w", "←", "oeste", "west_de"],
+}
+EXTENDED_WORD_TO_ACTION_24 = {
+    word: action
+    for action, words in SYNONYM_GROUPS_24.items()
+    for word in words
+}
+
+SYNONYM_GROUPS_32 = {
+    "N": ["north", "up", "n", "↑", "norte", "nord", "kita", "shimal"],
+    "E: alt".replace(": alt", ""): ["east", "right", "e", "→", "este", "ost", "higashi", "sharq"],
+    "S": ["south", "down", "s", "↓", "sur", "süd", "minami", "janub"],
+    "W": ["west", "left", "w", "←", "oeste", "west_de", "nishi", "gharb"],
+}
+# Fix the dict literal (was malformed — let me redo)
+SYNONYM_GROUPS_32 = {
+    "N": ["north", "up", "n", "↑", "norte", "nord", "kita", "shimal"],
+    "E": ["east", "right", "e", "→", "este", "ost", "higashi", "sharq"],
+    "S": ["south", "down", "s", "↓", "sur", "süd", "minami", "janub"],
+    "W": ["west", "left", "w", "←", "oeste", "west_de", "nishi", "gharb"],
+}
+EXTENDED_WORD_TO_ACTION_32 = {
+    word: action
+    for action, words in SYNONYM_GROUPS_32.items()
+    for word in words
+}
+
+SYNONYM_GROUPS_48 = {
+    "N": ["north", "up", "n", "↑", "norte", "nord", "kita", "shimal",
+           "northern", "northbound", "uppward", "upper"],
+    "E": ["east", "right", "e", "→", "este", "ost", "higashi", "sharq",
+           "eastern", "eastbound", "rightward", "rightside"],
+    "S": ["south", "down", "s", "↓", "sur", "süd", "minami", "janub",
+           "southern", "southbound", "downward", "lower"],
+    "W": ["west", "left", "w", "←", "oeste", "west_de", "nishi", "gharb",
+           "western", "westbound", "leftward", "leftside"],
+}
+EXTENDED_WORD_TO_ACTION_48 = {
+    word: action
+    for action, words in SYNONYM_GROUPS_48.items()
+    for word in words
+}
+
+SYNONYM_GROUPS_64 = {
+    "N": ["north", "up", "n", "↑", "norte", "nord", "kita", "shimal",
+           "northern", "northbound", "uppward", "upper",
+           "topward", "ascend", "headup", "topside"],
+    "E": ["east", "right", "e", "→", "este", "ost", "higashi", "sharq",
+           "eastern", "eastbound", "rightward", "rightside",
+           "starboard", "rightturn", "rightstep", "rightmove"],
+    "S": ["south", "down", "s", "↓", "sur", "süd", "minami", "janub",
+           "southern", "southbound", "downward", "lower",
+           "descend", "headdown", "downside", "fall"],
+    "W": ["west", "left", "w", "←", "oeste", "west_de", "nishi", "gharb",
+           "western", "westbound", "leftward", "leftside",
+           "port", "leftturn", "leftstep", "leftmove"],
+}
+EXTENDED_WORD_TO_ACTION_64 = {
+    word: action
+    for action, words in SYNONYM_GROUPS_64.items()
+    for word in words
+}
+
 
 def get_synonym_groups(vocab_size: int = 8) -> dict:
     """Return SYNONYM_GROUPS for the requested vocab size.
@@ -69,7 +148,19 @@ def get_synonym_groups(vocab_size: int = 8) -> dict:
     vocab_size=8:  {N:[north,up], E:[east,right], S:[south,down], W:[west,left]}
     vocab_size=12: adds short forms {N:[..., n], ...}
     vocab_size=16: adds Unicode arrows {N:[..., ↑], E:[..., →], ...}
+    vocab_size=24: adds Spanish/German localizations
+    vocab_size=32: adds Japanese/Arabic localizations
+    vocab_size=48: adds derived forms (-ward, -bound, -side, etc.)
+    vocab_size=64: adds nautical/movement terms (port/starboard, ascend, etc.)
     """
+    if vocab_size == 64:
+        return SYNONYM_GROUPS_64
+    if vocab_size == 48:
+        return SYNONYM_GROUPS_48
+    if vocab_size == 32:
+        return SYNONYM_GROUPS_32
+    if vocab_size == 24:
+        return SYNONYM_GROUPS_24
     if vocab_size == 16:
         return SYNONYM_GROUPS_16
     if vocab_size == 12:
@@ -78,6 +169,14 @@ def get_synonym_groups(vocab_size: int = 8) -> dict:
 
 
 def get_extended_word_to_action(vocab_size: int = 8) -> dict:
+    if vocab_size == 64:
+        return EXTENDED_WORD_TO_ACTION_64
+    if vocab_size == 48:
+        return EXTENDED_WORD_TO_ACTION_48
+    if vocab_size == 32:
+        return EXTENDED_WORD_TO_ACTION_32
+    if vocab_size == 24:
+        return EXTENDED_WORD_TO_ACTION_24
     if vocab_size == 16:
         return EXTENDED_WORD_TO_ACTION_16
     if vocab_size == 12:
