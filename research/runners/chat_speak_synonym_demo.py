@@ -111,7 +111,9 @@ def evaluate_w_to_a_baseline_synonym(bridge, n_rounds: int = 2,
     }
 
 
-def evaluate_a_to_w_synonym(bridge, verbose: bool = True) -> dict:
+def evaluate_a_to_w_synonym(bridge, verbose: bool = True,
+                              temperature: float = 0.0,
+                              rng_seed: int = None) -> dict:
     """A→W: drive motor_<action>, decode to one of 8 synonym words.
 
     Returns dict with three accuracy metrics:
@@ -132,8 +134,12 @@ def evaluate_a_to_w_synonym(bridge, verbose: bool = True) -> dict:
         # keep the full ranking in the JSON (default top_k=4 would truncate
         # to top-4 of 8 — top-1 is correct either way, but the full list
         # is useful for diagnosing primary-vs-synonym preference).
-        result = generative_inference(bridge, action, vocab_words=ALL_WORDS,
-                                       top_k=8)
+        # 2026-05-10: temperature plumbed for synonym-lift testing.
+        # τ=0 (default) preserves deterministic argmax for repro testing.
+        result = generative_inference(
+            bridge, action, vocab_words=ALL_WORDS,
+            top_k=8, temperature=temperature, rng_seed=rng_seed,
+        )
         pred = result["predicted_word"]
         rankings = [(w, float(s)) for w, s in result["rankings"]]
 
@@ -186,7 +192,8 @@ def run_chat_speak_synonym_demo(seed: int = 42,
                                   n_lang_input: int = 4096,
                                   n_motor_per_action: int = 1000,
                                   n_motor_fs_per_action: int = 120,
-                                  verbose: bool = True) -> dict:
+                                  verbose: bool = True,
+                                  temperature: float = 0.0) -> dict:
     """Tier 2.1 8-word :speak demo: train scale-up bridge, then A->W."""
     # Structured progress events for live webapp + brain3d
     from sim.progress import emit_progress
@@ -232,7 +239,13 @@ def run_chat_speak_synonym_demo(seed: int = 42,
           flush=True)
     emit_progress("phase", current=2, total=3, phase="A2W_synonym_speak",
                   unit="phases", label="chat_speak_synonym_demo")
-    a2w = evaluate_a_to_w_synonym(bridge, verbose=verbose)
+    # Pass temperature through; rng_seed=seed for reproducible sampling
+    # when temperature > 0 (each seed's :speak still varies but is repeatable)
+    a2w = evaluate_a_to_w_synonym(
+        bridge, verbose=verbose,
+        temperature=temperature,
+        rng_seed=(seed if temperature > 0 else None),
+    )
     print(f"  A->W any-synonym accuracy: {a2w['any_accuracy']:.1%} "
           f"({a2w['any_correct']}/{a2w['total']})", flush=True)
     print(f"  A->W primary accuracy:    {a2w['primary_accuracy']:.1%}",
@@ -302,6 +315,14 @@ def main():
                     help="JSON stats output path (matches chat_demo schema)")
     ap.add_argument("--quiet", action="store_true",
                     help="Suppress per-turn logging")
+    ap.add_argument("--temperature", type=float, default=0.0,
+                    help="Softmax sampling temperature for :speak. "
+                         "0 (default) = deterministic argmax, "
+                         "matches all prior multi-seed validations. "
+                         "0.01-0.02 = 'primary dominant with synonym lift', "
+                         "0.05+ = 'lots of variety, primary slightly preferred'. "
+                         "Use 0 for reproducible benchmarking; >0 for "
+                         "natural-feeling user-facing chat.")
     args = ap.parse_args()
 
     result = run_chat_speak_synonym_demo(
@@ -311,6 +332,7 @@ def main():
         n_motor_per_action=args.n_motor_per_action,
         n_motor_fs_per_action=args.n_motor_fs_per_action,
         verbose=not args.quiet,
+        temperature=args.temperature,
     )
 
     if args.out_stats:

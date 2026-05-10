@@ -285,6 +285,40 @@ def _cosine_similarity(a, b) -> float:
     return float(np.dot(a, b) / (na * nb))
 
 
+def _sample_with_temperature(rankings, temperature: float = 0.0,
+                                rng_seed: int = None):
+    """Sample one word from a sorted (word, similarity) list using softmax
+    with temperature τ.
+
+    Args:
+        rankings: list of (word, similarity) tuples, sorted descending by sim.
+        temperature: τ. 0 → return None (caller falls back to argmax).
+            >0 → softmax sampling. Lower τ = sharper, more deterministic.
+            Recommended τ ∈ [0.01, 0.05] for "natural feeling" synonym
+            preference vs strict argmax. τ → ∞ approaches uniform random.
+        rng_seed: optional seed for reproducible sampling.
+
+    Returns:
+        Sampled word (str) or None if temperature ≤ 0 / rankings empty.
+
+    Math: probs = softmax(sims / τ). Numerically stable shift via max-subtract.
+    """
+    if temperature <= 0.0 or not rankings:
+        return None
+    words = [w for w, _ in rankings]
+    sims = np.array([s for _, s in rankings], dtype=np.float64)
+    # Subtract max for numerical stability (softmax is shift-invariant)
+    scaled = (sims - sims.max()) / max(temperature, 1e-9)
+    weights = np.exp(scaled)
+    probs = weights / weights.sum()
+    sampler = (
+        np.random.default_rng(rng_seed) if rng_seed is not None
+        else np.random.default_rng()
+    )
+    sampled_idx = int(sampler.choice(len(words), p=probs))
+    return words[sampled_idx]
+
+
 def _rank_words_by_similarity(spike_pattern, word_patterns: dict):
     """Rank vocab words by cosine similarity to the spike pattern.
 
@@ -312,7 +346,9 @@ def generative_inference(bridge, target_action: str,
                          motor_drive_pA: float = 1500.0,
                          drive_max_pA: float = 200.0,
                          sparsity: float = 0.1,
-                         top_k: int = 4):
+                         top_k: int = 4,
+                         temperature: float = 0.0,
+                         rng_seed: int = None):
     """Generative decoder: action → word (A→W direction).
 
     Drives motor_<target_action> with elevated current, reads the
@@ -325,10 +361,30 @@ def generative_inference(bridge, target_action: str,
     travel in opposite directions through the same plastic synapses
     that embodied-Hebbian co-firing strengthened during training.
 
+    Args:
+        target_action: action letter (N/E/S/W) to drive motor pool
+        vocab_words: list of words to score (default 4-word vocab)
+        stim_steps: simulation steps to drive motor for
+        reset_steps: simulation steps to reset between baseline + drive
+        motor_drive_pA: current strength to motor pool
+        drive_max_pA: drive strength for vocab pattern lookup
+        sparsity: fraction of language_output neurons active per word
+        top_k: how many ranked words to return
+        temperature: 0.0 (default) → strict argmax, deterministic. >0 →
+            softmax sampling over similarities; higher = more random.
+            Recommended range: 0.01-0.05 for "natural-feeling" synonym
+            preference vs strict primary win. tau=0.02 typically lifts
+            secondary-synonym top-1 from 0% to ~15-30% while keeping
+            primary as the dominant choice. SET TO 0 FOR REPRODUCIBLE
+            TESTING. Per perf-audit 2026-05-10 + STDP-WTA-pattern
+            observed in Tier 2.1 BREAKTHROUGH paper.
+        rng_seed: optional seed for sampling reproducibility when
+            temperature > 0. None → uses numpy default (non-reproducible).
+
     Returns:
         dict with:
           target_action: input action letter
-          predicted_word: top-1 ranked word
+          predicted_word: top-1 ranked word (or sampled when temperature > 0)
           confidence: top-1 similarity / runner-up similarity
           rankings: list of (word, similarity) sorted desc
           delta: 1D numpy array of language_output spike deltas
@@ -383,7 +439,17 @@ def generative_inference(bridge, target_action: str,
         for w in vocab_words
     }
     rankings = _rank_words_by_similarity(delta, word_patterns)
+    # Keep full sorted list for both top_k truncation and temperature sampling
+    full_rankings = list(rankings)
     rankings = rankings[:top_k]
+
+    # Predicted word: argmax (temperature=0) or sampled (temperature > 0).
+    sampled_word = _sample_with_temperature(
+        full_rankings, temperature=temperature, rng_seed=rng_seed,
+    )
+    predicted = sampled_word if sampled_word is not None else (
+        rankings[0][0] if rankings else None
+    )
 
     # Confidence: top-1 / top-2 ratio (Inf if top-2 is non-positive)
     if len(rankings) >= 2 and rankings[1][1] > 0:
@@ -395,7 +461,10 @@ def generative_inference(bridge, target_action: str,
 
     return {
         "target_action": target_action,
-        "predicted_word": rankings[0][0] if rankings else None,
+        "predicted_word": predicted,
+        "argmax_word": rankings[0][0] if rankings else None,  # always argmax
+        "sampled_word": sampled_word,  # None if temperature == 0
+        "temperature": float(temperature),
         "confidence": confidence,
         "rankings": rankings,
         "delta": delta,
