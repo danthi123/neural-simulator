@@ -1,12 +1,12 @@
 {
   "as_of": "2026-05-10",
   "headline": {
-    "tier": "Tier 2.1 8-word :speak production-side (chat_speak_synonym_demo)",
-    "result": "6/6 GO unanimous EXCEEDS paper",
-    "metrics": "A2W any-synonym 87.5% +/- 20.9% (paper 63.7%); 5/6 at literal 100%",
-    "wall_clock": "~2.7 hrs (6 seeds 25-40 min each at scaled arch)",
-    "finding_doc": "2026-05-09-chat_speak_synonym_demo-Tier2.1-8word-MULTI-SEED.md",
-    "summary": "Tier 2.1 BREAKTHROUGH paper's reception-side (W->A 5/6 aligned, A->W mean 63.7%) reproduced AND exceeded on the production-side. The chat_speak_synonym_demo runner is a faithful + sharper validation tool. Track 3 v1 production-side complete: 4-word + 8-word :speak both multi-seed validated."
+    "tier": "STP DEFAULT FLIP — 3.28x faster + 100% A2W primary",
+    "result": "3-seed validation unanimous; default changed",
+    "metrics": "wall clock 506s (vs 1660s w/STP); A2W primary 100% (vs 87.5%); W2A 52% (vs 35%)",
+    "wall_clock": "~25 min for 3-seed validation",
+    "finding_doc": "2026-05-10-stp-default-flip.md",
+    "summary": "STP (Short-Term Plasticity) was 57% of inner-loop step time AND silently degrading binding accuracy by ~12-25pp. 3-seed validation showed STP-off is BOTH 3.28x faster AND more accurate. Default flipped 2026-05-10. Largest single optimization win of the arc — compounds with cloud H100 to ~44-74x baseline. Re-validation of prior multi-seed results recommended."
   },
   "pillars": [
     {
@@ -92,6 +92,20 @@
       "metric": "A2W any-synonym mean 87.5% +/- 20.9% (6/6 above 50%, 5/6 at 100%); paper's 6/6 aligned reproduces and exceeds (paper was 63.7% +/- 11.8%); STDP WTA primary-wins confirmed at production-side (synonym top-1 0% across all seeds)",
       "doc": "2026-05-09-chat_speak_synonym_demo-Tier2.1-8word-MULTI-SEED.md",
       "date": "2026-05-10"
+    },
+    {
+      "name": "64-word smoke — capacity rule extends to 16 sub-pops/motor_X",
+      "status": "BOUNDARY",
+      "metric": "pre-silence primary 62.5% (anchor binding scales to 64-word vocab!); retention primary 76% (just under 80% threshold); retention synonym 157% (anomalous, secondaries IMPROVE post-hippo-silence)",
+      "doc": "2026-05-10-64word-smoke-PARTIAL-capacity-extends.md",
+      "date": "2026-05-10"
+    },
+    {
+      "name": "STP DEFAULT FLIPPED — 3.28x faster + accuracy improved",
+      "status": "VALIDATED",
+      "metric": "3-seed validation: wall clock 506s vs 1660s (3.28x); A2W primary 100% vs 87.5% (+12.5pp); W2A 52% vs 35% (+17pp). STP was 57% of inner-loop step time AND degrading binding via millisecond synaptic fatigue. Default flipped in chat training paths.",
+      "doc": "2026-05-10-stp-default-flip.md",
+      "date": "2026-05-10"
     }
   ],
   "capacity_rule": {
@@ -106,10 +120,10 @@
     ]
   },
   "phase_status": {
-    "active": "16-word smoke in flight (consolidation_synonym_16word_scaled_smoke seed 42, run ea1050, ETA ~02:00 EDT). Tests capacity rule extension to 4 sub-pops/motor_X. Predicted PASS per derived rule (~500 neurons/sub-pop). Auto-fired by chain script after Tier 2.1 :speak multi-seed completed.",
-    "next": "If 16-word smoke PASS: launch consolidation_synonym_16word_scaled_medium 3-seed multi-seed (~11 hrs). If FAIL: capacity boundary at 4 sub-pops/motor_X with current scaled arch -> scale further (n_motor=3000+) or pivot to Tier 2.3 phrases.",
-    "after_next": "Tier 2.3 phrases revisit with PFC verb pool capacity scale-up (was architecture-limited at 41%)",
-    "after_after": "Phase 1.4 BRANCH A continual learning at 16-word vocab (catastrophic forgetting eval extension)",
+    "active": "STP default flipped to False after 3-seed validation showed 3.28x speedup AND accuracy improvement. All chat training paths now use STP-off. Major optimization win — compounds with cloud H100 to ~44-74x baseline.",
+    "next": "Re-run prior multi-seed results at STP-off (Tier 1 6-seed, Tier 2.1 8-word 6-seed, Phase 1.4 BRANCH A retention, 64-word smoke) — predicted to push primary binding to ~95-100%.",
+    "after_next": "Encoding-axis 64-word smoke at STP-off (~3 hr instead of 9.4 hr at STP-on). Tests user's hypothesis that lang_input encoding (not motor capacity) is the real bottleneck at higher vocab tiers.",
+    "after_after": "Webapp chat UI WebSocket (1-2 day project; bridges library backend + saved-bridges tab UI shipped tonight). Cloud deploy with optimized stack.",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
     "resumption_plan": "docs/plans/2026-05-09-Phase-2-resumption-plan.md"
   }
