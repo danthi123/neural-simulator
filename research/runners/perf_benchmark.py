@@ -100,11 +100,21 @@ def benchmark(
     t_init = time.time() - t0
     print(f"[init] Bridge ready ({t_init:.1f}s)", flush=True)
 
+    # Enable bridge's built-in step profiler. It times 7 sections per step
+    # (init/stp/syn/dyn/plast/homeo/final) and emits a [PROFILER] summary
+    # line every 500 steps. Captured naturally in stdout.
+    bridge.gpu_config.enable_step_profiler = True
+
     # Warm-up (avoid first-call JIT overhead)
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(50):
         bridge._run_one_simulation_step()
     cp.cuda.Stream.null.synchronize()
+    # Reset profiler accumulators after warm-up so the warm-up doesn't
+    # contaminate the timing.
+    if hasattr(bridge, "_prof_accum"):
+        bridge._prof_accum = None
+        bridge._prof_count = 0
 
     # Actual benchmark loop
     print(f"\n[bench] Running {n_steps} simulation steps...", flush=True)
