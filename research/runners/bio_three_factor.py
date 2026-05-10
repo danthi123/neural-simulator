@@ -697,27 +697,30 @@ def run_three_factor(
         if (event_idx + 1) % push_to_gpu_every == 0:
             if not gpu_eligibility:
                 bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
+
+        # Emit [PROGRESS] every 50 events so the webapp inflight panel
+        # + 3D Brain live mode show real progress regardless of `verbose`.
+        # 2026-05-09 fix: this used to be nested inside the
+        # push_to_gpu_every (=64) conditional, so it only fired at
+        # LCM(50,64)=1600 (i.e. ONCE per typical training run). Now
+        # decoupled so it actually fires every 50 events as documented.
+        # Also decoupled from the `verbose` flag — the print stays
+        # behind verbose, but the structured event always emits.
+        if (event_idx + 1) % 50 == 0:
             elapsed = time.time() - t_start
             rolling_acc = correct_recent / n_recent if n_recent else 0
-            # Emit [PROGRESS] even when verbose=False so the webapp
-            # inflight panel + 3D Brain live mode can show real progress
-            # during chat_*_demo / consolidation_synonym_* runners that
-            # call run_three_factor with verbose=False to suppress prints.
-            # (Pre-2026-05-09 these runs went 5-9 min between progress
-            # events because the structured event was gated on `verbose`.)
-            if (event_idx + 1) % 50 == 0:
-                if verbose:
-                    print(f"  [3factor] {event_idx+1}/{len(buffer)} events "
-                          f"({elapsed:.0f}s) rolling_acc={rolling_acc:.1%}",
-                          flush=True)
-                from sim.progress import emit_progress
-                emit_progress(
-                    "training", event_idx + 1, len(buffer),
-                    phase="three-factor", unit="events",
-                    label="bio-3factor",
-                    elapsed_seconds=elapsed,
-                    rolling_acc=rolling_acc,
-                )
+            if verbose:
+                print(f"  [3factor] {event_idx+1}/{len(buffer)} events "
+                      f"({elapsed:.0f}s) rolling_acc={rolling_acc:.1%}",
+                      flush=True)
+            from sim.progress import emit_progress
+            emit_progress(
+                "training", event_idx + 1, len(buffer),
+                phase="three-factor", unit="events",
+                label="bio-3factor",
+                elapsed_seconds=elapsed,
+                rolling_acc=rolling_acc,
+            )
             correct_recent = 0
             n_recent = 0
 
