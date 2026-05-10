@@ -1,0 +1,126 @@
+{
+  "seed": 43,
+  "smoke": true,
+  "medium": false,
+  "strict_silence": false,
+  "vocab_size": 64,
+  "stats": {
+    "n_awake_events": 200,
+    "n_sleep_phases": 12,
+    "n_total_swr_events": 600,
+    "wall_clock_seconds": 948.6631803512573,
+    "vocab_size": 64,
+    "synonym_groups": {
+      "N": [
+        "north",
+        "up",
+        "n",
+        "\u2191",
+        "norte",
+        "nord",
+        "kita",
+        "shimal",
+        "northern",
+        "northbound",
+        "uppward",
+        "upper",
+        "topward",
+        "ascend",
+        "headup",
+        "topside"
+      ],
+      "E": [
+        "east",
+        "right",
+        "e",
+        "\u2192",
+        "este",
+        "ost",
+        "higashi",
+        "sharq",
+        "eastern",
+        "eastbound",
+        "rightward",
+        "rightside",
+        "starboard",
+        "rightturn",
+        "rightstep",
+        "rightmove"
+      ],
+      "S": [
+        "south",
+        "down",
+        "s",
+        "\u2193",
+        "sur",
+        "s\u00fcd",
+        "minami",
+        "janub",
+        "southern",
+        "southbound",
+        "downward",
+        "lower",
+        "descend",
+        "headdown",
+        "downside",
+        "fall"
+      ],
+      "W": [
+        "west",
+        "left",
+        "w",
+        "\u2190",
+        "oeste",
+        "west_de",
+        "nishi",
+        "gharb",
+        "western",
+        "westbound",
+        "leftward",
+        "leftside",
+        "port",
+        "leftturn",
+        "leftstep",
+        "leftmove"
+      ]
+    }
+  },
+  "pre_silence": {
+    "accuracy": 0.278125,
+    "primary_acc": 0.44999999999999996,
+    "synonym_acc": 0.2,
+    "per_word": {
+      "north": 0.6,
+      "east": 0.4,
+      "south": 0.4,
+      "west": 0.4,
+      "up": 0.0,
+      "right": 0.6,
+      "down": 0.2,
+      "left": 0.0
+    }
+  },
+  "hippo_off": {
+    "accuracy": 0.303125,
+    "primary_acc": 0.55,
+    "synonym_acc": 0.25,
+    "per_word": {
+      "north": 0.6,
+      "east": 0.6,
+      "south": 0.2,
+      "west": 0.8,
+      "up": 0.4,
+      "right": 0.0,
+      "down": 0.0,
+      "left": 0.6
+    }
+  },
+  "retention": {
+    "overall": 1.089887640449438,
+    "primary": 1.2222222222222225,
+    "synonym": 1.25,
+    "primary_pass": true,
+    "synonym_pass": true
+  },
+  "verdict": "GO"
+}
