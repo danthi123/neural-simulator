@@ -78,6 +78,13 @@
       "metric": "134K cosine 0.72 -> 50M cosine 0.85 (WORSE); bigger model pushes features more alike across direction words; path-f-hybrid is dead-end at single-3090 scale",
       "doc": "2026-05-09-Phase-2.3b-50M-cosine-REFUTED.md",
       "date": "2026-05-09"
+    },
+    {
+      "name": "Track 3 layer 4 :speak — 6-seed multi-seed VALIDATED",
+      "status": "VALIDATED",
+      "metric": "A2W mean 58.3% +/- 20.4% (5/6 seeds at >= 50%, 5/6 above chance); single-seed 75% reproduces; per-direction N=67% E=67% S=67% W=33%",
+      "doc": "2026-05-09-chat_speak_demo-Track3-layer4-MULTI-SEED.md",
+      "date": "2026-05-09"
     }
   ],
   "capacity_rule": {
@@ -92,9 +99,9 @@
     ]
   },
   "phase_status": {
-    "active": "Path A pivot — chat_speak_demo 6-seed multi-seed running (~60 min). Validates Track 3 v1 layer 4 generative decoder reproduces 75% A2W across seeds. Phase 2 path-f-hybrid CLOSED tonight at single-3090 scale (50M cosine smoke REFUTED scale thesis).",
-    "next": "After multi-seed: master plan + README updated to mark Phase 2 dead-end; pivot fully to biology-grounded path",
-    "after_next": "Tier 2.1 8-word :speak variant OR 16-word smoke (capacity rule extension, predicted PASS at scaled arch)",
+    "active": "Tier 2.1 8-word :speak smoke in flight (chat_speak_synonym_demo seed 42, run a7647c, ETA ~12 min). Tests whether the production-side analog of Tier 2.1 v4's W->A reception (5/6 aligned at 63.7%) reproduces on A->W with synonyms. If smoke GO, 6-seed multi-seed wrapper pre-staged.",
+    "next": "If smoke GO: 6-seed multi-seed via scripts/multiseed_chat_speak_synonym_demo.sh (~60-80 min total). If smoke NO-GO: investigate motor pool capacity vs synonym training dose.",
+    "after_next": "16-word smoke (capacity rule extension, predicted PASS at n_motor=2000 per derived rule)",
     "after_after": "Tier 2.3 phrases revisit with PFC verb pool capacity scale-up (was architecture-limited at 41%)",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
     "resumption_plan": "docs/plans/2026-05-09-Phase-2-resumption-plan.md"

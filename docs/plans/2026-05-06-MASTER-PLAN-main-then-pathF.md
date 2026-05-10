@@ -1468,4 +1468,44 @@ better use of free time during runs"):**
    truly retains, not eval artifact)
 4. 12-word default 3-seed: 2/3 GO PARTIAL (defines capacity boundary)
 5. 12-word scaled single-seed: GO at n_motor=2000 (capacity hypothesis)
-6. 12-word scaled multi-seed: in flight
+6. 12-word scaled 3-seed: 3/3 GO at scaled arch (capacity rule confirmed)
+7. Track 3 v1 layer 4 :speak (chat_speak_demo) 6-seed multi-seed:
+   **VALIDATED 2026-05-09**. A2W mean 58.3% ± 20.4%, 5/6 seeds at
+   ≥50%, 5/6 above chance (>25%). Single-seed 75% reproduces.
+   Track 3 production-side robustness confirmed.
+
+## 2026-05-09 ~21:00-21:35 EDT -- Track 3 v2 multi-seed VALIDATED
+
+After tonight's Phase 2 dead-end finding (Phase 2.3b 50M cosine 0.85
+REFUTED), pivoted to Path A continuation. First milestone: validate
+Track 3 v1's :speak primitive at multi-seed scale.
+
+**Result:** chat_speak_demo 6-seed multi-seed (seeds 42, 43, 44, 100,
+101, 102) confirms the single-seed 75% A2W ceiling reproduces but is
+not the typical case. Mean 58.3% ± 20.4%, 5/6 seeds at ≥50%, 5/6
+above chance. Per-direction A2W means: N=67%, E=67%, S=67%, W=33%.
+The W weakness is the mirror of the Tier 1 BREAKTHROUGH paper's
+"north 4/6 REVERSED cascade structural N-bias" finding — same
+architectural asymmetry expressed through the production-side pathway.
+
+**Findings:**
+[`research/findings/2026-05-09-chat_speak_demo-Track3-layer4-MULTI-SEED.md`](../../research/findings/2026-05-09-chat_speak_demo-Track3-layer4-MULTI-SEED.md)
+
+**Decisions:**
+1. Track 3 v1 conversational stack: feature-complete + multi-seed
+   robust. Layer 1 (`--learn`), Layer 2 (chat_learn_demo), Layer 3
+   (dialog state), Layer 4 (`:speak` generative decoder) all
+   multi-seed validated.
+2. Pre-staged Tier 2.1 8-word :speak runner
+   (`research/runners/chat_speak_synonym_demo.py`) to test whether
+   the production-side analog of Tier 2.1's W→A reception
+   (5/6 aligned at 63.7%) reproduces on A→W with synonyms.
+   Single-seed smoke launched immediately (run a7647c1afb58,
+   ETA ~12 min); 6-seed wrapper
+   (`scripts/multiseed_chat_speak_synonym_demo.sh`) pre-staged.
+3. Aggregator branch + 3 unit tests for chat_speak_demo schema
+   (`tests/test_chat_demo_aggregate.py`, 11/11 pass).
+4. Webapp wired up: `chat_speak_synonym_demo` preset added to
+   PRESETS / PRESET_RUNNERS / PRESET_OUTPUT_FLAG dicts and to the
+   launcher dropdown (per autonomous-runs principle #10:
+   backend + frontend in same iteration).
