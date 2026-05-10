@@ -662,6 +662,22 @@ PRESETS: dict[str, list[str]] = {
     "chat_speak_demo": [
         "--train-events", "200",
     ],
+    # Track 3 layer 4 :speak synonym variant (Tier 2.1 8-word A→W).
+    # Trains the Tier 2.1 v4 scale-up arch (n_lang_input=4096,
+    # n_motor=1000, n_motor_fs=120) on the 8-word synonym vocab,
+    # then exercises generative_inference for each of N/E/S/W
+    # ranking against ALL 8 words. Headline: any-synonym A→W >= 50%
+    # (PASS if motor_X drives produces ANY of {primary, synonym}).
+    # Validates the production-side analog of Tier 2.1 v4's W→A
+    # reception (which was 5/6 aligned at A→W mean 63.7% in the
+    # Tier 2.1 BREAKTHROUGH paper). Wall clock ~10-13 min single
+    # seed (Tier 2.1 v4 is bigger than Tier 1 so a touch slower).
+    "chat_speak_synonym_demo": [
+        "--train-events", "400",
+        "--n-lang-input", "4096",
+        "--n-motor-per-action", "1000",
+        "--n-motor-fs-per-action", "120",
+    ],
     # Phase 1.3 + Tier 2.1 combined consolidation test. Trains synonym
     # vocab with hippocampus, alternates awake/sleep, then tests
     # whether cortex retains both primary AND synonym words after
@@ -777,6 +793,7 @@ PRESET_RUNNERS: dict[str, str] = {
     "chat_synonym_demo":      "research.runners.chat_synonym_demo",
     "chat_learn_demo":        "research.runners.chat_learn_demo",
     "chat_speak_demo":        "research.runners.chat_speak_demo",
+    "chat_speak_synonym_demo": "research.runners.chat_speak_synonym_demo",
     "consolidation_synonym":                       "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_smoke":                 "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_medium":                "research.runners.consolidation_synonym_trainer",
@@ -812,6 +829,7 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "chat_synonym_demo":      "--out-stats",
     "chat_learn_demo":        "--out-stats",
     "chat_speak_demo":        "--out-stats",
+    "chat_speak_synonym_demo": "--out-stats",
     "consolidation_synonym":                       "--out-stats",
     "consolidation_synonym_smoke":                 "--out-stats",
     "consolidation_synonym_medium":                "--out-stats",
