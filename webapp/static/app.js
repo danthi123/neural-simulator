@@ -338,6 +338,7 @@ const TAB_REGISTRY = [
   { id: "language",    label: "Language",    order: 70, onActivate: () => { if (!window._languageLoaded) loadLanguage(); } },
   { id: "findings",    label: "Findings",    order: 80, onActivate: () => { if (!window._findingsLoaded) loadFindings(); } },
   { id: "plans",       label: "Plans",       order: 85, onActivate: () => { if (!window._plansLoaded) loadPlans(); } },
+  { id: "bridges",     label: "Bridges",     order: 87, onActivate: () => loadBridges() },
   { id: "info",        label: "About",       order: 90, onActivate: () => { if (!window._infoLoaded) loadInfo(); } },
 ];
 
@@ -1903,6 +1904,77 @@ function renderFindingsList() {
     list.appendChild(item);
   }
 }
+
+// ─── Bridges tab (saved-bridge library, 2026-05-10) ────────────────────
+// Lists `.simstate.h5` files saved via chat_repl --save-bridge, with
+// sidecar metadata (mode, seed, training events, save date, neuron/
+// synapse counts). Future: load-into-chat workflow + WebSocket REPL.
+async function loadBridges() {
+  const list = $("#bridges-list");
+  if (!list) return;
+  list.replaceChildren(el("p", { class: "muted" }, "Loading…"));
+  try {
+    const res = await fetch("/api/bridges");
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    renderBridgesList(data);
+  } catch (e) {
+    list.replaceChildren(el("p", { class: "error" }, e.message));
+  }
+}
+
+function renderBridgesList(data) {
+  const list = $("#bridges-list");
+  const count = $("#bridges-count");
+  list.replaceChildren();
+  count.textContent = `${data.n_bridges} bridges in ${data.directory || "(no directory)"}`;
+  if (!data.bridges.length) {
+    list.appendChild(el("p", { class: "muted" },
+      "No saved bridges yet. Save one via chat_repl --save-bridge."
+    ));
+    return;
+  }
+  // Build a card for each bridge
+  for (const b of data.bridges) {
+    const card = el("div", {
+      class: "list-item",
+      style: "padding: 0.75em; border: 1px solid var(--border-light); margin-bottom: 0.5em; border-radius: 4px;",
+    });
+    card.appendChild(el("div", { class: "name", style: "font-weight: bold; font-size: 1.1em;" }, b.name));
+    if (b.error) {
+      card.appendChild(el("div", { class: "error" }, b.error));
+    } else {
+      const m = b.metadata || {};
+      const meta_lines = [];
+      if (m.mode) meta_lines.push(`mode=${m.mode}`);
+      if (m.seed != null) meta_lines.push(`seed=${m.seed}`);
+      if (m.n_train_events != null) meta_lines.push(`events=${m.n_train_events}`);
+      if (m.n_neurons) meta_lines.push(`${m.n_neurons.toLocaleString()} neurons`);
+      if (m.n_synapses) meta_lines.push(`${m.n_synapses.toLocaleString()} synapses`);
+      const sizeStr = `${b.size_mb} MB`;
+      const dateStr = m.saved_at || b.modified_at;
+      card.appendChild(el("div", { class: "meta", style: "color: var(--muted); font-size: 0.9em;" },
+        `${meta_lines.join(" · ") || "(no metadata)"} · ${sizeStr} · ${dateStr}`
+      ));
+      card.appendChild(el("div", { class: "meta", style: "color: var(--muted); font-size: 0.85em; margin-top: 0.3em;" },
+        `Path: ${b.path}`
+      ));
+      // Placeholder for "load into chat" — not yet implemented
+      const loadBtn = el("button", {
+        style: "margin-top: 0.5em; opacity: 0.6; cursor: not-allowed;",
+        disabled: "true",
+      }, "Load into chat (coming soon)");
+      card.appendChild(loadBtn);
+    }
+    list.appendChild(card);
+  }
+}
+
+// Refresh button
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("refresh-bridges");
+  if (btn) btn.addEventListener("click", loadBridges);
+});
 
 async function loadFindingDetail(name, listItem) {
   const detail = $("#finding-detail");

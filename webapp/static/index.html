@@ -50,6 +50,7 @@
       <button data-tab="language">Language</button>
       <button data-tab="findings">Findings</button>
       <button data-tab="plans">Plans</button>
+      <button data-tab="bridges">Bridges</button>
       <button data-tab="info">About</button>
     </nav>
     <!-- Theme toggle. Click cycles dark <-> light; persisted in localStorage. -->
@@ -673,6 +674,23 @@
         <div class="detail" id="plan-detail">
           <p class="muted">Click a plan to read it.</p>
         </div>
+      </div>
+    </section>
+
+    <!-- 2026-05-10: Bridges tab — saved-bridge library.
+         Lists `.simstate.h5` checkpoints + sidecar metadata via /api/bridges.
+         Future: load-into-chat workflow + WebSocket REPL (deferred). -->
+    <section id="tab-bridges" class="tab">
+      <div class="toolbar">
+        <button id="refresh-bridges">Refresh</button>
+        <span class="muted" id="bridges-count"></span>
+        <span class="muted" style="margin-left:1em;">
+          Save bridges via:
+          <code>chat_repl --mode &lt;mode&gt; --seed N --save-bridge bridges/&lt;name&gt;.simstate.h5</code>
+        </span>
+      </div>
+      <div id="bridges-list">
+        <p class="muted">Loading…</p>
       </div>
     </section>
 
