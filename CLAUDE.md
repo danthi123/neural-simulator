@@ -63,7 +63,7 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
 sim/                    # 15 modules, ~12.3K lines — core engine
-  bridge.py             # 6093 lines — SimulationBridge + GPU state orchestration
+  bridge.py             # 6144 lines — SimulationBridge + GPU state orchestration
   config.py             #  741 lines — all @dataclass configs
   enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  988 lines — spatial/WS/motif connection generators (GPU)
@@ -80,9 +80,9 @@ sim/                    # 15 modules, ~12.3K lines — core engine
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 60 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/etc) for research
-research/findings/      # session-by-session findings docs (200+ files)
-tests/                  # 61 test files (determinism, runners, kernels, plasticity, etc.)
+research/runners/       # 70 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/etc) for research
+research/findings/      # session-by-session findings docs (210+ files)
+tests/                  # 65 test files (determinism, runners, kernels, plasticity, etc.)
 ```
 
 ### Thread Model
@@ -94,7 +94,7 @@ tests/                  # 61 test files (determinism, runners, kernels, plastici
 
 **SimulationBridge** (`sim/bridge.py:170`): Central simulation orchestrator
 - Manages all GPU state arrays (CuPy)
-- Simulation stepping (`_run_one_simulation_step` at line 4236)
+- Simulation stepping (`_run_one_simulation_step` at line 4287)
 - Initialization (`_initialize_simulation_data` at line 831)
 - Recording/playback to HDF5
 - Checkpoint save/restore
