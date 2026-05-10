@@ -2400,6 +2400,57 @@ class SimulationBridge:
             raise KeyError(name)
         return len(self._plasticity_gate_to_synapses[name])
 
+    def set_global_plasticity_gain(self, value: float) -> None:
+        """Set the global per-synapse plasticity gain to `value` for ALL synapses.
+
+        Convenience wrapper around `cp_plasticity_rate_gain` that:
+        - Allocates the array (filled to `value`) if not yet allocated
+        - Otherwise fills the entire existing array with `value`
+
+        Use cases:
+        - `set_global_plasticity_gain(0.0)`: freeze ALL plasticity globally
+          (e.g. during reset_steps in training loops). Trace decay still
+          happens; only weight UPDATES are zeroed.
+        - `set_global_plasticity_gain(1.0)`: thaw all plasticity. Inverse.
+        - Partial values (e.g. 0.1) for soft global modulation.
+
+        2026-05-10: shipped as part of perf optimization #3 (skip plasticity
+        during reset_steps; per-event training does ~50 quiet steps where
+        plasticity ops should be no-ops anyway). Expected ~1.3-1.5×
+        speedup on plasticity-heavy training.
+
+        NOTE: this is GLOBAL — overrides any per-pathway gates set via
+        `set_plasticity_gate(name, value)`. The named gates can be
+        re-applied AFTER this call to restore per-pathway state, OR
+        wrap reset blocks tightly so per-pathway gates are stable
+        across the whole training event.
+        """
+        v = float(value)
+        if self.cp_plasticity_rate_gain is None:
+            # Lazy allocate. Use the actual NNZ from the connections matrix.
+            if not hasattr(self, "cp_connections") or self.cp_connections is None:
+                # No connections yet; nothing to gate
+                return
+            nnz = int(self.cp_connections.nnz)
+            self.cp_plasticity_rate_gain = cp.full(nnz, v, dtype=cp.float32)
+        else:
+            self.cp_plasticity_rate_gain.fill(v)
+
+    def get_global_plasticity_gain(self) -> float | None:
+        """Return the current global gain if uniform; else None.
+
+        Returns None if cp_plasticity_rate_gain has heterogeneous values
+        (e.g. some pathways gated 0, others 1). Returns the uniform value
+        otherwise. Used for testing + debugging.
+        """
+        if self.cp_plasticity_rate_gain is None:
+            return None
+        # Check if uniform (cheap GPU op)
+        first = float(self.cp_plasticity_rate_gain[0])
+        if bool(cp.all(self.cp_plasticity_rate_gain == first).get()):
+            return first
+        return None
+
     def update_pruning(self, eligibility_trace, reward_signal, prunable_indices=None):
         """Structural-plasticity step. Updates survival scores based on
         reward-aligned eligibility, then prunes synapses meeting both

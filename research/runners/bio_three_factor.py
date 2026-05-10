@@ -147,17 +147,25 @@ def run_three_factor(
     n_motor_fs_per_action: int = 3,
     push_to_gpu_every: int = 64,
     fast_spike_reset: bool = True,
+    freeze_plasticity_during_reset: bool = False,
+                                          # 2026-05-10 perf optimization #3:
+                                          # zero plasticity gain during reset_steps.
+                                          # Expected 1.3-1.5x speedup but unvalidated
+                                          # against multi-seed accuracy. Off by
+                                          # default until validated; flip to True
+                                          # for benchmarking arc.
     biological: bool = False,
     enable_nmda: bool = False,
     ou_tau_ms: float = 15.0,
     ou_std_current_pA: float = 100.0,
     gpu_eligibility: bool = True,  # Phase 1: keep eligibility/edges on GPU
-    fp16_synapse_state: bool = True,  # Phase 2: FP16 cp_eligibility_trace
+    fp16_synapse_state: bool = False,  # Phase 2: FP16 cp_eligibility_trace
                                           # (validated <1mV voltage drift over
                                           # 1000 steps in 2026-05-05 perf wave 2;
-                                          # default flipped to True 2026-05-10
-                                          # for ~1.2-1.5x speedup on
-                                          # plasticity-heavy training)
+                                          # off by default until tomorrow's
+                                          # benchmarking arc validates against
+                                          # multi-seed binding accuracy on
+                                          # current arch tiers)
     da_mode: str = "sign",  # "sign" (classical), "graded" (magnitude DA)
     orthogonal_cues: bool = False,  # 2026-05-05: replace random hash codes
                                     # with non-overlapping banded codes
@@ -569,11 +577,21 @@ def run_three_factor(
         token = event["token"]
         target_action = event["action"]
 
-        # Inter-trial reset
+        # Inter-trial reset (input zeroed; plasticity continues at default
+        # gain). 2026-05-10: plasticity-during-reset can be GATED OFF for
+        # ~1.3-1.5x speedup on plasticity-heavy training, but the gate
+        # change introduces a subtle accuracy shift (small spurious STDP
+        # updates during quiet reset are zeroed). Currently OPT-IN via
+        # `freeze_plasticity_during_reset=True` until validated against
+        # multi-seed binding accuracy (next-day work).
         bridge.cp_external_input_current[:] = 0.0
+        if freeze_plasticity_during_reset:
+            bridge.set_global_plasticity_gain(0.0)
         for _ in range(reset_steps):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
+        if freeze_plasticity_during_reset:
+            bridge.set_global_plasticity_gain(1.0)
 
         # Drive language_input. If cofire trial (synonym_mode + cofire),
         # OR the two synonym drive vectors together — both word codes
