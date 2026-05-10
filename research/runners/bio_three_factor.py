@@ -699,11 +699,17 @@ def run_three_factor(
                 bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
             elapsed = time.time() - t_start
             rolling_acc = correct_recent / n_recent if n_recent else 0
-            # Print every 50 events (was 250) to surface stalls earlier
-            if verbose and (event_idx + 1) % 50 == 0:
-                print(f"  [3factor] {event_idx+1}/{len(buffer)} events "
-                      f"({elapsed:.0f}s) rolling_acc={rolling_acc:.1%}",
-                      flush=True)
+            # Emit [PROGRESS] even when verbose=False so the webapp
+            # inflight panel + 3D Brain live mode can show real progress
+            # during chat_*_demo / consolidation_synonym_* runners that
+            # call run_three_factor with verbose=False to suppress prints.
+            # (Pre-2026-05-09 these runs went 5-9 min between progress
+            # events because the structured event was gated on `verbose`.)
+            if (event_idx + 1) % 50 == 0:
+                if verbose:
+                    print(f"  [3factor] {event_idx+1}/{len(buffer)} events "
+                          f"({elapsed:.0f}s) rolling_acc={rolling_acc:.1%}",
+                          flush=True)
                 from sim.progress import emit_progress
                 emit_progress(
                     "training", event_idx + 1, len(buffer),
