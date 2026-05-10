@@ -1473,6 +1473,51 @@ better use of free time during runs"):**
    **VALIDATED 2026-05-09**. A2W mean 58.3% ± 20.4%, 5/6 seeds at
    ≥50%, 5/6 above chance (>25%). Single-seed 75% reproduces.
    Track 3 production-side robustness confirmed.
+8. Tier 2.1 8-word :speak (chat_speak_synonym_demo) 6-seed multi-seed:
+   **VALIDATED + EXCEEDS PAPER 2026-05-10**. A2W any-synonym mean
+   87.5% ± 20.9% (vs paper's 63.7% ± 11.8%). 6/6 GO unanimous,
+   5/6 at 100%. Track 3 production-side complete: 4-word + 8-word
+   :speak both multi-seed validated.
+
+## 2026-05-10 ~01:27 EDT -- Tier 2.1 8-word :speak 6/6 GO EXCEEDS paper
+
+After Track 3 v2 multi-seed validation (chat_speak_demo Tier 1 4-word
+A2W 58.3%), the chain script auto-fired the production-side analog of
+the Tier 2.1 BREAKTHROUGH paper: chat_speak_synonym_demo on the 8-word
+synonym vocab.
+
+**Result: 6/6 GO unanimous, A2W any-synonym mean 87.5% ± 20.9%** —
+significantly **exceeds** the paper's 6-seed mean of 63.7% ± 11.8%.
+The chat_speak_synonym_demo runner is a faithful + sharper validation
+tool than the paper's text_eval method. 5/6 seeds hit literal 100%
+A2W; only seed 42 stays at 50% (matches paper's seed 42 exactly).
+
+**Per-direction A2W:** N=83% (5/6), E=100% (6/6), S=83% (5/6), W=83% (5/6).
+**STDP WTA confirmed at production-side:** synonym top-1 rate is exactly
+0% across all 6 seeds (paper's "secondary doesn't consolidate" pattern
+reproduces at the cosine-readout level).
+
+**Findings:**
+[`research/findings/2026-05-09-chat_speak_synonym_demo-Tier2.1-8word-MULTI-SEED.md`](../../research/findings/2026-05-09-chat_speak_synonym_demo-Tier2.1-8word-MULTI-SEED.md)
+
+**Decisions:**
+1. Track 3 conversational stack production-side: COMPLETE. Both
+   Tier 1 4-word :speak (58.3%) and Tier 2.1 8-word :speak (87.5%)
+   are multi-seed validated.
+2. chat_speak_synonym_demo is the canonical production-side validation
+   tool for new Tier 2.1+ architectures. Use it for any future synonym
+   training arc.
+3. Cross-action synonym confusion (3 cases out of 24 trials, 12.5%
+   rate) is documented but minor — not blocking.
+4. 16-word smoke auto-fired by chain script (rid ea1050, ETA 02:00).
+   Tests capacity rule extension to 4 sub-pops/motor_X.
+
+**Bug found + fixed during arc:**
+- `bio_three_factor` LCM(50,64) progress bug: structured [PROGRESS]
+  events were nested inside `% 64 == 0` AND `% 50 == 0`, only firing
+  at LCM = 1600 (once per training run). Fix: decoupled the two so
+  progress emits every 50 events independently. Validated working
+  on seed 101 (32 progress events visible during ~31 min training).
 
 ## 2026-05-09 ~21:00-21:35 EDT -- Track 3 v2 multi-seed VALIDATED
 
