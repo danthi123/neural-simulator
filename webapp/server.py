@@ -26,6 +26,7 @@ import sys
 import time
 import uuid
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -1580,6 +1581,86 @@ def info() -> JSONResponse:
         "raw_runs_dir": str(RAW_RUNS_DIR),
         "presets": list(PRESETS.keys()),
         "phase": "1 (research dashboard, runner launcher, findings browser)",
+    })
+
+
+# ─── Saved-bridges library (2026-05-10) ───────────────────────────────────
+# Lists `.simstate.h5` checkpoint files saved by chat_repl --save-bridge,
+# along with their sidecar metadata. Lets users browse trained bridges
+# via the webapp instead of dropping to the CLI to remember paths.
+#
+# Bridges live under `bridges/` at the repo root (created on first save).
+# Each bridge has:
+#   - <name>.simstate.h5 — HDF5 weights + region indices
+#   - <name>.simstate.h5.meta.json — sidecar metadata (mode, seed,
+#     n_train_events, n_neurons, n_synapses, saved_at)
+
+BRIDGES_DIR = REPO_ROOT / "bridges"
+
+
+@app.get("/api/bridges")
+def list_bridges() -> JSONResponse:
+    """List all saved bridges with sidecar metadata.
+
+    Returns: {"bridges": [...], "directory": str}
+    Each entry: {name, path, size_mb, modified_at, metadata?}
+    """
+    bridges = []
+    if BRIDGES_DIR.exists():
+        for h5_path in sorted(BRIDGES_DIR.glob("*.simstate.h5")):
+            try:
+                stat = h5_path.stat()
+                entry = {
+                    "name": h5_path.stem.replace(".simstate", ""),
+                    "path": str(h5_path.relative_to(REPO_ROOT)),
+                    "size_mb": round(stat.st_size / (1024 * 1024), 1),
+                    "modified_at": datetime.fromtimestamp(
+                        stat.st_mtime
+                    ).isoformat(),
+                }
+                # Pick up sidecar metadata if present
+                sidecar = h5_path.with_name(h5_path.name + ".meta.json")
+                if sidecar.exists():
+                    try:
+                        entry["metadata"] = json.loads(
+                            sidecar.read_text(encoding="utf-8")
+                        )
+                    except (json.JSONDecodeError, OSError) as e:
+                        entry["metadata_error"] = str(e)
+                bridges.append(entry)
+            except OSError as e:
+                bridges.append({
+                    "name": h5_path.stem,
+                    "error": str(e),
+                })
+    return JSONResponse({
+        "bridges": bridges,
+        "directory": str(BRIDGES_DIR.relative_to(REPO_ROOT)) \
+                       if BRIDGES_DIR.exists() else None,
+        "n_bridges": len(bridges),
+    })
+
+
+@app.get("/api/bridges/{name}")
+def get_bridge(name: str) -> JSONResponse:
+    """Get full metadata for one bridge by name."""
+    h5_path = BRIDGES_DIR / f"{name}.simstate.h5"
+    if not h5_path.exists():
+        raise HTTPException(404, f"bridge not found: {name}")
+    sidecar = h5_path.with_name(h5_path.name + ".meta.json")
+    metadata = {}
+    if sidecar.exists():
+        try:
+            metadata = json.loads(sidecar.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            pass
+    stat = h5_path.stat()
+    return JSONResponse({
+        "name": name,
+        "path": str(h5_path.relative_to(REPO_ROOT)),
+        "size_mb": round(stat.st_size / (1024 * 1024), 1),
+        "modified_at": datetime.fromtimestamp(stat.st_mtime).isoformat(),
+        "metadata": metadata,
     })
 
 

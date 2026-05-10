@@ -49,6 +49,33 @@ def test_runs_listing(client):
         assert "final_qs" in r
 
 
+def test_bridges_listing(client):
+    """`/api/bridges` lists saved bridge checkpoints with sidecar metadata.
+
+    Empty case: directory exists with just a README. Endpoint returns
+    {"bridges": [], "directory": "bridges", "n_bridges": 0}.
+    Non-empty case is exercised by chat_repl --save-bridge integration.
+    """
+    res = client.get("/api/bridges")
+    assert res.status_code == 200
+    data = res.json()
+    assert "bridges" in data
+    assert "n_bridges" in data
+    assert isinstance(data["bridges"], list)
+    assert data["n_bridges"] == len(data["bridges"])
+    # Each bridge entry has expected schema (when any present)
+    for b in data["bridges"][:3]:
+        assert "name" in b
+        # Either a path + size or an error field
+        assert "path" in b or "error" in b
+
+
+def test_bridge_detail_404_unknown(client):
+    """`/api/bridges/{name}` returns 404 for unknown bridge."""
+    res = client.get("/api/bridges/this-bridge-definitely-does-not-exist")
+    assert res.status_code == 404
+
+
 def test_findings_listing(client):
     res = client.get("/api/findings")
     assert res.status_code == 200

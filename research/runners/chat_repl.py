@@ -681,8 +681,22 @@ def _load_bridge_from_checkpoint(checkpoint_path: str, mode: str, seed: int,
     return bridge
 
 
-def _save_bridge_checkpoint(bridge, checkpoint_path: str, verbose: bool = True):
-    """Save the trained bridge state for fast reload in future sessions."""
+def _save_bridge_checkpoint(bridge, checkpoint_path: str, verbose: bool = True,
+                              metadata: dict = None):
+    """Save the trained bridge state for fast reload in future sessions.
+
+    Writes both:
+    - <checkpoint_path>: HDF5 bridge state (weights, region indices, etc.)
+    - <checkpoint_path>.meta.json: sidecar metadata so the webapp's
+      bridges library can list metadata without loading the HDF5.
+
+    Sidecar fields: mode, seed, n_train_events, n_neurons, n_synapses,
+    saved_at (ISO 8601), tags (optional list). Caller passes `metadata`
+    to populate these. The HDF5 file is the source of truth for the
+    actual state; sidecar is just for browsing.
+    """
+    import json
+    from datetime import datetime
     from pathlib import Path
 
     if verbose:
@@ -693,8 +707,25 @@ def _save_bridge_checkpoint(bridge, checkpoint_path: str, verbose: bool = True):
     Path(checkpoint_path).parent.mkdir(parents=True, exist_ok=True)
     bridge.save_checkpoint(checkpoint_path)
 
+    # Write sidecar metadata so the webapp can browse without h5py.
+    sidecar = {
+        "saved_at": datetime.now().isoformat(),
+        "checkpoint": Path(checkpoint_path).name,
+        "n_neurons": int(getattr(bridge.core_sim_config, "num_neurons", 0)),
+        "n_synapses": int(getattr(
+            bridge, "actual_total_connections_n", 0
+        )) if hasattr(bridge, "actual_total_connections_n") else None,
+    }
+    if metadata:
+        sidecar.update(metadata)
+    sidecar_path = Path(str(checkpoint_path) + ".meta.json")
+    sidecar_path.write_text(json.dumps(sidecar, indent=2),
+                              encoding="utf-8")
+
     if verbose:
-        print(f"[SAVE] complete ({time.time() - t0:.0f}s)", flush=True)
+        print(f"[SAVE] complete ({time.time() - t0:.0f}s) "
+              f"+ sidecar {sidecar_path.name}",
+              flush=True)
 
 
 def run_repl(mode: str, seed: int, n_train_events: int,
@@ -739,12 +770,24 @@ def run_repl(mode: str, seed: int, n_train_events: int,
     elif mode == "tier1":
         bridge = _load_or_train_tier1(seed, n_train_events, verbose=True)
         if save_bridge:
-            _save_bridge_checkpoint(bridge, save_bridge, verbose=True)
+            _save_bridge_checkpoint(
+                bridge, save_bridge, verbose=True,
+                metadata={
+                    "mode": mode, "seed": seed,
+                    "n_train_events": n_train_events,
+                },
+            )
     elif mode == "synonym":
         bridge = _load_or_train_synonym(seed, n_train_events, verbose=True,
                                           vocab_size=8)
         if save_bridge:
-            _save_bridge_checkpoint(bridge, save_bridge, verbose=True)
+            _save_bridge_checkpoint(
+                bridge, save_bridge, verbose=True,
+                metadata={
+                    "mode": mode, "seed": seed,
+                    "n_train_events": n_train_events,
+                },
+            )
     elif mode == "synonym12":
         # 12-word: capacity boundary at default arch -- use scaled (n_motor=2000)
         bridge = _load_or_train_synonym(seed, n_train_events, verbose=True,
@@ -752,7 +795,13 @@ def run_repl(mode: str, seed: int, n_train_events: int,
                                           n_motor_per_action=2000,
                                           n_motor_fs_per_action=240)
         if save_bridge:
-            _save_bridge_checkpoint(bridge, save_bridge, verbose=True)
+            _save_bridge_checkpoint(
+                bridge, save_bridge, verbose=True,
+                metadata={
+                    "mode": mode, "seed": seed,
+                    "n_train_events": n_train_events,
+                },
+            )
     elif mode == "synonym16":
         # 16-word: only tested at scaled arch (n_motor=2000)
         bridge = _load_or_train_synonym(seed, n_train_events, verbose=True,
@@ -760,7 +809,13 @@ def run_repl(mode: str, seed: int, n_train_events: int,
                                           n_motor_per_action=2000,
                                           n_motor_fs_per_action=240)
         if save_bridge:
-            _save_bridge_checkpoint(bridge, save_bridge, verbose=True)
+            _save_bridge_checkpoint(
+                bridge, save_bridge, verbose=True,
+                metadata={
+                    "mode": mode, "seed": seed,
+                    "n_train_events": n_train_events,
+                },
+            )
     else:
         raise ValueError(f"unknown mode: {mode}")
 
