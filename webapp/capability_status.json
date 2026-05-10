@@ -1,12 +1,12 @@
 {
-  "as_of": "2026-05-09",
+  "as_of": "2026-05-10",
   "headline": {
-    "tier": "12-word vocab @ scaled arch (3 sub-pops/motor_X)",
-    "result": "3/3 GO unanimous",
-    "metrics": "primary 95.5% / synonym 115.0% retention",
-    "wall_clock": "~12 hrs (3 seeds × ~4 hrs at scaled arch)",
-    "finding_doc": "2026-05-09-Phase1.3-Tier2.1-12word-scaled-3seed-CONFIRMED.md",
-    "summary": "Capacity hypothesis validated at multi-seed: doubling motor pool capacity (n_motor 1000 -> 2000) lifts 12-word retention from 2/3 GO PARTIAL to 3/3 GO unanimous, with the failing seed seeing the largest lift (71% -> 100% primary)."
+    "tier": "Tier 2.1 8-word :speak production-side (chat_speak_synonym_demo)",
+    "result": "6/6 GO unanimous EXCEEDS paper",
+    "metrics": "A2W any-synonym 87.5% +/- 20.9% (paper 63.7%); 5/6 at literal 100%",
+    "wall_clock": "~2.7 hrs (6 seeds 25-40 min each at scaled arch)",
+    "finding_doc": "2026-05-09-chat_speak_synonym_demo-Tier2.1-8word-MULTI-SEED.md",
+    "summary": "Tier 2.1 BREAKTHROUGH paper's reception-side (W->A 5/6 aligned, A->W mean 63.7%) reproduced AND exceeded on the production-side. The chat_speak_synonym_demo runner is a faithful + sharper validation tool. Track 3 v1 production-side complete: 4-word + 8-word :speak both multi-seed validated."
   },
   "pillars": [
     {
@@ -85,6 +85,13 @@
       "metric": "A2W mean 58.3% +/- 20.4% (5/6 seeds at >= 50%, 5/6 above chance); single-seed 75% reproduces; per-direction N=67% E=67% S=67% W=33%",
       "doc": "2026-05-09-chat_speak_demo-Track3-layer4-MULTI-SEED.md",
       "date": "2026-05-09"
+    },
+    {
+      "name": "Tier 2.1 8-word :speak (production-side analog) — 6/6 GO EXCEEDS paper",
+      "status": "VALIDATED",
+      "metric": "A2W any-synonym mean 87.5% +/- 20.9% (6/6 above 50%, 5/6 at 100%); paper's 6/6 aligned reproduces and exceeds (paper was 63.7% +/- 11.8%); STDP WTA primary-wins confirmed at production-side (synonym top-1 0% across all seeds)",
+      "doc": "2026-05-09-chat_speak_synonym_demo-Tier2.1-8word-MULTI-SEED.md",
+      "date": "2026-05-10"
     }
   ],
   "capacity_rule": {
@@ -99,10 +106,10 @@
     ]
   },
   "phase_status": {
-    "active": "Tier 2.1 8-word :speak smoke in flight (chat_speak_synonym_demo seed 42, run a7647c, ETA ~12 min). Tests whether the production-side analog of Tier 2.1 v4's W->A reception (5/6 aligned at 63.7%) reproduces on A->W with synonyms. If smoke GO, 6-seed multi-seed wrapper pre-staged.",
-    "next": "If smoke GO: 6-seed multi-seed via scripts/multiseed_chat_speak_synonym_demo.sh (~60-80 min total). If smoke NO-GO: investigate motor pool capacity vs synonym training dose.",
-    "after_next": "16-word smoke (capacity rule extension, predicted PASS at n_motor=2000 per derived rule)",
-    "after_after": "Tier 2.3 phrases revisit with PFC verb pool capacity scale-up (was architecture-limited at 41%)",
+    "active": "16-word smoke in flight (consolidation_synonym_16word_scaled_smoke seed 42, run ea1050, ETA ~02:00 EDT). Tests capacity rule extension to 4 sub-pops/motor_X. Predicted PASS per derived rule (~500 neurons/sub-pop). Auto-fired by chain script after Tier 2.1 :speak multi-seed completed.",
+    "next": "If 16-word smoke PASS: launch consolidation_synonym_16word_scaled_medium 3-seed multi-seed (~11 hrs). If FAIL: capacity boundary at 4 sub-pops/motor_X with current scaled arch -> scale further (n_motor=3000+) or pivot to Tier 2.3 phrases.",
+    "after_next": "Tier 2.3 phrases revisit with PFC verb pool capacity scale-up (was architecture-limited at 41%)",
+    "after_after": "Phase 1.4 BRANCH A continual learning at 16-word vocab (catastrophic forgetting eval extension)",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
     "resumption_plan": "docs/plans/2026-05-09-Phase-2-resumption-plan.md"
   }
