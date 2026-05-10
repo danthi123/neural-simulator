@@ -111,10 +111,19 @@ def benchmark(
         bridge._run_one_simulation_step()
     cp.cuda.Stream.null.synchronize()
     # Reset profiler accumulators after warm-up so the warm-up doesn't
-    # contaminate the timing.
+    # contaminate the timing. Use delattr (not setattr None) — bridge
+    # checks `hasattr` before init; setting to None causes AttributeError
+    # on subsequent .get() calls.
     if hasattr(bridge, "_prof_accum"):
-        bridge._prof_accum = None
-        bridge._prof_count = 0
+        try:
+            delattr(bridge, "_prof_accum")
+        except AttributeError:
+            pass
+    if hasattr(bridge, "_prof_count"):
+        try:
+            delattr(bridge, "_prof_count")
+        except AttributeError:
+            pass
 
     # Actual benchmark loop
     print(f"\n[bench] Running {n_steps} simulation steps...", flush=True)
