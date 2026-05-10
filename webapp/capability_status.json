@@ -1,12 +1,12 @@
 {
   "as_of": "2026-05-10",
   "headline": {
-    "tier": "STP DEFAULT FLIP — 3.28x faster + 100% A2W primary",
-    "result": "3-seed validation unanimous; default changed",
-    "metrics": "wall clock 506s (vs 1660s w/STP); A2W primary 100% (vs 87.5%); W2A 52% (vs 35%)",
-    "wall_clock": "~25 min for 3-seed validation",
-    "finding_doc": "2026-05-10-stp-default-flip.md",
-    "summary": "STP (Short-Term Plasticity) was 57% of inner-loop step time AND silently degrading binding accuracy by ~12-25pp. 3-seed validation showed STP-off is BOTH 3.28x faster AND more accurate. Default flipped 2026-05-10. Largest single optimization win of the arc — compounds with cloud H100 to ~44-74x baseline. Re-validation of prior multi-seed results recommended."
+    "tier": "Encoding-axis 64-word: 3/3 GO unanimous + 35x speedup",
+    "result": "Capacity rule revised: encoding > motor at higher vocab",
+    "metrics": "retention primary 110% +/- 23% (3-seed mean); wall clock 16 min/seed (vs prior 9.4 hr baseline). Combined with STP-off, the optimization stack is now 35x over original 64-word baseline.",
+    "wall_clock": "~48 min for 3-seed validation",
+    "finding_doc": "2026-05-10-encoding-axis-64word-3SEED-GO.md",
+    "summary": "User's encoding-vs-motor hypothesis VALIDATED at multi-seed. New architecture (n_lang=8192, n_motor=2000, STP-off) is 35x faster than original AND passes consolidation retention test 3/3 unanimous. Capacity rule revised: motor pool capacity matters LESS than encoding capacity at higher vocab tiers; lang_input encoding is the rate-limiting constraint. Recommended baseline for vocab >= 32 words."
   },
   "pillars": [
     {
@@ -106,24 +106,35 @@
       "metric": "3-seed validation: wall clock 506s vs 1660s (3.28x); A2W primary 100% vs 87.5% (+12.5pp); W2A 52% vs 35% (+17pp). STP was 57% of inner-loop step time AND degrading binding via millisecond synaptic fatigue. Default flipped in chat training paths.",
       "doc": "2026-05-10-stp-default-flip.md",
       "date": "2026-05-10"
+    },
+    {
+      "name": "Encoding-axis 64-word 3-seed — capacity rule revised",
+      "status": "VALIDATED",
+      "metric": "3/3 GO unanimous. Retention primary 110% +/- 23%, synonym 119% +/- 34%. Wall clock 954s +/- 7s (35x faster than prior 9.4 hr baseline). User's encoding-vs-motor hypothesis confirmed: n_motor=2000 + n_lang=8192 outperforms n_motor=6000 + n_lang=4096 at 64-word vocab. New rule: lang_input encoding is rate-limiting, not motor capacity.",
+      "doc": "2026-05-10-encoding-axis-64word-3SEED-GO.md",
+      "date": "2026-05-10"
     }
   ],
   "capacity_rule": {
-    "rule": "n_motor / sub_pops_per_motor_X >= ~333 neurons per sub-population (empirical, derived 2026-05-09)",
+    "rule": "REVISED 2026-05-10: encoding-axis architecture recommended for vocab >= 32. Motor capacity matters less than encoding capacity at higher vocab tiers. Encoding (n_lang_input) is rate-limiting; motor pool just needs ~125 neurons/sub-pop to support STDP convergence.",
     "rows": [
-      {"vocab": "4-word", "subpops": 1, "n_motor": 500, "neurons_per_subpop": 500, "status": "VALIDATED"},
-      {"vocab": "8-word", "subpops": 2, "n_motor": 1000, "neurons_per_subpop": 500, "status": "VALIDATED"},
-      {"vocab": "12-word default", "subpops": 3, "n_motor": 1000, "neurons_per_subpop": 333, "status": "BOUNDARY"},
-      {"vocab": "12-word scaled", "subpops": 3, "n_motor": 2000, "neurons_per_subpop": 667, "status": "VALIDATED"},
-      {"vocab": "16-word", "subpops": 4, "n_motor": 2000, "neurons_per_subpop": 500, "status": "PREDICTED"},
-      {"vocab": "20-word", "subpops": 5, "n_motor": 2500, "neurons_per_subpop": 500, "status": "PREDICTED"}
+      {"vocab": "4-word", "subpops": 1, "n_motor": 500, "n_lang": 4096, "neurons_per_subpop": 500, "status": "VALIDATED"},
+      {"vocab": "8-word", "subpops": 2, "n_motor": 1000, "n_lang": 4096, "neurons_per_subpop": 500, "status": "VALIDATED"},
+      {"vocab": "12-word default", "subpops": 3, "n_motor": 1000, "n_lang": 4096, "neurons_per_subpop": 333, "status": "BOUNDARY"},
+      {"vocab": "12-word scaled", "subpops": 3, "n_motor": 2000, "n_lang": 4096, "neurons_per_subpop": 667, "status": "VALIDATED"},
+      {"vocab": "16-word", "subpops": 4, "n_motor": 2000, "n_lang": 4096, "neurons_per_subpop": 500, "status": "VALIDATED (smoke)"},
+      {"vocab": "64-word baseline (old)", "subpops": 16, "n_motor": 6000, "n_lang": 4096, "neurons_per_subpop": 375, "status": "PARTIAL (retention 76% FAIL)"},
+      {"vocab": "64-word encoding-axis (NEW)", "subpops": 16, "n_motor": 2000, "n_lang": 8192, "neurons_per_subpop": 125, "status": "VALIDATED 3-seed (retention 110% PASS, 35x faster)"},
+      {"vocab": "96-word", "subpops": 24, "n_motor": 2000, "n_lang": 8192, "neurons_per_subpop": 83, "status": "PREDICTED"},
+      {"vocab": "128-word", "subpops": 32, "n_motor": 4000, "n_lang": 16384, "neurons_per_subpop": 125, "status": "PREDICTED"},
+      {"vocab": "256-word", "subpops": 64, "n_motor": 8000, "n_lang": 32768, "neurons_per_subpop": 125, "status": "PREDICTED"}
     ]
   },
   "phase_status": {
-    "active": "STP default flipped to False after 3-seed validation showed 3.28x speedup AND accuracy improvement. All chat training paths now use STP-off. Major optimization win — compounds with cloud H100 to ~44-74x baseline.",
-    "next": "Re-run prior multi-seed results at STP-off (Tier 1 6-seed, Tier 2.1 8-word 6-seed, Phase 1.4 BRANCH A retention, 64-word smoke) — predicted to push primary binding to ~95-100%.",
-    "after_next": "Encoding-axis 64-word smoke at STP-off (~3 hr instead of 9.4 hr at STP-on). Tests user's hypothesis that lang_input encoding (not motor capacity) is the real bottleneck at higher vocab tiers.",
-    "after_after": "Webapp chat UI WebSocket (1-2 day project; bridges library backend + saved-bridges tab UI shipped tonight). Cloud deploy with optimized stack.",
+    "active": "Encoding-axis architecture VALIDATED 3-seed. Combined opt stack: STP-off + encoding-axis = 35x speedup AND better retention. Recommended baseline for vocab >= 32 words. Capacity rule revised. Tier 2.3 phrases needs STP-off revalidation (silent flip risk).",
+    "next": "Launch 128-word + 256-word encoding-axis smokes (~30-60 min each) to validate true encoding-wall ceiling. Re-run Tier 2.3 phrases at STP-off (architecture was limited at 41% with STP-on; STP-off may improve or degrade).",
+    "after_next": "Re-validate prior Tier 1 + Tier 2.1 + Phase 1.4 multi-seed results at STP-off + new architecture. Predicted to push numbers significantly higher.",
+    "after_after": "Webapp chat UI WebSocket (1-2 day project; bridges library backend + saved-bridges tab UI shipped tonight). Cloud deploy with optimized stack (480-800x speedup multiplier on H100).",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
     "resumption_plan": "docs/plans/2026-05-09-Phase-2-resumption-plan.md"
   }
