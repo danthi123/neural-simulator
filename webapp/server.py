@@ -731,6 +731,21 @@ PRESETS: dict[str, list[str]] = {
         "--n-motor-fs-per-action", "240",
         "--n-test-per-word", "20",
     ],
+    # Cheap 16-word smoke (~30-40 min/seed). Same scaled arch as the
+    # medium variant but with --smoke chunking (50+50 events, 12
+    # chunks). Use as a fast capacity-rule probe to predict whether the
+    # full 16word_scaled_medium will pass before committing 3.5 hrs.
+    # If smoke shows reasonable retention (>= 50% primary), proceed to
+    # medium; if smoke fails outright, capacity boundary is at 4
+    # sub-pops/motor_X with current scaled arch and we need to scale
+    # further.
+    "consolidation_synonym_16word_scaled_smoke": [
+        "--smoke",
+        "--vocab-size", "16",
+        "--n-motor-per-action", "2000",
+        "--n-motor-fs-per-action", "240",
+        "--n-test-per-word", "10",
+    ],
     # 12-word vocab extension (adds n/e/s/w abbreviations as 3rd synonym
     # per action). Tests whether CLS theory still holds at richer vocabulary
     # scale than the 8-word validated result. Same architecture as 8-word;
@@ -801,6 +816,7 @@ PRESET_RUNNERS: dict[str, str] = {
     "consolidation_synonym_12word_medium":         "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_12word_scaled_medium":  "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_16word_scaled_medium":  "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_16word_scaled_smoke":   "research.runners.consolidation_synonym_trainer",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
@@ -837,6 +853,7 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "consolidation_synonym_12word_medium":         "--out-stats",
     "consolidation_synonym_12word_scaled_medium":  "--out-stats",
     "consolidation_synonym_16word_scaled_medium":  "--out-stats",
+    "consolidation_synonym_16word_scaled_smoke":   "--out-stats",
     # phase_2_* presets removed -- see PRESETS dict comment above.
 }
 
