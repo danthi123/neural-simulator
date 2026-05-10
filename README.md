@@ -327,13 +327,16 @@ problem with the previous training approach.
     sub-threshold lifts. Per-word bimodal pattern (some words bind,
     others don't) consistent across all tests suggests drive-pattern
     collision under sparse encoding — architectural not tunable.
-- Track 3 v1 conversational scaffolding **feature-complete**
-  (2026-05-09): 4 layers shipped (`--learn` primitive, `chat_learn_demo`
-  runner, `:again`/`:opposite`/`:history`/`:forget` dialog state,
-  `:speak` generative decoder). chat_speak_demo single-seed validated
-  at 75% A2W (3/4 actions decoded correctly). Track 3 v1 conversation
-  example: read words, write words, remember last action, learn new
-  vocab online — all biology-grounded.
+- Track 3 v1 conversational scaffolding **feature-complete +
+  multi-seed validated** (2026-05-09): 4 layers shipped (`--learn`
+  primitive, `chat_learn_demo` runner, `:again`/`:opposite`/`:history`/
+  `:forget` dialog state, `:speak` generative decoder). chat_speak_demo
+  single-seed validated at 75% A2W (3/4 actions decoded correctly).
+  **6-seed multi-seed: A2W mean 58.3% ± 20.4%, 5/6 seeds at ≥50%**
+  (5/6 above-chance). Per-direction A2W: N=67% E=67% S=67% W=33%
+  (W cascade-bias mirror of the Tier 1 BREAKTHROUGH N-bias).
+  Track 3 v1 conversation example: read words, write words, remember
+  last action, learn new vocab online — all biology-grounded.
 - **Phase 2 path-f-hybrid scale thesis REFUTED (2026-05-09 evening):**
   Phase 2.2b v3 at 50M params (375× larger than Phase 2.3a's 134K)
   produced inter-word cosine 0.85 — WORSE than Phase 2.3a's 0.72.
@@ -344,9 +347,11 @@ problem with the previous training approach.
   conversational capability is fully **Path A (biology-grounded):**
   Phase 1.4 BRANCH A + Phase 1.3 consolidation + Tier 2.1 12-word
   scaled multi-seed + Track 3 v1 (chat_repl `--learn` / `:speak`
-  generative decoder / dialog state). Currently: chat_speak_demo
-  6-seed multi-seed running on freed GPU to validate Track 3 layer 4
-  robustness.
+  generative decoder / dialog state). Currently:
+  `chat_speak_synonym_demo` (Tier 2.1 8-word :speak production-side
+  test) smoke in flight, then 6-seed multi-seed wrapper pre-staged.
+  Subsequent: 16-word capacity rule extension test (predicted PASS
+  at scaled arch).
 
 This characterizes the architecture's empirical capability: the
 biology-grounded continual learning works at multi-seed (4/8/12-word
