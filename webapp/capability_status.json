@@ -71,6 +71,13 @@
       "metric": "v400 + n=2000 score 0.390 (+0.045 vs n=1000); below 0.50 threshold; both tunable levers fail",
       "doc": "2026-05-09-Phase-1.5-n_motor_2000-interference-REFUTED.md",
       "date": "2026-05-09"
+    },
+    {
+      "name": "Phase 2.3b 50M-param cosine smoke — scale hypothesis REFUTED",
+      "status": "NEGATIVE",
+      "metric": "134K cosine 0.72 -> 50M cosine 0.85 (WORSE); bigger model pushes features more alike across direction words; path-f-hybrid is dead-end at single-3090 scale",
+      "doc": "2026-05-09-Phase-2.3b-50M-cosine-REFUTED.md",
+      "date": "2026-05-09"
     }
   ],
   "capacity_rule": {
@@ -85,10 +92,10 @@
     ]
   },
   "phase_status": {
-    "active": "Phase 1.5 architecture-ceiling investigation: n_motor=2000 interference test in flight (~80-100 min). v400 hypothesis REFUTED (0.340->0.345 no change); testing whether capacity scale-up that fixed 12-word also fixes 8-word interleaved interference.",
-    "next": "After n_motor=2000: long_tail_relaxed test auto-chained (~50 min) — second hypothesis (rare-word binding fails on dose+teacher vs architecture)",
-    "after_next": "After both hypotheses tested: master plan strategic decision — demote Phase 1.5 to tier report vs invest more architecture testing; OR pivot to Phase 2.2b 10M-param overnight",
-    "after_after": "Track 3 :speak GPU smoke (after all Phase 1.5 hypothesis tests drain GPU)",
+    "active": "Path A pivot — chat_speak_demo 6-seed multi-seed running (~60 min). Validates Track 3 v1 layer 4 generative decoder reproduces 75% A2W across seeds. Phase 2 path-f-hybrid CLOSED tonight at single-3090 scale (50M cosine smoke REFUTED scale thesis).",
+    "next": "After multi-seed: master plan + README updated to mark Phase 2 dead-end; pivot fully to biology-grounded path",
+    "after_next": "Tier 2.1 8-word :speak variant OR 16-word smoke (capacity rule extension, predicted PASS at scaled arch)",
+    "after_after": "Tier 2.3 phrases revisit with PFC verb pool capacity scale-up (was architecture-limited at 41%)",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
     "resumption_plan": "docs/plans/2026-05-09-Phase-2-resumption-plan.md"
   }

@@ -334,11 +334,19 @@ problem with the previous training approach.
   at 75% A2W (3/4 actions decoded correctly). Track 3 v1 conversation
   example: read words, write words, remember last action, learn new
   vocab online — all biology-grounded.
-- **Active arc 2026-05-09 evening:** Phase 2.2b 10M-param overnight on
-  `path-f-hybrid` branch — scale-sweep at 50M params (4096 wide × 3
-  layers, ~10 GB GPU) testing whether Phase 2.3a's 134K-param NEGATIVE
-  was scale-bound. After v3: Phase 2.3b transfer test, possible v4
-  at 67-113M params, multi-seed validation, chat_speak_demo Track 3 v2.
+- **Phase 2 path-f-hybrid scale thesis REFUTED (2026-05-09 evening):**
+  Phase 2.2b v3 at 50M params (375× larger than Phase 2.3a's 134K)
+  produced inter-word cosine 0.85 — WORSE than Phase 2.3a's 0.72.
+  Bigger model packs direction-word features MORE alike, not less.
+  Char-level next-char objective is wrong for word-action transfer;
+  scale doesn't fix it. **Phase 2 path-f-hybrid is a documented
+  dead-end at single-3090 scale class.** The path forward to
+  conversational capability is fully **Path A (biology-grounded):**
+  Phase 1.4 BRANCH A + Phase 1.3 consolidation + Tier 2.1 12-word
+  scaled multi-seed + Track 3 v1 (chat_repl `--learn` / `:speak`
+  generative decoder / dialog state). Currently: chat_speak_demo
+  6-seed multi-seed running on freed GPU to validate Track 3 layer 4
+  robustness.
 
 This characterizes the architecture's empirical capability: the
 biology-grounded continual learning works at multi-seed (4/8/12-word

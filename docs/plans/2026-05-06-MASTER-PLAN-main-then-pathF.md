@@ -456,7 +456,46 @@ If Phase 1.4 reveals catastrophic forgetting:
 
 ---
 
-# Phase 2 — `path-f-hybrid` branch
+# Phase 2 — `path-f-hybrid` branch — **DEAD-END at single-3090 scale (2026-05-09)**
+
+## Status as of 2026-05-09
+
+Phase 2 thesis ("biology-grounded continual learning + cortex pretraining
+via surrogate-grad BPTT can reach conversational capability") is REFUTED
+at the scale class accessible to a single RTX 3090.
+
+Scale-sweep results:
+- Phase 2.3a (134K params, commit 4dac708): 22% W2A, NEGATIVE.
+  Cosine 0.72 between direction words.
+- Phase 2.2b v3 (50M params, 2026-05-09): cosine 0.85 — WORSE.
+  Smoke gate auto-skipped Phase 2.3b Bridge transfer test (would
+  predict equally NEGATIVE Bridge result).
+- Going from 134K to 50M (375x more params) made transfer features
+  MORE confused across direction words, not less.
+
+Why scale doesn't help: char-level next-char prediction objective
+doesn't push features to be word-discriminative. Bigger models
+memorize statistical regularities better but pack similar-looking
+features tighter, RAISING inter-word cosine. Wrong objective for
+word-action transfer; scale is not the limiting factor.
+
+To make Phase 2 work would need:
+- Word-level pretraining (different scope; not testable at this scale)
+- Contrastive objective that pushes features apart for distinct words
+  (research direction; weeks of design work)
+- Project-Nord-class scale (1B+ params, cloud H100, ~$300-500 budget)
+
+For the master plan's "make sim conversational" goal, **Path A
+(biology-grounded) is the active path**. Phase 1.4 BRANCH A multi-seed
++ Phase 1.3 consolidation + Tier 2.1 12-word scaled multi-seed +
+Track 3 v1 (chat_repl --learn / dialog state / :speak generative
+decoder) are all VALIDATED. The biology-grounded conversational artifact
+is feature-complete tonight.
+
+See `research/findings/2026-05-09-Phase-2.3b-50M-cosine-REFUTED.md`
+for the full analysis.
+
+The original Phase 2 design content is preserved below for reference.
 
 Total estimated time: **6-10 weeks** (begins only after Phase 1 complete).
 
