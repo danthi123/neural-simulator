@@ -2400,6 +2400,52 @@ class SimulationBridge:
             raise KeyError(name)
         return len(self._plasticity_gate_to_synapses[name])
 
+    def enable_stp_runtime(self) -> bool:
+        """Re-enable Short-Term Plasticity at runtime after the bridge was
+        built without it.
+
+        Use case: train fast with STP-disabled (~3.3x faster, per 2026-05-10
+        optimization arc), then re-enable STP for inference/eval so the
+        biological dynamics (temporal filtering, gain control, adaptation,
+        gamma stability) are restored. Combined with STP-off training
+        this gives the best of both worlds: fast training + biologically
+        realistic inference.
+
+        Allocates cp_stp_x and cp_stp_u arrays if they don't exist (matches
+        allocation pattern in _init_synapse_arrays_with_capacity). Sets
+        cfg.enable_short_term_plasticity = True so subsequent
+        _run_one_simulation_step calls execute STP dynamics.
+
+        Returns True if STP was newly allocated, False if already active.
+
+        Safe to call multiple times. To disable again, set
+        cfg.enable_short_term_plasticity = False directly (existing arrays
+        are kept but ignored by the step loop).
+
+        2026-05-10: validates the user's "biological realism via re-enable
+        at inference" hypothesis. See research/findings/
+        2026-05-10-stp-default-flip.md for context.
+        """
+        cfg = self.core_config
+        already_active = (
+            cfg.enable_short_term_plasticity
+            and self.cp_stp_x is not None
+        )
+        if already_active:
+            return False
+        cfg.enable_short_term_plasticity = True
+        if self.cp_stp_x is None:
+            # Match allocation pattern from _init_synapse_arrays_with_capacity
+            if not hasattr(self, "cp_connections") or self.cp_connections is None:
+                return False  # no connections yet
+            capacity = self._synapse_capacity if hasattr(
+                self, "_synapse_capacity"
+            ) else int(self.cp_connections.data.size)
+            self.cp_stp_x = cp.ones(capacity, dtype=cp.float32)
+            self.cp_stp_u = cp.full(capacity, cfg.stp_U, dtype=cp.float32)
+            return True
+        return False
+
     def set_global_plasticity_gain(self, value: float) -> None:
         """Set the global per-synapse plasticity gain to `value` for ALL synapses.
 

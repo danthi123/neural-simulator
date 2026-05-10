@@ -194,10 +194,19 @@ def run_chat_speak_synonym_demo(seed: int = 42,
                                   n_motor_fs_per_action: int = 120,
                                   verbose: bool = True,
                                   temperature: float = 0.0,
-                                  enable_stp: bool = False) -> dict:
+                                  enable_stp: bool = False,
+                                  reenable_stp_for_eval: bool = False) -> dict:
     """2026-05-10: enable_stp default flipped from True to False.
     3-seed validation showed 3.28x speedup AND higher accuracy with
-    STP off. See research/findings/2026-05-10-stp-default-flip.md."""
+    STP off. See research/findings/2026-05-10-stp-default-flip.md.
+
+    reenable_stp_for_eval (2026-05-10 user-requested test): if True,
+    after training completes (STP off, fast), enable STP at runtime
+    for the W2A + A2W eval phases. Tests if STP-off training is
+    'reversible at inference time' — i.e., do the weights trained
+    fast still work with biological STP dynamics restored at eval?
+    If yes, we get best-of-both-worlds: fast training + biology at
+    inference."""
     """Tier 2.1 8-word :speak demo: train scale-up bridge, then A->W."""
     # Structured progress events for live webapp + brain3d
     from sim.progress import emit_progress
@@ -225,6 +234,16 @@ def run_chat_speak_synonym_demo(seed: int = 42,
     emit_progress("complete", current=1, total=3, phase="training",
                   unit="phases", label="chat_speak_synonym_demo",
                   wall_clock_s=int(train_sec))
+
+    # Optional: re-enable STP for eval (test reversibility of STP-off training)
+    if reenable_stp_for_eval:
+        if verbose:
+            print(f"\n[REENABLE-STP] Activating short-term plasticity for eval "
+                  f"(was {'on' if enable_stp else 'off'} during training)",
+                  flush=True)
+        newly = bridge.enable_stp_runtime()
+        if verbose:
+            print(f"  cp_stp_x newly_allocated: {newly}", flush=True)
 
     # Phase B: W->A regression baseline on 8 words
     print(f"\n[PHASE B] W->A regression on 8-word synonym vocab",
@@ -334,6 +353,14 @@ def main():
                          "time; disabling gives ~2.86x speedup. Default "
                          "OFF (i.e. STP enabled) until multi-seed accuracy "
                          "validated. Use this flag for the validation arc.")
+    ap.add_argument("--reenable-stp-for-eval", action="store_true",
+                    help="After training completes (with STP off, fast), "
+                         "re-enable STP for the W->A + A->W eval phases. "
+                         "Tests if STP-off training is reversible at "
+                         "inference: do weights trained fast still work "
+                         "with biological STP dynamics restored? If yes, "
+                         "we get best-of-both-worlds: fast training + "
+                         "biology at inference.")
     args = ap.parse_args()
 
     result = run_chat_speak_synonym_demo(
@@ -345,6 +372,7 @@ def main():
         verbose=not args.quiet,
         temperature=args.temperature,
         enable_stp=not args.no_stp,
+        reenable_stp_for_eval=args.reenable_stp_for_eval,
     )
 
     if args.out_stats:
