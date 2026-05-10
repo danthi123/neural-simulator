@@ -220,3 +220,134 @@ def test_chat_learn_demo_handles_missing_optional_fields(tmp_path):
     assert cl["binding_rate_mean"] == 0.0
     assert cl["primary_retention_mean"] == 0.0
     assert cl["n_go_verdict"] == 0
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# chat_speak_demo branch (Track 3 layer 4 :speak generative decoder, 2026-05-09)
+# ─────────────────────────────────────────────────────────────────────────
+
+
+def test_aggregate_chat_speak_demo_basic(tmp_path):
+    """chat_speak_demo JSONs route to the chat_speak aggregation block.
+
+    Reproduces the 6-seed Track 3 v2 multi-seed validation result
+    (A2W mean 58.3%, 5/6 above-50%) at three-seed scale.
+    """
+    paths = [
+        _write(tmp_path, "g11_seed42_chat_speak_demo.json", {
+            "seed": 42,
+            "demo_kind": "chat_speak_demo",
+            "accuracy": 0.125,            # W2A regression
+            "speak_accuracy": 0.75,       # A2W
+            "speak_correct": 3,
+            "speak_total": 4,
+            "per_word_accuracy": {"north": 0.0, "east": 0.5,
+                                   "south": 0.0, "west": 0.0},
+            "speak_results": [
+                {"target_action": "N", "predicted_word": "north",
+                 "correct": True},
+                {"target_action": "E", "predicted_word": "east",
+                 "correct": True},
+                {"target_action": "S", "predicted_word": "south",
+                 "correct": True},
+                {"target_action": "W", "predicted_word": "east",
+                 "correct": False},
+            ],
+        }),
+        _write(tmp_path, "g11_seed43_chat_speak_demo.json", {
+            "seed": 43,
+            "demo_kind": "chat_speak_demo",
+            "accuracy": 0.50,
+            "speak_accuracy": 0.75,
+            "speak_correct": 3,
+            "speak_total": 4,
+            "speak_results": [
+                {"target_action": "N", "predicted_word": "north",
+                 "correct": True},
+                {"target_action": "E", "predicted_word": "east",
+                 "correct": True},
+                {"target_action": "S", "predicted_word": "south",
+                 "correct": True},
+                {"target_action": "W", "predicted_word": "east",
+                 "correct": False},
+            ],
+        }),
+        _write(tmp_path, "g11_seed102_chat_speak_demo.json", {
+            "seed": 102,
+            "demo_kind": "chat_speak_demo",
+            "accuracy": 0.25,
+            "speak_accuracy": 0.25,         # only outlier in real run
+            "speak_correct": 1,
+            "speak_total": 4,
+            "speak_results": [
+                {"target_action": "N", "predicted_word": "west",
+                 "correct": False},
+                {"target_action": "E", "predicted_word": "south",
+                 "correct": False},
+                {"target_action": "S", "predicted_word": "north",
+                 "correct": False},
+                {"target_action": "W", "predicted_word": "west",
+                 "correct": True},
+            ],
+        }),
+    ]
+    s = aggregate(paths)
+    assert s["n_seeds"] == 3
+    assert s["demo_types"] == ["chat_speak"]
+    assert "chat_speak_demo" in s
+    cs = s["chat_speak_demo"]
+    # A2W mean: (0.75 + 0.75 + 0.25) / 3 = 0.583
+    assert abs(cs["speak_accuracy_mean"] - 0.583) < 0.01
+    # 2/3 seeds above chance (>0.25), 2/3 at >=50%
+    assert cs["n_speak_above_chance"] == 2
+    assert cs["n_speak_above_50pct"] == 2
+    # W2A surfaced separately
+    assert abs(cs["w2a_accuracy_mean"] - 0.292) < 0.01  # (0.125+0.5+0.25)/3
+    # Per-direction A2W: N hits 2/3, E hits 2/3, S hits 2/3, W hits 1/3
+    pd = cs["per_direction_a2w_mean"]
+    assert abs(pd["N"] - 2/3) < 0.01
+    assert abs(pd["W"] - 1/3) < 0.01
+
+
+def test_chat_speak_demo_distinguishes_from_tier1(tmp_path):
+    """chat_speak_demo with demo_kind goes to chat_speak, NOT tier1."""
+    paths = [
+        _write(tmp_path, "g11_seed42_chat_speak_demo.json", {
+            "seed": 42,
+            "demo_kind": "chat_speak_demo",
+            "accuracy": 0.5,
+            "speak_accuracy": 0.5,
+            "speak_correct": 2,
+            "speak_total": 4,
+            "speak_results": [
+                {"target_action": "N", "predicted_word": "north",
+                 "correct": True},
+            ],
+        }),
+    ]
+    s = aggregate(paths)
+    assert s["demo_types"] == ["chat_speak"]
+    assert "chat_speak_demo" in s
+    # Should NOT have leaked into tier1 (no per_word_accuracy aggregation)
+    assert "tier1_per_direction" not in s
+
+
+def test_chat_speak_demo_handles_missing_speak_results(tmp_path):
+    """Older chat_speak JSONs missing speak_results don't crash."""
+    paths = [
+        _write(tmp_path, "g11_seed42_chat_speak_demo.json", {
+            "seed": 42,
+            "demo_kind": "chat_speak_demo",
+            "accuracy": 0.25,
+            "speak_accuracy": 0.50,
+            "speak_correct": 2,
+            "speak_total": 4,
+            # No speak_results field
+        }),
+    ]
+    s = aggregate(paths)
+    assert s["n_seeds"] == 1
+    cs = s["chat_speak_demo"]
+    assert cs["speak_accuracy_mean"] == 0.5
+    # per_direction_a2w_mean should be empty when no speak_results
+    assert cs["per_direction_a2w_mean"] == {}
