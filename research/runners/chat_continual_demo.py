@@ -125,6 +125,8 @@ def run_continual_demo(
     import cupy as cp
     import numpy as np
     from sim.text_embeddings import vocab_to_drive_pattern
+    # 2026-05-09: emit_progress for live frontend visibility
+    from sim.progress import emit_progress
 
     transcript = []
     transcript.append({"type": "system",
@@ -135,9 +137,13 @@ def run_continual_demo(
                                 f"Tier 1 embodied Hebbian "
                                 f"({n_events_per_word} events/word)..."})
 
+    # 4 phases: train_primaries, test_primaries, train_synonyms, test_retention
+    emit_progress("phase", current=0, total=4, phase="train_primaries",
+                  unit="phases", label="chat_continual_demo")
+
     if verbose:
         print(f"[TRAINING PHASE A] Primaries: {PRIMARY_WORDS}")
-        t0 = time.time()
+    t0 = time.time()
     bridge, _ = run_three_factor(
         seed=seed,
         n_events_per_direction=n_events_per_word,
@@ -152,9 +158,12 @@ def run_continual_demo(
         synonym_mode=False,
         verbose=False,
     )
+    elapsed = time.time() - t0
     if verbose:
-        elapsed = time.time() - t0
         print(f"  done ({elapsed:.0f}s)")
+    emit_progress("complete", current=1, total=4, phase="train_primaries",
+                  unit="phases", label="chat_continual_demo",
+                  wall_clock_s=int(elapsed))
 
     transcript.append({"type": "system",
                         "text": f"Phase A training complete "
@@ -169,6 +178,8 @@ def run_continual_demo(
 
     if verbose:
         print(f"\n[TEST] Primary binding (post Phase A):")
+    emit_progress("phase", current=1, total=4, phase="test_primaries",
+                  unit="phases", label="chat_continual_demo")
     primary_results_post_a = []
     for word in PRIMARY_WORDS:
         for _ in range(n_test_per_word):

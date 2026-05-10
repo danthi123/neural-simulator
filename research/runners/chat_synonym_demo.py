@@ -192,10 +192,22 @@ def run_demo(
     verbose: bool = True,
 ):
     """Full Tier 2.1 synonym demo: train, then 8-word conversation."""
+    # 2026-05-09: emit_progress for live frontend visibility
+    from sim.progress import emit_progress
+    import time as _time
+
+    emit_progress("phase", current=0, total=2, phase="training",
+                  unit="phases", label="chat_synonym_demo")
+    _t0 = _time.time()
     bridge = train_chat_bridge(
         seed=seed, n_events_per_word=n_train_events, verbose=verbose,
     )
+    emit_progress("complete", current=1, total=2, phase="training",
+                  unit="phases", label="chat_synonym_demo",
+                  wall_clock_s=int(_time.time() - _t0))
 
+    emit_progress("phase", current=1, total=2, phase="W2A_synonym_eval",
+                  unit="phases", label="chat_synonym_demo")
     transcript = []
     transcript.append({"type": "header",
                         "text": "Chat synonym demo on Tier 2.1 BREAKTHROUGH"})
@@ -210,6 +222,8 @@ def run_demo(
     primary_total = 0
     synonym_correct = 0
     synonym_total = 0
+    _turn_idx = 0
+    _n_total_turns = 2 * len(ALL_WORDS)  # 16 turns total
 
     for round_n in range(1, 3):
         transcript.append({"type": "section",
@@ -220,6 +234,10 @@ def run_demo(
             total_per_action[a] += 1
             if result["correct"]:
                 correct_per_action[a] += 1
+            _turn_idx += 1
+            emit_progress("eval", current=_turn_idx, total=_n_total_turns,
+                          phase="W2A_synonym_eval", unit="turns",
+                          label="chat_synonym_demo")
 
             is_primary = (word == ACTION_TO_PRIMARY[a])
             if is_primary:

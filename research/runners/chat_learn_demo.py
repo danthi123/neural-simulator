@@ -141,32 +141,52 @@ def run_chat_learn_demo(seed: int = 42, n_train_events: int = 200,
     if new_words is None:
         new_words = list(DEFAULT_NEW_WORDS)
 
+    # 2026-05-09: emit_progress for live frontend visibility
+    from sim.progress import emit_progress
+
     print(f"\n=== chat_learn_demo (seed={seed}) ===", flush=True)
     print(f"  primaries:  {DIRECTIONS}", flush=True)
     print(f"  new words:  {new_words}", flush=True)
     print(f"  train_events={n_train_events}, "
           f"learn_events={learn_n_events}\n", flush=True)
 
+    # 4 phases: training, baseline_primaries, learn_new_words, retest_primaries
+    emit_progress("phase", current=0, total=4, phase="training",
+                  unit="phases", label="chat_learn_demo")
     t0 = time.time()
     bridge = train_chat_bridge(seed=seed, n_events_per_word=n_train_events,
                                 verbose=verbose)
     train_sec = time.time() - t0
+    emit_progress("complete", current=1, total=4, phase="training",
+                  unit="phases", label="chat_learn_demo",
+                  wall_clock_s=int(train_sec))
 
     # ─── Phase A: baseline primary accuracy ───
     print(f"\n[PHASE A] baseline primary accuracy", flush=True)
+    emit_progress("phase", current=1, total=4, phase="baseline_primaries",
+                  unit="phases", label="chat_learn_demo")
     phase_a = evaluate_primaries(bridge, n_rounds=2, verbose=verbose)
     print(f"  baseline primary acc: {phase_a['accuracy']:.1%} "
           f"({phase_a['correct']}/{phase_a['total']})", flush=True)
+    emit_progress("complete", current=2, total=4, phase="baseline_primaries",
+                  unit="phases", label="chat_learn_demo",
+                  score=float(phase_a['accuracy']))
 
     # ─── Phase B: learn N new words ───
     print(f"\n[PHASE B] learning {len(new_words)} new words "
           f"({learn_n_events} events each)", flush=True)
+    emit_progress("phase", current=2, total=4, phase="learn_new_words",
+                  unit="phases", label="chat_learn_demo")
     learn_log = []
-    for new_word, target in new_words:
+    for i, (new_word, target) in enumerate(new_words):
         learn_word_pairing(bridge, new_word, target,
                             n_events=learn_n_events, verbose=verbose)
         learn_log.append({"word": new_word, "target": target,
                           "n_events": learn_n_events})
+        # Per-word eval-style progress so the panel shows incremental learning
+        emit_progress("eval", current=i + 1, total=len(new_words),
+                      phase="learn_new_words", unit="words",
+                      label="chat_learn_demo")
 
     # ─── Phase C: test new-word bindings ───
     print(f"\n[PHASE C] new-word binding test", flush=True)
@@ -181,6 +201,8 @@ def run_chat_learn_demo(seed: int = 42, n_train_events: int = 200,
 
     # ─── Phase D: re-test primaries (catastrophic-forgetting check) ───
     print(f"\n[PHASE D] re-test primaries (forgetting check)", flush=True)
+    emit_progress("phase", current=3, total=4, phase="retest_primaries",
+                  unit="phases", label="chat_learn_demo")
     phase_d = evaluate_primaries(bridge, n_rounds=2, verbose=verbose)
     print(f"  post-learn primary acc: {phase_d['accuracy']:.1%} "
           f"({phase_d['correct']}/{phase_d['total']})", flush=True)
@@ -188,6 +210,9 @@ def run_chat_learn_demo(seed: int = 42, n_train_events: int = 200,
                  if phase_a["accuracy"] > 0 else 0.0)
     print(f"  retention ratio: {retention:.2f} "
           f"(post / baseline)", flush=True)
+    emit_progress("complete", current=4, total=4, phase="retest_primaries",
+                  unit="phases", label="chat_learn_demo",
+                  score=float(retention))
 
     # GO criterion (mirrors Phase 1.4 BRANCH A threshold)
     go = (binding_rate >= 0.5) and (retention >= 0.8)
