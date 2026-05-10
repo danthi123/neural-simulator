@@ -803,7 +803,8 @@ def run_repl(mode: str, seed: int, n_train_events: int,
              save_bridge: str = None,
              scripted_words: list = None,
              allow_learn: bool = False,
-             learn_n_events: int = 50):
+             learn_n_events: int = 50,
+             speak_temperature: float = 0.0):
     """Train + interactive REPL loop.
 
     If load_bridge is given, skip training and load from checkpoint.
@@ -996,6 +997,7 @@ def run_repl(mode: str, seed: int, n_train_events: int,
                     speak_result = generative_inference(
                         bridge, target_action,
                         vocab_words=sorted(vocab),
+                        temperature=speak_temperature,
                     )
                     rankings = speak_result["rankings"]
                     pred_word = speak_result["predicted_word"]
@@ -1186,6 +1188,13 @@ def main():
                          "command (default 50). Higher values give a "
                          "stronger binding but risk perturbing existing "
                          "vocab on the same motor pool.")
+    ap.add_argument("--speak-temperature", type=float, default=0.0,
+                    help="Softmax sampling temperature for the :speak "
+                         "command. 0 (default) = strict argmax (always "
+                         "produces the primary word). 0.01-0.02 = primary "
+                         "dominant with occasional synonym lift. 0.05+ = "
+                         "more variety, primary slightly preferred. "
+                         ">0 enables natural-feeling synonym selection.")
     args = ap.parse_args()
 
     if args.train_events is None:
@@ -1217,6 +1226,7 @@ def main():
         scripted_words=scripted_words,
         allow_learn=args.learn,
         learn_n_events=args.learn_events,
+        speak_temperature=args.speak_temperature,
     )
     return 0
 
