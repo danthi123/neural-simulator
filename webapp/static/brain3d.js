@@ -1584,6 +1584,48 @@ function renderLiveStep(step) {
     // animation; sweep is just a "still alive" backdrop.
     activateLanguagePathway(true);
     bumpActivity("snc", 0.15);
+  } else if (p.kind === "phase" || p.kind === "complete") {
+    // 2026-05-09: chat_*_demo runners emit "phase" + "complete" events
+    // at meaningful boundaries (training, W2A_eval, A2W_speak,
+    // baseline_primaries, learn_new_words, retest_primaries, etc).
+    // Different phases get different visual signatures so the user
+    // can read "what's happening now" from the viz alone.
+    const phase = (p.phase || "").toLowerCase();
+    if (phase.includes("training") || phase.includes("train_")) {
+      // Training: language pathway active + cycling motor pools
+      // (this is what embodied-Hebbian co-firing looks like)
+      activateLanguagePathway(true);
+      const t = Math.floor(Date.now() / 300);
+      activateAction(t % 4, 0.7);
+      bumpActivity("snc", 0.4);  // DA reward signal during training
+    } else if (phase.includes("speak") || phase.includes("a2w")) {
+      // A2W speak: motor → language_output (inverse of W2A)
+      // Drive a motor pool, light up language_output via cosine
+      const t = Math.floor(Date.now() / 250);
+      activateAction(t % 4, 0.5);
+      activateLanguagePathway(false);  // output side
+      bumpActivity("language_output", 0.7);
+    } else if (phase.includes("learn_") || phase.includes("learn-")) {
+      // :learn online vocab binding — embodied-Hebbian on a new word
+      activateLanguagePathway(true);
+      const actIdx = (p.current || 0) % 4;
+      activateAction(actIdx, 0.8);  // strong drive (motor teacher)
+      bumpActivity("snc", 0.5);     // strong reward during binding
+    } else if (phase.includes("test") || phase.includes("eval") ||
+               phase.includes("regression") || phase.includes("primaries")) {
+      // Read-only test: cycle through actions, no DA pulse
+      activateLanguagePathway(true);
+      const actIdx = (p.current || 0) % 4;
+      activateAction(actIdx, 0.5);
+    } else {
+      // Unknown phase — generic active language pathway
+      activateLanguagePathway(true);
+      bumpActivity("snc", 0.2);
+    }
+    // On "complete" with score: brief DA pulse proportional to score
+    if (p.kind === "complete" && p.score != null) {
+      bumpActivity("snc", Math.min(1.0, 0.3 + p.score * 0.7));
+    }
   } else if (p.kind === "embodied_episode") {
     activateVisualPathway(true);
     activateLanguagePathway(true);
