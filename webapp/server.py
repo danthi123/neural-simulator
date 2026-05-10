@@ -814,6 +814,55 @@ PRESETS: dict[str, list[str]] = {
         "--n-motor-fs-per-action", "720",
         "--n-test-per-word", "3",
     ],
+    # 2026-05-10: axis-decoupling experiments — per user observation that
+    # the find-the-ceiling test scaled motor only, leaving encoding
+    # (n_lang_input=4096) potentially the actual bottleneck. Test the
+    # other two axes:
+    #
+    # (A) Encoding-scale at moderate motor: bigger lang_input, smaller
+    #     motor, 64-word. Tests if encoding density alone fixes binding.
+    "consolidation_synonym_64word_encoding_scale_smoke": [
+        "--smoke",
+        "--vocab-size", "64",
+        "--n-lang-input", "8192",
+        "--n-motor-per-action", "2000",
+        "--n-motor-fs-per-action", "240",
+        "--n-test-per-word", "5",
+    ],
+    # (B) Lang-balanced at 64-word: aspect ratio matched to encoding load
+    #     (n_lang/n_motor ≈ 2). Predicted PASS at lower wall-clock than
+    #     n_motor=6000 variant.
+    "consolidation_synonym_64word_lang_balanced_smoke": [
+        "--smoke",
+        "--vocab-size", "64",
+        "--n-lang-input", "8192",
+        "--n-motor-per-action", "4000",
+        "--n-motor-fs-per-action", "480",
+        "--n-test-per-word", "5",
+    ],
+    # (C) Big-encoding at 256-word: scale encoding 4× (16384) to handle
+    #     extreme vocab. Tests true encoding ceiling. Predicted ~24 GB
+    #     VRAM (right at 3090 limit).
+    "consolidation_synonym_256word_big_encoding_smoke": [
+        "--smoke",
+        "--vocab-size", "256",
+        "--n-lang-input", "16384",
+        "--n-motor-per-action", "2000",
+        "--n-motor-fs-per-action", "240",
+        "--n-test-per-word", "3",
+    ],
+    # (D) Big-motor at 16-word: motor capacity excess test. Does
+    #     n_motor=12000 with only 16 words yield smoother / faster
+    #     convergence than n_motor=2000? Tests whether the 333-floor
+    #     rule has diminishing returns above some threshold.
+    "consolidation_synonym_16word_big_motor_smoke": [
+        "--smoke",
+        "--vocab-size", "16",
+        "--n-lang-input", "4096",
+        "--n-motor-per-action", "12000",
+        "--n-motor-fs-per-action", "1440",
+        "--n-test-per-word", "10",
+    ],
     # 12-word vocab extension (adds n/e/s/w abbreviations as 3rd synonym
     # per action). Tests whether CLS theory still holds at richer vocabulary
     # scale than the 8-word validated result. Same architecture as 8-word;
@@ -892,6 +941,10 @@ PRESET_RUNNERS: dict[str, str] = {
     "consolidation_synonym_96word_scaled_smoke":   "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_128word_scaled_smoke":  "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_256word_scaled_smoke":  "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_64word_encoding_scale_smoke": "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_64word_lang_balanced_smoke":  "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_256word_big_encoding_smoke":  "research.runners.consolidation_synonym_trainer",
+    "consolidation_synonym_16word_big_motor_smoke":      "research.runners.consolidation_synonym_trainer",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
@@ -936,6 +989,10 @@ PRESET_OUTPUT_FLAG: dict[str, str] = {
     "consolidation_synonym_96word_scaled_smoke":   "--out-stats",
     "consolidation_synonym_128word_scaled_smoke":  "--out-stats",
     "consolidation_synonym_256word_scaled_smoke":  "--out-stats",
+    "consolidation_synonym_64word_encoding_scale_smoke": "--out-stats",
+    "consolidation_synonym_64word_lang_balanced_smoke":  "--out-stats",
+    "consolidation_synonym_256word_big_encoding_smoke":  "--out-stats",
+    "consolidation_synonym_16word_big_motor_smoke":      "--out-stats",
     # phase_2_* presets removed -- see PRESETS dict comment above.
 }
 
