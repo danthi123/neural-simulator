@@ -53,6 +53,7 @@ def train_chat_bridge(
     n_motor_per_action: int = 1000,
     n_motor_fs_per_action: int = 120,
     verbose: bool = True,
+    enable_stp: bool = True,
 ):
     """Train Bridge with Tier 2.1 v4 scale-up config for synonym chat demo."""
     from research.runners.bio_three_factor import run_three_factor
@@ -79,6 +80,7 @@ def train_chat_bridge(
         synonym_mode=True,  # Tier 2.1 — both primary + synonym presented
         synonym_vocab_size=8,
         verbose=False,
+        enable_stp=enable_stp,
     )
 
     if verbose:

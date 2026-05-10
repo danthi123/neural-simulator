@@ -54,6 +54,7 @@ def benchmark(
     n_steps: int,
     fp16_synapse_state: bool = False,
     freeze_plasticity_during_reset: bool = False,
+    disable_stp: bool = False,
     vocab_size: int = 8,
     n_lang_input: int = 4096,
     n_motor_per_action: int = 1000,
@@ -98,6 +99,14 @@ def benchmark(
         verbose=False,
     )
     t_init = time.time() - t0
+    # Optionally disable STP at runtime — perf_benchmark discovery
+    # (2026-05-10) showed STP is 57% of inner-loop step time. Disabling
+    # it should give ~2.3× speedup if safe.
+    if disable_stp:
+        bridge.core_config.enable_short_term_plasticity = False
+        print(f"[init] STP DISABLED at runtime "
+              f"(enable_short_term_plasticity = False)", flush=True)
+
     print(f"[init] Bridge ready ({t_init:.1f}s)", flush=True)
 
     # Enable bridge's built-in step profiler. It times 7 sections per step
@@ -196,6 +205,11 @@ def main():
                     help="Enable fp16_synapse_state (FP16 eligibility traces)")
     ap.add_argument("--freeze-plasticity-during-reset", action="store_true",
                     help="Enable plasticity freeze during reset_steps")
+    ap.add_argument("--disable-stp", action="store_true",
+                    help="Disable short-term plasticity (set "
+                         "enable_short_term_plasticity=False after bridge "
+                         "build). Predicted ~2.3x speedup per 2026-05-10 "
+                         "perf benchmark discovery (STP was 57% of step).")
     ap.add_argument("--vocab-size", type=int, default=8,
                     choices=[8, 12, 16, 24, 32, 48, 64, 96, 128, 256])
     ap.add_argument("--n-lang-input", type=int, default=4096)
@@ -212,6 +226,7 @@ def main():
         n_steps=args.steps,
         fp16_synapse_state=args.fp16_synapse_state,
         freeze_plasticity_during_reset=args.freeze_plasticity_during_reset,
+        disable_stp=args.disable_stp,
         vocab_size=args.vocab_size,
         n_lang_input=args.n_lang_input,
         n_motor_per_action=args.n_motor_per_action,

@@ -193,7 +193,8 @@ def run_chat_speak_synonym_demo(seed: int = 42,
                                   n_motor_per_action: int = 1000,
                                   n_motor_fs_per_action: int = 120,
                                   verbose: bool = True,
-                                  temperature: float = 0.0) -> dict:
+                                  temperature: float = 0.0,
+                                  enable_stp: bool = True) -> dict:
     """Tier 2.1 8-word :speak demo: train scale-up bridge, then A->W."""
     # Structured progress events for live webapp + brain3d
     from sim.progress import emit_progress
@@ -215,6 +216,7 @@ def run_chat_speak_synonym_demo(seed: int = 42,
         n_motor_per_action=n_motor_per_action,
         n_motor_fs_per_action=n_motor_fs_per_action,
         verbose=verbose,
+        enable_stp=enable_stp,
     )
     train_sec = time.time() - t0
     emit_progress("complete", current=1, total=3, phase="training",
@@ -323,6 +325,12 @@ def main():
                          "0.05+ = 'lots of variety, primary slightly preferred'. "
                          "Use 0 for reproducible benchmarking; >0 for "
                          "natural-feeling user-facing chat.")
+    ap.add_argument("--no-stp", action="store_true",
+                    help="Disable short-term plasticity. Per 2026-05-10 "
+                         "perf benchmark, STP is 57%% of inner-loop step "
+                         "time; disabling gives ~2.86x speedup. Default "
+                         "OFF (i.e. STP enabled) until multi-seed accuracy "
+                         "validated. Use this flag for the validation arc.")
     args = ap.parse_args()
 
     result = run_chat_speak_synonym_demo(
@@ -333,6 +341,7 @@ def main():
         n_motor_fs_per_action=args.n_motor_fs_per_action,
         verbose=not args.quiet,
         temperature=args.temperature,
+        enable_stp=not args.no_stp,
     )
 
     if args.out_stats:

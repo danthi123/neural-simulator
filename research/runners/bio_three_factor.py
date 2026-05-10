@@ -147,6 +147,13 @@ def run_three_factor(
     n_motor_fs_per_action: int = 3,
     push_to_gpu_every: int = 64,
     fast_spike_reset: bool = True,
+    enable_stp: bool = True,
+                                          # 2026-05-10: STP is 57% of
+                                          # inner-loop step time. Default
+                                          # True preserves prior behavior;
+                                          # set False for ~2.86x speedup,
+                                          # pending multi-seed accuracy
+                                          # validation.
     freeze_plasticity_during_reset: bool = False,
                                           # 2026-05-10 perf optimization #3:
                                           # zero plasticity gain during reset_steps.
@@ -316,6 +323,12 @@ def run_three_factor(
     cfg.enable_structural_plasticity = False
     cfg.enable_per_type_stp = False
     cfg.enable_hebbian_learning = False
+    # 2026-05-10: STP discovered to be 57% of inner-loop step time at this
+    # arch (perf_benchmark commit 0b2e2f6). Disabling gives 2.86x speedup.
+    # `enable_short_term_plasticity` defaults to True; honor `enable_stp`
+    # parameter (defaults True; preserves prior behavior) for opt-in
+    # disable during STP-validation arc.
+    cfg.enable_short_term_plasticity = enable_stp
     cfg.stdp_w_max = max(weight_max + 1.0, 5.0)
     cfg.fast_spike_reset = fast_spike_reset
     cfg.fp16_synapse_state = fp16_synapse_state
