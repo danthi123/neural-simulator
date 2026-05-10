@@ -662,10 +662,15 @@ def evaluate_word_to_action(
             correct += 1
         total += 1
 
-        # Tier-1 universal progress event (every 25 trials)
+        # Tier-1 universal progress event (every 25 trials).
+        # 2026-05-10 fix: was hardcoded `4 * n_trials_per_word` (correct
+        # only for 4-word vocab); now uses len(schedule) which correctly
+        # reflects vocab × n_trials_per_word for synonym modes (8, 16,
+        # 32, 64, ... word vocabs). Frontend was showing 250% before
+        # this fix because at vocab=64 trial 100 vs total 40 = 250%.
         if verbose and total % 25 == 0:
             from sim.progress import emit_progress
-            n_total_trials = 4 * n_trials_per_word
+            n_total_trials = len(schedule)
             emit_progress(
                 "eval", total, n_total_trials,
                 phase="W->A", unit="trials",
