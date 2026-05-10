@@ -103,20 +103,31 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
             entry["learn_results"] = data.get("learn_results", [])
             entry["go"] = bool(data.get("go", False))
             entry["verdict"] = data.get("verdict", "")
-        elif data.get("demo_kind") == "chat_speak_demo":
-            # Track 3 chat_speak_demo (2026-05-09): exercises the
-            # :speak A2W generative decoder. We surface BOTH the W2A
-            # regression accuracy ("accuracy") AND the A2W speak
-            # accuracy ("speak_accuracy") so multi-seed aggregation
-            # answers "does motor->word generation reproduce across
-            # seeds?".
+        elif data.get("demo_kind") in ("chat_speak_demo",
+                                          "chat_speak_synonym_demo"):
+            # Track 3 chat_speak_demo (Tier 1 4-word, 2026-05-09) and
+            # chat_speak_synonym_demo (Tier 2.1 8-word, 2026-05-09):
+            # both exercise the :speak A2W generative decoder. We
+            # surface W2A regression + A2W speak accuracy + (for the
+            # synonym variant) primary-vs-synonym A2W split. Multi-seed
+            # aggregation answers "does motor->word generation
+            # reproduce across seeds?" + (for synonym) "does the
+            # network favor primary or synonym words?".
             entry["demo_type"] = "chat_speak"
+            entry["demo_kind"] = data.get("demo_kind")
             entry["accuracy"] = data.get("accuracy", 0.0)  # W2A regression
             entry["speak_accuracy"] = data.get("speak_accuracy", 0.0)
             entry["speak_correct"] = data.get("speak_correct", 0)
             entry["speak_total"] = data.get("speak_total", 0)
             entry["per_word_accuracy"] = data.get("per_word_accuracy", {})
             entry["speak_results"] = data.get("speak_results", [])
+            # Tier 2.1 8-word :speak only — primary vs synonym split.
+            if "speak_primary_accuracy" in data:
+                entry["speak_primary_accuracy"] = data["speak_primary_accuracy"]
+                entry["speak_synonym_accuracy"] = data.get(
+                    "speak_synonym_accuracy", 0.0
+                )
+                entry["vocab_size"] = data.get("vocab_size", 8)
         elif ("retention_ratio" in data
               or (isinstance(data.get("retention"), (int, float))
                   and data.get("retention") > 0)
@@ -255,9 +266,14 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
         for s in cs_speak:
             for r in s.get("speak_results", []):
                 tgt = r.get("target_action")
+                # chat_speak_demo uses "correct"; chat_speak_synonym_demo
+                # uses "any_correct" (primary OR synonym in expected_words).
+                # Treat the synonym schema's any_correct as the per-
+                # direction headline metric.
+                ok = r.get("any_correct", r.get("correct", False))
                 if tgt in per_dir_a2w:
-                    per_dir_a2w[tgt].append(1.0 if r.get("correct") else 0.0)
-        summary["chat_speak_demo"] = {
+                    per_dir_a2w[tgt].append(1.0 if ok else 0.0)
+        chat_speak_summary = {
             "n_seeds": len(cs_speak),
             "w2a_accuracy_mean": _safe_mean(w2a),
             "w2a_accuracy_std": _safe_std(w2a),
@@ -271,6 +287,22 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
                 d: _safe_mean(vs) for d, vs in per_dir_a2w.items() if vs
             },
         }
+        # Tier 2.1 8-word :speak adds primary/synonym split (whenever
+        # any seed has speak_primary_accuracy field — only synonym
+        # variant emits it).
+        synonym_seeds = [s for s in cs_speak
+                          if "speak_primary_accuracy" in s]
+        if synonym_seeds:
+            pri = [s["speak_primary_accuracy"] for s in synonym_seeds]
+            syn = [s["speak_synonym_accuracy"] for s in synonym_seeds]
+            chat_speak_summary["speak_primary_mean"] = _safe_mean(pri)
+            chat_speak_summary["speak_primary_std"] = _safe_std(pri)
+            chat_speak_summary["speak_synonym_mean"] = _safe_mean(syn)
+            chat_speak_summary["speak_synonym_std"] = _safe_std(syn)
+            chat_speak_summary["vocab_size"] = synonym_seeds[0].get(
+                "vocab_size", 8
+            )
+        summary["chat_speak_demo"] = chat_speak_summary
 
     # chat_learn_demo aggregation (Track 3 online vocab learning, 2026-05-09).
     # Reports binding rate + primary retention separately so multi-seed runs
@@ -357,6 +389,15 @@ def write_findings_md(summary: dict[str, Any], out_path: str, label: str):
             md.append(", ".join(f"{d}={v:.0%}"
                                 for d, v in cs["per_direction_a2w_mean"].items()))
             md.append("\n")
+        # Tier 2.1 8-word :speak: surface primary vs synonym split.
+        if "speak_primary_mean" in cs:
+            md.append(f"- Vocab size: {cs.get('vocab_size', 8)} words\n")
+            md.append(f"- A2W primary (top-1 = primary word): "
+                      f"**{cs['speak_primary_mean']:.1%}** ± "
+                      f"{cs['speak_primary_std']:.1%}\n")
+            md.append(f"- A2W synonym (top-1 = secondary synonym): "
+                      f"**{cs['speak_synonym_mean']:.1%}** ± "
+                      f"{cs['speak_synonym_std']:.1%}\n")
         md.append("\n")
 
     if "consolidation_synonym" in summary:
