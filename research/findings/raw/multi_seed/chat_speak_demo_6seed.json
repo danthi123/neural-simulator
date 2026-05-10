@@ -1,0 +1,739 @@
+{
+  "n_seeds": 6,
+  "demo_types": [
+    "chat_speak"
+  ],
+  "seeds": [
+    100,
+    101,
+    102,
+    42,
+    43,
+    44
+  ],
+  "accuracy_mean": 0.3333333333333333,
+  "accuracy_std": 0.15138251770487457,
+  "accuracy_min": 0.125,
+  "accuracy_max": 0.5,
+  "per_seed": [
+    {
+      "path": "research/findings/raw/g11_bg/g11_seed100_chat_speak_demo_b67bcc.json",
+      "seed": 100,
+      "demo_type": "chat_speak",
+      "accuracy": 0.25,
+      "speak_accuracy": 0.75,
+      "speak_correct": 3,
+      "speak_total": 4,
+      "per_word_accuracy": {
+        "north": 0.5,
+        "east": 0.0,
+        "south": 0.5,
+        "west": 0.0
+      },
+      "speak_results": [
+        {
+          "target_action": "N",
+          "expected_word": "north",
+          "predicted_word": "east",
+          "correct": false,
+          "confidence": 2.1,
+          "rankings": [
+            [
+              "east",
+              0.028676325435198744
+            ],
+            [
+              "west",
+              0.013655393064380354
+            ],
+            [
+              "south",
+              0.004096617919314106
+            ],
+            [
+              "north",
+              -0.0013655393064380354
+            ]
+          ]
+        },
+        {
+          "target_action": "E",
+          "expected_word": "east",
+          "predicted_word": "east",
+          "correct": true,
+          "confidence": 1.12,
+          "rankings": [
+            [
+              "east",
+              0.07308438258018693
+            ],
+            [
+              "north",
+              0.06525391301802404
+            ],
+            [
+              "south",
+              0.06003359997658212
+            ],
+            [
+              "west",
+              0.06003359997658212
+            ]
+          ]
+        },
+        {
+          "target_action": "S",
+          "expected_word": "south",
+          "predicted_word": "south",
+          "correct": true,
+          "confidence": 1.1250000000000002,
+          "rankings": [
+            [
+              "south",
+              0.05043852551677846
+            ],
+            [
+              "west",
+              0.04483424490380307
+            ],
+            [
+              "north",
+              0.016812841838926153
+            ],
+            [
+              "east",
+              0.0
+            ]
+          ]
+        },
+        {
+          "target_action": "W",
+          "expected_word": "west",
+          "predicted_word": "west",
+          "correct": true,
+          "confidence": 6.500000000000001,
+          "rankings": [
+            [
+              "west",
+              0.03391427865443047
+            ],
+            [
+              "east",
+              0.0052175813314508405
+            ],
+            [
+              "north",
+              0.00391318599858813
+            ],
+            [
+              "south",
+              -0.019565929992940653
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "path": "research/findings/raw/g11_bg/g11_seed101_chat_speak_demo_8e8b2a.json",
+      "seed": 101,
+      "demo_type": "chat_speak",
+      "accuracy": 0.5,
+      "speak_accuracy": 0.5,
+      "speak_correct": 2,
+      "speak_total": 4,
+      "per_word_accuracy": {
+        "north": 0.5,
+        "east": 1.0,
+        "south": 0.0,
+        "west": 0.5
+      },
+      "speak_results": [
+        {
+          "target_action": "N",
+          "expected_word": "north",
+          "predicted_word": "north",
+          "correct": true,
+          "confidence": 1.28,
+          "rankings": [
+            [
+              "north",
+              0.043301797966500855
+            ],
+            [
+              "south",
+              0.033829529661328794
+            ],
+            [
+              "west",
+              0.028416804915516188
+            ],
+            [
+              "east",
+              0.017591355423890974
+            ]
+          ]
+        },
+        {
+          "target_action": "E",
+          "expected_word": "east",
+          "predicted_word": "west",
+          "correct": false,
+          "confidence": 1.2000000000000002,
+          "rankings": [
+            [
+              "west",
+              0.007881545990519571
+            ],
+            [
+              "south",
+              0.006567954992099642
+            ],
+            [
+              "north",
+              -0.006567954992099642
+            ],
+            [
+              "east",
+              -0.006567954992099642
+            ]
+          ]
+        },
+        {
+          "target_action": "S",
+          "expected_word": "south",
+          "predicted_word": "south",
+          "correct": true,
+          "confidence": 1.875,
+          "rankings": [
+            [
+              "south",
+              0.03802711949989759
+            ],
+            [
+              "west",
+              0.02028113039994538
+            ],
+            [
+              "east",
+              0.003802711949989759
+            ],
+            [
+              "north",
+              0.0
+            ]
+          ]
+        },
+        {
+          "target_action": "W",
+          "expected_word": "west",
+          "predicted_word": "north",
+          "correct": false,
+          "confidence": 2.4117647058823533,
+          "rankings": [
+            [
+              "north",
+              0.05298356192799731
+            ],
+            [
+              "west",
+              0.021968793970145225
+            ],
+            [
+              "east",
+              0.020676511971901387
+            ],
+            [
+              "south",
+              0.0064614099912191835
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "path": "research/findings/raw/g11_bg/g11_seed102_chat_speak_demo_bdacc1.json",
+      "seed": 102,
+      "demo_type": "chat_speak",
+      "accuracy": 0.25,
+      "speak_accuracy": 0.25,
+      "speak_correct": 1,
+      "speak_total": 4,
+      "per_word_accuracy": {
+        "north": 0.0,
+        "east": 0.0,
+        "south": 1.0,
+        "west": 0.0
+      },
+      "speak_results": [
+        {
+          "target_action": "N",
+          "expected_word": "north",
+          "predicted_word": "west",
+          "correct": false,
+          "confidence": 1.2121212121212122,
+          "rankings": [
+            [
+              "west",
+              0.0526461630399423
+            ],
+            [
+              "east",
+              0.0434330845079524
+            ],
+            [
+              "north",
+              0.034220005975962496
+            ],
+            [
+              "south",
+              0.023690773367974035
+            ]
+          ]
+        },
+        {
+          "target_action": "E",
+          "expected_word": "east",
+          "predicted_word": "south",
+          "correct": false,
+          "confidence": null,
+          "rankings": [
+            [
+              "south",
+              0.019226898950596875
+            ],
+            [
+              "east",
+              -0.006408966316865625
+            ],
+            [
+              "north",
+              -0.008972552843611875
+            ],
+            [
+              "west",
+              -0.026917658530835626
+            ]
+          ]
+        },
+        {
+          "target_action": "S",
+          "expected_word": "south",
+          "predicted_word": "north",
+          "correct": false,
+          "confidence": null,
+          "rankings": [
+            [
+              "north",
+              0.009995120840077448
+            ],
+            [
+              "south",
+              0.0
+            ],
+            [
+              "east",
+              -0.023738411995183936
+            ],
+            [
+              "west",
+              -0.03998048336030979
+            ]
+          ]
+        },
+        {
+          "target_action": "W",
+          "expected_word": "west",
+          "predicted_word": "west",
+          "correct": true,
+          "confidence": 1.482758620689655,
+          "rankings": [
+            [
+              "west",
+              0.05332427262418665
+            ],
+            [
+              "east",
+              0.03596288153724216
+            ],
+            [
+              "south",
+              0.014881192360238136
+            ],
+            [
+              "north",
+              0.01240099363353178
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "path": "research/findings/raw/g11_bg/g11_seed42_chat_speak_demo_a86f08.json",
+      "seed": 42,
+      "demo_type": "chat_speak",
+      "accuracy": 0.125,
+      "speak_accuracy": 0.75,
+      "speak_correct": 3,
+      "speak_total": 4,
+      "per_word_accuracy": {
+        "north": 0.0,
+        "east": 0.5,
+        "south": 0.0,
+        "west": 0.0
+      },
+      "speak_results": [
+        {
+          "target_action": "N",
+          "expected_word": "north",
+          "predicted_word": "north",
+          "correct": true,
+          "confidence": 1.7692307692307694,
+          "rankings": [
+            [
+              "north",
+              0.03087498606094321
+            ],
+            [
+              "west",
+              0.01745107907792442
+            ],
+            [
+              "east",
+              0.0
+            ],
+            [
+              "south",
+              -0.004027172094905636
+            ]
+          ]
+        },
+        {
+          "target_action": "E",
+          "expected_word": "east",
+          "predicted_word": "east",
+          "correct": true,
+          "confidence": 4.375,
+          "rankings": [
+            [
+              "east",
+              0.04652194938465255
+            ],
+            [
+              "north",
+              0.010633588430777725
+            ],
+            [
+              "west",
+              0.006645992769236078
+            ],
+            [
+              "south",
+              -0.010633588430777725
+            ]
+          ]
+        },
+        {
+          "target_action": "S",
+          "expected_word": "south",
+          "predicted_word": "south",
+          "correct": true,
+          "confidence": 2.666666666666667,
+          "rankings": [
+            [
+              "south",
+              0.06173435678081833
+            ],
+            [
+              "east",
+              0.023150383792806872
+            ],
+            [
+              "west",
+              0.006430662164668576
+            ],
+            [
+              "north",
+              -0.00514452973173486
+            ]
+          ]
+        },
+        {
+          "target_action": "W",
+          "expected_word": "west",
+          "predicted_word": "south",
+          "correct": false,
+          "confidence": 2.4375,
+          "rankings": [
+            [
+              "south",
+              0.049321666826006375
+            ],
+            [
+              "west",
+              0.02023452997990005
+            ],
+            [
+              "north",
+              -0.010117264989950026
+            ],
+            [
+              "east",
+              -0.011381923113693779
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "path": "research/findings/raw/g11_bg/g11_seed43_chat_speak_demo_c1e440.json",
+      "seed": 43,
+      "demo_type": "chat_speak",
+      "accuracy": 0.5,
+      "speak_accuracy": 0.75,
+      "speak_correct": 3,
+      "speak_total": 4,
+      "per_word_accuracy": {
+        "north": 0.5,
+        "east": 0.5,
+        "south": 0.5,
+        "west": 0.5
+      },
+      "speak_results": [
+        {
+          "target_action": "N",
+          "expected_word": "north",
+          "predicted_word": "north",
+          "correct": true,
+          "confidence": 3.8095238095238098,
+          "rankings": [
+            [
+              "north",
+              0.10597188712462831
+            ],
+            [
+              "south",
+              0.02781762037021493
+            ],
+            [
+              "east",
+              0.019869728835867805
+            ],
+            [
+              "west",
+              0.013246485890578539
+            ]
+          ]
+        },
+        {
+          "target_action": "E",
+          "expected_word": "east",
+          "predicted_word": "east",
+          "correct": true,
+          "confidence": 1.3793103448275863,
+          "rankings": [
+            [
+              "east",
+              0.05026597405452472
+            ],
+            [
+              "south",
+              0.03644283118953042
+            ],
+            [
+              "north",
+              0.02513298702726236
+            ],
+            [
+              "west",
+              0.005026597405452473
+            ]
+          ]
+        },
+        {
+          "target_action": "S",
+          "expected_word": "south",
+          "predicted_word": "south",
+          "correct": true,
+          "confidence": 3.0,
+          "rankings": [
+            [
+              "south",
+              0.037115326481685
+            ],
+            [
+              "east",
+              0.012371775493895001
+            ],
+            [
+              "west",
+              0.0012371775493895002
+            ],
+            [
+              "north",
+              -0.014846130592674003
+            ]
+          ]
+        },
+        {
+          "target_action": "W",
+          "expected_word": "west",
+          "predicted_word": "south",
+          "correct": false,
+          "confidence": 1.1,
+          "rankings": [
+            [
+              "south",
+              0.027277886665598196
+            ],
+            [
+              "east",
+              0.02479807878690745
+            ],
+            [
+              "west",
+              0.02479807878690745
+            ],
+            [
+              "north",
+              0.019838463029525962
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "path": "research/findings/raw/g11_bg/g11_seed44_chat_speak_demo_c7271c.json",
+      "seed": 44,
+      "demo_type": "chat_speak",
+      "accuracy": 0.375,
+      "speak_accuracy": 0.5,
+      "speak_correct": 2,
+      "speak_total": 4,
+      "per_word_accuracy": {
+        "north": 0.5,
+        "east": 0.0,
+        "south": 0.5,
+        "west": 0.5
+      },
+      "speak_results": [
+        {
+          "target_action": "N",
+          "expected_word": "north",
+          "predicted_word": "north",
+          "correct": true,
+          "confidence": 2.0,
+          "rankings": [
+            [
+              "north",
+              0.023865145370238473
+            ],
+            [
+              "east",
+              0.011932572685119236
+            ],
+            [
+              "south",
+              0.003977524228373079
+            ],
+            [
+              "west",
+              0.002651682818915386
+            ]
+          ]
+        },
+        {
+          "target_action": "E",
+          "expected_word": "east",
+          "predicted_word": "east",
+          "correct": true,
+          "confidence": 1.0476190476190477,
+          "rankings": [
+            [
+              "east",
+              0.029079574749788763
+            ],
+            [
+              "west",
+              0.027757775897525636
+            ],
+            [
+              "north",
+              0.007930793113578753
+            ],
+            [
+              "south",
+              0.003965396556789376
+            ]
+          ]
+        },
+        {
+          "target_action": "S",
+          "expected_word": "south",
+          "predicted_word": "west",
+          "correct": false,
+          "confidence": 1.8846153846153846,
+          "rankings": [
+            [
+              "west",
+              0.06417329735094707
+            ],
+            [
+              "south",
+              0.03405113736989028
+            ],
+            [
+              "north",
+              0.018335227814556303
+            ],
+            [
+              "east",
+              0.01440625042572281
+            ]
+          ]
+        },
+        {
+          "target_action": "W",
+          "expected_word": "west",
+          "predicted_word": "south",
+          "correct": false,
+          "confidence": 1.5,
+          "rankings": [
+            [
+              "south",
+              0.015872960786810348
+            ],
+            [
+              "east",
+              0.010581973857873565
+            ],
+            [
+              "west",
+              0.010581973857873565
+            ],
+            [
+              "north",
+              -0.01190472059010776
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "chat_speak_demo": {
+    "n_seeds": 6,
+    "w2a_accuracy_mean": 0.3333333333333333,
+    "w2a_accuracy_std": 0.15138251770487457,
+    "speak_accuracy_mean": 0.5833333333333334,
+    "speak_accuracy_std": 0.2041241452319315,
+    "speak_accuracy_min": 0.25,
+    "speak_accuracy_max": 0.75,
+    "n_speak_above_chance": 5,
+    "n_speak_above_50pct": 5,
+    "per_direction_a2w_mean": {
+      "N": 0.6666666666666666,
+      "E": 0.6666666666666666,
+      "S": 0.6666666666666666,
+      "W": 0.3333333333333333
+    }
+  }
+}

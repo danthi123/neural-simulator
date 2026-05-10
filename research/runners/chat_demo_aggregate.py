@@ -103,6 +103,20 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
             entry["learn_results"] = data.get("learn_results", [])
             entry["go"] = bool(data.get("go", False))
             entry["verdict"] = data.get("verdict", "")
+        elif data.get("demo_kind") == "chat_speak_demo":
+            # Track 3 chat_speak_demo (2026-05-09): exercises the
+            # :speak A2W generative decoder. We surface BOTH the W2A
+            # regression accuracy ("accuracy") AND the A2W speak
+            # accuracy ("speak_accuracy") so multi-seed aggregation
+            # answers "does motor->word generation reproduce across
+            # seeds?".
+            entry["demo_type"] = "chat_speak"
+            entry["accuracy"] = data.get("accuracy", 0.0)  # W2A regression
+            entry["speak_accuracy"] = data.get("speak_accuracy", 0.0)
+            entry["speak_correct"] = data.get("speak_correct", 0)
+            entry["speak_total"] = data.get("speak_total", 0)
+            entry["per_word_accuracy"] = data.get("per_word_accuracy", {})
+            entry["speak_results"] = data.get("speak_results", [])
         elif ("retention_ratio" in data
               or (isinstance(data.get("retention"), (int, float))
                   and data.get("retention") > 0)
@@ -227,6 +241,37 @@ def aggregate(result_paths: list[str]) -> dict[str, Any]:
             "verdicts": [s["verdict"] for s in cs_seeds],
         }
 
+    # chat_speak_demo aggregation (Track 3 layer 4 generative decoder, 2026-05-09).
+    # Reports BOTH W2A regression and A2W generative accuracy. The A2W
+    # accuracy is the headline number for layer 4 :speak validation —
+    # multi-seed reproducibility is what tonight's multi-seed run targets.
+    cs_speak = [s for s in per_seed if s["demo_type"] == "chat_speak"]
+    if cs_speak:
+        w2a = [s["accuracy"] for s in cs_speak]
+        a2w = [s["speak_accuracy"] for s in cs_speak]
+        # Per-direction A2W (rare to have all 4 directions correct on
+        # an 8-trial smoke; see master plan).
+        per_dir_a2w = {"N": [], "E": [], "S": [], "W": []}
+        for s in cs_speak:
+            for r in s.get("speak_results", []):
+                tgt = r.get("target_action")
+                if tgt in per_dir_a2w:
+                    per_dir_a2w[tgt].append(1.0 if r.get("correct") else 0.0)
+        summary["chat_speak_demo"] = {
+            "n_seeds": len(cs_speak),
+            "w2a_accuracy_mean": _safe_mean(w2a),
+            "w2a_accuracy_std": _safe_std(w2a),
+            "speak_accuracy_mean": _safe_mean(a2w),
+            "speak_accuracy_std": _safe_std(a2w),
+            "speak_accuracy_min": min(a2w),
+            "speak_accuracy_max": max(a2w),
+            "n_speak_above_chance": sum(1 for v in a2w if v > 0.25),
+            "n_speak_above_50pct": sum(1 for v in a2w if v >= 0.50),
+            "per_direction_a2w_mean": {
+                d: _safe_mean(vs) for d, vs in per_dir_a2w.items() if vs
+            },
+        }
+
     # chat_learn_demo aggregation (Track 3 online vocab learning, 2026-05-09).
     # Reports binding rate + primary retention separately so multi-seed runs
     # surface "does online learning generalize, AND not break existing
@@ -291,6 +336,29 @@ def write_findings_md(summary: dict[str, Any], out_path: str, label: str):
         md.append(f"- Seeds passing >= 80% retention: "
                   f"{c['n_pass_above_80']}/{c['n_seeds']}\n\n")
 
+    if "chat_speak_demo" in summary:
+        cs = summary["chat_speak_demo"]
+        md.append("## Track 3 :speak A2W generative decoder\n\n")
+        md.append(f"- N seeds: {cs['n_seeds']}\n")
+        md.append(f"- **A2W speak accuracy:** "
+                  f"**{cs['speak_accuracy_mean']:.1%}** ± "
+                  f"{cs['speak_accuracy_std']:.1%}\n")
+        md.append(f"- A2W range: {cs['speak_accuracy_min']:.1%} – "
+                  f"{cs['speak_accuracy_max']:.1%}\n")
+        md.append(f"- Seeds above chance (>25%): "
+                  f"{cs['n_speak_above_chance']}/{cs['n_seeds']}\n")
+        md.append(f"- Seeds at >= 50%: "
+                  f"{cs['n_speak_above_50pct']}/{cs['n_seeds']}\n")
+        md.append(f"- W2A regression: "
+                  f"{cs['w2a_accuracy_mean']:.1%} ± "
+                  f"{cs['w2a_accuracy_std']:.1%}\n")
+        if cs.get("per_direction_a2w_mean"):
+            md.append("- Per-direction A2W mean: ")
+            md.append(", ".join(f"{d}={v:.0%}"
+                                for d, v in cs["per_direction_a2w_mean"].items()))
+            md.append("\n")
+        md.append("\n")
+
     if "consolidation_synonym" in summary:
         cs = summary["consolidation_synonym"]
         md.append("## Phase 1.3 + Tier 2.1 combined consolidation\n\n")
@@ -318,6 +386,10 @@ def write_findings_md(summary: dict[str, Any], out_path: str, label: str):
             notes_parts.append(f"PRI ret={s['retention_primary']:.0%}")
             notes_parts.append(f"SYN ret={s['retention_synonym']:.0%}")
             notes_parts.append(s['verdict'][:8])
+        if s["demo_type"] == "chat_speak":
+            notes_parts.append(f"W2A={s['accuracy']:.0%}")
+            notes_parts.append(f"A2W={s['speak_accuracy']:.0%} "
+                                f"({s['speak_correct']}/{s['speak_total']})")
         notes = ", ".join(notes_parts) if notes_parts else "-"
         md.append(f"| {s['seed']} | {s['accuracy']:.1%} | {notes} |\n")
     md.append("\n")
