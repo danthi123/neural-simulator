@@ -1,0 +1,126 @@
+{
+  "seed": 42,
+  "smoke": true,
+  "medium": false,
+  "strict_silence": false,
+  "vocab_size": 64,
+  "stats": {
+    "n_awake_events": 200,
+    "n_sleep_phases": 12,
+    "n_total_swr_events": 600,
+    "wall_clock_seconds": 9835.350467681885,
+    "vocab_size": 64,
+    "synonym_groups": {
+      "N": [
+        "north",
+        "up",
+        "n",
+        "\u2191",
+        "norte",
+        "nord",
+        "kita",
+        "shimal",
+        "northern",
+        "northbound",
+        "uppward",
+        "upper",
+        "topward",
+        "ascend",
+        "headup",
+        "topside"
+      ],
+      "E": [
+        "east",
+        "right",
+        "e",
+        "\u2192",
+        "este",
+        "ost",
+        "higashi",
+        "sharq",
+        "eastern",
+        "eastbound",
+        "rightward",
+        "rightside",
+        "starboard",
+        "rightturn",
+        "rightstep",
+        "rightmove"
+      ],
+      "S": [
+        "south",
+        "down",
+        "s",
+        "\u2193",
+        "sur",
+        "s\u00fcd",
+        "minami",
+        "janub",
+        "southern",
+        "southbound",
+        "downward",
+        "lower",
+        "descend",
+        "headdown",
+        "downside",
+        "fall"
+      ],
+      "W": [
+        "west",
+        "left",
+        "w",
+        "\u2190",
+        "oeste",
+        "west_de",
+        "nishi",
+        "gharb",
+        "western",
+        "westbound",
+        "leftward",
+        "leftside",
+        "port",
+        "leftturn",
+        "leftstep",
+        "leftmove"
+      ]
+    }
+  },
+  "pre_silence": {
+    "accuracy": 0.2734375,
+    "primary_acc": 0.625,
+    "synonym_acc": 0.175,
+    "per_word": {
+      "north": 0.8,
+      "east": 0.7,
+      "south": 0.7,
+      "west": 0.3,
+      "up": 0.3,
+      "right": 0.2,
+      "down": 0.2,
+      "left": 0.0
+    }
+  },
+  "hippo_off": {
+    "accuracy": 0.26875,
+    "primary_acc": 0.47500000000000003,
+    "synonym_acc": 0.275,
+    "per_word": {
+      "north": 0.5,
+      "east": 0.4,
+      "south": 0.7,
+      "west": 0.3,
+      "up": 0.2,
+      "right": 0.2,
+      "down": 0.5,
+      "left": 0.2
+    }
+  },
+  "retention": {
+    "overall": 0.9828571428571428,
+    "primary": 0.76,
+    "synonym": 1.5714285714285716,
+    "primary_pass": false,
+    "synonym_pass": true
+  },
+  "verdict": "PARTIAL (synonym >= 60% but primary < 80% -- synonym binding survives but primary degrades; may indicate synonym training interferes with primary)"
+}
