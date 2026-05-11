@@ -255,6 +255,31 @@ def build_biological_brain_regions(
     semantic_to_wernicke_weight: float = 2.0,
     ca1_to_semantic_density: float = 0.20,
     ca1_to_semantic_weight: float = 3.0,
+    # P6 Broca's area + compositional syntax (catalog G.12, Kandel
+    # 6e Ch 55 pp 1382-1384). Adds broca region (~500 neurons,
+    # recurrent for sentence working memory) + motor_speech region
+    # (4 slots; will scale up later). Pathways:
+    #   wernicke → broca (semantic content feeds syntax)
+    #   broca → broca (sentence-level working memory)
+    #   semantic_cortex → broca (meaning constraints)
+    #   broca → motor_speech (articulation drive)
+    #   broca → ec_context (Broca's drives positional context
+    #                        during composition; only when
+    #                        enable_episodic_context=True)
+    # Default OFF for backward compat.
+    enable_broca: bool = False,
+    n_broca: int = 500,
+    n_motor_speech: int = 64,  # 4 slots × 16 neurons each
+    broca_recurrent_density: float = 0.15,
+    broca_recurrent_weight: float = 2.0,
+    wernicke_to_broca_density: float = 0.30,
+    wernicke_to_broca_weight: float = 3.0,
+    semantic_to_broca_density: float = 0.20,
+    semantic_to_broca_weight: float = 2.0,
+    broca_to_motor_speech_density: float = 0.40,
+    broca_to_motor_speech_weight: float = 4.0,
+    broca_to_ec_context_density: float = 0.20,
+    broca_to_ec_context_weight: float = 2.0,
 ):
     """Biological-scale architecture with cortical canon ENABLED.
 
@@ -287,6 +312,20 @@ def build_biological_brain_regions(
     from sim.enums import NeuronType
 
     ACTION_NAMES = ["N", "E", "S", "W"]
+    # Prereq checks (top-level so they fire regardless of which
+    # downstream sub-flags are set).
+    if enable_broca and not enable_ventral_semantic:
+        raise ValueError(
+            "enable_broca=True requires enable_ventral_semantic=True "
+            "(Broca's reads from wernicke + semantic_cortex; "
+            "catalog G.12 prereq)"
+        )
+    if enable_ventral_semantic and not enable_hippocampus_consolidation:
+        raise ValueError(
+            "enable_ventral_semantic=True requires "
+            "enable_hippocampus_consolidation=True "
+            "(ca1->semantic_cortex consolidation pathway needs ca1)"
+        )
     regions = []
     pathways = []
 
@@ -543,6 +582,61 @@ def build_biological_brain_regions(
                 weight_jitter=0.3,
                 plastic=True, plasticity_gate="ca1_to_semantic",
             ))
+        # P6 Broca's area + motor_speech (catalog G.12). Adds
+        # syntactic composition layer. Requires P5 ventral
+        # semantic stream (broca reads from wernicke +
+        # semantic_cortex).
+        if enable_broca and enable_ventral_semantic:
+            regions.append(BrainRegion(
+                name="broca",
+                n_neurons=n_broca, exc_fraction=0.8,
+                internal_density=broca_recurrent_density,
+                exc_weight_mean=broca_recurrent_weight,
+                inh_weight_mean=1.5,
+                weight_jitter=0.2, plastic_internal=True,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
+            regions.append(BrainRegion(
+                name="motor_speech",
+                n_neurons=n_motor_speech, exc_fraction=0.85,
+                internal_density=0.05,
+                exc_weight_mean=0.3, inh_weight_mean=0.8,
+                weight_jitter=0.2, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
+            # Pathways
+            pathways.append(RegionPathway(
+                from_region="wernicke", to_region="broca",
+                density=wernicke_to_broca_density,
+                weight_mean=wernicke_to_broca_weight,
+                weight_jitter=0.2,
+                plastic=True, plasticity_gate="wernicke_to_broca",
+            ))
+            pathways.append(RegionPathway(
+                from_region="semantic_cortex", to_region="broca",
+                density=semantic_to_broca_density,
+                weight_mean=semantic_to_broca_weight,
+                weight_jitter=0.2,
+                plastic=True, plasticity_gate="semantic_to_broca",
+            ))
+            pathways.append(RegionPathway(
+                from_region="broca", to_region="motor_speech",
+                density=broca_to_motor_speech_density,
+                weight_mean=broca_to_motor_speech_weight,
+                weight_jitter=0.2,
+                plastic=True, plasticity_gate="broca_to_motor_speech",
+            ))
+            # Optional: broca drives ec_context (Broca's generates
+            # positional context during production). Only wired if
+            # ec_context exists.
+            if enable_episodic_context:
+                pathways.append(RegionPathway(
+                    from_region="broca", to_region="ec_context",
+                    density=broca_to_ec_context_density,
+                    weight_mean=broca_to_ec_context_weight,
+                    weight_jitter=0.2,
+                    plastic=True, plasticity_gate="broca_to_ec_context",
+                ))
         # ec -> dg_pv_basket and dg_pv_basket -> dg (FFi for sparsity)
         pathways.append(RegionPathway(
             from_region="ec", to_region="dg_pv_basket",
