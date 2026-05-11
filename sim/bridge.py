@@ -1838,7 +1838,9 @@ class SimulationBridge:
             - invalidates COO cache, inhibitory mask cache, STP-type cache
             - re-initializes synapse-indexed arrays (pulse timers, conn type)
         """
-        import cupyx.scipy.sparse as csp
+        # Backend-aware: use the module-level csp (cupyx on CuPy, scipy
+        # on NumPy). The function-local re-import was hard-coded to
+        # cupyx, breaking the NumPy backend.
 
         n = self.core_config.num_neurons
 
@@ -2264,7 +2266,9 @@ class SimulationBridge:
             ValueError: if any (pre, post) is missing and add_missing=False.
             RuntimeError: if cp_connections is None.
         """
-        import cupyx.scipy.sparse as csp
+        # Backend-aware: use the module-level csp (cupyx on CuPy, scipy
+        # on NumPy). The function-local re-import was hard-coded to
+        # cupyx, breaking the NumPy backend.
 
         if self.cp_connections is None:
             raise RuntimeError(
