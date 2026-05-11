@@ -222,6 +222,55 @@ def cmd_prune(args) -> int:
     return 0
 
 
+def cmd_memory_stats(args) -> int:
+    """Show BridgeMemory state for a lineage (mirrors /api/bridge-memory)."""
+    root = Path(args.root) if args.root else LINEAGE_ROOT
+    lineage = BridgeLineage(args.name, root=root)
+    if not lineage.exists():
+        print(f"ERROR: lineage '{args.name}' does not exist", file=sys.stderr)
+        return 2
+    meta = lineage.read_metadata()
+    bindings = []
+    n_forgets = 0
+    n_consolidations = 0
+    last_consolidation = None
+    for e in meta.growth_events:
+        kind = e.get("kind", "")
+        if kind == "memory_bind":
+            md = e.get("metadata", {})
+            bindings.append({
+                "key": md.get("key", ""),
+                "value": md.get("value", ""),
+                "target_action": md.get("target_action", ""),
+                "confidence": md.get("confidence", 0.0),
+                "at": e.get("at", ""),
+            })
+        elif kind == "memory_forget":
+            n_forgets += 1
+        elif kind == "memory_consolidate":
+            n_consolidations += 1
+            last_consolidation = e.get("at", "")
+
+    print(f"=== Memory stats for '{args.name}' ===")
+    print(f"  Bindings:       {len(bindings)}")
+    print(f"  Forgets:        {n_forgets}")
+    print(f"  Consolidations: {n_consolidations}")
+    if last_consolidation:
+        print(f"  Last consolidation: {last_consolidation}")
+    print(f"  Current tier:   {meta.current_tier}")
+    print(f"  Vocab size:     {len(meta.vocab)}")
+    print(f"  Cumulative training events: {meta.cumulative_training_events}")
+    if bindings:
+        print(f"\n  Recent bindings (last {min(args.last, len(bindings))}):")
+        for b in bindings[-args.last:]:
+            conf = b.get("confidence", 0)
+            conf_str = f"{conf:.2f}" if isinstance(conf, (int, float)) else "—"
+            print(f"    [{b.get('at', '?')}] {b.get('key', ''):<20} "
+                  f"-> {b.get('value', ''):<10} (action={b.get('target_action', '?')}, "
+                  f"conf={conf_str})")
+    return 0
+
+
 def cmd_list_shards(args) -> int:
     """List per-pathway shards exported for a lineage."""
     root = Path(args.root) if args.root else LINEAGE_ROOT
@@ -364,6 +413,14 @@ def main() -> int:
     p_pr.add_argument("--keep-last", type=int, default=30,
                        help="Number of recent snapshots to keep (default 30)")
     p_pr.set_defaults(func=cmd_prune)
+
+    # memory-stats (Path 3 BridgeMemory inspection)
+    p_ms = sub.add_parser("memory-stats",
+                            help="Show BridgeMemory state for a lineage")
+    p_ms.add_argument("name", type=str, help="Lineage name")
+    p_ms.add_argument("--last", type=int, default=10,
+                       help="Show last N bindings (default 10)")
+    p_ms.set_defaults(func=cmd_memory_stats)
 
     # list-shards (tiering Phase 3 Strategy C inspection)
     p_ls = sub.add_parser("list-shards",
