@@ -19,11 +19,31 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
 from typing import Dict, List, Optional
 
-import cupy as cp
+# Route through the backend abstraction so this module is forward-
+# compatible with the NumPy backend (Phase 2 of the tiering design).
+# For Phase 1, the abstraction is additive — current CuPy behavior is
+# preserved exactly when sim.backend resolves to "cupy" (the default).
+# GPU-specific calls (cp.cuda.*, cp.get_default_memory_pool()) remain
+# unmodified in this file and will only work on the CuPy backend;
+# Phase 2 work refactors those behind is_gpu_backend() guards.
 try:
-    import cupy.sparse as csp
-except (ImportError, ModuleNotFoundError):
-    import cupyx.scipy.sparse as csp
+    from sim.backend import (
+        get_backend, get_sparse_module, fuse, is_gpu_backend,
+        synchronize as _backend_synchronize,
+    )
+    cp, _backend_name = get_backend()
+    csp = get_sparse_module()
+except ImportError:
+    # Defensive bootstrap fallback (very early import contexts only).
+    import cupy as cp
+    try:
+        import cupy.sparse as csp
+    except (ImportError, ModuleNotFoundError):
+        import cupyx.scipy.sparse as csp
+    fuse = cp.fuse
+    is_gpu_backend = lambda: True
+    _backend_synchronize = lambda: cp.cuda.Stream.null.synchronize()
+    _backend_name = "cupy"
 
 from sim.enums import (NeuronModel, NeuronType, DefaultHodgkinHuxleyParams,
                         DefaultIzhikevichParamsManager, NEURON_TYPE_MAPPER)

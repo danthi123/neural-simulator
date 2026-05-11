@@ -455,6 +455,23 @@ def my_kernel(a, b):
 The pattern is additive — existing `import cupy as cp` code is unaffected
 until refactored. No runtime behavior change for current users.
 
+**Status of bridge.py / connectivity.py / kernels.py refactor (Phase 1 part 2, 2026-05-11):**
+- `sim/kernels.py` migrated: `import cupy as cp` → backend-aware import;
+  all `@cp.fuse()` decorators → `@fuse()` (no-op on NumPy backend).
+- `sim/connectivity.py` migrated: `import cupy as cp` + `cupyx.scipy.sparse`
+  → backend-aware via `get_sparse_module()`.
+- `sim/bridge.py` migrated (import block only): backend-aware `cp` / `csp`
+  / `fuse` / `synchronize`. Defensive fallback preserves CuPy code path
+  exactly when `sim.backend` is unavailable (e.g. partial bootstrap).
+- 19 GPU-specific call sites in bridge.py (`cp.cuda.*`,
+  `cp.get_default_memory_pool()`) remain unmigrated. They work on CuPy
+  backend; Phase 2 of the tiering design refactors them behind
+  `is_gpu_backend()` guards. Until then, constructing a SimulationBridge
+  with `SIM_BACKEND=numpy` will fail at GPU-init time — that's expected
+  Phase 1 scope.
+- 198 lightweight CPU-only tests pass; kernel smoke (Izhikevich) verified
+  on CuPy path. No regression for current users.
+
 ### Continuous-learning workflow (2026-05-11): Bridge Lineage Manager
 
 **Status:** SHIPPED 2026-05-11. The chat REPL now "lives" between sessions

@@ -1,13 +1,25 @@
-"""GPU fused kernels for neural simulation dynamics.
+"""Fused kernels for neural simulation dynamics.
 
-All functions are decorated with @cp.fuse() for element-wise GPU execution.
-They are pure math: arrays in, arrays out, no simulator-specific dependencies.
+All functions are decorated with @fuse() which is `cp.fuse()` on the CuPy
+backend (element-wise GPU execution) and a no-op on the NumPy backend
+(pure-Python fallback for CPU-only runs). They are pure math: arrays
+in, arrays out, no simulator-specific dependencies.
+
+`cp` here is the active backend module (CuPy or NumPy) — call sites
+like `cp.where(...)`, `cp.exp(...)`, `cp.clip(...)` work identically
+on both because the NumPy API matches.
+
+See sim/backend.py + docs/plans/2026-05-11-cpu-ram-ssd-tiering-design.md.
 """
 
-import cupy as cp
+# Route through the backend abstraction so this module works on both
+# CuPy and NumPy. `cp` is the active backend module; @fuse() is the
+# backend-aware kernel-fusion decorator.
+from sim.backend import get_backend, fuse
+cp, _backend_name = get_backend()
 
 # --- CuPy Fused Kernels ---
-@cp.fuse()
+@fuse()
 def fused_izhikevich_legacy_dynamics_update(v, u, a, b, total_I, dt):
     """Fused kernel for legacy Izhikevich model dynamics."""
     dv = (0.04 * v**2 + 5 * v + 140 - u + total_I)
@@ -16,7 +28,7 @@ def fused_izhikevich_legacy_dynamics_update(v, u, a, b, total_I, dt):
     u_new = u + du * dt
     return v_new, u_new
 
-@cp.fuse()
+@fuse()
 def fused_izhikevich2007_dynamics_update(v, u, C_param, k_param, vr_param, vt_param, a_param, b_param, total_synaptic_current, dt):
     """Fused kernel for Izhikevich 2007 model dynamics."""
     # Ensure C_param is not zero to prevent division by zero errors.
@@ -32,7 +44,7 @@ def fused_izhikevich2007_dynamics_update(v, u, C_param, k_param, vr_param, vt_pa
     u_new = u + du_dt * dt
     return v_new, u_new
 
-@cp.fuse()
+@fuse()
 def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g_K_max, g_L, E_Na, E_K, E_L, phi_m, phi_h, phi_n):
     """Fused kernel for Hodgkin-Huxley model dynamics with per-gate Q10.
 
@@ -104,7 +116,7 @@ def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g
     V_new = V + dV_dt * dt        # Euler integration
     return V_new, m_new, h_new, n_new
 
-@cp.fuse()
+@fuse()
 def fused_hh_m_current_update(V, p_old, dt, g_M_max, E_K, tau_m_ms, phi):
     """Optional slow K+ M-current for extended HH models.
 
@@ -123,7 +135,7 @@ def fused_hh_m_current_update(V, p_old, dt, g_M_max, E_K, tau_m_ms, phi):
     I_M = g_M_max * p_new * (V - E_K)
     return p_new, I_M
 
-@cp.fuse()
+@fuse()
 def fused_hh_CaT_current_update(V, m_old, h_old, dt, g_CaT_max, E_CaT, phi):
     """Low-threshold T-type Ca2+ current for extended HH models.
 
@@ -141,7 +153,7 @@ def fused_hh_CaT_current_update(V, m_old, h_old, dt, g_CaT_max, E_CaT, phi):
     I_CaT = g_CaT_max * (m_new ** 2) * h_new * (V - E_CaT)
     return m_new, h_new, I_CaT
 
-@cp.fuse()
+@fuse()
 def fused_hh_h_current_update(V, q_old, dt, g_h_max, E_h, phi):
     """Hyperpolarization-activated mixed cation current (I_h) for extended HH models.
 
@@ -155,7 +167,7 @@ def fused_hh_h_current_update(V, q_old, dt, g_h_max, E_h, phi):
     I_h = g_h_max * q_new * (V - E_h)
     return q_new, I_h
 
-@cp.fuse()
+@fuse()
 def fused_hh_NaP_current_update(V, p_old, dt, g_NaP_max, E_Na, phi):
     """Persistent Na+ current for extended HH models.
 
@@ -168,7 +180,7 @@ def fused_hh_NaP_current_update(V, p_old, dt, g_NaP_max, E_Na, phi):
     I_NaP = g_NaP_max * p_new * (V - E_Na)
     return p_new, I_NaP
 
-@cp.fuse()
+@fuse()
 def fused_adex_dynamics_update(V, w, I_syn, dt, C, g_L, E_L, V_T, Delta_T, a, tau_w):
     """Fused kernel for Adaptive Exponential Integrate-and-Fire (AdEx) dynamics.
 
@@ -192,7 +204,7 @@ def fused_adex_dynamics_update(V, w, I_syn, dt, C, g_L, E_L, V_T, Delta_T, a, ta
     w_new = w + dw_dt * dt
     return V_new, w_new
 
-@cp.fuse()
+@fuse()
 def fused_conductance_decay_and_current(g_e, g_i, decay_e, decay_i, v, E_e, E_i):
     """Fused kernel for synaptic conductance decay and calculating synaptic current."""
     # Decay conductances
@@ -202,7 +214,7 @@ def fused_conductance_decay_and_current(g_e, g_i, decay_e, decay_i, v, E_e, E_i)
     I_syn = g_e_new * (E_e - v) + g_i_new * (E_i - v) # I_syn = g_e*(E_e - V) + g_i*(E_i - V)
     return g_e_new, g_i_new, I_syn
 
-@cp.fuse()
+@fuse()
 def fused_nmda_update_and_current(g_nmda, g_nmda_rise, decay_nmda, decay_nmda_rise, v, E_nmda, mg_conc):
     """Fused kernel for NMDA conductance with voltage-dependent Mg2+ block.
 
@@ -226,7 +238,7 @@ def fused_nmda_update_and_current(g_nmda, g_nmda_rise, decay_nmda, decay_nmda_ri
     I_nmda = g_eff * mg_block * (E_nmda - v)
     return g_nmda_new, g_nmda_rise_new, I_nmda
 
-@cp.fuse()
+@fuse()
 def fused_stp_decay_recovery(u, x, dt, tau_f, tau_d):
     """Fused kernel for STP u and x variable decay/recovery."""
     # Ensure tau_f and tau_d are not zero to prevent division by zero.
@@ -241,7 +253,7 @@ def fused_stp_decay_recovery(u, x, dt, tau_f, tau_d):
     x_clipped = cp.clip(x_recovered, 0.0, 1.0) # Ensure x stays within [0, 1]
     return u_decayed, x_clipped
 
-@cp.fuse()
+@fuse()
 def fused_homeostasis_update(neuron_activity_ema_in, fired_this_step_float, target_rate, alpha_ema, adapt_rate,
                              neuron_firing_thresholds_in, thresh_min, thresh_max):
     """Fused kernel for homeostatic threshold adaptation."""
@@ -258,7 +270,7 @@ def fused_homeostasis_update(neuron_activity_ema_in, fired_this_step_float, targ
     return new_neuron_activity_ema, new_neuron_firing_thresholds_clipped
 
 # --- Phase C2: STDP Kernels (Bi & Poo 1998, Caporale & Dan 2008) ---
-@cp.fuse()
+@fuse()
 def fused_stdp_weight_update(delta_t, w_current, A_plus, A_minus, tau_plus, tau_minus, w_min, w_max):
     """Fused kernel for STDP weight update based on spike timing difference.
 
@@ -300,7 +312,7 @@ def fused_stdp_weight_update(delta_t, w_current, A_plus, A_minus, tau_plus, tau_
     w_new_clipped = cp.clip(w_new, w_min, w_max)
     return w_new_clipped
 
-@cp.fuse()
+@fuse()
 def fused_eligibility_trace_decay(trace, decay_factor):
     """Fused kernel for eligibility trace exponential decay.
 

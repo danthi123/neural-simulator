@@ -1,8 +1,12 @@
 """Connectivity generators for the neural simulator.
 
 Standalone functions extracted from SimulationBridge methods.
-Each generator builds a CuPy CSR sparse matrix representing
-the synaptic weight matrix for a network of *n* neurons.
+Each generator builds a CSR sparse matrix representing the synaptic
+weight matrix for a network of *n* neurons. Sparse matrix backend is
+`cupyx.scipy.sparse` on CuPy or `scipy.sparse` on NumPy — both expose
+the same `csr_matrix`, `csc_matrix`, etc. APIs.
+
+See sim/backend.py + docs/plans/2026-05-11-cpu-ram-ssd-tiering-design.md.
 """
 
 import time
@@ -10,12 +14,19 @@ from collections import defaultdict
 
 import numpy as np
 
+# Route through the backend abstraction so this module works on both
+# CuPy and NumPy. `cp` is the active backend module (numpy-like API);
+# `csp` is the matching sparse-matrix submodule.
 try:
-    import cupy as cp
-    import cupyx.scipy.sparse as csp
+    from sim.backend import get_backend, get_sparse_module
+    cp, _backend_name = get_backend()
+    csp = get_sparse_module()
 except ImportError:
+    # Defensive fallback for very early bootstrap or test isolation; in
+    # normal use sim.backend imports cleanly.
     cp = None
     csp = None
+    _backend_name = "unknown"
 
 
 # ---------------------------------------------------------------------------
