@@ -149,7 +149,7 @@ def run_causal_recall(
         except Exception:
             pass
 
-    log(f"\nTraining 'north' → motor_N for {train_events} events...")
+    log(f"\nTraining 'north' -> motor_N for {train_events} events...")
     for ev in range(train_events):
         bridge.cp_external_input_current[:] = 0.0
         for _ in range(30):

@@ -1,0 +1,23 @@
+{
+  "seed": 42,
+  "build_seconds": 1.301666498184204,
+  "n_neurons": 4568,
+  "n_synapses": 881445,
+  "n_train_events": 300,
+  "n_replay_cycles": 30,
+  "apple_tag_size": 21,
+  "river_tag_size": 32,
+  "comprehension": {
+    "apple_self_cosine": 0.22616463578083135,
+    "apple_river_cosine": 0.18625322946656697,
+    "passed": false
+  },
+  "naming": {
+    "baseline_lang_out_spikes": 391.0,
+    "causal_lang_out_spikes": 424.0,
+    "ratio": 1.0843989769820972,
+    "passed": false
+  },
+  "overall_passed": false,
+  "total_seconds": 305.67397022247314
+}

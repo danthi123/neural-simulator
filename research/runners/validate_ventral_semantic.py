@@ -79,6 +79,13 @@ def run_ventral_validation(
     n_replay_cycles: int = 20,
     strict_two_stage: bool = False,
     drive_lang_during_replay: bool = False,
+    # Iter D: semantic_cortex attractor dynamics (catalog G.11
+    # Patterson 2007 ATL hub; Wang 2002 NMDA bistability).
+    semantic_cortex_recurrent_density: float = 0.10,
+    semantic_cortex_recurrent_weight: float = 1.0,
+    lang_to_wernicke_weight: float = 3.0,
+    wernicke_to_semantic_weight: float = 4.0,
+    drive_steps: int = 100,
     out_path: Optional[Path] = None,
     verbose: bool = True,
 ):
@@ -134,6 +141,11 @@ def run_ventral_validation(
         n_ec=200, n_dg=800, n_dg_pv_basket=240,
         n_ca3=400, n_ca1=200,
         ca3_recurrent_weight=5.0,
+        # Iter D: semantic_cortex attractor tuning
+        semantic_cortex_recurrent_density=semantic_cortex_recurrent_density,
+        semantic_cortex_recurrent_weight=semantic_cortex_recurrent_weight,
+        lang_to_wernicke_weight=lang_to_wernicke_weight,
+        wernicke_to_semantic_weight=wernicke_to_semantic_weight,
     )
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -314,7 +326,7 @@ def run_ventral_validation(
             bridge.runtime_state.current_time_step += 1
         bridge.start_engram_recording(name)
         bridge.cp_external_input_current[drive_arr] = 200.0
-        for _ in range(100):
+        for _ in range(drive_steps):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
         bridge.cp_external_input_current[:] = 0.0
@@ -330,7 +342,7 @@ def run_ventral_validation(
             bridge.runtime_state.current_time_step += 1
         bridge.cp_external_input_current[drive_arr] = 200.0
         spike_counts = measure_region_spikes(bridge, "semantic_cortex",
-                                                n_steps=100)
+                                                n_steps=drive_steps)
         bridge.cp_external_input_current[:] = 0.0
         # Return indices of neurons that fired at all
         return np.where(spike_counts > 0)[0]
@@ -471,6 +483,23 @@ def main() -> int:
     ap.add_argument("--drive-lang-during-replay", action="store_true",
                     help="Iter B variant: drive lang_input(concept) "
                          "alongside CA3 replay")
+    # Iter D: semantic_cortex attractor tuning
+    ap.add_argument("--semantic-cortex-recurrent-density", type=float,
+                    default=0.10,
+                    help="Iter D: cortex recurrent density (default "
+                         "0.10; try 0.25 for stronger attractor)")
+    ap.add_argument("--semantic-cortex-recurrent-weight", type=float,
+                    default=1.0,
+                    help="Iter D: cortex recurrent weight (default "
+                         "1.0; try 2.5 for stronger attractor)")
+    ap.add_argument("--lang-to-wernicke-weight", type=float,
+                    default=3.0)
+    ap.add_argument("--wernicke-to-semantic-weight", type=float,
+                    default=4.0)
+    ap.add_argument("--drive-steps", type=int, default=100,
+                    help="Iter D: steps to drive during test "
+                         "(default 100; try 300 for attractor "
+                         "settling)")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
     run_ventral_validation(
@@ -481,6 +510,13 @@ def main() -> int:
         n_wernicke=args.n_wernicke,
         strict_two_stage=args.strict_two_stage,
         drive_lang_during_replay=args.drive_lang_during_replay,
+        semantic_cortex_recurrent_density=(
+            args.semantic_cortex_recurrent_density),
+        semantic_cortex_recurrent_weight=(
+            args.semantic_cortex_recurrent_weight),
+        lang_to_wernicke_weight=args.lang_to_wernicke_weight,
+        wernicke_to_semantic_weight=args.wernicke_to_semantic_weight,
+        drive_steps=args.drive_steps,
         out_path=Path(args.out) if args.out else None,
         verbose=True,
     )
