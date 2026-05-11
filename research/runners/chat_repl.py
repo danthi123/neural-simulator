@@ -48,6 +48,12 @@ from pathlib import Path
 
 import numpy as np
 
+# Bridge Lineage Manager: persistent continuous-learning state.
+# Per user 2026-05-10: "is there a good way to continually work off the
+# most recently trained sim state and keep improving it rather than
+# settling with from-scratch training sessions?"
+from sim.lineage import BridgeLineage
+
 
 def _load_or_train_tier1(seed: int, n_train_events: int, verbose: bool):
     """Train Tier 1 architecture (4-word vocab) and return bridge."""
@@ -797,6 +803,60 @@ def _save_bridge_checkpoint(bridge, checkpoint_path: str, verbose: bool = True,
               flush=True)
 
 
+def _lineage_save(lineage, bridge, *, mode: str, seed: int,
+                   n_train_events: int,
+                   kind: str = "save",
+                   description: str = "",
+                   accuracy_metric: str = None,
+                   accuracy_value: float = None,
+                   accuracy_context: str = ""):
+    """Save bridge to lineage with a tier label, arch dict, and growth event.
+
+    Centralises the metadata-update logic so chat_repl callsites all
+    record the same fields (mode, seed, training events, arch shape, etc).
+    """
+    # Build arch dict from bridge config. n_lang_input + n_motor_per_action
+    # are the dominant scaling axes for retention/capacity.
+    try:
+        cfg = bridge.core_sim_config
+        arch = {
+            "mode": mode,
+            "n_neurons": int(getattr(cfg, "num_neurons", 0)),
+            "n_synapses": int(getattr(bridge, "actual_total_connections_n", 0))
+                if hasattr(bridge, "actual_total_connections_n") else None,
+        }
+    except Exception:
+        arch = {"mode": mode}
+
+    # Pick a tier label from mode (4-word / 8-word / 12-word / 16-word).
+    tier_label_map = {
+        "tier1": "4-word",
+        "synonym": "8-word",
+        "synonym12": "12-word",
+        "synonym16": "16-word",
+    }
+    tier = tier_label_map.get(mode, mode)
+
+    # Persist
+    lineage.save(bridge, tier=tier, arch=arch)
+    # Append growth event + accuracy datapoint to metadata
+    meta = lineage.read_metadata()
+    meta.cumulative_training_events += int(n_train_events or 0)
+    meta.add_growth_event(
+        kind=kind,
+        description=description,
+        seed=seed,
+        n_train_events=n_train_events,
+    )
+    if accuracy_metric is not None and accuracy_value is not None:
+        meta.add_accuracy(
+            metric=accuracy_metric,
+            value=float(accuracy_value),
+            context=accuracy_context,
+        )
+    lineage.write_metadata(meta)
+
+
 def run_repl(mode: str, seed: int, n_train_events: int,
              transcript_out: str = None,
              load_bridge: str = None,
@@ -804,7 +864,10 @@ def run_repl(mode: str, seed: int, n_train_events: int,
              scripted_words: list = None,
              allow_learn: bool = False,
              learn_n_events: int = 50,
-             speak_temperature: float = 0.0):
+             speak_temperature: float = 0.0,
+             lineage_name: str = "main",
+             from_scratch: bool = False,
+             fork_lineage: str = None):
     """Train + interactive REPL loop.
 
     If load_bridge is given, skip training and load from checkpoint.
@@ -822,6 +885,15 @@ def run_repl(mode: str, seed: int, n_train_events: int,
     Hebbian binding session of ``learn_n_events`` paired events, then
     automatically test the new binding. Default OFF — learning during
     the REPL is opt-in because it can perturb existing bindings.
+
+    Bridge Lineage:
+    - lineage_name: persistent state to load/save (default 'main').
+      Located under bridges/lineage/<name>/.
+    - from_scratch: if True, skip lineage entirely (science mode).
+    - fork_lineage: if given, after loading 'lineage_name', fork to a
+      new lineage of that name and save back to the fork (not the
+      original). Useful for branching experiments without disturbing
+      'main'.
     """
     print("=" * 60)
     print(f"BIOLOGY-GROUNDED CHAT REPL — mode={mode}, seed={seed}")
@@ -834,9 +906,44 @@ def run_repl(mode: str, seed: int, n_train_events: int,
     vocab, _ = _vocab_for_mode(mode)
     mode_label = mode.upper()
 
+    # ── Lineage setup ──────────────────────────────────────────────
+    # Default: continuous mode using lineage_name (default 'main').
+    # Pre-existing lineage is loaded; on exit we save back.
+    # Explicit --load-bridge / --save-bridge override the lineage paths.
+    lineage = None
+    used_lineage_load = False
+    if not from_scratch:
+        lineage = BridgeLineage(lineage_name)
+        # Compatibility guard: if the lineage was trained at a different
+        # mode/arch, loading would silently shape-mismatch. Check meta.
+        if lineage.exists():
+            try:
+                lm = lineage.read_metadata()
+                stored_mode = (lm.arch or {}).get("mode")
+                if stored_mode and stored_mode != mode:
+                    print(f"[LINEAGE] Lineage '{lineage_name}' was trained "
+                          f"in mode={stored_mode}; current --mode={mode} "
+                          f"differs. Falling back to training from scratch; "
+                          f"the new run will overwrite the lineage on save.",
+                          flush=True)
+                    lineage = None  # do not auto-load; will retrain
+            except Exception as e:
+                print(f"[LINEAGE] Warning: could not read metadata "
+                      f"for '{lineage_name}': {e}", flush=True)
+
     if load_bridge:
+        # Explicit load-bridge path takes precedence over lineage auto-load.
         bridge = _load_bridge_from_checkpoint(load_bridge, mode, seed,
                                                 verbose=True)
+    elif lineage is not None and lineage.exists():
+        # Auto-load from lineage. Build the bridge skeleton then overlay
+        # weights from the lineage's current.simstate.h5.
+        print(f"[LINEAGE] Loading state from lineage '{lineage_name}' "
+              f"(skipping training)", flush=True)
+        bridge = _load_bridge_from_checkpoint(
+            str(lineage.current_path), mode, seed, verbose=True,
+        )
+        used_lineage_load = True
     elif mode == "tier1":
         bridge = _load_or_train_tier1(seed, n_train_events, verbose=True)
         if save_bridge:
@@ -888,6 +995,40 @@ def run_repl(mode: str, seed: int, n_train_events: int,
             )
     else:
         raise ValueError(f"unknown mode: {mode}")
+
+    # ── Lineage: fork (if requested) and initial-save after training ──
+    if not from_scratch:
+        if fork_lineage:
+            # Need an existing lineage to fork; if we didn't just load
+            # from one, save the freshly-trained bridge to 'lineage_name'
+            # first so the fork has a parent.
+            if not used_lineage_load and lineage is not None:
+                _lineage_save(lineage, bridge, mode=mode, seed=seed,
+                              n_train_events=n_train_events,
+                              kind="init",
+                              description=f"Initial train (seed={seed}, "
+                                            f"n_train_events={n_train_events})")
+            try:
+                base_lineage = lineage if lineage is not None else BridgeLineage(lineage_name)
+                lineage = base_lineage.fork(fork_lineage)
+                print(f"[LINEAGE] Forked '{lineage_name}' -> '{fork_lineage}'. "
+                      f"Future saves go to the fork.", flush=True)
+            except FileExistsError:
+                print(f"[LINEAGE] Lineage '{fork_lineage}' already exists; "
+                      f"refusing to overwrite. Using existing target lineage "
+                      f"for saves.", flush=True)
+                lineage = BridgeLineage(fork_lineage)
+            except FileNotFoundError as e:
+                print(f"[LINEAGE] Fork failed: {e}", flush=True)
+                lineage = None
+        elif lineage is not None and not used_lineage_load:
+            # We just trained from scratch (lineage didn't exist) — write
+            # an initial save so future sessions can load it.
+            _lineage_save(lineage, bridge, mode=mode, seed=seed,
+                          n_train_events=n_train_events,
+                          kind="init",
+                          description=f"Initial train (seed={seed}, "
+                                        f"n_train_events={n_train_events})")
 
     print(f"\nReady. Vocab: {sorted(vocab)}")
     if scripted_words is None:
@@ -1115,6 +1256,35 @@ def run_repl(mode: str, seed: int, n_train_events: int,
                       f"= {correct/in_vocab_turns:.1%}")
         print("=" * 60, flush=True)
 
+        # ── Lineage: save back on exit (continuous mode) ──────────────
+        # Skip if --from-scratch, no lineage (mode mismatch fallback), or
+        # the user gave an explicit --save-bridge target (they're using
+        # the legacy explicit-path workflow).
+        if (not from_scratch) and lineage is not None:
+            n_in_vocab = sum(1 for t in transcript if t["in_vocab"])
+            session_acc = (correct / n_in_vocab) if n_in_vocab > 0 else None
+            try:
+                _lineage_save(
+                    lineage, bridge, mode=mode, seed=seed,
+                    n_train_events=n_train_events,
+                    kind="repl_session_end",
+                    description=(
+                        f"REPL session: {n_turns} turns "
+                        f"({n_in_vocab} in-vocab"
+                        + (f", acc={session_acc:.1%}" if session_acc is not None else "")
+                        + ")"
+                    ),
+                    accuracy_metric="REPL in-vocab",
+                    accuracy_value=session_acc,
+                    accuracy_context=f"session_n_turns={n_turns}",
+                )
+                # Cheap retention: keep the last 30 history snapshots.
+                lineage.prune_history(keep_last=30)
+                print(f"[LINEAGE] State saved to '{lineage.name}'.",
+                      flush=True)
+            except Exception as e:
+                print(f"[LINEAGE] Save failed (non-fatal): {e}", flush=True)
+
         if transcript_out and transcript:
             Path(transcript_out).parent.mkdir(parents=True, exist_ok=True)
             md = []
@@ -1195,6 +1365,31 @@ def main():
                          "dominant with occasional synonym lift. 0.05+ = "
                          "more variety, primary slightly preferred. "
                          ">0 enables natural-feeling synonym selection.")
+    # ── Bridge Lineage Manager (continuous-learning workflow) ──
+    # Default behavior: load the 'main' lineage if it exists; save back
+    # on exit. The sim "lives" between sessions. Pass --from-scratch
+    # for the prior behavior (always train; never auto-save to lineage).
+    ap.add_argument("--lineage", type=str, default="main",
+                    help="Name of the bridge lineage to load/save state "
+                         "from (default: 'main'). Lineages live under "
+                         "bridges/lineage/<name>/. If the lineage exists "
+                         "and matches the current --mode, training is "
+                         "skipped and state is loaded. On exit the bridge "
+                         "is saved back to this lineage (snapshotting the "
+                         "previous state to history/). Pass --from-scratch "
+                         "to disable lineage auto-load/save.")
+    ap.add_argument("--from-scratch", action="store_true",
+                    help="Science mode: always train from random init, "
+                         "do NOT auto-load or auto-save the lineage. Use "
+                         "for multi-seed reproducibility / experiments. "
+                         "Without this flag, the REPL uses the 'main' "
+                         "lineage as a persistent continual-learning state.")
+    ap.add_argument("--fork-lineage", type=str, default=None,
+                    help="Fork the loaded lineage into a new lineage with "
+                         "the given name BEFORE making any further saves. "
+                         "Useful for branching experiments without "
+                         "disturbing 'main'. Example: --lineage main "
+                         "--fork-lineage experiment_v3.")
     args = ap.parse_args()
 
     if args.train_events is None:
@@ -1208,6 +1403,9 @@ def main():
     if args.load_bridge and args.save_bridge:
         ap.error("--load-bridge and --save-bridge are mutually exclusive "
                  "(saving overwrites a checkpoint that was just loaded)")
+    if args.fork_lineage and args.from_scratch:
+        ap.error("--fork-lineage requires a lineage to fork from; "
+                 "incompatible with --from-scratch")
 
     scripted_words = None
     if args.scripted_words:
@@ -1227,6 +1425,9 @@ def main():
         allow_learn=args.learn,
         learn_n_events=args.learn_events,
         speak_temperature=args.speak_temperature,
+        lineage_name=args.lineage,
+        from_scratch=args.from_scratch,
+        fork_lineage=args.fork_lineage,
     )
     return 0
 

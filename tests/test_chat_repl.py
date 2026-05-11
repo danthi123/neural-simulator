@@ -328,3 +328,87 @@ def test_rank_words_by_similarity():
     assert abs(rankings[0][1] - 1.0) < 1e-6
     assert rankings[1][0] == "up"
     assert rankings[2][0] == "south"
+
+# ─────────────────────────────────────────────────────────────────────────
+# Lineage integration (wiring + CLI flags) — added 2026-05-10 23:50
+# ─────────────────────────────────────────────────────────────────────────
+
+
+def test_lineage_save_helper_records_growth_event(tmp_path):
+    """_lineage_save updates metadata: tier, arch, cumulative events, growth"""
+    from research.runners.chat_repl import _lineage_save
+    from sim.lineage import BridgeLineage
+
+    class _FakeBridge:
+        """Mock that satisfies _lineage_save's interface."""
+        class _Cfg:
+            num_neurons = 42288
+        core_sim_config = _Cfg()
+        actual_total_connections_n = 111929115
+
+        def save_checkpoint(self, path):
+            from pathlib import Path
+            Path(path).write_text("fake-state", encoding="utf-8")
+
+    bridge = _FakeBridge()
+    lineage = BridgeLineage("unit_test", root=tmp_path)
+    _lineage_save(
+        lineage, bridge, mode="synonym", seed=42, n_train_events=400,
+        kind="init", description="unit test",
+        accuracy_metric="REPL in-vocab", accuracy_value=0.9,
+        accuracy_context="session_n_turns=10",
+    )
+    assert lineage.exists()
+    meta = lineage.read_metadata()
+    assert meta.current_tier == "8-word"
+    assert meta.arch["mode"] == "synonym"
+    assert meta.arch["n_neurons"] == 42288
+    assert meta.cumulative_training_events == 400
+    assert any(e["kind"] == "init" for e in meta.growth_events)
+    assert len(meta.accuracy_history) == 1
+    assert meta.accuracy_history[0]["metric"] == "REPL in-vocab"
+    assert abs(meta.accuracy_history[0]["value"] - 0.9) < 1e-9
+
+
+def test_lineage_save_helper_uses_correct_tier_per_mode(tmp_path):
+    """Each mode -> a distinct tier label in metadata."""
+    from research.runners.chat_repl import _lineage_save
+    from sim.lineage import BridgeLineage
+
+    class _FakeBridge:
+        class _Cfg:
+            num_neurons = 0
+        core_sim_config = _Cfg()
+        def save_checkpoint(self, path):
+            from pathlib import Path
+            Path(path).write_text("fake", encoding="utf-8")
+
+    cases = [
+        ("tier1", "4-word"),
+        ("synonym", "8-word"),
+        ("synonym12", "12-word"),
+        ("synonym16", "16-word"),
+    ]
+    for mode, expected_tier in cases:
+        lineage = BridgeLineage(f"unit_{mode}", root=tmp_path)
+        _lineage_save(lineage, _FakeBridge(), mode=mode, seed=42,
+                       n_train_events=100, kind="init")
+        meta = lineage.read_metadata()
+        assert meta.current_tier == expected_tier, (
+            f"mode={mode!r} should -> tier={expected_tier!r}, got {meta.current_tier!r}"
+        )
+
+
+def test_chat_repl_help_mentions_lineage_flags():
+    """--lineage / --from-scratch / --fork-lineage are advertised."""
+    import subprocess, sys as _sys, os as _os
+    p = subprocess.run(
+        [_sys.executable, "-m", "research.runners.chat_repl", "--help"],
+        capture_output=True, text=True, timeout=30,
+        cwd=_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+    )
+    assert p.returncode == 0, p.stderr
+    assert "--lineage" in p.stdout
+    assert "--from-scratch" in p.stdout
+    assert "--fork-lineage" in p.stdout
+
