@@ -118,6 +118,39 @@ class BridgeMemory:
                 # Save initial state
                 if self.auto_save:
                     self._save_to_lineage("init", "Memory initialized")
+        # ── Safety check: lineage/bridge arch mismatch ──
+        # A common failure mode: the lineage was saved at toy-scale
+        # arch (e.g. 208 neurons from bridge_memory_demo's tier1 toy)
+        # but the chat_repl loader rebuilds the standard tier1 bridge
+        # (~6336 neurons), leaving region_manager at the bigger layout
+        # while cp_external_input_current resizes from the checkpoint.
+        # The mismatch surfaces later as IndexError on store().
+        # Detect early and raise a clear message.
+        if self.bridge is not None:
+            try:
+                n_neurons = int(self.bridge.core_config.num_neurons)
+                cur_array = self.bridge.cp_external_input_current
+                cur_size = int(cur_array.shape[0])
+                rm_indices = self.bridge.region_manager.indices("language_input")
+                max_rm_idx = max(rm_indices) if rm_indices else 0
+                if max_rm_idx >= cur_size or max_rm_idx >= n_neurons:
+                    raise RuntimeError(
+                        f"BridgeMemory: lineage '{self.lineage_name}' "
+                        f"has cp_external_input_current of size {cur_size} "
+                        f"(num_neurons={n_neurons}) but region_manager's "
+                        f"language_input region extends to index {max_rm_idx}. "
+                        f"This indicates a toy-scale lineage being loaded "
+                        f"against the standard tier1/synonym architecture. "
+                        f"Re-bootstrap the lineage at the intended scale "
+                        f"(e.g. `python -m research.runners.chat_repl "
+                        f"--mode {self.mode} --lineage {self.lineage_name} "
+                        f"--from-scratch`)."
+                    )
+            except RuntimeError:
+                raise
+            except Exception:
+                # Best-effort check; don't block on attribute errors
+                pass
 
     # ── Store ────────────────────────────────────────────────────────
 
