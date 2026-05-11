@@ -1181,6 +1181,132 @@ def apply_topographic_bias(
     return summary
 
 
+def apply_wernicke_topographic_bias(
+    bridge,
+    concepts: list,  # e.g., ["apple", "river"]
+    topographic_factor: float = 1.5,
+    off_target_factor: float = 0.7,
+    n_lang_input: int = 1024,
+    sparsity: float = 0.1,
+    verbose: bool = True,
+):
+    """Apply biology-grounded topographic bias to language_input ->
+    wernicke weights. Each concept's active lang_input neurons get
+    boosted weights to a DEDICATED contiguous subset of wernicke
+    neurons (their "concept ensemble"). Off-target wernicke
+    subsets get reduced weights.
+
+    Path G+ MINIMAL: same wernicke region as default, but topographic
+    structural prior creates per-concept ensembles. Mirror of the
+    apply_topographic_bias for motor pools (which produced Tier 1
+    multi-seed PASS).
+
+    Args:
+        concepts: list of concept names (e.g., ["apple", "river"]).
+            Each concept gets a contiguous wernicke slice.
+        topographic_factor: weight multiplier for concept's lang
+            neurons -> concept's wernicke subset. Default 1.5.
+        off_target_factor: weight multiplier for concept's lang
+            neurons -> OTHER concept's wernicke subset. Default 0.7.
+        n_lang_input: lang_input region size.
+        sparsity: token drive sparsity.
+
+    Returns: dict with edge modification summary per concept.
+
+    Biology: Wernicke's area has topographic phoneme organization
+    (Pulvermüller 2001-2003) — different phonemes activate different
+    sub-regions. This function imposes that structure.
+    """
+    from sim.text_embeddings import vocab_to_drive_pattern
+    import numpy as np
+
+    if bridge.region_manager is None:
+        raise RuntimeError("apply_wernicke_topographic_bias: "
+                           "region_manager is None")
+
+    rm = bridge.region_manager
+    lang_input_indices = list(rm.indices("language_input"))
+    wernicke_indices = list(rm.indices("wernicke"))
+    n_wernicke = len(wernicke_indices)
+
+    if len(lang_input_indices) != n_lang_input:
+        raise ValueError(
+            f"apply_wernicke_topographic_bias: bridge has "
+            f"{len(lang_input_indices)} language_input neurons but "
+            f"caller specified {n_lang_input}"
+        )
+
+    n_concepts = len(concepts)
+    if n_concepts < 2:
+        raise ValueError("Need at least 2 concepts to bias")
+    if n_wernicke < n_concepts:
+        raise ValueError(
+            f"Wernicke has {n_wernicke} neurons but {n_concepts} "
+            "concepts requested — increase n_wernicke")
+
+    # Split wernicke into contiguous slices per concept
+    slice_size = n_wernicke // n_concepts
+    concept_slices = {}
+    for i, concept in enumerate(concepts):
+        start = i * slice_size
+        end = start + slice_size if i < n_concepts - 1 else n_wernicke
+        concept_slices[concept] = wernicke_indices[start:end]
+
+    # Extract CSR weights
+    indptr = _to_host(bridge.cp_connections.indptr)
+    indices = _to_host(bridge.cp_connections.indices)
+    data = _to_host(bridge.cp_connections.data)
+
+    # Pre-compute (pre, post) -> data index for fast lookup
+    pair_to_idx = {}
+    n_rows = int(bridge.cp_connections.shape[0])
+    for r in range(n_rows):
+        start = int(indptr[r])
+        end = int(indptr[r + 1])
+        for off in range(start, end):
+            pair_to_idx[(r, int(indices[off]))] = off
+
+    summary = {}
+    for concept in concepts:
+        drive = vocab_to_drive_pattern(
+            concept, n_neurons=n_lang_input, sparsity=sparsity,
+        )
+        local_active = np.where(drive > 0)[0]
+        global_active = [lang_input_indices[i] for i in local_active]
+
+        for target_concept in concepts:
+            wernicke_subset = concept_slices[target_concept]
+            factor = (topographic_factor if target_concept == concept
+                      else off_target_factor)
+            n_changed = 0
+            for src in global_active:
+                for dst in wernicke_subset:
+                    key = (src, dst)
+                    if key in pair_to_idx:
+                        idx = pair_to_idx[key]
+                        data[idx] = float(data[idx]) * factor
+                        n_changed += 1
+            summary[f"{concept}->wernicke_{target_concept}"] = {
+                "factor": factor,
+                "edges_modified": n_changed,
+            }
+
+    # Push modified data back to bridge
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+    bridge.cp_connections.data[...] = cp.asarray(data,
+                                                   dtype=cp.float32)
+
+    if verbose:
+        print(f"[wernicke-topographic] {len(concepts)} concepts, "
+              f"slice size {slice_size}, factor={topographic_factor:.2f}/"
+              f"{off_target_factor:.2f}")
+        for k, v in summary.items():
+            print(f"  {k}: x{v['factor']:.2f} on {v['edges_modified']} edges")
+
+    return summary
+
+
 def run_minimal_isolation(
     seed: int = 42,
     n_events_per_direction: int = 1000,

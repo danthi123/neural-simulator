@@ -108,6 +108,13 @@ def run_ventral_validation(
     # CA3 engram is stimulated.
     ca1_to_lang_out_weight: float = 2.0,
     stim_drive_pA: float = 200.0,
+    # Path G+ minimal (iter P): apply topographic bias to
+    # lang_input -> wernicke weights so each concept activates a
+    # dedicated wernicke subset. Mirror of Tier 1 motor pool
+    # topographic bias that produced 5/6 multi-seed PASS.
+    apply_wernicke_topographic: bool = False,
+    wernicke_topographic_factor: float = 1.5,
+    wernicke_off_target_factor: float = 0.7,
     out_path: Optional[Path] = None,
     verbose: bool = True,
 ):
@@ -201,6 +208,21 @@ def run_ventral_validation(
     build_sec = time.time() - t0
     log(f"Built in {build_sec:.1f}s; {cfg.num_neurons} neurons, "
         f"{int(bridge.cp_connections.nnz)} synapses")
+
+    # Path G+ minimal: topographic bias for wernicke per-concept ensembles
+    if apply_wernicke_topographic:
+        from research.runners.text_minimal_isolation import (
+            apply_wernicke_topographic_bias,
+        )
+        apply_wernicke_topographic_bias(
+            bridge,
+            concepts=["apple", "river"],
+            topographic_factor=wernicke_topographic_factor,
+            off_target_factor=wernicke_off_target_factor,
+            n_lang_input=n_lang_input,
+            sparsity=0.1,
+            verbose=verbose,
+        )
 
     # Encode 2 concepts via lang_input drive + hippo plasticity
     # The hippo trace + ca1->semantic_cortex pathway will produce
@@ -792,6 +814,20 @@ def main() -> int:
                     help="Iter M: engram tag stimulation drive "
                          "(default 200 pA; try 500 for stronger "
                          "naming test)")
+    # Path G+ minimal (iter P): wernicke topographic bias
+    ap.add_argument("--apply-wernicke-topographic", action="store_true",
+                    help="Path G+ minimal: bias lang_input -> "
+                         "wernicke so each concept activates a "
+                         "dedicated wernicke subset. Mirror of "
+                         "Tier 1 motor pool bias.")
+    ap.add_argument("--wernicke-topographic-factor", type=float,
+                    default=1.5,
+                    help="Path G+ minimal: weight boost for "
+                         "on-target wernicke subset (default 1.5)")
+    ap.add_argument("--wernicke-off-target-factor", type=float,
+                    default=0.7,
+                    help="Path G+ minimal: weight reduction for "
+                         "off-target wernicke subset (default 0.7)")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
     run_ventral_validation(
@@ -817,6 +853,9 @@ def main() -> int:
         n_wernicke_fs=args.n_wernicke_fs,
         ca1_to_lang_out_weight=args.ca1_to_lang_out_weight,
         stim_drive_pA=args.stim_drive_pa,
+        apply_wernicke_topographic=args.apply_wernicke_topographic,
+        wernicke_topographic_factor=args.wernicke_topographic_factor,
+        wernicke_off_target_factor=args.wernicke_off_target_factor,
         out_path=Path(args.out) if args.out else None,
         verbose=True,
     )
