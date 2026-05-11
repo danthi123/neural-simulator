@@ -1892,6 +1892,78 @@ def get_lineage(name: str) -> JSONResponse:
     })
 
 
+# ─── Synapse tiering endpoints (Phase 3 Strategy B, 2026-05-11) ─────────
+# Inspect TieredSynapseStore state for lineages that have exported per-
+# pathway shards. Useful for verifying activity tracking, eviction
+# behavior, and total disk usage.
+
+@app.get("/api/synapse-tiering/{name}")
+def get_synapse_tiering(name: str) -> JSONResponse:
+    """Return per-pathway shard inventory + size for a lineage.
+
+    Returns:
+        {
+          "lineage_name": "main",
+          "shards_dir": "bridges/lineage/main/shards" (or null),
+          "n_pathways": 24,
+          "total_size_mb": 12.3,
+          "shards": [
+            {"name": "language_input_to_motor_N", "size_mb": 0.5, "exists": true},
+            ...
+          ]
+        }
+
+    404 if the lineage doesn't exist.
+    200 with empty shards list if lineage exists but has no shards
+    (user hasn't run export_shards yet).
+    """
+    from sim.lineage import BridgeLineage, LINEAGE_ROOT
+    root = REPO_ROOT / LINEAGE_ROOT
+    lineage = BridgeLineage(name, root=root)
+    if not lineage.exists():
+        raise HTTPException(404, f"lineage not found: {name}")
+
+    shard_root = lineage.root / "shards"
+    if not shard_root.exists():
+        return JSONResponse({
+            "lineage_name": name,
+            "shards_dir": None,
+            "n_pathways": 0,
+            "total_size_mb": 0.0,
+            "shards": [],
+        })
+
+    pathway_names = lineage.list_shards()
+    entries = []
+    total_size = 0
+    for pw in pathway_names:
+        path = shard_root / f"{pw}.npz"
+        if not path.exists():
+            entries.append({"name": pw, "exists": False, "size_mb": None})
+            continue
+        try:
+            sz = path.stat().st_size
+            total_size += sz
+            entries.append({
+                "name": pw,
+                "exists": True,
+                "size_mb": round(sz / (1024 * 1024), 3),
+            })
+        except OSError as e:
+            entries.append({
+                "name": pw, "exists": False, "size_mb": None,
+                "error": str(e),
+            })
+
+    return JSONResponse({
+        "lineage_name": name,
+        "shards_dir": str(shard_root.relative_to(REPO_ROOT)),
+        "n_pathways": len(pathway_names),
+        "total_size_mb": round(total_size / (1024 * 1024), 3),
+        "shards": entries,
+    })
+
+
 # ─── In-flight detached-run monitor (2026-05-01) ────────────────────────
 # Detached runs (launched via PowerShell Start-Process to survive Claude
 # restart) write a *.pid + *.log file under research/findings/raw/g11_bg/.
