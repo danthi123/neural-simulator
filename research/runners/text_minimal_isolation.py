@@ -235,6 +235,26 @@ def build_biological_brain_regions(
     n_ec_context: int = 200,
     ec_context_to_dg_density: float = 0.40,
     ec_context_to_dg_weight: float = 4.0,
+    # P5 ventral semantic stream (catalog G.11 + G.13): adds
+    # semantic_cortex (~1000 neurons, sparse distributed concept
+    # representations) + wernicke (~200 neurons, lang↔semantic bridge).
+    # Pathways: lang_input → wernicke → semantic_cortex (comprehension);
+    # semantic_cortex → wernicke → language_output (naming/production);
+    # ca1 → semantic_cortex (consolidation via SWR replay).
+    # Default OFF for backward compat.
+    enable_ventral_semantic: bool = False,
+    n_semantic_cortex: int = 1000,
+    n_wernicke: int = 200,
+    semantic_cortex_recurrent_density: float = 0.10,
+    semantic_cortex_recurrent_weight: float = 1.0,
+    lang_to_wernicke_density: float = 0.30,
+    lang_to_wernicke_weight: float = 3.0,
+    wernicke_to_semantic_density: float = 0.30,
+    wernicke_to_semantic_weight: float = 4.0,
+    semantic_to_wernicke_density: float = 0.20,  # weaker (production)
+    semantic_to_wernicke_weight: float = 2.0,
+    ca1_to_semantic_density: float = 0.20,
+    ca1_to_semantic_weight: float = 3.0,
 ):
     """Biological-scale architecture with cortical canon ENABLED.
 
@@ -458,6 +478,70 @@ def build_biological_brain_regions(
                 weight_mean=ec_context_to_dg_weight,
                 weight_jitter=0.2,
                 plastic=True, plasticity_gate="ec_context_to_dg",
+            ))
+        # P5 ventral semantic stream (catalog G.11 + G.13).
+        # semantic_cortex: sparse distributed concept store
+        #   (anterior-temporal-lobe analog).
+        # wernicke: bidirectional bridge between phonological
+        #   (lang_input/output) and semantic (semantic_cortex).
+        if enable_ventral_semantic:
+            regions.append(BrainRegion(
+                name="wernicke",
+                n_neurons=n_wernicke, exc_fraction=0.8,
+                internal_density=0.05,
+                exc_weight_mean=0.3, inh_weight_mean=0.8,
+                weight_jitter=0.2, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
+            regions.append(BrainRegion(
+                name="semantic_cortex",
+                n_neurons=n_semantic_cortex, exc_fraction=0.85,
+                internal_density=semantic_cortex_recurrent_density,
+                exc_weight_mean=semantic_cortex_recurrent_weight,
+                inh_weight_mean=1.5,
+                weight_jitter=0.2, plastic_internal=True,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
+            # Comprehension path: lang_input -> wernicke -> semantic_cortex
+            pathways.append(RegionPathway(
+                from_region="language_input", to_region="wernicke",
+                density=lang_to_wernicke_density,
+                weight_mean=lang_to_wernicke_weight,
+                weight_jitter=0.2,
+                plastic=True, plasticity_gate="lang_to_wernicke",
+            ))
+            pathways.append(RegionPathway(
+                from_region="wernicke", to_region="semantic_cortex",
+                density=wernicke_to_semantic_density,
+                weight_mean=wernicke_to_semantic_weight,
+                weight_jitter=0.2,
+                plastic=True, plasticity_gate="wernicke_to_semantic",
+            ))
+            # Production path: semantic_cortex -> wernicke -> language_output
+            # (weaker — the recall direction)
+            pathways.append(RegionPathway(
+                from_region="semantic_cortex", to_region="wernicke",
+                density=semantic_to_wernicke_density,
+                weight_mean=semantic_to_wernicke_weight,
+                weight_jitter=0.2,
+                plastic=True, plasticity_gate="semantic_to_wernicke",
+            ))
+            if enable_language_output:
+                pathways.append(RegionPathway(
+                    from_region="wernicke", to_region="language_output",
+                    density=0.30, weight_mean=3.0,
+                    weight_jitter=0.2,
+                    plastic=True, plasticity_gate="wernicke_to_lang_out",
+                ))
+            # Hippo -> semantic_cortex consolidation pathway
+            # (THE KEY BRIDGE — catalog D.01 consolidation; engrams
+            # become durable cortical meanings via SWR replay).
+            pathways.append(RegionPathway(
+                from_region="ca1", to_region="semantic_cortex",
+                density=ca1_to_semantic_density,
+                weight_mean=ca1_to_semantic_weight,
+                weight_jitter=0.3,
+                plastic=True, plasticity_gate="ca1_to_semantic",
             ))
         # ec -> dg_pv_basket and dg_pv_basket -> dg (FFi for sparsity)
         pathways.append(RegionPathway(
