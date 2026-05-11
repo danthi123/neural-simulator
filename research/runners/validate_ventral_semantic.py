@@ -101,6 +101,14 @@ def run_ventral_validation(
     # concept ensembles.
     enable_wernicke_fs: bool = False,
     n_wernicke_fs: int = 60,
+    # Path A / Path G+ FULL (iter T): multi-pool wernicke.
+    # When True, the architecture uses per-concept wernicke
+    # pools (wernicke_pool_0, wernicke_pool_1) with cross-pool
+    # FS inhibition. Mirror of Tier 1 motor pool pattern.
+    enable_multi_pool_wernicke: bool = False,
+    n_wernicke_pools: int = 2,
+    n_per_wernicke_pool: int = 100,
+    n_per_wernicke_pool_fs: int = 12,
     # Iter M: strengthen naming pathway weights. ca1_to_lang_out
     # at default 2.0 produces only ~20 mV drive on lang_output
     # which is barely suprathreshold. Bumping to 5.0 should
@@ -183,6 +191,11 @@ def run_ventral_validation(
         # Path G (iter G): wernicke_FS lateral inhibition
         enable_wernicke_fs=enable_wernicke_fs,
         n_wernicke_fs=n_wernicke_fs,
+        # Path A / Path G+ FULL (iter T): multi-pool wernicke
+        enable_multi_pool_wernicke=enable_multi_pool_wernicke,
+        n_wernicke_pools=n_wernicke_pools,
+        n_per_wernicke_pool=n_per_wernicke_pool,
+        n_per_wernicke_pool_fs=n_per_wernicke_pool_fs,
         # Iter M: strengthen ca1->lang_output for naming
         ca1_to_lang_out_weight=ca1_to_lang_out_weight,
     )
@@ -246,19 +259,36 @@ def run_ventral_validation(
     HIPPO_GATES = (
         "lang_to_ec", "ec_to_dg", "dg_to_ca3", "ca3_to_ca1", "ec_to_ca1",
     )
-    VENTRAL_GATES = (
-        "lang_to_wernicke", "wernicke_to_semantic", "ca1_to_semantic",
-    )
+    if enable_multi_pool_wernicke:
+        # Path A: gates are per-pool. For 2 pools (apple, river):
+        # lang_to_wernicke_pool_0/1, wernicke_pool_0/1_to_semantic, etc.
+        pool_names = [f"wernicke_pool_{i}" for i in range(n_wernicke_pools)]
+        VENTRAL_GATES = tuple(
+            [f"lang_to_{p}" for p in pool_names]
+            + [f"{p}_to_semantic" for p in pool_names]
+            + ["ca1_to_semantic"]
+        )
+    else:
+        VENTRAL_GATES = (
+            "lang_to_wernicke", "wernicke_to_semantic", "ca1_to_semantic",
+        )
     # Iter L (2026-05-11): production pathways MUST also train so
     # the engram-tag -> lang_output chain works. Per iter K finding,
     # naming pathway weights stay random unless these gates open
     # during encoding. The lang_input drive activates wernicke +
     # semantic_cortex AND drives wernicke -> lang_output via the
     # comprehension loop, so STDP can co-fire-train these.
-    PRODUCTION_GATES = (
-        "semantic_to_wernicke", "wernicke_to_lang_out",
-        "ca1_to_lang_out",
-    )
+    if enable_multi_pool_wernicke:
+        PRODUCTION_GATES = tuple(
+            [f"semantic_to_{p}" for p in pool_names]
+            + [f"{p}_to_lang_out" for p in pool_names]
+            + ["ca1_to_lang_out"]
+        )
+    else:
+        PRODUCTION_GATES = (
+            "semantic_to_wernicke", "wernicke_to_lang_out",
+            "ca1_to_lang_out",
+        )
     REPLAY_GATES = ("ca3_swr_burst",)
     if strict_two_stage:
         encode_gates = HIPPO_GATES
@@ -327,15 +357,29 @@ def run_ventral_validation(
     # replay.
     # Iter L addition: also open production gates (semantic_to_wernicke,
     # wernicke_to_lang_out) so the full production chain trains.
-    base_replay_gates = (
-        "ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1",
-        "ca1_to_lang_out",
-        "semantic_to_wernicke", "wernicke_to_lang_out",
-    )
-    if strict_two_stage:
-        replay_phase_gates = base_replay_gates + (
-            "lang_to_wernicke", "wernicke_to_semantic",
+    if enable_multi_pool_wernicke:
+        base_replay_gates = tuple(
+            ["ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1",
+             "ca1_to_lang_out"]
+            + [f"semantic_to_{p}" for p in pool_names]
+            + [f"{p}_to_lang_out" for p in pool_names]
         )
+    else:
+        base_replay_gates = (
+            "ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1",
+            "ca1_to_lang_out",
+            "semantic_to_wernicke", "wernicke_to_lang_out",
+        )
+    if strict_two_stage:
+        if enable_multi_pool_wernicke:
+            replay_phase_gates = base_replay_gates + tuple(
+                [f"lang_to_{p}" for p in pool_names]
+                + [f"{p}_to_semantic" for p in pool_names]
+            )
+        else:
+            replay_phase_gates = base_replay_gates + (
+                "lang_to_wernicke", "wernicke_to_semantic",
+            )
         log("  [iter B] replay opens both hippo-replay AND ventral gates")
     else:
         replay_phase_gates = base_replay_gates
@@ -571,9 +615,16 @@ def run_ventral_validation(
     log("\n[TEST 3] Weight inspection: wernicke->semantic_cortex matrix")
     weight_diag = {}
     try:
-        # Get wernicke + semantic_cortex region indices
+        # Get wernicke + semantic_cortex region indices.
+        # For multi-pool, aggregate all pool neurons.
         rm2 = bridge.region_manager
-        wernicke_indices = list(rm2.indices("wernicke"))
+        if enable_multi_pool_wernicke:
+            wernicke_indices = []
+            for i in range(n_wernicke_pools):
+                wernicke_indices.extend(
+                    list(rm2.indices(f"wernicke_pool_{i}")))
+        else:
+            wernicke_indices = list(rm2.indices("wernicke"))
         sem_indices_local = list(rm2.indices("semantic_cortex"))
         sem_idx_set = set(sem_indices_local)
 
@@ -595,8 +646,14 @@ def run_ventral_validation(
             order = np.argsort(counts)[::-1][:n_top]
             return order
 
-        apple_wernicke_local = fire_indices("wernicke", apple_arr)
-        river_wernicke_local = fire_indices("wernicke", river_arr)
+        # For multi-pool, measure each pool's response and aggregate
+        if enable_multi_pool_wernicke:
+            # apple should fire pool_0 strongly; river should fire pool_1
+            apple_wernicke_local = fire_indices("wernicke_pool_0", apple_arr)
+            river_wernicke_local = fire_indices("wernicke_pool_1", river_arr)
+        else:
+            apple_wernicke_local = fire_indices("wernicke", apple_arr)
+            river_wernicke_local = fire_indices("wernicke", river_arr)
         apple_sem_local = fire_indices("semantic_cortex", apple_arr)
         river_sem_local = fire_indices("semantic_cortex", river_arr)
         log(f"  apple wernicke ensemble: {len(apple_wernicke_local)}, "
@@ -631,14 +688,30 @@ def run_ventral_validation(
                         n += 1
             return (total / n if n > 0 else 0.0), n
 
-        apple_wernicke_global = np.array(
-            [wernicke_indices[i] for i in apple_wernicke_local],
-            dtype=np.int64
-        )
-        river_wernicke_global = np.array(
-            [wernicke_indices[i] for i in river_wernicke_local],
-            dtype=np.int64
-        )
+        # Correct local->global conversion: for multi-pool case,
+        # apple_local indices into pool_0; river_local into pool_1.
+        if enable_multi_pool_wernicke:
+            pool_0_indices = list(rm2.indices("wernicke_pool_0"))
+            pool_1_indices = list(rm2.indices("wernicke_pool_1"))
+            apple_wernicke_global = np.array(
+                [pool_0_indices[i] for i in apple_wernicke_local
+                 if i < len(pool_0_indices)],
+                dtype=np.int64
+            )
+            river_wernicke_global = np.array(
+                [pool_1_indices[i] for i in river_wernicke_local
+                 if i < len(pool_1_indices)],
+                dtype=np.int64
+            )
+        else:
+            apple_wernicke_global = np.array(
+                [wernicke_indices[i] for i in apple_wernicke_local],
+                dtype=np.int64
+            )
+            river_wernicke_global = np.array(
+                [wernicke_indices[i] for i in river_wernicke_local],
+                dtype=np.int64
+            )
         apple_sem_global_set = set(
             int(sem_indices_local[i]) for i in apple_sem_local
         )
@@ -810,6 +883,15 @@ def main() -> int:
                          "concept ensemble encoding. Fixes "
                          "upstream bottleneck identified by iter E.")
     ap.add_argument("--n-wernicke-fs", type=int, default=60)
+    # Path A / Path G+ FULL (iter T): multi-pool wernicke
+    ap.add_argument("--enable-multi-pool-wernicke", action="store_true",
+                    help="Path A: per-concept wernicke pools with "
+                         "cross-pool FS inhibition. Mirror of Tier 1 "
+                         "motor pool architecture (which produced "
+                         "6/6 multi-seed PASS).")
+    ap.add_argument("--n-wernicke-pools", type=int, default=2)
+    ap.add_argument("--n-per-wernicke-pool", type=int, default=100)
+    ap.add_argument("--n-per-wernicke-pool-fs", type=int, default=12)
     # Iter M: strengthen naming pathway
     ap.add_argument("--ca1-to-lang-out-weight", type=float, default=2.0,
                     help="Iter M: strengthen CA1->lang_output "
@@ -857,6 +939,10 @@ def main() -> int:
         n_semantic_fs=args.n_semantic_fs,
         enable_wernicke_fs=args.enable_wernicke_fs,
         n_wernicke_fs=args.n_wernicke_fs,
+        enable_multi_pool_wernicke=args.enable_multi_pool_wernicke,
+        n_wernicke_pools=args.n_wernicke_pools,
+        n_per_wernicke_pool=args.n_per_wernicke_pool,
+        n_per_wernicke_pool_fs=args.n_per_wernicke_pool_fs,
         ca1_to_lang_out_weight=args.ca1_to_lang_out_weight,
         stim_drive_pA=args.stim_drive_pa,
         apply_wernicke_topographic=args.apply_wernicke_topographic,

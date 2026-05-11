@@ -278,6 +278,19 @@ def build_biological_brain_regions(
     wernicke_to_fs_weight: float = 3.0,
     wernicke_fs_to_wernicke_density: float = 0.50,
     wernicke_fs_to_wernicke_weight: float = 4.0,
+    # Path A / Path G+ FULL (iter T): multi-pool wernicke with
+    # per-concept FS cross-inhibition. Mirror of Tier 1 motor pool
+    # architecture (which produced 6/6 multi-seed PASS). Each
+    # concept gets dedicated wernicke_pool_<i> region (100 neurons)
+    # + wernicke_fs_pool_<i> (12 PV-FS). Cross-pool inhibition:
+    # each pool's FS inhibits OTHER pools (winner-take-most).
+    # The single "wernicke" region is replaced by N pools.
+    enable_multi_pool_wernicke: bool = False,
+    n_wernicke_pools: int = 2,
+    n_per_wernicke_pool: int = 100,
+    n_per_wernicke_pool_fs: int = 12,
+    wernicke_pool_to_fs_weight: float = 3.0,
+    wernicke_fs_cross_weight: float = 4.0,
     # P6 Broca's area + compositional syntax (catalog G.12, Kandel
     # 6e Ch 55 pp 1382-1384). Adds broca region (~500 neurons,
     # recurrent for sentence working memory) + motor_speech region
@@ -547,14 +560,46 @@ def build_biological_brain_regions(
         # wernicke: bidirectional bridge between phonological
         #   (lang_input/output) and semantic (semantic_cortex).
         if enable_ventral_semantic:
-            regions.append(BrainRegion(
-                name="wernicke",
-                n_neurons=n_wernicke, exc_fraction=0.8,
-                internal_density=0.05,
-                exc_weight_mean=0.3, inh_weight_mean=0.8,
-                weight_jitter=0.2, plastic_internal=False,
-                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
-            ))
+            # Path A / Path G+ FULL: multi-pool wernicke or single
+            # wernicke region. If enable_multi_pool_wernicke=True,
+            # create wernicke_pool_0 ... wernicke_pool_{N-1} with
+            # cross-pool FS inhibition. Otherwise create single
+            # "wernicke" region as before.
+            if enable_multi_pool_wernicke:
+                wernicke_names = [f"wernicke_pool_{i}"
+                                   for i in range(n_wernicke_pools)]
+                wernicke_fs_names = [f"wernicke_fs_pool_{i}"
+                                       for i in range(n_wernicke_pools)]
+                for name in wernicke_names:
+                    regions.append(BrainRegion(
+                        name=name,
+                        n_neurons=n_per_wernicke_pool, exc_fraction=0.8,
+                        internal_density=0.05,
+                        exc_weight_mean=0.3, inh_weight_mean=0.8,
+                        weight_jitter=0.2, plastic_internal=False,
+                        izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+                    ))
+                for name in wernicke_fs_names:
+                    regions.append(BrainRegion(
+                        name=name,
+                        n_neurons=n_per_wernicke_pool_fs,
+                        exc_fraction=0.0,
+                        internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0,
+                        weight_jitter=0.0, plastic_internal=False,
+                        izh_neuron_type=(
+                            NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name
+                        ),
+                    ))
+            else:
+                regions.append(BrainRegion(
+                    name="wernicke",
+                    n_neurons=n_wernicke, exc_fraction=0.8,
+                    internal_density=0.05,
+                    exc_weight_mean=0.3, inh_weight_mean=0.8,
+                    weight_jitter=0.2, plastic_internal=False,
+                    izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+                ))
             regions.append(BrainRegion(
                 name="semantic_cortex",
                 n_neurons=n_semantic_cortex, exc_fraction=0.85,
@@ -564,37 +609,92 @@ def build_biological_brain_regions(
                 weight_jitter=0.2, plastic_internal=True,
                 izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
             ))
-            # Comprehension path: lang_input -> wernicke -> semantic_cortex
-            pathways.append(RegionPathway(
-                from_region="language_input", to_region="wernicke",
-                density=lang_to_wernicke_density,
-                weight_mean=lang_to_wernicke_weight,
-                weight_jitter=0.2,
-                plastic=True, plasticity_gate="lang_to_wernicke",
-            ))
-            pathways.append(RegionPathway(
-                from_region="wernicke", to_region="semantic_cortex",
-                density=wernicke_to_semantic_density,
-                weight_mean=wernicke_to_semantic_weight,
-                weight_jitter=0.2,
-                plastic=True, plasticity_gate="wernicke_to_semantic",
-            ))
-            # Production path: semantic_cortex -> wernicke -> language_output
-            # (weaker — the recall direction)
-            pathways.append(RegionPathway(
-                from_region="semantic_cortex", to_region="wernicke",
-                density=semantic_to_wernicke_density,
-                weight_mean=semantic_to_wernicke_weight,
-                weight_jitter=0.2,
-                plastic=True, plasticity_gate="semantic_to_wernicke",
-            ))
-            if enable_language_output:
+            # Comprehension path: lang_input -> wernicke[_pool_i] -> semantic_cortex
+            if enable_multi_pool_wernicke:
+                # Each lang_input -> wernicke_pool_i with topographic
+                # bias applied separately via apply_wernicke_pools_topographic_bias.
+                # Cross-pool FS: each pool drives its own FS;
+                # each FS inhibits OTHER pools (winner-take-most).
+                for i, pool_name in enumerate(wernicke_names):
+                    pathways.append(RegionPathway(
+                        from_region="language_input", to_region=pool_name,
+                        density=lang_to_wernicke_density,
+                        weight_mean=lang_to_wernicke_weight,
+                        weight_jitter=0.2,
+                        plastic=True, plasticity_gate=f"lang_to_{pool_name}",
+                    ))
+                    pathways.append(RegionPathway(
+                        from_region=pool_name, to_region="semantic_cortex",
+                        density=wernicke_to_semantic_density,
+                        weight_mean=wernicke_to_semantic_weight,
+                        weight_jitter=0.2,
+                        plastic=True, plasticity_gate=f"{pool_name}_to_semantic",
+                    ))
+                    pathways.append(RegionPathway(
+                        from_region="semantic_cortex", to_region=pool_name,
+                        density=semantic_to_wernicke_density,
+                        weight_mean=semantic_to_wernicke_weight,
+                        weight_jitter=0.2,
+                        plastic=True, plasticity_gate=f"semantic_to_{pool_name}",
+                    ))
+                    fs_name = wernicke_fs_names[i]
+                    pathways.append(RegionPathway(
+                        from_region=pool_name, to_region=fs_name,
+                        density=0.30,
+                        weight_mean=wernicke_pool_to_fs_weight,
+                        weight_jitter=0.2,
+                        plastic=True, plasticity_gate=f"{pool_name}_to_fs",
+                    ))
+                    # FS_i inhibits all OTHER pools (cross-inhibition)
+                    for j, other_pool in enumerate(wernicke_names):
+                        if j == i:
+                            continue
+                        pathways.append(RegionPathway(
+                            from_region=fs_name, to_region=other_pool,
+                            density=0.50,
+                            weight_mean=wernicke_fs_cross_weight,
+                            weight_jitter=0.2,
+                            plastic=False,
+                            plasticity_gate=f"{fs_name}_to_{other_pool}",
+                        ))
+                    if enable_language_output:
+                        pathways.append(RegionPathway(
+                            from_region=pool_name,
+                            to_region="language_output",
+                            density=0.30, weight_mean=3.0,
+                            weight_jitter=0.2,
+                            plastic=True,
+                            plasticity_gate=f"{pool_name}_to_lang_out",
+                        ))
+            else:
                 pathways.append(RegionPathway(
-                    from_region="wernicke", to_region="language_output",
-                    density=0.30, weight_mean=3.0,
+                    from_region="language_input", to_region="wernicke",
+                    density=lang_to_wernicke_density,
+                    weight_mean=lang_to_wernicke_weight,
                     weight_jitter=0.2,
-                    plastic=True, plasticity_gate="wernicke_to_lang_out",
+                    plastic=True, plasticity_gate="lang_to_wernicke",
                 ))
+                pathways.append(RegionPathway(
+                    from_region="wernicke", to_region="semantic_cortex",
+                    density=wernicke_to_semantic_density,
+                    weight_mean=wernicke_to_semantic_weight,
+                    weight_jitter=0.2,
+                    plastic=True, plasticity_gate="wernicke_to_semantic",
+                ))
+                pathways.append(RegionPathway(
+                    from_region="semantic_cortex", to_region="wernicke",
+                    density=semantic_to_wernicke_density,
+                    weight_mean=semantic_to_wernicke_weight,
+                    weight_jitter=0.2,
+                    plastic=True, plasticity_gate="semantic_to_wernicke",
+                ))
+                if enable_language_output:
+                    pathways.append(RegionPathway(
+                        from_region="wernicke", to_region="language_output",
+                        density=0.30, weight_mean=3.0,
+                        weight_jitter=0.2,
+                        plastic=True, plasticity_gate="wernicke_to_lang_out",
+                    ))
             # Hippo -> semantic_cortex consolidation pathway
             # (THE KEY BRIDGE — catalog D.01 consolidation; engrams
             # become durable cortical meanings via SWR replay).
