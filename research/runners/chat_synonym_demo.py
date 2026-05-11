@@ -111,7 +111,9 @@ def chat_turn(
     Returns dict with motor delta counts, predicted action, predicted
     primary direction word, confidence ratio, and correctness.
     """
-    import cupy as cp
+    # Backend-aware: cp is the active backend (cupy on CuPy, numpy on NumPy)
+    from sim.backend import get_backend
+    cp, _ = get_backend()
     from sim.text_embeddings import vocab_to_drive_pattern
 
     rm = bridge.region_manager
@@ -155,8 +157,10 @@ def chat_turn(
         for a_i, a in enumerate(["N", "E", "S", "W"]):
             drive_counts[a_i] += fired[motor_arr[a]].sum()
 
-    bl = baseline_counts.get()
-    dr = drive_counts.get()
+    # Backend-aware D->H transfer (passthrough on NumPy)
+    from sim.backend import to_host as _bl_to_host
+    bl = _bl_to_host(baseline_counts)
+    dr = _bl_to_host(drive_counts)
     delta = dr - bl
     predicted_idx = int(np.argmax(delta))
     predicted_action = ["N", "E", "S", "W"][predicted_idx]

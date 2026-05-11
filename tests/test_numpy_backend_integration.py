@@ -25,15 +25,35 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 def numpy_backend(monkeypatch):
     """Force SIM_BACKEND=numpy for the duration of a single test.
 
-    Resets the cached backend so the test sees a clean numpy resolution.
+    Resets the cached backend AND reloads sim.bridge / sim.kernels /
+    sim.connectivity / sim.lineage so their module-level cp / csp /
+    fuse references re-resolve to NumPy. Without this, tests that
+    run AFTER a CuPy-backed test (e.g. test_backend.py CuPy paths)
+    would see the cached CuPy `cp` inside bridge.py.
     """
+    import importlib
+    import sys
+
     monkeypatch.setenv("SIM_BACKEND", "numpy")
     from sim.backend import _reset_cache_for_tests, get_backend
     _reset_cache_for_tests()
     xp, name = get_backend("numpy")
     assert name == "numpy"
+
+    # Reload the modules that bind backend at import time. Order matters:
+    # backend first (already imported), then connectivity + kernels (no
+    # bridge dependency), then bridge (depends on connectivity/kernels).
+    for modname in ("sim.kernels", "sim.connectivity", "sim.bridge"):
+        if modname in sys.modules:
+            importlib.reload(sys.modules[modname])
+
     yield xp
+
+    # Clean up: reset cache + reload back so next test sees default again
     _reset_cache_for_tests()
+    for modname in ("sim.kernels", "sim.connectivity", "sim.bridge"):
+        if modname in sys.modules:
+            importlib.reload(sys.modules[modname])
 
 
 @pytest.mark.slow
