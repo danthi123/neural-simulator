@@ -222,6 +222,21 @@ def cmd_prune(args) -> int:
     return 0
 
 
+def cmd_growth_log(args) -> int:
+    """Render the lineage's growth log to stdout (or --write to _growth_log.md)."""
+    root = Path(args.root) if args.root else LINEAGE_ROOT
+    lineage = BridgeLineage(args.name, root=root)
+    if not lineage.exists():
+        print(f"ERROR: lineage '{args.name}' does not exist", file=sys.stderr)
+        return 2
+    if args.write:
+        path = lineage.write_growth_log()
+        print(f"[growth-log] wrote {path}")
+    else:
+        print(lineage.render_growth_log())
+    return 0
+
+
 def cmd_diff(args) -> int:
     """Compare two lineage states (or one lineage's current vs a snapshot).
 
@@ -325,6 +340,14 @@ def main() -> int:
     p_pr.add_argument("--keep-last", type=int, default=30,
                        help="Number of recent snapshots to keep (default 30)")
     p_pr.set_defaults(func=cmd_prune)
+
+    # growth-log
+    p_gl = sub.add_parser("growth-log",
+                            help="Render lineage growth log as markdown")
+    p_gl.add_argument("name", type=str, help="Lineage name")
+    p_gl.add_argument("--write", action="store_true",
+                       help="Write to _growth_log.md (default: print to stdout)")
+    p_gl.set_defaults(func=cmd_growth_log)
 
     # diff
     p_diff = sub.add_parser("diff", help="Diff two lineage states (metadata)")

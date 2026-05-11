@@ -387,6 +387,87 @@ class BridgeLineage:
         new_lineage.write_metadata(new_meta)
         return new_lineage
 
+    # ── Growth log (human-readable diary of the lineage's evolution) ────
+
+    def render_growth_log(self) -> str:
+        """Render the lineage's growth_events + accuracy_history as a
+        human-readable markdown diary. Pure function; does not write to
+        disk (caller can write to _growth_log.md if desired).
+        """
+        meta = self.read_metadata()
+        lines = []
+        lines.append(f"# Growth log — lineage `{meta.lineage_name}`")
+        lines.append("")
+        # Header summary
+        lines.append(f"- **Current tier:** {meta.current_tier}")
+        lines.append(f"- **Cumulative training events:** "
+                       f"{meta.cumulative_training_events}")
+        if meta.parent_lineage:
+            lines.append(f"- **Parent lineage:** `{meta.parent_lineage}`")
+            if meta.branched_at:
+                lines.append(f"- **Branched at:** {meta.branched_at}")
+        if meta.tags:
+            lines.append(f"- **Tags:** {', '.join(meta.tags)}")
+        if meta.created_at:
+            lines.append(f"- **Created:** {meta.created_at}")
+        if meta.last_updated_at:
+            lines.append(f"- **Last updated:** {meta.last_updated_at}")
+        lines.append("")
+        # Growth events timeline
+        if meta.growth_events:
+            lines.append("## Growth events")
+            lines.append("")
+            for e in meta.growth_events:
+                at = e.get("at", "?")
+                kind = e.get("kind", "?")
+                desc = e.get("description", "")
+                lines.append(f"- **[{at}] `{kind}`** — {desc}")
+                extra_meta = e.get("metadata", {})
+                if extra_meta:
+                    # Render extra metadata as a nested list
+                    for k, v in extra_meta.items():
+                        # Skip noisy / verbose fields if any (e.g. weight arrays)
+                        if isinstance(v, (str, int, float, bool)) or v is None:
+                            lines.append(f"  - `{k}`: {v}")
+                        elif isinstance(v, dict):
+                            short = ", ".join(f"{kk}={vv}" for kk, vv in v.items())
+                            lines.append(f"  - `{k}`: {{{short}}}")
+                        else:
+                            lines.append(f"  - `{k}`: {v!r}")
+            lines.append("")
+        else:
+            lines.append("_No growth events recorded yet._")
+            lines.append("")
+        # Accuracy history (most-recent first, capped)
+        if meta.accuracy_history:
+            lines.append("## Accuracy history (most recent 20)")
+            lines.append("")
+            lines.append("| At | Metric | Value | Context |")
+            lines.append("|----|--------|-------|---------|")
+            for p in list(reversed(meta.accuracy_history))[:20]:
+                at = p.get("at", "?")
+                m = p.get("metric", "?")
+                v = p.get("value", 0)
+                ctx = p.get("context", "")
+                lines.append(f"| {at} | {m} | {v:.3f} | {ctx} |")
+            lines.append("")
+        return "\n".join(lines)
+
+    def write_growth_log(self) -> Path:
+        """Render + write the growth log to `_growth_log.md`.
+
+        Returns the written path. Atomic via .new + os.replace.
+        """
+        content = self.render_growth_log()
+        self.root.mkdir(parents=True, exist_ok=True)
+        tmp = self.growth_log_path.with_suffix(".md.new")
+        tmp.write_text(content, encoding="utf-8")
+        if self.growth_log_path.exists():
+            os.replace(str(tmp), str(self.growth_log_path))
+        else:
+            tmp.rename(self.growth_log_path)
+        return self.growth_log_path
+
     # ── Listing ─────────────────────────────────────────────────────────
 
     @classmethod

@@ -309,3 +309,95 @@ def test_fork_preserves_history_count(tmp_path):
     # But growth_events ARE copied
     fmeta = forked.read_metadata()
     assert len(fmeta.growth_events) >= 1  # at least the fork event
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Growth log markdown rendering (added 2026-05-11; completes Phase 1)
+# ──────────────────────────────────────────────────────────────────────
+
+
+def test_render_growth_log_basic_structure(tmp_path):
+    """render_growth_log produces a valid markdown header + sections."""
+    lineage = BridgeLineage("main", root=tmp_path)
+    bridge = _MockBridge("v1")
+    lineage.save(bridge, save_fn=_mock_save, tier="4-word",
+                  arch={"n_lang_input": 2048, "mode": "tier1"})
+    meta = lineage.read_metadata()
+    meta.cumulative_training_events = 200
+    meta.add_growth_event(kind="init", description="Initial train")
+    meta.add_accuracy(metric="A2W any", value=0.92, context="post-train")
+    lineage.write_metadata(meta)
+    md = lineage.render_growth_log()
+    assert "# Growth log" in md
+    assert "lineage `main`" in md
+    assert "Current tier:" in md and "4-word" in md
+    assert "Cumulative training events:** 200" in md
+    assert "## Growth events" in md
+    assert "`init`" in md and "Initial train" in md
+    assert "## Accuracy history" in md
+    assert "A2W any" in md
+    assert "0.920" in md or "0.92" in md
+
+
+def test_render_growth_log_no_events(tmp_path):
+    """Empty growth_events renders the placeholder message."""
+    lineage = BridgeLineage("main", root=tmp_path)
+    bridge = _MockBridge("v0")
+    lineage.save(bridge, save_fn=_mock_save)
+    md = lineage.render_growth_log()
+    assert "No growth events recorded yet" in md
+
+
+def test_render_growth_log_includes_event_metadata(tmp_path):
+    """Per-event metadata is rendered as nested list items."""
+    lineage = BridgeLineage("main", root=tmp_path)
+    bridge = _MockBridge("v1")
+    lineage.save(bridge, save_fn=_mock_save)
+    meta = lineage.read_metadata()
+    meta.add_growth_event(
+        kind="tier_promotion",
+        description="Promoted 4-word -> 8-word",
+        from_tier=4, to_tier=8,
+    )
+    lineage.write_metadata(meta)
+    md = lineage.render_growth_log()
+    assert "`tier_promotion`" in md
+    assert "Promoted 4-word -> 8-word" in md
+    assert "`from_tier`: 4" in md
+    assert "`to_tier`: 8" in md
+
+
+def test_write_growth_log_creates_file(tmp_path):
+    """write_growth_log writes _growth_log.md atomically."""
+    lineage = BridgeLineage("main", root=tmp_path)
+    bridge = _MockBridge("v1")
+    lineage.save(bridge, save_fn=_mock_save)
+    meta = lineage.read_metadata()
+    meta.add_growth_event(kind="init", description="Test")
+    lineage.write_metadata(meta)
+    path = lineage.write_growth_log()
+    assert path.exists()
+    assert path.name == "_growth_log.md"
+    content = path.read_text(encoding="utf-8")
+    assert "# Growth log" in content
+    # No leftover .new
+    assert not (path.with_suffix(".md.new").exists())
+
+
+def test_write_growth_log_idempotent(tmp_path):
+    """Writing the growth log twice overwrites cleanly."""
+    lineage = BridgeLineage("main", root=tmp_path)
+    bridge = _MockBridge("v1")
+    lineage.save(bridge, save_fn=_mock_save)
+    meta = lineage.read_metadata()
+    meta.add_growth_event(kind="init", description="First")
+    lineage.write_metadata(meta)
+    lineage.write_growth_log()
+    # Now add another event + rewrite
+    meta2 = lineage.read_metadata()
+    meta2.add_growth_event(kind="tier_promotion", description="Second")
+    lineage.write_metadata(meta2)
+    lineage.write_growth_log()
+    content = lineage.growth_log_path.read_text(encoding="utf-8")
+    assert "First" in content
+    assert "Second" in content
