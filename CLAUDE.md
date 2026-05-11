@@ -494,6 +494,63 @@ until refactored. No runtime behavior change for current users.
 - 198 lightweight CPU-only tests pass; kernel smoke (Izhikevich) verified
   on CuPy path. No regression for current users.
 
+### Synapse tiering (2026-05-11): pathway-grained storage + activity tracking
+
+**Status:** Phase 3 Strategies B+C SHIPPED 2026-05-11. The bridge can
+mirror its per-pathway CSRs into a `TieredSynapseStore` (`sim/synapse_storage.py`)
+and track per-pathway activity each simulation step. Inference still
+uses the monolithic `cp_connections`; the store is observational +
+foundation for Phase 4 auto-tiering. Per-pathway shards can be
+exported alongside the lineage's `current.simstate.h5` for inspection
+or future SSD-tiered access.
+
+**Opt-in usage:**
+
+```python
+# In a CoreSimConfig:
+cfg.enable_brain_region_framework = True   # required (pathway names)
+cfg.enable_synapse_tiering = True          # opt-in
+cfg.synapse_tiering_evict_idle_steps = 1000
+cfg.synapse_tiering_grace_pagein_steps = 100
+cfg.synapse_tiering_root = "bridges/synapse_shards/active"
+
+# Bridge auto-initializes self.synapse_store at end of
+# _initialize_simulation_data; per-step activity tracked in
+# _run_one_simulation_step.
+
+# Inspect at runtime:
+print(bridge.synapse_store.stats())
+# {'n_pathways': 24, 'n_in_memory': 18, 'n_on_disk': 6,
+#  'n_pageins_lifetime': 12, 'n_pageouts_lifetime': 8, ...}
+```
+
+**Lineage export (Strategy C, works with or without runtime tiering):**
+
+```python
+from sim.lineage import BridgeLineage
+lineage = BridgeLineage("main")
+n_shards = lineage.export_shards(bridge)
+# Writes <lineage>/shards/<pathway_name>.npz per pathway
+```
+
+**CLI:**
+```bash
+# Inspect exported shards for a lineage
+python -m research.runners.bridge_lineage list-shards main
+```
+
+**Webapp endpoint:** `GET /api/synapse-tiering/{name}` returns shard
+inventory + sizes per pathway. (Active after webapp restart.)
+
+**Design:**
+- Foundational design: [`docs/plans/2026-05-11-cpu-ram-ssd-tiering-design.md`](docs/plans/2026-05-11-cpu-ram-ssd-tiering-design.md)
+- Bridge integration design: [`docs/plans/2026-05-11-tiering-phase3-part2-bridge-integration-design.md`](docs/plans/2026-05-11-tiering-phase3-part2-bridge-integration-design.md)
+- 3-strategy incremental plan: C (export only) → B (mirror + activity tracking) → A (per-pathway compute, 3-4 weeks scope, deferred)
+
+**Tests:** 56 across `sim.synapse_storage` + bridge integration
+(`tests/test_synapse_storage.py`, `tests/test_numpy_backend_integration.py`).
+All PASS, all CPU-only.
+
 ### Continuous-learning workflow (2026-05-11): Bridge Lineage Manager
 
 **Status:** SHIPPED 2026-05-11. The chat REPL now "lives" between sessions

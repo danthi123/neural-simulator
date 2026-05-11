@@ -2154,6 +2154,57 @@ function renderLineageDetail(data) {
       ));
     }
   }
+  // Synapse tiering (Phase 3 Strategy C/B) — lazy-loaded
+  // Fetches /api/synapse-tiering/<name> and renders shard inventory
+  loadSynapseTiering(data.name).then((tiering) => {
+    if (!tiering) return;  // 404 or fetch error
+    body.appendChild(el("h4", {}, "Synapse tiering (per-pathway shards)"));
+    if (tiering.n_pathways === 0) {
+      body.appendChild(el("p", { class: "muted" },
+        "No shards exported yet. Run `lineage.export_shards(bridge)` " +
+        "or `python -m research.runners.bridge_lineage list-shards " +
+        data.name + "` to see what's available."
+      ));
+      return;
+    }
+    const summary = el("p", { class: "muted" },
+      tiering.n_pathways + " pathways · " + tiering.total_size_mb +
+      " MB total · " + tiering.shards_dir);
+    body.appendChild(summary);
+    const table = el("table", { style: "width:100%; border-collapse: collapse;" });
+    table.appendChild(el("thead", {}, el("tr", {},
+      el("th", { style: "text-align:left; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Pathway"),
+      el("th", { style: "text-align:right; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Size (MB)"),
+      el("th", { style: "text-align:center; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Status"),
+    )));
+    const tbody = el("tbody", {});
+    for (const s of tiering.shards) {
+      const statusText = s.exists ? "ok" : "missing";
+      const statusColor = s.exists ? "var(--muted)" : "var(--error, #c00)";
+      tbody.appendChild(el("tr", {},
+        el("td", { style: "padding: 0.3em; font-family: monospace; font-size: 0.85em;" }, s.name),
+        el("td", { style: "padding: 0.3em; text-align: right;" },
+           s.size_mb != null ? s.size_mb.toFixed(3) : "—"),
+        el("td", { style: "padding: 0.3em; text-align: center; color: " + statusColor + ";" }, statusText),
+      ));
+    }
+    table.appendChild(tbody);
+    body.appendChild(table);
+  }).catch((e) => {
+    // Silently ignore — endpoint may not be available yet
+    console.debug("Synapse tiering fetch failed (non-fatal):", e);
+  });
+}
+
+async function loadSynapseTiering(name) {
+  try {
+    const res = await fetch("/api/synapse-tiering/" + encodeURIComponent(name));
+    if (res.status === 404) return null;  // lineage not found OR endpoint not present
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
