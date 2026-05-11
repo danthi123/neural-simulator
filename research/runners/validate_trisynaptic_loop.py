@@ -240,19 +240,39 @@ def test_pattern_completion(
     train_events: int = 30,
     partial_frac: float = 0.5,
     drive_pA: float = 200.0,
+    direct_ca3_drive: bool = False,
     verbose: bool = True,
 ):
     """D.13 — Pattern completion test.
 
+    Two test modes:
+
+    EC-DRIVEN (default): drive lang_input -> ec -> dg -> ca3 with
+    partial pattern, see if CA3 attractor completes. This routes
+    through 3 layers of feedforward processing before reaching CA3,
+    so the test mixes "trisynaptic feed-through" with "CA3 attractor
+    completion".
+
+    DIRECT-CA3 (direct_ca3_drive=True): record which CA3 neurons fired
+    during full-pattern training (the stored CA3 ensemble), then for
+    recall drive a partial of that CA3 ensemble DIRECTLY. This is the
+    Marr autoassociator test in its purest form — does the recurrent
+    network complete the pattern when half the stored neurons are
+    driven?
+
     1. Pick a full EC drive pattern P.
     2. Co-fire P + open ca3_swr_burst gate to strengthen CA3 recurrents
        via STDP (autoassociator learning).
-    3. Present a partial cue P_partial (first partial_frac of P's indices).
+       Direct-CA3 mode: also record CA3 firing during the last few
+       training events (the stored CA3 ensemble).
+    3. Present a partial cue (EC-driven: first partial_frac of P's
+       indices; direct-CA3: first partial_frac of stored CA3 ensemble).
     4. Measure CA3 output; compare to full-cue CA3 output.
     PASS: cosine(CA3_partial, CA3_full) > 0.7.
     """
     log = print if verbose else (lambda *a, **k: None)
-    log("\n[D.13] Pattern completion test")
+    mode_label = "DIRECT-CA3" if direct_ca3_drive else "EC-DRIVEN"
+    log(f"\n[D.13] Pattern completion test (mode={mode_label})")
     log(f"  Training CA3 attractor over {train_events} events")
 
     drive_full = build_drive_pattern(
@@ -261,7 +281,7 @@ def test_pattern_completion(
     n_full = len(drive_full)
     n_partial = max(1, int(round(partial_frac * n_full)))
     drive_partial = drive_full[:n_partial]
-    log(f"  Full drive: {n_full} neurons; partial: {n_partial} "
+    log(f"  Full lang drive: {n_full} neurons; partial: {n_partial} "
         f"({partial_frac*100:.0f}%)")
 
     # Open ca3 recurrent plasticity for training
@@ -274,10 +294,16 @@ def test_pattern_completion(
         pass
 
     # Training: present full pattern N times, let STDP strengthen CA3
-    # recurrents.
-    from sim.backend import get_backend
+    # recurrents. In direct-CA3 mode, also record CA3 firing during
+    # the last `record_window` events to learn the stored CA3 ensemble.
+    from sim.backend import get_backend, to_host
     cp, _ = get_backend()
     drive_arr_full = cp.asarray(drive_full, dtype=cp.int64)
+    rm = bridge.region_manager
+    ca3_indices = list(rm.indices("ca3"))
+    ca3_arr = cp.asarray(ca3_indices, dtype=cp.int64)
+    ca3_train_spikes = cp.zeros(len(ca3_indices), dtype=cp.float32)
+    record_last_n = min(10, max(1, train_events // 3))
 
     for ev in range(train_events):
         bridge.cp_external_input_current[:] = 0.0
@@ -287,9 +313,13 @@ def test_pattern_completion(
             bridge.runtime_state.current_time_step += 1
         # Drive
         bridge.cp_external_input_current[drive_arr_full] = float(drive_pA)
+        recording = direct_ca3_drive and (ev >= train_events - record_last_n)
         for _ in range(100):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
+            if recording:
+                fired = bridge.cp_firing_states[ca3_arr]
+                ca3_train_spikes += fired.astype(cp.float32)
 
     # Close training gates
     try:
@@ -300,18 +330,60 @@ def test_pattern_completion(
     except Exception:
         pass
 
+    # Determine stored CA3 ensemble (top N by spike count during last
+    # window of training).
+    stored_ca3_local_indices = None
+    stored_ca3_global_indices = None
+    if direct_ca3_drive:
+        train_spikes_host = to_host(ca3_train_spikes)
+        # Pick top 10% as the "stored ensemble" (Marr-like sparse code)
+        n_stored = max(4, int(0.10 * len(ca3_indices)))
+        top_local = np.argsort(-train_spikes_host)[:n_stored]
+        # Filter to neurons that actually fired (spike_count > 0)
+        active_mask = train_spikes_host[top_local] > 0
+        stored_ca3_local_indices = top_local[active_mask]
+        stored_ca3_global_indices = np.array(
+            [ca3_indices[i] for i in stored_ca3_local_indices],
+            dtype=np.int64,
+        )
+        n_stored_actual = len(stored_ca3_global_indices)
+        log(f"  Stored CA3 ensemble: {n_stored_actual} neurons "
+            f"(top by spike count in last {record_last_n} train events)")
+        if n_stored_actual < 4:
+            log(f"  WARN: too few stored CA3 neurons ({n_stored_actual}); "
+                f"DIRECT-CA3 mode will degenerate")
+
     log("  Training complete; measuring recall")
 
-    # Recall with full cue
-    ca3_full = measure_region_response(
-        bridge, "ca3", drive_full, drive_pA=drive_pA,
-        drive_region="language_input", n_steps=100,
-    )
-    # Recall with partial cue
-    ca3_partial = measure_region_response(
-        bridge, "ca3", drive_partial, drive_pA=drive_pA,
-        drive_region="language_input", n_steps=100,
-    )
+    if direct_ca3_drive and stored_ca3_global_indices is not None and \
+            len(stored_ca3_global_indices) >= 4:
+        # DIRECT-CA3 mode: drive CA3 directly with full / partial of
+        # the stored ensemble.
+        n_stored = len(stored_ca3_global_indices)
+        n_stored_partial = max(1, int(round(partial_frac * n_stored)))
+        stored_full = stored_ca3_global_indices
+        stored_partial = stored_ca3_global_indices[:n_stored_partial]
+        log(f"  Direct-CA3 drive: full {n_stored} stored neurons; "
+            f"partial {n_stored_partial} ({partial_frac*100:.0f}%)")
+        ca3_full = measure_region_response(
+            bridge, "ca3", stored_full, drive_pA=drive_pA,
+            drive_region="ca3", n_steps=100,
+        )
+        ca3_partial = measure_region_response(
+            bridge, "ca3", stored_partial, drive_pA=drive_pA,
+            drive_region="ca3", n_steps=100,
+        )
+    else:
+        # EC-DRIVEN mode (default): drive lang_input with full / partial
+        # of the training pattern; propagates through ec -> dg -> ca3.
+        ca3_full = measure_region_response(
+            bridge, "ca3", drive_full, drive_pA=drive_pA,
+            drive_region="language_input", n_steps=100,
+        )
+        ca3_partial = measure_region_response(
+            bridge, "ca3", drive_partial, drive_pA=drive_pA,
+            drive_region="language_input", n_steps=100,
+        )
 
     cos = cosine_similarity(ca3_full, ca3_partial)
     n_active_full = float(np.mean(ca3_full > 0))
@@ -325,12 +397,16 @@ def test_pattern_completion(
 
     return {
         "test": "pattern_completion_D13",
+        "mode": "DIRECT-CA3" if direct_ca3_drive else "EC-DRIVEN",
         "train_events": train_events,
         "partial_frac": partial_frac,
         "ca3_cosine_partial_vs_full": cos,
         "ca3_active_full": n_active_full,
         "ca3_active_partial": n_active_partial,
         "passed": passed,
+        "stored_ca3_size": (int(len(stored_ca3_global_indices))
+                              if stored_ca3_global_indices is not None
+                              else None),
     }
 
 
@@ -351,6 +427,7 @@ def run_validation(
     ca3_recurrent_weight: float = 1.5,
     overlap_frac: float = 0.8,
     train_events: int = 30,
+    direct_ca3_drive: bool = False,
     out_path: Optional[Path] = None,
     verbose: bool = True,
 ) -> dict:
@@ -445,7 +522,9 @@ def run_validation(
     t2 = time.time()
     comp_result = test_pattern_completion(
         bridge, n_lang_input=n_lang_input, n_ca3=n_ca3,
-        seed=seed, train_events=train_events, verbose=verbose,
+        seed=seed, train_events=train_events,
+        direct_ca3_drive=direct_ca3_drive,
+        verbose=verbose,
     )
     comp_result["elapsed_seconds"] = time.time() - t2
     results["tests"].append(comp_result)
@@ -487,6 +566,9 @@ def main() -> int:
     ap.add_argument("--train-events", type=int, default=30)
     ap.add_argument("--ca3-recurrent-density", type=float, default=0.30)
     ap.add_argument("--ca3-recurrent-weight", type=float, default=1.5)
+    ap.add_argument("--direct-ca3-drive", action="store_true",
+                    help="Drive CA3 directly with stored ensemble (Marr "
+                         "autoassociator test) instead of via EC->DG->CA3")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
@@ -502,6 +584,7 @@ def main() -> int:
         ca3_recurrent_weight=args.ca3_recurrent_weight,
         overlap_frac=args.overlap_frac,
         train_events=args.train_events,
+        direct_ca3_drive=args.direct_ca3_drive,
         out_path=Path(args.out) if args.out else None,
         verbose=True,
     )
