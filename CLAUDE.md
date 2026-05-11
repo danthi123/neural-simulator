@@ -675,8 +675,14 @@ is downstream work; the API is the prerequisite.
 
 ### Hippocampal trisynaptic loop (P1, 2026-05-11): catalog D.03+D.12+D.13 validated
 
-**Status:** SINGLE-SEED PASS commit 9d9b8f3. Multi-seed (seeds 43,
-44) in flight at time of writing.
+**Status:** SINGLE-SEED PASS commit 9d9b8f3. Multi-seed (seeds 42,
+43, 44) shows D.12 (separation) robust at 3/3; D.13 (completion)
+1/3 on the absolute cos > 0.7 threshold (seed 42=0.748, seeds
+43=0.676, 44=0.679). Seeds 43/44 within 3% of threshold —
+autoassociator working but seed-variable. Two-concept discrimination
+test (relative criterion, more biology-faithful per catalog D.13
+"too much completion → confused episodes; too little → no
+generalization") running 3 seeds; results pending.
 
 **Runner:** `research/runners/validate_trisynaptic_loop.py`.
 
