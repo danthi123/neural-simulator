@@ -50,6 +50,11 @@ DEFAULT_EVICT_AFTER_IDLE_STEPS = 1000
 # a grace period before it can be evicted again. Prevents oscillation.
 DEFAULT_GRACE_AFTER_PAGEIN_STEPS = 100
 
+# Phase 4 memory-pressure eviction: if total in-RAM CSR size exceeds
+# this threshold (bytes), evict the longest-idle pathway. 0 = disabled
+# (idle-counter eviction only). Default 0 — opt-in.
+DEFAULT_RAM_BUDGET_BYTES = 0
+
 
 @dataclass
 class PathwayShard:
@@ -88,11 +93,17 @@ class TieredSynapseStore:
     def __init__(self,
                  root: Path | str,
                  evict_after_idle_steps: int = DEFAULT_EVICT_AFTER_IDLE_STEPS,
-                 grace_after_pagein_steps: int = DEFAULT_GRACE_AFTER_PAGEIN_STEPS):
+                 grace_after_pagein_steps: int = DEFAULT_GRACE_AFTER_PAGEIN_STEPS,
+                 ram_budget_bytes: int = DEFAULT_RAM_BUDGET_BYTES):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self.evict_after_idle_steps = int(evict_after_idle_steps)
         self.grace_after_pagein_steps = int(grace_after_pagein_steps)
+        # Phase 4: memory-pressure eviction trigger. 0 = disabled.
+        # Non-zero: each step() also checks if total in-RAM CSR size
+        # exceeds budget; if so, evict the longest-idle pathway until
+        # back under budget.
+        self.ram_budget_bytes = int(ram_budget_bytes)
 
         # Pathway state
         self.shards: dict[str, PathwayShard] = {}
@@ -103,6 +114,9 @@ class TieredSynapseStore:
         # Stats for inspection / metrics
         self.n_pageins: int = 0
         self.n_pageouts: int = 0
+        # Phase 4: count evictions specifically caused by memory pressure
+        # (vs idle-counter eviction). Useful for tuning ram_budget_bytes.
+        self.n_pressure_evictions: int = 0
 
     # ── Pathway lifecycle ────────────────────────────────────────────
 
@@ -160,8 +174,9 @@ class TieredSynapseStore:
             fired_pathways: set of pathway names that fired this step.
 
         Returns:
-            Dict mapping pathway name -> "evicted" for any that got paged
-            out. Empty dict if no state changes. Useful for logging.
+            Dict mapping pathway name -> "evicted" or "pressure_evicted"
+            for any that got paged out. Empty dict if no state changes.
+            Useful for logging.
         """
         actions = {}
         for name in list(self.shards.keys()):
@@ -181,7 +196,66 @@ class TieredSynapseStore:
                     and self.grace_remaining.get(name, 0) == 0):
                 self._page_out(shard)
                 actions[name] = "evicted"
+
+        # Phase 4: memory-pressure eviction. If a RAM budget is set and
+        # we're over it, evict the longest-idle pathway (with grace
+        # expired) until back under budget OR no more candidates exist.
+        if self.ram_budget_bytes > 0:
+            in_mem_bytes = self._estimate_in_memory_bytes()
+            while in_mem_bytes > self.ram_budget_bytes:
+                candidate = self._select_pressure_eviction_candidate()
+                if candidate is None:
+                    break  # nothing evictable (all in grace or empty)
+                shard = self.shards[candidate]
+                # Approximate the bytes we'll free
+                freed = self._estimate_shard_bytes(shard)
+                self._page_out(shard)
+                self.n_pressure_evictions += 1
+                actions[candidate] = "pressure_evicted"
+                in_mem_bytes -= freed
+
         return actions
+
+    def _select_pressure_eviction_candidate(self) -> str | None:
+        """Return the name of the in-memory pathway with the highest
+        idle counter AND expired grace. Returns None if no candidate.
+        """
+        best_name = None
+        best_idle = -1
+        for name, shard in self.shards.items():
+            if not shard.in_memory:
+                continue
+            if self.grace_remaining.get(name, 0) > 0:
+                continue  # in grace; skip
+            idle = self.idle_counter.get(name, 0)
+            if idle > best_idle:
+                best_idle = idle
+                best_name = name
+        return best_name
+
+    def _estimate_in_memory_bytes(self) -> int:
+        """Estimate total bytes used by in-memory shard CSRs.
+
+        Sums data.nbytes + indices.nbytes + indptr.nbytes across all
+        in-memory shards. Fast: doesn't touch on-disk shards.
+        """
+        total = 0
+        for shard in self.shards.values():
+            if not shard.in_memory:
+                continue
+            total += self._estimate_shard_bytes(shard)
+        return total
+
+    @staticmethod
+    def _estimate_shard_bytes(shard: PathwayShard) -> int:
+        """Approximate bytes used by an in-memory shard's CSR."""
+        if not shard.in_memory or shard.cached_csr is None:
+            return 0
+        csr = shard.cached_csr
+        try:
+            return int(csr.data.nbytes + csr.indices.nbytes + csr.indptr.nbytes)
+        except AttributeError:
+            return 0
 
     # ── Page in / page out (atomic-write for safety) ──────────────────
 
@@ -333,6 +407,9 @@ class TieredSynapseStore:
             "n_on_disk": on_disk,
             "n_pageins_lifetime": self.n_pageins,
             "n_pageouts_lifetime": self.n_pageouts,
+            "n_pressure_evictions": self.n_pressure_evictions,
+            "in_memory_bytes": self._estimate_in_memory_bytes(),
             "evict_after_idle_steps": self.evict_after_idle_steps,
             "grace_after_pagein_steps": self.grace_after_pagein_steps,
+            "ram_budget_bytes": self.ram_budget_bytes,
         }
