@@ -1425,10 +1425,10 @@ class SimulationBridge:
             self._log_console(f"Error during simulation data initialization (3D): {e}","critical")
             import traceback; traceback.print_exc()
             self.is_initialized = False
-            if 'cupy' in sys.modules and cp.is_available():
+            if is_gpu_backend() and 'cupy' in sys.modules:
                 cp.get_default_memory_pool().free_all_blocks()
                 cp.get_default_pinned_memory_pool().free_all_blocks()
-    
+
     def _apply_per_region_neuron_types(self, cfg, n):
         """Override per-neuron parameters based on region.izh_neuron_type /
         region.hh_neuron_type / region.adex_neuron_type fields.
@@ -1766,7 +1766,7 @@ class SimulationBridge:
             if hasattr(self, attr_name) and getattr(self, attr_name) is not None:
                 setattr(self, attr_name, None) 
 
-        if 'cupy' in sys.modules and cp.is_available():
+        if is_gpu_backend() and 'cupy' in sys.modules:
             try:
                 cp.get_default_memory_pool().free_all_blocks()
                 cp.get_default_pinned_memory_pool().free_all_blocks()
@@ -3918,7 +3918,12 @@ class SimulationBridge:
                         self.gpu_playback_cache[frame_idx] = frame_data_gpu
                         frames_loaded += 1
 
-                except cp.cuda.memory.OutOfMemoryError:
+                # Backend-aware OOM: cp.cuda.memory.OutOfMemoryError on
+                # CuPy, MemoryError on NumPy (which raises stdlib
+                # MemoryError when alloc fails).
+                except (MemoryError,
+                          getattr(getattr(getattr(cp, "cuda", None), "memory", None),
+                                    "OutOfMemoryError", MemoryError)):
                     # OOM during transfer - stop here and use what we have
                     memory_limit_reached = True
                     self._log_to_ui(
@@ -4369,7 +4374,7 @@ class SimulationBridge:
             _prev_any = bool(self.cp_prev_firing_states.any())
 
             # --- 1. Synaptic Plasticity (STP) Update ---
-            if _profiling: cp.cuda.Device().synchronize(); _prof['t_init'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
+            if _profiling: _backend_synchronize(); _prof['t_init'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             base_synaptic_weights = self.cp_connections.data
             effective_synaptic_strength = base_synaptic_weights
 
@@ -4477,7 +4482,7 @@ class SimulationBridge:
                 else:
                     effective_connections_matrix = self.cp_connections
 
-            if _profiling: cp.cuda.Device().synchronize(); _prof['t_stp'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
+            if _profiling: _backend_synchronize(); _prof['t_stp'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 2. Synaptic Conductance Update & Current Calculation ---
             decay_e = self._cached_decay_e
             decay_i = self._cached_decay_i
@@ -4592,7 +4597,7 @@ class SimulationBridge:
                 # Add OU current to total input
                 total_input_current_pA = total_input_current_pA + self.cp_ou_current
 
-            if _profiling: cp.cuda.Device().synchronize(); _prof['t_syn'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
+            if _profiling: _backend_synchronize(); _prof['t_syn'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 3. Neuron Model Dynamics Update ---
             fired_this_step = cp.zeros(n_neurons, dtype=bool)
 
@@ -4812,7 +4817,7 @@ class SimulationBridge:
                         self.cp_synapse_pulse_timers[synapses_to_activate_indices] = pulse_lifetime 
                         self.cp_synapse_pulse_progress[synapses_to_activate_indices] = 0.0 
 
-            if _profiling: cp.cuda.Device().synchronize(); _prof['t_dyn'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
+            if _profiling: _backend_synchronize(); _prof['t_dyn'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
 
             # Experiment-phase plasticity gating: if an experiment is running,
             # respect the current phase's enable_plasticity flag (e.g. testing phases disable plasticity).
@@ -5351,7 +5356,7 @@ class SimulationBridge:
                                 # Keep _synapse_count in sync with actual connection matrix
                                 self._synapse_count = self.cp_connections.nnz
 
-            if _profiling: cp.cuda.Device().synchronize(); _prof['t_plast'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
+            if _profiling: _backend_synchronize(); _prof['t_plast'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 5. Homeostatic Plasticity (gated separately from learning plasticity) ---
             # 5a. Adaptive thresholds (Izhikevich-specific)
             if _homeostasis_gated and cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
@@ -5398,7 +5403,7 @@ class SimulationBridge:
                     else:
                         cp.clip(self.cp_connections.data, 0.01, 5.0, out=self.cp_connections.data)
 
-            if _profiling: cp.cuda.Device().synchronize(); _prof['t_homeo'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
+            if _profiling: _backend_synchronize(); _prof['t_homeo'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 6. Prepare for Next Step & Record Frame ---
             self.cp_prev_firing_states[:] = fired_this_step
             self.record_current_frame_if_active() # This was the missing method call's target
@@ -5437,7 +5442,7 @@ class SimulationBridge:
 
             # Step profiler: accumulate and log summary every 500 steps
             if _profiling:
-                cp.cuda.Device().synchronize()
+                _backend_synchronize()
                 _prof['t_final'] = _time.perf_counter() - _t0
                 if not hasattr(self, '_prof_accum'):
                     self._prof_accum = {k: 0.0 for k in _prof}
