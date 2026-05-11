@@ -1098,3 +1098,17 @@ def test_llm_chat_request_validates_body(client):
     )
     # FastAPI returns 422 for validation errors
     assert res.status_code == 422
+
+
+def test_llm_chat_frontend_panel_present(client):
+    """The Lineages tab JS includes the LLM chat panel renderer."""
+    res = client.get("/static/app.js")
+    assert res.status_code == 200
+    body = res.text
+    assert "renderLLMChatPanel" in body
+    assert "/api/llm-chat" in body
+    # Mode selector populates tier1 + synonym variants
+    assert "synonym12" in body
+    # Reset button + transcript reload wired up
+    assert "Reset chat" in body
+    assert "loadChatTranscript" in body

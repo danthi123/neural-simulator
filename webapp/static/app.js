@@ -2241,6 +2241,175 @@ function renderLineageDetail(data) {
     // Silently ignore — endpoint may not be available yet
     console.debug("Synapse tiering fetch failed (non-fatal):", e);
   });
+  // Phase 3.2 LLM chat panel (2026-05-11)
+  // Lets the user converse with the BridgeMemory via the MockLLM
+  // tool-use loop. First message can be slow (~30-60s if no checkpoint
+  // exists for the chosen mode); subsequent turns are fast.
+  renderLLMChatPanel(body, data.name);
+}
+
+function renderLLMChatPanel(body, lineageName) {
+  body.appendChild(el("h4", {}, "Chat with this lineage (Phase 3.2 demo)"));
+  body.appendChild(el("p", { class: "muted" },
+    "Conversational interface to the BridgeMemory via a MockLLM. " +
+    "Recognized patterns: \"Remember that my X is north\", " +
+    "\"What's my X?\", \"What word goes with east?\". " +
+    "First message may take 30-60s if the bridge for this mode isn't " +
+    "cached yet; subsequent turns are fast."
+  ));
+  // Controls row: mode selector + reset
+  const controls = el("div", { style: "display:flex; gap:0.5em; align-items:center; margin-bottom:0.5em;" });
+  const modeSelect = el("select", { id: "llm-chat-mode-" + lineageName });
+  for (const m of ["tier1", "synonym", "synonym12", "synonym16"]) {
+    const opt = el("option", { value: m }, m);
+    if (m === "tier1") opt.selected = true;
+    modeSelect.appendChild(opt);
+  }
+  controls.appendChild(el("label", {}, "Mode: "));
+  controls.appendChild(modeSelect);
+  const resetBtn = el("button", {}, "Reset chat");
+  resetBtn.style.marginLeft = "0.5em";
+  controls.appendChild(resetBtn);
+  body.appendChild(controls);
+  // Message log
+  const logEl = el("div", {
+    id: "llm-chat-log-" + lineageName,
+    style: "border:1px solid var(--border-light); border-radius:4px; " +
+            "padding:0.5em; max-height:300px; overflow-y:auto; " +
+            "background:var(--bg-soft,#f8f8f8); margin-bottom:0.5em; " +
+            "font-family: monospace; font-size: 0.85em;",
+  });
+  logEl.appendChild(el("p", { class: "muted" }, "(no messages yet — say hi)"));
+  body.appendChild(logEl);
+  // Input row
+  const inputRow = el("div", { style: "display:flex; gap:0.5em;" });
+  const inputEl = el("input", {
+    type: "text",
+    placeholder: "Type a message... e.g. \"Remember that my favorite is north.\"",
+    style: "flex: 1; padding: 0.4em;",
+  });
+  const sendBtn = el("button", {}, "Send");
+  inputRow.appendChild(inputEl);
+  inputRow.appendChild(sendBtn);
+  body.appendChild(inputRow);
+
+  // Try to load any existing transcript for the default mode
+  loadChatTranscript(lineageName, modeSelect.value, logEl);
+
+  // Wire up handlers
+  async function sendMessage() {
+    const message = inputEl.value.trim();
+    if (!message) return;
+    const mode = modeSelect.value;
+    // Optimistic UI: append user message immediately
+    appendChatTurn(logEl, "user", message);
+    inputEl.value = "";
+    sendBtn.disabled = true;
+    sendBtn.textContent = "Thinking...";
+    try {
+      const res = await fetch("/api/llm-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lineage: lineageName, mode, message }),
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        appendChatTurn(logEl, "error", `Error ${res.status}: ${errText}`);
+      } else {
+        const data = await res.json();
+        appendChatTurn(logEl, "assistant", data.response);
+        if (data.tool_calls && data.tool_calls.length) {
+          for (const tc of data.tool_calls) {
+            appendChatTurn(logEl, "tool",
+              `${tc.name}: ${tc.result_summary}`);
+          }
+        }
+      }
+    } catch (e) {
+      appendChatTurn(logEl, "error", `Network error: ${e.message}`);
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = "Send";
+      inputEl.focus();
+    }
+  }
+
+  sendBtn.addEventListener("click", sendMessage);
+  inputEl.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+  resetBtn.addEventListener("click", async () => {
+    const mode = modeSelect.value;
+    try {
+      await fetch(
+        "/api/llm-chat/" + encodeURIComponent(lineageName) +
+        "/reset?mode=" + encodeURIComponent(mode),
+        { method: "POST" },
+      );
+      logEl.replaceChildren(el("p", { class: "muted" }, "(chat reset)"));
+    } catch (e) {
+      console.debug("Reset failed:", e);
+    }
+  });
+  modeSelect.addEventListener("change", () => {
+    loadChatTranscript(lineageName, modeSelect.value, logEl);
+  });
+}
+
+function appendChatTurn(logEl, role, content) {
+  // Strip the placeholder muted "no messages yet" line
+  if (logEl.children.length === 1 &&
+       logEl.firstChild.classList &&
+       logEl.firstChild.classList.contains("muted")) {
+    logEl.replaceChildren();
+  }
+  const colorByRole = {
+    user: "var(--accent, #06c)",
+    assistant: "var(--fg, #222)",
+    tool: "var(--muted, #888)",
+    error: "var(--error, #c00)",
+  };
+  const labelByRole = {
+    user: "user",
+    assistant: "assistant",
+    tool: "tool",
+    error: "error",
+  };
+  const turnEl = el("div", {
+    style: "margin: 0.25em 0; line-height: 1.3;",
+  });
+  turnEl.appendChild(el("span", {
+    style: "color: " + (colorByRole[role] || "var(--fg)") + "; " +
+            "font-weight: bold; margin-right: 0.5em;",
+  }, (labelByRole[role] || role) + ":"));
+  turnEl.appendChild(el("span", {}, content));
+  logEl.appendChild(turnEl);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+async function loadChatTranscript(lineageName, mode, logEl) {
+  try {
+    const res = await fetch(
+      "/api/llm-chat/" + encodeURIComponent(lineageName) +
+      "/transcript?mode=" + encodeURIComponent(mode),
+    );
+    if (res.status === 404) {
+      logEl.replaceChildren(el("p", { class: "muted" }, "(no messages yet — say hi)"));
+      return;
+    }
+    if (!res.ok) return;
+    const data = await res.json();
+    logEl.replaceChildren();
+    if (!data.messages || !data.messages.length) {
+      logEl.appendChild(el("p", { class: "muted" }, "(no messages yet — say hi)"));
+      return;
+    }
+    for (const m of data.messages) {
+      appendChatTurn(logEl, m.role, m.content);
+    }
+  } catch (e) {
+    console.debug("Transcript fetch failed:", e);
+  }
 }
 
 async function loadSynapseTiering(name) {
