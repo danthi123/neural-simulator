@@ -624,6 +624,87 @@ arch (Phase 3.2+).
 + 1 real-bridge integration test in test_numpy_backend_integration.py).
 All PASS.
 
+### Engram-tagging API (P2, 2026-05-11): catalog D.14 / roadmap T1.C SHIPPED
+
+**Status:** SHIPPED commit 29513ac + a3acb9c. 12/12 unit tests pass.
+Persistence through save/load validated (2 integration tests skipped
+pending fuller test bridge).
+
+**Module:** `sim/bridge.py` (added 9 methods to SimulationBridge,
+~200 lines including docstrings)
+
+Tonegawa-style ensemble tagging — "Apple is a CA3 ensemble":
+
+```python
+bridge.start_engram_recording("apple")
+# Drive lang_input("apple") + run bridge steps for the encoding window
+for _ in range(encoding_steps):
+    bridge._run_one_simulation_step()  # auto-accumulates spike counts
+stats = bridge.commit_engram_tag("apple", top_k=50,
+                                    region_filter=["ca3"])
+# stats = {"n_tagged": 47, "n_recorded_steps": 100, "window_ms": 100.0,
+#          "mean_spike_count": 1.4, ...}
+
+# Later — causal recall by stimulating the tag:
+bridge.stimulate_tag("apple", drive_pA=200.0)
+# Now run more steps and observe downstream regions
+```
+
+Auto-tick wired into `_run_one_simulation_step` (zero overhead when
+no active recordings).
+
+Methods:
+- `start_engram_recording(name)` — begin accumulating spike counts
+- `commit_engram_tag(name, threshold_hz=5.0, top_k=None,
+                      region_filter=None)` — finalize tag from
+  accumulated counts. Two selection modes: top-K or threshold-Hz.
+- `stimulate_tag(name, drive_pA, additive=False)` — drive
+  `cp_external_input_current` at tagged indices
+- `clear_tag_drive(name=None)` — zero per-tag or globally
+- `list_engram_tags()` / `get_engram_tag_indices(name)` / `delete_engram_tag(name)`
+
+Persistence: tags saved as HDF5 `engram_tags/` group in
+`save_checkpoint`; restored in `load_checkpoint`. Concepts survive
+between sessions, matching the project's continual-learning premise.
+
+Validation: catalog D.14 (Tonegawa engram cells); roadmap T1.C
+behavioral check is the Liu 2012 inception-of-fear paradigm (train
+context A → reward, tag ensemble, drive ensemble in context B,
+verify reward-conditioned behavior emerges). Liu 2012 reproduction
+is downstream work; the API is the prerequisite.
+
+### Hippocampal trisynaptic loop (P1, 2026-05-11): catalog D.03+D.12+D.13 validated
+
+**Status:** SINGLE-SEED PASS commit 9d9b8f3. Multi-seed (seeds 43,
+44) in flight at time of writing.
+
+**Runner:** `research/runners/validate_trisynaptic_loop.py`.
+
+The trisynaptic architecture was ALREADY built in
+`build_biological_brain_regions(enable_hippocampus_consolidation=True)`
+(Phase 1.3 consolidation work). P1 validated the catalog's two
+characteristic functional properties:
+
+```bash
+python -m research.runners.validate_trisynaptic_loop \
+    --seed 42 --train-events 400 --ca3-recurrent-weight 5.0 \
+    --direct-ca3-drive \
+    --out research/findings/raw/g11_bg/trisynaptic_seed42.json
+```
+
+- **D.12 pattern separation** (Kandel pp 1357–1360): DG cosine 0.218
+  from input cosine 0.800 — 58pp orthogonalization. ✅ PASS
+- **D.13 pattern completion** (Kandel pp 1342, 1360–1361; Marr 1971):
+  CA3 cosine 0.748 (target > 0.7). ✅ PASS
+
+Methodology note: EC-driven test (drive lang_input, propagate
+through trisynaptic chain) FAILED at all parameter combinations.
+DIRECT-CA3 test (drive partial of stored CA3 ensemble directly) is
+the cleaner Marr autoassociator test and PASSES at train=400 +
+ca3_recurrent_weight=5.0.
+
+See `research/findings/2026-05-11-P1-trisynaptic-loop-validation.md`.
+
 ### Realigned plan (2026-05-11, post-checkin): sim as STANDALONE conversational agent
 
 After the Path 3 Phase 3.2 work shipped, the user clarified: goal is
