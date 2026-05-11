@@ -62,31 +62,31 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 16 modules, ~12.8K lines — core engine
-  bridge.py             # 6144 lines — SimulationBridge + GPU state orchestration
-  config.py             #  741 lines — all @dataclass configs
+sim/                    # 19 modules, ~14.4K lines — core engine
+  bridge.py             # 6442 lines — SimulationBridge + GPU state orchestration
+  config.py             #  760 lines — all @dataclass configs
   enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
-  connectivity.py       #  988 lines — spatial/WS/motif connection generators (GPU)
-  kernels.py            #  314 lines — fused @cp.fuse() neuron + plasticity kernels
+  connectivity.py       #  999 lines — spatial/WS/motif connection generators (backend-pluggable)
+  kernels.py            #  326 lines — fused @fuse() neuron + plasticity kernels (cupy/numpy)
   profiles.py           #  432 lines — NEURAL_STRUCTURE_PROFILES + CONNECTIVITY_MOTIFS dicts
   regions.py            #  602 lines — BrainRegion + RegionPathway + RegionManager
-  neuromodulators.py    # 1051 lines — declarative neuromodulator subsystem
+  neuromodulators.py    # 1052 lines — declarative neuromodulator subsystem
   data_bus.py           #   95 lines — DataChannel pub/sub for streaming sim data
   replicas.py           #  243 lines — replicated wiring (multi-bridge support)
   text_embeddings.py    #  205 lines — token embeddings for language regions (2026-05-01)
   visual_cortex.py      #  310 lines — Gabor RFs + retina rendering (Cluster K v2, 2026-05-01)
   bioparameter.py       #  231 lines — biological parameter helpers
   progress.py           #  147 lines — universal [PROGRESS] event format (2026-05-04)
-  lineage.py            #  402 lines — BridgeLineage persistent continuous-learning state (2026-05-11)
-  auto_growth.py        #  283 lines — TierPromoter + weight-transfer (auto-growth Phase A, 2026-05-11)
-  backend.py            #  360 lines — pluggable xp abstraction + device helpers (cupy/numpy, 2026-05-11)
-  synapse_storage.py    #  290 lines — TieredSynapseStore (SSD synapse paging, tiering Phase 3, 2026-05-11)
+  lineage.py            #  538 lines — BridgeLineage persistent continuous-learning + growth-log + shard export (2026-05-11)
+  auto_growth.py        #  357 lines — TierPromoter + weight-transfer (auto-growth Phase A, 2026-05-11)
+  backend.py            #  415 lines — pluggable xp abstraction + device helpers + RNG state (cupy/numpy, 2026-05-11)
+  synapse_storage.py    #  415 lines — TieredSynapseStore + idle/pressure eviction (tiering Phase 3+4, 2026-05-11)
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 71 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/etc) for research
-research/findings/      # session-by-session findings docs (220+ files)
-tests/                  # 68 test files (determinism, runners, kernels, plasticity, lineage, etc.)
+research/runners/       # 72 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/etc) for research
+research/findings/      # session-by-session findings docs (225+ files)
+tests/                  # 72 test files (determinism, runners, kernels, plasticity, lineage, tiering, etc.)
 ```
 
 ### Thread Model
