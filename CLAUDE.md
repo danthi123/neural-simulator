@@ -673,6 +673,26 @@ context A → reward, tag ensemble, drive ensemble in context B,
 verify reward-conditioned behavior emerges). Liu 2012 reproduction
 is downstream work; the API is the prerequisite.
 
+### Concept replay P3.1 (2026-05-11): catalog D.19 + T1.B SHIPPED
+
+**Status:** SHIPPED commit d569848. 5/5 unit tests pass.
+
+`run_concept_replay_phase(bridge, tag_names, n_replays_per_tag=20)`
+added to `research/runners/consolidation_trainer.py`. During NREM,
+drives each engram-tagged CA3 ensemble repeatedly so STDP at
+ca3→ca1→cortex consolidates the specific concept.
+
+Differs from existing `run_swr_replay_phase` (random sparse CA3
+drives): concept replay is SELECTIVE to the day's tagged concepts.
+After enough replay cycles, recall works from cortex without needing
+hippo state (consolidated).
+
+Graceful error handling: missing tag names + empty tags silently
+skipped. Caller manages awake/sleep gate transitions.
+
+P3.2 (sequence replay with 10-20× time compression) deferred until
+P4 episodic encoder produces sequences worth replaying.
+
 ### Hippocampal trisynaptic loop (P1, 2026-05-11): catalog D.03+D.12+D.13 validated
 
 **Status:** SINGLE-SEED PASS commit 9d9b8f3. Multi-seed (seeds 42,
