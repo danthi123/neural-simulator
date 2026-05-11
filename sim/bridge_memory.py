@@ -278,38 +278,143 @@ class BridgeMemory:
 
     # ── Forget ──────────────────────────────────────────────────────
 
-    def forget(self, key: str, decay_rate: float = 0.5) -> dict:
-        """Best-effort unbind. Decays weights along the pathway
-        associated with `key`.
+    def forget(self, key: str, decay_rate: float = 0.5,
+                  sparsity: float = 0.1) -> dict:
+        """Decay weights along synapses originating from `key`'s
+        language_input neurons.
 
-        Phase 3.1 stub: records the request as a growth event but
-        does not actually decay weights. Real implementation calls
-        bridge.set_pathway_weights with weights × decay_rate for the
-        edges connecting `key` neurons to motor pools.
+        Phase 3.2 real-ops (2026-05-11): computes the deterministic
+        embedding for `key`, identifies which language_input neurons
+        it activates (top `sparsity` fraction per
+        text_embeddings.vocab_to_drive_pattern), and multiplies the
+        weights of all outgoing synapses from those neurons by
+        `decay_rate`.
+
+        Biology: real forgetting is gradual + neuromodulator-gated
+        decay along recently-active synapses. This is a coarser
+        intervention — uniform multiplicative decay on edges sourced
+        from the key's active neurons. Closer to extinction-style
+        forgetting than passive decay.
+
+        Args:
+            key: the cue word to forget
+            decay_rate: weights are multiplied by this (0.0 = full
+                erase, 0.5 = halve, 1.0 = no-op). Default 0.5.
+            sparsity: must match the sparsity used when binding (must
+                target the same neurons). Default 0.1 — matches the
+                bind/recall default.
 
         Returns:
             {
               "key": str,
               "decay_rate": float,
-              "n_synapses_decayed": int (0 in stub),
-              "estimated_retention": float (1.0 in stub),
+              "n_active_neurons": int,        # active in language_input
+              "n_synapses_decayed": int,      # weights touched
+              "mean_weight_pre": float,
+              "mean_weight_post": float,
+              "estimated_retention": float,   # post/pre ratio
             }
         """
         self._ensure_loaded()
+
+        # ── Step 1: identify language_input neurons active for `key` ──
+        from sim.text_embeddings import vocab_to_drive_pattern
+        from sim.backend import to_host as _to_host
+        import numpy as _np
+
+        if self.bridge.region_manager is None:
+            raise RuntimeError(
+                "BridgeMemory.forget: bridge has no region_manager. "
+                "Brain-region framework must be enabled."
+            )
+        try:
+            lang_indices = list(
+                self.bridge.region_manager.indices("language_input")
+            )
+        except Exception as e:
+            raise RuntimeError(
+                f"BridgeMemory.forget: language_input region not found: {e}"
+            ) from None
+
+        n_lang = len(lang_indices)
+        drive = vocab_to_drive_pattern(
+            key, n_neurons=n_lang, drive_max_pA=200.0, sparsity=sparsity,
+        )
+        active_local = _np.where(drive > 0)[0]
+        # Map local language_input indices to global neuron indices
+        active_global = _np.array(
+            [lang_indices[i] for i in active_local], dtype=_np.int64,
+        )
+        n_active = int(len(active_global))
+        if n_active == 0:
+            return {
+                "key": key, "decay_rate": decay_rate,
+                "n_active_neurons": 0, "n_synapses_decayed": 0,
+                "mean_weight_pre": 0.0, "mean_weight_post": 0.0,
+                "estimated_retention": 1.0,
+                "warn": "no active neurons for this key",
+            }
+
+        # ── Step 2: locate outgoing edges in CSR ─────────────────────
+        # cp_connections is CSR in (pre -> post) layout. For each
+        # active pre-neuron, slice rows by indptr to get its outgoing
+        # edges' data indices.
+        cp_conn = self.bridge.cp_connections
+        indptr_host = _to_host(cp_conn.indptr)
+        # Edges-by-row index arrays into cp_conn.data
+        data_indices = []
+        for src in active_global:
+            start = int(indptr_host[src])
+            end = int(indptr_host[src + 1])
+            if end > start:
+                data_indices.extend(range(start, end))
+        if not data_indices:
+            return {
+                "key": key, "decay_rate": decay_rate,
+                "n_active_neurons": n_active, "n_synapses_decayed": 0,
+                "mean_weight_pre": 0.0, "mean_weight_post": 0.0,
+                "estimated_retention": 1.0,
+                "warn": "no outgoing synapses from active neurons",
+            }
+
+        # ── Step 3: decay weights ────────────────────────────────────
+        # Use backend-aware indexing: cp_conn.data is a {cupy, numpy}
+        # ndarray. We update in-place.
+        from sim.backend import get_backend
+        xp, _backend_name = get_backend()
+        idx = xp.asarray(data_indices, dtype=xp.int64)
+        data = cp_conn.data
+        # Snapshot pre-decay weights for stats
+        pre_weights_host = _to_host(data[idx])
+        mean_pre = float(_np.mean(pre_weights_host)) if len(pre_weights_host) else 0.0
+        # Apply decay (cast to data's dtype to preserve precision)
+        data[idx] = data[idx] * xp.asarray(decay_rate, dtype=data.dtype)
+        # Snapshot post-decay for confirmation
+        post_weights_host = _to_host(data[idx])
+        mean_post = float(_np.mean(post_weights_host)) if len(post_weights_host) else 0.0
+
+        retention = mean_post / mean_pre if mean_pre > 0 else 1.0
+        n_decayed = int(len(data_indices))
+
         result = {
             "key": key,
             "decay_rate": decay_rate,
-            "n_synapses_decayed": 0,
-            "estimated_retention": 1.0,
-            "stub_note": (
-                "Phase 3.1 scaffold: forget deferred to Phase 3.2."
-            ),
+            "n_active_neurons": n_active,
+            "n_synapses_decayed": n_decayed,
+            "mean_weight_pre": mean_pre,
+            "mean_weight_post": mean_post,
+            "estimated_retention": retention,
         }
         if self.auto_save and self._lineage is not None:
             self._save_to_lineage(
                 "memory_forget",
-                f"forget('{key}', decay={decay_rate})",
+                f"forget('{key}', decay={decay_rate}) -> "
+                f"{n_decayed} synapses decayed ({mean_pre:.3f} -> "
+                f"{mean_post:.3f}, retention={retention:.2f})",
                 key=key, decay_rate=decay_rate,
+                n_synapses_decayed=n_decayed,
+                mean_weight_pre=mean_pre,
+                mean_weight_post=mean_post,
             )
         return result
 

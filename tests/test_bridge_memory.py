@@ -27,11 +27,44 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 class _MockBridge:
-    """Stand-in for SimulationBridge with the attrs BridgeMemory reads."""
+    """Stand-in for SimulationBridge with the attrs BridgeMemory reads.
+
+    Includes a minimal `region_manager` + `cp_connections` so the
+    Phase 3.2 real-ops (forget) can run against it without booting a
+    full sim.
+    """
     class _Cfg:
         num_neurons = 6336
     core_config = _Cfg()
     actual_total_connections_n = 3218125
+
+    def __init__(self):
+        import numpy as _np
+        import scipy.sparse as _sp
+
+        class _RegionManager:
+            """Mock RegionManager with a single language_input region of
+            64 neurons starting at index 0."""
+            def indices(self, name):
+                if name == "language_input":
+                    return list(range(64))
+                raise KeyError(name)
+
+        self.region_manager = _RegionManager()
+
+        # Build a small CSR: each of the 64 language_input neurons
+        # has 10 random outgoing edges with weight 1.0. Total 640 edges.
+        rng = _np.random.default_rng(0)
+        srcs = _np.repeat(_np.arange(64, dtype=_np.int64), 10)
+        # Targets in [64, 6336) — anywhere outside the input region
+        tgts = rng.integers(64, 6336, size=srcs.size, dtype=_np.int64)
+        weights = _np.ones(srcs.size, dtype=_np.float32)
+        coo = _sp.coo_matrix(
+            (weights, (srcs, tgts)), shape=(6336, 6336),
+        )
+        # Use scipy CSR; BridgeMemory.forget operates via .data + .indptr
+        # which work the same in scipy as in cupyx.scipy.sparse.
+        self.cp_connections = coo.tocsr()
 
     def save_checkpoint(self, path: str):
         from pathlib import Path
@@ -160,23 +193,64 @@ def test_recall_does_not_record_growth_event(mock_memory):
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_forget_returns_stub_schema(mock_memory):
-    """forget() returns stub schema with n_synapses_decayed=0."""
+def test_forget_returns_realops_schema(mock_memory):
+    """forget() returns the Phase 3.2 real-ops schema."""
     result = mock_memory.forget("test_key", decay_rate=0.5)
     assert result["key"] == "test_key"
     assert result["decay_rate"] == 0.5
-    assert result["n_synapses_decayed"] == 0
-    assert result["estimated_retention"] == 1.0
+    # New real-ops fields
+    assert "n_active_neurons" in result
+    assert "n_synapses_decayed" in result
+    assert "mean_weight_pre" in result
+    assert "mean_weight_post" in result
+    assert "estimated_retention" in result
+
+
+def test_forget_actually_decays_weights(mock_memory):
+    """forget() multiplies weights by decay_rate. With 1.0 weights pre,
+    decay_rate=0.5 should give 0.5 post."""
+    # vocab_to_drive_pattern picks ~10% of 64 neurons = ~6 active.
+    # Each has 10 outgoing edges = ~60 synapses decayed.
+    result = mock_memory.forget("test_key", decay_rate=0.5)
+    assert result["n_active_neurons"] > 0
+    assert result["n_synapses_decayed"] > 0
+    # All starting weights are 1.0; after decay_rate=0.5 they should be 0.5.
+    assert abs(result["mean_weight_pre"] - 1.0) < 0.01
+    assert abs(result["mean_weight_post"] - 0.5) < 0.01
+    assert abs(result["estimated_retention"] - 0.5) < 0.01
+
+
+def test_forget_zero_decay_full_erase(mock_memory):
+    """decay_rate=0.0 fully erases the targeted weights."""
+    result = mock_memory.forget("erase_me", decay_rate=0.0)
+    assert result["mean_weight_post"] == 0.0
+    assert result["estimated_retention"] == 0.0
+
+
+def test_forget_one_decay_no_op(mock_memory):
+    """decay_rate=1.0 is a no-op (weights unchanged)."""
+    result = mock_memory.forget("noop_test", decay_rate=1.0)
+    assert abs(result["mean_weight_pre"] - 1.0) < 0.01
+    assert abs(result["mean_weight_post"] - 1.0) < 0.01
+    assert abs(result["estimated_retention"] - 1.0) < 0.01
 
 
 def test_forget_records_growth_event(mock_memory):
-    """forget() records a memory_forget growth event."""
-    mock_memory.forget("user_name")
+    """forget() records a memory_forget growth event with stats."""
+    mock_memory.forget("user_name", decay_rate=0.7)
     meta = mock_memory._lineage.read_metadata()
     forget_events = [e for e in meta.growth_events
                        if e["kind"] == "memory_forget"]
     assert len(forget_events) >= 1
-    assert "user_name" in forget_events[-1]["description"]
+    last = forget_events[-1]
+    assert "user_name" in last["description"]
+    # Real-ops description now includes synapse count + retention
+    assert "synapses decayed" in last["description"]
+    # Metadata is recorded too
+    md = last.get("metadata", {})
+    assert md.get("key") == "user_name"
+    assert md.get("decay_rate") == 0.7
+    assert md.get("n_synapses_decayed", 0) > 0
 
 
 # ──────────────────────────────────────────────────────────────────────
