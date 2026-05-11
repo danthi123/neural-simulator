@@ -62,7 +62,7 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 20 modules (+ __init__.py), ~15.4K lines — core engine
+sim/                    # 21 modules (+ __init__.py), ~15.7K lines — core engine
   bridge.py             # 6442 lines — SimulationBridge + GPU state orchestration
   config.py             #  760 lines — all @dataclass configs
   enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
@@ -82,13 +82,14 @@ sim/                    # 20 modules (+ __init__.py), ~15.4K lines — core engi
   backend.py            #  415 lines — pluggable xp abstraction + device helpers + RNG state (cupy/numpy, 2026-05-11)
   synapse_storage.py    #  415 lines — TieredSynapseStore + idle/pressure eviction (tiering Phase 3+4, 2026-05-11)
   bridge_memory.py      #  487 lines — BridgeMemory LLM-callable memory wrapper (Path 3 Phase 3.1.6, 2026-05-11)
-  llm_memory_orchestrator.py #  347 lines — MockLLM + LLMMemoryOrchestrator tool-use loop (Phase 3.2, 2026-05-11)
+  llm_memory_orchestrator.py #  ~440 lines — MockLLM + LLMMemoryOrchestrator tool-use loop, 5 tool schemas (Phase 3.2, 2026-05-11)
+  llm_adapters.py       #  ~190 lines — OllamaLLM + LlamaCppLLM stub adapters (Phase 3.3 scaffold, 2026-05-11)
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 75 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/etc) for research
+research/runners/       # 77 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/bootstrap_hippo_lineage/etc) for research
 research/findings/      # session-by-session findings docs (230+ files)
-tests/                  # 76 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, etc.)
+tests/                  # 77 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, llm adapters, etc.)
 ```
 
 ### Thread Model
