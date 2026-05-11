@@ -40,7 +40,10 @@ class _MockBridge:
 
     def __init__(self):
         import numpy as _np
-        import scipy.sparse as _sp
+        from sim.backend import get_backend, get_sparse_module
+
+        xp, _ = get_backend()
+        sp = get_sparse_module()
 
         class _RegionManager:
             """Mock RegionManager with a single language_input region of
@@ -52,18 +55,21 @@ class _MockBridge:
 
         self.region_manager = _RegionManager()
 
-        # Build a small CSR: each of the 64 language_input neurons
-        # has 10 random outgoing edges with weight 1.0. Total 640 edges.
+        # Build a small CSR using the ACTIVE backend's sparse module.
+        # Under CuPy this is cupyx.scipy.sparse; under NumPy it's scipy.sparse.
+        # Each of the 64 language_input neurons has 10 random outgoing
+        # edges with weight 1.0. Total 640 edges.
         rng = _np.random.default_rng(0)
         srcs = _np.repeat(_np.arange(64, dtype=_np.int64), 10)
-        # Targets in [64, 6336) — anywhere outside the input region
         tgts = rng.integers(64, 6336, size=srcs.size, dtype=_np.int64)
         weights = _np.ones(srcs.size, dtype=_np.float32)
-        coo = _sp.coo_matrix(
-            (weights, (srcs, tgts)), shape=(6336, 6336),
+
+        srcs_xp = xp.asarray(srcs)
+        tgts_xp = xp.asarray(tgts)
+        weights_xp = xp.asarray(weights)
+        coo = sp.coo_matrix(
+            (weights_xp, (srcs_xp, tgts_xp)), shape=(6336, 6336),
         )
-        # Use scipy CSR; BridgeMemory.forget operates via .data + .indptr
-        # which work the same in scipy as in cupyx.scipy.sparse.
         self.cp_connections = coo.tocsr()
 
     def save_checkpoint(self, path: str):
