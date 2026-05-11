@@ -77,9 +77,31 @@ def run_ventral_validation(
     n_wernicke: int = 100,
     n_train_events: int = 100,
     n_replay_cycles: int = 20,
+    strict_two_stage: bool = False,
+    drive_lang_during_replay: bool = False,
     out_path: Optional[Path] = None,
     verbose: bool = True,
 ):
+    """Iteration B parameters (catalog G.11/G.13 + McClelland 1995 CLS):
+
+    strict_two_stage:
+        If True, encoding phase opens ONLY hippocampal gates
+        (lang_to_ec, ec_to_dg, dg_to_ca3, ca3_to_ca1, ec_to_ca1).
+        Ventral-stream gates (lang_to_wernicke, wernicke_to_semantic,
+        ca1_to_semantic) stay closed. Then during the replay/sleep
+        phase the ventral gates open. This matches McClelland 1995
+        CLS: wake = hippo fast learning; sleep = cortex slow
+        consolidation via hippo replay.
+
+    drive_lang_during_replay:
+        If True (only meaningful with strict_two_stage=True), during
+        each replay burst we ALSO drive lang_input(concept) so that
+        wernicke sees both the (replayed) meaning via ca1->semantic
+        AND the word via lang->wernicke, enabling Hebbian binding.
+        Biology: Wilson & McNaughton 1994 coordinated hippo+cortex
+        replay; real cortical replay reactivates phonological codes
+        alongside semantic content.
+    """
     log = print if verbose else (lambda *a, **k: None)
     log("=" * 60)
     log(f"P5 ventral semantic stream validation (seed={seed})")
@@ -154,13 +176,24 @@ def run_ventral_validation(
         [lang_idx[i] for i in np.where(word_river > 0)[0]], dtype=cp.int64
     )
 
+    # Iter B: split gate sets so encoding can be hippo-only.
+    HIPPO_GATES = (
+        "lang_to_ec", "ec_to_dg", "dg_to_ca3", "ca3_to_ca1", "ec_to_ca1",
+    )
+    VENTRAL_GATES = (
+        "lang_to_wernicke", "wernicke_to_semantic", "ca1_to_semantic",
+    )
+    REPLAY_GATES = ("ca3_swr_burst",)
+    if strict_two_stage:
+        encode_gates = HIPPO_GATES
+        log("  [iter B] strict two-stage: encoding hippo-only")
+    else:
+        # Iter A: open everything during encoding (current behavior)
+        encode_gates = HIPPO_GATES + REPLAY_GATES + VENTRAL_GATES
+
     def encode_concept(name, drive_arr):
         """Encode + tag the CA3 ensemble for this concept."""
-        # Open gates
-        for g in ("lang_to_ec", "ec_to_dg", "dg_to_ca3", "ca3_to_ca1",
-                  "ec_to_ca1", "ca3_swr_burst",
-                  "lang_to_wernicke", "wernicke_to_semantic",
-                  "ca1_to_semantic"):
+        for g in encode_gates:
             try:
                 bridge.set_plasticity_gate(g, 1.0)
             except Exception:
@@ -176,10 +209,7 @@ def run_ventral_validation(
                 bridge._run_one_simulation_step()
                 bridge.runtime_state.current_time_step += 1
         # Close
-        for g in ("lang_to_ec", "ec_to_dg", "dg_to_ca3", "ca3_to_ca1",
-                  "ec_to_ca1", "ca3_swr_burst",
-                  "lang_to_wernicke", "wernicke_to_semantic",
-                  "ca1_to_semantic"):
+        for g in encode_gates:
             try:
                 bridge.set_plasticity_gate(g, 0.0)
             except Exception:
@@ -210,20 +240,57 @@ def run_ventral_validation(
 
     # Run concept replay (P3.1) to consolidate to semantic_cortex
     log(f"\nRunning concept replay ({n_replay_cycles} cycles each)...")
-    # Open ca1_to_semantic for the consolidation transfer
-    for g in ("ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1"):
+    # Iter B: during replay, open the ventral gates so cortex can
+    # learn the meaning from the replayed CA3 pattern; also open
+    # ca1_to_semantic and ca3_swr_burst for the consolidation
+    # transfer per McClelland 1995.
+    if strict_two_stage:
+        replay_phase_gates = (
+            "ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1",
+            "lang_to_wernicke", "wernicke_to_semantic",
+        )
+        log("  [iter B] replay opens both hippo-replay AND ventral gates")
+    else:
+        replay_phase_gates = ("ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1")
+    for g in replay_phase_gates:
         try:
             bridge.set_plasticity_gate(g, 1.0)
         except Exception:
             pass
     t_replay = time.time()
-    replay_stats = run_concept_replay_phase(
-        bridge, tag_names=["apple", "river"],
-        n_replays_per_tag=n_replay_cycles,
-        burst_duration_ms=50, inter_burst_ms=20,
-        drive_pA=150.0,
-    )
-    for g in ("ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1"):
+    if drive_lang_during_replay:
+        # Iter B variant: drive lang_input alongside CA3 replay so
+        # wernicke sees both word + consolidated meaning. Custom
+        # replay loop here since run_concept_replay_phase doesn't
+        # support external drive on each burst.
+        drives = {"apple": apple_arr, "river": river_arr}
+        replays_run = 0
+        for cycle in range(n_replay_cycles):
+            for tag_name in ("apple", "river"):
+                # Burst CA3 tag AND drive lang_input(concept)
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.cp_external_input_current[drives[tag_name]] = 200.0
+                bridge.stimulate_tag(tag_name, drive_pA=150.0)
+                for _ in range(50):  # burst_duration_ms
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+                # Inter-burst gap
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.clear_tag_drive()
+                for _ in range(20):  # inter_burst_ms
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+                replays_run += 1
+        replay_stats = {"n_replays": replays_run}
+        log("  [iter B] drove lang_input alongside CA3 replay")
+    else:
+        replay_stats = run_concept_replay_phase(
+            bridge, tag_names=["apple", "river"],
+            n_replays_per_tag=n_replay_cycles,
+            burst_duration_ms=50, inter_burst_ms=20,
+            drive_pA=150.0,
+        )
+    for g in replay_phase_gates:
         try:
             bridge.set_plasticity_gate(g, 0.0)
         except Exception:
@@ -394,12 +461,26 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--n-train-events", type=int, default=300)
     ap.add_argument("--n-replay-cycles", type=int, default=20)
+    ap.add_argument("--n-semantic-cortex", type=int, default=500,
+                    help="Iter C: scale 500 -> 1000")
+    ap.add_argument("--n-wernicke", type=int, default=100,
+                    help="Iter C: scale 100 -> 400")
+    ap.add_argument("--strict-two-stage", action="store_true",
+                    help="Iter B: encoding hippo-only; replay opens "
+                         "ventral gates")
+    ap.add_argument("--drive-lang-during-replay", action="store_true",
+                    help="Iter B variant: drive lang_input(concept) "
+                         "alongside CA3 replay")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
     run_ventral_validation(
         seed=args.seed,
         n_train_events=args.n_train_events,
         n_replay_cycles=args.n_replay_cycles,
+        n_semantic_cortex=args.n_semantic_cortex,
+        n_wernicke=args.n_wernicke,
+        strict_two_stage=args.strict_two_stage,
+        drive_lang_during_replay=args.drive_lang_during_replay,
         out_path=Path(args.out) if args.out else None,
         verbose=True,
     )
