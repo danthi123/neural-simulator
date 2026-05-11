@@ -1,0 +1,17 @@
+{
+  "vocab_size": 8,
+  "n_lang_input": 4096,
+  "n_motor_per_action": 1000,
+  "n_motor_fs_per_action": 120,
+  "enable_stp": false,
+  "n_rounds": 10,
+  "t_init_sec": 39.877187728881836,
+  "speak_stats": {
+    "mean_sec": 1.2857581198215484,
+    "std_sec": 0.2601373758214231,
+    "min_sec": 0.9353022575378418,
+    "max_sec": 1.7894234657287598,
+    "n_samples": 40
+  },
+  "vram_mb": 591.11767578125
+}
