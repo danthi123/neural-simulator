@@ -40,6 +40,117 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 
+def run_concept_replay_phase(
+    bridge,
+    tag_names,
+    n_replays_per_tag: int = 20,
+    burst_duration_ms: int = 100,
+    inter_burst_ms: int = 50,
+    drive_pA: float = 100.0,
+    randomize_order: bool = True,
+    rng=None,
+):
+    """During NREM, drive engram-tagged CA3 ensembles in turn.
+
+    Catalog D.19 (SWRs) + D.14 (engram cells). Roadmap T1.B (P3.1).
+
+    Each replay event:
+      1. Drive the tag's neurons (via bridge.stimulate_tag) at
+         drive_pA for burst_duration_ms (~150 Hz population firing
+         with typical CA3 dynamics).
+      2. STDP at ca3->ca1->cortex pathways auto-consolidates that
+         specific concept's hippocampal trace into cortex.
+      3. inter_burst_ms quiet between bursts.
+
+    Compared to run_swr_replay_phase (random sparse CA3 drives):
+      - Random replay consolidates whatever has been recently
+        learned generically.
+      - Concept replay consolidates SPECIFIC tagged concepts.
+
+    Use case: after binding "apple" via P1+P2 (hippo encoding +
+    engram tag), run concept replay on "apple" for N cycles to
+    consolidate to cortex. Subsequent recall works from cortex
+    without needing hippocampus.
+
+    Args:
+        bridge: SimulationBridge with engram-tagging enabled
+            (call commit_engram_tag for each tag first).
+        tag_names: list of engram-tag names (each must exist via
+            bridge.commit_engram_tag).
+        n_replays_per_tag: how many replay events per tag
+            (default 20 — Buzsaki 2015 typical NREM cycle count
+            scaled down).
+        burst_duration_ms: drive duration per replay (default 100 ms;
+            real SWR is shorter ~50 ms but the longer window helps
+            STDP capture).
+        inter_burst_ms: quiet window between replays (default 50 ms).
+        drive_pA: drive amplitude (default 100; matches existing
+            run_swr_replay_phase).
+        randomize_order: shuffle the replay order to avoid biasing
+            by sequence (default True).
+        rng: optional numpy RNG for reproducibility.
+
+    Requires:
+        Each tag in tag_names must already be committed (call
+        bridge.commit_engram_tag before this).
+
+    Returns:
+        dict with replay stats: {n_replays, tags_replayed,
+        per_tag_replay_count}.
+
+    Caveat: gates configured per Phase 1.3 set_sleep_gates pattern
+    (ca3_swr_burst ON, lang_to_motor OFF) should be active before
+    calling. This function doesn't change gates — caller manages
+    awake/sleep transitions.
+    """
+    if rng is None:
+        rng = np.random.default_rng()
+
+    # Build replay order
+    order = list(tag_names) * n_replays_per_tag
+    if randomize_order:
+        order = list(order)
+        rng.shuffle(order)
+
+    per_tag_count = {name: 0 for name in tag_names}
+    n_replays_total = 0
+
+    for tag_name in order:
+        # Each replay:
+        # 1. Zero drive
+        # 2. Drive the tag's CA3 neurons
+        # 3. Run for burst_duration_ms
+        # 4. Zero drive
+        # 5. Run for inter_burst_ms (quiet)
+        bridge.cp_external_input_current[:] = 0.0
+        try:
+            n_stim = bridge.stimulate_tag(tag_name, drive_pA=drive_pA)
+        except KeyError:
+            # Tag not committed; skip
+            continue
+        if n_stim == 0:
+            continue
+        for _ in range(burst_duration_ms):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        # Quiet
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(inter_burst_ms):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        per_tag_count[tag_name] += 1
+        n_replays_total += 1
+
+    return {
+        "n_replays": n_replays_total,
+        "tags_replayed": list(tag_names),
+        "per_tag_replay_count": per_tag_count,
+        "burst_duration_ms": burst_duration_ms,
+        "inter_burst_ms": inter_burst_ms,
+        "randomize_order": randomize_order,
+    }
+
+
 def run_swr_replay_phase(
     bridge,
     n_swr_events: int = 200,
