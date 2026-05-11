@@ -222,6 +222,30 @@ def cmd_prune(args) -> int:
     return 0
 
 
+def cmd_list_shards(args) -> int:
+    """List per-pathway shards exported for a lineage."""
+    root = Path(args.root) if args.root else LINEAGE_ROOT
+    lineage = BridgeLineage(args.name, root=root)
+    if not lineage.exists():
+        print(f"ERROR: lineage '{args.name}' does not exist", file=sys.stderr)
+        return 2
+    names = lineage.list_shards()
+    if not names:
+        print(f"[no shards exported for '{args.name}'; run export-shards "
+              f"after loading a bridge from this lineage]")
+        return 0
+    print(f"Shards for '{args.name}' ({len(names)} pathways):")
+    shard_root = lineage.root / "shards"
+    for name in names:
+        path = shard_root / f"{name}.npz"
+        try:
+            size = path.stat().st_size
+            print(f"  {name:<40} {_fmt_bytes(size):>10}")
+        except OSError:
+            print(f"  {name:<40} <missing>")
+    return 0
+
+
 def cmd_growth_log(args) -> int:
     """Render the lineage's growth log to stdout (or --write to _growth_log.md)."""
     root = Path(args.root) if args.root else LINEAGE_ROOT
@@ -340,6 +364,12 @@ def main() -> int:
     p_pr.add_argument("--keep-last", type=int, default=30,
                        help="Number of recent snapshots to keep (default 30)")
     p_pr.set_defaults(func=cmd_prune)
+
+    # list-shards (tiering Phase 3 Strategy C inspection)
+    p_ls = sub.add_parser("list-shards",
+                            help="List per-pathway shards (if exported)")
+    p_ls.add_argument("name", type=str, help="Lineage name")
+    p_ls.set_defaults(func=cmd_list_shards)
 
     # growth-log
     p_gl = sub.add_parser("growth-log",

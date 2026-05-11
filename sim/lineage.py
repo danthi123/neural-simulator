@@ -387,6 +387,61 @@ class BridgeLineage:
         new_lineage.write_metadata(new_meta)
         return new_lineage
 
+    # ── Per-pathway shard export (tiering Phase 3 Strategy C) ────────
+
+    def export_shards(self, bridge, shard_root: Path | str = None) -> int:
+        """Export the bridge's pathways as per-pathway shards.
+
+        Strategy C of the tiering Phase 3 part 2 design:
+        - Bridge stays monolithic (cp_connections unchanged)
+        - Lineage gains a side-car shards/ directory with per-pathway
+          .npz files alongside current.simstate.h5
+        - Future use: SSD-tiered access via TieredSynapseStore
+
+        Args:
+            bridge: SimulationBridge with region_manager enabled
+            shard_root: optional path to write shards into (default:
+                self.root / "shards")
+
+        Returns:
+            Number of shards written (= number of pathways in
+            region_manager.pathways()).
+
+        Raises:
+            RuntimeError: if bridge doesn't have a region_manager.
+        """
+        from sim.synapse_storage import TieredSynapseStore
+
+        if bridge.region_manager is None:
+            raise RuntimeError(
+                "export_shards: bridge.region_manager is None — "
+                "brain region framework must be enabled"
+            )
+        shard_root = Path(shard_root) if shard_root else (self.root / "shards")
+        shard_root.mkdir(parents=True, exist_ok=True)
+        store = TieredSynapseStore(root=shard_root)
+        per_pathway = bridge.extract_per_pathway_csrs()
+        for name, csr in per_pathway.items():
+            store.add_pathway(name, csr)
+        n = store.save_all_shards()
+        return n
+
+    def list_shards(self, shard_root: Path | str = None) -> list[str]:
+        """List pathway shard names available on disk for this lineage.
+
+        Returns the pathway names that have been exported via
+        export_shards(). Empty list if shards directory doesn't exist
+        or no shards have been saved.
+        """
+        from sim.synapse_storage import TieredSynapseStore
+
+        shard_root = Path(shard_root) if shard_root else (self.root / "shards")
+        if not shard_root.exists():
+            return []
+        store = TieredSynapseStore(root=shard_root)
+        store.load_shard_index()
+        return store.pathway_names()
+
     # ── Growth log (human-readable diary of the lineage's evolution) ────
 
     def render_growth_log(self) -> str:

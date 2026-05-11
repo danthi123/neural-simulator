@@ -2432,6 +2432,80 @@ class SimulationBridge:
         if indices.size > 0 and int(indices.max()) < nnz:
             self.cp_plasticity_rate_gain[indices] = cp.float32(value)
 
+    def extract_per_pathway_csrs(self) -> dict:
+        """Split the monolithic cp_connections into per-pathway sub-matrices.
+
+        Used for SSD synapse paging (Phase 3 of tiering design) — each
+        pathway becomes a separately-loadable shard. Each sub-matrix has
+        shape (n_post_region, n_pre_region) and contains only the edges
+        for that specific pathway.
+
+        Returns:
+            Dict mapping pathway name (e.g. "language_input_to_motor_N") to
+            scipy.sparse.csr_matrix (the per-pathway sub-CSR).
+
+        Requires:
+            - self.region_manager is not None (brain region framework enabled)
+            - self.cp_connections is initialized
+
+        On NumPy backend the result is scipy.sparse; on CuPy backend
+        the result is cupyx.scipy.sparse. Caller should convert via
+        _backend_to_host() before disk persistence (TieredSynapseStore
+        expects scipy.sparse).
+        """
+        if self.region_manager is None:
+            raise RuntimeError(
+                "extract_per_pathway_csrs: region_manager is None — "
+                "brain region framework must be enabled"
+            )
+        if self.cp_connections is None:
+            raise RuntimeError(
+                "extract_per_pathway_csrs: cp_connections is None — "
+                "_initialize_simulation_data must have been called"
+            )
+        result = {}
+        # We use scipy.sparse on the host side regardless of backend,
+        # because TieredSynapseStore is scipy.sparse-only and shards
+        # are stored as numpy .npz files.
+        import scipy.sparse as sp_host
+        import numpy as np
+        # Pull CSR to host once if on CuPy
+        try:
+            indptr = _backend_to_host(self.cp_connections.indptr)
+            indices = _backend_to_host(self.cp_connections.indices)
+            data = _backend_to_host(self.cp_connections.data)
+        except NameError:
+            # _backend_to_host not in scope (e.g. defensive bootstrap)
+            indptr = self.cp_connections.indptr
+            indices = self.cp_connections.indices
+            data = self.cp_connections.data
+            if hasattr(indptr, "get"):
+                indptr = indptr.get()
+            if hasattr(indices, "get"):
+                indices = indices.get()
+            if hasattr(data, "get"):
+                data = data.get()
+        n = int(self.cp_connections.shape[0])
+        full_csr = sp_host.csr_matrix(
+            (data, indices, indptr), shape=(n, n)
+        )
+
+        for pw in self.region_manager.pathways():
+            pre_indices = np.array(
+                list(self.region_manager.indices(pw.from_region)),
+                dtype=np.int64,
+            )
+            post_indices = np.array(
+                list(self.region_manager.indices(pw.to_region)),
+                dtype=np.int64,
+            )
+            # Slice rows then columns (CSR -> CSR slicing is cheap)
+            sub = full_csr[post_indices, :][:, pre_indices].tocsr()
+            # Naming convention: <from_region>_to_<to_region>
+            pw_name = f"{pw.from_region}_to_{pw.to_region}"
+            result[pw_name] = sub
+        return result
+
     def get_plasticity_gate_value(self, name: str) -> float:
         """Return the current plasticity gain for the named gate."""
         name = self._canonicalize_gate_name(name)

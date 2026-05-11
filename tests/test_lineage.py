@@ -401,3 +401,89 @@ def test_write_growth_log_idempotent(tmp_path):
     content = lineage.growth_log_path.read_text(encoding="utf-8")
     assert "First" in content
     assert "Second" in content
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Per-pathway shard export (Strategy C of tiering Phase 3 part 2)
+# Added 2026-05-11
+# ──────────────────────────────────────────────────────────────────────
+
+
+def test_export_shards_requires_region_manager(tmp_path):
+    """export_shards raises when bridge has no region_manager."""
+    lineage = BridgeLineage("rm_none", root=tmp_path)
+    class _FakeBridge:
+        region_manager = None
+    bridge = _FakeBridge()
+    with pytest.raises(RuntimeError, match="region_manager"):
+        lineage.export_shards(bridge)
+
+
+def test_list_shards_empty_when_not_exported(tmp_path):
+    """list_shards returns [] when shards directory is absent."""
+    lineage = BridgeLineage("no_shards", root=tmp_path)
+    assert lineage.list_shards() == []
+
+
+def test_export_shards_with_mock_bridge_round_trip(tmp_path):
+    """export_shards writes per-pathway shards; list_shards returns them.
+
+    Uses a minimal mock bridge providing region_manager + extract_per_pathway_csrs.
+    """
+    import scipy.sparse as sp
+    import numpy as np
+
+    class _MockRegionManager:
+        def pathways(self):
+            return [type("Pw", (), {
+                "from_region": "lang", "to_region": "motor"
+            })()]
+        def indices(self, name):
+            return list(range(5)) if name == "lang" else list(range(5, 10))
+
+    class _MockBridge:
+        region_manager = _MockRegionManager()
+        def extract_per_pathway_csrs(self):
+            # Build a small CSR for the lang->motor pathway
+            data = np.array([1.0, 2.0, 3.0], dtype=np.float32)
+            indices = np.array([0, 1, 2], dtype=np.int32)
+            indptr = np.array([0, 1, 2, 3, 3, 3], dtype=np.int64)
+            csr = sp.csr_matrix((data, indices, indptr), shape=(5, 5))
+            return {"lang_to_motor": csr}
+
+    lineage = BridgeLineage("shard_test", root=tmp_path)
+    bridge = _MockBridge()
+    n = lineage.export_shards(bridge)
+    assert n == 1
+
+    # Shard file exists where we expect
+    shard_path = tmp_path / "shard_test" / "shards" / "lang_to_motor.npz"
+    assert shard_path.exists()
+
+    # list_shards reports the pathway
+    names = lineage.list_shards()
+    assert names == ["lang_to_motor"]
+
+
+def test_export_shards_custom_root(tmp_path):
+    """export_shards respects a custom shard_root path."""
+    import scipy.sparse as sp
+    import numpy as np
+
+    class _MockRM:
+        def pathways(self):
+            return [type("Pw", (), {"from_region": "a", "to_region": "b"})()]
+        def indices(self, name):
+            return list(range(3)) if name == "a" else list(range(3, 6))
+
+    class _MockB:
+        region_manager = _MockRM()
+        def extract_per_pathway_csrs(self):
+            csr = sp.csr_matrix(np.eye(3, dtype=np.float32))
+            return {"a_to_b": csr}
+
+    lineage = BridgeLineage("custom_root", root=tmp_path)
+    custom_path = tmp_path / "elsewhere" / "shards"
+    n = lineage.export_shards(_MockB(), shard_root=custom_path)
+    assert n == 1
+    assert (custom_path / "a_to_b.npz").exists()
