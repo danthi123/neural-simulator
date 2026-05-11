@@ -757,10 +757,15 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--n-train-events", type=int, default=300)
     ap.add_argument("--n-replay-cycles", type=int, default=20)
+    ap.add_argument("--n-lang-input", type=int, default=1024,
+                    help="Iter R (scale-up): 1024 -> 4096 for "
+                         "biological scale test")
     ap.add_argument("--n-semantic-cortex", type=int, default=500,
-                    help="Iter C: scale 500 -> 1000")
+                    help="Iter C/R: scale 500 -> 1000 (Tier C) "
+                         "or 5000 (Tier R biological scale)")
     ap.add_argument("--n-wernicke", type=int, default=100,
-                    help="Iter C: scale 100 -> 400")
+                    help="Iter C/R: scale 100 -> 400 (Tier C) "
+                         "or 2000 (Tier R biological scale)")
     ap.add_argument("--strict-two-stage", action="store_true",
                     help="Iter B: encoding hippo-only; replay opens "
                          "ventral gates")
@@ -832,6 +837,7 @@ def main() -> int:
     args = ap.parse_args()
     run_ventral_validation(
         seed=args.seed,
+        n_lang_input=args.n_lang_input,
         n_train_events=args.n_train_events,
         n_replay_cycles=args.n_replay_cycles,
         n_semantic_cortex=args.n_semantic_cortex,
