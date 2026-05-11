@@ -203,3 +203,71 @@ def orthogonal_drive_pattern(
     end = start + n_active
     drive[start:end] = drive_max_pA
     return drive
+
+
+def positional_drive_pattern(
+    position: int,
+    n_neurons: int = 200,
+    drive_max_pA: float = 200.0,
+    sparsity: float = 0.1,
+    n_max_positions: int = 16,
+) -> np.ndarray:
+    """Deterministic sparse drive pattern for a sentence position
+    (P4.1 — episodic encoder).
+
+    Catalog reference: D.11 time cells (temporal sequence code).
+    Not a perfect biological analog (real time cells fire in
+    sequence; this gives each position a static sparse code), but
+    sufficient for sentence-level positional binding.
+
+    Each position k ∈ [0, n_max_positions) maps to a unique sparse
+    pattern. Position 0 activates the first ~sparsity-fraction of
+    neurons; position 1 activates a non-overlapping band; etc. Uses
+    the same band-stride layout as `orthogonal_drive_pattern` so
+    different positions are MAXIMALLY separable.
+
+    Args:
+        position: 0-indexed position in the sentence/episode.
+            Must be < n_max_positions.
+        n_neurons: ec_context region size (default 200).
+        drive_max_pA: per-active-neuron drive in pA.
+        sparsity: fraction of neurons active per position (default
+            0.1). The constraint sparsity * n_max_positions <= 1
+            ensures bands don't overlap.
+        n_max_positions: total number of distinct positions
+            supported (default 16). With n_neurons=200 and
+            sparsity=0.1 (20 active), n_max_positions <= 200/20=10
+            for non-overlapping bands. Default 16 will produce
+            overlapping (good for >10 positions but loses strict
+            separability past position 10).
+
+    Returns:
+        np.ndarray of shape (n_neurons,) with drive_max_pA on
+        n_active neurons in position's band, 0 elsewhere.
+
+    Use case: P4.1 episodic encoding. Drive both
+    `lang_input(word)` and `ec_context(position)` simultaneously so
+    DG's expansion recoding produces a CA3 ensemble specific to
+    (word, position). The same word at different positions gets
+    distinct CA3 ensembles.
+
+    Catalog: D.01 episodic memory; D.02 Eichenbaum-Cohen relational
+    binding; D.11 time cells. Roadmap: realigned plan v3 phase P4.1.
+    """
+    if position < 0 or position >= n_max_positions:
+        raise ValueError(
+            f"positional_drive_pattern: position={position} out of "
+            f"range [0, {n_max_positions})"
+        )
+    n_active = max(1, int(round(sparsity * n_neurons)))
+    stride = max(1, n_neurons // n_max_positions)
+    drive = np.zeros(n_neurons, dtype=np.float32)
+    start = (position * stride) % n_neurons
+    end = min(start + n_active, n_neurons)
+    drive[start:end] = drive_max_pA
+    # If band wraps past end (when n_active > remaining), wrap
+    # around to the beginning
+    if end - start < n_active:
+        remaining = n_active - (end - start)
+        drive[:remaining] = drive_max_pA
+    return drive

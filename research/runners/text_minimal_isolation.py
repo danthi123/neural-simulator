@@ -224,6 +224,17 @@ def build_biological_brain_regions(
     # recurrent connectivity.
     ca3_recurrent_density: float = 0.30,
     ca3_recurrent_weight: float = 1.5,
+    # P4.1 episodic encoder: ec_context region for positional binding
+    # (catalog D.01/D.02 + D.11 time cells). When enabled, adds a
+    # separate region driven by positional embeddings; the pathway
+    # ec_context -> dg gives DG (alongside ec -> dg) a combined
+    # (word, position) input → distinct CA3 ensembles per
+    # (word, position) tuple. Default OFF for backward compat with
+    # Phase 1.3 retention tests.
+    enable_episodic_context: bool = False,
+    n_ec_context: int = 200,
+    ec_context_to_dg_density: float = 0.40,
+    ec_context_to_dg_weight: float = 4.0,
 ):
     """Biological-scale architecture with cortical canon ENABLED.
 
@@ -427,6 +438,27 @@ def build_biological_brain_regions(
             density=0.40, weight_mean=6.0, weight_jitter=0.2,
             plastic=True, plasticity_gate="ec_to_dg",
         ))
+        # P4.1 episodic context: ec_context -> dg parallel pathway.
+        # Catalog D.01/D.02 + D.11. When enable_episodic_context=True,
+        # add ec_context region + this pathway so DG receives a
+        # combined (word, position) drive → distinct CA3 ensembles
+        # per (word, position) tuple.
+        if enable_episodic_context:
+            regions.append(BrainRegion(
+                name="ec_context",
+                n_neurons=n_ec_context, exc_fraction=1.0,
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
+            pathways.append(RegionPathway(
+                from_region="ec_context", to_region="dg",
+                density=ec_context_to_dg_density,
+                weight_mean=ec_context_to_dg_weight,
+                weight_jitter=0.2,
+                plastic=True, plasticity_gate="ec_context_to_dg",
+            ))
         # ec -> dg_pv_basket and dg_pv_basket -> dg (FFi for sparsity)
         pathways.append(RegionPathway(
             from_region="ec", to_region="dg_pv_basket",
