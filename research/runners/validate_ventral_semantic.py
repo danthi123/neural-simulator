@@ -421,6 +421,141 @@ def run_ventral_validation(
     naming_ratio = causal_sum / max(baseline_sum, 1.0)
     pass_naming = naming_ratio > 1.3
 
+    # Iter E (alt methodology): inspect learned weights directly.
+    # Question: did STDP grow wernicke->semantic_cortex weights
+    # selectively for each concept's ensembles? If yes, training
+    # worked but dynamics are too noisy. If no, training itself
+    # didn't learn the binding.
+    log("\n[TEST 3] Weight inspection: wernicke->semantic_cortex matrix")
+    weight_diag = {}
+    try:
+        # Get wernicke + semantic_cortex region indices
+        rm2 = bridge.region_manager
+        wernicke_indices = list(rm2.indices("wernicke"))
+        sem_indices_local = list(rm2.indices("semantic_cortex"))
+        sem_idx_set = set(sem_indices_local)
+
+        # Identify wernicke "concept ensembles" via spike counts
+        # during fresh drive
+        def fire_indices(region_name, drive_arr, n_steps=100):
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(30):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+            bridge.cp_external_input_current[drive_arr] = 200.0
+            counts = measure_region_spikes(bridge, region_name,
+                                              n_steps=n_steps)
+            bridge.cp_external_input_current[:] = 0.0
+            # Return top-K firing indices (LOCAL to region)
+            n_top = min(50, int(np.sum(counts > 0)))
+            if n_top == 0:
+                return np.array([], dtype=np.int64)
+            order = np.argsort(counts)[::-1][:n_top]
+            return order
+
+        apple_wernicke_local = fire_indices("wernicke", apple_arr)
+        river_wernicke_local = fire_indices("wernicke", river_arr)
+        apple_sem_local = fire_indices("semantic_cortex", apple_arr)
+        river_sem_local = fire_indices("semantic_cortex", river_arr)
+        log(f"  apple wernicke ensemble: {len(apple_wernicke_local)}, "
+            f"sem ensemble: {len(apple_sem_local)}")
+        log(f"  river wernicke ensemble: {len(river_wernicke_local)}, "
+            f"sem ensemble: {len(river_sem_local)}")
+
+        # Look at the wernicke->semantic_cortex weights via the
+        # bridge's connections sparse matrix. We compute mean weight
+        # from apple_wernicke -> apple_sem vs apple_wernicke -> river_sem.
+        # Sparse CSR: connections[i, j] is weight of pre=i to post=j.
+        conn = bridge.cp_connections
+        # to_host for sparse: pull out CSR arrays
+        csr_data = to_host(conn.data)
+        csr_indices = to_host(conn.indices)
+        csr_indptr = to_host(conn.indptr)
+
+        def mean_weight_subset(pre_global, post_set):
+            """Return mean weight pre->post for pre in pre_global,
+            post in post_set."""
+            if len(pre_global) == 0 or len(post_set) == 0:
+                return 0.0, 0
+            total = 0.0
+            n = 0
+            for pre_i in pre_global:
+                start = csr_indptr[pre_i]
+                end = csr_indptr[pre_i + 1]
+                for k in range(start, end):
+                    post_j = int(csr_indices[k])
+                    if post_j in post_set:
+                        total += float(csr_data[k])
+                        n += 1
+            return (total / n if n > 0 else 0.0), n
+
+        apple_wernicke_global = np.array(
+            [wernicke_indices[i] for i in apple_wernicke_local],
+            dtype=np.int64
+        )
+        river_wernicke_global = np.array(
+            [wernicke_indices[i] for i in river_wernicke_local],
+            dtype=np.int64
+        )
+        apple_sem_global_set = set(
+            int(sem_indices_local[i]) for i in apple_sem_local
+        )
+        river_sem_global_set = set(
+            int(sem_indices_local[i]) for i in river_sem_local
+        )
+
+        w_apple_apple, n_aa = mean_weight_subset(
+            apple_wernicke_global, apple_sem_global_set
+        )
+        w_apple_river, n_ar = mean_weight_subset(
+            apple_wernicke_global, river_sem_global_set
+        )
+        w_river_river, n_rr = mean_weight_subset(
+            river_wernicke_global, river_sem_global_set
+        )
+        w_river_apple, n_ra = mean_weight_subset(
+            river_wernicke_global, apple_sem_global_set
+        )
+
+        log(f"  Mean weight apple_wernicke -> apple_sem: "
+            f"{w_apple_apple:.3f} (n={n_aa})")
+        log(f"  Mean weight apple_wernicke -> river_sem: "
+            f"{w_apple_river:.3f} (n={n_ar})")
+        log(f"  Mean weight river_wernicke -> river_sem: "
+            f"{w_river_river:.3f} (n={n_rr})")
+        log(f"  Mean weight river_wernicke -> apple_sem: "
+            f"{w_river_apple:.3f} (n={n_ra})")
+
+        # Selectivity index: (same-concept mean - cross-concept mean) /
+        #                     (same-concept mean + cross-concept mean)
+        # > 0 means learning worked; ~0 means no selective binding
+        same_mean = (w_apple_apple + w_river_river) / 2
+        cross_mean = (w_apple_river + w_river_apple) / 2
+        if (same_mean + cross_mean) > 0:
+            selectivity = (same_mean - cross_mean) / (same_mean + cross_mean)
+        else:
+            selectivity = 0.0
+        log(f"  WEIGHT SELECTIVITY INDEX: {selectivity:.3f}")
+        log(f"    (>0.1 = clear binding; ~0 = no learning)")
+        weight_diag = {
+            "apple_wernicke_size": len(apple_wernicke_local),
+            "river_wernicke_size": len(river_wernicke_local),
+            "apple_sem_size": len(apple_sem_local),
+            "river_sem_size": len(river_sem_local),
+            "w_apple_apple": w_apple_apple,
+            "w_apple_river": w_apple_river,
+            "w_river_river": w_river_river,
+            "w_river_apple": w_river_apple,
+            "n_apple_apple": n_aa,
+            "n_apple_river": n_ar,
+            "n_river_river": n_rr,
+            "n_river_apple": n_ra,
+            "selectivity_index": selectivity,
+        }
+    except Exception as e:
+        log(f"  [TEST 3] weight inspection failed: {e}")
+        weight_diag = {"error": str(e)}
+
     log("\n" + "=" * 60)
     log("PASS criteria:")
     log(f"  Comprehension (apple_self > 0.5 AND apple_river < 0.4): "
@@ -432,6 +567,9 @@ def run_ventral_validation(
     log(f"    ratio={naming_ratio:.2f}x")
     overall = pass_comprehension and pass_naming
     log(f"  OVERALL: {'PASS' if overall else 'FAIL'}")
+    if "selectivity_index" in weight_diag:
+        log(f"  Weight selectivity (diagnostic): "
+            f"{weight_diag['selectivity_index']:.3f}")
     log("=" * 60)
 
     result = {
@@ -454,6 +592,7 @@ def run_ventral_validation(
             "ratio": naming_ratio,
             "passed": pass_naming,
         },
+        "weight_diagnostics": weight_diag,
         "overall_passed": overall,
         "total_seconds": time.time() - t0,
     }
