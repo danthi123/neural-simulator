@@ -1402,6 +1402,20 @@ def main():
                          "Useful for branching experiments without "
                          "disturbing 'main'. Example: --lineage main "
                          "--fork-lineage experiment_v3.")
+    # ── Auto-grow demo (Phase A2 Strategy B) ──
+    ap.add_argument("--auto-grow", action="store_true",
+                    help="Before starting the REPL, run a demo of the "
+                         "auto-grow orchestration loop (Phase A2 Strategy "
+                         "B). Uses synthetic train/transfer functions to "
+                         "demonstrate tier promotion via TierPromoter, "
+                         "writing growth events to the active lineage. "
+                         "Does NOT run real training; use "
+                         "`python -m research.runners.auto_grow_chat` for "
+                         "the standalone demo. Real bio_three_factor + "
+                         "weight-transfer integration (Strategy A) is "
+                         "deferred pending strategic Path 1/2/3 decision.")
+    ap.add_argument("--auto-grow-max-promotions", type=int, default=3,
+                    help="Max promotions for --auto-grow (default 3)")
     args = ap.parse_args()
 
     if args.train_events is None:
@@ -1418,6 +1432,33 @@ def main():
     if args.fork_lineage and args.from_scratch:
         ap.error("--fork-lineage requires a lineage to fork from; "
                  "incompatible with --from-scratch")
+
+    # --auto-grow demo (Phase A2 Strategy B): fires BEFORE the REPL.
+    # Demonstrates the orchestration loop; records growth events to
+    # the active lineage. Doesn't replace REPL — REPL still runs after
+    # the demo finishes.
+    if args.auto_grow:
+        from research.runners.auto_grow_chat import run_auto_grow_demo
+        print("\n" + "=" * 60)
+        print("AUTO-GROW DEMO (Phase A2 Strategy B; synthetic train/transfer)")
+        print("=" * 60, flush=True)
+        # Use the lineage name from args if set, else "auto_grow_demo"
+        ag_lineage = (args.lineage
+                       if not args.from_scratch and args.lineage
+                       else "auto_grow_demo")
+        run_auto_grow_demo(
+            initial_tier=4,
+            threshold=0.90,
+            consecutive_required=3,
+            max_promotions=int(args.auto_grow_max_promotions),
+            max_epochs_per_tier=20,
+            lineage_name=ag_lineage,
+            verbose=True,
+        )
+        print("=" * 60)
+        print(f"Growth events written to lineage '{ag_lineage}'. "
+              f"REPL will now start at tier {args.mode}.")
+        print("=" * 60, flush=True)
 
     scripted_words = None
     if args.scripted_words:
