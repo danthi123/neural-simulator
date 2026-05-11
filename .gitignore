@@ -60,8 +60,10 @@ benchmark_results_*.json
 *_freq_data.json
 startup_debug.txt
 
-# Claude Code
-.claude/
+# Claude Code — ignore everything in .claude/ EXCEPT shared skills
+.claude/*
+!.claude/skills/
+!.claude/skills/**
 
 # Test output (transient)
 tests/validation_results.json
