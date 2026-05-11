@@ -258,6 +258,20 @@ class CoreSimConfig:
     brain_regions: list = field(default_factory=list)  # List[BrainRegion]
     region_pathways: list = field(default_factory=list)  # List[RegionPathway]
 
+    # ─── Synapse tiering (Phase 3 Strategy B, 2026-05-11) ──────────
+    # Activity-tracked TieredSynapseStore mirrors the per-pathway CSRs
+    # alongside the monolithic cp_connections. Foundation for Phase 4
+    # auto-tiering (SSD paging). Opt-in. Requires
+    # enable_brain_region_framework=True (uses RegionPathway names).
+    # Design doc: docs/plans/2026-05-11-tiering-phase3-part2-bridge-integration-design.md
+    enable_synapse_tiering: bool = False
+    # Eviction policy (only effective if Strategy A's per-pathway compute
+    # is ever shipped; for Strategy B these are tracking thresholds only)
+    synapse_tiering_evict_idle_steps: int = 1000
+    synapse_tiering_grace_pagein_steps: int = 100
+    # Optional storage root override (default: bridges/synapse_shards/active)
+    synapse_tiering_root: str = ""
+
     # C3: Structural Plasticity (Synapse Formation/Elimination) - Butz et al. 2009
     enable_structural_plasticity: bool = True  # Enabled by default for dynamic network adaptation
     struct_plast_formation_rate: float = 1e-6     # Probability per timestep per neuron pair

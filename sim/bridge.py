@@ -382,6 +382,12 @@ class SimulationBridge:
         # None means legacy single-population path runs.
         self.region_manager = None
 
+        # Synapse tiering (Phase 3 Strategy B, 2026-05-11)
+        # Opt-in via cfg.enable_synapse_tiering. Mirrors per-pathway
+        # CSRs and tracks activity each simulation step. Foundation
+        # for Phase 4 auto-tiering.
+        self.synapse_store = None
+
         # Experiment & stimulus system
         self.experiment_engine = None
         self.experiment_config = None  # ExperimentConfig dataclass
@@ -1447,6 +1453,17 @@ class SimulationBridge:
                 f"GPU memory: {mem_stats['used_gb']:.1f}GB/{mem_stats['total_gb']:.1f}GB ({mem_stats['usage_percent']:.1f}%)"
             )
             self._check_gpu_memory_pressure()
+
+            # ── Tiering Phase 3 Strategy B: synapse store mirror ──
+            # Opt-in via cfg.enable_synapse_tiering. Requires brain
+            # region framework so we can identify per-pathway slices.
+            # The store mirrors the monolithic cp_connections as
+            # per-pathway CSRs; inference still uses the monolithic
+            # path. Activity tracked each step in _run_one_simulation_step.
+            if (cfg.enable_synapse_tiering
+                    and self.region_manager is not None
+                    and self.cp_connections is not None):
+                self._initialize_synapse_store(cfg)
         except Exception as e:
             self._log_console(f"Error during simulation data initialization (3D): {e}","critical")
             import traceback; traceback.print_exc()
@@ -2505,6 +2522,90 @@ class SimulationBridge:
             pw_name = f"{pw.from_region}_to_{pw.to_region}"
             result[pw_name] = sub
         return result
+
+    def _initialize_synapse_store(self, cfg) -> None:
+        """Build the TieredSynapseStore mirror for Phase 3 Strategy B.
+
+        Called from _initialize_simulation_data when
+        cfg.enable_synapse_tiering=True AND region_manager is set.
+        The store mirrors the bridge's per-pathway CSRs so activity
+        can be tracked + future Phase 4 auto-tiering can fire.
+
+        Inference still uses the monolithic self.cp_connections; the
+        store is observational. Strategy A would later make the store
+        the source of truth for compute.
+        """
+        from pathlib import Path
+        from sim.synapse_storage import TieredSynapseStore
+
+        root = cfg.synapse_tiering_root
+        if not root:
+            # Default: process-local active directory
+            root = "bridges/synapse_shards/active"
+        self.synapse_store = TieredSynapseStore(
+            root=Path(root),
+            evict_after_idle_steps=int(cfg.synapse_tiering_evict_idle_steps),
+            grace_after_pagein_steps=int(cfg.synapse_tiering_grace_pagein_steps),
+        )
+
+        # Mirror per-pathway CSRs (Strategy B = observational mirror only;
+        # the monolithic cp_connections remains the source of truth for
+        # the inference path).
+        try:
+            per_pathway = self.extract_per_pathway_csrs()
+            for name, csr in per_pathway.items():
+                self.synapse_store.add_pathway(name, csr)
+            self._log_console(
+                f"Synapse tiering enabled: {len(per_pathway)} pathways "
+                f"mirrored to {root} (evict_idle={cfg.synapse_tiering_evict_idle_steps}, "
+                f"grace={cfg.synapse_tiering_grace_pagein_steps})",
+                "info",
+            )
+        except Exception as e:
+            self._log_console(
+                f"Synapse tiering init failed: {e}; tiering disabled "
+                f"for this session.", "warning",
+            )
+            self.synapse_store = None
+
+    def _detect_fired_pathways(self, fired_this_step) -> set:
+        """Return the set of pathway names whose POST-region has fired
+        in this simulation step.
+
+        A pathway "fired" if any post-region neuron crossed firing
+        threshold. Used to feed TieredSynapseStore.step() so the
+        eviction policy can react to actual activity patterns.
+
+        Args:
+            fired_this_step: array (cupy or numpy) of bools, one per
+                neuron, True if it fired this step.
+
+        Returns:
+            Set of pathway names. Empty set if no pathway fired.
+        """
+        if self.synapse_store is None or self.region_manager is None:
+            return set()
+        fired_pathways = set()
+        # Pull fired_this_step to host once (cheap; we already pay this
+        # cost in other diagnostics each step).
+        try:
+            fired_host = _backend_to_host(fired_this_step)
+        except NameError:
+            fired_host = (fired_this_step.get()
+                            if hasattr(fired_this_step, "get")
+                            else fired_this_step)
+        import numpy as np
+        for pw in self.region_manager.pathways():
+            post_indices = np.array(
+                list(self.region_manager.indices(pw.to_region)),
+                dtype=np.int64,
+            )
+            if post_indices.size == 0:
+                continue
+            if bool(fired_host[post_indices].any()):
+                pw_name = f"{pw.from_region}_to_{pw.to_region}"
+                fired_pathways.add(pw_name)
+        return fired_pathways
 
     def get_plasticity_gate_value(self, name: str) -> float:
         """Return the current plasticity gain for the named gate."""
@@ -5545,6 +5646,25 @@ class SimulationBridge:
 
             # Note: Network firing rate calculation deferred to avoid GPU->CPU sync every step
             # Will be updated on-demand when GUI data is requested
+
+            # ── Synapse tiering (Phase 3 Strategy B) activity tick ──
+            # Feed fired-pathway names to the store's eviction policy.
+            # No-op if synapse_store is None (default). Cheap enough to
+            # run unconditionally when enabled — single host-side bool
+            # reduce per pathway (~O(n_post) per pathway, ~30 pathways).
+            if self.synapse_store is not None:
+                try:
+                    fired_pathways = self._detect_fired_pathways(fired_this_step)
+                    self.synapse_store.step(fired_pathways)
+                except Exception as e:
+                    # Don't let tiering bookkeeping kill the sim
+                    if not hasattr(self, "_synapse_store_warned"):
+                        self._log_console(
+                            f"synapse_store.step failed: {e}; "
+                            f"tiering bookkeeping disabled this session.",
+                            "warning",
+                        )
+                        self._synapse_store_warned = True
 
             # Step profiler: accumulate and log summary every 500 steps
             if _profiling:

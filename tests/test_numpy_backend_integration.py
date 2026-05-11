@@ -352,3 +352,93 @@ def test_extract_per_pathway_csrs_requires_region_manager():
     # extract_per_pathway_csrs should raise — no region_manager
     with pytest.raises(RuntimeError, match="region_manager is None"):
         bridge.extract_per_pathway_csrs()
+
+
+@pytest.mark.slow
+def test_synapse_tiering_strategy_b_end_to_end(numpy_backend, tmp_path):
+    """Strategy B: synapse_store mirror is initialized, activity is
+    tracked per step, and dormant pathways are evicted to disk.
+
+    Real-bridge end-to-end test of Phase 3 part 2 Strategy B.
+    """
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.regions import BrainRegion, RegionPathway
+
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = [
+        BrainRegion(name="A", n_neurons=10, exc_fraction=1.0,
+                     internal_density=0.0),
+        BrainRegion(name="B", n_neurons=10, exc_fraction=1.0,
+                     internal_density=0.0),
+    ]
+    cfg.region_pathways = [
+        RegionPathway(from_region="A", to_region="B",
+                       density=0.3, weight_mean=1.0, weight_jitter=0.1),
+    ]
+    cfg.enable_synapse_tiering = True
+    cfg.synapse_tiering_evict_idle_steps = 5  # aggressive for test speed
+    cfg.synapse_tiering_grace_pagein_steps = 0
+    cfg.synapse_tiering_root = str(tmp_path / "shards")
+    cfg.dt = 1.0
+
+    bridge = SimulationBridge(
+        core_config=cfg, viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(), gpu_config=GPUConfig(),
+    )
+    bridge._initialize_simulation_data()
+
+    # Store should be initialized + 1 pathway mirrored
+    assert bridge.synapse_store is not None
+    s = bridge.synapse_store.stats()
+    assert s["n_pathways"] == 1
+    assert s["n_in_memory"] == 1
+    assert s["n_on_disk"] == 0
+    assert s["n_pageouts_lifetime"] == 0
+
+    # Run 20 steps — beyond evict threshold of 5
+    for _ in range(20):
+        bridge._run_one_simulation_step()
+
+    # Pathway should have been evicted (no activity in toy network)
+    s = bridge.synapse_store.stats()
+    assert s["n_on_disk"] >= 1, (
+        f"Expected eviction after 20 idle steps; stats: {s}"
+    )
+    # Shard file should exist on disk
+    shard_path = tmp_path / "shards" / "A_to_B.npz"
+    assert shard_path.exists()
+
+
+@pytest.mark.slow
+def test_synapse_tiering_opt_in_default_off(numpy_backend, tmp_path):
+    """Default cfg.enable_synapse_tiering=False -> no synapse_store."""
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.regions import BrainRegion, RegionPathway
+
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = [
+        BrainRegion(name="X", n_neurons=10, exc_fraction=1.0,
+                     internal_density=0.0),
+        BrainRegion(name="Y", n_neurons=10, exc_fraction=1.0,
+                     internal_density=0.0),
+    ]
+    cfg.region_pathways = [
+        RegionPathway(from_region="X", to_region="Y",
+                       density=0.3, weight_mean=1.0, weight_jitter=0.1),
+    ]
+    # cfg.enable_synapse_tiering defaults to False
+    cfg.dt = 1.0
+
+    bridge = SimulationBridge(
+        core_config=cfg, viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(), gpu_config=GPUConfig(),
+    )
+    bridge._initialize_simulation_data()
+    # No store created
+    assert bridge.synapse_store is None
+    # Step still runs cleanly
+    bridge._run_one_simulation_step()
