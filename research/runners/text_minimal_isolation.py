@@ -48,6 +48,13 @@ import json
 import time
 import numpy as np
 
+# Backend-aware D->H transfer helper. 2026-05-11: enables this runner
+# under SIM_BACKEND=numpy.
+try:
+    from sim.backend import to_host as _to_host
+except ImportError:
+    _to_host = lambda arr: arr.get() if hasattr(arr, "get") else arr
+
 
 def build_minimal_brain_regions(
     n_lang_input: int = 256,
@@ -741,9 +748,9 @@ def apply_topographic_bias(
     word_to_idx = {w: i for i, w in enumerate(word_to_action.keys())}
 
     # Extract current CSR weights once (avoids per-pathway pull)
-    indptr = bridge.cp_connections.indptr.get()
-    indices = bridge.cp_connections.indices.get()
-    data = bridge.cp_connections.data.get()
+    indptr = _to_host(bridge.cp_connections.indptr)
+    indices = _to_host(bridge.cp_connections.indices)
+    data = _to_host(bridge.cp_connections.data)
 
     # Pre-compute (pre, post) -> data index for fast lookup
     pair_to_idx = {}
@@ -846,8 +853,9 @@ def apply_topographic_bias(
                     "edges_modified": n_changed,
                 }
 
-    # Push back to GPU
-    import cupy as cp
+    # Push back to active backend (cupy or numpy)
+    from sim.backend import get_backend
+    cp, _ = get_backend()
     bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
 
     if verbose:
