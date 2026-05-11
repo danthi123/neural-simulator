@@ -673,6 +673,36 @@ context A → reward, tag ensemble, drive ensemble in context B,
 verify reward-conditioned behavior emerges). Liu 2012 reproduction
 is downstream work; the API is the prerequisite.
 
+### Positional context P4.1 substrate (2026-05-11): catalog D.01+D.02+D.11
+
+**Status:** SUBSTRATE SHIPPED commit 11c7c53 + ea9e439. Multi-seed
+validation pending GPU (after P1 two-concept aggregates).
+
+`sim/text_embeddings.py` adds:
+  `positional_drive_pattern(position, n_neurons=200, sparsity=0.1,
+                              n_max_positions=16)` — deterministic
+  sparse code per position. Same band-stride layout as
+  `orthogonal_drive_pattern` for maximal separability.
+
+`research/runners/text_minimal_isolation.py` adds:
+  `enable_episodic_context` flag → adds `ec_context` region (default
+  200 neurons) + `ec_context → dg` plastic pathway (gate
+  `ec_context_to_dg`). When enabled, DG receives a combined
+  (word, position) drive → distinct CA3 ensembles per (word,
+  position) tuple.
+
+`research/runners/validate_positional_binding.py` (Test runner for
+P4.1):
+  Encodes 4 (word, position) bindings (apple@pos_0/pos_2,
+  alice@pos_0/pos_2) and measures pairwise CA3 ensemble cosines.
+  PASS criteria:
+    - Same word, different position: cos < 0.4
+    - Different word, same position: cos < 0.4
+
+After P4.1 PASS, the architecture supports word-order-dependent
+meaning. Downstream P5/P6 can learn to distinguish sentences by
+their (word, position) ensemble structure.
+
 ### Concept replay P3.1 (2026-05-11): catalog D.19 + T1.B SHIPPED
 
 **Status:** SHIPPED commit d569848. 5/5 unit tests pass.
