@@ -2099,6 +2099,23 @@ def llm_chat(req: LLMChatRequest) -> JSONResponse:
         from sim.llm_memory_orchestrator import (
             LLMMemoryOrchestrator, MockLLM,
         )
+        # SIM_LLM_BACKEND env var picks the adapter:
+        #   unset/'mock' -> MockLLM (default, zero external deps)
+        #   'ollama'     -> OllamaLLM(model=$SIM_LLM_MODEL or 'llama3.2:3b')
+        # See sim/llm_adapters.py + Phase 3.3 design doc.
+        llm_backend = os.environ.get("SIM_LLM_BACKEND", "mock").lower()
+        if llm_backend == "ollama":
+            try:
+                from sim.llm_adapters import OllamaLLM
+                model = os.environ.get("SIM_LLM_MODEL", "llama3.2:3b")
+                llm_callable = OllamaLLM(model=model, verbose=False)
+            except ImportError as e:
+                # Fall back to MockLLM if openai isn't installed; the
+                # 'connection failure' is preferable to a 500.
+                llm_callable = MockLLM()
+        else:
+            llm_callable = MockLLM()
+
         mem = BridgeMemory(
             lineage_name=req.lineage,
             mode=req.mode,
@@ -2110,7 +2127,7 @@ def llm_chat(req: LLMChatRequest) -> JSONResponse:
         mem._ensure_loaded()
         orch = LLMMemoryOrchestrator(
             memory=mem,
-            llm_callable=MockLLM(),
+            llm_callable=llm_callable,
             max_tool_iterations=5,
         )
         _LLM_ORCHESTRATORS[cache_key] = orch
