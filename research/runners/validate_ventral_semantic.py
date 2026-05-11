@@ -451,30 +451,36 @@ def run_ventral_validation(
     log(f"    (different-concept; target < 0.3)")
     pass_comprehension = (cos_apple_self > 0.5) and (cos_apple_river < 0.4)
 
-    # Test 2: Naming — engram-tag methodology (iter N).
-    # Tag the lang_output ensembles per concept via direct drive
-    # (during fresh exposure). Then stimulate apple CA3 tag and
-    # measure cosine of resulting lang_output firing vs each tag.
-    # Same trick that fixed comprehension in iter A.
-    log("\n[TEST 2] Naming: tag lang_output, stim CA3, measure recall")
+    # Test 2: Naming — engram-tag methodology (iter O).
+    # Tag the lang_output ensemble via CA3-DRIVEN activation
+    # (same chain as naming test). Iter N's approach (lang_input
+    # drive) captured the wernicke->lang_out path's ensemble,
+    # but the naming test uses the CA3->CA1->lang_out chain.
+    # Mismatched paths → anti-discrimination (iter N finding).
+    # Iter O uses matched paths.
+    log("\n[TEST 2] Naming: CA3-stim-tag lang_output, stim CA3, measure recall")
 
-    def drive_and_tag_langout(name, drive_arr):
+    def ca3_stim_and_tag_langout(name, ca3_tag_name):
+        """Stimulate the CA3 engram tag and tag lang_output's
+        response. Same chain (CA1->lang_out) used in test."""
         bridge.cp_external_input_current[:] = 0.0
+        bridge.clear_tag_drive()
         for _ in range(50):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
         bridge.start_engram_recording(name)
-        bridge.cp_external_input_current[drive_arr] = 200.0
+        bridge.stimulate_tag(ca3_tag_name, drive_pA=stim_drive_pA)
         for _ in range(drive_steps):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
         bridge.cp_external_input_current[:] = 0.0
+        bridge.clear_tag_drive()
         return bridge.commit_engram_tag(
             name, top_k=50, region_filter=["language_output"],
         )
 
-    apple_lang_tag = drive_and_tag_langout("apple_langout", apple_arr)
-    river_lang_tag = drive_and_tag_langout("river_langout", river_arr)
+    apple_lang_tag = ca3_stim_and_tag_langout("apple_langout", "apple")
+    river_lang_tag = ca3_stim_and_tag_langout("river_langout", "river")
     log(f"  apple lang_output tag: {apple_lang_tag['n_tagged']} neurons")
     log(f"  river lang_output tag: {river_lang_tag['n_tagged']} neurons")
 
