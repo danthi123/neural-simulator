@@ -415,12 +415,33 @@ cortex frozen (or partial) + input layers thawed. Biologically: real
 critical periods close gradually, gated by neuromodulators, allowing
 sensory cortex to mature before association cortex.
 
-### Pluggable backend (2026-05-11): xp abstraction layer
+### Pluggable backend (2026-05-11): NumPy backend SHIPPED end-to-end
 
-**Status:** Phase 1 of the tiering design SHIPPED 2026-05-11. The
-abstraction module (`sim/backend.py`) is in place; bridge.py refactor
-to use `xp.*` instead of `cp.*` is a separate work unit (~6000 lines
-of mechanical refactoring, scoped 1 week per the design doc).
+**Status:** Phases 1+2 of the tiering design SHIPPED 2026-05-11.
+SimulationBridge construction + initialization + simulation steps +
+brain region framework + checkpoint save/load + bio_three_factor
+training + chat_repl W→A + chat_repl :speak A→W ALL work end-to-end
+under `SIM_BACKEND=numpy`. No NVIDIA/CUDA dependency required.
+
+CuPy backend remains the production speed path (4-50× faster than
+NumPy depending on workload). NumPy backend is for portability +
+verification + CI + low-end hardware.
+
+**Usage:**
+```bash
+# Default (CuPy if available, else NumPy)
+python -m research.runners.chat_repl --mode tier1 --seed 42
+
+# Force NumPy backend (Mac M-series, GPU-less Linux, CI)
+SIM_BACKEND=numpy python -m research.runners.chat_repl --mode tier1 --seed 42
+
+# Force CuPy explicitly (or fail if unavailable)
+SIM_BACKEND=cupy python -m research.runners.chat_repl --mode tier1 --seed 42
+```
+
+Findings:
+- `research/findings/2026-05-11-numpy-backend-shipped.md` (Phase 2 milestone)
+- `research/findings/2026-05-11-numpy-backend-chat-repl-shipped.md` (full chat pipeline)
 
 Design doc: [`docs/plans/2026-05-11-cpu-ram-ssd-tiering-design.md`](docs/plans/2026-05-11-cpu-ram-ssd-tiering-design.md)
 Strategic context: [`docs/plans/2026-05-11-strategic-reevaluation.md`](docs/plans/2026-05-11-strategic-reevaluation.md)
