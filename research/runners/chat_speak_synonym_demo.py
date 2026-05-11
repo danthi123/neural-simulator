@@ -195,7 +195,9 @@ def run_chat_speak_synonym_demo(seed: int = 42,
                                   verbose: bool = True,
                                   temperature: float = 0.0,
                                   enable_stp: bool = False,
-                                  reenable_stp_for_eval: bool = False) -> dict:
+                                  reenable_stp_for_eval: bool = False,
+                                  lineage_name: str = None,
+                                  save_to_lineage: bool = False) -> dict:
     """2026-05-10: enable_stp default flipped from True to False.
     3-seed validation showed 3.28x speedup AND higher accuracy with
     STP off. See research/findings/2026-05-10-stp-default-flip.md.
@@ -217,23 +219,108 @@ def run_chat_speak_synonym_demo(seed: int = 42,
           f"n_motor_fs={n_motor_fs_per_action}", flush=True)
     print(f"  train_events/word={n_train_events}\n", flush=True)
 
-    # 3 phases: training, W2A regression, A2W synonym speak
-    emit_progress("phase", current=0, total=3, phase="training",
-                  unit="phases", label="chat_speak_synonym_demo")
-    t0 = time.time()
-    bridge = train_chat_bridge(
-        seed=seed,
-        n_events_per_word=n_train_events,
-        n_lang_input=n_lang_input,
-        n_motor_per_action=n_motor_per_action,
-        n_motor_fs_per_action=n_motor_fs_per_action,
-        verbose=verbose,
-        enable_stp=enable_stp,
-    )
-    train_sec = time.time() - t0
-    emit_progress("complete", current=1, total=3, phase="training",
-                  unit="phases", label="chat_speak_synonym_demo",
-                  wall_clock_s=int(train_sec))
+    # 3 phases: training (or loading), W2A regression, A2W synonym speak
+    # Lineage auto-load when requested (opt-in via lineage_name)
+    lineage = None
+    used_lineage_load = False
+    if lineage_name:
+        from sim.lineage import BridgeLineage
+        lineage = BridgeLineage(lineage_name)
+        if lineage.exists():
+            try:
+                lm = lineage.read_metadata()
+                stored_mode = (lm.arch or {}).get("mode")
+                if stored_mode and stored_mode != "synonym":
+                    if verbose:
+                        print(f"[LINEAGE] '{lineage_name}' was trained "
+                              f"in mode={stored_mode}; chat_speak_synonym_demo "
+                              f"is synonym. Falling back to fresh training.",
+                              flush=True)
+                else:
+                    used_lineage_load = True
+            except Exception as e:
+                if verbose:
+                    print(f"[LINEAGE] could not read metadata: {e}",
+                          flush=True)
+
+    if used_lineage_load:
+        if verbose:
+            print(f"[LINEAGE] Loading state from '{lineage_name}'",
+                  flush=True)
+        emit_progress("phase", current=0, total=3, phase="loading",
+                      unit="phases", label="chat_speak_synonym_demo")
+        t0 = time.time()
+        from research.runners.bio_three_factor import run_three_factor
+        bridge, _ = run_three_factor(
+            seed=seed,
+            n_events_per_direction=0,
+            n_lang_input=n_lang_input,
+            n_motor_per_action=n_motor_per_action,
+            n_motor_fs_per_action=n_motor_fs_per_action,
+            biological=True,
+            enable_motor_fs=True,
+            enable_nmda=True,
+            apply_topographic_bias=True,
+            embodied_hebbian=True,
+            synonym_mode=True,
+            synonym_vocab_size=8,
+            verbose=False,
+            enable_stp=enable_stp,
+        )
+        bridge.load_checkpoint(str(lineage.current_path))
+        try:
+            bridge.set_plasticity_gate("language_input_to_motor", 0.0)
+            bridge.set_plasticity_gate("motor_to_language_output", 0.0)
+        except Exception:
+            pass
+        train_sec = time.time() - t0
+        emit_progress("complete", current=1, total=3, phase="loading",
+                      unit="phases", label="chat_speak_synonym_demo",
+                      wall_clock_s=int(train_sec))
+    else:
+        emit_progress("phase", current=0, total=3, phase="training",
+                      unit="phases", label="chat_speak_synonym_demo")
+        t0 = time.time()
+        bridge = train_chat_bridge(
+            seed=seed,
+            n_events_per_word=n_train_events,
+            n_lang_input=n_lang_input,
+            n_motor_per_action=n_motor_per_action,
+            n_motor_fs_per_action=n_motor_fs_per_action,
+            verbose=verbose,
+            enable_stp=enable_stp,
+        )
+        train_sec = time.time() - t0
+        emit_progress("complete", current=1, total=3, phase="training",
+                      unit="phases", label="chat_speak_synonym_demo",
+                      wall_clock_s=int(train_sec))
+        if save_to_lineage and lineage is not None:
+            try:
+                lineage.save(bridge, tier="8-word",
+                              arch={"mode": "synonym",
+                                    "n_neurons": int(getattr(
+                                        bridge.core_sim_config,
+                                        "num_neurons", 0)),
+                                    "n_lang_input": n_lang_input,
+                                    "n_motor_per_action": n_motor_per_action})
+                meta = lineage.read_metadata()
+                meta.cumulative_training_events += int(n_train_events or 0)
+                meta.add_growth_event(
+                    kind="init",
+                    description=(
+                        f"chat_speak_synonym_demo train (seed={seed}, "
+                        f"n_train_events={n_train_events})"
+                    ),
+                    seed=seed,
+                )
+                lineage.write_metadata(meta)
+                if verbose:
+                    print(f"[LINEAGE] Saved trained state to '{lineage_name}'",
+                          flush=True)
+            except Exception as e:
+                if verbose:
+                    print(f"[LINEAGE] Save failed (non-fatal): {e}",
+                          flush=True)
 
     # Optional: re-enable STP for eval (test reversibility of STP-off training)
     if reenable_stp_for_eval:
@@ -361,6 +448,14 @@ def main():
                          "with biological STP dynamics restored? If yes, "
                          "we get best-of-both-worlds: fast training + "
                          "biology at inference.")
+    # Lineage (opt-in)
+    ap.add_argument("--lineage", type=str, default=None,
+                    help="Optional lineage NAME under bridges/lineage/. "
+                         "If exists with matching synonym arch, load and "
+                         "skip training. Default: None (always train).")
+    ap.add_argument("--save-to-lineage", action="store_true",
+                    help="After training, save trained bridge to lineage "
+                         "(creates it if needed). Requires --lineage.")
     args = ap.parse_args()
 
     result = run_chat_speak_synonym_demo(
@@ -373,6 +468,8 @@ def main():
         temperature=args.temperature,
         enable_stp=not args.no_stp,
         reenable_stp_for_eval=args.reenable_stp_for_eval,
+        lineage_name=args.lineage,
+        save_to_lineage=args.save_to_lineage,
     )
 
     if args.out_stats:

@@ -351,3 +351,53 @@ def test_chat_speak_demo_handles_missing_speak_results(tmp_path):
     assert cs["speak_accuracy_mean"] == 0.5
     # per_direction_a2w_mean should be empty when no speak_results
     assert cs["per_direction_a2w_mean"] == {}
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Lineage opt-in (added 2026-05-10) — verify chat demos surface --lineage
+# ─────────────────────────────────────────────────────────────────────────
+
+
+def test_chat_demo_help_advertises_lineage():
+    """chat_demo --help exposes --lineage and --save-to-lineage."""
+    import subprocess, sys as _sys, os as _os
+    p = subprocess.run(
+        [_sys.executable, "-m", "research.runners.chat_demo", "--help"],
+        capture_output=True, text=True, timeout=30,
+        cwd=_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+        env={**_os.environ, "PYTHONIOENCODING": "utf-8"},
+    )
+    assert p.returncode == 0, p.stderr
+    assert "--lineage" in p.stdout
+    assert "--save-to-lineage" in p.stdout
+
+
+def test_chat_synonym_demo_help_advertises_lineage():
+    """chat_synonym_demo --help exposes --lineage and --save-to-lineage."""
+    import subprocess, sys as _sys, os as _os
+    p = subprocess.run(
+        [_sys.executable, "-m", "research.runners.chat_synonym_demo",
+         "--help"],
+        capture_output=True, text=True, timeout=30,
+        cwd=_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+        env={**_os.environ, "PYTHONIOENCODING": "utf-8"},
+    )
+    assert p.returncode == 0, p.stderr
+    assert "--lineage" in p.stdout
+    assert "--save-to-lineage" in p.stdout
+
+
+def test_run_demo_signatures_accept_lineage_params():
+    """All three demo runners accept lineage_name + save_to_lineage."""
+    import inspect
+    from research.runners.chat_demo import run_demo as cd
+    from research.runners.chat_synonym_demo import run_demo as csd
+    from research.runners.chat_speak_synonym_demo import (
+        run_chat_speak_synonym_demo as cssd,
+    )
+    for fn in (cd, csd, cssd):
+        params = inspect.signature(fn).parameters
+        assert "lineage_name" in params, f"{fn.__name__} missing lineage_name"
+        assert "save_to_lineage" in params, (
+            f"{fn.__name__} missing save_to_lineage"
+        )

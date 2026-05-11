@@ -191,22 +191,117 @@ def run_demo(
     n_train_events: int = 200,
     transcript_out: str = None,
     verbose: bool = True,
+    lineage_name: str = None,
+    save_to_lineage: bool = False,
 ):
-    """Full demo: train, then 4-direction conversation."""
+    """Full demo: train (or load from lineage), then 4-direction conversation.
+
+    If ``lineage_name`` is given and the lineage exists with a matching
+    tier1 arch, training is skipped and the lineage's saved state is
+    loaded instead — useful for "demo on the evolving sim" workflow vs
+    the default per-seed-from-scratch validation workflow.
+
+    If ``save_to_lineage`` is True, the trained bridge is saved back to
+    the lineage (creating it if it didn't exist). Compatible with
+    cumulative metadata tracking.
+    """
     # 2026-05-09: emit_progress so webapp inflight panel + 3D viz show
     # live progress (was "0% no markers")
     from sim.progress import emit_progress
     import time
 
-    emit_progress("phase", current=0, total=2, phase="training",
-                  unit="phases", label="chat_demo")
-    t0 = time.time()
-    bridge = train_chat_bridge(
-        seed=seed, n_events_per_word=n_train_events, verbose=verbose,
-    )
-    emit_progress("complete", current=1, total=2, phase="training",
-                  unit="phases", label="chat_demo",
-                  wall_clock_s=int(time.time() - t0))
+    # Try lineage auto-load when requested
+    lineage = None
+    used_lineage_load = False
+    if lineage_name:
+        from sim.lineage import BridgeLineage
+        lineage = BridgeLineage(lineage_name)
+        if lineage.exists():
+            try:
+                lm = lineage.read_metadata()
+                stored_mode = (lm.arch or {}).get("mode")
+                if stored_mode and stored_mode != "tier1":
+                    if verbose:
+                        print(f"[LINEAGE] '{lineage_name}' was trained "
+                              f"in mode={stored_mode}; chat_demo is tier1. "
+                              f"Falling back to fresh training.", flush=True)
+                else:
+                    used_lineage_load = True
+            except Exception as e:
+                if verbose:
+                    print(f"[LINEAGE] could not read metadata: {e}",
+                          flush=True)
+
+    if used_lineage_load:
+        if verbose:
+            print(f"[LINEAGE] Loading state from '{lineage_name}'",
+                  flush=True)
+        emit_progress("phase", current=0, total=2, phase="loading",
+                      unit="phases", label="chat_demo")
+        t0 = time.time()
+        # Rebuild the bridge skeleton (no training) then overlay weights
+        from research.runners.bio_three_factor import run_three_factor
+        bridge, _ = run_three_factor(
+            seed=seed,
+            n_events_per_direction=0,  # build only, no training
+            n_lang_input=2048,
+            n_motor_per_action=500,
+            n_motor_fs_per_action=60,
+            biological=True,
+            enable_motor_fs=True,
+            enable_nmda=True,
+            apply_topographic_bias=True,
+            embodied_hebbian=True,
+            synonym_mode=False,
+            verbose=False,
+        )
+        bridge.load_checkpoint(str(lineage.current_path))
+        try:
+            bridge.set_plasticity_gate("language_input_to_motor", 0.0)
+            bridge.set_plasticity_gate("motor_to_language_output", 0.0)
+        except Exception:
+            pass
+        emit_progress("complete", current=1, total=2, phase="loading",
+                      unit="phases", label="chat_demo",
+                      wall_clock_s=int(time.time() - t0))
+    else:
+        emit_progress("phase", current=0, total=2, phase="training",
+                      unit="phases", label="chat_demo")
+        t0 = time.time()
+        bridge = train_chat_bridge(
+            seed=seed, n_events_per_word=n_train_events, verbose=verbose,
+        )
+        emit_progress("complete", current=1, total=2, phase="training",
+                      unit="phases", label="chat_demo",
+                      wall_clock_s=int(time.time() - t0))
+        # Save to lineage if requested (post-training)
+        if save_to_lineage and lineage is not None:
+            try:
+                lineage.save(bridge, tier="4-word",
+                              arch={"mode": "tier1",
+                                    "n_neurons": int(getattr(
+                                        bridge.core_sim_config,
+                                        "num_neurons", 0)),
+                                    "n_lang_input": 2048,
+                                    "n_motor_per_action": 500})
+                meta = lineage.read_metadata()
+                meta.cumulative_training_events += int(n_train_events or 0)
+                meta.add_growth_event(
+                    kind="init",
+                    description=(
+                        f"chat_demo train (seed={seed}, "
+                        f"n_train_events={n_train_events})"
+                    ),
+                    seed=seed,
+                )
+                lineage.write_metadata(meta)
+                if verbose:
+                    print(f"[LINEAGE] Saved trained state to '{lineage_name}'",
+                          flush=True)
+            except Exception as e:
+                if verbose:
+                    print(f"[LINEAGE] Save failed (non-fatal): {e}",
+                          flush=True)
 
     # Run "conversation" -- 1 turn per direction, repeated 3 times = 12 turns
     emit_progress("phase", current=1, total=2, phase="W2A_eval",
@@ -353,6 +448,18 @@ def main():
                     help="Tier 1 events per word")
     ap.add_argument("--transcript-out", type=str, default=None)
     ap.add_argument("--out-stats", type=str, default=None)
+    # ── Lineage (continual-learning) opt-in ────────────────────────
+    # Unlike chat_repl, batch demos default to from-scratch (seed-
+    # specific validation). Pass --lineage NAME to load/save state.
+    ap.add_argument("--lineage", type=str, default=None,
+                    help="Optional lineage NAME under bridges/lineage/. "
+                         "If the lineage exists with matching arch, load "
+                         "and skip training. Default: None (always train).")
+    ap.add_argument("--save-to-lineage", action="store_true",
+                    help="After training (and only if --lineage given), "
+                         "save the trained bridge to that lineage so "
+                         "future demos can load it. Creates the lineage "
+                         "if it doesn't exist.")
     args = ap.parse_args()
 
     result = run_demo(
@@ -360,6 +467,8 @@ def main():
         n_train_events=args.train_events,
         transcript_out=args.transcript_out,
         verbose=True,
+        lineage_name=args.lineage,
+        save_to_lineage=args.save_to_lineage,
     )
 
     if args.out_stats:

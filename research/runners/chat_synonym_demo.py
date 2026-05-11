@@ -194,21 +194,114 @@ def run_demo(
     n_train_events: int = 400,
     transcript_out: str = None,
     verbose: bool = True,
+    lineage_name: str = None,
+    save_to_lineage: bool = False,
 ):
-    """Full Tier 2.1 synonym demo: train, then 8-word conversation."""
+    """Full Tier 2.1 synonym demo: train (or load from lineage), then 8-word conversation.
+
+    Lineage usage (opt-in via ``lineage_name``):
+    - If the named lineage exists with a matching synonym arch, load
+      state instead of training (skip ~6-10 min).
+    - If ``save_to_lineage``, save the trained bridge back to the
+      lineage (creating it if necessary).
+    """
     # 2026-05-09: emit_progress for live frontend visibility
     from sim.progress import emit_progress
     import time as _time
 
-    emit_progress("phase", current=0, total=2, phase="training",
-                  unit="phases", label="chat_synonym_demo")
-    _t0 = _time.time()
-    bridge = train_chat_bridge(
-        seed=seed, n_events_per_word=n_train_events, verbose=verbose,
-    )
-    emit_progress("complete", current=1, total=2, phase="training",
-                  unit="phases", label="chat_synonym_demo",
-                  wall_clock_s=int(_time.time() - _t0))
+    # Lineage auto-load when requested
+    lineage = None
+    used_lineage_load = False
+    if lineage_name:
+        from sim.lineage import BridgeLineage
+        lineage = BridgeLineage(lineage_name)
+        if lineage.exists():
+            try:
+                lm = lineage.read_metadata()
+                stored_mode = (lm.arch or {}).get("mode")
+                if stored_mode and stored_mode != "synonym":
+                    if verbose:
+                        print(f"[LINEAGE] '{lineage_name}' was trained "
+                              f"in mode={stored_mode}; chat_synonym_demo "
+                              f"is synonym. Falling back to fresh training.",
+                              flush=True)
+                else:
+                    used_lineage_load = True
+            except Exception as e:
+                if verbose:
+                    print(f"[LINEAGE] could not read metadata: {e}",
+                          flush=True)
+
+    if used_lineage_load:
+        if verbose:
+            print(f"[LINEAGE] Loading state from '{lineage_name}'",
+                  flush=True)
+        emit_progress("phase", current=0, total=2, phase="loading",
+                      unit="phases", label="chat_synonym_demo")
+        _t0 = _time.time()
+        from research.runners.bio_three_factor import run_three_factor
+        bridge, _ = run_three_factor(
+            seed=seed,
+            n_events_per_direction=0,  # build only
+            n_lang_input=4096,
+            n_motor_per_action=1000,
+            n_motor_fs_per_action=120,
+            biological=True,
+            enable_motor_fs=True,
+            enable_nmda=True,
+            apply_topographic_bias=True,
+            embodied_hebbian=True,
+            synonym_mode=True,
+            synonym_vocab_size=8,
+            verbose=False,
+            enable_stp=False,
+        )
+        bridge.load_checkpoint(str(lineage.current_path))
+        try:
+            bridge.set_plasticity_gate("language_input_to_motor", 0.0)
+            bridge.set_plasticity_gate("motor_to_language_output", 0.0)
+        except Exception:
+            pass
+        emit_progress("complete", current=1, total=2, phase="loading",
+                      unit="phases", label="chat_synonym_demo",
+                      wall_clock_s=int(_time.time() - _t0))
+    else:
+        emit_progress("phase", current=0, total=2, phase="training",
+                      unit="phases", label="chat_synonym_demo")
+        _t0 = _time.time()
+        bridge = train_chat_bridge(
+            seed=seed, n_events_per_word=n_train_events, verbose=verbose,
+        )
+        emit_progress("complete", current=1, total=2, phase="training",
+                      unit="phases", label="chat_synonym_demo",
+                      wall_clock_s=int(_time.time() - _t0))
+        if save_to_lineage and lineage is not None:
+            try:
+                lineage.save(bridge, tier="8-word",
+                              arch={"mode": "synonym",
+                                    "n_neurons": int(getattr(
+                                        bridge.core_sim_config,
+                                        "num_neurons", 0)),
+                                    "n_lang_input": 4096,
+                                    "n_motor_per_action": 1000})
+                meta = lineage.read_metadata()
+                meta.cumulative_training_events += int(n_train_events or 0)
+                meta.add_growth_event(
+                    kind="init",
+                    description=(
+                        f"chat_synonym_demo train (seed={seed}, "
+                        f"n_train_events={n_train_events})"
+                    ),
+                    seed=seed,
+                )
+                lineage.write_metadata(meta)
+                if verbose:
+                    print(f"[LINEAGE] Saved trained state to '{lineage_name}'",
+                          flush=True)
+            except Exception as e:
+                if verbose:
+                    print(f"[LINEAGE] Save failed (non-fatal): {e}",
+                          flush=True)
 
     emit_progress("phase", current=1, total=2, phase="W2A_synonym_eval",
                   unit="phases", label="chat_synonym_demo")
@@ -375,6 +468,14 @@ def main():
                     help="Path to write a chat transcript markdown")
     ap.add_argument("--out-stats", type=str, default=None,
                     help="Path to write summary stats JSON")
+    # Lineage (opt-in)
+    ap.add_argument("--lineage", type=str, default=None,
+                    help="Optional lineage NAME under bridges/lineage/. "
+                         "If exists with matching arch, load and skip "
+                         "training. Default: None (always train).")
+    ap.add_argument("--save-to-lineage", action="store_true",
+                    help="After training, save trained bridge to lineage "
+                         "(creates it if necessary). Requires --lineage.")
     args = ap.parse_args()
 
     result = run_demo(
@@ -382,6 +483,8 @@ def main():
         n_train_events=args.train_events,
         transcript_out=args.transcript_out,
         verbose=True,
+        lineage_name=args.lineage,
+        save_to_lineage=args.save_to_lineage,
     )
 
     if args.out_stats:
