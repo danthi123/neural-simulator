@@ -110,13 +110,16 @@ Don't trust your own intent over the git log. The agent's summary describes what
 
 ### Rule 8 — Biology-first capability workflow (THIS REPO)
 
-This repo is a **biology-grounded neural simulator**. Every capability hypothesis must pass through the biology-first workflow:
+This repo is a **biology-grounded neural simulator** with a **research catalog and textbook library on hand**. Every capability hypothesis must pass through the biology-first workflow:
 
 1. **State the capability.** "Sim should be able to X."
 2. **Test against existing architecture.** Does the current code do X? What's the failure mode?
-3. **If failing, ask: what does real biology have that allows this capability to exist?** Cite specific papers / mechanisms (e.g. "McClelland 1995 CLS theory says novel concepts route through hippocampus first," "Larkum BAC firing gates plasticity via apical-basal coincidence"). Do not skip this step.
-4. **Copy the biology in code.** Implement the mechanism, not an engineering substitute. "Zero out the weights" is engineering; "route the new pattern through hippocampus then replay during sleep" is biology. Prefer biology.
-5. **Test again.** Did the biology copy work? If yes: validate multi-seed. If no: return to step 3 — what other biology might apply, OR did the implementation miss a critical detail?
+3. **Consult the catalog FIRST, then ask what biology applies.** Order matters:
+   - **Catalog first**: `E:/Documents/Projects/sim-catalog/references/feature-catalog.md` (Kandel 6e mapping with `Sim status: missing/partial/present` per entry) and `biology-buildout-roadmap.md` (tiered T0/T1/T2/T3 prioritized buildout). Grep the catalog for the capability keywords; check whether it's already a catalog entry with Sim status missing/partial, and whether the roadmap already sequences it. The catalog has clusters A–Q covering BG, striatum, hippocampus, cortex, language, sleep, etc.
+   - **Textbook library second**: PDFs at `E:/Documents/Projects/sim-catalog/references/textbooks/` — Kandel 6e is the primary text; specialty volumes for Marr cerebellum, Albus, Buzsáki rhythms, O'Keefe & Nadel hippocampus, Schultz dopamine, Sutton & Barto RL, Tepper striatal interneurons, Bolam BG anatomy. Cite chapter + page numbers, not paper-from-memory.
+   - **Then biology hypothesis**: only after the catalog/library check, name a specific mechanism with citation. "Per catalog G.11 dual-stream language model, ventral stream is the missing piece" is correct; "Patterson 2007 hub-and-spoke" without checking whether the catalog already covers this is the anti-pattern.
+4. **Copy the biology in code.** Implement the mechanism, not an engineering substitute. "Zero out the weights" is engineering; "route the new pattern through hippocampus then replay during sleep" is biology. Prefer biology. Cite the catalog entry the new code implements (so future agents can trace why).
+5. **Test again.** Did the biology copy work? If yes: validate multi-seed. If no: return to step 3 — what other catalog entry might apply, OR did the implementation miss a critical detail?
 6. **Repeat workflow.** Each capability gets its own pass.
 
 **Anti-patterns this rule blocks:**
@@ -131,6 +134,8 @@ This repo is a **biology-grounded neural simulator**. Every capability hypothesi
 - Never as the primary variant.
 
 **Worked example of the drift this rule prevents (2026-05-11):** the initial in-vivo binding fix runner shipped 4 variants — vanilla, pre-bind-zero-edges, curriculum-interleave, recall-only-tail. Only V0 (control) and V2 (weakly Tse 2007) had biology backing. The user flagged the methodology miss. Correct redesign: route new-word binding through hippocampus (McClelland 1995 CLS) with immediate sleep consolidation, using the already-shipped Phase 1.3 infrastructure.
+
+**Worked example #2 (also 2026-05-11):** when the user pointed out that "concepts ≠ motor pools" (most words people speak have no motor target), I proposed inventing a `semantic_hub` region from Patterson 2007 hub-and-spoke memory. The user then reminded me the project has a research catalog with PDFs. The catalog already had three relevant entries at `Sim status: missing` — **G.11 dual-stream language model** (Kandel Ch 55), **G.13 Wernicke's area** ("Prerequisites: semantic memory store"), and **D.01 episodic memory** + **D.02 relational binding** (Kandel Ch 52). The buildout roadmap already sequenced the prerequisites (**T1.A hippocampal trisynaptic loop**, **T1.B SWR-driven sequential replay**, **T1.C engram-tagging API**). Working from the catalog first would have produced a better, Kandel-grounded plan immediately. Lesson: ALWAYS grep the catalog before citing biology from memory.
 
 ## Drift modes (anti-patterns observed in past sessions)
 
