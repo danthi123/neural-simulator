@@ -2154,6 +2154,53 @@ function renderLineageDetail(data) {
       ));
     }
   }
+  // Bridge memory (Path 3 Phase 3.1.5) — lazy-loaded
+  // Fetches /api/bridge-memory/<name> and renders binding summary
+  loadBridgeMemory(data.name).then((memory) => {
+    if (!memory) return;
+    body.appendChild(el("h4", {}, "Bridge memory (LLM-callable bindings)"));
+    if (memory.n_bindings === 0) {
+      body.appendChild(el("p", { class: "muted" },
+        "No memory bindings recorded yet. Use " +
+        "`BridgeMemory.store(key, value)` to bind facts. " +
+        "See docs/plans/2026-05-11-path3-bridge-memory-api-design.md"
+      ));
+      return;
+    }
+    body.appendChild(el("p", { class: "muted" },
+      memory.n_bindings + " bindings · " + memory.n_forgets + " forgets · " +
+      memory.n_consolidations + " consolidations" +
+      (memory.last_consolidation_at
+        ? " · last consolidation: " + memory.last_consolidation_at
+        : "")
+    ));
+    if (memory.bindings && memory.bindings.length) {
+      const table = el("table", { style: "width:100%; border-collapse: collapse;" });
+      table.appendChild(el("thead", {}, el("tr", {},
+        el("th", { style: "text-align:left; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Key"),
+        el("th", { style: "text-align:left; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Value"),
+        el("th", { style: "text-align:center; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Action"),
+        el("th", { style: "text-align:right; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Confidence"),
+        el("th", { style: "text-align:left; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "At"),
+      )));
+      const tbody = el("tbody", {});
+      // Show most recent first; cap at 20
+      for (const b of [...memory.bindings].reverse().slice(0, 20)) {
+        tbody.appendChild(el("tr", {},
+          el("td", { style: "padding: 0.3em; font-family: monospace; font-size: 0.85em;" }, b.key || ""),
+          el("td", { style: "padding: 0.3em;" }, b.value || ""),
+          el("td", { style: "padding: 0.3em; text-align: center; font-family: monospace;" }, b.target_action || ""),
+          el("td", { style: "padding: 0.3em; text-align: right;" },
+             b.confidence != null ? b.confidence.toFixed(2) : "—"),
+          el("td", { style: "padding: 0.3em; color: var(--muted); font-size: 0.85em;" }, b.at || ""),
+        ));
+      }
+      table.appendChild(tbody);
+      body.appendChild(table);
+    }
+  }).catch((e) => {
+    console.debug("Bridge memory fetch failed (non-fatal):", e);
+  });
   // Synapse tiering (Phase 3 Strategy C/B) — lazy-loaded
   // Fetches /api/synapse-tiering/<name> and renders shard inventory
   loadSynapseTiering(data.name).then((tiering) => {
@@ -2200,6 +2247,17 @@ async function loadSynapseTiering(name) {
   try {
     const res = await fetch("/api/synapse-tiering/" + encodeURIComponent(name));
     if (res.status === 404) return null;  // lineage not found OR endpoint not present
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+async function loadBridgeMemory(name) {
+  try {
+    const res = await fetch("/api/bridge-memory/" + encodeURIComponent(name));
+    if (res.status === 404) return null;
     if (!res.ok) return null;
     return await res.json();
   } catch (e) {
