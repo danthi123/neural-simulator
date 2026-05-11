@@ -152,7 +152,9 @@ def chat_inference(
     Returns dict with delta_counts, predicted_action, predicted_direction,
     confidence_ratio.
     """
-    import cupy as cp
+    # Backend-aware: cp is the active backend (cupy on CuPy, numpy on NumPy)
+    from sim.backend import get_backend
+    cp, _ = get_backend()
     from sim.text_embeddings import vocab_to_drive_pattern
 
     rm = bridge.region_manager
@@ -196,8 +198,10 @@ def chat_inference(
         for a_i, a in enumerate(["N", "E", "S", "W"]):
             drive_counts[a_i] += fired[motor_arr[a]].sum()
 
-    bl = baseline.get()
-    dr = drive_counts.get()
+    # Backend-aware D->H transfer (passthrough on NumPy)
+    from sim.backend import to_host as _bl_to_host
+    bl = _bl_to_host(baseline)
+    dr = _bl_to_host(drive_counts)
     delta = dr - bl
     predicted_idx = int(np.argmax(delta))
     predicted_action = ["N", "E", "S", "W"][predicted_idx]
@@ -395,7 +399,9 @@ def generative_inference(bridge, target_action: str,
           rankings: list of (word, similarity) sorted desc
           delta: 1D numpy array of language_output spike deltas
     """
-    import cupy as cp
+    # Backend-aware: cp is the active backend (cupy on CuPy, numpy on NumPy)
+    from sim.backend import get_backend
+    cp, _ = get_backend()
     import numpy as np
     from sim.text_embeddings import vocab_to_drive_pattern
 
@@ -432,7 +438,9 @@ def generative_inference(bridge, target_action: str,
         bridge.runtime_state.current_time_step += 1
         drive_counts += bridge.cp_firing_states[lang_out_arr].astype(cp.int32)
 
-    delta = (drive_counts - baseline).get().astype(np.float32)
+    # Backend-aware D->H transfer (passthrough on NumPy)
+    from sim.backend import to_host as _delta_to_host
+    delta = _delta_to_host(drive_counts - baseline).astype(np.float32)
 
     # Decode by cosine similarity to known vocab patterns
     if vocab_words is None:
@@ -586,7 +594,9 @@ def learn_word_pairing(bridge, word: str, target_action: str,
     Returns:
         dict with summary stats (n_events_run, target_action, gates_opened)
     """
-    import cupy as cp
+    # Backend-aware: cp is the active backend (cupy on CuPy, numpy on NumPy)
+    from sim.backend import get_backend
+    cp, _ = get_backend()
     from sim.text_embeddings import vocab_to_drive_pattern
 
     if target_action not in ("N", "E", "S", "W"):
