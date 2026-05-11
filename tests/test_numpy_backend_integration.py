@@ -254,3 +254,101 @@ def test_backend_respects_env_var_forced_numpy(monkeypatch):
     assert name == "numpy"
     import numpy as np
     assert xp is np
+
+
+@pytest.mark.slow
+def test_export_shards_real_bridge_on_numpy(numpy_backend, tmp_path):
+    """Real bridge under NumPy: extract_per_pathway_csrs + lineage.export_shards.
+
+    Builds a small brain-region bridge and exports per-pathway shards.
+    Verifies shard contents match the original pathway data.
+    """
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.regions import BrainRegion, RegionPathway
+    from sim.lineage import BridgeLineage
+
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = [
+        BrainRegion(name="A", n_neurons=10, exc_fraction=1.0,
+                     internal_density=0.0),  # no internal connections
+        BrainRegion(name="B", n_neurons=10, exc_fraction=1.0,
+                     internal_density=0.0),
+        BrainRegion(name="C", n_neurons=10, exc_fraction=1.0,
+                     internal_density=0.0),
+    ]
+    cfg.region_pathways = [
+        RegionPathway(from_region="A", to_region="B",
+                       density=0.3, weight_mean=1.0, weight_jitter=0.1),
+        RegionPathway(from_region="B", to_region="C",
+                       density=0.3, weight_mean=2.0, weight_jitter=0.1),
+        RegionPathway(from_region="A", to_region="C",
+                       density=0.3, weight_mean=3.0, weight_jitter=0.1),
+    ]
+    cfg.dt = 1.0
+
+    bridge = SimulationBridge(
+        core_config=cfg, viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(), gpu_config=GPUConfig(),
+    )
+    bridge._initialize_simulation_data()
+    assert bridge.is_initialized
+
+    # Extract per-pathway CSRs
+    pathways = bridge.extract_per_pathway_csrs()
+    assert set(pathways.keys()) == {"A_to_B", "B_to_C", "A_to_C"}
+
+    # Each sub-matrix should have the expected shape (post x pre)
+    # All regions are 10 neurons, so each pathway is 10x10
+    for name, csr in pathways.items():
+        assert csr.shape == (10, 10), f"{name}: shape {csr.shape}"
+
+    # Now export via lineage
+    lineage = BridgeLineage("shard_test", root=tmp_path)
+    n = lineage.export_shards(bridge)
+    assert n == 3
+
+    # list_shards returns the expected names
+    names = lineage.list_shards()
+    assert set(names) == {"A_to_B", "B_to_C", "A_to_C"}
+
+    # Shard files exist
+    for pw in ("A_to_B", "B_to_C", "A_to_C"):
+        shard_path = tmp_path / "shard_test" / "shards" / f"{pw}.npz"
+        assert shard_path.exists(), f"{pw}.npz missing"
+
+
+@pytest.mark.slow
+def test_extract_per_pathway_csrs_requires_region_manager():
+    """extract_per_pathway_csrs raises on non-brain-region bridges."""
+    # Force a fresh backend
+    import importlib
+    import sys
+    from sim.backend import _reset_cache_for_tests, get_backend
+    _reset_cache_for_tests()
+    if "SIM_BACKEND" in os.environ:
+        del os.environ["SIM_BACKEND"]
+    xp, name = get_backend("numpy") if "cupy" not in sys.modules else get_backend()
+    for modname in ("sim.kernels", "sim.connectivity", "sim.bridge"):
+        if modname in sys.modules:
+            importlib.reload(sys.modules[modname])
+
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+
+    cfg = CoreSimConfig()
+    cfg.num_neurons = 30
+    cfg.enable_brain_region_framework = False  # no region_manager
+    cfg.dt = 1.0
+
+    bridge = SimulationBridge(
+        core_config=cfg, viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(), gpu_config=GPUConfig(),
+    )
+    bridge._initialize_simulation_data()
+    assert bridge.is_initialized
+
+    # extract_per_pathway_csrs should raise — no region_manager
+    with pytest.raises(RuntimeError, match="region_manager is None"):
+        bridge.extract_per_pathway_csrs()
