@@ -411,6 +411,68 @@ cortex frozen (or partial) + input layers thawed. Biologically: real
 critical periods close gradually, gated by neuromodulators, allowing
 sensory cortex to mature before association cortex.
 
+### Continuous-learning workflow (2026-05-11): Bridge Lineage Manager
+
+**Status:** SHIPPED 2026-05-11. The chat REPL now "lives" between sessions
+by default. See
+[`research/findings/2026-05-11-bridge-lineage-shipped.md`](research/findings/2026-05-11-bridge-lineage-shipped.md)
+for the full shipping notes; design doc at
+[`docs/plans/2026-05-10-bridge-lineage-design.md`](docs/plans/2026-05-10-bridge-lineage-design.md).
+
+Persistent training state lives under `bridges/lineage/<name>/`:
+`current.simstate.h5` (latest state, auto-loaded), `metadata.json`
+(vocab, tier, cumulative events, accuracy_history, growth_events), and
+`history/` (last 30 snapshots by default). The `BridgeLineage` class
+(`sim/lineage.py`) handles atomic save (`.new` + `os.replace`),
+millisecond-precision history timestamps, and schema-version migration.
+
+**Default workflow (continuous mode):**
+```bash
+# Loads lineage 'main' if it exists, skips ~6-20 min training.
+# Saves back on exit; previous state goes to history/.
+python -m research.runners.chat_repl --mode synonym
+```
+
+**Science mode (multi-seed reproducibility):**
+```bash
+# Always trains from random init; does NOT touch lineage.
+python -m research.runners.chat_repl --mode synonym --from-scratch --seed 42
+```
+
+**Branching for experiments:**
+```bash
+# Fork 'main' into a new lineage; future saves go to the fork.
+python -m research.runners.chat_repl --mode synonym --fork-lineage experiment_v3
+```
+
+**Inspection / management CLI (`research/runners/bridge_lineage.py`):**
+```bash
+python -m research.runners.bridge_lineage list
+python -m research.runners.bridge_lineage show main
+python -m research.runners.bridge_lineage history main
+python -m research.runners.bridge_lineage rollback main --to <snapshot_id>
+python -m research.runners.bridge_lineage fork main experiment_v3
+python -m research.runners.bridge_lineage prune main --keep-last 10
+python -m research.runners.bridge_lineage diff main --from <snap_id> --to current
+```
+
+**Webapp endpoints (`GET /api/lineages`, `GET /api/lineages/{name}`):**
+Surface the lineage data for the future Lineages tab. Endpoints are
+wired + tested; frontend tab is the only remaining piece.
+
+**Compatibility:**
+- Lineage stores `mode` + arch in metadata. Loading a `tier1` lineage
+  with `--mode synonym` triggers a "fallback to fresh training"
+  warning — no shape-mismatch crash.
+- `save_checkpoint` doesn't preserve firing thresholds / STP /
+  eligibility per the CLAUDE.md gotcha above. Self-recovers in ~10ms
+  of free running. Fine for inference (REPL chat); documented.
+- Batch demos (`chat_demo`, `chat_synonym_demo`, `chat_speak_synonym_demo`)
+  default to fresh training; opt-in to lineage via `--lineage NAME`.
+
+**Tests:** 78 across the subsystem (21 BridgeLineage, 13 CLI, 28
+chat_repl, 14 chat_demo_aggregate, 2 webapp). All PASS, all CPU-only.
+
 ### Recommended configuration (current best 2026-05-01)
 
 **Text I/O infrastructure (2026-05-02) — ~~STATISTICALLY SIGNIFICANT W→A~~ SUPERSEDED 2026-05-05.** See the [W→A verdict](research/findings/2026-05-05-W-to-A-VERDICT-global-scalar-feedback-fails.md): the "28.5% W→A" reported below failed the permuted-label control (2026-05-03) and was not aligned with task labels. Three subsequent investigations (3-factor with classical sign-only DA: 1/6, 3-factor with magnitude-graded DA: 0/6, B3 supervised gradient: 3/3 PERFECT) confirmed that global scalar feedback in any form cannot match per-region gradient at biological-scale W→A. Section retained below for historical context.
