@@ -37,7 +37,23 @@ if (-not (Test-Path $OUT_DIR)) { New-Item -ItemType Directory -Path $OUT_DIR -Fo
 
 function Log($msg) {
     $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    "[$ts] $msg" | Tee-Object -FilePath $LOG -Append
+    $line = "[$ts] $msg"
+    # Tee to stdout, then append to file as UTF-8 (no BOM) so grep /
+    # tail-F / monitor scripts can read the log without UTF-16 unwrap.
+    Write-Output $line
+    [System.IO.File]::AppendAllText(
+        (Resolve-Path -LiteralPath $LOG -ErrorAction SilentlyContinue),
+        "$line`n",
+        [System.Text.UTF8Encoding]::new($false)
+    ) 2>$null
+    # Fallback if the path doesn't resolve yet (first write)
+    if (-not $?) {
+        [System.IO.File]::AppendAllText(
+            $LOG,
+            "$line`n",
+            [System.Text.UTF8Encoding]::new($false)
+        )
+    }
 }
 
 Log "Chain started; watching for XL python.exe PID $XL_PID to exit + VRAM to drop."

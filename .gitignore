@@ -94,3 +94,18 @@ AGENTS.md
 
 # Playwright MCP cache (used for webapp UI verification)
 .playwright-mcp/
+
+# Runtime lineage storage (per-user; not source). Each lineage is
+# a SimulationBridge state on disk plus metadata.json + history/
+# snapshots. Created at runtime by chat_repl + BridgeMemory.
+bridges/lineage/
+
+# Runtime synapse shard storage (Phase 3 SSD paging). Per-pathway
+# .npz files written by TieredSynapseStore. Regenerable from bridge
+# state; not source.
+bridges/synapse_shards/
+
+# Webapp runtime artifacts (logs, restart helpers)
+webapp_restart*.log
+webapp_restart*.log.err
+webapp/runtime/run_*.log
