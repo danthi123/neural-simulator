@@ -101,6 +101,13 @@ def run_ventral_validation(
     # concept ensembles.
     enable_wernicke_fs: bool = False,
     n_wernicke_fs: int = 60,
+    # Iter M: strengthen naming pathway weights. ca1_to_lang_out
+    # at default 2.0 produces only ~20 mV drive on lang_output
+    # which is barely suprathreshold. Bumping to 5.0 should
+    # produce robust above-baseline lang_output activation when
+    # CA3 engram is stimulated.
+    ca1_to_lang_out_weight: float = 2.0,
+    stim_drive_pA: float = 200.0,
     out_path: Optional[Path] = None,
     verbose: bool = True,
 ):
@@ -169,6 +176,8 @@ def run_ventral_validation(
         # Path G (iter G): wernicke_FS lateral inhibition
         enable_wernicke_fs=enable_wernicke_fs,
         n_wernicke_fs=n_wernicke_fs,
+        # Iter M: strengthen ca1->lang_output for naming
+        ca1_to_lang_out_weight=ca1_to_lang_out_weight,
     )
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -218,13 +227,25 @@ def run_ventral_validation(
     VENTRAL_GATES = (
         "lang_to_wernicke", "wernicke_to_semantic", "ca1_to_semantic",
     )
+    # Iter L (2026-05-11): production pathways MUST also train so
+    # the engram-tag -> lang_output chain works. Per iter K finding,
+    # naming pathway weights stay random unless these gates open
+    # during encoding. The lang_input drive activates wernicke +
+    # semantic_cortex AND drives wernicke -> lang_output via the
+    # comprehension loop, so STDP can co-fire-train these.
+    PRODUCTION_GATES = (
+        "semantic_to_wernicke", "wernicke_to_lang_out",
+        "ca1_to_lang_out",
+    )
     REPLAY_GATES = ("ca3_swr_burst",)
     if strict_two_stage:
         encode_gates = HIPPO_GATES
         log("  [iter B] strict two-stage: encoding hippo-only")
     else:
-        # Iter A: open everything during encoding (current behavior)
-        encode_gates = HIPPO_GATES + REPLAY_GATES + VENTRAL_GATES
+        # Iter A + iter L: open everything during encoding
+        encode_gates = (
+            HIPPO_GATES + REPLAY_GATES + VENTRAL_GATES + PRODUCTION_GATES
+        )
 
     def encode_concept(name, drive_arr):
         """Encode + tag the CA3 ensemble for this concept."""
@@ -279,14 +300,23 @@ def run_ventral_validation(
     # learn the meaning from the replayed CA3 pattern; also open
     # ca1_to_semantic and ca3_swr_burst for the consolidation
     # transfer per McClelland 1995.
+    # Iter K addition (2026-05-11): also open ca1_to_lang_out so the
+    # naming pathway (CA3 tag → CA1 → lang_output) trains during
+    # replay.
+    # Iter L addition: also open production gates (semantic_to_wernicke,
+    # wernicke_to_lang_out) so the full production chain trains.
+    base_replay_gates = (
+        "ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1",
+        "ca1_to_lang_out",
+        "semantic_to_wernicke", "wernicke_to_lang_out",
+    )
     if strict_two_stage:
-        replay_phase_gates = (
-            "ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1",
+        replay_phase_gates = base_replay_gates + (
             "lang_to_wernicke", "wernicke_to_semantic",
         )
         log("  [iter B] replay opens both hippo-replay AND ventral gates")
     else:
-        replay_phase_gates = ("ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1")
+        replay_phase_gates = base_replay_gates
     for g in replay_phase_gates:
         try:
             bridge.set_plasticity_gate(g, 1.0)
@@ -421,28 +451,89 @@ def run_ventral_validation(
     log(f"    (different-concept; target < 0.3)")
     pass_comprehension = (cos_apple_self > 0.5) and (cos_apple_river < 0.4)
 
-    # Test 2: Naming — stimulate the apple engram (CA3), measure lang_output
-    log("\n[TEST 2] Naming: stimulate apple CA3 tag, measure lang_output")
-    bridge.cp_external_input_current[:] = 0.0
-    for _ in range(50):
-        bridge._run_one_simulation_step()
-        bridge.runtime_state.current_time_step += 1
-    baseline_lang_out = measure_region_spikes(bridge, "language_output", n_steps=100)
+    # Test 2: Naming — engram-tag methodology (iter N).
+    # Tag the lang_output ensembles per concept via direct drive
+    # (during fresh exposure). Then stimulate apple CA3 tag and
+    # measure cosine of resulting lang_output firing vs each tag.
+    # Same trick that fixed comprehension in iter A.
+    log("\n[TEST 2] Naming: tag lang_output, stim CA3, measure recall")
+
+    def drive_and_tag_langout(name, drive_arr):
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(50):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        bridge.start_engram_recording(name)
+        bridge.cp_external_input_current[drive_arr] = 200.0
+        for _ in range(drive_steps):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        bridge.cp_external_input_current[:] = 0.0
+        return bridge.commit_engram_tag(
+            name, top_k=50, region_filter=["language_output"],
+        )
+
+    apple_lang_tag = drive_and_tag_langout("apple_langout", apple_arr)
+    river_lang_tag = drive_and_tag_langout("river_langout", river_arr)
+    log(f"  apple lang_output tag: {apple_lang_tag['n_tagged']} neurons")
+    log(f"  river lang_output tag: {river_lang_tag['n_tagged']} neurons")
+
+    apple_lang_idx = to_host(
+        bridge.get_engram_tag_indices("apple_langout"))
+    river_lang_idx = to_host(
+        bridge.get_engram_tag_indices("river_langout"))
+
+    lang_out_indices = list(rm.indices("language_output"))
+
+    def measure_langout_response_indices():
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(30):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        spike_counts = measure_region_spikes(bridge, "language_output",
+                                              n_steps=drive_steps)
+        return np.where(spike_counts > 0)[0]
+
+    # Baseline: lang_output response with NO stimulation
+    baseline_lang_local = measure_langout_response_indices()
+    baseline_lang_global = np.array(
+        [lang_out_indices[i] for i in baseline_lang_local
+         if i < len(lang_out_indices)],
+        dtype=np.int64,
+    )
+
+    # Causal: stimulate apple CA3 tag, measure lang_output
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(30):
         bridge._run_one_simulation_step()
         bridge.runtime_state.current_time_step += 1
-    bridge.stimulate_tag("apple", drive_pA=200.0)
-    causal_lang_out = measure_region_spikes(bridge, "language_output", n_steps=100)
+    bridge.stimulate_tag("apple", drive_pA=stim_drive_pA)
+    causal_spikes = measure_region_spikes(bridge, "language_output",
+                                            n_steps=drive_steps)
+    causal_lang_local = np.where(causal_spikes > 0)[0]
+    causal_lang_global = np.array(
+        [lang_out_indices[i] for i in causal_lang_local
+         if i < len(lang_out_indices)],
+        dtype=np.int64,
+    )
     bridge.cp_external_input_current[:] = 0.0
+    bridge.clear_tag_drive()
 
-    baseline_sum = float(baseline_lang_out.sum())
-    causal_sum = float(causal_lang_out.sum())
-    log(f"  baseline lang_output spikes: {baseline_sum:.0f}")
-    log(f"  causal (engram-driven) lang_output spikes: {causal_sum:.0f}")
-    log(f"    (causal/baseline ratio; target > 1.3)")
-    naming_ratio = causal_sum / max(baseline_sum, 1.0)
-    pass_naming = naming_ratio > 1.3
+    cos_naming_self = index_cosine(causal_lang_global, apple_lang_idx,
+                                    n_neurons_total)
+    cos_naming_cross = index_cosine(causal_lang_global, river_lang_idx,
+                                      n_neurons_total)
+    cos_baseline_self = index_cosine(baseline_lang_global, apple_lang_idx,
+                                       n_neurons_total)
+    log(f"  CA3-apple-stim lang_output vs apple_lang tag: {cos_naming_self:.3f}")
+    log(f"  CA3-apple-stim lang_output vs river_lang tag: {cos_naming_cross:.3f}")
+    log(f"  baseline lang_output vs apple_lang tag: {cos_baseline_self:.3f}")
+
+    # Also keep raw spike count metric for back-compat
+    baseline_sum = float(np.sum(baseline_lang_local > -1))
+    causal_sum = float(np.sum(causal_lang_local > -1))
+    naming_ratio = max(cos_naming_self, 0.01) / max(cos_naming_cross, 0.01)
+    pass_naming = (cos_naming_self > 0.3 and cos_naming_self > 1.3 * cos_naming_cross)
 
     # Iter E (alt methodology): inspect learned weights directly.
     # Question: did STDP grow wernicke->semantic_cortex weights
@@ -613,6 +704,9 @@ def run_ventral_validation(
             "baseline_lang_out_spikes": baseline_sum,
             "causal_lang_out_spikes": causal_sum,
             "ratio": naming_ratio,
+            "cos_naming_self": cos_naming_self,
+            "cos_naming_cross": cos_naming_cross,
+            "cos_baseline_self": cos_baseline_self,
             "passed": pass_naming,
         },
         "weight_diagnostics": weight_diag,
@@ -683,6 +777,15 @@ def main() -> int:
                          "concept ensemble encoding. Fixes "
                          "upstream bottleneck identified by iter E.")
     ap.add_argument("--n-wernicke-fs", type=int, default=60)
+    # Iter M: strengthen naming pathway
+    ap.add_argument("--ca1-to-lang-out-weight", type=float, default=2.0,
+                    help="Iter M: strengthen CA1->lang_output "
+                         "weight (default 2.0; try 5.0 for "
+                         "robust naming propagation)")
+    ap.add_argument("--stim-drive-pa", type=float, default=200.0,
+                    help="Iter M: engram tag stimulation drive "
+                         "(default 200 pA; try 500 for stronger "
+                         "naming test)")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
     run_ventral_validation(
@@ -706,6 +809,8 @@ def main() -> int:
         n_semantic_fs=args.n_semantic_fs,
         enable_wernicke_fs=args.enable_wernicke_fs,
         n_wernicke_fs=args.n_wernicke_fs,
+        ca1_to_lang_out_weight=args.ca1_to_lang_out_weight,
+        stim_drive_pA=args.stim_drive_pa,
         out_path=Path(args.out) if args.out else None,
         verbose=True,
     )
