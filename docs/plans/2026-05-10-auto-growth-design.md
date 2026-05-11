@@ -100,15 +100,65 @@ class TierPromoter:
 
     def _transfer_weights(self, old_bridge, new_bridge,
                             old_tier, new_tier):
-        """Map weights from old motor pools to corresponding sub-pops
-        in new pool. New sub-pops get random init."""
-        # For each action N/E/S/W:
-        #   Old motor_X has old_tier/4 sub-pops, ~125 neurons each
-        #   New motor_X has new_tier/4 sub-pops, ~125 neurons each
-        #   First (old_tier/4) sub-pops: copy weights from old bridge
-        #   Remaining sub-pops: random init (or random subset of trained)
-        # Pathways involved: language_input -> motor_X (synonym binding)
-        # Implementation: per-pathway weight slicing + interpolation
+        """Map weights from old motor pools to new (larger) pools.
+
+        Algorithm (refined 2026-05-11 after surveying bridge.py +
+        regions.py):
+
+        At the architecture level, synonyms are NOT distinct sub-
+        regions — they are patterns within a continuous motor pool
+        that emerge during STDP/embodied-Hebbian training. The
+        promotion algorithm is therefore "grow the pool, copy what's
+        trained, random-init the rest":
+
+        For each pathway involving a growing region (e.g. motor_N at
+        tier1 has 500 neurons -> tier2.1 has 1000):
+
+        1. Get old + new region indices via region_manager:
+              pre_old  = old_bridge.region_manager.indices(pre_region)
+              post_old = old_bridge.region_manager.indices(post_region)
+              pre_new  = new_bridge.region_manager.indices(pre_region)
+              post_new = new_bridge.region_manager.indices(post_region)
+              n_pre_old, n_pre_new = len(pre_old), len(pre_new)
+              n_post_old, n_post_new = len(post_old), len(post_new)
+
+        2. Read old weights into dense block via CSR slicing:
+              old_W = old_bridge.cp_connections[
+                  post_old[:, None], pre_old[None, :]
+              ].toarray()  # shape (n_post_old, n_pre_old)
+
+        3. Map first n_pre_old / n_post_old new neurons 1:1 to old:
+              new_W[0:n_post_old, 0:n_pre_old] = old_W (copy trained)
+              new_W[n_post_old:, :] = random_init  (new post-neurons)
+              new_W[:, n_pre_old:] = random_init  (new pre-neurons)
+
+        4. Install via set_pathway_weights:
+              new_bridge.set_pathway_weights(
+                  pathway_name,
+                  pre_indices=expanded_pre_array,
+                  post_indices=expanded_post_array,
+                  weights=new_W.flatten(),
+                  add_missing=True,  # CSR may not have all edges yet
+              )
+
+        Pathways to transfer (per Phase 1.4 BRANCH A arch):
+            - language_input -> motor_{N,E,S,W}
+            - motor_{N,E,S,W} -> language_output
+            - motor_{N,E,S,W} -> motor_FS_{N,E,S,W} (FS lateral inhib)
+            - motor_FS_{N,E,S,W} -> motor_{N,E,S,W}
+            - (hippo pathways if enabled)
+
+        Biology rationale: real cortex grows by adding pyramidals with
+        random initial connections, while existing pyramidals keep
+        their trained patterns (Lichtman 2014; Holtmaat 2009 review).
+        Sleep replay (Phase 1.3) consolidates the new neurons over a
+        few REPL sessions.
+
+        Random init params (match original arch's prior):
+            weight_mean = old pathway's weight_mean
+            weight_jitter = old pathway's weight_jitter
+            density = old pathway's density (use rng with new seed)
+        """
         ...
 ```
 
