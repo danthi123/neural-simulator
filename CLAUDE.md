@@ -62,8 +62,8 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 21 modules (+ __init__.py), ~15.7K lines — core engine
-  bridge.py             # 6442 lines — SimulationBridge + GPU state orchestration
+sim/                    # 21 modules (+ __init__.py), ~16.1K lines — core engine
+  bridge.py             # 6704 lines — SimulationBridge + GPU state orchestration
   config.py             #  760 lines — all @dataclass configs
   enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  999 lines — spatial/WS/motif connection generators (backend-pluggable)
@@ -87,9 +87,9 @@ sim/                    # 21 modules (+ __init__.py), ~15.7K lines — core engi
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 77 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/bootstrap_hippo_lineage/etc) for research
-research/findings/      # session-by-session findings docs (230+ files)
-tests/                  # 77 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, llm adapters, etc.)
+research/runners/       # 75 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/bootstrap_hippo_lineage/validate_ventral_semantic/etc) for research
+research/findings/      # session-by-session findings docs (240+ files)
+tests/                  # 79 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, llm adapters, etc.)
 ```
 
 ### Thread Model
