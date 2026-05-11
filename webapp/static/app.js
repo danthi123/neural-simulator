@@ -2314,6 +2314,31 @@ function renderLLMChatPanel(body, lineageName) {
   inputRow.appendChild(inputEl);
   inputRow.appendChild(sendBtn);
   body.appendChild(inputRow);
+  // Quick-fill chips: example prompts
+  const chips = el("div", {
+    style: "display:flex; gap:0.5em; flex-wrap:wrap; margin-top:0.5em;",
+  });
+  const examples = [
+    "Remember that my favorite is north.",
+    "What's my favorite?",
+    "Remember that my pet is east.",
+    "What word goes with east?",
+  ];
+  for (const text of examples) {
+    const chip = el("button", {
+      type: "button",
+      style: "font-size:0.8em; padding:0.2em 0.5em; cursor:pointer; " +
+              "background:var(--bg-soft,#f0f0f0); border:1px solid " +
+              "var(--border-light); border-radius:1em;",
+      title: "Click to fill input",
+    }, text);
+    chip.addEventListener("click", () => {
+      inputEl.value = text;
+      inputEl.focus();
+    });
+    chips.appendChild(chip);
+  }
+  body.appendChild(chips);
 
   // Try to load any existing transcript for the default mode
   loadChatTranscript(lineageName, modeSelect.value, logEl);
