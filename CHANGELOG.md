@@ -62,6 +62,30 @@ This is a research codebase; entries are organised chronologically rather than b
 
 Findings: `research/findings/2026-05-11-path3-phase3.2-llm-stack-shipped.md`.
 
+### Continuation (same arc, post-user-checkin)
+- **continual-autonomous-work skill** (`0244ee7`) — project-scoped
+  addendum to autonomous-runs codifying 5 hard rules against
+  self-imposed clean break points; `.claude/skills/` now version-
+  controlled via .gitignore exception.
+- **BridgeMemory.consolidate() real-ops** (`7867bbf`) — replaces the
+  Phase 3.1 stub with SWR sleep replay on hippocampus-enabled
+  bridges; detects 'ca3' region, returns degenerate result otherwise.
+- **bootstrap_hippo_lineage runner** (`055aa86`) — wraps
+  consolidation_trainer to produce a hippocampus-enabled lineage
+  (`main_hippo`) usable by consolidate() real-ops.
+- **MockLLM forget + consolidate patterns** (`fa1d8b1`) —
+  TOOL_SCHEMAS 3 → 5 (memory_forget + memory_consolidate added);
+  natural-language patterns recognized ("forget my X", "fully forget",
+  "consolidate", "sleep on it", "for N cycles"); dispatch routing.
+- **Chat UI chips for forget + consolidate** (`3d69f82`) — example
+  chips below input expose the new patterns.
+- **Phase 3.4 design** (`9ef3cd0`) — multi-session continuity test
+  plan: capacity / retention / interference / forget-rebind across a
+  7-calendar-day arc.
+
+Total this arc (post-checkin extension): 8 commits, 4 new tool schemas
+exposed, 1 new skill, 1 new design doc, 24/24 tests still pass.
+
 ## [Unreleased] — 2026-05-03/04 — Permuted-label control debunks 28.5% W→A + autonomous-arc tooling
 
 ### Critical correction
