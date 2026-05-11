@@ -1,0 +1,35 @@
+{
+  "seed": 44,
+  "target_action": "N",
+  "train_events": 200,
+  "n_engram_neurons": 29,
+  "baseline_motor": {
+    "N": 7.0,
+    "E": 8.0,
+    "S": 18.0,
+    "W": 19.0
+  },
+  "word_driven_motor": {
+    "N": 2.0,
+    "E": 10.0,
+    "S": 9.0,
+    "W": 10.0
+  },
+  "causal_recall_motor": {
+    "N": 10.0,
+    "E": 9.0,
+    "S": 18.0,
+    "W": 10.0
+  },
+  "target_baseline": 7.0,
+  "target_word": 2.0,
+  "target_causal": 10.0,
+  "other_baseline": 15.0,
+  "other_word": 9.666666666666666,
+  "other_causal": 12.333333333333334,
+  "pass_word_driven": false,
+  "pass_causal_recall": false,
+  "causal_recall_ratio": 0.8108108108108107,
+  "overall_passed": false,
+  "total_seconds": 119.99758052825928
+}
