@@ -2546,6 +2546,7 @@ class SimulationBridge:
             root=Path(root),
             evict_after_idle_steps=int(cfg.synapse_tiering_evict_idle_steps),
             grace_after_pagein_steps=int(cfg.synapse_tiering_grace_pagein_steps),
+            ram_budget_bytes=int(getattr(cfg, "synapse_tiering_ram_budget_bytes", 0)),
         )
 
         # Mirror per-pathway CSRs (Strategy B = observational mirror only;

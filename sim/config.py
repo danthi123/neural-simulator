@@ -269,6 +269,11 @@ class CoreSimConfig:
     # is ever shipped; for Strategy B these are tracking thresholds only)
     synapse_tiering_evict_idle_steps: int = 1000
     synapse_tiering_grace_pagein_steps: int = 100
+    # Phase 4 memory-pressure eviction. 0 = disabled (idle-counter only).
+    # Non-zero: evict longest-idle pathway when in-RAM bytes exceed budget.
+    # Useful when individual pathways are large; the idle counter alone
+    # may not free memory fast enough under hot workloads.
+    synapse_tiering_ram_budget_bytes: int = 0
     # Optional storage root override (default: bridges/synapse_shards/active)
     synapse_tiering_root: str = ""
 
