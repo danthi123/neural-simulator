@@ -231,32 +231,88 @@ def run_ventral_validation(
     log(f"  replay done ({replay_stats['n_replays']} events, "
         f"{time.time() - t_replay:.0f}s)")
 
-    # Test 1: Comprehension — drive each word, measure semantic_cortex
-    log("\n[TEST 1] Comprehension: drive lang_input, measure semantic_cortex")
-    bridge.cp_external_input_current[:] = 0.0
-    for _ in range(50):
-        bridge._run_one_simulation_step()
-        bridge.runtime_state.current_time_step += 1
-    bridge.cp_external_input_current[apple_arr] = 200.0
-    apple_sem_1 = measure_region_spikes(bridge, "semantic_cortex", n_steps=100)
-    bridge.cp_external_input_current[:] = 0.0
-    for _ in range(30):
-        bridge._run_one_simulation_step()
-        bridge.runtime_state.current_time_step += 1
-    # Second 'apple' trial
-    bridge.cp_external_input_current[apple_arr] = 200.0
-    apple_sem_2 = measure_region_spikes(bridge, "semantic_cortex", n_steps=100)
-    bridge.cp_external_input_current[:] = 0.0
-    for _ in range(30):
-        bridge._run_one_simulation_step()
-        bridge.runtime_state.current_time_step += 1
-    # 'river' trial
-    bridge.cp_external_input_current[river_arr] = 200.0
-    river_sem = measure_region_spikes(bridge, "semantic_cortex", n_steps=100)
-    bridge.cp_external_input_current[:] = 0.0
+    # Test 1: Comprehension — engram-tag methodology (P5 iteration A).
+    # First exposure: drive lang_input(apple), tag semantic_cortex
+    # ensemble. Subsequent exposure: drive lang_input(apple) again,
+    # measure cosine of resulting semantic_cortex firing pattern vs
+    # the tagged ensemble (treats both as binary index sets). Same
+    # methodology that turned P1 D.13 from FAIL to PASS.
+    log("\n[TEST 1] Comprehension: tag semantic_cortex on first exposure, "
+        "test reactivation")
 
-    cos_apple_self = cosine_similarity(apple_sem_1, apple_sem_2)
-    cos_apple_river = cosine_similarity(apple_sem_1, river_sem)
+    def drive_and_tag_semantic(name, drive_arr):
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(50):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        bridge.start_engram_recording(name)
+        bridge.cp_external_input_current[drive_arr] = 200.0
+        for _ in range(100):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        bridge.cp_external_input_current[:] = 0.0
+        return bridge.commit_engram_tag(
+            name, top_k=50, region_filter=["semantic_cortex"],
+        )
+
+    def measure_semantic_response_indices(drive_arr):
+        """Drive + return indices of semantic_cortex neurons that fired."""
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(30):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+        bridge.cp_external_input_current[drive_arr] = 200.0
+        spike_counts = measure_region_spikes(bridge, "semantic_cortex",
+                                                n_steps=100)
+        bridge.cp_external_input_current[:] = 0.0
+        # Return indices of neurons that fired at all
+        return np.where(spike_counts > 0)[0]
+
+    # Tag semantic_cortex ensembles
+    apple_sem_tag = drive_and_tag_semantic("apple_semantic", apple_arr)
+    log(f"  apple semantic_cortex tag: {apple_sem_tag['n_tagged']} neurons")
+    river_sem_tag = drive_and_tag_semantic("river_semantic", river_arr)
+    log(f"  river semantic_cortex tag: {river_sem_tag['n_tagged']} neurons")
+
+    # Get tag indices (in semantic_cortex local) for binary cosine
+    rm = bridge.region_manager
+    sem_cortex_indices = list(rm.indices("semantic_cortex"))
+    sem_cortex_set = set(sem_cortex_indices)
+    apple_tag_global = to_host(
+        bridge.get_engram_tag_indices("apple_semantic")
+    )
+    river_tag_global = to_host(
+        bridge.get_engram_tag_indices("river_semantic")
+    )
+
+    # Measure reactivation: drive lang_input(apple) again, see which
+    # semantic_cortex neurons fire
+    apple_reactivation = measure_semantic_response_indices(apple_arr)
+    # Convert local indices back to global semantic_cortex indices
+    apple_reactivation_global = np.array(
+        [sem_cortex_indices[i] for i in apple_reactivation if i < len(sem_cortex_indices)],
+        dtype=np.int64,
+    )
+
+    river_reactivation = measure_semantic_response_indices(river_arr)
+    river_reactivation_global = np.array(
+        [sem_cortex_indices[i] for i in river_reactivation if i < len(sem_cortex_indices)],
+        dtype=np.int64,
+    )
+
+    def index_cosine(a_idx, b_idx, n_total):
+        if len(a_idx) == 0 or len(b_idx) == 0:
+            return 0.0
+        s_a = set(int(x) for x in a_idx)
+        s_b = set(int(x) for x in b_idx)
+        overlap = len(s_a & s_b)
+        return float(overlap / (np.sqrt(len(s_a)) * np.sqrt(len(s_b))))
+
+    n_neurons_total = int(cfg.num_neurons)
+    cos_apple_self = index_cosine(apple_reactivation_global, apple_tag_global,
+                                    n_neurons_total)
+    cos_apple_river = index_cosine(apple_reactivation_global, river_tag_global,
+                                      n_neurons_total)
     log(f"  apple trial 1 vs apple trial 2: cos = {cos_apple_self:.3f}")
     log(f"    (same-concept stability; target > 0.6)")
     log(f"  apple vs river: cos = {cos_apple_river:.3f}")
@@ -336,7 +392,7 @@ def main() -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--n-train-events", type=int, default=100)
+    ap.add_argument("--n-train-events", type=int, default=300)
     ap.add_argument("--n-replay-cycles", type=int, default=20)
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
