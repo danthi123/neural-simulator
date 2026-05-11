@@ -1,7 +1,11 @@
 # Bridge Lineage Manager — persistent continuous-learning state
 
 **Date:** 2026-05-10 23:35 EDT
-**Status:** DESIGN approved by user; first Phase 1 implementation item
+**Status:** Phases 1-3 SHIPPED 2026-05-10 night (~3hr autonomous execution
+arc, NOT a 1-week estimate as originally scoped). All days-1-7 backbone
+landed: MVP + branching + history + CLI + webapp `/api/lineages` endpoint.
+Phase 3 frontend tab + timeline view is still pending. See bottom of doc
+for the actual shipped artifact inventory.
 **Trigger:** User (2026-05-10) — "we're basically starting from scratch
 on each run. Is there a good way to continually work off the most
 recently trained sim state and keep improving it rather than settling
@@ -224,6 +228,68 @@ The Bridges tab (shipped tonight) extends to a "Lineages" tab:
 - Frontend tab (extends bridges tab UI)
 - Timeline view
 - Integration with chat workflow
+
+---
+
+## Shipped artifact inventory (2026-05-10 → 2026-05-11)
+
+The full design above was scoped for 1 week. Actual execution was a
+single autonomous session, completing Phases 1-3 (minus the Lineages
+UI tab). All artifacts are committed + remote-pushed.
+
+### Phase 1 (MVP) — commits 3030517, ee9040a, 5f5b360
+
+- `sim/lineage.py` (~400 lines): `BridgeLineage` class, `LineageMetadata`
+  dataclass, `GrowthEvent` + `AccuracyDatapoint`. Atomic save (`.new` +
+  `os.replace`), millisecond-precision history timestamps, schema-version
+  field for future migration.
+- `tests/test_lineage.py` (21 tests): default construction, dict
+  round-trip, unknown-field tolerance, save creates files, load with/
+  without loader, load missing raises, append to history, skip snapshot,
+  rollback restores, rollback missing raises, fork creates, fork into
+  existing raises, list_all, metadata persists across saves, atomic save
+  cleanup, history pruning, fork-history-count.
+- `research/runners/chat_repl.py` integration: `--lineage NAME` (default
+  `main`), `--from-scratch`, `--fork-lineage`. Loads on startup if
+  lineage exists with matching mode/arch; saves on exit; mode mismatch
+  falls back to fresh training (no crash).
+- `research/runners/chat_demo.py`, `chat_synonym_demo.py`,
+  `chat_speak_synonym_demo.py`: opt-in `--lineage NAME` +
+  `--save-to-lineage`. Defaults to fresh training (batch demos are
+  seed-deterministic by convention).
+- `tests/test_chat_repl.py` +3 tests, `tests/test_chat_demo_aggregate.py`
+  +3 tests. 28/28 chat_repl PASS, 14/14 aggregate PASS.
+
+### Phase 2 (branching + history UX) — commit 7b477fd
+
+- `research/runners/bridge_lineage.py` (~330 lines): CLI subcommands
+  `list`, `show`, `history`, `rollback`, `fork`, `prune`, `diff`. Reads
+  metadata, lists snapshots, manages forks, prunes history with
+  configurable `--keep-last`.
+- `tests/test_bridge_lineage_cli.py` (13 tests). All PASS.
+- Bug fix in `sim/lineage.py`: history snapshot metadata files were
+  written as `<snap_id>-checkpoint.simstate.metadata.json` but the
+  rollback / prune helpers expected `<snap_id>-checkpoint.metadata.json`.
+  Standardised on the cleaner naming.
+
+### Phase 3 (webapp endpoints) — commit 7bb9bcf
+
+- `webapp/server.py` `/api/lineages` (list summary) +
+  `/api/lineages/{name}` (full detail with snapshots + growth events).
+- `tests/test_webapp_server.py` +2 tests. PASS via in-process TestClient.
+- **NOT YET SHIPPED:** frontend Lineages tab + timeline view. Endpoints
+  are wired and tested; the UI tab is the remaining work.
+
+### Still pending
+
+- Frontend Lineages tab in `webapp/static/`
+- Lock file for concurrent-save protection (single-user assumption holds
+  for now)
+- Checksum validation on load (file existence check is enough for now)
+- Auto-rollback on corrupt current state (manual rollback via CLI works)
+
+These can be added when the user wants to deploy lineage to a multi-
+session / multi-user context.
 
 After Phase 1: lineage is the default; from-scratch is opt-in for
 science.
