@@ -217,7 +217,7 @@ def test_pattern_separation(
         f"(target 0.02–0.05)")
 
     passed = dg_cos < 0.5
-    log(f"  PASS criterion (DG cos < 0.5): {'✓ PASS' if passed else '✗ FAIL'}")
+    log(f"  PASS criterion (DG cos < 0.5): {'PASS' if passed else 'FAIL'}")
 
     return {
         "test": "pattern_separation_D12",
@@ -321,7 +321,7 @@ def test_pattern_completion(
     log(f"  CA3 cosine(partial vs full): {cos:.3f}")
 
     passed = cos > 0.7
-    log(f"  PASS criterion (cosine > 0.7): {'✓ PASS' if passed else '✗ FAIL'}")
+    log(f"  PASS criterion (cosine > 0.7): {'PASS' if passed else 'FAIL'}")
 
     return {
         "test": "pattern_completion_D13",
@@ -347,6 +347,8 @@ def run_validation(
     n_ca1: int = 200,
     n_ec: int = 200,
     n_dg_pv_basket: int = 240,  # 30% of DG, biology-grounded FFi ratio
+    ca3_recurrent_density: float = 0.30,
+    ca3_recurrent_weight: float = 1.5,
     overlap_frac: float = 0.8,
     train_events: int = 30,
     out_path: Optional[Path] = None,
@@ -387,6 +389,8 @@ def run_validation(
         n_dg_pv_basket=n_dg_pv_basket,
         n_ca3=n_ca3,
         n_ca1=n_ca1,
+        ca3_recurrent_density=ca3_recurrent_density,
+        ca3_recurrent_weight=ca3_recurrent_weight,
     )
 
     cfg = CoreSimConfig()
@@ -481,6 +485,8 @@ def main() -> int:
     ap.add_argument("--n-ca1", type=int, default=200)
     ap.add_argument("--overlap-frac", type=float, default=0.8)
     ap.add_argument("--train-events", type=int, default=30)
+    ap.add_argument("--ca3-recurrent-density", type=float, default=0.30)
+    ap.add_argument("--ca3-recurrent-weight", type=float, default=1.5)
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
@@ -492,6 +498,8 @@ def main() -> int:
         n_dg_pv_basket=args.n_dg_pv_basket,
         n_ca3=args.n_ca3,
         n_ca1=args.n_ca1,
+        ca3_recurrent_density=args.ca3_recurrent_density,
+        ca3_recurrent_weight=args.ca3_recurrent_weight,
         overlap_frac=args.overlap_frac,
         train_events=args.train_events,
         out_path=Path(args.out) if args.out else None,

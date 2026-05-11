@@ -218,6 +218,12 @@ def build_biological_brain_regions(
     ca1_to_motor_weight: float = 2.0,
     ca1_to_lang_out_density: float = 0.20,
     ca1_to_lang_out_weight: float = 2.0,
+    # CA3 autoassociator strength (Marr 1971; catalog D.05/D.13).
+    # Default tuned for consolidation use case (Phase 1.3); pattern-
+    # completion validation (P1 of realigned plan) may need stronger
+    # recurrent connectivity.
+    ca3_recurrent_density: float = 0.30,
+    ca3_recurrent_weight: float = 1.5,
 ):
     """Biological-scale architecture with cortical canon ENABLED.
 
@@ -445,9 +451,13 @@ def build_biological_brain_regions(
             plastic=True, plasticity_gate="ec_to_ca1",
         ))
         # ca3 -> ca3 recurrent (SWR-gated; awake = OFF, sleep = ON)
+        # Parametrized 2026-05-11 for P1 pattern-completion validation
+        # (catalog D.05/D.13; Marr 1971 autoassociator).
         pathways.append(RegionPathway(
             from_region="ca3", to_region="ca3",
-            density=0.30, weight_mean=1.5, weight_jitter=0.2,
+            density=ca3_recurrent_density,
+            weight_mean=ca3_recurrent_weight,
+            weight_jitter=0.2,
             plastic=True, plasticity_gate="ca3_swr_burst",
         ))
         # ca3 -> ca1 (Schaffer collaterals)
