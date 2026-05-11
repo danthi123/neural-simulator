@@ -590,8 +590,14 @@ mem.forget("alice", decay_rate=0.5)
 #     "n_synapses_decayed": 60, "mean_weight_pre": 1.0,
 #     "mean_weight_post": 0.5, "estimated_retention": 0.5}
 
-# Long-term consolidation (Phase 1.3 sleep-replay; stub in 3.1.5)
+# Long-term consolidation (Phase 3.2 real-ops, 2026-05-11)
+# Requires hippocampus-enabled bridge (main lineage isn't; bootstrap
+# `main_hippo` via research.runners.bootstrap_hippo_lineage)
 mem.consolidate(n_sleep_cycles=3)
+# -> hippo-enabled: {"n_sleep_cycles_run": 3, "n_swr_events_run": 600,
+#                     "elapsed_seconds": 45.2, "hippocampus_enabled": True}
+# -> no hippo:     {"n_sleep_cycles_run": 0, "hippocampus_enabled": False,
+#                     "note": "Bridge lacks hippocampus..."}
 
 # State
 print(mem.stats())
@@ -624,12 +630,15 @@ demo + webapp chat surface. Real LLM swap-in (Phi-3 / Llama 3.2 /
 Qwen2.5) is a one-line change at the orchestrator's `llm_callable`
 argument.
 
-**Module:** `sim/llm_memory_orchestrator.py` (~340 lines)
-- `TOOL_SCHEMAS` — OpenAI-compatible JSON schemas for the three
-  tools (`memory_store`, `memory_recall`, `memory_speak`).
+**Module:** `sim/llm_memory_orchestrator.py` (~440 lines)
+- `TOOL_SCHEMAS` — OpenAI-compatible JSON schemas for the five
+  tools (`memory_store`, `memory_recall`, `memory_speak`,
+  `memory_forget`, `memory_consolidate`).
 - `ToolCall` / `LLMResponse` — dataclasses for the tool-use protocol.
 - `MockLLM` — regex-based pattern recognition for "remember that X
-  is dir", "what's my X", "what word goes with dir". Direction
+  is dir", "what's my X", "what word goes with dir", "forget my X"
+  (+ "fully forget" / "erase" for decay=0.0), "consolidate" /
+  "sleep on it" (+ "for N cycles" for explicit count). Direction
   synonyms (up/down/left/right). Falls back to a helpful message
   on unrecognized input. Propagates tool-dispatch errors verbatim.
 - `LLMMemoryOrchestrator` — drives the tool-use loop. `chat()` adds
