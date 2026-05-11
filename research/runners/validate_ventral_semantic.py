@@ -83,7 +83,9 @@ def run_ventral_validation(
     # Patterson 2007 ATL hub; Wang 2002 NMDA bistability).
     semantic_cortex_recurrent_density: float = 0.10,
     semantic_cortex_recurrent_weight: float = 1.0,
+    lang_to_wernicke_density: float = 0.30,
     lang_to_wernicke_weight: float = 3.0,
+    wernicke_to_semantic_density: float = 0.30,
     wernicke_to_semantic_weight: float = 4.0,
     drive_steps: int = 100,
     # Path B+ (iter F): semantic_FS lateral inhibition for
@@ -157,7 +159,9 @@ def run_ventral_validation(
         # Iter D: semantic_cortex attractor tuning
         semantic_cortex_recurrent_density=semantic_cortex_recurrent_density,
         semantic_cortex_recurrent_weight=semantic_cortex_recurrent_weight,
+        lang_to_wernicke_density=lang_to_wernicke_density,
         lang_to_wernicke_weight=lang_to_wernicke_weight,
+        wernicke_to_semantic_density=wernicke_to_semantic_density,
         wernicke_to_semantic_weight=wernicke_to_semantic_weight,
         # Path B+ (iter F): semantic_FS lateral inhibition
         enable_semantic_fs=enable_semantic_fs,
@@ -650,8 +654,16 @@ def main() -> int:
                     default=1.0,
                     help="Iter D: cortex recurrent weight (default "
                          "1.0; try 2.5 for stronger attractor)")
+    ap.add_argument("--lang-to-wernicke-density", type=float,
+                    default=0.30,
+                    help="Iter H: lower density (e.g. 0.05) so "
+                         "different lang patterns hit different "
+                         "wernicke neurons by chance, creating "
+                         "natural sparse ensembles per concept")
     ap.add_argument("--lang-to-wernicke-weight", type=float,
                     default=3.0)
+    ap.add_argument("--wernicke-to-semantic-density", type=float,
+                    default=0.30)
     ap.add_argument("--wernicke-to-semantic-weight", type=float,
                     default=4.0)
     ap.add_argument("--drive-steps", type=int, default=100,
@@ -685,7 +697,9 @@ def main() -> int:
             args.semantic_cortex_recurrent_density),
         semantic_cortex_recurrent_weight=(
             args.semantic_cortex_recurrent_weight),
+        lang_to_wernicke_density=args.lang_to_wernicke_density,
         lang_to_wernicke_weight=args.lang_to_wernicke_weight,
+        wernicke_to_semantic_density=args.wernicke_to_semantic_density,
         wernicke_to_semantic_weight=args.wernicke_to_semantic_weight,
         drive_steps=args.drive_steps,
         enable_semantic_fs=args.enable_semantic_fs,
