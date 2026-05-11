@@ -117,7 +117,59 @@ GPU code).
 independent of motor pools.** "Apple" becomes the name of a tagged
 ensemble in CA3, not a motor target. Recall = stimulate the tag.
 
-### Step P3 — SWR sequential replay augment (roadmap T1.B, ~Month 2)
+### Step P2 update — engram-tagging API SHIPPED 2026-05-11
+
+`bridge.start_engram_recording / commit_engram_tag / stimulate_tag`
+plus persistence through save/load. 12 unit tests pass.
+
+See `sim/bridge.py` (200 LOC added) and
+`tests/test_engram_tagging.py` (14 tests including 2 skip-pending-
+integration). Commits: `29513ac` (API), `a3acb9c` (persistence).
+
+### Step P1 update — multi-seed mixed, two-concept test running
+
+Catalog D.12 + D.13 validated single-seed (cosine 0.748). Multi-seed
+(42, 43, 44):
+- D.12 (DG separation): 3/3 PASS, robust
+- D.13 (CA3 completion at cos > 0.7 absolute): 1/3 (42=0.748,
+  43=0.676, 44=0.679) — autoassociator IS working, just below my
+  arbitrary > 0.7 cutoff.
+
+Running `validate_two_concept_discrimination.py` (3 seeds) — the
+biology-faithful RELATIVE criterion (same-concept cos >> cross-
+concept cos). Results determine whether P1 is good enough for
+the conversational-sim use case.
+
+### Step P3 update — DESIGN SHIPPED 2026-05-11
+
+`docs/plans/2026-05-11-P3-swr-replay-design.md` (commit `5012a9d`).
+Two-stage plan: P3.1 concept replay (cheap, uses P2 tags) then P3.2
+sequence replay (deferred until P4 produces sequences). Gates on
+P1 final pass.
+
+### Step P4 update — DESIGN SHIPPED 2026-05-11
+
+`docs/plans/2026-05-11-P4-episodic-encoder-design.md` (commit
+`1de75f0`). Adds `ec_context` region with positional embedding;
+trains item-in-context bindings in CA3 so (apple, pos_1) is distinct
+from (apple, pos_3). Foundation for word-order-dependent meaning.
+
+### Step P5 update — DESIGN SHIPPED 2026-05-11
+
+`docs/plans/2026-05-11-P5-ventral-semantic-stream-design.md` (commit
+`8cf7e14`). Adds `semantic_cortex` + `wernicke` regions; replaces
+the invented `semantic_hub` from v2 with the catalog-grounded
+ventral language stream (Hickok & Poeppel, Kandel Ch 55).
+
+### Step P6 update — DESIGN SHIPPED 2026-05-11
+
+`docs/plans/2026-05-11-P6-brocas-grammar-design.md` (commit
+`88b1124`). Adds `broca` + `motor_speech` regions; replaces the
+failed Tier 2.3 PFC verb pool with the catalog-grounded Broca's
+design. Solves composition at the syntactic level, not via motor
+gain modulation.
+
+### Step P3 (original heading kept for backref) — SWR sequential replay augment (roadmap T1.B, ~Month 2)
 
 **Catalog:** D.19 SWRs, N.04 ripple-coupled replay. Roadmap T1.B.
 
