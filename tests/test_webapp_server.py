@@ -76,6 +76,33 @@ def test_bridge_detail_404_unknown(client):
     assert res.status_code == 404
 
 
+def test_lineages_listing(client):
+    """`/api/lineages` lists persistent training lineages.
+
+    Empty case (no lineages saved yet) returns {"lineages": [],
+    "directory": "bridges/lineage", "n_lineages": 0}. Non-empty case
+    is exercised by chat_repl integration.
+    """
+    res = client.get("/api/lineages")
+    assert res.status_code == 200
+    data = res.json()
+    assert "lineages" in data
+    assert "n_lineages" in data
+    assert isinstance(data["lineages"], list)
+    assert data["n_lineages"] == len(data["lineages"])
+    # Each entry (when present) has the expected schema
+    for L in data["lineages"][:3]:
+        assert "name" in L
+        # Either metadata fields or an error
+        assert ("tier" in L and "cumulative_events" in L) or "error" in L
+
+
+def test_lineage_detail_404_unknown(client):
+    """`/api/lineages/{name}` returns 404 for unknown lineage."""
+    res = client.get("/api/lineages/this-lineage-definitely-does-not-exist")
+    assert res.status_code == 404
+
+
 def test_findings_listing(client):
     res = client.get("/api/findings")
     assert res.status_code == 200

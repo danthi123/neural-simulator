@@ -1802,6 +1802,96 @@ def get_bridge(name: str) -> JSONResponse:
     })
 
 
+# ─── Bridge Lineage Manager endpoints (2026-05-10) ──────────────────────
+# Persistent training lineages live under bridges/lineage/<name>/. These
+# endpoints expose them to the webapp's future Lineages tab.
+
+@app.get("/api/lineages")
+def list_lineages() -> JSONResponse:
+    """List all known lineages with summary metadata.
+
+    Returns: {"lineages": [...], "directory": str}
+    Each entry: {name, tier, vocab_size, cumulative_events, n_snapshots,
+                 parent_lineage?, last_updated_at, arch?}
+    """
+    from sim.lineage import BridgeLineage, LINEAGE_ROOT
+    root = REPO_ROOT / LINEAGE_ROOT
+    entries = []
+    if root.exists():
+        for L in BridgeLineage.list_all(root=root):
+            try:
+                meta = L.read_metadata()
+                n_history = len(L.list_history())
+                # Get size of current state
+                current_size_mb = None
+                try:
+                    current_size_mb = round(
+                        L.current_path.stat().st_size / (1024 * 1024), 1
+                    )
+                except OSError:
+                    pass
+                entries.append({
+                    "name": L.name,
+                    "tier": meta.current_tier,
+                    "vocab_size": len(meta.vocab),
+                    "vocab_preview": meta.vocab[:8]
+                                      if len(meta.vocab) > 8 else meta.vocab,
+                    "cumulative_events": meta.cumulative_training_events,
+                    "n_snapshots": n_history,
+                    "parent_lineage": meta.parent_lineage,
+                    "branched_at": meta.branched_at,
+                    "created_at": meta.created_at,
+                    "last_updated_at": meta.last_updated_at,
+                    "tags": meta.tags,
+                    "arch": meta.arch,
+                    "size_mb": current_size_mb,
+                })
+            except Exception as e:
+                entries.append({"name": L.name, "error": str(e)})
+    return JSONResponse({
+        "lineages": entries,
+        "directory": str(root.relative_to(REPO_ROOT))
+                       if root.exists() else None,
+        "n_lineages": len(entries),
+    })
+
+
+@app.get("/api/lineages/{name}")
+def get_lineage(name: str) -> JSONResponse:
+    """Full metadata for one lineage including growth events + accuracy history."""
+    from sim.lineage import BridgeLineage, LINEAGE_ROOT
+    root = REPO_ROOT / LINEAGE_ROOT
+    lineage = BridgeLineage(name, root=root)
+    if not lineage.exists():
+        raise HTTPException(404, f"lineage not found: {name}")
+    meta = lineage.read_metadata()
+    snapshots = lineage.list_history()
+    snap_entries = []
+    for snap in snapshots:
+        snap_id = snap.name.replace("-checkpoint.simstate.h5", "")
+        try:
+            size_mb = round(snap.stat().st_size / (1024 * 1024), 1)
+        except OSError:
+            size_mb = None
+        snap_entries.append({
+            "snapshot_id": snap_id,
+            "size_mb": size_mb,
+        })
+    current_size_mb = None
+    try:
+        current_size_mb = round(
+            lineage.current_path.stat().st_size / (1024 * 1024), 1
+        )
+    except OSError:
+        pass
+    return JSONResponse({
+        "name": name,
+        "metadata": meta.to_dict(),
+        "snapshots": snap_entries,
+        "current_size_mb": current_size_mb,
+    })
+
+
 # ─── In-flight detached-run monitor (2026-05-01) ────────────────────────
 # Detached runs (launched via PowerShell Start-Process to survive Claude
 # restart) write a *.pid + *.log file under research/findings/raw/g11_bg/.
