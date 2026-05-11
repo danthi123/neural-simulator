@@ -77,6 +77,7 @@ def run_multi_concept_validation(
     n_replay_cycles: int = 40,
     n_per_wernicke_pool: int = 100,
     n_per_wernicke_pool_fs: int = 12,
+    use_orthogonal_embeddings: bool = False,
     out_path: Optional[Path] = None,
     verbose: bool = True,
 ):
@@ -96,7 +97,9 @@ def run_multi_concept_validation(
     from research.runners.consolidation_trainer import (
         run_concept_replay_phase,
     )
-    from sim.text_embeddings import vocab_to_drive_pattern
+    from sim.text_embeddings import (
+        vocab_to_drive_pattern, orthogonal_drive_pattern,
+    )
     from sim.backend import get_backend, to_host
     cp, _ = get_backend()
 
@@ -141,20 +144,30 @@ def run_multi_concept_validation(
     log(f"Built in {build_sec:.1f}s; {cfg.num_neurons} neurons, "
         f"{int(bridge.cp_connections.nnz)} synapses")
 
-    # Drive patterns for each concept
+    # Drive patterns for each concept (hash-based by default; or
+    # banded orthogonal for clean architectural test)
     rm = bridge.region_manager
     lang_idx = list(rm.indices("language_input"))
     concept_arrays = {}
-    for concept in concepts:
-        drive = vocab_to_drive_pattern(
-            concept, n_neurons=n_lang_input,
-            drive_max_pA=200.0, sparsity=0.1,
-        )
+    for i, concept in enumerate(concepts):
+        if use_orthogonal_embeddings:
+            drive = orthogonal_drive_pattern(
+                cue_idx=i, n_cues=n_concepts,
+                n_neurons=n_lang_input,
+                drive_max_pA=200.0, sparsity=0.1,
+            )
+        else:
+            drive = vocab_to_drive_pattern(
+                concept, n_neurons=n_lang_input,
+                drive_max_pA=200.0, sparsity=0.1,
+            )
         arr = cp.asarray(
-            [lang_idx[i] for i in np.where(drive > 0)[0]],
+            [lang_idx[idx] for idx in np.where(drive > 0)[0]],
             dtype=cp.int64,
         )
         concept_arrays[concept] = arr
+    log(f"  embeddings: "
+        f"{'ORTHOGONAL banded' if use_orthogonal_embeddings else 'hash-based'}")
 
     # Gates for multi-pool path
     pool_names = [f"wernicke_pool_{i}" for i in range(n_concepts)]
@@ -387,6 +400,9 @@ def main() -> int:
     ap.add_argument("--n-replay-cycles", type=int, default=40)
     ap.add_argument("--n-per-wernicke-pool", type=int, default=100)
     ap.add_argument("--n-per-wernicke-pool-fs", type=int, default=12)
+    ap.add_argument("--orthogonal-embeddings", action="store_true",
+                    help="Use banded orthogonal codes (clean arch test) "
+                         "instead of hash-based vocab codes")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
     concepts = [c.strip() for c in args.concepts.split(",") if c.strip()]
@@ -397,6 +413,7 @@ def main() -> int:
         n_replay_cycles=args.n_replay_cycles,
         n_per_wernicke_pool=args.n_per_wernicke_pool,
         n_per_wernicke_pool_fs=args.n_per_wernicke_pool_fs,
+        use_orthogonal_embeddings=args.orthogonal_embeddings,
         out_path=Path(args.out) if args.out else None,
         verbose=True,
     )
