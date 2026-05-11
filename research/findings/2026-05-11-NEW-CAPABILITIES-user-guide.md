@@ -124,8 +124,11 @@ API summary:
 - `mem.store(key, value, n_events=50)` — bind via embodied-Hebbian
 - `mem.recall(key, top_k=5)` — W→A inference; ranked motor pools
 - `mem.speak(action, top_k=4)` — A→W generative; ranked words
-- `mem.forget(key, decay_rate=0.5)` — weight decay (Phase 3.2 stub)
-- `mem.consolidate(n_sleep_cycles=3)` — sleep replay (Phase 3.2 stub)
+- `mem.forget(key, decay_rate=0.5)` — extinction-style weight decay
+  on synapses from the key's language_input neurons (Phase 3.2 real-ops)
+- `mem.consolidate(n_sleep_cycles=3)` — SWR sleep replay (Phase 3.2
+  real-ops; requires hippocampus-enabled bridge — bootstrap via
+  `python -m research.runners.bootstrap_hippo_lineage --lineage main_hippo`)
 - `mem.stats()` — current state
 - `mem.list_keys()` — known vocab
 
@@ -147,6 +150,27 @@ SIM_BACKEND=numpy python -m research.runners.llm_memory_demo \
 #   4. Scroll to "Chat with this lineage" panel
 #   5. Type "Remember that my favorite is north." → Send
 #   6. Type "What's my favorite?" → Send
+#   7. Try "Forget my favorite." (extinction-style decay)
+#   8. Try "Consolidate the memory." (SWR sleep replay; needs main_hippo)
+```
+
+Recognized chat patterns (MockLLM):
+- "Remember that my X is north" / "...is up"            → memory_store
+- "What's my X?" / "What is my X?"                       → memory_recall
+- "What word goes with east?"                            → memory_speak
+- "Forget my X." / "Unlearn X."                          → memory_forget
+- "Fully forget my X." / "Erase X."                      → memory_forget (decay=0)
+- "Consolidate the memory." / "Sleep on it."             → memory_consolidate
+- "Consolidate for 5 cycles."                            → memory_consolidate (n=5)
+
+For consolidate() to do real work, bootstrap a hippocampus-enabled
+lineage:
+
+```bash
+python -m research.runners.bootstrap_hippo_lineage --lineage main_hippo
+# ~30 min on RTX 3090. Saves to bridges/lineage/main_hippo/.
+# Then in the dashboard chat panel: mode='synonym', lineage='main_hippo'
+# → "Consolidate the memory." actually runs SWR replays.
 ```
 
 Programmatic usage:
