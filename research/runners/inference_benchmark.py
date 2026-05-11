@@ -113,8 +113,11 @@ def benchmark_inference(vocab_size: int = 8,
     _ = generative_inference(bridge, "N", vocab_words=vocab_words)
     cp.cuda.Stream.null.synchronize()
 
-    # ─── Benchmark :speak (A→W generative decoder) ───────────────────────
-    print(f"\n[bench] :speak (A→W generative) × {n_rounds} rounds × 4 actions",
+    # ─── Benchmark :speak (A->W generative decoder) ──────────────────────
+    # ASCII-only print to avoid Windows cp1252 encoding errors when run
+    # as a subprocess (e.g. via the chain watcher) where stdout is not
+    # forced to UTF-8.
+    print(f"\n[bench] :speak (A->W generative) x {n_rounds} rounds x 4 actions",
           flush=True)
     speak_latencies = []
     for round_n in range(n_rounds):

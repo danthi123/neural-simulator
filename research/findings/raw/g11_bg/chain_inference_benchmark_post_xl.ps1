@@ -24,6 +24,9 @@
 
 $ErrorActionPreference = "Continue"
 Set-Location E:\Documents\Projects\sim
+# Force UTF-8 for Python stdout to avoid Windows cp1252 encoding errors
+# when subprocesses print Unicode (arrows, accented chars, etc.).
+$env:PYTHONIOENCODING = "utf-8"
 
 $XL_PID = 24012
 $OUT_DIR = "research/findings/raw/perf/inference_bench"
@@ -64,7 +67,11 @@ while ($true) {
         # nvidia-smi failed; assume GPU busy
     }
 
-    if (-not $xlAlive -and $vramMB -lt 3000) {
+    # Threshold raised 2026-05-11 01:43 EDT: baseline VRAM usage from
+    # Windows compositor + browsers + Claude + Discord is ~5 GB even
+    # with no Python on GPU. Use 7 GB as "free enough for inference
+    # benchmark" — inference build uses ~10-12 GB at the biggest tier.
+    if (-not $xlAlive -and $vramMB -lt 7000) {
         Log "GO: XL process exited; VRAM free ($vramMB MB used)."
         break
     }
