@@ -2323,6 +2323,8 @@ function renderLLMChatPanel(body, lineageName) {
     "What's my favorite?",
     "Remember that my pet is east.",
     "What word goes with east?",
+    "Forget my favorite.",
+    "Consolidate the memory.",
   ];
   for (const text of examples) {
     const chip = el("button", {
