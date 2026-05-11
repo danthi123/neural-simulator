@@ -1,41 +1,64 @@
-"""Investigate in-vivo new-vocab binding strategies.
+"""Investigate in-vivo new-vocab binding strategies (BIOLOGY-FIRST REDESIGN).
 
 Followup to investigate_n_events_curve, which showed that more events
-alone doesn't fix the recall failure for novel keys (e.g. "apple" ->
-north binds the edges but recall still returns south/west). The recall
-pathway's random-init weights for unseen embeddings dominate.
+alone doesn't fix the recall failure for novel keys.
 
-This runner tests four binding strategies on a forked lineage:
+This runner now follows the biology-first workflow per the project
+methodology (see .claude/skills/continual-autonomous-work/SKILL.md
+Rule 8). Each variant must be motivated by a specific biological
+mechanism, with citation.
 
-  V0 — Vanilla (control). Existing learn_word_pairing.
+  V0 — Vanilla (control). Existing learn_word_pairing. This is the
+        current CLS slow-learning style (direct cortical co-firing) —
+        which biology uses for already-known schema, NOT for novel
+        concepts.
 
-  V1 — Pre-bind anchoring. Before the bind loop, zero out
-        cp_connections rows for the new word's active language_input
-        neurons. STDP then builds the lang_input -> motor pathway from
-        zero rather than fighting random-init weights.
+  V_HIPPO_BIO — Hippocampus-routed binding + immediate consolidation.
+        Biology citation: McClelland 1995 (complementary learning
+        systems theory), Buzsáki 2015 (SWR ripple model), Tse 2007
+        (schema-supported memory consolidation).
+        Mechanism:
+          1. Novel concept enters hippocampus first (DG pattern-
+             separates; CA3 forms fast autoassociative trace; CA1
+             relays to cortex).
+          2. After encoding, switch to sleep mode and run SWR replay
+             cycles to consolidate hippo -> cortex.
+          3. Switch back to awake; now recall should propagate
+             through the cortically-consolidated pathway.
+        REQUIRES a hippocampus-enabled bridge (main_hippo lineage from
+        research.runners.bootstrap_hippo_lineage).
 
-  V2 — Curriculum anchoring. Interleave the new-word bind with brief
-        re-trains of known anchor words. Hypothesis: the recall path
-        is primed by recently-reinforced known patterns; new
-        embeddings need to ride the same neural infrastructure.
+  V_SCHEMA — Schema-supported binding.
+        Biology citation: Tse et al 2007 (Science): schema-related
+        new facts integrate faster because they activate existing
+        cortical schemas. Implementation: interleave new-word bind
+        events with brief reinforcement of the matching anchor word
+        (e.g. binding "apple" -> north interleaves with brief
+        re-encoding of "north"). The new word's hippocampal trace
+        attaches to the recently-reinforced "north" schema.
 
-  V3 — Recall-only fine-tune tail. After the standard bind loop, run
-        additional events with ONLY drive_in (no language_output, no
-        motor teacher). Lets STDP firm up the lang_input -> motor edges
-        based on actual recall dynamics, not artificially-teachered
-        co-firing.
+Test bindings: 4 made-up keys (apple/river/mountain/forest) bound
+to N/E/S/W. Each variant runs on a separate fork of the base lineage.
 
-Each variant is tested on a separate fork of the base lineage with 4
-made-up keys (apple, river, mountain, forest) bound to N, E, S, W.
+Validation: ≥ 4/6 seeds correct top-1 recall on all 4 novel keys.
+
+Usage:
+    # Requires main_hippo lineage:
+    python -m research.runners.bootstrap_hippo_lineage --lineage main_hippo
+    # Then:
+    python -m research.runners.investigate_invivo_binding_fix \\
+        --base-lineage main_hippo --n-events 200 --seed 42
 
 Saves results to research/findings/raw/g11_bg/invivo_binding_fix.json.
 
-Usage:
-    python -m research.runners.investigate_invivo_binding_fix \\
-        --base-lineage main --n-events 200 --seed 42
+This is Step 1 of the realigned primary path (2026-05-11): sim as
+standalone conversational agent. New-vocab binding must work before
+scaling vocab.
 
-This is part of the primary path: sim as standalone conversational
-agent. New-vocab binding must work before scaling vocab.
+Deprecated variants (engineering tweaks, removed 2026-05-11 after
+methodology check-in):
+  V1 (pre-bind zero edges) — brains don't zero weights before learning
+  V3 (recall-only tail)    — no biology citation
 """
 from __future__ import annotations
 
@@ -71,147 +94,74 @@ def variant_v0_vanilla(mem, key: str, value: str, n_events: int) -> dict:
     return mem.store(key, value, n_events=n_events)
 
 
-def variant_v1_anchored(mem, key: str, value: str, n_events: int) -> dict:
-    """Pre-bind: zero out cp_connections weights for edges originating
-    from the new key's active language_input neurons. Then bind."""
-    from sim.text_embeddings import vocab_to_drive_pattern
-    from sim.backend import to_host as _to_host
+def variant_v_hippo_bio(mem, key: str, value: str, n_events: int) -> dict:
+    """Hippocampus-routed binding + immediate sleep consolidation.
+
+    Biology citation:
+      - McClelland, McNaughton & O'Reilly 1995: complementary learning
+        systems theory (novel concepts encoded fast in hippocampus,
+        consolidated slowly to neocortex via offline replay).
+      - Buzsáki 2015: hippocampal sharp-wave ripples drive cortical
+        memory consolidation during NREM sleep.
+      - Tse et al 2007 (Science): schema-related facts integrate faster.
+
+    Mechanism:
+      1. AWAKE encoding: bind events run with hippocampus pathways
+         (ec→dg→ca3→ca1) plastic alongside the direct cortical pathway.
+         Drive the new word + motor teacher; both pathways encode.
+      2. SLEEP consolidation: switch gates to sleep mode, run K SWR
+         replay cycles. CA3 burst patterns propagate to CA1 → motor
+         and language_output, strengthening cortical edges via STDP.
+      3. AWAKE recall: switch back; recall now propagates through the
+         consolidated cortical pathway, no longer dependent on the
+         hippocampal trace.
+
+    REQUIRES a hippocampus-enabled bridge (look for 'ca3' region).
+    """
+    from research.runners.text_minimal_isolation import (
+        set_awake_gates, set_sleep_gates,
+    )
+    from research.runners.consolidation_trainer import run_swr_replay_phase
+    from research.runners.chat_repl import learn_word_pairing, chat_inference
     import numpy as _np
 
+    # Pre-check: bridge must have hippocampus
     bridge = mem.bridge
-    rm = bridge.region_manager
-    lang_indices = list(rm.indices("language_input"))
-    n_lang = len(lang_indices)
-
-    # Find active language_input neurons for this key
-    drive = vocab_to_drive_pattern(key, n_neurons=n_lang,
-                                       drive_max_pA=200.0, sparsity=0.1)
-    active_local = _np.where(drive > 0)[0]
-    active_global = [lang_indices[i] for i in active_local]
-
-    # Zero out outgoing rows in cp_connections (CSR pre->post layout)
-    cp_conn = bridge.cp_connections
-    indptr_host = _to_host(cp_conn.indptr)
-    data = cp_conn.data
-    n_zeroed = 0
-    for src in active_global:
-        start = int(indptr_host[src])
-        end = int(indptr_host[src + 1])
-        if end > start:
-            data[start:end] = 0.0
-            n_zeroed += (end - start)
-
-    # Now run the standard bind loop
-    result = mem.store(key, value, n_events=n_events)
-    result["v1_n_zeroed_edges"] = n_zeroed
-    return result
-
-
-def variant_v2_curriculum(mem, key: str, value: str, n_events: int) -> dict:
-    """Curriculum: interleave new-word bind with brief anchor re-trains.
-
-    For every M new-word events, do 1 anchor-word event (anchor word
-    matches the same target direction). Total work: n_events for the
-    new word + ~n_events/M for anchors.
-
-    Hypothesis: the recall path is primed by recently-reinforced
-    known patterns; new embeddings should ride that infrastructure.
-    """
-    from research.runners.chat_repl import learn_word_pairing
+    try:
+        bridge.region_manager.indices("ca3")
+    except Exception as e:
+        return {
+            "key": key, "value": value,
+            "error": (f"V_HIPPO_BIO requires hippocampus-enabled bridge. "
+                       f"Bootstrap main_hippo first: {e}"),
+            "n_events_run": 0,
+            "bound_correctly": False, "confidence": 0.0,
+        }
 
     target_action = mem._value_to_action(value)
-    anchor_word = {"N": "north", "E": "east",
-                    "S": "south", "W": "west"}[target_action]
-
-    # Interleave: alternate batches of (M new + 1 anchor)
-    M = 20
-    n_batches = max(1, n_events // M)
-    actual_new_events = n_batches * M
-    t0 = time.time()
-    for batch in range(n_batches):
-        learn_word_pairing(mem.bridge, word=key, target_action=target_action,
-                            n_events=M, verbose=False)
-        # Brief anchor refresh
-        learn_word_pairing(mem.bridge, word=anchor_word, target_action=target_action,
-                            n_events=2, verbose=False)
-    elapsed = time.time() - t0
-
-    # Best-effort recall for confidence stat
-    from research.runners.chat_repl import chat_inference
-    try:
-        check = chat_inference(mem.bridge, key)
-        confidence = float(check.get("confidence_ratio", 0.0))
-        bound_correctly = (check.get("predicted_action") == target_action)
-    except Exception:
-        confidence = 0.0
-        bound_correctly = False
-
-    return {
-        "key": key, "value": value, "target_action": target_action,
-        "confidence": confidence, "bound_correctly": bound_correctly,
-        "n_events_run": actual_new_events,
-        "v2_n_anchor_events": n_batches * 2,
-        "elapsed_seconds": elapsed,
-    }
-
-
-def variant_v3_recall_tail(mem, key: str, value: str, n_events: int) -> dict:
-    """Standard bind + recall-only tail.
-
-    Phase A: standard bind for 0.8 * n_events.
-    Phase B: 0.2 * n_events events with ONLY drive_in (no
-             language_output, no motor teacher). STDP fires based on
-             whatever motor pool the recall pathway naturally
-             activates — strengthening the actual recall dynamics.
-    """
-    from sim.text_embeddings import vocab_to_drive_pattern
-    from sim.backend import get_backend
-    cp, _ = get_backend()
-    from research.runners.chat_repl import learn_word_pairing, chat_inference
-
-    n_phase_a = int(0.8 * n_events)
-    n_phase_b = n_events - n_phase_a
-    target_action = mem._value_to_action(value)
+    n_sleep_cycles = 2  # K=2 — Buzsáki 2015 typical NREM cycle count
+    n_swr_per_cycle = 100  # ~10-20% of CA3 active per ripple
 
     t0 = time.time()
-    # Phase A: standard bind
-    learn_word_pairing(mem.bridge, word=key, target_action=target_action,
-                        n_events=n_phase_a, verbose=False)
 
-    # Phase B: recall-only events (drive_in alone, plasticity gate open)
-    bridge = mem.bridge
-    rm = bridge.region_manager
-    lang_indices = list(rm.indices("language_input"))
-    n_lang = len(lang_indices)
-    drive = vocab_to_drive_pattern(key, n_neurons=n_lang,
-                                       drive_max_pA=200.0, sparsity=0.1)
-    drive_gpu = cp.asarray(drive, dtype=cp.float32)
-    lang_arr = cp.asarray(lang_indices, dtype=cp.int64)
+    # Phase 1: AWAKE encoding (both pathways plastic)
+    set_awake_gates(bridge)
+    learn_word_pairing(bridge, word=key, target_action=target_action,
+                        n_events=n_events, verbose=False)
 
-    # Open language_input_to_motor gate
-    try:
-        bridge.set_plasticity_gate("language_input_to_motor", 1.0)
-    except Exception:
-        pass
+    # Phase 2: SLEEP consolidation
+    set_sleep_gates(bridge)
+    rng = _np.random.default_rng()
+    for _ in range(n_sleep_cycles):
+        run_swr_replay_phase(
+            bridge,
+            n_swr_events=n_swr_per_cycle,
+            swr_drive_pA=100.0,
+            rng=rng,
+        )
 
-    for _ in range(n_phase_b):
-        bridge.cp_external_input_current[:] = 0.0
-        # Reset window
-        for _ in range(50):
-            bridge._run_one_simulation_step()
-            bridge.runtime_state.current_time_step += 1
-        # Drive language_input ONLY
-        bridge.cp_external_input_current[lang_arr] = drive_gpu
-        for _ in range(100):
-            bridge._run_one_simulation_step()
-            bridge.runtime_state.current_time_step += 1
-
-    # Re-freeze gate
-    try:
-        bridge.set_plasticity_gate("language_input_to_motor", 0.0)
-    except Exception:
-        pass
-
+    # Phase 3: AWAKE recall (gates restored)
+    set_awake_gates(bridge)
     elapsed = time.time() - t0
 
     # Best-effort recall for confidence
@@ -227,16 +177,67 @@ def variant_v3_recall_tail(mem, key: str, value: str, n_events: int) -> dict:
         "key": key, "value": value, "target_action": target_action,
         "confidence": confidence, "bound_correctly": bound_correctly,
         "n_events_run": n_events,
-        "v3_phase_a_events": n_phase_a, "v3_phase_b_events": n_phase_b,
+        "v_hippo_n_sleep_cycles": n_sleep_cycles,
+        "v_hippo_n_swr_events": n_sleep_cycles * n_swr_per_cycle,
+        "elapsed_seconds": elapsed,
+    }
+
+
+def variant_v_schema(mem, key: str, value: str, n_events: int) -> dict:
+    """Schema-supported binding (Tse et al 2007 Science).
+
+    Biology citation:
+      - Tse et al 2007: schema-related new facts integrate into
+        neocortex within ~24 hours instead of the standard weeks-
+        months consolidation timescale. Mechanism: existing schema
+        provides a "scaffold" that new related facts attach to.
+
+    Mechanism: interleave new-word bind events with brief
+    reinforcement of the matching anchor word. Hypothesis: the new
+    word's trace attaches to the recently-reinforced anchor schema.
+
+    Lighter-weight than V_HIPPO_BIO (doesn't require hippocampus),
+    so this can also run on non-hippo bridges as a comparison.
+    """
+    from research.runners.chat_repl import learn_word_pairing, chat_inference
+
+    target_action = mem._value_to_action(value)
+    anchor_word = {"N": "north", "E": "east",
+                    "S": "south", "W": "west"}[target_action]
+
+    M = 20
+    n_batches = max(1, n_events // M)
+    actual_new_events = n_batches * M
+    t0 = time.time()
+    for batch in range(n_batches):
+        learn_word_pairing(mem.bridge, word=key, target_action=target_action,
+                            n_events=M, verbose=False)
+        # Brief anchor refresh — reinforces the schema the new word attaches to
+        learn_word_pairing(mem.bridge, word=anchor_word, target_action=target_action,
+                            n_events=2, verbose=False)
+    elapsed = time.time() - t0
+
+    try:
+        check = chat_inference(mem.bridge, key)
+        confidence = float(check.get("confidence_ratio", 0.0))
+        bound_correctly = (check.get("predicted_action") == target_action)
+    except Exception:
+        confidence = 0.0
+        bound_correctly = False
+
+    return {
+        "key": key, "value": value, "target_action": target_action,
+        "confidence": confidence, "bound_correctly": bound_correctly,
+        "n_events_run": actual_new_events,
+        "v_schema_n_anchor_events": n_batches * 2,
         "elapsed_seconds": elapsed,
     }
 
 
 VARIANTS: dict[str, Callable] = {
     "v0_vanilla": variant_v0_vanilla,
-    "v1_anchored": variant_v1_anchored,
-    "v2_curriculum": variant_v2_curriculum,
-    "v3_recall_tail": variant_v3_recall_tail,
+    "v_hippo_bio": variant_v_hippo_bio,
+    "v_schema": variant_v_schema,
 }
 
 
@@ -343,7 +344,7 @@ def main() -> int:
     ap.add_argument("--n-events", type=int, default=200)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--variants", type=str,
-                    default="v0_vanilla,v1_anchored,v2_curriculum,v3_recall_tail")
+                    default="v0_vanilla,v_hippo_bio,v_schema")
     ap.add_argument("--out", type=str,
                     default="research/findings/raw/g11_bg/invivo_binding_fix.json")
     args = ap.parse_args()

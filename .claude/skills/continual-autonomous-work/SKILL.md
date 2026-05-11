@@ -108,6 +108,30 @@ After each significant commit, briefly:
 
 Don't trust your own intent over the git log. The agent's summary describes what it intended to do, not necessarily what it did.
 
+### Rule 8 — Biology-first capability workflow (THIS REPO)
+
+This repo is a **biology-grounded neural simulator**. Every capability hypothesis must pass through the biology-first workflow:
+
+1. **State the capability.** "Sim should be able to X."
+2. **Test against existing architecture.** Does the current code do X? What's the failure mode?
+3. **If failing, ask: what does real biology have that allows this capability to exist?** Cite specific papers / mechanisms (e.g. "McClelland 1995 CLS theory says novel concepts route through hippocampus first," "Larkum BAC firing gates plasticity via apical-basal coincidence"). Do not skip this step.
+4. **Copy the biology in code.** Implement the mechanism, not an engineering substitute. "Zero out the weights" is engineering; "route the new pattern through hippocampus then replay during sleep" is biology. Prefer biology.
+5. **Test again.** Did the biology copy work? If yes: validate multi-seed. If no: return to step 3 — what other biology might apply, OR did the implementation miss a critical detail?
+6. **Repeat workflow.** Each capability gets its own pass.
+
+**Anti-patterns this rule blocks:**
+- Engineering tweaks dressed up as variants (e.g. "try zeroing weights, adding noise, scaling parameters" without a biology citation).
+- Skipping step 3 because step 2's failure mode "feels" obvious.
+- "Curriculum / regularization / scheduling" as a default toolbox — these are ML techniques, not biology. They can be biology-grounded (Tse 2007 schema learning) but the burden is to cite the mechanism.
+- Hypothesis lists where one variant is "biology" and the others are "engineering". If biology is the goal, every variant must be motivated by a specific biological mechanism, even the control.
+
+**When a non-biology hypothesis is worth testing:**
+- As an explicit upper-bound control ("does ANY tweak help?"). State it as a control, not a serious candidate.
+- When biology hypotheses for a step are exhausted and you want to understand the architecture's headroom under non-biological cheats.
+- Never as the primary variant.
+
+**Worked example of the drift this rule prevents (2026-05-11):** the initial in-vivo binding fix runner shipped 4 variants — vanilla, pre-bind-zero-edges, curriculum-interleave, recall-only-tail. Only V0 (control) and V2 (weakly Tse 2007) had biology backing. The user flagged the methodology miss. Correct redesign: route new-word binding through hippocampus (McClelland 1995 CLS) with immediate sleep consolidation, using the already-shipped Phase 1.3 infrastructure.
+
 ## Drift modes (anti-patterns observed in past sessions)
 
 1. **The "phase 3.2 arc wrap-up" doc.** Found in commit a0e095f (2026-05-11). The doc framed the work as complete even though Phase 3.3 was queued and the new-vocab binding issue was open. Should have been `phase3.2-shipped.md` with an explicit "open follow-ups" section, not "arc wrap-up".
