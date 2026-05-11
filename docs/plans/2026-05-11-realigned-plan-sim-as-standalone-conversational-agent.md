@@ -1,241 +1,245 @@
-# Realigned plan: sim as standalone conversational agent
+# Realigned plan: sim as standalone conversational agent (catalog-grounded v3)
 
-**Date:** 2026-05-11 (post-user-checkin)
-**Status:** ACTIVE — primary path, supersedes earlier Path 3 framing
-**Author:** autonomous arc, after user clarified goal
+**Date:** 2026-05-11 (post-user-checkin v3)
+**Status:** ACTIVE — primary path, supersedes v2 and earlier Path 3 framing
+**Author:** autonomous arc, after three user clarifications (no LLM,
+biology-first workflow, consult catalog)
 
 ## Goal
 
 Biology-grounded spiking neural simulator as a **standalone**
-conversational agent. **No external LLM** — not as orchestrator, not
-as feature extractor, not as fallback. Fully local execution (CPU or
-GPU). Eventually capable of multi-word, multi-turn, semantically
-meaningful conversation.
+conversational agent. **No external LLM, ever.** Fully local. Eventually
+capable of multi-word, multi-turn, semantically meaningful conversation.
 
-## Why the previous Path 3 framing was wrong
+## Methodology — biology-first, catalog-grounded
 
-The 2026-05-11 strategic re-eval framed Path 3 as **"LLM + sim-as-memory-
-subsystem"** — an external 3B-param LLM (Phi-3 / Llama / Qwen) doing
-language, sim doing persistent memory. That's tractable but it abandons
-the harder goal. The user's actual goal: the sim does language too.
+Per `.claude/skills/continual-autonomous-work/SKILL.md` Rule 8:
 
-Concrete consequence: the work shipped on 2026-05-11 that I'm carrying
-forward vs. deprecating:
+1. State capability
+2. Test against existing architecture
+3. **Consult the research catalog FIRST:**
+   - `E:/Documents/Projects/sim-catalog/references/feature-catalog.md`
+   - `E:/Documents/Projects/sim-catalog/references/biology-buildout-roadmap.md`
+   - `E:/Documents/Projects/sim-catalog/references/textbooks/` (Kandel 6e + specialty PDFs)
+4. Implement the catalog-cited mechanism
+5. Test, validate, repeat
 
-| Component | Status |
-|---|---|
-| BridgeMemory API (store/recall/speak/forget/consolidate) | KEEP — these are the sim's cognitive operations, not LLM-facing tools |
-| Bridge Lineage Manager + continuous learning | KEEP — this is the differentiator |
-| Synapse tiering + auto-growth + NumPy backend | KEEP — scaling infrastructure |
-| Dashboard chat panel + chips | KEEP — direct sim interaction (the "user types, sim responds") UI |
-| LLMMemoryOrchestrator + MockLLM | KEEP-BUT-REFRAME — MockLLM is just a pattern-matched intent router (sim-native), not an "LLM" |
-| OllamaLLM adapter + SIM_LLM_BACKEND env var | KEEP-AS-SECONDARY — useful if user ever wants the vector-DB-for-LLMs path; **not active development** |
-| Phase 3.3 design (real LLM integration) | DEPRECATED for primary path |
-| Phase 3.4 design (multi-session assuming LLM driver) | NEEDS REFIT — the multi-session test is still relevant, but reframed around sim-native interaction |
+## What the previous "realigned plan v2" got wrong
 
-## Capabilities table (where we are, where we need to go)
+v2 proposed a "Step 0 — add semantic_hub region" invented from
+Patterson 2007 hub-and-spoke memory. The catalog already had the
+better framing:
 
-| Capability | Status | Distance |
-|---|---|---|
-| Bind/recall direction words | ✅ Working | done |
-| A→W generation | ✅ Working | done |
-| Sleep-replay consolidation | ✅ Real-ops shipped | done |
-| Multi-session persistence | ✅ Lineage system working | done |
-| Catastrophic-forgetting resistance | ✅ Phase 1.4 BRANCH A 5/6 retention | done |
-| 8-word vocab (synonym) | ✅ Tier 2.1, 5/6 W→A | done |
-| **In-vivo new-vocab binding** | ❌ **0/4 → 1/4 at 200/400 events** | **BLOCKER — must fix** |
-| 12-16 word vocab | partial (synonym12/16); needs multi-seed | small (gated on in-vivo fix) |
-| 20-30 word vocab | infra (auto-grow Phase A); not validated | medium |
-| 64+ word vocab | NEGATIVE @ XL encoding 2026-05-11 | large — arch insufficient |
-| Compositional syntax (2-word phrases) | infra (Tier 2.3 PFC verb pool); never positive | large |
-| Sentence-level understanding | not started | huge |
-| Sentence-level generation | not started | huge |
-| Reasoning | not started | huge |
-| Hundreds-of-words conversation | not started | enormous |
+- **G.11 dual-stream language model** (Kandel Ch 55 pp 1380–1387) —
+  ventral stream is the missing semantic substrate
+- **G.13 Wernicke's area** (Kandel Ch 55 pp 1384–1385) — explicitly
+  lists "semantic memory store" as a prerequisite
+- **D.01 episodic memory** (Kandel Ch 52 pp 1296–1302) — concept
+  binding via medial temporal lobe + association cortices
+- **D.02 relational binding (Eichenbaum–Cohen)** — items-in-context
 
-The "in-vivo new-vocab binding" row is the immediate blocker. Today's
-sweep confirmed novel keys (apple/river/mountain/forest) don't bind
-reliably even at 800 events. Every subsequent scaling step depends on
-this working.
+All four entries are `Sim status: missing`. The buildout roadmap
+sequenced the prerequisites:
 
-## Step-by-step plan
+- **T1.A — Hippocampal trisynaptic loop** (Month 1): DG → CA3 → CA1
+  proper, with DG pattern-separation + CA3 attractor completion
+- **T1.B — SWR-driven sequential replay** (Month 2): time-compressed
+  consolidation sequences
+- **T1.C — Engram-tagging API** (Month 2, parallel): tag + stimulate
+  active ensembles by name
 
-### Step 1 (active, ~1-2 weeks): Fix in-vivo new-vocab binding
+This is the **catalog-grounded** sequence the user's "concepts ≠
+motor pools" insight pointed at all along. Defer to the roadmap.
 
-Run `research/runners/investigate_invivo_binding_fix.py` testing four
-variants:
-- V0 — vanilla control
-- V1 — pre-bind anchoring (zero edges, build from zero)
-- V2 — curriculum interleave with anchor words
-- V3 — recall-only tail fine-tune
+## Capabilities table (catalog-grounded, where we are, where we need to go)
 
-Validation: ≥ 4/6 seeds correct on 4 made-up keys at default n_events.
+| Capability | Catalog entry | Sim status | Distance |
+|---|---|---|---|
+| Hippocampus proper (DG/CA3/CA1 trisynaptic) | D.03 (Kandel Ch 52) | partial (stub CA3) | Tier 1 / month 1 |
+| Pattern separation (DG sparsifies overlaps) | D.12 | missing | gated on T1.A |
+| Pattern completion (CA3 attractor) | D.13 | missing | gated on T1.A |
+| Engram tagging (Tonegawa-style ensemble ID) | D.14 + T1.C | missing | 2-3 days bridge code |
+| SWR sequential replay (time-compressed) | D.19 + T1.B | partial (gates exist, no compression) | Tier 1 / month 2 |
+| Episodic encoder | D.01 | missing | gated on T1.A+B+C |
+| Relational binding (items-in-context) | D.02 | missing | gated on D.01 |
+| Ventral semantic stream | G.11 | missing | gated on D.01 |
+| Wernicke's area (auditory→semantic) | G.13 | missing | gated on G.11 |
+| Broca's area (speech production + syntax) | G.12 | missing | gated on G.13 |
+| Direction-word binding (motor pool) | (existing) | ✅ Tier 2.1 5/6 W→A | done — but only for action-words |
+| 12-word direction vocab | (existing) | ✅ 3/3 GO scaled arch | done |
+| 16-word direction vocab | (existing) | partial (1/1 smoke) | small (multi-seed pending) |
+| 64+ word vocab | (existing) | NEGATIVE 2026-05-11 | architecture-limited; gated on D.01+G.* |
+| Compositional 2-word phrases | (Tier 2.3) | partial (39.8% mean) | architecture-limited; gated on D.01+G.12 |
+| Sentence-level understanding | gated chain | missing | gated on T1.A→T1.C→D.01→G.11→G.13 |
+| Reasoning | gated chain | missing | gated on all of above + G.* expansion |
+| Hundreds-of-words conversation | gated chain | missing | gated on all of above |
 
-If V1/V2/V3 works → bake into `BridgeMemory.store()` as the new default.
+## Step plan (deferring to roadmap T1.A → T1.B + T1.C → D.01 → G.*)
 
-If NONE works → escalate: either Step 4 immediately (dendritic learning
-rewrite) or design a 5th variant (e.g. cortex_X anchored learning).
+### Step P1 — Hippocampal trisynaptic loop (roadmap T1.A, ~Month 1)
 
-### Step 2 (~2-3 weeks): Multi-seed validate synonym12 / synonym16
+**Catalog:** D.03 (Kandel Ch 52 pp 1310-ish), D.12 pattern separation,
+D.13 pattern completion. Roadmap T1.A spec.
 
-**Step 2a — 12-word vocab: ✅ ALREADY VALIDATED (2026-05-09).**
-3/3 GO unanimous at scaled arch (n_motor=2000): primary retention
-95.5%, synonym retention 115.0%. Counts toward this step; no new
-work needed.
-Source: `research/findings/2026-05-09-Phase1.3-Tier2.1-12word-scaled-3seed-CONFIRMED.md`
+**Build:** 3 new BrainRegions — DG, CA3, CA1 — wired as
+`EC → DG → CA3 → CA1 → output` with `EC → CA1` direct path and
+`CA3 → CA3` recurrent attractor. Existing primitives only (no new
+GPU code).
 
-**Step 2b — 16-word vocab: PARTIAL (1/1 smoke seed PASSES).**
-16-word smoke at seed 42 (`consolidation_synonym_16word_scaled_smoke`
-preset, n_motor=2000) gives **primary retention 90%, synonym
-retention 108.7%, verdict GO**. Single-seed positive — capacity
-hypothesis appears to extend to 16 words.
+**Validate:**
+- Pattern separation: present 2 similar place inputs → verify DG
+  outputs decorrelate (cosine drop)
+- Pattern completion: train CA3 on (cue, context) pair → partial cue
+  reactivates full pattern
+- Place-field stability across trials in CA1 readout
 
-Real Step 2b work: run `consolidation_synonym_16word_scaled_medium`
-preset at 3-6 seeds (already wired up in webapp; ~3.5 hr/seed at
-medium config). No new code needed. ~10-20 hours total wall clock.
+**Effort:** 1-2 weeks for working circuit; 4-6 weeks to full validation.
 
-Validation: ≥ 4/6 seeds at ≥ 80% primary retention, ≥ 60% synonym
-retention (matches 12-word criteria).
+### Step P2 — Engram-tagging API (roadmap T1.C, ~Month 2 parallel)
 
-If Step 1's fix enables in-vivo binding, Step 2b can also test
-adding NEW words on top of the trained 16-word vocab (capacity
-test with novel keys).
+**Catalog:** D.14 engram cells (Tonegawa et al). Roadmap T1.C spec.
 
-If passes: 16-word vocab unlocked. Update capability_status.json.
+**Build:** ~50 LOC bridge addition:
+- `bridge.tag_active_ensemble(name, threshold_hz, window_ms)` —
+  snapshot which neurons fired above threshold during a window
+- `bridge.stimulate_tag(name, drive_pA)` — drive only tagged neurons
+- Persist tags across simulation steps
 
-### Step 3 (~2-4 weeks): Compositional syntax — Tier 2.3 PFC verb pool
+**Validate:**
+- Train on "context A → reward"; tag the active ensemble
+- Place agent in context B, drive tagged neurons → verify
+  reward-conditioned behavior emerges (Liu 2012 inception-of-fear
+  paradigm)
 
-Re-activate the existing Tier 2.3 infrastructure (`phrase_trainer.py`,
-`phrase_eval.py`), but with an **action_gate redesign** addressing the
-2026-05-07 finding ("Tier 2.3 6seed PARTIAL"):
+**Effort:** 2-3 days for bridge code; 1-2 weeks for first experiment.
 
-> **Phrase accuracy < direction-only accuracy across ALL 6 seeds.**
-> Phrase composition consistently HURTS, not helps. Hypothesis:
-> `action_gate` boosts ALL motor pools indiscriminately when PFC is
-> active, making non-target pools fire too easily. Indiscriminate
-> excitatory boost ≠ verb-context-gated selection.
+**This is the primitive that lets concepts live as tagged ensembles
+independent of motor pools.** "Apple" becomes the name of a tagged
+ensemble in CA3, not a motor target. Recall = stimulate the tag.
 
-Two redesigns to try (sketched per `text_minimal_isolation.py:622`):
+### Step P3 — SWR sequential replay augment (roadmap T1.B, ~Month 2)
 
-**v2a — Per-direction PFC subpools (recommended).** Split `dlpfc_verb`
-into 4 subpools, one per direction. Each subpool fires only for
-verbs that map to its motor pool. Train each subpool to gate ONLY its
-own motor pool. 4 neuromodulators (`action_gate_N/E/S/W`) instead of
-1. Biologically plausible: real PFC has direction-tuned subpopulations.
+**Catalog:** D.19 SWRs, N.04 ripple-coupled replay. Roadmap T1.B.
 
-**v2b — Inhibitory action_gate.** action_gate inhibits non-target motor
-pools rather than exciting the target. Mechanism: when dlpfc_verb is
-active, all motor pools EXCEPT the target get an inhibitory drive.
-The motor_TARGET pool fires by default; verb context just suppresses
-competitors. Biologically plausible: basal ganglia disinhibition
-model (Mink 1996).
+**Build:** augment existing sleep-replay infrastructure to generate
+time-compressed (10-20×) place-cell sequences during NREM windows,
+phase-locked to slow oscillation surrogate and nested by spindle
+envelopes.
 
-With Step 1's binding fix + v2a or v2b, the two-word phrase task
-should have a real shot.
+**Validate:**
+- Ripple events show 10-20× temporal compression of waking sequences
+- Downstream weight changes during sleep vs no-sleep on a memory task
+- Replicate "blocking SWRs impairs spatial learning" (Girardeau 2009)
 
-Validation: ≥ 4/6 seeds where two-word phrases produce coherent
-motor sequences (not just one motor pool) AND phrase ≥ direction-
-only accuracy (not the inversion we saw in 2026-05-07).
+**Effort:** 2-3 weeks (composes onto T1.A).
 
-If passes: compositional syntax unlocked. This is a real research
-contribution.
+### Step P4 — Episodic encoder + relational binding (D.01 + D.02)
 
-If fails: clear signal that the current arch can't compose even with
-verb-direction gating fixed. Escalate to Step 4 (dendritic learning).
+**Catalog:** D.01 (Kandel Ch 52 pp 1296-1302), D.02 Eichenbaum-Cohen.
 
-### Step 4 (months, real research bet): Dendritic learning rewrite
+**Build:** wire item-stream (perirhinal analog) + context-stream
+(parahippocampal analog) → hippocampus CA1. Store items-in-context;
+support transitive inference via overlapping events.
 
-The 2026-05-05 W→A verdict said "global scalar feedback fails at
-biological scale; need apical-basal dendritic learning OR predictive
-coding." Step 3's outcome will tell us if Step 4 is necessary or not.
+**This unlocks abstract concepts beyond motor-pool grounding.**
 
-Design doc: `docs/plans/2026-05-05-dendritic-learning-design.md`
-(1.5-2 month scope).
+### Step P5 — Ventral semantic stream + Wernicke's (G.11 + G.13)
 
-If Step 3 succeeds compositionally without dendritic learning, Step 4
-can be deferred. If Step 3 fails, Step 4 becomes the only path to
-sentence-level capability.
+**Catalog:** G.11 (Kandel Ch 55 pp 1380-1387 Hickok & Poeppel), G.13
+(Kandel Ch 55 pp 1384-1385).
 
-### Step 5 (after Step 4 lands): Scale to 64-word vocab + sentence-level
+**Build:** semantic cortex region (Wernicke's analog) receiving
+language_input and routing to/from hippocampal engram tags.
+Bidirectional: word → concept (comprehension), concept → word
+(recall).
 
-The earlier NEGATIVE 64-word @ XL encoding result was on the current
-architecture. With dendritic learning, retry the same experiment.
+### Step P6 — Broca's area + compositional syntax (G.12)
 
-Validation: 64-word vocab with reliable binding + recall + at least
-short-phrase composition.
+**Catalog:** G.12 (Kandel Ch 55 pp 1382-1384). Replaces the failed
+Tier 2.3 PFC verb pool with the Broca's-grounded design.
 
-### Step 6+ (year+ horizon): Sentence-level understanding + generation,
-reasoning, conversation.
+**Build:** left posterior inferior frontal gyrus analog supporting
+grammatical processing + speech production. Two-word phrase
+composition validation.
 
-These are the huge-distance items. Each will require its own design
-arc once we have the foundation from Steps 1-5.
+### Steps P7+ — Sentence-level + reasoning + conversation
 
-## What gets validated at each step
+Long-horizon. Each gated on prior steps. Specific catalog entries
+TBD as we approach.
 
-The user's risk tolerance is high but each step has a clear PASS / FAIL
-criterion. Negative results are publishable findings just as positive
-ones are.
+## Tier 3 (long horizon, decide explicitly per roadmap)
 
-| Step | PASS criterion | FAIL implication |
-|---|---|---|
-| 1 | ≥ 4/6 seeds correct recall on novel keys | Escalate to Step 4 immediately |
-| 2 | ≥ 4/6 seeds at ≥ 60% W→A on synonym12 + synonym16 | Architecture won't scale linearly; need redesign |
-| 3 | ≥ 4/6 seeds with coherent 2-word phrase motor sequences | Need dendritic learning before composition possible |
-| 4 | Dendritic learning produces measurable credit-assignment improvement vs scalar DA at toy scale | Pivot to predictive coding alternative |
-| 5 | 64-word vocab works with dendritic learning | Need scale beyond what local hardware allows |
-| 6+ | Sentence-level emergence | Hard limit of biology-grounded approach at our scale |
+- **T3.A compartmental neurons** (apical-basal dendrites) — was
+  "Step 4 dendritic learning rewrite" in v2. Per roadmap: decide
+  explicitly when limitations bite. Don't pre-commit.
+- **T3.C muscle output / Hill-type model** — gateway to embodied
+  speech production. Big architectural decision.
 
-## What stays warm but inactive
+## What about the in-vivo binding fix experiment I was about to run?
 
-The Ollama / SIM_LLM_BACKEND scaffolding remains in the codebase as
-the **secondary path** (sim as continuous-learning memory layer for
-external LLM agents). This isn't garbage code — it's a valid
-production application that several real groups would pay for.
+**Off-axis until P1/P2 land.** "Fix in-vivo binding to motor pools"
+tries to scale a fundamentally-limited architecture. Real biology
+binds new concepts as **tagged hippocampal ensembles** (D.14 + T1.C),
+which then consolidate via SWR replay (D.19 + T1.B) to distributed
+cortical representations (D.01 + G.11). All currently `Sim status:
+missing`.
 
-Active development on the secondary path resumes ONLY when:
-- The primary path hits a hard ceiling we can't overcome, OR
-- The user explicitly redirects
+The n_events sweep result (0/4, 1/4, ??/4 at 200/400/800) is still a
+useful baseline — it documents the motor-pool-bound architecture's
+ceiling. Let it finish for the record. Then pivot to T1.A.
 
-## Wall clock estimates
+## What gets carried forward from prior work
 
-- Step 1: 1-2 weeks (mostly compute; experiments are quick to set up)
-- Step 2: 2-3 weeks
-- Step 3: 2-4 weeks
-- Step 4: 1.5-2 months (real implementation + validation)
-- Step 5: 1 month
-- Step 6+: open-ended
+KEEP:
+- BridgeLineage (continuous learning infrastructure)
+- BridgeMemory API (works as-is for direction-word vocab; will extend
+  to engram-tagged concepts once T1.C lands)
+- Synapse tiering + auto-growth + NumPy backend (scaling infra)
+- Dashboard chat panel (UI works against any future API)
+- Phase 1.3 consolidation work (partial T1.B foundation — needs the
+  compression augment)
+- continual-autonomous-work skill (meta-tooling)
 
-Total to "demonstrable conversational sim" with compositional syntax
-and reasoning: **6-12 months** at autonomous pace, possibly longer
-with negative-result detours.
+KEEP-AS-SECONDARY (no active work):
+- OllamaLLM adapter + SIM_LLM_BACKEND env var (vector-DB-for-LLMs
+  path, not primary)
+
+DEPRECATED:
+- Phase 3.3 design (real LLM integration)
+- "Realigned plan v2" Step 0 semantic_hub invention (replaced by
+  catalog-grounded P1-P5)
+- In-vivo binding fix runner (off-axis until P1/P2)
 
 ## Local-only commitment
 
-Every step above runs on local hardware. CuPy on the RTX 3090 (24 GB)
-or NumPy on CPU. No cloud dependencies. No external LLM. The deploy_
-to_cloud.sh script from earlier is for sweep parallelization only; it
-is NEVER required for the sim itself to function.
+Every step runs on local hardware (RTX 3090 or CPU). No cloud, no
+external LLM, ever.
 
-If a future step hits the 24 GB VRAM ceiling, the sim still runs on
-CPU (slower). Synapse tiering already allows pathway-grained eviction
-to SSD, so even >24 GB synapse counts are reachable on the same box.
+## Realistic timeline
 
-## What this plan does NOT promise
+Following the roadmap's 12-month sequencing:
 
-- A 6-month "ChatGPT replacement". Sentence-level conversation is the
-  endpoint, not the next milestone. The capability table is honest
-  about distance.
-- Working 64+ word vocab at the current scale. The 2026-05-11 NEGATIVE
-  result stands; Step 5 retries it AFTER Step 4 lands.
-- That every step will produce a positive result. Some will produce
-  NEGATIVE findings, and those are valuable.
+| Roadmap month | Phase here | Capability unlocked |
+|---|---|---|
+| 1 | P1 | Trisynaptic loop working |
+| 2 | P2 + P3 | Engram tags + SWR compression |
+| 3-4 | P4 | Episodic + relational binding |
+| 5-6 | P5 | Semantic memory store |
+| 7-9 | P6 | Compositional 2-word phrases |
+| 10-12 | P7+ | Sentence-level approaches |
+| 12+ | T3 decisions | Compartmental neurons, muscle, etc. |
 
-This plan is a **research arc**, not a feature roadmap. Each step
-informs the next; some steps may pivot the entire plan.
+Realistic horizon for "demonstrable conversational sim with
+composition + abstract concepts": **6-12+ months autonomous pace.**
+Each phase has explicit catalog-cited validation criteria.
 
 ## Resume directive
 
-I'm resuming autonomous work on Step 1 now. The n_events sweep is
-finishing in the background (will give us the final "more events
-doesn't help" datapoint). Once that lands, I'll launch the four-
-variant binding-fix experiment immediately.
+The n_events sweep finishes on its own (let the 800-level wrap for
+the record). Next concrete action after the sweep: start **P1 —
+hippocampal trisynaptic loop** per roadmap T1.A. The build uses
+existing `BrainRegion` + `RegionPathway` primitives; no new GPU
+code. Catalog entries D.03 + D.12 + D.13 are the spec.
+
+Pause for user confirmation before starting P1, since this is the
+first month-scale step of the realigned plan.
