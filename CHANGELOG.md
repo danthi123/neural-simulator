@@ -7,6 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-05-11 — Path 3 Phase 3.2 SHIPPED: LLM tool-use stack end-to-end
+
+### Path 3 Phase 3.2 — LLM orchestrator + chat surface
+- **LLMMemoryOrchestrator** (`sim/llm_memory_orchestrator.py`, 347 lines)
+  drives a tool-use loop between an LLM and BridgeMemory. Three
+  OpenAI-compatible tool schemas: `memory_store`, `memory_recall`,
+  `memory_speak`. MockLLM ships as the default callable for zero
+  external-dependency demos; real LLM swap-in (Phi-3 / Llama 3.2 /
+  Qwen2.5) is a one-line constructor change.
+- **End-to-end demo runner** (`research/runners/llm_memory_demo.py`)
+  proves the full stack: MockLLM → orchestrator → BridgeMemory →
+  SimulationBridge → BridgeLineage (atomic persisted state). Scripted
+  5-turn chat, JSON output, validated under SIM_BACKEND=numpy.
+- **Webapp endpoints** (`webapp/server.py`):
+  - `POST /api/llm-chat` — one chat turn, dispatched against a cached
+    orchestrator per (lineage, mode) tuple
+  - `GET /api/llm-chat/{name}/transcript?mode=...` — conversation log
+  - `POST /api/llm-chat/{name}/reset?mode=...` — clear cached state
+- **Frontend chat panel** in the Lineages tab: mode selector
+  (tier1 / synonym / synonym12 / synonym16), color-coded message log,
+  send/reset/Enter, transcript auto-load.
+- **BridgeMemory.forget() real-ops** (Phase 3.1 stub → Phase 3.2 real):
+  multiplicative weight decay on synapses originating from the key's
+  language_input neurons. Decay rate 0.0 = full erase, 0.5 = halve,
+  1.0 = no-op. Returns full schema (n_active_neurons, n_synapses_decayed,
+  mean_weight_pre/post, estimated_retention). Backend-aware (CuPy +
+  NumPy via sim.backend.get_backend).
+- **32 new tests** across the LLM stack:
+  - 14 in `tests/test_llm_memory_orchestrator.py` (tool schema, MockLLM
+    patterns, orchestrator end-to-end, max-iter cap, error propagation)
+  - 2 in `tests/test_llm_memory_demo.py` (single-turn + multi-turn
+    smoke against a real bridge; SIM_BACKEND=numpy CI-portable)
+  - 5 in `tests/test_webapp_server.py` (404 + reset idempotent +
+    validation + frontend asset)
+  - 5 new in `tests/test_bridge_memory.py` (real-ops decay assertions)
+  - 6 updated MockBridge to support region_manager + cp_connections
+- **Phase 3.3 design doc** (`docs/plans/2026-05-11-path3-phase3.3-real-llm-design.md`)
+  details LLM candidate comparison, ollama adapter sketch, validation
+  plan, risk matrix. Estimated ~4 hours implementation work once LLM
+  is chosen.
+- **Bootstrap `main` synonym lineage** auto-trained in background
+  (12,672 neurons, ~12.9M synapses; 1600 events at ~4s/event) for the
+  user to chat against on next session.
+
+### Commits in this arc
+- `343ea94` feat(path3): Phase 3.2 LLM-memory orchestrator scaffold + MockLLM
+- `dbf037f` feat(path3): llm_memory_demo runner — end-to-end Phase 3.2 stack
+- `bd1eb13` feat(webapp): POST /api/llm-chat endpoint + transcript / reset siblings
+- `3d63dbb` feat(webapp): chat-with-lineage panel in Lineages tab (Phase 3.2 UI)
+- `4aab01f` docs: Phase 3.2 LLM stack — CLAUDE.md + findings + user guide
+- `3f19a85` docs(path3): Phase 3.3 design — real LLM integration plan
+- `31d4a3c` feat(path3): BridgeMemory.forget() real-ops — multiplicative weight decay
+
+Findings: `research/findings/2026-05-11-path3-phase3.2-llm-stack-shipped.md`.
+
 ## [Unreleased] — 2026-05-03/04 — Permuted-label control debunks 28.5% W→A + autonomous-arc tooling
 
 ### Critical correction

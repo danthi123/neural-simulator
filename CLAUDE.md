@@ -584,6 +584,12 @@ results = mem.recall("alice", top_k=4)
 # [{"action": "N", "value": "north", "confidence": 1.0, "rank": 1,
 #   "raw_delta": 317}, ...]
 
+# Extinction-style forgetting (Phase 3.2 real-ops, 2026-05-11)
+mem.forget("alice", decay_rate=0.5)
+# -> {"key": "alice", "decay_rate": 0.5, "n_active_neurons": 6,
+#     "n_synapses_decayed": 60, "mean_weight_pre": 1.0,
+#     "mean_weight_post": 0.5, "estimated_retention": 0.5}
+
 # Long-term consolidation (Phase 1.3 sleep-replay; stub in 3.1.5)
 mem.consolidate(n_sleep_cycles=3)
 
