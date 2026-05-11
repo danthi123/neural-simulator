@@ -30,6 +30,11 @@ try:
     from sim.backend import (
         get_backend, get_sparse_module, fuse, is_gpu_backend,
         synchronize as _backend_synchronize,
+        set_device as _backend_set_device,
+        get_device_mem_info as _backend_get_device_mem_info,
+        get_device_properties as _backend_get_device_properties,
+        get_memory_pool as _backend_get_memory_pool,
+        get_pinned_memory_pool as _backend_get_pinned_memory_pool,
     )
     cp, _backend_name = get_backend()
     csp = get_sparse_module()
@@ -43,6 +48,11 @@ except ImportError:
     fuse = cp.fuse
     is_gpu_backend = lambda: True
     _backend_synchronize = lambda: cp.cuda.Stream.null.synchronize()
+    _backend_set_device = lambda dev_id=0: cp.cuda.Device(dev_id).use()
+    _backend_get_device_mem_info = lambda: cp.cuda.Device().mem_info
+    _backend_get_device_properties = lambda dev_id=0: cp.cuda.runtime.getDeviceProperties(dev_id)
+    _backend_get_memory_pool = lambda: cp.get_default_memory_pool()
+    _backend_get_pinned_memory_pool = lambda: cp.get_default_pinned_memory_pool()
     _backend_name = "cupy"
 
 from sim.enums import (NeuronModel, NeuronType, DefaultHodgkinHuxleyParams,
@@ -420,25 +430,33 @@ class SimulationBridge:
                 except OSError as e:
                     self._log_console(f"Error creating directory {dir_path}: {e}", "error")
         try:
-             cp.cuda.Device(0).use()
-             
-             # Configure memory pool for better performance (controlled by gpu_config)
-             mempool = cp.get_default_memory_pool()
-             pinned_mempool = cp.get_default_pinned_memory_pool()
-             
-             # Set memory pool limit based on gpu_config
-             dev_props = cp.cuda.runtime.getDeviceProperties(0)
+             _backend_set_device(0)
+
+             # Configure memory pool for better performance (controlled by
+             # gpu_config). On NumPy backend, mempool is None — skip pool
+             # configuration (no pool concept on CPU).
+             mempool = _backend_get_memory_pool()
+             pinned_mempool = _backend_get_pinned_memory_pool()
+
+             dev_props = _backend_get_device_properties(0)
              total_mem = dev_props['totalGlobalMem']
-             mempool.set_limit(size=int(total_mem * self.gpu_config.memory_pool_limit_fraction))
-             
-             gpu_name = dev_props.get('name',b'Unknown').decode()
-             self._log_console(
-                 f"CuPy using GPU: {gpu_name} ({total_mem / 1024**3:.1f} GB), "
-                 f"mempool limit: {self.gpu_config.memory_pool_limit_fraction*100:.0f}%",
-                 "info"
-             )
+             if mempool is not None:
+                 mempool.set_limit(size=int(total_mem * self.gpu_config.memory_pool_limit_fraction))
+
+             gpu_name = dev_props.get('name', b'Unknown').decode()
+             if is_gpu_backend():
+                 self._log_console(
+                     f"CuPy using GPU: {gpu_name} ({total_mem / 1024**3:.1f} GB), "
+                     f"mempool limit: {self.gpu_config.memory_pool_limit_fraction*100:.0f}%",
+                     "info"
+                 )
+             else:
+                 self._log_console(
+                     f"NumPy backend ({gpu_name}, {total_mem / 1024**3:.1f} GB RAM available)",
+                     "info"
+                 )
         except Exception as e:
-             self._log_console(f"Error setting CuPy device: {e}", "critical")
+             self._log_console(f"Error setting device: {e}", "critical")
 
     def _log_console(self, message, level="info"):
         """Logs a message to the console (standard output)."""
@@ -468,7 +486,7 @@ class SimulationBridge:
     
     def _get_gpu_memory_info(self):
         """Returns current GPU memory usage statistics."""
-        mem_info = cp.cuda.Device().mem_info
+        mem_info = _backend_get_device_mem_info()
         free_memory, total_memory = mem_info
         used_memory = total_memory - free_memory
         
@@ -2715,7 +2733,7 @@ class SimulationBridge:
         frame_size = self._estimate_frame_size_bytes()
         required_memory = frame_size * estimated_frames
         
-        mem_info = cp.cuda.Device().mem_info
+        mem_info = _backend_get_device_mem_info()
         free_memory, total_memory = mem_info
         
         # Use configured fraction of available memory for recording buffer
@@ -2746,7 +2764,7 @@ class SimulationBridge:
         """
         # Check GPU memory
         try:
-            mem_info = cp.cuda.Device().mem_info
+            mem_info = _backend_get_device_mem_info()
             free_memory, total_memory = mem_info
             gpu_used = total_memory - free_memory
             gpu_usage_pct = gpu_used / total_memory
@@ -3779,7 +3797,7 @@ class SimulationBridge:
         num_chunks = (num_frames + chunk_size - 1) // chunk_size
 
         # Check initial GPU memory availability
-        mem_info = cp.cuda.Device().mem_info
+        mem_info = _backend_get_device_mem_info()
         free_memory_initial, total_memory = mem_info
         free_gb_initial = free_memory_initial / 1e9
 
@@ -3842,7 +3860,7 @@ class SimulationBridge:
             # Process in chunks
             for chunk_idx in range(num_chunks):
                 # Check GPU memory before loading this chunk
-                mem_info = cp.cuda.Device().mem_info
+                mem_info = _backend_get_device_mem_info()
                 free_memory_now, _ = mem_info
                 free_gb_now = free_memory_now / 1e9
 
@@ -3955,7 +3973,7 @@ class SimulationBridge:
             frames_per_sec = frames_loaded / elapsed if elapsed > 0 else 0
 
             # Check GPU memory usage
-            mem_info = cp.cuda.Device().mem_info
+            mem_info = _backend_get_device_mem_info()
             free_memory, total_memory = mem_info
             used_gb = (total_memory - free_memory) / 1e9
 

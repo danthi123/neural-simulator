@@ -22,6 +22,8 @@ from sim.backend import (
     get_backend, get_sparse_module, is_gpu_backend,
     fuse, synchronize, to_host, from_host,
     get_memory_pool_used_mb, _reset_cache_for_tests,
+    set_device, get_device_mem_info, get_device_properties,
+    get_memory_pool, get_pinned_memory_pool,
 )
 
 
@@ -337,3 +339,111 @@ def test_existing_sim_modules_still_import_under_default_backend():
     get_backend("cupy")
     # If this import raises, the abstraction broke existing code
     import sim.kernels  # noqa: F401
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Device-level helpers (set_device, get_device_mem_info, etc.)
+# ──────────────────────────────────────────────────────────────────────
+
+
+def test_set_device_numpy_noop():
+    """set_device() on numpy backend is a silent no-op (no error)."""
+    get_backend("numpy")
+    set_device(0)  # should not raise
+
+
+@pytest.mark.skipif(not _has_cupy(), reason="cupy not available")
+def test_set_device_cupy_runs():
+    """set_device() on cupy backend invokes cupy.cuda.Device.use()."""
+    get_backend("cupy")
+    set_device(0)  # should not raise
+
+
+def test_get_device_mem_info_numpy_returns_tuple():
+    """get_device_mem_info() on numpy returns (free_bytes, total_bytes) > 0."""
+    get_backend("numpy")
+    mem = get_device_mem_info()
+    assert isinstance(mem, tuple)
+    assert len(mem) == 2
+    free, total = mem
+    assert isinstance(free, int)
+    assert isinstance(total, int)
+    assert free > 0
+    assert total > 0
+    assert free <= total
+
+
+@pytest.mark.skipif(not _has_cupy(), reason="cupy not available")
+def test_get_device_mem_info_cupy_returns_gpu_mem():
+    """get_device_mem_info() on cupy returns GPU VRAM info."""
+    get_backend("cupy")
+    free, total = get_device_mem_info()
+    # RTX 3090 has 24 GB ~ 24 * 1024^3 ~ 2.6e10. Other GPUs differ.
+    # Sanity: at least 1 GB total VRAM.
+    assert total > 1 * 1024**3, f"total VRAM seems too small: {total}"
+    assert free <= total
+
+
+def test_get_device_properties_numpy_synthetic_dict():
+    """get_device_properties() on numpy returns synthetic dict with key fields."""
+    get_backend("numpy")
+    props = get_device_properties(0)
+    assert isinstance(props, dict)
+    assert "totalGlobalMem" in props
+    assert "name" in props
+    # Bridge reads: gpu_name = dev_props.get('name', b'Unknown').decode()
+    name = props.get("name", b"Unknown")
+    assert isinstance(name, bytes)
+    assert name.decode().startswith("CPU")
+    # totalGlobalMem must be positive int (used in pool.set_limit calculation)
+    assert isinstance(props["totalGlobalMem"], int)
+    assert props["totalGlobalMem"] > 0
+
+
+@pytest.mark.skipif(not _has_cupy(), reason="cupy not available")
+def test_get_device_properties_cupy_returns_real_props():
+    """get_device_properties() on cupy returns the real GPU props dict."""
+    get_backend("cupy")
+    props = get_device_properties(0)
+    assert "totalGlobalMem" in props
+    assert "name" in props
+    # GPU has totalGlobalMem in bytes; should be >= 1 GB
+    assert props["totalGlobalMem"] >= 1 * 1024**3
+
+
+def test_get_memory_pool_numpy_returns_none():
+    """get_memory_pool() on numpy returns None (no pool concept)."""
+    get_backend("numpy")
+    assert get_memory_pool() is None
+
+
+def test_get_pinned_memory_pool_numpy_returns_none():
+    """get_pinned_memory_pool() on numpy returns None."""
+    get_backend("numpy")
+    assert get_pinned_memory_pool() is None
+
+
+@pytest.mark.skipif(not _has_cupy(), reason="cupy not available")
+def test_get_memory_pool_cupy_returns_pool():
+    """get_memory_pool() on cupy returns a MemoryPool with usable API."""
+    get_backend("cupy")
+    pool = get_memory_pool()
+    assert pool is not None
+    # API check: pool should support used_bytes()
+    assert pool.used_bytes() >= 0
+
+
+def test_bridge_synthetic_props_compatible_with_call_pattern():
+    """The synthetic props dict supports the exact bridge.py read pattern.
+
+    Bridge does:
+      dev_props = get_device_properties(0)
+      total_mem = dev_props['totalGlobalMem']
+      gpu_name = dev_props.get('name', b'Unknown').decode()
+    """
+    get_backend("numpy")
+    dev_props = get_device_properties(0)
+    total_mem = dev_props['totalGlobalMem']  # __getitem__
+    gpu_name = dev_props.get('name', b'Unknown').decode()  # .get + .decode
+    assert isinstance(total_mem, int) and total_mem > 0
+    assert isinstance(gpu_name, str)

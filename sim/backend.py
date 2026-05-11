@@ -273,6 +273,102 @@ def get_memory_pool_used_mb() -> float | None:
     return None
 
 
+# ── Device-level helpers (GPU queries with CPU fallbacks) ───────────────
+
+
+def set_device(device_id: int = 0) -> None:
+    """Set the active device on backends that have a device concept.
+
+    On CuPy: cupy.cuda.Device(device_id).use()
+    On NumPy: no-op (CPU has no addressable device)
+    """
+    _, name = get_backend()
+    if name == "cupy":
+        import cupy
+        cupy.cuda.Device(device_id).use()
+
+
+def get_device_mem_info() -> tuple[int, int]:
+    """Return (free_bytes, total_bytes) for the active device.
+
+    On CuPy: cupy.cuda.Device().mem_info (GPU free + total VRAM)
+    On NumPy: psutil.virtual_memory() free + total (system RAM)
+              Falls back to (sys.maxsize, sys.maxsize) if psutil
+              unavailable — i.e. "assume unlimited" so VRAM-aware
+              allocation decisions on the call side don't refuse work.
+    """
+    _, name = get_backend()
+    if name == "cupy":
+        import cupy
+        return cupy.cuda.Device().mem_info
+    # NumPy backend: prefer real system RAM info if psutil available
+    try:
+        import psutil
+        vm = psutil.virtual_memory()
+        return (int(vm.available), int(vm.total))
+    except ImportError:
+        import sys
+        return (sys.maxsize, sys.maxsize)
+
+
+def get_device_properties(device_id: int = 0) -> dict:
+    """Return device properties dict.
+
+    On CuPy: cupy.cuda.runtime.getDeviceProperties(device_id)
+             (dict with 'name' (bytes), 'totalGlobalMem', etc.)
+    On NumPy: synthetic dict mirroring the key fields the bridge reads
+              (name as bytes, totalGlobalMem from psutil or sys.maxsize).
+
+    The bridge's usage pattern is:
+        dev_props = cp.cuda.runtime.getDeviceProperties(0)
+        total_mem = dev_props['totalGlobalMem']
+        gpu_name = dev_props.get('name', b'Unknown').decode()
+
+    So the synthetic dict must support both __getitem__ and .get().
+    """
+    _, name = get_backend()
+    if name == "cupy":
+        import cupy
+        return cupy.cuda.runtime.getDeviceProperties(device_id)
+    # NumPy backend: synthetic dict
+    free, total = get_device_mem_info()
+    return {
+        "name": b"CPU (NumPy backend)",
+        "totalGlobalMem": total,
+        "freeGlobalMem": free,
+        "is_gpu": False,
+    }
+
+
+def get_memory_pool():
+    """Return the active backend's default memory pool, or None.
+
+    On CuPy: cupy.get_default_memory_pool()
+    On NumPy: None (no pool)
+
+    Caller should `if pool := get_memory_pool(): pool.foo()` or similar
+    None-check before using.
+    """
+    _, name = get_backend()
+    if name == "cupy":
+        import cupy
+        return cupy.get_default_memory_pool()
+    return None
+
+
+def get_pinned_memory_pool():
+    """Return the active backend's pinned memory pool, or None.
+
+    On CuPy: cupy.get_default_pinned_memory_pool()
+    On NumPy: None
+    """
+    _, name = get_backend()
+    if name == "cupy":
+        import cupy
+        return cupy.get_default_pinned_memory_pool()
+    return None
+
+
 def _reset_cache_for_tests():
     """Test-only helper: clear the cached backend so tests can switch.
 
