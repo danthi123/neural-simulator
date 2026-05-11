@@ -2449,6 +2449,218 @@ class SimulationBridge:
         if indices.size > 0 and int(indices.max()) < nnz:
             self.cp_plasticity_rate_gain[indices] = cp.float32(value)
 
+    # ──────────────────────────────────────────────────────────────────
+    # Engram-tagging API (P2 / roadmap T1.C / catalog D.14)
+    # ──────────────────────────────────────────────────────────────────
+    # Tonegawa et al's ensemble-tagging paradigm in code form. A named
+    # "engram tag" is just the set of neurons that fired above some
+    # threshold during a window of simulation. Once tagged, the same
+    # ensemble can be reactivated (`stimulate_tag`) — closing the loop
+    # between correlational observation and causal driving.
+    #
+    # Usage:
+    #     bridge.start_engram_recording("apple")
+    #     for _ in range(n_steps):
+    #         bridge._run_one_simulation_step()  # auto-accumulates
+    #     stats = bridge.commit_engram_tag("apple", top_k=50)
+    #     # Later, recall by causal stimulation:
+    #     n = bridge.stimulate_tag("apple", drive_pA=200.0)
+    #     ...
+    #     bridge.clear_tag_drive()
+    #
+    # Tags persist across sim steps in self._engram_tags (CuPy/NumPy
+    # int64 arrays of global neuron indices). They're cleared on
+    # bridge re-init unless saved separately. Persistence to lineage
+    # is straightforward — int arrays serialize trivially.
+
+    def _init_engram_tagging(self) -> None:
+        """Initialize engram-tagging structures. Called by
+        _initialize_simulation_data once cp_firing_states exists."""
+        if not hasattr(self, "_engram_tags") or self._engram_tags is None:
+            self._engram_tags: dict = {}
+        if not hasattr(self, "_engram_recordings") or \
+                self._engram_recordings is None:
+            self._engram_recordings: dict = {}
+
+    def start_engram_recording(self, name: str) -> None:
+        """Start accumulating spike counts for engram tag `name`.
+
+        Each subsequent _run_one_simulation_step automatically adds
+        the per-neuron spike state to the recording. Call
+        commit_engram_tag(name, ...) to finalize.
+
+        Catalog: D.14 (Tonegawa engram cells).
+        """
+        self._init_engram_tagging()
+        n = int(self.cp_firing_states.shape[0])
+        self._engram_recordings[name] = {
+            "spike_counts": cp.zeros(n, dtype=cp.float32),
+            "n_steps": 0,
+        }
+
+    def _tick_engram_recordings(self) -> None:
+        """Internal: called once per simulation step to accumulate
+        spike counts for active recordings. No-op when no active
+        recordings — zero overhead when not in use."""
+        if not getattr(self, "_engram_recordings", None):
+            return
+        if self.cp_firing_states is None:
+            return
+        fired_f32 = self.cp_firing_states.astype(cp.float32)
+        for rec in self._engram_recordings.values():
+            rec["spike_counts"] += fired_f32
+            rec["n_steps"] += 1
+
+    def commit_engram_tag(
+        self,
+        name: str,
+        threshold_hz: float = 5.0,
+        top_k: Optional[int] = None,
+        region_filter: Optional[list] = None,
+    ) -> dict:
+        """Finalize an engram tag from accumulated spike counts.
+
+        Two selection modes:
+        - threshold_hz: tag neurons firing above (threshold_hz *
+          window_seconds) total spikes during the recording.
+        - top_k: tag the top K neurons by spike count regardless of
+          rate (Marr-like sparse engram).
+
+        If both are given, top_k wins.
+
+        Args:
+            name: tag identifier (must match a prior start_engram_recording)
+            threshold_hz: minimum firing rate (default 5 Hz)
+            top_k: alternative: tag top K spike-count neurons
+            region_filter: list of region names; only consider neurons
+                from these regions (e.g. ["ca3"] for hippocampal engrams)
+
+        Returns:
+            {"name": str, "n_tagged": int, "n_recorded_steps": int,
+             "window_ms": float, "mean_spike_count": float}
+        """
+        self._init_engram_tagging()
+        if name not in self._engram_recordings:
+            raise KeyError(
+                f"No active engram recording for {name!r}. "
+                f"Call start_engram_recording({name!r}) first."
+            )
+        rec = self._engram_recordings.pop(name)
+        spike_counts = rec["spike_counts"]
+        n_steps = rec["n_steps"]
+        window_ms = n_steps * float(self.core_config.dt_ms)
+        window_s = window_ms / 1000.0
+
+        # Region filter
+        n_total = int(spike_counts.shape[0])
+        candidate_mask = cp.ones(n_total, dtype=bool)
+        if region_filter and self.region_manager is not None:
+            candidate_mask = cp.zeros(n_total, dtype=bool)
+            for rname in region_filter:
+                try:
+                    rindices = self.region_manager.indices(rname)
+                    rarr = cp.asarray(list(rindices), dtype=cp.int64)
+                    candidate_mask[rarr] = True
+                except Exception:
+                    pass
+
+        masked_counts = cp.where(candidate_mask, spike_counts,
+                                    cp.float32(-1.0))
+
+        if top_k is not None and int(top_k) > 0:
+            # Top-K selection
+            k = int(top_k)
+            # Use argsort descending; mask out non-candidates first
+            order = cp.argsort(-masked_counts)
+            top_indices = order[:k]
+            # Filter out any -1 sentinel (non-candidate)
+            valid_mask = masked_counts[top_indices] > 0
+            indices = top_indices[valid_mask]
+        else:
+            # Threshold-based: spikes >= threshold_hz * window_s
+            min_spikes = max(1.0, float(threshold_hz) * max(window_s, 1e-3))
+            indices = cp.where(spike_counts >= cp.float32(min_spikes))[0]
+            # Apply region filter
+            if region_filter and self.region_manager is not None:
+                indices_mask = candidate_mask[indices]
+                indices = indices[indices_mask]
+
+        # Store as int64 indices (host-compatible)
+        self._engram_tags[name] = indices.astype(cp.int64)
+        mean_count = float(spike_counts.mean()) if n_total > 0 else 0.0
+        return {
+            "name": name,
+            "n_tagged": int(indices.shape[0]),
+            "n_recorded_steps": int(n_steps),
+            "window_ms": window_ms,
+            "mean_spike_count": mean_count,
+        }
+
+    def stimulate_tag(self, name: str, drive_pA: float,
+                        additive: bool = False) -> int:
+        """Drive all neurons in engram tag `name` to drive_pA.
+
+        Args:
+            name: tag identifier (must exist via commit_engram_tag)
+            drive_pA: input current (pA)
+            additive: if True, ADD to existing
+                cp_external_input_current; if False (default),
+                overwrite at tagged indices.
+
+        Returns: number of neurons stimulated.
+
+        Catalog: D.14 — the "stimulate the tag" half of the
+        Tonegawa paradigm. Drive the same ensemble that fired
+        during encoding and the network treats it as recall.
+        """
+        self._init_engram_tagging()
+        if name not in self._engram_tags:
+            raise KeyError(f"No engram tag {name!r}. Did you commit it?")
+        indices = self._engram_tags[name]
+        if indices.shape[0] == 0:
+            return 0
+        if additive:
+            self.cp_external_input_current[indices] = \
+                self.cp_external_input_current[indices] + cp.float32(drive_pA)
+        else:
+            self.cp_external_input_current[indices] = cp.float32(drive_pA)
+        return int(indices.shape[0])
+
+    def clear_tag_drive(self, name: Optional[str] = None) -> None:
+        """Zero the external drive. If name given, only at that tag's
+        indices; else clear everything (matches existing pattern in
+        other drive helpers)."""
+        self._init_engram_tagging()
+        if name is None:
+            self.cp_external_input_current[:] = 0.0
+            return
+        if name not in self._engram_tags:
+            return
+        indices = self._engram_tags[name]
+        if indices.shape[0] > 0:
+            self.cp_external_input_current[indices] = 0.0
+
+    def list_engram_tags(self) -> list:
+        """List committed engram tags with sizes (for inspection)."""
+        self._init_engram_tagging()
+        return [
+            {"name": k, "n_neurons": int(v.shape[0])}
+            for k, v in self._engram_tags.items()
+        ]
+
+    def get_engram_tag_indices(self, name: str):
+        """Return the int64 array of tagged neuron indices (CuPy or
+        NumPy depending on backend). Useful for analysis."""
+        self._init_engram_tagging()
+        if name not in self._engram_tags:
+            raise KeyError(name)
+        return self._engram_tags[name]
+
+    def delete_engram_tag(self, name: str) -> bool:
+        """Delete an engram tag. Returns True if it existed."""
+        self._init_engram_tagging()
+        return self._engram_tags.pop(name, None) is not None
+
     def extract_per_pathway_csrs(self) -> dict:
         """Split the monolithic cp_connections into per-pathway sub-matrices.
 
@@ -4978,6 +5190,10 @@ class SimulationBridge:
                 self.cp_refractory_timers[self.cp_refractory_timers > 0] -= 1
 
             self.cp_firing_states[:] = fired_this_step
+
+            # Engram tagging (catalog D.14): auto-accumulate spike counts
+            # for any active recordings. Zero overhead when no recordings.
+            self._tick_engram_recordings()
 
             # Combine spike count + any() into a single GPU reduction.
             # cp.sum(bool_array) gives spike count; > 0 gives _fired_any — one kernel, one sync.
