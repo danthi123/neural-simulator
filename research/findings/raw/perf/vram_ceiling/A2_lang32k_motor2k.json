@@ -1,0 +1,15 @@
+{
+  "n_steps": 500,
+  "vocab_size": 8,
+  "n_lang_input": 32768,
+  "n_motor_per_action": 2000,
+  "n_motor_fs_per_action": 200,
+  "fp16_synapse_state": false,
+  "freeze_plasticity_during_reset": false,
+  "seed": 42,
+  "t_init_sec": 2669.5912861824036,
+  "t_bench_sec": 285.87856006622314,
+  "steps_per_sec": 1.7489943977756712,
+  "ms_per_step": 571.7571201324463,
+  "vram_peak_mb": 12172.7265625
+}
