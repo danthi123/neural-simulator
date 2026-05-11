@@ -78,28 +78,65 @@ rewrite) or design a 5th variant (e.g. cortex_X anchored learning).
 
 ### Step 2 (~2-3 weeks): Multi-seed validate synonym12 / synonym16
 
-With Step 1's fix in place, run Tier 2.1's validated config but with
-the 12-word and 16-word vocabs. 6-seed validation per
-`research/runners/chat_speak_synonym_demo.py` style.
+**Step 2a — 12-word vocab: ✅ ALREADY VALIDATED (2026-05-09).**
+3/3 GO unanimous at scaled arch (n_motor=2000): primary retention
+95.5%, synonym retention 115.0%. Counts toward this step; no new
+work needed.
+Source: `research/findings/2026-05-09-Phase1.3-Tier2.1-12word-scaled-3seed-CONFIRMED.md`
 
-Validation: ≥ 4/6 seeds at ≥ 60% W→A accuracy on each vocab tier.
+**Step 2b — 16-word vocab: NOT validated yet.** This is the real
+Step 2 work. 16-word vocab adds arrow glyphs (↑→↓←) on top of the
+12-word synonym set. Per the empirical capacity scaling rule,
+n_motor likely needs ~2500+ for retention to hold.
 
-If passes: 12-16 word vocab unlocked. Update capability_status.json.
+Validation: ≥ 4/6 seeds at ≥ 60% W→A on synonym16 mode after
+training, ≥ 80% retention after consolidation.
+
+If Step 1's fix enables in-vivo binding, Step 2b can also test
+adding NEW words on top of the trained 16-word vocab (capacity
+test with novel keys).
+
+If passes: 16-word vocab unlocked. Update capability_status.json.
 
 ### Step 3 (~2-4 weeks): Compositional syntax — Tier 2.3 PFC verb pool
 
 Re-activate the existing Tier 2.3 infrastructure (`phrase_trainer.py`,
-`phrase_eval.py`). With Step 1's binding fix, the two-word phrase task
-("verb_subject" combinations) should have a real shot.
+`phrase_eval.py`), but with an **action_gate redesign** addressing the
+2026-05-07 finding ("Tier 2.3 6seed PARTIAL"):
+
+> **Phrase accuracy < direction-only accuracy across ALL 6 seeds.**
+> Phrase composition consistently HURTS, not helps. Hypothesis:
+> `action_gate` boosts ALL motor pools indiscriminately when PFC is
+> active, making non-target pools fire too easily. Indiscriminate
+> excitatory boost ≠ verb-context-gated selection.
+
+Two redesigns to try (sketched per `text_minimal_isolation.py:622`):
+
+**v2a — Per-direction PFC subpools (recommended).** Split `dlpfc_verb`
+into 4 subpools, one per direction. Each subpool fires only for
+verbs that map to its motor pool. Train each subpool to gate ONLY its
+own motor pool. 4 neuromodulators (`action_gate_N/E/S/W`) instead of
+1. Biologically plausible: real PFC has direction-tuned subpopulations.
+
+**v2b — Inhibitory action_gate.** action_gate inhibits non-target motor
+pools rather than exciting the target. Mechanism: when dlpfc_verb is
+active, all motor pools EXCEPT the target get an inhibitory drive.
+The motor_TARGET pool fires by default; verb context just suppresses
+competitors. Biologically plausible: basal ganglia disinhibition
+model (Mink 1996).
+
+With Step 1's binding fix + v2a or v2b, the two-word phrase task
+should have a real shot.
 
 Validation: ≥ 4/6 seeds where two-word phrases produce coherent
-motor sequences (not just one motor pool).
+motor sequences (not just one motor pool) AND phrase ≥ direction-
+only accuracy (not the inversion we saw in 2026-05-07).
 
 If passes: compositional syntax unlocked. This is a real research
 contribution.
 
-If fails: clear signal that the current arch can't compose. Escalate
-to Step 4.
+If fails: clear signal that the current arch can't compose even with
+verb-direction gating fixed. Escalate to Step 4 (dendritic learning).
 
 ### Step 4 (months, real research bet): Dendritic learning rewrite
 
