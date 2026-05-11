@@ -1112,3 +1112,19 @@ def test_llm_chat_frontend_panel_present(client):
     # Reset button + transcript reload wired up
     assert "Reset chat" in body
     assert "loadChatTranscript" in body
+
+
+def test_llm_chat_frontend_ux_helpers_present(client):
+    """Chat panel includes tier hint + example prompt chips."""
+    res = client.get("/static/app.js")
+    assert res.status_code == 200
+    body = res.text
+    # Tier hint refresh function
+    assert "refreshTierHint" in body
+    # Production scale hint references the 2026-05-06 breakthrough
+    assert "5/6 W" in body or "5/6 W→A" in body
+    # Example prompt chips present
+    assert "Click to fill input" in body
+    # Specific example prompts shipped
+    assert "Remember that my favorite is north" in body
+    assert "What word goes with east" in body
