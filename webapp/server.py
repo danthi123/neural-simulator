@@ -2033,6 +2033,184 @@ def get_bridge_memory(name: str) -> JSONResponse:
     })
 
 
+# ─── Path 3 Phase 3.2: LLM-driven chat (2026-05-11) ──────────────────
+# Drives a tool-use loop between a MockLLM and a real BridgeMemory.
+# Subsequent turns reuse the in-process orchestrator (and its bridge)
+# to avoid the ~1.5s rebuild cost per turn. Each lineage caches its own
+# orchestrator. To swap in a real LLM later, set llm_callable to the
+# (Phi-3 / Llama / Qwen) callable; orchestrator interface unchanged.
+
+_LLM_ORCHESTRATORS: dict[tuple[str, str], object] = {}
+
+
+class LLMChatRequest(BaseModel):
+    """One LLM-driven chat turn against a BridgeMemory."""
+    lineage: str = "main"
+    mode: str = "tier1"  # tier1 / synonym / synonym12 / synonym16
+    message: str
+    # If True and an orchestrator is cached for this (lineage, mode),
+    # reset it before processing the message (useful for "start fresh").
+    reset_conversation: bool = False
+
+
+@app.post("/api/llm-chat")
+def llm_chat(req: LLMChatRequest) -> JSONResponse:
+    """One LLM-driven turn against a BridgeMemory.
+
+    First call per (lineage, mode) loads the lineage and trains/loads a
+    bridge — can take 30-60s. Subsequent turns are fast (~1-2s for
+    store, ~30ms for recall/speak).
+
+    Returns:
+        {
+          "lineage_name": str,
+          "mode": str,
+          "response": str,                # the assistant's final message
+          "tool_calls": [
+            {"name": "memory_store", "args": {...}, "result_summary": "..."},
+            ...
+          ],
+          "conversation_length": int,     # total messages in transcript
+          "n_turns": int,                 # how many user turns so far
+        }
+
+    404 if lineage doesn't exist (use POST /api/lineages first or the
+    chat_repl CLI to create one).
+    """
+    from sim.lineage import BridgeLineage, LINEAGE_ROOT
+    root = REPO_ROOT / LINEAGE_ROOT
+    lineage = BridgeLineage(req.lineage, root=root)
+    if not lineage.exists():
+        raise HTTPException(
+            404,
+            f"lineage '{req.lineage}' not found. Run "
+            f"`python -m research.runners.chat_repl --mode {req.mode} "
+            f"--lineage {req.lineage}` first to create it, or use the "
+            f"llm_memory_demo runner.",
+        )
+
+    cache_key = (req.lineage, req.mode)
+    if req.reset_conversation and cache_key in _LLM_ORCHESTRATORS:
+        del _LLM_ORCHESTRATORS[cache_key]
+
+    orch = _LLM_ORCHESTRATORS.get(cache_key)
+    if orch is None:
+        from sim.bridge_memory import BridgeMemory
+        from sim.llm_memory_orchestrator import (
+            LLMMemoryOrchestrator, MockLLM,
+        )
+        mem = BridgeMemory(
+            lineage_name=req.lineage,
+            mode=req.mode,
+            auto_save=True,
+            verbose=False,
+        )
+        # Force lineage load — _ensure_loaded triggers bridge load/train
+        mem._lineage = lineage
+        mem._ensure_loaded()
+        orch = LLMMemoryOrchestrator(
+            memory=mem,
+            llm_callable=MockLLM(),
+            max_tool_iterations=5,
+        )
+        _LLM_ORCHESTRATORS[cache_key] = orch
+
+    # Track tool calls for this turn by recording the conversation
+    # length pre/post.
+    pre_len = len(orch.conversation)
+    response = orch.chat(req.message)
+    turn_slice = orch.conversation[pre_len:]
+
+    tool_call_summaries = []
+    for t in turn_slice:
+        if t.get("role") == "tool":
+            content = t.get("content")
+            # Build a short result summary (avoid serializing huge dicts)
+            if isinstance(content, dict):
+                if "error" in content:
+                    summary = f"error: {content['error']}"
+                elif "target_action" in content:
+                    summary = (f"bound -> motor_{content['target_action']} "
+                               f"(conf={content.get('confidence', 0):.2f})")
+                elif "key" in content:
+                    summary = f"forget('{content['key']}')"
+                else:
+                    summary = str(content)[:100]
+            elif isinstance(content, list) and content:
+                # recall/speak return list of {value/word, ...}
+                top = content[0]
+                if "value" in top:
+                    summary = (f"top: {top.get('value', '?')} "
+                                f"(conf={top.get('confidence', 0):.2f})")
+                elif "word" in top:
+                    summary = (f"top: '{top.get('word', '?')}' "
+                                f"(sim={top.get('similarity', 0):.2f})")
+                else:
+                    summary = str(top)[:100]
+            else:
+                summary = str(content)[:100]
+            tool_call_summaries.append({
+                "name": t.get("name", "?"),
+                "result_summary": summary,
+            })
+
+    n_turns = sum(1 for m in orch.conversation if m.get("role") == "user")
+    return JSONResponse({
+        "lineage_name": req.lineage,
+        "mode": req.mode,
+        "response": response,
+        "tool_calls": tool_call_summaries,
+        "conversation_length": len(orch.conversation),
+        "n_turns": n_turns,
+    })
+
+
+@app.get("/api/llm-chat/{name}/transcript")
+def llm_chat_transcript(name: str, mode: str = "tier1") -> JSONResponse:
+    """Return the cached conversation transcript for a lineage+mode.
+
+    Useful for refreshing the frontend chat panel after a reload. 404
+    if no orchestrator has been instantiated for (name, mode) yet.
+    """
+    cache_key = (name, mode)
+    orch = _LLM_ORCHESTRATORS.get(cache_key)
+    if orch is None:
+        raise HTTPException(
+            404,
+            f"no LLM chat session active for ({name}, {mode}). "
+            f"POST /api/llm-chat to start one.",
+        )
+    # Filter conversation to user/assistant only for the UI (tool
+    # turns are internal). Each entry: {"role", "content"}.
+    visible = []
+    for m in orch.conversation:
+        if m.get("role") in ("user", "assistant"):
+            visible.append({
+                "role": m["role"],
+                "content": m.get("content", ""),
+            })
+    return JSONResponse({
+        "lineage_name": name,
+        "mode": mode,
+        "messages": visible,
+        "n_turns": sum(1 for m in visible if m["role"] == "user"),
+        "total_messages": len(orch.conversation),
+    })
+
+
+@app.post("/api/llm-chat/{name}/reset")
+def llm_chat_reset(name: str, mode: str = "tier1") -> JSONResponse:
+    """Clear the cached orchestrator for (name, mode).
+
+    Frees the bridge + conversation. Next POST /api/llm-chat will
+    reload from lineage.
+    """
+    cache_key = (name, mode)
+    existed = cache_key in _LLM_ORCHESTRATORS
+    _LLM_ORCHESTRATORS.pop(cache_key, None)
+    return JSONResponse({"reset": existed, "lineage_name": name, "mode": mode})
+
+
 # ─── In-flight detached-run monitor (2026-05-01) ────────────────────────
 # Detached runs (launched via PowerShell Start-Process to survive Claude
 # restart) write a *.pid + *.log file under research/findings/raw/g11_bg/.

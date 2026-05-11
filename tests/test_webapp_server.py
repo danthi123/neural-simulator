@@ -1047,3 +1047,54 @@ def test_capability_status_handles_missing_file(client, monkeypatch, tmp_path):
     finally:
         if backup is not None:
             real_path.write_bytes(backup)
+
+
+# ─── Phase 3.2 LLM chat endpoint (2026-05-11) ───────────────────────
+
+
+def test_llm_chat_404_unknown_lineage(client):
+    """POST /api/llm-chat against unknown lineage returns 404."""
+    res = client.post(
+        "/api/llm-chat",
+        json={
+            "lineage": "totally-nonexistent-lineage",
+            "mode": "tier1",
+            "message": "hello",
+        },
+    )
+    assert res.status_code == 404
+
+
+def test_llm_chat_transcript_404_no_session(client):
+    """GET /api/llm-chat/{name}/transcript returns 404 when no
+    orchestrator has been instantiated yet."""
+    # Use a lineage name unlikely to have an active orchestrator
+    res = client.get(
+        "/api/llm-chat/no-such-active-session-name/transcript",
+        params={"mode": "tier1"},
+    )
+    assert res.status_code == 404
+
+
+def test_llm_chat_reset_idempotent(client):
+    """POST /api/llm-chat/{name}/reset returns 200 even when no
+    session was active. Reports {reset: false} in that case."""
+    res = client.post(
+        "/api/llm-chat/no-such-session/reset",
+        params={"mode": "tier1"},
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert data["reset"] is False
+    assert data["lineage_name"] == "no-such-session"
+    assert data["mode"] == "tier1"
+
+
+def test_llm_chat_request_validates_body(client):
+    """Missing required `message` field returns 422 (FastAPI default)."""
+    res = client.post(
+        "/api/llm-chat",
+        json={"lineage": "main", "mode": "tier1"},
+    )
+    # FastAPI returns 422 for validation errors
+    assert res.status_code == 422

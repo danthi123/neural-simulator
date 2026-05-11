@@ -262,3 +262,23 @@ def test_orchestrator_dispatch_unknown_tool_returns_error():
     tool_turn = next(t for t in orch.conversation if t["role"] == "tool")
     assert "error" in tool_turn["content"]
     assert response == "Done."
+
+
+def test_mock_llm_propagates_tool_error_to_user():
+    """When the dispatched tool errors, MockLLM surfaces the error
+    instead of a misleading 'Got it' message."""
+    llm = MockLLM()
+    # Simulate the conversation: user message + a tool result that
+    # carries an "error" key (as bridge_memory.store would when its
+    # underlying ops fail).
+    conv = [
+        {"role": "user", "content": "Remember that my name is north."},
+        {"role": "tool", "name": "memory_store",
+         "content": {"error": "vocab full"}},
+    ]
+    response = llm(conv)
+    msg = response.message.lower()
+    # Must mention the error or apologize — not say "got it"
+    assert "error" in msg or "sorry" in msg
+    assert "got it" not in msg
+    assert "vocab full" in response.message

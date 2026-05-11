@@ -181,6 +181,12 @@ class MockLLM:
         if last_turn.get("role") == "tool":
             tool_name = last_turn.get("name", "")
             result = last_turn.get("content", {})
+            # Propagate dispatch errors back to the user verbatim.
+            if isinstance(result, dict) and "error" in result:
+                return LLMResponse(
+                    message=("Sorry, I hit an error trying that. "
+                             f"({tool_name}: {result['error']})")
+                )
             if tool_name == "memory_recall":
                 # result is a list of {action, value, confidence, rank, raw_delta}
                 if result and len(result) > 0 and result[0].get("raw_delta", 0) > 0:
