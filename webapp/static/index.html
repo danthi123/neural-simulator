@@ -51,6 +51,7 @@
       <button data-tab="findings">Findings</button>
       <button data-tab="plans">Plans</button>
       <button data-tab="bridges">Bridges</button>
+      <button data-tab="lineages">Lineages</button>
       <button data-tab="info">About</button>
     </nav>
     <!-- Theme toggle. Click cycles dark <-> light; persisted in localStorage. -->
@@ -691,6 +692,29 @@
       </div>
       <div id="bridges-list">
         <p class="muted">Loading…</p>
+      </div>
+    </section>
+
+    <!-- 2026-05-11: Lineages tab — persistent training lineages.
+         Lists bridges/lineage/<name>/ entries via /api/lineages, with
+         growth events + accuracy history + snapshot inventory. The
+         persistent continual-learning workflow surface. -->
+    <section id="tab-lineages" class="tab">
+      <div class="toolbar">
+        <button id="refresh-lineages">Refresh</button>
+        <span class="muted" id="lineages-count"></span>
+        <span class="muted" style="margin-left:1em;">
+          Lineages persist sim state between sessions. Default REPL flag:
+          <code>chat_repl --lineage main</code>
+          (continuous mode; <code>--from-scratch</code> opts out).
+        </span>
+      </div>
+      <div id="lineages-list">
+        <p class="muted">Loading…</p>
+      </div>
+      <div id="lineage-detail" style="margin-top:1.5em; display:none;">
+        <h3 id="lineage-detail-title"></h3>
+        <div id="lineage-detail-body"></div>
       </div>
     </section>
 

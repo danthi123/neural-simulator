@@ -339,6 +339,7 @@ const TAB_REGISTRY = [
   { id: "findings",    label: "Findings",    order: 80, onActivate: () => { if (!window._findingsLoaded) loadFindings(); } },
   { id: "plans",       label: "Plans",       order: 85, onActivate: () => { if (!window._plansLoaded) loadPlans(); } },
   { id: "bridges",     label: "Bridges",     order: 87, onActivate: () => loadBridges() },
+  { id: "lineages",    label: "Lineages",    order: 88, onActivate: () => loadLineages() },
   { id: "info",        label: "About",       order: 90, onActivate: () => { if (!window._infoLoaded) loadInfo(); } },
 ];
 
@@ -1974,6 +1975,190 @@ function renderBridgesList(data) {
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("refresh-bridges");
   if (btn) btn.addEventListener("click", loadBridges);
+});
+
+
+// ─── Lineages tab (Bridge Lineage Manager, 2026-05-11) ─────────────────
+// Persistent training state under bridges/lineage/<name>/ surfaced via
+// /api/lineages + /api/lineages/{name}. Sister to the Bridges tab but
+// for the continuous-learning workflow (sim "lives" between sessions).
+async function loadLineages() {
+  const list = document.getElementById("lineages-list");
+  if (!list) return;
+  list.replaceChildren(el("p", { class: "muted" }, "Loading…"));
+  try {
+    const res = await fetch("/api/lineages");
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    renderLineagesList(data);
+  } catch (e) {
+    list.replaceChildren(el("p", { class: "error" }, e.message));
+  }
+}
+
+function renderLineagesList(data) {
+  const list = document.getElementById("lineages-list");
+  const count = document.getElementById("lineages-count");
+  list.replaceChildren();
+  count.textContent = `${data.n_lineages} lineages in ${data.directory || "(no directory)"}`;
+  if (!data.lineages.length) {
+    list.appendChild(el("p", { class: "muted" },
+      "No lineages yet. Run `python -m research.runners.chat_repl --mode synonym` to create the 'main' lineage."
+    ));
+    return;
+  }
+  // Build a card per lineage
+  for (const L of data.lineages) {
+    const card = el("div", {
+      class: "list-item",
+      style: "padding: 0.75em; border: 1px solid var(--border-light); margin-bottom: 0.5em; border-radius: 4px; cursor: pointer;",
+    });
+    card.appendChild(el("div", { class: "name", style: "font-weight: bold; font-size: 1.1em;" },
+      L.name + (L.parent_lineage ? ` (fork of ${L.parent_lineage})` : "")
+    ));
+    if (L.error) {
+      card.appendChild(el("div", { class: "error" }, L.error));
+    } else {
+      const meta_lines = [];
+      if (L.tier) meta_lines.push(`tier=${L.tier}`);
+      if (L.vocab_size != null) meta_lines.push(`${L.vocab_size}-word`);
+      if (L.cumulative_events != null) meta_lines.push(`${L.cumulative_events.toLocaleString()} events`);
+      if (L.n_snapshots != null) meta_lines.push(`${L.n_snapshots} snapshots`);
+      if (L.size_mb != null) meta_lines.push(`${L.size_mb} MB`);
+      const arch_str = L.arch && L.arch.mode ? ` · mode=${L.arch.mode}` : "";
+      card.appendChild(el("div", { class: "meta", style: "color: var(--muted); font-size: 0.9em;" },
+        meta_lines.join(" · ") + arch_str
+      ));
+      if (L.last_updated_at) {
+        card.appendChild(el("div", { class: "meta", style: "color: var(--muted); font-size: 0.85em; margin-top: 0.3em;" },
+          `Updated: ${L.last_updated_at}`
+        ));
+      }
+      if (L.tags && L.tags.length) {
+        card.appendChild(el("div", { class: "meta", style: "color: var(--muted); font-size: 0.85em; margin-top: 0.3em;" },
+          `Tags: ${L.tags.join(", ")}`
+        ));
+      }
+      // Click to load detail
+      card.addEventListener("click", () => loadLineageDetail(L.name));
+    }
+    list.appendChild(card);
+  }
+}
+
+async function loadLineageDetail(name) {
+  const detail = document.getElementById("lineage-detail");
+  const title = document.getElementById("lineage-detail-title");
+  const body = document.getElementById("lineage-detail-body");
+  if (!detail) return;
+  detail.style.display = "block";
+  title.textContent = `Lineage: ${name}`;
+  body.replaceChildren(el("p", { class: "muted" }, "Loading…"));
+  try {
+    const res = await fetch(`/api/lineages/${encodeURIComponent(name)}`);
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    renderLineageDetail(data);
+  } catch (e) {
+    body.replaceChildren(el("p", { class: "error" }, e.message));
+  }
+}
+
+function renderLineageDetail(data) {
+  const body = document.getElementById("lineage-detail-body");
+  body.replaceChildren();
+  const m = data.metadata || {};
+  // Top-line summary
+  const summary = el("div", { class: "summary", style: "margin-bottom: 1em;" });
+  const lines = [];
+  if (m.current_tier) lines.push(`Tier: ${m.current_tier}`);
+  if (m.vocab && m.vocab.length) lines.push(`Vocab size: ${m.vocab.length}`);
+  if (m.cumulative_training_events != null) lines.push(`Cumulative events: ${m.cumulative_training_events.toLocaleString()}`);
+  if (data.current_size_mb != null) lines.push(`Current state: ${data.current_size_mb} MB`);
+  if (data.snapshots) lines.push(`History snapshots: ${data.snapshots.length}`);
+  if (m.created_at) lines.push(`Created: ${m.created_at}`);
+  if (m.last_updated_at) lines.push(`Last updated: ${m.last_updated_at}`);
+  if (m.parent_lineage) lines.push(`Parent: ${m.parent_lineage}`);
+  summary.appendChild(el("ul", {}, ...lines.map((l) => el("li", {}, l))));
+  body.appendChild(summary);
+  // Arch
+  if (m.arch && Object.keys(m.arch).length) {
+    body.appendChild(el("h4", {}, "Architecture"));
+    const archList = el("ul", {}, ...Object.entries(m.arch).map(
+      ([k, v]) => el("li", {}, `${k}: ${v}`)
+    ));
+    body.appendChild(archList);
+  }
+  // Vocab preview
+  if (m.vocab && m.vocab.length) {
+    body.appendChild(el("h4", {}, "Vocab"));
+    const vocab_str = m.vocab.length > 16
+      ? m.vocab.slice(0, 16).join(", ") + ` ... (+${m.vocab.length - 16} more)`
+      : m.vocab.join(", ");
+    body.appendChild(el("p", { class: "muted" }, vocab_str));
+  }
+  // Growth events timeline
+  if (m.growth_events && m.growth_events.length) {
+    body.appendChild(el("h4", {}, "Growth events"));
+    const table = el("table", { style: "width:100%; border-collapse: collapse;" });
+    table.appendChild(el("thead", {}, el("tr", {},
+      el("th", { style: "text-align:left; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "At"),
+      el("th", { style: "text-align:left; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Kind"),
+      el("th", { style: "text-align:left; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Description"),
+    )));
+    const tbody = el("tbody", {});
+    // Show most-recent first (limit to 20)
+    for (const e of [...m.growth_events].reverse().slice(0, 20)) {
+      tbody.appendChild(el("tr", {},
+        el("td", { style: "padding: 0.3em; font-family: monospace; font-size: 0.85em;" }, e.at || ""),
+        el("td", { style: "padding: 0.3em;" }, e.kind || ""),
+        el("td", { style: "padding: 0.3em; color: var(--muted);" }, e.description || ""),
+      ));
+    }
+    table.appendChild(tbody);
+    body.appendChild(table);
+  }
+  // Accuracy history
+  if (m.accuracy_history && m.accuracy_history.length) {
+    body.appendChild(el("h4", {}, "Accuracy history"));
+    const table = el("table", { style: "width:100%; border-collapse: collapse;" });
+    table.appendChild(el("thead", {}, el("tr", {},
+      el("th", { style: "text-align:left; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "At"),
+      el("th", { style: "text-align:left; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Metric"),
+      el("th", { style: "text-align:right; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Value"),
+      el("th", { style: "text-align:left; border-bottom:1px solid var(--border-light); padding: 0.3em;" }, "Context"),
+    )));
+    const tbody = el("tbody", {});
+    for (const p of [...m.accuracy_history].reverse().slice(0, 20)) {
+      tbody.appendChild(el("tr", {},
+        el("td", { style: "padding: 0.3em; font-family: monospace; font-size: 0.85em;" }, p.at || ""),
+        el("td", { style: "padding: 0.3em;" }, p.metric || ""),
+        el("td", { style: "padding: 0.3em; text-align: right;" }, (p.value != null ? (p.value * 100).toFixed(1) + "%" : "")),
+        el("td", { style: "padding: 0.3em; color: var(--muted); font-size: 0.85em;" }, p.context || ""),
+      ));
+    }
+    table.appendChild(tbody);
+    body.appendChild(table);
+  }
+  // Snapshots
+  if (data.snapshots && data.snapshots.length) {
+    body.appendChild(el("h4", {}, `History snapshots (${data.snapshots.length})`));
+    const ul = el("ul", { style: "font-family: monospace; font-size: 0.85em;" });
+    for (const s of data.snapshots.slice(-10).reverse()) {
+      ul.appendChild(el("li", {}, `${s.snapshot_id}  (${s.size_mb} MB)`));
+    }
+    body.appendChild(ul);
+    if (data.snapshots.length > 10) {
+      body.appendChild(el("p", { class: "muted" },
+        `Showing 10 most-recent of ${data.snapshots.length} total. Use \`bridge_lineage history ${data.name}\` to list all.`
+      ));
+    }
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("refresh-lineages");
+  if (btn) btn.addEventListener("click", loadLineages);
 });
 
 async function loadFindingDetail(name, listItem) {
