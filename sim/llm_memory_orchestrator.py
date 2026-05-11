@@ -94,6 +94,40 @@ TOOL_SCHEMAS = [
             "required": ["action"],
         },
     },
+    {
+        "name": "memory_forget",
+        "description": ("Weaken (decay) the synapses encoding a stored key. "
+                        "Use when the user says 'forget X' or 'unlearn X'. "
+                        "decay_rate of 0.5 halves the weights; 0.0 fully "
+                        "erases; 1.0 is a no-op."),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "key": {"type": "string",
+                          "description": "The cue word to forget"},
+                "decay_rate": {"type": "number", "default": 0.5,
+                                  "description": "Multiplier on weights "
+                                                  "(0=erase, 0.5=halve, 1=noop)"},
+            },
+            "required": ["key"],
+        },
+    },
+    {
+        "name": "memory_consolidate",
+        "description": ("Run sleep-replay consolidation. Pushes recent "
+                        "hippocampal patterns into cortex via SWR bursts. "
+                        "Use when the user says 'consolidate memory' or "
+                        "'sleep on it'. Only effective on a hippocampus-"
+                        "enabled bridge (e.g. main_hippo lineage)."),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "n_sleep_cycles": {"type": "integer", "default": 3,
+                                       "description": "Number of sleep cycles"},
+            },
+            "required": [],
+        },
+    },
 ]
 
 
@@ -213,6 +247,37 @@ class MockLLM:
                 return LLMResponse(
                     message="No clear word found for that direction."
                 )
+            if tool_name == "memory_forget":
+                # result is a dict with n_synapses_decayed + retention
+                n = result.get("n_synapses_decayed", 0)
+                ret = result.get("estimated_retention", 1.0)
+                if n == 0:
+                    return LLMResponse(
+                        message=(f"I don't have anything bound to "
+                                  f"'{result.get('key', 'that')}' to forget.")
+                    )
+                return LLMResponse(
+                    message=(f"OK, I've weakened the binding for "
+                              f"'{result.get('key', '?')}' "
+                              f"({n} synapses decayed, "
+                              f"retention {ret:.0%}).")
+                )
+            if tool_name == "memory_consolidate":
+                if not result.get("hippocampus_enabled", False):
+                    return LLMResponse(
+                        message=("I can't run consolidation on this bridge "
+                                  "— it doesn't have a hippocampus. Bootstrap "
+                                  "a hippo lineage first via "
+                                  "research.runners.bootstrap_hippo_lineage.")
+                    )
+                n_cycles = result.get("n_sleep_cycles_run", 0)
+                n_swr = result.get("n_swr_events_run", 0)
+                elapsed = result.get("elapsed_seconds", 0)
+                return LLMResponse(
+                    message=(f"Slept on it. Ran {n_cycles} consolidation "
+                              f"cycles ({n_swr} SWR replays total, "
+                              f"{elapsed:.1f}s).")
+                )
 
         # Otherwise, pattern-match on the user message
         # Pattern: "remember that <key> is <direction>"
@@ -254,6 +319,37 @@ class MockLLM:
                                   arguments={"action": action_map[direction]})
                     ]
                 )
+
+        # Pattern: "forget my <key>" or "unlearn <key>"
+        m = re.search(
+            r"(?:forget|unlearn)\s+(?:my\s+|the\s+)?(.+?)[\?\.\!]*$",
+            last_user,
+        )
+        if m:
+            key = m.group(1).strip()
+            # Default decay 0.5; "fully forget" / "erase" → 0.0
+            decay = 0.0 if ("fully" in last_user or "erase" in last_user) else 0.5
+            return LLMResponse(
+                tool_calls=[
+                    ToolCall(name="memory_forget",
+                              arguments={"key": key, "decay_rate": decay})
+                ]
+            )
+
+        # Pattern: "consolidate" / "sleep on it" / "sleep"
+        if any(w in last_user for w in
+                ("consolidate", "sleep on it", "sleep on this")):
+            # Extract n_cycles if mentioned ("sleep for 5 cycles")
+            n_cycles = 3
+            mc = re.search(r"(\d+)\s+(?:cycle|sleep)", last_user)
+            if mc:
+                n_cycles = int(mc.group(1))
+            return LLMResponse(
+                tool_calls=[
+                    ToolCall(name="memory_consolidate",
+                              arguments={"n_sleep_cycles": n_cycles})
+                ]
+            )
 
         # Fallback
         return LLMResponse(
@@ -340,6 +436,15 @@ class LLMMemoryOrchestrator:
             elif tc.name == "memory_speak":
                 return self.memory.speak(
                     action=args["action"], top_k=args.get("top_k", 4)
+                )
+            elif tc.name == "memory_forget":
+                return self.memory.forget(
+                    key=args["key"],
+                    decay_rate=args.get("decay_rate", 0.5),
+                )
+            elif tc.name == "memory_consolidate":
+                return self.memory.consolidate(
+                    n_sleep_cycles=args.get("n_sleep_cycles", 3),
                 )
             else:
                 return {"error": f"unknown tool: {tc.name}"}

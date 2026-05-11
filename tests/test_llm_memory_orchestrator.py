@@ -87,9 +87,12 @@ class _MockMemory:
 
 def test_tool_schemas_well_formed():
     """TOOL_SCHEMAS is a list of valid OpenAI-style tool definitions."""
-    assert len(TOOL_SCHEMAS) == 3
+    assert len(TOOL_SCHEMAS) == 5  # store, recall, speak, forget, consolidate
     names = {s["name"] for s in TOOL_SCHEMAS}
-    assert names == {"memory_store", "memory_recall", "memory_speak"}
+    assert names == {
+        "memory_store", "memory_recall", "memory_speak",
+        "memory_forget", "memory_consolidate",
+    }
     for s in TOOL_SCHEMAS:
         assert "description" in s
         assert "parameters" in s
@@ -155,6 +158,51 @@ def test_mock_llm_handles_synonym_direction():
     ])
     assert response.tool_calls
     assert response.tool_calls[0].arguments["value"] == "north"
+
+
+def test_mock_llm_recognizes_forget_pattern():
+    """'forget my X' -> memory_forget call with decay_rate=0.5."""
+    llm = MockLLM()
+    response = llm([
+        {"role": "user", "content": "Forget my favorite."}
+    ])
+    assert response.tool_calls
+    tc = response.tool_calls[0]
+    assert tc.name == "memory_forget"
+    assert "favorite" in tc.arguments["key"]
+    assert tc.arguments["decay_rate"] == 0.5
+
+
+def test_mock_llm_recognizes_full_erase_pattern():
+    """'fully forget' or 'erase' -> decay_rate=0.0."""
+    llm = MockLLM()
+    response = llm([
+        {"role": "user", "content": "Fully forget my favorite."}
+    ])
+    assert response.tool_calls
+    assert response.tool_calls[0].name == "memory_forget"
+    assert response.tool_calls[0].arguments["decay_rate"] == 0.0
+
+
+def test_mock_llm_recognizes_consolidate_pattern():
+    """'consolidate memory' / 'sleep on it' -> memory_consolidate."""
+    llm = MockLLM()
+    for msg in ("Please consolidate the memory.",
+                  "Sleep on it.",
+                  "Time to sleep on this."):
+        response = llm([{"role": "user", "content": msg}])
+        assert response.tool_calls, f"no tool call for: {msg!r}"
+        assert response.tool_calls[0].name == "memory_consolidate"
+
+
+def test_mock_llm_extracts_n_cycles_from_consolidate():
+    """'sleep for 5 cycles' -> n_sleep_cycles=5."""
+    llm = MockLLM()
+    response = llm([
+        {"role": "user", "content": "Consolidate for 5 cycles."}
+    ])
+    assert response.tool_calls
+    assert response.tool_calls[0].arguments["n_sleep_cycles"] == 5
 
 
 # ──────────────────────────────────────────────────────────────────────
