@@ -2271,6 +2271,28 @@ function renderLLMChatPanel(body, lineageName) {
   resetBtn.style.marginLeft = "0.5em";
   controls.appendChild(resetBtn);
   body.appendChild(controls);
+  // Tier hint — refreshes when mode changes
+  const tierHint = el("p", {
+    class: "muted",
+    style: "font-size: 0.8em; margin: 0 0 0.5em 0;",
+  });
+  body.appendChild(tierHint);
+  function refreshTierHint() {
+    const m = modeSelect.value;
+    const hints = {
+      tier1: "Tier 1 toy scale (~208 neurons). Mechanically correct but " +
+              "binding quality is noisy. For real W→A accuracy use 'synonym'.",
+      synonym: "Tier 2.1 production scale (~12K neurons, 8-word synonym " +
+                "vocab). Validated 5/6 W→A aligned, 6/6 A→W aligned " +
+                "(2026-05-06 breakthrough).",
+      synonym12: "Tier 2.1 + 'n/e/s/w' letters added (12 words). Slightly " +
+                  "more capacity, similar accuracy profile.",
+      synonym16: "Tier 2.1 + arrow glyphs (16 words). Maximum capacity " +
+                  "currently validated.",
+    };
+    tierHint.textContent = hints[m] || "";
+  }
+  refreshTierHint();
   // Message log
   const logEl = el("div", {
     id: "llm-chat-log-" + lineageName,
@@ -2353,6 +2375,7 @@ function renderLLMChatPanel(body, lineageName) {
   });
   modeSelect.addEventListener("change", () => {
     loadChatTranscript(lineageName, modeSelect.value, logEl);
+    refreshTierHint();
   });
 }
 
