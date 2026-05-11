@@ -88,7 +88,7 @@ viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
 research/runners/       # 75 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/bootstrap_hippo_lineage/validate_ventral_semantic/etc) for research
-research/findings/      # session-by-session findings docs (240+ files)
+research/findings/      # session-by-session findings docs (257+ files)
 tests/                  # 79 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, llm adapters, etc.)
 ```
 
@@ -941,7 +941,33 @@ wired + tested; frontend tab is the only remaining piece.
 **Tests:** 78 across the subsystem (21 BridgeLineage, 13 CLI, 28
 chat_repl, 14 chat_demo_aggregate, 2 webapp). All PASS, all CPU-only.
 
-### Recommended configuration (current best 2026-05-01)
+### Recommended configuration (current best 2026-05-11)
+
+**🎉 THREE multi-seed PASS validations confirmed on current code today (2026-05-11):**
+
+1. **Tier 1 motor binding (4-word direction)**: 6/6 multi-seed PASS. Mean
+   W→A 85.8%, A→W 98.2%. Recipe:
+   `python -m research.runners.bio_three_factor --biological --embodied-hebbian
+   --apply-topographic-bias --enable-motor-fs --n-events-per-direction 200 --seed N`.
+   See `research/findings/2026-05-11-Tier1-multiseed-6of6-PASS.md`.
+
+2. **Tier 2.1 synonym binding (8-word)**: 6/6 multi-seed PASS. Mean
+   W→A 60.0%, A→W 95.3%. Recipe: Tier 1 + `--synonym-mode --n-lang-input 4096
+   --n-motor-per-action 1000 --n-motor-fs-per-action 120 --n-events-per-direction 400`.
+   See `research/findings/2026-05-11-Tier2.1-multiseed-6of6-PASS.md`.
+
+3. **P5 ventral semantic comprehension (Path A iter W)**: 6/6 multi-seed
+   PASS. Mean margin +0.085, ratio 1.46x. Recipe:
+   `python -m research.runners.validate_ventral_semantic --seed N
+   --n-train-events 400 --n-replay-cycles 40 --enable-multi-pool-wernicke
+   --n-wernicke-pools 2 --n-per-wernicke-pool 100 --n-per-wernicke-pool-fs 12`.
+   See `research/findings/2026-05-11-P5-iterW-BREAKTHROUGH-6of6-COMP-PASS.md`.
+
+P5 naming still 3/6 partial (architectural work needed for the recall
+pathway). 25 P5 iterations (A-Y) document the exhaustive parameter sweep
+behind the iter W breakthrough.
+
+---
 
 **Text I/O infrastructure (2026-05-02) — ~~STATISTICALLY SIGNIFICANT W→A~~ SUPERSEDED 2026-05-05.** See the [W→A verdict](research/findings/2026-05-05-W-to-A-VERDICT-global-scalar-feedback-fails.md): the "28.5% W→A" reported below failed the permuted-label control (2026-05-03) and was not aligned with task labels. Three subsequent investigations (3-factor with classical sign-only DA: 1/6, 3-factor with magnitude-graded DA: 0/6, B3 supervised gradient: 3/3 PERFECT) confirmed that global scalar feedback in any form cannot match per-region gradient at biological-scale W→A. Section retained below for historical context.
 
