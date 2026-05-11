@@ -380,6 +380,63 @@ class BridgeMemory:
             "stub_phase": "3.1",
         }
 
+    def speak(self, action: str, top_k: int = 4,
+                temperature: float = 0.0) -> list[dict]:
+        """Generative A→W recall: drive a motor pool, decode what word.
+
+        Phase 3.1.6 (added 2026-05-11): the inverse of recall(). Where
+        recall takes a key and reads the motor activity, speak takes a
+        motor action and reads the language_output cortex to decode
+        which word the sim "thinks" goes with that action.
+
+        Used for:
+        - Verifying bindings: store("alice", "north"); speak("N") -> "alice"
+        - LLM-driven generation: "produce a word for direction N" -> "alice"
+        - Conversation paraphrase: LLM can ask the memory to "speak"
+          its current binding for a motor concept
+
+        Args:
+            action: motor pool to activate ("N", "E", "S", "W")
+            top_k: how many candidate words to return
+            temperature: 0 = strict argmax (deterministic);
+                0.01-0.05 = primary dominant with synonym variation;
+                0.05+ = more variety
+
+        Returns:
+            List of {"word": str, "similarity": float, "rank": int}
+            sorted by descending similarity. Mirrors the output of
+            chat_repl.generative_inference for compatibility with the
+            existing :speak path.
+        """
+        self._ensure_loaded()
+        from research.runners.chat_repl import generative_inference
+
+        action = action.upper()
+        if action not in ("N", "E", "S", "W"):
+            raise ValueError(
+                f"speak: action must be one of N/E/S/W, got '{action}'"
+            )
+        try:
+            result = generative_inference(
+                self.bridge,
+                target_action=action,
+                temperature=temperature,
+            )
+        except Exception:
+            return []
+
+        # generative_inference returns {"rankings": [...], "delta": ..., "top_k": ...}
+        # We normalize to a consistent schema
+        rankings = result.get("rankings", [])
+        out = []
+        for rank, (word, sim) in enumerate(rankings[:top_k], 1):
+            out.append({
+                "word": word,
+                "similarity": float(sim),
+                "rank": rank,
+            })
+        return out
+
     def list_keys(self) -> list[str]:
         """Return all known keys (vocab) the memory can recall.
 

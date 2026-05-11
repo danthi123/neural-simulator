@@ -272,6 +272,50 @@ def test_list_keys_returns_mode_vocab(mock_memory):
 # ──────────────────────────────────────────────────────────────────────
 
 
+def test_speak_returns_rankings(mock_memory, monkeypatch):
+    """speak(action) returns ranked words via generative_inference."""
+    import research.runners.chat_repl as cr
+    monkeypatch.setattr(cr, "generative_inference",
+                          lambda b, target_action, temperature=0.0: {
+                              "rankings": [("north", 0.85), ("up", 0.42),
+                                            ("south", 0.10), ("east", 0.05)],
+                          })
+    result = mock_memory.speak("N", top_k=4)
+    assert len(result) == 4
+    assert result[0]["word"] == "north"
+    assert result[0]["similarity"] == 0.85
+    assert result[0]["rank"] == 1
+    assert result[1]["word"] == "up"
+
+
+def test_speak_rejects_invalid_action(mock_memory):
+    """speak with non-N/E/S/W raises ValueError."""
+    with pytest.raises(ValueError, match="N/E/S/W"):
+        mock_memory.speak("invalid")
+
+
+def test_speak_returns_empty_on_failure(mock_memory, monkeypatch):
+    """speak gracefully returns [] if generative_inference raises."""
+    import research.runners.chat_repl as cr
+    def raises(*args, **kwargs):
+        raise RuntimeError("mock failure")
+    monkeypatch.setattr(cr, "generative_inference", raises)
+    result = mock_memory.speak("N")
+    assert result == []
+
+
+def test_speak_respects_top_k(mock_memory, monkeypatch):
+    """top_k limits the number of returned candidates."""
+    import research.runners.chat_repl as cr
+    monkeypatch.setattr(cr, "generative_inference",
+                          lambda b, target_action, temperature=0.0: {
+                              "rankings": [("a", 0.9), ("b", 0.8), ("c", 0.7),
+                                            ("d", 0.6), ("e", 0.5)],
+                          })
+    result = mock_memory.speak("E", top_k=2)
+    assert len(result) == 2
+
+
 def test_save_records_growth_event(mock_memory):
     """save() records a manual_save growth event."""
     path = mock_memory.save(growth_kind="manual_save", description="test save")
