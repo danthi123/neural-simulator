@@ -79,7 +79,8 @@ sim/                    # 16 modules, ~12.8K lines — core engine
   progress.py           #  147 lines — universal [PROGRESS] event format (2026-05-04)
   lineage.py            #  402 lines — BridgeLineage persistent continuous-learning state (2026-05-11)
   auto_growth.py        #  283 lines — TierPromoter + weight-transfer (auto-growth Phase A, 2026-05-11)
-  backend.py            #  254 lines — pluggable xp abstraction (cupy/numpy backend, 2026-05-11)
+  backend.py            #  360 lines — pluggable xp abstraction + device helpers (cupy/numpy, 2026-05-11)
+  synapse_storage.py    #  290 lines — TieredSynapseStore (SSD synapse paging, tiering Phase 3, 2026-05-11)
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
