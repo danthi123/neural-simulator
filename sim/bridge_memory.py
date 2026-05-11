@@ -437,32 +437,92 @@ class BridgeMemory:
 
     # ── Consolidate ─────────────────────────────────────────────────
 
-    def consolidate(self, n_sleep_cycles: int = 3) -> dict:
+    def consolidate(self, n_sleep_cycles: int = 3,
+                       n_swr_events_per_cycle: int = 200,
+                       swr_drive_pA: float = 100.0) -> dict:
         """Run sleep-replay consolidation (Phase 1.3).
 
-        Phase 3.1 stub: returns mock stats. Real implementation calls
-        the bridge's consolidation pathway (see Phase 1.3 work in
-        bridge.py + the consolidation_synonym_trainer runner).
+        Phase 3.2 real-ops (2026-05-11): drives CA3 with SWR-style
+        bursts during a sleep phase, propagating patterns through
+        ca3 -> ca1 -> motor / lang_output via the consolidation
+        pathways. Implements Buzsaki 2015 ripple model + McClelland
+        1995 CLS theory.
+
+        Requires a hippocampus-enabled bridge (built with
+        enable_hippocampus_consolidation=True). The `main` lineage as
+        of 2026-05-11 is NOT hippocampus-enabled; bootstrap a
+        hippo-enabled lineage via
+        research.runners.consolidation_trainer first.
+
+        Args:
+            n_sleep_cycles: number of sleep cycles to run. Each cycle
+                runs `n_swr_events_per_cycle` SWR bursts.
+            n_swr_events_per_cycle: SWR bursts per cycle (default 200)
+            swr_drive_pA: CA3 drive amplitude during bursts (default 100)
 
         Returns:
             {
-              "pre_silence_acc": dict,
-              "hippo_off_acc": dict,
-              "retention_ratio": float,
               "n_sleep_cycles_run": int,
+              "n_swr_events_run": int,
+              "elapsed_seconds": float,
+              "hippocampus_enabled": bool,
+              "note": str (if degenerate),
             }
         """
         self._ensure_loaded()
-        result = {
-            "pre_silence_acc": {"overall": 0.0},
-            "hippo_off_acc": {"overall": 0.0},
-            "retention_ratio": 1.0,
-            "n_sleep_cycles_run": 0,
-            "stub_note": (
-                "Phase 3.1 scaffold: consolidation deferred to Phase 3.2. "
-                "The lineage growth event IS recorded."
-            ),
-        }
+        t0 = time.time()
+
+        # Detect hippocampus by looking for the "ca3" region.
+        has_hippo = False
+        try:
+            if self.bridge.region_manager is not None:
+                self.bridge.region_manager.indices("ca3")
+                has_hippo = True
+        except Exception:
+            has_hippo = False
+
+        if not has_hippo:
+            result = {
+                "n_sleep_cycles_run": 0,
+                "n_swr_events_run": 0,
+                "elapsed_seconds": 0.0,
+                "hippocampus_enabled": False,
+                "note": (
+                    "Bridge lacks hippocampus (no 'ca3' region). Build a "
+                    "hippo-enabled bridge with "
+                    "enable_hippocampus_consolidation=True via "
+                    "research.runners.consolidation_trainer."
+                ),
+            }
+        else:
+            # Run real consolidation
+            from research.runners.consolidation_trainer import (
+                run_swr_replay_phase,
+            )
+            from research.runners.text_minimal_isolation import (
+                set_awake_gates, set_sleep_gates,
+            )
+            import numpy as _np
+            rng = _np.random.default_rng()
+            n_events_total = 0
+            try:
+                set_sleep_gates(self.bridge)
+                for _ in range(int(n_sleep_cycles)):
+                    run_swr_replay_phase(
+                        self.bridge,
+                        n_swr_events=n_swr_events_per_cycle,
+                        swr_drive_pA=swr_drive_pA,
+                        rng=rng,
+                    )
+                    n_events_total += n_swr_events_per_cycle
+            finally:
+                set_awake_gates(self.bridge)
+            result = {
+                "n_sleep_cycles_run": int(n_sleep_cycles),
+                "n_swr_events_run": n_events_total,
+                "elapsed_seconds": time.time() - t0,
+                "hippocampus_enabled": True,
+            }
         self._last_consolidation = result
         if self.auto_save and self._lineage is not None:
             self._save_to_lineage(

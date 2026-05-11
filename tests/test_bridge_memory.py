@@ -260,18 +260,23 @@ def test_forget_records_growth_event(mock_memory):
 
 
 # ──────────────────────────────────────────────────────────────────────
-# consolidate() — Phase 3.1 stub
+# consolidate() — Phase 3.2 real-ops (degenerate path on non-hippo bridge)
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_consolidate_returns_stub_schema(mock_memory):
-    """consolidate() returns expected stub schema."""
+def test_consolidate_returns_realops_schema_no_hippo(mock_memory):
+    """consolidate() on a non-hippocampus bridge returns a clear
+    'hippocampus_enabled: False' result with explanatory note."""
     result = mock_memory.consolidate(n_sleep_cycles=3)
-    assert "pre_silence_acc" in result
-    assert "hippo_off_acc" in result
-    assert "retention_ratio" in result
     assert "n_sleep_cycles_run" in result
-    assert "stub_note" in result
+    assert "n_swr_events_run" in result
+    assert "elapsed_seconds" in result
+    assert "hippocampus_enabled" in result
+    # MockBridge has no ca3 region
+    assert result["hippocampus_enabled"] is False
+    assert result["n_sleep_cycles_run"] == 0
+    assert "note" in result
+    assert "ca3" in result["note"].lower() or "hippo" in result["note"].lower()
 
 
 def test_consolidate_records_growth_event(mock_memory):
@@ -326,7 +331,10 @@ def test_stats_includes_consolidation_when_run(mock_memory):
     mock_memory.consolidate(n_sleep_cycles=3)
     s_after = mock_memory.stats()
     assert s_after["last_consolidation"] is not None
-    assert "retention_ratio" in s_after["last_consolidation"]
+    # Phase 3.2 schema fields (replacing the Phase 3.1 retention_ratio stub)
+    last = s_after["last_consolidation"]
+    assert "n_sleep_cycles_run" in last
+    assert "hippocampus_enabled" in last
 
 
 # ──────────────────────────────────────────────────────────────────────
