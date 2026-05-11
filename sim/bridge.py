@@ -35,6 +35,8 @@ try:
         get_device_properties as _backend_get_device_properties,
         get_memory_pool as _backend_get_memory_pool,
         get_pinned_memory_pool as _backend_get_pinned_memory_pool,
+        to_host as _backend_to_host,
+        from_host as _backend_from_host,
     )
     cp, _backend_name = get_backend()
     csp = get_sparse_module()
@@ -53,6 +55,8 @@ except ImportError:
     _backend_get_device_properties = lambda dev_id=0: cp.cuda.runtime.getDeviceProperties(dev_id)
     _backend_get_memory_pool = lambda: cp.get_default_memory_pool()
     _backend_get_pinned_memory_pool = lambda: cp.get_default_pinned_memory_pool()
+    _backend_to_host = lambda arr: arr.get() if hasattr(arr, "get") else arr
+    _backend_from_host = lambda arr, dtype=None: cp.asarray(arr, dtype=dtype)
     _backend_name = "cupy"
 
 from sim.enums import (NeuronModel, NeuronType, DefaultHodgkinHuxleyParams,
@@ -761,7 +765,7 @@ class SimulationBridge:
             self.cp_synapse_pulse_timers[:kept_timers.size] = kept_timers
             self.cp_synapse_pulse_progress[:kept_progress.size] = kept_progress
 
-        self._synapse_count = int(cp.sum(keep_mask).get())
+        self._synapse_count = int(cp.sum(keep_mask))  # int() works on cupy 0-d + numpy scalar
 
     def get_profiling_stats(self):
         """Returns summary statistics for profiling timings.
@@ -1095,7 +1099,7 @@ class SimulationBridge:
                             cfg.homeostasis_threshold_min, cfg.homeostasis_threshold_max,
                             out=self.cp_neuron_firing_thresholds)
 
-                np_traits_host = cp.asnumpy(self.cp_traits)
+                np_traits_host = _backend_to_host(self.cp_traits)
                 defined_izh2007_types = [
                     ntype for ntype in NeuronType
                     if "IZH2007" in ntype.name and ntype in DefaultIzhikevichParamsManager.PARAMS
@@ -2280,9 +2284,9 @@ class SimulationBridge:
             return 0
 
         # Pull CSR structure to host once (small cost vs N edge lookups)
-        indptr = self.cp_connections.indptr.get()
-        indices = self.cp_connections.indices.get()
-        data = self.cp_connections.data.get()
+        indptr = _backend_to_host(self.cp_connections.indptr)
+        indices = _backend_to_host(self.cp_connections.indices)
+        data = _backend_to_host(self.cp_connections.data)
 
         # Build a dict: (pre, post) -> data index. O(nnz) one-time cost.
         # For each row r, iterate indices[indptr[r]:indptr[r+1]].
@@ -2531,7 +2535,7 @@ class SimulationBridge:
             return None
         # Check if uniform (cheap GPU op)
         first = float(self.cp_plasticity_rate_gain[0])
-        if bool(cp.all(self.cp_plasticity_rate_gain == first).get()):
+        if bool(cp.all(self.cp_plasticity_rate_gain == first)):  # bool() works on cupy 0-d + numpy scalar
             return first
         return None
 
@@ -2816,19 +2820,19 @@ class SimulationBridge:
             "start_time_step": self.runtime_state.current_time_step
         }
 
-        if self.cp_traits is not None: snapshot["cp_traits"] = cp.asnumpy(self.cp_traits)
-        if self.cp_neuron_positions_3d is not None: snapshot["cp_neuron_positions_3d"] = cp.asnumpy(self.cp_neuron_positions_3d)
+        if self.cp_traits is not None: snapshot["cp_traits"] = _backend_to_host(self.cp_traits)
+        if self.cp_neuron_positions_3d is not None: snapshot["cp_neuron_positions_3d"] = _backend_to_host(self.cp_neuron_positions_3d)
 
         if self.core_config.neuron_model_type == NeuronModel.IZHIKEVICH.name:
             for param in ['C', 'k', 'vr', 'vt', 'vpeak', 'a', 'b', 'c_reset', 'd_increment']:
                 attr_name = f"cp_izh_{param}"
                 if hasattr(self, attr_name) and getattr(self, attr_name) is not None:
-                    snapshot[attr_name] = cp.asnumpy(getattr(self, attr_name))
+                    snapshot[attr_name] = _backend_to_host(getattr(self, attr_name))
         elif self.core_config.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
             for param in ['C_m', 'g_Na_max', 'g_K_max', 'g_L', 'E_Na', 'E_K', 'E_L', 'v_peak']:
                 attr_name = f"cp_hh_{param}"
                 if hasattr(self, attr_name) and getattr(self, attr_name) is not None:
-                    snapshot[attr_name] = cp.asnumpy(getattr(self, attr_name))
+                    snapshot[attr_name] = _backend_to_host(getattr(self, attr_name))
 
         arrays_to_capture = [
             'cp_membrane_potential_v', 'cp_recovery_variable_u', 'cp_gating_variable_m',
@@ -2844,14 +2848,14 @@ class SimulationBridge:
         for attr_name in arrays_to_capture:
             array_data = getattr(self, attr_name, None)
             if array_data is not None:
-                snapshot[attr_name] = cp.asnumpy(array_data)
+                snapshot[attr_name] = _backend_to_host(array_data)
             else: 
                 snapshot[attr_name] = None 
 
         if self.cp_connections is not None:
-            snapshot["connections_data"] = cp.asnumpy(self.cp_connections.data) if self.cp_connections.data is not None else np.array([])
-            snapshot["connections_indices"] = cp.asnumpy(self.cp_connections.indices) if self.cp_connections.indices is not None else np.array([])
-            snapshot["connections_indptr"] = cp.asnumpy(self.cp_connections.indptr) if self.cp_connections.indptr is not None else np.array([])
+            snapshot["connections_data"] = _backend_to_host(self.cp_connections.data) if self.cp_connections.data is not None else np.array([])
+            snapshot["connections_indices"] = _backend_to_host(self.cp_connections.indices) if self.cp_connections.indices is not None else np.array([])
+            snapshot["connections_indptr"] = _backend_to_host(self.cp_connections.indptr) if self.cp_connections.indptr is not None else np.array([])
             snapshot["connections_shape"] = self.cp_connections.shape 
         else: 
             snapshot["connections_data"] = np.array([]); snapshot["connections_indices"] = np.array([])
@@ -2861,11 +2865,11 @@ class SimulationBridge:
         synapse_count = getattr(self, '_synapse_count', None)
         if self.cp_stp_u is not None:
             active_u = self.cp_stp_u[:synapse_count] if synapse_count else self.cp_stp_u
-            snapshot["cp_stp_u"] = cp.asnumpy(active_u)
+            snapshot["cp_stp_u"] = _backend_to_host(active_u)
         else: snapshot["cp_stp_u"] = None
         if self.cp_stp_x is not None:
             active_x = self.cp_stp_x[:synapse_count] if synapse_count else self.cp_stp_x
-            snapshot["cp_stp_x"] = cp.asnumpy(active_x)
+            snapshot["cp_stp_x"] = _backend_to_host(active_x)
         else: snapshot["cp_stp_x"] = None
         
         return snapshot
@@ -2937,7 +2941,7 @@ class SimulationBridge:
                     frame_data_np = {}
                     for key, value in frame_data_gpu.items():
                         if isinstance(value, cp.ndarray):
-                            frame_data_np[key] = cp.asnumpy(value)
+                            frame_data_np[key] = _backend_to_host(value)
                         else:
                             frame_data_np[key] = value
                     frames_np[frame_idx] = frame_data_np
@@ -3351,7 +3355,7 @@ class SimulationBridge:
         for attr_name in dynamic_arrays:
             array_data = getattr(self, attr_name, None)
             if array_data is not None:
-                frame_data[attr_name] = cp.asnumpy(array_data)
+                frame_data[attr_name] = _backend_to_host(array_data)
             else:
                 frame_data[attr_name] = None
 
@@ -3359,16 +3363,16 @@ class SimulationBridge:
         if not skip_synaptic_data:
             if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
                 if self.cp_connections.data is not None:
-                    frame_data["cp_connections_data"] = cp.asnumpy(self.cp_connections.data)
+                    frame_data["cp_connections_data"] = _backend_to_host(self.cp_connections.data)
 
             if self.core_config.enable_short_term_plasticity:
                 synapse_count = getattr(self, '_synapse_count', None)
                 if self.cp_stp_u is not None:
-                    frame_data["cp_stp_u"] = cp.asnumpy(
+                    frame_data["cp_stp_u"] = _backend_to_host(
                         self.cp_stp_u[:synapse_count] if synapse_count else self.cp_stp_u
                     )
                 if self.cp_stp_x is not None:
-                    frame_data["cp_stp_x"] = cp.asnumpy(
+                    frame_data["cp_stp_x"] = _backend_to_host(
                         self.cp_stp_x[:synapse_count] if synapse_count else self.cp_stp_x
                     )
 
@@ -3522,19 +3526,19 @@ class SimulationBridge:
                     if not skip_synaptic:
                         if self.core_config.enable_hebbian_learning and self.cp_connections is not None:
                             if self.cp_connections.data is not None:
-                                frame_data["cp_connections_data"] = cp.asnumpy(self.cp_connections.data)
+                                frame_data["cp_connections_data"] = _backend_to_host(self.cp_connections.data)
 
                         if self.core_config.enable_short_term_plasticity:
                             synapse_count = getattr(self, '_synapse_count', None)
                             if self.cp_stp_u is not None:
-                                frame_data["cp_stp_u"] = cp.asnumpy(self.cp_stp_u[:synapse_count] if synapse_count else self.cp_stp_u)
+                                frame_data["cp_stp_u"] = _backend_to_host(self.cp_stp_u[:synapse_count] if synapse_count else self.cp_stp_u)
                             if self.cp_stp_x is not None:
-                                frame_data["cp_stp_x"] = cp.asnumpy(self.cp_stp_x[:synapse_count] if synapse_count else self.cp_stp_x)
+                                frame_data["cp_stp_x"] = _backend_to_host(self.cp_stp_x[:synapse_count] if synapse_count else self.cp_stp_x)
 
                     for attr_name in dynamic_arrays_to_capture:
                         array_data = getattr(self, attr_name, None)
                         if array_data is not None:
-                            frame_data[attr_name] = cp.asnumpy(array_data)  # GPU→CPU transfer
+                            frame_data[attr_name] = _backend_to_host(array_data)  # GPU→CPU transfer
                         else:
                             frame_data[attr_name] = None
 
@@ -4804,7 +4808,7 @@ class SimulationBridge:
 
             self._stats_sync_counter += 1
             if self._stats_sync_counter >= self.gpu_config.stats_sync_interval_steps:
-                self._mock_num_spikes_this_step = int(self._accumulated_spikes_gpu.get()) // self._stats_sync_counter
+                self._mock_num_spikes_this_step = int(self._accumulated_spikes_gpu) // self._stats_sync_counter
                 self._last_synced_spike_count = self._mock_num_spikes_this_step
                 self._accumulated_spikes_gpu = None
                 self._stats_sync_counter = 0
@@ -5183,7 +5187,7 @@ class SimulationBridge:
                     # Count significant updates
                     significant_updates = cp.sum(cp.abs(weight_updates) > 1e-6)
                     if significant_updates > 0:
-                        self._mock_total_plasticity_events += int(significant_updates.get())
+                        self._mock_total_plasticity_events += int(significant_updates)
 
             # --- 4d. C3: Structural Plasticity (Synapse Formation/Elimination) ---
             # Freeze structural plasticity during experiments: synaptogenesis operates on
@@ -5202,7 +5206,8 @@ class SimulationBridge:
                     
                     # Synapse elimination: remove weak synapses
                     weak_synapse_mask = self.cp_connections.data < cfg.struct_plast_weight_threshold
-                    num_weak = cp.sum(weak_synapse_mask).get()
+                    # int() works on both cupy 0-d arrays and numpy scalars
+                    num_weak = int(cp.sum(weak_synapse_mask))
                     
                     if num_weak > 0:
                         # Probabilistic elimination based on elimination rate
@@ -5212,7 +5217,7 @@ class SimulationBridge:
                         
                         # Generate random numbers for each weak synapse
                         eliminate_mask = weak_synapse_mask & (cp.random.rand(self.cp_connections.nnz) < elimination_prob)
-                        num_eliminated = cp.sum(eliminate_mask).get()
+                        num_eliminated = int(cp.sum(eliminate_mask))
                         
                         if num_eliminated > 0:
                             # DON'T filter synapse arrays here - defer to compaction
@@ -5272,7 +5277,7 @@ class SimulationBridge:
                                 # Activity-biased: sample neurons proportional to their firing EMA
                                 ema = self.cp_neuron_activity_ema + 1e-9  # avoid all-zero
                                 ema_probs = ema / ema.sum()
-                                ema_probs_np = cp.asnumpy(ema_probs).astype(np.float64)
+                                ema_probs_np = _backend_to_host(ema_probs).astype(np.float64)
                                 ema_probs_np /= ema_probs_np.sum()  # renormalize for float64 precision
                                 # Sample active neurons as both pre and post (co-active pairs)
                                 biased_pre_np = np.random.choice(n_neurons, size=n_biased, p=ema_probs_np)
@@ -5428,7 +5433,8 @@ class SimulationBridge:
 
             # Publish to data bus if available
             if self.data_bus is not None:
-                n_spikes = int(spike_count_gpu.get()) if _fired_any else 0
+                # int() works on both cupy 0-d arrays and numpy scalars
+                n_spikes = int(spike_count_gpu) if _fired_any else 0
                 self.data_bus.publish("firing_rates", {
                     "time_ms": self.runtime_state.current_time_ms,
                     "total_spikes": n_spikes,
@@ -5439,7 +5445,7 @@ class SimulationBridge:
                     if fired_idx.size <= 500:  # Cap to avoid huge GPU->CPU transfers
                         self.data_bus.publish("spike_events", {
                             "time_ms": self.runtime_state.current_time_ms,
-                            "neuron_indices": cp.asnumpy(fired_idx),
+                            "neuron_indices": _backend_to_host(fired_idx),
                         })
 
                 # Publish weight snapshot (infrequent — every 1000 steps for histogram)
@@ -5452,7 +5458,7 @@ class SimulationBridge:
                     sample_size = min(10000, data.size)
                     if sample_size > 0:
                         indices = cp.random.randint(0, data.size, sample_size)
-                        sampled = cp.asnumpy(data[indices])
+                        sampled = _backend_to_host(data[indices])
                         self.data_bus.publish("weights", {"weights": sampled})
 
             # Note: Network firing rate calculation deferred to avoid GPU->CPU sync every step
@@ -5514,17 +5520,17 @@ class SimulationBridge:
                 for attr_name in arrays_to_save_direct:
                     data_array = getattr(self, attr_name, None)
                     if data_array is not None and data_array.size > 0:
-                        state_group.create_dataset(attr_name, data=cp.asnumpy(data_array), compression="gzip")
+                        state_group.create_dataset(attr_name, data=_backend_to_host(data_array), compression="gzip")
                     elif data_array is not None: 
                          state_group.attrs[f"{attr_name}_is_empty"] = True
 
                 if self.cp_connections is not None:
                     if self.cp_connections.data is not None and self.cp_connections.data.size > 0:
-                        state_group.create_dataset("connections_data", data=cp.asnumpy(self.cp_connections.data), compression="gzip")
+                        state_group.create_dataset("connections_data", data=_backend_to_host(self.cp_connections.data), compression="gzip")
                     if self.cp_connections.indices is not None and self.cp_connections.indices.size > 0:
-                        state_group.create_dataset("connections_indices", data=cp.asnumpy(self.cp_connections.indices), compression="gzip")
+                        state_group.create_dataset("connections_indices", data=_backend_to_host(self.cp_connections.indices), compression="gzip")
                     if self.cp_connections.indptr is not None and self.cp_connections.indptr.size > 0:
-                        state_group.create_dataset("connections_indptr", data=cp.asnumpy(self.cp_connections.indptr), compression="gzip")
+                        state_group.create_dataset("connections_indptr", data=_backend_to_host(self.cp_connections.indptr), compression="gzip")
                     state_group.attrs["connections_shape_0"] = self.cp_connections.shape[0]
                     state_group.attrs["connections_shape_1"] = self.cp_connections.shape[1]
 
@@ -5532,16 +5538,16 @@ class SimulationBridge:
                 synapse_count = getattr(self, '_synapse_count', None)
                 if self.cp_stp_u is not None and self.cp_stp_u.size > 0:
                     active_stp_u = self.cp_stp_u[:synapse_count] if synapse_count else self.cp_stp_u
-                    state_group.create_dataset("cp_stp_u", data=cp.asnumpy(active_stp_u), compression="gzip")
+                    state_group.create_dataset("cp_stp_u", data=_backend_to_host(active_stp_u), compression="gzip")
                 elif self.cp_stp_u is not None: state_group.attrs["cp_stp_u_is_empty"] = True
                 if self.cp_stp_x is not None and self.cp_stp_x.size > 0:
                     active_stp_x = self.cp_stp_x[:synapse_count] if synapse_count else self.cp_stp_x
-                    state_group.create_dataset("cp_stp_x", data=cp.asnumpy(active_stp_x), compression="gzip")
+                    state_group.create_dataset("cp_stp_x", data=_backend_to_host(active_stp_x), compression="gzip")
                 elif self.cp_stp_x is not None: state_group.attrs["cp_stp_x_is_empty"] = True
                 
                 # C2: Save STDP and reward modulation state
                 if self.cp_last_spike_time is not None and self.cp_last_spike_time.size > 0:
-                    state_group.create_dataset("cp_last_spike_time", data=cp.asnumpy(self.cp_last_spike_time), compression="gzip")
+                    state_group.create_dataset("cp_last_spike_time", data=_backend_to_host(self.cp_last_spike_time), compression="gzip")
                 elif self.cp_last_spike_time is not None:
                     state_group.attrs["cp_last_spike_time_is_empty"] = True
 
@@ -5551,24 +5557,24 @@ class SimulationBridge:
                     nnz = self.cp_connections.nnz if self.cp_connections is not None else self.cp_synapse_plastic_mask.size
                     mask_active = self.cp_synapse_plastic_mask[:nnz]
                     state_group.create_dataset("cp_synapse_plastic_mask",
-                                               data=cp.asnumpy(mask_active).astype(np.bool_),
+                                               data=_backend_to_host(mask_active).astype(np.bool_),
                                                compression="gzip")
                 
                 if self.cp_eligibility_trace is not None and self.cp_eligibility_trace.size > 0:
                     active_traces = self.cp_eligibility_trace[:synapse_count] if synapse_count else self.cp_eligibility_trace
-                    state_group.create_dataset("cp_eligibility_trace", data=cp.asnumpy(active_traces), compression="gzip")
+                    state_group.create_dataset("cp_eligibility_trace", data=_backend_to_host(active_traces), compression="gzip")
                 elif self.cp_eligibility_trace is not None:
                     state_group.attrs["cp_eligibility_trace_is_empty"] = True
 
                 # Save synapse visualization arrays (synapse-indexed with pre-allocation)
                 if self.cp_synapse_pulse_timers is not None and self.cp_synapse_pulse_timers.size > 0:
                     active_timers = self.cp_synapse_pulse_timers[:synapse_count] if synapse_count else self.cp_synapse_pulse_timers
-                    state_group.create_dataset("cp_synapse_pulse_timers", data=cp.asnumpy(active_timers), compression="gzip")
+                    state_group.create_dataset("cp_synapse_pulse_timers", data=_backend_to_host(active_timers), compression="gzip")
                 elif self.cp_synapse_pulse_timers is not None:
                     state_group.attrs["cp_synapse_pulse_timers_is_empty"] = True
                 if self.cp_synapse_pulse_progress is not None and self.cp_synapse_pulse_progress.size > 0:
                     active_progress = self.cp_synapse_pulse_progress[:synapse_count] if synapse_count else self.cp_synapse_pulse_progress
-                    state_group.create_dataset("cp_synapse_pulse_progress", data=cp.asnumpy(active_progress), compression="gzip")
+                    state_group.create_dataset("cp_synapse_pulse_progress", data=_backend_to_host(active_progress), compression="gzip")
                 elif self.cp_synapse_pulse_progress is not None:
                     state_group.attrs["cp_synapse_pulse_progress_is_empty"] = True
 
@@ -5577,21 +5583,21 @@ class SimulationBridge:
                     state_group.attrs["cp_struct_plast_step_counter"] = self.cp_struct_plast_step_counter
 
                 if self.core_config.neuron_model_type == NeuronModel.IZHIKEVICH.name:
-                    if self.cp_recovery_variable_u is not None and self.cp_recovery_variable_u.size > 0: state_group.create_dataset("cp_recovery_variable_u", data=cp.asnumpy(self.cp_recovery_variable_u), compression="gzip")
+                    if self.cp_recovery_variable_u is not None and self.cp_recovery_variable_u.size > 0: state_group.create_dataset("cp_recovery_variable_u", data=_backend_to_host(self.cp_recovery_variable_u), compression="gzip")
                     elif self.cp_recovery_variable_u is not None : state_group.attrs["cp_recovery_variable_u_is_empty"] = True
                     for param in ['C', 'k', 'vr', 'vt', 'vpeak', 'a', 'b', 'c_reset', 'd_increment']:
                          attr_name_cp = f"cp_izh_{param}"
                          data_array = getattr(self, attr_name_cp, None)
-                         if data_array is not None and data_array.size > 0: state_group.create_dataset(attr_name_cp, data=cp.asnumpy(data_array), compression="gzip")
+                         if data_array is not None and data_array.size > 0: state_group.create_dataset(attr_name_cp, data=_backend_to_host(data_array), compression="gzip")
                          elif data_array is not None : state_group.attrs[f"{attr_name_cp}_is_empty"] = True
-                    if self.cp_neuron_firing_thresholds is not None and self.cp_neuron_firing_thresholds.size > 0: state_group.create_dataset("cp_neuron_firing_thresholds", data=cp.asnumpy(self.cp_neuron_firing_thresholds), compression="gzip")
+                    if self.cp_neuron_firing_thresholds is not None and self.cp_neuron_firing_thresholds.size > 0: state_group.create_dataset("cp_neuron_firing_thresholds", data=_backend_to_host(self.cp_neuron_firing_thresholds), compression="gzip")
                     elif self.cp_neuron_firing_thresholds is not None : state_group.attrs["cp_neuron_firing_thresholds_is_empty"] = True
 
                 elif self.core_config.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
                     for attr_name_suffix in ['m', 'h', 'n']:
                         attr_name_cp = f"cp_gating_variable_{attr_name_suffix}"
                         data_array = getattr(self, attr_name_cp, None)
-                        if data_array is not None and data_array.size > 0: state_group.create_dataset(attr_name_cp, data=cp.asnumpy(data_array), compression="gzip")
+                        if data_array is not None and data_array.size > 0: state_group.create_dataset(attr_name_cp, data=_backend_to_host(data_array), compression="gzip")
                         elif data_array is not None : state_group.attrs[f"{attr_name_cp}_is_empty"] = True
                     # Optional extended HH activation states
                     for attr_name_cp in [
@@ -5603,13 +5609,13 @@ class SimulationBridge:
                     ]:
                         data_array = getattr(self, attr_name_cp, None)
                         if data_array is not None and data_array.size > 0:
-                            state_group.create_dataset(attr_name_cp, data=cp.asnumpy(data_array), compression="gzip")
+                            state_group.create_dataset(attr_name_cp, data=_backend_to_host(data_array), compression="gzip")
                         elif data_array is not None:
                             state_group.attrs[f"{attr_name_cp}_is_empty"] = True
                     for param in ['C_m', 'g_Na_max', 'g_K_max', 'g_L', 'E_Na', 'E_K', 'E_L', 'v_peak']:
                          attr_name_cp = f"cp_hh_{param}"
                          data_array = getattr(self, attr_name_cp, None)
-                         if data_array is not None and data_array.size > 0: state_group.create_dataset(attr_name_cp, data=cp.asnumpy(data_array), compression="gzip")
+                         if data_array is not None and data_array.size > 0: state_group.create_dataset(attr_name_cp, data=_backend_to_host(data_array), compression="gzip")
                          elif data_array is not None : state_group.attrs[f"{attr_name_cp}_is_empty"] = True
                 
                 h5f.attrs["_mock_total_plasticity_events"] = self._mock_total_plasticity_events
@@ -5998,7 +6004,7 @@ class SimulationBridge:
         if self.cp_membrane_potential_v is not None:
             # Example: If you need a small sample of Vm for a DPG plot (not for GL points usually)
             # sample_indices_vm = cp.random.choice(cp.arange(n), size=min(n, 100), replace=False) if n > 0 else cp.array([])
-            # gui_data_dict["neuron_Vm_sample_np"] = cp.asnumpy(self.cp_membrane_potential_v[sample_indices_vm]) if sample_indices_vm.size > 0 else np.array([])
+            # gui_data_dict["neuron_Vm_sample_np"] = _backend_to_host(self.cp_membrane_potential_v[sample_indices_vm]) if sample_indices_vm.size > 0 else np.array([])
             pass # For full Vm, if used for something other than GL points directly, decide if cp or np needed
 
         # Synapse info for GUI is CPU-based and sampled - only update occasionally to minimize CPU-GPU transfers
@@ -6025,8 +6031,8 @@ class SimulationBridge:
                                             if num_actual_synapses > num_to_send else np.arange(num_actual_synapses)
 
                         # Fetch relevant data from CuPy arrays using NumPy indices
-                        row_indices_np = cp.asnumpy(coo_conn.row[indices_to_sample_np])
-                        col_indices_np = cp.asnumpy(coo_conn.col[indices_to_sample_np])
+                        row_indices_np = _backend_to_host(coo_conn.row[indices_to_sample_np])
+                        col_indices_np = _backend_to_host(coo_conn.col[indices_to_sample_np])
 
                         weights_data_to_use_cp = self.cp_connections.data 
                         if self.core_config.enable_short_term_plasticity and \
@@ -6036,7 +6042,7 @@ class SimulationBridge:
                             weights_data_to_use_cp = self.cp_connections.data * self.cp_stp_u * self.cp_stp_x
 
                         # Sample weights using NumPy indices on the CuPy array, then convert
-                        sampled_weights_np = cp.asnumpy(weights_data_to_use_cp[cp.asarray(indices_to_sample_np)])
+                        sampled_weights_np = _backend_to_host(weights_data_to_use_cp[cp.asarray(indices_to_sample_np)])
 
                         for i in range(num_to_send):
                             synapse_info_for_gui.append({
@@ -6093,7 +6099,7 @@ class SimulationBridge:
         # Small, specific NumPy arrays for DPG plots (if any)
         # Example: if self.cp_membrane_potential_v is not None and n > 0:
         #     sample_indices = cp.random.choice(cp.arange(n), size=min(n, 10), replace=False) # Small sample for plotting
-        #     gui_data_dict["neuron_Vm_trace_sample_np"] = cp.asnumpy(self.cp_membrane_potential_v[sample_indices])
+        #     gui_data_dict["neuron_Vm_trace_sample_np"] = _backend_to_host(self.cp_membrane_potential_v[sample_indices])
 
         # Experiment system status (lightweight — no GPU sync needed)
         if self.experiment_engine is not None:
@@ -6189,7 +6195,7 @@ class SimulationBridge:
 
                 if types_stale: 
                     cfg.neuron_types_list_for_viz = [""] * num_n 
-                    np_traits_host_temp = cp.asnumpy(self.cp_traits) if self.cp_traits is not None and self.cp_traits.size == num_n else \
+                    np_traits_host_temp = _backend_to_host(self.cp_traits) if self.cp_traits is not None and self.cp_traits.size == num_n else \
                                     np.random.randint(0, max(1, cfg.num_traits), num_n) 
                     if self.cp_traits is None or self.cp_traits.size != num_n: 
                         self.cp_traits = cp.asarray(np_traits_host_temp)
@@ -6211,7 +6217,7 @@ class SimulationBridge:
                     else: 
                         cfg.neuron_types_list_for_viz = [f"Unknown_Type_{np_traits_host_temp[i]}" for i in range(num_n)]
 
-            positions_3d_np = cp.asnumpy(self.cp_neuron_positions_3d) if self.cp_neuron_positions_3d is not None else np.zeros((0,3), dtype=np.float32)
+            positions_3d_np = _backend_to_host(self.cp_neuron_positions_3d) if self.cp_neuron_positions_3d is not None else np.zeros((0,3), dtype=np.float32)
             return {
                 "neuron_positions_3d": positions_3d_np,
                 "neuron_types": cfg.neuron_types_list_for_viz, 
