@@ -267,6 +267,17 @@ def build_biological_brain_regions(
     semantic_to_fs_weight: float = 3.0,
     fs_to_semantic_density: float = 0.50,
     fs_to_semantic_weight: float = 4.0,
+    # Path G (iter G): wernicke_FS lateral inhibition for sparse
+    # concept ensemble encoding. Per P5 iter E weight inspection
+    # (selectivity=0.004), wernicke fires ALL neurons regardless
+    # of concept — there's no selective ensemble. FS inhibition
+    # forces sparse firing patterns that differ per input.
+    enable_wernicke_fs: bool = False,
+    n_wernicke_fs: int = 60,
+    wernicke_to_fs_density: float = 0.30,
+    wernicke_to_fs_weight: float = 3.0,
+    wernicke_fs_to_wernicke_density: float = 0.50,
+    wernicke_fs_to_wernicke_weight: float = 4.0,
     # P6 Broca's area + compositional syntax (catalog G.12, Kandel
     # 6e Ch 55 pp 1382-1384). Adds broca region (~500 neurons,
     # recurrent for sentence working memory) + motor_speech region
@@ -594,6 +605,40 @@ def build_biological_brain_regions(
                 weight_jitter=0.3,
                 plastic=True, plasticity_gate="ca1_to_semantic",
             ))
+            # Path G: wernicke_FS lateral inhibition for sparse
+            # concept ensemble encoding. Per P5 iter E weight
+            # inspection (selectivity=0.004), wernicke fires ALL
+            # neurons for both apple AND river — there's no
+            # selective ensemble encoding. With FS inhibition,
+            # only the top ~5-10% of wernicke neurons sustain
+            # firing per input, producing distinct sparse codes.
+            if enable_wernicke_fs:
+                regions.append(BrainRegion(
+                    name="wernicke_fs",
+                    n_neurons=n_wernicke_fs, exc_fraction=0.0,
+                    internal_density=0.0,
+                    exc_weight_mean=0.0, inh_weight_mean=0.0,
+                    weight_jitter=0.0, plastic_internal=False,
+                    izh_neuron_type=(
+                        NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name
+                    ),
+                ))
+                pathways.append(RegionPathway(
+                    from_region="wernicke",
+                    to_region="wernicke_fs",
+                    density=wernicke_to_fs_density,
+                    weight_mean=wernicke_to_fs_weight,
+                    weight_jitter=0.2,
+                    plastic=True, plasticity_gate="wernicke_to_fs",
+                ))
+                pathways.append(RegionPathway(
+                    from_region="wernicke_fs",
+                    to_region="wernicke",
+                    density=wernicke_fs_to_wernicke_density,
+                    weight_mean=wernicke_fs_to_wernicke_weight,
+                    weight_jitter=0.2,
+                    plastic=False, plasticity_gate="wernicke_fs_to_wernicke",
+                ))
             # Path B+: semantic_FS lateral inhibition for selective
             # attractor formation. Real cortex PV-FS interneurons
             # provide winner-take-most among co-active sub-populations.

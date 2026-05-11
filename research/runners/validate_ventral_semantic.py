@@ -92,6 +92,13 @@ def run_ventral_validation(
     # selective basins instead of monolithic attractor.
     enable_semantic_fs: bool = False,
     n_semantic_fs: int = 100,
+    # Path G (iter G): wernicke_FS lateral inhibition. Per P5
+    # iter E weight inspection (selectivity=0.004), wernicke is
+    # the upstream bottleneck — fires all neurons regardless of
+    # concept. FS sparsifies wernicke firing to produce per-
+    # concept ensembles.
+    enable_wernicke_fs: bool = False,
+    n_wernicke_fs: int = 60,
     out_path: Optional[Path] = None,
     verbose: bool = True,
 ):
@@ -155,6 +162,9 @@ def run_ventral_validation(
         # Path B+ (iter F): semantic_FS lateral inhibition
         enable_semantic_fs=enable_semantic_fs,
         n_semantic_fs=n_semantic_fs,
+        # Path G (iter G): wernicke_FS lateral inhibition
+        enable_wernicke_fs=enable_wernicke_fs,
+        n_wernicke_fs=n_wernicke_fs,
     )
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -654,6 +664,13 @@ def main() -> int:
                          "inhibition to semantic_cortex for "
                          "competitive attractor formation")
     ap.add_argument("--n-semantic-fs", type=int, default=100)
+    # Path G (iter G): wernicke_FS lateral inhibition (UPSTREAM fix)
+    ap.add_argument("--enable-wernicke-fs", action="store_true",
+                    help="Path G (iter G): add PV-FS lateral "
+                         "inhibition to wernicke for sparse per-"
+                         "concept ensemble encoding. Fixes "
+                         "upstream bottleneck identified by iter E.")
+    ap.add_argument("--n-wernicke-fs", type=int, default=60)
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
     run_ventral_validation(
@@ -673,6 +690,8 @@ def main() -> int:
         drive_steps=args.drive_steps,
         enable_semantic_fs=args.enable_semantic_fs,
         n_semantic_fs=args.n_semantic_fs,
+        enable_wernicke_fs=args.enable_wernicke_fs,
+        n_wernicke_fs=args.n_wernicke_fs,
         out_path=Path(args.out) if args.out else None,
         verbose=True,
     )
