@@ -268,16 +268,34 @@ sim's growth trajectory genuinely warrants cloud migration.
 
 ---
 
-## Recommended build order
+## Recommended build order (REVISED 2026-05-10 per user direction)
+
+User confirmed (2026-05-10): focus on growth capabilities urgent;
+defer Phase C+D until we actually need them. We're staying local
+for a while; cloud migration can wait until we hit actual saturation.
+
+**Build order:**
+
+0. **NEW PRIORITY: Bridge Lineage Manager** (~1 week) — persistent
+   continuous-learning state. Foundation for everything else; see
+   `docs/plans/2026-05-10-bridge-lineage-design.md`. Pairs naturally
+   with Phase A.
 
 1. **Now (immediate value)**: Phase A — tier promotion via checkpoint
    reload. ~1 week. Gives "agent grows over time" UX immediately.
+   Integrates with lineage (each promotion is a lineage growth event).
+
 2. **Next**: Phase B — within-tier structural plasticity. ~2-3 weeks
    (validation-bound).
-3. **Defer**: Phase C — online neurogenesis. ~1-2 months. Needs Phase
-   A+B running smoothly first.
-4. **Defer further**: Phase D — hardware migration. ~2 weeks. Needs
-   Phase C demonstrating real local saturation.
+
+3. **Defer significantly**: Phase C — online neurogenesis. ~1-2 months.
+   Needs Phase A+B running smoothly first. Per user (2026-05-10):
+   "we intend to run fully locally for a while; many pending tests/
+   work/implementations are higher priority."
+
+4. **Defer significantly**: Phase D — hardware migration. ~2 weeks.
+   Per user: only build when we actually need it. Local-first
+   commitment means this is far-future.
 
 ## Biological grounding notes
 
