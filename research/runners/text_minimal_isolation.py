@@ -1407,6 +1407,99 @@ def apply_wernicke_topographic_bias(
     return summary
 
 
+def apply_wernicke_pool_topographic_bias(
+    bridge,
+    concepts: list,  # e.g., ["apple", "river"]
+    topographic_factor: float = 2.0,
+    off_target_factor: float = 0.5,
+    n_lang_input: int = 1024,
+    sparsity: float = 0.1,
+    verbose: bool = True,
+):
+    """Apply topographic bias to lang_input -> wernicke_pool_i
+    pathways. For each concept, boost its active lang_input
+    neurons' weights to its ASSIGNED pool and reduce weights to
+    OTHER pools. Path A iter U: routing per-concept.
+
+    Args:
+        concepts: list of concept names. concepts[i] maps to
+            wernicke_pool_i.
+        topographic_factor: weight multiplier for on-target
+            (concept[i] -> wernicke_pool_i) connections.
+            Default 2.0 (stronger than the single-region 1.5).
+        off_target_factor: weight multiplier for off-target.
+            Default 0.5 (more aggressive than 0.7).
+        n_lang_input: lang_input region size.
+        sparsity: token drive sparsity.
+    """
+    from sim.text_embeddings import vocab_to_drive_pattern
+    import numpy as np
+
+    rm = bridge.region_manager
+    lang_input_indices = list(rm.indices("language_input"))
+    if len(lang_input_indices) != n_lang_input:
+        raise ValueError(
+            f"apply_wernicke_pool_topographic_bias: bridge has "
+            f"{len(lang_input_indices)} language_input neurons but "
+            f"caller specified {n_lang_input}"
+        )
+
+    pool_indices = {}
+    for i in range(len(concepts)):
+        pool_name = f"wernicke_pool_{i}"
+        pool_indices[i] = list(rm.indices(pool_name))
+
+    indptr = _to_host(bridge.cp_connections.indptr)
+    indices = _to_host(bridge.cp_connections.indices)
+    data = _to_host(bridge.cp_connections.data)
+
+    pair_to_idx = {}
+    n_rows = int(bridge.cp_connections.shape[0])
+    for r in range(n_rows):
+        start = int(indptr[r])
+        end = int(indptr[r + 1])
+        for off in range(start, end):
+            pair_to_idx[(r, int(indices[off]))] = off
+
+    summary = {}
+    for concept_i, concept in enumerate(concepts):
+        drive = vocab_to_drive_pattern(
+            concept, n_neurons=n_lang_input, sparsity=sparsity,
+        )
+        local_active = np.where(drive > 0)[0]
+        global_active = [lang_input_indices[i] for i in local_active]
+
+        for pool_i in range(len(concepts)):
+            pool_dst = pool_indices[pool_i]
+            factor = (topographic_factor if pool_i == concept_i
+                      else off_target_factor)
+            n_changed = 0
+            for src in global_active:
+                for dst in pool_dst:
+                    key = (src, dst)
+                    if key in pair_to_idx:
+                        idx = pair_to_idx[key]
+                        data[idx] = float(data[idx]) * factor
+                        n_changed += 1
+            summary[f"{concept}->wernicke_pool_{pool_i}"] = {
+                "factor": factor,
+                "edges_modified": n_changed,
+            }
+
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+    bridge.cp_connections.data[...] = cp.asarray(data,
+                                                   dtype=cp.float32)
+
+    if verbose:
+        print(f"[wernicke-pool-topographic] {len(concepts)} concepts, "
+              f"factor={topographic_factor:.2f}/{off_target_factor:.2f}")
+        for k, v in summary.items():
+            print(f"  {k}: x{v['factor']:.2f} on {v['edges_modified']} edges")
+
+    return summary
+
+
 def run_minimal_isolation(
     seed: int = 42,
     n_events_per_direction: int = 1000,

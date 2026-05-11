@@ -224,18 +224,32 @@ def run_ventral_validation(
 
     # Path G+ minimal: topographic bias for wernicke per-concept ensembles
     if apply_wernicke_topographic:
-        from research.runners.text_minimal_isolation import (
-            apply_wernicke_topographic_bias,
-        )
-        apply_wernicke_topographic_bias(
-            bridge,
-            concepts=["apple", "river"],
-            topographic_factor=wernicke_topographic_factor,
-            off_target_factor=wernicke_off_target_factor,
-            n_lang_input=n_lang_input,
-            sparsity=0.1,
-            verbose=verbose,
-        )
+        if enable_multi_pool_wernicke:
+            from research.runners.text_minimal_isolation import (
+                apply_wernicke_pool_topographic_bias,
+            )
+            apply_wernicke_pool_topographic_bias(
+                bridge,
+                concepts=["apple", "river"],
+                topographic_factor=wernicke_topographic_factor,
+                off_target_factor=wernicke_off_target_factor,
+                n_lang_input=n_lang_input,
+                sparsity=0.1,
+                verbose=verbose,
+            )
+        else:
+            from research.runners.text_minimal_isolation import (
+                apply_wernicke_topographic_bias,
+            )
+            apply_wernicke_topographic_bias(
+                bridge,
+                concepts=["apple", "river"],
+                topographic_factor=wernicke_topographic_factor,
+                off_target_factor=wernicke_off_target_factor,
+                n_lang_input=n_lang_input,
+                sparsity=0.1,
+                verbose=verbose,
+            )
 
     # Encode 2 concepts via lang_input drive + hippo plasticity
     # The hippo trace + ca1->semantic_cortex pathway will produce
