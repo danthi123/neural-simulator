@@ -1,0 +1,79 @@
+{
+  "seed": 42,
+  "concepts": [
+    "apple",
+    "river",
+    "alice",
+    "table"
+  ],
+  "n_concepts": 4,
+  "build_seconds": 2.39184832572937,
+  "n_neurons": 4916,
+  "n_synapses": 1305313,
+  "n_train_events": 400,
+  "n_replay_cycles": 40,
+  "comp_matrix": {
+    "apple_react_vs_apple_tag": 0.254000254000381,
+    "apple_react_vs_river_tag": 0.24130024130036196,
+    "apple_react_vs_alice_tag": 0.26670026670040003,
+    "apple_react_vs_table_tag": 0.254000254000381,
+    "river_react_vs_apple_tag": 0.206155281280883,
+    "river_react_vs_river_tag": 0.24253562503633297,
+    "river_react_vs_alice_tag": 0.206155281280883,
+    "river_react_vs_table_tag": 0.206155281280883,
+    "alice_react_vs_apple_tag": 0.21828206253269966,
+    "alice_react_vs_river_tag": 0.29104275004359953,
+    "alice_react_vs_alice_tag": 0.27891596879178293,
+    "alice_react_vs_table_tag": 0.206155281280883,
+    "table_react_vs_apple_tag": 0.27815179498365916,
+    "table_react_vs_river_tag": 0.25166114784235827,
+    "table_react_vs_alice_tag": 0.19867985355975654,
+    "table_react_vs_table_tag": 0.3576237364075618
+  },
+  "comp_results": {
+    "apple": {
+      "self_cosine": 0.254000254000381,
+      "mean_cross_cosine": 0.254000254000381,
+      "max_cross_cosine": 0.26670026670040003,
+      "margin_mean": 0.0,
+      "margin_max": -0.012700012700019025,
+      "ratio_self_to_mean_cross": 1.0,
+      "pass_strict": false,
+      "pass_biology": false
+    },
+    "river": {
+      "self_cosine": 0.24253562503633297,
+      "mean_cross_cosine": 0.206155281280883,
+      "max_cross_cosine": 0.206155281280883,
+      "margin_mean": 0.03638034375544996,
+      "margin_max": 0.03638034375544996,
+      "ratio_self_to_mean_cross": 1.1764705882352942,
+      "pass_strict": true,
+      "pass_biology": false
+    },
+    "alice": {
+      "self_cosine": 0.27891596879178293,
+      "mean_cross_cosine": 0.2384933646190607,
+      "max_cross_cosine": 0.29104275004359953,
+      "margin_mean": 0.040422604172722226,
+      "margin_max": -0.012126781251816598,
+      "ratio_self_to_mean_cross": 1.169491525423729,
+      "pass_strict": false,
+      "pass_biology": false
+    },
+    "table": {
+      "self_cosine": 0.3576237364075618,
+      "mean_cross_cosine": 0.2428309321285913,
+      "max_cross_cosine": 0.27815179498365916,
+      "margin_mean": 0.11479280427897048,
+      "margin_max": 0.07947194142390263,
+      "ratio_self_to_mean_cross": 1.4727272727272729,
+      "pass_strict": true,
+      "pass_biology": true
+    }
+  },
+  "n_comp_pass_strict": 2,
+  "n_comp_pass_biology": 1,
+  "overall_passed": false,
+  "total_seconds": 823.9908072948456
+}
