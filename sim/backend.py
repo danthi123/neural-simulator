@@ -369,6 +369,40 @@ def get_pinned_memory_pool():
     return None
 
 
+# ── Random state save/restore (different method names on CuPy/NumPy) ────
+
+
+def get_random_state():
+    """Return the active backend's RNG state in an opaque container.
+
+    On CuPy: cupy.random.get_random_state() (a RandomState object)
+    On NumPy: numpy.random.get_state() (a tuple)
+
+    Use with set_random_state() in a save-state / seed / restore pattern.
+    """
+    _, name = get_backend()
+    if name == "cupy":
+        import cupy
+        return cupy.random.get_random_state()
+    import numpy
+    return numpy.random.get_state()
+
+
+def set_random_state(state) -> None:
+    """Restore RNG state saved by get_random_state().
+
+    On CuPy: cupy.random.set_random_state(state)
+    On NumPy: numpy.random.set_state(state)
+    """
+    _, name = get_backend()
+    if name == "cupy":
+        import cupy
+        cupy.random.set_random_state(state)
+        return
+    import numpy
+    numpy.random.set_state(state)
+
+
 def _reset_cache_for_tests():
     """Test-only helper: clear the cached backend so tests can switch.
 

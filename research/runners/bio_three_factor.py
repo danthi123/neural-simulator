@@ -53,6 +53,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
+# Backend-aware D->H transfer helper (passthrough on NumPy backend).
+# 2026-05-11: enables this runner under SIM_BACKEND=numpy.
+try:
+    from sim.backend import to_host as _to_host
+except ImportError:
+    _to_host = lambda arr: arr.get() if hasattr(arr, "get") else arr
+
 
 def update_eligibility_and_weights(
     eligibility,
@@ -248,7 +255,10 @@ def run_three_factor(
     More biologically plausible (synapses can't compute exact magnitudes
     of remote firing rates).
     """
-    import cupy as cp
+    # Backend-aware: cp is the active backend (cupy or numpy).
+    # 2026-05-11: enables this runner under SIM_BACKEND=numpy.
+    from sim.backend import get_backend
+    cp, _ = get_backend()
     from sim.config import (
         CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig,
     )
@@ -402,15 +412,15 @@ def run_three_factor(
     # Build (src, dst) -> idx map for fast CSR mutation. Always pull
     # indptr/indices to CPU once (we only need them for edge enumeration,
     # not the hot path).
-    indptr = bridge.cp_connections.indptr.get()
-    indices = bridge.cp_connections.indices.get()
+    indptr = _to_host(bridge.cp_connections.indptr)
+    indices = _to_host(bridge.cp_connections.indices)
     if gpu_eligibility:
         # Hot-path uses bridge.cp_connections.data IN-PLACE on GPU.
         # `data` here is just an alias for the GPU array.
         data = bridge.cp_connections.data
     else:
         # CPU mode: pull data, mutate locally, push back periodically.
-        data = bridge.cp_connections.data.get()
+        data = _to_host(bridge.cp_connections.data)
 
     rm = bridge.region_manager
     lang_input_idx = list(rm.indices("language_input"))
@@ -673,11 +683,11 @@ def run_three_factor(
 
         # GPU-resident: post_active_mask stays on GPU when gpu_eligibility.
         # Spike counts always pulled to CPU (small, 4 ints).
-        motor_spike_counts_arr = motor_spike_count_gpu.get()
+        motor_spike_counts_arr = _to_host(motor_spike_count_gpu)
         if gpu_eligibility:
             post_active_mask = post_active_mask_gpu  # stays on GPU
         else:
-            post_active_mask = post_active_mask_gpu.get()  # bring to CPU
+            post_active_mask = _to_host(post_active_mask_gpu)  # bring to CPU
 
         # DA per motor pool. Two modes:
         #   "sign" (classical 3-factor, Fremaux & Gerstner 2016):
@@ -948,7 +958,9 @@ def main():
     # Embodied-Hebbian Tier 1: also evaluate action → word (A→W)
     aw_result = None
     if args.embodied_hebbian:
-        import cupy as cp_eval
+        # Backend-aware: cp_eval is the active backend (cupy or numpy)
+        from sim.backend import get_backend
+        cp_eval, _ = get_backend()
         print("\n" + "=" * 60)
         print(f"EVAL: action -> word (Tier 1 A->W, {args.n_eval_per_word} per action)")
         print("=" * 60, flush=True)
@@ -994,7 +1006,7 @@ def main():
                     fired = bridge.cp_firing_states
                     lang_out_spike_count += fired[lang_out_arr].astype(cp_eval.int32)
                 # Convert to numpy for cosine match
-                activity = lang_out_spike_count.get().astype(np.float32)
+                activity = _to_host(lang_out_spike_count).astype(np.float32)
                 if activity.sum() > 0:
                     from sim.text_embeddings import (
                         nearest_token, vocab_to_drive_pattern,

@@ -37,6 +37,8 @@ try:
         get_pinned_memory_pool as _backend_get_pinned_memory_pool,
         to_host as _backend_to_host,
         from_host as _backend_from_host,
+        get_random_state as _backend_get_random_state,
+        set_random_state as _backend_set_random_state,
     )
     cp, _backend_name = get_backend()
     csp = get_sparse_module()
@@ -57,6 +59,8 @@ except ImportError:
     _backend_get_pinned_memory_pool = lambda: cp.get_default_pinned_memory_pool()
     _backend_to_host = lambda arr: arr.get() if hasattr(arr, "get") else arr
     _backend_from_host = lambda arr, dtype=None: cp.asarray(arr, dtype=dtype)
+    _backend_get_random_state = lambda: cp.random.get_random_state()
+    _backend_set_random_state = lambda s: cp.random.set_random_state(s)
     _backend_name = "cupy"
 
 from sim.enums import (NeuronModel, NeuronType, DefaultHodgkinHuxleyParams,
@@ -1526,7 +1530,7 @@ class SimulationBridge:
         # Set separate RNG state for heterogeneity (deterministic if seed provided)
         het_seed = cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed
         if het_seed >= 0:
-            rng_state = cp.random.get_random_state()
+            rng_state = _backend_get_random_state()
             cp.random.seed(het_seed)
         
         # Map parameter names to CuPy arrays
@@ -1581,7 +1585,7 @@ class SimulationBridge:
         
         # Restore RNG state
         if het_seed >= 0:
-            cp.random.set_random_state(rng_state)
+            _backend_set_random_state(rng_state)
         
         self._log_console(f"Applied heterogeneity to {applied_count} parameters.")
     
