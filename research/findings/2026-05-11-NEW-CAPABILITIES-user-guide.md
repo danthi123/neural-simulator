@@ -129,6 +129,59 @@ API summary:
 - `mem.stats()` — current state
 - `mem.list_keys()` — known vocab
 
+## LLM-memory orchestrator + dashboard chat (Phase 3.2 — NEW)
+
+The biology-grounded sim is now LLM-callable via a tool-use protocol.
+Today ships with MockLLM (regex-based pattern recognition, zero
+external dependency). Real-LLM swap-in is a one-line change.
+
+```bash
+# End-to-end CLI demo: MockLLM → BridgeMemory → SimulationBridge
+SIM_BACKEND=numpy python -m research.runners.llm_memory_demo \
+    --seed 42 --lineage llm_demo --out llm_demo.json
+
+# Or chat from the dashboard:
+#   1. Open http://localhost:8765
+#   2. Click Lineages tab
+#   3. Click a lineage to load detail
+#   4. Scroll to "Chat with this lineage" panel
+#   5. Type "Remember that my favorite is north." → Send
+#   6. Type "What's my favorite?" → Send
+```
+
+Programmatic usage:
+```python
+from sim.bridge_memory import BridgeMemory
+from sim.llm_memory_orchestrator import LLMMemoryOrchestrator, MockLLM
+
+mem = BridgeMemory(lineage_name="main", mode="synonym")
+orch = LLMMemoryOrchestrator(memory=mem, llm_callable=MockLLM())
+
+print(orch.chat("Remember that my favorite is north."))
+# → "Got it. I'll remember: favorite = north."
+
+print(orch.chat("What's my favorite?"))
+# → "Your answer is north."
+```
+
+To swap in a real LLM (Phi-3-mini / Llama 3.2 / Qwen2.5):
+```python
+def real_llm(conversation: list[dict]) -> LLMResponse:
+    # Call your LLM with sim.llm_memory_orchestrator.TOOL_SCHEMAS as tools
+    # Return LLMResponse(message=..., tool_calls=[ToolCall(name, args), ...])
+    ...
+
+orch = LLMMemoryOrchestrator(memory=mem, llm_callable=real_llm)
+```
+
+New endpoints:
+- `POST /api/llm-chat` — `{lineage, mode, message}` → response + tool calls
+- `GET  /api/llm-chat/{name}/transcript?mode=...` — conversation log
+- `POST /api/llm-chat/{name}/reset?mode=...` — clear cached orchestrator
+
+Tests: 32 new across the LLM stack (orchestrator + demo runner +
+webapp endpoints + frontend asset). All PASS. CPU-only safe.
+
 ## Synapse tiering (SSD paging)
 
 Activity-tracked per-pathway eviction policy. Opt-in.
@@ -154,19 +207,24 @@ lineage.export_shards(bridge)
 
 ## Webapp dashboard
 
-The Lineages tab now lazy-loads ALL three subsystem subsections in
+The Lineages tab now lazy-loads ALL four subsystem subsections in
 the detail panel (click a lineage):
 - Growth events timeline
 - Accuracy history
 - History snapshots
 - Synapse tiering shard inventory
 - Bridge memory bindings
+- **Chat with this lineage** (Phase 3.2 LLM tool-use; mode selector,
+  message log, send/reset)
 
 Endpoints live at:
 - http://localhost:8765/api/lineages
 - http://localhost:8765/api/lineages/{name}
 - http://localhost:8765/api/synapse-tiering/{name}
 - http://localhost:8765/api/bridge-memory/{name}
+- http://localhost:8765/api/llm-chat (POST)
+- http://localhost:8765/api/llm-chat/{name}/transcript
+- http://localhost:8765/api/llm-chat/{name}/reset (POST)
 
 ## Tests
 

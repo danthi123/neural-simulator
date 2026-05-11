@@ -62,7 +62,7 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 19 modules, ~14.4K lines — core engine
+sim/                    # 20 modules, ~15.2K lines — core engine
   bridge.py             # 6442 lines — SimulationBridge + GPU state orchestration
   config.py             #  760 lines — all @dataclass configs
   enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
@@ -81,13 +81,14 @@ sim/                    # 19 modules, ~14.4K lines — core engine
   auto_growth.py        #  357 lines — TierPromoter + weight-transfer (auto-growth Phase A, 2026-05-11)
   backend.py            #  415 lines — pluggable xp abstraction + device helpers + RNG state (cupy/numpy, 2026-05-11)
   synapse_storage.py    #  415 lines — TieredSynapseStore + idle/pressure eviction (tiering Phase 3+4, 2026-05-11)
-  bridge_memory.py      #  340 lines — BridgeMemory LLM-callable memory wrapper (Path 3 Phase 3.1.5, 2026-05-11)
+  bridge_memory.py      #  487 lines — BridgeMemory LLM-callable memory wrapper (Path 3 Phase 3.1.6, 2026-05-11)
+  llm_memory_orchestrator.py #  347 lines — MockLLM + LLMMemoryOrchestrator tool-use loop (Phase 3.2, 2026-05-11)
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 72 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/etc) for research
-research/findings/      # session-by-session findings docs (225+ files)
-tests/                  # 72 test files (determinism, runners, kernels, plasticity, lineage, tiering, etc.)
+research/runners/       # 70 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/etc) for research
+research/findings/      # session-by-session findings docs (228+ files)
+tests/                  # 76 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, etc.)
 ```
 
 ### Thread Model
@@ -609,6 +610,90 @@ arch (Phase 3.2+).
 **Tests:** 18 across `sim.bridge_memory` (17 in test_bridge_memory.py
 + 1 real-bridge integration test in test_numpy_backend_integration.py).
 All PASS.
+
+### Path 3 Phase 3.2 (2026-05-11): LLM-memory orchestrator + chat UI
+
+**Status:** SHIPPED 2026-05-11. MockLLM tool-use loop with end-to-end
+demo + webapp chat surface. Real LLM swap-in (Phi-3 / Llama 3.2 /
+Qwen2.5) is a one-line change at the orchestrator's `llm_callable`
+argument.
+
+**Module:** `sim/llm_memory_orchestrator.py` (~340 lines)
+- `TOOL_SCHEMAS` — OpenAI-compatible JSON schemas for the three
+  tools (`memory_store`, `memory_recall`, `memory_speak`).
+- `ToolCall` / `LLMResponse` — dataclasses for the tool-use protocol.
+- `MockLLM` — regex-based pattern recognition for "remember that X
+  is dir", "what's my X", "what word goes with dir". Direction
+  synonyms (up/down/left/right). Falls back to a helpful message
+  on unrecognized input. Propagates tool-dispatch errors verbatim.
+- `LLMMemoryOrchestrator` — drives the tool-use loop. `chat()` adds
+  the user message, queries the LLM, dispatches tool calls against
+  the BridgeMemory, feeds results back, repeats until a final
+  message or `max_tool_iterations` (default 5).
+
+**Runner:** `research/runners/llm_memory_demo.py` — end-to-end demo
+(MockLLM → orchestrator → BridgeMemory → SimulationBridge → lineage).
+208-neuron tier1 toy bridge built in ~1.5s on CPU.
+
+```bash
+# CPU NumPy backend
+SIM_BACKEND=numpy python -m research.runners.llm_memory_demo \
+    --seed 42 --lineage llm_demo --out demo.json
+
+# Scripted 5-turn chat with full transcript printed + JSON dump
+```
+
+**Webapp endpoints (Phase 3.2 UI):**
+
+```
+POST /api/llm-chat
+  body: {lineage, mode, message, reset_conversation?}
+  returns: {response, tool_calls[], conversation_length, n_turns}
+
+GET /api/llm-chat/{name}/transcript?mode=...
+  returns: {messages[{role,content}], n_turns, total_messages}
+
+POST /api/llm-chat/{name}/reset?mode=...
+  returns: {reset: bool}
+```
+
+In-process orchestrator cache: first call per (lineage, mode) tuple
+pays the bridge-load cost; subsequent calls are fast.
+
+**Frontend (Lineages tab):** click a lineage → "Chat with this lineage"
+panel renders below the bridge-memory bindings. Mode selector
+(tier1 / synonym / synonym12 / synonym16), message log (color-coded
+by role), input box + Send / Enter, Reset button. Transcript
+auto-loads when mode changes or the lineage is revisited.
+
+**Tests:** 32 across the LLM stack:
+- 14 in `tests/test_llm_memory_orchestrator.py` (tool schema, MockLLM
+  patterns, orchestrator end-to-end, max-iter cap, error propagation)
+- 2 in `tests/test_llm_memory_demo.py` (single-turn + multi-turn
+  smoke against a real bridge; SIM_BACKEND=numpy for CI portability)
+- 5 in `tests/test_webapp_server.py` (404 + reset idempotent +
+  validation + frontend asset)
+
+All PASS. CPU-only safe.
+
+**Real-LLM integration (Phase 3.3 — user-blocked on LLM choice):**
+
+```python
+# Drop-in replacement for MockLLM:
+def real_llm_callable(conversation: list[dict]) -> LLMResponse:
+    # Call ollama / vLLM / llama.cpp with TOOL_SCHEMAS as tools.
+    # Parse the response into LLMResponse(message=..., tool_calls=[...])
+    ...
+
+orch = LLMMemoryOrchestrator(memory=mem, llm_callable=real_llm_callable)
+```
+
+Candidate LLMs (all open-weights, CPU-runnable):
+- **Phi-3-mini-4k-instruct** (~3.8B params, Q4 → ~2GB) — Microsoft
+- **Llama-3.2-3B-Instruct** (Q4 → ~2GB) — Meta
+- **Qwen2.5-3B-Instruct** (Q4 → ~2GB) — Alibaba
+
+Findings doc: `research/findings/2026-05-11-path3-phase3.2-llm-stack-shipped.md`
 
 ### Continuous-learning workflow (2026-05-11): Bridge Lineage Manager
 
