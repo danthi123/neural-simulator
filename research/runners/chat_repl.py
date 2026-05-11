@@ -1260,7 +1260,9 @@ def run_repl(mode: str, seed: int, n_train_events: int,
         print("\n" + "=" * 60)
         print(f"[DONE] {n_turns} turns total.")
         if n_turns > 0:
-            in_vocab_turns = sum(1 for t in transcript if t["in_vocab"])
+            # Use .get() with default False — :speak and :learn transcript
+            # records don't have an in_vocab key (they're not chat turns).
+            in_vocab_turns = sum(1 for t in transcript if t.get("in_vocab"))
             if in_vocab_turns > 0:
                 print(f"  In-vocab accuracy: {correct}/{in_vocab_turns} "
                       f"= {correct/in_vocab_turns:.1%}")
