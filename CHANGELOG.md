@@ -86,6 +86,108 @@ Findings: `research/findings/2026-05-11-path3-phase3.2-llm-stack-shipped.md`.
 Total this arc (post-checkin extension): 8 commits, 4 new tool schemas
 exposed, 1 new skill, 1 new design doc, 24/24 tests still pass.
 
+## [Unreleased] — 2026-05-11 — P1-P6 catalog-grounded path to conversational sim
+
+Major realignment after 3 user clarifications:
+  1. No external LLM, ever (sim does language itself)
+  2. Biology-first workflow (state capability → consult catalog →
+     copy biology → test)
+  3. Use the research catalog (Kandel 6e PDFs + feature-catalog.md
+     at sim-catalog/references/) instead of citing biology from
+     memory
+
+Per the realigned plan v3 (commit c075be5), six catalog-grounded
+phases (P1-P6) shipped or designed:
+
+### P1 — Hippocampal trisynaptic loop (catalog D.03 + D.12 + D.13)
+
+- `validate_trisynaptic_loop.py` runner shipped. Tests pattern
+  separation (DG sparsifies overlapping inputs) and pattern
+  completion (CA3 attractor reconstructs from partial cue).
+- D.12 separation: 3/3 PASS multi-seed (DG cosine 0.218 from input
+  0.800; 58pp orthogonalization).
+- D.13 completion (absolute cos > 0.7): 1/3 strict (seed 42 = 0.748;
+  seeds 43, 44 ~0.68).
+- **Two-concept discrimination test (biology-faithful Marr 1971
+  criterion): 3/3 PASS**. Cross-concept tag overlap 0.000-0.120
+  (target < 0.3), discrimination margin 0.215-0.432 (target > 0.2).
+  Architecture confirmed to support "concepts as distinguishable
+  CA3 ensembles."
+
+### P2 — Engram-tagging API (catalog D.14 / roadmap T1.C)
+
+- `bridge.start_engram_recording / commit_engram_tag / stimulate_tag`
+  + companions (`clear_tag_drive`, `list_engram_tags`,
+  `get_engram_tag_indices`, `delete_engram_tag`).
+- Auto-tick in `_run_one_simulation_step` (zero overhead when no
+  active recordings).
+- Persistence through `save_checkpoint`/`load_checkpoint`.
+- 12 unit tests pass + 2 persistence tests skipped pending fuller
+  test bridge.
+
+### P3.1 — Concept replay during NREM (catalog D.19 / roadmap T1.B)
+
+- `run_concept_replay_phase(bridge, tag_names, ...)` in
+  `consolidation_trainer.py`.
+- Selective consolidation: drive each engram-tagged ensemble during
+  sleep. STDP at ca3 → ca1 → cortex pathways auto-consolidates.
+  Distinct from existing random-CA3-pattern `run_swr_replay_phase`.
+- 5 unit tests pass.
+
+### P4.1 — Positional context for episodic binding (catalog D.01 + D.02 + D.11)
+
+- `positional_drive_pattern(position, ...)` in `text_embeddings.py`.
+  Deterministic sparse code per position (max 16 positions at
+  sparsity=0.1, n_neurons=200).
+- `enable_episodic_context` flag adds `ec_context` region + plastic
+  `ec_context → dg` pathway. DG receives combined (word, position)
+  drive → distinct CA3 ensembles per (word, position) tuple.
+- `validate_positional_binding.py` runner shipped. Tests
+  (apple, pos_0) vs (apple, pos_2) cosine, etc. Multi-seed
+  validation in flight.
+
+### P5 — Ventral semantic stream substrate (catalog G.11 + G.13)
+
+- `enable_ventral_semantic` flag adds:
+  - `wernicke` region (200 neurons, lang↔semantic bridge)
+  - `semantic_cortex` region (1000 neurons, ATL analog, recurrent)
+- 5 plastic pathways: lang_input → wernicke → semantic_cortex
+  (comprehension); semantic_cortex → wernicke → language_output
+  (production); ca1 → semantic_cortex (consolidation).
+- Designs at `docs/plans/2026-05-11-P5-ventral-semantic-stream-design.md`.
+- Validation runner pending (next phase of work).
+
+### P6 — Broca's compositional syntax (catalog G.12)
+
+- Design at `docs/plans/2026-05-11-P6-brocas-grammar-design.md`.
+- Replaces failed Tier 2.3 PFC verb pool (2026-05-07 PARTIAL).
+- Implementation pending.
+
+### Liu 2012-style causal recall test (P2 behavioral validation)
+
+- `validate_causal_recall.py` runner shipped. Encode word→motor via
+  hippo, tag CA3 ensemble, then test: stimulating ONLY the CA3 tag
+  (no lang_input) reproduces the conditioned motor response.
+- Multi-seed validation pending.
+
+### Methodology
+
+- `continual-autonomous-work` skill — Rule 8 codifies the catalog-
+  first workflow. Two worked drift examples captured (engineering-
+  variants without biology citations; semantic_hub invention without
+  checking the catalog).
+
+### Commits in this arc (~30 total)
+
+All catalog-cited. ~1500 LOC new code (validators, runners, tests,
+engram API). 5 new design docs (~1100 lines). All committed +
+pushed to both remotes.
+
+After this arc, the architecture for "concepts as tagged ensembles
+→ consolidated to cortex → composed into sentences" is either
+shipped (P1+P2+P3.1+P4.1+P5 substrate) or designed (P5 validation,
+P6 full).
+
 ## [Unreleased] — 2026-05-03/04 — Permuted-label control debunks 28.5% W→A + autonomous-arc tooling
 
 ### Critical correction
