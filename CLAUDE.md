@@ -624,12 +624,43 @@ arch (Phase 3.2+).
 + 1 real-bridge integration test in test_numpy_backend_integration.py).
 All PASS.
 
-### Path 3 Phase 3.2 (2026-05-11): LLM-memory orchestrator + chat UI
+### Realigned plan (2026-05-11, post-checkin): sim as STANDALONE conversational agent
+
+After the Path 3 Phase 3.2 work shipped, the user clarified: goal is
+sim as a standalone agent, **no external LLM ever**. The Phase 3.3
+(real LLM swap-in) is DEPRECATED for primary path. See
+[`docs/plans/2026-05-11-realigned-plan-sim-as-standalone-conversational-agent.md`](docs/plans/2026-05-11-realigned-plan-sim-as-standalone-conversational-agent.md).
+
+Active steps:
+- **Step 1 (1-2 wk):** Fix in-vivo new-vocab binding via the four-
+  variant runner (`research/runners/investigate_invivo_binding_fix.py`).
+  The 2026-05-11 n_events curve confirmed novel keys fail at 200/400
+  events (0/4 → 1/4 correct). Variants test pre-bind anchoring,
+  curriculum interleaving, recall-only fine-tune tail.
+- **Step 2 (2-3 wk):** Validate synonym12 / synonym16 vocab with the
+  Step 1 fix.
+- **Step 3 (2-4 wk):** Compositional 2-word phrases (Tier 2.3 PFC
+  verb pool reactivated).
+- **Step 4 (1.5-2 mo, conditional):** Dendritic learning rewrite if
+  Step 3 hits a compositional ceiling.
+- **Step 5+ (months-year):** 64+ word vocab, sentence-level
+  understanding, reasoning, true conversation.
+
+Local-only commitment: every step runs on RTX 3090 or CPU. No cloud
+dependencies, no external LLM.
+
+### Path 3 Phase 3.2 (2026-05-11): LLM-memory orchestrator + chat UI (now SECONDARY)
+
+⚠️ **The Phase 3.2 stack is now framed as the SECONDARY application
+(sim as continuous-learning memory layer for external LLM agents).**
+Code stays in the codebase, but the framing changed per the realigned
+plan above. The MockLLM in the dashboard chat is a sim-native pattern
+dispatcher — it doesn't pretend to be an LLM.
 
 **Status:** SHIPPED 2026-05-11. MockLLM tool-use loop with end-to-end
 demo + webapp chat surface. Real LLM swap-in (Phi-3 / Llama 3.2 /
-Qwen2.5) is a one-line change at the orchestrator's `llm_callable`
-argument.
+Qwen2.5) via SIM_LLM_BACKEND=ollama env var is available for the
+secondary path but NOT actively developed.
 
 **Module:** `sim/llm_memory_orchestrator.py` (~440 lines)
 - `TOOL_SCHEMAS` — OpenAI-compatible JSON schemas for the five
