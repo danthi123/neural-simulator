@@ -84,13 +84,18 @@ rewrite) or design a 5th variant (e.g. cortex_X anchored learning).
 work needed.
 Source: `research/findings/2026-05-09-Phase1.3-Tier2.1-12word-scaled-3seed-CONFIRMED.md`
 
-**Step 2b — 16-word vocab: NOT validated yet.** This is the real
-Step 2 work. 16-word vocab adds arrow glyphs (↑→↓←) on top of the
-12-word synonym set. Per the empirical capacity scaling rule,
-n_motor likely needs ~2500+ for retention to hold.
+**Step 2b — 16-word vocab: PARTIAL (1/1 smoke seed PASSES).**
+16-word smoke at seed 42 (`consolidation_synonym_16word_scaled_smoke`
+preset, n_motor=2000) gives **primary retention 90%, synonym
+retention 108.7%, verdict GO**. Single-seed positive — capacity
+hypothesis appears to extend to 16 words.
 
-Validation: ≥ 4/6 seeds at ≥ 60% W→A on synonym16 mode after
-training, ≥ 80% retention after consolidation.
+Real Step 2b work: run `consolidation_synonym_16word_scaled_medium`
+preset at 3-6 seeds (already wired up in webapp; ~3.5 hr/seed at
+medium config). No new code needed. ~10-20 hours total wall clock.
+
+Validation: ≥ 4/6 seeds at ≥ 80% primary retention, ≥ 60% synonym
+retention (matches 12-word criteria).
 
 If Step 1's fix enables in-vivo binding, Step 2b can also test
 adding NEW words on top of the trained 16-word vocab (capacity
