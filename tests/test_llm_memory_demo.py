@@ -17,11 +17,25 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
+def _skip_if_backend_mismatch():
+    """Skip the test if a non-numpy backend is already locked into the
+    bridge module. Backend resolution happens once per process; tests
+    that need a specific backend either need to run first or in a fresh
+    subprocess."""
+    # Lazy import: don't trigger backend resolution before we set the env
+    from sim import backend as _b
+    if _b._cached_name is not None and _b._cached_name != "numpy":
+        pytest.skip(
+            f"backend already locked to {_b._cached_name}; this test needs "
+            "numpy. Run tests/test_llm_memory_demo.py first or in isolation."
+        )
+
+
 @pytest.mark.slow
 def test_llm_memory_demo_end_to_end():
     """End-to-end: MockLLM stores a fact through the real bridge stack."""
-    # Force NumPy backend for CI portability
     os.environ.setdefault("SIM_BACKEND", "numpy")
+    _skip_if_backend_mismatch()
 
     from research.runners.llm_memory_demo import run_llm_demo
 
@@ -71,6 +85,7 @@ def test_llm_memory_demo_end_to_end():
 def test_llm_memory_demo_multi_turn():
     """Multi-turn: store then recall in the same session."""
     os.environ.setdefault("SIM_BACKEND", "numpy")
+    _skip_if_backend_mismatch()
 
     from research.runners.llm_memory_demo import run_llm_demo
 

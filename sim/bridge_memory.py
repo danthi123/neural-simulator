@@ -121,7 +121,19 @@ class BridgeMemory:
 
     # ── Store ────────────────────────────────────────────────────────
 
-    def store(self, key: str, value: str, n_events: int = 50,
+    # Mode-specific default training events. Production-scale synonym
+    # arches (12K neurons, ~12M synapses) need more co-firing events to
+    # overcome random-init bias than the toy tier1 (~208 neurons).
+    # Tuned 2026-05-11 after live smoke showed 50 events insufficient
+    # for synonym scale.
+    DEFAULT_N_EVENTS = {
+        "tier1": 50,
+        "synonym": 200,
+        "synonym12": 200,
+        "synonym16": 200,
+    }
+
+    def store(self, key: str, value: str, n_events: int | None = None,
                 **metadata) -> dict:
         """Bind key → value in the bridge.
 
@@ -137,7 +149,9 @@ class BridgeMemory:
             value: target direction word (e.g. "north", "up", "left")
                 Must be in the active mode's vocab or be a primary
                 N/E/S/W letter.
-            n_events: training events for the co-firing session (default 50)
+            n_events: training events for the co-firing session. If None,
+                uses DEFAULT_N_EVENTS[mode] (50 for tier1, 200 for
+                synonym variants — production scale needs more events).
             **metadata: extra fields for the lineage growth event
 
         Returns:
@@ -157,6 +171,9 @@ class BridgeMemory:
         self._ensure_loaded()
         t0 = time.time()
         target_action = self._value_to_action(value)
+        # Resolve default training events from mode if not explicit.
+        if n_events is None:
+            n_events = self.DEFAULT_N_EVENTS.get(self.mode, 50)
         from research.runners.chat_repl import learn_word_pairing
 
         summary = learn_word_pairing(
