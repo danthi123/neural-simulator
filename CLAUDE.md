@@ -78,6 +78,8 @@ sim/                    # 16 modules, ~12.8K lines — core engine
   bioparameter.py       #  231 lines — biological parameter helpers
   progress.py           #  147 lines — universal [PROGRESS] event format (2026-05-04)
   lineage.py            #  402 lines — BridgeLineage persistent continuous-learning state (2026-05-11)
+  auto_growth.py        #  283 lines — TierPromoter + weight-transfer (auto-growth Phase A, 2026-05-11)
+  backend.py            #  254 lines — pluggable xp abstraction (cupy/numpy backend, 2026-05-11)
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
@@ -411,6 +413,47 @@ Curriculum: phase 1 corticostriatal plastic + input layers frozen; phase 2
 cortex frozen (or partial) + input layers thawed. Biologically: real
 critical periods close gradually, gated by neuromodulators, allowing
 sensory cortex to mature before association cortex.
+
+### Pluggable backend (2026-05-11): xp abstraction layer
+
+**Status:** Phase 1 of the tiering design SHIPPED 2026-05-11. The
+abstraction module (`sim/backend.py`) is in place; bridge.py refactor
+to use `xp.*` instead of `cp.*` is a separate work unit (~6000 lines
+of mechanical refactoring, scoped 1 week per the design doc).
+
+Design doc: [`docs/plans/2026-05-11-cpu-ram-ssd-tiering-design.md`](docs/plans/2026-05-11-cpu-ram-ssd-tiering-design.md)
+Strategic context: [`docs/plans/2026-05-11-strategic-reevaluation.md`](docs/plans/2026-05-11-strategic-reevaluation.md)
+
+**Pattern for new code:** instead of `import cupy as cp`, use:
+
+```python
+from sim.backend import get_backend, fuse, synchronize, to_host
+xp, backend_name = get_backend()
+
+@fuse()
+def my_kernel(a, b):
+    return a + b  # works on both cupy + numpy backends
+```
+
+**Backend selection** (in priority order):
+1. Explicit `get_backend("cupy")` or `get_backend("numpy")` (test code)
+2. `SIM_BACKEND` env var (`cupy` / `numpy` / `auto`)
+3. Cached backend from a prior call (sticky)
+4. Auto-detect: CuPy if installed AND `cp.cuda.runtime.getDeviceCount() > 0`,
+   else NumPy
+
+**Helpers exposed by `sim.backend`:**
+- `get_backend()` — returns `(xp_module, backend_name)`
+- `get_sparse_module()` — `cupyx.scipy.sparse` or `scipy.sparse`
+- `is_gpu_backend()` — True if active backend is CuPy
+- `fuse(...)` — decorator that's `cp.fuse()` on CuPy, no-op on NumPy
+- `synchronize()` — `cp.cuda.Stream.null.synchronize()` on CuPy, no-op on NumPy
+- `to_host(arr)` / `from_host(arr)` — D↔H transfers (passthrough on NumPy)
+- `get_memory_pool_used_mb()` — CuPy memory pool stats or None
+
+**Tests:** 27/27 pass on both NumPy and CuPy paths (`tests/test_backend.py`).
+The pattern is additive — existing `import cupy as cp` code is unaffected
+until refactored. No runtime behavior change for current users.
 
 ### Continuous-learning workflow (2026-05-11): Bridge Lineage Manager
 
