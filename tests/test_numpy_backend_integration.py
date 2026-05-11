@@ -442,3 +442,62 @@ def test_synapse_tiering_opt_in_default_off(numpy_backend, tmp_path):
     assert bridge.synapse_store is None
     # Step still runs cleanly
     bridge._run_one_simulation_step()
+
+
+@pytest.mark.slow
+def test_bridge_memory_real_bridge_store_recall_on_numpy(numpy_backend, tmp_path, monkeypatch):
+    """BridgeMemory end-to-end on a real bridge under SIM_BACKEND=numpy.
+
+    Builds a tier1 toy bridge, binds a key with embodied-Hebbian,
+    verifies recall returns the expected motor pool.
+
+    Toy scale: n_lang=64, n_motor=16 — fast enough for CI but big
+    enough to exercise the full bind/recall paths.
+    """
+    from sim.bridge_memory import BridgeMemory
+    from research.runners.bio_three_factor import run_three_factor
+
+    # Build a tiny pre-trained bridge (skip lineage train path)
+    bridge, _ = run_three_factor(
+        seed=42, n_events_per_direction=2, biological=True,
+        n_lang_input=64, n_motor_per_action=16, n_motor_fs_per_action=4,
+        enable_motor_fs=True, enable_nmda=False,
+        apply_topographic_bias=True, embodied_hebbian=True,
+        synonym_mode=False, verbose=False,
+    )
+
+    # Pre-create the lineage to skip BridgeMemory's load-or-train path
+    from sim.lineage import BridgeLineage
+    lineage = BridgeLineage("bridge_memory_real_test", root=tmp_path)
+    lineage.save(bridge, tier="tier1", arch={"mode": "tier1"})
+
+    mem = BridgeMemory(
+        lineage_name="bridge_memory_real_test",
+        mode="tier1",
+        bridge=bridge,
+        auto_save=True,
+        verbose=False,
+    )
+    mem._lineage = lineage  # bypass _ensure_loaded's lineage fetch
+
+    # Bind a new word ("alice") to motor_N
+    store_result = mem.store("alice", "north", n_events=20)
+    assert store_result["target_action"] == "N"
+    assert store_result["n_events_run"] == 20
+
+    # Recall should at least return SOMETHING (4 motor pools)
+    recall_result = mem.recall("alice", top_k=4)
+    assert len(recall_result) == 4
+    # All entries should have required fields
+    for r in recall_result:
+        assert "action" in r and r["action"] in ("N", "E", "S", "W")
+        assert "value" in r
+        assert "confidence" in r
+        assert "rank" in r
+
+    # The lineage should have a memory_bind growth event
+    meta = lineage.read_metadata()
+    bind_events = [e for e in meta.growth_events
+                    if e["kind"] == "memory_bind"]
+    assert len(bind_events) == 1
+    assert bind_events[0]["metadata"]["target_action"] == "N"

@@ -95,36 +95,41 @@ def test_bridge_memory_explicit_args():
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_store_returns_stub_schema(mock_memory):
-    """store() returns the expected stub schema."""
-    result = mock_memory.store("user_name", "alice")
-    assert "key" in result and result["key"] == "user_name"
-    assert "value" in result and result["value"] == "alice"
-    assert "confidence" in result
-    assert "bound_correctly" in result
-    assert "n_events_run" in result
-    assert "elapsed_seconds" in result
-    assert "stub_note" in result  # Phase 3.1 placeholder
-    assert "Phase 3.1" in result["stub_note"]
+def test_value_to_action_letter_passthrough(mock_memory):
+    """value='N' / 'E' / 'S' / 'W' maps to itself."""
+    assert mock_memory._value_to_action("N") == "N"
+    assert mock_memory._value_to_action("e") == "E"
+    assert mock_memory._value_to_action("South") == "S"
+    assert mock_memory._value_to_action("w") == "W"
 
 
-def test_store_records_growth_event(mock_memory):
-    """store() records a memory_bind growth event."""
-    mock_memory.store("favorite_color", "blue")
-    meta = mock_memory._lineage.read_metadata()
-    bind_events = [e for e in meta.growth_events
-                    if e["kind"] == "memory_bind"]
-    assert len(bind_events) >= 1
-    assert "favorite_color" in bind_events[-1]["description"]
+def test_value_to_action_primary_words(mock_memory):
+    """value='north' etc. maps via vocab table."""
+    assert mock_memory._value_to_action("north") == "N"
+    assert mock_memory._value_to_action("east") == "E"
+    assert mock_memory._value_to_action("South") == "S"
+    assert mock_memory._value_to_action("WEST") == "W"
 
 
-def test_store_bumps_vocab_estimate(mock_memory):
-    """Each store() increments _vocab_size_estimate."""
-    assert mock_memory._vocab_size_estimate == 0
-    mock_memory.store("k1", "v1")
-    mock_memory.store("k2", "v2")
-    mock_memory.store("k3", "v3")
-    assert mock_memory._vocab_size_estimate == 3
+def test_value_to_action_synonyms(mock_memory):
+    """In synonym mode, 'up'/'right'/'down'/'left' map to N/E/S/W."""
+    # mock_memory is mode="synonym"
+    assert mock_memory._value_to_action("up") == "N"
+    assert mock_memory._value_to_action("right") == "E"
+    assert mock_memory._value_to_action("down") == "S"
+    assert mock_memory._value_to_action("left") == "W"
+
+
+def test_value_to_action_rejects_unknown(mock_memory):
+    """Unknown values raise ValueError."""
+    with pytest.raises(ValueError, match="doesn't map to N/E/S/W"):
+        mock_memory._value_to_action("blueberry")
+
+
+# The store/recall tests that exercise the real bridge are in
+# tests/test_numpy_backend_integration.py — they need a real
+# SimulationBridge built under SIM_BACKEND=numpy. Here we test the
+# scaffolding around them.
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -132,17 +137,20 @@ def test_store_bumps_vocab_estimate(mock_memory):
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_recall_returns_empty_list_in_stub(mock_memory):
-    """Phase 3.1 stub: recall() returns []."""
-    result = mock_memory.recall("user_name")
-    assert result == []
-
-
 def test_recall_does_not_record_growth_event(mock_memory):
-    """recall() is read-only; no growth event."""
+    """recall() is read-only; no growth event recorded.
+
+    Note: recall against a mock bridge can't return real results (it
+    would call chat_inference on a non-functional bridge). We just
+    verify it doesn't add growth events.
+    """
     initial_meta = mock_memory._lineage.read_metadata()
     initial_count = len(initial_meta.growth_events)
-    mock_memory.recall("test")
+    try:
+        mock_memory.recall("test")
+    except Exception:
+        # Mock bridge can't actually run chat_inference; that's fine
+        pass
     after_meta = mock_memory._lineage.read_metadata()
     assert len(after_meta.growth_events) == initial_count
 
@@ -208,9 +216,17 @@ def test_consolidate_caches_last_result(mock_memory):
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_stats_returns_expected_schema(mock_memory):
+def test_stats_returns_expected_schema(mock_memory, monkeypatch):
     """stats() returns dict with required fields."""
-    mock_memory.store("k", "v")
+    # Patch learn_word_pairing + chat_inference so store() works on the
+    # mock bridge without GPU
+    import research.runners.chat_repl as cr
+    monkeypatch.setattr(cr, "learn_word_pairing",
+                          lambda b, **kw: {"n_events_run": 50})
+    monkeypatch.setattr(cr, "chat_inference",
+                          lambda b, w: {"predicted_action": "N",
+                                          "confidence_ratio": 1.5})
+    mock_memory.store("alice", "north")
     s = mock_memory.stats()
     assert s["lineage_name"] == "test_memory"
     assert s["mode"] == "synonym"
@@ -271,16 +287,31 @@ def test_save_records_growth_event(mock_memory):
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_conversation_flow_records_all_events(mock_memory):
-    """Simulate a multi-turn LLM interaction; verify lineage records."""
-    # Turn 1: user introduces self
-    mock_memory.store("user_name", "alice")
-    mock_memory.store("user_role", "engineer")
-    # Turn 2: LLM queries something it hasn't been told
-    result = mock_memory.recall("favorite_color")
-    assert result == []  # stub
-    # Turn 3: user provides the answer
-    mock_memory.store("favorite_color", "blue")
+def test_conversation_flow_records_all_events(mock_memory, monkeypatch):
+    """Simulate a multi-turn LLM interaction; verify lineage records.
+
+    Patches learn_word_pairing + chat_inference so store() works
+    against the mock bridge. Values are direction words (today's
+    bridge has 4 motor pools).
+    """
+    import research.runners.chat_repl as cr
+    monkeypatch.setattr(cr, "learn_word_pairing",
+                          lambda b, **kw: {"n_events_run": 50})
+    monkeypatch.setattr(cr, "chat_inference",
+                          lambda b, w: {"predicted_action": "N",
+                                          "confidence_ratio": 1.5,
+                                          "delta_counts": {"N": 50, "E": 10,
+                                                            "S": 5, "W": 2}})
+
+    # Turn 1: bind 3 cues to direction values
+    mock_memory.store("alice", "north")
+    mock_memory.store("engineer", "east")
+    # Turn 2: LLM queries (recall path doesn't need patching here
+    # because it returns based on delta_counts from chat_inference)
+    result = mock_memory.recall("alice")
+    assert isinstance(result, list)
+    # Turn 3: another bind
+    mock_memory.store("blue_color", "south")
     # Session end: consolidate
     mock_memory.consolidate(n_sleep_cycles=3)
 

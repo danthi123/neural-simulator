@@ -121,57 +121,107 @@ class BridgeMemory:
 
     # ── Store ────────────────────────────────────────────────────────
 
-    def store(self, key: str, value: str, **metadata) -> dict:
+    def store(self, key: str, value: str, n_events: int = 50,
+                **metadata) -> dict:
         """Bind key → value in the bridge.
 
-        Phase 3.1 stub: uses chat_repl's learn flow (embodied-Hebbian
-        co-firing). The learn flow assumes value maps to one of N/E/S/W
-        actions, which limits Phase 3.1 to action-like bindings.
-        Multi-vocab extension is Phase 3.2.
+        Phase 3.1.5: uses chat_repl's learn_word_pairing flow
+        (embodied-Hebbian co-firing). Today's bridge has 4 motor pools
+        (N/E/S/W) — value must be one of these directions OR a known
+        synonym/word that maps to one (per the mode's vocab table).
+
+        Phase 3.2 will extend to multi-modal bindings as the arch grows.
 
         Args:
-            key: cue word (e.g. "user_name", "favorite_color")
-            value: target word (e.g. "alice", "blue")
+            key: cue word to bind (e.g. "alice", "favorite_color")
+            value: target direction word (e.g. "north", "up", "left")
+                Must be in the active mode's vocab or be a primary
+                N/E/S/W letter.
+            n_events: training events for the co-firing session (default 50)
             **metadata: extra fields for the lineage growth event
 
         Returns:
             {
               "key": str,
               "value": str,
+              "target_action": str (N/E/S/W),
               "confidence": float,
               "bound_correctly": bool,
               "n_events_run": int,
               "elapsed_seconds": float,
-              "stub_note": str (Phase 3.1 placeholder explanation)
             }
+
+        Raises:
+            ValueError: if value cannot be mapped to an N/E/S/W action.
         """
         self._ensure_loaded()
         t0 = time.time()
-        # Phase 3.1 scaffold: record the request without actually doing
-        # embodied-Hebbian learning. Real implementation calls
-        # chat_repl's _run_embodied_learn_session, which trains the
-        # bridge on (key, value) co-firing.
+        target_action = self._value_to_action(value)
+        from research.runners.chat_repl import learn_word_pairing
+
+        summary = learn_word_pairing(
+            self.bridge,
+            word=key,
+            target_action=target_action,
+            n_events=n_events,
+            verbose=self.verbose,
+        )
+
+        # Best-effort confidence via a follow-up chat_inference
+        from research.runners.chat_repl import chat_inference
+        try:
+            check = chat_inference(self.bridge, key)
+            confidence = float(check.get("confidence_ratio", 0.0))
+            bound_correctly = (check.get("predicted_action") == target_action)
+        except Exception:
+            confidence = 0.0
+            bound_correctly = False
+
         result = {
             "key": key,
             "value": value,
-            "confidence": 0.0,  # not yet computed
-            "bound_correctly": False,
-            "n_events_run": 0,
+            "target_action": target_action,
+            "confidence": confidence,
+            "bound_correctly": bound_correctly,
+            "n_events_run": int(summary.get("n_events_run", n_events)),
             "elapsed_seconds": time.time() - t0,
-            "stub_note": (
-                "Phase 3.1 scaffold: bridge binding deferred to Phase "
-                "3.2. The lineage growth event IS recorded so the "
-                "memory's intended state survives this stub."
-            ),
         }
         self._vocab_size_estimate += 1
         if self.auto_save and self._lineage is not None:
             self._save_to_lineage(
                 "memory_bind",
-                f"store('{key}', '{value}')",
-                key=key, value=value, **metadata,
+                f"store('{key}', '{value}') -> motor_{target_action}, "
+                f"acc={confidence:.2f}",
+                key=key, value=value, target_action=target_action,
+                confidence=confidence, **metadata,
             )
         return result
+
+    def _value_to_action(self, value: str) -> str:
+        """Map value → motor action letter (N/E/S/W).
+
+        Accepts:
+          - Direction letters: "N", "E", "S", "W" (any case)
+          - Primary direction words: "north", "east", "south", "west"
+          - Synonyms in the mode's vocab table (e.g. "up", "right")
+        """
+        value_lower = value.strip().lower()
+        # Direct letter
+        if value.upper() in ("N", "E", "S", "W"):
+            return value.upper()
+        # Vocab lookup
+        try:
+            from research.runners.chat_repl import _vocab_for_mode
+            _, word_to_action = _vocab_for_mode(self.mode)
+            if value_lower in word_to_action:
+                return word_to_action[value_lower]
+        except Exception:
+            pass
+        raise ValueError(
+            f"value '{value}' doesn't map to N/E/S/W under mode "
+            f"'{self.mode}'. Today's bridge has 4 motor pools; use a "
+            f"primary direction word or a synonym from the mode vocab."
+        )
 
     # ── Recall ──────────────────────────────────────────────────────
 
@@ -179,25 +229,52 @@ class BridgeMemory:
                  temperature: float = 0.0) -> list[dict]:
         """Retrieve associations for key, sorted by confidence.
 
-        Phase 3.1 stub: returns empty list. Real implementation calls
-        chat_repl's chat_inference or chat_speak path with `key` as
-        input, ranks the resulting motor activity / language_output
-        spikes against the known vocab.
+        Phase 3.1.5: uses chat_repl.chat_inference to drive `key`
+        through language_input and read motor activity. Returns the
+        top-k (action, confidence) pairs ranked by spike-delta.
+
+        For a more semantically-rich response, use a vocab-aware
+        synonym mode (synonym / synonym12 / synonym16) — recall will
+        return the canonical primary word for the top motor pool.
 
         Args:
             key: the cue
-            top_k: how many candidates to return
-            temperature: 0 = argmax; >0 = softmax sampling
+            top_k: how many candidates to return (max 4 = N/E/S/W;
+                limited by the 4-motor-pool arch)
+            temperature: reserved for Phase 3.2 (softmax sampling)
 
         Returns:
-            List of {"value": str, "confidence": float, "rank": int}
-            sorted by descending confidence. Empty if no binding exists
-            or stub stage.
+            List of {"value": str, "confidence": float, "rank": int,
+                       "action": str} sorted by descending confidence.
         """
         self._ensure_loaded()
-        # Phase 3.1 scaffold: return empty list. Real implementation
-        # routes through chat_repl.chat_inference / chat_speak.
-        return []
+        from research.runners.chat_repl import chat_inference
+        try:
+            result = chat_inference(self.bridge, key)
+        except Exception:
+            return []
+
+        # delta_counts is {"N": int, "E": int, "S": int, "W": int}
+        # Rank by descending delta
+        deltas = result.get("delta_counts", {})
+        if not deltas:
+            return []
+        # Compute confidence-style score: positive delta / max delta
+        max_delta = max(max(deltas.values()), 1)
+        ranked = sorted(deltas.items(), key=lambda kv: -kv[1])
+
+        # Action -> primary word for the response
+        action_to_word = {"N": "north", "E": "east", "S": "south", "W": "west"}
+        out = []
+        for rank, (action, delta) in enumerate(ranked[:top_k], 1):
+            out.append({
+                "action": action,
+                "value": action_to_word.get(action, action),
+                "confidence": float(delta / max_delta) if max_delta > 0 else 0.0,
+                "rank": rank,
+                "raw_delta": int(delta),
+            })
+        return out
 
     # ── Forget ──────────────────────────────────────────────────────
 
