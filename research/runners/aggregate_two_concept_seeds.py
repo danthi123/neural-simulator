@@ -175,7 +175,19 @@ def main() -> int:
     rows = aggregate(seeds, root)
     md = render_markdown(rows)
 
-    print(md)
+    # ASCII-safe stdout summary (avoid Windows cp1252 crashes on
+    # special chars in markdown like arrows).
+    n_seeds = len(rows)
+    n_bio = sum(1 for r in rows if r["bio_overall"])
+    n_strict = sum(1 for r in rows if r["strict_overall"])
+    print(f"Seeds: {[r['seed'] for r in rows]}")
+    print(f"Biology-faithful PASS: {n_bio}/{n_seeds}")
+    print(f"Strict PASS: {n_strict}/{n_seeds}")
+    for r in rows:
+        print(f"  seed={r['seed']}: bio={'PASS' if r['bio_overall'] else 'FAIL'}, "
+              f"strict={'PASS' if r['strict_overall'] else 'FAIL'}, "
+              f"tag_AB cos={r['tag_ab_cos']:.3f}, "
+              f"margin_a={r['margin_a']:.3f}, margin_b={r['margin_b']:.3f}")
     if args.out:
         out = Path(args.out)
         out.parent.mkdir(parents=True, exist_ok=True)
