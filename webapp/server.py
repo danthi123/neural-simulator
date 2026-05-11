@@ -1964,6 +1964,75 @@ def get_synapse_tiering(name: str) -> JSONResponse:
     })
 
 
+# ─── BridgeMemory stats endpoint (Path 3, 2026-05-11) ──────────────────
+# Returns memory subsystem state for a lineage: how many bindings,
+# consolidations, forgets have been recorded via growth events.
+
+@app.get("/api/bridge-memory/{name}")
+def get_bridge_memory(name: str) -> JSONResponse:
+    """Aggregate BridgeMemory state for a lineage.
+
+    Counts growth events of kinds memory_bind / memory_forget /
+    memory_consolidate / manual_save and returns a summary.
+
+    Returns:
+        {
+          "lineage_name": "main",
+          "n_bindings": 12,      # count of memory_bind events
+          "n_forgets": 1,
+          "n_consolidations": 3,
+          "last_consolidation_at": "2026-05-11T...",
+          "bindings": [
+            {"key": "alice", "value": "north", "at": "...",
+             "target_action": "N", "confidence": 0.91},
+            ...
+          ],
+          "current_tier": "8-word",
+          "vocab_size": 8,
+          "cumulative_training_events": 400
+        }
+
+    404 if lineage doesn't exist.
+    """
+    from sim.lineage import BridgeLineage, LINEAGE_ROOT
+    root = REPO_ROOT / LINEAGE_ROOT
+    lineage = BridgeLineage(name, root=root)
+    if not lineage.exists():
+        raise HTTPException(404, f"lineage not found: {name}")
+    meta = lineage.read_metadata()
+    bindings = []
+    n_forgets = 0
+    n_consolidations = 0
+    last_consolidation_at = None
+    for e in meta.growth_events:
+        kind = e.get("kind", "")
+        if kind == "memory_bind":
+            md = e.get("metadata", {})
+            bindings.append({
+                "key": md.get("key", ""),
+                "value": md.get("value", ""),
+                "target_action": md.get("target_action", ""),
+                "confidence": md.get("confidence", 0.0),
+                "at": e.get("at", ""),
+            })
+        elif kind == "memory_forget":
+            n_forgets += 1
+        elif kind == "memory_consolidate":
+            n_consolidations += 1
+            last_consolidation_at = e.get("at", "")
+    return JSONResponse({
+        "lineage_name": name,
+        "n_bindings": len(bindings),
+        "n_forgets": n_forgets,
+        "n_consolidations": n_consolidations,
+        "last_consolidation_at": last_consolidation_at,
+        "bindings": bindings[-50:],  # last 50 only to bound response size
+        "current_tier": meta.current_tier,
+        "vocab_size": len(meta.vocab),
+        "cumulative_training_events": meta.cumulative_training_events,
+    })
+
+
 # ─── In-flight detached-run monitor (2026-05-01) ────────────────────────
 # Detached runs (launched via PowerShell Start-Process to survive Claude
 # restart) write a *.pid + *.log file under research/findings/raw/g11_bg/.

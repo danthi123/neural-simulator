@@ -109,6 +109,12 @@ def test_synapse_tiering_404_unknown(client):
     assert res.status_code == 404
 
 
+def test_bridge_memory_404_unknown(client):
+    """`/api/bridge-memory/{name}` returns 404 for unknown lineage."""
+    res = client.get("/api/bridge-memory/totally-nonexistent-lineage-name")
+    assert res.status_code == 404
+
+
 def test_synapse_tiering_response_schema_when_lineage_exists_but_no_shards(client, tmp_path, monkeypatch):
     """Returns an empty shards list (200, not 404) when lineage exists
     but has no exported shards yet (user hasn't run export_shards)."""
