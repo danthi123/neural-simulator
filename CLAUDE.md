@@ -81,6 +81,7 @@ sim/                    # 19 modules, ~14.4K lines — core engine
   auto_growth.py        #  357 lines — TierPromoter + weight-transfer (auto-growth Phase A, 2026-05-11)
   backend.py            #  415 lines — pluggable xp abstraction + device helpers + RNG state (cupy/numpy, 2026-05-11)
   synapse_storage.py    #  415 lines — TieredSynapseStore + idle/pressure eviction (tiering Phase 3+4, 2026-05-11)
+  bridge_memory.py      #  340 lines — BridgeMemory LLM-callable memory wrapper (Path 3 Phase 3.1.5, 2026-05-11)
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
@@ -550,6 +551,64 @@ inventory + sizes per pathway. (Active after webapp restart.)
 **Tests:** 56 across `sim.synapse_storage` + bridge integration
 (`tests/test_synapse_storage.py`, `tests/test_numpy_backend_integration.py`).
 All PASS, all CPU-only.
+
+### Path 3 LLM-callable memory (2026-05-11): BridgeMemory API
+
+**Status:** Phase 3.1.5 SHIPPED 2026-05-11. The `BridgeMemory` class
+in `sim/bridge_memory.py` wraps a SimulationBridge + BridgeLineage as
+a key-value memory subsystem that an LLM can call via tool-use.
+
+Design doc: [`docs/plans/2026-05-11-path3-bridge-memory-api-design.md`](docs/plans/2026-05-11-path3-bridge-memory-api-design.md)
+
+**Why:** the strategic re-eval (Path 1/2/3) places this on the most
+pragmatic path — a locally-runnable LLM (Phi-3-mini / Llama 3.2 1B /
+Qwen2.5) handles language + cognition; the biology-grounded sim
+becomes the **memory subsystem** distinguished by continuous learning
+across sessions without catastrophic forgetting.
+
+**Usage:**
+
+```python
+from sim.bridge_memory import BridgeMemory
+
+mem = BridgeMemory(lineage_name="alice", mode="synonym")
+
+# Bind facts — value must map to N/E/S/W (current 4-motor-pool arch)
+mem.store("alice", "north", n_events=50)
+# {"key": "alice", "value": "north", "target_action": "N",
+#  "confidence": 1.5, "bound_correctly": True, "n_events_run": 50}
+
+# Recall
+results = mem.recall("alice", top_k=4)
+# [{"action": "N", "value": "north", "confidence": 1.0, "rank": 1,
+#   "raw_delta": 317}, ...]
+
+# Long-term consolidation (Phase 1.3 sleep-replay; stub in 3.1.5)
+mem.consolidate(n_sleep_cycles=3)
+
+# State
+print(mem.stats())
+```
+
+**Webapp endpoint:** `GET /api/bridge-memory/{name}` returns memory
+state aggregated from lineage growth events: n_bindings, n_forgets,
+n_consolidations, the binding history (last 50), current_tier.
+(Active after webapp restart; shipped commit `def96d8`.)
+
+**What's Phase 3.2 (deferred):**
+- Choose local LLM hosting (vLLM / llama.cpp / ollama)
+- Wire BridgeMemory methods to tool-use handlers (OpenAI / Anthropic
+  schema)
+- 5-turn conversation smoke test
+- Multi-session continuity test (Phase 3.3)
+
+**Limitation:** today's bridge has 4 motor pools (N/E/S/W). Values
+must map to these. Multi-modal arbitrary k/v bindings need a larger
+arch (Phase 3.2+).
+
+**Tests:** 18 across `sim.bridge_memory` (17 in test_bridge_memory.py
++ 1 real-bridge integration test in test_numpy_backend_integration.py).
+All PASS.
 
 ### Continuous-learning workflow (2026-05-11): Bridge Lineage Manager
 
