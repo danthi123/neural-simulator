@@ -255,6 +255,18 @@ def build_biological_brain_regions(
     semantic_to_wernicke_weight: float = 2.0,
     ca1_to_semantic_density: float = 0.20,
     ca1_to_semantic_weight: float = 3.0,
+    # Path B+ (P5 architecture rework): semantic_FS lateral
+    # inhibition. Real cortex has PV-FS interneurons that enforce
+    # winner-take-most selection among co-active sub-populations
+    # (Vogels 2011, Hofer 2011). Without this, attractor dynamics
+    # are monolithic — every input drives the same big basin.
+    # See P5 iter D FAIL (2026-05-11).
+    enable_semantic_fs: bool = False,
+    n_semantic_fs: int = 100,
+    semantic_to_fs_density: float = 0.30,
+    semantic_to_fs_weight: float = 3.0,
+    fs_to_semantic_density: float = 0.50,
+    fs_to_semantic_weight: float = 4.0,
     # P6 Broca's area + compositional syntax (catalog G.12, Kandel
     # 6e Ch 55 pp 1382-1384). Adds broca region (~500 neurons,
     # recurrent for sentence working memory) + motor_speech region
@@ -582,6 +594,42 @@ def build_biological_brain_regions(
                 weight_jitter=0.3,
                 plastic=True, plasticity_gate="ca1_to_semantic",
             ))
+            # Path B+: semantic_FS lateral inhibition for selective
+            # attractor formation. Real cortex PV-FS interneurons
+            # provide winner-take-most among co-active sub-populations.
+            # Vogels 2011 / Hofer 2011: PV-FS ~12% of cortex; tonic
+            # spiking; broad projections within column. Here:
+            # semantic_cortex -> semantic_fs (excite all FS) and
+            # semantic_fs -> semantic_cortex (inhibit broadly). The
+            # winning sub-population is favored because it sustains
+            # via recurrence; losing sub-populations get suppressed.
+            if enable_semantic_fs:
+                regions.append(BrainRegion(
+                    name="semantic_fs",
+                    n_neurons=n_semantic_fs, exc_fraction=0.0,
+                    internal_density=0.0,
+                    exc_weight_mean=0.0, inh_weight_mean=0.0,
+                    weight_jitter=0.0, plastic_internal=False,
+                    izh_neuron_type=(
+                        NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name
+                    ),
+                ))
+                pathways.append(RegionPathway(
+                    from_region="semantic_cortex",
+                    to_region="semantic_fs",
+                    density=semantic_to_fs_density,
+                    weight_mean=semantic_to_fs_weight,
+                    weight_jitter=0.2,
+                    plastic=True, plasticity_gate="semantic_to_fs",
+                ))
+                pathways.append(RegionPathway(
+                    from_region="semantic_fs",
+                    to_region="semantic_cortex",
+                    density=fs_to_semantic_density,
+                    weight_mean=fs_to_semantic_weight,
+                    weight_jitter=0.2,
+                    plastic=False, plasticity_gate="fs_to_semantic",
+                ))
         # P6 Broca's area + motor_speech (catalog G.12). Adds
         # syntactic composition layer. Requires P5 ventral
         # semantic stream (broca reads from wernicke +

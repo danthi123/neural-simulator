@@ -86,6 +86,12 @@ def run_ventral_validation(
     lang_to_wernicke_weight: float = 3.0,
     wernicke_to_semantic_weight: float = 4.0,
     drive_steps: int = 100,
+    # Path B+ (iter F): semantic_FS lateral inhibition for
+    # competitive attractor formation (Vogels 2011, Hofer 2011).
+    # Pairs with strong recurrence (iter D params) to produce
+    # selective basins instead of monolithic attractor.
+    enable_semantic_fs: bool = False,
+    n_semantic_fs: int = 100,
     out_path: Optional[Path] = None,
     verbose: bool = True,
 ):
@@ -146,6 +152,9 @@ def run_ventral_validation(
         semantic_cortex_recurrent_weight=semantic_cortex_recurrent_weight,
         lang_to_wernicke_weight=lang_to_wernicke_weight,
         wernicke_to_semantic_weight=wernicke_to_semantic_weight,
+        # Path B+ (iter F): semantic_FS lateral inhibition
+        enable_semantic_fs=enable_semantic_fs,
+        n_semantic_fs=n_semantic_fs,
     )
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -639,6 +648,12 @@ def main() -> int:
                     help="Iter D: steps to drive during test "
                          "(default 100; try 300 for attractor "
                          "settling)")
+    # Path B+ (iter F): semantic_FS lateral inhibition
+    ap.add_argument("--enable-semantic-fs", action="store_true",
+                    help="Path B+ (iter F): add PV-FS lateral "
+                         "inhibition to semantic_cortex for "
+                         "competitive attractor formation")
+    ap.add_argument("--n-semantic-fs", type=int, default=100)
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
     run_ventral_validation(
@@ -656,6 +671,8 @@ def main() -> int:
         lang_to_wernicke_weight=args.lang_to_wernicke_weight,
         wernicke_to_semantic_weight=args.wernicke_to_semantic_weight,
         drive_steps=args.drive_steps,
+        enable_semantic_fs=args.enable_semantic_fs,
+        n_semantic_fs=args.n_semantic_fs,
         out_path=Path(args.out) if args.out else None,
         verbose=True,
     )
