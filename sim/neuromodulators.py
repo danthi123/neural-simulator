@@ -740,7 +740,8 @@ class NeuromodulatorManager:
                     return 0.0
                 idx_cp = self._cp.asarray(indices, dtype=self._cp.int32)
                 # mean fraction firing this step (0.0 - 1.0)
-                rate = float(self._cp.mean(firing[idx_cp].astype(self._cp.float32)).get())
+                # float() unwraps either cupy 0-d array or numpy scalar
+                rate = float(self._cp.mean(firing[idx_cp].astype(self._cp.float32)))
             except Exception:
                 return 0.0
             # EMA over window_ms (mirrors from_error_persistence pattern)
