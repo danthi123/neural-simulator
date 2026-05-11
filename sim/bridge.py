@@ -6057,6 +6057,30 @@ class SimulationBridge:
                     except Exception as e_exp:
                         self._log_console(f"Warning: Could not save experiment config to checkpoint: {e_exp}", "warning")
 
+                # Engram tags (catalog D.14): persist named neuron-index
+                # ensembles. Concepts-as-tagged-ensembles must survive
+                # save/load for continuous learning across sessions.
+                tags = getattr(self, "_engram_tags", None)
+                if tags:
+                    try:
+                        tag_grp = h5f.create_group("engram_tags")
+                        for tag_name, idx_array in tags.items():
+                            if idx_array is None or idx_array.size == 0:
+                                continue
+                            # Sanitize name for HDF5 (no '/')
+                            safe = tag_name.replace("/", "_slash_")
+                            tag_grp.create_dataset(
+                                safe,
+                                data=_backend_to_host(idx_array.astype(cp.int64)),
+                                compression="gzip",
+                            )
+                            tag_grp[safe].attrs["original_name"] = tag_name
+                    except Exception as e_eng:
+                        self._log_console(
+                            f"Warning: engram tags not saved: {e_eng}",
+                            "warning",
+                        )
+
             self._log_to_ui(f"Checkpoint saved successfully to {filepath}", "success")
             if self.ui_queue: self.ui_queue.put({"type": "CHECKPOINT_SAVE_SUCCESS", "filepath": filepath})
             return True
@@ -6297,6 +6321,28 @@ class SimulationBridge:
                 self._cached_hh_phi_m = cfg.hh_q10_m ** _temp_delta_div_10
                 self._cached_hh_phi_h = cfg.hh_q10_h ** _temp_delta_div_10
                 self._cached_hh_phi_n = cfg.hh_q10_n ** _temp_delta_div_10
+
+                # Engram tags (catalog D.14): restore named ensembles
+                # if present in the checkpoint.
+                if "engram_tags" in h5f:
+                    try:
+                        self._init_engram_tagging()
+                        self._engram_tags.clear()
+                        tag_grp = h5f["engram_tags"]
+                        for safe_name in tag_grp.keys():
+                            ds = tag_grp[safe_name]
+                            original = ds.attrs.get("original_name", safe_name)
+                            if isinstance(original, bytes):
+                                original = original.decode("utf-8")
+                            idx_host = ds[()]
+                            self._engram_tags[str(original)] = cp.asarray(
+                                idx_host, dtype=cp.int64
+                            )
+                    except Exception as e_eng:
+                        self._log_console(
+                            f"Warning: engram tags not loaded: {e_eng}",
+                            "warning",
+                        )
 
                 self.is_initialized = True
                 self._log_to_ui(f"Checkpoint loaded. Sim time: {self.runtime_state.current_time_ms}ms, Step: {self.runtime_state.current_time_step}, Model: {self.core_config.neuron_model_type}", "success")
