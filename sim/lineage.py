@@ -286,11 +286,15 @@ class BridgeLineage:
         # Copy (not move) so current remains valid during the snapshot.
         # Then the save() flow replaces current atomically.
         shutil.copy2(str(self.current_path), str(history_path))
-        # Also copy metadata at this point
+        # Also copy metadata at this point. Use a CONSISTENT naming
+        # convention: <snap_id>-checkpoint.metadata.json — this is what
+        # rollback_to() and the bridge_lineage CLI's diff command expect.
+        # (Previously this used `.simstate.metadata.json` which created
+        # orphaned metadata files unreadable by rollback / diff.)
         if self.metadata_path.exists():
-            history_meta = history_path.with_suffix(
-                ".json"
-            ).with_name(history_path.stem + ".metadata.json")
+            # snap_id is everything before "-checkpoint.simstate.h5"
+            snap_id = history_path.name.replace("-checkpoint.simstate.h5", "")
+            history_meta = self.history_dir / f"{snap_id}-checkpoint.metadata.json"
             shutil.copy2(str(self.metadata_path), str(history_meta))
 
     def list_history(self) -> list[Path]:
@@ -325,10 +329,10 @@ class BridgeLineage:
         for snap in snapshots[:-keep_last]:
             try:
                 snap.unlink()
-                # Also remove paired metadata file if present
-                paired_meta = snap.with_suffix(".json").with_name(
-                    snap.stem + ".metadata.json"
-                )
+                # Also remove paired metadata file if present.
+                # Naming convention: <snap_id>-checkpoint.metadata.json
+                snap_id = snap.name.replace("-checkpoint.simstate.h5", "")
+                paired_meta = self.history_dir / f"{snap_id}-checkpoint.metadata.json"
                 if paired_meta.exists():
                     paired_meta.unlink()
             except OSError:
