@@ -62,7 +62,7 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 15 modules, ~12.3K lines — core engine
+sim/                    # 16 modules, ~12.8K lines — core engine
   bridge.py             # 6144 lines — SimulationBridge + GPU state orchestration
   config.py             #  741 lines — all @dataclass configs
   enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
@@ -77,12 +77,13 @@ sim/                    # 15 modules, ~12.3K lines — core engine
   visual_cortex.py      #  310 lines — Gabor RFs + retina rendering (Cluster K v2, 2026-05-01)
   bioparameter.py       #  231 lines — biological parameter helpers
   progress.py           #  147 lines — universal [PROGRESS] event format (2026-05-04)
+  lineage.py            #  402 lines — BridgeLineage persistent continuous-learning state (2026-05-11)
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 70 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/etc) for research
-research/findings/      # session-by-session findings docs (210+ files)
-tests/                  # 65 test files (determinism, runners, kernels, plasticity, etc.)
+research/runners/       # 71 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/etc) for research
+research/findings/      # session-by-session findings docs (220+ files)
+tests/                  # 68 test files (determinism, runners, kernels, plasticity, lineage, etc.)
 ```
 
 ### Thread Model
