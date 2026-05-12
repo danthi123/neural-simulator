@@ -128,6 +128,9 @@ def run_ventral_validation(
     # Iter DD: multi-trial averaging at recognition (smooth
     # single-trial noise like seed 44's 3-spike margin)
     n_recognition_trials: int = 1,
+    # Iter EE: longer inter-trial rest (default 50 steps) to
+    # allow neuron adaptation to recover between trials
+    inter_trial_rest_steps: int = 50,
     # Iter M: strengthen naming pathway weights. ca1_to_lang_out
     # at default 2.0 produces only ~20 mV drive on lang_output
     # which is barely suprathreshold. Bumping to 5.0 should
@@ -737,7 +740,8 @@ def run_ventral_validation(
             for trial in range(n_recognition_trials):
                 bridge.cp_external_input_current[:] = 0.0
                 bridge.clear_tag_drive()
-                for _ in range(50):
+                # Inter-trial rest (iter EE: configurable, default 50)
+                for _ in range(inter_trial_rest_steps):
                     bridge._run_one_simulation_step()
                     bridge.runtime_state.current_time_step += 1
                 bridge.stimulate_tag(stim_concept, drive_pA=stim_drive_pA)
@@ -1076,6 +1080,10 @@ def main() -> int:
     ap.add_argument("--n-recognition-trials", type=int, default=1,
                     help="Iter DD: multi-trial averaging at "
                          "recognition (5 reduces single-trial noise)")
+    ap.add_argument("--inter-trial-rest-steps", type=int, default=50,
+                    help="Iter EE: rest steps between recognition "
+                         "trials (default 50; try 500 for full "
+                         "adaptation recovery)")
     # Iter M: strengthen naming pathway
     ap.add_argument("--ca1-to-lang-out-weight", type=float, default=2.0,
                     help="Iter M: strengthen CA1->lang_output "
@@ -1135,6 +1143,7 @@ def main() -> int:
         enable_lang_out_fs_pools=args.enable_lang_out_fs_pools,
         n_per_lang_out_fs_pool=args.n_per_lang_out_fs_pool,
         n_recognition_trials=args.n_recognition_trials,
+        inter_trial_rest_steps=args.inter_trial_rest_steps,
         ca1_to_lang_out_weight=args.ca1_to_lang_out_weight,
         stim_drive_pA=args.stim_drive_pa,
         apply_wernicke_topographic=args.apply_wernicke_topographic,

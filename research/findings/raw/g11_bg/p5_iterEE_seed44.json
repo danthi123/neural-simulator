@@ -1,0 +1,51 @@
+{
+  "seed": 44,
+  "build_seconds": 1.6682236194610596,
+  "n_neurons": 5092,
+  "n_synapses": 1022526,
+  "n_train_events": 400,
+  "n_replay_cycles": 40,
+  "apple_tag_size": 24,
+  "river_tag_size": 26,
+  "comprehension": {
+    "apple_self_cosine": 0.2603778219616477,
+    "apple_river_cosine": 0.24735893086356536,
+    "passed": false
+  },
+  "naming": {
+    "baseline_lang_out_spikes": 222.0,
+    "causal_lang_out_spikes": 260.0,
+    "ratio": 0.923076923076923,
+    "cos_naming_self": 0.21049392463368702,
+    "cos_naming_cross": 0.2280350850198276,
+    "cos_baseline_self": 0.21830633902307475,
+    "passed": false,
+    "pool_readout": {
+      "apple": {
+        "0": 68.66666666666667,
+        "1": 67.33333333333333
+      },
+      "river": {
+        "0": 80.33333333333333,
+        "1": 64.33333333333333
+      }
+    }
+  },
+  "weight_diagnostics": {
+    "apple_wernicke_size": 27,
+    "river_wernicke_size": 26,
+    "apple_sem_size": 50,
+    "river_sem_size": 50,
+    "w_apple_apple": 3.9817425125107473,
+    "w_apple_river": 3.995058883148636,
+    "w_river_river": 4.0143835363869975,
+    "w_river_apple": 3.978718570344516,
+    "n_apple_apple": 392,
+    "n_apple_river": 379,
+    "n_river_river": 376,
+    "n_river_apple": 387,
+    "selectivity_index": 0.0013994195645106098
+  },
+  "overall_passed": false,
+  "total_seconds": 693.7144031524658
+}
