@@ -91,6 +91,90 @@ def _load_or_train_tier1(seed: int, n_train_events: int, verbose: bool):
     return bridge
 
 
+def _load_or_train_tier1_hippo(seed: int, n_train_events: int, verbose: bool):
+    """Build hippocampus-enabled Tier 1 architecture and return bridge.
+
+    Mirrors consolidation_trainer.run_consolidation_training's build path
+    (Tier 1 motor pools + hippocampus regions ec/dg/dg_pv_basket/ca3/ca1)
+    but supports n_train_events=0 for pure architecture build (used by
+    BridgeMemory + investigate_invivo_binding_fix loading main_hippo).
+
+    Catalog G.13 + Buzsáki 2015 + McClelland 1995 CLS theory.
+    """
+    from research.runners.text_minimal_isolation import (
+        build_biological_brain_regions,
+    )
+    from sim.bridge import SimulationBridge
+    from sim.config import (
+        CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig,
+    )
+
+    if verbose:
+        print(f"[BUILD] Tier 1 + hippocampus architecture (seed={seed})",
+              flush=True)
+        t0 = time.time()
+
+    regions, pathways = build_biological_brain_regions(
+        n_lang_input=2048,
+        n_motor_per_action=500,
+        enable_motor_fs=True,
+        n_motor_fs_per_action=60,
+        enable_language_output=True,
+        n_lang_output=2048,
+        motor_to_language_output_weight=2.0,
+        enable_hippocampus_consolidation=True,
+    )
+
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = list(regions)
+    cfg.region_pathways = list(pathways)
+    cfg.dt_ms = 1.0
+    cfg.seed = seed
+    cfg.enable_nmda = True
+    cfg.enable_structural_plasticity = False
+    cfg.enable_per_type_stp = False
+    cfg.enable_hebbian_learning = False
+    cfg.stdp_w_max = 5.0
+    cfg.fast_spike_reset = True
+
+    bridge = SimulationBridge(
+        core_config=cfg,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
+    )
+    bridge.runtime_state.max_delay_steps = int(
+        cfg.max_synaptic_delay_ms / cfg.dt_ms
+    )
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    if n_train_events > 0:
+        # Optional: caller can request fresh training via this helper too
+        from research.runners.consolidation_trainer import (
+            run_consolidation_training,
+        )
+        bridge, _ = run_consolidation_training(
+            seed=seed,
+            n_awake_events_per_word=n_train_events,
+            verbose=verbose,
+        )
+
+    if verbose:
+        print(f"[BUILD] complete ({time.time() - t0:.0f}s)",
+              flush=True)
+
+    # Default: language plasticity gates OFF (consistent with tier1/synonym)
+    for gate in ("language_input_to_motor",
+                  "motor_to_language_output"):
+        try:
+            bridge.set_plasticity_gate(gate, 0.0)
+        except Exception:
+            pass
+
+    return bridge
+
+
 def _load_or_train_synonym(seed: int, n_train_events: int, verbose: bool,
                              vocab_size: int = 8,
                              n_motor_per_action: int = 1000,
@@ -747,6 +831,16 @@ def _load_bridge_from_checkpoint(checkpoint_path: str, mode: str, seed: int,
         bridge = _load_or_train_tier1(seed, n_train_events=0, verbose=False)
     elif mode == "synonym":
         bridge = _load_or_train_synonym(seed, n_train_events=0, verbose=False)
+    elif mode == "tier1_hippo":
+        # Build Tier 1 architecture WITH hippocampus consolidation
+        # (for lineages bootstrapped via bootstrap_hippo_lineage). No
+        # training — just construct the architecture so load_checkpoint
+        # can overlay the saved weights. Fixes the BridgeMemory load
+        # path for hippo lineages (chat_repl previously only knew
+        # "tier1" and "synonym" modes, losing the ca3/dg/ec/ca1 regions
+        # during checkpoint reload).
+        bridge = _load_or_train_tier1_hippo(seed, n_train_events=0,
+                                              verbose=False)
     else:
         raise ValueError(f"unknown mode: {mode}")
 

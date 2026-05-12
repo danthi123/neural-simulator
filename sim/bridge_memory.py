@@ -89,9 +89,28 @@ class BridgeMemory:
             # backends and respects the lineage state.
             if self._lineage.exists():
                 from research.runners.chat_repl import _load_bridge_from_checkpoint
+                # Auto-detect architecture mode from lineage metadata.
+                # If the lineage was bootstrapped at tier1_hippo (i.e.
+                # has hippocampus regions), use that mode for loading
+                # instead of caller's mode. Otherwise lineage state
+                # is loaded into the WRONG architecture and hippocampus
+                # regions go missing (which broke investigate_invivo).
+                load_mode = self.mode
+                try:
+                    meta = self._lineage.read_metadata()
+                    lineage_mode = (meta.arch or {}).get("mode", "")
+                    if lineage_mode == "tier1_hippo":
+                        load_mode = "tier1_hippo"
+                        if self.verbose:
+                            print(f"[BridgeMemory] lineage "
+                                  f"'{self.lineage_name}' is tier1_hippo; "
+                                  f"loading with that mode (overrides "
+                                  f"caller mode '{self.mode}').")
+                except Exception:
+                    pass
                 # default seed 42 — matches chat_repl defaults
                 self.bridge = _load_bridge_from_checkpoint(
-                    str(self._lineage.current_path), self.mode, 42,
+                    str(self._lineage.current_path), load_mode, 42,
                     verbose=self.verbose,
                 )
             else:
