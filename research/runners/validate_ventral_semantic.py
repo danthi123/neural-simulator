@@ -119,6 +119,16 @@ def run_ventral_validation(
     # motor pool architecture at the language output side.
     enable_per_concept_lang_out_pools: bool = False,
     n_per_lang_out_pool: int = 200,
+    # Iter KK->LL: per-pool dynamics parameterized. Default = iter AA
+    # weak (0.05/0.3/0.8). Cortical canon (0.10/2.0/4.0) was tested in
+    # iter KK seed 42 — amplified structural bias, regressed. Available
+    # for future experimentation but NOT default.
+    wernicke_pool_internal_density: float = 0.05,
+    wernicke_pool_exc_weight_mean: float = 0.3,
+    wernicke_pool_inh_weight_mean: float = 0.8,
+    lang_output_pool_internal_density: float = 0.05,
+    lang_output_pool_exc_weight_mean: float = 0.3,
+    lang_output_pool_inh_weight_mean: float = 0.8,
     # Iter BB: stronger cross-pool FS inhibition (default 4.0)
     # to push river-direction from 4/6 to 6/6
     wernicke_fs_cross_weight: float = 4.0,
@@ -231,6 +241,13 @@ def run_ventral_validation(
         # Iter AA: per-concept lang_output pools
         enable_per_concept_lang_out_pools=enable_per_concept_lang_out_pools,
         n_per_lang_out_pool=n_per_lang_out_pool,
+        # Iter KK->LL: parameterized per-pool dynamics
+        wernicke_pool_internal_density=wernicke_pool_internal_density,
+        wernicke_pool_exc_weight_mean=wernicke_pool_exc_weight_mean,
+        wernicke_pool_inh_weight_mean=wernicke_pool_inh_weight_mean,
+        lang_output_pool_internal_density=lang_output_pool_internal_density,
+        lang_output_pool_exc_weight_mean=lang_output_pool_exc_weight_mean,
+        lang_output_pool_inh_weight_mean=lang_output_pool_inh_weight_mean,
         # Iter BB: stronger cross-pool FS
         wernicke_fs_cross_weight=wernicke_fs_cross_weight,
         # Iter CC: lang_output FS pools
@@ -1113,6 +1130,27 @@ def main() -> int:
                          "dedicated lang_output_pool. Mirror of "
                          "Tier 1 motor pool at output.")
     ap.add_argument("--n-per-lang-out-pool", type=int, default=200)
+    # Iter KK->LL: per-pool dynamics parameterization. Defaults = iter AA
+    # weak dynamics. Override for Tier 1 cortical canon experimentation.
+    ap.add_argument("--wernicke-pool-internal-density", type=float,
+                    default=0.05,
+                    help="Wernicke pool recurrent density (iter AA "
+                         "default 0.05; Tier 1 canon 0.10 amplifies "
+                         "structural bias at biological scale per "
+                         "iter KK seed 42 finding)")
+    ap.add_argument("--wernicke-pool-exc-weight", type=float, default=0.3,
+                    help="Wernicke pool exc recurrent weight (iter AA "
+                         "default 0.3; Tier 1 canon 2.0)")
+    ap.add_argument("--wernicke-pool-inh-weight", type=float, default=0.8,
+                    help="Wernicke pool inh recurrent weight (iter AA "
+                         "default 0.8; Tier 1 canon 4.0)")
+    ap.add_argument("--lang-output-pool-internal-density", type=float,
+                    default=0.05,
+                    help="Lang-output pool recurrent density (default 0.05)")
+    ap.add_argument("--lang-output-pool-exc-weight", type=float, default=0.3,
+                    help="Lang-output pool exc recurrent weight (default 0.3)")
+    ap.add_argument("--lang-output-pool-inh-weight", type=float, default=0.8,
+                    help="Lang-output pool inh recurrent weight (default 0.8)")
     ap.add_argument("--wernicke-fs-cross-weight", type=float, default=4.0,
                     help="Iter BB: cross-pool FS inhibition weight "
                          "(default 4.0; try 8.0 to suppress apple-bias)")
@@ -1194,6 +1232,13 @@ def main() -> int:
         enable_per_concept_lang_out_pools=(
             args.enable_per_concept_lang_out_pools),
         n_per_lang_out_pool=args.n_per_lang_out_pool,
+        wernicke_pool_internal_density=args.wernicke_pool_internal_density,
+        wernicke_pool_exc_weight_mean=args.wernicke_pool_exc_weight,
+        wernicke_pool_inh_weight_mean=args.wernicke_pool_inh_weight,
+        lang_output_pool_internal_density=(
+            args.lang_output_pool_internal_density),
+        lang_output_pool_exc_weight_mean=args.lang_output_pool_exc_weight,
+        lang_output_pool_inh_weight_mean=args.lang_output_pool_inh_weight,
         wernicke_fs_cross_weight=args.wernicke_fs_cross_weight,
         enable_lang_out_fs_pools=args.enable_lang_out_fs_pools,
         n_per_lang_out_fs_pool=args.n_per_lang_out_fs_pool,

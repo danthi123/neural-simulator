@@ -290,6 +290,16 @@ def build_biological_brain_regions(
     n_per_wernicke_pool: int = 100,
     n_per_wernicke_pool_fs: int = 12,
     wernicke_pool_to_fs_weight: float = 3.0,
+    # Iter KK->LL: per-pool dynamics parameterized to test canon vs
+    # weak iter-AA defaults. Iter KK seed 42 showed canon (0.10/2.0/4.0)
+    # makes pools self-sustain and amplifies structural bias. Default
+    # back to iter AA weak; add flags to override.
+    wernicke_pool_internal_density: float = 0.05,
+    wernicke_pool_exc_weight_mean: float = 0.3,
+    wernicke_pool_inh_weight_mean: float = 0.8,
+    lang_output_pool_internal_density: float = 0.05,
+    lang_output_pool_exc_weight_mean: float = 0.3,
+    lang_output_pool_inh_weight_mean: float = 0.8,
     wernicke_fs_cross_weight: float = 4.0,
     # Per-concept lang_output pools (mirror Tier 1 motor pool
     # at output side; addresses iter Z finding that shared
@@ -595,14 +605,13 @@ def build_biological_brain_regions(
                     regions.append(BrainRegion(
                         name=name,
                         n_neurons=n_per_wernicke_pool, exc_fraction=0.8,
-                        # Iter KK: Tier 1 cortical canon (was 0.05,
-                        # 0.3, 0.8 in iter AA — too weak vs Tier 1
-                        # motor pools that get 6/6). Real cortex has
-                        # 10-20% recurrent density (Lefort 2009) and
-                        # strong recurrent excitation that creates
-                        # attractor dynamics (Wang 2002 NMDA bistab).
-                        internal_density=0.10,
-                        exc_weight_mean=2.0, inh_weight_mean=4.0,
+                        # Iter KK->LL: parameterized. Default = iter AA
+                        # weak (0.05/0.3/0.8). Override via CLI for
+                        # canon (0.10/2.0/4.0) — but iter KK seed 42
+                        # showed canon amplifies structural bias.
+                        internal_density=wernicke_pool_internal_density,
+                        exc_weight_mean=wernicke_pool_exc_weight_mean,
+                        inh_weight_mean=wernicke_pool_inh_weight_mean,
                         weight_jitter=0.2, plastic_internal=False,
                         izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
                     ))
@@ -630,14 +639,11 @@ def build_biological_brain_regions(
                             name=f"lang_output_pool_{i}",
                             n_neurons=n_per_lang_out_pool,
                             exc_fraction=0.8,
-                            # Iter KK: Tier 1 cortical canon (was 0.05,
-                            # 0.3, 0.8 in iter AA). Lang output pool
-                            # is analogous to motor_X pool in Tier 1
-                            # which uses these stronger dynamics for
-                            # robust attractor (Lefort 2009; Wang 2002).
-                            internal_density=0.10,
-                            exc_weight_mean=2.0,
-                            inh_weight_mean=4.0,
+                            # Iter KK->LL: parameterized. Default =
+                            # iter AA weak (0.05/0.3/0.8).
+                            internal_density=lang_output_pool_internal_density,
+                            exc_weight_mean=lang_output_pool_exc_weight_mean,
+                            inh_weight_mean=lang_output_pool_inh_weight_mean,
                             weight_jitter=0.2,
                             plastic_internal=False,
                             izh_neuron_type=(
