@@ -1019,22 +1019,31 @@ values (33, 22, 23, 8). The seed parameter only varies OU noise which
 doesn't perturb V_SCHEMA's training outcome. To test real seed variance,
 need to bootstrap multiple main_hippo lineages with different seeds.
 
-**🎉 STRONG HIPPO BREAKTHROUGH (2026-05-12):** With main_hippo
-bootstrapped at full strength (200 events × 4 dirs + 100 SWR, 53 min
-compute), V_SCHEMA achieves **2/4** — apple→N AND mountain→S both
-correct, doubled from smoke 1/4. Validates the hypothesis: V_SCHEMA
-effectiveness scales with anchor word pre-training strength. The
-"north" anchor became strong enough at 200 events to support apple
-binding via schema-reinforcement co-firing.
+**🎯 NON-MONOTONIC SWEET SPOT (2026-05-12):** V_SCHEMA performance
+peaks at 200-event main_hippo bootstrap:
 
-See `research/findings/2026-05-12-V_SCHEMA-2of4-strong-hippo-BREAKTHROUGH.md`.
+| Bootstrap | Wall | V_SCHEMA result | Bindings |
+|---|---|---|---|
+| 50ev (smoke) | 9 min | 1/4 | mountain→S only |
+| **200ev (sweet spot)** | **53 min** | **2/4 ✓** | **apple→N + mountain→S** |
+| 400ev (over-trained) | 112 min | 1/4 (REGRESSED) | mountain→S only |
 
-**Path forward for non-motor binding:**
-- Strong bootstrap (200+ events × 4 dirs) is required for V_SCHEMA
-- Each new word's success depends on target pool's anchor strength
-- 400+ events bootstrap likely unlocks east/west anchors too
-- This is the FIRST biology-grounded method for in-vivo vocab growth
-  that exceeds 1/4 at the toy ceiling level
+400-event bootstrap REGRESSES V_SCHEMA to 1/4. Over-training creates
+winner-take-all dynamics where one pool's recurrent activity
+overwhelms anchor-driven STDP for new bindings. Just-right anchors
+at 200ev provide balanced pool competition.
+
+See `research/findings/2026-05-12-V_SCHEMA-2of4-strong-hippo-BREAKTHROUGH.md`
+and `research/findings/2026-05-12-V_SCHEMA-non-monotonic-200ev-sweet-spot.md`.
+
+**Best in-vivo vocab method:** V_SCHEMA + 200ev main_hippo = 2/4. To
+push beyond requires different mechanism (per-direction-balanced
+bootstrap, homeostasis enforcing equal pool strength, OR topographic
+bias prior at binding time) — not just more events.
+
+**Canonical main_hippo lineage:** bridges/lineage/main_hippo is now
+the 200ev sweet-spot version. 400ev version preserved at
+bridges/lineage/main_hippo_400ev for future comparison.
 
 **Same architectural ceiling as iter PP biological scale:** per-seed
 random structural variance dominates the learning signal for NOVEL
