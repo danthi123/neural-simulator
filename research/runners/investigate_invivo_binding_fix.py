@@ -234,10 +234,77 @@ def variant_v_schema(mem, key: str, value: str, n_events: int) -> dict:
     }
 
 
+def variant_v_schema_topo(mem, key: str, value: str, n_events: int) -> dict:
+    """Schema-supported binding + topographic prior at binding time.
+
+    Pre-applies topographic bias from lang_input(key) → motor_target
+    BEFORE running the V_SCHEMA training. The topographic boost
+    aligns initial weights toward target, then V_SCHEMA's anchor
+    reinforcement compounds the learning signal.
+
+    Hypothesis: V_SCHEMA's 2/4 ceiling at 200ev hippo is because
+    east/west anchors aren't strong enough on their own. Pre-aligning
+    weights with topographic bias should compensate for weaker
+    anchors and unlock more bindings.
+
+    Biology: Pulvermüller 2001-2003 cortical somatotopy (word-action
+    pairs cluster in topographically-organized cortical zones).
+    Applying topographic prior is biology-faithful: real cortex has
+    pre-developmental priors that align with semantic content.
+    """
+    from research.runners.chat_repl import learn_word_pairing, chat_inference
+    from research.runners.text_minimal_isolation import (
+        apply_novel_key_topographic_bias,
+    )
+
+    target_action = mem._value_to_action(value)
+    anchor_word = {"N": "north", "E": "east",
+                    "S": "south", "W": "west"}[target_action]
+
+    # Apply topographic bias BEFORE training. Factor configurable via
+    # env var TOPO_FACTOR for quick experimentation; default 5.0
+    # (matching Tier 1's apply_topographic_bias default).
+    import os as _os
+    _topo_factor = float(_os.environ.get("TOPO_FACTOR", "5.0"))
+    topo_result = apply_novel_key_topographic_bias(
+        mem.bridge, key=key, target_action=target_action,
+        factor=_topo_factor, n_lang_input=2048, sparsity=0.1, verbose=False,
+    )
+
+    # Same schema-supported training pattern as v_schema
+    M = 20
+    n_batches = max(1, n_events // M)
+    actual_new_events = n_batches * M
+    t0 = time.time()
+    for batch in range(n_batches):
+        learn_word_pairing(mem.bridge, word=key, target_action=target_action,
+                            n_events=M, verbose=False)
+        learn_word_pairing(mem.bridge, word=anchor_word, target_action=target_action,
+                            n_events=2, verbose=False)
+    elapsed = time.time() - t0
+
+    try:
+        check = chat_inference(mem.bridge, key)
+        confidence = float(check.get("confidence_ratio", 0.0))
+        bound_correctly = (check.get("predicted_action") == target_action)
+    except Exception:
+        confidence = 0.0
+        bound_correctly = False
+
+    return {
+        "key": key, "value": value, "target_action": target_action,
+        "confidence": confidence, "bound_correctly": bound_correctly,
+        "n_events_run": actual_new_events,
+        "v_schema_topo_topographic_bias": topo_result,
+        "elapsed_seconds": elapsed,
+    }
+
+
 VARIANTS: dict[str, Callable] = {
     "v0_vanilla": variant_v0_vanilla,
     "v_hippo_bio": variant_v_hippo_bio,
     "v_schema": variant_v_schema,
+    "v_schema_topo": variant_v_schema_topo,
 }
 
 

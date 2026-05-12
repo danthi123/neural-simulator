@@ -1418,6 +1418,99 @@ def make_concept_image(
     return flat
 
 
+def apply_novel_key_topographic_bias(
+    bridge,
+    key: str,
+    target_action: str,
+    factor: float = 2.0,
+    n_lang_input: int = 2048,
+    sparsity: float = 0.1,
+    verbose: bool = False,
+):
+    """Apply topographic bias to lang_input -> motor_<target> for a
+    novel key BEFORE V_SCHEMA training. Pre-aligns weights so STDP
+    has a stronger starting point.
+
+    This is the analog of Tier 1's apply_topographic_bias (direction
+    words -> motor pools) but for arbitrary new vocabulary. The novel
+    key's active lang_input neurons get their edges to target motor
+    pool multiplied by `factor`, edges to OTHER pools multiplied by
+    1/factor (downweighted).
+
+    Args:
+        key: novel word string (e.g. "apple")
+        target_action: "N"/"E"/"S"/"W"
+        factor: boost factor for on-target (default 2.0)
+        n_lang_input: language_input region size
+        sparsity: drive pattern sparsity (matches vocab_to_drive_pattern default)
+        verbose: print summary
+
+    Returns:
+        dict with edges_boosted, edges_downweighted counts.
+    """
+    from sim.text_embeddings import vocab_to_drive_pattern
+    import numpy as _np
+
+    rm = bridge.region_manager
+    lang_input_indices = list(rm.indices("language_input"))
+    motor_target = list(rm.indices(f"motor_{target_action}"))
+    other_actions = [a for a in ("N", "E", "S", "W") if a != target_action]
+
+    drive = vocab_to_drive_pattern(
+        key, n_neurons=n_lang_input, sparsity=sparsity,
+    )
+    local_active = _np.where(drive > 0)[0]
+    global_active = [lang_input_indices[i] for i in local_active]
+
+    indptr = _to_host(bridge.cp_connections.indptr)
+    indices = _to_host(bridge.cp_connections.indices)
+    data = _to_host(bridge.cp_connections.data)
+
+    pair_to_idx = {}
+    n_rows = int(bridge.cp_connections.shape[0])
+    for r in range(n_rows):
+        start = int(indptr[r])
+        end = int(indptr[r + 1])
+        for off in range(start, end):
+            pair_to_idx[(r, int(indices[off]))] = off
+
+    boosted = 0
+    downweighted = 0
+    off_factor = 1.0 / factor
+
+    for src in global_active:
+        # Boost on-target
+        for dst in motor_target:
+            key_pair = (src, dst)
+            if key_pair in pair_to_idx:
+                idx = pair_to_idx[key_pair]
+                data[idx] = float(data[idx]) * factor
+                boosted += 1
+        # Downweight off-target
+        for other_action in other_actions:
+            motor_other = list(rm.indices(f"motor_{other_action}"))
+            for dst in motor_other:
+                key_pair = (src, dst)
+                if key_pair in pair_to_idx:
+                    idx = pair_to_idx[key_pair]
+                    data[idx] = float(data[idx]) * off_factor
+                    downweighted += 1
+
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+    bridge.cp_connections.data[...] = cp.asarray(data, dtype=cp.float32)
+
+    if verbose:
+        print(f"[novel-key-topographic] '{key}' -> motor_{target_action}: "
+              f"boosted={boosted} edges (x{factor:.2f}), "
+              f"downweighted={downweighted} (x{off_factor:.2f})")
+
+    return {
+        "key": key, "target_action": target_action, "factor": factor,
+        "edges_boosted": boosted, "edges_downweighted": downweighted,
+    }
+
+
 def build_tier_2_3_action_gate(
     sensitivity: float = 0.01,
     decay_tau_ms: float = 300.0,

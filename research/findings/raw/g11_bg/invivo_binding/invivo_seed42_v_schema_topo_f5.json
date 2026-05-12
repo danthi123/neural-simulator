@@ -1,0 +1,145 @@
+{
+  "base_lineage": "main_hippo",
+  "n_events": 200,
+  "seed": 42,
+  "test_bindings": [
+    [
+      "apple",
+      "north",
+      "N"
+    ],
+    [
+      "river",
+      "east",
+      "E"
+    ],
+    [
+      "mountain",
+      "south",
+      "S"
+    ],
+    [
+      "forest",
+      "west",
+      "W"
+    ]
+  ],
+  "variants_tested": [
+    "v_schema_topo"
+  ],
+  "results": [
+    {
+      "variant": "v_schema_topo",
+      "n_correct": 2,
+      "n_total": 4,
+      "accuracy": 0.5,
+      "total_seconds": 472.35988187789917,
+      "details": [
+        {
+          "key": "apple",
+          "expected_value": "north",
+          "expected_action": "N",
+          "got_action": "N",
+          "got_value": "north",
+          "correct": true,
+          "confidence": 1.0,
+          "raw_delta": 14,
+          "bind_result": {
+            "key": "apple",
+            "value": "north",
+            "target_action": "N",
+            "confidence": 5.352941176470588,
+            "bound_correctly": true,
+            "n_events_run": 200,
+            "v_schema_topo_topographic_bias": {
+              "key": "apple",
+              "target_action": "N",
+              "factor": 5.0,
+              "edges_boosted": 30767,
+              "edges_downweighted": 92618
+            },
+            "elapsed_seconds": 117.30106663703918
+          }
+        },
+        {
+          "key": "river",
+          "expected_value": "east",
+          "expected_action": "E",
+          "got_action": "S",
+          "got_value": "south",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 33,
+          "bind_result": {
+            "key": "river",
+            "value": "east",
+            "target_action": "E",
+            "confidence": 5.9,
+            "bound_correctly": true,
+            "n_events_run": 200,
+            "v_schema_topo_topographic_bias": {
+              "key": "river",
+              "target_action": "E",
+              "factor": 5.0,
+              "edges_boosted": 30818,
+              "edges_downweighted": 92735
+            },
+            "elapsed_seconds": 111.74414205551147
+          }
+        },
+        {
+          "key": "mountain",
+          "expected_value": "south",
+          "expected_action": "S",
+          "got_action": "S",
+          "got_value": "south",
+          "correct": true,
+          "confidence": 1.0,
+          "raw_delta": 35,
+          "bind_result": {
+            "key": "mountain",
+            "value": "south",
+            "target_action": "S",
+            "confidence": Infinity,
+            "bound_correctly": true,
+            "n_events_run": 200,
+            "v_schema_topo_topographic_bias": {
+              "key": "mountain",
+              "target_action": "S",
+              "factor": 5.0,
+              "edges_boosted": 30958,
+              "edges_downweighted": 92146
+            },
+            "elapsed_seconds": 114.07692503929138
+          }
+        },
+        {
+          "key": "forest",
+          "expected_value": "west",
+          "expected_action": "W",
+          "got_action": "S",
+          "got_value": "south",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 17,
+          "bind_result": {
+            "key": "forest",
+            "value": "west",
+            "target_action": "W",
+            "confidence": 1.8666666666666667,
+            "bound_correctly": true,
+            "n_events_run": 200,
+            "v_schema_topo_topographic_bias": {
+              "key": "forest",
+              "target_action": "W",
+              "factor": 5.0,
+              "edges_boosted": 30647,
+              "edges_downweighted": 92533
+            },
+            "elapsed_seconds": 114.8373453617096
+          }
+        }
+      ]
+    }
+  ]
+}
