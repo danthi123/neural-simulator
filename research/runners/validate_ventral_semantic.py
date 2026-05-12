@@ -119,6 +119,9 @@ def run_ventral_validation(
     # motor pool architecture at the language output side.
     enable_per_concept_lang_out_pools: bool = False,
     n_per_lang_out_pool: int = 200,
+    # Iter BB: stronger cross-pool FS inhibition (default 4.0)
+    # to push river-direction from 4/6 to 6/6
+    wernicke_fs_cross_weight: float = 4.0,
     # Iter M: strengthen naming pathway weights. ca1_to_lang_out
     # at default 2.0 produces only ~20 mV drive on lang_output
     # which is barely suprathreshold. Bumping to 5.0 should
@@ -209,6 +212,8 @@ def run_ventral_validation(
         # Iter AA: per-concept lang_output pools
         enable_per_concept_lang_out_pools=enable_per_concept_lang_out_pools,
         n_per_lang_out_pool=n_per_lang_out_pool,
+        # Iter BB: stronger cross-pool FS
+        wernicke_fs_cross_weight=wernicke_fs_cross_weight,
         # Iter M: strengthen ca1->lang_output for naming
         ca1_to_lang_out_weight=ca1_to_lang_out_weight,
     )
@@ -1044,6 +1049,9 @@ def main() -> int:
                          "dedicated lang_output_pool. Mirror of "
                          "Tier 1 motor pool at output.")
     ap.add_argument("--n-per-lang-out-pool", type=int, default=200)
+    ap.add_argument("--wernicke-fs-cross-weight", type=float, default=4.0,
+                    help="Iter BB: cross-pool FS inhibition weight "
+                         "(default 4.0; try 8.0 to suppress apple-bias)")
     # Iter M: strengthen naming pathway
     ap.add_argument("--ca1-to-lang-out-weight", type=float, default=2.0,
                     help="Iter M: strengthen CA1->lang_output "
@@ -1099,6 +1107,7 @@ def main() -> int:
         enable_per_concept_lang_out_pools=(
             args.enable_per_concept_lang_out_pools),
         n_per_lang_out_pool=args.n_per_lang_out_pool,
+        wernicke_fs_cross_weight=args.wernicke_fs_cross_weight,
         ca1_to_lang_out_weight=args.ca1_to_lang_out_weight,
         stim_drive_pA=args.stim_drive_pa,
         apply_wernicke_topographic=args.apply_wernicke_topographic,
