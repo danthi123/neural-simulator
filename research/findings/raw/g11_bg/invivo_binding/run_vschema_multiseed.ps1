@@ -15,9 +15,15 @@ $outDir = "research/findings/raw/g11_bg/invivo_binding"
 foreach ($seed in $seeds) {
     Write-Host "[v_schema] Starting seed $seed..." -ForegroundColor Cyan
     $t0 = Get-Date
-    # Clean prior fork if exists
-    $fork = "bridges/lineage/invivo_fix_v_schema_seed$seed"
-    if (Test-Path $fork) { Remove-Item -Path $fork -Recurse -Force }
+    # CRITICAL: Delete the SHARED v_schema fork before each seed run.
+    # The runner's fork_name doesn't include seed, so without this
+    # cleanup each seed inherits the previous seed's STDP state and
+    # results are identical (bug found 2026-05-12 mid-V_SCHEMA-sweep).
+    $fork = "bridges/lineage/invivo_fix_v_schema"
+    if (Test-Path $fork) {
+        Write-Host "  removing prior fork: $fork" -ForegroundColor Gray
+        Remove-Item -Path $fork -Recurse -Force
+    }
 
     python -u -m research.runners.investigate_invivo_binding_fix `
         --base-lineage main_hippo --seed $seed `
