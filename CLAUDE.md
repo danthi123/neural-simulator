@@ -1004,18 +1004,45 @@ See `research/findings/2026-05-12-P5-iterPP-multiseed-NEGATIVE-FINAL.md`
 and `docs/plans/2026-05-12-P5-sensory-grounding-design.md` for full
 arc details.
 
-**Strategic pivot (2026-05-12):** Step 1 of realigned plan — in-vivo
-new-vocab binding via biology-grounded variants:
-- V_HIPPO_BIO (McClelland 1995 CLS + Buzsáki 2015 SWR)
-- V_SCHEMA (Tse 2007 schema-supported integration)
-Tests 4 novel keys (apple/river/mountain/forest → N/E/S/W) on the
-main_hippo lineage. PASS criterion: ≥3/4 bindings correct, ≥4/6 seeds.
-Runner at `research/runners/investigate_invivo_binding_fix.py`.
+**Strategic pivot tested (2026-05-12):** Step 1 in-vivo new-vocab
+binding via biology-grounded variants on main_hippo lineage.
 
-P5 naming still 3/6 partial. 32+ P5 iterations (A-PP) document the
-exhaustive parameter sweep. iter AA 4/6 toy-scale is the demonstrated
-P5 capability; biological-scale path is closed pending architectural
-rethink (unified Wernicke + sparse coding, or different design entirely).
+| Variant | seed 42 | Notes |
+|---|---|---|
+| V0 vanilla | 1/4 | forest→W correct by coincidence; routing varied |
+| V_HIPPO_BIO | 0/4 | Hippocampus+SWR varies pool selection but never to target |
+| V_SCHEMA | 1/4 | **mountain→S TRUE bind via anchor reinforcement** |
+
+**Same architectural ceiling as iter PP biological scale:** per-seed
+random structural variance dominates the learning signal for NOVEL
+keys (apple/river/mountain/forest) without pre-existing topographic
+prior. Hippocampus+SWR encoding doesn't reach lang_input → motor
+strongly enough; schema-supported anchor reinforcement works on ONE
+direction (mountain→S) but not consistently.
+
+**Bug fix preserved (commit f3308b8):** BridgeMemory was loading
+hippo-enabled lineages with wrong architecture (synonym instead of
+tier1_hippo). Added `tier1_hippo` mode to chat_repl helpers and
+auto-detect from lineage metadata in BridgeMemory._ensure_loaded.
+Any future hippo-enabled lineage work is now unblocked.
+
+See `research/findings/2026-05-12-invivo-binding-seed42-smoke-NEGATIVE.md`
+for full smoke results + strategic synthesis.
+
+**Current demonstrated conversational capability:**
+- Tier 1 (4-word direction): 6/6 BIDIR multi-seed PASS (74% W→A,
+  98% A→W at seed 42)
+- Tier 2.1 (8-word synonym): 6/6 BIDIR multi-seed PASS
+- Phase 1.3 consolidation: 3/3 PASS (cortex retains binding after
+  hippo silence)
+- P5 abstract concept (2-word, toy iter AA): 4/6 BIDIR multi-seed
+- In-vivo novel-key binding: 0-1/4 single-seed (architectural limit)
+
+P5 naming still 3/6 partial. 32+ P5 iterations (A-PP) + invivo
+variants exhaust parameter sweep. **iter AA 4/6 toy-scale is the P5
+production capability;** biological-scale path closed pending major
+architectural rethink (stronger topographic prior at binding time
+OR pre-allocated novel-key pools OR unified Wernicke + sparse coding).
 
 ---
 
