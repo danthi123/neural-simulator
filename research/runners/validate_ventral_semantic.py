@@ -171,6 +171,23 @@ def run_ventral_validation(
     # this confusion. Same flag controls both the runner's drive call
     # and the topographic bias function so they're consistent.
     use_orthogonal_codes: bool = False,
+    # Iter OO_visual (2026-05-12): sensory grounding via Cluster K v2
+    # visual cortex + multimodal_hub. Addresses iter KK/LL/MM/NN's
+    # per-seed pool bias ceiling by adding SECOND strong training
+    # signal (visual stream) independent of random connectivity.
+    # See docs/plans/2026-05-12-P5-sensory-grounding-design.md.
+    enable_visual_cortex: bool = False,
+    enable_multimodal_hub: bool = False,
+    visual_image_size: int = 32,
+    visual_v1_weight_scale: float = 10.0,
+    visual_receptive_field_radius: int = 4,
+    visual_n_orientations: int = 8,
+    visual_n_frequencies: int = 2,
+    visual_n_positions_per_dim: int = 8,
+    visual_n_v2: int = 256,
+    visual_n_it: int = 64,
+    n_multimodal_hub: int = 500,
+    pair_visual_during_training: bool = False,
     out_path: Optional[Path] = None,
     verbose: bool = True,
 ):
@@ -261,6 +278,16 @@ def run_ventral_validation(
         n_per_lang_out_fs_pool=n_per_lang_out_fs_pool,
         # Iter M: strengthen ca1->lang_output for naming
         ca1_to_lang_out_weight=ca1_to_lang_out_weight,
+        # Iter OO_visual: sensory grounding via Cluster K v2 + multimodal_hub
+        enable_visual_cortex=enable_visual_cortex,
+        visual_n_orientations=visual_n_orientations,
+        visual_n_frequencies=visual_n_frequencies,
+        visual_n_positions_per_dim=visual_n_positions_per_dim,
+        visual_image_size=visual_image_size,
+        visual_n_v2=visual_n_v2,
+        visual_n_it=visual_n_it,
+        enable_multimodal_hub=enable_multimodal_hub,
+        n_multimodal_hub=n_multimodal_hub,
     )
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -284,6 +311,23 @@ def run_ventral_validation(
     build_sec = time.time() - t0
     log(f"Built in {build_sec:.1f}s; {cfg.num_neurons} neurons, "
         f"{int(bridge.cp_connections.nnz)} synapses")
+
+    # Iter OO_visual (2026-05-12): apply V1 Gabor weights for biology-
+    # correct orientation tuning per Hubel & Wiesel 1962. Must happen
+    # AFTER bridge init (CSR exists) but BEFORE topographic bias.
+    if enable_visual_cortex:
+        from sim.visual_cortex import apply_v1_gabor_weights
+        n_gabor = apply_v1_gabor_weights(
+            bridge,
+            n_orientations=visual_n_orientations,
+            n_frequencies=visual_n_frequencies,
+            n_positions_per_dim=visual_n_positions_per_dim,
+            retina_size=visual_image_size,
+            receptive_field_radius=visual_receptive_field_radius,
+            weight_scale=visual_v1_weight_scale,
+        )
+        log(f"[Cluster K v2] applied {n_gabor} Gabor weights to "
+            f"retina -> cortex_v1_simple")
 
     # Path G+ minimal: topographic bias for wernicke per-concept ensembles
     if apply_wernicke_topographic:
@@ -454,6 +498,54 @@ def run_ventral_validation(
                 bridge.set_plasticity_gate(g, 1.0)
             except Exception:
                 pass
+        # Iter OO_visual: open visual + multimodal plasticity gates
+        # so the visual stream learns concept-image associations and
+        # the multimodal_hub learns the cross-modal binding.
+        visual_mm_gates = []
+        if enable_visual_cortex:
+            visual_mm_gates += [
+                "visual_cortex_v1", "visual_cortex_v2",
+                "visual_cortex_it",
+            ]
+        if enable_multimodal_hub:
+            visual_mm_gates += ["it_to_hub"]
+            if enable_multi_pool_wernicke:
+                visual_mm_gates += [
+                    f"wernicke_pool_{i}_to_hub"
+                    for i in range(n_wernicke_pools)
+                ]
+            if enable_per_concept_lang_out_pools:
+                visual_mm_gates += [
+                    f"hub_to_lang_pool_{i}"
+                    for i in range(n_wernicke_pools)
+                ]
+        for g in visual_mm_gates:
+            try:
+                bridge.set_plasticity_gate(g, 1.0)
+            except Exception:
+                pass
+        # Iter OO_visual: pre-compute retina indices + concept images
+        # for visual-paired training. Mirrors Tier 1's embodied-Hebbian
+        # paradigm: the visual signal acts as the "embodied teacher"
+        # that's independent of random connectivity.
+        retina_arr = None
+        concept_images = {}
+        if pair_visual_during_training and enable_visual_cortex:
+            from research.runners.text_minimal_isolation import (
+                make_concept_image,
+            )
+            rm_v = bridge.region_manager
+            retina_global = list(rm_v.indices("retina"))
+            retina_arr = cp.asarray(retina_global, dtype=cp.int64)
+            for cname in ("apple", "river"):
+                img = make_concept_image(
+                    cname, retina_size=visual_image_size,
+                    drive_pA=200.0,
+                )
+                concept_images[cname] = cp.asarray(img, dtype=cp.float32)
+            log(f"  [iter OO_visual] visual pairing enabled "
+                f"(retina={len(retina_global)} neurons, "
+                f"concept images for {list(concept_images.keys())})")
         # Iter GG: teacher pairing for P5. During interleaved
         # training, optionally drive lang_output_pool_<i> with
         # teacher current alongside lang_input(concept_<i>).
@@ -481,6 +573,15 @@ def run_ventral_validation(
                     bridge._run_one_simulation_step()
                     bridge.runtime_state.current_time_step += 1
                 bridge.cp_external_input_current[c_arr] = 200.0
+                # Iter OO_visual: drive retina with concept's image
+                # (multimodal co-firing). Visual signal is independent
+                # of random connectivity → embodied semantic anchor.
+                if (pair_visual_during_training
+                        and retina_arr is not None
+                        and cname in concept_images):
+                    bridge.cp_external_input_current[
+                        retina_arr
+                    ] = concept_images[cname]
                 # Iter GG: add teacher current to lang_output_pool
                 if cname in teacher_pools:
                     bridge.cp_external_input_current[
@@ -499,6 +600,11 @@ def run_ventral_validation(
                     bridge._run_one_simulation_step()
                     bridge.runtime_state.current_time_step += 1
         for g in encode_gates:
+            try:
+                bridge.set_plasticity_gate(g, 0.0)
+            except Exception:
+                pass
+        for g in visual_mm_gates:
             try:
                 bridge.set_plasticity_gate(g, 0.0)
             except Exception:
@@ -848,11 +954,67 @@ def run_ventral_validation(
         apple_correct = pool_readout["apple"][0] > pool_readout["apple"][1]
         river_correct = pool_readout["river"][1] > pool_readout["river"][0]
         pass_naming_pool = apple_correct and river_correct
-        log(f"  apple→pool_0>pool_1: {apple_correct}")
-        log(f"  river→pool_1>pool_0: {river_correct}")
+        log(f"  apple->pool_0>pool_1: {apple_correct}")
+        log(f"  river->pool_1>pool_0: {river_correct}")
         log(f"  bidirectional PASS: {pass_naming_pool}")
         # Override pass_naming with the pool-based criterion
         pass_naming = pass_naming_pool
+
+    # Iter OO_visual TEST 2c: visual-only recognition. Drive ONLY the
+    # retina with the concept's image (no lang_input, no CA3 tag stim),
+    # measure pool spikes. If sensory grounding worked, the visual
+    # signal alone routes through ventral stream -> multimodal_hub ->
+    # lang_output_pool_i correctly.
+    visual_pool_readout = None
+    if (enable_visual_cortex
+            and enable_multimodal_hub
+            and enable_per_concept_lang_out_pools
+            and enable_multi_pool_wernicke):
+        from research.runners.text_minimal_isolation import (
+            make_concept_image,
+        )
+        log(f"\n[TEST 2c] Visual-only recognition (sensory grounding)")
+        rm_v = bridge.region_manager
+        retina_global = list(rm_v.indices("retina"))
+        retina_arr_test = cp.asarray(retina_global, dtype=cp.int64)
+        visual_pool_readout = {"apple": {}, "river": {}}
+        for stim_concept in ("apple", "river"):
+            pool_spikes_sum = {i: 0.0 for i in range(n_wernicke_pools)}
+            img = make_concept_image(
+                stim_concept, retina_size=visual_image_size,
+                drive_pA=200.0,
+            )
+            img_cp = cp.asarray(img, dtype=cp.float32)
+            for trial in range(n_recognition_trials):
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.clear_tag_drive()
+                for _ in range(inter_trial_rest_steps):
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+                # Drive retina with concept image (no lang_input, no tag stim)
+                bridge.cp_external_input_current[retina_arr_test] = img_cp
+                for i in range(n_wernicke_pools):
+                    pool_name = f"lang_output_pool_{i}"
+                    spikes = measure_region_spikes(
+                        bridge, pool_name, n_steps=100,
+                    )
+                    pool_spikes_sum[i] += float(spikes.sum())
+                bridge.cp_external_input_current[:] = 0.0
+            pool_spikes = {i: pool_spikes_sum[i] / n_recognition_trials
+                            for i in range(n_wernicke_pools)}
+            visual_pool_readout[stim_concept] = pool_spikes
+            log(f"  visual stim '{stim_concept}' (n={n_recognition_trials}): "
+                + ", ".join(
+                f"pool_{i}={v:.0f}"
+                for i, v in pool_spikes.items()))
+        apple_v_correct = (visual_pool_readout["apple"][0]
+                            > visual_pool_readout["apple"][1])
+        river_v_correct = (visual_pool_readout["river"][1]
+                            > visual_pool_readout["river"][0])
+        pass_visual_pool = apple_v_correct and river_v_correct
+        log(f"  visual apple->pool_0>pool_1: {apple_v_correct}")
+        log(f"  visual river->pool_1>pool_0: {river_v_correct}")
+        log(f"  visual bidirectional PASS: {pass_visual_pool}")
 
     # Iter E (alt methodology): inspect learned weights directly.
     # Question: did STDP grow wernicke->semantic_cortex weights
@@ -1057,6 +1219,7 @@ def run_ventral_validation(
             "cos_baseline_self": cos_baseline_self,
             "passed": pass_naming,
             "pool_readout": pool_readout,
+            "visual_pool_readout": visual_pool_readout,
         },
         "weight_diagnostics": weight_diag,
         "overall_passed": overall,
@@ -1229,6 +1392,33 @@ def main() -> int:
                          "overlap for apple/river). Eliminates input-"
                          "code ambiguity that hurts topographic bias "
                          "at biological scale.")
+    # Iter OO_visual: sensory grounding via Cluster K v2 + multimodal_hub
+    ap.add_argument("--enable-visual-cortex", action="store_true",
+                    help="Iter OO_visual: add Cluster K v2 visual "
+                         "stream (retina -> V1 simple Gabor -> V1 "
+                         "complex -> V2 -> IT) for sensory grounding "
+                         "of abstract concepts. Catalog K.01.")
+    ap.add_argument("--enable-multimodal-hub", action="store_true",
+                    help="Iter OO_visual: add multimodal_hub region "
+                         "(ATL-like convergence zone). IT + wernicke "
+                         "pools feed it; it feeds lang_output_pools. "
+                         "Catalog G.11 + Lambon Ralph 2017 hub-and-"
+                         "spoke model.")
+    ap.add_argument("--visual-image-size", type=int, default=32,
+                    help="Retina spatial dim (32x32 pixels; 2*32^2 = "
+                         "2048 retina neurons in ON/OFF channels)")
+    ap.add_argument("--visual-v1-weight-scale", type=float, default=10.0,
+                    help="Gabor weight scale for retina -> V1 simple")
+    ap.add_argument("--visual-receptive-field-radius", type=int, default=4,
+                    help="Gabor RF radius in retina pixels")
+    ap.add_argument("--visual-n-v2", type=int, default=256)
+    ap.add_argument("--visual-n-it", type=int, default=64)
+    ap.add_argument("--n-multimodal-hub", type=int, default=500)
+    ap.add_argument("--pair-visual-during-training", action="store_true",
+                    help="Iter OO_visual: during each training event, "
+                         "drive retina with the concept's image "
+                         "prototype alongside lang_input(word). Creates "
+                         "multimodal co-firing for embodied binding.")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
     run_ventral_validation(
@@ -1282,6 +1472,15 @@ def main() -> int:
         wernicke_topographic_factor=args.wernicke_topographic_factor,
         wernicke_off_target_factor=args.wernicke_off_target_factor,
         use_orthogonal_codes=args.use_orthogonal_codes,
+        enable_visual_cortex=args.enable_visual_cortex,
+        enable_multimodal_hub=args.enable_multimodal_hub,
+        visual_image_size=args.visual_image_size,
+        visual_v1_weight_scale=args.visual_v1_weight_scale,
+        visual_receptive_field_radius=args.visual_receptive_field_radius,
+        visual_n_v2=args.visual_n_v2,
+        visual_n_it=args.visual_n_it,
+        n_multimodal_hub=args.n_multimodal_hub,
+        pair_visual_during_training=args.pair_visual_during_training,
         out_path=Path(args.out) if args.out else None,
         verbose=True,
     )

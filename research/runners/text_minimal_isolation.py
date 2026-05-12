@@ -347,6 +347,40 @@ def build_biological_brain_regions(
     broca_to_motor_speech_weight: float = 4.0,
     broca_to_ec_context_density: float = 0.20,
     broca_to_ec_context_weight: float = 2.0,
+    # ─────────── Sensory grounding via Cluster K v2 (2026-05-12) ──────
+    # P5 architectural pivot per iter KK/LL/MM/NN findings: at
+    # biological scale, per-concept pool architecture has per-seed
+    # structural pool bias that no parameter tuning fixes. Solution:
+    # add a SECOND strong training signal (visual stream) independent
+    # of random connectivity. Mirrors Tier 1's 6/6 success — motor
+    # teacher current overrides random structure for direction words;
+    # visual teacher does the same for abstract concepts.
+    #
+    # Catalog G.11 (Hickok & Poeppel ventral) + K.01 (V1/V2/IT
+    # visual ventral) + Pulvermüller embodied semantics.
+    # Design: docs/plans/2026-05-12-P5-sensory-grounding-design.md
+    enable_visual_cortex: bool = False,
+    visual_n_orientations: int = 8,
+    visual_n_frequencies: int = 2,
+    visual_n_positions_per_dim: int = 8,
+    visual_image_size: int = 32,  # retina = 2 × 32² = 2048 ON/OFF
+    visual_n_v2: int = 256,
+    visual_n_it: int = 64,
+    # Multimodal hub: where wernicke (auditory) + IT (visual) converge
+    # to form the embodied semantic representation per concept. Real
+    # biology: anterior temporal lobe (ATL) hub-and-spoke model
+    # (Lambon Ralph 2017). Plastic recurrent + bidirectional pathways.
+    enable_multimodal_hub: bool = False,
+    n_multimodal_hub: int = 500,
+    multimodal_hub_internal_density: float = 0.05,
+    multimodal_hub_exc_weight_mean: float = 0.3,
+    multimodal_hub_inh_weight_mean: float = 0.8,
+    it_to_hub_density: float = 0.30,
+    it_to_hub_weight: float = 2.0,
+    wernicke_pool_to_hub_density: float = 0.30,
+    wernicke_pool_to_hub_weight: float = 2.0,
+    hub_to_lang_output_pool_density: float = 0.30,
+    hub_to_lang_output_pool_weight: float = 2.0,
 ):
     """Biological-scale architecture with cortical canon ENABLED.
 
@@ -1062,6 +1096,140 @@ def build_biological_brain_regions(
                     weight_jitter=0.3, plastic=False,
                 ))
 
+    # ─────────── Cluster K v2 visual ventral stream (2026-05-12) ───────
+    # Sensory grounding for P5 abstract concepts. Mirror of g11_bg_runner
+    # K v2 architecture: retina → V1 simple (Gabor) → V1 complex (phase
+    # pooling) → V2 → IT. IT acts as concept-level visual hub feeding
+    # multimodal_hub for cross-modal semantic binding.
+    #
+    # Catalog K.01 (V1/V2/IT ventral stream) + G.11 (Hickok & Poeppel
+    # multi-stream language). Design:
+    # docs/plans/2026-05-12-P5-sensory-grounding-design.md
+    if enable_visual_cortex:
+        n_retina = 2 * visual_image_size * visual_image_size  # ON + OFF
+        n_v1_simple = (visual_n_orientations * visual_n_frequencies
+                       * visual_n_positions_per_dim
+                       * visual_n_positions_per_dim)
+        n_v1_complex = (visual_n_orientations
+                        * visual_n_positions_per_dim
+                        * visual_n_positions_per_dim)
+        regions.append(BrainRegion(
+            name="retina",
+            n_neurons=n_retina,
+            exc_fraction=1.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="cortex_v1_simple",
+            n_neurons=n_v1_simple,
+            exc_fraction=1.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="cortex_v1_complex",
+            n_neurons=n_v1_complex,
+            exc_fraction=1.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="cortex_v2",
+            n_neurons=visual_n_v2,
+            exc_fraction=0.8, internal_density=0.05,
+            exc_weight_mean=2.0, inh_weight_mean=4.0,
+            weight_jitter=0.2, plastic_internal=True,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        regions.append(BrainRegion(
+            name="cortex_it",
+            n_neurons=visual_n_it,
+            exc_fraction=0.8, internal_density=0.10,
+            exc_weight_mean=2.0, inh_weight_mean=4.0,
+            weight_jitter=0.2, plastic_internal=True,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        # retina → V1 simple — Gabor init applied post-build via
+        # apply_v1_gabor_weights. Plastic so STDP can refine.
+        pathways.append(RegionPathway(
+            from_region="retina", to_region="cortex_v1_simple",
+            density=0.05, weight_mean=0.5, weight_jitter=0.5,
+            plastic=True, plasticity_gate="visual_cortex_v1",
+        ))
+        # V1 simple → V1 complex (phase pooling). Fixed.
+        pathways.append(RegionPathway(
+            from_region="cortex_v1_simple",
+            to_region="cortex_v1_complex",
+            density=visual_n_frequencies / float(n_v1_simple),
+            weight_mean=2.0, weight_jitter=0.0, plastic=False,
+        ))
+        # V1 complex → V2 (higher-order features). Plastic.
+        pathways.append(RegionPathway(
+            from_region="cortex_v1_complex", to_region="cortex_v2",
+            density=0.10, weight_mean=1.0, weight_jitter=0.5,
+            plastic=True, plasticity_gate="visual_cortex_v2",
+        ))
+        # V2 → IT (object/category). Plastic.
+        pathways.append(RegionPathway(
+            from_region="cortex_v2", to_region="cortex_it",
+            density=0.20, weight_mean=1.5, weight_jitter=0.5,
+            plastic=True, plasticity_gate="visual_cortex_it",
+        ))
+
+    # Multimodal hub: ATL-like convergence zone where auditory
+    # (wernicke) + visual (IT) semantic content binds together.
+    # The "embodied" signal that Tier 1 motor binding got from motor
+    # teacher current is now provided by visual co-firing.
+    if enable_multimodal_hub:
+        regions.append(BrainRegion(
+            name="multimodal_hub",
+            n_neurons=n_multimodal_hub,
+            exc_fraction=0.8,
+            internal_density=multimodal_hub_internal_density,
+            exc_weight_mean=multimodal_hub_exc_weight_mean,
+            inh_weight_mean=multimodal_hub_inh_weight_mean,
+            weight_jitter=0.2, plastic_internal=True,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        # IT → multimodal_hub (visual semantic content)
+        if enable_visual_cortex:
+            pathways.append(RegionPathway(
+                from_region="cortex_it", to_region="multimodal_hub",
+                density=it_to_hub_density,
+                weight_mean=it_to_hub_weight,
+                weight_jitter=0.2, plastic=True,
+                plasticity_gate="it_to_hub",
+            ))
+        # wernicke_pool_i → multimodal_hub (auditory semantic content)
+        if enable_ventral_semantic and enable_multi_pool_wernicke:
+            for i in range(n_wernicke_pools):
+                pathways.append(RegionPathway(
+                    from_region=f"wernicke_pool_{i}",
+                    to_region="multimodal_hub",
+                    density=wernicke_pool_to_hub_density,
+                    weight_mean=wernicke_pool_to_hub_weight,
+                    weight_jitter=0.2, plastic=True,
+                    plasticity_gate=f"wernicke_pool_{i}_to_hub",
+                ))
+        # multimodal_hub → lang_output_pool_i (so visual recognition
+        # can drive the naming output via the hub)
+        if (enable_ventral_semantic
+                and enable_multi_pool_wernicke
+                and enable_per_concept_lang_out_pools):
+            for i in range(n_wernicke_pools):
+                pathways.append(RegionPathway(
+                    from_region="multimodal_hub",
+                    to_region=f"lang_output_pool_{i}",
+                    density=hub_to_lang_output_pool_density,
+                    weight_mean=hub_to_lang_output_pool_weight,
+                    weight_jitter=0.2, plastic=True,
+                    plasticity_gate=f"hub_to_lang_pool_{i}",
+                ))
+
     return regions, pathways
 
 
@@ -1165,6 +1333,89 @@ def freeze_all_gates(bridge):
             bridge.set_plasticity_gate(gate, 0.0)
         except Exception:
             pass
+
+
+def make_concept_image(
+    concept: str,
+    retina_size: int = 32,
+    drive_pA: float = 200.0,
+) -> "np.ndarray":
+    """Generate a deterministic retina drive pattern for a concept.
+
+    For P5 sensory grounding (catalog G.11 + K.01 + Pulvermüller
+    embodied semantics). Each concept gets a geometric visual prototype
+    that's identifiable by V1 Gabor cells + V2 shape features.
+
+    Returns: (2 * retina_size^2,) ndarray of pA values for the retina
+    region. First half is ON-channel, second half is OFF-channel.
+
+    Concept prototypes (designed for V1-detectable features):
+    - "apple": round bright shape, center of image
+                (Gabor cells with low-spatial-frequency tuning will fire)
+    - "river": elongated horizontal wave pattern
+                (Gabor cells with horizontal orientation will fire)
+    - "alice": vertical bar (different orientation)
+    - "table": rectangular flat shape
+    - Default: faint sparse pattern
+
+    The shapes are intentionally distinct in DOMINANT ORIENTATION and
+    SHAPE so V1 simple cell tuning naturally separates them.
+    """
+    import numpy as np
+    img_on = np.zeros((retina_size, retina_size), dtype=np.float32)
+    img_off = np.zeros((retina_size, retina_size), dtype=np.float32)
+
+    cx, cy = retina_size // 2, retina_size // 2
+
+    if concept == "apple":
+        # Round bright blob in center (low-freq, no preferred orient)
+        r_main = retina_size * 0.25
+        for y in range(retina_size):
+            for x in range(retina_size):
+                d = np.sqrt((x - cx)**2 + (y - cy)**2)
+                if d < r_main:
+                    img_on[y, x] = drive_pA
+                elif d < r_main + 2.0:
+                    # Edge transition: weak OFF
+                    img_off[y, x] = drive_pA * 0.4
+    elif concept == "river":
+        # Horizontal wavy elongated band (HORIZONTAL orientation)
+        center_band_h = retina_size * 0.20
+        for y in range(retina_size):
+            # Wavy mid-line
+            mid = cy + int(2.5 * np.sin(y * 0.6))
+            for x in range(retina_size):
+                if abs(x - mid) < center_band_h * 0.5:
+                    img_on[y, x] = drive_pA
+                elif abs(x - mid) < center_band_h * 0.7:
+                    img_off[y, x] = drive_pA * 0.4
+        # Transpose so horizontal orientation dominates
+        img_on = img_on.T.copy()
+        img_off = img_off.T.copy()
+    elif concept == "alice":
+        # Vertical bar (VERTICAL orientation)
+        bar_w = max(2, int(retina_size * 0.10))
+        for y in range(retina_size):
+            for x in range(cx - bar_w, cx + bar_w):
+                if 0 <= x < retina_size:
+                    img_on[y, x] = drive_pA
+    elif concept == "table":
+        # Rectangular flat shape (mixed orientations, distinct from
+        # apple's roundness via aspect ratio)
+        h, w = int(retina_size * 0.15), int(retina_size * 0.35)
+        for y in range(cy - h, cy + h):
+            for x in range(cx - w, cx + w):
+                if 0 <= y < retina_size and 0 <= x < retina_size:
+                    img_on[y, x] = drive_pA
+    else:
+        # Faint default: 5% random sparse pattern
+        rng = np.random.default_rng(hash(concept) & 0xFFFFFFFF)
+        mask = rng.random((retina_size, retina_size)) < 0.05
+        img_on[mask] = drive_pA * 0.5
+
+    # Pack to retina ON/OFF format (channel-first: ON first, then OFF)
+    flat = np.concatenate([img_on.flatten(), img_off.flatten()])
+    return flat
 
 
 def build_tier_2_3_action_gate(
