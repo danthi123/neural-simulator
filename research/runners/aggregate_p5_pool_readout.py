@@ -60,7 +60,7 @@ def main() -> int:
         apple_ok = apple_p0 > apple_p1
         river_ok = river_p1 > river_p0
         bidir = apple_ok and river_ok
-        rows.append({
+        row = {
             "seed": s,
             "apple_p0": apple_p0, "apple_p1": apple_p1,
             "river_p0": river_p0, "river_p1": river_p1,
@@ -72,7 +72,20 @@ def main() -> int:
             "n_neurons": d.get("n_neurons", 0),
             "n_synapses": d.get("n_synapses", 0),
             "total_seconds": d.get("total_seconds", 0.0),
-        })
+        }
+        # Iter OO_visual: optional visual_pool_readout (TEST 2c)
+        vpr = d.get("naming", {}).get("visual_pool_readout")
+        if vpr:
+            v_apple = vpr.get("apple", {})
+            v_river = vpr.get("river", {})
+            row["v_apple_p0"] = float(v_apple.get("0", 0.0))
+            row["v_apple_p1"] = float(v_apple.get("1", 0.0))
+            row["v_river_p0"] = float(v_river.get("0", 0.0))
+            row["v_river_p1"] = float(v_river.get("1", 0.0))
+            row["v_apple_ok"] = row["v_apple_p0"] > row["v_apple_p1"]
+            row["v_river_ok"] = row["v_river_p1"] > row["v_river_p0"]
+            row["v_bidir"] = row["v_apple_ok"] and row["v_river_ok"]
+        rows.append(row)
 
     if not rows:
         print("No seeds found.")
@@ -83,25 +96,43 @@ def main() -> int:
     n_river = sum(int(r["river_ok"]) for r in rows)
     n_bidir = sum(int(r["bidir"]) for r in rows)
     avg_total = sum(r["total_seconds"] for r in rows) / n
+    has_visual = any("v_bidir" in r for r in rows)
+    if has_visual:
+        n_v_apple = sum(int(r.get("v_apple_ok", False)) for r in rows)
+        n_v_river = sum(int(r.get("v_river_ok", False)) for r in rows)
+        n_v_bidir = sum(int(r.get("v_bidir", False)) for r in rows)
 
     print(f"=== {args.label} ===")
     print(f"Seeds: {[r['seed'] for r in rows]}")
-    print(f"Apple recognition: {n_apple}/{n}")
-    print(f"River recognition: {n_river}/{n}")
-    print(f"BIDIRECTIONAL: {n_bidir}/{n}")
+    print(f"AUDITORY (CA3-stim) recognition:")
+    print(f"  Apple: {n_apple}/{n}")
+    print(f"  River: {n_river}/{n}")
+    print(f"  BIDIRECTIONAL: {n_bidir}/{n}")
+    if has_visual:
+        print(f"VISUAL-ONLY (retina-stim) recognition:")
+        print(f"  Apple: {n_v_apple}/{n}")
+        print(f"  River: {n_v_river}/{n}")
+        print(f"  BIDIRECTIONAL: {n_v_bidir}/{n}")
     print(f"Mean wall clock: {avg_total/60:.1f} min/seed")
     print()
     for r in rows:
-        print(
+        line = (
             f"  seed {r['seed']:>3}: "
-            f"apple p0={r['apple_p0']:5.0f} p1={r['apple_p1']:5.0f} "
-            f"(margin {r['apple_margin']:+5.0f}, "
-            f"{'OK' if r['apple_ok'] else 'X '}) | "
-            f"river p0={r['river_p0']:5.0f} p1={r['river_p1']:5.0f} "
-            f"(margin {r['river_margin']:+5.0f}, "
-            f"{'OK' if r['river_ok'] else 'X '}) | "
+            f"audio apple {r['apple_margin']:+5.0f} "
+            f"({'OK' if r['apple_ok'] else 'X '}) "
+            f"river {r['river_margin']:+5.0f} "
+            f"({'OK' if r['river_ok'] else 'X '}) "
             f"BIDIR={'YES' if r['bidir'] else 'no '}"
         )
+        if "v_bidir" in r:
+            line += (
+                f" | visual apple {r['v_apple_p0']-r['v_apple_p1']:+5.0f} "
+                f"({'OK' if r['v_apple_ok'] else 'X '}) "
+                f"river {r['v_river_p1']-r['v_river_p0']:+5.0f} "
+                f"({'OK' if r['v_river_ok'] else 'X '}) "
+                f"BIDIR={'YES' if r['v_bidir'] else 'no '}"
+            )
+        print(line)
 
     if args.out:
         md = []
