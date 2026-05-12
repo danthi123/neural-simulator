@@ -109,6 +109,11 @@ def run_ventral_validation(
     n_wernicke_pools: int = 2,
     n_per_wernicke_pool: int = 100,
     n_per_wernicke_pool_fs: int = 12,
+    # Iter Z (2026-05-11): interleaved training fix for the
+    # apple/river asymmetry identified in V3 demo. Sequential
+    # training (apple block then river block) produced apple-
+    # biased weights. Per-event alternation should symmetrize.
+    interleaved_training: bool = False,
     # Iter M: strengthen naming pathway weights. ca1_to_lang_out
     # at default 2.0 produces only ~20 mV drive on lang_output
     # which is barely suprathreshold. Bumping to 5.0 should
@@ -352,13 +357,65 @@ def run_ventral_validation(
         )
         return stats
 
-    log(f"\nEncoding 'apple' ({n_train_events} events)...")
-    apple_tag = encode_concept("apple", apple_arr)
-    log(f"  CA3 tag: {apple_tag['n_tagged']} neurons")
+    if interleaved_training:
+        # Interleaved training (iter Z, asymmetry fix):
+        # Per-event apple/river alternation. STDP can't grow
+        # apple-biased weights without immediate river contrast.
+        # Identified as the fix for iter W's apple-only asymmetry
+        # (river-direction failed at single-trial demo).
+        log(f"\n[interleaved] training apple+river alternating "
+            f"per-event x {n_train_events} events...")
+        for g in encode_gates:
+            try:
+                bridge.set_plasticity_gate(g, 1.0)
+            except Exception:
+                pass
+        for ev_idx in range(n_train_events):
+            for cname, c_arr in (("apple", apple_arr), ("river", river_arr)):
+                bridge.cp_external_input_current[:] = 0.0
+                for _ in range(30):
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+                bridge.cp_external_input_current[c_arr] = 200.0
+                for _ in range(100):
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+        for g in encode_gates:
+            try:
+                bridge.set_plasticity_gate(g, 0.0)
+            except Exception:
+                pass
+        # Tag both CA3 ensembles after interleaved training
+        log("  [interleaved] tagging CA3 ensembles post-training...")
+        apple_tag = None
+        river_tag = None
+        for cname, c_arr in (("apple", apple_arr), ("river", river_arr)):
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(30):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+            bridge.start_engram_recording(cname)
+            bridge.cp_external_input_current[c_arr] = 200.0
+            for _ in range(100):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+            bridge.cp_external_input_current[:] = 0.0
+            t = bridge.commit_engram_tag(
+                cname, top_k=50, region_filter=["ca3"]
+            )
+            log(f"    {cname} CA3 tag: {t['n_tagged']} neurons")
+            if cname == "apple":
+                apple_tag = t
+            else:
+                river_tag = t
+    else:
+        log(f"\nEncoding 'apple' ({n_train_events} events)...")
+        apple_tag = encode_concept("apple", apple_arr)
+        log(f"  CA3 tag: {apple_tag['n_tagged']} neurons")
 
-    log(f"\nEncoding 'river' ({n_train_events} events)...")
-    river_tag = encode_concept("river", river_arr)
-    log(f"  CA3 tag: {river_tag['n_tagged']} neurons")
+        log(f"\nEncoding 'river' ({n_train_events} events)...")
+        river_tag = encode_concept("river", river_arr)
+        log(f"  CA3 tag: {river_tag['n_tagged']} neurons")
 
     # Run concept replay (P3.1) to consolidate to semantic_cortex
     log(f"\nRunning concept replay ({n_replay_cycles} cycles each)...")
@@ -906,6 +963,10 @@ def main() -> int:
     ap.add_argument("--n-wernicke-pools", type=int, default=2)
     ap.add_argument("--n-per-wernicke-pool", type=int, default=100)
     ap.add_argument("--n-per-wernicke-pool-fs", type=int, default=12)
+    ap.add_argument("--interleaved-training", action="store_true",
+                    help="Iter Z: train apple+river per-event "
+                         "alternating instead of sequential blocks. "
+                         "Fixes apple-asymmetry from V3 demo data.")
     # Iter M: strengthen naming pathway
     ap.add_argument("--ca1-to-lang-out-weight", type=float, default=2.0,
                     help="Iter M: strengthen CA1->lang_output "
@@ -957,6 +1018,7 @@ def main() -> int:
         n_wernicke_pools=args.n_wernicke_pools,
         n_per_wernicke_pool=args.n_per_wernicke_pool,
         n_per_wernicke_pool_fs=args.n_per_wernicke_pool_fs,
+        interleaved_training=args.interleaved_training,
         ca1_to_lang_out_weight=args.ca1_to_lang_out_weight,
         stim_drive_pA=args.stim_drive_pa,
         apply_wernicke_topographic=args.apply_wernicke_topographic,
