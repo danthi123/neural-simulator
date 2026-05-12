@@ -1,0 +1,289 @@
+{
+  "base_lineage": "main_hippo",
+  "n_events": 200,
+  "seed": 42,
+  "test_bindings": [
+    [
+      "apple",
+      "north",
+      "N"
+    ],
+    [
+      "river",
+      "east",
+      "E"
+    ],
+    [
+      "mountain",
+      "south",
+      "S"
+    ],
+    [
+      "forest",
+      "west",
+      "W"
+    ]
+  ],
+  "variants_tested": [
+    "v0_vanilla",
+    "v_hippo_bio",
+    "v_schema"
+  ],
+  "results": [
+    {
+      "variant": "v0_vanilla",
+      "n_correct": 1,
+      "n_total": 4,
+      "accuracy": 0.25,
+      "total_seconds": 430.9716796875,
+      "details": [
+        {
+          "key": "apple",
+          "expected_value": "north",
+          "expected_action": "N",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 426,
+          "bind_result": {
+            "key": "apple",
+            "value": "north",
+            "target_action": "N",
+            "confidence": 2.7289156626506026,
+            "bound_correctly": false,
+            "n_events_run": 200,
+            "elapsed_seconds": 103.246591091156
+          }
+        },
+        {
+          "key": "river",
+          "expected_value": "east",
+          "expected_action": "E",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 571,
+          "bind_result": {
+            "key": "river",
+            "value": "east",
+            "target_action": "E",
+            "confidence": 3.4135802469135803,
+            "bound_correctly": false,
+            "n_events_run": 200,
+            "elapsed_seconds": 103.83540892601013
+          }
+        },
+        {
+          "key": "mountain",
+          "expected_value": "south",
+          "expected_action": "S",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 582,
+          "bind_result": {
+            "key": "mountain",
+            "value": "south",
+            "target_action": "S",
+            "confidence": 1.9838709677419355,
+            "bound_correctly": false,
+            "n_events_run": 200,
+            "elapsed_seconds": 106.94178199768066
+          }
+        },
+        {
+          "key": "forest",
+          "expected_value": "west",
+          "expected_action": "W",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": true,
+          "confidence": 1.0,
+          "raw_delta": 361,
+          "bind_result": {
+            "key": "forest",
+            "value": "west",
+            "target_action": "W",
+            "confidence": 3.2045454545454546,
+            "bound_correctly": true,
+            "n_events_run": 200,
+            "elapsed_seconds": 112.51686120033264
+          }
+        }
+      ]
+    },
+    {
+      "variant": "v_hippo_bio",
+      "n_correct": 1,
+      "n_total": 4,
+      "accuracy": 0.25,
+      "total_seconds": 4.277451992034912,
+      "details": [
+        {
+          "key": "apple",
+          "expected_value": "north",
+          "expected_action": "N",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 366,
+          "bind_result": {
+            "key": "apple",
+            "value": "north",
+            "error": "V_HIPPO_BIO requires hippocampus-enabled bridge. Bootstrap main_hippo first: 'ca3'",
+            "n_events_run": 0,
+            "bound_correctly": false,
+            "confidence": 0.0
+          }
+        },
+        {
+          "key": "river",
+          "expected_value": "east",
+          "expected_action": "E",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 539,
+          "bind_result": {
+            "key": "river",
+            "value": "east",
+            "error": "V_HIPPO_BIO requires hippocampus-enabled bridge. Bootstrap main_hippo first: 'ca3'",
+            "n_events_run": 0,
+            "bound_correctly": false,
+            "confidence": 0.0
+          }
+        },
+        {
+          "key": "mountain",
+          "expected_value": "south",
+          "expected_action": "S",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 440,
+          "bind_result": {
+            "key": "mountain",
+            "value": "south",
+            "error": "V_HIPPO_BIO requires hippocampus-enabled bridge. Bootstrap main_hippo first: 'ca3'",
+            "n_events_run": 0,
+            "bound_correctly": false,
+            "confidence": 0.0
+          }
+        },
+        {
+          "key": "forest",
+          "expected_value": "west",
+          "expected_action": "W",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": true,
+          "confidence": 1.0,
+          "raw_delta": 281,
+          "bind_result": {
+            "key": "forest",
+            "value": "west",
+            "error": "V_HIPPO_BIO requires hippocampus-enabled bridge. Bootstrap main_hippo first: 'ca3'",
+            "n_events_run": 0,
+            "bound_correctly": false,
+            "confidence": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "variant": "v_schema",
+      "n_correct": 1,
+      "n_total": 4,
+      "accuracy": 0.25,
+      "total_seconds": 471.66371870040894,
+      "details": [
+        {
+          "key": "apple",
+          "expected_value": "north",
+          "expected_action": "N",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 454,
+          "bind_result": {
+            "key": "apple",
+            "value": "north",
+            "target_action": "N",
+            "confidence": 3.404109589041096,
+            "bound_correctly": false,
+            "n_events_run": 200,
+            "v_schema_n_anchor_events": 20,
+            "elapsed_seconds": 114.96176147460938
+          }
+        },
+        {
+          "key": "river",
+          "expected_value": "east",
+          "expected_action": "E",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 576,
+          "bind_result": {
+            "key": "river",
+            "value": "east",
+            "target_action": "E",
+            "confidence": 3.4853801169590644,
+            "bound_correctly": false,
+            "n_events_run": 200,
+            "v_schema_n_anchor_events": 20,
+            "elapsed_seconds": 114.27117896080017
+          }
+        },
+        {
+          "key": "mountain",
+          "expected_value": "south",
+          "expected_action": "S",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 586,
+          "bind_result": {
+            "key": "mountain",
+            "value": "south",
+            "target_action": "S",
+            "confidence": 2.069672131147541,
+            "bound_correctly": false,
+            "n_events_run": 200,
+            "v_schema_n_anchor_events": 20,
+            "elapsed_seconds": 112.69096970558167
+          }
+        },
+        {
+          "key": "forest",
+          "expected_value": "west",
+          "expected_action": "W",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": true,
+          "confidence": 1.0,
+          "raw_delta": 398,
+          "bind_result": {
+            "key": "forest",
+            "value": "west",
+            "target_action": "W",
+            "confidence": 3.723404255319149,
+            "bound_correctly": true,
+            "n_events_run": 200,
+            "v_schema_n_anchor_events": 20,
+            "elapsed_seconds": 119.14736247062683
+          }
+        }
+      ]
+    }
+  ]
+}
