@@ -216,6 +216,13 @@ def run_consolidation_training(
     n_motor_per_action: int = 500,
     n_motor_fs_per_action: int = 60,
     swr_drive_pA: float = 100.0,
+    n_awake_per_word_map: dict | None = None,
+    # Per-direction event count override. When provided (e.g.
+    # {"north": 200, "east": 400, "south": 100, "west": 400}),
+    # overrides n_awake_events_per_word per-direction. Lets us
+    # rebalance the bootstrap so each motor pool ends up with
+    # similar trained-edge strength. Diagnostic for the V_SCHEMA
+    # ceiling at 2/4 (2026-05-12).
     verbose: bool = True,
 ):
     """Train Tier 1 vocab with hippocampus consolidation interleaved.
@@ -304,15 +311,24 @@ def run_consolidation_training(
         verbose=verbose,
     )
 
-    # Build awake training buffer
+    # Build awake training buffer (per-direction event count override
+    # supported for balanced-bootstrap experimentation)
     awake_buffer = []
+    effective_per_word = {}
     for word in PRIMARY_WORDS:
-        for _ in range(n_awake_events_per_word):
+        n = (n_awake_per_word_map or {}).get(
+            word, n_awake_events_per_word,
+        )
+        effective_per_word[word] = n
+        for _ in range(n):
             awake_buffer.append({
                 "token": word,
                 "action": PRIMARY_TO_ACTION[word],
             })
     rng.shuffle(awake_buffer)
+    if verbose and n_awake_per_word_map:
+        print(f"  Per-direction event counts: {effective_per_word}",
+              flush=True)
 
     rm = bridge.region_manager
     lang_input_idx = list(rm.indices("language_input"))

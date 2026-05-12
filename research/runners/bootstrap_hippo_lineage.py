@@ -33,6 +33,7 @@ def bootstrap_hippo_lineage(
     n_awake_events_per_word: int = 200,
     n_sleep_swr_events: int = 200,
     consolidation_interval: int = 4,
+    n_awake_per_word_map: dict | None = None,
     train_only: bool = True,
     verbose: bool = True,
 ) -> dict:
@@ -67,6 +68,7 @@ def bootstrap_hippo_lineage(
         n_awake_events_per_word=n_awake_events_per_word,
         n_sleep_swr_events=n_sleep_swr_events,
         consolidation_interval=consolidation_interval,
+        n_awake_per_word_map=n_awake_per_word_map,
         verbose=verbose,
     )
 
@@ -133,8 +135,27 @@ def main() -> int:
     ap.add_argument("--n-swr", type=int, default=200,
                     help="SWR bursts per sleep cycle (default 200)")
     ap.add_argument("--consolidation-interval", type=int, default=4)
+    ap.add_argument("--n-awake-north", type=int, default=None,
+                    help="Per-direction override for north (default uses --n-awake)")
+    ap.add_argument("--n-awake-east", type=int, default=None,
+                    help="Per-direction override for east")
+    ap.add_argument("--n-awake-south", type=int, default=None,
+                    help="Per-direction override for south")
+    ap.add_argument("--n-awake-west", type=int, default=None,
+                    help="Per-direction override for west")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
+
+    # Build per-direction map if any overrides given
+    n_awake_per_word_map = None
+    if any(x is not None for x in [args.n_awake_north, args.n_awake_east,
+                                      args.n_awake_south, args.n_awake_west]):
+        n_awake_per_word_map = {
+            "north": args.n_awake_north if args.n_awake_north is not None else args.n_awake,
+            "east":  args.n_awake_east  if args.n_awake_east  is not None else args.n_awake,
+            "south": args.n_awake_south if args.n_awake_south is not None else args.n_awake,
+            "west":  args.n_awake_west  if args.n_awake_west  is not None else args.n_awake,
+        }
 
     result = bootstrap_hippo_lineage(
         lineage_name=args.lineage,
@@ -142,6 +163,7 @@ def main() -> int:
         n_awake_events_per_word=args.n_awake,
         n_sleep_swr_events=args.n_swr,
         consolidation_interval=args.consolidation_interval,
+        n_awake_per_word_map=n_awake_per_word_map,
         train_only=True,
         verbose=True,
     )
