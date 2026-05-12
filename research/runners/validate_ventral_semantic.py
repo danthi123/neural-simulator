@@ -131,6 +131,11 @@ def run_ventral_validation(
     # Iter EE: longer inter-trial rest (default 50 steps) to
     # allow neuron adaptation to recover between trials
     inter_trial_rest_steps: int = 50,
+    # Iter GG: teacher pairing at lang_output. During training,
+    # drive lang_output_pool_<i> with teacher current alongside
+    # lang_input(concept_<i>). Mirrors Tier 1's embodied-Hebbian.
+    enable_lang_out_teacher: bool = False,
+    lang_out_teacher_pA: float = 300.0,
     # Iter M: strengthen naming pathway weights. ca1_to_lang_out
     # at default 2.0 produces only ~20 mV drive on lang_output
     # which is barely suprathreshold. Bumping to 5.0 should
@@ -406,6 +411,26 @@ def run_ventral_validation(
                 bridge.set_plasticity_gate(g, 1.0)
             except Exception:
                 pass
+        # Iter GG: teacher pairing for P5. During interleaved
+        # training, optionally drive lang_output_pool_<i> with
+        # teacher current alongside lang_input(concept_<i>).
+        # Mirrors Tier 1's embodied-Hebbian paired-stim that gave
+        # 6/6 motor binding. Without teacher, STDP through the
+        # long chain (lang_input → wernicke_pool → lang_pool) is
+        # too weak; with teacher, lang_output_pool fires reliably
+        # during concept training, locking in the binding.
+        teacher_pools = {}
+        if (enable_lang_out_teacher
+                and enable_multi_pool_wernicke
+                and enable_per_concept_lang_out_pools):
+            rm_t = bridge.region_manager
+            for i, cname in enumerate(("apple", "river")):
+                pool_indices = list(rm_t.indices(f"lang_output_pool_{i}"))
+                teacher_pools[cname] = cp.asarray(
+                    pool_indices, dtype=cp.int64,
+                )
+            log(f"  [iter GG] teacher pairing enabled "
+                f"({lang_out_teacher_pA:.0f} pA on lang_output_pool)")
         for ev_idx in range(n_train_events):
             for cname, c_arr in (("apple", apple_arr), ("river", river_arr)):
                 bridge.cp_external_input_current[:] = 0.0
@@ -413,6 +438,11 @@ def run_ventral_validation(
                     bridge._run_one_simulation_step()
                     bridge.runtime_state.current_time_step += 1
                 bridge.cp_external_input_current[c_arr] = 200.0
+                # Iter GG: add teacher current to lang_output_pool
+                if cname in teacher_pools:
+                    bridge.cp_external_input_current[
+                        teacher_pools[cname]
+                    ] = float(lang_out_teacher_pA)
                 for _ in range(100):
                     bridge._run_one_simulation_step()
                     bridge.runtime_state.current_time_step += 1
@@ -1084,6 +1114,12 @@ def main() -> int:
                     help="Iter EE: rest steps between recognition "
                          "trials (default 50; try 500 for full "
                          "adaptation recovery)")
+    ap.add_argument("--enable-lang-out-teacher", action="store_true",
+                    help="Iter GG: teacher pairing at lang_output. "
+                         "During training, drive lang_output_pool_<i> "
+                         "with teacher current alongside concept input. "
+                         "Mirrors Tier 1's embodied-Hebbian paradigm.")
+    ap.add_argument("--lang-out-teacher-pa", type=float, default=300.0)
     # Iter M: strengthen naming pathway
     ap.add_argument("--ca1-to-lang-out-weight", type=float, default=2.0,
                     help="Iter M: strengthen CA1->lang_output "
@@ -1144,6 +1180,8 @@ def main() -> int:
         n_per_lang_out_fs_pool=args.n_per_lang_out_fs_pool,
         n_recognition_trials=args.n_recognition_trials,
         inter_trial_rest_steps=args.inter_trial_rest_steps,
+        enable_lang_out_teacher=args.enable_lang_out_teacher,
+        lang_out_teacher_pA=args.lang_out_teacher_pa,
         ca1_to_lang_out_weight=args.ca1_to_lang_out_weight,
         stim_drive_pA=args.stim_drive_pa,
         apply_wernicke_topographic=args.apply_wernicke_topographic,
