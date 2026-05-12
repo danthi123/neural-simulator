@@ -165,6 +165,12 @@ def run_ventral_validation(
     apply_wernicke_topographic: bool = False,
     wernicke_topographic_factor: float = 1.5,
     wernicke_off_target_factor: float = 0.7,
+    # Iter NN: orthogonal concept codes (zero overlap between concepts).
+    # vocab_to_drive_pattern has 8.8% overlap for apple/river → shared
+    # neurons get ambiguous topographic bias. Orthogonal codes eliminate
+    # this confusion. Same flag controls both the runner's drive call
+    # and the topographic bias function so they're consistent.
+    use_orthogonal_codes: bool = False,
     out_path: Optional[Path] = None,
     verbose: bool = True,
 ):
@@ -292,6 +298,7 @@ def run_ventral_validation(
                 off_target_factor=wernicke_off_target_factor,
                 n_lang_input=n_lang_input,
                 sparsity=0.1,
+                use_orthogonal_codes=use_orthogonal_codes,
                 verbose=verbose,
             )
         else:
@@ -305,18 +312,32 @@ def run_ventral_validation(
                 off_target_factor=wernicke_off_target_factor,
                 n_lang_input=n_lang_input,
                 sparsity=0.1,
+                use_orthogonal_codes=use_orthogonal_codes,
                 verbose=verbose,
             )
 
     # Encode 2 concepts via lang_input drive + hippo plasticity
     # The hippo trace + ca1->semantic_cortex pathway will produce
     # semantic_cortex activations during/after training.
-    word_apple = vocab_to_drive_pattern(
-        "apple", n_neurons=n_lang_input, drive_max_pA=200.0, sparsity=0.1,
-    )
-    word_river = vocab_to_drive_pattern(
-        "river", n_neurons=n_lang_input, drive_max_pA=200.0, sparsity=0.1,
-    )
+    # Iter NN: optionally use orthogonal codes (zero overlap) instead
+    # of hash-Gaussian-based vocab codes (8.8% overlap for apple/river).
+    if use_orthogonal_codes:
+        from sim.text_embeddings import orthogonal_drive_pattern
+        word_apple = orthogonal_drive_pattern(
+            cue_idx=0, n_cues=2, n_neurons=n_lang_input,
+            drive_max_pA=200.0, sparsity=0.1,
+        )
+        word_river = orthogonal_drive_pattern(
+            cue_idx=1, n_cues=2, n_neurons=n_lang_input,
+            drive_max_pA=200.0, sparsity=0.1,
+        )
+    else:
+        word_apple = vocab_to_drive_pattern(
+            "apple", n_neurons=n_lang_input, drive_max_pA=200.0, sparsity=0.1,
+        )
+        word_river = vocab_to_drive_pattern(
+            "river", n_neurons=n_lang_input, drive_max_pA=200.0, sparsity=0.1,
+        )
     rm = bridge.region_manager
     lang_idx = list(rm.indices("language_input"))
     apple_arr = cp.asarray(
@@ -1200,6 +1221,14 @@ def main() -> int:
                     default=0.7,
                     help="Path G+ minimal: weight reduction for "
                          "off-target wernicke subset (default 0.7)")
+    # Iter NN: orthogonal concept codes
+    ap.add_argument("--use-orthogonal-codes", action="store_true",
+                    help="Iter NN: use orthogonal_drive_pattern (zero "
+                         "overlap between concepts) instead of "
+                         "vocab_to_drive_pattern (which has ~9pp "
+                         "overlap for apple/river). Eliminates input-"
+                         "code ambiguity that hurts topographic bias "
+                         "at biological scale.")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
     run_ventral_validation(
@@ -1252,6 +1281,7 @@ def main() -> int:
         apply_wernicke_topographic=args.apply_wernicke_topographic,
         wernicke_topographic_factor=args.wernicke_topographic_factor,
         wernicke_off_target_factor=args.wernicke_off_target_factor,
+        use_orthogonal_codes=args.use_orthogonal_codes,
         out_path=Path(args.out) if args.out else None,
         verbose=True,
     )

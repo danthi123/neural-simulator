@@ -1549,6 +1549,7 @@ def apply_wernicke_pool_topographic_bias(
     off_target_factor: float = 0.5,
     n_lang_input: int = 1024,
     sparsity: float = 0.1,
+    use_orthogonal_codes: bool = False,
     verbose: bool = True,
 ):
     """Apply topographic bias to lang_input -> wernicke_pool_i
@@ -1566,8 +1567,14 @@ def apply_wernicke_pool_topographic_bias(
             Default 0.5 (more aggressive than 0.7).
         n_lang_input: lang_input region size.
         sparsity: token drive sparsity.
+        use_orthogonal_codes: if True, use orthogonal_drive_pattern
+            (zero overlap between concepts) instead of
+            vocab_to_drive_pattern (8.8% overlap for 2 concepts).
+            Iter NN test: removes input-code ambiguity to test if
+            the per-seed pool bias at biological scale is caused
+            by overlapping codes confusing the topographic bias.
     """
-    from sim.text_embeddings import vocab_to_drive_pattern
+    from sim.text_embeddings import vocab_to_drive_pattern, orthogonal_drive_pattern
     import numpy as np
 
     rm = bridge.region_manager
@@ -1598,9 +1605,15 @@ def apply_wernicke_pool_topographic_bias(
 
     summary = {}
     for concept_i, concept in enumerate(concepts):
-        drive = vocab_to_drive_pattern(
-            concept, n_neurons=n_lang_input, sparsity=sparsity,
-        )
+        if use_orthogonal_codes:
+            drive = orthogonal_drive_pattern(
+                cue_idx=concept_i, n_cues=len(concepts),
+                n_neurons=n_lang_input, sparsity=sparsity,
+            )
+        else:
+            drive = vocab_to_drive_pattern(
+                concept, n_neurons=n_lang_input, sparsity=sparsity,
+            )
         local_active = np.where(drive > 0)[0]
         global_active = [lang_input_indices[i] for i in local_active]
 
