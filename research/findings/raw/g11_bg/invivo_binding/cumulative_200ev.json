@@ -1,0 +1,123 @@
+{
+  "base_lineage": "main_hippo",
+  "seed": 42,
+  "n_events_per_binding": 200,
+  "bindings": [
+    {
+      "key": "apple",
+      "value": "north"
+    },
+    {
+      "key": "mountain",
+      "value": "south"
+    },
+    {
+      "key": "cat",
+      "value": "east"
+    },
+    {
+      "key": "dog",
+      "value": "west"
+    }
+  ],
+  "binding_steps": [
+    {
+      "step": 1,
+      "new_key": "apple",
+      "new_target": "N",
+      "train_seconds": 186.69460034370422,
+      "recalls": {
+        "apple": {
+          "expected": "N",
+          "got": "N",
+          "confidence": 3.9130434782608696,
+          "correct": true
+        }
+      },
+      "n_correct_so_far": 1
+    },
+    {
+      "step": 2,
+      "new_key": "mountain",
+      "new_target": "S",
+      "train_seconds": 181.9926266670227,
+      "recalls": {
+        "apple": {
+          "expected": "N",
+          "got": "S",
+          "confidence": 16.2,
+          "correct": false
+        },
+        "mountain": {
+          "expected": "S",
+          "got": "W",
+          "confidence": 1.3157894736842106,
+          "correct": false
+        }
+      },
+      "n_correct_so_far": 0
+    },
+    {
+      "step": 3,
+      "new_key": "cat",
+      "new_target": "E",
+      "train_seconds": 182.0930335521698,
+      "recalls": {
+        "apple": {
+          "expected": "N",
+          "got": "E",
+          "confidence": 2.375,
+          "correct": false
+        },
+        "mountain": {
+          "expected": "S",
+          "got": "S",
+          "confidence": 1.0,
+          "correct": true
+        },
+        "cat": {
+          "expected": "E",
+          "got": "S",
+          "confidence": 1.5555555555555556,
+          "correct": false
+        }
+      },
+      "n_correct_so_far": 1
+    },
+    {
+      "step": 4,
+      "new_key": "dog",
+      "new_target": "W",
+      "train_seconds": 183.4135320186615,
+      "recalls": {
+        "apple": {
+          "expected": "N",
+          "got": "W",
+          "confidence": 2.0208333333333335,
+          "correct": false
+        },
+        "mountain": {
+          "expected": "S",
+          "got": "S",
+          "confidence": 1.2222222222222223,
+          "correct": true
+        },
+        "cat": {
+          "expected": "E",
+          "got": "E",
+          "confidence": 2.0,
+          "correct": true
+        },
+        "dog": {
+          "expected": "W",
+          "got": "N",
+          "confidence": 1.0,
+          "correct": false
+        }
+      },
+      "n_correct_so_far": 2
+    }
+  ],
+  "final_correct": 2,
+  "total_bindings": 4
+}
