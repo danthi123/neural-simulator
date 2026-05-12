@@ -291,6 +291,17 @@ def build_biological_brain_regions(
     n_per_wernicke_pool_fs: int = 12,
     wernicke_pool_to_fs_weight: float = 3.0,
     wernicke_fs_cross_weight: float = 4.0,
+    # Per-concept lang_output pools (mirror Tier 1 motor pool
+    # at output side; addresses iter Z finding that shared
+    # lang_output prevents bidirectional discrimination at toy
+    # scale). When enabled AND multi_pool_wernicke is on:
+    # - lang_output_pool_<i> regions created
+    # - wernicke_pool_<i> -> lang_output_pool_<i> (dedicated)
+    # - ca1 -> each lang_output_pool_<i>
+    enable_per_concept_lang_out_pools: bool = False,
+    n_per_lang_out_pool: int = 200,
+    pool_to_lang_out_pool_weight: float = 3.0,
+    ca1_to_lang_out_pool_weight: float = 2.0,
     # P6 Broca's area + compositional syntax (catalog G.12, Kandel
     # 6e Ch 55 pp 1382-1384). Adds broca region (~500 neurons,
     # recurrent for sentence working memory) + motor_speech region
@@ -591,6 +602,27 @@ def build_biological_brain_regions(
                             NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name
                         ),
                     ))
+                # Per-concept lang_output pools (iter AA): mirror
+                # Tier 1 motor pool architecture at the language
+                # output. Each wernicke_pool routes to its dedicated
+                # lang_output_pool, preventing the shared lang_output
+                # bottleneck that limited iter Z bidirectional
+                # discrimination.
+                if enable_per_concept_lang_out_pools:
+                    for i in range(n_wernicke_pools):
+                        regions.append(BrainRegion(
+                            name=f"lang_output_pool_{i}",
+                            n_neurons=n_per_lang_out_pool,
+                            exc_fraction=0.8,
+                            internal_density=0.05,
+                            exc_weight_mean=0.3,
+                            inh_weight_mean=0.8,
+                            weight_jitter=0.2,
+                            plastic_internal=False,
+                            izh_neuron_type=(
+                                NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name
+                            ),
+                        ))
             else:
                 regions.append(BrainRegion(
                     name="wernicke",
@@ -658,14 +690,31 @@ def build_biological_brain_regions(
                             plasticity_gate=f"{fs_name}_to_{other_pool}",
                         ))
                     if enable_language_output:
-                        pathways.append(RegionPathway(
-                            from_region=pool_name,
-                            to_region="language_output",
-                            density=0.30, weight_mean=3.0,
-                            weight_jitter=0.2,
-                            plastic=True,
-                            plasticity_gate=f"{pool_name}_to_lang_out",
-                        ))
+                        if enable_per_concept_lang_out_pools:
+                            # Path A++ (iter AA): dedicated per-
+                            # concept lang_output_pool. Mirror of
+                            # Tier 1 motor pool at output.
+                            pool_lang_name = f"lang_output_pool_{i}"
+                            pathways.append(RegionPathway(
+                                from_region=pool_name,
+                                to_region=pool_lang_name,
+                                density=0.30,
+                                weight_mean=pool_to_lang_out_pool_weight,
+                                weight_jitter=0.2,
+                                plastic=True,
+                                plasticity_gate=(
+                                    f"{pool_name}_to_lang_pool_{i}"),
+                            ))
+                        else:
+                            pathways.append(RegionPathway(
+                                from_region=pool_name,
+                                to_region="language_output",
+                                density=0.30, weight_mean=3.0,
+                                weight_jitter=0.2,
+                                plastic=True,
+                                plasticity_gate=(
+                                    f"{pool_name}_to_lang_out"),
+                            ))
             else:
                 pathways.append(RegionPathway(
                     from_region="language_input", to_region="wernicke",
@@ -895,6 +944,21 @@ def build_biological_brain_regions(
                 weight_jitter=0.3, plastic=True,
                 plasticity_gate="ca1_to_lang_out",
             ))
+            # iter AA: also project ca1 to per-concept lang_output_pools
+            # so the naming pathway (CA3 tag → CA1 → lang_pool) can
+            # discriminate without going through shared lang_output.
+            if (enable_multi_pool_wernicke
+                    and enable_per_concept_lang_out_pools
+                    and enable_ventral_semantic):
+                for i in range(n_wernicke_pools):
+                    pathways.append(RegionPathway(
+                        from_region="ca1",
+                        to_region=f"lang_output_pool_{i}",
+                        density=ca1_to_lang_out_density,
+                        weight_mean=ca1_to_lang_out_pool_weight,
+                        weight_jitter=0.3, plastic=True,
+                        plasticity_gate=f"ca1_to_lang_pool_{i}",
+                    ))
 
     # Motor lateral inhibition via PV-FSI (Vogels 2011 / Hofer 2011) -
     # biological 12% of motor pool size.

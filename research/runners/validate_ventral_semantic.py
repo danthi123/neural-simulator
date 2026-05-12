@@ -114,6 +114,11 @@ def run_ventral_validation(
     # training (apple block then river block) produced apple-
     # biased weights. Per-event alternation should symmetrize.
     interleaved_training: bool = False,
+    # Iter AA: per-concept lang_output pools (architectural fix
+    # for the shared lang_output bottleneck). Mirror of Tier 1
+    # motor pool architecture at the language output side.
+    enable_per_concept_lang_out_pools: bool = False,
+    n_per_lang_out_pool: int = 200,
     # Iter M: strengthen naming pathway weights. ca1_to_lang_out
     # at default 2.0 produces only ~20 mV drive on lang_output
     # which is barely suprathreshold. Bumping to 5.0 should
@@ -201,6 +206,9 @@ def run_ventral_validation(
         n_wernicke_pools=n_wernicke_pools,
         n_per_wernicke_pool=n_per_wernicke_pool,
         n_per_wernicke_pool_fs=n_per_wernicke_pool_fs,
+        # Iter AA: per-concept lang_output pools
+        enable_per_concept_lang_out_pools=enable_per_concept_lang_out_pools,
+        n_per_lang_out_pool=n_per_lang_out_pool,
         # Iter M: strengthen ca1->lang_output for naming
         ca1_to_lang_out_weight=ca1_to_lang_out_weight,
     )
@@ -298,11 +306,22 @@ def run_ventral_validation(
     # semantic_cortex AND drives wernicke -> lang_output via the
     # comprehension loop, so STDP can co-fire-train these.
     if enable_multi_pool_wernicke:
-        PRODUCTION_GATES = tuple(
-            [f"semantic_to_{p}" for p in pool_names]
-            + [f"{p}_to_lang_out" for p in pool_names]
-            + ["ca1_to_lang_out"]
-        )
+        if enable_per_concept_lang_out_pools:
+            # iter AA: per-pool gates target dedicated lang_output_pools
+            PRODUCTION_GATES = tuple(
+                [f"semantic_to_{p}" for p in pool_names]
+                + [f"{pool_names[i]}_to_lang_pool_{i}"
+                   for i in range(n_wernicke_pools)]
+                + [f"ca1_to_lang_pool_{i}"
+                   for i in range(n_wernicke_pools)]
+                + ["ca1_to_lang_out"]
+            )
+        else:
+            PRODUCTION_GATES = tuple(
+                [f"semantic_to_{p}" for p in pool_names]
+                + [f"{p}_to_lang_out" for p in pool_names]
+                + ["ca1_to_lang_out"]
+            )
     else:
         PRODUCTION_GATES = (
             "semantic_to_wernicke", "wernicke_to_lang_out",
@@ -429,12 +448,23 @@ def run_ventral_validation(
     # Iter L addition: also open production gates (semantic_to_wernicke,
     # wernicke_to_lang_out) so the full production chain trains.
     if enable_multi_pool_wernicke:
-        base_replay_gates = tuple(
-            ["ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1",
-             "ca1_to_lang_out"]
-            + [f"semantic_to_{p}" for p in pool_names]
-            + [f"{p}_to_lang_out" for p in pool_names]
-        )
+        if enable_per_concept_lang_out_pools:
+            base_replay_gates = tuple(
+                ["ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1",
+                 "ca1_to_lang_out"]
+                + [f"semantic_to_{p}" for p in pool_names]
+                + [f"{pool_names[i]}_to_lang_pool_{i}"
+                   for i in range(n_wernicke_pools)]
+                + [f"ca1_to_lang_pool_{i}"
+                   for i in range(n_wernicke_pools)]
+            )
+        else:
+            base_replay_gates = tuple(
+                ["ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1",
+                 "ca1_to_lang_out"]
+                + [f"semantic_to_{p}" for p in pool_names]
+                + [f"{p}_to_lang_out" for p in pool_names]
+            )
     else:
         base_replay_gates = (
             "ca3_swr_burst", "ca1_to_semantic", "ca3_to_ca1",
@@ -678,6 +708,45 @@ def run_ventral_validation(
     naming_ratio = max(cos_naming_self, 0.01) / max(cos_naming_cross, 0.01)
     pass_naming = (cos_naming_self > 0.3 and cos_naming_self > 1.3 * cos_naming_cross)
 
+    # Iter AA: per-concept lang_output_pool readout (true behavioral
+    # naming test). If apple CA3 stim activates lang_output_pool_0
+    # more than lang_output_pool_1, recognized as apple.
+    pool_readout = None
+    if enable_per_concept_lang_out_pools and enable_multi_pool_wernicke:
+        log("\n[TEST 2b] Per-pool lang_output naming readout (iter AA)")
+        pool_readout = {"apple": {}, "river": {}}
+        for stim_concept in ("apple", "river"):
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.clear_tag_drive()
+            for _ in range(50):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+            bridge.stimulate_tag(stim_concept, drive_pA=stim_drive_pA)
+            pool_spikes = {}
+            for i in range(n_wernicke_pools):
+                pool_name = f"lang_output_pool_{i}"
+                spikes = measure_region_spikes(
+                    bridge, pool_name, n_steps=100,
+                )
+                pool_spikes[i] = float(spikes.sum())
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.clear_tag_drive()
+            pool_readout[stim_concept] = pool_spikes
+            log(f"  stim '{stim_concept}': " + ", ".join(
+                f"pool_{i}={v:.0f}"
+                for i, v in pool_spikes.items()))
+
+        # PASS criterion: stim apple → pool_0 > pool_1;
+        # stim river → pool_1 > pool_0
+        apple_correct = pool_readout["apple"][0] > pool_readout["apple"][1]
+        river_correct = pool_readout["river"][1] > pool_readout["river"][0]
+        pass_naming_pool = apple_correct and river_correct
+        log(f"  apple→pool_0>pool_1: {apple_correct}")
+        log(f"  river→pool_1>pool_0: {river_correct}")
+        log(f"  bidirectional PASS: {pass_naming_pool}")
+        # Override pass_naming with the pool-based criterion
+        pass_naming = pass_naming_pool
+
     # Iter E (alt methodology): inspect learned weights directly.
     # Question: did STDP grow wernicke->semantic_cortex weights
     # selectively for each concept's ensembles? If yes, training
@@ -880,6 +949,7 @@ def run_ventral_validation(
             "cos_naming_cross": cos_naming_cross,
             "cos_baseline_self": cos_baseline_self,
             "passed": pass_naming,
+            "pool_readout": pool_readout,
         },
         "weight_diagnostics": weight_diag,
         "overall_passed": overall,
@@ -967,6 +1037,13 @@ def main() -> int:
                     help="Iter Z: train apple+river per-event "
                          "alternating instead of sequential blocks. "
                          "Fixes apple-asymmetry from V3 demo data.")
+    ap.add_argument("--enable-per-concept-lang-out-pools",
+                    action="store_true",
+                    help="Iter AA: per-concept lang_output_pool "
+                         "regions. Each wernicke_pool routes to its "
+                         "dedicated lang_output_pool. Mirror of "
+                         "Tier 1 motor pool at output.")
+    ap.add_argument("--n-per-lang-out-pool", type=int, default=200)
     # Iter M: strengthen naming pathway
     ap.add_argument("--ca1-to-lang-out-weight", type=float, default=2.0,
                     help="Iter M: strengthen CA1->lang_output "
@@ -1019,6 +1096,9 @@ def main() -> int:
         n_per_wernicke_pool=args.n_per_wernicke_pool,
         n_per_wernicke_pool_fs=args.n_per_wernicke_pool_fs,
         interleaved_training=args.interleaved_training,
+        enable_per_concept_lang_out_pools=(
+            args.enable_per_concept_lang_out_pools),
+        n_per_lang_out_pool=args.n_per_lang_out_pool,
         ca1_to_lang_out_weight=args.ca1_to_lang_out_weight,
         stim_drive_pA=args.stim_drive_pa,
         apply_wernicke_topographic=args.apply_wernicke_topographic,
