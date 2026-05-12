@@ -957,15 +957,47 @@ chat_repl, 14 chat_demo_aggregate, 2 webapp). All PASS, all CPU-only.
    See `research/findings/2026-05-11-Tier2.1-multiseed-6of6-PASS.md`.
 
 3. **P5 ventral semantic comprehension (Path A iter W)**: 6/6 multi-seed
-   PASS. Mean margin +0.085, ratio 1.46x. Recipe:
+   PASS on comprehension cosine. Mean margin +0.085, ratio 1.46x. Recipe:
    `python -m research.runners.validate_ventral_semantic --seed N
    --n-train-events 400 --n-replay-cycles 40 --enable-multi-pool-wernicke
    --n-wernicke-pools 2 --n-per-wernicke-pool 100 --n-per-wernicke-pool-fs 12`.
    See `research/findings/2026-05-11-P5-iterW-BREAKTHROUGH-6of6-COMP-PASS.md`.
 
-P5 naming still 3/6 partial (architectural work needed for the recall
-pathway). 25 P5 iterations (A-Y) document the exhaustive parameter sweep
-behind the iter W breakthrough.
+4. **P5 iter AA bidirectional naming (2-concept)**: 4/6 multi-seed PASS
+   on pool_readout BIDIR (apple 6/6, river 4/6). Recipe: iter W +
+   `--interleaved-training --enable-per-concept-lang-out-pools
+   --n-per-lang-out-pool 200`. See
+   `research/findings/2026-05-12-P5-iter-AA-confirmed-ceiling.md`.
+
+**Biological-scale extension (2026-05-12, 4 iterations) — NEGATIVE arc:**
+
+Per the user's directive ("larger scale clearly needed"), iter AA was
+tested at biological scale (8.6K neurons, 500-neuron pools, 2048
+lang_input). Four parameter combinations were systematically tested:
+
+| Iter | Change from iter AA at scale | apple s42 | river s42 | BIDIR |
+|---|---|---|---|---|
+| KK | + Tier 1 cortical canon (0.10/2.0/4.0) | -18 ✗ | +17 ✓ | NO |
+| LL | + scale only (weak dynamics) | -5 ✗ | +8 ✓ | NO |
+| MM | + stronger topographic (3.0/0.33) | -6 ✗ | +17 ✓ | NO |
+| NN | + orthogonal concept codes | +5 ✓ | -3 ✗ | NO (FLIPPED) |
+
+Diagnosis: discrimination depends on TOPOGRAPHIC BIAS PRIOR (not STDP
+learning — selectivity_index ~0 across all iter AA seeds). At
+biological scale, per-seed random structural pool variance dominates
+and one pool always wins for both stimuli. Changing inputs (iter NN)
+flips WHICH pool wins; cortical canon (iter KK) amplifies the bias.
+
+**Recommended pivot:** sensory grounding via Cluster K v2 visual
+cortex (Pulvermüller embodied semantics, catalog G.11 + K.01). Adds
+SECOND strong training signal independent of random connectivity,
+mirroring Tier 1's 6/6 PASS mechanism (motor teacher current).
+Design at `docs/plans/2026-05-12-P5-sensory-grounding-design.md`,
+strategic summary at
+`research/findings/2026-05-12-P5-arc-final-session-summary.md`.
+
+P5 naming still 3/6 partial. 29+ P5 iterations (A-NN) document the
+exhaustive parameter sweep — architectural pivot now recommended.
 
 ---
 
