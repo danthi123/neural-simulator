@@ -125,6 +125,9 @@ def run_ventral_validation(
     # Iter CC: lang_output_FS pools (cross-inhibition at output)
     enable_lang_out_fs_pools: bool = False,
     n_per_lang_out_fs_pool: int = 24,
+    # Iter DD: multi-trial averaging at recognition (smooth
+    # single-trial noise like seed 44's 3-spike margin)
+    n_recognition_trials: int = 1,
     # Iter M: strengthen naming pathway weights. ca1_to_lang_out
     # at default 2.0 produces only ~20 mV drive on lang_output
     # which is barely suprathreshold. Bumping to 5.0 should
@@ -724,26 +727,33 @@ def run_ventral_validation(
     # more than lang_output_pool_1, recognized as apple.
     pool_readout = None
     if enable_per_concept_lang_out_pools and enable_multi_pool_wernicke:
-        log("\n[TEST 2b] Per-pool lang_output naming readout (iter AA)")
+        log(f"\n[TEST 2b] Per-pool lang_output naming readout "
+            f"(iter AA, {n_recognition_trials}-trial avg)")
         pool_readout = {"apple": {}, "river": {}}
         for stim_concept in ("apple", "river"):
-            bridge.cp_external_input_current[:] = 0.0
-            bridge.clear_tag_drive()
-            for _ in range(50):
-                bridge._run_one_simulation_step()
-                bridge.runtime_state.current_time_step += 1
-            bridge.stimulate_tag(stim_concept, drive_pA=stim_drive_pA)
-            pool_spikes = {}
-            for i in range(n_wernicke_pools):
-                pool_name = f"lang_output_pool_{i}"
-                spikes = measure_region_spikes(
-                    bridge, pool_name, n_steps=100,
-                )
-                pool_spikes[i] = float(spikes.sum())
-            bridge.cp_external_input_current[:] = 0.0
-            bridge.clear_tag_drive()
+            # Multi-trial averaging (iter DD): sum spikes across
+            # N trials per concept to smooth single-trial noise.
+            pool_spikes_sum = {i: 0.0 for i in range(n_wernicke_pools)}
+            for trial in range(n_recognition_trials):
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.clear_tag_drive()
+                for _ in range(50):
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+                bridge.stimulate_tag(stim_concept, drive_pA=stim_drive_pA)
+                for i in range(n_wernicke_pools):
+                    pool_name = f"lang_output_pool_{i}"
+                    spikes = measure_region_spikes(
+                        bridge, pool_name, n_steps=100,
+                    )
+                    pool_spikes_sum[i] += float(spikes.sum())
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.clear_tag_drive()
+            pool_spikes = {i: pool_spikes_sum[i] / n_recognition_trials
+                            for i in range(n_wernicke_pools)}
             pool_readout[stim_concept] = pool_spikes
-            log(f"  stim '{stim_concept}': " + ", ".join(
+            log(f"  stim '{stim_concept}' (n={n_recognition_trials}): "
+                + ", ".join(
                 f"pool_{i}={v:.0f}"
                 for i, v in pool_spikes.items()))
 
@@ -1063,6 +1073,9 @@ def main() -> int:
                          "cross-inhibition at output layer. Full Tier 1 "
                          "motor pool mirror at output side.")
     ap.add_argument("--n-per-lang-out-fs-pool", type=int, default=24)
+    ap.add_argument("--n-recognition-trials", type=int, default=1,
+                    help="Iter DD: multi-trial averaging at "
+                         "recognition (5 reduces single-trial noise)")
     # Iter M: strengthen naming pathway
     ap.add_argument("--ca1-to-lang-out-weight", type=float, default=2.0,
                     help="Iter M: strengthen CA1->lang_output "
@@ -1121,6 +1134,7 @@ def main() -> int:
         wernicke_fs_cross_weight=args.wernicke_fs_cross_weight,
         enable_lang_out_fs_pools=args.enable_lang_out_fs_pools,
         n_per_lang_out_fs_pool=args.n_per_lang_out_fs_pool,
+        n_recognition_trials=args.n_recognition_trials,
         ca1_to_lang_out_weight=args.ca1_to_lang_out_weight,
         stim_drive_pA=args.stim_drive_pa,
         apply_wernicke_topographic=args.apply_wernicke_topographic,
