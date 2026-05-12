@@ -302,6 +302,16 @@ def build_biological_brain_regions(
     n_per_lang_out_pool: int = 200,
     pool_to_lang_out_pool_weight: float = 3.0,
     ca1_to_lang_out_pool_weight: float = 2.0,
+    # Iter CC: lang_output_FS pools (cross-inhibition at output
+    # layer). Completes the full Tier 1 motor pool mirror —
+    # each lang_output_pool_i has dedicated FS that inhibits
+    # OTHER lang_output_pools (winner-take-most at output).
+    # Fixes seed-101-style structural pool bias where one pool
+    # is "always more active" regardless of input.
+    enable_lang_out_fs_pools: bool = False,
+    n_per_lang_out_fs_pool: int = 24,  # 12% of 200 = 24 PV-FS
+    lang_out_to_fs_weight: float = 3.0,
+    lang_out_fs_cross_weight: float = 4.0,
     # P6 Broca's area + compositional syntax (catalog G.12, Kandel
     # 6e Ch 55 pp 1382-1384). Adds broca region (~500 neurons,
     # recurrent for sentence working memory) + motor_speech region
@@ -623,6 +633,22 @@ def build_biological_brain_regions(
                                 NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name
                             ),
                         ))
+                    if enable_lang_out_fs_pools:
+                        # Per-pool FS at lang_output (iter CC)
+                        for i in range(n_wernicke_pools):
+                            regions.append(BrainRegion(
+                                name=f"lang_output_fs_pool_{i}",
+                                n_neurons=n_per_lang_out_fs_pool,
+                                exc_fraction=0.0,
+                                internal_density=0.0,
+                                exc_weight_mean=0.0,
+                                inh_weight_mean=0.0,
+                                weight_jitter=0.0,
+                                plastic_internal=False,
+                                izh_neuron_type=(
+                                    NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name
+                                ),
+                            ))
             else:
                 regions.append(BrainRegion(
                     name="wernicke",
@@ -959,6 +985,34 @@ def build_biological_brain_regions(
                         weight_jitter=0.3, plastic=True,
                         plasticity_gate=f"ca1_to_lang_pool_{i}",
                     ))
+                # Iter CC: lang_output_fs cross-inhibition
+                if enable_lang_out_fs_pools:
+                    for i in range(n_wernicke_pools):
+                        # Each lang_pool drives its own FS
+                        pathways.append(RegionPathway(
+                            from_region=f"lang_output_pool_{i}",
+                            to_region=f"lang_output_fs_pool_{i}",
+                            density=0.30,
+                            weight_mean=lang_out_to_fs_weight,
+                            weight_jitter=0.2,
+                            plastic=True,
+                            plasticity_gate=(
+                                f"lang_pool_{i}_to_fs"),
+                        ))
+                        # Cross-inhibition: FS_i inhibits OTHER pools
+                        for j in range(n_wernicke_pools):
+                            if j == i:
+                                continue
+                            pathways.append(RegionPathway(
+                                from_region=f"lang_output_fs_pool_{i}",
+                                to_region=f"lang_output_pool_{j}",
+                                density=0.50,
+                                weight_mean=lang_out_fs_cross_weight,
+                                weight_jitter=0.2,
+                                plastic=False,
+                                plasticity_gate=(
+                                    f"lang_fs_{i}_to_pool_{j}"),
+                            ))
 
     # Motor lateral inhibition via PV-FSI (Vogels 2011 / Hofer 2011) -
     # biological 12% of motor pool size.

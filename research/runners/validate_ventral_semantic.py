@@ -122,6 +122,9 @@ def run_ventral_validation(
     # Iter BB: stronger cross-pool FS inhibition (default 4.0)
     # to push river-direction from 4/6 to 6/6
     wernicke_fs_cross_weight: float = 4.0,
+    # Iter CC: lang_output_FS pools (cross-inhibition at output)
+    enable_lang_out_fs_pools: bool = False,
+    n_per_lang_out_fs_pool: int = 24,
     # Iter M: strengthen naming pathway weights. ca1_to_lang_out
     # at default 2.0 produces only ~20 mV drive on lang_output
     # which is barely suprathreshold. Bumping to 5.0 should
@@ -214,6 +217,9 @@ def run_ventral_validation(
         n_per_lang_out_pool=n_per_lang_out_pool,
         # Iter BB: stronger cross-pool FS
         wernicke_fs_cross_weight=wernicke_fs_cross_weight,
+        # Iter CC: lang_output FS pools
+        enable_lang_out_fs_pools=enable_lang_out_fs_pools,
+        n_per_lang_out_fs_pool=n_per_lang_out_fs_pool,
         # Iter M: strengthen ca1->lang_output for naming
         ca1_to_lang_out_weight=ca1_to_lang_out_weight,
     )
@@ -1052,6 +1058,11 @@ def main() -> int:
     ap.add_argument("--wernicke-fs-cross-weight", type=float, default=4.0,
                     help="Iter BB: cross-pool FS inhibition weight "
                          "(default 4.0; try 8.0 to suppress apple-bias)")
+    ap.add_argument("--enable-lang-out-fs-pools", action="store_true",
+                    help="Iter CC: add lang_output_FS_pool_<i> for "
+                         "cross-inhibition at output layer. Full Tier 1 "
+                         "motor pool mirror at output side.")
+    ap.add_argument("--n-per-lang-out-fs-pool", type=int, default=24)
     # Iter M: strengthen naming pathway
     ap.add_argument("--ca1-to-lang-out-weight", type=float, default=2.0,
                     help="Iter M: strengthen CA1->lang_output "
@@ -1108,6 +1119,8 @@ def main() -> int:
             args.enable_per_concept_lang_out_pools),
         n_per_lang_out_pool=args.n_per_lang_out_pool,
         wernicke_fs_cross_weight=args.wernicke_fs_cross_weight,
+        enable_lang_out_fs_pools=args.enable_lang_out_fs_pools,
+        n_per_lang_out_fs_pool=args.n_per_lang_out_fs_pool,
         ca1_to_lang_out_weight=args.ca1_to_lang_out_weight,
         stim_drive_pA=args.stim_drive_pa,
         apply_wernicke_topographic=args.apply_wernicke_topographic,
