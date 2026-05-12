@@ -969,55 +969,53 @@ chat_repl, 14 chat_demo_aggregate, 2 webapp). All PASS, all CPU-only.
    --n-per-lang-out-pool 200`. See
    `research/findings/2026-05-12-P5-iter-AA-confirmed-ceiling.md`.
 
-**Biological-scale extension (2026-05-12, 6 iterations) — architectural pivot arc:**
+**Biological-scale extension (2026-05-12) — architectural ceiling
+confirmed; strategic pivot to in-vivo new-vocab binding:**
 
-Per the user's directive ("larger scale clearly needed"), iter AA was
-tested at biological scale (8.6K-13K neurons, 500-neuron pools, 2048
-lang_input). Six parameter combinations + one architectural pivot
-were systematically tested:
+After 7 biological-scale iterations + 30+ toy-scale iterations,
+**iter AA's 4/6 toy-scale BIDIR is conclusively the architectural
+ceiling** for the per-concept pool design at the P5 ventral semantic
+stream. No biological-scale variant tested improves on it.
 
-| Iter | Change | apple s42 margin | river s42 margin | BIDIR |
-|---|---|---|---|---|
-| AA (toy, ref) | iter AA recipe | +7 ✓ | +31 ✓ | YES (4/6 ms) |
-| KK | + Tier 1 canon (0.10/2.0/4.0) | -18 ✗ | +17 ✓ | NO |
-| LL | + scale only (weak dynamics) | -5 ✗ | +8 ✓ | NO |
-| MM | + stronger topographic (3.0/0.33) | -6 ✗ | +17 ✓ | NO |
-| NN | + orthogonal concept codes | +5 ✓ | -3 ✗ | NO (FLIPPED) |
-| **OO_visual** | **+ Cluster K v2 sensory grounding** | **+23 ✓** | **-24 ✗** | NO (FLIPPED) |
-| PP (running) | + lang_output FS cross-inh | ? | ? | ? |
+| Iter | Change | Result |
+|---|---|---|
+| AA (toy, ref) | per-concept pools, weak dynamics | **4/6 BIDIR** |
+| KK | + Tier 1 canon, biological scale | 0/seed_42 (canon amplifies bias) |
+| LL | + scale only (weak) | 0/seed_42 (discrimination collapses) |
+| MM | + stronger topographic | 0/seed_42 (helps river, not apple) |
+| NN | + orthogonal codes | 0/seed_42 (flips winner, doesn't fix) |
+| OO_visual | + sensory grounding (Cluster K v2) | 0/seed_42 (apple+23 but river flipped) |
+| **PP** | **+ lang_output FS WTA** | **1/4 BIDIR** (seed 42 PASS, 43/44/100 FAIL) |
 
-**Key findings:**
-- Discrimination at iter AA toy scale depends on TOPOGRAPHIC PRIOR
-  (not STDP — selectivity_index ~0 across all 6 seeds)
-- At biological scale, per-seed random structural pool variance can
-  dominate. Pool 1 wins under vocab codes (iter LL/MM); pool 0 wins
-  under orthogonal codes (iter NN) and sensory grounding (iter OO_visual).
-- **Sensory grounding (iter OO_visual) delivered a 28-spike improvement
-  on apple-direction** (margin -5 → +23 vs iter LL). This was the
-  hypothesized mechanism (visual signal independent of random conn).
-- BUT bias MOVED downstream from wernicke_pool → multimodal_hub →
-  lang_output_pool. Pool 0 now wins for BOTH stimuli at output.
-- iter PP test: add lang_output FS cross-inhibition (winner-take-all
-  at output) to address the downstream bias.
+**Diagnosis:** discrimination at iter AA depends on TOPOGRAPHIC PRIOR
+(selectivity_index ~0 across all seeds — STDP doesn't add concept-
+specific selectivity). At biological scale, per-seed random structural
+pool variance compounds through multi-hop chains and dominates the
+input signal. Mitigations (canon dynamics, stronger bias, orthogonal
+codes, sensory grounding, output FS WTA) all help individual seeds
+but fail multi-seed robustness.
 
-**Architecture (iter OO_visual / PP): 13K neurons, 28-30 regions**
+**Architecture preserved in code** (parameterized via CLI flags). iter
+PP seed 42's BIDIR PASS (+1, +6 margins) is the first bidirectional
+pass at biological scale and demonstrates the sensory-grounding +
+output-WTA pattern CAN work — just not robustly.
 
-```
-Auditory: lang_input → wernicke_pool_i → semantic_cortex (existing)
-Visual (NEW, K v2): retina(2048) → V1_simple(1024) → V1_complex(512)
-  → V2(256) → IT(64) → multimodal_hub(500)
-Convergence (NEW, ATL hub-and-spoke): wernicke_pool_i → multimodal_hub
-Output: multimodal_hub → lang_output_pool_i (+ optional FS pools in iter PP)
-Training: lang_input(word) + retina(concept_image) co-fired per event
-```
-
-See `research/findings/2026-05-12-P5-iterOOvisual-PARTIAL-bias-moved-not-fixed.md`
+See `research/findings/2026-05-12-P5-iterPP-multiseed-NEGATIVE-FINAL.md`
 and `docs/plans/2026-05-12-P5-sensory-grounding-design.md` for full
-details.
+arc details.
 
-P5 naming still 3/6 partial. 31+ P5 iterations (A-PP) document the
-arc. iter AA 4/6 toy-scale remains the best demonstrated capability;
-biological-scale path requires further work or architectural rethink.
+**Strategic pivot (2026-05-12):** Step 1 of realigned plan — in-vivo
+new-vocab binding via biology-grounded variants:
+- V_HIPPO_BIO (McClelland 1995 CLS + Buzsáki 2015 SWR)
+- V_SCHEMA (Tse 2007 schema-supported integration)
+Tests 4 novel keys (apple/river/mountain/forest → N/E/S/W) on the
+main_hippo lineage. PASS criterion: ≥3/4 bindings correct, ≥4/6 seeds.
+Runner at `research/runners/investigate_invivo_binding_fix.py`.
+
+P5 naming still 3/6 partial. 32+ P5 iterations (A-PP) document the
+exhaustive parameter sweep. iter AA 4/6 toy-scale is the demonstrated
+P5 capability; biological-scale path is closed pending architectural
+rethink (unified Wernicke + sparse coding, or different design entirely).
 
 ---
 
