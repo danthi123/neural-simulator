@@ -38,6 +38,8 @@ def run_cumulative_binding(
     bindings: list[tuple[str, str]],
     seed: int = 42,
     n_events: int = 200,
+    consolidate_between: bool = False,
+    n_consolidation_cycles: int = 3,
     verbose: bool = True,
 ) -> dict:
     """Bind keys one after another on the same bridge. After each
@@ -92,6 +94,24 @@ def run_cumulative_binding(
         train_sec = time.time() - t0
         log(f"  training done ({train_sec:.0f}s)")
 
+        # Optional: consolidate via SWR sleep replay BEFORE testing
+        # recall. Hypothesis: pushes hippocampal trace -> cortex so
+        # the binding persists across subsequent bindings.
+        consolidation_sec = 0.0
+        if consolidate_between:
+            log(f"  [CONSOLIDATE] running {n_consolidation_cycles} sleep cycles...")
+            t1 = time.time()
+            try:
+                consol_result = mem.consolidate(
+                    n_sleep_cycles=n_consolidation_cycles,
+                )
+                consolidation_sec = time.time() - t1
+                log(f"  consolidation done ({consolidation_sec:.0f}s, "
+                    f"hippocampus_enabled={consol_result.get('hippocampus_enabled')})")
+            except Exception as e:
+                log(f"  [WARN] consolidation failed: {e}")
+                consolidation_sec = -1.0
+
         # Recall this key + ALL previous keys
         recalls = {}
         for prev_idx in range(step_idx + 1):
@@ -122,6 +142,7 @@ def run_cumulative_binding(
             "new_key": key,
             "new_target": target_action,
             "train_seconds": train_sec,
+            "consolidation_seconds": consolidation_sec,
             "recalls": recalls,
             "n_correct_so_far": n_correct,
         })
@@ -153,6 +174,11 @@ def main() -> int:
     ap.add_argument("--bindings", type=str,
                     default="apple:north,mountain:south,cat:east,dog:west",
                     help="comma-separated key:value pairs")
+    ap.add_argument("--consolidate-between", action="store_true",
+                    help="Run SWR sleep replay between each binding "
+                         "(Phase 1.3 mechanism). Hypothesis: prevents "
+                         "binding displacement by consolidating to cortex.")
+    ap.add_argument("--n-consolidation-cycles", type=int, default=3)
     ap.add_argument("--out", type=str,
                     default="research/findings/raw/g11_bg/invivo_binding/cumulative.json")
     args = ap.parse_args()
@@ -172,6 +198,8 @@ def main() -> int:
         bindings=bindings,
         seed=args.seed,
         n_events=args.n_events,
+        consolidate_between=args.consolidate_between,
+        n_consolidation_cycles=args.n_consolidation_cycles,
         verbose=True,
     )
 
