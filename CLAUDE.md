@@ -1007,18 +1007,31 @@ arc details.
 **Strategic pivot tested (2026-05-12):** Step 1 in-vivo new-vocab
 binding via biology-grounded variants on main_hippo lineage.
 
-| Variant | seed 42 | Notes |
+| Variant | seed 42/43 | Notes |
 |---|---|---|
 | V0 vanilla | 1/4 | forest→W correct by coincidence; routing varied |
 | V_HIPPO_BIO | 0/4 | Hippocampus+SWR varies pool selection but never to target |
-| V_SCHEMA | 1/4 | **mountain→S TRUE bind via anchor reinforcement** |
+| V_SCHEMA | 1/4 (deterministic) | **mountain→S TRUE bind via anchor reinforcement** |
+
+**V_SCHEMA result is fully deterministic** given main_hippo state. Multi-
+seed runs (42 + 43 with proper fork cleanup) produce IDENTICAL raw_delta
+values (33, 22, 23, 8). The seed parameter only varies OU noise which
+doesn't perturb V_SCHEMA's training outcome. To test real seed variance,
+need to bootstrap multiple main_hippo lineages with different seeds.
+
+**mountain→south is biology-grounded reproducible**: Tse 2007 schema-
+supported anchor reinforcement works WHEN the target pool's anchor word
+(here "south") has strong enough pre-existing lang_input→motor weights
+in main_hippo. With smoke bootstrap (50 events × 4 directions), only
+"south" qualifies. Stronger bootstrap (200+ events) would likely unlock
+more bindings.
 
 **Same architectural ceiling as iter PP biological scale:** per-seed
 random structural variance dominates the learning signal for NOVEL
-keys (apple/river/mountain/forest) without pre-existing topographic
-prior. Hippocampus+SWR encoding doesn't reach lang_input → motor
-strongly enough; schema-supported anchor reinforcement works on ONE
-direction (mountain→S) but not consistently.
+keys without pre-existing topographic prior. Hippocampus+SWR encoding
+doesn't reach lang_input → motor strongly enough; schema-supported
+anchor reinforcement only works on ONE direction at the current
+bootstrap config.
 
 **Bug fix preserved (commit f3308b8):** BridgeMemory was loading
 hippo-enabled lineages with wrong architecture (synonym instead of
