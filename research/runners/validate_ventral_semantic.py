@@ -136,6 +136,11 @@ def run_ventral_validation(
     # lang_input(concept_<i>). Mirrors Tier 1's embodied-Hebbian.
     enable_lang_out_teacher: bool = False,
     lang_out_teacher_pA: float = 300.0,
+    # Iter II: contrastive training. During concept_i training,
+    # actively suppress OTHER lang_output_pool_j with negative
+    # current. Forces LTD on cross-concept connections via STDP
+    # anti-Hebbian rule. Should break apple-bias from random init.
+    contrastive_suppress_pA: float = 0.0,  # 0 = disabled; try -200 to suppress
     # Iter M: strengthen naming pathway weights. ca1_to_lang_out
     # at default 2.0 produces only ~20 mV drive on lang_output
     # which is barely suprathreshold. Bumping to 5.0 should
@@ -443,6 +448,15 @@ def run_ventral_validation(
                     bridge.cp_external_input_current[
                         teacher_pools[cname]
                     ] = float(lang_out_teacher_pA)
+                # Iter II: contrastive suppression of OTHER pools.
+                # When training apple, hyperpolarize river-pool to
+                # force LTD on cross-concept connections.
+                if contrastive_suppress_pA != 0.0 and teacher_pools:
+                    for other_cname, other_pool in teacher_pools.items():
+                        if other_cname != cname:
+                            bridge.cp_external_input_current[
+                                other_pool
+                            ] = float(contrastive_suppress_pA)
                 for _ in range(100):
                     bridge._run_one_simulation_step()
                     bridge.runtime_state.current_time_step += 1
@@ -1120,6 +1134,11 @@ def main() -> int:
                          "with teacher current alongside concept input. "
                          "Mirrors Tier 1's embodied-Hebbian paradigm.")
     ap.add_argument("--lang-out-teacher-pa", type=float, default=300.0)
+    ap.add_argument("--contrastive-suppress-pa", type=float, default=0.0,
+                    help="Iter II: contrastive training. During "
+                         "concept_i training, drive OTHER pools with "
+                         "this current (typically negative, e.g. -200). "
+                         "Forces LTD on cross-concept binding.")
     # Iter M: strengthen naming pathway
     ap.add_argument("--ca1-to-lang-out-weight", type=float, default=2.0,
                     help="Iter M: strengthen CA1->lang_output "
@@ -1182,6 +1201,7 @@ def main() -> int:
         inter_trial_rest_steps=args.inter_trial_rest_steps,
         enable_lang_out_teacher=args.enable_lang_out_teacher,
         lang_out_teacher_pA=args.lang_out_teacher_pa,
+        contrastive_suppress_pA=args.contrastive_suppress_pa,
         ca1_to_lang_out_weight=args.ca1_to_lang_out_weight,
         stim_drive_pA=args.stim_drive_pa,
         apply_wernicke_topographic=args.apply_wernicke_topographic,
