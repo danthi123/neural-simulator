@@ -786,6 +786,68 @@ Active steps:
 Local-only commitment: every step runs on RTX 3090 or CPU. No cloud
 dependencies, no external LLM.
 
+### Concept pool architecture (2026-05-13): diversity beyond 4 motor pools
+
+**User mandate 2026-05-12:** "those scaling axes are 100% what need to
+be given our full focus currently, as the blocker for reaching
+conversational capabilities... it needs concepts, composition, and
+diversity."
+
+Root-cause diagnosis: every conversational ceiling (P5 2/4, Tier 2.3
+34-40%, in-vivo 2/4 fixed capacity, synonym32 W→A 44%) shares ONE
+common cause — only 4 motor pools. Every concept must collapse onto
+one of the four cardinal directions.
+
+**Solution:** mirror the proven Tier 1 6/6 multi-seed recipe (500-neuron
+pool + paired teacher current + FS cross-inhibition + reciprocal
+lang_output) for non-direction concept categories. Each kind gets its
+own pools alongside the existing 4 motor pools.
+
+**Architecture additions in `sim/research/runners/text_minimal_isolation.py`:**
+
+`build_biological_brain_regions` parameters:
+- `enable_noun_pools` + `noun_pool_names` + `n_noun_per_pool` + `n_noun_fs_per_pool`
+- `enable_verb_pools` + `verb_pool_names` + `n_verb_per_pool` + `n_verb_fs_per_pool`
+- `concept_to_language_output_density` / `_weight` / `_jitter`
+
+Internal helper `_add_concept_kind(kind, names, ...)` builds:
+- Per-pool BrainRegion (Tier 1 cortical canon)
+- `lang_input → pool` plastic pathway (gate-tagged `language_input_to_{kind}_pool`)
+- Reciprocal `pool → language_output` plastic pathway (gate-tagged `{kind}_pool_to_language_output`)
+- FS interneurons WITHIN kind (no cross-kind FS — deliberate design
+  choice so "go north" can fire verb_pool_GO + motor_N together)
+
+**Three demo runners:**
+- `research/runners/concept_pool_demo.py` — Phase 1 cross-category
+  isolation (typing "apple" → noun_APPLE, NOT motor_N or verb_GO)
+- `research/runners/concept_compose_demo.py` — Phase 2 composition
+  (sequential + co-fire merging; tests NMDA bistability)
+- `research/runners/concept_speak_demo.py` — Phase 3 A→W readout (drive
+  pool → decode "spoken" word from language_output cosine)
+
+**Supporting infrastructure:**
+- `research/runners/concept_pool_repl.py` — interactive shell
+- `research/runners/concept_weight_probe.py` — diagnose trained weights
+- `research/runners/concept_pool_aggregate.py` — multi-seed analysis
+- 21 tests (15 unit + 6 integration) all PASS, CPU-only
+
+**Default vocab (10 distinct output pools, 2.5× diversity over Tier 1):**
+
+| Kind | Pool count | Words |
+|---|---|---|
+| Motor (existing Tier 1) | 4 | north, east, south, west |
+| **Noun (NEW)** | **4** | apple, river, dog, cat |
+| **Verb (NEW)** | **2** | go, come |
+
+**Webapp wire-up:**
+- PRESETS["concept_pool_demo"] / ["concept_compose_demo"] / ["concept_speak_demo"]
+- ui.js category "Concept pool architecture" (sky blue)
+- index.html launcher dropdown options
+
+**Seed 42 validation: IN FLIGHT** (will update with result).
+
+Findings: `research/findings/2026-05-13-concept-pool-architecture-Phase1.md`
+
 ### Path 3 Phase 3.2 (2026-05-11): LLM-memory orchestrator + chat UI (now SECONDARY)
 
 ⚠️ **The Phase 3.2 stack is now framed as the SECONDARY application
