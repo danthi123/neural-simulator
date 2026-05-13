@@ -281,7 +281,7 @@ def apply_concept_topographic_bias(bridge,
 def train_word_to_pool(bridge, word: str, target_pool_region: str,
                         n_events: int = 200,
                         stim_steps_per_event: int = 100,
-                        reset_steps: int = 50,
+                        reset_steps: int = 50,  # 25ms; NMDA tau ~150ms
                         drive_pA: float = 200.0,
                         teacher_pA: float = 1500.0,
                         sparsity: float = 0.1,
@@ -289,6 +289,14 @@ def train_word_to_pool(bridge, word: str, target_pool_region: str,
                         n_lang_output: int = 4096,
                         embodied_hebbian: bool = True,
                         verbose: bool = False) -> Dict:
+    """Train a single word -> pool binding via paired teacher current.
+
+    reset_steps gotcha (2026-05-13 design note): NMDA tau is ~150ms;
+    50-step reset (25ms) doesn't fully decay NMDA activation between
+    events. If you observe pool dominance unrelated to the trained
+    target, try reset_steps=300 (~150ms) to let NMDA fully decay
+    between events. Trade-off: 3x training wall clock.
+    """
     """Train ONE word to fire ONE specific pool via embodied Hebbian.
 
     Tier 1's proven recipe: drive language_input with word pattern,
@@ -441,6 +449,7 @@ def run_concept_pool_demo(seed: int = 42,
                             n_fs_per_pool: int = 60,
                             apply_topographic: bool = True,
                             enable_adjective: bool = False,
+                            reset_steps: int = 50,  # 25ms (NMDA tau is ~150ms)
                             verbose: bool = True,
                             load_bridge: str = None,
                             save_bridge: str = None) -> Dict:
@@ -533,6 +542,7 @@ def run_concept_pool_demo(seed: int = 42,
             train_word_to_pool(
                 bridge, word, target,
                 n_events=n_train_events,
+                reset_steps=reset_steps,
                 n_lang_input=n_lang_input,
                 n_lang_output=n_lang_input,
                 verbose=False,
@@ -636,6 +646,10 @@ def main():
     parser.add_argument("--enable-adjective", action="store_true",
                          help="Add 4 adjective pools (BIG/SMALL/HOT/COLD); "
                          "14 total output categories")
+    parser.add_argument("--reset-steps", type=int, default=50,
+                         help="Steps to free-run between training events "
+                         "(default 50 = 25ms). For v3 NMDA-decay fix: "
+                         "use 300 (~150ms tau). Trade-off: 3x training time.")
     parser.add_argument("--out", type=str, default=None,
                          help="Output JSON path (default stdout only)")
     parser.add_argument("--load-bridge", type=str, default=None,
@@ -654,6 +668,7 @@ def main():
         n_fs_per_pool=args.n_fs_per_pool,
         apply_topographic=not args.no_topographic,
         enable_adjective=args.enable_adjective,
+        reset_steps=args.reset_steps,
         load_bridge=args.load_bridge,
         save_bridge=args.save_bridge,
     )
