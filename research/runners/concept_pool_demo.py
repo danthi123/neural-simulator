@@ -80,6 +80,7 @@ def build_concept_bridge(seed: int,
                           enable_adjective: bool = False,
                           weak_dynamics: bool = False,
                           enable_dlpfc_verb_holding: bool = False,
+                          enable_dlpfc_verb_unidirectional: bool = False,
                           nmda_verb_pools: bool = False,
                           nmda_tau_decay_ms: float = 100.0,
                           verbose: bool = True):
@@ -133,8 +134,15 @@ def build_concept_bridge(seed: int,
         concept_pool_exc_weight_mean=concept_exc_weight,
         concept_pool_inh_weight_mean=concept_inh_weight,
         # v12 (2026-05-13): dlpfc_verb holding for sequential composition
-        enable_dlpfc_verb=enable_dlpfc_verb_holding,
+        # Note: --enable-dlpfc-verb-unidirectional also requires dlpfc_verb
+        # region to exist; we OR with the v15 flag so users only need one.
+        enable_dlpfc_verb=(enable_dlpfc_verb_holding
+                           or enable_dlpfc_verb_unidirectional),
         enable_dlpfc_verb_concept_integration=enable_dlpfc_verb_holding,
+        # v15 (2026-05-13 night): unidirectional verb -> dlpfc -> motor
+        # gating. Fixes v12's bidirectional leakage. Forward only,
+        # plastic, gated separately for verb input vs motor gating.
+        enable_dlpfc_verb_unidirectional=enable_dlpfc_verb_unidirectional,
         # v13 (2026-05-13): per-kind NMDA opt-in (cluster G v2 pattern)
         enable_nmda_verb_pools=nmda_verb_pools,
     )
@@ -706,6 +714,7 @@ def run_concept_pool_demo(seed: int = 42,
                             interleaved: bool = False,
                             weak_dynamics: bool = False,
                             enable_dlpfc_verb_holding: bool = False,
+                            enable_dlpfc_verb_unidirectional: bool = False,
                             nmda_verb_pools: bool = False,
                             nmda_tau_decay_ms: float = 100.0,
                             orthogonal_codes: bool = False,
@@ -747,6 +756,7 @@ def run_concept_pool_demo(seed: int = 42,
         enable_adjective=enable_adjective,
         weak_dynamics=weak_dynamics,
         enable_dlpfc_verb_holding=enable_dlpfc_verb_holding,
+        enable_dlpfc_verb_unidirectional=enable_dlpfc_verb_unidirectional,
         nmda_verb_pools=nmda_verb_pools,
         nmda_tau_decay_ms=nmda_tau_decay_ms,
         verbose=verbose,
@@ -991,7 +1001,16 @@ def main():
                          help="v12: enable dlpfc_verb region with bidirectional "
                          "wiring to verb pools (Tier 2.3 PFC verb-holding pattern). "
                          "Provides canon-NMDA holding stage for sequential "
-                         "composition without breaking weak-dynamics isolation.")
+                         "composition without breaking weak-dynamics isolation. "
+                         "NOTE: v12 NEGATIVE on isolation due to PFC back-feedback "
+                         "leakage; prefer --enable-dlpfc-verb-unidirectional (v15).")
+    parser.add_argument("--enable-dlpfc-verb-unidirectional", action="store_true",
+                         help="v15: unidirectional verb_pool -> dlpfc_verb -> motor_X "
+                         "gating. Fixes v12 leakage by removing PFC back-feedback to "
+                         "verb pools and adding forward dlpfc -> motor pathways "
+                         "(catalog G.06/G.08 PFC working memory + gating). dlpfc_verb "
+                         "internal recurrence + NMDA bistability provides holding; "
+                         "feedforward-only architecture preserves Phase 1 isolation.")
     parser.add_argument("--nmda-verb-pools", action="store_true",
                          help="v13: per-kind NMDA opt-in. Enable NMDA bistability "
                          "ONLY on verb pools (cluster G v2 pattern). Other pools "
@@ -1034,6 +1053,7 @@ def main():
         interleaved=args.interleaved,
         weak_dynamics=args.weak_concept_dynamics,
         enable_dlpfc_verb_holding=args.enable_dlpfc_verb_holding,
+        enable_dlpfc_verb_unidirectional=args.enable_dlpfc_verb_unidirectional,
         nmda_verb_pools=args.nmda_verb_pools,
         nmda_tau_decay_ms=args.nmda_tau_decay_ms,
         orthogonal_codes=args.orthogonal_codes,

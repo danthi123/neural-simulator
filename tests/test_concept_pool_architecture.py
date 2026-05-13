@@ -418,3 +418,140 @@ def test_total_pool_count_14_with_3_kinds():
             and not r.name.endswith("_fs"))
     ]
     assert len(output_pools) == 14  # 4 motor + 4 noun + 2 verb + 4 adj
+
+
+# ============================================================================
+# v15 unidirectional dlpfc_verb -> motor gating tests (2026-05-13 night)
+# ============================================================================
+# v15 fixes the v12 bidirectional feedback leakage by making verb_pool ->
+# dlpfc_verb FORWARD ONLY (no back-feedback) and adding new dlpfc_verb ->
+# motor_X gating pathways. The biology: PFC receives concept content via
+# feedforward pathways, maintains via internal NMDA bistability, and gates
+# downstream motor selection — without back-broadcasting to upstream concept
+# areas (catalog G.06/G.08).
+
+
+def test_v15_default_off_no_unidirectional_pathways():
+    """Default behavior: enable_dlpfc_verb_unidirectional=False produces
+    no v15 wiring."""
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_verb_pools=True,
+        enable_dlpfc_verb=True,
+        **SMALL_CFG,
+    )
+    # No verb_pool -> dlpfc_verb pathways without the flag
+    fwd = [p for p in pathways
+           if p.from_region.startswith("verb_pool_")
+           and p.to_region == "dlpfc_verb"]
+    assert fwd == []
+    # No dlpfc_verb -> motor_X pathways without the flag
+    gate = [p for p in pathways
+            if p.from_region == "dlpfc_verb"
+            and p.to_region.startswith("motor_")
+            and not p.to_region.startswith("motor_FS_")]
+    assert gate == []
+
+
+def test_v15_unidirectional_adds_forward_verb_to_dlpfc():
+    """v15: verb_pool_X -> dlpfc_verb pathways exist (one per verb)."""
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_verb_pools=True,
+        verb_pool_names=["GO", "COME", "STOP", "LOOK"],
+        enable_dlpfc_verb=True,
+        enable_dlpfc_verb_unidirectional=True,
+        **SMALL_CFG,
+    )
+    fwd = [p for p in pathways
+           if p.from_region.startswith("verb_pool_")
+           and p.to_region == "dlpfc_verb"]
+    fwd_names = sorted(p.from_region for p in fwd)
+    assert fwd_names == [
+        "verb_pool_COME", "verb_pool_GO",
+        "verb_pool_LOOK", "verb_pool_STOP",
+    ]
+    # All forward pathways are plastic
+    assert all(p.plastic for p in fwd)
+    # All forward pathways are gated for selective training
+    assert all(p.plasticity_gate == "verb_pool_to_dlpfc_uni" for p in fwd)
+
+
+def test_v15_unidirectional_adds_dlpfc_to_motor():
+    """v15: dlpfc_verb -> motor_X pathways exist (one per direction)."""
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_verb_pools=True,
+        enable_dlpfc_verb=True,
+        enable_dlpfc_verb_unidirectional=True,
+        **SMALL_CFG,
+    )
+    gate = [p for p in pathways
+            if p.from_region == "dlpfc_verb"
+            and p.to_region.startswith("motor_")
+            and not p.to_region.startswith("motor_FS_")]
+    gate_names = sorted(p.to_region for p in gate)
+    assert gate_names == ["motor_E", "motor_N", "motor_S", "motor_W"]
+    # All gating pathways are plastic
+    assert all(p.plastic for p in gate)
+    # All gating pathways are gated for selective training (compose window)
+    assert all(p.plasticity_gate == "dlpfc_verb_to_motor_uni" for p in gate)
+
+
+def test_v15_unidirectional_has_no_back_feedback():
+    """v15 critical invariant: NO dlpfc_verb -> verb_pool_X back-feedback.
+
+    This is the v12 leakage source — v15 fixes it by making the
+    integration strictly feedforward.
+    """
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_verb_pools=True,
+        enable_dlpfc_verb=True,
+        enable_dlpfc_verb_unidirectional=True,
+        **SMALL_CFG,
+    )
+    back_feed = [p for p in pathways
+                 if p.from_region == "dlpfc_verb"
+                 and p.to_region.startswith("verb_pool_")]
+    assert back_feed == [], (
+        f"v15 must NOT have dlpfc_verb -> verb_pool back-feedback "
+        f"(this was the v12 leakage source). Found: {back_feed}"
+    )
+    # Also: no motor_X -> dlpfc_verb (motor cortex doesn't drive PFC
+    # in this direction at the conceptual level)
+    rev = [p for p in pathways
+           if p.from_region.startswith("motor_")
+           and not p.from_region.startswith("motor_FS_")
+           and p.to_region == "dlpfc_verb"]
+    assert rev == [], (
+        f"v15 must NOT have motor_X -> dlpfc_verb (PFC receives concepts "
+        f"from concept pools, not motor execution). Found: {rev}"
+    )
+
+
+def test_v15_independent_of_v12_bidirectional():
+    """v15 unidirectional + v12 bidirectional are independent flags.
+
+    Either can be enabled; if both, both wirings apply (not recommended,
+    but architecturally legal).
+    """
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_verb_pools=True,
+        enable_dlpfc_verb=True,
+        enable_dlpfc_verb_concept_integration=False,
+        enable_dlpfc_verb_unidirectional=True,
+        **SMALL_CFG,
+    )
+    # v15 wiring present
+    fwd_uni = [p for p in pathways
+               if p.from_region.startswith("verb_pool_")
+               and p.to_region == "dlpfc_verb"
+               and p.plasticity_gate == "verb_pool_to_dlpfc_uni"]
+    assert len(fwd_uni) >= 2  # at least GO + COME default
+    # v12 wiring absent
+    back_v12 = [p for p in pathways
+                if p.from_region == "dlpfc_verb"
+                and p.to_region.startswith("verb_pool_")]
+    assert back_v12 == []

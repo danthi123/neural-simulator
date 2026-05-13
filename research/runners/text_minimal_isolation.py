@@ -441,6 +441,28 @@ def build_biological_brain_regions(
     verb_pool_to_dlpfc_weight: float = 2.0,
     dlpfc_to_verb_pool_density: float = 0.30,
     dlpfc_to_verb_pool_weight: float = 2.0,
+    # v15 (2026-05-13 night): unidirectional verb_pool -> dlpfc_verb ->
+    # motor_X gating. Fixes v12's bidirectional feedback leakage by
+    # making the integration strictly feedforward. dlpfc_verb still
+    # receives content from verb pools and maintains via internal NMDA
+    # bistability (canon dynamics), but does NOT back-feed to verb pools.
+    # ALSO adds dlpfc_verb -> motor_X plastic pathways so PFC can gate
+    # motor selection (catalog G.06 PFC working memory + G.08 BG-thalamic
+    # gating). Biology: PFC outputs to motor/striatal/thalamic loops, not
+    # back to upstream concept areas.
+    enable_dlpfc_verb_unidirectional: bool = False,
+    verb_pool_to_dlpfc_uni_density: float = 0.30,
+    verb_pool_to_dlpfc_uni_weight: float = 2.0,
+    dlpfc_verb_to_motor_density: float = 0.20,
+    # IMPORTANT: dlpfc_verb -> motor default weight is 0.0 by design.
+    # The plasticity gate freezes STDP only, NOT synaptic current (see
+    # CLAUDE.md "GOTCHA — plasticity gate vs synaptic transmission").
+    # Starting at 0.0 means no current injection during Phase 1
+    # single-word training; STDP grows the weights only during compose
+    # co-firing windows when dlpfc_verb_to_motor_uni gate is opened.
+    # This preserves v14's Phase 1 W->A while letting v15 build the
+    # PFC->motor gating from zero.
+    dlpfc_verb_to_motor_weight: float = 0.0,
     # v13 (2026-05-13 night): per-concept-kind NMDA opt-in (cluster G v2
     # pattern). Default OFF for all concept pools. When True, the
     # specified pool kind gets NMDA bistability — needed for cross-word
@@ -1470,6 +1492,50 @@ def build_biological_brain_regions(
                 weight_jitter=0.2,
                 plastic=True,
                 plasticity_gate="dlpfc_to_verb_pool",
+            ))
+
+    # v15 (2026-05-13 night): unidirectional verb_pool → dlpfc_verb →
+    # motor_X gating. Independent of v12 bidirectional flag — both can
+    # be enabled, though v15 alone is the intended use (v12 broke
+    # isolation via back-feedback leakage).
+    #
+    # Wiring:
+    #   verb_pool_X → dlpfc_verb (forward, plastic, gated)
+    #   dlpfc_verb → motor_X (forward, plastic, gated) — per direction
+    #   NO dlpfc_verb → verb_pool feedback (the v12 leakage source)
+    #
+    # dlpfc_verb's internal recurrence (density 0.15, canon dynamics,
+    # NMDA bistability when enable_nmda is set on the region) provides
+    # the holding mechanism instead of bidirectional feedback. Catalog
+    # G.06 (PFC working memory) + G.08 (BG-thalamic gating of PFC).
+    if (enable_dlpfc_verb_unidirectional
+            and enable_verb_pools and enable_dlpfc_verb):
+        v15_verb_names = (verb_pool_names if verb_pool_names is not None
+                          else ["GO", "COME"])
+        for vname in v15_verb_names:
+            # verb_pool_X → dlpfc_verb (verb concept drives PFC)
+            pathways.append(RegionPathway(
+                from_region=f"verb_pool_{vname}",
+                to_region="dlpfc_verb",
+                density=verb_pool_to_dlpfc_uni_density,
+                weight_mean=verb_pool_to_dlpfc_uni_weight,
+                weight_jitter=0.2,
+                plastic=True,
+                plasticity_gate="verb_pool_to_dlpfc_uni",
+            ))
+        # dlpfc_verb → motor_X (PFC gates motor selection)
+        # Gate "dlpfc_verb_to_motor_uni" open during co-fire compose
+        # training windows; closed during single-word Phase 1 training
+        # so v14 W→A isolation isn't perturbed.
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region="dlpfc_verb",
+                to_region=f"motor_{action}",
+                density=dlpfc_verb_to_motor_density,
+                weight_mean=dlpfc_verb_to_motor_weight,
+                weight_jitter=0.2,
+                plastic=True,
+                plasticity_gate="dlpfc_verb_to_motor_uni",
             ))
 
     return regions, pathways
