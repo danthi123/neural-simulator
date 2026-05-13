@@ -338,17 +338,33 @@ def train_word_to_pool(bridge, word: str, target_pool_region: str,
         )
         drive_out_gpu = cp.asarray(drive_out, dtype=cp.float32)
 
-    # Open all relevant gates for training
-    gates = [
-        "language_input_to_motor",
-        "language_input_to_noun_pool",
-        "language_input_to_verb_pool",
-        "motor_to_language_output",
-        "noun_pool_to_language_output",
-        "verb_pool_to_language_output",
+    # Open ONLY the target kind's gates during training. v1/v2 bug:
+    # opening all 6 gates let off-target pathways (e.g., lang_input ->
+    # noun_pool during direction training) accumulate STDP whenever
+    # off-target pools fired by chance. Over 200 events x 12 words,
+    # this added structural bias to whichever pool had random initial
+    # over-firing.
+    #
+    # Fix: identify target kind, open only its 2 gates (in, out). All
+    # other pathways stay frozen during this word's training. Each
+    # word's training is now ISOLATED to its target pathway.
+    if target_pool_region.startswith("motor_"):
+        target_kind = "motor"
+    elif target_pool_region.startswith("noun_pool_"):
+        target_kind = "noun_pool"
+    elif target_pool_region.startswith("verb_pool_"):
+        target_kind = "verb_pool"
+    elif target_pool_region.startswith("adjective_pool_"):
+        target_kind = "adjective_pool"
+    else:
+        raise ValueError(f"unknown target pool kind: {target_pool_region}")
+
+    gates_to_open = [
+        f"language_input_to_{target_kind}",
+        f"{target_kind}_to_language_output",
     ]
     gates_opened = []
-    for g in gates:
+    for g in gates_to_open:
         try:
             bridge.set_plasticity_gate(g, 1.0)
             gates_opened.append(g)
