@@ -412,7 +412,9 @@ def run_concept_compose_demo(seed: int = 42,
         }
 
     print(f"\n[VERDICTS]", flush=True)
-    print(f"  Test 1 isolation:  {n_isolation_pass}/10 PASS", flush=True)
+    n_words_total = len(DIRECTION_VOCAB) + len(NOUN_VOCAB) + len(VERB_VOCAB)
+    print(f"  Test 1 isolation:  {n_isolation_pass}/{n_words_total} PASS",
+          flush=True)
     print(f"  Test 2 sequential: {n_sequential_pass}/{len(COMPOSE_PAIRS)} PASS",
           flush=True)
     print(f"  Test 3 co-fire:    {n_cofire_pass}/{len(COMPOSE_PAIRS)} PASS",
@@ -424,7 +426,7 @@ def run_concept_compose_demo(seed: int = 42,
         "n_train_events": n_train_events,
         "wall_clock_s": time.time() - t0,
         "n_isolation_pass": n_isolation_pass,
-        "n_isolation_words": 10,
+        "n_isolation_words": len(DIRECTION_VOCAB) + len(NOUN_VOCAB) + len(VERB_VOCAB),
         "n_sequential_pass": n_sequential_pass,
         "n_sequential_pairs": len(COMPOSE_PAIRS),
         "n_cofire_pass": n_cofire_pass,
