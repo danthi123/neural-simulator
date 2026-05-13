@@ -1,7 +1,8 @@
 # Concept pool architecture — Phase 1: diversity beyond 4 motor pools
 
 **Date:** 2026-05-13
-**Status:** Architecture SHIPPED; seed 42 validation IN FLIGHT (will update).
+**Status:** v1 architecture SHIPPED + seed 42 v1 FAIL (0/10) + diagnosis +
+v2 fix LAUNCHED (4 verb pools, tighter topographic prior).
 
 ## User mandate
 
@@ -122,16 +123,66 @@ the smoke uses 1/4 the lang_input + 1/5 the per-pool neuron count.
 Smoke confirms the pipeline works end-to-end: bridge builds, topographic
 bias applies correctly, training runs, eval measures.
 
-## Real run (seed 42, IN FLIGHT)
+## Real run (seed 42 v1: 0/10 FAIL, 2026-05-13)
 
 Full Tier 1-scale config:
 - n_train_events = 200 (Tier 1 default)
 - n_lang_input = 4096 (Tier 2.1 v4 scale-up)
 - n_per_pool = 500 (Schieber 2001 motor sub-pool)
 - n_fs_per_pool = 60 (12% PV-FSI fraction)
-- Wall clock estimate: ~20 min (~108s/word × 10 words + eval)
+- Wall clock: 1314s (~22 min)
 
-**Results pending** — this section will be updated when seed 42 completes.
+**Result: 0/10 PASS.** All 10 words FAILed cross-category isolation.
+
+| Word | Target | Target rate | Max-off | Max-off pool | Ratio |
+|---|---|---|---|---|---|
+| north | motor_N | 1.768 | 2.986 | verb_pool_COME | 0.59x |
+| east | motor_E | 1.512 | 3.232 | verb_pool_COME | 0.47x |
+| south | motor_S | 0.992 | 2.376 | verb_pool_COME | 0.42x |
+| west | motor_W | 0.818 | 1.900 | verb_pool_COME | 0.43x |
+| apple | noun_pool_APPLE | 1.560 | 2.060 | verb_pool_COME | 0.76x |
+| river | noun_pool_RIVER | 1.548 | 2.334 | verb_pool_COME | 0.66x |
+| dog | noun_pool_DOG | 2.180 | 2.898 | verb_pool_COME | 0.75x |
+| cat | noun_pool_CAT | 1.784 | 2.824 | verb_pool_COME | 0.63x |
+| go | verb_pool_GO | 2.322 | 2.826 | verb_pool_COME | 0.82x |
+| come | verb_pool_COME | 2.806 | 3.180 | verb_pool_GO | 0.88x |
+
+## Diagnosis: verb_pool_COME structural dominance (FS imbalance)
+
+**Pattern**: verb_pool_COME has anomalously high firing rate (2.8-3.2)
+across NINE of ten words it wasn't trained for. Even target pools fire
+lower than off-target verb_pool_COME.
+
+**Root cause**: FS within-kind imbalance.
+
+- Motor pools (4): each motor_FS has 3 cross-inhibition edges
+- Noun pools (4): each noun_FS has 3 cross-inhibition edges
+- **Verb pools (2)**: each verb_FS has only **1** cross-inhibition edge
+
+Verb pools receive 1/3 the within-kind suppression that motor/noun pools
+do → verb pools fire freely across all stimuli → verb_pool_COME (seed-
+specific structurally dominant pool) dominates everything.
+
+This was anticipated in the design tradeoff documentation (FS within-
+kind only to enable composition), but the asymmetry in pool count per
+kind broke the FS suppression budget.
+
+## Fix v2: 4 verb pools + tighter topographic prior
+
+Two changes pushed in commit 8bbb01a:
+
+**1. Expand verb pools from 2 → 4** (GO, COME, STOP, LOOK)
+   - Now each verb_FS has 3 cross-inhibition edges (matches noun/motor)
+   - FS suppression budget equalized across all kinds
+   - 12 total output pools (was 10) — still 3× Tier 1 diversity
+
+**2. Tighten topographic prior 1.5/0.7 → 2.0/0.5**
+   - Target/off-target weight ratio at init: 2.14x → 4.0x
+   - Stronger initial signal for STDP to amplify
+   - Within Pulvermüller 2003 reported biology range (2-4x)
+
+V2 seed 42 LAUNCHED with `--save-bridge` enabled (for post-mortem
+weight probing if it also fails).
 
 ## Phase 1 success criteria
 
