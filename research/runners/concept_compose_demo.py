@@ -226,6 +226,8 @@ def run_concept_compose_demo(seed: int = 42,
                                n_fs_per_pool: int = 60,
                                apply_topographic: bool = True,
                                train_bridge: bool = True,
+                               weak_dynamics: bool = False,
+                               load_bridge: str = None,
                                verbose: bool = True) -> Dict:
     """Train bridge, then test sequential + co-fire composition.
 
@@ -243,10 +245,27 @@ def run_concept_compose_demo(seed: int = 42,
         n_lang_input=n_lang_input,
         n_per_pool=n_per_pool,
         n_fs_per_pool=n_fs_per_pool,
+        weak_dynamics=weak_dynamics,
         verbose=verbose,
     )
 
-    if apply_topographic:
+    if load_bridge:
+        print(f"\n[LOAD] loading bridge from {load_bridge}", flush=True)
+        bridge.load_checkpoint(load_bridge)
+        # Freeze gates for inference (no further training)
+        for g in ("language_input_to_motor",
+                  "language_input_to_noun_pool",
+                  "language_input_to_verb_pool",
+                  "motor_to_language_output",
+                  "noun_pool_to_language_output",
+                  "verb_pool_to_language_output"):
+            try:
+                bridge.set_plasticity_gate(g, 0.0)
+            except Exception:
+                pass
+        train_bridge = False  # don't retrain a loaded bridge
+
+    if apply_topographic and not load_bridge:
         apply_concept_topographic_bias(
             bridge, n_lang_input=n_lang_input, verbose=verbose,
         )
@@ -427,6 +446,10 @@ def main():
     parser.add_argument("--no-topographic", action="store_true")
     parser.add_argument("--no-train", action="store_true",
                          help="Skip training (assumes bridge has been pre-trained)")
+    parser.add_argument("--weak-concept-dynamics", action="store_true",
+                         help="Match v7 production recipe")
+    parser.add_argument("--load-bridge", type=str, default=None,
+                         help="Load v7 saved bridge checkpoint")
     parser.add_argument("--out", type=str, default=None)
     args = parser.parse_args()
 
@@ -438,6 +461,8 @@ def main():
         n_fs_per_pool=args.n_fs_per_pool,
         apply_topographic=not args.no_topographic,
         train_bridge=not args.no_train,
+        weak_dynamics=args.weak_concept_dynamics,
+        load_bridge=args.load_bridge,
     )
 
     if args.out:
