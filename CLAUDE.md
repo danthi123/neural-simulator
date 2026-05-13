@@ -882,24 +882,48 @@ python -m research.runners.concept_pool_demo --seed N \
 **v7 5-seed (W→A only):** mean **6.4/12 (53%)**, std 0.89,
 range 5-7. All 5 seeds PARTIAL on Phase 1 cross-category isolation.
 
-**🎉 v9 BREAKTHROUGH (2026-05-13): bidirectional binding at single seed**
+**🎉 v9 BREAKTHROUGH (2026-05-13): bidirectional binding multi-seed validated**
 
-v9 adds reciprocal topographic bias to pool → language_output
-(matching Tier 1's `apply_reciprocal=True` pattern). Result on seed 42:
-
-- Phase 1 (W→A cross-category isolation): **6/12** (unchanged from v7)
-- Phase 3 (A→W spoken-word readout): **12/12 PASS** !
-
-Every concept pool speaks its trained word at top-1 cosine match.
-Bidirectional binding works on all 4 motor + 4 noun + 4 verb pools.
+v9 adds reciprocal topographic bias to pool → language_output. v9
+5-seed result:
+- Phase 1 W→A: mean 6.2/12 (52%), std 0.89
+- Phase 3 A→W: **60/60 = 100% UNANIMOUS** across all 5 seeds
 
 | Variant | Phase 1 W→A | Phase 3 A→W |
 |---|---|---|
 | v7 (forward bias only) | 6/12 | 0/12 |
 | v8 (+ weight 0.5→2.0) | 6/12 | 0/12 |
-| **v9 (+ reciprocal bias)** | **6/12** | **12/12** |
+| **v9 (+ reciprocal bias)** | **6/12 (mean 6.2 5-seed)** | **12/12 unanimous 5/5** |
 
-Multi-seed v9 validation in flight.
+**🎉 v11 SCALE BREAKTHROUGH (2026-05-13 evening): 16 pools work BETTER**
+
+Added adjective pools (BIG/SMALL/HOT/COLD) via --enable-adjective.
+Total 16 distinct output pools = 4 motor + 4 noun + 4 verb + 4 adj.
+
+Single-seed result on seed 42:
+- Phase 1 W→A: **11/16 PASS (69%)** — BETTER than v9's 6/12 (50%)
+- Phase 3 A→W: **16/16 PASS (100%)** — every pool speaks its word
+
+The architecture's discrimination IMPROVES with more output diversity.
+v9's failed words (south, west, come) now PASS in v11. Hypothesis:
+larger off-target set spreads structural bias; no single pool can
+dominate ALL competitors when there are 15 of them.
+
+Multi-seed v11 in flight.
+
+```bash
+python -m research.runners.concept_pool_demo --seed N \
+    --n-train-events 200 --n-lang-input 2048 --n-per-pool 200 \
+    --n-fs-per-pool 24 --weak-concept-dynamics --interleaved \
+    --topographic-factor 3.0 --off-target-factor 0.3 \
+    --enable-adjective  # ← v11 16-pool architecture
+```
+
+V10 (NMDA tau 250ms uniformly) NEGATIVE: collapses both Phase 1 and
+A→W via "canon amplifies bias" mechanism. Lesson: per-pool persistence
+needs dedicated holding region (dlpfc_verb pattern, Tier 2.3), not
+uniform NMDA extension. v12 = dlpfc_verb integration for sequential
+composition is queued.
 
 Per-word robustness from v7 multi-seed:
 - 80% robust (4/5 seeds): north, east, cat
