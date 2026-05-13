@@ -605,6 +605,27 @@ The architecture satisfies the user's three blockers more strongly
 than v7 alone suggested. Multi-seed validation queued to confirm
 A→W consistency.
 
+## v10 (NMDA tau 250ms): NEGATIVE — uniform tau extension hurts both
+
+Tried `--nmda-tau-decay-ms 250.0` on seed 42 to extend pool persistence
+for sequential composition (catalog G.06 PFC working memory).
+
+Result: **Phase 1: 1/12** (was 6/12 in v9). **A→W: 2/12** (was 12/12).
+
+Cause: with longer NMDA, noun_pool_CAT (structurally dominant at this
+seed) self-sustains at high firing (4.4-4.6 rate) across MOST words.
+Same "canon amplifies bias" failure mode as v2c, but via NMDA route
+instead of recurrent gain.
+
+Lesson: uniform NMDA tau extension across all pools breaks isolation.
+Need targeted approach (dlpfc_verb pattern from Tier 2.3) where
+persistence is in a DEDICATED holding region, not in the concept
+pools themselves.
+
+v11 pivots to scale validation (enable_adjective: 16 pools = 4 motor
++ 4 noun + 4 verb + 4 adjective). v12 will attempt dlpfc_verb
+integration for sequential composition if v11 confirms scale.
+
 ## v9 5-seed FINAL (2026-05-13): A→W 100% UNANIMOUS 🎉
 
 | Seed | Phase 1 W→A | Phase 3 A→W |
