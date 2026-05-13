@@ -350,6 +350,49 @@ So far: 6.5/12 (54%) mean across seeds 42-43. Confirms the architecture
 demonstrates concepts/composition/diversity at meaningful rates beyond
 single-pool dominance.
 
+## Phase 2 (composition) + Phase 3 (A→W readout) on v7 seed 42
+
+### Phase 2: composition test on saved v7 bridge
+
+Using `concept_compose_demo --load-bridge seed42_v7.simstate.h5
+--weak-concept-dynamics`:
+
+| Test | Result | Notes |
+|---|---|---|
+| Single-word isolation | **9/12 PASS** | Better than concept_pool_demo's 6/12 (slight state difference) |
+| Sequential composition (NMDA persistence) | **0/6 PASS** | Pool_a drops to ~0 firing when drive switches to word_b |
+| Co-firing composition (merged drive) | **2/6 PASS** | go+north and dog+west work |
+
+Key trade-off discovered: **weak dynamics (chosen to fix v2c canon
+bias) prevents NMDA bistability needed for sequential composition.**
+Pool firing collapses to baseline within 25ms of drive removal.
+
+Sequential composition would require either:
+- Canon dynamics (reintroduces bias amplification)
+- Longer-tau NMDA in concept pools specifically
+- Explicit working-memory gate (Tier 2.3 PFC pattern)
+
+Co-fire composition partial-works (2/6 = 33%) — concept_pool architecture
+demonstrates concepts + diversity + co-fire composition; sequential
+composition is an open architectural problem.
+
+### Phase 3: A→W readout on v7 saved bridge
+
+Using `concept_speak_demo --load-bridge seed42_v7.simstate.h5
+--weak-concept-dynamics`:
+
+**Result: 0/12 PASS.** Driving each pool produces uniform low
+cosines (0.05-0.15) against word reference patterns.
+
+Diagnosis: `concept_to_language_output_weight` defaults to 0.5,
+while `motor_to_language_output_weight` is 2.0 (Tier 1 setting).
+Concept pool → language_output projection is **4x weaker** than the
+motor projection that Tier 1 uses successfully.
+
+Fix queued for v8 batch (commit d21efae then revert 54f72d1 to
+preserve v7 multi-seed consistency). Will re-apply after seed 46
+v7 completes and run v8 single-seed validation.
+
 **Sizes**: 13,792 total neurons (4096 lang_in + 4096 lang_out +
 4×500 motor + 4×60 motor_FS + 4×500 noun + 4×60 noun_FS + 2×500 verb +
 2×60 verb_FS). 14.7M synapses, 2.4 GB GPU.
