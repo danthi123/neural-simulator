@@ -1,8 +1,9 @@
 # Concept pool architecture — Phase 1: diversity beyond 4 motor pools
 
 **Date:** 2026-05-13
-**Status:** v1 architecture SHIPPED + seed 42 v1 FAIL (0/10) + diagnosis +
-v2 fix LAUNCHED (4 verb pools, tighter topographic prior).
+**Status:** v9 BREAKTHROUGH — bidirectional binding works at single seed.
+Phase 1 W→A: 6/12. **Phase 3 A→W: 12/12 (all pools speak trained word).**
+Multi-seed validation queued.
 
 ## User mandate
 
@@ -563,3 +564,43 @@ After seed 42:
   result (pending)
 - `research/findings/raw/g11_bg/concept_pool_demo/launch_multiseed.ps1` —
   multi-seed launcher
+
+## v8/v9 update (2026-05-13 post-v7 multi-seed): A→W BREAKTHROUGH
+
+After v7 multi-seed validated 6.4/12 (53%) PASS on Phase 1 (W→A),
+Phase 3 (A→W readout) was tested on the saved v7 bridge.
+
+**v8 (concept_to_language_output_weight 0.5 → 2.0): NEGATIVE.**
+A→W still 0/12. Weight magnitude wasn't the issue.
+
+**v9 (+ reciprocal topographic bias): 🎉 A→W 12/12 PASS.**
+Adding `apply_reciprocal=True` to `apply_concept_topographic_bias`
+(matching Tier 1's apply_topographic_bias pattern) is the fix:
+
+- pool_target(w) → word's lang_output pattern: boost (3.0x)
+- pool_target(w) → off-target lang_output: dampen (0.3x)
+- off-target pool → word's lang_output: dampen
+- Same target-priority logic; ~148k edges biased
+
+**v9 seed 42 result:** Phase 1 6/12 (unchanged from v7), Phase 3
+**12/12 PASS**. Every pool speaks its trained word — top-1 cosine
+match for all 4 motor + all 4 noun + all 4 verb pools.
+
+| Variant | Phase 1 W→A | Phase 3 A→W |
+|---|---|---|
+| v7 (forward bias only) | 6/12 | 0/12 |
+| v8 (+ weight 0.5→2.0) | 6/12 | 0/12 |
+| **v9 (+ reciprocal bias)** | **6/12** | **12/12** |
+
+The reciprocal bias was the **missing piece for A→W**. Forward bias
+alone fixed W→A but had nothing for A→W. v7's correct lang_input→pool
+weights couldn't help pool→lang_output be selective; the reverse path
+needed its own topographic prior.
+
+Bidirectional binding now demonstrated:
+- W→A 50% PASS (seed-dependent, 80% on robust trio)
+- A→W 100% PASS at single seed
+
+The architecture satisfies the user's three blockers more strongly
+than v7 alone suggested. Multi-seed validation queued to confirm
+A→W consistency.
