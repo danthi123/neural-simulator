@@ -676,6 +676,47 @@ consistent. Architecture is scaling.
 Compose with adjective pools not yet evaluated separately for
 seeds 43-46 (v11 speak16 follow-up queued auto-fires after seed 46).
 
+### v11 5-seed FINAL: A→W 60/60 unanimous
+
+Seed 46 v11: Phase 1 9/16, A→W 12/12.
+
+5-seed v11 mean: 9.0/16 (56.25%) Phase 1, **60/60 A→W (100%)**.
+
+Architecture maintains v9-level reliability at 16 pools with slightly
+higher PASS rate. 100% A→W consistency is preserved.
+
+## v12 (dlpfc_verb holding) — MIXED to NEGATIVE on seed 42
+
+Added bidirectional verb_pool_X ↔ dlpfc_verb pathways with shared
+gates "verb_pool_to_dlpfc" and "dlpfc_to_verb_pool" opened during
+verb word training.
+
+Result vs v9 baseline (12-pool, seed 42):
+
+| Test | v9 | v12 | Δ |
+|---|---|---|---|
+| Phase 1 W→A | 6/12 | 5/12 | -1 |
+| Phase 3 A→W | **12/12** | **4/12** | **-8 (regression)** |
+| Compose sequential | 0/6 | 1/6 | +1 |
+| Compose co-fire | 2/6 | 0/6 | -2 |
+
+**A→W collapsed from 100% → 33%.** Hypothesis: dlpfc_verb feedback
+introduces non-specific firing in verb pools during training (PFC
+fires on any verb word → activates ALL trained verbs via feedback →
+STDP at verb_pool→lang_output trains less selective weights).
+
+Sequential composition gained +1 word, marginal. Co-fire lost.
+
+**v12 fails the "first do no harm" criterion.** v9/v11 remain the
+production recipe. v13 would need two-phase training (train v9 first,
+then introduce PFC pathways without retraining verb→lang_output) or
+unidirectional verb→PFC only (no feedback during training).
+
+Sequential composition remains the unsolved frontier for full
+conversational. v9/v11 demonstrate single-word bidirectional binding
++ scale to 16 concepts; sequential is genuinely a harder problem
+requiring more careful architectural work than the v12 quick attempt.
+
 ## v9 5-seed FINAL (2026-05-13): A→W 100% UNANIMOUS 🎉
 
 | Seed | Phase 1 W→A | Phase 3 A→W |
