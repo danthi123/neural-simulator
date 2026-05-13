@@ -1,0 +1,121 @@
+{
+  "base_lineage": "main_hippo_balanced",
+  "n_events": 200,
+  "seed": 42,
+  "test_bindings": [
+    [
+      "apple",
+      "north",
+      "N"
+    ],
+    [
+      "river",
+      "east",
+      "E"
+    ],
+    [
+      "mountain",
+      "south",
+      "S"
+    ],
+    [
+      "forest",
+      "west",
+      "W"
+    ]
+  ],
+  "variants_tested": [
+    "v_schema"
+  ],
+  "results": [
+    {
+      "variant": "v_schema",
+      "n_correct": 1,
+      "n_total": 4,
+      "accuracy": 0.25,
+      "total_seconds": 480.0626127719879,
+      "details": [
+        {
+          "key": "apple",
+          "expected_value": "north",
+          "expected_action": "N",
+          "got_action": "W",
+          "got_value": "west",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 29,
+          "bind_result": {
+            "key": "apple",
+            "value": "north",
+            "target_action": "N",
+            "confidence": 4.08,
+            "bound_correctly": true,
+            "n_events_run": 200,
+            "v_schema_n_anchor_events": 20,
+            "elapsed_seconds": 117.49194097518921
+          }
+        },
+        {
+          "key": "river",
+          "expected_value": "east",
+          "expected_action": "E",
+          "got_action": "S",
+          "got_value": "south",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 33,
+          "bind_result": {
+            "key": "river",
+            "value": "east",
+            "target_action": "E",
+            "confidence": 1.7297297297297298,
+            "bound_correctly": true,
+            "n_events_run": 200,
+            "v_schema_n_anchor_events": 20,
+            "elapsed_seconds": 117.88063621520996
+          }
+        },
+        {
+          "key": "mountain",
+          "expected_value": "south",
+          "expected_action": "S",
+          "got_action": "S",
+          "got_value": "south",
+          "correct": true,
+          "confidence": 1.0,
+          "raw_delta": 39,
+          "bind_result": {
+            "key": "mountain",
+            "value": "south",
+            "target_action": "S",
+            "confidence": Infinity,
+            "bound_correctly": true,
+            "n_events_run": 200,
+            "v_schema_n_anchor_events": 20,
+            "elapsed_seconds": 118.65574216842651
+          }
+        },
+        {
+          "key": "forest",
+          "expected_value": "west",
+          "expected_action": "W",
+          "got_action": "E",
+          "got_value": "east",
+          "correct": false,
+          "confidence": 1.0,
+          "raw_delta": 10,
+          "bind_result": {
+            "key": "forest",
+            "value": "west",
+            "target_action": "W",
+            "confidence": 2.3076923076923075,
+            "bound_correctly": true,
+            "n_events_run": 200,
+            "v_schema_n_anchor_events": 20,
+            "elapsed_seconds": 117.06418538093567
+          }
+        }
+      ]
+    }
+  ]
+}
