@@ -120,11 +120,12 @@ def test_measure_pool_firing_returns_all_pools(concept_bridge):
 def test_apply_concept_topographic_bias_does_not_crash(concept_bridge):
     """Topographic bias application succeeds across ALL pools.
 
-    Post-v4 fix (2026-05-13): peers now span ALL output pools across
-    kinds, not just within kind. Otherwise cross-kind edges keep
-    random init and dominate as max-off.
-
-    12 words x 12 peer pools = 144 entries.
+    Post-v9 fix (2026-05-13): reciprocal pool -> language_output bias
+    also applied. Summary contains:
+    - 12 forward target entries (word -> target_pool, boost)
+    - 132 forward off-target entries (word -> off-target pool, dampen)
+    - 2 reciprocal summary entries (total target + off-target edges)
+    Total 146 entries.
     """
     from research.runners.concept_pool_demo import apply_concept_topographic_bias
     summary = apply_concept_topographic_bias(
@@ -132,6 +133,8 @@ def test_apply_concept_topographic_bias_does_not_crash(concept_bridge):
         n_lang_input=64,
         topographic_factor=2.0,
         off_target_factor=0.5,
+        apply_reciprocal=True,
+        n_lang_output=64,
         verbose=False,
     )
-    assert len(summary) == 144
+    assert len(summary) == 146

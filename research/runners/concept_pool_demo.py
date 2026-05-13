@@ -179,6 +179,8 @@ def apply_concept_topographic_bias(bridge,
                                      topographic_factor: float = 2.0,
                                      off_target_factor: float = 0.5,
                                      sparsity: float = 0.1,
+                                     apply_reciprocal: bool = True,
+                                     n_lang_output: int = None,
                                      verbose: bool = True) -> Dict:
     """Apply Pulvermüller-style topographic bias to lang_input -> {pool}.
 
@@ -336,6 +338,89 @@ def apply_concept_topographic_bias(bridge,
                         n_changed += 1
             summary[f"{word}->{peer}(off)"] = {
                 "factor": off_target_factor, "edges_modified": n_changed,
+            }
+
+    # v9 fix (2026-05-13 post-v8): reciprocal topographic bias on
+    # pool -> language_output. v8 A->W returned 0/12 because pool->
+    # lang_output projection had no topographic prior -- only the
+    # forward lang_input -> pool was biased. Reciprocal Pulvermüller
+    # 2003: motor cortex pyramidals also project topographically back
+    # to premotor / language areas.
+    #
+    # For each word w:
+    #   pool_target(w) neurons -> word's lang_output pattern: boost
+    #   pool_target(w) neurons -> off-target lang_output:     dampen
+    #
+    # Same target-priority logic as forward pass (no cumulative
+    # multiplicative dampening).
+    if apply_reciprocal:
+        if n_lang_output is None:
+            try:
+                lang_output_indices_full = list(rm.indices("language_output"))
+                n_lang_output_actual = len(lang_output_indices_full)
+            except Exception:
+                lang_output_indices_full = None
+                n_lang_output_actual = 0
+        else:
+            try:
+                lang_output_indices_full = list(rm.indices("language_output"))
+                n_lang_output_actual = n_lang_output
+            except Exception:
+                lang_output_indices_full = None
+                n_lang_output_actual = 0
+
+        if lang_output_indices_full is not None:
+            # Pre-compute word -> active lang_output neurons (same scheme
+            # as forward drive pattern)
+            word_to_lang_out_active = {}
+            for word in word_to_active:
+                drive = vocab_to_drive_pattern(
+                    word, n_neurons=n_lang_output_actual, sparsity=sparsity
+                )
+                local_active = np.where(drive > 0)[0]
+                word_to_lang_out_active[word] = [
+                    lang_output_indices_full[i] for i in local_active
+                ]
+
+            # Pass 1 reciprocal: target boosts (pool -> word-pattern lang_out)
+            target_edges_recip = set()
+            for word, target_region, _ in bias_tasks:
+                pool_neurons = list(rm.indices(target_region))
+                global_active_out = word_to_lang_out_active[word]
+                for src in pool_neurons:  # pre = pool neuron
+                    for dst in global_active_out:  # post = lang_output word neuron
+                        key = (src, dst)
+                        if key in pair_to_idx and key not in target_edges_recip:
+                            idx = pair_to_idx[key]
+                            data[idx] = float(data[idx]) * topographic_factor
+                            target_edges_recip.add(key)
+
+            # Pass 2 reciprocal: off-target dampening
+            dampened_edges_recip = set()
+            for word, target_region, peer_regions in bias_tasks:
+                for peer in peer_regions:
+                    if peer == target_region:
+                        continue
+                    peer_pool_neurons = list(rm.indices(peer))
+                    # peer pool's edges to THIS word's lang_output pattern
+                    global_active_out = word_to_lang_out_active[word]
+                    for src in peer_pool_neurons:
+                        for dst in global_active_out:
+                            key = (src, dst)
+                            if (key in pair_to_idx
+                                    and key not in target_edges_recip
+                                    and key not in dampened_edges_recip):
+                                idx = pair_to_idx[key]
+                                data[idx] = float(data[idx]) * off_target_factor
+                                dampened_edges_recip.add(key)
+
+            summary["reciprocal_target_edges"] = {
+                "factor": topographic_factor,
+                "edges_modified": len(target_edges_recip),
+            }
+            summary["reciprocal_off_target_edges"] = {
+                "factor": off_target_factor,
+                "edges_modified": len(dampened_edges_recip),
             }
 
     bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
