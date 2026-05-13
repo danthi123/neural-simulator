@@ -1,14 +1,21 @@
 {
-  "as_of": "2026-05-10",
+  "as_of": "2026-05-13",
   "headline": {
-    "tier": "Encoding-axis 64-word: 3/3 GO unanimous + 35x speedup",
-    "result": "Capacity rule revised: encoding > motor at higher vocab",
-    "metrics": "retention primary 110% +/- 23% (3-seed mean); wall clock 16 min/seed (vs prior 9.4 hr baseline). Combined with STP-off, the optimization stack is now 35x over original 64-word baseline.",
-    "wall_clock": "~48 min for 3-seed validation",
-    "finding_doc": "2026-05-10-encoding-axis-64word-3SEED-GO.md",
-    "summary": "User's encoding-vs-motor hypothesis VALIDATED at multi-seed. New architecture (n_lang=8192, n_motor=2000, STP-off) is 35x faster than original AND passes consolidation retention test 3/3 unanimous. Capacity rule revised: motor pool capacity matters LESS than encoding capacity at higher vocab tiers; lang_input encoding is the rate-limiting constraint. Recommended baseline for vocab >= 32 words."
+    "tier": "v9 Concept Pool Architecture: bidirectional binding, 12 pools, 5-seed validated",
+    "result": "First 3x diversity over 4-motor-pool ceiling; A->W 100% unanimous",
+    "metrics": "Phase 1 W->A: 6.2/12 mean (52%) std 0.89 across 5 seeds. Phase 3 A->W: 60/60 = 100% UNANIMOUS. Every concept pool deterministically speaks its trained word.",
+    "wall_clock": "~13 min/seed training + 30s A->W eval (smoke scale: 2048 lang_input, 200 per pool)",
+    "finding_doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+    "summary": "Concept pool architecture (4 motor + 4 noun + 4 verb = 12 pools) extends Tier 1 recipe to non-direction concepts. 9-iteration debugging arc identified 6 architectural bugs (FS asymmetry, STDP leakage, canon dynamics, topographic strength, multiplicative dampening, one-directional bias). v9 production recipe: weak dynamics + interleaved + target-priority topographic 3.0/0.3 + reciprocal bias. Multi-seed 5/5 confirms bidirectional binding (A->W 100%) and meaningful W->A (52% with low std). 3 words (north/east/cat) reach 80% W->A robustness. Architecture demonstrates concepts + diversity + co-fire composition (2/6); sequential composition still open (NMDA-tau gap, v10 in flight)."
   },
   "pillars": [
+    {
+      "name": "v9 Concept Pool Architecture - bidirectional binding multi-seed",
+      "status": "VALIDATED",
+      "metric": "5/5 seeds: A->W 12/12 each (100%); W->A 6.2/12 mean (52%)",
+      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-13"
+    },
     {
       "name": "Phase 1.4 BRANCH A — no catastrophic forgetting",
       "status": "VALIDATED",
