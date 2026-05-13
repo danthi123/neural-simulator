@@ -427,6 +427,20 @@ def build_biological_brain_regions(
     concept_pool_internal_density: float = None,  # None -> use motor_internal_density
     concept_pool_exc_weight_mean: float = None,
     concept_pool_inh_weight_mean: float = None,
+    # v12 (2026-05-13 evening): verb pool ↔ dlpfc_verb integration for
+    # sequential composition. When enable_dlpfc_verb_concept_integration
+    # is True AND enable_dlpfc_verb is True AND enable_verb_pools is True,
+    # adds bidirectional pathways:
+    #   verb_pool_X → dlpfc_verb (verb concept drives PFC)
+    #   dlpfc_verb → verb_pool_X (PFC feedback sustains verb pool firing)
+    # dlpfc_verb's canon dynamics + NMDA bistability provide the
+    # holding mechanism; verb pools stay weak (clean isolation), but
+    # PFC feedback keeps them firing during cross-word windows.
+    enable_dlpfc_verb_concept_integration: bool = False,
+    verb_pool_to_dlpfc_density: float = 0.30,
+    verb_pool_to_dlpfc_weight: float = 2.0,
+    dlpfc_to_verb_pool_density: float = 0.30,
+    dlpfc_to_verb_pool_weight: float = 2.0,
     # Reciprocal pool → language_output density/weight. Same defaults as
     # motor → language_output. The lang_output pathway makes the pool
     # "speakable" — firing the pool generates the corresponding word
@@ -1411,6 +1425,39 @@ def build_biological_brain_regions(
             n_adjective_fs_per_pool,
             enable_fs_for_kind=enable_motor_fs,
         )
+
+    # v12 (2026-05-13): verb pool ↔ dlpfc_verb bidirectional wiring for
+    # sequential composition. Requires enable_verb_pools=True AND
+    # enable_dlpfc_verb=True. dlpfc_verb provides the canon-NMDA holding
+    # stage; verb pools stay weak (clean isolation in v9-v11) but get
+    # PFC feedback to sustain firing during cross-word windows.
+    if (enable_dlpfc_verb_concept_integration
+            and enable_verb_pools and enable_dlpfc_verb):
+        verb_names = (verb_pool_names if verb_pool_names is not None
+                      else ["GO", "COME"])
+        for vname in verb_names:
+            # verb_pool_X → dlpfc_verb (verb activation drives PFC)
+            # Shared gate: "verb_pool_to_dlpfc" — open whenever any verb
+            # word is training, training data informs PFC selectivity.
+            pathways.append(RegionPathway(
+                from_region=f"verb_pool_{vname}",
+                to_region="dlpfc_verb",
+                density=verb_pool_to_dlpfc_density,
+                weight_mean=verb_pool_to_dlpfc_weight,
+                weight_jitter=0.2,
+                plastic=True,
+                plasticity_gate="verb_pool_to_dlpfc",
+            ))
+            # dlpfc_verb → verb_pool_X (PFC feedback to sustain firing)
+            pathways.append(RegionPathway(
+                from_region="dlpfc_verb",
+                to_region=f"verb_pool_{vname}",
+                density=dlpfc_to_verb_pool_density,
+                weight_mean=dlpfc_to_verb_pool_weight,
+                weight_jitter=0.2,
+                plastic=True,
+                plasticity_gate="dlpfc_to_verb_pool",
+            ))
 
     return regions, pathways
 

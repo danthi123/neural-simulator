@@ -79,6 +79,7 @@ def build_concept_bridge(seed: int,
                           n_fs_per_pool: int = 60,
                           enable_adjective: bool = False,
                           weak_dynamics: bool = False,
+                          enable_dlpfc_verb_holding: bool = False,
                           nmda_tau_decay_ms: float = 100.0,
                           verbose: bool = True):
     """Construct a bridge with motor + noun + verb (+ optional adjective) pools.
@@ -130,6 +131,9 @@ def build_concept_bridge(seed: int,
         concept_pool_internal_density=concept_internal_density,
         concept_pool_exc_weight_mean=concept_exc_weight,
         concept_pool_inh_weight_mean=concept_inh_weight,
+        # v12 (2026-05-13): dlpfc_verb holding for sequential composition
+        enable_dlpfc_verb=enable_dlpfc_verb_holding,
+        enable_dlpfc_verb_concept_integration=enable_dlpfc_verb_holding,
     )
 
     cfg = CoreSimConfig()
@@ -529,6 +533,18 @@ def train_word_to_pool(bridge, word: str, target_pool_region: str,
         f"language_input_to_{target_kind}",
         f"{target_kind}_to_language_output",
     ]
+    # v12 (2026-05-13): for verb training, also open verb<->PFC gates
+    # if the dlpfc_verb_concept_integration is wired into this bridge.
+    # Shared gates "verb_pool_to_dlpfc" and "dlpfc_to_verb_pool" cover
+    # all verb pools. Training a verb word forms PFC selectivity for
+    # that verb via STDP; PFC feedback then sustains the verb pool
+    # firing during multi-word eval windows.
+    if target_kind == "verb_pool":
+        gates_to_open += [
+            "verb_pool_to_dlpfc",
+            "dlpfc_to_verb_pool",
+            "language_input_to_dlpfc_verb",
+        ]
     gates_opened = []
     for g in gates_to_open:
         try:
@@ -635,6 +651,7 @@ def run_concept_pool_demo(seed: int = 42,
                             enable_adjective: bool = False,
                             interleaved: bool = False,
                             weak_dynamics: bool = False,
+                            enable_dlpfc_verb_holding: bool = False,
                             nmda_tau_decay_ms: float = 100.0,
                             reset_steps: int = 50,  # 25ms (NMDA tau is ~150ms)
                             verbose: bool = True,
@@ -672,6 +689,7 @@ def run_concept_pool_demo(seed: int = 42,
         n_fs_per_pool=n_fs_per_pool,
         enable_adjective=enable_adjective,
         weak_dynamics=weak_dynamics,
+        enable_dlpfc_verb_holding=enable_dlpfc_verb_holding,
         nmda_tau_decay_ms=nmda_tau_decay_ms,
         verbose=verbose,
     )
@@ -886,6 +904,11 @@ def main():
                          "composition: try 200-300ms (Wang 2002 PFC range). "
                          "Longer tau gives concept pools cross-word "
                          "persistence for compositional binding.")
+    parser.add_argument("--enable-dlpfc-verb-holding", action="store_true",
+                         help="v12: enable dlpfc_verb region with bidirectional "
+                         "wiring to verb pools (Tier 2.3 PFC verb-holding pattern). "
+                         "Provides canon-NMDA holding stage for sequential "
+                         "composition without breaking weak-dynamics isolation.")
     parser.add_argument("--reset-steps", type=int, default=50,
                          help="Steps to free-run between training events "
                          "(default 50 = 25ms). For v3 NMDA-decay fix: "
@@ -912,6 +935,7 @@ def main():
         enable_adjective=args.enable_adjective,
         interleaved=args.interleaved,
         weak_dynamics=args.weak_concept_dynamics,
+        enable_dlpfc_verb_holding=args.enable_dlpfc_verb_holding,
         nmda_tau_decay_ms=args.nmda_tau_decay_ms,
         reset_steps=args.reset_steps,
         load_bridge=args.load_bridge,
