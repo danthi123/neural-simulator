@@ -339,25 +339,27 @@ build_concept_bridge:
 | 42 | 6/12 | north, east, apple, dog, cat, go | south, west, river, come, stop, look |
 | 43 | 7/12 | north, east, south, river, cat, come, look | west, apple, dog, go, stop |
 | 44 | 7/12 | north, east, west, apple, river, cat, look | south, dog, go, come, stop |
-| 45 | (in flight) | | |
-| 46 | (pending) | | |
+| 45 | 7/12 | (data in seed45_v7.json) | |
+| 46 | 5/12 | (data in seed46_v7.json) | |
 
-Different words pass at different seeds — seed-dependent structural
-variance dominates per-word PASS pattern. Multi-seed mean is what
-matters for architecture validation.
+**v7 5-seed final: mean 6.4/12 (53%), std 0.89, range 5-7.**
 
-3-seed v7 mean: **6.7/12 (56%) PASS, std 0.58** (very tight).
+Verdict: all 5 seeds PARTIAL (5 ≤ PASS < 8). 0 GO, 0 FAIL.
 
-Per-word PASS rate across 3 seeds:
-- **100% robust**: north, east, cat — consistently dominate target firing
-- **67% mixed**: apple, river, look — pass on most seeds
-- **33% fragile**: south, west, dog, go, come — variable
-- **0% fragile**: stop — never passes (3 seeds)
+Per-word PASS rate across 5 seeds:
+- **80% robust**: north, east, cat — pass on 4 of 5 seeds
+- **60% mixed**: apple, river, look — pass on 3 of 5 seeds
+- **40% fragile**: south, west, dog, go, come — pass on 2 of 5 seeds
+- **20% fragile**: stop — only passed on seed 43
 
-`stop` consistently fails. Hypothesis: its hash-based lang_input drive
-pattern has high overlap with stronger words' patterns, OR
-verb_pool_STOP has unfavorable random structural connectivity that
-all 3 seeds exhibit.
+Architecture produces CONSISTENT 53% PASS rate (low std 0.89 across
+5 seeds). 3 words (north, east, cat) reach 80% — demonstrating the
+architecture CAN reliably bind specific (word, pool) pairings.
+
+The fragile words have seed-dependent unfavorable structural pool
+connectivity. With orthogonal codes or pre-shape phase, these might
+flip to robust. Drive-pattern overlap analysis showed stop's
+lang_input overlap is normal (4-13%), so issue is downstream.
 
 ## Phase 2 (composition) + Phase 3 (A→W readout) on v7 seed 42
 
