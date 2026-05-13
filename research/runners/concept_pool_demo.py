@@ -451,9 +451,21 @@ def run_concept_pool_demo(seed: int = 42,
     subsequent eval iterations don't need to retrain.
     """
     print(f"\n=== concept_pool_demo (seed={seed}) ===", flush=True)
-    print(f"  Architecture: 4 motor + 4 noun + 2 verb = 10 pools", flush=True)
-    print(f"  Vocab: {list(DIRECTION_VOCAB)} + {list(NOUN_VOCAB)} + "
-          f"{list(VERB_VOCAB)}", flush=True)
+    n_motor = 4
+    n_noun = len(NOUN_VOCAB)
+    n_verb = len(VERB_VOCAB)
+    n_adj = len(ADJECTIVE_VOCAB) if enable_adjective else 0
+    n_pools = n_motor + n_noun + n_verb + n_adj
+    parts = [f"{n_motor} motor", f"{n_noun} noun", f"{n_verb} verb"]
+    if enable_adjective:
+        parts.append(f"{n_adj} adjective")
+    print(f"  Architecture: {' + '.join(parts)} = {n_pools} pools", flush=True)
+    vocab_str = (
+        f"{list(DIRECTION_VOCAB)} + {list(NOUN_VOCAB)} + {list(VERB_VOCAB)}"
+    )
+    if enable_adjective:
+        vocab_str += f" + {list(ADJECTIVE_VOCAB)}"
+    print(f"  Vocab: {vocab_str}", flush=True)
     print(f"  Train events/word: {n_train_events}", flush=True)
 
     t0 = time.time()
