@@ -1,0 +1,225 @@
+{
+  "seed": 42,
+  "demo_kind": "chat_speak_synonym_demo",
+  "vocab_size": 12,
+  "n_train_events": 400,
+  "n_lang_input": 4096,
+  "n_motor_per_action": 2000,
+  "n_motor_fs_per_action": 240,
+  "accuracy": 0.5625,
+  "correct": 9,
+  "total": 16,
+  "per_word_accuracy": {
+    "north": 0.5,
+    "up": 0.5,
+    "east": 0.5,
+    "right": 0.5,
+    "south": 1.0,
+    "down": 0.0,
+    "west": 1.0,
+    "left": 0.5
+  },
+  "speak_accuracy": 1.0,
+  "speak_primary_accuracy": 1.0,
+  "speak_synonym_accuracy": 0.0,
+  "speak_correct": 4,
+  "speak_total": 4,
+  "speak_results": [
+    {
+      "target_action": "N",
+      "expected_words": [
+        "north",
+        "up"
+      ],
+      "primary_word": "north",
+      "synonym_word": "up",
+      "predicted_word": "north",
+      "any_correct": true,
+      "primary_correct": true,
+      "synonym_correct": false,
+      "confidence": 1.2442396313364055,
+      "rankings": [
+        [
+          "north",
+          0.15067301720760037
+        ],
+        [
+          "up",
+          0.1210964619779603
+        ],
+        [
+          "down",
+          0.11160964237600027
+        ],
+        [
+          "right",
+          0.10100672635028025
+        ],
+        [
+          "left",
+          0.09821648529088024
+        ],
+        [
+          "west",
+          0.07701065323944019
+        ],
+        [
+          "south",
+          0.07477846039192018
+        ],
+        [
+          "east",
+          0.06529164078996016
+        ]
+      ]
+    },
+    {
+      "target_action": "E",
+      "expected_words": [
+        "east",
+        "right"
+      ],
+      "primary_word": "east",
+      "synonym_word": "right",
+      "predicted_word": "east",
+      "any_correct": true,
+      "primary_correct": true,
+      "synonym_correct": false,
+      "confidence": 1.4137931034482758,
+      "rankings": [
+        [
+          "east",
+          0.17490983044355468
+        ],
+        [
+          "left",
+          0.12371670933812405
+        ],
+        [
+          "down",
+          0.10185298053267972
+        ],
+        [
+          "up",
+          0.09598710207268245
+        ],
+        [
+          "south",
+          0.0794559900490538
+        ],
+        [
+          "right",
+          0.07838946669269067
+        ],
+        [
+          "west",
+          0.06825749480724086
+        ],
+        [
+          "north",
+          0.055992476209064765
+        ]
+      ]
+    },
+    {
+      "target_action": "S",
+      "expected_words": [
+        "south",
+        "down"
+      ],
+      "primary_word": "south",
+      "synonym_word": "down",
+      "predicted_word": "south",
+      "any_correct": true,
+      "primary_correct": true,
+      "synonym_correct": false,
+      "confidence": 1.3194444444444444,
+      "rankings": [
+        [
+          "south",
+          0.15110997885972405
+        ],
+        [
+          "down",
+          0.11452545766210664
+        ],
+        [
+          "left",
+          0.11452545766210664
+        ],
+        [
+          "right",
+          0.09543788138508887
+        ],
+        [
+          "up",
+          0.09278682912439196
+        ],
+        [
+          "west",
+          0.07900135736876801
+        ],
+        [
+          "north",
+          0.0699877796823985
+        ],
+        [
+          "east",
+          0.06256483335244714
+        ]
+      ]
+    },
+    {
+      "target_action": "W",
+      "expected_words": [
+        "west",
+        "left"
+      ],
+      "primary_word": "west",
+      "synonym_word": "left",
+      "predicted_word": "west",
+      "any_correct": true,
+      "primary_correct": true,
+      "synonym_correct": false,
+      "confidence": 1.5526315789473686,
+      "rankings": [
+        [
+          "west",
+          0.15955084998492053
+        ],
+        [
+          "up",
+          0.10276156439706745
+        ],
+        [
+          "down",
+          0.10167986371920358
+        ],
+        [
+          "left",
+          0.08978115626270104
+        ],
+        [
+          "right",
+          0.08815860524590524
+        ],
+        [
+          "north",
+          0.07193309507794722
+        ],
+        [
+          "east",
+          0.06760629236649175
+        ],
+        [
+          "south",
+          0.048676530503874056
+        ]
+      ]
+    }
+  ],
+  "verdict": "GO",
+  "go": true,
+  "wall_clock_sec": 4148.321300029755,
+  "train_sec": 4054.315236568451
+}
