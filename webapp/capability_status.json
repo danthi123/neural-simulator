@@ -1,16 +1,23 @@
 {
   "as_of": "2026-05-13",
   "headline": {
-    "tier": "v11 Concept Pool Architecture: 16 pools, 5-seed validated bidirectional binding",
-    "result": "4x diversity over 4-motor-pool ceiling; A->W 98.75% unanimous; W->A 56%",
-    "metrics": "Phase 1 W->A: 9.0/16 mean (56%) std 1.5 across 5 seeds. Phase 3 A->W: 79/80 = 98.75% (only seed 45 lost 1 of 16). Every concept pool deterministically speaks its trained word in nearly all seeds.",
-    "wall_clock": "~17 min/seed training + 1min A->W eval (2048 lang_input, 200 per pool, 16 concepts)",
+    "tier": "v14 Concept Pool Architecture: 16 pools + orthogonal codes, 5-seed validated bidirectional binding",
+    "result": "4x diversity over 4-motor-pool ceiling; A->W 100% unanimous; W->A 77.5% (up +22pp from v11)",
+    "metrics": "Phase 1 W->A: 12.4/16 mean (77.5%) std 1.52 across 5 seeds (range 11-15/16). Phase 3 A->W: 80/80 = 100% UNANIMOUS across all 5 seeds. Total: 142/160 = 88.75% bidirectional binding multi-seed.",
+    "wall_clock": "~17 min/seed training + ~30s A->W readout (2048 lang_input, 200 per pool, 16 concepts, 200 events/word x 16 words = 3200 interleaved events)",
     "finding_doc": "2026-05-13-concept-pool-architecture-Phase1.md",
-    "summary": "Concept pool architecture (4 motor + 4 noun + 4 verb + 4 adjective = 16 pools) extends Tier 1 recipe to non-direction concepts. 11-iteration debugging arc identified 7 architectural bugs (FS asymmetry, STDP leakage, canon dynamics, topographic strength, multiplicative dampening, one-directional bias, scale-vs-diversity tradeoff). v11 production recipe: weak dynamics + interleaved + target-priority topographic 3.0/0.3 + reciprocal bias + adjective pools. Multi-seed 5/5 confirms scale: bidirectional binding (A->W 98.75%) + meaningful W->A (56% with low std). v9 12-pool was 52%; adding adjectives IMPROVED rate. v12 dlpfc_verb integration NEGATIVE (broke A->W via PFC feedback). Sequential composition remains open (single-pool persistence needs more careful design)."
+    "summary": "v14 = v11 + orthogonal drive codes (eliminates ~10% hash-based pairwise word-pattern overlap). 14-iteration debugging arc identified 8 architectural mechanisms: FS asymmetry (v1), STDP leakage (v2), canon-vs-weak dynamics tradeoff (v3), topographic strength (v4), cumulative dampening (v6), target-priority assignment (v7), reciprocal bias (v9), adjective pools (v11), orthogonal codes (v14). v14 production recipe: weak dynamics + interleaved + target-priority topographic 3.0/0.3 + reciprocal bias + 16 pools + orthogonal codes + sparsity 0.05. Multi-seed 5/5 GO confirms scale: A->W 100% deterministic + W->A 77.5% mean (10 of 16 words robust at 4-5/5). Sequential composition remains open frontier (v12/v13 NEGATIVE; v15 unidirectional verb_pool->dlpfc_verb->motor gating queued -- see docs/plans/2026-05-13-sequential-composition-design-note.md)."
   },
   "pillars": [
     {
-      "name": "v11 Concept Pool Architecture - 16-pool bidirectional binding multi-seed",
+      "name": "v14 Concept Pool Architecture - 16-pool orthogonal codes multi-seed GO",
+      "status": "VALIDATED",
+      "metric": "5/5 GO seeds: A->W 80/80 (100%); W->A 62/80 (77.5%) mean 12.4/16; total 142/160 (88.75%)",
+      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-13"
+    },
+    {
+      "name": "v11 Concept Pool Architecture - 16-pool hash codes (superseded by v14)",
       "status": "VALIDATED",
       "metric": "5/5 seeds: A->W 79/80 (98.75%); W->A 45/80 (56%) mean 9/16",
       "doc": "2026-05-13-concept-pool-architecture-Phase1.md",

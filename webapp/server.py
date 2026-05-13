@@ -902,12 +902,14 @@ PRESETS: dict[str, list[str]] = {
     #          NOT motor_N or verb_GO). Tier 1 recipe at full scale.
     # Wall clock: ~15-25 min/seed.
     # v7 production recipe (2026-05-13): 6/12 PASS at single seed,
-    # mean 6.5/12 across seeds 42-43 (std 0.71). Tightly-bounded smoke
-    # arch (2048 lang, 200/pool) trains in ~13 min/seed.
+    # mean 12.75/16 across seeds 42-45 (std 1.50). Trains in ~17 min/seed.
     #
-    # Flags: weak-concept-dynamics (per iter AA recipe), interleaved
-    # (matches Tier 1 pattern), topographic 3.0/0.3 (target-priority,
-    # 10x ratio).
+    # v14 production recipe (orthogonal drive codes + 16 pools):
+    # weak-concept-dynamics (iter AA recipe), interleaved (Tier 1 pattern),
+    # topographic 3.0/0.3 (target-priority 10x ratio), enable-adjective
+    # (16-pool arch = 4 motor + 4 noun + 4 verb + 4 adjective),
+    # orthogonal-codes (non-overlapping word patterns — fixes hash-based
+    # ~10% pairwise overlap), sparsity 0.05.
     "concept_pool_demo": [
         "--n-train-events", "200",
         "--n-lang-input", "2048",
@@ -917,11 +919,16 @@ PRESETS: dict[str, list[str]] = {
         "--interleaved",
         "--topographic-factor", "3.0",
         "--off-target-factor", "0.3",
+        "--enable-adjective",
+        "--orthogonal-codes",
+        "--sparsity", "0.05",
     ],
     # Phase 2: composition test - do multiple pools fire together for
     # phrases like "go north"? Tests NMDA sequential + co-fire merging.
-    # Same v7 recipe arch. Compose passes co-fire 2/6, sequential 0/6
-    # (weak dynamics trade off vs Phase 1 isolation).
+    # Same v14 recipe arch. Compose passes co-fire ~2/6, sequential 0-1/6
+    # (weak dynamics trade off vs Phase 1 isolation). Sequential is the
+    # remaining open frontier — see docs/plans/2026-05-13-sequential-
+    # composition-design-note.md for v15 plan.
     "concept_compose_demo": [
         "--n-train-events", "200",
         "--n-lang-input", "2048",
@@ -930,11 +937,15 @@ PRESETS: dict[str, list[str]] = {
         "--weak-concept-dynamics",
         "--topographic-factor", "3.0",
         "--off-target-factor", "0.3",
+        "--enable-adjective",
+        "--orthogonal-codes",
+        "--sparsity", "0.05",
     ],
-    # Phase 3: A->W readout. Drive each of 12 pools, cosine-rank the
-    # network's "spoken" word against all 12 trained words. v7 result:
-    # 0/12 due to concept_to_language_output_weight=0.5 (4x weaker
-    # than motor 2.0); fix queued for v8.
+    # Phase 3: A->W readout. Drive each of 16 pools, cosine-rank the
+    # network's "spoken" word against all 16 trained words. v14 result:
+    # 16/16 = 100% unanimous across seeds 42-45 (64/64 = 100% across 4
+    # seeds). CRITICAL: orthogonal-codes + sparsity 0.05 must match
+    # training (the reference patterns must use the same drive codes).
     "concept_speak_demo": [
         "--n-train-events", "200",
         "--n-lang-input", "2048",
@@ -943,6 +954,9 @@ PRESETS: dict[str, list[str]] = {
         "--weak-concept-dynamics",
         "--topographic-factor", "3.0",
         "--off-target-factor", "0.3",
+        "--enable-adjective",
+        "--orthogonal-codes",
+        "--sparsity", "0.05",
     ],
     # NOTE: phase_2_1_abc / phase_2_2_shakespeare presets exist only on
     # the path-f-hybrid branch (cortex_pretraining.py is not on main).

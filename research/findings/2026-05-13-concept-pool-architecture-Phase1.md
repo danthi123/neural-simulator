@@ -813,3 +813,89 @@ Demonstrates:
 - 3× diversity over Tier 1 (4 motor pools only)
 - Co-fire composition partial (2/6 pairs)
 - Sequential composition NOT YET (NMDA tau gap; v10 design queued)
+
+## v14 (orthogonal drive codes, 16 pools): NEW BEST — multi-seed PASS
+
+**Hypothesis:** v11's hash-based `vocab_to_drive_pattern` produces ~10%
+pairwise overlap between word patterns; that overlap is the residual
+interference floor on W→A. Replacing with `orthogonal_drive_pattern`
+(non-overlapping bands assigned by `cue_idx`) eliminates the floor.
+
+**Architecture:** v11 + 16 pools (4 motor + 4 noun + 4 verb + 4 adjective)
++ orthogonal codes via `--orthogonal-codes`. Same training recipe
+otherwise: 200 events/word, n_lang_input 2048, n_per_pool 200, weak
+dynamics, target-only STDP gating, topographic factor 3.0/0.3,
+reciprocal bias on pool→language_output.
+
+**5-seed FINAL result:**
+
+| Seed | Phase 1 W→A | Phase 3 A→W | Total | Wall (min) |
+|---|---|---|---|---|
+| 42 | **15/16** | 16/16 | 31/32 (97%) | 18.0 |
+| 43 | 12/16 | 16/16 | 28/32 (88%) | 16.3 |
+| 44 | 12/16 | 16/16 | 28/32 (88%) | 16.6 |
+| 45 | 12/16 | 16/16 | 28/32 (88%) | 16.3 |
+| 46 | 11/16 | 16/16 | 27/32 (84%) | 17.6 |
+| **Mean (5)** | **12.4/16 (77.5%)** | **16/16 unanimous (100%)** | **28.4/32 (88.75%)** |
+| **Std** | 1.52 | 0 | — | — |
+| **Range** | 11-15/16 | 16/16 | — | — |
+
+**Per-word PASS rate (5 seeds, 16-word vocab):**
+- **Robust 5/5:** west, apple, cat, come, hot, cold (6 words)
+- **Robust 4/5:** east, south, go, stop (4 words)
+- **Mixed 3/5:** north, river, dog, small (4 words)
+- **Fragile 2/5:** look, big (2 words)
+
+A→W is **unanimous 16/16 across all 5 seeds = 80/80 = 100%**. This is
+the strongest multi-seed binding result yet at 16-word vocab. Seed 42
+breakthrough W→A=15/16 (94%) demonstrates the orthogonal-code ceiling
+is genuinely high; the multi-seed mean 12.4/16 (77.5%) confirms the
+reliable improvement over v11 (mean 9.0/16 = 56%).
+
+**Comparison v9 → v11 → v14:**
+
+| Variant | Vocab | W→A mean | A→W mean | Total |
+|---|---|---|---|---|
+| v9 (hash codes, 12 pools) | 12 | 52% | 100% | 18.5/24 (77%) |
+| v11 (hash codes, +adjective) | 16 | 56% | 99% | 25/32 (78%) |
+| **v14 (orthogonal codes, +adjective)** | **16** | **77.5%** | **100%** | **28.4/32 (89%)** |
+
+v14 jumps both metrics: W→A +22pp over v11, total improvement +11pp.
+
+**Cosine strengthening (seed 42):** v11 cosines 0.05-0.40 → v14 cosines
+0.25-0.49. Cleaner readout signal correlates with the higher W→A.
+
+**Why orthogonal codes are the right fix:**
+v11 hash-based patterns: each word activates ~10% of lang_input neurons
+randomly. Two words overlap ~1% (10% × 10%) of their neurons, but
+~10-20% via correlation in dense connectivity. STDP at lang_input →
+pool sees mixed signal: target word's edges get LTP, but ~10% of
+target word's edges also belong to OTHER words → cross-word LTP/LTD
+interference.
+
+Orthogonal codes: word i occupies band `[i × (sparsity × n_neurons / N) :
+(i+1) × ...]`. Zero pairwise overlap. STDP at lang_input → pool is
+strictly word-specific. Phase 1 W→A jumps as the cross-word noise
+floor is eliminated.
+
+**Production recipe:**
+```bash
+python -m research.runners.concept_pool_demo --seed N \
+    --n-train-events 200 --n-lang-input 2048 --n-per-pool 200 \
+    --n-fs-per-pool 24 --weak-concept-dynamics --interleaved \
+    --topographic-factor 3.0 --off-target-factor 0.3 \
+    --enable-adjective --orthogonal-codes --sparsity 0.05 \
+    --save-bridge <bridge.h5> --out <result.json>
+
+python -m research.runners.concept_speak_demo --seed N \
+    --n-lang-input 2048 --n-per-pool 200 --n-fs-per-pool 24 \
+    --weak-concept-dynamics --enable-adjective --orthogonal-codes \
+    --sparsity 0.05 --load-bridge <bridge.h5> --out <speak.json>
+```
+
+**v14 is the new production recipe.** Surpasses v9 (12 pools, 6/12 W→A,
+12/12 A→W = 18/24) and v11 (16 pools, 11/16 W→A, 16/16 A→W = 27/32) on
+both metrics simultaneously while increasing vocab from 12→16 concepts.
+
+**Sequential composition unchanged** — still v15 work (see
+`docs/plans/2026-05-13-sequential-composition-design-note.md`).

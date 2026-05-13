@@ -136,8 +136,92 @@ persistent holding stage between concept pools and motor output:
 This is exactly Tier 2.3's pattern (which got stuck at 34-40% on
 phrase composition, but architecturally proven for persistence).
 
+## Update 2026-05-13 late (post-v12/v13/v14)
+
+**v10 (NMDA tau=250ms on ALL pools):** NEGATIVE on isolation. Canon-amplifies-
+bias path resurfaces — all pools self-sustain on random structural bias
+once NMDA tau is extended. Sequential persistence achieved but Phase 1
+W→A collapsed from 11/16 to 4/16.
+
+**v11 (NMDA tau=250ms on verb pools only):** PARTIAL. Verb pools held
+for ~150ms (3x baseline), but Phase 1 W→A dropped to 9/16 — verb pools
+still over-activated by stray lang_input drive. Composition seq 1/6.
+
+**v12 (verb_pool ↔ dlpfc_verb bidirectional):** NEGATIVE on isolation.
+Bidirectional feedback creates a leakage pathway: any pool's stray
+activity → dlpfc_verb via the broad concept→dlpfc pathway → back to
+verb_pool → all pools mildly active. Phase 1 collapsed to 6/16.
+
+**v13 (per-kind NMDA: verb=canon, motor/noun/adj=weak):** PARTIAL.
+verb_pool_X persistence +3x but Phase 1 isolation -5x (other words
+activate verb pools due to dlpfc back-feed in canon NMDA bistability).
+Sequential composition still ~1/6.
+
+**v14 (orthogonal drive codes, no holding mechanism):** Strong Phase 1
+(15/16 single-seed, 12-15/16 multi-seed) + perfect A→W (16/16 unanimous
+across seeds 42-45). Confirms orthogonal codes solve the cross-word
+overlap interference. **But no architectural change for sequential
+composition.** Composition test still ~co-fire-only.
+
+## v15 design — unidirectional verb_pool → dlpfc_verb → motor gating
+
+**Catalog grounding:** G.08 (BG-thalamic gating of PFC) + G.06 (PFC
+delay-period activity). The biology: PFC receives content from
+sensory/concept areas via FEEDFORWARD pathways and maintains it via
+INTERNAL recurrence + bistability. PFC then gates downstream motor
+selection via thalamo-cortical-striatal loops. Critically, PFC does
+NOT broadcast directly back to all upstream concept areas — that
+would erase selectivity. PFC's outputs go through gated pathways
+(BG, motor cortex, downstream effectors).
+
+**v15 architecture:**
+
+  language_input → verb_pool_X (existing, plastic)
+  verb_pool_X → dlpfc_verb (forward only, plastic) — NEW WIRING
+  dlpfc_verb internal recurrence (canon dynamics + NMDA bistability)
+  dlpfc_verb → motor_X (forward only, plastic, gated) — NEW WIRING
+  NO dlpfc_verb → verb_pool feedback (delete v12 wiring)
+
+**Mechanism:**
+1. "go" drive → verb_pool_GO fires → forward propagates to dlpfc_verb
+2. dlpfc_verb sustains via internal NMDA bistability (~100-200ms hold)
+3. "north" drive 50ms later → motor_N fires from lang_input pathway
+4. dlpfc_verb still firing → dlpfc → motor STDP strengthens during
+   the co-fire window → "go north" pair learned
+5. At inference: "go" sustains dlpfc → primes motor selection bias
+6. "north" alone: lang_input → motor_N (dominant) without prior dlpfc
+   activation → clean isolation preserved
+
+**Why this should work where v12/v13 failed:**
+- Forward-only verb_pool → dlpfc prevents back-leakage to other pools
+- dlpfc internal recurrence (200 neurons, density 0.15, canon dynamics)
+  provides the bistability v10/v11 tried to add globally
+- dlpfc→motor weights LEARNED, so spurious activations don't
+  preferentially route to any one motor
+
+**Implementation plan:**
+1. Add `enable_dlpfc_verb_unidirectional` flag to `build_biological_brain_regions`
+2. When true + enable_dlpfc_verb + enable_verb_pools:
+   - Add verb_pool_X → dlpfc_verb pathway per verb (forward, plastic)
+   - Add dlpfc_verb → motor_X pathway per direction (forward, plastic,
+     gated by `dlpfc_verb_to_motor`)
+   - DO NOT add dlpfc → verb_pool feedback
+3. Run training: open `verb_pool_to_dlpfc` gate during verb word events;
+   open `dlpfc_verb_to_motor` gate during co-firing windows in compose test
+4. Test v15a: train + Phase 1 W→A (should preserve v14's 12-15/16)
+5. Test v15b: train compose pairs + measure sequential PASS (target ≥ 4/6)
+
+**Estimated cost:** 1-2 days code, 8-12 hr training + eval for one seed.
+
+**Risk:** if dlpfc internal recurrence is too weak (lower density, weak
+weights), no hold. If too strong, dlpfc self-sustains indefinitely and
+loses selectivity. Tier 2.3 canon settings (density 0.15, weight 3.0/4.0,
+NMDA on) are the starting point.
+
 ## Notes
 
 This design note is intentionally NOT a plan — it's an option
-inventory for the next architectural decision after v7/v8 multi-seed
-validation completes.
+inventory for the next architectural decision. v15 (unidirectional
+verb→dlpfc→motor) is the most promising path forward; the v12 failure
+was due to bidirectional feedback breaking isolation, not the basic
+dlpfc-as-working-memory concept.

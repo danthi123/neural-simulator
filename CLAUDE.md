@@ -925,28 +925,51 @@ needs dedicated holding region (dlpfc_verb pattern, Tier 2.3), not
 uniform NMDA extension. v12 = dlpfc_verb integration for sequential
 composition is queued.
 
-**🎉🎉 v14 SINGLE-SEED BREAKTHROUGH (2026-05-13 night): orthogonal codes**
+**🎉🎉🎉 v14 5-SEED MULTI-SEED GO (2026-05-13 night): orthogonal codes
++ 16 pools, NEW PRODUCTION RECIPE**
 
-Hash-based vocab_to_drive_pattern produces ~10% pairwise overlap.
+Hash-based vocab_to_drive_pattern produced ~10% pairwise overlap.
 Per-word structural overlap → seed-dependent fragile words (v11
 multi-seed: half words fragile across seeds). v14 uses
 orthogonal_drive_pattern: each word gets a non-overlapping band.
 
-Seed 42 result:
-- Phase 1 W→A: **15/16 PASS (94%)** — up from v11's 11/16 (69%)
-- Phase 3 A→W: **16/16 PASS (100%)** — same as v11
-- TOTAL: **31/32 = 97% bidirectional binding at single seed**
-- Cosines 0.25-0.49 (much stronger than v11's 0.05-0.40)
+**5-seed FINAL result (seeds 42-46):**
+- Phase 1 W→A: **mean 12.4/16 (77.5%), std 1.52, range 11-15** —
+  up from v11 mean 9.0/16 (56%) and v9 mean 6.2/12 (52%)
+- Phase 3 A→W: **80/80 = 100% UNANIMOUS** across all 5 seeds
+- TOTAL: **142/160 = 88.75% bidirectional binding multi-seed**
+- 5 GO + 0 PARTIAL + 0 FAIL
 
-Multi-seed v14 in flight.
+**Per-word robustness (5 seeds):**
+- Robust 5/5: west, apple, cat, come, hot, cold (6 words)
+- Robust 4/5: east, south, go, stop (4 words)
+- Mixed 3/5: north, river, dog, small (4 words)
+- Fragile 2/5: look, big (2 words)
+
+10 of 16 words robust at 4-5 seeds; orthogonal codes lift the W→A mean
++22pp over v11. The architectural ceiling at this scale appears to be
+around mean 80% W→A with consistent 100% A→W.
 
 ```bash
 python -m research.runners.concept_pool_demo --seed N \
     --n-train-events 200 --n-lang-input 2048 --n-per-pool 200 \
     --n-fs-per-pool 24 --weak-concept-dynamics --interleaved \
     --topographic-factor 3.0 --off-target-factor 0.3 \
-    --enable-adjective --orthogonal-codes --sparsity 0.05
+    --enable-adjective --orthogonal-codes --sparsity 0.05 \
+    --save-bridge <out.h5> --out <out.json>
+
+python -m research.runners.concept_speak_demo --seed N \
+    --n-lang-input 2048 --n-per-pool 200 --n-fs-per-pool 24 \
+    --weak-concept-dynamics --enable-adjective --orthogonal-codes \
+    --sparsity 0.05 --load-bridge <out.h5> --out <speak.json>
 ```
+
+Total wall-clock 5-seed: ~85 min (~17 min/seed). 16-pool architecture
+(4 motor + 4 noun + 4 verb + 4 adjective) trains with 200 events/word
+× 16 words = 3200 interleaved events. Demonstrates 4× concept diversity
+over Tier 1's 4-motor-only ceiling with reliable bidirectional binding.
+
+**Findings:** `research/findings/2026-05-13-concept-pool-architecture-Phase1.md` §v14
 
 Sequential composition still open (v12 NEGATIVE bidirectional dlpfc;
 v13 PARTIAL per-kind NMDA: +3x persistence but -5x isolation). Real
