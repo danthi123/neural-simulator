@@ -901,31 +901,48 @@ PRESETS: dict[str, list[str]] = {
     # Phase 1: validate cross-category isolation (typing "apple" -> noun_APPLE,
     #          NOT motor_N or verb_GO). Tier 1 recipe at full scale.
     # Wall clock: ~15-25 min/seed.
+    # v7 production recipe (2026-05-13): 6/12 PASS at single seed,
+    # mean 6.5/12 across seeds 42-43 (std 0.71). Tightly-bounded smoke
+    # arch (2048 lang, 200/pool) trains in ~13 min/seed.
+    #
+    # Flags: weak-concept-dynamics (per iter AA recipe), interleaved
+    # (matches Tier 1 pattern), topographic 3.0/0.3 (target-priority,
+    # 10x ratio).
     "concept_pool_demo": [
         "--n-train-events", "200",
-        "--n-lang-input", "4096",
-        "--n-per-pool", "500",
-        "--n-fs-per-pool", "60",
+        "--n-lang-input", "2048",
+        "--n-per-pool", "200",
+        "--n-fs-per-pool", "24",
+        "--weak-concept-dynamics",
+        "--interleaved",
+        "--topographic-factor", "3.0",
+        "--off-target-factor", "0.3",
     ],
     # Phase 2: composition test - do multiple pools fire together for
     # phrases like "go north"? Tests NMDA sequential + co-fire merging.
-    # Trains 10 pools same as concept_pool_demo + 3 composition tests.
-    # Wall clock: ~20-30 min/seed (training same + 6 compose pairs).
+    # Same v7 recipe arch. Compose passes co-fire 2/6, sequential 0/6
+    # (weak dynamics trade off vs Phase 1 isolation).
     "concept_compose_demo": [
         "--n-train-events", "200",
-        "--n-lang-input", "4096",
-        "--n-per-pool", "500",
-        "--n-fs-per-pool", "60",
+        "--n-lang-input", "2048",
+        "--n-per-pool", "200",
+        "--n-fs-per-pool", "24",
+        "--weak-concept-dynamics",
+        "--topographic-factor", "3.0",
+        "--off-target-factor", "0.3",
     ],
-    # Phase 3: A->W readout. Drive each of 10 pools, cosine-rank the
-    # network's "spoken" word against all 10 trained words. Validates
-    # the reciprocal pool -> language_output pathway end-to-end.
-    # Wall clock: ~20-25 min/seed.
+    # Phase 3: A->W readout. Drive each of 12 pools, cosine-rank the
+    # network's "spoken" word against all 12 trained words. v7 result:
+    # 0/12 due to concept_to_language_output_weight=0.5 (4x weaker
+    # than motor 2.0); fix queued for v8.
     "concept_speak_demo": [
         "--n-train-events", "200",
-        "--n-lang-input", "4096",
-        "--n-per-pool", "500",
-        "--n-fs-per-pool", "60",
+        "--n-lang-input", "2048",
+        "--n-per-pool", "200",
+        "--n-fs-per-pool", "24",
+        "--weak-concept-dynamics",
+        "--topographic-factor", "3.0",
+        "--off-target-factor", "0.3",
     ],
     # NOTE: phase_2_1_abc / phase_2_2_shakespeare presets exist only on
     # the path-f-hybrid branch (cortex_pretraining.py is not on main).
