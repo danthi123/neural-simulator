@@ -831,6 +831,12 @@ def _load_bridge_from_checkpoint(checkpoint_path: str, mode: str, seed: int,
         bridge = _load_or_train_tier1(seed, n_train_events=0, verbose=False)
     elif mode == "synonym":
         bridge = _load_or_train_synonym(seed, n_train_events=0, verbose=False)
+    elif mode == "synonym12":
+        bridge = _load_or_train_synonym(seed, n_train_events=0, verbose=False,
+                                          vocab_size=12)
+    elif mode == "synonym16":
+        bridge = _load_or_train_synonym(seed, n_train_events=0, verbose=False,
+                                          vocab_size=16)
     elif mode == "tier1_hippo":
         # Build Tier 1 architecture WITH hippocampus consolidation
         # (for lineages bootstrapped via bootstrap_hippo_lineage). No
