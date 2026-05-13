@@ -157,6 +157,51 @@ If v2 fails, the proven fallback is **weak dynamics
 (0.05/0.3/0.8)** following iter AA. This trades cortical realism
 for differentiation robustness.
 
+## v2b smoke result (50 events, 2048 lang_input, 200 per_pool)
+
+**Result: 3/12 PASS** (north, east, go).
+
+Wall clock: 1245s (~21 min). Per-word: motor 146-180s, noun 71-84s,
+verb 55-57s (GPU warm-up effect).
+
+| Word | Target | Target rate | Max-off | Max-off pool | Ratio |
+|---|---|---|---|---|---|
+| north | motor_N | **1.220** | 1.190 | noun_pool_RIVER | **1.03x PASS** |
+| east | motor_E | **1.410** | 1.285 | noun_pool_RIVER | **1.10x PASS** |
+| south | motor_S | 0.730 | 1.000 | verb_pool_LOOK | 0.73x FAIL |
+| west | motor_W | 0.980 | 1.200 | noun_pool_RIVER | 0.82x FAIL |
+| apple | noun_pool_APPLE | 1.420 | 1.490 | motor_W | 0.95x FAIL |
+| river | noun_pool_RIVER | 0.920 | 1.025 | verb_pool_GO | 0.90x FAIL |
+| dog | noun_pool_DOG | 1.260 | 1.315 | verb_pool_GO | 0.96x FAIL |
+| cat | noun_pool_CAT | 1.775 | 1.940 | motor_N | 0.91x FAIL |
+| go | verb_pool_GO | **1.725** | 1.565 | noun_pool_CAT | **1.10x PASS** |
+| come | verb_pool_COME | 0.905 | 1.390 | noun_pool_DOG | 0.65x FAIL |
+| stop | verb_pool_STOP | 0.835 | 1.215 | verb_pool_GO | 0.69x FAIL |
+| look | verb_pool_LOOK | 0.920 | 0.950 | noun_pool_DOG | 0.97x FAIL |
+
+### Diagnosis: v2 fixes worked, but training under-dosed at 50 events
+
+- **v1 dominance pattern gone**: verb_pool_COME no longer dominates
+  9/10 words. Different pools dominate as max-off per word — no
+  single structural winner. The 4-verb pool fix + target-only STDP
+  gating addressed the v1 root cause.
+- **Many borderline FAILs** (ratio 0.90-0.97): close calls. With
+  more training, target weights should pull further ahead.
+- **Some target rates LOW** (south 0.73, come 0.91, stop 0.84):
+  these words got under-trained pathways. More events should help.
+- **Tier 1 used 200 events**; smoke v2b used 50 (one-quarter dose).
+
+### v2c launched (200 events, save-bridge enabled)
+
+Same arch as v2b smoke (2048 lang_input, 200 per pool, 24 fs per pool)
+but with full Tier 1 training dose. ETA ~80 min.
+
+Expected outcome: most borderline FAILs flip to PASS. Target ≥ 8/12.
+If still partial after 200 events, try further iterations:
+- Stronger topographic prior (3.0/0.3 = 10x ratio)
+- Weak dynamics (iter AA recipe 0.05/0.3/0.8)
+- Per-kind dynamics parameters
+
 **Sizes**: 13,792 total neurons (4096 lang_in + 4096 lang_out +
 4×500 motor + 4×60 motor_FS + 4×500 noun + 4×60 noun_FS + 2×500 verb +
 2×60 verb_FS). 14.7M synapses, 2.4 GB GPU.
