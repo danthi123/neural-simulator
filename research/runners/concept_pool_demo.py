@@ -464,7 +464,10 @@ def run_concept_pool_demo(seed: int = 42,
                             n_per_pool: int = 500,
                             n_fs_per_pool: int = 60,
                             apply_topographic: bool = True,
+                            topographic_factor: float = 2.0,
+                            off_target_factor: float = 0.5,
                             enable_adjective: bool = False,
+                            interleaved: bool = False,
                             reset_steps: int = 50,  # 25ms (NMDA tau is ~150ms)
                             verbose: bool = True,
                             load_bridge: str = None,
@@ -525,6 +528,8 @@ def run_concept_pool_demo(seed: int = 42,
         apply_concept_topographic_bias(
             bridge,
             n_lang_input=n_lang_input,
+            topographic_factor=topographic_factor,
+            off_target_factor=off_target_factor,
             verbose=verbose,
         )
 
@@ -546,27 +551,54 @@ def run_concept_pool_demo(seed: int = 42,
         print(f"\n[TRAIN] SKIPPED (loaded from checkpoint)", flush=True)
         train_sec = 0.0
     else:
+        total_events = len(all_targets) * n_train_events
+        mode_str = "interleaved" if interleaved else "sequential"
         print(f"\n[TRAIN] {len(all_targets)} (word, pool) pairs, "
-              f"{n_train_events} events each = "
-              f"{len(all_targets) * n_train_events} total events", flush=True)
+              f"{n_train_events} events each = {total_events} total events "
+              f"({mode_str})", flush=True)
 
-        # Train word-by-word (interleaved would be more biology-faithful but
-        # this is the MVP; bio_three_factor uses interleaved batches)
         t_train = time.time()
-        for word, target in all_targets:
-            t_word = time.time()
-            train_word_to_pool(
-                bridge, word, target,
-                n_events=n_train_events,
-                reset_steps=reset_steps,
-                n_lang_input=n_lang_input,
-                n_lang_output=n_lang_input,
-                verbose=False,
-            )
-            print(f"  trained '{word}' -> {target} "
-                  f"({time.time() - t_word:.0f}s)", flush=True)
+        if interleaved:
+            # Interleaved training: shuffle event order across all words.
+            # Matches bio_three_factor's pattern. Prevents one pool from
+            # dominating during long uninterrupted same-word training.
+            # Per-event cost is higher (gate switching per event), so this
+            # is slower than sequential but may yield cleaner discrimination
+            # at biological scale.
+            buffer = []
+            for word, target in all_targets:
+                for _ in range(n_train_events):
+                    buffer.append((word, target))
+            rng.shuffle(buffer)
+            for ev_idx, (word, target) in enumerate(buffer):
+                train_word_to_pool(
+                    bridge, word, target,
+                    n_events=1,
+                    reset_steps=reset_steps,
+                    n_lang_input=n_lang_input,
+                    n_lang_output=n_lang_input,
+                    verbose=False,
+                )
+                if (ev_idx + 1) % 100 == 0:
+                    print(f"  interleaved event {ev_idx + 1}/{total_events}"
+                          f" ({time.time() - t_train:.0f}s)", flush=True)
+        else:
+            # Sequential: train all events for word_1, then word_2, etc.
+            for word, target in all_targets:
+                t_word = time.time()
+                train_word_to_pool(
+                    bridge, word, target,
+                    n_events=n_train_events,
+                    reset_steps=reset_steps,
+                    n_lang_input=n_lang_input,
+                    n_lang_output=n_lang_input,
+                    verbose=False,
+                )
+                print(f"  trained '{word}' -> {target} "
+                      f"({time.time() - t_word:.0f}s)", flush=True)
         train_sec = time.time() - t_train
-        print(f"\n[TRAIN] complete ({train_sec:.0f}s)", flush=True)
+        print(f"\n[TRAIN] complete ({train_sec:.0f}s, {mode_str})",
+              flush=True)
 
         if save_bridge:
             print(f"\n[SAVE] saving bridge to {save_bridge}", flush=True)
@@ -659,9 +691,19 @@ def main():
     parser.add_argument("--n-fs-per-pool", type=int, default=60)
     parser.add_argument("--no-topographic", action="store_true",
                          help="Skip Pulvermuller topographic bias init")
+    parser.add_argument("--topographic-factor", type=float, default=2.0,
+                         help="Multiplier for target pool weights "
+                         "(default 2.0). v3 stronger prior: try 3.0.")
+    parser.add_argument("--off-target-factor", type=float, default=0.5,
+                         help="Multiplier for off-target pool weights "
+                         "(default 0.5). v3 stronger prior: try 0.3.")
     parser.add_argument("--enable-adjective", action="store_true",
                          help="Add 4 adjective pools (BIG/SMALL/HOT/COLD); "
                          "14 total output categories")
+    parser.add_argument("--interleaved", action="store_true",
+                         help="Use interleaved training (shuffled event "
+                         "order) instead of sequential word-by-word. "
+                         "Matches bio_three_factor Tier 1 pattern.")
     parser.add_argument("--reset-steps", type=int, default=50,
                          help="Steps to free-run between training events "
                          "(default 50 = 25ms). For v3 NMDA-decay fix: "
@@ -683,7 +725,10 @@ def main():
         n_per_pool=args.n_per_pool,
         n_fs_per_pool=args.n_fs_per_pool,
         apply_topographic=not args.no_topographic,
+        topographic_factor=args.topographic_factor,
+        off_target_factor=args.off_target_factor,
         enable_adjective=args.enable_adjective,
+        interleaved=args.interleaved,
         reset_steps=args.reset_steps,
         load_bridge=args.load_bridge,
         save_bridge=args.save_bridge,
