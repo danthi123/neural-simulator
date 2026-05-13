@@ -66,7 +66,7 @@ def cmd_hear(bridge, word: str, n_lang_input: int):
     print(f"\n[HEAR '{word}'] per-pool firing rates (top-5):")
     for pool, rate in sorted_rates[:5]:
         target_word = _target_word_for_pool(pool)
-        marker = "✓" if target_word == word else " "
+        marker = "*" if target_word == word else " "
         print(f"  {marker} {pool:22s}: {rate:.3f}  (trained for '{target_word}')")
     top1_pool, top1_rate = sorted_rates[0]
     print(f"\n  Network 'hears': {_target_word_for_pool(top1_pool)} via {top1_pool}",
@@ -98,7 +98,7 @@ def cmd_speak(bridge, pool: str, n_lang_input: int, stim_steps: int = 100):
     target_word = _target_word_for_pool(pool)
     print(f"\n[SPEAK {pool}] cosine-ranked words (top-5):")
     for word, score in sorted_scores[:5]:
-        marker = "✓" if word == target_word else " "
+        marker = "*" if word == target_word else " "
         print(f"  {marker} {word:10s}: {score:.3f}")
     top1, top_score = sorted_scores[0]
     print(f"\n  Network 'says': '{top1}' (cosine {top_score:.3f}, "
@@ -151,7 +151,7 @@ def cmd_list():
 def run_repl(bridge, n_lang_input: int = 4096):
     """Interactive command loop."""
     print("\n" + "=" * 60)
-    print("CONCEPT POOL REPL — 10 distinct output categories")
+    print("CONCEPT POOL REPL - 12 distinct output categories")
     print("Type 'help' for commands. Type a word to hear it.")
     print("=" * 60, flush=True)
 
