@@ -530,6 +530,133 @@ def test_v15_unidirectional_has_no_back_feedback():
     )
 
 
+# ============================================================================
+# v16 direct verb_pool -> motor pathway tests (2026-05-13 night, post-v15)
+# ============================================================================
+# v16 abandons the PFC-region approach (v12/v15 both NEGATIVE on v14's
+# reciprocal binding due to dlpfc_verb's 200-neuron perturbation of
+# eligibility-trace state). v16 takes the simplest possible compositional
+# approach: direct verb_pool_X -> motor_Y plastic pathways. NO new region.
+# 16 plastic pathways (4 verbs × 4 motors). Zero-init + zero-jitter so
+# Phase 1 is unaffected. Compose training opens the shared gate and drives
+# (verb_word, motor_word) co-firing; STDP grows weights from 0.
+
+
+def test_v16_default_off_no_direct_pathways():
+    """Default behavior: enable_direct_verb_to_motor=False produces no
+    direct verb -> motor pathways."""
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_verb_pools=True, **SMALL_CFG,
+    )
+    direct = [p for p in pathways
+              if p.from_region.startswith("verb_pool_")
+              and p.to_region.startswith("motor_")
+              and not p.to_region.startswith("motor_FS_")]
+    assert direct == []
+
+
+def test_v16_flag_on_adds_16_pathways():
+    """v16: 4 verbs × 4 motors = 16 direct verb -> motor pathways."""
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_verb_pools=True,
+        verb_pool_names=["GO", "COME", "STOP", "LOOK"],
+        enable_direct_verb_to_motor=True,
+        **SMALL_CFG,
+    )
+    direct = [p for p in pathways
+              if p.from_region.startswith("verb_pool_")
+              and p.to_region.startswith("motor_")
+              and not p.to_region.startswith("motor_FS_")]
+    assert len(direct) == 16
+    # Each verb -> each motor exactly once
+    pairs = set((p.from_region, p.to_region) for p in direct)
+    expected = {(f"verb_pool_{v}", f"motor_{m}")
+                for v in ["GO", "COME", "STOP", "LOOK"]
+                for m in ["N", "E", "S", "W"]}
+    assert pairs == expected
+
+
+def test_v16_all_zero_init():
+    """v16 critical invariant: ALL 16 pathways have weight_mean=0.0 +
+    weight_jitter=0.0. This ensures the pathways are STRUCTURALLY
+    present but FUNCTIONALLY silent until compose training opens the
+    gate and grows weights via co-firing STDP. Phase 1 W->A and
+    Phase 3 A->W must be preserved."""
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_verb_pools=True,
+        enable_direct_verb_to_motor=True,
+        **SMALL_CFG,
+    )
+    direct = [p for p in pathways
+              if p.from_region.startswith("verb_pool_")
+              and p.to_region.startswith("motor_")
+              and not p.to_region.startswith("motor_FS_")]
+    assert len(direct) > 0
+    for p in direct:
+        assert p.weight_mean == 0.0, (
+            f"v16 pathway {p.from_region}->{p.to_region} must default to "
+            f"weight_mean=0.0 (got {p.weight_mean}). v15a regression at "
+            f"weight_mean=2.0 + jitter=0.2 produced 8/16 Phase 1."
+        )
+        assert p.weight_jitter == 0.0, (
+            f"v16 pathway {p.from_region}->{p.to_region} must default to "
+            f"weight_jitter=0.0 (got {p.weight_jitter}). Non-zero jitter "
+            f"injects noise current during Phase 1 even with weight_mean=0."
+        )
+
+
+def test_v16_shared_gate_name():
+    """All v16 pathways share one plasticity gate name so compose
+    training can open them all atomically."""
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_verb_pools=True,
+        enable_direct_verb_to_motor=True,
+        **SMALL_CFG,
+    )
+    direct = [p for p in pathways
+              if p.from_region.startswith("verb_pool_")
+              and p.to_region.startswith("motor_")
+              and not p.to_region.startswith("motor_FS_")]
+    gate_names = set(p.plasticity_gate for p in direct)
+    assert gate_names == {"verb_to_motor_direct"}, (
+        f"v16 pathways must share gate name 'verb_to_motor_direct' "
+        f"so compose training can open atomically. Got: {gate_names}"
+    )
+
+
+def test_v16_independent_of_v15():
+    """v16 direct pathway is independent of v15 dlpfc unidirectional.
+    Either, both, or neither can be enabled; v16 adds verb -> motor,
+    v15 adds verb -> dlpfc -> motor. No interaction."""
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    # v16 only — no v15
+    regions, pathways = build_biological_brain_regions(
+        enable_verb_pools=True,
+        enable_direct_verb_to_motor=True,
+        enable_dlpfc_verb=False,
+        enable_dlpfc_verb_unidirectional=False,
+        **SMALL_CFG,
+    )
+    # v16 pathways present
+    direct = [p for p in pathways
+              if p.from_region.startswith("verb_pool_")
+              and p.to_region.startswith("motor_")
+              and not p.to_region.startswith("motor_FS_")]
+    assert len(direct) > 0
+    # No dlpfc_verb region
+    has_dlpfc = any(r.name == "dlpfc_verb" for r in regions)
+    assert not has_dlpfc
+    # No v15 pathways either
+    v15_pathways = [p for p in pathways
+                    if p.to_region == "dlpfc_verb"
+                    or p.from_region == "dlpfc_verb"]
+    assert v15_pathways == []
+
+
 def test_v15_independent_of_v12_bidirectional():
     """v15 unidirectional + v12 bidirectional are independent flags.
 

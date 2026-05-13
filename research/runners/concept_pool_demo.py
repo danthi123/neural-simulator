@@ -81,6 +81,7 @@ def build_concept_bridge(seed: int,
                           weak_dynamics: bool = False,
                           enable_dlpfc_verb_holding: bool = False,
                           enable_dlpfc_verb_unidirectional: bool = False,
+                          enable_direct_verb_to_motor: bool = False,
                           nmda_verb_pools: bool = False,
                           nmda_tau_decay_ms: float = 100.0,
                           verbose: bool = True):
@@ -143,6 +144,11 @@ def build_concept_bridge(seed: int,
         # gating. Fixes v12's bidirectional leakage. Forward only,
         # plastic, gated separately for verb input vs motor gating.
         enable_dlpfc_verb_unidirectional=enable_dlpfc_verb_unidirectional,
+        # v16 (2026-05-13 night, post-v15-NEGATIVE): direct verb_pool ->
+        # motor plastic pathways. No new region (which broke v15 by
+        # collapsing v14's A->W from 100% to 25%). Zero-init Hebbian
+        # association; compose training grows weights from co-firing.
+        enable_direct_verb_to_motor=enable_direct_verb_to_motor,
         # v13 (2026-05-13): per-kind NMDA opt-in (cluster G v2 pattern)
         enable_nmda_verb_pools=nmda_verb_pools,
     )
@@ -715,6 +721,7 @@ def run_concept_pool_demo(seed: int = 42,
                             weak_dynamics: bool = False,
                             enable_dlpfc_verb_holding: bool = False,
                             enable_dlpfc_verb_unidirectional: bool = False,
+                            enable_direct_verb_to_motor: bool = False,
                             nmda_verb_pools: bool = False,
                             nmda_tau_decay_ms: float = 100.0,
                             orthogonal_codes: bool = False,
@@ -757,6 +764,7 @@ def run_concept_pool_demo(seed: int = 42,
         weak_dynamics=weak_dynamics,
         enable_dlpfc_verb_holding=enable_dlpfc_verb_holding,
         enable_dlpfc_verb_unidirectional=enable_dlpfc_verb_unidirectional,
+        enable_direct_verb_to_motor=enable_direct_verb_to_motor,
         nmda_verb_pools=nmda_verb_pools,
         nmda_tau_decay_ms=nmda_tau_decay_ms,
         verbose=verbose,
@@ -1010,7 +1018,17 @@ def main():
                          "verb pools and adding forward dlpfc -> motor pathways "
                          "(catalog G.06/G.08 PFC working memory + gating). dlpfc_verb "
                          "internal recurrence + NMDA bistability provides holding; "
-                         "feedforward-only architecture preserves Phase 1 isolation.")
+                         "feedforward-only architecture preserves Phase 1 isolation. "
+                         "NOTE: v15 NEGATIVE multi-seed (2026-05-13). The 200-neuron "
+                         "dlpfc_verb region collapses v14's A->W from 100 percent to 25 percent "
+                         "via off-by-1 eligibility-trace perturbation. Use v16 instead.")
+    parser.add_argument("--enable-direct-verb-to-motor", action="store_true",
+                         help="v16: direct verb_pool_X -> motor_Y plastic pathways "
+                         "(16 total = 4 verbs × 4 motors). No new region. Hebbian "
+                         "co-firing association. Zero-init + zero-jitter so Phase 1 "
+                         "is bit-equivalent to v14 until compose training opens the "
+                         "shared gate 'verb_to_motor_direct' and drives "
+                         "(verb_word, motor_word) co-firing.")
     parser.add_argument("--nmda-verb-pools", action="store_true",
                          help="v13: per-kind NMDA opt-in. Enable NMDA bistability "
                          "ONLY on verb pools (cluster G v2 pattern). Other pools "
@@ -1054,6 +1072,7 @@ def main():
         weak_dynamics=args.weak_concept_dynamics,
         enable_dlpfc_verb_holding=args.enable_dlpfc_verb_holding,
         enable_dlpfc_verb_unidirectional=args.enable_dlpfc_verb_unidirectional,
+        enable_direct_verb_to_motor=args.enable_direct_verb_to_motor,
         nmda_verb_pools=args.nmda_verb_pools,
         nmda_tau_decay_ms=args.nmda_tau_decay_ms,
         orthogonal_codes=args.orthogonal_codes,

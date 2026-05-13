@@ -450,6 +450,15 @@ def build_biological_brain_regions(
     # motor selection (catalog G.06 PFC working memory + G.08 BG-thalamic
     # gating). Biology: PFC outputs to motor/striatal/thalamic loops, not
     # back to upstream concept areas.
+    # v16 (2026-05-13 night, post-v15-NEGATIVE): direct verb_pool ->
+    # motor plastic pathways. Simplest possible compositional substrate.
+    # No new region (v12/v15's dlpfc_verb perturbed v14's reciprocal
+    # binding). 4 verbs × 4 motors = 16 plastic pathways with shared
+    # plasticity gate "verb_to_motor_direct". Default OFF; zero-init
+    # (weight 0.0 + jitter 0.0) when enabled so Phase 1 is preserved
+    # exactly until compose training opens the gate.
+    enable_direct_verb_to_motor: bool = False,
+    direct_verb_to_motor_density: float = 0.20,
     enable_dlpfc_verb_unidirectional: bool = False,
     verb_pool_to_dlpfc_uni_density: float = 0.30,
     # IMPORTANT: BOTH v15 pathways default to weight_mean=0.0 + jitter=0.0.
@@ -1580,6 +1589,31 @@ def build_biological_brain_regions(
                 plastic=True,
                 plasticity_gate="dlpfc_verb_to_motor_uni",
             ))
+
+    # v16 (2026-05-13 night, post-v15 NEGATIVE): direct verb_pool_X ->
+    # motor_Y plastic pathways. No new region (which was v15's
+    # downfall — adding 200-neuron dlpfc_verb collapsed v14 A->W from
+    # 100% to 25% multi-seed). Direct Hebbian co-firing approach:
+    # compose training drives (verb_word, motor_word) simultaneously,
+    # STDP at verb_pool_X -> motor_Y grows weights from 0 to non-zero
+    # for the co-fired pairs. 16 pathways total (4 verbs × 4 motors)
+    # with shared gate "verb_to_motor_direct" for atomic compose-mode
+    # opening. Zero-init (weight=0, jitter=0) so Phase 1 W->A and
+    # Phase 3 A->W are bit-equivalent to v14 until compose training.
+    if enable_direct_verb_to_motor and enable_verb_pools:
+        v16_verb_names = (verb_pool_names if verb_pool_names is not None
+                          else ["GO", "COME"])
+        for vname in v16_verb_names:
+            for action in ACTION_NAMES:
+                pathways.append(RegionPathway(
+                    from_region=f"verb_pool_{vname}",
+                    to_region=f"motor_{action}",
+                    density=direct_verb_to_motor_density,
+                    weight_mean=0.0,      # zero-init = Phase 1 preserved
+                    weight_jitter=0.0,    # zero jitter = no noise injection
+                    plastic=True,
+                    plasticity_gate="verb_to_motor_direct",
+                ))
 
     return regions, pathways
 
