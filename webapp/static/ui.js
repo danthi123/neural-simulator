@@ -270,6 +270,11 @@ export function categorizeExperiment(experimentName) {
       e.includes("chat_continual_demo") || e.includes("chat_learn_demo") ||
       e.includes("chat_speak_demo"))
     return { category: "Track 3 chat demos", color: "#f472b6" };  // pink
+  // 2026-05-13: concept pool architecture (diversity beyond 4 motors).
+  // noun_pool_APPLE, verb_pool_GO etc — addresses conversational ceiling.
+  if (e.includes("concept_pool") || e.includes("concept_compose") ||
+      e.includes("noun_pool") || e.includes("verb_pool"))
+    return { category: "Concept pool architecture", color: "#60a5fa" };  // sky blue
   if (e.includes("smoke") || e.includes("test")) return { category: "smoke", color: "#5f6770" };
   return { category: "other", color: "#9aa3ad" };
 }

@@ -890,6 +890,33 @@ PRESETS: dict[str, list[str]] = {
         "--n-motor-fs-per-action", "240",
         "--n-test-per-word", "20",
     ],
+    # ─── 2026-05-13 concept pool architecture (diversity beyond 4 motors) ─
+    # User mandate 2026-05-12: focus on concepts/composition/diversity.
+    # Adds dedicated noun pools (APPLE/RIVER/DOG/CAT) + verb pools (GO/COME)
+    # alongside existing motor pools (N/E/S/W). 10 distinct output categories
+    # = 2.5x diversity over Tier 1's 4-motor ceiling. Each pool follows the
+    # proven Tier 1 recipe (500 neurons + paired teacher + FS cross-inhibition
+    # within kind + reciprocal lang_output).
+    #
+    # Phase 1: validate cross-category isolation (typing "apple" -> noun_APPLE,
+    #          NOT motor_N or verb_GO). Tier 1 recipe at full scale.
+    # Wall clock: ~15-25 min/seed.
+    "concept_pool_demo": [
+        "--n-train-events", "200",
+        "--n-lang-input", "4096",
+        "--n-per-pool", "500",
+        "--n-fs-per-pool", "60",
+    ],
+    # Phase 2: composition test - do multiple pools fire together for
+    # phrases like "go north"? Tests NMDA sequential + co-fire merging.
+    # Trains 10 pools same as concept_pool_demo + 3 composition tests.
+    # Wall clock: ~20-30 min/seed (training same + 6 compose pairs).
+    "concept_compose_demo": [
+        "--n-train-events", "200",
+        "--n-lang-input", "4096",
+        "--n-per-pool", "500",
+        "--n-fs-per-pool", "60",
+    ],
     # NOTE: phase_2_1_abc / phase_2_2_shakespeare presets exist only on
     # the path-f-hybrid branch (cortex_pretraining.py is not on main).
     # Run from that branch:
@@ -945,6 +972,9 @@ PRESET_RUNNERS: dict[str, str] = {
     "consolidation_synonym_64word_lang_balanced_smoke":  "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_256word_big_encoding_smoke":  "research.runners.consolidation_synonym_trainer",
     "consolidation_synonym_16word_big_motor_smoke":      "research.runners.consolidation_synonym_trainer",
+    # Concept pool architecture (2026-05-13)
+    "concept_pool_demo":     "research.runners.concept_pool_demo",
+    "concept_compose_demo":  "research.runners.concept_compose_demo",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
