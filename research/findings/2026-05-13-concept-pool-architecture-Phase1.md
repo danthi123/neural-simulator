@@ -128,6 +128,35 @@ Maps to several catalog entries (catalog-build branch,
 This work is the first attempt to implement the ventral language
 stream in the simulator.
 
+## Prior art in this codebase
+
+`enable_multi_pool_wernicke` (existing infrastructure in
+`build_biological_brain_regions`) already implements a similar
+per-concept Wernicke architecture. The P5 iter KK-PP arc (2026-05-11
+to 2026-05-12) explored this exact problem space and discovered:
+
+- Iter AA (toy scale, weak dynamics 0.05/0.3/0.8): **4/6 BIDIR** —
+  ceiling.
+- Iter KK (canon dynamics 0.10/2.0/4.0, biological scale):
+  **0/seed_42** — "canon amplifies structural bias".
+- Iter LL/MM/NN/OO/PP: 0-1/seed at biological scale, ceiling
+  confirmed.
+
+Key takeaway: at biological scale, **per-seed random structural
+pool variance compounds through multi-hop chains and dominates the
+input signal**.
+
+My concept_pool_demo uses **cortical canon (0.10/2.0/4.0)** for
+each concept pool. This may trigger the same structural-bias
+amplification observed in wernicke iter KK. **v2 will tell us
+whether the symmetric pool counts + target-only STDP gating + 4x
+topographic prior are enough to overcome this — or whether the same
+ceiling applies.**
+
+If v2 fails, the proven fallback is **weak dynamics
+(0.05/0.3/0.8)** following iter AA. This trades cortical realism
+for differentiation robustness.
+
 **Sizes**: 13,792 total neurons (4096 lang_in + 4096 lang_out +
 4×500 motor + 4×60 motor_FS + 4×500 noun + 4×60 noun_FS + 2×500 verb +
 2×60 verb_FS). 14.7M synapses, 2.4 GB GPU.
