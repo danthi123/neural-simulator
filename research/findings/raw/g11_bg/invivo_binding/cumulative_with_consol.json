@@ -1,0 +1,127 @@
+{
+  "base_lineage": "main_hippo",
+  "seed": 42,
+  "n_events_per_binding": 200,
+  "bindings": [
+    {
+      "key": "apple",
+      "value": "north"
+    },
+    {
+      "key": "mountain",
+      "value": "south"
+    },
+    {
+      "key": "cat",
+      "value": "east"
+    },
+    {
+      "key": "dog",
+      "value": "west"
+    }
+  ],
+  "binding_steps": [
+    {
+      "step": 1,
+      "new_key": "apple",
+      "new_target": "N",
+      "train_seconds": 182.84457421302795,
+      "consolidation_seconds": 503.8197753429413,
+      "recalls": {
+        "apple": {
+          "expected": "N",
+          "got": "E",
+          "confidence": 2.111111111111111,
+          "correct": false
+        }
+      },
+      "n_correct_so_far": 0
+    },
+    {
+      "step": 2,
+      "new_key": "mountain",
+      "new_target": "S",
+      "train_seconds": 184.6046097278595,
+      "consolidation_seconds": 503.8134889602661,
+      "recalls": {
+        "apple": {
+          "expected": "N",
+          "got": "E",
+          "confidence": 1.2222222222222223,
+          "correct": false
+        },
+        "mountain": {
+          "expected": "S",
+          "got": "E",
+          "confidence": 6.363636363636363,
+          "correct": false
+        }
+      },
+      "n_correct_so_far": 0
+    },
+    {
+      "step": 3,
+      "new_key": "cat",
+      "new_target": "E",
+      "train_seconds": 186.69609093666077,
+      "consolidation_seconds": 504.79201340675354,
+      "recalls": {
+        "apple": {
+          "expected": "N",
+          "got": "N",
+          "confidence": 1.7647058823529411,
+          "correct": true
+        },
+        "mountain": {
+          "expected": "S",
+          "got": "S",
+          "confidence": 1.0,
+          "correct": true
+        },
+        "cat": {
+          "expected": "E",
+          "got": "W",
+          "confidence": 4.25,
+          "correct": false
+        }
+      },
+      "n_correct_so_far": 2
+    },
+    {
+      "step": 4,
+      "new_key": "dog",
+      "new_target": "W",
+      "train_seconds": 187.29485177993774,
+      "consolidation_seconds": 515.0185661315918,
+      "recalls": {
+        "apple": {
+          "expected": "N",
+          "got": "W",
+          "confidence": 1.2,
+          "correct": false
+        },
+        "mountain": {
+          "expected": "S",
+          "got": "W",
+          "confidence": 1.0588235294117647,
+          "correct": false
+        },
+        "cat": {
+          "expected": "E",
+          "got": "E",
+          "confidence": 1.2307692307692308,
+          "correct": true
+        },
+        "dog": {
+          "expected": "W",
+          "got": "W",
+          "confidence": 1.1666666666666667,
+          "correct": true
+        }
+      },
+      "n_correct_so_far": 2
+    }
+  ],
+  "final_correct": 2,
+  "total_bindings": 4
+}
