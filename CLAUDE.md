@@ -1046,14 +1046,16 @@ the 200ev sweet-spot version. 400ev version preserved at
 bridges/lineage/main_hippo_400ev for future comparison. Balanced
 version at main_hippo_balanced (also doesn't break ceiling).
 
-**🎉 SYNONYM12 + SYNONYM16 CHAT_SPEAK VALIDATED (2026-05-12):**
+**🎉 FULL VOCAB TIER LADDER CHAT_SPEAK VALIDATED (2026-05-12/13):**
 
-| Mode | Vocab | W→A | A→W | Verdict |
-|---|---|---|---|---|
-| Tier 1 | 4w | 74-98% | 58% | GO multi-seed |
-| Synonym (Tier 2.1) | 8w | 31-56% | 85% | GO 6-seed |
-| **Synonym12** | **12w** | **56%** | **100%** | **GO seed 42** |
-| **Synonym16** | **16w** | **56%** | **100%** | **GO seed 42** |
+| Mode | Vocab | n_motor | W→A | A→W | Verdict |
+|---|---|---|---|---|---|
+| Tier 1 | 4w | 500 | 74-98% | 58% | GO multi-seed |
+| Synonym (Tier 2.1) | 8w | 1000 | 31-56% | 85% | GO 6-seed |
+| Synonym12 | 12w | 2000 | 56% | 100% | GO seed 42 |
+| Synonym16 | 16w | 2000 | 56% | 100% | GO seed 42 |
+| Synonym24 | 24w | 2000 | 56% | 100% | GO seed 42 (multi-lang ES+DE) |
+| **Synonym32** | **32w** | **3000** | **44%** | **100%** | **GO seed 42 (multi-lang ES+DE+JP+AR)** |
 
 Synonym12 and Synonym16 chat_speak both achieve 100% A→W (4/4 top-1
 correct primary direction word) and 56% W→A (9x chance for 16-word).
