@@ -427,12 +427,16 @@ def build_biological_brain_regions(
     concept_pool_internal_density: float = None,  # None -> use motor_internal_density
     concept_pool_exc_weight_mean: float = None,
     concept_pool_inh_weight_mean: float = None,
-    # Reciprocal pool → language_output density/weight. Same defaults as
-    # motor → language_output. The lang_output pathway makes the pool
-    # "speakable" — firing the pool generates the corresponding word
-    # pattern in language_output (A→W readout).
+    # Reciprocal pool → language_output density/weight. 2026-05-13:
+    # weight bumped from 0.5 → 2.0 to match motor → language_output
+    # (Tier 1 uses 2.0). v7 A→W readout returned 0/12 with weight 0.5
+    # because pool→lang_output projection was 4x weaker than the
+    # motor pathway, producing indistinguishable readout patterns.
+    # The lang_output pathway makes the pool "speakable" — firing the
+    # pool generates the corresponding word pattern in language_output
+    # (A→W readout).
     concept_to_language_output_density: float = 0.30,
-    concept_to_language_output_weight: float = 0.5,
+    concept_to_language_output_weight: float = 2.0,
     concept_to_language_output_jitter: float = 0.3,
 ):
     """Biological-scale architecture with cortical canon ENABLED.
