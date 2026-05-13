@@ -1043,7 +1043,44 @@ bias prior at binding time) — not just more events.
 
 **Canonical main_hippo lineage:** bridges/lineage/main_hippo is now
 the 200ev sweet-spot version. 400ev version preserved at
-bridges/lineage/main_hippo_400ev for future comparison.
+bridges/lineage/main_hippo_400ev for future comparison. Balanced
+version at main_hippo_balanced (also doesn't break ceiling).
+
+**🎉 SYNONYM12 + SYNONYM16 CHAT_SPEAK VALIDATED (2026-05-12):**
+
+| Mode | Vocab | W→A | A→W | Verdict |
+|---|---|---|---|---|
+| Tier 1 | 4w | 74-98% | 58% | GO multi-seed |
+| Synonym (Tier 2.1) | 8w | 31-56% | 85% | GO 6-seed |
+| **Synonym12** | **12w** | **56%** | **100%** | **GO seed 42** |
+| **Synonym16** | **16w** | **56%** | **100%** | **GO seed 42** |
+
+Synonym12 and Synonym16 chat_speak both achieve 100% A→W (4/4 top-1
+correct primary direction word) and 56% W→A (9x chance for 16-word).
+The conversational sim now demonstrates a **16-word working vocabulary**
+with reliable bidirectional binding.
+
+See `research/findings/2026-05-12-synonym12-synonym16-chat_speak-PASS.md`.
+
+Recipe (replicate):
+```bash
+python -m research.runners.chat_speak_synonym_demo --seed N \
+    --vocab-size 16 --train-events 400
+# Synonym16: 17K neurons, 26.8M synapses, ~42 min compute (solo)
+```
+
+Combined conversational stack:
+- Pre-trained 16-word vocabulary (synonym16 GO)
+- Bidirectional W→A + A→W
+- :learn V_SCHEMA for in-vivo +2 words (Tse 2007 schema reinforcement)
+- Phase 1.3 hippocampus consolidation (no catastrophic forgetting)
+- chat_repl interactive REPL
+
+This is a genuinely usable conversational artifact for ~16 direction-
+related words. Future expansion options:
+- Multi-seed validation of synonym12/16 (~3 hr)
+- Synonym24/32 extension (requires vocab table expansion in text_embeddings.py)
+- Tier 2.3 phrase composition (architecture-limited at 34-40%, deeper rework needed)
 
 **Same architectural ceiling as iter PP biological scale:** per-seed
 random structural variance dominates the learning signal for NOVEL
