@@ -73,11 +73,60 @@ compete and only one would win.
                     language_input (4096)
                     ↙           ↓           ↘
         motor_X (500)   noun_pool_X (500)   verb_pool_X (500)
-        × 4 pools       × 4 pools           × 2 pools
+        × 4 pools       × 4 pools           × 2 pools (v1) / 4 (v2)
         (FS within)     (FS within)         (FS within)
                     ↘           ↓           ↙
                     language_output (4096)
 ```
+
+## Biological grounding (catalog references)
+
+Maps to several catalog entries (catalog-build branch,
+`references/feature-catalog.md`):
+
+- **G.11 Dual-stream model of language (Hickok & Poeppel)** —
+  Kandel 6e Ch 55 pp 1380–1387. Ventral stream: superior + middle
+  temporal → semantic interface (sound→meaning). My lang_input →
+  concept_pool pathway implements the ventral stream's
+  sound-to-meaning map.
+
+- **G.13 Wernicke's area — auditory-to-semantic mapping** —
+  Kandel 6e Ch 55 pp 1384–1385. "Selects words matching intended
+  meaning; phonemic and semantic paraphasias result from selection
+  failures." My v1 0/10 result is essentially a paraphasia failure
+  — wrong concept (verb_pool_COME) consistently selected for input.
+
+- **G.12 Broca's area — speech production + grammatical processing** —
+  Kandel 6e Ch 55 pp 1382–1384. Notably: "Damage → labored,
+  agrammatic speech, **retained noun selection, lost
+  function-word/verb use**". This validates my architectural choice
+  to put nouns and verbs in separate pools — they are
+  biologically dissociable.
+
+- **E.04 Topographic / somatotopic maps** — Kandel 6e Ch 17 pp 460–462.
+  "Adjacent receptors map to adjacent cortical neurons, producing
+  organized maps." My topographic prior (Pulvermüller-style 2.0/0.5
+  boost ratio) implements this for lang_input → concept_pool edges.
+
+- **E.05 Lateral inhibition** — Kandel 6e Ch 22 pp 588–593. "Inhibitory
+  horizontal connections sharpen contrast." Cluster B notes MSN
+  lateral inhibition is the "same algorithmic motif" used for action
+  WTA. My within-kind FS cross-inhibition implements this for
+  category selection within each concept kind.
+
+- **E.10 Cortical columns** — Kandel 6e Ch 23 pp 562–569. "Vertical
+  columns share a feature; horizontal organization tiles all values."
+  My per-concept pools are functionally column-like — each pool is
+  a dedicated population representing one semantic feature.
+
+- **Cluster B / FS WTA** — Cluster B catalog (entries B.01-B.07).
+  Striatal PV-FSI architecture provides the algorithmic kin for my
+  within-kind FS cross-inhibition. Catalog notes FSI feedforward
+  inhibition is the canonical WTA microcircuit.
+
+**Catalog gap**: G.11/G.12/G.13 are marked "Sim status: missing".
+This work is the first attempt to implement the ventral language
+stream in the simulator.
 
 **Sizes**: 13,792 total neurons (4096 lang_in + 4096 lang_out +
 4×500 motor + 4×60 motor_FS + 4×500 noun + 4×60 noun_FS + 2×500 verb +
