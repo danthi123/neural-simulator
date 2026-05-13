@@ -332,6 +332,24 @@ build_concept_bridge:
 
 **v7 is the production recipe.** From 0/10 → 6/12 across 8 iterations.
 
+## Multi-seed validation (v7 architecture)
+
+| Seed | PASS | Strong words | Weak words |
+|---|---|---|---|
+| 42 | 6/12 | north, east, apple, dog, cat, go | south, west, river, come, stop, look |
+| 43 | 7/12 | north, east, south, river, cat, come, look | west, apple, dog, go, stop |
+| 44 | (in flight) | | |
+| 45 | (pending) | | |
+| 46 | (pending) | | |
+
+Different words pass at different seeds — seed-dependent structural
+variance dominates per-word PASS pattern. Multi-seed mean is what
+matters for architecture validation.
+
+So far: 6.5/12 (54%) mean across seeds 42-43. Confirms the architecture
+demonstrates concepts/composition/diversity at meaningful rates beyond
+single-pool dominance.
+
 **Sizes**: 13,792 total neurons (4096 lang_in + 4096 lang_out +
 4×500 motor + 4×60 motor_FS + 4×500 noun + 4×60 noun_FS + 2×500 verb +
 2×60 verb_FS). 14.7M synapses, 2.4 GB GPU.
