@@ -143,9 +143,11 @@ def drive_pool_and_read_lang_output(bridge, pool_region: str,
 
 def evaluate_A_to_W(bridge, n_lang_input: int = 4096,
                      stim_steps: int = 100,
+                     orthogonal_codes: bool = False,
+                     sparsity: float = 0.1,
                      verbose: bool = True):
     """For each pool, drive it and rank the trained words by cosine."""
-    from sim.text_embeddings import vocab_to_drive_pattern
+    from sim.text_embeddings import vocab_to_drive_pattern, orthogonal_drive_pattern
 
     rm = bridge.region_manager
     n_lang_out = len(list(rm.indices("language_output")))
@@ -158,12 +160,24 @@ def evaluate_A_to_W(bridge, n_lang_input: int = 4096,
     except Exception:
         pass
 
-    # Pre-compute word reference patterns
+    # Pre-compute word reference patterns. For v14 bridges trained with
+    # orthogonal codes, the reference patterns must match.
     all_words = _all_words(include_adjective=has_adjective)
-    word_patterns = {
-        w: vocab_to_drive_pattern(w, n_neurons=n_lang_out, sparsity=0.1)
-        for w in all_words
-    }
+    n_words_total = len(all_words)
+    word_to_idx = {w: i for i, w in enumerate(all_words)}
+    if orthogonal_codes:
+        word_patterns = {
+            w: orthogonal_drive_pattern(
+                cue_idx=word_to_idx[w], n_cues=n_words_total,
+                n_neurons=n_lang_out, sparsity=sparsity,
+            )
+            for w in all_words
+        }
+    else:
+        word_patterns = {
+            w: vocab_to_drive_pattern(w, n_neurons=n_lang_out, sparsity=sparsity)
+            for w in all_words
+        }
 
     # Iterate over all pools (12 or 16 depending on adjective presence)
     all_pools = (
@@ -227,6 +241,8 @@ def run_concept_speak_demo(seed: int = 42,
                              weak_dynamics: bool = False,
                              enable_adjective: bool = False,
                              nmda_tau_decay_ms: float = 100.0,
+                             orthogonal_codes: bool = False,
+                             sparsity: float = 0.1,
                              load_bridge: str = None,
                              verbose: bool = True):
     """Train + evaluate A->W readout for all 12 pools (motor + noun + verb).
@@ -300,6 +316,8 @@ def run_concept_speak_demo(seed: int = 42,
     # Phase 3: A->W readout
     print(f"\n[EVAL] A->W readout for all 10 pools", flush=True)
     aw_result = evaluate_A_to_W(bridge, n_lang_input=n_lang_input,
+                                  orthogonal_codes=orthogonal_codes,
+                                  sparsity=sparsity,
                                   verbose=verbose)
 
     print(f"\n[VERDICT] {aw_result['n_pass']}/{aw_result['n_total']} pools "
@@ -334,6 +352,13 @@ def main():
     parser.add_argument("--nmda-tau-decay-ms", type=float, default=100.0,
                          help="NMDA tau (ms); for loaded bridges must "
                          "match the bridge's training tau")
+    parser.add_argument("--orthogonal-codes", action="store_true",
+                         help="Match v14 orthogonal codes architecture. "
+                         "Required when loading v14+ bridges so reference "
+                         "patterns match the bridge's training codes.")
+    parser.add_argument("--sparsity", type=float, default=0.1,
+                         help="Drive sparsity; must match bridge training value "
+                         "(0.05 for v14 orthogonal codes)")
     parser.add_argument("--load-bridge", type=str, default=None,
                          help="Load checkpoint instead of training "
                          "(use with v7 saved bridge from concept_pool_demo)")
@@ -350,6 +375,8 @@ def main():
         weak_dynamics=args.weak_concept_dynamics,
         enable_adjective=args.enable_adjective,
         nmda_tau_decay_ms=args.nmda_tau_decay_ms,
+        orthogonal_codes=args.orthogonal_codes,
+        sparsity=args.sparsity,
         load_bridge=args.load_bridge,
     )
     if args.out:
