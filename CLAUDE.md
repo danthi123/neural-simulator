@@ -853,7 +853,14 @@ Optional 3rd kind:
 dominated 9/10 words due to FS within-kind imbalance (2 verb pools = 1
 cross-FS edge per FS vs 3 for 4-pool kinds).
 
-**Seed 42 v2 (12 pools, 4 verb + tighter topographic): IN FLIGHT.**
+**Seed 42 v2 (12 pools, 4 verb + tighter topographic + target-only STDP
+gating): IN FLIGHT (~2-3 hr/seed at full scale, ~35 min at smoke scale).**
+
+Wall-clock note: with 12 pools and NMDA dynamics, training per word is
+~150-180s at biological scale (vs Tier 1's 100s for 4 pools). 200
+events × 12 words = 2-3 hours per seed. Full multi-seed (4 seeds) ≈
+10 hours. Use --n-train-events 50 + smaller pools for faster smoke
+testing if needed.
 
 Diagnosis + fix: `docs/plans/2026-05-13-concept-pool-FS-design-note.md`
 Findings: `research/findings/2026-05-13-concept-pool-architecture-Phase1.md`
