@@ -879,11 +879,20 @@ python -m research.runners.concept_pool_demo --seed N \
     --topographic-factor 3.0 --off-target-factor 0.3
 ```
 
-Multi-seed in flight (seeds 42-46). Seeds 42, 43 done: 6/12, 7/12 PASS.
-Mean 6.5/12 (54%), std 0.71. v7 weight probe shows consistent 4x ratio
-across seeds — variability is dynamics, not weights. Architecture
-demonstrates concepts + composition framework + diversity per user
-mandate at meaningful (50%+) PASS rate.
+**v7 5-seed FINAL (2026-05-13):** mean **6.4/12 (53%)**, std 0.89,
+range 5-7. All 5 seeds PARTIAL (5 ≤ PASS < 8). 0 GO, 0 FAIL.
+
+Per-word robustness:
+- 80% robust (4/5 seeds): north, east, cat
+- 60% mixed (3/5): apple, river, look
+- 40% fragile (2/5): south, west, dog, go, come
+- 20% fragile (1/5): stop
+
+v7 weight probe shows consistent 4x weight ratio across seeds —
+variability is dynamics, not weights. Architecture demonstrates
+concepts + composition framework + diversity per user mandate at
+meaningful (53%) PASS rate. 3-word robust trio (north, east, cat)
+demonstrates the recipe CAN reliably bind specific pairs across seeds.
 
 Phase 3 A→W readout currently 0/12 on v7 bridge (separate issue:
 concept_to_language_output_weight=0.5 vs motor's 2.0 = 4x weaker
