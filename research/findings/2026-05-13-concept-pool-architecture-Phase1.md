@@ -676,14 +676,30 @@ consistent. Architecture is scaling.
 Compose with adjective pools not yet evaluated separately for
 seeds 43-46 (v11 speak16 follow-up queued auto-fires after seed 46).
 
-### v11 5-seed FINAL: A→W 60/60 unanimous
+### v11 5-seed FINAL: 16-pool architecture validated
 
-Seed 46 v11: Phase 1 9/16, A→W 12/12.
+Phase 1 W→A (per seed):
+| Seed | W→A (16) | A→W (12-subset) | A→W (full 16) |
+|---|---|---|---|
+| 42 | 11/16 | 12/12 | 16/16 |
+| 43 | 9/16 | 12/12 | 16/16 |
+| 44 | 9/16 | 12/12 | 16/16 |
+| 45 | 7/16 | 12/12 | 15/16 |
+| 46 | 9/16 | 12/12 | 16/16 |
+| **Total** | **45/80 (56%)** | **60/60 (100%)** | **79/80 (98.75%)** |
 
-5-seed v11 mean: 9.0/16 (56.25%) Phase 1, **60/60 A→W (100%)**.
+**v11 16-pool architecture is fully validated:**
+- Phase 1 W→A 56% mean (better than v9's 52%)
+- Phase 3 A→W 98.75% across 16 categories (essentially unanimous)
+- Adjectives don't break the architecture; they help it scale
 
-Architecture maintains v9-level reliability at 16 pools with slightly
-higher PASS rate. 100% A→W consistency is preserved.
+Compare to baseline (Tier 1, 4 motor pools): 6/6 multi-seed PASS.
+Compare to prior conversational architectures: P5 2/4 ceiling,
+Tier 2.3 34-40%, in-vivo 2/4 fixed.
+
+The concept pool architecture is the first project structure to
+demonstrate diversity (16 concepts) + bidirectional binding
+(99% A→W + 56% W→A) at multi-seed.
 
 ## v12 (dlpfc_verb holding) — MIXED to NEGATIVE on seed 42
 

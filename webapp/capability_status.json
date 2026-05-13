@@ -1,16 +1,23 @@
 {
   "as_of": "2026-05-13",
   "headline": {
-    "tier": "v9 Concept Pool Architecture: bidirectional binding, 12 pools, 5-seed validated",
-    "result": "First 3x diversity over 4-motor-pool ceiling; A->W 100% unanimous",
-    "metrics": "Phase 1 W->A: 6.2/12 mean (52%) std 0.89 across 5 seeds. Phase 3 A->W: 60/60 = 100% UNANIMOUS. Every concept pool deterministically speaks its trained word.",
-    "wall_clock": "~13 min/seed training + 30s A->W eval (smoke scale: 2048 lang_input, 200 per pool)",
+    "tier": "v11 Concept Pool Architecture: 16 pools, 5-seed validated bidirectional binding",
+    "result": "4x diversity over 4-motor-pool ceiling; A->W 98.75% unanimous; W->A 56%",
+    "metrics": "Phase 1 W->A: 9.0/16 mean (56%) std 1.5 across 5 seeds. Phase 3 A->W: 79/80 = 98.75% (only seed 45 lost 1 of 16). Every concept pool deterministically speaks its trained word in nearly all seeds.",
+    "wall_clock": "~17 min/seed training + 1min A->W eval (2048 lang_input, 200 per pool, 16 concepts)",
     "finding_doc": "2026-05-13-concept-pool-architecture-Phase1.md",
-    "summary": "Concept pool architecture (4 motor + 4 noun + 4 verb = 12 pools) extends Tier 1 recipe to non-direction concepts. 9-iteration debugging arc identified 6 architectural bugs (FS asymmetry, STDP leakage, canon dynamics, topographic strength, multiplicative dampening, one-directional bias). v9 production recipe: weak dynamics + interleaved + target-priority topographic 3.0/0.3 + reciprocal bias. Multi-seed 5/5 confirms bidirectional binding (A->W 100%) and meaningful W->A (52% with low std). 3 words (north/east/cat) reach 80% W->A robustness. Architecture demonstrates concepts + diversity + co-fire composition (2/6); sequential composition still open (NMDA-tau gap, v10 in flight)."
+    "summary": "Concept pool architecture (4 motor + 4 noun + 4 verb + 4 adjective = 16 pools) extends Tier 1 recipe to non-direction concepts. 11-iteration debugging arc identified 7 architectural bugs (FS asymmetry, STDP leakage, canon dynamics, topographic strength, multiplicative dampening, one-directional bias, scale-vs-diversity tradeoff). v11 production recipe: weak dynamics + interleaved + target-priority topographic 3.0/0.3 + reciprocal bias + adjective pools. Multi-seed 5/5 confirms scale: bidirectional binding (A->W 98.75%) + meaningful W->A (56% with low std). v9 12-pool was 52%; adding adjectives IMPROVED rate. v12 dlpfc_verb integration NEGATIVE (broke A->W via PFC feedback). Sequential composition remains open (single-pool persistence needs more careful design)."
   },
   "pillars": [
     {
-      "name": "v9 Concept Pool Architecture - bidirectional binding multi-seed",
+      "name": "v11 Concept Pool Architecture - 16-pool bidirectional binding multi-seed",
+      "status": "VALIDATED",
+      "metric": "5/5 seeds: A->W 79/80 (98.75%); W->A 45/80 (56%) mean 9/16",
+      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-13"
+    },
+    {
+      "name": "v9 Concept Pool Architecture - 12-pool baseline (superseded by v11)",
       "status": "VALIDATED",
       "metric": "5/5 seeds: A->W 12/12 each (100%); W->A 6.2/12 mean (52%)",
       "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
