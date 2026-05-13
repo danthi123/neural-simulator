@@ -381,6 +381,39 @@ def build_biological_brain_regions(
     wernicke_pool_to_hub_weight: float = 2.0,
     hub_to_lang_output_pool_density: float = 0.30,
     hub_to_lang_output_pool_weight: float = 2.0,
+    # ─── Concept diversity (2026-05-13): noun/verb pool architecture ───
+    # User mandate 2026-05-12: "concepts, composition, and diversity"
+    # are the blockers to conversational capabilities. Solution mirrors
+    # Tier 1 motor pool architecture (which got 6/6 multi-seed for
+    # direction words): each non-direction concept gets its own
+    # dedicated pool with paired teacher-current training. With 4 noun
+    # pools + 2 verb pools added to the existing 4 motor pools, the
+    # architecture goes from 4 → 10 distinct output categories — a 2.5×
+    # diversity gain that unlocks non-direction vocabulary.
+    #
+    # Each pool follows the proven Tier 1 recipe:
+    #   - n_per_pool=500 (Schieber 2001 / Rathelot 2009 motor sub-pools)
+    #   - exc 0.8 + internal recurrence 0.10 (Lefort 2009 cortical canon)
+    #   - lang_input → pool plastic pathway (gate-tagged)
+    #   - reciprocal pool → language_output (Pulvermüller 2003 premotor)
+    #   - optional FS cross-inhibition (Vogels 2011 / Hofer 2011)
+    #
+    # Default OFF for backward compat.
+    enable_noun_pools: bool = False,
+    noun_pool_names: list = None,  # default ["APPLE","RIVER","DOG","CAT"]
+    n_noun_per_pool: int = 500,
+    n_noun_fs_per_pool: int = 60,
+    enable_verb_pools: bool = False,
+    verb_pool_names: list = None,  # default ["GO","COME"]
+    n_verb_per_pool: int = 500,
+    n_verb_fs_per_pool: int = 60,
+    # Reciprocal pool → language_output density/weight. Same defaults as
+    # motor → language_output. The lang_output pathway makes the pool
+    # "speakable" — firing the pool generates the corresponding word
+    # pattern in language_output (A→W readout).
+    concept_to_language_output_density: float = 0.30,
+    concept_to_language_output_weight: float = 0.5,
+    concept_to_language_output_jitter: float = 0.3,
 ):
     """Biological-scale architecture with cortical canon ENABLED.
 
@@ -1229,6 +1262,110 @@ def build_biological_brain_regions(
                     weight_jitter=0.2, plastic=True,
                     plasticity_gate=f"hub_to_lang_pool_{i}",
                 ))
+
+    # ─── Concept diversity: noun/verb pool architecture (2026-05-13) ─
+    # Mirror of Tier 1 motor pool recipe. Each concept gets:
+    #   - dedicated 500-neuron exc/inh-balanced pool
+    #   - plastic lang_input -> pool pathway (gate-tagged)
+    #   - optional FS cross-inhibition (winner-take-most across pools
+    #     within the same kind: nouns vs other nouns, verbs vs other
+    #     verbs; cross-kind FS deliberately omitted so "go apple" can
+    #     fire verb_GO + noun_APPLE together for composition tests)
+    #   - reciprocal pool -> language_output (A->W readout via STDP)
+    def _add_concept_kind(
+        kind: str,                     # "noun" or "verb"
+        pool_names: list,              # ["APPLE", ...] etc.
+        n_per_pool: int,
+        n_fs_per_pool: int,
+        enable_fs_for_kind: bool,
+    ):
+        """Add a dedicated pool per concept name plus its optional FS
+        cross-inhibition and reciprocal language_output pathway.
+
+        FS topology mirrors Tier 1 motor_fs: each pool's FS receives
+        excitation from its own pool and inhibits ALL OTHER pools of
+        the same kind (cross-pool WTM). FS does NOT cross between
+        kinds (a verb_GO_fs does not inhibit noun_APPLE) so
+        composition like "go north" can have both pools active.
+        """
+        for name in pool_names:
+            pool_region = f"{kind}_pool_{name}"
+            regions.append(BrainRegion(
+                name=pool_region,
+                n_neurons=n_per_pool,
+                exc_fraction=motor_exc_fraction,
+                internal_density=motor_internal_density,
+                exc_weight_mean=motor_exc_weight_mean,
+                inh_weight_mean=motor_inh_weight_mean,
+                weight_jitter=0.2, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
+            # language_input -> pool (the plastic pathway being trained)
+            pathways.append(RegionPathway(
+                from_region="language_input", to_region=pool_region,
+                density=text_input_to_motor_density,
+                weight_mean=text_input_to_motor_weight,
+                weight_jitter=text_input_to_motor_jitter,
+                plastic=True,
+                plasticity_gate=f"language_input_to_{kind}_pool",
+            ))
+            # Reciprocal pool -> language_output (A->W readout)
+            if enable_language_output:
+                pathways.append(RegionPathway(
+                    from_region=pool_region, to_region="language_output",
+                    density=concept_to_language_output_density,
+                    weight_mean=concept_to_language_output_weight,
+                    weight_jitter=concept_to_language_output_jitter,
+                    plastic=True,
+                    plasticity_gate=f"{kind}_pool_to_language_output",
+                ))
+
+        # FS cross-inhibition (within kind, not across kinds)
+        if enable_fs_for_kind and n_fs_per_pool > 0:
+            for name in pool_names:
+                fs_region = f"{kind}_pool_{name}_fs"
+                regions.append(BrainRegion(
+                    name=fs_region,
+                    n_neurons=n_fs_per_pool,
+                    exc_fraction=0.0,  # all inhibitory
+                    internal_density=0.0,
+                    exc_weight_mean=0.0,
+                    inh_weight_mean=0.0,
+                    weight_jitter=0.0, plastic_internal=False,
+                    izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+                ))
+                # Pool -> own FS (drives FS firing)
+                pathways.append(RegionPathway(
+                    from_region=f"{kind}_pool_{name}", to_region=fs_region,
+                    density=0.5, weight_mean=motor_to_fs_weight,
+                    weight_jitter=0.2, plastic=False,
+                ))
+                # FS -> OTHER pools of same kind (cross-inhibition)
+                for other in pool_names:
+                    if other == name:
+                        continue
+                    pathways.append(RegionPathway(
+                        from_region=fs_region,
+                        to_region=f"{kind}_pool_{other}",
+                        density=0.5, weight_mean=fs_to_motor_weight,
+                        weight_jitter=0.2, plastic=False,
+                    ))
+
+    if enable_noun_pools:
+        noun_names = (noun_pool_names if noun_pool_names is not None
+                      else ["APPLE", "RIVER", "DOG", "CAT"])
+        _add_concept_kind(
+            "noun", noun_names, n_noun_per_pool, n_noun_fs_per_pool,
+            enable_fs_for_kind=enable_motor_fs,
+        )
+
+    if enable_verb_pools:
+        verb_names = (verb_pool_names if verb_pool_names is not None
+                      else ["GO", "COME"])
+        _add_concept_kind(
+            "verb", verb_names, n_verb_per_pool, n_verb_fs_per_pool,
+            enable_fs_for_kind=enable_motor_fs,
+        )
 
     return regions, pathways
 

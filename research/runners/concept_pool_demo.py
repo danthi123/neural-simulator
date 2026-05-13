@@ -1,0 +1,566 @@
+"""concept_pool_demo — Phase 1 of the concepts/composition/diversity arc.
+
+User directive 2026-05-12: "those scaling axes are 100% what need to be given
+our full focus currently, as the blocker for reaching conversational
+capabilities... it needs concepts, composition, and diversity."
+
+Diagnosis: every conversational blocker (P5 abstract concepts at 2/4 ceiling,
+Tier 2.3 compositional grammar stuck at 34-40%, in-vivo new-vocab binding
+at 2/4 fixed capacity) shares ONE root cause — only 4 motor pools.
+
+This runner demonstrates the architectural fix: add dedicated noun pools
+(APPLE/RIVER/DOG/CAT) and verb pools (GO/COME), each following the proven
+Tier 1 recipe (500-neuron pool + paired teacher current + FS cross-
+inhibition + reciprocal lang_output). The result is 10 distinct output
+categories — 2.5x diversity over the current 4-pool ceiling.
+
+Phase 1 (this runner): validate cross-category isolation.
+    typing "north" -> motor_N fires (existing Tier 1 capability)
+    typing "apple" -> noun_pool_APPLE fires (NEW)
+    typing "go"    -> verb_pool_GO fires (NEW)
+    typing "apple" -> noun_pool_RIVER stays silent (isolation)
+    typing "apple" -> motor_N stays silent (cross-kind isolation)
+
+Phase 2 (concept_compose_demo, future): composition.
+    "go" then "north" -> verb_pool_GO + motor_N BOTH fire (NMDA bistability)
+    "apple" then "north" -> noun_pool_APPLE + motor_N BOTH fire
+
+Phase 3 (concept_speak_demo, future): A->W readout
+    drive noun_pool_APPLE -> language_output produces "apple" pattern
+
+Architecture: mirrors bio_three_factor's training loop but extended to
+train all three pool kinds (motor/noun/verb) on dedicated vocabularies.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import time
+from pathlib import Path
+from typing import Dict, List, Tuple
+
+# ─── Vocab ────────────────────────────────────────────────────────────
+# Direction words (existing Tier 1) — bind to motor pools
+DIRECTION_VOCAB: Dict[str, str] = {
+    "north": "N", "east": "E", "south": "S", "west": "W",
+}
+
+# Noun words (NEW) — bind to dedicated noun pools
+NOUN_VOCAB: Dict[str, str] = {
+    "apple": "APPLE", "river": "RIVER", "dog": "DOG", "cat": "CAT",
+}
+
+# Verb words (NEW) — bind to dedicated verb pools
+VERB_VOCAB: Dict[str, str] = {"go": "GO", "come": "COME"}
+
+NOUN_NAMES = list(NOUN_VOCAB.values())   # ["APPLE", "RIVER", "DOG", "CAT"]
+VERB_NAMES = list(VERB_VOCAB.values())   # ["GO", "COME"]
+MOTOR_NAMES = ["N", "E", "S", "W"]
+
+
+def build_concept_bridge(seed: int,
+                          n_lang_input: int = 4096,
+                          n_per_pool: int = 500,
+                          n_fs_per_pool: int = 60,
+                          verbose: bool = True):
+    """Construct a bridge with motor + noun + verb pool architecture.
+
+    Mirrors bio_three_factor's biological config: NMDA bistability,
+    motor FS cross-inhibition, embodied Hebbian training. Pools follow
+    the Tier 1 recipe (500 neurons, exc 0.8, internal 0.10).
+    """
+    from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
+    from sim.bridge import SimulationBridge
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+
+    regions, pathways = build_biological_brain_regions(
+        n_lang_input=n_lang_input,
+        n_motor_per_action=n_per_pool,
+        text_input_to_motor_density=0.30,
+        text_input_to_motor_weight=3.0,
+        text_input_to_motor_jitter=0.5,
+        enable_motor_fs=True,
+        n_motor_fs_per_action=n_fs_per_pool,
+        enable_language_output=True,
+        n_lang_output=n_lang_input,
+        motor_to_language_output_weight=2.0,
+        # NEW: enable noun + verb pools (Tier 1 recipe per kind)
+        enable_noun_pools=True,
+        noun_pool_names=NOUN_NAMES,
+        n_noun_per_pool=n_per_pool,
+        n_noun_fs_per_pool=n_fs_per_pool,
+        enable_verb_pools=True,
+        verb_pool_names=VERB_NAMES,
+        n_verb_per_pool=n_per_pool,
+        n_verb_fs_per_pool=n_fs_per_pool,
+    )
+
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = list(regions)
+    cfg.region_pathways = list(pathways)
+    cfg.dt_ms = 0.5
+    cfg.seed = seed
+    cfg.enable_nmda = True
+    cfg.enable_structural_plasticity = False
+    cfg.enable_per_type_stp = False
+    cfg.enable_hebbian_learning = False
+    cfg.enable_short_term_plasticity = False
+    cfg.stdp_w_max = 8.0  # Above design weights to avoid soft-bound collapse
+    cfg.fast_spike_reset = True
+
+    bridge = SimulationBridge(
+        core_config=cfg,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
+    )
+    bridge.runtime_state.max_delay_steps = int(
+        cfg.max_synaptic_delay_ms / cfg.dt_ms
+    )
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    if verbose:
+        rm = bridge.region_manager
+        all_pools = (
+            [f"motor_{a}" for a in MOTOR_NAMES]
+            + [f"noun_pool_{n}" for n in NOUN_NAMES]
+            + [f"verb_pool_{v}" for v in VERB_NAMES]
+        )
+        n_pool_neurons = sum(len(list(rm.indices(p))) for p in all_pools)
+        n_total = int(getattr(cfg, "num_neurons", 0)) or sum(
+            r.n_neurons for r in cfg.brain_regions
+        )
+        print(f"[BUILD] concept-pool bridge: {n_total} neurons total, "
+              f"{len(all_pools)} concept pools ({n_pool_neurons} neurons in pools)",
+              flush=True)
+
+    return bridge
+
+
+def apply_concept_topographic_bias(bridge,
+                                     n_lang_input: int = 4096,
+                                     topographic_factor: float = 1.5,
+                                     off_target_factor: float = 0.7,
+                                     sparsity: float = 0.1,
+                                     verbose: bool = True) -> Dict:
+    """Apply Pulvermüller-style topographic bias to lang_input -> {pool}.
+
+    Extends apply_topographic_bias to cover noun_pool_X and verb_pool_X
+    pathways. For each word w with active language_input neuron set A_w:
+        weights[A_w -> pool_target(w)] *= topographic_factor
+        weights[A_w -> pool_other]      *= off_target_factor
+
+    With default 1.5/0.7 the ratio is ~2.1x (within Pulvermüller's
+    reported 2-3x biology range). This is the proven recipe that got
+    Tier 1 to 6/6 multi-seed PASS.
+    """
+    import numpy as np
+    from sim.text_embeddings import vocab_to_drive_pattern
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+
+    def _to_host(arr):
+        try:
+            return cp.asnumpy(arr)
+        except Exception:
+            return np.asarray(arr)
+
+    rm = bridge.region_manager
+    lang_input_indices = list(rm.indices("language_input"))
+    if len(lang_input_indices) != n_lang_input:
+        raise ValueError(
+            f"apply_concept_topographic_bias: bridge has "
+            f"{len(lang_input_indices)} lang_input neurons but caller "
+            f"specified {n_lang_input}"
+        )
+
+    indptr = _to_host(bridge.cp_connections.indptr)
+    indices = _to_host(bridge.cp_connections.indices)
+    data = _to_host(bridge.cp_connections.data)
+
+    # Pre-compute (pre, post) -> data offset for fast lookup
+    pair_to_idx: Dict[Tuple[int, int], int] = {}
+    n_rows = int(bridge.cp_connections.shape[0])
+    for r in range(n_rows):
+        start = int(indptr[r])
+        end = int(indptr[r + 1])
+        for off in range(start, end):
+            pair_to_idx[(r, int(indices[off]))] = off
+
+    summary: Dict[str, Dict] = {}
+
+    # Build (word, target_pool_region, peers) tuples for all three kinds
+    bias_tasks: List[Tuple[str, str, List[str]]] = []
+    for word, action in DIRECTION_VOCAB.items():
+        target = f"motor_{action}"
+        peers = [f"motor_{a}" for a in MOTOR_NAMES]
+        bias_tasks.append((word, target, peers))
+    for word, name in NOUN_VOCAB.items():
+        target = f"noun_pool_{name}"
+        peers = [f"noun_pool_{n}" for n in NOUN_NAMES]
+        bias_tasks.append((word, target, peers))
+    for word, name in VERB_VOCAB.items():
+        target = f"verb_pool_{name}"
+        peers = [f"verb_pool_{v}" for v in VERB_NAMES]
+        bias_tasks.append((word, target, peers))
+
+    for word, target_region, peer_regions in bias_tasks:
+        drive = vocab_to_drive_pattern(
+            word, n_neurons=n_lang_input, sparsity=sparsity
+        )
+        local_active = np.where(drive > 0)[0]
+        global_active = [lang_input_indices[i] for i in local_active]
+
+        for peer in peer_regions:
+            peer_neurons = list(rm.indices(peer))
+            factor = topographic_factor if peer == target_region else off_target_factor
+            n_changed = 0
+            for src in global_active:
+                for dst in peer_neurons:
+                    key = (src, dst)
+                    if key in pair_to_idx:
+                        idx = pair_to_idx[key]
+                        data[idx] = float(data[idx]) * factor
+                        n_changed += 1
+            summary[f"{word}->{peer}"] = {
+                "factor": factor, "edges_modified": n_changed,
+            }
+
+    bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
+
+    if verbose:
+        print(f"[topographic-bias] Applied factor={topographic_factor:.2f}/"
+              f"{off_target_factor:.2f} across motor + noun + verb pools",
+              flush=True)
+        # Print only target boosts for brevity (off-target counts are similar)
+        for k, v in summary.items():
+            if v["factor"] == topographic_factor:
+                print(f"  {k}: x{v['factor']:.2f} on {v['edges_modified']} edges")
+
+    return summary
+
+
+def train_word_to_pool(bridge, word: str, target_pool_region: str,
+                        n_events: int = 200,
+                        stim_steps_per_event: int = 100,
+                        reset_steps: int = 50,
+                        drive_pA: float = 200.0,
+                        teacher_pA: float = 1500.0,
+                        sparsity: float = 0.1,
+                        n_lang_input: int = 4096,
+                        n_lang_output: int = 4096,
+                        embodied_hebbian: bool = True,
+                        verbose: bool = False) -> Dict:
+    """Train ONE word to fire ONE specific pool via embodied Hebbian.
+
+    Tier 1's proven recipe: drive language_input with word pattern,
+    drive target pool with strong teacher current, step bridge for
+    STDP to fire on co-active synapses. With embodied_hebbian=True,
+    also drive language_output with same pattern (Pulvermüller premotor
+    co-firing for reciprocal A->W readout).
+
+    target_pool_region: e.g. "motor_N", "noun_pool_APPLE", "verb_pool_GO"
+    """
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+    from sim.text_embeddings import vocab_to_drive_pattern
+
+    rm = bridge.region_manager
+    lang_input_idx = list(rm.indices("language_input"))
+    lang_input_arr = cp.asarray(lang_input_idx, dtype=cp.int64)
+    pool_idx = list(rm.indices(target_pool_region))
+    pool_arr = cp.asarray(pool_idx, dtype=cp.int64)
+
+    has_output = False
+    if embodied_hebbian:
+        try:
+            lang_output_idx = list(rm.indices("language_output"))
+            lang_output_arr = cp.asarray(lang_output_idx, dtype=cp.int64)
+            has_output = True
+        except Exception:
+            pass
+
+    drive_in = vocab_to_drive_pattern(
+        word, n_neurons=n_lang_input,
+        drive_max_pA=drive_pA, sparsity=sparsity,
+    )
+    drive_in_gpu = cp.asarray(drive_in, dtype=cp.float32)
+    if has_output:
+        drive_out = vocab_to_drive_pattern(
+            word, n_neurons=n_lang_output,
+            drive_max_pA=drive_pA, sparsity=sparsity,
+        )
+        drive_out_gpu = cp.asarray(drive_out, dtype=cp.float32)
+
+    # Open all relevant gates for training
+    gates = [
+        "language_input_to_motor",
+        "language_input_to_noun_pool",
+        "language_input_to_verb_pool",
+        "motor_to_language_output",
+        "noun_pool_to_language_output",
+        "verb_pool_to_language_output",
+    ]
+    gates_opened = []
+    for g in gates:
+        try:
+            bridge.set_plasticity_gate(g, 1.0)
+            gates_opened.append(g)
+        except Exception:
+            pass
+
+    try:
+        for ev in range(n_events):
+            # Reset
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(reset_steps):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+
+            # Drive lang_input + (optionally lang_output) + target pool
+            bridge.cp_external_input_current[lang_input_arr] = drive_in_gpu
+            if has_output:
+                bridge.cp_external_input_current[lang_output_arr] = drive_out_gpu
+            bridge.cp_external_input_current[pool_arr] += float(teacher_pA)
+
+            for _ in range(stim_steps_per_event):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+
+            if verbose and (ev + 1) % 50 == 0:
+                print(f"  [train '{word}' -> {target_pool_region}] "
+                      f"{ev+1}/{n_events}", flush=True)
+    finally:
+        for g in gates_opened:
+            try:
+                bridge.set_plasticity_gate(g, 0.0)
+            except Exception:
+                pass
+
+    return {"word": word, "target": target_pool_region,
+            "n_events": n_events, "gates_opened": gates_opened}
+
+
+def measure_pool_firing(bridge, word: str,
+                          all_pool_regions: List[str],
+                          stim_steps: int = 100,
+                          reset_steps: int = 50,
+                          drive_pA: float = 200.0,
+                          sparsity: float = 0.1,
+                          n_lang_input: int = 4096) -> Dict[str, float]:
+    """Drive lang_input(word) without any teacher, measure spike counts
+    across ALL listed pool regions. Returns per-pool spike count.
+    """
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+    from sim.text_embeddings import vocab_to_drive_pattern
+
+    rm = bridge.region_manager
+    lang_input_idx = list(rm.indices("language_input"))
+    lang_input_arr = cp.asarray(lang_input_idx, dtype=cp.int64)
+
+    drive_in = vocab_to_drive_pattern(
+        word, n_neurons=n_lang_input,
+        drive_max_pA=drive_pA, sparsity=sparsity,
+    )
+    drive_in_gpu = cp.asarray(drive_in, dtype=cp.float32)
+
+    # Reset
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(reset_steps):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+
+    # Drive lang_input only — no teacher current on any pool
+    bridge.cp_external_input_current[lang_input_arr] = drive_in_gpu
+
+    # Accumulate spike counts across stim window per pool
+    per_pool_indices = {p: cp.asarray(list(rm.indices(p)), dtype=cp.int64)
+                        for p in all_pool_regions}
+    per_pool_count = {p: 0.0 for p in all_pool_regions}
+
+    for _ in range(stim_steps):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+        fired = bridge.cp_firing_states
+        for p, idx_arr in per_pool_indices.items():
+            count = int(fired[idx_arr].sum())
+            per_pool_count[p] += count
+
+    # Convert to per-neuron mean firing
+    per_pool_rate = {}
+    for p in all_pool_regions:
+        n_neurons = len(list(rm.indices(p)))
+        per_pool_rate[p] = per_pool_count[p] / max(n_neurons, 1)
+
+    return per_pool_rate
+
+
+def run_concept_pool_demo(seed: int = 42,
+                            n_train_events: int = 200,
+                            n_lang_input: int = 4096,
+                            n_per_pool: int = 500,
+                            n_fs_per_pool: int = 60,
+                            apply_topographic: bool = True,
+                            verbose: bool = True) -> Dict:
+    """Train motor + noun + verb pools, then measure cross-category isolation."""
+    print(f"\n=== concept_pool_demo (seed={seed}) ===", flush=True)
+    print(f"  Architecture: 4 motor + 4 noun + 2 verb = 10 pools", flush=True)
+    print(f"  Vocab: {list(DIRECTION_VOCAB)} + {list(NOUN_VOCAB)} + "
+          f"{list(VERB_VOCAB)}", flush=True)
+    print(f"  Train events/word: {n_train_events}", flush=True)
+
+    t0 = time.time()
+    bridge = build_concept_bridge(
+        seed=seed,
+        n_lang_input=n_lang_input,
+        n_per_pool=n_per_pool,
+        n_fs_per_pool=n_fs_per_pool,
+        verbose=verbose,
+    )
+
+    if apply_topographic:
+        apply_concept_topographic_bias(
+            bridge,
+            n_lang_input=n_lang_input,
+            verbose=verbose,
+        )
+
+    # Build training schedule: shuffle across all 10 words
+    import numpy as np
+    rng = np.random.default_rng(seed)
+    all_targets = []  # list of (word, target_pool_region)
+    for word, action in DIRECTION_VOCAB.items():
+        all_targets.append((word, f"motor_{action}"))
+    for word, name in NOUN_VOCAB.items():
+        all_targets.append((word, f"noun_pool_{name}"))
+    for word, name in VERB_VOCAB.items():
+        all_targets.append((word, f"verb_pool_{name}"))
+
+    print(f"\n[TRAIN] {len(all_targets)} (word, pool) pairs, "
+          f"{n_train_events} events each = {len(all_targets) * n_train_events} "
+          f"total events", flush=True)
+
+    # Train word-by-word (interleaved would be more biology-faithful but
+    # this is the MVP; bio_three_factor uses interleaved batches)
+    t_train = time.time()
+    for word, target in all_targets:
+        t_word = time.time()
+        train_word_to_pool(
+            bridge, word, target,
+            n_events=n_train_events,
+            n_lang_input=n_lang_input,
+            n_lang_output=n_lang_input,
+            verbose=False,
+        )
+        print(f"  trained '{word}' -> {target} "
+              f"({time.time() - t_word:.0f}s)", flush=True)
+    train_sec = time.time() - t_train
+    print(f"\n[TRAIN] complete ({train_sec:.0f}s)", flush=True)
+
+    # Measure cross-category isolation
+    all_pool_regions = (
+        [f"motor_{a}" for a in MOTOR_NAMES]
+        + [f"noun_pool_{n}" for n in NOUN_NAMES]
+        + [f"verb_pool_{v}" for v in VERB_NAMES]
+    )
+
+    print(f"\n[EVAL] measuring cross-category isolation across "
+          f"{len(all_pool_regions)} pools", flush=True)
+
+    eval_results = {}
+    for word, target in all_targets:
+        per_pool = measure_pool_firing(
+            bridge, word, all_pool_regions,
+            n_lang_input=n_lang_input,
+        )
+        eval_results[word] = {
+            "target": target,
+            "per_pool": per_pool,
+            "target_rate": per_pool[target],
+            "max_off_target": max(v for k, v in per_pool.items() if k != target),
+            "max_off_target_pool": max(
+                (k for k in per_pool if k != target),
+                key=lambda k: per_pool[k],
+            ),
+        }
+
+    # Compute pass/fail per word — target rate must be highest
+    print(f"\n[RESULTS] per-word cross-category isolation:", flush=True)
+    n_pass = 0
+    for word, res in eval_results.items():
+        target_rate = res["target_rate"]
+        max_off = res["max_off_target"]
+        ratio = target_rate / max(max_off, 0.001)
+        passed = target_rate > max_off
+        if passed:
+            n_pass += 1
+        marker = "PASS" if passed else "FAIL"
+        print(f"  {word:8s} -> {res['target']:20s}  "
+              f"target={target_rate:.3f}  "
+              f"max_off={max_off:.3f} ({res['max_off_target_pool']})  "
+              f"ratio={ratio:.2f}x  [{marker}]", flush=True)
+
+    print(f"\n[VERDICT] {n_pass}/{len(eval_results)} words have correct "
+          f"target-pool dominance", flush=True)
+    print(f"  Total wall clock: {time.time() - t0:.0f}s", flush=True)
+
+    return {
+        "seed": seed,
+        "n_train_events": n_train_events,
+        "n_lang_input": n_lang_input,
+        "n_per_pool": n_per_pool,
+        "n_fs_per_pool": n_fs_per_pool,
+        "apply_topographic": apply_topographic,
+        "n_pools": len(all_pool_regions),
+        "n_pass": n_pass,
+        "n_words": len(eval_results),
+        "wall_clock_s": time.time() - t0,
+        "results": {
+            word: {
+                "target": res["target"],
+                "target_rate": float(res["target_rate"]),
+                "max_off_target": float(res["max_off_target"]),
+                "max_off_target_pool": res["max_off_target_pool"],
+                "per_pool": {k: float(v) for k, v in res["per_pool"].items()},
+            }
+            for word, res in eval_results.items()
+        },
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Phase 1 concept pool demo (concepts + diversity).")
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--n-train-events", type=int, default=200,
+                         help="Events per word (Tier 1 default 200)")
+    parser.add_argument("--n-lang-input", type=int, default=4096)
+    parser.add_argument("--n-per-pool", type=int, default=500)
+    parser.add_argument("--n-fs-per-pool", type=int, default=60)
+    parser.add_argument("--no-topographic", action="store_true",
+                         help="Skip Pulvermuller topographic bias init")
+    parser.add_argument("--out", type=str, default=None,
+                         help="Output JSON path (default stdout only)")
+    args = parser.parse_args()
+
+    result = run_concept_pool_demo(
+        seed=args.seed,
+        n_train_events=args.n_train_events,
+        n_lang_input=args.n_lang_input,
+        n_per_pool=args.n_per_pool,
+        n_fs_per_pool=args.n_fs_per_pool,
+        apply_topographic=not args.no_topographic,
+    )
+
+    if args.out:
+        out_path = Path(args.out)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(result, indent=2))
+        print(f"\n[OUT] wrote {out_path}", flush=True)
+
+
+if __name__ == "__main__":
+    main()
