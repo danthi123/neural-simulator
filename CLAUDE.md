@@ -831,21 +831,31 @@ Internal helper `_add_concept_kind(kind, names, ...)` builds:
 - `research/runners/concept_pool_aggregate.py` — multi-seed analysis
 - 21 tests (15 unit + 6 integration) all PASS, CPU-only
 
-**Default vocab (10 distinct output pools, 2.5× diversity over Tier 1):**
+**Default vocab v2 (12 distinct output pools, 3× diversity over Tier 1):**
 
 | Kind | Pool count | Words |
 |---|---|---|
 | Motor (existing Tier 1) | 4 | north, east, south, west |
 | **Noun (NEW)** | **4** | apple, river, dog, cat |
-| **Verb (NEW)** | **2** | go, come |
+| **Verb (NEW)** | **4** | go, come, stop, look |
+
+Optional 3rd kind:
+| Adjective (opt-in via `--enable-adjective`) | 4 | big, small, hot, cold |
+
+→ 14 pools with adjectives = 3.5× Tier 1 diversity.
 
 **Webapp wire-up:**
 - PRESETS["concept_pool_demo"] / ["concept_compose_demo"] / ["concept_speak_demo"]
 - ui.js category "Concept pool architecture" (sky blue)
 - index.html launcher dropdown options
 
-**Seed 42 validation: IN FLIGHT** (will update with result).
+**Seed 42 v1 (10 pools, 2 verb): 0/10 PASS** — verb_pool_COME structurally
+dominated 9/10 words due to FS within-kind imbalance (2 verb pools = 1
+cross-FS edge per FS vs 3 for 4-pool kinds).
 
+**Seed 42 v2 (12 pools, 4 verb + tighter topographic): IN FLIGHT.**
+
+Diagnosis + fix: `docs/plans/2026-05-13-concept-pool-FS-design-note.md`
 Findings: `research/findings/2026-05-13-concept-pool-architecture-Phase1.md`
 
 ### Path 3 Phase 3.2 (2026-05-11): LLM-memory orchestrator + chat UI (now SECONDARY)
