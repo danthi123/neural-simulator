@@ -604,3 +604,47 @@ Bidirectional binding now demonstrated:
 The architecture satisfies the user's three blockers more strongly
 than v7 alone suggested. Multi-seed validation queued to confirm
 A→W consistency.
+
+## v9 5-seed FINAL (2026-05-13): A→W 100% UNANIMOUS 🎉
+
+| Seed | Phase 1 W→A | Phase 3 A→W |
+|---|---|---|
+| 42 | 6/12 | **12/12** |
+| 43 | 7/12 | **12/12** |
+| 44 | 6/12 | **12/12** |
+| 45 | 7/12 | **12/12** |
+| 46 | 5/12 | **12/12** |
+| **Mean** | **6.2/12 (52%)** | **60/60 = 100%** |
+
+**A→W spoken-word readout is deterministic at 12/12 across all 5
+seeds.** Every concept pool reliably speaks its trained word.
+
+Phase 1 (W→A cross-category isolation) at 52% mirrors the v7
+baseline — the reciprocal bias didn't change forward firing.
+Architecture limitations on isolation are dynamics-driven (seed-
+dependent per-pool firing variance), not weight-driven (weights
+have consistent 4x ratio across seeds).
+
+### v9 is the production recipe
+
+```bash
+python -m research.runners.concept_pool_demo --seed N \
+    --n-train-events 200 --n-lang-input 2048 --n-per-pool 200 \
+    --n-fs-per-pool 24 --weak-concept-dynamics --interleaved \
+    --topographic-factor 3.0 --off-target-factor 0.3 \
+    --save-bridge ... --out ...
+```
+
+Then for A→W readout:
+```bash
+python -m research.runners.concept_speak_demo --seed N \
+    --n-lang-input 2048 --n-per-pool 200 --n-fs-per-pool 24 \
+    --weak-concept-dynamics --load-bridge <saved bridge>
+```
+
+Demonstrates:
+- 12 distinct concept pools (4 motor + 4 noun + 4 verb)
+- Bidirectional binding (W→A 52% mean / A→W 100%)
+- 3× diversity over Tier 1 (4 motor pools only)
+- Co-fire composition partial (2/6 pairs)
+- Sequential composition NOT YET (NMDA tau gap; v10 design queued)
