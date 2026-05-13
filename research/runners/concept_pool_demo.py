@@ -265,26 +265,77 @@ def apply_concept_topographic_bias(bridge,
             target = f"adjective_pool_{name}"
             bias_tasks.append((word, target, all_output_pools))
 
-    for word, target_region, peer_regions in bias_tasks:
+    # 2026-05-13 v7 FIX: priority-based assignment with TARGET-FIRST.
+    #
+    # Earlier multiplicative approach caused cumulative dampening when
+    # a single edge was "target" for one word but "off-target" for 11
+    # others (overlap between word drive patterns ~10%). Result with
+    # 0.3 dampening factor: 3.0 boost × 0.3^11 = ~5e-6 effective.
+    # Killed motor pool target firing in v6 (target_rate dropped from
+    # 1.2 to 0.7).
+    #
+    # New approach: two-pass priority.
+    #   Pass 1 (target): for each (word, target_pool), boost edges
+    #          from word-active lang_input to target_pool. Track in
+    #          a set so they're protected from pass 2.
+    #   Pass 2 (off-target): for each (word, off-target_pool), dampen
+    #          edges NOT in the target set.
+    # An edge that is "target" for ANY word never gets dampened.
+    # An edge that is "off-target" for AT LEAST ONE word gets dampened
+    # exactly ONCE.
+
+    # Step 1: pre-compute global_active per word
+    word_to_active = {}
+    for word, _, _ in bias_tasks:
+        if word in word_to_active:
+            continue
         drive = vocab_to_drive_pattern(
             word, n_neurons=n_lang_input, sparsity=sparsity
         )
         local_active = np.where(drive > 0)[0]
-        global_active = [lang_input_indices[i] for i in local_active]
+        word_to_active[word] = [lang_input_indices[i] for i in local_active]
 
+    # Pass 1: identify and boost all target edges
+    target_edges = set()
+    for word, target_region, _ in bias_tasks:
+        peer_neurons = list(rm.indices(target_region))
+        global_active = word_to_active[word]
+        n_changed = 0
+        for src in global_active:
+            for dst in peer_neurons:
+                key = (src, dst)
+                if key in pair_to_idx:
+                    if key not in target_edges:
+                        # First time touching this edge as target
+                        idx = pair_to_idx[key]
+                        data[idx] = float(data[idx]) * topographic_factor
+                        target_edges.add(key)
+                        n_changed += 1
+        summary[f"{word}->{target_region}"] = {
+            "factor": topographic_factor, "edges_modified": n_changed,
+        }
+
+    # Pass 2: dampen off-target edges (skip any in target_edges)
+    dampened_edges = set()
+    for word, target_region, peer_regions in bias_tasks:
+        global_active = word_to_active[word]
         for peer in peer_regions:
+            if peer == target_region:
+                continue
             peer_neurons = list(rm.indices(peer))
-            factor = topographic_factor if peer == target_region else off_target_factor
             n_changed = 0
             for src in global_active:
                 for dst in peer_neurons:
                     key = (src, dst)
-                    if key in pair_to_idx:
+                    if (key in pair_to_idx
+                            and key not in target_edges
+                            and key not in dampened_edges):
                         idx = pair_to_idx[key]
-                        data[idx] = float(data[idx]) * factor
+                        data[idx] = float(data[idx]) * off_target_factor
+                        dampened_edges.add(key)
                         n_changed += 1
-            summary[f"{word}->{peer}"] = {
-                "factor": factor, "edges_modified": n_changed,
+            summary[f"{word}->{peer}(off)"] = {
+                "factor": off_target_factor, "edges_modified": n_changed,
             }
 
     bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
