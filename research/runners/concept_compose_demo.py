@@ -53,9 +53,9 @@ from research.runners.concept_pool_demo import (
 
 def measure_two_word_sequential(bridge, word_a: str, word_b: str,
                                   all_pool_regions: List[str],
-                                  window_a_steps: int = 50,
-                                  window_b_steps: int = 50,
-                                  reset_steps: int = 50,
+                                  window_a_steps: int = 200,  # 100ms — biology-faithful word duration
+                                  window_b_steps: int = 200,
+                                  reset_steps: int = 100,
                                   drive_pA: float = 200.0,
                                   sparsity: float = 0.1,
                                   n_lang_input: int = 4096

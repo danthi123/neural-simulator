@@ -205,6 +205,7 @@ def run_concept_speak_demo(seed: int = 42,
                              n_fs_per_pool: int = 60,
                              apply_topographic: bool = True,
                              weak_dynamics: bool = False,
+                             nmda_tau_decay_ms: float = 100.0,
                              load_bridge: str = None,
                              verbose: bool = True):
     """Train + evaluate A->W readout for all 12 pools (motor + noun + verb).
@@ -223,6 +224,7 @@ def run_concept_speak_demo(seed: int = 42,
         n_per_pool=n_per_pool,
         n_fs_per_pool=n_fs_per_pool,
         weak_dynamics=weak_dynamics,
+        nmda_tau_decay_ms=nmda_tau_decay_ms,
         verbose=verbose,
     )
 
@@ -304,6 +306,9 @@ def main():
     parser.add_argument("--weak-concept-dynamics", action="store_true",
                          help="Match v7 production recipe (concept pools "
                          "use weak dynamics 0.05/0.3/0.8)")
+    parser.add_argument("--nmda-tau-decay-ms", type=float, default=100.0,
+                         help="NMDA tau (ms); for loaded bridges must "
+                         "match the bridge's training tau")
     parser.add_argument("--load-bridge", type=str, default=None,
                          help="Load checkpoint instead of training "
                          "(use with v7 saved bridge from concept_pool_demo)")
@@ -318,6 +323,7 @@ def main():
         n_fs_per_pool=args.n_fs_per_pool,
         apply_topographic=not args.no_topographic,
         weak_dynamics=args.weak_concept_dynamics,
+        nmda_tau_decay_ms=args.nmda_tau_decay_ms,
         load_bridge=args.load_bridge,
     )
     if args.out:

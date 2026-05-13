@@ -79,6 +79,7 @@ def build_concept_bridge(seed: int,
                           n_fs_per_pool: int = 60,
                           enable_adjective: bool = False,
                           weak_dynamics: bool = False,
+                          nmda_tau_decay_ms: float = 100.0,
                           verbose: bool = True):
     """Construct a bridge with motor + noun + verb (+ optional adjective) pools.
 
@@ -138,6 +139,12 @@ def build_concept_bridge(seed: int,
     cfg.dt_ms = 0.5
     cfg.seed = seed
     cfg.enable_nmda = True
+    # v10 (2026-05-13): NMDA tau override for sequential composition.
+    # Default 100ms = global cfg default. Set to 200-300ms for concept
+    # pool sequential persistence (Wang 2002 PFC NMDA: 100-300ms range).
+    # Longer tau lets verb_pool_GO hold firing during "north" drive
+    # window, enabling "go north" composition.
+    cfg.nmda_tau_decay = nmda_tau_decay_ms
     cfg.enable_structural_plasticity = False
     cfg.enable_per_type_stp = False
     cfg.enable_hebbian_learning = False
@@ -628,6 +635,7 @@ def run_concept_pool_demo(seed: int = 42,
                             enable_adjective: bool = False,
                             interleaved: bool = False,
                             weak_dynamics: bool = False,
+                            nmda_tau_decay_ms: float = 100.0,
                             reset_steps: int = 50,  # 25ms (NMDA tau is ~150ms)
                             verbose: bool = True,
                             load_bridge: str = None,
@@ -664,6 +672,7 @@ def run_concept_pool_demo(seed: int = 42,
         n_fs_per_pool=n_fs_per_pool,
         enable_adjective=enable_adjective,
         weak_dynamics=weak_dynamics,
+        nmda_tau_decay_ms=nmda_tau_decay_ms,
         verbose=verbose,
     )
 
@@ -872,6 +881,11 @@ def main():
                          "structural bias at biological scale with many "
                          "pools. Weak prevents off-target pools from "
                          "accumulating activated states.")
+    parser.add_argument("--nmda-tau-decay-ms", type=float, default=100.0,
+                         help="NMDA decay tau (ms). v10 sequential "
+                         "composition: try 200-300ms (Wang 2002 PFC range). "
+                         "Longer tau gives concept pools cross-word "
+                         "persistence for compositional binding.")
     parser.add_argument("--reset-steps", type=int, default=50,
                          help="Steps to free-run between training events "
                          "(default 50 = 25ms). For v3 NMDA-decay fix: "
@@ -898,6 +912,7 @@ def main():
         enable_adjective=args.enable_adjective,
         interleaved=args.interleaved,
         weak_dynamics=args.weak_concept_dynamics,
+        nmda_tau_decay_ms=args.nmda_tau_decay_ms,
         reset_steps=args.reset_steps,
         load_bridge=args.load_bridge,
         save_bridge=args.save_bridge,
