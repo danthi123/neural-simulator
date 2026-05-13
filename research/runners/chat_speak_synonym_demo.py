@@ -113,22 +113,31 @@ def evaluate_w_to_a_baseline_synonym(bridge, n_rounds: int = 2,
 
 def evaluate_a_to_w_synonym(bridge, verbose: bool = True,
                               temperature: float = 0.0,
-                              rng_seed: int = None) -> dict:
-    """A→W: drive motor_<action>, decode to one of 8 synonym words.
+                              rng_seed: int = None,
+                              vocab_size: int = 8) -> dict:
+    """A→W: drive motor_<action>, decode to one of N synonym words.
 
     Returns dict with three accuracy metrics:
       any_accuracy     — top-1 word is ANY synonym for target action
       primary_accuracy — top-1 word is the PRIMARY synonym (north/east/south/west)
       synonym_accuracy — top-1 word is the SECONDARY synonym (up/right/down/left)
     """
+    # Use vocab-size-aware synonym groups for vocab>8
+    if vocab_size == 8:
+        groups = SYNONYM_GROUPS
+        words = ALL_WORDS
+    else:
+        from research.runners.text_eval import get_synonym_groups
+        groups = get_synonym_groups(vocab_size)
+        words = [w for syns in groups.values() for w in syns]
     speak_results = []
     any_correct = 0
     primary_correct = 0
     synonym_correct = 0
     for action in ("N", "E", "S", "W"):
-        expected_synonyms = SYNONYM_GROUPS[action]
+        expected_synonyms = groups[action]
         primary_word = expected_synonyms[0]
-        synonym_word = expected_synonyms[1]
+        synonym_word = expected_synonyms[1] if len(expected_synonyms) > 1 else primary_word
         # Rank all 8 words; whichever has highest cosine to the post-drive
         # language_output delta is "what the network said". top_k=8 to
         # keep the full ranking in the JSON (default top_k=4 would truncate
@@ -137,8 +146,9 @@ def evaluate_a_to_w_synonym(bridge, verbose: bool = True,
         # 2026-05-10: temperature plumbed for synonym-lift testing.
         # τ=0 (default) preserves deterministic argmax for repro testing.
         result = generative_inference(
-            bridge, action, vocab_words=ALL_WORDS,
-            top_k=8, temperature=temperature, rng_seed=rng_seed,
+            bridge, action, vocab_words=words,
+            top_k=max(8, len(words)),
+            temperature=temperature, rng_seed=rng_seed,
         )
         pred = result["predicted_word"]
         rankings = [(w, float(s)) for w, s in result["rankings"]]
@@ -358,6 +368,7 @@ def run_chat_speak_synonym_demo(seed: int = 42,
         bridge, verbose=verbose,
         temperature=temperature,
         rng_seed=(seed if temperature > 0 else None),
+        vocab_size=vocab_size,
     )
     print(f"  A->W any-synonym accuracy: {a2w['any_accuracy']:.1%} "
           f"({a2w['any_correct']}/{a2w['total']})", flush=True)
