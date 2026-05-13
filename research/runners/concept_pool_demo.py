@@ -58,17 +58,28 @@ NOUN_NAMES = list(NOUN_VOCAB.values())   # ["APPLE", "RIVER", "DOG", "CAT"]
 VERB_NAMES = list(VERB_VOCAB.values())   # ["GO", "COME"]
 MOTOR_NAMES = ["N", "E", "S", "W"]
 
+# 3rd concept kind (opt-in via --enable-adjective):
+# Adjective words (NEW kind) — bind to dedicated adjective pools.
+ADJECTIVE_VOCAB: Dict[str, str] = {
+    "big": "BIG", "small": "SMALL", "hot": "HOT", "cold": "COLD",
+}
+ADJECTIVE_NAMES = list(ADJECTIVE_VOCAB.values())   # ["BIG","SMALL","HOT","COLD"]
+
 
 def build_concept_bridge(seed: int,
                           n_lang_input: int = 4096,
                           n_per_pool: int = 500,
                           n_fs_per_pool: int = 60,
+                          enable_adjective: bool = False,
                           verbose: bool = True):
-    """Construct a bridge with motor + noun + verb pool architecture.
+    """Construct a bridge with motor + noun + verb (+ optional adjective) pools.
 
     Mirrors bio_three_factor's biological config: NMDA bistability,
     motor FS cross-inhibition, embodied Hebbian training. Pools follow
     the Tier 1 recipe (500 neurons, exc 0.8, internal 0.10).
+
+    enable_adjective=True adds 4 additional pools (BIG/SMALL/HOT/COLD)
+    -> 14 distinct output categories (3.5x diversity over Tier 1).
     """
     from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
     from sim.bridge import SimulationBridge
@@ -94,6 +105,11 @@ def build_concept_bridge(seed: int,
         verb_pool_names=VERB_NAMES,
         n_verb_per_pool=n_per_pool,
         n_verb_fs_per_pool=n_fs_per_pool,
+        # Optional 3rd kind: adjectives
+        enable_adjective_pools=enable_adjective,
+        adjective_pool_names=ADJECTIVE_NAMES if enable_adjective else None,
+        n_adjective_per_pool=n_per_pool,
+        n_adjective_fs_per_pool=n_fs_per_pool,
     )
 
     cfg = CoreSimConfig()
@@ -191,7 +207,8 @@ def apply_concept_topographic_bias(bridge,
 
     summary: Dict[str, Dict] = {}
 
-    # Build (word, target_pool_region, peers) tuples for all three kinds
+    # Build (word, target_pool_region, peers) tuples for all kinds
+    rm_existing = bridge.region_manager
     bias_tasks: List[Tuple[str, str, List[str]]] = []
     for word, action in DIRECTION_VOCAB.items():
         target = f"motor_{action}"
@@ -205,6 +222,18 @@ def apply_concept_topographic_bias(bridge,
         target = f"verb_pool_{name}"
         peers = [f"verb_pool_{v}" for v in VERB_NAMES]
         bias_tasks.append((word, target, peers))
+    # Check if adjective pools exist in the bridge (opt-in)
+    has_adjective = False
+    try:
+        rm_existing.indices(f"adjective_pool_{ADJECTIVE_NAMES[0]}")
+        has_adjective = True
+    except Exception:
+        pass
+    if has_adjective:
+        for word, name in ADJECTIVE_VOCAB.items():
+            target = f"adjective_pool_{name}"
+            peers = [f"adjective_pool_{n}" for n in ADJECTIVE_NAMES]
+            bias_tasks.append((word, target, peers))
 
     for word, target_region, peer_regions in bias_tasks:
         drive = vocab_to_drive_pattern(
@@ -404,6 +433,7 @@ def run_concept_pool_demo(seed: int = 42,
                             n_per_pool: int = 500,
                             n_fs_per_pool: int = 60,
                             apply_topographic: bool = True,
+                            enable_adjective: bool = False,
                             verbose: bool = True,
                             load_bridge: str = None,
                             save_bridge: str = None) -> Dict:
@@ -425,6 +455,7 @@ def run_concept_pool_demo(seed: int = 42,
         n_lang_input=n_lang_input,
         n_per_pool=n_per_pool,
         n_fs_per_pool=n_fs_per_pool,
+        enable_adjective=enable_adjective,
         verbose=verbose,
     )
 
@@ -453,7 +484,7 @@ def run_concept_pool_demo(seed: int = 42,
             verbose=verbose,
         )
 
-    # Build training schedule: shuffle across all 10 words
+    # Build training schedule: shuffle across all (word, target_pool) pairs
     import numpy as np
     rng = np.random.default_rng(seed)
     all_targets = []  # list of (word, target_pool_region)
@@ -463,6 +494,9 @@ def run_concept_pool_demo(seed: int = 42,
         all_targets.append((word, f"noun_pool_{name}"))
     for word, name in VERB_VOCAB.items():
         all_targets.append((word, f"verb_pool_{name}"))
+    if enable_adjective:
+        for word, name in ADJECTIVE_VOCAB.items():
+            all_targets.append((word, f"adjective_pool_{name}"))
 
     if load_bridge:
         print(f"\n[TRAIN] SKIPPED (loaded from checkpoint)", flush=True)
@@ -502,6 +536,8 @@ def run_concept_pool_demo(seed: int = 42,
         + [f"noun_pool_{n}" for n in NOUN_NAMES]
         + [f"verb_pool_{v}" for v in VERB_NAMES]
     )
+    if enable_adjective:
+        all_pool_regions += [f"adjective_pool_{n}" for n in ADJECTIVE_NAMES]
 
     print(f"\n[EVAL] measuring cross-category isolation across "
           f"{len(all_pool_regions)} pools", flush=True)
@@ -578,6 +614,9 @@ def main():
     parser.add_argument("--n-fs-per-pool", type=int, default=60)
     parser.add_argument("--no-topographic", action="store_true",
                          help="Skip Pulvermuller topographic bias init")
+    parser.add_argument("--enable-adjective", action="store_true",
+                         help="Add 4 adjective pools (BIG/SMALL/HOT/COLD); "
+                         "14 total output categories")
     parser.add_argument("--out", type=str, default=None,
                          help="Output JSON path (default stdout only)")
     parser.add_argument("--load-bridge", type=str, default=None,
@@ -595,6 +634,7 @@ def main():
         n_per_pool=args.n_per_pool,
         n_fs_per_pool=args.n_fs_per_pool,
         apply_topographic=not args.no_topographic,
+        enable_adjective=args.enable_adjective,
         load_bridge=args.load_bridge,
         save_bridge=args.save_bridge,
     )
