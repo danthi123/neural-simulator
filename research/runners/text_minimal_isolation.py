@@ -432,7 +432,7 @@ def build_biological_brain_regions(
     # "speakable" — firing the pool generates the corresponding word
     # pattern in language_output (A→W readout).
     concept_to_language_output_density: float = 0.30,
-    concept_to_language_output_weight: float = 0.5,
+    concept_to_language_output_weight: float = 2.0,
     concept_to_language_output_jitter: float = 0.3,
 ):
     """Biological-scale architecture with cortical canon ENABLED.
@@ -2565,3 +2565,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
