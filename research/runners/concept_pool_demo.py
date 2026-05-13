@@ -80,6 +80,7 @@ def build_concept_bridge(seed: int,
                           enable_adjective: bool = False,
                           weak_dynamics: bool = False,
                           enable_dlpfc_verb_holding: bool = False,
+                          nmda_verb_pools: bool = False,
                           nmda_tau_decay_ms: float = 100.0,
                           verbose: bool = True):
     """Construct a bridge with motor + noun + verb (+ optional adjective) pools.
@@ -134,6 +135,8 @@ def build_concept_bridge(seed: int,
         # v12 (2026-05-13): dlpfc_verb holding for sequential composition
         enable_dlpfc_verb=enable_dlpfc_verb_holding,
         enable_dlpfc_verb_concept_integration=enable_dlpfc_verb_holding,
+        # v13 (2026-05-13): per-kind NMDA opt-in (cluster G v2 pattern)
+        enable_nmda_verb_pools=nmda_verb_pools,
     )
 
     cfg = CoreSimConfig()
@@ -652,6 +655,7 @@ def run_concept_pool_demo(seed: int = 42,
                             interleaved: bool = False,
                             weak_dynamics: bool = False,
                             enable_dlpfc_verb_holding: bool = False,
+                            nmda_verb_pools: bool = False,
                             nmda_tau_decay_ms: float = 100.0,
                             reset_steps: int = 50,  # 25ms (NMDA tau is ~150ms)
                             verbose: bool = True,
@@ -690,6 +694,7 @@ def run_concept_pool_demo(seed: int = 42,
         enable_adjective=enable_adjective,
         weak_dynamics=weak_dynamics,
         enable_dlpfc_verb_holding=enable_dlpfc_verb_holding,
+        nmda_verb_pools=nmda_verb_pools,
         nmda_tau_decay_ms=nmda_tau_decay_ms,
         verbose=verbose,
     )
@@ -909,6 +914,11 @@ def main():
                          "wiring to verb pools (Tier 2.3 PFC verb-holding pattern). "
                          "Provides canon-NMDA holding stage for sequential "
                          "composition without breaking weak-dynamics isolation.")
+    parser.add_argument("--nmda-verb-pools", action="store_true",
+                         help="v13: per-kind NMDA opt-in. Enable NMDA bistability "
+                         "ONLY on verb pools (cluster G v2 pattern). Other pools "
+                         "stay clean. Verbs get cross-word persistence for "
+                         "sequential composition. Combine with --nmda-tau-decay-ms.")
     parser.add_argument("--reset-steps", type=int, default=50,
                          help="Steps to free-run between training events "
                          "(default 50 = 25ms). For v3 NMDA-decay fix: "
@@ -936,6 +946,7 @@ def main():
         interleaved=args.interleaved,
         weak_dynamics=args.weak_concept_dynamics,
         enable_dlpfc_verb_holding=args.enable_dlpfc_verb_holding,
+        nmda_verb_pools=args.nmda_verb_pools,
         nmda_tau_decay_ms=args.nmda_tau_decay_ms,
         reset_steps=args.reset_steps,
         load_bridge=args.load_bridge,

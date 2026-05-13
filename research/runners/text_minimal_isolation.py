@@ -441,6 +441,14 @@ def build_biological_brain_regions(
     verb_pool_to_dlpfc_weight: float = 2.0,
     dlpfc_to_verb_pool_density: float = 0.30,
     dlpfc_to_verb_pool_weight: float = 2.0,
+    # v13 (2026-05-13 night): per-concept-kind NMDA opt-in (cluster G v2
+    # pattern). Default OFF for all concept pools. When True, the
+    # specified pool kind gets NMDA bistability — needed for cross-word
+    # persistence in sequential composition. Other kinds stay clean.
+    enable_nmda_motor_pools: bool = False,
+    enable_nmda_noun_pools: bool = False,
+    enable_nmda_verb_pools: bool = False,
+    enable_nmda_adjective_pools: bool = False,
     # Reciprocal pool → language_output density/weight. Same defaults as
     # motor → language_output. The lang_output pathway makes the pool
     # "speakable" — firing the pool generates the corresponding word
@@ -1312,6 +1320,7 @@ def build_biological_brain_regions(
         n_per_pool: int,
         n_fs_per_pool: int,
         enable_fs_for_kind: bool,
+        enable_nmda_for_kind: bool = False,  # v13: per-kind NMDA
     ):
         """Add a dedicated pool per concept name plus its optional FS
         cross-inhibition and reciprocal language_output pathway.
@@ -1349,6 +1358,7 @@ def build_biological_brain_regions(
                 inh_weight_mean=pool_inh_weight,
                 weight_jitter=0.2, plastic_internal=False,
                 izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+                enable_nmda=enable_nmda_for_kind,  # v13: per-kind NMDA opt-in
             ))
             # language_input -> pool (the plastic pathway being trained)
             pathways.append(RegionPathway(
@@ -1407,6 +1417,7 @@ def build_biological_brain_regions(
         _add_concept_kind(
             "noun", noun_names, n_noun_per_pool, n_noun_fs_per_pool,
             enable_fs_for_kind=enable_motor_fs,
+            enable_nmda_for_kind=enable_nmda_noun_pools,
         )
 
     if enable_verb_pools:
@@ -1415,6 +1426,7 @@ def build_biological_brain_regions(
         _add_concept_kind(
             "verb", verb_names, n_verb_per_pool, n_verb_fs_per_pool,
             enable_fs_for_kind=enable_motor_fs,
+            enable_nmda_for_kind=enable_nmda_verb_pools,
         )
 
     if enable_adjective_pools:
@@ -1424,6 +1436,7 @@ def build_biological_brain_regions(
             "adjective", adj_names, n_adjective_per_pool,
             n_adjective_fs_per_pool,
             enable_fs_for_kind=enable_motor_fs,
+            enable_nmda_for_kind=enable_nmda_adjective_pools,
         )
 
     # v12 (2026-05-13): verb pool ↔ dlpfc_verb bidirectional wiring for
