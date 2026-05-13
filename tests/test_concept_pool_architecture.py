@@ -312,3 +312,73 @@ def test_pool_kind_plasticity_gates_distinct():
     assert "language_input_to_motor" in gates
     assert "language_input_to_noun_pool" in gates
     assert "language_input_to_verb_pool" in gates
+
+
+def test_adjective_pools_3rd_kind():
+    """enable_adjective_pools=True adds 4 dedicated pools + FS within-kind."""
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_adjective_pools=True,
+        **SMALL_CFG,
+    )
+    adj_pools = [r for r in regions
+                 if r.name.startswith("adjective_pool_")
+                 and not r.name.endswith("_fs")]
+    names = sorted(r.name for r in adj_pools)
+    assert names == [
+        "adjective_pool_BIG", "adjective_pool_COLD",
+        "adjective_pool_HOT", "adjective_pool_SMALL",
+    ]
+    # FS within-kind: 4 pools * 3 others = 12 cross-edges
+    adj_fs_paths = [
+        p for p in pathways
+        if p.from_region.startswith("adjective_pool_")
+        and p.from_region.endswith("_fs")
+    ]
+    assert len(adj_fs_paths) == 12
+    # FS doesn't cross to noun/motor/verb
+    for p in adj_fs_paths:
+        assert p.to_region.startswith("adjective_pool_")
+
+
+def test_all_3_concept_kinds_distinct_gates():
+    """Each of 3 kinds has its own plasticity gate."""
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_noun_pools=True,
+        enable_verb_pools=True,
+        enable_adjective_pools=True,
+        **SMALL_CFG,
+    )
+    gates = set()
+    for p in pathways:
+        if p.from_region == "language_input" and p.plastic:
+            if p.plasticity_gate:
+                gates.add(p.plasticity_gate)
+    assert "language_input_to_motor" in gates
+    assert "language_input_to_noun_pool" in gates
+    assert "language_input_to_verb_pool" in gates
+    assert "language_input_to_adjective_pool" in gates
+
+
+def test_total_pool_count_14_with_3_kinds():
+    """4 motor + 4 noun + 2 verb + 4 adjective = 14 distinct output pools."""
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_noun_pools=True,
+        enable_verb_pools=True,
+        enable_adjective_pools=True,
+        **SMALL_CFG,
+    )
+    output_pools = [
+        r for r in regions
+        if (r.name.startswith("motor_")
+            and not r.name.startswith("motor_FS_"))
+        or (r.name.startswith("noun_pool_")
+            and not r.name.endswith("_fs"))
+        or (r.name.startswith("verb_pool_")
+            and not r.name.endswith("_fs"))
+        or (r.name.startswith("adjective_pool_")
+            and not r.name.endswith("_fs"))
+    ]
+    assert len(output_pools) == 14  # 4 motor + 4 noun + 2 verb + 4 adj

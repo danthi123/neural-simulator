@@ -407,6 +407,14 @@ def build_biological_brain_regions(
     verb_pool_names: list = None,  # default ["GO","COME"]
     n_verb_per_pool: int = 500,
     n_verb_fs_per_pool: int = 60,
+    # 3rd concept kind: adjective pools (2026-05-13). Adds property-
+    # representation pools (BIG, SMALL, HOT, COLD by default). Same
+    # Tier 1 recipe, FS within-kind only (cross-kind FS omitted so
+    # "big apple" can fire adj_BIG + noun_APPLE together).
+    enable_adjective_pools: bool = False,
+    adjective_pool_names: list = None,  # default ["BIG","SMALL","HOT","COLD"]
+    n_adjective_per_pool: int = 500,
+    n_adjective_fs_per_pool: int = 60,
     # Reciprocal pool → language_output density/weight. Same defaults as
     # motor → language_output. The lang_output pathway makes the pool
     # "speakable" — firing the pool generates the corresponding word
@@ -1364,6 +1372,15 @@ def build_biological_brain_regions(
                       else ["GO", "COME"])
         _add_concept_kind(
             "verb", verb_names, n_verb_per_pool, n_verb_fs_per_pool,
+            enable_fs_for_kind=enable_motor_fs,
+        )
+
+    if enable_adjective_pools:
+        adj_names = (adjective_pool_names if adjective_pool_names is not None
+                     else ["BIG", "SMALL", "HOT", "COLD"])
+        _add_concept_kind(
+            "adjective", adj_names, n_adjective_per_pool,
+            n_adjective_fs_per_pool,
             enable_fs_for_kind=enable_motor_fs,
         )
 
