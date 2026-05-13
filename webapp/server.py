@@ -917,6 +917,16 @@ PRESETS: dict[str, list[str]] = {
         "--n-per-pool", "500",
         "--n-fs-per-pool", "60",
     ],
+    # Phase 3: A->W readout. Drive each of 10 pools, cosine-rank the
+    # network's "spoken" word against all 10 trained words. Validates
+    # the reciprocal pool -> language_output pathway end-to-end.
+    # Wall clock: ~20-25 min/seed.
+    "concept_speak_demo": [
+        "--n-train-events", "200",
+        "--n-lang-input", "4096",
+        "--n-per-pool", "500",
+        "--n-fs-per-pool", "60",
+    ],
     # NOTE: phase_2_1_abc / phase_2_2_shakespeare presets exist only on
     # the path-f-hybrid branch (cortex_pretraining.py is not on main).
     # Run from that branch:
@@ -975,6 +985,7 @@ PRESET_RUNNERS: dict[str, str] = {
     # Concept pool architecture (2026-05-13)
     "concept_pool_demo":     "research.runners.concept_pool_demo",
     "concept_compose_demo":  "research.runners.concept_compose_demo",
+    "concept_speak_demo":    "research.runners.concept_speak_demo",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
