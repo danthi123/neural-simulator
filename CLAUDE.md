@@ -862,6 +862,44 @@ events × 12 words = 2-3 hours per seed. Full multi-seed (4 seeds) ≈
 10 hours. Use --n-train-events 50 + smaller pools for faster smoke
 testing if needed.
 
+**v7 production recipe (2026-05-13, post-iteration arc):**
+
+After 8 architectural iterations (v1→v7), the production recipe is:
+- 12 pools (4 motor + 4 noun + 4 verb) for FS symmetry
+- Target-only STDP gating (only target kind's gate open per word)
+- Weak dynamics for concept pools (0.05/0.3/0.8); motor canon
+- Topographic prior 3.0/0.3 (10x ratio), target-priority bias
+- Interleaved training (shuffled events match Tier 1 pattern)
+- 200 events per word, 2048 lang_input, 200 per pool
+
+```bash
+python -m research.runners.concept_pool_demo --seed N \
+    --n-train-events 200 --n-lang-input 2048 --n-per-pool 200 \
+    --n-fs-per-pool 24 --weak-concept-dynamics --interleaved \
+    --topographic-factor 3.0 --off-target-factor 0.3
+```
+
+Multi-seed in flight (seeds 42-46). Seeds 42, 43 done: 6/12, 7/12 PASS.
+Mean 6.5/12 (54%), std 0.71. v7 weight probe shows consistent 4x ratio
+across seeds — variability is dynamics, not weights. Architecture
+demonstrates concepts + composition framework + diversity per user
+mandate at meaningful (50%+) PASS rate.
+
+Phase 3 A→W readout currently 0/12 on v7 bridge (separate issue:
+concept_to_language_output_weight=0.5 vs motor's 2.0 = 4x weaker
+readout). Fix queued for v8 batch.
+
+Trajectory: v1 0/10 → v7 6.5/12. Each iteration identified and fixed
+a specific bug:
+- v2: FS topology asymmetry (verb count)
+- v2.x: target-only STDP gating
+- v3: weak dynamics fixes canon bias amplification
+- v4: stronger topographic prior
+- v6: cross-kind topographic dampening
+- v7: target-priority assignment (no cumulative dampening)
+
+Findings: `research/findings/2026-05-13-concept-pool-architecture-Phase1.md`
+
 Diagnosis + fix: `docs/plans/2026-05-13-concept-pool-FS-design-note.md`
 Findings: `research/findings/2026-05-13-concept-pool-architecture-Phase1.md`
 
