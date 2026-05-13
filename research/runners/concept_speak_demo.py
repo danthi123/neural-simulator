@@ -35,16 +35,19 @@ from pathlib import Path
 from typing import Dict, List
 
 from research.runners.concept_pool_demo import (
-    DIRECTION_VOCAB, NOUN_VOCAB, VERB_VOCAB,
-    NOUN_NAMES, VERB_NAMES, MOTOR_NAMES,
+    DIRECTION_VOCAB, NOUN_VOCAB, VERB_VOCAB, ADJECTIVE_VOCAB,
+    NOUN_NAMES, VERB_NAMES, MOTOR_NAMES, ADJECTIVE_NAMES,
     build_concept_bridge, apply_concept_topographic_bias,
     train_word_to_pool,
 )
 
 
-def _all_words():
+def _all_words(include_adjective: bool = False):
     """Return all trained words in canonical order."""
-    return list(DIRECTION_VOCAB) + list(NOUN_VOCAB) + list(VERB_VOCAB)
+    out = list(DIRECTION_VOCAB) + list(NOUN_VOCAB) + list(VERB_VOCAB)
+    if include_adjective:
+        out += list(ADJECTIVE_VOCAB)
+    return out
 
 
 def _target_pool_for_word(word: str) -> str:
@@ -54,6 +57,8 @@ def _target_pool_for_word(word: str) -> str:
         return f"noun_pool_{NOUN_VOCAB[word]}"
     if word in VERB_VOCAB:
         return f"verb_pool_{VERB_VOCAB[word]}"
+    if word in ADJECTIVE_VOCAB:
+        return f"adjective_pool_{ADJECTIVE_VOCAB[word]}"
     raise ValueError(f"unknown word: {word!r}")
 
 
@@ -72,6 +77,11 @@ def _target_word_for_pool(pool: str) -> str:
     elif pool.startswith("verb_pool_"):
         name = pool[len("verb_pool_"):]
         for w, n in VERB_VOCAB.items():
+            if n == name:
+                return w
+    elif pool.startswith("adjective_pool_"):
+        name = pool[len("adjective_pool_"):]
+        for w, n in ADJECTIVE_VOCAB.items():
             if n == name:
                 return w
     raise ValueError(f"unknown pool: {pool!r}")
@@ -140,19 +150,29 @@ def evaluate_A_to_W(bridge, n_lang_input: int = 4096,
     rm = bridge.region_manager
     n_lang_out = len(list(rm.indices("language_output")))
 
+    # Auto-detect adjective pools (v11+: 16-pool architecture)
+    has_adjective = False
+    try:
+        rm.indices(f"adjective_pool_{ADJECTIVE_NAMES[0]}")
+        has_adjective = True
+    except Exception:
+        pass
+
     # Pre-compute word reference patterns
-    all_words = _all_words()
+    all_words = _all_words(include_adjective=has_adjective)
     word_patterns = {
         w: vocab_to_drive_pattern(w, n_neurons=n_lang_out, sparsity=0.1)
         for w in all_words
     }
 
-    # Iterate over all 10 pools
+    # Iterate over all pools (12 or 16 depending on adjective presence)
     all_pools = (
         [f"motor_{a}" for a in MOTOR_NAMES]
         + [f"noun_pool_{n}" for n in NOUN_NAMES]
         + [f"verb_pool_{v}" for v in VERB_NAMES]
     )
+    if has_adjective:
+        all_pools += [f"adjective_pool_{n}" for n in ADJECTIVE_NAMES]
 
     results = {}
     n_pass = 0
@@ -205,6 +225,7 @@ def run_concept_speak_demo(seed: int = 42,
                              n_fs_per_pool: int = 60,
                              apply_topographic: bool = True,
                              weak_dynamics: bool = False,
+                             enable_adjective: bool = False,
                              nmda_tau_decay_ms: float = 100.0,
                              load_bridge: str = None,
                              verbose: bool = True):
@@ -224,6 +245,7 @@ def run_concept_speak_demo(seed: int = 42,
         n_per_pool=n_per_pool,
         n_fs_per_pool=n_fs_per_pool,
         weak_dynamics=weak_dynamics,
+        enable_adjective=enable_adjective,
         nmda_tau_decay_ms=nmda_tau_decay_ms,
         verbose=verbose,
     )
@@ -306,6 +328,9 @@ def main():
     parser.add_argument("--weak-concept-dynamics", action="store_true",
                          help="Match v7 production recipe (concept pools "
                          "use weak dynamics 0.05/0.3/0.8)")
+    parser.add_argument("--enable-adjective", action="store_true",
+                         help="Match v11 16-pool architecture (adds "
+                         "4 adjective pools). Required when loading v11+ bridges.")
     parser.add_argument("--nmda-tau-decay-ms", type=float, default=100.0,
                          help="NMDA tau (ms); for loaded bridges must "
                          "match the bridge's training tau")
@@ -323,6 +348,7 @@ def main():
         n_fs_per_pool=args.n_fs_per_pool,
         apply_topographic=not args.no_topographic,
         weak_dynamics=args.weak_concept_dynamics,
+        enable_adjective=args.enable_adjective,
         nmda_tau_decay_ms=args.nmda_tau_decay_ms,
         load_bridge=args.load_bridge,
     )
