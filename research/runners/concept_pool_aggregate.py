@@ -101,13 +101,16 @@ def main():
     parser.add_argument("--dir", type=str,
                          default="research/findings/raw/g11_bg/concept_pool_demo",
                          help="Directory containing seed*.json files")
+    parser.add_argument("--pattern", type=str, default="seed*.json",
+                         help="Glob pattern (default 'seed*.json'). "
+                         "For v7-only: 'seed*_v7.json'.")
     parser.add_argument("--out", type=str, default=None,
                          help="Output JSON path for aggregated summary")
     args = parser.parse_args()
 
-    json_files = sorted(Path(args.dir).glob("seed*.json"))
+    json_files = sorted(Path(args.dir).glob(args.pattern))
     if not json_files:
-        print(f"No seed*.json found in {args.dir}")
+        print(f"No files matching '{args.pattern}' in {args.dir}")
         return 1
 
     print(f"Aggregating {len(json_files)} seed results from {args.dir}\n")
