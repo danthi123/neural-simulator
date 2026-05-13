@@ -92,6 +92,50 @@ Implementation order:
   might improve without architecture change.
 - If v8 doesn't help, Option A is the next step.
 
+## Update 2026-05-13 evening (post-v9 breakthrough)
+
+V8 result: A→W still 0/12.
+V9 result: A→W 12/12 PASS (reciprocal topographic bias was the fix,
+not the weight magnitude).
+
+v10 = Option A in flight: --nmda-tau-decay-ms 250.0 (extends from
+default 100ms toward Wang 2002 PFC NMDA range 100-300ms).
+
+### Catalog biology grounding (referenced 2026-05-13)
+
+**G.06 PFC working memory — sustained delay-period activity**
+(Kandel 6e Ch 34 pp 827–842): "dorsolateral PFC; recurrent excitation
+supports persistent firing across delay; modulated by D1." This is
+EXACTLY the mechanism v10 NMDA tau extension is targeting — though
+v10 applies it generically across all concept pools rather than
+specifically to PFC.
+
+**G.08 Working memory in prefrontal cortex — persistent activity
+for active maintenance** (Kandel 6e Ch 52 pp 1292–1294): "Maintains
+transient, goal-relevant representations across delays (seconds).
+DMS-task PFC neurons hold 'what' (object), 'where' (location), and
+'what+where' conjunctions during the delay period (Rainer/Asaad/Miller 1998)."
+
+This is the bidirectional binding pattern we want — verb_pool_GO
+holds "what" while motor_N processes "where" for the "go north"
+phrase. The catalog notes Cluster G sim status: partial — PFC region
+exists (60 neurons recurrent) but single-compartment, no DMS-style
+delay-period mixed selectivity. Concept pool architecture extends
+the partial PFC capability to non-direction concepts.
+
+### v11 fallback if v10 partial
+
+If v10 NMDA tau 250ms gives sequential <4/6, fall back to **Option B
+(explicit working-memory pool)** integrating the existing
+`enable_dlpfc_verb` infrastructure. The dlpfc_verb region (200
+neurons, internal_density 0.15, NMDA bistable) can act as a
+persistent holding stage between concept pools and motor output:
+
+  language_input → verb_pool_X → dlpfc_verb → motor_X
+
+This is exactly Tier 2.3's pattern (which got stuck at 34-40% on
+phrase composition, but architecturally proven for persistence).
+
 ## Notes
 
 This design note is intentionally NOT a plan — it's an option
