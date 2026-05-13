@@ -204,10 +204,17 @@ def run_concept_speak_demo(seed: int = 42,
                              n_per_pool: int = 500,
                              n_fs_per_pool: int = 60,
                              apply_topographic: bool = True,
+                             weak_dynamics: bool = False,
+                             load_bridge: str = None,
                              verbose: bool = True):
-    """Train + evaluate A->W readout for all 10 pools."""
+    """Train + evaluate A->W readout for all 12 pools (motor + noun + verb).
+
+    If load_bridge is given, skip training and load checkpoint (e.g.,
+    from concept_pool_demo --save-bridge). Fast iteration on A->W
+    mechanics without retraining.
+    """
     print(f"\n=== concept_speak_demo (seed={seed}) ===", flush=True)
-    print(f"  Tests A->W: drive 10 pools, decode 'spoken' word", flush=True)
+    print(f"  Tests A->W: drive all pools, decode 'spoken' word", flush=True)
 
     t0 = time.time()
     bridge = build_concept_bridge(
@@ -215,35 +222,56 @@ def run_concept_speak_demo(seed: int = 42,
         n_lang_input=n_lang_input,
         n_per_pool=n_per_pool,
         n_fs_per_pool=n_fs_per_pool,
+        weak_dynamics=weak_dynamics,
         verbose=verbose,
     )
-    if apply_topographic:
-        apply_concept_topographic_bias(bridge, n_lang_input=n_lang_input,
-                                          verbose=verbose)
 
-    # Train all 10 (word, pool) pairs
-    all_targets = []
-    for word, action in DIRECTION_VOCAB.items():
-        all_targets.append((word, f"motor_{action}"))
-    for word, name in NOUN_VOCAB.items():
-        all_targets.append((word, f"noun_pool_{name}"))
-    for word, name in VERB_VOCAB.items():
-        all_targets.append((word, f"verb_pool_{name}"))
+    if load_bridge:
+        print(f"\n[LOAD] loading checkpoint from {load_bridge}", flush=True)
+        bridge.load_checkpoint(load_bridge)
+        # Freeze gates for inference
+        for g in ("language_input_to_motor",
+                  "language_input_to_noun_pool",
+                  "language_input_to_verb_pool",
+                  "motor_to_language_output",
+                  "noun_pool_to_language_output",
+                  "verb_pool_to_language_output"):
+            try:
+                bridge.set_plasticity_gate(g, 0.0)
+            except Exception:
+                pass
+        train_sec = 0.0
+    else:
+        if apply_topographic:
+            apply_concept_topographic_bias(
+                bridge, n_lang_input=n_lang_input, verbose=verbose,
+            )
 
-    print(f"\n[TRAIN] {len(all_targets)} (word, pool) pairs", flush=True)
-    t_train = time.time()
-    for word, target in all_targets:
-        t_word = time.time()
-        train_word_to_pool(
-            bridge, word, target,
-            n_events=n_train_events,
-            n_lang_input=n_lang_input,
-            n_lang_output=n_lang_input,
-            verbose=False,
-        )
-        print(f"  trained '{word}' -> {target} "
-              f"({time.time() - t_word:.0f}s)", flush=True)
-    print(f"[TRAIN] complete ({time.time() - t_train:.0f}s)", flush=True)
+        # Train all (word, pool) pairs
+        all_targets = []
+        for word, action in DIRECTION_VOCAB.items():
+            all_targets.append((word, f"motor_{action}"))
+        for word, name in NOUN_VOCAB.items():
+            all_targets.append((word, f"noun_pool_{name}"))
+        for word, name in VERB_VOCAB.items():
+            all_targets.append((word, f"verb_pool_{name}"))
+
+        print(f"\n[TRAIN] {len(all_targets)} (word, pool) pairs",
+              flush=True)
+        t_train = time.time()
+        for word, target in all_targets:
+            t_word = time.time()
+            train_word_to_pool(
+                bridge, word, target,
+                n_events=n_train_events,
+                n_lang_input=n_lang_input,
+                n_lang_output=n_lang_input,
+                verbose=False,
+            )
+            print(f"  trained '{word}' -> {target} "
+                  f"({time.time() - t_word:.0f}s)", flush=True)
+        train_sec = time.time() - t_train
+        print(f"[TRAIN] complete ({train_sec:.0f}s)", flush=True)
 
     # Phase 3: A->W readout
     print(f"\n[EVAL] A->W readout for all 10 pools", flush=True)
@@ -273,6 +301,12 @@ def main():
     parser.add_argument("--n-per-pool", type=int, default=500)
     parser.add_argument("--n-fs-per-pool", type=int, default=60)
     parser.add_argument("--no-topographic", action="store_true")
+    parser.add_argument("--weak-concept-dynamics", action="store_true",
+                         help="Match v7 production recipe (concept pools "
+                         "use weak dynamics 0.05/0.3/0.8)")
+    parser.add_argument("--load-bridge", type=str, default=None,
+                         help="Load checkpoint instead of training "
+                         "(use with v7 saved bridge from concept_pool_demo)")
     parser.add_argument("--out", type=str, default=None)
     args = parser.parse_args()
 
@@ -283,6 +317,8 @@ def main():
         n_per_pool=args.n_per_pool,
         n_fs_per_pool=args.n_fs_per_pool,
         apply_topographic=not args.no_topographic,
+        weak_dynamics=args.weak_concept_dynamics,
+        load_bridge=args.load_bridge,
     )
     if args.out:
         out_path = Path(args.out)
