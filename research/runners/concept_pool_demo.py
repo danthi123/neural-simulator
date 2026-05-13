@@ -195,6 +195,9 @@ def apply_concept_topographic_bias(bridge,
                                      sparsity: float = 0.1,
                                      apply_reciprocal: bool = True,
                                      n_lang_output: int = None,
+                                     orthogonal_codes: bool = False,
+                                     n_words_for_orthogonal: int = 12,
+                                     word_to_idx: dict = None,
                                      verbose: bool = True) -> Dict:
     """Apply Pulvermüller-style topographic bias to lang_input -> {pool}.
 
@@ -301,13 +304,21 @@ def apply_concept_topographic_bias(bridge,
     # exactly ONCE.
 
     # Step 1: pre-compute global_active per word
+    if orthogonal_codes:
+        from sim.text_embeddings import orthogonal_drive_pattern
     word_to_active = {}
     for word, _, _ in bias_tasks:
         if word in word_to_active:
             continue
-        drive = vocab_to_drive_pattern(
-            word, n_neurons=n_lang_input, sparsity=sparsity
-        )
+        if orthogonal_codes:
+            drive = orthogonal_drive_pattern(
+                cue_idx=word_to_idx[word], n_cues=n_words_for_orthogonal,
+                n_neurons=n_lang_input, sparsity=sparsity,
+            )
+        else:
+            drive = vocab_to_drive_pattern(
+                word, n_neurons=n_lang_input, sparsity=sparsity
+            )
         local_active = np.where(drive > 0)[0]
         word_to_active[word] = [lang_input_indices[i] for i in local_active]
 
@@ -388,9 +399,16 @@ def apply_concept_topographic_bias(bridge,
             # as forward drive pattern)
             word_to_lang_out_active = {}
             for word in word_to_active:
-                drive = vocab_to_drive_pattern(
-                    word, n_neurons=n_lang_output_actual, sparsity=sparsity
-                )
+                if orthogonal_codes:
+                    drive = orthogonal_drive_pattern(
+                        cue_idx=word_to_idx[word],
+                        n_cues=n_words_for_orthogonal,
+                        n_neurons=n_lang_output_actual, sparsity=sparsity,
+                    )
+                else:
+                    drive = vocab_to_drive_pattern(
+                        word, n_neurons=n_lang_output_actual, sparsity=sparsity
+                    )
                 local_active = np.where(drive > 0)[0]
                 word_to_lang_out_active[word] = [
                     lang_output_indices_full[i] for i in local_active
@@ -461,6 +479,9 @@ def train_word_to_pool(bridge, word: str, target_pool_region: str,
                         n_lang_input: int = 4096,
                         n_lang_output: int = 4096,
                         embodied_hebbian: bool = True,
+                        orthogonal_codes: bool = False,
+                        n_words_for_orthogonal: int = 12,
+                        word_to_idx: dict = None,
                         verbose: bool = False) -> Dict:
     """Train a single word -> pool binding via paired teacher current.
 
@@ -482,7 +503,7 @@ def train_word_to_pool(bridge, word: str, target_pool_region: str,
     """
     from sim.backend import get_backend
     cp, _ = get_backend()
-    from sim.text_embeddings import vocab_to_drive_pattern
+    from sim.text_embeddings import vocab_to_drive_pattern, orthogonal_drive_pattern
 
     rm = bridge.region_manager
     lang_input_idx = list(rm.indices("language_input"))
@@ -499,16 +520,37 @@ def train_word_to_pool(bridge, word: str, target_pool_region: str,
         except Exception:
             pass
 
-    drive_in = vocab_to_drive_pattern(
-        word, n_neurons=n_lang_input,
-        drive_max_pA=drive_pA, sparsity=sparsity,
-    )
-    drive_in_gpu = cp.asarray(drive_in, dtype=cp.float32)
-    if has_output:
-        drive_out = vocab_to_drive_pattern(
-            word, n_neurons=n_lang_output,
+    # v14 (2026-05-13): orthogonal codes for non-overlapping word patterns.
+    # Hash-based vocab_to_drive_pattern produces ~10% overlap between
+    # word patterns; orthogonal_drive_pattern gives each word a
+    # disjoint band, eliminating overlap entirely.
+    if orthogonal_codes:
+        if word_to_idx is None or word not in word_to_idx:
+            raise ValueError(
+                f"orthogonal_codes=True requires word_to_idx mapping "
+                f"containing word={word!r}"
+            )
+        drive_in = orthogonal_drive_pattern(
+            cue_idx=word_to_idx[word], n_cues=n_words_for_orthogonal,
+            n_neurons=n_lang_input, drive_max_pA=drive_pA, sparsity=sparsity,
+        )
+    else:
+        drive_in = vocab_to_drive_pattern(
+            word, n_neurons=n_lang_input,
             drive_max_pA=drive_pA, sparsity=sparsity,
         )
+    drive_in_gpu = cp.asarray(drive_in, dtype=cp.float32)
+    if has_output:
+        if orthogonal_codes:
+            drive_out = orthogonal_drive_pattern(
+                cue_idx=word_to_idx[word], n_cues=n_words_for_orthogonal,
+                n_neurons=n_lang_output, drive_max_pA=drive_pA, sparsity=sparsity,
+            )
+        else:
+            drive_out = vocab_to_drive_pattern(
+                word, n_neurons=n_lang_output,
+                drive_max_pA=drive_pA, sparsity=sparsity,
+            )
         drive_out_gpu = cp.asarray(drive_out, dtype=cp.float32)
 
     # Open ONLY the target kind's gates during training. v1/v2 bug:
@@ -594,22 +636,31 @@ def measure_pool_firing(bridge, word: str,
                           reset_steps: int = 50,
                           drive_pA: float = 200.0,
                           sparsity: float = 0.1,
-                          n_lang_input: int = 4096) -> Dict[str, float]:
+                          n_lang_input: int = 4096,
+                          orthogonal_codes: bool = False,
+                          n_words_for_orthogonal: int = 12,
+                          word_to_idx: dict = None) -> Dict[str, float]:
     """Drive lang_input(word) without any teacher, measure spike counts
     across ALL listed pool regions. Returns per-pool spike count.
     """
     from sim.backend import get_backend
     cp, _ = get_backend()
-    from sim.text_embeddings import vocab_to_drive_pattern
+    from sim.text_embeddings import vocab_to_drive_pattern, orthogonal_drive_pattern
 
     rm = bridge.region_manager
     lang_input_idx = list(rm.indices("language_input"))
     lang_input_arr = cp.asarray(lang_input_idx, dtype=cp.int64)
 
-    drive_in = vocab_to_drive_pattern(
-        word, n_neurons=n_lang_input,
-        drive_max_pA=drive_pA, sparsity=sparsity,
-    )
+    if orthogonal_codes:
+        drive_in = orthogonal_drive_pattern(
+            cue_idx=word_to_idx[word], n_cues=n_words_for_orthogonal,
+            n_neurons=n_lang_input, drive_max_pA=drive_pA, sparsity=sparsity,
+        )
+    else:
+        drive_in = vocab_to_drive_pattern(
+            word, n_neurons=n_lang_input,
+            drive_max_pA=drive_pA, sparsity=sparsity,
+        )
     drive_in_gpu = cp.asarray(drive_in, dtype=cp.float32)
 
     # Reset
@@ -657,6 +708,8 @@ def run_concept_pool_demo(seed: int = 42,
                             enable_dlpfc_verb_holding: bool = False,
                             nmda_verb_pools: bool = False,
                             nmda_tau_decay_ms: float = 100.0,
+                            orthogonal_codes: bool = False,
+                            sparsity: float = 0.1,
                             reset_steps: int = 50,  # 25ms (NMDA tau is ~150ms)
                             verbose: bool = True,
                             load_bridge: str = None,
@@ -715,6 +768,15 @@ def run_concept_pool_demo(seed: int = 42,
             except Exception:
                 pass
 
+    # Build word_to_idx mapping for orthogonal codes (v14)
+    all_words_ordered = (
+        list(DIRECTION_VOCAB) + list(NOUN_VOCAB) + list(VERB_VOCAB)
+    )
+    if enable_adjective:
+        all_words_ordered += list(ADJECTIVE_VOCAB)
+    word_to_idx = {w: i for i, w in enumerate(all_words_ordered)}
+    n_words_total = len(all_words_ordered)
+
     if apply_topographic and not load_bridge:
         # Only apply topographic bias for fresh training (would overwrite
         # learned weights if applied to loaded bridge)
@@ -723,6 +785,10 @@ def run_concept_pool_demo(seed: int = 42,
             n_lang_input=n_lang_input,
             topographic_factor=topographic_factor,
             off_target_factor=off_target_factor,
+            sparsity=sparsity,
+            orthogonal_codes=orthogonal_codes,
+            n_words_for_orthogonal=n_words_total,
+            word_to_idx=word_to_idx,
             verbose=verbose,
         )
 
@@ -770,6 +836,10 @@ def run_concept_pool_demo(seed: int = 42,
                     reset_steps=reset_steps,
                     n_lang_input=n_lang_input,
                     n_lang_output=n_lang_input,
+                    sparsity=sparsity,
+                    orthogonal_codes=orthogonal_codes,
+                    n_words_for_orthogonal=n_words_total,
+                    word_to_idx=word_to_idx,
                     verbose=False,
                 )
                 if (ev_idx + 1) % 100 == 0:
@@ -785,6 +855,10 @@ def run_concept_pool_demo(seed: int = 42,
                     reset_steps=reset_steps,
                     n_lang_input=n_lang_input,
                     n_lang_output=n_lang_input,
+                    sparsity=sparsity,
+                    orthogonal_codes=orthogonal_codes,
+                    n_words_for_orthogonal=n_words_total,
+                    word_to_idx=word_to_idx,
                     verbose=False,
                 )
                 print(f"  trained '{word}' -> {target} "
@@ -817,6 +891,10 @@ def run_concept_pool_demo(seed: int = 42,
         per_pool = measure_pool_firing(
             bridge, word, all_pool_regions,
             n_lang_input=n_lang_input,
+            sparsity=sparsity,
+            orthogonal_codes=orthogonal_codes,
+            n_words_for_orthogonal=n_words_total,
+            word_to_idx=word_to_idx,
         )
         eval_results[word] = {
             "target": target,
@@ -919,6 +997,16 @@ def main():
                          "ONLY on verb pools (cluster G v2 pattern). Other pools "
                          "stay clean. Verbs get cross-word persistence for "
                          "sequential composition. Combine with --nmda-tau-decay-ms.")
+    parser.add_argument("--orthogonal-codes", action="store_true",
+                         help="v14: use orthogonal_drive_pattern (non-overlapping "
+                         "bands) instead of hash-based vocab_to_drive_pattern. "
+                         "Eliminates per-word structural overlap that causes "
+                         "fragile W->A on some words. Requires sparsity small "
+                         "enough that all words' bands fit non-overlapping.")
+    parser.add_argument("--sparsity", type=float, default=0.1,
+                         help="Drive pattern sparsity (default 0.1). With "
+                         "--orthogonal-codes, must be small enough: e.g., 0.05 "
+                         "for 16 words in 2048 lang_input.")
     parser.add_argument("--reset-steps", type=int, default=50,
                          help="Steps to free-run between training events "
                          "(default 50 = 25ms). For v3 NMDA-decay fix: "
@@ -948,6 +1036,8 @@ def main():
         enable_dlpfc_verb_holding=args.enable_dlpfc_verb_holding,
         nmda_verb_pools=args.nmda_verb_pools,
         nmda_tau_decay_ms=args.nmda_tau_decay_ms,
+        orthogonal_codes=args.orthogonal_codes,
+        sparsity=args.sparsity,
         reset_steps=args.reset_steps,
         load_bridge=args.load_bridge,
         save_bridge=args.save_bridge,
