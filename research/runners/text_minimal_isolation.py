@@ -415,6 +415,18 @@ def build_biological_brain_regions(
     adjective_pool_names: list = None,  # default ["BIG","SMALL","HOT","COLD"]
     n_adjective_per_pool: int = 500,
     n_adjective_fs_per_pool: int = 60,
+    # Concept-pool dynamics (2026-05-13 post-v2c). v2c found canon
+    # dynamics (0.10/2.0/4.0) amplify structural bias at biological
+    # scale with 12 pools (same pattern as P5 iter KK with multi-pool
+    # wernicke). Weak dynamics (iter AA recipe 0.05/0.3/0.8) reduce
+    # internal recurrent amplification, preventing off-target pools
+    # from accumulating activated states across training events.
+    #
+    # Default = motor canon (backward compat). Set to weak via
+    # --weak-concept-dynamics CLI flag in concept_pool_demo.
+    concept_pool_internal_density: float = None,  # None -> use motor_internal_density
+    concept_pool_exc_weight_mean: float = None,
+    concept_pool_inh_weight_mean: float = None,
     # Reciprocal pool → language_output density/weight. Same defaults as
     # motor → language_output. The lang_output pathway makes the pool
     # "speakable" — firing the pool generates the corresponding word
@@ -1296,15 +1308,31 @@ def build_biological_brain_regions(
         kinds (a verb_GO_fs does not inhibit noun_APPLE) so
         composition like "go north" can have both pools active.
         """
+        # Use concept-pool-specific dynamics if provided, else motor canon
+        pool_internal_density = (
+            concept_pool_internal_density
+            if concept_pool_internal_density is not None
+            else motor_internal_density
+        )
+        pool_exc_weight = (
+            concept_pool_exc_weight_mean
+            if concept_pool_exc_weight_mean is not None
+            else motor_exc_weight_mean
+        )
+        pool_inh_weight = (
+            concept_pool_inh_weight_mean
+            if concept_pool_inh_weight_mean is not None
+            else motor_inh_weight_mean
+        )
         for name in pool_names:
             pool_region = f"{kind}_pool_{name}"
             regions.append(BrainRegion(
                 name=pool_region,
                 n_neurons=n_per_pool,
                 exc_fraction=motor_exc_fraction,
-                internal_density=motor_internal_density,
-                exc_weight_mean=motor_exc_weight_mean,
-                inh_weight_mean=motor_inh_weight_mean,
+                internal_density=pool_internal_density,
+                exc_weight_mean=pool_exc_weight,
+                inh_weight_mean=pool_inh_weight,
                 weight_jitter=0.2, plastic_internal=False,
                 izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
             ))

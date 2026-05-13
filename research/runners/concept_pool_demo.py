@@ -78,6 +78,7 @@ def build_concept_bridge(seed: int,
                           n_per_pool: int = 500,
                           n_fs_per_pool: int = 60,
                           enable_adjective: bool = False,
+                          weak_dynamics: bool = False,
                           verbose: bool = True):
     """Construct a bridge with motor + noun + verb (+ optional adjective) pools.
 
@@ -91,6 +92,13 @@ def build_concept_bridge(seed: int,
     from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
+
+    # Per v2c finding: canon dynamics (0.10/2.0/4.0) amplify structural
+    # bias at biological scale with 12 pools (same as P5 iter KK). Weak
+    # dynamics (iter AA recipe) prevent off-target pool self-sustaining.
+    concept_internal_density = 0.05 if weak_dynamics else None
+    concept_exc_weight = 0.3 if weak_dynamics else None
+    concept_inh_weight = 0.8 if weak_dynamics else None
 
     regions, pathways = build_biological_brain_regions(
         n_lang_input=n_lang_input,
@@ -117,6 +125,10 @@ def build_concept_bridge(seed: int,
         adjective_pool_names=ADJECTIVE_NAMES if enable_adjective else None,
         n_adjective_per_pool=n_per_pool,
         n_adjective_fs_per_pool=n_fs_per_pool,
+        # Per-kind dynamics (weak when --weak-concept-dynamics)
+        concept_pool_internal_density=concept_internal_density,
+        concept_pool_exc_weight_mean=concept_exc_weight,
+        concept_pool_inh_weight_mean=concept_inh_weight,
     )
 
     cfg = CoreSimConfig()
@@ -468,6 +480,7 @@ def run_concept_pool_demo(seed: int = 42,
                             off_target_factor: float = 0.5,
                             enable_adjective: bool = False,
                             interleaved: bool = False,
+                            weak_dynamics: bool = False,
                             reset_steps: int = 50,  # 25ms (NMDA tau is ~150ms)
                             verbose: bool = True,
                             load_bridge: str = None,
@@ -503,6 +516,7 @@ def run_concept_pool_demo(seed: int = 42,
         n_per_pool=n_per_pool,
         n_fs_per_pool=n_fs_per_pool,
         enable_adjective=enable_adjective,
+        weak_dynamics=weak_dynamics,
         verbose=verbose,
     )
 
@@ -704,6 +718,13 @@ def main():
                          help="Use interleaved training (shuffled event "
                          "order) instead of sequential word-by-word. "
                          "Matches bio_three_factor Tier 1 pattern.")
+    parser.add_argument("--weak-concept-dynamics", action="store_true",
+                         help="Use weak dynamics for concept pools "
+                         "(0.05/0.3/0.8 instead of canon 0.10/2.0/4.0). "
+                         "Per P5 iter AA + v2c finding: canon amplifies "
+                         "structural bias at biological scale with many "
+                         "pools. Weak prevents off-target pools from "
+                         "accumulating activated states.")
     parser.add_argument("--reset-steps", type=int, default=50,
                          help="Steps to free-run between training events "
                          "(default 50 = 25ms). For v3 NMDA-decay fix: "
@@ -729,6 +750,7 @@ def main():
         off_target_factor=args.off_target_factor,
         enable_adjective=args.enable_adjective,
         interleaved=args.interleaved,
+        weak_dynamics=args.weak_concept_dynamics,
         reset_steps=args.reset_steps,
         load_bridge=args.load_bridge,
         save_bridge=args.save_bridge,
