@@ -338,17 +338,26 @@ build_concept_bridge:
 |---|---|---|---|
 | 42 | 6/12 | north, east, apple, dog, cat, go | south, west, river, come, stop, look |
 | 43 | 7/12 | north, east, south, river, cat, come, look | west, apple, dog, go, stop |
-| 44 | (in flight) | | |
-| 45 | (pending) | | |
+| 44 | 7/12 | north, east, west, apple, river, cat, look | south, dog, go, come, stop |
+| 45 | (in flight) | | |
 | 46 | (pending) | | |
 
 Different words pass at different seeds — seed-dependent structural
 variance dominates per-word PASS pattern. Multi-seed mean is what
 matters for architecture validation.
 
-So far: 6.5/12 (54%) mean across seeds 42-43. Confirms the architecture
-demonstrates concepts/composition/diversity at meaningful rates beyond
-single-pool dominance.
+3-seed v7 mean: **6.7/12 (56%) PASS, std 0.58** (very tight).
+
+Per-word PASS rate across 3 seeds:
+- **100% robust**: north, east, cat — consistently dominate target firing
+- **67% mixed**: apple, river, look — pass on most seeds
+- **33% fragile**: south, west, dog, go, come — variable
+- **0% fragile**: stop — never passes (3 seeds)
+
+`stop` consistently fails. Hypothesis: its hash-based lang_input drive
+pattern has high overlap with stronger words' patterns, OR
+verb_pool_STOP has unfavorable random structural connectivity that
+all 3 seeds exhibit.
 
 ## Phase 2 (composition) + Phase 3 (A→W readout) on v7 seed 42
 
