@@ -925,6 +925,34 @@ needs dedicated holding region (dlpfc_verb pattern, Tier 2.3), not
 uniform NMDA extension. v12 = dlpfc_verb integration for sequential
 composition is queued.
 
+**🎉🎉 v14 SINGLE-SEED BREAKTHROUGH (2026-05-13 night): orthogonal codes**
+
+Hash-based vocab_to_drive_pattern produces ~10% pairwise overlap.
+Per-word structural overlap → seed-dependent fragile words (v11
+multi-seed: half words fragile across seeds). v14 uses
+orthogonal_drive_pattern: each word gets a non-overlapping band.
+
+Seed 42 result:
+- Phase 1 W→A: **15/16 PASS (94%)** — up from v11's 11/16 (69%)
+- Phase 3 A→W: **16/16 PASS (100%)** — same as v11
+- TOTAL: **31/32 = 97% bidirectional binding at single seed**
+- Cosines 0.25-0.49 (much stronger than v11's 0.05-0.40)
+
+Multi-seed v14 in flight.
+
+```bash
+python -m research.runners.concept_pool_demo --seed N \
+    --n-train-events 200 --n-lang-input 2048 --n-per-pool 200 \
+    --n-fs-per-pool 24 --weak-concept-dynamics --interleaved \
+    --topographic-factor 3.0 --off-target-factor 0.3 \
+    --enable-adjective --orthogonal-codes --sparsity 0.05
+```
+
+Sequential composition still open (v12 NEGATIVE bidirectional dlpfc;
+v13 PARTIAL per-kind NMDA: +3x persistence but -5x isolation). Real
+architectural tension between holding (NMDA bistability) and selection
+(clean isolation); biology solves this with PFC as separate region.
+
 Per-word robustness from v7 multi-seed:
 - 80% robust (4/5 seeds): north, east, cat
 - 60% mixed (3/5): apple, river, look
