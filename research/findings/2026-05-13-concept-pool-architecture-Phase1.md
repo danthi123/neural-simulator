@@ -233,6 +233,40 @@ Plus interleaved training (`--interleaved`) to match Tier 1 pattern.
 
 v3 launched seed 42 with: weak dynamics + interleaved + 100 events.
 
+### v3 (weak + interleaved, 100ev): 3/12 PASS — same ceiling
+
+PASSes: north, west, cat. Different words than v2b (was north, east,
+go). Weak dynamics prevented the v2c regression but didn't push past
+the v2b 3/12 ceiling.
+
+### v4 (v3 + stronger topographic 3.0/0.3, 100ev): 5/12 PASS — improvement
+
+PASSes: north, east, apple, dog, cat. All 4 noun pools improved.
+
+Stronger topographic prior (10x ratio vs 4x) gave +2 words. Pattern:
+- All 4 nouns improving (apple 1.03x, dog 1.12x, cat 1.37x)
+- 2 motor PASS (north, east — borderline)
+- 2 motor FAIL (south, west)
+- All 4 verbs FAIL (especially under-trained: stop 0.84, look 0.72)
+
+| Variant | PASS | Key change |
+|---|---|---|
+| v1 (canon seq 200ev) | 0/10 | baseline (FS bug) |
+| v2b (canon seq 50ev) | 3/12 | FS fixed |
+| v2c (canon seq 200ev) | 0/12 | canon amplifies bias |
+| v3 (weak interl 100ev) | 3/12 | weak fixes regression |
+| v4 (weak interl 100ev + 3.0/0.3 topo) | **5/12** | strong topo helps |
+
+Trajectory: each architectural refinement adds 2-3 PASS words. The
+ceiling of v2b/v3 was structural; v4 broke past it via topographic
+strength. Under-trained verbs suggest 200 events may push further.
+
+### v5 launched: v4 + 200 events
+
+Expected: most under-trained verbs (stop, look at 0.72-0.84 target
+rate) should hit higher target rates with double the training. If
+v5 = 7+/12, multi-seed validation is justified.
+
 **Sizes**: 13,792 total neurons (4096 lang_in + 4096 lang_out +
 4×500 motor + 4×60 motor_FS + 4×500 noun + 4×60 noun_FS + 2×500 verb +
 2×60 verb_FS). 14.7M synapses, 2.4 GB GPU.
