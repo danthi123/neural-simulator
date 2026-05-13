@@ -452,16 +452,21 @@ def build_biological_brain_regions(
     # back to upstream concept areas.
     enable_dlpfc_verb_unidirectional: bool = False,
     verb_pool_to_dlpfc_uni_density: float = 0.30,
-    verb_pool_to_dlpfc_uni_weight: float = 2.0,
-    dlpfc_verb_to_motor_density: float = 0.20,
-    # IMPORTANT: dlpfc_verb -> motor default weight is 0.0 by design.
+    # IMPORTANT: BOTH v15 pathways default to weight_mean=0.0 + jitter=0.0.
     # The plasticity gate freezes STDP only, NOT synaptic current (see
     # CLAUDE.md "GOTCHA — plasticity gate vs synaptic transmission").
-    # Starting at 0.0 means no current injection during Phase 1
-    # single-word training; STDP grows the weights only during compose
-    # co-firing windows when dlpfc_verb_to_motor_uni gate is opened.
-    # This preserves v14's Phase 1 W->A while letting v15 build the
-    # PFC->motor gating from zero.
+    # Starting at 0.0 means v15 is STRUCTURALLY present but FUNCTIONALLY
+    # silent until STDP grows individual weights during compose training
+    # (co-firing windows). This preserves v14's Phase 1 W->A while
+    # letting v15 build the PFC working-memory pathway from zero.
+    #
+    # v15 smoke seed 42 (initial design with weight 2.0 + jitter 0.2):
+    # 8/16 W->A vs v14's 15/16. The dlpfc_verb region's NMDA bistability
+    # caused self-sustaining firing that perturbed subsequent training
+    # events even though dlpfc -> motor was zero. Zero-init on BOTH
+    # pathways is the safe default.
+    verb_pool_to_dlpfc_uni_weight: float = 0.0,
+    dlpfc_verb_to_motor_density: float = 0.20,
     dlpfc_verb_to_motor_weight: float = 0.0,
     # v13 (2026-05-13 night): per-concept-kind NMDA opt-in (cluster G v2
     # pattern). Default OFF for all concept pools. When True, the
@@ -600,28 +605,53 @@ def build_biological_brain_regions(
     # internal_density 0.15 (high recurrence for working memory),
     # plastic_internal=False (frozen recurrence; only the input
     # pathway is plastic).
+    #
+    # v15 (2026-05-13 night) v15-alone mode: when ONLY
+    # enable_dlpfc_verb_unidirectional is set (no v12 concept-integration
+    # bidirectional, no Tier 2.3 phrase trainer wiring), use WEAK
+    # dynamics so dlpfc_verb is functionally silent until compose
+    # training activates it. Canon dynamics + lang_input direct drive
+    # caused Phase 1 W->A to regress 15/16 -> 8/16 in v15 zero-init
+    # smoke (2026-05-13 night). Weak dynamics preserve v14 Phase 1.
     if enable_dlpfc_verb:
+        v15_alone = (enable_dlpfc_verb_unidirectional
+                     and not enable_dlpfc_verb_concept_integration)
+        if v15_alone:
+            # Weak dynamics: matches concept pool weak-dynamics defaults
+            # (0.05 / 0.3 / 0.8). dlpfc_verb stays silent until STDP
+            # grows pathways from verb_pool during compose training.
+            v15_internal_density = 0.05
+            v15_exc_weight = 0.3
+            v15_inh_weight = 0.8
+        else:
+            # v12 or Tier 2.3: use the original canon dynamics needed
+            # for active working memory holding.
+            v15_internal_density = dlpfc_verb_internal_density
+            v15_exc_weight = dlpfc_verb_exc_weight_mean
+            v15_inh_weight = dlpfc_verb_inh_weight_mean
         regions.append(BrainRegion(
             name="dlpfc_verb",
             n_neurons=n_dlpfc_verb,
             exc_fraction=0.8,
-            internal_density=dlpfc_verb_internal_density,
-            exc_weight_mean=dlpfc_verb_exc_weight_mean,
-            inh_weight_mean=dlpfc_verb_inh_weight_mean,
+            internal_density=v15_internal_density,
+            exc_weight_mean=v15_exc_weight,
+            inh_weight_mean=v15_inh_weight,
             weight_jitter=0.2, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
         ))
-        # language_input -> dlpfc_verb (plastic, gated). Verb words
-        # in language_input drive dlpfc_verb; STDP at this pathway
-        # binds specific verb codes to PFC pool activation.
-        pathways.append(RegionPathway(
-            from_region="language_input", to_region="dlpfc_verb",
-            density=lang_to_dlpfc_verb_density,
-            weight_mean=lang_to_dlpfc_verb_weight,
-            weight_jitter=0.5,
-            plastic=True,
-            plasticity_gate="language_input_to_dlpfc_verb",
-        ))
+        # language_input -> dlpfc_verb (plastic, gated). v12 wiring;
+        # skipped in v15-alone mode since v15 drives dlpfc_verb via
+        # the verb_pool -> dlpfc_verb pathway instead (concept-mediated,
+        # not direct lang_input).
+        if not v15_alone:
+            pathways.append(RegionPathway(
+                from_region="language_input", to_region="dlpfc_verb",
+                density=lang_to_dlpfc_verb_density,
+                weight_mean=lang_to_dlpfc_verb_weight,
+                weight_jitter=0.5,
+                plastic=True,
+                plasticity_gate="language_input_to_dlpfc_verb",
+            ))
 
     # Phase 1.3 hippocampus consolidation regions + pathways.
     # Implements the trisynaptic loop EC -> DG -> CA3 -> CA1 plus
@@ -1512,6 +1542,10 @@ def build_biological_brain_regions(
             and enable_verb_pools and enable_dlpfc_verb):
         v15_verb_names = (verb_pool_names if verb_pool_names is not None
                           else ["GO", "COME"])
+        # See default doc above: zero-init keeps v15 structurally present
+        # but functionally silent until STDP grows weights in compose.
+        v15_verb_jitter = (0.0 if verb_pool_to_dlpfc_uni_weight == 0.0
+                           else 0.2)
         for vname in v15_verb_names:
             # verb_pool_X → dlpfc_verb (verb concept drives PFC)
             pathways.append(RegionPathway(
@@ -1519,7 +1553,7 @@ def build_biological_brain_regions(
                 to_region="dlpfc_verb",
                 density=verb_pool_to_dlpfc_uni_density,
                 weight_mean=verb_pool_to_dlpfc_uni_weight,
-                weight_jitter=0.2,
+                weight_jitter=v15_verb_jitter,
                 plastic=True,
                 plasticity_gate="verb_pool_to_dlpfc_uni",
             ))
@@ -1527,13 +1561,22 @@ def build_biological_brain_regions(
         # Gate "dlpfc_verb_to_motor_uni" open during co-fire compose
         # training windows; closed during single-word Phase 1 training
         # so v14 W→A isolation isn't perturbed.
+        #
+        # CRITICAL: weight_jitter=0.0 when weight_mean=0.0. Even N(0, 0.2)
+        # noise injected by dlpfc_verb activity during verb training
+        # perturbed motor pool selectivity by ~0.18 mean target rate
+        # (v15 smoke seed 42: 8/16 vs v14's 15/16). Zero jitter keeps
+        # the pathway STRUCTURALLY present but FUNCTIONALLY silent
+        # until STDP grows individual weights from 0.0 in compose
+        # training windows.
+        v15_motor_jitter = 0.0 if dlpfc_verb_to_motor_weight == 0.0 else 0.2
         for action in ACTION_NAMES:
             pathways.append(RegionPathway(
                 from_region="dlpfc_verb",
                 to_region=f"motor_{action}",
                 density=dlpfc_verb_to_motor_density,
                 weight_mean=dlpfc_verb_to_motor_weight,
-                weight_jitter=0.2,
+                weight_jitter=v15_motor_jitter,
                 plastic=True,
                 plasticity_gate="dlpfc_verb_to_motor_uni",
             ))
