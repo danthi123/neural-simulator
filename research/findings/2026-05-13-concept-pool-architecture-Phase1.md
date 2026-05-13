@@ -658,6 +658,24 @@ is actually under-stating the architecture's strength.
 
 Multi-seed validation queued to confirm pattern.
 
+### v11 multi-seed partial (4 of 5 seeds done)
+
+| Seed | Phase 1 W→A | A→W (12-pool subset) |
+|---|---|---|
+| 42 | 11/16 | 12/12 |
+| 43 | 9/16 | 12/12 |
+| 44 | 9/16 | 12/12 |
+| 45 | 7/16 | 12/12 |
+| 46 | (in flight) | (pending) |
+| **Mean (4 seeds)** | **9.0/16 (56%)** | **48/48 (100%)** |
+
+v11 PASS rate (56% at 16 pools) > v9 PASS rate (52% at 12 pools)
+even with seed 45 dragging the average. A→W remains 100%
+consistent. Architecture is scaling.
+
+Compose with adjective pools not yet evaluated separately for
+seeds 43-46 (v11 speak16 follow-up queued auto-fires after seed 46).
+
 ## v9 5-seed FINAL (2026-05-13): A→W 100% UNANIMOUS 🎉
 
 | Seed | Phase 1 W→A | Phase 3 A→W |
