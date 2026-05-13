@@ -779,6 +779,13 @@ VOCAB_SYNONYM = {"north", "east", "south", "west",
                   "up", "right", "down", "left"}
 VOCAB_SYNONYM_12 = VOCAB_SYNONYM | {"n", "e", "s", "w"}
 VOCAB_SYNONYM_16 = VOCAB_SYNONYM_12 | {"↑", "→", "↓", "←"}
+# 2026-05-12: synonym24/32 extend with multi-language synonyms
+# (Spanish, German, Japanese, Arabic). Sourced from text_eval's
+# SYNONYM_GROUPS_24/32. Tests vocab-tier scaling on 16-word baseline.
+VOCAB_SYNONYM_24 = VOCAB_SYNONYM_16 | {"norte", "nord", "este", "ost",
+                                         "sur", "süd", "oeste", "west_de"}
+VOCAB_SYNONYM_32 = VOCAB_SYNONYM_24 | {"kita", "shimal", "higashi", "sharq",
+                                         "minami", "janub", "nishi", "gharb"}
 
 WORD_TO_ACTION_SYNONYM = {
     "north": "N", "up": "N",
@@ -790,6 +797,16 @@ WORD_TO_ACTION_SYNONYM_12 = {**WORD_TO_ACTION_SYNONYM,
     "n": "N", "e": "E", "s": "S", "w": "W"}
 WORD_TO_ACTION_SYNONYM_16 = {**WORD_TO_ACTION_SYNONYM_12,
     "↑": "N", "→": "E", "↓": "S", "←": "W"}
+WORD_TO_ACTION_SYNONYM_24 = {**WORD_TO_ACTION_SYNONYM_16,
+    "norte": "N", "nord": "N",
+    "este": "E", "ost": "E",
+    "sur": "S", "süd": "S",
+    "oeste": "W", "west_de": "W"}
+WORD_TO_ACTION_SYNONYM_32 = {**WORD_TO_ACTION_SYNONYM_24,
+    "kita": "N", "shimal": "N",
+    "higashi": "E", "sharq": "E",
+    "minami": "S", "janub": "S",
+    "nishi": "W", "gharb": "W"}
 
 
 def _vocab_for_mode(mode: str):
@@ -803,6 +820,10 @@ def _vocab_for_mode(mode: str):
         return VOCAB_SYNONYM_12, WORD_TO_ACTION_SYNONYM_12
     if mode == "synonym16":
         return VOCAB_SYNONYM_16, WORD_TO_ACTION_SYNONYM_16
+    if mode == "synonym24":
+        return VOCAB_SYNONYM_24, WORD_TO_ACTION_SYNONYM_24
+    if mode == "synonym32":
+        return VOCAB_SYNONYM_32, WORD_TO_ACTION_SYNONYM_32
     raise ValueError(f"unknown mode: {mode}")
 
 
@@ -843,6 +864,19 @@ def _load_bridge_from_checkpoint(checkpoint_path: str, mode: str, seed: int,
                                           vocab_size=16,
                                           n_motor_per_action=2000,
                                           n_motor_fs_per_action=240)
+    elif mode == "synonym24":
+        # 24-word vocab. Per capacity rule (vocab_size N needs
+        # ~(N/4)*333 motor neurons), 24-word needs ~2000 motor.
+        bridge = _load_or_train_synonym(seed, n_train_events=0, verbose=False,
+                                          vocab_size=24,
+                                          n_motor_per_action=2000,
+                                          n_motor_fs_per_action=240)
+    elif mode == "synonym32":
+        # 32-word vocab. Per capacity rule, needs ~2670 motor; use 3000.
+        bridge = _load_or_train_synonym(seed, n_train_events=0, verbose=False,
+                                          vocab_size=32,
+                                          n_motor_per_action=3000,
+                                          n_motor_fs_per_action=360)
     elif mode == "tier1_hippo":
         # Build Tier 1 architecture WITH hippocampus consolidation
         # (for lineages bootstrapped via bootstrap_hippo_lineage). No
@@ -1448,7 +1482,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mode",
-                    choices=["tier1", "synonym", "synonym12", "synonym16"],
+                    choices=["tier1", "synonym", "synonym12", "synonym16",
+                             "synonym24", "synonym32"],
                     default="tier1",
                     help="Architecture mode: "
                          "tier1=4-word (validated 5/6+6/6); "
@@ -1458,7 +1493,10 @@ def main():
                          "REPL uses scaled n_motor=2000 per capacity "
                          "hypothesis); "
                          "synonym16=16-word (master plan extension, "
-                         "Unicode arrows up/right/down/left as 4th synonym)")
+                         "Unicode arrows up/right/down/left as 4th synonym); "
+                         "synonym24=24-word (multi-lang: Spanish, German); "
+                         "synonym32=32-word (multi-lang + Japanese, Arabic, "
+                         "uses n_motor=3000 per capacity rule)")
     ap.add_argument("--seed", type=int, default=43,
                     help="Random seed (43 is the documented best Tier 1 seed; "
                          "42 is best Tier 2.1 single-seed)")
