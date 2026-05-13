@@ -404,8 +404,15 @@ def run_concept_pool_demo(seed: int = 42,
                             n_per_pool: int = 500,
                             n_fs_per_pool: int = 60,
                             apply_topographic: bool = True,
-                            verbose: bool = True) -> Dict:
-    """Train motor + noun + verb pools, then measure cross-category isolation."""
+                            verbose: bool = True,
+                            load_bridge: str = None,
+                            save_bridge: str = None) -> Dict:
+    """Train motor + noun + verb pools, then measure cross-category isolation.
+
+    If load_bridge is given, skip training and load from checkpoint.
+    If save_bridge is given (and we DID train), save after training so
+    subsequent eval iterations don't need to retrain.
+    """
     print(f"\n=== concept_pool_demo (seed={seed}) ===", flush=True)
     print(f"  Architecture: 4 motor + 4 noun + 2 verb = 10 pools", flush=True)
     print(f"  Vocab: {list(DIRECTION_VOCAB)} + {list(NOUN_VOCAB)} + "
@@ -421,7 +428,25 @@ def run_concept_pool_demo(seed: int = 42,
         verbose=verbose,
     )
 
-    if apply_topographic:
+    # Handle load: load checkpoint AFTER building bridge skeleton
+    if load_bridge:
+        print(f"\n[LOAD] loading checkpoint from {load_bridge}", flush=True)
+        bridge.load_checkpoint(load_bridge)
+        # Re-freeze all plasticity gates after load (load may have reopened them)
+        for g in ("language_input_to_motor",
+                  "language_input_to_noun_pool",
+                  "language_input_to_verb_pool",
+                  "motor_to_language_output",
+                  "noun_pool_to_language_output",
+                  "verb_pool_to_language_output"):
+            try:
+                bridge.set_plasticity_gate(g, 0.0)
+            except Exception:
+                pass
+
+    if apply_topographic and not load_bridge:
+        # Only apply topographic bias for fresh training (would overwrite
+        # learned weights if applied to loaded bridge)
         apply_concept_topographic_bias(
             bridge,
             n_lang_input=n_lang_input,
@@ -439,26 +464,37 @@ def run_concept_pool_demo(seed: int = 42,
     for word, name in VERB_VOCAB.items():
         all_targets.append((word, f"verb_pool_{name}"))
 
-    print(f"\n[TRAIN] {len(all_targets)} (word, pool) pairs, "
-          f"{n_train_events} events each = {len(all_targets) * n_train_events} "
-          f"total events", flush=True)
+    if load_bridge:
+        print(f"\n[TRAIN] SKIPPED (loaded from checkpoint)", flush=True)
+        train_sec = 0.0
+    else:
+        print(f"\n[TRAIN] {len(all_targets)} (word, pool) pairs, "
+              f"{n_train_events} events each = "
+              f"{len(all_targets) * n_train_events} total events", flush=True)
 
-    # Train word-by-word (interleaved would be more biology-faithful but
-    # this is the MVP; bio_three_factor uses interleaved batches)
-    t_train = time.time()
-    for word, target in all_targets:
-        t_word = time.time()
-        train_word_to_pool(
-            bridge, word, target,
-            n_events=n_train_events,
-            n_lang_input=n_lang_input,
-            n_lang_output=n_lang_input,
-            verbose=False,
-        )
-        print(f"  trained '{word}' -> {target} "
-              f"({time.time() - t_word:.0f}s)", flush=True)
-    train_sec = time.time() - t_train
-    print(f"\n[TRAIN] complete ({train_sec:.0f}s)", flush=True)
+        # Train word-by-word (interleaved would be more biology-faithful but
+        # this is the MVP; bio_three_factor uses interleaved batches)
+        t_train = time.time()
+        for word, target in all_targets:
+            t_word = time.time()
+            train_word_to_pool(
+                bridge, word, target,
+                n_events=n_train_events,
+                n_lang_input=n_lang_input,
+                n_lang_output=n_lang_input,
+                verbose=False,
+            )
+            print(f"  trained '{word}' -> {target} "
+                  f"({time.time() - t_word:.0f}s)", flush=True)
+        train_sec = time.time() - t_train
+        print(f"\n[TRAIN] complete ({train_sec:.0f}s)", flush=True)
+
+        if save_bridge:
+            print(f"\n[SAVE] saving bridge to {save_bridge}", flush=True)
+            from pathlib import Path
+            Path(save_bridge).parent.mkdir(parents=True, exist_ok=True)
+            bridge.save_checkpoint(save_bridge)
+            print(f"[SAVE] checkpoint written", flush=True)
 
     # Measure cross-category isolation
     all_pool_regions = (
@@ -544,6 +580,12 @@ def main():
                          help="Skip Pulvermuller topographic bias init")
     parser.add_argument("--out", type=str, default=None,
                          help="Output JSON path (default stdout only)")
+    parser.add_argument("--load-bridge", type=str, default=None,
+                         help="Load bridge checkpoint instead of training "
+                         "(fast iteration on eval mechanics)")
+    parser.add_argument("--save-bridge", type=str, default=None,
+                         help="Save trained bridge to this checkpoint for "
+                         "reuse via --load-bridge")
     args = parser.parse_args()
 
     result = run_concept_pool_demo(
@@ -553,6 +595,8 @@ def main():
         n_per_pool=args.n_per_pool,
         n_fs_per_pool=args.n_fs_per_pool,
         apply_topographic=not args.no_topographic,
+        load_bridge=args.load_bridge,
+        save_bridge=args.save_bridge,
     )
 
     if args.out:

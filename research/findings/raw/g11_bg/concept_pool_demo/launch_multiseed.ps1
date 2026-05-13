@@ -34,6 +34,7 @@ function Run-Seed {
     param([int]$Seed)
     $outPath = "$OutDir\seed$Seed.json"
     $logPath = "$OutDir\seed$Seed.log"
+    $savePath = "$OutDir\seed$Seed.simstate.h5"
     Write-Host "[multiseed] Launching seed $Seed..."
     $env:PYTHONIOENCODING = "utf-8"
     python -m research.runners.concept_pool_demo `
@@ -42,12 +43,13 @@ function Run-Seed {
         --n-lang-input 4096 `
         --n-per-pool 500 `
         --n-fs-per-pool 60 `
-        --out $outPath 2>&1 | Tee-Object -FilePath $logPath
+        --out $outPath `
+        --save-bridge $savePath 2>&1 | Tee-Object -FilePath $logPath
     if ($LASTEXITCODE -ne 0) {
         Write-Host "[multiseed] Seed $Seed FAILED (exit $LASTEXITCODE)"
         return $false
     }
-    Write-Host "[multiseed] Seed $Seed done"
+    Write-Host "[multiseed] Seed $Seed done (bridge saved to $savePath)"
     return $true
 }
 
