@@ -191,16 +191,47 @@ verb 55-57s (GPU warm-up effect).
   these words got under-trained pathways. More events should help.
 - **Tier 1 used 200 events**; smoke v2b used 50 (one-quarter dose).
 
-### v2c launched (200 events, save-bridge enabled)
+### v2c (200 events) FAIL: 0/12 — canon amplifies bias
 
-Same arch as v2b smoke (2048 lang_input, 200 per pool, 24 fs per pool)
-but with full Tier 1 training dose. ETA ~80 min.
+v2c trained 200 events with v2 architecture. **Result: 0/12 PASS,
+WORSE than v2b's 3/12 at 50 events.**
 
-Expected outcome: most borderline FAILs flip to PASS. Target ≥ 8/12.
-If still partial after 200 events, try further iterations:
-- Stronger topographic prior (3.0/0.3 = 10x ratio)
-- Weak dynamics (iter AA recipe 0.05/0.3/0.8)
-- Per-kind dynamics parameters
+| Word | Target | v2b ratio | v2c ratio | Δ |
+|---|---|---|---|---|
+| north | motor_N | 1.03x PASS | 1.00x tie | -0.03 |
+| east | motor_E | 1.10x PASS | 0.94x FAIL | -0.16 |
+| south | motor_S | 0.73x | 0.54x | -0.19 (worse) |
+| west | motor_W | 0.82x | 0.62x | -0.20 |
+| apple | noun_APPLE | 0.95x | 0.97x | +0.02 |
+| river | noun_RIVER | 0.90x | 0.74x | -0.16 |
+| dog | noun_DOG | 0.96x | 0.88x | -0.08 |
+| cat | noun_CAT | 0.91x | 0.89x | -0.02 |
+| go | verb_GO | 1.10x PASS | 0.84x FAIL | -0.26 |
+| come | verb_COME | 0.65x | 0.72x | +0.07 |
+| stop | verb_STOP | 0.69x | 0.64x | -0.05 |
+| look | verb_LOOK | 0.97x | 0.73x | -0.24 |
+
+More training → most ratios got WORSE (10 of 12). Pattern is the
+same as **P5 iter KK with multi-pool wernicke**: at biological scale
+with many pools, canon dynamics (0.10/2.0/4.0) cause off-target
+pools to accumulate activated states from spillover drive across
+events. Internal recurrence + NMDA bistability + cross-kind FS
+omission = unbounded off-target firing growth.
+
+### v3 fix: weak dynamics (iter AA recipe)
+
+Implementation (commit fc31152):
+- New params in `build_biological_brain_regions`:
+  `concept_pool_internal_density / exc_weight_mean / inh_weight_mean`
+- Default None → use motor_internal_density (backward compat for motor)
+- `--weak-concept-dynamics` CLI in concept_pool_demo:
+  sets concept pools to 0.05/0.3/0.8 (iter AA recipe)
+- Motor pools KEEP canon (Tier 1 6/6 multi-seed works with canon)
+- Only non-motor pools get weak dynamics
+
+Plus interleaved training (`--interleaved`) to match Tier 1 pattern.
+
+v3 launched seed 42 with: weak dynamics + interleaved + 100 events.
 
 **Sizes**: 13,792 total neurons (4096 lang_in + 4096 lang_out +
 4×500 motor + 4×60 motor_FS + 4×500 noun + 4×60 noun_FS + 2×500 verb +
