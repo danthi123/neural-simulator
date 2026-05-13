@@ -12,12 +12,17 @@ $OutDir = "research\findings\raw\g11_bg\concept_pool_demo"
 function Wait-Seed {
     param([int]$Seed, [string]$Variant)
     $jsonPath = "$OutDir\seed${Seed}_${Variant}.json"
+    $logPath = "$OutDir\seed${Seed}_${Variant}.log"
     while (-not (Test-Path $jsonPath)) {
         Start-Sleep -Seconds 30
-        $progress = (Select-String -Path "$OutDir\seed${Seed}_${Variant}.log" -Pattern "VERDICT" -ErrorAction SilentlyContinue).Count
-        if ($progress -gt 0) {
-            Start-Sleep -Seconds 3
-            return
+        if (Test-Path $logPath) {
+            try {
+                $progress = (Select-String -Path $logPath -Pattern "VERDICT").Count
+                if ($progress -gt 0) {
+                    Start-Sleep -Seconds 3
+                    return
+                }
+            } catch {}
         }
     }
 }
