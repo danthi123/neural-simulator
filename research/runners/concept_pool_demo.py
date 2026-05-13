@@ -226,33 +226,44 @@ def apply_concept_topographic_bias(bridge,
 
     summary: Dict[str, Dict] = {}
 
-    # Build (word, target_pool_region, peers) tuples for all kinds
+    # Build (word, target_pool_region, peers) tuples.
+    #
+    # FIX 2026-05-13 (post-v4 weight probe): peers must include ALL
+    # output pools across ALL kinds, not just within kind. Otherwise
+    # cross-kind edges keep their random init (~3.0) while within-kind
+    # off-target edges get dampened to ~0.9. Result: cross-kind pools
+    # win as max-off after training (observed in v4 weight probe).
+    #
+    # Now: every word dampens ALL non-target pool edges (cross-kind +
+    # within-kind off-target). Only target-pool edges get the boost.
     rm_existing = bridge.region_manager
     bias_tasks: List[Tuple[str, str, List[str]]] = []
-    for word, action in DIRECTION_VOCAB.items():
-        target = f"motor_{action}"
-        peers = [f"motor_{a}" for a in MOTOR_NAMES]
-        bias_tasks.append((word, target, peers))
-    for word, name in NOUN_VOCAB.items():
-        target = f"noun_pool_{name}"
-        peers = [f"noun_pool_{n}" for n in NOUN_NAMES]
-        bias_tasks.append((word, target, peers))
-    for word, name in VERB_VOCAB.items():
-        target = f"verb_pool_{name}"
-        peers = [f"verb_pool_{v}" for v in VERB_NAMES]
-        bias_tasks.append((word, target, peers))
-    # Check if adjective pools exist in the bridge (opt-in)
+
+    # Discover all output pools that exist in the bridge
+    all_output_pools = [f"motor_{a}" for a in MOTOR_NAMES]
+    all_output_pools += [f"noun_pool_{n}" for n in NOUN_NAMES]
+    all_output_pools += [f"verb_pool_{v}" for v in VERB_NAMES]
     has_adjective = False
     try:
         rm_existing.indices(f"adjective_pool_{ADJECTIVE_NAMES[0]}")
         has_adjective = True
+        all_output_pools += [f"adjective_pool_{n}" for n in ADJECTIVE_NAMES]
     except Exception:
         pass
+
+    for word, action in DIRECTION_VOCAB.items():
+        target = f"motor_{action}"
+        bias_tasks.append((word, target, all_output_pools))
+    for word, name in NOUN_VOCAB.items():
+        target = f"noun_pool_{name}"
+        bias_tasks.append((word, target, all_output_pools))
+    for word, name in VERB_VOCAB.items():
+        target = f"verb_pool_{name}"
+        bias_tasks.append((word, target, all_output_pools))
     if has_adjective:
         for word, name in ADJECTIVE_VOCAB.items():
             target = f"adjective_pool_{name}"
-            peers = [f"adjective_pool_{n}" for n in ADJECTIVE_NAMES]
-            bias_tasks.append((word, target, peers))
+            bias_tasks.append((word, target, all_output_pools))
 
     for word, target_region, peer_regions in bias_tasks:
         drive = vocab_to_drive_pattern(
