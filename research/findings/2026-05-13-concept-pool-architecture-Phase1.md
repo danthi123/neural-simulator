@@ -733,6 +733,43 @@ conversational. v9/v11 demonstrate single-word bidirectional binding
 + scale to 16 concepts; sequential is genuinely a harder problem
 requiring more careful architectural work than the v12 quick attempt.
 
+## v13 (NMDA only on verb pools): partial — persistence ↑3x but isolation ↓5x
+
+Cluster G v2 pattern: `BrainRegion.enable_nmda` per-region opt-in.
+v13 sets `enable_nmda=True` only on verb pools, with cfg.nmda_tau_decay=200ms.
+
+Result vs v9 baseline (seed 42):
+
+| Test | v9 | v13 | Δ |
+|---|---|---|---|
+| Phase 1 W→A | 6/12 | **1/12** | -5 (regression) |
+| Phase 3 A→W | 12/12 | 12/12 | 0 |
+| Compose seq persistence | 0.00-0.10 | **0.30-0.38** | +3-4× (partial) |
+| Compose seq PASS | 0/6 | 0/6 (still below 0.5 threshold) | 0 |
+
+**Real progress on persistence (3-4× better) but at the cost of
+isolation.** Verb pools with NMDA self-sustain on cross-input firing
+→ dominate all words. Same canon-amplifies-bias pattern, restricted
+to verb kind.
+
+**Architectural tension surfaced:**
+- Holding (NMDA bistability) inherently breaks selection (off-target sustain)
+- Selection (clean isolation) inherently breaks holding (no persistence)
+
+Biology solves this by separating the holding stage (PFC) from
+selection (sensory cortex). dlpfc_verb is the natural carrier — v12
+tried bidirectional integration and broke A→W. v14 design (queued):
+unidirectional verb_pool → dlpfc only during training, with
+post-hoc reciprocal init for eval-time feedback. More careful design
+than tonight permits.
+
+**Pivot to W→A improvement** (more tractable). v11 multi-seed shows
+W→A 56% is the seed-averaged ceiling at current scale. Options:
+- Orthogonal codes (vs hash-based drive patterns)
+- Pre-shape phase (Tomasello two-stage)
+- Stronger teacher current
+- Larger pools (n_per_pool 200 → 500)
+
 ## v9 5-seed FINAL (2026-05-13): A→W 100% UNANIMOUS 🎉
 
 | Seed | Phase 1 W→A | Phase 3 A→W |
