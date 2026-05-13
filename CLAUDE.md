@@ -879,20 +879,39 @@ python -m research.runners.concept_pool_demo --seed N \
     --topographic-factor 3.0 --off-target-factor 0.3
 ```
 
-**v7 5-seed FINAL (2026-05-13):** mean **6.4/12 (53%)**, std 0.89,
-range 5-7. All 5 seeds PARTIAL (5 ≤ PASS < 8). 0 GO, 0 FAIL.
+**v7 5-seed (W→A only):** mean **6.4/12 (53%)**, std 0.89,
+range 5-7. All 5 seeds PARTIAL on Phase 1 cross-category isolation.
 
-Per-word robustness:
+**🎉 v9 BREAKTHROUGH (2026-05-13): bidirectional binding at single seed**
+
+v9 adds reciprocal topographic bias to pool → language_output
+(matching Tier 1's `apply_reciprocal=True` pattern). Result on seed 42:
+
+- Phase 1 (W→A cross-category isolation): **6/12** (unchanged from v7)
+- Phase 3 (A→W spoken-word readout): **12/12 PASS** !
+
+Every concept pool speaks its trained word at top-1 cosine match.
+Bidirectional binding works on all 4 motor + 4 noun + 4 verb pools.
+
+| Variant | Phase 1 W→A | Phase 3 A→W |
+|---|---|---|
+| v7 (forward bias only) | 6/12 | 0/12 |
+| v8 (+ weight 0.5→2.0) | 6/12 | 0/12 |
+| **v9 (+ reciprocal bias)** | **6/12** | **12/12** |
+
+Multi-seed v9 validation in flight.
+
+Per-word robustness from v7 multi-seed:
 - 80% robust (4/5 seeds): north, east, cat
 - 60% mixed (3/5): apple, river, look
 - 40% fragile (2/5): south, west, dog, go, come
 - 20% fragile (1/5): stop
 
 v7 weight probe shows consistent 4x weight ratio across seeds —
-variability is dynamics, not weights. Architecture demonstrates
-concepts + composition framework + diversity per user mandate at
-meaningful (53%) PASS rate. 3-word robust trio (north, east, cat)
-demonstrates the recipe CAN reliably bind specific pairs across seeds.
+variability is dynamics, not weights. v9 architecture demonstrates
+concepts + diversity + bidirectional binding per user mandate.
+3-word robust trio (north, east, cat) demonstrates the recipe CAN
+reliably bind specific pairs across seeds.
 
 Phase 3 A→W readout currently 0/12 on v7 bridge (separate issue:
 concept_to_language_output_weight=0.5 vs motor's 2.0 = 4x weaker
