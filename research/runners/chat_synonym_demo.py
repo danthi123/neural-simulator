@@ -52,6 +52,7 @@ def train_chat_bridge(
     n_lang_input: int = 4096,
     n_motor_per_action: int = 1000,
     n_motor_fs_per_action: int = 120,
+    vocab_size: int = 8,  # 8/12/16 supported per Tier 2.1+ capacity work
     verbose: bool = True,
     enable_stp: bool = False,  # 2026-05-10: flipped to False
                                   # after 3-seed validation. See
@@ -80,7 +81,7 @@ def train_chat_bridge(
         apply_topographic_bias=True,
         embodied_hebbian=True,
         synonym_mode=True,  # Tier 2.1 — both primary + synonym presented
-        synonym_vocab_size=8,
+        synonym_vocab_size=vocab_size,
         verbose=False,
         enable_stp=enable_stp,
     )

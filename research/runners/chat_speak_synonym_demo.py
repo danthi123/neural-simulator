@@ -192,6 +192,7 @@ def run_chat_speak_synonym_demo(seed: int = 42,
                                   n_lang_input: int = 4096,
                                   n_motor_per_action: int = 1000,
                                   n_motor_fs_per_action: int = 120,
+                                  vocab_size: int = 8,
                                   verbose: bool = True,
                                   temperature: float = 0.0,
                                   enable_stp: bool = False,
@@ -263,7 +264,7 @@ def run_chat_speak_synonym_demo(seed: int = 42,
             apply_topographic_bias=True,
             embodied_hebbian=True,
             synonym_mode=True,
-            synonym_vocab_size=8,
+            synonym_vocab_size=vocab_size,
             verbose=False,
             enable_stp=enable_stp,
         )
@@ -287,6 +288,7 @@ def run_chat_speak_synonym_demo(seed: int = 42,
             n_lang_input=n_lang_input,
             n_motor_per_action=n_motor_per_action,
             n_motor_fs_per_action=n_motor_fs_per_action,
+            vocab_size=vocab_size,
             verbose=verbose,
             enable_stp=enable_stp,
         )
@@ -384,7 +386,7 @@ def run_chat_speak_synonym_demo(seed: int = 42,
     return {
         "seed": seed,
         "demo_kind": "chat_speak_synonym_demo",
-        "vocab_size": 8,
+        "vocab_size": vocab_size,
         "n_train_events": n_train_events,
         "n_lang_input": n_lang_input,
         "n_motor_per_action": n_motor_per_action,
@@ -415,13 +417,20 @@ def main():
     ap.add_argument("--train-events", type=int, default=400,
                     help="Events per word during initial training "
                          "(Tier 2.1 default: 400)")
+    ap.add_argument("--vocab-size", type=int, default=8,
+                    help="Synonym vocab size: 8 (Tier 2.1), 12 "
+                         "(synonym12, capacity hypothesis), 16 "
+                         "(synonym16, master plan extension). "
+                         "Larger sizes auto-bump n_motor_per_action.")
     ap.add_argument("--n-lang-input", type=int, default=4096,
                     help="Language input neuron count (Tier 2.1 default: 4096)")
-    ap.add_argument("--n-motor-per-action", type=int, default=1000,
-                    help="Motor neurons per action (Tier 2.1 default: 1000)")
-    ap.add_argument("--n-motor-fs-per-action", type=int, default=120,
-                    help="Motor FS interneurons per action "
-                         "(Tier 2.1 default: 120)")
+    ap.add_argument("--n-motor-per-action", type=int, default=None,
+                    help="Motor neurons per action. Auto-determined "
+                         "from vocab_size if not given: vocab=8 → 1000, "
+                         "vocab=12/16 → 2000 (capacity hypothesis).")
+    ap.add_argument("--n-motor-fs-per-action", type=int, default=None,
+                    help="Motor FS interneurons per action. Auto: "
+                         "vocab=8 → 120, vocab=12/16 → 240.")
     ap.add_argument("--out-stats", type=str, default=None,
                     help="JSON stats output path (matches chat_demo schema)")
     ap.add_argument("--quiet", action="store_true",
@@ -458,12 +467,23 @@ def main():
                          "(creates it if needed). Requires --lineage.")
     args = ap.parse_args()
 
+    # Auto-determine n_motor_per_action from vocab_size per
+    # 2026-05-08 capacity hypothesis findings: synonym12+ need
+    # n_motor=2000 to achieve unanimous GO.
+    n_motor = args.n_motor_per_action
+    n_motor_fs = args.n_motor_fs_per_action
+    if n_motor is None:
+        n_motor = 1000 if args.vocab_size == 8 else 2000
+    if n_motor_fs is None:
+        n_motor_fs = 120 if args.vocab_size == 8 else 240
+
     result = run_chat_speak_synonym_demo(
         seed=args.seed,
         n_train_events=args.train_events,
         n_lang_input=args.n_lang_input,
-        n_motor_per_action=args.n_motor_per_action,
-        n_motor_fs_per_action=args.n_motor_fs_per_action,
+        n_motor_per_action=n_motor,
+        n_motor_fs_per_action=n_motor_fs,
+        vocab_size=args.vocab_size,
         verbose=not args.quiet,
         temperature=args.temperature,
         enable_stp=not args.no_stp,
