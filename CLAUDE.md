@@ -971,6 +971,33 @@ over Tier 1's 4-motor-only ceiling with reliable bidirectional binding.
 
 **Findings:** `research/findings/2026-05-13-concept-pool-architecture-Phase1.md` §v14
 
+## v15 (unidirectional verb→dlpfc→motor): NEGATIVE multi-seed (2026-05-13)
+
+Tried per the sequential composition design note. v15 adds
+`verb_pool_X → dlpfc_verb` (forward, plastic) + `dlpfc_verb → motor_X`
+(forward, plastic, gated) wiring — no back-feedback to verb_pool
+(the v12 leakage source). Three iterations:
+
+- v15a: weight 2.0 + jitter 0.2 + canon dlpfc → 8/16 seed 42
+- v15b: zero weight + zero jitter + canon dlpfc → 8/16 (proves
+  not weight_jitter)
+- v15c: weak dlpfc dynamics + zero-init pathways + skip lang→dlpfc
+  → 11/16 seed 42, 5-seed mean 11.2/16
+
+But Phase 3 A→W collapsed 5-seed mean: 3.2/16 (25%) vs v14's
+16/16 unanimous (100%). A→W failure pattern shows off-by-1 (each
+pool speaks the previously-trained word), suggesting the 200-neuron
+dlpfc_verb region perturbs eligibility-trace state across training
+events.
+
+**Conclusion:** adding the dlpfc_verb region (with any dynamics
+strength tested) breaks v14's reciprocal binding. v15 cannot be a
+drop-in. **v14 remains the production recipe.**
+
+For sequential composition, pivot to v16: direct verb_pool → motor
+plastic pathways (no new region). Hebbian "go + north co-firing"
+hypothesis. See findings doc §v15 NEGATIVE.
+
 Sequential composition still open (v12 NEGATIVE bidirectional dlpfc;
 v13 PARTIAL per-kind NMDA: +3x persistence but -5x isolation). Real
 architectural tension between holding (NMDA bistability) and selection

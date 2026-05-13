@@ -899,3 +899,56 @@ both metrics simultaneously while increasing vocab from 12→16 concepts.
 
 **Sequential composition unchanged** — still v15 work (see
 `docs/plans/2026-05-13-sequential-composition-design-note.md`).
+
+## v15 (unidirectional verb→dlpfc→motor): NEGATIVE multi-seed
+
+Designed per the sequential composition note. v15 fixes v12's
+bidirectional feedback by making verb_pool → dlpfc_verb → motor
+FORWARD ONLY. Implemented and tested across three iterations:
+
+| Iter | Defaults | Phase 1 seed 42 | Multi-seed (43-46) |
+|---|---|---|---|
+| v15a | weight 2.0 + jitter 0.2 + canon dlpfc | 8/16 | — (regression confirmed at single seed) |
+| v15b | zero weight + zero jitter + canon dlpfc | 8/16 | — |
+| **v15c** | zero weight + zero jitter + WEAK dlpfc + skip lang→dlpfc | **11/16** | **mean 11.2/16, A→W 3.2/16** |
+
+**v15c full 5-seed result:**
+
+| Seed | P1 W→A | P3 A→W | Total |
+|---|---|---|---|
+| 42 | 11/16 | — | — |
+| 43 | 12/16 | 4/16 | 16/32 |
+| 44 | 12/16 | 4/16 | 16/32 |
+| 45 | 9/16 | 4/16 | 13/32 |
+| 46 | 12/16 | 4/16 | 16/32 |
+| **Mean** | **11.2/16 (70%)** | **3.2/16 (25%)** | **14.4/32 (45%)** |
+
+vs v14 5-seed mean: W→A 12.4 (-1.2pp), A→W 16.0 (-12.8pp = -80pp).
+
+**A→W collapse is the critical regression.** The off-by-one pattern
+in failure modes (verb_pool_COME → top-1 "go", verb_pool_STOP →
+top-1 "come", adjective_pool_BIG → top-1 "look") suggests pool →
+language_output reciprocal STDP got shifted in time by one training
+event. Hypothesis: adding the 200-neuron dlpfc_verb region modifies
+eligibility-trace state across training events, so the X-1 word's
+language_output residual gets associated with word X's pool.
+
+**Diagnosis approach:**
+1. v15a → v15b: confirmed not weight_jitter noise (same 8/16)
+2. v15b → v15c: weak dlpfc dynamics + skip lang_input→dlpfc helped
+   Phase 1 (8 → 11) but A→W still collapsed (-12.8 multi-seed mean)
+
+**Conclusion:** v15 architecture (adding a dlpfc_verb region for
+working memory holding) cannot be a drop-in for v14 — the new
+region's mere presence perturbs the reciprocal binding STDP that
+gave v14 its 100% A→W. Three iterations + multi-seed validation
+proved this.
+
+**v15 NEGATIVE — v14 remains the production recipe.**
+
+For sequential composition, pivot to v16: direct verb_pool → motor
+plastic pathways (no new region, no working memory). Same compose-
+training approach (open gate, drive co-firing, STDP grows weights).
+The Hebbian-association hypothesis: "go + north" co-firing builds
+a direct verb_pool_GO → motor_N association, no PFC needed for
+the 2-word case.
