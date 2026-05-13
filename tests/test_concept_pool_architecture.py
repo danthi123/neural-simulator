@@ -71,7 +71,12 @@ def test_noun_pools_enabled_default_names():
 
 
 def test_verb_pools_enabled_default_names():
-    """enable_verb_pools=True with default names creates 2 pools."""
+    """enable_verb_pools=True with default names creates 2 pools.
+
+    Note: build_biological_brain_regions defaults to ["GO","COME"] but
+    concept_pool_demo overrides to 4 pools (GO/COME/STOP/LOOK) for FS
+    symmetry. This test exercises the architecture-level default.
+    """
     from research.runners.text_minimal_isolation import build_biological_brain_regions
     regions, pathways = build_biological_brain_regions(
         enable_verb_pools=True, **SMALL_CFG
@@ -164,7 +169,10 @@ def test_fs_cross_inhibition_within_kind():
 
 
 def test_fs_does_not_cross_kinds():
-    """verb FS does NOT inhibit motor or noun pools (design choice for composition)."""
+    """verb FS does NOT inhibit motor or noun pools (design choice for composition).
+
+    Uses default 2 verb pools (build_biological_brain_regions default).
+    """
     from research.runners.text_minimal_isolation import build_biological_brain_regions
     regions, pathways = build_biological_brain_regions(
         enable_noun_pools=True,
@@ -183,8 +191,36 @@ def test_fs_does_not_cross_kinds():
         assert not p.to_region.startswith("motor_")
         assert not p.to_region.startswith("noun_pool_")
 
-    # 2 verb pools, each FS inhibits 1 other = 2 total
+    # 2 verb pools (default), each FS inhibits 1 other = 2 total
     assert len(verb_fs_paths) == 2
+
+
+def test_4_verb_pools_for_fs_symmetry():
+    """With 4 verb pool names, FS symmetry matches motor/noun (3 cross-edges per FS).
+
+    Critical for concept_pool_demo v2 (2026-05-13): the 2-pool default
+    has 1-cross-edge per verb_FS which causes structural firing bias
+    (verb_pool_COME dominated all 10 words in seed 42 v1 run). Fix is
+    to use 4 verb pools so each FS has 3 cross-edges like noun/motor.
+    """
+    from research.runners.text_minimal_isolation import build_biological_brain_regions
+    regions, pathways = build_biological_brain_regions(
+        enable_verb_pools=True,
+        verb_pool_names=["GO", "COME", "STOP", "LOOK"],
+        **SMALL_CFG,
+    )
+    verb_pools = [r for r in regions
+                  if r.name.startswith("verb_pool_")
+                  and not r.name.endswith("_fs")]
+    assert len(verb_pools) == 4
+
+    # 4 verb pools, each FS inhibits 3 others = 12 cross-edges
+    verb_fs_paths = [
+        p for p in pathways
+        if p.from_region.startswith("verb_pool_")
+        and p.from_region.endswith("_fs")
+    ]
+    assert len(verb_fs_paths) == 12
 
 
 def test_reciprocal_pool_to_lang_output_pathways():

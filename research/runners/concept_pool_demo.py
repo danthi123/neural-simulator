@@ -51,8 +51,15 @@ NOUN_VOCAB: Dict[str, str] = {
     "apple": "APPLE", "river": "RIVER", "dog": "DOG", "cat": "CAT",
 }
 
-# Verb words (NEW) — bind to dedicated verb pools
-VERB_VOCAB: Dict[str, str] = {"go": "GO", "come": "COME"}
+# Verb words (NEW) — bind to dedicated verb pools.
+# 2026-05-13 v2: expanded from 2 to 4 to match noun/motor pool count.
+# v1 seed 42 result showed verb_pool_COME structurally dominating all
+# 10 words because 2 verb pools means each verb_FS has only 1 cross-
+# inhibition edge (vs 3 for 4-pool kinds). Adding STOP and LOOK gives
+# verb FS the same topology as noun/motor FS (3 cross-edges per FS).
+VERB_VOCAB: Dict[str, str] = {
+    "go": "GO", "come": "COME", "stop": "STOP", "look": "LOOK",
+}
 
 NOUN_NAMES = list(NOUN_VOCAB.values())   # ["APPLE", "RIVER", "DOG", "CAT"]
 VERB_NAMES = list(VERB_VOCAB.values())   # ["GO", "COME"]
@@ -157,8 +164,8 @@ def build_concept_bridge(seed: int,
 
 def apply_concept_topographic_bias(bridge,
                                      n_lang_input: int = 4096,
-                                     topographic_factor: float = 1.5,
-                                     off_target_factor: float = 0.7,
+                                     topographic_factor: float = 2.0,
+                                     off_target_factor: float = 0.5,
                                      sparsity: float = 0.1,
                                      verbose: bool = True) -> Dict:
     """Apply Pulvermüller-style topographic bias to lang_input -> {pool}.

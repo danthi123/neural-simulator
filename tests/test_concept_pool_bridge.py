@@ -33,12 +33,17 @@ def concept_bridge():
     return bridge
 
 
-def test_bridge_has_all_10_pools(concept_bridge):
-    """Bridge initialization succeeds with 10 distinct output pools."""
+def test_bridge_has_all_12_pools(concept_bridge):
+    """Bridge initialization succeeds with 12 distinct output pools.
+
+    2026-05-13 v2: expanded from 10 to 12 (4 verb pools: GO/COME/STOP/LOOK
+    instead of just GO/COME) to fix FS within-kind asymmetry that caused
+    v1 seed 42 0/10 PASS via verb_pool dominance.
+    """
     rm = concept_bridge.region_manager
     motor_pools = [f"motor_{a}" for a in ["N", "E", "S", "W"]]
     noun_pools = [f"noun_pool_{n}" for n in ["APPLE", "RIVER", "DOG", "CAT"]]
-    verb_pools = [f"verb_pool_{v}" for v in ["GO", "COME"]]
+    verb_pools = [f"verb_pool_{v}" for v in ["GO", "COME", "STOP", "LOOK"]]
 
     for pool in motor_pools + noun_pools + verb_pools:
         indices = list(rm.indices(pool))
@@ -99,7 +104,7 @@ def test_measure_pool_firing_returns_all_pools(concept_bridge):
     all_pools = (
         [f"motor_{a}" for a in ["N", "E", "S", "W"]]
         + [f"noun_pool_{n}" for n in ["APPLE", "RIVER", "DOG", "CAT"]]
-        + [f"verb_pool_{v}" for v in ["GO", "COME"]]
+        + [f"verb_pool_{v}" for v in ["GO", "COME", "STOP", "LOOK"]]
     )
     rates = measure_pool_firing(
         concept_bridge, word="apple",
@@ -113,19 +118,19 @@ def test_measure_pool_firing_returns_all_pools(concept_bridge):
 
 
 def test_apply_concept_topographic_bias_does_not_crash(concept_bridge):
-    """Topographic bias application succeeds across all 10 pools."""
+    """Topographic bias application succeeds across all 12 pools.
+
+    Vocab counts (2026-05-13 v2): 4 direction + 4 noun + 4 verb = 12 words.
+    For each word, peers are pools of its own kind (4 motor / 4 noun /
+    4 verb), so each word contributes 4 entries (target + 3 off-target).
+    Total: 12 words * 4 peers = 48 entries.
+    """
     from research.runners.concept_pool_demo import apply_concept_topographic_bias
     summary = apply_concept_topographic_bias(
         concept_bridge,
         n_lang_input=64,
-        topographic_factor=1.5,
-        off_target_factor=0.7,
+        topographic_factor=2.0,
+        off_target_factor=0.5,
         verbose=False,
     )
-    # 10 words x 4 motor + 10 words x 4 noun + 10 words x 2 verb peers
-    # = expected entries (target + 3-or-1 off-target per word per kind)
-    # Actually: for each of 10 words, peers are own-kind pools (4 motor /
-    # 4 noun / 2 verb). So: 4 direction words * 4 motor peers = 16,
-    # 4 noun words * 4 noun peers = 16,
-    # 2 verb words * 2 verb peers = 4. Total 36 entries.
-    assert len(summary) == 36
+    assert len(summary) == 48
