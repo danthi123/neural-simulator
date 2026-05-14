@@ -66,10 +66,10 @@
       "date": "2026-05-14"
     },
     {
-      "name": "TRANSITIVE SEMANTIC INFERENCE - 90% multi-seed (RETRACTED 2026-05-14)",
+      "name": "TRANSITIVE SEMANTIC INFERENCE - 90% (RETRACTED) - re-measured at 45% via multitag soft traversal",
       "status": "RETRACTED",
-      "metric": "RETRACTED: previous claim of 18/20 chained 90% was an architecture-mismatch artifact. Re-test with corrected bridge (compose_concept_engram patch removed): v16 seed 42 = 1/4 chains PASS (25%). The 90% multi-seed result was the bug operating consistently across seeds. See 2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md.",
-      "doc": "2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md",
+      "metric": "RETRACTED: previous claim of 18/20 chained 90% was architecture-mismatch artifact. HONEST RE-MEASUREMENT 2026-05-14 PM via multitag mechanism (multitag_transitive_eval.py): 9/20 = 45% multi-seed transitive (chance 33%, so ~36% above chance). Direct (B in top-5): 95% multi-seed. Soft graph traversal is real but much weaker than originally claimed. The 'transitive inference' label was overstated; the actual capability is SOFT 2nd-degree neighbor retrieval at small cosine scores. Forensic on 20-pair test confirmed 2nd-degree neighbors appear in spurious retrievals (cat->cold->river pattern).",
+      "doc": "2026-05-14-multitag-spurious-are-2nd-degree.md",
       "date": "2026-05-14"
     },
     {
