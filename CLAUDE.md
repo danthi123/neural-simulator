@@ -1216,6 +1216,48 @@ This is the honest architectural reality. Tonight's compose arc has
 exhausted the v16-direct-pathway approach within the constraints of
 Phase 1's existing word-level fragility.
 
+### End-of-arc summary (2026-05-13 night)
+
+**14 iterations across the day:**
+- v1 (0/10) → v2-v6: cumulative dampening bug fixes
+- v7 (multi-seed): topographic target-priority
+- v9 (5/5 GO): reciprocal bias
+- v11 (5/5 GO): adjective pools (16 total)
+- v14 (5/5 GO): orthogonal codes — production for concepts+diversity
+- v15a/b/c (NEGATIVE): dlpfc_verb region addition collapses A→W
+- v16 (5/5 GO): direct verb→motor pathways — production for binding
+- v16 + compose-training (BOUNDARY): compose works architecturally
+  but binding is bottlenecked by Phase 1 per-word fragility
+
+**Final status table:**
+
+| User blocker | Status | Validation |
+|---|---|---|
+| Concepts | ✅ VALIDATED multi-seed | v14: 16-pool, 5/5 seeds |
+| Diversity | ✅ VALIDATED | 4× over Tier 1 |
+| Composition | ⚠️ BOUNDARY | Framework + anti-cheat tools in place; signal weak (mean TRUE rank 8.4/24 vs chance 12.5/24); bottlenecked by Phase 1 |
+
+**Tools shipped:**
+- `concept_pool_demo.py --enable-direct-verb-to-motor`: v16 Phase 1
+- `concept_compose_train.py --motor-teacher-pA`: compose-training
+- `v16_compose_permuted_check.py`: 24-permutation anti-cheat
+- `v16_manual_compose.py`: manual weight installation for arch tests
+- `v16_dlpfc_probe.py`: dlpfc_verb diagnostic (for v15 forensics)
+- `concept_pool_aggregate.py`: multi-seed aggregator (extended)
+- Multiple PowerShell multi-seed launchers
+
+**Future work priorities (in order):**
+1. Push Phase 1 W→A multi-seed mean from 11.8/16 → 14+/16. This
+   directly improves compose-binding capacity since compose
+   inherits Phase 1 per-word success.
+2. Validate that v16+compose works architecturally on
+   Phase-1-passing pairs (would need ≥4 such pairs per seed).
+3. Consider alternative composition mechanisms not bottlenecked
+   by single-direction Phase 1 binding (e.g., engram tags for
+   compositional binding, catalog D.14).
+4. Scale to 24/32 word vocabs with v14 recipe (no Phase 1
+   architecture change needed).
+
 Sequential composition still open (v12 NEGATIVE bidirectional dlpfc;
 v13 PARTIAL per-kind NMDA: +3x persistence but -5x isolation). Real
 architectural tension between holding (NMDA bistability) and selection
