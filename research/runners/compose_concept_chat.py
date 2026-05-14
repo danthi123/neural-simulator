@@ -150,6 +150,7 @@ def main():
     print("  remember <a> is <b>      Encode new association (90% retrieval)")
     print("  what is <word>           Retrieve associates (multi-tag, 90% multi-seed)")
     print("  what is <a> and <b>      Compositional: words associated with BOTH")
+    print("  is <a> <b>?              Yes/no: check if (a,b) is bound")
     print("  tell me more             Next-best associates of last query")
     print("  tell me about <word>     Same as 'what is'")
     print("  forget <tag>             Delete an engram tag (tag = a_b)")
@@ -477,6 +478,40 @@ def main():
                 print(f"  [{result}]", flush=True)
             else:
                 print(f"  [remembered: {result}]", flush=True)
+            return None
+        if line.startswith("is "):
+            # Yes/no query: 'is apple big' → check if apple_big or big_apple tagged
+            rest = line[len("is "):].strip()
+            # Support 'a b' and 'a is b' redundancy
+            if rest.endswith("?"):
+                rest = rest[:-1].strip()
+            parts = rest.split()
+            if len(parts) < 2:
+                print(f"  [usage: 'is <a> <b>?']", flush=True)
+                return None
+            a, b = parts[0], parts[-1]  # first and last words
+            # Check if either ordering exists as a tag
+            tag1, tag2 = f"{a}_{b}", f"{b}_{a}"
+            if tag1 in encoded_tags or tag2 in encoded_tags:
+                actual_tag = tag1 if tag1 in encoded_tags else tag2
+                # Stim and check cosine confidence
+                r = handle_stim(actual_tag)
+                if r:
+                    a_in_top5 = a in [w for w, _ in r["top5"]]
+                    b_in_top5 = b in [w for w, _ in r["top5"]]
+                    if a_in_top5 and b_in_top5:
+                        print(f"  YES: '{a}' is bound to '{b}' "
+                              f"(tag {actual_tag}, both in lang_output top-5)",
+                              flush=True)
+                    else:
+                        print(f"  PARTIAL: tag exists but recall is weak "
+                              f"(a={a} in top5: {a_in_top5}, "
+                              f"b={b} in top5: {b_in_top5})", flush=True)
+                else:
+                    print(f"  [tag exists but stim failed]", flush=True)
+            else:
+                print(f"  NO: no tag binding '{a}' and '{b}' "
+                      f"(checked {tag1}, {tag2})", flush=True)
             return None
         if line.startswith("what is ") or line.startswith("tell me about "):
             # Natural-language multitag query
