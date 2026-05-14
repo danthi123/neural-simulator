@@ -77,6 +77,8 @@ def build_concept_bridge(seed: int,
                           n_lang_input: int = 4096,
                           n_per_pool: int = 500,
                           n_fs_per_pool: int = 60,
+                          n_motor_per_pool: int = None,  # override; falls back to n_per_pool
+                          n_motor_fs_per_pool: int = None,
                           enable_adjective: bool = False,
                           weak_dynamics: bool = False,
                           enable_dlpfc_verb_holding: bool = False,
@@ -106,14 +108,19 @@ def build_concept_bridge(seed: int,
     concept_exc_weight = 0.3 if weak_dynamics else None
     concept_inh_weight = 0.8 if weak_dynamics else None
 
+    # v17 scaling fix (2026-05-14): allow smaller motor pools to reduce
+    # motor-pool dominance over concept pools at high pool counts.
+    actual_n_motor = n_motor_per_pool if n_motor_per_pool is not None else n_per_pool
+    actual_n_motor_fs = n_motor_fs_per_pool if n_motor_fs_per_pool is not None else n_fs_per_pool
+
     regions, pathways = build_biological_brain_regions(
         n_lang_input=n_lang_input,
-        n_motor_per_action=n_per_pool,
+        n_motor_per_action=actual_n_motor,
         text_input_to_motor_density=0.30,
         text_input_to_motor_weight=3.0,
         text_input_to_motor_jitter=0.5,
         enable_motor_fs=True,
-        n_motor_fs_per_action=n_fs_per_pool,
+        n_motor_fs_per_action=actual_n_motor_fs,
         enable_language_output=True,
         n_lang_output=n_lang_input,
         motor_to_language_output_weight=2.0,
@@ -717,6 +724,8 @@ def run_concept_pool_demo(seed: int = 42,
                             n_lang_input: int = 4096,
                             n_per_pool: int = 500,
                             n_fs_per_pool: int = 60,
+                            n_motor_per_pool: int = None,
+                            n_motor_fs_per_pool: int = None,
                             apply_topographic: bool = True,
                             topographic_factor: float = 2.0,
                             off_target_factor: float = 0.5,
@@ -765,6 +774,8 @@ def run_concept_pool_demo(seed: int = 42,
         n_lang_input=n_lang_input,
         n_per_pool=n_per_pool,
         n_fs_per_pool=n_fs_per_pool,
+        n_motor_per_pool=n_motor_per_pool,
+        n_motor_fs_per_pool=n_motor_fs_per_pool,
         enable_adjective=enable_adjective,
         weak_dynamics=weak_dynamics,
         enable_dlpfc_verb_holding=enable_dlpfc_verb_holding,
@@ -1000,6 +1011,14 @@ def main():
     parser.add_argument("--n-lang-input", type=int, default=4096)
     parser.add_argument("--n-per-pool", type=int, default=500)
     parser.add_argument("--n-fs-per-pool", type=int, default=60)
+    parser.add_argument("--n-motor-per-pool", type=int, default=None,
+                         help="Override motor pool size (defaults to "
+                         "n_per_pool). Use smaller (e.g. 50) at high pool "
+                         "count to reduce motor pool dominance over concept "
+                         "pools. v17 scaling fix.")
+    parser.add_argument("--n-motor-fs-per-pool", type=int, default=None,
+                         help="Override motor FS pool size (defaults to "
+                         "n_fs_per_pool).")
     parser.add_argument("--no-topographic", action="store_true",
                          help="Skip Pulvermuller topographic bias init")
     parser.add_argument("--topographic-factor", type=float, default=2.0,
@@ -1094,6 +1113,8 @@ def main():
         n_lang_input=args.n_lang_input,
         n_per_pool=args.n_per_pool,
         n_fs_per_pool=args.n_fs_per_pool,
+        n_motor_per_pool=args.n_motor_per_pool,
+        n_motor_fs_per_pool=args.n_motor_fs_per_pool,
         apply_topographic=not args.no_topographic,
         topographic_factor=args.topographic_factor,
         off_target_factor=args.off_target_factor,
