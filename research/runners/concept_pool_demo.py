@@ -82,6 +82,7 @@ def build_concept_bridge(seed: int,
                           enable_dlpfc_verb_holding: bool = False,
                           enable_dlpfc_verb_unidirectional: bool = False,
                           enable_direct_verb_to_motor: bool = False,
+                          enable_cross_pool_concept_pathways: bool = False,
                           nmda_verb_pools: bool = False,
                           nmda_tau_decay_ms: float = 100.0,
                           verbose: bool = True):
@@ -149,6 +150,9 @@ def build_concept_bridge(seed: int,
         # collapsing v14's A->W from 100% to 25%). Zero-init Hebbian
         # association; compose training grows weights from co-firing.
         enable_direct_verb_to_motor=enable_direct_verb_to_motor,
+        # v18 (2026-05-14): all-to-all plastic pathways between concept
+        # pools. Enables real cross-pool semantic association memory.
+        enable_cross_pool_concept_pathways=enable_cross_pool_concept_pathways,
         # v13 (2026-05-13): per-kind NMDA opt-in (cluster G v2 pattern)
         enable_nmda_verb_pools=nmda_verb_pools,
     )
@@ -722,6 +726,7 @@ def run_concept_pool_demo(seed: int = 42,
                             enable_dlpfc_verb_holding: bool = False,
                             enable_dlpfc_verb_unidirectional: bool = False,
                             enable_direct_verb_to_motor: bool = False,
+                            enable_cross_pool_concept_pathways: bool = False,
                             nmda_verb_pools: bool = False,
                             nmda_tau_decay_ms: float = 100.0,
                             orthogonal_codes: bool = False,
@@ -765,6 +770,7 @@ def run_concept_pool_demo(seed: int = 42,
         enable_dlpfc_verb_holding=enable_dlpfc_verb_holding,
         enable_dlpfc_verb_unidirectional=enable_dlpfc_verb_unidirectional,
         enable_direct_verb_to_motor=enable_direct_verb_to_motor,
+        enable_cross_pool_concept_pathways=enable_cross_pool_concept_pathways,
         nmda_verb_pools=nmda_verb_pools,
         nmda_tau_decay_ms=nmda_tau_decay_ms,
         verbose=verbose,
@@ -1029,6 +1035,14 @@ def main():
                          "is bit-equivalent to v14 until compose training opens the "
                          "shared gate 'verb_to_motor_direct' and drives "
                          "(verb_word, motor_word) co-firing.")
+    parser.add_argument("--enable-cross-pool-concept-pathways", action="store_true",
+                         help="v18: all-to-all plastic pathways between concept pools "
+                         "for direct semantic association. With 16 concept pools, "
+                         "creates 16*15 = 240 directed plastic pathways, gated by "
+                         "'cross_pool_concept'. Zero-init so Phase 1 preserved. "
+                         "Concept-concept engram encoding opens the gate -> STDP grows "
+                         "weights between co-firing pools -> direct pool-pool "
+                         "association beyond shared-lang_input STDP.")
     parser.add_argument("--nmda-verb-pools", action="store_true",
                          help="v13: per-kind NMDA opt-in. Enable NMDA bistability "
                          "ONLY on verb pools (cluster G v2 pattern). Other pools "
@@ -1073,6 +1087,7 @@ def main():
         enable_dlpfc_verb_holding=args.enable_dlpfc_verb_holding,
         enable_dlpfc_verb_unidirectional=args.enable_dlpfc_verb_unidirectional,
         enable_direct_verb_to_motor=args.enable_direct_verb_to_motor,
+        enable_cross_pool_concept_pathways=args.enable_cross_pool_concept_pathways,
         nmda_verb_pools=args.nmda_verb_pools,
         nmda_tau_decay_ms=args.nmda_tau_decay_ms,
         orthogonal_codes=args.orthogonal_codes,

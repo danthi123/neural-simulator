@@ -459,6 +459,10 @@ def build_biological_brain_regions(
     # exactly until compose training opens the gate.
     enable_direct_verb_to_motor: bool = False,
     direct_verb_to_motor_density: float = 0.20,
+    # v18 (2026-05-14): all-to-all plastic pathways between concept pools.
+    # Enables real cross-pool association memory beyond shared-lang_input STDP.
+    enable_cross_pool_concept_pathways: bool = False,
+    cross_pool_concept_density: float = 0.10,
     enable_dlpfc_verb_unidirectional: bool = False,
     verb_pool_to_dlpfc_uni_density: float = 0.30,
     # IMPORTANT: BOTH v15 pathways default to weight_mean=0.0 + jitter=0.0.
@@ -1613,6 +1617,45 @@ def build_biological_brain_regions(
                     weight_jitter=0.0,    # zero jitter = no noise injection
                     plastic=True,
                     plasticity_gate="verb_to_motor_direct",
+                ))
+
+    # v18 (2026-05-14): direct cross-pool plastic pathways for semantic
+    # memory. Concept-concept binding via lang_input STDP gives only 25%
+    # top-1 multi-seed because cross-pool firing is indirect. Adding
+    # explicit pool->pool pathways lets engram encoding directly
+    # strengthen the association. All zero-init + zero-jitter to preserve
+    # Phase 1 binding. Compose-training (or concept-concept engram
+    # encoding) opens the gate; STDP grows specific pair weights.
+    if enable_cross_pool_concept_pathways and enable_verb_pools:
+        # Build list of all concept pool names that exist
+        all_concept_pool_names = []
+        if enable_noun_pools:
+            for n in (noun_pool_names if noun_pool_names is not None
+                      else ["APPLE", "RIVER", "DOG", "CAT"]):
+                all_concept_pool_names.append(f"noun_pool_{n}")
+        if enable_verb_pools:
+            for v in (verb_pool_names if verb_pool_names is not None
+                      else ["GO", "COME"]):
+                all_concept_pool_names.append(f"verb_pool_{v}")
+        if enable_adjective_pools:
+            for a in (adjective_pool_names if adjective_pool_names is not None
+                      else ["BIG", "SMALL", "HOT", "COLD"]):
+                all_concept_pool_names.append(f"adjective_pool_{a}")
+
+        # Add all-to-all directed pathways between distinct pools, plastic
+        # with shared gate "cross_pool_concept" for atomic open/close
+        for src in all_concept_pool_names:
+            for dst in all_concept_pool_names:
+                if src == dst:
+                    continue
+                pathways.append(RegionPathway(
+                    from_region=src,
+                    to_region=dst,
+                    density=cross_pool_concept_density,
+                    weight_mean=0.0,
+                    weight_jitter=0.0,
+                    plastic=True,
+                    plasticity_gate="cross_pool_concept",
                 ))
 
     return regions, pathways
