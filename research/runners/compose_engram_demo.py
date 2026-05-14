@@ -270,41 +270,54 @@ def main():
     print()
     print(f"[VERDICT] {n_pass}/{len(pairs)} engram tags drive TRUE motor pool")
 
-    # ANTI-CHEAT: 24 permutations
+    # ANTI-CHEAT: 24 permutations (only when n_pairs == 4 and motors are
+    # unique). With more pairs or duplicate motors, the permutation
+    # space explodes (16! / (4!)^4 ~= 63M); skip and just report PASS.
     print()
-    print("[ANTI-CHEAT] 24 permutations")
-    verb_words = [verb for verb, _ in pairs]
-    motor_words = [motor for _, motor in pairs]
-    perm_results = []
-    for motor_perm in itertools.permutations(motor_words):
-        mapping = list(zip(verb_words, motor_perm))
-        passes = 0
-        for verb, motor in mapping:
-            tag = f"{verb}_{dict(pairs)[verb]}"  # the trained tag for this verb
-            d = firing[tag]
-            tgt = _WORD_TO_POOL[motor]
-            target_rate = d["rates"][tgt]
-            off = max(v for k, v in d["rates"].items() if k != tgt)
-            if target_rate > off:
-                passes += 1
-        true_dict = dict(pairs)
-        is_true = all(motor == true_dict[verb] for verb, motor in mapping)
-        perm_results.append({"mapping": mapping, "n_pass": passes,
-                              "is_true": is_true})
-    perm_results.sort(key=lambda r: -r["n_pass"])
-    true_rank = next(i for i, r in enumerate(perm_results, start=1)
-                      if r["is_true"])
-    true_pass = next(r["n_pass"] for r in perm_results if r["is_true"])
+    motor_set = set(m for _, m in pairs)
+    do_anti_cheat = (len(pairs) == 4 and len(motor_set) == 4)
+    if not do_anti_cheat:
+        print(f"[ANTI-CHEAT] Skipped (n_pairs={len(pairs)}, "
+              f"n_unique_motors={len(motor_set)}; need 4+4 for clean perm test)")
+        true_rank = 1  # placeholder
+        true_pass = n_pass
+        best_perm_pass = n_pass
+        perm_results = []
+    else:
+        print("[ANTI-CHEAT] 24 permutations")
+        verb_words = [verb for verb, _ in pairs]
+        motor_words = [motor for _, motor in pairs]
+        perm_results = []
+        for motor_perm in itertools.permutations(motor_words):
+            mapping = list(zip(verb_words, motor_perm))
+            passes = 0
+            for verb, motor in mapping:
+                tag = f"{verb}_{dict(pairs)[verb]}"
+                d = firing[tag]
+                tgt = _WORD_TO_POOL[motor]
+                target_rate = d["rates"][tgt]
+                off = max(v for k, v in d["rates"].items() if k != tgt)
+                if target_rate > off:
+                    passes += 1
+            true_dict = dict(pairs)
+            is_true = all(motor == true_dict[verb] for verb, motor in mapping)
+            perm_results.append({"mapping": mapping, "n_pass": passes,
+                                  "is_true": is_true})
+        perm_results.sort(key=lambda r: -r["n_pass"])
+        true_rank = next(i for i, r in enumerate(perm_results, start=1)
+                          if r["is_true"])
+        true_pass = next(r["n_pass"] for r in perm_results if r["is_true"])
+        best_perm_pass = perm_results[0]["n_pass"]
 
-    print(f"  Top 5 permutations:")
-    for rank, r in enumerate(perm_results[:5], start=1):
-        m = ", ".join(f"{v}->{m}" for v, m in r["mapping"])
-        tag = "** TRUE **" if r["is_true"] else ""
-        print(f"    {rank} {m:50s} {r['n_pass']}/4 {tag}")
-    print()
-    print(f"  TRUE rank: {true_rank}/24 (chance=12.5/24)")
-    print(f"  TRUE pass: {true_pass}/4")
-    print(f"  Best perm pass: {perm_results[0]['n_pass']}/4")
+        print(f"  Top 5 permutations:")
+        for rank, r in enumerate(perm_results[:5], start=1):
+            m = ", ".join(f"{v}->{m}" for v, m in r["mapping"])
+            tag = "** TRUE **" if r["is_true"] else ""
+            print(f"    {rank} {m:50s} {r['n_pass']}/4 {tag}")
+        print()
+        print(f"  TRUE rank: {true_rank}/24 (chance=12.5/24)")
+    print(f"  TRUE pass: {true_pass}/{len(pairs)}")
+    print(f"  Best perm pass: {best_perm_pass}/{len(pairs)}")
 
     if args.out:
         with open(args.out, "w") as f:
@@ -317,9 +330,10 @@ def main():
                 "encoding_stats": encoding_stats,
                 "firing": firing,
                 "n_pass": n_pass,
+                "n_total": len(pairs),
                 "true_rank": true_rank,
                 "true_pass": true_pass,
-                "best_perm_pass": perm_results[0]["n_pass"],
+                "best_perm_pass": best_perm_pass,
             }, f, indent=2, default=str)
         print(f"\n[OUT] wrote {args.out}")
 

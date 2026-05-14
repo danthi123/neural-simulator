@@ -1,0 +1,288 @@
+{
+  "bridge": "research/findings/raw/g11_bg/concept_pool_demo/seed44_v16.simstate.h5",
+  "seed": 44,
+  "encoding_steps": 200,
+  "top_k": 100,
+  "recall_stim_pA": 1500.0,
+  "encoding_stats": [
+    {
+      "name": "go_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.675390601158142
+    },
+    {
+      "name": "go_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6662760972976685
+    },
+    {
+      "name": "go_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7299479246139526
+    },
+    {
+      "name": "go_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7214844226837158
+    },
+    {
+      "name": "come_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.8048176765441895
+    },
+    {
+      "name": "come_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6686197519302368
+    },
+    {
+      "name": "come_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7279947996139526
+    },
+    {
+      "name": "come_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.699609398841858
+    },
+    {
+      "name": "stop_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7726562023162842
+    },
+    {
+      "name": "stop_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6704427003860474
+    },
+    {
+      "name": "stop_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.743749976158142
+    },
+    {
+      "name": "stop_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6826822757720947
+    },
+    {
+      "name": "look_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7932292222976685
+    },
+    {
+      "name": "look_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7610677480697632
+    },
+    {
+      "name": "look_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7104166746139526
+    },
+    {
+      "name": "look_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7311197519302368
+    }
+  ],
+  "firing": {
+    "go_north": {
+      "verb": "go",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.157,
+        "motor_E": 0.0004,
+        "motor_S": 0.00085,
+        "motor_W": 0.0
+      }
+    },
+    "go_east": {
+      "verb": "go",
+      "motor": "east",
+      "rates": {
+        "motor_N": 5e-05,
+        "motor_E": 0.1541,
+        "motor_S": 0.0016,
+        "motor_W": 0.00075
+      }
+    },
+    "go_south": {
+      "verb": "go",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.0011,
+        "motor_E": 0.0003,
+        "motor_S": 0.15605,
+        "motor_W": 0.001
+      }
+    },
+    "go_west": {
+      "verb": "go",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.00145,
+        "motor_E": 0.00095,
+        "motor_S": 0.0006,
+        "motor_W": 0.15525
+      }
+    },
+    "come_north": {
+      "verb": "come",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.1573,
+        "motor_E": 0.00035,
+        "motor_S": 0.0004,
+        "motor_W": 0.00015
+      }
+    },
+    "come_east": {
+      "verb": "come",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.0003,
+        "motor_E": 0.15735,
+        "motor_S": 0.00175,
+        "motor_W": 0.00095
+      }
+    },
+    "come_south": {
+      "verb": "come",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.00055,
+        "motor_E": 0.0003,
+        "motor_S": 0.1554,
+        "motor_W": 0.0027
+      }
+    },
+    "come_west": {
+      "verb": "come",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.0007,
+        "motor_E": 0.00105,
+        "motor_S": 0.0006,
+        "motor_W": 0.1528
+      }
+    },
+    "stop_north": {
+      "verb": "stop",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.1584,
+        "motor_E": 0.00055,
+        "motor_S": 0.00045,
+        "motor_W": 0.00035
+      }
+    },
+    "stop_east": {
+      "verb": "stop",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.0001,
+        "motor_E": 0.15405,
+        "motor_S": 0.00155,
+        "motor_W": 0.00085
+      }
+    },
+    "stop_south": {
+      "verb": "stop",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.00105,
+        "motor_E": 0.00035,
+        "motor_S": 0.15695,
+        "motor_W": 0.00235
+      }
+    },
+    "stop_west": {
+      "verb": "stop",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.00045,
+        "motor_E": 0.00095,
+        "motor_S": 5e-05,
+        "motor_W": 0.1533
+      }
+    },
+    "look_north": {
+      "verb": "look",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.15815,
+        "motor_E": 0.00085,
+        "motor_S": 0.0007,
+        "motor_W": 0.00055
+      }
+    },
+    "look_east": {
+      "verb": "look",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.00025,
+        "motor_E": 0.15455,
+        "motor_S": 0.0019,
+        "motor_W": 0.0016
+      }
+    },
+    "look_south": {
+      "verb": "look",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.0003,
+        "motor_E": 0.00015,
+        "motor_S": 0.15345,
+        "motor_W": 0.0016
+      }
+    },
+    "look_west": {
+      "verb": "look",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.00055,
+        "motor_E": 0.00045,
+        "motor_S": 0.00035,
+        "motor_W": 0.15075
+      }
+    }
+  },
+  "n_pass": 16,
+  "n_total": 16,
+  "true_rank": 1,
+  "true_pass": 16,
+  "best_perm_pass": 16
+}
