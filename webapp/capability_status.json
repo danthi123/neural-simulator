@@ -1,18 +1,46 @@
 {
   "as_of": "2026-05-14",
   "headline": {
-    "tier": "Compose-Engram + Chat REPL: full conversational pipeline VALIDATED multi-seed",
-    "result": "20/20 PERFECT motor recall with motor teacher (was 16/20 = 80%). Chat REPL operational: 12-pair 91.7% multi-seed (55/60 motor recall). Sequential composition VALIDATED at 16/20 retrieval + 20/20 recall (real conversation pattern works). Cosine-match retrieval enables automatic engram identification.",
-    "metrics": "4-pair engram: 20/20 PERFECT multi-seed with motor teacher. Cosine retrieval: 17/20 (85%). Full pipeline: 17/20 cosine + 16/20 motor. 12-pair chat: 55/60 motor recall (91.7%, 3/5 seeds 12/12 perfect). Sequential composition: 16/20 retrieve + 20/20 recall. v14/v16 substrate (A->W 100% unanimous) preserved throughout.",
+    "tier": "Concept-Concept Semantic Memory: real conceptual chat (NO motor) - multi-seed VALIDATED",
+    "result": "Real semantic association memory: user types 'apple' → system associates 'big' or 'cat' (trained associations). Multi-seed v16: 23/40 stim-recall (57.5%), 12/40 associative-recall (30%). Both above chance. Foundation for actual conceptual conversation - output is a CONCEPT WORD, not motor direction. Previous '96/96 PERFECT compose' tests were vocabulary-rich direction routing; this is the architectural pivot to real semantic memory.",
+    "metrics": "Concept-concept (NO motor) multi-seed v16 8-pair: 23/40 stim-recall (57.5%) + 12/40 associative-recall (30%). Compose capacity ladder (motor-routed, separate track): 1-pair 100%, 2-pair 100% (up to 48), 3-word 100% motor/85% full, 4-word 100% motor/60% full multi-seed. v17 28-word vocab + 96 cross-pair: 96/96 PERFECT seed 42 (motor-routed). 3 seeds v17 confirmed PERFECT before cancelled.",
     "wall_clock": "~17 min/seed v14/v16 Phase 1 + ~30s/seed engram encoding+recall + ~10s/seed chat REPL setup. Full demo end-to-end: ~18 min/seed.",
     "finding_doc": "2026-05-13-concept-pool-architecture-Phase1.md",
-    "summary": "ALL THREE user-stated blockers (concepts, composition, diversity) VALIDATED multi-seed plus operational chat REPL. After engram breakthrough (catalog D.14), four refinements pushed composition to production quality: (1) motor teacher current during encoding ensures engram includes motor neurons (16/20 -> 20/20); (2) cosine-match retrieval for automatic engram identification (no need to specify tag); (3) phase-separated full pipeline (queries first then recalls, avoids state contamination); (4) sequential composition (temporal verb-then-motor drive, captures real conversation pattern). Chat REPL operational at 12-word vocabulary, 91.7% motor recall multi-seed. v14 Phase 1 + v16 substrate + engram-tagging stack = production conversational architecture."
+    "summary": "ALL THREE user-stated blockers (concepts, composition, diversity) validated. ARCHITECTURAL PIVOT 2026-05-14: previous compose tests were vocabulary-rich MOTOR DIRECTION routing (cue -> N/E/S/W). User correctly identified this isn't real semantic conversation. Pivoted to concept-concept engrams (NO motor in tag): encode (apple, big) -> stimulate tag -> lang_output spells BOTH 'apple' and 'big'. Multi-seed v16 8-pair: 23/40 stim-recall (57.5%, both concepts in top-5), 12/40 associative-recall (30%, drive a alone, b appears in non-a top-3). compose_concept_chat.py operational - user types 'apple', system associates 'big'/'cat'/etc. Real semantic memory foundation. Quality is ~30-60% multi-seed; above chance but room for improvement (longer encoding, denser association graph, stronger Phase 1 readout)."
   },
   "pillars": [
     {
-      "name": "Compose-Engram + Chat REPL - 12-word vocab 91.7% motor recall multi-seed",
+      "name": "48-pair compose engram - PERFECT 240/240 multi-seed (5/5 seeds 48/48)",
       "status": "VALIDATED",
-      "metric": "Chat REPL 12-pair multi-seed: 55/60 motor recall (91.7%); 3/5 seeds perfect 12/12. End-to-end pipeline: query -> cosine-match -> stimulate engram -> motor.",
+      "metric": "12 cues (4 verb + 4 noun + 4 adj) x 4 motors = 48 compositional units. 100% recall across all 5 seeds with motor teacher current. Demonstrates 48-distinct-memory capacity in single bridge.",
+      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-14"
+    },
+    {
+      "name": "3-word phrases (adj+noun+motor) - tuned 20/20 motor + 17/20 full multi-seed",
+      "status": "VALIDATED",
+      "metric": "5/5 seeds: motor recall 4/4 each (20/20 PERFECT); full 3-way pool recall 4+4+4+2+3 = 17/20 (85%). Tuned: motor_teacher_pA=750, top_k=250.",
+      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-14"
+    },
+    {
+      "name": "4-word phrases (verb+adj+noun+motor) - 20/20 motor + 12/20 full multi-seed",
+      "status": "VALIDATED",
+      "metric": "5/5 seeds: motor recall 4/4 each (20/20 PERFECT); full 4-way pool recall 3+3+3+2+1 = 12/20 (60%). Tuned: motor_teacher_pA=750, top_k=400.",
+      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-14"
+    },
+    {
+      "name": "Concept-Concept Semantic Memory (NO motor) - multi-seed REAL semantic conversation",
+      "status": "VALIDATED",
+      "metric": "v16 multi-seed 5x8 pairs: 23/40 stim-recall (57.5%, both concepts in lang_output top-5), 12/40 associative-recall (30%, drive a alone -> b in non-a top-3). Above chance. Real concept-word output, not motor direction.",
+      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-14"
+    },
+    {
+      "name": "Compose-Engram + Chat REPL - 12-word vocab 91.7% motor recall multi-seed (motor-routed track)",
+      "status": "VALIDATED",
+      "metric": "Chat REPL 12-pair multi-seed: 55/60 motor recall (91.7%); 3/5 seeds perfect 12/12. Note: this is motor-direction routing, not semantic memory.",
       "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
       "date": "2026-05-14"
     },
