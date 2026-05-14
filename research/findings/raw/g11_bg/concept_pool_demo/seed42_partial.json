@@ -1,0 +1,76 @@
+{
+  "seed": 42,
+  "load_bridge": "research/findings/raw/g11_bg/concept_pool_demo/seed42_v16.simstate.h5",
+  "encoding_steps": 200,
+  "top_k": 100,
+  "drive_pA": 1500.0,
+  "stim_steps": 100,
+  "results": [
+    {
+      "tag": "go_north",
+      "verb": "go",
+      "motor": "north",
+      "n_non_motor": 57,
+      "rates": {
+        "motor_N": 0.00175,
+        "motor_E": 0.00095,
+        "motor_S": 0.00085,
+        "motor_W": 0.002
+      },
+      "target_rate": 0.00175,
+      "max_off": 0.002,
+      "passed": false,
+      "ratio": 0.875
+    },
+    {
+      "tag": "come_south",
+      "verb": "come",
+      "motor": "south",
+      "n_non_motor": 65,
+      "rates": {
+        "motor_N": 0.00285,
+        "motor_E": 0.0022,
+        "motor_S": 0.0033,
+        "motor_W": 0.0015
+      },
+      "target_rate": 0.0033,
+      "max_off": 0.00285,
+      "passed": true,
+      "ratio": 1.1578947368421053
+    },
+    {
+      "tag": "stop_west",
+      "verb": "stop",
+      "motor": "west",
+      "n_non_motor": 60,
+      "rates": {
+        "motor_N": 0.0011,
+        "motor_E": 0.001,
+        "motor_S": 0.00105,
+        "motor_W": 0.00075
+      },
+      "target_rate": 0.00075,
+      "max_off": 0.0011,
+      "passed": false,
+      "ratio": 0.6818181818181818
+    },
+    {
+      "tag": "look_east",
+      "verb": "look",
+      "motor": "east",
+      "n_non_motor": 62,
+      "rates": {
+        "motor_N": 0.00245,
+        "motor_E": 0.00155,
+        "motor_S": 0.00175,
+        "motor_W": 0.0025
+      },
+      "target_rate": 0.00155,
+      "max_off": 0.0025,
+      "passed": false,
+      "ratio": 0.62
+    }
+  ],
+  "n_pass": 1,
+  "n_total": 4
+}
