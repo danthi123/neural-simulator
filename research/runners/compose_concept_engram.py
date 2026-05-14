@@ -44,8 +44,16 @@ def encode_concept_pair(bridge, word_a: str, word_b: str, tag_name: str,
                           sparsity: float = 0.03, n_lang_input: int = 4096,
                           n_words_for_orthogonal: int = 28,
                           region_filter=None, top_k: int = 100,
+                          balanced_teacher_pA: float = 0.0,
                           verbose: bool = True):
-    """Encode (word_a, word_b) engram — both concepts, no motor."""
+    """Encode (word_a, word_b) engram — both concepts, no motor.
+
+    With balanced_teacher_pA > 0, applies teacher current to BOTH
+    concept pools (the pool for word_a AND word_b) during encoding.
+    Analogous to motor_teacher but symmetric across both concepts —
+    ensures both pools get strong representation in the top-K tag,
+    not just whichever happens to fire stronger from lang_input drive.
+    """
     from sim.backend import get_backend
     cp, _ = get_backend()
     rm = bridge.region_manager
@@ -64,6 +72,14 @@ def encode_concept_pair(bridge, word_a: str, word_b: str, tag_name: str,
         list(rm.indices("language_input")), dtype=cp.int64)
     n_total = bridge.cp_external_input_current.shape[0]
 
+    # Balanced teachers: drive both concept pools' neurons directly
+    use_teacher = balanced_teacher_pA > 0.0
+    if use_teacher:
+        pool_a_idx = list(rm.indices(_WORD_TO_POOL[word_a]))
+        pool_b_idx = list(rm.indices(_WORD_TO_POOL[word_b]))
+        pool_a_arr_gpu = cp.asarray(pool_a_idx, dtype=cp.int64)
+        pool_b_arr_gpu = cp.asarray(pool_b_idx, dtype=cp.int64)
+
     bridge.start_engram_recording(tag_name)
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(30):
@@ -73,6 +89,9 @@ def encode_concept_pair(bridge, word_a: str, word_b: str, tag_name: str,
     for _ in range(encoding_steps):
         ext.fill(0)
         ext[lang_arr_gpu] = combined_gpu
+        if use_teacher:
+            ext[pool_a_arr_gpu] = balanced_teacher_pA
+            ext[pool_b_arr_gpu] = balanced_teacher_pA
         bridge.cp_external_input_current[:] = ext
         bridge._run_one_simulation_step()
 
@@ -199,6 +218,10 @@ def main():
     p.add_argument("--recall-stim-pA", type=float, default=1500.0)
     p.add_argument("--recall-steps", type=int, default=100)
     p.add_argument("--sparsity", type=float, default=0.03)
+    p.add_argument("--balanced-teacher-pA", type=float, default=0.0,
+                    help="Drive both concept pools with teacher current "
+                    "during encoding (analog of motor_teacher but on both "
+                    "concept pools). Helps ensure balanced representation.")
     p.add_argument("--out", type=str, default=None)
     args = p.parse_args()
 
@@ -258,6 +281,7 @@ def main():
             n_lang_input=args.n_lang_input,
             n_words_for_orthogonal=args.n_words_for_orthogonal,
             region_filter=region_filter, top_k=args.top_k,
+            balanced_teacher_pA=args.balanced_teacher_pA,
             verbose=True,
         )
 
