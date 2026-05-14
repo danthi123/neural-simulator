@@ -1,0 +1,267 @@
+{
+  "seed": 45,
+  "pairs": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "apple",
+      "cat"
+    ],
+    [
+      "apple",
+      "hot"
+    ],
+    [
+      "apple",
+      "dog"
+    ],
+    [
+      "dog",
+      "small"
+    ],
+    [
+      "dog",
+      "river"
+    ],
+    [
+      "dog",
+      "cold"
+    ],
+    [
+      "dog",
+      "cat"
+    ],
+    [
+      "big",
+      "hot"
+    ],
+    [
+      "big",
+      "small"
+    ],
+    [
+      "big",
+      "cat"
+    ],
+    [
+      "small",
+      "cold"
+    ],
+    [
+      "small",
+      "river"
+    ],
+    [
+      "cat",
+      "hot"
+    ],
+    [
+      "river",
+      "cold"
+    ],
+    [
+      "hot",
+      "cold"
+    ]
+  ],
+  "top_n": 4,
+  "n_full_pass": 6,
+  "n_partial_pass": 8,
+  "n_total": 8,
+  "results": [
+    {
+      "cue": "apple",
+      "expected": [
+        "big",
+        "cat",
+        "hot",
+        "dog"
+      ],
+      "top_n": [
+        "hot",
+        "big",
+        "cat",
+        "small"
+      ],
+      "full_pass": false,
+      "partial_pass": true,
+      "scores": {
+        "hot": 0.3971029933069092,
+        "big": 0.2824127920711281,
+        "cat": 0.1956950976502671,
+        "small": 0.09001974491912287,
+        "dog": 0.07145774839991592
+      }
+    },
+    {
+      "cue": "big",
+      "expected": [
+        "apple",
+        "hot",
+        "small",
+        "cat"
+      ],
+      "top_n": [
+        "hot",
+        "small",
+        "cat",
+        "apple"
+      ],
+      "full_pass": true,
+      "partial_pass": true,
+      "scores": {
+        "hot": 0.39187779618276003,
+        "small": 0.3157181038192697,
+        "cat": 0.18505616246881396,
+        "apple": 0.131171738525684,
+        "cold": 0.06609148659600499
+      }
+    },
+    {
+      "cue": "cat",
+      "expected": [
+        "apple",
+        "dog",
+        "big",
+        "hot"
+      ],
+      "top_n": [
+        "hot",
+        "big",
+        "apple",
+        "dog"
+      ],
+      "full_pass": true,
+      "partial_pass": true,
+      "scores": {
+        "hot": 0.37128033428982793,
+        "big": 0.23368657477350813,
+        "apple": 0.21114415061491768,
+        "dog": 0.15181969715064697,
+        "cold": 0.10121313143376465
+      }
+    },
+    {
+      "cue": "hot",
+      "expected": [
+        "apple",
+        "big",
+        "cat",
+        "cold"
+      ],
+      "top_n": [
+        "big",
+        "cold",
+        "apple",
+        "cat"
+      ],
+      "full_pass": true,
+      "partial_pass": true,
+      "scores": {
+        "big": 0.2093968349993065,
+        "cold": 0.18568793511538426,
+        "apple": 0.1356135862131135,
+        "cat": 0.1326070505382304,
+        "river": 0.07328889224975726
+      }
+    },
+    {
+      "cue": "dog",
+      "expected": [
+        "apple",
+        "small",
+        "river",
+        "cold",
+        "cat"
+      ],
+      "top_n": [
+        "river",
+        "small",
+        "cold",
+        "apple"
+      ],
+      "full_pass": false,
+      "partial_pass": true,
+      "scores": {
+        "river": 0.35488299460298084,
+        "small": 0.242095859949882,
+        "cold": 0.21898393922069412,
+        "apple": 0.1869140445748138,
+        "cat": 0.14625448634545427
+      }
+    },
+    {
+      "cue": "small",
+      "expected": [
+        "dog",
+        "big",
+        "cold",
+        "river"
+      ],
+      "top_n": [
+        "river",
+        "cold",
+        "big",
+        "dog"
+      ],
+      "full_pass": true,
+      "partial_pass": true,
+      "scores": {
+        "river": 0.21825596678327602,
+        "cold": 0.20653976035812271,
+        "big": 0.1739166947577638,
+        "dog": 0.08998576136019779,
+        "come": 0.07030674894462792
+      }
+    },
+    {
+      "cue": "river",
+      "expected": [
+        "dog",
+        "small",
+        "cold"
+      ],
+      "top_n": [
+        "small",
+        "cold",
+        "dog",
+        "go"
+      ],
+      "full_pass": true,
+      "partial_pass": true,
+      "scores": {
+        "small": 0.26473860650247605,
+        "cold": 0.14613153602770257,
+        "dog": 0.127240213713017,
+        "go": 0.08253419267871373,
+        "look": 0.07155097473039893
+      }
+    },
+    {
+      "cue": "cold",
+      "expected": [
+        "dog",
+        "small",
+        "river",
+        "hot"
+      ],
+      "top_n": [
+        "hot",
+        "river",
+        "small",
+        "dog"
+      ],
+      "full_pass": true,
+      "partial_pass": true,
+      "scores": {
+        "hot": 0.35362951292097233,
+        "river": 0.2733870796364455,
+        "small": 0.24184099760275188,
+        "dog": 0.14968158093201214,
+        "stop": 0.09424395836460024
+      }
+    }
+  ]
+}
