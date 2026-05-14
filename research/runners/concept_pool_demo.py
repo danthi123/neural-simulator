@@ -81,6 +81,7 @@ def build_concept_bridge(seed: int,
                           n_motor_fs_per_pool: int = None,
                           enable_adjective: bool = False,
                           weak_dynamics: bool = False,
+                          weak_motor_dynamics: bool = False,
                           enable_dlpfc_verb_holding: bool = False,
                           enable_dlpfc_verb_unidirectional: bool = False,
                           enable_direct_verb_to_motor: bool = False,
@@ -108,6 +109,16 @@ def build_concept_bridge(seed: int,
     concept_exc_weight = 0.3 if weak_dynamics else None
     concept_inh_weight = 0.8 if weak_dynamics else None
 
+    # v17 scaling fix (2026-05-14): OPT-IN weak motor dynamics. Diagnosis:
+    # at v17 28-pool, motor pools dominate concept pools because canon
+    # dynamics (0.10/2.0/4.0) have 7x stronger excitatory recurrence than
+    # concept weak dynamics (0.05/0.3/0.8). Setting weak_motor_dynamics=True
+    # makes motor pools weak too, equalizing the footing. Default OFF to
+    # preserve v16's validated 90% multitag (uses weak concept + canon motor).
+    motor_internal_density = 0.05 if weak_motor_dynamics else 0.10
+    motor_exc_weight = 0.3 if weak_motor_dynamics else 2.0
+    motor_inh_weight = 0.8 if weak_motor_dynamics else 4.0
+
     # v17 scaling fix (2026-05-14): allow smaller motor pools to reduce
     # motor-pool dominance over concept pools at high pool counts.
     actual_n_motor = n_motor_per_pool if n_motor_per_pool is not None else n_per_pool
@@ -116,6 +127,9 @@ def build_concept_bridge(seed: int,
     regions, pathways = build_biological_brain_regions(
         n_lang_input=n_lang_input,
         n_motor_per_action=actual_n_motor,
+        motor_internal_density=motor_internal_density,
+        motor_exc_weight_mean=motor_exc_weight,
+        motor_inh_weight_mean=motor_inh_weight,
         text_input_to_motor_density=0.30,
         text_input_to_motor_weight=3.0,
         text_input_to_motor_jitter=0.5,
@@ -731,6 +745,7 @@ def run_concept_pool_demo(seed: int = 42,
                             n_motor_per_pool: int = None,
                             n_motor_fs_per_pool: int = None,
                             skip_motor_training: bool = False,
+                            weak_motor_dynamics: bool = False,
                             apply_topographic: bool = True,
                             topographic_factor: float = 2.0,
                             off_target_factor: float = 0.5,
@@ -783,6 +798,7 @@ def run_concept_pool_demo(seed: int = 42,
         n_motor_fs_per_pool=n_motor_fs_per_pool,
         enable_adjective=enable_adjective,
         weak_dynamics=weak_dynamics,
+        weak_motor_dynamics=weak_motor_dynamics,
         enable_dlpfc_verb_holding=enable_dlpfc_verb_holding,
         enable_dlpfc_verb_unidirectional=enable_dlpfc_verb_unidirectional,
         enable_direct_verb_to_motor=enable_direct_verb_to_motor,
@@ -1033,6 +1049,12 @@ def main():
                          "pools but doesn't train lang_input->motor STDP). "
                          "Tests whether motor weights are the structural "
                          "source of dominance at high pool counts (v17).")
+    parser.add_argument("--weak-motor-dynamics", action="store_true",
+                         help="v17 scaling: also use weak dynamics for motor "
+                         "pools (0.05/0.3/0.8 instead of canon 0.10/2.0/4.0). "
+                         "Equalizes motor and concept pool recurrence. "
+                         "Default OFF preserves v16 90% multitag (which has "
+                         "weak concepts + canon motors).")
     parser.add_argument("--no-topographic", action="store_true",
                          help="Skip Pulvermuller topographic bias init")
     parser.add_argument("--topographic-factor", type=float, default=2.0,
@@ -1130,6 +1152,7 @@ def main():
         n_motor_per_pool=args.n_motor_per_pool,
         n_motor_fs_per_pool=args.n_motor_fs_per_pool,
         skip_motor_training=args.skip_motor_training,
+        weak_motor_dynamics=args.weak_motor_dynamics,
         apply_topographic=not args.no_topographic,
         topographic_factor=args.topographic_factor,
         off_target_factor=args.off_target_factor,
