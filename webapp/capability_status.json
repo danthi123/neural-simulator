@@ -10,9 +10,9 @@
   },
   "pillars": [
     {
-      "name": "v16 + Compose-Training - FIRST COMPOSITIONAL BINDING (seed 42)",
-      "status": "VALIDATED",
-      "metric": "Verb-alone -> motor pool: 2/4 PASS; A->W preserved 16/16 (100%) at both 100 and 400 events/pair",
+      "name": "v16 + Compose-Training - FIRST COMPOSITIONAL BINDING (multi-seed boundary, A->W preserved)",
+      "status": "BOUNDARY",
+      "metric": "Multi-seed (42-46, 100 ev/pair): Compose 5/20 (25%); A->W 80/80 unanimous (100% PRESERVED). Single-seed seed 42 best at 2/4 + 16/16.",
       "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
       "date": "2026-05-13"
     },

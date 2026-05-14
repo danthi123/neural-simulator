@@ -1096,6 +1096,38 @@ push PASS rate above 2/4. Cross-seed variance + competing-pair
 interference (later pairs may overwrite earlier ones' STDP) are
 the main investigation targets.
 
+### Multi-seed compose-training (seeds 42-46, 100 events/pair)
+
+Result on existing v16 bridges (no Phase 1 retrain, just compose):
+
+| Seed | Compose PASS | A→W (post-compose) |
+|---|---|---|
+| 42 | 2/4 | 16/16 |
+| 43 | 0/4 | 16/16 |
+| 44 | 1/4 | 16/16 |
+| 45 | 0/4 | 16/16 |
+| 46 | 2/4 | 16/16 |
+| **Total** | **5/20 (25%)** | **80/80 (100%)** |
+
+**Verdict: A→W PERFECTLY preserved across all 5 seeds** — the
+frozen-gate strategy is robust. **Compose-binding is PARTIAL** —
+signal emerges but seed-variable at 100 events. PASS rate 25%
+multi-seed (vs 50% at seed 42 alone).
+
+Hypothesis: at 100 events/pair, the v16 verb→motor weights grow
+just enough to be visible at strong seeds (42, 46) but not enough
+to overcome random structural bias at weaker seeds (43, 45). Need
+either:
+1. More events/pair (200, 400, 800)
+2. Better temporal protocol (longer verb-only window, varied
+   compose-pair interleaving)
+3. Direct weight initialization (set verb→motor to a small prior)
+   then refine via STDP.
+
+**Status: compositional architecture validated multi-seed for
+binding preservation; compositional signal requires further
+iteration to robust multi-seed PASS.**
+
 Sequential composition still open (v12 NEGATIVE bidirectional dlpfc;
 v13 PARTIAL per-kind NMDA: +3x persistence but -5x isolation). Real
 architectural tension between holding (NMDA bistability) and selection

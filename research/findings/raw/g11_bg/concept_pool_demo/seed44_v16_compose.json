@@ -1,0 +1,127 @@
+{
+  "seed": 44,
+  "load_bridge": "research\\findings\\raw\\g11_bg\\concept_pool_demo\\seed44_v16.simstate.h5",
+  "compose_pairs": [
+    [
+      "go",
+      "north"
+    ],
+    [
+      "come",
+      "south"
+    ],
+    [
+      "stop",
+      "west"
+    ],
+    [
+      "look",
+      "east"
+    ]
+  ],
+  "n_events_per_pair": 100,
+  "train_results": [
+    {
+      "verb_word": "go",
+      "motor_word": "north",
+      "n_events": 100,
+      "wall_s": 35.56970548629761
+    },
+    {
+      "verb_word": "come",
+      "motor_word": "south",
+      "n_events": 100,
+      "wall_s": 28.276107788085938
+    },
+    {
+      "verb_word": "stop",
+      "motor_word": "west",
+      "n_events": 100,
+      "wall_s": 28.1234130859375
+    },
+    {
+      "verb_word": "look",
+      "motor_word": "east",
+      "n_events": 100,
+      "wall_s": 28.137592554092407
+    }
+  ],
+  "inference_results": [
+    {
+      "verb_word": "go",
+      "expected_motor": "north",
+      "expected_pool": "motor_N",
+      "target_rate": 0.12,
+      "all_rates": {
+        "motor_N": 0.12,
+        "motor_E": 0.09,
+        "motor_S": 0.195,
+        "motor_W": 0.265
+      },
+      "max_off": 0.265,
+      "max_off_pool": "motor_W",
+      "passed": false,
+      "ratio": 0.45283018867924524
+    },
+    {
+      "verb_word": "come",
+      "expected_motor": "south",
+      "expected_pool": "motor_S",
+      "target_rate": 0.255,
+      "all_rates": {
+        "motor_N": 0.16,
+        "motor_E": 0.15,
+        "motor_S": 0.255,
+        "motor_W": 0.185
+      },
+      "max_off": 0.185,
+      "max_off_pool": "motor_W",
+      "passed": true,
+      "ratio": 1.3783783783783785
+    },
+    {
+      "verb_word": "stop",
+      "expected_motor": "west",
+      "expected_pool": "motor_W",
+      "target_rate": 0.145,
+      "all_rates": {
+        "motor_N": 0.06,
+        "motor_E": 0.09,
+        "motor_S": 0.225,
+        "motor_W": 0.145
+      },
+      "max_off": 0.225,
+      "max_off_pool": "motor_S",
+      "passed": false,
+      "ratio": 0.6444444444444444
+    },
+    {
+      "verb_word": "look",
+      "expected_motor": "east",
+      "expected_pool": "motor_E",
+      "target_rate": 0.065,
+      "all_rates": {
+        "motor_N": 0.055,
+        "motor_E": 0.065,
+        "motor_S": 0.075,
+        "motor_W": 0.05
+      },
+      "max_off": 0.075,
+      "max_off_pool": "motor_S",
+      "passed": false,
+      "ratio": 0.8666666666666667
+    }
+  ],
+  "n_pass": 1,
+  "n_total": 4,
+  "frozen_gates": [
+    "language_input_to_motor",
+    "language_input_to_verb_pool",
+    "language_input_to_noun_pool",
+    "language_input_to_adjective_pool",
+    "motor_to_language_output",
+    "verb_pool_to_language_output",
+    "noun_pool_to_language_output",
+    "adjective_pool_to_language_output"
+  ]
+}
