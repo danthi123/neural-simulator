@@ -1,18 +1,39 @@
 {
-  "as_of": "2026-05-13",
+  "as_of": "2026-05-14",
   "headline": {
-    "tier": "Engram-Composition (catalog D.14): concepts + diversity + COMPOSITION all VALIDATED multi-seed",
-    "result": "5-seed engram-based composition: 16/20 PASS (80%) on direct test, TRUE mapping rank 1/24 UNANIMOUS across all 5 seeds (chance=12.5/24). Catalog D.14 (Tonegawa engram-tagging) succeeds where STDP-pathway approaches failed.",
-    "metrics": "Engram (5 seeds, 200 encoding steps + 100 recall steps): PASS 3/4, 4/4, 3/4, 4/4, 2/4 (mean 3.2/4 = 80%); TRUE rank 1/24 across all 5 seeds (some ties at lower-PASS seeds, but TRUE always among top permutations). vs chance 25% PASS and rank 12.5/24. Foundation: v14/v16 Phase 1 5/5 GO (A->W 100% unanimous), v16 substrate preserves binding.",
-    "wall_clock": "~17 min/seed v14/v16 Phase 1 + ~30s/seed engram encoding+recall = ~18 min/seed full compose demo. Engram encoding is ~5000x faster than STDP compose-training (200 steps vs 1.6M sub-steps).",
+    "tier": "Compose-Engram + Chat REPL: full conversational pipeline VALIDATED multi-seed",
+    "result": "20/20 PERFECT motor recall with motor teacher (was 16/20 = 80%). Chat REPL operational: 12-pair 91.7% multi-seed (55/60 motor recall). Sequential composition VALIDATED at 16/20 retrieval + 20/20 recall (real conversation pattern works). Cosine-match retrieval enables automatic engram identification.",
+    "metrics": "4-pair engram: 20/20 PERFECT multi-seed with motor teacher. Cosine retrieval: 17/20 (85%). Full pipeline: 17/20 cosine + 16/20 motor. 12-pair chat: 55/60 motor recall (91.7%, 3/5 seeds 12/12 perfect). Sequential composition: 16/20 retrieve + 20/20 recall. v14/v16 substrate (A->W 100% unanimous) preserved throughout.",
+    "wall_clock": "~17 min/seed v14/v16 Phase 1 + ~30s/seed engram encoding+recall + ~10s/seed chat REPL setup. Full demo end-to-end: ~18 min/seed.",
     "finding_doc": "2026-05-13-concept-pool-architecture-Phase1.md",
-    "summary": "ALL THREE user-stated blockers (concepts, composition, diversity) VALIDATED multi-seed via catalog D.14 engram-tagging. After 14 iterations of STDP-pathway approaches (v1-v16 + compose-training) found composition NEGATIVE (direct-drive test: 0/4 PASS, motor rates 0.001-0.005), pivoted to Tonegawa engram-tagging mechanism. Engram ENCODES co-firing neurons as a tag in one pass; RECALL stimulates the tagged neurons directly via external current (no STDP weight-growth needed). 5-seed validation: 16/20 PASS (80%), TRUE rank 1/24 unanimous - significantly above chance 25%/12.5. The architectural breakthrough: bypass pathway-weight learning entirely. Composition VALIDATED via biology-grounded mechanism (Liu 2012 inception-of-fear paradigm; Tonegawa 2012-2017 ensemble code)."
+    "summary": "ALL THREE user-stated blockers (concepts, composition, diversity) VALIDATED multi-seed plus operational chat REPL. After engram breakthrough (catalog D.14), four refinements pushed composition to production quality: (1) motor teacher current during encoding ensures engram includes motor neurons (16/20 -> 20/20); (2) cosine-match retrieval for automatic engram identification (no need to specify tag); (3) phase-separated full pipeline (queries first then recalls, avoids state contamination); (4) sequential composition (temporal verb-then-motor drive, captures real conversation pattern). Chat REPL operational at 12-word vocabulary, 91.7% motor recall multi-seed. v14 Phase 1 + v16 substrate + engram-tagging stack = production conversational architecture."
   },
   "pillars": [
     {
-      "name": "Engram-Composition (catalog D.14 Tonegawa) - 5-seed multi-seed VALIDATED",
+      "name": "Compose-Engram + Chat REPL - 12-word vocab 91.7% motor recall multi-seed",
       "status": "VALIDATED",
-      "metric": "5/5 seeds: 16/20 PASS (80%); TRUE mapping rank 1/24 UNANIMOUS across all seeds (chance=12.5/24). Two seeds (43, 45) achieve 4/4 perfect. Encoding: 200 steps drive lang_input(verb+motor) together, commit top-K=100 engram across verb_pool + motor regions. Recall: stimulate_tag at 1500 pA, measure motor firing.",
+      "metric": "Chat REPL 12-pair multi-seed: 55/60 motor recall (91.7%); 3/5 seeds perfect 12/12. End-to-end pipeline: query -> cosine-match -> stimulate engram -> motor.",
+      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-14"
+    },
+    {
+      "name": "Engram + motor teacher: PERFECT 4-pair compose multi-seed",
+      "status": "VALIDATED",
+      "metric": "5/5 seeds 4/4 PERFECT (20/20 total) with --motor-teacher-pA 1500. TRUE rank 1/24 unanimously (mathematically unique at 4/4 max). +20pp improvement over base engram (16/20).",
+      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-14"
+    },
+    {
+      "name": "Sequential composition (verb-then-motor temporal drive)",
+      "status": "VALIDATED",
+      "metric": "5-seed: 16/20 cosine retrieve (80%) + 20/20 recall (100% PERFECT). Engram captures spikes across temporal windows. Real conversation pattern works.",
+      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-14"
+    },
+    {
+      "name": "Engram-Composition (catalog D.14 Tonegawa) - original 4-pair baseline",
+      "status": "VALIDATED",
+      "metric": "5/5 seeds: 16/20 PASS (80%); TRUE mapping rank 1/24 UNANIMOUS across all seeds (chance=12.5/24). Two seeds (43, 45) achieve 4/4 perfect.",
       "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
       "date": "2026-05-13"
     },
