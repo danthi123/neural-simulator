@@ -58,12 +58,20 @@ def main():
                     "for stim-recall mode.")
     args = p.parse_args()
 
-    # Parse pairs
+    # Parse pairs (empty string = no initial pairs)
     pairs = []
-    for ps in args.pairs.split(","):
-        a, b = ps.strip().split(":")
-        if a in _WORD_TO_IDX and b in _WORD_TO_IDX:
-            pairs.append((a, b))
+    if args.pairs.strip():
+        for ps in args.pairs.split(","):
+            ps = ps.strip()
+            if not ps:
+                continue
+            try:
+                a, b = ps.split(":")
+            except ValueError:
+                print(f"WARN: skipping malformed pair '{ps}'", flush=True)
+                continue
+            if a in _WORD_TO_IDX and b in _WORD_TO_IDX:
+                pairs.append((a, b))
 
     print(f"Loading bridge: {args.load_bridge}", flush=True)
     bridge = cpd.build_concept_bridge(
