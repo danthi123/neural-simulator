@@ -1,0 +1,83 @@
+{
+  "bridge": "research\\findings\\raw\\g11_bg\\concept_pool_demo\\seed45_v16.simstate.h5",
+  "seed": 45,
+  "encoding_steps": 200,
+  "top_k": 100,
+  "recall_stim_pA": 1500.0,
+  "encoding_stats": [
+    {
+      "name": "go_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 0.6341145634651184
+    },
+    {
+      "name": "come_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 0.755859375
+    },
+    {
+      "name": "stop_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 0.6773437261581421
+    },
+    {
+      "name": "look_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 0.7055989503860474
+    }
+  ],
+  "firing": {
+    "go_north": {
+      "verb": "go",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.0569,
+        "motor_E": 0.00705,
+        "motor_S": 0.0095,
+        "motor_W": 0.0011
+      }
+    },
+    "come_south": {
+      "verb": "come",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.01875,
+        "motor_E": 0.0178,
+        "motor_S": 0.0391,
+        "motor_W": 0.018
+      }
+    },
+    "stop_west": {
+      "verb": "stop",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.0266,
+        "motor_E": 0.02115,
+        "motor_S": 0.0126,
+        "motor_W": 0.02845
+      }
+    },
+    "look_east": {
+      "verb": "look",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.00895,
+        "motor_E": 0.0391,
+        "motor_S": 0.01535,
+        "motor_W": 0.01555
+      }
+    }
+  },
+  "n_pass": 4,
+  "true_rank": 1,
+  "true_pass": 4,
+  "best_perm_pass": 4
+}
