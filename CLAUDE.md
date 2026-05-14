@@ -1169,6 +1169,53 @@ The compose-training framework + anti-cheat tools are now in place
 for future iteration. v14/v16 binding (concepts + diversity) is
 unconditionally validated; composition is the open frontier.
 
+### Root cause diagnosis (2026-05-13 late): Phase 1 word-level binding is the bottleneck
+
+Direct probe of verb_pool firing during verb-alone inference reveals
+the actual mechanism:
+
+| Drive | verb_GO | verb_COME | verb_STOP | verb_LOOK | motor_N |
+|---|---|---|---|---|---|
+| "go" | **0.00** | 0.14 | 0.17 | 0.24 | 0.08 |
+| "come" | 0.03 | **0.26** | 0.07 | 0.04 | 0.10 |
+| "north" | 0.13 | 0.24 | 0.12 | 0.14 | **0.42** |
+| "apple" | 0.23 | 0.20 | 0.20 | 0.22 | 0.11 |
+
+**At seed 42, "go" drive activates verb_pool_GO at 0.00 rate** —
+Phase 1 simply didn't bind "go" → verb_pool_GO at this seed. Yet
+"come" → verb_pool_COME works (0.26 rate). "north" → motor_N works
+(0.42 rate).
+
+This explains the compose BOUNDARY pattern: compose-binding requires
+Phase 1 to have bound BOTH the verb word AND the motor word reliably.
+With Phase 1 W→A multi-seed mean 74% (5 robust + 9 mixed + 2 fragile
+words), the pairwise (verb, motor) Phase 1 success rate is 0.74² = 55%
+expected. Multi-seed compose result 5/20 = 25% is BELOW this — but
+the strict "verb alone → motor uniquely fires" criterion also
+requires the verb_pool's downstream motor pathway to dominate over
+random structural bias, which is a HARDER test.
+
+**Manual weight test** (set verb_pool → motor weights to 5.0, 30.0):
+even huge weights don't fix the compose test, because verb_pool_GO
+itself isn't firing during "go" drive at this seed. The bottleneck
+is NOT the v16 pathway weight magnitude — it's Phase 1 binding.
+
+**Strategic implication:** To improve compose multi-seed, first
+improve Phase 1 W→A robustness (push mean from 11.8/16 → 14+/16).
+Compose-binding currently inherits Phase 1's seed-dependent
+per-word fragility.
+
+**Pivot direction for future iteration:**
+1. Push v14/v16 Phase 1 W→A robustness (more training, better
+   topographic prior, etc.)
+2. Cherry-pick compose pairs to words that DID Phase 1 bind well
+   (anti-cheat against per-word bias)
+3. Re-test compose only on the robust word subset
+
+This is the honest architectural reality. Tonight's compose arc has
+exhausted the v16-direct-pathway approach within the constraints of
+Phase 1's existing word-level fragility.
+
 Sequential composition still open (v12 NEGATIVE bidirectional dlpfc;
 v13 PARTIAL per-kind NMDA: +3x persistence but -5x isolation). Real
 architectural tension between holding (NMDA bistability) and selection

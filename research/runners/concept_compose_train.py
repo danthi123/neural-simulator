@@ -91,6 +91,7 @@ def train_compose_pair(bridge, verb_word: str, motor_word: str,
                         n_lang_input: int = 2048,
                         n_words_for_orthogonal: int = 16,
                         orthogonal_codes: bool = True,
+                        motor_teacher_pA: float = 0.0,
                         verbose: bool = False):
     """Train one (verb, motor) compose pair.
 
@@ -141,6 +142,17 @@ def train_compose_pair(bridge, verb_word: str, motor_word: str,
     lang_arr_gpu = cp.asarray(lang_input_idx, dtype=cp.int64)
     n_total = bridge.cp_external_input_current.shape[0]
 
+    # Optional: motor teacher current during cofire phase.
+    # Analogous to Phase 1's teacher_pA on target pool. When non-zero,
+    # forces motor pool to fire strongly during co-fire, giving cleaner
+    # STDP signal at verb_pool -> motor (post-firing is teacher-driven,
+    # not just lang_input-driven via v14 weights).
+    use_teacher = motor_teacher_pA > 0.0
+    motor_pool_name = _WORD_TO_POOL[motor_word]  # e.g., "motor_N"
+    if use_teacher:
+        motor_pool_idx = list(rm.indices(motor_pool_name))
+        motor_pool_arr_gpu = cp.asarray(motor_pool_idx, dtype=cp.int64)
+
     t0 = time.time()
     for evt in range(n_events):
         # Phase 1: verb only (10ms) — verb_pool fires first
@@ -149,10 +161,14 @@ def train_compose_pair(bridge, verb_word: str, motor_word: str,
             ext[lang_arr_gpu] = verb_gpu
             bridge.cp_external_input_current[:] = ext
             bridge._run_one_simulation_step()
-        # Phase 2: co-fire (40ms) — motor fires while verb still active
+        # Phase 2: co-fire (40ms) — motor fires while verb still active.
+        # With motor_teacher_pA, ALSO inject teacher current on motor pool
+        # for cleaner post-firing during STDP eligibility window.
         for _ in range(cofire_steps):
             ext = cp.zeros(n_total, dtype=cp.float32)
             ext[lang_arr_gpu] = both_gpu
+            if use_teacher:
+                ext[motor_pool_arr_gpu] = motor_teacher_pA
             bridge.cp_external_input_current[:] = ext
             bridge._run_one_simulation_step()
         # Phase 3: reset (25ms) — decay NMDA + eligibility
@@ -221,6 +237,12 @@ def main():
     p.add_argument("--n-events-per-pair", type=int, default=100)
     p.add_argument("--orthogonal-codes", action="store_true", default=True)
     p.add_argument("--sparsity", type=float, default=0.05)
+    p.add_argument("--motor-teacher-pA", type=float, default=0.0,
+                    help="Optional teacher current on motor pool during "
+                    "co-fire phase (analogous to Phase 1 teacher_pA). "
+                    "0.0=off (current default behavior). 1500.0 matches "
+                    "Phase 1 teacher_pA. Strengthens STDP signal at "
+                    "verb_pool -> motor by forcing strong motor post-firing.")
     p.add_argument("--save-bridge", type=str, default=None)
     p.add_argument("--out", type=str, default=None)
     args = p.parse_args()
@@ -281,6 +303,7 @@ def main():
             n_lang_input=args.n_lang_input,
             sparsity=args.sparsity,
             orthogonal_codes=args.orthogonal_codes,
+            motor_teacher_pA=args.motor_teacher_pA,
             verbose=False,
         )
         train_results.append(r)
