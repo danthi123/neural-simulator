@@ -344,24 +344,38 @@ def main():
                   flush=True)
         print(f"  [{r['elapsed_s']:.1f}s]", flush=True)
 
+    def _strip_articles(s):
+        """Strip leading 'the ', 'a ', 'an ', 'that ' for more natural input."""
+        s = s.strip()
+        for prefix in ("the ", "a ", "an ", "that "):
+            if s.startswith(prefix):
+                s = s[len(prefix):].strip()
+        return s
+
     def handle_remember(line):
         """Parse 'remember <a> is <b>' or 'remember <a> <b>' → encode pair.
 
+        Accepts natural phrasings: 'remember (that)? (the)? apple is (the)? big'
+        Strips common articles for tolerance.
+
         Returns the encoded tag name, or None if parse failed.
         """
-        # Strip the 'remember ' prefix and 'is' connector
+        # Strip the 'remember ' prefix
         rest = line[len("remember "):].strip()
+        # Strip optional 'that' (e.g. 'remember that apple is big')
+        if rest.startswith("that "):
+            rest = rest[len("that "):].strip()
         # Try 'a is b' form first
         if " is " in rest:
             parts = rest.split(" is ", 1)
-            a = parts[0].strip()
-            b = parts[1].strip()
+            a = _strip_articles(parts[0])
+            b = _strip_articles(parts[1])
         else:
             # Try 'a b' (space-separated)
             parts = rest.split()
             if len(parts) != 2:
                 return None
-            a, b = parts[0], parts[1]
+            a, b = _strip_articles(parts[0]), _strip_articles(parts[1])
         if a not in _WORD_TO_IDX or _WORD_TO_IDX[a] >= args.n_words_for_orthogonal:
             return f"unknown word: {a}"
         if b not in _WORD_TO_IDX or _WORD_TO_IDX[b] >= args.n_words_for_orthogonal:
