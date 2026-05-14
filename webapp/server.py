@@ -923,6 +923,39 @@ PRESETS: dict[str, list[str]] = {
         "--orthogonal-codes",
         "--sparsity", "0.05",
     ],
+    # 2026-05-14 validated semantic memory recipes (after architecture-mismatch
+    # bug retraction). Both require a pre-trained v16 concept-pool bridge
+    # passed via extra_args (--load-bridge ...). The launcher passes --seed
+    # automatically; the user provides the bridge path in extra_args.
+    #
+    # engram_stim_recall: Tonegawa-style engram tagging. Encode N pairs of
+    # concepts; stim the tag → both bound concepts reactivate.
+    # Multi-seed result: 87.5% stim-recall, 27.5% assoc-recall.
+    "engram_stim_recall": [
+        "--n-lang-input", "2048",
+        "--n-per-pool", "200",
+        "--n-fs-per-pool", "24",
+        "--n-words-for-orthogonal", "16",
+        "--encoding-steps", "500",
+        "--sparsity", "0.05",
+        "--balanced-teacher-pA", "500.0",
+        "--pairs", "apple:big,dog:small,cat:hot,river:cold,go:look,come:stop,big:hot,small:cold",
+    ],
+    # multitag_cue_recall: user-friendly cue retrieval. For cue X, find all
+    # engram tags containing X, stim each, aggregate. Multi-seed: 90% FULL
+    # (all associates in top-2 of 15) / 100% PARTIAL. This is the validated
+    # concept-concept conversational capability.
+    "multitag_cue_recall": [
+        "--n-lang-input", "2048",
+        "--n-per-pool", "200",
+        "--n-fs-per-pool", "24",
+        "--n-words-for-orthogonal", "16",
+        "--encoding-steps", "500",
+        "--sparsity", "0.05",
+        "--balanced-teacher-pA", "500.0",
+        "--top-n", "2",
+        "--pairs", "apple:big,dog:small,cat:hot,river:cold,big:hot,small:cold,apple:cat,dog:river",
+    ],
     # Phase 2: composition test - do multiple pools fire together for
     # phrases like "go north"? Tests NMDA sequential + co-fire merging.
     # Same v14 recipe arch. Compose passes co-fire ~2/6, sequential 0-1/6
@@ -1017,6 +1050,9 @@ PRESET_RUNNERS: dict[str, str] = {
     "concept_pool_demo":     "research.runners.concept_pool_demo",
     "concept_compose_demo":  "research.runners.concept_compose_demo",
     "concept_speak_demo":    "research.runners.concept_speak_demo",
+    # Semantic memory + cue retrieval (2026-05-14 corrected after bug fix)
+    "engram_stim_recall":    "research.runners.compose_concept_engram",
+    "multitag_cue_recall":   "research.runners.multitag_eval",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 

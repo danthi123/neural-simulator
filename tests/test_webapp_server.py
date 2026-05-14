@@ -773,12 +773,15 @@ def test_capability_status_headline_shape(client):
 
 def test_capability_status_pillars_have_status(client):
     """Each pillar should have name + status + metric. Status is one of
-    VALIDATED/BOUNDARY/PREDICTED/NEGATIVE so the UI can color-code badges."""
+    VALIDATED/BOUNDARY/PREDICTED/NEGATIVE/RETRACTED so the UI can color-code badges."""
     res = client.get("/api/capability-status")
     data = res.json()
     pillars = data.get("pillars") or []
     assert len(pillars) >= 1, "expect at least one empirical pillar documented"
-    valid_statuses = {"VALIDATED", "BOUNDARY", "PREDICTED", "NEGATIVE"}
+    # RETRACTED added 2026-05-14: bug-affected pillars marked RETRACTED
+    # (semantically different from NEGATIVE: previous claim invalidated by
+    # measurement bug, not by genuine experimental failure).
+    valid_statuses = {"VALIDATED", "BOUNDARY", "PREDICTED", "NEGATIVE", "RETRACTED"}
     for p in pillars:
         assert "name" in p
         assert "status" in p

@@ -621,6 +621,9 @@
             <option value="concept_pool_demo" data-eta-min="18">★ concept_pool_demo v14 — 4 motor + 4 noun + 4 verb + 4 adjective = 16 pools; orthogonal codes; W→A ~80% mean across seeds 42-45 (Phase 1) [~18min]</option>
             <option value="concept_compose_demo" data-eta-min="20">concept_compose_demo — Phase 2 composition (sequential NMDA + co-fire merge); does verb_GO + motor_N fire together for "go north"? Sequential still open (v15 planned) [~20min]</option>
             <option value="concept_speak_demo" data-eta-min="2">★ concept_speak_demo v14 — Phase 3 A→W readout; drives each pool, decodes spoken word; 16/16 = 100% A→W unanimous across seeds 42-45 [~2min, needs --load-bridge]</option>
+            <option disabled>──── SEMANTIC MEMORY (2026-05-14, validated after architecture bug fix) ────</option>
+            <option value="engram_stim_recall" data-eta-min="2">★ engram_stim_recall — Tonegawa engram tags; stim tag → both bound concepts; 87.5% multi-seed [~2min, needs --load-bridge ...v16.simstate.h5]</option>
+            <option value="multitag_cue_recall" data-eta-min="3">★★ multitag_cue_recall — user types cue word → system returns all trained associates; 90% FULL / 100% PARTIAL multi-seed [~3min, needs --load-bridge ...v16.simstate.h5]</option>
           </select>
           <!-- ETA hint shown on preset change -->
           <div id="launch-preset-hint" class="muted" style="font-size:11px;margin-top:4px;"></div>
