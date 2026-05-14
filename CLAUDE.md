@@ -1311,6 +1311,43 @@ reasons:
   4. Engram-tagging mechanism (catalog D.14) — bind sets of
      co-fired neurons as a unit rather than train pathway weights
 
+## 🎉 v17 (2026-05-14): extended 28-word vocab + 96-pair compose PERFECT seed 42
+
+Extended vocabulary from v16's 16 words to **28 words**:
+- 8 nouns (added: tree, bird, sun, moon)
+- 8 verbs (added: walk, run, eat, sleep)
+- 8 adjectives (added: red, blue, fast, slow)
+- 4 motors (unchanged: N/E/S/W)
+
+Bridge size 14464 neurons (vs 7680 v16), 16M synapses, 2.5GB GPU.
+Training: 28 words × 200 events = ~44 min/seed.
+
+**Seed 42 results:**
+
+| Test | Result |
+|---|---|
+| Phase 1 W→A | 14/28 = 50% (degraded from v16's 81%) |
+| 4-pair engram (NEW verbs walk/run/eat/sleep) | 4/4 PERFECT |
+| 24-cue engram (every cue → one motor) | 24/24 PERFECT |
+| **96-pair cross (24 cues × 4 motors)** | **96/96 PERFECT** |
+
+**Key finding:** engram-based composition is INDEPENDENT of Phase 1
+binding quality. Even at 50% W→A, every (cue, motor) compose pair
+recalls its target motor at 100%.
+
+**Compositional capacity progression:**
+- v16 (16-word): 48 cross-pairs PERFECT multi-seed
+- v17 (28-word): 96 cross-pairs PERFECT seed 42 (2× v16)
+
+**Multi-seed v17 in flight** (seeds 43-46, ~3.5 hours).
+
+**Production tools (v17):**
+- `concept_pool_demo_v2.py` — 28-word bridge training
+- `compose_engram_demo_v2.py` — extended-vocab compose
+- `compose_chat_repl_v2.py` — chat REPL with 24-cue + motor vocab
+- `compose_5word_engram.py` — 5-word phrase test
+- `run_v17_multiseed.ps1` — multi-seed launcher
+
 ## 🎉🎉🎉 ENGRAM-BASED COMPOSITION (catalog D.14): 5-seed VALIDATED
 
 After the STDP-pathway compose approaches went NEGATIVE, switched to
