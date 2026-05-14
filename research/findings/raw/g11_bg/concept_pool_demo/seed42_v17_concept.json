@@ -1,0 +1,268 @@
+{
+  "seed": 42,
+  "pairs": [
+    [
+      "apple",
+      "red"
+    ],
+    [
+      "dog",
+      "big"
+    ],
+    [
+      "walk",
+      "fast"
+    ],
+    [
+      "sun",
+      "hot"
+    ],
+    [
+      "bird",
+      "fast"
+    ],
+    [
+      "river",
+      "cold"
+    ],
+    [
+      "tree",
+      "big"
+    ],
+    [
+      "cat",
+      "small"
+    ]
+  ],
+  "n_stim_pass": 1,
+  "n_assoc_pass": 2,
+  "n_total": 8,
+  "stim_results": [
+    {
+      "tag": "apple_red",
+      "a": "apple",
+      "b": "red",
+      "a_score": 0.28229473975978087,
+      "b_score": 0.05849350463490955,
+      "top_1": "apple",
+      "in_top_5": [
+        "apple",
+        "cat",
+        "stop",
+        "cold",
+        "slow"
+      ],
+      "passed": false
+    },
+    {
+      "tag": "dog_big",
+      "a": "dog",
+      "b": "big",
+      "a_score": 0.1427649084328446,
+      "b_score": 0.023794151405474098,
+      "top_1": "cat",
+      "in_top_5": [
+        "cat",
+        "dog",
+        "fast",
+        "go",
+        "cold"
+      ],
+      "passed": false
+    },
+    {
+      "tag": "walk_fast",
+      "a": "walk",
+      "b": "fast",
+      "a_score": 0.06912800774826508,
+      "b_score": 0.08115026996535465,
+      "top_1": "apple",
+      "in_top_5": [
+        "apple",
+        "blue",
+        "bird",
+        "hot",
+        "slow"
+      ],
+      "passed": false
+    },
+    {
+      "tag": "sun_hot",
+      "a": "sun",
+      "b": "hot",
+      "a_score": 0.05885323468823073,
+      "b_score": 0.0539487984642115,
+      "top_1": "cat",
+      "in_top_5": [
+        "cat",
+        "dog",
+        "come",
+        "apple",
+        "stop"
+      ],
+      "passed": false
+    },
+    {
+      "tag": "bird_fast",
+      "a": "bird",
+      "b": "fast",
+      "a_score": 0.08130356002954787,
+      "b_score": 0.04279134738397257,
+      "top_1": "tree",
+      "in_top_5": [
+        "tree",
+        "cold",
+        "eat",
+        "go",
+        "moon"
+      ],
+      "passed": false
+    },
+    {
+      "tag": "river_cold",
+      "a": "river",
+      "b": "cold",
+      "a_score": 0.09120698683233924,
+      "b_score": 0.013029569547477035,
+      "top_1": "come",
+      "in_top_5": [
+        "come",
+        "moon",
+        "dog",
+        "sleep",
+        "river"
+      ],
+      "passed": false
+    },
+    {
+      "tag": "tree_big",
+      "a": "tree",
+      "b": "big",
+      "a_score": 0.09538415441993925,
+      "b_score": 0.15429789685578407,
+      "top_1": "stop",
+      "in_top_5": [
+        "stop",
+        "big",
+        "go",
+        "tree",
+        "come"
+      ],
+      "passed": true
+    },
+    {
+      "tag": "cat_small",
+      "a": "cat",
+      "b": "small",
+      "a_score": 0.0897104232303574,
+      "b_score": 0.038447324241581746,
+      "top_1": "go",
+      "in_top_5": [
+        "go",
+        "cat",
+        "apple",
+        "blue",
+        "stop"
+      ],
+      "passed": false
+    }
+  ],
+  "assoc_results": [
+    {
+      "cue": "apple",
+      "expect_b": "red",
+      "a_score": 0.04318524135609365,
+      "b_score": 0.05937970686462876,
+      "non_a_top3": [
+        "moon",
+        "go",
+        "stop"
+      ],
+      "passed": false
+    },
+    {
+      "cue": "dog",
+      "expect_b": "big",
+      "a_score": 0.04525350504687656,
+      "b_score": 0.07693095857969015,
+      "non_a_top3": [
+        "go",
+        "look",
+        "big"
+      ],
+      "passed": true
+    },
+    {
+      "cue": "walk",
+      "expect_b": "fast",
+      "a_score": 0.03833856109091134,
+      "b_score": 0.07667712218182268,
+      "non_a_top3": [
+        "slow",
+        "fast",
+        "apple"
+      ],
+      "passed": true
+    },
+    {
+      "cue": "sun",
+      "expect_b": "hot",
+      "a_score": 0.06562895286107166,
+      "b_score": 0.04038704791450563,
+      "non_a_top3": [
+        "look",
+        "red",
+        "apple"
+      ],
+      "passed": false
+    },
+    {
+      "cue": "bird",
+      "expect_b": "fast",
+      "a_score": 0.06720649189612453,
+      "b_score": 0.05376519351689963,
+      "non_a_top3": [
+        "tree",
+        "go",
+        "hot"
+      ],
+      "passed": false
+    },
+    {
+      "cue": "river",
+      "expect_b": "cold",
+      "a_score": 0.055358920887690045,
+      "b_score": 0.04026103337286549,
+      "non_a_top3": [
+        "moon",
+        "go",
+        "big"
+      ],
+      "passed": false
+    },
+    {
+      "cue": "tree",
+      "expect_b": "big",
+      "a_score": 0.032102552193367426,
+      "b_score": 0.032102552193367426,
+      "non_a_top3": [
+        "look",
+        "eat",
+        "river"
+      ],
+      "passed": false
+    },
+    {
+      "cue": "cat",
+      "expect_b": "small",
+      "a_score": 0.03813029795051901,
+      "b_score": 0.03813029795051901,
+      "non_a_top3": [
+        "blue",
+        "apple",
+        "tree"
+      ],
+      "passed": false
+    }
+  ]
+}

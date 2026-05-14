@@ -271,12 +271,14 @@ def main():
         pat, n_lo = lang_output_pattern_during_stim(
             bridge, tag, drive_pA=args.recall_stim_pA,
             stim_steps=args.recall_steps)
-        # Cosine to all concept words
+        # Cosine to all concept words IN THE BRIDGE'S VOCAB RANGE
+        valid_words = [w for w in _ALL_CONCEPTS
+                        if _WORD_TO_IDX[w] < args.n_words_for_orthogonal]
         scores = {w: cosine_to_word(
             pat, w, n_lo,
             n_words_for_orthogonal=args.n_words_for_orthogonal,
             sparsity=args.sparsity,
-        ) for w in _ALL_CONCEPTS}
+        ) for w in valid_words}
         ranked = sorted(scores.items(), key=lambda kv: -kv[1])
         a_score = scores[a]
         b_score = scores[b]
@@ -307,11 +309,13 @@ def main():
             n_words_for_orthogonal=args.n_words_for_orthogonal,
             stim_steps=args.recall_steps,
         )
+        valid_words = [w for w in _ALL_CONCEPTS
+                        if _WORD_TO_IDX[w] < args.n_words_for_orthogonal]
         scores = {w: cosine_to_word(
             pat, w, n_lo,
             n_words_for_orthogonal=args.n_words_for_orthogonal,
             sparsity=args.sparsity,
-        ) for w in _ALL_CONCEPTS}
+        ) for w in valid_words}
         ranked = sorted(scores.items(), key=lambda kv: -kv[1])
         a_score = scores[a]
         b_score = scores[b]
