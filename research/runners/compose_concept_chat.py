@@ -142,6 +142,7 @@ def main():
     print("  remember <a> is <b>      Encode new association (90% retrieval)")
     print("  what is <word>           Retrieve associates (multi-tag, 90% multi-seed)")
     print("  tell me about <word>     Same as 'what is'")
+    print("  forget <tag>             Delete an engram tag (tag = a_b)")
     print("  <word>                   Shortcut for multi-tag recall")
     print("  /stim <tag>              Direct tag stim-recall (87.5% multi-seed)")
     print("  /cue <word>              Raw cue-pool firing rank (~28%; experimental)")
@@ -348,6 +349,17 @@ def main():
         encoded_tags.append(tag)
         return tag
 
+    def handle_forget(tag_name):
+        """Delete an engram tag at runtime."""
+        if tag_name not in encoded_tags:
+            return f"no such tag: {tag_name}"
+        try:
+            bridge.delete_engram_tag(tag_name)
+            encoded_tags.remove(tag_name)
+            return tag_name
+        except Exception as e:
+            return f"error deleting {tag_name}: {e}"
+
     def dispatch(line):
         """Parse one chat line; return result dict or None for command."""
         line = line.strip().lower()
@@ -358,6 +370,14 @@ def main():
             return None
         if line in ("/vocab", "vocab"):
             print(f"  vocab: {valid_concepts}", flush=True)
+            return None
+        if line.startswith("/forget ") or line.startswith("forget "):
+            tag_arg = line.split(" ", 1)[1].strip()
+            result = handle_forget(tag_arg)
+            if result == tag_arg:
+                print(f"  [forgot: {tag_arg}]", flush=True)
+            else:
+                print(f"  [{result}]", flush=True)
             return None
         if line.startswith("/stim "):
             tag_arg = line[len("/stim "):].strip()
