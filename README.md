@@ -280,7 +280,33 @@ batch finishes in ~45-55 minutes on an RTX 3090.
 
 ## Latest validated result
 
-**Navigation on 16×16 gridworld with biology-grounded perception** —
+**Multi-tag cue retrieval — real concept-concept semantic conversation
+(2026-05-14):** user types "apple", system retrieves "big" AND "cat"
+(both trained associates) with 90% FULL / 100% PARTIAL multi-seed
+reliability (5 seeds × 8 cues × 16-word vocab).
+
+```
+Configuration: v16 concept-pool architecture + Tonegawa engram tagging (D.14)
+Validation:    5 independent seeds, 8 concept-concept pairs each
+Result:        36/40 = 90% FULL (all associates in top-2 of 15, chance ~0.95%)
+               40/40 = 100% PARTIAL (any associate retrieved)
+Recipe:        --encoding-steps 500 --balanced-teacher-pA 500.0
+Chat REPL:     compose_concept_chat.py with three modes
+```
+
+Mechanism: for cue X, stim every engram tag containing X (each at
+87.5% per-tag stim-recall reliability), aggregate `lang_output`
+cosines, rank associates. Discovered after the 2026-05-14
+architecture-mismatch bug retraction (prior 65%/90% claims were
+measurement artifacts).
+
+See [`research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md`](research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md)
+and [`research/findings/2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md`](research/findings/2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md)
+for the full arc.
+
+---
+
+**Earlier flagship — navigation on 16×16 gridworld with biology-grounded perception** —
 agent reaches goal 38% of the time using only retinal input, no
 shortcuts (no direct (x,y) access, no heuristic, no distance reward).
 
