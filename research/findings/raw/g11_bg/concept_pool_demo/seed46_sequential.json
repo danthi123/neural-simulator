@@ -1,0 +1,9 @@
+{
+  "seed": 46,
+  "verb_steps": 100,
+  "motor_steps": 100,
+  "inter_steps": 50,
+  "motor_teacher_pA": 1500.0,
+  "n_pass": 4,
+  "n_total": 4
+}
