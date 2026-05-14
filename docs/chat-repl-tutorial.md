@@ -55,6 +55,7 @@ omit it and add associations interactively via `remember`.
 | `remember <a> is <b>` | Encode a new association at runtime. Uses 500 events + teacher 500 pA. Takes ~5s. |
 | `remember <a> <b>` | Space-separated form. |
 | `forget <tag>` | Delete an engram tag at runtime. |
+| `save [path]` | **Persist bridge + tags to checkpoint** for cross-session memory. |
 
 ### Introspection
 
@@ -187,18 +188,52 @@ The multi-tag aggregation exploits the per-tag 87.5% stim-recall
 reliability. With 2 matching tags, both associates appear in
 `lang_output` top-5 with 90% probability.
 
+## Cross-session persistence
+
+The chat REPL supports true long-term conversational memory via the
+`save` command. The bridge's engram-tag state is persisted to the
+HDF5 checkpoint:
+
+```
+# Session 1
+> remember apple is big
+> remember cat is hot
+> save              # writes to current bridge path
+  [saved bridge + 2 engram tag(s) to bridges/v16/seed44.simstate.h5]
+
+# Exit, come back later
+> python -m research.runners.compose_concept_chat \
+    --load-bridge bridges/v16/seed44.simstate.h5 ...
+  [restored 2 engram tag(s) from checkpoint: ['apple_big', 'cat_hot']]
+
+> what is apple        # Still knows! 90% retrieval
+  matched 1 tag(s): ['apple_big']
+  top-5: [big=0.21, ...]
+```
+
+This means the user can:
+- Teach the system new associations
+- Save before exiting
+- Return tomorrow / next week and continue
+- The system's "memory" persists biologically in the bridge
+
 ## Limitations (2026-05-14)
 
 - **16-word vocab**: validated. 28-word (v17) doesn't yet retrieve
   reliably because Phase 1 is weaker at higher pool count.
 - **Per-cue capacity**: at 8 pairs (2 associates per cue), FULL
   retrieval is 90%. At 12 pairs (3 associates), drops to 72.5%.
-  At 16 pairs (4-5 associates), 65%.
-- **No multi-turn memory**: each query is independent. The system
-  doesn't remember "what we talked about before".
+  At 16 pairs (4-5 associates), 65%. At 20 pairs (5-6 associates),
+  98.8% PRECISION (every returned word is real) but FULL drops to
+  ~12% because top-N can't hold all associates.
+- **Multi-turn within-session**: `tell me more` extends a query to
+  next-best associates. Beyond that, queries are mostly independent.
+- **Cross-session via save**: tags persist between REPL sessions.
 - **Tag overlap**: encoding `apple_big` and `apple_cat` creates two
   separate tags with overlapping neurons. Heavy overlap may
   eventually cause tag interference.
+- **Soft transitive inference**: 2nd-degree neighbors appear at
+  lower cosine scores (45% multi-seed at top-5, chance 33%).
 
 ## Further reading
 
