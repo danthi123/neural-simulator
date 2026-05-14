@@ -223,6 +223,7 @@ def apply_concept_topographic_bias(bridge,
                                      orthogonal_codes: bool = False,
                                      n_words_for_orthogonal: int = 12,
                                      word_to_idx: dict = None,
+                                     skip_motor: bool = False,
                                      verbose: bool = True) -> Dict:
     """Apply Pulvermüller-style topographic bias to lang_input -> {pool}.
 
@@ -284,7 +285,9 @@ def apply_concept_topographic_bias(bridge,
     bias_tasks: List[Tuple[str, str, List[str]]] = []
 
     # Discover all output pools that exist in the bridge
-    all_output_pools = [f"motor_{a}" for a in MOTOR_NAMES]
+    all_output_pools = []
+    if not skip_motor:
+        all_output_pools += [f"motor_{a}" for a in MOTOR_NAMES]
     all_output_pools += [f"noun_pool_{n}" for n in NOUN_NAMES]
     all_output_pools += [f"verb_pool_{v}" for v in VERB_NAMES]
     has_adjective = False
@@ -295,9 +298,10 @@ def apply_concept_topographic_bias(bridge,
     except Exception:
         pass
 
-    for word, action in DIRECTION_VOCAB.items():
-        target = f"motor_{action}"
-        bias_tasks.append((word, target, all_output_pools))
+    if not skip_motor:
+        for word, action in DIRECTION_VOCAB.items():
+            target = f"motor_{action}"
+            bias_tasks.append((word, target, all_output_pools))
     for word, name in NOUN_VOCAB.items():
         target = f"noun_pool_{name}"
         bias_tasks.append((word, target, all_output_pools))
@@ -726,6 +730,7 @@ def run_concept_pool_demo(seed: int = 42,
                             n_fs_per_pool: int = 60,
                             n_motor_per_pool: int = None,
                             n_motor_fs_per_pool: int = None,
+                            skip_motor_training: bool = False,
                             apply_topographic: bool = True,
                             topographic_factor: float = 2.0,
                             off_target_factor: float = 0.5,
@@ -824,6 +829,7 @@ def run_concept_pool_demo(seed: int = 42,
             orthogonal_codes=orthogonal_codes,
             n_words_for_orthogonal=n_words_total,
             word_to_idx=word_to_idx,
+            skip_motor=skip_motor_training,
             verbose=verbose,
         )
 
@@ -831,8 +837,11 @@ def run_concept_pool_demo(seed: int = 42,
     import numpy as np
     rng = np.random.default_rng(seed)
     all_targets = []  # list of (word, target_pool_region)
-    for word, action in DIRECTION_VOCAB.items():
-        all_targets.append((word, f"motor_{action}"))
+    # v17 scaling test (2026-05-14): skip motor training to test if motor
+    # pool weights are the structural source of dominance at high pool counts.
+    if not skip_motor_training:
+        for word, action in DIRECTION_VOCAB.items():
+            all_targets.append((word, f"motor_{action}"))
     for word, name in NOUN_VOCAB.items():
         all_targets.append((word, f"noun_pool_{name}"))
     for word, name in VERB_VOCAB.items():
@@ -1019,6 +1028,11 @@ def main():
     parser.add_argument("--n-motor-fs-per-pool", type=int, default=None,
                          help="Override motor FS pool size (defaults to "
                          "n_fs_per_pool).")
+    parser.add_argument("--skip-motor-training", action="store_true",
+                         help="Skip motor pool training (still builds motor "
+                         "pools but doesn't train lang_input->motor STDP). "
+                         "Tests whether motor weights are the structural "
+                         "source of dominance at high pool counts (v17).")
     parser.add_argument("--no-topographic", action="store_true",
                          help="Skip Pulvermuller topographic bias init")
     parser.add_argument("--topographic-factor", type=float, default=2.0,
@@ -1115,6 +1129,7 @@ def main():
         n_fs_per_pool=args.n_fs_per_pool,
         n_motor_per_pool=args.n_motor_per_pool,
         n_motor_fs_per_pool=args.n_motor_fs_per_pool,
+        skip_motor_training=args.skip_motor_training,
         apply_topographic=not args.no_topographic,
         topographic_factor=args.topographic_factor,
         off_target_factor=args.off_target_factor,
