@@ -1,0 +1,70 @@
+{
+  "results": [
+    {
+      "verb_word": "go",
+      "expected_motor": "north",
+      "expected_pool": "motor_N",
+      "target_rate": 0.195,
+      "all_rates": {
+        "motor_N": 0.195,
+        "motor_E": 0.285,
+        "motor_S": 0.295,
+        "motor_W": 0.245
+      },
+      "max_off": 0.295,
+      "max_off_pool": "motor_S",
+      "passed": false,
+      "ratio": 0.6610169491525424
+    },
+    {
+      "verb_word": "come",
+      "expected_motor": "south",
+      "expected_pool": "motor_S",
+      "target_rate": 0.13,
+      "all_rates": {
+        "motor_N": 0.075,
+        "motor_E": 0.115,
+        "motor_S": 0.13,
+        "motor_W": 0.06
+      },
+      "max_off": 0.115,
+      "max_off_pool": "motor_E",
+      "passed": true,
+      "ratio": 1.1304347826086956
+    },
+    {
+      "verb_word": "stop",
+      "expected_motor": "west",
+      "expected_pool": "motor_W",
+      "target_rate": 0.11,
+      "all_rates": {
+        "motor_N": 0.2,
+        "motor_E": 0.165,
+        "motor_S": 0.105,
+        "motor_W": 0.11
+      },
+      "max_off": 0.2,
+      "max_off_pool": "motor_N",
+      "passed": false,
+      "ratio": 0.5499999999999999
+    },
+    {
+      "verb_word": "look",
+      "expected_motor": "east",
+      "expected_pool": "motor_E",
+      "target_rate": 0.235,
+      "all_rates": {
+        "motor_N": 0.09,
+        "motor_E": 0.235,
+        "motor_S": 0.21,
+        "motor_W": 0.08
+      },
+      "max_off": 0.21,
+      "max_off_pool": "motor_S",
+      "passed": true,
+      "ratio": 1.119047619047619
+    }
+  ],
+  "n_pass": 2,
+  "n_total": 4
+}
