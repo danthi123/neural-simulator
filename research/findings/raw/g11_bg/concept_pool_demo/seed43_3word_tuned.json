@@ -1,0 +1,150 @@
+{
+  "seed": 43,
+  "triples": [
+    [
+      "big",
+      "apple",
+      "north"
+    ],
+    [
+      "small",
+      "cat",
+      "south"
+    ],
+    [
+      "hot",
+      "dog",
+      "west"
+    ],
+    [
+      "cold",
+      "river",
+      "east"
+    ]
+  ],
+  "n_motor_pass": 4,
+  "n_full_pass": 4,
+  "n_total": 4,
+  "results": [
+    {
+      "tag": "big_apple_north",
+      "adj": "big",
+      "noun": "apple",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.23965,
+        "motor_E": 0.00565,
+        "motor_S": 0.0118,
+        "motor_W": 0.0047,
+        "adjective_pool_BIG": 0.0189,
+        "adjective_pool_SMALL": 0.00745,
+        "adjective_pool_HOT": 0.002,
+        "adjective_pool_COLD": 0.0006,
+        "noun_pool_APPLE": 0.02865,
+        "noun_pool_RIVER": 0.00615,
+        "noun_pool_DOG": 0.00445,
+        "noun_pool_CAT": 0.0005
+      },
+      "motor_target": 0.23965,
+      "motor_off": 0.0118,
+      "adj_target": 0.0189,
+      "adj_off": 0.00745,
+      "noun_target": 0.02865,
+      "noun_off": 0.00615,
+      "motor_pass": true,
+      "adj_pass": true,
+      "noun_pass": true,
+      "full_pass": true
+    },
+    {
+      "tag": "small_cat_south",
+      "adj": "small",
+      "noun": "cat",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.0034,
+        "motor_E": 0.00645,
+        "motor_S": 0.2359,
+        "motor_W": 0.00655,
+        "adjective_pool_BIG": 0.00535,
+        "adjective_pool_SMALL": 0.01275,
+        "adjective_pool_HOT": 0.01085,
+        "adjective_pool_COLD": 0.00665,
+        "noun_pool_APPLE": 0.0057,
+        "noun_pool_RIVER": 0.00575,
+        "noun_pool_DOG": 0.0037,
+        "noun_pool_CAT": 0.01235
+      },
+      "motor_target": 0.2359,
+      "motor_off": 0.00655,
+      "adj_target": 0.01275,
+      "adj_off": 0.01085,
+      "noun_target": 0.01235,
+      "noun_off": 0.00575,
+      "motor_pass": true,
+      "adj_pass": true,
+      "noun_pass": true,
+      "full_pass": true
+    },
+    {
+      "tag": "hot_dog_west",
+      "adj": "hot",
+      "noun": "dog",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.00415,
+        "motor_E": 0.0123,
+        "motor_S": 0.00105,
+        "motor_W": 0.2557,
+        "adjective_pool_BIG": 0.001,
+        "adjective_pool_SMALL": 0.0029,
+        "adjective_pool_HOT": 0.0186,
+        "adjective_pool_COLD": 0.00705,
+        "noun_pool_APPLE": 0.0123,
+        "noun_pool_RIVER": 0.005,
+        "noun_pool_DOG": 0.0251,
+        "noun_pool_CAT": 0.0058
+      },
+      "motor_target": 0.2557,
+      "motor_off": 0.0123,
+      "adj_target": 0.0186,
+      "adj_off": 0.00705,
+      "noun_target": 0.0251,
+      "noun_off": 0.0123,
+      "motor_pass": true,
+      "adj_pass": true,
+      "noun_pass": true,
+      "full_pass": true
+    },
+    {
+      "tag": "cold_river_east",
+      "adj": "cold",
+      "noun": "river",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.00765,
+        "motor_E": 0.23585,
+        "motor_S": 0.0059,
+        "motor_W": 0.0,
+        "adjective_pool_BIG": 0.0037,
+        "adjective_pool_SMALL": 0.0046,
+        "adjective_pool_HOT": 0.00465,
+        "adjective_pool_COLD": 0.0159,
+        "noun_pool_APPLE": 0.0089,
+        "noun_pool_RIVER": 0.0265,
+        "noun_pool_DOG": 0.00265,
+        "noun_pool_CAT": 0.00835
+      },
+      "motor_target": 0.23585,
+      "motor_off": 0.00765,
+      "adj_target": 0.0159,
+      "adj_off": 0.00465,
+      "noun_target": 0.0265,
+      "noun_off": 0.0089,
+      "motor_pass": true,
+      "adj_pass": true,
+      "noun_pass": true,
+      "full_pass": true
+    }
+  ]
+}
