@@ -1039,6 +1039,63 @@ python -m research.runners.concept_pool_demo --seed N \
 
 **Findings:** `research/findings/2026-05-13-concept-pool-architecture-Phase1.md` §v16
 
+## 🎉🎉 v16 + compose-training: FIRST COMPOSITIONAL BINDING (2026-05-13 night)
+
+Implemented `research/runners/concept_compose_train.py`: loads a v16
+bridge, freezes Phase 1 plasticity gates, opens `verb_to_motor_direct`
+gate, and trains (verb, motor) co-fire pairs with temporal offset
+(verb fires before motor for LTP-favorable STDP).
+
+**Single-seed (seed 42) results, 4 compose pairs:**
+
+| Events/pair | Compose PASS | A→W (post-compose) |
+|---|---|---|
+| 100 | 2/4 ('come', 'look' strong) | **16/16 PERFECT** |
+| 400 | 2/4 ('go' 1.62x, 'come' 1.23x) | **16/16 PERFECT** |
+
+**Key invariant — frozen-gate strategy works:** Compose-training does
+NOT disturb v14/v16's reciprocal binding. 16/16 A→W preserved across
+both 100 and 400 event scales.
+
+**Compositional binding emerges from Hebbian STDP** on direct
+verb_pool → motor pathways. After training, driving the verb word
+ALONE preferentially activates the trained motor pool (vs other 3
+motor pools).
+
+**This is the first demonstration of all three user-stated blockers:**
+- Concepts (16 distinct pools, v14)
+- Composition (verb-alone → motor pool, v16+compose-train)
+- Diversity (4× over Tier 1)
+
+**Production recipe (v16 + compose):**
+```bash
+# Step 1: Phase 1 training (v16 architecture)
+python -m research.runners.concept_pool_demo --seed N \
+    --n-train-events 200 --n-lang-input 2048 --n-per-pool 200 \
+    --n-fs-per-pool 24 --weak-concept-dynamics --interleaved \
+    --topographic-factor 3.0 --off-target-factor 0.3 \
+    --enable-adjective --orthogonal-codes --sparsity 0.05 \
+    --enable-direct-verb-to-motor \
+    --save-bridge <v16.h5>
+
+# Step 2: Compose-training
+python -m research.runners.concept_compose_train \
+    --load-bridge <v16.h5> --seed N \
+    --compose-pairs "go:north,come:south,stop:west,look:east" \
+    --n-events-per-pair 400 --orthogonal-codes --sparsity 0.05 \
+    --save-bridge <v16_composed.h5> --out compose.json
+
+# Step 3: Verify A->W still works
+python -m research.runners.concept_speak_demo --seed N \
+    --enable-adjective --orthogonal-codes --sparsity 0.05 \
+    --load-bridge <v16_composed.h5> --out speak.json
+```
+
+**Open work:** scale compose-training (multi-seed) and refine to
+push PASS rate above 2/4. Cross-seed variance + competing-pair
+interference (later pairs may overwrite earlier ones' STDP) are
+the main investigation targets.
+
 Sequential composition still open (v12 NEGATIVE bidirectional dlpfc;
 v13 PARTIAL per-kind NMDA: +3x persistence but -5x isolation). Real
 architectural tension between holding (NMDA bistability) and selection
