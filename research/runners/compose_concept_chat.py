@@ -160,6 +160,7 @@ def main():
     print("Commands:")
     print("  remember <a> is <b>      Encode new association (90% retrieval)")
     print("  what is <word>           Retrieve associates (multi-tag, 90% multi-seed)")
+    print("  describe <word>          Natural-language synthesis ('apple is big and hot')")
     print("  what is <a> and <b>      Compositional: words associated with BOTH")
     print("  is <a> <b>?              Yes/no: check if (a,b) is bound")
     print("  tell me more             Next-best associates of last query")
@@ -537,6 +538,28 @@ def main():
             else:
                 print(f"  NO: no tag binding '{a}' and '{b}' "
                       f"(checked {tag1}, {tag2})", flush=True)
+            return None
+        if line.startswith("describe "):
+            word = line[len("describe "):].strip()
+            r = handle_multitag(word)
+            if r is None or not r.get("associates"):
+                print(f"  I don't know anything about '{word}'.", flush=True)
+                return None
+            # Natural-language synthesis: take top associates with score > 0.10
+            strong = [(w, s) for w, s, _, _ in r["associates"] if s > 0.10]
+            if not strong:
+                print(f"  I have weak memories about '{word}' but nothing "
+                      f"confident.", flush=True)
+                return None
+            words = [w for w, _ in strong]
+            if len(words) == 1:
+                print(f"  {word} is {words[0]}.", flush=True)
+            elif len(words) == 2:
+                print(f"  {word} is {words[0]} and {words[1]}.", flush=True)
+            else:
+                # 3+: oxford-comma list
+                tail = ", ".join(words[:-1])
+                print(f"  {word} is {tail}, and {words[-1]}.", flush=True)
             return None
         if line.startswith("what is ") or line.startswith("tell me about "):
             # Natural-language multitag query
