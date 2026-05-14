@@ -1,0 +1,201 @@
+{
+  "seed": 43,
+  "pairs": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "dog",
+      "small"
+    ],
+    [
+      "cat",
+      "hot"
+    ],
+    [
+      "river",
+      "cold"
+    ],
+    [
+      "go",
+      "look"
+    ],
+    [
+      "come",
+      "stop"
+    ],
+    [
+      "big",
+      "hot"
+    ],
+    [
+      "small",
+      "cold"
+    ]
+  ],
+  "n_assoc_pass": 6,
+  "n_total": 8,
+  "results": [
+    {
+      "cue": "apple",
+      "expect_b": "big",
+      "b_rate": 0.00395,
+      "top3_non_a": [
+        [
+          "big",
+          0.00395
+        ],
+        [
+          "small",
+          0.00355
+        ],
+        [
+          "cold",
+          0.003
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "cue": "dog",
+      "expect_b": "small",
+      "b_rate": 0.00455,
+      "top3_non_a": [
+        [
+          "small",
+          0.00455
+        ],
+        [
+          "big",
+          0.00385
+        ],
+        [
+          "cold",
+          0.003
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "cue": "cat",
+      "expect_b": "hot",
+      "b_rate": 0.0031,
+      "top3_non_a": [
+        [
+          "big",
+          0.02095
+        ],
+        [
+          "small",
+          0.00315
+        ],
+        [
+          "hot",
+          0.0031
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "cue": "river",
+      "expect_b": "cold",
+      "b_rate": 0.0031,
+      "top3_non_a": [
+        [
+          "small",
+          0.0033
+        ],
+        [
+          "hot",
+          0.0033
+        ],
+        [
+          "cold",
+          0.0031
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "cue": "go",
+      "expect_b": "look",
+      "b_rate": 0.001,
+      "top3_non_a": [
+        [
+          "big",
+          0.01495
+        ],
+        [
+          "small",
+          0.0085
+        ],
+        [
+          "dog",
+          0.00225
+        ]
+      ],
+      "passed": false
+    },
+    {
+      "cue": "come",
+      "expect_b": "stop",
+      "b_rate": 0.0016,
+      "top3_non_a": [
+        [
+          "small",
+          0.02115
+        ],
+        [
+          "hot",
+          0.00345
+        ],
+        [
+          "look",
+          0.0031
+        ]
+      ],
+      "passed": false
+    },
+    {
+      "cue": "big",
+      "expect_b": "hot",
+      "b_rate": 0.003,
+      "top3_non_a": [
+        [
+          "cold",
+          0.0194
+        ],
+        [
+          "go",
+          0.0032
+        ],
+        [
+          "hot",
+          0.003
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "cue": "small",
+      "expect_b": "cold",
+      "b_rate": 0.0077,
+      "top3_non_a": [
+        [
+          "cold",
+          0.0077
+        ],
+        [
+          "big",
+          0.00385
+        ],
+        [
+          "hot",
+          0.00315
+        ]
+      ],
+      "passed": true
+    }
+  ]
+}
