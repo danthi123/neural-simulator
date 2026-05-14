@@ -38,6 +38,20 @@
       "date": "2026-05-14"
     },
     {
+      "name": "Multi-tag capacity - 98.8% PRECISION at 20 pairs encoded multi-seed",
+      "status": "VALIDATED",
+      "metric": "v16 5-seed 20-pair 8-cue top-4: 158/160 = 98.8% PRECISION (every retrieved associate is a genuine trained binding). 20 pairs with 5-6 associates per cue exceeds top-4 capacity so FULL drops to 12.5%, but PRECISION stays at 98.8%. The system holds 20+ concept-concept associations cleanly; user needs 'tell me more' to enumerate all associates per cue. Practical capacity bound for conversational chat.",
+      "doc": "2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md",
+      "date": "2026-05-14"
+    },
+    {
+      "name": "Compositional intersection ('what is a and b') - 90% FULL multi-seed",
+      "status": "VALIDATED",
+      "metric": "v16 5-seed 4-query: 18/20 = 90% FULL (all shared associates in top-3), 20/20 = 100% PARTIAL. Tests compositional reasoning: drive cues a and b separately, intersect top-N associates, return shared. Test config: (apple, cat) both bound to (big, hot); (dog, river) both bound to (small, cold). Mechanism layered on top of validated multitag.",
+      "doc": "2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md",
+      "date": "2026-05-14"
+    },
+    {
       "name": "Engram-tag stim-recall - 87.5% multi-seed (catalog D.14 Tonegawa)",
       "status": "VALIDATED",
       "metric": "v16 5-seed 8-pair: 35/40 = 87.5% stim-recall (both concepts in lang_output top-5). Range 6-8 per seed (75-100%). Chance baseline ~8.3% (5/16 * 4/15). Recipe: v16 baseline arch + 500 encoding events + balanced teacher 500 pA. Engram tag captures co-firing concept-pool neurons; stimulating tag reliably reactivates both concepts.",
