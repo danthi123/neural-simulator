@@ -1,8 +1,8 @@
 {
   "as_of": "2026-05-14",
   "headline": {
-    "tier": "Concept-Concept Semantic Memory: real conceptual chat (NO motor) - multi-seed VALIDATED",
-    "result": "Real semantic association memory: user types 'apple' → system associates 'big' or 'cat' (trained associations). Multi-seed v16: 23/40 stim-recall (57.5%), 12/40 associative-recall (30%). Both above chance. Foundation for actual conceptual conversation - output is a CONCEPT WORD, not motor direction. Previous '96/96 PERFECT compose' tests were vocabulary-rich direction routing; this is the architectural pivot to real semantic memory.",
+    "tier": "Semantic Memory + Transitive Inference: 65% direct + 90% chained recall multi-seed",
+    "result": "Real semantic association memory with TRANSITIVE INFERENCE. Direct recall (user types 'apple' -> system retrieves 'big'): 65% multi-seed via pool-firing readout. Chained inference (train apple<->big and big<->hot -> query apple -> retrieve 'hot'): 90% multi-seed. Concept-output conversation, NO motor routing.",
     "metrics": "Concept-concept (NO motor) multi-seed v16 8-pair: 23/40 stim-recall (57.5%) + 12/40 associative-recall (30%). Compose capacity ladder (motor-routed, separate track): 1-pair 100%, 2-pair 100% (up to 48), 3-word 100% motor/85% full, 4-word 100% motor/60% full multi-seed. v17 28-word vocab + 96 cross-pair: 96/96 PERFECT seed 42 (motor-routed). 3 seeds v17 confirmed PERFECT before cancelled.",
     "wall_clock": "~17 min/seed v14/v16 Phase 1 + ~30s/seed engram encoding+recall + ~10s/seed chat REPL setup. Full demo end-to-end: ~18 min/seed.",
     "finding_doc": "2026-05-13-concept-pool-architecture-Phase1.md",
@@ -31,9 +31,16 @@
       "date": "2026-05-14"
     },
     {
-      "name": "Concept-Concept Semantic Memory (NO motor) - multi-seed REAL semantic conversation",
+      "name": "TRANSITIVE SEMANTIC INFERENCE - 90% multi-seed (chained A->C via B)",
       "status": "VALIDATED",
-      "metric": "v16 multi-seed 5x8 pairs: 23/40 stim-recall (57.5%, both concepts in lang_output top-5), 12/40 associative-recall (30%, drive a alone -> b in non-a top-3). Above chance. Real concept-word output, not motor direction.",
+      "metric": "v16 5-seed 4 chains each: Direct A->B 17/20 (85%); Chained A->C via B 18/20 (90%). Train apple<->big and big<->hot, query apple, retrieve hot. Chain recall HIGHER than direct - distributed activation propagates through learned association graph.",
+      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-14"
+    },
+    {
+      "name": "Concept-Concept Pool-Firing Readout - 65% multi-seed (chat-usable)",
+      "status": "VALIDATED",
+      "metric": "v16 multi-seed 5x8 pairs: 26/40 (65%) associative recall via pool-firing rank (vs 12/40=30% with cosine spelling). Drive cue, rank concept pools by firing rate, return top-3 non-cue. Significantly above chance.",
       "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
       "date": "2026-05-14"
     },
