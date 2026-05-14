@@ -150,6 +150,7 @@ def main():
     print("  remember <a> is <b>      Encode new association (90% retrieval)")
     print("  what is <word>           Retrieve associates (multi-tag, 90% multi-seed)")
     print("  what is <a> and <b>      Compositional: words associated with BOTH")
+    print("  tell me more             Next-best associates of last query")
     print("  tell me about <word>     Same as 'what is'")
     print("  forget <tag>             Delete an engram tag (tag = a_b)")
     print("  <word>                   Shortcut for multi-tag recall")
@@ -411,6 +412,9 @@ def main():
         except Exception as e:
             return f"error deleting {tag_name}: {e}"
 
+    # Simple multi-turn state: last query cue + last shown associates
+    state = {"last_cue": None, "last_shown": set()}
+
     def dispatch(line):
         """Parse one chat line; return result dict or None for command."""
         line = line.strip().lower()
@@ -421,6 +425,29 @@ def main():
             return None
         if line in ("/vocab", "vocab"):
             print(f"  vocab: {valid_concepts}", flush=True)
+            return None
+        if line in ("tell me more", "more"):
+            # Re-query the last cue, but exclude already-shown associates
+            if state["last_cue"] is None:
+                print(f"  [no recent query — type 'what is X' first]", flush=True)
+                return None
+            r = handle_multitag(state["last_cue"])
+            if r is None or not r.get("associates"):
+                print(f"  [no more associates for '{state['last_cue']}']", flush=True)
+                return None
+            # Filter out previously shown
+            remaining = [(w, s, t, n) for (w, s, t, n) in r["associates"]
+                         if w not in state["last_shown"]]
+            if not remaining:
+                print(f"  [no more associates for '{state['last_cue']}' "
+                      f"beyond {sorted(state['last_shown'])}]", flush=True)
+                return None
+            print(f"  [more for '{state['last_cue']}']", flush=True)
+            for w, score, tag, n_hits in remaining[:3]:
+                marker = "**" if score > 0.1 else ""
+                print(f"    {w:8s} = {score:.3f} via {tag:20s} {marker}",
+                      flush=True)
+                state["last_shown"].add(w)
             return None
         if line.startswith("/forget ") or line.startswith("forget "):
             tag_arg = line.split(" ", 1)[1].strip()
@@ -471,9 +498,16 @@ def main():
                     return None
                 r = handle_intersection(a, b)
                 print_result(r)
+                # Reset state for intersection queries
+                state["last_cue"] = None
+                state["last_shown"] = set()
             else:
                 r = handle_multitag(arg)
                 print_result(r)
+                # Track state for 'tell me more' follow-up
+                if r and r.get("associates"):
+                    state["last_cue"] = arg
+                    state["last_shown"] = {w for w, _, _, _ in r["associates"][:5]}
             return None
         # plain word -> multitag mode (the recommended cue retrieval)
         # Also support 'a and b' shortcut
@@ -483,9 +517,14 @@ def main():
             b = parts[1].strip()
             r = handle_intersection(a, b)
             print_result(r)
+            state["last_cue"] = None
+            state["last_shown"] = set()
             return None
         r = handle_multitag(line)
         print_result(r)
+        if r and r.get("associates"):
+            state["last_cue"] = line
+            state["last_shown"] = {w for w, _, _, _ in r["associates"][:5]}
         return None
 
     if args.scripted:
