@@ -1,0 +1,36 @@
+{
+  "bridge": "research/findings/raw/g11_bg/concept_pool_demo/seed42_v16_composed400.simstate.h5",
+  "seed": 42,
+  "drive_pA": 1500.0,
+  "stim_steps": 100,
+  "firing": {
+    "go": {
+      "motor_N": 0.00305,
+      "motor_E": 0.0036,
+      "motor_S": 0.00315,
+      "motor_W": 0.00475
+    },
+    "come": {
+      "motor_N": 0.0023,
+      "motor_E": 0.0012,
+      "motor_S": 0.00195,
+      "motor_W": 0.0012
+    },
+    "stop": {
+      "motor_N": 0.00295,
+      "motor_E": 0.0023,
+      "motor_S": 0.00245,
+      "motor_W": 0.0017
+    },
+    "look": {
+      "motor_N": 0.00375,
+      "motor_E": 0.00395,
+      "motor_S": 0.00395,
+      "motor_W": 0.00255
+    }
+  },
+  "n_pass": 0,
+  "true_rank": 15,
+  "true_pass": 0,
+  "max_pass": 2
+}

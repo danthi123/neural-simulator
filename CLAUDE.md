@@ -1258,6 +1258,59 @@ Phase 1's existing word-level fragility.
 4. Scale to 24/32 word vocabs with v14 recipe (no Phase 1
    architecture change needed).
 
+### Direct-drive test: v16 compose pathway is essentially silent
+
+Performed architectural validation by driving verb_pool directly
+with 1500 pA (bypassing Phase 1's lang_input → verb_pool), then
+measuring motor pool firing. This isolates the v16 verb_pool →
+motor pathway from the Phase 1 binding bottleneck.
+
+**Result (seed 42, v16+compose400):**
+
+| Verb pool drive | motor_N | motor_E | motor_S | motor_W |
+|---|---|---|---|---|
+| verb_pool_GO | 0.003 | 0.004 | 0.003 | 0.005 |
+| verb_pool_COME | 0.002 | 0.001 | 0.002 | 0.001 |
+| verb_pool_STOP | 0.003 | 0.002 | 0.002 | 0.002 |
+| verb_pool_LOOK | 0.004 | 0.004 | 0.004 | 0.003 |
+
+- **0/4 compose pairs PASS** on direct-drive test (verb_pool drive
+  doesn't preferentially activate trained motor pool)
+- **TRUE mapping rank 15/24** — BELOW chance (12.5/24)
+- Motor firing rates 0.001-0.005 (essentially zero — 100× lower
+  than lang_input-driven rates of 0.30-0.45)
+
+**Definitive finding:** The v16 verb_pool → motor pathway is
+ESSENTIALLY SILENT even after compose-training. The previous
+verb-alone-via-lang_input test results (2/4 PASS at ratios 1.1-1.6x)
+were artifacts of lang_input → motor pathways (trained during
+Phase 1) + structural noise, NOT real composition via the v16
+pathway.
+
+**The architecture fails to compose at the pathway level.** Possible
+reasons:
+- STDP weight growth from zero-init is insufficient (compose-training
+  events don't drive enough LTP to produce functionally meaningful
+  weight magnitudes)
+- Motor pool requires multi-modal input (lang_input + verb context)
+  to fire; verb context alone is insufficient
+- The 200 lang_input neurons firing → 100 verb_pool neurons firing →
+  via v16 pathway → 200 motor neurons effectively NEVER causes
+  motor pool to threshold
+
+**Revised verdict:**
+- v16 + compose-training: **NEGATIVE on real composition**
+  (BOUNDARY claim retracted further — direct-drive proves no
+  pathway-level binding)
+- v16 architecture as a SUBSTRATE for future compose mechanisms:
+  still useful (pathways structurally exist, gates work)
+- Future compose must use either:
+  1. Pre-initialized non-zero weights (skip STDP cold start)
+  2. Rate-based Hebbian instead of STDP timing-based
+  3. Different connectivity (e.g., higher density, lower neuron count)
+  4. Engram-tagging mechanism (catalog D.14) — bind sets of
+     co-fired neurons as a unit rather than train pathway weights
+
 Sequential composition still open (v12 NEGATIVE bidirectional dlpfc;
 v13 PARTIAL per-kind NMDA: +3x persistence but -5x isolation). Real
 architectural tension between holding (NMDA bistability) and selection

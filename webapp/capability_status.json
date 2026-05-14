@@ -10,9 +10,9 @@
   },
   "pillars": [
     {
-      "name": "v16 + Compose-Training - architectural framework + anti-cheat (BOUNDARY, A->W preserved)",
-      "status": "BOUNDARY",
-      "metric": "Anti-cheat (5 seeds, 400 ev/pair): mean true mapping rank 8.4/24 (chance 12.5/24); only seed 44 has TRUE uniquely best. 3/5 seeds above-chance, 2/5 anti-learning. A->W binding 80/80 unanimous (100% PRESERVED across seeds and training scales). Compose framework + anti-cheat tools in place; signal requires future iteration to robust multi-seed.",
+      "name": "v16 + Compose-Training - architectural framework only (NEGATIVE on real compose-binding)",
+      "status": "NEGATIVE",
+      "metric": "Direct-drive test: 1500 pA on verb_pool produces motor firing 0.001-0.005 (essentially zero, 100x lower than lang_input rates). 0/4 compose pairs PASS, TRUE rank 15/24 (BELOW chance). Previous BOUNDARY result was lang_input + structural noise artifact, not real v16 pathway binding. A->W (Phase 1) preserved 80/80 unanimous - v16 architecture safe for binding but compose-training STDP doesn't grow pathway to functional magnitude. Framework + tools in place; future compose needs different mechanism (pre-init weights, rate-based Hebbian, or engram tags).",
       "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
       "date": "2026-05-13"
     },
