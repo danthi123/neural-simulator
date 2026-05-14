@@ -1311,6 +1311,33 @@ reasons:
   4. Engram-tagging mechanism (catalog D.14) — bind sets of
      co-fired neurons as a unit rather than train pathway weights
 
+## ⚠️ v17 28-word scaling LIMIT (2026-05-14 PM): structural imbalance, not training-event count
+
+Tested two approaches to push the conversational capability beyond
+v16's 16-word vocab:
+
+| Variant | Phase 1 PASS | Multitag FULL | Multitag PARTIAL |
+|---|---|---|---|
+| v17 original (200 events) | 14/28 = 50% | 0/36 = 0% | 15/36 = 41.7% |
+| v17 stronger (400 events) | 6/28 = 21% | 0/9 = 0% | 5/9 = 55.6% |
+
+**400 events makes Phase 1 WORSE.** Diagnosis (from per-word ratios):
+motor pools dominate. 4 motor pools × ~150 concentrated lang_input
+weights vs 24 concept pools × 60 spread weights. More training shifts
+balance further toward motors. 22/28 words have a MOTOR pool as the
+top off-target winner.
+
+Vocab scaling to 28 words requires **architectural rework**, not
+longer training:
+- Smaller motor pools, or
+- 8192+ lang_input neurons, or
+- Topographic prior favoring concept-pool selectivity, or
+- Concept-only architecture (drop motor pools entirely)
+
+For 16-word vocab, the validated multitag mechanism delivers
+genuine 90% multi-seed conversational retrieval. 28-word is an
+open frontier requiring deeper architectural design.
+
 ## 🎉🎉 Multi-tag cue retrieval: 90% FULL / 100% PARTIAL multi-seed (2026-05-14 PM)
 
 The "real concept-concept conversation" capability the user wanted is
