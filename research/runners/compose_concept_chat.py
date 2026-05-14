@@ -24,7 +24,7 @@ import research.runners.concept_pool_demo as cpd
 from research.runners.concept_compose_train import _WORD_TO_IDX, _WORD_TO_POOL
 from research.runners.compose_concept_engram import (
     encode_concept_pair, lang_output_pattern_during_input,
-    cosine_to_word, _ALL_CONCEPTS,
+    lang_output_pattern_during_stim, cosine_to_word, _ALL_CONCEPTS,
 )
 from research.runners.compose_concept_pool_readout import (
     measure_concept_pool_rates, _POOL_TO_WORD,
@@ -43,11 +43,19 @@ def main():
                     default="apple:big,dog:small,cat:hot,river:cold,"
                             "big:hot,small:cold,apple:cat,dog:river",
                     help="Train these concept-concept associations")
-    p.add_argument("--encoding-steps", type=int, default=200)
+    p.add_argument("--encoding-steps", type=int, default=500,
+                    help="Encoding events per pair (default 500 for 87.5% "
+                    "stim-recall recipe; was 200 before bug discovery)")
+    p.add_argument("--balanced-teacher-pA", type=float, default=500.0,
+                    help="Teacher current on both concept pools during "
+                    "encoding (default 500 pA for 87.5% stim-recall)")
     p.add_argument("--top-k", type=int, default=100)
     p.add_argument("--drive-steps", type=int, default=100)
     p.add_argument("--sparsity", type=float, default=0.05)
-    p.add_argument("--scripted", type=str, default=None)
+    p.add_argument("--scripted", type=str, default=None,
+                    help="Comma-separated list of test inputs (skips "
+                    "interactive). Cue mode for plain words, /stim <tag> "
+                    "for stim-recall mode.")
     args = p.parse_args()
 
     # Parse pairs
@@ -93,6 +101,9 @@ def main():
                        if _WORD_TO_IDX[w] < args.n_words_for_orthogonal]
 
     print(f"\nEncoding {len(pairs)} concept-concept associations...", flush=True)
+    print(f"  recipe: {args.encoding_steps} events + teacher {args.balanced_teacher_pA} pA "
+          f"(2026-05-14 validated 87.5% stim-recall multi-seed)", flush=True)
+    encoded_tags = []
     for a, b in pairs:
         tag = f"{a}_{b}"
         encode_concept_pair(
@@ -102,9 +113,11 @@ def main():
             n_lang_input=args.n_lang_input,
             n_words_for_orthogonal=args.n_words_for_orthogonal,
             region_filter=region_filter, top_k=args.top_k,
+            balanced_teacher_pA=args.balanced_teacher_pA,
             verbose=False,
         )
-        print(f"  learned: '{a}' <-> '{b}'", flush=True)
+        encoded_tags.append(tag)
+        print(f"  learned: '{a}' <-> '{b}' (tag: {tag})", flush=True)
 
     # Now freeze plasticity for inference stability (chat loop)
     for g in [
@@ -120,10 +133,17 @@ def main():
 
     print()
     print("=" * 60)
-    print("CONCEPT CHAT — type a concept word, system associates")
+    print("CONCEPT CHAT")
     print(f"Vocab: {valid_concepts}")
     print(f"Learned associations: {pairs}")
-    print("Type 'quit' to exit")
+    print(f"Encoded tags: {encoded_tags}")
+    print()
+    print("Commands:")
+    print("  <word>           Cue-recall mode (~28% multi-seed; experimental)")
+    print("  /stim <tag>      Stim-recall mode (87.5% multi-seed; validated)")
+    print("                   tag is 'a_b' for trained pair (a, b)")
+    print("  /tags            List all encoded engram tags")
+    print("  quit             Exit")
     print("=" * 60, flush=True)
 
     # All concept pools (for pool-firing readout)
@@ -133,7 +153,7 @@ def main():
         if word not in _WORD_TO_IDX or _WORD_TO_IDX[word] >= args.n_words_for_orthogonal:
             return None
         t0 = time.time()
-        # POOL-FIRING readout (65% multi-seed) instead of cosine-spelling (30%)
+        # Cue mode: drive lang_input alone, rank concept pools (27.5% multi-seed)
         rates = measure_concept_pool_rates(
             bridge, word, all_concept_pools,
             n_lang_input=args.n_lang_input,
@@ -148,40 +168,102 @@ def main():
         top3 = [(_POOL_TO_WORD.get(p, p.split('_')[-1]), r)
                  for p, r in non_self_ranked[:3]]
         return {
+            "mode": "cue",
             "self_rate": rates[pool_self],
             "top3_non_self": top3,
             "elapsed_s": time.time() - t0,
         }
 
+    def handle_stim(tag_name):
+        """Stim-recall: stimulate engram tag, read lang_output spelling.
+        This is the 87.5% validated mode (2026-05-14)."""
+        if tag_name not in encoded_tags:
+            return None
+        t0 = time.time()
+        pattern, n_lang_out = lang_output_pattern_during_stim(
+            bridge, tag_name, drive_pA=1500.0, stim_steps=args.drive_steps,
+        )
+        # Rank all 16 vocab words by cosine to lang_output pattern
+        scores = {}
+        for w in valid_concepts:
+            scores[w] = cosine_to_word(
+                pattern, w, n_lang_out,
+                n_words_for_orthogonal=args.n_words_for_orthogonal,
+                sparsity=args.sparsity,
+            )
+        ranked = sorted(scores.items(), key=lambda kv: -kv[1])
+        top5 = ranked[:5]
+        # Expected: both A and B from "A_B" tag
+        try:
+            a_word, b_word = tag_name.split("_")
+        except ValueError:
+            a_word, b_word = None, None
+        return {
+            "mode": "stim",
+            "tag": tag_name,
+            "a_word": a_word,
+            "b_word": b_word,
+            "a_score": scores.get(a_word, 0.0) if a_word else 0.0,
+            "b_score": scores.get(b_word, 0.0) if b_word else 0.0,
+            "top5": top5,
+            "elapsed_s": time.time() - t0,
+        }
+
+    def print_result(r):
+        if r is None:
+            print(f"  [unknown input]", flush=True)
+            return
+        if r["mode"] == "cue":
+            associations = ", ".join(f"{w}={s:.2f}" for w, s in r["top3_non_self"])
+            print(f"  [cue mode, ~28% multi-seed]", flush=True)
+            print(f"  self: {r['self_rate']:.2f}", flush=True)
+            print(f"  associates: [{associations}]", flush=True)
+        elif r["mode"] == "stim":
+            print(f"  [stim mode, 87.5% multi-seed] tag={r['tag']}", flush=True)
+            print(f"  expected: {r['a_word']} + {r['b_word']}", flush=True)
+            print(f"  a_score: {r['a_score']:.3f}   b_score: {r['b_score']:.3f}", flush=True)
+            top5_str = ", ".join(f"{w}={s:.2f}" for w, s in r["top5"])
+            print(f"  top-5 lang_output: [{top5_str}]", flush=True)
+            both_in_top5 = (r["a_word"] in [w for w, _ in r["top5"]] and
+                            r["b_word"] in [w for w, _ in r["top5"]])
+            print(f"  verdict: {'PASS (both in top-5)' if both_in_top5 else 'PARTIAL/FAIL'}",
+                  flush=True)
+        print(f"  [{r['elapsed_s']:.1f}s]", flush=True)
+
+    def dispatch(line):
+        """Parse one chat line; return result dict or None for command."""
+        line = line.strip().lower()
+        if not line or line in ("quit", "exit"):
+            return "EXIT"
+        if line == "/tags":
+            print(f"  tags: {encoded_tags}", flush=True)
+            return None
+        if line.startswith("/stim "):
+            tag_arg = line[len("/stim "):].strip()
+            r = handle_stim(tag_arg)
+            print_result(r)
+            return None
+        # plain word -> cue mode
+        r = handle(line)
+        print_result(r)
+        return None
+
     if args.scripted:
         inputs = [s.strip() for s in args.scripted.split(",") if s.strip()]
         for inp in inputs:
             print(f"\n> {inp}", flush=True)
-            r = handle(inp)
-            if r is None:
-                print(f"  [unknown: '{inp}']", flush=True)
-                continue
-            associations = ", ".join(f"{w}={s:.2f}" for w, s in r["top3_non_self"])
-            print(f"  self firing: {r['self_rate']:.2f}", flush=True)
-            print(f"  associates: [{associations}]", flush=True)
-            print(f"  [{r['elapsed_s']:.1f}s]", flush=True)
+            if dispatch(inp) == "EXIT":
+                break
     else:
         print("Ready.", flush=True)
         while True:
             try:
-                line = input("> ").strip().lower()
+                line = input("> ").strip()
             except (EOFError, KeyboardInterrupt):
                 print()
                 break
-            if line in ("quit", "exit", ""):
+            if dispatch(line) == "EXIT":
                 break
-            r = handle(line)
-            if r is None:
-                print(f"  [unknown word]")
-                continue
-            associations = ", ".join(f"{w}={s:.2f}" for w, s in r["top3_non_self"])
-            print(f"  self: {r['self_rate']:.2f}")
-            print(f"  associates: [{associations}]")
 
     print("\nDone.", flush=True)
 
