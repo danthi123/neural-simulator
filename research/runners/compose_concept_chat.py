@@ -457,11 +457,18 @@ def main():
                 arg = line[len("what is "):].strip()
             else:
                 arg = line[len("tell me about "):].strip()
+            if not arg:
+                print(f"  [usage: 'what is <word>' or 'what is <a> and <b>']",
+                      flush=True)
+                return None
             # Check for 'a and b' intersection query
             if " and " in arg:
                 parts = arg.split(" and ", 1)
                 a = parts[0].strip()
                 b = parts[1].strip()
+                if not a or not b:
+                    print(f"  [usage: 'what is <a> and <b>']", flush=True)
+                    return None
                 r = handle_intersection(a, b)
                 print_result(r)
             else:
