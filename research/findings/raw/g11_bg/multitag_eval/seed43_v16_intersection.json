@@ -1,0 +1,121 @@
+{
+  "seed": 43,
+  "pairs": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "apple",
+      "hot"
+    ],
+    [
+      "cat",
+      "big"
+    ],
+    [
+      "cat",
+      "hot"
+    ],
+    [
+      "dog",
+      "small"
+    ],
+    [
+      "dog",
+      "cold"
+    ],
+    [
+      "river",
+      "small"
+    ],
+    [
+      "river",
+      "cold"
+    ]
+  ],
+  "intersection_queries": [
+    [
+      "apple",
+      "cat"
+    ],
+    [
+      "big",
+      "hot"
+    ],
+    [
+      "dog",
+      "river"
+    ],
+    [
+      "small",
+      "cold"
+    ]
+  ],
+  "top_n": 3,
+  "n_full_pass": 3,
+  "n_partial_pass": 4,
+  "n_total": 4,
+  "results": [
+    {
+      "cue_a": "apple",
+      "cue_b": "cat",
+      "expected": [
+        "big",
+        "hot"
+      ],
+      "top_n": [
+        "big",
+        "hot",
+        "look"
+      ],
+      "full_pass": true,
+      "partial_pass": true
+    },
+    {
+      "cue_a": "big",
+      "cue_b": "hot",
+      "expected": [
+        "apple",
+        "cat"
+      ],
+      "top_n": [
+        "apple",
+        "cat",
+        "come"
+      ],
+      "full_pass": true,
+      "partial_pass": true
+    },
+    {
+      "cue_a": "dog",
+      "cue_b": "river",
+      "expected": [
+        "cold",
+        "small"
+      ],
+      "top_n": [
+        "small",
+        "cold",
+        "big"
+      ],
+      "full_pass": true,
+      "partial_pass": true
+    },
+    {
+      "cue_a": "small",
+      "cue_b": "cold",
+      "expected": [
+        "dog",
+        "river"
+      ],
+      "top_n": [
+        "river",
+        "big",
+        "look"
+      ],
+      "full_pass": false,
+      "partial_pass": true
+    }
+  ]
+}
