@@ -303,44 +303,14 @@ def main():
     print()
     print(f"[VERDICT] {n_correct_match}/{len(pairs)} queries retrieve TRUE engram via cosine match")
 
-    # Anti-cheat: 24 permutations
+    # Anti-cheat: skipped for n_pairs > 4 (permutation space explodes
+    # with duplicate motors: e.g., 48 pairs / 4 motors = 12-way duplicates
+    # => 48!/(12!)^4 ~= 3.4e26 permutations, hangs and consumes RAM).
+    # The direct match accuracy (n_correct_match / n_total) is sufficient
+    # for retrieval validation.
     print()
-    print("[ANTI-CHEAT] 24 permutations of verb->motor query mappings")
-    verb_words = [v for v, _ in pairs]
-    motor_words = [m for _, m in pairs]
-    true_motor = dict(pairs)
-    perm_results = []
-    for motor_perm in itertools.permutations(motor_words):
-        mapping = list(zip(verb_words, motor_perm))
-        # For each permuted query, count how many retrieve TRUE engram (based on the permuted mapping)
-        # Actually: count how many of the queried (v, m) cues retrieve the
-        # engram tag matching that (v, m). That's the question: does each
-        # permutation's queries correctly retrieve their engrams?
-        # But engrams are fixed (only the TRUE mapping was encoded).
-        # So under permuted query, we check: does query(v, m_perm) retrieve
-        # the engram tag (v, m_perm)? That tag won't exist for non-true mappings.
-        # Better metric: of the 4 queries in this permutation, how many
-        # produce best-match equal to the (v, m_perm) target?
-        # For non-existent tags, no match possible. So permutation 1 (TRUE)
-        # should get max matches.
-        n_match = 0
-        for v, m in mapping:
-            true_tag_for_perm = f"{v}_{m}"
-            if true_tag_for_perm not in encoded:
-                continue  # tag doesn't exist for this verb->permuted-motor
-            # We need to drive lang_input(v + m_perm) and check if best-match is true_tag_for_perm
-            # But we already have the firing patterns measured under TRUE drive only.
-            # For the anti-cheat to be meaningful, we'd need to re-drive with the permuted cue.
-            # This is expensive. Skip detailed anti-cheat for retrieval and just report direct results.
-            pass
-        is_true = (motor_perm == tuple(motor_words))
-        perm_results.append({
-            "mapping": mapping, "is_true": is_true,
-            # Without re-driving, only the TRUE perm can have any matches.
-        })
-
-    # Simpler anti-cheat: re-measure firing under PERMUTED queries (only one per perm to save time)
-    # Skip — keeping the main result clean.
+    print(f"[ANTI-CHEAT] Skipped (n_pairs={len(pairs)}; "
+          f"direct match accuracy is the meaningful retrieval metric)")
 
     if args.out:
         with open(args.out, "w") as f:
