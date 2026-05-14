@@ -1,0 +1,84 @@
+{
+  "bridge": "research/findings/raw/g11_bg/concept_pool_demo/seed42_v17.simstate.h5",
+  "seed": 42,
+  "encoding_steps": 200,
+  "top_k": 100,
+  "recall_stim_pA": 1500.0,
+  "encoding_stats": [
+    {
+      "name": "walk_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 0.9937776327133179
+    },
+    {
+      "name": "run_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.0551023483276367
+    },
+    {
+      "name": "eat_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.1137306690216064
+    },
+    {
+      "name": "sleep_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.0956166982650757
+    }
+  ],
+  "firing": {
+    "walk_north": {
+      "verb": "walk",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.1515,
+        "motor_E": 0.0,
+        "motor_S": 0.0019,
+        "motor_W": 0.00055
+      }
+    },
+    "run_south": {
+      "verb": "run",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.00125,
+        "motor_E": 0.00025,
+        "motor_S": 0.14765,
+        "motor_W": 0.00095
+      }
+    },
+    "eat_west": {
+      "verb": "eat",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.0005,
+        "motor_E": 0.00095,
+        "motor_S": 0.0002,
+        "motor_W": 0.1559
+      }
+    },
+    "sleep_east": {
+      "verb": "sleep",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.0012,
+        "motor_E": 0.1431,
+        "motor_S": 0.0006,
+        "motor_W": 0.0002
+      }
+    }
+  },
+  "n_pass": 4,
+  "n_total": 4,
+  "true_rank": 1,
+  "true_pass": 4,
+  "best_perm_pass": 4
+}

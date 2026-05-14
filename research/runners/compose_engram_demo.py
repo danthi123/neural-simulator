@@ -180,6 +180,9 @@ def main():
                     help="Optional teacher current on motor pool during "
                     "encoding (analogous to Phase 1 teacher_pA). Ensures "
                     "engram tag includes motor neurons. Default 0=off.")
+    p.add_argument("--n-words-for-orthogonal", type=int, default=16,
+                    help="Number of orthogonal codes in lang_input. Must "
+                    "match the bridge's training vocab (16 for v16, 28 for v17).")
     p.add_argument("--out", type=str, default=None)
     args = p.parse_args()
 
@@ -224,6 +227,7 @@ def main():
             drive_pA=args.drive_pA,
             sparsity=args.sparsity,
             n_lang_input=args.n_lang_input,
+            n_words_for_orthogonal=args.n_words_for_orthogonal,
             region_filter=region_filter_full,
             top_k=args.top_k,
             motor_teacher_pA=args.motor_teacher_pA,

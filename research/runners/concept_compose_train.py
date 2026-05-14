@@ -32,12 +32,19 @@ import research.runners.concept_pool_demo as cpd
 from sim.text_embeddings import orthogonal_drive_pattern, vocab_to_drive_pattern
 
 
-# v14 training-order word index (must match concept_pool_demo)
+# v14 training-order word index (matches concept_pool_demo).
+# Extended with v17 words (2026-05-14): 12 new words for 28-word vocab.
+# The v16 words are first 16 positions for backward compatibility with
+# v16 bridges (which only have orthogonal codes for cue_idx 0-15).
 _ALL_WORDS = [
     "north", "east", "south", "west",
     "apple", "river", "dog", "cat",
     "go", "come", "stop", "look",
     "big", "small", "hot", "cold",
+    # v17 additions (must match concept_pool_demo_v2.py ordering):
+    "tree", "bird", "sun", "moon",
+    "walk", "run", "eat", "sleep",
+    "red", "blue", "fast", "slow",
 ]
 _WORD_TO_IDX = {w: i for i, w in enumerate(_ALL_WORDS)}
 _WORD_TO_POOL = {
@@ -48,6 +55,13 @@ _WORD_TO_POOL = {
     "stop": "verb_pool_STOP", "look": "verb_pool_LOOK",
     "big": "adjective_pool_BIG", "small": "adjective_pool_SMALL",
     "hot": "adjective_pool_HOT", "cold": "adjective_pool_COLD",
+    # v17 additions:
+    "tree": "noun_pool_TREE", "bird": "noun_pool_BIRD",
+    "sun": "noun_pool_SUN", "moon": "noun_pool_MOON",
+    "walk": "verb_pool_WALK", "run": "verb_pool_RUN",
+    "eat": "verb_pool_EAT", "sleep": "verb_pool_SLEEP",
+    "red": "adjective_pool_RED", "blue": "adjective_pool_BLUE",
+    "fast": "adjective_pool_FAST", "slow": "adjective_pool_SLOW",
 }
 
 
