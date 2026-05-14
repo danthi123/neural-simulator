@@ -1311,6 +1311,63 @@ reasons:
   4. Engram-tagging mechanism (catalog D.14) — bind sets of
      co-fired neurons as a unit rather than train pathway weights
 
+## 🎉 Engram-tag stim-recall: 87.5% multi-seed (2026-05-14 PM, corrected re-test)
+
+After the bug retraction (below), the same engram-tagging mechanism was
+re-tested with corrected bridge architecture AND stronger encoding
+settings (teacher current 500 pA + 500 encoding events). The validated
+result:
+
+**5-seed × 8-pair concept-concept stim-recall: 35/40 = 87.5%**
+
+| Seed | Stim-recall (both A,B in lang_output top-5) | Assoc-recall (B in non-A top-3) |
+|---|---|---|
+| 42 | 7/8 | 2/8 |
+| 43 | 6/8 | 3/8 |
+| 44 | 8/8 | 2/8 |
+| 45 | 8/8 | 3/8 |
+| 46 | 6/8 | 1/8 |
+| **Total** | **35/40 = 87.5%** | 11/40 = 27.5% |
+
+Chance baseline for stim-recall (both in top-5 of 16): 8.3%. Result is
+~10× chance.
+
+**Recipe (validated):**
+```bash
+# 1. Train v16 bridge (standard 16-pool architecture)
+python -m research.runners.concept_pool_demo --seed N \
+    --n-train-events 200 --n-lang-input 2048 --n-per-pool 200 \
+    --n-fs-per-pool 24 --weak-concept-dynamics --interleaved \
+    --topographic-factor 3.0 --off-target-factor 0.3 \
+    --enable-adjective --orthogonal-codes --sparsity 0.05 \
+    --save-bridge bridges/v16/seed${N}.simstate.h5
+
+# 2. Encode + test (per seed)
+python -m research.runners.compose_concept_engram \
+    --load-bridge bridges/v16/seed${N}.simstate.h5 --seed N \
+    --n-lang-input 2048 --n-per-pool 200 --n-fs-per-pool 24 \
+    --n-words-for-orthogonal 16 --encoding-steps 500 --sparsity 0.05 \
+    --pairs "apple:big,dog:small,cat:hot,river:cold,go:look,come:stop,big:hot,small:cold" \
+    --balanced-teacher-pA 500.0
+```
+
+**What works:**
+- Tonegawa-style engram tagging (catalog D.14): bind a co-fired
+  ensemble across two concept pools, stim it later, both concept
+  pools reactivate. lang_output spelling for both words appears in
+  top-5 with high reliability.
+
+**What doesn't work (yet):**
+- Cue-only associative recall (drive A alone, expect B in top-3):
+  27.5% multi-seed, barely above chance (20%). Cross-pool plastic
+  pathways (v18/v19) don't add measurable improvement.
+
+**v19 (cross-pool pathways) verdict:** NEGATIVE. Side-by-side at
+seed 42 with same strong encoding, v19 gives 6/8 stim vs v16's 7/8.
+Cross-pool architecture adds complexity without lift.
+
+**See finding:** [`research/findings/2026-05-14-engram-stim-recall-multi-seed-VALIDATED.md`](research/findings/2026-05-14-engram-stim-recall-multi-seed-VALIDATED.md)
+
 ## ⚠️ RETRACTION (2026-05-14): concept-concept results were architecture-mismatch artifacts
 
 **Critical bug discovered 2026-05-14:** The 65% pool-firing readout and
