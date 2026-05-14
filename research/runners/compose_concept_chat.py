@@ -139,12 +139,15 @@ def main():
     print(f"Encoded tags: {encoded_tags}")
     print()
     print("Commands:")
-    print("  <word>           Multi-tag recall: auto-stim all tags with word")
-    print("                   (leverages 87.5% stim-recall per tag)")
-    print("  /stim <tag>      Direct tag stim-recall (87.5% multi-seed)")
-    print("  /cue <word>      Raw cue-pool firing rank (~28%; experimental)")
-    print("  /tags            List all encoded engram tags")
-    print("  quit             Exit")
+    print("  remember <a> is <b>      Encode new association (90% retrieval)")
+    print("  what is <word>           Retrieve associates (multi-tag, 90% multi-seed)")
+    print("  tell me about <word>     Same as 'what is'")
+    print("  <word>                   Shortcut for multi-tag recall")
+    print("  /stim <tag>              Direct tag stim-recall (87.5% multi-seed)")
+    print("  /cue <word>              Raw cue-pool firing rank (~28%; experimental)")
+    print("  /tags                    List all encoded engram tags")
+    print("  /vocab                   List available concept words")
+    print("  quit                     Exit")
     print("=" * 60, flush=True)
 
     # All concept pools (for pool-firing readout)
@@ -306,6 +309,45 @@ def main():
                   flush=True)
         print(f"  [{r['elapsed_s']:.1f}s]", flush=True)
 
+    def handle_remember(line):
+        """Parse 'remember <a> is <b>' or 'remember <a> <b>' → encode pair.
+
+        Returns the encoded tag name, or None if parse failed.
+        """
+        # Strip the 'remember ' prefix and 'is' connector
+        rest = line[len("remember "):].strip()
+        # Try 'a is b' form first
+        if " is " in rest:
+            parts = rest.split(" is ", 1)
+            a = parts[0].strip()
+            b = parts[1].strip()
+        else:
+            # Try 'a b' (space-separated)
+            parts = rest.split()
+            if len(parts) != 2:
+                return None
+            a, b = parts[0], parts[1]
+        if a not in _WORD_TO_IDX or _WORD_TO_IDX[a] >= args.n_words_for_orthogonal:
+            return f"unknown word: {a}"
+        if b not in _WORD_TO_IDX or _WORD_TO_IDX[b] >= args.n_words_for_orthogonal:
+            return f"unknown word: {b}"
+        tag = f"{a}_{b}"
+        if tag in encoded_tags:
+            return f"already remembered: {tag}"
+        # Encode now (slow ~5s)
+        encode_concept_pair(
+            bridge, a, b, tag,
+            encoding_steps=args.encoding_steps,
+            drive_pA=200.0, sparsity=args.sparsity,
+            n_lang_input=args.n_lang_input,
+            n_words_for_orthogonal=args.n_words_for_orthogonal,
+            region_filter=region_filter, top_k=args.top_k,
+            balanced_teacher_pA=args.balanced_teacher_pA,
+            verbose=False,
+        )
+        encoded_tags.append(tag)
+        return tag
+
     def dispatch(line):
         """Parse one chat line; return result dict or None for command."""
         line = line.strip().lower()
@@ -313,6 +355,9 @@ def main():
             return "EXIT"
         if line in ("/tags", "tags"):
             print(f"  tags: {encoded_tags}", flush=True)
+            return None
+        if line in ("/vocab", "vocab"):
+            print(f"  vocab: {valid_concepts}", flush=True)
             return None
         if line.startswith("/stim "):
             tag_arg = line[len("/stim "):].strip()
@@ -322,6 +367,26 @@ def main():
         if line.startswith("/cue "):
             word = line[len("/cue "):].strip()
             r = handle(word)
+            print_result(r)
+            return None
+        if line.startswith("remember "):
+            result = handle_remember(line)
+            if result is None:
+                print(f"  [could not parse 'remember' command]", flush=True)
+            elif result.startswith("unknown word"):
+                print(f"  [{result}; vocab: {valid_concepts}]", flush=True)
+            elif result.startswith("already remembered"):
+                print(f"  [{result}]", flush=True)
+            else:
+                print(f"  [remembered: {result}]", flush=True)
+            return None
+        if line.startswith("what is ") or line.startswith("tell me about "):
+            # Natural-language multitag query
+            if line.startswith("what is "):
+                word = line[len("what is "):].strip()
+            else:
+                word = line[len("tell me about "):].strip()
+            r = handle_multitag(word)
             print_result(r)
             return None
         # plain word -> multitag mode (the recommended cue retrieval)
