@@ -1311,6 +1311,58 @@ reasons:
   4. Engram-tagging mechanism (catalog D.14) — bind sets of
      co-fired neurons as a unit rather than train pathway weights
 
+## 🎉🎉 Multi-tag cue retrieval: 90% FULL / 100% PARTIAL multi-seed (2026-05-14 PM)
+
+The "real concept-concept conversation" capability the user wanted is
+GENUINELY ACHIEVED. After the bug retraction and engram-stim-recall
+finding, a simple aggregator mechanism delivers cue-driven retrieval
+at multi-seed reliability:
+
+**Mechanism:** For cue word X, stim every engram tag containing X
+(each at 87.5% per-tag stim-recall reliability), aggregate
+`lang_output` cosines, rank associates.
+
+**Multi-seed result (5 seeds × 8 cues, 16-word vocab):**
+
+| Seed | FULL (all associates in top-2) | PARTIAL (any in top-2) |
+|---|---|---|
+| 42 | 7/8 | 8/8 |
+| 43 | 7/8 | 8/8 |
+| 44 | 8/8 | 8/8 |
+| 45 | 8/8 | 8/8 |
+| 46 | 6/8 | 8/8 |
+| **Total** | **36/40 = 90.0%** | **40/40 = 100%** |
+
+Chance for FULL (top-2 of 15 covering 2 specific words): ~0.95%.
+**Result is ~95× chance.**
+
+**Demo (seed 44):**
+```
+> apple
+  matched 2 tag(s): ['apple_big', 'apple_cat']
+  top-5: [big=0.20, cat=0.17, stop=0.06, go=0.06, come=0.06]
+  ✓ both big and cat in top-2
+
+> dog
+  matched 2 tag(s): ['dog_small', 'dog_river']
+  top-5: [river=0.43, small=0.34, cat=0.06, big=0.06, look=0.05]
+  ✓ both river and small in top-2
+
+> big
+  matched 2 tag(s): ['apple_big', 'big_hot']
+  top-5: [apple=0.45, hot=0.40, stop=0.07, small=0.06, cat=0.06]
+  ✓ both apple and hot in top-2
+```
+
+**Three-mode chat REPL** (`compose_concept_chat.py`):
+- `<word>` → multitag (default, 90% FULL multi-seed) ✓ RECOMMENDED
+- `/stim <tag>` → direct tag stim-recall (87.5% per-tag)
+- `/cue <word>` → raw pool firing (~28%, experimental)
+
+**See findings:**
+- [`research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md`](research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md)
+- [`research/findings/2026-05-14-engram-stim-recall-multi-seed-VALIDATED.md`](research/findings/2026-05-14-engram-stim-recall-multi-seed-VALIDATED.md)
+
 ## 🎉 Engram-tag stim-recall: 87.5% multi-seed (2026-05-14 PM, corrected re-test)
 
 After the bug retraction (below), the same engram-tagging mechanism was

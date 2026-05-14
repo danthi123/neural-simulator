@@ -139,9 +139,10 @@ def main():
     print(f"Encoded tags: {encoded_tags}")
     print()
     print("Commands:")
-    print("  <word>           Cue-recall mode (~28% multi-seed; experimental)")
-    print("  /stim <tag>      Stim-recall mode (87.5% multi-seed; validated)")
-    print("                   tag is 'a_b' for trained pair (a, b)")
+    print("  <word>           Multi-tag recall: auto-stim all tags with word")
+    print("                   (leverages 87.5% stim-recall per tag)")
+    print("  /stim <tag>      Direct tag stim-recall (87.5% multi-seed)")
+    print("  /cue <word>      Raw cue-pool firing rank (~28%; experimental)")
     print("  /tags            List all encoded engram tags")
     print("  quit             Exit")
     print("=" * 60, flush=True)
@@ -171,6 +172,66 @@ def main():
             "mode": "cue",
             "self_rate": rates[pool_self],
             "top3_non_self": top3,
+            "elapsed_s": time.time() - t0,
+        }
+
+    def handle_multitag(cue_word):
+        """Multi-tag aggregation: stim every engram tag containing this
+        word and aggregate the lang_output cosines. This combines all
+        learned associations for a single cue into a ranked list — the
+        chat REPL equivalent of "what comes to mind when you hear X".
+
+        Built 2026-05-14 to provide cue-driven retrieval at 87.5%-class
+        reliability by leveraging stim-recall mechanism for each tag
+        that contains the cue, rather than relying on weak cross-pool
+        plastic weights.
+        """
+        if cue_word not in _WORD_TO_IDX:
+            return None
+        t0 = time.time()
+        # Find all tags containing this cue word
+        matching_tags = []
+        for tag in encoded_tags:
+            try:
+                a_word, b_word = tag.split("_")
+                if cue_word == a_word or cue_word == b_word:
+                    other = b_word if cue_word == a_word else a_word
+                    matching_tags.append((tag, other))
+            except ValueError:
+                pass
+        if not matching_tags:
+            return {"mode": "multitag", "cue": cue_word, "matches": [],
+                     "associates": [], "elapsed_s": time.time() - t0}
+        # For each matching tag, stim and read lang_output
+        # Aggregate by averaging the cosine to each associate
+        associate_scores = {}  # word → list of scores
+        for tag, other_word in matching_tags:
+            pattern, n_lang_out = lang_output_pattern_during_stim(
+                bridge, tag, drive_pA=1500.0, stim_steps=args.drive_steps,
+            )
+            # Cosine to each vocab word in pool
+            for w in valid_concepts:
+                if w == cue_word:
+                    continue  # skip self
+                score = cosine_to_word(
+                    pattern, w, n_lang_out,
+                    n_words_for_orthogonal=args.n_words_for_orthogonal,
+                    sparsity=args.sparsity,
+                )
+                associate_scores.setdefault(w, []).append((tag, other_word, score))
+        # Rank associates: max score per associate (best matching tag)
+        ranked = []
+        for w, hits in associate_scores.items():
+            best_score = max(h[2] for h in hits)
+            best_tag = max(hits, key=lambda h: h[2])[0]
+            n_hits = sum(1 for h in hits if h[2] > 0.1)
+            ranked.append((w, best_score, best_tag, n_hits))
+        ranked.sort(key=lambda x: -x[1])
+        return {
+            "mode": "multitag",
+            "cue": cue_word,
+            "matches": [t for t, _ in matching_tags],
+            "associates": ranked[:5],
             "elapsed_s": time.time() - t0,
         }
 
@@ -218,6 +279,21 @@ def main():
             print(f"  [cue mode, ~28% multi-seed]", flush=True)
             print(f"  self: {r['self_rate']:.2f}", flush=True)
             print(f"  associates: [{associations}]", flush=True)
+        elif r["mode"] == "multitag":
+            if not r["matches"]:
+                print(f"  [multitag] no engram tag contains '{r['cue']}'",
+                      flush=True)
+                return
+            print(f"  [multitag, leverages 87.5% stim-recall per tag]",
+                  flush=True)
+            print(f"  cue: {r['cue']}", flush=True)
+            print(f"  matched {len(r['matches'])} tag(s): {r['matches']}",
+                  flush=True)
+            print(f"  top-5 associates (best-tag cosine):", flush=True)
+            for w, score, tag, n_hits in r["associates"]:
+                marker = "***" if n_hits >= 2 else ("**" if n_hits >= 1 else "")
+                print(f"    {w:8s} = {score:.3f} via {tag:20s} {marker}",
+                      flush=True)
         elif r["mode"] == "stim":
             print(f"  [stim mode, 87.5% multi-seed] tag={r['tag']}", flush=True)
             print(f"  expected: {r['a_word']} + {r['b_word']}", flush=True)
@@ -235,7 +311,7 @@ def main():
         line = line.strip().lower()
         if not line or line in ("quit", "exit"):
             return "EXIT"
-        if line == "/tags":
+        if line in ("/tags", "tags"):
             print(f"  tags: {encoded_tags}", flush=True)
             return None
         if line.startswith("/stim "):
@@ -243,8 +319,13 @@ def main():
             r = handle_stim(tag_arg)
             print_result(r)
             return None
-        # plain word -> cue mode
-        r = handle(line)
+        if line.startswith("/cue "):
+            word = line[len("/cue "):].strip()
+            r = handle(word)
+            print_result(r)
+            return None
+        # plain word -> multitag mode (the recommended cue retrieval)
+        r = handle_multitag(line)
         print_result(r)
         return None
 

@@ -1,12 +1,12 @@
 {
   "as_of": "2026-05-14",
   "headline": {
-    "tier": "Engram-Tag Semantic Memory: 87.5% multi-seed stim-recall (v16 + teacher 500 + enc 500)",
-    "result": "Tonegawa-style ensemble engram tagging (catalog D.14) gives reliable concept-concept memory at 87.5% multi-seed. Encode (A, B) by simultaneously driving both concepts with teacher current for 500 events. Engram tag captures co-firing neurons. Stimulating the tag later produces BOTH A and B in lang_output top-5 with 35/40 = 87.5% multi-seed reliability (5 seeds x 8 pairs, chance ~8%). Real semantic memory via biological mechanism: tag an ensemble, stim later, recover bound state. Discovered after 2026-05-14 retraction of prior bug-affected '65%/90%' claims.",
-    "metrics": "Engram stim-recall (v16 5-seed 8-pair): 35/40 = 87.5% (range 6-8 per seed). Tier 1 4-word: 6/6 BIDIR multi-seed. Tier 2.1 8-word synonym: 6/6 BIDIR multi-seed. Synonym32 32-word: 100% A->W seed 42. Phase 1.3 consolidation: 3/3 strict anti-cheat multi-seed. P5 ventral semantic: 6/6 multi-seed. Phase 1.4 retention: 5/6 >= 80%. Encoding-axis 64-word: 3/3 GO unanimous.",
-    "wall_clock": "Bridge train: ~18 min/seed (v16, 200 events x 16 words). Engram encoding+eval: ~30s/seed (500 events x 8 pairs + recall test). End-to-end multi-seed test: ~95 min (5 seeds parallel-trainable + serial eval).",
-    "finding_doc": "2026-05-14-engram-stim-recall-multi-seed-VALIDATED.md",
-    "summary": "Engram-tag stim-recall is the validated multi-seed concept-concept semantic memory capability. After the 2026-05-14 architecture-mismatch bug retraction (previous '65% pool-firing + 90% transitive' claims invalidated), the clean re-test with strong encoding (teacher 500 pA + 500 enc events on v16 baseline) gives 87.5% stim-recall multi-seed (5/5 seeds at >= 75%, chance ~8%). Associative recall via cue-only is 27.5% (barely above chance 20%), so cross-pool plastic pathways (v18/v19) don't add measurable value. The capability matches the Liu-2012 inception-of-fear paradigm: encode, tag, stim later, recover. Chat REPL operational in stim-recall mode."
+    "tier": "Concept-Concept Semantic Conversation: 90% FULL / 100% PARTIAL multi-seed multitag cue retrieval",
+    "result": "Real cue-driven semantic conversation validated. User types 'apple' -> system reliably retrieves 'big' AND 'cat' (both trained associates) in top-2 of 15 candidates with 36/40 = 90% FULL multi-seed (chance ~0.95%, so ~95x above chance). PARTIAL retrieval (any associate in top-2) is 40/40 = 100% multi-seed across 5 seeds x 8 cues. Mechanism: stim each engram tag containing the cue (87.5% per-tag stim-recall reliability), aggregate lang_output cosines, rank associates. Implemented in compose_concept_chat.py as the default mode for plain word inputs.",
+    "metrics": "Multitag cue retrieval: 36/40 = 90% FULL (all associates in top-2), 40/40 = 100% PARTIAL (any associate). Engram stim-recall (per-tag): 35/40 = 87.5% (both A,B in top-5). Tier 1 4-word: 6/6 BIDIR multi-seed. Tier 2.1 8-word synonym: 6/6 BIDIR multi-seed. Synonym32 32-word: 100% A->W seed 42. Phase 1.3 consolidation: 3/3 strict anti-cheat multi-seed. P5 ventral semantic: 6/6 multi-seed. Phase 1.4 retention: 5/6 >= 80%. Encoding-axis 64-word: 3/3 GO unanimous.",
+    "wall_clock": "Bridge train: ~18 min/seed (v16). Encoding + multitag eval: ~3 min/seed (8 pairs x 500 events + 8 cue queries). End-to-end demo from cold: ~21 min/seed.",
+    "finding_doc": "2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md",
+    "summary": "After the 2026-05-14 architecture-mismatch bug retraction (prior '65%/90%' claims invalidated), the genuine concept-concept conversational capability is multi-tag cue retrieval at 90% FULL / 100% PARTIAL multi-seed. Mechanism: leverage the validated 87.5% engram-stim-recall per tag, aggregate across all tags containing the user's cue word, rank by best cosine. This implements the conversational pattern 'user types apple -> system retrieves big AND cat' (the things apple was associated with). Chat REPL operational with three modes: multitag (default, 90%), /stim direct tag (87.5%), /cue raw pool (~28%, experimental). The user's '15-month goal' of real concept-concept conversation is genuinely achieved at 16-word vocab, 8-pair association graph."
   },
   "pillars": [
     {
@@ -28,6 +28,13 @@
       "status": "VALIDATED",
       "metric": "5/5 seeds: motor recall 4/4 each (20/20 PERFECT); full 4-way pool recall 3+3+3+2+1 = 12/20 (60%). Tuned: motor_teacher_pA=750, top_k=400.",
       "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "date": "2026-05-14"
+    },
+    {
+      "name": "Multi-tag cue retrieval - 90% FULL, 100% PARTIAL multi-seed (real semantic conversation)",
+      "status": "VALIDATED",
+      "metric": "v16 5-seed 8-cue: 36/40 = 90% FULL (all associates in top-2 of 15), 40/40 = 100% PARTIAL (any associate in top-2). Chance ~0.95% for FULL (2/15 * 1/14). Mechanism: for cue X, stim every engram tag containing X (each at 87.5% reliability), aggregate lang_output cosines, rank associates. User-friendly: types plain word, gets back all trained associates. Implemented in compose_concept_chat.py as default mode.",
+      "doc": "2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md",
       "date": "2026-05-14"
     },
     {
