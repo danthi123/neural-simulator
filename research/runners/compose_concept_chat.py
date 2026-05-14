@@ -86,6 +86,15 @@ def main():
     )
     bridge.load_checkpoint(args.load_bridge)
 
+    # Sync REPL's encoded_tags from any tags restored by load_checkpoint.
+    # This enables cross-session persistence: save, exit, restart, queries
+    # against the same tags continue to work.
+    # bridge.list_engram_tags() returns [{"name": ..., "n_neurons": ...}, ...]
+    restored_tag_names = sorted([t["name"] for t in bridge.list_engram_tags()])
+    if restored_tag_names:
+        print(f"  [restored {len(restored_tag_names)} engram tag(s) from "
+              f"checkpoint: {restored_tag_names}]", flush=True)
+
     # IMPORTANT: do NOT freeze plasticity BEFORE encoding. Cross-pool
     # association weights (lang_input -> non-target pool) need active STDP
     # during engram encoding for the associative recall to work later.
@@ -111,7 +120,9 @@ def main():
     print(f"\nEncoding {len(pairs)} concept-concept associations...", flush=True)
     print(f"  recipe: {args.encoding_steps} events + teacher {args.balanced_teacher_pA} pA "
           f"(2026-05-14 validated 87.5% stim-recall multi-seed)", flush=True)
-    encoded_tags = []
+    # Initialize encoded_tags from any restored tags so cross-session
+    # persistence works (save in session N+1 includes session N's tags).
+    encoded_tags = list(restored_tag_names)
     for a, b in pairs:
         tag = f"{a}_{b}"
         encode_concept_pair(
@@ -154,6 +165,7 @@ def main():
     print("  tell me more             Next-best associates of last query")
     print("  tell me about <word>     Same as 'what is'")
     print("  forget <tag>             Delete an engram tag (tag = a_b)")
+    print("  save [path]              Persist bridge + tags to checkpoint")
     print("  <word>                   Shortcut for multi-tag recall")
     print("  <a> and <b>              Shortcut for intersection query")
     print("  /stim <tag>              Direct tag stim-recall (87.5% multi-seed)")
@@ -449,6 +461,19 @@ def main():
                 print(f"    {w:8s} = {score:.3f} via {tag:20s} {marker}",
                       flush=True)
                 state["last_shown"].add(w)
+            return None
+        if line.startswith("save ") or line == "save":
+            parts = line.split(maxsplit=1)
+            path = parts[1].strip() if len(parts) > 1 else None
+            if not path:
+                # Default: save back to the loaded bridge path
+                path = args.load_bridge
+            try:
+                bridge.save_checkpoint(path)
+                print(f"  [saved bridge + {len(encoded_tags)} engram tag(s) "
+                      f"to {path}]", flush=True)
+            except Exception as e:
+                print(f"  [save failed: {e}]", flush=True)
             return None
         if line.startswith("/forget ") or line.startswith("forget "):
             tag_arg = line.split(" ", 1)[1].strip()
