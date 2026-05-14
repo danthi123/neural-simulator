@@ -1,0 +1,95 @@
+{
+  "seed": 44,
+  "chains": [
+    [
+      "apple",
+      "big",
+      "hot"
+    ],
+    [
+      "dog",
+      "small",
+      "cold"
+    ],
+    [
+      "cat",
+      "hot",
+      "big"
+    ],
+    [
+      "river",
+      "cold",
+      "small"
+    ]
+  ],
+  "top_n": 5,
+  "n_direct_pass": 4,
+  "n_transitive_pass": 3,
+  "n_total": 4,
+  "results": [
+    {
+      "A": "apple",
+      "B": "big",
+      "C": "hot",
+      "top_n": [
+        "big",
+        "go",
+        "cat",
+        "come",
+        "look"
+      ],
+      "B_score": 0.20147500664577286,
+      "C_score": 0.046357081175133576,
+      "direct_pass": true,
+      "transitive_pass": false
+    },
+    {
+      "A": "dog",
+      "B": "small",
+      "C": "cold",
+      "top_n": [
+        "small",
+        "look",
+        "stop",
+        "cold",
+        "go"
+      ],
+      "B_score": 0.31655062491028035,
+      "C_score": 0.04331745393509099,
+      "direct_pass": true,
+      "transitive_pass": true
+    },
+    {
+      "A": "cat",
+      "B": "hot",
+      "C": "big",
+      "top_n": [
+        "hot",
+        "go",
+        "big",
+        "dog",
+        "stop"
+      ],
+      "B_score": 0.2821225065225772,
+      "C_score": 0.05323066160803343,
+      "direct_pass": true,
+      "transitive_pass": true
+    },
+    {
+      "A": "river",
+      "B": "cold",
+      "C": "small",
+      "top_n": [
+        "cold",
+        "small",
+        "dog",
+        "go",
+        "look"
+      ],
+      "B_score": 0.17705014446507222,
+      "C_score": 0.05901671482169074,
+      "direct_pass": true,
+      "transitive_pass": true
+    }
+  ]
+}
