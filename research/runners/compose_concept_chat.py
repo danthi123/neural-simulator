@@ -26,6 +26,9 @@ from research.runners.compose_concept_engram import (
     encode_concept_pair, lang_output_pattern_during_input,
     cosine_to_word, _ALL_CONCEPTS,
 )
+from research.runners.compose_concept_pool_readout import (
+    measure_concept_pool_rates, _POOL_TO_WORD,
+)
 
 
 def main():
@@ -67,19 +70,10 @@ def main():
     )
     bridge.load_checkpoint(args.load_bridge)
 
-    # Freeze plasticity
-    for g in [
-        "language_input_to_motor", "language_input_to_verb_pool",
-        "language_input_to_noun_pool", "language_input_to_adjective_pool",
-        "motor_to_language_output", "verb_pool_to_language_output",
-        "noun_pool_to_language_output", "adjective_pool_to_language_output",
-        "motor_FS_to_motor", "verb_pool_FS_to_verb_pool",
-        "noun_pool_FS_to_noun_pool", "adjective_pool_FS_to_adjective_pool",
-    ]:
-        try:
-            bridge.set_plasticity_gate(g, 0.0)
-        except Exception:
-            pass
+    # IMPORTANT: do NOT freeze plasticity BEFORE encoding. Cross-pool
+    # association weights (lang_input -> non-target pool) need active STDP
+    # during engram encoding for the associative recall to work later.
+    # We freeze gates AFTER encoding completes, before the chat loop.
 
     # Region filter: concept pools only (no motor)
     rm = bridge.region_manager
@@ -112,6 +106,18 @@ def main():
         )
         print(f"  learned: '{a}' <-> '{b}'", flush=True)
 
+    # Now freeze plasticity for inference stability (chat loop)
+    for g in [
+        "language_input_to_motor", "language_input_to_verb_pool",
+        "language_input_to_noun_pool", "language_input_to_adjective_pool",
+        "motor_to_language_output", "verb_pool_to_language_output",
+        "noun_pool_to_language_output", "adjective_pool_to_language_output",
+    ]:
+        try:
+            bridge.set_plasticity_gate(g, 0.0)
+        except Exception:
+            pass
+
     print()
     print("=" * 60)
     print("CONCEPT CHAT — type a concept word, system associates")
@@ -120,26 +126,30 @@ def main():
     print("Type 'quit' to exit")
     print("=" * 60, flush=True)
 
+    # All concept pools (for pool-firing readout)
+    all_concept_pools = [_WORD_TO_POOL[w] for w in valid_concepts]
+
     def handle(word):
         if word not in _WORD_TO_IDX or _WORD_TO_IDX[word] >= args.n_words_for_orthogonal:
             return None
         t0 = time.time()
-        pat, n_lo = lang_output_pattern_during_input(
-            bridge, word,
-            n_lang_input=args.n_lang_input, sparsity=args.sparsity,
+        # POOL-FIRING readout (65% multi-seed) instead of cosine-spelling (30%)
+        rates = measure_concept_pool_rates(
+            bridge, word, all_concept_pools,
+            n_lang_input=args.n_lang_input,
+            sparsity=args.sparsity,
             n_words_for_orthogonal=args.n_words_for_orthogonal,
             stim_steps=args.drive_steps,
         )
-        scores = {w: cosine_to_word(
-            pat, w, n_lo, n_words_for_orthogonal=args.n_words_for_orthogonal,
-            sparsity=args.sparsity,
-        ) for w in valid_concepts}
-        ranked = sorted(scores.items(), key=lambda kv: -kv[1])
-        non_self = [(w, s) for w, s in ranked if w != word]
+        pool_self = _WORD_TO_POOL[word]
+        non_self_ranked = sorted(
+            [(p, r) for p, r in rates.items() if p != pool_self],
+            key=lambda kv: -kv[1])
+        top3 = [(_POOL_TO_WORD.get(p, p.split('_')[-1]), r)
+                 for p, r in non_self_ranked[:3]]
         return {
-            "top_1_overall": ranked[0],
-            "top_3_non_self": non_self[:3],
-            "self_score": scores[word],
+            "self_rate": rates[pool_self],
+            "top3_non_self": top3,
             "elapsed_s": time.time() - t0,
         }
 
@@ -151,10 +161,9 @@ def main():
             if r is None:
                 print(f"  [unknown: '{inp}']", flush=True)
                 continue
-            top1, _ = r["top_1_overall"]
-            associations = ", ".join(f"{w}={s:.2f}" for w, s in r["top_3_non_self"])
-            print(f"  spelling: {top1} (cos={r['top_1_overall'][1]:.2f})", flush=True)
-            print(f"  associated: [{associations}]", flush=True)
+            associations = ", ".join(f"{w}={s:.2f}" for w, s in r["top3_non_self"])
+            print(f"  self firing: {r['self_rate']:.2f}", flush=True)
+            print(f"  associates: [{associations}]", flush=True)
             print(f"  [{r['elapsed_s']:.1f}s]", flush=True)
     else:
         print("Ready.", flush=True)
@@ -170,10 +179,9 @@ def main():
             if r is None:
                 print(f"  [unknown word]")
                 continue
-            top1, _ = r["top_1_overall"]
-            associations = ", ".join(f"{w}={s:.2f}" for w, s in r["top_3_non_self"])
-            print(f"  spelling: {top1}")
-            print(f"  associated: [{associations}]")
+            associations = ", ".join(f"{w}={s:.2f}" for w, s in r["top3_non_self"])
+            print(f"  self: {r['self_rate']:.2f}")
+            print(f"  associates: [{associations}]")
 
     print("\nDone.", flush=True)
 
