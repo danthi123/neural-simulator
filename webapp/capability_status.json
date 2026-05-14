@@ -52,6 +52,13 @@
       "date": "2026-05-14"
     },
     {
+      "name": "Yes/no questions ('is a b?') - 96.7% accuracy multi-seed",
+      "status": "VALIDATED",
+      "metric": "v16 5-seed 6 TRUE + 6 NEGATIVE queries: 28/30 TP + 30/30 TN = 58/60 = 96.7%. PERFECT true negatives (system never falsely confirms untrained pair). 93.3% true positives (occasional 'PARTIAL' on weak recall). Strongest multi-seed metric in the conversational suite. Combines tag-existence check (deterministic) with stim-recall confidence verification.",
+      "doc": "2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md",
+      "date": "2026-05-14"
+    },
+    {
       "name": "Engram-tag stim-recall - 87.5% multi-seed (catalog D.14 Tonegawa)",
       "status": "VALIDATED",
       "metric": "v16 5-seed 8-pair: 35/40 = 87.5% stim-recall (both concepts in lang_output top-5). Range 6-8 per seed (75-100%). Chance baseline ~8.3% (5/16 * 4/15). Recipe: v16 baseline arch + 500 encoding events + balanced teacher 500 pA. Engram tag captures co-firing concept-pool neurons; stimulating tag reliably reactivates both concepts.",
