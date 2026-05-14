@@ -93,17 +93,20 @@ def encode_with_pattern(bridge, verb_word: str, motor_word: str,
     for _ in range(30):
         bridge._run_one_simulation_step()
 
-    # Accumulate firing pattern during encoding
+    # Pre-allocate ext + pattern_accum ONCE (was allocating per step ->
+    # CuPy pool grew unbounded, 36GB+ WSS at 16+ engrams).
     pattern_accum = cp.zeros(n_total, dtype=cp.float32)
+    ext = cp.zeros(n_total, dtype=cp.float32)
     for _ in range(encoding_steps):
-        ext = cp.zeros(n_total, dtype=cp.float32)
+        ext.fill(0)  # in-place zero, no allocation
         ext[lang_arr_gpu] = both_gpu
         if use_motor_teacher:
             ext[motor_target_arr_gpu] = motor_teacher_pA
         bridge.cp_external_input_current[:] = ext
         bridge._run_one_simulation_step()
         if hasattr(bridge, "cp_firing_states"):
-            pattern_accum += bridge.cp_firing_states.astype(cp.float32)
+            # Direct add without astype intermediate
+            pattern_accum += bridge.cp_firing_states
 
     # Reset
     bridge.cp_external_input_current[:] = 0.0
@@ -159,15 +162,16 @@ def measure_firing_pattern_during_drive(bridge, verb_word: str, motor_word: str,
     for _ in range(30):
         bridge._run_one_simulation_step()
 
-    # Drive + accumulate firing
+    # Drive + accumulate firing (pre-allocated to avoid pool growth)
     pattern_accum = cp.zeros(n_total, dtype=cp.float32)
+    ext = cp.zeros(n_total, dtype=cp.float32)
     for _ in range(drive_steps):
-        ext = cp.zeros(n_total, dtype=cp.float32)
+        ext.fill(0)
         ext[lang_arr_gpu] = both_gpu
         bridge.cp_external_input_current[:] = ext
         bridge._run_one_simulation_step()
         if hasattr(bridge, "cp_firing_states"):
-            pattern_accum += bridge.cp_firing_states.astype(cp.float32)
+            pattern_accum += bridge.cp_firing_states
 
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(20):

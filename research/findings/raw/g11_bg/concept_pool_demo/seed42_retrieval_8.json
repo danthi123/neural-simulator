@@ -1,0 +1,155 @@
+{
+  "seed": 42,
+  "load_bridge": "research/findings/raw/g11_bg/concept_pool_demo/seed42_v16.simstate.h5",
+  "encoding_steps": 200,
+  "retrieval_steps": 200,
+  "top_k": 100,
+  "n_correct_match": 6,
+  "n_total": 8,
+  "results": [
+    {
+      "true_tag": "go_north",
+      "best_match": "apple_north",
+      "top_score": 0.33858389602727296,
+      "true_score": 0.28812012366068407,
+      "true_rank": 3,
+      "is_correct": false,
+      "all_scores": {
+        "go_north": 0.28812012366068407,
+        "come_south": 0.2592374449856394,
+        "stop_west": 0.2702655909999355,
+        "look_east": 0.23583785778300748,
+        "apple_north": 0.33858389602727296,
+        "river_south": 0.281521004240612,
+        "dog_west": 0.29067429388516663,
+        "cat_east": 0.19827341348718544
+      }
+    },
+    {
+      "true_tag": "come_south",
+      "best_match": "river_south",
+      "top_score": 0.40039903098587837,
+      "true_score": 0.36070573481876017,
+      "true_rank": 2,
+      "is_correct": false,
+      "all_scores": {
+        "go_north": 0.30576597404752315,
+        "come_south": 0.36070573481876017,
+        "stop_west": 0.3019883774834794,
+        "look_east": 0.31197964364382846,
+        "apple_north": 0.3427725755314023,
+        "river_south": 0.40039903098587837,
+        "dog_west": 0.33390451577838187,
+        "cat_east": 0.3399723415819204
+      }
+    },
+    {
+      "true_tag": "stop_west",
+      "best_match": "stop_west",
+      "top_score": 0.34991843202690065,
+      "true_score": 0.34991843202690065,
+      "true_rank": 1,
+      "is_correct": true,
+      "all_scores": {
+        "go_north": 0.27611313592496584,
+        "come_south": 0.28706173373827926,
+        "stop_west": 0.34991843202690065,
+        "look_east": 0.3138375704289469,
+        "apple_north": 0.3249373934211868,
+        "river_south": 0.3104121096917546,
+        "dog_west": 0.33634944728759253,
+        "cat_east": 0.32795291191161197
+      }
+    },
+    {
+      "true_tag": "look_east",
+      "best_match": "look_east",
+      "top_score": 0.35516015143536545,
+      "true_score": 0.35516015143536545,
+      "true_rank": 1,
+      "is_correct": true,
+      "all_scores": {
+        "go_north": 0.2772626849512943,
+        "come_south": 0.30234720164661355,
+        "stop_west": 0.2982979913944595,
+        "look_east": 0.35516015143536545,
+        "apple_north": 0.3001424244216707,
+        "river_south": 0.3063683300145943,
+        "dog_west": 0.33180749129866777,
+        "cat_east": 0.32998379388586446
+      }
+    },
+    {
+      "true_tag": "apple_north",
+      "best_match": "apple_north",
+      "top_score": 0.3931233139479953,
+      "true_score": 0.3931233139479953,
+      "true_rank": 1,
+      "is_correct": true,
+      "all_scores": {
+        "go_north": 0.3671329091351461,
+        "come_south": 0.27313761481022486,
+        "stop_west": 0.28199249156244516,
+        "look_east": 0.3285782593395726,
+        "apple_north": 0.3931233139479953,
+        "river_south": 0.31456510201219245,
+        "dog_west": 0.3040140401640439,
+        "cat_east": 0.26841101992531363
+      }
+    },
+    {
+      "true_tag": "river_south",
+      "best_match": "river_south",
+      "top_score": 0.44604590528395827,
+      "true_score": 0.44604590528395827,
+      "true_rank": 1,
+      "is_correct": true,
+      "all_scores": {
+        "go_north": 0.25259021523246594,
+        "come_south": 0.3274466822107606,
+        "stop_west": 0.309443699801808,
+        "look_east": 0.2647113510161151,
+        "apple_north": 0.28904047064366617,
+        "river_south": 0.44604590528395827,
+        "dog_west": 0.3073659336951775,
+        "cat_east": 0.31324662562403083
+      }
+    },
+    {
+      "true_tag": "dog_west",
+      "best_match": "dog_west",
+      "top_score": 0.3686291145070496,
+      "true_score": 0.3686291145070496,
+      "true_rank": 1,
+      "is_correct": true,
+      "all_scores": {
+        "go_north": 0.2965999070100983,
+        "come_south": 0.3093736356657333,
+        "stop_west": 0.28794839103538666,
+        "look_east": 0.3096811873127574,
+        "apple_north": 0.35848296912458927,
+        "river_south": 0.3137377041217423,
+        "dog_west": 0.3686291145070496,
+        "cat_east": 0.29075444670854167
+      }
+    },
+    {
+      "true_tag": "cat_east",
+      "best_match": "cat_east",
+      "top_score": 0.39759849472753295,
+      "true_score": 0.39759849472753295,
+      "true_rank": 1,
+      "is_correct": true,
+      "all_scores": {
+        "go_north": 0.26083375481091087,
+        "come_south": 0.2921353022914295,
+        "stop_west": 0.26217983388652416,
+        "look_east": 0.3646553361649727,
+        "apple_north": 0.3311594828535683,
+        "river_south": 0.27825891021699073,
+        "dog_west": 0.3338479713807597,
+        "cat_east": 0.39759849472753295
+      }
+    }
+  ]
+}
