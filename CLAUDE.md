@@ -992,11 +992,52 @@ events.
 
 **Conclusion:** adding the dlpfc_verb region (with any dynamics
 strength tested) breaks v14's reciprocal binding. v15 cannot be a
-drop-in. **v14 remains the production recipe.**
+drop-in.
 
-For sequential composition, pivot to v16: direct verb_pool → motor
+For sequential composition, pivoted to v16: direct verb_pool → motor
 plastic pathways (no new region). Hebbian "go + north co-firing"
 hypothesis. See findings doc §v15 NEGATIVE.
+
+## 🎉 v16 5-seed MULTI-SEED GO (2026-05-13 night): compositional substrate validated
+
+V16 adds **direct verb_pool_X → motor_Y plastic pathways** (16 total =
+4 verbs × 4 motors), zero-init + zero-jitter so Phase 1 is preserved.
+No new region (v15's downfall). 5-seed validation:
+
+| Seed | P1 W→A | P3 A→W | Total |
+|---|---|---|---|
+| 42 | 13/16 | 16/16 | 29/32 |
+| 43 | 12/16 | 16/16 | 28/32 |
+| 44 | 11/16 | 16/16 | 27/32 |
+| 45 | 12/16 | 16/16 | 28/32 |
+| 46 | 11/16 | 16/16 | 27/32 |
+| **Mean** | **11.8/16 (74%)** | **80/80 = 100% UNANIMOUS** | **27.8/32 (87%)** |
+
+vs v14 5-seed: P1 -0.6/16 (-3.75pp); A→W identical (both 100%); total
+-1.85pp. **v16 is a near-drop-in for v14** — minor P1 regression from
+added structural pathways is within noise, A→W perfect across all 5 seeds.
+
+**5/5 GO** with 5 robust + 9 mixed + 2 fragile words (look=2/5, big=2/5).
+
+**Critical:** v16 pathways are STRUCTURALLY present but FUNCTIONALLY
+silent (zero weights) until compose training opens the
+`verb_to_motor_direct` gate and drives (verb, motor) co-firing.
+Compose training is the next step (will grow weights from 0 via STDP).
+
+```bash
+# v16 production recipe (Phase 1 with compositional substrate):
+python -m research.runners.concept_pool_demo --seed N \
+    --n-train-events 200 --n-lang-input 2048 --n-per-pool 200 \
+    --n-fs-per-pool 24 --weak-concept-dynamics --interleaved \
+    --topographic-factor 3.0 --off-target-factor 0.3 \
+    --enable-adjective --orthogonal-codes --sparsity 0.05 \
+    --enable-direct-verb-to-motor \
+    --save-bridge <out.h5> --out <out.json>
+```
+
+**v16 is the new production recipe for Phase 1 + composition-ready.**
+
+**Findings:** `research/findings/2026-05-13-concept-pool-architecture-Phase1.md` §v16
 
 Sequential composition still open (v12 NEGATIVE bidirectional dlpfc;
 v13 PARTIAL per-kind NMDA: +3x persistence but -5x isolation). Real
