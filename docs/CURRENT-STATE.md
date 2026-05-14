@@ -7,7 +7,10 @@ This document is the **authoritative current-state reference**.
 Update it whenever capabilities change. For the journey of how we
 got here, see `research/findings/`.
 
-**Last meaningful update:** 2026-05-05 (three-factor learning rule sweep in flight; Phase 1 GPU-port + Phase 2 FP16 + parallel=6 perf stack shipped & GPU-validated)
+**Last meaningful update:** 2026-05-14 (concept-concept semantic
+conversation validated at 90% FULL / 100% PARTIAL multi-seed via
+multi-tag cue retrieval; bug retraction for prior compose_concept
+claims documented).
 
 ---
 
@@ -20,12 +23,17 @@ The simulator is a GPU-accelerated spiking neural network with:
 - Biology-grounded models: Izhikevich-2007, Hodgkin-Huxley, AdEx
 - ~375 biological mechanisms catalogued from Kandel + 12 specialty texts
 
-The agent currently solves two main tasks:
+The agent currently solves three main tasks:
 
 1. **Gridworld navigation** (the "main task") — find a goal on a 8×8
    to 24×24 grid using only retinal input
 2. **Word-to-action mapping** (the "language task") — hear "north",
    move motor cortex toward north
+3. **Concept-concept semantic conversation** (2026-05-14, NEW) —
+   user types "apple", system retrieves "big" AND "cat" via
+   multi-tag engram cue retrieval. 90% FULL / 100% PARTIAL multi-seed
+   at 16-word vocab. Chat REPL with `remember`/`what is`/`forget`/`and`
+   commands. See [`research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md`](../research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md).
 
 ---
 
