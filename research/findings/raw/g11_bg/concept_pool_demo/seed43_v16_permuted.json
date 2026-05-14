@@ -1,0 +1,605 @@
+{
+  "seed": 43,
+  "load_bridge": "research/findings/raw/g11_bg/concept_pool_demo/seed43_v16_composed400.simstate.h5",
+  "true_mapping": [
+    [
+      "go",
+      "north"
+    ],
+    [
+      "come",
+      "south"
+    ],
+    [
+      "stop",
+      "west"
+    ],
+    [
+      "look",
+      "east"
+    ]
+  ],
+  "verb_firing": {
+    "go": {
+      "motor_N": 0.455,
+      "motor_E": 0.19,
+      "motor_S": 0.215,
+      "motor_W": 0.27
+    },
+    "come": {
+      "motor_N": 0.315,
+      "motor_E": 0.265,
+      "motor_S": 0.395,
+      "motor_W": 0.31
+    },
+    "stop": {
+      "motor_N": 0.28,
+      "motor_E": 0.215,
+      "motor_S": 0.105,
+      "motor_W": 0.12
+    },
+    "look": {
+      "motor_N": 0.14,
+      "motor_E": 0.12,
+      "motor_S": 0.185,
+      "motor_W": 0.24
+    }
+  },
+  "all_permutations": [
+    {
+      "perm_idx": 1,
+      "mapping": [
+        [
+          "go",
+          "north"
+        ],
+        [
+          "come",
+          "south"
+        ],
+        [
+          "stop",
+          "east"
+        ],
+        [
+          "look",
+          "west"
+        ]
+      ],
+      "n_pass": 3,
+      "is_true": false
+    },
+    {
+      "perm_idx": 20,
+      "mapping": [
+        [
+          "go",
+          "east"
+        ],
+        [
+          "come",
+          "south"
+        ],
+        [
+          "stop",
+          "north"
+        ],
+        [
+          "look",
+          "west"
+        ]
+      ],
+      "n_pass": 3,
+      "is_true": false
+    },
+    {
+      "perm_idx": 0,
+      "mapping": [
+        [
+          "go",
+          "north"
+        ],
+        [
+          "come",
+          "south"
+        ],
+        [
+          "stop",
+          "west"
+        ],
+        [
+          "look",
+          "east"
+        ]
+      ],
+      "n_pass": 2,
+      "is_true": true
+    },
+    {
+      "perm_idx": 4,
+      "mapping": [
+        [
+          "go",
+          "north"
+        ],
+        [
+          "come",
+          "east"
+        ],
+        [
+          "stop",
+          "south"
+        ],
+        [
+          "look",
+          "west"
+        ]
+      ],
+      "n_pass": 2,
+      "is_true": false
+    },
+    {
+      "perm_idx": 10,
+      "mapping": [
+        [
+          "go",
+          "south"
+        ],
+        [
+          "come",
+          "east"
+        ],
+        [
+          "stop",
+          "north"
+        ],
+        [
+          "look",
+          "west"
+        ]
+      ],
+      "n_pass": 2,
+      "is_true": false
+    },
+    {
+      "perm_idx": 14,
+      "mapping": [
+        [
+          "go",
+          "west"
+        ],
+        [
+          "come",
+          "south"
+        ],
+        [
+          "stop",
+          "north"
+        ],
+        [
+          "look",
+          "east"
+        ]
+      ],
+      "n_pass": 2,
+      "is_true": false
+    },
+    {
+      "perm_idx": 2,
+      "mapping": [
+        [
+          "go",
+          "north"
+        ],
+        [
+          "come",
+          "west"
+        ],
+        [
+          "stop",
+          "south"
+        ],
+        [
+          "look",
+          "east"
+        ]
+      ],
+      "n_pass": 1,
+      "is_true": false
+    },
+    {
+      "perm_idx": 3,
+      "mapping": [
+        [
+          "go",
+          "north"
+        ],
+        [
+          "come",
+          "west"
+        ],
+        [
+          "stop",
+          "east"
+        ],
+        [
+          "look",
+          "south"
+        ]
+      ],
+      "n_pass": 1,
+      "is_true": false
+    },
+    {
+      "perm_idx": 5,
+      "mapping": [
+        [
+          "go",
+          "north"
+        ],
+        [
+          "come",
+          "east"
+        ],
+        [
+          "stop",
+          "west"
+        ],
+        [
+          "look",
+          "south"
+        ]
+      ],
+      "n_pass": 1,
+      "is_true": false
+    },
+    {
+      "perm_idx": 7,
+      "mapping": [
+        [
+          "go",
+          "south"
+        ],
+        [
+          "come",
+          "north"
+        ],
+        [
+          "stop",
+          "east"
+        ],
+        [
+          "look",
+          "west"
+        ]
+      ],
+      "n_pass": 1,
+      "is_true": false
+    },
+    {
+      "perm_idx": 8,
+      "mapping": [
+        [
+          "go",
+          "south"
+        ],
+        [
+          "come",
+          "west"
+        ],
+        [
+          "stop",
+          "north"
+        ],
+        [
+          "look",
+          "east"
+        ]
+      ],
+      "n_pass": 1,
+      "is_true": false
+    },
+    {
+      "perm_idx": 15,
+      "mapping": [
+        [
+          "go",
+          "west"
+        ],
+        [
+          "come",
+          "south"
+        ],
+        [
+          "stop",
+          "east"
+        ],
+        [
+          "look",
+          "north"
+        ]
+      ],
+      "n_pass": 1,
+      "is_true": false
+    },
+    {
+      "perm_idx": 16,
+      "mapping": [
+        [
+          "go",
+          "west"
+        ],
+        [
+          "come",
+          "east"
+        ],
+        [
+          "stop",
+          "north"
+        ],
+        [
+          "look",
+          "south"
+        ]
+      ],
+      "n_pass": 1,
+      "is_true": false
+    },
+    {
+      "perm_idx": 18,
+      "mapping": [
+        [
+          "go",
+          "east"
+        ],
+        [
+          "come",
+          "north"
+        ],
+        [
+          "stop",
+          "south"
+        ],
+        [
+          "look",
+          "west"
+        ]
+      ],
+      "n_pass": 1,
+      "is_true": false
+    },
+    {
+      "perm_idx": 21,
+      "mapping": [
+        [
+          "go",
+          "east"
+        ],
+        [
+          "come",
+          "south"
+        ],
+        [
+          "stop",
+          "west"
+        ],
+        [
+          "look",
+          "north"
+        ]
+      ],
+      "n_pass": 1,
+      "is_true": false
+    },
+    {
+      "perm_idx": 22,
+      "mapping": [
+        [
+          "go",
+          "east"
+        ],
+        [
+          "come",
+          "west"
+        ],
+        [
+          "stop",
+          "north"
+        ],
+        [
+          "look",
+          "south"
+        ]
+      ],
+      "n_pass": 1,
+      "is_true": false
+    },
+    {
+      "perm_idx": 6,
+      "mapping": [
+        [
+          "go",
+          "south"
+        ],
+        [
+          "come",
+          "north"
+        ],
+        [
+          "stop",
+          "west"
+        ],
+        [
+          "look",
+          "east"
+        ]
+      ],
+      "n_pass": 0,
+      "is_true": false
+    },
+    {
+      "perm_idx": 9,
+      "mapping": [
+        [
+          "go",
+          "south"
+        ],
+        [
+          "come",
+          "west"
+        ],
+        [
+          "stop",
+          "east"
+        ],
+        [
+          "look",
+          "north"
+        ]
+      ],
+      "n_pass": 0,
+      "is_true": false
+    },
+    {
+      "perm_idx": 11,
+      "mapping": [
+        [
+          "go",
+          "south"
+        ],
+        [
+          "come",
+          "east"
+        ],
+        [
+          "stop",
+          "west"
+        ],
+        [
+          "look",
+          "north"
+        ]
+      ],
+      "n_pass": 0,
+      "is_true": false
+    },
+    {
+      "perm_idx": 12,
+      "mapping": [
+        [
+          "go",
+          "west"
+        ],
+        [
+          "come",
+          "north"
+        ],
+        [
+          "stop",
+          "south"
+        ],
+        [
+          "look",
+          "east"
+        ]
+      ],
+      "n_pass": 0,
+      "is_true": false
+    },
+    {
+      "perm_idx": 13,
+      "mapping": [
+        [
+          "go",
+          "west"
+        ],
+        [
+          "come",
+          "north"
+        ],
+        [
+          "stop",
+          "east"
+        ],
+        [
+          "look",
+          "south"
+        ]
+      ],
+      "n_pass": 0,
+      "is_true": false
+    },
+    {
+      "perm_idx": 17,
+      "mapping": [
+        [
+          "go",
+          "west"
+        ],
+        [
+          "come",
+          "east"
+        ],
+        [
+          "stop",
+          "south"
+        ],
+        [
+          "look",
+          "north"
+        ]
+      ],
+      "n_pass": 0,
+      "is_true": false
+    },
+    {
+      "perm_idx": 19,
+      "mapping": [
+        [
+          "go",
+          "east"
+        ],
+        [
+          "come",
+          "north"
+        ],
+        [
+          "stop",
+          "west"
+        ],
+        [
+          "look",
+          "south"
+        ]
+      ],
+      "n_pass": 0,
+      "is_true": false
+    },
+    {
+      "perm_idx": 23,
+      "mapping": [
+        [
+          "go",
+          "east"
+        ],
+        [
+          "come",
+          "west"
+        ],
+        [
+          "stop",
+          "south"
+        ],
+        [
+          "look",
+          "north"
+        ]
+      ],
+      "n_pass": 0,
+      "is_true": false
+    }
+  ],
+  "true_rank": 3,
+  "true_n_pass": 2,
+  "max_n_pass": 3
+}

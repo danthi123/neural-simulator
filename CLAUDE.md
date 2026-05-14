@@ -1128,6 +1128,47 @@ either:
 binding preservation; compositional signal requires further
 iteration to robust multi-seed PASS.**
 
+### Anti-cheat (permuted-mapping control, 5 seeds, 400 events/pair)
+
+Compose-training trains TRUE mapping {go→north, come→south,
+stop→west, look→east}. Anti-cheat tests all 4! = 24 permutations
+of verb→motor mapping. A REAL learning result would have TRUE
+mapping uniquely ranked 1/24 (highest PASS count).
+
+| Seed | True rank | True PASS | Best perm PASS |
+|---|---|---|---|
+| 42 | 2/24 | 2/4 | 4/4 |
+| 43 | 3/24 | 2/4 | 3/4 |
+| **44** | **1/24** | **2/4** | **2/4 (TRUE IS UNIQUELY BEST)** |
+| 45 | 17/24 | 0/4 | 2/4 |
+| 46 | 19/24 | 0/4 | 2/4 |
+
+**Honest verdict:** Mean true rank 8.4/24 vs chance 12.5/24. 3/5
+seeds show above-chance signal (ranks ≤3), but only seed 44 is
+UNIQUELY best. Seeds 45/46 actively learn WRONG associations
+(rank 17-19 = anti-learning). This pattern matches the 2026-05-03
+permuted-label control finding: weak signal that's seed-dependent
+and not robust enough to claim composition is "working."
+
+**Compositional binding multi-seed verdict: BOUNDARY (weak signal,
+not robust). Some learning is happening (seed 44 unique best is
+not chance) but the current architecture+training doesn't reliably
+produce composition across seeds.**
+
+**What would push above BOUNDARY:**
+1. Much stronger compose-training (2000+ events, teacher current
+   on motor during co-fire)
+2. Pre-bind initialization (set verb→motor weight to non-zero
+   prior so STDP refines rather than grows from 0)
+3. Different test methodology (verb+motor co-drive → motor
+   modulated, vs. verb-alone → motor)
+4. Deeper architecture rework (e.g., proper PFC region with
+   correct dynamics that doesn't break A→W)
+
+The compose-training framework + anti-cheat tools are now in place
+for future iteration. v14/v16 binding (concepts + diversity) is
+unconditionally validated; composition is the open frontier.
+
 Sequential composition still open (v12 NEGATIVE bidirectional dlpfc;
 v13 PARTIAL per-kind NMDA: +3x persistence but -5x isolation). Real
 architectural tension between holding (NMDA bistability) and selection
