@@ -1,0 +1,832 @@
+{
+  "bridge": "research/findings/raw/g11_bg/concept_pool_demo/seed44_v16.simstate.h5",
+  "seed": 44,
+  "encoding_steps": 200,
+  "top_k": 100,
+  "recall_stim_pA": 1500.0,
+  "encoding_stats": [
+    {
+      "name": "go_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.675390601158142
+    },
+    {
+      "name": "go_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6662760972976685
+    },
+    {
+      "name": "go_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7299479246139526
+    },
+    {
+      "name": "go_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7214844226837158
+    },
+    {
+      "name": "come_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.8048176765441895
+    },
+    {
+      "name": "come_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6686197519302368
+    },
+    {
+      "name": "come_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7279947996139526
+    },
+    {
+      "name": "come_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.699609398841858
+    },
+    {
+      "name": "stop_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7726562023162842
+    },
+    {
+      "name": "stop_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6704427003860474
+    },
+    {
+      "name": "stop_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.743749976158142
+    },
+    {
+      "name": "stop_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6826822757720947
+    },
+    {
+      "name": "look_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7932292222976685
+    },
+    {
+      "name": "look_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7610677480697632
+    },
+    {
+      "name": "look_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7104166746139526
+    },
+    {
+      "name": "look_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7311197519302368
+    },
+    {
+      "name": "apple_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7606770992279053
+    },
+    {
+      "name": "apple_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6884114742279053
+    },
+    {
+      "name": "apple_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7127604484558105
+    },
+    {
+      "name": "apple_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.763281226158142
+    },
+    {
+      "name": "river_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.791406273841858
+    },
+    {
+      "name": "river_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6345051527023315
+    },
+    {
+      "name": "river_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7380207777023315
+    },
+    {
+      "name": "river_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7428385019302368
+    },
+    {
+      "name": "dog_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.8058593273162842
+    },
+    {
+      "name": "dog_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7826822996139526
+    },
+    {
+      "name": "dog_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7473958730697632
+    },
+    {
+      "name": "dog_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6960937976837158
+    },
+    {
+      "name": "cat_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7772135734558105
+    },
+    {
+      "name": "cat_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6723958253860474
+    },
+    {
+      "name": "cat_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.773828148841858
+    },
+    {
+      "name": "cat_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7709635496139526
+    },
+    {
+      "name": "big_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.790624976158142
+    },
+    {
+      "name": "big_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6923177242279053
+    },
+    {
+      "name": "big_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7951823472976685
+    },
+    {
+      "name": "big_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.663671851158142
+    },
+    {
+      "name": "small_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.769140601158142
+    },
+    {
+      "name": "small_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.6716145277023315
+    },
+    {
+      "name": "small_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7572916746139526
+    },
+    {
+      "name": "small_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7294270992279053
+    },
+    {
+      "name": "hot_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.739843726158142
+    },
+    {
+      "name": "hot_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7153645753860474
+    },
+    {
+      "name": "hot_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7434896230697632
+    },
+    {
+      "name": "hot_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7134114503860474
+    },
+    {
+      "name": "cold_north",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.8298176527023315
+    },
+    {
+      "name": "cold_east",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7298177480697632
+    },
+    {
+      "name": "cold_south",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7644531726837158
+    },
+    {
+      "name": "cold_west",
+      "n_tagged": 100,
+      "n_recorded_steps": 250,
+      "window_ms": 125.0,
+      "mean_spike_count": 1.7251302003860474
+    }
+  ],
+  "firing": {
+    "go_north": {
+      "verb": "go",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.15645,
+        "motor_E": 0.00095,
+        "motor_S": 0.00115,
+        "motor_W": 0.0
+      }
+    },
+    "go_east": {
+      "verb": "go",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.0003,
+        "motor_E": 0.15565,
+        "motor_S": 0.0021,
+        "motor_W": 0.00065
+      }
+    },
+    "go_south": {
+      "verb": "go",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.0004,
+        "motor_E": 0.0003,
+        "motor_S": 0.1503,
+        "motor_W": 0.0013
+      }
+    },
+    "go_west": {
+      "verb": "go",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.0007,
+        "motor_E": 0.00045,
+        "motor_S": 0.0003,
+        "motor_W": 0.1523
+      }
+    },
+    "come_north": {
+      "verb": "come",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.1604,
+        "motor_E": 0.00155,
+        "motor_S": 0.0009,
+        "motor_W": 0.00095
+      }
+    },
+    "come_east": {
+      "verb": "come",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.00055,
+        "motor_E": 0.15585,
+        "motor_S": 0.00135,
+        "motor_W": 0.0008
+      }
+    },
+    "come_south": {
+      "verb": "come",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.0009,
+        "motor_E": 0.00035,
+        "motor_S": 0.15625,
+        "motor_W": 0.0015
+      }
+    },
+    "come_west": {
+      "verb": "come",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.00065,
+        "motor_E": 0.0003,
+        "motor_S": 0.00025,
+        "motor_W": 0.15195
+      }
+    },
+    "stop_north": {
+      "verb": "stop",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.15625,
+        "motor_E": 0.00055,
+        "motor_S": 0.00035,
+        "motor_W": 0.0003
+      }
+    },
+    "stop_east": {
+      "verb": "stop",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.00055,
+        "motor_E": 0.15315,
+        "motor_S": 0.00145,
+        "motor_W": 0.00075
+      }
+    },
+    "stop_south": {
+      "verb": "stop",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.0,
+        "motor_E": 0.00045,
+        "motor_S": 0.1534,
+        "motor_W": 0.00085
+      }
+    },
+    "stop_west": {
+      "verb": "stop",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.00105,
+        "motor_E": 0.0004,
+        "motor_S": 5e-05,
+        "motor_W": 0.1553
+      }
+    },
+    "look_north": {
+      "verb": "look",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.1601,
+        "motor_E": 0.00195,
+        "motor_S": 0.0011,
+        "motor_W": 0.0002
+      }
+    },
+    "look_east": {
+      "verb": "look",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.00055,
+        "motor_E": 0.15305,
+        "motor_S": 0.00115,
+        "motor_W": 0.0005
+      }
+    },
+    "look_south": {
+      "verb": "look",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.00015,
+        "motor_E": 0.0002,
+        "motor_S": 0.15255,
+        "motor_W": 0.0017
+      }
+    },
+    "look_west": {
+      "verb": "look",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.0012,
+        "motor_E": 0.00115,
+        "motor_S": 0.00035,
+        "motor_W": 0.1512
+      }
+    },
+    "apple_north": {
+      "verb": "apple",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.15815,
+        "motor_E": 0.0022,
+        "motor_S": 0.001,
+        "motor_W": 0.0005
+      }
+    },
+    "apple_east": {
+      "verb": "apple",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.00015,
+        "motor_E": 0.1563,
+        "motor_S": 0.0015,
+        "motor_W": 0.00035
+      }
+    },
+    "apple_south": {
+      "verb": "apple",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.0005,
+        "motor_E": 0.0004,
+        "motor_S": 0.1506,
+        "motor_W": 0.0017
+      }
+    },
+    "apple_west": {
+      "verb": "apple",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.0003,
+        "motor_E": 0.00065,
+        "motor_S": 0.0001,
+        "motor_W": 0.1501
+      }
+    },
+    "river_north": {
+      "verb": "river",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.15845,
+        "motor_E": 0.0015,
+        "motor_S": 0.00105,
+        "motor_W": 0.0008
+      }
+    },
+    "river_east": {
+      "verb": "river",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.00055,
+        "motor_E": 0.1546,
+        "motor_S": 0.00225,
+        "motor_W": 0.00025
+      }
+    },
+    "river_south": {
+      "verb": "river",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.0008,
+        "motor_E": 0.00035,
+        "motor_S": 0.15165,
+        "motor_W": 0.00085
+      }
+    },
+    "river_west": {
+      "verb": "river",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.0009,
+        "motor_E": 0.00025,
+        "motor_S": 0.0,
+        "motor_W": 0.15095
+      }
+    },
+    "dog_north": {
+      "verb": "dog",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.15625,
+        "motor_E": 0.0005,
+        "motor_S": 0.00075,
+        "motor_W": 0.0002
+      }
+    },
+    "dog_east": {
+      "verb": "dog",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.0005,
+        "motor_E": 0.15665,
+        "motor_S": 0.00195,
+        "motor_W": 0.00175
+      }
+    },
+    "dog_south": {
+      "verb": "dog",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.0008,
+        "motor_E": 0.00015,
+        "motor_S": 0.1532,
+        "motor_W": 0.00085
+      }
+    },
+    "dog_west": {
+      "verb": "dog",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.00115,
+        "motor_E": 0.00095,
+        "motor_S": 0.0002,
+        "motor_W": 0.15175
+      }
+    },
+    "cat_north": {
+      "verb": "cat",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.15665,
+        "motor_E": 0.00035,
+        "motor_S": 0.00045,
+        "motor_W": 0.00035
+      }
+    },
+    "cat_east": {
+      "verb": "cat",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.00035,
+        "motor_E": 0.15625,
+        "motor_S": 0.0029,
+        "motor_W": 0.0009
+      }
+    },
+    "cat_south": {
+      "verb": "cat",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.00055,
+        "motor_E": 0.0,
+        "motor_S": 0.15205,
+        "motor_W": 0.00075
+      }
+    },
+    "cat_west": {
+      "verb": "cat",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.0016,
+        "motor_E": 0.00085,
+        "motor_S": 0.00035,
+        "motor_W": 0.1499
+      }
+    },
+    "big_north": {
+      "verb": "big",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.15715,
+        "motor_E": 0.0006,
+        "motor_S": 0.00055,
+        "motor_W": 0.0
+      }
+    },
+    "big_east": {
+      "verb": "big",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.0007,
+        "motor_E": 0.1558,
+        "motor_S": 0.0019,
+        "motor_W": 0.00115
+      }
+    },
+    "big_south": {
+      "verb": "big",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.0008,
+        "motor_E": 0.00025,
+        "motor_S": 0.1513,
+        "motor_W": 0.0023
+      }
+    },
+    "big_west": {
+      "verb": "big",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.0008,
+        "motor_E": 0.00015,
+        "motor_S": 0.0006,
+        "motor_W": 0.1506
+      }
+    },
+    "small_north": {
+      "verb": "small",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.1558,
+        "motor_E": 0.00125,
+        "motor_S": 0.00065,
+        "motor_W": 0.0002
+      }
+    },
+    "small_east": {
+      "verb": "small",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.00035,
+        "motor_E": 0.15505,
+        "motor_S": 0.0022,
+        "motor_W": 0.00175
+      }
+    },
+    "small_south": {
+      "verb": "small",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.00055,
+        "motor_E": 5e-05,
+        "motor_S": 0.1534,
+        "motor_W": 0.00065
+      }
+    },
+    "small_west": {
+      "verb": "small",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.0004,
+        "motor_E": 0.0005,
+        "motor_S": 0.0002,
+        "motor_W": 0.15335
+      }
+    },
+    "hot_north": {
+      "verb": "hot",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.15805,
+        "motor_E": 0.00145,
+        "motor_S": 0.00135,
+        "motor_W": 0.0001
+      }
+    },
+    "hot_east": {
+      "verb": "hot",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.0006,
+        "motor_E": 0.1557,
+        "motor_S": 0.0008,
+        "motor_W": 0.001
+      }
+    },
+    "hot_south": {
+      "verb": "hot",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.001,
+        "motor_E": 0.00015,
+        "motor_S": 0.15535,
+        "motor_W": 0.00145
+      }
+    },
+    "hot_west": {
+      "verb": "hot",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.00105,
+        "motor_E": 0.0006,
+        "motor_S": 0.00025,
+        "motor_W": 0.1534
+      }
+    },
+    "cold_north": {
+      "verb": "cold",
+      "motor": "north",
+      "rates": {
+        "motor_N": 0.1566,
+        "motor_E": 0.00125,
+        "motor_S": 0.00085,
+        "motor_W": 0.00055
+      }
+    },
+    "cold_east": {
+      "verb": "cold",
+      "motor": "east",
+      "rates": {
+        "motor_N": 0.00015,
+        "motor_E": 0.15305,
+        "motor_S": 0.00205,
+        "motor_W": 0.00125
+      }
+    },
+    "cold_south": {
+      "verb": "cold",
+      "motor": "south",
+      "rates": {
+        "motor_N": 0.0013,
+        "motor_E": 0.00015,
+        "motor_S": 0.1534,
+        "motor_W": 0.0019
+      }
+    },
+    "cold_west": {
+      "verb": "cold",
+      "motor": "west",
+      "rates": {
+        "motor_N": 0.0013,
+        "motor_E": 0.00055,
+        "motor_S": 0.00025,
+        "motor_W": 0.1515
+      }
+    }
+  },
+  "n_pass": 48,
+  "n_total": 48,
+  "true_rank": 1,
+  "true_pass": 48,
+  "best_perm_pass": 48
+}
