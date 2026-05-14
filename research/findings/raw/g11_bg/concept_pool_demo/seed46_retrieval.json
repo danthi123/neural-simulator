@@ -1,0 +1,67 @@
+{
+  "seed": 46,
+  "load_bridge": "research/findings/raw/g11_bg/concept_pool_demo/seed46_v16.simstate.h5",
+  "encoding_steps": 200,
+  "retrieval_steps": 200,
+  "top_k": 100,
+  "n_correct_match": 3,
+  "n_total": 4,
+  "results": [
+    {
+      "true_tag": "go_north",
+      "best_match": "go_north",
+      "top_score": 0.5235909984719208,
+      "true_score": 0.5235909984719208,
+      "true_rank": 1,
+      "is_correct": true,
+      "all_scores": {
+        "go_north": 0.5235909984719208,
+        "come_south": 0.26175114412357,
+        "stop_west": 0.3672148794148585,
+        "look_east": 0.28393737601594554
+      }
+    },
+    {
+      "true_tag": "come_south",
+      "best_match": "stop_west",
+      "top_score": 0.3375596947535208,
+      "true_score": 0.27982837575241615,
+      "true_rank": 3,
+      "is_correct": false,
+      "all_scores": {
+        "go_north": 0.2822351474755023,
+        "come_south": 0.27982837575241615,
+        "stop_west": 0.3375596947535208,
+        "look_east": 0.26492328943954446
+      }
+    },
+    {
+      "true_tag": "stop_west",
+      "best_match": "stop_west",
+      "top_score": 0.4649544048998195,
+      "true_score": 0.4649544048998195,
+      "true_rank": 1,
+      "is_correct": true,
+      "all_scores": {
+        "go_north": 0.3407659978961804,
+        "come_south": 0.26475776586257493,
+        "stop_west": 0.4649544048998195,
+        "look_east": 0.3506638510745113
+      }
+    },
+    {
+      "true_tag": "look_east",
+      "best_match": "look_east",
+      "top_score": 0.3984132733887775,
+      "true_score": 0.3984132733887775,
+      "true_rank": 1,
+      "is_correct": true,
+      "all_scores": {
+        "go_north": 0.27467591999982016,
+        "come_south": 0.2804950667932648,
+        "stop_west": 0.32739311060132953,
+        "look_east": 0.3984132733887775
+      }
+    }
+  ]
+}

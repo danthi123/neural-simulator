@@ -1,0 +1,105 @@
+{
+  "seed": 45,
+  "load_bridge": "research/findings/raw/g11_bg/concept_pool_demo/seed45_v16.simstate.h5",
+  "encoding_steps": 200,
+  "retrieval_steps": 200,
+  "recall_stim_pA": 1500.0,
+  "recall_steps": 100,
+  "n_match_correct": 3,
+  "n_motor_correct": 3,
+  "n_total": 4,
+  "results": [
+    {
+      "verb": "go",
+      "motor": "north",
+      "true_tag": "go_north",
+      "matched_tag": "go_north",
+      "match_score": 0.40005853202223124,
+      "all_scores": {
+        "go_north": 0.40005853202223124,
+        "come_south": 0.37312960632909575,
+        "stop_west": 0.30567745168310895,
+        "look_east": 0.2660228774887951
+      },
+      "is_match": true,
+      "motor_rates": {
+        "motor_N": 0.0295,
+        "motor_E": 0.0021,
+        "motor_S": 0.00905,
+        "motor_W": 0.00115
+      },
+      "recalled_motor_pool": "motor_N",
+      "true_motor_pool": "motor_N",
+      "motor_correct": true
+    },
+    {
+      "verb": "come",
+      "motor": "south",
+      "true_tag": "come_south",
+      "matched_tag": "come_south",
+      "match_score": 0.47839810708679553,
+      "all_scores": {
+        "go_north": 0.34167295515671614,
+        "come_south": 0.47839810708679553,
+        "stop_west": 0.3111357701366788,
+        "look_east": 0.4081755687045199
+      },
+      "is_match": true,
+      "motor_rates": {
+        "motor_N": 0.0204,
+        "motor_E": 0.0199,
+        "motor_S": 0.02865,
+        "motor_W": 0.00665
+      },
+      "recalled_motor_pool": "motor_S",
+      "true_motor_pool": "motor_S",
+      "motor_correct": true
+    },
+    {
+      "verb": "stop",
+      "motor": "west",
+      "true_tag": "stop_west",
+      "matched_tag": "come_south",
+      "match_score": 0.3566095009319973,
+      "all_scores": {
+        "go_north": 0.27777682589920966,
+        "come_south": 0.3566095009319973,
+        "stop_west": 0.3330647886277548,
+        "look_east": 0.31148724106719633
+      },
+      "is_match": false,
+      "motor_rates": {
+        "motor_N": 0.0185,
+        "motor_E": 0.0155,
+        "motor_S": 0.0248,
+        "motor_W": 0.0047
+      },
+      "recalled_motor_pool": "motor_S",
+      "true_motor_pool": "motor_W",
+      "motor_correct": false
+    },
+    {
+      "verb": "look",
+      "motor": "east",
+      "true_tag": "look_east",
+      "matched_tag": "look_east",
+      "match_score": 0.41976184068882405,
+      "all_scores": {
+        "go_north": 0.2929654929180282,
+        "come_south": 0.37871233066043497,
+        "stop_west": 0.27873471958508156,
+        "look_east": 0.41976184068882405
+      },
+      "is_match": true,
+      "motor_rates": {
+        "motor_N": 0.00925,
+        "motor_E": 0.039,
+        "motor_S": 0.0157,
+        "motor_W": 0.00565
+      },
+      "recalled_motor_pool": "motor_E",
+      "true_motor_pool": "motor_E",
+      "motor_correct": true
+    }
+  ]
+}
