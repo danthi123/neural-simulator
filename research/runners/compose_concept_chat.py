@@ -149,9 +149,11 @@ def main():
     print("Commands:")
     print("  remember <a> is <b>      Encode new association (90% retrieval)")
     print("  what is <word>           Retrieve associates (multi-tag, 90% multi-seed)")
+    print("  what is <a> and <b>      Compositional: words associated with BOTH")
     print("  tell me about <word>     Same as 'what is'")
     print("  forget <tag>             Delete an engram tag (tag = a_b)")
     print("  <word>                   Shortcut for multi-tag recall")
+    print("  <a> and <b>              Shortcut for intersection query")
     print("  /stim <tag>              Direct tag stim-recall (87.5% multi-seed)")
     print("  /cue <word>              Raw cue-pool firing rank (~28%; experimental)")
     print("  /tags                    List all encoded engram tags")
@@ -306,6 +308,15 @@ def main():
                 marker = "***" if n_hits >= 2 else ("**" if n_hits >= 1 else "")
                 print(f"    {w:8s} = {score:.3f} via {tag:20s} {marker}",
                       flush=True)
+        elif r["mode"] == "intersection":
+            print(f"  [intersection] cue=({r['a']} AND {r['b']})", flush=True)
+            if not r["shared"]:
+                print(f"  no words associated with both {r['a']} and {r['b']}",
+                      flush=True)
+            else:
+                for w, min_score, sa, sb in r["shared"][:5]:
+                    print(f"    {w:8s} = min({sa:.2f}, {sb:.2f}) = {min_score:.2f}",
+                          flush=True)
         elif r["mode"] == "stim":
             print(f"  [stim mode, 87.5% multi-seed] tag={r['tag']}", flush=True)
             print(f"  expected: {r['a_word']} + {r['b_word']}", flush=True)
@@ -356,6 +367,38 @@ def main():
         )
         encoded_tags.append(tag)
         return tag
+
+    def handle_intersection(word_a, word_b):
+        """Compositional retrieval: what's associated with BOTH a AND b.
+
+        Drive lang_input(a) tags, drive lang_input(b) tags, intersect
+        the top-5 associates of each. Returns words appearing in both
+        with their combined min-score (weakest link wins).
+
+        Built 2026-05-14 to demonstrate compositional conversational
+        capability: 'what's both apple AND red?' style queries.
+        """
+        r_a = handle_multitag(word_a)
+        r_b = handle_multitag(word_b)
+        if r_a is None or r_b is None:
+            return None
+        if not r_a.get("associates") or not r_b.get("associates"):
+            return {"mode": "intersection", "a": word_a, "b": word_b,
+                     "shared": [], "elapsed_s": 0}
+        # Set of words associated with a (top-5)
+        words_a = {w: score for w, score, _, _ in r_a["associates"]}
+        words_b = {w: score for w, score, _, _ in r_b["associates"]}
+        shared = []
+        for w in set(words_a) & set(words_b):
+            min_score = min(words_a[w], words_b[w])
+            shared.append((w, min_score, words_a[w], words_b[w]))
+        shared.sort(key=lambda x: -x[1])
+        return {
+            "mode": "intersection",
+            "a": word_a, "b": word_b,
+            "shared": shared,
+            "elapsed_s": r_a["elapsed_s"] + r_b["elapsed_s"],
+        }
 
     def handle_forget(tag_name):
         """Delete an engram tag at runtime."""
@@ -411,13 +454,29 @@ def main():
         if line.startswith("what is ") or line.startswith("tell me about "):
             # Natural-language multitag query
             if line.startswith("what is "):
-                word = line[len("what is "):].strip()
+                arg = line[len("what is "):].strip()
             else:
-                word = line[len("tell me about "):].strip()
-            r = handle_multitag(word)
-            print_result(r)
+                arg = line[len("tell me about "):].strip()
+            # Check for 'a and b' intersection query
+            if " and " in arg:
+                parts = arg.split(" and ", 1)
+                a = parts[0].strip()
+                b = parts[1].strip()
+                r = handle_intersection(a, b)
+                print_result(r)
+            else:
+                r = handle_multitag(arg)
+                print_result(r)
             return None
         # plain word -> multitag mode (the recommended cue retrieval)
+        # Also support 'a and b' shortcut
+        if " and " in line:
+            parts = line.split(" and ", 1)
+            a = parts[0].strip()
+            b = parts[1].strip()
+            r = handle_intersection(a, b)
+            print_result(r)
+            return None
         r = handle_multitag(line)
         print_result(r)
         return None
