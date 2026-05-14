@@ -1,0 +1,166 @@
+{
+  "seed": 46,
+  "pairs": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "dog",
+      "small"
+    ],
+    [
+      "cat",
+      "hot"
+    ],
+    [
+      "river",
+      "cold"
+    ],
+    [
+      "big",
+      "hot"
+    ],
+    [
+      "small",
+      "cold"
+    ]
+  ],
+  "negative_queries": [
+    [
+      "apple",
+      "cold"
+    ],
+    [
+      "dog",
+      "hot"
+    ],
+    [
+      "cat",
+      "cold"
+    ],
+    [
+      "river",
+      "big"
+    ],
+    [
+      "big",
+      "cold"
+    ],
+    [
+      "small",
+      "hot"
+    ]
+  ],
+  "n_true_correct": 4,
+  "n_neg_correct": 6,
+  "n_total_true": 6,
+  "n_total_neg": 6,
+  "accuracy": 0.8333333333333334,
+  "pos_results": [
+    {
+      "a": "apple",
+      "b": "big",
+      "expected": "YES",
+      "actual": "YES",
+      "scores": {
+        "apple": 0.23595162837219277,
+        "big": 0.11044544306783491
+      }
+    },
+    {
+      "a": "dog",
+      "b": "small",
+      "expected": "YES",
+      "actual": "YES",
+      "scores": {
+        "dog": 0.2988272749210927,
+        "small": 0.21136563348077286
+      }
+    },
+    {
+      "a": "cat",
+      "b": "hot",
+      "expected": "YES",
+      "actual": "PARTIAL",
+      "scores": {
+        "cat": 0.30469684655302975,
+        "hot": 0.01218787386212119
+      }
+    },
+    {
+      "a": "river",
+      "b": "cold",
+      "expected": "YES",
+      "actual": "YES",
+      "scores": {
+        "river": 0.2961945973182845,
+        "cold": 0.24850224690262854
+      }
+    },
+    {
+      "a": "big",
+      "b": "hot",
+      "expected": "YES",
+      "actual": "PARTIAL",
+      "scores": {
+        "big": 0.16710046710906773,
+        "hot": 0.03342009342181355
+      }
+    },
+    {
+      "a": "small",
+      "b": "cold",
+      "expected": "YES",
+      "actual": "YES",
+      "scores": {
+        "small": 0.2337417192130355,
+        "cold": 0.18626293249788767
+      }
+    }
+  ],
+  "neg_results": [
+    {
+      "a": "apple",
+      "b": "cold",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    },
+    {
+      "a": "dog",
+      "b": "hot",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    },
+    {
+      "a": "cat",
+      "b": "cold",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    },
+    {
+      "a": "river",
+      "b": "big",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    },
+    {
+      "a": "big",
+      "b": "cold",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    },
+    {
+      "a": "small",
+      "b": "hot",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    }
+  ]
+}

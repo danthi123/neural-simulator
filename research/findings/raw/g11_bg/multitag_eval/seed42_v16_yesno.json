@@ -1,0 +1,166 @@
+{
+  "seed": 42,
+  "pairs": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "dog",
+      "small"
+    ],
+    [
+      "cat",
+      "hot"
+    ],
+    [
+      "river",
+      "cold"
+    ],
+    [
+      "big",
+      "hot"
+    ],
+    [
+      "small",
+      "cold"
+    ]
+  ],
+  "negative_queries": [
+    [
+      "apple",
+      "cold"
+    ],
+    [
+      "dog",
+      "hot"
+    ],
+    [
+      "cat",
+      "cold"
+    ],
+    [
+      "river",
+      "big"
+    ],
+    [
+      "big",
+      "cold"
+    ],
+    [
+      "small",
+      "hot"
+    ]
+  ],
+  "n_true_correct": 6,
+  "n_neg_correct": 6,
+  "n_total_true": 6,
+  "n_total_neg": 6,
+  "accuracy": 1.0,
+  "pos_results": [
+    {
+      "a": "apple",
+      "b": "big",
+      "expected": "YES",
+      "actual": "YES",
+      "scores": {
+        "apple": 0.2011713728532265,
+        "big": 0.13716229967265442
+      }
+    },
+    {
+      "a": "dog",
+      "b": "small",
+      "expected": "YES",
+      "actual": "YES",
+      "scores": {
+        "dog": 0.4462099506864689,
+        "small": 0.12666605051744925
+      }
+    },
+    {
+      "a": "cat",
+      "b": "hot",
+      "expected": "YES",
+      "actual": "YES",
+      "scores": {
+        "cat": 0.35752888164150726,
+        "hot": 0.2972478492717182
+      }
+    },
+    {
+      "a": "river",
+      "b": "cold",
+      "expected": "YES",
+      "actual": "YES",
+      "scores": {
+        "river": 0.15501361738860234,
+        "cold": 0.10540925982424958
+      }
+    },
+    {
+      "a": "big",
+      "b": "hot",
+      "expected": "YES",
+      "actual": "YES",
+      "scores": {
+        "big": 0.12161579218919646,
+        "hot": 0.33010000737067613
+      }
+    },
+    {
+      "a": "small",
+      "b": "cold",
+      "expected": "YES",
+      "actual": "YES",
+      "scores": {
+        "small": 0.2585132475876242,
+        "cold": 0.04847123392267953
+      }
+    }
+  ],
+  "neg_results": [
+    {
+      "a": "apple",
+      "b": "cold",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    },
+    {
+      "a": "dog",
+      "b": "hot",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    },
+    {
+      "a": "cat",
+      "b": "cold",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    },
+    {
+      "a": "river",
+      "b": "big",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    },
+    {
+      "a": "big",
+      "b": "cold",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    },
+    {
+      "a": "small",
+      "b": "hot",
+      "expected": "NO",
+      "actual": "NO",
+      "scores": {}
+    }
+  ]
+}
