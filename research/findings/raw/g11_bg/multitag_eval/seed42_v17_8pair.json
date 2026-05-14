@@ -1,0 +1,42 @@
+{
+  "seed": 42,
+  "pairs": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "dog",
+      "small"
+    ],
+    [
+      "cat",
+      "hot"
+    ],
+    [
+      "river",
+      "cold"
+    ],
+    [
+      "tree",
+      "bird"
+    ],
+    [
+      "sun",
+      "moon"
+    ],
+    [
+      "walk",
+      "fast"
+    ],
+    [
+      "red",
+      "blue"
+    ]
+  ],
+  "top_n": 1,
+  "n_full_pass": 0,
+  "n_partial_pass": 0,
+  "n_total": 0,
+  "results": []
+}
