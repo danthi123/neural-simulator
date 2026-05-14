@@ -12,19 +12,23 @@ Tests:
    does the system "say"? Should include BOTH concept_A and concept_B
    above off-target words.
 3. ASSOCIATIVE-RECALL: drive lang_input(concept_A) ALONE; check if
-   lang_output also produces signal for concept_B (semantic association).
+   lang_output also produces signal for concept_B (semantic association.
 
 A clean PASS means the system has stored "concept_A is related to
 concept_B" as a recoverable memory, independent of motor actions.
+
+ARCHITECTURE NOTE (v19, 2026-05-14): the v17 vocab patch is OPT-IN via
+--vocab-v17 flag (or the dedicated v17 wrapper). Importing this module
+no longer monkey-patches concept_pool_demo's vocab tables — that was
+silently turning v16-trained bridges (16 pools) into 28-pool bridges
+during eval, causing weight-load mismatches. The 25% top-1 ceiling for
+v18 was MEASURED with this bug active and is being re-tested.
 """
 from __future__ import annotations
 import argparse
 import itertools
 import json
 import numpy as np
-
-# Patch v17 vocab for extended-vocab compatibility
-import research.runners.compose_engram_demo_v2  # noqa: F401
 
 import research.runners.concept_pool_demo as cpd
 from research.runners.concept_compose_train import _WORD_TO_IDX, _WORD_TO_POOL
@@ -80,6 +84,18 @@ def encode_concept_pair(bridge, word_a: str, word_b: str, tag_name: str,
         pool_a_arr_gpu = cp.asarray(pool_a_idx, dtype=cp.int64)
         pool_b_arr_gpu = cp.asarray(pool_b_idx, dtype=cp.int64)
 
+    # v19 (2026-05-14): open cross_pool_concept gate during encoding so
+    # STDP can grow pool_a → pool_b weights from co-firing. Gate is
+    # closed elsewhere (Phase 1 trained with gate at 0.0 in v19, so
+    # cross-pool weights start at zero-init). Open here → encoding-
+    # specific STDP. Close after → frozen for inference stability.
+    cpc_gate_was_set = False
+    try:
+        bridge.set_plasticity_gate("cross_pool_concept", 1.0)
+        cpc_gate_was_set = True
+    except KeyError:
+        pass  # v16 bridge (no cross_pool_concept gate) — no-op
+
     bridge.start_engram_recording(tag_name)
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(30):
@@ -98,6 +114,13 @@ def encode_concept_pair(bridge, word_a: str, word_b: str, tag_name: str,
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(20):
         bridge._run_one_simulation_step()
+
+    # Close gate after encoding (frozen for stim-recall + assoc-recall tests)
+    if cpc_gate_was_set:
+        try:
+            bridge.set_plasticity_gate("cross_pool_concept", 0.0)
+        except KeyError:
+            pass
 
     stats = bridge.commit_engram_tag(tag_name, top_k=top_k,
                                        region_filter=region_filter)
@@ -222,6 +245,15 @@ def main():
                     help="Drive both concept pools with teacher current "
                     "during encoding (analog of motor_teacher but on both "
                     "concept pools). Helps ensure balanced representation.")
+    p.add_argument("--n-reencodes", type=int, default=1,
+                    help="Re-encode each pair N times (overwrites tag each "
+                    "time; tests if repeated learning strengthens via STDP "
+                    "side effects). Default 1.")
+    p.add_argument("--enable-cross-pool-concept-pathways", action="store_true",
+                    help="v18/v19: build bridge with all-to-all plastic "
+                    "pathways between concept pools (required to load v18+ "
+                    "checkpoints). v19 trains with the gate frozen and opens "
+                    "it here in encode_concept_pair for compose-specific STDP.")
     p.add_argument("--out", type=str, default=None)
     args = p.parse_args()
 
@@ -256,6 +288,7 @@ def main():
         enable_adjective=True,
         weak_dynamics=True,
         enable_direct_verb_to_motor=True,
+        enable_cross_pool_concept_pathways=args.enable_cross_pool_concept_pathways,
         verbose=False,
     )
     bridge.load_checkpoint(args.load_bridge)
@@ -274,16 +307,24 @@ def main():
     print("[ENCODE] Concept-concept engrams (NO motor teacher, NO motor in tag)")
     for a, b in pairs:
         tag = f"{a}_{b}"
-        encode_concept_pair(
-            bridge, a, b, tag,
-            encoding_steps=args.encoding_steps,
-            drive_pA=200.0, sparsity=args.sparsity,
-            n_lang_input=args.n_lang_input,
-            n_words_for_orthogonal=args.n_words_for_orthogonal,
-            region_filter=region_filter, top_k=args.top_k,
-            balanced_teacher_pA=args.balanced_teacher_pA,
-            verbose=True,
-        )
+        for rep in range(args.n_reencodes):
+            # Delete previous tag if re-encoding (commit_engram_tag would
+            # fail if tag exists). Last encoding's tag is what we recall.
+            if rep > 0:
+                try:
+                    bridge.delete_engram_tag(tag)
+                except Exception:
+                    pass
+            encode_concept_pair(
+                bridge, a, b, tag,
+                encoding_steps=args.encoding_steps,
+                drive_pA=200.0, sparsity=args.sparsity,
+                n_lang_input=args.n_lang_input,
+                n_words_for_orthogonal=args.n_words_for_orthogonal,
+                region_filter=region_filter, top_k=args.top_k,
+                balanced_teacher_pA=args.balanced_teacher_pA,
+                verbose=(rep == 0),  # only print first
+            )
 
     # TEST 1: STIM-RECALL. Stimulate tag, read lang_output, rank words.
     print()

@@ -1,0 +1,138 @@
+{
+  "seed": 42,
+  "pairs": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "dog",
+      "small"
+    ],
+    [
+      "cat",
+      "hot"
+    ],
+    [
+      "river",
+      "cold"
+    ],
+    [
+      "go",
+      "look"
+    ],
+    [
+      "come",
+      "stop"
+    ],
+    [
+      "big",
+      "hot"
+    ],
+    [
+      "small",
+      "cold"
+    ]
+  ],
+  "n_top1_pass": 2,
+  "n_top3_pass": 5,
+  "n_total": 8,
+  "results": [
+    {
+      "cue": "apple",
+      "expect_b": "big",
+      "top1": "hot",
+      "top3": [
+        "hot",
+        "big",
+        "small"
+      ],
+      "top1_pass": false,
+      "top3_pass": true
+    },
+    {
+      "cue": "dog",
+      "expect_b": "small",
+      "top1": "big",
+      "top3": [
+        "big",
+        "hot",
+        "small"
+      ],
+      "top1_pass": false,
+      "top3_pass": true
+    },
+    {
+      "cue": "cat",
+      "expect_b": "hot",
+      "top1": "big",
+      "top3": [
+        "big",
+        "come",
+        "small"
+      ],
+      "top1_pass": false,
+      "top3_pass": false
+    },
+    {
+      "cue": "river",
+      "expect_b": "cold",
+      "top1": "cold",
+      "top3": [
+        "cold",
+        "hot",
+        "look"
+      ],
+      "top1_pass": true,
+      "top3_pass": true
+    },
+    {
+      "cue": "go",
+      "expect_b": "look",
+      "top1": "big",
+      "top3": [
+        "big",
+        "small",
+        "hot"
+      ],
+      "top1_pass": false,
+      "top3_pass": false
+    },
+    {
+      "cue": "come",
+      "expect_b": "stop",
+      "top1": "small",
+      "top3": [
+        "small",
+        "hot",
+        "cold"
+      ],
+      "top1_pass": false,
+      "top3_pass": false
+    },
+    {
+      "cue": "big",
+      "expect_b": "hot",
+      "top1": "cold",
+      "top3": [
+        "cold",
+        "hot",
+        "go"
+      ],
+      "top1_pass": false,
+      "top3_pass": true
+    },
+    {
+      "cue": "small",
+      "expect_b": "cold",
+      "top1": "cold",
+      "top3": [
+        "cold",
+        "hot",
+        "big"
+      ],
+      "top1_pass": true,
+      "top3_pass": true
+    }
+  ]
+}

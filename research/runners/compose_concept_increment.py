@@ -59,6 +59,10 @@ def main():
     p.add_argument("--top-k", type=int, default=100)
     p.add_argument("--drive-steps", type=int, default=100)
     p.add_argument("--sparsity", type=float, default=0.05)
+    p.add_argument("--enable-cross-pool-concept-pathways", action="store_true",
+                    help="v18/v19: build bridge with all-to-all plastic "
+                    "pathways between concept pools (required to load v18+ "
+                    "checkpoints).")
     p.add_argument("--out", type=str, default=None)
     args = p.parse_args()
 
@@ -78,6 +82,7 @@ def main():
         enable_adjective=True,
         weak_dynamics=True,
         enable_direct_verb_to_motor=True,
+        enable_cross_pool_concept_pathways=args.enable_cross_pool_concept_pathways,
         verbose=False,
     )
     bridge.load_checkpoint(args.load_bridge)

@@ -1311,7 +1311,39 @@ reasons:
   4. Engram-tagging mechanism (catalog D.14) — bind sets of
      co-fired neurons as a unit rather than train pathway weights
 
-## 🔥 ARCHITECTURAL PIVOT (2026-05-14): real semantic memory via concept-concept engrams
+## ⚠️ RETRACTION (2026-05-14): concept-concept results were architecture-mismatch artifacts
+
+**Critical bug discovered 2026-05-14:** The 65% pool-firing readout and
+90% transitive inference claims below were measurement artifacts caused
+by a module-level monkey-patch in `compose_engram_demo_v2` that silently
+corrupted bridge architecture during evaluation. With corrected
+architecture matching, the strict top-1 collapses from claimed 25% to
+0/8 (chance ~6%), and chain transitive collapses from claimed 90%
+multi-seed to 1/4 on seed 42.
+
+**See** [`research/findings/2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md`](research/findings/2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md)
+for full diagnosis.
+
+**What's still real (unaffected by bug):**
+- Tier 1 (4-word direction): 6/6 BIDIR multi-seed (bio_three_factor)
+- Tier 2.1 (8-word synonym): 6/6 BIDIR multi-seed (bio_three_factor)
+- Synonym32 (32-word multi-language) chat_speak: 100% A→W seed 42
+- Phase 1.3 hippocampus consolidation: 3/3 strict anti-cheat multi-seed
+- P5 ventral semantic comprehension: 6/6 multi-seed (iter W)
+- Phase 1.4 BRANCH A no-forgetting: 5/6 retention ≥ 80%
+- Encoding-axis 64-word: 3/3 GO unanimous, 35× speedup
+
+The motor-routed compose ladder (4-pair, 12-pair, 48-pair, 96-pair) also
+uses `compose_engram_demo` (NOT `compose_concept_engram`) and is
+unaffected by the bug.
+
+**Section below preserved for historical context** (showing what was
+claimed before the bug was discovered). All "65%" / "90%" / "30%"
+numbers are RETRACTED.
+
+---
+
+## 🔥 ARCHITECTURAL PIVOT (2026-05-14): real semantic memory via concept-concept engrams [RETRACTED 2026-05-14 PM]
 
 **User correctly identified** that all "compositional capacity" results
 above (48/96/240 cross-pair compose) were **vocabulary-rich motor-direction
@@ -1324,14 +1356,16 @@ routing**: every engram terminated in N/E/S/W. That's not real conversation.
 - Recall: stimulate tag → read lang_output → cosine-match to word
   spelling patterns. Output is a CONCEPT WORD, not motor direction.
 
-**Multi-seed v16 result (5 seeds × 8 pairs):**
+**Multi-seed v16 result (5 seeds × 8 pairs) — RETRACTED:**
 
-| Test | Pass count |
-|---|---|
-| Stim-recall (both concepts in lang_output top-5) | 23/40 = 57.5% |
-| Associative-recall (drive a alone, b in non-a top-3) | 12/40 = 30% |
+| Test | Pass count (CLAIMED) | Re-test (CORRECTED) |
+|---|---|---|
+| Stim-recall (both concepts in lang_output top-5) | 23/40 = 57.5% | not re-tested |
+| Associative-recall (drive a alone, b in non-a top-3) | 12/40 = 30% | not re-tested |
 
 vs chance (~30%/~20%). Both above chance — real semantic memory.
+NOTE: These numbers measured with mismatched 16-pool vs 28-pool bridge
+architecture. Not real signal — see retraction notice above.
 
 **Concept chat REPL transcript (compose_concept_chat.py):**
 
@@ -1367,37 +1401,56 @@ have BOTH motor-routed validation (96/96 PERFECT compose) AND now a
 genuine concept-output validation (30% associative, 57% stim-recall).
 The latter is the real conversational foundation.
 
-## 🎉🎉🎉 Pool-firing readout + TRANSITIVE INFERENCE (2026-05-14 morning)
+## ⚠️ RETRACTED 2026-05-14 PM: Pool-firing readout 65% + TRANSITIVE 90%
+
+The two breakthroughs reported below were BOTH measurement artifacts of
+the same architecture-mismatch bug. With corrected bridge architecture:
+
+| Metric | CLAIMED | CORRECTED (seed 42) |
+|---|---|---|
+| Pool-firing readout (compose_concept_strict) | 26/40 = 65% multi-seed | 0/8 top-1 = 0% |
+| Transitive inference (compose_concept_chain_test) | 18/20 = 90% multi-seed | 1/4 chains = 25% |
+
+Section preserved for historical context. See [`2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md`](research/findings/2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md).
+
+## 🎉🎉🎉 Pool-firing readout + TRANSITIVE INFERENCE (2026-05-14 morning) [RETRACTED]
 
 After initial concept-concept demo (30% assoc with lang_output cosine),
-two breakthroughs improved semantic memory quality:
+two breakthroughs improved semantic memory quality: [RETRACTED — bug artifacts]
 
-**1. Pool-firing readout (compose_concept_pool_readout.py):**
+**1. Pool-firing readout (compose_concept_pool_readout.py):** [RETRACTED]
 Instead of cosine-matching lang_output spelling patterns, rank concept
 pools by firing rate during recall. Top non-cue pool = associated
 concept. Multi-seed v16 8-pair: **26/40 = 65% associative recall**
 (up from 12/40 = 30% with cosine).
+**Re-test with corrected architecture: 0/8 top-1 strict.**
 
-**2. TRANSITIVE INFERENCE (compose_concept_chain_test.py):**
+**2. TRANSITIVE INFERENCE (compose_concept_chain_test.py):** [RETRACTED]
 Train apple↔big AND big↔hot. Query apple. Top-3 non-apple includes
 "hot" (the chained association via big). Multi-seed v16 4 chains:
 **18/20 = 90% chained recall** (vs 17/20 = 85% direct).
+**Re-test with corrected architecture: 1/4 chains on seed 42.**
 
 Chained > direct! Distributed activation propagates through learned
 association graph. apple → noun_APPLE (Phase 1) AND adj_BIG (cross-pool
 STDP from apple_big encoding) AND adj_HOT (chained via big_hot
 encoding's cross-pool STDP). Multiple pathways converge.
+[RETRACTED — the multi-pathway convergence was firing-pattern coincidence
+due to architecture mismatch, not learned cross-pool STDP.]
 
-**Capability ladder for semantic conversation:**
-- Direct association (apple → big): 65% multi-seed
-- Transitive inference (apple → hot via big): 90% multi-seed
+**Capability ladder for semantic conversation:** [RETRACTED]
+- Direct association (apple → big): 65% multi-seed → CORRECTED 0%
+- Transitive inference (apple → hot via big): 90% multi-seed → CORRECTED 25% seed 42
 - Chat REPL (compose_concept_chat.py) operational with pool-firing
   readout, all 8 trained pairs retrieval visible in top-3.
+  [Chat REPL infrastructure still operational; ranking results suspect.]
 
-**This is genuine semantic conversation.** Not vocabulary-rich motor
+**This is genuine semantic conversation.** [RETRACTED] Not vocabulary-rich motor
 routing — the system stores learned word-word associations, retrieves
 them via pool firing, AND infers indirect connections through the
 graph.
+[RETRACTED — measurements were bug artifacts. Genuine semantic
+conversation at the concept-concept level remains an open problem.]
 
 ## 🎉 v17 (2026-05-14): extended 28-word vocab + 96-pair compose PERFECT seed 42
 

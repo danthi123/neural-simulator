@@ -834,6 +834,22 @@ def run_concept_pool_demo(seed: int = 42,
         print(f"\n[TRAIN] SKIPPED (loaded from checkpoint)", flush=True)
         train_sec = 0.0
     else:
+        # v19 (2026-05-14): if cross_pool_concept pathways are enabled,
+        # FREEZE the gate during Phase 1 W→A training. Default gate gain
+        # is 1.0, so Phase 1's 3200 events would otherwise random-walk
+        # the cross-pool weights from incidental co-firing. Closing the
+        # gate keeps cross-pool weights at zero-init, so concept-concept
+        # encoding (which opens the gate) sees a clean substrate for
+        # pair-specific STDP. v18 left this open → no top-1 improvement.
+        if enable_cross_pool_concept_pathways:
+            try:
+                bridge.set_plasticity_gate("cross_pool_concept", 0.0)
+                print(f"[v19] cross_pool_concept gate CLOSED for Phase 1 "
+                      f"(opens only during concept-concept encoding)",
+                      flush=True)
+            except KeyError:
+                pass  # gate not registered (no cross-pool pathways)
+
         total_events = len(all_targets) * n_train_events
         mode_str = "interleaved" if interleaved else "sequential"
         print(f"\n[TRAIN] {len(all_targets)} (word, pool) pairs, "

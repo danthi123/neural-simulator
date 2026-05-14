@@ -1,12 +1,12 @@
 {
   "as_of": "2026-05-14",
   "headline": {
-    "tier": "Semantic Memory + Transitive Inference: 65% direct + 90% chained recall multi-seed",
-    "result": "Real semantic association memory with TRANSITIVE INFERENCE. Direct recall (user types 'apple' -> system retrieves 'big'): 65% multi-seed via pool-firing readout. Chained inference (train apple<->big and big<->hot -> query apple -> retrieve 'hot'): 90% multi-seed. Concept-output conversation, NO motor routing.",
-    "metrics": "Concept-concept (NO motor) multi-seed v16 8-pair: 23/40 stim-recall (57.5%) + 12/40 associative-recall (30%). Compose capacity ladder (motor-routed, separate track): 1-pair 100%, 2-pair 100% (up to 48), 3-word 100% motor/85% full, 4-word 100% motor/60% full multi-seed. v17 28-word vocab + 96 cross-pair: 96/96 PERFECT seed 42 (motor-routed). 3 seeds v17 confirmed PERFECT before cancelled.",
-    "wall_clock": "~17 min/seed v14/v16 Phase 1 + ~30s/seed engram encoding+recall + ~10s/seed chat REPL setup. Full demo end-to-end: ~18 min/seed.",
-    "finding_doc": "2026-05-13-concept-pool-architecture-Phase1.md",
-    "summary": "ALL THREE user-stated blockers (concepts, composition, diversity) validated. ARCHITECTURAL PIVOT 2026-05-14: previous compose tests were vocabulary-rich MOTOR DIRECTION routing (cue -> N/E/S/W). User correctly identified this isn't real semantic conversation. Pivoted to concept-concept engrams (NO motor in tag): encode (apple, big) -> stimulate tag -> lang_output spells BOTH 'apple' and 'big'. Multi-seed v16 8-pair: 23/40 stim-recall (57.5%, both concepts in top-5), 12/40 associative-recall (30%, drive a alone, b appears in non-a top-3). compose_concept_chat.py operational - user types 'apple', system associates 'big'/'cat'/etc. Real semantic memory foundation. Quality is ~30-60% multi-seed; above chance but room for improvement (longer encoding, denser association graph, stronger Phase 1 readout)."
+    "tier": "Encoding-axis 64-word vocab: 3/3 GO multi-seed, 35x faster (most recent validated milestone)",
+    "result": "User's encoding-vs-motor hypothesis confirmed: n_motor=2000 + n_lang=8192 outperforms n_motor=6000 + n_lang=4096 at 64-word vocab. New capacity rule: lang_input encoding is rate-limiting, not motor capacity. 3-seed unanimous GO, retention primary 110% +/- 23%, synonym 119% +/- 34%, wall clock 954s +/- 7s (35x speedup over prior 9.4 hr baseline). Combined with STP-off default flip, the full optimization stack is operational.",
+    "metrics": "Tier 1 (4-word) 6/6 BIDIR multi-seed. Tier 2.1 (8-word synonym) 6/6 BIDIR multi-seed (mean W2A 60.0%, A2W 95.3%). Synonym32 (32-word multi-language) chat_speak 100% A2W seed 42. Phase 1.3 hippocampus consolidation 3/3 strict anti-cheat multi-seed. P5 ventral semantic comprehension 6/6 multi-seed (iter W). Phase 1.4 BRANCH A 5/6 retention >= 80%. Encoding-axis 64-word 3/3 GO unanimous.",
+    "wall_clock": "Tier 1 ~6 min/seed, Tier 2.1 ~10 min/seed, Synonym32 ~30 min/seed, Phase 1.3 ~25 min/seed, P5 ventral ~15 min/seed, Encoding-axis 64-word ~16 min/seed (was 9.4 hr).",
+    "finding_doc": "2026-05-10-encoding-axis-64word-3SEED-GO.md",
+    "summary": "RETRACTED 2026-05-14: previous headline claimed 'Semantic Memory + Transitive Inference: 65% direct + 90% chained' from the compose_concept_* pipeline. Re-verification with corrected bridge architecture (compose_concept_engram was silently monkey-patching all eval bridges to v17 28-pool, while v16/v18/v19 bridges had 16 pools) shows the strict top-1 collapses to 0/8 and chain transitive to 1/4 on seed 42. Bug fix shipped 2026-05-14. The Tier 1 / Tier 2.1 / Phase 1.3 / P5 results remain valid as they use independent runners. See 2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md for full details. Headline reverted to the most recent properly-validated milestone (encoding-axis 64-word 3-seed GO from 2026-05-10)."
   },
   "pillars": [
     {
@@ -31,17 +31,17 @@
       "date": "2026-05-14"
     },
     {
-      "name": "TRANSITIVE SEMANTIC INFERENCE - 90% multi-seed (chained A->C via B)",
-      "status": "VALIDATED",
-      "metric": "v16 5-seed 4 chains each: Direct A->B 17/20 (85%); Chained A->C via B 18/20 (90%). Train apple<->big and big<->hot, query apple, retrieve hot. Chain recall HIGHER than direct - distributed activation propagates through learned association graph.",
-      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "name": "TRANSITIVE SEMANTIC INFERENCE - 90% multi-seed (RETRACTED 2026-05-14)",
+      "status": "RETRACTED",
+      "metric": "RETRACTED: previous claim of 18/20 chained 90% was an architecture-mismatch artifact. Re-test with corrected bridge (compose_concept_engram patch removed): v16 seed 42 = 1/4 chains PASS (25%). The 90% multi-seed result was the bug operating consistently across seeds. See 2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md.",
+      "doc": "2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md",
       "date": "2026-05-14"
     },
     {
-      "name": "Concept-Concept Pool-Firing Readout - 65% multi-seed (chat-usable)",
-      "status": "VALIDATED",
-      "metric": "v16 multi-seed 5x8 pairs: 26/40 (65%) associative recall via pool-firing rank (vs 12/40=30% with cosine spelling). Drive cue, rank concept pools by firing rate, return top-3 non-cue. Significantly above chance.",
-      "doc": "2026-05-13-concept-pool-architecture-Phase1.md",
+      "name": "Concept-Concept Pool-Firing Readout - 65% (RETRACTED 2026-05-14)",
+      "status": "RETRACTED",
+      "metric": "RETRACTED: previous 26/40 (65%) via pool-firing rank was an architecture-mismatch artifact. Re-test with corrected bridge (compose_concept_engram no longer monkey-patches v17 vocab): v16/v18/v19 all give 0/8 top-1 strict on seed 42 (vs claimed 2/8 = 25%). Cross-pool weights at 200 encoding events don't influence pool firing strongly enough to differentiate concept associations from random pool-firing biases.",
+      "doc": "2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md",
       "date": "2026-05-14"
     },
     {
