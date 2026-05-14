@@ -1,0 +1,244 @@
+{
+  "seed": 42,
+  "pairs": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "apple",
+      "tree"
+    ],
+    [
+      "apple",
+      "hot"
+    ],
+    [
+      "dog",
+      "small"
+    ],
+    [
+      "dog",
+      "bird"
+    ],
+    [
+      "dog",
+      "cold"
+    ],
+    [
+      "tree",
+      "bird"
+    ],
+    [
+      "tree",
+      "sun"
+    ],
+    [
+      "sun",
+      "hot"
+    ],
+    [
+      "sun",
+      "moon"
+    ],
+    [
+      "big",
+      "hot"
+    ],
+    [
+      "small",
+      "cold"
+    ]
+  ],
+  "top_n": 2,
+  "n_full_pass": 0,
+  "n_partial_pass": 4,
+  "n_total": 9,
+  "results": [
+    {
+      "cue": "apple",
+      "expected": [
+        "big",
+        "tree",
+        "hot"
+      ],
+      "top_n": [
+        "walk",
+        "small"
+      ],
+      "full_pass": false,
+      "partial_pass": false,
+      "scores": {
+        "walk": 0.20522903642024723,
+        "small": 0.06689930685607719,
+        "look": 0.06548243564418384,
+        "sun": 0.06263537322487149,
+        "hot": 0.05651234336209707
+      }
+    },
+    {
+      "cue": "big",
+      "expected": [
+        "apple",
+        "hot"
+      ],
+      "top_n": [
+        "apple",
+        "walk"
+      ],
+      "full_pass": false,
+      "partial_pass": true,
+      "scores": {
+        "apple": 0.22064557447510258,
+        "walk": 0.18387131206258547,
+        "eat": 0.09283783719910958,
+        "go": 0.07265569867756402,
+        "slow": 0.0645828432689458
+      }
+    },
+    {
+      "cue": "tree",
+      "expected": [
+        "apple",
+        "bird",
+        "sun"
+      ],
+      "top_n": [
+        "apple",
+        "dog"
+      ],
+      "full_pass": false,
+      "partial_pass": true,
+      "scores": {
+        "apple": 0.323113224109204,
+        "dog": 0.2204081406466423,
+        "cat": 0.1306099975273356,
+        "hot": 0.1306099975273356,
+        "walk": 0.0842645145337649
+      }
+    },
+    {
+      "cue": "hot",
+      "expected": [
+        "apple",
+        "sun",
+        "big"
+      ],
+      "top_n": [
+        "walk",
+        "apple"
+      ],
+      "full_pass": false,
+      "partial_pass": true,
+      "scores": {
+        "walk": 0.1702494862621356,
+        "apple": 0.15289614172606034,
+        "eat": 0.14356347281612528,
+        "cold": 0.07600419149088986,
+        "run": 0.07188311642179059
+      }
+    },
+    {
+      "cue": "dog",
+      "expected": [
+        "small",
+        "bird",
+        "cold"
+      ],
+      "top_n": [
+        "run",
+        "sleep"
+      ],
+      "full_pass": false,
+      "partial_pass": false,
+      "scores": {
+        "run": 0.18058423024729287,
+        "sleep": 0.10840136585136438,
+        "fast": 0.07540964580964479,
+        "go": 0.07069654294654198,
+        "river": 0.06753558659237528
+      }
+    },
+    {
+      "cue": "small",
+      "expected": [
+        "dog",
+        "cold"
+      ],
+      "top_n": [
+        "run",
+        "sleep"
+      ],
+      "full_pass": false,
+      "partial_pass": false,
+      "scores": {
+        "run": 0.18294634407749005,
+        "sleep": 0.1680260905910823,
+        "sun": 0.07907110145462697,
+        "dog": 0.07158769985640916,
+        "fast": 0.06589258454552248
+      }
+    },
+    {
+      "cue": "bird",
+      "expected": [
+        "dog",
+        "tree"
+      ],
+      "top_n": [
+        "apple",
+        "dog"
+      ],
+      "full_pass": false,
+      "partial_pass": true,
+      "scores": {
+        "apple": 0.31327577210558694,
+        "dog": 0.24462042242543677,
+        "cat": 0.11245796947380043,
+        "hot": 0.08434347710535033,
+        "fast": 0.0682780528948074
+      }
+    },
+    {
+      "cue": "cold",
+      "expected": [
+        "dog",
+        "small"
+      ],
+      "top_n": [
+        "run",
+        "sleep"
+      ],
+      "full_pass": false,
+      "partial_pass": false,
+      "scores": {
+        "run": 0.1878424620690746,
+        "sleep": 0.15368928714742466,
+        "fast": 0.06489103235113486,
+        "tree": 0.05806039736680487,
+        "go": 0.05695632495139309
+      }
+    },
+    {
+      "cue": "sun",
+      "expected": [
+        "tree",
+        "hot",
+        "moon"
+      ],
+      "top_n": [
+        "dog",
+        "apple"
+      ],
+      "full_pass": false,
+      "partial_pass": false,
+      "scores": {
+        "dog": 0.2500709004879377,
+        "apple": 0.2476662263186221,
+        "eat": 0.15922707054361185,
+        "sleep": 0.14859973579117325,
+        "river": 0.1295484876128177
+      }
+    }
+  ]
+}
