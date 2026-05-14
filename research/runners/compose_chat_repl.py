@@ -145,6 +145,10 @@ def main():
     p.add_argument("--recall-steps", type=int, default=100)
     p.add_argument("--top-k", type=int, default=100)
     p.add_argument("--sparsity", type=float, default=0.05)
+    p.add_argument("--motor-teacher-pA", type=float, default=1500.0,
+                    help="Motor teacher current during encoding (default 1500). "
+                    "Ensures engram includes enough motor neurons for clean "
+                    "recall. Set to 0 to disable.")
     p.add_argument("--scripted", type=str, default=None,
                     help="Comma-separated test inputs (skip interactive)")
     args = p.parse_args()
@@ -201,6 +205,7 @@ def main():
             n_lang_input=args.n_lang_input,
             region_filter=REGION_FILTER,
             top_k=args.top_k,
+            motor_teacher_pA=args.motor_teacher_pA,
             verbose=False,
         )
         encoded[tag_name] = {"verb": verb, "motor": motor, "pattern": pattern}

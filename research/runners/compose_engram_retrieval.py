@@ -41,6 +41,7 @@ def encode_with_pattern(bridge, verb_word: str, motor_word: str,
                           n_words_for_orthogonal: int = 16,
                           region_filter=None,
                           top_k: int = 100,
+                          motor_teacher_pA: float = 0.0,
                           verbose: bool = True):
     """Encode engram + capture the encoding firing pattern.
 
@@ -68,6 +69,13 @@ def encode_with_pattern(bridge, verb_word: str, motor_word: str,
     lang_arr_gpu = cp.asarray(lang_input_idx, dtype=cp.int64)
     n_total = bridge.cp_external_input_current.shape[0]
 
+    # Optional motor teacher (analogous to Phase 1 teacher_pA, ensures
+    # engram includes motor neurons for clean recall)
+    use_motor_teacher = motor_teacher_pA > 0.0
+    if use_motor_teacher:
+        motor_target_idx = list(rm.indices(_WORD_TO_POOL[motor_word]))
+        motor_target_arr_gpu = cp.asarray(motor_target_idx, dtype=cp.int64)
+
     # Build region-filter mask for the pattern vector
     rf_mask = np.zeros(n_total, dtype=bool)
     if region_filter:
@@ -90,6 +98,8 @@ def encode_with_pattern(bridge, verb_word: str, motor_word: str,
     for _ in range(encoding_steps):
         ext = cp.zeros(n_total, dtype=cp.float32)
         ext[lang_arr_gpu] = both_gpu
+        if use_motor_teacher:
+            ext[motor_target_arr_gpu] = motor_teacher_pA
         bridge.cp_external_input_current[:] = ext
         bridge._run_one_simulation_step()
         if hasattr(bridge, "cp_firing_states"):

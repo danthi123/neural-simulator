@@ -47,6 +47,7 @@ def encode_compose_pair(bridge, verb_word: str, motor_word: str,
                          n_words_for_orthogonal: int = 16,
                          region_filter=None,
                          top_k: int = 100,
+                         motor_teacher_pA: float = 0.0,
                          verbose: bool = True):
     """Encode one (verb, motor) pair as an engram tag.
 
@@ -74,6 +75,14 @@ def encode_compose_pair(bridge, verb_word: str, motor_word: str,
     lang_arr_gpu = cp.asarray(lang_input_idx, dtype=cp.int64)
     n_total = bridge.cp_external_input_current.shape[0]
 
+    # Optional motor teacher: force the target motor pool to fire strongly
+    # during encoding, ensuring the engram tag includes motor neurons.
+    use_motor_teacher = motor_teacher_pA > 0.0
+    motor_target_pool = _WORD_TO_POOL[motor_word]
+    if use_motor_teacher:
+        motor_target_idx = list(rm.indices(motor_target_pool))
+        motor_target_arr_gpu = cp.asarray(motor_target_idx, dtype=cp.int64)
+
     # Start recording
     bridge.start_engram_recording(tag_name)
 
@@ -86,6 +95,8 @@ def encode_compose_pair(bridge, verb_word: str, motor_word: str,
     for _ in range(encoding_steps):
         ext = cp.zeros(n_total, dtype=cp.float32)
         ext[lang_arr_gpu] = both_gpu
+        if use_motor_teacher:
+            ext[motor_target_arr_gpu] = motor_teacher_pA
         bridge.cp_external_input_current[:] = ext
         bridge._run_one_simulation_step()
 
@@ -165,6 +176,10 @@ def main():
     p.add_argument("--recall-steps", type=int, default=100)
     p.add_argument("--sparsity", type=float, default=0.05)
     p.add_argument("--save-bridge", type=str, default=None)
+    p.add_argument("--motor-teacher-pA", type=float, default=0.0,
+                    help="Optional teacher current on motor pool during "
+                    "encoding (analogous to Phase 1 teacher_pA). Ensures "
+                    "engram tag includes motor neurons. Default 0=off.")
     p.add_argument("--out", type=str, default=None)
     args = p.parse_args()
 
@@ -211,6 +226,7 @@ def main():
             n_lang_input=args.n_lang_input,
             region_filter=region_filter_full,
             top_k=args.top_k,
+            motor_teacher_pA=args.motor_teacher_pA,
             verbose=True,
         )
         encoding_stats.append(stats)
