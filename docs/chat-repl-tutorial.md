@@ -38,10 +38,14 @@ omit it and add associations interactively via `remember`.
 
 | Command | Behavior |
 |---|---|
-| `<word>` | Multi-tag retrieval (recommended). Auto-stim all tags containing the word, return top-5 associates by cosine. |
+| `<word>` | Multi-tag retrieval (recommended). Auto-stim all tags containing the word, return top-5 associates by cosine. **90% FULL multi-seed.** |
 | `what is <word>` | Same as `<word>` — natural-language alias. |
 | `tell me about <word>` | Same as `<word>`. |
-| `/stim <tag>` | Direct stimulation of a specific tag. Useful when you know the tag name. |
+| `what is <a> and <b>` | **Compositional intersection** — words associated with BOTH a and b. **90% FULL multi-seed.** |
+| `<a> and <b>` | Shortcut for intersection query. |
+| `is <a> <b>?` | **Yes/no question** — does the system know (a, b) is bound? |
+| `tell me more` | Show next-best associates of the last query (multi-turn drill-down). |
+| `/stim <tag>` | Direct stimulation of a specific tag. Useful when you know the tag name. **87.5% multi-seed per-tag.** |
 | `/cue <word>` | Raw pool firing rank (experimental, ~28% reliability). |
 
 ### Encoding
@@ -50,6 +54,7 @@ omit it and add associations interactively via `remember`.
 |---|---|
 | `remember <a> is <b>` | Encode a new association at runtime. Uses 500 events + teacher 500 pA. Takes ~5s. |
 | `remember <a> <b>` | Space-separated form. |
+| `forget <tag>` | Delete an engram tag at runtime. |
 
 ### Introspection
 
@@ -80,6 +85,41 @@ the navigation pipeline, not semantic memory).
 
 > remember apple is big
   [remembered: apple_big]
+
+> remember apple is hot
+  [remembered: apple_hot]
+
+> remember cat is big
+  [remembered: cat_big]
+
+> remember cat is hot
+  [remembered: cat_hot]
+
+> is apple big
+  YES: 'apple' is bound to 'big' (tag apple_big, both in lang_output top-5)
+
+> is apple cold
+  NO: no tag binding 'apple' and 'cold' (checked apple_cold, cold_apple)
+
+> what is apple
+  matched 2 tag(s): ['apple_big', 'apple_hot']
+  top-5: [big=0.20, hot=0.16, cat=0.11, ...]
+
+> tell me more
+  [more for 'apple']
+  stop = 0.07 via apple_big
+
+> what is apple and cat
+  [intersection]
+  hot     = min(0.20, 0.31) = 0.20
+  big     = min(0.20, 0.16) = 0.16
+
+> forget apple_big
+  [forgot: apple_big]
+
+> what is apple
+  matched 1 tag(s): ['apple_hot']
+  top-5: [hot=0.27, big=0.07, ...]
 
 > remember apple is cat
   [remembered: apple_cat]
