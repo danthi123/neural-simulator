@@ -5,6 +5,35 @@
 **Author:** autonomous arc, after three user clarifications (no LLM,
 biology-first workflow, consult catalog)
 
+## 2026-05-14 status update
+
+**REAL semantic conversation achieved at 16-word vocab.** After the
+2026-05-14 architecture-mismatch bug retraction, the validated
+conversational capability is multi-tag cue retrieval at 90% FULL /
+100% PARTIAL multi-seed reliability. Mechanism:
+- Tonegawa-style engram tagging (catalog D.14) stores concept-concept
+  associations at 87.5% per-tag stim-recall reliability
+- Multi-tag aggregator indexes by cue word, sums lang_output cosines
+  across all matching tags, ranks associates
+
+Chat REPL (`compose_concept_chat.py`) supports natural-language
+interaction:
+- `remember a is b` — encode at runtime
+- `what is X` — retrieve associates
+- `what is a and b` — compositional intersection
+- `forget tag` — delete association
+
+**Vocabulary boundary:** v16 (16-word) works at 90%. v17 (28-word)
+fails (0% FULL) because Phase 1 lang_output binding is too weak at
+28-pool architecture. Retraining v17 with stronger settings (400
+events vs 200) in flight 2026-05-14 evening.
+
+**See:**
+- [`research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md`](../research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md)
+- [`research/findings/2026-05-14-engram-stim-recall-multi-seed-VALIDATED.md`](../research/findings/2026-05-14-engram-stim-recall-multi-seed-VALIDATED.md)
+- [`research/findings/2026-05-14-session-summary.md`](../research/findings/2026-05-14-session-summary.md)
+- [`docs/chat-repl-tutorial.md`](../chat-repl-tutorial.md)
+
 ## Goal
 
 Biology-grounded spiking neural simulator as a **standalone**
