@@ -698,6 +698,54 @@ def main():
                 return None
             # Possessive normalization: "X's Y is Z" -> "Y_of_X is Z"
             rest = _normalize_possessive(rest)
+            # COMPARISONS: 'X is bigger than Y' -> tag 'X_bigger_Y'
+            if " than " in rest:
+                # Find comparison marker (e.g. "bigger" before " than ")
+                before, after = rest.split(" than ", 1)
+                before_parts = before.split()
+                if len(before_parts) >= 3 and before_parts[-2] == "is":
+                    subj = before_parts[-3]
+                    rel = before_parts[-1]
+                    obj_parts = _parts(after)
+                    if obj_parts:
+                        obj = obj_parts[-1]
+                        words = [subj, rel, obj]
+                        _track_subject([subj, obj])
+                        encode_sentence(words)
+                        return None
+            # TENSE markers: PAST / FUTURE prefix
+            # 'remember the dog will eat apple' -> 'FUTURE_dog_eat_apple'
+            # 'remember the dog ate apple' -> 'PAST_dog_eat_apple'
+            #   (special-case 'ate' -> 'eat' for normalization)
+            tense = None
+            if " will " in rest:
+                tense = "FUTURE"
+                rest = rest.replace(" will ", " ")
+            elif " did " in rest:
+                tense = "PAST"
+                rest = rest.replace(" did ", " ")
+            # Verb past-form normalization (simple irregular table)
+            PAST_TO_PRESENT = {
+                "ate": "eat", "drank": "drink", "spoke": "speak",
+                "ran": "run", "took": "take", "gave": "give",
+                "found": "find", "lost": "lose", "saw": "see",
+                "went": "go", "came": "come", "wrote": "write",
+                "read": "read",  # same form
+                "pushed": "push", "pulled": "pull",
+                "opened": "open", "closed": "close",
+                "slept": "sleep", "walked": "walk",
+                "listened": "listen", "looked": "look",
+                "stopped": "stop", "heard": "hear",
+            }
+            for past_form, present_form in PAST_TO_PRESENT.items():
+                if f" {past_form} " in f" {rest} ":
+                    # Normalize past form -> present + mark tense as PAST
+                    rest = rest.replace(f" {past_form} ",
+                                          f" {present_form} ")
+                    rest = rest.replace(f"{past_form} ",
+                                          f"{present_form} ", 1) if rest.startswith(f"{past_form} ") else rest
+                    if tense is None:
+                        tense = "PAST"
             # Negation: "remember the dog is not big" -> tag 'NOT_dog_big'
             negated = False
             if " is not " in rest:
@@ -714,6 +762,8 @@ def main():
                 words = [a, b]
                 if negated:
                     words = ["NOT"] + words
+                if tense:
+                    words = [tense] + words
                 _track_subject([a, b])
                 encode_sentence(words)
                 return None
@@ -723,6 +773,8 @@ def main():
                 print("  [usage: remember a is b OR remember <words ...>]",
                       flush=True)
                 return None
+            if tense:
+                parts = [tense] + parts
             _track_subject(parts)
             encode_sentence(parts)
             return None
@@ -876,6 +928,9 @@ def main():
     print("  is X Y?                       YES/NO/UNKNOWN exact tag match")
     print("  is X not Y?                   Negated YES/NO query")
     print("  is X's Y Z?                   Possessive YES/NO query")
+    print("  remember X is bigger than Y   Comparison ('X_bigger_Y' tag)")
+    print("  remember X will V Y           Future tense ('FUTURE_X_V_Y' tag)")
+    print("  remember X ate Y              Past tense ('PAST_X_eat_Y' tag)")
     print("  who <verb> <obj>?             Find subject of '*_verb_obj'")
     print("  what did <subj> <verb>?       Find object of 'subj_verb_*'")
     print("  what is the Y of X?           Relational: 'Y_of_X_*' tag")
