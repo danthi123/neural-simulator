@@ -114,6 +114,7 @@ def main():
         "--names", *bridge_names,
         "--seed", str(args.seed),
         "--scripted", scripted,
+        "--tokenize",   # PATH 2
     ]
     if args.friendly:
         cmd.append("--friendly")

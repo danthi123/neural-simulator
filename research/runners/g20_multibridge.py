@@ -36,6 +36,29 @@ from research.runners.shared_pool_chat import (
     encode_pair_engram,
 )
 
+# Path 2: morpheme tokenizer
+try:
+    from research.runners.subword_tokenizer import (
+        tokenize_sentence as _tokenize_sentence,
+    )
+    _HAS_TOKENIZER = True
+except ImportError:
+    _HAS_TOKENIZER = False
+    _tokenize_sentence = None
+
+# Path 3: hierarchy
+try:
+    from research.runners.hierarchical_concepts import (
+        get_ancestors as _get_ancestors,
+        get_descendants as _get_descendants,
+        is_a as _is_a,
+        DEFAULT_HIERARCHY,
+    )
+    _HAS_HIERARCHY = True
+except ImportError:
+    _HAS_HIERARCHY = False
+    DEFAULT_HIERARCHY = {}
+
 
 def encode_partial_pair_engram(bridge, word_to_drive: str,
                                  tag_name: str, vocab,
@@ -189,6 +212,8 @@ def main():
     p.add_argument("--drive-steps", type=int, default=100)
     p.add_argument("--scripted", type=str, default=None)
     p.add_argument("--friendly", action="store_true")
+    p.add_argument("--tokenize", action="store_true",
+                    help="Apply morpheme tokenization before parsing")
     args = p.parse_args()
 
     if len(args.bridges) != len(args.vocab_files):
@@ -221,7 +246,25 @@ def main():
     print(f"  Bridges: {[m.name for m in members]}", flush=True)
     print(f"  Total unique vocab: {len(total_vocab)} concepts "
           f"across {len(members)} bridges", flush=True)
+    if args.tokenize and _HAS_TOKENIZER:
+        print(f"  Path 2: morpheme tokenization ENABLED", flush=True)
+    if _HAS_HIERARCHY:
+        print(f"  Path 3: hierarchy queries ENABLED", flush=True)
     print(flush=True)
+
+    # Build known-roots set for tokenizer (all bridge vocabs)
+    KNOWN_ROOTS = set(total_vocab) if args.tokenize else set()
+    MARKERS = {"PAST", "PLURAL", "ing", "ed", "er", "est", "ly",
+                "tion", "able", "ful", "less", "ness", "s", "es", "ies",
+                "un", "re", "pre", "dis", "mis", "over", "under", "anti"}
+
+    def _maybe_tokenize(rest):
+        """Tokenize + strip markers if --tokenize active."""
+        if not args.tokenize or not _HAS_TOKENIZER:
+            return rest
+        tokens = _tokenize_sentence(rest, KNOWN_ROOTS)
+        roots = [t for t in tokens if t not in MARKERS]
+        return " ".join(roots)
 
     for m in members:
         print(f"  [loading {m.name} ({m.n_concepts()} concepts)]",
@@ -294,6 +337,62 @@ def main():
         line = line.strip().lower()
         if not line or line in ("quit", "exit"):
             return "EXIT"
+        # PATH 2: tokenize command content
+        if args.tokenize and _HAS_TOKENIZER:
+            for cmd_prefix in ("remember ", "is ", "what is ", "what "):
+                if line.startswith(cmd_prefix):
+                    content = line[len(cmd_prefix):]
+                    tokenized = _maybe_tokenize(content)
+                    if tokenized != content:
+                        line = cmd_prefix + tokenized
+                    break
+        # PATH 3: hierarchy queries
+        if _HAS_HIERARCHY:
+            # 'is a X an Y?' or 'is X an animal?' patterns
+            if line.startswith("is a ") or line.startswith("is an "):
+                rest = line.rstrip("?").strip()
+                # Remove leading 'is a' / 'is an'
+                if rest.startswith("is an "):
+                    rest = rest[len("is an "):]
+                elif rest.startswith("is a "):
+                    rest = rest[len("is a "):]
+                # Strip articles
+                STOP = {"a", "an", "the", "that"}
+                parts = [w for w in rest.replace(" an ", " ")
+                          .replace(" a ", " ").split() if w not in STOP]
+                if len(parts) == 2:
+                    a, b = parts[0], parts[1]
+                    if a in DEFAULT_HIERARCHY or b in DEFAULT_HIERARCHY or any(
+                        a == v or b == v for v in DEFAULT_HIERARCHY.values()):
+                        ok = _is_a(a, b)
+                        if args.friendly:
+                            if ok:
+                                print(f"  Yes, {a} is a kind of {b}.",
+                                      flush=True)
+                            else:
+                                print(f"  No, {a} is not a kind of {b}.",
+                                      flush=True)
+                        else:
+                            print(f"  is_a({a}, {b}) = {ok}", flush=True)
+                        return None
+            # 'what mammals do you know?' / 'what colors do you know?'
+            if (line.startswith("what ")
+                    and line.endswith("s do you know?")):
+                category = line[len("what "):-len("s do you know?")]
+                desc = _get_descendants(category)
+                if not desc:
+                    desc = _get_descendants(category + "s")
+                if desc:
+                    leaves = [d for d in desc
+                              if d not in set(DEFAULT_HIERARCHY.values())]
+                    items = leaves or desc
+                    if args.friendly:
+                        print(f"  Kinds of {category}: "
+                              f"{', '.join(items[:8])}.", flush=True)
+                    else:
+                        print(f"  [descendants of {category}]: "
+                              f"{', '.join(items)}", flush=True)
+                    return None
         if line in ("concepts", "vocab", "/vocab"):
             for m in members:
                 print(f"  [{m.name}] {m.n_concepts()} concepts: "
