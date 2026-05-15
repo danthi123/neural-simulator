@@ -87,9 +87,9 @@ sim/                    # 21 modules (+ __init__.py), ~16.1K lines — core engi
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 75 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/bootstrap_hippo_lineage/validate_ventral_semantic/etc) for research
-research/findings/      # session-by-session findings docs (257+ files)
-tests/                  # 79 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, llm adapters, etc.)
+research/runners/       # 119 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/multibridge_60word_demo/etc) for research
+research/findings/      # session-by-session findings docs (298+ files)
+tests/                  # 84 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, etc.)
 ```
 
 ### Thread Model
@@ -99,10 +99,10 @@ tests/                  # 79 test files (determinism, runners, kernels, plastici
 
 ### Key Classes
 
-**SimulationBridge** (`sim/bridge.py:170`): Central simulation orchestrator
+**SimulationBridge** (`sim/bridge.py:208`): Central simulation orchestrator
 - Manages all GPU state arrays (CuPy)
-- Simulation stepping (`_run_one_simulation_step` at line 4287)
-- Initialization (`_initialize_simulation_data` at line 831)
+- Simulation stepping (`_run_one_simulation_step` at line 4776)
+- Initialization (`_initialize_simulation_data` at line 883)
 - Recording/playback to HDF5
 - Checkpoint save/restore
 - Profiling and performance monitoring
