@@ -337,16 +337,8 @@ def main():
         line = line.strip().lower()
         if not line or line in ("quit", "exit"):
             return "EXIT"
-        # PATH 2: tokenize command content
-        if args.tokenize and _HAS_TOKENIZER:
-            for cmd_prefix in ("remember ", "is ", "what is ", "what "):
-                if line.startswith(cmd_prefix):
-                    content = line[len(cmd_prefix):]
-                    tokenized = _maybe_tokenize(content)
-                    if tokenized != content:
-                        line = cmd_prefix + tokenized
-                    break
-        # PATH 3: hierarchy queries
+        # PATH 3: hierarchy queries FIRST (before tokenization, since
+        # 'what mammals do you know?' shouldn't be tokenized)
         if _HAS_HIERARCHY:
             # 'is a X an Y?' or 'is X an animal?' patterns
             if line.startswith("is a ") or line.startswith("is an "):
@@ -393,6 +385,15 @@ def main():
                         print(f"  [descendants of {category}]: "
                               f"{', '.join(items)}", flush=True)
                     return None
+        # PATH 2: tokenize remaining command content
+        if args.tokenize and _HAS_TOKENIZER:
+            for cmd_prefix in ("remember ", "is ", "what is ", "what "):
+                if line.startswith(cmd_prefix):
+                    content = line[len(cmd_prefix):]
+                    tokenized = _maybe_tokenize(content)
+                    if tokenized != content:
+                        line = cmd_prefix + tokenized
+                    break
         if line in ("concepts", "vocab", "/vocab"):
             for m in members:
                 print(f"  [{m.name}] {m.n_concepts()} concepts: "
