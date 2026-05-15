@@ -278,6 +278,9 @@ export function categorizeExperiment(experimentName) {
   // 2026-05-15: multi-bridge ensemble (60-word vocab across 5 bridges).
   if (e.includes("multibridge") || e.includes("multi_bridge"))
     return { category: "Multi-bridge ensemble (60 words)", color: "#a78bfa" };  // violet
+  // 2026-05-15: catalog G.20 shared-pool BREAKTHROUGH
+  if (e.includes("g20_shared_pool") || e.includes("shared_pool"))
+    return { category: "G.20 distributed encoding", color: "#ec4899" };  // pink
   // 2026-05-14: semantic memory validated after architecture-mismatch bug
   // retraction. engram_stim_recall (87.5%) + multitag_cue_recall (90%).
   if (e.includes("engram_stim_recall") || e.includes("multitag_cue_recall") ||

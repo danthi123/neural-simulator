@@ -982,6 +982,32 @@ PRESETS: dict[str, list[str]] = {
     "multibridge_60word_demo": [
         "--friendly",
     ],
+    # 2026-05-15 catalog G.20 BREAKTHROUGH: distributed encoding in
+    # shared pool. 32 concepts / 1600 neurons / 81.2% top-1 (4.2x
+    # per-neuron efficiency vs v16). Multi-seed 74% mean.
+    "g20_shared_pool_n32": [
+        "--n-concepts", "32",
+        "--n-train-events", "400",
+        "--n-lang-input", "8192",
+        "--n-shared-pool", "1600",
+        "--slice-size", "50",
+        "--top-k", "100",
+        "--topographic-factor", "10.0",
+        "--off-target-factor", "0.1",
+        "--sparsity", "0.03",
+    ],
+    # G.20 capacity-stretch tier (60 concepts; 56.7% top-1 single seed).
+    "g20_shared_pool_n60": [
+        "--n-concepts", "60",
+        "--n-train-events", "400",
+        "--n-lang-input", "8192",
+        "--n-shared-pool", "3200",
+        "--slice-size", "50",
+        "--top-k", "100",
+        "--topographic-factor", "10.0",
+        "--off-target-factor", "0.1",
+        "--sparsity", "0.015",
+    ],
     # 2026-05-14 validated semantic memory recipes (after architecture-mismatch
     # bug retraction). Both require a pre-trained v16 concept-pool bridge
     # passed via extra_args (--load-bridge ...). The launcher passes --seed
@@ -1118,6 +1144,9 @@ PRESET_RUNNERS: dict[str, str] = {
     # 60-word multi-bridge end-to-end demo (2026-05-15). Requires all 5
     # bridges trained: seed${N}_v16/_set2/_set3/_set4/_set5.simstate.h5.
     "multibridge_60word_demo": "research.runners.multibridge_60word_demo",
+    # G.20 distributed-encoding BREAKTHROUGH (catalog G.20, 2026-05-15)
+    "g20_shared_pool_n32": "research.runners.concept_pool_demo_shared",
+    "g20_shared_pool_n60": "research.runners.concept_pool_demo_shared",
     # Semantic memory + cue retrieval (2026-05-14 corrected after bug fix)
     "engram_stim_recall":    "research.runners.compose_concept_engram",
     "multitag_cue_recall":   "research.runners.multitag_eval",
