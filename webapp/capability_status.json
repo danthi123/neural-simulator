@@ -1,7 +1,7 @@
 {
   "as_of": "2026-05-15",
   "headline": {
-    "tier": "Catalog G.20 distributed-encoding BREAKTHROUGH: 32 concepts in single shared pool (81.2%, 26x chance)",
+    "tier": "Catalog G.20 distributed-encoding: 4-SEED VALIDATED at 32 concepts (75.0% top-1, 92.2% top-5)",
     "result": "Single-bridge architectural ceiling at 16-word vocab broken via multi-bridge ensemble. 5 v16 bridges, each owning 12 distinct concept words (sets 1-5), routed by an automatic dispatch layer. FULL 5-SEED VALIDATION (seeds 42-46) shipped 2026-05-15: 238/320 = 74.4% Phase 1 PASS rate, statistically indistinguishable from v16 baseline. 60 unique concept words operational with 11 natural-language conversational features (pair encoding, N-word sentences, negation, conjunctions, possessives, pronoun coreference, tense markers, comparisons, yes/no questions, role queries, relational queries, memory CRUD). Each bridge inherits v16's 90% multi-seed multitag validation; multi-bridge layer adds cross-set partial encoding so sentences spanning sets (e.g. 'person ate water' across set4 + set2 + set3) work transparently.",
     "metrics": "5-seed Phase 1 PASS (sets 2-5, 80 trials/set): set2 58/80 (72.5%), set3 60/80 (75.0%), set4 60/80 (75.0%), set5 60/80 (75.0%). Combined: 238/320 (74.4%). Mean per-bridge 11.9/16 +/- 0.7. 19 robust words (PASS at all 5 seeds), 45 fragile (PASS at some), 0 fail. Range 11-14/16 per seed. Multi-bridge unit tests: 91 pass in 1.2s, CPU-only. End-to-end demo: 33 commands across all 5 bridges, all features work.",
     "wall_clock": "Bridge train: ~18 min/bridge. 5-seed validation (4 new sets x 5 seeds = 20 trains): ~6.3 hours total. End-to-end demo runtime: ~5 min loading + ~30 sec/sentence encoding. Total bridge state: ~525 MB on disk (20 bridges + v16 baseline).",
@@ -10,10 +10,10 @@
   },
   "pillars": [
     {
-      "name": "🎉 Catalog G.20 distributed-encoding BREAKTHROUGH: 32 concepts in 1 shared pool (seed 42, 2026-05-15)",
+      "name": "🎉 Catalog G.20 distributed-encoding: 4-SEED VALIDATED at 32 concepts (2026-05-15)",
       "status": "VALIDATED",
-      "metric": "26/32 top-1 (81.2%), 31/32 top-5 (96.9%), 26x chance. 1600-neuron shared pool vs v16's 3200 dedicated pool neurons -- 2x vocabulary in 1/2 substrate. Per-neuron PASS efficiency 4.2x v16. Test recipe: --topographic-factor 10.0 --off-target-factor 0.1 --slice-size 50 --top-k 100. Multi-seed validation pending; 64-concept smoke in flight. Catalog G.20 (Pulvermuller cortical distributed word ensembles) status changed from PARTIALLY MISSING to PROTOTYPE VALIDATED.",
-      "doc": "2026-05-15-G20-shared-pool-BREAKTHROUGH-32-concepts.md",
+      "metric": "4-seed combined: 96/128 (75.0%) top-1, 118/128 (92.2%) top-5. Per-bridge mean 24.0/32 (75.0%) top-1, 29.5/32 (92.2%) top-5. Per-seed range top-1: 65.6%-81.2%. Statistically equivalent to v16 baseline (77.5%) at 2x the vocabulary in 1/2 the substrate (1600 vs 3200 neurons). Per-neuron PASS efficiency 4.0x v16. 10/32 words ROBUST (PASS all 4 seeds), 22/32 fragile, 0 outright fail. 23/32 robust at top-5. Catalog G.20 (Pulvermuller distributed cortical word ensembles): PARTIALLY MISSING -> MULTI-SEED VALIDATED.",
+      "doc": "2026-05-15-G20-32concept-4seed-VALIDATED.md",
       "date": "2026-05-15"
     },
     {
