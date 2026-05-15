@@ -275,6 +275,9 @@ export function categorizeExperiment(experimentName) {
   if (e.includes("concept_pool") || e.includes("concept_compose") ||
       e.includes("noun_pool") || e.includes("verb_pool"))
     return { category: "Concept pool architecture", color: "#60a5fa" };  // sky blue
+  // 2026-05-15: multi-bridge ensemble (60-word vocab across 5 bridges).
+  if (e.includes("multibridge") || e.includes("multi_bridge"))
+    return { category: "Multi-bridge ensemble (60 words)", color: "#a78bfa" };  // violet
   // 2026-05-14: semantic memory validated after architecture-mismatch bug
   // retraction. engram_stim_recall (87.5%) + multitag_cue_recall (90%).
   if (e.includes("engram_stim_recall") || e.includes("multitag_cue_recall") ||

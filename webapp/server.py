@@ -923,6 +923,65 @@ PRESETS: dict[str, list[str]] = {
         "--orthogonal-codes",
         "--sparsity", "0.05",
     ],
+    # Multi-bridge set wrappers (set2-5) use IDENTICAL args to concept_pool_demo;
+    # only their vocab tables differ. Each trains a 12-concept-word v16 bridge.
+    "concept_pool_demo_set2": [
+        "--n-train-events", "200",
+        "--n-lang-input", "2048",
+        "--n-per-pool", "200",
+        "--n-fs-per-pool", "24",
+        "--weak-concept-dynamics",
+        "--interleaved",
+        "--topographic-factor", "3.0",
+        "--off-target-factor", "0.3",
+        "--enable-adjective",
+        "--orthogonal-codes",
+        "--sparsity", "0.05",
+    ],
+    "concept_pool_demo_set3": [
+        "--n-train-events", "200",
+        "--n-lang-input", "2048",
+        "--n-per-pool", "200",
+        "--n-fs-per-pool", "24",
+        "--weak-concept-dynamics",
+        "--interleaved",
+        "--topographic-factor", "3.0",
+        "--off-target-factor", "0.3",
+        "--enable-adjective",
+        "--orthogonal-codes",
+        "--sparsity", "0.05",
+    ],
+    "concept_pool_demo_set4": [
+        "--n-train-events", "200",
+        "--n-lang-input", "2048",
+        "--n-per-pool", "200",
+        "--n-fs-per-pool", "24",
+        "--weak-concept-dynamics",
+        "--interleaved",
+        "--topographic-factor", "3.0",
+        "--off-target-factor", "0.3",
+        "--enable-adjective",
+        "--orthogonal-codes",
+        "--sparsity", "0.05",
+    ],
+    "concept_pool_demo_set5": [
+        "--n-train-events", "200",
+        "--n-lang-input", "2048",
+        "--n-per-pool", "200",
+        "--n-fs-per-pool", "24",
+        "--weak-concept-dynamics",
+        "--interleaved",
+        "--topographic-factor", "3.0",
+        "--off-target-factor", "0.3",
+        "--enable-adjective",
+        "--orthogonal-codes",
+        "--sparsity", "0.05",
+    ],
+    # End-to-end demo across all 5 bridges. Requires all 5 trained at the
+    # requested seed. Use --friendly extra arg for natural-language output.
+    "multibridge_60word_demo": [
+        "--friendly",
+    ],
     # 2026-05-14 validated semantic memory recipes (after architecture-mismatch
     # bug retraction). Both require a pre-trained v16 concept-pool bridge
     # passed via extra_args (--load-bridge ...). The launcher passes --seed
@@ -1050,6 +1109,15 @@ PRESET_RUNNERS: dict[str, str] = {
     "concept_pool_demo":     "research.runners.concept_pool_demo",
     "concept_compose_demo":  "research.runners.concept_compose_demo",
     "concept_speak_demo":    "research.runners.concept_speak_demo",
+    # Multi-bridge vocab expansion: each set wrapper trains a new v16 bridge
+    # with DIFFERENT vocab. Stack: set2 = 12 new words, set3 = 12, etc.
+    "concept_pool_demo_set2": "research.runners.concept_pool_demo_set2",
+    "concept_pool_demo_set3": "research.runners.concept_pool_demo_set3",
+    "concept_pool_demo_set4": "research.runners.concept_pool_demo_set4",
+    "concept_pool_demo_set5": "research.runners.concept_pool_demo_set5",
+    # 60-word multi-bridge end-to-end demo (2026-05-15). Requires all 5
+    # bridges trained: seed${N}_v16/_set2/_set3/_set4/_set5.simstate.h5.
+    "multibridge_60word_demo": "research.runners.multibridge_60word_demo",
     # Semantic memory + cue retrieval (2026-05-14 corrected after bug fix)
     "engram_stim_recall":    "research.runners.compose_concept_engram",
     "multitag_cue_recall":   "research.runners.multitag_eval",
