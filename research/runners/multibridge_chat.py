@@ -326,6 +326,10 @@ def main():
     p.add_argument("--top-k", type=int, default=100)
     p.add_argument("--drive-steps", type=int, default=100)
     p.add_argument("--scripted", type=str, default=None)
+    p.add_argument("--friendly", action="store_true",
+                    help="Output in natural-language style instead of "
+                    "tag-form (e.g. 'Yes, the dog is big.' vs "
+                    "'YES (matched dog_big)')")
     args = p.parse_args()
 
     names = args.names or [Path(bp).stem for bp in args.bridges]
@@ -496,6 +500,41 @@ def main():
         the closure's `members`."""
         return query_sentence_template(members, template)
 
+    def _humanize_tag(tag):
+        """Pretty-print a tag: 'NOT_a_b' -> 'not a b',
+        'PAST_x_eat_y' -> 'x ate y', 'color_of_apple_red' -> 'apple's color is red'.
+        """
+        parts = tag.split("_")
+        if not parts:
+            return tag
+        if parts[0] == "NOT" and len(parts) >= 3:
+            return f"{parts[1]} is not {parts[2]}"
+        if parts[0] == "PAST" and len(parts) >= 4:
+            VERB_PAST = {"eat": "ate", "drink": "drank", "speak": "spoke",
+                          "run": "ran", "take": "took", "give": "gave",
+                          "find": "found", "lose": "lost", "go": "went",
+                          "come": "came", "write": "wrote", "see": "saw",
+                          "push": "pushed", "pull": "pulled",
+                          "open": "opened", "close": "closed",
+                          "sleep": "slept", "walk": "walked",
+                          "listen": "listened", "look": "looked",
+                          "stop": "stopped", "hear": "heard"}
+            verb = VERB_PAST.get(parts[2], parts[2] + "ed")
+            return f"{parts[1]} {verb} {parts[3]}"
+        if parts[0] == "FUTURE" and len(parts) >= 4:
+            return f"{parts[1]} will {parts[2]} {parts[3]}"
+        if len(parts) >= 3 and parts[1] == "of":
+            # color_of_apple_red -> "apple's color is red"
+            owner, attr, val = parts[2], parts[0], "_".join(parts[3:]) if len(parts) > 3 else None
+            if val:
+                return f"{owner}'s {attr} is {val}"
+            return f"{owner}'s {attr}"
+        if len(parts) == 2:
+            return f"{parts[0]} is {parts[1]}"
+        if len(parts) == 3:
+            return f"{parts[0]} {parts[1]} {parts[2]}"
+        return " ".join(parts)
+
     def encode_sentence(words):
         """Multi-bridge sentence encoding.
 
@@ -506,7 +545,11 @@ def main():
         m_all = find_bridges_for_words(members, words)
         if m_all is not None:
             result = encode_to_bridge(m_all, *words)
-            print(f"  [{m_all.name}] {result}", flush=True)
+            if args.friendly:
+                print(f"  OK, I'll remember {_humanize_tag(result) if result and not result.startswith('already') else 'that'}.",
+                      flush=True)
+            else:
+                print(f"  [{m_all.name}] {result}", flush=True)
             return
         encoded_in = []
         for m in members:
@@ -517,10 +560,18 @@ def main():
         if encoded_in:
             bridge_names = [n for n, _ in encoded_in]
             tag_name = encoded_in[0][1]
-            print(f"  [cross-set: '{tag_name}' encoded in {bridge_names}]",
-                  flush=True)
+            if args.friendly:
+                print(f"  OK, I'll remember {_humanize_tag(tag_name)}.",
+                      flush=True)
+            else:
+                print(f"  [cross-set: '{tag_name}' encoded in {bridge_names}]",
+                      flush=True)
         else:
-            print(f"  [no bridge knows any of {words}]", flush=True)
+            if args.friendly:
+                print(f"  Sorry, I don't know any of those words yet.",
+                      flush=True)
+            else:
+                print(f"  [no bridge knows any of {words}]", flush=True)
 
     STOPWORDS = {"the", "a", "an", "that", "in", "on", "at",
                   "to", "of", "with", "by"}
@@ -801,14 +852,25 @@ def main():
             hits = _yes_no_query(target)
             alt = _yes_no_query(
                 (parts if negated else ["NOT"] + parts))
-            if hits:
-                print(f"  YES (matched '{hits[0][1]}' in {hits[0][0]})",
-                      flush=True)
-            elif alt:
-                print(f"  NO (have opposite-truth: '{alt[0][1]}' in "
-                      f"{alt[0][0]})", flush=True)
+            if args.friendly:
+                if hits:
+                    print(f"  Yes, {parts[0]} is{' not' if negated else ''} {parts[1]}.",
+                          flush=True)
+                elif alt:
+                    print(f"  No, {parts[0]} is{'' if negated else ' not'} {parts[1]}.",
+                          flush=True)
+                else:
+                    print(f"  I don't know. I haven't been told.",
+                          flush=True)
             else:
-                print(f"  UNKNOWN (no tag matches)", flush=True)
+                if hits:
+                    print(f"  YES (matched '{hits[0][1]}' in {hits[0][0]})",
+                          flush=True)
+                elif alt:
+                    print(f"  NO (have opposite-truth: '{alt[0][1]}' in "
+                          f"{alt[0][0]})", flush=True)
+                else:
+                    print(f"  UNKNOWN (no tag matches)", flush=True)
             _track_subject(parts)
             return None
         # 'who X Y?' or 'who X Y' -> find subject of '*_X_Y'
