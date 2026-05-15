@@ -129,6 +129,47 @@ See [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) for all
 conversational demos (Tier 1 / Tier 2.1 synonym / Phase 1.4 continual
 learning).
 
+### 60-word multi-bridge conversation (2026-05-15)
+
+Single bridge has an architectural ceiling at 16-word vocab. The
+**multi-bridge ensemble** runs 5 v16 bridges (each owning 12 distinct
+concept words = 60 unique vocab) with automatic dispatch:
+
+```bash
+# End-to-end demo with natural-language output
+python research/runners/multibridge_60word_demo.py --seed 42 --friendly
+```
+
+Example session (--friendly mode):
+```
+> remember the dog is big
+  OK, I'll remember dog is big.
+> remember the dog ate apple
+  OK, I'll remember dog ate apple.
+> is the dog big?
+  Yes, dog is big.
+> is the apple small?
+  I don't know. I haven't been told.
+> who ate apple?
+  Dog did.
+> what did dog ate?
+  Apple.
+> remember sun is hot
+  OK, I'll remember sun is hot.    # CROSS-SET (sun in set2, hot in set1)
+> remember apple's color is red
+  OK, I'll remember apple's color is red.
+> what color is apple?
+  Red.
+```
+
+11 conversational features: pair encoding, N-word sentences, negation,
+conjunctions, possessives, pronoun coreference, tense (PAST/FUTURE),
+comparisons, yes/no, role queries, relational queries. Plus memory
+CRUD (about / forget / save). 91 unit tests passing in 1.2s.
+
+See [`research/findings/2026-05-15-multibridge-60word-shipped.md`](research/findings/2026-05-15-multibridge-60word-shipped.md)
+for the full milestone doc.
+
 Full setup in [QUICKSTART.md](QUICKSTART.md).
 
 ---
