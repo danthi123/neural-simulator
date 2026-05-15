@@ -129,11 +129,14 @@ See [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) for all
 conversational demos (Tier 1 / Tier 2.1 synonym / Phase 1.4 continual
 learning).
 
-### 🎉 Catalog G.20 distributed-encoding BREAKTHROUGH (2026-05-15)
+### 🎉 Catalog G.20 distributed-encoding: 4-SEED VALIDATED (2026-05-15)
 
-**32 concepts in 1 shared pool: 81.2% top-1 PASS, 96.9% top-5, 26× chance.**
-This breaks v16's 16-pool ceiling using HALF the substrate for TWICE
-the vocabulary.
+**32 concepts in 1 shared pool, 4-seed: 75.0% top-1 mean, 92.2% top-5 mean.**
+Statistically equivalent to v16 baseline (77.5%) at TWICE the vocabulary
+in HALF the substrate. 4.0× per-neuron PASS efficiency.
+
+Per-seed: 81.2%, 65.6%, 75.0%, 78.1% (seeds 42-45). 10/32 words robust
+at all 4 seeds; 0 words fail all 4 seeds.
 
 ```bash
 # Train a 32-concept G.20 bridge (~30 min):
