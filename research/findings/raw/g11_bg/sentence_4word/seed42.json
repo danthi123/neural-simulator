@@ -1,0 +1,171 @@
+{
+  "seed": 42,
+  "n_tags_neural_pass": 8,
+  "n_total_tags": 8,
+  "n_found_words": 32,
+  "n_total_words": 32,
+  "n_role_correct": 16,
+  "n_role_total": 16,
+  "per_sentence": [
+    {
+      "tag": "apple_stop_big_cat",
+      "words": [
+        "apple",
+        "stop",
+        "big",
+        "cat"
+      ],
+      "n_found": 4,
+      "n_words": 4,
+      "top6": [
+        "cat",
+        "big",
+        "apple",
+        "stop",
+        "go",
+        "river"
+      ],
+      "all_found": true
+    },
+    {
+      "tag": "cat_stop_big_apple",
+      "words": [
+        "cat",
+        "stop",
+        "big",
+        "apple"
+      ],
+      "n_found": 4,
+      "n_words": 4,
+      "top6": [
+        "cat",
+        "big",
+        "apple",
+        "river",
+        "go",
+        "stop"
+      ],
+      "all_found": true
+    },
+    {
+      "tag": "dog_look_hot_cold",
+      "words": [
+        "dog",
+        "look",
+        "hot",
+        "cold"
+      ],
+      "n_found": 4,
+      "n_words": 4,
+      "top6": [
+        "hot",
+        "dog",
+        "look",
+        "small",
+        "big",
+        "apple"
+      ],
+      "all_found": true
+    },
+    {
+      "tag": "cold_look_hot_dog",
+      "words": [
+        "cold",
+        "look",
+        "hot",
+        "dog"
+      ],
+      "n_found": 4,
+      "n_words": 4,
+      "top6": [
+        "dog",
+        "look",
+        "hot",
+        "river",
+        "cold",
+        "small"
+      ],
+      "all_found": true
+    },
+    {
+      "tag": "river_go_small_big",
+      "words": [
+        "river",
+        "go",
+        "small",
+        "big"
+      ],
+      "n_found": 4,
+      "n_words": 4,
+      "top6": [
+        "small",
+        "big",
+        "go",
+        "river",
+        "hot",
+        "dog"
+      ],
+      "all_found": true
+    },
+    {
+      "tag": "big_go_small_river",
+      "words": [
+        "big",
+        "go",
+        "small",
+        "river"
+      ],
+      "n_found": 4,
+      "n_words": 4,
+      "top6": [
+        "big",
+        "small",
+        "river",
+        "go",
+        "hot",
+        "cold"
+      ],
+      "all_found": true
+    },
+    {
+      "tag": "come_river_hot_apple",
+      "words": [
+        "come",
+        "river",
+        "hot",
+        "apple"
+      ],
+      "n_found": 4,
+      "n_words": 4,
+      "top6": [
+        "hot",
+        "come",
+        "river",
+        "apple",
+        "big",
+        "small"
+      ],
+      "all_found": true
+    },
+    {
+      "tag": "apple_river_hot_come",
+      "words": [
+        "apple",
+        "river",
+        "hot",
+        "come"
+      ],
+      "n_found": 4,
+      "n_words": 4,
+      "top6": [
+        "come",
+        "hot",
+        "river",
+        "apple",
+        "go",
+        "dog"
+      ],
+      "all_found": true
+    }
+  ]
+}

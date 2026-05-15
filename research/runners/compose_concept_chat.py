@@ -425,6 +425,52 @@ def main():
         )
         return tag_name
 
+    def encode_quad(words, tag_name):
+        """Encode 4-word sentence as one engram (subject verb modifier object).
+
+        Same mechanism as encode_triple but with 4 words. Multi-seed
+        validated 2026-05-14: 100% role accuracy, 98.1% word recall.
+        """
+        from sim.backend import get_backend
+        cp, _ = get_backend()
+        rm = bridge.region_manager
+        from sim.text_embeddings import orthogonal_drive_pattern
+
+        n_words = args.n_words_for_orthogonal
+        n_lang = args.n_lang_input
+        drives = [orthogonal_drive_pattern(
+            cue_idx=_WORD_TO_IDX[w], n_cues=n_words,
+            n_neurons=n_lang, drive_max_pA=200.0, sparsity=args.sparsity,
+        ) for w in words]
+        combined = cp.asarray(sum(drives), dtype=cp.float32)
+
+        lang_arr = cp.asarray(list(rm.indices("language_input")), dtype=cp.int64)
+        pool_arrs = [cp.asarray(list(rm.indices(_WORD_TO_POOL[w])),
+                                  dtype=cp.int64) for w in words]
+        n_total = bridge.cp_external_input_current.shape[0]
+
+        bridge.start_engram_recording(tag_name)
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(30):
+            bridge._run_one_simulation_step()
+
+        ext = cp.zeros(n_total, dtype=cp.float32)
+        for _ in range(args.encoding_steps):
+            ext.fill(0)
+            ext[lang_arr] = combined
+            for pa in pool_arrs:
+                ext[pa] = args.balanced_teacher_pA
+            bridge.cp_external_input_current[:] = ext
+            bridge._run_one_simulation_step()
+
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(20):
+            bridge._run_one_simulation_step()
+
+        bridge.commit_engram_tag(tag_name, top_k=args.top_k,
+                                   region_filter=region_filter)
+        return tag_name
+
     def handle_remember(line):
         """Parse 'remember <a> is <b>' or 'remember <a> <b>' → encode pair.
 
@@ -451,16 +497,18 @@ def main():
             parts = [_strip_articles(p) for p in rest.split()]
             if len(parts) == 2:
                 a, b = parts[0], parts[1]
-            elif len(parts) == 3:
-                # 3-word sentence: subject verb object
-                w_a, w_v, w_b = parts[0], parts[1], parts[2]
-                for w in (w_a, w_v, w_b):
+            elif len(parts) in (3, 4):
+                # 3 or 4-word sentence: subject verb (modifier) object
+                for w in parts:
                     if w not in _WORD_TO_IDX or _WORD_TO_IDX[w] >= args.n_words_for_orthogonal:
                         return f"unknown word: {w}"
-                tag = f"{w_a}_{w_v}_{w_b}"
+                tag = "_".join(parts)
                 if tag in encoded_tags:
                     return f"already remembered: {tag}"
-                encode_triple(w_a, w_v, w_b, tag)
+                if len(parts) == 3:
+                    encode_triple(parts[0], parts[1], parts[2], tag)
+                else:
+                    encode_quad(parts, tag)
                 encoded_tags.append(tag)
                 return tag
             else:
@@ -635,57 +683,56 @@ def main():
                 return True  # if verify fails for any reason, accept match
 
         if line.startswith("who "):
-            # 'who <verb> <obj>' -> find tag matching '*_verb_obj'
+            # 'who <verb> <obj>' -> find tag matching '*_verb_obj' (3-word)
+            # 'who <verb> <mod> <obj>' -> find '*_verb_mod_obj' (4-word)
             rest = line[len("who "):].strip().rstrip("?").strip()
             parts = rest.split()
             if len(parts) >= 2:
-                verb = parts[0]
-                obj = parts[-1]
-                matches = [t for t in encoded_tags
-                            if t.endswith(f"_{verb}_{obj}")]
+                suffix = "_" + "_".join(parts)
+                matches = [t for t in encoded_tags if t.endswith(suffix)]
                 verified = []
                 for t in matches:
                     subj = t.split("_")[0]
-                    if neural_verify_triple(t, [subj, verb, obj]):
+                    if neural_verify_triple(t, [subj] + parts):
                         verified.append(subj)
+                action_str = " ".join(parts)
                 if verified:
-                    print(f"  Who {verb} {obj}? {', '.join(verified)}",
+                    print(f"  Who {action_str}? {', '.join(verified)}",
                           flush=True)
                 elif matches:
-                    # Symbol match but neural verification failed
                     subjects_unverified = [t.split("_")[0] for t in matches]
-                    print(f"  Who {verb} {obj}? (weak): "
+                    print(f"  Who {action_str}? (weak): "
                           f"{', '.join(subjects_unverified)}", flush=True)
                 else:
-                    print(f"  I don't know who {verb} {obj}.", flush=True)
+                    print(f"  I don't know who {action_str}.", flush=True)
             else:
-                print(f"  [usage: 'who <verb> <object>?']", flush=True)
+                print(f"  [usage: 'who <verb> <object>?' or 'who <verb> <mod> <obj>?']", flush=True)
             return None
         if line.startswith("what did "):
-            # 'what did <subj> <verb>' -> find tag matching 'subj_verb_*'
+            # 'what did <subj> <verb>' -> 'subj_verb_*' (3-word)
+            # 'what did <subj> <verb> <mod>' -> 'subj_verb_mod_*' (4-word)
             rest = line[len("what did "):].strip().rstrip("?").strip()
             parts = rest.split()
             if len(parts) >= 2:
-                subj = parts[0]
-                verb = parts[-1]
-                matches = [t for t in encoded_tags
-                            if t.startswith(f"{subj}_{verb}_")]
+                prefix = "_".join(parts) + "_"
+                matches = [t for t in encoded_tags if t.startswith(prefix)]
                 verified = []
                 for t in matches:
                     obj = t.split("_")[-1]
-                    if neural_verify_triple(t, [subj, verb, obj]):
+                    if neural_verify_triple(t, parts + [obj]):
                         verified.append(obj)
+                action_str = " ".join(parts)
                 if verified:
-                    print(f"  What did {subj} {verb}? {', '.join(verified)}",
+                    print(f"  What did {action_str}? {', '.join(verified)}",
                           flush=True)
                 elif matches:
                     objects_unverified = [t.split("_")[-1] for t in matches]
-                    print(f"  What did {subj} {verb}? (weak): "
+                    print(f"  What did {action_str}? (weak): "
                           f"{', '.join(objects_unverified)}", flush=True)
                 else:
-                    print(f"  I don't know what {subj} {verb}.", flush=True)
+                    print(f"  I don't know what {action_str}.", flush=True)
             else:
-                print(f"  [usage: 'what did <subject> <verb>?']", flush=True)
+                print(f"  [usage: 'what did <subject> <verb> [<mod>]?']", flush=True)
             return None
         if line.startswith("is "):
             # Yes/no query: 'is apple big' → check if apple_big or big_apple tagged
