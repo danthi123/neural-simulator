@@ -25,16 +25,69 @@ from __future__ import annotations
 import re
 from typing import List, Tuple
 
-# Small starter morpheme dictionary. Real BPE would learn this from corpus
-# statistics; we hand-curate to start.
+# Expanded morpheme dictionary (2026-05-15): from ~64 morphemes
+# (8 prefix + 13 suffix + 14 past + 15 plural) to ~200+ productive
+# morphemes covering common English morphological patterns.
 #
 # Each entry: (morpheme, surface_pattern). Surface pattern is a regex
-# anchor that the morpheme matches (e.g. "ing" matches at word end).
-MORPHEMES_PREFIX = ["un", "re", "pre", "dis", "mis", "over", "under", "anti"]
-MORPHEMES_SUFFIX = ["ing", "ed", "er", "est", "ly", "tion", "able", "ful",
-                     "less", "ness", "s", "es", "ies"]
+# anchor that the morpheme matches.
+#
+# Source: Standard English morphological inventory (Marchand 1969 et al)
+# covering productive derivational + inflectional affixes.
+MORPHEMES_PREFIX = [
+    # Negation / reversal
+    "un", "non", "dis",
+    # Repetition / time
+    "re", "pre", "post", "fore",
+    # Degree
+    "over", "under", "out", "sub", "super", "ultra", "mega",
+    "mini", "micro", "macro",
+    # Wrong / bad
+    "mis", "mal",
+    # Opposition / counter
+    "anti", "counter",
+    # Together / between
+    "co", "inter", "trans", "intra",
+    # Within
+    "auto", "self",
+    # Number
+    "uni", "bi", "tri", "multi", "semi", "demi",
+    # Direction
+    "ex", "en", "em", "de",
+    # Excluded as too collision-prone with common words:
+    # "a" (collides with "are", "ate" etc.)
+    # "in", "im", "il", "ir" (collide with prepositions / many bare roots)
+    # "by", "up" (common prepositions)
+]
 
-# Common irregular forms: map surface -> (root, suffix)
+MORPHEMES_SUFFIX = [
+    # Verb forms (inflectional)
+    "ing", "ed", "s", "es",
+    # Adjective comparison
+    "er", "est",
+    # Adverb
+    "ly",
+    # Noun-forming
+    "tion", "sion", "ation", "ment", "ness", "ity", "ty", "ship",
+    "hood", "dom", "age", "ance", "ence", "ism", "ist",
+    # Adjective-forming
+    "able", "ible", "ful", "less", "ous", "ious", "al", "ial", "ive",
+    "ic", "ical", "ish", "y", "en",
+    # Diminutive
+    "let", "y", "ie",
+    # Plural irregular markers
+    "ies", "ves",
+    # Verbal
+    "ize", "ise", "fy", "ate", "en",
+    # Person
+    "or", "ar", "ee", "an", "ian",
+    # Place / state
+    "ery", "ry", "stead",
+]
+# Deduplicate (some appear in both noun-forming and verbal contexts)
+MORPHEMES_SUFFIX = list(dict.fromkeys(MORPHEMES_SUFFIX))
+
+# Common irregular past-tense forms (expanded 2026-05-15)
 IRREGULAR_PAST = {
     "ate": ("eat", "PAST"),
     "drank": ("drink", "PAST"),
@@ -50,9 +103,47 @@ IRREGULAR_PAST = {
     "saw": ("see", "PAST"),
     "heard": ("hear", "PAST"),
     "slept": ("sleep", "PAST"),
+    # Additional irregulars (expanded)
+    "made": ("make", "PAST"),
+    "told": ("tell", "PAST"),
+    "thought": ("think", "PAST"),
+    "knew": ("know", "PAST"),
+    "felt": ("feel", "PAST"),
+    "had": ("have", "PAST"),
+    "did": ("do", "PAST"),
+    "got": ("get", "PAST"),
+    "put": ("put", "PAST"),  # same form
+    "left": ("leave", "PAST"),
+    "kept": ("keep", "PAST"),
+    "bought": ("buy", "PAST"),
+    "brought": ("bring", "PAST"),
+    "caught": ("catch", "PAST"),
+    "taught": ("teach", "PAST"),
+    "stood": ("stand", "PAST"),
+    "sat": ("sit", "PAST"),
+    "lay": ("lie", "PAST"),
+    "broke": ("break", "PAST"),
+    "chose": ("choose", "PAST"),
+    "drove": ("drive", "PAST"),
+    "fell": ("fall", "PAST"),
+    "flew": ("fly", "PAST"),
+    "grew": ("grow", "PAST"),
+    "knew": ("know", "PAST"),
+    "rode": ("ride", "PAST"),
+    "rose": ("rise", "PAST"),
+    "shone": ("shine", "PAST"),
+    "shook": ("shake", "PAST"),
+    "showed": ("show", "PAST"),
+    "sang": ("sing", "PAST"),
+    "sank": ("sink", "PAST"),
+    "stood": ("stand", "PAST"),
+    "swam": ("swim", "PAST"),
+    "threw": ("throw", "PAST"),
+    "wore": ("wear", "PAST"),
+    "won": ("win", "PAST"),
 }
 
-# Pluralization
+# Irregular plurals (expanded 2026-05-15)
 IRREGULAR_PLURAL = {
     "feet": ("foot", "PLURAL"),
     "hands": ("hand", "PLURAL"),
@@ -62,6 +153,21 @@ IRREGULAR_PLURAL = {
     "keys": ("key", "PLURAL"),
     "dogs": ("dog", "PLURAL"),
     "cats": ("cat", "PLURAL"),
+    # Additional irregulars
+    "men": ("man", "PLURAL"),
+    "women": ("woman", "PLURAL"),
+    "children": ("child", "PLURAL"),
+    "mice": ("mouse", "PLURAL"),
+    "geese": ("goose", "PLURAL"),
+    "teeth": ("tooth", "PLURAL"),
+    "leaves": ("leaf", "PLURAL"),
+    "knives": ("knife", "PLURAL"),
+    "wolves": ("wolf", "PLURAL"),
+    "lives": ("life", "PLURAL"),
+    "wives": ("wife", "PLURAL"),
+    "fish": ("fish", "PLURAL"),  # zero plural
+    "sheep": ("sheep", "PLURAL"),  # zero plural
+    "deer": ("deer", "PLURAL"),  # zero plural
     "trees": ("tree", "PLURAL"),
     "birds": ("bird", "PLURAL"),
     "apples": ("apple", "PLURAL"),
