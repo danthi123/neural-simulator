@@ -578,6 +578,88 @@ def main():
             for m in members:
                 print(f"  [{m.name}] concepts: {m.concept_words}", flush=True)
             return None
+        # 'know about X' or 'what do you know about X' or 'about X'
+        # -> list all tags containing X across all bridges
+        if (line.startswith("about ")
+            or line.startswith("know about ")
+            or line.startswith("what do you know about ")
+            or line.startswith("tell me about ")):
+            for prefix in ("what do you know about ",
+                            "tell me about ", "know about ", "about "):
+                if line.startswith(prefix):
+                    word = line[len(prefix):].rstrip("?").strip()
+                    break
+            if not word:
+                print("  [usage: about <X> | know about <X> | tell me about <X>]",
+                      flush=True)
+                return None
+            found = []
+            for m in members:
+                for t in m.encoded_tags:
+                    parts = t.split("_")
+                    if word in parts:
+                        found.append((m.name, t))
+            if not found:
+                print(f"  [no tags mention '{word}']", flush=True)
+            else:
+                print(f"  [I know {len(found)} thing(s) about '{word}']:",
+                      flush=True)
+                for bn, t in found:
+                    print(f"    {t} (via {bn})", flush=True)
+            return None
+        # 'forget <a> <b>' or 'forget <tag_name>' or 'forget about <X>'
+        # Removes matching tag(s) from bridges. Note: only removes the
+        # named index; doesn't undo synaptic plasticity.
+        if line.startswith("forget"):
+            rest = line[len("forget"):].strip()
+            if rest.startswith("about "):
+                word = rest[len("about "):].rstrip("?").strip()
+                removed = []
+                for m in members:
+                    keep, drop = [], []
+                    for t in m.encoded_tags:
+                        if word in t.split("_"):
+                            drop.append(t)
+                        else:
+                            keep.append(t)
+                    for t in drop:
+                        try:
+                            m.bridge.delete_engram_tag(t)
+                            removed.append((m.name, t))
+                        except Exception as e:
+                            print(f"  [warning: delete failed {t}: {e}]",
+                                  flush=True)
+                    m.encoded_tags = keep
+                if not removed:
+                    print(f"  [no tags about '{word}' to forget]", flush=True)
+                else:
+                    print(f"  [forgot {len(removed)} tag(s) about '{word}']:",
+                          flush=True)
+                    for bn, t in removed:
+                        print(f"    {t} (from {bn})", flush=True)
+                return None
+            # 'forget a b' or 'forget a is b' -> remove specific tag
+            parts = rest.replace(" is ", " ").split()
+            if not parts:
+                print("  [usage: forget <a> <b> OR forget about <X>]",
+                      flush=True)
+                return None
+            tag = "_".join(parts)
+            removed = []
+            for m in members:
+                if tag in m.encoded_tags:
+                    try:
+                        m.bridge.delete_engram_tag(tag)
+                        m.encoded_tags.remove(tag)
+                        removed.append(m.name)
+                    except Exception as e:
+                        print(f"  [warning: delete failed {tag}: {e}]",
+                              flush=True)
+            if removed:
+                print(f"  [forgot '{tag}' from {removed}]", flush=True)
+            else:
+                print(f"  [no bridge has tag '{tag}']", flush=True)
+            return None
         # Help command
         if line in ("help", "/help", "?"):
             print(__doc__ or "Multi-bridge chat REPL", flush=True)
@@ -731,6 +813,9 @@ def main():
     print("  who <verb> <obj>?             Find subject of '*_verb_obj'")
     print("  what did <subj> <verb>?       Find object of 'subj_verb_*'")
     print("  what is X                     Multi-bridge multitag retrieval")
+    print("  about X / tell me about X     List all tags mentioning X")
+    print("  forget a b                    Remove tag 'a_b' from bridges")
+    print("  forget about X                Remove all tags mentioning X")
     print("  <word>                        Same as 'what is'")
     print("  X and Y                       Conjunction: each dispatched")
     print("  tags                          List tags across all bridges")
