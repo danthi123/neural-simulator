@@ -27,31 +27,68 @@ OUT_DIR = REPO_ROOT / "research/findings/raw/g11_bg/concept_pool_demo"
 
 
 SCRIPTED_DEMO = ",".join([
-    # 1. List vocab across all bridges
+    # 1. Inventory: 60-word vocab and starting tags
     "vocab",
+    "tags",
+
     # 2. Intra-set pair encoding (one per set to verify routing)
     "remember apple is big",        # set 1
     "remember tree is fast",        # set 2
     "remember house is tall",       # set 3
-    "remember ball is happy",       # set 4 (person/baby/ball/key + adj happy)
-    "remember food is hot",         # set 5 has food, set 1 has hot -- CROSS-SET
-    # 3. Cross-set pair encoding (sun in set2, hot in set1)
-    "remember sun is hot",
-    # 4. Intra-set 3-word sentences
+    "remember ball is happy",       # set 4
+    "remember food is new",         # set 5
+
+    # 3. CROSS-SET pair encoding (no single bridge has both)
+    "remember sun is hot",          # sun in set2, hot in set1
+    "remember dog is fast",         # dog in set1, fast in set2
+
+    # 4. NEGATION
+    "remember apple is not small",  # tag 'NOT_apple_small'
+
+    # 5. CONJUNCTION
+    "remember person is happy and ball is full",  # 2 tags created
+
+    # 6. POSSESSIVE: stored as 'color_of_apple_red'
+    "remember apple's color is red",
+    "remember dog's color is small",  # using vocab; 'small' as color stand-in
+
+    # 7. PRONOUNS (last subject = dog from above)
+    "remember it is hot",           # 'it' -> dog, tag 'dog_hot'
+
+    # 8. 3-word sentences (intra-set + cross-set)
     "remember dog ate apple",       # all set 1
-    "remember bird ate tree",       # all set 2 (verb 'eat' is set2; need 'ate')
-    "remember person ate water",    # cross: person set4, ate set2, water set3
-    # 5. List all encoded tags
+    "remember bird ate tree",       # all set 2
+    "remember person ate water",    # cross: set4 + set2 + set3
+
+    # 9. List everything we've stored
     "tags",
-    # 6. Single-word multitag retrieval
+
+    # 10. Single-word multitag retrieval
     "apple",
     "sun",
     "food",
-    # 7. Role queries
-    "who ate apple?",               # who 'ate' apple? (template *_ate_apple)
-    "what did dog ate?",            # what 'ate' did dog? (template dog_ate_*)
-    # 8. Cross-set role query
-    "what did person ate?",         # template person_ate_*
+
+    # 11. YES/NO questions
+    "is apple big?",
+    "is apple small?",              # should be NO (we have NOT_apple_small)
+    "is tree fast?",
+
+    # 12. ROLE queries (subject / object)
+    "who ate apple?",               # template *_ate_apple
+    "what did dog ate?",            # template dog_ate_*
+    "what did person ate?",         # cross-set role query
+
+    # 13. RELATIONAL queries
+    "what is the color of apple?",  # template color_of_apple_*
+    "what color is dog?",           # compact form
+
+    # 14. ABOUT queries
+    "about apple",
+    "tell me about dog",
+
+    # 15. FORGET
+    "forget apple is big",
+    "tags",                         # verify 'apple_big' removed
 ])
 
 
