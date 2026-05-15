@@ -249,6 +249,111 @@ class TestCosineToWordWithVocab:
         assert score > 0.99, f"self-match cos={score}, expected >0.99"
 
 
+class TestQuerySentenceTemplate:
+    """query_sentence_template matches tag-name templates across bridges."""
+
+    def _make_member_with_tags(self, set_name, tags):
+        """Make a BridgeMember stub with pre-populated encoded_tags."""
+        m = mbc.BridgeMember(
+            bridge_path=f"fake_{set_name}.h5",
+            vocab_set=ALL_SET_VOCABS[set_name],
+            n_lang_input=2048, n_per_pool=200, n_fs_per_pool=24,
+            sparsity=0.05, n_words_for_orthogonal=16,
+            encoding_steps=500, balanced_teacher_pA=500.0,
+            top_k=100, name=set_name,
+        )
+        m.encoded_tags = list(tags)
+        return m
+
+    def test_subject_query_single_match(self):
+        """'who ate apple?' template ['*','ate','apple'] finds 'alice_ate_apple'."""
+        m1 = self._make_member_with_tags("set1", ["alice_ate_apple"])
+        results = mbc.query_sentence_template([m1], ["*", "ate", "apple"])
+        assert len(results) == 1
+        assert results[0]["wildcards"] == ["alice"]
+        assert results[0]["tag"] == "alice_ate_apple"
+        assert results[0]["bridge"] == "set1"
+
+    def test_subject_query_multiple_matches(self):
+        """Multiple sentences with same verb+obj find multiple subjects."""
+        m1 = self._make_member_with_tags(
+            "set1", ["alice_ate_apple", "bob_ate_apple"])
+        results = mbc.query_sentence_template([m1], ["*", "ate", "apple"])
+        assert len(results) == 2
+        subjects = sorted(r["wildcards"][0] for r in results)
+        assert subjects == ["alice", "bob"]
+
+    def test_subject_query_across_bridges(self):
+        """Same template matches tags in DIFFERENT bridges (cross-set)."""
+        m1 = self._make_member_with_tags("set1", ["alice_ate_apple"])
+        m2 = self._make_member_with_tags("set2", ["bob_ate_apple"])
+        results = mbc.query_sentence_template(
+            [m1, m2], ["*", "ate", "apple"])
+        assert len(results) == 2
+        # Both bridges contributed
+        bridges = sorted(r["bridge"] for r in results)
+        assert bridges == ["set1", "set2"]
+        subjects = sorted(r["wildcards"][0] for r in results)
+        assert subjects == ["alice", "bob"]
+
+    def test_object_query(self):
+        """'what did alice eat?' template ['alice','ate','*'] finds objects."""
+        m1 = self._make_member_with_tags(
+            "set1", ["alice_ate_apple", "alice_ate_cake", "bob_ate_apple"])
+        results = mbc.query_sentence_template(
+            [m1], ["alice", "ate", "*"])
+        assert len(results) == 2
+        objects = sorted(r["wildcards"][0] for r in results)
+        assert objects == ["apple", "cake"]
+
+    def test_no_match_returns_empty(self):
+        """Template that doesn't match any tag returns empty list."""
+        m1 = self._make_member_with_tags("set1", ["alice_ate_apple"])
+        results = mbc.query_sentence_template(
+            [m1], ["*", "drank", "water"])
+        assert results == []
+
+    def test_length_mismatch_skips(self):
+        """Tag with wrong length doesn't match template."""
+        # 'alice_ate_apple' is 3 words; template is 4-word
+        m1 = self._make_member_with_tags("set1", ["alice_ate_apple"])
+        results = mbc.query_sentence_template(
+            [m1], ["*", "ate", "the", "apple"])
+        assert results == []
+
+    def test_4word_template(self):
+        """4-word templates work (subj verb mod obj)."""
+        m1 = self._make_member_with_tags(
+            "set1", ["alice_ate_big_apple", "bob_ate_red_apple"])
+        # what did *_ate_big_*: subject of 'ate big apple' (any)
+        results = mbc.query_sentence_template(
+            [m1], ["*", "ate", "big", "apple"])
+        assert len(results) == 1
+        assert results[0]["wildcards"] == ["alice"]
+
+    def test_multiple_wildcards(self):
+        """Multiple wildcards return all wildcard positions in order."""
+        m1 = self._make_member_with_tags("set1", ["alice_ate_apple"])
+        # template ['*', 'ate', '*']: subject + object
+        results = mbc.query_sentence_template([m1], ["*", "ate", "*"])
+        assert len(results) == 1
+        # First wildcard is alice (subject), second is apple (object)
+        assert results[0]["wildcards"] == ["alice", "apple"]
+
+    def test_no_wildcards_exact_match(self):
+        """Template with no wildcards is exact-match check."""
+        m1 = self._make_member_with_tags("set1", ["alice_ate_apple"])
+        results = mbc.query_sentence_template(
+            [m1], ["alice", "ate", "apple"])
+        assert len(results) == 1
+        assert results[0]["wildcards"] == []
+
+    def test_empty_members_returns_empty(self):
+        """No bridges -> no results."""
+        results = mbc.query_sentence_template([], ["*", "ate", "apple"])
+        assert results == []
+
+
 class TestSetWrapperImportability:
     """The per-set patch modules can be imported without crashing."""
 

@@ -233,6 +233,42 @@ def find_bridges_for_words(members, words):
     return None
 
 
+def query_sentence_template(members, template):
+    """Find sentences matching a tag-name template.
+
+    Template is a list of strings where '*' is a wildcard. Returns
+    list of dicts {wildcards, tag, bridge} matching the template
+    across all bridges' encoded_tags.
+
+    E.g. template=['*', 'ate', 'apple'] finds 'alice_ate_apple',
+    'bob_ate_apple' across all bridges, with wildcards=['alice'] or
+    wildcards=['bob']. Returns subjects in tag-name first-position.
+
+    Pure function — easy to unit-test. Used by 'who X Y?' and 'what
+    did X Y?' commands.
+    """
+    results = []
+    for m in members:
+        for tag in m.encoded_tags:
+            parts = tag.split("_")
+            if len(parts) != len(template):
+                continue
+            wildcards = []
+            ok = True
+            for tpart, ttok in zip(parts, template):
+                if ttok == "*":
+                    wildcards.append(tpart)
+                elif tpart != ttok:
+                    ok = False
+                    break
+            if ok:
+                results.append({
+                    "wildcards": wildcards,
+                    "tag": tag, "bridge": m.name,
+                })
+    return results
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--bridges", nargs="+", required=True,
@@ -312,59 +348,51 @@ def main():
     for m in members:
         m.load(args.seed, vocab_set_module=m.vocab_set_module)
 
-    def encode_to_bridge(m, a, b):
-        """Encode (a, b) pair on bridge member m using m's vocab mapping.
+    def encode_to_bridge(m, *words):
+        """Encode a variable-length word tuple as one engram on bridge m.
 
-        Supports PARTIAL encoding for cross-set pairs: if only one of
-        (a, b) is in m's vocab, encode that word's pool + drive its
-        lang_input pattern. The other word is essentially ignored at
-        this bridge but still labeled in the tag name. Multi-bridge
-        querying recovers the cross-set relationship by aggregating
-        tags with matching name from BOTH bridges.
+        Supports PARTIAL encoding: if only some of the words are in m's
+        vocab, encode those pools + drive their lang_input patterns. The
+        other words are ignored at this bridge but still recorded in the
+        tag name. Multi-bridge querying recovers the cross-set
+        relationship by aggregating tags with matching name across
+        bridges.
 
-        Returns the tag name, or 'already remembered' string if tag
-        exists.
+        Tag name = words joined by '_' (e.g. 'alice_ate_apple'). Order
+        info preserved in name regardless of bridge.
+
+        Returns the tag name, 'already remembered' string, or None if
+        the bridge knows zero of the words.
         """
         from sim.backend import get_backend
         cp, _ = get_backend()
-        tag = f"{a}_{b}"
+        tag = "_".join(words)
         if tag in m.encoded_tags:
             return f"already remembered in {m.name}"
         bridge = m.bridge
         rm = bridge.region_manager
-        has_a = a in m.word_to_idx and a in m.word_to_pool
-        has_b = b in m.word_to_idx and b in m.word_to_pool
-        if not has_a and not has_b:
-            return None  # bridge has neither word
+        known_words = [w for w in words
+                        if w in m.word_to_idx and w in m.word_to_pool]
+        if not known_words:
+            return None
 
         n_total = bridge.cp_external_input_current.shape[0]
         lang_arr = cp.asarray(list(rm.indices("language_input")), dtype=cp.int64)
 
-        # Build combined drive — include only words this bridge knows
+        # Drive lang_input for each known word
         drives = []
-        if has_a:
+        for w in known_words:
             drives.append(orthogonal_drive_pattern(
-                cue_idx=m.word_to_idx[a],
-                n_cues=args.n_words_for_orthogonal,
-                n_neurons=args.n_lang_input,
-                drive_max_pA=200.0, sparsity=args.sparsity,
-            ))
-        if has_b:
-            drives.append(orthogonal_drive_pattern(
-                cue_idx=m.word_to_idx[b],
+                cue_idx=m.word_to_idx[w],
                 n_cues=args.n_words_for_orthogonal,
                 n_neurons=args.n_lang_input,
                 drive_max_pA=200.0, sparsity=args.sparsity,
             ))
         combined = cp.asarray(sum(drives), dtype=cp.float32)
 
-        teacher_pools = []
-        if has_a:
-            teacher_pools.append(cp.asarray(
-                list(rm.indices(m.word_to_pool[a])), dtype=cp.int64))
-        if has_b:
-            teacher_pools.append(cp.asarray(
-                list(rm.indices(m.word_to_pool[b])), dtype=cp.int64))
+        teacher_pools = [cp.asarray(
+            list(rm.indices(m.word_to_pool[w])), dtype=cp.int64)
+            for w in known_words]
 
         bridge.start_engram_recording(tag)
         bridge.cp_external_input_current[:] = 0.0
@@ -426,6 +454,37 @@ def main():
         ranked = sorted(by_word.values(), key=lambda r: -r["score"])
         return {"results": ranked[:5]}
 
+    def query_sentence(template):
+        """Thin wrapper around top-level query_sentence_template using
+        the closure's `members`."""
+        return query_sentence_template(members, template)
+
+    def encode_sentence(words):
+        """Multi-bridge sentence encoding.
+
+        Tries each bridge: if a bridge knows any of the words, encode
+        partial there. Tag name preserves full sentence order across
+        all participating bridges.
+        """
+        m_all = find_bridges_for_words(members, words)
+        if m_all is not None:
+            result = encode_to_bridge(m_all, *words)
+            print(f"  [{m_all.name}] {result}", flush=True)
+            return
+        encoded_in = []
+        for m in members:
+            if any(w in m.vocab for w in words):
+                r = encode_to_bridge(m, *words)
+                if r is not None:
+                    encoded_in.append((m.name, r))
+        if encoded_in:
+            bridge_names = [n for n, _ in encoded_in]
+            tag_name = encoded_in[0][1]
+            print(f"  [cross-set: '{tag_name}' encoded in {bridge_names}]",
+                  flush=True)
+        else:
+            print(f"  [no bridge knows any of {words}]", flush=True)
+
     def dispatch(line):
         line = line.strip().lower()
         if not line or line in ("quit", "exit"):
@@ -434,38 +493,66 @@ def main():
             for m in members:
                 print(f"  [{m.name}] tags: {m.encoded_tags}", flush=True)
             return None
+        if line in ("vocab", "/vocab"):
+            for m in members:
+                print(f"  [{m.name}] concepts: {m.concept_words}", flush=True)
+            return None
         if line.startswith("remember "):
             rest = line[len("remember "):].strip()
             if " is " in rest:
                 a, b = rest.split(" is ", 1)
                 a, b = a.strip(), b.strip()
-            else:
-                parts = rest.split()
-                if len(parts) != 2:
-                    print("  [usage: remember a is b]", flush=True)
-                    return None
-                a, b = parts[0], parts[1]
-            # CROSS-BRIDGE ENCODING: prefer single bridge with both,
-            # else fall back to encoding in BOTH bridges that have
-            # at least one word. Each bridge captures its half of the
-            # relationship; multi-bridge query aggregates at recall.
-            m_both = find_bridges_for_words(members, [a, b])
-            if m_both is not None:
-                result = encode_to_bridge(m_both, a, b)
-                print(f"  [{m_both.name}] {result}", flush=True)
+                encode_sentence([a, b])
                 return None
-            # Cross-set: encode in each bridge with at least one word
-            encoded_in = []
-            for m in members:
-                if a in m.vocab or b in m.vocab:
-                    r = encode_to_bridge(m, a, b)
-                    if r is not None:
-                        encoded_in.append((m.name, r))
-            if encoded_in:
-                bridge_names = [n for n, _ in encoded_in]
-                print(f"  [cross-set: encoded in {bridge_names}]", flush=True)
+            # Allow N-word sentences (drop articles/prepositions)
+            STOPWORDS = {"the", "a", "an", "that", "in", "on", "at",
+                           "to", "of"}
+            parts = [w for w in rest.split() if w not in STOPWORDS]
+            if len(parts) < 2:
+                print("  [usage: remember a is b OR remember <words ...>]",
+                      flush=True)
+                return None
+            encode_sentence(parts)
+            return None
+        # 'who X Y?' or 'who X Y' -> find subject of '*_X_Y'
+        if line.startswith("who "):
+            rest = line.rstrip("?").strip()[len("who "):].strip()
+            STOPWORDS = {"the", "a", "an", "that"}
+            parts = [w for w in rest.split() if w not in STOPWORDS]
+            if len(parts) < 2:
+                print("  [usage: who <verb> <obj>? or who <verb> <mod> <obj>?]",
+                      flush=True)
+                return None
+            template = ["*"] + parts
+            matches = query_sentence(template)
+            if not matches:
+                print(f"  [no tag matches: *_{'_'.join(parts)}]", flush=True)
             else:
-                print(f"  [no bridge has either {a} or {b}]", flush=True)
+                subjects = sorted(set(r["wildcards"][0] for r in matches))
+                print(f"  [subjects of '{' '.join(parts)}']: "
+                      f"{', '.join(subjects)}", flush=True)
+                for r in matches:
+                    print(f"    {r['tag']} (via {r['bridge']})", flush=True)
+            return None
+        # 'what did X Y?' -> find object of 'X_Y_*'
+        if line.startswith("what did "):
+            rest = line.rstrip("?").strip()[len("what did "):].strip()
+            STOPWORDS = {"the", "a", "an", "that"}
+            parts = [w for w in rest.split() if w not in STOPWORDS]
+            if len(parts) < 2:
+                print("  [usage: what did <subj> <verb>? or what did <subj> <verb> <mod>?]",
+                      flush=True)
+                return None
+            template = parts + ["*"]
+            matches = query_sentence(template)
+            if not matches:
+                print(f"  [no tag matches: {'_'.join(parts)}_*]", flush=True)
+            else:
+                objects = sorted(set(r["wildcards"][0] for r in matches))
+                print(f"  [objects of '{' '.join(parts)}']: "
+                      f"{', '.join(objects)}", flush=True)
+                for r in matches:
+                    print(f"    {r['tag']} (via {r['bridge']})", flush=True)
             return None
         if line.startswith("what is "):
             word = line[len("what is "):].strip()
@@ -489,11 +576,15 @@ def main():
         return None
 
     print("Commands:")
-    print("  remember a is b   Encode pair (routed to bridge with both words)")
-    print("  what is X         Multi-bridge multitag retrieval")
-    print("  <word>            Same as 'what is'")
-    print("  tags              List tags across all bridges")
-    print("  quit              Exit")
+    print("  remember a is b               Encode pair")
+    print("  remember <w1> <w2> ... <wN>   Encode N-word sentence (order in tag)")
+    print("  who <verb> <obj>?             Find subject of '*_verb_obj'")
+    print("  what did <subj> <verb>?       Find object of 'subj_verb_*'")
+    print("  what is X                     Multi-bridge multitag retrieval")
+    print("  <word>                        Same as 'what is'")
+    print("  tags                          List tags across all bridges")
+    print("  vocab                         List concept words per bridge")
+    print("  quit                          Exit")
     print()
 
     if args.scripted:
