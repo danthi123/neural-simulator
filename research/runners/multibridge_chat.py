@@ -779,6 +779,52 @@ def main():
                 for r in matches:
                     print(f"    {r['tag']} (via {r['bridge']})", flush=True)
             return None
+        # Relational queries: 'what is the color of apple?' or
+        # 'what color is apple?' -> template ['color', 'of', 'apple', '*']
+        # Tag form: 'color_of_apple_red' encoded via 'remember apple's color is red'
+        if line.startswith("what is the ") and " of " in line:
+            # 'what is the <attr> of <owner>?'
+            rest = line.rstrip("?").strip()[len("what is the "):]
+            if " of " in rest:
+                attr, owner = rest.split(" of ", 1)
+                attr = attr.strip()
+                owner_parts = _parts(owner.strip())
+                owner = owner_parts[-1] if owner_parts else owner.strip()
+                template = [attr, "of", owner, "*"]
+                matches = query_sentence(template)
+                if not matches:
+                    print(f"  [no tag matches: {attr}_of_{owner}_*]", flush=True)
+                else:
+                    values = sorted(set(r["wildcards"][0] for r in matches))
+                    print(f"  [{attr} of {owner}]: {', '.join(values)}",
+                          flush=True)
+                    for r in matches:
+                        print(f"    {r['tag']} (via {r['bridge']})", flush=True)
+                return None
+        # 'what <attr> is <X>?' -> template [attr, 'of', X, '*']
+        if line.startswith("what "):
+            rest = line.rstrip("?").strip()[len("what "):]
+            if " is " in rest:
+                attr, owner = rest.split(" is ", 1)
+                attr = attr.strip()
+                owner_parts = _parts(owner.strip())
+                owner = owner_parts[-1] if owner_parts else owner.strip()
+                # Only treat as relational if attr is a single word
+                # (avoids interfering with 'what did X V?' / 'what is X')
+                if attr and " " not in attr and attr not in (
+                    "is", "did", "do", "can", "are"):
+                    template = [attr, "of", owner, "*"]
+                    matches = query_sentence(template)
+                    if matches:
+                        values = sorted(set(
+                            r["wildcards"][0] for r in matches))
+                        print(f"  [{attr} of {owner}]: {', '.join(values)}",
+                              flush=True)
+                        for r in matches:
+                            print(f"    {r['tag']} (via {r['bridge']})",
+                                  flush=True)
+                        return None
+            # Fall through to plain 'what is X' handling below
         if line.startswith("what is "):
             word = line[len("what is "):].strip()
             r = query_word(word)
@@ -812,6 +858,8 @@ def main():
     print("  is X's Y Z?                   Possessive YES/NO query")
     print("  who <verb> <obj>?             Find subject of '*_verb_obj'")
     print("  what did <subj> <verb>?       Find object of 'subj_verb_*'")
+    print("  what is the Y of X?           Relational: 'Y_of_X_*' tag")
+    print("  what Y is X?                  Same (compact form)")
     print("  what is X                     Multi-bridge multitag retrieval")
     print("  about X / tell me about X     List all tags mentioning X")
     print("  forget a b                    Remove tag 'a_b' from bridges")
