@@ -29,6 +29,18 @@ from research.runners.compose_concept_engram import (
 from sim.text_embeddings import orthogonal_drive_pattern
 import numpy as np
 
+# Path 2: subword/morpheme tokenizer for combinatorial vocab
+try:
+    from research.runners.subword_tokenizer import (
+        tokenize_sentence as _tokenize_sentence,
+        DEFAULT_ROOTS_60,
+    )
+    _HAS_TOKENIZER = True
+except ImportError:
+    _HAS_TOKENIZER = False
+    _tokenize_sentence = None
+    DEFAULT_ROOTS_60 = set()
+
 
 def cosine_to_word_with_vocab(pattern, target_word, n_lang_out,
                                 word_to_idx, n_words_for_orthogonal=16,
@@ -330,6 +342,11 @@ def main():
                     help="Output in natural-language style instead of "
                     "tag-form (e.g. 'Yes, the dog is big.' vs "
                     "'YES (matched dog_big)')")
+    p.add_argument("--tokenize", action="store_true",
+                    help="Apply morpheme tokenization before encoding. "
+                    "'dogs ate apples' -> [dog, eat, apple] "
+                    "(strips PLURAL/PAST/tense markers, decomposes "
+                    "complex words). Enables combinatorial vocab.")
     args = p.parse_args()
 
     names = args.names or [Path(bp).stem for bp in args.bridges]
@@ -578,6 +595,35 @@ def main():
     # Anaphora / pronoun resolution: track last subject mentioned
     state = {"last_subject": None}
 
+    # Build the known-roots set for the tokenizer from active vocabs.
+    # Any concept word in ANY loaded bridge is a known root.
+    KNOWN_ROOTS = set()
+    if args.tokenize and _HAS_TOKENIZER:
+        for m in members:
+            KNOWN_ROOTS.update(m.concept_words)
+        # Plus motor words (shared across all bridges)
+        KNOWN_ROOTS.update(["north", "east", "south", "west"])
+        print(f"[tokenize] known roots: {len(KNOWN_ROOTS)}", flush=True)
+
+    def _maybe_tokenize(rest):
+        """If --tokenize active, decompose surface words to morphemes.
+        Strips morphological markers (PAST/PLURAL/ing/er/etc.) and
+        returns a string with bare roots.
+
+        E.g. 'the dogs ate apples' -> 'the dog eat apple'
+
+        Stripping markers makes the resulting sentence match the
+        existing engram-tag system (which stores root-form concepts)."""
+        if not args.tokenize or not _HAS_TOKENIZER:
+            return rest
+        tokens = _tokenize_sentence(rest, KNOWN_ROOTS)
+        # Drop morphological markers (we keep the semantic root)
+        MARKERS = {"PAST", "PLURAL", "ing", "ed", "er", "est", "ly",
+                    "tion", "able", "ful", "less", "ness", "s", "es", "ies",
+                    "un", "re", "pre", "dis", "mis", "over", "under", "anti"}
+        roots = [t for t in tokens if t not in MARKERS]
+        return " ".join(roots)
+
     def _normalize_possessive(rest):
         return normalize_possessive(rest)
 
@@ -611,6 +657,20 @@ def main():
         line = line.strip().lower()
         if not line or line in ("quit", "exit"):
             return "EXIT"
+        # PATH 2: tokenize complex word forms before parsing
+        # 'dogs ate apples' -> 'dog eat apple' (root-form)
+        # Only apply to the CONTENT after the command prefix (so commands
+        # like 'remember' stay intact).
+        if args.tokenize and _HAS_TOKENIZER:
+            for cmd_prefix in ("remember ", "is ", "who ", "what did ",
+                                 "what is ", "what ",
+                                 "about ", "tell me about ", "forget "):
+                if line.startswith(cmd_prefix):
+                    content = line[len(cmd_prefix):]
+                    tokenized = _maybe_tokenize(content)
+                    if tokenized != content:
+                        line = cmd_prefix + tokenized
+                    break
         # CONJUNCTIONS: split on ' and ' and dispatch each clause
         # (only if not a 'remember' that handles multi-clause itself)
         if " and " in line and not line.startswith("remember "):
