@@ -497,8 +497,8 @@ def main():
             parts = [_strip_articles(p) for p in rest.split()]
             if len(parts) == 2:
                 a, b = parts[0], parts[1]
-            elif len(parts) in (3, 4):
-                # 3 or 4-word sentence: subject verb (modifier) object
+            elif len(parts) in (3, 4, 5):
+                # 3/4/5-word sentence: subject verb (modifier(s)) object
                 for w in parts:
                     if w not in _WORD_TO_IDX or _WORD_TO_IDX[w] >= args.n_words_for_orthogonal:
                         return f"unknown word: {w}"
@@ -821,6 +821,40 @@ def main():
                     state["last_cue"] = arg
                     state["last_shown"] = {w for w, _, _, _ in r["associates"][:5]}
             return None
+        # Natural assertion: if the input looks like a sentence, treat as
+        # 'remember' without needing the prefix. Lets the user say
+        # 'alice ate apple' instead of 'remember alice ate apple'.
+        # Handles:
+        # - 'a is b'        -> remember pair
+        # - 'a b'           -> remember pair (with explicit space)
+        # - 'a b c'         -> 3-word sentence
+        # - 'a b c d'       -> 4-word sentence
+        # - 'a b c d e'     -> 5-word sentence
+        parts_check = [_strip_articles(p) for p in line.split()]
+        # Strip 'is' connector for natural pair assertion
+        if len(parts_check) == 3 and parts_check[1] == "is":
+            parts_check = [parts_check[0], parts_check[2]]
+        if len(parts_check) in (2, 3, 4, 5):
+            all_vocab = all(
+                p in _WORD_TO_IDX and _WORD_TO_IDX[p] < args.n_words_for_orthogonal
+                for p in parts_check
+            )
+            if all_vocab:
+                # Looks like an assertion; route through handle_remember
+                # Build canonical form to pass:
+                if len(parts_check) == 2:
+                    canonical = f"remember {parts_check[0]} is {parts_check[1]}"
+                else:
+                    canonical = f"remember {' '.join(parts_check)}"
+                result = handle_remember(canonical)
+                if result and not result.startswith("unknown") and not result.startswith("already"):
+                    print(f"  Got it, I'll remember: {result}", flush=True)
+                elif result and result.startswith("already"):
+                    print(f"  [I already knew that]", flush=True)
+                else:
+                    print(f"  [{result}]" if result else "  [couldn't parse]",
+                          flush=True)
+                return None
         # plain word -> multitag mode (the recommended cue retrieval)
         # Also support 'a and b' shortcut
         if " and " in line:
