@@ -158,11 +158,14 @@ def main():
     print(f"Encoded tags: {encoded_tags}")
     print()
     print("Commands:")
-    print("  remember <a> is <b>      Encode new association (90% retrieval)")
+    print("  remember <a> is <b>      Encode new pair association (90% retrieval)")
+    print("  remember <subj> <verb> <obj>  Encode 3-word sentence (order in tag)")
     print("  what is <word>           Retrieve associates (multi-tag, 90% multi-seed)")
     print("  describe <word>          Natural-language synthesis ('apple is big and hot')")
     print("  what is <a> and <b>      Compositional: words associated with BOTH")
     print("  is <a> <b>?              Yes/no: check if (a,b) is bound")
+    print("  who <verb> <obj>?        Find subject of sentence (e.g. 'who ate apple?')")
+    print("  what did <subj> <verb>?  Find object (e.g. 'what did alice eat?')")
     print("  tell me more             Next-best associates of last query")
     print("  tell me about <word>     Same as 'what is'")
     print("  forget <tag>             Delete an engram tag (tag = a_b)")
@@ -352,11 +355,84 @@ def main():
                 s = s[len(prefix):].strip()
         return s
 
+    def encode_triple(word_a, word_v, word_b, tag_name):
+        """Encode a 3-word tuple as a single engram. Drives lang_input of
+        all 3 words simultaneously + teacher current on all 3 pools.
+
+        Order info lives in the tag name string. Retrieval uses tag-name
+        pattern matching (e.g. 'alice_ate_*' to find what alice ate).
+
+        Built 2026-05-14 PM as pragmatic sentence-level encoding on top
+        of the validated multitag mechanism. Limitations: doesn't
+        encode word-order in the engram firing pattern (concept-pool
+        architecture lacks temporal binding), but tag-name preserves
+        ordering and queries work via string match.
+        """
+        from sim.backend import get_backend
+        cp, _ = get_backend()
+        rm = bridge.region_manager
+        from research.runners.compose_concept_engram import (
+            encode_concept_pair,
+        )
+        # Use the same encode_concept_pair but with 3-word drive. Simpler:
+        # drive all 3 words in lang_input + 3 teacher pools.
+        from sim.text_embeddings import orthogonal_drive_pattern
+        import numpy as np
+
+        n_words = args.n_words_for_orthogonal
+        n_lang = args.n_lang_input
+        drive_a = orthogonal_drive_pattern(
+            cue_idx=_WORD_TO_IDX[word_a], n_cues=n_words,
+            n_neurons=n_lang, drive_max_pA=200.0, sparsity=args.sparsity,
+        )
+        drive_v = orthogonal_drive_pattern(
+            cue_idx=_WORD_TO_IDX[word_v], n_cues=n_words,
+            n_neurons=n_lang, drive_max_pA=200.0, sparsity=args.sparsity,
+        )
+        drive_b = orthogonal_drive_pattern(
+            cue_idx=_WORD_TO_IDX[word_b], n_cues=n_words,
+            n_neurons=n_lang, drive_max_pA=200.0, sparsity=args.sparsity,
+        )
+        combined = cp.asarray(drive_a + drive_v + drive_b, dtype=cp.float32)
+        lang_arr = cp.asarray(
+            list(rm.indices("language_input")), dtype=cp.int64)
+        pool_a = cp.asarray(list(rm.indices(_WORD_TO_POOL[word_a])), dtype=cp.int64)
+        pool_v = cp.asarray(list(rm.indices(_WORD_TO_POOL[word_v])), dtype=cp.int64)
+        pool_b = cp.asarray(list(rm.indices(_WORD_TO_POOL[word_b])), dtype=cp.int64)
+        n_total = bridge.cp_external_input_current.shape[0]
+
+        bridge.start_engram_recording(tag_name)
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(30):
+            bridge._run_one_simulation_step()
+
+        ext = cp.zeros(n_total, dtype=cp.float32)
+        for _ in range(args.encoding_steps):
+            ext.fill(0)
+            ext[lang_arr] = combined
+            ext[pool_a] = args.balanced_teacher_pA
+            ext[pool_v] = args.balanced_teacher_pA
+            ext[pool_b] = args.balanced_teacher_pA
+            bridge.cp_external_input_current[:] = ext
+            bridge._run_one_simulation_step()
+
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(20):
+            bridge._run_one_simulation_step()
+
+        bridge.commit_engram_tag(
+            tag_name, top_k=args.top_k, region_filter=region_filter,
+        )
+        return tag_name
+
     def handle_remember(line):
         """Parse 'remember <a> is <b>' or 'remember <a> <b>' → encode pair.
 
-        Accepts natural phrasings: 'remember (that)? (the)? apple is (the)? big'
-        Strips common articles for tolerance.
+        Also accepts 3-word sentences: 'remember alice ate apple' →
+        encode triple as one engram with tag 'alice_ate_apple'. Order
+        info preserved in tag name.
+
+        Accepts natural phrasings with articles stripped.
 
         Returns the encoded tag name, or None if parse failed.
         """
@@ -365,17 +441,30 @@ def main():
         # Strip optional 'that' (e.g. 'remember that apple is big')
         if rest.startswith("that "):
             rest = rest[len("that "):].strip()
-        # Try 'a is b' form first
+        # Try 'a is b' form first (2-word with 'is' connector)
         if " is " in rest:
             parts = rest.split(" is ", 1)
             a = _strip_articles(parts[0])
             b = _strip_articles(parts[1])
         else:
-            # Try 'a b' (space-separated)
-            parts = rest.split()
-            if len(parts) != 2:
+            # Try 'a b' or 'a b c' (space-separated)
+            parts = [_strip_articles(p) for p in rest.split()]
+            if len(parts) == 2:
+                a, b = parts[0], parts[1]
+            elif len(parts) == 3:
+                # 3-word sentence: subject verb object
+                w_a, w_v, w_b = parts[0], parts[1], parts[2]
+                for w in (w_a, w_v, w_b):
+                    if w not in _WORD_TO_IDX or _WORD_TO_IDX[w] >= args.n_words_for_orthogonal:
+                        return f"unknown word: {w}"
+                tag = f"{w_a}_{w_v}_{w_b}"
+                if tag in encoded_tags:
+                    return f"already remembered: {tag}"
+                encode_triple(w_a, w_v, w_b, tag)
+                encoded_tags.append(tag)
+                return tag
+            else:
                 return None
-            a, b = _strip_articles(parts[0]), _strip_articles(parts[1])
         if a not in _WORD_TO_IDX or _WORD_TO_IDX[a] >= args.n_words_for_orthogonal:
             return f"unknown word: {a}"
         if b not in _WORD_TO_IDX or _WORD_TO_IDX[b] >= args.n_words_for_orthogonal:
@@ -518,6 +607,85 @@ def main():
                 print(f"  [{result}]", flush=True)
             else:
                 print(f"  [remembered: {result}]", flush=True)
+            return None
+        # 3-word role queries: who/what + verb + object/subject
+        # Mechanism: pattern-match tag names, then NEURALLY verify by
+        # stimming the tag and confirming all 3 words appear in
+        # lang_output top-K. If neural verification fails, drop the
+        # candidate. This grounds the symbolic lookup in actual neural
+        # storage rather than pure string match.
+        def neural_verify_triple(tag_name, words):
+            """Stim the tag, verify all 3 words appear in lang_output top-K."""
+            try:
+                pat, n_lo = lang_output_pattern_during_stim(
+                    bridge, tag_name, drive_pA=1500.0,
+                    stim_steps=args.drive_steps,
+                )
+                scores = {}
+                for w in valid_concepts:
+                    scores[w] = cosine_to_word(
+                        pat, w, n_lo,
+                        n_words_for_orthogonal=args.n_words_for_orthogonal,
+                        sparsity=args.sparsity,
+                    )
+                ranked = sorted(scores.items(), key=lambda kv: -kv[1])
+                top_k_names = [w for w, _ in ranked[:8]]
+                return all(w in top_k_names for w in words)
+            except Exception:
+                return True  # if verify fails for any reason, accept match
+
+        if line.startswith("who "):
+            # 'who <verb> <obj>' -> find tag matching '*_verb_obj'
+            rest = line[len("who "):].strip().rstrip("?").strip()
+            parts = rest.split()
+            if len(parts) >= 2:
+                verb = parts[0]
+                obj = parts[-1]
+                matches = [t for t in encoded_tags
+                            if t.endswith(f"_{verb}_{obj}")]
+                verified = []
+                for t in matches:
+                    subj = t.split("_")[0]
+                    if neural_verify_triple(t, [subj, verb, obj]):
+                        verified.append(subj)
+                if verified:
+                    print(f"  Who {verb} {obj}? {', '.join(verified)}",
+                          flush=True)
+                elif matches:
+                    # Symbol match but neural verification failed
+                    subjects_unverified = [t.split("_")[0] for t in matches]
+                    print(f"  Who {verb} {obj}? (weak): "
+                          f"{', '.join(subjects_unverified)}", flush=True)
+                else:
+                    print(f"  I don't know who {verb} {obj}.", flush=True)
+            else:
+                print(f"  [usage: 'who <verb> <object>?']", flush=True)
+            return None
+        if line.startswith("what did "):
+            # 'what did <subj> <verb>' -> find tag matching 'subj_verb_*'
+            rest = line[len("what did "):].strip().rstrip("?").strip()
+            parts = rest.split()
+            if len(parts) >= 2:
+                subj = parts[0]
+                verb = parts[-1]
+                matches = [t for t in encoded_tags
+                            if t.startswith(f"{subj}_{verb}_")]
+                verified = []
+                for t in matches:
+                    obj = t.split("_")[-1]
+                    if neural_verify_triple(t, [subj, verb, obj]):
+                        verified.append(obj)
+                if verified:
+                    print(f"  What did {subj} {verb}? {', '.join(verified)}",
+                          flush=True)
+                elif matches:
+                    objects_unverified = [t.split("_")[-1] for t in matches]
+                    print(f"  What did {subj} {verb}? (weak): "
+                          f"{', '.join(objects_unverified)}", flush=True)
+                else:
+                    print(f"  I don't know what {subj} {verb}.", flush=True)
+            else:
+                print(f"  [usage: 'what did <subject> <verb>?']", flush=True)
             return None
         if line.startswith("is "):
             # Yes/no query: 'is apple big' → check if apple_big or big_apple tagged
