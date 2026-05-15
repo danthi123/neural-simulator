@@ -127,6 +127,24 @@ SET4_VOCAB = {
     "concept_words": ["person","baby","ball","key","open","close","push","pull",
                        "happy","sad","full","empty"],
 }
+SET5_VOCAB = {
+    "word_to_idx": {
+        "north": 0, "east": 1, "south": 2, "west": 3,
+        "food": 4, "drink": 5, "hand": 6, "foot": 7,
+        "speak": 8, "listen": 9, "read": 10, "write": 11,
+        "new": 12, "old": 13, "clean": 14, "hard": 15,
+    },
+    "word_to_pool": {
+        "food": "noun_pool_FOOD", "drink": "noun_pool_DRINK",
+        "hand": "noun_pool_HAND", "foot": "noun_pool_FOOT",
+        "speak": "verb_pool_SPEAK", "listen": "verb_pool_LISTEN",
+        "read": "verb_pool_READ", "write": "verb_pool_WRITE",
+        "new": "adjective_pool_NEW", "old": "adjective_pool_OLD",
+        "clean": "adjective_pool_CLEAN", "hard": "adjective_pool_HARD",
+    },
+    "concept_words": ["food","drink","hand","foot","speak","listen","read","write",
+                       "new","old","clean","hard"],
+}
 
 
 class BridgeMember:
@@ -251,12 +269,14 @@ def main():
         "set2": SET2_VOCAB,
         "set3": SET3_VOCAB,
         "set4": SET4_VOCAB,
+        "set5": SET5_VOCAB,
     }
     SET_NAME_TO_PATCH_MODULE = {
         "set1": None,
         "set2": "research.runners.concept_pool_demo_set2",
         "set3": "research.runners.concept_pool_demo_set3",
         "set4": "research.runners.concept_pool_demo_set4",
+        "set5": "research.runners.concept_pool_demo_set5",
     }
 
     members = []
