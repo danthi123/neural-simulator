@@ -485,10 +485,37 @@ def main():
         else:
             print(f"  [no bridge knows any of {words}]", flush=True)
 
+    STOPWORDS = {"the", "a", "an", "that", "in", "on", "at",
+                  "to", "of", "with", "by"}
+
+    def _parts(rest):
+        """Tokenize + strip stopwords + lowercase."""
+        return [w for w in rest.split() if w not in STOPWORDS]
+
+    def _yes_no_query(words):
+        """Return (matched_tags_list, bridge_names_list) for exact tag match.
+        If at least one bridge contains tag joined(words) -> YES."""
+        target_tag = "_".join(words)
+        hits = []
+        for m in members:
+            if target_tag in m.encoded_tags:
+                hits.append((m.name, target_tag))
+        return hits
+
     def dispatch(line):
         line = line.strip().lower()
         if not line or line in ("quit", "exit"):
             return "EXIT"
+        # CONJUNCTIONS: split on ' and ' and dispatch each clause
+        # (only if not a 'remember' that handles multi-clause itself)
+        if " and " in line and not line.startswith("remember "):
+            sub_clauses = [c.strip() for c in line.split(" and ") if c.strip()]
+            if len(sub_clauses) >= 2:
+                for c in sub_clauses:
+                    print(f"  [and] dispatching: '{c}'", flush=True)
+                    if dispatch(c) == "EXIT":
+                        return "EXIT"
+                return None
         if line in ("tags", "/tags"):
             for m in members:
                 print(f"  [{m.name}] tags: {m.encoded_tags}", flush=True)
@@ -497,22 +524,68 @@ def main():
             for m in members:
                 print(f"  [{m.name}] concepts: {m.concept_words}", flush=True)
             return None
+        # Help command
+        if line in ("help", "/help", "?"):
+            print(__doc__ or "Multi-bridge chat REPL", flush=True)
+            return None
         if line.startswith("remember "):
             rest = line[len("remember "):].strip()
+            # Conjunction inside remember: handle each clause
+            if " and " in rest:
+                sub_clauses = [c.strip() for c in rest.split(" and ")
+                                 if c.strip()]
+                for c in sub_clauses:
+                    print(f"  [remember-and] '{c}'", flush=True)
+                    dispatch(f"remember {c}")
+                return None
+            # Negation: "remember the dog is not big" -> tag 'NOT_dog_big'
+            negated = False
+            if " is not " in rest:
+                negated = True
+                rest = rest.replace(" is not ", " is ")
             if " is " in rest:
                 a, b = rest.split(" is ", 1)
                 a, b = a.strip(), b.strip()
-                encode_sentence([a, b])
+                words = [a, b]
+                if negated:
+                    words = ["NOT"] + words
+                encode_sentence(words)
                 return None
-            # Allow N-word sentences (drop articles/prepositions)
-            STOPWORDS = {"the", "a", "an", "that", "in", "on", "at",
-                           "to", "of"}
-            parts = [w for w in rest.split() if w not in STOPWORDS]
+            # N-word sentences (drop articles/prepositions)
+            parts = _parts(rest)
             if len(parts) < 2:
                 print("  [usage: remember a is b OR remember <words ...>]",
                       flush=True)
                 return None
             encode_sentence(parts)
+            return None
+        # Yes/no questions: 'is the dog big?' -> exact tag match on dog_big
+        # or negated: 'is the dog not big?' -> match 'NOT_dog_big'
+        if line.startswith("is "):
+            rest = line.rstrip("?").strip()[len("is "):].strip()
+            negated = False
+            if " not " in rest:
+                negated = True
+                rest = rest.replace(" not ", " ")
+            parts = _parts(rest)
+            if len(parts) != 2:
+                print("  [usage: 'is <X> <Y>?' or 'is <X> not <Y>?']",
+                      flush=True)
+                return None
+            target = (["NOT"] + parts) if negated else parts
+            # Also check opposite-truth tag: if 'dog is big' encoded and
+            # query is 'is dog not big', report NO (we have the positive)
+            hits = _yes_no_query(target)
+            alt = _yes_no_query(
+                (parts if negated else ["NOT"] + parts))
+            if hits:
+                print(f"  YES (matched '{hits[0][1]}' in {hits[0][0]})",
+                      flush=True)
+            elif alt:
+                print(f"  NO (have opposite-truth: '{alt[0][1]}' in "
+                      f"{alt[0][0]})", flush=True)
+            else:
+                print(f"  UNKNOWN (no tag matches)", flush=True)
             return None
         # 'who X Y?' or 'who X Y' -> find subject of '*_X_Y'
         if line.startswith("who "):
@@ -577,11 +650,16 @@ def main():
 
     print("Commands:")
     print("  remember a is b               Encode pair")
-    print("  remember <w1> <w2> ... <wN>   Encode N-word sentence (order in tag)")
+    print("  remember a is not b           Negated pair (tag 'NOT_a_b')")
+    print("  remember <w1> ... <wN>        N-word sentence (order in tag)")
+    print("  remember X and Y              Chained: each clause encoded")
+    print("  is X Y?                       YES/NO/UNKNOWN exact tag match")
+    print("  is X not Y?                   Negated YES/NO query")
     print("  who <verb> <obj>?             Find subject of '*_verb_obj'")
     print("  what did <subj> <verb>?       Find object of 'subj_verb_*'")
     print("  what is X                     Multi-bridge multitag retrieval")
     print("  <word>                        Same as 'what is'")
+    print("  X and Y                       Conjunction: each dispatched")
     print("  tags                          List tags across all bridges")
     print("  vocab                         List concept words per bridge")
     print("  quit                          Exit")
