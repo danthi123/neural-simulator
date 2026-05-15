@@ -116,6 +116,56 @@ class TestStopwordStripping:
         assert parts == ["dog", "runs", "river"]
 
 
+class TestTokenizerStripping:
+    """Verify the _maybe_tokenize behavior strips morphological markers."""
+
+    def test_tokenize_strips_plural(self):
+        """'dogs ate apples' tokenized + stripped -> 'dog eat apple'"""
+        from research.runners.subword_tokenizer import tokenize_sentence
+        roots = {"dog", "cat", "apple", "eat", "ate"}
+        tokens = tokenize_sentence("dogs ate apples", roots)
+        MARKERS = {"PAST", "PLURAL", "ing", "ed", "er", "s"}
+        out = [t for t in tokens if t not in MARKERS]
+        assert "dog" in out
+        assert "eat" in out
+        assert "apple" in out
+        assert "PLURAL" not in out
+        assert "PAST" not in out
+
+    def test_tokenize_preserves_unknown(self):
+        """Unknown words pass through stripped output."""
+        from research.runners.subword_tokenizer import tokenize_sentence
+        roots = {"dog", "eat"}
+        tokens = tokenize_sentence("xyzzy plover", roots)
+        # 'xyzzy' and 'plover' not in markers, should appear
+        assert "xyzzy" in tokens
+        assert "plover" in tokens
+
+
+class TestHierarchyIntegration:
+    """Verify hierarchical queries work as expected."""
+
+    def test_is_a_animal_query(self):
+        """'is a dog an animal?' resolves to is_a('dog', 'animal') = True."""
+        from research.runners.hierarchical_concepts import is_a
+        assert is_a("dog", "animal")
+        assert is_a("cat", "mammal")
+        assert is_a("red", "color")
+        assert is_a("red", "property")
+        assert is_a("run", "action")
+
+    def test_descendant_query(self):
+        """'what mammals do you know?' returns mammal subconcepts."""
+        from research.runners.hierarchical_concepts import get_descendants
+        mammals = set(get_descendants("mammal"))
+        assert mammals == {"dog", "cat", "person", "baby"}
+
+    def test_cross_tree_isolation(self):
+        """dog (thing tree) and run (event tree) share NO ancestor."""
+        from research.runners.hierarchical_concepts import common_ancestor
+        assert common_ancestor("dog", "run") == ""
+
+
 class TestNegationParsing:
     """' is not ' converts to ' is ' + NOT prefix."""
 
