@@ -1,0 +1,188 @@
+{
+  "seed": 45,
+  "sentences": [
+    [
+      "apple",
+      "stop",
+      "big"
+    ],
+    [
+      "big",
+      "stop",
+      "apple"
+    ],
+    [
+      "dog",
+      "look",
+      "cat"
+    ],
+    [
+      "cat",
+      "look",
+      "dog"
+    ],
+    [
+      "river",
+      "go",
+      "cold"
+    ],
+    [
+      "cold",
+      "go",
+      "river"
+    ],
+    [
+      "hot",
+      "come",
+      "small"
+    ],
+    [
+      "small",
+      "come",
+      "hot"
+    ]
+  ],
+  "n_correct": 16,
+  "n_total": 16,
+  "accuracy": 1.0,
+  "n_neural_pass": 8,
+  "neural_pass_rate": 1.0,
+  "results": [
+    {
+      "sentence": "apple stop big",
+      "who_query": {
+        "matches": [
+          "apple"
+        ],
+        "expected": "apple",
+        "correct": true
+      },
+      "what_query": {
+        "matches": [
+          "big"
+        ],
+        "expected": "big",
+        "correct": true
+      }
+    },
+    {
+      "sentence": "big stop apple",
+      "who_query": {
+        "matches": [
+          "big"
+        ],
+        "expected": "big",
+        "correct": true
+      },
+      "what_query": {
+        "matches": [
+          "apple"
+        ],
+        "expected": "apple",
+        "correct": true
+      }
+    },
+    {
+      "sentence": "dog look cat",
+      "who_query": {
+        "matches": [
+          "dog"
+        ],
+        "expected": "dog",
+        "correct": true
+      },
+      "what_query": {
+        "matches": [
+          "cat"
+        ],
+        "expected": "cat",
+        "correct": true
+      }
+    },
+    {
+      "sentence": "cat look dog",
+      "who_query": {
+        "matches": [
+          "cat"
+        ],
+        "expected": "cat",
+        "correct": true
+      },
+      "what_query": {
+        "matches": [
+          "dog"
+        ],
+        "expected": "dog",
+        "correct": true
+      }
+    },
+    {
+      "sentence": "river go cold",
+      "who_query": {
+        "matches": [
+          "river"
+        ],
+        "expected": "river",
+        "correct": true
+      },
+      "what_query": {
+        "matches": [
+          "cold"
+        ],
+        "expected": "cold",
+        "correct": true
+      }
+    },
+    {
+      "sentence": "cold go river",
+      "who_query": {
+        "matches": [
+          "cold"
+        ],
+        "expected": "cold",
+        "correct": true
+      },
+      "what_query": {
+        "matches": [
+          "river"
+        ],
+        "expected": "river",
+        "correct": true
+      }
+    },
+    {
+      "sentence": "hot come small",
+      "who_query": {
+        "matches": [
+          "hot"
+        ],
+        "expected": "hot",
+        "correct": true
+      },
+      "what_query": {
+        "matches": [
+          "small"
+        ],
+        "expected": "small",
+        "correct": true
+      }
+    },
+    {
+      "sentence": "small come hot",
+      "who_query": {
+        "matches": [
+          "small"
+        ],
+        "expected": "small",
+        "correct": true
+      },
+      "what_query": {
+        "matches": [
+          "hot"
+        ],
+        "expected": "hot",
+        "correct": true
+      }
+    }
+  ]
+}
