@@ -275,8 +275,15 @@ def main():
     def encode_to_bridge(m, a, b):
         """Encode (a, b) pair on bridge member m using m's vocab mapping.
 
-        Custom implementation (not encode_concept_pair) so we can pass
-        m.word_to_idx + m.word_to_pool instead of global imports.
+        Supports PARTIAL encoding for cross-set pairs: if only one of
+        (a, b) is in m's vocab, encode that word's pool + drive its
+        lang_input pattern. The other word is essentially ignored at
+        this bridge but still labeled in the tag name. Multi-bridge
+        querying recovers the cross-set relationship by aggregating
+        tags with matching name from BOTH bridges.
+
+        Returns the tag name, or 'already remembered' string if tag
+        exists.
         """
         from sim.backend import get_backend
         cp, _ = get_backend()
@@ -285,23 +292,39 @@ def main():
             return f"already remembered in {m.name}"
         bridge = m.bridge
         rm = bridge.region_manager
-        drive_a = orthogonal_drive_pattern(
-            cue_idx=m.word_to_idx[a],
-            n_cues=args.n_words_for_orthogonal,
-            n_neurons=args.n_lang_input,
-            drive_max_pA=200.0, sparsity=args.sparsity,
-        )
-        drive_b = orthogonal_drive_pattern(
-            cue_idx=m.word_to_idx[b],
-            n_cues=args.n_words_for_orthogonal,
-            n_neurons=args.n_lang_input,
-            drive_max_pA=200.0, sparsity=args.sparsity,
-        )
-        combined = cp.asarray(drive_a + drive_b, dtype=cp.float32)
-        lang_arr = cp.asarray(list(rm.indices("language_input")), dtype=cp.int64)
-        pool_a = cp.asarray(list(rm.indices(m.word_to_pool[a])), dtype=cp.int64)
-        pool_b = cp.asarray(list(rm.indices(m.word_to_pool[b])), dtype=cp.int64)
+        has_a = a in m.word_to_idx and a in m.word_to_pool
+        has_b = b in m.word_to_idx and b in m.word_to_pool
+        if not has_a and not has_b:
+            return None  # bridge has neither word
+
         n_total = bridge.cp_external_input_current.shape[0]
+        lang_arr = cp.asarray(list(rm.indices("language_input")), dtype=cp.int64)
+
+        # Build combined drive — include only words this bridge knows
+        drives = []
+        if has_a:
+            drives.append(orthogonal_drive_pattern(
+                cue_idx=m.word_to_idx[a],
+                n_cues=args.n_words_for_orthogonal,
+                n_neurons=args.n_lang_input,
+                drive_max_pA=200.0, sparsity=args.sparsity,
+            ))
+        if has_b:
+            drives.append(orthogonal_drive_pattern(
+                cue_idx=m.word_to_idx[b],
+                n_cues=args.n_words_for_orthogonal,
+                n_neurons=args.n_lang_input,
+                drive_max_pA=200.0, sparsity=args.sparsity,
+            ))
+        combined = cp.asarray(sum(drives), dtype=cp.float32)
+
+        teacher_pools = []
+        if has_a:
+            teacher_pools.append(cp.asarray(
+                list(rm.indices(m.word_to_pool[a])), dtype=cp.int64))
+        if has_b:
+            teacher_pools.append(cp.asarray(
+                list(rm.indices(m.word_to_pool[b])), dtype=cp.int64))
 
         bridge.start_engram_recording(tag)
         bridge.cp_external_input_current[:] = 0.0
@@ -311,8 +334,8 @@ def main():
         for _ in range(args.encoding_steps):
             ext.fill(0)
             ext[lang_arr] = combined
-            ext[pool_a] = args.balanced_teacher_pA
-            ext[pool_b] = args.balanced_teacher_pA
+            for tp in teacher_pools:
+                ext[tp] = args.balanced_teacher_pA
             bridge.cp_external_input_current[:] = ext
             bridge._run_one_simulation_step()
         bridge.cp_external_input_current[:] = 0.0
@@ -325,14 +348,16 @@ def main():
 
     def query_word(word):
         """Multi-tag retrieval across all bridges. Returns top associates
-        aggregated across all bridges that have tags with this word."""
-        # Check if any bridge has this word
-        if not any(word in m.vocab for m in members):
-            return {"matches": [], "results": []}
+        aggregated across all bridges that have tags with this word
+        (in tag name OR vocab). Cross-bridge encoded tags are searched
+        in every bridge — useful for cross-set associations.
+        """
         all_results = []
         for m in members:
-            if word not in m.vocab:
-                continue
+            # Search ALL tags by name for cross-set support, not just
+            # bridges where word is in vocab. This way set1's
+            # 'sun_hot' tag (encoded via cross-set fallback) is found
+            # even though set1 doesn't have 'sun' in its vocab.
             matches = [t for t in m.encoded_tags if word in t.split("_")]
             for tag in matches:
                 pat, n_lo = lang_output_pattern_during_stim(
@@ -380,13 +405,27 @@ def main():
                     print("  [usage: remember a is b]", flush=True)
                     return None
                 a, b = parts[0], parts[1]
-            # Find a bridge with both words in vocab
-            m = find_bridges_for_words(members, [a, b])
-            if m is None:
-                print(f"  [no bridge has both {a} and {b}]", flush=True)
+            # CROSS-BRIDGE ENCODING: prefer single bridge with both,
+            # else fall back to encoding in BOTH bridges that have
+            # at least one word. Each bridge captures its half of the
+            # relationship; multi-bridge query aggregates at recall.
+            m_both = find_bridges_for_words(members, [a, b])
+            if m_both is not None:
+                result = encode_to_bridge(m_both, a, b)
+                print(f"  [{m_both.name}] {result}", flush=True)
                 return None
-            result = encode_to_bridge(m, a, b)
-            print(f"  [{m.name}] {result}", flush=True)
+            # Cross-set: encode in each bridge with at least one word
+            encoded_in = []
+            for m in members:
+                if a in m.vocab or b in m.vocab:
+                    r = encode_to_bridge(m, a, b)
+                    if r is not None:
+                        encoded_in.append((m.name, r))
+            if encoded_in:
+                bridge_names = [n for n, _ in encoded_in]
+                print(f"  [cross-set: encoded in {bridge_names}]", flush=True)
+            else:
+                print(f"  [no bridge has either {a} or {b}]", flush=True)
             return None
         if line.startswith("what is "):
             word = line[len("what is "):].strip()
