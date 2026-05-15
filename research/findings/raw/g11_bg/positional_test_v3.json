@@ -1,0 +1,225 @@
+{
+  "seed": 42,
+  "results": [
+    {
+      "tag_a": "apple_pos0",
+      "tag_b": "apple_pos2",
+      "jaccard": 0.5037593984962406,
+      "category": "SAME_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos0",
+      "tag_b": "apple_pos4",
+      "jaccard": 0.5748031496062992,
+      "category": "SAME_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos0",
+      "tag_b": "dog_pos0",
+      "jaccard": 0.05263157894736842,
+      "category": "DIFF_W_SAME_P"
+    },
+    {
+      "tag_a": "apple_pos0",
+      "tag_b": "dog_pos2",
+      "jaccard": 0.02564102564102564,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos0",
+      "tag_b": "dog_pos4",
+      "jaccard": 0.015228426395939087,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos0",
+      "tag_b": "cat_pos0",
+      "jaccard": 0.04712041884816754,
+      "category": "DIFF_W_SAME_P"
+    },
+    {
+      "tag_a": "apple_pos0",
+      "tag_b": "cat_pos2",
+      "jaccard": 0.041666666666666664,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos0",
+      "tag_b": "cat_pos4",
+      "jaccard": 0.010101010101010102,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos2",
+      "tag_b": "apple_pos4",
+      "jaccard": 0.5267175572519084,
+      "category": "SAME_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos2",
+      "tag_b": "dog_pos0",
+      "jaccard": 0.04712041884816754,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos2",
+      "tag_b": "dog_pos2",
+      "jaccard": 0.08695652173913043,
+      "category": "DIFF_W_SAME_P"
+    },
+    {
+      "tag_a": "apple_pos2",
+      "tag_b": "dog_pos4",
+      "jaccard": 0.030927835051546393,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos2",
+      "tag_b": "cat_pos0",
+      "jaccard": 0.015228426395939087,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos2",
+      "tag_b": "cat_pos2",
+      "jaccard": 0.09289617486338798,
+      "category": "DIFF_W_SAME_P"
+    },
+    {
+      "tag_a": "apple_pos2",
+      "tag_b": "cat_pos4",
+      "jaccard": 0.010101010101010102,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos4",
+      "tag_b": "dog_pos0",
+      "jaccard": 0.02564102564102564,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos4",
+      "tag_b": "dog_pos2",
+      "jaccard": 0.05263157894736842,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos4",
+      "tag_b": "dog_pos4",
+      "jaccard": 0.0582010582010582,
+      "category": "DIFF_W_SAME_P"
+    },
+    {
+      "tag_a": "apple_pos4",
+      "tag_b": "cat_pos0",
+      "jaccard": 0.02564102564102564,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos4",
+      "tag_b": "cat_pos2",
+      "jaccard": 0.06951871657754011,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "apple_pos4",
+      "tag_b": "cat_pos4",
+      "jaccard": 0.0582010582010582,
+      "category": "DIFF_W_SAME_P"
+    },
+    {
+      "tag_a": "dog_pos0",
+      "tag_b": "dog_pos2",
+      "jaccard": 0.639344262295082,
+      "category": "SAME_W_DIFF_P"
+    },
+    {
+      "tag_a": "dog_pos0",
+      "tag_b": "dog_pos4",
+      "jaccard": 0.6528925619834711,
+      "category": "SAME_W_DIFF_P"
+    },
+    {
+      "tag_a": "dog_pos2",
+      "tag_b": "dog_pos4",
+      "jaccard": 0.6,
+      "category": "SAME_W_DIFF_P"
+    },
+    {
+      "tag_a": "cat_pos0",
+      "tag_b": "dog_pos0",
+      "jaccard": 0.04712041884816754,
+      "category": "DIFF_W_SAME_P"
+    },
+    {
+      "tag_a": "cat_pos0",
+      "tag_b": "dog_pos2",
+      "jaccard": 0.02040816326530612,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "cat_pos0",
+      "tag_b": "dog_pos4",
+      "jaccard": 0.015228426395939087,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "cat_pos0",
+      "tag_b": "cat_pos2",
+      "jaccard": 0.6528925619834711,
+      "category": "SAME_W_DIFF_P"
+    },
+    {
+      "tag_a": "cat_pos0",
+      "tag_b": "cat_pos4",
+      "jaccard": 0.5873015873015873,
+      "category": "SAME_W_DIFF_P"
+    },
+    {
+      "tag_a": "cat_pos2",
+      "tag_b": "dog_pos0",
+      "jaccard": 0.030927835051546393,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "cat_pos2",
+      "tag_b": "dog_pos2",
+      "jaccard": 0.09289617486338798,
+      "category": "DIFF_W_SAME_P"
+    },
+    {
+      "tag_a": "cat_pos2",
+      "tag_b": "dog_pos4",
+      "jaccard": 0.02040816326530612,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "cat_pos2",
+      "tag_b": "cat_pos4",
+      "jaccard": 0.5625,
+      "category": "SAME_W_DIFF_P"
+    },
+    {
+      "tag_a": "cat_pos4",
+      "tag_b": "dog_pos0",
+      "jaccard": 0.015228426395939087,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "cat_pos4",
+      "tag_b": "dog_pos2",
+      "jaccard": 0.015228426395939087,
+      "category": "DIFF_W_DIFF_P"
+    },
+    {
+      "tag_a": "cat_pos4",
+      "tag_b": "dog_pos4",
+      "jaccard": 0.041666666666666664,
+      "category": "DIFF_W_SAME_P"
+    }
+  ],
+  "same_word_diff_pos_mean": 0.5889123421020066,
+  "diff_word_same_pos_mean": 0.0641877856864881,
+  "diff_word_diff_pos_mean": 0.027048700376568906,
+  "passed": false
+}

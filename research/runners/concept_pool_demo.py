@@ -82,6 +82,10 @@ def build_concept_bridge(seed: int,
                           enable_adjective: bool = False,
                           weak_dynamics: bool = False,
                           weak_motor_dynamics: bool = False,
+                          enable_positional_context: bool = False,
+                          n_ec_context: int = 200,
+                          ec_context_to_pool_density: float = 0.30,
+                          ec_context_to_pool_weight: float = 3.0,
                           enable_dlpfc_verb_holding: bool = False,
                           enable_dlpfc_verb_unidirectional: bool = False,
                           enable_direct_verb_to_motor: bool = False,
@@ -177,6 +181,70 @@ def build_concept_bridge(seed: int,
         # v13 (2026-05-13): per-kind NMDA opt-in (cluster G v2 pattern)
         enable_nmda_verb_pools=nmda_verb_pools,
     )
+
+    # SENTENCE-LEVEL ENCODING (2026-05-14): add ec_context region for
+    # positional binding (catalog D.01 episodic memory, D.02 relational
+    # binding, D.11 time cells). When enable_positional_context=True,
+    # the bridge gains:
+    #   - ec_context region (200 neurons, non-recurrent)
+    #   - ec_context -> all concept pools (sparse plastic, gate-tagged)
+    #   - ec_context -> motor pools (sparse plastic)
+    #
+    # Combined drive: lang_input(word) + ec_context(position) during
+    # encoding produces distinct engram tags per (word, position) tuple.
+    # Enables 'alice ate apple' vs 'apple ate alice' distinction.
+    if enable_positional_context:
+        from sim.regions import BrainRegion, RegionPathway
+        # Import enum NeuronType from sim - tolerate both module locations
+        try:
+            from sim.enums import NeuronType
+        except ImportError:
+            from sim import NeuronType  # type: ignore
+        regions.append(BrainRegion(
+            name="ec_context",
+            n_neurons=n_ec_context, exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        # Wire ec_context -> all concept pools (plastic, sparse)
+        for pool_kind, names in [
+            ("noun_pool", NOUN_NAMES),
+            ("verb_pool", VERB_NAMES),
+        ]:
+            for n in names:
+                pathways.append(RegionPathway(
+                    from_region="ec_context",
+                    to_region=f"{pool_kind}_{n}",
+                    density=ec_context_to_pool_density,
+                    weight_mean=ec_context_to_pool_weight,
+                    weight_jitter=0.2,
+                    plastic=True,
+                    plasticity_gate=f"ec_context_to_{pool_kind}",
+                ))
+        if enable_adjective:
+            for n in ADJECTIVE_NAMES:
+                pathways.append(RegionPathway(
+                    from_region="ec_context",
+                    to_region=f"adjective_pool_{n}",
+                    density=ec_context_to_pool_density,
+                    weight_mean=ec_context_to_pool_weight,
+                    weight_jitter=0.2,
+                    plastic=True,
+                    plasticity_gate="ec_context_to_adjective_pool",
+                ))
+        # Also wire to motors (so 'alice goes' can bind to a verb position)
+        for action in ["N", "E", "S", "W"]:
+            pathways.append(RegionPathway(
+                from_region="ec_context",
+                to_region=f"motor_{action}",
+                density=ec_context_to_pool_density,
+                weight_mean=ec_context_to_pool_weight,
+                weight_jitter=0.2,
+                plastic=True,
+                plasticity_gate="ec_context_to_motor",
+            ))
 
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -746,6 +814,7 @@ def run_concept_pool_demo(seed: int = 42,
                             n_motor_fs_per_pool: int = None,
                             skip_motor_training: bool = False,
                             weak_motor_dynamics: bool = False,
+                            enable_positional_context: bool = False,
                             apply_topographic: bool = True,
                             topographic_factor: float = 2.0,
                             off_target_factor: float = 0.5,
@@ -799,6 +868,7 @@ def run_concept_pool_demo(seed: int = 42,
         enable_adjective=enable_adjective,
         weak_dynamics=weak_dynamics,
         weak_motor_dynamics=weak_motor_dynamics,
+        enable_positional_context=enable_positional_context,
         enable_dlpfc_verb_holding=enable_dlpfc_verb_holding,
         enable_dlpfc_verb_unidirectional=enable_dlpfc_verb_unidirectional,
         enable_direct_verb_to_motor=enable_direct_verb_to_motor,
