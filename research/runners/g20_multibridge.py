@@ -37,6 +37,63 @@ from research.runners.shared_pool_chat import (
 )
 
 
+def encode_partial_pair_engram(bridge, word_to_drive: str,
+                                 tag_name: str, vocab,
+                                 slice_size: int, n_lang_input: int,
+                                 sparsity: float,
+                                 encoding_steps: int = 200,
+                                 teacher_pA: float = 500.0,
+                                 top_k: int = 100) -> str:
+    """Encode a SINGLE-word engram tag in this bridge using the given tag name.
+
+    Used for cross-bridge encoding: when a pair (apple, big) spans two
+    bridges, we encode apple on the noun bridge and big on the adjective
+    bridge — each gets a tag named 'apple_big' (or 'big_apple'). The full
+    pair name is preserved in tag names for cross-bridge query aggregation.
+    """
+    from sim.backend import get_backend
+    from sim.text_embeddings import orthogonal_drive_pattern
+    cp, _ = get_backend()
+    rm = bridge.region_manager
+
+    if word_to_drive not in vocab:
+        raise ValueError(f"word '{word_to_drive}' not in vocab")
+    word_idx = vocab.index(word_to_drive)
+
+    lang_arr = cp.asarray(list(rm.indices("language_input")), dtype=cp.int64)
+    shared_indices = list(rm.indices("shared_concept_pool"))
+    slice_word = cp.asarray(
+        shared_indices[word_idx * slice_size:(word_idx + 1) * slice_size],
+        dtype=cp.int64)
+
+    drive = orthogonal_drive_pattern(
+        cue_idx=word_idx, n_cues=len(vocab),
+        n_neurons=n_lang_input, drive_max_pA=200.0, sparsity=sparsity,
+    )
+    drive_arr = cp.asarray(drive, dtype=cp.float32)
+    n_total = bridge.cp_external_input_current.shape[0]
+    ext = cp.zeros(n_total, dtype=cp.float32)
+
+    bridge.start_engram_recording(tag_name)
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(20):
+        bridge._run_one_simulation_step()
+    for _ in range(encoding_steps):
+        ext.fill(0)
+        ext[lang_arr] = drive_arr
+        ext[slice_word] = teacher_pA
+        bridge.cp_external_input_current[:] = ext
+        bridge._run_one_simulation_step()
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(10):
+        bridge._run_one_simulation_step()
+    bridge.commit_engram_tag(
+        tag_name, top_k=top_k,
+        region_filter=["shared_concept_pool"],
+    )
+    return tag_name
+
+
 def read_vocab_file(path: str) -> List[str]:
     """Read a vocab file: comma-separated OR newline-separated."""
     text = Path(path).read_text().strip()
@@ -175,48 +232,63 @@ def main():
     print(flush=True)
 
     def query_concept(word):
-        """Find associates of `word` across all bridges."""
-        m = find_member_for_word(members, word)
-        if m is None:
-            if args.friendly:
-                print(f"  I don't know '{word}'.", flush=True)
-            else:
-                print(f"  [no bridge has '{word}']", flush=True)
-            return
-        # Find tags containing this word
-        matches = [t for t in m.encoded_tags if word in t.split("_")]
-        if not matches:
+        """Find associates of `word` across ALL bridges.
+
+        Searches tag NAMES for `word` across every bridge (not just
+        the bridge that has `word` in vocab). This catches cross-bridge
+        partial encodings: 'apple_big' is in both bridgeA (which has
+        apple) and bridgeC (which has big). Aggregating across both
+        gives the full set of associates."""
+        all_results = []
+        for m in members:
+            matches = [t for t in m.encoded_tags
+                        if word in t.split("_")]
+            for tag in matches:
+                rates = stim_recall_slice_rates(
+                    m.bridge, tag, n_concepts=m.n_concepts(),
+                    slice_size=m.slice_size,
+                    drive_pA=m.drive_pA, stim_steps=m.drive_steps,
+                )
+                sorted_idx = np.argsort(-rates)
+                # Top firing concepts from THIS bridge
+                for j in sorted_idx[:5]:
+                    candidate = m.vocab[j]
+                    if candidate == word:
+                        continue
+                    all_results.append({
+                        "word": candidate,
+                        "rate": float(rates[j]),
+                        "tag": tag,
+                        "bridge": m.name,
+                    })
+
+        if not all_results:
             if args.friendly:
                 print(f"  I don't know anything about '{word}' yet.",
                       flush=True)
             else:
-                print(f"  [{m.name}] no tags contain '{word}'", flush=True)
+                print(f"  [no tags contain '{word}' across any bridge]",
+                      flush=True)
             return
-        # Aggregate slice firing across all matching tags
-        n = m.n_concepts()
-        aggregated = np.zeros(n, dtype=np.float32)
-        for tag in matches:
-            rates = stim_recall_slice_rates(
-                m.bridge, tag, n_concepts=n,
-                slice_size=m.slice_size,
-                drive_pA=m.drive_pA, stim_steps=m.drive_steps,
-            )
-            aggregated += rates
-        sorted_idx = np.argsort(-aggregated)
-        top5 = [(m.vocab[i], float(aggregated[i])) for i in sorted_idx[:5]]
-        associates = [(w, s) for w, s in top5 if w != word][:4]
+        # Aggregate: max rate per word across all bridges + tags
+        by_word = {}
+        for r in all_results:
+            if (r["word"] not in by_word
+                    or r["rate"] > by_word[r["word"]]["rate"]):
+                by_word[r["word"]] = r
+        ranked = sorted(by_word.values(), key=lambda r: -r["rate"])[:4]
         if args.friendly:
-            if not associates:
-                print(f"  '{word}' has no associates yet.", flush=True)
-            else:
-                summaries = [f"{w} ({s:.0f})" for w, s in associates]
-                print(f"  {word.capitalize()} is associated with: "
-                      f"{', '.join(summaries)}.", flush=True)
+            summaries = [f"{r['word']} ({r['rate']:.0f})" for r in ranked]
+            print(f"  {word.capitalize()} is associated with: "
+                  f"{', '.join(summaries)}.", flush=True)
         else:
-            print(f"  [{m.name}] '{word}' associates "
-                  f"(from {len(matches)} tag(s)):", flush=True)
-            for w, s in associates:
-                print(f"    {w:12} {s:.0f}", flush=True)
+            n_tags = len(set(r["tag"] for r in all_results))
+            print(f"  '{word}' associates (from {n_tags} tag(s) across "
+                  f"{len(set(r['bridge'] for r in all_results))} bridges):",
+                  flush=True)
+            for r in ranked:
+                print(f"    {r['word']:12} {r['rate']:.0f} "
+                      f"via {r['bridge']}/{r['tag']}", flush=True)
 
     def dispatch(line):
         line = line.strip().lower()
@@ -249,40 +321,66 @@ def main():
                 a, b = parts
             # Route: prefer single bridge with both words
             m_both = find_member_for_pair(members, a, b)
-            if m_both is None:
-                # Cross-bridge: encode in each bridge that has at least
-                # one word
-                encoded_in = []
-                for m in members:
-                    if a in m.vocab_set or b in m.vocab_set:
-                        # Need a helper that does PARTIAL encoding;
-                        # the existing encode_pair_engram requires BOTH
-                        # words to be in the same vocab. So for cross-
-                        # bridge we'd need a partial-encoding path. For
-                        # this iteration, only intra-bridge encoding.
-                        pass
+            if m_both is not None:
+                tag = encode_pair_engram(
+                    m_both.bridge, a, b, vocab=m_both.vocab,
+                    slice_size=m_both.slice_size,
+                    n_lang_input=m_both.n_lang_input,
+                    sparsity=m_both.sparsity,
+                    encoding_steps=m_both.encoding_steps,
+                    teacher_pA=m_both.teacher_pA,
+                    top_k=m_both.top_k,
+                )
+                m_both.encoded_tags.append(tag)
                 if args.friendly:
-                    print(f"  Sorry, I can only remember pairs from the "
-                          f"same vocab right now. '{a}' or '{b}' "
-                          f"crosses bridges.", flush=True)
+                    print(f"  OK, I'll remember {a} is {b}.", flush=True)
                 else:
-                    print(f"  [no single bridge has both '{a}' and '{b}']",
+                    print(f"  [{m_both.name}] encoded tag '{tag}'",
                           flush=True)
                 return None
-            tag = encode_pair_engram(
-                m_both.bridge, a, b, vocab=m_both.vocab,
-                slice_size=m_both.slice_size,
-                n_lang_input=m_both.n_lang_input,
-                sparsity=m_both.sparsity,
-                encoding_steps=m_both.encoding_steps,
-                teacher_pA=m_both.teacher_pA,
-                top_k=m_both.top_k,
-            )
-            m_both.encoded_tags.append(tag)
-            if args.friendly:
-                print(f"  OK, I'll remember {a} is {b}.", flush=True)
+            # CROSS-BRIDGE PARTIAL ENCODING: tag name preserves the
+            # full pair; each bridge encodes only the word it knows.
+            # Query-time tag-name search finds these across bridges.
+            tag_name = f"{a}_{b}"
+            encoded_in = []
+            for m in members:
+                if a in m.vocab_set:
+                    encode_partial_pair_engram(
+                        m.bridge, a, tag_name, vocab=m.vocab,
+                        slice_size=m.slice_size,
+                        n_lang_input=m.n_lang_input,
+                        sparsity=m.sparsity,
+                        encoding_steps=m.encoding_steps,
+                        teacher_pA=m.teacher_pA,
+                        top_k=m.top_k,
+                    )
+                    m.encoded_tags.append(tag_name)
+                    encoded_in.append((m.name, a))
+                elif b in m.vocab_set:
+                    encode_partial_pair_engram(
+                        m.bridge, b, tag_name, vocab=m.vocab,
+                        slice_size=m.slice_size,
+                        n_lang_input=m.n_lang_input,
+                        sparsity=m.sparsity,
+                        encoding_steps=m.encoding_steps,
+                        teacher_pA=m.teacher_pA,
+                        top_k=m.top_k,
+                    )
+                    m.encoded_tags.append(tag_name)
+                    encoded_in.append((m.name, b))
+            if encoded_in:
+                bridge_names = [n for n, _ in encoded_in]
+                if args.friendly:
+                    print(f"  OK, I'll remember {a} is {b}.", flush=True)
+                else:
+                    print(f"  [cross-bridge: '{tag_name}' encoded in "
+                          f"{bridge_names}]", flush=True)
             else:
-                print(f"  [{m_both.name}] encoded tag '{tag}'", flush=True)
+                if args.friendly:
+                    print(f"  I don't know '{a}' or '{b}'.", flush=True)
+                else:
+                    print(f"  [no bridge has either '{a}' or '{b}']",
+                          flush=True)
             return None
         if line.startswith("what is "):
             word = line[len("what is "):].strip()
@@ -293,27 +391,23 @@ def main():
             parts = rest.split()
             if len(parts) == 2:
                 a, b = parts
-                m = find_member_for_pair(members, a, b)
-                if m is None:
-                    if args.friendly:
-                        print(f"  I don't have a bridge with both {a} "
-                              f"and {b}.", flush=True)
-                    else:
-                        print(f"  UNKNOWN (no bridge has both)",
-                              flush=True)
-                    return None
                 tag = f"{a}_{b}"
-                if tag in m.encoded_tags:
+                # Check ANY bridge for this exact tag (intra OR cross)
+                hits = [(m.name, tag) for m in members
+                         if tag in m.encoded_tags]
+                if hits:
                     if args.friendly:
                         print(f"  Yes, {a} is {b}.", flush=True)
                     else:
-                        print(f"  [{m.name}] YES (tag '{tag}')",
+                        bridge_names = [n for n, _ in hits]
+                        print(f"  YES (tag '{tag}' in {bridge_names})",
                               flush=True)
                 else:
                     if args.friendly:
                         print(f"  I don't know.", flush=True)
                     else:
-                        print(f"  [{m.name}] UNKNOWN", flush=True)
+                        print(f"  UNKNOWN (no bridge has tag '{tag}')",
+                              flush=True)
             return None
         # plain word
         query_concept(line)
