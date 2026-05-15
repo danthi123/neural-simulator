@@ -249,6 +249,63 @@ class TestCosineToWordWithVocab:
         assert score > 0.99, f"self-match cos={score}, expected >0.99"
 
 
+class TestNormalizePossessive:
+    """normalize_possessive: 'X's Y' -> 'Y_of_X' string rewrite."""
+
+    def test_simple_possessive(self):
+        """'apple's color is red' -> 'color_of_apple is red'."""
+        assert mbc.normalize_possessive("apple's color is red") == \
+            "color_of_apple is red"
+
+    def test_possessive_no_tail(self):
+        """'apple's color' -> 'color_of_apple'."""
+        assert mbc.normalize_possessive("apple's color") == "color_of_apple"
+
+    def test_no_possessive_unchanged(self):
+        """'apple is red' -> unchanged."""
+        assert mbc.normalize_possessive("apple is red") == "apple is red"
+
+    def test_only_first_possessive(self):
+        """Only the first possessive is normalized (rest passes through)."""
+        # 'apple's color is dog's color' -> 'color_of_apple is dog's color'
+        out = mbc.normalize_possessive("apple's color is dog's color")
+        assert out == "color_of_apple is dog's color"
+
+
+class TestResolvePronouns:
+    """resolve_pronouns: pronoun -> last_subject substitution."""
+
+    def test_it_resolves(self):
+        """'it is big' with last_subject='dog' -> 'dog is big'."""
+        assert mbc.resolve_pronouns("it is big", "dog") == "dog is big"
+
+    def test_he_resolves(self):
+        """'he is happy' with last_subject='alice' -> 'alice is happy'."""
+        assert mbc.resolve_pronouns("he is happy", "alice") == "alice is happy"
+
+    def test_she_resolves(self):
+        """'she is happy' -> 'alice is happy'."""
+        assert mbc.resolve_pronouns("she is happy", "alice") == "alice is happy"
+
+    def test_they_resolves(self):
+        """'they are big' -> 'dogs are big'."""
+        assert mbc.resolve_pronouns("they are big", "dogs") == "dogs are big"
+
+    def test_no_pronoun_unchanged(self):
+        """'apple is red' -> unchanged regardless of last_subject."""
+        assert mbc.resolve_pronouns("apple is red", "dog") == "apple is red"
+
+    def test_no_last_subject_unchanged(self):
+        """No last_subject -> pronouns NOT resolved."""
+        assert mbc.resolve_pronouns("it is big", None) == "it is big"
+        assert mbc.resolve_pronouns("it is big", "") == "it is big"
+
+    def test_partial_word_not_replaced(self):
+        """'kit' is NOT 'it'; should not be replaced."""
+        # Split-based substitution only matches standalone tokens
+        assert mbc.resolve_pronouns("kit is big", "dog") == "kit is big"
+
+
 class TestQuerySentenceTemplate:
     """query_sentence_template matches tag-name templates across bridges."""
 

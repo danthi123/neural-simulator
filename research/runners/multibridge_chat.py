@@ -233,6 +233,43 @@ def find_bridges_for_words(members, words):
     return None
 
 
+def normalize_possessive(rest):
+    """Convert 'X's Y' to 'Y_of_X' tag form.
+
+    Returns rewritten string if possessive found, else original.
+    Examples:
+      "apple's color is red"   -> "color_of_apple is red"
+      "the dog's tail is long" -> "tail_of_dog is long"
+
+    Used by both 'remember' encoding and 'is X Y?' queries so
+    possessive forms map to a canonical tag-name representation.
+    """
+    import re
+    m = re.match(r"^(\w+)'s\s+(\w+)(.*)$", rest)
+    if m:
+        owner, attr, tail = m.group(1), m.group(2), m.group(3)
+        return f"{attr}_of_{owner}{tail}"
+    return rest
+
+
+def resolve_pronouns(rest, last_subject):
+    """Replace pronouns (it/he/she/they) with last_subject if set.
+
+    Single-token substitution only. Pronouns inside compound words are
+    NOT replaced (e.g. 'kit' won't be touched).
+    """
+    if not last_subject:
+        return rest
+    parts = rest.split()
+    out = []
+    for w in parts:
+        if w in ("it", "he", "she", "they"):
+            out.append(last_subject)
+        else:
+            out.append(w)
+    return " ".join(out)
+
+
 def query_sentence_template(members, template):
     """Find sentences matching a tag-name template.
 
@@ -487,10 +524,27 @@ def main():
 
     STOPWORDS = {"the", "a", "an", "that", "in", "on", "at",
                   "to", "of", "with", "by"}
+    # Anaphora / pronoun resolution: track last subject mentioned
+    state = {"last_subject": None}
+
+    def _normalize_possessive(rest):
+        return normalize_possessive(rest)
+
+    def _resolve_pronouns(rest):
+        return resolve_pronouns(rest, state.get("last_subject"))
 
     def _parts(rest):
         """Tokenize + strip stopwords + lowercase."""
         return [w for w in rest.split() if w not in STOPWORDS]
+
+    def _track_subject(words):
+        """If first word looks like a subject, remember it for pronoun
+        resolution. Heuristic: anything that's not a stopword and not
+        'NOT'."""
+        if words and words[0] not in STOPWORDS and words[0] != "NOT":
+            state["last_subject"] = words[0]
+        elif len(words) > 1 and words[1] not in STOPWORDS:
+            state["last_subject"] = words[1]
 
     def _yes_no_query(words):
         """Return (matched_tags_list, bridge_names_list) for exact tag match.
@@ -530,6 +584,8 @@ def main():
             return None
         if line.startswith("remember "):
             rest = line[len("remember "):].strip()
+            # Resolve pronouns FIRST (so 'it' -> last subject before splitting)
+            rest = _resolve_pronouns(rest)
             # Conjunction inside remember: handle each clause
             if " and " in rest:
                 sub_clauses = [c.strip() for c in rest.split(" and ")
@@ -538,6 +594,8 @@ def main():
                     print(f"  [remember-and] '{c}'", flush=True)
                     dispatch(f"remember {c}")
                 return None
+            # Possessive normalization: "X's Y is Z" -> "Y_of_X is Z"
+            rest = _normalize_possessive(rest)
             # Negation: "remember the dog is not big" -> tag 'NOT_dog_big'
             negated = False
             if " is not " in rest:
@@ -546,9 +604,15 @@ def main():
             if " is " in rest:
                 a, b = rest.split(" is ", 1)
                 a, b = a.strip(), b.strip()
+                # Strip articles from each side
+                a_parts = _parts(a)
+                b_parts = _parts(b)
+                a = a_parts[-1] if a_parts else a
+                b = b_parts[-1] if b_parts else b
                 words = [a, b]
                 if negated:
                     words = ["NOT"] + words
+                _track_subject([a, b])
                 encode_sentence(words)
                 return None
             # N-word sentences (drop articles/prepositions)
@@ -557,12 +621,17 @@ def main():
                 print("  [usage: remember a is b OR remember <words ...>]",
                       flush=True)
                 return None
+            _track_subject(parts)
             encode_sentence(parts)
             return None
         # Yes/no questions: 'is the dog big?' -> exact tag match on dog_big
         # or negated: 'is the dog not big?' -> match 'NOT_dog_big'
         if line.startswith("is "):
             rest = line.rstrip("?").strip()[len("is "):].strip()
+            # Resolve pronouns first
+            rest = _resolve_pronouns(rest)
+            # Possessive normalization
+            rest = _normalize_possessive(rest)
             negated = False
             if " not " in rest:
                 negated = True
@@ -586,6 +655,7 @@ def main():
                       f"{alt[0][0]})", flush=True)
             else:
                 print(f"  UNKNOWN (no tag matches)", flush=True)
+            _track_subject(parts)
             return None
         # 'who X Y?' or 'who X Y' -> find subject of '*_X_Y'
         if line.startswith("who "):
@@ -651,10 +721,13 @@ def main():
     print("Commands:")
     print("  remember a is b               Encode pair")
     print("  remember a is not b           Negated pair (tag 'NOT_a_b')")
+    print("  remember X's Y is Z           Possessive ('Y_of_X is Z')")
+    print("  remember it/he/she/they is X  Pronoun resolves to last subject")
     print("  remember <w1> ... <wN>        N-word sentence (order in tag)")
     print("  remember X and Y              Chained: each clause encoded")
     print("  is X Y?                       YES/NO/UNKNOWN exact tag match")
     print("  is X not Y?                   Negated YES/NO query")
+    print("  is X's Y Z?                   Possessive YES/NO query")
     print("  who <verb> <obj>?             Find subject of '*_verb_obj'")
     print("  what did <subj> <verb>?       Find object of 'subj_verb_*'")
     print("  what is X                     Multi-bridge multitag retrieval")
