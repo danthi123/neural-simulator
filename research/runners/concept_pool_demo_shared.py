@@ -239,64 +239,63 @@ def apply_shared_pool_topographic_prior(
             f"x slice_size {slice_size}. Reduce slice_size or n_concepts."
         )
 
-    indptr = _to_host(bridge.cp_connections.indptr)
-    indices = _to_host(bridge.cp_connections.indices)
-    data = _to_host(bridge.cp_connections.data)
-
-    # Build (pre, post) -> data offset lookup
-    pair_to_idx: Dict[tuple, int] = {}
-    n_rows = int(bridge.cp_connections.shape[0])
-    for r in range(n_rows):
-        start = int(indptr[r])
-        end = int(indptr[r + 1])
-        for off in range(start, end):
-            pair_to_idx[(r, int(indices[off]))] = off
+    # GPU-VECTORIZED implementation (2026-05-15 perf fix). The previous
+    # version pulled the whole CSR to host, built a Python dict of every
+    # (pre,post) -> offset (~8M entries), then did
+    # n_concepts x active_lang x pool_size Python dict lookups. That
+    # preprocessing step was CPU-bound and dominated wall-clock at high
+    # concept counts. New version keeps CSR data+indices on device and
+    # scales each active lang row's outgoing edges with one vectorized
+    # gather+multiply per row. indptr pulled to host ONCE (small).
+    n_total = int(bridge.cp_connections.shape[0])
+    indptr_host = _to_host(bridge.cp_connections.indptr)
+    indices_dev = bridge.cp_connections.indices       # stays on GPU
+    data_dev = bridge.cp_connections.data             # modified in place
+    shared_arr = cp.asarray(shared_indices, dtype=cp.int64)
 
     boosted = 0
     dampened = 0
     for cue_idx in range(n_concepts):
-        # Get lang_input active set for this concept (orthogonal code)
         drive = orthogonal_drive_pattern(
             cue_idx=cue_idx, n_cues=n_words_for_orthogonal,
             n_neurons=n_lang_input, drive_max_pA=1.0, sparsity=sparsity,
         )
-        # Lang_input neurons with drive > 0
         active_lang_local = np.where(drive > 0)[0]
-        active_lang_global = [lang_input_indices[i] for i in active_lang_local]
+        active_lang_global = [lang_input_indices[i]
+                                for i in active_lang_local]
 
-        # Target slice in shared_pool for this concept
-        target_slice_local = list(range(cue_idx * slice_size,
-                                          (cue_idx + 1) * slice_size))
-        target_global = set(shared_indices[i] for i in target_slice_local)
-        # All other shared_pool neurons are "off-target" for this concept
-        off_target_global = set(shared_indices) - target_global
+        # Per-concept multiplier over ALL postsynaptic neurons (GPU):
+        # 1.0 default, off_target_factor for pool, topographic for slice.
+        mult = cp.ones(n_total, dtype=cp.float32)
+        mult[shared_arr] = off_target_factor
+        target_slice_global = cp.asarray(
+            [shared_indices[i] for i in range(
+                cue_idx * slice_size, (cue_idx + 1) * slice_size)],
+            dtype=cp.int64)
+        mult[target_slice_global] = topographic_factor
 
         for pre in active_lang_global:
-            for post_target in target_global:
-                key = (pre, post_target)
-                if key in pair_to_idx:
-                    off = pair_to_idx[key]
-                    data[off] = float(data[off]) * topographic_factor
-                    boosted += 1
-            for post_off in off_target_global:
-                key = (pre, post_off)
-                if key in pair_to_idx:
-                    off = pair_to_idx[key]
-                    data[off] = float(data[off]) * off_target_factor
-                    dampened += 1
+            s = int(indptr_host[pre])
+            e = int(indptr_host[pre + 1])
+            if e <= s:
+                continue
+            cols = indices_dev[s:e]
+            data_dev[s:e] *= mult[cols]
+        n_active = len(active_lang_global)
+        boosted += n_active * slice_size
+        dampened += n_active * (len(shared_indices) - slice_size)
 
-    # Write back
-    bridge.cp_connections.data = cp.asarray(data)
+    bridge.cp_connections.data = data_dev
 
     if verbose:
-        print(f"[topographic prior] applied: {boosted} boosted "
-              f"({topographic_factor}x), {dampened} dampened "
-              f"({off_target_factor}x) on {n_concepts} concept slices",
+        print(f"[topographic prior] GPU-vectorized; ~{boosted} boost / "
+              f"~{dampened} dampen targets across {n_concepts} slices "
+              f"(upper bounds; actual = intersection with existing edges)",
               flush=True)
 
     return {
         "n_concepts": n_concepts, "slice_size": slice_size,
-        "boosted": boosted, "dampened": dampened,
+        "boosted_upper": boosted, "dampened_upper": dampened,
     }
 
 

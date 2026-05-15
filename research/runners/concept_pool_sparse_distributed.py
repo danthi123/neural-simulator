@@ -177,26 +177,34 @@ def apply_sparse_topographic_prior(
 
     lang_input_indices = list(rm.indices("language_input"))
     shared_indices = list(rm.indices("shared_concept_pool"))
+    n_total = int(bridge.cp_connections.shape[0])
 
-    indptr = cp.asnumpy(bridge.cp_connections.indptr)
-    indices = cp.asnumpy(bridge.cp_connections.indices)
-    data = cp.asnumpy(bridge.cp_connections.data)
+    # GPU-VECTORIZED implementation (2026-05-15 perf fix).
+    #
+    # Previous version pulled the whole CSR to host, built a Python dict
+    # of every (pre,post) -> offset (~8M entries), then did
+    # n_concepts x active_lang x pool_size Python dict lookups
+    # (73M+ ops at 256 concepts / 5000 pool). That preprocessing step
+    # dominated wall-clock (CPU-bound, NOT GPU-accelerated).
+    #
+    # New version keeps the CSR data + indices on device. For each
+    # concept it builds a per-postsynaptic-neuron multiplier array on
+    # GPU (1.0 default, off_target_factor for pool neurons, then
+    # topographic_factor for the concept's sparse-pattern neurons),
+    # then scales each active lang row's outgoing edges via a single
+    # vectorized gather+multiply on GPU. indptr is pulled to host ONCE
+    # (small, ~n_total ints) so row-slice bounds are pure host
+    # arithmetic with no per-row GPU sync.
+    indptr_host = cp.asnumpy(bridge.cp_connections.indptr)
+    indices_dev = bridge.cp_connections.indices       # stays on GPU
+    data_dev = bridge.cp_connections.data             # modified in place
 
-    # Pair lookup
-    pair_to_idx: Dict[tuple, int] = {}
-    n_rows = int(bridge.cp_connections.shape[0])
-    for r in range(n_rows):
-        start = int(indptr[r])
-        end = int(indptr[r + 1])
-        for off in range(start, end):
-            pair_to_idx[(r, int(indices[off]))] = off
+    shared_arr = cp.asarray(shared_indices, dtype=cp.int64)
 
     boosted = 0
     dampened = 0
-    pool_set = set(shared_indices)
 
     for cue_idx in range(n_concepts):
-        # Active lang_input neurons for this concept
         drive = orthogonal_drive_pattern(
             cue_idx=cue_idx, n_cues=n_words_for_orthogonal,
             n_neurons=n_lang_input, drive_max_pA=1.0, sparsity=sparsity,
@@ -204,34 +212,40 @@ def apply_sparse_topographic_prior(
         active_lang_local = np.where(drive > 0)[0]
         active_lang_global = [lang_input_indices[i]
                                 for i in active_lang_local]
-        # Target = concept's sparse pattern (mapped to global neuron ids)
-        target_local = sparse_patterns[cue_idx]
-        target_global = set(shared_indices[i] for i in target_local)
-        # Off-target = pool neurons NOT in target pattern
-        # (boost neurons that ARE in target; dampen the rest)
-        off_target_global = pool_set - target_global
 
+        # Per-concept multiplier over ALL postsynaptic neurons (GPU).
+        mult = cp.ones(n_total, dtype=cp.float32)
+        mult[shared_arr] = off_target_factor          # all pool dampened
+        target_global = cp.asarray(
+            [shared_indices[i] for i in sparse_patterns[cue_idx]],
+            dtype=cp.int64)
+        mult[target_global] = topographic_factor      # pattern boosted
+
+        # For each active lang row: scale outgoing edges by mult[col].
         for pre in active_lang_global:
-            for post in target_global:
-                key = (pre, post)
-                if key in pair_to_idx:
-                    off = pair_to_idx[key]
-                    data[off] = float(data[off]) * topographic_factor
-                    boosted += 1
-            for post in off_target_global:
-                key = (pre, post)
-                if key in pair_to_idx:
-                    off = pair_to_idx[key]
-                    data[off] = float(data[off]) * off_target_factor
-                    dampened += 1
+            s = int(indptr_host[pre])
+            e = int(indptr_host[pre + 1])
+            if e <= s:
+                continue
+            cols = indices_dev[s:e]                    # GPU slice
+            data_dev[s:e] *= mult[cols]                # GPU gather+mul
+        # Structural accounting (no GPU sync): each active row touches
+        # pattern_size boosted edges + pool_size-pattern_size dampened
+        # (upper bound; exact count would require a GPU reduction).
+        n_active = len(active_lang_global)
+        boosted += n_active * len(sparse_patterns[cue_idx])
+        dampened += n_active * (len(shared_indices)
+                                 - len(sparse_patterns[cue_idx]))
 
-    bridge.cp_connections.data = cp.asarray(data)
+    bridge.cp_connections.data = data_dev
     if verbose:
-        print(f"[sparse topographic prior] applied: {boosted} boosted, "
-              f"{dampened} dampened on {n_concepts} sparse patterns",
+        print(f"[sparse topographic prior] GPU-vectorized; "
+              f"~{boosted} boost-targets, ~{dampened} dampen-targets "
+              f"across {n_concepts} sparse patterns "
+              f"(upper bounds; actual = intersection with existing edges)",
               flush=True)
-    return {"n_concepts": n_concepts, "boosted": boosted,
-            "dampened": dampened,
+    return {"n_concepts": n_concepts, "boosted_upper": boosted,
+            "dampened_upper": dampened,
             "pattern_size": len(sparse_patterns[0])}
 
 
