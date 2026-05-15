@@ -578,6 +578,26 @@ def main():
             for m in members:
                 print(f"  [{m.name}] concepts: {m.concept_words}", flush=True)
             return None
+        # 'save' -> persist each bridge to its load path
+        if line in ("save", "/save"):
+            saved = []
+            for m in members:
+                try:
+                    m.bridge.save_checkpoint(m.bridge_path)
+                    saved.append((m.name, m.bridge_path,
+                                   len(m.encoded_tags)))
+                except Exception as e:
+                    print(f"  [save failed {m.name}: {e}]", flush=True)
+            if saved:
+                print(f"  [saved {len(saved)} bridge(s)]:", flush=True)
+                for n, p, nt in saved:
+                    print(f"    {n}: {nt} tags -> {p}", flush=True)
+            return None
+        # 'help' -> show commands
+        if line in ("commands", "/commands"):
+            print("  remember/forget/about/is/who/what/tags/vocab/save/quit",
+                  flush=True)
+            return None
         # 'know about X' or 'what do you know about X' or 'about X'
         # -> list all tags containing X across all bridges
         if (line.startswith("about ")
@@ -868,6 +888,7 @@ def main():
     print("  X and Y                       Conjunction: each dispatched")
     print("  tags                          List tags across all bridges")
     print("  vocab                         List concept words per bridge")
+    print("  save                          Persist all bridges to disk")
     print("  quit                          Exit")
     print()
 
