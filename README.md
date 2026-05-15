@@ -129,6 +129,34 @@ See [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) for all
 conversational demos (Tier 1 / Tier 2.1 synonym / Phase 1.4 continual
 learning).
 
+### 🎉 Catalog G.20 distributed-encoding BREAKTHROUGH (2026-05-15)
+
+**32 concepts in 1 shared pool: 81.2% top-1 PASS, 96.9% top-5, 26× chance.**
+This breaks v16's 16-pool ceiling using HALF the substrate for TWICE
+the vocabulary.
+
+```bash
+# Train a 32-concept G.20 bridge (~30 min):
+python -m research.runners.concept_pool_demo_shared --seed 42 \
+    --n-concepts 32 --n-train-events 400 --n-lang-input 8192 \
+    --n-shared-pool 1600 --slice-size 50 --top-k 100 \
+    --topographic-factor 10.0 --off-target-factor 0.1 --sparsity 0.03 \
+    --save-bridge bridges/shared_pool_n32.h5 \
+    --out results/shared_pool_n32.json
+
+# Chat with the trained bridge:
+python -m research.runners.shared_pool_chat \
+    --load-bridge bridges/shared_pool_n32.h5 \
+    --vocab "apple,river,dog,cat,go,come,stop,look,big,small,hot,cold,\
+tree,bird,sun,moon,walk,run,eat,sleep,red,blue,fast,slow,\
+house,road,fire,water,give,take,find,lose" --friendly
+```
+
+Per-neuron PASS efficiency: 4.2× better than v16. Catalog
+G.20 (Pulvermüller distributed cortical word ensembles) status:
+**PROTOTYPE VALIDATED**. See
+[`research/findings/2026-05-15-G20-shared-pool-BREAKTHROUGH-32-concepts.md`](research/findings/2026-05-15-G20-shared-pool-BREAKTHROUGH-32-concepts.md).
+
 ### 60-word multi-bridge conversation (2026-05-15)
 
 Single bridge has an architectural ceiling at 16-word vocab. The
