@@ -1,0 +1,101 @@
+{
+  "seed": 42,
+  "sentences": [
+    {
+      "words": [
+        "apple",
+        "big"
+      ],
+      "results": {
+        "0": {
+          "expected_word": "apple",
+          "expected_pool": "noun_pool_APPLE",
+          "top3": [
+            [
+              "noun_pool_CAT",
+              0.0175
+            ],
+            [
+              "adjective_pool_HOT",
+              0.0143
+            ],
+            [
+              "noun_pool_APPLE",
+              0.01405
+            ]
+          ],
+          "correct": false
+        },
+        "1": {
+          "expected_word": "big",
+          "expected_pool": "adjective_pool_BIG",
+          "top3": [
+            [
+              "adjective_pool_SMALL",
+              0.0113
+            ],
+            [
+              "adjective_pool_BIG",
+              0.01035
+            ],
+            [
+              "adjective_pool_HOT",
+              0.00985
+            ]
+          ],
+          "correct": false
+        }
+      }
+    },
+    {
+      "words": [
+        "big",
+        "apple"
+      ],
+      "results": {
+        "0": {
+          "expected_word": "big",
+          "expected_pool": "adjective_pool_BIG",
+          "top3": [
+            [
+              "adjective_pool_SMALL",
+              0.0163
+            ],
+            [
+              "adjective_pool_HOT",
+              0.0151
+            ],
+            [
+              "adjective_pool_COLD",
+              0.01505
+            ]
+          ],
+          "correct": false
+        },
+        "1": {
+          "expected_word": "apple",
+          "expected_pool": "noun_pool_APPLE",
+          "top3": [
+            [
+              "noun_pool_DOG",
+              0.00995
+            ],
+            [
+              "adjective_pool_SMALL",
+              0.0097
+            ],
+            [
+              "noun_pool_CAT",
+              0.0087
+            ]
+          ],
+          "correct": false
+        }
+      }
+    }
+  ],
+  "correct_count": 0,
+  "total": 4,
+  "accuracy": 0.0,
+  "passed": false
+}
