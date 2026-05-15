@@ -91,6 +91,24 @@ SET2_VOCAB = {
     "concept_words": ["tree","bird","sun","moon","walk","run","eat","sleep",
                        "red","blue","fast","slow"],
 }
+SET3_VOCAB = {
+    "word_to_idx": {
+        "north": 0, "east": 1, "south": 2, "west": 3,
+        "house": 4, "road": 5, "fire": 6, "water": 7,
+        "give": 8, "take": 9, "find": 10, "lose": 11,
+        "tall": 12, "short": 13, "wet": 14, "dry": 15,
+    },
+    "word_to_pool": {
+        "house": "noun_pool_HOUSE", "road": "noun_pool_ROAD",
+        "fire": "noun_pool_FIRE", "water": "noun_pool_WATER",
+        "give": "verb_pool_GIVE", "take": "verb_pool_TAKE",
+        "find": "verb_pool_FIND", "lose": "verb_pool_LOSE",
+        "tall": "adjective_pool_TALL", "short": "adjective_pool_SHORT",
+        "wet": "adjective_pool_WET", "dry": "adjective_pool_DRY",
+    },
+    "concept_words": ["house","road","fire","water","give","take","find","lose",
+                       "tall","short","wet","dry"],
+}
 
 
 class BridgeMember:
@@ -210,10 +228,15 @@ def main():
         print(f"ERROR: --vocab-sets length must match --bridges length", flush=True)
         return
 
-    SET_NAME_TO_VOCAB = {"set1": SET1_VOCAB, "set2": SET2_VOCAB}
+    SET_NAME_TO_VOCAB = {
+        "set1": SET1_VOCAB,
+        "set2": SET2_VOCAB,
+        "set3": SET3_VOCAB,
+    }
     SET_NAME_TO_PATCH_MODULE = {
         "set1": None,
         "set2": "research.runners.concept_pool_demo_set2",
+        "set3": "research.runners.concept_pool_demo_set3",
     }
 
     members = []
