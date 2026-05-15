@@ -12,8 +12,8 @@
     {
       "name": "60-word multi-bridge ensemble + 11 conversational features (2026-05-15)",
       "status": "VALIDATED",
-      "metric": "5 v16 bridges (set1-5) each owning 12 distinct concept words, routed by dispatch layer. Per-bridge Phase 1 PASS at seed 42: set1~11/16, set2 11/16, set3 14/16, set4 13/16, set5 13/16 (total 62/80=77.5%). End-to-end demo on all 5 bridges validates 11 features: pair encoding, N-word sentences, negation, conjunctions, possessives, pronoun coreference, tense (PAST/FUTURE), comparisons, yes/no, role queries, relational queries, memory CRUD. 91 unit tests pass (1.2s CPU). Total bridge state 8.7 GB. Each bridge inherits v16's 90% multi-seed multitag validation. Multi-bridge partial-encoding solves cross-set sentence storage.",
-      "doc": "2026-05-14-multibridge-60word-vocab-plan.md",
+      "metric": "5 v16 bridges (set1-5) each owning 12 distinct concept words, routed by dispatch layer. Multi-seed (42, 43) validation for 4 new sets: 99/128 = 77.3% combined Phase 1 PASS rate, matching v16's documented baseline (mean 12.4/16 multi-seed). 36 robust words (PASS at both seeds), 27 fragile, 1 fail (blue). Per-bridge at seed 42: set1~11/16, set2 11/16, set3 14/16, set4 13/16, set5 13/16. End-to-end demo validates 11 features: pair encoding, N-word sentences, negation, conjunctions, possessives, pronoun coreference, tense (PAST/FUTURE), comparisons, yes/no, role queries, relational queries, memory CRUD. 91 unit tests pass (1.2s CPU). Total bridge state 8.7 GB + 8.7 GB for seed 43.",
+      "doc": "2026-05-15-multibridge-2seed-validation.md",
       "date": "2026-05-15"
     },
     {
