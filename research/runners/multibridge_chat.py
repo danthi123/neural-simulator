@@ -41,6 +41,20 @@ except ImportError:
     _tokenize_sentence = None
     DEFAULT_ROOTS_60 = set()
 
+# Path 3: hierarchical concept trees (Patterson 2007 hub-and-spoke)
+try:
+    from research.runners.hierarchical_concepts import (
+        get_ancestors as _get_ancestors,
+        get_descendants as _get_descendants,
+        is_a as _is_a,
+        common_ancestor as _common_ancestor,
+        DEFAULT_HIERARCHY,
+    )
+    _HAS_HIERARCHY = True
+except ImportError:
+    _HAS_HIERARCHY = False
+    DEFAULT_HIERARCHY = {}
+
 
 def cosine_to_word_with_vocab(pattern, target_word, n_lang_out,
                                 word_to_idx, n_words_for_orthogonal=16,
@@ -689,6 +703,93 @@ def main():
             for m in members:
                 print(f"  [{m.name}] concepts: {m.concept_words}", flush=True)
             return None
+        # PATH 3 hierarchy commands
+        # 'what kind of X is Y?' or 'what is X?' (single token) — categories
+        # 'is X a Y?' — taxonomic check
+        # 'what Ys do you know?' — descendants of Y
+        if _HAS_HIERARCHY:
+            # 'is a X a Y?' or 'is X a Y?' or 'is the X a Y?'
+            if line.startswith("is a ") or " a " in line and line.startswith("is "):
+                # parse: "is [a/the] X a Y?"
+                rest = line.rstrip("?").strip()[3:].strip()  # strip "is "
+                # Remove leading article if present
+                STOP = {"a", "an", "the", "that"}
+                parts = [w for w in rest.replace(" a ", " ").split() if w not in STOP]
+                if len(parts) == 2:
+                    a, b = parts[0], parts[1]
+                    if a in DEFAULT_HIERARCHY or b in DEFAULT_HIERARCHY \
+                       or any(a == v or b == v for v in DEFAULT_HIERARCHY.values()):
+                        # Treat as hierarchy check
+                        ok = _is_a(a, b)
+                        if args.friendly:
+                            if ok:
+                                print(f"  Yes, {a} is a kind of {b}.",
+                                      flush=True)
+                            else:
+                                print(f"  No, {a} is not a kind of {b}.",
+                                      flush=True)
+                        else:
+                            print(f"  is_a({a}, {b}) = {ok}", flush=True)
+                        return None
+            # 'what kind of thing is X?' or 'what is X?'
+            if (line.startswith("what kind of ") or
+                line.startswith("what kind ")):
+                rest = line.rstrip("?").strip()
+                # Parse 'what kind of thing is X' -> X
+                if " is " in rest:
+                    _, target = rest.split(" is ", 1)
+                    target = target.strip()
+                    anc = _get_ancestors(target)
+                    if not anc:
+                        if args.friendly:
+                            print(f"  I don't know about '{target}'.",
+                                  flush=True)
+                        else:
+                            print(f"  [no hierarchy for '{target}']",
+                                  flush=True)
+                    else:
+                        if args.friendly:
+                            print(f"  {target} is a kind of "
+                                  f"{', '.join(anc[:3])}.", flush=True)
+                        else:
+                            print(f"  [hierarchy {target} -> "
+                                  f"{' -> '.join(anc)}]", flush=True)
+                    return None
+            # 'what Ys do you know?' or 'list Ys' — descendants
+            if (line.startswith("what ") and
+                line.endswith("s do you know?")):
+                category = line[len("what "):-len("s do you know?")]
+                # Try plural-stripping
+                desc = _get_descendants(category)
+                if not desc:
+                    # Try without -s strip
+                    desc = _get_descendants(category + "s")
+                if not desc:
+                    if args.friendly:
+                        print(f"  I don't know any kinds of '{category}'.",
+                              flush=True)
+                    else:
+                        print(f"  [no descendants of '{category}']",
+                              flush=True)
+                else:
+                    # Filter to leaf concepts (not internal categories)
+                    leaves = [d for d in desc if d not in
+                              set(DEFAULT_HIERARCHY.values())]
+                    if leaves:
+                        if args.friendly:
+                            print(f"  Kinds of {category}: "
+                                  f"{', '.join(leaves[:8])}.", flush=True)
+                        else:
+                            print(f"  [leaves of '{category}']: "
+                                  f"{', '.join(leaves)}", flush=True)
+                    else:
+                        if args.friendly:
+                            print(f"  Subcategories of {category}: "
+                                  f"{', '.join(desc[:8])}.", flush=True)
+                        else:
+                            print(f"  [subcategories of '{category}']: "
+                                  f"{', '.join(desc)}", flush=True)
+                return None
         # 'save' -> persist each bridge to its load path
         if line in ("save", "/save"):
             saved = []
