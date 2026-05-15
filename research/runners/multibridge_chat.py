@@ -914,16 +914,26 @@ def main():
             for tpl in templates:
                 all_matches.extend(query_sentence(tpl))
             if not all_matches:
-                print(f"  [no tag matches: *_{'_'.join(parts)}]", flush=True)
+                if args.friendly:
+                    print(f"  I don't know of anyone who {' '.join(parts)}.",
+                          flush=True)
+                else:
+                    print(f"  [no tag matches: *_{'_'.join(parts)}]", flush=True)
             else:
                 subjects = sorted(set(r["wildcards"][-1]
                                        if r["wildcards"][0] in ("PAST", "FUTURE")
                                        else r["wildcards"][0]
                                        for r in all_matches))
-                print(f"  [subjects of '{' '.join(parts)}']: "
-                      f"{', '.join(subjects)}", flush=True)
-                for r in all_matches:
-                    print(f"    {r['tag']} (via {r['bridge']})", flush=True)
+                if args.friendly:
+                    if len(subjects) == 1:
+                        print(f"  {subjects[0].capitalize()} did.", flush=True)
+                    else:
+                        print(f"  {', '.join(subjects)}.", flush=True)
+                else:
+                    print(f"  [subjects of '{' '.join(parts)}']: "
+                          f"{', '.join(subjects)}", flush=True)
+                    for r in all_matches:
+                        print(f"    {r['tag']} (via {r['bridge']})", flush=True)
             return None
         # 'what did X Y?' -> find object of 'X_Y_*' or 'PAST_X_Y_*'
         if line.startswith("what did "):
@@ -955,14 +965,24 @@ def main():
             for tpl in templates:
                 all_matches.extend(query_sentence(tpl))
             if not all_matches:
-                print(f"  [no tag matches: {'_'.join(parts)}_*]", flush=True)
+                if args.friendly:
+                    print(f"  I don't know what {parts[0]} {parts[1]}.",
+                          flush=True)
+                else:
+                    print(f"  [no tag matches: {'_'.join(parts)}_*]", flush=True)
             else:
                 objects = sorted(set(r["wildcards"][-1]
                                       for r in all_matches))
-                print(f"  [objects of '{' '.join(parts)}']: "
-                      f"{', '.join(objects)}", flush=True)
-                for r in all_matches:
-                    print(f"    {r['tag']} (via {r['bridge']})", flush=True)
+                if args.friendly:
+                    if len(objects) == 1:
+                        print(f"  {objects[0].capitalize()}.", flush=True)
+                    else:
+                        print(f"  {', '.join(objects)}.", flush=True)
+                else:
+                    print(f"  [objects of '{' '.join(parts)}']: "
+                          f"{', '.join(objects)}", flush=True)
+                    for r in all_matches:
+                        print(f"    {r['tag']} (via {r['bridge']})", flush=True)
             return None
         # Relational queries: 'what is the color of apple?' or
         # 'what color is apple?' -> template ['color', 'of', 'apple', '*']

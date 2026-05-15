@@ -99,6 +99,8 @@ def main():
     p.add_argument("--script", type=str, default=None,
                     help="Override scripted commands (comma-separated). "
                     "Default: built-in 60-word demo.")
+    p.add_argument("--friendly", action="store_true",
+                    help="Use natural-language output mode")
     args = p.parse_args()
 
     bridges_dir = Path(args.bridges_dir)
@@ -142,6 +144,8 @@ def main():
         "--drive-steps", "100",
         "--scripted", scripted,
     ]
+    if args.friendly:
+        cmd.append("--friendly")
 
     print("=== 60-word multi-bridge chat REPL demo ===", flush=True)
     print(f"Bridges: {[s for s in set_names]}", flush=True)
