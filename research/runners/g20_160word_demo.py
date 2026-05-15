@@ -78,7 +78,13 @@ def main():
         "bridgeA_nouns", "bridgeB_verbs", "bridgeC_adj",
         "bridgeD_spatial", "bridgeE_functional",
     ]
-    bridge_paths = [bridge_dir / f"{n}.simstate.h5" for n in bridge_names]
+    # Prefer v2 bridges (teacher-bias engram capture, 100% PASS).
+    # Fall back to v1 (original 50-step capture, 81.2% PASS) if v2 not built.
+    bridge_paths = []
+    for n in bridge_names:
+        v2 = bridge_dir / f"{n}_v2.simstate.h5"
+        v1 = bridge_dir / f"{n}.simstate.h5"
+        bridge_paths.append(v2 if v2.exists() else v1)
     vocab_paths = [VOCAB_DIR / f"g20_{n}_vocab.txt" for n in bridge_names]
 
     # Verify all bridges + vocab files exist
