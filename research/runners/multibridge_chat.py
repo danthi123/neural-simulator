@@ -812,6 +812,7 @@ def main():
             _track_subject(parts)
             return None
         # 'who X Y?' or 'who X Y' -> find subject of '*_X_Y'
+        # Also matches PAST_ or FUTURE_-prefixed tags when X is past-form
         if line.startswith("who "):
             rest = line.rstrip("?").strip()[len("who "):].strip()
             STOPWORDS = {"the", "a", "an", "that"}
@@ -820,18 +821,49 @@ def main():
                 print("  [usage: who <verb> <obj>? or who <verb> <mod> <obj>?]",
                       flush=True)
                 return None
-            template = ["*"] + parts
-            matches = query_sentence(template)
-            if not matches:
+            # Normalize past-form verbs to present (so 'who ate apple?'
+            # matches 'PAST_dog_eat_apple')
+            PAST_TO_PRESENT = {
+                "ate": "eat", "drank": "drink", "spoke": "speak",
+                "ran": "run", "took": "take", "gave": "give",
+                "found": "find", "lost": "lose", "saw": "see",
+                "went": "go", "came": "come", "wrote": "write",
+                "pushed": "push", "pulled": "pull",
+                "opened": "open", "closed": "close",
+                "slept": "sleep", "walked": "walk",
+                "listened": "listen", "looked": "look",
+                "stopped": "stop", "heard": "hear",
+            }
+            past_query = any(p in PAST_TO_PRESENT for p in parts)
+            future_query = "will" in parts
+            parts = [PAST_TO_PRESENT.get(w, w) for w in parts
+                      if w != "will"]
+            # Build templates: try with PAST_/FUTURE_ prefix and bare
+            templates = [["*"] + parts]
+            if past_query:
+                templates.append(["PAST", "*"] + parts)
+            elif future_query:
+                templates.append(["FUTURE", "*"] + parts)
+            else:
+                # Also try prefixed forms in case user asked w/o tense
+                templates.append(["PAST", "*"] + parts)
+                templates.append(["FUTURE", "*"] + parts)
+            all_matches = []
+            for tpl in templates:
+                all_matches.extend(query_sentence(tpl))
+            if not all_matches:
                 print(f"  [no tag matches: *_{'_'.join(parts)}]", flush=True)
             else:
-                subjects = sorted(set(r["wildcards"][0] for r in matches))
+                subjects = sorted(set(r["wildcards"][-1]
+                                       if r["wildcards"][0] in ("PAST", "FUTURE")
+                                       else r["wildcards"][0]
+                                       for r in all_matches))
                 print(f"  [subjects of '{' '.join(parts)}']: "
                       f"{', '.join(subjects)}", flush=True)
-                for r in matches:
+                for r in all_matches:
                     print(f"    {r['tag']} (via {r['bridge']})", flush=True)
             return None
-        # 'what did X Y?' -> find object of 'X_Y_*'
+        # 'what did X Y?' -> find object of 'X_Y_*' or 'PAST_X_Y_*'
         if line.startswith("what did "):
             rest = line.rstrip("?").strip()[len("what did "):].strip()
             STOPWORDS = {"the", "a", "an", "that"}
@@ -840,15 +872,34 @@ def main():
                 print("  [usage: what did <subj> <verb>? or what did <subj> <verb> <mod>?]",
                       flush=True)
                 return None
-            template = parts + ["*"]
-            matches = query_sentence(template)
-            if not matches:
+            # 'did' triggers past-form normalization (e.g. 'what did dog ate?'
+            # has verb 'ate' which should normalize to 'eat')
+            PAST_TO_PRESENT = {
+                "ate": "eat", "drank": "drink", "spoke": "speak",
+                "ran": "run", "took": "take", "gave": "give",
+                "found": "find", "lost": "lose",
+                "wrote": "write", "pushed": "push", "pulled": "pull",
+                "opened": "open", "closed": "close", "slept": "sleep",
+                "walked": "walk", "listened": "listen", "looked": "look",
+                "stopped": "stop", "heard": "hear",
+            }
+            parts = [PAST_TO_PRESENT.get(w, w) for w in parts]
+            # Try bare and PAST-prefixed templates
+            templates = [
+                parts + ["*"],
+                ["PAST"] + parts + ["*"],
+            ]
+            all_matches = []
+            for tpl in templates:
+                all_matches.extend(query_sentence(tpl))
+            if not all_matches:
                 print(f"  [no tag matches: {'_'.join(parts)}_*]", flush=True)
             else:
-                objects = sorted(set(r["wildcards"][0] for r in matches))
+                objects = sorted(set(r["wildcards"][-1]
+                                      for r in all_matches))
                 print(f"  [objects of '{' '.join(parts)}']: "
                       f"{', '.join(objects)}", flush=True)
-                for r in matches:
+                for r in all_matches:
                     print(f"    {r['tag']} (via {r['bridge']})", flush=True)
             return None
         # Relational queries: 'what is the color of apple?' or
