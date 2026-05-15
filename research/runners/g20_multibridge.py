@@ -408,17 +408,122 @@ def main():
                       f"{m.encoded_tags[:5]}{'...' if len(m.encoded_tags) > 5 else ''}",
                       flush=True)
             return None
+        # N-WORD SENTENCE role queries (tag-name indexing, the v16-
+        # validated 100% multi-seed mechanism). Must come BEFORE the
+        # generic 'what is' / 'is' handlers.
+        STOP_RQ = {"the", "a", "an", "that", "did", "does", "do"}
+        if line.startswith("who "):
+            rest = line.rstrip("?").strip()[len("who "):].strip()
+            parts = [w for w in rest.split() if w not in STOP_RQ]
+            if len(parts) >= 2:
+                # template: *_<parts...>  -> find subject
+                template = ["*"] + parts
+                hits = []
+                for m in members:
+                    for t in m.encoded_tags:
+                        tp = t.split("_")
+                        if len(tp) != len(template):
+                            continue
+                        ok = all(tt == "*" or tt == pp
+                                  for tt, pp in zip(template, tp))
+                        if ok:
+                            hits.append((tp[0], t, m.name))
+                if hits:
+                    subjects = sorted(set(h[0] for h in hits))
+                    if args.friendly:
+                        print(f"  {', '.join(s.capitalize() for s in subjects)}.",
+                              flush=True)
+                    else:
+                        print(f"  [subjects of '{' '.join(parts)}']: "
+                              f"{subjects}", flush=True)
+                else:
+                    print(f"  I don't know who {' '.join(parts)}.",
+                          flush=True)
+                return None
+        if line.startswith("what did "):
+            rest = line.rstrip("?").strip()[len("what did "):].strip()
+            parts = [w for w in rest.split() if w not in STOP_RQ]
+            if len(parts) >= 2:
+                # template: <parts...>_*  -> find object
+                template = parts + ["*"]
+                hits = []
+                for m in members:
+                    for t in m.encoded_tags:
+                        tp = t.split("_")
+                        if len(tp) != len(template):
+                            continue
+                        ok = all(tt == "*" or tt == pp
+                                  for tt, pp in zip(template, tp))
+                        if ok:
+                            hits.append((tp[-1], t, m.name))
+                if hits:
+                    objs = sorted(set(h[0] for h in hits))
+                    if args.friendly:
+                        print(f"  {', '.join(o.capitalize() for o in objs)}.",
+                              flush=True)
+                    else:
+                        print(f"  [objects of '{' '.join(parts)}']: "
+                              f"{objs}", flush=True)
+                else:
+                    print(f"  I don't know what {' '.join(parts)}.",
+                          flush=True)
+                return None
         if line.startswith("remember "):
             rest = line[len("remember "):].strip()
             if " is " in rest:
                 a, b = rest.split(" is ", 1)
                 a, b = a.strip(), b.strip()
+                sentence_words = None
             else:
                 parts = rest.split()
-                if len(parts) != 2:
-                    print("  [usage: remember a is b]", flush=True)
+                if len(parts) == 2:
+                    a, b = parts
+                    sentence_words = None
+                elif len(parts) >= 3:
+                    # N-WORD SENTENCE: drop articles, encode as ordered
+                    # tag across all bridges that know each word.
+                    STOPW = {"the", "a", "an", "that", "in", "on",
+                              "at", "to", "of", "with", "by"}
+                    sentence_words = [w for w in parts if w not in STOPW]
+                    a = b = None
+                else:
+                    print("  [usage: remember a is b OR "
+                          "remember <w1> <w2> ... <wN>]", flush=True)
                     return None
-                a, b = parts
+            if sentence_words is not None and len(sentence_words) >= 2:
+                tag_name = "_".join(sentence_words)
+                encoded_in = []
+                for m in members:
+                    known = [w for w in sentence_words
+                              if w in m.vocab_set]
+                    if not known:
+                        continue
+                    # Encode each known word's partial under shared tag
+                    for w in known:
+                        encode_partial_pair_engram(
+                            m.bridge, w, tag_name, vocab=m.vocab,
+                            slice_size=m.slice_size,
+                            n_lang_input=m.n_lang_input,
+                            sparsity=m.sparsity,
+                            encoding_steps=m.encoding_steps,
+                            teacher_pA=m.teacher_pA,
+                            top_k=m.top_k,
+                        )
+                    if tag_name not in m.encoded_tags:
+                        m.encoded_tags.append(tag_name)
+                    encoded_in.append((m.name, known))
+                if encoded_in:
+                    if args.friendly:
+                        print(f"  OK, I'll remember "
+                              f"{' '.join(sentence_words)}.", flush=True)
+                    else:
+                        bn = [n for n, _ in encoded_in]
+                        print(f"  [sentence '{tag_name}' encoded in "
+                              f"{bn}]", flush=True)
+                else:
+                    print(f"  I don't know any of "
+                          f"{sentence_words}.", flush=True)
+                return None
             # Route: prefer single bridge with both words
             m_both = find_member_for_pair(members, a, b)
             if m_both is not None:
