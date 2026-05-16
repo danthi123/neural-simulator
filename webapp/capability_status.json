@@ -353,9 +353,9 @@
       "date": "2026-05-16"
     },
     {
-      "name": "Stage-2 (concept-sequence replay) feasibility \u2014 NO-GO (corpus, not mechanism)",
-      "status": "NEGATIVE",
-      "metric": "Cheap zero-GPU anti-cheat probe BEFORE designing: bigram next-concept acc 0.000 = unigram = permuted control (86 seqs, vocab 141/192 tokens). Existing data is random-by-construction; project has NO natural concept-sequence corpus. Blocker is data not mechanism; all non-cheating corpus sources fail or are circular (v12-v16 trap). Saved a months-class NEGATIVE arc. Stage-2 replay NOT implemented (correct).",
+      "name": "Stage-2 feasibility NO-GO SUPERSEDED (constraints corrected by user)",
+      "status": "RETRACTED",
+      "metric": "The NO-GO was conditioned on a self-invented 320-hand-curated-concepts rule + no-public-data/no-local-distillation assumptions the user NEVER imposed. User clarified: public datasets OK, local-model distillation OK, large LEARNED vocab OK; only hard rule = all local. Generative frontier RE-OPENED and viable; re-scoped design follows. Probe mechanics sound, conclusion retracted (wrong assumed constraints).",
       "doc": "2026-05-16-generative-stage2-NO-GO-feasibility.md",
       "date": "2026-05-16"
     }
@@ -446,8 +446,8 @@
     ]
   },
   "phase_status": {
-    "active": "Generative Stage 1 SHIPPED+hardened (trustworthy grounded agent, robust margin, no-confabulation moat). Stage 2 (concept-sequence replay) feasibility-probed BEFORE design and is NO-GO: no natural concept-sequence corpus exists and none is obtainable non-circularly under no-LLM/no-cheating/local-only/320-concept constraints. Generative frontier blocked at the DATA layer, not the mechanism.",
-    "next": "Strategic (user decision, NOT autonomous): the only path past the generative data-wall is relaxing a constraint (e.g. a scoped public text corpus mapped onto a much larger LEARNED vocabulary -- a different project than 320 hand-curated concepts). Surfaced for the user. Stage 1 is the delivered conversational capability under current constraints.",
+    "active": "Stage 1 SHIPPED+hardened (trustworthy grounded agent). Stage-2 NO-GO RETRACTED: was based on wrong assumed constraints. User clarified -> public corpus + local-LLM distillation + large learned vocab allowed, local-only. Generative path RE-OPENED; re-scoping the design now.",
+    "next": "Re-scope generative under CORRECT constraints: local public-text corpus + learned vocab + optional local open-weights model for distillation, the project Phase-2 surrogate-grad sequence learner now properly fuel-able. Cheap feasibility re-ground, then design->plan->implement.",
     "after_next": "Re-validate prior Tier 1 + Tier 2.1 + Phase 1.4 multi-seed results at STP-off + new architecture. Predicted to push numbers significantly higher.",
     "after_after": "Webapp chat UI WebSocket (1-2 day project; bridges library backend + saved-bridges tab UI shipped tonight). Cloud deploy with optimized stack (480-800x speedup multiplier on H100).",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",

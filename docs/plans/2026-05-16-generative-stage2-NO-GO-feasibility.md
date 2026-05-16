@@ -110,3 +110,25 @@ outcome here.
 - Supersedes the Stage-2 portion of
   `docs/plans/2026-05-16-generative-conversation-design.md` with a
   NO-GO + reframe (corpus problem).
+
+## ⚠️ CONSTRAINT CORRECTION (2026-05-16, user clarification) — NO-GO is SUPERSEDED
+
+The user clarified the actual constraints. The NO-GO above was
+conditioned on assumptions the user did NOT impose:
+
+- **"320 hand-curated concepts" was NEVER a user rule** — I invented
+  it as a constraint. Vocabulary may be large and LEARNED.
+- **A free, public training dataset IS allowed.**
+- **Using a LOCAL model to distill information IS allowed.**
+- The ONLY hard constraint is: **everything runs locally** (no cloud,
+  no external API). "No cheating / no using an existing AI as a
+  crutch to fake results" still holds — but principled local
+  distillation + public-corpus training are explicitly sanctioned.
+
+Under the *correct* constraints the data-wall dissolves: a free
+public text corpus + a learned (large) vocabulary + optional
+local-LLM distillation provide exactly the natural-sequence corpus
+the probe found missing. **The generative frontier is RE-OPENED and
+genuinely viable.** The probe's mechanics were sound; its conclusion
+was an artifact of wrong assumed constraints. Superseded by the
+re-scoped design that follows.
