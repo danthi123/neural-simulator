@@ -56,3 +56,15 @@ class SongHVC:
             self._bias = {}
         for t, k in enumerate(concept_seq):
             self._bias[(int(intention), t)] = int(k)
+
+    def babble(self, base_seq: list, rng, temperature: float) -> list:
+        """LMAN-like exploratory variability: with prob ~temperature
+        replace ONE slot's concept with a random one. Deterministic
+        given `rng`. temperature=0 -> exact replay (no exploration)."""
+        cand = list(base_seq)
+        if temperature <= 0.0 or not cand:
+            return cand
+        if rng.random() < float(temperature):
+            i = int(rng.integers(0, len(cand)))
+            cand[i] = int(rng.integers(0, self.n_concepts))
+        return cand

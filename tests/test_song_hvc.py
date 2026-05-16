@@ -29,3 +29,22 @@ def test_intention_biases_first_states_so_two_intentions_can_differ():
     c.set_intention_bias(intention=1, concept_seq=[4, 5, 6])
     assert c.rollout(0, 3) == [1, 2, 3]
     assert c.rollout(1, 3) == [4, 5, 6]
+
+
+def test_babble_perturbs_one_slot_deterministically_by_rng():
+    c = SongHVC(n_states=8, n_concepts=10, seed=1)
+    base = [1, 2, 3]
+    rng = np.random.default_rng(7)
+    cand = c.babble(base, rng, temperature=1.0)
+    assert len(cand) == len(base)
+    # exactly the babble policy: at most one slot changed, in-range
+    assert sum(a != b for a, b in zip(base, cand)) <= 1
+    assert all(0 <= k < 10 for k in cand)
+    # deterministic given rng state
+    rng2 = np.random.default_rng(7)
+    assert c.babble(base, rng2, temperature=1.0) == cand
+
+def test_babble_temperature_zero_is_noop():
+    c = SongHVC(n_states=8, n_concepts=10, seed=1)
+    assert c.babble([1, 2, 3], np.random.default_rng(0),
+                    temperature=0.0) == [1, 2, 3]
