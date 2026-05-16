@@ -302,6 +302,13 @@
       "metric": "320: 86.7% genuine SEED-42 only (clean seed -> multi-seed likely lower, TBD). 160 multi-seed mean 92.7% (90-100%, 5 seeds). Scaling cost 160->320 ~6-13pp. Signal preserved -> distractor competition not weaker binding. K=3 reinforced NEGATIVE (one-shot optimal).",
       "doc": "2026-05-16-G20-320-xbridge-benchmark.md",
       "date": "2026-05-16"
+    },
+    {
+      "name": "320 ensemble 3-way sentence retrieval benchmark",
+      "status": "VALIDATED",
+      "metric": "16/20=80.0% genuine sentence binding (subj->verb+obj both top-5, anti-cheat 0 coincidental; seed42). Verb weak link (verb 85% vs obj 95%). 3-way < 2-way (80 vs 86.7) as expected. Multi-seed TBD (seed42 clean).",
+      "doc": "2026-05-16-G20-320-sentence-benchmark.md",
+      "date": "2026-05-16"
     }
   ],
   "capacity_rule": {
