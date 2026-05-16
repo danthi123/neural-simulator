@@ -68,6 +68,30 @@ invalidates the G1 result -- see the implementation plan
      the Step-0 g1_abstain are persisted (sidecar JSON next to the
      checkpoint) so a resumed run AND Task 10 use the SAME values.
 
+SMOKE / FULL CKPT NAMESPACE ISOLATION (pre-launch defense, two layers):
+
+  (a) A default --smoke run (one whose --ckpt was NOT explicitly
+      overridden) is redirected to an ISOLATED checkpoint+sidecar with
+      a ".smoke" infix (song_g1.smoke.ckpt.npz / its sidecar). So a
+      default smoke run NEVER writes the canonical song_g1.ckpt.npz
+      that the multi-hour full run + Task 10 consume. The default
+      --ckpt CONSTANT is unchanged; only smoke-with-default-path is
+      redirected. If --ckpt is passed explicitly with --smoke, that
+      path is honored (defense (b) still applies).
+
+  (b) The sidecar records "smoke": bool. On resume/reuse, if an
+      existing checkpoint/sidecar's smoke flag differs from the
+      current run's, its calibration.g1_abstain is NOT reused AND
+      SongHVC.W / epoch are NOT resumed -- the run starts fresh
+      (recompute Step 0, fresh init, epoch 0) with an explicit
+      [fresh] warning. This guarantees a full run / Task 10 can never
+      inherit a smoke-calibrated abstention floor or smoke-trained
+      weights even if paths collide (e.g. an explicit shared --ckpt).
+      A SAME-mode resume (smoke->smoke or full->full) is unchanged:
+      W + rng + loss + frozen props + calibration are reused exactly.
+      The sidecar "smoke" key is additive JSON; Task 10 reads the
+      sidecar and will see smoke:false for the real full run.
+
 WHY single-bridge propositions: ignite_sequence / self_comprehend
 operate on ONE SharedPoolMember's bridge using THAT member's concept
 indices (its sparse_patterns). A proposition is therefore an ORDERED
@@ -297,10 +321,21 @@ def _step0_calibrate(members, props_train, ignite_sequence,
             control_rates.append(rate)
             _recover(member, recover_steps)
 
-    # (ii-b) CONTROL: random/unencoded concept sequences (per train
-    #        bridge so the regime matches; deterministic via rng).
-    for p in props_train[:_CTRL_N_RANDOM]:
-        member = members[p["bridge_idx"]]
+    # (ii-b) CONTROL: EXACTLY _CTRL_N_RANDOM random/unencoded ordered
+    #        concept-index sequences (FIX 2). The count is decoupled
+    #        from len(props_train) (was props_train[:_CTRL_N_RANDOM],
+    #        which capped at 4 full / 2 smoke -- making the named
+    #        constant unreachable and feeding the smoke/full divergence).
+    #        Each draw picks a bridge from the TRAIN propositions'
+    #        bridges (regime-matched) via the DEDICATED calibration rng
+    #        (does NOT touch the training rng stream; deterministic
+    #        given --seed). Same in-regime random/unencoded controls
+    #        fed through the SAME _integrated_decode path.
+    train_bridge_idxs = [p["bridge_idx"] for p in props_train]
+    for _k in range(_CTRL_N_RANDOM):
+        bidx = train_bridge_idxs[
+            int(rng.integers(0, len(train_bridge_idxs)))]
+        member = members[bidx]
         n_v = len(member.vocab)
         a = int(rng.integers(0, n_v))
         b = int(rng.integers(0, n_v))
@@ -343,6 +378,18 @@ def _step0_calibrate(members, props_train, ignite_sequence,
                  "control-max operating point, fixed at train start, "
                  "never tuned (anti-cheat: pre-registered RULE)."),
     }
+
+
+def _smoke_ckpt_path(ckpt_path):
+    """Isolated smoke checkpoint path = the base with a '.smoke' infix
+    before the '.ckpt.npz' (or '.npz') suffix. Pure string transform
+    (deterministic; no IO). Used ONLY when --smoke is set and --ckpt
+    was left at its default so a default smoke run can never write the
+    canonical full-run checkpoint."""
+    for suffix in (".ckpt.npz", ".npz"):
+        if ckpt_path.endswith(suffix):
+            return ckpt_path[: -len(suffix)] + ".smoke" + suffix
+    return ckpt_path + ".smoke"
 
 
 def _sidecar_path(ckpt_path):
@@ -398,11 +445,19 @@ def main():
                         "(babble/control sampling).")
     p.add_argument("--ckpt", type=str, default=_CKPT_DEFAULT,
                    help="checkpoint .npz path (sidecar .meta.json holds "
-                        "frozen props + Step-0 g1_abstain).")
+                        "frozen props + Step-0 g1_abstain + a 'smoke' "
+                        "flag). If --smoke is set and --ckpt is left at "
+                        "its default, the path is auto-redirected to an "
+                        "isolated '.smoke' namespace so a smoke run "
+                        "NEVER writes the canonical full-run checkpoint.")
     p.add_argument("--smoke", action="store_true",
                    help="tiny build/kill-safe-resume validation: 2 "
                         "epochs, 2 train props, k=2 babbles. NOT the "
-                        "G1 result (Task 10 is the gate).")
+                        "G1 result (Task 10 is the gate). Uses an "
+                        "ISOLATED ckpt/sidecar namespace (default path "
+                        "gets a '.smoke' infix); a sidecar from the "
+                        "OTHER mode is refused (no full verdict can be "
+                        "gated on a smoke-calibrated floor or weights).")
     args = p.parse_args()
 
     # --- lazy/heavy imports (loading 5 sparse bridges is slow + GPU) -
@@ -421,6 +476,22 @@ def main():
 
     t0 = time.time()
     smoke = bool(args.smoke)
+
+    # --- FIX 1(a): isolated smoke namespace when --ckpt not overridden.
+    #     If this is a smoke run AND the user left --ckpt at its default,
+    #     redirect to a distinct '.smoke' ckpt+sidecar so a default smoke
+    #     run NEVER writes the canonical song_g1.ckpt.npz/sidecar that the
+    #     multi-hour full run + Task 10 consume. An explicitly-passed
+    #     --ckpt is honored verbatim (defense (b) still guards it).
+    ckpt_explicit = (args.ckpt != _CKPT_DEFAULT)
+    if smoke and not ckpt_explicit:
+        args.ckpt = _smoke_ckpt_path(_CKPT_DEFAULT)
+        print(f"[SMOKE-ISOLATION] --ckpt left at default; redirecting "
+              f"smoke run to isolated namespace:\n  ckpt    = {args.ckpt}"
+              f"\n  sidecar = {_sidecar_path(args.ckpt)}\n  (the "
+              f"canonical {_CKPT_DEFAULT} is untouched by smoke runs)",
+              flush=True)
+
     n_epochs = 2 if smoke else int(args.epochs)
     n_babble = 2 if smoke else int(args.n_babble)
     n_train_cap = 2 if smoke else _N_TRAIN
@@ -447,9 +518,13 @@ def main():
     all_props = _build_frozen_propositions(members)
     props_train_full = [p for p in all_props if p["kind"] == "train"]
     props_heldout = [p for p in all_props if p["kind"] == "heldout"]
-    # smoke trains only the first 2 train props (still freezes the SAME
-    # full train/held-out lists in the sidecar so a non-smoke resume /
-    # Task 10 see the canonical set).
+    # smoke trains only the first 2 train props. The sidecar still
+    # records the SAME full train/held-out lists, BUT a smoke run
+    # writes to an ISOLATED namespace (FIX 1(a): default --ckpt gets a
+    # '.smoke' infix) and a cross-mode sidecar is REFUSED (FIX 1(b)),
+    # so a non-smoke resume / Task 10 NEVER inherits the smoke sidecar
+    # or its smoke-calibrated g1_abstain -- they recompute Step 0 fresh
+    # on the canonical namespace and freeze the canonical set there.
     props_train = props_train_full[:n_train_cap]
 
     print(f"\nFrozen propositions (deterministic via "
@@ -473,13 +548,38 @@ def main():
                    seed=int(args.seed))
     _seed_intention_biases(song, all_props)
 
+    # --- FIX 1(b): cross-mode reuse refusal -------------------------
+    #     Load the sidecar FIRST so the smoke<->full decision is made
+    #     atomically for BOTH W/epoch resume AND calibration reuse. If
+    #     an existing sidecar's "smoke" flag differs from this run's
+    #     smoke, we REFUSE to inherit anything from that namespace
+    #     (no smoke-calibrated floor / smoke-trained weights can ever
+    #     gate a full verdict, even on a colliding explicit --ckpt).
+    #     A missing "smoke" key in an existing sidecar is treated as a
+    #     mismatch ONLY when this run is smoke (a legacy/full sidecar
+    #     must not be silently inherited by a smoke run, and vice
+    #     versa) -- conservatively, ANY existing sidecar whose recorded
+    #     smoke != current smoke (with absent treated as full=False)
+    #     forces a fresh start.
+    meta = _load_sidecar(args.ckpt)
+    cross_mode_mismatch = False
+    if meta is not None:
+        sidecar_smoke = bool(meta.get("smoke", False))
+        if sidecar_smoke != smoke:
+            cross_mode_mismatch = True
+            print(f"\n[fresh] existing ckpt is smoke={sidecar_smoke} "
+                  f"but this run smoke={smoke}; ignoring it (will not "
+                  f"gate a full verdict on a smoke-calibrated floor)",
+                  flush=True)
+
     # --- resume (kill-safe Inc-3 pattern) ----------------------------
     ckpt = load_checkpoint(args.ckpt)
-    start_epoch = resume_epoch(ckpt)
     rng = np.random.default_rng(int(args.seed))
     loss_history = []
-    if ckpt is not None:
-        # restore controller weights + RNG state + loss history.
+    if ckpt is not None and not cross_mode_mismatch:
+        # SAME-mode resume: restore controller weights + RNG state +
+        # loss history exactly as before.
+        start_epoch = resume_epoch(ckpt)
         song.W = np.asarray(ckpt["weights"][0],
                              dtype=np.float32).copy()
         rng.bit_generator.state = ckpt["rng_state"]
@@ -487,14 +587,25 @@ def main():
         print(f"\n[RESUME] checkpoint at epoch {ckpt['epoch']} -> "
               f"resuming at epoch {start_epoch} "
               f"(loss_history len={len(loss_history)})", flush=True)
+    elif ckpt is not None and cross_mode_mismatch:
+        # CROSS-mode collision: a checkpoint exists but it belongs to
+        # the other mode. Do NOT resume W/epoch from it -- start fresh
+        # (epoch 0, fresh SongHVC init, fresh rng) so a full/Task-10
+        # verdict can never inherit smoke-trained weights.
+        start_epoch = 0
+        print(f"\n[FRESH] checkpoint at {args.ckpt} is the OTHER mode "
+              f"-> NOT resuming its weights/epoch; starting fresh at "
+              f"epoch 0", flush=True)
     else:
+        start_epoch = resume_epoch(ckpt)
         print(f"\n[FRESH] no checkpoint at {args.ckpt} -> starting "
               f"at epoch 0", flush=True)
 
     # --- sidecar: frozen props + Step-0 g1_abstain (persist ONCE;
-    #     resume + Task 10 MUST reuse the SAME values) ----------------
-    meta = _load_sidecar(args.ckpt)
-    if meta is not None and "g1_abstain" in meta.get("calibration", {}):
+    #     SAME-mode resume + Task 10 MUST reuse the SAME values; a
+    #     cross-mode sidecar is REFUSED -> Step 0 recomputed fresh) ---
+    if (meta is not None and not cross_mode_mismatch
+            and "g1_abstain" in meta.get("calibration", {})):
         calib = meta["calibration"]
         g1_abstain = float(calib["g1_abstain"])
         print(f"[SIDECAR] reusing pre-registered Step-0 g1_abstain="
@@ -517,6 +628,10 @@ def main():
             "task": "song_g1 Task 9 self-supervised training",
             "substrate": "G.20 320-sparse 5-bridge",
             "seed": int(args.seed),
+            # FIX 1(b): record the mode so a resume/Task-10 read can
+            # REFUSE a cross-mode sidecar. Additive JSON key (Task 10
+            # tolerates it; it will see smoke:false for the real run).
+            "smoke": bool(args.smoke),
             "pair_sampler": {
                 "fn": "sample_xbridge_pairs",
                 "seed": _PAIR_SEED,
@@ -555,6 +670,13 @@ def main():
           f"props={len(props_train)}  k={n_babble}  lr={args.lr}  "
           f"recover={args.recover_steps}  g1_abstain="
           f"{g1_abstain:.2f}", flush=True)
+
+    # FIX 3: track the last-completed epoch in-process so the
+    # KeyboardInterrupt handler does NOT re-read the npz it just wrote
+    # (cosmetic disk read). Initialized to one-before-start so a kill
+    # before any epoch completes reports the correct resume baseline
+    # (start_epoch - 1 == the epoch already on disk, or -1 if fresh).
+    last_completed_epoch = start_epoch - 1
 
     try:
         for epoch in range(start_epoch, n_epochs):
@@ -614,6 +736,7 @@ def main():
                 args.ckpt, epoch,
                 [np.asarray(song.W, dtype=np.float32)],
                 rng.bit_generator.state, loss_history)
+            last_completed_epoch = epoch  # FIX 3: track in-process
 
             print(f"[epoch {epoch}] mean_reward={mean_reward:.4f} "
                   f"n_gate_cleared={n_gate_cleared} "
@@ -623,12 +746,15 @@ def main():
 
     except KeyboardInterrupt:
         # kill-safe: the last COMPLETED epoch is already checkpointed
-        # (save_checkpoint runs at the END of each epoch). Just exit
-        # cleanly; re-running resumes from that epoch.
-        last = (resume_epoch(load_checkpoint(args.ckpt)) - 1)
+        # (save_checkpoint runs at the END of each epoch). FIX 3: use
+        # the in-process last_completed_epoch instead of re-reading the
+        # npz we just wrote. Behavior otherwise unchanged -- the
+        # handler writes NO checkpoint (the last completed epoch was
+        # already checkpointed at epoch-end); re-running resumes from
+        # that epoch.
         print(f"\n[INTERRUPT] KeyboardInterrupt -- last completed "
-              f"epoch checkpointed = {last}. Re-run to resume. "
-              f"Exiting cleanly.", flush=True)
+              f"epoch checkpointed = {last_completed_epoch}. Re-run "
+              f"to resume. Exiting cleanly.", flush=True)
         print("=" * 64, flush=True)
         return 0
 
