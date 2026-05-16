@@ -68,3 +68,17 @@ class SongHVC:
             i = int(rng.integers(0, len(cand)))
             cand[i] = int(rng.integers(0, self.n_concepts))
         return cand
+
+    def reinforce(self, intention: int, concept_seq: list,
+                  reward: float, lr: float) -> None:
+        """Three-factor (eligibility x dopamine) update: reward * lr
+        added to W[state, emitted_concept] for each slot. reward<=0 ->
+        no change (DA gate). Bounded by tanh squashing to keep the
+        argmax map stable (no runaway)."""
+        r = float(reward)
+        if r <= 0.0:
+            return
+        for t, k in enumerate(concept_seq):
+            if 0 <= t < self.n_states and 0 <= k < self.n_concepts:
+                self.W[t, k] += float(lr) * r
+        np.tanh(self.W, out=self.W)

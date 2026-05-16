@@ -48,3 +48,21 @@ def test_babble_temperature_zero_is_noop():
     c = SongHVC(n_states=8, n_concepts=10, seed=1)
     assert c.babble([1, 2, 3], np.random.default_rng(0),
                     temperature=0.0) == [1, 2, 3]
+
+
+def test_reinforce_strengthens_rewarded_mapping_only():
+    c = SongHVC(n_states=8, n_concepts=10, seed=1)
+    seq = [3, 5, 7]
+    w_before = c.W.copy()
+    c.reinforce(intention=0, concept_seq=seq, reward=1.0, lr=0.5)
+    # rewarded (state t -> concept seq[t]) weights increased
+    for t, k in enumerate(seq):
+        assert c.W[t, k] > w_before[t, k]
+    # zero reward -> no change
+    w_mid = c.W.copy()
+    c.reinforce(0, seq, reward=0.0, lr=0.5)
+    assert np.allclose(c.W, w_mid)
+    # after enough positive reinforcement the chain emits seq
+    for _ in range(50):
+        c.reinforce(0, seq, reward=1.0, lr=0.5)
+    assert [int(np.argmax(c.W[t])) for t in range(3)] == seq
