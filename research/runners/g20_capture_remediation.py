@@ -83,6 +83,9 @@ def main():
     p.add_argument("--boost-steps", type=int, default=250,
                     help="vs training's 100-step capture window")
     p.add_argument("--out", type=str, default=None)
+    p.add_argument("--save-bridge", type=str, default=None,
+                    help="save the remediated bridge (NEW path; the "
+                         "validated source artifact is never overwritten)")
     args = p.parse_args()
 
     vocab = read_vocab_file(args.vocab)
@@ -148,6 +151,11 @@ def main():
           flush=True)
     print(f"  verdict: {'ARTIFACT-SAFE FIX WORKS' if summary['fix_rate']>=0.5 else 'INSUFFICIENT (negative/partial)'}",
           flush=True)
+    if args.save_bridge:
+        Path(args.save_bridge).parent.mkdir(parents=True, exist_ok=True)
+        bridge.save_checkpoint(args.save_bridge)
+        print(f"  saved remediated bridge -> {args.save_bridge}",
+              flush=True)
     if args.out:
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
         json.dump({"summary": summary, "rows": rows},
