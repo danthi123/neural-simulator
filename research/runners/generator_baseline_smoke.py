@@ -52,7 +52,7 @@ def main() -> int:
     rng.shuffle(perm_chars)             # destroy sequential structure
     perm = "".join(perm_chars)
     print(f"[smoke] corpus {len(real):,} chars (ascii); "
-          f"vocab≈{len(set(real))}; epochs={a.epochs} "
+          f"vocab~{len(set(real))}; epochs={a.epochs} "
           f"hidden=[{a.hidden}]", flush=True)
 
     def run(text: str, label: str):
