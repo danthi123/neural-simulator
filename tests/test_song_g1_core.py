@@ -2,6 +2,7 @@ import numpy as np
 from research.runners.song_g1_core import (
     score_order, permuted_order_controls, compose_reward,
 )
+from research.runners.song_g1_core import g1_verdict
 
 def test_score_order_identity_max_scrambled_lower():
     assert score_order([1, 2, 3], [1, 2, 3]) == 1.0
@@ -30,3 +31,14 @@ def test_compose_reward_zero_when_gate_failed():
                            gate_cleared=True) == 1.0
     assert 0.0 <= compose_reward([2, 1, 3], [1, 2, 3],
                                  gate_cleared=True) < 1.0
+
+def test_g1_verdict_pass_requires_gate_and_10pct_over_permuted():
+    # true-order score must clear abstention AND beat best permuted
+    # control by >= 10% (relative). Bar is FIXED here.
+    v = g1_verdict(true_score=0.90, best_perm_score=0.50,
+                   gate_cleared=True)
+    assert v["GATE"] == "PASS" and v["pct_over_permuted"] >= 10.0
+    # gate not cleared -> FAIL regardless of score gap
+    assert g1_verdict(0.99, 0.10, gate_cleared=False)["GATE"] == "FAIL"
+    # < 10% over permuted -> FAIL (not order-learning, just concepts)
+    assert g1_verdict(0.52, 0.50, gate_cleared=True)["GATE"] == "FAIL"

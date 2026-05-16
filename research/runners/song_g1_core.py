@@ -44,3 +44,22 @@ def compose_reward(decoded: list, intended: list,
     if not gate_cleared:
         return 0.0
     return score_order(decoded, intended)
+
+
+_G1_MARGIN = 0.10  # FIXED pre-registered bar; never tuned post-hoc
+
+def g1_verdict(true_score: float, best_perm_score: float,
+               gate_cleared: bool) -> dict:
+    """PASS iff the produced proposition cleared the abstention gate
+    AND its true-ORDER self-comprehension score beats the best
+    permuted-ORDER control by >= 10% (relative). FIXED bar."""
+    ts, ps = float(true_score), float(best_perm_score)
+    pct = (100.0 * (ts - ps) / ps) if ps > 0 else (
+        100.0 if ts > 0 else 0.0)
+    gate = bool(gate_cleared and ts > ps * (1.0 + _G1_MARGIN))
+    return {
+        "true_score": ts, "best_perm_score": ps,
+        "pct_over_permuted": pct, "gate_cleared": bool(gate_cleared),
+        "margin_required_pct": 100.0 * _G1_MARGIN,
+        "gate": gate, "GATE": "PASS" if gate else "FAIL",
+    }
