@@ -358,6 +358,13 @@
       "metric": "The NO-GO was conditioned on a self-invented 320-hand-curated-concepts rule + no-public-data/no-local-distillation assumptions the user NEVER imposed. User clarified: public datasets OK, local-model distillation OK, large LEARNED vocab OK; only hard rule = all local. Generative frontier RE-OPENED and viable; re-scoped design follows. Probe mechanics sound, conclusion retracted (wrong assumed constraints).",
       "doc": "2026-05-16-generative-stage2-NO-GO-feasibility.md",
       "date": "2026-05-16"
+    },
+    {
+      "name": "Generator Increment 1 \u2014 own seq-net learns real local text on main (foundation)",
+      "status": "VALIDATED",
+      "metric": "Phase-2 BPTT generator ported to main (28/28 tests). Anti-cheat gate PASS: REAL loss 15.0->4.44 (-70.4%) vs PERMUTED 5.70 (REAL 22.1% below) -> learns genuine structure not noise. HONEST: absolute loss only marginally below chance at tiny smoke config; FOUNDATION mechanism only -- NOT conversational/distilled/grounded. No network/LLM/templates. Self-contained.",
+      "doc": "2026-05-16-generator-increment1-foundation.md",
+      "date": "2026-05-16"
     }
   ],
   "capacity_rule": {
@@ -446,8 +453,8 @@
     ]
   },
   "phase_status": {
-    "active": "Validated asset = trustworthy grounded MEMORY + no-confabulation abstention (real). SPEECH must be the sim OWN learned generator. Hard rules (user): no templates in UX (test-only), no runtime LLM (speaker OR interpreter), sim ENTIRELY self-contained after training. Local LLM allowed ONLY as a training-time distillation teacher; public corpora OK. Single path: train the project Phase-2 neural generator on a public corpus locally (optional training-time local distillation), runtime = sim net + own grounding/abstention.",
-    "next": "Re-scope to the single self-contained path: Phase-2 surrogate-grad BPTT generator (proven on local Tiny Shakespeare) scaled on a public corpus; optional training-time local distillation teacher; runtime fully self-contained (own net + own grounded/abstention honesty); zero templates / zero runtime LLM. G1 + Option B RETRACTED.",
+    "active": "Self-contained generator path, Increment 1 DONE: project Phase-2 BPTT generator ported to main + provably learns real local text (anti-cheat-gated, REAL 22.1% below permuted). Honest: foundation mechanism only, fluency low at smoke scale. Next = Increment 2 (training-time local distillation). Runtime stays 100% self-contained; templates test-only; no runtime LLM.",
+    "next": "Increment 2: local LLM distillation teacher (training-time-only one-time public-weights fetch) + KD loss; falsifiable gate = distilled SELF-CONTAINED net beats the Increment-1 no-distill baseline (teacher absent at eval). Then Increment 3: self-contained runtime + grounding/abstention.",
     "after_next": "Re-validate prior Tier 1 + Tier 2.1 + Phase 1.4 multi-seed results at STP-off + new architecture. Predicted to push numbers significantly higher.",
     "after_after": "Webapp chat UI WebSocket (1-2 day project; bridges library backend + saved-bridges tab UI shipped tonight). Cloud deploy with optimized stack (480-800x speedup multiplier on H100).",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
