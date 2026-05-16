@@ -1,12 +1,12 @@
 {
   "as_of": "2026-05-16",
   "headline": {
-    "tier": "\ud83c\udf89\ud83c\udf89 320-concept sparse-distributed G.20 ensemble \u2014 SHIPPED (98.4% per-bridge, ensemble validated)",
-    "result": "Production scaling target reached: 5 bridges x 64 sparse-distributed concepts = 320 unique concepts. Per-bridge discrimination 98.4% (uniform 63/64 all 5 bridges; one deterministic, characterized, seed-42-pattern-specific gap at concept index 12 -- NOT vocab-dependent, NOT simple overlap). Ensemble integration validated end-to-end seed 42: cross-bridge memory (apple is big -> 'apple' returns 'big' #1 at 779 vs ~658 noise), exact tag match, and -- critically -- the +160 EXTENSION vocab works: querying new word 'horse' retrieves both sentence co-members ('run' 882, 'fast' 508) cross-bridge across 3 bridges; role queries 100%. The 160-concept tier (2026-05-15) remains 100% per-bridge; 320 trades a characterized 1.6% per-bridge gap for 2x vocab. Multi-bridge scaling route confirmed linear in bridge count.",
-    "metrics": "320 concepts, per-bridge 315/320 = 98.4% top-1 (deterministic idx-12 gap, seed-42 pattern-set artifact; idx-8/17 overlap more yet pass, so not raw overlap; cheap fix = per-bridge seeds / overlap-rejection, deferred). Ensemble demo seed 42: base + extension-vocab cross-bridge retrieval clears noise (779 vs 658; 882 vs 518); tag routing exact (A66 B65 C66 D64 E64). 41 vocab-spec tests + 16 sparse-mode tests + 141 G.20 tests green.",
-    "wall_clock": "320 chain: ~34 min/bridge x 5 = ~2.8 hr (sparse-64, 25600 events/bridge, GPU-vectorized prior 0.2s). End-to-end 320 demo ~3.5 min.",
-    "finding_doc": "2026-05-16-G20-failure-mechanism-FINAL-SYNTHESIS.md",
-    "summary": "320-concept sparse-distributed conversational ensemble SHIPPED 2026-05-16 (production scaling target, ~age-5 vocab breadth). 5 bridges x 64 Kanerva-SDM concepts; 98.4% per-bridge (honest: not 100% like the 32-tier -- one characterized seed-42 idx-12 gap/bridge); cross-bridge memory + N-word sentences + role queries validated incl. the +160 extension vocab. Next: per-bridge seeds / overlap-rejection to recover toward 64/64; multi-seed ensemble."
+    "tier": "Stage-1 grounded generative conversational agent SHIPPED (trustworthy, NOT LLM-fluent)",
+    "result": "The sim now has a working multi-turn conversational agent on the validated 320 G.20 substrate: grounded cross-bridge retrieval + pronoun coref + yes/no + productive concept-grammar generation + Stage-2 sequence logging, and -- the key trust property -- it correctly ABSTAINS on unknown input instead of confabulating (a small LLM does not). No cheating, no external LLM, no retrain. Integration gate caught + fixed a real multi-turn recall-decay bug (inter-turn recovery). Honest ceiling: productive grammar over grounded retrieval, NOT LLM-fluent prose; recall margin thin (~672-719 vs gate 650). Stage 2 (biology-grounded concept-sequence replay learning) remains the real open generative research, scoped in the design.",
+    "metrics": "Multi-turn verified (fresh controller run): what-is/coref/yes-no all answer grounded + consistent (big @ 719/672/708, gate 650); unknown -> abstain (moat intact, gate NOT lowered). 22/22 CPU unit tests; integration smoke PASS post-fix. Thin margin + remember-turn log degeneracy documented honestly.",
+    "wall_clock": "Design+plan+TDD impl+integration fix: one autonomous session. Smoke ~3 min.",
+    "finding_doc": "2026-05-16-G20-stage1-generative-agent-SHIPPED.md",
+    "summary": "Generative Stage 1 SHIPPED 2026-05-16: trustworthy grounded conversational agent (no confabulation moat) on the validated substrate. Honest: grounded-assistant not LLM-fluent; thin margin. Stage 2 = biology-grounded sequence replay (the real generative frontier), designed+scoped."
   },
   "pillars": [
     {
@@ -344,6 +344,13 @@
       "metric": "Under-recall remediation: ROBUST +3.3pp (5/5 bridges, mechanism-deterministic) -> ship as default. samebridge_downweight: multi-seed (43-46) mean +2.5pp but 1/4 REGRESSED (-3.3pp seed43); SEED-VARIANT, not robust -> optional/tunable only, NOT default. perbridge_norm FALSIFIED (-16.7pp). Earlier seed-42 +6.7pp stacked down-graded honestly to ~+5pp-typical-but-variable. Multi-seed rigor caught the seed-42-favorable snapshot.",
       "doc": "2026-05-16-G20-aggregation-lever-multiseed-REFINED.md",
       "date": "2026-05-16"
+    },
+    {
+      "name": "Stage-1 grounded generative conversational agent",
+      "status": "VALIDATED",
+      "metric": "Multi-turn integration-verified: grounded retrieval + coref + yes/no + productive grammar; ABSTAINS on unknown (no confabulation, gate not lowered). big @719/672/708 vs gate650. 22/22 CPU tests. Honest: NOT LLM-fluent (productive grammar over retrieval); thin margin; needs inter-turn recovery. Seed42.",
+      "doc": "2026-05-16-G20-stage1-generative-agent-SHIPPED.md",
+      "date": "2026-05-16"
     }
   ],
   "capacity_rule": {
@@ -432,8 +439,8 @@
     ]
   },
   "phase_status": {
-    "active": "G.20 fully characterized; artifact-safe levers multi-seed-refined: under-recall remediation ROBUST +3.3pp (default-ship), samebridge_downweight SEED-VARIANT ~+2.5pp (optional/tunable, can regress), perbridge_norm falsified. Honest combined ~+5pp-typical. Residual third-bridge sub-effect + lever-tuning + multi-seed-320 = dedicated session.",
-    "next": "Dedicated session (precisely scoped in FINAL-SYNTHESIS): ship capture-quality gate default; tune/gate samebridge_downweight; characterize the 40% third-bridge residual; multi-seed-320 combined recipe. Genuine next mission = generative conversation (brainstorming-gated; frontier survey prepared). Do NOT revisit falsified: overlap-rejection, per-seed, perbridge_norm, function-word-category.",
+    "active": "Generative Stage 1 SHIPPED: trustworthy grounded conversational agent on validated 320 substrate (no-confabulation moat, multi-turn verified, NOT LLM-fluent -- honest). Stage 2 (biology-grounded concept-sequence SWR/theta replay learning over Stage-1 conversation logs) is the next, real generative research arc -- designed + scoped, separate from Stage 1.",
+    "next": "Stage 2: concept-level sequence learning via catalog Cluster-D hippocampal replay over the JSONL conversation logs (continual, no catastrophic forgetting, no external LLM). Own design/plan when a sequence corpus exists. Also open (dedicated sessions): failure-mechanism third-bridge residual; multi-seed Stage-1 margin; remember-turn log fix for cleaner Stage-2 fuel.",
     "after_next": "Re-validate prior Tier 1 + Tier 2.1 + Phase 1.4 multi-seed results at STP-off + new architecture. Predicted to push numbers significantly higher.",
     "after_after": "Webapp chat UI WebSocket (1-2 day project; bridges library backend + saved-bridges tab UI shipped tonight). Cloud deploy with optimized stack (480-800x speedup multiplier on H100).",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
