@@ -171,6 +171,24 @@ self-comprehension decoder.
   terminal stops excluded). This makes the pre-registered gate VALID
   (analogous to the Inc-3 held-out correction); it is the opposite of
   tuning a bar after seeing results. _G1_MARGIN stays 0.10.
+- **Pre-registration correction 2 (2026-05-16, PRE-DATA, integrity fix
+  -- NOT goalpost-moving):** a Task-7 code review found the literal
+  abstention threshold 650 was calibrated on stim_recall_sparse_rates'
+  continuous-drive regime, but self_comprehend reads a no-drive
+  integrated residual (a different magnitude regime; the no-drive
+  residual is the order-carrying signal and is correct -- not changed).
+  Applying literal 650 there would risk a FALSE NEGATIVE (always-abstain
+  scale artifact misread as 'songbird failed'). Correction, decided
+  before any G1 data: Task 9/10 derive a regime-specific abstention
+  floor from a CONTROL distribution measured in the identical
+  self_comprehend regime, via the same encoded-vs-control AUC
+  methodology that produced 650, pre-registered and never tuned
+  afterward. The pre-registered RULE (control-calibrated separation,
+  fixed operating point, decided pre-data) is the anti-cheat invariant;
+  the literal number is regime-dependent. _G1_MARGIN=0.10 and
+  _G1_ABS_FLOOR=0.5 unchanged. Note these doc files reflect this; the
+  user/linter may have reformatted them -- preserve their current
+  structure, append don't rewrite.
 
 ## Why this is the right bet (and honest about risk)
 

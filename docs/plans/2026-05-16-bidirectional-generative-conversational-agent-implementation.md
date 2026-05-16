@@ -573,7 +573,12 @@ mode). No training runs until this passes.
   probe documents empirically).
 - Reuse `_query_top` (UNMODIFIED) on a fixed sample of >=8 known
   word->associate pairs from the 320 vocab; assert each top associate
-  clears `abstention_gate.DEFAULT_THRESHOLD` (650).
+  clears `abstention_gate.DEFAULT_THRESHOLD` (650). (The literal 650 is
+  CORRECT here: `_query_top` decodes via the UNMODIFIED
+  `stim_recall_sparse_rates` CONTINUOUS-DRIVE path — the exact regime
+  650 was calibrated on. This is a different regime from Task 9/10's
+  no-drive `self_comprehend` residual, which uses the pre-registered
+  regime-specific floor, NOT 650. Do not conflate the two.)
 - Abstention moat: query `zzznonsense` -> assert `gate(...)` returns
   None (abstains).
 - Compare top rates to the committed baseline
@@ -611,10 +616,32 @@ small set of known propositions (4-6 "A rel B" triples whose concepts
 all exist in the 320 vocab, e.g. from bridgeA/bridgeC; held-out
 propositions reserved for Task 10, NEVER trained).
 
+**Step 0 (pre-registered, run ONCE at train start — NOT 650):**
+Compute the training-time provisional abstention floor in the
+`self_comprehend` regime. The literal 650 was calibrated on
+`stim_recall_sparse_rates`' CONTINUOUS-DRIVE magnitudes; `self_comprehend`
+reads a NO-DRIVE integrated residual (a different magnitude regime), so
+650 is NOT directly comparable here. Instead, measure the
+`self_comprehend` integrated-residual rate distribution for (i)
+intended-order productions of the TRAIN propositions [proxy for
+"encoded"] and (ii) a CONTROL set [random/unencoded concept sequences
+AND permuted-order productions], in the IDENTICAL `self_comprehend`
+regime. Set the provisional `g1_abstain` floor = the encoded-vs-control
+separation point at the SAME operating criterion the original 650 used
+(max-AUC / control-max), via the existing `abstention_gate` AUC
+methodology. This is the SAME control-calibrated quantity Task 10 will
+pre-register; compute it ONCE at train start and NEVER tune it during
+training. Do NOT hardcode 650.
+
 **Step 1:** Implement loop (DRY — reuse Task 1-7 + `sim/train_checkpoint`):
 - For each epoch, for each TRAIN proposition (intention id -> intended
-  concept idx sequence): `babble` k candidates; for each, `ignite_sequence`
-  -> `self_comprehend` -> `gate_cleared = all slot rates > 650` ->
+  concept idx sequence): `babble` k candidates; for EACH candidate,
+  ignite the WHOLE ordered candidate via `ignite_sequence`, THEN call
+  `self_comprehend` ONCE on the integrated post-sequence residual
+  (order enters via the integrated residual; do NOT decode per-slot
+  nor per-slot-then-average — that erases the order signal). Then
+  `gate_cleared = (integrated decode rate >= the Step-0 provisional
+  control-calibrated g1_abstain floor)` (NOT `> 650`) ->
   `compose_reward(decoded, intended, gate_cleared)`; `reinforce` the
   best-reward candidate (DA via existing `from_reward` neuromodulator
   hook on the bridge if enabled; the pure `reinforce` is the chain-side
@@ -651,16 +678,48 @@ git commit -m "feat(song-g1): kill-safe self-supervised babble->comprehend->DA l
 
 **Step 1:** Implement gate `main()` (reuses Task 5/6 pure logic +
 Task 7 adapter; loads trained `song_g1.ckpt.npz`):
+
+- **Step 1a — PRE-REGISTERED regime-specific abstention calibration
+  (FIRST, BEFORE the held-out eval):** the literal 650 was calibrated
+  on `stim_recall_sparse_rates`' CONTINUOUS-DRIVE regime; the gate
+  decodes via `self_comprehend`'s NO-DRIVE integrated residual (a
+  different magnitude regime), so 650 is NOT directly comparable here
+  and hardcoding it risks always-abstaining (a FALSE NEGATIVE that
+  would misattribute a scale artifact to "the songbird mechanism
+  failed"). Calibrate the regime-specific abstention floor: measure the
+  `self_comprehend` integrated-residual rate distribution for (i)
+  intended-order productions of the TRAIN propositions [proxy for
+  "encoded"] and (ii) a CONTROL set [random/unencoded concept sequences
+  AND permuted-order productions] in the IDENTICAL `self_comprehend`
+  regime. Set `g1_abstain` = the encoded-vs-control separation point at
+  the SAME operating criterion the original 650 used (max-AUC /
+  control-max), via the existing `abstention_gate` AUC methodology.
+  This threshold is PRE-REGISTERED from the control distribution,
+  computed BEFORE seeing any held-out true-order results, and NEVER
+  tuned afterward. Record `g1_abstain` + its AUC in the gate JSON. Do
+  NOT hardcode 650 for the `self_comprehend` regime. (The permuted-ORDER
+  control remains load-bearing and is ALSO part of this calibration's
+  control distribution.)
 - For each HELD-OUT proposition (never trained): `rollout` the trained
-  chain -> `ignite_sequence` -> `self_comprehend` via the UNMODIFIED
-  path -> `gate_cleared` (every slot rate > 650, gate NEVER lowered)
-  -> `true_score = score_order(decoded, intended)`.
+  chain -> `ignite_sequence` the WHOLE ordered sequence -> a single
+  `self_comprehend` ONCE on the integrated post-sequence residual via
+  the UNMODIFIED path (do NOT decode per-slot-then-average; order
+  enters via the integrated residual) -> `gate_cleared = (true-order
+  integrated decode rate >= the Step-1a regime-calibrated g1_abstain,
+  NEVER lowered post-calibration)` -> `true_score =
+  score_order(decoded, intended)`.
 - Build `permuted_order_controls(intended, rng, n)`; for each, ignite
-  in scrambled order, self-comprehend, score; `best_perm_score = max`.
+  the whole scrambled order, self-comprehend once on the integrated
+  residual, score; `best_perm_score = max`.
 - `v = g1_verdict(true_score, best_perm_score, gate_cleared)` per
-  proposition; aggregate (mean true vs mean best-perm; PASS iff the
-  pre-registered FIXED `g1_verdict` PASSES on the aggregate).
-- Write JSON; print ASCII verdict block.
+  proposition (UNCHANGED: PASS iff `gate_cleared AND best_perm_score>0
+  AND true_score>=_G1_ABS_FLOOR(0.5) AND true_score>=best_perm*1.10`;
+  the FIXED `_G1_MARGIN=0.10` / `_G1_ABS_FLOOR=0.5` bars are unchanged,
+  only `gate_cleared` now means "true-order integrated decode rate >=
+  the regime-calibrated g1_abstain" instead of "> literal 650");
+  aggregate (mean true vs mean best-perm; PASS iff the pre-registered
+  FIXED `g1_verdict` PASSES on the aggregate).
+- Write JSON (including `g1_abstain` + AUC); print ASCII verdict block.
 
 **Step 2: Run**
 
@@ -732,3 +791,21 @@ git push origin main && git push gitea main
   terminal stops excluded). This makes the pre-registered gate VALID
   (analogous to the Inc-3 held-out correction); it is the opposite of
   tuning a bar after seeing results. _G1_MARGIN stays 0.10.
+- **Pre-registration correction 2 (2026-05-16, PRE-DATA, integrity fix
+  -- NOT goalpost-moving):** a Task-7 code review found the literal
+  abstention threshold 650 was calibrated on stim_recall_sparse_rates'
+  continuous-drive regime, but self_comprehend reads a no-drive
+  integrated residual (a different magnitude regime; the no-drive
+  residual is the order-carrying signal and is correct -- not changed).
+  Applying literal 650 there would risk a FALSE NEGATIVE (always-abstain
+  scale artifact misread as 'songbird failed'). Correction, decided
+  before any G1 data: Task 9/10 derive a regime-specific abstention
+  floor from a CONTROL distribution measured in the identical
+  self_comprehend regime, via the same encoded-vs-control AUC
+  methodology that produced 650, pre-registered and never tuned
+  afterward. The pre-registered RULE (control-calibrated separation,
+  fixed operating point, decided pre-data) is the anti-cheat invariant;
+  the literal number is regime-dependent. _G1_MARGIN=0.10 and
+  _G1_ABS_FLOOR=0.5 unchanged. Note these doc files reflect this; the
+  user/linter may have reformatted them -- preserve their current
+  structure, append don't rewrite.

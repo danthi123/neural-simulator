@@ -29,9 +29,19 @@ NOT reimplement recall or sparse-pattern generation):
                                loop as stim_recall_sparse_rates (read
                                cp_firing_states[pattern_arr].sum() over a
                                window). Returns the argmax concept + its
-                               accumulated rate; that rate IS the
-                               abstention-gate confidence the later gate
-                               compares to the 650 threshold.
+                               accumulated rate. That rate is a NO-DRIVE
+                               residual readout (no external current is
+                               written during decode) -- a DIFFERENT
+                               magnitude regime from the continuous-drive
+                               stim_recall_sparse_rates regime that the
+                               abstention_gate 650 threshold was
+                               calibrated on. It is therefore NOT a
+                               drop-in for the literal 650; Task 9/10
+                               must pre-register a regime-specific
+                               abstention floor from a control
+                               distribution measured in THIS exact
+                               self_comprehend regime (see
+                               self_comprehend's docstring).
 
 Validation: import/signature smoke only (tests/test_song_g1_ignite_smoke.py).
 The real validation is Task 8's no-harm probe + Task 10's gate -- NOT a
@@ -66,6 +76,8 @@ _BRIDGE_SPEC = [
 # uses sparsity 0.02; this is the 320 tier so 0.007 is correct.
 _N_LANG_INPUT = 8192
 _N_SHARED_POOL = 2000
+# _SPARSITY is used only by encode_partial (which this adapter never
+# calls); kept for loader-idiom fidelity with the 320-tier caller.
 _SPARSITY = 0.007
 _PATTERN_SIZE = 100
 
@@ -208,17 +220,40 @@ def self_comprehend(member, decode_window: int = 100) -> list:
     steps, advance the bridge and accumulate, per concept,
     cp_firing_states[pattern_arr].sum() into a per-concept rate vector
     (the same readout that reproduces the training-time discrimination).
-    NO tag is stimulated and NO external current is written here: this
-    decodes whatever ignite_sequence just drove (the just-ignited slot).
+    NO tag is stimulated and NO external current is written here.
 
-    The returned rate IS the abstention-gate confidence the later gate
-    (Task 10) compares to the 650 threshold.
+    The returned rate is a per-concept accumulated-firing readout of
+    the pool's RESIDUAL state AFTER the ordered production (no drive
+    during decode). This no-drive residual is what carries the ORDER
+    signal: a different ignition order leaves a different residual
+    attractor in the pool; driving during decode would clamp the pool
+    and DESTROY that order signal -- so the no-drive regime is correct
+    and is deliberately NOT changed.
+
+    Because nothing is driven during decode, the magnitude regime of
+    this rate DIFFERS from stim_recall_sparse_rates' continuous-drive
+    regime, which is the regime the abstention_gate 650 threshold was
+    calibrated on (encoded ~796 / control ~584, AUC 0.990). Therefore
+    Task 10 must NOT apply the literal 650 here: it must pre-register a
+    regime-specific abstention threshold derived from a CONTROL
+    distribution measured in THIS exact self_comprehend regime, using
+    the same encoded-vs-control AUC methodology that produced 650 --
+    decided BEFORE the true-order eval and never tuned afterward
+    (anti-cheat: the pre-registered RULE, not the literal number, is
+    the invariant).
+
+    M3 -- INTEGRATED post-sequence decode (not per-slot): this decodes
+    the integrated post-sequence pool state. Task 9/10 produce the FULL
+    ordered sequence via ignite_sequence, THEN call self_comprehend ONCE
+    on the integrated residual; order enters through the pool's
+    sequence-dependent settling. Do NOT decode per-slot-then-average --
+    that would erase the order signal.
 
     Returns a single-element list [(concept_idx, rate)] = the argmax
     concept index over the window + its accumulated firing count, so the
-    caller treats it as the decode for the just-ignited slot. (List
-    return shape keeps the door open for a top-k variant later without
-    an API break.)
+    caller treats it as the decode for the integrated post-sequence
+    state. (List return shape keeps the door open for a top-k variant
+    later without an API break.)
     """
     import numpy as np
 
@@ -230,7 +265,9 @@ def self_comprehend(member, decode_window: int = 100) -> list:
 
     # Identical accumulation loop to stim_recall_sparse_rates' inner
     # body (minus the stimulate_tag/clear_tag_drive that helper wraps it
-    # in -- self-comprehension reads the ALREADY-driven state).
+    # in -- self-comprehension reads the NO-DRIVE residual pool state
+    # left by the just-finished ordered production; see docstring re:
+    # why this no-drive regime is correct + not 650-comparable).
     rates = np.zeros(len(pattern_arrs), dtype=np.float32)
     for _ in range(decode_window):
         bridge._run_one_simulation_step()
