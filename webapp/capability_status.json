@@ -330,6 +330,13 @@
       "metric": "Artifact-safe boosted re-capture: 5/5 bridges had 1 under-recaller (idx-12), all fixed (161->1361, rank 20->1). End-to-end CONTROLLED: cross-bridge 80.0%->83.3% (+3.3pp, +1/6 misses recovered). Real+safe+production-foldable but MODEST -- under-recall is a partial contributor; majority of cross-bridge misses are a distinct still-open sub-mechanism (self-winning concepts that still lose cross-bridge). Not overclaimed as a cap fix.",
       "doc": "2026-05-16-G20-remediation-end-to-end-CLOSURE.md",
       "date": "2026-05-16"
+    },
+    {
+      "name": "Distinct cross-bridge sub-mechanism characterized (same-bridge cross-talk)",
+      "status": "VALIDATED",
+      "metric": "Pure analysis of 10 cross-bridge misses (both 320 benchmarks): 50% SAME-AS-QUERY cross-talk (query bridge home-advantage in un-normalized max-rate aggregation), 40% THIRD-bridge spurious, 10% same-as-target. Points to a 2nd artifact-safe query-time lever (per-bridge rate normalization / same-bridge down-weight). Honest: 50% plurality not majority; 40% secondary unaddressed by that lever.",
+      "doc": "2026-05-16-G20-distinct-submechanism-same-bridge-crosstalk.md",
+      "date": "2026-05-16"
     }
   ],
   "capacity_rule": {
