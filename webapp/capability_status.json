@@ -325,10 +325,10 @@
       "date": "2026-05-16"
     },
     {
-      "name": "Failure root-cause IDENTIFIED: dynamical under-recall",
+      "name": "Under-recall: mechanism confirmed + artifact-safe fix (bounded n=1)",
       "status": "VALIDATED",
-      "metric": "Chain: overlap->category[retracted]->static-overlap[disconfirmed]->DYNAMICAL UNDER-RECALL [identified]. Probe: failing idx-12 self_cum 213 vs robust 1157 (5.4x weaker), self-rank 12; not capture (winner weak 385). Lever = engram-capture strength, NOT overlap-rejection/seed. Actionable artifact-SAFE fix for flagged task: post-hoc capture-quality gate (re-capture under-recalling tags w/ boosted drive). n=1 caveat.",
-      "doc": "2026-05-16-G20-dynamical-signature-UNDER-RECALL.md",
+      "metric": "Boosted re-capture FIXES under-recall: idx-12 self_cum 161->1361, rank 20->1 (mechanism-consistent, not artifact). Artifact-safe (no retrain/no generate_sparse_patterns change). HONEST BOUNDS: n=1 under-recaller on bridgeA; fixes SELF-recall not (yet) the 86.7% cross-bridge metric; most cross-bridge misses are other bridges/indices (partial contributor). Post-hoc capture-quality gate = safe add-on; end-to-end lift UNMEASURED, not claimed.",
+      "doc": "2026-05-16-G20-capture-remediation-WORKS-bounded.md",
       "date": "2026-05-16"
     }
   ],
