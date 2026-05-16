@@ -132,3 +132,47 @@ perplexity vs teacher, vs n-gram baseline).
 - `research/runners/grounded_generative_smoke.ps1`
 - Supersedes Stage-2 in `2026-05-16-generative-conversation-design.md`;
   retraction context in `…-stage2-NO-GO-feasibility.md`.
+
+## ⚠️ CONSTRAINT CORRECTION #2 (2026-05-16, user) — G1 RETRACTED; templates are testing-only
+
+User clarified a core principle: **the sim's conversational/speech
+output must be the sim's OWN learned generation.** Specifically:
+
+- **Hand-written templates are cheating for the UX** (the human
+  authored the language). Templates are permitted as a TEST harness
+  only — never as the conversational deliverable.
+- An **external/local LM doing the talking at runtime is also
+  against the spirit** (UX reliant on external scaffolding for
+  speech). The earlier permission for a local model was for
+  **training-time distillation (teacher) only**, plus public-corpus
+  training — NOT a runtime mouthpiece.
+
+**Therefore G1 (local LM as runtime generator, sim gates it) is
+RETRACTED.** The design collapses to a SINGLE non-cheating path:
+**the sim's own learned neural generator** — the project's Phase-2
+surrogate-grad BPTT network (already proven on real local Tiny
+Shakespeare, 84% loss reduction, this 3090) — trained/scaled on a
+public corpus locally, OPTIONALLY distilled from a small local
+teacher **at training time only**, and kept honest at runtime by the
+validated grounded-retrieval + abstention layer. Runtime speaker =
+the sim's own trained network. Zero templates, zero runtime-LM in
+the UX path.
+
+Honest reframe of prior work: Stage-1's genuine validated
+contribution is the **grounded retrieval + no-confabulation
+abstention** (the trust mechanism). Its template verbalizer is
+**testing scaffold, NOT a conversational deliverable** — the record
+must not call it "a conversational agent" on the strength of
+templated speech. Superseded by the single-path design above.
+
+## ⚠️ CONSTRAINT CORRECTION #3 (2026-05-16, user) — self-contained after training
+
+Sharpened: a local LLM may be used for **distillation INTO the sim
+(training-time teacher) only — never interpretation FROM the sim**
+(no LLM post-processing/reading the sim at runtime). **After
+training, the sim is ENTIRELY self-contained**: at runtime only the
+sim's own trained network + its own grounded-memory/abstention run.
+No external model, no templates, no external interpreter — ever — in
+the runtime/UX path. Option B (LM at runtime) is a hard NO-GO,
+confirmed. This fully determines the design: ONE path, the sim's own
+trained generator, self-contained at runtime.
