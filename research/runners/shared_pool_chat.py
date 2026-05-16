@@ -122,6 +122,164 @@ def encode_pair_engram(bridge, word_a: str, word_b: str, vocab: List[str],
     return tag
 
 
+# ---------------------------------------------------------------------------
+# Sparse-distributed (Kanerva SDM) analogues. The sparse bridges store each
+# concept as a scattered K-of-N random pattern in the shared pool instead of
+# a contiguous slice. `sparse_patterns[i]` is the list of pool-local indices
+# for concept i (regenerated deterministically from the training seed via
+# concept_pool_sparse_distributed.generate_sparse_patterns). These mirror the
+# contiguous-slice helpers above but index scattered patterns, and match the
+# VALIDATED sparse capture recipe (teacher-bias 100 pA, 100-step window,
+# n_cues = vocab length, top_k 150).
+# ---------------------------------------------------------------------------
+
+def stim_recall_sparse_rates(bridge, tag_name: str,
+                              sparse_patterns: List[List[int]],
+                              drive_pA: float = 1500.0,
+                              stim_steps: int = 100) -> np.ndarray:
+    """Sparse analogue of stim_recall_slice_rates: stim the tag, return
+    accumulated firing per SPARSE PATTERN in shared_concept_pool.
+
+    Mirrors concept_pool_sparse_distributed.eval_sparse_discrimination's
+    inner loop so demo recall reproduces the training-time discrimination.
+    """
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+    rm = bridge.region_manager
+    shared_indices = list(rm.indices("shared_concept_pool"))
+    pattern_arrs = [
+        cp.asarray([shared_indices[k] for k in pat], dtype=cp.int64)
+        for pat in sparse_patterns
+    ]
+
+    bridge.stimulate_tag(tag_name, drive_pA=drive_pA)
+    rates = np.zeros(len(sparse_patterns), dtype=np.float32)
+    for _ in range(stim_steps):
+        bridge._run_one_simulation_step()
+        for j, parr in enumerate(pattern_arrs):
+            firing = bridge.cp_firing_states[parr]
+            s = firing.sum() if hasattr(firing, 'sum') else 0
+            if hasattr(s, 'item'):
+                s = s.item()
+            rates[j] += float(s)
+    bridge.clear_tag_drive(tag_name)
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(20):
+        bridge._run_one_simulation_step()
+    return rates
+
+
+def encode_partial_pair_engram_sparse(bridge, word_to_drive: str,
+                                       tag_name: str, vocab: List[str],
+                                       sparse_patterns: List[List[int]],
+                                       n_lang_input: int, sparsity: float,
+                                       encoding_steps: int = 100,
+                                       teacher_pA: float = 100.0,
+                                       top_k: int = 150) -> str:
+    """Sparse analogue of encode_partial_pair_engram (cross-bridge single
+    word under a shared tag name). Drives lang_input(word) + teacher-bias
+    on the word's SPARSE PATTERN, commits `tag_name`."""
+    from sim.backend import get_backend
+    from sim.text_embeddings import orthogonal_drive_pattern
+    cp, _ = get_backend()
+    rm = bridge.region_manager
+
+    if word_to_drive not in vocab:
+        raise ValueError(f"word '{word_to_drive}' not in vocab")
+    word_idx = vocab.index(word_to_drive)
+
+    lang_arr = cp.asarray(list(rm.indices("language_input")), dtype=cp.int64)
+    shared_indices = list(rm.indices("shared_concept_pool"))
+    pattern_global = [shared_indices[k] for k in sparse_patterns[word_idx]]
+    pattern_arr = cp.asarray(pattern_global, dtype=cp.int64)
+
+    drive = orthogonal_drive_pattern(
+        cue_idx=word_idx, n_cues=len(vocab),
+        n_neurons=n_lang_input, drive_max_pA=200.0, sparsity=sparsity,
+    )
+    drive_arr = cp.asarray(drive, dtype=cp.float32)
+    n_total = bridge.cp_external_input_current.shape[0]
+    ext = cp.zeros(n_total, dtype=cp.float32)
+
+    bridge.start_engram_recording(tag_name)
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(20):
+        bridge._run_one_simulation_step()
+    for _ in range(encoding_steps):
+        ext.fill(0)
+        ext[lang_arr] = drive_arr
+        ext[pattern_arr] = teacher_pA
+        bridge.cp_external_input_current[:] = ext
+        bridge._run_one_simulation_step()
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(10):
+        bridge._run_one_simulation_step()
+    bridge.commit_engram_tag(
+        tag_name, top_k=top_k,
+        region_filter=["shared_concept_pool"],
+    )
+    return tag_name
+
+
+def encode_pair_engram_sparse(bridge, word_a: str, word_b: str,
+                               vocab: List[str],
+                               sparse_patterns: List[List[int]],
+                               n_lang_input: int, sparsity: float,
+                               encoding_steps: int = 100,
+                               teacher_pA: float = 100.0,
+                               top_k: int = 150) -> str:
+    """Sparse analogue of encode_pair_engram (both words live in ONE sparse
+    bridge). Drives lang_input for both + teacher-bias on both sparse
+    patterns, commits tag '<a>_<b>'."""
+    from sim.backend import get_backend
+    from sim.text_embeddings import orthogonal_drive_pattern
+    cp, _ = get_backend()
+    rm = bridge.region_manager
+
+    a_idx = vocab.index(word_a)
+    b_idx = vocab.index(word_b)
+
+    lang_arr = cp.asarray(list(rm.indices("language_input")), dtype=cp.int64)
+    shared_indices = list(rm.indices("shared_concept_pool"))
+    pat_a = cp.asarray([shared_indices[k] for k in sparse_patterns[a_idx]],
+                        dtype=cp.int64)
+    pat_b = cp.asarray([shared_indices[k] for k in sparse_patterns[b_idx]],
+                        dtype=cp.int64)
+
+    drive_a = orthogonal_drive_pattern(
+        cue_idx=a_idx, n_cues=len(vocab),
+        n_neurons=n_lang_input, drive_max_pA=200.0, sparsity=sparsity,
+    )
+    drive_b = orthogonal_drive_pattern(
+        cue_idx=b_idx, n_cues=len(vocab),
+        n_neurons=n_lang_input, drive_max_pA=200.0, sparsity=sparsity,
+    )
+    combined = cp.asarray(drive_a + drive_b, dtype=cp.float32)
+    n_total = bridge.cp_external_input_current.shape[0]
+    ext = cp.zeros(n_total, dtype=cp.float32)
+
+    tag = f"{word_a}_{word_b}"
+    bridge.start_engram_recording(tag)
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(20):
+        bridge._run_one_simulation_step()
+    for _ in range(encoding_steps):
+        ext.fill(0)
+        ext[lang_arr] = combined
+        ext[pat_a] = teacher_pA
+        ext[pat_b] = teacher_pA
+        bridge.cp_external_input_current[:] = ext
+        bridge._run_one_simulation_step()
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(10):
+        bridge._run_one_simulation_step()
+    bridge.commit_engram_tag(
+        tag, top_k=top_k,
+        region_filter=["shared_concept_pool"],
+    )
+    return tag
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--load-bridge", type=str, required=True)

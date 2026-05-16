@@ -31,9 +31,16 @@ import numpy as np
 from research.runners.concept_pool_demo_shared import (
     build_shared_pool_bridge,
 )
+from research.runners.concept_pool_sparse_distributed import (
+    build_sparse_pool_bridge,
+    generate_sparse_patterns,
+)
 from research.runners.shared_pool_chat import (
     stim_recall_slice_rates,
     encode_pair_engram,
+    stim_recall_sparse_rates,
+    encode_pair_engram_sparse,
+    encode_partial_pair_engram_sparse,
 )
 
 # Path 2: morpheme tokenizer
@@ -136,7 +143,8 @@ class SharedPoolMember:
                  n_shared_fs: int = 200, slice_size: int = 50,
                  sparsity: float = 0.03, top_k: int = 100,
                  encoding_steps: int = 200, teacher_pA: float = 500.0,
-                 drive_pA: float = 1500.0, drive_steps: int = 100):
+                 drive_pA: float = 1500.0, drive_steps: int = 100,
+                 sparse: bool = False, pattern_size: int = 100):
         self.bridge_path = bridge_path
         self.vocab = list(vocab)
         self.vocab_set = set(vocab)
@@ -152,26 +160,89 @@ class SharedPoolMember:
         self.teacher_pA = teacher_pA
         self.drive_pA = drive_pA
         self.drive_steps = drive_steps
+        # Sparse-distributed (Kanerva SDM) form: each concept is a
+        # scattered K-of-N random pattern, NOT a contiguous slice.
+        self.sparse = sparse
+        self.pattern_size = pattern_size
+        self.sparse_patterns: Optional[List[List[int]]] = None
         self.bridge = None
         self.encoded_tags: List[str] = []
+
+    def regen_sparse_patterns(self, seed: int) -> List[List[int]]:
+        """Reproduce the EXACT per-concept patterns the sparse runner used
+        at training time. Pure (no bridge) so it's unit-testable; a drift
+        here would make the demo read the wrong neurons."""
+        return generate_sparse_patterns(
+            len(self.vocab), self.n_shared_pool, self.pattern_size, seed)
 
     def load(self, seed: int):
         if self.bridge is not None:
             return
-        self.bridge = build_shared_pool_bridge(
-            seed=seed,
-            n_lang_input=self.n_lang_input,
-            n_shared_pool=self.n_shared_pool,
-            n_shared_fs=self.n_shared_fs,
-            n_lang_output=self.n_lang_input,
-            verbose=False,
-        )
+        if self.sparse:
+            self.bridge = build_sparse_pool_bridge(
+                seed=seed,
+                n_lang_input=self.n_lang_input,
+                n_shared_pool=self.n_shared_pool,
+                n_lang_output=self.n_lang_input,
+                verbose=False,
+            )
+            self.sparse_patterns = self.regen_sparse_patterns(seed)
+        else:
+            self.bridge = build_shared_pool_bridge(
+                seed=seed,
+                n_lang_input=self.n_lang_input,
+                n_shared_pool=self.n_shared_pool,
+                n_shared_fs=self.n_shared_fs,
+                n_lang_output=self.n_lang_input,
+                verbose=False,
+            )
         self.bridge.load_checkpoint(self.bridge_path)
         self.encoded_tags = sorted(
             [t["name"] for t in self.bridge.list_engram_tags()])
 
     def n_concepts(self):
         return len(self.vocab)
+
+    # --- architecture-aware dispatch (sparse vs contiguous-slice) ---
+
+    def recall_rates(self, tag_name: str) -> np.ndarray:
+        """Stim a tag, return accumulated firing per concept."""
+        if self.sparse:
+            return stim_recall_sparse_rates(
+                self.bridge, tag_name, self.sparse_patterns,
+                drive_pA=self.drive_pA, stim_steps=self.drive_steps)
+        return stim_recall_slice_rates(
+            self.bridge, tag_name, n_concepts=self.n_concepts(),
+            slice_size=self.slice_size,
+            drive_pA=self.drive_pA, stim_steps=self.drive_steps)
+
+    def encode_partial(self, word: str, tag_name: str) -> str:
+        """Encode a single word under a (possibly cross-bridge) tag name.
+        Sparse path uses the VALIDATED capture recipe (helper defaults:
+        teacher-bias 100 pA, 100-step window, top_k 150)."""
+        if self.sparse:
+            return encode_partial_pair_engram_sparse(
+                self.bridge, word, tag_name, vocab=self.vocab,
+                sparse_patterns=self.sparse_patterns,
+                n_lang_input=self.n_lang_input, sparsity=self.sparsity)
+        return encode_partial_pair_engram(
+            self.bridge, word, tag_name, vocab=self.vocab,
+            slice_size=self.slice_size, n_lang_input=self.n_lang_input,
+            sparsity=self.sparsity, encoding_steps=self.encoding_steps,
+            teacher_pA=self.teacher_pA, top_k=self.top_k)
+
+    def encode_pair(self, a: str, b: str) -> str:
+        """Encode (a, b) when BOTH live in this bridge."""
+        if self.sparse:
+            return encode_pair_engram_sparse(
+                self.bridge, a, b, vocab=self.vocab,
+                sparse_patterns=self.sparse_patterns,
+                n_lang_input=self.n_lang_input, sparsity=self.sparsity)
+        return encode_pair_engram(
+            self.bridge, a, b, vocab=self.vocab,
+            slice_size=self.slice_size, n_lang_input=self.n_lang_input,
+            sparsity=self.sparsity, encoding_steps=self.encoding_steps,
+            teacher_pA=self.teacher_pA, top_k=self.top_k)
 
 
 def find_member_for_word(members: List[SharedPoolMember],
@@ -214,6 +285,13 @@ def main():
     p.add_argument("--friendly", action="store_true")
     p.add_argument("--tokenize", action="store_true",
                     help="Apply morpheme tokenization before parsing")
+    p.add_argument("--sparse", action="store_true",
+                    help="Bridges are sparse-distributed (Kanerva SDM): "
+                         "scattered K-of-N patterns, not contiguous slices. "
+                         "Patterns regenerated from --seed to match training.")
+    p.add_argument("--pattern-size", type=int, default=100,
+                    help="Sparse pattern size K (must match training; "
+                         "the 5-bridge chain used 100)")
     args = p.parse_args()
 
     if len(args.bridges) != len(args.vocab_files):
@@ -238,6 +316,7 @@ def main():
             slice_size=args.slice_size, sparsity=args.sparsity,
             top_k=args.top_k, encoding_steps=args.encoding_steps,
             drive_pA=args.drive_pA, drive_steps=args.drive_steps,
+            sparse=args.sparse, pattern_size=args.pattern_size,
         )
         members.append(m)
         total_vocab.update(vocab)
@@ -246,6 +325,9 @@ def main():
     print(f"  Bridges: {[m.name for m in members]}", flush=True)
     print(f"  Total unique vocab: {len(total_vocab)} concepts "
           f"across {len(members)} bridges", flush=True)
+    if args.sparse:
+        print(f"  Form: SPARSE-DISTRIBUTED (Kanerva SDM), K="
+              f"{args.pattern_size}, pool={args.n_shared_pool}", flush=True)
     if args.tokenize and _HAS_TOKENIZER:
         print(f"  Path 2: morpheme tokenization ENABLED", flush=True)
     if _HAS_HIERARCHY:
@@ -287,11 +369,7 @@ def main():
             matches = [t for t in m.encoded_tags
                         if word in t.split("_")]
             for tag in matches:
-                rates = stim_recall_slice_rates(
-                    m.bridge, tag, n_concepts=m.n_concepts(),
-                    slice_size=m.slice_size,
-                    drive_pA=m.drive_pA, stim_steps=m.drive_steps,
-                )
+                rates = m.recall_rates(tag)
                 sorted_idx = np.argsort(-rates)
                 # Top firing concepts from THIS bridge
                 for j in sorted_idx[:5]:
@@ -500,15 +578,7 @@ def main():
                         continue
                     # Encode each known word's partial under shared tag
                     for w in known:
-                        encode_partial_pair_engram(
-                            m.bridge, w, tag_name, vocab=m.vocab,
-                            slice_size=m.slice_size,
-                            n_lang_input=m.n_lang_input,
-                            sparsity=m.sparsity,
-                            encoding_steps=m.encoding_steps,
-                            teacher_pA=m.teacher_pA,
-                            top_k=m.top_k,
-                        )
+                        m.encode_partial(w, tag_name)
                     if tag_name not in m.encoded_tags:
                         m.encoded_tags.append(tag_name)
                     encoded_in.append((m.name, known))
@@ -527,15 +597,7 @@ def main():
             # Route: prefer single bridge with both words
             m_both = find_member_for_pair(members, a, b)
             if m_both is not None:
-                tag = encode_pair_engram(
-                    m_both.bridge, a, b, vocab=m_both.vocab,
-                    slice_size=m_both.slice_size,
-                    n_lang_input=m_both.n_lang_input,
-                    sparsity=m_both.sparsity,
-                    encoding_steps=m_both.encoding_steps,
-                    teacher_pA=m_both.teacher_pA,
-                    top_k=m_both.top_k,
-                )
+                tag = m_both.encode_pair(a, b)
                 m_both.encoded_tags.append(tag)
                 if args.friendly:
                     print(f"  OK, I'll remember {a} is {b}.", flush=True)
@@ -550,27 +612,11 @@ def main():
             encoded_in = []
             for m in members:
                 if a in m.vocab_set:
-                    encode_partial_pair_engram(
-                        m.bridge, a, tag_name, vocab=m.vocab,
-                        slice_size=m.slice_size,
-                        n_lang_input=m.n_lang_input,
-                        sparsity=m.sparsity,
-                        encoding_steps=m.encoding_steps,
-                        teacher_pA=m.teacher_pA,
-                        top_k=m.top_k,
-                    )
+                    m.encode_partial(a, tag_name)
                     m.encoded_tags.append(tag_name)
                     encoded_in.append((m.name, a))
                 elif b in m.vocab_set:
-                    encode_partial_pair_engram(
-                        m.bridge, b, tag_name, vocab=m.vocab,
-                        slice_size=m.slice_size,
-                        n_lang_input=m.n_lang_input,
-                        sparsity=m.sparsity,
-                        encoding_steps=m.encoding_steps,
-                        teacher_pA=m.teacher_pA,
-                        top_k=m.top_k,
-                    )
+                    m.encode_partial(b, tag_name)
                     m.encoded_tags.append(tag_name)
                     encoded_in.append((m.name, b))
             if encoded_in:
