@@ -102,6 +102,32 @@ different mechanism (stronger single-shot teacher, or accumulate-
 without-recommit) — a future lever, not claimed here. Negative result,
 honestly documented.
 
+## Controlled 160-vs-320 scaling tradeoff (same tool, 30 pairs, seed 42)
+
+| Ensemble | Genuine cross-bridge | Mean signal | Misses |
+|---|---|---|---|
+| **160** (5×32, sparsity 0.02) | **30/30 = 100.0%** | 771 | 0 |
+| **320** (5×64, sparsity 0.007) | 26/30 = 86.7% | 767 | 4 |
+| **Δ (scaling cost)** | **−13.3pp** | ≈0 | — |
+
+The honest engineering tradeoff for "proper vocab sizes":
+
+- The **160-concept ensemble is a 100% genuine cross-bridge
+  conversational-retrieval artifact** under the anti-cheat protocol
+  (30/30, zero coincidental — strictly stronger evidence than the
+  earlier "5/5 demo-seed integration" claim).
+- Scaling 160→320 doubles vocabulary at a measured **−13.3pp**
+  one-shot cross-bridge retrieval cost (100% → 86.7%).
+- **Mean retrieval signal is preserved** (771 vs 767): the 320
+  degradation is NOT weaker binding — it is purely distractor
+  competition (2× concepts → more competitors, ~13% of pairs lose
+  the top-1 to a strong existing per-concept associate). Binding
+  strength per successful pair is unchanged.
+
+Decision input: 160 for maximum reliability (100%/160 concepts); 320
+when breadth matters more than one-shot reliability (86.7%/320
+concepts). Both are anti-cheat-validated, single-seed (42).
+
 ## Files
 
 - `research/runners/g20_xbridge_benchmark.py` + `tests/test_g20_xbridge_benchmark.py`

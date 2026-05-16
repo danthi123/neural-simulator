@@ -292,14 +292,14 @@
     {
       "name": "160-concept sparse ensemble \u2014 multi-seed (42-46)",
       "status": "VALIDATED",
-      "metric": "Ensemble integration 5/5 seeds PASS (cross-bridge big #1 every seed 649-876); per-bridge 98.1% mean seed-variant (93.8-100%, 3/5 seeds @100%); same shared-seed pattern-set mechanism as 320 idx-12",
+      "metric": "Integration 5/5 seeds PASS; per-bridge 98.1% mean (93.8-100%, 3/5 @100%). RIGOROUS anti-cheat xbridge benchmark seed42: 30/30=100.0% genuine cross-bridge top-1 (0 coincidental, mean signal 771).",
       "doc": "2026-05-16-G20-sparse-160-multiseed-VALIDATED.md",
       "date": "2026-05-16"
     },
     {
       "name": "320 ensemble cross-bridge retrieval benchmark",
       "status": "VALIDATED",
-      "metric": "26/30=86.7% genuine cross-bridge top-1 (anti-cheat: 0 coincidental; mean 767; seed42, idx-12 excl). One-shot is OPTIMAL: controlled K=3 reinforced-encode NEGATIVE (73.3%, -13.4pp -- naive re-commit dilutes specificity). 4 misses = functional-bridge distractors.",
+      "metric": "320: 26/30=86.7% genuine (anti-cheat, 0 coincidental, mean 767). Controlled 160-vs-320 scaling cost = -13.3pp (160=30/30 100%); signal preserved (771 vs 767) -> cost is distractor competition not weaker binding. One-shot OPTIMAL (K=3 reinforced -13.4pp NEGATIVE).",
       "doc": "2026-05-16-G20-320-xbridge-benchmark.md",
       "date": "2026-05-16"
     }
