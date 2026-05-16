@@ -19,9 +19,10 @@ Anti-cheat invariants exercised here:
 import numpy as np
 
 from research.runners.song_g1_gate import (
-    _check_sidecar_usable, aggregate_verdict,
+    _check_sidecar_usable, _sidecar_readout, aggregate_verdict,
 )
 from research.runners.song_g1_core import g1_verdict
+from research.runners.song_g1_train import traj_top_rate
 
 
 # --- aggregate_verdict: g1_verdict on the means -----------------------
@@ -194,6 +195,122 @@ def test_sidecar_malformed_non_dict_is_rejected():
     ok, reason = _check_sidecar_usable(["not", "a", "dict"])
     assert ok is False
     assert "malformed" in reason.lower()
+
+
+# --- G1.5: _check_sidecar_usable readout cross-mode refusal -----------
+
+def test_sidecar_final_regime_rejected_for_trajectory_gate():
+    # a final-regime frozen floor must NEVER gate a trajectory run
+    # (different decode magnitude regime -- same HARD-refusal class as
+    # the smoke-tag rejection).
+    meta = {"smoke": False, "readout": "final",
+            "calibration": {"g1_abstain": 72.0}}
+    ok, reason = _check_sidecar_usable(meta, readout="trajectory")
+    assert ok is False
+    assert "readout" in reason.lower()
+    # still OK when the readout regimes MATCH (final<->final).
+    ok2, reason2 = _check_sidecar_usable(meta, readout="final")
+    assert ok2 is True and reason2 == "ok"
+
+
+def test_sidecar_trajectory_regime_rejected_for_final_gate():
+    # the inverse: a trajectory-regime floor must NEVER gate a final
+    # run. The trainer mirrors readout inside calibration{} (the
+    # single source of truth _sidecar_readout reads).
+    meta = {"smoke": False, "readout": "trajectory",
+            "calibration": {"g1_abstain": 41.0,
+                            "readout": "trajectory",
+                            "traj_rate_rule": "min"}}
+    ok, reason = _check_sidecar_usable(meta, readout="final")
+    assert ok is False
+    assert "readout" in reason.lower()
+    # matches when both trajectory.
+    ok2, reason2 = _check_sidecar_usable(meta, readout="trajectory")
+    assert ok2 is True and reason2 == "ok"
+
+
+def test_sidecar_calibration_readout_is_source_of_truth():
+    # _step0_calibrate writes readout INSIDE calibration{}; that is the
+    # single source of truth (top-level meta['readout'] is a mirror).
+    # A calibration.readout=trajectory must be honored even if a stale
+    # top-level key disagreed.
+    meta = {"smoke": False, "readout": "final",
+            "calibration": {"g1_abstain": 41.0,
+                            "readout": "trajectory",
+                            "traj_rate_rule": "min"}}
+    assert _sidecar_readout(meta) == "trajectory"
+    ok, _ = _check_sidecar_usable(meta, readout="trajectory")
+    assert ok is True
+    ok2, reason2 = _check_sidecar_usable(meta, readout="final")
+    assert ok2 is False and "readout" in reason2.lower()
+
+
+def test_sidecar_default_readout_is_final_legacy():
+    # legacy G1 sidecars predate the readout key -> "final" regime
+    # (the trainer's additive-JSON contract). Default gate --readout
+    # is also final, so a legacy sidecar still gates a final run.
+    meta = {"smoke": False, "calibration": {"g1_abstain": 72.0}}
+    assert _sidecar_readout(meta) == "final"
+    # default readout arg == "final" -> usable (back-compat preserved).
+    ok, reason = _check_sidecar_usable(meta)
+    assert ok is True and reason == "ok"
+    # but a trajectory gate must REFUSE that legacy final sidecar.
+    ok2, reason2 = _check_sidecar_usable(meta, readout="trajectory")
+    assert ok2 is False and "readout" in reason2.lower()
+
+
+def test_sidecar_smoke_still_rejected_regardless_of_readout():
+    # smoke rejection is checked BEFORE readout -- a smoke trajectory
+    # sidecar is rejected for the smoke reason (never gates the real
+    # verdict), not silently accepted because readout happens to match.
+    meta = {"smoke": True, "readout": "trajectory",
+            "calibration": {"g1_abstain": 41.0,
+                            "readout": "trajectory",
+                            "traj_rate_rule": "min"}}
+    ok, reason = _check_sidecar_usable(meta, readout="trajectory")
+    assert ok is False
+    assert "smoke" in reason.lower()
+
+
+def test_sidecar_none_rejected_for_trajectory_too():
+    ok, reason = _check_sidecar_usable(None, readout="trajectory")
+    assert ok is False
+    assert "missing" in reason.lower()
+
+
+# --- G1.5: traj_top_rate -- the pre-registered MIN-per-slot rule -----
+
+def test_traj_top_rate_empty_is_zero():
+    # empty rates_list (no slots) -> 0.0 (cannot clear any floor).
+    assert traj_top_rate([]) == 0.0
+
+
+def test_traj_top_rate_is_min_per_slot():
+    # the documented rule is the MINIMUM per-slot accumulated rate:
+    # the production is "confident" only if EVERY slot cleared the
+    # floor (mirrors compose_reward's no-confabulation moat).
+    assert traj_top_rate([100.0, 50.0, 80.0]) == 50.0
+    assert traj_top_rate([5.0]) == 5.0
+    assert traj_top_rate([7.0, 7.0, 7.0]) == 7.0
+    # NOT max, NOT mean.
+    assert traj_top_rate([10.0, 20.0, 30.0]) != 30.0  # not max
+    assert traj_top_rate([10.0, 20.0, 30.0]) != 20.0  # not mean
+
+
+def test_traj_top_rate_deterministic_and_float():
+    rates = [12.0, 3.0, 9.0, 3.0]
+    a = traj_top_rate(rates)
+    b = traj_top_rate(rates)
+    assert a == b == 3.0
+    assert isinstance(a, float)
+
+
+def test_traj_top_rate_accepts_ints_returns_float():
+    # rates may arrive as ints; the rule coerces to float (a single
+    # scalar compared against the frozen float g1_abstain).
+    out = traj_top_rate([4, 2, 9])
+    assert out == 2.0
+    assert isinstance(out, float)
 
 
 # --- import / signature surface is smoke-able WITHOUT a checkpoint ----

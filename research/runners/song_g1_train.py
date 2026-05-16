@@ -68,7 +68,44 @@ invalidates the G1 result -- see the implementation plan
      the Step-0 g1_abstain are persisted (sidecar JSON next to the
      checkpoint) so a resumed run AND Task 10 use the SAME values.
 
-SMOKE / FULL CKPT NAMESPACE ISOLATION (pre-launch defense, two layers):
+G1.5 --readout MODE (additive; default 'final' = G1 byte-identical):
+
+  --readout final (DEFAULT) keeps the EXACT G1 behavior: each babble
+  candidate is decoded via the M3 _integrated_decode path (ignite the
+  WHOLE ordered sequence ONCE, self_comprehend ONCE on the integrated
+  residual -> a length-1 decode). Nothing about the G1 negative's
+  reproducibility changes when --readout is absent or 'final'.
+
+  --readout trajectory (G1.5) decodes via
+  song_g1_ignite.ignite_and_trajectory_decode: per concept slot, a
+  write-only ignition -> brief UN-DRIVEN gap -> argmax read, returning
+  an ORDERED length-N decoded list + a per-slot rate list. This lets
+  song_g1_core.score_order reach 1.0 and reflect ORDER (vs G1's
+  length-1 0.5-capped readout). The "top rate" used for gate_cleared
+  is the trajectory-rate aggregate `traj_top_rate(rates_list)` = the
+  MIN per-slot accumulated rate (sidecar key traj_rate_rule="min"):
+  the production is only "confident" if EVERY slot cleared the
+  abstention floor (matches compose_reward's no-confabulation moat:
+  "any produced slot below the abstention gate -> 0.0"). This ONE rule
+  is used IDENTICALLY in Step-0 calibration, training, and the gate
+  (recorded in the sidecar so the gate uses the same).
+
+  The trajectory regime is a DIFFERENT readout magnitude regime, so
+  Step 0 RE-CALIBRATES the control-max abstention floor IN the
+  trajectory regime (same AUC/control-max methodology that produced
+  G1's 72.0, re-derived here -- NOT 72.0, NOT the literal 650).
+
+SMOKE / FULL + READOUT CKPT NAMESPACE ISOLATION (pre-launch defense,
+three layers; the readout layer reuses the EXACT smoke idioms, DRY):
+
+  (a-traj) When --readout trajectory AND --ckpt was NOT explicitly
+      overridden, the path is redirected to an ISOLATED namespace with
+      a ".traj" infix (song_g1.traj.ckpt.npz / its sidecar) so the
+      trajectory-regime frozen floor + weights NEVER collide with G1's
+      canonical song_g1.ckpt.npz (the recorded G1 negative). This
+      composes with (a): --smoke --readout trajectory with a default
+      --ckpt -> song_g1.traj.smoke.ckpt.npz. An explicitly-passed
+      --ckpt is honored verbatim (defense (b) still guards it).
 
   (a) A default --smoke run (one whose --ckpt was NOT explicitly
       overridden) is redirected to an ISOLATED checkpoint+sidecar with
@@ -79,18 +116,20 @@ SMOKE / FULL CKPT NAMESPACE ISOLATION (pre-launch defense, two layers):
       redirected. If --ckpt is passed explicitly with --smoke, that
       path is honored (defense (b) still applies).
 
-  (b) The sidecar records "smoke": bool. On resume/reuse, if an
-      existing checkpoint/sidecar's smoke flag differs from the
-      current run's, its calibration.g1_abstain is NOT reused AND
-      SongHVC.W / epoch are NOT resumed -- the run starts fresh
-      (recompute Step 0, fresh init, epoch 0) with an explicit
+  (b) The sidecar records "smoke": bool AND "readout": str. On
+      resume/reuse, if an existing checkpoint/sidecar's smoke flag
+      differs from the current run's OR its recorded readout differs
+      from this run's --readout, its calibration.g1_abstain is NOT
+      reused AND SongHVC.W / epoch are NOT resumed -- the run starts
+      fresh (recompute Step 0, fresh init, epoch 0) with an explicit
       [fresh] warning. This guarantees a full run / Task 10 can never
-      inherit a smoke-calibrated abstention floor or smoke-trained
-      weights even if paths collide (e.g. an explicit shared --ckpt).
-      A SAME-mode resume (smoke->smoke or full->full) is unchanged:
-      W + rng + loss + frozen props + calibration are reused exactly.
-      The sidecar "smoke" key is additive JSON; Task 10 reads the
-      sidecar and will see smoke:false for the real full run.
+      inherit a smoke-calibrated OR cross-readout-regime abstention
+      floor or weights even if paths collide (e.g. an explicit shared
+      --ckpt across modes). A SAME-mode resume (smoke->smoke or
+      full->full, SAME readout) is unchanged: W + rng + loss + frozen
+      props + calibration are reused exactly. The sidecar "smoke" /
+      "readout" keys are additive JSON; Task 10 reads the sidecar and
+      will see smoke:false + the matching readout for the real run.
 
 WHY single-bridge propositions: ignite_sequence / self_comprehend
 operate on ONE SharedPoolMember's bridge using THAT member's concept
@@ -160,6 +199,33 @@ _DRIVE_PA = 1500.0
 _STEPS_PER = 100
 _IGNITE_RECOVERY = 20    # ignite_sequence's own inter-slot settle
 _DECODE_WINDOW = 100
+
+
+def traj_top_rate(rates_list) -> float:
+    """PURE: the G1.5 trajectory-rate aggregate (no IO, deterministic).
+
+    The single, pre-registered `traj_rate_rule` = "min": the trajectory
+    "top rate" used for `gate_cleared` is the MINIMUM per-slot
+    accumulated rate over the ordered decode. Rationale: the production
+    is only "confident" (non-confabulated) if EVERY slot cleared the
+    abstention floor -- this mirrors compose_reward's no-confabulation
+    moat ("any produced slot below the abstention gate -> 0.0"). The
+    MIN aggregate enforces "every slot >= floor" with a single scalar
+    comparison against the frozen g1_abstain.
+
+    This ONE rule MUST be used IDENTICALLY in Step-0 calibration,
+    training, and the gate (it is recorded in the sidecar as
+    traj_rate_rule so the gate uses the same). Empty list -> 0.0.
+    """
+    if not rates_list:
+        return 0.0
+    return float(min(float(r) for r in rates_list))
+
+
+# The pre-registered trajectory-rate aggregate name, persisted to the
+# sidecar so train + gate provably use the IDENTICAL rule (anti-cheat:
+# the gate is invalid if its aggregate differs from Step-0's).
+_TRAJ_RATE_RULE = "min"
 
 
 def _build_frozen_propositions(members):
@@ -262,6 +328,38 @@ def _integrated_decode(member, ignite_sequence, self_comprehend,
     return [int(idx)], float(rate)
 
 
+def _decode_candidate(readout, member, ignite_sequence, self_comprehend,
+                       trajectory_decode, concept_seq, drive_pA,
+                       steps_per, decode_window):
+    """Readout-mode dispatch for ONE ordered candidate. Returns
+    (decoded_list, top_rate) in BOTH modes so the caller (Step-0
+    calibration, training, gate) is readout-agnostic and the SAME rule
+    flows everywhere.
+
+      readout == "final"      -> the EXACT G1 path: _integrated_decode
+          (ignite the WHOLE ordered sequence ONCE, self_comprehend ONCE
+          on the integrated residual). decoded_list is length-1; the
+          top_rate is that single integrated residual rate. BYTE-
+          IDENTICAL to G1 -- this branch is the default and does not
+          change the recorded G1 negative's reproducibility.
+
+      readout == "trajectory" -> ignite_and_trajectory_decode: an
+          ORDERED length-N decoded list + per-slot rates. top_rate =
+          traj_top_rate(rates_list) (the pre-registered MIN-per-slot
+          `traj_rate_rule`), used IDENTICALLY for gate_cleared in
+          Step-0, training, and the gate.
+    """
+    if readout == "trajectory":
+        decoded_list, rates_list = trajectory_decode(
+            member, concept_seq, drive_pA=drive_pA,
+            steps_per=steps_per)
+        return [int(x) for x in decoded_list], traj_top_rate(rates_list)
+    # default: byte-identical G1 M3 integrated decode (length-1).
+    return _integrated_decode(
+        member, ignite_sequence, self_comprehend,
+        concept_seq, drive_pA, steps_per, decode_window)
+
+
 def _recover(member, recover_steps):
     """Inter-production free-run so adaptation/STP recovers between
     ignitions (the documented Stage-1 inter-turn remedy; the no-harm
@@ -277,15 +375,17 @@ def _recover(member, recover_steps):
 
 def _step0_calibrate(members, props_train, ignite_sequence,
                       self_comprehend, rng, drive_pA, steps_per,
-                      decode_window, recover_steps):
+                      decode_window, recover_steps, readout="final",
+                      trajectory_decode=None):
     """Pre-registered Step 0 (ONCE at train start; NOT 650).
 
-    Measure the self_comprehend integrated-residual TOP-RATE
-    distribution in the IDENTICAL regime for:
+    Measure the decode TOP-RATE distribution in the IDENTICAL regime
+    (the SAME `readout` mode + the SAME `traj_rate_rule` aggregate the
+    run uses) for:
       (i)  ENCODED proxy : intended-order productions of the TRAIN
            propositions.
       (ii) CONTROL       : random/unencoded concept sequences AND
-           permuted-order productions of the TRAIN propositions
+           permuted-ORDER productions of the TRAIN propositions
            (the permuted-ORDER control is load-bearing).
 
     g1_abstain = the encoded-vs-control separation at the SAME operating
@@ -295,6 +395,13 @@ def _step0_calibrate(members, props_train, ignite_sequence,
     encoded-vs-control AUC methodology that produced 650 -- but the
     OPERATING POINT is control-max, fixed here, never tuned.
 
+    G1.5: when readout=="trajectory" the encoded/control TOP-RATE is
+    the trajectory-regime traj_top_rate(rates_list) (MIN per slot),
+    NOT G1's final-residual rate -- a DIFFERENT magnitude regime, so
+    the floor is RE-DERIVED here (same control-max methodology that
+    produced G1's 72.0; the result is NOT 72.0, NOT 650). readout=="
+    final" is byte-identical to G1's Step 0.
+
     Returns a calibration dict (also written to the sidecar)."""
     encoded_rates = []
     control_rates = []
@@ -302,9 +409,10 @@ def _step0_calibrate(members, props_train, ignite_sequence,
     # (i) ENCODED proxy: intended order of each TRAIN proposition.
     for p in props_train:
         member = members[p["bridge_idx"]]
-        _dec, rate = _integrated_decode(
-            member, ignite_sequence, self_comprehend,
-            p["concept_seq"], drive_pA, steps_per, decode_window)
+        _dec, rate = _decode_candidate(
+            readout, member, ignite_sequence, self_comprehend,
+            trajectory_decode, p["concept_seq"], drive_pA, steps_per,
+            decode_window)
         encoded_rates.append(rate)
         _recover(member, recover_steps)
 
@@ -315,9 +423,10 @@ def _step0_calibrate(members, props_train, ignite_sequence,
         member = members[p["bridge_idx"]]
         perms = permuted_order_controls(p["concept_seq"], rng, n=2)
         for perm in perms:
-            _dec, rate = _integrated_decode(
-                member, ignite_sequence, self_comprehend,
-                perm, drive_pA, steps_per, decode_window)
+            _dec, rate = _decode_candidate(
+                readout, member, ignite_sequence, self_comprehend,
+                trajectory_decode, perm, drive_pA, steps_per,
+                decode_window)
             control_rates.append(rate)
             _recover(member, recover_steps)
 
@@ -341,9 +450,10 @@ def _step0_calibrate(members, props_train, ignite_sequence,
         b = int(rng.integers(0, n_v))
         if b == a:
             b = (a + 1) % n_v
-        _dec, rate = _integrated_decode(
-            member, ignite_sequence, self_comprehend,
-            [a, b], drive_pA, steps_per, decode_window)
+        _dec, rate = _decode_candidate(
+            readout, member, ignite_sequence, self_comprehend,
+            trajectory_decode, [a, b], drive_pA, steps_per,
+            decode_window)
         control_rates.append(rate)
         _recover(member, recover_steps)
 
@@ -365,6 +475,13 @@ def _step0_calibrate(members, props_train, ignite_sequence,
     return {
         "g1_abstain": g1_abstain,
         "operating_criterion": "control_max",
+        # G1.5: which readout regime this floor was calibrated IN, and
+        # the trajectory-rate aggregate used. The gate REFUSES a
+        # sidecar whose readout != its --readout, and uses the SAME
+        # traj_rate_rule (anti-cheat: identical rule everywhere).
+        "readout": str(readout),
+        "traj_rate_rule": (_TRAJ_RATE_RULE if readout == "trajectory"
+                           else None),
         "encoded_rates": [round(x, 2) for x in enc],
         "control_rates": [round(x, 2) for x in ctl],
         "encoded_mean": round(encoded_mean, 2),
@@ -373,10 +490,17 @@ def _step0_calibrate(members, props_train, ignite_sequence,
         "auc_encoded_vs_control": round(auc, 4),
         "n_encoded": len(enc),
         "n_control": len(ctl),
-        "note": ("self_comprehend NO-DRIVE integrated-residual regime; "
-                 "NOT the literal 650 (continuous-drive regime). "
-                 "control-max operating point, fixed at train start, "
-                 "never tuned (anti-cheat: pre-registered RULE)."),
+        "note": (
+            ("trajectory-regime per-slot decode, traj_rate_rule='%s' "
+             "(MIN per slot); RE-CALIBRATED in THIS regime -- NOT G1's "
+             "72.0, NOT 650. control-max operating point, fixed at "
+             "train start, never tuned (anti-cheat: pre-registered "
+             "RULE)." % _TRAJ_RATE_RULE)
+            if readout == "trajectory" else
+            ("self_comprehend NO-DRIVE integrated-residual regime; "
+             "NOT the literal 650 (continuous-drive regime). "
+             "control-max operating point, fixed at train start, "
+             "never tuned (anti-cheat: pre-registered RULE).")),
     }
 
 
@@ -390,6 +514,25 @@ def _smoke_ckpt_path(ckpt_path):
         if ckpt_path.endswith(suffix):
             return ckpt_path[: -len(suffix)] + ".smoke" + suffix
     return ckpt_path + ".smoke"
+
+
+def _traj_ckpt_path(ckpt_path):
+    """Isolated trajectory-regime checkpoint path = the base with a
+    '.traj' infix before the '.ckpt.npz' (or '.npz') suffix. Pure
+    string transform (deterministic; no IO -- the EXACT idiom as
+    _smoke_ckpt_path with a '.traj' tag instead of '.smoke').
+
+    Used ONLY when --readout trajectory AND --ckpt was left at its
+    default so a trajectory run can NEVER write the canonical
+    song_g1.ckpt.npz (G1's recorded NEGATIVE) or its sidecar/floor.
+    Composes with _smoke_ckpt_path: applying this first then the smoke
+    transform yields '<base>.traj.smoke.ckpt.npz' (the trajectory smoke
+    namespace) -- both layers reuse the same pure-string-transform
+    machinery (DRY)."""
+    for suffix in (".ckpt.npz", ".npz"):
+        if ckpt_path.endswith(suffix):
+            return ckpt_path[: -len(suffix)] + ".traj" + suffix
+    return ckpt_path + ".traj"
 
 
 def _sidecar_path(ckpt_path):
@@ -445,19 +588,44 @@ def main():
                         "(babble/control sampling).")
     p.add_argument("--ckpt", type=str, default=_CKPT_DEFAULT,
                    help="checkpoint .npz path (sidecar .meta.json holds "
-                        "frozen props + Step-0 g1_abstain + a 'smoke' "
-                        "flag). If --smoke is set and --ckpt is left at "
-                        "its default, the path is auto-redirected to an "
-                        "isolated '.smoke' namespace so a smoke run "
-                        "NEVER writes the canonical full-run checkpoint.")
+                        "frozen props + Step-0 g1_abstain + 'smoke' + "
+                        "'readout' flags). If --readout trajectory and "
+                        "--ckpt is left at its default, the path is "
+                        "auto-redirected to an isolated '.traj' "
+                        "namespace (composes with '.smoke') so a "
+                        "trajectory run NEVER writes G1's canonical "
+                        "song_g1.ckpt.npz (the recorded G1 negative). "
+                        "If --smoke is set and --ckpt is default, the "
+                        "path also gets a '.smoke' infix so a smoke "
+                        "run NEVER writes the canonical full-run "
+                        "checkpoint.")
+    p.add_argument("--readout", type=str, default="final",
+                   choices=("final", "trajectory"),
+                   help="decode regime. 'final' (DEFAULT) = the EXACT "
+                        "G1 M3 integrated decode (length-1, byte-"
+                        "identical to the recorded G1 negative -- its "
+                        "reproducibility is unchanged when this flag "
+                        "is absent). 'trajectory' (G1.5) = per-slot "
+                        "ignite -> un-driven gap -> argmax read, an "
+                        "ORDERED length-N decode (score_order can "
+                        "reach 1.0 / reflect ORDER); gate_cleared uses "
+                        "the MIN-per-slot traj_rate_rule. The "
+                        "trajectory regime uses an ISOLATED '.traj' "
+                        "ckpt/sidecar namespace and its OWN Step-0 "
+                        "control-max floor RE-CALIBRATED in that regime "
+                        "(NOT G1's 72.0, NOT 650); the gate refuses a "
+                        "cross-readout sidecar.")
     p.add_argument("--smoke", action="store_true",
                    help="tiny build/kill-safe-resume validation: 2 "
                         "epochs, 2 train props, k=2 babbles. NOT the "
                         "G1 result (Task 10 is the gate). Uses an "
                         "ISOLATED ckpt/sidecar namespace (default path "
-                        "gets a '.smoke' infix); a sidecar from the "
-                        "OTHER mode is refused (no full verdict can be "
-                        "gated on a smoke-calibrated floor or weights).")
+                        "gets a '.smoke' infix, composing with the "
+                        "'.traj' infix when --readout trajectory); a "
+                        "sidecar from the OTHER mode (different smoke "
+                        "flag OR different readout) is refused (no full "
+                        "verdict can be gated on a smoke-calibrated or "
+                        "cross-readout-regime floor or weights).")
     args = p.parse_args()
 
     # --- lazy/heavy imports (loading 5 sparse bridges is slow + GPU) -
@@ -467,7 +635,8 @@ def main():
 
     from research.runners.song_g1_core import compose_reward
     from research.runners.song_g1_ignite import (
-        ignite_sequence, load_members, self_comprehend,
+        ignite_and_trajectory_decode, ignite_sequence, load_members,
+        self_comprehend,
     )
     from sim.song_hvc import SongHVC
     from sim.train_checkpoint import (
@@ -476,21 +645,44 @@ def main():
 
     t0 = time.time()
     smoke = bool(args.smoke)
+    readout = str(args.readout)
 
-    # --- FIX 1(a): isolated smoke namespace when --ckpt not overridden.
-    #     If this is a smoke run AND the user left --ckpt at its default,
-    #     redirect to a distinct '.smoke' ckpt+sidecar so a default smoke
-    #     run NEVER writes the canonical song_g1.ckpt.npz/sidecar that the
-    #     multi-hour full run + Task 10 consume. An explicitly-passed
-    #     --ckpt is honored verbatim (defense (b) still guards it).
+    # --- isolated ckpt namespace when --ckpt not overridden (DRY: the
+    #     SAME pure-string-transform idiom for BOTH the '.traj' regime
+    #     layer AND the '.smoke' layer; they COMPOSE):
+    #
+    #   FIX 1(a-traj): if --readout trajectory AND --ckpt is default,
+    #     redirect to a distinct '.traj' ckpt+sidecar so a trajectory
+    #     run can NEVER write G1's canonical song_g1.ckpt.npz (the
+    #     recorded G1 NEGATIVE) or its frozen floor.
+    #   FIX 1(a): if --smoke AND --ckpt is default, redirect to a
+    #     distinct '.smoke' ckpt+sidecar so a smoke run NEVER writes
+    #     the canonical full-run checkpoint.
+    #
+    #   Both apply on the SAME default base, so --smoke --readout
+    #   trajectory -> song_g1.traj.smoke.ckpt.npz. An explicitly-passed
+    #   --ckpt is honored verbatim (defense (b)'s cross-mode refusal --
+    #   smoke flag OR readout mismatch -- still guards it).
     ckpt_explicit = (args.ckpt != _CKPT_DEFAULT)
-    if smoke and not ckpt_explicit:
-        args.ckpt = _smoke_ckpt_path(_CKPT_DEFAULT)
-        print(f"[SMOKE-ISOLATION] --ckpt left at default; redirecting "
-              f"smoke run to isolated namespace:\n  ckpt    = {args.ckpt}"
-              f"\n  sidecar = {_sidecar_path(args.ckpt)}\n  (the "
-              f"canonical {_CKPT_DEFAULT} is untouched by smoke runs)",
-              flush=True)
+    if not ckpt_explicit:
+        isolated = _CKPT_DEFAULT
+        if readout == "trajectory":
+            isolated = _traj_ckpt_path(isolated)
+        if smoke:
+            isolated = _smoke_ckpt_path(isolated)
+        if isolated != _CKPT_DEFAULT:
+            args.ckpt = isolated
+            tags = []
+            if readout == "trajectory":
+                tags.append("readout=trajectory ('.traj')")
+            if smoke:
+                tags.append("smoke ('.smoke')")
+            print(f"[CKPT-ISOLATION] --ckpt left at default; "
+                  f"redirecting {' + '.join(tags)} run to isolated "
+                  f"namespace:\n  ckpt    = {args.ckpt}"
+                  f"\n  sidecar = {_sidecar_path(args.ckpt)}\n  (the "
+                  f"canonical {_CKPT_DEFAULT} -- the recorded G1 "
+                  f"negative -- is UNTOUCHED)", flush=True)
 
     n_epochs = 2 if smoke else int(args.epochs)
     n_babble = 2 if smoke else int(args.n_babble)
@@ -549,28 +741,41 @@ def main():
     _seed_intention_biases(song, all_props)
 
     # --- FIX 1(b): cross-mode reuse refusal -------------------------
-    #     Load the sidecar FIRST so the smoke<->full decision is made
-    #     atomically for BOTH W/epoch resume AND calibration reuse. If
-    #     an existing sidecar's "smoke" flag differs from this run's
-    #     smoke, we REFUSE to inherit anything from that namespace
-    #     (no smoke-calibrated floor / smoke-trained weights can ever
-    #     gate a full verdict, even on a colliding explicit --ckpt).
-    #     A missing "smoke" key in an existing sidecar is treated as a
-    #     mismatch ONLY when this run is smoke (a legacy/full sidecar
-    #     must not be silently inherited by a smoke run, and vice
-    #     versa) -- conservatively, ANY existing sidecar whose recorded
-    #     smoke != current smoke (with absent treated as full=False)
-    #     forces a fresh start.
+    #     Load the sidecar FIRST so the cross-mode decision is made
+    #     atomically for BOTH W/epoch resume AND calibration reuse. The
+    #     run REFUSES to inherit anything from a namespace whose mode
+    #     differs -- mode = (smoke flag, readout regime). Mismatch iff
+    #     the existing sidecar's "smoke" flag differs from this run's
+    #     smoke OR its recorded "readout" differs from this run's
+    #     --readout. A cross-readout floor is a HARD refusal class
+    #     (a final-regime control-max floor must NEVER gate a
+    #     trajectory run or vice versa -- a DIFFERENT magnitude
+    #     regime). An absent "smoke" key -> full=False; an absent
+    #     "readout" key -> "final" (the trainer's own additive-JSON
+    #     contract: legacy G1 sidecars predate the readout key and are
+    #     final-regime). Conservatively, ANY recorded (smoke, readout)
+    #     != current forces a fresh start (recompute Step 0, fresh
+    #     init, epoch 0) -- no smoke-calibrated / cross-readout floor
+    #     or weights can ever gate a full verdict, even on a colliding
+    #     explicit --ckpt.
     meta = _load_sidecar(args.ckpt)
     cross_mode_mismatch = False
     if meta is not None:
         sidecar_smoke = bool(meta.get("smoke", False))
+        sidecar_readout = str(meta.get("readout", "final"))
         if sidecar_smoke != smoke:
             cross_mode_mismatch = True
-            print(f"\n[fresh] existing ckpt is smoke={sidecar_smoke} "
-                  f"but this run smoke={smoke}; ignoring it (will not "
-                  f"gate a full verdict on a smoke-calibrated floor)",
-                  flush=True)
+            print(f"\n[fresh] existing ckpt readout={sidecar_readout} "
+                  f"smoke={sidecar_smoke} but this run smoke={smoke}; "
+                  f"ignoring it (will not gate a full verdict on a "
+                  f"smoke-calibrated floor)", flush=True)
+        elif sidecar_readout != readout:
+            cross_mode_mismatch = True
+            print(f"\n[fresh] existing ckpt readout={sidecar_readout} "
+                  f"but this run readout={readout}; ignoring it (a "
+                  f"{sidecar_readout}-regime control-max floor must "
+                  f"NEVER gate a {readout} run -- different magnitude "
+                  f"regime)", flush=True)
 
     # --- resume (kill-safe Inc-3 pattern) ----------------------------
     ckpt = load_checkpoint(args.ckpt)
@@ -608,30 +813,44 @@ def main():
             and "g1_abstain" in meta.get("calibration", {})):
         calib = meta["calibration"]
         g1_abstain = float(calib["g1_abstain"])
+        _calib_readout = str(calib.get("readout", "final"))
         print(f"[SIDECAR] reusing pre-registered Step-0 g1_abstain="
-              f"{g1_abstain:.2f} (control-max, computed at train "
-              f"start; NEVER retuned)", flush=True)
-    else:
-        # Step 0 -- run ONCE at train start (NOT 650). Uses a dedicated
-        # RNG so the calibration is independent of (and does not
-        # consume) the training rng stream.
-        print("\n[STEP 0] PRE-REGISTERED control-calibrated abstention "
-              "floor (self_comprehend regime; NOT literal 650) ...",
+              f"{g1_abstain:.2f} (control-max, {_calib_readout} "
+              f"regime, computed at train start; NEVER retuned)",
               flush=True)
+    else:
+        # Step 0 -- run ONCE at train start (NOT 650; NOT G1's 72.0
+        # when readout=trajectory -- a DIFFERENT magnitude regime, so
+        # the control-max floor is RE-DERIVED here). Uses a dedicated
+        # RNG so the calibration is independent of (and does not
+        # consume) the training rng stream. Decodes via the SAME
+        # readout path + SAME traj_rate_rule the run trains/gates with.
+        print(f"\n[STEP 0] PRE-REGISTERED control-calibrated "
+              f"abstention floor (readout={readout} regime; NOT "
+              f"literal 650"
+              f"{'; NOT G1 final-regime 72.0' if readout == 'trajectory' else ''}"
+              f") ...", flush=True)
         calib_rng = np.random.default_rng(int(args.seed) * 7 + 1)
         calib = _step0_calibrate(
             members, props_train, ignite_sequence, self_comprehend,
             calib_rng, _DRIVE_PA, _STEPS_PER, _DECODE_WINDOW,
-            int(args.recover_steps))
+            int(args.recover_steps), readout=readout,
+            trajectory_decode=ignite_and_trajectory_decode)
         g1_abstain = float(calib["g1_abstain"])
         meta = {
             "task": "song_g1 Task 9 self-supervised training",
             "substrate": "G.20 320-sparse 5-bridge",
             "seed": int(args.seed),
             # FIX 1(b): record the mode so a resume/Task-10 read can
-            # REFUSE a cross-mode sidecar. Additive JSON key (Task 10
-            # tolerates it; it will see smoke:false for the real run).
+            # REFUSE a cross-mode sidecar. Additive JSON keys (Task 10
+            # tolerates them; it will see smoke:false + the matching
+            # readout for the real run). 'readout' is ALSO mirrored
+            # inside calibration{} by _step0_calibrate (single source
+            # the gate's _check_sidecar_usable reads).
             "smoke": bool(args.smoke),
+            "readout": str(readout),
+            "traj_rate_rule": (_TRAJ_RATE_RULE
+                               if readout == "trajectory" else None),
             "pair_sampler": {
                 "fn": "sample_xbridge_pairs",
                 "seed": _PAIR_SEED,
@@ -701,11 +920,16 @@ def main():
                 best_cand = None
                 for _ in range(n_babble):
                     cand = song.babble(base, rng, temperature)
-                    # M3: ignite the WHOLE ordered candidate ONCE, THEN
-                    # self_comprehend ONCE on the integrated residual
-                    # (NEVER per-slot then average).
-                    decoded, top_rate = _integrated_decode(
-                        member, ignite_sequence, self_comprehend,
+                    # Readout-mode dispatch (SAME path + SAME
+                    # traj_rate_rule as Step-0 + the gate):
+                    #   final      = M3 integrated decode (ignite the
+                    #     WHOLE ordered candidate ONCE, self_comprehend
+                    #     ONCE; length-1; byte-identical to G1).
+                    #   trajectory = per-slot ordered decode; top_rate
+                    #     = traj_top_rate (MIN per slot).
+                    decoded, top_rate = _decode_candidate(
+                        readout, member, ignite_sequence,
+                        self_comprehend, ignite_and_trajectory_decode,
                         cand, _DRIVE_PA, _STEPS_PER, _DECODE_WINDOW)
                     gate_cleared = bool(top_rate >= g1_abstain)
                     if gate_cleared:
@@ -760,10 +984,15 @@ def main():
 
     print("\n" + "=" * 64, flush=True)
     print("SONG G1 TASK 9 TRAINING COMPLETE", flush=True)
+    print(f"  readout            : {readout}"
+          f"{' (traj_rate_rule=' + _TRAJ_RATE_RULE + ')' if readout == 'trajectory' else ' (G1 byte-identical)'}",
+          flush=True)
     print(f"  epochs run         : {start_epoch}..{n_epochs-1}",
           flush=True)
     print(f"  g1_abstain (frozen): {g1_abstain:.2f} "
-          f"(control-max; NOT 650)", flush=True)
+          f"(control-max, {readout} regime; NOT 650"
+          f"{'; NOT G1 72.0' if readout == 'trajectory' else ''})",
+          flush=True)
     if loss_history:
         print(f"  mean_reward first  : {loss_history[0]:.4f}",
               flush=True)
