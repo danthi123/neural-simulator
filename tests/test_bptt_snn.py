@@ -129,6 +129,49 @@ def test_softmax_grad_np_sums_to_zero():
     assert abs(grad.sum()) < 1e-5
 
 
+def test_cross_entropy_finite_for_large_rate_coded_logits():
+    """Regression: rate-coded logits = sum of spikes over a long BPTT
+    unroll. At T=96 raw logits reach ~96; the naive
+    `log(sum(exp(logits)))` overflowed (exp(96)~5e41) -> inf loss ->
+    nan weights -> dead net pinned at exactly ln(V). The log-sum-exp
+    stabilization must keep loss + grad finite at this magnitude.
+    """
+    from sim.bptt_snn import cross_entropy_loss_np, softmax_grad_np
+
+    V = 97
+    rng = np.random.default_rng(0)
+    # Logits in [0, 96] with ~30 spread -- the regime that overflowed.
+    logits = (rng.random((1, V)).astype(np.float32) * 96.0)
+    loss = cross_entropy_loss_np(logits, target_idx=3)
+    grad = softmax_grad_np(logits, target_idx=3)
+    assert np.isfinite(loss), "CE must be finite for large logits"
+    assert np.all(np.isfinite(grad)), "softmax grad must be finite"
+    # CE is bounded by ~max logit gap; certainly far below any inf.
+    assert 0.0 <= loss < 200.0
+    # Gradient still sums to zero (softmax property preserved).
+    assert abs(grad.sum()) < 1e-4
+
+
+def test_logsumexp_stabilization_is_exact_for_small_logits():
+    """The fix is mathematically exact (softmax/CE are shift-invariant):
+    for small logits where the naive form did NOT overflow, the
+    stabilized result must match the closed-form value, so Phase 2.1 /
+    2.2 validated behavior is unchanged.
+    """
+    from sim.bptt_snn import cross_entropy_loss_np, softmax_grad_np
+
+    logits = np.array([[0.0, 0.0, 5.0]], dtype=np.float64)
+    # Closed form: -log(softmax(logits)[target])
+    ex = np.exp(logits - logits.max())
+    probs = ex / ex.sum()
+    expected_loss = float(-np.log(probs[0, 2]))
+    expected_grad = probs.copy()
+    expected_grad[0, 2] -= 1.0
+    assert abs(cross_entropy_loss_np(logits, 2) - expected_loss) < 1e-6
+    assert np.allclose(softmax_grad_np(logits, 2), expected_grad,
+                       atol=1e-6)
+
+
 def test_backward_unroll_correct_shapes():
     """backward_unroll returns weight gradients with same shape as W_in."""
     from sim.bptt_snn import (

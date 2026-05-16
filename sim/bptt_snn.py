@@ -117,15 +117,31 @@ def forward_unroll(
 
 
 def cross_entropy_loss_np(logits: np.ndarray, target_idx: int) -> float:
-    """logits: (B, V_out). target_idx: int. Returns mean loss across batch."""
-    log_probs = logits - np.log(np.sum(np.exp(logits), axis=-1, keepdims=True))
+    """logits: (B, V_out). target_idx: int. Returns mean loss across batch.
+
+    Numerically stabilized via the log-sum-exp trick (subtract per-row
+    max before exp). softmax/CE are shift-invariant, so this is
+    mathematically exact -- it only prevents exp() overflow when logits
+    are large (e.g. rate-coded logits = sum of spikes over a long BPTT
+    unroll: at T=96 raw logits reach ~96, exp(96)~5e41 overflows).
+    """
+    m = np.max(logits, axis=-1, keepdims=True)
+    log_sum_exp = m + np.log(
+        np.sum(np.exp(logits - m), axis=-1, keepdims=True))
+    log_probs = logits - log_sum_exp
     return float(-log_probs[:, target_idx].mean())
 
 
 def softmax_grad_np(logits: np.ndarray, target_idx: int) -> np.ndarray:
     """Gradient dL/d_logits for softmax + cross-entropy.
-    logits: (B, V_out). Returns same shape."""
-    probs = np.exp(logits) / np.sum(np.exp(logits), axis=-1, keepdims=True)
+    logits: (B, V_out). Returns same shape.
+
+    Same log-sum-exp stabilization as cross_entropy_loss_np (exact;
+    softmax is shift-invariant).
+    """
+    m = np.max(logits, axis=-1, keepdims=True)
+    e = np.exp(logits - m)
+    probs = e / np.sum(e, axis=-1, keepdims=True)
     grad = probs.copy()
     grad[:, target_idx] -= 1.0
     return grad / logits.shape[0]  # batch-mean
