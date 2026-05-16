@@ -282,3 +282,118 @@ def self_comprehend(member, decode_window: int = 100) -> list:
         return []
     best_idx = int(np.argmax(rates))
     return [(best_idx, float(rates[best_idx]))]
+
+
+def ignite_and_trajectory_decode(member, concept_indices,
+                                  drive_pA: float = 1500.0,
+                                  steps_per: int = 100,
+                                  gap_steps: int = 20,
+                                  decode_steps: int = 30) -> tuple:
+    """G1.5 order-sensitive trajectory readout (write-only).
+
+    For each concept index in `concept_indices` IN ORDER, this produces
+    one ordered decode slot:
+
+      1. WRITE-ONLY drive: clear cp_external_input_current, then set it
+         to `drive_pA` at that concept's sparse-pattern GLOBAL indices
+         in shared_concept_pool ONLY (the EXACT inner drive idiom of
+         ignite_sequence -- same _pattern_global_arrs mapping, same
+         backend). Advance the bridge `steps_per` steps.
+      2. Zero cp_external_input_current, then free-run `gap_steps`
+         UN-DRIVEN steps. This gap is LOAD-BEARING: it prevents the
+         trivial "read back the concept you just drove" circularity, so
+         the subsequent read reflects the pool's order-dependent
+         integration / RESPONSE, not the clamped input. `gap_steps`
+         MUST be > 0 (enforced).
+      3. Over `decode_steps` further UN-DRIVEN steps, accumulate
+         cp_firing_states[pattern_arr].sum() per concept pattern using
+         the SAME validated per-sparse-pattern accumulation loop as
+         self_comprehend / stim_recall_sparse_rates. argmax over the
+         per-concept accumulated vector is `decoded[t]` -- the concept
+         the pool expresses after integrating slots 0..t (order-
+         dependent); its accumulated rate is `rate[t]`.
+
+    Unlike self_comprehend (a single argmax of the final integrated
+    residual, length-1, 0.5-capped under score_order), this returns an
+    ORDERED length-N decoded list so song_g1_core.score_order can reach
+    1.0 and reflect ORDER. A scrambled ignition order yields a different
+    per-slot trajectory.
+
+    LOAD-BEARING CONSTRAINT -- strictly WRITE-ONLY, identical guarantee
+    to ignite_sequence / self_comprehend:
+      * the ONLY bridge state write is cp_external_input_current (drive
+        at concept patterns + zeroing); never lang_input, never any
+        other region;
+      * cp_firing_states is READ only;
+      * registers NO RegionPathway; adds NO feedback connection;
+      * calls NO commit_engram_tag / start_engram_recording /
+        stimulate_tag;
+      * modifies NO weights / plasticity gates / tags.
+    (The v12/v13/v15 dlpfc failure: a region that fed activity back
+    broke per-concept selectivity. The G.20 substrate stays UNCHANGED.)
+
+    DRY: reuses _pattern_global_arrs (the same pool-local -> global
+    mapping ignite_sequence and self_comprehend index), and the same
+    validated accumulation loop as self_comprehend. Heavy imports are
+    lazy so the module top stays import-light.
+
+    Returns (decoded_list, rates_list) where both have length ==
+    len(concept_indices); decoded_list[t] is an int concept index and
+    rates_list[t] is a float accumulated rate.
+    """
+    if gap_steps <= 0:
+        raise ValueError(
+            "gap_steps must be > 0 (the un-driven gap is load-bearing: "
+            "it prevents the read-back-what-you-drove circularity); got "
+            "%d" % gap_steps)
+
+    import numpy as np
+
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+
+    bridge = member.bridge
+    pattern_arrs = _pattern_global_arrs(member, cp)
+    n_concepts = len(pattern_arrs)
+
+    order = list(concept_indices)
+    decoded_list = []
+    rates_list = []
+    for idx in order:
+        if idx < 0 or idx >= n_concepts:
+            raise IndexError(
+                "concept index %d out of range [0, %d)"
+                % (idx, n_concepts))
+        parr = pattern_arrs[idx]
+        # (1) write-only drive of THIS concept's pattern (ignite_sequence
+        #     inner drive idiom -- same allowed write surface)
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.cp_external_input_current[parr] = drive_pA
+        for _ in range(steps_per):
+            bridge._run_one_simulation_step()
+        # (2) un-driven gap: zero current, free-run so the read reflects
+        #     the pool's RESPONSE, not the driven input (gap_steps > 0)
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(gap_steps):
+            bridge._run_one_simulation_step()
+        # (3) un-driven decode: SAME accumulation loop as self_comprehend
+        #     (cp_firing_states READ only; no external current written)
+        rates = np.zeros(n_concepts, dtype=np.float32)
+        for _ in range(decode_steps):
+            bridge._run_one_simulation_step()
+            for j, pj in enumerate(pattern_arrs):
+                firing = bridge.cp_firing_states[pj]
+                s = firing.sum() if hasattr(firing, 'sum') else 0
+                if hasattr(s, 'item'):
+                    s = s.item()
+                rates[j] += float(s)
+        best_idx = int(np.argmax(rates))
+        decoded_list.append(best_idx)
+        rates_list.append(float(rates[best_idx]))
+
+    # optional brief settle for cleanliness (still write-only: zero only)
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(min(gap_steps, 5)):
+        bridge._run_one_simulation_step()
+
+    return (decoded_list, rates_list)
