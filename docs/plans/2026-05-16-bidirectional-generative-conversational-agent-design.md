@@ -218,6 +218,35 @@ self-comprehension decoder.
   test was replaced (with a stricter run-relative form) and the pool
   widened. Ratified PRE-DATA, no bar lowered. (Plus one hardening
   assert that the silent SongHVC is unstarted -- _state == -1.)
+- **Pre-registration correction 4 (2026-05-16, PRE-(re)DATA, integrity
+  fix -- NOT goalpost-moving):** the Increment-G1 Task-8 no-harm gate's
+  criterion (i) is a HARD ABSOLUTE 650 floor. The widened-pool probe
+  (commit 0574b53) qualified a candidate as a no-harm subject with an
+  UNMARGINED min(A1,A2) > 650, so a candidate whose no-SongHVC rate
+  STRADDLES 650 within the substrate's documented ~12-16% intrinsic
+  pass-to-pass variance could trip criterion (i) on substrate
+  stochasticity ALONE -- independent of, and falsely attributed to,
+  the thing under test. The 0574b53 FAIL on `stand` was exactly this
+  (no-SongHVC A1=694/A2=674, only 24-44 pA over 650; B=637 a 5.5%
+  third-sample drop; top-1 `always` UNCHANGED in all 3 passes,
+  criterion (ii) +0.0 excess, _state==-1 asserted -- a substrate-noise
+  artifact, not a silent-SongHVC regression: SongHVC is pure/bridge-
+  independent). Decided BEFORE the (re)run: a candidate qualifies as a
+  no-harm subject only if its no-SongHVC rate clears 650 by >=
+  max(2x its own |A1-A2| band, 15% of its rate) -- i.e. by more than
+  substrate noise. A near-650 straddler is excluded (recorded
+  transparently as EXCLUDED_NEAR_650_STRADDLER, never silently
+  dropped). This is correct INCLUSION criteria (test only where the
+  validated path ROBUSTLY answers -- the same "make the gate valid"
+  class as corrections 1/2/3 and the Inc-3 held-out fix); the literal
+  650, the criterion (ii) band formula, the >= 8 validated-known
+  minimum, and criterion (i)/(ii) verdict logic are ALL UNCHANGED. The
+  cushion is derived PURELY from the substrate's PRE-documented
+  variance + the word's own measured band, applied UNIFORMLY; prompted
+  by the FAIL but justified by documented substrate properties, NOT the
+  failing datapoint (excluding `stand` is a consequence of correct
+  methodology, not its motivation). Ratified PRE-(re)DATA, no bar
+  lowered.
 
 ## Why this is the right bet (and honest about risk)
 

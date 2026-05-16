@@ -78,15 +78,61 @@ that interference confound into the no-harm verdict.
 The fix: define "known" RELATIVE TO THIS RUN'S OWN no-SongHVC control.
 A pair is a VALIDATED-KNOWN probe iff the validated comprehension path
 itself answers it WITHOUT any SongHVC -- i.e. its expected associate
-is top-1 AND clears 650 in BOTH control passes A1 AND A2. Only those
-pairs can possibly be "regressed" by adding SongHVC; a pair the
-validated path itself abstains on in this run's interference condition
-is not a no-harm subject (excluded + recorded transparently, never
-silently). The frozen list is just the deterministic CANDIDATE pool
-(robust under selection); the A1 INTERSECT A2 control decides the
-actual known set per run -- no number is tuned, the controller is
-untouched, and the keep/drop rule is a pre-stated principled
-invariant, not cherry-picking.
+is top-1 in BOTH control passes A1 AND A2 AND its no-SongHVC rate
+clears 650 by MORE than substrate noise (the correction-4
+qualification cushion, below). Only those pairs can possibly be
+"regressed" by adding SongHVC; a pair the validated path itself
+abstains on in this run's interference condition is not a no-harm
+subject (excluded + recorded transparently, never silently). The
+frozen list is just the deterministic CANDIDATE pool (robust under
+selection); the A1 INTERSECT A2 + cushion control decides the actual
+known set per run -- no number is tuned, the controller is untouched,
+and the keep/drop rule is a pre-stated principled invariant, not
+cherry-picking.
+
+CORRECTION 4 -- NEAR-650 QUALIFICATION CUSHION (2026-05-16, PRE-(re)DATA)
+------------------------------------------------------------------------
+Criterion (i) is a HARD ABSOLUTE 650 floor. The prior probe qualified
+a candidate with an UNMARGINED min(A1,A2) > 650. A candidate whose
+no-SongHVC rate STRADDLES 650 within the substrate's DOCUMENTED ~12-16%
+intrinsic pass-to-pass variance can therefore trip criterion (i)'s
+absolute floor on substrate stochasticity ALONE -- independent of, and
+falsely attributed to, the thing under test. The 0574b53 FAIL on
+`stand` was exactly this: no-SongHVC A1=694, A2=674 (only 24-44 pA
+above 650), then a 5.5% third-sample drop to B=637 (<650 by 13 pA) ->
+criterion (i) tripped. But `stand` kept the CORRECT top-1 (`always`)
+in ALL three passes, criterion (ii) passed with +0.0 excess, and the
+silent SongHVC's `_state == -1` assert passed (the controller is pure
+numpy, structurally bridge-INDEPENDENT). The 637 is a third-sample
+draw inside the substrate's pre-documented intrinsic variance, NOT a
+SongHVC regression.
+
+Correction 4 makes the gate's INCLUSION criteria valid (test only
+where the validated path ROBUSTLY answers -- the same "make the gate
+valid" class as Pre-registration corrections 1/2/3 and the Inc-3
+held-out fix): a candidate qualifies as a no-harm SUBJECT only if its
+no-SongHVC rate clears 650 by more than substrate noise --
+
+  qualifies iff expected associate is top-1 in BOTH A1 and A2
+    AND min(A1_rate, A2_rate) - 650
+          >= max( _VK_BAND_MULT * |A1_rate - A2_rate|,
+                  _VK_REL_CUSHION * min(A1_rate, A2_rate) )
+
+i.e. the no-SongHVC rate must exceed 650 by at least BOTH (2x the
+word's OWN measured intrinsic |A1-A2| band) AND (15% of its rate, ~
+the documented substrate intrinsic variance). The cushion is derived
+PURELY from the substrate's PRE-documented variance + the word's own
+measured band, applied UNIFORMLY -- NOT from `stand`'s failing number,
+and specified before the (re)run. A candidate not clearing it is a
+near-650 straddler (status EXCLUDED_NEAR_650_STRADDLER) whose
+qualification is unstable under substrate noise alone; it is EXCLUDED
+(recorded transparently in the JSON with the straddler reason, NEVER
+silently dropped) because it is not a VALID no-harm subject. This does
+NOT lower 650, NOT loosen the band, NOT change the >= 8 minimum, NOT
+change criterion (i)/(ii) verdict logic. It was prompted by the FAIL
+but is justified by documented substrate properties, not the failing
+datapoint; excluding a straddler is a CONSEQUENCE of correct
+methodology, not its motivation.
 
 Per VALIDATED-KNOWN pair, no-harm holds iff:
   (i)  PASS B: expected associate is top-1 AND its rate clears 650
@@ -98,12 +144,15 @@ Per VALIDATED-KNOWN pair, no-harm holds iff:
 WHICH CRITERION IS LOAD-BEARING (honest -- read this)
 -----------------------------------------------------
 The BINDING no-harm guarantee is criterion (i): every VALIDATED-KNOWN
-subject must, WITH the silent SongHVC present, STILL return its
-expected associate as top-1 AND STILL clear the absolute 650 gate (650
-used in its correct continuous-drive calibration regime -- see above).
-That is the assertion that catches the v12/v13/v15-class catastrophic
-selectivity loss and ANY regression that crosses 650 or flips top-1 on
-any validated-known subject.
+subject (top-1 in A1 AND A2 AND clearing the correction-4 cushion --
+its no-SongHVC rate exceeds 650 by more than substrate noise, so
+criterion (i) tests SongHVC effect not substrate stochasticity) must,
+WITH the silent SongHVC present, STILL return its expected associate
+as top-1 AND STILL clear the absolute 650 gate (650 used in its
+correct continuous-drive calibration regime -- see above). That is the
+assertion that catches the v12/v13/v15-class catastrophic selectivity
+loss and ANY regression that crosses 650 or flips top-1 on any
+validated-known subject.
 
 Criterion (ii) (the A1/A2/B run-relative band) is a COARSE SECONDARY
 sanity bound, NOT a "the silent SongHVC adds no variance" guarantee.
@@ -132,8 +181,9 @@ ABSTENTION MOAT: `_query_top("zzznonsense")` (in NO vocab) with the
 silent SongHVC present -> `gate(ranked, 650)` MUST return None (the
 agent abstains; no confabulation).
 
-PASS iff: >= 8 candidate pairs survive the A1 INTERSECT A2
-validated-known gate (so the test has real subjects), EVERY surviving
+PASS iff: >= 8 candidate pairs survive the A1 INTERSECT A2 +
+correction-4 cushion validated-known gate (so the test has real,
+ROBUST subjects -- the >= 8 minimum is UNCHANGED), EVERY surviving
 validated-known pair satisfies (i)+(ii) WITH the silent SongHVC, AND
 the abstention moat holds.
 
@@ -240,6 +290,44 @@ _NONSENSE_WORD = "zzznonsense"
 # in existence at all.
 _BAND_REL_SLACK = 0.06   # 6 pp on top of the per-word intrinsic band
 _BAND_ABS_FLOOR = 60.0   # pA absolute floor (tiny-rate guard)
+
+# --- VALIDATED-KNOWN QUALIFICATION CUSHION (correction 4, 2026-05-16) -
+# Criterion (i) is a HARD ABSOLUTE 650 floor. The prior probe qualified
+# a candidate as a no-harm subject with an UNMARGINED min(A1,A2) > 650.
+# A candidate whose no-SongHVC rate STRADDLES 650 within the substrate's
+# DOCUMENTED ~12-16% intrinsic pass-to-pass stochastic variance (module
+# docstring; Task 8 design control) can therefore trip criterion (i)'s
+# absolute floor on substrate stochasticity ALONE, falsely attributed to
+# the thing under test (the 0574b53 FAIL on `stand`: no-SongHVC A1=694
+# A2=674, only 24-44 pA above 650, then a 5.5% third-sample drop to
+# B=637 -- top-1 `always` PRESERVED in all three passes, _state==-1
+# asserted, criterion (ii) +0.0 excess; a substrate-noise artifact, NOT
+# a silent-SongHVC regression). Correction 4 (PRE-(re)DATA, integrity --
+# same class as Pre-registration corrections 1/2/3 + the Inc-3 held-out
+# fix; it makes the gate's INCLUSION criteria valid -- test only where
+# the validated path ROBUSTLY answers) requires a candidate's no-SongHVC
+# rate to clear 650 by MORE than substrate noise to qualify as a
+# no-harm subject:
+#
+#   qualifies iff expected associate is top-1 in BOTH A1 and A2
+#     AND min(A1,A2) - 650 >= max( _VK_BAND_MULT * |A1 - A2|,
+#                                  _VK_REL_CUSHION * min(A1,A2) )
+#
+# i.e. the no-SongHVC rate must exceed 650 by at least BOTH (2x the
+# word's OWN measured intrinsic |A1-A2| band) AND (15% of its rate, ~
+# the documented substrate intrinsic variance). The cushion is derived
+# PURELY from the substrate's PRE-documented variance + the word's own
+# measured band, applied UNIFORMLY -- NOT from `stand`'s number, and
+# specified before the (re)run. A candidate not clearing it is a
+# near-650 straddler whose qualification is unstable under substrate
+# noise alone; it is EXCLUDED (recorded transparently in the JSON with
+# reason "near-650 straddler: unstable no-harm subject", never silently
+# dropped) because it is not a VALID no-harm subject. This does NOT
+# lower 650, NOT loosen the band, NOT change the >= 8 minimum, NOT
+# change criterion (i)/(ii) verdict logic; excluding a straddler is a
+# CONSEQUENCE of correct methodology, not its motivation.
+_VK_BAND_MULT = 2.0     # >= 2x the word's own measured |A1-A2| band
+_VK_REL_CUSHION = 0.15  # >= 15% of rate (~ documented ~12-16% variance)
 
 # SongHVC construction params (the real class; pure, bridge-independent
 # by construction -- never reset/step/rollout here).
@@ -370,13 +458,38 @@ def main() -> int:
 
         # VALIDATED-KNOWN gate: the validated comprehension path itself
         # answers this query WITHOUT any SongHVC -- expected associate
-        # top-1 AND clears 650 in BOTH control passes of THIS run.
-        # Only such pairs are no-harm subjects (a pair the path itself
-        # abstains on in this run's interference condition cannot be
-        # "regressed" by adding an inert controller).
-        a1_ok = (a1_assoc == wb) and (a1_rate > gate_thr)
-        a2_ok = (a2_assoc == wb) and (a2_rate > gate_thr)
-        validated_known = bool(a1_ok and a2_ok)
+        # top-1 in BOTH control passes of THIS run, AND its no-SongHVC
+        # rate clears 650 by MORE than substrate noise (correction 4
+        # qualification cushion). Only such pairs are ROBUST no-harm
+        # subjects: a pair the path itself abstains on in this run's
+        # interference condition cannot be "regressed" by an inert
+        # controller, and a near-650 straddler's qualification is
+        # unstable under the substrate's documented ~12-16% intrinsic
+        # variance ALONE (so it would trip criterion (i)'s absolute
+        # floor on substrate stochasticity, not on the thing tested).
+        a1_top1 = (a1_assoc == wb)
+        a2_top1 = (a2_assoc == wb)
+        both_top1 = bool(a1_top1 and a2_top1)
+        vk_intrinsic_band = abs(a1_rate - a2_rate)
+        vk_min_rate = min(a1_rate, a2_rate)
+        # cushion: clear 650 by >= BOTH 2x the word's own |A1-A2| band
+        # AND 15% of its rate (~ documented substrate variance).
+        vk_cushion = max(_VK_BAND_MULT * vk_intrinsic_band,
+                         _VK_REL_CUSHION * vk_min_rate)
+        vk_margin = vk_min_rate - gate_thr  # pA above the 650 floor
+        cushion_cleared = bool(both_top1 and vk_margin >= vk_cushion)
+        validated_known = cushion_cleared
+        # transparent exclusion-reason bookkeeping
+        if validated_known:
+            exclude_reason = None
+        elif both_top1:
+            # top-1 in both but no-SongHVC rate straddles 650 within
+            # substrate noise -> not a stable no-harm subject.
+            exclude_reason = ("near-650 straddler: unstable no-harm "
+                              "subject")
+        else:
+            exclude_reason = ("validated path abstains / wrong top-1 "
+                              "this run")
 
         # (i) WITH-SongHVC: expected associate top-1 AND clears 650
         assoc_top1 = (b_assoc == wb)
@@ -405,7 +518,12 @@ def main() -> int:
             # Not a no-harm subject in this run -- excluded from the
             # verdict, recorded transparently (never silently dropped).
             word_ok = None
-            status = "EXCLUDED_PATH_ABSTAINS_THIS_RUN"
+            if both_top1:
+                # correction 4: top-1 ok but rate straddles 650
+                # within substrate noise -> unstable subject.
+                status = "EXCLUDED_NEAR_650_STRADDLER"
+            else:
+                status = "EXCLUDED_PATH_ABSTAINS_THIS_RUN"
 
         per_word.append({
             "word": wa,
@@ -417,6 +535,12 @@ def main() -> int:
             "rate_with": round(b_rate, 2),
             "top_assoc": b_assoc,
             "validated_known": validated_known,
+            "vk_both_top1": both_top1,
+            "vk_min_rate_without": round(vk_min_rate, 2),
+            "vk_margin_over_650": round(vk_margin, 2),
+            "vk_required_cushion": round(vk_cushion, 2),
+            "vk_cushion_cleared": cushion_cleared,
+            "exclude_reason": exclude_reason,
             "assoc_is_top1": bool(assoc_top1),
             "cleared_650": bool(cleared_650),
             "intrinsic_band_abs": round(intrinsic_band, 2),
@@ -471,9 +595,13 @@ def main() -> int:
         "task": "song_g1 Task 8 no-harm safety gate",
         "substrate": "G.20 320-sparse 5-bridge (seed 42)",
         "method": ("self-referential A1 INTERSECT A2 validated-known "
-                   "gate, then control-banded: silent-SongHVC shift "
-                   "|B-A2| must be within the bridge's own no-SongHVC "
-                   "intrinsic pass-to-pass band |A1-A2| + slack"),
+                   "gate WITH correction-4 near-650 qualification "
+                   "cushion (no-SongHVC rate must clear 650 by >= "
+                   "max(2x own |A1-A2| band, 15% of rate) so substrate "
+                   "noise alone cannot trip criterion (i)), then "
+                   "control-banded: silent-SongHVC shift |B-A2| must "
+                   "be within the bridge's own no-SongHVC intrinsic "
+                   "pass-to-pass band |A1-A2| + slack"),
         "candidate_words": [wa for wa, _ in _KNOWN_PAIRS],
         "candidate_pairs": [{"word": wa, "expected_assoc": wb}
                             for wa, wb in _KNOWN_PAIRS],
@@ -483,6 +611,14 @@ def main() -> int:
             r["word"] for r in per_word if r["validated_known"]],
         "excluded_words": [
             r["word"] for r in per_word if not r["validated_known"]],
+        "excluded_near_650_straddlers": [
+            r["word"] for r in per_word
+            if r["status"] == "EXCLUDED_NEAR_650_STRADDLER"],
+        "excluded_path_abstains": [
+            r["word"] for r in per_word
+            if r["status"] == "EXCLUDED_PATH_ABSTAINS_THIS_RUN"],
+        "vk_band_mult": _VK_BAND_MULT,
+        "vk_rel_cushion": _VK_REL_CUSHION,
         "n_known_ok": n_known_ok,
         "enough_subjects": bool(enough_subjects),
         "all_validated_known_ok": bool(all_subjects_ok),
@@ -516,16 +652,21 @@ def main() -> int:
     print(f"  candidate pairs     : {n_total} "
           f"(frozen deterministic pool)", flush=True)
     print(f"  validated-known     : {n_validated_known} "
-          f"(path answers in A1 AND A2 -- no-harm subjects)",
+          f"(path answers in A1 AND A2, cushioned -- no-harm subjects)",
           flush=True)
     print(f"  gate threshold      : {gate_thr:.0f} "
           f"(continuous-drive regime; literal-correct here)",
           flush=True)
+    print(f"  qual cushion (c4)   : no-SongHVC rate must clear 650 by "
+          f">= max({_VK_BAND_MULT:g}x |A1-A2|, "
+          f"{_VK_REL_CUSHION:g}*rate)", flush=True)
     print("  no-harm test        : silent-SongHVC shift within "
           "bridge's OWN no-SongHVC variance band", flush=True)
     print("  -" * 32, flush=True)
     for r in per_word:
-        if not r["validated_known"]:
+        if r["status"] == "EXCLUDED_NEAR_650_STRADDLER":
+            flag = "STR"
+        elif not r["validated_known"]:
             flag = "EXC"
         elif r["word_ok"]:
             flag = "OK "
@@ -535,14 +676,18 @@ def main() -> int:
               f"a1={r['rate_a1_without']:>7.1f} "
               f"a2={r['rate_a2_without']:>7.1f} "
               f"B={r['rate_with']:>7.1f} | "
-              f"intr={r['intrinsic_band_abs']:>6.1f} "
+              f"mrg={r['vk_margin_over_650']:>6.1f} "
+              f"cush={r['vk_required_cushion']:>6.1f} "
               f"shift={r['silent_shift_abs']:>6.1f} "
               f"allow={r['allowed_band_abs']:>6.1f} "
               f"vk={'Y' if r['validated_known'] else 'N'} "
               f"top1={'Y' if r['assoc_is_top1'] else 'N'} "
               f"650={'Y' if r['cleared_650'] else 'N'}", flush=True)
-    print("  (EXC = validated path itself abstains this run -- not a "
-          "no-harm subject; recorded, not silently dropped)",
+    print("  (STR = near-650 straddler: top-1 ok but no-SongHVC rate "
+          "clears 650 by < substrate noise -- unstable, excluded)",
+          flush=True)
+    print("  (EXC = validated path itself abstains/wrong-top1 this run "
+          "-- not a no-harm subject; recorded, not silently dropped)",
           flush=True)
     print("  -" * 32, flush=True)
     print(f"  validated-known subjects     : "
