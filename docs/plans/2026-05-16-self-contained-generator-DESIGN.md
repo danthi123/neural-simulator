@@ -132,3 +132,32 @@ This design is intentionally honest about being a hard, humble,
 multi-increment research build. Its value is a genuinely
 self-contained sim that speaks its own learned language and does not
 lie — the integrity the user is explicitly buying over faked fluency.
+
+## Increment-2 approach refinement (2026-05-16) — data distillation, not logit distillation
+
+Feasibility gate: GO. Qwen2.5-0.5B-Instruct (Apache-2.0, fastest
+sensible PoC teacher, user-approved "use the fastest") fetched +
+cached locally (~988 MB); torch+CUDA on the 3090 ready;
+`transformers` present. One-time training-time fetch only.
+
+**Honest technical refinement:** the Increment-1 generator is
+CHARACTER-level (CharTokenizer, vocab ~94); the teacher is
+subword/BPE (~150K vocab). Direct next-token *logit* distillation
+across mismatched token spaces is ill-posed. The correct, cited
+method is **sequence-level / data distillation** (Kim & Rush 2016,
+"Sequence-Level Knowledge Distillation"): at TRAINING time the
+teacher generates a clean text corpus; the student trains its OWN
+char-level weights on that corpus. This:
+- sidesteps the tokenizer-space mismatch entirely,
+- keeps the rule exactly (teacher only generates training text at
+  training time; student is self-contained; teacher never in
+  runtime, never an interpreter),
+- has a clean falsifiable gate: the distilled SELF-CONTAINED student
+  (teacher absent at eval) must beat the Increment-1 no-distill
+  baseline on held-out loss/perplexity by a real margin — proving
+  the capability lives in the student's own weights.
+
+Increment 2 therefore = (a) training-time-only teacher text
+generator (Qwen, offline after the one-time fetch), (b) generate a
+distillation corpus, (c) train the Increment-1 student on it,
+(d) anti-cheat gate vs the no-distill baseline (teacher absent).
