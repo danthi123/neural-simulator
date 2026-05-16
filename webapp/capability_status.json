@@ -372,6 +372,13 @@
       "metric": "Pre-registered controlled gate FAILED: distilled vs baseline +5.2pct (needed >=10pct); distilled vs its OWN permuted control -1.1pct (did NOT beat shuffled noise). The tiny char-level spiking student does not learn real sequence structure at PoC scale regardless of corpus quality. Bottleneck is student capacity under local compute, not corpus. Gate not tuned, no fake corpus, student not config-cranked to chase a pass.",
       "doc": "2026-05-16-generator-increment2-distillation-NEGATIVE.md",
       "date": "2026-05-16"
+    },
+    {
+      "name": "Generator Inc-3 maxed-capacity scan - NEGATIVE (memorization, not structure)",
+      "status": "NEGATIVE",
+      "metric": "Pre-registered held-out gate FAILED. Maxed local char-SNN (3x512 LIF, T=96, 1,000,000-char local English, 400 epochs, ~10x Inc-1 capacity) memorized training windows (train loss 0.057) but HELD-OUT loss 21.65 -- ~5x WORSE than uniform chance (ln V 4.57) and 418pct worse than the Inc-1 tiny baseline (4.18). PERMUTED control identical (held-out 23.22); REAL only 6.75pct below it (needed >=10pct). Capacity was NOT the bottleneck -- more capacity bought more memorization, not generalization. Self-contained locally-trained fluent generation via this BPTT-SNN approach is out of reach on a single RTX 3090 under no-cheating/local-only. Anti-cheat: gate ran the pre-registered HELD-OUT metric on provably-disjoint windows (a training-loss PASS would have been a memorization artifact -- caught and corrected before claiming); a latent log-sum-exp overflow bug was root-caused and fixed en route; gate bar not tuned, config not cranked.",
+      "doc": "2026-05-16-generator-increment3-capacity-scan-NEGATIVE.md",
+      "date": "2026-05-16"
     }
   ],
   "capacity_rule": {

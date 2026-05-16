@@ -103,13 +103,28 @@ def _build_arg_parser():
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
+    # PRE-REGISTERED metric = HELD-OUT loss (Inc-3 plan Task 4). The
+    # trainer records only TRAINING loss, which both REAL and PERMUTED
+    # drive to ~0 by memorizing the 2000 fixed windows -- comparing
+    # that is a memorization artifact, not learned structure. So the
+    # gate consumes the held-out JSONs from scaled_heldout_eval. The
+    # --real-ckpt/--perm-ckpt training-loss path is kept ONLY as a
+    # clearly-labelled non-pre-registered diagnostic.
     ap.add_argument(
-        "--real-ckpt", type=str, required=True,
-        help="Checkpoint .npz produced by the REAL-corpus trainer run.")
+        "--real-heldout-json", type=str, default=None,
+        help="scaled_heldout_eval JSON for the REAL net (PRE-REGISTERED "
+             "metric). When given with --perm-heldout-json the gate "
+             "runs on held-out loss.")
     ap.add_argument(
-        "--perm-ckpt", type=str, required=True,
-        help="Checkpoint .npz produced by the trainer run with "
-             "--permute-corpus (anti-cheat control).")
+        "--perm-heldout-json", type=str, default=None,
+        help="scaled_heldout_eval JSON for the PERMUTED control.")
+    ap.add_argument(
+        "--real-ckpt", type=str, default=None,
+        help="(DIAGNOSTIC ONLY, not pre-registered) REAL trainer ckpt "
+             "-- compares TRAINING loss, a memorization artifact.")
+    ap.add_argument(
+        "--perm-ckpt", type=str, default=None,
+        help="(DIAGNOSTIC ONLY, not pre-registered) PERMUTED ckpt.")
     ap.add_argument(
         "--baseline-end", type=float, default=4.18,
         help="Inc-1 tiny-config end loss for context only "
@@ -126,37 +141,76 @@ def main():
     # instant (no numpy at module-import time).
     import json
 
-    from sim.train_checkpoint import load_checkpoint
-
     args = _build_arg_parser().parse_args()
 
-    real_ck = load_checkpoint(args.real_ckpt)
-    if real_ck is None:
-        print("ckpt not ready: %s" % args.real_ckpt)
-        return 2
-    perm_ck = load_checkpoint(args.perm_ckpt)
-    if perm_ck is None:
-        print("ckpt not ready: %s" % args.perm_ckpt)
-        return 2
-
-    real_hist = real_ck["loss_history"]
-    perm_hist = perm_ck["loss_history"]
-    if not real_hist:
-        print("ckpt not ready: %s (empty loss_history)" % args.real_ckpt)
-        return 2
-    if not perm_hist:
-        print("ckpt not ready: %s (empty loss_history)" % args.perm_ckpt)
-        return 2
-
-    v = verdict(real_hist, perm_hist, baseline_end=args.baseline_end)
+    use_heldout = bool(args.real_heldout_json and args.perm_heldout_json)
+    if use_heldout:
+        try:
+            with open(args.real_heldout_json) as fh:
+                rj = json.load(fh)
+            with open(args.perm_heldout_json) as fh:
+                pj = json.load(fh)
+        except FileNotFoundError as e:
+            print("held-out json not ready: %s" % e)
+            return 2
+        real_val = float(rj["heldout_loss"])
+        perm_val = float(pj["heldout_loss"])
+        metric = "HELD-OUT loss (pre-registered)"
+        v = verdict([real_val], [perm_val],
+                    baseline_end=args.baseline_end)
+        v["metric"] = metric
+        v["real_final_train_loss"] = rj.get("final_train_loss")
+        v["perm_final_train_loss"] = pj.get("final_train_loss")
+        v["ln_V_chance"] = rj.get("ln_V")
+        v["real_trained_epochs"] = rj.get("trained_epochs")
+        v["n_heldout"] = rj.get("n_heldout")
+    else:
+        if not (args.real_ckpt and args.perm_ckpt):
+            print("provide --real-heldout-json + --perm-heldout-json "
+                  "(pre-registered) or both --real-ckpt + --perm-ckpt "
+                  "(diagnostic).")
+            return 2
+        from sim.train_checkpoint import load_checkpoint
+        real_ck = load_checkpoint(args.real_ckpt)
+        if real_ck is None:
+            print("ckpt not ready: %s" % args.real_ckpt)
+            return 2
+        perm_ck = load_checkpoint(args.perm_ckpt)
+        if perm_ck is None:
+            print("ckpt not ready: %s" % args.perm_ckpt)
+            return 2
+        real_hist = real_ck["loss_history"]
+        perm_hist = perm_ck["loss_history"]
+        if not real_hist:
+            print("ckpt not ready: %s (empty loss_history)"
+                  % args.real_ckpt)
+            return 2
+        if not perm_hist:
+            print("ckpt not ready: %s (empty loss_history)"
+                  % args.perm_ckpt)
+            return 2
+        metric = ("TRAINING loss (DIAGNOSTIC ONLY -- not the "
+                  "pre-registered metric; memorization artifact)")
+        v = verdict(real_hist, perm_hist,
+                    baseline_end=args.baseline_end)
+        v["metric"] = metric
 
     print("=" * 64)
     print("SCALED GENERATOR CAPACITY SCAN -- honest REAL vs PERMUTED")
     print("=" * 64)
-    print("  REAL    end loss : %.4f  (epoch %d, %d epochs trained)"
-          % (v["real_end"], real_ck["epoch"], len(real_hist)))
-    print("  PERMUTED end loss: %.4f  (epoch %d, %d epochs trained)"
-          % (v["perm_end"], perm_ck["epoch"], len(perm_hist)))
+    print("  metric          : %s" % v["metric"])
+    if v.get("ln_V_chance") is not None:
+        print("  uniform chance  : %.4f  (ln V; loss >> this == worse "
+              "than guessing)" % v["ln_V_chance"])
+    if v.get("real_final_train_loss") is not None:
+        print("  TRAIN loss      : REAL %.4f | PERMUTED %.4f  "
+              "(both ~0 == memorized; context only)"
+              % (v["real_final_train_loss"],
+                 v["perm_final_train_loss"]))
+    print("  REAL     %s : %.4f" % (
+        "end loss", v["real_end"]))
+    print("  PERMUTED %s : %.4f" % (
+        "end loss", v["perm_end"]))
     print("  REAL is %.2f%% below PERMUTED control (need >= 10.00%%)"
           % v["pct_below_permuted"])
     if v.get("vs_baseline_pct") is not None:

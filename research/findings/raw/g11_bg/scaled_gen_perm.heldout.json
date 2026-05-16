@@ -1,0 +1,21 @@
+{
+  "ckpt": "research/findings/raw/g11_bg/scaled_gen_perm.ckpt.npz",
+  "permuted": true,
+  "heldout_loss": 23.218414775848387,
+  "n_heldout": 2000,
+  "n_train_samples": 2000,
+  "vocab_size": 97,
+  "ln_V": 4.574710978503383,
+  "layer_sizes": [
+    97,
+    512,
+    512,
+    512,
+    97
+  ],
+  "trained_epochs": 400,
+  "final_train_loss": 0.0677147796077113,
+  "T": 96,
+  "heldout_seed": 12345,
+  "zero_overlap_with_train": true
+}

@@ -1,0 +1,17 @@
+{
+  "real_end": 21.65167499923706,
+  "perm_end": 23.218414775848387,
+  "pct_below_permuted": 6.747832665307705,
+  "gate_threshold_fraction": 0.9,
+  "gate": false,
+  "GATE": "FAIL",
+  "gate_message": "even a maxed local char-SNN does not beat its permuted control -> self-contained local fluent generation out of reach on this hardware (honest)",
+  "baseline_end": 4.18,
+  "vs_baseline_pct": -417.9826554841402,
+  "metric": "HELD-OUT loss (pre-registered)",
+  "real_final_train_loss": 0.05656655757657943,
+  "perm_final_train_loss": 0.0677147796077113,
+  "ln_V_chance": 4.574710978503383,
+  "real_trained_epochs": 400,
+  "n_heldout": 2000
+}
