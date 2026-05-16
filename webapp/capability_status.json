@@ -295,6 +295,13 @@
       "metric": "Ensemble integration 5/5 seeds PASS (cross-bridge big #1 every seed 649-876); per-bridge 98.1% mean seed-variant (93.8-100%, 3/5 seeds @100%); same shared-seed pattern-set mechanism as 320 idx-12",
       "doc": "2026-05-16-G20-sparse-160-multiseed-VALIDATED.md",
       "date": "2026-05-16"
+    },
+    {
+      "name": "320 ensemble cross-bridge retrieval benchmark",
+      "status": "VALIDATED",
+      "metric": "26/30 = 86.7% genuine cross-bridge top-1 (anti-cheat: n_genuine==n_top1, 0 coincidental; mean signal 767; seed 42, idx-12 excluded). 4 misses = functional-bridge distractor margin cases.",
+      "doc": "2026-05-16-G20-320-xbridge-benchmark.md",
+      "date": "2026-05-16"
     }
   ],
   "capacity_rule": {
