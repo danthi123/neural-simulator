@@ -124,9 +124,42 @@ The honest engineering tradeoff for "proper vocab sizes":
   the top-1 to a strong existing per-concept associate). Binding
   strength per successful pair is unchanged.
 
-Decision input: 160 for maximum reliability (100%/160 concepts); 320
-when breadth matters more than one-shot reliability (86.7%/320
-concepts). Both are anti-cheat-validated, single-seed (42).
+## CORRECTION (multi-seed): 160 is 92.7% mean, NOT 100%
+
+The "160 = 100%" above was **seed-42 only**, and seed 42 is a known
+*clean* 160 seed (multi-seed hardening: per-bridge 100% at 42 vs
+96.9%/93.8% at 43/46). Multi-seed-ing the cross-bridge benchmark on
+the already-trained seeds 43–46 (zero retrain):
+
+| Seed | Genuine cross-bridge | Mean signal |
+|---|---|---|
+| 42 | 30/30 = 100.0% | 771 |
+| 43 | 27/30 = 90.0% | 783 |
+| 44 | 28/30 = 93.3% | 807 |
+| 45 | 27/30 = 90.0% | 856 |
+| 46 | 27/30 = 90.0% | 812 |
+| **5-seed** | **mean 92.7%, range 90.0–100.0%** | mean 806 |
+
+**Honest 160 headline: 92.7% mean genuine cross-bridge retrieval
+(5 seeds, 90–100%)** — NOT flat 100%. Seed 42 was favorable. The
+single-seed-42 100% propagated two commits earlier is hereby
+corrected (anti-overclaim discipline; documented forthrightly).
+
+Note the mean retrieval *signal* is HIGHER at 43–46 (783–856) than
+seed 42 (771): seed variance is purely in success **rate** (how many
+of 30 pairs win top-1), not binding strength. Even the worst seed is
+a robust 90%.
+
+**Caveat carried to 320:** the 320 figure (86.7%) is likewise
+**seed-42 only** (a clean seed). By the same mechanism, multi-seed
+320 cross-bridge is very likely **below 86.7%**. Multi-seed 320 is
+not measured here (would need 4×5 64-concept retrains, ~11 hr —
+out of scope; overlaps the flagged per-bridge-seed recovery task).
+Honest status: 320 cross-bridge = 86.7% **seed-42**, multi-seed TBD.
+
+Decision input (honest): 160 ≈ 92.7% mean (90–100%, 5 seeds) for
+160 concepts; 320 = 86.7% seed-42 (multi-seed likely lower) for
+320 concepts. Both anti-cheat-validated.
 
 ## Files
 
