@@ -1,12 +1,12 @@
 {
-  "as_of": "2026-05-15",
+  "as_of": "2026-05-16",
   "headline": {
-    "tier": "\ud83c\udf89\ud83c\udf89\ud83c\udf89 160-concept sparse-distributed G.20 ensemble \u2014 end-to-end SHIPPED",
-    "result": "5 sparse-distributed (Kanerva SDM) bridges x 32 concepts = 160 unique concepts, every bridge trained at 100% discrimination, loaded through a new g20_multibridge --sparse mode. End-to-end scripted demo (seed 42) PASSED with zero failures: cross-bridge associative memory (apple[nouns] is big[adj] -> querying 'apple' returns 'big' at rate 662, decisively above the ~400 noise floor, retrieved via bridgeC_adj/apple_big), exact cross-bridge tag match, N-word sentence spanning 3 bridges (dog[nouns] run[verbs] fast[adj]), and tag-name role queries (who run fast? -> dog; what did dog run? -> fast). Closes the multi-bridge scaling path the 256-concept conclusion identified: sparse @ 100%/bridge, linear in bridge count, now validated through the ensemble loader not just per-bridge.",
-    "metrics": "5 bridges all 32/32 top-1 = 100% per-bridge discrimination (multi-seed 288/288 in the capacity-curve work). Ensemble integration demo seed 42: cross-bridge retrieval signal 662 vs noise ~400; tag routing exact (A=34,B=33,C=34,D=32,E=32); role queries 100%. 16 CPU tests pin pattern-regen reproducibility; 141 G.20 + 96 contiguous-multibridge tests green (no regression).",
-    "wall_clock": "Sparse bridge train ~17 min/bridge (5 = ~85 min, GPU-vectorized prior 0.3s). End-to-end ensemble demo: ~3 min (5x bridge load + scripted ops).",
-    "finding_doc": "2026-05-15-G20-sparse-ensemble-160concept-end-to-end-SHIPPED.md",
-    "summary": "160-concept sparse-distributed conversational ensemble validated end-to-end 2026-05-15. The true Kanerva-SDM form (scattered K-of-N patterns, K=100/2000-pool) trains at 100%/bridge and the new --sparse multibridge loader makes cross-bridge memory + N-word sentences + role queries work across the 5-bridge / 160-concept ensemble. Multi-bridge is the production scaling route (linear in bridge count); 5x64=320 is the documented next tier."
+    "tier": "\ud83c\udf89\ud83c\udf89 320-concept sparse-distributed G.20 ensemble \u2014 SHIPPED (98.4% per-bridge, ensemble validated)",
+    "result": "Production scaling target reached: 5 bridges x 64 sparse-distributed concepts = 320 unique concepts. Per-bridge discrimination 98.4% (uniform 63/64 all 5 bridges; one deterministic, characterized, seed-42-pattern-specific gap at concept index 12 -- NOT vocab-dependent, NOT simple overlap). Ensemble integration validated end-to-end seed 42: cross-bridge memory (apple is big -> 'apple' returns 'big' #1 at 779 vs ~658 noise), exact tag match, and -- critically -- the +160 EXTENSION vocab works: querying new word 'horse' retrieves both sentence co-members ('run' 882, 'fast' 508) cross-bridge across 3 bridges; role queries 100%. The 160-concept tier (2026-05-15) remains 100% per-bridge; 320 trades a characterized 1.6% per-bridge gap for 2x vocab. Multi-bridge scaling route confirmed linear in bridge count.",
+    "metrics": "320 concepts, per-bridge 315/320 = 98.4% top-1 (deterministic idx-12 gap, seed-42 pattern-set artifact; idx-8/17 overlap more yet pass, so not raw overlap; cheap fix = per-bridge seeds / overlap-rejection, deferred). Ensemble demo seed 42: base + extension-vocab cross-bridge retrieval clears noise (779 vs 658; 882 vs 518); tag routing exact (A66 B65 C66 D64 E64). 41 vocab-spec tests + 16 sparse-mode tests + 141 G.20 tests green.",
+    "wall_clock": "320 chain: ~34 min/bridge x 5 = ~2.8 hr (sparse-64, 25600 events/bridge, GPU-vectorized prior 0.2s). End-to-end 320 demo ~3.5 min.",
+    "finding_doc": "2026-05-16-G20-sparse-ensemble-320concept-SHIPPED.md",
+    "summary": "320-concept sparse-distributed conversational ensemble SHIPPED 2026-05-16 (production scaling target, ~age-5 vocab breadth). 5 bridges x 64 Kanerva-SDM concepts; 98.4% per-bridge (honest: not 100% like the 32-tier -- one characterized seed-42 idx-12 gap/bridge); cross-bridge memory + N-word sentences + role queries validated incl. the +160 extension vocab. Next: per-bridge seeds / overlap-rejection to recover toward 64/64; multi-seed ensemble."
   },
   "pillars": [
     {
@@ -281,6 +281,13 @@
       "metric": "5 bridges x 32 sparse @ 100%; cross-bridge retrieval 662 vs ~400 noise; role queries 100%; seed 42",
       "doc": "2026-05-15-G20-sparse-ensemble-160concept-end-to-end-SHIPPED.md",
       "date": "2026-05-15"
+    },
+    {
+      "name": "320-concept sparse-distributed ensemble (production tier)",
+      "status": "VALIDATED",
+      "metric": "5x64 sparse; 315/320=98.4% per-bridge (deterministic idx-12 seed-42 gap); cross-bridge+sentence+extension-vocab end-to-end PASS seed 42",
+      "doc": "2026-05-16-G20-sparse-ensemble-320concept-SHIPPED.md",
+      "date": "2026-05-16"
     }
   ],
   "capacity_rule": {
@@ -369,8 +376,8 @@
     ]
   },
   "phase_status": {
-    "active": "160-concept sparse-distributed G.20 ensemble SHIPPED + end-to-end validated (seed 42). 5 bridges x 32 Kanerva-SDM concepts @ 100%/bridge; --sparse multibridge loader validated for cross-bridge memory + N-word sentences + role queries.",
-    "next": "Multi-seed ensemble integration (re-run 5-bridge chain at seeds 43-46, ~85 min/seed) then 5x64=320-concept tier (sparse validated to 64/bridge @ 100%; ~40 min/bridge train).",
+    "active": "320-concept sparse-distributed ensemble SHIPPED + validated end-to-end (seed 42). 5x64 Kanerva-SDM, 98.4% per-bridge (characterized idx-12 seed-42 gap), ensemble integration incl. +160 extension vocab confirmed. 160-tier remains 100% per-bridge.",
+    "next": "Recover 320 toward 64/64: per-bridge distinct seeds (42-46) and/or overlap-rejection in generate_sparse_patterns (re-train ~2.8 hr); then multi-seed ensemble integration. Stretch: 5x128=640 sparse (~84%/bridge).",
     "after_next": "Re-validate prior Tier 1 + Tier 2.1 + Phase 1.4 multi-seed results at STP-off + new architecture. Predicted to push numbers significantly higher.",
     "after_after": "Webapp chat UI WebSocket (1-2 day project; bridges library backend + saved-bridges tab UI shipped tonight). Cloud deploy with optimized stack (480-800x speedup multiplier on H100).",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",

@@ -1837,9 +1837,26 @@ unchanged (contiguous path preserved; 96 multibridge tests still green).
 
 **Honest scope:** per-bridge 100% is multi-seed; the *ensemble
 integration* (cross-bridge + sentences through `--sparse`) is seed-42.
-Multi-seed ensemble + 5×64=320-concept tier are the documented next
-steps. Findings:
+Findings:
 `research/findings/2026-05-15-G20-sparse-ensemble-160concept-end-to-end-SHIPPED.md`.
+
+**320-concept production tier — SHIPPED 2026-05-16 (98.4% per-bridge):**
+5 bridges × 64 sparse concepts = 320 (the documented "age-5" target).
+Per-bridge **98.4% (315/320)** — honest: NOT 100% like the 32-tier.
+One **deterministic, characterized** gap: every bridge fails at concept
+index 12 (rank 18), because all 5 train with `--seed 42` → identical
+`generate_sparse_patterns(64,2000,100,42)` set; pattern-12 fails
+identically (vocab-independent; NOT raw overlap — idx 8/17 overlap more
+yet pass). Ensemble integration validated end-to-end seed 42 incl. the
+**+160 extension vocab** (querying new word `horse` retrieves sentence
+co-members `run` 882 + `fast` 508 cross-bridge across 3 bridges).
+`g20_vocab_spec_320.py` (frozen-160 base + curated +160, global-
+uniqueness assert) + `g20_sparse_5bridge_chain_320.ps1` (**sparsity
+0.007** required: orthogonal-drive needs n_active 57 < stride
+8192/64=128; the 160 chain's 0.02 → 164 would crash every bridge).
+Cheap recovery path (deferred): per-bridge distinct seeds (42–46) /
+overlap-rejection in `generate_sparse_patterns`. Findings:
+`research/findings/2026-05-16-G20-sparse-ensemble-320concept-SHIPPED.md`.
 
 ### Path 3 Phase 3.2 (2026-05-11): LLM-memory orchestrator + chat UI (now SECONDARY)
 
