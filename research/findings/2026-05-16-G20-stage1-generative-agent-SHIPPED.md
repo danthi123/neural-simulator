@@ -92,3 +92,27 @@ the real open generative research, correctly scoped in the design.
   plan: `…-stage1-implementation.md`
 - Commits: 9b42b35, 6f053d1, b8b0900, 2a32a01 (modules), 6ea60fe
   (loop), 703853d (inter-turn-recovery fix)
+
+## Hardening addendum — remediated substrate removes the thin-margin caveat
+
+Pointing the *unchanged* Stage-1 agent at the already-validated
+remediated 320 bridges (capture-quality gate, proven ROBUST 5/5
+this session, artifact-safe — no new training) widens the recall
+margin decisively:
+
+| Turn | original substrate | remediated substrate |
+|---|---|---|
+| what is apple | big @ 719 (+69) | big @ **908 (+258)** |
+| what about it (coref) | big @ 672 (+22) | big @ **887 (+237)** |
+| is apple big | big @ 708 (+58) | big @ **894 (+244)** |
+
+(gate 650). Margin ~3.5× wider; grounded answers now sit far above
+the gate instead of on it. Transcript identical (grounded + coref +
+yes/no correct); **abstention moat intact** (`zzznonsense` → abstain).
+The honest "thin margin" caveat is **resolved** for the remediated
+substrate via a lever validated earlier the same session — not a new
+claim, a composition of two validated results. Recommended config:
+run the agent on the remediated bridges
+(`g20_generative_agent_smoke_remediated.ps1`). Unchanged ceiling:
+still a productive grammar over grounded retrieval, NOT LLM-fluent;
+still seed 42.

@@ -348,7 +348,7 @@
     {
       "name": "Stage-1 grounded generative conversational agent",
       "status": "VALIDATED",
-      "metric": "Multi-turn integration-verified: grounded retrieval + coref + yes/no + productive grammar; ABSTAINS on unknown (no confabulation, gate not lowered). big @719/672/708 vs gate650. 22/22 CPU tests. Honest: NOT LLM-fluent (productive grammar over retrieval); thin margin; needs inter-turn recovery. Seed42.",
+      "metric": "Multi-turn integration-verified; ABSTAINS on unknown (no confabulation, gate not lowered). On remediated substrate (validated artifact-safe lever, no new training): big @908/887/894 vs gate650 = ROBUST +237-258 margin (was thin +22-69 on original; caveat resolved). 22/22 CPU tests. Honest: NOT LLM-fluent (productive grammar over retrieval); seed42.",
       "doc": "2026-05-16-G20-stage1-generative-agent-SHIPPED.md",
       "date": "2026-05-16"
     }
