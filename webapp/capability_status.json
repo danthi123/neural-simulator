@@ -325,9 +325,9 @@
       "date": "2026-05-16"
     },
     {
-      "name": "Cross-benchmark failure analysis (root-cause reframe)",
+      "name": "Cross-benchmark failure analysis (INDEX-intrinsic, corrected)",
       "status": "VALIDATED",
-      "metric": "Failure is NOT pattern-overlap-predicted (10.36 vs 10.58) and NOT concept-intrinsic (only 2/59 fail in >=2 benchmarks). It is bridge-level: adj 3.1% << verbs 15% < functional 25% < spatial 30%. Bottleneck = function-word category encodability (linguistically expected), not pattern/seed defects -> tempers flagged-recovery premise.",
+      "metric": "CORRECTED: failure is INDEX-intrinsic (idx 10/42 fail >=2x; idx-12 at 64-tier) in the seed-42 pattern set, BRIDGE-AGNOSTIC (all bridges share seed-42 index-determined patterns+codes -> category effect mechanically impossible; the apparent bridge spread was small-n sampling artifact, 4-8 targets/bridge). STRENGTHENS the flagged per-seed/overlap-rejection recovery premise. Original function-word-category conclusion retracted forthrightly.",
       "doc": "2026-05-16-G20-cross-benchmark-failure-analysis.md",
       "date": "2026-05-16"
     }

@@ -1,6 +1,48 @@
-# Cross-benchmark failure analysis — the bottleneck is function-word category encodability, NOT pattern/seed defects
+# Cross-benchmark failure analysis — INDEX-intrinsic seed-42 pattern weakness (corrected)
 
-## TL;DR
+## ⚠️ CORRECTION (supersedes the original conclusion below)
+
+The original conclusion of this doc ("function-word category
+encodability is the bottleneck") was **WRONG** and is retracted.
+A deeper mechanistic check (committed same session) shows why:
+
+- `orthogonal_drive_pattern(cue_idx=i,…)` and
+  `generate_sparse_patterns(…,seed=42)` are **purely
+  index-determined**. All 5 bridges train with `--seed 42`. So a
+  concept at vocab index *k* has a **byte-identical** input code AND
+  sparse pattern in *every* bridge. The bridges are neurally
+  near-identical, differing only in word *labels* (tag names /
+  readout), which are never used in the neural encoding.
+- Therefore a real "function-word category" effect is
+  **mechanistically impossible** — there is no neural channel by
+  which "spatial" vs "adjective" words could differ.
+- Attributing failures by **index** instead of bridge: only **2
+  indices fail ≥2×** — idx 10 (`every`) 2/2, idx 42 (`touch`) 3/5.
+  The failing unit is the **INDEX**, not the word or category.
+  (Cf. idx-12 at the 64-concept tier — same phenomenon, different
+  weak position.)
+- The apparent "adj 3% ≪ spatial 30%" bridge spread is a **small-n
+  sampling artifact**: only 4–8 targets were drawn per bridge, so
+  which of the 64 indices happened to be probed per bridge dominated
+  the per-bridge rate. Not a category property.
+
+**Corrected conclusion:** failure is **index-intrinsic** — specific
+positions in the seed-42 sparse pattern set (10, 42, and 12 at the
+64-tier) are weak in a **bridge-agnostic** way. This is the *same*
+root cause as the flagged idx-12 recovery. It therefore **STRENGTHENS
+(does NOT temper) the flagged recovery's premise**: per-bridge
+distinct seeds / overlap-rejection / a different seed *is* the right
+lever, because the defect is a property of the index-determined
+pattern set, exactly what those interventions change. The original
+doc said the opposite; the original was wrong.
+
+This correction is propagated forthrightly (same intellectual-honesty
+discipline as the earlier seed-42 100%→92.7% correction). The
+original analysis is preserved below for the audit trail.
+
+---
+
+## (ORIGINAL — RETRACTED) TL;DR
 
 A recurring failure pattern appeared across every 320 benchmark.
 Cross-correlating the row-level failures of three independent
