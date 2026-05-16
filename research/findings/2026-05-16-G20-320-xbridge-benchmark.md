@@ -73,6 +73,35 @@ honest margin cases, not a mechanism failure: B still moves up
   reveals an honest 86.7% ceiling for one-shot cross-bridge binding
   at 320-concept scale.
 
+## Follow-up: reinforced encoding is NEGATIVE (one-shot is optimal)
+
+The benchmark surfaced a hypothesis: the 4 misses are *under-encoded*
+distractor cases — would repeating the cross-bridge encode lift them?
+Controlled test, **same 30 pairs, seed 42**, K=3 encode-repeats vs K=1:
+
+| | genuine | rate | mean signal |
+|---|---|---|---|
+| K=1 (one-shot) | 26/30 | **86.7%** | 767 |
+| K=3 (reinforced) | 22/30 | **73.3%** | 736 |
+
+**Reinforced encoding HURTS (−13.4pp).** K=3 recovered 1 pair
+(`hit→every`) but regressed 5 (`apple→when`, `then→each`, `that→eye`,
+`leg→cook`, `that→crawl`). Hypothesis **falsified.**
+
+Mechanism: each `encode_partial` does
+`start_engram_recording → drive → commit_engram_tag` for the SAME tag.
+Calling it 3× re-commits over a progressively-perturbed shared pool —
+the later commits record a noisier ensemble, *diluting* specificity
+rather than reinforcing it. (`that` appears in 2 regressions — a query
+word reused across pairs whose later re-encodes interfere.)
+
+**Actionable conclusion:** one-shot cross-bridge encode is the optimal
+operating point at 320 scale; naive re-commit is counterproductive
+with the current engram-tag semantics. True reinforcement would need a
+different mechanism (stronger single-shot teacher, or accumulate-
+without-recommit) — a future lever, not claimed here. Negative result,
+honestly documented.
+
 ## Files
 
 - `research/runners/g20_xbridge_benchmark.py` + `tests/test_g20_xbridge_benchmark.py`
