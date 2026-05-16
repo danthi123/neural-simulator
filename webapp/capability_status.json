@@ -360,10 +360,17 @@
       "date": "2026-05-16"
     },
     {
-      "name": "Generator Increment 1 \u2014 own seq-net learns real local text on main (foundation)",
-      "status": "VALIDATED",
-      "metric": "Phase-2 BPTT generator ported to main (28/28 tests). Anti-cheat gate PASS: REAL loss 15.0->4.44 (-70.4%) vs PERMUTED 5.70 (REAL 22.1% below) -> learns genuine structure not noise. HONEST: absolute loss only marginally below chance at tiny smoke config; FOUNDATION mechanism only -- NOT conversational/distilled/grounded. No network/LLM/templates. Self-contained.",
+      "name": "Generator Inc-1 foundation (CAVEAT: structure signal fragile / corpus-specific)",
+      "status": "BOUNDARY",
+      "metric": "Ported generator runs on main (28/28 tests). Inc-1 showed REAL 22pct below permuted on the repo corpus, BUT the Inc-2 control shows the same tiny config FAILS the permuted control on a different corpus (-1.1pct). The structure signal is corpus-specific and fragile at PoC scale, not a robust foundation. Honest correction.",
       "doc": "2026-05-16-generator-increment1-foundation.md",
+      "date": "2026-05-16"
+    },
+    {
+      "name": "Generator Inc-2 data distillation - NEGATIVE (capacity-bound)",
+      "status": "NEGATIVE",
+      "metric": "Pre-registered controlled gate FAILED: distilled vs baseline +5.2pct (needed >=10pct); distilled vs its OWN permuted control -1.1pct (did NOT beat shuffled noise). The tiny char-level spiking student does not learn real sequence structure at PoC scale regardless of corpus quality. Bottleneck is student capacity under local compute, not corpus. Gate not tuned, no fake corpus, student not config-cranked to chase a pass.",
+      "doc": "2026-05-16-generator-increment2-distillation-NEGATIVE.md",
       "date": "2026-05-16"
     }
   ],
@@ -453,8 +460,8 @@
     ]
   },
   "phase_status": {
-    "active": "Self-contained generator path, Increment 1 DONE: project Phase-2 BPTT generator ported to main + provably learns real local text (anti-cheat-gated, REAL 22.1% below permuted). Honest: foundation mechanism only, fluency low at smoke scale. Next = Increment 2 (training-time local distillation). Runtime stays 100% self-contained; templates test-only; no runtime LLM.",
-    "next": "Increment 2: local LLM distillation teacher (training-time-only one-time public-weights fetch) + KD loss; falsifiable gate = distilled SELF-CONTAINED net beats the Increment-1 no-distill baseline (teacher absent at eval). Then Increment 3: self-contained runtime + grounding/abstention.",
+    "active": "Generator path: Inc-1 foundation signal is fragile / corpus-specific (honest correction); Inc-2 data distillation NEGATIVE at PoC scale (student fails its own permuted control - not learning real structure regardless of corpus). Bottleneck is student CAPACITY under local-only compute, not corpus. The validated non-fragile asset remains the trustworthy continual MEMORY plus no-confabulation abstention; generation is unproven.",
+    "next": "Strategic user decision, not auto-pursued: does a materially larger student (more layers/hidden, subword tokenizer, many more epochs) cross the structure-learning threshold on a single 3090, or is local generation a humble dead-end? A transparently reported capacity scan is the honest next step IF the user wants to spend the compute - NOT config-cranking to chase a pass.",
     "after_next": "Re-validate prior Tier 1 + Tier 2.1 + Phase 1.4 multi-seed results at STP-off + new architecture. Predicted to push numbers significantly higher.",
     "after_after": "Webapp chat UI WebSocket (1-2 day project; bridges library backend + saved-bridges tab UI shipped tonight). Cloud deploy with optimized stack (480-800x speedup multiplier on H100).",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
