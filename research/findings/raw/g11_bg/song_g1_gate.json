@@ -1,0 +1,126 @@
+{
+  "task": "song_g1 Task 10 pre-registered held-out anti-cheat gate",
+  "substrate": "G.20 320-sparse 5-bridge",
+  "seed": 42,
+  "ckpt": "research/findings/raw/g11_bg/song_g1.ckpt.npz",
+  "sidecar": "research/findings/raw/g11_bg/song_g1.ckpt.npz.meta.json",
+  "trained_epoch": 59,
+  "g1_abstain": 72.0,
+  "g1_abstain_source": "sidecar-frozen",
+  "g1_abstain_note": "EXACTLY meta['calibration']['g1_abstain'] frozen by Step 0 at TRAIN START; NOT the literal 650 (different magnitude regime), NOT recomputed here",
+  "meta_smoke": false,
+  "operating_criterion": "control_max",
+  "calibration_auc_encoded_vs_control": 0.775,
+  "perm_n": 8,
+  "g1_margin_pct": 10.0,
+  "g1_abs_floor": 0.5,
+  "n_heldout_props": 2,
+  "n_excluded": 0,
+  "n_counted": 2,
+  "n_gate_cleared": 0,
+  "n_prop_pass": 0,
+  "all_gate_cleared": false,
+  "mean_true_score": 0.0,
+  "mean_best_perm_score": 0.0,
+  "per_prop": [
+    {
+      "intention": 4,
+      "bridge": "bridgeC_adj",
+      "concept_seq": [
+        23,
+        28
+      ],
+      "words": [
+        "old",
+        "hard"
+      ],
+      "produced": [
+        23,
+        28
+      ],
+      "decoded": [
+        41
+      ],
+      "top_rate": 54.0,
+      "gate_cleared": false,
+      "true_score": 0.0,
+      "best_perm_score": 0.0,
+      "perm_scores": [
+        0.0
+      ],
+      "n_perm_controls": 1,
+      "excluded": false,
+      "exclude_reason": null,
+      "verdict": {
+        "true_score": 0.0,
+        "best_perm_score": 0.0,
+        "pct_over_permuted": 0.0,
+        "gate_cleared": false,
+        "margin_required_pct": 10.0,
+        "abs_floor": 0.5,
+        "gate": false,
+        "GATE": "FAIL"
+      }
+    },
+    {
+      "intention": 5,
+      "bridge": "bridgeB_verbs",
+      "concept_seq": [
+        37,
+        43
+      ],
+      "words": [
+        "ride",
+        "smell"
+      ],
+      "produced": [
+        37,
+        43
+      ],
+      "decoded": [
+        8
+      ],
+      "top_rate": 70.0,
+      "gate_cleared": false,
+      "true_score": 0.0,
+      "best_perm_score": 0.0,
+      "perm_scores": [
+        0.0
+      ],
+      "n_perm_controls": 1,
+      "excluded": false,
+      "exclude_reason": null,
+      "verdict": {
+        "true_score": 0.0,
+        "best_perm_score": 0.0,
+        "pct_over_permuted": 0.0,
+        "gate_cleared": false,
+        "margin_required_pct": 10.0,
+        "abs_floor": 0.5,
+        "gate": false,
+        "GATE": "FAIL"
+      }
+    }
+  ],
+  "aggregate_verdict": {
+    "true_score": 0.0,
+    "best_perm_score": 0.0,
+    "pct_over_permuted": 0.0,
+    "gate_cleared": false,
+    "margin_required_pct": 10.0,
+    "abs_floor": 0.5,
+    "gate": false,
+    "GATE": "FAIL",
+    "n_props": 2,
+    "n_excluded": 0,
+    "n_counted": 2,
+    "n_gate_cleared": 0,
+    "n_prop_pass": 0,
+    "all_gate_cleared": false,
+    "mean_true_score": 0.0,
+    "mean_best_perm_score": 0.0,
+    "excluded_props": []
+  },
+  "GATE": "FAIL",
+  "elapsed_seconds": 94.6
+}

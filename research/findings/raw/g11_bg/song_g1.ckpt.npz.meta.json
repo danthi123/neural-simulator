@@ -1,0 +1,130 @@
+{
+  "task": "song_g1 Task 9 self-supervised training",
+  "substrate": "G.20 320-sparse 5-bridge",
+  "seed": 42,
+  "smoke": false,
+  "pair_sampler": {
+    "fn": "sample_xbridge_pairs",
+    "seed": 42,
+    "exclude_idx": 12,
+    "n_pairs_prefix": 60
+  },
+  "prop_len": 2,
+  "train_propositions": [
+    {
+      "intention": 0,
+      "bridge": "bridgeE_functional",
+      "bridge_idx": 4,
+      "concept_seq": [
+        53,
+        54
+      ],
+      "words": [
+        "only",
+        "not"
+      ],
+      "kind": "train"
+    },
+    {
+      "intention": 1,
+      "bridge": "bridgeB_verbs",
+      "bridge_idx": 1,
+      "concept_seq": [
+        50,
+        52
+      ],
+      "words": [
+        "fix",
+        "bring"
+      ],
+      "kind": "train"
+    },
+    {
+      "intention": 2,
+      "bridge": "bridgeE_functional",
+      "bridge_idx": 4,
+      "concept_seq": [
+        0,
+        3
+      ],
+      "words": [
+        "one",
+        "four"
+      ],
+      "kind": "train"
+    },
+    {
+      "intention": 3,
+      "bridge": "bridgeA_nouns",
+      "bridge_idx": 0,
+      "concept_seq": [
+        0,
+        4
+      ],
+      "words": [
+        "apple",
+        "bird"
+      ],
+      "kind": "train"
+    }
+  ],
+  "heldout_propositions": [
+    {
+      "intention": 4,
+      "bridge": "bridgeC_adj",
+      "bridge_idx": 2,
+      "concept_seq": [
+        23,
+        28
+      ],
+      "words": [
+        "old",
+        "hard"
+      ],
+      "kind": "heldout"
+    },
+    {
+      "intention": 5,
+      "bridge": "bridgeB_verbs",
+      "bridge_idx": 1,
+      "concept_seq": [
+        37,
+        43
+      ],
+      "words": [
+        "ride",
+        "smell"
+      ],
+      "kind": "heldout"
+    }
+  ],
+  "calibration": {
+    "g1_abstain": 72.0,
+    "operating_criterion": "control_max",
+    "encoded_rates": [
+      54.0,
+      54.0,
+      70.0,
+      115.0
+    ],
+    "control_rates": [
+      40.0,
+      47.0,
+      48.0,
+      50.0,
+      50.0,
+      52.0,
+      55.0,
+      59.0,
+      64.0,
+      72.0
+    ],
+    "encoded_mean": 73.25,
+    "control_mean": 53.7,
+    "control_max": 72.0,
+    "auc_encoded_vs_control": 0.775,
+    "n_encoded": 4,
+    "n_control": 10,
+    "note": "self_comprehend NO-DRIVE integrated-residual regime; NOT the literal 650 (continuous-drive regime). control-max operating point, fixed at train start, never tuned (anti-cheat: pre-registered RULE)."
+  }
+}
