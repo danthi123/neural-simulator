@@ -1,0 +1,723 @@
+# Bidirectional Generative Agent — Increment G1 Implementation Plan
+
+> **For Claude:** REQUIRED SUB-SKILL: superpowers:subagent-driven-development
+> (fresh subagent per task + spec/quality review). Design:
+> `docs/plans/2026-05-16-bidirectional-generative-conversational-agent-design.md`.
+
+**Goal:** Build the cheap-first, decisive, pre-registered falsifiable
+**G1 B-probe**: a songbird-HVC-style sequential controller (`song_hvc`)
+that, trained only by a babble -> self-comprehend -> dopamine loop,
+learns to emit a 2-3 concept *ordered* proposition that the UNMODIFIED
+validated comprehension path decodes back to the intended proposition
+above the abstention gate (650) AND >=10% better than a permuted-ORDER
+control. PASS => the songbird mechanism works on our substrate. FAIL =>
+honest negative; predictive-coding (P) is required. Either way, propagate.
+
+**Architecture:** A pure, deterministic chain controller (`sim/song_hvc.py`)
+emits per-state "ignite concept k" commands into the UNCHANGED validated
+G.20 sparse-ensemble substrate via the existing `stimulate_tag` /
+`generate_sparse_patterns` / `SharedPoolMember` reuse surface. A
+self-supervised loop re-encodes the produced ordered ignition sequence
+through the UNMODIFIED comprehension judge (`stim_recall_sparse_rates`
+readout + abstention gate) and dopamine (existing `from_reward`)
+reinforces chains whose self-comprehension matches intent. `song_hvc`
+ONLY writes drive, NEVER adds a feedback pathway into concept pools
+(the documented v12/v13/v15 dlpfc failure mode). A safety probe proves
+W->A binding + abstention moat are UNREGRESSED with `song_hvc`
+present-but-silent BEFORE any training is allowed.
+
+**Tech Stack:** numpy (pure controller + plasticity, CPU-testable),
+CuPy/`SIM_BACKEND` (bridge integration), pytest, the validated G.20
+320-sparse-bridge fixtures, `sim/train_checkpoint` (kill-safe resume).
+
+**Anti-cheat (non-negotiable):** the G1 gate bar (>=10%, gate 650,
+held-out, permuted-ORDER control) is pre-registered here and NEVER
+tuned after seeing numbers. A FAIL is a real propagated finding
+(findings doc + `capability_status.json` pillar, schema test green),
+not iterated away. The abstention gate is NEVER lowered.
+
+**Reuse (DRY — do NOT rebuild):**
+- `research/runners/abstention_gate.py`: `DEFAULT_THRESHOLD=650.0`,
+  `abstain(conf, threshold=650)->bool`, `gate(ranked, threshold)->tuple|None`
+- `research/runners/concept_pool_sparse_distributed.py:137`
+  `generate_sparse_patterns(n_concepts, n_pool, pattern_size, seed)->List[List[int]]`
+- `research/runners/shared_pool_chat.py:136`
+  `stim_recall_sparse_rates(bridge, tag_name, sparse_patterns, drive_pA=1500.0, stim_steps=100)->np.ndarray`
+- `research/runners/g20_multibridge.py:139` `SharedPoolMember(bridge_path, vocab, name, n_lang_input=8192, n_shared_pool=2000, sparse=True, pattern_size=100, ...)`;
+  `.load(seed)`, `.recall_rates(tag)->np.ndarray`, `.regen_sparse_patterns(seed)`,
+  `.vocab`, `.word_to_idx`, `.encoded_tags`, `.bridge`
+- `research/runners/g20_xbridge_benchmark.py:83`
+  `_query_top(members, word, aggregation="max")->List[(assoc,rate,tag)]`
+- `sim/bridge.py`: `stimulate_tag(name, drive_pA, additive=False)->int` (:2599),
+  `commit_engram_tag(name, top_k, region_filter)` (:2514),
+  `start_engram_recording(name)` (:2485), `clear_tag_drive(name)`,
+  `region_manager.indices("shared_concept_pool")`, `cp_firing_states`,
+  `cp_external_input_current`, `_run_one_simulation_step()`
+- `sim/train_checkpoint.py`: `save_checkpoint(path, epoch, weights, rng_state, loss_history)`,
+  `load_checkpoint(path)->dict|None`, `resume_epoch(ckpt)->int`
+- Fixtures: `research/findings/raw/g11_bg/g20_sparse_bridges_320/bridge{A_nouns,B_verbs,C_adj,D_spatial,E_functional}_sparse64.simstate.h5`
+  + `.json` (vocab); vocab spec `research/runners/g20_vocab_spec_320.py`;
+  sparse config: `pattern_size=100`, `n_shared_pool=2000`,
+  `n_lang_input=8192`, `sparsity=0.007`, `seed=42`
+
+**Conventions:** ASCII-only in every `print()` (Windows cp1252).
+Pure logic = CPU pytest. Bridge integration validated by the gate +
+the no-harm probe (project pattern; no contrived unit tests for
+orchestration). Frequent commits.
+
+---
+
+## Phase A — Pure controller + scoring core (CPU TDD)
+
+### Task 1: SongHVC chain advances deterministically
+
+**Files:**
+- Create: `sim/song_hvc.py`
+- Test: `tests/test_song_hvc.py`
+
+**Step 1: Write the failing test**
+
+```python
+import numpy as np
+from sim.song_hvc import SongHVC
+
+def test_chain_advances_one_state_per_step_and_is_deterministic():
+    c = SongHVC(n_states=6, n_concepts=8, seed=42)
+    c.reset(intention=0)
+    states = [c.step()["state"] for _ in range(6)]
+    assert states == [0, 1, 2, 3, 4, 5]          # synfire-like chain
+    # past chain end -> terminal sentinel, not crash
+    assert c.step()["state"] == -1
+    c2 = SongHVC(n_states=6, n_concepts=8, seed=42)
+    c2.reset(intention=0)
+    states2 = [c2.step()["state"] for _ in range(6)]
+    assert states2 == states                      # deterministic
+```
+
+**Step 2: Run test to verify it fails**
+
+Run: `python -m pytest tests/test_song_hvc.py::test_chain_advances_one_state_per_step_and_is_deterministic -v`
+Expected: FAIL (`ModuleNotFoundError: No module named 'sim.song_hvc'`)
+
+**Step 3: Write minimal implementation**
+
+```python
+"""song_hvc: a songbird-HVC-style sparse SEQUENTIAL CONTROLLER.
+
+Pure, deterministic, backend-agnostic (numpy). A synfire-like chain:
+exactly one state active per step (Hahnloser et al. 2002). Each state
+holds a learnable association to a concept index; the babble +
+dopamine-reinforce loop (Fee & Goldberg 2011) shapes that association.
+This module ONLY decides "ignite concept k at step t" -- it never
+touches a bridge and never feeds activity back into concept pools
+(the v12/v13/v15 dlpfc failure mode: "first, do no harm").
+"""
+from __future__ import annotations
+import numpy as np
+
+
+class SongHVC:
+    def __init__(self, n_states: int, n_concepts: int, seed: int = 42):
+        self.n_states = int(n_states)
+        self.n_concepts = int(n_concepts)
+        self.seed = int(seed)
+        rng = np.random.default_rng(seed)
+        # state -> concept association weights (the learnable map).
+        self.W = rng.normal(0.0, 0.01,
+                            (n_states, n_concepts)).astype(np.float32)
+        self._state = -1
+        self._intention = 0
+
+    def reset(self, intention: int = 0) -> None:
+        self._state = 0
+        self._intention = int(intention)
+
+    def step(self) -> dict:
+        s = self._state
+        if s < 0 or s >= self.n_states:
+            return {"state": -1, "concept": -1}
+        concept = int(np.argmax(self.W[s]))
+        self._state = s + 1
+        return {"state": s, "concept": concept}
+```
+
+**Step 4: Run test to verify it passes**
+
+Run: `python -m pytest tests/test_song_hvc.py -v`
+Expected: PASS
+
+**Step 5: Commit**
+
+```bash
+git add sim/song_hvc.py tests/test_song_hvc.py
+git commit -m "feat(song-g1): SongHVC deterministic synfire chain core"
+```
+
+---
+
+### Task 2: SongHVC rolls out an ordered concept sequence per intention
+
+**Files:**
+- Modify: `sim/song_hvc.py`
+- Test: `tests/test_song_hvc.py`
+
+**Step 1: Write the failing test**
+
+```python
+def test_rollout_returns_ordered_concept_sequence_of_length_k():
+    c = SongHVC(n_states=8, n_concepts=10, seed=1)
+    seq = c.rollout(intention=2, length=3)
+    assert isinstance(seq, list) and len(seq) == 3
+    assert all(0 <= k < 10 for k in seq)
+    # deterministic for same (intention, length, weights)
+    assert c.rollout(intention=2, length=3) == seq
+
+def test_intention_biases_first_states_so_two_intentions_can_differ():
+    c = SongHVC(n_states=8, n_concepts=10, seed=1)
+    # inject distinct intention bias, then rollouts may differ
+    c.set_intention_bias(intention=0, concept_seq=[1, 2, 3])
+    c.set_intention_bias(intention=1, concept_seq=[4, 5, 6])
+    assert c.rollout(0, 3) == [1, 2, 3]
+    assert c.rollout(1, 3) == [4, 5, 6]
+```
+
+**Step 2: Run** `python -m pytest tests/test_song_hvc.py -v` -> FAIL (`rollout`/`set_intention_bias` missing)
+
+**Step 3: Minimal implementation** — add to `SongHVC`:
+
+```python
+    def rollout(self, intention: int, length: int) -> list:
+        self.reset(intention)
+        out = []
+        for _ in range(length):
+            st = self.step()
+            if st["state"] < 0:
+                break
+            # intention bias steers which concept this state emits
+            bias = self._bias.get(
+                (intention, st["state"]), None)
+            out.append(bias if bias is not None else st["concept"])
+        return out
+
+    def set_intention_bias(self, intention: int,
+                           concept_seq: list) -> None:
+        if not hasattr(self, "_bias"):
+            self._bias = {}
+        for t, k in enumerate(concept_seq):
+            self._bias[(int(intention), t)] = int(k)
+```
+
+Add `self._bias: dict = {}` in `__init__` (so `rollout` works before
+any `set_intention_bias`).
+
+**Step 4: Run** `python -m pytest tests/test_song_hvc.py -v` -> PASS
+
+**Step 5: Commit**
+
+```bash
+git add sim/song_hvc.py tests/test_song_hvc.py
+git commit -m "feat(song-g1): intention-conditioned chain rollout"
+```
+
+---
+
+### Task 3: Babble policy (LMAN-like variability)
+
+**Files:**
+- Modify: `sim/song_hvc.py`
+- Test: `tests/test_song_hvc.py`
+
+**Step 1: Failing test**
+
+```python
+def test_babble_perturbs_one_slot_deterministically_by_rng():
+    c = SongHVC(n_states=8, n_concepts=10, seed=1)
+    base = [1, 2, 3]
+    rng = np.random.default_rng(7)
+    cand = c.babble(base, rng, temperature=1.0)
+    assert len(cand) == len(base)
+    # exactly the babble policy: at most one slot changed, in-range
+    assert sum(a != b for a, b in zip(base, cand)) <= 1
+    assert all(0 <= k < 10 for k in cand)
+    # deterministic given rng state
+    rng2 = np.random.default_rng(7)
+    assert c.babble(base, rng2, temperature=1.0) == cand
+
+def test_babble_temperature_zero_is_noop():
+    c = SongHVC(n_states=8, n_concepts=10, seed=1)
+    assert c.babble([1, 2, 3], np.random.default_rng(0),
+                    temperature=0.0) == [1, 2, 3]
+```
+
+**Step 2: Run -> FAIL** (`babble` missing)
+
+**Step 3: Minimal implementation** — add to `SongHVC`:
+
+```python
+    def babble(self, base_seq: list, rng, temperature: float) -> list:
+        """LMAN-like exploratory variability: with prob ~temperature
+        replace ONE slot's concept with a random one. Deterministic
+        given `rng`. temperature=0 -> exact replay (no exploration)."""
+        cand = list(base_seq)
+        if temperature <= 0.0 or not cand:
+            return cand
+        if rng.random() < float(temperature):
+            i = int(rng.integers(0, len(cand)))
+            cand[i] = int(rng.integers(0, self.n_concepts))
+        return cand
+```
+
+**Step 4: Run -> PASS**
+
+**Step 5: Commit**
+
+```bash
+git add sim/song_hvc.py tests/test_song_hvc.py
+git commit -m "feat(song-g1): LMAN-like babble variability policy"
+```
+
+---
+
+### Task 4: DA-gated reinforce update (three-factor)
+
+**Files:**
+- Modify: `sim/song_hvc.py`
+- Test: `tests/test_song_hvc.py`
+
+**Step 1: Failing test**
+
+```python
+def test_reinforce_strengthens_rewarded_mapping_only():
+    c = SongHVC(n_states=8, n_concepts=10, seed=1)
+    seq = [3, 5, 7]
+    w_before = c.W.copy()
+    c.reinforce(intention=0, concept_seq=seq, reward=1.0, lr=0.5)
+    # rewarded (state t -> concept seq[t]) weights increased
+    for t, k in enumerate(seq):
+        assert c.W[t, k] > w_before[t, k]
+    # zero reward -> no change
+    w_mid = c.W.copy()
+    c.reinforce(0, seq, reward=0.0, lr=0.5)
+    assert np.allclose(c.W, w_mid)
+    # after enough positive reinforcement the chain emits seq
+    for _ in range(50):
+        c.reinforce(0, seq, reward=1.0, lr=0.5)
+    assert [int(np.argmax(c.W[t])) for t in range(3)] == seq
+```
+
+**Step 2: Run -> FAIL** (`reinforce` missing)
+
+**Step 3: Minimal implementation** — add to `SongHVC`:
+
+```python
+    def reinforce(self, intention: int, concept_seq: list,
+                  reward: float, lr: float) -> None:
+        """Three-factor (eligibility x dopamine) update: reward * lr
+        added to W[state, emitted_concept] for each slot. reward<=0 ->
+        no change (DA gate). Bounded by tanh squashing to keep the
+        argmax map stable (no runaway)."""
+        r = float(reward)
+        if r <= 0.0:
+            return
+        for t, k in enumerate(concept_seq):
+            if 0 <= t < self.n_states and 0 <= k < self.n_concepts:
+                self.W[t, k] += float(lr) * r
+        np.tanh(self.W, out=self.W)
+```
+
+**Step 4: Run -> PASS**
+
+**Step 5: Commit**
+
+```bash
+git add sim/song_hvc.py tests/test_song_hvc.py
+git commit -m "feat(song-g1): DA-gated three-factor reinforce update"
+```
+
+---
+
+### Task 5: Ordered-sequence scoring + permuted-ORDER control (the anti-cheat core)
+
+**Files:**
+- Create: `research/runners/song_g1_core.py`
+- Test: `tests/test_song_g1_core.py`
+
+**Step 1: Failing test**
+
+```python
+import numpy as np
+from research.runners.song_g1_core import (
+    score_order, permuted_order_controls, compose_reward,
+)
+
+def test_score_order_identity_max_scrambled_lower():
+    assert score_order([1, 2, 3], [1, 2, 3]) == 1.0
+    assert score_order([3, 2, 1], [1, 2, 3]) < 1.0
+    # right concepts, wrong order scores strictly below identity
+    assert score_order([2, 1, 3], [1, 2, 3]) < 1.0
+    # wrong concepts entirely -> low
+    assert score_order([9, 9, 9], [1, 2, 3]) < score_order(
+        [2, 1, 3], [1, 2, 3])
+
+def test_permuted_order_controls_same_multiset_diff_order():
+    ctrls = permuted_order_controls([1, 2, 3],
+                                    np.random.default_rng(0), n=5)
+    for c in ctrls:
+        assert sorted(c) == [1, 2, 3]      # same concepts
+        assert c != [1, 2, 3]              # order scrambled
+    # deterministic given rng
+    assert permuted_order_controls(
+        [1, 2, 3], np.random.default_rng(0), n=5) == ctrls
+
+def test_compose_reward_zero_when_gate_failed():
+    # any slot below gate -> reward 0 (no-confabulation moat)
+    assert compose_reward([1, 2, 3], [1, 2, 3],
+                           gate_cleared=False) == 0.0
+    assert compose_reward([1, 2, 3], [1, 2, 3],
+                           gate_cleared=True) == 1.0
+    assert 0.0 <= compose_reward([2, 1, 3], [1, 2, 3],
+                                 gate_cleared=True) < 1.0
+```
+
+**Step 2: Run** `python -m pytest tests/test_song_g1_core.py -v` -> FAIL (module missing)
+
+**Step 3: Minimal implementation**
+
+```python
+"""G1 pure scoring / control / reward logic (CPU-testable).
+
+The permuted-ORDER control is the load-bearing anti-cheat: it has the
+SAME concept multiset, only the ORDER scrambled. A system that merely
+ignites the right concepts (no learned order) scores the true order
+~equal to permuted; only genuine order-learning beats it >=10%.
+"""
+from __future__ import annotations
+from itertools import permutations
+import numpy as np
+
+
+def score_order(decoded: list, intended: list) -> float:
+    """1.0 iff decoded == intended; partial credit = fraction of
+    positions whose concept matches the intended position. Pure,
+    deterministic, in [0, 1]."""
+    if not intended:
+        return 0.0
+    n = len(intended)
+    d = list(decoded)[:n] + [None] * max(0, n - len(decoded))
+    hits = sum(1 for i in range(n) if d[i] == intended[i])
+    return hits / float(n)
+
+
+def permuted_order_controls(intended: list, rng, n: int) -> list:
+    """Up to n distinct non-identity orderings of the SAME multiset.
+    Deterministic given rng. Exhaustive when n! is small."""
+    base = list(intended)
+    perms = [list(p) for p in set(permutations(base))
+             if list(p) != base]
+    perms.sort()
+    if not perms:
+        return []
+    idx = rng.permutation(len(perms))[:n]
+    return [perms[i] for i in sorted(idx.tolist())]
+
+
+def compose_reward(decoded: list, intended: list,
+                   gate_cleared: bool) -> float:
+    """Self-comprehension agreement -> DA reward. Gate not cleared
+    (any produced slot below the abstention gate) -> 0.0 (the
+    no-confabulation moat: never reward a confabulated/low-confidence
+    production). Else = ordered match score."""
+    if not gate_cleared:
+        return 0.0
+    return score_order(decoded, intended)
+```
+
+**Step 4: Run -> PASS**
+
+**Step 5: Commit**
+
+```bash
+git add research/runners/song_g1_core.py tests/test_song_g1_core.py
+git commit -m "feat(song-g1): ordered scoring + permuted-ORDER anti-cheat control"
+```
+
+---
+
+### Task 6: Pure G1 verdict (pre-registered gate, no IO)
+
+**Files:**
+- Modify: `research/runners/song_g1_core.py`
+- Test: `tests/test_song_g1_core.py`
+
+**Step 1: Failing test**
+
+```python
+from research.runners.song_g1_core import g1_verdict
+
+def test_g1_verdict_pass_requires_gate_and_10pct_over_permuted():
+    # true-order score must clear abstention AND beat best permuted
+    # control by >= 10% (relative). Bar is FIXED here.
+    v = g1_verdict(true_score=0.90, best_perm_score=0.50,
+                   gate_cleared=True)
+    assert v["GATE"] == "PASS" and v["pct_over_permuted"] >= 10.0
+    # gate not cleared -> FAIL regardless of score gap
+    assert g1_verdict(0.99, 0.10, gate_cleared=False)["GATE"] == "FAIL"
+    # < 10% over permuted -> FAIL (not order-learning, just concepts)
+    assert g1_verdict(0.52, 0.50, gate_cleared=True)["GATE"] == "FAIL"
+```
+
+**Step 2: Run -> FAIL** (`g1_verdict` missing)
+
+**Step 3: Minimal implementation** — add to `song_g1_core.py`:
+
+```python
+_G1_MARGIN = 0.10  # FIXED pre-registered bar; never tuned post-hoc
+
+def g1_verdict(true_score: float, best_perm_score: float,
+               gate_cleared: bool) -> dict:
+    """PASS iff the produced proposition cleared the abstention gate
+    AND its true-ORDER self-comprehension score beats the best
+    permuted-ORDER control by >= 10% (relative). FIXED bar."""
+    ts, ps = float(true_score), float(best_perm_score)
+    pct = (100.0 * (ts - ps) / ps) if ps > 0 else (
+        100.0 if ts > 0 else 0.0)
+    gate = bool(gate_cleared and ts > ps * (1.0 + _G1_MARGIN))
+    return {
+        "true_score": ts, "best_perm_score": ps,
+        "pct_over_permuted": pct, "gate_cleared": bool(gate_cleared),
+        "margin_required_pct": 100.0 * _G1_MARGIN,
+        "gate": gate, "GATE": "PASS" if gate else "FAIL",
+    }
+```
+
+**Step 4: Run -> PASS**
+
+**Step 5: Commit**
+
+```bash
+git add research/runners/song_g1_core.py tests/test_song_g1_core.py
+git commit -m "feat(song-g1): pure pre-registered G1 verdict (fixed >=10pct bar)"
+```
+
+---
+
+## Phase B — Bridge integration (validated by probe + gate; project pattern)
+
+### Task 7: Ignition + self-comprehension adapter
+
+**Files:**
+- Create: `research/runners/song_g1_ignite.py`
+- Smoke (no contrived unit test — orchestration, validated by Task 8/10):
+  `tests/test_song_g1_ignite_smoke.py` (import + signature smoke only)
+
+**Step 1: Failing smoke test**
+
+```python
+def test_ignite_module_exposes_expected_api():
+    import research.runners.song_g1_ignite as ig
+    for fn in ("load_members", "ignite_sequence",
+               "self_comprehend"):
+        assert hasattr(ig, fn), fn
+```
+
+**Step 2: Run** `python -m pytest tests/test_song_g1_ignite_smoke.py -v` -> FAIL
+
+**Step 3: Implement** `research/runners/song_g1_ignite.py`:
+
+- `load_members(seed=42) -> list[SharedPoolMember]`: build the 5
+  sparse members from the 320 fixtures (DRY — copy the loader idiom
+  from `g20_multibridge.main` / `g20_sparse_ensemble_demo`: paths
+  `research/findings/raw/g11_bg/g20_sparse_bridges_320/bridge*_sparse64.simstate.h5`,
+  vocab from `g20_vocab_spec_320`, `sparse=True`, `pattern_size=100`,
+  `n_shared_pool=2000`, `n_lang_input=8192`, `sparsity=0.007`),
+  `.load(seed)` each.
+- `ignite_sequence(member, concept_indices, drive_pA=1500, steps_per=100)`:
+  for each concept idx in order, drive that concept's sparse pattern
+  (`member.sparse_patterns[idx]` mapped through
+  `member.bridge.region_manager.indices("shared_concept_pool")`) via
+  `bridge.cp_external_input_current` for `steps_per` steps, then clear;
+  WRITE-ONLY. Never registers a pathway/region. (Mirror the inner
+  drive of `stim_recall_sparse_rates`; do NOT add feedback.)
+- `self_comprehend(member, decode_window=100) -> list[(concept_idx, rate)]`:
+  after each ignited slot, accumulate per-pattern firing exactly like
+  `stim_recall_sparse_rates` and return the argmax concept + its rate
+  per slot (the UNMODIFIED validated readout). The slot's rate is the
+  abstention-gate confidence.
+
+**Step 4: Run smoke -> PASS**
+
+**Step 5: Commit**
+
+```bash
+git add research/runners/song_g1_ignite.py tests/test_song_g1_ignite_smoke.py
+git commit -m "feat(song-g1): write-only ignition + validated self-comprehension adapter"
+```
+
+---
+
+### Task 8: "First, do no harm" regression probe (MUST pass before any training)
+
+**Files:**
+- Create: `research/runners/song_g1_noharm_probe.py`
+- Output: `research/findings/raw/g11_bg/song_g1_noharm.json`
+
+This is load-bearing: it proves `song_hvc` present-but-SILENT does NOT
+regress the validated comprehension path (the v12/v13/v15 failure
+mode). No training runs until this passes.
+
+**Step 1:** Implement probe `main()`:
+- `load_members()` (Task 7).
+- Instantiate a `SongHVC` and hold it SILENT (constructed, never
+  ignites — proves mere presence is inert; `song_hvc` is pure and
+  bridge-independent by design, so this is a structural guarantee the
+  probe documents empirically).
+- Reuse `_query_top` (UNMODIFIED) on a fixed sample of >=8 known
+  word->associate pairs from the 320 vocab; assert each top associate
+  clears `abstention_gate.DEFAULT_THRESHOLD` (650).
+- Abstention moat: query `zzznonsense` -> assert `gate(...)` returns
+  None (abstains).
+- Compare top rates to the committed baseline
+  (`g20_xbridge_benchmark` / G.20-320 findings numbers); assert no
+  rate regressed > 2% vs that baseline.
+- Write JSON `{n_known_ok, abstain_ok, max_regression_pct, PASS}`;
+  print ASCII verdict; exit 0 iff PASS else 1.
+
+**Step 2: Run**
+
+Run: `python -m research.runners.song_g1_noharm_probe`
+Expected: `PASS` (known clear 650, zzznonsense abstains, regression
+<= 2%).
+
+**Step 3: Commit**
+
+```bash
+git add research/runners/song_g1_noharm_probe.py research/findings/raw/g11_bg/song_g1_noharm.json
+git commit -m "feat(song-g1): no-harm probe (W->A binding + abstention moat unregressed)"
+```
+
+> GATE: if this probe FAILS, STOP. `song_hvc` is not inert -> fix
+> before any training. Do not proceed to Task 9.
+
+---
+
+### Task 9: Self-supervised G1 training loop (kill-safe resumable)
+
+**Files:**
+- Create: `research/runners/song_g1_train.py`
+- Checkpoint: `research/findings/raw/g11_bg/song_g1.ckpt.npz`
+
+Train `SongHVC` by babble -> self-comprehend -> DA-reinforce on a
+small set of known propositions (4-6 "A rel B" triples whose concepts
+all exist in the 320 vocab, e.g. from bridgeA/bridgeC; held-out
+propositions reserved for Task 10, NEVER trained).
+
+**Step 1:** Implement loop (DRY — reuse Task 1-7 + `sim/train_checkpoint`):
+- For each epoch, for each TRAIN proposition (intention id -> intended
+  concept idx sequence): `babble` k candidates; for each, `ignite_sequence`
+  -> `self_comprehend` -> `gate_cleared = all slot rates > 650` ->
+  `compose_reward(decoded, intended, gate_cleared)`; `reinforce` the
+  best-reward candidate (DA via existing `from_reward` neuromodulator
+  hook on the bridge if enabled; the pure `reinforce` is the chain-side
+  three-factor update). Inter-turn `--recover-steps 200` free-run
+  between ignitions (the documented adaptation-recovery remedy).
+- Per-epoch `save_checkpoint(ckpt, epoch, [c.W], rng.bit_generator.state,
+  loss_history)`; auto-resume via `load_checkpoint`/`resume_epoch`;
+  `KeyboardInterrupt -> checkpoint + exit`; print `[epoch N] mean_reward=..`
+  ASCII only.
+- Launch long runs via `run_in_background`; kill-safe (Inc-3 pattern).
+
+**Step 2: Run** a SHORT smoke (2 epochs, 2 train props):
+
+Run: `python -m research.runners.song_g1_train --epochs 2 --smoke`
+Expected: finite increasing mean_reward, `[ckpt saved]`, resumes on
+re-run (not from 0).
+
+**Step 3: Commit**
+
+```bash
+git add research/runners/song_g1_train.py
+git commit -m "feat(song-g1): kill-safe self-supervised babble->comprehend->DA loop"
+```
+
+---
+
+### Task 10: The pre-registered G1 anti-cheat gate + honest propagation
+
+**Files:**
+- Create: `research/runners/song_g1_gate.py`
+- Output: `research/findings/raw/g11_bg/song_g1_gate.json`
+- Create: `research/findings/2026-05-16-generator-G1-songbird-<PASS|NEGATIVE>.md`
+- Modify: `webapp/capability_status.json` (append G1 pillar)
+
+**Step 1:** Implement gate `main()` (reuses Task 5/6 pure logic +
+Task 7 adapter; loads trained `song_g1.ckpt.npz`):
+- For each HELD-OUT proposition (never trained): `rollout` the trained
+  chain -> `ignite_sequence` -> `self_comprehend` via the UNMODIFIED
+  path -> `gate_cleared` (every slot rate > 650, gate NEVER lowered)
+  -> `true_score = score_order(decoded, intended)`.
+- Build `permuted_order_controls(intended, rng, n)`; for each, ignite
+  in scrambled order, self-comprehend, score; `best_perm_score = max`.
+- `v = g1_verdict(true_score, best_perm_score, gate_cleared)` per
+  proposition; aggregate (mean true vs mean best-perm; PASS iff the
+  pre-registered FIXED `g1_verdict` PASSES on the aggregate).
+- Write JSON; print ASCII verdict block.
+
+**Step 2: Run**
+
+Run: `python -m research.runners.song_g1_gate --ckpt research/findings/raw/g11_bg/song_g1.ckpt.npz`
+Expected: a definitive PASS or FAIL on the FIXED bar (do not re-run
+with tweaked parameters to chase a pass — that is the cheat this
+project forbids).
+
+**Step 3: Propagate honestly (either outcome)**
+
+- Findings doc: state the pre-registered gate, the numbers, PASS or
+  honest NEGATIVE; if FAIL, conclude "controller-only insufficient ->
+  predictive-coding top-down (P) is the next increment" (do NOT tune
+  G1 to pass). Reference the design doc + scientific basis.
+- `capability_status.json`: append pillar
+  `{"name": "Generator G1 songbird B-probe - <PASS|NEGATIVE>",
+    "status": "<VALIDATED|NEGATIVE>", "metric": "...numbers...",
+    "doc": "...", "date": "2026-05-16"}`; keep `as_of` current.
+- Run: `python -m pytest tests/test_webapp_server.py -k capability_status -q`
+  Expected: PASS (schema green).
+
+**Step 4: Commit + push both remotes**
+
+```bash
+git add research/runners/song_g1_gate.py research/findings/raw/g11_bg/song_g1_gate.json research/findings/2026-05-16-generator-G1-songbird-*.md webapp/capability_status.json
+git commit -m "research(song-g1): pre-registered B-probe gate <PASS|NEGATIVE> (honest)"
+git push origin main && git push gitea main
+```
+
+---
+
+## Future increments (NOT in this plan — YAGNI; G1 decides them)
+
+- **G2:** multi-seed G1 + held-out *novel compositional* propositions
+  (never babbled) beat permuted control >=10% (generalization, not
+  memorization — the Inc-3 held-out lesson).
+- **G3:** multi-turn generated conversation with abstention moat
+  intact + CLS no-forgetting check.
+- **P (predictive-coding top-down):** built ONLY if G1 FAILs (Rao-Ballard
+  top-down generative + prediction-error pathway on the concept cortex).
+  Scoped in its own design/plan after G1's verdict.
+
+## Notes for the executor
+
+- **Anti-cheat:** the `_G1_MARGIN=0.10`, gate 650, held-out propositions,
+  and permuted-ORDER control are pre-registered. Never change them after
+  seeing results. A maxed-effort-but-FAIL is a real finding to report.
+- **First, do no harm:** Task 8 must PASS before Task 9. `song_hvc` is
+  pure/bridge-independent by construction; the probe proves it empirically.
+- **DRY:** reuse `SharedPoolMember`, `stim_recall_sparse_rates`,
+  `_query_top`, `abstention_gate`, `generate_sparse_patterns`,
+  `sim/train_checkpoint`. Do NOT reimplement recall, sparse patterns,
+  checkpointing, or the comprehension decoder.
+- **YAGNI:** no predictive coding, no new bridge regions/pathways, no
+  external LLM, no templates. G1 is controller + loop + gate only.
+- ASCII-only prints (Windows cp1252). Long GPU runs via
+  `run_in_background`, kill-safe (Inc-3 pattern).
+- Pure logic (Tasks 1-6) = CPU pytest. Bridge tasks (7-10) validated by
+  the no-harm probe + the pre-registered gate (project pattern; no
+  contrived orchestration unit tests).
