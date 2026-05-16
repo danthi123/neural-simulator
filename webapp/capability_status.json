@@ -339,10 +339,10 @@
       "date": "2026-05-16"
     },
     {
-      "name": "Stacked artifact-safe levers: +6.7pp combined (seed42)",
+      "name": "Artifact-safe levers (multi-seed refined): remediation robust, aggregation seed-variant",
       "status": "VALIDATED",
-      "metric": "2 independent post-hoc/query-time levers, NO retrain/pattern-change: under-recall remediation (+3.3pp) + samebridge_downweight aggregation (+3.3pp) => 80.0->86.7% keep-all cross-bridge (seed42, n=30, +2 pairs). perbridge_norm FALSIFIED (-16.7pp, over-corrects). Honest: wide CI at n=30; ~40% third-bridge residual unaddressed; multi-seed = dedicated session.",
-      "doc": "2026-05-16-G20-stacked-artifact-safe-levers-CLOSURE.md",
+      "metric": "Under-recall remediation: ROBUST +3.3pp (5/5 bridges, mechanism-deterministic) -> ship as default. samebridge_downweight: multi-seed (43-46) mean +2.5pp but 1/4 REGRESSED (-3.3pp seed43); SEED-VARIANT, not robust -> optional/tunable only, NOT default. perbridge_norm FALSIFIED (-16.7pp). Earlier seed-42 +6.7pp stacked down-graded honestly to ~+5pp-typical-but-variable. Multi-seed rigor caught the seed-42-favorable snapshot.",
+      "doc": "2026-05-16-G20-aggregation-lever-multiseed-REFINED.md",
       "date": "2026-05-16"
     }
   ],
@@ -432,7 +432,7 @@
     ]
   },
   "phase_status": {
-    "active": "G.20 substrate fully characterized + 2 artifact-safe levers VALIDATED stacked (+6.7pp, 80->86.7 keep-all seed42, no retrain): post-hoc capture-quality gate + query-time samebridge-downweight. perbridge_norm falsified. Residual ~40% third-bridge sub-effect + multi-seed confirmation correctly scoped for a dedicated session.",
+    "active": "G.20 fully characterized; artifact-safe levers multi-seed-refined: under-recall remediation ROBUST +3.3pp (default-ship), samebridge_downweight SEED-VARIANT ~+2.5pp (optional/tunable, can regress), perbridge_norm falsified. Honest combined ~+5pp-typical. Residual third-bridge sub-effect + lever-tuning + multi-seed-320 = dedicated session.",
     "next": "Characterization complete. Open frontiers (need dedicated sessions / human design): flagged 320 idx-12/pattern-quality recovery; multi-seed of the 320 benchmarks (retrain); generative (vs retrieval) conversation arc (brainstorming-class, not autonomous grind).",
     "after_next": "Re-validate prior Tier 1 + Tier 2.1 + Phase 1.4 multi-seed results at STP-off + new architecture. Predicted to push numbers significantly higher.",
     "after_after": "Webapp chat UI WebSocket (1-2 day project; bridges library backend + saved-bridges tab UI shipped tonight). Cloud deploy with optimized stack (480-800x speedup multiplier on H100).",
