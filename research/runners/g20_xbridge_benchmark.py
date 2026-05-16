@@ -80,24 +80,45 @@ def sample_xbridge_pairs(member_vocabs: List[List[str]],
     return pairs
 
 
-def _query_top(members: List[SharedPoolMember], word: str
+def _query_top(members: List[SharedPoolMember], word: str,
+                aggregation: str = "max",
+                samebridge_factor: float = 0.4
                 ) -> List[Tuple[str, float, str]]:
     """Replicate g20_multibridge.query_concept aggregation: search all
     bridges' tags containing `word`, recall, return ranked (assoc,
-    rate, tag) excluding `word` itself."""
-    results = []
+    rate, tag) excluding `word` itself.
+
+    `aggregation` (artifact-safe, query-time only — characterized in
+    2026-05-16-G20-distinct-submechanism-same-bridge-crosstalk):
+      - "max": raw max rate across bridges (the current/baseline).
+      - "perbridge_norm": scale each bridge's candidate rates by that
+        bridge's own max in this query (0-1) before aggregating, so a
+        high-baseline home bridge cannot win purely by magnitude.
+      - "samebridge_downweight": multiply rate by `samebridge_factor`
+        for candidates from the query word's OWN home bridge.
+    """
+    home = next((m.name for m in members
+                 if word in m.vocab_set), None)
+    results = []  # (cand, rate, tag, src_bridge)
     for m in members:
         matches = [t for t in m.encoded_tags if word in t.split("_")]
         for tag in matches:
             rates = m.recall_rates(tag)
+            mmax = float(np.max(rates)) if len(rates) else 0.0
             order = np.argsort(-rates)
             for j in order[:5]:
                 cand = m.vocab[j]
                 if cand == word:
                     continue
-                results.append((cand, float(rates[j]), tag))
+                r = float(rates[j])
+                if aggregation == "perbridge_norm":
+                    r = r / mmax if mmax > 0 else 0.0
+                elif (aggregation == "samebridge_downweight"
+                      and m.name == home):
+                    r = r * samebridge_factor
+                results.append((cand, r, tag, m.name))
     by_word: Dict[str, Tuple[str, float, str]] = {}
-    for w, r, tag in results:
+    for w, r, tag, _src in results:
         if w not in by_word or r > by_word[w][1]:
             by_word[w] = (w, r, tag)
     return sorted(by_word.values(), key=lambda x: -x[1])
@@ -121,6 +142,12 @@ def main():
                          "same --seed -> same pairs for A/B comparison)")
     p.add_argument("--exclude-idx", type=int, default=12,
                     help="drop this concept position (known bad); -1 = keep all")
+    p.add_argument("--aggregation", default="max",
+                    choices=["max", "perbridge_norm",
+                             "samebridge_downweight"],
+                    help="cross-bridge aggregation (artifact-safe, "
+                         "query-time only)")
+    p.add_argument("--samebridge-factor", type=float, default=0.4)
     p.add_argument("--out", type=str, default=None)
     args = p.parse_args()
 
@@ -150,7 +177,8 @@ def main():
     for i, (ba, wa, bb, wb) in enumerate(pairs):
         ma, mb = members[ba], members[bb]
         # PRE: B should not already be top-1 associate of A
-        pre = _query_top(members, wa)
+        pre = _query_top(members, wa, args.aggregation,
+                          args.samebridge_factor)
         pre_top = pre[0][0] if pre else None
         pre_b_rank = next((k for k, x in enumerate(pre)
                             if x[0] == wb), -1)
@@ -164,7 +192,8 @@ def main():
         if tag not in mb.encoded_tags:
             mb.encoded_tags.append(tag)
         # POST
-        post = _query_top(members, wa)
+        post = _query_top(members, wa, args.aggregation,
+                           args.samebridge_factor)
         post_top = post[0][0] if post else None
         post_b_rank = next((k for k, x in enumerate(post)
                              if x[0] == wb), -1)
