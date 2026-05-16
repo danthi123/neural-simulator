@@ -325,10 +325,10 @@
       "date": "2026-05-16"
     },
     {
-      "name": "Failure root-cause: NOT static pattern-overlap (3x-refined, NEGATIVE predictor)",
+      "name": "Failure root-cause IDENTIFIED: dynamical under-recall",
       "status": "VALIDATED",
-      "metric": "Falsifiable overlap predictor validated vs 5 known-160 seeds: FAILED (all 2 outliers; overlap anti-correlates w/ accuracy). Rules out static-geometry explanation at concept AND seed level. Overlap-rejection lever unlikely to work; seed-63 rec WITHDRAWN. Failure indices real+reproducible but DYNAMICAL (engram/STDP/recall interaction), not static. Correctly relocates the flagged-recovery open question.",
-      "doc": "2026-05-16-G20-seed-quality-predictor-NEGATIVE.md",
+      "metric": "Chain: overlap->category[retracted]->static-overlap[disconfirmed]->DYNAMICAL UNDER-RECALL [identified]. Probe: failing idx-12 self_cum 213 vs robust 1157 (5.4x weaker), self-rank 12; not capture (winner weak 385). Lever = engram-capture strength, NOT overlap-rejection/seed. Actionable artifact-SAFE fix for flagged task: post-hoc capture-quality gate (re-capture under-recalling tags w/ boosted drive). n=1 caveat.",
+      "doc": "2026-05-16-G20-dynamical-signature-UNDER-RECALL.md",
       "date": "2026-05-16"
     }
   ],
