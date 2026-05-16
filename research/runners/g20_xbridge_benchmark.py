@@ -115,6 +115,10 @@ def main():
     p.add_argument("--pattern-size", type=int, default=100)
     p.add_argument("--sparse", action="store_true")
     p.add_argument("--n-pairs", type=int, default=30)
+    p.add_argument("--encode-repeats", type=int, default=1,
+                    help="repeat the cross-bridge encode N times before "
+                         "POST (controlled one-shot-vs-reinforced test; "
+                         "same --seed -> same pairs for A/B comparison)")
     p.add_argument("--exclude-idx", type=int, default=12,
                     help="drop this concept position (known bad); -1 = keep all")
     p.add_argument("--out", type=str, default=None)
@@ -150,12 +154,13 @@ def main():
         pre_top = pre[0][0] if pre else None
         pre_b_rank = next((k for k, x in enumerate(pre)
                             if x[0] == wb), -1)
-        # ENCODE cross-bridge tag "wa_wb"
+        # ENCODE cross-bridge tag "wa_wb" (optionally reinforced N times)
         tag = f"{wa}_{wb}"
-        ma.encode_partial(wa, tag)
+        for _ in range(max(1, args.encode_repeats)):
+            ma.encode_partial(wa, tag)
+            mb.encode_partial(wb, tag)
         if tag not in ma.encoded_tags:
             ma.encoded_tags.append(tag)
-        mb.encode_partial(wb, tag)
         if tag not in mb.encoded_tags:
             mb.encoded_tags.append(tag)
         # POST
