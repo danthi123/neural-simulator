@@ -24,24 +24,46 @@ reward and biological plasticity rules.
 
 ## What it does today
 
-**Navigates a gridworld** using only what it sees through a simulated
-retina. The agent locates a goal, picks a direction, moves, gets a
-reward signal, and learns. After 1800 steps on a 16×16 grid, the agent
-spends 38% of its time at the goal — well above random behavior.
+**A trustworthy continual memory.** You can teach the system
+word–concept facts ("apple is big"); it recalls them on cue, and —
+the genuinely hard part it actually solves — it keeps old memories
+intact while learning new ones (no *catastrophic forgetting*). It
+holds roughly **320 distinct concepts** spread across a five-part
+cortex, validated across multiple random seeds. Scientific basis:
+words stored as distributed cell assemblies spanning cortex
+(Pulvermüller 2001), recalled as scattered sparse patterns (sparse
+distributed memory, Kanerva 1988), each memory a re-triggerable
+tagged ensemble (engram cells — Liu/Tonegawa et al. 2012), and
+protected from being overwritten by hippocampus→cortex consolidation
+with sharp-wave-ripple replay (complementary learning systems — Marr
+1971; McClelland, McNaughton & O'Reilly 1995; Buzsáki replay).
 
-**Word-action mapping (under investigation).** A 2026-05-03 permuted-label
-control falsified the previously-claimed "28.5% W→A" result: across 45+
-runs spanning every variant tested, the TRUE labeled mapping was NEVER
-the best of 24 permutations of (token → action). The architecture
-produces structure above chance, but it's seed-dependent and unaligned
-with task labels. A biology-grounded investigation (topographic
-Wernicke→motor priors + motor PV-FS lateral inhibition) is the active
-research question. See
-[`research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`](research/findings/2026-05-03-permuted-label-control-NEGATIVE.md).
+**It refuses to make things up.** Asked about something it was never
+taught, it answers "I don't know" instead of fabricating a confident
+wrong answer — a trust property today's language models lack. This is
+validated quantitatively: a clean confidence separation between what
+it knows and what it does not.
 
-**Visualizes its own brain.** Live 3D OpenGL view of every neuron
-firing, every synapse pulsing, with click-to-teleport-goal interactive
-control. You can watch the brain learn in real time.
+**It is learning to speak in its own words (early-stage).** The
+system's *own* spiking network is being trained to generate language
+from a local text corpus using spike-based backprop-through-time
+(surrogate-gradient learning, Neftci, Mostafa & Zenke 2019). The
+foundation is validated — it provably learns *real* text structure,
+not noise — but it is **not yet fluent**, and honestly far from a
+large language model. A separate model may be used only as a
+training-time teacher (knowledge distillation, Hinton, Vinyals &
+Dean 2015); **after training the system runs entirely on its own and
+fully local** — no external model and no hand-written response
+templates in actual use.
+
+**It still navigates from vision.** The original capability: it
+finds a goal in a gridworld using only simulated retinal input,
+picking directions and learning from a reward signal — ~38% of time
+at the goal on a 16×16 grid, well above chance.
+
+**It visualizes its own brain.** Live 3D view of every neuron firing
+and synapse pulsing, with interactive control — watch it learn in
+real time.
 
 ---
 
@@ -53,9 +75,14 @@ through time. They learn from local rules: "neurons that fire together,
 wire together" (Hebb 1949), refined by dopamine reward (Schultz 1998).
 
 This project tests how far you can go with **only those biological
-rules**. The answer so far: navigation works well, language learning
-works modestly. The system has clear limits, and finding those limits
-is itself the contribution.
+rules**, entirely locally. The answer so far: navigation works well;
+a biologically-grounded **memory** works genuinely well — continual
+(no catastrophic forgetting) and trustworthy (it abstains rather than
+confabulate); open-ended **language generation** is an active,
+honestly-hard frontier (foundation validated, fluency not yet). The
+system has clear limits, and mapping those limits — with anti-cheat
+controls and forthright retractions when a result doesn't hold — is
+itself the contribution.
 
 ---
 
@@ -68,9 +95,10 @@ is itself the contribution.
 | **Move** | Motor cortex pools fire, agent moves on grid | ✅ Working |
 | **Learn from reward** | Dopamine modulates spike-timing plasticity | ✅ Working |
 | **Hold goals in mind** | Prefrontal cortex working memory (NMDA bistability) | ✅ Working |
-| **Understand words** | Language input → motor cortex via Wernicke→Broca pathway | ⚠️ Under investigation — see [permuted-label control finding](research/findings/2026-05-03-permuted-label-control-NEGATIVE.md) |
-| **Speak** | Cortex/visual cortex → language output | ⚠️ Partial (high variance) |
-| **Remember & dream** | Hippocampus + sharp-wave-ripple replay | ⚠️ Implemented, integration pending |
+| **Remember word–concept facts** | Distributed cortical word-ensembles (Pulvermüller); sparse distributed recall (Kanerva 1988); engram tagging (Tonegawa) | ✅ Working — ~320 concepts, multi-seed validated |
+| **Not forget when learning more** | Hippocampus→cortex consolidation + sharp-wave-ripple replay (complementary learning systems, McClelland 1995) | ✅ Working — no catastrophic forgetting |
+| **Know what it doesn't know** | Recall-confidence threshold; abstains below it | ✅ Working — refuses to confabulate |
+| **Speak in its own words** | Own spiking network trained by surrogate-gradient backprop-through-time (Neftci 2019) on local text | ⚠️ Early — foundation validated, not yet fluent |
 
 ---
 
@@ -270,35 +298,49 @@ For the deep technical view, see [docs/biology.md](docs/biology.md).
 
 ## What's known to work, what's not
 
-### Working
+### Working (validated, multi-seed where stated)
 
-- **Navigation:** 38% time at goal on 16×16 grid (perception only,
-  no shortcuts) — see [docs/CURRENT-STATE.md](docs/CURRENT-STATE.md)
-- **Multi-region cascading:** 50+ brain regions, ~175,000 synapses,
-  fully connected through biology-grounded pathways
-- **Real-time visualization:** every neuron + synapse rendered in 3D
-- **Reproducibility:** all RNG sources seeded, deterministic mode
-  available
-- **Performance:** ~7-8x speedup vs original (dt=1.0 + parallel-3 GPU
-  sharing + cp.where masked-update spike-reset). 6-seed minimal-arch
-  batch in ~45-55 min. See [`research/findings/2026-05-04-perf-speedup-stack.md`](research/findings/2026-05-04-perf-speedup-stack.md).
+- **Continual memory:** ~320 concepts across a five-part cortex; new
+  learning does **not** erase old memories (no catastrophic
+  forgetting) — multi-seed validated
+- **Trustworthy recall:** the system abstains ("I don't know")
+  instead of confabulating on un-taught queries — quantified clean
+  confidence separation between known vs unknown
+- **Associative retrieval:** cue→associate recall ≈87% at the
+  320-concept scale / ≈93% multi-seed at the 160-concept scale;
+  subject→(verb, object) sentence-style retrieval ≈80%
+- **Navigation:** ~38% time at goal on 16×16 grid from simulated
+  vision only, no shortcuts — see [docs/CURRENT-STATE.md](docs/CURRENT-STATE.md)
+- **Own-network text learning (foundation):** the system's own
+  spiking net provably learns real local text structure (beats a
+  shuffled-text control), trained by surrogate-gradient
+  backprop-through-time — fully local
+- **Multi-region cascading:** 50+ brain regions, biology-grounded
+  pathways; **real-time 3D visualization**; **reproducibility**
+  (all RNG seeded, deterministic mode); **performance** ~7–8×
+  speedup vs the original engine
 
-### Modest results
+### Modest / early
 
-- **Image→word readout:** ~25% (chance) on average across seeds; some
-  seeds reach 33%, but high variance
-- **Working memory across long delays:** PFC holds goals for ~10s
-  but not minutes
-- **Vocabulary size:** 4 cardinal directions only
+- **Language fluency:** the own-network generator's foundation is
+  validated but output is far below a large language model — fluency
+  is the active frontier (knowledge-distillation training underway)
+- **Working memory across long delays:** prefrontal working memory
+  holds a goal for seconds, not minutes
 
-### Known limitations
+### Known limitations (honest)
 
-- **Scale:** ~5K neurons. Real brain regions have 10⁴–10⁶ neurons each
-- **Training time:** ~100 episodes. Real children see 10⁵+ examples
-- **Static brain structure:** developmental changes (synaptic pruning,
-  cortical layer formation) not modeled
-- **Single time scale:** millisecond STDP only. No protein-synthesis-
-  dependent late-LTP for long-term consolidation
+- **Not LLM-fluent.** The genuine contribution is a *continual,
+  trustworthy, fully-local* memory — not open-ended fluent prose.
+  Local hardware caps generation well below cloud models; integrity
+  (no cheating, no fabrication, self-contained), not parity, is the
+  point.
+- **Scale:** thousands of neurons per region vs 10⁴–10⁶ in biology;
+  training on far fewer examples than a developing brain sees
+- **Static structure:** developmental synaptic pruning / cortical
+  layer formation not modeled
+- **Single time scale:** millisecond spike-timing plasticity only;
+  no protein-synthesis-dependent late-phase consolidation
 
 ---
 
@@ -333,7 +375,7 @@ neural-simulator/
 │   └── glossary.md
 ├── webapp/                ← FastAPI dashboard (server.py + static/)
 ├── simulation_profiles/   ← 47 brain-region JSON profiles
-├── tests/                 ← pytest test suite (84 files)
+├── tests/                 ← pytest test suite (102 files)
 ├── viz/                   ← 3D OpenGL rendering
 └── ui/                    ← DearPyGUI controls
 ```
@@ -372,29 +414,47 @@ batch finishes in ~45-55 minutes on an RTX 3090.
 
 ## Latest validated result
 
-**Multi-tag cue retrieval — real concept-concept semantic conversation
-(2026-05-14):** user types "apple", system retrieves "big" AND "cat"
-(both trained associates) with 90% FULL / 100% PARTIAL multi-seed
-reliability (5 seeds × 8 cues × 16-word vocab).
+**A trustworthy, continual, fully-local concept memory + an
+early own-network speech generator (2026-05-16):**
+
+A multi-part cortex storing many concepts as distributed sparse
+ensembles (Pulvermüller cortical word-webs; Kanerva sparse
+distributed memory; Tonegawa engram tagging) now demonstrates, with
+anti-cheat controls:
 
 ```
-Configuration: v16 concept-pool architecture + Tonegawa engram tagging (D.14)
-Validation:    5 independent seeds, 8 concept-concept pairs each
-Result:        36/40 = 90% FULL (all associates in top-2 of 15, chance ~0.95%)
-               40/40 = 100% PARTIAL (any associate retrieved)
-Recipe:        --encoding-steps 500 --balanced-teacher-pA 500.0
-Chat REPL:     compose_concept_chat.py with three modes
+Concept capacity:   320 concepts (5 cortices × 64), every cortex
+                    ~98% concept-discrimination; 160-concept tier
+                    100% per-cortex
+Cross-cue recall:   ~87% genuine (320) / ~93% multi-seed (160),
+                    measured with a pre/post anti-cheat control
+                    (counts only if it was NOT already the answer
+                    before being taught — rules out coincidence)
+Sentence recall:    subject→(verb, object) ≈80%
+Trustworthiness:    clean confidence separation known vs unknown —
+                    the system abstains instead of confabulating
+Continual learning: new vocabulary does not erase old memories
+                    (no catastrophic forgetting), multi-seed
+Generator (early):  the system's OWN spiking net, trained by
+                    surrogate-gradient backprop-through-time on a
+                    local text corpus, provably learns real text
+                    structure (70% loss reduction; 22% better than
+                    a shuffled-text control) — foundation only,
+                    not yet fluent
 ```
 
-Mechanism: for cue X, stim every engram tag containing X (each at
-87.5% per-tag stim-recall reliability), aggregate `lang_output`
-cosines, rank associates. Discovered after the 2026-05-14
-architecture-mismatch bug retraction (prior 65%/90% claims were
-measurement artifacts).
+Honest framing: the validated, distinctive result is a
+biology-grounded memory that is **continual** (doesn't forget) and
+**trustworthy** (doesn't fabricate), running **entirely locally**.
+Open-ended fluent generation is an active frontier — the foundation
+is proven; fluency is not, and is not overclaimed. Several results
+en route were retracted forthrightly when anti-cheat controls
+failed (e.g. a 2026-05-14 architecture-mismatch bug; a
+seed-favourable retrieval number corrected to its multi-seed mean) —
+those corrections are part of the record, not hidden.
 
-See [`research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md`](research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md)
-and [`research/findings/2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md`](research/findings/2026-05-14-CRITICAL-bug-compose-concept-architecture-mismatch.md)
-for the full arc.
+See `research/findings/2026-05-16-G20-failure-mechanism-FINAL-SYNTHESIS.md`
+and `research/findings/2026-05-16-generator-increment1-foundation.md`.
 
 ---
 

@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-05-16 — Trustworthy continual memory + self-contained generator (Increment 1)
+
+### Distributed-sparse cortical memory (G.20), validated + characterized
+- 320-concept (5 cortices × 64) and 160-concept (5 × 32) distributed
+  sparse-ensemble memory. Cross-cue recall ~87% (320) / 92.7%
+  multi-seed (160); subject→(verb, object) sentence recall ≈80%; all
+  measured with pre/post **anti-cheat controls**. Scientific basis:
+  Pulvermüller distributed cortical word-webs, Kanerva sparse
+  distributed memory, Tonegawa engram tagging.
+- **Trustworthiness:** clean confidence separation between known and
+  unknown — the system abstains instead of confabulating.
+- **No catastrophic forgetting** (continual learning) — multi-seed;
+  complementary-learning-systems consolidation (McClelland 1995).
+- Failure mode falsification-chained to "dynamical under-recall"; an
+  artifact-safe capture-quality fix + a query-time aggregation lever
+  shipped (modest, honestly bounded). Several seed-favourable /
+  bug-artifact results **retracted forthrightly** when anti-cheat
+  controls failed — corrections are part of the record.
+
+### Self-contained generator — Increment 1 (foundation)
+- Ported the project's own surrogate-gradient backprop-through-time
+  spiking net to `main` (28/28 ported tests pass). On a zero-download
+  local English corpus it provably learns **real** sequential
+  structure (loss −70.4%, 22% below a shuffled-text control). Honest:
+  foundation only, **not yet fluent**, not conversational.
+- Design constraint (user): the system must be **entirely
+  self-contained at runtime** — no external/local LLM as speaker or
+  interpreter, no hand-written response templates in the UX. A local
+  model may be used **only** as a training-time distillation teacher.
+- Stage-1 template verbalizer reframed honestly as **test scaffold**,
+  not a conversational deliverable; its genuine value (grounded
+  recall + abstention) carries forward.
+
 ## [Unreleased] — 2026-05-11 — Path 3 Phase 3.2 SHIPPED: LLM tool-use stack end-to-end
 
 ### Path 3 Phase 3.2 — LLM orchestrator + chat surface
