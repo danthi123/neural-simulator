@@ -288,6 +288,13 @@
       "metric": "5x64 sparse; 315/320=98.4% per-bridge (deterministic idx-12 seed-42 gap); cross-bridge+sentence+extension-vocab end-to-end PASS seed 42",
       "doc": "2026-05-16-G20-sparse-ensemble-320concept-SHIPPED.md",
       "date": "2026-05-16"
+    },
+    {
+      "name": "160-concept sparse ensemble \u2014 multi-seed (42-46)",
+      "status": "VALIDATED",
+      "metric": "Ensemble integration 5/5 seeds PASS (cross-bridge big #1 every seed 649-876); per-bridge 98.1% mean seed-variant (93.8-100%, 3/5 seeds @100%); same shared-seed pattern-set mechanism as 320 idx-12",
+      "doc": "2026-05-16-G20-sparse-160-multiseed-VALIDATED.md",
+      "date": "2026-05-16"
     }
   ],
   "capacity_rule": {
@@ -376,8 +383,8 @@
     ]
   },
   "phase_status": {
-    "active": "320-concept sparse-distributed ensemble SHIPPED + validated end-to-end (seed 42). 5x64 Kanerva-SDM, 98.4% per-bridge (characterized idx-12 seed-42 gap), ensemble integration incl. +160 extension vocab confirmed. 160-tier remains 100% per-bridge.",
-    "next": "Recover 320 toward 64/64: per-bridge distinct seeds (42-46) and/or overlap-rejection in generate_sparse_patterns (re-train ~2.8 hr); then multi-seed ensemble integration. Stretch: 5x128=640 sparse (~84%/bridge).",
+    "active": "160-concept sparse ensemble INTEGRATION multi-seed VALIDATED (seeds 42-46, 5/5 PASS: cross-bridge memory + N-word sentences + role queries). Per-bridge discrimination seed-variant (mean 98.1%, 93.8-100%) -- cause: all 5 bridges share per-seed pattern set (same mechanism as 320 idx-12). 320 tier SHIPPED 98.4%/bridge end-to-end incl. extension vocab.",
+    "next": "Flagged recovery (separate task): per-bridge distinct seeds + overlap-rejection in generate_sparse_patterns -- multi-seed evidence now shows pattern-set quality (not architecture) is the lever for both the 160 seed-variance and the 320 idx-12 gap. Stretch: 5x128=640.",
     "after_next": "Re-validate prior Tier 1 + Tier 2.1 + Phase 1.4 multi-seed results at STP-off + new architecture. Predicted to push numbers significantly higher.",
     "after_after": "Webapp chat UI WebSocket (1-2 day project; bridges library backend + saved-bridges tab UI shipped tonight). Cloud deploy with optimized stack (480-800x speedup multiplier on H100).",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
