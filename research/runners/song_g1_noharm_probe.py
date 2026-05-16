@@ -94,12 +94,39 @@ Per VALIDATED-KNOWN pair, no-harm holds iff:
        an abstention / wrong answer);
   (ii) the with-vs-without shift |B - A2| is within the bridge's own
        intrinsic control band |A1 - A2| (+ documented slack/floor).
-       I.e. the silent SongHVC adds NO variance beyond what the
-       bridge already exhibits with no SongHVC at all.
+
+WHICH CRITERION IS LOAD-BEARING (honest -- read this)
+-----------------------------------------------------
+The BINDING no-harm guarantee is criterion (i): every VALIDATED-KNOWN
+subject must, WITH the silent SongHVC present, STILL return its
+expected associate as top-1 AND STILL clear the absolute 650 gate (650
+used in its correct continuous-drive calibration regime -- see above).
+That is the assertion that catches the v12/v13/v15-class catastrophic
+selectivity loss and ANY regression that crosses 650 or flips top-1 on
+any validated-known subject.
+
+Criterion (ii) (the A1/A2/B run-relative band) is a COARSE SECONDARY
+sanity bound, NOT a "the silent SongHVC adds no variance" guarantee.
+Worked out, the per-word allowance is
+  allowed = |a1 - a2| + 0.06*denom + 60.0
+i.e. the FIXED 0.06*rate + 60 floor (on rates ~600-1100 that is
+~96-126 pA) dominates over the measured intrinsic |a1 - a2| (single-
+to mid-double-digit pA on most subjects). So (ii) is effectively a
+~12-20%-of-rate bound, of which the intrinsic component is the
+minority. It would NOT detect a sub-~13% uniform shift that keeps
+every subject above 650 -- and that blindness is ACCEPTABLE: a
+never-reset/step/rollout pure-numpy SongHVC is structurally bridge-
+INDEPENDENT by construction (it shares no array, no RNG stream, no
+pathway with the bridge), so this probe empirically CORROBORATES a
+structural guarantee; it is not the sole line of defense. (ii) stays
+in the verdict as a cheap extra tripwire and a recorded sanity number,
+but the load-bearing axis -- the one a regression must violate to be
+caught -- is (i)'s absolute-650 + top-1.
 
 A pure, never-driven controller cannot perturb the bridge; this
 formalizes that as: of every query the validated path answers in
-THIS run, the silent SongHVC regresses none.
+THIS run, the silent SongHVC regresses none (criterion (i) is the
+binding test of that claim).
 
 ABSTENTION MOAT: `_query_top("zzznonsense")` (in NO vocab) with the
 silent SongHVC present -> `gate(ranked, 650)` MUST return None (the
@@ -118,13 +145,45 @@ ASCII-only output (Windows cp1252 safe).
 from __future__ import annotations
 
 # --- FROZEN deterministic CANDIDATE cross-bridge pairs (documented) --
-# Selected from sample_xbridge_pairs(
-#     [ALL_BRIDGES_64[n] for n in BRIDGE_NAMES],
-#     n_pairs=30, seed=42, exclude_idx=12) -- the validated
-# deterministic sampler -- then filtered to pairs that were robust
-# top-1 + >650 over 3 control passes during Task 8 design selection.
+# WIDENED 2026-05-16 (anti-flaky integrity fix, PRE-DATA, no bar moved):
+# the prior 12-pair pool yielded EXACTLY 8/12 validated-known on the
+# committed PASS run (4 candidates excluded because the validated path
+# itself stochastically abstained on them that run). 8 is the
+# pre-registered >= 8 minimum, so the prior pool met it by a razor-thin
+# 0-pair margin: one unlucky A1/A2 control sample on one more candidate
+# -> n=7 -> a spurious FAIL UNRELATED to any regression (which would
+# stall Task 9 or tempt a re-run-until-pass anti-cheat violation). The
+# fix is to widen the deterministic CANDIDATE pool so the >= 8 minimum
+# is cleared with comfortable margin by genuinely-robust subjects, NOT
+# by luck. The >= 8 PASS minimum itself is UNCHANGED (it is the
+# pre-registered bar); only the pool it draws from is widened. No
+# criterion logic, the literal 650, or the band formula is touched.
 #
-# This is the CANDIDATE POOL, not the final known set. Because a
+# Construction (SAME validated deterministic idiom as before, just a
+# larger n_pairs prefix): take
+#   sample_xbridge_pairs(
+#       [ALL_BRIDGES_64[n] for n in BRIDGE_NAMES],
+#       n_pairs=60, seed=42, exclude_idx=12)
+# -- the exact validated sampler the abstention / xbridge benchmarks
+# use; seed 42 unchanged; exclude_idx=12 is the documented 320-tier
+# sparse-pattern gap -- then dedup by queried word `word_a` (keep first
+# occurrence; the probe queries word_a, so a repeated word_a would just
+# re-query the same word with a different expected associate) and keep
+# the first 26 unique-word_a pairs. That deterministic prefix is a
+# strict SUPERSET of the prior pool: ALL 12 prior pairs (independently
+# rate-characterized as robust top-1 + >650 over 3 control passes
+# during the original Task 8 design selection -- their measured
+# `# min rate` provenance is preserved verbatim below) reappear at the
+# SAME (word_a -> word_b) the sampler emits, plus 14 additional
+# deterministic candidates. The 14 new candidates are sampler-derived
+# but were NOT independently rate-pre-characterized; they do not need
+# to be -- the per-run self-referential A1 INTERSECT A2 control gate
+# empirically decides VALIDATED-KNOWN membership for EVERY candidate
+# (12 prior + 14 new alike). With a robust-rich superset, > 12 of the
+# 26 are expected to clear that gate, clearing >= 8 with real margin
+# rather than by chance.
+#
+# This is still the CANDIDATE POOL, not the final known set. Because a
 # cross-bridge association's rate depends on cross-bridge encoding
 # interference (a Task 8 design finding -- see module docstring; the
 # project lesson "probes must match deployed config"), the ACTUAL
@@ -136,21 +195,37 @@ from __future__ import annotations
 # no-harm verdict without tuning any number or touching the
 # controller. The frozen list just fixes the deterministic candidate
 # pool so the probe is reproducible. (word_a queried, word_b =
-# expected encoded associate; trailing comment = min top-rate over
-# the 3 probe-condition control passes during selection).
+# expected encoded associate; "min rate N" = measured min top-rate
+# over the 3 probe-condition control passes during the original
+# selection [prior 12]; "deterministic widen" = sampler-derived
+# widening candidate, A1 n A2 control gate decides it per-run).
 _KNOWN_PAIRS = [
-    ("another", "wolf"),   # min rate 1011
-    ("ride", "false"),     # min rate  989
-    ("wet", "maybe"),      # min rate  961
-    ("find", "apple"),     # min rate  897
-    ("bag", "warm"),       # min rate  880
-    ("walk", "ok"),        # min rate  877
-    ("old", "take"),       # min rate  799
-    ("nose", "hit"),       # min rate  782
-    ("then", "each"),      # min rate  766
-    ("only", "down"),      # min rate  761
-    ("loud", "need"),      # min rate  760
-    ("if", "rich"),        # min rate  758
+    ("only", "down"),       # min rate  761
+    ("fix", "false"),       # deterministic widen
+    ("one", "touch"),       # deterministic widen
+    ("apple", "when"),      # deterministic widen
+    ("old", "take"),        # min rate  799
+    ("ride", "false"),      # min rate  989
+    ("root", "take"),       # deterministic widen
+    ("find", "apple"),      # min rate  897
+    ("loud", "need"),       # min rate  760
+    ("stand", "always"),    # deterministic widen
+    ("walk", "ok"),         # min rate  877
+    ("maybe", "last"),      # deterministic widen
+    ("then", "each"),       # min rate  766
+    ("wet", "maybe"),       # min rate  961
+    ("smell", "sweet"),     # deterministic widen
+    ("long", "bee"),        # deterministic widen
+    ("bag", "warm"),        # min rate  880
+    ("narrow", "feel"),     # deterministic widen
+    ("that", "eye"),        # deterministic widen
+    ("hit", "every"),       # deterministic widen
+    ("bad", "beyond"),      # deterministic widen
+    ("another", "wolf"),    # min rate 1011
+    ("whenever", "short"),  # deterministic widen
+    ("nose", "hit"),        # min rate  782
+    ("leg", "cook"),        # deterministic widen
+    ("if", "rich"),         # min rate  758
 ]
 
 # Word guaranteed absent from all 5 vocabs (abstention-moat probe).
@@ -260,6 +335,13 @@ def main() -> int:
     silent_song = SongHVC(n_states=_SONG_N_STATES,
                           n_concepts=_SONG_N_CONCEPTS,
                           seed=_SONG_SEED)
+    # Hard-check the recorded inertness claim instead of only
+    # documenting it: a freshly-constructed SongHVC is unstarted
+    # (_state == -1); reset()/step()/rollout() are the ONLY ways to
+    # advance it, and this probe calls none of them. Asserting here
+    # makes the JSON's internal_state_unstarted claim load-bearing.
+    assert silent_song._state == -1, \
+        "SongHVC must be unstarted/silent"
     _song_inert = {
         "type": type(silent_song).__name__,
         "module": type(silent_song).__module__,

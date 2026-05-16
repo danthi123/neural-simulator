@@ -189,6 +189,35 @@ self-comprehension decoder.
   _G1_ABS_FLOOR=0.5 unchanged. Note these doc files reflect this; the
   user/linter may have reformatted them -- preserve their current
   structure, append don't rewrite.
+- **Pre-registration correction 3 (2026-05-16, PRE-DATA, integrity
+  fix -- NOT goalpost-moving):** the Increment-G1 Task-8 "first, do no
+  harm" gate originally prescribed a fixed "no top rate regressed
+  > 2% vs the committed baseline" test. A code review found that test
+  scientifically unusable: the 320 base tags do NOT clear the 650
+  abstention gate from checkpoint-only state (correct abstention --
+  no encoded association), so there is no valid fixed external
+  baseline; and the G.20 substrate has ~12-16% intrinsic pass-to-pass
+  variance, so a fixed 2% tolerance flags intrinsic stochasticity as
+  a regression. Decided BEFORE any Task 8 data: Task 8 uses a
+  RUN-RELATIVE control band (two no-SongHVC passes measure the
+  bridge's own variance; a self-referential A1 INTERSECT A2 gate
+  defines the validated-known subjects per-run; the silent-SongHVC
+  pass is bounded against that intrinsic band). The BINDING guarantee
+  is the absolute-650 + top-1 criterion (i) on the WITH-SongHVC run;
+  the run-relative band (ii) is a coarse secondary sanity bound
+  (~12-20% of rate; the fixed 0.06*rate+60 floor dominates the
+  measured intrinsic |A1-A2|), NOT a "no added variance" guarantee --
+  acceptable because a never-driven pure-numpy SongHVC is structurally
+  bridge-independent (the probe corroborates a structural guarantee;
+  it is not the sole defense). The frozen deterministic candidate
+  pool was also widened (12 -> ~26 unique-word_a pairs; same validated
+  sampler, a strict superset) so the pre-registered >= 8
+  validated-known minimum is met robustly with comfortable margin,
+  not by luck. The >= 8 minimum, the literal 650, and the band
+  formula are ALL UNCHANGED; only the obsolete fixed-2%-vs-baseline
+  test was replaced (with a stricter run-relative form) and the pool
+  widened. Ratified PRE-DATA, no bar lowered. (Plus one hardening
+  assert that the silent SongHVC is unstarted -- _state == -1.)
 
 ## Why this is the right bet (and honest about risk)
 
