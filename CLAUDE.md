@@ -1786,6 +1786,61 @@ Findings: `research/findings/2026-05-13-concept-pool-architecture-Phase1.md`
 Diagnosis + fix: `docs/plans/2026-05-13-concept-pool-FS-design-note.md`
 Findings: `research/findings/2026-05-13-concept-pool-architecture-Phase1.md`
 
+## 🎉🎉🎉 160-concept sparse-distributed G.20 ensemble — end-to-end SHIPPED (2026-05-15)
+
+The catalog G.20 (Pulvermüller distributed cortical word ensembles)
+shared-pool architecture, in its **true Kanerva-SDM sparse form**
+(each concept = a scattered K-of-N random pattern, K=100 in a
+2000-neuron pool, NOT a contiguous slice), is the vocab-scaling unlock.
+Per-bridge: **64 concepts @ 100% discrimination, multi-seed 288/288**
+(see `2026-05-15-sparse-distributed-capacity-curve.md`). The 256-concept
+single-bridge run is **training-bound, not prior-bound** (after the
+GPU-vectorized topographic-prior fix, prior is 0.3s; training is ~6 hr)
+→ **multi-bridge is the production scaling route, linear in bridge
+count** (`2026-05-15-256-concept-training-bound-conclusion.md`).
+
+**SHIPPED + validated end-to-end 2026-05-15:** 5 sparse bridges
+(A nouns / B verbs / C adj / D spatial / E functional) × 32 concepts
+= **160 unique concepts, every bridge 100%**, loaded through a new
+`g20_multibridge --sparse` mode. Seed-42 scripted demo PASSED with
+zero failures:
+
+- Cross-bridge associative memory: `remember apple is big`
+  (apple∈nouns, big∈adj) → querying `apple` returns **big at rate
+  662**, decisively above the ~400 noise floor, via
+  `bridgeC_adj/apple_big`. This exercises the new sparse recall +
+  cross-bridge sparse engram capture + deterministic pattern regen.
+- Exact cross-bridge tag match (`is apple big?` → YES).
+- N-word sentence spanning 3 bridges (`remember dog run fast`).
+- Tag-name role queries (`who run fast?` → dog; `what did dog run?`
+  → fast) — the v16-validated 100% multi-seed mechanism,
+  architecture-independent.
+
+```bash
+# Train 5 sparse bridges (chain waits for GPU, ~17 min/bridge):
+pwsh research/runners/g20_sparse_5bridge_chain.ps1
+# End-to-end ensemble demo (loads all 5, scripted exercise):
+pwsh research/runners/g20_sparse_ensemble_demo.ps1
+# Or directly: python -m research.runners.g20_multibridge --sparse \
+#   --pattern-size 100 --n-shared-pool 2000 --n-lang-input 8192 \
+#   --sparsity 0.02 --seed 42 --bridges <5 *.simstate.h5> \
+#   --vocab-files <5 vocab.txt> --names bridgeA_nouns ... --scripted "..."
+```
+
+`--sparse` builds via `build_sparse_pool_bridge`, regenerates per-bridge
+patterns from `--seed` (verified byte-identical to training; 16 CPU
+tests pin this — a drift would silently read wrong neurons), and routes
+recall/encode through sparse analogues in `shared_pool_chat.py`. The
+sparse-vs-contiguous branch is centralized in `SharedPoolMember`
+methods so the sentence/tokenizer/hierarchy dispatch is reused
+unchanged (contiguous path preserved; 96 multibridge tests still green).
+
+**Honest scope:** per-bridge 100% is multi-seed; the *ensemble
+integration* (cross-bridge + sentences through `--sparse`) is seed-42.
+Multi-seed ensemble + 5×64=320-concept tier are the documented next
+steps. Findings:
+`research/findings/2026-05-15-G20-sparse-ensemble-160concept-end-to-end-SHIPPED.md`.
+
 ### Path 3 Phase 3.2 (2026-05-11): LLM-memory orchestrator + chat UI (now SECONDARY)
 
 ⚠️ **The Phase 3.2 stack is now framed as the SECONDARY application

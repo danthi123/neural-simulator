@@ -1,23 +1,23 @@
 {
   "as_of": "2026-05-15",
   "headline": {
-    "tier": "🎉🎉🎉 Sparse-distributed G.20: 64 concepts/bridge at 100% PASS (true Kanerva form unlocks scaling)",
-    "result": "Single-bridge architectural ceiling at 16-word vocab broken via multi-bridge ensemble. 5 v16 bridges, each owning 12 distinct concept words (sets 1-5), routed by an automatic dispatch layer. FULL 5-SEED VALIDATION (seeds 42-46) shipped 2026-05-15: 238/320 = 74.4% Phase 1 PASS rate, statistically indistinguishable from v16 baseline. 60 unique concept words operational with 11 natural-language conversational features (pair encoding, N-word sentences, negation, conjunctions, possessives, pronoun coreference, tense markers, comparisons, yes/no questions, role queries, relational queries, memory CRUD). Each bridge inherits v16's 90% multi-seed multitag validation; multi-bridge layer adds cross-set partial encoding so sentences spanning sets (e.g. 'person ate water' across set4 + set2 + set3) work transparently.",
-    "metrics": "5-seed Phase 1 PASS (sets 2-5, 80 trials/set): set2 58/80 (72.5%), set3 60/80 (75.0%), set4 60/80 (75.0%), set5 60/80 (75.0%). Combined: 238/320 (74.4%). Mean per-bridge 11.9/16 +/- 0.7. 19 robust words (PASS at all 5 seeds), 45 fragile (PASS at some), 0 fail. Range 11-14/16 per seed. Multi-bridge unit tests: 91 pass in 1.2s, CPU-only. End-to-end demo: 33 commands across all 5 bridges, all features work.",
-    "wall_clock": "Bridge train: ~18 min/bridge. 5-seed validation (4 new sets x 5 seeds = 20 trains): ~6.3 hours total. End-to-end demo runtime: ~5 min loading + ~30 sec/sentence encoding. Total bridge state: ~525 MB on disk (20 bridges + v16 baseline).",
-    "finding_doc": "2026-05-15-multibridge-5seed-FINAL.md",
-    "summary": "60-word multi-bridge conversational system FULLY VALIDATED 2026-05-15. 5 bridges x 12 distinct concept words = 60 unique vocab + 4 shared motors. 5-seed validation (seeds 42-46) shipped: 238/320 = 74.4% Phase 1 PASS rate, statistically indistinguishable from v16 baseline. 11 natural-language features layer on top: pair encoding ('apple is big'), N-word sentences ('dog ate apple'), negation ('not big' -> NOT_ prefix), conjunctions ('a and b' -> chain), possessives (X's Y -> Y_of_X), pronoun coreference (it/he/she/they -> last subject), tense (PAST/FUTURE prefix + past-form normalization), comparisons (X is bigger than Y), yes/no questions (YES/NO with opposite-truth detection / UNKNOWN), role queries (who/what did, handles tense), relational queries (color of X), memory CRUD (about, forget, save). All features validated end-to-end on seed 42 demo with 91 unit tests covering parsing logic + cross-bridge routing. The user's goal of full conversational functionality is achieved at 60 unique concept words across 5 v16 bridges with biology-grounded engram-tag retrieval (catalog D.14)."
+    "tier": "\ud83c\udf89\ud83c\udf89\ud83c\udf89 160-concept sparse-distributed G.20 ensemble \u2014 end-to-end SHIPPED",
+    "result": "5 sparse-distributed (Kanerva SDM) bridges x 32 concepts = 160 unique concepts, every bridge trained at 100% discrimination, loaded through a new g20_multibridge --sparse mode. End-to-end scripted demo (seed 42) PASSED with zero failures: cross-bridge associative memory (apple[nouns] is big[adj] -> querying 'apple' returns 'big' at rate 662, decisively above the ~400 noise floor, retrieved via bridgeC_adj/apple_big), exact cross-bridge tag match, N-word sentence spanning 3 bridges (dog[nouns] run[verbs] fast[adj]), and tag-name role queries (who run fast? -> dog; what did dog run? -> fast). Closes the multi-bridge scaling path the 256-concept conclusion identified: sparse @ 100%/bridge, linear in bridge count, now validated through the ensemble loader not just per-bridge.",
+    "metrics": "5 bridges all 32/32 top-1 = 100% per-bridge discrimination (multi-seed 288/288 in the capacity-curve work). Ensemble integration demo seed 42: cross-bridge retrieval signal 662 vs noise ~400; tag routing exact (A=34,B=33,C=34,D=32,E=32); role queries 100%. 16 CPU tests pin pattern-regen reproducibility; 141 G.20 + 96 contiguous-multibridge tests green (no regression).",
+    "wall_clock": "Sparse bridge train ~17 min/bridge (5 = ~85 min, GPU-vectorized prior 0.3s). End-to-end ensemble demo: ~3 min (5x bridge load + scripted ops).",
+    "finding_doc": "2026-05-15-G20-sparse-ensemble-160concept-end-to-end-SHIPPED.md",
+    "summary": "160-concept sparse-distributed conversational ensemble validated end-to-end 2026-05-15. The true Kanerva-SDM form (scattered K-of-N patterns, K=100/2000-pool) trains at 100%/bridge and the new --sparse multibridge loader makes cross-bridge memory + N-word sentences + role queries work across the 5-bridge / 160-concept ensemble. Multi-bridge is the production scaling route (linear in bridge count); 5x64=320 is the documented next tier."
   },
   "pillars": [
     {
-      "name": "🎉🎉🎉 Sparse-distributed G.20 64-concept at 100% PASS (true Kanerva form, 2026-05-15)",
+      "name": "\u00f0\u0178\u017d\u2030\u00f0\u0178\u017d\u2030\u00f0\u0178\u017d\u2030 Sparse-distributed G.20 64-concept at 100% PASS (true Kanerva form, 2026-05-15)",
       "status": "VALIDATED",
       "metric": "After contiguous-slice 60-concept hit a wall at 78.3% top-1, pivoted to TRUE Kanerva-style sparse-distributed encoding (random sparse patterns, not contiguous blocks). Result: 64/64 (100%) top-1, 64/64 (100%) top-5 at seed 42 in 2000-neuron pool with 100-neuron sparse patterns. MORE concepts (64 vs 60), LESS substrate (2000 vs 3200), PERFECT discrimination (vs 78.3% / 96.7%). Architecture pivot validated. The contiguous-slice approximation was the bottleneck at 60+; sparse-distributed unlocks linear scaling. Capacity implications: 5-bridge sparse-distributed at 64/bridge = 320 concepts (vs current 160); at 128/bridge (testing) = 640 concepts. Combined with expanded morpheme dict (~10x reach): 3200-6400 surface forms = mid-child to early-adult vocabulary range. Catalog G.20 (Pulvermuller distributed cortical word ensembles): 'SAME NEURONS PARTICIPATE' specification now properly implemented via overlapping random patterns.",
       "doc": "2026-05-15-sparse-distributed-BREAKTHROUGH.md",
       "date": "2026-05-15"
     },
     {
-      "name": "🎉🎉 G.20 contiguous-slice 160-concept ensemble at 100% PASS (5 bridges, 2026-05-15)",
+      "name": "\u00f0\u0178\u017d\u2030\u00f0\u0178\u017d\u2030 G.20 contiguous-slice 160-concept ensemble at 100% PASS (5 bridges, 2026-05-15)",
       "status": "VALIDATED",
       "metric": "Teacher-bias capture method achieves 100% top-1 PASS across all 5 contiguous-slice bridges at 32 concepts each (160 total). Production-tested. Sparse-distributed prototype now beats this with 64 concepts in single bridge, but the 5-bridge contiguous ensemble remains a validated production artifact.",
       "doc": "2026-05-15-G20-100-percent-PASS-teacher-bias.md",
@@ -26,7 +26,7 @@
     {
       "name": "60-word multi-bridge ensemble + 11 conversational features (5-seed VALIDATED 2026-05-15)",
       "status": "VALIDATED",
-      "metric": "5 v16 bridges (set1-5) each owning 12 distinct concept words, routed by dispatch layer. FULL 5-SEED VALIDATION (seeds 42-46) for 4 new sets: 238/320 = 74.4% combined Phase 1 PASS rate, mean per-bridge 11.9/16 ± 0.7 -- statistically indistinguishable from v16 baseline (12.4/16 ± 1.52). 19 robust words (PASS at ALL 5 seeds), 45 fragile, 0 fail. End-to-end demo validates 11 features: pair encoding, N-word sentences, negation, conjunctions, possessives, pronoun coreference, tense (PAST/FUTURE), comparisons, yes/no, role queries, relational queries, memory CRUD. 91 unit tests pass (1.2s CPU). Total bridge state: 5 seeds * 4 sets * 25MB + 1 set1 = ~525 MB. Per-seed wall clock ~72 min for 4 new sets. Full 5-seed wall clock: ~6.3 hours total.",
+      "metric": "5 v16 bridges (set1-5) each owning 12 distinct concept words, routed by dispatch layer. FULL 5-SEED VALIDATION (seeds 42-46) for 4 new sets: 238/320 = 74.4% combined Phase 1 PASS rate, mean per-bridge 11.9/16 \u00c2\u00b1 0.7 -- statistically indistinguishable from v16 baseline (12.4/16 \u00c2\u00b1 1.52). 19 robust words (PASS at ALL 5 seeds), 45 fragile, 0 fail. End-to-end demo validates 11 features: pair encoding, N-word sentences, negation, conjunctions, possessives, pronoun coreference, tense (PAST/FUTURE), comparisons, yes/no, role queries, relational queries, memory CRUD. 91 unit tests pass (1.2s CPU). Total bridge state: 5 seeds * 4 sets * 25MB + 1 set1 = ~525 MB. Per-seed wall clock ~72 min for 4 new sets. Full 5-seed wall clock: ~6.3 hours total.",
       "doc": "2026-05-15-multibridge-5seed-FINAL.md",
       "date": "2026-05-15"
     },
@@ -171,129 +171,206 @@
       "date": "2026-05-13"
     },
     {
-      "name": "Phase 1.4 BRANCH A — no catastrophic forgetting",
+      "name": "Phase 1.4 BRANCH A \u00e2\u20ac\u201d no catastrophic forgetting",
       "status": "VALIDATED",
       "metric": "5/6 PASS, mean 103% primary retention",
       "doc": "2026-05-07-Phase-1.4-v3-6seed-FINAL.md",
       "date": "2026-05-07"
     },
     {
-      "name": "8-word Phase 1.3 + Tier 2.1 — CLS at synonym scale",
+      "name": "8-word Phase 1.3 + Tier 2.1 \u00e2\u20ac\u201d CLS at synonym scale",
       "status": "VALIDATED",
       "metric": "3/3 GO, mean primary 91% / synonym 128%",
       "doc": "2026-05-08-Phase1.3-Tier2.1-combined-3seed-CONFIRMED.md",
       "date": "2026-05-08"
     },
     {
-      "name": "8-word strict anti-cheat — cortex truly retains",
+      "name": "8-word strict anti-cheat \u00e2\u20ac\u201d cortex truly retains",
       "status": "VALIDATED",
       "metric": "3/3 GO, identical to non-strict (eval not artifact)",
       "doc": "2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md",
       "date": "2026-05-08"
     },
     {
-      "name": "12-word default arch — capacity boundary defined",
+      "name": "12-word default arch \u00e2\u20ac\u201d capacity boundary defined",
       "status": "BOUNDARY",
       "metric": "2/3 GO PARTIAL (one seed fails at 71% primary)",
       "doc": "2026-05-08-Phase1.3-Tier2.1-12word-medium-3seed-PARTIAL.md",
       "date": "2026-05-08"
     },
     {
-      "name": "12-word scaled single-seed — capacity hypothesis lift",
+      "name": "12-word scaled single-seed \u00e2\u20ac\u201d capacity hypothesis lift",
       "status": "VALIDATED",
       "metric": "PARTIAL -> GO at +29pp primary",
       "doc": "2026-05-08-Phase1.3-Tier2.1-12word-scaled-CAPACITY-CONFIRMED.md",
       "date": "2026-05-08"
     },
     {
-      "name": "12-word scaled 3-seed — capacity hypothesis confirmed",
+      "name": "12-word scaled 3-seed \u00e2\u20ac\u201d capacity hypothesis confirmed",
       "status": "VALIDATED",
       "metric": "3/3 GO unanimous, mean 95.5% / 115.0%",
       "doc": "2026-05-09-Phase1.3-Tier2.1-12word-scaled-3seed-CONFIRMED.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Phase 1.5 unified suite — sequential regime sound",
+      "name": "Phase 1.5 unified suite \u00e2\u20ac\u201d sequential regime sound",
       "status": "BOUNDARY",
       "metric": "2/4 PASS multi-seed: sequential 0.95 + retention 0.94 (both 3/3); interference 0.39 + long_tail 0.23 fail",
       "doc": "2026-05-09-Phase-1.5-multi-seed-FINAL.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Phase 1.5 v400 interference — under-training hypothesis refuted",
+      "name": "Phase 1.5 v400 interference \u00e2\u20ac\u201d under-training hypothesis refuted",
       "status": "NEGATIVE",
       "metric": "v200 0.340 -> v400 0.345; failure is architectural not dose-bound",
       "doc": "2026-05-09-Phase-1.5-v400-interference-REFUTED.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Phase 1.5 n_motor=2000 interference — capacity hypothesis refuted",
+      "name": "Phase 1.5 n_motor=2000 interference \u00e2\u20ac\u201d capacity hypothesis refuted",
       "status": "NEGATIVE",
       "metric": "v400 + n=2000 score 0.390 (+0.045 vs n=1000); below 0.50 threshold; both tunable levers fail",
       "doc": "2026-05-09-Phase-1.5-n_motor_2000-interference-REFUTED.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Phase 2.3b 50M-param cosine smoke — scale hypothesis REFUTED",
+      "name": "Phase 2.3b 50M-param cosine smoke \u00e2\u20ac\u201d scale hypothesis REFUTED",
       "status": "NEGATIVE",
       "metric": "134K cosine 0.72 -> 50M cosine 0.85 (WORSE); bigger model pushes features more alike across direction words; path-f-hybrid is dead-end at single-3090 scale",
       "doc": "2026-05-09-Phase-2.3b-50M-cosine-REFUTED.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Track 3 layer 4 :speak — 6-seed multi-seed VALIDATED",
+      "name": "Track 3 layer 4 :speak \u00e2\u20ac\u201d 6-seed multi-seed VALIDATED",
       "status": "VALIDATED",
       "metric": "A2W mean 58.3% +/- 20.4% (5/6 seeds at >= 50%, 5/6 above chance); single-seed 75% reproduces; per-direction N=67% E=67% S=67% W=33%",
       "doc": "2026-05-09-chat_speak_demo-Track3-layer4-MULTI-SEED.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Tier 2.1 8-word :speak (production-side analog) — 6/6 GO EXCEEDS paper",
+      "name": "Tier 2.1 8-word :speak (production-side analog) \u00e2\u20ac\u201d 6/6 GO EXCEEDS paper",
       "status": "VALIDATED",
       "metric": "A2W any-synonym mean 87.5% +/- 20.9% (6/6 above 50%, 5/6 at 100%); paper's 6/6 aligned reproduces and exceeds (paper was 63.7% +/- 11.8%); STDP WTA primary-wins confirmed at production-side (synonym top-1 0% across all seeds)",
       "doc": "2026-05-09-chat_speak_synonym_demo-Tier2.1-8word-MULTI-SEED.md",
       "date": "2026-05-10"
     },
     {
-      "name": "64-word smoke — capacity rule extends to 16 sub-pops/motor_X",
+      "name": "64-word smoke \u00e2\u20ac\u201d capacity rule extends to 16 sub-pops/motor_X",
       "status": "BOUNDARY",
       "metric": "pre-silence primary 62.5% (anchor binding scales to 64-word vocab!); retention primary 76% (just under 80% threshold); retention synonym 157% (anomalous, secondaries IMPROVE post-hippo-silence)",
       "doc": "2026-05-10-64word-smoke-PARTIAL-capacity-extends.md",
       "date": "2026-05-10"
     },
     {
-      "name": "STP DEFAULT FLIPPED — 3.28x faster + accuracy improved",
+      "name": "STP DEFAULT FLIPPED \u00e2\u20ac\u201d 3.28x faster + accuracy improved",
       "status": "VALIDATED",
       "metric": "3-seed validation: wall clock 506s vs 1660s (3.28x); A2W primary 100% vs 87.5% (+12.5pp); W2A 52% vs 35% (+17pp). STP was 57% of inner-loop step time AND degrading binding via millisecond synaptic fatigue. Default flipped in chat training paths.",
       "doc": "2026-05-10-stp-default-flip.md",
       "date": "2026-05-10"
     },
     {
-      "name": "Encoding-axis 64-word 3-seed — capacity rule revised",
+      "name": "Encoding-axis 64-word 3-seed \u00e2\u20ac\u201d capacity rule revised",
       "status": "VALIDATED",
       "metric": "3/3 GO unanimous. Retention primary 110% +/- 23%, synonym 119% +/- 34%. Wall clock 954s +/- 7s (35x faster than prior 9.4 hr baseline). User's encoding-vs-motor hypothesis confirmed: n_motor=2000 + n_lang=8192 outperforms n_motor=6000 + n_lang=4096 at 64-word vocab. New rule: lang_input encoding is rate-limiting, not motor capacity.",
       "doc": "2026-05-10-encoding-axis-64word-3SEED-GO.md",
       "date": "2026-05-10"
+    },
+    {
+      "name": "160-concept sparse-distributed ensemble (end-to-end)",
+      "status": "VALIDATED",
+      "metric": "5 bridges x 32 sparse @ 100%; cross-bridge retrieval 662 vs ~400 noise; role queries 100%; seed 42",
+      "doc": "2026-05-15-G20-sparse-ensemble-160concept-end-to-end-SHIPPED.md",
+      "date": "2026-05-15"
     }
   ],
   "capacity_rule": {
     "rule": "REVISED 2026-05-10: encoding-axis architecture recommended for vocab >= 32. Motor capacity matters less than encoding capacity at higher vocab tiers. Encoding (n_lang_input) is rate-limiting; motor pool just needs ~125 neurons/sub-pop to support STDP convergence.",
     "rows": [
-      {"vocab": "4-word", "subpops": 1, "n_motor": 500, "n_lang": 4096, "neurons_per_subpop": 500, "status": "VALIDATED"},
-      {"vocab": "8-word", "subpops": 2, "n_motor": 1000, "n_lang": 4096, "neurons_per_subpop": 500, "status": "VALIDATED"},
-      {"vocab": "12-word default", "subpops": 3, "n_motor": 1000, "n_lang": 4096, "neurons_per_subpop": 333, "status": "BOUNDARY"},
-      {"vocab": "12-word scaled", "subpops": 3, "n_motor": 2000, "n_lang": 4096, "neurons_per_subpop": 667, "status": "VALIDATED"},
-      {"vocab": "16-word", "subpops": 4, "n_motor": 2000, "n_lang": 4096, "neurons_per_subpop": 500, "status": "VALIDATED (smoke)"},
-      {"vocab": "64-word baseline (old)", "subpops": 16, "n_motor": 6000, "n_lang": 4096, "neurons_per_subpop": 375, "status": "PARTIAL (retention 76% FAIL)"},
-      {"vocab": "64-word encoding-axis (NEW)", "subpops": 16, "n_motor": 2000, "n_lang": 8192, "neurons_per_subpop": 125, "status": "VALIDATED 3-seed (retention 110% PASS, 35x faster)"},
-      {"vocab": "96-word", "subpops": 24, "n_motor": 2000, "n_lang": 8192, "neurons_per_subpop": 83, "status": "PREDICTED"},
-      {"vocab": "128-word", "subpops": 32, "n_motor": 4000, "n_lang": 16384, "neurons_per_subpop": 125, "status": "PREDICTED"},
-      {"vocab": "256-word", "subpops": 64, "n_motor": 8000, "n_lang": 32768, "neurons_per_subpop": 125, "status": "PREDICTED"}
+      {
+        "vocab": "4-word",
+        "subpops": 1,
+        "n_motor": 500,
+        "n_lang": 4096,
+        "neurons_per_subpop": 500,
+        "status": "VALIDATED"
+      },
+      {
+        "vocab": "8-word",
+        "subpops": 2,
+        "n_motor": 1000,
+        "n_lang": 4096,
+        "neurons_per_subpop": 500,
+        "status": "VALIDATED"
+      },
+      {
+        "vocab": "12-word default",
+        "subpops": 3,
+        "n_motor": 1000,
+        "n_lang": 4096,
+        "neurons_per_subpop": 333,
+        "status": "BOUNDARY"
+      },
+      {
+        "vocab": "12-word scaled",
+        "subpops": 3,
+        "n_motor": 2000,
+        "n_lang": 4096,
+        "neurons_per_subpop": 667,
+        "status": "VALIDATED"
+      },
+      {
+        "vocab": "16-word",
+        "subpops": 4,
+        "n_motor": 2000,
+        "n_lang": 4096,
+        "neurons_per_subpop": 500,
+        "status": "VALIDATED (smoke)"
+      },
+      {
+        "vocab": "64-word baseline (old)",
+        "subpops": 16,
+        "n_motor": 6000,
+        "n_lang": 4096,
+        "neurons_per_subpop": 375,
+        "status": "PARTIAL (retention 76% FAIL)"
+      },
+      {
+        "vocab": "64-word encoding-axis (NEW)",
+        "subpops": 16,
+        "n_motor": 2000,
+        "n_lang": 8192,
+        "neurons_per_subpop": 125,
+        "status": "VALIDATED 3-seed (retention 110% PASS, 35x faster)"
+      },
+      {
+        "vocab": "96-word",
+        "subpops": 24,
+        "n_motor": 2000,
+        "n_lang": 8192,
+        "neurons_per_subpop": 83,
+        "status": "PREDICTED"
+      },
+      {
+        "vocab": "128-word",
+        "subpops": 32,
+        "n_motor": 4000,
+        "n_lang": 16384,
+        "neurons_per_subpop": 125,
+        "status": "PREDICTED"
+      },
+      {
+        "vocab": "256-word",
+        "subpops": 64,
+        "n_motor": 8000,
+        "n_lang": 32768,
+        "neurons_per_subpop": 125,
+        "status": "PREDICTED"
+      }
     ]
   },
   "phase_status": {
-    "active": "Encoding-axis architecture VALIDATED 3-seed. Combined opt stack: STP-off + encoding-axis = 35x speedup AND better retention. Recommended baseline for vocab >= 32 words. Capacity rule revised. Tier 2.3 phrases needs STP-off revalidation (silent flip risk).",
-    "next": "Launch 128-word + 256-word encoding-axis smokes (~30-60 min each) to validate true encoding-wall ceiling. Re-run Tier 2.3 phrases at STP-off (architecture was limited at 41% with STP-on; STP-off may improve or degrade).",
+    "active": "160-concept sparse-distributed G.20 ensemble SHIPPED + end-to-end validated (seed 42). 5 bridges x 32 Kanerva-SDM concepts @ 100%/bridge; --sparse multibridge loader validated for cross-bridge memory + N-word sentences + role queries.",
+    "next": "Multi-seed ensemble integration (re-run 5-bridge chain at seeds 43-46, ~85 min/seed) then 5x64=320-concept tier (sparse validated to 64/bridge @ 100%; ~40 min/bridge train).",
     "after_next": "Re-validate prior Tier 1 + Tier 2.1 + Phase 1.4 multi-seed results at STP-off + new architecture. Predicted to push numbers significantly higher.",
     "after_after": "Webapp chat UI WebSocket (1-2 day project; bridges library backend + saved-bridges tab UI shipped tonight). Cloud deploy with optimized stack (480-800x speedup multiplier on H100).",
     "master_plan": "docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md",
