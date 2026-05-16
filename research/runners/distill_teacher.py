@@ -35,11 +35,15 @@ def generate_corpus(n_passages: int = 200, max_new_tokens: int = 160,
     for i in range(n_passages):
         p = prompts[i % len(prompts)]
         msgs = [{"role": "user", "content": p}]
-        ids = tok.apply_chat_template(msgs, add_generation_prompt=True,
-                                       return_tensors="pt").to(model.device)
-        gen = model.generate(ids, do_sample=True, temperature=0.8,
+        # tokenize=False then tokenize: robust across transformers
+        # versions (apply_chat_template return type varies).
+        prompt = tok.apply_chat_template(msgs, tokenize=False,
+                                          add_generation_prompt=True)
+        enc = tok(prompt, return_tensors="pt").to(model.device)
+        n_in = enc["input_ids"].shape[1]
+        gen = model.generate(**enc, do_sample=True, temperature=0.8,
                               top_p=0.95, max_new_tokens=max_new_tokens,
                               pad_token_id=tok.eos_token_id)
-        txt = tok.decode(gen[0][ids.shape[1]:], skip_special_tokens=True)
+        txt = tok.decode(gen[0][n_in:], skip_special_tokens=True)
         out.append(txt.strip())
     return "\n\n".join(out)
