@@ -160,6 +160,17 @@ self-comprehension decoder.
   metric, never softened after seeing numbers; a FAIL is a real,
   propagated finding (findings doc + capability_status), not iterated
   away.
+- **Pre-registration correction (2026-05-16, PRE-DATA, integrity fix --
+  NOT goalpost-moving):** a code review found the originally-specified
+  g1_verdict/score_order had logic holes (zero-permuted-score false
+  PASS; confabulation-blind scoring; >/>= boundary). Corrected BEFORE
+  any G1 training or numbers existed: g1_verdict now also requires
+  best_perm_score>0 AND true_score>=_G1_ABS_FLOOR (0.5, majority
+  correctly ordered) AND honors the documented >= bar; score_order
+  penalizes trailing confabulation (max(len) denominator, clean -1
+  terminal stops excluded). This makes the pre-registered gate VALID
+  (analogous to the Inc-3 held-out correction); it is the opposite of
+  tuning a bar after seeing results. _G1_MARGIN stays 0.10.
 
 ## Why this is the right bet (and honest about risk)
 

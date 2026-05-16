@@ -22,12 +22,10 @@ class SongHVC:
         self.W = rng.normal(0.0, 0.01,
                             (n_states, n_concepts)).astype(np.float32)
         self._state = -1
-        self._intention = 0
         self._bias: dict = {}
 
     def reset(self, intention: int = 0) -> None:
         self._state = 0
-        self._intention = int(intention)
 
     def step(self) -> dict:
         s = self._state
@@ -44,7 +42,9 @@ class SongHVC:
             st = self.step()
             if st["state"] < 0:
                 break
-            # intention bias steers which concept this state emits
+            # intention bias steers which concept this state emits.
+            # Invariant: chain starts at state 0 and advances by 1, so
+            # st["state"] == enumeration index used by set_intention_bias.
             bias = self._bias.get(
                 (intention, st["state"]), None)
             out.append(bias if bias is not None else st["concept"])
@@ -52,8 +52,6 @@ class SongHVC:
 
     def set_intention_bias(self, intention: int,
                            concept_seq: list) -> None:
-        if not hasattr(self, "_bias"):
-            self._bias = {}
         for t, k in enumerate(concept_seq):
             self._bias[(int(intention), t)] = int(k)
 
