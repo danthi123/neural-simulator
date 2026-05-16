@@ -50,6 +50,24 @@ def respond(intent_tuple, members, state, threshold):
                 [(top[0],top[1])], False)
     return render("assoc",{"SUBJ":a,"OBJ":top[0]}), [(top[0],top[1])], False
 
+def _recover(members, steps):
+    """Inter-turn neural recovery. Repeated stimulate_tag of the same
+    engram across turns induces adaptation / STP depression in the
+    shared pool; _query_top only settles ~20 internal steps, too few
+    to recover cross-turn (controlled apple x4 probe: 677 -> 601 ->
+    sub-noise). Free-run every loaded bridge with ZERO external drive
+    for `steps` so adaptation/STP recover before the next turn. This
+    is the documented bridge behaviour (CLAUDE.md: state "self-recovers
+    in ~10ms free running"); dt=0.5ms so 200 steps ~= 100ms >> 10ms.
+    Reuses the project's settle idiom (cp_external_input_current[:]=0
+    + _run_one_simulation_step loop) verbatim; backend-agnostic."""
+    if steps <= 0:
+        return
+    for m in members:
+        m.bridge.cp_external_input_current[:] = 0.0
+        for _ in range(steps):
+            m.bridge._run_one_simulation_step()
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--bridges",nargs="+",required=True)
@@ -62,6 +80,10 @@ def main():
     p.add_argument("--sparse",action="store_true")
     p.add_argument("--threshold",type=float,default=DEFAULT_THRESHOLD)
     p.add_argument("--scripted",type=str,default=None)
+    p.add_argument("--recover-steps",type=int,default=200,
+        help="inter-turn zero-drive free-run steps so adaptation/STP "
+             "recover before the next turn (dt=0.5ms; 200~=100ms). "
+             "0 disables (reproduces the pre-fix decay).")
     p.add_argument("--log",type=str,default=None)
     a=p.parse_args()
     members=[]
@@ -80,6 +102,7 @@ def main():
         resp,retr,abst=respond(it,members,state,a.threshold)
         print(f"> {line}\n  {resp}",flush=True)
         if logf: logf.write(json.dumps(make_record(turn,line,it[0],retr,abst,resp))+"\n")
+        _recover(members, a.recover_steps)
     if logf: logf.close()
     print("Done.",flush=True)
 
