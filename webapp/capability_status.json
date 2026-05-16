@@ -325,10 +325,10 @@
       "date": "2026-05-16"
     },
     {
-      "name": "Cross-benchmark failure analysis (INDEX-intrinsic, corrected)",
+      "name": "Failure root-cause: NOT static pattern-overlap (3x-refined, NEGATIVE predictor)",
       "status": "VALIDATED",
-      "metric": "CORRECTED: failure is INDEX-intrinsic (idx 10/42 fail >=2x; idx-12 at 64-tier) in the seed-42 pattern set, BRIDGE-AGNOSTIC (all bridges share seed-42 index-determined patterns+codes -> category effect mechanically impossible; the apparent bridge spread was small-n sampling artifact, 4-8 targets/bridge). STRENGTHENS the flagged per-seed/overlap-rejection recovery premise. Original function-word-category conclusion retracted forthrightly.",
-      "doc": "2026-05-16-G20-cross-benchmark-failure-analysis.md",
+      "metric": "Falsifiable overlap predictor validated vs 5 known-160 seeds: FAILED (all 2 outliers; overlap anti-correlates w/ accuracy). Rules out static-geometry explanation at concept AND seed level. Overlap-rejection lever unlikely to work; seed-63 rec WITHDRAWN. Failure indices real+reproducible but DYNAMICAL (engram/STDP/recall interaction), not static. Correctly relocates the flagged-recovery open question.",
+      "doc": "2026-05-16-G20-seed-quality-predictor-NEGATIVE.md",
       "date": "2026-05-16"
     }
   ],
