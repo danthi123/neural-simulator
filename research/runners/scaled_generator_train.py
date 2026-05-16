@@ -70,6 +70,12 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         help='"all" = clean_corpus(local repo English + distill corpus '
              "if present), capped to %d ascii chars."
              % _CORPUS_CHAR_CAP)
+    ap.add_argument(
+        "--permute-corpus", action="store_true", default=False,
+        help="Anti-cheat control: deterministically shuffle the cleaned "
+             "corpus characters (seeded by --seed) BEFORE tokenization. "
+             "Destroys sequential structure while preserving the exact "
+             "character distribution. Use a distinct --ckpt path.")
     return ap
 
 
@@ -148,6 +154,15 @@ def main() -> int:
     print("[corpus] %d ascii chars (%s)"
           % (len(corpus),
              "capped" if len(corpus) == _CORPUS_CHAR_CAP else "full"))
+    if args.permute_corpus:
+        # Anti-cheat control: destroy sequential structure while keeping
+        # the exact character distribution. Deterministic given --seed.
+        perm_rng = np.random.default_rng(args.seed)
+        chars = list(corpus)
+        perm_rng.shuffle(chars)
+        corpus = "".join(chars)
+        print("[permute-corpus] anti-cheat control: "
+              "corpus characters shuffled")
     tok = CharTokenizer(corpus)
     V = tok.vocab_size
     print("[vocab] V=%d" % V)
