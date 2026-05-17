@@ -46,3 +46,21 @@ def test_prediction_error_is_softmax_minus_onehot():
     # reuses sim.bptt_snn.softmax_grad_np, the log-sum-exp-stable one)
     expected = softmax_grad_np(logits.reshape(1, -1), 3)[0]
     assert np.allclose(err, expected, atol=1e-6)
+
+
+def test_learn_reduces_ce_on_a_fixed_prefix_target():
+    from sim.bptt_snn import cross_entropy_loss_np
+    pc = PredictiveCoder(n_concepts=6, state_dim=12, seed=3)
+    prefix, target = [1, 4], 2
+    def ce():
+        pc.reset(intention=prefix + [target])
+        for c in prefix: pc.update_state(c)
+        return cross_entropy_loss_np(
+            pc.predict_next().reshape(1, -1), target)
+    before = ce()
+    for _ in range(200):
+        pc.learn(prefix=prefix, target_next_idx=target, lr=0.05)
+    after = ce()
+    assert after < before * 0.5      # self-supervised CE drops
+    # learning is confined to P weights; shapes unchanged
+    assert pc.W_pred.shape == (12, 6) and pc.W_in.shape == (6, 12)

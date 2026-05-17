@@ -60,3 +60,26 @@ class PredictiveCoder:
         from sim.bptt_snn import softmax_grad_np
         logits = self.predict_next().reshape(1, -1)
         return softmax_grad_np(logits, int(realized_next_idx))[0]
+
+    def learn(self, prefix: list, target_next_idx: int,
+              lr: float) -> None:
+        self.reset(self._intention or (list(prefix) + [target_next_idx]))
+        # recompute prefix state, tracking the concepts for W_in grad
+        self.state = np.zeros(self.state_dim, dtype=np.float32)
+        contribs = []
+        for c in prefix:
+            self.state = (self.leak * self.state
+                          + self.W_in[int(c)]).astype(np.float32)
+            contribs.append(int(c))
+        err = self.prediction_error(int(target_next_idx))   # (n_concepts,)
+        # dL/dW_pred = outer(state, err); dL/dstate = W_pred @ err
+        gW_pred = np.outer(self.state, err).astype(np.float32)
+        dstate = (self.W_pred @ err).astype(np.float32)
+        self.W_pred -= lr * gW_pred
+        # W_in grad: each prefix concept contributed leak**k * W_in[c]
+        # to state; apply the same dstate to the concepts' rows (a
+        # 1-step approximation -- sufficient for the cheap P probe).
+        for c in set(contribs):
+            self.W_in[c] -= lr * dstate
+        np.clip(self.W_pred, -5.0, 5.0, out=self.W_pred)
+        np.clip(self.W_in, -5.0, 5.0, out=self.W_in)
