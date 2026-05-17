@@ -110,3 +110,23 @@ def test_results_cannot_move_fixed_bars():
     c.gh_verdict(0.0, 0.0, 0.0, 9.9, 0.0, 9.9, False)
     assert c._GH_UNGROUNDED_ENTITY_MAX == 0.20
     assert c._GH_MIN_COVERAGE == 1.0 and c._GH_MAX_REPEAT == 0.50
+
+
+def test_non_finite_rate_args_fail_closed():
+    """inf / -inf in ANY of the six rate args must FAIL closed --
+    never a spurious PASS (e.g. -inf <= 0.20 -> faithful True;
+    inf >= 1.0 -> covered True)."""
+    for arg in ("abstain_on_ungrounded_rate", "bare_moat_abstain_rate",
+                "grounded_answer_rate", "mean_ungrounded_entity_rate",
+                "mean_coverage", "mean_max_repeat"):
+        assert _good(**{arg: float("inf")})["GATE"] == "FAIL", arg
+    assert _good(mean_ungrounded_entity_rate=float("-inf"))["GATE"] \
+        == "FAIL"
+    assert _good(mean_coverage=float("nan"))["GATE"] == "FAIL"
+
+
+def test_max_repeat_exactly_at_bar_fails():
+    """A fully-collapsed 3-token hard loop scores max-repeat == 0.50
+    exactly. The strict comparator must FAIL it (0.50 < 0.50 is
+    False). _GH_MAX_REPEAT literal stays 0.50 byte-unchanged."""
+    assert _good(mean_max_repeat=0.50)["GATE"] == "FAIL"

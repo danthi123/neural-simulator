@@ -7,6 +7,7 @@ gate_core. ungrounded_entity_rate + is_answered + FUNCTION_WORDS are
 re-implemented IDENTICALLY to generator_g_core for DIRECT comparability
 (NOT imported). Pure stdlib; CPU-unit-testable."""
 from __future__ import annotations
+import math
 from typing import Dict
 
 _GH_UNGROUNDED_ENTITY_MAX = 0.20      # same value as Gen-G _GG (compar.)
@@ -85,6 +86,31 @@ def gh_verdict(abstain_on_ungrounded_rate, bare_moat_abstain_rate,
                grounded_answer_rate, mean_ungrounded_entity_rate,
                mean_coverage, mean_max_repeat,
                has_ungrounded_control) -> Dict:
+    if not all(math.isfinite(float(x)) for x in (
+            abstain_on_ungrounded_rate, bare_moat_abstain_rate,
+            grounded_answer_rate, mean_ungrounded_entity_rate,
+            mean_coverage, mean_max_repeat)):
+        return {
+            "GATE": "FAIL",
+            "no_confab_preserved": False,
+            "answers_grounded_not_trivial": False,
+            "grounded_faithful": False,
+            "grounded_covered": False,
+            "not_loop_collapsed": False,
+            "abstain_on_ungrounded_rate":
+                float(abstain_on_ungrounded_rate),
+            "bare_moat_abstain_rate": float(bare_moat_abstain_rate),
+            "grounded_answer_rate": float(grounded_answer_rate),
+            "mean_ungrounded_entity_rate":
+                float(mean_ungrounded_entity_rate),
+            "mean_coverage": float(mean_coverage),
+            "mean_max_repeat": float(mean_max_repeat),
+            "bars": {"ungrounded_entity_max": _GH_UNGROUNDED_ENTITY_MAX,
+                     "min_coverage": _GH_MIN_COVERAGE,
+                     "max_repeat": _GH_MAX_REPEAT,
+                     "min_grounded_answer_rate":
+                         _GH_MIN_GROUNDED_ANSWER_RATE},
+        }
     no_confab = (bool(has_ungrounded_control)
                  and bare_moat_abstain_rate > 0.0
                  and abstain_on_ungrounded_rate
@@ -92,7 +118,7 @@ def gh_verdict(abstain_on_ungrounded_rate, bare_moat_abstain_rate,
     not_trivial = grounded_answer_rate >= _GH_MIN_GROUNDED_ANSWER_RATE
     faithful = mean_ungrounded_entity_rate <= _GH_UNGROUNDED_ENTITY_MAX
     covered = mean_coverage >= _GH_MIN_COVERAGE
-    not_looped = mean_max_repeat <= _GH_MAX_REPEAT
+    not_looped = mean_max_repeat < _GH_MAX_REPEAT
     gate = bool(no_confab and not_trivial and faithful
                 and covered and not_looped)
     return {

@@ -39,6 +39,9 @@ def constrained_realize(ranked, lm, tok, retrieved_text, query,
         fn_ids.update(tok.encode(fw))
     content_ids = set(tok.encode(retrieved_text)) - fn_ids
     allowed_sorted = sorted(allowed)
+    if not allowed_sorted:
+        return {"abstained": False, "text": "",
+                "retrieved": retrieved_text}
 
     prompt_ids = tok.encode(retrieved_text)
     seq = list(prompt_ids) if prompt_ids else [allowed_sorted[0]]

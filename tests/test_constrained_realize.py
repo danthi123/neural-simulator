@@ -119,6 +119,22 @@ def test_no_repeat_ngram_blocks_immediate_loop():
     assert len(grams) == len(set(grams)) or len(ids) <= 2, ids
 
 
+def test_empty_allowed_grounded_path_degrades_safely_no_crash():
+    """Grounded path (gate PASSes) but the allowed id set is empty
+    (retrieved_text encodes to [] AND function_words=[]). Must degrade
+    safely like sim/grounded_decode.py -- return an empty realization,
+    NOT raise IndexError on allowed_sorted[0]. The spy LM additionally
+    proves the lm is NOT touched in this degraded path (we return
+    before any lm.logits call)."""
+    tok = _ToyTok()
+    r = constrained_realize(
+        ranked=[("x", 900.0, "kb")], lm=_SpyLM(), tok=tok,
+        retrieved_text="", query="x",
+        function_words=[], threshold=650.0,
+        no_repeat_ngram=3, max_new=10)
+    assert r == {"abstained": False, "text": "", "retrieved": ""}
+
+
 def test_coverage_stop_halts_once_all_content_ids_emitted():
     tok = _ToyTok()
 
