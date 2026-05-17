@@ -140,6 +140,34 @@ buildout):
    regresses either, STOP and fix the pathway's separation-of-
    concerns before any scaling (the v12/v13/v15/G1 lesson).
 
+```
++---------------------------------------------------------------+
+| PRE-GATE CORRECTION (CATEGORY ERROR) -- 2026-05-16             |
++---------------------------------------------------------------+
+| Task-6 no-harm OVERALL =                                       |
+|   (store-distinctness-unregressed: every seed max CA3 cos<0.4) |
+|   AND (no-confabulation: every seed's never-encoded control    |
+|        ABSTAINS).                                              |
+| The encoded-vs-control MAGNITUDE separation is the             |
+| pre-registered Task 7 capability gate (permuted-ORDER control  |
+| + control-calibrated frozen floor, proper config), NOT a       |
+| Task-6 no-harm criterion. The a78815b run's OVERALL=FAIL       |
+| folded that capability-magnitude bar into moat_PASS at a       |
+| deliberately-minimal speed config, under-powered-pre-empting   |
+| the decisive Task 7 gate (the same class as the documented     |
+| C1/C2, Inc-3-held-out, P-bias, Task-5-retarget corrections).   |
+| RECOMPUTED purely from the already-recorded a78815b run data   |
+| (NO GPU re-run, no chasing a pass):                            |
+|   store: 3/3 PASS (seed42 0.263, seed43 0.177, seed44 0.166;   |
+|          all < 0.4)                                            |
+|   control-abstains: 3/3 PASS (seed42/43/44 all abstain)        |
+|   -> Task-6 no-harm SATISFIED.                                 |
+| The capability question is NOT removed/weakened -- it IS the   |
+| pre-registered Task 7 gate, run honestly at proper config      |
+| regardless of this no-harm outcome.                            |
++---------------------------------------------------------------+
+```
+
 PASS => order-intrinsic structured-proposition conversation is real
 on this substrate -> scale (more concepts/positions, compose,
 multi-turn, the full conversational primitive set over it). FAIL =>

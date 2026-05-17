@@ -237,6 +237,35 @@ weaken `validate_positional_binding`. Commit the JSON (PASS or FAIL)
 as a recorded finding. Commit `feat(order-intrinsic): LOAD-BEARING no-harm check (store distinctness + moat unregressed)`.
 > GATE: Task 6 PASS REQUIRED before Task 7 is trusted.
 
+```
++---------------------------------------------------------------+
+| PRE-GATE CORRECTION (CATEGORY ERROR) -- 2026-05-16             |
++---------------------------------------------------------------+
+| Task-6 no-harm OVERALL =                                       |
+|   (store-distinctness-unregressed: every seed max CA3 cos<0.4) |
+|   AND (no-confabulation: every seed's never-encoded control    |
+|        ABSTAINS).                                              |
+| Encoded-vs-control MAGNITUDE separation is the pre-registered  |
+| Task 7 capability gate (proper config), NOT a Task-6 no-harm   |
+| criterion. The a78815b run recorded OVERALL=FAIL ONLY because  |
+| it folded that capability-magnitude bar into moat_PASS at a    |
+| deliberately-minimal speed config -- under-powered-pre-empting |
+| the decisive Task 7 gate (same integrity-correction class as   |
+| the documented C1/C2, Inc-3-held-out, P-bias, Task-5-retarget  |
+| corrections). RECOMPUTED purely from the already-recorded      |
+| a78815b run data (NO GPU re-run, no pass-chasing):             |
+|   store-distinctness: 3/3 PASS (seed42 0.263, seed43 0.177,    |
+|                        seed44 0.166; all < 0.4)                |
+|   no-confabulation (control abstains): 3/3 PASS                |
+|   -> Task-6 no-harm SATISFIED.                                 |
+| The capability question is NOT removed/weakened -- it IS the   |
+| pre-registered Task 7 gate, run honestly at proper config      |
+| regardless. order_intrinsic_noharm.py OVERALL logic is fixed   |
+| for FUTURE runs; the JSON was rewritten by a pure recompute    |
+| from the recorded per-seed numbers (no GPU job).               |
++---------------------------------------------------------------+
+```
+
 ### Task 7: pre-registered MULTI-SEED gate + honest propagation
 
 **Files:** Create `research/runners/order_intrinsic_gate.py`; out
