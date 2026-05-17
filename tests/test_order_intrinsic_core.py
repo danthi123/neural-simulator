@@ -18,3 +18,13 @@ def test_decode_position_sweep_argmax_and_abstain():
     assert d2 == ["A"]
     # empty -> empty
     assert decode_position_sweep([], floor=0.1) == ([], [], [])
+
+from research.runners.order_intrinsic_core import control_max_floor
+
+def test_control_max_floor_is_control_max_operating_point():
+    enc = [0.50, 0.42, 0.61]          # encoded (intended) top-rates
+    ctl = [0.20, 0.31, 0.18, 0.27]    # control (permuted/random) top-rates
+    f = control_max_floor(enc, ctl)
+    assert f == 0.31                  # the SAME operating criterion
+                                      # that produced prior floors (control-max)
+    assert control_max_floor([0.9], []) == 0.0   # no controls -> 0.0

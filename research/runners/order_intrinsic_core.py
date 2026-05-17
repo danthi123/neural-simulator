@@ -59,3 +59,17 @@ def decode_position_sweep(per_pos_rates, floor):
         else:
             decoded.append(best_k)
     return decoded, conf, abstained
+
+
+def control_max_floor(encoded_toprates, control_toprates) -> float:
+    """Pre-registered control-calibrated abstention floor =
+    control-MAX (the EXACT operating criterion that produced the
+    prior frozen floors: the gate is set just above the max control
+    top-rate). `encoded_toprates` is accepted for signature parity /
+    transparency logging (e.g. an AUC could be reported alongside)
+    but does NOT affect the bar -- the bar is control-max ONLY, so it
+    can never be tuned by the encoded distribution. No controls ->
+    0.0. Pure / deterministic."""
+    if not control_toprates:
+        return 0.0
+    return float(max(float(x) for x in control_toprates))
