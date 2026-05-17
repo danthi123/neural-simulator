@@ -1,0 +1,149 @@
+{
+  "task": "Generator-F pre-registered MULTI-SEED capability gate",
+  "mechanism": "self-contained small Transformer LM (TinyGPT) trained on the authorized public corpus; honest ceiling: small-Transformer TinyStories-class, NOT an LLM",
+  "corpus_used": "tinystories",
+  "corpus_degraded": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_seeds": 3,
+  "config": {
+    "vocab_size": 513,
+    "vocab_size_requested": 512,
+    "d_model": 256,
+    "n_layer": 4,
+    "n_head": 4,
+    "block_size": 128,
+    "steps": 12000,
+    "batch_size": 64,
+    "gen_tokens": 200,
+    "eval_positions": 2000
+  },
+  "anti_cheat": {
+    "hardened_gate_core": "0.20/1.5/0.5/0.20 + abs-competence floor; >=3 seeds; NEVER tuned; uniform_ppl passed",
+    "load_bearing_control": "BPE-invariant word-shuffle of the train split",
+    "memorization_caught_by": "hardened verbatim-copy + generalization + word-shuffle bars + mandatory smell-test",
+    "honest_ceiling": "small-Transformer TinyStories-class coherent SIMPLE-STORY, NOT an LLM; never spun",
+    "honest_propagation": "CONTROLLER's post-run job; runner only computes+writes JSON"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "resumed": false,
+      "heldout_ppl": 6.129348822843217,
+      "shuffled_ctl_ppl": 41.20868886058302,
+      "train_ppl": 4.259773268713084,
+      "uniform_ppl": 513,
+      "distinct_trigram": 0.9090909090909091,
+      "verbatim_copy_frac": 0.07772020725388601,
+      "real_final_loss": 1.4711004495620728,
+      "ctl_final_loss": 3.6065926551818848,
+      "gen_sample": "Tom held lue and tunnel. He did not like to wear her whistle. They were very eaten. But then, Tom accidentally broke the glass. He looked funny and saw the glass and holding the green glass. He had walked and looked in the forest. He found the glass green glass, and blew it from his wheels. Tom was ",
+      "verdict": {
+        "GATE": "PASS",
+        "absolute_competence_beats_random": true,
+        "real_structure_vs_shuffled": true,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 6.129348822843217,
+        "shuffled_ppl": 41.20868886058302,
+        "train_ppl": 4.259773268713084,
+        "uniform_ppl": 513.0,
+        "distinct_trigram": 0.9090909090909091,
+        "verbatim_copy_frac": 0.07772020725388601,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 42
+      }
+    },
+    {
+      "seed": 43,
+      "resumed": false,
+      "heldout_ppl": 6.176032051980185,
+      "shuffled_ctl_ppl": 41.291009544490244,
+      "train_ppl": 4.236422699750639,
+      "uniform_ppl": 513,
+      "distinct_trigram": 0.9949494949494949,
+      "verbatim_copy_frac": 0.10880829015544041,
+      "real_final_loss": 1.4140478372573853,
+      "ctl_final_loss": 3.5977113246917725,
+      "gen_sample": "Lila thought that if it was no easy to be silly. They thought it was funny, so they missed their happy puzzle. They had a lot of fun together. They laughed and had a great time playing the zip together. <|endoftext|> Once upon a time, there was a smooth. It was in a nearby house. It was very sad and",
+      "verdict": {
+        "GATE": "PASS",
+        "absolute_competence_beats_random": true,
+        "real_structure_vs_shuffled": true,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 6.176032051980185,
+        "shuffled_ppl": 41.291009544490244,
+        "train_ppl": 4.236422699750639,
+        "uniform_ppl": 513.0,
+        "distinct_trigram": 0.9949494949494949,
+        "verbatim_copy_frac": 0.10880829015544041,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 43
+      }
+    },
+    {
+      "seed": 44,
+      "resumed": false,
+      "heldout_ppl": 6.114047954519317,
+      "shuffled_ctl_ppl": 41.12055542218805,
+      "train_ppl": 4.271775245192417,
+      "uniform_ppl": 513,
+      "distinct_trigram": 0.9797979797979798,
+      "verbatim_copy_frac": 0.09844559585492228,
+      "real_final_loss": 1.4352376461029053,
+      "ctl_final_loss": 3.5858912467956543,
+      "gen_sample": "It will be useful to grin.\" Sue was very sad. She hugged her mom and said, \"Mom, I work hard and share. We found the understood near of. I didn't look inside the ornament been a plane and sneakers. Let's play Tom again and again soon!\" Bill went home and agreed. Soon, Mary and Missing her new word. ",
+      "verdict": {
+        "GATE": "PASS",
+        "absolute_competence_beats_random": true,
+        "real_structure_vs_shuffled": true,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 6.114047954519317,
+        "shuffled_ppl": 41.12055542218805,
+        "train_ppl": 4.271775245192417,
+        "uniform_ppl": 513.0,
+        "distinct_trigram": 0.9797979797979798,
+        "verbatim_copy_frac": 0.09844559585492228,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 44
+      }
+    }
+  ],
+  "aggregate_verdict": {
+    "GATE": "PASS",
+    "n_seeds": 3,
+    "min_seeds_requested": 3,
+    "min_seeds": 3,
+    "n_pass": 3,
+    "all_pass": true
+  },
+  "GATE": "PASS",
+  "OVERALL": "PASS",
+  "elapsed_seconds": 3464.2
+}
