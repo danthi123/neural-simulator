@@ -13,6 +13,18 @@ _GS_DISTINCT_MIN = 0.5
 _GS_COPY_MAX = 0.20
 _GS_MIN_SEEDS = 3
 
+# Pre-registered ABSOLUTE-COMPETENCE floor (added 2026-05-17 after the
+# Generator-S gate-design-hole: a noise model whose held-out ppl is
+# WORSE than uniform-random must NEVER pass, regardless of the
+# relative bars -- when real/control/train are all astronomically bad
+# the relative bars are vacuous). held-out ppl must be STRICTLY below
+# this multiple of the uniform-random baseline (vocab_size). 1.0 ==
+# "must beat uniform random" -- an inarguable necessary condition for
+# having learned language; a fluent model clears it by orders of
+# magnitude; only noise fails it. STRICTLY STRENGTHENING (reject-more-
+# only); FROZEN; never tuned toward a pass.
+_GS_ABS_COMPETENCE_PPL_RATIO = 1.0
+
 
 def perplexity(nll_per_token: List[float]) -> float:
     if not nll_per_token:
@@ -47,7 +59,19 @@ def verbatim_copy_fraction(gen: List[int], train: List[int],
 
 
 def gs_verdict(heldout_ppl, shuffled_ppl, train_ppl, distinct,
-               copy_frac, has_shuffled_control) -> Dict:
+               copy_frac, has_shuffled_control,
+               uniform_ppl=None) -> Dict:
+    import math
+    # ABSOLUTE-COMPETENCE floor (pre-registered, frozen, strictly
+    # strengthening): without a valid uniform-random baseline OR if
+    # held-out ppl does not strictly beat _GS_ABS_COMPETENCE_PPL_RATIO
+    # * uniform_ppl, the model has not learned language at all and the
+    # relative bars below are vacuous -> FAIL-CLOSED.
+    competent = (uniform_ppl is not None
+                 and math.isfinite(uniform_ppl) and uniform_ppl > 0
+                 and math.isfinite(heldout_ppl)
+                 and heldout_ppl
+                 < _GS_ABS_COMPETENCE_PPL_RATIO * float(uniform_ppl))
     real_structure = (has_shuffled_control
                       and math.isfinite(shuffled_ppl) and shuffled_ppl > 0
                       and math.isfinite(heldout_ppl)
@@ -58,10 +82,11 @@ def gs_verdict(heldout_ppl, shuffled_ppl, train_ppl, distinct,
                    and heldout_ppl <= _GS_GENERALIZATION_MAX * train_ppl)
     non_degenerate = distinct >= _GS_DISTINCT_MIN
     not_copying = copy_frac <= _GS_COPY_MAX
-    gate = bool(real_structure and generalizes and non_degenerate
-                and not_copying)
+    gate = bool(competent and real_structure and generalizes
+                and non_degenerate and not_copying)
     return {
         "GATE": "PASS" if gate else "FAIL",
+        "absolute_competence_beats_random": bool(competent),
         "real_structure_vs_shuffled": bool(real_structure),
         "generalizes_not_memorizes": bool(generalizes),
         "non_degenerate_generation": bool(non_degenerate),
@@ -69,12 +94,16 @@ def gs_verdict(heldout_ppl, shuffled_ppl, train_ppl, distinct,
         "heldout_ppl": float(heldout_ppl),
         "shuffled_ppl": float(shuffled_ppl),
         "train_ppl": float(train_ppl),
+        "uniform_ppl": (float(uniform_ppl)
+                        if uniform_ppl is not None else None),
         "distinct_trigram": float(distinct),
         "verbatim_copy_frac": float(copy_frac),
         "bars": {"ppl_margin": _GS_PPL_MARGIN,
                  "generalization_max": _GS_GENERALIZATION_MAX,
                  "distinct_min": _GS_DISTINCT_MIN,
-                 "copy_max": _GS_COPY_MAX},
+                 "copy_max": _GS_COPY_MAX,
+                 "abs_competence_ppl_ratio":
+                     _GS_ABS_COMPETENCE_PPL_RATIO},
     }
 
 
