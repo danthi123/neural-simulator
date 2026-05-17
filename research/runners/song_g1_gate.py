@@ -43,6 +43,39 @@ verdict -- see "Pre-registration corrections 2/3/4" + Task 10):
     UNTOUCHED; the floor is sidecar-frozen ONLY (never recomputed,
     never 650, never G1's 72.0 for a trajectory run).
 
+(1c) Generator-P --mode {songbird,p} (default songbird = G1/G1.5
+    byte-identical; Task 8 of the Generator-P plan). The gate's default
+    --ckpt resolves to the SAME isolated path rule as the trainer for
+    the chosen mode: --mode p -> song_g1.pc.ckpt.npz (+ its sidecar)
+    by default, so a P gate reads the P-regime frozen floor, never
+    G1's / the trajectory regime's. PRECEDENCE (matches the trainer):
+    --mode p SUPERSEDES --readout for the ckpt path infix AND the
+    decode path. _check_sidecar_usable ALSO REFUSES a sidecar whose
+    recorded `mode` != the gate run's --mode (a P-regime control-max
+    floor must NEVER gate a songbird run or vice versa -- a DIFFERENT
+    decode regime; same HARD-refusal class as the smoke/readout
+    rejection; the smoke check is FIRST, then mode, then readout).
+    Legacy/absent `mode` -> "songbird" (the trainer's additive-JSON
+    back-compat contract, exactly mirroring legacy-absent readout ->
+    "final" -- so existing G1/G1.5 sidecars stay usable by songbird
+    runs). The held-out decode uses the matching mode path: songbird
+    -> the readout-matched _decode_candidate; p -> a TRAINED
+    PredictiveCoder (W_in/W_pred/b_pred restored from the checkpoint,
+    NOT re-randomized -- the exact trainer resume idiom)
+    active-inference rollout realized via the write-only
+    song_g1_ignite.ignite_prediction surface, then the EXISTING
+    integrated self_comprehend rate (the SAME comprehension readout
+    songbird/final uses for the rate; only the ordered-sequence CHOICE
+    differs). The per-slot candidate list is the FIXED canonical
+    vocab-index order (NOT target-ordered -- anti-cheat Minor #4, the
+    SAME builder the trainer's Step-0 + training used). Each
+    permuted-ORDER control is realized through the SAME write-only P-T
+    surface + SAME integrated rate aggregate. The pure g1_verdict /
+    score_order / permuted_order_controls and the FIXED bars are
+    UNMODIFIED; the P-regime floor is sidecar-frozen ONLY (never
+    recomputed, never 650, never G1's 72.0, never the trajectory
+    regime's 46.0).
+
 (2) HELD-OUT ONLY decode (corrections 2 / M3 for final; ordered
     trajectory for G1.5). Evaluate ONLY the sidecar's frozen
     `heldout_propositions` (never trained). For each: rebuild the
@@ -153,9 +186,28 @@ def _sidecar_readout(meta):
     return "final"
 
 
-def _check_sidecar_usable(meta, readout="final"):
-    """PURE: may this sidecar gate the REAL G1 verdict in `readout`
-    regime? (no IO).
+def _sidecar_mode(meta):
+    """PURE: the mode a sidecar was calibrated IN (mirrors
+    _sidecar_readout exactly; identical to song_g1_train._sidecar_mode).
+
+    Single source of truth = meta["calibration"]["mode"] (where
+    _step0_calibrate writes it); falls back to top-level meta["mode"]
+    (the trainer mirrors it there too), then to "songbird" -- legacy
+    G1/G1.5 sidecars predate the mode key and are the songbird regime
+    (the trainer's own additive-JSON contract, exactly mirroring the
+    legacy-absent readout -> "final" back-compat). `meta` must be a
+    dict (the caller validates non-dict first)."""
+    calib = meta.get("calibration")
+    if isinstance(calib, dict) and calib.get("mode") is not None:
+        return str(calib["mode"])
+    if meta.get("mode") is not None:
+        return str(meta["mode"])
+    return "songbird"
+
+
+def _check_sidecar_usable(meta, readout="final", mode="songbird"):
+    """PURE: may this sidecar gate the REAL G1 verdict in `mode` +
+    `readout` regime? (no IO).
 
     Returns (ok: bool, reason: str). The sidecar is usable ONLY if:
       * it exists (meta is not None), AND
@@ -163,6 +215,11 @@ def _check_sidecar_usable(meta, readout="final"):
         NEVER gate the real verdict (its g1_abstain was frozen on a
         2-epoch / 2-prop toy run; absent key treated as full=False
         per the trainer's own additive-JSON contract), AND
+      * the sidecar's recorded mode regime == `mode` (Generator-P
+        cross-mode refusal: a P-regime control-max floor must NEVER
+        gate a songbird run or vice versa -- a DIFFERENT decode
+        regime; same HARD-refusal class as the smoke-tag rejection.
+        Legacy/absent mode -> "songbird"), AND
       * the sidecar's recorded readout regime == `readout` (G1.5
         cross-mode refusal: a final-regime control-max floor must
         NEVER gate a trajectory run or vice versa -- a DIFFERENT
@@ -171,11 +228,13 @@ def _check_sidecar_usable(meta, readout="final"):
       * meta["calibration"]["g1_abstain"] is present (the Step-0
         control-max floor frozen at TRAIN START).
 
-    This is the anti-cheat guard for invariant (1)+(1b): a missing,
-    smoke-tagged, OR cross-readout sidecar is "not runnable" (caller
-    exits code 2); we NEVER fall back to 650, NEVER recompute the
-    floor, and NEVER let a final floor gate a trajectory run (or vice
-    versa).
+    This is the anti-cheat guard for invariant (1)+(1b)+Generator-P: a
+    missing, smoke-tagged, cross-mode, OR cross-readout sidecar is "not
+    runnable" (caller exits code 2); we NEVER fall back to 650, NEVER
+    recompute the floor, and NEVER let a P floor gate a songbird run
+    (or vice versa), nor a final floor gate a trajectory run (or vice
+    versa). The smoke check is FIRST (a smoke sidecar is rejected for
+    the smoke reason regardless of mode/readout).
     """
     if meta is None:
         return False, "sidecar missing (no <ckpt>.meta.json)"
@@ -185,6 +244,14 @@ def _check_sidecar_usable(meta, readout="final"):
         return False, ("sidecar is smoke-calibrated (smoke=True); a "
                        "smoke sidecar must NEVER gate the real G1 "
                        "verdict")
+    sidecar_md = _sidecar_mode(meta)
+    if sidecar_md != str(mode):
+        return False, (
+            "sidecar mode regime mismatch: sidecar was calibrated in "
+            "'%s' mode but this gate run is --mode '%s'; a "
+            "'%s'-regime control-max floor must NEVER gate a '%s' run "
+            "(different decode regime)"
+            % (sidecar_md, mode, sidecar_md, mode))
     sidecar_ro = _sidecar_readout(meta)
     if sidecar_ro != str(readout):
         return False, (
@@ -303,19 +370,43 @@ def _build_arg_parser():
     )
     ap.add_argument(
         "--ckpt", type=str, default=_CKPT_DEFAULT,
-        help="trained SongHVC checkpoint .npz (its sidecar "
-             "<ckpt>.meta.json holds the FROZEN train/held-out "
+        help="trained SongHVC / PredictiveCoder checkpoint .npz (its "
+             "sidecar <ckpt>.meta.json holds the FROZEN train/held-out "
              "propositions + the Step-0 control-calibrated g1_abstain "
-             "+ 'smoke' + 'readout' flags). If left at the default AND "
-             "--readout trajectory, it auto-resolves to the trainer's "
-             "isolated '.traj' path (song_g1.traj.ckpt.npz) so a "
-             "trajectory gate reads the trajectory-regime frozen "
-             "floor, never G1's canonical song_g1.ckpt.npz. "
+             "+ 'smoke' + 'readout' + 'mode' flags). If left at the "
+             "default it auto-resolves to the SAME isolated path rule "
+             "as the trainer for the chosen mode/readout: --mode p -> "
+             "the trainer's isolated '.pc' path "
+             "(song_g1.pc.ckpt.npz); else --readout trajectory -> the "
+             "'.traj' path (song_g1.traj.ckpt.npz). PRECEDENCE: --mode "
+             "p SUPERSEDES --readout for the path infix (so --mode p "
+             "reads song_g1.pc.ckpt.npz regardless of --readout). A "
+             "trajectory/P gate thus reads ITS regime's frozen floor, "
+             "never G1's canonical song_g1.ckpt.npz. Default: "
+             "%(default)s")
+    ap.add_argument(
+        "--mode", type=str, default="songbird",
+        choices=("songbird", "p"),
+        help="generation regime -- MUST match the sidecar's recorded "
+             "mode (the gate REFUSES a cross-mode sidecar: a P-regime "
+             "floor can never gate a songbird run or vice versa, same "
+             "HARD-refusal class as smoke/readout). 'songbird' "
+             "(DEFAULT) = the EXACT G1/G1.5 path (byte-identical). "
+             "'p' (Generator-P) = the held-out decode is a "
+             "PredictiveCoder active-inference rollout (trained "
+             "W_in/W_pred/b_pred restored from the checkpoint, NOT "
+             "re-randomized) realized via the write-only "
+             "ignite_prediction surface, then the EXISTING integrated "
+             "self_comprehend rate; the canonical candidate list is "
+             "the FIXED vocab-index order (NOT target-ordered). P mode "
+             "SUPERSEDES --readout for the ckpt path + decode path. "
              "Default: %(default)s")
     ap.add_argument(
         "--readout", type=str, default="final",
         choices=("final", "trajectory"),
-        help="decode regime -- MUST match the sidecar's recorded "
+        help="decode regime (songbird mode only -- in --mode p the P "
+             "decode path supersedes this and the '.pc' namespace is "
+             "used regardless) -- MUST match the sidecar's recorded "
              "readout (the gate REFUSES a cross-readout sidecar: a "
              "final-regime floor can never gate a trajectory run or "
              "vice versa). 'final' (DEFAULT) = the EXACT G1 M3 "
@@ -351,26 +442,47 @@ def main():
 
     args = _build_arg_parser().parse_args()
     readout = str(args.readout)
+    mode = str(args.mode)
 
     # --- default --ckpt resolves to the SAME isolated path rule as the
-    #     trainer for the chosen readout (DRY: reuse the trainer's
-    #     _traj_ckpt_path pure-string-transform). Only when --ckpt was
-    #     left at the default: --readout trajectory -> the trainer's
-    #     '.traj' namespace (song_g1.traj.ckpt.npz) so a trajectory
-    #     gate reads the trajectory-regime frozen floor, never G1's
+    #     trainer for the chosen mode/readout (DRY: reuse the trainer's
+    #     _p_ckpt_path / _traj_ckpt_path pure-string-transforms). Only
+    #     when --ckpt was left at the default:
+    #       --mode p              -> the trainer's '.pc' namespace
+    #                                (song_g1.pc.ckpt.npz)
+    #       else --readout traj   -> the trainer's '.traj' namespace
+    #                                (song_g1.traj.ckpt.npz)
+    #     PRECEDENCE (matches the trainer): --mode p SUPERSEDES
+    #     --readout for the path infix -- when mode==p we resolve to
+    #     '.pc' and do NOT apply '.traj' (so --mode p reads
+    #     song_g1.pc.ckpt.npz regardless of --readout). A trajectory/P
+    #     gate thus reads ITS regime's frozen floor, never G1's
     #     canonical song_g1.ckpt.npz. An explicit --ckpt is honored
-    #     verbatim (the readout cross-mode refusal in
-    #     _check_sidecar_usable still guards it). The gate NEVER reads
-    #     a '.smoke' namespace (a smoke sidecar is rejected anyway).
-    from research.runners.song_g1_train import _traj_ckpt_path
-    if args.ckpt == _CKPT_DEFAULT and readout == "trajectory":
-        args.ckpt = _traj_ckpt_path(_CKPT_DEFAULT)
-        print(f"[CKPT-ISOLATION] --ckpt left at default + --readout "
-              f"trajectory; resolving to the trainer's isolated "
-              f"trajectory namespace:\n  ckpt    = {args.ckpt}"
-              f"\n  sidecar = {_sidecar_path(args.ckpt)}\n  (G1's "
-              f"canonical {_CKPT_DEFAULT} is NOT read by a trajectory "
-              f"gate)", flush=True)
+    #     verbatim (the mode + readout cross-mode refusals in
+    #     _check_sidecar_usable still guard it). The gate NEVER reads a
+    #     '.smoke' namespace (a smoke sidecar is rejected anyway).
+    from research.runners.song_g1_train import (
+        _p_ckpt_path, _traj_ckpt_path,
+    )
+    if args.ckpt == _CKPT_DEFAULT:
+        if mode == "p":
+            args.ckpt = _p_ckpt_path(_CKPT_DEFAULT)
+            print(f"[CKPT-ISOLATION] --ckpt left at default + --mode p "
+                  f"(supersedes --readout); resolving to the trainer's "
+                  f"isolated P namespace:\n  ckpt    = {args.ckpt}"
+                  f"\n  sidecar = {_sidecar_path(args.ckpt)}\n  (G1's "
+                  f"canonical {_CKPT_DEFAULT} + the trajectory regime's "
+                  f"song_g1.traj.ckpt.npz are NOT read by a P gate)",
+                  flush=True)
+        elif readout == "trajectory":
+            args.ckpt = _traj_ckpt_path(_CKPT_DEFAULT)
+            print(f"[CKPT-ISOLATION] --ckpt left at default + "
+                  f"--readout trajectory; resolving to the trainer's "
+                  f"isolated trajectory namespace:\n  ckpt    = "
+                  f"{args.ckpt}\n  sidecar = "
+                  f"{_sidecar_path(args.ckpt)}\n  (G1's canonical "
+                  f"{_CKPT_DEFAULT} is NOT read by a trajectory gate)",
+                  flush=True)
 
     sidecar = _sidecar_path(args.ckpt)
 
@@ -378,7 +490,8 @@ def main():
     print("SONG G1 TASK 10 -- PRE-REGISTERED HELD-OUT ANTI-CHEAT GATE",
           flush=True)
     print(f"(sidecar-FROZEN g1_abstain; held-out ONLY; permuted-ORDER; "
-          f"pure g1_verdict; readout={readout})", flush=True)
+          f"pure g1_verdict; mode={mode}; readout={readout})",
+          flush=True)
     print("=" * 64, flush=True)
 
     # --- (1) sidecar gate: refuse missing / smoke-tagged -------------
@@ -401,25 +514,31 @@ def main():
             print("=" * 64, flush=True)
             return 2
 
-    ok, reason = _check_sidecar_usable(meta, readout=readout)
+    ok, reason = _check_sidecar_usable(meta, readout=readout,
+                                        mode=mode)
     if not ok:
         print(f"[NOT READY] sidecar not usable: {reason}", flush=True)
         print(f"  sidecar = {sidecar}", flush=True)
         print("  REFUSING to fall back to literal 650, recompute the "
-              "floor, or cross readout regimes (anti-cheat invariant "
-              "1/1b).", flush=True)
+              "floor, or cross mode/readout regimes (anti-cheat "
+              "invariant 1/1b/Generator-P).", flush=True)
         print("  Exit 2 (not a computed verdict -- not runnable).",
               flush=True)
         print("=" * 64, flush=True)
         return 2
 
     # The FROZEN floor -- EXACTLY the Step-0 value, never recomputed,
-    # never 650 (never G1's 72.0 for a trajectory run). Assert the run
-    # that produced it was NOT a smoke run AND its readout regime
-    # matches (both already enforced by _check_sidecar_usable).
+    # never 650 (never G1's 72.0 / the trajectory regime's 46.0 for a
+    # P run). Assert the run that produced it was NOT a smoke run AND
+    # its mode + readout regimes match (all already enforced by
+    # _check_sidecar_usable).
     meta_smoke = bool(meta.get("smoke", False))
     assert meta_smoke is False, (
         "smoke-tagged sidecar reached the gate body -- "
+        "_check_sidecar_usable must have rejected it")
+    sidecar_mode = _sidecar_mode(meta)
+    assert sidecar_mode == mode, (
+        "cross-mode sidecar reached the gate body -- "
         "_check_sidecar_usable must have rejected it")
     sidecar_readout = _sidecar_readout(meta)
     assert sidecar_readout == readout, (
@@ -435,22 +554,25 @@ def main():
     print(f"  meta_smoke          : {meta_smoke}  (asserted False -- "
           f"a smoke sidecar may never gate the real verdict)",
           flush=True)
+    print(f"  mode                : {mode}  (sidecar={sidecar_mode}; "
+          f"asserted MATCH -- a cross-mode floor may never gate)",
+          flush=True)
     print(f"  readout             : {readout}  (sidecar="
           f"{sidecar_readout}; asserted MATCH -- a cross-readout "
           f"floor may never gate)", flush=True)
-    if readout == "trajectory":
+    if mode != "p" and readout == "trajectory":
         print(f"  traj_rate_rule      : {traj_rate_rule}  "
               f"(MIN per slot; IDENTICAL to Step-0's frozen rule)",
               flush=True)
     print(f"  g1_abstain (FROZEN) : {g1_abstain:.2f}  "
-          f"(Step-0 sidecar value, {readout} regime; NOT 650, NOT "
+          f"(Step-0 sidecar value, {mode} regime; NOT 650, NOT "
           f"recomputed"
-          f"{'; NOT G1 final-regime 72.0' if readout == 'trajectory' else ''})",
+          f"{'; NOT G1 final 72.0; NOT trajectory 46.0' if mode == 'p' else ('; NOT G1 final-regime 72.0' if readout == 'trajectory' else '')})",
           flush=True)
     print(f"  operating criterion : "
           f"{meta['calibration'].get('operating_criterion', '?')}  "
-          f"({readout}-regime "
-          f"{'per-slot trajectory decode' if readout == 'trajectory' else 'NO-DRIVE integrated residual'})",
+          f"({mode}-regime "
+          f"{'P top-down realization + NO-DRIVE integrated residual' if mode == 'p' else ('per-slot trajectory decode' if readout == 'trajectory' else 'NO-DRIVE integrated residual')})",
           flush=True)
     print(f"  held-out props      : {len(heldout_props)}  "
           f"(NEVER trained -- the only props this gate evaluates)",
@@ -469,22 +591,32 @@ def main():
         g1_verdict, permuted_order_controls, score_order,
     )
     from research.runners.song_g1_ignite import (
-        ignite_and_trajectory_decode, ignite_sequence, load_members,
-        self_comprehend,
+        ignite_and_trajectory_decode, ignite_prediction,
+        ignite_sequence, load_members, self_comprehend,
     )
-    # REUSE the trainer's exact readout dispatch (_decode_candidate:
-    # final = M3 integrated decode, trajectory = ordered per-slot
-    # decode with the SAME traj_top_rate MIN rule Step-0 froze) +
-    # inter-production recovery (DRY -- do NOT re-implement the
-    # order-carrying decode or the rate aggregate).
+    # REUSE the trainer's exact decode dispatch (DRY -- do NOT
+    # re-implement the order-carrying decode or the rate aggregate):
+    #   songbird: _decode_candidate (final = M3 integrated decode,
+    #     trajectory = ordered per-slot decode with the SAME
+    #     traj_top_rate MIN rule Step-0 froze).
+    #   P (--mode p): _decode_candidate_p (PredictiveCoder
+    #     active-inference rollout + write-only ignite_prediction +
+    #     the EXISTING integrated self_comprehend rate) for the TRUE
+    #     production; _realize_order_p (realize a GIVEN order through
+    #     the SAME write-only P-T surface + SAME rate aggregate) for
+    #     each permuted-ORDER control. The candidate list is the FIXED
+    #     canonical vocab-index order (NOT target-ordered) -- anti-
+    #     cheat Minor #4, the SAME builder Step-0 + training used.
     from research.runners.song_g1_train import (
-        _decode_candidate, _recover, _seed_intention_biases,
-        _IGNITE_RECOVERY,
+        _canonical_candidates, _decode_candidate, _decode_candidate_p,
+        _realize_order_p, _recover, _seed_intention_biases,
+        _IGNITE_RECOVERY, _P_DRIVE_PA, _P_STATE_DIM, _P_STEPS_PER,
     )
+    from sim.predictive_coding import PredictiveCoder
     from sim.song_hvc import SongHVC
     from sim.train_checkpoint import load_checkpoint
 
-    # --- load the trained SongHVC weights from the checkpoint --------
+    # --- load the trained weights from the checkpoint ---------------
     ckpt = load_checkpoint(args.ckpt)
     if ckpt is None:
         # exists() said yes but load failed -> treat as not-ready.
@@ -502,16 +634,35 @@ def main():
     print(f"  loaded: {[m.name for m in members]} "
           f"({int(time.time()-t0)}s)", flush=True)
 
-    # --- rebuild the TRAINED chain (W from ckpt; NOT re-randomized;
-    #     exact trainer resume idiom) + re-seed intention biases from
-    #     ALL frozen sidecar props so rollout reproduces training -----
+    # --- rebuild the TRAINED controller (weights from ckpt; NOT
+    #     re-randomized; the exact trainer resume idiom). songbird
+    #     mode restores SongHVC.W (+ re-seeds intention biases from
+    #     ALL frozen sidecar props so rollout reproduces training).
+    #     P mode restores the PredictiveCoder W_in/W_pred/b_pred (the
+    #     trained P weights -- NOT re-randomized) so the held-out
+    #     active-inference rollout uses the trained predictor.
     song = SongHVC(n_states=_SONG_N_STATES,
                    n_concepts=_SONG_N_CONCEPTS,
                    seed=int(args.seed))
     _seed_intention_biases(song, all_props)
-    song.W = np.asarray(ckpt["weights"][0], dtype=np.float32).copy()
-    print(f"  trained SongHVC restored from ckpt (epoch "
-          f"{trained_epoch}; W NOT re-randomized)", flush=True)
+    pc = PredictiveCoder(n_concepts=_SONG_N_CONCEPTS,
+                         state_dim=_P_STATE_DIM,
+                         seed=int(args.seed))
+    if mode == "p":
+        pc.W_in = np.asarray(ckpt["weights"][0],
+                             dtype=np.float32).copy()
+        pc.W_pred = np.asarray(ckpt["weights"][1],
+                               dtype=np.float32).copy()
+        pc.b_pred = np.asarray(ckpt["weights"][2],
+                               dtype=np.float32).copy()
+        print(f"  trained PredictiveCoder restored from ckpt (epoch "
+              f"{trained_epoch}; W_in/W_pred/b_pred NOT "
+              f"re-randomized)", flush=True)
+    else:
+        song.W = np.asarray(ckpt["weights"][0],
+                            dtype=np.float32).copy()
+        print(f"  trained SongHVC restored from ckpt (epoch "
+              f"{trained_epoch}; W NOT re-randomized)", flush=True)
 
     print(f"\n[GATE] held-out propositions ({len(heldout_props)}; "
           f"NEVER trained):", flush=True)
@@ -528,23 +679,45 @@ def main():
         member = members[bidx]
         intended = list(p["concept_seq"])
 
-        # produced ORDERED sequence from the TRAINED chain.
-        produced = song.rollout(intention, len(intended))
-
-        # Readout-matched decode (DRY: the trainer's exact
-        # _decode_candidate dispatch). final = M3 integrated decode
-        # (length-1; NEVER per-slot). trajectory = per-slot ordered
-        # decode; top_rate = traj_top_rate (MIN per slot -- the SAME
-        # rule Step-0 froze in the sidecar). score_order is the
-        # UNMODIFIED song_g1_core fn (in trajectory mode it now scores
-        # the ORDERED length-N trajectory vs the intended order).
-        decoded, top_rate = _decode_candidate(
-            readout, member, ignite_sequence, self_comprehend,
-            ignite_and_trajectory_decode, produced, _DRIVE_PA,
-            _STEPS_PER, _DECODE_WINDOW)
-        gate_cleared = bool(top_rate >= g1_abstain)
-        true_score = float(score_order(decoded, intended))
-        _recover(member, _IGNITE_RECOVERY)
+        if mode == "p":
+            # Generator-P: the produced ORDERED sequence is CHOSEN by
+            # the TRAINED PredictiveCoder active-inference rollout
+            # (realized via the write-only P-T ignite_prediction
+            # surface), and the gate-cleared rate is the EXISTING
+            # integrated self_comprehend readout -- the SAME rate
+            # aggregate Step-0 froze. _decode_candidate_p builds the
+            # FIXED canonical vocab-index candidate list internally
+            # (NOT target-ordered -- anti-cheat Minor #4). `produced`
+            # == `decoded` here (the rollout IS the production; the
+            # length-1 integrated self_comprehend argmax is only used
+            # for the rate, not the order -- score_order scores the
+            # rollout's ORDERED produced list vs the intended order,
+            # exactly as songbird scores its produced order).
+            produced, top_rate = _decode_candidate_p(
+                pc, member, ignite_prediction, self_comprehend,
+                intended, _P_DRIVE_PA, _P_STEPS_PER, _DECODE_WINDOW)
+            decoded = list(produced)
+            gate_cleared = bool(top_rate >= g1_abstain)
+            true_score = float(score_order(decoded, intended))
+            _recover(member, _IGNITE_RECOVERY)
+        else:
+            # songbird: produced ORDERED sequence from the TRAINED
+            # chain, then the readout-matched decode (DRY: the
+            # trainer's exact _decode_candidate dispatch). final = M3
+            # integrated decode (length-1; NEVER per-slot). trajectory
+            # = per-slot ordered decode; top_rate = traj_top_rate (MIN
+            # per slot -- the SAME rule Step-0 froze in the sidecar).
+            # score_order is the UNMODIFIED song_g1_core fn (in
+            # trajectory mode it scores the ORDERED length-N trajectory
+            # vs the intended order).
+            produced = song.rollout(intention, len(intended))
+            decoded, top_rate = _decode_candidate(
+                readout, member, ignite_sequence, self_comprehend,
+                ignite_and_trajectory_decode, produced, _DRIVE_PA,
+                _STEPS_PER, _DECODE_WINDOW)
+            gate_cleared = bool(top_rate >= g1_abstain)
+            true_score = float(score_order(decoded, intended))
+            _recover(member, _IGNITE_RECOVERY)
 
         # --- permuted-ORDER controls (load-bearing anti-cheat) -------
         # deterministic per-prop rng (seed + intention) so the controls
@@ -586,14 +759,25 @@ def main():
 
         perm_scores = []
         for perm in perms:
-            # SAME readout path as the true production (DRY:
-            # _decode_candidate). In trajectory mode a scrambled order
-            # yields a DIFFERENT per-slot trajectory, so score_order
-            # vs the intended order is genuinely ORDER-sensitive.
-            p_dec, _p_rate = _decode_candidate(
-                readout, member, ignite_sequence, self_comprehend,
-                ignite_and_trajectory_decode, perm, _DRIVE_PA,
-                _STEPS_PER, _DECODE_WINDOW)
+            # SAME decode path as the true production (DRY). songbird:
+            # _decode_candidate (in trajectory mode a scrambled order
+            # yields a DIFFERENT per-slot trajectory). P mode:
+            # _realize_order_p realizes the GIVEN permuted ORDER
+            # through the SAME write-only P-T ignite_prediction surface
+            # + the SAME integrated self_comprehend rate aggregate
+            # Step-0 froze (exactly as Step-0's permuted-ORDER control
+            # did) -- a scrambled ignition order leaves a different
+            # residual attractor, so score_order vs the intended order
+            # is genuinely ORDER-sensitive. score_order is UNMODIFIED.
+            if mode == "p":
+                p_dec, _p_rate = _realize_order_p(
+                    member, ignite_prediction, self_comprehend, perm,
+                    _P_DRIVE_PA, _P_STEPS_PER, _DECODE_WINDOW)
+            else:
+                p_dec, _p_rate = _decode_candidate(
+                    readout, member, ignite_sequence, self_comprehend,
+                    ignite_and_trajectory_decode, perm, _DRIVE_PA,
+                    _STEPS_PER, _DECODE_WINDOW)
             perm_scores.append(float(score_order(p_dec, intended)))
             _recover(member, _IGNITE_RECOVERY)
         best_perm_score = max(perm_scores) if perm_scores else 0.0
@@ -634,21 +818,32 @@ def main():
         "ckpt": args.ckpt,
         "sidecar": sidecar,
         "trained_epoch": trained_epoch,
-        # invariant (1)+(1b) provenance -- explicit + machine-checkable.
+        # invariant (1)+(1b)+Generator-P provenance -- explicit +
+        # machine-checkable.
+        "mode": mode,
+        "sidecar_mode": sidecar_mode,         # asserted == mode
         "readout": readout,
         "sidecar_readout": sidecar_readout,   # asserted == readout
         "traj_rate_rule": traj_rate_rule,     # MIN per slot (traj only)
         "g1_abstain": g1_abstain,
         "g1_abstain_source": "sidecar-frozen",
         "g1_abstain_note": (
-            "EXACTLY meta['calibration']['g1_abstain'] frozen by Step "
-            "0 at TRAIN START in the '%s' readout regime; NOT the "
-            "literal 650, NOT recomputed here%s. traj_rate_rule=%r "
-            "(IDENTICAL to Step-0's frozen rule)."
-            % (readout,
-               (", NOT G1's final-regime 72.0"
-                if readout == "trajectory" else ""),
-               traj_rate_rule)),
+            ("EXACTLY meta['calibration']['g1_abstain'] frozen by Step "
+             "0 at TRAIN START in the 'p' (Generator-P) regime; NOT "
+             "the literal 650, NOT G1's final-regime 72.0, NOT the "
+             "trajectory regime's 46.0, NOT recomputed here. The "
+             "P-regime control-max floor was RE-DERIVED at train start "
+             "with the SAME control-max methodology that produced "
+             "G1's 72.0 and is sidecar-frozen ONLY.")
+            if mode == "p" else
+            ("EXACTLY meta['calibration']['g1_abstain'] frozen by Step "
+             "0 at TRAIN START in the '%s' readout regime; NOT the "
+             "literal 650, NOT recomputed here%s. traj_rate_rule=%r "
+             "(IDENTICAL to Step-0's frozen rule)."
+             % (readout,
+                (", NOT G1's final-regime 72.0"
+                 if readout == "trajectory" else ""),
+                traj_rate_rule))),
         "meta_smoke": meta_smoke,          # asserted False
         "operating_criterion": meta["calibration"].get(
             "operating_criterion"),
@@ -683,14 +878,16 @@ def main():
     print("  substrate           : G.20 320-sparse 5-bridge", flush=True)
     print(f"  ckpt                : {args.ckpt} (epoch "
           f"{trained_epoch})", flush=True)
+    print(f"  mode                : {mode}  (sidecar={sidecar_mode}; "
+          f"asserted MATCH)", flush=True)
     print(f"  readout             : {readout}  (sidecar="
           f"{sidecar_readout}; asserted MATCH)"
-          f"{'  traj_rate_rule=' + str(traj_rate_rule) if readout == 'trajectory' else ''}",
+          f"{'  traj_rate_rule=' + str(traj_rate_rule) if (mode != 'p' and readout == 'trajectory') else ''}",
           flush=True)
     print(f"  g1_abstain          : {g1_abstain:.2f}  "
-          f"[SOURCE = sidecar-frozen Step-0 value, {readout} regime; "
+          f"[SOURCE = sidecar-frozen Step-0 value, {mode} regime; "
           f"NOT 650; NOT recomputed"
-          f"{'; NOT G1 72.0' if readout == 'trajectory' else ''}]",
+          f"{'; NOT G1 final 72.0; NOT trajectory 46.0' if mode == 'p' else ('; NOT G1 72.0' if readout == 'trajectory' else '')}]",
           flush=True)
     print(f"  meta_smoke          : {meta_smoke}  (asserted False)",
           flush=True)

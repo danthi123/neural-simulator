@@ -19,10 +19,16 @@ Anti-cheat invariants exercised here:
 import numpy as np
 
 from research.runners.song_g1_gate import (
-    _check_sidecar_usable, _sidecar_readout, aggregate_verdict,
+    _check_sidecar_usable, _sidecar_mode, _sidecar_readout,
+    aggregate_verdict,
 )
 from research.runners.song_g1_core import g1_verdict
-from research.runners.song_g1_train import traj_top_rate
+from research.runners.song_g1_train import (
+    _canonical_candidates, _p_ckpt_path, traj_top_rate,
+)
+from research.runners.song_g1_train import (
+    _sidecar_mode as _train_sidecar_mode,
+)
 
 
 # --- aggregate_verdict: g1_verdict on the means -----------------------
@@ -313,11 +319,173 @@ def test_traj_top_rate_accepts_ints_returns_float():
     assert isinstance(out, float)
 
 
+# --- Generator-P (--mode p): _sidecar_mode / _check_sidecar_usable ----
+#     mode cross-mode refusal (Task 8). PURE: no IO, no bridge, CPU.
+
+def test_sidecar_mode_default_is_songbird_legacy():
+    # legacy G1/G1.5 sidecars predate the mode key -> "songbird"
+    # regime (the trainer's additive-JSON back-compat contract,
+    # exactly mirroring legacy-absent readout -> "final").
+    meta = {"smoke": False, "calibration": {"g1_abstain": 72.0}}
+    assert _sidecar_mode(meta) == "songbird"
+    # default gate --mode is also songbird -> a legacy sidecar still
+    # gates a songbird run (back-compat preserved).
+    ok, reason = _check_sidecar_usable(meta)            # mode default
+    assert ok is True and reason == "ok"
+    # the gate's _sidecar_mode mirrors the trainer's EXACTLY.
+    assert _sidecar_mode(meta) == _train_sidecar_mode(meta)
+
+
+def test_sidecar_mode_top_level_then_calibration_source_of_truth():
+    # top-level meta["mode"] is read when calibration.mode absent...
+    assert _sidecar_mode({"mode": "p", "calibration": {}}) == "p"
+    # ...but calibration.mode is the SINGLE source of truth (the
+    # trainer mirrors it there; a stale top-level key must NOT win).
+    meta = {"mode": "songbird",
+            "calibration": {"g1_abstain": 41.0, "mode": "p"}}
+    assert _sidecar_mode(meta) == "p"
+    assert _train_sidecar_mode(meta) == "p"
+
+
+def test_sidecar_p_regime_rejected_for_songbird_gate():
+    # a P-regime frozen floor must NEVER gate a songbird run
+    # (different decode regime -- same HARD-refusal class as the
+    # smoke-tag rejection).
+    meta = {"smoke": False, "mode": "p",
+            "calibration": {"g1_abstain": 33.0, "mode": "p"}}
+    ok, reason = _check_sidecar_usable(meta, mode="songbird")
+    assert ok is False
+    assert "mode" in reason.lower()
+    # OK when the mode regimes MATCH (p<->p).
+    ok2, reason2 = _check_sidecar_usable(meta, mode="p")
+    assert ok2 is True and reason2 == "ok"
+
+
+def test_sidecar_songbird_regime_rejected_for_p_gate():
+    # the inverse: a songbird-regime floor must NEVER gate a P run.
+    meta = {"smoke": False, "mode": "songbird",
+            "calibration": {"g1_abstain": 72.0, "mode": "songbird"}}
+    ok, reason = _check_sidecar_usable(meta, mode="p")
+    assert ok is False
+    assert "mode" in reason.lower()
+    # matches when both songbird.
+    ok2, reason2 = _check_sidecar_usable(meta, mode="songbird")
+    assert ok2 is True and reason2 == "ok"
+
+
+def test_sidecar_legacy_absent_mode_rejected_for_p_gate():
+    # a legacy sidecar (no mode key -> "songbird") must be REFUSED by
+    # a P gate (a songbird-regime floor can never gate a P run); but
+    # still usable by a songbird gate (back-compat).
+    meta = {"smoke": False, "calibration": {"g1_abstain": 72.0}}
+    ok, reason = _check_sidecar_usable(meta, mode="p")
+    assert ok is False and "mode" in reason.lower()
+    ok2, _ = _check_sidecar_usable(meta, mode="songbird")
+    assert ok2 is True
+
+
+def test_sidecar_smoke_rejected_before_mode_check():
+    # smoke rejection is checked BEFORE mode -- a smoke P sidecar is
+    # rejected for the SMOKE reason (never gates the real verdict),
+    # not silently accepted because the mode happens to match.
+    meta = {"smoke": True, "mode": "p",
+            "calibration": {"g1_abstain": 33.0, "mode": "p"}}
+    ok, reason = _check_sidecar_usable(meta, mode="p")
+    assert ok is False
+    assert "smoke" in reason.lower()
+
+
+def test_sidecar_mode_and_readout_both_checked_independently():
+    # a P sidecar with readout=final gates a P run with --readout
+    # final (mode matches, readout matches). The same P sidecar must
+    # be refused by a songbird run (mode mismatch) regardless of
+    # readout. mode is checked before readout (both are HARD refusals).
+    meta = {"smoke": False, "mode": "p", "readout": "final",
+            "calibration": {"g1_abstain": 33.0, "mode": "p",
+                            "readout": "final"}}
+    assert _check_sidecar_usable(meta, mode="p", readout="final")[0]
+    ok, reason = _check_sidecar_usable(meta, mode="songbird",
+                                       readout="final")
+    assert ok is False and "mode" in reason.lower()
+
+
+def test_sidecar_none_and_nondict_rejected_for_p_too():
+    ok, reason = _check_sidecar_usable(None, mode="p")
+    assert ok is False and "missing" in reason.lower()
+    ok2, reason2 = _check_sidecar_usable(["x"], mode="p")
+    assert ok2 is False and "malformed" in reason2.lower()
+
+
+# --- Generator-P: _canonical_candidates is NOT target-ordered --------
+#     LOAD-BEARING anti-cheat (carry-forward Minor #4): PredictiveCoder
+#     .select_next tie-breaks to the FIRST candidate. The builder MUST
+#     return a FIXED range(n)-style order independent of any target.
+
+def test_canonical_candidates_is_fixed_range_not_target_ordered():
+    # the builder is exactly list(range(n)) -- the natural vocab index
+    # order, INDEPENDENT of any intended/target sequence.
+    assert _canonical_candidates(5) == [0, 1, 2, 3, 4]
+    assert _canonical_candidates(1) == [0]
+    assert _canonical_candidates(64) == list(range(64))
+    # it does NOT depend on / echo any target sequence: for several
+    # distinct "targets" the candidate list is the SAME fixed order
+    # (so PredictiveCoder.select_next's first-candidate tie-break can
+    # NEVER correlate with the target for a degenerate predictor).
+    n = 8
+    fixed = _canonical_candidates(n)
+    for target in ([7, 3], [3, 7], [0, 1], [5, 5], [6, 2, 4]):
+        # whatever the target order, the builder ignores it entirely.
+        assert _canonical_candidates(n) == fixed == list(range(n))
+        assert _canonical_candidates(n) != list(target)  # not target
+
+
+def test_canonical_candidates_deterministic_and_int_list():
+    a = _canonical_candidates(10)
+    b = _canonical_candidates(10)
+    assert a == b == list(range(10))
+    assert all(isinstance(x, int) for x in a)
+    # accepts an int-like and coerces (range(int(n))).
+    assert _canonical_candidates(3) == [0, 1, 2]
+
+
+# --- Generator-P: _p_ckpt_path isolation + PRECEDENCE ----------------
+
+def test_p_ckpt_path_inserts_pc_infix():
+    # '.pc' infix before the '.ckpt.npz' (or '.npz') suffix -- the
+    # EXACT idiom as _smoke_ckpt_path / _traj_ckpt_path.
+    assert _p_ckpt_path("a/b/song_g1.ckpt.npz") == \
+        "a/b/song_g1.pc.ckpt.npz"
+    assert _p_ckpt_path("x.npz") == "x.pc.npz"
+    assert _p_ckpt_path("noext") == "noext.pc"
+
+
+def test_p_ckpt_path_composes_with_smoke_and_supersedes_traj():
+    # PRECEDENCE: --mode p SUPERSEDES --readout for the path infix.
+    # The trainer/gate apply '.pc' FIRST (NOT '.traj'), then '.smoke'.
+    # Re-derive the documented composition purely.
+    from research.runners.song_g1_train import (
+        _smoke_ckpt_path, _traj_ckpt_path, _CKPT_DEFAULT,
+    )
+    base = _CKPT_DEFAULT
+    # --mode p -> '.pc' (NOT '.traj')
+    p_path = _p_ckpt_path(base)
+    assert ".pc." in p_path and ".traj." not in p_path
+    # --mode p --smoke -> '.pc.smoke'
+    p_smoke = _smoke_ckpt_path(_p_ckpt_path(base))
+    assert p_smoke.endswith(".pc.smoke.ckpt.npz")
+    # songbird --readout trajectory is UNCHANGED ('.traj', no '.pc')
+    traj = _traj_ckpt_path(base)
+    assert ".traj." in traj and ".pc." not in traj
+    # the three are all DISTINCT namespaces (no collision)
+    assert len({base, p_path, p_smoke, traj}) == 4
+
+
 # --- import / signature surface is smoke-able WITHOUT a checkpoint ----
 
 def test_module_imports_clean_and_exposes_pure_surface():
     import research.runners.song_g1_gate as g
-    for name in ("main", "aggregate_verdict", "_check_sidecar_usable"):
+    for name in ("main", "aggregate_verdict", "_check_sidecar_usable",
+                 "_sidecar_mode", "_sidecar_readout"):
         assert hasattr(g, name), name
     # numpy is only needed by the pure-test fixtures, not the module
     # top -- a no-op presence check keeping the import deterministic.
