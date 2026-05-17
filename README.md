@@ -375,7 +375,7 @@ neural-simulator/
 │   └── glossary.md
 ├── webapp/                ← FastAPI dashboard (server.py + static/)
 ├── simulation_profiles/   ← 47 brain-region JSON profiles
-├── tests/                 ← pytest test suite (102 files)
+├── tests/                 ← pytest test suite (115 files)
 ├── viz/                   ← 3D OpenGL rendering
 └── ui/                    ← DearPyGUI controls
 ```

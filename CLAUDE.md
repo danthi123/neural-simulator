@@ -87,9 +87,9 @@ sim/                    # 24 modules (+ __init__.py), ~16.8K lines — core engi
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 138 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/etc) for research
-research/findings/      # session-by-session findings docs (333+ files)
-tests/                  # 102 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, etc.)
+research/runners/       # 148 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/etc) for research
+research/findings/      # session-by-session findings docs (339+ files)
+tests/                  # 115 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, etc.)
 ```
 
 ### Thread Model
@@ -117,9 +117,9 @@ tests/                  # 102 test files (determinism, runners, kernels, plastic
   - HH numerical stability: dt auto-adjusts to 0.05ms when HH model selected
   - **Per-gate Q10**: `hh_q10_m=3.0`, `hh_q10_h=hh_q10_n=1.5` (fixed 2026-04-25 — uniform Q10=3 over-compressed dynamics at 37°C; see Phase A below)
   - **STDP bounds gotcha**: `stdp_w_max=2.0` default. The STDP rule is **soft-bound** (`Δw_LTP = A_plus * (w_max - w) * exp(...)`) so when `weight_mean > stdp_w_max`, every "LTP" event is strongly negative and weights collapse to w_max within ms. Set `cfg.stdp_w_max` above your design weights (e.g. cortex→D1 in Phase B uses `weight_mean=25` → set `stdp_w_max=30`).
-- `VisualizationConfig` (line 357): OpenGL rendering and camera parameters
-- `RuntimeState` (line 377): Mutable execution state (running, paused, time tracking)
-- `GPUConfig` (line 392): GPU features, memory management, recording modes
+- `VisualizationConfig` (line 376): OpenGL rendering and camera parameters
+- `RuntimeState` (line 396): Mutable execution state (running, paused, time tracking)
+- `GPUConfig` (line 411): GPU features, memory management, recording modes
 - Experiment configs (lines 440–619): `StimulusPattern`, `StimulusChannel`, `NeuronGroup`, `ReadoutConfig`, `TrainingConfig`, `ExperimentPhase`, `ExperimentConfig`
 
 ### GPU Array Naming Conventions
