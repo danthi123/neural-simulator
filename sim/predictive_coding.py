@@ -79,8 +79,9 @@ class PredictiveCoder:
 
     def learn(self, prefix: list, target_next_idx: int,
               lr: float) -> None:
-        self.reset(self._intention or (list(prefix) + [target_next_idx]))
-        # recompute prefix state, tracking the concepts for W_in grad
+        # recompute prefix state from the passed prefix only (the
+        # gradient depends solely on prefix + target; _intention is
+        # not read by the learning math).
         self.state = np.zeros(self.state_dim, dtype=np.float32)
         contribs = []
         for c in prefix:
@@ -97,7 +98,12 @@ class PredictiveCoder:
         self.b_pred -= lr * err
         # W_in grad: each prefix concept contributed leak**k * W_in[c]
         # to state; apply the same dstate to the concepts' rows (a
-        # 1-step approximation -- sufficient for the cheap P probe).
+        # 1-step approximation -- a guaranteed descent direction, never
+        # anti-learning; set() de-dups so a repeated concept is
+        # under-counted vs the exact summed grad. Sufficient for the
+        # cheap P probe; a P FAIL is NOT an artifact of this approx
+        # since W_pred + b_pred -- which carry predictive capacity at
+        # both zero and non-zero state -- are exact).
         for c in set(contribs):
             self.W_in[c] -= lr * dstate
         np.clip(self.W_pred, -5.0, 5.0, out=self.W_pred)
