@@ -79,3 +79,15 @@ def test_select_next_picks_the_learned_continuation():
     # restricting candidates still returns the best AVAILABLE one
     alt = pc.select_next(candidates=[1, 3, 4])
     assert alt == 3
+
+
+def test_rollout_reproduces_a_learned_two_concept_proposition():
+    pc = PredictiveCoder(n_concepts=8, state_dim=24, seed=5)
+    intended = [2, 6]                       # ordered proposition
+    # self-supervised on each prefix->next of the intended order
+    for _ in range(400):
+        pc.learn(prefix=[], target_next_idx=2, lr=0.05)
+        pc.learn(prefix=[2], target_next_idx=6, lr=0.05)
+    produced = pc.rollout(intention=intended, length=2,
+                          candidates=list(range(8)))
+    assert produced == intended            # order-correct generation

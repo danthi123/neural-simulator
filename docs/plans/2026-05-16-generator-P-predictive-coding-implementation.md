@@ -149,6 +149,10 @@ class PredictiveCoder:
             0.0, 0.1, (n_concepts, state_dim)).astype(np.float32)
         self.W_pred = rng.normal(
             0.0, 0.1, (state_dim, n_concepts)).astype(np.float32)
+        # learnable output bias: makes the start-of-sequence ([] prefix,
+        # zero pc_state) transition learnable (its CE gradient is `err`,
+        # always nonzero -- textbook softmax/LM output-layer bias).
+        self.b_pred = np.zeros(n_concepts, dtype=np.float32)
         self.state = np.zeros(state_dim, dtype=np.float32)
         self._intention: list = []
 
@@ -203,8 +207,9 @@ def test_predict_next_logits_shape_and_determinism():
 ```python
     def predict_next(self) -> np.ndarray:
         """Top-down generative prediction: pc_state -> next-concept
-        logits. Pure/deterministic."""
-        return (self.state @ self.W_pred).astype(np.float32)
+        logits, with a learnable output bias so the start-of-sequence
+        ([] prefix, zero state) transition is learnable. Pure/det."""
+        return (self.state @ self.W_pred + self.b_pred).astype(np.float32)
 ```
 
 **Step 4:** run → PASS. **Step 5:** commit
@@ -302,12 +307,16 @@ in-module pure-update pattern.)
         gW_pred = np.outer(self.state, err).astype(np.float32)
         dstate = (self.W_pred @ err).astype(np.float32)
         self.W_pred -= lr * gW_pred
+        # output-bias grad (softmax-CE): dL/db_pred == err. Always
+        # nonzero, so the []->first-concept transition is learnable.
+        self.b_pred -= lr * err
         # W_in grad: each prefix concept contributed leak**k * W_in[c]
         # to state; apply the same dstate to the concepts' rows (a
         # 1-step approximation -- sufficient for the cheap P probe).
         for c in set(contribs):
             self.W_in[c] -= lr * dstate
         np.clip(self.W_pred, -5.0, 5.0, out=self.W_pred)
+        np.clip(self.b_pred, -5.0, 5.0, out=self.b_pred)
         np.clip(self.W_in, -5.0, 5.0, out=self.W_in)
 ```
 
@@ -533,3 +542,16 @@ validation only, NOT a result). Commit
 - A maxed P FAIL is a real, terminal finding — propagate honestly,
   do NOT iterate the predictor to chase the gate (the config-cranking
   the project forbids).
+- Pre-data correction (2026-05-16, TDD-caught latent spec bug -- NOT
+  test/spec-hacking): Task 6 TDD revealed the original PredictiveCoder
+  spec had no learnable parameter affecting predict_next at zero state,
+  so the start-of-sequence ([] prefix) transition was structurally
+  unlearnable (learn(prefix=[]) was a no-op: outer(0,err)=0, no prefix
+  concepts). Root-cause fix applied BEFORE any P result: a learnable
+  output bias b_pred (predict_next += b_pred; learn: b_pred -= lr*err;
+  bias CE-gradient is err, always nonzero). Textbook (every softmax/LM
+  output has a bias). Preserves Tasks 1-5 (b_pred zero-init; non-empty-
+  prefix only gains capacity); makes Task 6 pass legitimately (the
+  test/assertion was NOT altered -- the prior subagent correctly
+  refused to fake-pass). Analogous to the G1 C1/C2 pre-data integrity
+  corrections; no anti-cheat bar is involved (pure core, no gate yet).

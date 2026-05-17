@@ -31,6 +31,10 @@ class PredictiveCoder:
             0.0, 0.1, (n_concepts, state_dim)).astype(np.float32)
         self.W_pred = rng.normal(
             0.0, 0.1, (state_dim, n_concepts)).astype(np.float32)
+        # learnable output bias: makes the start-of-sequence ([] prefix,
+        # zero pc_state) transition learnable (its CE gradient is `err`,
+        # always nonzero -- textbook softmax/LM output-layer bias).
+        self.b_pred = np.zeros(n_concepts, dtype=np.float32)
         self.state = np.zeros(state_dim, dtype=np.float32)
         self._intention: list = []
 
@@ -49,8 +53,9 @@ class PredictiveCoder:
 
     def predict_next(self) -> np.ndarray:
         """Top-down generative prediction: pc_state -> next-concept
-        logits. Pure/deterministic."""
-        return (self.state @ self.W_pred).astype(np.float32)
+        logits, with a learnable output bias so the start-of-sequence
+        ([] prefix, zero state) transition is learnable. Pure/det."""
+        return (self.state @ self.W_pred + self.b_pred).astype(np.float32)
 
     def select_next(self, candidates: list) -> int:
         """Active inference: emit the candidate concept the top-down
@@ -87,10 +92,28 @@ class PredictiveCoder:
         gW_pred = np.outer(self.state, err).astype(np.float32)
         dstate = (self.W_pred @ err).astype(np.float32)
         self.W_pred -= lr * gW_pred
+        # output-bias grad (softmax-CE): dL/db_pred == err. Always
+        # nonzero, so the []->first-concept transition is learnable.
+        self.b_pred -= lr * err
         # W_in grad: each prefix concept contributed leak**k * W_in[c]
         # to state; apply the same dstate to the concepts' rows (a
         # 1-step approximation -- sufficient for the cheap P probe).
         for c in set(contribs):
             self.W_in[c] -= lr * dstate
         np.clip(self.W_pred, -5.0, 5.0, out=self.W_pred)
+        np.clip(self.b_pred, -5.0, 5.0, out=self.b_pred)
         np.clip(self.W_in, -5.0, 5.0, out=self.W_in)
+
+    def rollout(self, intention: list, length: int,
+                candidates: list) -> list:
+        """Active-inference rollout: reset to the intention, then for
+        each step emit the next concept the top-down generative model
+        most predicts (select_next) and feed it back into pc_state.
+        Returns the ordered produced concept list. Pure (no bridge)."""
+        self.reset(intention)
+        produced: list = []
+        for _ in range(int(length)):
+            c = self.select_next(candidates)
+            produced.append(int(c))
+            self.update_state(int(c))
+        return produced
