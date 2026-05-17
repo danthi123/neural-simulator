@@ -50,3 +50,29 @@ def test_save_load_roundtrip_logit_exact(tmp_path):
     assert json.loads(open(p + ".meta.json").read())["d_model"] == 16
     m2 = TinyGPT.load(p).eval()
     assert torch.equal(m2(idx).detach(), before)
+
+
+def test_position0_depends_only_on_token0_anti_inversion():
+    # THE strongest causal pin: position 0 may attend ONLY to itself.
+    # Change EVERY position except 0; position-0 logits must be
+    # byte-identical. This FAILS under an inverted/anti-causal mask
+    # (where pos 0 would attend the future) -- defense-in-depth on the
+    # load-bearing no-future-leak property.
+    m = _mk(V=20, bs=8)
+    torch.manual_seed(2)
+    idx = torch.randint(0, 20, (1, 8))
+    base = m(idx).detach().clone()
+    idx2 = idx.clone()
+    for t in range(1, 8):
+        idx2[0, t] = (idx[0, t].item() + 7) % 20    # perturb 1..7
+    alt = m(idx2).detach()
+    assert torch.equal(base[:, 0, :], alt[:, 0, :])  # pos0 invariant
+    # and the model is NOT degenerate (pos0 logits have real spread)
+    assert float(base[:, 0, :].std()) > 0.0
+
+
+def test_too_long_sequence_raises_not_silent():
+    m = _mk(V=20, bs=8)
+    import pytest as _pt
+    with _pt.raises(ValueError):
+        m(torch.randint(0, 20, (1, 9)))   # n=9 > block_size=8

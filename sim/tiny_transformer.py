@@ -52,6 +52,11 @@ class TinyGPT(nn.Module):
 
     def forward(self, idx):
         n = idx.size(1)
+        if n > self.cfg["block_size"]:
+            raise ValueError(
+                "sequence length %d exceeds block_size %d "
+                "(positional embedding would be out of range)"
+                % (n, self.cfg["block_size"]))
         pos = torch.arange(n, device=idx.device)
         x = self.drop(self.tok(idx) + self.pos(pos)[None, :, :])
         for b in self.blocks:
