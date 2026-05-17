@@ -1,0 +1,137 @@
+{
+  "task": "Generator-E pre-registered MULTI-SEED capability gate",
+  "mechanism": "self-contained n-gram generative LM (NgramTeacher) through the SAME HARDENED gate_core; honest ceiling: n-gram-class LOCAL coherence, NOT an LLM",
+  "corpus_used": "tinystories",
+  "corpus_degraded": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_seeds": 3,
+  "config": {
+    "vocab_size": 513,
+    "vocab_size_requested": 512,
+    "gen_tokens": 200,
+    "eval_positions": 4000
+  },
+  "anti_cheat": {
+    "hardened_gate_core": "0.20/1.5/0.5/0.20 + abs-competence floor; >=3 seeds; NEVER tuned; uniform_ppl passed",
+    "load_bearing_control": "BPE-invariant word-shuffle of the train split; control n-gram has no trigram structure",
+    "ngram_cheat_is_regurgitation": "the hardened verbatim-copy<=0.20 bar is the load-bearing adjudicator",
+    "honest_ceiling": "n-gram-class LOCAL coherence ONLY, explicitly NOT an LLM; never spun",
+    "honest_propagation": "CONTROLLER's post-run job; runner only computes+writes JSON"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "resumed": false,
+      "heldout_ppl": 14.753801622099749,
+      "shuffled_ctl_ppl": 76.03214704673746,
+      "train_ppl": 11.69534483240433,
+      "uniform_ppl": 513,
+      "distinct_trigram": 0.98989898989899,
+      "verbatim_copy_frac": 0.05699481865284974,
+      "gen_sample": "t countrun awasmiled and said, \"Now shind and <|enes, but <|endoftext|says, poound thar watwatch Lucy was looked at the log. t's do itam Do you want to share your friends. wished clothes. One sunny in the crayone, the n the yummy tree! <|en",
+      "verdict": {
+        "GATE": "PASS",
+        "absolute_competence_beats_random": true,
+        "real_structure_vs_shuffled": true,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 14.753801622099749,
+        "shuffled_ppl": 76.03214704673746,
+        "train_ppl": 11.69534483240433,
+        "uniform_ppl": 513.0,
+        "distinct_trigram": 0.98989898989899,
+        "verbatim_copy_frac": 0.05699481865284974,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 42
+      }
+    },
+    {
+      "seed": 43,
+      "resumed": false,
+      "heldout_ppl": 14.753801622099749,
+      "shuffled_ctl_ppl": 76.26262088356413,
+      "train_ppl": 11.69534483240433,
+      "uniform_ppl": 513,
+      "distinct_trigram": 1.0,
+      "verbatim_copy_frac": 0.0051813471502590676,
+      "gen_sample": "They nodded and drove awathought it would be f you give you. It was maside together again. She ant to lifefrightlts , she shut arms. down at tticexcited when it looks the storing ver. It looked came best friends, but Ben friends, shing, and",
+      "verdict": {
+        "GATE": "PASS",
+        "absolute_competence_beats_random": true,
+        "real_structure_vs_shuffled": true,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 14.753801622099749,
+        "shuffled_ppl": 76.26262088356413,
+        "train_ppl": 11.69534483240433,
+        "uniform_ppl": 513.0,
+        "distinct_trigram": 1.0,
+        "verbatim_copy_frac": 0.0051813471502590676,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 43
+      }
+    },
+    {
+      "seed": 44,
+      "resumed": false,
+      "heldout_ppl": 14.753801622099749,
+      "shuffled_ctl_ppl": 77.06953877940342,
+      "train_ppl": 11.69534483240433,
+      "uniform_ppl": 513,
+      "distinct_trigram": 0.9848484848484849,
+      "verbatim_copy_frac": 0.0051813471502590676,
+      "gen_sample": "They all played >it started to fix it.\" Joh smiled beC big fish was sult to <|endoftext|>.\" She gave the wise old owher. And from that day on, Micks. an end knew it was her Lily ran ry is apphappy. He played with her new game. d. He tried w",
+      "verdict": {
+        "GATE": "PASS",
+        "absolute_competence_beats_random": true,
+        "real_structure_vs_shuffled": true,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 14.753801622099749,
+        "shuffled_ppl": 77.06953877940342,
+        "train_ppl": 11.69534483240433,
+        "uniform_ppl": 513.0,
+        "distinct_trigram": 0.9848484848484849,
+        "verbatim_copy_frac": 0.0051813471502590676,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 44
+      }
+    }
+  ],
+  "aggregate_verdict": {
+    "GATE": "PASS",
+    "n_seeds": 3,
+    "min_seeds_requested": 3,
+    "min_seeds": 3,
+    "n_pass": 3,
+    "all_pass": true
+  },
+  "GATE": "PASS",
+  "OVERALL": "PASS",
+  "elapsed_seconds": 814.4
+}
