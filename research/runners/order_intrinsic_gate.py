@@ -442,6 +442,42 @@ def main():
                     except (ValueError, OSError):
                         g1_abstain = None
                 frozen_floors[seed] = g1_abstain
+                # Rebuild a per_prop record SCHEMA-CONSISTENT with the
+                # fresh-seed prop_records (below) so the JSON `per_seed`
+                # artifact is uniform and the ASCII verdict block can
+                # render resumed seeds. v_list is 1:1 in-order with the
+                # PURE-re-derived heldout_props (a seed only enters
+                # `completed` AFTER its full in-order held-out loop). The
+                # displayed fields are FAITHFUL: prop is purely
+                # re-derived; gate_cleared / true_score / best_perm_score
+                # are read from the PERSISTED verdict (g1_verdict stores
+                # "gate_cleared"). Verbose diagnostics not persisted in
+                # the kill-safe resume record are honestly None/[] (NOT
+                # fabricated). This is display/record only -- it does NOT
+                # touch per_seed_prop_verdicts (what aggregate_multiseed
+                # consumes), the floor, the verdict, or any protected
+                # module, so the terminal verdict is provably unaffected.
+                resumed_per_prop = []
+                for i, v in enumerate(v_list):
+                    hp_i = (list(heldout_props[i])
+                            if i < len(heldout_props) else None)
+                    resumed_per_prop.append({
+                        "prop": hp_i,
+                        "true_decoded": None,
+                        "true_conf": None,
+                        "true_abstained_positions": None,
+                        "true_top_rate": None,
+                        "gate_cleared": v.get("gate_cleared"),
+                        "g1_abstain_frozen": g1_abstain,
+                        "n_perm_controls": None,
+                        "perm_controls": None,
+                        "perm_best": round(
+                            float(v.get("best_perm_score", 0.0)), 6),
+                        "true_score": round(
+                            float(v.get("true_score", 0.0)), 6),
+                        "verdict": v,
+                        "resumed_record": True,
+                    })
                 per_seed_records.append({
                     "seed": seed,
                     "resumed": True,
@@ -450,7 +486,7 @@ def main():
                                          "NEVER recomputed)",
                     "train_propositions": train_props,
                     "heldout_propositions": heldout_props,
-                    "per_prop": v_list,
+                    "per_prop": resumed_per_prop,
                 })
                 print("\n[SEED %d] RESUMED from frozen sidecar "
                       "(floor=%s; %d held-out props; NEVER "
