@@ -1,0 +1,135 @@
+{
+  "task": "Generator-S pre-registered MULTI-SEED capability gate",
+  "mechanism": "subword spiking LM, surrogate-grad BPTT, real public corpus, self-contained at runtime; order is learned, not read out of an order-blind pool",
+  "corpus_used": "tinystories",
+  "corpus_degraded": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_seeds": 3,
+  "config": {
+    "vocab_size": 512,
+    "hidden_layers": [
+      256,
+      256
+    ],
+    "T": 32,
+    "epochs": 40,
+    "batch_size": 32,
+    "n_train_samples": 2000,
+    "lr": 0.005
+  },
+  "anti_cheat": {
+    "fixed_bars_in_gate_core": "0.20/1.5/0.5/0.20; >=3 seeds; NEVER tuned in the runner",
+    "load_bearing_control": "BPE-invariant word-shuffle of the train split (identical tokenizer/token distribution; only sequence order destroyed)",
+    "honest_propagation": "CONTROLLER's post-run job; runner only computes+writes JSON"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "resumed": false,
+      "heldout_ppl": 117715.86566454619,
+      "shuffled_ctl_ppl": 224392.1965873365,
+      "train_ppl": 133303.12057692203,
+      "distinct_trigram": 1.0,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 4.503460032324637,
+      "ctl_final_loss": 5.018780175716646,
+      "gen_sample": "when ated Ft. loved inina from gh,\" d. em. and and , cad. , it to He said, k grand their uhat . ons ed. d. the d. ed red and . It man!\" sthe shind toand y. arto of oer. laup haand waed arght boOplaying sheback lehouhyouoingtle",
+      "verdict": {
+        "GATE": "PASS",
+        "real_structure_vs_shuffled": true,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 117715.86566454619,
+        "shuffled_ppl": 224392.1965873365,
+        "train_ppl": 133303.12057692203,
+        "distinct_trigram": 1.0,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2
+        },
+        "seed": 42
+      }
+    },
+    {
+      "seed": 43,
+      "resumed": false,
+      "heldout_ppl": 124281.74114588596,
+      "shuffled_ctl_ppl": 188015.15735242196,
+      "train_ppl": 236538.0364629428,
+      "distinct_trigram": 1.0,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 4.947580443274591,
+      "ctl_final_loss": 5.248565827646563,
+      "gen_sample": "m his e e big a the placaerethe albig w e the taing arthe it w w ! erooathe the ing cien lelucar! thshe w arkthe thele en, time, him le argreed ys go ced go muraed ley. day. little liat bs. anthe orAis was theis Mais to",
+      "verdict": {
+        "GATE": "PASS",
+        "real_structure_vs_shuffled": true,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 124281.74114588596,
+        "shuffled_ppl": 188015.15735242196,
+        "train_ppl": 236538.0364629428,
+        "distinct_trigram": 1.0,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2
+        },
+        "seed": 43
+      }
+    },
+    {
+      "seed": 44,
+      "resumed": false,
+      "heldout_ppl": 387991.4670809262,
+      "shuffled_ctl_ppl": 488165.3491615053,
+      "train_ppl": 396376.7673498382,
+      "distinct_trigram": 1.0,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 4.399570467010621,
+      "ctl_final_loss": 4.651766811647723,
+      "gen_sample": "ran Maran 0out it weed she e at at obbeShe qued a\"anisthe tireouside quShe Lily ged ed that was so cs va ffa and a othouthe and doutheir a a at friends g. friends Lily g. in enLily ing. The a ouing. One t. sMax good w exthe y, the said. y, ",
+      "verdict": {
+        "GATE": "PASS",
+        "real_structure_vs_shuffled": true,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 387991.4670809262,
+        "shuffled_ppl": 488165.3491615053,
+        "train_ppl": 396376.7673498382,
+        "distinct_trigram": 1.0,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2
+        },
+        "seed": 44
+      }
+    }
+  ],
+  "aggregate_verdict": {
+    "GATE": "PASS",
+    "n_seeds": 3,
+    "min_seeds_requested": 3,
+    "min_seeds": 3,
+    "n_pass": 3,
+    "all_pass": true
+  },
+  "GATE": "PASS",
+  "OVERALL": "PASS",
+  "elapsed_seconds": 1992.5
+}

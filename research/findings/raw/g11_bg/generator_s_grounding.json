@@ -1,0 +1,134 @@
+{
+  "task": "Generator-S pre-registered MULTI-SEED capability gate",
+  "mechanism": "subword spiking LM, surrogate-grad BPTT, real public corpus, self-contained at runtime; order is learned, not read out of an order-blind pool",
+  "corpus_used": "data/tinyshakespeare.txt",
+  "corpus_degraded": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_seeds": 3,
+  "config": {
+    "vocab_size": 96,
+    "hidden_layers": [
+      32
+    ],
+    "T": 12,
+    "epochs": 3,
+    "batch_size": 8,
+    "n_train_samples": 60,
+    "lr": 0.005
+  },
+  "anti_cheat": {
+    "fixed_bars_in_gate_core": "0.20/1.5/0.5/0.20; >=3 seeds; NEVER tuned in the runner",
+    "load_bearing_control": "BPE-invariant word-shuffle of the train split (identical tokenizer/token distribution; only sequence order destroyed)",
+    "honest_propagation": "CONTROLLER's post-run job; runner only computes+writes JSON"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "resumed": false,
+      "heldout_ppl": 1434.9996021684485,
+      "shuffled_ctl_ppl": 1391.999132334594,
+      "train_ppl": 1223.2878297930777,
+      "distinct_trigram": 1.0,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 7.167167936052595,
+      "ctl_final_loss": 6.9806846380233765,
+      "gen_sample": "xKxKuthe Ruothe o:u:uuthe s Gthe the Authe qthe qokuthe :::o :kthe kG",
+      "verdict": {
+        "GATE": "FAIL",
+        "real_structure_vs_shuffled": false,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 1434.9996021684485,
+        "shuffled_ppl": 1391.999132334594,
+        "train_ppl": 1223.2878297930777,
+        "distinct_trigram": 1.0,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2
+        },
+        "seed": 42
+      }
+    },
+    {
+      "seed": 43,
+      "resumed": false,
+      "heldout_ppl": 2066.6982295553785,
+      "shuffled_ctl_ppl": 1870.5974415059868,
+      "train_ppl": 1581.345060957347,
+      "distinct_trigram": 1.0,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 7.008061741079603,
+      "ctl_final_loss": 6.907533432756152,
+      "gen_sample": "haand Xand and XyyXeeto KKto Kowowmarto nyy.FbFlowowand owP.!!!oK",
+      "verdict": {
+        "GATE": "FAIL",
+        "real_structure_vs_shuffled": false,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 2066.6982295553785,
+        "shuffled_ppl": 1870.5974415059868,
+        "train_ppl": 1581.345060957347,
+        "distinct_trigram": 1.0,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2
+        },
+        "seed": 43
+      }
+    },
+    {
+      "seed": 44,
+      "resumed": false,
+      "heldout_ppl": 4941.350100286498,
+      "shuffled_ctl_ppl": 4939.542399633038,
+      "train_ppl": 4095.914157017119,
+      "distinct_trigram": 1.0,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 8.028932281902858,
+      "ctl_final_loss": 7.648011190550668,
+      "gen_sample": "S-on,llrr,dWdSanS'lS,'SSlonddonon-,nddrroorrKon",
+      "verdict": {
+        "GATE": "FAIL",
+        "real_structure_vs_shuffled": false,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 4941.350100286498,
+        "shuffled_ppl": 4939.542399633038,
+        "train_ppl": 4095.914157017119,
+        "distinct_trigram": 1.0,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2
+        },
+        "seed": 44
+      }
+    }
+  ],
+  "aggregate_verdict": {
+    "GATE": "FAIL",
+    "n_seeds": 3,
+    "min_seeds_requested": 3,
+    "min_seeds": 3,
+    "n_pass": 0,
+    "all_pass": false
+  },
+  "GATE": "FAIL",
+  "OVERALL": "FAIL",
+  "elapsed_seconds": 35.9
+}
