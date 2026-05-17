@@ -1,0 +1,151 @@
+{
+  "task": "Generator-D pre-registered MULTI-SEED capability gate",
+  "mechanism": "subword spiking LM via knowledge distillation (soft-xent vs competent trigram teacher), real public corpus, self-contained at runtime (teacher discarded post-training)",
+  "corpus_used": "tinystories",
+  "corpus_degraded": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_seeds": 3,
+  "config": {
+    "vocab_size": 512,
+    "hidden_layers": [
+      256,
+      256
+    ],
+    "T": 32,
+    "epochs": 40,
+    "batch_size": 32,
+    "n_train_samples": 2000,
+    "lr": 0.005
+  },
+  "anti_cheat": {
+    "hardened_gate_core": "0.20/1.5/0.5/0.20 + abs-competence floor; >=3 seeds; NEVER tuned in the runner; uniform_ppl passed",
+    "load_bearing_control": "BPE-invariant word-shuffle of the train split (identical tokenizer/token distribution; only sequence order destroyed; its teacher has no sequential structure)",
+    "teacher_is_transparency_only": "teacher_heldout_ppl recorded for transparency; the gate judges the STUDENT; teacher discarded post-training",
+    "honest_propagation": "CONTROLLER's post-run job; runner only computes+writes JSON"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "resumed": false,
+      "heldout_ppl": 803.8057487055343,
+      "shuffled_ctl_ppl": 965.1428997042254,
+      "train_ppl": 2784.784621133339,
+      "uniform_ppl": 513,
+      "teacher_heldout_ppl": 15.268786279153424,
+      "distinct_trigram": 1.0,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 7.559230280609364,
+      "ctl_final_loss": 7.907814685425448,
+      "gen_sample": "wiback seTom saidhomfound inbig hfrom Ben go =onphe Th\"er happy 'putiThey tiplaylaua wewent ed ,\" ke sher. friends. took ghgthean?all r4orwthing in. tiezffylt llakwas jed y. hin ly him She te unmaboy t's norazved o, took lly",
+      "verdict": {
+        "GATE": "FAIL",
+        "absolute_competence_beats_random": false,
+        "real_structure_vs_shuffled": false,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 803.8057487055343,
+        "shuffled_ppl": 965.1428997042254,
+        "train_ppl": 2784.784621133339,
+        "uniform_ppl": 513.0,
+        "distinct_trigram": 1.0,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 42
+      }
+    },
+    {
+      "seed": 43,
+      "resumed": false,
+      "heldout_ppl": 2367.073554153972,
+      "shuffled_ctl_ppl": 2117.9913554490076,
+      "train_ppl": 2245.2602900580887,
+      "uniform_ppl": 513,
+      "teacher_heldout_ppl": 15.268786279153424,
+      "distinct_trigram": 1.0,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 8.019467879577459,
+      "ctl_final_loss": 8.345315698133637,
+      "gen_sample": "neir e fcThey ut s. big helpgewas Tiball wighvertinew heltonew took , from neFtso icecnehind mane , see shya obtiscarrer. win rbakhis zliked erhlost shday. knotrebird idgot be asked r bsome my 'datot. have It happy v",
+      "verdict": {
+        "GATE": "FAIL",
+        "absolute_competence_beats_random": false,
+        "real_structure_vs_shuffled": false,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 2367.073554153972,
+        "shuffled_ppl": 2117.9913554490076,
+        "train_ppl": 2245.2602900580887,
+        "uniform_ppl": 513.0,
+        "distinct_trigram": 1.0,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 43
+      }
+    },
+    {
+      "seed": 44,
+      "resumed": false,
+      "heldout_ppl": 3087.9927997064833,
+      "shuffled_ctl_ppl": 3320.175753736226,
+      "train_ppl": 2965.6004253360293,
+      "uniform_ppl": 513,
+      "teacher_heldout_ppl": 15.268786279153424,
+      "distinct_trigram": 1.0,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 7.67072758748307,
+      "ctl_final_loss": 8.04689051338154,
+      "gen_sample": "n -m'id it. ttfelt parat birarloved ea. smait. He !\" chhelpununle her stothB.jande trey, spleapuput and ke Thd. anplayed maued, ilorthey de albegehave f<|endoftext|> like manke .\" me You dait. liLily r ld Oicundid sy t mom zk. he",
+      "verdict": {
+        "GATE": "FAIL",
+        "absolute_competence_beats_random": false,
+        "real_structure_vs_shuffled": false,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 3087.9927997064833,
+        "shuffled_ppl": 3320.175753736226,
+        "train_ppl": 2965.6004253360293,
+        "uniform_ppl": 513.0,
+        "distinct_trigram": 1.0,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 44
+      }
+    }
+  ],
+  "aggregate_verdict": {
+    "GATE": "FAIL",
+    "n_seeds": 3,
+    "min_seeds_requested": 3,
+    "min_seeds": 3,
+    "n_pass": 0,
+    "all_pass": false
+  },
+  "GATE": "FAIL",
+  "OVERALL": "FAIL",
+  "elapsed_seconds": 3561.7
+}

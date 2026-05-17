@@ -1,0 +1,150 @@
+{
+  "task": "Generator-D pre-registered MULTI-SEED capability gate",
+  "mechanism": "subword spiking LM via knowledge distillation (soft-xent vs competent trigram teacher), real public corpus, self-contained at runtime (teacher discarded post-training)",
+  "corpus_used": "data/tinyshakespeare.txt",
+  "corpus_degraded": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_seeds": 3,
+  "config": {
+    "vocab_size": 96,
+    "hidden_layers": [
+      32
+    ],
+    "T": 12,
+    "epochs": 3,
+    "batch_size": 8,
+    "n_train_samples": 60,
+    "lr": 0.005
+  },
+  "anti_cheat": {
+    "hardened_gate_core": "0.20/1.5/0.5/0.20 + abs-competence floor; >=3 seeds; NEVER tuned in the runner; uniform_ppl passed",
+    "load_bearing_control": "BPE-invariant word-shuffle of the train split (identical tokenizer/token distribution; only sequence order destroyed; its teacher has no sequential structure)",
+    "teacher_is_transparency_only": "teacher_heldout_ppl recorded for transparency; the gate judges the STUDENT; teacher discarded post-training",
+    "honest_propagation": "CONTROLLER's post-run job; runner only computes+writes JSON"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "resumed": false,
+      "heldout_ppl": 1465.8276416522162,
+      "shuffled_ctl_ppl": 1394.7547717740429,
+      "train_ppl": 1223.261848908257,
+      "uniform_ppl": 97,
+      "teacher_heldout_ppl": 11.637257450846649,
+      "distinct_trigram": 0.9473684210526315,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 7.163644164963799,
+      "ctl_final_loss": 7.026251711556284,
+      "gen_sample": "x wKuininorSuthe the uouuthe the 'the the Athe uAuthe the ll uuo'oo'll o:in",
+      "verdict": {
+        "GATE": "FAIL",
+        "absolute_competence_beats_random": false,
+        "real_structure_vs_shuffled": false,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 1465.8276416522162,
+        "shuffled_ppl": 1394.7547717740429,
+        "train_ppl": 1223.261848908257,
+        "uniform_ppl": 97.0,
+        "distinct_trigram": 0.9473684210526315,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 42
+      }
+    },
+    {
+      "seed": 43,
+      "resumed": false,
+      "heldout_ppl": 2062.7637649629164,
+      "shuffled_ctl_ppl": 1967.535942324884,
+      "train_ppl": 1676.347926418084,
+      "uniform_ppl": 97,
+      "teacher_heldout_ppl": 11.637257450846649,
+      "distinct_trigram": 0.9736842105263158,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 7.600500682749462,
+      "ctl_final_loss": 7.5580869310234675,
+      "gen_sample": "hahaand and and and yyXeowto e-y !ooarKhaKowo!KK!to to WEowowEEE-arX",
+      "verdict": {
+        "GATE": "FAIL",
+        "absolute_competence_beats_random": false,
+        "real_structure_vs_shuffled": false,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 2062.7637649629164,
+        "shuffled_ppl": 1967.535942324884,
+        "train_ppl": 1676.347926418084,
+        "uniform_ppl": 97.0,
+        "distinct_trigram": 0.9736842105263158,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 43
+      }
+    },
+    {
+      "seed": 44,
+      "resumed": false,
+      "heldout_ppl": 5009.386510518178,
+      "shuffled_ctl_ppl": 4978.899855298336,
+      "train_ppl": 4163.1837653865405,
+      "uniform_ppl": 97,
+      "teacher_heldout_ppl": 11.637257450846649,
+      "distinct_trigram": 0.9210526315789473,
+      "verbatim_copy_frac": 0.0,
+      "real_final_loss": 8.431995464586054,
+      "ctl_final_loss": 7.991209455164813,
+      "gen_sample": "S-on,orr:inandanonan-ll-'SanronaSthth-Sonaonrthrrrrrr",
+      "verdict": {
+        "GATE": "FAIL",
+        "absolute_competence_beats_random": false,
+        "real_structure_vs_shuffled": false,
+        "generalizes_not_memorizes": true,
+        "non_degenerate_generation": true,
+        "not_verbatim_copying": true,
+        "heldout_ppl": 5009.386510518178,
+        "shuffled_ppl": 4978.899855298336,
+        "train_ppl": 4163.1837653865405,
+        "uniform_ppl": 97.0,
+        "distinct_trigram": 0.9210526315789473,
+        "verbatim_copy_frac": 0.0,
+        "bars": {
+          "ppl_margin": 0.2,
+          "generalization_max": 1.5,
+          "distinct_min": 0.5,
+          "copy_max": 0.2,
+          "abs_competence_ppl_ratio": 1.0
+        },
+        "seed": 44
+      }
+    }
+  ],
+  "aggregate_verdict": {
+    "GATE": "FAIL",
+    "n_seeds": 3,
+    "min_seeds_requested": 3,
+    "min_seeds": 3,
+    "n_pass": 0,
+    "all_pass": false
+  },
+  "GATE": "FAIL",
+  "OVERALL": "FAIL",
+  "elapsed_seconds": 101.6
+}
