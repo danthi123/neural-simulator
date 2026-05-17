@@ -9,12 +9,12 @@ after the 6-negative generative line -- the network does not GENERATE
 an ordered sequence; instead each position is read back by a
 deterministic position sweep over the positional store).
 
-Task 3 will REUSE song_g1_core.g1_verdict / score_order /
-permuted_order_controls UNMODIFIED -- the pre-registered anti-cheat
-bars (permuted-ORDER control, absolute floor, +10% margin) are NEVER
-reimplemented here. This file only adds the decode/aggregation glue;
-later tasks append more pure functions (control_max_floor,
-order_intrinsic_verdict, aggregate_multiseed) to it.
+`order_intrinsic_verdict` REUSES song_g1_core.g1_verdict /
+score_order UNMODIFIED -- the pre-registered anti-cheat bars
+(permuted-ORDER control, absolute floor, +10% margin) are NEVER
+reimplemented here. This file holds only the decode/aggregation glue:
+decode_position_sweep, control_max_floor, order_intrinsic_verdict,
+aggregate_multiseed.
 """
 from __future__ import annotations
 
@@ -101,6 +101,10 @@ def order_intrinsic_verdict(true_decoded, intended, perm_decoded,
         (score_order(pd, intended) for pd in perm_decoded),
         default=0.0)
     v = g1_verdict(true_score, best_perm, gate_cleared)
+    # g1_verdict already returns these keys with identical values;
+    # re-set them explicitly so this module's JSON contract is
+    # decoupled from g1_verdict's internal key names (not a fix for a
+    # missing key -- a deliberate, explicit, stable contract).
     v["true_score"] = true_score
     v["best_perm_score"] = best_perm
     return v
@@ -111,10 +115,14 @@ def aggregate_multiseed(per_seed_prop_verdicts, min_seeds: int = 3) -> dict:
       (a) at least `min_seeds` seeds were run (>=3 mandatory --
           single-seed / near-noise is explicitly NOT a pass; the
           cheap probe proved single-seed unreliable at 50%), AND
-      (b) EVERY held-out proposition in EVERY seed has GATE == "PASS".
-    Any seed-prop FAIL, or fewer than min_seeds seeds, -> FAIL.
-    Pure / deterministic. Returns a dict with the aggregate GATE +
-    counts for the JSON record."""
+      (b) EVERY seed contributed at least one held-out proposition
+          (a seed with zero props would vacuously satisfy "every
+          prop passed" -- guarded so an empty/mixed-empty seed list
+          can never manufacture a PASS), AND
+      (c) EVERY held-out proposition in EVERY seed has GATE == "PASS".
+    Any seed-prop FAIL, any empty seed, or fewer than min_seeds
+    seeds, -> FAIL. Pure / deterministic. Returns a dict with the
+    aggregate GATE + counts for the JSON record."""
     n_seeds = len(per_seed_prop_verdicts)
     n_props_total = 0
     n_props_pass = 0
@@ -124,14 +132,20 @@ def aggregate_multiseed(per_seed_prop_verdicts, min_seeds: int = 3) -> dict:
             if v.get("GATE") == "PASS":
                 n_props_pass += 1
     enough_seeds = n_seeds >= int(min_seeds)
+    # every seed must contribute >=1 prop (a zero-prop seed vacuously
+    # "all-pass" -- the mixed-empty-seed anti-cheat hole; only makes
+    # the gate STRICTER, the correct direction).
+    all_seeds_have_props = (n_seeds > 0 and all(
+        len(sp) > 0 for sp in per_seed_prop_verdicts))
     all_pass = (n_props_total > 0
                 and n_props_pass == n_props_total)
-    gate = bool(enough_seeds and all_pass)
+    gate = bool(enough_seeds and all_seeds_have_props and all_pass)
     return {
         "GATE": "PASS" if gate else "FAIL",
         "n_seeds": n_seeds,
         "min_seeds": int(min_seeds),
         "enough_seeds": enough_seeds,
+        "all_seeds_have_props": all_seeds_have_props,
         "n_props_total": n_props_total,
         "n_props_pass": n_props_pass,
         "all_pass": all_pass,

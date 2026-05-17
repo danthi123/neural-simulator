@@ -54,3 +54,48 @@ def test_aggregate_multiseed_requires_all_seeds_pass():
     assert aggregate_multiseed([seed_ok, seed_ok, seed_ok])["GATE"] == "PASS"
     assert aggregate_multiseed([seed_ok, seed_bad, seed_ok])["GATE"] == "FAIL"
     assert aggregate_multiseed([seed_ok, seed_ok])["GATE"] == "FAIL"  # <3 seeds
+
+
+# --- review-recommended adversarial coverage: lock the paramount
+#     anti-cheat properties so a future regression cannot silently
+#     break this terminal-verdict-gating core ---
+
+def test_encoded_distribution_cannot_tune_the_floor():
+    # THE paramount anti-cheat property: the floor is control-MAX
+    # ONLY; the encoded (intended) distribution must never move it.
+    ctl = [0.20, 0.31, 0.18, 0.27]
+    base = control_max_floor([0.50, 0.42, 0.61], ctl)
+    assert control_max_floor([1e9, 1e9, 1e9], ctl) == base
+    assert control_max_floor([1e-9], ctl) == base
+    assert control_max_floor([], ctl) == base
+    assert base == 0.31
+
+def test_verdict_no_permuted_controls_is_fail():
+    # no permuted-ORDER contrast -> no order-evidence -> FAIL even
+    # with a perfect true decode + gate cleared
+    v = order_intrinsic_verdict([1, 2, 3], [1, 2, 3],
+                                perm_decoded=[], gate_cleared=True)
+    assert v["GATE"] == "FAIL"
+
+def test_verdict_none_slots_penalised_not_free_pass():
+    # an abstained (None) slot is a mismatch, not a clean stop:
+    # 2/3 correct -> below the 0.5 floor only if <0.5; here 2/3>0.5
+    # but a single correct (1/3) must be FAIL
+    v_partial = order_intrinsic_verdict([1, None, 3], [1, 2, 3],
+                                        [[2, 1, 3]], gate_cleared=True)
+    assert abs(v_partial["true_score"] - (2.0 / 3.0)) < 1e-9
+    v_one = order_intrinsic_verdict([1, None, None], [1, 2, 3],
+                                    [[2, 1, 3]], gate_cleared=True)
+    assert v_one["true_score"] < 0.5 and v_one["GATE"] == "FAIL"
+
+def test_decode_at_floor_boundary_abstains():
+    # rate EXACTLY at floor abstains (<= floor) -- the no-confab moat
+    d, _, ab = decode_position_sweep([{"A": 0.20}], floor=0.20)
+    assert d == [None] and ab == [0]
+
+def test_aggregate_mixed_empty_seed_cannot_manufacture_pass():
+    # a >=3-seed run where one seed contributed ZERO props must FAIL
+    # (a zero-prop seed vacuously "all-pass" -- the closed hole)
+    seed_ok = [{"GATE": "PASS"}, {"GATE": "PASS"}]
+    r = aggregate_multiseed([seed_ok, seed_ok, []])
+    assert r["GATE"] == "FAIL" and r["all_seeds_have_props"] is False
