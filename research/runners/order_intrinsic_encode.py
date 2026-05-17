@@ -1,144 +1,244 @@
-"""Trained ec_context(position)->concept-pool readback encode +
-deterministic position-sweep producer (order-intrinsic slice, Task 5).
+"""Trained ec_context(position)->concept-readout encode + deterministic
+position-sweep producer, over the MULTI-SEED-VALIDATED D.11/P4.1
+DG->CA3 positional store (order-intrinsic slice, Task 5).
+
+RETARGETED 2026-05-16 (spec-compliance fix). The first Task-5 cut
+(commit 89113c8) built on `concept_pool_demo.build_concept_bridge(
+enable_positional_context=True)` -- the *weak ~50% prototype's*
+bridge, which wires ec_context -> concept-pools DIRECTLY with NO
+DG/CA3 and whose (word,position) distinctness is only SINGLE-seed
+(`test_positional_binding_concept_pool.py`). The design
+(`docs/plans/2026-05-16-order-intrinsic-conversational-memory-design.md`
+"Evidence grounding" + "Architecture") grounds the line on the
+multi-seed-validated (3/3, `2026-05-11-P41-positional-multiseed.md`)
+P4.1 substrate built by `text_minimal_isolation.build_biological_
+brain_regions(enable_hippocampus_consolidation=True,
+enable_episodic_context=True)` -> ec_context -> dg -> CA3, which
+`research/runners/validate_positional_binding.py` validates and which
+Task 6's no-harm re-runs UNCHANGED. Building Task 5 on the OTHER
+substrate would make Task 6's no-harm vacuous (it would protect a
+store the architecture never uses) and the design's
+"multi-seed-validated-reuse" premise FALSE as implemented. This module
+is retargeted to that DG/CA3 store so the no-harm is MEANINGFUL and the
+premise TRUE.
 
 THE NET-NEW MECHANISM of this line. The 6-negative terminated line
 tried to LEARN an ordered sequence model; this does NOT. Order is
 INTRINSIC: it lives in the deterministic D.11 positional code
 (`sim.text_embeddings.positional_drive_pattern`) and is read back by a
 plain position sweep. The single net-new behavior over the weak ~50%
-prototype (`research/runners/test_word_order_discrimination.py`) is
-that the `ec_context -> concept-pool` pathway is PLASTIC AND
-co-firing-strengthened DURING the existing validated co-drive encode
-(Tonegawa engram binds all co-active elements; catalog D.14 / D.02),
-so a later `ec_context(position)`-alone sweep drives the bound concept
-pool strongly instead of leaving it at the raw-trace ~50% floor.
+read-back (`validate_positional_binding`'s query is the raw associative
+trace -- here we ADD a *trained* read-back) is ONE additive plastic
+`ec_context -> motor_{N,E,S,W}` pathway (gate
+`ec_context_to_motor_readback`, DISJOINT from every validated store
+gate) that is co-firing-strengthened DURING the existing validated
+DG->CA3 co-drive encode (Tonegawa engram binds all co-active elements;
+catalog D.14 / D.02), so a later `ec_context(position)`-alone sweep
+drives the bound concept's readout strongly instead of leaving it at
+the raw-trace ~50% floor.
+
+WHY motor_{N,E,S,W} IS THE READ-BACK TARGET. The validated DG/CA3
+bridge (`validate_positional_binding.run_positional_validation`) has
+NO noun/verb/adjective concept pools -- its only per-concept readout
+regions are `motor_{N,E,S,W}` (8 neurons each), which are also the
+validated decoder readout for this bridge (`ca1 -> motor_{action}`
+consolidation pathways, gate `ca1_to_motor`, already exist on it).
+`order_intrinsic_core.decode_position_sweep` consumes a per-position
+`{concept: rate}` dict; the concept vocab for this substrate is
+therefore the four direction words {north,east,south,west} ->
+{motor_N,motor_E,motor_S,motor_W} (the `text_minimal_isolation`
+ACTION_NAMES set). The net-new trained pathway makes
+`ec_context(position) -> the position-k word's motor pool` strong,
+WITHOUT touching the validated ec_context->dg->CA3 store-distinctness
+path (separation of concerns -- the v12/v13/v15/G1 lesson).
 
 DRY (nothing here is reimplemented):
-  - bridge construction          : reuse
-    `concept_pool_demo.build_concept_bridge(enable_positional_context
-    =True, ...)` -- the SAME wiring the prototype uses.
+  - bridge construction          : copy
+    `validate_positional_binding.run_positional_validation`'s
+    build_biological_brain_regions(...) + cfg.* idiom EXACTLY (the
+    3/3-multi-seed store), then APPEND the single net-new plastic
+    `ec_context -> motor_{action}` pathway BEFORE
+    _initialize_simulation_data. The validated store regions/pathways
+    /gates are byte-for-byte unchanged.
   - positional code              : reuse
     `sim.text_embeddings.positional_drive_pattern` (D.11; deterministic).
-  - the co-drive encode idiom    : reuse the prototype's
-    `encode_sentence` drive pattern (lang_input(word) orthogonal code +
-    ec_context(position) + target-pool teacher current) AND the
-    `sim.bridge` engram API (start_engram_recording / commit_engram_tag).
-  - the position-sweep readback  : delegate verbatim to the prototype's
-    `query_position` (drive ec_context(position) ALONE; return
-    {pool: rate}). readback_sweep is write-only into the substrate
-    (external current only) -- no feedback, no new pathway.
-  - word<->idx / word<->pool maps: reuse the prototype's `_WORD_TO_IDX`
-    / `_WORD_TO_POOL` (do NOT redefine the vocab).
+  - the co-drive encode idiom    : reuse
+    `validate_positional_binding.encode_and_tag`'s exact drive idiom
+    (lang_input(word) + ec_context(positional_drive_pattern) through
+    the SAME validated store gates `ca3_swr_burst/dg_to_ca3/ec_to_dg/
+    ec_context_to_dg/lang_to_ec`) + the `sim.bridge` engram API
+    (start_engram_recording / commit_engram_tag, region_filter=
+    ["ca3"], matching the validated store).
+  - the position-sweep readback  : reuse
+    `test_word_order_discrimination.query_position`'s exact
+    ec_context(position)-alone drive + per-region spike-rate read
+    mechanism, applied to the motor_{action} readout regions.
+    readback_sweep is write-only into the substrate (external current
+    only) -- no feedback, no new pathway.
+  - word<->action map            : the four-direction subset of
+    `test_word_order_discrimination._WORD_TO_IDX` (orthogonal code
+    indices) -> motor_{action}; do NOT redefine the vocab.
 
 SEPARATION OF CONCERNS (the v12/v13/v15/G1 "first do no harm" lesson;
 Task 6 hard-checks this). During the order-intrinsic encode we open
-ONLY the `ec_context -> concept-pool` pathway plasticity gates that
-`build_concept_bridge` declares on the concept-pool bridge:
-`ec_context_to_noun_pool`, `ec_context_to_verb_pool`,
-`ec_context_to_adjective_pool`, `ec_context_to_motor` (plus the
-`language_input -> *pool` gates so the prototype's teacher-driven
-pool firing co-strengthens, exactly as the weak prototype relies on).
+the validated store's OWN plasticity gates EXACTLY as
+`validate_positional_binding.encode_and_tag` does (`ca3_swr_burst`,
+`dg_to_ca3`, `ec_to_dg`, `ec_context_to_dg`, `lang_to_ec`) -- so the
+(word,position)->distinct-CA3 encoding is byte-identical to the
+validated path -- PLUS exactly one net-new gate
+`ec_context_to_motor_readback` for the additive read-back pathway.
 Every gate is opened in a try/finally and CLOSED at the end of the
-encode -- plasticity never bleeds past the order-intrinsic encode.
-
-The VALIDATED multi-seed D.11/P4.1 `(word,position)->distinct-CA3`
-store (`research/runners/validate_positional_binding.py`,
-`2026-05-11-P41-positional-multiseed.md`) is the *hippocampal
-trisynaptic* store: it is built by a DIFFERENT bridge
-(`build_biological_brain_regions(enable_hippocampus_consolidation
-=True, enable_episodic_context=True)`) whose gates
-(`ec_context_to_dg`, `ec_to_dg`, `dg_to_ca3`, `ca3_swr_burst`,
-`lang_to_ec`) DO NOT EXIST on this concept-pool bridge. This encode
-touches NONE of them: those pathway/gate sets are disjoint, the no-harm
-check (Task 6) re-runs that separate hippo store unchanged, and the
-defensive try/except guards mean any non-existent gate name is a no-op.
-This is precisely the intended target per the plan ("If
-build_concept_bridge's positional wiring is ec_context->pool ... NOT
-the DG/CA3 path, that is the intended target").
+encode -- plasticity never bleeds past the order-intrinsic encode. The
+net-new gate `ec_context_to_motor_readback` is DISJOINT from every
+validated store gate (`ec_context_to_dg`, `ec_to_dg`, `dg_to_ca3`,
+`ca3_swr_burst`, `lang_to_ec`, `ec_to_ca1`, `ca3_to_ca1`,
+`ca1_to_motor`, `ca1_to_lang_out`, `motor_to_language_output`), so
+Task 6's UNCHANGED re-run of `validate_positional_binding` genuinely
+protects the store the architecture now actually uses, and the
+design's multi-seed-validated-reuse premise is TRUE as implemented.
 
 Conventions: ASCII-only print() (Windows cp1252). Heavy imports
-(sim.*, the prototype, the concept-pool builder) are LAZY inside the
-functions so the import/signature smoke is instant.
+(sim.*, validate_positional_binding, the prototype) are LAZY inside
+the functions so the import/signature smoke is instant.
 """
 from __future__ import annotations
 
-from typing import List
+from typing import Dict, List
 
-# Concept-pool plasticity gates declared by build_concept_bridge when
-# enable_positional_context=True (see concept_pool_demo.py lines
-# ~196-247). These are the ONLY net-new gates this encode opens. They
-# are wholly disjoint from the validated D.11/P4.1 DG/CA3 hippocampal
-# store gates, which do not exist on the concept-pool bridge at all.
-_EC_CONTEXT_TO_POOL_GATES = (
-    "ec_context_to_noun_pool",
-    "ec_context_to_verb_pool",
-    "ec_context_to_adjective_pool",
-    "ec_context_to_motor",
-)
-# lang_input -> {kind}_pool gates: opened alongside so the prototype's
-# teacher-driven pool firing co-strengthens lang_input(word)->pool too
-# (the weak 50% prototype implicitly relies on this via teacher_pA).
-# Tagged by build_biological_brain_regions as
-# "language_input_to_{kind}_pool".
-_LANG_INPUT_TO_POOL_GATES = (
-    "language_input_to_noun_pool",
-    "language_input_to_verb_pool",
-    "language_input_to_adjective_pool",
-    "language_input_to_motor",
+# The four direction words this DG/CA3 substrate can read back: the
+# only per-concept readout regions on the validated bridge are
+# motor_{N,E,S,W}. Index is the orthogonal_drive_pattern cue_idx
+# (subset of test_word_order_discrimination._WORD_TO_IDX); pool is the
+# motor region. Vocab is NOT redefined -- this is that map's direction
+# subset.
+_WORD_TO_ACTION = {
+    "north": "N", "east": "E", "south": "S", "west": "W",
+}
+_ACTION_NAMES = ["N", "E", "S", "W"]
+
+# The single net-new plasticity gate -- the additive trained read-back
+# pathway ec_context -> motor_{action}. DISJOINT from every validated
+# DG/CA3 store gate (see module docstring). Task 6's UNCHANGED re-run
+# of validate_positional_binding never references this gate.
+_READBACK_GATE = "ec_context_to_motor_readback"
+
+# The validated store's OWN plasticity gates, opened during the
+# co-drive EXACTLY as validate_positional_binding.encode_and_tag opens
+# them (so the (word,position)->distinct-CA3 encoding is byte-identical
+# to the validated path). NOT net-new -- reused verbatim.
+_VALIDATED_STORE_GATES = (
+    "ca3_swr_burst", "dg_to_ca3", "ec_to_dg",
+    "ec_context_to_dg", "lang_to_ec",
 )
 
 
 def build_order_intrinsic_bridge(seed: int,
-                                  n_lang_input: int = 2048,
-                                  n_per_pool: int = 200,
-                                  n_fs_per_pool: int = 24,
+                                  n_lang_input: int = 1024,
+                                  n_ec: int = 200,
+                                  n_dg: int = 800,
+                                  n_dg_pv_basket: int = 240,
+                                  n_ca3: int = 400,
+                                  n_ca1: int = 200,
                                   n_ec_context: int = 200,
-                                  ec_context_to_pool_density: float = 0.30,
-                                  ec_context_to_pool_weight: float = 3.0,
-                                  enable_adjective: bool = True,
+                                  ca3_recurrent_weight: float = 5.0,
+                                  ec_context_to_motor_density: float = 0.30,
+                                  ec_context_to_motor_weight: float = 3.0,
                                   verbose: bool = False):
-    """Build the concept-pool bridge with the validated positional
-    store + the (now to-be-trained) plastic ec_context->concept-pool
-    pathway present.
+    """Build the MULTI-SEED-VALIDATED D.11/P4.1 DG->CA3 positional
+    store + the (now to-be-trained) additive plastic
+    `ec_context -> motor_{action}` read-back pathway.
 
-    DRY: this is exactly `concept_pool_demo.build_concept_bridge(
-    enable_positional_context=True, ...)` -- the SAME wiring the weak
-    ~50% prototype (`test_word_order_discrimination.py`) uses. Nothing
-    about the wiring is net-new; the net-new piece is `encode_proposition`
-    opening the ec_context->pool plasticity gate during the co-drive
-    encode (the prototype left that pathway untrained -> ~50%).
-
-    canon dynamics (weak_dynamics=False) match the prototype: an
-    ec_context-alone sweep must bootstrap pool firing through the
-    STDP-grown weights, and weak pools do not self-sustain that.
+    DRY: the regions/pathways/cfg are copied EXACTLY from
+    `validate_positional_binding.run_positional_validation` (the store
+    that is 3/3 multi-seed PASS in `2026-05-11-P41-positional-
+    multiseed.md`). The ONLY addition is one net-new plastic
+    `ec_context -> motor_{N,E,S,W}` RegionPathway tagged
+    `ec_context_to_motor_readback`, appended to cfg.region_pathways
+    BEFORE _initialize_simulation_data so its gate is registered. The
+    validated store's regions, pathways and gates are byte-for-byte
+    unchanged; the net-new gate is disjoint from all of them, so
+    Task 6's UNCHANGED re-run of validate_positional_binding still
+    protects exactly the store this bridge uses.
 
     Returns the constructed SimulationBridge.
     """
-    import research.runners.concept_pool_demo as cpd
-
-    return cpd.build_concept_bridge(
-        seed=seed,
-        n_lang_input=n_lang_input,
-        n_per_pool=n_per_pool,
-        n_fs_per_pool=n_fs_per_pool,
-        enable_adjective=enable_adjective,
-        weak_dynamics=False,  # canon: match the prototype (stronger pool firing)
-        enable_direct_verb_to_motor=True,
-        enable_positional_context=True,
-        n_ec_context=n_ec_context,
-        ec_context_to_pool_density=ec_context_to_pool_density,
-        ec_context_to_pool_weight=ec_context_to_pool_weight,
-        verbose=verbose,
+    from sim.config import (CoreSimConfig, RuntimeState, GPUConfig,
+                            VisualizationConfig)
+    from sim.bridge import SimulationBridge
+    from sim.regions import RegionPathway
+    from research.runners.text_minimal_isolation import (
+        build_biological_brain_regions,
     )
+
+    # --- EXACT copy of validate_positional_binding's store build ---
+    regions, pathways = build_biological_brain_regions(
+        n_lang_input=n_lang_input,
+        n_motor_per_action=8, n_motor_fs_per_action=2,
+        enable_motor_fs=True, enable_language_output=True,
+        n_lang_output=n_lang_input,
+        enable_hippocampus_consolidation=True,
+        n_ec=n_ec, n_dg=n_dg, n_dg_pv_basket=n_dg_pv_basket,
+        n_ca3=n_ca3, n_ca1=n_ca1,
+        ca3_recurrent_weight=ca3_recurrent_weight,
+        enable_episodic_context=True,
+        n_ec_context=n_ec_context,
+    )
+
+    # --- the SINGLE net-new mechanism: additive trained read-back ---
+    # ec_context -> motor_{action}, plastic, its OWN disjoint gate.
+    # Appended BEFORE init so set_plasticity_gate(_READBACK_GATE) works.
+    # Touches NONE of the validated store's regions/pathways/gates.
+    for action in _ACTION_NAMES:
+        pathways.append(RegionPathway(
+            from_region="ec_context",
+            to_region=f"motor_{action}",
+            density=ec_context_to_motor_density,
+            weight_mean=ec_context_to_motor_weight,
+            weight_jitter=0.2,
+            plastic=True,
+            plasticity_gate=_READBACK_GATE,
+        ))
+
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = list(regions)
+    cfg.region_pathways = list(pathways)
+    cfg.dt_ms = 1.0
+    cfg.seed = seed
+    cfg.enable_nmda = True
+    cfg.fast_spike_reset = True
+    cfg.stdp_w_max = 10.0
+    cfg.enable_hebbian_learning = False
+
+    bridge = SimulationBridge(
+        core_config=cfg, viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(), gpu_config=GPUConfig(),
+    )
+    bridge.runtime_state.max_delay_steps = int(
+        cfg.max_synaptic_delay_ms / cfg.dt_ms
+    )
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    if verbose:
+        try:
+            nnz = int(bridge.cp_connections.nnz)
+        except Exception:
+            nnz = -1
+        print("[BUILD] order-intrinsic DG/CA3 bridge: %d neurons, "
+              "%d synapses (validated P4.1 store + 1 net-new "
+              "ec_context->motor read-back pathway, gate=%s)"
+              % (int(getattr(cfg, "num_neurons", 0)), nnz,
+                 _READBACK_GATE), flush=True)
+
+    return bridge
 
 
 def _open_gates(bridge, names) -> List[str]:
     """Open (set to 1.0) every plasticity gate in `names` that EXISTS
     on this bridge. A name absent from the active wiring plan raises
-    KeyError in set_plasticity_gate -> swallowed (no-op). This is the
-    defensive guard that guarantees a gate from a DIFFERENT architecture
-    (e.g. the D.11/P4.1 DG/CA3 store's `ec_context_to_dg`) can never be
-    touched here even by mistake. Returns the gates actually opened."""
+    KeyError in set_plasticity_gate -> swallowed (no-op). Defensive
+    guard so a gate from a different architecture can never be touched
+    by mistake. Returns the gates actually opened."""
     opened: List[str] = []
     for g in names:
         try:
@@ -159,136 +259,157 @@ def _close_gates(bridge, names) -> None:
 
 def encode_proposition(bridge,
                         concept_words: List[str],
-                        all_pool_names: List[str],
                         tag_name: str = None,
-                        n_lang_input: int = 2048,
-                        n_words_for_orthogonal: int = 16,
-                        sparsity: float = 0.05,
+                        n_lang_input: int = 1024,
+                        word_seed: int = 42,
                         n_ec_context: int = 200,
-                        n_max_positions: int = 8,
+                        n_max_positions: int = 10,
                         positional_sparsity: float = 0.1,
-                        encoding_steps: int = 400,
+                        encoding_steps: int = 100,
+                        warmup_steps: int = 30,
                         drive_pA: float = 200.0,
-                        ec_drive_pA: float = 500.0,
+                        ec_drive_pA: float = 200.0,
                         teacher_pA: float = 500.0,
-                        top_k: int = 100,
+                        top_k: int = 50,
                         verbose: bool = False) -> str:
     """Encode ONE proposition as a single Tonegawa engram over the
-    co-active (concept @ position) set, WITH the ec_context->concept-
-    pool pathway plastic + co-firing-strengthened.
+    co-active CA3 (concept @ position) set, WITH the net-new
+    `ec_context -> motor_{action}` read-back pathway plastic +
+    co-firing-strengthened.
 
     For k, word in enumerate(concept_words): drive lang_input(word)
-    (orthogonal code) AND ec_context(positional_drive_pattern(k)) AND
-    teacher current on the word's target concept pool, SIMULTANEOUSLY,
-    for `encoding_steps` steps, with the ec_context->pool (and
-    lang_input->pool) plasticity gates OPEN. STDP/Hebbian co-firing
-    strengthens position-k -> the concept's pool. The entire multi-
-    position drive is wrapped in one start_engram_recording /
-    commit_engram_tag so the proposition is ONE engram over the
-    co-active concept-pool ensemble (D.14).
+    (deterministic sparse word pattern, same idiom as
+    validate_positional_binding.build_word_pattern) AND
+    ec_context(positional_drive_pattern(k)) through the DG->CA3 store
+    EXACTLY as validate_positional_binding.encode_and_tag does, AND
+    teacher current on the word's motor_{action} readout pool,
+    SIMULTANEOUSLY, for `encoding_steps` steps. The validated store
+    gates (`ca3_swr_burst/dg_to_ca3/ec_to_dg/ec_context_to_dg/
+    lang_to_ec`) are opened EXACTLY as the validated path opens them
+    (so the (word,position)->distinct-CA3 encoding is byte-identical),
+    PLUS the net-new `ec_context_to_motor_readback` gate so STDP/Hebbian
+    co-firing strengthens position-k -> the word's motor pool. The
+    entire multi-position drive is wrapped in one
+    start_engram_recording / commit_engram_tag(region_filter=["ca3"])
+    so the proposition is ONE engram over the CA3 ensemble (D.14),
+    matching the validated store's tagging exactly.
 
-    DRY: the per-(word,position) drive block is the prototype's
-    `encode_sentence` idiom (orthogonal_drive_pattern + positional_
-    drive_pattern + per-pool teacher current); the recording/tag is the
-    `sim.bridge` engram API. The ONLY net-new behavior vs the weak ~50%
-    prototype is the gates being OPEN during this co-drive (the
-    prototype trained nothing on ec_context->pool).
+    DRY: the per-(word,position) drive block + the validated-store gate
+    set + the engram API call are reused verbatim from
+    validate_positional_binding.encode_and_tag. The ONLY net-new
+    behavior is also opening _READBACK_GATE during this co-drive +
+    the teacher current on the readout pool (the read-back the raw-trace
+    ~50% query lacked).
 
     SEPARATION OF CONCERNS: gates are opened in a try/finally and
     CLOSED before return -- plasticity never bleeds past this encode.
-    Only `ec_context_to_{noun,verb,adjective,motor}` (+ the analogous
-    `language_input_to_*pool`) gates -- which exist ONLY on this
-    concept-pool bridge -- are touched. The validated D.11/P4.1 DG/CA3
-    store's gates do not exist here and are never referenced.
+    The net-new gate is DISJOINT from every validated store gate.
 
     Returns the committed engram tag name.
     """
+    import numpy as np
     from sim.backend import get_backend
     cp, _ = get_backend()
-    from sim.text_embeddings import (orthogonal_drive_pattern,
-                                     positional_drive_pattern)
-    # Reuse the prototype's vocab maps -- do NOT redefine them.
-    from research.runners.test_word_order_discrimination import (
-        _WORD_TO_IDX, _WORD_TO_POOL,
-    )
+    from sim.text_embeddings import positional_drive_pattern
 
     if tag_name is None:
         tag_name = "prop_" + "_".join(concept_words)
 
     rm = bridge.region_manager
-    lang_arr = cp.asarray(list(rm.indices("language_input")), dtype=cp.int64)
-    ec_arr = cp.asarray(list(rm.indices("ec_context")), dtype=cp.int64)
+    lang_indices = list(rm.indices("language_input"))
+    ec_context_indices = list(rm.indices("ec_context"))
+    n_lang = len(lang_indices)
+    n_ctx = len(ec_context_indices)
     n_total = bridge.cp_external_input_current.shape[0]
 
-    # region_filter for the engram: the concept pools (the
-    # compositional ensemble), matching compose_engram_demo's idiom.
-    region_filter = list(all_pool_names)
+    # Per-word deterministic sparse lang_input pattern -- the EXACT
+    # idiom of validate_positional_binding.build_word_pattern (hash +
+    # seeded rng, 10% active), so the store sees the same kind of word
+    # drive it was validated with.
+    def _word_pattern(word: str):
+        rng = np.random.default_rng(
+            (hash(word) ^ int(word_seed)) % (2 ** 31))
+        n_active = max(1, int(0.1 * n_lang))
+        return rng.choice(n_lang, size=n_active,
+                          replace=False).astype(np.int64)
 
-    # Settle transients before recording (prototype encode_sentence
-    # does a 30-step zero-input warmup).
+    # Settle transients before recording (validated path warms up too).
     bridge.cp_external_input_current[:] = 0.0
-    for _ in range(30):
+    for _ in range(int(warmup_steps)):
         bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
 
-    opened = []
+    opened: List[str] = []
     try:
-        # Open ONLY the concept-pool-bridge plasticity gates (net-new:
-        # ec_context->pool; plus lang_input->pool so teacher-driven
-        # pool firing co-strengthens, as the weak prototype implicitly
-        # relied on). Non-existent gates are no-ops (defensive guard).
+        # Open the validated store's OWN gates EXACTLY as the validated
+        # encode does, PLUS the single net-new read-back gate. Absent
+        # gates are no-ops (defensive guard).
         opened = _open_gates(
-            bridge, list(_EC_CONTEXT_TO_POOL_GATES)
-            + list(_LANG_INPUT_TO_POOL_GATES))
+            bridge, list(_VALIDATED_STORE_GATES) + [_READBACK_GATE])
         if verbose:
             print("[ENCODE] '%s' (tag=%s) gates_open=%s"
                   % (" ".join(concept_words), tag_name, opened),
                   flush=True)
 
-        # One engram over the whole multi-position co-drive (D.14).
+        # One engram over the whole multi-position co-drive (D.14),
+        # over the CA3 ensemble -- matching the validated store.
         bridge.start_engram_recording(tag_name)
 
         for position, word in enumerate(concept_words):
-            word_drive = orthogonal_drive_pattern(
-                cue_idx=_WORD_TO_IDX[word], n_cues=n_words_for_orthogonal,
-                n_neurons=n_lang_input, drive_max_pA=drive_pA,
-                sparsity=sparsity,
-            )
+            word_idx = _word_pattern(word)
+            word_global = np.array(
+                [lang_indices[i] for i in word_idx], dtype=np.int64)
+            word_arr = cp.asarray(word_global, dtype=cp.int64)
+
             pos_drive = positional_drive_pattern(
-                position=position, n_neurons=n_ec_context,
-                drive_max_pA=ec_drive_pA, sparsity=positional_sparsity,
+                position, n_neurons=n_ctx,
+                drive_max_pA=ec_drive_pA,
+                sparsity=positional_sparsity,
                 n_max_positions=n_max_positions,
             )
-            pool_name = _WORD_TO_POOL[word]
-            pool_arr = cp.asarray(list(rm.indices(pool_name)),
-                                  dtype=cp.int64)
+            pos_active = np.where(pos_drive > 0)[0]
+            pos_global = np.array(
+                [ec_context_indices[i] for i in pos_active],
+                dtype=np.int64)
+            pos_arr = cp.asarray(pos_global, dtype=cp.int64)
 
-            word_drive_gpu = cp.asarray(word_drive, dtype=cp.float32)
-            pos_drive_gpu = cp.asarray(pos_drive, dtype=cp.float32)
+            # The word's motor readout pool (the net-new read-back
+            # target). Unknown direction word -> no teacher (still
+            # encodes the CA3 engram; just no trained read-back).
+            action = _WORD_TO_ACTION.get(word)
+            pool_arr = None
+            if action is not None:
+                pool_arr = cp.asarray(
+                    list(rm.indices(f"motor_{action}")),
+                    dtype=cp.int64)
 
             ext = cp.zeros(n_total, dtype=cp.float32)
-            for _ in range(encoding_steps):
+            for _ in range(int(encoding_steps)):
                 ext.fill(0)
-                ext[lang_arr] = word_drive_gpu
-                ext[ec_arr] = pos_drive_gpu
-                ext[pool_arr] = teacher_pA
+                ext[word_arr] = float(drive_pA)
+                ext[pos_arr] = float(drive_pA)
+                if pool_arr is not None:
+                    ext[pool_arr] = float(teacher_pA)
                 bridge.cp_external_input_current[:] = ext
                 bridge._run_one_simulation_step()
                 bridge.runtime_state.current_time_step += 1
 
             if verbose:
-                print("  [enc] pos=%d word=%s -> %s (%d steps)"
-                      % (position, word, pool_name, encoding_steps),
+                print("  [enc] pos=%d word=%s -> motor_%s (%d steps)"
+                      % (position, word, action, encoding_steps),
                       flush=True)
 
-        # Settle, then commit the engram over the concept-pool ensemble.
+        # Settle, then commit the engram over the CA3 ensemble --
+        # region_filter=["ca3"] matches validate_positional_binding.
         bridge.cp_external_input_current[:] = 0.0
         for _ in range(20):
             bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
         stats = bridge.commit_engram_tag(
-            tag_name, top_k=top_k, region_filter=region_filter,
+            tag_name, top_k=top_k, region_filter=["ca3"],
         )
         if verbose:
-            print("  [TAG] %s -> %d neurons"
+            print("  [TAG] %s -> %d CA3 neurons"
                   % (tag_name, stats.get("n_tagged", -1)), flush=True)
     finally:
         # Plasticity NEVER bleeds past the order-intrinsic encode.
@@ -300,41 +421,84 @@ def encode_proposition(bridge,
 
 def readback_sweep(bridge,
                    length: int,
-                   all_pool_names: List[str],
                    n_ec_context: int = 200,
-                   n_max_positions: int = 8,
+                   n_max_positions: int = 10,
                    positional_sparsity: float = 0.1,
-                   ec_drive_pA: float = 500.0,
-                   stim_steps: int = 100) -> List[dict]:
+                   ec_drive_pA: float = 200.0,
+                   warmup_steps: int = 30,
+                   stim_steps: int = 100) -> List[Dict]:
     """Deterministic position sweep (the producer). For k in
     range(length): drive ec_context(positional_drive_pattern(k)) ALONE
-    -- NO word / lang_input drive -- and collect the per-pool firing
-    rate dict. NO learned sequence model: order is intrinsic to the
-    D.11 positional code; this is a plain sweep.
+    -- NO word / lang_input drive -- and collect the per-direction-word
+    motor-pool firing-rate dict. NO learned sequence model: order is
+    intrinsic to the D.11 positional code; this is a plain sweep.
 
-    DRY: each position is read back by delegating verbatim to the
-    prototype's `query_position` (`test_word_order_discrimination.py`)
-    -- the EXACT ec_context(position)-alone drive mechanism. This
-    function adds NO feedback and NO new pathway: it is WRITE-ONLY into
-    the substrate (external current only), exactly as query_position is.
+    DRY: the ec_context(position)-alone drive + per-region spike-rate
+    read mechanism is reused verbatim from
+    test_word_order_discrimination.query_position, applied to the
+    motor_{N,E,S,W} readout regions (the validated decoder readout for
+    this DG/CA3 bridge). This function adds NO feedback and NO new
+    pathway: it is WRITE-ONLY into the substrate (external current
+    only).
 
     Returns a list[dict] of length `length`, the i-th entry being
-    {pool: rate} for position i -- the shape Phase A's
-    `order_intrinsic_core.decode_position_sweep` consumes.
+    {direction_word: rate} for position i -- the shape Phase A's
+    `order_intrinsic_core.decode_position_sweep` consumes (concept ==
+    direction word).
     """
-    from research.runners.test_word_order_discrimination import (
-        query_position,
-    )
+    import numpy as np
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+    from sim.text_embeddings import positional_drive_pattern
 
-    per_pos: List[dict] = []
+    rm = bridge.region_manager
+    ec_context_indices = list(rm.indices("ec_context"))
+    n_ctx = len(ec_context_indices)
+    n_total = bridge.cp_external_input_current.shape[0]
+
+    # word -> its motor readout region index array.
+    pool_arrs = {
+        word: cp.asarray(list(rm.indices(f"motor_{action}")),
+                         dtype=cp.int64)
+        for word, action in _WORD_TO_ACTION.items()
+    }
+
+    per_pos: List[Dict] = []
     for k in range(int(length)):
-        rates = query_position(
-            bridge, k, list(all_pool_names),
-            n_ec_context=n_ec_context,
+        pos_drive = positional_drive_pattern(
+            k, n_neurons=n_ctx,
+            drive_max_pA=ec_drive_pA,
+            sparsity=positional_sparsity,
             n_max_positions=n_max_positions,
-            positional_sparsity=positional_sparsity,
-            ec_drive_pA=ec_drive_pA,
-            stim_steps=stim_steps,
         )
+        pos_active = np.where(pos_drive > 0)[0]
+        pos_global = np.array(
+            [ec_context_indices[i] for i in pos_active],
+            dtype=np.int64)
+        pos_arr = cp.asarray(pos_global, dtype=cp.int64)
+
+        spike_counts = {w: 0 for w in pool_arrs}
+
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(int(warmup_steps)):
+            bridge._run_one_simulation_step()
+
+        ext = cp.zeros(n_total, dtype=cp.float32)
+        for _ in range(int(stim_steps)):
+            ext.fill(0)
+            ext[pos_arr] = float(ec_drive_pA)
+            bridge.cp_external_input_current[:] = ext
+            bridge._run_one_simulation_step()
+            if hasattr(bridge, "cp_firing_states"):
+                firing = bridge.cp_firing_states
+                for w, arr in pool_arrs.items():
+                    spike_counts[w] += int(firing[arr].sum())
+
+        rates = {
+            w: spike_counts[w] / (int(stim_steps) * len(pool_arrs[w]))
+            for w in pool_arrs
+        }
         per_pos.append(rates)
+
+    bridge.cp_external_input_current[:] = 0.0
     return per_pos
