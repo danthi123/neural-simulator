@@ -1,0 +1,136 @@
+{
+  "task": "song_g1 Task 9 self-supervised training",
+  "substrate": "G.20 320-sparse 5-bridge",
+  "seed": 42,
+  "smoke": false,
+  "mode": "p",
+  "readout": "final",
+  "traj_rate_rule": null,
+  "pair_sampler": {
+    "fn": "sample_xbridge_pairs",
+    "seed": 42,
+    "exclude_idx": 12,
+    "n_pairs_prefix": 60
+  },
+  "prop_len": 2,
+  "train_propositions": [
+    {
+      "intention": 0,
+      "bridge": "bridgeE_functional",
+      "bridge_idx": 4,
+      "concept_seq": [
+        53,
+        54
+      ],
+      "words": [
+        "only",
+        "not"
+      ],
+      "kind": "train"
+    },
+    {
+      "intention": 1,
+      "bridge": "bridgeB_verbs",
+      "bridge_idx": 1,
+      "concept_seq": [
+        50,
+        52
+      ],
+      "words": [
+        "fix",
+        "bring"
+      ],
+      "kind": "train"
+    },
+    {
+      "intention": 2,
+      "bridge": "bridgeE_functional",
+      "bridge_idx": 4,
+      "concept_seq": [
+        0,
+        3
+      ],
+      "words": [
+        "one",
+        "four"
+      ],
+      "kind": "train"
+    },
+    {
+      "intention": 3,
+      "bridge": "bridgeA_nouns",
+      "bridge_idx": 0,
+      "concept_seq": [
+        0,
+        4
+      ],
+      "words": [
+        "apple",
+        "bird"
+      ],
+      "kind": "train"
+    }
+  ],
+  "heldout_propositions": [
+    {
+      "intention": 4,
+      "bridge": "bridgeC_adj",
+      "bridge_idx": 2,
+      "concept_seq": [
+        23,
+        28
+      ],
+      "words": [
+        "old",
+        "hard"
+      ],
+      "kind": "heldout"
+    },
+    {
+      "intention": 5,
+      "bridge": "bridgeB_verbs",
+      "bridge_idx": 1,
+      "concept_seq": [
+        37,
+        43
+      ],
+      "words": [
+        "ride",
+        "smell"
+      ],
+      "kind": "heldout"
+    }
+  ],
+  "calibration": {
+    "g1_abstain": 85.0,
+    "operating_criterion": "control_max",
+    "mode": "p",
+    "readout": "final",
+    "traj_rate_rule": null,
+    "encoded_rates": [
+      48.0,
+      50.0,
+      64.0,
+      66.0
+    ],
+    "control_rates": [
+      21.0,
+      44.0,
+      44.0,
+      54.0,
+      60.0,
+      63.0,
+      65.0,
+      67.0,
+      71.0,
+      85.0
+    ],
+    "encoded_mean": 57.0,
+    "control_mean": 57.4,
+    "control_max": 85.0,
+    "auc_encoded_vs_control": 0.475,
+    "n_encoded": 4,
+    "n_control": 10,
+    "note": "Generator-P regime: a GIVEN ordered concept sequence realized via the write-only P top-down (P-T) prediction surface (ignite_prediction per slot) THEN the EXISTING integrated self_comprehend NO-DRIVE residual readout. RE-CALIBRATED in THIS regime -- NOT G1's final 72.0, NOT the trajectory regime's 46.0, NOT the literal 650. control-max operating point, fixed at train start, never tuned (anti-cheat: pre-registered RULE)."
+  }
+}
