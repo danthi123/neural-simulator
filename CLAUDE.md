@@ -62,7 +62,7 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 24 modules (+ __init__.py), ~16.8K lines — core engine
+sim/                    # 35 modules (+ __init__.py), ~17.6K lines — core engine
   bridge.py             # 6704 lines — SimulationBridge + GPU state orchestration
   config.py             #  760 lines — all @dataclass configs
   enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
@@ -87,9 +87,9 @@ sim/                    # 24 modules (+ __init__.py), ~16.8K lines — core engi
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 148 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/etc) for research
+research/runners/       # 156 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/etc) for research
 research/findings/      # session-by-session findings docs (339+ files)
-tests/                  # 115 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, etc.)
+tests/                  # 144 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, etc.)
 ```
 
 ### Thread Model

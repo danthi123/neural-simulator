@@ -379,7 +379,7 @@ ui/                            # DearPyGUI panels / callbacks / layout / plots
 experiment/                    # ExperimentEngine + StimulusManager + Readout + Training
 experiments/                   # YAML configs for autonomous sweeps
 research/
-  runners/                     # 148 headless runners (g1..g11 + cluster + text + k_v2 + chat_*_demo + perf_benchmark + multibridge_chat + g20_multibridge + g20_sparse + generator + order_intrinsic)
+  runners/                     # 156 headless runners (g1..g11 + cluster + text + k_v2 + chat_*_demo + perf_benchmark + multibridge_chat + g20_multibridge + g20_sparse + generator + order_intrinsic)
   findings/                    # session-by-session findings (339+ markdown docs)
   findings/raw/                # raw JSON output per gate run
   datasets/                    # synthetic datasets (e.g. tiny_patterns.npz)
@@ -390,7 +390,7 @@ docs/
   SCIENCE_ROADMAP.md           # validation pillars + gate progression
   plans/                       # per-feature design docs (paired with findings)
 webapp/                        # FastAPI dashboard (server.py + static/)
-tests/                         # 115 test files
+tests/                         # 144 test files
   test_determinism.py          # RNG determinism (init + step)
   test_kernels_cpu.py          # CPU validation of fused kernels
   test_experiment_system.py    # experiment engine + stimulus manager
