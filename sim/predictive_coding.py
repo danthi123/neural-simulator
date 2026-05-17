@@ -51,3 +51,12 @@ class PredictiveCoder:
         """Top-down generative prediction: pc_state -> next-concept
         logits. Pure/deterministic."""
         return (self.state @ self.W_pred).astype(np.float32)
+
+    def prediction_error(self, realized_next_idx: int) -> np.ndarray:
+        """Rao-Ballard residual = softmax(predicted) - onehot(realized)
+        = the stabilized CE gradient w.r.t. logits. Reuses
+        sim.bptt_snn.softmax_grad_np (log-sum-exp stable since the
+        Inc-3 fix). Order-sensitive: depends on pc_state (the prefix)."""
+        from sim.bptt_snn import softmax_grad_np
+        logits = self.predict_next().reshape(1, -1)
+        return softmax_grad_np(logits, int(realized_next_idx))[0]

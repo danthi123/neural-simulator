@@ -32,3 +32,17 @@ def test_predict_next_logits_shape_and_determinism():
     # different prefix -> different prediction
     pc.update_state(4)
     assert not np.allclose(pc.predict_next(), logits)
+
+
+def test_prediction_error_is_softmax_minus_onehot():
+    from sim.bptt_snn import softmax_grad_np
+    pc = PredictiveCoder(n_concepts=6, state_dim=12, seed=2)
+    pc.reset(intention=[1, 3]); pc.update_state(1)
+    logits = pc.predict_next()
+    err = pc.prediction_error(realized_next_idx=3)
+    assert err.shape == (6,)
+    assert np.all(np.isfinite(err))
+    # Rao-Ballard residual == stabilized softmax CE gradient (DRY:
+    # reuses sim.bptt_snn.softmax_grad_np, the log-sum-exp-stable one)
+    expected = softmax_grad_np(logits.reshape(1, -1), 3)[0]
+    assert np.allclose(err, expected, atol=1e-6)
