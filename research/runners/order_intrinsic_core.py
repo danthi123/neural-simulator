@@ -104,3 +104,35 @@ def order_intrinsic_verdict(true_decoded, intended, perm_decoded,
     v["true_score"] = true_score
     v["best_perm_score"] = best_perm
     return v
+
+
+def aggregate_multiseed(per_seed_prop_verdicts, min_seeds: int = 3) -> dict:
+    """Pre-registered MULTI-SEED aggregate. PASS iff:
+      (a) at least `min_seeds` seeds were run (>=3 mandatory --
+          single-seed / near-noise is explicitly NOT a pass; the
+          cheap probe proved single-seed unreliable at 50%), AND
+      (b) EVERY held-out proposition in EVERY seed has GATE == "PASS".
+    Any seed-prop FAIL, or fewer than min_seeds seeds, -> FAIL.
+    Pure / deterministic. Returns a dict with the aggregate GATE +
+    counts for the JSON record."""
+    n_seeds = len(per_seed_prop_verdicts)
+    n_props_total = 0
+    n_props_pass = 0
+    for seed_props in per_seed_prop_verdicts:
+        for v in seed_props:
+            n_props_total += 1
+            if v.get("GATE") == "PASS":
+                n_props_pass += 1
+    enough_seeds = n_seeds >= int(min_seeds)
+    all_pass = (n_props_total > 0
+                and n_props_pass == n_props_total)
+    gate = bool(enough_seeds and all_pass)
+    return {
+        "GATE": "PASS" if gate else "FAIL",
+        "n_seeds": n_seeds,
+        "min_seeds": int(min_seeds),
+        "enough_seeds": enough_seeds,
+        "n_props_total": n_props_total,
+        "n_props_pass": n_props_pass,
+        "all_pass": all_pass,
+    }

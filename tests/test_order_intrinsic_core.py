@@ -44,3 +44,13 @@ def test_order_intrinsic_verdict_reuses_g1_bars():
     # true == permuted (no order learned) -> FAIL
     assert order_intrinsic_verdict([2,1,3],[1,2,3],[[2,1,3]],
                                    gate_cleared=True)["GATE"] == "FAIL"
+
+from research.runners.order_intrinsic_core import aggregate_multiseed
+
+def test_aggregate_multiseed_requires_all_seeds_pass():
+    # per-seed list of per-prop verdict dicts (from order_intrinsic_verdict)
+    seed_ok = [{"GATE":"PASS"},{"GATE":"PASS"}]
+    seed_bad = [{"GATE":"PASS"},{"GATE":"FAIL"}]
+    assert aggregate_multiseed([seed_ok, seed_ok, seed_ok])["GATE"] == "PASS"
+    assert aggregate_multiseed([seed_ok, seed_bad, seed_ok])["GATE"] == "FAIL"
+    assert aggregate_multiseed([seed_ok, seed_ok])["GATE"] == "FAIL"  # <3 seeds
