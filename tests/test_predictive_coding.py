@@ -64,3 +64,18 @@ def test_learn_reduces_ce_on_a_fixed_prefix_target():
     assert after < before * 0.5      # self-supervised CE drops
     # learning is confined to P weights; shapes unchanged
     assert pc.W_pred.shape == (12, 6) and pc.W_in.shape == (6, 12)
+
+
+def test_select_next_picks_the_learned_continuation():
+    pc = PredictiveCoder(n_concepts=6, state_dim=12, seed=4)
+    prefix, target = [0, 5], 3
+    for _ in range(300):
+        pc.learn(prefix=prefix, target_next_idx=target, lr=0.05)
+    pc.reset(intention=prefix + [target])
+    for c in prefix: pc.update_state(c)
+    # active inference: emit the concept the generative model most
+    # predicts given the prefix (argmax predicted prob)
+    assert pc.select_next(candidates=list(range(6))) == target
+    # restricting candidates still returns the best AVAILABLE one
+    alt = pc.select_next(candidates=[1, 3, 4])
+    assert alt == 3

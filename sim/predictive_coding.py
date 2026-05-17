@@ -52,6 +52,17 @@ class PredictiveCoder:
         logits. Pure/deterministic."""
         return (self.state @ self.W_pred).astype(np.float32)
 
+    def select_next(self, candidates: list) -> int:
+        """Active inference: emit the candidate concept the top-down
+        generative model most predicts given the current prefix
+        (argmax predicted logit over candidates). Pure."""
+        logits = self.predict_next()
+        cand = [int(c) for c in candidates
+                if 0 <= int(c) < self.n_concepts]
+        if not cand:
+            raise ValueError("no valid candidates")
+        return max(cand, key=lambda c: float(logits[c]))
+
     def prediction_error(self, realized_next_idx: int) -> np.ndarray:
         """Rao-Ballard residual = softmax(predicted) - onehot(realized)
         = the stabilized CE gradient w.r.t. logits. Reuses
