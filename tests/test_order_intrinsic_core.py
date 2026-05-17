@@ -28,3 +28,19 @@ def test_control_max_floor_is_control_max_operating_point():
     assert f == 0.31                  # the SAME operating criterion
                                       # that produced prior floors (control-max)
     assert control_max_floor([0.9], []) == 0.0   # no controls -> 0.0
+
+from research.runners.order_intrinsic_core import order_intrinsic_verdict
+
+def test_order_intrinsic_verdict_reuses_g1_bars():
+    # true-order decoded correct; permuted-order decoded scrambled;
+    # gate cleared -> PASS via UNMODIFIED g1_verdict (>=10% + >=0.5)
+    v = order_intrinsic_verdict(
+        true_decoded=[1, 2, 3], intended=[1, 2, 3],
+        perm_decoded=[[2, 1, 3], [3, 2, 1]], gate_cleared=True)
+    assert v["GATE"] == "PASS" and v["true_score"] == 1.0
+    # gate not cleared -> FAIL regardless
+    assert order_intrinsic_verdict([1,2,3],[1,2,3],[[2,1,3]],
+                                   gate_cleared=False)["GATE"] == "FAIL"
+    # true == permuted (no order learned) -> FAIL
+    assert order_intrinsic_verdict([2,1,3],[1,2,3],[[2,1,3]],
+                                   gate_cleared=True)["GATE"] == "FAIL"

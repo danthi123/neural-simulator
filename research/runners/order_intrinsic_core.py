@@ -73,3 +73,34 @@ def control_max_floor(encoded_toprates, control_toprates) -> float:
     if not control_toprates:
         return 0.0
     return float(max(float(x) for x in control_toprates))
+
+
+def order_intrinsic_verdict(true_decoded, intended, perm_decoded,
+                            gate_cleared) -> dict:
+    """Pure pre-registered verdict for one held-out proposition.
+    REUSES song_g1_core.score_order + g1_verdict UNMODIFIED -- the
+    anti-cheat bars (_G1_MARGIN=0.10, _G1_ABS_FLOOR=0.5) are NEVER
+    reimplemented or touched here.
+
+    true_decoded : decoded ordered concept list from the position
+                   sweep (None slots allowed -> score_order treats a
+                   mismatch).
+    intended     : the intended ordered concept list.
+    perm_decoded : list of decoded lists, one per permuted-ORDER
+                   control (the load-bearing anti-cheat: same concept
+                   multiset, scrambled positions).
+    gate_cleared : did the production clear the pre-registered
+                   control-max abstention floor (computed elsewhere)?
+
+    Returns the g1_verdict dict augmented with true_score /
+    best_perm_score for the JSON record.
+    """
+    from research.runners.song_g1_core import score_order, g1_verdict
+    true_score = score_order(true_decoded, intended)
+    best_perm = max(
+        (score_order(pd, intended) for pd in perm_decoded),
+        default=0.0)
+    v = g1_verdict(true_score, best_perm, gate_cleared)
+    v["true_score"] = true_score
+    v["best_perm_score"] = best_perm
+    return v
