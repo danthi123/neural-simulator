@@ -284,6 +284,71 @@ def self_comprehend(member, decode_window: int = 100) -> list:
     return [(best_idx, float(rates[best_idx]))]
 
 
+def ignite_prediction(member, concept_idx, drive_pA: float = 1500.0,
+                       steps_per: int = 100):
+    """Generator-P write-only top-down-prediction ignition (Task 7a).
+
+    The P (PredictiveCoder, sim/predictive_coding.py) layer's ONLY
+    write into concept pools: deliver a single top-down PREDICTED
+    concept into shared_concept_pool by driving that concept's sparse
+    pattern, using the EXACT same allowed-write surface as
+    ignite_sequence's inner per-concept drive. P predicts the next
+    concept (active inference); this function realizes that prediction
+    as a (P-T) top-down prediction current on the predicted concept's
+    pattern -- nothing else.
+
+    Thin reuse, NOT a reimplementation: this delegates to
+    ignite_sequence([concept_idx], drive_pA=..., steps_per=...,
+    recovery_steps=0). That means the concept->global-neuron mapping
+    is _pattern_global_arrs (the IDENTICAL mapping ignite_sequence /
+    self_comprehend / ignite_and_trajectory_decode index), and the
+    ONLY bridge state write is cp_external_input_current (drive at the
+    predicted concept's sparse pattern + zeroing). recovery_steps=0
+    keeps a single prediction-step atomic (the P rollout caller, Task
+    8, sequences predictions slot-by-slot and owns inter-slot
+    settling, exactly as it does for ignite_and_trajectory_decode);
+    no behavior of ignite_sequence is changed (default recovery_steps
+    is unaffected for its existing callers).
+
+    LOAD-BEARING CONSTRAINT -- strictly WRITE-ONLY, identical
+    guarantee to ignite_sequence (inherited verbatim by delegation):
+      * the ONLY bridge state write is cp_external_input_current
+        (drive at the predicted concept's pattern + zeroing); never
+        lang_input, never any other region;
+      * registers NO RegionPathway; adds NO feedback connection;
+      * calls NO commit_engram_tag / start_engram_recording /
+        stimulate_tag;
+      * modifies NO weights / plasticity gates / tags.
+    (The v12/v13/v15/G1 "first, do no harm" lesson: a region that fed
+    activity back broke per-concept selectivity. P feeds in a
+    SPECIFIC predicted-concept pattern via the validated write-only
+    surface only -- never non-specific feedback. The G.20 substrate
+    stays UNCHANGED; the no-harm probe re-proves this empirically.)
+
+    Range-checks concept_idx (raises IndexError, same as
+    ignite_sequence / ignite_and_trajectory_decode).
+
+    Task 8/10 NOTE (for the gate author -- do NOT act on it here):
+    PredictiveCoder.select_next tie-breaks to the FIRST candidate on
+    logit ties (deterministic, NOT uniform-random). The Task 8/10
+    gate's per-candidate lists MUST NOT be target-ordered, else a
+    degenerate "always pick the first candidate" rollout could score
+    above chance without learning. The pre-registered permuted-ORDER
+    control + frozen abstention floor are designed to catch this --
+    but the gate author must keep candidate ordering target-agnostic
+    explicitly.
+
+    Returns the number of predicted concepts ignited (always 1).
+    """
+    return ignite_sequence(
+        member,
+        [concept_idx],
+        drive_pA=drive_pA,
+        steps_per=steps_per,
+        recovery_steps=0,
+    )
+
+
 def ignite_and_trajectory_decode(member, concept_indices,
                                   drive_pA: float = 1500.0,
                                   steps_per: int = 100,
