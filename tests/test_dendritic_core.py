@@ -58,6 +58,17 @@ def test_non_finite_fails_closed():
     assert _good(hidden_credit=float("inf"))["GATE"] == "FAIL"
 
 
+def test_truthy_string_control_rejected():
+    # truthy non-True strings must NOT satisfy the bool gates
+    assert _good(has_permuted_control='false')["GATE"] == "FAIL"
+    assert _good(biologically_local='no')["GATE"] == "FAIL"
+
+
+def test_string_numeric_arg_fails_closed_not_raises():
+    # a string-numeric arg must fail closed, NOT raise TypeError
+    assert _good(hidden_credit='0.9')["GATE"] == "FAIL"
+
+
 def test_results_cannot_move_fixed_bars():
     c.dend_verdict(9.9, 9.9, 9.9, 9.9, True, True)
     assert c._DEND_GRAD_COSINE_MIN == 0.30

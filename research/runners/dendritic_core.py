@@ -31,13 +31,46 @@ def _finite(*xs):
     return True
 
 
+def _all_fail_dict() -> Dict:
+    return {
+        "GATE": "FAIL",
+        "finite": False,
+        "biologically_local": False,
+        "has_permuted_control": False,
+        "task_learned": False,
+        "nohidden_floor_fails": False,
+        "permuted_control_not_cleared": False,
+        "emergent_grad_alignment": False,
+        "hidden_credit": None,
+        "nohidden_floor": None,
+        "permuted": None,
+        "grad_cosine": None,
+        "bars": {"grad_cosine_min": _DEND_GRAD_COSINE_MIN,
+                 "hidden_credit_min": _DEND_HIDDEN_CREDIT_MIN,
+                 "nohidden_floor_max": _DEND_NOHIDDEN_FLOOR_MAX,
+                 "permuted_max": _DEND_PERMUTED_MAX},
+    }
+
+
 def dend_verdict(hidden_credit, nohidden_floor, permuted,
                  grad_cosine, biologically_local,
                  has_permuted_control) -> Dict:
+    # Fail-closed BEFORE any comparison: a non-numeric / str / None
+    # numeric arg must NOT raise AND must NOT be silently coerced --
+    # it returns the all-FAIL dict. (float('0.9') succeeds, so a bare
+    # try/float() would let '0.9' slip through to PASS; instead any
+    # arg that is not a genuine real number -- str, None, bool, etc.
+    # -- fails closed deterministically.) bool is rejected because it
+    # is an int subclass and True >= 0.90 would silently evaluate.
+    for _v in (hidden_credit, nohidden_floor, permuted, grad_cosine):
+        if isinstance(_v, bool) or not isinstance(_v, (int, float)):
+            return _all_fail_dict()
     finite = _finite(hidden_credit, nohidden_floor, permuted,
                       grad_cosine)
-    bio_local = bool(biologically_local)
-    has_ctrl = bool(has_permuted_control)
+    # Strict-bool: only the literal True passes (a truthy non-True
+    # string like 'false' must NOT satisfy the gate).
+    bio_local = (biologically_local is True)
+    has_ctrl = (has_permuted_control is True)
     learned = finite and hidden_credit >= _DEND_HIDDEN_CREDIT_MIN
     floor_fails = finite and nohidden_floor <= _DEND_NOHIDDEN_FLOOR_MAX
     permuted_ok = finite and permuted <= _DEND_PERMUTED_MAX

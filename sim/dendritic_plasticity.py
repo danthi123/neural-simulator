@@ -28,12 +28,14 @@ def urbanczik_senn_update(pre_rate, soma_rate, v_basal,
         mismatch = soma - _sig(vb)            # self-prediction error
     else:
         # apical-driven local target (GLR-2017): soma pulled toward
-        # the FIXED-random-projected top-down signal. The top-down
-        # signal is the positive output-error projected through the
-        # FIXED-random apical feedback; the local descent step is the
-        # negative of error * phi'(soma) * pre (still purely local --
-        # only post-synaptic quantities + the random-projected
-        # teaching signal; NO weight transport).
-        mismatch = -np.asarray(apical_signal, float) * soma * (1.0 - soma)
+        # the FIXED-random-projected top-down signal. apical_signal is
+        # the positive output-error projected through the FIXED-random
+        # apical feedback (caller side; NO weight transport here).
+        # The rule returns the ASCENT-on-reward vector: under weight
+        # transport dW1 == +g_true (the true gradient itself), so the
+        # documented training convention W1 += lr*(-dW1) is exactly
+        # gradient DESCENT. Still purely local -- only post-synaptic
+        # quantities * the random-projected teaching signal.
+        mismatch = np.asarray(apical_signal, float) * soma * (1.0 - soma)
     dw = np.outer(pre, lr * gate * mismatch)
     return dw
