@@ -48,10 +48,13 @@ def verbatim_copy_fraction(gen: List[int], train: List[int],
 
 def gs_verdict(heldout_ppl, shuffled_ppl, train_ppl, distinct,
                copy_frac, has_shuffled_control) -> Dict:
-    real_structure = (has_shuffled_control and shuffled_ppl > 0
+    real_structure = (has_shuffled_control
+                      and math.isfinite(shuffled_ppl) and shuffled_ppl > 0
+                      and math.isfinite(heldout_ppl)
                       and heldout_ppl <= (1.0 - _GS_PPL_MARGIN)
                       * shuffled_ppl)
-    generalizes = (train_ppl > 0
+    generalizes = (math.isfinite(train_ppl) and train_ppl > 0
+                   and math.isfinite(heldout_ppl)
                    and heldout_ppl <= _GS_GENERALIZATION_MAX * train_ppl)
     non_degenerate = distinct >= _GS_DISTINCT_MIN
     not_copying = copy_frac <= _GS_COPY_MAX
@@ -76,9 +79,16 @@ def gs_verdict(heldout_ppl, shuffled_ppl, train_ppl, distinct,
 
 
 def gs_aggregate_multiseed(per_seed_verdicts, min_seeds: int = _GS_MIN_SEEDS):
+    # The pre-registered >=3-seed floor is UNBYPASSABLE: a caller can
+    # only STRENGTHEN it, never weaken it below _GS_MIN_SEEDS (single-
+    # seed / near-noise is explicitly NOT a pass; same anti-cheat
+    # direction as the rest of the arc). Both requested and effective
+    # are recorded for transparency.
+    eff_min = max(int(min_seeds), _GS_MIN_SEEDS)
     n = len(per_seed_verdicts)
     n_pass = sum(1 for v in per_seed_verdicts if v.get("GATE") == "PASS")
-    gate = bool(n >= int(min_seeds) and n_pass == n and n > 0)
+    gate = bool(n >= eff_min and n_pass == n and n > 0)
     return {"GATE": "PASS" if gate else "FAIL", "n_seeds": n,
-            "min_seeds": int(min_seeds), "n_pass": n_pass,
+            "min_seeds_requested": int(min_seeds),
+            "min_seeds": eff_min, "n_pass": n_pass,
             "all_pass": (n > 0 and n_pass == n)}

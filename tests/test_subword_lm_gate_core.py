@@ -52,3 +52,35 @@ def test_multiseed_requires_3_and_all_pass():
     assert gs_aggregate_multiseed([P,F,P])["GATE"] == "FAIL"
     assert gs_aggregate_multiseed([P,P])["GATE"] == "FAIL"
     assert gs_aggregate_multiseed([])["GATE"] == "FAIL"
+
+def test_infinite_shuffled_control_cannot_manufacture_pass():
+    # an inf shuffled-control perplexity would make the load-bearing
+    # margin check vacuous (heldout <= 0.8*inf) -> must be FAIL.
+    v = gs_verdict(heldout_ppl=50.0, shuffled_ppl=float("inf"),
+                   train_ppl=40.0, distinct=0.9, copy_frac=0.05,
+                   has_shuffled_control=True)
+    assert v["GATE"] == "FAIL" and v["real_structure_vs_shuffled"] is False
+    # nan/inf heldout or train ppl also never pass
+    assert gs_verdict(float("nan"), 100.0, 50.0, 0.9, 0.0,
+                      True)["GATE"] == "FAIL"
+    assert gs_verdict(50.0, 100.0, float("inf"), 0.9, 0.0,
+                      True)["GATE"] == "FAIL"
+
+def test_minseeds_floor_is_unbypassable():
+    P = {"GATE": "PASS"}
+    # a caller trying to weaken the >=3 floor cannot: 1 seed stays FAIL
+    r = gs_aggregate_multiseed([P], min_seeds=1)
+    assert r["GATE"] == "FAIL"
+    assert r["min_seeds"] == 3 and r["min_seeds_requested"] == 1
+    # can only be STRENGTHENED (3 PASS but caller demands 5 -> FAIL)
+    assert gs_aggregate_multiseed([P, P, P], min_seeds=5)["GATE"] == "FAIL"
+    # default 3-seed all-pass still PASS (no regression)
+    assert gs_aggregate_multiseed([P, P, P])["GATE"] == "PASS"
+
+def test_shuffled_control_on_degenerate_input_does_not_false_pass():
+    import numpy as np
+    # all-identical tokens: control degenerates to identity, so it
+    # cannot beat itself by 20% -> the gate must NOT PASS off it.
+    out = shuffled_token_control([5, 5, 5], np.random.default_rng(0))
+    assert sorted(out) == [5, 5, 5]            # same multiset
+    assert shuffled_token_control([], np.random.default_rng(0)) == []
