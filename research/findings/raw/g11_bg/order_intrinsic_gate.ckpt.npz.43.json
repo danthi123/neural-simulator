@@ -1,0 +1,84 @@
+{
+  "seed": 43,
+  "g1_abstain": 0.0075,
+  "g1_abstain_source": "Step-0 control-max ONLY over TRAIN intended-order vs permuted/random-order read-back top-rates; frozen here; NEVER recomputed at gate time; NEVER 650",
+  "encoding_steps": 100,
+  "perm_n": 8,
+  "n_encoded_samples": 9,
+  "n_control_samples": 9,
+  "encoded_toprates": [
+    0.00375,
+    0.0075,
+    0.00625,
+    0.00625,
+    0.00625,
+    0.005,
+    0.00625,
+    0.00875,
+    0.0125
+  ],
+  "control_toprates": [
+    0.005,
+    0.005,
+    0.005,
+    0.005,
+    0.0075,
+    0.00625,
+    0.00625,
+    0.005,
+    0.00625
+  ],
+  "train_propositions": [
+    [
+      "east",
+      "west"
+    ],
+    [
+      "south",
+      "north"
+    ],
+    [
+      "south",
+      "east"
+    ],
+    [
+      "south",
+      "west"
+    ],
+    [
+      "west",
+      "north"
+    ],
+    [
+      "west",
+      "east"
+    ],
+    [
+      "west",
+      "south"
+    ],
+    [
+      "north",
+      "east"
+    ],
+    [
+      "north",
+      "south"
+    ]
+  ],
+  "heldout_propositions": [
+    [
+      "north",
+      "west"
+    ],
+    [
+      "east",
+      "north"
+    ],
+    [
+      "east",
+      "south"
+    ]
+  ],
+  "proper_config_rationale": "encoding_steps=100 is the encode_proposition default AND the exact 100-step-per-(word,position) co-drive window the multi-seed-validated P4.1 DG/CA3 store was validated in (validate_positional_binding.encode_and_tag train_events=100 x 100-step drive; 2026-05-11-P41-positional-multiseed.md 3/3 PASS). The Task-6 no-harm runner DELIBERATELY overrode this DOWN to encoding_steps=60/train_events=12 as a documented SPEED config (no-harm question is pathway-PRESENCE-damages-store, not store-quality); at that under-powered config the read-back signal does not separate (recorded a78815b margin_rel negative). The PROPER config for the decisive capability gate is the validated-store regime (encoding_steps=100), strong enough to actually train the additive read-back pathway. This is FIXED/pre-registered here -- it is NOT tuned after seeing the gate result; a wrong/too-weak config would make the terminal verdict uninterpretable."
+}
