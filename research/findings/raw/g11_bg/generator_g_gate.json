@@ -1,0 +1,310 @@
+{
+  "task": "Generator-G pre-registered MULTI-SEED capability gate",
+  "mechanism": "validated no-confab moat gates FIRST; trained Generator-F TinyGPT faithfulness-constrained on grounded; no-confab preserved BY CONSTRUCTION; honest ceiling: small-Transformer simple grounded responses, NOT an LLM",
+  "decisive_slice_note": "isolates the COMPOSITION via a FROZEN grounded source; G.20 retrieval already separately multi-seed-validated; full-retrieval wiring is a noted later increment",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_seeds": 3,
+  "anti_cheat": {
+    "validated_moat_reused_unmodified": "research.runners.abstention_gate gate/abstain/650 byte-UNMODIFIED",
+    "no_confab_by_construction": "grounded_decode abstain path never touches the LM",
+    "fixed_bars_in_gg_core": "_GG_UNGROUNDED_ENTITY_MAX=0.20 / _GG_MIN_GROUNDED_ANSWER_RATE=0.5 / >=3 seeds; relational no-confab-preserved bar; NEVER tuned",
+    "is_answered_anti_vacuous": "function-word-only/empty responses are NOT counted as answers",
+    "honest_propagation": "CONTROLLER's post-run job"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "resumed": false,
+      "grounded_answer_rate": 1.0,
+      "abstain_on_ungrounded_rate": 1.0,
+      "bare_moat_abstain_rate": 1.0,
+      "mean_ungrounded_entity_rate": 0.8874571506924448,
+      "n_grounded": 6,
+      "n_ungrounded": 6,
+      "transcripts": {
+        "grounded": [
+          {
+            "q": "sue",
+            "abstained": false,
+            "answered": true,
+            "response": "and make it more fun. <|endoftext|> Once upon a time, there was a little girl named Lily. She had a big box of clothes that she loved to play with. One"
+          },
+          {
+            "q": "tom",
+            "abstained": false,
+            "answered": true,
+            "response": "with its blue keys. Tim and Sue were very happy to see the blue key and the blue key on the ground. They played with the b"
+          },
+          {
+            "q": "mia",
+            "abstained": false,
+            "answered": true,
+            "response": "that was safe. The cat was happy and thanked the bird. They became good friends and played together every day. <|endoftext|> Once upon a time, there was a little girl named Lily."
+          },
+          {
+            "q": "ben",
+            "abstained": false,
+            "answered": true,
+            "response": "and a face. They are very happy. They are friends. <|endoftext|> Once upon a time, there was a little girl named Lily. She had a big box of toys. Lily loved her box"
+          },
+          {
+            "q": "lily",
+            "abstained": false,
+            "answered": true,
+            "response": "in the park. He is very happy. He is a good friend. He has a bad bone. He has a red ball. He is a dog to play with his bon"
+          },
+          {
+            "q": "max",
+            "abstained": false,
+            "answered": true,
+            "response": "who likes to play with them. They share and have fun. They are happy. <|endoftext|> Once upon a time, there was a little girl named Lily. She had a big box of"
+          }
+        ],
+        "ungrounded": [
+          {
+            "q": "drovil",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "vexin",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "zarn",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "qexel",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "plonk",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "wun",
+            "result": "ABSTAIN"
+          }
+        ]
+      },
+      "verdict": {
+        "GATE": "FAIL",
+        "no_confab_preserved": true,
+        "answers_grounded_not_trivial": true,
+        "grounded_faithful": false,
+        "abstain_on_ungrounded_rate": 1.0,
+        "bare_moat_abstain_rate": 1.0,
+        "grounded_answer_rate": 1.0,
+        "mean_ungrounded_entity_rate": 0.8874571506924448,
+        "bars": {
+          "ungrounded_entity_max": 0.2,
+          "min_grounded_answer_rate": 0.5
+        },
+        "seed": 42,
+        "n_grounded": 6,
+        "n_ungrounded": 6
+      }
+    },
+    {
+      "seed": 43,
+      "resumed": false,
+      "grounded_answer_rate": 1.0,
+      "abstain_on_ungrounded_rate": 1.0,
+      "bare_moat_abstain_rate": 1.0,
+      "mean_ungrounded_entity_rate": 0.8874571506924448,
+      "n_grounded": 6,
+      "n_ungrounded": 6,
+      "transcripts": {
+        "grounded": [
+          {
+            "q": "mia",
+            "abstained": false,
+            "answered": true,
+            "response": "that was safe. The cat was happy and thanked the bird. They became good friends and played together every day. <|endoftext|> Once upon a time, there was a little girl named Lily."
+          },
+          {
+            "q": "lily",
+            "abstained": false,
+            "answered": true,
+            "response": "in the park. He is very happy. He is a good friend. He has a bad bone. He has a red ball. He is a dog to play with his bon"
+          },
+          {
+            "q": "ben",
+            "abstained": false,
+            "answered": true,
+            "response": "and a face. They are very happy. They are friends. <|endoftext|> Once upon a time, there was a little girl named Lily. She had a big box of toys. Lily loved her box"
+          },
+          {
+            "q": "tom",
+            "abstained": false,
+            "answered": true,
+            "response": "with its blue keys. Tim and Sue were very happy to see the blue key and the blue key on the ground. They played with the b"
+          },
+          {
+            "q": "max",
+            "abstained": false,
+            "answered": true,
+            "response": "who likes to play with them. They share and have fun. They are happy. <|endoftext|> Once upon a time, there was a little girl named Lily. She had a big box of"
+          },
+          {
+            "q": "sue",
+            "abstained": false,
+            "answered": true,
+            "response": "and make it more fun. <|endoftext|> Once upon a time, there was a little girl named Lily. She had a big box of clothes that she loved to play with. One"
+          }
+        ],
+        "ungrounded": [
+          {
+            "q": "zarn",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "wun",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "drovil",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "qexel",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "plonk",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "vexin",
+            "result": "ABSTAIN"
+          }
+        ]
+      },
+      "verdict": {
+        "GATE": "FAIL",
+        "no_confab_preserved": true,
+        "answers_grounded_not_trivial": true,
+        "grounded_faithful": false,
+        "abstain_on_ungrounded_rate": 1.0,
+        "bare_moat_abstain_rate": 1.0,
+        "grounded_answer_rate": 1.0,
+        "mean_ungrounded_entity_rate": 0.8874571506924448,
+        "bars": {
+          "ungrounded_entity_max": 0.2,
+          "min_grounded_answer_rate": 0.5
+        },
+        "seed": 43,
+        "n_grounded": 6,
+        "n_ungrounded": 6
+      }
+    },
+    {
+      "seed": 44,
+      "resumed": false,
+      "grounded_answer_rate": 1.0,
+      "abstain_on_ungrounded_rate": 1.0,
+      "bare_moat_abstain_rate": 1.0,
+      "mean_ungrounded_entity_rate": 0.8874571506924448,
+      "n_grounded": 6,
+      "n_ungrounded": 6,
+      "transcripts": {
+        "grounded": [
+          {
+            "q": "sue",
+            "abstained": false,
+            "answered": true,
+            "response": "and make it more fun. <|endoftext|> Once upon a time, there was a little girl named Lily. She had a big box of clothes that she loved to play with. One"
+          },
+          {
+            "q": "max",
+            "abstained": false,
+            "answered": true,
+            "response": "who likes to play with them. They share and have fun. They are happy. <|endoftext|> Once upon a time, there was a little girl named Lily. She had a big box of"
+          },
+          {
+            "q": "tom",
+            "abstained": false,
+            "answered": true,
+            "response": "with its blue keys. Tim and Sue were very happy to see the blue key and the blue key on the ground. They played with the b"
+          },
+          {
+            "q": "mia",
+            "abstained": false,
+            "answered": true,
+            "response": "that was safe. The cat was happy and thanked the bird. They became good friends and played together every day. <|endoftext|> Once upon a time, there was a little girl named Lily."
+          },
+          {
+            "q": "ben",
+            "abstained": false,
+            "answered": true,
+            "response": "and a face. They are very happy. They are friends. <|endoftext|> Once upon a time, there was a little girl named Lily. She had a big box of toys. Lily loved her box"
+          },
+          {
+            "q": "lily",
+            "abstained": false,
+            "answered": true,
+            "response": "in the park. He is very happy. He is a good friend. He has a bad bone. He has a red ball. He is a dog to play with his bon"
+          }
+        ],
+        "ungrounded": [
+          {
+            "q": "zarn",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "wun",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "vexin",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "qexel",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "drovil",
+            "result": "ABSTAIN"
+          },
+          {
+            "q": "plonk",
+            "result": "ABSTAIN"
+          }
+        ]
+      },
+      "verdict": {
+        "GATE": "FAIL",
+        "no_confab_preserved": true,
+        "answers_grounded_not_trivial": true,
+        "grounded_faithful": false,
+        "abstain_on_ungrounded_rate": 1.0,
+        "bare_moat_abstain_rate": 1.0,
+        "grounded_answer_rate": 1.0,
+        "mean_ungrounded_entity_rate": 0.8874571506924448,
+        "bars": {
+          "ungrounded_entity_max": 0.2,
+          "min_grounded_answer_rate": 0.5
+        },
+        "seed": 44,
+        "n_grounded": 6,
+        "n_ungrounded": 6
+      }
+    }
+  ],
+  "aggregate_verdict": {
+    "GATE": "FAIL",
+    "n_seeds": 3,
+    "min_seeds": 3,
+    "n_pass": 0,
+    "all_have_both_probes": true,
+    "all_pass": false
+  },
+  "GATE": "FAIL",
+  "OVERALL": "FAIL",
+  "elapsed_seconds": 1.4
+}
