@@ -1,0 +1,403 @@
+{
+  "task": "order-intrinsic Task 6 LOAD-BEARING no-harm check",
+  "substrate": "multi-seed-validated DG/CA3 P4.1 store (validate_positional_binding) + additive ec_context_to_motor_readback pathway PRESENT",
+  "method": "PART A: REUSE validate_positional_binding's exact 4-tag encode + pairwise-CA3-cosine + < 0.4 PASS criteria (build_word_pattern / encode_and_tag / cosine_similarity_indices imported verbatim) on a build_order_intrinsic_bridge bridge. PART B: REUSE order_intrinsic_encode.encode_proposition + readback_sweep + order_intrinsic_core.decode_position_sweep/control_max_floor; encoded proposition's mean correct-motor rate must clearly separate from a never-encoded control-max floor (no literal 650 -- DG/CA3 regime) AND the never-encoded control must abstain",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "train_events": 12,
+  "store_cos_criterion": 0.4,
+  "multiseed_baseline_max_cos": 0.14,
+  "moat_rel_margin_required": 0.05,
+  "n_seeds": 3,
+  "n_store_distinctness_pass": 3,
+  "n_moat_pass": 0,
+  "n_seed_pass": 0,
+  "max_ca3_cosine_all_seeds": 0.2631174057921088,
+  "min_moat_margin_rel_all_seeds": -0.75,
+  "store_distinctness_PASS": true,
+  "moat_encoded_vs_control": {
+    "42": {
+      "mean_encoded_correct_rate": 0.00664,
+      "control_max_floor": 0.00937,
+      "margin_rel": -0.29167
+    },
+    "43": {
+      "mean_encoded_correct_rate": 0.00234,
+      "control_max_floor": 0.00937,
+      "margin_rel": -0.75
+    },
+    "44": {
+      "mean_encoded_correct_rate": 0.00391,
+      "control_max_floor": 0.00937,
+      "margin_rel": -0.58333
+    }
+  },
+  "moat_PASS": false,
+  "OVERALL_PASS": false,
+  "per_seed": [
+    {
+      "seed": 42,
+      "store": {
+        "seed": 42,
+        "train_events": 12,
+        "n_neurons": 4128,
+        "n_synapses": 690377,
+        "pair_cosines": [
+          {
+            "a": "apple_pos0",
+            "b": "apple_pos2",
+            "label": "SAME WORD, DIFFERENT POSITION",
+            "cosine": 0.05892556509887897
+          },
+          {
+            "a": "alice_pos0",
+            "b": "alice_pos2",
+            "label": "SAME WORD, DIFFERENT POSITION",
+            "cosine": 0.2631174057921088
+          },
+          {
+            "a": "apple_pos0",
+            "b": "alice_pos0",
+            "label": "DIFFERENT WORD, SAME POSITION",
+            "cosine": 0.05590169943749474
+          },
+          {
+            "a": "apple_pos2",
+            "b": "alice_pos2",
+            "label": "DIFFERENT WORD, SAME POSITION",
+            "cosine": 0.0
+          },
+          {
+            "a": "apple_pos0",
+            "b": "alice_pos2",
+            "label": "DIFFERENT WORD, DIFFERENT POSITION",
+            "cosine": 0.0
+          }
+        ],
+        "cos_apple_pos": 0.05892556509887897,
+        "cos_alice_pos": 0.2631174057921088,
+        "cos_pos0_word": 0.05590169943749474,
+        "cos_pos2_word": 0.0,
+        "max_ca3_cosine": 0.2631174057921088,
+        "store_criterion": 0.4,
+        "multiseed_baseline_max_cos": 0.14,
+        "pass_position": true,
+        "pass_word": true,
+        "store_distinctness_PASS": true
+      },
+      "moat": {
+        "seed": 42,
+        "proposition": [
+          "north",
+          "east",
+          "south",
+          "west"
+        ],
+        "encoded_tops": [
+          {
+            "position": 0,
+            "expected_word": "north",
+            "top_word": "north",
+            "top_rate": 0.00781,
+            "expected_rate": 0.00781,
+            "top_is_expected": true
+          },
+          {
+            "position": 1,
+            "expected_word": "east",
+            "top_word": "north",
+            "top_rate": 0.00781,
+            "expected_rate": 0.00781,
+            "top_is_expected": false
+          },
+          {
+            "position": 2,
+            "expected_word": "south",
+            "top_word": "east",
+            "top_rate": 0.0125,
+            "expected_rate": 0.00313,
+            "top_is_expected": false
+          },
+          {
+            "position": 3,
+            "expected_word": "west",
+            "top_word": "west",
+            "top_rate": 0.00781,
+            "expected_rate": 0.00781,
+            "top_is_expected": true
+          }
+        ],
+        "control_position": 4,
+        "control_top_word": "east",
+        "control_top_rate": 0.00937,
+        "control_max_floor": 0.00937,
+        "mean_encoded_correct_rate": 0.00664,
+        "moat_margin_abs": -0.00273,
+        "moat_margin_rel": -0.29167,
+        "moat_rel_margin_required": 0.05,
+        "encoded_signal_separates": false,
+        "encoded_decoded_any": true,
+        "control_abstained": true,
+        "decoded_sweep": [
+          "None",
+          "None",
+          "east",
+          "None",
+          "None"
+        ],
+        "abstained_positions": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "moat_PASS": false
+      },
+      "seed_PASS": false
+    },
+    {
+      "seed": 43,
+      "store": {
+        "seed": 43,
+        "train_events": 12,
+        "n_neurons": 4128,
+        "n_synapses": 689308,
+        "pair_cosines": [
+          {
+            "a": "apple_pos0",
+            "b": "apple_pos2",
+            "label": "SAME WORD, DIFFERENT POSITION",
+            "cosine": 0.1111111111111111
+          },
+          {
+            "a": "alice_pos0",
+            "b": "alice_pos2",
+            "label": "SAME WORD, DIFFERENT POSITION",
+            "cosine": 0.0
+          },
+          {
+            "a": "apple_pos0",
+            "b": "alice_pos0",
+            "label": "DIFFERENT WORD, SAME POSITION",
+            "cosine": 0.041030496993110906
+          },
+          {
+            "a": "apple_pos2",
+            "b": "alice_pos2",
+            "label": "DIFFERENT WORD, SAME POSITION",
+            "cosine": 0.17660431427533915
+          },
+          {
+            "a": "apple_pos0",
+            "b": "alice_pos2",
+            "label": "DIFFERENT WORD, DIFFERENT POSITION",
+            "cosine": 0.13245323570650436
+          }
+        ],
+        "cos_apple_pos": 0.1111111111111111,
+        "cos_alice_pos": 0.0,
+        "cos_pos0_word": 0.041030496993110906,
+        "cos_pos2_word": 0.17660431427533915,
+        "max_ca3_cosine": 0.17660431427533915,
+        "store_criterion": 0.4,
+        "multiseed_baseline_max_cos": 0.14,
+        "pass_position": true,
+        "pass_word": true,
+        "store_distinctness_PASS": true
+      },
+      "moat": {
+        "seed": 43,
+        "proposition": [
+          "north",
+          "east",
+          "south",
+          "west"
+        ],
+        "encoded_tops": [
+          {
+            "position": 0,
+            "expected_word": "north",
+            "top_word": "west",
+            "top_rate": 0.00313,
+            "expected_rate": 0.00156,
+            "top_is_expected": false
+          },
+          {
+            "position": 1,
+            "expected_word": "east",
+            "top_word": "west",
+            "top_rate": 0.00625,
+            "expected_rate": 0.0,
+            "top_is_expected": false
+          },
+          {
+            "position": 2,
+            "expected_word": "south",
+            "top_word": "west",
+            "top_rate": 0.00625,
+            "expected_rate": 0.00469,
+            "top_is_expected": false
+          },
+          {
+            "position": 3,
+            "expected_word": "west",
+            "top_word": "north",
+            "top_rate": 0.00313,
+            "expected_rate": 0.00313,
+            "top_is_expected": false
+          }
+        ],
+        "control_position": 4,
+        "control_top_word": "south",
+        "control_top_rate": 0.00937,
+        "control_max_floor": 0.00937,
+        "mean_encoded_correct_rate": 0.00234,
+        "moat_margin_abs": -0.00703,
+        "moat_margin_rel": -0.75,
+        "moat_rel_margin_required": 0.05,
+        "encoded_signal_separates": false,
+        "encoded_decoded_any": false,
+        "control_abstained": true,
+        "decoded_sweep": [
+          "None",
+          "None",
+          "None",
+          "None",
+          "None"
+        ],
+        "abstained_positions": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "moat_PASS": false
+      },
+      "seed_PASS": false
+    },
+    {
+      "seed": 44,
+      "store": {
+        "seed": 44,
+        "train_events": 12,
+        "n_neurons": 4128,
+        "n_synapses": 689192,
+        "pair_cosines": [
+          {
+            "a": "apple_pos0",
+            "b": "apple_pos2",
+            "label": "SAME WORD, DIFFERENT POSITION",
+            "cosine": 0.10811249552346708
+          },
+          {
+            "a": "alice_pos0",
+            "b": "alice_pos2",
+            "label": "SAME WORD, DIFFERENT POSITION",
+            "cosine": 0.0
+          },
+          {
+            "a": "apple_pos0",
+            "b": "alice_pos0",
+            "label": "DIFFERENT WORD, SAME POSITION",
+            "cosine": 0.16574838603294897
+          },
+          {
+            "a": "apple_pos2",
+            "b": "alice_pos2",
+            "label": "DIFFERENT WORD, SAME POSITION",
+            "cosine": 0.0
+          },
+          {
+            "a": "apple_pos0",
+            "b": "alice_pos2",
+            "label": "DIFFERENT WORD, DIFFERENT POSITION",
+            "cosine": 0.08451542547285165
+          }
+        ],
+        "cos_apple_pos": 0.10811249552346708,
+        "cos_alice_pos": 0.0,
+        "cos_pos0_word": 0.16574838603294897,
+        "cos_pos2_word": 0.0,
+        "max_ca3_cosine": 0.16574838603294897,
+        "store_criterion": 0.4,
+        "multiseed_baseline_max_cos": 0.14,
+        "pass_position": true,
+        "pass_word": true,
+        "store_distinctness_PASS": true
+      },
+      "moat": {
+        "seed": 44,
+        "proposition": [
+          "north",
+          "east",
+          "south",
+          "west"
+        ],
+        "encoded_tops": [
+          {
+            "position": 0,
+            "expected_word": "north",
+            "top_word": "east",
+            "top_rate": 0.00781,
+            "expected_rate": 0.00469,
+            "top_is_expected": false
+          },
+          {
+            "position": 1,
+            "expected_word": "east",
+            "top_word": "north",
+            "top_rate": 0.00625,
+            "expected_rate": 0.00156,
+            "top_is_expected": false
+          },
+          {
+            "position": 2,
+            "expected_word": "south",
+            "top_word": "west",
+            "top_rate": 0.01406,
+            "expected_rate": 0.00781,
+            "top_is_expected": false
+          },
+          {
+            "position": 3,
+            "expected_word": "west",
+            "top_word": "north",
+            "top_rate": 0.01094,
+            "expected_rate": 0.00156,
+            "top_is_expected": false
+          }
+        ],
+        "control_position": 4,
+        "control_top_word": "west",
+        "control_top_rate": 0.00937,
+        "control_max_floor": 0.00937,
+        "mean_encoded_correct_rate": 0.00391,
+        "moat_margin_abs": -0.00547,
+        "moat_margin_rel": -0.58333,
+        "moat_rel_margin_required": 0.05,
+        "encoded_signal_separates": false,
+        "encoded_decoded_any": true,
+        "control_abstained": true,
+        "decoded_sweep": [
+          "None",
+          "None",
+          "west",
+          "north",
+          "None"
+        ],
+        "abstained_positions": [
+          0,
+          1,
+          4
+        ],
+        "moat_PASS": false
+      },
+      "seed_PASS": false
+    }
+  ],
+  "elapsed_seconds": 78.5
+}
