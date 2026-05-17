@@ -46,3 +46,8 @@ class PredictiveCoder:
         # leaky recurrent prefix accumulation (order-dependent)
         self.state = (self.leak * self.state
                       + self.W_in[c]).astype(np.float32)
+
+    def predict_next(self) -> np.ndarray:
+        """Top-down generative prediction: pc_state -> next-concept
+        logits. Pure/deterministic."""
+        return (self.state @ self.W_pred).astype(np.float32)
