@@ -22,20 +22,46 @@ def ungrounded_entity_rate(response_text, retrieved_text,
                            function_words=FUNCTION_WORDS) -> float:
     """Fraction of response CONTENT words (not function words) that do
     NOT appear in the retrieved proposition. High == the LM invented
-    ungrounded content (renamed entities / confabulated)."""
-    ret = set(w.lower() for w in str(retrieved_text).split())
-    resp = [w.lower() for w in str(response_text).split()]
-    content = [w for w in resp if w not in function_words]
+    ungrounded content (renamed entities / confabulated). Tokens are
+    normalized (lowercased, non-word chars stripped) so punctuation
+    cannot mask a confabulation or inflate a faithful echo."""
+    import re
+    def _norm(s):
+        out = []
+        for w in str(s).split():
+            t = re.sub(r"[^\w]", "", w.lower())
+            if t:
+                out.append(t)
+        return out
+    ret = set(_norm(retrieved_text))
+    content = [w for w in _norm(response_text)
+               if w not in function_words]
     if not content:
         return 0.0
     ungrounded = sum(1 for w in content if w not in ret)
     return ungrounded / len(content)
 
 
+def is_answered(response_text, function_words=FUNCTION_WORDS) -> bool:
+    """A response counts as a real ANSWER only if it has >= 1 CONTENT
+    word (non-function, word-chars). Empty / function-word-only /
+    punctuation-only responses are NOT answers -- this prevents a
+    vacuous responder from gaming grounded_answer_rate while scoring
+    0.0 faithfulness. The Generator-G runner MUST compute
+    grounded_answer_rate using this helper."""
+    import re
+    for w in str(response_text).split():
+        t = re.sub(r"[^\w]", "", w.lower())
+        if t and t not in function_words:
+            return True
+    return False
+
+
 def gg_verdict(abstain_on_ungrounded_rate, bare_moat_abstain_rate,
                grounded_answer_rate, mean_ungrounded_entity_rate,
                has_ungrounded_control) -> Dict:
     no_confab = (bool(has_ungrounded_control)
+                 and bare_moat_abstain_rate > 0.0
                  and abstain_on_ungrounded_rate
                  >= bare_moat_abstain_rate - 1e-9)
     not_trivial = grounded_answer_rate >= _GG_MIN_GROUNDED_ANSWER_RATE

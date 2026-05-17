@@ -1,5 +1,6 @@
 from research.runners.generator_g_core import (
     ungrounded_entity_rate, gg_verdict, gg_aggregate_multiseed,
+    is_answered,
     _GG_UNGROUNDED_ENTITY_MAX, _GG_MIN_GROUNDED_ANSWER_RATE,
     _GG_MIN_SEEDS, FUNCTION_WORDS,
 )
@@ -59,3 +60,27 @@ def test_multiseed_requires_3_all_pass_each_has_both_probes():
     assert gg_aggregate_multiseed([P, F, P])["GATE"] == "FAIL"
     assert gg_aggregate_multiseed([P, P])["GATE"] == "FAIL"
     assert gg_aggregate_multiseed([P, P, Z])["GATE"] == "FAIL"
+
+
+def test_vacuous_zero_bare_moat_cannot_pass():
+    # bare moat abstained on NOTHING -> the no-confab comparison is
+    # meaningless -> must FAIL-closed (Issue 3).
+    v = gg_verdict(0.0, 0.0, 0.8, 0.0, True)
+    assert v["GATE"] == "FAIL" and v["no_confab_preserved"] is False
+
+
+def test_punctuation_does_not_mask_or_inflate():
+    # faithful echo with trailing punctuation -> still 0.0 (no inflate)
+    assert ungrounded_entity_rate("max. is here!", "max is here",
+                                  FUNCTION_WORDS) == 0.0
+    # confabulated entity with punctuation still flagged
+    assert ungrounded_entity_rate("bob, is here", "max is here",
+                                  FUNCTION_WORDS) > 0.0
+
+
+def test_is_answered_rejects_empty_and_function_word_only():
+    assert is_answered("max is a big dog", FUNCTION_WORDS) is True
+    assert is_answered("", FUNCTION_WORDS) is False
+    assert is_answered("   ", FUNCTION_WORDS) is False
+    assert is_answered("it is not the", FUNCTION_WORDS) is False  # all function words
+    assert is_answered("!!! ...", FUNCTION_WORDS) is False        # punctuation only
