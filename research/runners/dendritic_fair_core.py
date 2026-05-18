@@ -89,14 +89,27 @@ def dfair_verdict(oracle_heldout, correct_heldout, wrongsign_heldout,
 def dfair_aggregate_multiseed(per_seed, min_seeds=_DFAIR_MIN_SEEDS):
     n = len(per_seed)
     eff = max(int(min_seeds), _DFAIR_MIN_SEEDS)
-    gates = [v.get("GATE") for v in per_seed]
+    # Fail-closed: any malformed (non-dict / missing-GATE) seed, or
+    # any explicit VOID seed, makes the whole aggregate VOID
+    # (instrument-validity precedes the science verdict AND precedes
+    # the seed-count check -- a broken/under-specified instrument is
+    # never scored).
+    gates = []
+    malformed = False
+    for v in per_seed:
+        if isinstance(v, dict) and "GATE" in v:
+            gates.append(v["GATE"])
+        else:
+            malformed = True
+            gates.append("VOID")
+    if malformed or any(g == "VOID" for g in gates):
+        return {"GATE": "VOID", "n_seeds": n, "min_seeds": eff,
+                "n_void": sum(g == "VOID" for g in gates),
+                "malformed": bool(malformed),
+                "reason": "instrument VOID/malformed in >=1 seed"}
     if n < eff or n == 0:
         return {"GATE": "FAIL", "n_seeds": n, "min_seeds": eff,
                 "reason": "fewer than %d seeds" % eff}
-    if any(g == "VOID" for g in gates):
-        return {"GATE": "VOID", "n_seeds": n, "min_seeds": eff,
-                "n_void": sum(g == "VOID" for g in gates),
-                "reason": "instrument VOID in >=1 seed"}
     n_pass = sum(g == "PASS" for g in gates)
     return {"GATE": "PASS" if n_pass == n else "FAIL",
             "n_seeds": n, "min_seeds": eff, "n_pass": n_pass}

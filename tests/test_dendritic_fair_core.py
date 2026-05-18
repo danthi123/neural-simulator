@@ -100,3 +100,26 @@ def test_aggregate_all_valid_all_pass_is_PASS():
 def test_aggregate_valid_but_a_fail_is_FAIL():
     seeds = [_good(), _good(), _good(correct_heldout=0.5)]
     assert c.dfair_aggregate_multiseed(seeds)["GATE"] == "FAIL"
+
+
+def test_aggregate_malformed_seed_is_VOID_not_raises():
+    # non-dict / missing-GATE entries must fail-closed to VOID,
+    # never raise (robustness hardening).
+    assert c.dfair_aggregate_multiseed([None, None, None]
+                                       )["GATE"] == "VOID"
+    assert c.dfair_aggregate_multiseed([3.0, 3.0, 3.0]
+                                       )["GATE"] == "VOID"
+    assert c.dfair_aggregate_multiseed(
+        [{"GATE": "PASS"}, {"GATE": "PASS"}, {"no_gate": 1}]
+    )["GATE"] == "VOID"
+
+
+def test_aggregate_void_precedes_insufficient_seeds():
+    # an under-replicated run that ALSO contains a broken-instrument
+    # (VOID) seed must report VOID (instrument-invalid precedes the
+    # science verdict), not FAIL.
+    v = c.dfair_aggregate_multiseed([_good(), _good(oracle_heldout=0.5)])
+    assert v["GATE"] == "VOID"
+    # a clean under-replicated run with NO void seed is still FAIL:
+    assert c.dfair_aggregate_multiseed([_good(), _good()]
+                                       )["GATE"] == "FAIL"
