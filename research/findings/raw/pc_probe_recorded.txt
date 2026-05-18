@@ -1,0 +1,14 @@
+[run] seed=42 V1cos=0.995 pc_acc=0.083 no_inference_acc=0.108 wrongsign_acc=nan permuted_acc=0.108
+[run] seed=43 V1cos=0.994 pc_acc=0.192 no_inference_acc=0.225 wrongsign_acc=nan permuted_acc=0.200
+[run] seed=44 V1cos=0.997 pc_acc=0.358 no_inference_acc=0.358 wrongsign_acc=nan permuted_acc=0.283
+[run] seed=45 V1cos=0.995 pc_acc=0.117 no_inference_acc=0.058 wrongsign_acc=nan permuted_acc=0.275
+[run] seed=46 V1cos=0.995 pc_acc=0.400 no_inference_acc=0.317 wrongsign_acc=nan permuted_acc=0.258
+
+=== CHEAP PREDICTIVE-CODING FALSIFY-FIRST VERDICT (no spin) ===
+  frozen: V1 cos(PC,-bpgrad)>=0.95 | science acc>=0.80 | ctrl acc<=0.40 | seeds>=3 | chance=0.25
+  seed=42 V1cos=0.995 pc_acc=0.083 no_inference_acc=0.108 wrongsign_acc=nan permuted_acc=0.108
+  seed=43 V1cos=0.994 pc_acc=0.192 no_inference_acc=0.225 wrongsign_acc=nan permuted_acc=0.200
+  seed=44 V1cos=0.997 pc_acc=0.358 no_inference_acc=0.358 wrongsign_acc=nan permuted_acc=0.283
+  seed=45 V1cos=0.995 pc_acc=0.117 no_inference_acc=0.058 wrongsign_acc=nan permuted_acc=0.275
+  seed=46 V1cos=0.995 pc_acc=0.400 no_inference_acc=0.317 wrongsign_acc=nan permuted_acc=0.258
+  >>> VERDICT: FAIL -- instrument VALID + discriminating (PC tracks the gradient, controls fail) yet PC alone does NOT learn at this cheap scale. Honest negative triangulating the boundary from the PC direction. Propagate; do NOT config-crank.
