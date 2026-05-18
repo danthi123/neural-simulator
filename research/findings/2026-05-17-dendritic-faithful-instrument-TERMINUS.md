@@ -132,3 +132,46 @@ elsewhere -- triangulated, not asserted.
 - Scientific basis: Lillicrap 2016 (feedback alignment, training-
   emergent, deep-net regime); Guerguiev-Lillicrap-Richards 2017;
   Sacramento-Senn 2018; Larkum 2013; Urbanczik-Senn 2014.
+
+## Addendum: the LLM-teach-then-wean idea, specifically steelman-tested (2026-05-17)
+
+User asked whether using an LLM to teach "what is correct" until the
+sim can do it itself would help, or whether it is purely architecture.
+Answered by TESTING the strongest possible version (the true gradient
+is a strictly stronger "correct teacher" than any LLM): bootstrap the
+hidden layers with the true-gradient teacher, then WEAN to the
+committed sign-correct LOCAL rule, and check whether teaching-first
+makes the local rule's correctness NECESSARY (correct-sign sustains
+post-wean while wrong-sign collapses) on a SOUND instrument (validity
+gates: oracle positive-control works AND no-teach wrong-sign ~chance).
+
+Result: a FOURTH consecutive cheap instrument for this question failed
+to be soundly constructible -- not by science but by structural
+tension: (1) static-cosine mis-specified; (2) W2-co-adaptation
+confound (non-discriminating); (3) sigmoid-deep oracle vanished to
+chance; (4) ReLU-deep oracle overflowed to NaN. The two requirements
+of a discriminating-AND-sound instrument pull opposite ways at cheap
+local scale: easy/small enough to be cheap+stable -> the readout
+confound rescues any hidden rule (non-discriminating); hard/deep
+enough to defeat the confound -> optimization is unstable at cheap
+scale or needs the scale/care that IS the boundary.
+
+Honest conclusion (no spin): the LLM-teach-then-wean idea -- while
+biologically the right KIND of instinct -- does not cross the boundary
+because the property it would transfer ("the sim doing credit
+assignment itself") is not even MEASURABLE at feasible local scale
+(you cannot distinguish "learned to do it itself" from "readout reads
+teacher-shaped features"). It also inherits the already-terminal
+distillation-transfer line (Generator-D, Phase-2.3a), the self-
+contained-runtime constraint (external teacher = the rejected-cheat
+line), and lands in gap #3 (developmental scaffolding -- the owner's
+strategic fork). It RELOCATES the boundary into already-mapped
+terminal territory; it does not escape it. This triangulates the same
+joint-(scale x stable-optimization x task-hardness) infeasibility
+boundary now from a FIFTH independent direction (generation,
+realization, grounded-memory, dendritic-faithful, and teach-then-wean
+instrument-construction). NOT purely "an architecture we just have to
+build" -- the rule FORM is correct; the missing thing is a regime
+that is jointly infeasible locally, which no training crutch (LLM or
+otherwise) can substitute for. Decision-relevant, propagated without
+spin; the genuine options remain the owner's strategic call.
