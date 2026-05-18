@@ -1,0 +1,260 @@
+"""THROWAWAY falsify-cheaply probe (NOT committed; prefix _).
+
+OWNER decided Option B (eyes-open): pursue GENERATIVE compositional
+learning in the biology substrate, not retrieval-only. The
+compose->spiking-bridge integration VOIDed for ONE localized reason:
+n_rewarded=0 -- at cold-start the teacher/readout/reward loop never
+produced a single rewarded episode, so the TD error delta was
+identically 0 and the validated temporal-credit mechanism never
+engaged.
+
+Hypothesis (catalog-grounded, both mechanisms ALREADY validated
+multi-seed in-repo): the validated ENGRAM one-shot bind (Tonegawa
+D.14 -- reward-FREE Hebbian co-activation tagging of the co-fired
+(cue,target) ensemble; does NOT need a pre-existing rewarded episode)
+BOOTSTRAPS the loop (so n_rewarded>0 from the start, dissolving the
+exact VOID cause), and the validated TEMPORAL-CREDIT/eligibility
+mechanism then GENERATIVELY REFINES it -- generalizing across the
+gap BEYOND what the static engram tag alone (retrieval-only) can.
+
+  PRINCIPLED V1 (instrument soundness): does the engram bootstrap
+  actually dissolve the n_rewarded=0 blocker? engram_plus_td's
+  rewarded-episode fraction during training must be clearly > 0 AND
+  >> the cold-start (no-bootstrap) baseline. If even the engram
+  bootstrap cannot produce rewarded episodes the whole idea fails
+  cheaply -> VOID (do NOT green-light the heavy build).
+
+  SCIENCE (generative gain, the decisive question): with the loop
+  bootstrapped, does temporal-credit add GENERATIVE generalization
+  over retrieval-only? engram_plus_td gapped-accuracy must clear the
+  bar AND strictly exceed engram_only by a margin (the temporal-credit
+  genuinely learns, not just recalls), while the cold-start baseline
+  reproduces the VOID (~chance).
+
+  DISCRIMINATING CONTROLS that MUST fail:
+   - cold            : temporal-credit from zero-init, NO engram
+     bootstrap -- the faithful in-bridge-VOID analog (n_rewarded~0).
+     Must stay ~chance (reproduces the VOID).
+   - engram_only     : one-shot bind, NO temporal-credit refinement --
+     retrieval-only. Must NOT match engram_plus_td (isolates that the
+     generative gain is the TD refinement, not the tag).
+   - no_trace        : engram bootstrap + TD but eligibility suppressed
+     across the gap -- must collapse toward engram_only (isolates the
+     temporal bridge as the load-bearing generative element).
+   - permuted_boot   : engram binds a WRONG mapping then TD refines it
+     -> must score ~chance on the TRUE mapping (catches "any bootstrap
+     + any learning looks like success").
+   - wrongsign       : TD refinement sign-flipped -> anti-learns.
+
+  Pre-registered FROZEN bars (NEVER tuned), THREE-STATE
+  instrument-validity-FIRST fail-closed, multi-seed, recompute-clean.
+  Vectorized pure numpy; NO automatic differentiation; self-contained;
+  ASCII only. Throwaway: read once, decide, delete.
+
+HONEST CEILING (no spin, baked in): a PASS = the validated engram
+bootstrap dissolves the localized n_rewarded=0 VOID cause AND the
+validated temporal-credit mechanism then adds GENERATIVE
+generalization at small concept-vocab scale -> green-light a
+separately-gated in-bridge build. It is explicitly NOT open-ended
+fluent composition (the project's multiply-triangulated boundary at
+feasible local scale), NOT an LLM, NOT conversation-solved. A
+FAIL/VOID honestly triangulates that even the validated-bootstrap +
+validated-temporal-credit combination does not yield generative
+composition cheaply. Propagated honestly either way; NOT
+config-cranked.
+"""
+from __future__ import annotations
+
+import sys
+
+import numpy as np
+from sim.kernels import fused_eligibility_trace_decay  # REUSED UNMODIFIED
+
+# Schedule constants (NOT science bars). N>=12 so chance is low and
+# the absolute control bar is unambiguous (the small-N artifact
+# structurally excluded, per the prior validated probes).
+_N = 12             # concept pools; chance = 1/12 ~ 0.083
+_P = 64             # units per sparse population code
+_K = 8              # active units per code
+_GAP = 6            # temporal gap (decision -> delayed reward)
+_GAMMA = 0.95
+_LAMBDA = 0.9
+_ALPHA = 0.15
+_EPS = 0.10
+_NOISE = 0.10       # readout noise (the v16/in-bridge harder regime)
+_BIND = 3.0         # engram one-shot co-activation bind strength
+_EPOCHS = 60
+_N_TR = 1500
+
+# Pre-registered FROZEN bars (NEVER tuned). chance = 1/_N ~ 0.083.
+_V1_REWARD_FRAC_MIN = 0.20   # bootstrap dissolves n_rewarded=0 (>> cold ~0)
+_SCI_ACC_MIN = 0.80          # engram_plus_td genuinely generative
+_SCI_GAIN_MIN = 0.25         # generative gain over retrieval-only engram
+_CTRL_ACC_MAX = 0.40         # cold/permuted/wrongsign ~chance+margin
+_NOTRACE_GAIN_MAX = 0.10     # no_trace must NOT add the generative gain
+_MIN_SEEDS = 3
+
+
+def _codes(rng):
+    X = np.zeros((_N, _P))
+    for c in range(_N):
+        X[c, rng.choice(_P, _K, replace=False)] = 1.0
+    return X
+
+
+def _engram_bind(W, codes, pi):
+    """Validated one-shot engram bind (Tonegawa D.14 abstract analog):
+    reward-FREE Hebbian co-activation of the (cue_i, target pi[i])
+    ensemble -- adds a fixed prior to W[cue_units, pi[i]]. NO reward
+    used (this is exactly why it dissolves the n_rewarded=0 cold-start
+    blocker)."""
+    for i in range(_N):
+        W[:, pi[i]] += _BIND * codes[i] / _K
+    return W
+
+
+def _run(mode, seed):
+    """Returns (gap_acc, reward_frac). Episode: present cue_i sparse
+    code; eps-greedy decision over targets from the noisy readout;
+    TEMPORAL GAP; reward at t_R iff selected==pi[i]; TD(lambda)+
+    eligibility refinement via the bridge-validated decay. `cold` =
+    no engram bootstrap (the in-bridge-VOID analog). `engram_only` =
+    bind, no TD. `no_trace` = bind + TD but eligibility zeroed across
+    the gap. `permuted_boot` = engram binds a WRONG mapping."""
+    rng = np.random.default_rng(seed)
+    pi = rng.permutation(_N)
+    codes = _codes(rng)
+    W = np.zeros((_P, _N))
+    if mode in ("engram_only", "engram_plus_td", "no_trace",
+                "wrongsign"):
+        _engram_bind(W, codes, pi)
+    elif mode == "permuted_boot":
+        _engram_bind(W, codes, rng.permutation(_N))   # WRONG mapping
+    do_td = mode in ("engram_plus_td", "no_trace", "permuted_boot",
+                     "wrongsign", "cold")
+    decay = _GAMMA * _LAMBDA
+    rew = 0
+    tot = 0
+    if do_td:
+        for _t in range(_N_TR):
+            i = int(rng.integers(_N))
+            x = codes[i]
+            logits = x @ W + rng.normal(0, _NOISE, _N)
+            b = (int(rng.integers(_N)) if rng.random() < _EPS
+                 else int(np.argmax(logits)))
+            e = np.zeros((_P, _N))
+            e[:, b] = x
+            q = x @ W[:, b]
+            for _g in range(_GAP):
+                if mode == "no_trace":
+                    e[:] = 0.0
+                else:
+                    e = np.asarray(
+                        fused_eligibility_trace_decay(e, decay))
+            r = 1.0 if b == pi[i] else 0.0
+            rew += int(r > 0.5)
+            tot += 1
+            d = r + _GAMMA * 0.0 - q
+            step = -d if mode == "wrongsign" else d
+            W = W + _ALPHA * step * e
+    # noise-free greedy gapped eval over all cues
+    acc = float(np.mean(np.argmax(codes @ W, axis=1) == pi))
+    rfrac = (rew / tot) if tot else 0.0
+    return acc, rfrac
+
+
+def _verdict(rows):
+    seeds = sorted(rows)
+    print("\n=== CHEAP ENGRAM-BOOTSTRAP + TEMPORAL-CREDIT VERDICT "
+          "(no spin) ===")
+    print("  frozen: V1 reward_frac>=%.2f | science acc>=%.2f & "
+          "gain-over-engram_only>=%.2f | ctrl acc<=%.2f | "
+          "no_trace-gain<=%.2f | seeds>=%d | chance=%.3f"
+          % (_V1_REWARD_FRAC_MIN, _SCI_ACC_MIN, _SCI_GAIN_MIN,
+             _CTRL_ACC_MAX, _NOTRACE_GAIN_MAX, _MIN_SEEDS, 1.0 / _N))
+    for s in seeds:
+        r = rows[s]
+        print("  seed=%d eptd_acc=%.3f eptd_rfrac=%.3f "
+              "engram_only=%.3f cold=%.3f no_trace=%.3f "
+              "permuted_boot=%.3f wrongsign=%.3f"
+              % (s, r["eptd"][0], r["eptd"][1], r["eo"][0],
+                 r["cold"][0], r["nt"][0], r["pb"][0], r["ws"][0]))
+    if len(seeds) < _MIN_SEEDS:
+        print("  >>> VERDICT: VOID (<%d seeds)." % _MIN_SEEDS)
+        return
+
+    def _fin(x):
+        return x if np.isfinite(x) else -1e9
+    v1_ok = all(_fin(rows[s]["eptd"][1]) >= _V1_REWARD_FRAC_MIN
+                for s in seeds)
+    ctrls_fail = all(
+        ((not np.isfinite(rows[s]["cold"][0]))
+         or rows[s]["cold"][0] <= _CTRL_ACC_MAX)
+        and ((not np.isfinite(rows[s]["pb"][0]))
+             or rows[s]["pb"][0] <= _CTRL_ACC_MAX)
+        and ((not np.isfinite(rows[s]["ws"][0]))
+             or rows[s]["ws"][0] <= _CTRL_ACC_MAX)
+        and ((not np.isfinite(rows[s]["nt"][0]))
+             or (rows[s]["nt"][0] - rows[s]["eo"][0])
+             <= _NOTRACE_GAIN_MAX)
+        for s in seeds)
+    instrument_valid = v1_ok and ctrls_fail
+    if not instrument_valid:
+        why = []
+        if not v1_ok:
+            why.append("V1 unmet: engram bootstrap did NOT dissolve "
+                       "n_rewarded=0 (reward_frac < bar) -> the "
+                       "bootstrap idea itself fails cheaply "
+                       "(instrument-unsound)")
+        if not ctrls_fail:
+            why.append("a discriminating control did NOT fail "
+                       "(cold/permuted/wrongsign learned, or no_trace "
+                       "added the generative gain -> non-"
+                       "discriminating)")
+        print("  >>> VERDICT: VOID -- %s. NOT a science PASS/FAIL." %
+              "; ".join(why))
+        return
+    science = all(
+        rows[s]["eptd"][0] >= _SCI_ACC_MIN
+        and (rows[s]["eptd"][0] - rows[s]["eo"][0]) >= _SCI_GAIN_MIN
+        for s in seeds)
+    if science:
+        print("  >>> VERDICT: PASS -- the validated engram bootstrap "
+              "DISSOLVES the localized n_rewarded=0 VOID cause AND the "
+              "validated temporal-credit mechanism then adds GENERATIVE "
+              "generalization beyond retrieval-only (engram_only), "
+              "where the cold-start in-bridge-VOID analog stays "
+              "~chance. GREEN-LIGHT a separately-gated in-bridge build. "
+              "CEILING (no spin): small concept-vocab generative "
+              "compositional LEARNING bootstrapped -- explicitly NOT "
+              "open-ended fluent composition (the multiply-triangulated "
+              "boundary), NOT an LLM, NOT conversation-solved.")
+    else:
+        print("  >>> VERDICT: FAIL -- instrument VALID + discriminating "
+              "(bootstrap closes the loop, controls fail) yet "
+              "engram_plus_td does NOT add the generative gain over "
+              "retrieval-only at this cheap scale. Honest negative: "
+              "even validated-bootstrap + validated-temporal-credit "
+              "does not yield generative composition cheaply. "
+              "Propagate; do NOT config-crank.")
+
+
+if __name__ == "__main__":
+    seeds = [int(x) for x in sys.argv[1:]] or [42, 43, 44, 45, 46]
+    rows = {}
+    for s in seeds:
+        rows[s] = {
+            "eptd": _run("engram_plus_td", s),
+            "eo": _run("engram_only", s),
+            "cold": _run("cold", s),
+            "nt": _run("no_trace", s),
+            "pb": _run("permuted_boot", s),
+            "ws": _run("wrongsign", s),
+        }
+        r = rows[s]
+        print("[run] seed=%d eptd=%.3f(rfrac %.3f) engram_only=%.3f "
+              "cold=%.3f no_trace=%.3f permuted_boot=%.3f "
+              "wrongsign=%.3f"
+              % (s, r["eptd"][0], r["eptd"][1], r["eo"][0],
+                 r["cold"][0], r["nt"][0], r["pb"][0], r["ws"][0]))
+    _verdict(rows)
