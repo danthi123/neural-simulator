@@ -295,6 +295,7 @@ def main(argv=None):
            "note": ("TINY toy verdict -- NOT propagated" if a.tiny else
                     "multi-rung trend-primary scale-confidence verdict "
                     "-- recompute from this JSON; no re-run/no tuning"),
+           "elapsed_seconds": round(time.time() - t0, 1),
            "HONEST_CEILING": ("scale-confidence PoC: validated "
              "constrained-decoding faithfulness holds/improves up a "
              "genuine local KB ladder and clears the SAME 0.50 floor "
