@@ -1,0 +1,10 @@
+Q4 cheap falsify-first probe (= concept-objective feature-discriminativeness) -- recorded evidence (throwaway _probe_q4_concept_objective.py, deleted post-decision)
+
+RUN 1: TypeError -- backward_unroll call-site glue bug (omitted the inputs positional). Probe did not execute. ONE root-caused glue fix: backward_unroll(xt,layers,fwd,og). [sim.bptt_snn byte-UNMODIFIED; the call site was wrong.]
+
+RUN 2 (after the glue fix), 5 seeds, ladder C{4,8,16}:
+  C= 4 | char=0.379(V1 FAIL <0.55) concept=0.315 marg=0.064 shuf=0.359 rand=0.326 -> FAIL
+  C= 8 | char=0.247(V1 FAIL) concept=0.227 marg=0.020 shuf=0.246 rand=0.222 -> FAIL
+  C=16 | char=0.260(V1 FAIL) concept=0.248 marg=0.012 shuf=0.222 rand=0.205 -> FAIL
+
+VERDICT: cheap precursor VOID-class. V1 UNMET every rung (char-level inter-concept cosine 0.25-0.38, far below the pre-registered 0.55 floor -> the cheap toy net does NOT reproduce the DOCUMENTED Phase-2.3a/b char-level non-discriminative regime of 0.72-0.85). Controls NON-discriminating: concept ~= shuffled ~= random (all ~0.20-0.36) -> the instrument cannot separate the concept objective from shuffled-label/random-init artifacts. Root cause (decisive, NOT a cheap-fixable glue bug): the documented char-level failure regime is a property of the HEAVIER scale (4-layer wide SNN on Tiny-Shakespeare); at cheap toy scale all objectives' sparse-LIF features sit near-orthogonal and indistinguishable. A sound+discriminating CHEAP instrument for the Q4 question is therefore NOT constructible -- consistent with, and the terminal confirmation of, Phase-2.3b-REFUTED's already-assessed conclusion that this direction is not cheaply-testable at local scale (its Option 1). Per the iron law: ONE root-caused glue fix only; NO probe iteration toward the out-of-scope heavy scale; honest VOID-class. Q4 was the FINAL pivot-queue arm -> queue GENUINELY EXHAUSTED -> honest TERMINAL SYNTHESIS is the deliverable (NOT a stop, NOT spun). NOT a refutation of any validated asset; the 8x-triangulated meta-finding stands.
