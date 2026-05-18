@@ -337,7 +337,7 @@ def scale_confidence(rungs):
 **Step 4: Run — verify PASS**
 
 Run: `python -m pytest tests/test_engram_bootstrap_scale.py -q`
-Expected: PASS (9/9).
+Expected: PASS (8/8 — the spec test file defines 8 cases; an earlier draft said 9, corrected).
 
 **Step 5: Commit**
 
