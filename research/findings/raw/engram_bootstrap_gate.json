@@ -1,0 +1,289 @@
+{
+  "ladder": [
+    {
+      "B": 4,
+      "verdict": {
+        "GATE": "VOID",
+        "instrument_valid": false,
+        "reason": "V1 unmet: in-bridge TD did NOT learn the no-gap verb->motor bind (instrument unsound); a control learned / is missing -> temporal credit is NOT the in-bridge discriminator (non-discriminating)",
+        "frozen_bars": {
+          "V1_ACC_MIN": 0.8,
+          "SCI_ACC_MIN": 0.8,
+          "CTRL_ACC_MAX": 0.35,
+          "MIN_SEEDS": 3
+        },
+        "per_seed": {
+          "42": {
+            "nogap_td": 0.0,
+            "td": 0.5,
+            "controls": {
+              "hebbian_no_trace": 0.5,
+              "permuted": 0.5,
+              "wrongsign": 0.5
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "43": {
+            "nogap_td": 0.25,
+            "td": 0.25,
+            "controls": {
+              "hebbian_no_trace": 0.25,
+              "permuted": 0.25,
+              "wrongsign": 0.25
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "44": {
+            "nogap_td": 0.0,
+            "td": 0.25,
+            "controls": {
+              "hebbian_no_trace": 0.25,
+              "permuted": 0.25,
+              "wrongsign": 0.25
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "45": {
+            "nogap_td": 0.25,
+            "td": 0.5,
+            "controls": {
+              "hebbian_no_trace": 0.5,
+              "permuted": 0.5,
+              "wrongsign": 0.5
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "46": {
+            "nogap_td": 0.25,
+            "td": 0.5,
+            "controls": {
+              "hebbian_no_trace": 0.5,
+              "permuted": 0.5,
+              "wrongsign": 0.5
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          }
+        }
+      },
+      "td_mean": 0.4,
+      "engram_only_mean": 0.4
+    },
+    {
+      "B": 8,
+      "verdict": {
+        "GATE": "VOID",
+        "instrument_valid": false,
+        "reason": "V1 unmet: in-bridge TD did NOT learn the no-gap verb->motor bind (instrument unsound); a control learned / is missing -> temporal credit is NOT the in-bridge discriminator (non-discriminating)",
+        "frozen_bars": {
+          "V1_ACC_MIN": 0.8,
+          "SCI_ACC_MIN": 0.8,
+          "CTRL_ACC_MAX": 0.35,
+          "MIN_SEEDS": 3
+        },
+        "per_seed": {
+          "42": {
+            "nogap_td": 0.25,
+            "td": 0.125,
+            "controls": {
+              "hebbian_no_trace": 0.125,
+              "permuted": 0.125,
+              "wrongsign": 0.125
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "43": {
+            "nogap_td": 0.125,
+            "td": 0.0,
+            "controls": {
+              "hebbian_no_trace": 0.0,
+              "permuted": 0.25,
+              "wrongsign": 0.0
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "44": {
+            "nogap_td": 0.125,
+            "td": 0.0,
+            "controls": {
+              "hebbian_no_trace": 0.0,
+              "permuted": 0.375,
+              "wrongsign": 0.0
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "45": {
+            "nogap_td": 0.25,
+            "td": 0.0,
+            "controls": {
+              "hebbian_no_trace": 0.0,
+              "permuted": 0.25,
+              "wrongsign": 0.0
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "46": {
+            "nogap_td": 0.125,
+            "td": 0.25,
+            "controls": {
+              "hebbian_no_trace": 0.25,
+              "permuted": 0.25,
+              "wrongsign": 0.25
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          }
+        }
+      },
+      "td_mean": 0.075,
+      "engram_only_mean": 0.075
+    },
+    {
+      "B": 16,
+      "verdict": {
+        "GATE": "VOID",
+        "instrument_valid": false,
+        "reason": "V1 unmet: in-bridge TD did NOT learn the no-gap verb->motor bind (instrument unsound)",
+        "frozen_bars": {
+          "V1_ACC_MIN": 0.8,
+          "SCI_ACC_MIN": 0.8,
+          "CTRL_ACC_MAX": 0.35,
+          "MIN_SEEDS": 3
+        },
+        "per_seed": {
+          "42": {
+            "nogap_td": 0.0,
+            "td": 0.0,
+            "controls": {
+              "hebbian_no_trace": 0.0,
+              "permuted": 0.0625,
+              "wrongsign": 0.0
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "43": {
+            "nogap_td": 0.125,
+            "td": 0.0,
+            "controls": {
+              "hebbian_no_trace": 0.0,
+              "permuted": 0.0625,
+              "wrongsign": 0.0
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "44": {
+            "nogap_td": 0.0,
+            "td": 0.1875,
+            "controls": {
+              "hebbian_no_trace": 0.1875,
+              "permuted": 0.0625,
+              "wrongsign": 0.1875
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "45": {
+            "nogap_td": 0.0625,
+            "td": 0.0,
+            "controls": {
+              "hebbian_no_trace": 0.0,
+              "permuted": 0.125,
+              "wrongsign": 0.0
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          },
+          "46": {
+            "nogap_td": 0.1875,
+            "td": 0.1875,
+            "controls": {
+              "hebbian_no_trace": 0.1875,
+              "permuted": 0.0,
+              "wrongsign": 0.1875
+            },
+            "n_rewarded_td": 0,
+            "controls_semantics": {
+              "hebbian_no_trace": "engram_only: identical to td incl. the engram bootstrap+stimulate_tag, MINUS EXACTLY the eligibility-trace bridging across the gap (the faithful storage-only analog; NOT a strawman).",
+              "permuted": "identical engram bootstrap; pi(verb->motor) re-randomized per episode via a DEDICATED rng so the training-order stream stays byte-aligned with td (reward decorrelated; single-variable isolate).",
+              "wrongsign": "identical engram bootstrap; TD delta sign-flipped."
+            }
+          }
+        }
+      },
+      "td_mean": 0.075,
+      "engram_only_mean": 0.075
+    }
+  ],
+  "scale_confident": false,
+  "scale_classification": "VOID",
+  "scale_reason": "a rung GATE is VOID/missing",
+  "banner": "HONEST CEILING: scale-confidence PoC ONLY -- generative mechanism local at small capacity + no architectural ceiling across the local ladder; NOT GPT-class/open-ended fluent composition on local hardware, NOT an LLM, NOT conversation-solved. works-small-but-plateaus = honest non-success -> autonomous Q2 pivot.",
+  "tiny_synth": false,
+  "note": "multi-rung scale-confidence verdict -- recompute from this JSON; no re-run/no tuning"
+}
