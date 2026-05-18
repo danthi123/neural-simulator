@@ -136,7 +136,9 @@ _CONTROLS_SEMANTICS = {
                         "eligibility-trace bridging across the gap (the "
                         "faithful storage-only analog; NOT a strawman).",
     "permuted": "identical engram bootstrap; pi(verb->motor) re-"
-                "randomized per episode (reward decorrelated).",
+                "randomized per episode via a DEDICATED rng so the "
+                "training-order stream stays byte-aligned with td "
+                "(reward decorrelated; single-variable isolate).",
     "wrongsign": "identical engram bootstrap; TD delta sign-flipped."}
 
 _GAMMA = 0.95
@@ -335,6 +337,11 @@ def _run_mode(mode, seed, P, gap_zero=False):
     except Exception:
         pass
     rng = np.random.default_rng(seed)
+    # Dedicated RNG for the `permuted` control's per-epoch pi
+    # re-randomization, so the SHARED training-order stream stays
+    # byte-aligned with `td` (adversarial-review STRENGTHEN: permuted
+    # then differs from td ONLY by the intended reward decorrelation).
+    perm_rng = np.random.default_rng(seed + 1000003)
     pi = _bijection(rng, B)
     value_table = np.zeros(B, dtype=np.float64)
     tags = {}
@@ -346,7 +353,7 @@ def _run_mode(mode, seed, P, gap_zero=False):
     n_rewarded = 0
     for _ep in range(Pl["n_train_epochs"]):
         if mode == "permuted":
-            pi = _bijection(rng, B)
+            pi = _bijection(perm_rng, B)
         order = np.arange(B)
         rng.shuffle(order)
         for vi in order:
