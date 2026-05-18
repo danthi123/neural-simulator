@@ -1,0 +1,60 @@
+{
+  "ladder": [
+    {
+      "K": 12,
+      "verdict": {
+        "GATE": "FAIL",
+        "instrument_valid": true,
+        "science_ok": false,
+        "note": "constrained ungrounded-entity-rate ~0 is MECHANICAL (per-token veto, by construction) -- NOT the discriminating result; the discriminator is constrained NON-VACUITY vs the failing controls",
+        "frozen_bars": {
+          "FAITHFUL_MAX": 0.2,
+          "MIN_GROUNDED_CONTENT": 2,
+          "MIN_GROUNDED_ANSWER_RATE": 0.5,
+          "MIN_SEEDS": 3
+        },
+        "per_seed": {
+          "42": {
+            "unconstrained_uer": 0.9305555555555555,
+            "constrained_uer": 0.2638888888888889,
+            "constrained_nonvac_rate": 0.25,
+            "shuffled_uer": 1.0,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          },
+          "43": {
+            "unconstrained_uer": 0.9305555555555555,
+            "constrained_uer": 0.2638888888888889,
+            "constrained_nonvac_rate": 0.25,
+            "shuffled_uer": 0.9166666666666666,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          },
+          "44": {
+            "unconstrained_uer": 0.9305555555555555,
+            "constrained_uer": 0.2638888888888889,
+            "constrained_nonvac_rate": 0.25,
+            "shuffled_uer": 0.8333333333333334,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          }
+        }
+      },
+      "constrained_nonvac_rate_mean": 0.25
+    }
+  ],
+  "scale_confident": false,
+  "scale_classification": "TINY (toy; NOT propagated)",
+  "scale_reason": "",
+  "device": "cuda",
+  "tiny": true,
+  "note": "TINY toy verdict -- NOT propagated",
+  "elapsed_seconds": 0.0,
+  "HONEST_CEILING": "scale-confidence PoC: validated constrained-decoding faithfulness holds/improves up a genuine local KB ladder and clears the SAME 0.50 floor at the largest local scale with the validated instrument unmodified; NOT open-ended fluent composition, NOT an LLM, NOT GPT-class, NOT conversation-solved; constrained decoding TRADES fluency for faithfulness BY DESIGN"
+}
