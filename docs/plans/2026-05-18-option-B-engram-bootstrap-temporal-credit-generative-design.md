@@ -15,7 +15,39 @@ bridge API) can BOOTSTRAP the rewarded episode the compose-bridge VOID
 provably lacked (`n_rewarded = 0`), so the thrice-validated
 temporal-credit/eligibility mechanism can then GENERATIVELY refine that
 bootstrapped bind in a MINIMAL slice of the real spiking `sim.bridge`
-concept-pool architecture.
+concept-pool architecture -- AND whether that generative capability is
+**scale-confident** (holds/improves across a pre-registered local scale
+ladder with NO architectural plateau).
+
+## Deliverable reframed (owner clarification 2026-05-18) -- SCALE-CONFIDENCE, not local fluency
+
+The target is NOT GPT-class conversation on local hardware, and the
+honest ceiling is NOT merely "small-scale works." The deliverable the
+owner actually wants:
+
+> An architecture in a state where we are **confident scaling it up
+> yields the desired functionality**, with a **working proof-of-concept
+> locally at smaller capacity/capability**.
+
+Operationalized, pre-registered, never tuned: a result is
+**SCALE-CONFIDENT** iff BOTH hold:
+1. **Local PoC works:** the in-bridge THREE-STATE gate returns PASS
+   (instrument sound + discriminating + the generative signature
+   `td > engram_only`) at the smallest rung.
+2. **No architectural ceiling across the local scale ladder:** across a
+   pre-registered ladder of increasing compositional load
+   `B in {4, 8, 16}` bindings, the generative metric `td` is
+   non-decreasing up to a frozen substrate-noise tolerance AND the
+   generative signature (`td - engram_only >= margin`, `td >= science
+   bar`) STILL holds at the LARGEST locally-feasible rung. A capability
+   that works at `B=4` but plateaus/degrades by `B=16` is **NOT
+   scale-confident** -- an honest "works-small / no-scale-confidence"
+   finding that triggers the autonomous pivot, NEVER spun as a win.
+
+Scale-confidence is the explicit success criterion for THIS increment
+and for every queued architecture (Q1-Q4). It is a STRENGTHENING of the
+pre-registered science (an added measurement + frozen criterion), NOT a
+softened bar.
 
 ## Why this, and why now (deliberation -- no re-litigation)
 
@@ -186,24 +218,70 @@ conditions differ ONLY in the temporal-credit refinement on top:
   `_CBR_*` byte-UNCHANGED, recomputed from the recorded JSON, no
   re-run, no bar-tuning.
 
+### Pre-registered SCALE LADDER + scale-confidence criterion (frozen, NEVER tuned)
+
+The THREE-STATE gate above runs INDEPENDENTLY at each rung of a
+pre-registered scale ladder of compositional load:
+
+- Ladder `B in {4, 8, 16}` distinct verb->motor bindings. Frozen
+  per-rung topology rule (justified to keep orthogonal verb codes
+  non-overlapping at every rung -- stride must stay >= n_active):
+  `n_lang_input = 64 * B`, `sparsity = 0.5 / B`
+  (=> stride `= n_lang_input // B = 64` constant; `n_active =
+  round(sparsity * n_lang_input) = 32 < 64` at every rung), `n_per_pool
+  = 40`, `n_fs_per_pool = 6` fixed. Pre-registered here, NEVER tuned to
+  a result. `--tiny-synth` uses a single shrunk rung (toy verdict NOT
+  propagated).
+- `_SCALE_TOL = 0.05` (frozen; the substrate's irreducible greedy-eval
+  noise floor, justified BEFORE any run, never tuned).
+- **SCALE-CONFIDENT iff ALL hold (pre-registered):**
+  (a) every rung's THREE-STATE GATE == PASS (sound + discriminating +
+      science met + `engram_only` fails at that rung);
+  (b) `td` is non-decreasing across the ordered ladder up to
+      `_SCALE_TOL` (`td(B_{k+1}) >= td(B_k) - _SCALE_TOL` for every
+      adjacent pair) -- no architectural plateau/degradation;
+  (c) the generative signature still holds at the LARGEST rung
+      (`td(16) >= _CBR_SCI_ACC_MIN` AND
+      `td(16) - engram_only(16) >= _SCALE_TOL`).
+- Outcome mapping (pre-registered, honest, never spun):
+  - all rungs PASS AND (b)+(c) => **SCALE-CONFIDENT PASS** -- the
+    deliverable the owner asked for (local PoC + no architectural
+    ceiling across the local ladder).
+  - all/least rung PASS but (b) or (c) fails (works small, plateaus/
+    degrades with scale) => **WORKS-SMALL / NO-SCALE-CONFIDENCE** (an
+    honest FAIL-class finding; NOT a win) => propagate + autonomous Q2
+    pivot.
+  - any rung VOID (instrument unsound at that scale) => **VOID** =>
+    propagate + pivot.
+  - any rung FAIL (sound+discriminating, generative signature absent)
+    => **FAIL** => propagate + pivot.
+  The scale-confidence criterion is computed by REUSING `cbr_verdict`
+  per rung byte-UNMODIFIED (no new movable bar) plus the two frozen
+  scalars `_SCALE_TOL` / the ladder definition, pre-registered in the
+  implementation plan and recomputed from the single recorded
+  multi-rung JSON (no re-run, no tuning).
+
 ## Honest ceiling (stated up front, NEVER spun)
 
-- **IS (only if PASS):** the validated engram bind, refined by the
-  validated temporal-credit mechanism, produces small-scale GENERATIVE
-  compositional learning in a MINIMAL slice of the real spiking
-  concept-pool architecture -- the first in-architecture *generative*
-  (not merely stored-recall) dent in the composition blocker, where
-  the faithful storage-only `engram_only` analog cannot.
-- **IS NOT (the project boundary, never spun):** open-ended fluent
-  composition. NOT an LLM. NOT conversation-solved. NOT compositional
-  *language*. NOT the full vocab, NOT chat-integrated, NOT scaled. This
-  is a minimal-spiking-slice MECHANISM-TRANSFER test of whether
-  temporal-credit converts a validated engram bind into a *generative*
-  one. Open-ended fluent composition remains the honest project
-  boundary at feasible local scale (Generator-G NEGATIVE; Generator-F
-  coherent-simple ceiling; Phase-2.3a ~3-4 order scale gap) -- this
-  increment does NOT move that boundary and will not be reported as if
-  it does.
+- **IS (only if SCALE-CONFIDENT PASS):** the validated engram bind,
+  refined by the validated temporal-credit mechanism, produces
+  GENERATIVE compositional learning in a MINIMAL slice of the real
+  spiking concept-pool architecture, where the faithful storage-only
+  `engram_only` analog cannot, AND that capability holds/improves
+  across the pre-registered local scale ladder with no architectural
+  plateau -- i.e. the only thing between this local PoC and the
+  desired functionality is QUANTITATIVE scale, not a qualitative
+  architectural gap. This is exactly the owner's stated deliverable:
+  scale-confidence with a working local proof-of-concept at smaller
+  capacity.
+- **IS NOT (never spun):** GPT-class / open-ended fluent composition
+  ON LOCAL HARDWARE. NOT an LLM locally. NOT conversation-solved
+  locally. NOT the full vocab / chat-integrated locally. The claim is
+  NARROWLY "the architecture has no demonstrated architectural ceiling
+  across the local ladder, so scale-up is justified" -- it is NOT
+  "local hardware exhibits the full functionality." A
+  works-small-but-plateaus result is explicitly NOT scale-confidence
+  and is propagated as an honest non-success, never as a win.
 - A faithful FAIL/VOID is the strongest honest triangulation (6th
   independent direction) that the remaining blocker is spiking-dynamics
   integration, NOT the thrice-validated temporal-credit principle, and
@@ -330,10 +408,15 @@ autonomous arc.
   objective + concept-pool readout is an unexplored architecture, not a
   scale-crank.
 
-Each Qn has its own pre-registered THREE-STATE gate + honest ceiling,
-written at its turn. The arc proceeds Q1 -> (on any non-PASS, propagate
-+ pivot) -> Q2 -> Q3 -> Q4, non-stop, until a validated PASS or the
+Each Qn has its own pre-registered THREE-STATE gate **plus a
+pre-registered local SCALE LADDER + scale-confidence criterion** (the
+owner's actual deliverable: local PoC + no architectural ceiling across
+the local ladder) + honest ceiling, written at its turn. The arc
+proceeds Q1 -> (on any non-SCALE-CONFIDENT-PASS, propagate honestly +
+pivot) -> Q2 -> Q3 -> Q4, non-stop, until a SCALE-CONFIDENT PASS or the
 queue is genuinely exhausted (at which point new catalog-grounded
-architectures are enumerated, still non-stop). This file is the durable
-record so a compacted future context CONTINUES the queue rather than
-re-deferring.
+architectures are enumerated, still non-stop). "Works small but
+plateaus with scale" is an honest non-success that triggers the pivot,
+NEVER spun as success. This file is the durable record so a compacted
+future context CONTINUES the queue with the scale-confidence target
+intact rather than re-deferring or declaring a fixed-scale toy a win.
