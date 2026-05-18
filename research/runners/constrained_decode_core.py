@@ -28,6 +28,20 @@ _CDC_MIN_GROUNDED_ANSWER_RATE = 0.5
 _CDC_MIN_SEEDS = 3
 _CDC_SCALE_LADDER = (6, 12, 24)
 _CDC_SCALE_TOL = 0.10
+# ADDITIVE instrument-validity floor (pre-registered NOW, before the
+# decisive run; a NEW bar, never loosens an existing one). The Q2
+# premise is "the per-token grounded veto makes ungrounded content ~0
+# BY CONSTRUCTION while staying NON-VACUOUS". A BPE (subword) tokenizer
+# means grounded content words are multi-subword (e.g. max ->
+# ['ma','x</w>']). If the faithful veto cannot even EXPRESS the
+# grounded content (the model literally cannot emit "max"), then a
+# FAIL is ambiguous -- it conflates "composition tested & vacuous"
+# with "instrument structurally cannot test the premise". This floor
+# makes the subword-defeated regime an HONEST VOID (cannot-test), NOT
+# an ambiguous FAIL. >= half of the KB propositions must be fully
+# emittable under the constructed faithful mask for the instrument to
+# be able to see the tested effect at all.
+_CDC_MIN_MULTITOKEN_EMITTABLE = 0.5
 
 
 def _norm(s):
@@ -69,7 +83,8 @@ def _finite(x):
 _REQUIRED = ("unconstrained_uer", "constrained_uer",
              "constrained_nonvac_rate", "shuffled_uer",
              "shuffled_nonvac_rate", "bare_moat_abstain_rate",
-             "abstain_on_ungrounded_rate")
+             "abstain_on_ungrounded_rate",
+             "constrained_multitoken_emittable_rate")
 
 
 def cdc_verdict(per_seed: dict) -> dict:
@@ -89,6 +104,7 @@ def cdc_verdict(per_seed: dict) -> dict:
         return {"GATE": "VOID", "instrument_valid": False,
                 "reason": "fewer than %d seeds" % _CDC_MIN_SEEDS, **base}
     v1_ok = science_ok = controls_fail = no_confab_ok = True
+    multitoken_ok = True
     metrics_finite = True
     for s in seeds:
         d = per_seed[s]
@@ -102,6 +118,9 @@ def cdc_verdict(per_seed: dict) -> dict:
         if not (vals["unconstrained_uer"] > _CDC_FAITHFUL_MAX
                 and vals["bare_moat_abstain_rate"] > 0.0):
             v1_ok = False
+        if (vals["constrained_multitoken_emittable_rate"]
+                < _CDC_MIN_MULTITOKEN_EMITTABLE):
+            multitoken_ok = False
         unconstrained_fails = vals["unconstrained_uer"] > _CDC_FAITHFUL_MAX
         shuffled_fails = (vals["shuffled_uer"] > _CDC_FAITHFUL_MAX
                           or vals["shuffled_nonvac_rate"]
@@ -116,7 +135,7 @@ def cdc_verdict(per_seed: dict) -> dict:
                 vals["bare_moat_abstain_rate"] - 1e-9:
             no_confab_ok = False
     instrument_valid = bool(v1_ok and controls_fail and no_confab_ok
-                            and metrics_finite)
+                            and multitoken_ok and metrics_finite)
     if not instrument_valid:
         why = []
         if not v1_ok:
@@ -128,6 +147,10 @@ def cdc_verdict(per_seed: dict) -> dict:
         if not no_confab_ok:
             why.append("no-confab NOT preserved (abstain_on_ungrounded "
                        "< bare moat)")
+        if not multitoken_ok:
+            why.append("veto structurally cannot emit grounded "
+                       "multi-token content (subword-defeated) -- "
+                       "instrument cannot test the premise")
         if not metrics_finite:
             why.append("a required metric non-numeric/non-finite/"
                        "malformed")

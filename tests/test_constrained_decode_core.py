@@ -7,7 +7,8 @@ def _seed_ok(**kw):
     d = dict(unconstrained_uer=0.85, constrained_uer=0.0,
              constrained_nonvac_rate=0.9, shuffled_uer=0.85,
              shuffled_nonvac_rate=0.0, bare_moat_abstain_rate=1.0,
-             abstain_on_ungrounded_rate=1.0)
+             abstain_on_ungrounded_rate=1.0,
+             constrained_multitoken_emittable_rate=1.0)
     d.update(kw); return d
 
 
@@ -104,3 +105,44 @@ def test_scale_void_and_fail_precedence():
 def test_scale_ladder_tamper_is_void():
     assert cdc_scale_confidence([_rg(6, "PASS", .9), _rg(12, "PASS", .9)]
         )["classification"] == "VOID"
+
+
+# ---- Fix B: additive frozen instrument-validity floor (multitoken) ----
+
+def test_frozen_cdc_values_byte_unchanged():
+    import research.runners.constrained_decode_core as c
+    assert c._CDC_FAITHFUL_MAX == 0.20
+    assert c._CDC_MIN_GROUNDED_CONTENT == 2
+    assert c._CDC_MIN_GROUNDED_ANSWER_RATE == 0.5
+    assert c._CDC_MIN_SEEDS == 3
+    assert c._CDC_SCALE_LADDER == (6, 12, 24)
+    assert c._CDC_SCALE_TOL == 0.10
+
+
+def test_new_multitoken_floor_constant_is_half():
+    import research.runners.constrained_decode_core as c
+    assert c._CDC_MIN_MULTITOKEN_EMITTABLE == 0.5
+
+
+def test_low_multitoken_emittable_any_seed_is_void_cannot_test():
+    # subword-defeated regime: instrument cannot express the tested
+    # effect -> honest VOID (cannot-test), NOT an ambiguous FAIL.
+    v = cdc_verdict({42: _seed_ok(),
+                     43: _seed_ok(constrained_multitoken_emittable_rate=0.49),
+                     44: _seed_ok()})
+    assert v["GATE"] == "VOID" and v["instrument_valid"] is False
+    assert "subword-defeated" in v["reason"]
+
+
+def test_at_floor_multitoken_emittable_otherwise_good_passes():
+    v = cdc_verdict({42: _seed_ok(constrained_multitoken_emittable_rate=0.5),
+                     43: _seed_ok(constrained_multitoken_emittable_rate=0.5),
+                     44: _seed_ok(constrained_multitoken_emittable_rate=0.5)})
+    assert v["GATE"] == "PASS" and v["instrument_valid"] is True
+
+
+def test_missing_multitoken_key_is_void_fail_closed():
+    bad = dict(_seed_ok())
+    bad.pop("constrained_multitoken_emittable_rate")
+    v = cdc_verdict({42: bad, 43: _seed_ok(), 44: _seed_ok()})
+    assert v["GATE"] == "VOID" and v["instrument_valid"] is False

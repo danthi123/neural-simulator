@@ -51,14 +51,44 @@ _UNGROUNDED = ["zarn","qexel","drovil","plonk","vexin","wun"]
 class _GroundedConstrainedLM:
     """Duck-typed IDENTICALLY to generator_g_gate._TinyGPTLM (same
     __init__; same .generate_ids(prompt_ids, max_new)) so it drops into
-    grounded_decode BYTE-UNMODIFIED. generate_ids applies the per-token
-    grounded VETO: allowed vocab = token ids whose normalized decoded
-    surface is empty (punct/space) OR every word is in (allow_words
-    UNION FUNCTION_WORDS). allow_words = the prompt's own words (=
-    retrieved proposition, since grounded_decode passes prompt_ids =
-    tok.encode(retrieved_text)). mode: 'constrained' veto on;
-    'unconstrained' veto OFF (= Generator-G regime); 'shuffled' veto
-    allow_words from self._shuffle_text (a DIFFERENT proposition)."""
+    grounded_decode BYTE-UNMODIFIED.
+
+    FIX A (BPE-aware faithful per-token grounded veto): Generator-F's
+    tokenizer is Sennrich-2016 word-frequency BPE -- grounded content
+    words are MULTI-SUBWORD (e.g. "max" -> ['ma','x</w>'], "friendly"
+    -> ['friend','ly</w>']). The previous word-level isolated-token
+    mask therefore (a) STRUCTURALLY VETOED grounded multi-subword
+    content (the model literally could not emit "max") and (b) LEAKED
+    ungrounded content via short subword fragments whose isolated
+    decode collided with a function word. The veto was a subword sieve,
+    not a grounded constraint.
+
+    The faithful veto is a PREFIX-AUTOMATON over the BPE encodings of
+    the allowed words. ALLOW = content words of allow_text UNION
+    FUNCTION_WORDS. For every w in ALLOW, enc(w) = tok.encode(w);
+    PREFIXES = all proper prefixes (incl. empty) of every enc(w);
+    FULLS = the set of complete enc(w) tuples. The BPE word boundary
+    is structural -- every enc(w) ends in a symbol ending '</w>', so a
+    word COMPLETES exactly when a FULLS tuple is matched. Pure-
+    punctuation / UNK ids (decoded surface normalizes to empty) are
+    SEPARATOR ids; they are allowed only at a clean word boundary
+    (cur == []) so they cannot punctuation-terminate a partial NON-
+    allowed word. `cur` accumulates the in-progress word's ids since
+    the last boundary. A candidate next id `t` is ALLOWED iff
+    tuple(cur+[t]) is in PREFIXES, OR tuple(cur+[t]) is in FULLS, OR
+    (cur == [] and t is a separator id). On completing a FULLS tuple
+    or emitting a separator, cur resets to []. This (i) ALLOWS any
+    whole word in ALLOW including multi-subword ones and (ii) FORBIDS
+    completing any word NOT in ALLOW. Strictly STRENGTHENS: it makes
+    `constrained` a real grounded constraint, never loosens a _CDC_*.
+
+    mode: 'constrained' veto from the prompt's own words (= retrieved
+    proposition, since grounded_decode passes prompt_ids =
+    tok.encode(retrieved_text)); 'shuffled' veto from
+    self._shuffle_text (a DIFFERENT proposition); 'unconstrained' veto
+    OFF (NO masking -- differs ONLY by the veto). torch INFERENCE
+    ONLY: torch.no_grad(), greedy argmax, no autograd/optimizer/loss;
+    inference mode via model.train(False) (eval-equivalent)."""
     def __init__(self, ckpt_prefix, mode="constrained", block_size=128):
         import torch
         from sim.tiny_transformer import TinyGPT
@@ -77,27 +107,101 @@ class _GroundedConstrainedLM:
         self.model.load_state_dict(st["model"])
         self.model.train(False)            # inference mode (eval-equiv)
         self.model.to(self.device)
-        self._allow_cache = {}
+        self._auto_cache = {}
+        self._sep_ids = self._compute_sep_ids()
 
     def _norm_words(self, s):
         import re
         return [t for t in (re.sub(r"[^\w]", "", w.lower())
                             for w in str(s).split()) if t]
 
-    def _allowed_mask(self, allow_text):
-        if allow_text in self._allow_cache:
-            return self._allow_cache[allow_text]
-        torch = self._torch
+    def _compute_sep_ids(self):
+        # Separator/eos ids: vocab ids whose decoded surface normalizes
+        # to empty (pure punctuation, '</w>', UNK). Faithful boundary
+        # markers -- they reset the in-progress word at a clean break.
+        sep = set()
+        for tid in range(self.tok.vocab_size):
+            if not self._norm_words(self.tok.decode([tid])):
+                sep.add(int(tid))
+        return frozenset(sep)
+
+    def _allowed_automaton(self, allow_text):
+        """Precompute (cached per allow_text) the prefix-automaton:
+        {'prefixes': set(tuple), 'fulls': set(tuple),
+         'sep': frozenset(int)}. enc(w) = tok.encode(w) for every word
+        in ALLOW = content(allow_text) UNION FUNCTION_WORDS."""
+        if allow_text in self._auto_cache:
+            return self._auto_cache[allow_text]
         allow = set(self._norm_words(allow_text)) | set(FUNCTION_WORDS)
-        V = self.tok.vocab_size
-        mask = torch.zeros(V, dtype=torch.bool)
-        for tid in range(V):
-            surf = self._norm_words(self.tok.decode([tid]))
-            if not surf or all(w in allow for w in surf):
-                mask[tid] = True
-        mask = mask.to(self.device)
-        self._allow_cache[allow_text] = mask
-        return mask
+        prefixes = set()
+        fulls = set()
+        for w in allow:
+            enc = tuple(self.tok.encode(w))
+            if not enc:
+                continue
+            fulls.add(enc)
+            for k in range(len(enc)):
+                prefixes.add(enc[:k])
+        auto = {"prefixes": prefixes, "fulls": fulls,
+                "sep": self._sep_ids}
+        self._auto_cache[allow_text] = auto
+        return auto
+
+    def _token_allowed(self, auto, cur, t):
+        """A candidate next id `t` given in-progress word ids `cur`."""
+        t = int(t)
+        cand = tuple(cur) + (t,)
+        if cand in auto["prefixes"] or cand in auto["fulls"]:
+            return True
+        # Separator/eos only at a clean word boundary (cur empty) so it
+        # can NEVER punctuation-terminate a partial non-allowed word.
+        if not cur and t in auto["sep"]:
+            return True
+        return False
+
+    def _advance(self, auto, cur, t):
+        """Apply id `t`. Returns (new_cur, completed_bool). cur resets
+        on completing a FULLS word OR emitting a boundary separator."""
+        t = int(t)
+        cand = tuple(cur) + (t,)
+        if cand in auto["fulls"]:
+            return [], True
+        if not cur and t in auto["sep"]:
+            return [], True
+        return list(cand), False
+
+    def _props_fully_emittable_rate(self, props):
+        """Fix-B metric helper: fraction of `props` whose ALL content
+        words are emittable under the faithful mask -- i.e. each
+        content word's enc(w) is fully traversable in the automaton
+        (every proper prefix in PREFIXES/FULLS and the full seq in
+        FULLS). The whole point of Fix A is that this is HIGH; a low
+        value means the BPE veto structurally cannot express the
+        grounded content (subword-defeated) -> instrument cannot test
+        the Q2 premise (-> Fix-B VOID)."""
+        if not props:
+            return 0.0
+        good = 0
+        for prop in props:
+            auto = self._allowed_automaton(prop)
+            words = [w for w in self._norm_words(prop)
+                     if w not in FUNCTION_WORDS]
+            if not words:
+                continue
+            ok = True
+            for w in words:
+                enc = tuple(self.tok.encode(w))
+                if not enc or enc not in auto["fulls"]:
+                    ok = False
+                    break
+                if any(enc[:k] not in auto["prefixes"]
+                       and enc[:k] not in auto["fulls"]
+                       for k in range(len(enc))):
+                    ok = False
+                    break
+            if ok:
+                good += 1
+        return good / len(props)
 
     def generate_ids(self, prompt_ids, max_new):
         torch = self._torch
@@ -109,7 +213,8 @@ class _GroundedConstrainedLM:
         else:
             allow_text = (self.tok.decode(list(prompt_ids))
                           if prompt_ids else "")
-        mask = self._allowed_mask(allow_text) if use_veto else None
+        auto = self._allowed_automaton(allow_text) if use_veto else None
+        cur = []
         with torch.no_grad():
             for _ in range(int(max_new)):
                 ctx = seq[-self.block:]
@@ -117,10 +222,18 @@ class _GroundedConstrainedLM:
                                  device=self.device)[None]
                 logits = self.model(x)[0, -1]
                 if use_veto:
-                    logits = logits.masked_fill(~mask, float("-inf"))
+                    V = logits.shape[-1]
+                    am = torch.zeros(V, dtype=torch.bool,
+                                     device=logits.device)
+                    for tid in range(V):
+                        if self._token_allowed(auto, cur, tid):
+                            am[tid] = True
+                    logits = logits.masked_fill(~am, float("-inf"))
                 nxt = int(torch.argmax(logits).item())
                 seq.append(nxt)
                 out.append(nxt)
+                if use_veto:
+                    cur, _done = self._advance(auto, cur, nxt)
         return out
 
 
@@ -156,7 +269,18 @@ def _run_rung(K, seeds, lm_c, lm_u, lm_s, max_new, n_ung):
                                  threshold=DEFAULT_THRESHOLD,
                                  max_new=max_new)
             u_uer.append(ungrounded_entity_rate(ru["text"] or "", prop))
-            lm_s._shuffle_text = props[(idx + 1) % len(props)]
+            # WEAK#2: RNG-permuted shuffle source -- a per-seed
+            # rng-chosen DIFFERENT proposition (asserted != idx), not
+            # the fixed (idx+1)%len neighbour. Strengthens control
+            # independence; deterministic per seed (same rng stream).
+            if len(props) > 1:
+                sidx = int(rng.integers(0, len(props) - 1))
+                if sidx >= idx:
+                    sidx += 1
+            else:
+                sidx = idx
+            assert sidx != idx or len(props) <= 1
+            lm_s._shuffle_text = props[sidx]
             rs = grounded_decode(ranked, lm_s, lm_s.tok,
                                  retrieved_text=prop, query=subj,
                                  threshold=DEFAULT_THRESHOLD,
@@ -174,6 +298,11 @@ def _run_rung(K, seeds, lm_c, lm_u, lm_s, max_new, n_ung):
             if ra["abstained"]:
                 n_abst += 1
         nu = max(1, len(ung))
+        # Fix-B per-seed instrument-validity metric: fraction of the K
+        # KB props whose ALL content words are emittable under the
+        # constructed faithful mask (each content word's enc(w) fully
+        # traversable: prefixes + full present in the automaton).
+        mt_emit = lm_c._props_fully_emittable_rate(props)
         per_seed[seed] = {
             "unconstrained_uer": float(np.mean(u_uer)),
             "constrained_uer": float(np.mean(c_uer)),
@@ -181,7 +310,8 @@ def _run_rung(K, seeds, lm_c, lm_u, lm_s, max_new, n_ung):
             "shuffled_uer": float(np.mean(s_uer)),
             "shuffled_nonvac_rate": float(np.mean(s_nv)),
             "bare_moat_abstain_rate": bare / nu,
-            "abstain_on_ungrounded_rate": n_abst / nu}
+            "abstain_on_ungrounded_rate": n_abst / nu,
+            "constrained_multitoken_emittable_rate": float(mt_emit)}
     verdict = cdc_verdict(per_seed)
     nv_mean = float(np.mean(
         [per_seed[s]["constrained_nonvac_rate"] for s in per_seed]))
