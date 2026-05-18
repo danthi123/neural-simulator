@@ -111,3 +111,10 @@ bridges/synapse_shards/
 webapp_restart*.log
 webapp_restart*.log.err
 webapp/runtime/run_*.log
+
+# Regenerable public-dataset cache (MNIST .npz, ~11 MB binary).
+# Fetched ONCE at runtime from the canonical TF/Keras public mirror
+# by dendritic_fair_gate, then cached locally. Self-contained at
+# runtime via this cache; regenerable from the public mirror; not
+# source (mirrors the corpus cache discipline).
+data/mnist.npz

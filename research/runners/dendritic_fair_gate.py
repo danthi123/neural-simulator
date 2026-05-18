@@ -85,9 +85,11 @@ _HONEST_CEILING = (
     "post-run job), not this runner's."
 )
 
-# Well-known plain MNIST .npz mirror (x_train/y_train/x_test/y_test,
-# uint8). Fetched ONCE, then cached + reused (never re-downloaded).
-_MNIST_URL = "https://github.com/joaopauc/mnist-npz/raw/main/mnist.npz"
+# Canonical TF/Keras MNIST mirror (x_train/y_train/x_test/y_test,
+# uint8, 60000/10000). Authoritative + stable public Google Cloud
+# Storage bucket served by tf.keras.datasets.mnist. Fetched ONCE,
+# then cached + reused (never re-downloaded).
+_MNIST_URL = "https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz"
 
 
 def _wrap(text, width):
