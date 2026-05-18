@@ -1,0 +1,15 @@
+======================================================================
+Q2 CHEAP FALSIFY-FIRST PROBE: per-token grounded-veto contract
+(reuse validated abstention_gate + generator_g_core bars byte-UNMODIFIED; NO torch/autograd)
+bars: UER_MAX=0.20  MIN_ANSWER=0.50  MIN_SEEDS=3  R_PLAUSIBLE=0.50
+======================================================================
+r=0.20 | V1 unc_uer=0.842(DRIFT-OK) con_uer=0.000(faith) answer=1.000(nonvac) shuf_uer=0.900(ctrl-fail-OK) noconfab=True -> OK
+r=0.30 | V1 unc_uer=0.842(DRIFT-OK) con_uer=0.000(faith) answer=1.000(nonvac) shuf_uer=0.900(ctrl-fail-OK) noconfab=True -> OK
+r=0.40 | V1 unc_uer=0.842(DRIFT-OK) con_uer=0.000(faith) answer=1.000(nonvac) shuf_uer=0.950(ctrl-fail-OK) noconfab=True -> OK
+r=0.50 | V1 unc_uer=0.842(DRIFT-OK) con_uer=0.000(faith) answer=1.000(nonvac) shuf_uer=1.000(ctrl-fail-OK) noconfab=True -> OK
+r=0.60 | V1 unc_uer=0.842(DRIFT-OK) con_uer=0.000(faith) answer=1.000(nonvac) shuf_uer=1.000(ctrl-fail-OK) noconfab=True -> OK
+r=0.80 | V1 unc_uer=0.842(DRIFT-OK) con_uer=0.000(faith) answer=1.000(nonvac) shuf_uer=1.000(ctrl-fail-OK) noconfab=True -> OK
+----------------------------------------------------------------------
+CHEAP VERDICT: GREEN -- contract sound + non-vacuous at a PLAUSIBLE recovery r=0.20 (<= 0.50); V1 sees drift; shuffled-grounding control fails; no-confab preserved
+HONEST CEILING: this de-risks ONLY the veto-CONTRACT logic + metric soundness + the vacuity trap for an ASSUMED recovery r; the REAL Generator-F r under constraint is the in-sim THREE-STATE gate's decisive job. GREEN green-lights the heavy build; NEGATIVE -> honest propagate + pivot Q3. NOT spun.
+======================================================================

@@ -69,6 +69,50 @@ honest cheap NEGATIVE -> propagate + pivot to Q3 (no in-LM build). If
 GREEN, the heavy build is green-lit; the in-sim pre-registered
 THREE-STATE gate decides honestly every outcome.
 
+### Falsify-cheaply precursor — RESULT: cheap GREEN (recorded), with honest caveats + a pre-registration STRENGTHEN it surfaced
+
+Ran (throwaway `_probe_q2_constrained_decode.py`, deleted; evidence
+`research/findings/raw/q2_constrained_decode_probe_recorded.txt`), 5
+seeds, reusing `abstention_gate` + `generator_g_core`
+(`ungrounded_entity_rate`/`is_answered`/`FUNCTION_WORDS` + the frozen
+`_GG_*` bars) byte-UNMODIFIED, NO torch/autograd. **CHEAP VERDICT =
+GREEN**: V1 genuinely sees drift (unconstrained ungrounded-entity-rate
+0.842 >> 0.20); the shuffled-grounding control genuinely FAILS
+(0.90-1.0 >> 0.20 -- faithfulness tracks the TRUE grounding, not any
+allow-set); no-confab preserved (moat abstains on ungrounded, LM never
+touched); contract logic + reused validated metrics/moat compose
+correctly.
+
+**Mandatory smell-test (scrutinized HARDER than a FAIL), honest
+caveats -- NOT spun:**
+1. `con_uer = 0.000` is TAUTOLOGICAL: a per-token veto cannot emit an
+   off-proposition content token, so ungrounded-entity-rate vs the
+   true prop is 0 BY CONSTRUCTION. "Faithful" is therefore NOT the
+   open question for Q2 (the mechanism guarantees it); the in-sim gate
+   must NOT report `con_uer~0` as a discovered result -- it is
+   mechanical.
+2. The probe surfaced that bare `is_answered` (>= 1 CONTENT word in
+   the whole response) is **too weak** a non-vacuity bar: a response
+   of 1 grounded word + 11 function words passes it. The BINDING Q2
+   risk -- does the veto collapse output into near-vacuity -- is NOT
+   adequately measured by bare `is_answered`.
+3. The cheap GREEN therefore de-risks ONLY the contract logic + metric
+   soundness + control discrimination + no-confab preservation. It
+   does NOT de-risk whether the REAL Generator-F under per-token
+   constraint produces COHERENT non-vacuous text -- that remains the
+   in-sim THREE-STATE gate's decisive job. Green-light, honestly
+   bounded, never spun as "Q2 works."
+
+**Pre-registration STRENGTHEN (decided NOW, before ANY in-sim run --
+legitimate pre-registration, NOT tuning-to-a-result):** the Q2 in-sim
+non-vacuity criterion is strengthened from bare `is_answered` to a
+**grounded-CONTENT-word sufficiency** bar (a frozen minimum count/
+fraction of distinct on-proposition CONTENT words per grounded
+response, NOT merely >= 1), pre-registered in the implementation
+plan's `constrained_decode_core`, NEVER tuned to a result. This is the
+cheap probe doing its falsify-first job: it caught a too-weak bar
+BEFORE the heavy build, so the bar is tightened pre-registration.
+
 ## Architecture (maximally DRY; net-new vs reused-UNMODIFIED)
 
 **Reused UNMODIFIED (byte-empty in every commit-scoped diff):**
@@ -102,10 +146,17 @@ THREE-STATE gate decides honestly every outcome.
    exactly; does NOT import/mutate `generator_g_core` or any existing
    core). Frozen bars pre-registered in the implementation plan, NEVER
    tuned: `_CDC_FAITHFUL_MAX` (ungrounded-entity-rate ceiling),
+   **`_CDC_MIN_GROUNDED_CONTENT`** (the cheap-probe-surfaced
+   STRENGTHENED non-vacuity bar: min distinct on-proposition CONTENT
+   words per grounded response -- NOT bare `is_answered>=1`),
    `_CDC_MIN_GROUNDED_ANSWER_RATE`, `_CDC_MIN_SEEDS=3`,
    no-confab-preserved relational bar (abstain_on_ungrounded >=
    bare_moat_abstain). Instrument-validity FIRST, fail-closed, VOID
    strictly distinct from FAIL, malformed/junk -> VOID-not-raise.
+   `is_answered`/`ungrounded_entity_rate`/`FUNCTION_WORDS` reused from
+   `generator_g_core` byte-UNMODIFIED; the strengthened
+   grounded-CONTENT-word count is computed in `constrained_decode_core`
+   from those reused primitives (no mutation of any existing core).
 
 ## Pre-registered in-sim THREE-STATE + SCALE LADDER (frozen, NEVER tuned)
 
@@ -116,9 +167,18 @@ THREE-STATE gate decides honestly every outcome.
   instrument can SEE drift (so a faithful result is real signal, not a
   trivial/degenerate generator).
 - Science: with the per-token grounded veto, mean ungrounded-entity-rate
-  <= `_CDC_FAITHFUL_MAX` AND grounded_answer_rate >=
-  `_CDC_MIN_GROUNDED_ANSWER_RATE` (via the anti-vacuous `is_answered`)
-  AND no-confab preserved (abstain_on_ungrounded >= bare_moat).
+  <= `_CDC_FAITHFUL_MAX` (NOTE: ~0 by construction -- mechanical, NOT
+  the discriminating result; recorded as such) AND **the STRENGTHENED
+  non-vacuity bar** holds: mean distinct on-proposition CONTENT words
+  per grounded response >= `_CDC_MIN_GROUNDED_CONTENT` (a frozen
+  count/fraction, NOT bare `is_answered>=1` -- the cheap probe proved
+  bare `is_answered` too weak) AND grounded_answer_rate (under the
+  strengthened bar) >= `_CDC_MIN_GROUNDED_ANSWER_RATE` AND no-confab
+  preserved (abstain_on_ungrounded >= bare_moat). The DISCRIMINATING
+  Q2 signature is "constrained stays NON-VACUOUS" (not "constrained is
+  faithful" -- that is mechanical), vs the `unconstrained` control
+  which is faithful-FALSE, and `shuffled_grounding` which is either
+  faithful-FALSE-vs-true-prop or vacuity-collapsed.
 - Controls (must fail): `unconstrained` (Generator-F greedy, no veto =
   the Generator-G regime; must FAIL faithfulness -> proves the veto is
   the discriminator, not the generator), `shuffled_grounding` (veto
