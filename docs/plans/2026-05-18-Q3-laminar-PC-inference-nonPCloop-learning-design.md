@@ -9,9 +9,25 @@
 
 ## Status
 
-Pivot-queue Q3, ACTIVE (Q1 VOID, Q2 FAIL both propagated). Genuinely
-distinct from every prior arm (argued below). Own pre-registered
-THREE-STATE + scale ladder + honest ceiling.
+**OUTCOME (2026-05-18): cheap falsify-first precursor (Q3c) returned
+VOID-class -> heavy build NOT warranted per the pre-registered rule ->
+honest propagate + autonomous NON-STOP pivot to Q4.** Run 1 was
+instrument-invalid by construction (perfect-prior `no_inference`=1.000,
+honestly caught, not propagated); ONE root-caused mode-agnostic fix
+(degraded engram recall, faithful to validated ~87.5% stim-recall,
+frozen `_Q3_*` byte-unchanged); the one allowed re-run was VOID-class
+(V1 0.75-0.77<0.80 unmet AND shuffled_prior 0.71-0.86>>0.50
+non-discriminating -- observation-dominance). The durable-sound PC
+inference still beat prior-readout by +0.20-0.26 scale-positively
+(unaffected, NOT refuted). 7th-direction triangulation. See
+`research/findings/2026-05-18-Q3-laminar-PC-inference-cheap-precursor-VOID.md`
++ pillar n=76. No heavy build; no writing-plans; pivot Q4.
+
+---
+
+Pivot-queue Q3 (Q1 VOID, Q2 FAIL both propagated). Genuinely distinct
+from every prior arm (argued below). Own pre-registered THREE-STATE +
+scale ladder + honest ceiling.
 
 ## Goal (one sentence)
 

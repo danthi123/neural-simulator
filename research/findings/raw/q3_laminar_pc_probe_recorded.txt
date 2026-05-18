@@ -1,0 +1,13 @@
+Q3 cheap falsify-first probe (= Q3c) -- recorded evidence (throwaway _probe_q3_laminar_pc.py, deleted post-decision)
+
+RUN 1 (instrument-INVALID: prior was exact ground-truth latent => no_inference trivially 1.000, non-discriminating control by construction):
+  C=2 V1=0.878 PC=0.935 no_inf=1.000 marg=-0.065 shuf=0.742 wrong=-0.006 -> FAIL
+  C=4 V1=0.872 PC=0.972 no_inf=1.000 marg=-0.028 shuf=0.812 wrong=0.004  -> FAIL
+  C=8 V1=0.878 PC=0.989 no_inf=1.000 marg=-0.011 shuf=0.860 wrong=0.007  -> FAIL
+
+RUN 2 (after ONE root-caused mode-agnostic fix: degraded engram recall ~ validated 87.5% Tonegawa stim-recall, identical all conditions, frozen _Q3_* byte-unchanged):
+  C=2 V1=0.751 PC=0.836 no_inf=0.581 marg=+0.255 shuf=0.710 wrong=-0.067 -> FAIL
+  C=4 V1=0.770 PC=0.906 no_inf=0.674 marg=+0.233 shuf=0.799 wrong=-0.104 -> FAIL
+  C=8 V1=0.765 PC=0.935 no_inf=0.735 marg=+0.200 shuf=0.859 wrong=-0.138 -> FAIL
+
+VERDICT: cheap precursor VOID-class / NEGATIVE. Run-2 honest diagnosis: V1 unmet at cheap scale (0.76<0.80) AND shuffled_prior NON-DISCRIMINATING (0.71-0.86 >> 0.50) -- the partial observation of the already-composed target dominates the linear-Gaussian inference so a WRONG prior also reconstructs it; cannot distinguish prior-driven generative composition from observation-driven reconstruction => instrument not soundly+discriminatingly constructible cheaply. PC>no_inference by +0.20-0.26 (the sound PC inference IS doing real work) and scale-POSITIVE (0.84->0.91->0.94), but that does NOT rescue a non-discriminating instrument. Per pre-registered rule + iron law: ONE root-caused fix only, NO third crank, NO heavy build; propagate + pivot Q4. 7th-direction triangulation of the arc-wide boundary. NOT a refutation of the durable-sound PC inference principle (cos~0.995 unaffected); NOT spun.
