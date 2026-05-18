@@ -29,16 +29,17 @@ _EPS = 0.1          # epsilon-greedy exploration
 _N_TRIALS = 8000
 
 
-def run_bind(mode: str, seed: int, gap: int) -> float:
+def run_bind(mode: str, seed: int, gap: int, n_trials: int | None = None) -> float:
     """One run. A_i -> B_{pi(i)} bijection; reward arrives `gap` steps
     after the A-time eps-greedy decision; credit must bridge the gap
     via the eligibility trace. Returns greedy accuracy over all A.
     modes: 'td' | 'hebbian_no_trace' | 'permuted' | 'wrongsign'."""
+    n = _N_TRIALS if n_trials is None else int(n_trials)
     rng = np.random.default_rng(seed)
     pi = rng.permutation(_N)                  # the fixed compositional rule
     W = np.zeros((_N, _N))
     decay = _GAMMA * _LAMBDA
-    for _t in range(_N_TRIALS):
+    for _t in range(n):
         pi_eff = rng.permutation(_N) if mode == "permuted" else pi
         i = int(rng.integers(_N))
         if rng.random() < _EPS:
