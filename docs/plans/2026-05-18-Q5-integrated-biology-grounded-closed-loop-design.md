@@ -69,6 +69,79 @@ ungrounded output}. **Our sim has built and VALIDATED every node of
 this loop individually, but NEVER composed them into the closed loop
 and tested the whole.** That specific INTEGRATION is the gap.
 
+## 1b. CATALOG-GROUNDED interconnection (owner-directed deep dive — the depth Section 1 skipped; this SUPERSEDES the web-search grounding)
+
+Section 1 grounded the biology via web search + general knowledge. The
+owner correctly noted the project's OWN reference catalog
+(`references/feature-catalog.md`, ~323 entries, `catalog-build`
+branch; `references/language-mechanisms-additions.md`; `docs/biology.md`)
+covers the INTERCONNECTED systems in depth, organized as an explicit
+cluster + `Prerequisites:` dependency graph with `[discrepancy]` flags
+where the sim under-models the integration. Genuinely studied now; the
+catalog-faithful WHY (each claim cited to a catalog entry):
+
+- **The reentrant cortico-BG-thalamo-cortical loop is FIVE parallel
+  cross-coupled loops, not one (catalog A.05, A.06, A.11).** Alexander/
+  DeLong: motor / oculomotor / **dorsolateral-prefrontal** / orbitofrontal
+  / ACC loops share the SAME circuit motif; Bolam-2000 shows they are
+  *extensively cross-coupled* by local microcircuitry. Catalog
+  `[discrepancy]`: the project implements ONLY the motor channel. The
+  **dlPFC associative loop is the cognitive-selection/gating loop** and
+  has never been built -- composition must live there, not in the motor
+  loop every prior arm used.
+- **The specific missing node is UNIFICATION (catalog/language-additions
+  G.21 Hagoort MUC).** Memory (lexical/relational store -- sim HAS
+  substrate: `language_input` + v16 pools + hippocampal relational
+  binding) -> **Unification (combinatorial/syntactic binding, Broca's/
+  LIFG -- sim status: MISSING, "no compositional/syntactic processing")**
+  -> Control (selection/maintenance, dlPFC -- sim HAS substrate
+  `dlpfc_wm`). Composition is the Unification node operating *inside*
+  the dlPFC associative BG loop (Control gates which Unification ops
+  fire; Memory supplies candidates). Never built.
+- **THE key interconnection (catalog N.16 supplemental, Lisman-Idiart
+  theta-gamma multiplex) -- the depth I would have missed without this
+  dive:** the catalog *itself proposes* that PFC working memory and
+  hippocampal episodic sequence-encoding are **the SAME theta-gamma
+  multiplex** -- "a single theta-gamma generator could in principle
+  drive both": each gamma sub-cycle carries one item/role-filler
+  assembly, the theta period sets the compositional buffer span (~7+-2),
+  and SHIFTING (vs repeating) the assembly sequence across successive
+  theta cycles encodes the composition into episodic memory. Composition
+  is NOT memory/WM/binding standalone -- it is these systems
+  TIME-MULTIPLEXED on a shared theta-gamma clock.
+- **Relational binding + sequence compression (catalog D.01, D.02
+  Eichenbaum-Cohen "memory space"; D.24 theta-paced compression).**
+  Episodes = items-in-context bound into temporal sequences enabling
+  flexible (transitive) inference; D.24 theta-compression brings
+  *non-adjacent* compositional relations into the ~10-40 ms STDP
+  window -- "an essential precondition for replay to have content".
+- **Consolidation = three-level NESTED replay carrying the catalog's
+  OWN necessity-via-ablation logic (catalog N.16, N.17).** slow-osc ->
+  spindle -> SWR nesting; "disrupting any one level impairs
+  consolidation by similar magnitudes -- strong evidence each level is
+  necessary, not just correlated" (Bz Cycle 12). Plus N.17 awake
+  deliberative replay = the ONLINE compositional/credit loop, not just
+  sleep. This is precisely the per-node ablation instrument Q5's gate
+  specifies -- now grounded in the catalog's own method.
+- **Neuromodulators time the loop (catalog Cluster C; B.05 TAN pause =
+  cortico-striatal plasticity window; Cluster O LC-NE = consolidation/
+  attention SNR).** DA credit/gating, ACh (TAN-pause) plasticity
+  window, NE surprise/consolidation -- the catalog's documented timing.
+
+**Catalog-faithful synthesis (the WHY, superseding Section 1):**
+compositional language is the **MUC loop {Memory -> Unification ->
+Control} instantiated as the dlPFC-ASSOCIATIVE reentrant
+cortico-BG-thalamo-cortical loop, UNIFIED by a single shared
+theta-gamma multiplex that simultaneously drives PFC-WM maintenance AND
+hippocampal episodic sequence-encoding, with theta-compressed relational
+binding, nested-replay consolidation into cortical schema, and
+neuromodulator-timed plasticity windows, no-confab-gated at output.**
+The sim built+validated nodes individually but NEVER (a) the dlPFC
+associative loop, (b) the Unification node, (c) the shared theta-gamma
+multiplex unifying WM+episodic, (d) nested replay, (e) the whole as one
+closed loop. THAT specific catalog-documented integration is the gap --
+exactly the owner's point.
+
 ## 2. Reframe: the unit of analysis is the INTEGRATED CLOSED LOOP
 
 Hypothesis under test (pre-registered): a compositional capability
@@ -171,21 +244,49 @@ the biologically-correct ABLATION controls:
 ## 6. Falsify-cheaply precursor (MANDATORY, runs FIRST)
 
 Throwaway pure-numpy/CPU probe: an ABSTRACT closed-loop simulation of
-the gating algebra ONLY (engram-bound key->slot; BG-gated PFC-slot
-update/maintain; schema-prior compose; neuromod timing) -- NOT the
-heavy spiking bridge. Pre-registered cheap THREE-STATE with the SAME
-ablation controls: does relational composition emerge in the abstract
-loop AND vanish under every single-node ablation, scale-confidently
-across N{2,4,8}? GREEN -> heavy in-bridge build via writing-plans.
-NEGATIVE/VOID -> **do NOT declare unfit; ITERATE FOLLOWING BIOLOGY**:
-identify which integration point the abstract loop got biologically
-wrong (per the Section-1 cited mechanisms -- e.g. wrong gating
-discipline, wrong timing order, missing precision-weighting), fix the
-biological fidelity, re-pre-register if a bar must change for
-soundness (transparently, never toward an outcome), and re-run. Only
-genuine exhaustion of biology-grounded integration refinements (each
-propagated) is a terminus -- and even then the next step is the next
-biology-identified integration gap, autonomously, NOT owner-deferral.
+the **catalog-faithful MUC loop (Section 1b)**, NOT the heavy spiking
+bridge and NOT the Section-1 web-grounded sketch. It instantiates the
+documented interconnection: a **shared theta-gamma multiplex** clock
+(gamma sub-cycles = role/filler assembly slots; theta period = the
+compositional buffer span; SHIFTING the assembly sequence across
+successive theta cycles = episodic sequence-encoding -- catalog N.16
+Lisman-Idiart) that SIMULTANEOUSLY drives (i) PFC-WM maintenance of the
+bound role-filler set [Control] and (ii) hippocampal episodic
+sequence-encoding [Memory]; a **Unification** operator (catalog G.21,
+the MISSING node) that combines Memory candidates into a relational
+structure on the gamma slots; a **dlPFC-associative BG gate** (catalog
+A.05/A.06 dlPFC channel, NOT motor) that selects WHICH unification
+op/slot updates vs holds; theta-paced compression (D.24) bringing
+non-adjacent relations into the update window; nested-replay (N.16)
+consolidating the bound structure into the cortical schema prior.
+
+Pre-registered cheap THREE-STATE; the discriminating instrument is the
+catalog's OWN necessity-via-ablation method (N.16: each level
+necessary). Composition (bind N role-filler pairs, maintain, read out a
+NOVEL queried combination -- requiring genuine relational
+generalization, not memorization) must EMERGE in the full MUC loop AND
+vanish under EVERY single-node ablation, the decisive one being **the
+shared theta-gamma clock ablation** -- catalog N.16 predicts removing
+the single shared multiplex abolishes BOTH WM-maintenance AND
+episodic-encoding simultaneously (the strongest possible
+emergent-from-integration signature; a config-crank cannot reproduce
+"whole passes; remove the one shared clock and BOTH dependent
+capacities collapse together"). Ablations: -Unification; -dlPFC-BG-gate;
+-shared-theta-gamma-clock; -theta-compression; -nested-replay;
+-hippocampal-relational-bind. Scale-confident across N{2,4,8}.
+
+GREEN -> heavy in-bridge build via writing-plans. NEGATIVE/VOID ->
+**do NOT declare unfit; ITERATE FOLLOWING BIOLOGY**: name (with the
+catalog entry id) which integration point the abstract loop rendered
+unfaithfully (e.g. wrong theta:gamma ratio vs the catalog's ~7+-2
+buffer span, wrong shift-vs-repeat episodic rule, wrong dlPFC-BG gating
+discipline vs A.05, missing D.24 compression), fix THAT biological
+fidelity per the cited catalog entry, re-pre-register only if required
+for instrument soundness (transparently, never toward an outcome), and
+re-run. Only genuine exhaustion of catalog-grounded integration
+refinements (each propagated) is a terminus -- and even then the next
+step is the next catalog-identified integration gap, autonomously, NOT
+owner-deferral.
 
 ## 7. ITERATE-FOLLOWING-BIOLOGY discipline (the core behavioral change)
 
