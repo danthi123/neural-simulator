@@ -202,11 +202,12 @@ def test_unorderable_is_void_not_raise():
 ```python
 """Pure FIXED-bar TREND-PRIMARY scale-confidence verdict for Q2R --
 a FRESH larger-KB experiment of the VALIDATED Q2 constrained-decoding
-mechanism. Mirrors the adversarial-hardened constrained_decode_core /
-compose_bridge_core DISCIPLINE (fixed bars NEVER tuned, fail-closed,
+mechanism. Mirrors the adversarial-hardened Q2-constrained-decode-core
+and compose-bridge-core DISCIPLINE (fixed bars NEVER tuned, fail-closed,
 VOID strictly distinct from FAIL, malformed/junk -> VOID-not-raise).
-Holds its OWN frozen _Q2R_*; does NOT import/mutate constrained_decode_
-core or any *_core. Pure stdlib+typing; NO torch, NO autograd. ASCII.
+Holds its OWN frozen _Q2R_*; does NOT import/mutate the Q2
+constrained-decode core or any *_core sibling module. Pure
+stdlib+typing; NO torch, NO autograd. ASCII.
 
 A-PRIORI justification of the frozen criterion (defensible WITHOUT any
 reference to Q2's observed numbers):
@@ -219,7 +220,7 @@ reference to Q2's observed numbers):
   actually lives (K=96). The K=6 omission is a principled non-toy
   floor decided by what the QUESTION means, not by any observed value.
 - _Q2R_TOP_MIN = 0.50: DELIBERATELY the SAME absolute non-vacuity
-  value as constrained_decode_core._CDC_MIN_GROUNDED_ANSWER_RATE
+  value as the validated Q2 core's _CDC_MIN_GROUNDED_ANSWER_RATE
   (0.50). It is NOT a softened bar. The ONLY methodological change vs
   Q2 is WHERE the absolute floor + the trend are applied (at the
   LARGEST scale where scale-confidence is claimed + a monotone trend),
