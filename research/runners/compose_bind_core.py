@@ -30,13 +30,21 @@ def _finite(x):
 
 
 def _control_failed(x):
-    """A control 'genuinely fails' (good) iff it did NOT learn: a
-    diverged/non-finite value = correctly failed; a finite value must
-    be <= the chance bar. A finite value ABOVE the bar means the
-    control LEARNED -> the instrument is non-discriminating."""
+    """A control 'genuinely fails' (good) iff it did NOT learn. A
+    genuinely diverged NUMERIC value (nan/inf) = correctly failed
+    (good). Non-numeric junk (str/bool/None) is NOT a certified
+    failure: a control that learned but was serialized as "0.99"/True
+    must not pass as 'good' -> force VOID (fail-closed; mirrors the
+    science-path and the hardened td_critic_core discipline; _finite
+    already rejects these). A finite value ABOVE the chance bar means
+    the control LEARNED -> the instrument is non-discriminating."""
+    if x is None:
+        return False
+    if isinstance(x, bool) or not isinstance(x, (int, float)):
+        return False                      # non-numeric junk -> NOT good -> VOID
     f = _finite(x)
     if f is None:
-        return True                       # diverged/non-finite = failed
+        return True                       # numeric but nan/inf = diverged = good
     return f <= _CTB_CONTROL_ACC_MAX
 
 

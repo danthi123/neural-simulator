@@ -71,3 +71,12 @@ def test_results_cannot_move_frozen_bars():
     ctb_verdict({42: _sound(), 43: _sound(), 44: _sound()})
     import research.runners.compose_bind_core as c
     assert (c._CTB_V1_ACC_MIN, c._CTB_SCIENCE_ACC_MIN) == before
+
+
+def test_non_numeric_control_value_is_VOID_not_fabricated_pass():
+    # a control that LEARNED but is serialized as a string/bool must
+    # NOT be scored "correctly failed" -> must force VOID (fail-closed,
+    # mirrors the science-path / hardened td_critic_core discipline).
+    s = _sound(); s["controls"]["hebbian_no_trace"] = "0.99"
+    v = ctb_verdict({42: s, 43: s, 44: s})
+    assert v["GATE"] == "VOID"
