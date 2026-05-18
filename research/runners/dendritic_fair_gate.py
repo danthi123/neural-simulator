@@ -57,7 +57,9 @@ import urllib.request
 
 import numpy as np
 
+from sim.backend import to_host as _to_host
 from sim.dendritic_mlp import DendriticMLP
+from sim.dendritic_mlp import xp as _xp  # net's active array backend
 from sim.train_checkpoint import load_checkpoint, resume_epoch, save_checkpoint
 from research.runners.dendritic_fair_core import (
     dfair_aggregate_multiseed,
@@ -274,11 +276,20 @@ def _epoch_shuffle(seed, condition, epoch, n):
 
 
 def _restore(net, ckpt):
-    """Restore W + B from a checkpoint (packed as net.W + net.B)."""
+    """Restore W + B from a checkpoint (packed as net.W + net.B).
+
+    Checkpoints are host (numpy) .npz; move the arrays back onto the
+    net's active backend (CuPy on GPU, NumPy otherwise) so a checkpoint
+    round-trips correctly across CPU/GPU AND so the restored B stays
+    byte-identical (same backend) to a freshly regenerated
+    DendriticMLP(...).B for the no-weight-transport self-check. Pure
+    array-library transfer at the kill-safe boundary -- no logic
+    change.
+    """
     w = ckpt["weights"]
     nW = len(net.W)
-    net.W = [np.asarray(a, dtype=float) for a in w[:nW]]
-    net.B = [np.asarray(a, dtype=float) for a in w[nW:]]
+    net.W = [_xp.asarray(np.asarray(a, dtype=float)) for a in w[:nW]]
+    net.B = [_xp.asarray(np.asarray(a, dtype=float)) for a in w[nW:]]
 
 
 def _pack_history(history):
@@ -329,9 +340,14 @@ def _train_leg(seed, condition, Xtr, ytr, Xte, yte, sizes, epochs,
     meas_n = min(256, n)  # fixed measurement slice for alignment
 
     def _flush(epoch_completed):
+        # sim.train_checkpoint is numpy-only (kill-safe atomic .npz).
+        # If the net holds CuPy arrays (GPU backend), transfer to host
+        # BEFORE save_checkpoint. Pure D->H copy at the kill-safe
+        # boundary; verdict/checkpoint logic unchanged.
+        host_w = [_to_host(a) for a in (list(net.W) + list(net.B))]
         save_checkpoint(
             ckpt_path, epoch_completed,
-            weights=list(net.W) + list(net.B),
+            weights=host_w,
             rng_state={"seed": int(seed), "condition": condition},
             loss_history=_pack_history(history))
 

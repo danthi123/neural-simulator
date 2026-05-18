@@ -7,8 +7,11 @@ genuinely descends loss on a tiny problem (positive control works);
 (E) modes are clean + deterministic."""
 import numpy as np
 import inspect
+import pytest
 import sim.dendritic_mlp as dm
 import sim.dendritic_plasticity as dp
+import sim.backend as _be
+from sim.backend import get_backend
 
 
 def test_no_autograd_in_module():
@@ -32,7 +35,31 @@ def test_fixed_feedback_never_mutated_no_weight_transport():
             assert (b.shape != w.T.shape) or not np.array_equal(b, w.T)
 
 
-def test_batched_update_equals_committed_per_sample_sum():
+@pytest.fixture
+def numpy_backend_pinned(monkeypatch):
+    """Numerics-correctness pins (NOT perf pins) run on the NumPy
+    backend so the comparison is exact + deterministic against the
+    BYTE-FROZEN numpy sim.dendritic_plasticity reference. The default
+    process backend may be CuPy after the GPU port (that is the point
+    -- training is GPU-accelerated); these two faithfulness pins stay
+    numpy<->numpy so the 1e-9 equivalence and the oracle-descends
+    numerics stay provably exact. No assertion/bar is weakened; only
+    the array library under the formula is pinned for the comparison.
+    """
+    # Snapshot the shared backend cache so pinning numpy here does not
+    # leak into other tests (which validate the GPU/CuPy path).
+    saved = (_be._cached_backend, _be._cached_name, _be._cached_sparse)
+    np_xp, _ = get_backend("numpy")
+    monkeypatch.setattr(dm, "xp", np_xp)
+    try:
+        yield
+    finally:
+        (_be._cached_backend, _be._cached_name,
+         _be._cached_sparse) = saved
+
+
+def test_batched_update_equals_committed_per_sample_sum(
+        numpy_backend_pinned):
     net = dm.DendriticMLP([5, 6, 3], seed=1)
     rng = np.random.default_rng(2)
     X = rng.normal(size=(8, 5)); y = rng.integers(0, 3, 8)
@@ -48,7 +75,8 @@ def test_batched_update_equals_committed_per_sample_sum():
     assert np.allclose(dW0, ref, atol=1e-9)
 
 
-def test_oracle_mode_is_positive_control_descends_loss():
+def test_oracle_mode_is_positive_control_descends_loss(
+        numpy_backend_pinned):
     net = dm.DendriticMLP([8, 16, 16, 3], seed=3)
     rng = np.random.default_rng(4)
     X = rng.normal(size=(64, 8))
