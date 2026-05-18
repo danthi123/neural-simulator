@@ -67,3 +67,16 @@ def test_results_cannot_move_frozen_bars():
     tdc_verdict({42: _sound_seed(), 43: _sound_seed(), 44: _sound_seed()})
     import research.runners.td_critic_core as c
     assert (c._TDC_V1_VALUE_RMSE_MAX, c._TDC_TRANSFER_MIN) == before
+
+
+def test_unorderable_seed_keys_is_VOID_not_raise():
+    v = tdc_verdict({42: _sound_seed(), "x": _sound_seed(),
+                     43: _sound_seed()})
+    assert v["GATE"] == "VOID" and v["instrument_valid"] is False
+
+
+def test_non_sized_control_is_VOID_not_raise():
+    s = _sound_seed()
+    s["controls"]["no_bootstrap"] = 5   # non-sized -> treated missing
+    v = tdc_verdict({42: s, 43: s, 44: s})
+    assert v["GATE"] == "VOID"

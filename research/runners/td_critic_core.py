@@ -43,7 +43,16 @@ def tdc_verdict(per_seed: dict) -> dict:
             "TRANSFER_MIN": _TDC_TRANSFER_MIN,
             "US_DECAY_MAX": _TDC_US_DECAY_MAX,
             "MIN_SEEDS": _TDC_MIN_SEEDS}
-    seeds = sorted(per_seed.keys())
+    try:
+        seeds = sorted(per_seed.keys())
+    except TypeError:
+        # malformed harness (non-orderable seed keys): the instrument
+        # did not soundly measure -> VOID, never raise (mirrors the
+        # hardened dendritic_fair_core coerce-don't-raise doctrine).
+        return {"GATE": "VOID", "instrument_valid": False,
+                "reason": "per_seed keys not orderable (instrument did "
+                          "not soundly measure)",
+                "frozen_bars": bars, "per_seed": {}}
     base = {"frozen_bars": bars, "per_seed": {str(s): per_seed[s]
                                               for s in seeds}}
     if len(seeds) < _TDC_MIN_SEEDS:
@@ -72,7 +81,8 @@ def tdc_verdict(per_seed: dict) -> dict:
         ctrls = d.get("controls", {})
         for name in _CONTROLS:
             tup = ctrls.get(name)
-            if tup is None or len(tup) != 3:
+            if (tup is None or not isinstance(tup, (tuple, list))
+                    or len(tup) != 3):
                 # missing control == cannot certify discrimination
                 controls_fail = controls_fail and False
                 continue
