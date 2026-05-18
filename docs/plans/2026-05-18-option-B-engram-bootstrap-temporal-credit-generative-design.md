@@ -273,3 +273,67 @@ config-cranking past the pre-registered in-bridge terminus; the honest
 ceiling baked in and never spun. A maxed FAIL or honest VOID (or a
 caught false-PASS) is an honest finding to propagate, not a failure to
 hide.
+
+## CORRECTED OPERATING MODE -- VOID/BOUNDARY triggers PIVOT, never STOP (durable; survives compaction)
+
+Process self-correction (owner critique 2026-05-18, accepted without
+spin): prior VOID/BOUNDARY outcomes (dendritic, compose-bridge, PC)
+were each followed by a "handed to the OWNER eyes-open" deferral that
+functioned as a STOP. That conflated two distinct things:
+
+- "Do NOT config-crank the SAME instrument's budget/params past a
+  pre-registered terminus toward a desired PASS" -- CORRECT, kept.
+- "Therefore defer the deeper architecture work to the owner" --
+  WRONG. Standing autonomy explicitly authorizes autonomous
+  architecture iteration; a VOID means *the cheap instrument can't
+  de-risk it / this mechanism boundaried*, NOT *stop*. The anti-cheat
+  discipline forbids faking a PASS; it never mandated stopping after a
+  VOID.
+
+**Corrected rule (non-negotiable, applies to THIS arc and all
+following):** an honest VOID/BOUNDARY/FAIL is propagated (findings +
+pillar + both remotes) and then IMMEDIATELY triggers a pivot to the
+next genuinely-distinct architecture below -- autonomously,
+non-stop, NO owner-deferral, NO pause. Owner forks are recorded as
+*optional parallel escalations*, never as the reason to halt the
+autonomous arc.
+
+### Pivot queue -- genuinely-distinct architectures, same goal (local generative composition); each is NOT a config-crank of another
+
+- **Q1 (active): engram-bootstrap + temporal-credit, in-bridge** (this
+  design). Dissolves the diagnosed `n_rewarded=0` with a validated
+  reward-free Tonegawa bind, then temporal-credit refines generatively.
+- **Q2: two-module constrained decoding.** The validated coherent-simple
+  generator (Generator-F) PROPOSES tokens; the validated no-confab
+  grounded memory VETOES ungrounded tokens token-by-token (constrained
+  decoding interface). Genuinely distinct from Generator-G NEGATIVE
+  (which tried to make ONE small model both fluent and faithful). Goal:
+  faithful generative composition as TWO coupled validated modules.
+  Pre-registered THREE-STATE: V1 = generator alone fluent + grounded
+  memory alone faithful (both already validated); science = the coupled
+  decoder generates fluent text whose grounded claims are gated faithful
+  above a pre-registered no-confab-preserving bar; controls =
+  generator-without-gate (drifts), gate-with-shuffled-grounding (must
+  fail). Honest ceiling: NOT open-ended fluency; a faithfulness-gated
+  small generator.
+- **Q3: laminar cortical microcircuit (Larkum apical-basal) with a
+  NON-PC-training-loop learning signal.** Reuse the DURABLE sound PC
+  inference (V1 cos~0.995 held) for hierarchical generative inference,
+  but learn via engram-bootstrap / target-propagation -- explicitly NOT
+  the PC training-loop accumulation that VOIDed. Genuinely distinct from
+  the PC-learning VOID (different learning signal on a sound inference
+  core).
+- **Q4: concept-level pretraining objective for the surrogate-grad
+  cortex, rewired into the validated v16 concept-pool substrate.**
+  Phase-2.3a NEGATIVE was a char-level-next-char OBJECTIVE mismatch (an
+  architecture fault, not merely scale). A concept/word-prediction
+  objective + concept-pool readout is an unexplored architecture, not a
+  scale-crank.
+
+Each Qn has its own pre-registered THREE-STATE gate + honest ceiling,
+written at its turn. The arc proceeds Q1 -> (on any non-PASS, propagate
++ pivot) -> Q2 -> Q3 -> Q4, non-stop, until a validated PASS or the
+queue is genuinely exhausted (at which point new catalog-grounded
+architectures are enumerated, still non-stop). This file is the durable
+record so a compacted future context CONTINUES the queue rather than
+re-deferring.
