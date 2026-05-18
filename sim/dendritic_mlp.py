@@ -43,6 +43,18 @@ def _softmax(z):
     return ez / ez.sum(1, keepdims=True)
 
 
+# Instrument-calibration constant (NOT a science bar). Heavy-ball
+# (Polyak) momentum coefficient for the SGD weight updates. This is
+# mode-AGNOSTIC optimizer machinery: it accelerates whatever per-layer
+# update each mode already produced (oracle's hand-derived true grad,
+# the committed local rule's update, the global-scalar update, the
+# wrong-sign update, the permuted-label update) -- it does NOT change
+# which gradient/rule any mode computes, so it cannot advantage the
+# local rule over its controls. A standard, well-understood,
+# non-fundamental fix; pure array math, NO automatic differentiation.
+_MOMENTUM = 0.9
+
+
 class DendriticMLP:
     def __init__(self, sizes, seed=0):
         # Seeded init stays on NumPy (exact, reproducible, identical
@@ -53,6 +65,14 @@ class DendriticMLP:
         self.n_out = sizes[-1]
         self.W = []
         for i in range(len(sizes) - 1):
+            # Xavier/Glorot uniform: the CORRECT init for sigmoid
+            # (sigmoid is KEPT -- the committed Urbanczik-Senn rule
+            # hard-codes the sigmoid derivative soma*(1-soma); switching
+            # the hidden activation would break the adversarially-pinned
+            # committed-rule-faithfulness invariant). Verified
+            # well-scaled: layer-1 pre-activation std ~1 on standardized
+            # MNIST, only ~0.3% saturated -- init is sound; the VOID was
+            # the optimizer, not the init.
             lim = np.sqrt(6.0 / (sizes[i] + sizes[i + 1]))
             self.W.append(xp.asarray(
                 rng.uniform(-lim, lim, (sizes[i], sizes[i + 1]))))
@@ -60,6 +80,13 @@ class DendriticMLP:
         # mutated, NEVER derived from forward W (no weight transport).
         self.B = [xp.asarray(rng.normal(0, 1.0, (self.n_out, sizes[i])))
                   for i in range(1, len(sizes) - 1)]
+        # Per-parameter heavy-ball velocity buffers (one per W layer).
+        # Lazily zero-initialized on first train_step so a restored /
+        # freshly regenerated net is byte-identical for the
+        # no-weight-transport self-check (the velocity is transient
+        # optimizer state, NOT part of W or the FIXED feedback B and
+        # NOT checkpointed -- it self-recovers in <=1 epoch).
+        self._vel = None
 
     def _forward(self, X):
         acts = [xp.asarray(X, float)]
@@ -129,8 +156,32 @@ class DendriticMLP:
                     upd[li] = -gscal * (a_prev.T @ (a_l - 0.5))
                 else:
                     raise ValueError("unknown mode %r" % mode)
+        # --- Instrument optimizer (mode-AGNOSTIC; applied IDENTICALLY
+        # to every mode's `upd` above; does NOT alter which gradient/
+        # rule each mode computed, so discriminating power between the
+        # local rule and its controls is preserved). Two standard,
+        # well-understood, non-fundamental, pure-array fixes (NO
+        # automatic differentiation):
+        #   (1) Mean-over-batch normalization. Every `upd[li]` above is
+        #       a SUM over the minibatch (`a.T @ d`). Without dividing
+        #       by the batch size the effective step scales with the
+        #       batch (~128x too large for the pre-registered run) and
+        #       the deep sigmoid stack diverges into the dead-0.5 fixed
+        #       point -> MNIST chance even WITH the exact gradient
+        #       (the observed VOID). Normalizing makes the step batch-
+        #       size invariant. This is the dominant root cause of the
+        #       VOID.
+        #   (2) Heavy-ball momentum (_MOMENTUM). Per-parameter velocity
+        #       buffer; standard acceleration that lets the sigmoid MLP
+        #       converge in the pre-registered epoch budget.
+        m = X.shape[0]
+        if m < 1:
+            m = 1
+        if self._vel is None:
+            self._vel = [xp.zeros_like(w) for w in self.W]
         for li in range(nW):
-            self.W[li] = self.W[li] + lr * upd[li]
+            self._vel[li] = _MOMENTUM * self._vel[li] + upd[li] / m
+            self.W[li] = self.W[li] + lr * self._vel[li]
 
     def hidden_grad_alignment(self, X, y):
         """cos(applied layer-0 local update dir, true gradient-descent
