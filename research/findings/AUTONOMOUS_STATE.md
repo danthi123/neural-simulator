@@ -54,61 +54,59 @@ metamemory abstention) and TDD plan
 `docs/plans/2026-05-19-regime-correct-compositional-retrieval-implementation.md`
 (commit `7a6ace6`, Tasks 0-5).
 
-**CURRENT: subagent-driven execution; Task-3 adversarial review
-BLOCKED Task 2 with a CONFIRMED false-PASS (the discipline working --
-a caught false-pass is a success, propagated honestly).** Landed +
-controller-verified: Task 0 grounding pin `b37ba71`; Task 1 frozen
-fixed-bar three-state verdict module `c474d6e`
-(`research/runners/compose_retrieval_core.py`, 19-case matrix; the
-MODULE is sound -- bars immovable, recomputes from raw numbers,
-VOID!=FAIL); Task 2 net-new composition runner `fe89bc5`
-(`research/runners/compose_retrieval_runner.py`); dedicated adversarial
-review `c8962f7` (new non-protected pin file only). ALL original
-protected/validated modules + the no-confab moat byte-UNCHANGED across
-the whole arc; no autograd; monkey-patch is a runtime instance wrapper
-restored in finally (faithful; CLEAR). Adversarial verdict = BLOCK on
-the RUNNER's scoring contract (NOT the frozen module): (D-B) ablation
-accuracies are a structural constant 0.0 behind an `if groundable:`
-short-circuit -> the `_CR_ABLATION_MAX` collapse bars are DEAD; (D-C)
-an empty solver scores a clean PASS by reading the answer from the
-engram tag string + additive sub-threshold sums (the 2026-05-14
-retraction artifact class); (D-D) the no-confab moat is fed an
-uncalibrated quantity (650 was calibrated on raw lang_output firing
-rates, runner feeds cos*||pattern||) -> the guarantee does not
-transfer; (D-A) substrate diverges from the validated v16 recipe
-(`num_traits=1` vs the recipe default) -> a PASS would not transfer.
+**CURRENT: subagent-driven execution through Task 4; Task 5
+(CONTROLLER-ONLY decisive run) is the exact next action.** The full
+anti-cheat discipline ran end-to-end and worked: Task 0 pin `b37ba71`;
+Task 1 frozen fixed-bar three-state verdict module `c474d6e`
+(`research/runners/compose_retrieval_core.py`, 19-case matrix; bars
+immovable, recomputes from raw numbers, VOID!=FAIL, byte-unchanged
+since creation); Task 2 net-new composition runner `fe89bc5`;
+dedicated adversarial review `c8962f7` returned BLOCK on a CONFIRMED
+false-PASS in the runner's scoring contract (caught BEFORE any
+decisive run -- a success of the discipline, propagated honestly
+`c02abf9` both remotes); pre-committed faithfulness-fix iteration
+`19190bd` closed all four defects in the net-new runner ONLY
+(A validated-recipe substrate, no num_traits override; B live measured
+ablation accuracies, dead short-circuit removed; C opaque `fact_{i}`
+tags + answer decoded ONLY from the validated neural readout, empty/
+single-path/tag-string solvers provably FAIL; D moat fed its
+calibrated raw firing-rate quantity); independent RE-REVIEW
+re-executed every prior exploit end-to-end -> all now `GATE=FAIL` ->
+verdict CLEAR-to-proceed. Task 4 no-harm PASSED: protected set +
+no-confab moat byte-UNCHANGED across the whole arc (base `7a6ace6`
+.. HEAD `19190bd`), frozen verdict module byte-unchanged since Task 1,
+no autograd on shipped paths, full suite 47/47 green (moat 7/7).
 
-**EXACT NEXT ACTION: pre-committed faithfulness-fix iteration of the
-net-new runner ONLY (NO bar change, NO declare-unfit, NO hand-back,
-NO config-crank; protected set + frozen bars + no-confab moat
-byte-UNCHANGED).** Four precise corrections in
-`research/runners/compose_retrieval_runner.py` (+ its tests + invert
-the adversarial pin to assert the defect is CLOSED not hidden):
-(A) build the substrate EXACTLY as the validated concept-pool recipe
-does (do not override num_traits); faithfulness > tiny-synth
-convenience (decisive run is CuPy anyway). (B) all three arms run the
-IDENTICAL query->retrieve->compose->decode->score pipeline; kill the
-`if groundable:` short-circuit so recent_only_acc/remote_only_acc are
-genuinely MEASURED (the `_CR_ABLATION_MAX` bars become live: removing
-a regime must provably collapse measured accuracy <=0.40). (C) the
-compositional task must genuinely require BOTH regimes with the answer
-NOT recoverable from any string (OPAQUE tag ids e.g. `fact_{i}`),
-scored from neural readout via the validated
-`lang_output_pattern_during_*`->`cosine_to_word` path; the empty /
-single-path solver must provably FAIL (invert the adversarial pin to
-assert this). (D) feed the byte-unchanged moat `gate(ranked,650.0)`
-the raw lang_output firing-rate confidence it was calibrated on (the
-validated readout quantity), NOT cos*||pattern||. Then RE-RUN the
-dedicated adversarial review (fix -> re-review loop) until CLEAR;
-then Task 4 no-harm; then Task 5 CONTROLLER-ONLY decisive multi-seed
-run + smell-test + honest propagation both remotes; then autonomous
-next staged step. Honest ceiling unchanged: a clean success = a
-biology-grounded two-system composition answers grounded compositional
-queries each regime read in its correct regime, holding/improving with
-load, abstaining not confabulating under ablation -- NOT fluent
-language, NOT an LLM, NOT the retracted transitive claim. NO partition
-edit ever (necessity line closed); autonomous; the next-action tool
-call is always in the same turn; never stop on a promise.
+**EXACT NEXT ACTION: Task 5 -- CONTROLLER-ONLY decisive run (NOT a
+subagent task).** In the same turn, never stopping on a promise:
+(1) grounding-first tiny-synth run (toy numbers explicitly NOT
+propagated); (2) decisive kill-safe multi-seed run at the frozen
+ladder (2,4,8), seeds 42 43 44 (>= MIN_SEEDS), CuPy on RTX 3090,
+DURABLE output capture to research/findings/raw/, monitored to ACTUAL
+completion (foreground or a mechanism that genuinely notifies on
+process exit -- never a detached process with a false "will be
+notified"; completion actively confirmed before any result is
+stated); (3) mandatory smell-test scrutinising a nominal PASS HARDER
+than a FAIL -- recompute the verdict from the single recorded output
+(no re-run, no bar change), confirm full genuinely succeeds, each
+ablation genuinely collapses its regime part, abstention genuinely
+holds under both ablations; (4) honest propagation of EVERY outcome
+in plain language: findings doc + `webapp/capability_status.json`
+pillar (status PREDICTED until a clean scrutinised PASS; schema test
+green) + `AUTONOMOUS_STATE.md` + commit + push BOTH remotes;
+(5) then autonomously: a clean scrutinised PASS -> the next
+pre-registered staged step (design Architecture B: schema-accelerated
+assimilation), its own fixed-bar test; an honest FAIL/VOID/
+WORKS-AT-SMALL-LOAD -> follow the biology to the next
+integration-fidelity refinement and iterate -- NOT declare unfit,
+NOT hand back, NOT config-crank, NO bar change. Honest ceiling
+unchanged: a clean success = a biology-grounded two-system
+composition answers grounded compositional queries each regime read
+in its correct regime, holding/improving with load, abstaining not
+confabulating under ablation -- NOT fluent language, NOT an LLM, NOT
+the retracted transitive claim. NO partition edit ever (necessity
+line closed); autonomous; the next-action tool call is always in the
+same turn; never stop on a promise.
 
 **Corrected-approach PLAN done (7b1d47c, pushed both remotes). CONTROLLER
 PRE-COMMITTED HONESTY CEILING propagated BEFORE any build
