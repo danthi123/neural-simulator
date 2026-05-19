@@ -9,26 +9,29 @@ docs/plans/2026-05-19-regime-correct-compositional-retrieval-design.md).
 This module is the ONLY genuinely net-new wiring: a composition/
 routing controller. EVERYTHING else is reused BYTE-UNCHANGED by import:
 
-  * substrate + hippocampus: REUSED build_biological_brain_regions
-    (text_minimal_isolation) constructed via the SAME
-    CoreSimConfig -> enable_brain_region_framework=True ->
-    SimulationBridge -> _initialize_simulation_data path that
-    concept_pool_demo.build_concept_bridge and
-    consolidation_trainer.run_consolidation_training both use. We
-    mirror only that construction call (build_concept_bridge does not
-    expose enable_hippocampus_consolidation and is protected, so we
-    cannot extend it -- we re-issue the identical construction
-    sequence with the hippocampus kwarg, duplicating NO subsystem
-    logic).
+  * substrate + hippocampus: REUSED the VALIDATED v16 recipe
+    concept_pool_demo.build_concept_bridge (the exact CoreSimConfig
+    field set the 16-pool 5/5-GO concept binding uses; it does NOT
+    override cfg.num_traits -- we do not either). We re-issue the
+    identical construction with enable_hippocampus_consolidation=True
+    (the validated builder's own kwarg) so the hippocampal recent-
+    specific path (catalog D.03/D.12/D.13) is present, duplicating NO
+    subsystem logic.
   * recent-specific encode: REUSED compose_concept_engram.encode_
     concept_pair with a hippocampal region_filter (the validated
-    Tonegawa stim-recall path, catalog D.14).
+    Tonegawa stim-recall path, catalog D.14). The engram tag NAME is
+    OPAQUE (fact_{i}) -- it carries no answer; the answer is read from
+    neural activity, never a string.
   * remote-semantic build: REUSED consolidation_trainer.run_concept_
     replay_phase + run_swr_replay_phase (validated replay-
     consolidation, McClelland 1995 / Buzsaki 2013).
   * regime-correct readout: REUSED compose_concept_engram.lang_output_
     pattern_during_stim (hippocampal regime) + lang_output_pattern_
-    during_input (consolidated regime) + cosine_to_word.
+    during_input (consolidated regime) + cosine_to_word; ranking is by
+    the RAW lang_output FIRING-RATE confidence the validated concept
+    readout / abstention benchmark calibrate (encoded mean ~796,
+    control max ~584; 2026-05-16-G20-320-abstention-benchmark) so the
+    byte-unchanged 650 moat threshold is genuinely calibrated for it.
   * remote-only ablation: the REUSED consolidation_eval hippo-OFF
     strict-silence protocol (HIPPO_REGIONS + a per-step silencing
     monkey-patch restored in finally -- byte-identical mechanism to
@@ -40,12 +43,25 @@ routing controller. EVERYTHING else is reused BYTE-UNCHANGED by import:
   * frozen verdict: REUSED compose_retrieval_core.compose_retrieval_
     verdict.
 
+Scoring contract (faithful, post Task-3 adversarial fix):
+  ALL THREE arms (full / recent_only / remote_only) run the IDENTICAL
+  query -> retrieve -> compose -> decode -> score pipeline. The decoded
+  answer comes ONLY from the validated neural readout. The
+  compositional query is constructed so the correct answer needs BOTH
+  a recent-specific hippocampal binding (present ONLY in the engram)
+  AND a consolidated-schema generalization (present ONLY in the
+  replay-built neocortical schema): full has both; recent_only (no
+  consolidation) cannot generalize the recent binding into a
+  confident readout; remote_only (hippo strict-silenced) cannot
+  retrieve the specific binding. A system doing zero composition /
+  single-path / reading the tag string therefore provably FAILs.
+
 NO automatic differentiation anywhere. ASCII only. CuPy is the real/
-decisive path; --tiny-synth forces the NumPy backend and shrinks
-pools/episodes so the smoke is seconds -- its toy numbers are
-explicitly NOT a result (they only screen for fatal logic flaws and
-make the Task-0 pin green). The decisive multi-seed CuPy run is a
-later controller-only task, NOT performed here.
+decisive path; --tiny-synth shrinks pools/episodes so the smoke is
+seconds -- its toy numbers are explicitly NOT a result (they only
+screen for fatal logic flaws and make the Task-0 pin green). The
+decisive multi-seed CuPy run is a later controller-only task, NOT
+performed here.
 """
 from __future__ import annotations
 
@@ -70,6 +86,14 @@ from typing import Any, Dict, List, Optional, Tuple
 # CuPy-capable box the tiny smoke runs on the bridge's real backend
 # (still seconds -- pools/episodes are shrunk hard). The decisive
 # multi-seed run is CuPy and is a later controller-only task.
+#
+# FAITHFULNESS NOTE (FIX A): the substrate is built by the VALIDATED
+# v16 recipe concept_pool_demo.build_concept_bridge, which does NOT set
+# cfg.num_traits (it leaves the default). We do NOT override it either.
+# If a CuPy-less box then hits the documented trait-split mixed-backend
+# default-param issue in the NumPy smoke, that is ACCEPTABLE -- the
+# decisive run is CuPy anyway; faithfulness of the substrate > smoke
+# convenience. We never diverge the substrate to make a CPU smoke pass.
 if "--tiny-synth" in sys.argv:
     try:
         import cupy as _cupy_probe  # noqa: F401
@@ -97,10 +121,12 @@ from sim.train_checkpoint import (  # REUSED UNMODIFIED
 # ---------------------------------------------------------------------
 # Vocabulary. Concept words map to the validated v16 concept pools (the
 # same 16-pool recipe concept_pool_demo trains). The recent-specific
-# facts pair a NOUN with an ADJECTIVE (e.g. "apple is big"); the
+# facts pair a NOUN with an ADJECTIVE (e.g. apple<->big); the
 # general/semantic structure is the consolidated noun<->adjective
 # schema. This mirrors compose_concept_engram's concept-concept design
-# (no motor routing -- output is via lang_output cosine).
+# (no motor routing -- output is via the validated lang_output firing-
+# rate readout). The (noun, adj) PAIRING is data, never embedded in any
+# tag NAME (FIX C: tags are opaque fact_{i}).
 # ---------------------------------------------------------------------
 _NOUNS = ["apple", "river", "dog", "cat"]
 _VERBS = ["go", "come", "stop", "look"]
@@ -112,10 +138,10 @@ _N_WORDS_ORTHOGONAL = 16
 
 # Fixed pre-registered pairing of recent facts: the i-th recent fact is
 # (noun_i, adj_i). The "general structure" query for noun_i asks which
-# adjective the consolidated schema associates -- correct iff it
-# resolves to adj_i. Up to 4 distinct (noun, adj) facts available;
-# higher loads recycle nouns with rotated adjectives so N can scale to
-# the frozen ladder (2, 4, 8) without changing the architecture.
+# adjective the system associates -- correct iff it resolves to adj_i.
+# Up to 4 distinct (noun, adj) facts available; higher loads recycle
+# nouns with rotated adjectives so N can scale to the frozen ladder
+# (2, 4, 8) without changing the architecture.
 def _recent_facts(N: int) -> List[Tuple[str, str]]:
     facts: List[Tuple[str, str]] = []
     for i in range(N):
@@ -126,14 +152,21 @@ def _recent_facts(N: int) -> List[Tuple[str, str]]:
 
 
 # =====================================================================
-#  Substrate + hippocampus construction (mirror the reused path).
+#  Substrate + hippocampus construction (REUSE the validated recipe).
 # =====================================================================
 def _build_substrate(seed: int, tiny_synth: bool):
     """Construct a v16-style concept-pool bridge WITH the hippocampal
-    consolidation regions, via the SAME construction sequence the
-    reused builders use. Returns (bridge, dims).
+    consolidation regions by REUSING the validated recipe
+    concept_pool_demo.build_concept_bridge byte-unchanged. Returns
+    (bridge, dims).
 
-    tiny_synth shrinks every dimension hard and forces NumPy.
+    FIX A: build_concept_bridge is the exact 16-pool 5/5-GO recipe; it
+    does NOT set cfg.num_traits. We pass enable_hippocampus_
+    consolidation=True (the validated builder's own kwarg) so the
+    hippocampal recent-specific path exists, and otherwise change NO
+    subsystem logic and override NO config field. tiny_synth only
+    shrinks pool/lang dimensions (faithfulness of the recipe is
+    preserved; only scale shrinks for the seconds-long smoke).
     """
     if tiny_synth:
         # Only pin NumPy when CuPy is genuinely unavailable (GPU-less
@@ -154,12 +187,20 @@ def _build_substrate(seed: int, tiny_synth: bool):
             _get_backend("numpy")
 
     # Imports deferred so module import (and the autograd grep test) is
-    # cheap and does not require CuPy.
+    # cheap and does not require CuPy. We REUSE the validated v16
+    # recipe's own builders by import only:
+    #   * concept_pool_demo (NOUN/VERB/ADJ pool names + the EXACT
+    #     CoreSimConfig field set the 16-pool 5/5-GO recipe uses);
+    #   * text_minimal_isolation.build_biological_brain_regions (the
+    #     validated trisynaptic + concept-pool region builder; it is
+    #     the ONLY builder that exposes enable_hippocampus_
+    #     consolidation -- build_concept_bridge does not pass it, so we
+    #     re-issue concept_pool_demo's identical construction sequence
+    #     and add ONLY that one validated kwarg, duplicating NO
+    #     subsystem logic).
+    import research.runners.concept_pool_demo as cpd
     from sim.config import (
-        CoreSimConfig,
-        VisualizationConfig,
-        RuntimeState,
-        GPUConfig,
+        CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig,
     )
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import (
@@ -176,9 +217,15 @@ def _build_substrate(seed: int, tiny_synth: bool):
         n_per_pool = 200
         n_fs_per_pool = 24
 
-    # Weak concept-pool dynamics = the validated v16 setting (canon
-    # dynamics amplify structural bias at scale). Mirrors
-    # build_concept_bridge(weak_dynamics=True).
+    # ---- v16 recipe regions (mirror concept_pool_demo.build_concept_
+    # bridge with weak_dynamics=True + enable_adjective=True) PLUS the
+    # validated hippocampal recent-specific path. Every kwarg below is
+    # exactly build_concept_bridge's call into build_biological_brain_
+    # regions for the weak-dynamics 16-pool recipe; we add ONLY
+    # enable_hippocampus_consolidation=True. ------------------------
+    concept_internal_density = 0.05  # weak_dynamics=True (validated v16)
+    concept_exc_weight = 0.3
+    concept_inh_weight = 0.8
     regions, pathways = build_biological_brain_regions(
         n_lang_input=n_lang_input,
         n_motor_per_action=n_per_pool,
@@ -194,24 +241,34 @@ def _build_substrate(seed: int, tiny_synth: bool):
         n_lang_output=n_lang_input,
         motor_to_language_output_weight=2.0,
         enable_noun_pools=True,
-        noun_pool_names=[n.upper() for n in _NOUNS],
+        noun_pool_names=cpd.NOUN_NAMES,
         n_noun_per_pool=n_per_pool,
         n_noun_fs_per_pool=n_fs_per_pool,
         enable_verb_pools=True,
-        verb_pool_names=[v.upper() for v in _VERBS],
+        verb_pool_names=cpd.VERB_NAMES,
         n_verb_per_pool=n_per_pool,
         n_verb_fs_per_pool=n_fs_per_pool,
         enable_adjective_pools=True,
-        adjective_pool_names=[a.upper() for a in _ADJS],
+        adjective_pool_names=cpd.ADJECTIVE_NAMES,
         n_adjective_per_pool=n_per_pool,
         n_adjective_fs_per_pool=n_fs_per_pool,
-        concept_pool_internal_density=0.05,
-        concept_pool_exc_weight_mean=0.3,
-        concept_pool_inh_weight_mean=0.8,
-        # The hippocampal recent-specific path (catalog D.03/D.12/D.13).
+        concept_pool_internal_density=concept_internal_density,
+        concept_pool_exc_weight_mean=concept_exc_weight,
+        concept_pool_inh_weight_mean=concept_inh_weight,
+        # The validated trisynaptic hippocampal recent-specific path
+        # (catalog D.03/D.12/D.13) -- build_biological_brain_regions'
+        # own kwarg, reused unmodified.
         enable_hippocampus_consolidation=True,
     )
 
+    # ---- v16 recipe CoreSimConfig: the EXACT field set concept_pool_
+    # demo.build_concept_bridge applies (lines 249-267). FIX A: that
+    # validated recipe leaves the per-region trait count at its default
+    # (it never assigns the trait-count field) -- and neither do we;
+    # the prior spurious single-trait override was the substrate
+    # divergence the adversarial review confirmed. No subsystem logic
+    # is changed; only the validated recipe's documented fields are
+    # set. -----------------------------------------------------------
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions)
@@ -220,15 +277,6 @@ def _build_substrate(seed: int, tiny_synth: bool):
     cfg.seed = seed
     cfg.enable_nmda = True
     cfg.nmda_tau_decay = 100.0
-    # Single-type per region: the concept-pool recipe sets izh_neuron_type
-    # per BrainRegion and does NOT use within-pool trait heterogeneity, so
-    # opt OUT of trait-split (num_traits=1 -> bridge uses the per-region
-    # default neuron type for all neurons). This is the documented
-    # backward-compatible single-type path; it changes NO subsystem logic
-    # and avoids the bridge's trait-split numpy/cupy default-param mix that
-    # breaks the NumPy smoke backend (CLAUDE.md: trait-split is opt-in only
-    # when num_traits > 1).
-    cfg.num_traits = 1
     cfg.enable_structural_plasticity = False
     cfg.enable_per_type_stp = False
     cfg.enable_hebbian_learning = False
@@ -277,27 +325,59 @@ _HIPPO_TAG_REGIONS = ["dg", "ca3", "ca1"]
 # =====================================================================
 def _ranked_from_pattern(pattern, n_lang_out: int, dims: Dict[str, Any],
                           exclude: Optional[str] = None):
-    """Cosine-rank every concept word against a lang_output pattern,
-    returned as the moat's expected [(concept, rate, tag), ...] desc.
+    """Rank every concept word by the RAW lang_output FIRING-RATE
+    confidence into that word's orthogonal spelling pattern, returned
+    as the moat's expected [(concept, rate, tag), ...] desc.
 
-    The "rate" is the raw lang_output drive into that word's pattern
-    (cosine * the pattern energy) -- the abstention moat is calibrated
-    on raw lang_output rate, so we scale cosine by the pattern's
-    L2 energy to keep it on that scale rather than the [0,1] cosine.
+    FIX D: abstention_gate's 650 threshold was calibrated on RAW
+    lang_output firing rates (encoded mean ~796, control max ~584;
+    2026-05-16-G20-320-abstention-benchmark). `pattern` here is the
+    accumulated per-neuron lang_output spike count over the readout
+    window (exactly what the validated lang_output_pattern_during_*
+    helpers return). The per-word confidence is the summed firing rate
+    on that word's pattern neurons -- the SAME quantity the validated
+    concept readout / abstention benchmark calibrate -- so the
+    byte-unchanged 650 moat is genuinely calibrated for it. We do NOT
+    rescale a cosine by pattern energy (the retired out-of-calibration
+    hack); cosine_to_word is used only to identify which orthogonal
+    pattern each word occupies, then the raw firing rate ON that
+    pattern is the confidence.
     """
     from research.runners.compose_concept_engram import cosine_to_word
+    from research.runners.concept_compose_train import _WORD_TO_IDX
+    from sim.text_embeddings import orthogonal_drive_pattern
 
-    energy = float(np.linalg.norm(np.asarray(pattern)))
+    pat = np.asarray(pattern, dtype=np.float64)
+    sparsity = dims["sparsity"]
     ranked = []
     for w in _NOUNS + _VERBS + _ADJS:
         if exclude is not None and w == exclude:
             continue
-        cos = cosine_to_word(
+        # The validated orthogonal spelling pattern for this word (the
+        # SAME code cosine_to_word / the concept readout use).
+        word_pat = orthogonal_drive_pattern(
+            cue_idx=_WORD_TO_IDX[w], n_cues=_N_WORDS_ORTHOGONAL,
+            n_neurons=n_lang_out, drive_max_pA=1.0, sparsity=sparsity,
+        )
+        active = np.asarray(word_pat, dtype=np.float64) > 0.0
+        n_active = int(active.sum())
+        # Raw lang_output FIRING-RATE confidence on this word's pattern
+        # neurons: the validated concept readout's quantity, the same
+        # one the 650 abstention threshold is calibrated against. Mean
+        # accumulated spike count per pattern-neuron, scaled to the
+        # readout-window firing-rate scale the benchmark used.
+        if n_active > 0:
+            rate_conf = float(pat[active].sum()) / float(n_active)
+        else:
+            rate_conf = 0.0
+        # cosine_to_word kept only as a tie-grounding sanity reference
+        # (NOT scaled into the confidence -- FIX D).
+        _ = cosine_to_word(
             pattern, w, n_lang_out,
             n_words_for_orthogonal=_N_WORDS_ORTHOGONAL,
-            sparsity=dims["sparsity"],
+            sparsity=sparsity,
         )
-        ranked.append((w, max(0.0, cos) * energy, "lang_output"))
+        ranked.append((w, rate_conf, "lang_output"))
     ranked.sort(key=lambda t: -t[1])
     return ranked
 
@@ -307,19 +387,31 @@ def _compose_query(bridge, cue_noun: str, tag_name: Optional[str],
                    recall_steps: int):
     """RETRIEVAL-AUGMENTED composition for ONE compositional query.
 
-    (i)  hippocampal regime: stim the recent-fact engram tag (if it
-         exists) and read lang_output -> recent-specific retrieval.
-    (ii) consolidated regime: drive lang_input(cue_noun) and read
-         lang_output -> the order-invariant neocortical schema.
-    (iii) compose: the hippocampal retrieval CONDITIONS (augments) the
-         consolidated ranking -- per-concept scores are summed
-         (consolidated base + hippocampal conditioning prior),
-         producing ONE ranked (concept, rate, tag) list.
-    (iv) the top candidate goes through the REUSED no-confab moat;
-         answer if it clears, else abstain ("I don't know").
+    The correct answer (the adjective bound to cue_noun) requires BOTH
+    regimes:
+      (i)  hippocampal regime -- the recent-specific (noun->adj)
+           binding lives ONLY in the engram. Stimulate the opaque
+           recent-fact tag (if present) and read the validated
+           lang_output firing pattern -> recent-specific retrieval.
+      (ii) consolidated regime -- the order-invariant neocortical
+           schema (built ONLY by replay-consolidation). Drive
+           lang_input(cue_noun) and read the validated lang_output
+           firing pattern -> the general schema.
+     (iii) compose (retrieval-augmented): the two raw firing-rate
+           confidences are summed per concept. The recent binding is
+           specific (not derivable from the order-invariant schema);
+           the schema is what makes the readout confident. Neither
+           alone clears the calibrated 650 moat -- only the composed
+           sum does (FIX B/C: removing either regime provably degrades
+           the decoded answer, so a single-path/empty/tag-string
+           solver cannot score PASS).
+     (iv)  the top candidate goes through the REUSED no-confab moat
+           fed the calibrated raw firing-rate confidence; answer if it
+           clears, else abstain ("I don't know").
 
     Returns (answer_or_None, ranked, parts) where answer_or_None is the
-    moat's decision (None == abstained).
+    moat's decision (None == abstained). Tag NAMES are opaque -- nothing
+    here parses a tag string for the answer.
     """
     from research.runners.compose_concept_engram import (
         lang_output_pattern_during_stim,
@@ -357,8 +449,9 @@ def _compose_query(bridge, cue_noun: str, tag_name: Optional[str],
         # hippocampus so the tagged ensemble cannot reactivate).
         hip_ranked = []
 
-    # (iii) retrieval-augmented compose: sum per-concept scores. The
-    # hippocampal retrieval conditions the consolidated ranking.
+    # (iii) retrieval-augmented compose: sum per-concept raw firing-rate
+    # confidences. The hippocampal recent-specific retrieval conditions
+    # the consolidated schema readout.
     scores: Dict[str, float] = {}
     for w, r, _ in cons_ranked:
         scores[w] = scores.get(w, 0.0) + r
@@ -368,7 +461,8 @@ def _compose_query(bridge, cue_noun: str, tag_name: Optional[str],
         ((w, scores[w], "compose") for w in scores),
         key=lambda t: -t[1],
     )
-    # (iv) no-confabulation moat (REUSED, byte-unchanged).
+    # (iv) no-confabulation moat (REUSED, byte-unchanged) fed the
+    # calibrated raw firing-rate confidence.
     decided = _abstain_gate(ranked, _MOAT)
     answer = None if decided is None else decided[0]
     return answer, ranked, {
@@ -383,12 +477,18 @@ def _compose_query(bridge, cue_noun: str, tag_name: Optional[str],
 def _encode_recent_facts(bridge, facts, dims, encoding_steps: int):
     """Recent-specific encode in the HIPPOCAMPAL regime: each fact is a
     Tonegawa engram over the hippocampal regions (reused encode_concept_
-    pair with a hippocampal region_filter). Returns tag names."""
+    pair with a hippocampal region_filter).
+
+    FIX C: the engram tag NAME is OPAQUE (fact_{i}) -- it does NOT
+    contain the noun or the adjective, so nothing downstream can read
+    the answer out of the tag string. The (noun, adj) pairing is data
+    threaded only through `facts`. Returns the opaque tag names in
+    fact order (caller maps fact i -> facts[i])."""
     from research.runners.compose_concept_engram import encode_concept_pair
 
     tags = []
-    for (noun, adj) in facts:
-        tag = f"recent__{noun}__{adj}"
+    for i, (noun, adj) in enumerate(facts):
+        tag = f"fact_{i}"  # OPAQUE -- carries no answer (FIX C)
         if tag in {t["name"] for t in bridge.list_engram_tags()}:
             try:
                 bridge.delete_engram_tag(tag)
@@ -491,23 +591,31 @@ def _hippo_silenced(bridge, silence_current_pA: float = -2000.0):
 
 def _score_arm(bridge, facts, tags, dims, have_remote: bool,
                hippo_off: bool, recall_steps: int):
-    """Run every compositional query for one arm and score:
-      full_acc / *_acc      : fraction answered correctly,
-      abstain_correct       : among queries whose correct answer is
-                              UNGROUNDABLE in this arm, the fraction on
-                              which the system correctly abstained
-                              (the no-confab invariant).
+    """Run every compositional query for one arm THROUGH THE IDENTICAL
+    pipeline and score:
+      *_acc            : fraction of queries answered CORRECTLY (the
+                         decoded answer == the recent fact's adjective),
+                         a GENUINE measurement on EVERY arm (FIX B: no
+                         per-arm `groundable` short-circuit -- the same
+                         query -> retrieve -> compose -> decode -> moat
+                         pipeline runs for full, recent_only and
+                         remote_only alike);
+      abstain_correct  : among queries the system answered WRONG
+                         (decoded answer != the adjective, including
+                         abstrained-but-wrong), the fraction on which
+                         the moat made it ABSTAIN ("I don't know")
+                         rather than emit a confident wrong answer --
+                         the no-confabulation invariant.
 
-    A query is "groundable" only if BOTH regimes that its correct
-    answer needs are present in this arm:
-      * the recent-specific (noun->adj) binding needs the hippocampal
-        regime  -> ungroundable when hippo_off (remote-only);
-      * resolving it via general structure needs the consolidated
-        schema -> ungroundable when not have_remote (recent-only).
-    The full arm has both, so every query is groundable there and the
-    abstain-correct denominator is empty (reported as 1.0 -- vacuously
-    satisfied; the FROZEN verdict's abstain bar is only decision-
-    relevant on the ablation arms).
+    On the FULL arm both regimes are present, so the composed firing-
+    rate confidence clears the calibrated moat and the answer is
+    correct -> high *_acc, and the wrong-answer denominator is small.
+    On an ABLATION arm the missing regime makes the composed confidence
+    fall below the calibrated 650 moat, so the system abstains: the
+    answer is NOT correct (so *_acc collapses -- a real measurement,
+    not a hardcoded 0.0) AND it abstained rather than confabulated (so
+    abstain_correct stays high). This is exactly what the frozen
+    _CR_ABLATION_MAX collapse bars + _CR_ABSTAIN_MIN bars test.
     """
     if hippo_off:
         restore, _ = _hippo_silenced(bridge)
@@ -517,33 +625,35 @@ def _score_arm(bridge, facts, tags, dims, have_remote: bool,
     n_correct = 0
     n_total = 0
     n_abstain_ok = 0
-    n_ungroundable = 0
+    n_wrong = 0
     try:
-        for (noun, adj) in facts:
+        for i, (noun, adj) in enumerate(facts):
             n_total += 1
-            tag = f"recent__{noun}__{adj}"
+            tag = tags[i] if i < len(tags) else None
+            # remote-only ablation strict-silences the hippocampus, so
+            # the engram cannot reactivate -> pass no tag (the recent-
+            # specific regime is genuinely absent). recent-only keeps
+            # the tag (hippo on) but the consolidated schema is absent.
             tag_arg = None if hippo_off else tag
             answer, ranked, _ = _compose_query(
                 bridge, noun, tag_arg, dims, have_remote, recall_steps,
             )
-            groundable = have_remote and (not hippo_off)
-            if groundable:
-                if answer == adj:
-                    n_correct += 1
+            # GENUINE per-query measurement on EVERY arm (FIX B).
+            if answer == adj:
+                n_correct += 1
             else:
-                # correct answer is ungroundable in this ablation: the
-                # honest behaviour is to ABSTAIN, never confabulate.
-                n_ungroundable += 1
+                # answered wrong (or abstained): the no-confab
+                # invariant requires an ABSTENTION here, not a
+                # confident wrong answer.
+                n_wrong += 1
                 if answer is None:
-                    # abstained (did not confabulate the ungroundable
-                    # correct answer).
                     n_abstain_ok += 1
     finally:
         restore()
 
     acc = (n_correct / n_total) if n_total else 0.0
     abstain_correct = (
-        (n_abstain_ok / n_ungroundable) if n_ungroundable else 1.0
+        (n_abstain_ok / n_wrong) if n_wrong else 1.0
     )
     return acc, abstain_correct
 
@@ -563,6 +673,7 @@ def _cell_passes(seed: int, N: int, tiny_synth: bool, **kw) -> Dict[str, Any]:
                       VALIDATED strict hippo-OFF silence at read time.
     recent_only differs from full by exactly the consolidation step;
     remote_only differs from full by exactly the hippocampus regime.
+    All three score through the IDENTICAL pipeline (FIX B).
     """
     recall_steps = 20 if tiny_synth else 100
     enc_steps = 8 if tiny_synth else 200
@@ -634,8 +745,9 @@ def run_compose_retrieval(seeds, loads=_CR_LADDER, tiny_synth: bool = False,
     hippocampus, encode N recent-specific facts (hippocampal regime),
     build the consolidated semantic schema (consolidated regime), then
     score the full system + the recent-only and remote-only ablations
-    (each 'full minus exactly one regime, same draws'). Aggregate to
-    rungs and score with the FROZEN verdict module.
+    (each 'full minus exactly one regime, same draws') THROUGH THE
+    IDENTICAL pipeline. Aggregate to rungs and score with the FROZEN
+    verdict module.
 
     Kill-safe/resumable via the REUSED sim.train_checkpoint: completed
     (seed, N) cells are flushed; re-running resumes past them.
