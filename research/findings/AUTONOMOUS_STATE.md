@@ -18,57 +18,61 @@ reference biology, no hand-back, no declare-unfit.
 
 ## Exact next concrete action
 
-**Program-level finding (iter-4) propagated + bound honored (849218f).
-Phase-factored DESIGN (65f6c52) + TDD PLAN (412ccef) done + pushed.
-FALSIFY-FIRST DE-RISK = GREEN (committed honest-wip `3300d3f`):** with
-the offline shuffled-replay Phase-1.3 consolidation inserted on top of
-the e02f692 foundation, GPU-verified (CuPy/RTX 3090) `v1 ep = 1.0` is
-PRESERVED -- the relocated-contradiction risk did NOT materialize; the
-phase factorization genuinely dissolves the iter-4 encode-order
-contradiction at the v1 check; drilled wm queries role-correlated and
-clear the byte-unchanged 650 gate (671-1591). NOT a soundness pass
-(v1 wm not yet >=0.90 -- the genuine science question for the
-controller-only decisive run).
+**Phase-factored architecture = VOID-BY-CONSTRUCTION (GPU-verified;
+frozen verdict recomputed unchanged -> GATE=VOID; propagated; bound
+honored).** Full build + adversarial review done faithfully. GPU
+(CuPy/RTX3090, real N=2): `full` ep=0.0 (offline shuffled replay
+DESTROYS episodic order) while `no_cls_replay` ep=1.0 (skip
+consolidation -> online recall preserves order, does NOT collapse) ->
+frozen `_HELPER_EP` duty of `no_cls_replay` INVERTED -> unchanged
+frozen verdict = VOID (controller recomputed independently; integrity
+clean; 28 tests pass). TWICE-CONVERGENT program-level reading: iter-4
+(single-pass contradictory) + phase-factored (separating RELOCATES not
+dissolves it) -> the evidence now points at the PRE-REGISTERED
+NECESSITY PARTITION ITSELF as the likely falsified element (it encoded
+a single-pass-conception necessity hypothesis biology-faithful
+architectures do not realize; the frozen verdict correctly refuses to
+certify rather than be edited). Propagated: findings + capability
+(PREDICTED) + both remotes. Process lesson recorded: falsify-first
+must probe the FULL mode jointly, not v1 alone.
 
-**Exact next concrete action: dispatch the FULL Tasks 2-5 build
-(subagent-driven) on top of `3300d3f`.** Build the full phase-factored
-runner (online theta-ordered encode byte-unchanged + offline
-shuffled-replay Phase-1.3 consolidation + consolidated WM/episodic-order
-readouts; v1/full/8-lesions; SAME frozen gate `v1` wm AND ep >= 0.90;
-full+lesions novel probe byte-identical) -> Task 3 DEDICATED
-ADVERSARIAL REVIEW with MANDATORY primary scrutiny: (i) does
-`no_cls_replay` GENUINELY collapse ep at full scale (its frozen
-`_HELPER_EP` responsibility) or is it inverted -> then the frozen
-verdict correctly VOIDs, surfaced as the honest program-level outcome
-(NEVER edit the frozen verdict/partition/bars); (ii) is the
-consolidated episodic-order readout a genuine spiking measurement, NOT
-a strawman/hard-feed; (iii) lesions faithful (each = full minus exactly
-one, identical per-trial RNG), validated subsystems reused
-byte-unchanged, no autograd, WM selectivity learned-by-consolidation
-not pre-wired -> Task 4 no-harm -> Task 5 CONTROLLER-ONLY decisive
-multi-seed GPU run + anti-cheat smell-test + honest propagation both
-remotes. GPU/CuPy real path (numpy only --tiny-synth); reuse-only
-(net-new = phase controller + wiring).
+**Exact next concrete action: proper DESIGN pass for the next
+catalog-identified factorization (autonomous, no hand-back, no
+config-crank, NOT a reflexive patch).** Deeper separation of relational
+episodic binding from schema/concept abstraction along the
+hippocampal-neocortical interaction: the episodic-order readout served
+by the order-PRESERVING trisynaptic pattern-completion pathway
+(catalog D.12/D.13) and the concept/WM readout by the order-INVARIANT
+neocortical schema pathway -- genuinely DISTINCT readout pathways so
+the necessity structure is examined against the catalog's documented
+interaction rather than assumed. Proper design -> writing-plans ->
+subagent build; its pre-registered falsify-first MUST probe the FULL
+mode's wm AND ep jointly (the recorded process lesson), SAME frozen
+gate, reuse byte-unchanged, GPU/CuPy, no autograd.
 
-**PRE-COMMITTED bound (in force):** if the faithful full phase-factored
-build cannot achieve `v1` wm AND ep >= 0.90, OR a frozen lesion's
-pre-registered responsibility is inverted (the frozen verdict correctly
-returns VOID), that is surfaced honestly with its precise structural
-cause as the next program-level result -> the next catalog-identified
-integration factorization, autonomous, no hand-back, no config-crank,
-no edit of the frozen verdict or no-confab moat. Stated in advance so
-no outcome is rationalized.
+**PRE-COMMITTED TERMINAL bound (in force, stated in advance):** if the
+next factorization ALSO reaches VOID by the same category mismatch
+between the pre-registered necessity partition and biology-faithful
+causal structure, the honest TERMINAL scientific conclusion is that the
+pre-registered NECESSITY HYPOTHESIS -- not the local implementation --
+is the refuted element; surface that as the program's honest result and
+follow it with a catalog-grounded RE-DERIVATION of the necessity
+hypothesis itself, still autonomous, still no hand-back, still no
+frozen-verdict/moat edit. No outcome is rationalized.
 
 DO NOT stop after any propagation/commit. The next concrete action
 always begins in the same turn.
 
 ## Last durable commit
 
-Runner honest-wip `3300d3f` = phase-factored falsify-first DE-RISK
-GREEN (online theta-ordered encode byte-unchanged from e02f692 +
-offline shuffled-replay Phase-1.3 consolidation + consolidated
-WM/episodic-order readouts; GPU-verified v1 ep=1.0 preserved; NOT a
-soundness pass). Built on iter-3 foundation e02f692 (temporal-credit +
+Runner `2582992` = full phase-factored build (faithful;
+VOID-by-construction: full ep=0.0 / no_cls_replay ep=1.0 -> frozen
+_HELPER_EP inverted -> unchanged frozen verdict = VOID). Plus `07eab87`
+test pins. Built on the de-risk GREEN `3300d3f` / iter-3 foundation
+e02f692. The phase-factored line is closed VOID-by-construction; next =
+the next catalog-identified factorization (distinct order-preserving vs
+order-invariant readout pathways) via a proper design pass. Built on
+iter-3 foundation e02f692 (temporal-credit +
 homeostasis + documented non-zero init). Next = the full Tasks 2-5
 build on top of `3300d3f`. HEAD after the iter-4 program-level
 propagation commit (findings + capability PREDICTED + state file +
