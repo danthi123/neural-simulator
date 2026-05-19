@@ -18,43 +18,52 @@ reference biology, no hand-back, no declare-unfit.
 
 ## Exact next concrete action
 
-Background subagent `a4d4c9be7d13ca743` is running **pre-registered
-biology-fidelity iteration 2**: compose the project's validated
-homeostasis (per-stripe equalization) + validated temporal-credit /
-dopamine-gated eligibility (cold-start break for the
-`dlpfc_verb -> noun_pool` efferent) into `research/runners/integrated_loop_gate.py`,
-re-tested on GPU against the SAME frozen gate (`v1` wm AND ep >= 0.90;
-every drilled binding clears the byte-unchanged no-confab gate;
-`full`+lesions novel probe byte-identical). Strengthen-only;
-protected/frozen/moat byte-unchanged.
+**PENDING-LOCAL-GPU: iteration 3 (background subagent running locally on
+the RTX 3090).** Apply the documented project fix: a small NON-ZERO
+prior init (`weight_mean ~= 0.5`, `weight_jitter ~= 0.3`) on the net-new
+`dlpfc_verb -> noun_pool_F*` RegionPathway the runner already adds, so
+the (now-correctly-wired) temporal-credit reward can actually charge
+STDP eligibility (a zero-init synapse carries no current -> the
+documented CLAUDE.md zero-init gotcha; Barlow 1972 spontaneous baseline
+weights). KEEP both already-faithful levers: LEVER 1 temporal-credit
+(committed `5c27e99`, encode-only, validated idiom byte-unchanged) and
+LEVER 2 homeostasis (committed `5c27e99`, verified working). SAME frozen
+gate (`v1` wm AND ep >= 0.90 on GPU; every drilled binding clears the
+byte-unchanged no-confab gate; `full`+lesions novel probe
+byte-identical). Strengthen-only; protected/frozen/moat byte-unchanged;
+GPU/CuPy (numpy only for `--tiny-synth`). Commit only if acceptance met;
+else honest faithful-negative report.
 
-**On its completion notification:** controller trust-but-verify the diff
-(commit scope = only the runner; protected set byte-empty `bd27292..HEAD`;
-`integrated_loop_core.py` unchanged since `2048750`; no autograd; tests
-25/25; moat 7/7), then:
-- If acceptance met + committed -> dedicated adversarial re-review of the
-  runner (Probe 8 BG-causal still intact; no query-time hard-feed
-  introduced by the eligibility/reward wiring; lesions still faithful;
-  homeostasis scoped not global-cheating) -> on CLEAR: no-harm phase ->
-  Task 5 CONTROLLER-ONLY decisive multi-seed GPU run + mandatory
-  anti-cheat smell-test + honest propagation both remotes.
-- If faithful negative -> propagate honestly (findings + capability
-  pillar stays PREDICTED + both remotes), then immediately begin the
-  next cited biology-fidelity iteration (the subagent names it).
+**On the iteration-3 completion notification:** controller
+trust-but-verify the diff (commit scope = only the runner; protected
+byte-empty; `integrated_loop_core.py` unchanged since `2048750`; no
+autograd; 25/25; moat 7/7), then:
+- acceptance met + committed -> dedicated adversarial re-review (Probe-8
+  BG-causal intact; no query-time hard-feed from the eligibility/reward
+  or the non-zero init; lesions faithful; homeostasis scoped not
+  global-cheating; the non-zero init does not itself leak the answer)
+  -> on CLEAR: no-harm phase -> Task 5 CONTROLLER-ONLY decisive
+  multi-seed GPU run + anti-cheat smell-test + honest propagation both
+  remotes -> staged compositional sequence.
+- faithful negative -> propagate honestly (findings + capability stays
+  PREDICTED + both remotes); honest bound now in force: if soundness
+  still fails AFTER the documented non-zero init on top of the two
+  now-faithful mechanisms, this is a DEEPER ARCHITECTURE question to
+  surface (a fundamentally different approach / explicit owner-facing
+  architecture decision), NOT another config iteration.
 
 DO NOT stop after any propagation/commit. The next concrete action
 always begins in the same turn.
 
 ## Last durable commit
 
-`718213a` (HEAD): durable state file. Runner committed state `6c2c055`
-(logic == `d3a7ac3` + inert `--selfcheck-diag` harness). Iteration-2
-background subagent `a4d4c9be7d13ca743` is IN FLIGHT (composing validated
-homeostasis + temporal-credit into the runner on the local GPU); it
-will commit only if `v1` wm AND ep >= 0.90 on GPU, else report a
-faithful negative. On its completion: controller trust-but-verify ->
-adversarial re-review -> no-harm -> Task 5 decisive run, or honest
-propagation + next cited iteration.
+Runner honest-wip `5c27e99` = iteration 2: LEVER 1 (temporal-credit,
+encode-only, validated idiom byte-unchanged) + LEVER 2 (homeostasis,
+verified working) composed; acceptance NOT met (zero-init precondition
+blocks LEVER 1 eligibility) so committed as honest wip, NOT a pass.
+Iteration-2 findings + capability (PREDICTED) + this state file are the
+next propagation commit (both remotes). Iteration 3 (documented
+non-zero-init fix on top of `5c27e99`) is the in-flight next action.
 
 ## Pre-registered acceptance / frozen bars (NEVER tuned)
 

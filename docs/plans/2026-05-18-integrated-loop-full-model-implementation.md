@@ -861,6 +861,55 @@ patching, take the next step as a deeper, properly-designed iteration).
   biology-fidelity iteration — autonomously, no hand-back, no
   declare-unfit, no config-cranking a frozen bar.
 
+## Pre-registered biology-fidelity iteration 3 — documented non-zero efferent initialization (added 2026-05-19; supersedes iteration 2; single documented config fix; convergent, not thrashing)
+
+Iteration 2 (findings:
+`research/findings/2026-05-19-integrated-loop-iter2-homeostasis-works-temporal-credit-blocked-by-zero-init.md`)
+produced a precise convergent negative: LEVER 2 (validated homeostatic
+per-stripe equalization) transferred and works; LEVER 1 (validated
+temporal-credit, faithfully wired, encode-only) is blocked solely
+because the net-new `dlpfc_verb -> noun_pool_F*` efferent is zero-
+initialized — a truly-zero synapse carries no current, so spike-timing
+eligibility never charges and the reward-gated update is identically
+zero. This is the project's OWN documented zero-initialization gotcha
+(the same root cause as the validated text-input/output "non-zero
+readout pathway init" fix; biologically grounded as spontaneous
+baseline cortical weights, Barlow 1972).
+
+- **Named mechanism (documented project fix; cited):** initialize the
+  net-new slot-to-concept efferent with a small NON-ZERO prior
+  (`weight_mean ~= 0.5`, `weight_jitter ~= 0.3`) — exactly the
+  precondition the validated reference runners (`compose_bridge_gate`,
+  `concept_pool_demo`) already satisfy for their scored pathways — so
+  the now-correctly-timed LEVER-1 temporal-credit reward can actually
+  charge eligibility, while LEVER-2 homeostasis keeps the stripes
+  equalized. NOT a new mechanism; a single configuration change
+  (`weight_mean`/`weight_jitter`) on the `RegionPathway` the runner
+  already adds.
+- **Keep both now-faithful levers** (committed honest-wip `5c27e99`):
+  LEVER 1 temporal-credit (encode-only, validated idiom byte-unchanged,
+  no query hard-feed, no autograd) and LEVER 2 homeostasis (validated
+  kernel byte-unchanged, verified working).
+- **Acceptance is the SAME pre-registered frozen gate (unchanged):** on
+  the GPU, `v1` wm AND ep >= 0.90 with EVERY drilled binding clearing
+  the byte-unchanged no-confabulation gate; `full`+lesions novel probe
+  byte-identical. No frozen threshold touched; no-confab moat and every
+  protected/validated module byte-unchanged; no autograd; ASCII;
+  GPU/CuPy for the real path (numpy only for `--tiny-synth`).
+- **Honest hard bound (pre-committed):** if instrument-soundness still
+  fails AFTER correctly applying the documented non-zero initialization
+  on top of the two now-faithful mechanisms, the evidence then points
+  to a deeper architectural limit. That is surfaced as a genuine
+  architecture question / a fundamentally different approach — NOT
+  another configuration iteration, NOT config-cranking. Until then,
+  this single documented fix is the disciplined convergent next step,
+  autonomous, no hand-back.
+- **Process:** strengthen-only; controller trust-but-verify the diff;
+  dedicated adversarial re-review before the no-harm phase (Probe-8
+  BG-causal intact; the non-zero init does not itself leak the answer
+  / become a static hard-feed; lesions faithful; homeostasis scoped);
+  then no-harm; then the controller-only decisive run.
+
 ## Execution
 
 Per the owner's standing instruction, execution is same-session subagent-driven. Transition directly to superpowers:subagent-driven-development — do NOT present an execution-choice prompt.
