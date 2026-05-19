@@ -51,19 +51,49 @@ Everything below the controller is reused BYTE-UNCHANGED by import:
   * frozen verdict: REUSED spear_conversational_core.spear_conversational
     _verdict.
 
-ACH POLARITY (verified against the REUSED docstring of
-NeuromodulatorManager.compute_plasticity_window_gate_multiplier,
-sim/neuromodulators.py:444-456 -- gate = clip(1 - conc/baseline, 0, 1)):
-  ENCODE phase  -> plasticity ON  -> need gate ~= 1 -> ACh LOW  (set
-                   concentration ~= 0, well below baseline; "pause").
-  RETRIEVE phase -> plasticity OFF -> need gate ~= 0 -> ACh HIGH (set
-                   concentration >= baseline; tonic ACh blocks LTP, so
-                   the retrieve phase is pattern-completion only).
-This is exactly the Hasselmo SPEAR polarity (high ACh suppresses
-retrieval-time plasticity; the pause permits encoding). The design-doc
-prose says "encode = ACh high" loosely; we follow the REUSED CODE
-SEMANTICS, which is the biology-faithful choice and what the bridge
-actually computes.
+ACH TARGETING + POLARITY (closed 2026-05-19 net-new-runner-only
+faithfulness-fix after the dedicated adversarial review confirmed the
+prior plasticity_window_gate (scope=all) target was FUNCTIONALLY INERT
+here -- its ONLY consumer at sim/bridge.py:5577-5579 sits inside the C2
+reward-mod block, gated by `update_path_active` (bridge.py:5512-5513),
+and this runner never drives `current_reward_signal`, so the gate
+multiplier was never applied to anything):
+
+  Targets now used (verified against the REUSED bridge consumers):
+    - `plasticity_rate` (scope=all): consumed at sim/bridge.py:5519-5523
+      via compute_plasticity_rate_multiplier(). Same C2 path -- inert
+      when reward=0, but kept so the gate composes correctly the
+      moment a downstream stage adds a reward signal (no surprise
+      regression).
+    - `synaptic_gain` (scope=all): consumed EVERY simulation step at
+      sim/bridge.py:4877-4879 (STP branch) and bridge.py:4890-4897 (no-
+      STP branch) via compute_synaptic_gain_multiplier(). This is the
+      Hasselmo-faithful path: ACh modulates effective_synaptic_strength
+      directly, so the encode (LOW ACh) and retrieve (HIGH ACh) phases
+      genuinely change forward dynamics (and through that, downstream
+      STDP at C1, bridge.py:5341-5400).
+    - We retain the original plasticity_window_gate target for forward-
+      compatibility with the bridge's TAN gating path (no harm; it is
+      0.0 sensitivity-equivalent when reward=0).
+
+  Polarity (with the synaptic_gain sensitivity chosen NEGATIVE):
+    ENCODE phase  -> ACh LOW (conc ~= 0, well below baseline 1.0).
+                     synaptic_gain effect = 1 + (-s)*(0 - 1)
+                                          = 1 + s = enhanced gain.
+                     plasticity_window_gate ~= 1 (would-be permitted).
+                     Hasselmo: enhanced afferent drive, suppressed
+                     recurrent feedback equivalent -- the encode mode.
+    RETRIEVE phase -> ACh HIGH (conc ~= 1, at baseline).
+                     synaptic_gain effect = 1 + (-s)*(1 - 1) = 1
+                     plasticity_window_gate = 0 (would-be blocked).
+                     Hasselmo: baseline gain -> CA3 recurrent pattern-
+                     completion dominates -- the retrieve mode.
+
+  The polarity matches Hasselmo SPEAR (high ACh suppresses retrieval-
+  time LTP; the encode pause + enhanced afferent gain permits writing).
+  The design-doc prose says "encode = ACh high" loosely; we follow the
+  REUSED CODE SEMANTICS (the bridge's gate / gain formulas), which is
+  the biology-faithful choice and what the bridge actually computes.
 
 The decisive built-in control arm `rhythm_removed` is IDENTICAL to
 `full` for the same (seed, N) -- SAME seed, SAME facts, SAME RNG draws --
@@ -256,21 +286,44 @@ def _build_substrate(seed: int, tiny_synth: bool):
     cfg.fast_spike_reset = True
 
     # --- Net-new wiring: register the acetylcholine phase-gate
-    # neuromodulator (the VALIDATED subsystem). A plasticity_window_gate
-    # target (scope=all) + a `manual` production rule: the controller
-    # sets the concentration each phase via the reused
-    # set_concentration; the bridge's reused step multiplies reward-
-    # driven weight updates by compute_plasticity_window_gate_
-    # multiplier() (NO step edit). baseline=1.0 (>0, required by the
-    # gate formula gate = clip(1 - conc/baseline, 0, 1)). This is the
-    # SAME shape as _default_acetylcholine_tan_config() but with a
-    # `manual` rule (explicit phase multiplexing, not reward-driven).
+    # neuromodulator (the VALIDATED subsystem). The 2026-05-19 net-new-
+    # runner faithfulness fix re-targets ACh so the gate has measurable
+    # effect on bridge dynamics across the encode/retrieve phases this
+    # runner exercises (the prior plasticity_window_gate-only target
+    # was inert here -- its only consumer sits inside the reward-mod
+    # block we never enter; see the module docstring's ACH TARGETING
+    # section). Targets:
+    #   * synaptic_gain (scope=all): consumed every simulation step at
+    #     sim/bridge.py:4877-4879 / 4890-4897 -- the Hasselmo-faithful
+    #     path that makes the phase gate actually modulate
+    #     effective_synaptic_strength. Negative sensitivity so ACh LOW
+    #     (encode) boosts afferent gain and ACh HIGH (retrieve) settles
+    #     at baseline gain.
+    #   * plasticity_rate (scope=all): consumed at bridge.py:5519-5523
+    #     via compute_plasticity_rate_multiplier(); composes the
+    #     moment a downstream stage adds a reward signal.
+    #   * plasticity_window_gate (scope=all): retained for forward-
+    #     compatibility with the bridge's TAN gating path; reward=0
+    #     here so it is effectively dormant but adds no harm.
+    # baseline=1.0 (>0, required by the gate formula gate =
+    # clip(1 - conc/baseline, 0, 1)). `manual` rule -> the controller
+    # sets concentration each phase via the reused set_concentration
+    # (explicit phase multiplexing, not reward-driven).
     from sim.neuromodulators import (
         NeuromodulatorConfig,
         ModulatorTarget,
         ProductionRule,
     )
 
+    # synaptic_gain sensitivity: at ACh=0 (encode) -> gain = 1 + 0.3 = 1.3
+    # (boosted afferent drive); at ACh=1 (retrieve) -> gain = 1.0
+    # (baseline). Chosen modest so dynamics don't saturate; the test pin
+    # asserts the gate produces a clear measurable diff vs the inert
+    # zero-effect path.
+    _ACH_SYN_GAIN_SENS = -0.3
+    # plasticity_rate sensitivity: same shape; small negative so high
+    # ACh damps rate-modulated learning (TAN-like) when reward exists.
+    _ACH_PLAST_RATE_SENS = -0.5
     ach = NeuromodulatorConfig(
         name="acetylcholine_tan",
         baseline=1.0,
@@ -279,7 +332,15 @@ def _build_substrate(seed: int, tiny_synth: bool):
         concentration_max=2.0,
         targets=[
             ModulatorTarget(
-                target_type="plasticity_window_gate", scope="all"
+                target_type="synaptic_gain", scope="all",
+                sensitivity=_ACH_SYN_GAIN_SENS,
+            ),
+            ModulatorTarget(
+                target_type="plasticity_rate", scope="all",
+                sensitivity=_ACH_PLAST_RATE_SENS,
+            ),
+            ModulatorTarget(
+                target_type="plasticity_window_gate", scope="all",
             ),
         ],
         production_rules=[ProductionRule(rule_type="manual")],
