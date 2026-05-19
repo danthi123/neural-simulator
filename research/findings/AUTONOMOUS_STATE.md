@@ -18,71 +18,69 @@ reference biology, no hand-back, no declare-unfit.
 
 ## Exact next concrete action
 
-**PENDING-LOCAL-GPU: iteration 4 (the fundamentally-different,
-project-validated binding approach the hard bound EXPLICITLY permits;
-background subagent on the RTX 3090).** Iters 1-3 localized the
-instrument-soundness gap precisely: episodic binding is now PERFECT
-(ep=1.0) and the documented zero-init gotcha is resolved, but
-role-selective WORKING-MEMORY binding does not form under a global
-scalar three-factor (temporal-credit) signal -- triangulating with the
-project's own 2026-05-05 verdict ("global scalar feedback fails at
-biological scale; the credit-assignment RULE is the bottleneck, the
-architecture is sufficient"). Its documented RESOLUTION is the
-embodied-Hebbian co-firing + topographic-prior binding paradigm
-(Tier-1 6x; v16 88.75% multi-seed -- the design Section-3 concept-layer
-substrate). Iteration 4: carry the working-memory role-selectivity with
-that VALIDATED co-firing+topographic mechanism (reused byte-unchanged
-where it exists; net-new = only the in-loop wiring), with
-temporal-credit relegated to credit/gating ONLY, KEEPING every faithful
-part already committed in `e02f692`: Probe-8 `thal->dlpfc->noun_pool`
-wiring, LEVER-2 homeostasis (working), the documented non-zero init,
-perfect episodic binding. SAME frozen gate (`v1` wm AND ep >= 0.90 GPU;
-every drilled binding clears the byte-unchanged no-confab gate;
-`full`+lesions novel probe byte-identical). Strengthen-only;
-protected/frozen/moat byte-unchanged; GPU/CuPy (numpy only for
-`--tiny-synth`). Anti-hard-feed control: selectivity must be LEARNED by
-co-firing, not pre-wired. Commit only if acceptance met; else honest
-faithful-negative.
+**Iteration 4 COMPLETE -> PRE-COMMITTED PROGRAM-LEVEL FINDING (honored,
+propagated, NOT spun).** The project's OWN validated concept-binding
+mechanism (embodied co-firing + topographic prior) was applied
+faithfully in two forms; each recovered working-memory role-selectivity
+but DESTROYED the loop's perfect episodic binding (ep 1.0->0.0); both
+reverted, HEAD byte-restored. STRUCTURAL CAUSE (GPU-measured, not a
+tuning gap): the validated concept-binding needs a SHUFFLED encode
+order; the theta-gamma episodic store needs presentation-order ==
+binding-index; in ONE online encode pass at N=2 these two validated
+subsystems impose CONTRADICTORY encode-order requirements; no config
+reconciles them. This REFUTES integrated-loop instrument-soundness AT
+THIS MINIMAL SINGLE-PASS SLICE with the subsystems as currently
+factored (does NOT refute the cheap-tier non-separability core nor the
+hypothesis globally). Propagated: findings + capability (PREDICTED) +
+both remotes. The pre-committed bound forbids a further config
+iteration -- HONORED (no iteration 5; no tweak; no spin).
 
-**PRE-COMMITTED iteration-4 bound (stated before the run):** if the
-project's OWN validated co-firing+topographic binding mechanism ALSO
-fails to produce role-selective working-memory binding in this
-integrated loop at N=2, that is a genuine PROGRAM-LEVEL refutation of
-integrated-loop instrument-soundness at this slice -- surfaced honestly
-as a fundamental program decision, NOT a further iteration. Stated in
-advance so the outcome cannot be rationalized.
+**NEXT PROGRAM STEP (genuinely-distinct architecture; NOT a config
+iteration; its OWN proper design pass; autonomous, no hand-back, no
+declare-unfit):** the encode-order contradiction is the signature of
+the integration conflating two biologically-DISTINCT phases. Factor the
+loop into (a) an ONLINE theta-ordered hippocampal episodic encode
+(presentation-order == index, preserved) and (b) a SEPARATE OFFLINE
+interleaved/shuffled-replay neocortical consolidation that builds the
+concept selectivity -- reusing the project's VALIDATED multi-seed
+strict-anti-cheat complementary-learning-systems consolidation
+subsystem -- so each validated subsystem operates in the phase whose
+order-requirement it satisfies. This is a distinct architectural
+factorization, NOT a binding-rule tweak: it requires a PROPER design
+pass (a fresh design -> writing-plans -> subagent-driven build with the
+same adversarial + anti-cheat discipline + the SAME frozen acceptance:
+`v1` wm AND ep >= 0.90 GPU; no-confab moat + protected + frozen
+byte-unchanged; GPU/CuPy). It is deliberately NOT launched as a
+reflexive same-loop patch subagent. Begin it at the design entry point
+(brainstorm/writing-plans for the phase-factored consolidation
+architecture), grounded in the catalog's complementary-learning-systems
+factorization + the project's validated Phase-1.3 consolidation.
 
-**On the iteration-4 completion notification:** controller
-trust-but-verify the diff (commit scope = only the runner; protected
-byte-empty; `integrated_loop_core.py` unchanged since `2048750`; no
-autograd; 25/25; moat 7/7), then:
-- acceptance met + committed -> dedicated adversarial re-review (Probe-8
-  BG-causal intact; co-firing selectivity LEARNED not pre-wired/hard-fed;
-  lesions faithful; homeostasis scoped not global-cheating; non-zero
-  init not leaking the answer) -> on CLEAR: no-harm phase -> Task 5
-  CONTROLLER-ONLY decisive multi-seed GPU run + anti-cheat smell-test +
-  honest propagation both remotes -> staged compositional sequence.
-- faithful negative -> propagate honestly (findings + capability stays
-  PREDICTED + both remotes) + surface the PRE-COMMITTED program-level
-  refutation finding honestly (no further config/iteration spin).
+**PRE-COMMITTED bound for the phase-factored architecture (stated now):**
+if a faithful phase-factored design (online theta-ordered encode +
+offline shuffled-replay consolidation using the validated CLS
+subsystem) ALSO cannot achieve `v1` wm AND ep >= 0.90 in the integrated
+loop, that is a deeper program-level result to surface honestly with
+its precise structural cause -- the next step then being the next
+catalog-identified integration factorization, still autonomous, still
+no hand-back. Stated in advance so no outcome is rationalized.
 
 DO NOT stop after any propagation/commit. The next concrete action
 always begins in the same turn.
 
 ## Last durable commit
 
-Runner honest-wip `e02f692` = iteration 3: documented non-zero
-binding-agnostic init on the net-new `dlpfc_verb->noun_pool_F*`
-efferent ON TOP OF iter-2's LEVER-1 (temporal-credit) + LEVER-2
-(homeostasis). Result: zero-init gotcha RESOLVED -- episodic binding
-PERFECT (ep=1.0), scores clear the 650 no-confab gate -- but
-working-memory role-selectivity does NOT form under global-scalar
-temporal-credit (wm=0.0); committed honest-wip, NOT a pass; hard bound
-hit -> deeper-architecture finding. Iteration-3 findings + capability
-(PREDICTED) + this state file are the propagation commit (both
-remotes). Iteration 4 (the fundamentally-different validated
-co-firing+topographic binding for the working-memory dimension, on top
-of `e02f692`) is the in-flight next action.
+Runner honest-wip `e02f692` (iter-3 foundation: temporal-credit +
+homeostasis + documented non-zero init; episodic binding PERFECT
+ep=1.0; verified-correct; iter-4 reverted so the runner is byte-exact
+at this state). HEAD after the iter-4 program-level propagation commit
+(findings + capability PREDICTED + this state file + plan, both
+remotes). Iteration 4 produced the pre-committed PROGRAM-LEVEL finding
+(validated concept-binding vs theta-gamma episodic store =
+contradictory encode-order requirements at the N=2 single-pass slice);
+honored (no iteration 5). Next program step = the phase-factored
+consolidation architecture, via a PROPER design pass (NOT a reflexive
+patch).
 
 ## Pre-registered acceptance / frozen bars (NEVER tuned)
 

@@ -964,6 +964,60 @@ already specifies as the concept-layer substrate.
   faithful; homeostasis scoped; non-zero init not leaking the answer);
   then no-harm; then the controller-only decisive run.
 
+## Iteration 4 outcome — PRE-COMMITTED PROGRAM-LEVEL FINDING (2026-05-19; honored, not spun) + the next genuinely-distinct architecture (proper design pass, NOT a config iteration)
+
+Iteration 4 applied the project's own validated concept-binding
+mechanism (embodied co-firing + topographic prior) — the
+fundamentally-different approach the pre-committed bound explicitly
+permitted. GPU-verified: two faithful applications each recovered
+working-memory role-selectivity but destroyed the loop's perfect
+episodic binding; both reverted (HEAD byte-restored). Structural cause
+(measured): the validated concept-binding needs a shuffled encode
+order; the theta-gamma episodic store needs presentation-order ==
+binding-index; forced into one online encode pass at the minimal slice
+these two validated subsystems impose contradictory encode-order
+requirements — no configuration reconciles them. This REFUTES
+integrated-loop instrument-soundness at this minimal single-pass slice
+with the subsystems as currently factored (it does NOT refute the
+cheap-tier non-separability core, nor the hypothesis globally; no
+fixed threshold moved; the no-confabulation gate byte-unchanged;
+episodic binding genuinely perfect on HEAD). Findings:
+`research/findings/2026-05-19-integrated-loop-PROGRAM-LEVEL-encode-order-conflict-between-validated-concept-binding-and-episodic-store.md`.
+
+The pre-committed bound is honored: no iteration 5, no config tweak,
+no spin. The next program step is a **genuinely-distinct architecture**
+(the bound's explicitly-permitted "fundamentally different approach"),
+pursued autonomously per the standing iterate-following-biology
+mandate (no hand-back, no declare-unfit):
+
+- **Named architecture (biology + the project's own validated
+  subsystem):** the encode-order contradiction is the signature of
+  conflating two biologically distinct phases. Factor the loop into
+  (a) an online theta-ordered hippocampal episodic encode (order ==
+  index preserved) and (b) a separate offline interleaved/shuffled
+  replay consolidation that builds the concept selectivity, reusing
+  the project's validated multi-seed strict-anti-cheat
+  complementary-learning-systems consolidation subsystem — so each
+  validated subsystem operates in the phase whose order-requirement it
+  satisfies, instead of contending for one pass.
+- **Why this is not a configuration iteration:** it changes the
+  loop's phase structure (adds a distinct offline consolidation phase
+  using a different validated subsystem), not a weight, rate, or
+  binding-rule parameter. It therefore re-enters the full pre-registered
+  pipeline at the DESIGN entry point: a fresh focused design (which
+  validated consolidation interfaces, how the online/offline phases
+  compose, the honest ceiling) → writing-plans → subagent-driven build
+  with the same dedicated adversarial review and anti-cheat discipline
+  → the SAME frozen acceptance (`v1` wm AND ep >= 0.90 on GPU;
+  no-confab moat + protected + frozen byte-unchanged; GPU/CuPy). It is
+  deliberately NOT launched as a reflexive same-loop patch.
+- **Pre-committed bound (stated now):** if a faithful phase-factored
+  design also cannot achieve `v1` wm AND ep >= 0.90 in the integrated
+  loop, that deeper program-level result is surfaced honestly with its
+  precise structural cause; the next step is then the next
+  catalog-identified integration factorization — still autonomous,
+  still no hand-back.
+
 ## Execution
 
-Per the owner's standing instruction, execution is same-session subagent-driven. Transition directly to superpowers:subagent-driven-development — do NOT present an execution-choice prompt.
+Per the owner's standing instruction, execution is same-session subagent-driven. The next program step (the phase-factored consolidation architecture) re-enters at the DESIGN entry point (brainstorm → writing-plans → subagent-driven), NOT a reflexive same-loop patch — do NOT present an execution-choice prompt.
