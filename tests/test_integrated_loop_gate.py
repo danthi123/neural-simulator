@@ -26,14 +26,19 @@ def test_integration_runner_tiny_smoke_produces_verdict(tmp_path):
 
 def test_runner_imports_reused_parts_byte_unchanged():
     """The runner composes the validated parts by import; it must not
-    declare its own copies of them, and must add no autograd."""
+    declare its own copies of them, and must add no autograd. The
+    acceptance instrument is the NEW frozen integrated_loop_core_v2
+    (the original integrated_loop_core is NEVER imported here and is
+    NEVER edited; its VOID stands as the honest record)."""
     src = Path("research/runners/integrated_loop_gate.py").read_text()
     assert "import torch" not in src and ".backward(" not in src
     assert "build_biological_brain_regions" in src
     assert "build_bg_brain_regions" in src
     assert "start_engram_recording" in src or "commit_engram_tag" in src
     assert "from research.runners.abstention_gate import" in src
-    assert "from research.runners.integrated_loop_core import" in src
+    assert "integrated_loop_verdict_v2" in src
+    assert "from research.runners.integrated_loop_core import" not in src
+    assert "import integrated_loop_core\n" not in src
 
 
 def test_phase_factored_tiny_smoke_produces_tiny_verdict(tmp_path):
@@ -59,7 +64,7 @@ def test_phase_factored_tiny_smoke_produces_tiny_verdict(tmp_path):
 def test_runner_reuses_validated_phase_factored_parts():
     """The phase-factored runner composes the validated parts by
     import; it must not declare its own copies, must add no autograd,
-    and must reuse the frozen verdict + the Phase-1.3 consolidation
+    and must reuse the NEW frozen verdict + the Phase-1.3 consolidation
     interface + the no-confab moat byte-unchanged."""
     src = Path("research/runners/integrated_loop_gate.py").read_text()
     assert "import torch" not in src and ".backward(" not in src
@@ -70,7 +75,32 @@ def test_runner_reuses_validated_phase_factored_parts():
     assert "freeze_all_gates" in src
     assert "start_engram_recording" in src or "commit_engram_tag" in src
     assert "from research.runners.abstention_gate import" in src
-    assert "from research.runners.integrated_loop_core import" in src
+    assert "integrated_loop_verdict_v2" in src
+    assert "from research.runners.integrated_loop_core import" not in src
+
+
+def test_distinct_pathways_reuses_parts_byte_unchanged_and_new_core():
+    """The distinct-pathways mode composes the validated parts by
+    import, adds no autograd, scores via the NEW core (not the
+    original), and never imports the original frozen core (Task 4
+    Step 1 structural pin)."""
+    src = Path("research/runners/integrated_loop_gate.py").read_text()
+    assert "import torch" not in src and ".backward(" not in src
+    assert "build_biological_brain_regions" in src
+    assert "run_concept_replay_phase" in src
+    assert "start_engram_recording" in src or "commit_engram_tag" in src
+    assert "from research.runners.abstention_gate import" in src
+    assert "integrated_loop_verdict_v2" in src
+    assert "from research.runners.integrated_loop_core import" not in src
+    assert "import integrated_loop_core\n" not in src
+    # The distinct-pathways episodic readout must be the ONLINE
+    # trisynaptic completion taken BEFORE the offline consolidation
+    # (NOT post-consolidation); the structural markers for the
+    # order-preserving online path + the order-invariant offline
+    # consolidation must both be present.
+    assert "_DISTINCT_PATHWAYS" in src
+    assert "--distinct-pathways" in src
+    assert "_episodic_order_readout" in src
 
 
 def test_phase_factored_runs_offline_after_online_before_readout():

@@ -69,6 +69,38 @@ else:
 # composition wiring; no new learning rule, no autograd, no new module.
 _PHASE_FACTORED = ("--phase-factored" in sys.argv)
 
+# DISTINCT-READOUT-PATHWAYS mode (the biologically-correct fix the
+# phase-factored attempt missed; approved design commit 72e359a,
+# implementation plan commit 7b1d47c Task 4). Read from argv BEFORE
+# argparse exactly like the backend / --phase-factored idiom so the
+# build/episode path can branch with NO extra rng draw and no
+# signature churn. When OFF the e02f692 path is byte-identical.
+#
+# The phase-factored flaw was routing BOTH readouts through the SAME
+# consolidated trace (so the order-monotone episodic constraint and the
+# order-shuffled concept constraint contended in one trace ->
+# VOID-by-construction). Distinct pathways: the EPISODIC-ORDER readout
+# is served by the order-PRESERVING ONLINE hippocampal trisynaptic
+# CA3->CA1 pattern-completion path (the committed online engram tag is
+# the partial cue; the ca3_swr_burst recurrent autoassociator
+# reconstructs the theta-ordered bound pattern; per-role peak order is
+# read from the role concept pools -- taken AFTER the online write but
+# BEFORE the offline consolidation, NEVER post-consolidation, NEVER
+# touching run_concept_replay_phase -- exactly the byte-unchanged
+# e02f692 online-recall idiom, catalog D.03/D.12/D.13). The
+# concept/WORKING-MEMORY readout is served by the order-INVARIANT
+# neocortical schema built by a SEPARATE offline sleep-gated
+# run_concept_replay_phase (shuffled order, validated Phase-1.3,
+# byte-unchanged) read under the validated freeze_all_gates pre-eval
+# freeze. They share ONLY the single online engram WRITE then diverge
+# into physically distinct structures: the order-monotone (episodic)
+# and order-shuffled (concept) constraints live in SEPARATE pathways
+# and cannot contend. NET-NEW = ONLY the per-trial phase ordering of
+# the already-validated calls + the engram-tag fan-out to the two
+# distinct pathways; no new learning rule, no autograd, no new module.
+# Scored by the NEW frozen integrated_loop_core_v2 (NOT the original).
+_DISTINCT_PATHWAYS = ("--distinct-pathways" in sys.argv)
+
 import numpy as np
 
 from research.runners.text_minimal_isolation import (
@@ -84,7 +116,17 @@ from sim.neuromodulators import (NeuromodulatorConfig, ProductionRule,
                                  ModulatorTarget)
 from research.runners.abstention_gate import gate, DEFAULT_THRESHOLD
 from sim.text_embeddings import orthogonal_drive_pattern
-from research.runners.integrated_loop_core import integrated_loop_verdict
+# Acceptance instrument = the NEW separately-frozen catalog-grounded
+# necessity module (commit 36a7975), which corrects exactly one
+# falsified pre-registered partition membership (no_cls_replay:
+# episodic-helper -> working-memory-helper) with every numeric bar
+# verbatim-identical to the original. The ORIGINAL frozen
+# integrated_loop_core.py is NEVER imported here and is NEVER edited;
+# its prior "cannot conclude" (VOID) stands permanently as the honest
+# scientific record that the original pre-registered necessity
+# prediction was falsified. This runner scores ONLY via v2.
+from research.runners.integrated_loop_core_v2 import (
+    integrated_loop_verdict_v2)
 
 _BANNER = ("HONEST CEILING: emergent compositional memory in a "
            "biology-grounded multi-system loop ONLY -- NOT fluent "
@@ -1273,6 +1315,88 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
         if clk_hip is not clk_wm:
             clk_hip.step()
 
+    # ----- EPISODIC-ORDER READOUT closure (the order-PRESERVING ONLINE
+    # hippocampal trisynaptic CA3->CA1 pattern-completion path) -----
+    # This is the byte-unchanged e02f692 online-recall idiom: the
+    # committed engram tag is the partial CA3 retrieval cue; the
+    # ca3_swr_burst recurrent autoassociator (Marr 1971; catalog
+    # D.13) reconstructs the theta-ordered bound pattern; the per-role
+    # concept-pool activity-peak ORDER is read back and scored against
+    # the true online encode order. Defining it as a CLOSURE here does
+    # NOT change the default/--phase-factored behavior at all -- those
+    # paths still call it at the SAME original position below (so their
+    # readout source/timing/RNG/step structure is byte-identical). It
+    # is ONLY hoisted to run BEFORE the offline consolidation for the
+    # distinct-readout-pathways mode, where the EPISODIC readout MUST
+    # be the online order-preserving trisynaptic completion -- taken
+    # AFTER the online write but BEFORE (and physically independent of)
+    # the offline run_concept_replay_phase consolidation, so the
+    # order-monotone episodic constraint never shares a trace with the
+    # order-shuffled concept constraint. The closure draws NO rng (the
+    # per-trial RNG faithfulness discipline is preserved: _make_pairs
+    # in _run_mode remains the sole rng consumer, identical for every
+    # mode); it is a pure function of the in-bridge spiking dynamics.
+    def _episodic_order_readout():
+        if mode == "no_hippo_store":
+            return 0.0
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(P["reset_steps"]):
+            _step(bridge)
+        # peak_step[role_position] = readout step at which that role's
+        # concept pool fired most -> the recovered temporal order. The
+        # engram tag is the natural CA3 retrieval CUE (pattern
+        # completion) and the per-role temporal ORDER is recovered from
+        # the SHIFTED theta-ordered assembly the online encode wrote
+        # into the hippocampal store. The recall is NOT
+        # skipped/short-circuited for any mode that has a tag -- the
+        # per-mode collapse is produced GENUINELY by the spiking
+        # dynamics, not a Python hardcode: no_sequencing made the
+        # online clock REPEAT (not SHIFT) so no order was written ->
+        # degenerate recovered order -> collapses; no_hippo_store has
+        # no tag -> 0.0 by construction; no_binding wrote no bound
+        # assembly so completion has nothing to reconstruct. In the
+        # distinct-pathways mode this runs BEFORE the offline
+        # consolidation (online trisynaptic completion, NEVER
+        # post-consolidation); in the default/--phase-factored modes it
+        # runs at the original position below, byte-identically.
+        peak_val = np.full(N, -1.0, dtype=np.float64)
+        peak_t = np.zeros(N, dtype=np.int64)
+        n_recall = max(N * 2, P["readout_steps"])
+        for t in range(n_recall):
+            try:
+                bridge.stimulate_tag(tag, float(P["tag_stim_pA"]))
+            except Exception:
+                pass
+            _step(bridge)
+            rc = _counts(bridge, [role_arr[r] for r, _ in pairs])
+            for k in range(N):
+                if rc[k] > peak_val[k]:
+                    peak_val[k] = rc[k]
+                    peak_t[k] = t
+        try:
+            bridge.clear_tag_drive(tag)
+        except Exception:
+            pass
+        bridge.cp_external_input_current[:] = 0.0
+        recovered = list(np.argsort(peak_t, kind="stable"))
+        true_order = list(range(N))
+        return sum(1.0 for i in range(N)
+                   if recovered[i] == true_order[i]) / float(N)
+
+    # DISTINCT-READOUT-PATHWAYS: take the EPISODIC-ORDER readout HERE,
+    # from the order-PRESERVING ONLINE trisynaptic completion path,
+    # BEFORE the offline consolidation runs (and physically independent
+    # of it -- this readout NEVER touches run_concept_replay_phase and
+    # is NEVER post-consolidation). The concept/WORKING-MEMORY readout
+    # is taken later from the order-INVARIANT offline-consolidated
+    # schema. The two readouts therefore share ONLY the single online
+    # engram WRITE above, then diverge into physically distinct
+    # structures -- exactly the biologically-correct factoring the
+    # phase-factored attempt missed.
+    _ep_distinct = None
+    if _DISTINCT_PATHWAYS:
+        _ep_distinct = _episodic_order_readout()
+
     # ----- OFFLINE CONSOLIDATION (phase-factored DE-RISK; NET-NEW
     # WIRING, validated subsystem reused byte-unchanged) -----
     # The single net-new piece: a per-trial phase controller that
@@ -1302,8 +1426,8 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
     # order and _episode itself still draws nothing from the per-trial
     # `rng` (_make_pairs in _run_mode remains the sole consumer,
     # identical for every mode). NO new learning rule; NO autograd.
-    if (_PHASE_FACTORED and mode not in ("no_cls_replay",
-                                         "no_hippo_store")):
+    if ((_PHASE_FACTORED or _DISTINCT_PATHWAYS)
+            and mode not in ("no_cls_replay", "no_hippo_store")):
         set_sleep_gates(bridge)
         try:
             run_concept_replay_phase(
@@ -1578,70 +1702,25 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
     # e02f692 hippocampus-only stimulate_tag recall byte-identical
     # (the --phase-factored flag changes ONLY this post-MAINTAIN
     # readout source, never the online encode/write path).
-    if mode == "no_hippo_store":
-        ep_acc = 0.0
+    # DISTINCT-READOUT-PATHWAYS: the episodic-order readout was ALREADY
+    # taken above, from the order-PRESERVING ONLINE trisynaptic
+    # completion path, BEFORE the offline consolidation (and physically
+    # independent of it -- it never touched run_concept_replay_phase and
+    # was never post-consolidation). Use that value here; do NOT
+    # re-run the recall (re-running post-consolidation would
+    # reintroduce exactly the phase-factored both-readouts-from-one-
+    # consolidated-trace flaw this architecture exists to fix). The
+    # default and --phase-factored paths are byte-identical to e02f692:
+    # they call the SAME _episodic_order_readout() closure HERE, at the
+    # SAME original position, with the SAME readout source/timing/RNG/
+    # step structure (--phase-factored takes it post-consolidation
+    # under the freeze applied at the end of OFFLINE CONSOLIDATION;
+    # default takes the e02f692 hippocampus-only stimulate_tag recall).
+    if _DISTINCT_PATHWAYS:
+        ep_acc = float(_ep_distinct
+                       if _ep_distinct is not None else 0.0)
     else:
-        bridge.cp_external_input_current[:] = 0.0
-        for _ in range(P["reset_steps"]):
-            _step(bridge)
-        # peak_step[role_position] = readout step at which that role's
-        # concept pool fired most -> the recovered temporal order.
-        #
-        # PHASE-FACTORED (lesion-6 refinement): the recovered order is
-        # read from the CONSOLIDATED ca1->concept trace. The engram
-        # tag is the natural CA3 retrieval CUE (pattern completion)
-        # but the per-role temporal ORDER is carried by the
-        # consolidated cortical sequence the offline
-        # run_concept_replay_phase trained (ca3_swr_burst -> ca1 ->
-        # concept under the sleep gates). The recall here runs AFTER
-        # the offline phase under the validated freeze_all_gates
-        # pre-eval freeze (applied at the end of OFFLINE
-        # CONSOLIDATION). The recall is NOT skipped/short-circuited
-        # for any mode -- it is run identically for every mode that
-        # has a tag; the per-mode collapse is produced GENUINELY by
-        # the spiking dynamics, NOT a Python hardcode (a hardcoded
-        # 0.0 would be contriving the lesion; the gating-section
-        # mechanism is a STRUCTURAL collapse: there is no consolidated
-        # ordered cortical trace to peak-time-decode under the
-        # lesion). no_cls_replay skipped the offline consolidation ->
-        # the ca1->concept consolidation was NEVER trained on this
-        # episode's SHIFT sequence -> the cued recall produces NO
-        # recoverable per-role peak order (degenerate / chance) -> ep
-        # collapses (its frozen _HELPER_EP duty), measured on GPU,
-        # not asserted. no_sequencing: the online clock REPEATS (does
-        # not SHIFT) -> no order written at encode -> nothing ordered
-        # to consolidate -> degenerate recovered order -> collapses.
-        # The online theta-ordered ENCODE + engram WRITE stay
-        # byte-identical to e02f692; only the READOUT timing/source
-        # moved post-consolidation. NON-phase-factored runs keep the
-        # e02f692 hippocampus-only stimulate_tag recall byte-identical
-        # (the --phase-factored flag changes ONLY this readout's
-        # SOURCE -- consolidated cortical trace vs the online tag --
-        # never the online encode/write path, never the RNG draw
-        # order, never the step structure).
-        peak_val = np.full(N, -1.0, dtype=np.float64)
-        peak_t = np.zeros(N, dtype=np.int64)
-        n_recall = max(N * 2, P["readout_steps"])
-        for t in range(n_recall):
-            try:
-                bridge.stimulate_tag(tag, float(P["tag_stim_pA"]))
-            except Exception:
-                pass
-            _step(bridge)
-            rc = _counts(bridge, [role_arr[r] for r, _ in pairs])
-            for k in range(N):
-                if rc[k] > peak_val[k]:
-                    peak_val[k] = rc[k]
-                    peak_t[k] = t
-        try:
-            bridge.clear_tag_drive(tag)
-        except Exception:
-            pass
-        bridge.cp_external_input_current[:] = 0.0
-        recovered = list(np.argsort(peak_t, kind="stable"))
-        true_order = list(range(N))
-        ep_acc = sum(1.0 for i in range(N)
-                     if recovered[i] == true_order[i]) / float(N)
+        ep_acc = _episodic_order_readout()
 
     # ----- LEARN -----
     # Delayed reward drives the native eligibility path with the
@@ -1671,13 +1750,16 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
     # into the schema layer (the CLS replay path). Skipped for the
     # no_cls_replay HELPER lesion (and impossible for no_hippo_store).
     #
-    # Phase-factored DE-RISK: the consolidation has ALREADY been done
-    # up-front (the OFFLINE CONSOLIDATION phase, before both readouts).
-    # This e02f692 end-of-trial replay is therefore SKIPPED in
-    # phase-factored mode; only the validated awake-gate restoration is
-    # performed so the next epoch's encode is exactly the e02f692 encode
-    # (the readout window above stayed frozen per the lesion-6 design).
-    if _PHASE_FACTORED:
+    # Phase-factored DE-RISK / DISTINCT-READOUT-PATHWAYS: the
+    # consolidation has ALREADY been done up-front (the OFFLINE
+    # CONSOLIDATION phase). This e02f692 end-of-trial replay is
+    # therefore SKIPPED in BOTH modes; only the validated awake-gate
+    # restoration is performed so the NEXT epoch's online encode is
+    # exactly the e02f692 encode (the distinct-pathways episodic
+    # readout was already taken pre-consolidation; the WM readout
+    # window stayed frozen). The cleanup is byte-identical for both
+    # modes (same gate restoration set, same tag delete, same return).
+    if _PHASE_FACTORED or _DISTINCT_PATHWAYS:
         if mode not in ("no_cls_replay", "no_hippo_store"):
             for _g in ("language_input_to_noun_pool",
                        "bg_thal_to_dlpfc",
@@ -1954,6 +2036,36 @@ def main(argv=None):
                          "Read at module level from argv BEFORE argparse "
                          "(like --tiny-synth) so the build/episode path "
                          "branches with no extra rng draw.")
+    ap.add_argument("--distinct-pathways", action="store_true",
+                    help="DISTINCT-READOUT-PATHWAYS mode (the "
+                         "biologically-correct fix the phase-factored "
+                         "attempt missed; design 72e359a, plan 7b1d47c "
+                         "Task 4). The EPISODIC-ORDER readout is the "
+                         "order-PRESERVING ONLINE trisynaptic CA3->CA1 "
+                         "pattern-completion path taken AFTER the online "
+                         "engram write but BEFORE (and physically "
+                         "independent of) the offline consolidation; the "
+                         "concept/WORKING-MEMORY readout is the "
+                         "order-INVARIANT offline run_concept_replay_"
+                         "phase-consolidated 16-pool concept layer read "
+                         "under the validated freeze. They share ONLY "
+                         "the single online engram WRITE then diverge. "
+                         "Scored by the NEW frozen "
+                         "integrated_loop_core_v2. Read at module level "
+                         "from argv BEFORE argparse (like --tiny-synth) "
+                         "so the path branches with no extra rng draw.")
+    ap.add_argument("--falsify-first", action="store_true",
+                    help="Pre-registered FALSIFY-FIRST joint de-risk "
+                         "(plan Task 5; controller-run, NOT a verdict, "
+                         "NOT propagated): run ONE seed of the FULL "
+                         "science mode (gap_zero=False) at the smallest "
+                         "load N=2 on the _FULL slice and print the "
+                         "full-mode episodic (ep) AND working-memory "
+                         "(wm) readouts JOINTLY -- the recorded process "
+                         "lesson (the prior de-risk's fatal mistake was "
+                         "checking v1/soundness ALONE). Use with "
+                         "--distinct-pathways. NOT invoked by the tests "
+                         "or the decisive controller run.")
     ap.add_argument("--selfcheck", action="store_true",
                     help="soundness-calibration ONLY: run ONE seed of "
                          "v1 (gap_zero full) at the smallest load on "
@@ -1990,6 +2102,50 @@ def main(argv=None):
         except Exception:
             _dev = "cuda"
     print("BACKEND=%s  DEVICE=%s" % (_backend_name, _dev), flush=True)
+
+    if a.falsify_first:
+        # Pre-registered FALSIFY-FIRST joint de-risk (plan Task 5). The
+        # recorded process lesson: the prior phase-factored de-risk
+        # checked only the trivial-soundness (v1) mode and reported a
+        # false-green. Here we probe the FULL science mode's episodic
+        # (ep) AND working-memory (wm) readouts JOINTLY at the smallest
+        # rung N=2, single seed, on the _FULL slice (NOT --tiny-synth),
+        # on whatever backend sim.backend resolved (the GPU/CuPy path
+        # when a device is present). gap_zero=False so this is the
+        # genuine novel-recombination science task, NOT the drilled
+        # bijection. NOT a verdict; NOT propagated.
+        seed0 = int(a.seeds[0])
+        Nf = _IL_LADDER[0]  # 2
+        wm, ep, nu = _run_mode("full", seed0, Nf, tiny=False,
+                               gap_zero=False)
+        mode_label = ("distinct-pathways" if _DISTINCT_PATHWAYS
+                      else ("phase-factored" if _PHASE_FACTORED
+                            else "default"))
+        print("FALSIFY-FIRST (%s) seed=%d N=%d FULL-mode JOINT "
+              "(gap_zero=False, _FULL slice)" % (mode_label, seed0, Nf))
+        print("  full ep (episodic ORDER via order-preserving ONLINE "
+              "trisynaptic CA3->CA1 completion, taken PRE-"
+              "consolidation) = %.4f" % ep)
+        print("  full wm (concept/WORKING-MEMORY via order-invariant "
+              "offline-consolidated schema, read under freeze) = "
+              "%.4f" % wm)
+        print("  dlpfc slot non-uniformity (causal-liveness diag, "
+              "NOT a bar) = %.3f" % nu)
+        # Plain-language joint reading for the controller's
+        # pre-registered early trigger (Task 5 Step 2). Chance for the
+        # N=2 episodic order (2 roles -> 2! orderings, exact-position
+        # match) is 0.5; chance for the 1-of-N filler wm at N=2 is 0.5.
+        ep_hi = ep >= 0.75   # "approximately 1.0" tolerance band
+        wm_sel = wm > 0.5    # role-selective ABOVE chance
+        print("  JOINT READING: ep_high(>=0.75)=%s  "
+              "wm_role_selective(>0.5)=%s  -> %s"
+              % (ep_hi, wm_sel,
+                 "GREEN (proceed to runner adversarial review)"
+                 if (ep_hi and wm_sel) else
+                 "NEGATIVE (distinct-pathways does NOT jointly satisfy "
+                 "wm+ep at minimal load; honest negative -- next "
+                 "catalog factorization, NO partition edit)"))
+        return 0
 
     if a.selfcheck_diag:
         # Per-binding asymmetry DIAGNOSIS: ONE seed, v1 (gap_zero=True
@@ -2244,7 +2400,7 @@ def main(argv=None):
             "N": N,
             "slot_nonuniformity": agg["_diag_slot_nonuniformity"],
         })
-    verdict = integrated_loop_verdict(rungs)
+    verdict = integrated_loop_verdict_v2(rungs)
     verdict["banner"] = _BANNER
     verdict["rungs"] = rungs
     # Evidence the BG path is causally LIVE (recorded, never gated):
