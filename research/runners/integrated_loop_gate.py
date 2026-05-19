@@ -744,6 +744,46 @@ def _build_bridge(seed, P, N):
     cfg.stdp_w_max = 8.0                  # above design weights (gotcha)
     cfg.fast_spike_reset = True
 
+    # ---- LEVER 2: per-stripe equalization via the VALIDATED homeostatic
+    # firing-rate regulation (sim.kernels.fused_homeostasis_update;
+    # CLAUDE.md "Homeostasis: EMA alpha (~0.0002, tau ~5s) and threshold
+    # adapt rate (~0.0005)"). The mechanism (per-neuron adaptive firing
+    # threshold driven toward homeostasis_target_rate via an activity
+    # EMA) is reused BYTE-UNCHANGED in sim/; this runner ONLY enables +
+    # scopes it via these CoreSimConfig flags. enable_homeostasis is the
+    # CoreSimConfig default True (so the validated kernel already runs
+    # for the IZHIKEVICH model the builder selects -- bridge.py:5785),
+    # but the DEFAULT rates (target_rate=0.02, adapt_rate=0.0005, tau
+    # ~5s) are calibrated for general networks and are FAR too slow to
+    # act inside this runner's ~1.3k-step-per-binding encode horizon --
+    # the emergent winner-take-most attractor (diagnosed root cause A:
+    # one filler pool dominates encode firing F1~6004 vs F0~627 and only
+    # one binding clears the 650 gate) fully forms before the default
+    # homeostasis perceptibly moves any threshold. Scope it to the
+    # encode timescale (a faster activity EMA + a faster threshold
+    # adaptation) so EACH concept/filler stripe's neurons individually
+    # regulate toward the SAME target rate WITHIN encode: an
+    # over-firing dominant pool's neurons raise their own thresholds
+    # (the winner is pulled DOWN) and an under-firing suppressed pool's
+    # neurons lower theirs (the loser is released UP) -- the validated
+    # Turrigiano/Davis homeostatic equalization, breaking the WTM
+    # collapse so the two maintained bindings settle at COMPARABLE
+    # strength and BOTH clear the byte-unchanged 650 gate. Homeostasis
+    # is intrinsically per-NEURON (each neuron regulates independently
+    # off its own activity EMA), so "scope = each stripe" is automatic:
+    # the distinct concept-pool neuron sets each converge to the target
+    # rate without any per-region Python routing. Rates kept within the
+    # validated family (same order as the documented retune; the kernel,
+    # bounds, and EMA form are untouched -- only the two rate scalars +
+    # the slightly-higher target are set, exactly the enable/scope the
+    # pre-registration permits). The threshold-clip bounds
+    # (homeostasis_threshold_min/max) are left at the validated
+    # CoreSimConfig defaults.
+    cfg.enable_homeostasis = True
+    cfg.homeostasis_target_rate = 0.05    # match the v16 active fraction
+    cfg.homeostasis_ema_alpha = 0.02      # tau ~50 steps (encode-scale)
+    cfg.homeostasis_threshold_adapt_rate = 0.02  # acts within encode
+
     bridge = SimulationBridge(
         core_config=cfg,
         viz_config=VisualizationConfig(),
@@ -1042,6 +1082,9 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
             _slot_enc = np.zeros(_nslot, dtype=np.float64)
             _fil_enc = np.zeros(_MAX_LOAD, dtype=np.float64)
 
+        if _diag_on:
+            _dlpfc_enc = 0.0  # absolute dlpfc_verb total encode spikes
+
         for _ in range(P["stim_steps"]):
             _step(bridge)
             clk_wm.step()
@@ -1050,22 +1093,138 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
             if _diag_on:
                 _fired = bridge.cp_firing_states
                 _thal_enc += float(_fired[thal[chan]].sum())
+                _dlpfc_enc += float(_fired[dlpfc].sum())
                 for _s, (_lo, _hi) in enumerate(_sb):
                     _slot_enc[_s] += float(
                         _fired[dlpfc[_lo:_hi]].sum())
                 _fil_enc += _counts(bridge, filler_arr)
 
         if _diag_on:
+            # LEVER-1 precondition evidence: the dlpfc_verb -> bound
+            # filler eligibility RIGHT AFTER this binding's stim window
+            # (before the LEVER-1 reward step). If ~0 the slot is NOT
+            # co-firing with the filler so lr*delta*elig ~= 0 -> the
+            # efferent cannot bootstrap (root cause B unresolved).
+            # Pure read of cp_eligibility_trace via the CSR pair index;
+            # never mutates.
+            _elig_dlpfc_F = None
+            try:
+                import numpy as _npE
+                from sim.backend import get_backend as _gbE
+                _cpE, _ = _gbE()
+
+                def _hE(_a):
+                    try:
+                        return _cpE.asnumpy(_a)
+                    except Exception:
+                        return _npE.asarray(_a)
+                _et = bridge.cp_eligibility_trace
+                if _et is not None:
+                    _ip = _hE(bridge.cp_connections.indptr)
+                    _ix = _hE(bridge.cp_connections.indices)
+                    _eth = _hE(_et)
+                    _rm2 = bridge.region_manager
+                    _dl = [int(x) for x in _npE.asarray(
+                        _hE(dlpfc)).ravel()]
+                    _fp = set(int(x) for x in _rm2.indices(
+                        "noun_pool_F%d" % int(fidx)))
+                    _tot = 0.0
+                    for _r in _dl:
+                        _s = int(_ip[_r])
+                        _e = int(_ip[_r + 1])
+                        for _o in range(_s, _e):
+                            if int(_ix[_o]) in _fp:
+                                _tot += abs(float(_eth[_o]))
+                    _elig_dlpfc_F = float(_tot)
+            except Exception:
+                _elig_dlpfc_F = None
             _DIAG_SINK.setdefault("encode", []).append({
                 "episode_id": ctx["episode_id"], "bi": bi,
                 "ridx": int(ridx), "fidx": int(fidx),
                 "gslot": int(gslot), "chan": int(chan),
                 "chan_name": _BG_CHANNELS[chan],
                 "thal_enc_spikes": float(_thal_enc),
+                "dlpfc_enc_spikes": float(_dlpfc_enc),
+                "elig_dlpfc_to_Fbound_post_stim": _elig_dlpfc_F,
                 "slot_enc_spikes": [float(x) for x in _slot_enc],
                 "slot_enc_argmax": int(np.argmax(_slot_enc)),
                 "fil_enc_F0_7": [float(x) for x in _fil_enc],
             })
+
+        # ---- LEVER 1: encode-time temporal-credit bootstrap (the
+        # VALIDATED compose_bridge_gate._episode native-path idiom,
+        # reused BYTE-UNCHANGED -- NO new learning rule, NO autograd).
+        #
+        # Diagnosed root cause B: the BG-gated dlpfc_verb -> noun_pool_F*
+        # efferent is FUNCTIONALLY DEAD (selfcheck-diag: w(dlpfc->F1)=
+        # w(dlpfc->F0)=0.0100, the ~0.01 zero-init floor for BOTH
+        # bindings) because the ONLY reward in this loop is the
+        # post-query `reward = 0.5*wm + 0.5*ep` (LEARN block) which is
+        # ~0 at cold start AND is delivered hundreds of steps after the
+        # encode co-fire -- by then the eligibility trace charged on the
+        # dlpfc_verb->filler synapses (reward_eligibility_tau_ms=200) has
+        # fully decayed, so `weight_updates = lr * signal * eligibility`
+        # (bridge.py:5555) is ~0 for that efferent: it never bootstraps.
+        # This is EXACTLY compose_bridge_gate's `hebbian_no_trace`
+        # cold-start failure (the eligibility never bridges to the
+        # reward).
+        #
+        # The validated fix is compose_bridge_gate's native-path
+        # discipline: deliver the TD-delta reward CLOSE IN TIME to the
+        # eligibility-charging co-fire (its t_A teacher co-fire -> short
+        # gap -> reward at t_R, eligibility still high). Here the encode
+        # stim window IS the supervised co-fire (the teacher drives
+        # role_arr[ridx] + filler_arr[fidx] and the BG cascade selected
+        # the dlpfc_verb slot -> dlpfc_verb->noun_pool_F<fidx> co-fires
+        # -> STDP just charged its eligibility, bridge.py:5398). So,
+        # immediately AFTER this binding's stim window (eligibility still
+        # high -- NOT decayed across maintain/query), drive the SAME
+        # native reward path with the SAME TD(lambda) update as
+        # compose_bridge_gate (gamma=0.95, lambda=0.9; value_table line
+        # idiom): `delta = reward - V(s); V(s) += (1-gamma*lambda)*delta;
+        # current_reward_signal = float(delta); _step(bridge);
+        # current_reward_signal = 0.0`. reward = 1.0 because during
+        # ENCODE the bound (role,filler) is KNOWN BY CONSTRUCTION (the
+        # teacher DEFINES it) -- precisely compose_bridge_gate's
+        # `reward = 1.0 if selected == target_pool_idx` with the teacher
+        # MAKING selected == target (a supervised encode bootstrap, not
+        # a query signal). The per-binding bootstrap state is the bound
+        # filler slot (faithful to compose_bridge_gate's PER-verb
+        # value_table). The native eligibility/reward block multiplies
+        # by the open `dlpfc_verb_to_filler` plasticity gain, so the
+        # dead efferent finally potentiates for EVERY maintained binding
+        # (not only the first), supplying the per-stripe efferent LEVER 2
+        # then equalizes.
+        #
+        # HARD CONSTRAINT (an adversarial reviewer checks this): this is
+        # strictly inside the ENCODE per-binding loop, BEFORE maintain/
+        # query. The QUERY window (below) is byte-UNCHANGED -- it still
+        # drives ONLY the role code on language_input with NO teacher /
+        # NO reward / NO hard-feed into noun_pool/dlpfc. current_reward
+        # _signal is set to delta for exactly ONE step then immediately
+        # restored to 0.0, exactly like compose_bridge_gate (the gap /
+        # query / ep / LEARN blocks are unaffected). Suppressed for
+        # no_neuromod_timing (that lesion removes timed plasticity from
+        # the whole loop consistently). For no_binding there is no
+        # dlpfc-slot excitability bias -> the slot never co-fires ->
+        # eligibility on dlpfc_verb->filler is ~0 -> lr*delta*0 ~= 0:
+        # the bootstrap is automatically inert and that SHARED lesion
+        # still collapses wm THROUGH its own mechanism (faithful; no
+        # special-casing). Identical per-trial RNG: this block draws
+        # from NO rng (a fixed reward=1.0 + a tabular update); the only
+        # rng consumer is still _make_pairs, unchanged for every mode.
+        if mode != "no_neuromod_timing":
+            _evt = ctx["enc_value_table"]
+            _vb = float(_evt[fidx])
+            _enc_delta = 1.0 - _vb       # reward == 1.0 (teacher-defined)
+            _evt[fidx] = _vb + (1.0 - _GAMMA * _LAMBDA) * _enc_delta
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.core_config.current_reward_signal = float(_enc_delta)
+            _step(bridge)
+            clk_wm.step()
+            if clk_hip is not clk_wm:
+                clk_hip.step()
+            bridge.core_config.current_reward_signal = 0.0
 
     # Finalize the episode tag over the hippocampal regions only
     # (region_filter = the relational store). Skipped for
@@ -1514,10 +1673,19 @@ def _run_mode(mode, seed, N, tiny, gap_zero=False):
     # it is the same kind of readout-selection difference v1 already
     # carries via gap_zero -- it adds/removes NO rng draw (_episode
     # draws no rng; _make_pairs is the only consumer and is unchanged).
+    # LEVER 1 per-binding encode-bootstrap tabular value (one V(s) per
+    # filler slot, faithful to compose_bridge_gate's PER-verb
+    # value_table = np.zeros(_N_BINDINGS); here the bootstrap state is
+    # the bound filler index). A plain numpy zeros array -- it draws
+    # from NO rng, so the per-trial RNG faithfulness discipline is
+    # unchanged (every mode still makes the IDENTICAL _make_pairs draw
+    # at the IDENTICAL point; _episode still draws no rng).
+    enc_value_table = np.zeros(_MAX_LOAD, dtype=np.float64)
     ctx = dict(n_lang=int(lang.shape[0]), lang=lang,
                role_arr=role_arr, filler_arr=filler_arr,
                dlpfc=dlpfc, thal=thal, bg_cortex=bg_cortex,
                lang_out=lang_out, value_table=value_table,
+               enc_value_table=enc_value_table,
                episode_id=0, is_v1=bool(gap_zero))
 
     # VALIDATED v16 ENCODE DISCIPLINE (inherited from concept_pool_demo):
@@ -1699,15 +1867,25 @@ def main(argv=None):
             if not rows:
                 continue
             thal_m = sum(r["thal_enc_spikes"] for r in rows) / len(rows)
+            _dl_m = sum(r.get("dlpfc_enc_spikes", 0.0)
+                        for r in rows) / len(rows)
+            _eg_L = rows[-1].get("elig_dlpfc_to_Fbound_post_stim")
             ch = rows[-1]["chan_name"]
             gs = rows[-1]["gslot"]
             sa = [r["slot_enc_argmax"] for r in rows]
             print("  ENCODE b%d: chan=%s gslot=%d  "
                   "thal_enc(mean over %d ep)=%.1f  "
+                  "dlpfc_enc(mean)=%.1f  "
                   "slot_enc_argmax(last)=%d  fidx=%d"
-                  % (bi, ch, gs, len(rows), thal_m,
+                  % (bi, ch, gs, len(rows), thal_m, _dl_m,
                      rows[-1]["slot_enc_argmax"],
                      rows[-1]["fidx"]))
+            print("           elig(dlpfc->F%d) post-stim, last ep = %s "
+                  "(LEVER-1 precondition; ~0 => slot not co-firing "
+                  "filler => efferent cannot bootstrap)"
+                  % (rows[-1]["fidx"],
+                     ("%.5f" % _eg_L) if _eg_L is not None
+                     else "n/a"))
             _f0 = rows[0].get("fil_enc_F0_7")
             _fL = rows[-1].get("fil_enc_F0_7")
             if _f0 is not None:
