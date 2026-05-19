@@ -62,22 +62,38 @@ is NOT the scale-confident validated deliverable (at most
 "consistent-with", always reported with this limitation, never spun); a
 VOID/FAIL is a strong negative; NO further partition edit ever.**
 
-**Exact next concrete action: dispatch Task 1 + Task 2 (subagent).**
-Task 1 = build the NEW frozen `research/runners/integrated_loop_core_v2.py`
-verbatim per the plan (single change `no_cls_replay` EP->WM:
-`_ILV2_HELPER_WM=("no_bg_gate","no_cls_replay")`,
-`_ILV2_HELPER_EP=("no_sequencing",)`; bars verbatim; tests 17/18 pin
-verbatim-bar-equality + exactly-one-change) + its >=12-case adversarial
-matrix `tests/test_integrated_loop_core_v2.py`. Task 2 = DEDICATED
-goalpost-move adversarial review (FRESH agent, verbatim charter,
-coincidence-of-convenience as the PRIMARY thing to rule out, may NOT
-cite "what makes the candidate pass" as support) -- if it judges
-GOALPOST-MOVE it BLOCKS all downstream and the original VOID stands as
-the deeper terminal finding. Subagent STOPS at the Task-2 gate decision
-and returns to the controller (the candidate build is gated on the
-controller reviewing Task 2 clean). Original frozen
-`integrated_loop_core.py` NEVER edited (its 16/16 + VOID preserved). No
-code beyond the two new v2 files; no autograd; ASCII.
+**Task 1 DONE + controller-verified (36a7975): v2 frozen module = single
+biologically-cited change, bars verbatim, original byte-unchanged + VOID
+preserved, 41 tests green. Task 2 DONE: independent fresh
+goalpost-move adversarial review = ADVERSARIAL VERDICT: CLEAR
+(036bbc7, pushed both remotes) -- all 6 necessary conditions SOUND;
+the correction is independently catalog-reachable AND thrice-forced by
+prior convergent negatives predating v2 (legitimacy over convenience).
+CLEAR does NOT lift the honesty ceiling (still binding).**
+
+**Exact next concrete action: dispatch the distinct-readout-pathways
+CANDIDATE build (subagent), corrected-approach plan 7b1d47c Tasks 3-7,
+UNDER THE HONESTY CEILING.** Grounding pin -> build the distinct-pathways
+runner (`research/runners/integrated_loop_gate.py` extended): episodic-
+order readout via the byte-unchanged hippocampal trisynaptic
+pattern-completion path (D.12/D.13); concept/WM readout via the
+Phase-1.3-consolidated order-invariant neocortical schema; the 7
+lesions defined so each collapses its CORRECTED-v2-partition-required
+readout (scored by `integrated_loop_core_v2.integrated_loop_verdict_v2`,
+NOT the original); v1/full; identical per-trial RNG; reuse
+byte-unchanged (trisynaptic/engram + Phase-1.3 + 16-pool + homeostasis
++ non-zero-init + no-confab moat); net-new = controller + fan-out
+wiring ONLY; no autograd; GPU/CuPy real path (numpy only --tiny-synth);
+kill-safe -> pre-registered FALSIFY-FIRST probing the FULL science
+mode's wm AND ep JOINTLY at minimal load (the recorded process lesson,
+NOT v1 alone) -> dedicated adversarial review of the runner (lesions
+faithful, no hard-feed, reuse byte-unchanged, no autograd, selectivity
+learned). Subagent STOPS after the runner-adversarial-review and
+returns to the controller for Task-4 no-harm + Task-5 CONTROLLER-ONLY
+decisive multi-seed run. Original frozen `integrated_loop_core.py`
+NEVER edited; v2 module NEVER edited (frozen). HONESTY CEILING in the
+brief: a PASS vs v2 is "consistent-with" ONLY, never
+scale-confident-validated; a VOID/FAIL is a strong negative.
 
 **NEW PRE-COMMITTED bound (in force, stated in advance):** a faithful
 build that reaches VOID/FAIL against the NEW catalog-grounded module is
