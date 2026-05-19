@@ -9,6 +9,26 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## Project goal (top-level orienting context, owner-stated 2026-05-19)
+
+The actual goal of this project is **artificial life with a proper
+analogue for a real brain**, where insights from the sim translate
+back to insights about real neural networks in biology. Capabilities
+(conversation, composition, working memory, etc.) are INSTRUMENTAL
+toward that goal, not the deliverable. The project's strength is
+biological faithfulness; honest negatives under strict biological
+mechanism are *biology-translatable scientific findings*, not
+failures. Engineering-only baselines (e.g. surrogate-grad-BPTT at
+SpikeGPT-class scale) are permitted for ceiling-clarification
+testing but remain clearly-marked non-load-bearing; insights from
+them tell us about engineering, not biology. Standing brain-analogue
+capability targets stand (continual learning without catastrophic
+forgetting; trustworthy grounded memory; CLS consolidation; pattern
+separation/completion; engram-based compositional binding;
+multi-modal integration; goal-directed action; NMDA-bistable working
+memory; theta-gamma SPEAR; generative replay). Durably memorialised
+at `memory/project_actual_goal_artificial_life_brain_analogue.md`.
+
 ## Current objective
 
 The integrated-loop necessity-instrument line is SCIENTIFICALLY
