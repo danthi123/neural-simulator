@@ -23,6 +23,30 @@ each read in its own regime, never demanded of one shared readout) --
 NOT any further single-regime necessity-loop variant. Autonomous, no
 hand-back, no declare-unfit; honesty ceiling binding throughout.
 
+**DEEPENED 2026-05-19 (owner scientific input, internalized, NOT
+re-litigated; design `docs/plans/2026-05-19-regime-correct-
+compositional-retrieval-design.md` section 2b, refs [9]-[17]).** The
+recent/remote distinction is exactly what failed the necessity line
+because biology NEVER does a single simultaneous readout. The actual
+biological RESOLUTION of the conflict -- and the load-bearing core of
+the CONVERSATIONAL path (NOT retrieval-augmented ranking): (1) Separate
+Phases of Encoding And Retrieval -- one shared ~125ms theta rhythm
+time-multiplexes a write phase (entorhinal-afferent, high ACh,
+plasticity on) and a read/pattern-complete phase (CA3-recurrent, low
+ACh), the same framework gating the slower ACh encoding<->consolidation
+transition (Hasselmo SPEAR); (2) order-bearing vs order-invariant are
+operating MODES of one theta-gamma code (GABAergic regime), not two
+stores; (3) conversation = a generative hippocampal-prefrontal replay
+loop, PFC holding the ordered compositional frame, replay proposing-
+and-pattern-completing against the consolidated schema. This is the
+shared theta-gamma rhythm the project catalog (Lisman-Idiart N.16)
+flagged as never built and the necessity line kept re-deriving as
+load-bearing. Stage 1 (regime-correct retrieval + abstention; the
+in-flight decisive run) remains a VALID, necessary substrate; the
+conversational stages must be built around SPEAR temporal multiplexing
++ theta-gamma mode-unification + generative replay, each its own
+pre-registered fixed-bar test. Honest ceiling unchanged.
+
 ## Exact next concrete action
 
 **THE NECESSITY-INSTRUMENT LINE IS TERMINAL AND FULLY PROPAGATED
