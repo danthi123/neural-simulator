@@ -756,6 +756,60 @@ Bring Task 5 back to the controller. Tasks 0-3 are subagent-driven; Task 4 is co
 - Honest propagation of every outcome to both remotes; iterate following the reference catalog on any non-success; no hand-back.
 - The honest ceiling is stated and never overstated.
 
+## Pre-registered biology-fidelity iteration 1 — per-binding drive symmetry (added 2026-05-19; transparent; no frozen bar changed)
+
+The first full-model build pass produced an honest interim non-success at
+the instrument-soundness stage (findings:
+`research/findings/2026-05-18-integrated-loop-full-model-instrument-soundness-blocked-per-slot-drive-asymmetry.md`).
+After the adversarial review's strengthen-only fixes the loop is
+GPU-backed, role-selective (the validated 16-pool concept recipe
+transferred), and the trustworthy answer-only-when-grounded gate is
+operable. It does NOT yet pass the pre-registered soundness check: at the
+minimal two-binding load the closed-loop wiring under-potentiates the
+second binding, so the first binding clears the grounding gate and the
+second is correctly abstained (soundness one-half, below the bar). The
+gate is working as designed; the defect is upstream in the net-new
+wiring.
+
+Per the design's iterate-following-biology discipline (Q5 design Section
+7), the named, cited next step is its own pre-registered iteration:
+
+- **Named mechanism (cited):** the basal-ganglia gate updates each
+  prefrontal working-memory slot *independently and with comparable
+  strength*, and multiple slots are maintained simultaneously at
+  comparable strength (the prefrontal-basal-ganglia working-memory
+  model: independently-gated stripes, each updated equivalently — the
+  same reference-catalog grounding the design already cites). The
+  current net-new wiring violates this: later bindings receive weaker
+  effective drive than the first.
+- **Iteration task:** diagnose which net-new wiring element causes the
+  asymmetry (candidates to check, not assume: the validated topographic
+  -prior pass may boost only the first drilled binding's input edge; the
+  basal-ganglia channel / thalamocortical potentiation may favor the
+  first-driven channel; per-slot encode order without symmetric
+  interleaving may consolidate the first slot more), then fix the
+  net-new wiring so every maintained binding is driven symmetrically and
+  strongly enough that a genuinely-bound pool clears the byte-unchanged
+  no-confabulation gate — for ALL N bindings, not only the first.
+- **Acceptance is the SAME pre-registered, frozen gate (NOT changed):**
+  on the GPU, the trivial drilled bijection (`v1`) reaches `wm` >= 0.90
+  and `ep` >= 0.90 with every drilled binding clearing the
+  byte-unchanged grounding gate; the novel-recombination science probe
+  in `full` + every lesion is unchanged and exactly as hard. No frozen
+  threshold in `integrated_loop_core.py` is touched; the
+  no-confabulation gate and every protected/validated module stay
+  byte-unchanged; no automatic differentiation; ASCII; GPU for the
+  real/decisive path.
+- **Discipline:** strengthen-only; controller trust-but-verify each
+  diff (protected set byte-empty); then re-enter the dedicated
+  adversarial review (confirm the symmetry fix did not introduce a
+  hard-feed or break lesion faithfulness, and that the BG-gated
+  causal path stays intact), then the no-harm phase, then the
+  controller-only decisive multi-seed GPU run. A faithful repeat
+  negative is propagated honestly and triggers the next cited
+  biology-fidelity iteration — autonomously, no hand-back, no
+  declare-unfit, no config-cranking a frozen bar.
+
 ## Execution
 
 Per the owner's standing instruction, execution is same-session subagent-driven. Transition directly to superpowers:subagent-driven-development — do NOT present an execution-choice prompt.
