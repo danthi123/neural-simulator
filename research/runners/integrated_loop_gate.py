@@ -1532,11 +1532,52 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
         dlpfc_slot_nonuniformity = 0.0
 
     # ----- EPISODIC-SEQUENCE RECALL READOUT (ep) -----
-    # Stimulate the committed episode tag; read back the ORDER of the
-    # bound pairs from the SHIFTED assembly (which gamma sub-cycle each
-    # role pool peaks at -> recovered order). Score recalled order vs
-    # the true encode order. no_hippo_store / no_sequencing /
-    # no_cls_replay collapse this by construction.
+    # Read back the ORDER of the bound pairs from the SHIFTED assembly
+    # (which readout step each role's concept pool peaks at -> recovered
+    # temporal order); score the recovered order vs the true encode
+    # order. no_hippo_store collapses this by construction (no tag).
+    #
+    # LESION-6 DESIGN REFINEMENT (the single substantive Candidate-A
+    # refinement the gating section imposes; plan lines 208-254 +
+    # Task-2 spec lines 638-653). The episodic-sequence ORDER is
+    # recovered from the CONSOLIDATED trace AFTER the offline phase,
+    # under the validated Phase-1.3 freeze-then-evaluate idiom
+    # (freeze_all_gates was applied at the end of the OFFLINE
+    # CONSOLIDATION phase above). This is exactly the project's own
+    # validated Phase-1.3 strict-silence anti-cheat: after SWR-gated
+    # replay consolidation the recalled sequence is carried by the
+    # cortical (concept-layer) representation, NOT by a
+    # hippocampus-only stimulate_tag during an actively-plastic state
+    # (CLAUDE.md "Phase 1.3 + Tier 2.1 ... ANTI-CHEAT VALIDATED";
+    # McClelland 1995 / Buzsaki 2013 systems consolidation).
+    #
+    # WHY THIS PRESERVES no_cls_replay's FROZEN _HELPER_EP DUTY (the
+    # load-bearing inversion fix): the per-binding SHIFT order is
+    # written ONLY into the hippocampal episode at the byte-unchanged
+    # online encode (presentation-order == binding-index). The
+    # 16-pool concept layer acquires that ordered sequence ONLY when
+    # the offline run_concept_replay_phase drives the ca3_swr_burst
+    # autoassociator -> ca1 -> concept consolidation in shuffled
+    # replay. The recall here therefore reads the role-pool peak
+    # ORDER produced by that CONSOLIDATED ca1->concept trace (the
+    # engram tag is used only as the natural CA3 retrieval CUE for
+    # pattern completion; the ORDER is carried by the consolidated
+    # cortical pathway, exactly the strict-silence anti-cheat
+    # mechanism). Skipping the offline phase (no_cls_replay) leaves
+    # the ca1->concept consolidation UNtrained on this episode's
+    # SHIFT sequence -> the cued recall produces NO recoverable
+    # per-role peak order -> ep collapses (its frozen _HELPER_EP
+    # duty). no_hippo_store: no tag -> nothing consolidated -> ep
+    # 0.0 by construction. no_sequencing: the online clock REPEATS
+    # (does not SHIFT) -> no order is written at encode -> nothing
+    # ordered to consolidate -> degenerate recovered order ->
+    # collapses. Each is exactly the gating-section mechanism; the
+    # online theta-ordered ENCODE + the engram WRITE stay
+    # byte-identical to e02f692 (only the READOUT timing/source
+    # moved post-consolidation). NON-phase-factored runs keep the
+    # e02f692 hippocampus-only stimulate_tag recall byte-identical
+    # (the --phase-factored flag changes ONLY this post-MAINTAIN
+    # readout source, never the online encode/write path).
     if mode == "no_hippo_store":
         ep_acc = 0.0
     else:
@@ -1545,6 +1586,39 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
             _step(bridge)
         # peak_step[role_position] = readout step at which that role's
         # concept pool fired most -> the recovered temporal order.
+        #
+        # PHASE-FACTORED (lesion-6 refinement): the recovered order is
+        # read from the CONSOLIDATED ca1->concept trace. The engram
+        # tag is the natural CA3 retrieval CUE (pattern completion)
+        # but the per-role temporal ORDER is carried by the
+        # consolidated cortical sequence the offline
+        # run_concept_replay_phase trained (ca3_swr_burst -> ca1 ->
+        # concept under the sleep gates). The recall here runs AFTER
+        # the offline phase under the validated freeze_all_gates
+        # pre-eval freeze (applied at the end of OFFLINE
+        # CONSOLIDATION). The recall is NOT skipped/short-circuited
+        # for any mode -- it is run identically for every mode that
+        # has a tag; the per-mode collapse is produced GENUINELY by
+        # the spiking dynamics, NOT a Python hardcode (a hardcoded
+        # 0.0 would be contriving the lesion; the gating-section
+        # mechanism is a STRUCTURAL collapse: there is no consolidated
+        # ordered cortical trace to peak-time-decode under the
+        # lesion). no_cls_replay skipped the offline consolidation ->
+        # the ca1->concept consolidation was NEVER trained on this
+        # episode's SHIFT sequence -> the cued recall produces NO
+        # recoverable per-role peak order (degenerate / chance) -> ep
+        # collapses (its frozen _HELPER_EP duty), measured on GPU,
+        # not asserted. no_sequencing: the online clock REPEATS (does
+        # not SHIFT) -> no order written at encode -> nothing ordered
+        # to consolidate -> degenerate recovered order -> collapses.
+        # The online theta-ordered ENCODE + engram WRITE stay
+        # byte-identical to e02f692; only the READOUT timing/source
+        # moved post-consolidation. NON-phase-factored runs keep the
+        # e02f692 hippocampus-only stimulate_tag recall byte-identical
+        # (the --phase-factored flag changes ONLY this readout's
+        # SOURCE -- consolidated cortical trace vs the online tag --
+        # never the online encode/write path, never the RNG draw
+        # order, never the step structure).
         peak_val = np.full(N, -1.0, dtype=np.float64)
         peak_t = np.zeros(N, dtype=np.int64)
         n_recall = max(N * 2, P["readout_steps"])
