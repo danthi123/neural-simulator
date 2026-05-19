@@ -112,41 +112,65 @@ corrected `36a7975` + capability module `c474d6e` + no-confab moat
 all prior validated assets intact. Findings:
 `research/findings/2026-05-19-regime-correct-compositional-retrieval-Stage1-decisive-honest-negative.md`.
 
-**EXACT NEXT ACTION: the pre-registered next stage the negative
-triangulates onto -- the shared theta-gamma SPEAR + generative-replay
-CONVERSATIONAL architecture (design section 2b; autonomous, no
-hand-back, no config-crank, NO bar change, NO partition edit; the
-necessity line stays closed).** Run a proper design pass for it
-(brainstorming-style: it is a documented design call, NOT
-one-question-at-a-time -- biology is already investigated and cited
-[9]-[17]) then writing-plans -> subagent-driven-development ->
-pre-registered fixed-bar three-state gate -> honest propagation ->
-iterate-following-biology. Load-bearing core: ONE shared theta-gamma
-rhythm time-multiplexing an encode phase (entorhinal-afferent, high
-acetylcholine via the validated neuromodulator subsystem, plasticity
-on, retrieval suppressed) and a retrieve/pattern-complete phase
-(CA3-recurrent, low acetylcholine, plasticity off) -- Separate Phases
-of Encoding And Retrieval; order-bearing vs order-invariant as
-operating modes of one theta-gamma code; a prefrontal working-memory
-frame holding compositional sequence structure; a generative
-hippocampal-prefrontal replay loop producing novel schema-constrained
-ordered sequences. REUSE byte-unchanged: the validated theta-gamma
-episodic store, trisynaptic pattern-completion pathway,
-replay-consolidation subsystem, neuromodulator subsystem (acetylcholine
-gate), the no-confabulation moat at output; net-new = only the shared
-rhythm/phase controller + the wiring. Its OWN new frozen fixed-bar
-three-state verdict module (does NOT import/modify any existing
-verdict module or the moat); dedicated adversarial review BEFORE
-no-harm; controller-only decisive run + mandatory smell-test
-(scrutinise a PASS harder than a FAIL); honest propagation of EVERY
-outcome both remotes. Honest ceiling unchanged: a clean success = a
-biology-grounded shared-rhythm composition shows grounded
-compositional/conversational capability that holds/improves with load
-and abstains rather than confabulates -- explicitly NOT fluent
-open-ended language, NOT an LLM, unless a later pre-registered stage
-genuinely shows it; all prior validated results + honest boundaries
-unaffected. NO partition edit ever; autonomous; the next-action tool
-call is always in the same turn; never stop on a promise.
+**SPEAR Tasks 0-2 LANDED; Task-3 ADVERSARIAL REVIEW = BLOCK on a
+genuine mechanistic-faithfulness defect (caught BEFORE the decisive
+GPU run -- the discipline working again).** SPEAR design `4cd7e32` +
+plan `d1eeadf`; Task 0 pin `56d6de9`; Task 1 frozen capability-verdict
+module `0bc5230` (17-case adversarial matrix; bars immovable; CLEAR);
+Task 2 net-new shared-rhythm controller + runner `1cf5931`. The
+adversarial review CONFIRMED at the SCORING-CONTRACT level: verdict
+module sound, structural runner wiring sound, byte-reuse genuine,
+no-autograd hygiene clean, exploit-class protection holds (a
+degenerate run cannot false-PASS). BUT the BIOLOGICAL-MECHANISM
+faithfulness fails: the controller's only mechanism for
+distinguishing encode vs retrieve phases -- toggling
+`acetylcholine_tan` via `plasticity_window_gate` (scope=all) -- is
+consumed in EXACTLY ONE place (sim/bridge.py:5577-5579, inside the
+C2 reward-modulated weight-update block) and that block is gated by
+`update_path_active = (per_synapse_da is not None) or
+(abs(effective_signal) > 1e-6)`; the runner NEVER drives
+`cfg.current_reward_signal` and registers no DA modulator, so the C2
+block never executes and the ACh gate is FUNCTIONALLY INERT. STDP
+(the actual learning) is in block C1 and is NOT routed through this
+gate. Empirically (50-step constant-input probe + tiny-synth cell):
+full vs rhythm_removed produce byte-identical bridge state and
+byte-identical cell output. Consequence: the runner cannot produce a
+TRUE PASS of the hypothesis it claims to test (the SPEAR mechanism
+is inert), AND the verdict will reliably FAIL/VOID at decisive scale
+but for the WRONG reason (inert gate, not absent biological
+capability) -- which would propagate as a misleading honest-negative.
+Caught BEFORE any decisive GPU run; no protected file edited; no
+fixed bar moved; no-confab moat byte-unchanged.
+
+**EXACT NEXT ACTION: pre-committed faithfulness-fix iteration of the
+NET-NEW SPEAR runner ONLY (NO bar change, NO declare-unfit, NO hand-
+back, NO config-crank; protected set + frozen bars + moat
+byte-UNCHANGED).** Three precise corrections in
+`research/runners/spear_conversational_runner.py` (+ its tests + invert
+the adversarial pin to assert the defect is CLOSED): (A) re-target
+the ACh modulator from `plasticity_window_gate` (consumed only by the
+inert C2 block) to `plasticity_rate` (scope=all) AND a pathway-scoped
+`plasticity_gate` on the hippocampal+lang plastic pathways, both of
+which run in the C1/STDP path that is actually active during encode
+and retrieve -- so the encode vs retrieve ACh setpoint genuinely
+gates STDP plasticity on vs off, as Hasselmo SPEAR requires.
+(B) ADDITIONALLY route ACh through `synaptic_gain` (scope=all, OR
+pathway-scoped on the entorhinal-afferent and CA3-recurrent pathways)
+so the ACh phase also modulates the DYNAMICS across encode vs retrieve
+-- biologically faithful to Hasselmo (high ACh suppresses recurrent
+feedback excitation during encode, low ACh permits strong recurrent
+CA3 pattern-completion during retrieve). (C) ADD a positive
+adversarial pin asserting the gate has measurable effect on the
+bridge (the SAME 50-step constant-input probe the reviewer used must
+now produce a NON-byte-identical bridge state between ACh=encode and
+ACh=retrieve setpoints; the structural-effect pin asserts this
+explicitly). Re-run the dedicated adversarial review (fix -> re-review
+loop) until CLEAR; then Task 4 no-harm; then Task 5 CONTROLLER-ONLY
+decisive run + smell-test + honest propagation both remotes; then
+autonomous next staged step per outcome. Honest ceiling unchanged.
+NO partition edit ever (necessity line closed); autonomous; the
+next-action tool call is always in the same turn; never stop on a
+promise.
 
 **Corrected-approach PLAN done (7b1d47c, pushed both remotes). CONTROLLER
 PRE-COMMITTED HONESTY CEILING propagated BEFORE any build
