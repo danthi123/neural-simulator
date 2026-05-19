@@ -58,10 +58,24 @@ else:
     os.environ.setdefault("SIM_BACKEND", "auto")
     os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
+# DE-RISK (falsify-first) phase-factored mode. Read from argv BEFORE
+# argparse exactly like the backend idiom so the build/episode path can
+# branch with no extra rng draw and no signature churn. When OFF the
+# e02f692 path is byte-identical (this flag only changes what happens
+# AFTER the MAINTAIN phase: an offline sleep-gated CLS consolidation is
+# inserted, then BOTH readouts are taken post-consolidation under the
+# validated Phase-1.3 freeze-then-evaluate idiom). NET-NEW = ONLY the
+# per-trial phase sequencing of the already-validated calls + the
+# composition wiring; no new learning rule, no autograd, no new module.
+_PHASE_FACTORED = ("--phase-factored" in sys.argv)
+
 import numpy as np
 
 from research.runners.text_minimal_isolation import (
-    build_biological_brain_regions)
+    build_biological_brain_regions, set_awake_gates, set_sleep_gates,
+    freeze_all_gates)
+from research.runners.consolidation_trainer import (
+    run_concept_replay_phase)
 from research.runners.g11_bg_runner import build_bg_brain_regions
 from sim.kernels import fused_eligibility_trace_decay  # noqa: F401
 from sim.train_checkpoint import (save_checkpoint, load_checkpoint,
@@ -1259,6 +1273,60 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
         if clk_hip is not clk_wm:
             clk_hip.step()
 
+    # ----- OFFLINE CONSOLIDATION (phase-factored DE-RISK; NET-NEW
+    # WIRING, validated subsystem reused byte-unchanged) -----
+    # The single net-new piece: a per-trial phase controller that
+    # sequences the ALREADY-VALIDATED Phase-1.3 calls. The online
+    # theta-ordered ENCODE + the engram WRITE above are byte-identical
+    # to e02f692 (this branch only changes what happens AFTER MAINTAIN).
+    # Here, BEFORE either readout, the committed online episode tag is
+    # driven through the validated selective SWR replay
+    # (run_concept_replay_phase, randomize_order=True) under the
+    # validated set_sleep_gates so the ca3_swr_burst autoassociator +
+    # ca1->concept consolidation transfers the bound (role, filler)
+    # structure into the 16-pool neocortical concept layer. The offline
+    # replay is ORDER-SHUFFLED exactly as the validated concept
+    # mechanism structurally requires. Both readouts are then taken
+    # post-consolidation under the validated Phase-1.3
+    # freeze_all_gates() pre-eval freeze (the strict-silence anti-cheat
+    # idiom: after consolidation the recalled content is carried by the
+    # cortical representation). For the no_cls_replay HELPER lesion and
+    # the no_hippo_store SHARED lesion this entire phase is skipped --
+    # identical in RNG effect to how e02f692 already skips its
+    # end-of-trial replay for exactly these modes (a deterministic skip,
+    # not an extra/missing draw). RNG faithfulness: with a SINGLE
+    # episode tag, run_concept_replay_phase's order = [tag]*n then
+    # rng.shuffle(order) is a content no-op (a list of identical
+    # elements); a dedicated deterministic local rng (seeded from the
+    # episode id) is used so passing it perturbs NO cross-mode draw
+    # order and _episode itself still draws nothing from the per-trial
+    # `rng` (_make_pairs in _run_mode remains the sole consumer,
+    # identical for every mode). NO new learning rule; NO autograd.
+    if (_PHASE_FACTORED and mode not in ("no_cls_replay",
+                                         "no_hippo_store")):
+        set_sleep_gates(bridge)
+        try:
+            run_concept_replay_phase(
+                bridge, tag_names=[tag],
+                n_replays_per_tag=int(P["replay_steps"]),
+                burst_duration_ms=int(P["stim_steps"]),
+                inter_burst_ms=int(P["gap_steps"]),
+                drive_pA=float(P["tag_stim_pA"]),
+                randomize_order=True,
+                rng=np.random.default_rng(
+                    1000 + int(ctx["episode_id"]))),
+        except Exception:
+            pass
+        # The validated Phase-1.3 pre-eval freeze: BOTH the consolidated
+        # WM readout and the consolidated episodic-ORDER readout (below)
+        # are taken under this freeze (weights cannot drift during eval;
+        # the recalled content is now the consolidated cortical
+        # representation, not a hippocampus-only stimulate_tag during an
+        # actively-plastic state). The next trial's awake encode gates
+        # are restored at trial end (the existing end-of-trial gate
+        # restoration), so the readout window stays frozen.
+        freeze_all_gates(bridge)
+
     # ----- WORKING-MEMORY QUERY READOUT (wm) -----
     # Present each queried role; population-vote the filler concept
     # pools for the bound filler; emit only if gate(...) passes else
@@ -1528,6 +1596,29 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
     # so ca1 -> concept consolidation transfers the bound structure
     # into the schema layer (the CLS replay path). Skipped for the
     # no_cls_replay HELPER lesion (and impossible for no_hippo_store).
+    #
+    # Phase-factored DE-RISK: the consolidation has ALREADY been done
+    # up-front (the OFFLINE CONSOLIDATION phase, before both readouts).
+    # This e02f692 end-of-trial replay is therefore SKIPPED in
+    # phase-factored mode; only the validated awake-gate restoration is
+    # performed so the next epoch's encode is exactly the e02f692 encode
+    # (the readout window above stayed frozen per the lesion-6 design).
+    if _PHASE_FACTORED:
+        if mode not in ("no_cls_replay", "no_hippo_store"):
+            for _g in ("language_input_to_noun_pool",
+                       "bg_thal_to_dlpfc",
+                       "language_input_to_dlpfc_verb",
+                       "dlpfc_verb_to_filler"):
+                try:
+                    bridge.set_plasticity_gate(_g, 1.0)
+                except Exception:
+                    pass
+        try:
+            bridge.delete_engram_tag(tag)
+        except Exception:
+            pass
+        bridge.cp_external_input_current[:] = 0.0
+        return wm_acc, ep_acc, dlpfc_slot_nonuniformity
     if mode not in ("no_cls_replay", "no_hippo_store"):
         try:
             bridge.set_plasticity_gate("ca1_to_motor", 1.0)
@@ -1777,6 +1868,18 @@ def main(argv=None):
     ap.add_argument("--seeds", type=int, nargs="+",
                     default=[42, 43, 44, 45, 46])
     ap.add_argument("--tiny-synth", action="store_true")
+    ap.add_argument("--phase-factored", action="store_true",
+                    help="DE-RISK (falsify-first): insert a separate "
+                         "offline sleep-gated CLS consolidation "
+                         "(run_concept_replay_phase, shuffled) AFTER "
+                         "the byte-unchanged online theta-ordered "
+                         "encode and BEFORE both readouts; take WM from "
+                         "the consolidated concept layer and the "
+                         "episodic ORDER from the consolidated trace "
+                         "under the validated Phase-1.3 freeze idiom. "
+                         "Read at module level from argv BEFORE argparse "
+                         "(like --tiny-synth) so the build/episode path "
+                         "branches with no extra rng draw.")
     ap.add_argument("--selfcheck", action="store_true",
                     help="soundness-calibration ONLY: run ONE seed of "
                          "v1 (gap_zero full) at the smallest load on "
