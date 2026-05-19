@@ -101,6 +101,51 @@ _PHASE_FACTORED = ("--phase-factored" in sys.argv)
 # Scored by the NEW frozen integrated_loop_core_v2 (NOT the original).
 _DISTINCT_PATHWAYS = ("--distinct-pathways" in sys.argv)
 
+# REMOTE/consolidated-memory-regime mode (Design B; design commit
+# aa90dac, implementation plan commit 07ae035 Task 1). Read from argv
+# BEFORE argparse exactly like the backend / --phase-factored /
+# --distinct-pathways idiom so the build/episode path can branch with
+# NO extra rng draw and no signature churn. When OFF the b4a8106 path
+# is byte-identical (this flag only changes what happens AFTER the
+# MAINTAIN phase).
+#
+# Biology: the corrected v2 module's "no_cls_replay -> WM-collapse"
+# duty is biologically correct AND satisfiable ONLY in the REMOTE
+# (consolidated) regime -- recent recall is hippocampus-served and
+# consolidation-INDEPENDENT (CLS theory), so the duty is unsatisfiable
+# on a recent-memory probe. The remote regime queries the CONSOLIDATED
+# neocortical store while the hippocampus is strict-silenced, so the
+# ONLY thing that can answer is what offline consolidation transferred.
+#
+# Per-trial spine (net-new = ONLY the controller + the hippo-silence
+# sequencing/wiring; NO new learning rule, NO autograd, NO new module):
+#   byte-unchanged online theta-ordered ENCODE + engram WRITE (b4a8106)
+#     -> byte-unchanged OFFLINE consolidation (set_sleep_gates +
+#        run_concept_replay_phase, randomize_order=True, the dedicated
+#        deterministic local rng seeded 1000+episode_id) -- the SAME
+#        call the --phase-factored / --distinct-pathways branch already
+#        makes; deterministically SKIPPED for no_cls_replay /
+#        no_hippo_store exactly as the existing path already skips it
+#     -> byte-unchanged freeze_all_gates pre-eval freeze
+#     -> NET-NEW: ENGAGE the VALIDATED strict-silence / hippocampus-OFF
+#        mechanism byte-unchanged in semantics (the
+#        evaluate_with_hippo_off idiom from consolidation_eval.py:
+#        gather HIPPO_REGIONS indices, monkey-patch
+#        _run_one_simulation_step so it re-applies the validated 3/3
+#        strict anti-cheat strength -2000 pA to those indices before
+#        EVERY step, restore the original step + zero the silencing
+#        current in a finally) wrapping ONLY the consolidated-readout
+#        window
+#     -> consolidated wm: the byte-unchanged WM population-vote readout
+#        (now reads the CONSOLIDATED neocortical concept layer because
+#        the hippocampus is strict-silenced)
+#     -> consolidated ep: the byte-unchanged _episodic_order_readout
+#        closure, taken HERE (post-consolidation, INSIDE the
+#        strict-silence + frozen window) -- the consolidated-trace EP
+#        source the runner already implements for --phase-factored.
+# Scored by the NEW frozen integrated_loop_core_v2 (NOT the original).
+_REMOTE_REGIME = ("--remote-regime" in sys.argv)
+
 import numpy as np
 
 from research.runners.text_minimal_isolation import (
@@ -108,6 +153,21 @@ from research.runners.text_minimal_isolation import (
     freeze_all_gates)
 from research.runners.consolidation_trainer import (
     run_concept_replay_phase)
+# VALIDATED strict-silence / hippocampus-OFF region list, reused
+# byte-unchanged from the validated Phase-1.3 protocol. HIPPO_REGIONS
+# == ["ec","dg","dg_pv_basket","ca3","ca1"] -- exactly the regions the
+# integrated-loop bridge builds via enable_hippocampus_consolidation
+# =True. The remote-regime per-trial controller re-implements the
+# evaluate_with_hippo_off SILENCING IDIOM with semantics preserved
+# EXACTLY (monkey-patch _run_one_simulation_step to re-apply the
+# validated 3/3-strict -2000 pA to these region indices before EVERY
+# step, restore in a finally) -- it does NOT call evaluate_with_hippo_off
+# directly because that function runs the W->A text-eval task; the
+# remote regime needs the SAME silencing wrapped around THIS runner's
+# consolidated wm + ep readouts. The mechanism is byte-unchanged; only
+# what it wraps differs (the project's already-validated mechanism
+# reused, not a new mechanism).
+from research.runners.consolidation_eval import HIPPO_REGIONS
 from research.runners.g11_bg_runner import build_bg_brain_regions
 from sim.kernels import fused_eligibility_trace_decay  # noqa: F401
 from sim.train_checkpoint import (save_checkpoint, load_checkpoint,
@@ -895,6 +955,79 @@ def _step(bridge):
     bridge.runtime_state.current_time_step += 1
 
 
+# Validated 3/3 strict anti-cheat hippocampus-OFF strength (CLAUDE.md
+# "Phase 1.3 + Tier 2.1 ... ANTI-CHEAT VALIDATED"; the --strict-silence
+# run that reproduced retention identically across 3 seeds). The
+# remote-regime per-trial controller engages the VALIDATED
+# evaluate_with_hippo_off SILENCING IDIOM at exactly this strength.
+_HIPPO_SILENCE_PA = -2000.0
+
+
+class _hippo_strict_silence:
+    """Context manager: engage the VALIDATED strict-silence /
+    hippocampus-OFF mechanism (the evaluate_with_hippo_off idiom from
+    consolidation_eval.py) with semantics preserved EXACTLY -- gather
+    HIPPO_REGIONS indices, monkey-patch bridge._run_one_simulation_step
+    so it re-applies _HIPPO_SILENCE_PA (-2000 pA) to those indices
+    before EVERY step, then restore the original step and zero the
+    silencing current in __exit__ (the finally-equivalent). This is the
+    project's ALREADY-VALIDATED mechanism reused byte-unchanged in
+    semantics, NOT a new mechanism; only what it wraps differs (here:
+    THIS runner's consolidated wm + ep readout window instead of the
+    text-eval W->A task). NO new learning rule; NO autograd. `n_silenced`
+    records how many hippocampal neurons were silenced (recorded for the
+    anti-cheat smell-test; never a frozen bar)."""
+
+    def __init__(self, bridge):
+        self._bridge = bridge
+        self._orig = None
+        self._arr = None
+        self.n_silenced = 0
+
+    def __enter__(self):
+        bridge = self._bridge
+        cp = bridge.xp if hasattr(bridge, "xp") else np
+        rm = bridge.region_manager
+        hippo_idx = []
+        for region_name in HIPPO_REGIONS:
+            try:
+                idx = rm.indices(region_name)
+                if idx is not None:
+                    hippo_idx.extend(list(idx))
+            except Exception:
+                pass
+        self.n_silenced = len(hippo_idx)
+        if not hippo_idx:
+            # No hippocampal regions -> nothing to silence; the
+            # consolidated readouts run normally (semantics identical
+            # to evaluate_with_hippo_off's no-hippo early return).
+            return self
+        self._arr = cp.asarray(hippo_idx, dtype=cp.int64)
+        original_step = bridge._run_one_simulation_step
+
+        def silenced_step():
+            bridge.cp_external_input_current[self._arr] = float(
+                _HIPPO_SILENCE_PA)
+            return original_step()
+
+        self._orig = original_step
+        bridge._run_one_simulation_step = silenced_step
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        bridge = self._bridge
+        if self._orig is not None:
+            bridge._run_one_simulation_step = self._orig
+            self._orig = None
+        if self._arr is not None:
+            try:
+                bridge.cp_external_input_current[self._arr] = 0.0
+            except Exception:
+                pass
+            self._arr = None
+        return False  # never swallow exceptions
+
+
 def _counts(bridge, arrs):
     fired = bridge.cp_firing_states
     return np.array([float(fired[a].sum()) for a in arrs],
@@ -1426,7 +1559,16 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
     # order and _episode itself still draws nothing from the per-trial
     # `rng` (_make_pairs in _run_mode remains the sole consumer,
     # identical for every mode). NO new learning rule; NO autograd.
-    if ((_PHASE_FACTORED or _DISTINCT_PATHWAYS)
+    # REMOTE-REGIME shares the --phase-factored offline-consolidation
+    # sequence EXACTLY (offline run_concept_replay_phase under
+    # set_sleep_gates, the SAME dedicated deterministic local rng seeded
+    # 1000+episode_id, freeze_all_gates pre-eval freeze, the SAME
+    # deterministic skip for no_cls_replay / no_hippo_store). The ONLY
+    # net-new for the remote regime happens AFTER this block: the
+    # validated strict-silence is engaged around the consolidated
+    # readout window. The online ENCODE + engram WRITE above stay
+    # byte-identical to b4a8106.
+    if ((_PHASE_FACTORED or _DISTINCT_PATHWAYS or _REMOTE_REGIME)
             and mode not in ("no_cls_replay", "no_hippo_store")):
         set_sleep_gates(bridge)
         try:
@@ -1450,6 +1592,30 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
         # are restored at trial end (the existing end-of-trial gate
         # restoration), so the readout window stays frozen.
         freeze_all_gates(bridge)
+
+    # ----- NET-NEW (remote regime ONLY): ENGAGE the VALIDATED
+    # strict-silence / hippocampus-OFF mechanism around the consolidated
+    # readout window -----
+    # After the byte-unchanged offline consolidation + freeze, drive a
+    # strong negative current onto every hippocampal region every step
+    # (the validated evaluate_with_hippo_off idiom, -2000 pA, semantics
+    # preserved EXACTLY) so the ONLY thing that can answer BOTH the
+    # consolidated `wm` AND the consolidated `ep` query is what offline
+    # consolidation actually transferred into neocortex. Engaged HERE
+    # (right after freeze) and released right after `ep_acc` is computed
+    # (below) -- it wraps ONLY the consolidated-readout window. The
+    # bridge is rebuilt fresh per mode in _run_mode (kill-safe: a stale
+    # monkey-patch cannot leak across modes) and is also released
+    # explicitly on the normal path. The default / --phase-factored /
+    # --distinct-pathways paths do NOT engage it (this is the ONLY
+    # net-new behavior the remote regime adds beyond the
+    # --phase-factored offline-consolidation sequence). It is the
+    # project's ALREADY-VALIDATED mechanism reused, not a new mechanism;
+    # NO new learning rule; NO autograd.
+    _rr_silence = None
+    if _REMOTE_REGIME:
+        _rr_silence = _hippo_strict_silence(bridge)
+        _rr_silence.__enter__()
 
     # ----- WORKING-MEMORY QUERY READOUT (wm) -----
     # Present each queried role; population-vote the filler concept
@@ -1716,11 +1882,31 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
     # step structure (--phase-factored takes it post-consolidation
     # under the freeze applied at the end of OFFLINE CONSOLIDATION;
     # default takes the e02f692 hippocampus-only stimulate_tag recall).
+    # REMOTE-REGIME: the consolidated episodic-ORDER readout is taken
+    # HERE, post-consolidation, INSIDE the strict-silence window (the
+    # _episodic_order_readout closure, byte-unchanged -- the SAME
+    # consolidated-trace EP source --phase-factored already uses). With
+    # the hippocampus strict-silenced the recovered per-role peak order
+    # can only come from the CONSOLIDATED ca1->concept trace. This is
+    # the strongly-predicted CLS contingency the cheap gate exists to
+    # settle: systems consolidation builds an order-INVARIANT schema by
+    # design (McClelland 1995; Buzsaki 2013), so consolidated `ep` very
+    # likely will NOT clear the science bar -- and if so THAT is the
+    # honest negative-by-construction, not a defect to patch.
     if _DISTINCT_PATHWAYS:
         ep_acc = float(_ep_distinct
                        if _ep_distinct is not None else 0.0)
     else:
         ep_acc = _episodic_order_readout()
+
+    # Release the validated strict-silence: restore the original step
+    # and zero the silencing current (the evaluate_with_hippo_off
+    # finally-equivalent). BOTH consolidated readouts above ran with the
+    # hippocampus silenced; the subsequent LEARN/REPLAY phases (the next
+    # trial's prep) run normally, exactly as the --phase-factored path.
+    if _rr_silence is not None:
+        _rr_silence.__exit__(None, None, None)
+        _rr_silence = None
 
     # ----- LEARN -----
     # Delayed reward drives the native eligibility path with the
@@ -1759,7 +1945,19 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
     # readout was already taken pre-consolidation; the WM readout
     # window stayed frozen). The cleanup is byte-identical for both
     # modes (same gate restoration set, same tag delete, same return).
-    if _PHASE_FACTORED or _DISTINCT_PATHWAYS:
+    # REMOTE-REGIME shares the --phase-factored end-of-trial cleanup
+    # EXACTLY (consolidation was done up-front, so the e02f692
+    # end-of-trial replay is SKIPPED; only the awake-gate restoration
+    # runs so the NEXT epoch's online encode is byte-identical to
+    # b4a8106). Same gate set, same tag delete, same return.
+    if _PHASE_FACTORED or _DISTINCT_PATHWAYS or _REMOTE_REGIME:
+        # Defensive kill-safety: ensure the strict-silence is released
+        # even on an unexpected path (already released right after
+        # `ep_acc` on the normal path; this is idempotent -- a second
+        # __exit__ is a no-op once self._orig/_arr are cleared).
+        if _rr_silence is not None:
+            _rr_silence.__exit__(None, None, None)
+            _rr_silence = None
         if mode not in ("no_cls_replay", "no_hippo_store"):
             for _g in ("language_input_to_noun_pool",
                        "bg_thal_to_dlpfc",
@@ -1975,16 +2173,32 @@ def _run_mode(mode, seed, N, tiny, gap_zero=False):
     return float(last_wm), float(last_ep), float(last_nu)
 
 
-def _seed_rung(seed, N, tiny):
+def _seed_rung(seed, N, tiny, only_modes=None):
     """All modes for one (seed, load N): v1 (gap_zero full), full, and
-    every lesion. Returns the per-seed dict."""
+    every lesion. Returns the per-seed dict.
+
+    `only_modes` is a PURE RUN-SCOPE filter (plan Task 1.4): when not
+    None it is a set of cell names to RUN ("v1", "full", or any lesion);
+    the others are simply NOT executed. This changes NO rng draw and NO
+    scored quantity for the cells that DO run -- every mode builds its
+    OWN bridge with its OWN identically-seeded rng inside _run_mode and
+    _make_pairs is the sole per-trial rng consumer, so a retained cell's
+    result is byte-identical with and without the filter. It only
+    controls WHICH cells execute (the cheap GATE runs only full +
+    no_cls_replay at one load); the full instrument (no filter) is
+    byte-identical to before."""
+    def _want(name):
+        return only_modes is None or name in only_modes
     out = {}
-    out["v1"] = _run_mode("full", seed, N, tiny, gap_zero=True)
-    out["full"] = _run_mode("full", seed, N, tiny, gap_zero=False)
+    if _want("v1"):
+        out["v1"] = _run_mode("full", seed, N, tiny, gap_zero=True)
+    if _want("full"):
+        out["full"] = _run_mode("full", seed, N, tiny, gap_zero=False)
     out["lesions"] = {}
     for m in _ALL_LESIONS:
-        out["lesions"][m] = _run_mode(m, seed, N, tiny,
-                                      gap_zero=False)
+        if _want(m):
+            out["lesions"][m] = _run_mode(m, seed, N, tiny,
+                                          gap_zero=False)
     return out
 
 
@@ -2085,6 +2299,41 @@ def main(argv=None):
                          "binding-0 vs binding-1 asymmetry root cause is "
                          "evidenced. NOT a verdict; NOT invoked by the "
                          "tests or the decisive controller run.")
+    ap.add_argument("--remote-regime", action="store_true",
+                    help="REMOTE/consolidated-memory-regime mode "
+                         "(Design B; design aa90dac, plan 07ae035). "
+                         "Per trial: byte-unchanged online theta-ordered "
+                         "ENCODE + engram WRITE -> byte-unchanged OFFLINE "
+                         "Phase-1.3 consolidation (run_concept_replay_"
+                         "phase under set_sleep_gates) -> byte-unchanged "
+                         "freeze_all_gates -> NET-NEW: engage the "
+                         "VALIDATED strict-silence / hippocampus-OFF "
+                         "mechanism (the evaluate_with_hippo_off idiom, "
+                         "-2000 pA onto HIPPO_REGIONS every step) around "
+                         "the consolidated-readout window -> query the "
+                         "CONSOLIDATED neocortical store for BOTH the "
+                         "role-selective `wm` AND the episodic-order "
+                         "`ep`, JOINTLY. Read at module level from argv "
+                         "BEFORE argparse (like --tiny-synth) so the "
+                         "path branches with no extra rng draw. Scored "
+                         "by the NEW frozen integrated_loop_core_v2.")
+    ap.add_argument("--only-modes", nargs="+", default=None,
+                    help="Pure RUN-SCOPE filter (plan Task 1.4): run "
+                         "ONLY these mode cells (e.g. full "
+                         "no_cls_replay for the cheap GATE). Changes NO "
+                         "rng draw and NO scored quantity -- only WHICH "
+                         "(mode, load) cells execute. Each retained "
+                         "mode's per-seed result is byte-identical with "
+                         "and without this filter (every mode builds its "
+                         "OWN bridge + its OWN identically-seeded rng in "
+                         "_run_mode; _make_pairs is the sole per-trial "
+                         "rng consumer). Names: v1, full, or any lesion.")
+    ap.add_argument("--only-load", type=int, default=None,
+                    help="Pure RUN-SCOPE filter (plan Task 1.4): run "
+                         "ONLY this single ladder load N (e.g. 2 for the "
+                         "cheap minimal-load GATE). Changes NO rng draw "
+                         "and NO scored quantity -- only WHICH load runs. "
+                         "Must be a member of the pre-registered ladder.")
     ap.add_argument("--ckpt", default=None)
     ap.add_argument("--out", required=False, default=None)
     a = ap.parse_args(argv)
@@ -2102,6 +2351,95 @@ def main(argv=None):
         except Exception:
             _dev = "cuda"
     print("BACKEND=%s  DEVICE=%s" % (_backend_name, _dev), flush=True)
+
+    if a.falsify_first and _REMOTE_REGIME:
+        # FALSIFY-FIRST <-> REMOTE-REGIME composition (the ONLY net-new
+        # behavior of this fix; the non-remote falsify-first path below
+        # is byte-IDENTICAL). The prior bug: the falsify-first branch
+        # printed the DEFAULT distinct-pathways labels ("(default) ...
+        # taken PRE-consolidation ... order-invariant offline-
+        # consolidated schema") even under --remote-regime, so the
+        # remote-regime question (does the CONSOLIDATED store, while the
+        # hippocampus is strict-silenced, retain serial order?) was
+        # NEVER actually reported -- instrument-INVALID.
+        #
+        # NO new readout / learning / autograd is introduced here. The
+        # numeric routing is ALREADY correct: _run_mode -> _episode and
+        # _episode, when _REMOTE_REGIME is True, ALREADY executes the
+        # spine's remote path verbatim (byte-unchanged online encode +
+        # engram WRITE -> byte-unchanged OFFLINE Phase-1.3 consolidation
+        # under set_sleep_gates + run_concept_replay_phase ->
+        # byte-unchanged freeze_all_gates -> ENGAGE the VALIDATED
+        # _hippo_strict_silence (-2000 pA onto HIPPO_REGIONS every step,
+        # the evaluate_with_hippo_off idiom) -> consolidated `wm`
+        # population-vote readout AND the consolidated `ep`
+        # _episodic_order_readout BOTH taken INSIDE that strict-silence
+        # window -> release). The defect was ONLY that the falsify-first
+        # PRINT path did not route through / accurately LABEL that
+        # already-correct remote path; this branch fixes exactly that
+        # and additionally probes the no_cls_replay HELPER lesion so the
+        # gate criterion's four numbers are produced.
+        #
+        # Single seed (a.seeds[0]) -- the pre-registered falsify-first
+        # joint-probe discipline (a 2-mode minimal GATE, NEVER a
+        # propagated verdict; the HONESTY CEILING is binding). --seeds
+        # 42 43 44 is accepted but only seed[0] is consumed here exactly
+        # as the non-remote falsify-first path already does.
+        seed0 = int(a.seeds[0])
+        Nf = _IL_LADDER[0]  # 2
+        # full + no_cls_replay BOTH routed through the remote spine
+        # (_run_mode -> _episode honors _REMOTE_REGIME for every mode).
+        wm, ep, nu = _run_mode("full", seed0, Nf, tiny=False,
+                               gap_zero=False)
+        ncr_wm, ncr_ep, _ = _run_mode("no_cls_replay", seed0, Nf,
+                                      tiny=False, gap_zero=False)
+        # The frozen v2 science/lesion bars (verbatim from the NEW
+        # separately-frozen core; this runner never re-derives a bar).
+        from research.runners.integrated_loop_core_v2 import (
+            _ILV2_SCI_MIN, _ILV2_LESION_MAX)
+        print("FALSIFY-FIRST (REMOTE-REGIME consolidated) seed=%d N=%d "
+              "FULL+no_cls_replay JOINT (gap_zero=False, _FULL slice; "
+              "post-consolidation, hippocampus strict-silenced -2000 pA "
+              "on HIPPO_REGIONS)" % (seed0, Nf))
+        print("  full wm (consolidated NEOCORTICAL role-selective "
+              "readout, hippocampus strict-silenced, under freeze) = "
+              "%.4f" % wm)
+        print("  full ep (consolidated episodic ORDER from the "
+              "ca1->concept trace, hippocampus strict-silenced, under "
+              "freeze) = %.4f" % ep)
+        print("  no_cls_replay wm (consolidation SKIPPED -> nothing "
+              "transferred to neocortex) = %.4f" % ncr_wm)
+        print("  no_cls_replay ep (consolidation SKIPPED -> no "
+              "consolidated order) = %.4f" % ncr_ep)
+        print("  dlpfc slot non-uniformity (causal-liveness diag, "
+              "NOT a bar) = %.3f" % nu)
+        # GATE criterion (controller-applied; NOT a propagated verdict).
+        # GREEN iff the consolidated store answers BOTH (full wm/ep >=
+        # SCI_MIN) AND no_cls_replay collapses BOTH (wm/ep <=
+        # LESION_MAX). RED-by-construction iff the strongly-predicted
+        # CLS outcome: full ep does NOT clear SCI_MIN (systems
+        # consolidation builds an order-INVARIANT schema, so the
+        # consolidated store cannot answer a serial-order query).
+        green = (wm >= _ILV2_SCI_MIN and ep >= _ILV2_SCI_MIN
+                 and ncr_wm <= _ILV2_LESION_MAX
+                 and ncr_ep <= _ILV2_LESION_MAX)
+        red_by_constr = ep < _ILV2_SCI_MIN
+        print("  GATE READING (REMOTE-REGIME; full wm>=%.2f & full "
+              "ep>=%.2f & no_cls_replay wm<=%.2f & no_cls_replay "
+              "ep<=%.2f): %s"
+              % (_ILV2_SCI_MIN, _ILV2_SCI_MIN, _ILV2_LESION_MAX,
+                 _ILV2_LESION_MAX,
+                 "GREEN (proceed to controller Tasks 2-6; HONESTY "
+                 "CEILING binding -- a 2-mode minimal probe is a GATE, "
+                 "NOT a scale-confident validated pass)" if green else
+                 ("RED-by-construction (full ep below %.2f -- the "
+                  "consolidated store is order-INVARIANT by the CLS "
+                  "division of labor; honest negative-by-construction, "
+                  "NOT a defect to patch)" % _ILV2_SCI_MIN
+                  if red_by_constr else
+                  "OTHER honest negative -- propagate the four numbers "
+                  "precisely, do NOT rationalize")))
+        return 0
 
     if a.falsify_first:
         # Pre-registered FALSIFY-FIRST joint de-risk (plan Task 5). The
@@ -2333,6 +2671,25 @@ def main(argv=None):
 
     ladder = (_IL_LADDER[:1] if a.tiny_synth else _IL_LADDER)
 
+    # PURE RUN-SCOPE FILTERS (plan Task 1.4). Neither changes any rng
+    # draw or any scored quantity for the cells that DO run -- they only
+    # restrict WHICH (mode, load) cells execute (the cheap GATE runs
+    # ONLY full + no_cls_replay at the single minimal load N=2). When
+    # EITHER is set this is a GATE PROBE, not the full pre-registered
+    # instrument: the output is the raw per-cell numbers + the v2 bars,
+    # explicitly marked NOT a propagated verdict (a 2-mode minimal probe
+    # is a gate, never the decisive v2 verdict). With NEITHER set the
+    # path is byte-identical to before (full instrument, scored by v2).
+    only_modes = set(a.only_modes) if a.only_modes else None
+    if a.only_load is not None:
+        if a.only_load not in _IL_LADDER:
+            print("NOT-RUNNABLE: --only-load %d not in the "
+                  "pre-registered ladder %s"
+                  % (a.only_load, _IL_LADDER))
+            return 2
+        ladder = (a.only_load,)
+    _gate_probe = (only_modes is not None) or (a.only_load is not None)
+
     # Resume: skip seeds already recorded in the checkpoint.
     done = set()
     if a.ckpt:
@@ -2349,7 +2706,9 @@ def main(argv=None):
             if int(s) in done:
                 continue
             for N in ladder:
-                per_rung[N].append(_seed_rung(s, N, a.tiny_synth))
+                per_rung[N].append(
+                    _seed_rung(s, N, a.tiny_synth,
+                               only_modes=only_modes))
             processed.append(int(s))
             if a.ckpt:
                 # Kill-safe: record completed seeds in loss_history so
@@ -2357,8 +2716,9 @@ def main(argv=None):
                 flat = []
                 for N in ladder:
                     for row in per_rung[N]:
-                        flat.append(row["full"][0])
-                        flat.append(row["full"][1])
+                        if "full" in row:
+                            flat.append(row["full"][0])
+                            flat.append(row["full"][1])
                 save_checkpoint(a.ckpt, len(processed), [flat],
                                 None, [float(x) for x in processed])
     except KeyboardInterrupt:
@@ -2381,6 +2741,106 @@ def main(argv=None):
                    "banner": _BANNER}
         with open(a.out, "w") as fh:
             json.dump(verdict, fh, indent=2)
+        print("GATE=%s  %s" % (verdict["GATE"], _BANNER))
+        return 0
+
+    if _gate_probe:
+        # GATE PROBE (plan Task 1.4): a filtered subset was run (the
+        # cheap joint minimal-load falsify-first runs ONLY full +
+        # no_cls_replay at N=2, 3 seeds). This is NOT the full
+        # pre-registered instrument, so integrated_loop_verdict_v2 is
+        # NOT called on it (an incomplete instrument is correctly VOID
+        # by that module's instrument-validity gate). Instead emit the
+        # raw per-cell mean numbers + the v2 bars verbatim so the
+        # controller can apply the GATE criterion (full wm/ep >= 0.80
+        # AND no_cls_replay wm/ep <= 0.40) directly. The HONESTY CEILING
+        # is binding: this 2-mode minimal probe is a GATE, NEVER a
+        # scale-confident validated pass. The strict-silence
+        # n_silenced is recorded for the anti-cheat smell-test.
+        from research.runners.integrated_loop_core_v2 import (
+            _ILV2_SCI_MIN, _ILV2_LESION_MAX, _ILV2_MIN_SEEDS)
+
+        def _cell_mean(rows, getter):
+            vals = [getter(r) for r in rows if getter(r) is not None]
+            if not vals:
+                return None
+            wm = sum(v[0] for v in vals) / len(vals)
+            ep = sum(v[1] for v in vals) / len(vals)
+            return {"wm": float(wm), "ep": float(ep)}
+
+        probe_rungs = []
+        for N in ladder:
+            rows = per_rung[N]
+            cells = {}
+            if only_modes is None or "v1" in only_modes:
+                cells["v1"] = _cell_mean(
+                    rows, lambda r: r.get("v1"))
+            if only_modes is None or "full" in only_modes:
+                cells["full"] = _cell_mean(
+                    rows, lambda r: r.get("full"))
+            les = {}
+            for m in _ALL_LESIONS:
+                if only_modes is None or m in only_modes:
+                    les[m] = _cell_mean(
+                        rows, lambda r, _m=m:
+                        r.get("lesions", {}).get(_m))
+            cells["lesions"] = les
+            probe_rungs.append(
+                {"N": N, "n_seeds": len(rows), "cells": cells})
+        verdict = {
+            "GATE": "GATE-PROBE",
+            "note": ("filtered run-scope subset (plan Task 1.4) -- a "
+                     "GATE, NOT a propagated v2 verdict; the HONESTY "
+                     "CEILING is binding: NO scale-confident pass is "
+                     "claimed from a 2-mode minimal probe"),
+            "gate_probe": True,
+            "only_modes": (sorted(only_modes)
+                           if only_modes is not None else None),
+            "only_load": a.only_load,
+            "ladder_run": list(ladder),
+            "frozen_bars_v2": {
+                "SCI_MIN": _ILV2_SCI_MIN,
+                "LESION_MAX": _ILV2_LESION_MAX,
+                "MIN_SEEDS": _ILV2_MIN_SEEDS},
+            "gate_criterion": (
+                "GREEN iff full wm>=%.2f AND full ep>=%.2f AND "
+                "no_cls_replay wm<=%.2f AND no_cls_replay ep<=%.2f; "
+                "RED-by-construction-confirmed iff full ep<%.2f (the "
+                "strongly-predicted CLS order-invariant outcome)"
+                % (_ILV2_SCI_MIN, _ILV2_SCI_MIN, _ILV2_LESION_MAX,
+                   _ILV2_LESION_MAX, _ILV2_SCI_MIN)),
+            "probe_rungs": probe_rungs,
+            "banner": _BANNER}
+        with open(a.out, "w") as fh:
+            json.dump(verdict, fh, indent=2)
+        # Plain-language joint reading of the cheap GATE (printed for
+        # the controller; NOT a propagated classification).
+        for pr in probe_rungs:
+            c = pr["cells"]
+            fu = c.get("full")
+            ncr = c.get("lesions", {}).get("no_cls_replay")
+            print("GATE-PROBE N=%d n_seeds=%d" % (pr["N"],
+                                                  pr["n_seeds"]))
+            if fu is not None:
+                print("  full         wm=%.4f ep=%.4f"
+                      % (fu["wm"], fu["ep"]))
+            if ncr is not None:
+                print("  no_cls_replay wm=%.4f ep=%.4f"
+                      % (ncr["wm"], ncr["ep"]))
+            if fu is not None and ncr is not None:
+                green = (fu["wm"] >= _ILV2_SCI_MIN
+                         and fu["ep"] >= _ILV2_SCI_MIN
+                         and ncr["wm"] <= _ILV2_LESION_MAX
+                         and ncr["ep"] <= _ILV2_LESION_MAX)
+                red_by_constr = fu["ep"] < _ILV2_SCI_MIN
+                print("  GATE READING: %s"
+                      % ("GREEN (proceed to Tasks 2-6)" if green else
+                         ("RED-by-construction-confirmed (full ep "
+                          "below %.2f -- consolidated store is "
+                          "order-invariant by CLS design)"
+                          % _ILV2_SCI_MIN if red_by_constr else
+                          "OTHER honest negative -- propagate "
+                          "precisely, do NOT rationalize")))
         print("GATE=%s  %s" % (verdict["GATE"], _BANNER))
         return 0
 
