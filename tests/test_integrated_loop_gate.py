@@ -85,3 +85,23 @@ def test_phase_factored_runs_offline_after_online_before_readout():
     assert "--phase-factored" in src or "phase_factored" in src
     assert "run_concept_replay_phase(" in src
     assert "set_sleep_gates(" in src and "freeze_all_gates(" in src
+
+
+def test_distinct_pathways_tiny_smoke_produces_tiny_verdict(tmp_path):
+    """Grounding pin (Task 3): the runner's distinct-readout-pathways
+    mode runs a fast --tiny-synth smoke end-to-end on the CPU backend
+    and writes a verdict JSON marked TINY (never propagated at toy
+    scale), and that mode scores via the NEW core module
+    integrated_loop_verdict_v2 (not the original frozen core). This pin
+    is intentionally red until the --distinct-pathways mode lands."""
+    out = tmp_path / "tiny_dp.json"
+    proc = subprocess.run(
+        [sys.executable, "-m", "research.runners.integrated_loop_gate",
+         "--distinct-pathways", "--tiny-synth",
+         "--seeds", "42", "43", "44", "--out", str(out)],
+        capture_output=True, text=True, timeout=1200)
+    assert proc.returncode == 0, (proc.stdout + "\n" + proc.stderr)
+    assert out.exists()
+    v = json.loads(out.read_text())
+    assert "GATE" in v
+    assert "TINY" in json.dumps(v)
