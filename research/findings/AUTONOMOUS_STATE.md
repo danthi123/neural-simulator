@@ -11,58 +11,70 @@ explicit user stop/pause or a true safety boundary halts work)
 
 ## Current objective
 
-Build the catalog-grounded integrated-loop full spiking model to
-instrument-soundness, then the decisive multi-seed lesion run, then the
-staged compositional sequence — iterating following the project's
-reference biology, no hand-back, no declare-unfit.
+The integrated-loop necessity-instrument line is SCIENTIFICALLY
+TERMINAL (five convergent faithful routes; the fifth validly
+GPU-measured by a sound instrument). The genuinely-distinct next
+direction the five findings prescribe: build compositional capability
+on the project's ALREADY-VALIDATED subsystems used in their
+biologically-correct complementary-learning-systems regimes (episodic
+order via the hippocampal recent-memory pathway; order-invariant
+semantic/concept structure via the consolidated neocortical pathway;
+each read in its own regime, never demanded of one shared readout) --
+NOT any further single-regime necessity-loop variant. Autonomous, no
+hand-back, no declare-unfit; honesty ceiling binding throughout.
 
 ## Exact next concrete action
 
-**Prior convergent results STAND (durable, on the record both remotes;
-see findings/): thrice-convergent falsification+correction of the
-original necessity prediction (independently goalpost-move-cleared);
-encode-order contradiction DISSOLVED via distinct pathways; FOURTH
-(recent-memory) structural characterization. Original frozen verdict
-`2048750` + corrected v2 `36a7975` + no-confab moat byte-unchanged.**
+**THE NECESSITY-INSTRUMENT LINE IS TERMINAL AND FULLY PROPAGATED
+(2026-05-19, both remotes).** Five convergent faithful routes establish
+that the integrated-loop necessity instrument is biologically
+unsatisfiable by any faithful architecture in any memory regime,
+because that conjunction (consolidation-lesion-necessary AND
+episodic-serial-order-recoverable in one regime) IS the
+complementary-learning-systems division of labor and cannot co-hold.
+The fifth route was validly GPU-measured by the corrected sound
+instrument: full consolidated working-memory = 0.50, full consolidated
+episodic-order = 0.00; the unchanged frozen verdict recomputed
+independently returns FAIL (consolidated store is order-invariant by
+design). The pre-committed bound forbids any further
+necessity-structure/partition change, so this line is genuinely,
+rigorously exhausted -- manufacturing further necessity variants would
+be dishonest going-through-the-motions, not science. Durable
+valid-run log:
+`research/findings/raw/integrated_loop_remote_gate_VALID.log`;
+valid-instrument runner `research/runners/integrated_loop_gate.py`
+(commit `5866009`, honest-WIP). Original frozen verdict `2048750` +
+corrected v2 `36a7975` + no-confab moat byte-unchanged throughout.
 
-**CURRENT: the remote-regime cheap gate run was INSTRUMENT-INVALID
-(2026-05-19, propagated).** The `--falsify-first` gate-probe path did
-NOT honor `--remote-regime`: the durable GPU log shows it ran the
-DEFAULT distinct-pathways readouts ("FALSIFY-FIRST (default)"; full
-ep=1.0 via ONLINE trisynaptic PRE-consolidation; "distinct-pathways
-does NOT jointly satisfy") -- it never read episodic order from the
-post-consolidation HIPPO-SILENCED consolidated store that Design B
-pre-registered. Per instrument-validity-FIRST: NO science conclusion
-drawn; NO fifth/terminal finding (that would be overclaim from an
-unsound instrument). HEAD `9c097b9` (Task-0 pin); the remote-regime
-spine is wired but uncommitted; original/v2/moat byte-unchanged;
-durable invalid log at research/findings/raw/integrated_loop_remote_gate.log.
-
-**EXACT NEXT ACTION: fix the instrument, then VALID cheap re-run.** In
-`research/runners/integrated_loop_gate.py` ONLY: make the
-`--falsify-first` gate-probe path, when `--remote-regime` is set, take
-BOTH the consolidated working-memory readout AND the consolidated
-episodic-order readout from the post-consolidation,
-hippocampus-strict-silenced consolidated store (the EXISTING
-`_hippo_strict_silence` mechanism + the post-consolidation
-`_episodic_order_readout`, exactly as the file's own Design-B comments
-specify) instead of the default distinct-pathways readouts. Instrument
-construction only -- NOT result-driven; frozen verdict/bars/partition
-+ v2 + moat byte-UNCHANGED; reuse byte-unchanged; net-new = only the
-falsify-first<->remote-regime composition; no autograd; ASCII. Then
-re-run the cheap gate with DURABLE capture: `--remote-regime
---falsify-first --seeds 42 43 44 --only-modes full no_cls_replay
---only-load 2` redirected to research/findings/raw/integrated_loop_remote_gate.log
-(GPU/CuPy). Decision on the VALID run: GATE GREEN iff full wm>=0.80
-AND full ep>=0.80 AND no_cls_replay collapses BOTH (<=0.40) -> commit
-spine honest-WIP, proceed Tasks 2-6 (full build -> adversarial review
--> no-harm -> Task-5 CONTROLLER-ONLY decisive run scored by unchanged
-v2; honesty ceiling: pass=consistent-with ONLY). RED-by-construction
-iff full ep<0.80 (the strong CLS order-invariant prediction now
-VALIDLY tested) -> the FIFTH convergent + unifying terminal finding,
-propagate honestly both remotes -> next catalog factorization. Other
--> honest negative, propagate. NO partition edit; autonomous; no
-hand-back; never stop on a promise.
+**EXACT NEXT ACTION: a proper design pass for the genuinely-distinct
+next direction (autonomous, no hand-back, no necessity-loop variant).**
+Following the project's standing design discipline (brainstorming ->
+writing-plans -> subagent-driven-development -> pre-registered
+fixed-bar three-state gate -> honest propagation -> iterate-following-
+biology), design a compositional-capability build that uses the
+validated subsystems IN THEIR BIOLOGICALLY-CORRECT CLS REGIMES: the
+validated hippocampal trisynaptic/engram pathway for recent, specific,
+order-bearing bindings; the validated Phase-1.3 consolidation pathway
+for order-invariant remote semantic/concept structure; the validated
+v14/v16 16-pool concept binding (88.75% multi-seed) + multitag
+retrieval (90%) + engram stim-recall (87.5%) as the grounded
+knowledge substrate; the no-confabulation abstention moat at output.
+The net-new work is the biology-faithful COMPOSITION of these in their
+correct regimes, NOT a new isolated mechanism and NOT a shared-readout
+necessity loop. Pre-registered fixed-bar three-state verdict (its own
+frozen bars, mirroring the existing frozen-module discipline exactly;
+instrument-validity-first; VOID strictly distinct from FAIL; malformed
+-> cannot-conclude not crash). Reuse-by-import only; protected/frozen/
+validated modules + the no-confab moat byte-UNCHANGED; no autograd;
+GPU/CuPy for decisive runs; ASCII. Honest ceiling stated up front and
+never spun: a clean success = a biology-grounded multi-system
+composition shows grounded compositional retrieval that holds/improves
+with load -- explicitly NOT fluent open-ended language, NOT an LLM,
+unless a later pre-registered stage genuinely shows it; all prior
+validated results and honest boundaries unaffected. NO partition edit
+ever (the necessity line is closed); autonomous; no hand-back; the
+next-action tool call is always in the same turn; never stop on a
+promise.
 
 **Corrected-approach PLAN done (7b1d47c, pushed both remotes). CONTROLLER
 PRE-COMMITTED HONESTY CEILING propagated BEFORE any build
@@ -151,27 +163,19 @@ always begins in the same turn.
 
 ## Last durable commit
 
-Design `72e359a` = distinct-readout-pathways design, conclusion (b):
-the original necessity hypothesis is FALSIFIED (third convergent
-signal). Findings + capability + this state file are the propagation
-commit (both remotes). Runner remains at `2582992` (phase-factored,
-closed VOID-by-construction) -- NOT the basis for the next build; the
-next build is the distinct-pathways candidate exercised against a NEW
-frozen catalog-grounded necessity module (writing-plans first work
-item). Phase-factored line closed; superseded line =
-the next catalog-identified factorization (distinct order-preserving vs
-order-invariant readout pathways) via a proper design pass. Built on
-iter-3 foundation e02f692 (temporal-credit +
-homeostasis + documented non-zero init). Next = the full Tasks 2-5
-build on top of `3300d3f`. HEAD after the iter-4 program-level
-propagation commit (findings + capability PREDICTED + state file +
-plan, both
-remotes). Iteration 4 produced the pre-committed PROGRAM-LEVEL finding
-(validated concept-binding vs theta-gamma episodic store =
-contradictory encode-order requirements at the N=2 single-pass slice);
-honored (no iteration 5). Next program step = the phase-factored
-consolidation architecture, via a PROPER design pass (NOT a reflexive
-patch).
+Valid-instrument runner `5866009` (honest-WIP; fifth-route terminal
+result reproducible from it). The fifth/terminal finding + this state
+file + the capability pillar are the propagation commit (both
+remotes). The integrated-loop necessity-instrument line is
+SCIENTIFICALLY TERMINAL (five convergent faithful routes; the fifth
+validly GPU-measured); no further build on it -- the pre-committed
+bound forbids any further necessity-structure/partition change.
+Original frozen verdict `2048750` + corrected v2 `36a7975` + no-confab
+moat byte-unchanged throughout. Next program step = a proper design
+pass (brainstorming -> writing-plans -> subagent-driven-development)
+for the genuinely-distinct next direction: compositional capability on
+the validated subsystems used in their biologically-correct
+complementary-learning-systems regimes (NOT a necessity-loop variant).
 
 ## Pre-registered acceptance / frozen bars (NEVER tuned)
 
