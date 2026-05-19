@@ -810,6 +810,57 @@ Per the design's iterate-following-biology discipline (Q5 design Section
   biology-fidelity iteration — autonomously, no hand-back, no
   declare-unfit, no config-cranking a frozen bar.
 
+## Pre-registered biology-fidelity iteration 2 — active prefrontal-stripe equalization + cold-start-breaking gated learning (added 2026-05-19; supersedes iteration 1; deeper mechanism; needs its own design)
+
+Iteration 1 was run diagnose-before-fix and produced a precise, GPU-
+evidenced negative (findings:
+`research/findings/2026-05-19-integrated-loop-v1-asymmetry-is-an-emergent-symmetry-break-not-a-wiring-bug.md`).
+The `v1` asymmetry is NOT a structural wiring bug — every measured
+quantity is symmetric — it is an emergent winner-take-most
+symmetry-break in the structurally-symmetric shared-inhibition +
+bistable pool network, with the per-stripe basal-ganglia-gated
+slot-to-concept efferent dead from spike-timing cold-start. Three
+faithful strengthen-only fixes were each falsified and reverted. Minimal
+strengthen-only wiring tweaks are therefore demonstrably exhausted for
+this defect (the systematic-debugging inflection: stop reactive
+patching, take the next step as a deeper, properly-designed iteration).
+
+- **Named mechanism (cited; grounded in the project's own validated,
+  protected subsystems):** the prefrontal-basal-ganglia working-memory
+  account requires multiple slots maintained simultaneously at
+  comparable strength. A symmetric shared-inhibition bistable network
+  does not do this alone; biology equalizes competing maintained items
+  via active gain control (homeostatic / divisive normalization) and via
+  a working dopamine-gated three-factor learning signal that actually
+  potentiates the gated slot-to-content pathway. The project already has
+  BOTH validated and protected: the homeostatic firing-rate regulation
+  mechanism (basis for a per-stripe equalizing drive) and the validated
+  temporal-credit eligibility / dopamine-gated substrate (basis for
+  breaking the cold-start so the gated efferent genuinely learns).
+- **Iteration task (deeper than a tweak — its own design + plan):**
+  compose those two already-validated subsystems into the closed loop so
+  the prefrontal slots are actively equalized and the gated
+  slot-to-concept efferent potentiates for every maintained binding —
+  reusing the validated subsystems byte-unchanged; net-new = only the
+  composition wiring.
+- **Acceptance is the SAME pre-registered frozen gate (unchanged):** on
+  the GPU, the trivial drilled bijection (`v1`) reaches `wm` >= 0.90 and
+  `ep` >= 0.90 with EVERY drilled binding clearing the byte-unchanged
+  no-confabulation gate; the novel-recombination science probe in `full`
+  + every lesion is unchanged and exactly as hard. No frozen threshold
+  in `integrated_loop_core.py` touched; the no-confabulation gate and
+  every protected/validated module byte-unchanged; no automatic
+  differentiation; ASCII; GPU for the real/decisive path.
+- **Process:** because this is a substantive mechanism, not a
+  strengthen-only tweak, it re-enters the full pre-registered pipeline —
+  a focused design (which validated homeostasis + temporal-credit
+  interfaces, how composed, honest ceiling), then writing-plans, then
+  subagent-driven TDD with the dedicated adversarial review before the
+  no-harm phase, then the controller-only decisive run. A faithful
+  repeat negative is propagated honestly and names the next cited
+  biology-fidelity iteration — autonomously, no hand-back, no
+  declare-unfit, no config-cranking a frozen bar.
+
 ## Execution
 
 Per the owner's standing instruction, execution is same-session subagent-driven. Transition directly to superpowers:subagent-driven-development — do NOT present an execution-choice prompt.
