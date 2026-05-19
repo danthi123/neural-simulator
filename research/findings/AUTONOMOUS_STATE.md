@@ -18,63 +18,61 @@ reference biology, no hand-back, no declare-unfit.
 
 ## Exact next concrete action
 
-**Iteration 4 COMPLETE -> PRE-COMMITTED PROGRAM-LEVEL FINDING (honored,
-propagated, NOT spun).** The project's OWN validated concept-binding
-mechanism (embodied co-firing + topographic prior) was applied
-faithfully in two forms; each recovered working-memory role-selectivity
-but DESTROYED the loop's perfect episodic binding (ep 1.0->0.0); both
-reverted, HEAD byte-restored. STRUCTURAL CAUSE (GPU-measured, not a
-tuning gap): the validated concept-binding needs a SHUFFLED encode
-order; the theta-gamma episodic store needs presentation-order ==
-binding-index; in ONE online encode pass at N=2 these two validated
-subsystems impose CONTRADICTORY encode-order requirements; no config
-reconciles them. This REFUTES integrated-loop instrument-soundness AT
-THIS MINIMAL SINGLE-PASS SLICE with the subsystems as currently
-factored (does NOT refute the cheap-tier non-separability core nor the
-hypothesis globally). Propagated: findings + capability (PREDICTED) +
-both remotes. The pre-committed bound forbids a further config
-iteration -- HONORED (no iteration 5; no tweak; no spin).
+**Program-level finding (iter-4) propagated + bound honored (849218f).
+Phase-factored DESIGN (65f6c52) + TDD PLAN (412ccef) done + pushed.
+FALSIFY-FIRST DE-RISK = GREEN (committed honest-wip `3300d3f`):** with
+the offline shuffled-replay Phase-1.3 consolidation inserted on top of
+the e02f692 foundation, GPU-verified (CuPy/RTX 3090) `v1 ep = 1.0` is
+PRESERVED -- the relocated-contradiction risk did NOT materialize; the
+phase factorization genuinely dissolves the iter-4 encode-order
+contradiction at the v1 check; drilled wm queries role-correlated and
+clear the byte-unchanged 650 gate (671-1591). NOT a soundness pass
+(v1 wm not yet >=0.90 -- the genuine science question for the
+controller-only decisive run).
 
-**NEXT PROGRAM STEP (genuinely-distinct architecture; NOT a config
-iteration; its OWN proper design pass; autonomous, no hand-back, no
-declare-unfit):** the encode-order contradiction is the signature of
-the integration conflating two biologically-DISTINCT phases. Factor the
-loop into (a) an ONLINE theta-ordered hippocampal episodic encode
-(presentation-order == index, preserved) and (b) a SEPARATE OFFLINE
-interleaved/shuffled-replay neocortical consolidation that builds the
-concept selectivity -- reusing the project's VALIDATED multi-seed
-strict-anti-cheat complementary-learning-systems consolidation
-subsystem -- so each validated subsystem operates in the phase whose
-order-requirement it satisfies. This is a distinct architectural
-factorization, NOT a binding-rule tweak: it requires a PROPER design
-pass (a fresh design -> writing-plans -> subagent-driven build with the
-same adversarial + anti-cheat discipline + the SAME frozen acceptance:
-`v1` wm AND ep >= 0.90 GPU; no-confab moat + protected + frozen
-byte-unchanged; GPU/CuPy). It is deliberately NOT launched as a
-reflexive same-loop patch subagent. Begin it at the design entry point
-(brainstorm/writing-plans for the phase-factored consolidation
-architecture), grounded in the catalog's complementary-learning-systems
-factorization + the project's validated Phase-1.3 consolidation.
+**Exact next concrete action: dispatch the FULL Tasks 2-5 build
+(subagent-driven) on top of `3300d3f`.** Build the full phase-factored
+runner (online theta-ordered encode byte-unchanged + offline
+shuffled-replay Phase-1.3 consolidation + consolidated WM/episodic-order
+readouts; v1/full/8-lesions; SAME frozen gate `v1` wm AND ep >= 0.90;
+full+lesions novel probe byte-identical) -> Task 3 DEDICATED
+ADVERSARIAL REVIEW with MANDATORY primary scrutiny: (i) does
+`no_cls_replay` GENUINELY collapse ep at full scale (its frozen
+`_HELPER_EP` responsibility) or is it inverted -> then the frozen
+verdict correctly VOIDs, surfaced as the honest program-level outcome
+(NEVER edit the frozen verdict/partition/bars); (ii) is the
+consolidated episodic-order readout a genuine spiking measurement, NOT
+a strawman/hard-feed; (iii) lesions faithful (each = full minus exactly
+one, identical per-trial RNG), validated subsystems reused
+byte-unchanged, no autograd, WM selectivity learned-by-consolidation
+not pre-wired -> Task 4 no-harm -> Task 5 CONTROLLER-ONLY decisive
+multi-seed GPU run + anti-cheat smell-test + honest propagation both
+remotes. GPU/CuPy real path (numpy only --tiny-synth); reuse-only
+(net-new = phase controller + wiring).
 
-**PRE-COMMITTED bound for the phase-factored architecture (stated now):**
-if a faithful phase-factored design (online theta-ordered encode +
-offline shuffled-replay consolidation using the validated CLS
-subsystem) ALSO cannot achieve `v1` wm AND ep >= 0.90 in the integrated
-loop, that is a deeper program-level result to surface honestly with
-its precise structural cause -- the next step then being the next
-catalog-identified integration factorization, still autonomous, still
-no hand-back. Stated in advance so no outcome is rationalized.
+**PRE-COMMITTED bound (in force):** if the faithful full phase-factored
+build cannot achieve `v1` wm AND ep >= 0.90, OR a frozen lesion's
+pre-registered responsibility is inverted (the frozen verdict correctly
+returns VOID), that is surfaced honestly with its precise structural
+cause as the next program-level result -> the next catalog-identified
+integration factorization, autonomous, no hand-back, no config-crank,
+no edit of the frozen verdict or no-confab moat. Stated in advance so
+no outcome is rationalized.
 
 DO NOT stop after any propagation/commit. The next concrete action
 always begins in the same turn.
 
 ## Last durable commit
 
-Runner honest-wip `e02f692` (iter-3 foundation: temporal-credit +
-homeostasis + documented non-zero init; episodic binding PERFECT
-ep=1.0; verified-correct; iter-4 reverted so the runner is byte-exact
-at this state). HEAD after the iter-4 program-level propagation commit
-(findings + capability PREDICTED + this state file + plan, both
+Runner honest-wip `3300d3f` = phase-factored falsify-first DE-RISK
+GREEN (online theta-ordered encode byte-unchanged from e02f692 +
+offline shuffled-replay Phase-1.3 consolidation + consolidated
+WM/episodic-order readouts; GPU-verified v1 ep=1.0 preserved; NOT a
+soundness pass). Built on iter-3 foundation e02f692 (temporal-credit +
+homeostasis + documented non-zero init). Next = the full Tasks 2-5
+build on top of `3300d3f`. HEAD after the iter-4 program-level
+propagation commit (findings + capability PREDICTED + state file +
+plan, both
 remotes). Iteration 4 produced the pre-committed PROGRAM-LEVEL finding
 (validated concept-binding vs theta-gamma episodic store =
 contradictory encode-order requirements at the N=2 single-pass slice);
