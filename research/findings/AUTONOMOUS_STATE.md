@@ -78,59 +78,75 @@ metamemory abstention) and TDD plan
 `docs/plans/2026-05-19-regime-correct-compositional-retrieval-implementation.md`
 (commit `7a6ace6`, Tasks 0-5).
 
-**CURRENT: subagent-driven execution through Task 4; Task 5
-(CONTROLLER-ONLY decisive run) is the exact next action.** The full
-anti-cheat discipline ran end-to-end and worked: Task 0 pin `b37ba71`;
-Task 1 frozen fixed-bar three-state verdict module `c474d6e`
-(`research/runners/compose_retrieval_core.py`, 19-case matrix; bars
-immovable, recomputes from raw numbers, VOID!=FAIL, byte-unchanged
-since creation); Task 2 net-new composition runner `fe89bc5`;
-dedicated adversarial review `c8962f7` returned BLOCK on a CONFIRMED
-false-PASS in the runner's scoring contract (caught BEFORE any
-decisive run -- a success of the discipline, propagated honestly
-`c02abf9` both remotes); pre-committed faithfulness-fix iteration
-`19190bd` closed all four defects in the net-new runner ONLY
-(A validated-recipe substrate, no num_traits override; B live measured
-ablation accuracies, dead short-circuit removed; C opaque `fact_{i}`
-tags + answer decoded ONLY from the validated neural readout, empty/
-single-path/tag-string solvers provably FAIL; D moat fed its
-calibrated raw firing-rate quantity); independent RE-REVIEW
-re-executed every prior exploit end-to-end -> all now `GATE=FAIL` ->
-verdict CLEAR-to-proceed. Task 4 no-harm PASSED: protected set +
-no-confab moat byte-UNCHANGED across the whole arc (base `7a6ace6`
-.. HEAD `19190bd`), frozen verdict module byte-unchanged since Task 1,
-no autograd on shipped paths, full suite 47/47 green (moat 7/7).
+**CURRENT: Stage-1 COMPLETE through Task 5; decisive run = HONEST
+NEGATIVE, smell-test PASSED, fully propagated both remotes
+(`eb3ef96`..the Stage-1 propagation commit).** The full anti-cheat
+discipline ran end-to-end and worked: Task 0 pin `b37ba71`; Task 1
+frozen capability-verdict module `c474d6e` (19-case matrix; bars
+immovable, recomputes from raw numbers, VOID!=FAIL, byte-unchanged);
+Task 2 runner `fe89bc5`; dedicated adversarial review `c8962f7`
+returned BLOCK on a CONFIRMED false-PASS (caught BEFORE any decisive
+run; propagated honestly `c02abf9`); faithfulness-fix `19190bd`
+(net-new runner ONLY; no bar/protected/frozen/moat edit) closed all
+four defects; independent RE-REVIEW re-ran every exploit -> all
+`GATE=FAIL` -> CLEAR; Task 4 no-harm PASSED; design deepened with the
+biological conflict-resolution mechanism (`175bf00`, design section
+2b). Task 5 CONTROLLER-ONLY decisive run: full biological scale
+(8240-neuron validated 16-pool + hippocampus substrate; frozen ladder
+2/4/8; seeds 42/43/44; CuPy/RTX3090; kill-safe durable capture;
+monitored to actual process exit via a genuine completion waiter) =
+GATE=FAIL, full_acc=0.00 every load/seed; verdict independently
+recomputed from the single recording (no re-run, no bar change) =
+FAIL; mandatory smell-test PASSED (genuine full-scale ~34-min
+execution, zero errors/exceptions/NaN, 27 arm-runs, internally
+consistent -- honest measured negative, NOT instrument-invalid, NOT a
+false PASS). REAL PARTIAL POSITIVE (reported, not spun):
+abstain_correct=1.00 across ALL seeds/loads/both ablation arms -- the
+no-confabulation moat composed into the two-path architecture at
+biological scale and abstained rather than confabulating in every
+case. This empirically CONFIRMS the owner reframe (design section
+2b): static two-store retrieval-composition is not how biology
+produces this capability. Original frozen verdict `2048750` +
+corrected `36a7975` + capability module `c474d6e` + no-confab moat
+(7/7) byte-unchanged; conversational capability NOT achieved/claimed;
+all prior validated assets intact. Findings:
+`research/findings/2026-05-19-regime-correct-compositional-retrieval-Stage1-decisive-honest-negative.md`.
 
-**EXACT NEXT ACTION: Task 5 -- CONTROLLER-ONLY decisive run (NOT a
-subagent task).** In the same turn, never stopping on a promise:
-(1) grounding-first tiny-synth run (toy numbers explicitly NOT
-propagated); (2) decisive kill-safe multi-seed run at the frozen
-ladder (2,4,8), seeds 42 43 44 (>= MIN_SEEDS), CuPy on RTX 3090,
-DURABLE output capture to research/findings/raw/, monitored to ACTUAL
-completion (foreground or a mechanism that genuinely notifies on
-process exit -- never a detached process with a false "will be
-notified"; completion actively confirmed before any result is
-stated); (3) mandatory smell-test scrutinising a nominal PASS HARDER
-than a FAIL -- recompute the verdict from the single recorded output
-(no re-run, no bar change), confirm full genuinely succeeds, each
-ablation genuinely collapses its regime part, abstention genuinely
-holds under both ablations; (4) honest propagation of EVERY outcome
-in plain language: findings doc + `webapp/capability_status.json`
-pillar (status PREDICTED until a clean scrutinised PASS; schema test
-green) + `AUTONOMOUS_STATE.md` + commit + push BOTH remotes;
-(5) then autonomously: a clean scrutinised PASS -> the next
-pre-registered staged step (design Architecture B: schema-accelerated
-assimilation), its own fixed-bar test; an honest FAIL/VOID/
-WORKS-AT-SMALL-LOAD -> follow the biology to the next
-integration-fidelity refinement and iterate -- NOT declare unfit,
-NOT hand back, NOT config-crank, NO bar change. Honest ceiling
-unchanged: a clean success = a biology-grounded two-system
-composition answers grounded compositional queries each regime read
-in its correct regime, holding/improving with load, abstaining not
-confabulating under ablation -- NOT fluent language, NOT an LLM, NOT
-the retracted transitive claim. NO partition edit ever (necessity
-line closed); autonomous; the next-action tool call is always in the
-same turn; never stop on a promise.
+**EXACT NEXT ACTION: the pre-registered next stage the negative
+triangulates onto -- the shared theta-gamma SPEAR + generative-replay
+CONVERSATIONAL architecture (design section 2b; autonomous, no
+hand-back, no config-crank, NO bar change, NO partition edit; the
+necessity line stays closed).** Run a proper design pass for it
+(brainstorming-style: it is a documented design call, NOT
+one-question-at-a-time -- biology is already investigated and cited
+[9]-[17]) then writing-plans -> subagent-driven-development ->
+pre-registered fixed-bar three-state gate -> honest propagation ->
+iterate-following-biology. Load-bearing core: ONE shared theta-gamma
+rhythm time-multiplexing an encode phase (entorhinal-afferent, high
+acetylcholine via the validated neuromodulator subsystem, plasticity
+on, retrieval suppressed) and a retrieve/pattern-complete phase
+(CA3-recurrent, low acetylcholine, plasticity off) -- Separate Phases
+of Encoding And Retrieval; order-bearing vs order-invariant as
+operating modes of one theta-gamma code; a prefrontal working-memory
+frame holding compositional sequence structure; a generative
+hippocampal-prefrontal replay loop producing novel schema-constrained
+ordered sequences. REUSE byte-unchanged: the validated theta-gamma
+episodic store, trisynaptic pattern-completion pathway,
+replay-consolidation subsystem, neuromodulator subsystem (acetylcholine
+gate), the no-confabulation moat at output; net-new = only the shared
+rhythm/phase controller + the wiring. Its OWN new frozen fixed-bar
+three-state verdict module (does NOT import/modify any existing
+verdict module or the moat); dedicated adversarial review BEFORE
+no-harm; controller-only decisive run + mandatory smell-test
+(scrutinise a PASS harder than a FAIL); honest propagation of EVERY
+outcome both remotes. Honest ceiling unchanged: a clean success = a
+biology-grounded shared-rhythm composition shows grounded
+compositional/conversational capability that holds/improves with load
+and abstains rather than confabulates -- explicitly NOT fluent
+open-ended language, NOT an LLM, unless a later pre-registered stage
+genuinely shows it; all prior validated results + honest boundaries
+unaffected. NO partition edit ever; autonomous; the next-action tool
+call is always in the same turn; never stop on a promise.
 
 **Corrected-approach PLAN done (7b1d47c, pushed both remotes). CONTROLLER
 PRE-COMMITTED HONESTY CEILING propagated BEFORE any build
