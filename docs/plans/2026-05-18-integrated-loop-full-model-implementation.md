@@ -114,6 +114,8 @@ git commit -m "test: grounding pin for the integrated-loop runner (red until the
 
 The module is LOAD-BEARING and is fully specified below for exact transcription. Transcribe it verbatim. The 16-case adversarial test matrix must pass.
 
+**Pre-registration correction log (transparent; no numeric bar changed; no decisive run had occurred):** the first draft of this verdict applied a blanket "any load below the science bar -> FAIL" check before the scale analysis, which made the pre-registered `WORKS-SMALL-NO-SCALE-CONFIDENCE` classification (the owner's explicitly-defined honest non-success: "works at small load but degrades with scale") unreachable. That is an instrument self-consistency defect, not an outcome-driven change. The classification *precedence* was corrected (check scale-confident-PASS first; then "works at the minimal load but does not scale" -> WORKS-SMALL; then "fails even at the minimal load" -> plain FAIL). Every numeric threshold (`_IL_V1_MIN=0.90`, `_IL_SCI_MIN=0.80`, `_IL_LESION_MAX=0.40`, `_IL_SCALE_TOL=0.10`, ladder `(2,4,8)`, `_IL_MIN_SEEDS=3`) and the shared/helper lesion partition are byte-identical to the first draft. The 16-case test matrix below is unchanged — it always encoded the intended behaviour; the corrected module satisfies all 16.
+
 **Step 1: Write the failing test**
 
 Create `tests/test_integrated_loop_core.py` with the full matrix below. It imports `integrated_loop_verdict` and the frozen constants and exercises 16 cases: full-loop-succeeds-scale-confident; works-small (trend break); works-small (top below floor); each shared lesion failing to collapse one readout -> VOID; each helper lesion failing its responsibility -> VOID; instrument-soundness unmet -> VOID; sound+discriminating but science below bar -> FAIL; ladder mismatch -> VOID; non-numeric/NaN -> VOID-not-raise; too-few-seeds -> VOID; malformed top-level -> VOID-not-raise; and explicit pins that each frozen bar equals its pre-registered value.
@@ -383,13 +385,17 @@ def integrated_loop_verdict(rungs) -> Dict:
        "full": {"wm": float, "ep": float},   # genuine composition
        "lesions": {<name>: {"wm": float, "ep": float}, ...}}
 
-    Precedence (matches the established discipline): any soundness or
-    discrimination defect -> VOID; else any rung science below the bar
-    -> FAIL; else all rungs science-ok and scale-confident ->
-    SCALE-CONFIDENT-PASS; else (all science-ok but the trend breaks or
-    the top rung is below the science bar) -> the scale is not
-    confident, which is an honest non-success: FAIL with
-    classification WORKS-SMALL-NO-SCALE-CONFIDENCE."""
+    Precedence (fail-closed, self-consistent): any soundness or
+    discrimination defect -> VOID; else if every load meets the
+    science bar AND composition is non-decreasing up to tolerance AND
+    the largest load holds -> SCALE-CONFIDENT-PASS; else if the
+    smallest (minimal-composition) load meets the science bar but
+    scale confidence fails (a larger load drops below the bar, or the
+    trend breaks, or the top is below the bar) -> GATE FAIL with
+    classification WORKS-SMALL-NO-SCALE-CONFIDENCE (an honest
+    non-success: works small, does not scale); else (the loop fails
+    the science bar even at the smallest load) -> GATE FAIL with
+    classification FAIL (it does not perform the capability at all)."""
     bars = {"LADDER": list(_IL_LADDER), "V1_MIN": _IL_V1_MIN,
             "SCI_MIN": _IL_SCI_MIN, "LESION_MAX": _IL_LESION_MAX,
             "SCALE_TOL": _IL_SCALE_TOL, "MIN_SEEDS": _IL_MIN_SEEDS}
@@ -468,20 +474,18 @@ def integrated_loop_verdict(rungs) -> Dict:
         full_min.append(min(fu[0], fu[1]))
 
     # Instrument is sound + discriminating. Now the science verdict.
-    science_ok = all(fm >= _IL_SCI_MIN for fm in full_min)
+    # Precedence is ordered so every pre-registered classification is
+    # reachable and means exactly what the design defines:
+    #   PASS              -> every load meets the bar AND scales
+    #   WORKS-SMALL(FAIL) -> minimal load works, but does not scale
+    #   FAIL              -> does not even work at the minimal load
     base = {"instrument_valid": True, "frozen_bars": bars,
             "full_min_by_rung": full_min}
-    if not science_ok:
-        return {"GATE": "FAIL", "classification": "FAIL",
-                "reason": "instrument sound+discriminating but the "
-                          "full loop is below the science bar "
-                          "(min(wm,ep) >= %.2f) on at least one rung"
-                          % _IL_SCI_MIN, **base}
-
+    all_science_ok = all(fm >= _IL_SCI_MIN for fm in full_min)
     monotone = all(full_min[i + 1] >= full_min[i] - _IL_SCALE_TOL
                    for i in range(len(full_min) - 1))
     top_ok = full_min[-1] >= _IL_SCI_MIN
-    if monotone and top_ok:
+    if all_science_ok and monotone and top_ok:
         return {"GATE": "PASS",
                 "classification": "SCALE-CONFIDENT-PASS",
                 "reason": "the full integrated loop succeeds on both "
@@ -492,15 +496,27 @@ def integrated_loop_verdict(rungs) -> Dict:
                           "composition is non-decreasing up to "
                           "tolerance across the ascending load ladder "
                           "and holds at the largest load", **base}
-    return {"GATE": "FAIL",
-            "classification": "WORKS-SMALL-NO-SCALE-CONFIDENCE",
-            "reason": "every rung science-ok but %s%s -- works at "
-                      "small load without scale confidence (an honest "
-                      "non-success)"
-                      % ("" if monotone else "composition drops > "
-                         "tolerance between ascending loads; ",
-                         "" if top_ok else "the largest load is below "
-                         "the science bar"), **base}
+    if full_min[0] >= _IL_SCI_MIN:
+        why = []
+        if not all_science_ok:
+            why.append("a larger load falls below the science bar")
+        if not monotone:
+            why.append("composition drops > tolerance between "
+                       "ascending loads")
+        if not top_ok:
+            why.append("the largest load is below the science bar")
+        return {"GATE": "FAIL",
+                "classification": "WORKS-SMALL-NO-SCALE-CONFIDENCE",
+                "reason": "the loop performs the minimal composition "
+                          "(smallest load >= the science bar) but is "
+                          "NOT scale-confident: %s -- an honest "
+                          "non-success (works small, does not scale)"
+                          % "; ".join(why), **base}
+    return {"GATE": "FAIL", "classification": "FAIL",
+            "reason": "instrument sound+discriminating but the full "
+                      "loop is below the science bar even at the "
+                      "smallest (minimal-composition) load -- it does "
+                      "not perform the capability at all", **base}
 ```
 
 **Step 4: Run the test to verify it passes**
