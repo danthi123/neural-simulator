@@ -112,6 +112,80 @@ already do" before designing from biology alone.
   for the hippocampal-entorhinal compositional path; future stages
   should learn from / borrow its implementation.
 
+## 2d. Broader prior-art search (owner-flagged: "search, don't just recall")
+
+A broader literature + web + code-repo search (not just memory)
+returned an active 2023-2026 spike-driven language-model space the
+project's "no local generative scale-confident" terminus did not
+test against, plus the live open-source libraries and curated
+paper-lists the discipline should pull from:
+
+- **Spike-driven generative language models (open source, active
+  development).** SpikeGPT [19] (Zhu 2023, 130 cites; 45M-216M
+  parameter RWKV-inspired binary spiking LM trained on 5B tokens of
+  OpenWebText, ~22x less energy, 32.2x fewer ops on neuromorphic
+  hardware, competitive with non-spiking on benchmarks, Hugging Face
+  hosted, Discord community building chatbots, github
+  ridgerchu/SpikeGPT). SpikeLM [20] (Xing 2024, 34 cites; first
+  fully spike-driven model for BOTH discriminative AND generative
+  language tasks via elastic bi-spiking, github Xingrun-Xing/SpikeLM).
+  SpikingBERT [21] (Bal 2023, 78 cites; BERT distilled into a
+  spiking LM with implicit differentiation, multiple GLUE tasks,
+  github NeuroCompLab-psu/SpikingBERT). Spikingformer (AAAI 2026
+  foundation model for SNNs; github TheBrainLab/Spikingformer).
+  NeuronSpark (2026 arxiv: state-space SNN language model with
+  generative behaviour). These trade some biological strictness for
+  surrogate-gradient BPTT to get generative capability -- the
+  project already uses surrogate-grad BPTT in Phase 2.1/2.2 but
+  never scaled it to LLM-class architectures.
+- **Phase-coded VSA in spikes -- the natural unification with
+  SPEAR.** Orchard 2023/2024 [22][23] implement Fourier Holographic
+  Reduced Representation (FHRR, a VSA variant) in spiking neurons
+  by encoding each complex-vector phase as a SPIKE TIME WITHIN A
+  CYCLE. Bind, unbind, spatial reasoning, function representation,
+  memory delay -- all on spike-phase. The strategic implication: a
+  theta-gamma SPEAR rhythm and SPA-style vector-symbolic binding are
+  NOT competing architectures -- they are the SAME phase code with
+  two purposes (write/read multiplexing AND compositional binding).
+  Recent VSA advances continue (Furlong 2024 PMC11655797 on neural
+  probabilistic computation via VSA; arxiv 2511.01838 Nov 2025 on
+  efficient VSA from histogram recovery).
+- **Open-source libraries + curated lists to pull from
+  periodically.** NengoSPA (v2.0.1.dev0; actively maintained;
+  documented; recent models with 2048-d spatial semantic pointers
+  in spiking ReLU nets). TheBrainLab/Awesome-Spiking-Neural-Networks
+  is a curated paper+code list to scan at every design pass.
+- **Large-scale biology-plausible platforms.** BiCoSS [24] (Yang
+  2021, 164 cites; >4M biology-plausible spiking neurons for
+  cognitive activities). BrainScaleS-2 [25] (Pehle 2022, 221 cites;
+  neuromorphic hardware with hybrid plasticity). 2025 SNN review
+  [26] (Huo 2025).
+
+**Strategic pre-registered consequence (new, durable, propagated):**
+
+- The project's "no local generative scale-confident" terminus is
+  *NOT* a property of biology-grounded spiking sims in general; it
+  is a property of the project's specific anti-cheat constraints
+  (no autograd; only validated local learning rules). The
+  spike-driven LLM family achieves generative language by trading
+  some biological strictness for surrogate-gradient BPTT. There is
+  a legitimate, previously-undiscussed strategic question: should
+  the discipline allow a clearly-marked, non-load-bearing
+  **comparison baseline** that scales surrogate-grad BPTT to a
+  SpikeGPT-class architecture purely to answer "are our anti-cheat
+  constraints the actual ceiling, or is the substrate the ceiling?"
+  This is not pivoting away from biological discipline -- it is
+  testing whether the discipline is what is blocking us. Surfaced
+  for owner consideration; not adopted unilaterally.
+- Phase-coded VSA in spikes (Orchard 2023/2024) directly unifies
+  our two recent strategic threads (SPEAR theta-gamma + SPA
+  binding). Post-Stage-A design passes should evaluate this
+  unification rather than treat them as separate architectures.
+- The discipline for every future design pass: broad search
+  first -- consensus + web + open-source code + curated lists
+  (Awesome-Spiking-Neural-Networks, NengoSPA docs) -- not
+  narrow-from-memory.
+
 **Strategic consequence (pre-registered, durable).** The in-flight
 SPEAR Stage decisive run remains a valid experiment (testing whether
 the project's specific reuse of the validated subsystems under a
@@ -290,6 +364,18 @@ the capability the static composition could not.
 [16] [The Tolman-Eichenbaum Machine: Unifying Space and Relational Memory through Generalization in the Hippocampal Formation](https://consensus.app/papers/details/12de2e1b677d533796b8d7cfcc3f03dc/?utm_source=claude_code) (Whittington et al., 2019, Cell)
 [17] [The Spiking Tolman-Eichenbaum Machine: Emergent Spatial and Temporal Coding through Spiking Network Dynamics](https://consensus.app/papers/details/c7095e94ac295cff8446de5ad50678cf/?utm_source=claude_code) (Kawahara et al., 2025, bioRxiv)
 [18] [Hippocampal CA1 spiking during encoding and retrieval: relation to theta phase](https://consensus.app/papers/details/15ce17ce14a8549fb8e39e951c4fe20c/?utm_source=claude_code) (Manns et al., 2006, Neurobiology of Learning and Memory)
+[19] [SpikeGPT: Generative Pre-trained Language Model with Spiking Neural Networks](https://consensus.app/papers/details/d2b9c1c34dac56b4b12c0147f5a3c75b/?utm_source=claude_code) (Zhu et al., 2023, TMLR; [GitHub](https://github.com/ridgerchu/SpikeGPT))
+[20] [SpikeLM: Towards General Spike-Driven Language Modeling via Elastic Bi-Spiking Mechanisms](https://consensus.app/papers/details/dc5fe60a771d5d839c935dd72b0655bb/?utm_source=claude_code) (Xing et al., 2024; [GitHub](https://github.com/Xingrun-Xing/SpikeLM))
+[21] [SpikingBERT: Distilling BERT to Train Spiking Language Models Using Implicit Differentiation](https://consensus.app/papers/details/d94a2b4a097854a9b6b3a2ce4e23d8d9/?utm_source=claude_code) (Bal et al., 2023; [GitHub](https://github.com/NeuroCompLab-psu/SpikingBERT))
+[22] [Hyperdimensional Computing with Spiking-Phasor Neurons](https://consensus.app/papers/details/be1d5a9091145d4d94774194b95895cf/?utm_source=claude_code) (Orchard et al., 2023, ICONS)
+[23] [Efficient Hyperdimensional Computing With Spiking Phasors](https://consensus.app/papers/details/d689c878eb7d55888a796a9db9fdc6af/?utm_source=claude_code) (Orchard et al., 2024, Neural Computation)
+[24] [BiCoSS: Toward Large-Scale Cognition Brain With Multigranular Neuromorphic Architecture](https://consensus.app/papers/details/50112a70a15c53bdb423b07b4c137fb9/?utm_source=claude_code) (Yang et al., 2021, IEEE TNNLS)
+[25] [The BrainScaleS-2 Accelerated Neuromorphic System With Hybrid Plasticity](https://consensus.app/papers/details/cec2b4b9129f561f8f3401c42f302b81/?utm_source=claude_code) (Pehle et al., 2022, Frontiers Neurosci)
+[26] [Research on SNN Learning Algorithms and Networks Based on Biological Plausibility](https://consensus.app/papers/details/d646136c2c205e998422a53ab50da9e4/?utm_source=claude_code) (Huo et al., 2025, IEEE Access)
+[27] [Vector Symbolic Architectures as a Computing Framework for Emerging Hardware](https://consensus.app/papers/details/bdb7c7653fae58c4bfa9274d16e9b034/?utm_source=claude_code) (Kleyko et al., 2021, Proc IEEE)
+[28] [NengoSPA documentation (open source library)](https://www.nengo.ai/nengo-spa/user-guide/spa-intro.html)
+[29] [Spikingformer GitHub (AAAI 2026 foundation model)](https://github.com/TheBrainLab/Spikingformer)
+[30] [Awesome-Spiking-Neural-Networks (curated paper+code list)](https://github.com/TheBrainLab/Awesome-Spiking-Neural-Networks)
 
 ## 8. Components / data flow / error handling / testing (for the plan)
 
