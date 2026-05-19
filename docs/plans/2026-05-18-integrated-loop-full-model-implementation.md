@@ -910,6 +910,60 @@ baseline cortical weights, Barlow 1972).
   / become a static hard-feed; lesions faithful; homeostasis scoped);
   then no-harm; then the controller-only decisive run.
 
+## Pre-registered iteration 4 — the fundamentally-different, project-validated binding approach (added 2026-05-19; supersedes iteration 3; the hard bound's EXPLICITLY-permitted "fundamentally different approach", NOT a config iteration)
+
+Iterations 1-3 (findings:
+`research/findings/2026-05-19-integrated-loop-iter3-deeper-architecture-finding-global-scalar-credit-cannot-carry-WM-selectivity.md`)
+precisely localized the instrument-soundness gap: with the
+basal-ganglia causal wiring intact, per-stripe homeostatic
+equalization working, and the documented non-zero initialization
+applied, episodic binding is now PERFECT (ep=1.0) and the trustworthy
+gate is cleared — but role-selective WORKING-MEMORY binding does not
+form under a global scalar three-factor (temporal-credit) signal. This
+triangulates with the project's own independent 2026-05-05 verdict:
+global scalar feedback fails to produce selective binding at
+biological scale; the credit-assignment rule is the bottleneck, the
+architecture is sufficient. The project's own documented resolution is
+the embodied co-firing plus topographic-prior binding paradigm
+(validated: Tier-1 ~6x improvement; the 16-pool concept substrate at
+high multi-seed bidirectional binding) — which the design's Section 3
+already specifies as the concept-layer substrate.
+
+- **Named mechanism (project-validated; the design's own Section-3
+  mandate):** carry the working-memory role-selectivity with the
+  validated embodied co-firing + topographic-prior binding mechanism
+  (reused byte-unchanged where it exists; net-new = only the in-loop
+  wiring that routes it through the prefrontal-slot/concept dimension).
+  The temporal-credit signal is relegated to its correct role (credit
+  and gating) and is no longer asked to be the binding rule itself.
+- **Keep every faithful part already committed (`e02f692`):** the
+  basal-ganglia causal wiring (`thal -> dlpfc_verb -> noun_pool`), the
+  per-stripe homeostatic equalization (verified working), the
+  documented non-zero efferent initialization, and the now-perfect
+  episodic binding.
+- **Acceptance is the SAME pre-registered frozen gate (unchanged):** on
+  the GPU, `v1` wm AND ep >= 0.90 with EVERY drilled binding clearing
+  the byte-unchanged no-confabulation gate; `full`+lesions novel probe
+  byte-identical. No frozen threshold touched; no-confab moat and every
+  protected/validated module byte-unchanged; no autograd; ASCII;
+  GPU/CuPy for the real path (numpy only for `--tiny-synth`).
+- **Anti-hard-feed control:** selectivity must be LEARNED by co-firing,
+  demonstrably absent before training and present only after — not
+  pre-wired into the connectivity or fed at query.
+- **Pre-committed iteration-4 bound (stated BEFORE the run):** if the
+  project's OWN validated co-firing+topographic binding mechanism ALSO
+  fails to produce role-selective working-memory binding inside this
+  integrated loop at the minimal two-binding load, that is a genuine
+  PROGRAM-LEVEL refutation of integrated-loop instrument-soundness at
+  this slice — surfaced honestly as a fundamental program decision,
+  NOT a further iteration, NOT config-cranking, NOT spin. Stated in
+  advance so the outcome cannot be rationalized.
+- **Process:** strengthen-only; controller trust-but-verify the diff;
+  dedicated adversarial re-review before the no-harm phase (Probe-8
+  intact; co-firing selectivity learned not pre-wired; lesions
+  faithful; homeostasis scoped; non-zero init not leaking the answer);
+  then no-harm; then the controller-only decisive run.
+
 ## Execution
 
 Per the owner's standing instruction, execution is same-session subagent-driven. Transition directly to superpowers:subagent-driven-development — do NOT present an execution-choice prompt.

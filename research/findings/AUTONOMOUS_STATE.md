@@ -18,52 +18,71 @@ reference biology, no hand-back, no declare-unfit.
 
 ## Exact next concrete action
 
-**PENDING-LOCAL-GPU: iteration 3 (background subagent running locally on
-the RTX 3090).** Apply the documented project fix: a small NON-ZERO
-prior init (`weight_mean ~= 0.5`, `weight_jitter ~= 0.3`) on the net-new
-`dlpfc_verb -> noun_pool_F*` RegionPathway the runner already adds, so
-the (now-correctly-wired) temporal-credit reward can actually charge
-STDP eligibility (a zero-init synapse carries no current -> the
-documented CLAUDE.md zero-init gotcha; Barlow 1972 spontaneous baseline
-weights). KEEP both already-faithful levers: LEVER 1 temporal-credit
-(committed `5c27e99`, encode-only, validated idiom byte-unchanged) and
-LEVER 2 homeostasis (committed `5c27e99`, verified working). SAME frozen
-gate (`v1` wm AND ep >= 0.90 on GPU; every drilled binding clears the
-byte-unchanged no-confab gate; `full`+lesions novel probe
-byte-identical). Strengthen-only; protected/frozen/moat byte-unchanged;
-GPU/CuPy (numpy only for `--tiny-synth`). Commit only if acceptance met;
-else honest faithful-negative report.
+**PENDING-LOCAL-GPU: iteration 4 (the fundamentally-different,
+project-validated binding approach the hard bound EXPLICITLY permits;
+background subagent on the RTX 3090).** Iters 1-3 localized the
+instrument-soundness gap precisely: episodic binding is now PERFECT
+(ep=1.0) and the documented zero-init gotcha is resolved, but
+role-selective WORKING-MEMORY binding does not form under a global
+scalar three-factor (temporal-credit) signal -- triangulating with the
+project's own 2026-05-05 verdict ("global scalar feedback fails at
+biological scale; the credit-assignment RULE is the bottleneck, the
+architecture is sufficient"). Its documented RESOLUTION is the
+embodied-Hebbian co-firing + topographic-prior binding paradigm
+(Tier-1 6x; v16 88.75% multi-seed -- the design Section-3 concept-layer
+substrate). Iteration 4: carry the working-memory role-selectivity with
+that VALIDATED co-firing+topographic mechanism (reused byte-unchanged
+where it exists; net-new = only the in-loop wiring), with
+temporal-credit relegated to credit/gating ONLY, KEEPING every faithful
+part already committed in `e02f692`: Probe-8 `thal->dlpfc->noun_pool`
+wiring, LEVER-2 homeostasis (working), the documented non-zero init,
+perfect episodic binding. SAME frozen gate (`v1` wm AND ep >= 0.90 GPU;
+every drilled binding clears the byte-unchanged no-confab gate;
+`full`+lesions novel probe byte-identical). Strengthen-only;
+protected/frozen/moat byte-unchanged; GPU/CuPy (numpy only for
+`--tiny-synth`). Anti-hard-feed control: selectivity must be LEARNED by
+co-firing, not pre-wired. Commit only if acceptance met; else honest
+faithful-negative.
 
-**On the iteration-3 completion notification:** controller
+**PRE-COMMITTED iteration-4 bound (stated before the run):** if the
+project's OWN validated co-firing+topographic binding mechanism ALSO
+fails to produce role-selective working-memory binding in this
+integrated loop at N=2, that is a genuine PROGRAM-LEVEL refutation of
+integrated-loop instrument-soundness at this slice -- surfaced honestly
+as a fundamental program decision, NOT a further iteration. Stated in
+advance so the outcome cannot be rationalized.
+
+**On the iteration-4 completion notification:** controller
 trust-but-verify the diff (commit scope = only the runner; protected
 byte-empty; `integrated_loop_core.py` unchanged since `2048750`; no
 autograd; 25/25; moat 7/7), then:
 - acceptance met + committed -> dedicated adversarial re-review (Probe-8
-  BG-causal intact; no query-time hard-feed from the eligibility/reward
-  or the non-zero init; lesions faithful; homeostasis scoped not
-  global-cheating; the non-zero init does not itself leak the answer)
-  -> on CLEAR: no-harm phase -> Task 5 CONTROLLER-ONLY decisive
-  multi-seed GPU run + anti-cheat smell-test + honest propagation both
-  remotes -> staged compositional sequence.
+  BG-causal intact; co-firing selectivity LEARNED not pre-wired/hard-fed;
+  lesions faithful; homeostasis scoped not global-cheating; non-zero
+  init not leaking the answer) -> on CLEAR: no-harm phase -> Task 5
+  CONTROLLER-ONLY decisive multi-seed GPU run + anti-cheat smell-test +
+  honest propagation both remotes -> staged compositional sequence.
 - faithful negative -> propagate honestly (findings + capability stays
-  PREDICTED + both remotes); honest bound now in force: if soundness
-  still fails AFTER the documented non-zero init on top of the two
-  now-faithful mechanisms, this is a DEEPER ARCHITECTURE question to
-  surface (a fundamentally different approach / explicit owner-facing
-  architecture decision), NOT another config iteration.
+  PREDICTED + both remotes) + surface the PRE-COMMITTED program-level
+  refutation finding honestly (no further config/iteration spin).
 
 DO NOT stop after any propagation/commit. The next concrete action
 always begins in the same turn.
 
 ## Last durable commit
 
-Runner honest-wip `5c27e99` = iteration 2: LEVER 1 (temporal-credit,
-encode-only, validated idiom byte-unchanged) + LEVER 2 (homeostasis,
-verified working) composed; acceptance NOT met (zero-init precondition
-blocks LEVER 1 eligibility) so committed as honest wip, NOT a pass.
-Iteration-2 findings + capability (PREDICTED) + this state file are the
-next propagation commit (both remotes). Iteration 3 (documented
-non-zero-init fix on top of `5c27e99`) is the in-flight next action.
+Runner honest-wip `e02f692` = iteration 3: documented non-zero
+binding-agnostic init on the net-new `dlpfc_verb->noun_pool_F*`
+efferent ON TOP OF iter-2's LEVER-1 (temporal-credit) + LEVER-2
+(homeostasis). Result: zero-init gotcha RESOLVED -- episodic binding
+PERFECT (ep=1.0), scores clear the 650 no-confab gate -- but
+working-memory role-selectivity does NOT form under global-scalar
+temporal-credit (wm=0.0); committed honest-wip, NOT a pass; hard bound
+hit -> deeper-architecture finding. Iteration-3 findings + capability
+(PREDICTED) + this state file are the propagation commit (both
+remotes). Iteration 4 (the fundamentally-different validated
+co-firing+topographic binding for the working-memory dimension, on top
+of `e02f692`) is the in-flight next action.
 
 ## Pre-registered acceptance / frozen bars (NEVER tuned)
 
