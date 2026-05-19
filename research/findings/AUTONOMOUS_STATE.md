@@ -46,35 +46,69 @@ valid-instrument runner `research/runners/integrated_loop_gate.py`
 (commit `5866009`, honest-WIP). Original frozen verdict `2048750` +
 corrected v2 `36a7975` + no-confab moat byte-unchanged throughout.
 
-**EXACT NEXT ACTION: a proper design pass for the genuinely-distinct
-next direction (autonomous, no hand-back, no necessity-loop variant).**
-Following the project's standing design discipline (brainstorming ->
-writing-plans -> subagent-driven-development -> pre-registered
-fixed-bar three-state gate -> honest propagation -> iterate-following-
-biology), design a compositional-capability build that uses the
-validated subsystems IN THEIR BIOLOGICALLY-CORRECT CLS REGIMES: the
-validated hippocampal trisynaptic/engram pathway for recent, specific,
-order-bearing bindings; the validated Phase-1.3 consolidation pathway
-for order-invariant remote semantic/concept structure; the validated
-v14/v16 16-pool concept binding (88.75% multi-seed) + multitag
-retrieval (90%) + engram stim-recall (87.5%) as the grounded
-knowledge substrate; the no-confabulation abstention moat at output.
-The net-new work is the biology-faithful COMPOSITION of these in their
-correct regimes, NOT a new isolated mechanism and NOT a shared-readout
-necessity loop. Pre-registered fixed-bar three-state verdict (its own
-frozen bars, mirroring the existing frozen-module discipline exactly;
-instrument-validity-first; VOID strictly distinct from FAIL; malformed
--> cannot-conclude not crash). Reuse-by-import only; protected/frozen/
-validated modules + the no-confab moat byte-UNCHANGED; no autograd;
-GPU/CuPy for decisive runs; ASCII. Honest ceiling stated up front and
-never spun: a clean success = a biology-grounded multi-system
-composition shows grounded compositional retrieval that holds/improves
-with load -- explicitly NOT fluent open-ended language, NOT an LLM,
-unless a later pre-registered stage genuinely shows it; all prior
-validated results and honest boundaries unaffected. NO partition edit
-ever (the necessity line is closed); autonomous; no hand-back; the
-next-action tool call is always in the same turn; never stop on a
-promise.
+**DESIGN + PLAN DONE + PROPAGATED both remotes.** Design
+`docs/plans/2026-05-19-regime-correct-compositional-retrieval-design.md`
+(commit `337ff8c`, biology cited: retrieval-augmented generation across
+the two memory systems each read in its own regime + per-regime
+metamemory abstention) and TDD plan
+`docs/plans/2026-05-19-regime-correct-compositional-retrieval-implementation.md`
+(commit `7a6ace6`, Tasks 0-5).
+
+**CURRENT: subagent-driven execution; Task-3 adversarial review
+BLOCKED Task 2 with a CONFIRMED false-PASS (the discipline working --
+a caught false-pass is a success, propagated honestly).** Landed +
+controller-verified: Task 0 grounding pin `b37ba71`; Task 1 frozen
+fixed-bar three-state verdict module `c474d6e`
+(`research/runners/compose_retrieval_core.py`, 19-case matrix; the
+MODULE is sound -- bars immovable, recomputes from raw numbers,
+VOID!=FAIL); Task 2 net-new composition runner `fe89bc5`
+(`research/runners/compose_retrieval_runner.py`); dedicated adversarial
+review `c8962f7` (new non-protected pin file only). ALL original
+protected/validated modules + the no-confab moat byte-UNCHANGED across
+the whole arc; no autograd; monkey-patch is a runtime instance wrapper
+restored in finally (faithful; CLEAR). Adversarial verdict = BLOCK on
+the RUNNER's scoring contract (NOT the frozen module): (D-B) ablation
+accuracies are a structural constant 0.0 behind an `if groundable:`
+short-circuit -> the `_CR_ABLATION_MAX` collapse bars are DEAD; (D-C)
+an empty solver scores a clean PASS by reading the answer from the
+engram tag string + additive sub-threshold sums (the 2026-05-14
+retraction artifact class); (D-D) the no-confab moat is fed an
+uncalibrated quantity (650 was calibrated on raw lang_output firing
+rates, runner feeds cos*||pattern||) -> the guarantee does not
+transfer; (D-A) substrate diverges from the validated v16 recipe
+(`num_traits=1` vs the recipe default) -> a PASS would not transfer.
+
+**EXACT NEXT ACTION: pre-committed faithfulness-fix iteration of the
+net-new runner ONLY (NO bar change, NO declare-unfit, NO hand-back,
+NO config-crank; protected set + frozen bars + no-confab moat
+byte-UNCHANGED).** Four precise corrections in
+`research/runners/compose_retrieval_runner.py` (+ its tests + invert
+the adversarial pin to assert the defect is CLOSED not hidden):
+(A) build the substrate EXACTLY as the validated concept-pool recipe
+does (do not override num_traits); faithfulness > tiny-synth
+convenience (decisive run is CuPy anyway). (B) all three arms run the
+IDENTICAL query->retrieve->compose->decode->score pipeline; kill the
+`if groundable:` short-circuit so recent_only_acc/remote_only_acc are
+genuinely MEASURED (the `_CR_ABLATION_MAX` bars become live: removing
+a regime must provably collapse measured accuracy <=0.40). (C) the
+compositional task must genuinely require BOTH regimes with the answer
+NOT recoverable from any string (OPAQUE tag ids e.g. `fact_{i}`),
+scored from neural readout via the validated
+`lang_output_pattern_during_*`->`cosine_to_word` path; the empty /
+single-path solver must provably FAIL (invert the adversarial pin to
+assert this). (D) feed the byte-unchanged moat `gate(ranked,650.0)`
+the raw lang_output firing-rate confidence it was calibrated on (the
+validated readout quantity), NOT cos*||pattern||. Then RE-RUN the
+dedicated adversarial review (fix -> re-review loop) until CLEAR;
+then Task 4 no-harm; then Task 5 CONTROLLER-ONLY decisive multi-seed
+run + smell-test + honest propagation both remotes; then autonomous
+next staged step. Honest ceiling unchanged: a clean success = a
+biology-grounded two-system composition answers grounded compositional
+queries each regime read in its correct regime, holding/improving with
+load, abstaining not confabulating under ablation -- NOT fluent
+language, NOT an LLM, NOT the retracted transitive claim. NO partition
+edit ever (necessity line closed); autonomous; the next-action tool
+call is always in the same turn; never stop on a promise.
 
 **Corrected-approach PLAN done (7b1d47c, pushed both remotes). CONTROLLER
 PRE-COMMITTED HONESTY CEILING propagated BEFORE any build
