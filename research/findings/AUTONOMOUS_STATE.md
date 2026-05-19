@@ -48,21 +48,36 @@ episodic). Three faithful architectures, three directions, one
 conclusion. Original frozen verdict NEVER edited (its VOID stands as
 the honest record). Findings + capability (PREDICTED) propagated.
 
-**Exact next concrete action: writing-plans for the corrected
-approach.** FIRST work item = a NEW separately-pre-registered + frozen
-catalog-grounded necessity module (SINGLE biologically-cited partition
-correction: `no_cls_replay` -> working-memory/concept helper set, NOT
-`_HELPER_EP`; numeric bars reused VERBATIM with original a-priori
-justifications; instrument-validity-first; VOID strictly != FAIL;
-created + frozen BEFORE any architecture). It is gated by a DEDICATED
-ADVERSARIAL REVIEW whose PRIMARY mandate is goalpost-move detection
-("legitimate catalog-derived correction or a rationalized repartition
-to make the next candidate pass?" -- the latter BLOCKS the build). The
-original frozen module is untouched; its VOID preserved permanently.
-THEN the distinct-readout-pathways candidate is built + exercised
-against the NEW module; its falsify-first MUST probe the FULL science
-mode's wm AND ep JOINTLY at minimal load (the recorded process lesson);
-reuse byte-unchanged; GPU/CuPy; no autograd.
+**Corrected-approach PLAN done (7b1d47c, pushed both remotes). CONTROLLER
+PRE-COMMITTED HONESTY CEILING propagated BEFORE any build
+(2026-05-19-CONTROLLER-precommitted-honesty-ceiling-...md, 876bbf3-line):
+the corrected module's single partition change is biologically sound +
+thrice-convergent + pre-committed, BUT legitimacy and convenience
+COINCIDE (it is exactly the membership that lets the candidate pass) --
+an irreducible epistemic limit. BINDING: the load-bearing scale-confident
+result of this line IS the thrice-convergent falsification of the
+original prediction; a clean validated PASS vs the ORIGINAL instrument
+is now KNOWN UNOBTAINABLE from this line; a PASS vs the CORRECTED module
+is NOT the scale-confident validated deliverable (at most
+"consistent-with", always reported with this limitation, never spun); a
+VOID/FAIL is a strong negative; NO further partition edit ever.**
+
+**Exact next concrete action: dispatch Task 1 + Task 2 (subagent).**
+Task 1 = build the NEW frozen `research/runners/integrated_loop_core_v2.py`
+verbatim per the plan (single change `no_cls_replay` EP->WM:
+`_ILV2_HELPER_WM=("no_bg_gate","no_cls_replay")`,
+`_ILV2_HELPER_EP=("no_sequencing",)`; bars verbatim; tests 17/18 pin
+verbatim-bar-equality + exactly-one-change) + its >=12-case adversarial
+matrix `tests/test_integrated_loop_core_v2.py`. Task 2 = DEDICATED
+goalpost-move adversarial review (FRESH agent, verbatim charter,
+coincidence-of-convenience as the PRIMARY thing to rule out, may NOT
+cite "what makes the candidate pass" as support) -- if it judges
+GOALPOST-MOVE it BLOCKS all downstream and the original VOID stands as
+the deeper terminal finding. Subagent STOPS at the Task-2 gate decision
+and returns to the controller (the candidate build is gated on the
+controller reviewing Task 2 clean). Original frozen
+`integrated_loop_core.py` NEVER edited (its 16/16 + VOID preserved). No
+code beyond the two new v2 files; no autograd; ASCII.
 
 **NEW PRE-COMMITTED bound (in force, stated in advance):** a faithful
 build that reaches VOID/FAIL against the NEW catalog-grounded module is
