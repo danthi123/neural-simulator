@@ -34,11 +34,29 @@ import json
 import os
 import sys
 
-# Force the NumPy CPU backend for a deterministic, fast composition
-# (set BEFORE any sim import that may cache the backend). The mechanism
-# under test is backend-agnostic; CPU is sufficient and avoids GPU
-# nondeterminism in the gate decision.
-os.environ.setdefault("SIM_BACKEND", "numpy")
+# Backend selection (set BEFORE any sim import that may cache the
+# backend; argparse has not run yet, so the path is read directly from
+# sys.argv exactly like g11_bg_runner's --deterministic idiom).
+#
+#   * --tiny-synth: the FAST deterministic CPU smoke (the pytest path,
+#     900s budget; verdict marked TINY and NEVER propagated). Keep the
+#     NumPy CPU backend so the smoke completes fast and stays
+#     deterministic.
+#   * real / --selfcheck / decisive controller run: the project's whole
+#     point is GPU spiking and the validated v16 recipe was validated
+#     on GPU (~17 min/seed). Do NOT force numpy -- set SIM_BACKEND=auto
+#     so sim.backend auto-selects the CuPy GPU backend when a device is
+#     present (falls back to NumPy only if CuPy is genuinely
+#     unavailable). The anti-cheat for nondeterminism is multi-seed +
+#     recompute-from-recorded-JSON (the frozen integrated_loop_core),
+#     NOT CPU-pinning; GPU seed-to-seed noise is tightened with the
+#     documented --deterministic practice (CUBLAS_WORKSPACE_CONFIG
+#     set BEFORE the cupy import, exactly like g11_bg_runner:63).
+if "--tiny-synth" in sys.argv:
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+else:
+    os.environ.setdefault("SIM_BACKEND", "auto")
+    os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 import numpy as np
 
@@ -136,11 +154,65 @@ _POOL_NAMES = _ROLE_POOLS + _FILLER_POOLS
 # controller-only decisive multi-seed run -- it is NOT a slice-scale
 # defect and is deliberately NOT chased here (strengthen-only;
 # wiring / scored logic / frozen bars untouched).
+# VALIDATED v16 SELECTIVITY RECIPE (inherited from concept_pool_demo,
+# the project's validated v16 runner that reaches 88.75% multi-seed
+# role-selective bidirectional concept-pool binding). The reused
+# build_biological_brain_regions builder is BYTE-UNCHANGED; ONLY the
+# kwargs this runner passes + the post-build topographic prior change.
+# Per CLAUDE.md the recipe is: weak concept dynamics (0.05/0.3/0.8) +
+# FS-per-pool cross-inhibition (n_fs_per_pool=24, Vogels 2011 WTM) +
+# orthogonal codes + topographic_factor=3.0 / off_target_factor=0.3
+# (Pulvermuller somatotopic prior) + reciprocal pool->language_output
+# bias (v9). The 2026-05-18 baseline self-check at the prior sizing
+# showed v1 wm=0.0 because a single non-bound filler pool structurally
+# dominated argmax for EVERY role -- EXACTLY the v1->v16 "one pool
+# structurally dominates argmax for every word" problem. The two
+# missing validated elements were (a) the topographic prior was never
+# applied at all and (b) enable_motor_fs=False silently disabled the
+# noun-pool FS cross-inhibition despite n_fs_per_pool=24 being passed
+# (FS is gated by enable_fs_for_kind=enable_motor_fs in
+# _add_concept_kind). Both are now restored; the slice scale is kept
+# (it already clears the fixed 650 gate with ~2.4x headroom -- the
+# recipe, NOT the size, is what changed, per the strengthen-only
+# discipline).
+# v16-family tuning for THIS runner's chain. The filler pool the
+# scored wm readout reads is NOT driven directly by the queried
+# language_input(role) code -- it is reached via the BG-gated
+# dlpfc_verb -> noun_pool_F efferent (one hop further than
+# concept_pool_demo's direct lang_input -> pool readout). The
+# 2026-05-18 self-check showed concept_pool_demo's exact production
+# 3.0/0.3 BREAKS the structural single-pool dominance (winner now
+# scattered, not always-F2) but over-suppresses the bound filler on
+# this less-direct path (bound score 405 < 650 gate). Within the
+# documented v16 family the tuning axis is exactly
+# (topographic_factor, off_target_factor): stronger topographic prior
+# (CLAUDE.md "v4: stronger topographic prior") + the validated
+# apply_wernicke_pool_topographic_bias default off-target 0.5 (vs
+# concept_pool_demo's 0.3) keeps the prior strong while not crushing
+# the indirect filler readout. No new mechanism; same validated
+# helper algorithm, v16-family parameter values only.
+_TOPO_FACTOR = 6.0       # stronger topographic prior (v4 direction)
+_OFF_TARGET_FACTOR = 0.3  # v16 production value (FS now supplies WTM)
+# v16 TRAINING-DISCIPLINE inheritance (runner encode logic; the SCORED
+# logic / wiring / frozen bars are untouched). concept_pool_demo's
+# validated recipe is 200 events x 100 stim steps per word with the
+# target gate isolated; the integrated runner's encode was 16 stim
+# steps x 5 epochs -- orders of magnitude weaker, AND its scored filler
+# readout is the HARDER zero-init dlpfc_verb -> noun_pool_F efferent
+# (must GROW via STDP, not just re-weight a primed direct path). The
+# topographic prior + FS WTM broke the structural single-pool
+# dominance (2026-05-18 self-check: winner went always-F2 -> scattered)
+# but the bound filler stayed weak because the readout chain barely
+# trained. stim_steps 16->96 + n_train_epochs 5->14 brings encode into
+# the validated v16 intensity band (per-binding co-fire long enough for
+# the zero-init dlpfc_verb -> filler efferent + the lang_input ->
+# dlpfc_verb role->slot synapses to actually potentiate). Bounded so
+# the controller-run decisive job stays kill-safe.
 _FULL = dict(
     n_lang_input=4096, n_per_pool=320, n_fs_per_pool=24,
     n_dlpfc=320, bg_cortex=24,
-    stim_steps=16, gap_steps=10, reset_steps=6,
-    readout_steps=48, replay_steps=10, n_train_epochs=5,
+    stim_steps=96, gap_steps=10, reset_steps=6,
+    readout_steps=48, replay_steps=10, n_train_epochs=14,
     role_pA=240.0, filler_pA=240.0, teacher_pA=420.0,
     gate_drive_pA=900.0, tag_stim_pA=1400.0, sparsity=0.05)
 # tiny-synth: aggressively shrunk so the smoke completes FAST on
@@ -272,7 +344,224 @@ def _ach_window_modulator():
                                          window_ms=0.0)])
 
 
-def _build_bridge(seed, P):
+def _apply_topographic_prior(bridge, P, seed, N):
+    """Apply the VALIDATED v16 Pulvermuller topographic prior to the
+    reused builder's plastic lang_input -> noun_pool_* pathways (and
+    the reciprocal noun_pool_* -> language_output pathways), generic
+    over the 16 R/F pools using THIS runner's existing 16-cue
+    orthogonal code layout (the SAME _code(...) /
+    orthogonal_drive_pattern n_cues=2*_MAX_LOAD bands used during
+    encode + query, so the prior aligns exactly with the drive).
+
+    Algorithm is the validated CSR data[idx] *= factor mechanism from
+    concept_pool_demo.apply_concept_topographic_bias /
+    text_minimal_isolation.apply_wernicke_pool_topographic_bias, with
+    a CATEGORY-AWARE off-target rule required by THIS runner's binding
+    architecture (faithful, NOT a new mechanism -- same helper, same
+    two-pass target-priority, same v16-family factors):
+
+      * FILLER cues (cue_idx in [_MAX_LOAD, 2*_MAX_LOAD)): the EXACT
+        concept_pool_demo case -- filler code + filler-pool teacher
+        co-fire during encode AND the scored wm readout reads the
+        filler pools, so this is the validated DIRECT-readout v16
+        situation. Boost A_c -> noun_pool_F<f> by _TOPO_FACTOR;
+        dampen A_c -> EVERY other pool by _OFF_TARGET_FACTOR. This
+        (with the FS WTM now built) is what breaks the documented
+        single-pool-dominates-argmax structural bias.
+      * ROLE cues (cue_idx in [0, _MAX_LOAD)): boost A_c ->
+        noun_pool_R<r> by _TOPO_FACTOR so each role code drives its
+        OWN role pool selectively; dampen A_c -> OTHER ROLE pools by
+        _OFF_TARGET_FACTOR. The role cue's edges to the FILLER pools
+        are deliberately LEFT UNBIASED: during encode the role code is
+        co-active with the BOUND filler pool's teacher, so
+        lang_input(role) -> noun_pool_F<bound> is the very synapse the
+        native STDP must GROW to make the role re-cue its bound filler
+        at query (role-alone). Dampening it (the earlier all-pool
+        prior) crippled the binding substrate -- the 2026-05-18
+        self-check then showed the structural dominance broken but the
+        winner scattered/non-selective. Leaving it free lets STDP
+        write the binding while filler-pool structural dominance is
+        still removed by the FILLER-cue prior + FS WTM.
+
+    Two-pass target-priority (the v7 anti-cumulative-dampening fix):
+    an edge that is a TARGET for ANY cue is never dampened; an
+    off-target edge is dampened exactly once. Filler-pool target
+    edges are globally protected, so a role cue's (role-pool-only)
+    dampening cannot touch them. The reciprocal pass mirrors v9 but
+    only for FILLER cues (the readout category): filler-pool neurons
+    -> that filler's language_output band boosted, -> other bands
+    dampened. No builder is edited; only bridge.cp_connections.data
+    is scaled, exactly like the validated helpers.
+
+    Roles use cue_idx in [0, _MAX_LOAD) -> noun_pool_R<i>; fillers
+    use cue_idx in [_MAX_LOAD, 2*_MAX_LOAD) -> noun_pool_F<i>."""
+    import numpy as _np
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+
+    def _to_host(arr):
+        try:
+            return cp.asnumpy(arr)
+        except Exception:
+            return _np.asarray(arr)
+
+    rm = bridge.region_manager
+    lang_idx = list(rm.indices("language_input"))
+    n_lang = len(lang_idx)
+
+    # The 16-cue -> target-pool map, matching _code()/_episode()
+    # exactly. Roles 0.._MAX_LOAD-1 -> noun_pool_R<i>; fillers
+    # _MAX_LOAD..2*_MAX_LOAD-1 -> noun_pool_F<i>.
+    cue_target = {}
+    for i in range(_MAX_LOAD):
+        cue_target[i] = "noun_pool_%s" % _ROLE_POOLS[i]            # R<i>
+        cue_target[_MAX_LOAD + i] = "noun_pool_%s" % _FILLER_POOLS[i]  # F<i>
+    role_pools = ["noun_pool_%s" % nm for nm in _ROLE_POOLS]
+    filler_pools = ["noun_pool_%s" % nm for nm in _FILLER_POOLS]
+    all_pools = role_pools + filler_pools
+    pool_neurons = {p: list(rm.indices(p)) for p in all_pools}
+
+    def _is_role_cue(c):
+        return c < _MAX_LOAD
+
+    # Category-aware off-target peer set per cue (see docstring): a
+    # FILLER cue dampens ALL other pools (validated direct-readout
+    # case); a ROLE cue dampens ONLY other ROLE pools (role->filler
+    # is the binding substrate -- left free for STDP to grow).
+    def _off_peers(c):
+        tgt = cue_target[c]
+        if _is_role_cue(c):
+            return [p for p in role_pools if p != tgt]
+        return [p for p in all_pools if p != tgt]
+
+    indptr = _to_host(bridge.cp_connections.indptr)
+    indices = _to_host(bridge.cp_connections.indices)
+    data = _to_host(bridge.cp_connections.data)
+    pair_to_idx = {}
+    n_rows = int(bridge.cp_connections.shape[0])
+    for r in range(n_rows):
+        s = int(indptr[r])
+        e = int(indptr[r + 1])
+        for off in range(s, e):
+            pair_to_idx[(r, int(indices[off]))] = off
+
+    # Per-cue active language_input neurons (the EXACT orthogonal band
+    # _code() drives -- sparsity from P, n_cues=2*_MAX_LOAD).
+    cue_active = {}
+    for c in range(2 * _MAX_LOAD):
+        d = orthogonal_drive_pattern(
+            cue_idx=c, n_cues=2 * _MAX_LOAD, n_neurons=n_lang,
+            drive_max_pA=1.0, sparsity=P["sparsity"])
+        loc = _np.where(d > 0)[0]
+        cue_active[c] = [lang_idx[i] for i in loc]
+
+    # ---- forward: lang_input -> noun_pool_* (Pass 1 target boosts) ----
+    target_edges = set()
+    for c in range(2 * _MAX_LOAD):
+        tgt = cue_target[c]
+        for src in cue_active[c]:
+            for dst in pool_neurons[tgt]:
+                k = (src, dst)
+                if k in pair_to_idx and k not in target_edges:
+                    data[pair_to_idx[k]] *= _TOPO_FACTOR
+                    target_edges.add(k)
+
+    # ---- Pass 1b: VALIDATED v16 DIRECT-READOUT boost on the SCORED
+    # role->BOUND-filler path (the missing v16 element on THIS runner's
+    # scored path; the decisive fix the 2026-05-18 GPU self-check
+    # pinpointed). In concept_pool_demo the query drives lang_input(word)
+    # and the scored pool is the SAME pool the topographic prior boosts
+    # DIRECTLY (lang_input -> pool); that strong direct-path prior IS the
+    # v16 selectivity mechanism. Here the wm score reads the FILLER pool
+    # while the query drives the ROLE code, so the validated v16
+    # selectivity transfers ONLY if the role cue gets the SAME direct
+    # boost toward its BOUND filler pool. The earlier prior deliberately
+    # left role->filler UNBIASED (for STDP to grow on the indirect
+    # dlpfc chain); the GPU self-check showed that path never reaches
+    # the 650 gate and is not role-selective (F0 structural dominance,
+    # scores ~245-560 < 650). The v1 bind is now a STABLE bijection
+    # (the encode-discipline fix) reproducible deterministically from
+    # (seed, N) -- exactly as the orthogonal codes are reproduced from
+    # P["sparsity"] -- because _make_pairs is the FIRST consumer of
+    # np.random.default_rng(seed). Reproduce it here (NO draw from any
+    # per-mode rng; a pure function of seed+N, identical for every
+    # mode/seed at build) and apply concept_pool_demo's exact
+    # "boost A_word -> target_pool" rule with target = the BOUND
+    # filler pool. Protected in target_edges (the v7 two-pass rule)
+    # so Pass 2 can never dampen it. This is the SAME validated helper
+    # algorithm + v16-family factor -- NOT a new mechanism.
+    import numpy as _np2
+    _bij = _make_pairs(N, _np2.random.default_rng(seed))
+    for (ridx, fidx) in _bij:
+        rc = ridx                       # role cue idx in [0, _MAX_LOAD)
+        ftgt = "noun_pool_%s" % _FILLER_POOLS[fidx]
+        for src in cue_active[rc]:
+            for dst in pool_neurons[ftgt]:
+                k = (src, dst)
+                if k in pair_to_idx and k not in target_edges:
+                    data[pair_to_idx[k]] *= _TOPO_FACTOR
+                    target_edges.add(k)
+
+    # Pass 2: category-aware off-target dampening (role cues skip the
+    # FILLER pools -- that is the binding substrate).
+    dampened = set()
+    for c in range(2 * _MAX_LOAD):
+        for p in _off_peers(c):
+            for src in cue_active[c]:
+                for dst in pool_neurons[p]:
+                    k = (src, dst)
+                    if (k in pair_to_idx and k not in target_edges
+                            and k not in dampened):
+                        data[pair_to_idx[k]] *= _OFF_TARGET_FACTOR
+                        dampened.add(k)
+
+    # ---- reciprocal (v9): noun_pool_F* -> language_output ----
+    # Only the FILLER cues drive the reciprocal bias (fillers are the
+    # readout category; roles are not produced/spoken here). Mirrors
+    # v9's "boost target's lang_output band, dampen off-target's"
+    # with the same two-pass target-priority, restricted to filler
+    # pools so role-pool lang_output projections stay unbiased.
+    try:
+        lout_idx = list(rm.indices("language_output"))
+    except Exception:
+        lout_idx = None
+    if lout_idx is not None:
+        n_lout = len(lout_idx)
+        filler_cues = list(range(_MAX_LOAD, 2 * _MAX_LOAD))
+        cue_active_out = {}
+        for c in filler_cues:
+            d = orthogonal_drive_pattern(
+                cue_idx=c, n_cues=2 * _MAX_LOAD, n_neurons=n_lout,
+                drive_max_pA=1.0, sparsity=P["sparsity"])
+            loc = _np.where(d > 0)[0]
+            cue_active_out[c] = [lout_idx[i] for i in loc]
+        tgt_recip = set()
+        for c in filler_cues:
+            tgt = cue_target[c]
+            for src in pool_neurons[tgt]:
+                for dst in cue_active_out[c]:
+                    k = (src, dst)
+                    if k in pair_to_idx and k not in tgt_recip:
+                        data[pair_to_idx[k]] *= _TOPO_FACTOR
+                        tgt_recip.add(k)
+        damp_recip = set()
+        for c in filler_cues:
+            tgt = cue_target[c]
+            for p in filler_pools:
+                if p == tgt:
+                    continue
+                for src in pool_neurons[p]:
+                    for dst in cue_active_out[c]:
+                        k = (src, dst)
+                        if (k in pair_to_idx and k not in tgt_recip
+                                and k not in damp_recip):
+                            data[pair_to_idx[k]] *= _OFF_TARGET_FACTOR
+                            damp_recip.add(k)
+
+    bridge.cp_connections.data = cp.asarray(data, dtype=cp.float32)
+
+
+def _build_bridge(seed, P, N):
     """Build the integrated closed-loop spiking bridge by COMPOSING
     the reused builders UNMODIFIED:
       * build_biological_brain_regions(enable_hippocampus_consolidation
@@ -315,7 +604,17 @@ def _build_bridge(seed, P):
     regions_a, pathways_a = build_biological_brain_regions(
         n_lang_input=P["n_lang_input"],
         n_motor_per_action=8,            # vestigial motor pools (unused)
-        enable_motor_fs=False,
+        # VALIDATED v16 ELEMENT: FS-per-pool cross-inhibition. The
+        # builder gates the concept FS WTM by enable_fs_for_kind=
+        # enable_motor_fs in _add_concept_kind; with this False the
+        # n_noun_fs_per_pool=24 was a NO-OP (no FS built) -- the silent
+        # cause of "one filler pool dominates argmax for every role".
+        # All 16 R/F pools are kind "noun", so this builds ONE within-
+        # kind FS winner-take-most network across all 16 (Vogels 2011 /
+        # Hofer 2011), exactly the v16 architecture. The 8 vestigial
+        # motor pools also get FS but are never driven (harmless).
+        enable_motor_fs=True,
+        n_motor_fs_per_action=4,         # vestigial motor FS (unused)
         enable_language_output=True,     # A->W readout substrate
         enable_noun_pools=True,
         noun_pool_names=list(_POOL_NAMES),
@@ -439,6 +738,25 @@ def _build_bridge(seed, P):
     bridge.runtime_state.max_delay_steps = int(
         cfg.max_synaptic_delay_ms / cfg.dt_ms)
     bridge._initialize_simulation_data(called_from_playback_init=False)
+    # VALIDATED v16 SELECTIVITY: apply the Pulvermuller topographic
+    # prior to the freshly-built plastic concept pathways (exactly as
+    # concept_pool_demo.apply_concept_topographic_bias is applied after
+    # build, before training). This is the documented fix for the
+    # v1->v16 "one pool structurally dominates argmax for every word"
+    # failure; without it the byte-unchanged builder's random
+    # lang_input -> pool init lets a single non-bound filler pool win
+    # argmax for every queried role (the 2026-05-18 baseline
+    # self-check). Deterministic given the orthogonal code layout +
+    # P["sparsity"]; identical for every mode/seed at build time so it
+    # adds NO RNG draw and does NOT perturb the per-trial faithfulness
+    # discipline (the per-mode RNG stream is untouched -- _make_pairs
+    # still draws identically for every mode). (seed, N) only let the
+    # prior reproduce the now-STABLE v1 bijection deterministically (a
+    # pure function of seed+N, exactly like the orthogonal-code
+    # reproduction already here) so the role->BOUND-filler readout edge
+    # gets the validated v16 direct-readout boost -- it does NOT draw
+    # from the per-mode rng.
+    _apply_topographic_prior(bridge, P, seed, N)
     return bridge
 
 
@@ -664,10 +982,30 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
     # ----- WORKING-MEMORY QUERY READOUT (wm) -----
     # Present each queried role; population-vote the filler concept
     # pools for the bound filler; emit only if gate(...) passes else
-    # abstain. Include a NOVEL composed (role,filler) recombination
-    # (the last query uses a role bound to a DIFFERENT filler than
-    # drilled) so a memorized lookup cannot pass -- genuine relational
-    # generalization is required.
+    # abstain.
+    #
+    # MODE-DEPENDENT QUERY (pre-registered design Section 5; plan's
+    # corrected `wm` readout bullet + its "Pre-registration conformance
+    # log"). The novel-recombination probe must NOT be applied to v1:
+    #   * v1 (instrument soundness; ctx["is_v1"] is True): the scored
+    #     query is the TRIVIAL DRILLED binding -- query a role that WAS
+    #     drilled and expect ITS OWN bound filler ("can the loop
+    #     machinery learn the bijection at all"). NO novel
+    #     recombination. The no-gap discipline already holds (gap_steps
+    #     == 0). This makes the v1 soundness baseline measurable
+    #     instead of structurally capped at chance by a
+    #     by-design-unlearnable probe.
+    #   * full AND every one of the 8 lesion modes (ctx["is_v1"] is
+    #     False): UNCHANGED -- the genuine science/compositional probe
+    #     includes a NOVEL composed (role,filler) recombination (the
+    #     last query uses a role bound to a DIFFERENT filler than
+    #     drilled) so a memorized lookup cannot pass -- genuine
+    #     relational generalization is required. The lesions must still
+    #     collapse THIS hard task; the science is NOT made easier.
+    # The query is driven by the role code on language_input ONLY in
+    # both branches (no query-time teacher/external current into
+    # noun_pool/dlpfc) -- exactly like the other modes' query.
+    _is_v1 = bool(ctx.get("is_v1", False))
     wm_correct = 0
     n_q = len(pairs)
     # Causal-liveness diagnostic (NOT a frozen bar; NOT a router): split
@@ -690,7 +1028,12 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
         # Novel recombination on the final query: ask role ridx but the
         # ground truth is the filler of a DIFFERENT trained pair, so
         # the bound relation (not a per-role constant) must drive it.
-        if qi == n_q - 1 and n_q >= 2:
+        # Applied to full + EVERY lesion mode (the genuine science /
+        # compositional generalization the lesions must collapse).
+        # SKIPPED for v1: v1's scored query is the trivial DRILLED
+        # binding (query a drilled role -> expect ITS bound filler;
+        # the no-gap instrument-soundness probe per design Section 5).
+        if (not _is_v1) and qi == n_q - 1 and n_q >= 2:
             true_fidx = pairs[0][1]
             q_ridx = pairs[-1][0]
         else:
@@ -900,7 +1243,7 @@ def _run_mode(mode, seed, N, tiny, gap_zero=False):
     P = dict(_TINY if tiny else _FULL)
     if gap_zero:
         P["gap_steps"] = 0
-    bridge = _build_bridge(seed, P)
+    bridge = _build_bridge(seed, P, N)
     cp = bridge.xp if hasattr(bridge, "xp") else np
     rm = bridge.region_manager
 
@@ -947,15 +1290,50 @@ def _run_mode(mode, seed, N, tiny, gap_zero=False):
 
     rng = np.random.default_rng(seed)
     value_table = np.zeros(1, dtype=np.float64)
+    # is_v1 carries the pre-registered V1-vs-Science readout-selection
+    # distinction (design Section 5; plan's corrected `wm` readout
+    # bullet + its "Pre-registration conformance log"). It is exactly
+    # `gap_zero` -- v1 = the full loop on a NO-GAP trivial single bind,
+    # so the scored wm query must be the TRIVIAL DRILLED binding (query
+    # a role that WAS drilled, expect ITS OWN bound filler -- "can the
+    # loop machinery learn the bijection at all"). `full` and EVERY
+    # lesion mode keep the genuine NOVEL composed-recombination probe
+    # (the compositional generalization the lesions must collapse).
+    # This is NOT a mode (mode is "full" for both real-full and v1);
+    # it is the same kind of readout-selection difference v1 already
+    # carries via gap_zero -- it adds/removes NO rng draw (_episode
+    # draws no rng; _make_pairs is the only consumer and is unchanged).
     ctx = dict(n_lang=int(lang.shape[0]), lang=lang,
                role_arr=role_arr, filler_arr=filler_arr,
                dlpfc=dlpfc, thal=thal, bg_cortex=bg_cortex,
                lang_out=lang_out, value_table=value_table,
-               episode_id=0)
+               episode_id=0, is_v1=bool(gap_zero))
 
+    # VALIDATED v16 ENCODE DISCIPLINE (inherited from concept_pool_demo):
+    # the v16 runner trains a FIXED word->pool mapping (the
+    # DIRECTION/NOUN/VERB vocab CONSTANTS) with many INTERLEAVED
+    # repetitions -- the binding is STABLE across all training events,
+    # only the event ORDER is shuffled. The earlier loop here drew a
+    # FRESH bijection EVERY epoch, so for N=2 the role->filler mapping
+    # flipped randomly across the 14 epochs and the LAST epoch's mapping
+    # (the one the query scores) was a different binding than every
+    # prior epoch trained -- the network can never "nearly perfectly
+    # learn the bijection" (the _IL_V1_MIN soundness premise) because
+    # the bijection is not stable. The 2026-05-18 GPU self-check
+    # confirmed this exactly: v1 wm=0.0, winner alternating F0/F1
+    # regardless of the queried role (the documented "one pool
+    # dominates argmax for every word" symptom, here caused by an
+    # unstable target, not a weak prior). Fix per the v16 discipline:
+    # draw the bijection ONCE per run (stable across ALL epochs, like
+    # v16's fixed vocab) and present it INTERLEAVED-repeated across the
+    # epochs. Cross-mode faithfulness is PRESERVED: every mode still
+    # makes the IDENTICAL single _make_pairs draw from its own
+    # identically-seeded rng at the IDENTICAL point (the discipline's
+    # purpose -- the SAME draw for every mode); _episode itself draws no
+    # rng, so the per-trial RNG order is byte-identical across modes.
+    pairs = _make_pairs(N, rng)  # SAME single draw for every mode
     last_wm, last_ep, last_nu = 0.0, 0.0, 0.0
     for ep_i in range(P["n_train_epochs"]):
-        pairs = _make_pairs(N, rng)  # SAME draw for every mode
         ctx["episode_id"] = ep_i
         last_wm, last_ep, last_nu = _episode(
             bridge, mode, pairs, rng, P, ctx)
@@ -1022,6 +1400,20 @@ def main(argv=None):
     ap.add_argument("--ckpt", default=None)
     ap.add_argument("--out", required=False, default=None)
     a = ap.parse_args(argv)
+
+    # Print the ACTIVE resolved backend + device so it is visibly the
+    # GPU/CuPy backend on the real/--selfcheck/decisive path (numpy
+    # only for --tiny-synth). Resolved here AFTER the env decision
+    # above; the build path then uses whatever sim.backend selected.
+    from sim.backend import get_backend
+    _xp, _backend_name = get_backend()
+    _dev = "cpu"
+    if _backend_name == "cupy":
+        try:
+            _dev = _xp.cuda.runtime.getDeviceProperties(0)["name"].decode()
+        except Exception:
+            _dev = "cuda"
+    print("BACKEND=%s  DEVICE=%s" % (_backend_name, _dev), flush=True)
 
     if a.selfcheck:
         # Operable-gate calibration: ONE seed, v1 (gap_zero=True full),
