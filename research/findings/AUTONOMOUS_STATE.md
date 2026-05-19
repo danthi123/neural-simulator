@@ -162,40 +162,84 @@ capability) -- which would propagate as a misleading honest-negative.
 Caught BEFORE any decisive GPU run; no protected file edited; no
 fixed bar moved; no-confab moat byte-unchanged.
 
-**SPEAR fix-iteration LANDED (`f1292a0`); independent RE-REVIEW =
-CLEAR (the inert-gate defect is genuinely closed -- the reviewer
-re-executed the 50-step probe and reproduced a 14.15 mV bridge-state
-divergence between ACh setpoints, confirming FIX B routes the gate
-through `synaptic_gain (scope=all)` consumed at sim/bridge.py:4877-
-4879/4890-4897 every step independent of reward; FIX A and FIX C also
-closed; nothing previously CLEAR regressed; 37/37 green).** SPEAR
-Task 4 no-harm PASSED: protected set byte-unchanged across the whole
-arc (base `d1eeadf` .. HEAD `f1292a0`), `spear_conversational_core.py`
-byte-unchanged since Task 1 (`0bc5230`), no autograd on shipped
-paths, full SPEAR + moat suite 37/37 green. The full anti-cheat
-discipline ran end-to-end (twice, including catching a real
-mechanistic-faithfulness defect and closing it precisely).
+**SPEAR FULL ARC COMPLETE through Task 5; decisive run = HONEST
+NEGATIVE with smell-test PASSED; CONVERGENT CEILING across Stage-1
+and SPEAR is itself a biology-translatable insight; fully propagated
+both remotes.** Sequence: design `4cd7e32` + plan `d1eeadf`; Task 0
+pin `56d6de9`; Task 1 frozen verdict module `0bc5230` (17-case
+adversarial matrix; bars immovable; CLEAR); Task 2 runner `1cf5931`;
+dedicated adversarial review BLOCKED a real mechanistic-faithfulness
+defect (inert ACh gate; full vs rhythm_removed byte-identical bridge
+state) -- propagated honestly `5bc9a57`; precise net-new-runner-only
+faithfulness fix `f1292a0` (ACh routed through synaptic_gain +
+plasticity_rate; 14.15 mV bridge-state divergence proven on a 50-step
+constant-input probe); independent RE-REVIEW re-executed the
+original probe and reproduced the divergence -> CLEAR; Task 4
+no-harm PASSED `35c3094`. Task 5 CONTROLLER-ONLY decisive run
+(full biological scale: 8440-neuron full v16 + hippocampus + dlpfc
+substrate; frozen ladder 2/4/8; seeds 42/43/44; CuPy/RTX3090;
+~51 min wall-clock; 1014-line durable log; kill-safe; monitored to
+actual process exit via genuine completion waiter) = GATE=FAIL with
+full_acc=0.00 every load/seed, rhythm_removed_acc=0.00 likewise,
+abstain_correct_rhythm_removed=1.00 every cell; verdict independently
+recomputed from the single recording (no re-run, no bar change) =
+FAIL; mandatory smell-test PASSED (genuine full-scale; 18 arm-runs;
+zero errors/exceptions; internally consistent -- honest measured
+negative, NOT instrument-invalid, NOT a false PASS). REAL PARTIAL
+POSITIVE (reported, not spun): the no-confabulation moat composed
+into the rhythm-multiplexed architecture at biological scale and
+abstained rather than confabulating in every case -- zero
+confabulation under composition AGAIN, in a SECOND distinct
+architecture. CONVERGENT CEILING (biology-translatable): both static
+(Stage-1) and rhythm-multiplexed (SPEAR) composition hit the same
+wall -- the composed readout at lang_output does not reliably exceed
+the calibrated no-confab threshold (650; encoded ~796 vs control
+~584) for compositional queries; the trustworthy property holds in
+both; the rhythm controller is mechanistically active (14.15 mV
+proven) but does not lift compositional readout above the threshold.
+Brain achieves BOTH high-confidence direct recall AND lower-but-
+still-confident compositional recall; our substrate achieves the
+first (v14/v16 88.75% binding, 90% multitag, 87.5% engram
+stim-recall) but not the second in either architecture tried. No
+fixed threshold moved; original `2048750` + corrected `36a7975` +
+Stage-1 `c474d6e` + SPEAR `0bc5230` + no-confab moat byte-unchanged.
+Findings: `research/findings/2026-05-19-SPEAR-conversational-Stage-decisive-honest-negative-with-convergent-ceiling.md`.
 
-**EXACT NEXT ACTION: SPEAR Task 5 -- CONTROLLER-ONLY decisive run
-(NOT a subagent task).** In the same turn, never stopping on a
-promise: (1) grounding tiny-synth (toy numbers explicitly NOT
-propagated); (2) decisive kill-safe multi-seed run at the frozen
-ladder (2,4,8), seeds 42 43 44, CuPy on RTX 3090, DURABLE capture to
-`research/findings/raw/`, monitored to ACTUAL completion via a
-genuine completion waiter (never a detached process with a false
-"will be notified"); (3) mandatory smell-test scrutinising a nominal
-PASS HARDER than a FAIL -- recompute the verdict from the single
-recorded output (no re-run, no bar change), confirm `full` genuinely
-clears the bars AND `rhythm_removed` genuinely collapses to the
-Stage-1 static level (the capability is attributable to the rhythm),
-AND abstention genuinely holds; (4) honest propagation of EVERY
-outcome (findings doc + `webapp/capability_status.json` pillar,
-status PREDICTED until a clean scrutinised PASS, schema-green +
-state file + commit + push BOTH remotes); (5) autonomous next step
-per outcome (PASS -> next pre-registered staged design B/C; honest
-FAIL/VOID/WORKS-SMALL -> the next biology-identified fidelity
-refinement, NO bar change, NO config-crank, NO declare-unfit,
-NO hand-back).
+**EXACT NEXT ACTION: queue the genuinely-distinct biology-faithful
+next stage the convergent ceiling points at -- the PHASE-CODED
+VECTOR-SYMBOLIC-ARCHITECTURE UNIFICATION (Orchard 2023/2024
+spiking-phasor FHRR; refs [22][23][27] of the SPEAR design 2c/2d).**
+The convergent ceiling tells biology that rhythm-gating alone does
+not lift compositional readout above the trustworthy-abstention
+threshold; the lesson points at a mechanism where the rhythm does
+NOT just multiplex encode/retrieve phases, it ALSO carries
+compositional content as the phase of each spike within a cycle --
+i.e. the theta-gamma rhythm and SPA-style vector-symbolic binding
+are the SAME phase code with two purposes. This is biology-faithful
+(theta-gamma phase coding is observed and well-characterised in real
+brains -- Heusser 2016, Ursino 2024, Manns 2006) AND directly
+addresses the ceiling (the composed vector becomes a structured
+object the readout can decode, not a sum of partially-active
+sub-populations). Run a proper design pass under the standing
+chain: broader-search-first (consensus + WebSearch + open-source
+code repos + curated lists -- NengoSPA + Orchard et al. + Awesome-
+Spiking-Neural-Networks; do NOT rely on memory); then writing-plans
+-> subagent-driven-development -> pre-registered fixed-bar three-
+state gate (with a built-in decisive control comparing against the
+convergent Stage-1+SPEAR ceiling) -> dedicated adversarial review
+BEFORE no-harm -> controller-only decisive run + mandatory smell-
+test (scrutinise a PASS harder than a FAIL) -> honest propagation
+of EVERY outcome both remotes -> autonomous continuation per
+outcome. Reuse byte-unchanged: every previously-validated subsystem
+(no protected/frozen/moat edit; no bar change; no declare-unfit; no
+hand-back; no partition edit ever). Honest ceiling unchanged: a
+clean success = a biology-grounded phase-coded VSA in spikes shows
+grounded compositional readout above the trustworthy threshold
+(brain-faithful AND capable), explicitly NOT fluent open-ended
+language / NOT an LLM. The orienting goal is artificial life with a
+proper brain analogue; biology-translatable insights are the
+deliverable. The autonomous next-action tool call is always in the
+same turn; never stop on a promise.
 
 [HISTORICAL CONTEXT: the three precise corrections in
 `research/runners/spear_conversational_runner.py` (+ its tests + invert
