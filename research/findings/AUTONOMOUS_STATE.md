@@ -84,26 +84,41 @@ specificity -- the classic complementary-learning-systems
 specificity-vs-generalization trade-off, in isolation. Original frozen
 verdict + v2 module + moat byte-unchanged; 48 tests pass; no autograd.**
 
-**Exact next concrete action: proper DESIGN pass for the next
-catalog-identified factorization (autonomous; no hand-back; NO
-partition edit; NO config-crank; UNDER the honesty ceiling).** Route
-the role-selective WM readout of the CURRENT binding through the SAME
-specificity-PRESERVING hippocampal trisynaptic pattern-completion
-pathway (GPU-proven to retain binding specificity -- it delivered
-ep=1.0), with the Phase-1.3-consolidated order-invariant neocortical
-schema serving as the generalizable PRIOR/bias rather than the binding
-source. This is the CLS recent-specific-via-hippocampus /
-remote-generic-via-neocortex division applied correctly to the WM
-readout; genuinely distinct (no prior attempt routed role-selective WM
-through pattern-completion); reuse all validated subsystems
-byte-unchanged + the corrected frozen v2 module unchanged; net-new =
-controller + readout-routing wiring only; no autograd; GPU/CuPy.
+**WM-via-pattern-completion DESIGN done (ec3b0d0, pushed) = conclusion
+(b) NEGATIVE-BY-CONSTRUCTION -> FOURTH CONVERGENT STRUCTURAL FINDING
+(propagated both remotes). The corrected v2 puts no_cls_replay in
+HELPER_WM (correct for REMOTE WM), but the instrument as posed across
+the whole arc probes RECENT WM (bind->query within trial); CLS theory
+= recent memory is consolidation-INDEPENDENT. So no biology-faithful
+architecture serving recent bindings can make the consolidation lesion
+necessary -> the necessity-on-RECENT-memory sub-line is STRUCTURALLY
+CLOSED by construction (a theorem; NOT GPU-confirmed -- confirming a
+structural certainty wastes GPU, not rigor; option (b) taken: NO build
+of Candidate A). Durable result: precise characterization that the
+necessity question is only well-posed in the REMOTE/consolidated
+regime.**
+
+**Exact next concrete action: proper DESIGN pass for the
+genuinely-distinct REMOTE-MEMORY-REGIME necessity test (the finding
+points straight at it; autonomous; no hand-back; NO partition edit; NO
+config-crank; under the honesty ceiling).** Probe necessity in the
+REMOTE regime: bind -> run offline consolidation -> SILENCE the
+hippocampus -> query the consolidated neocortical store, reusing the
+project's VALIDATED multi-seed strict-anti-cheat Phase-1.3
+strict-silence / hippocampus-OFF protocol byte-unchanged. In that
+regime the corrected partition's consolidation-lesion->WM-collapse is
+BOTH biologically correct AND satisfiable (hippo silenced: removing
+consolidation genuinely collapses remote recall; intact consolidation
+supports it). Substantively different instrument REGIME (what memory is
+probed), not a partition/config change; reuse all validated subsystems
++ corrected v2 module byte-unchanged; net-new = the remote-regime
+controller + hippo-silence wiring only; no autograd; GPU/CuPy.
 Pipeline: design -> writing-plans -> subagent build -> FALSIFY-FIRST
-probing FULL mode wm AND ep JOINTLY at minimal load (the recorded
-process lesson) -> runner adversarial review -> controller Task-4
-no-harm + Task-5 CONTROLLER-ONLY decisive run scored by the unchanged
-v2 module. HONESTY CEILING binding throughout: any pass vs v2 is
-"consistent-with the corrected biology" ONLY, never
+probing the FULL remote-regime readout JOINTLY at minimal load (the
+recorded process lesson) -> runner adversarial review -> controller
+Task-4 no-harm + Task-5 CONTROLLER-ONLY decisive run scored by the
+unchanged v2 module. HONESTY CEILING binding throughout: any pass vs
+v2 is "consistent-with the corrected biology" ONLY, never
 scale-confident-validated; a VOID/FAIL is a strong negative -> next
 catalog factorization.
 
