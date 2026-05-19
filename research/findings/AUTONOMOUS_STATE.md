@@ -47,10 +47,14 @@ always begins in the same turn.
 
 ## Last durable commit
 
-`270f3c5` (HEAD): iter-1 emergent-symmetry-break diagnosis findings +
-iter-2 pre-registration + capability pillar (PREDICTED) — pushed origin
-+ gitea. Runner committed state `6c2c055` (logic == `d3a7ac3` + inert
-`--selfcheck-diag` harness).
+`718213a` (HEAD): durable state file. Runner committed state `6c2c055`
+(logic == `d3a7ac3` + inert `--selfcheck-diag` harness). Iteration-2
+background subagent `a4d4c9be7d13ca743` is IN FLIGHT (composing validated
+homeostasis + temporal-credit into the runner on the local GPU); it
+will commit only if `v1` wm AND ep >= 0.90 on GPU, else report a
+faithful negative. On its completion: controller trust-but-verify ->
+adversarial re-review -> no-harm -> Task 5 decisive run, or honest
+propagation + next cited iteration.
 
 ## Pre-registered acceptance / frozen bars (NEVER tuned)
 
@@ -59,10 +63,26 @@ LESION_MAX 0.40, SCALE_TOL 0.10, ladder (2,4,8), MIN_SEEDS 3. No-confab
 moat `research/runners/abstention_gate.py` + test 7/7 byte-identical.
 GPU (CuPy) for every real/decisive run; numpy only for `--tiny-synth`.
 
-## Continuation guarantee (watchdog)
+## Continuation guarantee (TWO watchdogs — installed)
 
-External scheduled watchdog re-invokes autonomous continuation on this
-repo regardless of session state. If `CronList`/schedule shows no active
-watchdog for this repo, RE-CREATE it before other work. The watchdog
-prompt instructs: read this file, check background agent state, perform
-the "Exact next concrete action", never stop on a promise.
+1. **LOCAL, GPU-capable** — Windows Scheduled Task `SimAutonomousWatchdog`
+   runs `scripts/autonomous_watchdog.ps1` every 20 min. Conservative
+   stall-gate: fires ONLY if no git commit for >40 min AND no active
+   claude/python-sim process AND no fresh `.watchdog.lock`. On stall it
+   re-invokes local `claude.exe -p` (bypassPermissions, `--add-dir` repo)
+   with a prompt to read THIS file and continue the exact next action
+   INCLUDING PENDING-LOCAL-GPU steps. Audit log:
+   `research/findings/raw/autonomous_watchdog.log`. This is the primary
+   guarantee for GPU-bound work. (Re-verify: `schtasks /query /tn
+   SimAutonomousWatchdog`; re-register via `scripts/autonomous_watchdog.ps1`
+   contract if missing.)
+2. **REMOTE, cross-session non-GPU safety-net** — claude.ai routine
+   `trig_01W7vwnpv4JYWUMjzwHaEKK6` (hourly, `0 * * * *`). Runs on a
+   GitHub checkout with NO local/GPU access; advances only non-GPU
+   pre-registered work (designs/plans/findings/propagation/state-file),
+   pushes both remotes, marks GPU steps `PENDING-LOCAL-GPU`. Manage:
+   https://claude.ai/code/routines/trig_01W7vwnpv4JYWUMjzwHaEKK6
+
+If either watchdog is missing, RE-CREATE it before other work. Neither
+watchdog nor the in-session discipline may stop on a promise: the
+next-action tool call is always in the same turn.
