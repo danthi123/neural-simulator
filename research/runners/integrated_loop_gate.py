@@ -667,24 +667,33 @@ def _build_bridge(seed, P, N):
     #
     # One plastic, gate-tagged pathway dlpfc_verb -> noun_pool_F<j> per
     # FILLER pool (the _FILLER_POOLS). All share ONE plasticity gate
-    # "dlpfc_verb_to_filler". ZERO-INIT (weight 0.0 + jitter 0.0): the
-    # plasticity gate freezes only weight UPDATES, not synaptic CURRENT
-    # (CLAUDE.md "GOTCHA -- plasticity gate vs synaptic transmission"),
-    # so the pathway is STRUCTURALLY present but FUNCTIONALLY SILENT
-    # until the native STDP/eligibility rule grows individual weights
-    # from zero during encode (when the BG-SELECTED dlpfc_verb slot
-    # sub-range and the teacher-driven target filler pool co-fire).
-    # This is the documented zero-init compositional-substrate pattern
-    # (cf. enable_direct_verb_to_motor). Region-granular pathway; the
-    # SLOT selectivity is enforced at the SPIKING level (only the
-    # BG-disinhibited slot sub-range fires during encode, so only those
-    # presynaptic neurons' synapses onto the co-firing filler get
-    # potentiated) -- native spiking STDP, NOT a Python-side lookup.
+    # "dlpfc_verb_to_filler". SMALL NON-ZERO GENERIC PRIOR
+    # (weight_mean=0.5 + weight_jitter=0.3): a strict zero-init synapse
+    # injects NO current, so it never produces the pre->post co-fire
+    # that spike-timing plasticity needs to charge eligibility -- the
+    # reward-gated update is lr*delta*0 = 0 regardless of correct reward
+    # timing (the documented "zero-init pathway carries no current"
+    # gotcha; CLAUDE.md "Non-zero readout pathway init ... Barlow 1972
+    # spontaneous baseline cortical weights"). The SAME small
+    # weight_mean/weight_jitter is applied to EVERY dlpfc_verb ->
+    # noun_pool_F<j> edge (uniform over _FILLER_POOLS), identical for
+    # all fillers and carrying NO information about which role binds
+    # which filler -- the init only enables current flow so STDP can
+    # operate; SELECTIVITY is still LEARNED by LEVER-1 temporal-credit
+    # potentiating the BG-gated co-firing pathway. This matches the
+    # precondition the validated compose_bridge_gate / concept_pool_demo
+    # scored pathways already satisfy (Non-zero readout pathway init
+    # 0.5+/-0.3). Region-granular pathway; the SLOT selectivity is
+    # enforced at the SPIKING level (only the BG-disinhibited slot
+    # sub-range fires during encode, so only those presynaptic neurons'
+    # synapses onto the co-firing filler get potentiated) -- native
+    # spiking STDP, NOT a Python-side lookup; the generic prior is
+    # binding-agnostic so it cannot become a hard-feed.
     for fj in _FILLER_POOLS:
         pathways.append(RegionPathway(
             from_region="dlpfc_verb",
             to_region="noun_pool_%s" % fj,
-            density=0.30, weight_mean=0.0, weight_jitter=0.0,
+            density=0.30, weight_mean=0.5, weight_jitter=0.3,
             plastic=True,
             plasticity_gate="dlpfc_verb_to_filler",
         ))
