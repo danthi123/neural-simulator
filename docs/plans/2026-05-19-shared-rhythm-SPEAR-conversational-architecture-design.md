@@ -60,6 +60,78 @@ load scales, abstaining rather than confabulating. There is no necessity
 partition anywhere (that line is closed); the single frozen artifact is a
 new capability-verdict module with fixed bars.
 
+## 2c. Existing biology-grounded sims that already implement related capability (owner-flagged gap; internalised, durable)
+
+The 2b biological grounding cites primary papers; this section cites
+existing biology-grounded *sim implementations* that have already
+realised related capability. These reshape the staged plan: future
+design passes after this stage MUST start from "what existing sims
+already do" before designing from biology alone.
+
+- **Spaun / Nengo / Semantic Pointer Architecture (Eliasmith et al.)
+  [10][11][12]** — the canonical large-spiking cognitive model
+  (2.5 M neurons; 8 cognitive tasks in one network including serial
+  working memory, question answering, symbolic pattern completion,
+  multi-item compositional binding into symbol-tree structures).
+  Achieves compositional binding via SPA: high-dimensional vectors
+  encode symbol-tree structures distributed across spiking-neuron
+  groups via the Neural Engineering Framework; basal-ganglia
+  cognitive control routes information between cortical components.
+  Open source (Nengo). SPA's vector-symbolic binding operator is
+  exactly the mechanism the project's previously-retracted
+  concept-concept compose arc, the integrated-loop necessity
+  terminus, and the Stage-1 static-composition negative all failed
+  to produce. The project has never tried SPA.
+- **Lisman-Idiart theta-gamma multi-item working memory --
+  implemented and characterised in spiking models [13][14][15].**
+  Ursino 2022 [13] is a worked-out spiking implementation: theta-
+  gamma cross-frequency coupling, multi-item maintenance up to
+  nine items desynchronised on gamma, ordered-sequence replay via
+  gamma-nested-in-theta, AND an "imagination phase" where the
+  isolated network under uniform noise spontaneously recovers
+  learned sequences and links them by similarity (exactly the
+  generative-replay loop the SPEAR Stage-C is supposed to build).
+  Soroka 2024/2021 [14][15] extend with alpha-vs-theta interference
+  and a modular traveling-wave variant. The SPEAR rhythm controller
+  should parameter-regime-ground in these (GABAergic strength,
+  theta/gamma frequencies, Hebbian/anti-Hebbian training) rather
+  than reinvent.
+- **Spiking Tolman-Eichenbaum Machine [16][17] -- hippocampal-
+  entorhinal compositional generalisation in spikes.** Whittington
+  2020 [16] (568 citations, Cell) formally links the
+  hippocampal-entorhinal circuit to structural generalisation;
+  medial entorhinal cells form a basis for structural knowledge,
+  hippocampal cells link it to sensory representations; learns
+  grid/place/border/object-vector cells; predicts and confirms
+  structural-knowledge transfer across remapping. Spiking TEM
+  (Kawahara 2025, bioRxiv) [17] extends this to spike-based
+  computation with theta phase locking, phase precession, and
+  predictive grid cells. Manns 2006 [18] is direct experimental
+  confirmation in CA1 of the Hasselmo encode/retrieve theta-phase
+  separation. Spiking TEM is the most directly relevant prior art
+  for the hippocampal-entorhinal compositional path; future stages
+  should learn from / borrow its implementation.
+
+**Strategic consequence (pre-registered, durable).** The in-flight
+SPEAR Stage decisive run remains a valid experiment (testing whether
+the project's specific reuse of the validated subsystems under a
+SPEAR rhythm works at biological scale). Regardless of its outcome:
+- Stage-A (this stage) parameter regimes for the rhythm controller
+  should be cross-checked against Ursino 2022 before any future
+  refinement iteration.
+- Stage-B / Stage-C (already pre-registered as follow-ons) must
+  adopt mechanisms from the above sims rather than reinvent --
+  specifically: a Semantic-Pointer-Architecture-style vector-
+  symbolic binding layer (Spaun open-source prior art) is the
+  strongest candidate for the compositional binding the project has
+  repeatedly failed to produce; the hippocampal-entorhinal pathway
+  should learn from Spiking TEM; the generative replay loop should
+  learn from Ursino 2022 imagination-phase.
+- Honest meta-finding (owner-flagged): the project's discipline
+  for future stages must be "check existing biology-grounded sim
+  implementations FIRST, adopt proven mechanisms, then iterate"
+  rather than "design from biology papers alone".
+
 ## 3. Inventory of validated subsystems to reuse byte-unchanged (exact, code-grounded)
 
 Reuse-by-import only; no edits to any protected/frozen/validated module or
@@ -206,6 +278,18 @@ contribution of this stage, regardless of outcome, is a faithful,
 adversarially-hardened, fixed-bar test of whether the biological
 conflict-resolution mechanism (shared-rhythm temporal multiplexing) yields
 the capability the static composition could not.
+
+## 7b. References (for §2c existing-sim prior art)
+
+[10] [Spaun: A Perception-Cognition-Action Model Using Spiking Neurons](https://consensus.app/papers/details/7f744298b6a15dfb820d6d3e5030aa9e/?utm_source=claude_code) (Stewart, Choo, Eliasmith, 2012, Cognitive Science)
+[11] [Large-Scale Synthesis of Functional Spiking Neural Circuits](https://consensus.app/papers/details/2a4b40fe07365d8fbe7cedc18bfdfcd1/?utm_source=claude_code) (Stewart et al., 2014, Proceedings of the IEEE)
+[12] [Large-scale cognitive model design using the Nengo neural simulator](https://consensus.app/papers/details/055032017c895ed19c396ca262e8104b/?utm_source=claude_code) (Sharma et al., 2016)
+[13] [A model of working memory for encoding multiple items and ordered sequences exploiting the theta-gamma code](https://consensus.app/papers/details/e17f7fc053485161afe1538750fd0c28/?utm_source=claude_code) (Ursino et al., 2022, Cognitive Neurodynamics)
+[14] [Mechanistic role of alpha oscillations in a computational model of working memory](https://consensus.app/papers/details/f3030fdfec135115ab01ded5aa34c45c/?utm_source=claude_code) (Soroka et al., 2024, PLOS ONE)
+[15] [Theta, alpha and gamma traveling waves in a multi-item working memory model](https://consensus.app/papers/details/747e59c429fa5cd19e41b0d052078464/?utm_source=claude_code) (Soroka et al., 2021)
+[16] [The Tolman-Eichenbaum Machine: Unifying Space and Relational Memory through Generalization in the Hippocampal Formation](https://consensus.app/papers/details/12de2e1b677d533796b8d7cfcc3f03dc/?utm_source=claude_code) (Whittington et al., 2019, Cell)
+[17] [The Spiking Tolman-Eichenbaum Machine: Emergent Spatial and Temporal Coding through Spiking Network Dynamics](https://consensus.app/papers/details/c7095e94ac295cff8446de5ad50678cf/?utm_source=claude_code) (Kawahara et al., 2025, bioRxiv)
+[18] [Hippocampal CA1 spiking during encoding and retrieval: relation to theta phase](https://consensus.app/papers/details/15ce17ce14a8549fb8e39e951c4fe20c/?utm_source=claude_code) (Manns et al., 2006, Neurobiology of Learning and Memory)
 
 ## 8. Components / data flow / error handling / testing (for the plan)
 
