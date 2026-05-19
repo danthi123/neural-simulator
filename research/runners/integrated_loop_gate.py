@@ -225,10 +225,24 @@ def _build_bridge(seed, P):
         thal_X -> motor_X). Its selected disinhibited channel is
         REPURPOSED to gate WM-slot updating (read off thal_X).
     Both region lists + pathway lists are concatenated into ONE bridge
-    so the loop is genuinely closed; neither builder is edited."""
+    so the loop is genuinely closed; neither builder is edited.
+
+    Net-new closed-loop CLOSURE (the only net-new wiring, not an edit
+    to any reused builder): a plastic, gate-tagged
+    dlpfc_verb -> noun_pool_F<j> pathway per filler pool (gate
+    "dlpfc_verb_to_filler", zero-init). This is the prefrontal-slot
+    EFFERENT back onto the concept/filler layer that the design calls
+    for; without it the BG-gated dlpfc_verb slot would be causally
+    SEVERED from the wm (noun-pool) readout. The slot selectivity is
+    enforced at the spiking level (only the BG-disinhibited dlpfc_verb
+    slot sub-range fires during encode, so the native STDP rule grows
+    only that slot's synapses onto the co-firing target filler) -- no
+    Python-side answer-feed; no teacher current touches the filler pool
+    at query time."""
     from sim.config import (CoreSimConfig, VisualizationConfig,
                             RuntimeState, GPUConfig)
     from sim.bridge import SimulationBridge
+    from sim.regions import RegionPathway
 
     regions_a, pathways_a = build_biological_brain_regions(
         n_lang_input=P["n_lang_input"],
@@ -261,6 +275,37 @@ def _build_bridge(seed, P):
     # subsystems without collision.
     regions = list(regions_a) + list(regions_b)
     pathways = list(pathways_a) + list(pathways_b)
+
+    # NET-NEW CLOSED-LOOP CLOSURE (the ONLY net-new wiring; not an edit
+    # to any reused builder). The prefrontal variable-binding slot must
+    # PROJECT BACK onto the concept/filler layer so the BG-gated
+    # dlpfc_verb slot is genuinely causally NECESSARY for the wm
+    # (noun-pool) readout -- without this efferent the basal-ganglia
+    # WM-slot gate controls nothing the score can observe.
+    #
+    # One plastic, gate-tagged pathway dlpfc_verb -> noun_pool_F<j> per
+    # FILLER pool (the _FILLER_POOLS). All share ONE plasticity gate
+    # "dlpfc_verb_to_filler". ZERO-INIT (weight 0.0 + jitter 0.0): the
+    # plasticity gate freezes only weight UPDATES, not synaptic CURRENT
+    # (CLAUDE.md "GOTCHA -- plasticity gate vs synaptic transmission"),
+    # so the pathway is STRUCTURALLY present but FUNCTIONALLY SILENT
+    # until the native STDP/eligibility rule grows individual weights
+    # from zero during encode (when the BG-SELECTED dlpfc_verb slot
+    # sub-range and the teacher-driven target filler pool co-fire).
+    # This is the documented zero-init compositional-substrate pattern
+    # (cf. enable_direct_verb_to_motor). Region-granular pathway; the
+    # SLOT selectivity is enforced at the SPIKING level (only the
+    # BG-disinhibited slot sub-range fires during encode, so only those
+    # presynaptic neurons' synapses onto the co-firing filler get
+    # potentiated) -- native spiking STDP, NOT a Python-side lookup.
+    for fj in _FILLER_POOLS:
+        pathways.append(RegionPathway(
+            from_region="dlpfc_verb",
+            to_region="noun_pool_%s" % fj,
+            density=0.30, weight_mean=0.0, weight_jitter=0.0,
+            plastic=True,
+            plasticity_gate="dlpfc_verb_to_filler",
+        ))
 
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -417,6 +462,33 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
                 "language_input_to_noun_pool", float(ach_open))
         except Exception:
             pass
+        # Open the CLOSED-LOOP binding synapses under the SAME ACh
+        # plasticity window so the native STDP/eligibility rule learns
+        # the role -> BG-gated dlpfc_verb slot -> bound filler chain:
+        #   language_input_to_dlpfc_verb : role+filler code -> the
+        #     BG-SELECTED dlpfc_verb slot (the loop ingress; this gate
+        #     is declared by the reused builder but never opened until
+        #     here -- closing it is part of the loop closure).
+        #   dlpfc_verb_to_filler         : the held slot -> the bound
+        #     filler noun pool (the NET-NEW prefrontal-slot efferent).
+        # Both timed by the SAME shared-clock ACh window, so
+        # no_neuromod_timing removes timed plasticity on the whole loop
+        # consistently (not just one synapse set). no_binding (no joint
+        # dlpfc-slot co-drive) and no_bg_gate (no selective slot
+        # disinhibition) therefore collapse wm THROUGH this mechanism:
+        # the wrong / no slot fires during encode, so STDP never writes
+        # role->slot->filler, so the query role drives the wrong / no
+        # filler.
+        try:
+            bridge.set_plasticity_gate(
+                "language_input_to_dlpfc_verb", float(ach_open))
+        except Exception:
+            pass
+        try:
+            bridge.set_plasticity_gate(
+                "dlpfc_verb_to_filler", float(ach_open))
+        except Exception:
+            pass
 
         for _ in range(P["stim_steps"]):
             _step(bridge)
@@ -571,6 +643,19 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
                 "language_input_to_noun_pool", 0.0)  # encode off
         except Exception:
             pass
+        # Freeze the closed-loop binding synapses during sleep replay
+        # too, so tag-driven replay activity cannot corrupt the learned
+        # role -> slot -> filler binding (the awake/sleep idiom applied
+        # consistently across the WHOLE loop; identical step structure).
+        try:
+            bridge.set_plasticity_gate(
+                "language_input_to_dlpfc_verb", 0.0)
+        except Exception:
+            pass
+        try:
+            bridge.set_plasticity_gate("dlpfc_verb_to_filler", 0.0)
+        except Exception:
+            pass
         for _ in range(P["replay_steps"]):
             try:
                 bridge.stimulate_tag(tag, float(P["tag_stim_pA"]))
@@ -581,10 +666,19 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
             bridge.clear_tag_drive(tag)
         except Exception:
             pass
-        # Restore awake encode gate for the next trial.
+        # Restore awake encode gates for the next trial.
         try:
             bridge.set_plasticity_gate(
                 "language_input_to_noun_pool", 1.0)
+        except Exception:
+            pass
+        try:
+            bridge.set_plasticity_gate(
+                "language_input_to_dlpfc_verb", 1.0)
+        except Exception:
+            pass
+        try:
+            bridge.set_plasticity_gate("dlpfc_verb_to_filler", 1.0)
         except Exception:
             pass
     # Drop the per-episode tag so tags don't accumulate across trials.
@@ -641,6 +735,18 @@ def _run_mode(mode, seed, N, tiny, gap_zero=False):
     # awake/sleep idiom flips the consolidation gates per trial.
     try:
         bridge.set_plasticity_gate("language_input_to_noun_pool", 1.0)
+    except Exception:
+        pass
+    # Open the closed-loop binding gates too (role -> BG-gated
+    # dlpfc_verb slot -> bound filler). The per-step ACh window inside
+    # _episode re-times them; this is just the known-open starting
+    # state, identical for every mode.
+    try:
+        bridge.set_plasticity_gate("language_input_to_dlpfc_verb", 1.0)
+    except Exception:
+        pass
+    try:
+        bridge.set_plasticity_gate("dlpfc_verb_to_filler", 1.0)
     except Exception:
         pass
 
