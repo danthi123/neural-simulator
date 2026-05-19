@@ -18,35 +18,51 @@ reference biology, no hand-back, no declare-unfit.
 
 ## Exact next concrete action
 
-**Phase-factored architecture = VOID-BY-CONSTRUCTION (GPU-verified;
-frozen verdict recomputed unchanged -> GATE=VOID; propagated; bound
-honored).** Full build + adversarial review done faithfully. GPU
-(CuPy/RTX3090, real N=2): `full` ep=0.0 (offline shuffled replay
-DESTROYS episodic order) while `no_cls_replay` ep=1.0 (skip
-consolidation -> online recall preserves order, does NOT collapse) ->
-frozen `_HELPER_EP` duty of `no_cls_replay` INVERTED -> unchanged
-frozen verdict = VOID (controller recomputed independently; integrity
-clean; 28 tests pass). TWICE-CONVERGENT program-level reading: iter-4
-(single-pass contradictory) + phase-factored (separating RELOCATES not
-dissolves it) -> the evidence now points at the PRE-REGISTERED
-NECESSITY PARTITION ITSELF as the likely falsified element (it encoded
-a single-pass-conception necessity hypothesis biology-faithful
-architectures do not realize; the frozen verdict correctly refuses to
-certify rather than be edited). Propagated: findings + capability
-(PREDICTED) + both remotes. Process lesson recorded: falsify-first
-must probe the FULL mode jointly, not v1 alone.
+**Prior convergent results STAND (durable, on the record both remotes;
+see findings/): thrice-convergent falsification+correction of the
+original necessity prediction (independently goalpost-move-cleared);
+encode-order contradiction DISSOLVED via distinct pathways; FOURTH
+(recent-memory) structural characterization. Original frozen verdict
+`2048750` + corrected v2 `36a7975` + no-confab moat byte-unchanged.**
 
-**THIRD CONVERGENT SIGNAL realized -> original necessity hypothesis
-FALSIFIED (design 72e359a conclusion (b); propagated both remotes; the
-pre-committed terminal path is now ACTIVE).** The distinct-pathways
-design proved BEFORE any run that a biology-faithful architecture
-cannot satisfy the original frozen `no_cls_replay`->`_HELPER_EP` duty
-(episodic order = online trisynaptic store D.12/D.13; CLS consolidation
-= order-INVARIANT neocortical schema, McClelland1995/Buzsaki2013/
-validated Phase-1.3 -> removing consolidation collapses concept/WM not
-episodic). Three faithful architectures, three directions, one
-conclusion. Original frozen verdict NEVER edited (its VOID stands as
-the honest record). Findings + capability (PREDICTED) propagated.
+**CURRENT: the remote-regime cheap gate run was INSTRUMENT-INVALID
+(2026-05-19, propagated).** The `--falsify-first` gate-probe path did
+NOT honor `--remote-regime`: the durable GPU log shows it ran the
+DEFAULT distinct-pathways readouts ("FALSIFY-FIRST (default)"; full
+ep=1.0 via ONLINE trisynaptic PRE-consolidation; "distinct-pathways
+does NOT jointly satisfy") -- it never read episodic order from the
+post-consolidation HIPPO-SILENCED consolidated store that Design B
+pre-registered. Per instrument-validity-FIRST: NO science conclusion
+drawn; NO fifth/terminal finding (that would be overclaim from an
+unsound instrument). HEAD `9c097b9` (Task-0 pin); the remote-regime
+spine is wired but uncommitted; original/v2/moat byte-unchanged;
+durable invalid log at research/findings/raw/integrated_loop_remote_gate.log.
+
+**EXACT NEXT ACTION: fix the instrument, then VALID cheap re-run.** In
+`research/runners/integrated_loop_gate.py` ONLY: make the
+`--falsify-first` gate-probe path, when `--remote-regime` is set, take
+BOTH the consolidated working-memory readout AND the consolidated
+episodic-order readout from the post-consolidation,
+hippocampus-strict-silenced consolidated store (the EXISTING
+`_hippo_strict_silence` mechanism + the post-consolidation
+`_episodic_order_readout`, exactly as the file's own Design-B comments
+specify) instead of the default distinct-pathways readouts. Instrument
+construction only -- NOT result-driven; frozen verdict/bars/partition
++ v2 + moat byte-UNCHANGED; reuse byte-unchanged; net-new = only the
+falsify-first<->remote-regime composition; no autograd; ASCII. Then
+re-run the cheap gate with DURABLE capture: `--remote-regime
+--falsify-first --seeds 42 43 44 --only-modes full no_cls_replay
+--only-load 2` redirected to research/findings/raw/integrated_loop_remote_gate.log
+(GPU/CuPy). Decision on the VALID run: GATE GREEN iff full wm>=0.80
+AND full ep>=0.80 AND no_cls_replay collapses BOTH (<=0.40) -> commit
+spine honest-WIP, proceed Tasks 2-6 (full build -> adversarial review
+-> no-harm -> Task-5 CONTROLLER-ONLY decisive run scored by unchanged
+v2; honesty ceiling: pass=consistent-with ONLY). RED-by-construction
+iff full ep<0.80 (the strong CLS order-invariant prediction now
+VALIDLY tested) -> the FIFTH convergent + unifying terminal finding,
+propagate honestly both remotes -> next catalog factorization. Other
+-> honest negative, propagate. NO partition edit; autonomous; no
+hand-back; never stop on a promise.
 
 **Corrected-approach PLAN done (7b1d47c, pushed both remotes). CONTROLLER
 PRE-COMMITTED HONESTY CEILING propagated BEFORE any build
