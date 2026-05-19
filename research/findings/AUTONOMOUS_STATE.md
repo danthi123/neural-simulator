@@ -36,40 +36,55 @@ certify rather than be edited). Propagated: findings + capability
 (PREDICTED) + both remotes. Process lesson recorded: falsify-first
 must probe the FULL mode jointly, not v1 alone.
 
-**Exact next concrete action: proper DESIGN pass for the next
-catalog-identified factorization (autonomous, no hand-back, no
-config-crank, NOT a reflexive patch).** Deeper separation of relational
-episodic binding from schema/concept abstraction along the
-hippocampal-neocortical interaction: the episodic-order readout served
-by the order-PRESERVING trisynaptic pattern-completion pathway
-(catalog D.12/D.13) and the concept/WM readout by the order-INVARIANT
-neocortical schema pathway -- genuinely DISTINCT readout pathways so
-the necessity structure is examined against the catalog's documented
-interaction rather than assumed. Proper design -> writing-plans ->
-subagent build; its pre-registered falsify-first MUST probe the FULL
-mode's wm AND ep jointly (the recorded process lesson), SAME frozen
-gate, reuse byte-unchanged, GPU/CuPy, no autograd.
+**THIRD CONVERGENT SIGNAL realized -> original necessity hypothesis
+FALSIFIED (design 72e359a conclusion (b); propagated both remotes; the
+pre-committed terminal path is now ACTIVE).** The distinct-pathways
+design proved BEFORE any run that a biology-faithful architecture
+cannot satisfy the original frozen `no_cls_replay`->`_HELPER_EP` duty
+(episodic order = online trisynaptic store D.12/D.13; CLS consolidation
+= order-INVARIANT neocortical schema, McClelland1995/Buzsaki2013/
+validated Phase-1.3 -> removing consolidation collapses concept/WM not
+episodic). Three faithful architectures, three directions, one
+conclusion. Original frozen verdict NEVER edited (its VOID stands as
+the honest record). Findings + capability (PREDICTED) propagated.
 
-**PRE-COMMITTED TERMINAL bound (in force, stated in advance):** if the
-next factorization ALSO reaches VOID by the same category mismatch
-between the pre-registered necessity partition and biology-faithful
-causal structure, the honest TERMINAL scientific conclusion is that the
-pre-registered NECESSITY HYPOTHESIS -- not the local implementation --
-is the refuted element; surface that as the program's honest result and
-follow it with a catalog-grounded RE-DERIVATION of the necessity
-hypothesis itself, still autonomous, still no hand-back, still no
-frozen-verdict/moat edit. No outcome is rationalized.
+**Exact next concrete action: writing-plans for the corrected
+approach.** FIRST work item = a NEW separately-pre-registered + frozen
+catalog-grounded necessity module (SINGLE biologically-cited partition
+correction: `no_cls_replay` -> working-memory/concept helper set, NOT
+`_HELPER_EP`; numeric bars reused VERBATIM with original a-priori
+justifications; instrument-validity-first; VOID strictly != FAIL;
+created + frozen BEFORE any architecture). It is gated by a DEDICATED
+ADVERSARIAL REVIEW whose PRIMARY mandate is goalpost-move detection
+("legitimate catalog-derived correction or a rationalized repartition
+to make the next candidate pass?" -- the latter BLOCKS the build). The
+original frozen module is untouched; its VOID preserved permanently.
+THEN the distinct-readout-pathways candidate is built + exercised
+against the NEW module; its falsify-first MUST probe the FULL science
+mode's wm AND ep JOINTLY at minimal load (the recorded process lesson);
+reuse byte-unchanged; GPU/CuPy; no autograd.
+
+**NEW PRE-COMMITTED bound (in force, stated in advance):** a faithful
+build that reaches VOID/FAIL against the NEW catalog-grounded module is
+an honest negative, propagated without spin; the next step is then the
+next catalog-identified factorization -- autonomous, no hand-back, no
+config-crank, NO further partition edits (one biologically-cited
+correction only; a second would itself be goalpost-moving). No outcome
+is rationalized.
 
 DO NOT stop after any propagation/commit. The next concrete action
 always begins in the same turn.
 
 ## Last durable commit
 
-Runner `2582992` = full phase-factored build (faithful;
-VOID-by-construction: full ep=0.0 / no_cls_replay ep=1.0 -> frozen
-_HELPER_EP inverted -> unchanged frozen verdict = VOID). Plus `07eab87`
-test pins. Built on the de-risk GREEN `3300d3f` / iter-3 foundation
-e02f692. The phase-factored line is closed VOID-by-construction; next =
+Design `72e359a` = distinct-readout-pathways design, conclusion (b):
+the original necessity hypothesis is FALSIFIED (third convergent
+signal). Findings + capability + this state file are the propagation
+commit (both remotes). Runner remains at `2582992` (phase-factored,
+closed VOID-by-construction) -- NOT the basis for the next build; the
+next build is the distinct-pathways candidate exercised against a NEW
+frozen catalog-grounded necessity module (writing-plans first work
+item). Phase-factored line closed; superseded line =
 the next catalog-identified factorization (distinct order-preserving vs
 order-invariant readout pathways) via a proper design pass. Built on
 iter-3 foundation e02f692 (temporal-credit +
