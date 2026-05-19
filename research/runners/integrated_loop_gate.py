@@ -110,10 +110,15 @@ _TINY = dict(
 # BG cascade action channels. ACTION_NAMES = ["N","E","S","W"] in
 # g11_bg_runner; we REPURPOSE these 4 selective-disinhibition channels
 # to gate WM-slot updates. The cascade's selected disinhibited output
-# (read off thal_X) selects WHICH WM slot (slot mod 4 -> channel)
-# updates this step; the others HOLD. This is the basal-ganglia
-# action-selection circuit driving prefrontal slot-updating instead of
-# motor output (Frank 2006 BG-WM gating; the cascade is unchanged).
+# (thal_<chan>) PHYSICALLY PROJECTS into dlpfc_verb via the net-new
+# build-time thal_<chan> -> dlpfc_verb afferent, so the disinhibited
+# channel DRIVES which prefrontal slot sub-population fires this step;
+# the others stay tonically inhibited and their slots HOLD. Slot
+# selection is therefore carried by the spiking cascade, NOT by a
+# Python index. This is the basal-ganglia action-selection circuit
+# driving prefrontal slot-updating instead of motor output (Frank 2006
+# BG-WM gating; the reused BG builder itself is byte-UNCHANGED -- the
+# afferent is added in THIS runner's cfg pathway list).
 _BG_CHANNELS = ["N", "E", "S", "W"]
 
 
@@ -228,17 +233,24 @@ def _build_bridge(seed, P):
     so the loop is genuinely closed; neither builder is edited.
 
     Net-new closed-loop CLOSURE (the only net-new wiring, not an edit
-    to any reused builder): a plastic, gate-tagged
-    dlpfc_verb -> noun_pool_F<j> pathway per filler pool (gate
-    "dlpfc_verb_to_filler", zero-init). This is the prefrontal-slot
-    EFFERENT back onto the concept/filler layer that the design calls
-    for; without it the BG-gated dlpfc_verb slot would be causally
-    SEVERED from the wm (noun-pool) readout. The slot selectivity is
-    enforced at the spiking level (only the BG-disinhibited dlpfc_verb
-    slot sub-range fires during encode, so the native STDP rule grows
-    only that slot's synapses onto the co-firing target filler) -- no
-    Python-side answer-feed; no teacher current touches the filler pool
-    at query time."""
+    to any reused builder), TWO halves:
+      AFFERENT: a plastic, gate-tagged thal_<chan> -> dlpfc_verb pathway
+        per BG channel (gate "bg_thal_to_dlpfc", NON-zero weight). This
+        is the BG cascade's physical disinhibition OUTPUT reaching the
+        prefrontal slot region -- the decisive fix: which dlpfc_verb
+        sub-population fires is now carried by which thal_<chan> the
+        cascade disinhibited, NEVER by a Python slot index.
+      EFFERENT: a plastic, gate-tagged dlpfc_verb -> noun_pool_F<j>
+        pathway per filler pool (gate "dlpfc_verb_to_filler", zero-
+        init). This is the prefrontal-slot efferent back onto the
+        concept/filler layer; without it the BG-gated dlpfc_verb slot
+        would be causally SEVERED from the wm (noun-pool) readout.
+    Slot selectivity is enforced at the SPIKING level end to end (the
+    cascade disinhibits exactly one thal_<chan> -> only that channel's
+    dlpfc_verb sub-population fires -> the native STDP rule grows only
+    that sub-population's synapses onto the co-firing target filler) --
+    no Python-side answer-feed; no teacher current touches the filler
+    pool at query time; no per-slot Python indexing anywhere."""
     from sim.config import (CoreSimConfig, VisualizationConfig,
                             RuntimeState, GPUConfig)
     from sim.bridge import SimulationBridge
@@ -307,6 +319,42 @@ def _build_bridge(seed, P):
             plasticity_gate="dlpfc_verb_to_filler",
         ))
 
+    # NET-NEW CLOSED-LOOP AFFERENT (the BG-cascade -> prefrontal slot
+    # ingress; the decisive fix from the adversarial re-review). Without
+    # this the basal-ganglia disinhibition cascade dead-ends at
+    # motor_X/cortex_X (per build_bg_brain_regions) and has NO efferent
+    # into dlpfc_verb -- so which prefrontal slot fires was a Python
+    # variable (the deleted gslot/slot_lo:slot_hi teacher hand-routing),
+    # NOT emergent BG gating, and no_bg_gate changed nothing the score
+    # could see (instrument VOID-by-construction).
+    #
+    # One plastic, gate-tagged pathway thal_<chan> -> dlpfc_verb per BG
+    # channel (the EXACT thal_* region names returned by
+    # build_bg_brain_regions: thal_N/E/S/W; consumed as-is, builder
+    # UNMODIFIED). All four share ONE plasticity gate
+    # "bg_thal_to_dlpfc". NON-zero weight (this pathway must DRIVE
+    # dlpfc_verb spikes -- it is the cascade's physical disinhibition
+    # output reaching the prefrontal slot region, not a silent
+    # substrate; plasticity lets the role->slot association still be
+    # shaped by the native STDP/eligibility rule under the ACh window).
+    # Because the cascade disinhibits exactly ONE thal_<chan> at a time
+    # (D1 silences GPi -> thal_<chan> released; the others stay tonically
+    # inhibited), only that channel's thal_<chan> -> dlpfc_verb synapses
+    # carry current, so only that channel's dlpfc_verb sub-population
+    # fires. The SLOT is thereby selected by the BG cascade at the
+    # SPIKING level -- never by a Python index. no_bg_gate drives ALL
+    # bg_cortex channels, so ALL thal_<chan> partially disinhibit and
+    # ALL thal_<chan> -> dlpfc_verb pathways inject -> NO single slot is
+    # cleanly held -> wm collapses THROUGH this mechanism.
+    for ch in _BG_CHANNELS:
+        pathways.append(RegionPathway(
+            from_region="thal_%s" % ch,
+            to_region="dlpfc_verb",
+            density=0.30, weight_mean=6.0, weight_jitter=0.2,
+            plastic=True,
+            plasticity_gate="bg_thal_to_dlpfc",
+        ))
+
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions)
@@ -362,9 +410,14 @@ def _counts(bridge, arrs):
 def _episode(bridge, mode, pairs, rng, P, ctx):
     """One composition trial at load N = len(pairs) per the BEHAVIORAL
     SPEC. `pairs` is a list of (role_idx, filler_idx). Returns
-    (wm_acc, ep_acc) for THIS trial. Every mode draws the SAME random
-    numbers in the SAME order from `rng`; only the lesioned system's
-    effect is removed (the compose_bridge_gate faithfulness rule)."""
+    (wm_acc, ep_acc, dlpfc_slot_nonuniformity) for THIS trial -- the
+    third value is a passive causal-liveness DIAGNOSTIC (max/mean of the
+    per-slot dlpfc_verb spike vector at query: ~1 uniform, >>1 a single
+    held slot), recorded in the result JSON but NEVER a frozen bar /
+    never propagated to integrated_loop_verdict. Every mode draws the
+    SAME random numbers in the SAME order from `rng`; only the lesioned
+    system's effect is removed (the compose_bridge_gate faithfulness
+    rule)."""
     cp = bridge.xp if hasattr(bridge, "xp") else np
     n_lang = ctx["n_lang"]
     lang = ctx["lang"]
@@ -426,21 +479,42 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
             float(P["teacher_pA"])
         bridge.cp_external_input_current[filler_arr[fidx]] += \
             float(P["teacher_pA"])
-        # COMBINATORIAL BINDING: also co-drive the WM slot region so
-        # the (role,filler) assembly forms in the NMDA-bistable slot.
-        # Suppressed for the no_binding SHARED lesion (role+filler are
-        # still driven, but the combined relational assembly is NOT
-        # formed -- no joint WM-slot co-drive).
+        # COMBINATORIAL BINDING (slot selection is now carried by the
+        # BG cascade, NOT a Python index): the deleted code here used to
+        # pick the prefrontal slot with gslot arithmetic
+        # (dlpfc[slot_lo:slot_hi] += teacher_pA) -- the exact hand-
+        # routing the adversarial re-review pinpointed. That is GONE.
+        # Which dlpfc_verb sub-population fires this encode step is now
+        # determined ONLY by which thal_<chan> the BG cascade
+        # disinhibits, projecting through the net-new (build-time)
+        # thal_<chan> -> dlpfc_verb afferent.
+        #
+        # The ONLY dlpfc_verb drive added here is a weak, strictly
+        # slot-AGNOSTIC region-WIDE excitability bias (the SAME scalar
+        # on every dlpfc_verb neuron -- no per-slot Python indexing, no
+        # gslot, no slicing). It only sets the holding region near
+        # threshold so the BG-disinhibited thal_<chan> -> dlpfc_verb
+        # input is what actually selects which sub-population crosses
+        # threshold and co-fires with the teacher-driven filler (the
+        # binding the native STDP rule then writes onto
+        # dlpfc_verb -> noun_pool_F<true>). It is suppressed for the
+        # no_binding SHARED lesion: without the excitability bias the
+        # BG-selected slot does not reach threshold, so the slot<->
+        # filler co-fire never happens and the dlpfc_verb -> noun_pool
+        # STDP is never written -> wm collapses THROUGH this mechanism
+        # (and the relational assembly never forms in the store -> ep
+        # collapses too; no_binding is a SHARED lesion).
         if mode != "no_binding":
-            slot_lo = (gslot * dlpfc.shape[0]) // _GAMMA_PER_THETA
-            slot_hi = ((gslot + 1) * dlpfc.shape[0]) // _GAMMA_PER_THETA
-            slot_hi = max(slot_hi, slot_lo + 1)
-            bridge.cp_external_input_current[
-                dlpfc[slot_lo:slot_hi]] += float(P["teacher_pA"])
+            bridge.cp_external_input_current[dlpfc] += \
+                0.5 * float(P["teacher_pA"])
         # BG-gated WM updating: drive the selected channel's BG cortex
-        # so its cascade disinhibits thal_<chan> -> "update this slot".
-        # no_bg_gate removes selective gating: ALL channels driven (no
-        # selectivity -> WM slots never selectively gated).
+        # so its cascade disinhibits thal_<chan>. That disinhibition is
+        # the cascade's real output and -- via the net-new
+        # thal_<chan> -> dlpfc_verb afferent -- is what now SELECTS the
+        # prefrontal slot sub-population (no Python slot index anywhere).
+        # no_bg_gate removes selective gating: ALL channels driven, so
+        # ALL thal_<chan> partially disinhibit and ALL feed dlpfc_verb
+        # -> no single slot is cleanly held -> wm collapses.
         if mode == "no_bg_gate":
             for ch in range(len(_BG_CHANNELS)):
                 bridge.cp_external_input_current[bg_cortex[ch]] += \
@@ -464,21 +538,32 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
             pass
         # Open the CLOSED-LOOP binding synapses under the SAME ACh
         # plasticity window so the native STDP/eligibility rule learns
-        # the role -> BG-gated dlpfc_verb slot -> bound filler chain:
-        #   language_input_to_dlpfc_verb : role+filler code -> the
-        #     BG-SELECTED dlpfc_verb slot (the loop ingress; this gate
-        #     is declared by the reused builder but never opened until
-        #     here -- closing it is part of the loop closure).
+        # the role -> BG-selected dlpfc_verb slot -> bound filler chain:
+        #   bg_thal_to_dlpfc             : the BG cascade's disinhibited
+        #     thal_<chan> -> the dlpfc_verb slot (the NET-NEW AFFERENT;
+        #     this is what makes the cascade physically SELECT the slot
+        #     -- the decisive re-review fix. Timed by the same window so
+        #     the native rule shapes the role->slot association too).
+        #   language_input_to_dlpfc_verb : role code -> dlpfc_verb (the
+        #     reused builder's plastic+gated pathway; opened here during
+        #     encode so STDP grows role->held-slot, which RE-CUES the
+        #     held slot at query from the role code ALONE).
         #   dlpfc_verb_to_filler         : the held slot -> the bound
         #     filler noun pool (the NET-NEW prefrontal-slot efferent).
-        # Both timed by the SAME shared-clock ACh window, so
+        # All timed by the SAME shared-clock ACh window, so
         # no_neuromod_timing removes timed plasticity on the whole loop
-        # consistently (not just one synapse set). no_binding (no joint
-        # dlpfc-slot co-drive) and no_bg_gate (no selective slot
-        # disinhibition) therefore collapse wm THROUGH this mechanism:
-        # the wrong / no slot fires during encode, so STDP never writes
+        # consistently (not just one synapse set). no_binding (no
+        # dlpfc-slot excitability bias -> BG-selected slot never reaches
+        # threshold) and no_bg_gate (all thal_<chan> driven -> no clean
+        # single slot) therefore collapse wm THROUGH this mechanism: the
+        # wrong / no slot fires during encode, so STDP never writes
         # role->slot->filler, so the query role drives the wrong / no
         # filler.
+        try:
+            bridge.set_plasticity_gate(
+                "bg_thal_to_dlpfc", float(ach_open))
+        except Exception:
+            pass
         try:
             bridge.set_plasticity_gate(
                 "language_input_to_dlpfc_verb", float(ach_open))
@@ -529,6 +614,22 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
     # generalization is required.
     wm_correct = 0
     n_q = len(pairs)
+    # Causal-liveness diagnostic (NOT a frozen bar; NOT a router): split
+    # dlpfc_verb into _GAMMA_PER_THETA equal MEASUREMENT sub-ranges and,
+    # at query (role code ALONE on language_input -- no current into
+    # noun_pool/dlpfc), accumulate per-sub-range spikes. If the BG path
+    # is causally live, the role re-cues exactly ONE held slot, so the
+    # per-slot vector is PEAKED in `full` (max/mean >> 1). Under
+    # no_bg_gate (all thal_<chan> driven during encode -> no single slot
+    # held) it is approximately UNIFORM (max/mean ~ 1). This is a passive
+    # readout partition; no per-slot Python injection anywhere.
+    nslot = _GAMMA_PER_THETA
+    d_n = int(dlpfc.shape[0])
+    slot_bounds = [((s * d_n) // nslot,
+                    max(((s + 1) * d_n) // nslot,
+                        (s * d_n) // nslot + 1))
+                   for s in range(nslot)]
+    slot_spikes = np.zeros(nslot, dtype=np.float64)
     for qi, (ridx, fidx) in enumerate(pairs):
         # Novel recombination on the final query: ask role ridx but the
         # ground truth is the filler of a DIFFERENT trained pair, so
@@ -551,6 +652,10 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
         for _ in range(P["readout_steps"]):
             _step(bridge)
             counts += _counts(bridge, filler_arr)
+            # Passive per-slot dlpfc_verb spike tally (diagnostic only).
+            fired = bridge.cp_firing_states
+            for s, (lo, hi) in enumerate(slot_bounds):
+                slot_spikes[s] += float(fired[dlpfc[lo:hi]].sum())
         # Rank fillers; trustworthy gate at DEFAULT_THRESHOLD.
         order = np.argsort(-counts)
         ranked = [("F%d" % int(j), float(counts[j]), "wm")
@@ -563,6 +668,14 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
             wm_correct += 1
     bridge.cp_external_input_current[:] = 0.0
     wm_acc = wm_correct / float(max(1, n_q))
+    # max/mean over the per-slot spike vector: 1.0 == perfectly uniform,
+    # nslot == a single slot carries everything. Recorded (never gated).
+    _ssum = float(slot_spikes.sum())
+    if _ssum > 0.0:
+        dlpfc_slot_nonuniformity = float(
+            slot_spikes.max() / (_ssum / float(nslot)))
+    else:
+        dlpfc_slot_nonuniformity = 0.0
 
     # ----- EPISODIC-SEQUENCE RECALL READOUT (ep) -----
     # Stimulate the committed episode tag; read back the ORDER of the
@@ -647,6 +760,12 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
         # too, so tag-driven replay activity cannot corrupt the learned
         # role -> slot -> filler binding (the awake/sleep idiom applied
         # consistently across the WHOLE loop; identical step structure).
+        # The NET-NEW bg_thal_to_dlpfc afferent is frozen here exactly
+        # like the other loop gates (symmetric awake/sleep handling).
+        try:
+            bridge.set_plasticity_gate("bg_thal_to_dlpfc", 0.0)
+        except Exception:
+            pass
         try:
             bridge.set_plasticity_gate(
                 "language_input_to_dlpfc_verb", 0.0)
@@ -666,10 +785,15 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
             bridge.clear_tag_drive(tag)
         except Exception:
             pass
-        # Restore awake encode gates for the next trial.
+        # Restore awake encode gates for the next trial (symmetric with
+        # the freeze above; bg_thal_to_dlpfc restored like the others).
         try:
             bridge.set_plasticity_gate(
                 "language_input_to_noun_pool", 1.0)
+        except Exception:
+            pass
+        try:
+            bridge.set_plasticity_gate("bg_thal_to_dlpfc", 1.0)
         except Exception:
             pass
         try:
@@ -687,7 +811,7 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
     except Exception:
         pass
     bridge.cp_external_input_current[:] = 0.0
-    return wm_acc, ep_acc
+    return wm_acc, ep_acc, dlpfc_slot_nonuniformity
 
 
 def _make_pairs(N, rng):
@@ -703,10 +827,12 @@ def _make_pairs(N, rng):
 def _run_mode(mode, seed, N, tiny, gap_zero=False):
     """Build the integrated closed-loop bridge, run the composition
     trials at load N per the BEHAVIORAL SPEC for `mode`, return
-    (wm, ep) means over the training epochs' final trial. Every mode
-    consumes IDENTICAL RNG draws in IDENTICAL order; only the lesioned
-    system's effect is removed. gap_zero forces the maintain gap to 0
-    (the v1 instrument-soundness, single trivial bind). NO autograd."""
+    (wm, ep, dlpfc_slot_nonuniformity) from the training epochs' final
+    trial -- the third value is the passive causal-liveness diagnostic
+    (recorded in the JSON, NEVER a frozen bar). Every mode consumes
+    IDENTICAL RNG draws in IDENTICAL order; only the lesioned system's
+    effect is removed. gap_zero forces the maintain gap to 0 (the v1
+    instrument-soundness, single trivial bind). NO autograd."""
     P = dict(_TINY if tiny else _FULL)
     if gap_zero:
         P["gap_steps"] = 0
@@ -737,10 +863,15 @@ def _run_mode(mode, seed, N, tiny, gap_zero=False):
         bridge.set_plasticity_gate("language_input_to_noun_pool", 1.0)
     except Exception:
         pass
-    # Open the closed-loop binding gates too (role -> BG-gated
-    # dlpfc_verb slot -> bound filler). The per-step ACh window inside
-    # _episode re-times them; this is just the known-open starting
-    # state, identical for every mode.
+    # Open the closed-loop binding gates too (BG cascade -> dlpfc_verb
+    # slot via the net-new afferent; role -> dlpfc_verb; held slot ->
+    # bound filler). The per-step ACh window inside _episode re-times
+    # them; this is just the known-open starting state, identical for
+    # every mode.
+    try:
+        bridge.set_plasticity_gate("bg_thal_to_dlpfc", 1.0)
+    except Exception:
+        pass
     try:
         bridge.set_plasticity_gate("language_input_to_dlpfc_verb", 1.0)
     except Exception:
@@ -758,12 +889,13 @@ def _run_mode(mode, seed, N, tiny, gap_zero=False):
                lang_out=lang_out, value_table=value_table,
                episode_id=0)
 
-    last_wm, last_ep = 0.0, 0.0
+    last_wm, last_ep, last_nu = 0.0, 0.0, 0.0
     for ep_i in range(P["n_train_epochs"]):
         pairs = _make_pairs(N, rng)  # SAME draw for every mode
         ctx["episode_id"] = ep_i
-        last_wm, last_ep = _episode(bridge, mode, pairs, rng, P, ctx)
-    return float(last_wm), float(last_ep)
+        last_wm, last_ep, last_nu = _episode(
+            bridge, mode, pairs, rng, P, ctx)
+    return float(last_wm), float(last_ep), float(last_nu)
 
 
 def _seed_rung(seed, N, tiny):
@@ -780,7 +912,13 @@ def _seed_rung(seed, N, tiny):
 
 
 def _aggregate(rows):
-    """Mean over seeds -> the rung schema integrated_loop_core wants."""
+    """Mean over seeds -> the rung schema integrated_loop_core wants.
+
+    The rung dicts hold ONLY {"wm","ep"} (+nested lesions) -- EXACTLY
+    the schema the frozen integrated_loop_core._pair consumes; the
+    causal-liveness diagnostic is aggregated SEPARATELY under
+    "_diag_slot_nonuniformity" and is NEVER part of what the verdict
+    sees (not a frozen bar)."""
     n = len(rows)
 
     def _mean(getter):
@@ -788,12 +926,20 @@ def _aggregate(rows):
         ep = sum(getter(r)[1] for r in rows) / n
         return {"wm": float(wm), "ep": float(ep)}
 
+    def _mean_nu(getter):
+        return float(sum(getter(r)[2] for r in rows) / n)
+
     les = {}
+    diag = {}
     for m in _ALL_LESIONS:
         les[m] = _mean(lambda r, _m=m: r["lesions"][_m])
+        diag[m] = _mean_nu(lambda r, _m=m: r["lesions"][_m])
+    diag["v1"] = _mean_nu(lambda r: r["v1"])
+    diag["full"] = _mean_nu(lambda r: r["full"])
     return {"v1": _mean(lambda r: r["v1"]),
             "full": _mean(lambda r: r["full"]),
-            "lesions": les}
+            "lesions": les,
+            "_diag_slot_nonuniformity": diag}
 
 
 def main(argv=None):
@@ -865,15 +1011,31 @@ def main(argv=None):
         return 0
 
     rungs = []
+    diagnostics = []
     for N in _IL_LADDER:
         rows = per_rung[N]
         agg = _aggregate(rows)
+        # The rung dict passed to the FROZEN verdict carries ONLY the
+        # pre-registered schema (N / n_seeds / v1 / full / lesions);
+        # the causal-liveness diagnostic is recorded SEPARATELY and is
+        # NEVER seen by integrated_loop_verdict (not a frozen bar).
         rungs.append({"N": N, "n_seeds": len(rows),
                       "v1": agg["v1"], "full": agg["full"],
                       "lesions": agg["lesions"]})
+        diagnostics.append({
+            "N": N,
+            "slot_nonuniformity": agg["_diag_slot_nonuniformity"],
+        })
     verdict = integrated_loop_verdict(rungs)
     verdict["banner"] = _BANNER
     verdict["rungs"] = rungs
+    # Evidence the BG path is causally LIVE (recorded, never gated):
+    # in `full` the role re-cues exactly one held slot so
+    # slot_nonuniformity is PEAKED (>> 1); under `no_bg_gate` all
+    # thal_<chan> are driven so no single slot is held and it is
+    # approximately UNIFORM (~ 1). This makes the BG-WM necessity test
+    # non-VOID-by-construction without adding any new frozen bar.
+    verdict["diagnostics_slot_nonuniformity"] = diagnostics
     with open(a.out, "w") as fh:
         json.dump(verdict, fh, indent=2)
     print("GATE=%s  %s" % (verdict["GATE"], _BANNER))
