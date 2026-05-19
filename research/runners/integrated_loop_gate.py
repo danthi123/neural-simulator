@@ -1,0 +1,778 @@
+"""Kill-safe FULL spiking-network integrated-loop test: does
+compositional memory emerge ONLY from several brain-like systems
+composed into ONE closed loop unified by a SINGLE shared theta-gamma
+rhythm? Composes -- by import, byte-UNMODIFIED -- the validated
+subsystems: build_biological_brain_regions (hippocampal relational
+store ec/dg/ca3/ca1 + the ca1->concept consolidation path + the
+prefrontal NMDA-bistable working-memory slots dlpfc_verb + the
+concept/schema pools) + build_bg_brain_regions (the validated
+basal-ganglia disinhibition cascade, its selective gate REPURPOSED
+from the motor channel to gating WHICH prefrontal WM slot updates
+vs holds) + the bridge's native cp_eligibility_trace temporal-credit
+reward path + the engram-tagging API (fast relational episode store)
++ the NM subsystem (phasic-DA from TD delta + a clock-gated ACh
+plasticity-window) + sim.train_checkpoint, ALL byte-UNMODIFIED.
+
+The ONLY net-new code here is (a) a small shared theta-gamma timing
+controller (pure, no learning, no autograd) and (b) the closed-loop
+wiring. Every learning update is the reused validated native
+eligibility/temporal-credit rule. NO automatic differentiation.
+
+Each of the 8 lesion modes + v1 + full is full-minus-EXACTLY-one-
+system with IDENTICAL RNG draws (the compose-bridge-gate faithfulness
+discipline) so the later adversarial review cannot reject a strawman.
+
+HONEST CEILING (printed, never spun): a PASS = emergent compositional
+memory in a biology-grounded multi-system loop ONLY -- NOT fluent
+open-ended language, NOT a large language model, NOT conversation
+solved. The verdict (PASS/FAIL/VOID) is decided by the frozen
+research.runners.integrated_loop_core and propagated honestly; the
+--tiny-synth smoke verdict is marked TINY and NEVER propagated."""
+from __future__ import annotations
+import argparse
+import json
+import os
+import sys
+
+# Force the NumPy CPU backend for a deterministic, fast composition
+# (set BEFORE any sim import that may cache the backend). The mechanism
+# under test is backend-agnostic; CPU is sufficient and avoids GPU
+# nondeterminism in the gate decision.
+os.environ.setdefault("SIM_BACKEND", "numpy")
+
+import numpy as np
+
+from research.runners.text_minimal_isolation import (
+    build_biological_brain_regions)
+from research.runners.g11_bg_runner import build_bg_brain_regions
+from sim.kernels import fused_eligibility_trace_decay  # noqa: F401
+from sim.train_checkpoint import (save_checkpoint, load_checkpoint,
+                                  resume_epoch)
+from sim.neuromodulators import (NeuromodulatorConfig, ProductionRule,
+                                 ModulatorTarget)
+from research.runners.abstention_gate import gate, DEFAULT_THRESHOLD
+from sim.text_embeddings import orthogonal_drive_pattern
+from research.runners.integrated_loop_core import integrated_loop_verdict
+
+_BANNER = ("HONEST CEILING: emergent compositional memory in a "
+           "biology-grounded multi-system loop ONLY -- NOT fluent "
+           "open-ended language, NOT a large language model, NOT "
+           "conversation solved.")
+
+# TD(lambda) constants (the validated rule; frozen here, identical to
+# compose_bridge_gate's native-path discipline).
+_GAMMA = 0.95
+_LAMBDA = 0.9
+
+# Frozen ladder for the FULL run: compositional load = number of
+# (role, filler) bindings held + composed simultaneously. (2,4,8) is
+# the pre-registered ladder owned by integrated_loop_core.
+_IL_LADDER = (2, 4, 8)
+_MAX_LOAD = max(_IL_LADDER)  # 8
+
+# The 8 lesion modes (mirror integrated_loop_core's frozen partition).
+_SHARED = ("no_binding", "no_shared_clock", "no_hippo_store")
+_HELPER_WM = ("no_bg_gate",)
+_HELPER_EP = ("no_sequencing", "no_cls_replay")
+_HELPER_BOTH = ("no_neuromod_timing",)
+_ALL_LESIONS = _SHARED + _HELPER_WM + _HELPER_EP + _HELPER_BOTH
+_MODES = ("full",) + _ALL_LESIONS  # "v1" is full with gap_zero
+
+# Concept/schema pools: one per (role|filler) slot. _MAX_LOAD bindings
+# need _MAX_LOAD role pools + _MAX_LOAD filler pools = 16 noun pools.
+_ROLE_POOLS = ["R%d" % i for i in range(_MAX_LOAD)]
+_FILLER_POOLS = ["F%d" % i for i in range(_MAX_LOAD)]
+_POOL_NAMES = _ROLE_POOLS + _FILLER_POOLS
+
+# Full-slice scale (still minimal vs production). n_lang_input chosen
+# so the orthogonal role+filler codes (2*_MAX_LOAD distinct cues) are
+# comfortably non-overlapping: stride = 1024 // 16 = 64 >= n_active =
+# round(0.05 * 1024) = 51.
+_FULL = dict(
+    n_lang_input=1024, n_per_pool=24, n_fs_per_pool=4,
+    n_dlpfc=80, bg_cortex=24,
+    stim_steps=10, gap_steps=10, reset_steps=6,
+    readout_steps=8, replay_steps=10, n_train_epochs=5,
+    role_pA=240.0, filler_pA=240.0, teacher_pA=420.0,
+    gate_drive_pA=900.0, tag_stim_pA=1400.0, sparsity=0.05)
+# tiny-synth: aggressively shrunk so the smoke completes FAST on
+# NumPy CPU (well under the 900s test budget). Its verdict is a toy
+# and is NEVER propagated. stride = 256 // 16 = 16 >= n_active =
+# round(0.05 * 256) = 13. Only the FIRST ladder rung is run.
+_TINY = dict(
+    n_lang_input=256, n_per_pool=6, n_fs_per_pool=1,
+    n_dlpfc=16, bg_cortex=6,
+    stim_steps=2, gap_steps=2, reset_steps=1,
+    readout_steps=2, replay_steps=2, n_train_epochs=1,
+    role_pA=240.0, filler_pA=240.0, teacher_pA=420.0,
+    gate_drive_pA=900.0, tag_stim_pA=1400.0, sparsity=0.05)
+
+# BG cascade action channels. ACTION_NAMES = ["N","E","S","W"] in
+# g11_bg_runner; we REPURPOSE these 4 selective-disinhibition channels
+# to gate WM-slot updates. The cascade's selected disinhibited output
+# (read off thal_X) selects WHICH WM slot (slot mod 4 -> channel)
+# updates this step; the others HOLD. This is the basal-ganglia
+# action-selection circuit driving prefrontal slot-updating instead of
+# motor output (Frank 2006 BG-WM gating; the cascade is unchanged).
+_BG_CHANNELS = ["N", "E", "S", "W"]
+
+
+# --------------------------------------------------------------------
+# NET-NEW PIECE 1: the shared theta-gamma timing controller.
+# Pure helper (no learning, no autograd, no new sim module). ONE
+# instance drives BOTH (i) which prefrontal WM slot is gated open for
+# update vs hold this step and (ii) which gamma slot the hippocampal
+# episodic encoder writes -- and it SHIFTS the role-filler assembly
+# across successive theta cycles (shift, not repeat = the episodic-
+# write rule that makes ordered recall possible).
+# Frozen structural choice (justified WITHOUT reference to any run):
+# gamma sub-cycles per theta period = _MAX_LOAD (8) >= the largest
+# ladder load, so all bindings of any ladder rung fit inside ONE theta
+# buffer -- the ~7+-2 working-memory buffer-span grounding (Lisman &
+# Idiart 1995 theta-gamma multiplexing; Miller 1956 buffer span).
+# --------------------------------------------------------------------
+_GAMMA_PER_THETA = _MAX_LOAD  # 8 gamma sub-cycles per theta period
+
+
+class SharedThetaGamma:
+    """ONE shared rhythm. `step()` advances one gamma sub-cycle; every
+    _GAMMA_PER_THETA sub-cycles is one theta period. `slot_for(i, N)`
+    returns the gamma sub-cycle assigned to binding i at load N; under
+    the shift rule that assignment is rotated by the current theta
+    period index (so the SAME instance both gates the WM slot and
+    times the hippocampal write, and successive theta cycles present
+    a SHIFTED assembly = the ordered episode). `no_shared_clock`
+    replaces the ONE instance with TWO independent instances (one for
+    prefrontal WM gating, one for the hippocampal write) so the two
+    timings desynchronize -- nothing else changes."""
+
+    def __init__(self, shift: bool = True):
+        self._g = 0          # gamma sub-cycle index within theta
+        self._theta = 0      # theta period counter
+        self._shift = shift  # SHIFT assembly across theta (episodic)
+
+    def step(self) -> None:
+        self._g += 1
+        if self._g >= _GAMMA_PER_THETA:
+            self._g = 0
+            self._theta += 1
+
+    @property
+    def gamma_slot(self) -> int:
+        return self._g
+
+    @property
+    def theta_period(self) -> int:
+        return self._theta
+
+    def slot_for(self, binding_idx: int, n_bindings: int) -> int:
+        """Gamma sub-cycle assigned to binding `binding_idx`. With the
+        SHIFT rule the per-theta rotation encodes order; with shift
+        OFF (no_sequencing lesion) the assembly REPEATS every theta
+        (no recoverable order)."""
+        rot = self._theta if self._shift else 0
+        return (binding_idx + rot) % _GAMMA_PER_THETA
+
+
+def _da_modulator_from_delta():
+    """Catalog C.30 phasic-DA via the REUSED NM subsystem UNMODIFIED:
+    a from_reward DA modulator whose drive is the TD delta. Constructed
+    (exactly like compose_bridge_gate's _da_modulator_from_delta) to
+    prove composition with the validated phasic-DA substrate; never
+    mutated."""
+    return NeuromodulatorConfig(
+        name="dopamine_integrated_loop", baseline=0.0,
+        decay_tau_ms=50.0, concentration_min=-5.0,
+        concentration_max=5.0,
+        targets=[ModulatorTarget(target_type="plasticity_rate",
+                                 scope="all", sensitivity=1.0)],
+        production_rules=[ProductionRule(rule_type="from_reward",
+                                         sensitivity=1.0,
+                                         threshold=0.0,
+                                         window_ms=0.0)])
+
+
+def _ach_window_modulator():
+    """Acetylcholine-style plasticity-window modulator, manual rule so
+    the SHARED clock's theta phase decides (in-loop) when plasticity
+    is allowed. Constructed via the reused NM subsystem UNMODIFIED;
+    its concentration is set from the shared clock, never mutated as a
+    schema. `no_neuromod_timing` simply does not gate plasticity by
+    this clock (plasticity always on, untimed)."""
+    return NeuromodulatorConfig(
+        name="acetylcholine_integrated_loop", baseline=1.0,
+        decay_tau_ms=20.0, concentration_min=0.0,
+        concentration_max=1.0,
+        targets=[ModulatorTarget(target_type="plasticity_rate",
+                                 scope="all", sensitivity=1.0)],
+        production_rules=[ProductionRule(rule_type="manual",
+                                         sensitivity=1.0,
+                                         threshold=0.0,
+                                         window_ms=0.0)])
+
+
+def _build_bridge(seed, P):
+    """Build the integrated closed-loop spiking bridge by COMPOSING
+    the reused builders UNMODIFIED:
+      * build_biological_brain_regions(enable_hippocampus_consolidation
+        =True, enable_dlpfc_verb=True, enable_noun_pools=True) ->
+        ec/dg/dg_pv_basket/ca3/ca1 (fast relational store + ca1->motor
+        / ca1->language_output consolidation/replay path), dlpfc_verb
+        (the prefrontal NMDA-bistable working-memory slot region), and
+        the concept/schema pools (noun_pool_R*/F*).
+      * build_bg_brain_regions(...) -> the validated basal-ganglia
+        disinhibition cascade (cortex_X -> str_D1/D2_X -> gpi_X ->
+        thal_X -> motor_X). Its selected disinhibited channel is
+        REPURPOSED to gate WM-slot updating (read off thal_X).
+    Both region lists + pathway lists are concatenated into ONE bridge
+    so the loop is genuinely closed; neither builder is edited."""
+    from sim.config import (CoreSimConfig, VisualizationConfig,
+                            RuntimeState, GPUConfig)
+    from sim.bridge import SimulationBridge
+
+    regions_a, pathways_a = build_biological_brain_regions(
+        n_lang_input=P["n_lang_input"],
+        n_motor_per_action=8,            # vestigial motor pools (unused)
+        enable_motor_fs=False,
+        enable_language_output=True,     # A->W readout substrate
+        enable_noun_pools=True,
+        noun_pool_names=list(_POOL_NAMES),
+        n_noun_per_pool=P["n_per_pool"],
+        n_noun_fs_per_pool=P["n_fs_per_pool"],
+        # weak concept-pool dynamics (iter-AA / v16 setting):
+        concept_pool_internal_density=0.05,
+        concept_pool_exc_weight_mean=0.3,
+        concept_pool_inh_weight_mean=0.8,
+        # the prefrontal NMDA-bistable working-memory slots:
+        enable_dlpfc_verb=True,
+        n_dlpfc_verb=P["n_dlpfc"],
+        # the fast hippocampal relational store + replay/consolidation:
+        enable_hippocampus_consolidation=True,
+    )
+    # The validated BG disinhibition cascade (selective gate). Renamed
+    # nowhere -- consumed as-is; we only READ thal_X to pick the gated
+    # WM slot. n_cortex small (this is a gate, not the workload).
+    regions_b, pathways_b = build_bg_brain_regions(
+        n_cortex=P["bg_cortex"],
+    )
+    # Concatenate into ONE closed loop. Region names are disjoint
+    # (noun_pool_*/dlpfc_verb/ec/dg/ca3/ca1 vs cortex_X/str_*/gpi_X/
+    # thal_X/motor_X/stn/snc), so the single region_manager wires both
+    # subsystems without collision.
+    regions = list(regions_a) + list(regions_b)
+    pathways = list(pathways_a) + list(pathways_b)
+
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = list(regions)
+    cfg.region_pathways = list(pathways)
+    cfg.dt_ms = 1.0
+    cfg.seed = seed
+    cfg.enable_nmda = True               # prefrontal bistable holding
+    cfg.enable_structural_plasticity = False
+    cfg.enable_per_type_stp = False
+    cfg.enable_hebbian_learning = False  # native 3-factor path only
+    cfg.enable_short_term_plasticity = False
+    cfg.enable_stdp = True
+    cfg.enable_reward_modulation = True
+    cfg.reward_learning_rate = 0.05
+    cfg.reward_eligibility_tau_ms = 200.0
+    cfg.reward_baseline = 0.0
+    cfg.stdp_w_max = 8.0                  # above design weights (gotcha)
+    cfg.fast_spike_reset = True
+
+    bridge = SimulationBridge(
+        core_config=cfg,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
+    )
+    bridge.runtime_state.max_delay_steps = int(
+        cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+    return bridge
+
+
+def _code(cue_idx, n_cues, n_lang, pA, P):
+    """Deterministic orthogonal code on language_input (the proven
+    concept-pool drive idiom; one disjoint band per cue). Roles and
+    fillers share ONE 2*_MAX_LOAD-cue space so every role and filler
+    has a unique non-overlapping band."""
+    return orthogonal_drive_pattern(
+        cue_idx=cue_idx, n_cues=2 * _MAX_LOAD,
+        n_neurons=n_lang, drive_max_pA=pA, sparsity=P["sparsity"])
+
+
+def _step(bridge):
+    bridge._run_one_simulation_step()
+    bridge.runtime_state.current_time_step += 1
+
+
+def _counts(bridge, arrs):
+    fired = bridge.cp_firing_states
+    return np.array([float(fired[a].sum()) for a in arrs],
+                    dtype=np.float64)
+
+
+def _episode(bridge, mode, pairs, rng, P, ctx):
+    """One composition trial at load N = len(pairs) per the BEHAVIORAL
+    SPEC. `pairs` is a list of (role_idx, filler_idx). Returns
+    (wm_acc, ep_acc) for THIS trial. Every mode draws the SAME random
+    numbers in the SAME order from `rng`; only the lesioned system's
+    effect is removed (the compose_bridge_gate faithfulness rule)."""
+    cp = bridge.xp if hasattr(bridge, "xp") else np
+    n_lang = ctx["n_lang"]
+    lang = ctx["lang"]
+    role_arr = ctx["role_arr"]
+    filler_arr = ctx["filler_arr"]
+    dlpfc = ctx["dlpfc"]
+    thal = ctx["thal"]            # 4 BG channels (REPURPOSED gate out)
+    bg_cortex = ctx["bg_cortex"]  # 4 BG cortex drive arrays
+    lang_out = ctx["lang_out"]
+    value_table = ctx["value_table"]
+    N = len(pairs)
+
+    # ONE shared clock unless this is the no_shared_clock lesion, in
+    # which case TWO independent clocks desynchronize WM gating vs the
+    # hippocampal write (nothing else changes).
+    if mode == "no_shared_clock":
+        clk_wm = SharedThetaGamma(shift=(mode != "no_sequencing"))
+        clk_hip = SharedThetaGamma(shift=(mode != "no_sequencing"))
+        # Desync: advance the hippocampal clock by a fixed phase so the
+        # two are genuinely out of step (independent timing sources).
+        for _ in range(_GAMMA_PER_THETA // 2):
+            clk_hip.step()
+    else:
+        clk_wm = SharedThetaGamma(shift=(mode != "no_sequencing"))
+        clk_hip = clk_wm  # THE shared instance drives both
+
+    tag = "episode_%d" % ctx["episode_id"]
+
+    # ----- reset (decay residual state between trials) -----
+    bridge.cp_external_input_current[:] = 0.0
+    bridge.core_config.current_reward_signal = 0.0
+    for _ in range(P["reset_steps"]):
+        _step(bridge)
+
+    # ----- ENCODE -----
+    # Hippocampal relational store records the episode (skipped only
+    # for the no_hippo_store SHARED lesion).
+    if mode != "no_hippo_store":
+        bridge.start_engram_recording(tag)
+
+    for bi, (ridx, fidx) in enumerate(pairs):
+        # Shared clock decides this binding's gamma sub-cycle; the
+        # matching prefrontal WM slot is gated open via the BG cascade
+        # (no_sequencing makes the clock REPEAT instead of SHIFT).
+        gslot = clk_wm.slot_for(bi, N)
+        chan = gslot % len(_BG_CHANNELS)  # which BG channel selects
+
+        # Drive role + filler orthogonal codes into the concept pools.
+        bridge.cp_external_input_current[:] = 0.0
+        drole = cp.asarray(_code(ridx, 2 * _MAX_LOAD, n_lang,
+                                 P["role_pA"], P), dtype=cp.float32)
+        dfill = cp.asarray(_code(_MAX_LOAD + fidx, 2 * _MAX_LOAD,
+                                 n_lang, P["filler_pA"], P),
+                           dtype=cp.float32)
+        bridge.cp_external_input_current[lang] = drole + dfill
+        # Teacher current co-fires the bound role+filler pools so the
+        # native eligibility trace charges on the concept synapses.
+        bridge.cp_external_input_current[role_arr[ridx]] += \
+            float(P["teacher_pA"])
+        bridge.cp_external_input_current[filler_arr[fidx]] += \
+            float(P["teacher_pA"])
+        # COMBINATORIAL BINDING: also co-drive the WM slot region so
+        # the (role,filler) assembly forms in the NMDA-bistable slot.
+        # Suppressed for the no_binding SHARED lesion (role+filler are
+        # still driven, but the combined relational assembly is NOT
+        # formed -- no joint WM-slot co-drive).
+        if mode != "no_binding":
+            slot_lo = (gslot * dlpfc.shape[0]) // _GAMMA_PER_THETA
+            slot_hi = ((gslot + 1) * dlpfc.shape[0]) // _GAMMA_PER_THETA
+            slot_hi = max(slot_hi, slot_lo + 1)
+            bridge.cp_external_input_current[
+                dlpfc[slot_lo:slot_hi]] += float(P["teacher_pA"])
+        # BG-gated WM updating: drive the selected channel's BG cortex
+        # so its cascade disinhibits thal_<chan> -> "update this slot".
+        # no_bg_gate removes selective gating: ALL channels driven (no
+        # selectivity -> WM slots never selectively gated).
+        if mode == "no_bg_gate":
+            for ch in range(len(_BG_CHANNELS)):
+                bridge.cp_external_input_current[bg_cortex[ch]] += \
+                    float(P["gate_drive_pA"])
+        else:
+            bridge.cp_external_input_current[bg_cortex[chan]] += \
+                float(P["gate_drive_pA"])
+
+        # The shared clock's theta phase times the ACh plasticity
+        # window (open in the first half of theta). no_neuromod_timing
+        # leaves plasticity always on (untimed).
+        if mode != "no_neuromod_timing":
+            ach_open = 1.0 if clk_hip.gamma_slot < (
+                _GAMMA_PER_THETA // 2) else 0.0
+        else:
+            ach_open = 1.0
+        try:
+            bridge.set_plasticity_gate(
+                "language_input_to_noun_pool", float(ach_open))
+        except Exception:
+            pass
+
+        for _ in range(P["stim_steps"]):
+            _step(bridge)
+            clk_wm.step()
+            if clk_hip is not clk_wm:
+                clk_hip.step()
+
+    # Finalize the episode tag over the hippocampal regions only
+    # (region_filter = the relational store). Skipped for
+    # no_hippo_store.
+    if mode != "no_hippo_store":
+        try:
+            bridge.commit_engram_tag(
+                tag, top_k=64,
+                region_filter=["ec", "dg", "ca3", "ca1"])
+        except Exception:
+            pass
+
+    # ----- MAINTAIN -----
+    # Delay; NO encode drive; reward strictly held at 0 (credit
+    # delayed past the gap, exactly compose_bridge_gate's discipline).
+    # NMDA bistability holds the slots; the shared clock keeps
+    # refreshing within theta.
+    bridge.cp_external_input_current[:] = 0.0
+    bridge.core_config.current_reward_signal = 0.0
+    for _ in range(P["gap_steps"]):
+        _step(bridge)
+        clk_wm.step()
+        if clk_hip is not clk_wm:
+            clk_hip.step()
+
+    # ----- WORKING-MEMORY QUERY READOUT (wm) -----
+    # Present each queried role; population-vote the filler concept
+    # pools for the bound filler; emit only if gate(...) passes else
+    # abstain. Include a NOVEL composed (role,filler) recombination
+    # (the last query uses a role bound to a DIFFERENT filler than
+    # drilled) so a memorized lookup cannot pass -- genuine relational
+    # generalization is required.
+    wm_correct = 0
+    n_q = len(pairs)
+    for qi, (ridx, fidx) in enumerate(pairs):
+        # Novel recombination on the final query: ask role ridx but the
+        # ground truth is the filler of a DIFFERENT trained pair, so
+        # the bound relation (not a per-role constant) must drive it.
+        if qi == n_q - 1 and n_q >= 2:
+            true_fidx = pairs[0][1]
+            q_ridx = pairs[-1][0]
+        else:
+            true_fidx = fidx
+            q_ridx = ridx
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(P["reset_steps"]):
+            _step(bridge)
+        dq = cp.asarray(_code(q_ridx, 2 * _MAX_LOAD, n_lang,
+                              P["role_pA"], P), dtype=cp.float32)
+        bridge.cp_external_input_current[lang] = dq
+        for _ in range(P["stim_steps"] + P["gap_steps"]):
+            _step(bridge)
+        counts = np.zeros(_MAX_LOAD, dtype=np.float64)
+        for _ in range(P["readout_steps"]):
+            _step(bridge)
+            counts += _counts(bridge, filler_arr)
+        # Rank fillers; trustworthy gate at DEFAULT_THRESHOLD.
+        order = np.argsort(-counts)
+        ranked = [("F%d" % int(j), float(counts[j]), "wm")
+                  for j in order]
+        decision = gate(ranked, DEFAULT_THRESHOLD)
+        # Wrong emission AND abstention-on-a-groundable-query both
+        # score 0; only a correct gated emission scores 1.
+        if decision is not None and \
+                decision[0] == ("F%d" % int(true_fidx)):
+            wm_correct += 1
+    bridge.cp_external_input_current[:] = 0.0
+    wm_acc = wm_correct / float(max(1, n_q))
+
+    # ----- EPISODIC-SEQUENCE RECALL READOUT (ep) -----
+    # Stimulate the committed episode tag; read back the ORDER of the
+    # bound pairs from the SHIFTED assembly (which gamma sub-cycle each
+    # role pool peaks at -> recovered order). Score recalled order vs
+    # the true encode order. no_hippo_store / no_sequencing /
+    # no_cls_replay collapse this by construction.
+    if mode == "no_hippo_store":
+        ep_acc = 0.0
+    else:
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(P["reset_steps"]):
+            _step(bridge)
+        # peak_step[role_position] = readout step at which that role's
+        # concept pool fired most -> the recovered temporal order.
+        peak_val = np.full(N, -1.0, dtype=np.float64)
+        peak_t = np.zeros(N, dtype=np.int64)
+        n_recall = max(N * 2, P["readout_steps"])
+        for t in range(n_recall):
+            try:
+                bridge.stimulate_tag(tag, float(P["tag_stim_pA"]))
+            except Exception:
+                pass
+            _step(bridge)
+            rc = _counts(bridge, [role_arr[r] for r, _ in pairs])
+            for k in range(N):
+                if rc[k] > peak_val[k]:
+                    peak_val[k] = rc[k]
+                    peak_t[k] = t
+        try:
+            bridge.clear_tag_drive(tag)
+        except Exception:
+            pass
+        bridge.cp_external_input_current[:] = 0.0
+        recovered = list(np.argsort(peak_t, kind="stable"))
+        true_order = list(range(N))
+        ep_acc = sum(1.0 for i in range(N)
+                     if recovered[i] == true_order[i]) / float(N)
+
+    # ----- LEARN -----
+    # Delayed reward drives the native eligibility path with the
+    # temporal-credit delta (compose_bridge_gate's native-path
+    # discipline; gamma=0.95, lambda=0.9). The clock-gated ACh
+    # modulator times when the update is allowed.
+    reward = 0.5 * wm_acc + 0.5 * ep_acc
+    v = float(value_table[0])
+    delta = reward - v
+    value_table[0] = v + (1.0 - _GAMMA * _LAMBDA) * delta
+
+    if mode != "no_neuromod_timing":
+        # ACh window open -> allow the weight update this step.
+        try:
+            bridge.set_plasticity_gate(
+                "language_input_to_noun_pool", 1.0)
+        except Exception:
+            pass
+    bridge.cp_external_input_current[:] = 0.0
+    bridge.core_config.current_reward_signal = float(delta)
+    _step(bridge)
+    bridge.core_config.current_reward_signal = 0.0
+
+    # ----- REPLAY / CONSOLIDATION -----
+    # Short replay phase: drive the committed tag during the SLEEP gate
+    # so ca1 -> concept consolidation transfers the bound structure
+    # into the schema layer (the CLS replay path). Skipped for the
+    # no_cls_replay HELPER lesion (and impossible for no_hippo_store).
+    if mode not in ("no_cls_replay", "no_hippo_store"):
+        try:
+            bridge.set_plasticity_gate("ca1_to_motor", 1.0)
+        except Exception:
+            pass
+        try:
+            bridge.set_plasticity_gate("ca1_to_lang_out", 1.0)
+        except Exception:
+            pass
+        try:
+            bridge.set_plasticity_gate(
+                "language_input_to_noun_pool", 0.0)  # encode off
+        except Exception:
+            pass
+        for _ in range(P["replay_steps"]):
+            try:
+                bridge.stimulate_tag(tag, float(P["tag_stim_pA"]))
+            except Exception:
+                pass
+            _step(bridge)
+        try:
+            bridge.clear_tag_drive(tag)
+        except Exception:
+            pass
+        # Restore awake encode gate for the next trial.
+        try:
+            bridge.set_plasticity_gate(
+                "language_input_to_noun_pool", 1.0)
+        except Exception:
+            pass
+    # Drop the per-episode tag so tags don't accumulate across trials.
+    try:
+        bridge.delete_engram_tag(tag)
+    except Exception:
+        pass
+    bridge.cp_external_input_current[:] = 0.0
+    return wm_acc, ep_acc
+
+
+def _make_pairs(N, rng):
+    """N (role, filler) pairs. Roles are a fixed prefix; fillers are a
+    random bijection (drawn from rng so every mode consumes the SAME
+    draw at this point)."""
+    roles = list(range(N))
+    fillers = np.arange(N)
+    rng.shuffle(fillers)
+    return list(zip(roles, [int(f) for f in fillers]))
+
+
+def _run_mode(mode, seed, N, tiny, gap_zero=False):
+    """Build the integrated closed-loop bridge, run the composition
+    trials at load N per the BEHAVIORAL SPEC for `mode`, return
+    (wm, ep) means over the training epochs' final trial. Every mode
+    consumes IDENTICAL RNG draws in IDENTICAL order; only the lesioned
+    system's effect is removed. gap_zero forces the maintain gap to 0
+    (the v1 instrument-soundness, single trivial bind). NO autograd."""
+    P = dict(_TINY if tiny else _FULL)
+    if gap_zero:
+        P["gap_steps"] = 0
+    bridge = _build_bridge(seed, P)
+    cp = bridge.xp if hasattr(bridge, "xp") else np
+    rm = bridge.region_manager
+
+    lang = cp.asarray(list(rm.indices("language_input")),
+                      dtype=cp.int64)
+    role_arr = [cp.asarray(list(rm.indices("noun_pool_%s" % nm)),
+                           dtype=cp.int64) for nm in _ROLE_POOLS]
+    filler_arr = [cp.asarray(list(rm.indices("noun_pool_%s" % nm)),
+                             dtype=cp.int64) for nm in _FILLER_POOLS]
+    dlpfc = cp.asarray(list(rm.indices("dlpfc_verb")), dtype=cp.int64)
+    thal = [cp.asarray(list(rm.indices("thal_%s" % ch)),
+                       dtype=cp.int64) for ch in _BG_CHANNELS]
+    bg_cortex = [cp.asarray(list(rm.indices("cortex_%s" % ch)),
+                            dtype=cp.int64) for ch in _BG_CHANNELS]
+    try:
+        lang_out = cp.asarray(list(rm.indices("language_output")),
+                              dtype=cp.int64)
+    except Exception:
+        lang_out = lang
+
+    # Open the plastic concept gate (the synapse set under test); the
+    # awake/sleep idiom flips the consolidation gates per trial.
+    try:
+        bridge.set_plasticity_gate("language_input_to_noun_pool", 1.0)
+    except Exception:
+        pass
+
+    rng = np.random.default_rng(seed)
+    value_table = np.zeros(1, dtype=np.float64)
+    ctx = dict(n_lang=int(lang.shape[0]), lang=lang,
+               role_arr=role_arr, filler_arr=filler_arr,
+               dlpfc=dlpfc, thal=thal, bg_cortex=bg_cortex,
+               lang_out=lang_out, value_table=value_table,
+               episode_id=0)
+
+    last_wm, last_ep = 0.0, 0.0
+    for ep_i in range(P["n_train_epochs"]):
+        pairs = _make_pairs(N, rng)  # SAME draw for every mode
+        ctx["episode_id"] = ep_i
+        last_wm, last_ep = _episode(bridge, mode, pairs, rng, P, ctx)
+    return float(last_wm), float(last_ep)
+
+
+def _seed_rung(seed, N, tiny):
+    """All modes for one (seed, load N): v1 (gap_zero full), full, and
+    every lesion. Returns the per-seed dict."""
+    out = {}
+    out["v1"] = _run_mode("full", seed, N, tiny, gap_zero=True)
+    out["full"] = _run_mode("full", seed, N, tiny, gap_zero=False)
+    out["lesions"] = {}
+    for m in _ALL_LESIONS:
+        out["lesions"][m] = _run_mode(m, seed, N, tiny,
+                                      gap_zero=False)
+    return out
+
+
+def _aggregate(rows):
+    """Mean over seeds -> the rung schema integrated_loop_core wants."""
+    n = len(rows)
+
+    def _mean(getter):
+        wm = sum(getter(r)[0] for r in rows) / n
+        ep = sum(getter(r)[1] for r in rows) / n
+        return {"wm": float(wm), "ep": float(ep)}
+
+    les = {}
+    for m in _ALL_LESIONS:
+        les[m] = _mean(lambda r, _m=m: r["lesions"][_m])
+    return {"v1": _mean(lambda r: r["v1"]),
+            "full": _mean(lambda r: r["full"]),
+            "lesions": les}
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seeds", type=int, nargs="+",
+                    default=[42, 43, 44, 45, 46])
+    ap.add_argument("--tiny-synth", action="store_true")
+    ap.add_argument("--ckpt", default=None)
+    ap.add_argument("--out", required=True)
+    a = ap.parse_args(argv)
+    if len(a.seeds) < 3:
+        print("NOT-RUNNABLE: need >=3 seeds for the pre-registered "
+              "gate")
+        return 2
+    _ = _da_modulator_from_delta()  # construct (not mutate)
+    _ = _ach_window_modulator()     # construct (not mutate)
+
+    ladder = (_IL_LADDER[:1] if a.tiny_synth else _IL_LADDER)
+
+    # Resume: skip seeds already recorded in the checkpoint.
+    done = set()
+    if a.ckpt:
+        ck = load_checkpoint(a.ckpt)
+        if ck is not None:
+            for s in ck["loss_history"]:
+                done.add(int(s))
+
+    # per_rung[N] = list of per-seed dicts.
+    per_rung = {N: [] for N in ladder}
+    processed = list(done)
+    try:
+        for s in a.seeds:
+            if int(s) in done:
+                continue
+            for N in ladder:
+                per_rung[N].append(_seed_rung(s, N, a.tiny_synth))
+            processed.append(int(s))
+            if a.ckpt:
+                # Kill-safe: record completed seeds in loss_history so
+                # a resume skips them; weights is a flat scalar list.
+                flat = []
+                for N in ladder:
+                    for row in per_rung[N]:
+                        flat.append(row["full"][0])
+                        flat.append(row["full"][1])
+                save_checkpoint(a.ckpt, len(processed), [flat],
+                                None, [float(x) for x in processed])
+    except KeyboardInterrupt:
+        print("INTERRUPTED -- partial checkpoint flushed; resumable "
+              "(rerun with the same --ckpt to skip finished seeds)")
+        return 130
+
+    if a.tiny_synth:
+        # TINY toy verdict -- NEVER propagated. Do NOT call
+        # integrated_loop_verdict for a real classification at toy
+        # scale; emit a TINY-marked object with a GATE field.
+        N0 = ladder[0]
+        agg = _aggregate(per_rung[N0]) if per_rung[N0] else {}
+        verdict = {"GATE": "TINY",
+                   "note": "TINY toy verdict -- NOT propagated",
+                   "tiny_synth": True,
+                   "ladder_run": list(ladder),
+                   "n_seeds": len(per_rung[N0]),
+                   "smoke_aggregate": agg,
+                   "banner": _BANNER}
+        with open(a.out, "w") as fh:
+            json.dump(verdict, fh, indent=2)
+        print("GATE=%s  %s" % (verdict["GATE"], _BANNER))
+        return 0
+
+    rungs = []
+    for N in _IL_LADDER:
+        rows = per_rung[N]
+        agg = _aggregate(rows)
+        rungs.append({"N": N, "n_seeds": len(rows),
+                      "v1": agg["v1"], "full": agg["full"],
+                      "lesions": agg["lesions"]})
+    verdict = integrated_loop_verdict(rungs)
+    verdict["banner"] = _BANNER
+    verdict["rungs"] = rungs
+    with open(a.out, "w") as fh:
+        json.dump(verdict, fh, indent=2)
+    print("GATE=%s  %s" % (verdict["GATE"], _BANNER))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

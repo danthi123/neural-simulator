@@ -22,3 +22,15 @@ def test_integration_runner_tiny_smoke_produces_verdict(tmp_path):
     assert "GATE" in v, "verdict has no GATE field"
     assert "TINY" in json.dumps(v), (
         "tiny-synth verdict must be marked TINY / NOT propagated")
+
+
+def test_runner_imports_reused_parts_byte_unchanged():
+    """The runner composes the validated parts by import; it must not
+    declare its own copies of them, and must add no autograd."""
+    src = Path("research/runners/integrated_loop_gate.py").read_text()
+    assert "import torch" not in src and ".backward(" not in src
+    assert "build_biological_brain_regions" in src
+    assert "build_bg_brain_regions" in src
+    assert "start_engram_recording" in src or "commit_engram_tag" in src
+    assert "from research.runners.abstention_gate import" in src
+    assert "from research.runners.integrated_loop_core import" in src
