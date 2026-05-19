@@ -71,29 +71,41 @@ the correction is independently catalog-reachable AND thrice-forced by
 prior convergent negatives predating v2 (legitimacy over convenience).
 CLEAR does NOT lift the honesty ceiling (still binding).**
 
-**Exact next concrete action: dispatch the distinct-readout-pathways
-CANDIDATE build (subagent), corrected-approach plan 7b1d47c Tasks 3-7,
-UNDER THE HONESTY CEILING.** Grounding pin -> build the distinct-pathways
-runner (`research/runners/integrated_loop_gate.py` extended): episodic-
-order readout via the byte-unchanged hippocampal trisynaptic
-pattern-completion path (D.12/D.13); concept/WM readout via the
-Phase-1.3-consolidated order-invariant neocortical schema; the 7
-lesions defined so each collapses its CORRECTED-v2-partition-required
-readout (scored by `integrated_loop_core_v2.integrated_loop_verdict_v2`,
-NOT the original); v1/full; identical per-trial RNG; reuse
-byte-unchanged (trisynaptic/engram + Phase-1.3 + 16-pool + homeostasis
-+ non-zero-init + no-confab moat); net-new = controller + fan-out
-wiring ONLY; no autograd; GPU/CuPy real path (numpy only --tiny-synth);
-kill-safe -> pre-registered FALSIFY-FIRST probing the FULL science
-mode's wm AND ep JOINTLY at minimal load (the recorded process lesson,
-NOT v1 alone) -> dedicated adversarial review of the runner (lesions
-faithful, no hard-feed, reuse byte-unchanged, no autograd, selectivity
-learned). Subagent STOPS after the runner-adversarial-review and
-returns to the controller for Task-4 no-harm + Task-5 CONTROLLER-ONLY
-decisive multi-seed run. Original frozen `integrated_loop_core.py`
-NEVER edited; v2 module NEVER edited (frozen). HONESTY CEILING in the
-brief: a PASS vs v2 is "consistent-with" ONLY, never
-scale-confident-validated; a VOID/FAIL is a strong negative.
+**Distinct-pathways CANDIDATE DONE = honest negative, controller-verified
+(b4a8106 honest-WIP; no pass), propagated both remotes. REAL FORWARD
+PROGRESS: the encode-order contradiction is DISSOLVED -- the
+order-preserving online trisynaptic pattern-completion pathway gives
+GPU full-mode ep=1.0 even with the separate offline consolidation
+inserted (the iter-4/phase-factored blocker that dominated the arc is
+STRUCTURALLY SOLVED). New blocker, precisely localized: full-mode
+wm=0.0 because the shuffled-replay CLS consolidation transfers a
+GENERIC most-consolidated-filler attractor, NOT role->filler binding
+specificity -- the classic complementary-learning-systems
+specificity-vs-generalization trade-off, in isolation. Original frozen
+verdict + v2 module + moat byte-unchanged; 48 tests pass; no autograd.**
+
+**Exact next concrete action: proper DESIGN pass for the next
+catalog-identified factorization (autonomous; no hand-back; NO
+partition edit; NO config-crank; UNDER the honesty ceiling).** Route
+the role-selective WM readout of the CURRENT binding through the SAME
+specificity-PRESERVING hippocampal trisynaptic pattern-completion
+pathway (GPU-proven to retain binding specificity -- it delivered
+ep=1.0), with the Phase-1.3-consolidated order-invariant neocortical
+schema serving as the generalizable PRIOR/bias rather than the binding
+source. This is the CLS recent-specific-via-hippocampus /
+remote-generic-via-neocortex division applied correctly to the WM
+readout; genuinely distinct (no prior attempt routed role-selective WM
+through pattern-completion); reuse all validated subsystems
+byte-unchanged + the corrected frozen v2 module unchanged; net-new =
+controller + readout-routing wiring only; no autograd; GPU/CuPy.
+Pipeline: design -> writing-plans -> subagent build -> FALSIFY-FIRST
+probing FULL mode wm AND ep JOINTLY at minimal load (the recorded
+process lesson) -> runner adversarial review -> controller Task-4
+no-harm + Task-5 CONTROLLER-ONLY decisive run scored by the unchanged
+v2 module. HONESTY CEILING binding throughout: any pass vs v2 is
+"consistent-with the corrected biology" ONLY, never
+scale-confident-validated; a VOID/FAIL is a strong negative -> next
+catalog factorization.
 
 **NEW PRE-COMMITTED bound (in force, stated in advance):** a faithful
 build that reaches VOID/FAIL against the NEW catalog-grounded module is
