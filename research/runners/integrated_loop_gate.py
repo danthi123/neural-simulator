@@ -235,6 +235,21 @@ _TINY = dict(
 # operator can OBSERVE that a bound v1 pool clears the fixed 650 gate.
 _SELFCHECK_SINK = None
 
+# Passive per-binding DIAGNOSTIC sink. None in every real/test/decisive
+# run (zero effect on any mode, RNG draw, gate decision, or verdict --
+# exactly like _SELFCHECK_SINK). ONLY the opt-in --selfcheck-diag
+# soundness-DIAGNOSIS path (NOT invoked by the tests, NOT by the
+# decisive controller run) sets this to a dict. When active, _episode
+# APPENDS, per binding index, the recorded evidence the pre-registered
+# Step-1 diagnosis needs: the BG channel selected for that binding, its
+# thal_<chan> firing during encode, the dlpfc_verb slot sub-population
+# firing for that binding during encode AND at query, and the STDP-grown
+# CSR weight magnitude on that binding's dlpfc_verb->noun_pool_F<bound>,
+# language_input->noun_pool_F<bound>, and language_input->dlpfc_verb
+# edges, plus that binding's final filler-pool score at query. It only
+# RECORDS; it never alters any drive, gate, RNG draw, or score.
+_DIAG_SINK = None
+
 # BG cascade action channels. ACTION_NAMES = ["N","E","S","W"] in
 # g11_bg_runner; we REPURPOSE these 4 selective-disinhibition channels
 # to gate WM-slot updates. The cascade's selected disinhibited output
@@ -781,6 +796,66 @@ def _counts(bridge, arrs):
                     dtype=np.float64)
 
 
+def _csr_weight_sum(bridge, pre_idx, post_idx):
+    """DIAGNOSTIC-ONLY: mean |weight| over the CSR edges that exist
+    between the pre_idx set and the post_idx set. Pure read of
+    bridge.cp_connections (same host-pull idiom as
+    _apply_topographic_prior); never mutates. Called ONLY from the
+    opt-in --selfcheck-diag path (sink is None everywhere else)."""
+    import numpy as _np
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+
+    def _h(arr):
+        try:
+            return cp.asnumpy(arr)
+        except Exception:
+            return _np.asarray(arr)
+
+    indptr = _h(bridge.cp_connections.indptr)
+    indices = _h(bridge.cp_connections.indices)
+    data = _h(bridge.cp_connections.data)
+    post_set = set(int(x) for x in _np.asarray(_h(post_idx)).ravel())
+    tot = 0.0
+    n = 0
+    for r in (int(x) for x in _np.asarray(_h(pre_idx)).ravel()):
+        s = int(indptr[r])
+        e = int(indptr[r + 1])
+        for off in range(s, e):
+            if int(indices[off]) in post_set:
+                tot += abs(float(data[off]))
+                n += 1
+    return (tot / n) if n else 0.0, n
+
+
+def _csr_signed_sum(bridge, pre_idx, post_idx):
+    """DIAGNOSTIC-ONLY: SIGNED sum of CSR weights from pre_idx into
+    post_idx (captures net excitatory-minus-inhibitory structural
+    drive). Pure read; never mutates. --selfcheck-diag path only."""
+    import numpy as _np
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+
+    def _h(arr):
+        try:
+            return cp.asnumpy(arr)
+        except Exception:
+            return _np.asarray(arr)
+
+    indptr = _h(bridge.cp_connections.indptr)
+    indices = _h(bridge.cp_connections.indices)
+    data = _h(bridge.cp_connections.data)
+    post_set = set(int(x) for x in _np.asarray(_h(post_idx)).ravel())
+    tot = 0.0
+    for r in (int(x) for x in _np.asarray(_h(pre_idx)).ravel()):
+        s = int(indptr[r])
+        e = int(indptr[r + 1])
+        for off in range(s, e):
+            if int(indices[off]) in post_set:
+                tot += float(data[off])
+    return tot
+
+
 def _episode(bridge, mode, pairs, rng, P, ctx):
     """One composition trial at load N = len(pairs) per the BEHAVIORAL
     SPEC. `pairs` is a list of (role_idx, filler_idx). Returns
@@ -949,11 +1024,48 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
         except Exception:
             pass
 
+        # DIAGNOSTIC-ONLY per-binding encode tally (sink is None in
+        # every real/test/decisive run -> this whole block is skipped
+        # and has zero effect on drive/gate/RNG/score). Accumulates this
+        # binding's thal_<chan> firing + per-slot dlpfc_verb firing
+        # across its OWN stim window so Step-1 can compare binding-0 vs
+        # binding-1 encode exposure.
+        _diag_on = _DIAG_SINK is not None
+        if _diag_on:
+            _d_n = int(dlpfc.shape[0])
+            _nslot = _GAMMA_PER_THETA
+            _sb = [((s * _d_n) // _nslot,
+                    max(((s + 1) * _d_n) // _nslot,
+                        (s * _d_n) // _nslot + 1))
+                   for s in range(_nslot)]
+            _thal_enc = 0.0
+            _slot_enc = np.zeros(_nslot, dtype=np.float64)
+            _fil_enc = np.zeros(_MAX_LOAD, dtype=np.float64)
+
         for _ in range(P["stim_steps"]):
             _step(bridge)
             clk_wm.step()
             if clk_hip is not clk_wm:
                 clk_hip.step()
+            if _diag_on:
+                _fired = bridge.cp_firing_states
+                _thal_enc += float(_fired[thal[chan]].sum())
+                for _s, (_lo, _hi) in enumerate(_sb):
+                    _slot_enc[_s] += float(
+                        _fired[dlpfc[_lo:_hi]].sum())
+                _fil_enc += _counts(bridge, filler_arr)
+
+        if _diag_on:
+            _DIAG_SINK.setdefault("encode", []).append({
+                "episode_id": ctx["episode_id"], "bi": bi,
+                "ridx": int(ridx), "fidx": int(fidx),
+                "gslot": int(gslot), "chan": int(chan),
+                "chan_name": _BG_CHANNELS[chan],
+                "thal_enc_spikes": float(_thal_enc),
+                "slot_enc_spikes": [float(x) for x in _slot_enc],
+                "slot_enc_argmax": int(np.argmax(_slot_enc)),
+                "fil_enc_F0_7": [float(x) for x in _fil_enc],
+            })
 
     # Finalize the episode tag over the hippocampal regions only
     # (region_filter = the relational store). Skipped for
@@ -1042,23 +1154,90 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
         bridge.cp_external_input_current[:] = 0.0
         for _ in range(P["reset_steps"]):
             _step(bridge)
+        # DIAGNOSTIC-ONLY: residual filler-pool firing AFTER the
+        # inter-query reset, BEFORE this query's drive. Tests whether
+        # NMDA-held activity from the PREVIOUS query persists into this
+        # one (the order/persistence asymmetry hypothesis). Pure read.
+        _resid = (_counts(bridge, filler_arr).tolist()
+                  if _DIAG_SINK is not None else None)
         dq = cp.asarray(_code(q_ridx, 2 * _MAX_LOAD, n_lang,
                               P["role_pA"], P), dtype=cp.float32)
         bridge.cp_external_input_current[lang] = dq
         for _ in range(P["stim_steps"] + P["gap_steps"]):
             _step(bridge)
         counts = np.zeros(_MAX_LOAD, dtype=np.float64)
+        # DIAGNOSTIC-ONLY: full 16-pool competition vector at query
+        # (all role + filler pools), to see which pools steal a weak
+        # bound pool's activity. Pure read.
+        _allpool_arr = (role_arr + filler_arr
+                        if _DIAG_SINK is not None else None)
+        _comp = (np.zeros(2 * _MAX_LOAD, dtype=np.float64)
+                 if _DIAG_SINK is not None else None)
+        _q_slot = (np.zeros(nslot, dtype=np.float64)
+                   if _DIAG_SINK is not None else None)
         for _ in range(P["readout_steps"]):
             _step(bridge)
             counts += _counts(bridge, filler_arr)
             # Passive per-slot dlpfc_verb spike tally (diagnostic only).
             fired = bridge.cp_firing_states
             for s, (lo, hi) in enumerate(slot_bounds):
-                slot_spikes[s] += float(fired[dlpfc[lo:hi]].sum())
+                _ss = float(fired[dlpfc[lo:hi]].sum())
+                slot_spikes[s] += _ss
+                if _q_slot is not None:
+                    _q_slot[s] += _ss
+            if _comp is not None:
+                _comp += _counts(bridge, _allpool_arr)
         # Rank fillers; trustworthy gate at DEFAULT_THRESHOLD.
         order = np.argsort(-counts)
         ranked = [("F%d" % int(j), float(counts[j]), "wm")
                   for j in order]
+        # DIAGNOSTIC-ONLY per-binding query record (sink None in every
+        # real/test/decisive run -> skipped, zero effect). Records the
+        # queried binding's slot firing at query, its bound filler's
+        # score, and the STDP-grown CSR weight magnitude on its
+        # dlpfc_verb->noun_pool_F<bound>, language_input->noun_pool
+        # F<bound>, and language_input->dlpfc_verb edges (the Step-1
+        # evidence). Pure reads; no drive/gate/RNG/score change.
+        if _DIAG_SINK is not None:
+            _rm = bridge.region_manager
+            _lang_h = list(_rm.indices("language_input"))
+            _band = _code(q_ridx, 2 * _MAX_LOAD, n_lang,
+                          P["role_pA"], P)
+            _band = np.asarray(
+                cp.asnumpy(_band) if hasattr(cp, "asnumpy")
+                else _band)
+            _band_loc = np.where(_band > 0)[0]
+            _role_lang = np.array([_lang_h[i] for i in _band_loc],
+                                  dtype=np.int64)
+            _fpool = list(_rm.indices(
+                "noun_pool_F%d" % int(true_fidx)))
+            _w_dlpfc_fil, _n1 = _csr_weight_sum(
+                bridge, list(np.asarray(
+                    cp.asnumpy(dlpfc) if hasattr(cp, "asnumpy")
+                    else dlpfc)), _fpool)
+            _w_lang_fil, _n2 = _csr_weight_sum(
+                bridge, _role_lang, _fpool)
+            _w_lang_dlpfc, _n3 = _csr_weight_sum(
+                bridge, _role_lang, list(np.asarray(
+                    cp.asnumpy(dlpfc) if hasattr(cp, "asnumpy")
+                    else dlpfc)))
+            _DIAG_SINK.setdefault("query", []).append({
+                "episode_id": ctx["episode_id"], "qi": qi,
+                "q_ridx": int(q_ridx),
+                "true_fidx": int(true_fidx),
+                "won": ranked[0][0],
+                "won_score": float(ranked[0][1]),
+                "bound_score": float(counts[int(true_fidx)]),
+                "resid_pre_drive": ([float(x) for x in _resid]
+                                    if _resid is not None else None),
+                "comp_R0_7_F0_7": [float(x) for x in _comp],
+                "q_slot_spikes": [float(x) for x in _q_slot],
+                "q_slot_argmax": int(np.argmax(_q_slot)),
+                "w_dlpfc_to_Fbound": float(_w_dlpfc_fil),
+                "w_lang_to_Fbound": float(_w_lang_fil),
+                "w_lang_to_dlpfc": float(_w_lang_dlpfc),
+                "is_v1": bool(_is_v1),
+            })
         # Passive soundness-calibration observation ONLY (sink is None
         # in every real/test/decisive run -> no effect anywhere; this
         # records, never alters, the score the unchanged gate sees).
@@ -1073,6 +1252,38 @@ def _episode(bridge, mode, pairs, rng, P, ctx):
         if decision is not None and \
                 decision[0] == ("F%d" % int(true_fidx)):
             wm_correct += 1
+    bridge.cp_external_input_current[:] = 0.0
+    # DIAGNOSTIC-ONLY order-swap probe (sink None in every real/test/
+    # decisive run -> skipped entirely; the scored wm_correct above is
+    # ALREADY finalized so this changes NOTHING the verdict sees). Re-
+    # presents the SAME drilled queries in REVERSED order into a
+    # separate sink key only: if binding-1's bound pool now CLEARS when
+    # queried FIRST (and binding-0's drops when queried SECOND), the
+    # asymmetry is a QUERY-ORDER effect, not a per-binding wiring one.
+    if _DIAG_SINK is not None and _is_v1 and n_q >= 2:
+        for qi in range(n_q - 1, -1, -1):
+            ridx, fidx = pairs[qi]
+            tfx = fidx
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(P["reset_steps"]):
+                _step(bridge)
+            dq = cp.asarray(_code(ridx, 2 * _MAX_LOAD, n_lang,
+                                  P["role_pA"], P), dtype=cp.float32)
+            bridge.cp_external_input_current[lang] = dq
+            for _ in range(P["stim_steps"] + P["gap_steps"]):
+                _step(bridge)
+            cnt = np.zeros(_MAX_LOAD, dtype=np.float64)
+            for _ in range(P["readout_steps"]):
+                _step(bridge)
+                cnt += _counts(bridge, filler_arr)
+            bridge.cp_external_input_current[:] = 0.0
+            _DIAG_SINK.setdefault("order_swap", []).append({
+                "episode_id": ctx["episode_id"], "qi_rev": qi,
+                "q_ridx": int(ridx), "true_fidx": int(tfx),
+                "bound_score": float(cnt[int(tfx)]),
+                "won": "F%d" % int(np.argmax(cnt)),
+                "won_score": float(cnt.max()),
+            })
     bridge.cp_external_input_current[:] = 0.0
     wm_acc = wm_correct / float(max(1, n_q))
     # max/mean over the per-slot spike vector: 1.0 == perfectly uniform,
@@ -1397,6 +1608,17 @@ def main(argv=None):
                          "operator can confirm the byte-unchanged 650 "
                          "gate is OPERABLE. NOT a verdict; NOT invoked "
                          "by the tests or the decisive controller run.")
+    ap.add_argument("--selfcheck-diag", action="store_true",
+                    help="soundness-DIAGNOSIS ONLY: run ONE seed of v1 "
+                         "(gap_zero full) at N=2 on the _FULL slice and "
+                         "print, per binding, the BG channel selected + "
+                         "thal_<chan> encode firing + dlpfc_verb slot "
+                         "firing (encode AND query) + the STDP-grown "
+                         "dlpfc->F<bound> / lang->F<bound> / lang->dlpfc "
+                         "weights + the bound filler score, so the "
+                         "binding-0 vs binding-1 asymmetry root cause is "
+                         "evidenced. NOT a verdict; NOT invoked by the "
+                         "tests or the decisive controller run.")
     ap.add_argument("--ckpt", default=None)
     ap.add_argument("--out", required=False, default=None)
     a = ap.parse_args(argv)
@@ -1414,6 +1636,134 @@ def main(argv=None):
         except Exception:
             _dev = "cuda"
     print("BACKEND=%s  DEVICE=%s" % (_backend_name, _dev), flush=True)
+
+    if a.selfcheck_diag:
+        # Per-binding asymmetry DIAGNOSIS: ONE seed, v1 (gap_zero=True
+        # full), N=2 (the minimal two-binding load the pre-registered
+        # defect is at), _FULL slice. The passive _DIAG_SINK records
+        # per-binding encode/query evidence; print binding-0 vs
+        # binding-1 side by side. NOT a verdict; NOT propagated.
+        global _DIAG_SINK
+        _DIAG_SINK = {}
+        seed0 = int(a.seeds[0])
+        Nd = 2
+        # STRUCTURAL pre-training probe: build the bridge exactly like
+        # _run_mode (so _apply_topographic_prior has been applied) and
+        # measure, per filler pool, the TOTAL incoming language_input
+        # weight and the TOTAL incoming inhibitory (negative) weight.
+        # This isolates whether the prior alone creates an F0-vs-F1
+        # structural imbalance BEFORE any STDP. Pure read; no training.
+        _Pdiag = dict(_FULL)
+        _Pdiag["gap_steps"] = 0
+        _bp = _build_bridge(seed0, _Pdiag, Nd)
+        _rmp = _bp.region_manager
+        _lang_all = list(_rmp.indices("language_input"))
+        # All noun_pool_* neurons feed the per-kind FS; FS->pool is the
+        # inhibitory (negative) drive. Sum the negative incoming weight
+        # per filler pool as the structural inhibition proxy.
+        _allpool = []
+        for nm in _POOL_NAMES:
+            _allpool += list(_rmp.indices("noun_pool_%s" % nm))
+        print("STRUCT(post-prior, pre-train) seed=%d N=%d  "
+              "bij=%s" % (seed0, Nd,
+                          _make_pairs(Nd, np.random.default_rng(seed0))))
+        # The Pass-1 prior boosts ONLY each cue's OWN active band -> its
+        # target pool. Measure, per ROLE and FILLER pool, the BAND-
+        # RESTRICTED incoming weight (the exact synapses the query
+        # drive uses): cue c's 205-neuron band -> noun_pool_{R,F}<c>.
+        for kind, pref, off in (("R", "noun_pool_R", 0),
+                                ("F", "noun_pool_F", _MAX_LOAD)):
+            for ci in range(_MAX_LOAD):
+                _band = _code(off + ci, 2 * _MAX_LOAD,
+                              len(_lang_all), _FULL["role_pA"], _Pdiag)
+                _band = np.asarray(_band)
+                _loc = np.where(_band > 0)[0]
+                _bsrc = [_lang_all[i] for i in _loc]
+                _pp = list(_rmp.indices("%s%d" % (pref, ci)))
+                _wb, _nb = _csr_weight_sum(_bp, _bsrc, _pp)
+                print("  band(cue%d)->%s%d: mean|w|=%.4f sum|w|=%.1f "
+                      "(%d edges)"
+                      % (off + ci, kind, ci, _wb, _wb * _nb, _nb))
+        del _bp
+        wm, ep, nu = _run_mode("full", seed0, Nd, tiny=False,
+                               gap_zero=True)
+        enc = _DIAG_SINK.get("encode", [])
+        qry = _DIAG_SINK.get("query", [])
+        _DIAG_SINK_OSW = _DIAG_SINK.get("order_swap", [])
+        _DIAG_SINK = None
+        print("SELFCHECK-DIAG seed=%d N=%d v1(gap_zero) "
+              "epochs=%d" % (seed0, Nd, _FULL["n_train_epochs"]))
+        # Per-binding ENCODE exposure across ALL epochs (mean).
+        for bi in (0, 1):
+            rows = [e for e in enc if e["bi"] == bi]
+            if not rows:
+                continue
+            thal_m = sum(r["thal_enc_spikes"] for r in rows) / len(rows)
+            ch = rows[-1]["chan_name"]
+            gs = rows[-1]["gslot"]
+            sa = [r["slot_enc_argmax"] for r in rows]
+            print("  ENCODE b%d: chan=%s gslot=%d  "
+                  "thal_enc(mean over %d ep)=%.1f  "
+                  "slot_enc_argmax(last)=%d  fidx=%d"
+                  % (bi, ch, gs, len(rows), thal_m,
+                     rows[-1]["slot_enc_argmax"],
+                     rows[-1]["fidx"]))
+            _f0 = rows[0].get("fil_enc_F0_7")
+            _fL = rows[-1].get("fil_enc_F0_7")
+            if _f0 is not None:
+                print("           fil_enc F0..F7 ep0 =%s"
+                      % ["%.0f" % x for x in _f0])
+                print("           fil_enc F0..F7 epL =%s  "
+                      "(bound=F%d)"
+                      % (["%.0f" % x for x in _fL],
+                         rows[-1]["fidx"]))
+        # Per-binding QUERY (last epoch) evidence.
+        last_ep = max((q["episode_id"] for q in qry), default=-1)
+        for qi in (0, 1):
+            rr = [q for q in qry
+                  if q["qi"] == qi and q["episode_id"] == last_ep]
+            if not rr:
+                continue
+            q = rr[-1]
+            print("  QUERY  q%d (role=%d -> true F%d): "
+                  "bound_score=%.1f won=%s(%.1f)  "
+                  "%s vs gate %.0f" % (
+                      qi, q["q_ridx"], q["true_fidx"],
+                      q["bound_score"], q["won"], q["won_score"],
+                      "CLEARS" if q["bound_score"] > DEFAULT_THRESHOLD
+                      else "BELOW", DEFAULT_THRESHOLD))
+            print("         w(dlpfc->F%d)=%.4f  w(lang->F%d)=%.4f  "
+                  "w(lang->dlpfc)=%.4f  q_slot_argmax=%d"
+                  % (q["true_fidx"], q["w_dlpfc_to_Fbound"],
+                     q["true_fidx"], q["w_lang_to_Fbound"],
+                     q["w_lang_to_dlpfc"], q["q_slot_argmax"]))
+            _rp = q.get("resid_pre_drive")
+            if _rp is not None:
+                print("         resid_pre_drive(F0..F7)=%s"
+                      % ["%.0f" % x for x in _rp])
+            _cp = q.get("comp_R0_7_F0_7")
+            if _cp is not None:
+                print("         comp R0..R7=%s"
+                      % ["%.0f" % x for x in _cp[:_MAX_LOAD]])
+                print("         comp F0..F7=%s"
+                      % ["%.0f" % x for x in _cp[_MAX_LOAD:]])
+        # ORDER-SWAP probe (last epoch): the SAME drilled queries
+        # re-presented in REVERSED order. If binding-1 now CLEARS when
+        # first and binding-0 drops when second -> the asymmetry is a
+        # QUERY-ORDER effect, not a per-binding wiring one.
+        osw = _DIAG_SINK_OSW
+        if osw:
+            le2 = max((o["episode_id"] for o in osw), default=-1)
+            print("  ORDER-SWAP (reversed query order, last epoch):")
+            for o in [o for o in osw if o["episode_id"] == le2]:
+                print("    rev q(role=%d -> true F%d): bound=%.1f "
+                      "won=%s(%.1f)  %s" % (
+                          o["q_ridx"], o["true_fidx"],
+                          o["bound_score"], o["won"], o["won_score"],
+                          "CLEARS" if o["bound_score"] >
+                          DEFAULT_THRESHOLD else "BELOW"))
+        print("  v1 wm=%.4f  v1 ep=%.4f" % (wm, ep))
+        return 0
 
     if a.selfcheck:
         # Operable-gate calibration: ONE seed, v1 (gap_zero=True full),
