@@ -142,10 +142,42 @@ capability) -- which would propagate as a misleading honest-negative.
 Caught BEFORE any decisive GPU run; no protected file edited; no
 fixed bar moved; no-confab moat byte-unchanged.
 
-**EXACT NEXT ACTION: pre-committed faithfulness-fix iteration of the
-NET-NEW SPEAR runner ONLY (NO bar change, NO declare-unfit, NO hand-
-back, NO config-crank; protected set + frozen bars + moat
-byte-UNCHANGED).** Three precise corrections in
+**SPEAR fix-iteration LANDED (`f1292a0`); independent RE-REVIEW =
+CLEAR (the inert-gate defect is genuinely closed -- the reviewer
+re-executed the 50-step probe and reproduced a 14.15 mV bridge-state
+divergence between ACh setpoints, confirming FIX B routes the gate
+through `synaptic_gain (scope=all)` consumed at sim/bridge.py:4877-
+4879/4890-4897 every step independent of reward; FIX A and FIX C also
+closed; nothing previously CLEAR regressed; 37/37 green).** SPEAR
+Task 4 no-harm PASSED: protected set byte-unchanged across the whole
+arc (base `d1eeadf` .. HEAD `f1292a0`), `spear_conversational_core.py`
+byte-unchanged since Task 1 (`0bc5230`), no autograd on shipped
+paths, full SPEAR + moat suite 37/37 green. The full anti-cheat
+discipline ran end-to-end (twice, including catching a real
+mechanistic-faithfulness defect and closing it precisely).
+
+**EXACT NEXT ACTION: SPEAR Task 5 -- CONTROLLER-ONLY decisive run
+(NOT a subagent task).** In the same turn, never stopping on a
+promise: (1) grounding tiny-synth (toy numbers explicitly NOT
+propagated); (2) decisive kill-safe multi-seed run at the frozen
+ladder (2,4,8), seeds 42 43 44, CuPy on RTX 3090, DURABLE capture to
+`research/findings/raw/`, monitored to ACTUAL completion via a
+genuine completion waiter (never a detached process with a false
+"will be notified"); (3) mandatory smell-test scrutinising a nominal
+PASS HARDER than a FAIL -- recompute the verdict from the single
+recorded output (no re-run, no bar change), confirm `full` genuinely
+clears the bars AND `rhythm_removed` genuinely collapses to the
+Stage-1 static level (the capability is attributable to the rhythm),
+AND abstention genuinely holds; (4) honest propagation of EVERY
+outcome (findings doc + `webapp/capability_status.json` pillar,
+status PREDICTED until a clean scrutinised PASS, schema-green +
+state file + commit + push BOTH remotes); (5) autonomous next step
+per outcome (PASS -> next pre-registered staged design B/C; honest
+FAIL/VOID/WORKS-SMALL -> the next biology-identified fidelity
+refinement, NO bar change, NO config-crank, NO declare-unfit,
+NO hand-back).
+
+[HISTORICAL CONTEXT: the three precise corrections in
 `research/runners/spear_conversational_runner.py` (+ its tests + invert
 the adversarial pin to assert the defect is CLOSED): (A) re-target
 the ACh modulator from `plasticity_window_gate` (consumed only by the
@@ -170,7 +202,7 @@ decisive run + smell-test + honest propagation both remotes; then
 autonomous next staged step per outcome. Honest ceiling unchanged.
 NO partition edit ever (necessity line closed); autonomous; the
 next-action tool call is always in the same turn; never stop on a
-promise.
+promise.]
 
 **Corrected-approach PLAN done (7b1d47c, pushed both remotes). CONTROLLER
 PRE-COMMITTED HONESTY CEILING propagated BEFORE any build
