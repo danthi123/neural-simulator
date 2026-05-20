@@ -49,6 +49,9 @@ from research.runners.abstention_gate_compositional import (
 from research.runners.abstention_gate import (
     DEFAULT_THRESHOLD as _MOAT_DIRECT,
 )
+from research.runners.abstention_gate_direct_unified import (
+    DIRECT_UNIFIED_THRESHOLD,
+)
 
 
 _VALID_GATES = {
@@ -181,19 +184,28 @@ def test_decode_is_neural_not_tag_string_parse():
 
 def test_both_moats_are_wired_in():
     """(e): BOTH moats are referenced in the runner source. The
-    per-regime architecture routes direct queries through the existing
-    650 moat AND compositional queries through the calibrated 5.69
-    compositional moat -- both are wired in by import."""
+    per-regime architecture routes direct queries through the
+    substrate-specific direct gate (placeholder 0.0 until calibrated)
+    AND compositional queries through the calibrated 5.69 compositional
+    moat -- both are wired in by import. The existing 650 moat stays
+    byte-unchanged as historical G.20 SharedPool calibration; it is
+    still importable but no longer used to gate direct queries in the
+    unified runner (substrate-mismatch defect #2 closure)."""
     src = Path(urr.__file__).read_text(encoding="utf-8", errors="ignore")
     # The runner imports / references BOTH gate modules.
     assert "abstention_gate" in src
     assert "abstention_gate_compositional" in src
-    # Both threshold constants present (calibrated quantities).
+    # The new substrate-specific direct gate is wired in too.
+    assert "abstention_gate_direct_unified" in src
+    # All three threshold constants present (calibrated quantities).
     assert "MOAT_DIRECT" in src or "DEFAULT_THRESHOLD" in src
     assert "COMPOSITIONAL_THRESHOLD" in src
-    # Both gate-call aliases or module-qualified calls visible.
+    assert "DIRECT_UNIFIED_THRESHOLD" in src
+    # Module-qualified gate calls visible. The unified runner now
+    # routes direct queries through gate_direct_unified.
     assert (
-        ("gate_direct" in src) or ("abstention_gate.gate" in src)
+        ("gate_direct_unified" in src)
+        or ("abstention_gate_direct_unified.gate" in src)
     )
     assert (
         ("gate_compositional" in src)
@@ -201,6 +213,128 @@ def test_both_moats_are_wired_in():
     )
     # The uniform_ctrl arm is present as a named concept.
     assert "uniform_ctrl" in src
+
+
+def test_direct_queries_route_through_new_substrate_specific_gate():
+    """Defect #2 closure: direct queries now route through the new
+    substrate-specific gate ``gate_direct_unified`` (placeholder
+    threshold 0.0 until calibration ships the calibrated value via a
+    controller commit). The existing 650 moat
+    (``abstention_gate.gate_direct``, calibrated on G.20 SharedPool
+    ``recall_rates``, scale ~500-800) is structurally unreachable by
+    ``measure_pool_firing`` (per-neuron mean rate, scale ~0.5-2) and
+    so cannot gate the unified runner's direct readout faithfully.
+
+    Source-level pin: the new gate's import is present AND the runner
+    routes direct queries through ``gate_direct_unified``, not through
+    the historical 650 moat. We assert the call site exists.
+    """
+    src = Path(urr.__file__).read_text(encoding="utf-8", errors="ignore")
+    # New gate import is present.
+    assert "from research.runners.abstention_gate_direct_unified import" in src
+    # The runner routes direct queries through the new gate (the call
+    # site appears at least once in source). For direct queries the
+    # existing 650 moat is no longer used in this runner.
+    assert "gate_direct_unified(" in src
+    # Placeholder threshold value matches the module constant.
+    assert "DIRECT_UNIFIED_THRESHOLD" in src
+
+
+def test_new_gate_module_threshold_pin():
+    """Cross-pin: the runner imports the new gate AND the module's
+    threshold constant is the documented placeholder (0.0). The
+    controller commits the calibrated value in a SEPARATE commit
+    (mirrors ``abe65f6`` for the compositional gate); until then the
+    placeholder makes the gate effectively transparent so the runner
+    can boot for the calibration step itself.
+    """
+    from research.runners.abstention_gate_direct_unified import (
+        DIRECT_UNIFIED_THRESHOLD as _DUT,
+        gate as _g,
+        abstain as _a,
+    )
+    assert _DUT == 0.0
+    # Surface-level invariants mirror the existing moats.
+    assert _a(0.0) is True
+    assert _a(0.1) is False
+    assert _g(None) is None
+    assert _g([]) is None
+
+
+def test_calibration_mode_runs_direct_gate_calibration(tmp_path):
+    """The runner accepts ``calibrate=True`` and produces a JSON
+    payload containing BOTH a compositional-gate calibration result
+    AND a direct-gate calibration result (per-seed thresholds +
+    aggregate + status). Tiny-synth smoke; the decisive multi-seed
+    CuPy calibration is a controller-only task.
+
+    The status reporting parallels the compositional gate: MATCH /
+    PENDING / MISMATCH / INSUFFICIENT-SEPARATION. INSUFFICIENT-
+    SEPARATION is the EXPECTED status on tiny-synth toy data per the
+    per-regime stage's pattern (the strengthen-only fix in
+    ``per_regime_monitor_runner._calibration_status``); the runner
+    must NOT crash on this case but report it cleanly.
+    """
+    cache_dir = tmp_path / "phase1"
+    result = urr.run_unified_per_regime_monitor(
+        seeds=[42, 43, 44],
+        loads=(2,),
+        tiny_synth=True,
+        phase1_cache_dir=str(cache_dir),
+        calibrate=True,
+    )
+    assert isinstance(result, dict)
+    assert result.get("mode") == "calibration"
+    # Compositional gate calibration block (parallels the per-regime
+    # runner's calibration mode).
+    comp = result.get("compositional_gate", result)
+    assert "per_seed_calibrated_thresholds" in comp
+    assert "aggregate_calibrated_threshold" in comp
+    assert "committed_threshold" in comp
+    assert "calibration_status" in comp
+    assert comp["calibration_status"] in {
+        "MATCH",
+        "PENDING",
+        "MISMATCH",
+        "INSUFFICIENT-SEPARATION",
+    }
+    # Direct gate calibration block: the new substrate-specific
+    # calibration result lives alongside the compositional one.
+    direct = result.get("direct_gate")
+    assert isinstance(direct, dict), (
+        "calibrate-mode result must include a direct_gate block "
+        "with per-seed thresholds + aggregate + status"
+    )
+    assert "per_seed_calibrated_thresholds" in direct
+    assert "aggregate_calibrated_threshold" in direct
+    assert "committed_threshold" in direct
+    assert direct["committed_threshold"] == float(DIRECT_UNIFIED_THRESHOLD)
+    assert "calibration_status" in direct
+    assert direct["calibration_status"] in {
+        "MATCH",
+        "PENDING",
+        "MISMATCH",
+        "INSUFFICIENT-SEPARATION",
+    }
+    # Per-seed payload has the right shape (one entry per seed).
+    assert len(direct["per_seed_calibrated_thresholds"]) == 3
+
+
+def test_calibrate_mode_writes_json_with_out_path(tmp_path):
+    """The runner writes the calibration result JSON when out_path is
+    provided in calibrate mode."""
+    cache_dir = tmp_path / "phase1"
+    out = tmp_path / "unified_calibrate_smoke.json"
+    result = urr.run_unified_per_regime_monitor(
+        seeds=[42],
+        loads=(2,),
+        tiny_synth=True,
+        phase1_cache_dir=str(cache_dir),
+        calibrate=True,
+        out_path=str(out),
+    )
+    assert out.exists()
+    assert result.get("mode") == "calibration"
 
 
 def test_direct_retain_is_read_from_same_full_run():

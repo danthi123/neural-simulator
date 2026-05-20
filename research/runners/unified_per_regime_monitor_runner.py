@@ -138,6 +138,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import statistics
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -162,15 +163,49 @@ from research.runners.per_regime_monitor_core import (
     _PR_LADDER,
 )
 
-# REUSED gates (each byte-unchanged in its own module). Both moats wired
-# in. The runner's per-regime arm uses MOAT_DIRECT for direct queries
-# and COMPOSITIONAL_THRESHOLD for compositional queries; the uniform_ctrl
-# control uses MOAT_DIRECT for BOTH (the SOLE difference from full).
+# REUSED gates (each byte-unchanged in its own module). THREE moats are
+# wired in by import; the unified runner uses TWO of them (the new
+# substrate-specific direct gate + the per-regime compositional gate)
+# and keeps the historical G.20 SharedPool direct moat imported only as
+# evidence that the existing 650 calibration is byte-unchanged:
+#
+#   * ``abstention_gate.DEFAULT_THRESHOLD = 650.0`` (byte-unchanged;
+#     calibrated on G.20 SharedPool ``recall_rates``, scale ~500-800).
+#     NOT used to gate any query in this runner -- the existing 650 is
+#     structurally unreachable by ``measure_pool_firing`` (per-neuron
+#     mean rate, scale ~0.5-2 documented in CLAUDE.md). Imported only so
+#     ``MOAT_DIRECT`` remains a referenced constant for source-grep pins
+#     (and audit trail of the historical G.20 calibration).
+#   * ``abstention_gate_direct_unified.DIRECT_UNIFIED_THRESHOLD = 0.0``
+#     (placeholder; the unified runner's calibration step on the
+#     ``build_biological_brain_regions`` substrate produces the
+#     calibrated value, which the controller commits as a separate
+#     frozen step). This is the new substrate-specific direct gate that
+#     replaces the 650 moat for direct queries in this runner.
+#   * ``abstention_gate_compositional.COMPOSITIONAL_THRESHOLD =
+#     5.6887...`` (byte-unchanged; calibrated on the per-regime stage's
+#     hippocampal one-shot substrate). Gates compositional queries.
+#
+# The uniform_ctrl arm applies a SINGLE threshold uniformly to BOTH
+# regimes: we use DIRECT_UNIFIED_THRESHOLD (the direct regime's
+# substrate-specific threshold) for both direct AND compositional
+# queries. The decisive built-in control: if a single threshold suffices
+# everywhere, the per-regime separation is not the differentiator. (The
+# choice of DIRECT_UNIFIED_THRESHOLD over MOAT_DIRECT=650 is dictated by
+# the substrate-mismatch defect #2: the historical 650 is not on the
+# unified substrate's scale, so a uniform-650 control would trivially
+# abstain on every query and the contrast vs `full` would be
+# uninformative. Using DIRECT_UNIFIED_THRESHOLD keeps the control on a
+# scale that produces a meaningful contrast.)
 from research.runners.abstention_gate import gate as gate_direct
 from research.runners.abstention_gate import DEFAULT_THRESHOLD as MOAT_DIRECT
 from research.runners.abstention_gate_compositional import (
     gate as gate_compositional,
     COMPOSITIONAL_THRESHOLD,
+)
+from research.runners.abstention_gate_direct_unified import (
+    gate as gate_direct_unified,
+    DIRECT_UNIFIED_THRESHOLD,
 )
 
 from sim.train_checkpoint import (  # REUSED UNMODIFIED
@@ -207,6 +242,45 @@ from research.runners.compose_retrieval_runner import (
 # are deterministic functions of (seed, N).
 # =====================================================================
 _UNIFIED_SUBSEED_OFFSET = 20000
+
+# =====================================================================
+# Calibration sub-seed offsets. Distinct from
+# _UNIFIED_SUBSEED_OFFSET=+20000 (eval pairs) AND from the per-regime
+# runner's compositional +10000 offset. Two distinct offsets:
+#   * +30000 for the unified runner's compositional-gate calibration
+#     set (held-out pairs disjoint from eval pairs);
+#   * +40000 for the unified runner's direct-gate calibration set
+#     (held-out words queried for groundable/ungroundable confidences).
+# So the unified runner's calibration sets cannot be confused with any
+# of the eval set or the per-regime calibration set.
+# =====================================================================
+_UNIFIED_CALIB_COMP_OFFSET = 30000
+_UNIFIED_CALIB_DIRECT_OFFSET = 40000
+
+# Tolerance for MATCH detection between calibrated aggregate and
+# committed constant (mirrors per_regime_monitor_runner._CALIB_MATCH_TOL).
+_CALIB_MATCH_TOL = 1e-6
+
+# Calibration method docstring echoed in the JSON output.
+CALIBRATION_METHOD_DOC = (
+    "median_midpoint: for each seed, run a HELD-OUT calibration on the "
+    "build_biological_brain_regions substrate (the SAME substrate "
+    "Stage-1 / SPEAR / Pirazzini / Per-regime / Unified all use). "
+    "Compositional gate: encode held-out (noun, adj) pairs (sub-seed = "
+    "seed + 30000, disjoint from eval pairs) and measure raw firing-"
+    "rate confidence at lang_output for GROUNDABLE (encoded) vs "
+    "UNGROUNDABLE (never-encoded) queries; calibrated_threshold = "
+    "0.5 * (median(groundable) + median(ungroundable)). Direct gate: "
+    "query each Phase-1-trained vocabulary word (sub-seed = seed + "
+    "40000) and measure the target-pool firing rate via "
+    "measure_pool_firing (groundable = trained-word target-pool rate; "
+    "ungroundable = never-trained word's top-pool rate -- in tiny-synth "
+    "this is the same vocab with a sub-sampled disjoint Phase-1 subset; "
+    "in full scale, the calibrator uses a held-out word partition). "
+    "INSUFFICIENT-SEPARATION on ANY seed where groundable_median <= "
+    "ungroundable_median (strengthen-only fix mirrored from the "
+    "per-regime runner)."
+)
 
 
 # =====================================================================
@@ -846,14 +920,22 @@ def _run_evaluation_arm(seed: int, N: int, tiny_synth: bool,
             bridge, word, dims, all_pools, word_to_idx,
             stim_steps=recall_steps, reset_steps=recall_steps // 2,
         )
-        # `full` routes direct queries through gate_direct (650 moat).
-        decided_full = gate_direct(ranked, MOAT_DIRECT)
+        # `full` routes direct queries through the NEW substrate-
+        # specific direct gate (DIRECT_UNIFIED_THRESHOLD placeholder
+        # 0.0 until calibration ships the calibrated value via a
+        # controller commit). The existing 650 moat is byte-unchanged
+        # but no longer used here -- its G.20 SharedPool-recall-rate
+        # scale does not match measure_pool_firing's per-neuron mean
+        # rate scale (defect #2 closure).
+        decided_full = gate_direct_unified(ranked, DIRECT_UNIFIED_THRESHOLD)
         ans_full = None if decided_full is None else decided_full[0]
-        # `uniform_ctrl` ALSO routes through the 650 moat (single-
-        # threshold-applied-uniformly). For direct queries the two arms
-        # therefore agree by construction -- the difference shows up
-        # on compositional queries.
-        decided_uniform = gate_direct(ranked, MOAT_DIRECT)
+        # `uniform_ctrl` ALSO routes through the SAME substrate-specific
+        # direct gate (single-threshold-applied-uniformly). For direct
+        # queries the two arms therefore agree by construction -- the
+        # difference shows up on compositional queries.
+        decided_uniform = gate_direct_unified(
+            ranked, DIRECT_UNIFIED_THRESHOLD
+        )
         ans_uniform = None if decided_uniform is None else decided_uniform[0]
         # The validated direct-retrieval correctness criterion (v14/v16):
         # the top pool above the moat MUST be the word's target pool.
@@ -883,8 +965,16 @@ def _run_evaluation_arm(seed: int, N: int, tiny_synth: bool,
         # `uniform_ctrl`: single-threshold-applied-uniformly. The
         # compositional queries STILL go through the compositional
         # gate's structural shape, but with the threshold set to
-        # MOAT_DIRECT=650. The SOLE difference from `full`.
-        decided_uniform = gate_compositional(ranked, MOAT_DIRECT)
+        # DIRECT_UNIFIED_THRESHOLD (the SAME threshold uniform_ctrl
+        # applies to direct queries). The SOLE difference from `full`
+        # is that uniform_ctrl uses the direct regime's substrate-
+        # specific threshold uniformly across BOTH regimes (instead
+        # of routing direct -> direct gate, compositional ->
+        # compositional gate as `full` does). Defect #2 closure: we
+        # use DIRECT_UNIFIED_THRESHOLD here, not MOAT_DIRECT=650 --
+        # the historical G.20 SharedPool calibration is not on the
+        # unified substrate's scale.
+        decided_uniform = gate_compositional(ranked, DIRECT_UNIFIED_THRESHOLD)
         ans_uniform = None if decided_uniform is None else decided_uniform[0]
         if ans_full == adj:
             n_comp_correct_full += 1
@@ -904,18 +994,19 @@ def _run_evaluation_arm(seed: int, N: int, tiny_synth: bool,
     n_abstain_ok = 0
     for w in ungroundable_direct_words:
         n_ungroundable += 1
-        # Direct ungroundable: the direct moat should abstain because
-        # the substrate's response to this word is not strongly bound
-        # against the per-cell encoding regime. (For Phase-1-trained
-        # words the direct moat will NOT abstain; we count those as
-        # not-abstain-correct. The honest abstain_correct measurement.)
-        # We here ask whether the substrate produces a top-pool rate
-        # above the direct moat -- if yes, the gate doesn't abstain.
+        # Direct ungroundable: the substrate-specific direct gate
+        # should abstain because the substrate's response to this word
+        # is not strongly bound against the per-cell encoding regime.
+        # (For Phase-1-trained words the direct gate will NOT abstain;
+        # we count those as not-abstain-correct. The honest
+        # abstain_correct measurement.) We here ask whether the
+        # substrate produces a top-pool rate above the substrate-
+        # specific direct gate -- if yes, the gate doesn't abstain.
         ranked = _direct_query_ranked(
             bridge, w, dims, all_pools, word_to_idx,
             stim_steps=recall_steps, reset_steps=recall_steps // 2,
         )
-        decided = gate_direct(ranked, MOAT_DIRECT)
+        decided = gate_direct_unified(ranked, DIRECT_UNIFIED_THRESHOLD)
         if decided is None:
             n_abstain_ok += 1
 
@@ -965,6 +1056,301 @@ def _run_evaluation_arm(seed: int, N: int, tiny_synth: bool,
 
 
 # =====================================================================
+# Calibration arm (compositional gate + new direct gate).
+#
+# Mirrors the per-regime runner's calibration mode but on the unified
+# substrate. The compositional-gate calibration is the SAME quantity
+# the per-regime runner's calibration produces (median midpoint of
+# groundable vs ungroundable compositional confidences). The direct-
+# gate calibration is NET-NEW: it measures the substrate-specific
+# direct readout's groundable vs ungroundable population medians on a
+# Phase-1-trained substrate (so the calibrated threshold is on the
+# scale of measure_pool_firing's per-neuron mean rate, not the
+# historical G.20 SharedPool recall_rates scale).
+# =====================================================================
+
+
+def _calibrate_compositional_one_seed(seed: int, tiny_synth: bool,
+                                        cache_dir: str) -> Dict[str, Any]:
+    """Per-seed compositional-gate calibration on the unified substrate.
+
+    Sub-seed = seed + _UNIFIED_CALIB_COMP_OFFSET (+30000). Encode held-
+    out (noun, adj) pairs disjoint from the eval set
+    (_unified_compositional_pairs at the maximum N in the ladder),
+    measure raw firing-rate confidences at lang_output for groundable
+    + ungroundable queries, return midpoint of medians.
+
+    The Phase-1 cache is loaded (so the substrate is already trained);
+    the compositional encoding is the SAME engram-API one-shot binding
+    the eval arm uses.
+    """
+    sub_seed = int(seed) + _UNIFIED_CALIB_COMP_OFFSET
+    cal_rng = np.random.default_rng(sub_seed)
+
+    # Eval-set pair partition at the maximum N in the frozen ladder.
+    eval_pairs = set(_unified_compositional_pairs(seed, max(_PR_LADDER)))
+    all_pairs = [(n, a) for n in _NOUNS for a in _ADJS]
+    held_out_pairs = [p for p in all_pairs if p not in eval_pairs]
+    n_calib_facts = 2 if tiny_synth else min(4, len(held_out_pairs))
+    if held_out_pairs:
+        perm_idx = cal_rng.permutation(len(held_out_pairs))
+        calib_facts = [
+            held_out_pairs[int(perm_idx[i])]
+            for i in range(min(n_calib_facts, len(held_out_pairs)))
+        ]
+    else:
+        calib_facts = []
+
+    recall_steps = 20 if tiny_synth else 100
+    enc_steps = 8 if tiny_synth else 200
+
+    # Load Phase-1 substrate.
+    cache_path = _phase1_cache_path(cache_dir, seed)
+    bridge = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
+    bridge.load_checkpoint(str(cache_path))
+    _freeze_phase1_gates(bridge)
+
+    recipe_dims = _phase1_recipe(tiny_synth)
+    all_words, _ = _all_words_word_to_idx()
+    n_words_for_orthogonal = max(_N_WORDS_ORTHOGONAL, len(all_words))
+    dims: Dict[str, Any] = {
+        "n_lang_input": int(recipe_dims["n_lang_input"]),
+        "n_per_pool": int(recipe_dims["n_per_pool"]),
+        "n_fs_per_pool": int(recipe_dims["n_fs_per_pool"]),
+        "sparsity": 0.05,
+        "dt_ms": 0.5,
+        "n_words_for_orthogonal": int(n_words_for_orthogonal),
+    }
+
+    tags = _encode_facts(bridge, calib_facts, dims, enc_steps)
+
+    # GROUNDABLE confidences: per encoded fact, confidence ON the
+    # correct answer (the bound adj).
+    groundable_confidences: List[float] = []
+    for i, (noun, adj) in enumerate(calib_facts):
+        tag = tags[i] if i < len(tags) else None
+        ranked = _compositional_query_ranked(
+            bridge, noun, tag, dims, recall_steps
+        )
+        rate_on_correct = 0.0
+        for w, r, _t in ranked:
+            if w == adj:
+                rate_on_correct = float(r)
+                break
+        groundable_confidences.append(rate_on_correct)
+
+    # UNGROUNDABLE confidences: query nouns NOT encoded in this calib
+    # set; no bound adj exists so the top compositional confidence is
+    # the noise-floor representative.
+    encoded_nouns = {n for n, _ in calib_facts}
+    ungroundable_nouns = [w for w in _NOUNS if w not in encoded_nouns]
+    if not ungroundable_nouns:
+        ungroundable_nouns = list(_VERBS)
+    ungroundable_confidences: List[float] = []
+    for w in ungroundable_nouns:
+        ranked = _compositional_query_ranked(
+            bridge, w, None, dims, recall_steps
+        )
+        # Top confidence (the moat-calibrated quantity).
+        top_conf = float(ranked[0][1]) if ranked else 0.0
+        ungroundable_confidences.append(top_conf)
+
+    g_median = (
+        float(statistics.median(groundable_confidences))
+        if groundable_confidences else 0.0
+    )
+    u_median = (
+        float(statistics.median(ungroundable_confidences))
+        if ungroundable_confidences else 0.0
+    )
+    calibrated_threshold = float(0.5 * (g_median + u_median))
+
+    return {
+        "seed": int(seed),
+        "sub_seed": int(sub_seed),
+        "groundable_median": g_median,
+        "ungroundable_median": u_median,
+        "calibrated_threshold": calibrated_threshold,
+        "n_groundable": len(groundable_confidences),
+        "n_ungroundable": len(ungroundable_confidences),
+    }
+
+
+def _calibrate_direct_one_seed(seed: int, tiny_synth: bool,
+                                 cache_dir: str) -> Dict[str, Any]:
+    """Per-seed direct-gate calibration on the unified substrate.
+
+    NET-NEW (defect #2 closure): the substrate-specific direct gate
+    needs its own calibration because the historical 650 moat was
+    calibrated on G.20 SharedPool recall_rates (scale ~500-800), but
+    the unified runner's direct readout uses measure_pool_firing
+    (per-neuron mean rate, scale ~0.5-2 per CLAUDE.md). The calibrated
+    threshold must be on the latter scale.
+
+    Sub-seed = seed + _UNIFIED_CALIB_DIRECT_OFFSET (+40000). Per-seed
+    deterministic split of the v14/v16 vocabulary into a calibration
+    GROUNDABLE half (words Phase-1 trained -- their target-pool firing
+    rate is the signal level) and an UNGROUNDABLE half (a non-overlapping
+    set of words queried as if-untrained: we query their TOP-POOL rate
+    on a name they were not trained against -- per-seed partition gives
+    a held-out split). The method is the SAME median-midpoint separator
+    the compositional calibration uses.
+
+    Method: groundable = trained-word's target-pool rate. Ungroundable
+    = a non-overlapping word's TOP-POOL rate when that word's actual
+    target is held-out from the comparison (we ask "what does the
+    substrate produce as its TOP rate for this word?" without asserting
+    correctness). For tiny-synth this is a small smoke; the decisive
+    multi-seed CuPy calibration is a controller-only step.
+    """
+    sub_seed = int(seed) + _UNIFIED_CALIB_DIRECT_OFFSET
+    cal_rng = np.random.default_rng(sub_seed)
+
+    # Load Phase-1 substrate.
+    cache_path = _phase1_cache_path(cache_dir, seed)
+    bridge = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
+    bridge.load_checkpoint(str(cache_path))
+    _freeze_phase1_gates(bridge)
+
+    recipe_dims = _phase1_recipe(tiny_synth)
+    all_words, word_to_idx = _all_words_word_to_idx()
+    n_words_for_orthogonal = max(_N_WORDS_ORTHOGONAL, len(all_words))
+    dims: Dict[str, Any] = {
+        "n_lang_input": int(recipe_dims["n_lang_input"]),
+        "n_per_pool": int(recipe_dims["n_per_pool"]),
+        "n_fs_per_pool": int(recipe_dims["n_fs_per_pool"]),
+        "sparsity": 0.05,
+        "dt_ms": 0.5,
+        "n_words_for_orthogonal": int(n_words_for_orthogonal),
+    }
+
+    all_pools = _all_pool_regions(enable_adjective=True)
+
+    # Per-seed deterministic split of the v14/v16 vocabulary.
+    candidate_words: List[str] = []
+    for w in cpd.DIRECTION_VOCAB:
+        candidate_words.append(w)
+    for w in cpd.NOUN_VOCAB:
+        candidate_words.append(w)
+    for w in cpd.VERB_VOCAB:
+        candidate_words.append(w)
+    for w in cpd.ADJECTIVE_VOCAB:
+        candidate_words.append(w)
+    perm = cal_rng.permutation(len(candidate_words))
+    split = len(candidate_words) // 2
+    g_idx = perm[:split]
+    u_idx = perm[split:]
+    if tiny_synth:
+        # Shrink to a few calibration queries for the smoke.
+        g_idx = g_idx[: min(4, len(g_idx))]
+        u_idx = u_idx[: min(4, len(u_idx))]
+    groundable_words = [candidate_words[int(i)] for i in g_idx]
+    ungroundable_words = [candidate_words[int(i)] for i in u_idx]
+
+    recall_steps = 20 if tiny_synth else 100
+
+    # GROUNDABLE rates: target-pool rate on a trained word.
+    groundable_rates: List[float] = []
+    for w in groundable_words:
+        try:
+            expected_pool = _direct_pool_target(w)
+        except KeyError:
+            continue
+        per_pool = cpd.measure_pool_firing(
+            bridge, w, all_pools,
+            stim_steps=int(recall_steps),
+            reset_steps=int(recall_steps // 2),
+            drive_pA=200.0,
+            sparsity=float(dims["sparsity"]),
+            n_lang_input=int(dims["n_lang_input"]),
+            orthogonal_codes=True,
+            n_words_for_orthogonal=int(dims["n_words_for_orthogonal"]),
+            word_to_idx=word_to_idx,
+        )
+        groundable_rates.append(float(per_pool.get(expected_pool, 0.0)))
+
+    # UNGROUNDABLE rates: TOP-POOL rate on a non-overlapping word
+    # (the held-out half of the per-seed split). This is the noise-
+    # floor representative: how high a "untrained-for-this-split"
+    # word's top-pool rate gets when we ask the substrate to retrieve.
+    ungroundable_rates: List[float] = []
+    for w in ungroundable_words:
+        per_pool = cpd.measure_pool_firing(
+            bridge, w, all_pools,
+            stim_steps=int(recall_steps),
+            reset_steps=int(recall_steps // 2),
+            drive_pA=200.0,
+            sparsity=float(dims["sparsity"]),
+            n_lang_input=int(dims["n_lang_input"]),
+            orthogonal_codes=True,
+            n_words_for_orthogonal=int(dims["n_words_for_orthogonal"]),
+            word_to_idx=word_to_idx,
+        )
+        top = max(per_pool.values()) if per_pool else 0.0
+        ungroundable_rates.append(float(top))
+
+    g_median = (
+        float(statistics.median(groundable_rates))
+        if groundable_rates else 0.0
+    )
+    u_median = (
+        float(statistics.median(ungroundable_rates))
+        if ungroundable_rates else 0.0
+    )
+    calibrated_threshold = float(0.5 * (g_median + u_median))
+
+    return {
+        "seed": int(seed),
+        "sub_seed": int(sub_seed),
+        "groundable_median": g_median,
+        "ungroundable_median": u_median,
+        "calibrated_threshold": calibrated_threshold,
+        "n_groundable": len(groundable_rates),
+        "n_ungroundable": len(ungroundable_rates),
+    }
+
+
+def _calibration_status(per_seed: List[Dict[str, Any]],
+                          committed: float) -> Tuple[str, float]:
+    """Classify the calibration outcome vs the committed constant.
+    Mirrors per_regime_monitor_runner._calibration_status:
+
+    INSUFFICIENT-SEPARATION -- on ANY per-seed cell the groundable
+                population median is <= the ungroundable population
+                median. The midpoint separator only makes sense when
+                signal > noise; if the populations overlap or invert
+                the committed threshold would route the WRONG way at
+                eval. Controller must NOT commit a calibrated constant
+                when this status is emitted.
+    MATCH    -- the aggregate calibrated value is within tolerance of
+                the committed constant.
+    PENDING  -- the committed constant is the placeholder (0.0) AND
+                the aggregate calibrated value is non-zero. The runner
+                writes JSON only; the controller updates the source
+                file in a separate commit.
+    MISMATCH -- the committed constant is non-zero AND the aggregate
+                calibrated value differs from it beyond tolerance.
+    """
+    vals = [d["calibrated_threshold"] for d in per_seed]
+    aggregate = float(sum(vals) / len(vals)) if vals else 0.0
+
+    # Strengthen-only: refuse to emit a separator when populations
+    # overlap or invert at any seed.
+    for d in per_seed:
+        g = float(d.get("groundable_median", 0.0))
+        u = float(d.get("ungroundable_median", 0.0))
+        if g <= u:
+            return "INSUFFICIENT-SEPARATION", aggregate
+
+    committed = float(committed)
+    if abs(aggregate - committed) <= _CALIB_MATCH_TOL:
+        return "MATCH", aggregate
+    if abs(committed) <= _CALIB_MATCH_TOL:
+        return "PENDING", aggregate
+    return "MISMATCH", aggregate
+
+
+# =====================================================================
 # Aggregation.
 # =====================================================================
 def _aggregate_rungs(cells_by_N: Dict[int, List[Dict[str, Any]]],
@@ -1000,15 +1386,22 @@ def run_unified_per_regime_monitor(
     phase1_cache_dir: str = _PHASE1_CACHE_DEFAULT,
     out_path: Optional[str] = None,
     ckpt: Optional[str] = None,
+    calibrate: bool = False,
 ) -> Dict[str, Any]:
     """Unified per-regime monitor + per-regime encoding capability runner.
 
-    Per seed: Phase-1 multi-event direct training (cached) BEFORE
-    compositional one-shot encoding. Per (seed, N): per-query-type
-    routing through both calibrated moats; three measurement arms
-    (full / uniform_ctrl / direct_retain) from the SAME run +
-    ungroundable abstain_correct. Aggregate to rungs; call the REUSED
-    frozen per-regime verdict unchanged.
+    Two modes:
+      calibrate=False (default) -- evaluation. Per seed, per N in the
+        frozen ladder: Phase-1 cached, compositional one-shot encoding,
+        per-query-type routing through both calibrated moats; three
+        measurement arms from the SAME run + abstain_correct.
+      calibrate=True -- calibration. Run held-out per-seed calibration
+        for BOTH the compositional gate (sub-seed = seed + 30000) AND
+        the new substrate-specific direct gate (sub-seed = seed +
+        40000). Returns per-seed thresholds + aggregate + status
+        (MATCH / PENDING / MISMATCH / INSUFFICIENT-SEPARATION) for
+        each gate. The runner writes JSON only; updating the source
+        constants is a SEPARATE controller commit.
 
     Kill-safe via the REUSED ``sim.train_checkpoint`` (evaluation cell
     granularity).
@@ -1017,10 +1410,107 @@ def run_unified_per_regime_monitor(
     loads = tuple(int(x) for x in loads)
     phase1_cache_dir = str(phase1_cache_dir)
 
-    # ---- Phase 1: per-seed training (cached). ----
+    # ---- Phase 1: per-seed training (cached) -- required for both
+    # evaluation AND calibration modes (the substrate-specific direct
+    # gate calibration needs a Phase-1-trained substrate; the
+    # compositional calibration encodes on top of it).
     Path(phase1_cache_dir).mkdir(parents=True, exist_ok=True)
     for s in seeds:
         _phase1_train_if_needed(int(s), phase1_cache_dir, tiny_synth)
+
+    if calibrate:
+        # ---- CALIBRATION MODE: held-out per-seed thresholds for both
+        # gates (compositional + new substrate-specific direct). ----
+        comp_per_seed: List[Dict[str, Any]] = []
+        direct_per_seed: List[Dict[str, Any]] = []
+        for s in seeds:
+            comp_per_seed.append(
+                _calibrate_compositional_one_seed(
+                    int(s), tiny_synth, phase1_cache_dir
+                )
+            )
+            direct_per_seed.append(
+                _calibrate_direct_one_seed(
+                    int(s), tiny_synth, phase1_cache_dir
+                )
+            )
+
+        comp_status, comp_aggregate = _calibration_status(
+            comp_per_seed, float(COMPOSITIONAL_THRESHOLD)
+        )
+        direct_status, direct_aggregate = _calibration_status(
+            direct_per_seed, float(DIRECT_UNIFIED_THRESHOLD)
+        )
+
+        result: Dict[str, Any] = {
+            "mode": "calibration",
+            "seeds": list(seeds),
+            "tiny_synth": bool(tiny_synth),
+            "method": CALIBRATION_METHOD_DOC,
+            "compositional_gate": {
+                "per_seed_calibrated_thresholds": [
+                    float(d["calibrated_threshold"]) for d in comp_per_seed
+                ],
+                "per_seed_details": comp_per_seed,
+                "aggregate_calibrated_threshold": float(comp_aggregate),
+                "committed_threshold": float(COMPOSITIONAL_THRESHOLD),
+                "calibration_status": comp_status,
+            },
+            "direct_gate": {
+                "per_seed_calibrated_thresholds": [
+                    float(d["calibrated_threshold"]) for d in direct_per_seed
+                ],
+                "per_seed_details": direct_per_seed,
+                "aggregate_calibrated_threshold": float(direct_aggregate),
+                "committed_threshold": float(DIRECT_UNIFIED_THRESHOLD),
+                "calibration_status": direct_status,
+            },
+            "note": (
+                "calibration only -- NOT a decisive result. Per-seed "
+                "calibrated thresholds reported for BOTH the "
+                "compositional gate AND the NEW substrate-specific "
+                "direct gate. The controller picks the aggregate value "
+                "and updates the source-constant in a SEPARATE commit. "
+                "The runner only writes JSON."
+            ),
+        }
+        if tiny_synth:
+            result["note"] = (
+                "TINY-SYNTH toy numbers -- NOT a result; logic-screen "
+                "only. INSUFFICIENT-SEPARATION expected on toy data "
+                "(per the per-regime stage's pattern); the decisive "
+                "multi-seed CuPy calibration is a controller-only step "
+                "at full biological scale."
+            )
+
+        if comp_status == "PENDING":
+            try:
+                print(
+                    "CALIBRATION-PENDING (compositional): aggregate "
+                    "calibrated threshold = %.6f vs committed %.6f."
+                    % (comp_aggregate, float(COMPOSITIONAL_THRESHOLD)),
+                    file=sys.stderr, flush=True,
+                )
+            except Exception:
+                pass
+        if direct_status == "PENDING":
+            try:
+                print(
+                    "CALIBRATION-PENDING (direct): aggregate "
+                    "calibrated threshold = %.6f vs committed "
+                    "placeholder %.6f. Controller must commit the "
+                    "calibrated value in a SEPARATE commit (mirrors "
+                    "abe65f6 for the compositional gate)."
+                    % (direct_aggregate, float(DIRECT_UNIFIED_THRESHOLD)),
+                    file=sys.stderr, flush=True,
+                )
+            except Exception:
+                pass
+
+        if out_path:
+            Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+            Path(out_path).write_text(json.dumps(result, indent=2))
+        return result
 
     # ---- Per-cell evaluation. ----
     cells: List[Dict[str, Any]] = []
@@ -1151,6 +1641,19 @@ def main(argv=None) -> int:
         default=None,
         help="Write the full result JSON here.",
     )
+    ap.add_argument(
+        "--calibrate",
+        action="store_true",
+        help=(
+            "Run the held-out calibration step ONLY for BOTH the "
+            "compositional gate AND the NEW substrate-specific direct "
+            "gate (closes adversarial review defect #2). Writes per-"
+            "seed thresholds + match status to the JSON output; does "
+            "NOT modify any gate-module source file. Controller commits "
+            "the calibrated constants in a SEPARATE commit (mirrors "
+            "abe65f6 for the compositional gate)."
+        ),
+    )
     a = ap.parse_args(argv)
 
     result = run_unified_per_regime_monitor(
@@ -1160,8 +1663,34 @@ def main(argv=None) -> int:
         phase1_cache_dir=a.phase1_cache_dir,
         out_path=a.out,
         ckpt=a.ckpt,
+        calibrate=a.calibrate,
     )
     tag = " [TINY-SYNTH toy -- NOT a result]" if a.tiny_synth else ""
+    if a.calibrate:
+        comp = result.get("compositional_gate", {})
+        direct = result.get("direct_gate", {})
+        print(
+            "CALIBRATION (compositional): status=%s aggregate=%.6f "
+            "committed=%.6f"
+            % (
+                comp.get("calibration_status", "?"),
+                float(comp.get("aggregate_calibrated_threshold", 0.0)),
+                float(comp.get("committed_threshold", 0.0)),
+            ),
+            flush=True,
+        )
+        print(
+            "CALIBRATION (direct): status=%s aggregate=%.6f "
+            "committed=%.6f%s"
+            % (
+                direct.get("calibration_status", "?"),
+                float(direct.get("aggregate_calibrated_threshold", 0.0)),
+                float(direct.get("committed_threshold", 0.0)),
+                tag,
+            ),
+            flush=True,
+        )
+        return 0
     g = result["verdict"]["gate"]
     print("GATE=%s%s" % (g, tag), flush=True)
     print(json.dumps(result["rungs"], indent=2), flush=True)
