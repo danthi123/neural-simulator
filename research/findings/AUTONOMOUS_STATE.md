@@ -586,24 +586,89 @@ across all four runs (composing as designed); the architectures
 themselves do not produce the compositional capability they were
 hypothesised to.
 
-**EXACT NEXT ACTION: localisation diagnostic + biology-grounded
-refinement (online threshold adaptation; iterate-following-biology
-per the standing discipline; no declare-unfit; no hand-back).**
-(A) Run a localisation diagnostic on the cached Phase-1 substrate to
-confirm the bimodal deployment compositional-readout distribution
-mechanism (top rate per query across 9 recorded cells; expected
-pattern: bimodal below 0.198 OR above 0.284, sparse between). ~5-10
-min, controller-only, no autograd, reuses cached substrate.
-(B) Online-threshold-adaptation refinement: net-new wiring replacing
-`gate_compositional_unified(ranked, COMPOSITIONAL_UNIFIED_THRESHOLD)`
-with a runtime EMA-tracking threshold (initialised at 0.197712;
-adapts to deployment-time distribution). Biology-grounded
-(homeostatic plasticity at the metacognitive-monitor level;
-Drugowitsch-2019; Pouget-2019). Subagent + adversarial review + 
-controller-only decisive re-run on the same substrate cache.
-(C) If online adaptation also fails -> next catalog factorisation
-(sequential composition / fluent-prior variant per the standing
-design doc 2026-05-19-regime-correct-compositional-retrieval-design.md).
+**LOCALISATION DIAGNOSTIC COMPLETE (commit `110f7cd`, both remotes):
+bimodal-threshold hypothesis FALSIFIED; deeper mechanism is
+compositional retrieval emits STRONG-BUT-WRONG top words at high
+confidence.** Seed 42 N=5 on the cached Phase-1 substrate; 7 queries
+total (5 groundable + 2 ungroundable). Distribution:
+- A (rate <= 0.198, both abstain): 1/7 (14%)
+- B (0.198 < rate <= 0.284, arms disagree): 1/7 (14%)
+- C (rate > 0.284, both emit same): 5/7 (71%)
+
+Of the 5 GROUNDABLE compositional queries, ALL fall in Case C and 4/5
+emit a WRONG top word at high confidence (apple->cold returns "go"
+rate=0.34; apple->hot returns "cold" rate=0.35; apple->small returns
+"go" rate=0.31; cat->small returns "look" rate=0.42; only cat->big
+returns "big" correctly). The substrate's compositional readout
+produces high-confidence outputs above BOTH calibrated thresholds
+(0.198 and 0.284); the activated pool is NOT the bound adjective in
+4/5 cases.
+
+The gating-based per-regime advantage CANNOT differentiate the arms
+because both arms emit the SAME (wrong) answer. The architecture's
+load-bearing hypothesis is structurally undermined by a more
+fundamental retrieval-correctness limitation -- not a threshold
+calibration issue. Online threshold adaptation would not help (the
+threshold question is downstream of the retrieval-correctness
+question). Findings:
+`research/findings/2026-05-20-UNIFIED-localisation-bimodal-FALSIFIED-
+deeper-mechanism-compositional-retrieval-emits-strong-wrong-answers.md`.
+
+**The 4-architecture convergent ceiling is now empirically grounded:**
+Stage-1 (static) + SPEAR (theta-mux ACh-gating) + Pirazzini (theta-
+disinhibition + ACh-gating; built) + Unified (per-regime monitor) all
+share the same engram-tag-and-cue compositional retrieval mechanism;
+the architecture variations in gating / multiplexing / metacognitive
+monitoring do not address the underlying limitation. At biological
+scale on the v14/v16+hippocampus substrate, this retrieval mechanism
+does not reliably emit the bound facts because the cued-noun's
+diffuse `lang_input` drive dominates the engram tag's selective
+bound-adj drive at deployment time. This is itself a biology-
+translatable insight: real compositional retrieval requires the cue
+NOT to be active during the bound-fact recall window.
+
+**EXACT NEXT ACTION: major arc transition -- theta-gamma
+mode-unification + generative replay (the standing user-directed
+catalog-grounded direction per design doc
+`docs/plans/2026-05-19-regime-correct-compositional-retrieval-design.md`,
+commit `337ff8c`).** The theta-trough RETRIEVE window suppresses
+cortex input + amplifies CA3 recurrence -- addressing the localised
+cued-noun-dominance failure mode directly. The cue activates the
+engram tag during the encode/cue phase; during the retrieve phase the
+cue is suppressed and CA3 pattern completion drives the bound-adj
+pool selectively. This is the catalog-grounded biological mechanism
+that the prior 4-architecture series did NOT implement (SPEAR's
+ACh-gating affected plasticity not transmission; Pirazzini's
+disinhibition was caught structurally inert at adversarial review then
+fixed but never decisively run on the localised mechanism).
+
+Steps:
+(1) Brainstorm refinement of the theta-gamma mode-unification design,
+    grounded in the localisation finding (the load-bearing mechanism
+    is cue-suppression-during-retrieve, not just phase-multiplexing).
+(2) writing-plans for TDD implementation: Task 0 grounding pin +
+    Task 1 frozen capability-verdict module (mirrors the prior 4
+    architectures' frozen verdicts; same fixed bars; same
+    cannot-conclude semantics) + Task 2 net-new runner that wires
+    cue-suppression-during-retrieve into the cached unified Phase-1
+    substrate (no protected/frozen module touched).
+(3) Dedicated adversarial review (eighth consecutive; the prior 7
+    each caught real defects, so the discipline has high adversarial
+    pressure).
+(4) Task 4 no-harm + Task 5 controller-only decisive run at full
+    biological scale.
+(5) Mandatory smell-test (scrutinize PASS harder than FAIL).
+(6) Honest propagation EVERY outcome both remotes.
+(7) Autonomous next staged step per outcome (if PASS: next
+    conversational stage per design; if FAIL or VOID: the
+    5-architecture convergent ceiling is the terminal biology-
+    translatable finding for this design line, propagate as such).
+
+The accumulated calibrated moats (650 + 5.6887 + 0.197712 + 0.284167)
+stay byte-stable; the protected set byte-empty diff vs `e8a99a2` must
+continue to hold; no-confab moat 7/7 byte-identical; honest ceiling
+unchanged. The autonomous next-action tool call is always in the same
+turn; never stop on a promise.
 
 NO bar change anywhere; protected set byte-empty diff vs `e8a99a2`
 must continue to hold; no-confab moat 7/7 byte-identical; honest
