@@ -291,10 +291,58 @@ unchanged hold; tiny-synth structural validity holds. No
 `review:` commits made (the fix requires net-new-runner-only
 implementation work, not strengthen-only).
 
-**EXACT NEXT ACTION: pre-committed faithfulness-fix iteration of
+**PIRAZZINI FIX LANDED (`d462bf0`); independent RE-REVIEW = CLEAR
+(four defects genuinely closed: 13.93 mV bridge-state diff via the
+runner's ACTUAL code path; numerical multiplier table at
+NEUTRAL/HIGH/LOW reproduced exactly; ACh-only exploit at N=2 and
+N=3 across seeds 42-44 = GATE=FAIL, false-PASS structurally
+impossible; no `encode_concept_pair`/`lang_output_pattern_during_*`
+calls in the runner; nothing previously CLEAR regressed).** Task 4
+no-harm PASSED: protected set + no-confab moat byte-UNCHANGED
+across the whole arc (base `0046ac9` .. HEAD `d462bf0`),
+`pirazzini_three_layer_core.py` byte-unchanged since Task 1
+(`46c74e2`), no autograd on shipped paths, comprehensive suite
+**110/110 green** across Pirazzini + SPEAR + Stage-1 + moat. The
+full anti-cheat discipline ran end-to-end (twice through the
+adversarial loop, including catching FOUR real mechanistic-
+faithfulness defects on the first review and closing them precisely
+via the net-new-runner-only fix). The discipline working a third
+time -- a caught false-mechanism is a success of the discipline.
+
+**EXACT NEXT ACTION: Pirazzini Task 5 -- CONTROLLER-ONLY decisive
+run (NOT a subagent task).** In the same turn, never stopping on a
+promise: (1) grounding tiny-synth (toy numbers explicitly NOT
+propagated); (2) decisive kill-safe multi-seed run at the frozen
+ladder (2,3,5), seeds 42 43 44 (>= MIN_SEEDS), CuPy on RTX 3090,
+DURABLE capture to `research/findings/raw/`, monitored to ACTUAL
+completion via a genuine completion waiter (never a detached
+process with a false "will be notified"); (3) mandatory smell-test
+scrutinising a nominal PASS HARDER than a FAIL -- recompute the
+verdict from the single recorded output (no re-run, no bar
+change), confirm `full` genuinely clears the bars AND
+`theta_disabled` genuinely collapses to <= the convergent
+Stage-1+SPEAR ceiling (0.10) AND abstention genuinely holds;
+(4) honest propagation of EVERY outcome (findings doc +
+`webapp/capability_status.json` pillar, status PREDICTED until a
+clean scrutinised PASS, schema-green + state file + commit + push
+BOTH remotes); (5) autonomous next step per outcome (PASS ->
+next pre-registered staged step under the broader-search +
+biology-translatable-insight disciplines; honest FAIL/VOID/
+WORKS-AT-SMALL-LOAD -> the next biology-identified fidelity
+refinement, NO bar change, NO config-crank, NO declare-unfit, NO
+hand-back). Honest ceiling unchanged: a clean success = a
+biology-grounded Pirazzini-reference shows grounded compositional
+readout above the trustworthy threshold AND the named
+disinhibition mechanism is what does the differentiation work
+(brain-faithful AND capable), explicitly NOT fluent open-ended
+language / NOT an LLM. The orienting goal is artificial life with
+a proper brain analogue; biology-translatable insights are the
+deliverable.
+
+[HISTORICAL CONTEXT: pre-committed faithfulness-fix iteration of
 the NET-NEW PIRAZZINI runner ONLY (NO bar change, NO declare-unfit,
 NO hand-back, NO config-crank; protected set + frozen bars + moat
-byte-UNCHANGED).** Three precise corrections in
+byte-UNCHANGED). Three precise corrections in
 `research/runners/pirazzini_three_layer_runner.py` (+ its tests +
 invert the adversarial pins to assert defects are CLOSED via the
 runner's actual code path, not a synthetic bypass): (A) replace the
@@ -331,7 +379,7 @@ adversarial review (fix -> re-review loop until CLEAR), Task 4
 no-harm, Task 5 controller-only decisive run + smell-test + honest
 propagation both remotes, autonomous continuation per outcome.
 Honest ceiling unchanged. NO partition edit ever; the next-action
-tool call is always in the same turn; never stop on a promise.
+tool call is always in the same turn; never stop on a promise.]
 
 [HISTORICAL CONTEXT: original Task-3 mandate was: dedicated
 adversarial review of Task 1 + Task 2 BEFORE no-harm, mirroring the
