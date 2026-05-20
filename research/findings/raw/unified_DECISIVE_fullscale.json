@@ -1,0 +1,161 @@
+{
+  "mode": "evaluation",
+  "rungs": [
+    {
+      "N": 2,
+      "n_seeds": 3,
+      "full_acc": 0.37777777777777777,
+      "uniform_ctrl_acc": 0.37777777777777777,
+      "direct_retain_acc": 0.611111111111111,
+      "abstain_correct": 0.38095238095238093
+    },
+    {
+      "N": 3,
+      "n_seeds": 3,
+      "full_acc": 0.2738095238095238,
+      "uniform_ctrl_acc": 0.2738095238095238,
+      "direct_retain_acc": 0.3833333333333333,
+      "abstain_correct": 0.43492063492063493
+    },
+    {
+      "N": 5,
+      "n_seeds": 3,
+      "full_acc": 0.40151515151515155,
+      "uniform_ctrl_acc": 0.40151515151515155,
+      "direct_retain_acc": 0.6587301587301587,
+      "abstain_correct": 0.5833333333333334
+    }
+  ],
+  "verdict": {
+    "gate": "FAIL",
+    "reason": "smallest-N rung does not meet frozen bars",
+    "frozen_bars": {
+      "full_min": 0.8,
+      "uniform_ctrl_max": 0.1,
+      "direct_retain_min": 0.8,
+      "abstain_correct_min": 0.9,
+      "scale_tol": 0.1,
+      "ladder": [
+        2,
+        3,
+        5
+      ],
+      "min_seeds": 3
+    }
+  },
+  "tiny_synth": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "raw_cells": [
+    {
+      "seed": 42,
+      "N": 2,
+      "full_acc": 0.2,
+      "uniform_ctrl_acc": 0.2,
+      "direct_retain_acc": 0.3333333333333333,
+      "abstain_correct": 0.5,
+      "n_direct": 3,
+      "n_compositional": 2,
+      "n_ungroundable": 8
+    },
+    {
+      "seed": 42,
+      "N": 3,
+      "full_acc": 0.2857142857142857,
+      "uniform_ctrl_acc": 0.2857142857142857,
+      "direct_retain_acc": 0.5,
+      "abstain_correct": 0.5714285714285714,
+      "n_direct": 4,
+      "n_compositional": 3,
+      "n_ungroundable": 7
+    },
+    {
+      "seed": 42,
+      "N": 5,
+      "full_acc": 0.45454545454545453,
+      "uniform_ctrl_acc": 0.45454545454545453,
+      "direct_retain_acc": 0.8333333333333334,
+      "abstain_correct": 0.25,
+      "n_direct": 6,
+      "n_compositional": 5,
+      "n_ungroundable": 4
+    },
+    {
+      "seed": 43,
+      "N": 2,
+      "full_acc": 0.3333333333333333,
+      "uniform_ctrl_acc": 0.3333333333333333,
+      "direct_retain_acc": 0.5,
+      "abstain_correct": 0.5,
+      "n_direct": 4,
+      "n_compositional": 2,
+      "n_ungroundable": 6
+    },
+    {
+      "seed": 43,
+      "N": 3,
+      "full_acc": 0.25,
+      "uniform_ctrl_acc": 0.25,
+      "direct_retain_acc": 0.4,
+      "abstain_correct": 0.4,
+      "n_direct": 5,
+      "n_compositional": 3,
+      "n_ungroundable": 5
+    },
+    {
+      "seed": 43,
+      "N": 5,
+      "full_acc": 0.4166666666666667,
+      "uniform_ctrl_acc": 0.4166666666666667,
+      "direct_retain_acc": 0.5714285714285714,
+      "abstain_correct": 0.5,
+      "n_direct": 7,
+      "n_compositional": 5,
+      "n_ungroundable": 2
+    },
+    {
+      "seed": 44,
+      "N": 2,
+      "full_acc": 0.6,
+      "uniform_ctrl_acc": 0.6,
+      "direct_retain_acc": 1.0,
+      "abstain_correct": 0.14285714285714285,
+      "n_direct": 3,
+      "n_compositional": 2,
+      "n_ungroundable": 7
+    },
+    {
+      "seed": 44,
+      "N": 3,
+      "full_acc": 0.2857142857142857,
+      "uniform_ctrl_acc": 0.2857142857142857,
+      "direct_retain_acc": 0.25,
+      "abstain_correct": 0.3333333333333333,
+      "n_direct": 4,
+      "n_compositional": 3,
+      "n_ungroundable": 6
+    },
+    {
+      "seed": 44,
+      "N": 5,
+      "full_acc": 0.3333333333333333,
+      "uniform_ctrl_acc": 0.3333333333333333,
+      "direct_retain_acc": 0.5714285714285714,
+      "abstain_correct": 1.0,
+      "n_direct": 7,
+      "n_compositional": 5,
+      "n_ungroundable": 2
+    }
+  ],
+  "phase1_cache_dir": "research/findings/raw/unified_per_regime/phase1",
+  "moat_direct": 650.0,
+  "compositional_threshold": 0.1977124183006536
+}

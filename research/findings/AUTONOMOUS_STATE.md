@@ -505,9 +505,118 @@ outcomes (42, 44) reflect random-split luck on a trained-only
 population, not a real noise floor. Findings:
 `research/findings/2026-05-20-unified-direct-gate-calibration-methodology-bug-CAUGHT-substrate-discrimination-INTACT.md`.
 
-**v2 DIRECT-GATE CALIBRATION COMPLETE -- threshold 0.2841666666666667
-calibrated and committed (commit pending controller verification +
-push).** Implementation chain ran end-to-end and worked:
+**UNIFIED ARC FULL DECISIVE RUN COMPLETE = GATE=FAIL (honest
+measured negative; smell-test PASSED; convergent ceiling now extends
+across FOUR architectures: Stage-1 + SPEAR + Pirazzini + Unified).**
+Sequence: design `b662940` + plan `d1cd059` + Task 0 pin `a1ff142` +
+Task 1+2 net-new runner `db8b9cb` + Task 3 adversarial review BLOCK
+on TWO defects `4e78548` -> substrate fix `9052d43` (zero-neuron
+engram defect closed) + direct-gate addition `beb8f1c` (650 scale
+mismatch defect closed; placeholder threshold 0.0); full-scale v1
+calibration ran 2026-05-20T16:57 with compositional MISMATCH 0.197712
+vs 5.6887 + direct INSUFFICIENT-SEPARATION (durable
+`research/findings/raw/unified_CALIBRATION_fullscale.json`) -> findings
+`44f569e` -> diagnostic v1 methodology bug CAUGHT (n_cues=12 vs n_cues=
+16 canon) before propagating wrong conclusion -> corrected v2
+diagnostic `7548465` (pure v14 13/16 = 81% correct direction at seed
+42 matches documented baseline; unified 10/16 at seed 42 = positive
+direction; the prior calibration's INSUFFICIENT-SEPARATION was mostly
+half-split-of-trained-vocab statistical fragility, NOT substrate
+failure) -> v2 direct calibration protocol redesign `b07486e` + sixth
+adversarial review CLEAR-WITH-NOTES + full-scale v2 calibration
+producing positive threshold across all 3 seeds (margins 0.030/0.110/
+0.121; aggregate 0.2841666666666667) -> threshold commit `0711e1d` ->
+test pin fix `588ed05` (caught by the compositional-unified subagent's
+own report) -> substrate-specific compositional gate `25b9183`
+(COMPOSITIONAL_UNIFIED_THRESHOLD = 0.1977124183006536 in new file
+`abstention_gate_compositional_unified.py`; runner routes FULL +
+ungroundable through it; uniform_ctrl unchanged; 5.6887 per-regime
+moat byte-unchanged) -> seventh adversarial review CLEAR (0 BLOCK; 2
+cosmetic notes) -> Task 4 no-harm = 53/53 PASS in 471s; protected
+set byte-empty diff vs `e8a99a2`; no-confab moat 7/7 byte-identical
+-> pre-launch verdict-module check CAUGHT a ladder mismatch (pre-
+staged --loads 2/4/8 vs frozen `_PR_LADDER=(2,3,5)`; corrected to CLI
+default = frozen ladder) -> smell-test recompute script `249519b` ->
+**Task 5 controller-only decisive run at full biological scale (3
+seeds; ladder (2, 3, 5); both unified-substrate-specific moats in
+place; kill-safe; ~4 min wall-clock per cached Phase-1 substrate +
+fast eval; durable JSON `research/findings/raw/unified_DECISIVE_fullscale.json`;
+durable log `unified_DECISIVE_fullscale.log`) = GATE=FAIL.**
+
+Per-rung decisive measurement:
+
+| N | full_acc | uniform_ctrl_acc | direct_retain_acc | abstain_correct |
+|---|----------|------------------|-------------------|-----------------|
+| 2 | 0.378    | 0.378            | 0.611             | 0.381           |
+| 3 | 0.274    | 0.274            | 0.383             | 0.435           |
+| 5 | 0.402    | 0.402            | 0.659             | 0.583           |
+
+**LOAD-BEARING FINDING: per_regime_advantage = 0.000 on EVERY (seed,
+N) cell.** Across all 9 (seed, N) cells in the raw_cells block,
+full_acc EXACTLY equals uniform_ctrl_acc. The per-regime monitor's
+load-bearing experimental contrast collapsed to zero -- the unified
+substrate's compositional readout produces a bimodal deployment
+distribution where the readout is either uniformly below BOTH
+calibrated thresholds (0.198 and 0.284 -> both arms abstain) or
+uniformly above BOTH (both arms emit the same top answer); the
+"between thresholds" region where the arms would disagree is
+statistically empty in the deployment-time distribution.
+
+Mandatory smell-test PASSED: smell-test recompute via
+`research/findings/raw/unified_DECISIVE_smell_test.py` reads the
+recorded JSON, validates per-rung internal consistency (acc in [0,1];
+N in frozen ladder; n_seeds=3), recomputes the verdict using the
+frozen `per_regime_monitor_core.per_regime_monitor_verdict`, and the
+recomputed gate matches runner-reported gate exactly = "FAIL,
+smallest-N rung does not meet frozen bars". The negative is a genuine
+measured outcome, NOT instrument-invalid, NOT a false-FAIL, NOT a
+degenerate-broken run.
+
+Findings: `research/findings/2026-05-20-UNIFIED-decisive-honest-
+negative-per-regime-advantage-zero-convergent-ceiling-extended.md`.
+
+**The convergent ceiling now extends across FOUR architectures**
+(Stage-1 static two-store + SPEAR theta-mux + Pirazzini disinhibition
++ Unified per-regime metacognitive monitor): the compositional
+readout at the unified substrate's lang_output does not reliably
+produce per-architecture differentiation. Each architecture's
+load-bearing experimental contrast (full vs ablation/uniform_ctrl)
+collapses to zero or near-zero. The trustworthy no-confab moat held
+across all four runs (composing as designed); the architectures
+themselves do not produce the compositional capability they were
+hypothesised to.
+
+**EXACT NEXT ACTION: localisation diagnostic + biology-grounded
+refinement (online threshold adaptation; iterate-following-biology
+per the standing discipline; no declare-unfit; no hand-back).**
+(A) Run a localisation diagnostic on the cached Phase-1 substrate to
+confirm the bimodal deployment compositional-readout distribution
+mechanism (top rate per query across 9 recorded cells; expected
+pattern: bimodal below 0.198 OR above 0.284, sparse between). ~5-10
+min, controller-only, no autograd, reuses cached substrate.
+(B) Online-threshold-adaptation refinement: net-new wiring replacing
+`gate_compositional_unified(ranked, COMPOSITIONAL_UNIFIED_THRESHOLD)`
+with a runtime EMA-tracking threshold (initialised at 0.197712;
+adapts to deployment-time distribution). Biology-grounded
+(homeostatic plasticity at the metacognitive-monitor level;
+Drugowitsch-2019; Pouget-2019). Subagent + adversarial review + 
+controller-only decisive re-run on the same substrate cache.
+(C) If online adaptation also fails -> next catalog factorisation
+(sequential composition / fluent-prior variant per the standing
+design doc 2026-05-19-regime-correct-compositional-retrieval-design.md).
+
+NO bar change anywhere; protected set byte-empty diff vs `e8a99a2`
+must continue to hold; no-confab moat 7/7 byte-identical; honest
+ceiling unchanged. The eighth consecutive disciplined refusal-to-
+overclaim-a-PASS pattern holds: the smell-test recompute pinned the
+FAIL exactly to the recorded numbers; no bar tuning; no re-run for
+the verdict; honest propagation. The autonomous next-action tool
+call is always in the same turn; never stop on a promise.
+
+---
+[Historical: v2 DIRECT-GATE CALIBRATION COMPLETE -- threshold
+0.2841666666666667 calibrated and committed.] Implementation chain
+ran end-to-end and worked:
 
 - v2 implementation by subagent (commit `b07486e`): additive
   `_calibrate_direct_v2_one_seed` function alongside v1 + new CLI
