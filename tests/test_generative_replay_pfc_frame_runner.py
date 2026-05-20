@@ -151,7 +151,7 @@ def test_no_autograd_on_shipped_path():
     assert "import torch" not in src
 
 
-def test_structural_effect_probes_validate_replay_and_pfc_frame_mechanisms():
+def test_structural_effect_probes_validate_replay_and_pfc_frame_mechanisms(tmp_path):
     """(d): MANDATORY structural-effect probes (TWO of them). Each
     must show > 1 mV bridge-state divergence between flag-on and
     flag-off via the runner's ACTUAL code path; controls (both-arms-
@@ -172,7 +172,20 @@ def test_structural_effect_probes_validate_replay_and_pfc_frame_mechanisms():
     effect probe must work via the runner's ACTUAL code path and rule
     out RNG drift via controls. If any probe fails (flag-differing
     < 1 mV OR control > 0.5 mV) the runner aborts (no decisive
-    numbers reported)."""
+    numbers reported).
+
+    CACHE-SCALE DISCIPLINE (closes 10th adversarial review BLOCK):
+    uses a tmp_path cache directory rather than the default
+    biological-scale ``_PHASE1_CACHE_DEFAULT``. With ``tiny_synth=True``
+    the probe builds a small (952-neuron) bridge; the cache MUST
+    match. The probe's pre-load validator
+    (``_validate_cache_scale_for_probe``) now REFUSES to run on a
+    mismatched cache; a fresh tmp_path lets ``_phase1_train_if_needed``
+    produce a matching tiny-synth-scale cache file. Without this
+    discipline the prior 24.46 / 35.99 mV "passing" numbers were
+    measured against a corrupted bridge (cached 8440-neuron state
+    loaded into a 952-neuron build silently raised IndexError per
+    sim step)."""
     assert hasattr(grr, "_replay_effect_probe"), (
         "the runner must expose a `_replay_effect_probe` helper "
         "(mirrors Pirazzini d462bf0 / theta-gamma e6b17da lesson)"
@@ -181,7 +194,10 @@ def test_structural_effect_probes_validate_replay_and_pfc_frame_mechanisms():
         "the runner must expose a `_pfc_frame_effect_probe` helper "
         "(mirrors Pirazzini d462bf0 / theta-gamma e6b17da lesson)"
     )
-    diff_replay = grr._replay_effect_probe(seed=42, tiny_synth=True)
+    cache_dir = tmp_path / "probe_cache"
+    diff_replay = grr._replay_effect_probe(
+        seed=42, tiny_synth=True, cache_dir=str(cache_dir)
+    )
     assert isinstance(diff_replay, float) and diff_replay > 1.0, (
         "the runner's actual code path must produce > 1 mV bridge-state "
         "divergence between replay-on and replay-off at the SAME initial "
@@ -189,7 +205,9 @@ def test_structural_effect_probes_validate_replay_and_pfc_frame_mechanisms():
         "the Pirazzini d462bf0 lesson guards against."
         % diff_replay
     )
-    diff_pfc = grr._pfc_frame_effect_probe(seed=42, tiny_synth=True)
+    diff_pfc = grr._pfc_frame_effect_probe(
+        seed=42, tiny_synth=True, cache_dir=str(cache_dir)
+    )
     assert isinstance(diff_pfc, float) and diff_pfc > 1.0, (
         "the runner's actual code path must produce > 1 mV bridge-state "
         "divergence between pfc-frame-on and pfc-frame-off at the SAME "
@@ -250,6 +268,101 @@ def test_full_vs_uniform_arms_differ_at_least_on_some_query():
         "replay execution trace). The mechanisms are structurally "
         "inert -- fix and re-run BEFORE decisive. raw_cells=%r"
         % cells
+    )
+
+
+def test_structural_effect_probes_refuse_cache_scale_mismatch(tmp_path):
+    """(f) -- closes 10th adversarial review BLOCK.
+
+    The 10th adversarial review caught a real defect: with
+    ``tiny_synth=True``, the runner builds a 952-neuron / 46497-synapse
+    bridge but ``load_checkpoint`` happily loads the existing
+    biological-scale Phase-1 cache (8440 neurons / 4825651 synapses)
+    from ``_PHASE1_CACHE_DEFAULT``. Every simulation step then raises
+    ``IndexError`` (swallowed by try/except inside the bridge step),
+    silently corrupting the bridge state -- the probe's "passing"
+    24.46 mV / 35.99 mV numbers were measured against this corrupted
+    state and are unreliable as a gate.
+
+    The strengthen-only fix REFUSES TO RUN the probes on a cache that
+    doesn't match the built bridge's neuron count. Inspect the HDF5
+    checkpoint metadata BEFORE ``load_checkpoint``; if the cached
+    ``num_neurons`` / ``connections_shape_0`` / ``cp_membrane_potential_v``
+    shape disagrees with the built bridge's dimensions, raise
+    ``RuntimeError`` with a clear message.
+
+    This test constructs the exact failure mode: a tmp cache directory
+    populated with a SYNTHETIC biological-scale cache file (one whose
+    stored ``num_neurons`` / connection sizes match the full-scale
+    recipe, NOT the tiny-synth recipe) for seed 42, then invokes the
+    two structural-effect probes with ``tiny_synth=True`` and that
+    cache directory. Both probes MUST raise ``RuntimeError`` whose
+    message references the cache-scale-mismatch defect.
+
+    The synthetic cache file is small (HDF5 with minimal datasets)
+    but its STORED dimensions encode the biological scale; the probe
+    must refuse based on that metadata, NOT after attempting to load
+    and corrupting the bridge.
+    """
+    import h5py
+    import numpy as np
+
+    # The probe will call ``_phase1_train_if_needed`` which is a no-op
+    # if the cache file already exists. We pre-populate the cache with
+    # a synthetic file whose stored dimensions are biological-scale,
+    # so the probe sees a cache that's mismatched relative to the
+    # tiny_synth-sized bridge it builds.
+    cache_dir = tmp_path / "mismatched_cache"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_path = cache_dir / "seed42.simstate.h5"
+
+    # Synthetic biological-scale cache. The probe's pre-load check
+    # reads num_neurons attr and the cp_membrane_potential_v shape; we
+    # only need those to record the mismatched scale. Connections
+    # metadata is included for defense-in-depth check.
+    bio_scale_n = 8440
+    with h5py.File(str(cache_path), "w") as f:
+        f.attrs["num_neurons"] = int(bio_scale_n)
+        f.attrs["connections_shape_0"] = int(bio_scale_n)
+        f.attrs["connections_shape_1"] = int(bio_scale_n)
+        f.create_dataset(
+            "cp_membrane_potential_v",
+            data=np.zeros((bio_scale_n,), dtype=np.float32),
+        )
+        f.create_dataset(
+            "connections_data",
+            data=np.zeros((10,), dtype=np.float32),
+        )
+
+    # Replay-effect probe MUST refuse on cache-scale mismatch.
+    with pytest.raises(RuntimeError) as exc_replay:
+        grr._replay_effect_probe(
+            seed=42, tiny_synth=True, cache_dir=str(cache_dir)
+        )
+    msg_replay = str(exc_replay.value)
+    assert "CACHE" in msg_replay.upper() or "MISMATCH" in msg_replay.upper(), (
+        "the replay-effect probe must raise a RuntimeError whose message "
+        "identifies the cache-scale-mismatch defect; got: %r" % msg_replay
+    )
+    assert str(bio_scale_n) in msg_replay, (
+        "the error message must surface the cached neuron count (%d) so "
+        "the operator can diagnose; got: %r" % (bio_scale_n, msg_replay)
+    )
+
+    # PFC-frame-effect probe MUST refuse on cache-scale mismatch.
+    with pytest.raises(RuntimeError) as exc_pfc:
+        grr._pfc_frame_effect_probe(
+            seed=42, tiny_synth=True, cache_dir=str(cache_dir)
+        )
+    msg_pfc = str(exc_pfc.value)
+    assert "CACHE" in msg_pfc.upper() or "MISMATCH" in msg_pfc.upper(), (
+        "the pfc-frame-effect probe must raise a RuntimeError whose "
+        "message identifies the cache-scale-mismatch defect; got: %r"
+        % msg_pfc
+    )
+    assert str(bio_scale_n) in msg_pfc, (
+        "the error message must surface the cached neuron count (%d) so "
+        "the operator can diagnose; got: %r" % (bio_scale_n, msg_pfc)
     )
 
 

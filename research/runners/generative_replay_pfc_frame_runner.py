@@ -437,6 +437,105 @@ _PROBE_ENCODE_RNG_SEED = 31337
 _PROBE_CONTROL_TOL_MV = 0.5
 
 
+def _validate_cache_scale_for_probe(cache_path, built_bridge,
+                                       probe_name: str) -> None:
+    """Refuse to run the probe on a cache file whose stored bridge
+    dimensions do NOT match the freshly-built bridge.
+
+    Closes the 10th adversarial review BLOCK on the 6th-architecture
+    arc: with ``tiny_synth=True``, the probe builds a small bridge
+    (e.g. 952 neurons / 46497 synapses) BUT ``load_checkpoint`` will
+    happily load an existing biological-scale Phase-1 cache (e.g. 8440
+    neurons / 4825651 synapses) under ``_PHASE1_CACHE_DEFAULT``. The
+    bridge state arrays then have inconsistent shapes:
+    ``cp_membrane_potential_v`` is sized to the cached value, but the
+    arrays the bridge allocated at build time (e.g.
+    ``cp_plasticity_rate_gain``) stay at the tiny-synth size. Every
+    subsequent simulation step raises ``IndexError`` (caught by a
+    broad ``try`` / ``except`` inside the bridge step), silently
+    corrupting the probe state -- so the probe's reported
+    flag-differing divergence is NOT trustworthy as a gate.
+
+    Implementation: open the HDF5 file (lazy ``import h5py`` so the
+    runner has no new top-level dependency) and inspect:
+      * ``num_neurons`` attr (the canonical stored neuron count);
+      * ``connections_shape_0`` attr (the connection-matrix neuron
+        count -- redundant cross-check);
+      * ``cp_membrane_potential_v`` dataset shape[0] (the actual
+        per-neuron array dim).
+    Compare against ``built_bridge.cp_membrane_potential_v.shape[0]``.
+    If ANY mismatches, raise ``RuntimeError`` with a clear message
+    that surfaces both the cached and built dimensions so the
+    operator can diagnose.
+
+    Args:
+      cache_path: path to the HDF5 Phase-1 checkpoint that will be
+        loaded.
+      built_bridge: the freshly-built SimulationBridge whose dimensions
+        the cache must match.
+      probe_name: e.g. ``"replay-effect"`` / ``"pfc-frame-effect"``;
+        surfaced in the error message for diagnostic clarity.
+
+    Returns: ``None`` on success.
+    Raises: ``RuntimeError`` on any dimensional mismatch.
+    """
+    import h5py  # lazy import per the strengthen-only fix
+
+    built_n_neurons = int(built_bridge.cp_membrane_potential_v.shape[0])
+    cached_n_attr = None
+    cached_conn_shape_0 = None
+    cached_v_shape_0 = None
+    try:
+        with h5py.File(str(cache_path), "r") as f:
+            if "num_neurons" in f.attrs:
+                cached_n_attr = int(f.attrs["num_neurons"])
+            if "connections_shape_0" in f.attrs:
+                cached_conn_shape_0 = int(f.attrs["connections_shape_0"])
+            if "cp_membrane_potential_v" in f:
+                cached_v_shape_0 = int(
+                    f["cp_membrane_potential_v"].shape[0]
+                )
+    except Exception as exc:
+        raise RuntimeError(
+            "%s probe FAILED to inspect cache metadata at %s: %r. "
+            "The probe REFUSES to run on a cache it cannot validate "
+            "the scale of. Closes 10th adversarial review BLOCK; fix "
+            "the cache file or re-run with --tiny-synth=False at the "
+            "scale the cache was trained for."
+            % (probe_name, str(cache_path), exc)
+        ) from exc
+
+    candidates = [
+        ("num_neurons attr", cached_n_attr),
+        ("connections_shape_0 attr", cached_conn_shape_0),
+        ("cp_membrane_potential_v shape[0]", cached_v_shape_0),
+    ]
+    mismatches = [
+        (label, value)
+        for (label, value) in candidates
+        if value is not None and value != built_n_neurons
+    ]
+    if mismatches:
+        details = "; ".join(
+            "%s=%d" % (label, value) for (label, value) in mismatches
+        )
+        raise RuntimeError(
+            "%s probe REFUSES TO RUN: CACHE-SCALE MISMATCH detected at "
+            "%s. The built bridge has %d neurons but the cached "
+            "checkpoint reports: %s. Loading this checkpoint into a "
+            "mismatched bridge silently corrupts state (every sim step "
+            "raises IndexError, swallowed by the bridge's try/except). "
+            "The previous 'passing' probe numbers would be unreliable "
+            "as a gate. Closes 10th adversarial review BLOCK. Fix: "
+            "re-run with --tiny-synth=False at the scale the cache "
+            "was trained for, OR point --phase1-cache-dir at a "
+            "tiny_synth-matching cache directory (or delete the "
+            "mismatched cache file so Phase-1 retraining reproduces "
+            "it at the correct scale)."
+            % (probe_name, str(cache_path), built_n_neurons, details)
+        )
+
+
 def _replay_effect_probe(
     seed: int = 42,
     tiny_synth: bool = True,
@@ -462,12 +561,29 @@ def _replay_effect_probe(
       * The flag-differing case (replay-on vs replay-off) MUST exceed
         1.0 mV for the mechanism to be declared structurally active.
 
+    DEFENSIVE pre-load check (CLOSES the 10th adversarial review
+    BLOCK): each contrast builds two fresh bridges and BEFORE calling
+    ``load_checkpoint`` validates that the cached checkpoint's stored
+    bridge dimensions match the freshly-built bridge dimensions via
+    ``_validate_cache_scale_for_probe``. The 10th adversarial review
+    caught a real defect: with ``tiny_synth=True`` and the
+    biological-scale Phase-1 cache under ``_PHASE1_CACHE_DEFAULT``,
+    the bridge was being silently corrupted (cached 8440-neuron state
+    loaded into a 952-neuron build raises IndexError on every step,
+    caught by the bridge's try/except). Pre-load scale validation
+    surfaces the mismatch as a clean ``RuntimeError`` BEFORE the
+    bridge is corrupted, so the probe's flag-differing divergence
+    cannot be reported off a corrupted state.
+
     If the flag-differing divergence is below 1 mV, the mechanism is
     structurally inert and the caller MUST abort (no decisive numbers
     reported). If a control shows divergence above the tolerance, RNG
-    isolation is broken and the caller MUST abort. Either raises
-    RuntimeError. Returns the flag-differing diff (float, > 1.0) when
-    BOTH the mechanism is structurally active AND the controls pass.
+    isolation is broken and the caller MUST abort. If the cache-scale
+    validation fails, the cache and build are incompatible and the
+    caller MUST abort. Any of these raises RuntimeError. Returns the
+    flag-differing diff (float, > 1.0) when BOTH the mechanism is
+    structurally active AND the controls pass AND the cache scale
+    matches.
     """
     from sim.backend import to_host
     cache_dir = str(cache_dir) if cache_dir else _PHASE1_CACHE_DEFAULT
@@ -497,10 +613,26 @@ def _replay_effect_probe(
         replay-phase OU-noise streams are IDENTICAL. The SOLE remaining
         between-arm difference is the replay-on flag.
 
+        Pre-load CACHE-SCALE validation: BEFORE load_checkpoint runs,
+        _validate_cache_scale_for_probe inspects the HDF5 file's
+        stored bridge dimensions and refuses to proceed if they
+        mismatch the freshly-built bridge. Closes 10th adversarial
+        review BLOCK; without this, tiny_synth=True with the
+        biological-scale Phase-1 cache silently corrupts bridge
+        state (IndexError every step, swallowed by bridge's
+        try/except) and the reported flag-differing divergence is
+        unreliable as a gate.
+
         Returns max |delta v_membrane|. Fresh bridges per contrast
         ensure no cross-contrast leakage."""
         bridge_a = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
         bridge_b = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
+        _validate_cache_scale_for_probe(
+            cache_path, bridge_a, "replay-effect"
+        )
+        _validate_cache_scale_for_probe(
+            cache_path, bridge_b, "replay-effect"
+        )
         bridge_a.load_checkpoint(str(cache_path))
         bridge_b.load_checkpoint(str(cache_path))
         _freeze_phase1_gates(bridge_a)
@@ -607,8 +739,23 @@ def _pfc_frame_effect_probe(
       * The flag-differing case (prime-on vs prime-off) MUST exceed
         1.0 mV for the mechanism to be declared structurally active.
 
+    DEFENSIVE pre-load check (CLOSES the 10th adversarial review
+    BLOCK): each contrast builds two fresh bridges and BEFORE calling
+    ``load_checkpoint`` validates that the cached checkpoint's stored
+    bridge dimensions match the freshly-built bridge dimensions via
+    ``_validate_cache_scale_for_probe``. The 10th adversarial review
+    caught a real defect: with ``tiny_synth=True`` and the
+    biological-scale Phase-1 cache under ``_PHASE1_CACHE_DEFAULT``,
+    the bridge was being silently corrupted (cached 8440-neuron state
+    loaded into a 952-neuron build raises IndexError on every step,
+    caught by the bridge's try/except). Pre-load scale validation
+    surfaces the mismatch as a clean ``RuntimeError`` BEFORE the
+    bridge is corrupted, so the probe's flag-differing divergence
+    cannot be reported off a corrupted state.
+
     Returns the flag-differing diff (float, > 1.0) when BOTH the
-    mechanism is structurally active AND the controls pass.
+    mechanism is structurally active AND the controls pass AND the
+    cache scale matches the built bridge.
     """
     from sim.backend import to_host
     cache_dir = str(cache_dir) if cache_dir else _PHASE1_CACHE_DEFAULT
@@ -621,9 +768,25 @@ def _pfc_frame_effect_probe(
         deterministic-seed BEFORE each _prime_pfc_frame call so the
         OU-noise streams match across arms; the SOLE between-arm
         difference is the prime-on flag.
+
+        Pre-load CACHE-SCALE validation: BEFORE load_checkpoint runs,
+        _validate_cache_scale_for_probe inspects the HDF5 file's
+        stored bridge dimensions and refuses to proceed if they
+        mismatch the freshly-built bridge. Closes 10th adversarial
+        review BLOCK; without this, tiny_synth=True with the
+        biological-scale Phase-1 cache silently corrupts bridge
+        state (IndexError every step, swallowed by bridge's
+        try/except) and the reported flag-differing divergence is
+        unreliable as a gate.
         """
         bridge_a = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
         bridge_b = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
+        _validate_cache_scale_for_probe(
+            cache_path, bridge_a, "pfc-frame-effect"
+        )
+        _validate_cache_scale_for_probe(
+            cache_path, bridge_b, "pfc-frame-effect"
+        )
         bridge_a.load_checkpoint(str(cache_path))
         bridge_b.load_checkpoint(str(cache_path))
         _freeze_phase1_gates(bridge_a)
