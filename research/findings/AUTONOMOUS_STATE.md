@@ -205,39 +205,91 @@ fixed threshold moved; original `2048750` + corrected `36a7975` +
 Stage-1 `c474d6e` + SPEAR `0bc5230` + no-confab moat byte-unchanged.
 Findings: `research/findings/2026-05-19-SPEAR-conversational-Stage-decisive-honest-negative-with-convergent-ceiling.md`.
 
-**EXACT NEXT ACTION: queue the genuinely-distinct biology-faithful
-next stage the convergent ceiling points at -- the PHASE-CODED
-VECTOR-SYMBOLIC-ARCHITECTURE UNIFICATION (Orchard 2023/2024
-spiking-phasor FHRR; refs [22][23][27] of the SPEAR design 2c/2d).**
-The convergent ceiling tells biology that rhythm-gating alone does
-not lift compositional readout above the trustworthy-abstention
-threshold; the lesson points at a mechanism where the rhythm does
-NOT just multiplex encode/retrieve phases, it ALSO carries
-compositional content as the phase of each spike within a cycle --
-i.e. the theta-gamma rhythm and SPA-style vector-symbolic binding
-are the SAME phase code with two purposes. This is biology-faithful
-(theta-gamma phase coding is observed and well-characterised in real
-brains -- Heusser 2016, Ursino 2024, Manns 2006) AND directly
-addresses the ceiling (the composed vector becomes a structured
-object the readout can decode, not a sum of partially-active
-sub-populations). Run a proper design pass under the standing
-chain: broader-search-first (consensus + WebSearch + open-source
-code repos + curated lists -- NengoSPA + Orchard et al. + Awesome-
-Spiking-Neural-Networks; do NOT rely on memory); then writing-plans
--> subagent-driven-development -> pre-registered fixed-bar three-
-state gate (with a built-in decisive control comparing against the
-convergent Stage-1+SPEAR ceiling) -> dedicated adversarial review
-BEFORE no-harm -> controller-only decisive run + mandatory smell-
-test (scrutinise a PASS harder than a FAIL) -> honest propagation
-of EVERY outcome both remotes -> autonomous continuation per
-outcome. Reuse byte-unchanged: every previously-validated subsystem
-(no protected/frozen/moat edit; no bar change; no declare-unfit; no
-hand-back; no partition edit ever). Honest ceiling unchanged: a
-clean success = a biology-grounded phase-coded VSA in spikes shows
-grounded compositional readout above the trustworthy threshold
+**PIRAZZINI-REFERENCE STAGE IN FLIGHT (design + plan + Tasks 0-2
+landed; Task 3 adversarial review is the EXACT NEXT ACTION).** After
+SPEAR convergent ceiling, the broader-search-first investigation
+(Pirazzini 2024 *Frontiers in Neural Circuits* WebFetch'd full text)
+identified a directly-implementable existing reference that uses a
+fundamentally different mechanism than SPEAR: a DISINHIBITION-based
+theta (external theta-generator unit rhythmically disinhibits CA3
+via excitatory synapses onto dg_pv_basket inhibitory interneurons),
+CORRECT HASSELMO ACh POLARITY (encode HIGH; suppresses CA3->CA1 +
+strengthens cortical input + facilitates LTP), one-shot Hebbian +
+anti-Hebbian training. Demonstrated 99 % recovery on early-position
+sequence retrieval on a comparable 3-layer architecture. Adapted to
+the project's validated `dlpfc_verb` / `ca3` / `ca1` substrate.
+Landed: design `838d50d` + plan `0046ac9` + Task 0 pin `9a3ef78` +
+Task 1 frozen verdict module `46c74e2`
+(`research/runners/pirazzini_three_layer_core.py`, 17-case
+adversarial matrix; bars verbatim `_PZ_FULL_MIN=0.80,
+_PZ_CONVERGENT_CEILING_MAX=0.10, _PZ_ABSTAIN_MIN=0.90,
+_PZ_SCALE_TOL=0.10, _PZ_LADDER=(2,3,5), _PZ_MIN_SEEDS=3`;
+`theta_disabled_acc` <= the convergent Stage-1+SPEAR ceiling as the
+DECISIVE BUILT-IN CONTROL) + Task 2 net-new runner `b0492ff`
+(`research/runners/pirazzini_three_layer_runner.py`, 887 lines:
+external theta-generator that writes -150 pA disinhibitory current
+onto dg_pv_basket at theta-trough each ~250 ms cycle via
+`bridge.cp_external_input_current`; multi-target ACh modulator
+`ach_pirazzini` baseline=0.5 with HIGH-at-encode polarity; one-shot
+encoding via reused engram API + `encode_concept_pair`; within-
+theta-cycle decode via the validated `lang_output_pattern_during_*`
++ raw firing-rate confidence path; reused `gate(ranked, 650.0)`
+moat; theta_disabled = full minus ONLY the theta-generator's
+disinhibitory current with same draws; structural-effect pin
+asserts non-byte-identical bridge state between theta ON vs OFF;
+no torch/autograd). All controller-verified: each task = exactly
+the 2 allowed files; protected set + frozen moat byte-unchanged
+across the whole Pirazzini arc; 37/37 green (17 core + 11 runner +
+2 pin + 7 moat). Both remotes synced at `b0492ff`.
+
+Two documented spec substitutions in Task 2 the dedicated
+adversarial reviewer must scrutinise explicitly: (i) the
+pathway-scoped HIGH-ACh-suppresses-CA3->CA1 and strengthens-cortical-
+input targets use `plasticity_gate (scope=gate:<pathway>)` rather
+than the spec's `synaptic_gain (scope=gate:<pathway>)` because
+`gate:` scope isn't supported for `synaptic_gain` in the reused
+subsystem (verified `sim/neuromodulators.py:298-305`); a
+`synaptic_gain (scope=all)` target with sensitivity=-0.3 was added
+as a broad-scope fallback for the transmission-dip semantic;
+(ii) `lang_to_ec` was used in place of the non-existent
+`lang_input_to_ca3` gate name (`lang_to_ec` is the closest-equivalent
+cortex-to-hippocampus input gate already in the validated builder).
+Both substitutions are documented inline and are sound under the
+project's reused-subsystem constraints; the deep faithfulness
+question is whether they materially misrepresent the Pirazzini
+mechanism for the capability being tested.
+
+**EXACT NEXT ACTION: Pirazzini Task 3 -- dedicated adversarial
+review of Task 1 + Task 2 BEFORE no-harm**, mirroring the proven
+Stage-1 + SPEAR pattern (both of which BLOCKED real defects on the
+first review and CLEARed after precise net-new-runner-only fixes).
+Specific high-risk items to scrutinise: (a) the disinhibition
+mechanism is genuinely Pirazzini's (negative current on dg_pv_basket
+at theta-trough every cycle) and is mechanistically active (50-step
+probe should show NON-byte-identical bridge state, mirror SPEAR
+re-review); (b) the `plasticity_gate` substitution for the
+pathway-scoped HIGH-ACh effects: is this a faithful approximation of
+Pirazzini's transmission-suppress/strengthen semantics or does it
+materially misrepresent the mechanism (plasticity_gate modulates
+plasticity, not transmission)?; (c) `lang_to_ec` for the cortical-
+input gate: is this the right pathway under Pirazzini's mechanism?;
+(d) ACh Hasselmo polarity (encode HIGH multiplies gates as
+configured; retrieve LOW); (e) `theta_disabled` is faithful = full
+minus ONLY the external theta generator's disinhibitory current
+with same draws; (f) a degenerate / empty / single-pathway solver
+cannot score PASS via runner+frozen-verdict end-to-end; (g) frozen
+bars immovable; no autograd; reuse byte-unchanged not copy-edited.
+STRENGTHEN-only fixes to non-protected files only; commit prefix
+`review:`; no push; no bar weakened. Then per outcome: CLEAR ->
+Task 4 no-harm + Task 5 controller-only decisive run + smell-test
++ honest propagation both remotes + autonomous next staged step;
+BLOCK -> honest propagation of the BLOCK + precise net-new-runner-
+only faithfulness fix + re-review until CLEAR. Honest ceiling
+unchanged: a clean success = a biology-grounded Pirazzini-reference
+shows grounded compositional readout above the trustworthy threshold
 (brain-faithful AND capable), explicitly NOT fluent open-ended
-language / NOT an LLM. The orienting goal is artificial life with a
-proper brain analogue; biology-translatable insights are the
+language / NOT an LLM. The orienting goal is artificial life with
+a proper brain analogue; biology-translatable insights are the
 deliverable. The autonomous next-action tool call is always in the
 same turn; never stop on a promise.
 
