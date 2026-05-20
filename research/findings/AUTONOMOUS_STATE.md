@@ -259,8 +259,83 @@ project's reused-subsystem constraints; the deep faithfulness
 question is whether they materially misrepresent the Pirazzini
 mechanism for the capability being tested.
 
-**EXACT NEXT ACTION: Pirazzini Task 3 -- dedicated adversarial
-review of Task 1 + Task 2 BEFORE no-harm**, mirroring the proven
+**PIRAZZINI TASK 3 ADVERSARIAL REVIEW = BLOCK (four real defects
+caught BEFORE the decisive run -- the discipline working a third
+time; propagated honestly).** Reviewer ran the structural-effect
+probe independently and found the disinhibition mechanism is
+**doubly inert**: (a) `step_idx=0` hardcoded at every call site
+(runner lines 511, 537, 570, 592) means `phase_in_cycle = 0 %
+theta_steps = 0` which is NEVER >= `trough_start (>=1)`; the
+disinhibition branch is dead code and the -150 pA write is
+unreachable; (b) even if it were reachable, `encode_concept_pair`
+(compose_concept_engram.py:100) and `lang_output_pattern_during_*`
+(:143, 189, 199) clear `bridge.cp_external_input_current[:] = 0.0`
+on every iteration, wiping any disinhibitory write. Empirical
+proof: bridges with theta ON vs OFF (ACh held neutral on both) are
+**byte-identical** (`np.allclose: True`). The runner's own
+structural-effect pin passes only because it bypasses both defects
+with a synthetic per-step loop that does NOT match how the runner
+actually invokes `_apply_theta_disinhibition`. Additional defects:
+(c) `plasticity_gate` substitution modulates UPDATE rate not
+TRANSMISSION; at NEUTRAL ACh `ca3_to_ca1` gate = 0.0 (pre-freezes
+the pathway on the CONTROL arm); at HIGH-ACh encode `ca3_to_ca1`
+gate = 0.0 too (Hasselmo polarity inverted under this target type);
+(d) confirmed false-PASS vector: an ACh-only mechanism (no
+disinhibition needed; same class as SPEAR's synaptic_gain modulation
+that was already shown insufficient) scores GATE=PASS via the
+runner+frozen-verdict end-to-end. theta_disabled is in practice
+"full minus ACh polarity", NOT "full minus disinhibition" -- the
+named control doesn't do the control work. CLEAR items: lang_to_ec
+routing is faithful; frozen bars + no autograd + reuse byte-
+unchanged hold; tiny-synth structural validity holds. No
+`review:` commits made (the fix requires net-new-runner-only
+implementation work, not strengthen-only).
+
+**EXACT NEXT ACTION: pre-committed faithfulness-fix iteration of
+the NET-NEW PIRAZZINI runner ONLY (NO bar change, NO declare-unfit,
+NO hand-back, NO config-crank; protected set + frozen bars + moat
+byte-UNCHANGED).** Three precise corrections in
+`research/runners/pirazzini_three_layer_runner.py` (+ its tests +
+invert the adversarial pins to assert defects are CLOSED via the
+runner's actual code path, not a synthetic bypass): (A) replace the
+direct-current-write disinhibition with a `excitability_drive`-
+based mechanism via the neuromodulator subsystem -- register a new
+`dg_disinhibition` NeuromodulatorConfig with target
+`excitability_drive scope=group:dg_pv_basket` (sensitivity tuned
+so HIGH conc gives NEGATIVE drive); the runner's controller calls
+`set_concentration` on this modulator at theta-trough phases each
+cycle via its OWN per-step bridge.step_simulation(1) loop --
+mirrors the SPEAR f1292a0 fix pattern (per-step honored consumer).
+(B) replace the `encode_concept_pair` / `lang_output_pattern_during_*`
+calls (which wipe the external-current buffer) with a runner-local
+per-step encode/retrieve loop that uses the validated engram API
+directly (`bridge.start_engram_recording` /
+`bridge.commit_engram_tag`) and drives inputs via the modulator
+subsystem (excitability_drive scope=group:language_input) instead
+of writing cp_external_input_current; this lets disinhibition
+survive each step. (C) rebalance the multi-target ACh modulator so
+at NEUTRAL ACh both pathway gates land at ~1.0 (not 0.0 --
+eliminate the control-arm pre-freeze), AND additionally route ACh
+through `excitability_drive scope=group:ca3` (negative sensitivity
+during encoding -> Hasselmo suppress-CA3-output-during-encoding) and
+`excitability_drive scope=group:ec` (positive sensitivity during
+encoding -> Hasselmo strengthen-cortical-input). Update the
+structural-effect pin to use the runner's ACTUAL `_run_arm` code
+path (not a synthetic per-step bypass) and assert NON-byte-
+identical bridge state with theta ON vs OFF at the SAME ACh
+neutral setpoint. ADD a positive false-PASS-protection pin:
+construct an ACh-only-mechanism solver (disinhibition disabled at
+the modulator level) and assert it cannot score GATE=PASS via the
+runner+frozen-verdict end-to-end. Then re-run the dedicated
+adversarial review (fix -> re-review loop until CLEAR), Task 4
+no-harm, Task 5 controller-only decisive run + smell-test + honest
+propagation both remotes, autonomous continuation per outcome.
+Honest ceiling unchanged. NO partition edit ever; the next-action
+tool call is always in the same turn; never stop on a promise.
+
+[HISTORICAL CONTEXT: original Task-3 mandate was: dedicated
+adversarial review of Task 1 + Task 2 BEFORE no-harm, mirroring the
+proven
 Stage-1 + SPEAR pattern (both of which BLOCKED real defects on the
 first review and CLEARed after precise net-new-runner-only fixes).
 Specific high-risk items to scrutinise: (a) the disinhibition
@@ -291,7 +366,7 @@ shows grounded compositional readout above the trustworthy threshold
 language / NOT an LLM. The orienting goal is artificial life with
 a proper brain analogue; biology-translatable insights are the
 deliverable. The autonomous next-action tool call is always in the
-same turn; never stop on a promise.
+same turn; never stop on a promise.]
 
 [HISTORICAL CONTEXT: the three precise corrections in
 `research/runners/spear_conversational_runner.py` (+ its tests + invert
