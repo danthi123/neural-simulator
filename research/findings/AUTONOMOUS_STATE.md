@@ -632,13 +632,20 @@ GPU (CuPy) for every real/decisive run; numpy only for `--tiny-synth`.
    guarantee for GPU-bound work. (Re-verify: `schtasks /query /tn
    SimAutonomousWatchdog`; re-register via `scripts/autonomous_watchdog.ps1`
    contract if missing.)
-2. **REMOTE, cross-session non-GPU safety-net** — claude.ai routine
-   `trig_01W7vwnpv4JYWUMjzwHaEKK6` (hourly, `0 * * * *`). Runs on a
-   GitHub checkout with NO local/GPU access; advances only non-GPU
-   pre-registered work (designs/plans/findings/propagation/state-file),
-   pushes both remotes, marks GPU steps `PENDING-LOCAL-GPU`. Manage:
-   https://claude.ai/code/routines/trig_01W7vwnpv4JYWUMjzwHaEKK6
+2. **REMOTE claude.ai routine -- DISABLED 2026-05-20 (owner
+   correction: budget consumed; do NOT re-enable or replace).**
+   The prior `sim-autonomous-continuation-watchdog` routine
+   (`trig_01W7vwnpv4JYWUMjzwHaEKK6`) was disabled by `RemoteTrigger`
+   update `enabled: false` after consuming the routine budget.
+   Continuity going forward is the LOCAL Windows Scheduled Task
+   ONLY. Do NOT create/enable/replace this routine. See
+   `memory/feedback_no_claude_routines_for_continuity.md`.
 
-If either watchdog is missing, RE-CREATE it before other work. Neither
-watchdog nor the in-session discipline may stop on a promise: the
-next-action tool call is always in the same turn.
+If the local watchdog is missing, RE-CREATE it before other work.
+The local watchdog is a fallback for genuine session death --
+it is NOT a justification to stop early in a working session.
+The in-session discipline NEVER stops on a promise: the next
+concrete tool call is always in the same turn after every commit;
+ending a turn with "AUTONOMOUS_STATE points the next session at X"
+is itself the promise-stall pattern the discipline forbids
+(owner-corrected 2026-05-20).
