@@ -12,44 +12,59 @@ Episode pairs are presented simultaneously to L1 (CA3) and L2 (CA1) for
 
 This module is the ONLY genuinely net-new code:
   * an external theta-generator CONTROLLER that rhythmically writes a
-    DISINHIBITORY current onto the CA3-targeted inhibitory population
-    (`dg_pv_basket`) at theta-trough phase via the REUSED
-    `bridge.cp_external_input_current` path. This is the Pirazzini
-    disinhibition mechanism -- biology-faithful, NOT a synaptic-gain
-    modulation (the SPEAR runner's choice);
+    DISINHIBITORY drive onto the CA3-targeted inhibitory population
+    (`dg_pv_basket`) at theta-trough phase via a NeuromodulatorConfig
+    named `dg_disinhibition` (excitability_drive scope=group:dg_pv_basket
+    with NEGATIVE sensitivity). Routing the disinhibition through the
+    modulator subsystem makes the bridge's per-step
+    `compute_excitability_drive_per_neuron` consumer apply it on EVERY
+    simulation step regardless of any encode/readout helper that zeros
+    `cp_external_input_current` between presentations. This is the
+    Pirazzini disinhibition mechanism -- biology-faithful, NOT a
+    synaptic-gain modulation (the SPEAR runner's choice), and NOT a raw
+    write to cp_external_input_current (the inert defect the
+    adversarial review caught);
   * a MULTI-TARGET ACh `NeuromodulatorConfig` combining REUSED
     `sim/neuromodulators.py` primitives so HIGH ACh simultaneously:
         (a) suppresses CA3->CA1 plasticity (via plasticity_gate scope=
-            `gate:ca3_to_ca1` with sensitivity-negative polarity);
-        (b) strengthens cortical input to hippocampus (via plasticity_
-            gate scope=`gate:lang_to_ec` with sensitivity-positive
-            polarity -- the closest existing gate tag in the validated
-            builder for "cortical input to hippocampus"; the builder
-            does not expose a `lang_input_to_ca3` gate, so this is the
-            documented closest-equivalent tag);
-        (c) facilitates LTP system-wide (via plasticity_rate scope=
+            `gate:ca3_to_ca1` with sensitivity-negative polarity REBALANCED
+            so the NEUTRAL setpoint produces gate ~1.0 -- the
+            adversarial-review-corrected control arm does NOT pre-freeze
+            this pathway);
+        (b) suppresses CA3 OUTPUT during encoding (via excitability_drive
+            scope=`group:ca3` with NEGATIVE sensitivity -- the Hasselmo
+            transmission-suppress effect, consumed EVERY step at
+            sim/bridge.py:4960-4964);
+        (c) strengthens cortical input to hippocampus during encoding
+            (via excitability_drive scope=`group:ec` with POSITIVE
+            sensitivity -- the Hasselmo cortical-strengthen effect,
+            same per-step consumer);
+        (d) facilitates LTP system-wide (via plasticity_rate scope=
             `all` with positive sensitivity);
-        (d) modulates effective synaptic strength (via synaptic_gain
+        (e) modulates effective synaptic strength (via synaptic_gain
             scope=`all` -- documented broad-scope fallback because the
             REUSED `compute_synaptic_gain_multiplier` consumer only
             honors scope=`all`; broader than ideal but biology-faithful
             on the cortex-wide ACh modulation scale).
-  * ONE-SHOT encoding via the REUSED engram-tagging API: each episode
-    pair (Ep_i, Ep_{i+1}) drives lang_input simultaneously via the
-    REUSED `encode_concept_pair` over 250 ms, ONCE, with HIGH ACh.
-    Tag NAMES are OPAQUE (`ep_{i}`) -- Stage-1 lesson, no answer string
-    in any tag.
-  * Within-theta-cycle DECODE via the REUSED neural readout:
-    `lang_output_pattern_during_stim` + `lang_output_pattern_during_
-    input` + the REUSED `_ranked_from_pattern` (raw firing-rate
-    confidence -- the calibrated 650-moat quantity), gated by the
-    REUSED `abstention_gate.gate(ranked, 650.0)`. SPEAR re-review
-    lesson: feed the moat its calibrated quantity, not a cosine * norm
-    hack.
+  * ONE-SHOT encoding via a RUNNER-LOCAL per-step loop that uses the
+    REUSED engram-tagging API directly: drives lang_input via a third
+    NeuromodulatorConfig `lang_drive_input` (excitability_drive
+    scope=`group:lang_drive_active` -- a freshly-registered group for
+    each fact, containing the active-neuron indices of the orthogonal
+    code), so the input drive composes with the disinhibition + ACh
+    modulators on EVERY step regardless of any external-current buffer
+    clears. The buffer-wiping helpers in compose_concept_engram.py are
+    NOT called (they wipe cp_external_input_current on entry, which
+    erased the disinhibition write in the original defect).
+  * Within-theta-cycle DECODE via a RUNNER-LOCAL retrieval loop using
+    the REUSED `_ranked_from_pattern` (raw firing-rate confidence --
+    the calibrated 650-moat quantity) gated by the REUSED
+    `abstention_gate.gate(ranked, 650.0)`. SPEAR re-review lesson:
+    feed the moat its calibrated quantity, not a cosine * norm hack.
 
 The decisive BUILT-IN CONTROL `theta_disabled` is IDENTICAL to `full`
 for the same (seed, N) -- SAME seed, SAME facts, SAME RNG draws --
-with the external theta generator's disinhibitory current held at zero
+with the dg_disinhibition modulator's concentration held at zero
 across all phases (no rhythmic disinhibition; CA3 remains inhibited).
 The convergent Stage-1 + SPEAR ceiling localised the gap: rhythm
 mechanism alone (in either static or rhythm-multiplexed form) does not
@@ -59,6 +74,32 @@ Pirazzini disinhibition mechanism is the next testable hypothesis.
 threaded identically. ASCII only. NO autograd anywhere. CuPy is the
 real/decisive path; --tiny-synth shrinks pools/episodes/phase-block
 lengths so the smoke is seconds (toy numbers explicitly NOT a result).
+
+ADVERSARIAL-REVIEW CORRECTION CHRONOLOGY (mirrors SPEAR f1292a0 +
+Stage-1 19190bd):
+  Original defect (commit b0492ff): _apply_theta_disinhibition received
+  `step_idx=0` at every call site -> phase_in_cycle = 0 % theta_steps
+  = 0, which is NEVER >= trough_start (>=1). The trough branch was
+  dead code; the disinhibitory -150 pA write was unreachable. Even if
+  reached, the encode_concept_pair / lang_output_pattern_during_*
+  helpers zero cp_external_input_current on entry, wiping any write.
+  An ACh-only solver (disinhibition inert, ACh polarity active) scored
+  GATE=PASS via the runner+verdict end-to-end -- a structural false-
+  PASS exploit.
+
+  Fix (this commit): four corrections, runner-only.
+    FIX A: route disinhibition through `excitability_drive scope=
+           group:dg_pv_basket` so it is consumed per-step regardless
+           of external-current clears (mirrors SPEAR f1292a0).
+    FIX B: replace buffer-wiping helper calls with runner-local
+           per-step encode/retrieve loops; drive lang_input via a
+           third modulator (excitability_drive group:lang_drive_active)
+           so the input drive also composes per-step.
+    FIX C: rebalance multi-target ACh (baseline 1.5, NEUTRAL=0.5
+           produces gate=1.0 on every pathway-scoped target) so the
+           control arm does NOT pre-freeze CA3->CA1. Add Hasselmo
+           transmission effects via excitability_drive on ec/ca3.
+    FIX D: positive false-PASS-protection pin in the test file.
 """
 from __future__ import annotations
 
@@ -125,10 +166,10 @@ def _build_substrate(seed: int, tiny_synth: bool):
 
     Mirrors the SPEAR-cleared spear_conversational_runner._build_
     substrate EXACTLY (same CoreSimConfig field set, same kwargs, NO
-    cfg.num_traits override) and registers the NET-NEW multi-target
-    ACh `NeuromodulatorConfig` (combining REUSED neuromodulator
-    primitives) so the bridge's reused step applies the three
-    Hasselmo effects each step the controller pulses ACh.
+    cfg.num_traits override) and registers the THREE NET-NEW
+    NeuromodulatorConfigs (multi-target ACh + dg_disinhibition +
+    lang_drive_input) so the bridge's reused step applies each effect
+    on every step the controller sets a concentration.
     """
     if tiny_synth:
         try:
@@ -229,90 +270,130 @@ def _build_substrate(seed: int, tiny_synth: bool):
     cfg.stdp_w_max = 8.0
     cfg.fast_spike_reset = True
 
-    # ---------- Net-new MULTI-TARGET ACh NeuromodulatorConfig ----------
-    # Combines REUSED `sim/neuromodulators.py` primitives so the three
-    # Hasselmo effects all fire each step the controller pulses ACh.
+    # ---------- THREE NET-NEW NeuromodulatorConfigs ----------
     #
-    # baseline=0.5 was chosen so the plasticity_gate formula
-    #     contribution = sensitivity * (conc - baseline)
-    # produces opposite-sign contributions at our HIGH (1.0) and LOW
-    # (0.0) setpoints. Concretely:
-    #
-    #  * synaptic_gain scope=`all` (REUSED `compute_synaptic_gain_
-    #    multiplier`, consumed every step at sim/bridge.py:4877-4879 and
-    #    4890-4897). Sensitivity NEGATIVE -- HIGH ACh (1.0) multiplies
-    #    effective gain by 1 + (-0.3)*(1-0.5) = 0.85 (suppression);
-    #    LOW ACh (0.0) gives 1 + (-0.3)*(-0.5) = 1.15 (boost). Documented
-    #    BROAD-SCOPE FALLBACK: the consumer only honors scope=`all` --
-    #    no scope=`gate:<name>` path exists for synaptic_gain (verified
-    #    via inspection of sim/neuromodulators.py:298-305). So this
-    #    pathway-selective Hasselmo effect is implemented at the
-    #    cortex-wide scale; the breadth is broader than ideal but
-    #    biologically plausible (ACh broadly modulates cortical gain;
-    #    Sarter 2009).
-    #  * plasticity_rate scope=`all` (REUSED `compute_plasticity_rate_
-    #    multiplier`). Sensitivity POSITIVE -- HIGH ACh facilitates LTP
-    #    system-wide. At HIGH (1.0) the multiplier is 1+0.5*(1-0.5)
-    #    = 1.25; at LOW (0.0) it is 1+0.5*(-0.5) = 0.75.
-    #  * plasticity_gate scope=`gate:ca3_to_ca1` (REUSED `compute_
-    #    plasticity_gate_values`, propagated to the per-pathway gate
-    #    via sim/bridge.py:5432-5438). Sensitivity NEGATIVE -- HIGH ACh
-    #    drives the gate value to 0 (CA3->CA1 plasticity SUPPRESSED);
-    #    LOW ACh drives it to ~1 (open). With baseline=0.5 and
-    #    sensitivity=-2.0: HIGH->-1.0 clipped to 0.0; LOW->+1.0 clipped
-    #    to 1.0.
-    #  * plasticity_gate scope=`gate:lang_to_ec` (closest-equivalent tag
-    #    for "cortical input to hippocampus"; the builder tags the
-    #    language_input->ec pathway with `lang_to_ec`, NOT a
-    #    `lang_input_to_ca3` gate that does not exist). Sensitivity
-    #    POSITIVE -- HIGH ACh keeps this gate OPEN (cortical input
-    #    strengthened during encoding); LOW ACh closes it.
-    #
-    # Production rule `manual` -- the controller drives concentration
-    # explicitly via the reused `set_concentration`. concentration_min
-    # 0.0 / concentration_max 2.0 are the same scale the SPEAR
-    # acetylcholine_tan config uses.
+    # The adversarial-review-blocked b0492ff design had a SINGLE multi-
+    # target ACh modulator and a raw `cp_external_input_current` write
+    # for disinhibition. That design was inert end-to-end (defects 1-3
+    # in the review). This rewrite registers THREE separate modulators
+    # so each named-biology effect is routed through a sim/bridge.py
+    # consumer that is honored EVERY simulation step (mirrors SPEAR
+    # f1292a0): excitability_drive on group:NAME for the per-step
+    # disinhibition + Hasselmo transmission effects + lang_input drive;
+    # plasticity_gate/plasticity_rate/synaptic_gain for the ACh learning
+    # modulation.
     from sim.neuromodulators import (
         NeuromodulatorConfig,
         ModulatorTarget,
         ProductionRule,
     )
 
-    _ACH_BASELINE = 0.5
-    _ACH_SYN_GAIN_SENS = -0.3   # HIGH ACh suppresses transmission gain
-    _ACH_PLAST_RATE_SENS = +0.5  # HIGH ACh facilitates LTP
-    _ACH_CA3_TO_CA1_SENS = -2.0  # HIGH ACh suppresses CA3->CA1 plasticity
-    _ACH_LANG_TO_EC_SENS = +2.0  # HIGH ACh strengthens cortical input
+    # =================================================================
+    # MOD 1: `ach_pirazzini` -- multi-target ACh (Hasselmo polarity).
+    # =================================================================
+    #
+    # FIX C (2026-05-20) rebalances the modulator after the adversarial
+    # review caught that with baseline=0.5 + sensitivity=-2.0 on the
+    # plasticity_gate scope=`gate:ca3_to_ca1` target, the NEUTRAL
+    # concentration (which the theta_disabled arm holds throughout)
+    # produces gate = clip(0,1, -2*(0.5-0.5)) = 0.0 -- the control arm
+    # has CA3->CA1 plasticity PRE-FROZEN. So `theta_disabled` was in
+    # practice `full minus the ACh polarity`, NOT `full minus the
+    # disinhibition mechanism`. That confused the named-control
+    # interpretation and is what enabled the ACh-only false-PASS exploit.
+    #
+    # The fix shifts baseline to 1.5 so:
+    #   gate at NEUTRAL conc=0.5: clip(0,1, -2*(0.5-1.5))= clip(0,1, 2.0) = 1.0  (PERMIT, no pre-freeze) ✓
+    #   gate at HIGH  conc=2.0:  clip(0,1, -2*(2.0-1.5))= clip(0,1,-1.0)= 0.0  (Hasselmo suppress CA3->CA1 plasticity at encode) ✓
+    #   gate at LOW   conc=0.0:  clip(0,1, -2*(0.0-1.5))= clip(0,1, 3.0) = 1.0  (PERMIT pattern completion at retrieve) ✓
+    #
+    # The Hasselmo TRANSMISSION semantics (HIGH ACh suppresses CA3 OUTPUT
+    # at encode + HIGH ACh STRENGTHENS cortical EC drive at encode) are
+    # NOT routed through plasticity_gate (which modulates only the
+    # PLASTICITY-update rate). They are routed through excitability_drive
+    # on group:ca3 and group:ec -- the per-step consumer at
+    # sim/bridge.py:4960-4964 honors group:NAME scopes via the registered
+    # group indices (set in _run_arm). NEUTRAL produces zero drive on
+    # both (the no-effect midpoint); HIGH produces suppression on ca3 +
+    # strengthening on ec; LOW does the opposite at low intensity.
+    #
+    # Targets (each verified against the REUSED consumer in sim/bridge.py):
+    #
+    #  * plasticity_gate scope=`gate:ca3_to_ca1` (REBALANCED).
+    #    consumer: sim/bridge.py:5432-5438. NEUTRAL = PERMIT (FIX C).
+    #
+    #  * excitability_drive scope=`group:ca3`, sensitivity = -300 pA
+    #    per unit (conc-baseline) -> at HIGH conc=2.0 produces
+    #    -300*(2.0-1.5) = -150 pA on CA3 neurons (suppresses CA3 output
+    #    during encode). At NEUTRAL/LOW the drive is +300 pA / +450 pA
+    #    -- not zero, but the Hasselmo asymmetry is preserved: HIGH
+    #    SUPPRESSES, LOW/NEUTRAL PERMITS. consumer: sim/bridge.py:4960-
+    #    4964 every step.
+    #
+    #  * excitability_drive scope=`group:ec`, sensitivity = +200 pA per
+    #    unit (conc-baseline) -> at HIGH conc=2.0 produces +200*(0.5)
+    #    = +100 pA on EC neurons (strengthens cortical input during
+    #    encode). At NEUTRAL produces -200 pA; at LOW produces -300 pA.
+    #    The Hasselmo asymmetry HIGH > NEUTRAL > LOW is preserved.
+    #    consumer: sim/bridge.py:4960-4964 every step.
+    #
+    #  * plasticity_rate scope=`all` (system-wide LTP facilitation).
+    #    consumer: compute_plasticity_rate_multiplier called inside C2
+    #    reward-mod block (active when reward signal exists). Sensitivity
+    #    POSITIVE so HIGH ACh facilitates LTP during encoding.
+    #
+    #  * synaptic_gain scope=`all` (DOCUMENTED BROAD-SCOPE FALLBACK; the
+    #    REUSED `compute_synaptic_gain_multiplier` consumer only honors
+    #    scope=`all`). Consumed EVERY step at sim/bridge.py:4877-4879
+    #    (STP branch) and 4890-4897 (no-STP branch). Sensitivity small
+    #    NEGATIVE so HIGH ACh slightly suppresses afferent gain (the
+    #    cortex-wide ACh modulation effect; biologically plausible per
+    #    Sarter 2009).
+    #
+    # Production rule `manual` -- the controller drives concentration
+    # explicitly via the reused `set_concentration`. concentration_max
+    # bumped to 2.5 so HIGH=2.0 sits comfortably below the cap.
+    _ACH_BASELINE = 1.5      # FIX C: rebalanced from 0.5 so NEUTRAL=PERMIT
+    _ACH_CA3_TO_CA1_SENS = -2.0   # gate suppression at HIGH ACh
+    _ACH_CA3_DRIVE_SENS = -300.0  # pA per unit (conc - baseline); HIGH ACh -> NEGATIVE drive on CA3 (suppress output)
+    _ACH_EC_DRIVE_SENS = +200.0   # pA per unit (conc - baseline); HIGH ACh -> POSITIVE drive on EC (strengthen input)
+    _ACH_PLAST_RATE_SENS = +0.5   # HIGH ACh facilitates LTP system-wide
+    _ACH_SYN_GAIN_SENS = -0.3     # HIGH ACh slightly suppresses cortex-wide gain
     ach = NeuromodulatorConfig(
         name="ach_pirazzini",
         baseline=_ACH_BASELINE,
         decay_tau_ms=500.0,
         concentration_min=0.0,
-        concentration_max=2.0,
+        concentration_max=2.5,
         targets=[
-            # (a) suppress CA3->CA1 (named-gate path)
+            # (a) suppress CA3->CA1 plasticity at encode (PERMIT at
+            # NEUTRAL/LOW, SUPPRESS at HIGH)
             ModulatorTarget(
                 target_type="plasticity_gate",
                 scope="gate:ca3_to_ca1",
                 sensitivity=_ACH_CA3_TO_CA1_SENS,
             ),
-            # (b) strengthen cortical input (closest-equivalent named
-            # gate is `lang_to_ec` -- builder does NOT expose a
-            # `lang_input_to_ca3` gate, documented above)
+            # (b) Hasselmo: suppress CA3 OUTPUT at encode (per-step
+            # consumed; not a plasticity gate)
             ModulatorTarget(
-                target_type="plasticity_gate",
-                scope="gate:lang_to_ec",
-                sensitivity=_ACH_LANG_TO_EC_SENS,
+                target_type="excitability_drive",
+                scope="group:ca3",
+                sensitivity=_ACH_CA3_DRIVE_SENS,
             ),
-            # (c) facilitate LTP (system-wide; standard Hasselmo)
+            # (c) Hasselmo: strengthen EC (cortical input) at encode
+            ModulatorTarget(
+                target_type="excitability_drive",
+                scope="group:ec",
+                sensitivity=_ACH_EC_DRIVE_SENS,
+            ),
+            # (d) Hasselmo: facilitate LTP system-wide at encode
             ModulatorTarget(
                 target_type="plasticity_rate",
                 scope="all",
                 sensitivity=_ACH_PLAST_RATE_SENS,
             ),
-            # (d) modulate effective synaptic strength every step
-            # (documented broad-scope fallback; consumer only honors
-            # scope="all" for synaptic_gain)
+            # (e) cortex-wide gain modulation (documented broad-scope
+            # fallback; consumer only honors scope="all")
             ModulatorTarget(
                 target_type="synaptic_gain",
                 scope="all",
@@ -321,8 +402,80 @@ def _build_substrate(seed: int, tiny_synth: bool):
         ],
         production_rules=[ProductionRule(rule_type="manual")],
     )
+
+    # =================================================================
+    # MOD 2: `dg_disinhibition` -- the Pirazzini external theta generator.
+    # =================================================================
+    #
+    # FIX A (2026-05-20): the original raw-buffer-write design wrote
+    # `bridge.cp_external_input_current[pv_idx] = -150` at theta-trough.
+    # That was inert because (i) `step_idx=0` was hardcoded at every
+    # call site -> phase_in_cycle never reached trough_start and (ii)
+    # `encode_concept_pair` zeros the external-current buffer on entry.
+    #
+    # The fix routes the disinhibition through a NeuromodulatorConfig
+    # whose ONE target is excitability_drive scope=`group:dg_pv_basket`
+    # with NEGATIVE sensitivity. The consumer at sim/bridge.py:4960-
+    # 4964 honors this scope EVERY simulation step (via the registered
+    # group indices set in _run_arm), so the disinhibition is applied
+    # regardless of any helper that clears cp_external_input_current.
+    # The controller drives concentration to 1.0 at theta-trough steps
+    # and 0.0 elsewhere, producing -150 pA on dg_pv_basket at trough
+    # (silences inhibitors -> CA3 disinhibited; biology-faithful per
+    # Pirazzini 2024 section 2). decay_tau_ms large so a per-step
+    # set_concentration call is the dominant driver.
+    _DISINHIB_SENS = -150.0   # pA per unit (conc - baseline); conc=1 -> -150 pA on dg_pv_basket
+    dg_disinhibition = NeuromodulatorConfig(
+        name="dg_disinhibition",
+        baseline=0.0,
+        decay_tau_ms=10000.0,   # large -> per-step set_concentration dominates
+        concentration_min=0.0,
+        concentration_max=1.5,
+        targets=[
+            ModulatorTarget(
+                target_type="excitability_drive",
+                scope="group:dg_pv_basket",
+                sensitivity=_DISINHIB_SENS,
+            ),
+        ],
+        production_rules=[ProductionRule(rule_type="manual")],
+    )
+
+    # =================================================================
+    # MOD 3: `lang_drive_input` -- per-fact orthogonal-code input drive.
+    # =================================================================
+    #
+    # FIX B (2026-05-20): the original runner called encode_concept_pair
+    # / lang_output_pattern_during_{stim,input}, which all zero
+    # cp_external_input_current on entry, wiping any prior write
+    # (disinhibition, ACh-driven anything). The fix replaces those calls
+    # with a runner-local per-step loop driving language_input via a
+    # third modulator. We register an excitability_drive target on
+    # scope=`group:lang_drive_active` -- the indices of the currently-
+    # active neurons in the orthogonal code (a fresh subset per fact).
+    # The runner's encode/retrieve loops register the indices via
+    # `mgr.set_group_indices({"lang_drive_active": active_idx})` BEFORE
+    # setting concentration. concentration units are pA / sensitivity
+    # so conc=1 produces +sensitivity drive on every active neuron.
+    _LANG_DRIVE_SENS = +200.0   # pA per unit; conc=1 -> +200 pA on the active subset
+    lang_drive_input = NeuromodulatorConfig(
+        name="lang_drive_input",
+        baseline=0.0,
+        decay_tau_ms=10000.0,
+        concentration_min=0.0,
+        concentration_max=1.5,
+        targets=[
+            ModulatorTarget(
+                target_type="excitability_drive",
+                scope="group:lang_drive_active",
+                sensitivity=_LANG_DRIVE_SENS,
+            ),
+        ],
+        production_rules=[ProductionRule(rule_type="manual")],
+    )
+
     cfg.enable_neuromodulator_subsystem = True
-    cfg.neuromodulators = [ach]
+    cfg.neuromodulators = [ach, dg_disinhibition, lang_drive_input]
 
     bridge = SimulationBridge(
         core_config=cfg,
@@ -368,15 +521,17 @@ def _build_substrate(seed: int, tiny_synth: bool):
 # =====================================================================
 #  THE NET-NEW EXTERNAL THETA GENERATOR CONTROLLER.
 #  (A timing controller; no new learning rule; no autograd. Implements
-#  Pirazzini's disinhibition mechanism via REUSED bridge primitives.)
+#  Pirazzini's disinhibition mechanism via REUSED bridge primitives,
+#  ALL routed through NeuromodulatorConfig targets per FIX A/B/C.)
 # =====================================================================
 def _set_ach(bridge, value: float) -> None:
     """Set the ACh concentration via the REUSED NeuromodulatorManager.
-    The bridge's reused `compute_*_multiplier` consumers then propagate
-    the four-target effect (CA3->CA1 plasticity, cortical input gate,
-    plasticity_rate, synaptic_gain) on every subsequent step until the
-    next call. Hasselmo polarity: HIGH = encoding-permissive, LOW =
-    pattern-completion.
+    The bridge's reused `compute_*_multiplier` / `compute_excitability_
+    drive_per_neuron` consumers then propagate the five-target effect
+    (CA3->CA1 plasticity gate, CA3 output excitability_drive, EC input
+    excitability_drive, plasticity_rate, synaptic_gain) on every
+    subsequent step until the next call. Hasselmo polarity: HIGH =
+    encoding-permissive, LOW = pattern-completion.
     """
     mgr = getattr(bridge, "neuromodulator_manager", None)
     if mgr is None:
@@ -385,22 +540,54 @@ def _set_ach(bridge, value: float) -> None:
         mgr.set_concentration("ach_pirazzini", float(value))
     except Exception:
         # Subsystem missing (degraded smoke) -- the controller still
-        # alternates the disinhibitory current; ACh is then a no-op.
+        # drives the disinhibition modulator; ACh is then a no-op.
         # Never fabricate a phase effect.
         pass
 
 
-# Hasselmo polarity ACh setpoints (baseline=0.5). ENCODE = HIGH (>=
-# baseline so plasticity_gate ca3_to_ca1 drives toward 0 and lang_to_ec
-# drives toward 1; synaptic_gain dips for suppression; plasticity_rate
-# boosts). RETRIEVE = LOW (the opposite -- pattern completion).
-_ACH_ENCODE_HIGH = 1.0    # Hasselmo: HIGH ACh during encoding
-_ACH_RETRIEVE_LOW = 0.0   # Hasselmo: LOW ACh during retrieval
-_ACH_NEUTRAL = 0.5        # baseline; theta-disabled holds ACh here
-#                            (so all three Pirazzini effects sit at
-#                            their no-effect midpoint and the only
-#                            difference from `full` is the disinhibitory
-#                            current itself being absent).
+def _set_disinhibition(bridge, value: float) -> None:
+    """Set the dg_disinhibition concentration. conc=1.0 -> -150 pA on
+    dg_pv_basket (CA3 disinhibited at theta-trough); conc=0.0 -> 0 pA
+    (inhibitors firing normally; CA3 inhibited). This is the per-step
+    consumer (FIX A) that replaces the original inert raw external-
+    current write.
+    """
+    mgr = getattr(bridge, "neuromodulator_manager", None)
+    if mgr is None:
+        return
+    try:
+        mgr.set_concentration("dg_disinhibition", float(value))
+    except Exception:
+        pass
+
+
+def _set_lang_drive(bridge, value: float) -> None:
+    """Set the lang_drive_input concentration. conc=1.0 -> +200 pA on
+    the registered `lang_drive_active` group (the active neurons of the
+    current orthogonal code); conc=0.0 -> 0 pA. The runner sets the
+    group's indices via `mgr.set_group_indices({"lang_drive_active":
+    active_idx})` BEFORE turning concentration on.
+    """
+    mgr = getattr(bridge, "neuromodulator_manager", None)
+    if mgr is None:
+        return
+    try:
+        mgr.set_concentration("lang_drive_input", float(value))
+    except Exception:
+        pass
+
+
+# Hasselmo polarity ACh setpoints. FIX C rebalanced: baseline=1.5,
+# NEUTRAL=0.5 produces gate=1.0 on every pathway-scoped target (PERMIT
+# everywhere, no pre-freeze in the control arm). HIGH=2.0 produces
+# gate=0 on ca3_to_ca1 (Hasselmo suppress encoded LTP) + negative drive
+# on ca3 (suppress output) + positive drive on ec (strengthen input).
+# LOW=0.0 produces gate=1 (permit), positive drive on ca3, negative
+# drive on ec -- the retrieve regime (pattern completion, CA3 dominant).
+# NEUTRAL=0.5 is the no-effect midpoint the theta_disabled arm holds.
+_ACH_ENCODE_HIGH = 2.0       # Hasselmo HIGH at encode
+_ACH_RETRIEVE_LOW = 0.0      # Hasselmo LOW at retrieve
+_ACH_NEUTRAL = 0.5           # theta_disabled holds this throughout
 
 
 def _resolve_pv_basket_indices(bridge):
@@ -421,191 +608,261 @@ def _resolve_pv_basket_indices(bridge):
         return []
 
 
-# Pirazzini disinhibitory current magnitude. NEGATIVE because the
-# inhibitory population (dg_pv_basket) is silenced at theta-trough, so
-# CA3 pyramidals are released from FFi inhibition (biology-faithful per
-# Pirazzini 2024 section 2). Magnitude chosen modest enough not to
-# overdrive the IZH FS interneurons into anomalous regimes but
-# definitively negative.
-_PV_DISINHIB_CURRENT_pA = -150.0
+def _phase_is_trough(step_idx: int, theta_steps: int) -> bool:
+    """Compute the theta phase for a given (absolute) step index.
 
-
-def _apply_theta_disinhibition(bridge, dims, step_idx, use_theta,
-                                  pv_arr=None):
-    """Pirazzini disinhibition: at theta-trough phase (the second half
-    of each ~250 ms theta cycle), write a NEGATIVE current onto the
-    dg_pv_basket inhibitory population via the REUSED
-    `bridge.cp_external_input_current` array, so CA3 pyramidals are
-    released from FFi inhibition. At theta-peak phase (first half),
-    write zero on dg_pv_basket (default inhibited regime).
-
-    On `use_theta=False` (the decisive built-in control), NEVER write
-    the disinhibitory current -- CA3 remains inhibited throughout.
-    Every other phase helper is identical between the two arms.
-
-    NOTE on sign: the spec offered two biologically-defensible options
-    (drive interneurons NEGATIVELY at trough so they release CA3, OR
-    drive CA3 pyramidals POSITIVELY at trough). We chose the first --
-    it matches Pirazzini 2024's explicit mechanism ("theta-generator
-    unit rhythmically disinhibits CA3 via glutamatergic excitatory
-    synapses onto inhibitory interneurons") more faithfully than a
-    direct CA3 depolarisation would, and it composes correctly with
-    the existing ec->dg_pv_basket->dg FFi sparsity pathway in the
-    validated builder. The negative current on dg_pv_basket silences
-    them; the absence of FFi releases the downstream CA3 layer.
+    Returns True iff phase is in the trough half. FIX A correction:
+    the original runner always passed `step_idx=0` to this kind of
+    helper, which made the trough branch dead code. The runner-local
+    per-step loops now thread the absolute step index through every
+    call so the trough/peak schedule is genuinely exercised.
     """
-    if not use_theta:
-        return
-    if pv_arr is None or len(pv_arr) == 0:
-        return
-    theta_steps = int(dims.get("theta_steps", 50))
-    trough_start = max(1, theta_steps // 2)
-    phase_in_cycle = int(step_idx) % theta_steps
-    if phase_in_cycle >= trough_start:
-        bridge.cp_external_input_current[pv_arr] = float(
-            _PV_DISINHIB_CURRENT_pA
-        )
-    # else: leave dg_pv_basket at whatever the caller's drive set
-    # (the encode/retrieve helpers zero the buffer between
-    # presentations; the disinhibitory write only fires at trough).
+    trough_start = max(1, int(theta_steps) // 2)
+    return (int(step_idx) % int(theta_steps)) >= trough_start
+
+
+# =====================================================================
+#  Runner-local helpers that drive lang_input via the modulator
+#  subsystem (FIX B): NO buffer-wiping helper calls.
+# =====================================================================
+def _resolve_active_lang_input_neurons(bridge, word: str, dims):
+    """Return the host-side list of language_input neuron indices that
+    are 'active' for the given word's orthogonal drive pattern.
+
+    REUSED: orthogonal_drive_pattern from sim.text_embeddings + the
+    Stage-1/SPEAR validated language_input region. We compute the
+    binary support of the orthogonal code and map it into the bridge's
+    region-indices namespace (so it can be registered as a group on the
+    neuromodulator manager and consumed by excitability_drive scope=
+    group:lang_drive_active per FIX B).
+    """
+    from sim.text_embeddings import orthogonal_drive_pattern
+    from research.runners.concept_compose_train import _WORD_TO_IDX
+
+    rm = bridge.region_manager
+    lang_indices = list(rm.indices("language_input"))
+    n_lang_input = dims["n_lang_input"]
+    sparsity = dims["sparsity"]
+    drive = orthogonal_drive_pattern(
+        cue_idx=_WORD_TO_IDX[word],
+        n_cues=_N_WORDS_ORTHOGONAL,
+        n_neurons=n_lang_input,
+        drive_max_pA=1.0,
+        sparsity=sparsity,
+    )
+    drive_arr = np.asarray(drive, dtype=np.float64)
+    # Map active positions (positions where the orthogonal code is
+    # non-zero) into the bridge's global neuron index namespace via
+    # language_input's region indices. orthogonal_drive_pattern returns
+    # an n_lang_input-length array aligned with the order of
+    # language_input neurons (which is the order rm.indices returns).
+    active_local = np.nonzero(drive_arr > 0.0)[0]
+    if len(active_local) == 0:
+        return []
+    return [int(lang_indices[i]) for i in active_local
+              if 0 <= i < len(lang_indices)]
 
 
 # =====================================================================
 #  Phase helpers: encode (HIGH ACh, simultaneous L1+L2) and retrieve
 #  (LOW ACh, pattern completion + moat-gated decode).
+#
+#  FIX B: replaces the buffer-wiping encode_concept_pair / lang_output_
+#  pattern_during_* helpers with runner-local per-step loops that drive
+#  inputs ONLY through the modulator subsystem (which is consumed every
+#  step at sim/bridge.py:4960-4964 + 4877-4897 + 5432-5438). The engram
+#  API itself (start_engram_recording / commit_engram_tag /
+#  stimulate_tag / clear_tag_drive) is REUSED byte-unchanged -- only
+#  the OUTER loops are net-new.
 # =====================================================================
 def _theta_encode_phase(bridge, fact, tag_name, dims, encoding_steps,
-                          gamma_idx, n_facts, use_theta, pv_arr):
-    """ENCODE phase for ONE episode pair.
+                          gamma_idx, n_facts, use_theta,
+                          force_disinhibition_off: bool = False):
+    """ENCODE phase for ONE episode pair via a runner-local per-step loop.
 
-    On the full path (use_theta=True): ACh is HIGH for the duration of
-    the 250 ms theta cycle. The Pirazzini disinhibition pulse fires at
-    the trough half of each theta cycle (released CA3 pyramidals). The
-    episode is encoded ONE-SHOT as a Tonegawa engram over the
-    hippocampal regions via the REUSED `encode_concept_pair`. The
-    `gamma_idx` selects WHICH ordered compositional slot the dlpfc
-    PFC frame holds (one fact per gamma sub-cycle, advancing each
-    theta cycle) -- this matches Pirazzini's claim that one theta
-    cycle accommodates ~5 episodes nested in gamma sub-cycles.
+    Steps:
+      1. resolve active lang_input neurons for noun + adj.
+      2. register them as the `lang_drive_active` group on the
+         neuromodulator manager.
+      3. start_engram_recording(tag_name) (REUSED).
+      4. per step in [0, encoding_steps):
+         - set lang_drive_input concentration = 1.0 (drives the active
+           lang_input neurons by +200 pA via excitability_drive).
+         - if use_theta: set ACh = HIGH; else: set ACh = NEUTRAL.
+         - if use_theta AND NOT force_disinhibition_off AND phase is
+           trough: set dg_disinhibition = 1.0; else: 0.0.
+         - bridge._run_one_simulation_step()
+      5. commit_engram_tag(tag_name, top_k=..., region_filter=
+         _HIPPO_TAG_REGIONS) (REUSED).
 
-    On the theta-disabled path (use_theta=False): ACh is held at the
-    neutral baseline (0.5) and the disinhibitory current is NEVER
-    written -- CA3 remains inhibited. The SAME reused encode runs
-    with the SAME draws.
+    Every concentration write is consumed by the bridge on the SAME
+    step. No external-current buffer is touched -- the input drive
+    travels through `compute_excitability_drive_per_neuron` (added to
+    `total_input_current_pA` at sim/bridge.py:4960-4964).
     """
-    from research.runners.compose_concept_engram import encode_concept_pair
-
     noun, adj = fact
-    if use_theta:
-        _set_ach(bridge, _ACH_ENCODE_HIGH)  # Hasselmo HIGH at encode
-    else:
-        _set_ach(bridge, _ACH_NEUTRAL)
+    mgr = bridge.neuromodulator_manager
 
-    # Apply disinhibition for the start of the encode window. The
-    # encode_concept_pair routine then loops `_run_one_simulation_step`
-    # internally; the disinhibitory current persists on dg_pv_basket
-    # until the next external-current write at theta-peak. The reused
-    # encode call zeros `cp_external_input_current` at boundaries so
-    # this is consistent with the validated path.
-    _apply_theta_disinhibition(
-        bridge, dims, step_idx=0, use_theta=use_theta, pv_arr=pv_arr,
-    )
+    # Active lang_input indices for noun OR adj (the validated
+    # encode_concept_pair combines both drives additively; we register
+    # the UNION so excitability_drive's mask covers all active neurons).
+    active_noun = _resolve_active_lang_input_neurons(bridge, noun, dims)
+    active_adj = _resolve_active_lang_input_neurons(bridge, adj, dims)
+    active = sorted(set(active_noun) | set(active_adj))
+    if mgr is not None and active:
+        # Refresh ALL group indices (region groups + lang_drive_active)
+        # each call. This is necessary because set_group_indices()
+        # replaces the entire group dict.
+        groups = dict(bridge.region_manager.region_indices_dict())
+        groups["lang_drive_active"] = active
+        mgr.set_group_indices(groups)
 
+    # Open the engram recording (REUSED API).
     if tag_name in {t["name"] for t in bridge.list_engram_tags()}:
         try:
             bridge.delete_engram_tag(tag_name)
         except Exception:
             pass
-    # `gamma_idx` is recorded in the OPAQUE tag name (`ep_{i}`) only as
-    # a slot id. Nothing downstream parses the tag string.
-    encode_concept_pair(
-        bridge, noun, adj, tag_name,
-        encoding_steps=encoding_steps,
-        drive_pA=200.0, sparsity=dims["sparsity"],
-        n_lang_input=dims["n_lang_input"],
-        n_words_for_orthogonal=_N_WORDS_ORTHOGONAL,
-        region_filter=_HIPPO_TAG_REGIONS,
+    bridge.start_engram_recording(tag_name)
+
+    # Per-step encode loop. The step index threads through
+    # _phase_is_trough so the theta cycle is genuinely exercised
+    # (FIX A: original `step_idx=0` made the trough branch dead).
+    theta_steps = int(dims.get("theta_steps", 50))
+    for s in range(int(encoding_steps)):
+        # Drive lang_input via modulator (NOT cp_external_input_current).
+        _set_lang_drive(bridge, 1.0)
+        # ACh polarity: HIGH at encode on the full arm; NEUTRAL on
+        # theta_disabled.
+        if use_theta:
+            _set_ach(bridge, _ACH_ENCODE_HIGH)
+        else:
+            _set_ach(bridge, _ACH_NEUTRAL)
+        # Disinhibition: ON at theta-trough phase on the full arm, OFF
+        # everywhere else. force_disinhibition_off (FIX D) holds it OFF
+        # regardless -- used by the false-PASS-protection pin to prove
+        # an ACh-only solver cannot score PASS.
+        if (use_theta
+                and not force_disinhibition_off
+                and _phase_is_trough(s, theta_steps)):
+            _set_disinhibition(bridge, 1.0)
+        else:
+            _set_disinhibition(bridge, 0.0)
+        bridge._run_one_simulation_step()
+
+    # Commit the engram (REUSED API). OPAQUE tag name -- Stage-1 lesson.
+    bridge.commit_engram_tag(
+        tag_name,
         top_k=max(8, dims["n_per_pool"] // 4),
-        balanced_teacher_pA=500.0,
-        verbose=False,
+        region_filter=_HIPPO_TAG_REGIONS,
     )
-    # Re-apply disinhibition once more after encode_concept_pair's
-    # internal zero of the external-current buffer -- so subsequent
-    # phase helpers (or the within-theta-cycle decode below) inherit a
-    # consistent trough/peak state on the full arm.
-    _apply_theta_disinhibition(
-        bridge, dims, step_idx=0, use_theta=use_theta, pv_arr=pv_arr,
-    )
+
+    # Settle: clear drives.
+    _set_lang_drive(bridge, 0.0)
+    _set_disinhibition(bridge, 0.0)
 
 
 def _theta_retrieve_phase(bridge, cue_noun, tag_name, dims,
-                            have_remote, recall_steps, use_theta, pv_arr):
-    """RETRIEVE / pattern-complete phase for ONE compositional query.
+                            have_remote, recall_steps, use_theta,
+                            force_disinhibition_off: bool = False):
+    """RETRIEVE / pattern-complete phase for ONE compositional query
+    via a runner-local per-step loop.
 
-    On the full path (use_theta=True): ACh is LOW (Hasselmo retrieval:
-    pattern completion, CA3 recurrent autoassociation dominates).
-    The disinhibition pulse continues to fire at theta-trough so the
-    within-theta-cycle decode reads CA3 in its rhythmically-released
-    state, mirroring Pirazzini's "70 % max-activity threshold within
-    a theta cycle" criterion -- adapted here to the calibrated raw
-    lang_output firing-rate confidence the REUSED 650 moat expects.
-
-    On the theta-disabled path (use_theta=False): ACh is held neutral
-    and the disinhibitory current is NEVER written. SAME reused
-    readouts with SAME draws.
+    Two sub-reads (consolidated regime + hippocampal regime); both
+    accumulate the lang_output firing pattern per step. Then the
+    ranked compose-sum is fed to the REUSED 650 moat (raw firing-rate
+    confidence per the SPEAR re-review lesson).
 
     Returns (answer_or_None, ranked).
     """
-    from research.runners.compose_concept_engram import (
-        lang_output_pattern_during_stim,
-        lang_output_pattern_during_input,
-    )
+    from sim.backend import get_backend, to_host
+    cp, _ = get_backend()
 
-    if use_theta:
-        _set_ach(bridge, _ACH_RETRIEVE_LOW)  # Hasselmo LOW at retrieve
-    else:
-        _set_ach(bridge, _ACH_NEUTRAL)
+    mgr = bridge.neuromodulator_manager
+    rm = bridge.region_manager
+    lang_out_idx = list(rm.indices("language_output"))
+    lang_out_arr = cp.asarray(lang_out_idx, dtype=cp.int64)
+    n_lang_out = len(lang_out_idx)
 
-    _apply_theta_disinhibition(
-        bridge, dims, step_idx=0, use_theta=use_theta, pv_arr=pv_arr,
-    )
+    theta_steps = int(dims.get("theta_steps", 50))
 
-    # Consolidated-regime read (cue alone drives lang_input; the
-    # consolidated schema is what makes the readout confident).
+    def _per_step_drives(s: int, drive_on: bool):
+        """Apply the same theta-cycle disinhibition + Hasselmo ACh
+        polarity (LOW at retrieve) for one step. drive_on selects
+        whether lang_drive_input is active for this sub-phase."""
+        if drive_on:
+            _set_lang_drive(bridge, 1.0)
+        else:
+            _set_lang_drive(bridge, 0.0)
+        if use_theta:
+            _set_ach(bridge, _ACH_RETRIEVE_LOW)
+        else:
+            _set_ach(bridge, _ACH_NEUTRAL)
+        if (use_theta
+                and not force_disinhibition_off
+                and _phase_is_trough(s, theta_steps)):
+            _set_disinhibition(bridge, 1.0)
+        else:
+            _set_disinhibition(bridge, 0.0)
+
+    # ----- Consolidated-regime read: drive lang_input(cue_noun) alone
+    # via the lang_drive_input modulator and accumulate lang_output
+    # spike pattern. -----
     if have_remote:
-        cons_pat, n_lo = lang_output_pattern_during_input(
-            bridge, cue_noun,
-            n_lang_input=dims["n_lang_input"],
-            sparsity=dims["sparsity"],
-            n_words_for_orthogonal=_N_WORDS_ORTHOGONAL,
-            stim_steps=recall_steps,
-        )
+        active_cue = _resolve_active_lang_input_neurons(bridge, cue_noun, dims)
+        if mgr is not None and active_cue:
+            groups = dict(bridge.region_manager.region_indices_dict())
+            groups["lang_drive_active"] = active_cue
+            mgr.set_group_indices(groups)
+        cons_pat = cp.zeros(n_lang_out, dtype=cp.float32)
+        for s in range(int(recall_steps)):
+            _per_step_drives(s, drive_on=True)
+            bridge._run_one_simulation_step()
+            if hasattr(bridge, "cp_firing_states"):
+                firing = bridge.cp_firing_states
+                cons_pat = cons_pat + firing[lang_out_arr].astype(cp.float32)
+        cons_pat_host = to_host(cons_pat)
         cons_ranked = _ranked_from_pattern(
-            cons_pat, n_lo, dims, exclude=cue_noun
+            cons_pat_host, n_lang_out, dims, exclude=cue_noun
         )
     else:
         cons_ranked = []
 
-    # Re-apply disinhibition (the readout helpers zero
-    # cp_external_input_current internally between presentations).
-    _apply_theta_disinhibition(
-        bridge, dims, step_idx=0, use_theta=use_theta, pv_arr=pv_arr,
-    )
-
-    # Hippocampal-regime read (engram stim-recall via the released CA3
-    # ensemble; the recent (Ep_i, Ep_{i+1}) binding lives in the
-    # engram, not in the cortical schema).
+    # ----- Hippocampal-regime read: stimulate the engram tag (REUSED
+    # API) and accumulate lang_output spike pattern. The lang_drive
+    # modulator is OFF here so the only drive is the tag stim. -----
     if tag_name is not None and tag_name in {
         t["name"] for t in bridge.list_engram_tags()
     }:
-        hip_pat, n_lo2 = lang_output_pattern_during_stim(
-            bridge, tag_name, drive_pA=1500.0, stim_steps=recall_steps,
-        )
+        # Clear any lingering tag drive + lang drive first.
+        try:
+            bridge.clear_tag_drive()
+        except Exception:
+            pass
+        _set_lang_drive(bridge, 0.0)
+        # Stimulate the tag (REUSED).
+        bridge.stimulate_tag(tag_name, drive_pA=1500.0, additive=False)
+        hip_pat = cp.zeros(n_lang_out, dtype=cp.float32)
+        for s in range(int(recall_steps)):
+            _per_step_drives(s, drive_on=False)
+            bridge._run_one_simulation_step()
+            if hasattr(bridge, "cp_firing_states"):
+                firing = bridge.cp_firing_states
+                hip_pat = hip_pat + firing[lang_out_arr].astype(cp.float32)
+        try:
+            bridge.clear_tag_drive(tag_name)
+        except Exception:
+            pass
+        hip_pat_host = to_host(hip_pat)
         hip_ranked = _ranked_from_pattern(
-            hip_pat, n_lo2, dims, exclude=cue_noun
+            hip_pat_host, n_lang_out, dims, exclude=cue_noun
         )
     else:
         hip_ranked = []
+
+    # Settle: zero all drives.
+    _set_lang_drive(bridge, 0.0)
+    _set_disinhibition(bridge, 0.0)
 
     # Within-theta-cycle compose: sum per-concept RAW firing-rate
     # confidences (the calibrated 650-moat quantity -- SPEAR re-review
@@ -631,18 +888,28 @@ def _theta_retrieve_phase(bridge, cue_noun, tag_name, dims,
 #  One arm = one full Pirazzini run for one (seed, N), differing from
 #  the other arm ONLY by `use_theta` (the sole controller flag).
 # =====================================================================
-def _run_arm(seed: int, N: int, tiny_synth: bool, use_theta: bool):
+def _run_arm(seed: int, N: int, tiny_synth: bool, use_theta: bool,
+              force_disinhibition_off: bool = False):
     """Run the complete Pirazzini pipeline for ONE (seed, N).
 
     `use_theta=True`  -> the net-new external theta generator is ENABLED:
         per theta cycle, an ACh-HIGH ENCODE phase (gamma sub-cycle
         indexes the dlpfc ordered slot) then an ACh-LOW RETRIEVE phase;
-        at theta-trough phase, the disinhibitory current releases CA3
-        pyramidals. This is the `full` arm.
-    `use_theta=False` -> the controller is DISABLED: ACh held neutral,
-        no disinhibitory current. CA3 remains inhibited throughout.
-        SAME seed, SAME RNG draws -- which reduces to the convergent
-        Stage-1 + SPEAR ceiling. This is the `theta_disabled` arm.
+        at theta-trough phase, the dg_disinhibition modulator releases
+        CA3 pyramidals. This is the `full` arm.
+    `use_theta=False` -> the controller is DISABLED: ACh held neutral
+        (NEUTRAL=0.5 = no-effect midpoint -- FIX C ensures pathway-
+        scoped gates resolve to 1.0 at this setpoint, so the control
+        arm does NOT pre-freeze CA3->CA1 plasticity), no disinhibitory
+        drive. CA3 remains inhibited throughout. SAME seed, SAME RNG
+        draws -- which reduces to the convergent Stage-1 + SPEAR
+        ceiling. This is the `theta_disabled` arm.
+
+    `force_disinhibition_off=True` (FIX D) holds the dg_disinhibition
+    modulator at 0.0 throughout REGARDLESS of `use_theta`. The ACh
+    polarity is still active. Used by the false-PASS-protection pin
+    to prove an ACh-only solver cannot score GATE=PASS via the runner
+    + frozen verdict end-to-end.
 
     The ONLY difference between the two arms is the single `use_theta`
     flag threaded identically through every phase helper. Returns
@@ -653,20 +920,22 @@ def _run_arm(seed: int, N: int, tiny_synth: bool, use_theta: bool):
     facts = _recent_facts(N)
 
     bridge, dims = _build_substrate(seed, tiny_synth)
-    rng = np.random.default_rng(seed)  # SAME seed -> SAME draws both arms
 
-    # Resolve the dg_pv_basket index buffer once (the disinhibition
-    # target). Materialise to backend array via the bridge's array
-    # module to match the buffer the writes target.
-    from sim.backend import get_backend
-    cp, _ = get_backend()
-    pv_idx = _resolve_pv_basket_indices(bridge)
-    pv_arr = (cp.asarray(pv_idx, dtype=cp.int64)
-              if pv_idx else cp.asarray([], dtype=cp.int64))
+    # Register region groups on the neuromodulator manager so the
+    # excitability_drive scope=group:NAME targets resolve (the
+    # `compute_excitability_drive_per_neuron` consumer at
+    # sim/bridge.py:4960-4964 looks up indices via the group dict).
+    # This is the one-time setup the per-step loops rely on.
+    if bridge.neuromodulator_manager is not None:
+        groups = dict(bridge.region_manager.region_indices_dict())
+        # `lang_drive_active` is refreshed per-fact inside encode/
+        # retrieve helpers; initialize as empty here.
+        groups["lang_drive_active"] = []
+        bridge.neuromodulator_manager.set_group_indices(groups)
 
     # ---- ENCODE epoch: one theta cycle per episode pair; ACh HIGH at
-    # encode (Hasselmo); disinhibitory current writes the trough/peak
-    # schedule onto dg_pv_basket.
+    # encode (Hasselmo); dg_disinhibition modulator drives the
+    # trough/peak schedule onto dg_pv_basket.
     n_facts = len(facts)
     tags: List[str] = []
     for gamma_idx, fact in enumerate(facts):
@@ -674,7 +943,8 @@ def _run_arm(seed: int, N: int, tiny_synth: bool, use_theta: bool):
         _theta_encode_phase(
             bridge, fact, tag, dims, enc_steps,
             gamma_idx=gamma_idx, n_facts=n_facts,
-            use_theta=use_theta, pv_arr=pv_arr,
+            use_theta=use_theta,
+            force_disinhibition_off=force_disinhibition_off,
         )
         tags.append(tag)
 
@@ -689,7 +959,8 @@ def _run_arm(seed: int, N: int, tiny_synth: bool, use_theta: bool):
         answer, _ranked = _theta_retrieve_phase(
             bridge, noun, tag, dims,
             have_remote=True, recall_steps=recall_steps,
-            use_theta=use_theta, pv_arr=pv_arr,
+            use_theta=use_theta,
+            force_disinhibition_off=force_disinhibition_off,
         )
         if answer == adj:
             n_correct += 1
@@ -764,14 +1035,14 @@ def run_pirazzini_three_layer(seeds, loads=_PZ_LADDER,
     Per seed, per load N in the frozen ladder: build the validated
     substrate + hippocampus + dlpfc PFC frame, then run the `full` arm
     (the net-new external theta generator ENABLED: rhythmic CA3
-    disinhibition at theta-trough + Hasselmo HIGH/LOW ACh phase
-    polarity + one-shot engram encoding + within-theta-cycle decode
-    through the calibrated 650 moat) and the decisive built-in
-    control `theta_disabled` arm (controller DISABLED -- ACh neutral,
-    no disinhibitory current; CA3 inhibited throughout), SAME seed
-    and SAME draws, differing ONLY by the `use_theta` flag.
-    Aggregate to rungs and score with the FROZEN
-    pirazzini_three_layer_verdict.
+    disinhibition at theta-trough via the dg_disinhibition modulator
+    + Hasselmo HIGH/LOW ACh phase polarity + one-shot engram encoding
+    + within-theta-cycle decode through the calibrated 650 moat) and
+    the decisive built-in control `theta_disabled` arm (controller
+    DISABLED -- ACh neutral, no disinhibitory modulator concentration;
+    CA3 inhibited throughout), SAME seed and SAME draws, differing
+    ONLY by the `use_theta` flag. Aggregate to rungs and score with
+    the FROZEN pirazzini_three_layer_verdict.
 
     Kill-safe/resumable via the REUSED sim.train_checkpoint:
     completed (seed, N) cells are flushed; re-running resumes past

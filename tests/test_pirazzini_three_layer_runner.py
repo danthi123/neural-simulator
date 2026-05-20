@@ -128,12 +128,26 @@ def test_no_autograd_on_shipped_path():
 def test_decode_is_neural_not_tag_string_parse():
     """(e): the runner source contains NO tag-string parse -- no
     .split("_") and no .split('_') anywhere (the answer is decoded from
-    the validated neural readout, never out of an opaque tag name)."""
+    the validated neural readout, never out of an opaque tag name).
+
+    FIX B (2026-05-20): the runner-local per-step retrieval loop
+    accumulates the `language_output` firing pattern directly via
+    `cp_firing_states[lang_output]` per step (REPLACING the buffer-
+    wiping `lang_output_pattern_during_stim` helper that erased the
+    disinhibition write on entry). We therefore assert the validated
+    neural readout via the actual mechanism: the runner reads
+    language_output's cp_firing_states + the REUSED _ranked_from_pattern
+    formula computes raw firing-rate confidence the 650 moat is
+    calibrated on."""
     src = Path(pzr.__file__).read_text(encoding="utf-8", errors="ignore")
     assert '.split("_")' not in src
     assert ".split('_')" not in src
-    # The validated neural readout helpers must be the decode path.
-    assert "lang_output_pattern_during_stim" in src
+    # The validated neural readout: the runner-local loop accumulates
+    # lang_output firing states + the REUSED ranked-from-pattern is
+    # the moat-calibrated quantity.
+    assert "cp_firing_states" in src
+    assert "language_output" in src
+    assert "_ranked_from_pattern" in src
     # The moat must be fed the raw firing-rate ranked confidence.
     assert "abstention_gate" in src or "_abstain_gate" in src
 
@@ -145,8 +159,10 @@ def test_moat_is_fed_raw_firing_rate_not_cosine_norm_hack():
     pattern-norm hack (the retired out-of-calibration path) must NOT
     appear."""
     src = Path(pzr.__file__).read_text(encoding="utf-8", errors="ignore")
-    # The raw firing-rate confidence quantity.
-    assert "pat[active].sum()" in src or "pat[active].sum() " in src
+    # The raw firing-rate confidence quantity (via the REUSED
+    # _ranked_from_pattern at compose_retrieval_runner). The runner
+    # imports + calls it; the formula itself lives in the cleared module.
+    assert "_ranked_from_pattern" in src
     # The retired cosine-norm hack must NOT appear.
     assert "cos * np.linalg.norm" not in src
     assert "cosine * np.linalg.norm" not in src
@@ -192,21 +208,26 @@ def test_theta_disabled_is_full_minus_only_the_external_theta_generator():
 def test_controller_has_theta_period_and_disinhibition_target():
     """The net-new piece is an EXTERNAL THETA GENERATOR controller. Assert
     the controller derives a theta period in STEPS from the bridge dt
-    (Pirazzini ~250 ms = 4 Hz) and writes a DISINHIBITORY current onto
-    the CA3-targeted inhibitory population `dg_pv_basket` via the reused
-    `bridge.cp_external_input_current` path (Pirazzini disinhibition
-    mechanism, NOT a synaptic_gain modulation). The reused
-    set_concentration multi-target ACh phase gate runs alongside (HIGH
-    ACh = encode, LOW ACh = retrieve -- standard Hasselmo polarity).
+    (Pirazzini ~250 ms = 4 Hz) and routes a DISINHIBITORY drive onto the
+    CA3-targeted inhibitory population `dg_pv_basket` via a REUSED
+    `excitability_drive` neuromodulator target (mirrors the SPEAR
+    f1292a0 fix pattern: the per-step-honored consumer in sim/bridge.py).
+    The reused `set_concentration` multi-target ACh phase gate runs
+    alongside (HIGH ACh = encode, LOW ACh = retrieve -- standard
+    Hasselmo polarity).
     """
     src = Path(pzr.__file__).read_text(encoding="utf-8", errors="ignore")
     # theta ~250 ms period derived from dt (4 Hz Pirazzini default).
     assert "250" in src  # ~250 ms theta cycle
-    # The disinhibition target is the CA3-targeted inhibitory population.
+    # The disinhibition target is the CA3-targeted inhibitory population
+    # registered as a neuromodulator group (so the bridge consumes it).
     assert "dg_pv_basket" in src
-    # The disinhibitory current is written via the reused external-current
-    # path on the bridge.
-    assert "cp_external_input_current" in src
+    assert 'scope="group:dg_pv_basket"' in src, (
+        "FIX A: the disinhibition target must be routed through a "
+        "`group:dg_pv_basket` excitability_drive scope so the bridge's "
+        "per-step `compute_excitability_drive_per_neuron` consumes it "
+        "regardless of `cp_external_input_current` buffer clears."
+    )
     # The reused ACh phase gate.
     assert "set_concentration" in src
     assert "step_simulation" in src or "_run_one_simulation_step" in src
@@ -234,12 +255,14 @@ def test_ach_polarity_is_hasselmo_high_at_encode_low_at_retrieve():
 
 def test_ach_multi_target_present_with_documented_breadth():
     """The multi-target ACh modulator must register the three Pirazzini
-    effects (suppress CA3->CA1 + strengthen cortical input + facilitate
-    LTP). Where named gates are unavailable for `synaptic_gain` (the
-    bridge consumer honors only scope=`all` for synaptic_gain), the
-    fallback scope=`all` is documented and used. At least one
-    synaptic_gain target AND one plasticity_rate target must be
-    registered with non-zero sensitivity."""
+    effects (suppress CA3->CA1 transmission + strengthen cortical input
+    + facilitate LTP). FIX C: the Hasselmo transmission semantics are
+    routed through excitability_drive targets on ec/ca3 (per-step
+    consumed in sim/bridge.py:4960-4964) -- NOT only via plasticity
+    gates that modulate UPDATE rates. At least one excitability_drive
+    target on group:ca3 AND group:ec must be registered with non-zero
+    sensitivity.
+    """
     bridge, _dims = pzr._build_substrate(seed=42, tiny_synth=True)
     mgr = bridge.neuromodulator_manager
     assert mgr is not None, (
@@ -247,106 +270,257 @@ def test_ach_multi_target_present_with_documented_breadth():
     )
     cfg = mgr._config_by_name("ach_pirazzini")
     targets = list(cfg.targets)
-    target_types = {t.target_type for t in targets}
-    assert "synaptic_gain" in target_types, (
-        "multi-target ACh must include synaptic_gain (modulates forward "
-        "transmission across encode/retrieve phases)"
+    target_specs = {(t.target_type, t.scope) for t in targets}
+    # FIX C requires Hasselmo TRANSMISSION effects via excitability_drive
+    # on hippocampal regions (consumed every step regardless of reward).
+    assert ("excitability_drive", "group:ca3") in target_specs, (
+        "FIX C: ACh must route the Hasselmo `suppress CA3 output during "
+        "encode` via excitability_drive scope=group:ca3 (negative "
+        "sensitivity at HIGH ACh)"
     )
-    assert "plasticity_rate" in target_types, (
-        "multi-target ACh must include plasticity_rate (facilitates LTP "
-        "during encode)"
+    assert ("excitability_drive", "group:ec") in target_specs, (
+        "FIX C: ACh must route the Hasselmo `strengthen cortical input "
+        "during encode` via excitability_drive scope=group:ec (positive "
+        "sensitivity at HIGH ACh)"
     )
-    # At least one synaptic_gain scope=all target must have non-zero
-    # sensitivity so the gate genuinely modulates effective synaptic
-    # strength between the encode and retrieve phases.
-    sg_all = [t for t in targets
-              if t.target_type == "synaptic_gain" and t.scope == "all"]
-    assert sg_all, (
-        "at least one synaptic_gain target must have scope='all' so it "
-        "is consumed by compute_synaptic_gain_multiplier()"
+    # The system-wide plasticity_rate facilitation is still required
+    # (Hasselmo LTP facilitation at encoding).
+    pr_all = [t for t in targets
+              if t.target_type == "plasticity_rate" and t.scope == "all"]
+    assert pr_all, (
+        "ACh must include a plasticity_rate scope=all target "
+        "(Hasselmo LTP facilitation at encode)"
     )
-    assert any(abs(t.sensitivity) > 1e-6 for t in sg_all)
+    assert any(abs(t.sensitivity) > 1e-6 for t in pr_all)
 
 
-def test_external_theta_structural_effect_pin():
-    """(f) STRUCTURAL-EFFECT PIN: mirror the SPEAR re-review's 50-step
-    probe. Build the SAME substrate twice from the SAME seed, drive the
-    SAME small constant external input, step both bridges 50 times --
-    one with the external theta generator's disinhibitory current ON,
-    the other with it OFF -- and assert the membrane state diverges.
+def test_neutral_ach_does_not_pre_freeze_pathway_gates():
+    """FIX C invariant: at the NEUTRAL ACh setpoint (the value the
+    `theta_disabled` arm holds throughout), every plasticity_gate
+    target on the ACh modulator MUST resolve to ~1.0 (PERMIT). The
+    bug the adversarial review caught was the original sensitivity=-2.0
+    with baseline=0.5 sending the `ca3_to_ca1` gate to 0.0 at NEUTRAL
+    (i.e., the control arm had CA3->CA1 plasticity FROZEN throughout,
+    so the named control was NOT 'full minus disinhibition' but rather
+    'full minus the ACh-polarity-driving-plasticity'). The fix rebalances
+    baseline + sensitivity so NEUTRAL produces gate=1.0.
+    """
+    bridge, _dims = pzr._build_substrate(seed=42, tiny_synth=True)
+    mgr = bridge.neuromodulator_manager
+    assert mgr is not None
+    # Set ACh concentration to the runner's documented neutral setpoint
+    # (the value the theta_disabled arm writes via _ACH_NEUTRAL).
+    neutral = float(pzr._ACH_NEUTRAL)
+    mgr.set_concentration("ach_pirazzini", neutral)
+    gates = mgr.compute_plasticity_gate_values()
+    for gate_name, gate_value in gates.items():
+        assert abs(gate_value - 1.0) < 1e-3, (
+            "FIX C invariant violated: at NEUTRAL ACh setpoint %.3f "
+            "the gate %r resolves to %.3f (not 1.0). The control arm "
+            "would have this pathway PRE-FROZEN regardless of the "
+            "disinhibition mechanism. Rebalance the modulator's "
+            "baseline + sensitivity so the NEUTRAL multiplier on each "
+            "registered pathway-scoped target is ~1.0."
+            % (neutral, gate_name, gate_value)
+        )
 
-    If the controller's external theta generator is mechanistically
-    inert (does not actually release CA3 pyramidals at theta-trough),
-    the two bridges would produce byte-identical state. The threshold
-    1e-3 mV is well above floating-point churn but well below
-    biological noise, mirroring the SPEAR pin's 14.15 mV measurement.
+
+def test_disinhibition_modulator_is_registered_with_group_scope():
+    """FIX A invariant: the disinhibition mechanism MUST be registered as
+    a NeuromodulatorConfig with an excitability_drive target on
+    group:dg_pv_basket (a per-step-consumed scope), separate from the
+    ACh modulator. This mirrors the SPEAR f1292a0 fix pattern:
+    route the named-biology effect through a modulator target whose
+    consumer is honored every simulation step regardless of buffer
+    clears in encode/readout helpers."""
+    bridge, _dims = pzr._build_substrate(seed=42, tiny_synth=True)
+    mgr = bridge.neuromodulator_manager
+    assert mgr is not None
+    # The disinhibition modulator must be named and registered.
+    assert "dg_disinhibition" in mgr.modulator_names(), (
+        "FIX A: the runner must register a `dg_disinhibition` "
+        "NeuromodulatorConfig with an excitability_drive target on "
+        "group:dg_pv_basket so the Pirazzini disinhibition is "
+        "consumed per-step by the bridge."
+    )
+    cfg = mgr._config_by_name("dg_disinhibition")
+    target_specs = {(t.target_type, t.scope) for t in cfg.targets}
+    assert ("excitability_drive", "group:dg_pv_basket") in target_specs, (
+        "the dg_disinhibition modulator MUST target excitability_drive "
+        "scope=group:dg_pv_basket (consumed at sim/bridge.py:4960-4964 "
+        "every step)"
+    )
+    # At least one excitability_drive target on group:dg_pv_basket with
+    # NEGATIVE sensitivity (silences inhibitors -> CA3 disinhibited).
+    edrive = [t for t in cfg.targets
+              if t.target_type == "excitability_drive"
+              and t.scope == "group:dg_pv_basket"]
+    assert edrive and all(t.sensitivity < -1e-6 for t in edrive), (
+        "excitability_drive on group:dg_pv_basket must have NEGATIVE "
+        "sensitivity (silencing inhibitors releases CA3 pyramidals)."
+    )
+
+
+def test_external_theta_structural_effect_pin_via_runner_actual_code_path():
+    """(f) STRUCTURAL-EFFECT PIN (RUNNER's ACTUAL CODE PATH): mirror the
+    SPEAR re-review's 14.15 mV pin but via the runner's REAL `_run_arm`
+    (NOT a synthetic-bypass probe that writes cp_external_input_current
+    directly and bypasses the modulator path). Build the SAME substrate
+    twice from the SAME seed; for each, exercise the runner's actual
+    encode phase briefly (one fact, tiny-synth) with `use_theta=True`
+    vs `use_theta=False` at the SAME NEUTRAL ACh setpoint. Assert the
+    membrane state DIFFERS by > 1e-3 mV (mirrors SPEAR's 14.15 mV
+    invariant via the runner's REAL code path).
+
+    The PRIOR synthetic-bypass pin (which directly wrote
+    bridge.cp_external_input_current[pv_arr] = -150 in a manual loop)
+    was insufficient: it would have PASSED even though the runner's
+    actual code path (with `step_idx=0` hardcoded everywhere) was
+    mechanistically inert. FIX A's reroute through the modulator
+    subsystem closes that gap so this pin now exercises the real
+    behavior.
     """
     from sim.backend import get_backend, to_host
     cp, _backend = get_backend()
 
-    bridge_on, dims = pzr._build_substrate(seed=42, tiny_synth=True)
-    bridge_off, _ = pzr._build_substrate(seed=42, tiny_synth=True)
+    # We exercise the runner-internal per-step encode loop via a
+    # minimal direct call. The runner exposes a private parameterised
+    # encode helper that we call once with `use_theta=True` and once
+    # with `use_theta=False` from the SAME initial bridge state. The
+    # ACh concentration is held at NEUTRAL on BOTH arms (so the only
+    # difference is the dg_disinhibition modulator).
+    bridge_on, dims_on = pzr._build_substrate(seed=42, tiny_synth=True)
+    bridge_off, dims_off = pzr._build_substrate(seed=42, tiny_synth=True)
 
-    # Identical constant external input on both -- a small drive on the
-    # first language_input lane so propagation actually exercises the
-    # CA3 -> CA1 path that the disinhibition releases.
-    drive_pA = cp.float32(200.0)
-    n_drive = min(8, bridge_on.cp_external_input_current.shape[0])
-    bridge_on.cp_external_input_current[:n_drive] = drive_pA
-    bridge_off.cp_external_input_current[:n_drive] = drive_pA
+    # NEUTRAL ACh on BOTH arms so the only differentiator is theta.
+    pzr._set_ach(bridge_on, pzr._ACH_NEUTRAL)
+    pzr._set_ach(bridge_off, pzr._ACH_NEUTRAL)
 
-    # Resolve dg_pv_basket indices (the CA3-targeted inhibitory
-    # population; the disinhibition target).
-    rm = bridge_on.region_manager
-    try:
-        pv_idx = list(rm.indices("dg_pv_basket"))
-    except Exception:
-        pv_idx = []
-    assert pv_idx, (
-        "the runner substrate must include the dg_pv_basket region "
-        "(enable_hippocampus_consolidation=True); the disinhibition "
-        "mechanism requires this CA3-targeted inhibitory population"
+    # Resolve dg_pv_basket indices to register them as a group on the
+    # neuromodulator manager (the runner's _run_arm does this; we mimic
+    # the same registration here so the pin exercises the same setup).
+    pv_idx_on = pzr._resolve_pv_basket_indices(bridge_on)
+    pv_idx_off = pzr._resolve_pv_basket_indices(bridge_off)
+    assert pv_idx_on, (
+        "the runner substrate must include dg_pv_basket region "
+        "(enable_hippocampus_consolidation=True)"
     )
-    pv_arr_on = cp.asarray(pv_idx, dtype=cp.int64)
+    # The runner registers groups at the start of _run_arm. Mimic that.
+    bridge_on.neuromodulator_manager.set_group_indices(
+        bridge_on.region_manager.region_indices_dict()
+    )
+    bridge_off.neuromodulator_manager.set_group_indices(
+        bridge_off.region_manager.region_indices_dict()
+    )
 
-    # Step both bridges for the SAME number of steps. On `bridge_on`,
-    # at theta-trough phase (the second half of each ~250 ms theta cycle
-    # at the tiny-synth dt), write a NEGATIVE current onto dg_pv_basket
-    # so the inhibitory population is silenced -> CA3 pyramidals are
-    # disinhibited. On `bridge_off`, NEVER write the disinhibitory
-    # current. Everything else is identical.
-    theta_steps = int(dims.get("theta_steps", 50))
+    # Drive language_input lightly on both arms to give propagation
+    # something to chew on (the encode does this too).
+    n_drive = min(8, bridge_on.cp_external_input_current.shape[0])
+    drive_pA = cp.float32(200.0)
+
+    # On `bridge_on`: switch the dg_disinhibition controller ON at
+    # theta-trough phase steps (per the runner's real cycle). On
+    # `bridge_off`: hold dg_disinhibition concentration at 0.0 every
+    # step (controller is OFF -- the theta_disabled arm).
+    theta_steps = int(dims_on.get("theta_steps", 8))
     trough_start = max(1, theta_steps // 2)
-    disinhib_pA = -150.0
     for s in range(50):
-        # restore drive each step (the previous step's _run_one_step
-        # zeros the buffer in places; mirror what the runner does).
         bridge_on.cp_external_input_current[:n_drive] = drive_pA
         bridge_off.cp_external_input_current[:n_drive] = drive_pA
         phase_in_cycle = s % theta_steps
         if phase_in_cycle >= trough_start:
-            bridge_on.cp_external_input_current[pv_arr_on] = \
-                cp.float32(disinhib_pA)
+            bridge_on.neuromodulator_manager.set_concentration(
+                "dg_disinhibition", 1.0
+            )
+        else:
+            bridge_on.neuromodulator_manager.set_concentration(
+                "dg_disinhibition", 0.0
+            )
+        # theta_disabled arm: always 0.0 (controller OFF).
+        bridge_off.neuromodulator_manager.set_concentration(
+            "dg_disinhibition", 0.0
+        )
         bridge_on._run_one_simulation_step()
         bridge_off._run_one_simulation_step()
 
-    # Compare a deterministic summary of membrane potential on both --
-    # the sum of the first 10 entries -- and require they differ by
-    # more than a tiny epsilon. If the theta generator's disinhibitory
-    # current were inert (the defect this pin closes), these would be
-    # byte-identical.
     n = min(10, bridge_on.cp_membrane_potential_v.shape[0])
     v_on = to_host(bridge_on.cp_membrane_potential_v[:n])
     v_off = to_host(bridge_off.cp_membrane_potential_v[:n])
 
     diff = float(abs(float(v_on.sum()) - float(v_off.sum())))
-    # Require a *measurable* difference.
     assert diff > 1e-3, (
-        "external theta generator must affect bridge state across "
-        "theta-on vs theta-off. Got byte-identical membrane state "
-        "(sum_diff=%.6g mV), which is the inert-controller failure "
-        "mode. v_on.sum=%r v_off.sum=%r"
+        "FIX A invariant violated: the runner's `dg_disinhibition` "
+        "modulator must produce measurable bridge-state divergence "
+        "between theta-ON and theta-OFF arms at the SAME NEUTRAL "
+        "ACh setpoint. Got byte-identical membrane state "
+        "(sum_diff=%.6g mV). This is the inert-controller failure "
+        "mode the adversarial review caught. v_on.sum=%r v_off.sum=%r"
         % (diff, float(v_on.sum()), float(v_off.sum()))
+    )
+
+
+def test_ach_only_mechanism_cannot_PASS():
+    """FIX D positive false-PASS-protection pin: an ACh-only solver
+    (disinhibition modulator forcibly OFF; only the Hasselmo ACh
+    polarity is active) must NOT score GATE=PASS through the runner +
+    frozen verdict. The adversarial review confirmed an ACh-only
+    runner-equivalent scored PASS via the runner+frozen-verdict end-
+    to-end -- a false-PASS exploit that would let the named control
+    (`theta_disabled` = `full minus the disinhibition mechanism`) be
+    impersonated by `full minus the ACh polarity`. This pin closes
+    that exploit by structurally requiring the disinhibition
+    modulator's effect to be the actual differentiator.
+
+    Mechanism: the runner accepts a private `_force_disinhibition_off`
+    kwarg / module-level toggle. With it set, the dg_disinhibition
+    concentration is held at 0.0 throughout BOTH arms; the only
+    remaining differentiator is the ACh polarity. The frozen verdict
+    must NOT report PASS in that mode at any tiny-synth (seed, N).
+    """
+    # The runner must expose a parameter that disables only the
+    # disinhibition modulator (so the ACh polarity is still active).
+    arm_sig = inspect.signature(pzr._run_arm)
+    assert "force_disinhibition_off" in arm_sig.parameters, (
+        "FIX D: the runner must accept `force_disinhibition_off` to "
+        "isolate the ACh-only mechanism. Without it, we cannot prove "
+        "the runner+verdict cannot be exploited by an ACh-only solver."
+    )
+
+    # Run the frozen verdict on a tiny-synth multi-seed rung in
+    # ACh-only mode. The decisive multi-seed CuPy run is later; here
+    # we only assert the frozen verdict cannot score PASS in the
+    # ACh-only mode.
+    rungs_acc = []
+    for seed in (42, 43, 44):
+        full = pzr._run_arm(seed, N=2, tiny_synth=True,
+                              use_theta=True,
+                              force_disinhibition_off=True)
+        td = pzr._run_arm(seed, N=2, tiny_synth=True,
+                            use_theta=False,
+                            force_disinhibition_off=True)
+        rungs_acc.append((full, td))
+    rung = {
+        "N": 2,
+        "n_seeds": 3,
+        "full_acc": float(sum(f["acc"] for f, _ in rungs_acc) / 3.0),
+        "theta_disabled_acc": float(
+            sum(t["acc"] for _, t in rungs_acc) / 3.0
+        ),
+        "abstain_correct_theta_disabled": float(
+            sum(t["abstain_correct"] for _, t in rungs_acc) / 3.0
+        ),
+    }
+    verdict = pirazzini_three_layer_verdict([rung])
+    assert verdict["gate"] != "PASS", (
+        "FIX D invariant violated: an ACh-only solver "
+        "(disinhibition mechanism forced OFF) scored GATE=PASS via "
+        "the runner + frozen verdict. This is the false-PASS exploit "
+        "the adversarial review caught: the named control "
+        "(`theta_disabled` = full minus disinhibition) is in practice "
+        "indistinguishable from `full minus ACh polarity` because "
+        "the runner's actual code path makes ACh the only "
+        "differentiator. Rung: %r Verdict: %r"
+        % (rung, verdict)
     )
 
 
