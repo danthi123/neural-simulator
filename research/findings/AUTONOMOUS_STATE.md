@@ -673,9 +673,73 @@ deliverable"):
 Findings:
 `research/findings/2026-05-20-GENERATIVE-REPLAY-PFC-FRAME-decisive-honest-negative-LOAD-DEPENDENT-signature-6-architecture-convergent-ceiling.md`.
 
-**EXACT NEXT ACTION: substrate-level refinement OPTION explored
-cheaply via a controller-only diagnostic FIRST (before launching a
-full 7th arc).** Per the design doc fallback + standing autonomy
+**QUANTITATIVE ANALYSIS ACROSS 3 DECISIVELY-RUN ARCS (at N=3, the
+rung where mechanisms helped most):**
+
+| Arc | N=3 full_acc | N=3 uniform | Gap to 0.80 |
+|-----|--------------|-------------|-------------|
+| Unified per-regime monitor | 0.274 | 0.274 | -0.526 |
+| Theta-gamma cue-suppression | 0.280 | 0.274 | -0.520 |
+| **6th arc (replay + PFC-frame)** | **0.458** | 0.321 | **-0.342** |
+
+The 6th arc CLOSED THE GAP TO 0.80 BY 35% (from 0.526 -> 0.342). The
+trajectory is real: the augmenting mechanisms moved the baseline UP
+(0.274 -> 0.321) AND added more on top (0.274 -> 0.458). The
+6-architecture convergent ceiling is NOT a hard wall -- progressive
+improvement is observable. A 7th arc could plausibly continue closing
+the gap if it addresses the empirically-localised failure mode
+(cued-noun's diffuse drive contaminating the bound-adj retrieval
+pathway; established at commit `110f7cd`).
+
+**EXACT NEXT ACTION: 7th arc design = TARGETED CUE-SUPPRESSION DURING
+REPLAY (NOT retrieve) + AMPLIFIED ENGRAM-TAG STIM + persistent
+PFC-frame.** The theta-gamma arc's finding was that cue-suppression
+during RETRIEVE violates encoding-specificity. But cue-suppression
+during REPLAY may be SOUND: the replay phase aims to consolidate the
+engram tag's selective bound-adj drive; the cue's contribution there
+is contamination, not encoding-context. The 7th arc:
+
+(A) During REPLAY phase: cue SUPPRESSED + amplified engram-tag stim.
+    The replay-induced strengthening targets the bound-adj pathway
+    selectively, not the cue's diffuse contamination.
+(B) During RETRIEVE phase: cue PRESENT (encoding-specificity
+    respected); engram-tag stim active; PFC-frame active.
+(C) PFC-frame persists longer (extend stim window from 10 to 50
+    steps; NMDA bistability holds the frame across the retrieve
+    window).
+(D) Higher n_replays_per_tag (from 20 -> 50; stronger consolidation
+    signal).
+
+If the trajectory continues, the 7th arc could plausibly reach
+~0.60-0.65 full_acc at N=3, closing another 20-30% of the gap. If
+it reaches >= 0.80, the bar is met. If it reaches a new plateau
+(e.g., ~0.55), the trajectory is asymptotic; the substrate's
+underlying retrieval mechanism is genuinely capped without deeper
+refinement (per-region inhibitory normalisation; different
+connectivity; different readout).
+
+Steps (mirrors the 6-arc discipline):
+1. Brainstorm refinement of the 7th arc design grounded in this
+   cross-arc trajectory analysis + the localisation finding.
+2. writing-plans for TDD: Task 0 grounding pin + Task 1 frozen
+   verdict (_TC_* constants distinct from _GR_*/_TG_*/_PR_*) +
+   Task 2 net-new runner (mirrors 6th arc structure; ADD cue-
+   suppression-during-replay; AMPLIFY engram-tag stim; PERSISTENT
+   PFC-frame).
+3. Dedicated adversarial review (12th consecutive).
+4. Task 4 no-harm + Task 5 controller-only decisive run.
+5. Mandatory smell-test + honest propagation EVERY outcome.
+
+NO bar change anywhere; protected set byte-empty diff vs `e8a99a2`
+must continue to hold; no-confab moat 7/7 byte-identical; 4
+calibrated abstention moats byte-stable. 11 consecutive
+disciplined refusal-to-overclaim-a-PASS pattern; honest ceiling
+unchanged.
+
+---
+[Historical: EXACT NEXT ACTION: substrate-level refinement OPTION
+explored cheaply via a controller-only diagnostic FIRST (before
+launching a full 7th arc).** Per the design doc fallback + standing autonomy
 + iterate-following-biology, the choice is: (a) deeper substrate-
 level refinement (per-region inhibitory normalisation; different
 readout; different connectivity); or (b) honest closure of this
