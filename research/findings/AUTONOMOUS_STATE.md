@@ -345,14 +345,23 @@ metacognitive monitors (Miyamoto 2017 doubly-dissociable parallel
 recent/remote metamemory streams). Findings:
 `research/findings/2026-05-20-Pirazzini-decisive-honest-negative-TRIPLE-convergent-ceiling-points-at-metacognitive-monitor.md`.
 
-**EXACT NEXT ACTION: design pass for the genuinely-distinct
-biology-faithful next stage the triple-convergent ceiling points
-at -- PER-REGIME METACOGNITIVE MONITORS (Miyamoto 2017's empirical
-doubly-dissociable parallel metamemory streams: prefrontal area
-9/46d for remote, area 6 for recent; separate calibrated
-trustworthy-abstention thresholds per memory regime; abstain-vs-
-answer decision routed through the appropriate monitor per query
-type).** This is biology-faithful, directly addresses the
+**PER-REGIME METACOGNITIVE MONITOR DESIGN COMPLETE
+(`59535c0`, both remotes; `docs/plans/2026-05-20-per-regime-
+metacognitive-monitor-architecture-design.md`; biology grounded in
+Miyamoto 2017 + 8 cited refs from a fresh web search per the
+broader-search-first rule, not memory).** Architecture A
+(recommended): a NEW compositional-regime gate
+`abstention_gate_compositional.py` sits ALONGSIDE the existing
+`abstention_gate.py` (DEFAULT_THRESHOLD=650, 7/7 byte-unchanged)
+with its own pre-registered fixed `COMPOSITIONAL_THRESHOLD`
+calibrated separately on held-out compositional ground-truth; a
+per-regime-monitor runner routes queries to the appropriate gate
+per query type; decisive built-in control: a single-threshold-
+applied-uniformly variant must collapse (the per-regime separation
+must be the differentiator).
+
+**EXACT NEXT ACTION: writing-plans for the per-regime
+metacognitive-monitor design.** This is biology-faithful, directly addresses the
 triple-convergent ceiling at its root (the threshold not the
 mechanism), and can be implemented as net-new runner code that
 REUSES the existing `abstention_gate` module byte-unchanged (a
