@@ -368,12 +368,123 @@ def _run_theta_cycle_query(
 
 
 # =====================================================================
+# Deterministic-RNG isolation helper for the structural-effect probe
+# AND the per-cell eval arm. CLOSES THE EIGHTH ADVERSARIAL REVIEW BLOCK
+# (the prior 30.24 mV divergence was an RNG-drift artefact: two bridges
+# in the same process share the global cp.random state, so OU-noise
+# draws inside _run_one_simulation_step diverged purely because of the
+# order the bridges were stepped -- the suppress_cue_during_retrieve
+# flag was INVISIBLE behind the RNG drift).
+#
+# The fix is purely runner-side. Before each _run_theta_cycle_query
+# call, we (a) capture the active backend's RNG state, (b) deterministic-
+# seed the backend so the second bridge's draws are IDENTICAL to the
+# first, (c) call the helper, (d) restore the captured state so other
+# components (training, OU noise outside this loop, etc.) see no
+# perturbation. The same deterministic seed value MUST be used for BOTH
+# arms of any controlled contrast (full vs uniform_ctrl OR probe-on vs
+# probe-off): the two arms then see identical OU-noise streams and the
+# only difference between them is the suppress_cue_during_retrieve flag.
+#
+# Implementation uses sim.backend.get_random_state / set_random_state /
+# the active backend's random.seed -- backend-aware (CuPy when GPU,
+# NumPy when CPU). No new top-level imports introduced (sim.backend is
+# already imported inside _run_theta_cycle_query / _structural_effect_probe).
+# =====================================================================
+def _seed_query_rng(rng_seed: int) -> Any:
+    """Capture the active backend's RNG state and deterministic-seed it.
+
+    Returns an opaque token to pass back to _restore_query_rng so the
+    caller can restore the global state once the helper returns. This
+    keeps the RNG perturbation LOCAL to a single _run_theta_cycle_query
+    call; other components (training, ungroundable queries, etc.)
+    that happen outside the wrapped window see no change.
+
+    What this seeds (CLOSES the 8th adversarial review BLOCK on RNG
+    drift):
+      * The active backend's RNG (CuPy or NumPy, via sim.backend).
+        This is what cp.random.randn / np.random.randn inside
+        bridge._run_one_simulation_step's OU noise consumes.
+      * The top-level numpy.random global (independent module-level
+        state from the backend on CuPy; the same state on NumPy).
+        bridge.py uses np.random for a number of CPU-side draws
+        (e.g. structural plasticity candidate sampling, lognormal
+        heterogeneity, etc.); leaving it un-seeded would silently
+        diverge two bridges across calls.
+      * The Python stdlib `random` module global. Bridge code paths
+        downstream of _run_one_simulation_step occasionally use it.
+    """
+    from sim.backend import get_backend, get_random_state
+    xp, name = get_backend()
+    # Snapshot ALL three RNG sources so they can be restored together.
+    backend_saved = get_random_state()
+    import numpy
+    np_saved = numpy.random.get_state()
+    import random as _pyrandom
+    py_saved = _pyrandom.getstate()
+
+    seed_value = int(rng_seed) & 0x7FFFFFFF
+    if name == "cupy":
+        import cupy
+        cupy.random.seed(seed_value)
+    # ALWAYS also seed numpy.random + stdlib random because (a) bridge
+    # uses np.random directly for CPU-side draws even on the CuPy
+    # backend; (b) on the NumPy backend cupy.random.seed isn't relevant
+    # but numpy.random.seed IS the backend seed. Single deterministic
+    # seed across all three sources -> two arms see identical draws
+    # everywhere downstream.
+    numpy.random.seed(seed_value)
+    _pyrandom.seed(seed_value)
+    return (backend_saved, np_saved, py_saved)
+
+
+def _restore_query_rng(saved_state: Any) -> None:
+    """Restore the active backend's + numpy + python RNG states
+    captured by _seed_query_rng. Idempotent on a None saved_state
+    (no-op)."""
+    if saved_state is None:
+        return
+    from sim.backend import set_random_state
+    backend_saved, np_saved, py_saved = saved_state
+    set_random_state(backend_saved)
+    import numpy
+    numpy.random.set_state(np_saved)
+    import random as _pyrandom
+    _pyrandom.setstate(py_saved)
+
+
+# =====================================================================
 # Structural-effect probe -- MANDATORY (mirrors Pirazzini d462bf0
 # lesson). Verifies the theta-gamma mechanism produces NON-byte-
 # identical bridge state between suppress_cue_during_retrieve=True
 # vs =False via the runner's ACTUAL code path (the per-step theta
 # cycle helper). NOT a synthetic-bypass probe.
+#
+# CLOSES the 8th adversarial review BLOCK: the prior probe measured
+# RNG-drift (two bridges sharing the global cp.random state diverged
+# purely from OU-noise draw ordering, NOT from the cue-suppression
+# mechanism). The fix is the deterministic-RNG isolation pattern: seed
+# the backend's RNG to the SAME value before each arm's call so both
+# arms see IDENTICAL OU-noise streams; the SOLE remaining difference
+# is the suppress_cue_during_retrieve flag. The probe also asserts
+# CONTROLS: when both arms pass the SAME flag, the bridge-state
+# divergence MUST be < 0.5 mV (RNG isolation is working). The
+# flag-differing case MUST exceed 1 mV (mechanism is structurally
+# active). If any control fails, RNG isolation is broken and the
+# probe raises.
 # =====================================================================
+# Deterministic RNG seed for the structural-effect probe. The probe
+# uses ONE fixed value across all four runs (two flag-differing, two
+# flag-same controls) so the only between-arm difference is the flag.
+_PROBE_RNG_SEED = 999
+
+# Tolerance for the "controls must show near-zero divergence" check.
+# 0.5 mV is well below the 1.0 mV bar the flag-differing case must
+# exceed; this gives the controls room for hardware-level fp32 noise
+# without false-rejecting RNG-isolation that is genuinely working.
+_PROBE_CONTROL_TOL_MV = 0.5
+
+
 def _structural_effect_probe(
     seed: int = 42,
     tiny_synth: bool = True,
@@ -381,12 +492,33 @@ def _structural_effect_probe(
 ) -> float:
     """Run the runner's actual code path twice with the SAME initial
     bridge state but different suppress_cue_during_retrieve flags;
-    return the max absolute membrane-potential divergence (mV).
+    return the max absolute membrane-potential divergence (mV) for
+    the flag-differing case. Strengthened to close the 8th adversarial
+    review BLOCK by adding RNG isolation + controls (see below).
 
-    If the divergence is below 1 mV, the mechanism is structurally
-    inert and the caller MUST abort (no decisive numbers reported).
-    Raises RuntimeError if so. Returns the diff (float, > 1.0) when
-    the mechanism is structurally active.
+    Mechanism (CLOSES the 8th adversarial review BLOCK):
+      * Deterministic-seed the active backend's RNG to _PROBE_RNG_SEED
+        BEFORE each _run_theta_cycle_query call. Both arms therefore
+        see IDENTICAL OU-noise streams; the SOLE remaining difference
+        between the arms is the suppress_cue_during_retrieve flag.
+      * Restore the RNG state after each call so other components
+        (Phase-1 training, fact encoding, etc.) see no perturbation.
+      * Run TWO additional CONTROL contrasts at the SAME seed:
+          (1) both arms pass suppress=True -> divergence must be < 0.5 mV
+          (2) both arms pass suppress=False -> divergence must be < 0.5 mV
+        If either control shows large divergence, RNG isolation is
+        broken and the probe raises RuntimeError (the previously
+        reported "30.24 mV" was exactly this failure mode -- it
+        reproduced under both-flags-True and both-flags-False).
+      * The flag-differing case (True vs False) MUST exceed 1.0 mV
+        for the mechanism to be declared structurally active.
+
+    If the flag-differing divergence is below 1 mV, the mechanism is
+    structurally inert and the caller MUST abort (no decisive numbers
+    reported). If a control shows divergence above the tolerance, RNG
+    isolation is broken and the caller MUST abort. Either raises
+    RuntimeError. Returns the flag-differing diff (float, > 1.0) when
+    BOTH the mechanism is structurally active AND the controls pass.
     """
     from sim.backend import get_backend, to_host
     cp, _backend_name = get_backend()
@@ -397,19 +529,6 @@ def _structural_effect_probe(
     _phase1_train_if_needed(int(seed), cache_dir, tiny_synth)
     cache_path = _phase1_cache_path(cache_dir, seed)
 
-    # Build TWO bridges from the SAME seed; load the SAME Phase-1
-    # checkpoint into both so the initial state is identical.
-    bridge_on = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
-    bridge_off = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
-    bridge_on.load_checkpoint(str(cache_path))
-    bridge_off.load_checkpoint(str(cache_path))
-    _freeze_phase1_gates(bridge_on)
-    _freeze_phase1_gates(bridge_off)
-
-    # Pick a cue word from the trained vocab; encode a dummy
-    # compositional fact so the engram tag exists for both bridges.
-    # (We do NOT need a real held-out pair -- the probe only needs
-    # the runner's actual code path to be exercised.)
     recipe_dims = _phase1_recipe(tiny_synth)
     all_words, word_to_idx = _all_words_word_to_idx()
     n_words_for_orthogonal = max(_N_WORDS_ORTHOGONAL, len(all_words))
@@ -422,54 +541,128 @@ def _structural_effect_probe(
         "n_words_for_orthogonal": int(n_words_for_orthogonal),
     }
     all_pools = _all_pool_regions(enable_adjective=True)
-    # One probe fact -- the structural-effect probe does NOT need a
-    # disjoint held-out set, only a real engram so the tag-stim path
-    # is exercised.
     facts = _unified_compositional_pairs(seed, 1)
     enc_steps = 8 if tiny_synth else 200
-    _encode_facts(bridge_on, facts, dims, enc_steps)
-    _encode_facts(bridge_off, facts, dims, enc_steps)
-
     cue_noun, _adj = facts[0]
     tag_name = "ep_0"
 
-    # Run the runner's ACTUAL code path on each bridge with the SOLE
-    # difference being the suppress_cue_during_retrieve flag.
-    _ = _run_theta_cycle_query(
-        bridge_on,
-        cue_word=cue_noun,
-        tag_name=tag_name,
-        dims=dims,
-        suppress_cue_during_retrieve=True,
-        tiny_synth=tiny_synth,
-        word_to_idx=word_to_idx,
-        all_pools=all_pools,
-    )
-    _ = _run_theta_cycle_query(
-        bridge_off,
-        cue_word=cue_noun,
-        tag_name=tag_name,
-        dims=dims,
-        suppress_cue_during_retrieve=False,
-        tiny_synth=tiny_synth,
-        word_to_idx=word_to_idx,
-        all_pools=all_pools,
-    )
+    # Deterministic RNG seed for the ENCODING phase (separate from the
+    # probe's RNG seed for the theta cycle, so encoding and theta-cycle
+    # noise streams are independent but DETERMINISTIC across arms).
+    ENCODE_RNG_SEED = 31337
 
-    v_on = to_host(bridge_on.cp_membrane_potential_v)
-    v_off = to_host(bridge_off.cp_membrane_potential_v)
-    diff = float(np.max(np.abs(np.asarray(v_on) - np.asarray(v_off))))
-    if diff <= 1.0:
+    def _one_contrast(flag_a: bool, flag_b: bool) -> float:
+        """Build two fresh bridges, load the SAME checkpoint into both,
+        deterministic-seed BEFORE _encode_facts on EACH so the encoded
+        bridge states are IDENTICAL, then deterministic-seed BEFORE
+        _run_theta_cycle_query on EACH (same seed across arms) so the
+        theta-cycle OU-noise streams are IDENTICAL. The SOLE remaining
+        between-arm difference is the suppress_cue_during_retrieve flag.
+
+        Returns max |delta v_membrane|. The fresh bridges per contrast
+        ensure no cross-contrast leakage."""
+        bridge_a = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
+        bridge_b = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
+        bridge_a.load_checkpoint(str(cache_path))
+        bridge_b.load_checkpoint(str(cache_path))
+        _freeze_phase1_gates(bridge_a)
+        _freeze_phase1_gates(bridge_b)
+
+        # Encoding phase: identical deterministic seed BEFORE each call
+        # so the two bridges end up in byte-identical encoded states.
+        saved_enc_a = _seed_query_rng(ENCODE_RNG_SEED)
+        try:
+            _encode_facts(bridge_a, facts, dims, enc_steps)
+        finally:
+            _restore_query_rng(saved_enc_a)
+        saved_enc_b = _seed_query_rng(ENCODE_RNG_SEED)
+        try:
+            _encode_facts(bridge_b, facts, dims, enc_steps)
+        finally:
+            _restore_query_rng(saved_enc_b)
+
+        # Theta-cycle phase: identical deterministic seed BEFORE each
+        # arm so the OU-noise streams match across arms.
+        saved_a = _seed_query_rng(_PROBE_RNG_SEED)
+        try:
+            _ = _run_theta_cycle_query(
+                bridge_a,
+                cue_word=cue_noun,
+                tag_name=tag_name,
+                dims=dims,
+                suppress_cue_during_retrieve=flag_a,
+                tiny_synth=tiny_synth,
+                word_to_idx=word_to_idx,
+                all_pools=all_pools,
+            )
+        finally:
+            _restore_query_rng(saved_a)
+
+        saved_b = _seed_query_rng(_PROBE_RNG_SEED)
+        try:
+            _ = _run_theta_cycle_query(
+                bridge_b,
+                cue_word=cue_noun,
+                tag_name=tag_name,
+                dims=dims,
+                suppress_cue_during_retrieve=flag_b,
+                tiny_synth=tiny_synth,
+                word_to_idx=word_to_idx,
+                all_pools=all_pools,
+            )
+        finally:
+            _restore_query_rng(saved_b)
+
+        v_a = to_host(bridge_a.cp_membrane_potential_v)
+        v_b = to_host(bridge_b.cp_membrane_potential_v)
+        return float(np.max(np.abs(np.asarray(v_a) - np.asarray(v_b))))
+
+    # Flag-differing case: the mechanism MUST move the bridge state.
+    diff_flag_diff = _one_contrast(True, False)
+    # Both-True control: with identical flag + identical RNG, the two
+    # bridges MUST agree (the RNG-isolation soundness check).
+    diff_both_true = _one_contrast(True, True)
+    # Both-False control: same check, opposite flag value.
+    diff_both_false = _one_contrast(False, False)
+
+    if diff_both_true > _PROBE_CONTROL_TOL_MV:
+        raise RuntimeError(
+            "Structural-effect probe CONTROL FAILED (both-True): with "
+            "suppress_cue_during_retrieve=True on BOTH bridges and the "
+            "same deterministic RNG seed, the two bridges diverged by "
+            "%.6g mV (> %.3g mV tolerance). RNG isolation is broken; "
+            "the flag-differing divergence is NOT attributable to the "
+            "cue-suppression mechanism. Closes 8th adversarial review "
+            "BLOCK; fix RNG isolation and re-run."
+            % (diff_both_true, _PROBE_CONTROL_TOL_MV)
+        )
+    if diff_both_false > _PROBE_CONTROL_TOL_MV:
+        raise RuntimeError(
+            "Structural-effect probe CONTROL FAILED (both-False): with "
+            "suppress_cue_during_retrieve=False on BOTH bridges and the "
+            "same deterministic RNG seed, the two bridges diverged by "
+            "%.6g mV (> %.3g mV tolerance). RNG isolation is broken; "
+            "the flag-differing divergence is NOT attributable to the "
+            "cue-suppression mechanism. Closes 8th adversarial review "
+            "BLOCK; fix RNG isolation and re-run."
+            % (diff_both_false, _PROBE_CONTROL_TOL_MV)
+        )
+
+    if diff_flag_diff <= 1.0:
         raise RuntimeError(
             "Structural-effect probe FAILED: theta-gamma "
             "suppress_cue_during_retrieve=True vs =False produced "
             "essentially identical bridge state (max |delta v| = "
-            "%.6g mV <= 1.0 mV) via the runner's ACTUAL code path. "
-            "The mechanism is structurally inert -- mirrors Pirazzini "
-            "d462bf0 defect. Fix and re-run BEFORE decisive."
-            % diff
+            "%.6g mV <= 1.0 mV) via the runner's ACTUAL code path "
+            "(controls passed: both-True=%.6g mV, both-False=%.6g mV "
+            "-- the small flag-differing divergence is the genuine "
+            "mechanism effect, not RNG drift). The mechanism is "
+            "structurally inert -- mirrors Pirazzini d462bf0 defect. "
+            "Fix and re-run BEFORE decisive."
+            % (diff_flag_diff, diff_both_true, diff_both_false)
         )
-    return float(diff)
+
+    return float(diff_flag_diff)
 
 
 # =====================================================================
@@ -540,9 +733,27 @@ def _run_evaluation_arm(seed: int, N: int, tiny_synth: bool,
 
     # Compositional encoding: encode the SAME facts into BOTH bridges
     # so the encoded state is identical at the start of the queries.
+    # RNG isolation (CLOSES 8th adversarial review BLOCK): seed the
+    # active backend + numpy + python RNGs to the SAME deterministic
+    # value BEFORE each call so the encoded bridge states are
+    # byte-identical across arms. Without this, the two bridges
+    # consume different RNG draws during encoding and end up in
+    # different post-encode states -- the arm contrast then conflates
+    # encoding noise with the mechanism's actual effect.
     facts = _unified_compositional_pairs(seed, N)
-    tags_full = _encode_facts(bridge_full, facts, dims, enc_steps)
-    tags_uniform = _encode_facts(bridge_uniform, facts, dims, enc_steps)
+    encode_rng_seed = (
+        int(seed) * 1_000_003 + int(N) * 1009 + 31337
+    ) & 0x7FFFFFFF
+    saved_enc_full = _seed_query_rng(encode_rng_seed)
+    try:
+        tags_full = _encode_facts(bridge_full, facts, dims, enc_steps)
+    finally:
+        _restore_query_rng(saved_enc_full)
+    saved_enc_uniform = _seed_query_rng(encode_rng_seed)
+    try:
+        tags_uniform = _encode_facts(bridge_uniform, facts, dims, enc_steps)
+    finally:
+        _restore_query_rng(saved_enc_uniform)
 
     # ---- DIRECT queries: one per unique trained word in the cell's
     # facts. BOTH arms route direct queries through the SAME
@@ -594,6 +805,15 @@ def _run_evaluation_arm(seed: int, N: int, tiny_synth: bool,
     # the UNIFORM_CTRL bridge runs with =False. This is the SOLE
     # differentiator between the two arms (the
     # cue-suppression-during-retrieve mechanism).
+    #
+    # RNG isolation (CLOSES 8th adversarial review BLOCK): each query
+    # deterministic-seeds the active backend's RNG to the SAME value
+    # for BOTH arms (derived from seed/N/query-index so it is unique
+    # per query but identical across the two arms). Both arms therefore
+    # see IDENTICAL OU-noise streams; the SOLE between-arm difference
+    # is the suppress_cue_during_retrieve flag. The RNG state is
+    # restored after each call so the surrounding code (encoding,
+    # direct queries, ungroundable queries) sees no perturbation.
     n_comp_total = 0
     n_comp_correct_full = 0
     n_comp_correct_uniform = 0
@@ -601,17 +821,28 @@ def _run_evaluation_arm(seed: int, N: int, tiny_synth: bool,
         n_comp_total += 1
         tag_full = tags_full[i] if i < len(tags_full) else None
         tag_uniform = tags_uniform[i] if i < len(tags_uniform) else None
+        # Deterministic RNG seed unique to this (seed, N, query-index)
+        # tuple. Both arms below use the SAME value so the OU-noise
+        # streams match across arms; the SOLE differentiator is the
+        # suppress_cue_during_retrieve flag.
+        query_rng_seed = (
+            int(seed) * 1_000_003 + int(N) * 1009 + int(i) * 7919 + 17
+        ) & 0x7FFFFFFF
         # FULL arm: cue suppressed during retrieve.
-        ranked_full = _run_theta_cycle_query(
-            bridge_full,
-            cue_word=noun,
-            tag_name=tag_full,
-            dims=dims,
-            suppress_cue_during_retrieve=True,
-            tiny_synth=tiny_synth,
-            word_to_idx=word_to_idx,
-            all_pools=all_pools,
-        )
+        saved_full = _seed_query_rng(query_rng_seed)
+        try:
+            ranked_full = _run_theta_cycle_query(
+                bridge_full,
+                cue_word=noun,
+                tag_name=tag_full,
+                dims=dims,
+                suppress_cue_during_retrieve=True,
+                tiny_synth=tiny_synth,
+                word_to_idx=word_to_idx,
+                all_pools=all_pools,
+            )
+        finally:
+            _restore_query_rng(saved_full)
         decided_full = gate_compositional_unified(
             ranked_full, COMPOSITIONAL_UNIFIED_THRESHOLD
         )
@@ -620,17 +851,22 @@ def _run_evaluation_arm(seed: int, N: int, tiny_synth: bool,
         # cycle EXCEPT the SOLE differentiator. The ranked output is
         # gated by the (uniform) DIRECT_UNIFIED_THRESHOLD via the
         # compositional-gate machinery (mirrors the unified runner's
-        # uniform_ctrl convention).
-        ranked_uniform = _run_theta_cycle_query(
-            bridge_uniform,
-            cue_word=noun,
-            tag_name=tag_uniform,
-            dims=dims,
-            suppress_cue_during_retrieve=False,
-            tiny_synth=tiny_synth,
-            word_to_idx=word_to_idx,
-            all_pools=all_pools,
-        )
+        # uniform_ctrl convention). IDENTICAL deterministic RNG seed
+        # to the FULL arm above.
+        saved_uniform = _seed_query_rng(query_rng_seed)
+        try:
+            ranked_uniform = _run_theta_cycle_query(
+                bridge_uniform,
+                cue_word=noun,
+                tag_name=tag_uniform,
+                dims=dims,
+                suppress_cue_during_retrieve=False,
+                tiny_synth=tiny_synth,
+                word_to_idx=word_to_idx,
+                all_pools=all_pools,
+            )
+        finally:
+            _restore_query_rng(saved_uniform)
         decided_uniform = gate_compositional(
             ranked_uniform, DIRECT_UNIFIED_THRESHOLD
         )

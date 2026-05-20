@@ -144,13 +144,23 @@ def test_structural_effect_probe_runs_via_runner_actual_code_path():
     synthetic per-step loop. If the probe fails the runner must
     raise (no decisive numbers are reported when the mechanism is
     structurally inert).
+
+    Strengthened per the 8th adversarial review BLOCK: the probe ALSO
+    runs CONTROL contrasts (both arms pass the SAME flag with the SAME
+    deterministic RNG seed) and asserts those agree to < 0.5 mV. The
+    earlier 30.24 mV claim turned out to be RNG-drift -- it reproduced
+    under both-True and both-False just like under the flag-differing
+    case. The strengthened probe rules that out by construction: if
+    either control shows divergence > 0.5 mV the probe raises.
     """
     assert hasattr(tgr, "_structural_effect_probe"), (
         "the runner must expose a `_structural_effect_probe` helper "
         "(mirrors Pirazzini d462bf0 lesson)"
     )
-    # The probe must not raise -- if it raises, the mechanism is
-    # structurally inert and the runner must abort.
+    # The probe must not raise -- if it raises, either (a) the mechanism
+    # is structurally inert (flag-differing < 1 mV) or (b) RNG isolation
+    # is broken (a control shows > 0.5 mV divergence). Both conditions
+    # are no-go.
     diff_mv = tgr._structural_effect_probe(seed=42, tiny_synth=True)
     assert isinstance(diff_mv, float) and diff_mv > 1.0, (
         "the runner's actual code path must produce > 1 mV bridge-state "
@@ -159,6 +169,129 @@ def test_structural_effect_probe_runs_via_runner_actual_code_path():
         "inert-mechanism failure mode the Pirazzini d462bf0 lesson "
         "guards against."
         % diff_mv
+    )
+
+
+def test_structural_effect_probe_controls_pass_at_runner_level():
+    """8th adversarial review BLOCK closer: directly assert that the
+    probe's CONTROL contrasts hold via the same helper the probe uses.
+
+    The probe internally seeds the active backend's RNG to a fixed
+    value before each call to _run_theta_cycle_query. We replicate the
+    both-True and both-False contrasts here at the test boundary, using
+    the _seed_query_rng / _restore_query_rng helpers the probe exposes,
+    and assert each control is < 0.5 mV.
+
+    If this test passes, the eighth adversarial review BLOCK is closed
+    in the test surface as well (not just inside the probe): RNG drift
+    is NOT the source of any bridge-state divergence reported by the
+    probe or the per-cell eval arm.
+    """
+    from sim.backend import to_host
+    import numpy as np
+
+    # The probe-internal seed value (kept private). We mirror it here
+    # so this test exercises the same isolation pattern the probe uses.
+    PROBE_RNG_SEED = 999
+
+    # Build the substrate the way the probe does.
+    cache_dir = tgr._PHASE1_CACHE_DEFAULT
+    tgr._phase1_train_if_needed(42, cache_dir, tiny_synth=True)
+    cache_path = tgr._phase1_cache_path(cache_dir, 42)
+
+    recipe_dims = tgr._phase1_recipe(True)
+    all_words, word_to_idx = tgr._all_words_word_to_idx()
+    n_words_for_orthogonal = max(
+        tgr._N_WORDS_ORTHOGONAL, len(all_words)
+    )
+    dims = {
+        "n_lang_input": int(recipe_dims["n_lang_input"]),
+        "n_per_pool": int(recipe_dims["n_per_pool"]),
+        "n_fs_per_pool": int(recipe_dims["n_fs_per_pool"]),
+        "sparsity": 0.05,
+        "dt_ms": 0.5,
+        "n_words_for_orthogonal": int(n_words_for_orthogonal),
+    }
+    all_pools = tgr._all_pool_regions(enable_adjective=True)
+    facts = tgr._unified_compositional_pairs(42, 1)
+    cue_noun, _adj = facts[0]
+    tag_name = "ep_0"
+
+    ENCODE_RNG_SEED = 31337
+
+    def _one_pair(flag_a: bool, flag_b: bool) -> float:
+        bridge_a = tgr._build_bridge_with_phase1_recipe(42, True)
+        bridge_b = tgr._build_bridge_with_phase1_recipe(42, True)
+        bridge_a.load_checkpoint(str(cache_path))
+        bridge_b.load_checkpoint(str(cache_path))
+        tgr._freeze_phase1_gates(bridge_a)
+        tgr._freeze_phase1_gates(bridge_b)
+
+        # Deterministic RNG isolation: identical seed BEFORE _encode_facts
+        # on each so the encoded states are byte-identical across arms.
+        saved_enc_a = tgr._seed_query_rng(ENCODE_RNG_SEED)
+        try:
+            tgr._encode_facts(bridge_a, facts, dims, 8)
+        finally:
+            tgr._restore_query_rng(saved_enc_a)
+        saved_enc_b = tgr._seed_query_rng(ENCODE_RNG_SEED)
+        try:
+            tgr._encode_facts(bridge_b, facts, dims, 8)
+        finally:
+            tgr._restore_query_rng(saved_enc_b)
+
+        saved_a = tgr._seed_query_rng(PROBE_RNG_SEED)
+        try:
+            tgr._run_theta_cycle_query(
+                bridge_a, cue_word=cue_noun, tag_name=tag_name,
+                dims=dims,
+                suppress_cue_during_retrieve=flag_a,
+                tiny_synth=True,
+                word_to_idx=word_to_idx,
+                all_pools=all_pools,
+            )
+        finally:
+            tgr._restore_query_rng(saved_a)
+        saved_b = tgr._seed_query_rng(PROBE_RNG_SEED)
+        try:
+            tgr._run_theta_cycle_query(
+                bridge_b, cue_word=cue_noun, tag_name=tag_name,
+                dims=dims,
+                suppress_cue_during_retrieve=flag_b,
+                tiny_synth=True,
+                word_to_idx=word_to_idx,
+                all_pools=all_pools,
+            )
+        finally:
+            tgr._restore_query_rng(saved_b)
+        v_a = to_host(bridge_a.cp_membrane_potential_v)
+        v_b = to_host(bridge_b.cp_membrane_potential_v)
+        return float(
+            np.max(np.abs(np.asarray(v_a) - np.asarray(v_b)))
+        )
+
+    diff_both_true = _one_pair(True, True)
+    diff_both_false = _one_pair(False, False)
+    diff_flag_diff = _one_pair(True, False)
+
+    assert diff_both_true < 0.5, (
+        "8th adversarial review BLOCK: with suppress=True on BOTH bridges "
+        "and the SAME deterministic RNG seed, the two bridges must agree "
+        "(div < 0.5 mV) -- RNG isolation is what closes the prior 30.24 "
+        "mV artefact. Got %.6g mV." % diff_both_true
+    )
+    assert diff_both_false < 0.5, (
+        "8th adversarial review BLOCK: with suppress=False on BOTH bridges "
+        "and the SAME deterministic RNG seed, the two bridges must agree "
+        "(div < 0.5 mV) -- RNG isolation is what closes the prior 30.24 "
+        "mV artefact. Got %.6g mV." % diff_both_false
+    )
+    assert diff_flag_diff > 1.0, (
+        "with suppress=True/False (flag-differing) and the SAME "
+        "deterministic RNG seed, the mechanism MUST produce > 1 mV "
+        "divergence -- this is the genuine cue-suppression effect "
+        "(NOT RNG drift, since the controls above passed). Got %.6g mV."
+        % diff_flag_diff
     )
 
 
