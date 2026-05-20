@@ -444,14 +444,52 @@ metacognitive monitors aren't applying a universal "compositional
 threshold"; they apply a "this substrate, this regime" threshold
 calibrated in-situ.
 
-**EXACT NEXT ACTION: pre-committed substantive fix-iteration of the
+**UNIFIED FIX ITERATIONS COMPLETE (defect-1 9052d43 + defect-2
+beb8f1c) + FULL-SCALE CALIBRATION RAN with TWO substantive
+findings:** (1) compositional gate calibration on the unified
+substrate aggregates to **0.198** (per-seed [0.218, 0.206, 0.169];
+consistent groundable > ungroundable at every seed) vs the
+per-regime stage's committed 5.6887 -- ~28x lower threshold on the
+SAME readout quantity; **empirically confirms the adversarial
+reviewer's substrate-specific-threshold insight**; status MISMATCH
+correctly blocks silent re-use. (2) direct gate calibration on the
+unified substrate via measure_pool_firing produces
+**INSUFFICIENT-SEPARATION at 2/3 seeds** (seed 42 INVERTED 0.27 vs
+0.30; seed 43 correct 0.48 vs 0.345; seed 44 INVERTED 0.33 vs
+0.41); the runner correctly BLOCKS the controller from committing
+a degenerate direct threshold. Decisive evaluation cannot proceed
+without understanding why. Findings:
+`research/findings/2026-05-20-unified-substrate-calibration-substrate-specific-compositional-threshold-confirmed-direct-INSUFFICIENT-SEPARATION.md`.
+
+**EXACT NEXT ACTION: diagnostic probe comparing
+`measure_pool_firing` separation on (a) the unified substrate
+(hippocampus + dlpfc + concept pools; the calibration's Phase-1
+checkpoints already exist at `research/findings/raw/unified_per_regime/phase1/seed{42,43,44}.simstate.h5`)
+vs (b) the pure v14/v16 substrate (`cpd.build_concept_bridge`,
+concept pools only).** The probe localises whether the unified
+substrate's hippocampus + dlpfc addition DEGRADES direct retrieval
+or whether the calibration query design is too noisy. Reuses
+cached checkpoints where available (zero retraining cost). Reports
+per-seed groundable vs ungroundable distributions on a larger
+query set than the calibration used. If pure v14/v16 substrate
+gives reliable separation, the next iteration must address the
+hippocampal/dlpfc interference (a real neuroscience-grounded
+refinement). If pure v14/v16 substrate ALSO shows
+INSUFFICIENT-SEPARATION, the next iteration must address the
+measurement-methodology gap (W->A vs A->W; statistical power of
+the held-out query design). Either branch is a real iteration --
+NOT declare-unfit, NOT config-crank, NOT hand-back. Honest
+ceiling unchanged. NO bar change. The autonomous next-action tool
+call is always in the same turn; never stop on a promise.
+
+[HISTORICAL CONTEXT: pre-committed substantive fix-iteration of the
 unified runner -- substrate redesign + dual recalibration of both
 moats on the unified substrate (NO bar change, NO declare-unfit, NO
 hand-back, NO config-crank; protected `*_core.py` + frozen verdict
 module byte-UNCHANGED; the two moats' source files DO get
 substrate-specific recalibration as separate pre-registered controller
 commits, exactly as the previous per-regime stage's calibration
-commit was a pre-registered separate step).** Concrete corrections
+commit was a pre-registered separate step). Concrete corrections
 in `research/runners/unified_per_regime_monitor_runner.py` (and a
 new substrate-specific calibration step, possibly via the existing
 `per_regime_monitor_runner.py --calibrate` machinery applied to a
@@ -490,7 +528,7 @@ controller-only decisive run; honest propagation. The five-
 adversarial-loops-each-catching-real-defects discipline is itself
 the meta-deliverable. Honest ceiling unchanged. NO partition edit
 ever; the autonomous next-action tool call is always in the same
-turn after every commit; never stop on a promise.
+turn after every commit; never stop on a promise.]
 
 [HISTORICAL CONTEXT: unified design pass for the
 PER-REGIME-MONITOR + PER-REGIME-ENCODING architecture (the
