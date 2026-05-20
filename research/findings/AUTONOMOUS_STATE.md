@@ -505,40 +505,85 @@ outcomes (42, 44) reflect random-split luck on a trained-only
 population, not a real noise floor. Findings:
 `research/findings/2026-05-20-unified-direct-gate-calibration-methodology-bug-CAUGHT-substrate-discrimination-INTACT.md`.
 
-**EXACT NEXT ACTION: REDESIGN the direct-gate calibration protocol
-to measure the right quantity.** Build a v2 calibration function
-`_calibrate_direct_v2_one_seed` alongside (NOT modifying) the
-existing v1 protocol, opt-in via a CLI flag. The v2 protocol uses
-the per-word SIGNAL-TO-NOISE METRIC (target-pool rate vs best-
-off-target-pool rate per trained word, aggregated over the FULL
-trained vocab -- the same metric the v2 diagnostic showed has
-positive separation 0.265 vs 0.235 on the unified substrate at
-seed 42). This eliminates the half-split fragility AND aligns the
-calibration's signal with the gate's deployment semantics ("is the
-substrate's top pool meaningfully above the runner-up?"). The new
-gate semantics:
+**v2 DIRECT-GATE CALIBRATION COMPLETE -- threshold 0.2841666666666667
+calibrated and committed (commit pending controller verification +
+push).** Implementation chain ran end-to-end and worked:
 
-- threshold = median midpoint of trained-vocab top-minus-second
-  gap distribution (computed per-seed; aggregated across 3 seeds)
-- at deployment, a query whose top-minus-second gap exceeds the
-  threshold is emitted; otherwise abstained
-- INSUFFICIENT-SEPARATION still fires if any per-seed cell shows
-  groundable_median <= ungroundable_median on the new metric (the
-  strengthen-only fail-closed discipline byte-unchanged)
+- v2 implementation by subagent (commit `b07486e`): additive
+  `_calibrate_direct_v2_one_seed` function alongside v1 + new CLI
+  flag `--direct-calibration-v2` + 3 new tests (`tests/test_unified_per_regime_monitor_runner.py`).
+  22/22 pytest PASS in 428s (~7 min); v1 byte-unchanged; protected
+  set byte-empty diff vs `e8a99a2` holds; no-confab moat 7/7.
+- Sixth consecutive dedicated adversarial review = CLEAR-WITH-NOTES
+  (no load-bearing defects; two cosmetic items for controller-
+  discretion follow-up: misleading sub_seed docstring + missing
+  uniform-tiny-gap PENDING regression test).
+- Full-scale v2 calibration (3 seeds; cached Phase-1 checkpoints;
+  ~1 min wall-clock per the cache pattern; commit-pending; durable
+  JSON `research/findings/raw/unified_CALIBRATION_v2_fullscale.json`,
+  log `research/findings/raw/unified_CALIBRATION_v2_fullscale.log`)
+  produced clean positive separation across all 3 seeds:
+    seed 42: groundable_median=0.265 > ungroundable_median=0.235
+             (margin 0.030); threshold=0.250
+    seed 43: groundable_median=0.365 > ungroundable_median=0.255
+             (margin 0.110); threshold=0.310
+    seed 44: groundable_median=0.353 > ungroundable_median=0.232
+             (margin 0.121); threshold=0.293
+    aggregate                                              = 0.2841666...
+  Status: PENDING (committed placeholder 0.0; aggregate non-zero;
+  every per-seed cell positive direction). The controller commits
+  the aggregate value as the frozen direct-unified moat in a
+  separate pre-registered step (mirroring the per-regime stage's
+  compositional-gate calibration commit `abe65f6`). Findings:
+  `research/findings/2026-05-20-unified-substrate-DIRECT-UNIFIED-THRESHOLD-CALIBRATED-via-v2-protocol.md`.
 
-Same standing chain: writing-plans -> subagent-driven-development
--> dedicated adversarial review BEFORE no-harm -> controller-only
-decisive calibration run on the new protocol -> if MATCH on a
-positive threshold, controller commits the new constant in a
-separate pre-registered step (mirroring the per-regime stage's
-`abe65f6` pattern) -> resume Tasks 4-5 of the unified arc. The
-existing `_calibrate_direct_one_seed` (v1) stays byte-unchanged;
-the `abstention_gate_direct_unified.py` placeholder threshold
-stays 0.0 until v2 calibration commits. NO bar change anywhere;
-the protected set byte-empty diff vs `e8a99a2` must continue to
-hold; no-confab moat 7/7 byte-identical; honest ceiling unchanged.
-The autonomous next-action tool call is always in the same turn;
-never stop on a promise.
+Seed-42 v2 calibration result (0.265/0.235) matches the v2 diagnostic
+result exactly -- determinism confirmed across both the diagnostic
+and calibration code paths.
+
+**EXACT NEXT ACTION: substrate-specific COMPOSITIONAL gate
+calibration commit + decisive run.** The unified runner currently
+routes compositional queries through ``gate_compositional(.,
+COMPOSITIONAL_THRESHOLD=5.6887)`` (the per-regime stage's
+calibrated moat). On the unified substrate this is structurally
+unreachable (the compositional readout is scale ~0.2, not ~5) and
+will over-abstain on every compositional query -- exactly the
+documented INSUFFICIENT-SEPARATION pattern in the v1 calibration's
+compositional gate output (aggregate 0.197712, MISMATCH vs 5.6887,
+but 3/3 seeds positive direction so the compositional readout IS
+substrate-bound -- just at a different scale). The next iteration:
+
+(A) Add a new file `abstention_gate_compositional_unified.py`
+    mirroring the `abstention_gate_direct_unified.py` pattern:
+    `COMPOSITIONAL_UNIFIED_THRESHOLD = 0.1977124183006536`
+    (the calibrated aggregate from the v1 calibration output) with
+    calibrated docstring + same gate function shape (defensive
+    handling of None / non-list / empty inputs). Stdlib + typing
+    only; ASCII.
+(B) Update the unified runner's three compositional-gate-routing
+    sites (lines 978, 992, 1036) to use
+    COMPOSITIONAL_UNIFIED_THRESHOLD instead of
+    COMPOSITIONAL_THRESHOLD. (The per-regime stage's 5.6887 stays
+    byte-unchanged in `abstention_gate_compositional.py` for the
+    per-regime substrate's hippocampal one-shot readout.)
+(C) Add tests for the new gate (mirroring the existing
+    abstention_gate_compositional tests).
+(D) Subagent-driven build with TDD + dedicated adversarial review +
+    controller verification of protected-set byte-empty diff +
+    no-confab moat 7/7.
+(E) Then Task 4 no-harm (full test suite green; protected set still
+    byte-empty diff vs `e8a99a2`) + Task 5 controller-only decisive
+    run (full biological scale; ladder 2/4/8; 3 seeds; both unified-
+    substrate-specific thresholds in place; kill-safe; monitored to
+    actual process exit via a genuine completion waiter) + mandatory
+    smell-test (scrutinize a PASS harder than a FAIL) + honest
+    propagation EVERY outcome both remotes + autonomous next staged
+    step per outcome.
+
+NO bar change anywhere; the protected set byte-empty diff vs
+`e8a99a2` must continue to hold; no-confab moat 7/7 byte-identical;
+honest ceiling unchanged. The autonomous next-action tool call is
+always in the same turn; never stop on a promise.
 
 [HISTORICAL CONTEXT: pre-committed substantive fix-iteration of the
 unified runner -- substrate redesign + dual recalibration of both

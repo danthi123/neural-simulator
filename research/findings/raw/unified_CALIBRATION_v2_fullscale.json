@@ -1,0 +1,98 @@
+{
+  "mode": "calibration",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "tiny_synth": false,
+  "method": "median_midpoint: for each seed, run a HELD-OUT calibration on the build_biological_brain_regions substrate (the SAME substrate Stage-1 / SPEAR / Pirazzini / Per-regime / Unified all use). Compositional gate: encode held-out (noun, adj) pairs (sub-seed = seed + 30000, disjoint from eval pairs) and measure raw firing-rate confidence at lang_output for GROUNDABLE (encoded) vs UNGROUNDABLE (never-encoded) queries; calibrated_threshold = 0.5 * (median(groundable) + median(ungroundable)). Direct gate: query each Phase-1-trained vocabulary word (sub-seed = seed + 40000) and measure the target-pool firing rate via measure_pool_firing (groundable = trained-word target-pool rate; ungroundable = never-trained word's top-pool rate -- in tiny-synth this is the same vocab with a sub-sampled disjoint Phase-1 subset; in full scale, the calibrator uses a held-out word partition). INSUFFICIENT-SEPARATION on ANY seed where groundable_median <= ungroundable_median (strengthen-only fix mirrored from the per-regime runner).",
+  "compositional_gate": {
+    "per_seed_calibrated_thresholds": [
+      0.2181372549019608,
+      0.20588235294117646,
+      0.16911764705882354
+    ],
+    "per_seed_details": [
+      {
+        "seed": 42,
+        "sub_seed": 30042,
+        "groundable_median": 0.25,
+        "ungroundable_median": 0.18627450980392157,
+        "calibrated_threshold": 0.2181372549019608,
+        "n_groundable": 4,
+        "n_ungroundable": 1,
+        "protocol_version": "v1"
+      },
+      {
+        "seed": 43,
+        "sub_seed": 30043,
+        "groundable_median": 0.2647058823529412,
+        "ungroundable_median": 0.14705882352941177,
+        "calibrated_threshold": 0.20588235294117646,
+        "n_groundable": 4,
+        "n_ungroundable": 4,
+        "protocol_version": "v1"
+      },
+      {
+        "seed": 44,
+        "sub_seed": 30044,
+        "groundable_median": 0.20098039215686275,
+        "ungroundable_median": 0.13725490196078433,
+        "calibrated_threshold": 0.16911764705882354,
+        "n_groundable": 4,
+        "n_ungroundable": 1,
+        "protocol_version": "v1"
+      }
+    ],
+    "aggregate_calibrated_threshold": 0.1977124183006536,
+    "committed_threshold": 5.688725490196079,
+    "calibration_status": "MISMATCH",
+    "protocol_version": "v1"
+  },
+  "direct_gate": {
+    "per_seed_calibrated_thresholds": [
+      0.25,
+      0.31,
+      0.2925
+    ],
+    "per_seed_details": [
+      {
+        "seed": 42,
+        "sub_seed": 50042,
+        "groundable_median": 0.265,
+        "ungroundable_median": 0.235,
+        "calibrated_threshold": 0.25,
+        "n_groundable": 16,
+        "n_ungroundable": 16,
+        "protocol_version": "v2"
+      },
+      {
+        "seed": 43,
+        "sub_seed": 50043,
+        "groundable_median": 0.365,
+        "ungroundable_median": 0.255,
+        "calibrated_threshold": 0.31,
+        "n_groundable": 16,
+        "n_ungroundable": 16,
+        "protocol_version": "v2"
+      },
+      {
+        "seed": 44,
+        "sub_seed": 50044,
+        "groundable_median": 0.35250000000000004,
+        "ungroundable_median": 0.23249999999999998,
+        "calibrated_threshold": 0.2925,
+        "n_groundable": 16,
+        "n_ungroundable": 16,
+        "protocol_version": "v2"
+      }
+    ],
+    "aggregate_calibrated_threshold": 0.2841666666666667,
+    "committed_threshold": 0.0,
+    "calibration_status": "PENDING",
+    "protocol_version": "v2",
+    "method": "v2: per-word target-vs-best-off-target gap aggregated over the full trained vocab; no per-seed half-split; calibrated_threshold = 0.5 * (median(target_rate) + median(best_off_target_rate)) per seed"
+  },
+  "note": "calibration only -- NOT a decisive result. Per-seed calibrated thresholds reported for BOTH the compositional gate AND the NEW substrate-specific direct gate. The controller picks the aggregate value and updates the source-constant in a SEPARATE commit. The runner only writes JSON."
+}
