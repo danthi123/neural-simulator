@@ -21,9 +21,27 @@ the compositional one-shot encoding, then routes per-query-type through
 both calibrated moats. The orchestrating runner is the ONLY net-new
 code; EVERY learning rule + subsystem is REUSED by import:
 
+  * Substrate construction (validated v16 + hippocampus + dlpfc PFC
+    frame -- the SAME substrate Stage-1 / SPEAR / Pirazzini /
+    Per-regime all used): REUSED ``text_minimal_isolation
+    .build_biological_brain_regions(
+    enable_hippocampus_consolidation=True, enable_noun_pools=True,
+    enable_verb_pools=True, enable_adjective_pools=True, ...)``
+    byte-unchanged. The new substrate has BOTH hippocampus (so the
+    engram ``region_filter=["dg","ca3","ca1"]`` resolves to a real
+    index set and ``commit_engram_tag`` produces tags with non-zero
+    ``n_tagged``) AND concept pools (so the v14/v16 multi-event
+    training applies cleanly via the validated
+    ``apply_concept_topographic_bias`` + ``train_word_to_pool``
+    flow byte-unchanged). The prior runner built on
+    ``cpd.build_concept_bridge`` -- concept-pool-only, NO
+    hippocampus -- which made the engram tags zero-neuron
+    (the adversarial-review-blocked defect #1).
   * Phase-1 multi-event direct training (validated v14/v16 88.75%
-    multi-seed): REUSED ``concept_pool_demo.run_concept_pool_demo``
-    + ``build_concept_bridge`` (byte-unchanged).
+    multi-seed): REUSED ``concept_pool_demo
+    .apply_concept_topographic_bias`` + ``train_word_to_pool``
+    byte-unchanged (the same recipe ``run_concept_pool_demo`` uses
+    internally; we just call them directly on the new substrate).
   * Bridge state persistence (HDF5; byte-stable at same seed):
     REUSED ``bridge.save_checkpoint`` / ``bridge.load_checkpoint``.
   * Compositional one-shot encoding: REUSED
@@ -47,18 +65,21 @@ code; EVERY learning rule + subsystem is REUSED by import:
 
 Per seed (in order):
   1. Phase-1 training (cached): if ``{phase1_cache_dir}/seed{seed}.simstate.h5``
-     exists, skip. Else call ``cpd.run_concept_pool_demo`` with the
-     v14/v16 validated recipe (shrunk for tiny_synth) + ``save_bridge=``
-     the cache path. Phase-1 produces a trained substrate at the
-     v14/v16-calibrated direct-pool-firing-rate confidence the 650
-     direct moat is calibrated on.
+     exists, skip. Else build the validated v16 + hippocampus + dlpfc
+     substrate, apply ``apply_concept_topographic_bias``, then loop
+     ``train_word_to_pool`` over the v14/v16 vocabulary -- the same
+     recipe ``run_concept_pool_demo`` uses internally. The substrate
+     is saved at the cache path for downstream (seed, N) cells to
+     ``load_checkpoint`` against. Phase-1 produces a trained substrate
+     at the v14/v16-calibrated direct-pool-firing-rate confidence the
+     650 direct moat is calibrated on.
 
 Per (seed, N) cell:
-  2. Build a fresh bridge via ``cpd.build_concept_bridge`` with the
-     SAME recipe kwargs as Phase-1 (so the loaded architecture matches
-     the saved checkpoint), then ``bridge.load_checkpoint(cache_path)``;
-     freeze all Phase-1 plasticity gates so encoding does not perturb
-     v14/v16's reciprocal binding.
+  2. Build a fresh bridge via the SAME substrate builder with the SAME
+     dimensions (so the loaded architecture matches the saved
+     checkpoint), then ``bridge.load_checkpoint(cache_path)``; freeze
+     all Phase-1 plasticity gates so encoding does not perturb v14/v16's
+     reciprocal binding.
   3. Compositional one-shot encoding: generate N held-out compositional
      (noun, adj) pairs deterministically from the seed (via a sub-seed
      offset distinct from the per-regime calibration's +10000 offset,
@@ -207,38 +228,51 @@ def _phase1_cache_path(cache_dir: str, seed: int) -> Path:
 # =====================================================================
 # Phase-1 dim/recipe selection -- the SAME kwargs Phase-1 training uses
 # and the SAME kwargs the per-cell bridge-build uses so the loaded
-# architecture matches the saved checkpoint exactly.
+# architecture matches the saved checkpoint exactly. Mirror the
+# Stage-1 / SPEAR / Pirazzini / Per-regime _build_substrate dim scheme
+# so the substrate is the SAME validated v16 + hippocampus + dlpfc
+# frame those stages cleared.
 # =====================================================================
 def _phase1_recipe(tiny_synth: bool) -> Dict[str, Any]:
-    """Return the v14/v16-validated Phase-1 recipe kwargs (shrunk for
-    tiny_synth). The same kwargs are used by:
-      * ``run_concept_pool_demo(...)`` when training; AND
-      * ``build_concept_bridge(...)`` when loading the cached
-        checkpoint into a fresh bridge per (seed, N).
-    So the architecture matches at save and load.
+    """Return the v14/v16-validated Phase-1 recipe dims (shrunk for
+    tiny_synth). The same dims are used by:
+      * Phase-1 training when calling ``apply_concept_topographic_bias``
+        + ``train_word_to_pool`` (the same recipe ``run_concept_pool_demo``
+        uses internally); AND
+      * ``_build_bridge_with_phase1_recipe(...)`` when loading the
+        cached checkpoint into a fresh bridge per (seed, N).
+    So the architecture matches at save and load. The dims mirror the
+    per-regime runner's _build_substrate for tiny_synth vs full scale
+    so the substrate is the SAME validated v16 + hippocampus + dlpfc
+    frame Stage-1 / SPEAR / Pirazzini / Per-regime all used (the
+    adversarial-review-blocked substrate fix: this builder gives the
+    engram region_filter [dg, ca3, ca1] something real to resolve
+    against).
     """
     if tiny_synth:
         return {
             "n_train_events": 4,
-            "n_lang_input": 256,
-            "n_per_pool": 24,
-            "n_fs_per_pool": 6,
+            "n_lang_input": 64,
+            "n_per_pool": 12,
+            "n_fs_per_pool": 3,
+            "n_dlpfc_verb": 24,
         }
     return {
         "n_train_events": 200,
         "n_lang_input": 2048,
         "n_per_pool": 200,
         "n_fs_per_pool": 24,
+        "n_dlpfc_verb": 200,
     }
 
 
 def _phase1_train_kwargs(tiny_synth: bool) -> Dict[str, Any]:
-    """The kwargs the unified runner passes to ``run_concept_pool_demo``
-    when training the Phase-1 substrate for one seed. The v14/v16
-    validated 88.75%-multi-seed recipe -- weak_dynamics + interleaved
-    + topographic prior 3.0 / 0.3 + orthogonal codes + sparsity 0.05
-    + adjective pools + direct verb-to-motor (substrate dimensions only;
-    no compose training).
+    """The kwargs Phase-1 training uses (the v14/v16-validated 88.75%-
+    multi-seed recipe -- weak_dynamics + interleaved + topographic prior
+    3.0 / 0.3 + orthogonal codes + sparsity 0.05 + adjective pools +
+    direct verb-to-motor). These are the SAME recipe constants
+    ``run_concept_pool_demo`` uses internally; we just apply them
+    directly here on top of the substrate-with-hippocampus.
     """
     dims = _phase1_recipe(tiny_synth)
     return {
@@ -260,21 +294,121 @@ def _phase1_train_kwargs(tiny_synth: bool) -> Dict[str, Any]:
 
 def _build_bridge_with_phase1_recipe(seed: int, tiny_synth: bool):
     """Build a FRESH bridge whose architecture matches the Phase-1
-    cached checkpoint exactly. Mirror ``build_concept_bridge``'s kwarg
-    surface so ``bridge.load_checkpoint`` can apply the saved weights
-    without shape mismatch.
+    cached checkpoint exactly. Uses the SAME validated v16 +
+    hippocampus + dlpfc substrate builder Stage-1 / SPEAR / Pirazzini /
+    Per-regime all used (``build_biological_brain_regions``); the
+    architecture has BOTH hippocampus (so the engram region_filter
+    [dg, ca3, ca1] resolves to a real index set and
+    ``commit_engram_tag`` produces tags with non-zero ``n_tagged``)
+    AND concept pools (so the v14/v16 multi-event training applies
+    cleanly). This is the SUBSTRATE FIX closing the prior adversarial-
+    review-blocked defect #1.
+
+    Strategic mirror: same construction path as
+    ``per_regime_monitor_runner._build_substrate`` -- byte-unchanged
+    builder, same kwarg surface, same CoreSimConfig dial-set, same
+    _initialize_simulation_data call.
     """
+    if tiny_synth:
+        try:
+            import cupy as _c  # noqa: F401
+
+            _cupy_ok = True
+        except Exception:
+            _cupy_ok = False
+        if not _cupy_ok:
+            os.environ["SIM_BACKEND"] = "numpy"
+            from sim.backend import get_backend as _get_backend
+
+            _get_backend("numpy")
+
     dims = _phase1_recipe(tiny_synth)
-    bridge = cpd.build_concept_bridge(
-        seed=int(seed),
-        n_lang_input=int(dims["n_lang_input"]),
-        n_per_pool=int(dims["n_per_pool"]),
-        n_fs_per_pool=int(dims["n_fs_per_pool"]),
-        enable_adjective=True,
-        weak_dynamics=True,
-        enable_direct_verb_to_motor=True,
-        verbose=False,
+    n_lang_input = int(dims["n_lang_input"])
+    n_per_pool = int(dims["n_per_pool"])
+    n_fs_per_pool = int(dims["n_fs_per_pool"])
+    n_dlpfc_verb = int(dims["n_dlpfc_verb"])
+
+    from sim.config import (
+        CoreSimConfig,
+        VisualizationConfig,
+        RuntimeState,
+        GPUConfig,
     )
+    from sim.bridge import SimulationBridge
+    from research.runners.text_minimal_isolation import (
+        build_biological_brain_regions,
+    )
+
+    # weak_dynamics=True (v14/v16-validated) -- the SAME concept-pool
+    # dial-set the Stage-1 / SPEAR / Pirazzini / Per-regime substrate
+    # uses. Motor pools keep canon dynamics (the v16-validated default).
+    concept_internal_density = 0.05
+    concept_exc_weight = 0.3
+    concept_inh_weight = 0.8
+    regions, pathways = build_biological_brain_regions(
+        n_lang_input=n_lang_input,
+        n_motor_per_action=n_per_pool,
+        motor_internal_density=0.10,
+        motor_exc_weight_mean=2.0,
+        motor_inh_weight_mean=4.0,
+        text_input_to_motor_density=0.30,
+        text_input_to_motor_weight=3.0,
+        text_input_to_motor_jitter=0.5,
+        enable_motor_fs=True,
+        n_motor_fs_per_action=n_fs_per_pool,
+        enable_language_output=True,
+        n_lang_output=n_lang_input,
+        motor_to_language_output_weight=2.0,
+        enable_noun_pools=True,
+        noun_pool_names=cpd.NOUN_NAMES,
+        n_noun_per_pool=n_per_pool,
+        n_noun_fs_per_pool=n_fs_per_pool,
+        enable_verb_pools=True,
+        verb_pool_names=cpd.VERB_NAMES,
+        n_verb_per_pool=n_per_pool,
+        n_verb_fs_per_pool=n_fs_per_pool,
+        enable_adjective_pools=True,
+        adjective_pool_names=cpd.ADJECTIVE_NAMES,
+        n_adjective_per_pool=n_per_pool,
+        n_adjective_fs_per_pool=n_fs_per_pool,
+        concept_pool_internal_density=concept_internal_density,
+        concept_pool_exc_weight_mean=concept_exc_weight,
+        concept_pool_inh_weight_mean=concept_inh_weight,
+        # The validated trisynaptic hippocampal recent-specific path.
+        # This is the SUBSTRATE FIX: the engram region_filter
+        # [dg, ca3, ca1] now resolves to a real index set.
+        enable_hippocampus_consolidation=True,
+        # The validated dlpfc PFC working-memory compositional frame.
+        enable_dlpfc_verb=True,
+        n_dlpfc_verb=n_dlpfc_verb,
+        dlpfc_verb_internal_density=0.15,
+    )
+
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = list(regions)
+    cfg.region_pathways = list(pathways)
+    cfg.dt_ms = 0.5
+    cfg.seed = int(seed)
+    cfg.enable_nmda = True
+    cfg.nmda_tau_decay = 100.0
+    cfg.enable_structural_plasticity = False
+    cfg.enable_per_type_stp = False
+    cfg.enable_hebbian_learning = False
+    cfg.enable_short_term_plasticity = False
+    cfg.stdp_w_max = 8.0
+    cfg.fast_spike_reset = True
+
+    bridge = SimulationBridge(
+        core_config=cfg,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(),
+    )
+    bridge.runtime_state.max_delay_steps = int(
+        cfg.max_synaptic_delay_ms / cfg.dt_ms
+    )
+    bridge._initialize_simulation_data(called_from_playback_init=False)
     return bridge
 
 
@@ -323,6 +457,19 @@ def _phase1_train_if_needed(seed: int, cache_dir: str,
     primary cost-amortisation: a decisive multi-seed run runs Phase-1
     once per seed and reuses the same checkpoint across all (seed, N)
     cells AND across all later eval invocations.
+
+    Phase-1 training is the SAME validated v14/v16 recipe
+    ``run_concept_pool_demo`` uses internally (88.75% multi-seed
+    bidirectional binding): apply Pulvermuller-style topographic bias
+    via ``apply_concept_topographic_bias``, then loop
+    ``train_word_to_pool`` over the full v14/v16 vocabulary in
+    interleaved-shuffled order so no single pool dominates training.
+    We invoke these byte-unchanged functions directly on the substrate
+    built by ``_build_bridge_with_phase1_recipe`` -- which uses
+    ``build_biological_brain_regions(
+    enable_hippocampus_consolidation=True, ...)`` so the substrate
+    has BOTH hippocampus AND concept pools (the SUBSTRATE FIX closing
+    the prior adversarial-review-blocked defect #1).
     """
     cache_path = _phase1_cache_path(cache_dir, seed)
     Path(cache_dir).mkdir(parents=True, exist_ok=True)
@@ -330,17 +477,95 @@ def _phase1_train_if_needed(seed: int, cache_dir: str,
         return cache_path
 
     train_kwargs = _phase1_train_kwargs(tiny_synth)
-    cpd.run_concept_pool_demo(
-        seed=int(seed),
-        save_bridge=str(cache_path),
-        verbose=False,
-        **train_kwargs,
+
+    # 1) Build the validated substrate (v16 + hippocampus + dlpfc PFC).
+    bridge = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
+
+    # 2) Build the word_to_idx mapping the v14/v16 orthogonal-codes path
+    # expects. The first 16 positions match
+    # compose_retrieval_runner._NOUNS + _VERBS + _ADJS ordering.
+    all_words_ordered = (
+        list(cpd.DIRECTION_VOCAB)
+        + list(cpd.NOUN_VOCAB)
+        + list(cpd.VERB_VOCAB)
+        + list(cpd.ADJECTIVE_VOCAB)
     )
+    word_to_idx = {w: i for i, w in enumerate(all_words_ordered)}
+    n_words_total = len(all_words_ordered)
+
+    # 3) Apply topographic bias -- the SAME Pulvermuller-style
+    # 1.5/0.7 cortical-somatotopy recipe ``run_concept_pool_demo`` uses
+    # internally.
+    cpd.apply_concept_topographic_bias(
+        bridge,
+        n_lang_input=int(train_kwargs["n_lang_input"]),
+        topographic_factor=float(train_kwargs["topographic_factor"]),
+        off_target_factor=float(train_kwargs["off_target_factor"]),
+        sparsity=float(train_kwargs["sparsity"]),
+        orthogonal_codes=bool(train_kwargs["orthogonal_codes"]),
+        n_words_for_orthogonal=int(n_words_total),
+        word_to_idx=word_to_idx,
+        skip_motor=False,
+        verbose=False,
+    )
+
+    # 4) Build the (word, target_pool) schedule -- the SAME schedule
+    # ``run_concept_pool_demo`` constructs internally.
+    all_targets: List[Tuple[str, str]] = []
+    for word, action in cpd.DIRECTION_VOCAB.items():
+        all_targets.append((word, "motor_%s" % action))
+    for word, name in cpd.NOUN_VOCAB.items():
+        all_targets.append((word, "noun_pool_%s" % name))
+    for word, name in cpd.VERB_VOCAB.items():
+        all_targets.append((word, "verb_pool_%s" % name))
+    for word, name in cpd.ADJECTIVE_VOCAB.items():
+        all_targets.append((word, "adjective_pool_%s" % name))
+
+    # 5) Interleaved training -- the SAME shuffle pattern
+    # ``run_concept_pool_demo`` uses (matches bio_three_factor +
+    # prevents one pool from dominating during uninterrupted same-word
+    # training). Shuffling deterministic on ``seed``.
+    n_train_events = int(train_kwargs["n_train_events"])
+    rng = np.random.default_rng(int(seed))
+    buffer: List[Tuple[str, str]] = []
+    for word, target in all_targets:
+        for _ in range(n_train_events):
+            buffer.append((word, target))
+    rng.shuffle(buffer)
+
+    for (word, target) in buffer:
+        cpd.train_word_to_pool(
+            bridge, word, target,
+            n_events=1,
+            reset_steps=50,
+            n_lang_input=int(train_kwargs["n_lang_input"]),
+            n_lang_output=int(train_kwargs["n_lang_input"]),
+            sparsity=float(train_kwargs["sparsity"]),
+            orthogonal_codes=bool(train_kwargs["orthogonal_codes"]),
+            n_words_for_orthogonal=int(n_words_total),
+            word_to_idx=word_to_idx,
+            verbose=False,
+        )
+
+    # 6) Persist trained substrate state for downstream (seed, N) cells
+    # to load_checkpoint against.
+    Path(str(cache_path)).parent.mkdir(parents=True, exist_ok=True)
+    bridge.save_checkpoint(str(cache_path))
+
     if not cache_path.exists():
         raise RuntimeError(
             "Phase-1 training did not produce the expected cache "
             "checkpoint at %s (recipe=%r)" % (cache_path, train_kwargs)
         )
+    # Note on validation reuse: this Phase-1 training is the same
+    # recipe ``run_concept_pool_demo`` runs internally (the v14/v16
+    # 88.75% multi-seed validated dial-set). The runner does not call
+    # ``cpd.run_concept_pool_demo`` directly because that helper would
+    # build its OWN bridge via ``cpd.build_concept_bridge`` which lacks
+    # hippocampal regions -- that was the substrate defect the
+    # adversarial review blocked on. Direct
+    # ``apply_concept_topographic_bias`` + ``train_word_to_pool``
+    # gives us the SAME training on the SUBSTRATE-with-hippocampus.
     return cache_path
 
 

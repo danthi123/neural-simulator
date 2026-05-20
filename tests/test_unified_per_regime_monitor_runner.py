@@ -317,5 +317,139 @@ def test_kill_safety_uses_train_checkpoint():
     assert "resume_epoch" in src
 
 
+# =====================================================================
+# Adversarial-review-block fix (substrate defect #1):
+# The prior runner built on ``cpd.build_concept_bridge`` whose substrate
+# has NO hippocampal regions (no dg / ca3 / ca1) -- but compositional
+# encoding via ``encode_concept_pair`` uses ``region_filter=
+# ["dg","ca3","ca1"]``. ``commit_engram_tag`` silently swallows
+# missing-region errors -> engram tags get ``n_tagged=0`` -> the
+# compositional arm of ``full_acc`` is structurally inert.
+#
+# The fix rebuilds the substrate on
+# ``text_minimal_isolation.build_biological_brain_regions(
+# enable_hippocampus_consolidation=True, ...)`` -- the same builder
+# Stage-1 / SPEAR / Pirazzini / Per-regime all used. The new substrate
+# has BOTH hippocampus AND concept pools, so the engram region_filter
+# now resolves to a real index set and ``commit_engram_tag`` produces
+# tags with non-zero ``n_tagged``.
+#
+# These two pins ARE the success criterion for the substrate fix.
+# =====================================================================
+
+
+def test_substrate_has_hippocampal_regions(tmp_path):
+    """The substrate the unified runner builds for a single (seed, N)
+    cell MUST have the hippocampal trisynaptic-loop regions present
+    (dg, ca3, ca1). Without these, ``commit_engram_tag(region_filter=
+    ["dg","ca3","ca1"])`` produces zero-neuron tags and the
+    compositional arm is structurally inert.
+
+    We exercise the runner's actual cell-builder path -- not a probe --
+    so the pin reflects what the decisive run will produce.
+    """
+    cache_dir = tmp_path / "phase1"
+    # Train Phase-1 for one seed (writes cached checkpoint).
+    urr.run_unified_per_regime_monitor(
+        seeds=[42],
+        loads=(2,),
+        tiny_synth=True,
+        phase1_cache_dir=str(cache_dir),
+    )
+
+    # Build the substrate the runner's evaluation arm uses (tiny-synth).
+    bridge = urr._build_bridge_with_phase1_recipe(seed=42, tiny_synth=True)
+    rm = bridge.region_manager
+
+    # All three trisynaptic-loop regions must be present + non-empty.
+    for region_name in ("dg", "ca3", "ca1"):
+        try:
+            idx = rm.indices(region_name)
+        except KeyError as exc:
+            raise AssertionError(
+                "substrate missing hippocampal region %r -- the "
+                "engram region_filter [dg, ca3, ca1] cannot resolve; "
+                "compositional tags will be zero-neuron and the "
+                "compositional arm structurally inert "
+                "(prior adversarial-review-blocked defect #1)"
+                % region_name
+            ) from exc
+        assert len(list(idx)) > 0, (
+            "hippocampal region %r exists but has zero neurons -- "
+            "engram region_filter would still produce zero-neuron tags"
+            % region_name
+        )
+
+
+def test_compositional_encoding_produces_nonzero_engram_tag(tmp_path):
+    """After ONE compositional encoding via the runner's encoding
+    helper, the committed engram tag MUST have ``n_tagged > 0``. The
+    prior adversarial review blocked precisely on this: zero-neuron
+    engram tags (because the substrate had no hippocampal regions for
+    the engram's region_filter to resolve against), which made the
+    compositional arm structurally inert and the 5.69 gate always
+    abstain on the zero-neuron-tag-stim noise.
+
+    The fix is the substrate redesign: ``build_biological_brain_regions
+    (enable_hippocampus_consolidation=True, ...)`` -- the same builder
+    Stage-1 / SPEAR / Pirazzini / Per-regime all used -- has BOTH
+    hippocampus AND concept pools, so the engram region_filter now
+    resolves to a real index set.
+    """
+    cache_dir = tmp_path / "phase1"
+    # Train Phase-1 for one seed (writes cached checkpoint).
+    urr.run_unified_per_regime_monitor(
+        seeds=[42],
+        loads=(2,),
+        tiny_synth=True,
+        phase1_cache_dir=str(cache_dir),
+    )
+
+    bridge = urr._build_bridge_with_phase1_recipe(seed=42, tiny_synth=True)
+    bridge.load_checkpoint(str(cache_dir / "seed42.simstate.h5"))
+    urr._freeze_phase1_gates(bridge)
+
+    # Encode ONE compositional pair via the runner's _encode_facts
+    # helper (the SAME helper the evaluation arm calls). Use tiny-synth
+    # encoding steps for fast smoke; the structural check is the
+    # n_tagged > 0 result, not signal quality.
+    recipe_dims = urr._phase1_recipe(tiny_synth=True)
+    dims = {
+        "n_lang_input": int(recipe_dims["n_lang_input"]),
+        "n_per_pool": int(recipe_dims["n_per_pool"]),
+        "n_fs_per_pool": int(recipe_dims["n_fs_per_pool"]),
+        "sparsity": 0.05,
+        "dt_ms": 0.5,
+        "n_words_for_orthogonal": 16,
+    }
+    facts = [("apple", "big")]
+    tags = urr._encode_facts(bridge, facts, dims, encoding_steps=8)
+    assert len(tags) == 1, "_encode_facts must return one tag per fact"
+
+    tag_records = bridge.list_engram_tags()
+    assert tag_records, "no engram tags committed after compositional encoding"
+    # Find the just-committed tag and inspect n_tagged.
+    by_name = {t["name"]: t for t in tag_records}
+    assert tags[0] in by_name, (
+        "expected tag %r among list_engram_tags() result %r"
+        % (tags[0], list(by_name.keys()))
+    )
+
+    # ``list_engram_tags`` reports the committed size as ``n_neurons``;
+    # ``commit_engram_tag`` reports ``n_tagged`` in its own return-dict.
+    # Both are the same quantity (the size of the int64 index array).
+    n_tagged = int(by_name[tags[0]].get(
+        "n_neurons",
+        by_name[tags[0]].get("n_tagged", 0),
+    ))
+    assert n_tagged > 0, (
+        "compositional engram tag has zero tagged neurons -- the "
+        "substrate's region_filter regions [dg, ca3, ca1] resolved "
+        "to an empty index set, so commit_engram_tag silently produced "
+        "a zero-neuron tag (prior adversarial-review-blocked defect #1). "
+        "Expected n_tagged > 0; got n_tagged = %d." % n_tagged
+    )
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
