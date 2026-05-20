@@ -309,35 +309,94 @@ faithfulness defects on the first review and closing them precisely
 via the net-new-runner-only fix). The discipline working a third
 time -- a caught false-mechanism is a success of the discipline.
 
-**EXACT NEXT ACTION: Pirazzini Task 5 -- CONTROLLER-ONLY decisive
-run (NOT a subagent task).** In the same turn, never stopping on a
-promise: (1) grounding tiny-synth (toy numbers explicitly NOT
-propagated); (2) decisive kill-safe multi-seed run at the frozen
-ladder (2,3,5), seeds 42 43 44 (>= MIN_SEEDS), CuPy on RTX 3090,
-DURABLE capture to `research/findings/raw/`, monitored to ACTUAL
-completion via a genuine completion waiter (never a detached
-process with a false "will be notified"); (3) mandatory smell-test
-scrutinising a nominal PASS HARDER than a FAIL -- recompute the
-verdict from the single recorded output (no re-run, no bar
-change), confirm `full` genuinely clears the bars AND
-`theta_disabled` genuinely collapses to <= the convergent
-Stage-1+SPEAR ceiling (0.10) AND abstention genuinely holds;
-(4) honest propagation of EVERY outcome (findings doc +
-`webapp/capability_status.json` pillar, status PREDICTED until a
-clean scrutinised PASS, schema-green + state file + commit + push
-BOTH remotes); (5) autonomous next step per outcome (PASS ->
-next pre-registered staged step under the broader-search +
-biology-translatable-insight disciplines; honest FAIL/VOID/
-WORKS-AT-SMALL-LOAD -> the next biology-identified fidelity
-refinement, NO bar change, NO config-crank, NO declare-unfit, NO
-hand-back). Honest ceiling unchanged: a clean success = a
-biology-grounded Pirazzini-reference shows grounded compositional
-readout above the trustworthy threshold AND the named
-disinhibition mechanism is what does the differentiation work
-(brain-faithful AND capable), explicitly NOT fluent open-ended
-language / NOT an LLM. The orienting goal is artificial life with
-a proper brain analogue; biology-translatable insights are the
-deliverable.
+**PIRAZZINI FULL ARC CLOSED: Task 5 decisive run = HONEST NEGATIVE
+with smell-test PASSED; TRIPLE CONVERGENT CEILING across Stage-1
++ SPEAR + Pirazzini is the load-bearing biology-translatable
+insight; fully propagated both remotes.** Decisive Task-5
+multi-seed run (full biological scale: 8440-neuron full v16 +
+hippocampus + dlpfc substrate; frozen ladder 2/3/5; seeds 42/43/44;
+CuPy/RTX3090; ~3.5 min wall-clock explained by one-shot encoding +
+no replay-consolidation + smaller ladder; 1014-line durable log
+with the three modulators ach_pirazzini/dg_disinhibition/
+lang_drive_input initialised on every bridge build) = GATE=FAIL,
+full_acc=0.00 every load/seed, theta_disabled_acc=0.00 likewise,
+abstain_correct_theta_disabled=1.00 every cell; verdict
+independently recomputed from single recording (no re-run, no bar
+change) = FAIL; mandatory smell-test PASSED (genuine full-scale
+execution; 18 arm-runs; zero errors; 13.93 mV mechanistic activity
+proven via the runner's actual code path). REAL PARTIAL POSITIVE
+(reported, not spun): the no-confab moat composed into a THIRD
+distinct architecture at biological scale and abstained rather than
+confabulating in every case (zero confabulation under composition
+in three biology-distinct architectures). TRIPLE CONVERGENT CEILING
+(biology-translatable insight): static composition (Stage-1) +
+rhythm-multiplexed synaptic_gain (SPEAR) + disinhibition-based theta
+with correct Hasselmo ACh polarity via excitability_drive
+(Pirazzini) ALL hit the SAME wall -- composed readout never
+exceeds the calibrated 650 no-confab threshold for compositional
+queries; trustworthy property holds in all three; each named
+mechanism independently mechanistically active. The convergence
+across three biology-distinct mechanisms rules out the candidate-
+fix class (more rhythm / different binding / different encoding) AND
+points at the next biology-faithful direction at its root: the
+direct-retrieval-calibrated trustworthy-abstention threshold ITSELF
+is the rate-limiting factor; brain has SEPARATE per-regime
+metacognitive monitors (Miyamoto 2017 doubly-dissociable parallel
+recent/remote metamemory streams). Findings:
+`research/findings/2026-05-20-Pirazzini-decisive-honest-negative-TRIPLE-convergent-ceiling-points-at-metacognitive-monitor.md`.
+
+**EXACT NEXT ACTION: design pass for the genuinely-distinct
+biology-faithful next stage the triple-convergent ceiling points
+at -- PER-REGIME METACOGNITIVE MONITORS (Miyamoto 2017's empirical
+doubly-dissociable parallel metamemory streams: prefrontal area
+9/46d for remote, area 6 for recent; separate calibrated
+trustworthy-abstention thresholds per memory regime; abstain-vs-
+answer decision routed through the appropriate monitor per query
+type).** This is biology-faithful, directly addresses the
+triple-convergent ceiling at its root (the threshold not the
+mechanism), and can be implemented as net-new runner code that
+REUSES the existing `abstention_gate` module byte-unchanged (a
+NEW calibration sits ALONGSIDE for the compositional regime; the
+existing 650 abstention_gate threshold + 7/7 test stays exactly
+as-is). Run a proper design pass under the standing chain:
+broader-search-first (consensus + WebSearch + open-source code +
+curated lists -- do NOT rely on memory); then writing-plans ->
+subagent-driven-development -> pre-registered fixed-bar three-
+state gate (with a built-in decisive control that the per-regime
+monitor specifically -- not just the existence of any second
+threshold -- is what does the differentiation) -> dedicated
+adversarial review BEFORE no-harm -> controller-only decisive run
++ mandatory smell-test (scrutinise a PASS harder than a FAIL;
+the triple-convergent ceiling means a fourth-architecture PASS
+must clear an especially-skeptical review) -> honest propagation
+of EVERY outcome both remotes -> autonomous continuation per
+outcome. Reuse byte-unchanged: every previously-validated
+subsystem (no protected/frozen/moat edit; no bar change; no
+declare-unfit; no hand-back; no partition edit ever). The
+clearly-marked engineering-only SpikeGPT-class surrogate-grad
+baseline remains owner-approved for ceiling-clarification testing
+only (separate side channel; not the primary biology-faithful
+thrust). Honest ceiling unchanged: a clean success = the
+per-regime metacognitive-monitor mechanism shows that grounded
+compositional readout exists at the substrate but is correctly
+routed below the direct-retrieval threshold yet above the
+compositional-regime threshold (brain-faithful AND capable),
+explicitly NOT fluent open-ended language / NOT an LLM. The
+orienting goal is artificial life with a proper brain analogue;
+biology-translatable insights are the deliverable. The autonomous
+next-action tool call is always in the same turn; never stop on a
+promise.
+
+[HISTORICAL CONTEXT: Pirazzini Task 5 original mandate was
+CONTROLLER-ONLY decisive run (NOT a subagent task). In the same
+turn, never stopping on a promise: (1) grounding tiny-synth (toy
+numbers explicitly NOT propagated); (2) decisive kill-safe multi-
+seed run at the frozen ladder (2,3,5), seeds 42 43 44 (>= MIN_SEEDS),
+CuPy on RTX 3090, DURABLE capture to `research/findings/raw/`,
+monitored to ACTUAL completion via a genuine completion waiter
+(never a detached process with a false "will be notified");
+(3) mandatory smell-test scrutinising a nominal PASS HARDER than
+a FAIL; (4) honest propagation; (5) autonomous next step.]
 
 [HISTORICAL CONTEXT: pre-committed faithfulness-fix iteration of
 the NET-NEW PIRAZZINI runner ONLY (NO bar change, NO declare-unfit,
