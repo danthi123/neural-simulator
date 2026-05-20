@@ -51,15 +51,24 @@ code; EVERY learning rule + subsystem is REUSED by import:
     engram API.
   * Direct W->A readout: REUSED ``concept_pool_demo.measure_pool_firing``
     (the validated v14/v16 readout the 650 moat is calibrated against).
-  * Compositional readout + 5.69 gate: REUSED the per-regime monitor
-    runner's ``_compositional_query_confidence`` pattern (raw firing-
-    rate confidence at lang_output via ``lang_output_pattern_during_*``
-    + the calibrated ``_ranked_from_pattern``).
+  * Compositional readout + substrate-specific gate
+    (``COMPOSITIONAL_UNIFIED_THRESHOLD = 0.1977124183006536``): REUSED
+    the per-regime monitor runner's ``_compositional_query_confidence``
+    pattern (raw firing-rate confidence at lang_output via
+    ``lang_output_pattern_during_*`` + the calibrated
+    ``_ranked_from_pattern``).
   * Capability verdict: REUSED ``per_regime_monitor_core
     .per_regime_monitor_verdict`` (byte-unchanged frozen bars
     [0.80, 0.10, 0.80, 0.90], ladder (2,3,5), min 3 seeds).
-  * Both calibrated moats: REUSED ``abstention_gate.gate(., 650.0)`` +
-    ``abstention_gate_compositional.gate(., 5.6887...)``.
+  * Both substrate-specific calibrated moats: REUSED
+    ``abstention_gate_direct_unified.gate(., DIRECT_UNIFIED_THRESHOLD =
+    0.2841666666666667)`` +
+    ``abstention_gate_compositional_unified.gate(.,
+    COMPOSITIONAL_UNIFIED_THRESHOLD = 0.1977124183006536)``. The
+    historical G.20 moat (650.0) and the per-regime stage's
+    compositional moat (5.6887...) remain byte-unchanged in their own
+    modules but are NOT used to gate queries on the unified substrate
+    (substrate-mismatch defect #2 closure on BOTH regimes).
   * Kill-safe checkpoint: REUSED ``sim.train_checkpoint.save_checkpoint``
     / ``load_checkpoint`` / ``resume_epoch``.
 
@@ -91,18 +100,23 @@ Per (seed, N) cell:
      readout, never out of a tag string.
   4. Per-query routing (per query):
      * DIRECT: ``measure_pool_firing`` -> ranked-by-rate list ->
-       ``gate_direct(ranked, MOAT_DIRECT=650.0)`` -> answer-or-abstain.
+       ``gate_direct_unified(ranked, DIRECT_UNIFIED_THRESHOLD =
+       0.2841666666666667)`` -> answer-or-abstain.
      * COMPOSITIONAL: validated compositional readout (raw firing-rate
        confidence at lang_output, via ``lang_output_pattern_during_*``
        + ``_ranked_from_pattern``) ->
-       ``gate_compositional(ranked, COMPOSITIONAL_THRESHOLD=5.6887...)``
+       ``gate_compositional_unified(ranked,
+       COMPOSITIONAL_UNIFIED_THRESHOLD = 0.1977124183006536)``
        -> answer-or-abstain.
   5. Three measurement arms (per cell), all from the SAME forward pass:
-     * ``full`` = per-regime routing (direct -> 650; compositional ->
-       5.69). Sum of correct direct + correct compositional / total.
-     * ``uniform_ctrl`` = SAME ranked confidences but BOTH gates set
-       to MOAT_DIRECT=650 (the decisive built-in control: the per-
-       regime separation must be the differentiator).
+     * ``full`` = per-regime routing (direct ->
+       DIRECT_UNIFIED_THRESHOLD; compositional ->
+       COMPOSITIONAL_UNIFIED_THRESHOLD). Sum of correct direct +
+       correct compositional / total.
+     * ``uniform_ctrl`` = SAME ranked confidences but BOTH regimes
+       gated at DIRECT_UNIFIED_THRESHOLD uniformly (the decisive
+       built-in control: the per-regime separation must be the
+       differentiator).
      * ``direct_retain`` = direct-queries-only accuracy under the per-
        regime arm. Read from the SAME run as ``full`` (the same direct-
        correct counter, divided by total direct queries).
@@ -163,11 +177,12 @@ from research.runners.per_regime_monitor_core import (
     _PR_LADDER,
 )
 
-# REUSED gates (each byte-unchanged in its own module). THREE moats are
+# REUSED gates (each byte-unchanged in its own module). FOUR moats are
 # wired in by import; the unified runner uses TWO of them (the new
-# substrate-specific direct gate + the per-regime compositional gate)
-# and keeps the historical G.20 SharedPool direct moat imported only as
-# evidence that the existing 650 calibration is byte-unchanged:
+# substrate-specific direct gate + the new substrate-specific
+# compositional gate) and keeps the historical G.20 SharedPool direct
+# moat AND the per-regime stage's compositional moat imported only as
+# evidence that those calibrations remain byte-unchanged:
 #
 #   * ``abstention_gate.DEFAULT_THRESHOLD = 650.0`` (byte-unchanged;
 #     calibrated on G.20 SharedPool ``recall_rates``, scale ~500-800).
@@ -176,15 +191,32 @@ from research.runners.per_regime_monitor_core import (
 #     mean rate, scale ~0.5-2 documented in CLAUDE.md). Imported only so
 #     ``MOAT_DIRECT`` remains a referenced constant for source-grep pins
 #     (and audit trail of the historical G.20 calibration).
-#   * ``abstention_gate_direct_unified.DIRECT_UNIFIED_THRESHOLD = 0.0``
-#     (placeholder; the unified runner's calibration step on the
-#     ``build_biological_brain_regions`` substrate produces the
-#     calibrated value, which the controller commits as a separate
-#     frozen step). This is the new substrate-specific direct gate that
-#     replaces the 650 moat for direct queries in this runner.
+#   * ``abstention_gate_direct_unified.DIRECT_UNIFIED_THRESHOLD =
+#     0.2841666666666667`` (calibrated 2026-05-20 via v2 protocol on the
+#     unified ``build_biological_brain_regions`` substrate; 3 seeds
+#     42/43/44 positive direction; commit ``0711e1d``). This is the new
+#     substrate-specific direct gate that replaces the 650 moat for
+#     direct queries in this runner.
 #   * ``abstention_gate_compositional.COMPOSITIONAL_THRESHOLD =
 #     5.6887...`` (byte-unchanged; calibrated on the per-regime stage's
-#     hippocampal one-shot substrate). Gates compositional queries.
+#     hippocampal one-shot substrate). Imported only as evidence the
+#     per-regime substrate's compositional calibration is byte-
+#     unchanged; NOT used to gate compositional queries on the unified
+#     substrate (substrate-mismatch defect #2 closure, compositional
+#     side): the per-regime stage's 5.6887 is on a different scale
+#     (~5) than the unified substrate's ``_ranked_from_pattern``
+#     compositional readout (~0.2), a ~29x mismatch.
+#   * ``abstention_gate_compositional_unified.COMPOSITIONAL_UNIFIED_THRESHOLD
+#     = 0.1977124183006536`` (calibrated 2026-05-20 via the v1
+#     compositional protocol on the unified
+#     ``build_biological_brain_regions`` substrate; 3 seeds 42/43/44 all
+#     positive direction; calibration evidence at
+#     ``research/findings/raw/unified_CALIBRATION_fullscale.json`` key
+#     ``compositional_gate.aggregate_calibrated_threshold``). This is the
+#     new substrate-specific compositional gate; the SECOND of the two
+#     unified-substrate-specific calibrated moats (mirrors the direct-
+#     unified gate pattern shipped at ``0711e1d``). Gates compositional
+#     queries on the unified substrate.
 #
 # The uniform_ctrl arm applies a SINGLE threshold uniformly to BOTH
 # regimes: we use DIRECT_UNIFIED_THRESHOLD (the direct regime's
@@ -202,6 +234,10 @@ from research.runners.abstention_gate import DEFAULT_THRESHOLD as MOAT_DIRECT
 from research.runners.abstention_gate_compositional import (
     gate as gate_compositional,
     COMPOSITIONAL_THRESHOLD,
+)
+from research.runners.abstention_gate_compositional_unified import (
+    gate as gate_compositional_unified,
+    COMPOSITIONAL_UNIFIED_THRESHOLD,
 )
 from research.runners.abstention_gate_direct_unified import (
     gate as gate_direct_unified,
@@ -960,10 +996,12 @@ def _run_evaluation_arm(seed: int, N: int, tiny_synth: bool,
             n_direct_correct_uniform += 1
 
     # ---- COMPOSITIONAL queries: one per encoded fact, cue the noun,
-    # expect the bound adj. The compositional-regime monitor (calibrated
-    # 5.69 gate) gates the answer for `full`; the SAME ranked
-    # confidences are routed through the direct moat (650) for
-    # `uniform_ctrl` (the SOLE difference vs `full`).
+    # expect the bound adj. The substrate-specific compositional
+    # monitor (calibrated COMPOSITIONAL_UNIFIED_THRESHOLD = 0.197712)
+    # gates the answer for `full`; the SAME ranked confidences are
+    # routed through the substrate-specific DIRECT moat
+    # (DIRECT_UNIFIED_THRESHOLD = 0.284167) for `uniform_ctrl` (the
+    # SOLE difference vs `full`).
     n_comp_total = 0
     n_comp_correct_full = 0
     n_comp_correct_uniform = 0
@@ -974,8 +1012,15 @@ def _run_evaluation_arm(seed: int, N: int, tiny_synth: bool,
             bridge, noun, tag, dims, recall_steps
         )
         # `full`: per-regime architecture routes compositional queries
-        # through the COMPOSITIONAL gate at COMPOSITIONAL_THRESHOLD.
-        decided_full = gate_compositional(ranked, COMPOSITIONAL_THRESHOLD)
+        # through the substrate-specific COMPOSITIONAL gate at
+        # COMPOSITIONAL_UNIFIED_THRESHOLD (substrate-mismatch defect #2
+        # closure, compositional side: the per-regime stage's 5.6887 is
+        # on a different scale (~5) than the unified substrate's
+        # _ranked_from_pattern compositional readout (~0.2); we use the
+        # substrate-specific threshold here).
+        decided_full = gate_compositional_unified(
+            ranked, COMPOSITIONAL_UNIFIED_THRESHOLD
+        )
         ans_full = None if decided_full is None else decided_full[0]
         # `uniform_ctrl`: single-threshold-applied-uniformly. The
         # compositional queries STILL go through the compositional
@@ -1026,14 +1071,17 @@ def _run_evaluation_arm(seed: int, N: int, tiny_synth: bool,
             n_abstain_ok += 1
 
     # Also count compositional ungroundables (cue a noun that was NOT
-    # encoded) -- the compositional gate at 5.69 should abstain.
+    # encoded) -- the substrate-specific compositional gate at
+    # COMPOSITIONAL_UNIFIED_THRESHOLD (0.197712) should abstain.
     ungroundable_nouns = [w for w in _NOUNS if w not in encoded_nouns]
     for w in ungroundable_nouns:
         n_ungroundable += 1
         ranked = _compositional_query_ranked(
             bridge, w, None, dims, recall_steps
         )
-        decided = gate_compositional(ranked, COMPOSITIONAL_THRESHOLD)
+        decided = gate_compositional_unified(
+            ranked, COMPOSITIONAL_UNIFIED_THRESHOLD
+        )
         if decided is None:
             n_abstain_ok += 1
 
@@ -1578,7 +1626,7 @@ def run_unified_per_regime_monitor(
             direct_per_seed.append(direct_entry)
 
         comp_status, comp_aggregate = _calibration_status(
-            comp_per_seed, float(COMPOSITIONAL_THRESHOLD)
+            comp_per_seed, float(COMPOSITIONAL_UNIFIED_THRESHOLD)
         )
         direct_status, direct_aggregate = _calibration_status(
             direct_per_seed, float(DIRECT_UNIFIED_THRESHOLD)
@@ -1600,7 +1648,7 @@ def run_unified_per_regime_monitor(
                 ],
                 "per_seed_details": comp_per_seed,
                 "aggregate_calibrated_threshold": float(comp_aggregate),
-                "committed_threshold": float(COMPOSITIONAL_THRESHOLD),
+                "committed_threshold": float(COMPOSITIONAL_UNIFIED_THRESHOLD),
                 "calibration_status": comp_status,
                 "protocol_version": "v1",
             },
@@ -1638,7 +1686,7 @@ def run_unified_per_regime_monitor(
                 print(
                     "CALIBRATION-PENDING (compositional): aggregate "
                     "calibrated threshold = %.6f vs committed %.6f."
-                    % (comp_aggregate, float(COMPOSITIONAL_THRESHOLD)),
+                    % (comp_aggregate, float(COMPOSITIONAL_UNIFIED_THRESHOLD)),
                     file=sys.stderr, flush=True,
                 )
             except Exception:
@@ -1724,7 +1772,7 @@ def run_unified_per_regime_monitor(
         "raw_cells": cells,
         "phase1_cache_dir": phase1_cache_dir,
         "moat_direct": float(MOAT_DIRECT),
-        "compositional_threshold": float(COMPOSITIONAL_THRESHOLD),
+        "compositional_threshold": float(COMPOSITIONAL_UNIFIED_THRESHOLD),
     }
     if tiny_synth:
         result["note"] = (

@@ -775,5 +775,98 @@ def test_cli_direct_calibration_v2_flag_routes_v2(tmp_path):
     assert int(d0["n_ungroundable"]) == 16
 
 
+# =====================================================================
+# Substrate-specific COMPOSITIONAL-gate calibration commit tests
+# (second of the two unified-substrate-specific calibrated moats;
+# mirrors the just-shipped direct-unified gate pattern at 0711e1d).
+# =====================================================================
+
+
+def test_abstention_gate_compositional_unified_exists():
+    """The new substrate-specific compositional gate module exists,
+    has the calibrated constant ``COMPOSITIONAL_UNIFIED_THRESHOLD ==
+    0.1977124183006536`` (frozen aggregate of the v1 compositional
+    calibration on the unified substrate; 3 seeds 42/43/44; all 3
+    positive direction; calibration evidence at
+    ``research/findings/raw/unified_CALIBRATION_fullscale.json``), and
+    exposes ``abstain`` + ``gate`` with the correct semantics on
+    synthetic inputs.
+    """
+    from research.runners.abstention_gate_compositional_unified import (
+        abstain as _a,
+        gate as _g,
+        COMPOSITIONAL_UNIFIED_THRESHOLD as _CUT,
+    )
+    # Calibrated value pinned.
+    assert _CUT == 0.1977124183006536
+    # ``abstain`` semantics: True iff top_confidence <= threshold.
+    assert _a(0.0, threshold=_CUT) is True
+    assert _a(_CUT, threshold=_CUT) is True       # at threshold
+    assert _a(_CUT + 0.01, threshold=_CUT) is False  # above threshold
+    # ``gate`` defensive handling.
+    assert _g(None) is None
+    assert _g([]) is None
+    assert _g("not a list") is None  # type: ignore[arg-type]
+    # ``gate`` emits top tuple when rate exceeds threshold.
+    ranked = [("big", 0.30, "compositional"), ("hot", 0.10, "compositional")]
+    assert _g(ranked) == ("big", 0.30, "compositional")
+    # ``gate`` abstains when top rate at-or-below threshold.
+    ranked_below = [("big", 0.10, "compositional")]
+    assert _g(ranked_below) is None
+
+
+def test_unified_runner_imports_compositional_unified_gate():
+    """The unified runner imports the new substrate-specific
+    compositional gate module + threshold constant by name (source-
+    grep pin; mirrors the existing direct-unified gate import pin).
+    """
+    src = Path(urr.__file__).read_text(encoding="utf-8", errors="ignore")
+    # The new compositional-unified gate module is imported.
+    assert (
+        "from research.runners.abstention_gate_compositional_unified import"
+        in src
+    )
+    # Both the gate function and the threshold constant are bound.
+    assert "gate_compositional_unified" in src
+    assert "COMPOSITIONAL_UNIFIED_THRESHOLD" in src
+    # The runner routes compositional queries through the new gate.
+    assert "gate_compositional_unified(" in src
+
+
+def test_calibrate_mode_writes_compositional_threshold_as_unified_value(tmp_path):
+    """In ``--calibrate`` mode, the output JSON's
+    ``compositional_gate.committed_threshold`` is now the substrate-
+    specific value (``0.1977124183006536``), NOT the per-regime
+    stage's ``5.688725490196079``. The runner's compositional
+    calibration's "committed" reference is the substrate-specific
+    constant. Because aggregate matches committed within tolerance
+    on the calibration evidence (and on a deterministic tiny-synth
+    smoke at full-vocab-medians, the same aggregate logic applies),
+    the calibration_status is MATCH or PENDING / MISMATCH /
+    INSUFFICIENT-SEPARATION on toy data -- never the old 5.69
+    mismatch.
+    """
+    from research.runners.abstention_gate_compositional_unified import (
+        COMPOSITIONAL_UNIFIED_THRESHOLD as _CUT,
+    )
+    cache_dir = tmp_path / "phase1"
+    out = tmp_path / "calibrate_smoke.json"
+    result = urr.run_unified_per_regime_monitor(
+        seeds=[42],
+        loads=(2,),
+        tiny_synth=True,
+        phase1_cache_dir=str(cache_dir),
+        calibrate=True,
+        out_path=str(out),
+    )
+    assert result.get("mode") == "calibration"
+    comp = result.get("compositional_gate")
+    assert isinstance(comp, dict)
+    # Committed threshold is now the substrate-specific
+    # COMPOSITIONAL_UNIFIED_THRESHOLD (0.1977...), NOT 5.6887.
+    assert comp["committed_threshold"] == float(_CUT)
+    assert comp["committed_threshold"] != 5.688725490196079
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
