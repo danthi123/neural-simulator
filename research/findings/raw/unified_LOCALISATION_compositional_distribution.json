@@ -1,0 +1,21 @@
+{
+  "seed": 42,
+  "N": 5,
+  "compositional_unified_threshold": 0.1977124183006536,
+  "direct_unified_threshold": 0.2841666666666667,
+  "groundable_rates": [
+    0.3431372549019608,
+    0.35294117647058826,
+    0.3137254901960784,
+    0.42156862745098034,
+    0.3627450980392157
+  ],
+  "ungroundable_rates": [
+    0.20588235294117646,
+    0.17647058823529413
+  ],
+  "n_in_bucket_A_below_compositional": 1,
+  "n_in_bucket_B_between_thresholds": 1,
+  "n_in_bucket_C_above_direct": 5,
+  "n_total": 7
+}
