@@ -360,8 +360,76 @@ per query type; decisive built-in control: a single-threshold-
 applied-uniformly variant must collapse (the per-regime separation
 must be the differentiator).
 
-**EXACT NEXT ACTION: writing-plans for the per-regime
-metacognitive-monitor design.** This is biology-faithful, directly addresses the
+**PER-REGIME TASKS 0-5 COMPLETE; Task 6 controller-only decisive
+run is the EXACT NEXT ACTION.** Task 0 pin `7d1c44f`; Task 1 frozen
+verdict `c1626e0` (18-case adversarial matrix); Task 2 new
+compositional gate `c286187` (7-case matrix; COMPOSITIONAL_THRESHOLD
+= 0.0 placeholder, calibration is the runner's job); Task 3 net-new
+runner `be0744f` (calibration + evaluation modes; per-query-type
+routing; THREE built-in controls -- uniform_ctrl <= 0.10 +
+direct_retain >= 0.80 + abstain_correct >= 0.90); Task 4 dedicated
+adversarial review CAUGHT TWO defects and FIXED them strengthen-
+only in single review commit `55d9c51`: (i) calibration-pair
+leakage to eval pairs at seeds 43/44 -> fix draws calibration pairs
+from Cartesian-product MINUS eval pairs (zero overlap re-verified);
+(ii) median-midpoint silent wrong-direction at 2/3 tiny-synth seeds
+-> fix emits INSUFFICIENT-SEPARATION status that BLOCKS controller
+from committing a degenerate threshold; review VERDICT: CLEAR. Task
+5 no-harm PASSED: protected set byte-unchanged whole arc (base
+`db416ac` .. HEAD `55d9c51`); frozen `per_regime_monitor_core.py`
+byte-unchanged since Task 1 (`c1626e0`); new compositional gate
+byte-unchanged since Task 2 (`c286187`); existing
+`abstention_gate.py` 7/7 byte-unchanged throughout; no autograd on
+shipped paths; **comprehensive suite 151/151 green** across
+Per-regime + Pirazzini + SPEAR + Stage-1 + moats.
+
+**EXACT NEXT ACTION: Task 6 -- CONTROLLER-ONLY decisive run (NOT
+a subagent task).** In the same turn, never stopping on a promise:
+(1) grounding tiny-synth (BOTH modes: --calibrate and default
+evaluation; toy numbers explicitly NOT propagated); (2) full-scale
+CALIBRATION multi-seed run (`--calibrate --seeds 42 43 44`,
+CuPy/RTX3090, durable capture, monitored to ACTUAL completion via
+a genuine completion waiter); INSPECT the calibration JSON status:
+- If INSUFFICIENT-SEPARATION: honest-negative -- propagate as
+  biology-translatable insight ("the compositional readout at
+  biological scale does not produce a separable signal/noise
+  distribution; the per-regime architecture is calibration-
+  impossible at this substrate"); the runner refuses to commit;
+  capability_status pillar updated honestly; AUTONOMOUS_STATE +
+  findings doc + commit + push both remotes; autonomous next
+  staged step.
+- If MATCH or sensible aggregate threshold:
+  (3) as a SEPARATE controller commit, update
+  COMPOSITIONAL_THRESHOLD in
+  `research/runners/abstention_gate_compositional.py` to the
+  calibrated value AND update the placeholder test pin; commit
+  message records the calibration JSON as evidence; push both
+  remotes.
+  (4) DECISIVE evaluation multi-seed run (default mode; `--seeds 42
+  43 44 --loads 2 3 5`; CuPy/RTX3090; durable capture; completion-
+  waiter-monitored). Verify the calibrated threshold matches the
+  committed constant (MATCH status).
+  (5) Mandatory smell-test scrutinising a nominal PASS HARDER than
+  a FAIL -- recompute the verdict from the single recorded output
+  (no re-run, no bar change); confirm `full` clears the bars AND
+  `uniform_ctrl` collapses to <= 0.10 AND `direct_retain` >= 0.80
+  AND abstain_correct holds; reject any inconsistency.
+  (6) Honest propagation of EVERY outcome (findings doc +
+  capability pillar + state file + commit + push BOTH remotes).
+  (7) Autonomous next staged step per outcome (clean scrutinised
+  PASS -> Architecture B per the design; honest FAIL/VOID/
+  WORKS-AT-SMALL-LOAD -> the next biology-identified fidelity
+  refinement; calibration INSUFFICIENT-SEPARATION -> see above).
+Honest ceiling unchanged: a clean success = the per-regime
+threshold separation correctly routes compositional queries to the
+regime-appropriate threshold while direct retrieval stays gated at
+650 and trustworthy abstention holds (brain-faithful AND capable),
+explicitly NOT fluent open-ended language / NOT an LLM. The
+orienting goal is artificial life with a proper brain analogue;
+biology-translatable insights are the deliverable. Continual-
+autonomous-work: the next concrete step starts IMMEDIATELY after
+each commit; the promise-stall pattern is forbidden; the local
+Windows watchdog is the only continuity mechanism. This is biology-faithful, directly addresses the
 triple-convergent ceiling at its root (the threshold not the
 mechanism), and can be implemented as net-new runner code that
 REUSES the existing `abstention_gate` module byte-unchanged (a
