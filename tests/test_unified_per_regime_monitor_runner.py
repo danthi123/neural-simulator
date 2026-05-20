@@ -242,21 +242,23 @@ def test_direct_queries_route_through_new_substrate_specific_gate():
 
 def test_new_gate_module_threshold_pin():
     """Cross-pin: the runner imports the new gate AND the module's
-    threshold constant is the documented placeholder (0.0). The
-    controller commits the calibrated value in a SEPARATE commit
-    (mirrors ``abe65f6`` for the compositional gate); until then the
-    placeholder makes the gate effectively transparent so the runner
-    can boot for the calibration step itself.
+    threshold constant is the calibrated value (0.2841666666666667)
+    per the v2 protocol calibration on the unified substrate
+    (controller commit ``0711e1d``; mirrors ``abe65f6`` for the
+    compositional gate).
     """
     from research.runners.abstention_gate_direct_unified import (
         DIRECT_UNIFIED_THRESHOLD as _DUT,
         gate as _g,
         abstain as _a,
     )
-    assert _DUT == 0.0
-    # Surface-level invariants mirror the existing moats.
+    assert _DUT == 0.2841666666666667
+    # Surface-level invariants mirror the existing moats. At the
+    # calibrated threshold (~0.284), values at-or-below abstain and
+    # values strictly above emit.
     assert _a(0.0) is True
-    assert _a(0.1) is False
+    assert _a(0.1) is True            # 0.1 <= 0.284 -> abstain
+    assert _a(0.5) is False           # 0.5 > 0.284  -> emit
     assert _g(None) is None
     assert _g([]) is None
 

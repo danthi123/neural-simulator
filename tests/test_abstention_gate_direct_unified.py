@@ -10,12 +10,13 @@ compositional moat, byte-unchanged at 7/7,
 sits ALONGSIDE both existing moats with its own pre-registered
 ``DIRECT_UNIFIED_THRESHOLD``.
 
-The threshold value is a PLACEHOLDER (0.0) until the unified
-per-regime runner's calibration step on the ``build_biological_brain_
+The threshold value is now CALIBRATED (0.2841666666666667) per the
+v2 protocol calibration on the unified ``build_biological_brain_
 regions`` substrate (the SAME substrate Stage-1 / SPEAR / Pirazzini /
-Per-regime / Unified all use) produces the calibrated value, which the
-controller commits as a separate frozen step (mirrors the pattern of
-the compositional gate's pre-committed calibration ``abe65f6``). Once
+Per-regime / Unified all use); 3 seeds (42/43/44) at full biological
+scale; aggregate of per-seed median midpoints. The controller commit
+``0711e1d`` lands the calibrated value (mirrors the pattern of the
+compositional gate's pre-committed calibration ``abe65f6``). Once
 frozen and committed, retroactive recalibration is forbidden.
 
 Biology-translatable insight (the adversarial-review-block on defect
@@ -38,13 +39,15 @@ from research.runners.abstention_gate_direct_unified import (
 
 
 def test_direct_unified_threshold_constant_is_pinned():
-    # The DIRECT_UNIFIED_THRESHOLD is a PLACEHOLDER (0.0) until the
-    # unified runner's calibration step on the ``build_biological_brain_
-    # regions`` substrate produces the calibrated value, which the
-    # controller commits as a separate frozen step (mirrors
-    # ``abe65f6`` for the compositional gate). Once frozen and
-    # committed, retroactive recalibration is forbidden.
-    assert DIRECT_UNIFIED_THRESHOLD == 0.0
+    # The DIRECT_UNIFIED_THRESHOLD is CALIBRATED (0.2841666666666667)
+    # per the v2 protocol calibration on the unified
+    # ``build_biological_brain_regions`` substrate (3 seeds 42/43/44
+    # at full biological scale; aggregate of per-seed median
+    # midpoints; durable JSON
+    # ``research/findings/raw/unified_CALIBRATION_v2_fullscale.json``;
+    # controller commit ``0711e1d``). Once frozen and committed,
+    # retroactive recalibration is forbidden.
+    assert DIRECT_UNIFIED_THRESHOLD == 0.2841666666666667
 
 
 def test_abstain_returns_true_iff_top_confidence_at_or_below_threshold():
@@ -56,9 +59,17 @@ def test_abstain_returns_true_iff_top_confidence_at_or_below_threshold():
     assert abstain(0.0, threshold=1.0) is True   # below
     assert abstain(1.0, threshold=1.0) is True   # at
     assert abstain(2.0, threshold=1.0) is False  # above
-    # At placeholder threshold (0.0): any non-positive value abstains.
+    # At the calibrated DIRECT_UNIFIED_THRESHOLD (0.2841666...): any
+    # value at-or-below the calibrated threshold abstains. The v2
+    # protocol calibrates this so that trained-word target-pool firing
+    # rates typically exceed it (per-seed median margins 0.030/0.110/
+    # 0.121) while ungroundable / out-of-distribution top-pool rates
+    # typically fall below it.
     assert abstain(0.0, threshold=DIRECT_UNIFIED_THRESHOLD) is True
-    assert abstain(0.1, threshold=DIRECT_UNIFIED_THRESHOLD) is False
+    assert abstain(0.1, threshold=DIRECT_UNIFIED_THRESHOLD) is True   # 0.1 <= 0.284 -> abstain
+    assert abstain(DIRECT_UNIFIED_THRESHOLD,
+                     threshold=DIRECT_UNIFIED_THRESHOLD) is True       # at threshold -> abstain
+    assert abstain(0.5, threshold=DIRECT_UNIFIED_THRESHOLD) is False  # 0.5 > 0.284 -> emit
 
 
 def test_gate_returns_top_tuple_when_rate_exceeds_threshold():
@@ -82,16 +93,18 @@ def test_gate_handles_empty_or_none_input_gracefully():
 
 def test_gate_uses_default_threshold_when_none_passed():
     # Mirror the existing moats: gate must use DIRECT_UNIFIED_THRESHOLD
-    # as the default when no threshold is provided. With the placeholder
-    # 0.0, any positive top rate clears the gate, and a zero rate
-    # abstains.
+    # as the default when no threshold is provided. With the calibrated
+    # 0.2841666... a top rate above it clears the gate, an at-or-below
+    # rate abstains.
     ranked_above = [("apple", 1.0, "direct")]
-    out = gate(ranked_above)  # 1.0 > DIRECT_UNIFIED_THRESHOLD (0.0)
+    out = gate(ranked_above)  # 1.0 > DIRECT_UNIFIED_THRESHOLD (0.284)
     assert out == ("apple", 1.0, "direct")
     ranked_at = [("apple", DIRECT_UNIFIED_THRESHOLD, "direct")]
     assert gate(ranked_at) is None  # equal does NOT exceed
     ranked_negative = [("apple", -0.1, "direct")]
     assert gate(ranked_negative) is None  # -0.1 <= DIRECT_UNIFIED_THRESHOLD
+    ranked_below = [("apple", 0.2, "direct")]
+    assert gate(ranked_below) is None  # 0.2 <= 0.284 -> abstain
 
 
 def test_module_is_stdlib_only_and_does_not_touch_existing_moats():
@@ -109,6 +122,7 @@ def test_module_is_stdlib_only_and_does_not_touch_existing_moats():
     # Existing per-regime compositional moat byte-unchanged
     # COMPOSITIONAL_THRESHOLD remains the frozen calibrated value:
     assert comp.COMPOSITIONAL_THRESHOLD == 5.688725490196079
-    # New module's threshold is the placeholder (controller commits the
-    # calibrated value in a separate commit, mirroring abe65f6):
-    assert direct_unified.DIRECT_UNIFIED_THRESHOLD == 0.0
+    # New module's threshold is the calibrated value committed in
+    # ``0711e1d`` (mirrors the ``abe65f6`` pattern for the
+    # compositional gate):
+    assert direct_unified.DIRECT_UNIFIED_THRESHOLD == 0.2841666666666667
