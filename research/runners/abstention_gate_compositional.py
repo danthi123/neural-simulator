@@ -4,13 +4,18 @@ gate. Sits ALONGSIDE the existing direct-retrieval-regime gate
 byte-unchanged at 7/7) per the Miyamoto-2017 doubly-dissociable
 parallel-metamemory-streams design.
 
-The `COMPOSITIONAL_THRESHOLD` constant below is a PLACEHOLDER (0.0).
-The runner's pre-registered calibration step in Task 3 of the
-per-regime metacognitive-monitor implementation plan
-(`docs/plans/2026-05-20-per-regime-metacognitive-monitor-implementation.md`)
-replaces it with the calibrated value and commits the source-file
-change as a separate frozen step. Once calibrated and committed, the
-value is frozen and retroactive recalibration is forbidden.
+The `COMPOSITIONAL_THRESHOLD` constant below is FROZEN at the
+calibrated value 5.688725490196079 (median of the per-seed
+calibrated thresholds [4.676470588235294, 5.688725490196079,
+6.316176470588236] from the full-scale held-out calibration run on
+2026-05-20, seeds 42/43/44, CuPy/RTX3090; method = median_midpoint
+of held-out groundable vs ungroundable compositional-readout raw
+firing-rate confidences, calibration set = Cartesian-product of
+the validated v16 concept vocabulary MINUS the evaluation set
+(zero pair overlap verified by the dedicated adversarial review).
+Provenance: research/findings/raw/per_regime_CALIBRATION_fullscale.json.
+Once frozen and committed, retroactive recalibration is forbidden
+(it would itself be goalpost-moving).
 
 Stdlib + typing only; ASCII; mirrors the existing moat's discipline.
 """
@@ -18,7 +23,7 @@ from __future__ import annotations
 
 from typing import Any, List, Optional, Tuple
 
-COMPOSITIONAL_THRESHOLD = 0.0
+COMPOSITIONAL_THRESHOLD = 5.688725490196079
 
 
 def abstain(
