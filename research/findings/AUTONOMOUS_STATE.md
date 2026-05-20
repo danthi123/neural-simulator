@@ -383,8 +383,66 @@ byte-unchanged since Task 2 (`c286187`); existing
 shipped paths; **comprehensive suite 151/151 green** across
 Per-regime + Pirazzini + SPEAR + Stage-1 + moats.
 
-**EXACT NEXT ACTION: Task 6 -- CONTROLLER-ONLY decisive run (NOT
-a subagent task).** In the same turn, never stopping on a promise:
+**PER-REGIME FULL ARC CLOSED: Task 6 decisive run = HONEST NEGATIVE
+with the FIRST mechanistically-validated per-regime separation in
+the project (uniform_ctrl=0 vs full>0 across all 9 cells; seed 43
+N=2 hit 25 percent full_acc); fully propagated both remotes.** The
+FAIL is precisely localised to direct_retain_acc=0.0 not clearing
+the v14/v16-multi-event-calibrated 650 threshold because the runner
+uses one-shot pair encoding (same as Stage-1/SPEAR/Pirazzini); the
+per-regime hypothesis is mechanistically VALIDATED (the threshold
+separation IS the measurable differentiator) but the architecture
+as built can't simultaneously preserve v14/v16-calibrated direct
+retrieval because the encoding regime affects both readouts.
+
+The biology-translatable insight (under the reframed top-level
+goal): **per-regime monitors are NECESSARY but NOT SUFFICIENT --
+they also require regime-appropriate ENCODING** (CLS-theory-
+consistent: cortical multi-event schema learning for direct
+concepts; hippocampal one-shot binding for compositional). The
+triple-convergent ceiling localised the threshold as the rate-
+limiter; this stage's nuanced FAIL doubles the localisation
+dimensionality (threshold + encoding regime). The trustworthy
+property HELD AGAIN in a FOURTH architecture (abstain_correct=1.0).
+The discipline working a FOURTH consecutive time (Stage-1/SPEAR/
+Pirazzini/Per-regime each had real defects caught + closed) is
+itself a meta-deliverable.
+
+**EXACT NEXT ACTION: design pass for the unified
+PER-REGIME-MONITOR + PER-REGIME-ENCODING architecture (the
+biology-translatable insight prescribes it).** Wire this stage's
+compositional gate at 5.69 alongside the existing 650 direct gate
+AND add a Phase-1 multi-event W->A training pre-stage (reused from
+the validated `concept_pool_demo` runner; 200 events per direct
+concept) BEFORE the compositional one-shot pair encoding. Direct
+queries are evaluated against the v14/v16-trained substrate (which
+should produce ~796 raw firing-rate confidence on direct concept
+retrieval) and the existing 650 moat; compositional queries remain
+one-shot-encoded and evaluated against the 5.69 compositional moat.
+The frozen capability-verdict module + bars stay byte-unchanged;
+the new stage's verdict must clear all four conjunctive bars
+simultaneously. Run a proper design pass under the standing chain:
+broader-search-first (do NOT rely on memory; pull from the
+existing `concept_pool_demo` validation evidence + the v14/v16
+research findings); then writing-plans -> subagent-driven-
+development -> pre-registered fixed-bar three-state gate ->
+dedicated adversarial review BEFORE no-harm -> controller-only
+decisive run + mandatory smell-test (scrutinise a PASS harder than
+a FAIL -- a fourth-architecture PASS especially must clear an
+especially-skeptical review) -> honest propagation of EVERY
+outcome both remotes -> autonomous continuation per outcome. Reuse
+byte-unchanged: every previously-validated subsystem + both
+abstention moats (the existing 650 + the calibrated 5.69) + all
+six existing frozen `*_core.py` verdict modules. The orienting
+goal remains artificial life with a proper brain analogue;
+biology-translatable insights are the deliverable. NO partition
+edit ever; the autonomous next-action tool call is always in the
+same turn after every commit; never stop on a promise; the
+promise-stall pattern is explicitly forbidden.
+
+[HISTORICAL CONTEXT: Per-regime Task 6 original mandate was
+CONTROLLER-ONLY decisive run (NOT a subagent task). In the same
+turn, never stopping on a promise:
 (1) grounding tiny-synth (BOTH modes: --calibrate and default
 evaluation; toy numbers explicitly NOT propagated); (2) full-scale
 CALIBRATION multi-seed run (`--calibrate --seeds 42 43 44`,
@@ -462,7 +520,7 @@ explicitly NOT fluent open-ended language / NOT an LLM. The
 orienting goal is artificial life with a proper brain analogue;
 biology-translatable insights are the deliverable. The autonomous
 next-action tool call is always in the same turn; never stop on a
-promise.
+promise.]
 
 [HISTORICAL CONTEXT: Pirazzini Task 5 original mandate was
 CONTROLLER-ONLY decisive run (NOT a subagent task). In the same
