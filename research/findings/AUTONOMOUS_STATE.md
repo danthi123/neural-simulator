@@ -627,7 +627,102 @@ bound-adj drive at deployment time. This is itself a biology-
 translatable insight: real compositional retrieval requires the cue
 NOT to be active during the bound-fact recall window.
 
-**EXACT NEXT ACTION: major arc transition -- theta-gamma
+**THETA-GAMMA ARC COMPLETE (commit `1bbc165`, both remotes) =
+GATE=FAIL (honest measured negative; smell-test PASSED).**
+Implementation chain: design `42bb8ce` + plan `693289b` + Task 0 pin
+`9822643` + Task 1 frozen verdict `11bd257` + Task 2 net-new runner
+`9d16d46` -> 8th adversarial review BLOCK on RNG-drift confound
+(Pirazzini `d462bf0` defect class recurring) -> strengthen-only fix
+`e6b17da` (cp.random snapshot/seed/restore around each call; flag-diff
+5.59 mV; both-True/both-False controls 0.00 mV) -> 9th re-review CLEAR
+-> Task 4 no-harm 79/79 PASS -> Task 5 controller-only decisive run
+= GATE=FAIL with smell-test PASSED.
+
+Decisive measurement (full biological scale; 3 seeds; ladder (2,3,5)):
+
+| N | full_acc | uniform_ctrl_acc | advantage | direct_retain | abstain_correct |
+|---|----------|------------------|-----------|---------------|------------------|
+| 2 | 0.311    | 0.311            | +0.000    | 0.500         | 0.516           |
+| 3 | 0.280    | 0.274            | +0.006    | 0.483         | 0.557           |
+| 5 | 0.285    | **0.371**        | **-0.086** | 0.500        | 0.667           |
+
+**STRUCTURALLY DIFFERENT failure mode from prior 4 arcs**: at N=5,
+all 3 seeds show per_regime_advantage in the -0.083 to -0.091 range.
+The cue-suppression mechanism IS structurally active (5.59 mV probe
+divergence with controls 0.00 mV) but produces the OPPOSITE of the
+hypothesised benefit. The cue is BOTH noise (motivating the localised
+suppression) AND useful encoding-context (Tulving 1973 encoding-
+specificity); at biological scale, context-loss outweighs noise-
+removal -> active anti-effect. Findings:
+`research/findings/2026-05-20-THETA-GAMMA-decisive-honest-negative-
+cue-suppression-HURTS-at-scale-5-architecture-convergent-ceiling.md`.
+
+**5-architecture convergent ceiling now empirically grounded with
+mechanism-level signatures:**
+
+| Arc | Mechanism | Decisive | per_regime_advantage signature |
+|-----|-----------|----------|-------------------------------|
+| Stage-1 | static two-store | FAIL (full_acc=0 abstain=1.00) | n/a |
+| SPEAR | theta-mux ACh-plasticity | FAIL (full_acc=0) | 0 rhythm_removed |
+| Pirazzini | theta-disinhibition+ACh | (built; not decisively run) | n/a |
+| Unified | per-regime monitor | FAIL (full=uniform EXACTLY) | 0 EXACTLY |
+| **Theta-gamma** | **cue-suppression** | **FAIL** | **NEGATIVE at N=5** |
+
+All 5 architectures hit walls; each with a DIFFERENT mechanism-level
+signature. The gating-based composition design line is empirically
+exhausted at biological scale on the v14/v16+hippocampus substrate.
+
+**EXACT NEXT ACTION: 6th architecture per design doc fallback --
+generative replay + PFC-held compositional frame (the standing
+catalog-grounded direction per design doc 2026-05-19 section 2b;
+already-validated subsystems not yet phase-multiplexed into the
+unified substrate).**
+
+The next arc REMOVES cue-suppression-during-retrieve (per the
+theta-gamma finding that it produces an anti-effect) and ADDS:
+
+(a) Generative replay loop: many cycles of CA3 recurrent + ACh
+    modulation propose-and-pattern-complete; the cue is present during
+    retrieve (encoding-specificity respected); the replay phase
+    strengthens the engram tag's selective pathway via theta-modulated
+    plasticity at CA3-CA1 (the project's validated SWR replay subsystem
+    at `consolidation_trainer.py`).
+(b) PFC-held compositional frame: the project's validated `dlpfc_verb`
+    region holds the compositional structure across queries via NMDA
+    bistable attractors (the validated Cluster-G per-region NMDA
+    subsystem); the PFC frame primes the substrate to expect the
+    compositional readout.
+
+Steps:
+1. Design refinement doc for the generative-replay + PFC-frame arc,
+   grounded in the 5-architecture ceiling finding.
+2. writing-plans for TDD implementation: Task 0 grounding pin + Task 1
+   frozen verdict (identical bars to the prior arcs; new module-local
+   `_GR_*` constants) + Task 2 net-new runner (REUSE the theta-gamma
+   structural scaffold but disable cue-suppression; ADD generative-
+   replay phase via reused `run_concept_replay_phase` + ADD PFC-frame
+   wiring via reused `dlpfc_verb` + NMDA bistability).
+3. Dedicated adversarial review (10th consecutive; the discipline has
+   now caught real defects in 8 of 9 reviews).
+4. Task 4 no-harm + Task 5 controller-only decisive run.
+5. Mandatory smell-test + honest propagation EVERY outcome both remotes.
+6. Autonomous next staged step per outcome (if PASS: substantive
+   positive finding; if FAIL: 6-architecture convergent ceiling
+   becomes the terminal biology-translatable finding for this design
+   line; next direction would require new subsystems beyond the
+   currently-validated set).
+
+NO bar change anywhere; protected set byte-empty diff vs `e8a99a2`
+must continue to hold; no-confab moat 7/7 byte-identical; the 4
+calibrated abstention moats stay byte-stable. The 10 consecutive
+disciplined refusal-to-overclaim-a-PASS pattern + smell-test recompute
+matching each runner-reported FAIL exactly + the 5-architecture
+convergent ceiling with mechanism-level characterisation are the
+durable scientific deliverables of this design line. Honest ceiling
+unchanged; conversational/compositional capability NOT achieved/claimed.
+
+---
+[Historical: major arc transition -- theta-gamma
 mode-unification + generative replay (the standing user-directed
 catalog-grounded direction per design doc
 `docs/plans/2026-05-19-regime-correct-compositional-retrieval-design.md`,
