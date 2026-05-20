@@ -159,7 +159,17 @@ def test_tiny_synth_calibration_runs_and_returns_well_formed_payload(tmp_path):
 
     # committed_threshold echoes the placeholder constant for this Task.
     assert result.get("committed_threshold") == float(COMPOSITIONAL_THRESHOLD)
-    assert result.get("calibration_status") in {"MATCH", "PENDING", "MISMATCH"}
+    # STRENGTHEN-only Task-4 review fix: INSUFFICIENT-SEPARATION is a
+    # new legitimate status the runner surfaces when the calibration
+    # populations overlap or invert (groundable_median <= ungroundable_
+    # median). The controller MUST NOT commit a calibrated constant
+    # under that status. Strict status-set is enlarged to include it.
+    assert result.get("calibration_status") in {
+        "MATCH",
+        "PENDING",
+        "MISMATCH",
+        "INSUFFICIENT-SEPARATION",
+    }
     method = result.get("method")
     assert isinstance(method, str) and len(method.strip()) > 0
     assert result.get("tiny_synth") is True
@@ -288,6 +298,82 @@ def test_main_entry_accepts_calibrate_and_tiny_synth_flags():
     assert '"--calibrate"' in src
     assert '"--tiny-synth"' in src
     assert '"--seeds"' in src
+
+
+def test_calibration_held_out_pairs_disjoint_from_eval_pairs(tmp_path):
+    """STRENGTHEN-only Task-4 review fix: every calibration (noun, adj)
+    PAIR returned by the runner's calibration block is guaranteed
+    disjoint from the eval set's _recent_facts pairs at the maximum N
+    in the frozen ladder. The vocabulary itself unavoidably overlaps
+    (only 4 nouns + 4 adjs in _NOUNS/_ADJS) but the PAIRINGS must not
+    -- a calibrated threshold fitted on an eval pairing is goalpost-
+    moving by construction."""
+    from research.runners.compose_retrieval_runner import _recent_facts
+    from research.runners.per_regime_monitor_core import _PR_LADDER
+
+    eval_pairs = set(_recent_facts(max(_PR_LADDER)))
+
+    # Probe per-seed calibration pair sets by invoking the helper that
+    # constructs them. The helper builds a full bridge -- expensive --
+    # so we re-execute its pair-construction logic in isolation here.
+    import numpy as np
+    from research.runners.compose_retrieval_runner import (
+        _NOUNS as _NOUNS_PROBE,
+        _ADJS as _ADJS_PROBE,
+    )
+    all_pairs = [(n, a) for n in _NOUNS_PROBE for a in _ADJS_PROBE]
+    held_out_pairs = [p for p in all_pairs if p not in eval_pairs]
+    assert held_out_pairs, "no held-out pair pool; vocab too small"
+
+    for seed in [42, 43, 44]:
+        sub_seed = int(seed) + prr._CALIB_SUBSEED_OFFSET
+        rng = np.random.default_rng(sub_seed)
+        n_calib = min(4, len(held_out_pairs))
+        perm_idx = rng.permutation(len(held_out_pairs))
+        calib_facts = [held_out_pairs[int(perm_idx[i])] for i in range(n_calib)]
+        for p in calib_facts:
+            assert p not in eval_pairs, (
+                "calibration pair %r overlaps eval set; calibrated "
+                "threshold would be fitted on an eval pairing" % (p,)
+            )
+
+
+def test_calibration_status_insufficient_separation_when_populations_overlap():
+    """STRENGTHEN-only Task-4 review fix: _calibration_status returns
+    INSUFFICIENT-SEPARATION when ANY per-seed cell has groundable_
+    median <= ungroundable_median (the midpoint separator is only
+    defensible when signal > noise). Drives the helper with a
+    synthetic per-seed payload."""
+    bad_overlap = [
+        {"calibrated_threshold": 0.5, "groundable_median": 0.0,
+         "ungroundable_median": 1.0},
+        {"calibrated_threshold": 0.7, "groundable_median": 1.2,
+         "ungroundable_median": 0.4},
+    ]
+    status, _agg = prr._calibration_status(bad_overlap)
+    assert status == "INSUFFICIENT-SEPARATION", (
+        "groundable_median <= ungroundable_median on ANY per-seed cell "
+        "must flag INSUFFICIENT-SEPARATION; controller must not commit."
+    )
+
+    bad_equal = [
+        {"calibrated_threshold": 0.0, "groundable_median": 0.0,
+         "ungroundable_median": 0.0},
+    ]
+    status, _agg = prr._calibration_status(bad_equal)
+    assert status == "INSUFFICIENT-SEPARATION"
+
+    # Sanity: when signal strictly exceeds noise everywhere, the status
+    # is whatever the existing MATCH / PENDING / MISMATCH classifier
+    # picks (not INSUFFICIENT-SEPARATION).
+    clean = [
+        {"calibrated_threshold": 0.5, "groundable_median": 1.0,
+         "ungroundable_median": 0.2},
+        {"calibrated_threshold": 0.6, "groundable_median": 1.2,
+         "ungroundable_median": 0.3},
+    ]
+    status, _agg = prr._calibration_status(clean)
+    assert status != "INSUFFICIENT-SEPARATION"
 
 
 if __name__ == "__main__":

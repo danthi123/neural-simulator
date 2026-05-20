@@ -581,23 +581,40 @@ def _calibrate_one_seed(seed: int, tiny_synth: bool) -> Dict[str, Any]:
     reads the raw firing-rate confidence at lang_output for both
     GROUNDABLE and UNGROUNDABLE queries. Returns the per-seed
     calibrated threshold + the two population summaries.
+
+    Strengthen-only fix (review:held-out-vocab-partition, Task 4):
+    the calibration (noun, adj) PAIRS are explicitly drawn from the
+    Cartesian-product MINUS the set of eval pairs ``_recent_facts(max(
+    _PR_LADDER))`` so a calibrated threshold cannot be fitted on a
+    pairing the eval will query. The vocabulary itself (only 4 nouns
+    + 4 adjs) is unavoidably shared between eval and calibration, but
+    the pair-level partition prevents the dominant failure mode
+    (calibrating directly on an eval-set association). If the held-
+    out pair pool is empty the runner returns a degenerate empty
+    result and the calibration status downstream becomes
+    INSUFFICIENT-SEPARATION.
     """
     sub_seed = int(seed) + _CALIB_SUBSEED_OFFSET
     cal_rng = np.random.default_rng(sub_seed)
 
-    # Held-out calibration set: a small set of compositional facts
-    # generated deterministically from sub_seed. We use a permutation
-    # of the noun/adj vocab so the calibration facts differ from the
-    # evaluation set's _recent_facts (which uses a fixed pairing).
-    n_calib_facts = 2 if tiny_synth else 4
-    nouns_perm = list(_NOUNS)
-    adjs_perm = list(_ADJS)
-    cal_rng.shuffle(nouns_perm)
-    cal_rng.shuffle(adjs_perm)
-    calib_facts = [
-        (nouns_perm[i % len(nouns_perm)], adjs_perm[i % len(adjs_perm)])
-        for i in range(n_calib_facts)
-    ]
+    # Held-out calibration set: PAIRS guaranteed disjoint from the
+    # eval set's _recent_facts pairs at the maximum N in the ladder
+    # (so the calibrated threshold is never fitted on a pairing the
+    # eval will encode + query). Sample without replacement; if the
+    # held-out pool is too small fall back to whatever is available
+    # and let the INSUFFICIENT-SEPARATION downstream check flag it.
+    eval_pairs = set(_recent_facts(max(_PR_LADDER)))
+    all_pairs = [(n, a) for n in _NOUNS for a in _ADJS]
+    held_out_pairs = [p for p in all_pairs if p not in eval_pairs]
+    n_calib_facts = 2 if tiny_synth else min(4, len(held_out_pairs))
+    if held_out_pairs:
+        perm_idx = cal_rng.permutation(len(held_out_pairs))
+        calib_facts = [
+            held_out_pairs[int(perm_idx[i])]
+            for i in range(min(n_calib_facts, len(held_out_pairs)))
+        ]
+    else:
+        calib_facts = []
 
     recall_steps = 20 if tiny_synth else 100
     enc_steps = 8 if tiny_synth else 200
@@ -693,6 +710,14 @@ def _aggregate_evaluation_rungs(cells_by_N: Dict[int, List[Dict[str, Any]]],
 def _calibration_status(per_seed: List[Dict[str, Any]]) -> Tuple[str, float]:
     """Classify the calibration outcome vs the committed constant.
 
+    INSUFFICIENT-SEPARATION -- on ANY per-seed cell the groundable
+                population median is <= the ungroundable population
+                median. The midpoint separator only makes sense when
+                signal > noise; if the populations overlap or invert
+                the committed threshold would route the WRONG way at
+                eval. STRENGTHEN-only review fix (Task 4); controller
+                must NOT commit a calibrated constant when this status
+                is emitted.
     MATCH    -- the aggregate calibrated value is within tolerance of
                 the committed COMPOSITIONAL_THRESHOLD.
     PENDING  -- the committed constant is the placeholder (0.0) AND
@@ -704,6 +729,18 @@ def _calibration_status(per_seed: List[Dict[str, Any]]) -> Tuple[str, float]:
     """
     vals = [d["calibrated_threshold"] for d in per_seed]
     aggregate = float(sum(vals) / len(vals)) if vals else 0.0
+
+    # STRENGTHEN-only: refuse to emit a separator when the populations
+    # overlap or invert at any seed. The midpoint is only defensible
+    # when groundable_median > ungroundable_median (signal genuinely
+    # above noise floor); otherwise the committed threshold would
+    # silently route the wrong way at eval. Tolerance is zero -- any
+    # equal-or-inverted case flags.
+    for d in per_seed:
+        g = float(d.get("groundable_median", 0.0))
+        u = float(d.get("ungroundable_median", 0.0))
+        if g <= u:
+            return "INSUFFICIENT-SEPARATION", aggregate
 
     committed = float(COMPOSITIONAL_THRESHOLD)
     if abs(aggregate - committed) <= _CALIB_MATCH_TOL:
