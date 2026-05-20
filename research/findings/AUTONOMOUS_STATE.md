@@ -408,9 +408,93 @@ The discipline working a FOURTH consecutive time (Stage-1/SPEAR/
 Pirazzini/Per-regime each had real defects caught + closed) is
 itself a meta-deliverable.
 
-**EXACT NEXT ACTION: design pass for the unified
+**UNIFIED PER-REGIME-MONITOR + PER-REGIME-ENCODING ARCHITECTURE
+DESIGNED + PLANNED + TASKS 0-1 LANDED + TASK 2 ADVERSARIAL REVIEW =
+BLOCK on TWO critical architectural defects (the FIFTH consecutive
+review on this project catching real load-bearing issues -- a
+fifth meta-deliverable).** Design `b662940` + plan `d1cd059` + Task 0
+pin `a1ff142` + Task 1 unified runner `db8b9cb` (947 lines; 59/59
+green; no autograd; protected byte-empty). Task 2 dedicated
+adversarial review verdict = BLOCK:
+
+(1) **Zero-neuron engram tags**: substrate built by
+`cpd.build_concept_bridge` (v14/v16 recipe) has NO hippocampal
+regions (no dg/ca3/ca1), but compositional encoding uses the engram
+API with `region_filter=["dg","ca3","ca1"]`. `commit_engram_tag`
+silently swallows missing-region errors -> tags get `n_indices=0`
+-> compositional arm of `full_acc` is structurally inert; the 5.69
+gate always abstains on the zero-neuron-tag-stim noise.
+
+(2) **Direct moat scale mismatch**: `measure_pool_firing` returns
+per-neuron mean rate (scale 0.5-2; the v14/v16 production rate range
+documented in CLAUDE.md as ~1.0-2.0). The 650 direct moat was
+calibrated on G.20 SharedPool `recall_rates` (scale 500-800 per the
+g20_abstention_bench_320.log "encoded top-rate mean 796 min 508").
+The scales differ by ~2-3 orders of magnitude. The
+`direct_retain_acc >= 0.80` bar is STRUCTURALLY UNREACHABLE
+regardless of how well Phase-1 trains.
+
+Both defects converge on a deeper biology-translatable insight:
+**trustworthy abstention thresholds are SUBSTRATE-SPECIFIC, not
+regime-specific.** 650 was calibrated on G.20 SharedPool; 5.69 was
+calibrated on the per-regime stage's hippocampal one-shot substrate;
+neither applies cleanly to a substrate combining v14/v16
+concept-pools with hippocampal engram-tagging. The brain's
+metacognitive monitors aren't applying a universal "compositional
+threshold"; they apply a "this substrate, this regime" threshold
+calibrated in-situ.
+
+**EXACT NEXT ACTION: pre-committed substantive fix-iteration of the
+unified runner -- substrate redesign + dual recalibration of both
+moats on the unified substrate (NO bar change, NO declare-unfit, NO
+hand-back, NO config-crank; protected `*_core.py` + frozen verdict
+module byte-UNCHANGED; the two moats' source files DO get
+substrate-specific recalibration as separate pre-registered controller
+commits, exactly as the previous per-regime stage's calibration
+commit was a pre-registered separate step).** Concrete corrections
+in `research/runners/unified_per_regime_monitor_runner.py` (and a
+new substrate-specific calibration step, possibly via the existing
+`per_regime_monitor_runner.py --calibrate` machinery applied to a
+NEW substrate path):
+
+(A) Replace `cpd.build_concept_bridge` with
+`text_minimal_isolation.build_biological_brain_regions(
+enable_hippocampus_consolidation=True, enable_noun_pools=True,
+enable_verb_pools=True, enable_adjective_pools=True, ...)` -- the
+substrate Stage-1/SPEAR/Pirazzini/Per-regime used; it has BOTH
+hippocampus (so the engram region_filter works) AND concept pools
+(so v14/v16 Phase-1 training can run on them).
+
+(B) Run Phase-1 multi-event direct training on the concept-pool
+component of THIS substrate (reuse the validated
+`apply_concept_topographic_bias` + `train_word_to_pool` flow from
+concept_pool_demo.py byte-unchanged); save to checkpoint cache.
+
+(C) CALIBRATE BOTH MOATS against the unified substrate's readouts
+as separate pre-registered controller commits (mirroring the
+per-regime stage's calibration commit `abe65f6`): direct moat
+calibrated on the Phase-1-trained substrate's
+`measure_pool_firing` output for groundable vs ungroundable direct
+queries; compositional moat re-calibrated on the same substrate's
+compositional readout. The 650 and 5.69 source constants get
+NEW VALUES that are substrate-specific. The frozen verdict module
++ bars stay byte-unchanged; only the threshold constants in the
+two gate modules change as a pre-registered calibration step.
+
+(D) Decisive evaluation: as designed, with the new calibrated
+thresholds.
+
+Then re-run the dedicated adversarial review (the FIFTH consecutive
+adversarial loop) until CLEAR; Task 3 no-harm; Task 4
+controller-only decisive run; honest propagation. The five-
+adversarial-loops-each-catching-real-defects discipline is itself
+the meta-deliverable. Honest ceiling unchanged. NO partition edit
+ever; the autonomous next-action tool call is always in the same
+turn after every commit; never stop on a promise.
+
+[HISTORICAL CONTEXT: unified design pass for the
 PER-REGIME-MONITOR + PER-REGIME-ENCODING architecture (the
-biology-translatable insight prescribes it).** Wire this stage's
+biology-translatable insight prescribes it). Wire this stage's
 compositional gate at 5.69 alongside the existing 650 direct gate
 AND add a Phase-1 multi-event W->A training pre-stage (reused from
 the validated `concept_pool_demo` runner; 200 events per direct
@@ -438,7 +522,7 @@ goal remains artificial life with a proper brain analogue;
 biology-translatable insights are the deliverable. NO partition
 edit ever; the autonomous next-action tool call is always in the
 same turn after every commit; never stop on a promise; the
-promise-stall pattern is explicitly forbidden.
+promise-stall pattern is explicitly forbidden.]
 
 [HISTORICAL CONTEXT: Per-regime Task 6 original mandate was
 CONTROLLER-ONLY decisive run (NOT a subagent task). In the same
