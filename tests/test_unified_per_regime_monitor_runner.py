@@ -585,5 +585,195 @@ def test_compositional_encoding_produces_nonzero_engram_tag(tmp_path):
     )
 
 
+# =====================================================================
+# v2 direct-gate calibration tests.
+#
+# The v1 protocol's "ungroundable" set is the held-out half of the
+# TRAINED 16-word vocab, queried with its own trained code, so it
+# measures (strong-half-median) vs (other-strong-half-median), NOT
+# trained-vs-untrained. The per-seed random half-split produces
+# INVERTED outcomes at 2/3 seeds (42, 44) just because random splits
+# sometimes put weak-binders in the groundable half.
+#
+# v2 replaces the half-split with a per-word target-vs-best-off-target
+# gap aggregated over the FULL trained vocab (16 words):
+#   target_rate         = per_pool[expected_pool]   -- groundable signal
+#   best_off_target     = max(per_pool[p] for p != expected_pool)
+#                                                   -- ungroundable signal
+# Then:
+#   g_median             = median(target_rate over 16 words)
+#   u_median             = median(best_off_target over 16 words)
+#   calibrated_threshold = 0.5 * (g_median + u_median)
+#
+# v2 leaves v1 byte-unchanged (additive function alongside).
+# =====================================================================
+
+
+def test_calibrate_direct_v2_returns_full_vocab_separator(tmp_path):
+    """``_calibrate_direct_v2_one_seed`` must:
+      * exist as a module-level function;
+      * return a dict with the v2 protocol keys + protocol_version = "v2";
+      * report n_groundable == n_ungroundable == 16 (full vocab, no
+        per-seed half-split);
+      * report g_median and u_median as floats in a plausible
+        measure_pool_firing scale ([0.0, 5.0] per CLAUDE.md);
+      * report calibrated_threshold EXACTLY equal to 0.5 *
+        (g_median + u_median);
+      * use a sub-seed = seed + 50000 (distinct from v1's +40000 offset).
+
+    Tiny-synth smoke; no decisive numbers asserted.
+    """
+    assert hasattr(urr, "_calibrate_direct_v2_one_seed"), (
+        "v2 direct-gate calibration function must exist alongside the "
+        "v1 function; net-new additive change."
+    )
+    cache_dir = tmp_path / "phase1"
+    # Need a Phase-1 checkpoint for v2 to load against; reuse the same
+    # tiny-synth Phase-1 training the v1 calibration uses.
+    urr.run_unified_per_regime_monitor(
+        seeds=[42],
+        loads=(2,),
+        tiny_synth=True,
+        phase1_cache_dir=str(cache_dir),
+    )
+
+    out = urr._calibrate_direct_v2_one_seed(
+        seed=42, tiny_synth=True, cache_dir=str(cache_dir),
+    )
+    assert isinstance(out, dict)
+    for k in (
+        "seed",
+        "sub_seed",
+        "groundable_median",
+        "ungroundable_median",
+        "calibrated_threshold",
+        "n_groundable",
+        "n_ungroundable",
+        "protocol_version",
+    ):
+        assert k in out, "v2 result missing key %r" % k
+    assert out["protocol_version"] == "v2"
+    assert int(out["seed"]) == 42
+    assert int(out["sub_seed"]) == 42 + 50000, (
+        "v2 sub-seed offset must be +50000 (distinct from v1's +40000)"
+    )
+
+    g = float(out["groundable_median"])
+    u = float(out["ungroundable_median"])
+    assert isinstance(g, float)
+    assert isinstance(u, float)
+    assert 0.0 <= g <= 5.0, "g_median outside plausible measure_pool_firing scale"
+    assert 0.0 <= u <= 5.0, "u_median outside plausible measure_pool_firing scale"
+
+    # Full trained vocab, no per-seed half-split: 4 direction + 4 noun +
+    # 4 verb + 4 adjective = 16.
+    assert int(out["n_groundable"]) == 16
+    assert int(out["n_ungroundable"]) == 16
+
+    # calibrated_threshold is EXACTLY the median midpoint.
+    expected = 0.5 * (g + u)
+    assert abs(float(out["calibrated_threshold"]) - expected) <= 1e-12, (
+        "calibrated_threshold must be exactly 0.5 * (g_median + u_median)"
+    )
+
+
+def test_calibrate_direct_v2_status_logic_matches_v1():
+    """``_calibration_status`` is reused unchanged: passing a per-seed
+    list constructed from v2 outputs must fire the same
+    MATCH / PENDING / MISMATCH / INSUFFICIENT-SEPARATION semantics as v1.
+
+    Construct synthetic per-seed v2-shaped dicts to exercise each branch.
+    """
+    # INSUFFICIENT-SEPARATION: any seed where g <= u.
+    bad = [
+        {"groundable_median": 0.10, "ungroundable_median": 0.20,
+         "calibrated_threshold": 0.15},
+        {"groundable_median": 0.30, "ungroundable_median": 0.10,
+         "calibrated_threshold": 0.20},
+    ]
+    status, agg = urr._calibration_status(bad, committed=0.0)
+    assert status == "INSUFFICIENT-SEPARATION"
+    assert abs(agg - 0.175) < 1e-9
+
+    # PENDING: committed is placeholder (0.0) AND aggregate is non-zero,
+    # AND every seed has g > u.
+    pending = [
+        {"groundable_median": 0.40, "ungroundable_median": 0.10,
+         "calibrated_threshold": 0.25},
+        {"groundable_median": 0.50, "ungroundable_median": 0.15,
+         "calibrated_threshold": 0.325},
+    ]
+    status, agg = urr._calibration_status(pending, committed=0.0)
+    assert status == "PENDING"
+    assert abs(agg - 0.2875) < 1e-9
+
+    # MATCH: committed equals the aggregate within tolerance.
+    matched = [
+        {"groundable_median": 0.40, "ungroundable_median": 0.10,
+         "calibrated_threshold": 0.30},
+        {"groundable_median": 0.50, "ungroundable_median": 0.10,
+         "calibrated_threshold": 0.30},
+    ]
+    status, agg = urr._calibration_status(matched, committed=0.30)
+    assert status == "MATCH"
+    assert abs(agg - 0.30) < 1e-9
+
+    # MISMATCH: committed non-zero AND aggregate diverges beyond tolerance.
+    mismatch = [
+        {"groundable_median": 0.60, "ungroundable_median": 0.10,
+         "calibrated_threshold": 0.50},
+    ]
+    status, agg = urr._calibration_status(mismatch, committed=0.30)
+    assert status == "MISMATCH"
+
+
+def test_cli_direct_calibration_v2_flag_routes_v2(tmp_path):
+    """The ``--direct-calibration-v2`` flag, when combined with
+    ``--calibrate``, routes the direct-gate calibration through the v2
+    function. The compositional-gate calibration is unaffected (still
+    v1, i.e. half-split).
+
+    The output JSON's direct_gate block carries ``protocol_version: v2``
+    and the compositional_gate block carries ``protocol_version: v1``.
+    """
+    cache_dir = tmp_path / "phase1"
+    out = tmp_path / "calibrate_v2_smoke.json"
+    rc = urr.main([
+        "--seeds", "42",
+        "--loads", "2",
+        "--tiny-synth",
+        "--phase1-cache-dir", str(cache_dir),
+        "--calibrate",
+        "--direct-calibration-v2",
+        "--out", str(out),
+    ])
+    assert rc == 0
+    assert out.exists(), "calibrate-mode out JSON not written"
+    import json as _json
+    payload = _json.loads(out.read_text(encoding="utf-8"))
+    assert payload.get("mode") == "calibration"
+
+    direct = payload.get("direct_gate")
+    assert isinstance(direct, dict)
+    assert direct.get("protocol_version") == "v2", (
+        "direct_gate protocol_version must be 'v2' under --direct-calibration-v2"
+    )
+
+    comp = payload.get("compositional_gate")
+    assert isinstance(comp, dict)
+    assert comp.get("protocol_version") == "v1", (
+        "compositional gate calibration MUST be unaffected by "
+        "--direct-calibration-v2 (still v1 / half-split)"
+    )
+
+    # Per-seed direct block carries the v2 keys for the single seed.
+    per_seed = direct.get("per_seed_details", [])
+    assert len(per_seed) == 1
+    d0 = per_seed[0]
+    assert d0.get("protocol_version") == "v2"
+    assert int(d0["n_groundable"]) == 16
+    assert int(d0["n_ungroundable"]) == 16
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

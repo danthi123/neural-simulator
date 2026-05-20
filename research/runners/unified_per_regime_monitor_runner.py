@@ -256,6 +256,21 @@ _UNIFIED_SUBSEED_OFFSET = 20000
 # =====================================================================
 _UNIFIED_CALIB_COMP_OFFSET = 30000
 _UNIFIED_CALIB_DIRECT_OFFSET = 40000
+# v2 direct-gate calibration sub-seed offset. The v2 protocol replaces
+# the v1 per-seed random half-split with a per-word target-vs-best-off-
+# target gap aggregated over the FULL trained vocab (16 words). The +50000
+# offset keeps the v2 sub-seed distinct from v1's +40000 so the two
+# protocols' deterministic noise are independent.
+_UNIFIED_CALIB_DIRECT_V2_OFFSET = 50000
+
+# v2 method docstring echoed in the JSON output (separate so it appears
+# verbatim under the v2 protocol_version, mirroring CALIBRATION_METHOD_DOC).
+CALIBRATION_METHOD_DOC_DIRECT_V2 = (
+    "v2: per-word target-vs-best-off-target gap aggregated over the "
+    "full trained vocab; no per-seed half-split; calibrated_threshold "
+    "= 0.5 * (median(target_rate) + median(best_off_target_rate)) per "
+    "seed"
+)
 
 # Tolerance for MATCH detection between calibrated aggregate and
 # committed constant (mirrors per_regime_monitor_runner._CALIB_MATCH_TOL).
@@ -1310,6 +1325,123 @@ def _calibrate_direct_one_seed(seed: int, tiny_synth: bool,
     }
 
 
+def _calibrate_direct_v2_one_seed(seed: int, tiny_synth: bool,
+                                     cache_dir: str) -> Dict[str, Any]:
+    """v2 per-seed direct-gate calibration on the unified substrate.
+
+    Method: per-word target-vs-best-off-target gap aggregated over the
+    FULL trained vocab (NO per-seed random half-split). For each of the
+    16 trained vocabulary words w:
+        target_rate     = per_pool[expected_pool(w)]
+        best_off_target = max(per_pool[p] for p != expected_pool(w))
+    Then:
+        g_median             = median(target_rate over 16 words)
+        u_median             = median(best_off_target over 16 words)
+        calibrated_threshold = 0.5 * (g_median + u_median)
+
+    Why v2: the v1 protocol's "ungroundable" set is the held-out half
+    of the TRAINED 16-word vocab, queried with its own trained code, so
+    it measures (strong-half-median) vs (other-strong-half-median),
+    NOT trained-vs-untrained. The per-seed random half-split produces
+    INVERTED outcomes at 2/3 seeds (42, 44) just because random splits
+    sometimes put weak-binders in the groundable half. v2's per-word
+    target-vs-best-off-target gap is a within-word contrast that
+    survives weak per-word binders -- a substrate-retains-direction
+    word still has target_rate > best_off_target_rate even when both
+    are small.
+
+    Sub-seed = seed + _UNIFIED_CALIB_DIRECT_V2_OFFSET (+50000). Distinct
+    from v1's +40000.
+
+    Return dict shape mirrors v1 (seed / sub_seed / groundable_median /
+    ungroundable_median / calibrated_threshold / n_groundable /
+    n_ungroundable) plus ``protocol_version = "v2"`` so the calibration
+    status logic + downstream JSON consumers can route per-protocol.
+    """
+    sub_seed = int(seed) + _UNIFIED_CALIB_DIRECT_V2_OFFSET
+
+    # Load Phase-1 substrate (same load + freeze pattern as v1).
+    cache_path = _phase1_cache_path(cache_dir, seed)
+    bridge = _build_bridge_with_phase1_recipe(int(seed), tiny_synth)
+    bridge.load_checkpoint(str(cache_path))
+    _freeze_phase1_gates(bridge)
+
+    recipe_dims = _phase1_recipe(tiny_synth)
+    all_words, word_to_idx = _all_words_word_to_idx()
+    n_words_for_orthogonal = max(_N_WORDS_ORTHOGONAL, len(all_words))
+    dims: Dict[str, Any] = {
+        "n_lang_input": int(recipe_dims["n_lang_input"]),
+        "n_per_pool": int(recipe_dims["n_per_pool"]),
+        "n_fs_per_pool": int(recipe_dims["n_fs_per_pool"]),
+        "sparsity": 0.05,
+        "dt_ms": 0.5,
+        "n_words_for_orthogonal": int(n_words_for_orthogonal),
+    }
+
+    all_pools = _all_pool_regions(enable_adjective=True)
+
+    # The FULL trained vocab (no per-seed split). 4 direction + 4 noun +
+    # 4 verb + 4 adjective = 16, matching the v14/v16 calibration canon.
+    trained_words: List[str] = []
+    for w in cpd.DIRECTION_VOCAB:
+        trained_words.append(w)
+    for w in cpd.NOUN_VOCAB:
+        trained_words.append(w)
+    for w in cpd.VERB_VOCAB:
+        trained_words.append(w)
+    for w in cpd.ADJECTIVE_VOCAB:
+        trained_words.append(w)
+
+    recall_steps = 20 if tiny_synth else 100
+
+    groundable_rates: List[float] = []
+    ungroundable_rates: List[float] = []
+    for w in trained_words:
+        try:
+            expected_pool = _direct_pool_target(w)
+        except KeyError:
+            continue
+        per_pool = cpd.measure_pool_firing(
+            bridge, w, all_pools,
+            stim_steps=int(recall_steps),
+            reset_steps=int(recall_steps // 2),
+            drive_pA=200.0,
+            sparsity=float(dims["sparsity"]),
+            n_lang_input=int(dims["n_lang_input"]),
+            orthogonal_codes=True,
+            n_words_for_orthogonal=int(dims["n_words_for_orthogonal"]),
+            word_to_idx=word_to_idx,
+        )
+        target_rate = float(per_pool.get(expected_pool, 0.0))
+        best_off_target_rate = max(
+            (r for p, r in per_pool.items() if p != expected_pool),
+            default=0.0,
+        )
+        groundable_rates.append(target_rate)
+        ungroundable_rates.append(float(best_off_target_rate))
+
+    g_median = (
+        float(statistics.median(groundable_rates))
+        if groundable_rates else 0.0
+    )
+    u_median = (
+        float(statistics.median(ungroundable_rates))
+        if ungroundable_rates else 0.0
+    )
+    calibrated_threshold = float(0.5 * (g_median + u_median))
+
+    return {
+        "seed": int(seed),
+        "sub_seed": int(sub_seed),
+        "groundable_median": g_median,
+        "ungroundable_median": u_median,
+        "calibrated_threshold": calibrated_threshold,
+        "n_groundable": len(groundable_rates),
+        "n_ungroundable": len(ungroundable_rates),
+        "protocol_version": "v2",
+    }
+
+
 def _calibration_status(per_seed: List[Dict[str, Any]],
                           committed: float) -> Tuple[str, float]:
     """Classify the calibration outcome vs the committed constant.
@@ -1387,6 +1519,7 @@ def run_unified_per_regime_monitor(
     out_path: Optional[str] = None,
     ckpt: Optional[str] = None,
     calibrate: bool = False,
+    direct_calibration_v2: bool = False,
 ) -> Dict[str, Any]:
     """Unified per-regime monitor + per-regime encoding capability runner.
 
@@ -1421,19 +1554,28 @@ def run_unified_per_regime_monitor(
     if calibrate:
         # ---- CALIBRATION MODE: held-out per-seed thresholds for both
         # gates (compositional + new substrate-specific direct). ----
+        # The compositional-gate calibration is UNAFFECTED by the
+        # ``direct_calibration_v2`` flag (still v1 / half-split-of-
+        # compositional-pairs). Only the direct-gate calibration loop
+        # routes through the v2 function when the flag is set.
         comp_per_seed: List[Dict[str, Any]] = []
         direct_per_seed: List[Dict[str, Any]] = []
         for s in seeds:
-            comp_per_seed.append(
-                _calibrate_compositional_one_seed(
+            comp_entry = _calibrate_compositional_one_seed(
+                int(s), tiny_synth, phase1_cache_dir
+            )
+            comp_entry.setdefault("protocol_version", "v1")
+            comp_per_seed.append(comp_entry)
+            if direct_calibration_v2:
+                direct_entry = _calibrate_direct_v2_one_seed(
                     int(s), tiny_synth, phase1_cache_dir
                 )
-            )
-            direct_per_seed.append(
-                _calibrate_direct_one_seed(
+            else:
+                direct_entry = _calibrate_direct_one_seed(
                     int(s), tiny_synth, phase1_cache_dir
                 )
-            )
+                direct_entry.setdefault("protocol_version", "v1")
+            direct_per_seed.append(direct_entry)
 
         comp_status, comp_aggregate = _calibration_status(
             comp_per_seed, float(COMPOSITIONAL_THRESHOLD)
@@ -1442,6 +1584,11 @@ def run_unified_per_regime_monitor(
             direct_per_seed, float(DIRECT_UNIFIED_THRESHOLD)
         )
 
+        direct_protocol = "v2" if direct_calibration_v2 else "v1"
+        direct_method = (
+            CALIBRATION_METHOD_DOC_DIRECT_V2
+            if direct_calibration_v2 else CALIBRATION_METHOD_DOC
+        )
         result: Dict[str, Any] = {
             "mode": "calibration",
             "seeds": list(seeds),
@@ -1455,6 +1602,7 @@ def run_unified_per_regime_monitor(
                 "aggregate_calibrated_threshold": float(comp_aggregate),
                 "committed_threshold": float(COMPOSITIONAL_THRESHOLD),
                 "calibration_status": comp_status,
+                "protocol_version": "v1",
             },
             "direct_gate": {
                 "per_seed_calibrated_thresholds": [
@@ -1464,6 +1612,8 @@ def run_unified_per_regime_monitor(
                 "aggregate_calibrated_threshold": float(direct_aggregate),
                 "committed_threshold": float(DIRECT_UNIFIED_THRESHOLD),
                 "calibration_status": direct_status,
+                "protocol_version": direct_protocol,
+                "method": direct_method,
             },
             "note": (
                 "calibration only -- NOT a decisive result. Per-seed "
@@ -1654,6 +1804,20 @@ def main(argv=None) -> int:
             "abe65f6 for the compositional gate)."
         ),
     )
+    ap.add_argument(
+        "--direct-calibration-v2",
+        action="store_true",
+        help=(
+            "When combined with --calibrate, route the direct-gate "
+            "calibration through the v2 protocol: per-word target-vs-"
+            "best-off-target gap aggregated over the FULL trained vocab "
+            "(no per-seed half-split). v1 suffered a methodology bug "
+            "(the 'ungroundable' set was the held-out half of the TRAINED "
+            "vocab queried with its own trained code; per-seed random "
+            "split produced INVERTED outcomes at 2/3 seeds). The "
+            "compositional-gate calibration is UNAFFECTED (still v1)."
+        ),
+    )
     a = ap.parse_args(argv)
 
     result = run_unified_per_regime_monitor(
@@ -1664,6 +1828,7 @@ def main(argv=None) -> int:
         out_path=a.out,
         ckpt=a.ckpt,
         calibrate=a.calibrate,
+        direct_calibration_v2=a.direct_calibration_v2,
     )
     tag = " [TINY-SYNTH toy -- NOT a result]" if a.tiny_synth else ""
     if a.calibrate:
