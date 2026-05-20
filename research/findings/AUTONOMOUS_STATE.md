@@ -461,26 +461,84 @@ a degenerate direct threshold. Decisive evaluation cannot proceed
 without understanding why. Findings:
 `research/findings/2026-05-20-unified-substrate-calibration-substrate-specific-compositional-threshold-confirmed-direct-INSUFFICIENT-SEPARATION.md`.
 
-**EXACT NEXT ACTION: diagnostic probe comparing
-`measure_pool_firing` separation on (a) the unified substrate
-(hippocampus + dlpfc + concept pools; the calibration's Phase-1
-checkpoints already exist at `research/findings/raw/unified_per_regime/phase1/seed{42,43,44}.simstate.h5`)
-vs (b) the pure v14/v16 substrate (`cpd.build_concept_bridge`,
-concept pools only).** The probe localises whether the unified
-substrate's hippocampus + dlpfc addition DEGRADES direct retrieval
-or whether the calibration query design is too noisy. Reuses
-cached checkpoints where available (zero retraining cost). Reports
-per-seed groundable vs ungroundable distributions on a larger
-query set than the calibration used. If pure v14/v16 substrate
-gives reliable separation, the next iteration must address the
-hippocampal/dlpfc interference (a real neuroscience-grounded
-refinement). If pure v14/v16 substrate ALSO shows
-INSUFFICIENT-SEPARATION, the next iteration must address the
-measurement-methodology gap (W->A vs A->W; statistical power of
-the held-out query design). Either branch is a real iteration --
-NOT declare-unfit, NOT config-crank, NOT hand-back. Honest
-ceiling unchanged. NO bar change. The autonomous next-action tool
-call is always in the same turn; never stop on a promise.
+**DIAGNOSTIC PROBE COMPLETE -- methodology bug CAUGHT (v1) and
+FIXED (v2); substantively different and honest reading lands
+(commit `7548465`, both remotes).** v1 used `n_words_for_orthogonal
+= 12` with a 12-word non-motor `word_to_idx`; both substrates
+falsely "failed" because the substrate was trained with
+`n_words_for_orthogonal = 16` and a 16-word motor-first
+`word_to_idx`. v1's apparent "pure v14 = 2/12" contradicted the
+documented v14 5-seed 77.5 % W->A baseline at six-fold magnitude
+-- which is exactly what signalled the probe (not the substrate)
+was broken. v2 fixes the canonical-vocab mismatch and reports both
+substrates on (a) all-16-words and (b) the 12-non-motor calibration
+scope. v2 results at seed 42:
+
+- pure v14 (no hippocampus, no dlpfc) all 16: groundable_median
+  0.380, ungroundable_median 0.240, **13/16 (81%) correct direction**
+  -- matches documented v14 5-seed mean 12.4/16 (77.5%).
+- unified (hippocampus + dlpfc + concept pools) all 16:
+  groundable_median 0.265, ungroundable_median 0.235,
+  **10/16 (62.5%) correct direction** -- POSITIVE separation in the
+  right direction, ~18.5pp below pure v14 at the same seed.
+- non-motor 12 scope: pure v14 9/12, unified 8/12.
+
+**Two honest discoveries.** (1) The unified substrate retains
+per-word direct binding at modestly degraded fidelity from the
+hippocampus + dlpfc integration; binding is NOT abolished. The
+core capability survives integration -- this is consistent with the
+integrated-loop hypothesis (integration introduces tradeoffs across
+multiple subsystems; the load-bearing question is whether the
+integrated loop emerges NEW capabilities, not byte-equivalence to
+isolated baselines). (2) The original calibration's
+INSUFFICIENT-SEPARATION verdict at 2/3 seeds is largely a
+methodology fragility, NOT a substrate failure. Reading the
+calibration code (`_calibrate_direct_one_seed`, lines 1179-1310):
+GROUNDABLE = trained word -> target-pool rate; UNGROUNDABLE = a
+NON-OVERLAPPING TRAINED word -> TOP-pool rate. Both halves are
+trained; the "ungroundable" set is the held-out trained half
+queried with its own trained code. The per-seed random half-split
+of the 16-word trained vocab measures (strong-binder-half-median)
+vs (other-strong-binder-half-median plus off-target leakage),
+NOT trained-vs-untrained discriminability. Per-seed INVERTED
+outcomes (42, 44) reflect random-split luck on a trained-only
+population, not a real noise floor. Findings:
+`research/findings/2026-05-20-unified-direct-gate-calibration-methodology-bug-CAUGHT-substrate-discrimination-INTACT.md`.
+
+**EXACT NEXT ACTION: REDESIGN the direct-gate calibration protocol
+to measure the right quantity.** Build a v2 calibration function
+`_calibrate_direct_v2_one_seed` alongside (NOT modifying) the
+existing v1 protocol, opt-in via a CLI flag. The v2 protocol uses
+the per-word SIGNAL-TO-NOISE METRIC (target-pool rate vs best-
+off-target-pool rate per trained word, aggregated over the FULL
+trained vocab -- the same metric the v2 diagnostic showed has
+positive separation 0.265 vs 0.235 on the unified substrate at
+seed 42). This eliminates the half-split fragility AND aligns the
+calibration's signal with the gate's deployment semantics ("is the
+substrate's top pool meaningfully above the runner-up?"). The new
+gate semantics:
+
+- threshold = median midpoint of trained-vocab top-minus-second
+  gap distribution (computed per-seed; aggregated across 3 seeds)
+- at deployment, a query whose top-minus-second gap exceeds the
+  threshold is emitted; otherwise abstained
+- INSUFFICIENT-SEPARATION still fires if any per-seed cell shows
+  groundable_median <= ungroundable_median on the new metric (the
+  strengthen-only fail-closed discipline byte-unchanged)
+
+Same standing chain: writing-plans -> subagent-driven-development
+-> dedicated adversarial review BEFORE no-harm -> controller-only
+decisive calibration run on the new protocol -> if MATCH on a
+positive threshold, controller commits the new constant in a
+separate pre-registered step (mirroring the per-regime stage's
+`abe65f6` pattern) -> resume Tasks 4-5 of the unified arc. The
+existing `_calibrate_direct_one_seed` (v1) stays byte-unchanged;
+the `abstention_gate_direct_unified.py` placeholder threshold
+stays 0.0 until v2 calibration commits. NO bar change anywhere;
+the protected set byte-empty diff vs `e8a99a2` must continue to
+hold; no-confab moat 7/7 byte-identical; honest ceiling unchanged.
+The autonomous next-action tool call is always in the same turn;
+never stop on a promise.
 
 [HISTORICAL CONTEXT: pre-committed substantive fix-iteration of the
 unified runner -- substrate redesign + dual recalibration of both
