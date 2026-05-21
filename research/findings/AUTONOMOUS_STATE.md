@@ -1268,9 +1268,87 @@ empty diff vs e8a99a2 holds; no-confab moat 7/7 byte-identical.
 Findings:
 `research/findings/2026-05-21-Direction-G-silent-interval-length-sweep-OSCILLATORY-dynamics-at-800ev-seed43-non-monotonic-bidirectional.md`.
 
-**EXACT NEXT ACTION: Direction H -- multi-seed oscillation-phase
-characterization at 800ev (test the phase-artifact hypothesis for
-Direction E's seed-dependent multi-seed variance).** Run the silent-
+**DIRECTION H COMPLETE (commit will follow this state update, both
+remotes). Multi-seed silent-interval LENGTH sweep at 800ev reveals
+THREE QUALITATIVELY DISTINCT silent-interval dynamics.**
+
+| Silent steps | seed 42 fgt% | seed 43 fgt% | seed 44 fgt% |
+|--------------|--------------|--------------|--------------|
+| 1000         | +6.7%        |  0.0%        | +7.7%        |
+| 5000         | +6.7%        | -15.4% (PEAK GAIN) | +15.4% (PEAK LOSS) |
+| 20000        | +13.3%       | -7.7%        | +7.7%        |
+| 50000        | +13.3%       |  0.0%        | +15.4%       |
+| 100000       | +20.0%       | -7.7%        |  0.0%        |
+
+Three substrates, three QUALITATIVELY DISTINCT silent-interval
+profiles:
+- Seed 42: MONOTONIC DECAY (forgetting % roughly linearly increases
+  with silent length; 6.7% -> 20%; pure passive decay; no oscillation)
+- Seed 43: OSCILLATORY GAINS (baseline -> PEAK GAIN -15.4% at 5k
+  steps; never below baseline; consolidative dynamics)
+- Seed 44: OSCILLATORY LOSSES (baseline -> PEAK LOSS +15.4% at 5k
+  steps; never above baseline; degradative dynamics)
+
+Seeds 43 and 44 are CONJUGATE: same oscillation period (~50000
+steps), opposite sign. Seed 42 has no strong attractor visit (pure
+relaxation toward neutral).
+
+Per the pre-registered Direction H second branch (seeds 42 + 44
+show different patterns), substrate has SEED-DEPENDENT silent-
+interval dynamics with QUALITATIVE differences. Insight #16 from
+Direction G is NUANCED multi-seed.
+
+**Biology-translatable insight #17 (NEW; multi-seed):** Substrate-
+level individual variance produces QUALITATIVELY DIFFERENT silent-
+interval behaviors (monotonic decay vs oscillatory gains vs
+oscillatory losses), not just quantitatively different rates. The
+5000-step PEAK locations in seeds 43/44 are CONJUGATE -- consistent
+with substrate having accessible attractor states that favor or
+disfavor trained binding. Seed 42 lacks strong attractor visits.
+The CLS-prediction-at-training-event-regime-level holds at seed 42
+but not as stated multi-seed; a more nuanced version requires
+substrate-specific attractor analysis.
+
+NO bar change; NO threshold tuning; reuse-only (nested shell loop
+calling silent_interval_persistence_probe.py byte-unchanged).
+Protected set byte-empty diff vs e8a99a2 holds; no-confab moat 7/7
+byte-identical. 22 consecutive honest-propagation cycles.
+
+Findings:
+`research/findings/2026-05-21-Direction-H-multi-seed-silent-interval-length-sweep-THREE-QUALITATIVELY-DISTINCT-dynamics-monotonic-decay-vs-oscillatory-gains-vs-oscillatory-losses.md`.
+
+**EXACT NEXT ACTION: Direction I -- per-word attractor analysis.**
+The oscillatory gains (seed 43) and losses (seed 44) at 5000 silent
+steps are CONJUGATE in magnitude (+/-15.4% = +/-2 words). Are these
+two-word swings concentrated on the SAME WORDS across the conjugate
+seeds, or different words? If the same words swing, the substrate
+has specific "attractor-sensitive" words. If different words, the
+substrate's attractor visits are diffuse.
+
+Concrete protocol (reuse-only):
+1. Load existing JSONs:
+   - `research/findings/raw/silent_interval_length_sweep_seed43_800ev_5000.json`
+   - `research/findings/raw/silent_interval_length_sweep_seed44_800ev_5000.json`
+2. Extract per-word results; compare PRE-silence (cached values)
+   vs POST-silence (5000-step value).
+3. Identify which specific words gained (seed 43) or lost (seed 44)
+   accuracy. Cross-reference for overlap.
+
+Cost: ~1 min (just parsing existing JSON outputs). Pure analysis;
+no GPU; reuse-only.
+
+Pre-registered Direction I decision rule:
+- If seed-43-gain words OVERLAP with seed-44-loss words: the
+  substrate's attractor-sensitive vocabulary is consistent across
+  the conjugate seeds. Specific words have attractor sensitivity;
+  the dynamics differ in which direction the attractor pulls.
+- If seed-43-gain words DIFFER from seed-44-loss words: the
+  attractor visits are seed-specific and diffuse across the vocab.
+  Each substrate has its own "attractor-sensitive" sub-vocabulary.
+
+Historical text from prior next-action (preserved for context):
+
+[Concrete protocol (reuse-only): Run the silent-
 interval length sweep at seeds 42 and 44 at 800ev. If their
 trajectories also show oscillatory bidirectional dynamics with
 similar period, the +/-15.4% Direction E seed-dependent result was
@@ -1292,9 +1370,9 @@ Concrete protocol (reuse-only):
    independent oscillation per seed.
 
 Cost: ~30 min per seed * 2 seeds = ~60 min. Pure eval; reuse-only;
-no new training; no new core code.
+no new training; no new core code.]
 
-Pre-registered Direction H decision rule:
+[Pre-registered Direction H decision rule:
 - If seeds 42 + 44 show oscillatory bidirectional dynamics with
   similar period: phase-artifact hypothesis SUPPORTED; insight #16
   multi-seed-validated; declare "fixed-length retention is phase-

@@ -1,0 +1,20 @@
+{
+  "seed": 44,
+  "n_silent_steps": 100000,
+  "ev_list": [
+    800
+  ],
+  "per_ev_results": [
+    {
+      "ev_per_word": 800,
+      "src_cache": "research/findings/raw/unified_per_regime/phase1_800ev",
+      "post_silence_cache": "research/findings/raw/unified_per_regime/phase1_800ev_post_silence",
+      "n_silent_steps": 100000,
+      "pre_n_correct": 13,
+      "pre_accuracy": 0.8125,
+      "post_n_correct": 13,
+      "post_accuracy": 0.8125,
+      "forgetting_pct": 0.0
+    }
+  ]
+}
