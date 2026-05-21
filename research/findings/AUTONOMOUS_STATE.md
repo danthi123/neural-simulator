@@ -723,7 +723,42 @@ discovery of the 6th arc as the LOCAL OPTIMUM are substantive
 biology-translatable scientific contributions per the user's reframe
 ("biology-translatable insights ARE the deliverable").
 
-**ABLATION DIAGNOSTIC COMPLETE (commit `0ef9b6e`, both remotes).**
+**POOL-vs-LANG_OUTPUT MULTI-SEED CONFIRMED real signal (commit
+`4d6a3a6`, both remotes).** 3 seeds × N=5 = 15 queries on cached
+substrate; aggregate pool 4/15 = 26.7% vs lang_output 2/15 = 13.3%;
++13.3pp improvement; per-seed deltas [+1, 0, +1] = pool consistently
+>= lang_output across all 3 seeds. The signal is REAL.
+
+But honest reading: improvement closes ~5% of the remaining gap to
+0.80 (real but partial). Pool readout reaches 26.7%; still far below
+the 0.80 bar. Even 6th arc local optimum + pool readout would
+plausibly reach ~0.55-0.60, not 0.80.
+
+**EXACT NEXT ACTION: 8th arc with concrete pool-readout proposal
+(empirically motivated; tractable single-arc cycle).** Architecture:
+reuse 6th arc runner (commit `13f73e8`) byte-unchanged BUT change the
+readout function from `_compositional_query_ranked` (lang_output
+cosine) to a new `_compositional_query_pool_readout` (adjective_pool
+firing rates). FULL = pool readout; UNIFORM_CTRL = lang_output cosine
+(6th arc's existing readout; 0.458 at N=3 mean baseline). Frozen bars
+identical (`_CP_*` shape; module-local constants distinct).
+
+Steps mirror prior arcs: Task 0 grounding pin + Task 1 frozen verdict
+(transcribe per_regime_monitor_core.py with `_PR_*` -> `_CP_*`) +
+Task 2 net-new runner with the pool-readout function + Task 3 13th
+adversarial review + Task 4 no-harm + Task 5 controller-only decisive
++ smell-test + honest propagation + cross-arc trajectory update.
+
+No new substrate region. Reuse-by-import. Pool readout function uses
+existing `cp_firing_states` reads on existing adjective_pool_* regions
+via the brain-region framework's public `region_manager.indices()`
+API. No protected file modification.
+
+Discipline pins identical. The 8th arc is the natural continuation
+of the 8-day arc cycle's substantive empirical trajectory.
+
+---
+[Historical: ABLATION DIAGNOSTIC COMPLETE (commit `0ef9b6e`, both remotes).**
 The 7th arc regression has been LOCALISED to a single primary
 culprit: mechanism D (`n_replays_per_tag=50` vs 6th arc's 20) produces
 -0.184 regression alone, substantially LARGER than the 7th arc's
