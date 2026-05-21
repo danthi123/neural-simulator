@@ -673,8 +673,94 @@ deliverable"):
 Findings:
 `research/findings/2026-05-20-GENERATIVE-REPLAY-PFC-FRAME-decisive-honest-negative-LOAD-DEPENDENT-signature-6-architecture-convergent-ceiling.md`.
 
-**QUANTITATIVE ANALYSIS ACROSS 3 DECISIVELY-RUN ARCS (at N=3, the
-rung where mechanisms helped most):**
+**7TH ARC COMPLETE (commit `54f37c1`, both remotes) = GATE=FAIL with
+CRITICAL NEW FINDING: more-aggressive targeted mechanisms REGRESSED
+vs simpler 6th arc baseline.**
+
+Implementation chain: design `bef9027` + plan `b80cbb9` + Task 0 pin
+`b376039` + Task 1 frozen verdict `3f0d04c` + Task 2 net-new runner
+`f0a4e8e` (3 probes all structurally active with clean controls;
+subagent caught + fixed a subtle replay-cue-suppression inertness
+during Task 2) -> 12th adversarial review CLEAR -> Task 5 decisive
+run = GATE=FAIL with smell-test PASS.
+
+Per-rung at biological scale (3 seeds; ladder (2,3,5)):
+
+| N | full | uniform | advantage | direct_retain | abstain |
+|---|------|---------|-----------|---------------|---------|
+| 2 | 0.322 | 0.256 | +0.067 | 0.528 | 0.482 |
+| 3 | 0.363 | 0.411 | -0.048 | 0.533 | 0.151 |
+| 5 | 0.369 | 0.341 | +0.028 | 0.643 | 0.500 |
+
+**Cross-arc trajectory at N=3 -- the 6th arc was the LOCAL OPTIMUM**:
+
+| Arc | N=3 full | gap to 0.80 | direction |
+|-----|----------|-------------|-----------|
+| Unified | 0.274 | -0.526 | baseline |
+| Theta-gamma | 0.280 | -0.520 | flat |
+| 6th (replay + PFC) | **0.458** | -0.342 | **35% closure (LOCAL OPTIMUM)** |
+| **7th (aggressive)** | **0.363** | **-0.437** | **-0.095 REGRESSION** |
+
+Per-cell pattern at N=3 reveals seed-44 catastrophe (-0.286
+advantage); the mechanisms can actively sabotage retrieval at
+certain (seed, load) cells. The 6th arc had 3/3 seeds positive at
+N=3 (+0.143/+0.125/+0.143); the 7th arc has 1/3 positive (+0.143),
+1/3 tie, 1/3 catastrophic negative.
+
+**Biology-translatable insight (NEW; sweet-spot principle)**: real
+biological compositional retrieval has a NARROW sweet spot for
+auxiliary mechanisms (consolidation strength, working-memory
+persistence, cue-context priming). Over-aggressive scaling breaks
+the evolved balance and produces destructive interference. Consistent
+with:
+- McClelland-McNaughton-O'Reilly 1995 CLS theory (gentle gradual
+  replay; not large bursts)
+- Wang 2002 NMDA bistability characteristic time-constant
+- Encoding-specificity coupling between cue + retrieve context
+
+The 7-arc series + the cross-arc trajectory analysis + the
+discovery of the 6th arc as the LOCAL OPTIMUM are substantive
+biology-translatable scientific contributions per the user's reframe
+("biology-translatable insights ARE the deliverable").
+
+**EXACT NEXT ACTION: ablation diagnostic on the 6th arc baseline
+(autonomous; iterate following biology).** Test which of the 7th
+arc's 4 mechanisms caused the regression:
+
+(1) 6th arc + ONLY cue-suppression-during-replay (mechanism 1)
+(2) 6th arc + ONLY amplified-tag-stim 3x (mechanism 2)
+(3) 6th arc + ONLY persistent PFC-frame 50-step (mechanism 3)
+(4) 6th arc + ONLY higher n_replays_per_tag 50 (mechanism 4)
+
+Each ablation is a controller-only decisive eval at the same
+biological scale, reusing the cached substrate. Wall-clock ~5-10 min
+per ablation; 4 ablations ~20-40 min total. The outcome localises
+WHICH mechanism caused most of the regression and informs the next
+direction:
+- If ONE mechanism alone CONTINUES the trajectory beyond the 6th arc
+  -> 8th arc with that mechanism only
+- If NO mechanism alone improves on the 6th arc -> the 6th arc is
+  the asymptotic optimum; the gating+augmenting composition design
+  line is structurally exhausted; pivot to deeper substrate
+  refinement OR honest closure
+
+Implementation: each ablation = a small wrapper around the 7th arc
+runner with one mechanism's flag set to its 6th arc value. The
+runner already supports the mechanism flags; just need a CLI argument
+to set per-mechanism overrides.
+
+Or even cheaper: write a small controller-only script that loads the
+6th arc bridge state, applies ONE 7th-arc modification, runs the
+compositional eval, reports the N=3 full_acc. No new runner needed.
+
+NO bar change; protected set byte-empty diff vs `e8a99a2`; no-confab
+moat 7/7 byte-identical; 4 calibrated moats byte-stable. 12
+consecutive disciplined refusal-to-overclaim-a-PASS pattern;
+honest ceiling unchanged.
+
+---
+[Historical: QUANTITATIVE ANALYSIS ACROSS 3 DECISIVELY-RUN ARCS (at
+N=3, the rung where mechanisms helped most):**
 
 | Arc | N=3 full_acc | N=3 uniform | Gap to 0.80 |
 |-----|--------------|-------------|-------------|
