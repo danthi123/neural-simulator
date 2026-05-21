@@ -1,0 +1,400 @@
+{
+  "diagnostic": "7th_arc_ablation",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "N": 3,
+  "conditions_run": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "tiny_synth": false,
+  "raw_cells_by_condition": {
+    "A": [
+      {
+        "condition": "A",
+        "seed": 42,
+        "N": 3,
+        "full_acc": 0.5714285714285714,
+        "uniform_ctrl_acc": 0.2857142857142857,
+        "advantage": 0.2857142857142857,
+        "direct_retain_acc": 0.75,
+        "abstain_correct": 0.2857142857142857,
+        "n_direct": 4,
+        "n_compositional": 3,
+        "n_ungroundable": 7,
+        "replay_n_replays": 60,
+        "cue_suppression": true,
+        "pfc_steps": 10,
+        "tag_amp_factor": 1.0,
+        "n_replays_per_tag": 20,
+        "wall_seconds": 68.36980819702148
+      },
+      {
+        "condition": "A",
+        "seed": 43,
+        "N": 3,
+        "full_acc": 0.375,
+        "uniform_ctrl_acc": 0.125,
+        "advantage": 0.25,
+        "direct_retain_acc": 0.6,
+        "abstain_correct": 0.4,
+        "n_direct": 5,
+        "n_compositional": 3,
+        "n_ungroundable": 5,
+        "replay_n_replays": 60,
+        "cue_suppression": true,
+        "pfc_steps": 10,
+        "tag_amp_factor": 1.0,
+        "n_replays_per_tag": 20,
+        "wall_seconds": 68.61408638954163
+      },
+      {
+        "condition": "A",
+        "seed": 44,
+        "N": 3,
+        "full_acc": 0.2857142857142857,
+        "uniform_ctrl_acc": 0.5714285714285714,
+        "advantage": -0.2857142857142857,
+        "direct_retain_acc": 0.5,
+        "abstain_correct": 0.16666666666666666,
+        "n_direct": 4,
+        "n_compositional": 3,
+        "n_ungroundable": 6,
+        "replay_n_replays": 60,
+        "cue_suppression": true,
+        "pfc_steps": 10,
+        "tag_amp_factor": 1.0,
+        "n_replays_per_tag": 20,
+        "wall_seconds": 67.26306629180908
+      }
+    ],
+    "B": [
+      {
+        "condition": "B",
+        "seed": 42,
+        "N": 3,
+        "full_acc": 0.5714285714285714,
+        "uniform_ctrl_acc": 0.2857142857142857,
+        "advantage": 0.2857142857142857,
+        "direct_retain_acc": 0.75,
+        "abstain_correct": 0.2857142857142857,
+        "n_direct": 4,
+        "n_compositional": 3,
+        "n_ungroundable": 7,
+        "replay_n_replays": 60,
+        "cue_suppression": false,
+        "pfc_steps": 10,
+        "tag_amp_factor": 3.0,
+        "n_replays_per_tag": 20,
+        "wall_seconds": 71.34150910377502
+      },
+      {
+        "condition": "B",
+        "seed": 43,
+        "N": 3,
+        "full_acc": 0.375,
+        "uniform_ctrl_acc": 0.125,
+        "advantage": 0.25,
+        "direct_retain_acc": 0.6,
+        "abstain_correct": 0.4,
+        "n_direct": 5,
+        "n_compositional": 3,
+        "n_ungroundable": 5,
+        "replay_n_replays": 60,
+        "cue_suppression": false,
+        "pfc_steps": 10,
+        "tag_amp_factor": 3.0,
+        "n_replays_per_tag": 20,
+        "wall_seconds": 67.72069239616394
+      },
+      {
+        "condition": "B",
+        "seed": 44,
+        "N": 3,
+        "full_acc": 0.2857142857142857,
+        "uniform_ctrl_acc": 0.5714285714285714,
+        "advantage": -0.2857142857142857,
+        "direct_retain_acc": 0.5,
+        "abstain_correct": 0.16666666666666666,
+        "n_direct": 4,
+        "n_compositional": 3,
+        "n_ungroundable": 6,
+        "replay_n_replays": 60,
+        "cue_suppression": false,
+        "pfc_steps": 10,
+        "tag_amp_factor": 3.0,
+        "n_replays_per_tag": 20,
+        "wall_seconds": 65.1716697216034
+      }
+    ],
+    "C": [
+      {
+        "condition": "C",
+        "seed": 42,
+        "N": 3,
+        "full_acc": 0.5714285714285714,
+        "uniform_ctrl_acc": 0.2857142857142857,
+        "advantage": 0.2857142857142857,
+        "direct_retain_acc": 0.75,
+        "abstain_correct": 0.2857142857142857,
+        "n_direct": 4,
+        "n_compositional": 3,
+        "n_ungroundable": 7,
+        "replay_n_replays": 60,
+        "cue_suppression": false,
+        "pfc_steps": 50,
+        "tag_amp_factor": 1.0,
+        "n_replays_per_tag": 20,
+        "wall_seconds": 66.31888127326965
+      },
+      {
+        "condition": "C",
+        "seed": 43,
+        "N": 3,
+        "full_acc": 0.375,
+        "uniform_ctrl_acc": 0.125,
+        "advantage": 0.25,
+        "direct_retain_acc": 0.6,
+        "abstain_correct": 0.2,
+        "n_direct": 5,
+        "n_compositional": 3,
+        "n_ungroundable": 5,
+        "replay_n_replays": 60,
+        "cue_suppression": false,
+        "pfc_steps": 50,
+        "tag_amp_factor": 1.0,
+        "n_replays_per_tag": 20,
+        "wall_seconds": 69.48509240150452
+      },
+      {
+        "condition": "C",
+        "seed": 44,
+        "N": 3,
+        "full_acc": 0.2857142857142857,
+        "uniform_ctrl_acc": 0.5714285714285714,
+        "advantage": -0.2857142857142857,
+        "direct_retain_acc": 0.5,
+        "abstain_correct": 0.3333333333333333,
+        "n_direct": 4,
+        "n_compositional": 3,
+        "n_ungroundable": 6,
+        "replay_n_replays": 60,
+        "cue_suppression": false,
+        "pfc_steps": 50,
+        "tag_amp_factor": 1.0,
+        "n_replays_per_tag": 20,
+        "wall_seconds": 67.50667905807495
+      }
+    ],
+    "D": [
+      {
+        "condition": "D",
+        "seed": 42,
+        "N": 3,
+        "full_acc": 0.2857142857142857,
+        "uniform_ctrl_acc": 0.2857142857142857,
+        "advantage": 0.0,
+        "direct_retain_acc": 0.5,
+        "abstain_correct": 0.42857142857142855,
+        "n_direct": 4,
+        "n_compositional": 3,
+        "n_ungroundable": 7,
+        "replay_n_replays": 150,
+        "cue_suppression": false,
+        "pfc_steps": 10,
+        "tag_amp_factor": 1.0,
+        "n_replays_per_tag": 50,
+        "wall_seconds": 108.65113043785095
+      },
+      {
+        "condition": "D",
+        "seed": 43,
+        "N": 3,
+        "full_acc": 0.25,
+        "uniform_ctrl_acc": 0.125,
+        "advantage": 0.125,
+        "direct_retain_acc": 0.4,
+        "abstain_correct": 0.4,
+        "n_direct": 5,
+        "n_compositional": 3,
+        "n_ungroundable": 5,
+        "replay_n_replays": 150,
+        "cue_suppression": false,
+        "pfc_steps": 10,
+        "tag_amp_factor": 1.0,
+        "n_replays_per_tag": 50,
+        "wall_seconds": 109.39448976516724
+      },
+      {
+        "condition": "D",
+        "seed": 44,
+        "N": 3,
+        "full_acc": 0.2857142857142857,
+        "uniform_ctrl_acc": 0.5714285714285714,
+        "advantage": -0.2857142857142857,
+        "direct_retain_acc": 0.5,
+        "abstain_correct": 0.16666666666666666,
+        "n_direct": 4,
+        "n_compositional": 3,
+        "n_ungroundable": 6,
+        "replay_n_replays": 150,
+        "cue_suppression": false,
+        "pfc_steps": 10,
+        "tag_amp_factor": 1.0,
+        "n_replays_per_tag": 50,
+        "wall_seconds": 110.7926459312439
+      }
+    ]
+  },
+  "summary_by_condition": {
+    "A": {
+      "n_seeds": 3,
+      "mean_full_acc": 0.41071428571428575,
+      "mean_uniform_ctrl_acc": 0.3273809523809524,
+      "mean_advantage": 0.08333333333333333,
+      "per_seed_full_acc": [
+        [
+          42,
+          0.5714285714285714
+        ],
+        [
+          43,
+          0.375
+        ],
+        [
+          44,
+          0.2857142857142857
+        ]
+      ],
+      "per_seed_advantage": [
+        [
+          42,
+          0.2857142857142857
+        ],
+        [
+          43,
+          0.25
+        ],
+        [
+          44,
+          -0.2857142857142857
+        ]
+      ]
+    },
+    "B": {
+      "n_seeds": 3,
+      "mean_full_acc": 0.41071428571428575,
+      "mean_uniform_ctrl_acc": 0.3273809523809524,
+      "mean_advantage": 0.08333333333333333,
+      "per_seed_full_acc": [
+        [
+          42,
+          0.5714285714285714
+        ],
+        [
+          43,
+          0.375
+        ],
+        [
+          44,
+          0.2857142857142857
+        ]
+      ],
+      "per_seed_advantage": [
+        [
+          42,
+          0.2857142857142857
+        ],
+        [
+          43,
+          0.25
+        ],
+        [
+          44,
+          -0.2857142857142857
+        ]
+      ]
+    },
+    "C": {
+      "n_seeds": 3,
+      "mean_full_acc": 0.41071428571428575,
+      "mean_uniform_ctrl_acc": 0.3273809523809524,
+      "mean_advantage": 0.08333333333333333,
+      "per_seed_full_acc": [
+        [
+          42,
+          0.5714285714285714
+        ],
+        [
+          43,
+          0.375
+        ],
+        [
+          44,
+          0.2857142857142857
+        ]
+      ],
+      "per_seed_advantage": [
+        [
+          42,
+          0.2857142857142857
+        ],
+        [
+          43,
+          0.25
+        ],
+        [
+          44,
+          -0.2857142857142857
+        ]
+      ]
+    },
+    "D": {
+      "n_seeds": 3,
+      "mean_full_acc": 0.2738095238095238,
+      "mean_uniform_ctrl_acc": 0.3273809523809524,
+      "mean_advantage": -0.05357142857142857,
+      "per_seed_full_acc": [
+        [
+          42,
+          0.2857142857142857
+        ],
+        [
+          43,
+          0.25
+        ],
+        [
+          44,
+          0.2857142857142857
+        ]
+      ],
+      "per_seed_advantage": [
+        [
+          42,
+          0.0
+        ],
+        [
+          43,
+          0.125
+        ],
+        [
+          44,
+          -0.2857142857142857
+        ]
+      ]
+    }
+  },
+  "baselines": {
+    "6th_arc_N3_full": 0.458,
+    "6th_arc_N3_advantage": 0.137,
+    "7th_arc_N3_full": 0.363,
+    "7th_arc_N3_advantage": -0.095
+  },
+  "interpretation": "6th arc baseline N=3 full_acc = 0.458 (commit cc8b791)\n7th arc all-4-mechanisms N=3 full_acc = 0.363 (commit 54f37c1; REGRESSION -0.095)\n\nPer-condition results:\n  A (cue-suppression-during-replay): mean_full=0.411 mean_adv=+0.083 -> HURTS alone vs 6th arc baseline\n  B (amplified-tag-stim 3.0x): mean_full=0.411 mean_adv=+0.083 -> HURTS alone vs 6th arc baseline\n  C (persistent PFC-frame 50-step): mean_full=0.411 mean_adv=+0.083 -> HURTS alone vs 6th arc baseline\n  D (higher n_replays_per_tag 50): mean_full=0.274 mean_adv=-0.054 -> HURTS alone vs 6th arc baseline\n\nLocalisation note: a condition whose mean_full matches other conditions exactly (e.g. A == B == C == 0.411 in this run) means the gate-decided answers are bit-identical across those mechanisms even though the underlying bridge-state perturbations differ. Such mechanisms are STRUCTURALLY active but gate-NEUTRAL at the rung tested.",
+  "total_wall_seconds": 940.6307530403137
+}
