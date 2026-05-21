@@ -1,0 +1,92 @@
+{
+  "mode": "evaluation",
+  "rungs": [
+    {
+      "N": 3,
+      "n_seeds": 3,
+      "full_acc": 0.4047619047619047,
+      "uniform_ctrl_acc": 0.3630952380952381,
+      "direct_retain_acc": 0.6,
+      "abstain_correct": 0.4984126984126984
+    }
+  ],
+  "verdict": {
+    "gate": "VOID",
+    "reason": "ladder prefix mismatch",
+    "frozen_bars": {
+      "full_min": 0.8,
+      "uniform_ctrl_max": 0.1,
+      "direct_retain_min": 0.8,
+      "abstain_correct_min": 0.9,
+      "scale_tol": 0.1,
+      "ladder": [
+        2,
+        3,
+        5
+      ],
+      "min_seeds": 3
+    }
+  },
+  "tiny_synth": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "loads": [
+    3
+  ],
+  "raw_cells": [
+    {
+      "seed": 42,
+      "N": 3,
+      "full_acc": 0.2857142857142857,
+      "uniform_ctrl_acc": 0.2857142857142857,
+      "direct_retain_acc": 0.25,
+      "abstain_correct": 0.42857142857142855,
+      "n_direct": 4,
+      "n_compositional": 3,
+      "n_ungroundable": 7,
+      "replay_n_replays": 60
+    },
+    {
+      "seed": 43,
+      "N": 3,
+      "full_acc": 0.5,
+      "uniform_ctrl_acc": 0.375,
+      "direct_retain_acc": 0.8,
+      "abstain_correct": 0.4,
+      "n_direct": 5,
+      "n_compositional": 3,
+      "n_ungroundable": 5,
+      "replay_n_replays": 60
+    },
+    {
+      "seed": 44,
+      "N": 3,
+      "full_acc": 0.42857142857142855,
+      "uniform_ctrl_acc": 0.42857142857142855,
+      "direct_retain_acc": 0.75,
+      "abstain_correct": 0.6666666666666666,
+      "n_direct": 4,
+      "n_compositional": 3,
+      "n_ungroundable": 6,
+      "replay_n_replays": 60
+    }
+  ],
+  "phase1_cache_dir": "research/findings/raw/unified_per_regime/phase1_400ev",
+  "moat_direct": 650.0,
+  "moat_compositional": 5.688725490196079,
+  "direct_unified_threshold": 0.2841666666666667,
+  "compositional_unified_threshold": 0.1977124183006536,
+  "generative_replay_constants": {
+    "N_REPLAYS_PER_TAG": 20,
+    "REPLAY_DRIVE_PA": 100.0,
+    "REPLAY_BURST_DURATION_MS": 100,
+    "REPLAY_INTER_BURST_MS": 50
+  },
+  "pfc_frame_constants": {
+    "PFC_FRAME_PA": 100.0,
+    "PFC_FRAME_STIM_STEPS": 10
+  }
+}
