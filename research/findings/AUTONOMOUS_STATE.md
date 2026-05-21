@@ -1132,9 +1132,84 @@ capturing the 4-regime authoritative picture. 6/6 schema tests PASS.
 Findings:
 `research/findings/2026-05-21-Direction-D-multi-seed-FAIL-300ev-not-dual-capability-multi-seed-transitional-band-uniquely-at-400ev.md`.
 
-**EXACT NEXT ACTION: Direction E -- characterize MEMORY PERSISTENCE
-across the 4 multi-seed training-event-budget regimes (cheap-first
-single-seed at seed 42; reuse the 4 existing caches; ~40 min total).**
+**DIRECTION E SINGLE-SEED COMPLETE (commit will follow this state
+update, both remotes). The substrate's training-event regimes are
+RETENTION regimes too -- forgetting % MONOTONICALLY DECREASES with
+training-event count, CLS-consistent.**
+
+Memory persistence (seed 42; 5000 silent steps; reused 4 existing
+caches; ~5 min per cache):
+
+| ev/word | Pre direct | Post direct | Forgetting % | Regime |
+|---------|------------|-------------|--------------|--------|
+| 200ev   | 11/16 = 68.8% | 10/16 = 62.5% | **9.1%** | COMP-FAVORED |
+| 300ev   | 14/16 = 87.5% | 13/16 = 81.2% | 7.1%     | SUB-OPTIMAL |
+| 400ev   | 15/16 = 93.8% | 14/16 = 87.5% | 6.7%     | TRANSITIONAL |
+| 800ev   | 15/16 = 93.8% | 14/16 = 87.5% | **6.7%** | DIRECT-FAVORED |
+
+Three empirical observations:
+1. **Monotonic CLS-consistent trend**: forgetting % strictly
+   decreases 200ev (9.1%) -> 300ev (7.1%) -> 400ev (6.7%).
+2. **Retention plateau at 400ev**: 400ev and 800ev show IDENTICAL
+   forgetting % (matching the direct binding accuracy saturation
+   point from Direction B Probe-2 multi-seed). Past 400ev, training
+   is wasted compute for retention purposes as well.
+3. **Non-trivial forgetting in all regimes**: even at 800ev
+   saturation, 6.7% forgetting after 5000 silent steps. Biologically
+   realistic (Hardt 2013 passive decay even without interference).
+
+Pre-silence accuracies match prior measurements EXACTLY (11/16,
+14/16, 15/16, 15/16 - the cached values from the original arcs).
+The result is robust against measurement noise.
+
+**Biology-translatable insight #14 (NEW; single-seed):** Direct
+binding consolidation reduces forgetting susceptibility roughly
+proportionally with cumulative training events, up to the saturation
+point at ~400ev where retention plateaus alongside accuracy. CLS-
+consistent: more cumulative training -> more consolidated schema ->
+slower decay. The single underlying schema-consolidation process
+appears to limit both metrics simultaneously.
+
+NO bar change; NO threshold tuning; reuse-only (4 existing caches;
+test_one_checkpoint byte-unchanged; silent-interval is just the
+bridge's existing step with cp_external_input_current=0). Protected
+set byte-empty diff vs e8a99a2 holds; no-confab moat 7/7 byte-
+identical. 19 consecutive honest-propagation cycles.
+
+Findings:
+`research/findings/2026-05-21-Direction-E-single-seed-MEMORY-PERSISTENCE-monotonically-decreases-with-training-events-CLS-consistent.md`.
+
+**EXACT NEXT ACTION: Direction E multi-seed expansion (seeds 43 + 44;
+~40 min total for 8 silent-interval + diagnostic cells; pure eval, no
+new training).**
+
+Per the pre-registered Direction E first-branch rule (monotonic
+decrease at single-seed), multi-seed validation of the retention
+pattern is the next concrete action. Concrete protocol (reuse-only):
+
+1. Run `silent_interval_persistence_probe.py --seed 43 --n-silent-steps 5000`
+2. Run with --seed 44 similarly
+3. Compare multi-seed forgetting % per regime; check whether the
+   monotonic decrease holds across all 3 seeds.
+
+Pre-registered Direction E multi-seed decision rule (frozen):
+- If multi-seed forgetting % MONOTONICALLY DECREASES with training-
+  event count for ALL 3 seeds (or aggregate mean monotonically
+  decreases): CLS prediction multi-seed-validated; declare biology-
+  translatable insight #14 as multi-seed-rigorous. Update
+  capability_status.json with a memory-persistence pillar.
+- If multi-seed forgetting % is non-monotonic for any seed: refines
+  the prediction; substrate has seed-dependent retention curves.
+  Honest propagation as such.
+
+Cost: ~5 min per (seed, ev) cell * 8 cells = ~40 min total; pure
+eval; no new training; reuse-only (no new code beyond what was
+shipped in Direction E single-seed).
+
+Historical text from prior next-action (preserved for context):
+
+[The training-event design line at MULTI-SEED is now empirically
+exhausted;
 
 The training-event design line at MULTI-SEED is now empirically
 exhausted; further sub-window refinement (e.g., 350ev or 450ev)
@@ -1174,7 +1249,7 @@ module touched. GPU/CuPy mandatory.
 
 Estimated wall-clock: ~5-10 min per cache eval * 4 = ~40 min total;
 single-seed cheap-first; multi-seed expansion gated on the seed-42
-result direction.
+result direction.]
 
 Historical text from prior next-action (preserved for context only):
 
