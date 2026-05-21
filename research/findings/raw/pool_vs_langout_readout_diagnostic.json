@@ -1,0 +1,49 @@
+{
+  "seed": 42,
+  "N": 5,
+  "lang_output_correct": 0,
+  "pool_readout_correct": 1,
+  "n_total": 5,
+  "per_query": [
+    {
+      "noun": "apple",
+      "target_adj": "cold",
+      "lang_top": "go",
+      "lang_correct": false,
+      "pool_top": "small",
+      "pool_correct": false
+    },
+    {
+      "noun": "apple",
+      "target_adj": "hot",
+      "lang_top": "big",
+      "lang_correct": false,
+      "pool_top": "small",
+      "pool_correct": false
+    },
+    {
+      "noun": "apple",
+      "target_adj": "small",
+      "lang_top": "go",
+      "lang_correct": false,
+      "pool_top": "big",
+      "pool_correct": false
+    },
+    {
+      "noun": "cat",
+      "target_adj": "small",
+      "lang_top": "go",
+      "lang_correct": false,
+      "pool_top": "big",
+      "pool_correct": false
+    },
+    {
+      "noun": "cat",
+      "target_adj": "big",
+      "lang_top": "dog",
+      "lang_correct": false,
+      "pool_top": "big",
+      "pool_correct": true
+    }
+  ]
+}
