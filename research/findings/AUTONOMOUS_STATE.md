@@ -1091,8 +1091,94 @@ NO bar change; NO threshold tuning; reuse-only.
 Findings:
 `research/findings/2026-05-21-Direction-D-Probe-300ev-single-seed-cheap-first-transitional-band-extends-DOWN-to-at-least-300ev-direct-87.5pct-composit-0.429.md`.
 
-**EXACT NEXT ACTION: Direction D multi-seed expansion (seeds 43 + 44
-at 300ev; ~60 min training + ~10 min eval = ~70 min total).**
+**DIRECTION D MULTI-SEED COMPLETE (commit will follow this state
+update, both remotes) = HONEST FAIL on the dual-capability decision
+rule.** Multi-seed direct binding at 300ev = 38/48 = 79.2% aggregate;
+only seed 42 individually >= 0.80 (seeds 43/44 at 75.0%). Multi-seed
+compositional N=3 = 0.369 (BELOW the 0.40 bar; per_regime_advantage
+-0.006). 300ev is NOT a multi-seed dual-capability point; the
+transitional regime band at multi-seed is genuinely narrow and
+UNIQUE to ~400ev on this substrate.
+
+The MULTI-SEED AUTHORITATIVE capability frontier (FINAL; 4 budgets,
+4 distinct operating regimes):
+
+| ev/word | Direct multi-seed | Composit N=3 multi-seed | Direct bar? | Composit bar? | Regime (multi-seed) |
+|---------|-------------------|--------------------------|------------|----------------|---------------------|
+| 200ev   | 35/48 = 72.9% (NO seed >= 0.80) | 0.458 (LOCAL OPTIMUM) | NO | YES | COMPOSITIONAL-FAVORED |
+| **300ev** | **38/48 = 79.2%** (only s42) | **0.369** | **NO** | **NO** | **SUB-OPTIMAL VALLEY** |
+| **400ev** | **41/48 = 85.4% (all 3 >= 0.80)** | **0.405 (thin +0.005)** | **YES** | **YES (edge)** | **TRANSITIONAL (unique)** |
+| 800ev   | 41/48 = 85.4% (all 3 >= 0.80; IDENTICAL to 400ev) | 0.143 (s42) | YES | NO | DIRECT-FAVORED |
+
+**Biology-translatable insight #13 (NEW; multi-seed empirically
+rigorous):** The substrate's training-event capability frontier has
+SEED-DEPENDENT WIDTH; single-seed probes can over-state band widths
+due to favorable-seed variance. The multi-seed transitional regime
+is NARROW and UNIQUE to ~400ev; below the transitional band lies a
+SUB-OPTIMAL VALLEY (300ev: neither bar met) between the
+COMPOSITIONAL-FAVORED plateau (200ev) and the TRANSITIONAL band.
+This is the empirical signature of substrate-level variance in CLS
+division-of-labor: different random seeds have different training-
+event-to-capability-saturation curves; only multi-seed
+characterization is honest.
+
+Smell-test recompute matches runner-reported VOID verbatim (18th
+consecutive match). NO bar change; NO threshold tuning; reuse-only
+(`direct_binding_multiseed_300ev.py` is a thin byte-for-byte clone
+of `direct_binding_multiseed_400ev.py` with CACHE_DIR swapped).
+
+Capability_status.json updated with the refined multi-seed pillar
+capturing the 4-regime authoritative picture. 6/6 schema tests PASS.
+Findings:
+`research/findings/2026-05-21-Direction-D-multi-seed-FAIL-300ev-not-dual-capability-multi-seed-transitional-band-uniquely-at-400ev.md`.
+
+**EXACT NEXT ACTION: Direction E -- characterize MEMORY PERSISTENCE
+across the 4 multi-seed training-event-budget regimes (cheap-first
+single-seed at seed 42; reuse the 4 existing caches; ~40 min total).**
+
+The training-event design line at MULTI-SEED is now empirically
+exhausted; further sub-window refinement (e.g., 350ev or 450ev)
+would have diminishing information per training-hour. The next
+biology-translatable axis worth probing: how does the substrate's
+MEMORY PERSISTENCE (retention after a silent interval) behave across
+the 4 already-characterized regimes? Predicted from CLS theory:
+- DIRECT-FAVORED regime (800ev): schema-consolidated; high retention
+  of direct binding; low retention of any compositional fragility.
+- COMPOSITIONAL-FAVORED regime (200ev): hippocampal episodic-style
+  binding; lower long-term retention; higher initial recall.
+- TRANSITIONAL regime (400ev): intermediate retention.
+- SUB-OPTIMAL VALLEY (300ev): neither system consolidated; lowest
+  retention.
+
+Cheapest informative probe: load each of the 4 caches, run a 5000-
+step silent interval (no input drive; just substrate dynamics), then
+re-test direct binding (16-word) and 6th arc compositional N=3.
+Compare post-silence accuracies to immediate-post-training. The
+FORGETTING % = (immediate - post-silence) / immediate per capability.
+
+Pre-registered Direction E decision rule (single-seed cheap-first):
+- If FORGETTING % monotonically DECREASES with training-event count
+  for direct binding (200ev > 400ev > 800ev forgetting): CLS-
+  consistent prediction supported; the substrate's training regimes
+  ARE retention regimes too. Queue multi-seed validation.
+- If FORGETTING % is NOT monotonic (e.g., U-shaped with min at
+  TRANSITIONAL 400ev) or shows different pattern: refines the CLS
+  prediction; substrate has a non-trivial retention-vs-training
+  curve. Honest report.
+
+Reuse-only: the silent-interval mechanic can be implemented with a
+2-line driver that loads the cache, runs `n_silent_steps` bridge
+ticks with cp_external_input_current = 0, then runs the existing
+diagnostics. NO new core code; NO frozen verdict / protected / moat
+module touched. GPU/CuPy mandatory.
+
+Estimated wall-clock: ~5-10 min per cache eval * 4 = ~40 min total;
+single-seed cheap-first; multi-seed expansion gated on the seed-42
+result direction.
+
+Historical text from prior next-action (preserved for context only):
+
+[1. Train seed 43 at 300ev:
 
 Per the pre-registered Direction D decision rule first branch (both
 single-seed conditions met), the next action is multi-seed
@@ -1113,7 +1199,7 @@ validation at 300ev. Concrete protocol (reuse-only):
        --out research/findings/raw/phase1_300ev_multiseed_decisive.json`
 5. Smell-test recompute via byte-unchanged
    `unified_DECISIVE_smell_test.py`.
-6. Apply the pre-registered decision rule; propagate honestly.
+6. Apply the pre-registered decision rule; propagate honestly.]
 
 Decision rule (pre-registered for the multi-seed outcome):
 - PASS multi-seed (all 3 seeds direct >= 0.80 AND multi-seed
