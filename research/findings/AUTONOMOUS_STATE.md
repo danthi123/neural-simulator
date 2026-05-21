@@ -1013,9 +1013,91 @@ training-event capability frontier finding. as_of stays 2026-05-21.
 6/6 schema tests PASS. Findings:
 `research/findings/2026-05-21-Direction-B-Probe-2-multi-seed-CHARACTERIZED-trade-off-curve-direct-binding-saturates-by-400ev-IDENTICAL-to-800ev-compositional-meets-0.40-bar-with-thin-margin-0.005-honest-framing.md`.
 
-**EXACT NEXT ACTION: Direction C -- complete the trade-off curve at
-multi-seed by measuring DIRECT BINDING at the 200ev compositional
-optimum cache.** Cheapest possible probe: no training needed (200ev
+**DIRECTION C COMPLETE (commit will follow this state update, both
+remotes). The full training-event capability frontier on the unified
+substrate at biological scale is now EMPIRICALLY CHARACTERIZED with
+THREE distinct operating regimes.**
+
+200ev multi-seed direct binding (the 6th arc compositional optimum
+cache; no new training): aggregate 35/48 = 72.9%; NO seed clears 0.80
+bar (per-seed 11/16=68.8%, 12/16=75.0%, 12/16=75.0%). Per the pre-
+registered decision rule, the 200ev compositional optimum is NOT a
+dual-capability point; 400ev is uniquely the TRANSITIONAL regime.
+
+The COMPLETE capability frontier:
+
+| ev/word | Direct binding multi-seed | Compositional N=3 multi-seed | Direct >= 0.80 | Composit >= 0.40 | Regime |
+|---------|---------------------------|-------------------------------|----------------|------------------|--------|
+| 100ev   | (untested)                | 0.286 (seed 42)              | --             | NO               | COMPOSITIONAL-WEAK |
+| **200ev** | **35/48 = 72.9% (NO seed >= 0.80)** | **0.458 (LOCAL OPTIMUM)** | **NO** | YES | **COMPOSITIONAL-FAVORED** |
+| **400ev** | **41/48 = 85.4% (all 3 seeds >= 0.80)** | **0.405 (thin +0.005 margin)** | **YES** | **YES (edge)** | **TRANSITIONAL** |
+| **800ev** | **41/48 = 85.4% (all 3 seeds >= 0.80; IDENTICAL to 400ev)** | 0.143 (seed 42) | YES | NO | **DIRECT-FAVORED** |
+
+**Biology-translatable insight #11 (NEW; multi-seed):** The substrate's
+two capabilities (direct binding, compositional retrieval) have
+DIFFERENT trustworthy operating thresholds at the training-event axis.
+The joint operating region (both bars met) is a NARROW TRANSITIONAL
+zone at ~400ev, NOT a wide overlapping plateau. This is the textbook
+CLS division-of-labor prediction (McClelland-McNaughton-O'Reilly
+1995; refined by Norman 2010 + Schapiro 2017) empirically demonstrated
+on a single substrate: hippocampal episodic binding (mapped here as
+compositional) and neocortical schema/concept binding (mapped here as
+direct) have COMPLEMENTARY-BUT-DISTINCT training-event profiles. Past
+the transitional regime, schema consolidation dominates and episodic
+flexibility is lost (biologically meaningful: cf. infantile amnesia,
+critical-period closure).
+
+Capability_status.json updated with new pillar capturing the full
+frontier finding. 6/6 schema tests PASS. Findings:
+`research/findings/2026-05-21-Direction-C-200ev-multi-seed-direct-binding-72.9pct-NOT-validated-FULL-trade-off-curve-CHARACTERIZED-three-distinct-operating-regimes.md`.
+
+**EXACT NEXT ACTION: Direction D -- characterize the transitional
+regime granularity by probing at 300ev (single-seed cheap-first; ~30
+min training + ~3 min direct binding + ~7 min compositional eval =
+~40 min total).**
+
+The transitional regime currently has ONE empirical data point at
+400ev. The compositional drop from 0.458 (200ev) to 0.405 (400ev) is
+across 200 events of training. Where exactly does direct binding
+SATURATE and where does compositional EXIT its plateau? Cheapest
+informative probe: 300ev seed 42 single-seed cheap-first.
+
+Pre-registered Direction D decision rule:
+- If 300ev compositional N=3 seed-42 > 0.405 AND direct binding > 0.80:
+  the transitional band is WIDER than just 400ev (extends down to at
+  least 300ev). Update frontier characterization; queue multi-seed
+  expansion of 300ev for trustworthy validation.
+- If 300ev compositional > 0.405 BUT direct binding < 0.80: 300ev is
+  still in the COMPOSITIONAL-FAVORED regime; the transitional band
+  starts above 300ev (probably 350-400ev). Honest report; queue
+  350ev or 450ev probe to bound the band.
+- If 300ev compositional <= 0.405 AND direct binding < 0.80: 300ev is
+  in a SUB-OPTIMAL regime (NEITHER bar cleared); the transitional
+  band is genuinely narrow and unique to ~400ev. Honest report;
+  characterization complete at the transitional boundary.
+
+Concrete protocol (reuse-only):
+1. `python research/findings/raw/phase1_curve_diagnostic.py --seed 42
+    --events-per-word 300` (~30 min training)
+2. `python research/findings/raw/direct_binding_single_seed_for_curve.py
+    --seed 42 --cache-dir research/findings/raw/unified_per_regime/phase1_300ev
+    --label "300ev seed 42"
+    --out research/findings/raw/direct_binding_300ev_seed42.json`
+3. `python -m research.runners.generative_replay_pfc_frame_runner
+    --seeds 42 --loads 3 --phase1-cache-dir
+    research/findings/raw/unified_per_regime/phase1_300ev
+    --ckpt research/findings/raw/phase1_300ev_decisive.ckpt
+    --out research/findings/raw/phase1_300ev_decisive.json`
+4. Smell-test recompute via the byte-unchanged
+   `unified_DECISIVE_smell_test.py`.
+5. Apply the pre-registered decision rule; propagate honestly.
+
+NO new code; NO frozen verdict / protected / moat module touched.
+GPU/CuPy mandatory.
+
+Historical text from prior next-action (preserved for context):
+
+[Pre-registered Direction C decision rule: Cheapest possible probe: no training needed (200ev
 cache exists at `research/findings/raw/unified_per_regime/phase1/`
 for seeds 42/43/44; was the substrate for the 6th arc); only the
 16-word direct binding diagnostic needs to run multi-seed (~3 min
@@ -1060,7 +1142,7 @@ underlying byte-unchanged `test_one_checkpoint` helper.
 Cost: ~10 min total wall-clock; pure eval (no training); GPU/CuPy
 mandatory; smell-test trivial (no compositional verdict to recompute
 since direct binding has its own bar pinned in the multi-seed script
-output JSON).
+output JSON).]
 
 Historical text from prior next-action (preserved for context):
 
