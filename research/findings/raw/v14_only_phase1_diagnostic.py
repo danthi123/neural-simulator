@@ -277,12 +277,20 @@ def test_one_checkpoint_v14(seed, cache_dir, label):
 
 
 def main():
-    SEED = 42
-    EVENTS = 800
-    CACHE_DIR = "research/findings/raw/v14_only_per_regime/phase1_800ev"
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--events-per-word", type=int, default=800)
+    parser.add_argument("--cache-dir", type=str, default=None)
+    parser.add_argument("--out", type=str, default=None)
+    args = parser.parse_args()
+
+    SEED = args.seed
+    EVENTS = args.events_per_word
+    CACHE_DIR = args.cache_dir or "research/findings/raw/v14_only_per_regime/phase1_800ev"
 
     cache = train_v14_only_phase1(SEED, EVENTS, CACHE_DIR)
-    result = test_one_checkpoint_v14(SEED, CACHE_DIR, f"v14-only 800ev seed {SEED}")
+    result = test_one_checkpoint_v14(SEED, CACHE_DIR, f"v14-only {EVENTS}ev seed {SEED}")
 
     bar = 0.80
     print(f"\n=== DIRECTION K RESULT (v14-only 800ev seed {SEED}) ===")
@@ -291,7 +299,7 @@ def main():
     print(f"  bar 0.80: {'PASS' if result['accuracy'] >= bar else 'FAIL'}")
     print(f"  vs unified 800ev seed 42 (15/16=93.8%): {'>=' if result['accuracy'] >= 15/16 else '<'}")
 
-    out = "research/findings/raw/v14_only_phase1_diagnostic_seed42.json"
+    out = args.out or f"research/findings/raw/v14_only_phase1_diagnostic_seed{SEED}.json"
     with open(out, "w", encoding="utf-8") as f:
         json.dump({
             "seed": SEED, "events_per_word": EVENTS, "cache_dir": CACHE_DIR,
