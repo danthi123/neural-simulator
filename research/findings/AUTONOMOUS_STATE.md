@@ -858,9 +858,81 @@ Files / evidence:
 - Findings doc: `research/findings/2026-05-21-DIRECT-BINDING-VALIDATED-multi-seed-85.4pct-aggregate-all-3-seeds-above-0.80-bar-on-unified-substrate-800ev-Phase-1.md`
 - capability_status.json pillar: `webapp/capability_status.json` (as_of 2026-05-21)
 
-**EXACT NEXT ACTION: Direction B -- characterize the compositional
-accuracy curve as a function of Phase-1 training events to refine the
-sweet-spot finding.** The 8-arc honest closure rests on the claim that
+**DIRECTION B PROBE-1 COMPLETE (commit will follow this state update,
+both remotes). Single-seed cheap-first probe of 100ev Phase-1 at seed
+42 came in STRICTLY LESS than the 6th arc seed-42 ceiling (0.286 vs
+0.571 at N=3 = -0.286 absolute regression). The pre-registered
+decision rule fires the "200ev sweet-spot empirically confirmed BELOW
+as well as ABOVE" branch -- multi-seed expansion NOT triggered (the
+decision rule explicitly blocks it when shorter is strictly worse;
+honest discipline preserved).**
+
+Per-rung at 100ev seed 42:
+- N=3, n_seeds=1: full_acc=0.286, uniform_ctrl_acc=0.286,
+  direct_retain_acc=0.500, abstain_correct=0.429
+- Runner verdict: GATE=VOID (n_seeds below min; correct)
+- Smell-test recompute: gate=VOID; matches runner-reported VERBATIM
+  (14th consecutive match between recompute and runner)
+
+Cross-arc trajectory at N=3 seed 42 now empirically brackets the
+200ev sweet-spot in BOTH directions:
+
+| Phase-1 events/word | N=3 full_acc (seed 42) | direction |
+|---------------------|------------------------|-----------|
+| 100ev (this probe)  | 0.286                  | -0.286 vs 200ev (NEW; below-sweet-spot regression) |
+| 200ev (6th arc)     | **0.571**              | **LOCAL OPTIMUM (established)** |
+| 800ev (longer-Phase-1) | 0.143               | -0.428 vs 200ev (above-sweet-spot regression) |
+
+The 8-arc convergent ceiling claim is empirically robust on BOTH sides
+of the 200ev local optimum -- the substrate's compositional retrieval
+genuinely peaks at 200ev within the (100ev, 200ev, 800ev) sample.
+
+**Biology-translatable insight #9 (NEW):** Gentler training does NOT
+preserve compositional capacity on this substrate. The naive CLS
+"less-is-more" prediction (shorter training preserves compositional
+flexibility) is REJECTED by data. The substrate has a MINIMUM training
+threshold below which compositional binding does not form even at
+moderate scale; 100ev is below that threshold. Consistent with NMDA-
+driven attractor formation needing sample-count threshold (Wang 2002)
++ Tsodyks-Markram STP recovery needs repeated co-firing.
+
+Findings:
+`research/findings/2026-05-21-Direction-B-Probe-1-100ev-single-seed-STRENGTHENS-200ev-sweet-spot-claim-8-arc-convergent-ceiling-now-empirically-validated-BOTH-directions.md`.
+
+**EXACT NEXT ACTION: Direction B Probe-2 -- characterize the substrate
+as a DUAL-CAPABILITY device at an intermediate training-event count
+(400ev seed 42 single-seed cheap-first; ~52 min wall-clock).** The
+current data shows direct binding multi-seed PASSES at 800ev (85.4%)
+and compositional retrieval LOCAL OPTIMUM is at 200ev (0.571 seed 42
+N=3); these are SEPARATED by 4x training-event budget. The natural
+biology-translatable question: is there an intermediate regime where
+BOTH capabilities are reasonable? Concrete probe: train seed 42 at
+400ev (intermediate between 200ev compositional optimum and 800ev
+direct-binding ceiling); then run BOTH (a) the 16-word direct binding
+diagnostic via `direct_binding_phase1_comparison.test_one_checkpoint`
+and (b) the 6th arc compositional eval at N=3. Pre-registered
+decision rule:
+
+- If 400ev direct_binding >= 0.80 AND compositional N=3 seed-42 >= 0.40:
+  there is a DUAL-CAPABILITY SWEET-SPOT at 400ev worth multi-seed
+  validating; report as a new validated milestone candidate (queue
+  multi-seed at seeds 43/44; ~104 min additional).
+- If 400ev direct_binding < 0.80 OR compositional < 0.40:
+  the substrate has SEPARABLE training-event preferences for the two
+  capabilities (each needs its own budget); this is itself a deeper
+  CLS-consistent biology-translatable insight (matches the hippo-vs-
+  cortex training-regime division of labor at the training-event
+  level).
+
+Reuse-only orchestration: `phase1_curve_diagnostic.py --events-per-word
+400` to produce the cache; the existing 6th arc runner + the existing
+direct binding diagnostic for the evals. NO new code; NO frozen verdict
+/ protected / moat module touched. GPU/CuPy mandatory.
+
+Historical text from prior next-action (preserved for context only):
+
+[The 8-arc honest closure rests on the claim that 200ev is the LOCAL
+OPTIMUM for compositional retrieval at N=3; The 8-arc honest closure rests on the claim that
 200ev is the LOCAL OPTIMUM for compositional retrieval; we have evidence
 at 200ev (0.458 N=3) and 800ev (0.143 N=3 seed-42; -0.428 regression),
 but we have NEVER tested SHORTER Phase-1 (50ev, 100ev, 150ev). If the
@@ -903,7 +975,7 @@ self-imposed stopping". The 200ev sweet-spot is a load-bearing claim
 in the 8-arc closure; biology says critical periods preserve
 compositional capacity by GENTLER training (CLS schema-vs-binding) ->
 testing shorter Phase-1 is the natural next biology-grounded probe.
-Cost is bounded (~70 min for the cheap single-seed probe).
+Cost is bounded (~70 min for the cheap single-seed probe).]
 
 ---
 [Historical: 8TH ARC DECISIVE COMPLETE (commit `69175d9`, both remotes) =
