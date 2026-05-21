@@ -5,7 +5,7 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-05-19
+**Updated:** 2026-05-21
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
@@ -800,20 +800,110 @@ defects. Smell-test recompute matched runner-reported FAIL across 5
 decisive arcs. Findings:
 `research/findings/2026-05-21-longer-phase1-diagnostic-NEW-INSIGHT-Phase1-training-sweet-spot-aggressive-training-improves-direct-but-DEGRADES-compositional.md`.
 
-**EXACT NEXT ACTION: AWAIT USER DIRECTION.** The substantive scientific
-deliverables are durable and propagated. Future iteration directions
-all require substantial fresh investment OUTSIDE this design line:
-- Fundamentally different substrate architecture (protected-discipline
-  re-evaluation needed)
-- Different task framing (smaller vocab; different abstention metric)
-- Test the substrate's N=5 direct-retention strength as a fresh
-  capability arc (the +0.33 improvement at N=5 with longer training
-  IS a real signal worth pursuing IF the user wants to pivot to
-  direct-binding capability instead of compositional)
+**MULTI-SEED DIRECT BINDING VALIDATED at biological scale on the
+unified substrate (commit `13cf569` -> capability_status pillar
+`4739d8e`, both remotes; 2026-05-21).** Cheap-first single-seed
+finding (commit `1a8b384`; seed 42 = 15/16 = 93.8% at 800ev Phase-1)
+expanded to multi-seed: trained seeds 43 and 44 at 800ev (~130 min
+total; cached at `research/findings/raw/unified_per_regime/phase1_800ev/`);
+ran 16-word direct-binding diagnostic across all 3 seeds.
 
-Without further user direction, the 8-arc + longer-Phase-1 diagnostic
-+ 7 biology-translatable insights stand as the COMPLETE scientific
-deliverable for this design line.
+| Seed | n_correct / n_total | Accuracy |
+|------|----------------------|----------|
+| 42 | 15/16 | 93.8% |
+| 43 | 13/16 | 81.2% |
+| 44 | 13/16 | 81.2% |
+| **Aggregate** | **41/48** | **85.4%** |
+
+**ALL 3 SEEDS individually >= 0.80 frozen direct_retain bar.**
+Exceeds v14 documented multi-seed baseline 77.5% by +7.9pp despite
+the unified substrate's substantive additions (hippocampus + dlpfc)
+that v14 did NOT have. The 200ev modest degradation (~68.8%) is
+fully recovered AND exceeded at 800ev.
+
+NO bar change anywhere; protected set byte-empty diff vs `e8a99a2`
+holds; no-confab moat 7/7 byte-identical; 4 calibrated abstention
+moats byte-stable. The 0.80 trustworthy bar was set in advance (in
+the prior arcs' frozen verdict modules); the 85.4% aggregate exceeds
+it without bar tuning.
+
+**Biology-translatable insight #8 (NEW; durable):** direct binding
+capability recovers AND exceeds the v14 baseline with cumulative
+training even on the unified substrate's extended architecture
+(hippocampus + dlpfc). The catalog's CLS-theory observation -- "Phase
+1.3 hippocampus consolidation: ... cortex doesn't need hippo at all
+post-consolidation" -- combines with the new insight: when an
+architecture adds auxiliary subsystems that participate in training
+but aren't strictly needed for direct retrieval, the system needs
+MORE training events to consolidate the discriminative pathways.
+Extended training is a normal biological compensation for added
+architectural complexity. The deepest single insight is the
+TRADE-OFF DISSOCIATION: direct binding and compositional retrieval
+have OPPOSITE optimal training durations on the same substrate.
+
+The 9-day substantive deliverables now include:
+
+| Capability | Status |
+|------------|--------|
+| Compositional retrieval at N=3 | LOCAL OPTIMUM 0.458; 8-arc honest closure |
+| Direct binding at biological scale | **VALIDATED multi-seed 85.4%; ALL 3 seeds >= 0.80** |
+| 8 biology-translatable insights | propagated |
+| 13 consecutive adversarial reviews | 9 of 13 caught real defects |
+
+Files / evidence:
+- Multi-seed diagnostic: `research/findings/raw/direct_binding_multiseed.py`
+- Multi-seed JSON: `research/findings/raw/direct_binding_multiseed.json`
+- 800ev Phase-1 checkpoints: `research/findings/raw/unified_per_regime/phase1_800ev/seed{42,43,44}.simstate.h5`
+- Multi-seed training script: `research/findings/raw/longer_phase1_multiseed.py`
+- Findings doc: `research/findings/2026-05-21-DIRECT-BINDING-VALIDATED-multi-seed-85.4pct-aggregate-all-3-seeds-above-0.80-bar-on-unified-substrate-800ev-Phase-1.md`
+- capability_status.json pillar: `webapp/capability_status.json` (as_of 2026-05-21)
+
+**EXACT NEXT ACTION: Direction B -- characterize the compositional
+accuracy curve as a function of Phase-1 training events to refine the
+sweet-spot finding.** The 8-arc honest closure rests on the claim that
+200ev is the LOCAL OPTIMUM for compositional retrieval; we have evidence
+at 200ev (0.458 N=3) and 800ev (0.143 N=3 seed-42; -0.428 regression),
+but we have NEVER tested SHORTER Phase-1 (50ev, 100ev, 150ev). If the
+sweet-spot is actually below 200ev, the 0.458 LOCAL OPTIMUM is itself
+an artifact of the discrete sample, not the true optimum, and would
+warrant retracting the "8-arc convergent ceiling" closure claim or
+strengthening it. This is pure biology-grounded science (CLS schema-vs-
+binding tradeoff; critical-period gradient model: gentler training
+preserves compositional capacity further). The discipline:
+single-seed cheap-first probe at 100ev (single seed 42) to test the
+hypothesis that shorter helps compositional. If positive (compositional
+> 0.458 N=3 seed-42), expand multi-seed for honest validation. If
+negative (compositional <= 0.458 N=3 seed-42), the 200ev sweet-spot
+claim is strengthened and the 8-arc closure stands more firmly.
+
+Concrete protocol (Direction B, pre-registered before run):
+- Probe-1: train seed 42 at 100ev Phase-1 (~70 min); cache at
+  `research/findings/raw/unified_per_regime/phase1_100ev/seed42.simstate.h5`.
+- Run full 6th-arc compositional retrieval eval on the 100ev seed-42
+  cache, frozen ladder (2,3,5).
+- Compare N=3 full_acc against the 6th arc seed-42 N=3 = 0.571.
+- Decision rule:
+  - If 100ev N=3 full_acc >= 0.571: shorter Phase-1 may be a better
+    sweet-spot. Expand multi-seed at 100ev (seeds 43/44; ~140 min) and
+    decisively retest. If multi-seed confirms, RETRACT the 6th arc
+    LOCAL OPTIMUM claim and update the 8-arc closure.
+  - If 100ev N=3 full_acc strictly < 0.571: the 6th arc 200ev sweet-spot
+    is empirically confirmed below as well as above, STRENGTHENS the
+    8-arc convergent ceiling claim. Propagate honestly + queue further
+    biology-faithful directions.
+- Reuse the existing 6th-arc compositional eval runner; do NOT modify
+  any frozen verdict/protected/moat module.
+- GPU/CuPy mandatory (real run; numpy only for any tiny structural pin).
+- Smell-test recompute MUST match runner-reported number before
+  propagation.
+
+Reasoning to pursue this and not stop: the owner's standing instruction
+is "iterate following the project reference biology, no hand-back, no
+self-imposed stopping". The 200ev sweet-spot is a load-bearing claim
+in the 8-arc closure; biology says critical periods preserve
+compositional capacity by GENTLER training (CLS schema-vs-binding) ->
+testing shorter Phase-1 is the natural next biology-grounded probe.
+Cost is bounded (~70 min for the cheap single-seed probe).
 
 ---
 [Historical: 8TH ARC DECISIVE COMPLETE (commit `69175d9`, both remotes) =
