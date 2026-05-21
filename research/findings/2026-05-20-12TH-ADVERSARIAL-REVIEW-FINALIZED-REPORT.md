@@ -92,13 +92,23 @@ issue:
 - The biology-translatable "sweet-spot" insight emerged from a clean
   decisive measurement, not from instrument noise
 
-## Task 4 no-harm verification (post-Task-5 confirmation)
+## Task 4 no-harm verification (post-Task-5 confirmation) -- COMPLETED
 
-Full test suite across all 7 arcs' test files (results captured
-during this finalization). No-confab moat 7/7 byte-identical;
-protected set byte-empty diff vs `e8a99a2` continues to hold; all
+Full test suite across all 7 arcs' test files: **106/106 PASS in
+904.73s (~15 min wall-clock)**. Includes:
+- 4 abstention moats (28/28 PASS): test_abstention_gate +
+  test_abstention_gate_compositional + test_abstention_gate_compositional_unified
+  + test_abstention_gate_direct_unified
+- Theta-gamma arc (3 test files; 26/26): core + grounding + runner
+- 6th arc / generative-replay + PFC-frame (3 test files; 26/26):
+  core + grounding + runner
+- 7th arc / targeted-cue-suppression-replay (3 test files; 26/26):
+  core + grounding + runner
+
+Protected set byte-empty diff vs `e8a99a2` continues to hold; all
 four calibrated abstention moats byte-stable; all prior-arc *_core
-modules byte-unchanged.
+modules + prior-arc runners byte-unchanged. No-confab moat 7/7
+byte-identical.
 
 ## Final overall verdict for the 12th adversarial review
 
