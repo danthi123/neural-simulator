@@ -71,7 +71,7 @@ INTERFERING_PAIRS = [
     ("big", "verb_pool_GO"),             # was adjective_pool_BIG
     ("north", "noun_pool_APPLE"),        # was motor_N
 ]
-N_INTERFERING_EVENTS_PER_PAIR = 50  # ~10% of original 200ev training
+N_INTERFERING_EVENTS_PER_PAIR_DEFAULT = 50  # ~10% of original 200ev training
 
 
 def _gates_to_open():
@@ -86,7 +86,8 @@ def _gates_to_open():
 
 
 def run_interference_training_and_save(seed: int, src_cache_dir: str,
-                                         dst_cache_dir: str):
+                                         dst_cache_dir: str,
+                                         n_interfering_per_pair: int = N_INTERFERING_EVENTS_PER_PAIR_DEFAULT):
     """Load substrate from src_cache_dir, apply interference training,
     save resulting state to dst_cache_dir."""
     print(f"\n=== Interference training; seed {seed} ===")
@@ -119,7 +120,7 @@ def run_interference_training_and_save(seed: int, src_cache_dir: str,
     rng = np.random.default_rng(int(seed) + 9999)  # different seed slice
     buffer = []
     for word, new_target in INTERFERING_PAIRS:
-        for _ in range(N_INTERFERING_EVENTS_PER_PAIR):
+        for _ in range(int(n_interfering_per_pair)):
             buffer.append((word, new_target))
     rng.shuffle(buffer)
 
@@ -147,13 +148,14 @@ def run_interference_training_and_save(seed: int, src_cache_dir: str,
     return dst_path
 
 
-def run_probe_for_regime(seed: int, ev: int):
+def run_probe_for_regime(seed: int, ev: int,
+                            n_interfering_per_pair: int = N_INTERFERING_EVENTS_PER_PAIR_DEFAULT):
     """Run the full catastrophic-forgetting probe for one (seed, ev) cell."""
     if ev == 200:
         src_cache = "research/findings/raw/unified_per_regime/phase1"
     else:
         src_cache = f"research/findings/raw/unified_per_regime/phase1_{ev}ev"
-    dst_cache = f"research/findings/raw/unified_per_regime/phase1_{ev}ev_post_interference"
+    dst_cache = f"research/findings/raw/unified_per_regime/phase1_{ev}ev_post_interference_{n_interfering_per_pair}per"
 
     # Pre-interference diagnostic (on existing cache, fresh bridge)
     pre = test_one_checkpoint(
@@ -161,7 +163,8 @@ def run_probe_for_regime(seed: int, ev: int):
     )
 
     # Interference training + save
-    run_interference_training_and_save(seed, src_cache, dst_cache)
+    run_interference_training_and_save(seed, src_cache, dst_cache,
+                                          n_interfering_per_pair=n_interfering_per_pair)
 
     # Post-interference diagnostic (on new cache, fresh bridge)
     post = test_one_checkpoint(
@@ -196,7 +199,7 @@ def run_probe_for_regime(seed: int, ev: int):
         "src_cache": src_cache,
         "post_interference_cache": dst_cache,
         "interfering_pairs": INTERFERING_PAIRS,
-        "n_interfering_events_per_pair": N_INTERFERING_EVENTS_PER_PAIR,
+        "n_interfering_events_per_pair": int(n_interfering_per_pair),
         "pre_accuracy": pre_acc,
         "pre_n_correct": pre["n_correct"],
         "post_accuracy": post_acc,
@@ -217,13 +220,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--ev-list", type=int, nargs="+", default=[200, 800])
+    parser.add_argument("--n-interfering-per-pair", type=int,
+                          default=N_INTERFERING_EVENTS_PER_PAIR_DEFAULT)
     parser.add_argument("--out", type=str,
                           default="research/findings/raw/catastrophic_forgetting_probe.json")
     args = parser.parse_args()
 
     results = []
     for ev in args.ev_list:
-        summary = run_probe_for_regime(args.seed, ev)
+        summary = run_probe_for_regime(args.seed, ev,
+                                          n_interfering_per_pair=args.n_interfering_per_pair)
         results.append(summary)
         print(f"\n=== CATASTROPHIC-FORGETTING PROBE RESULT ({ev}ev seed {args.seed}) ===")
         print(f"  PRE accuracy : {summary['pre_n_correct']}/16 = {100.0*summary['pre_accuracy']:.1f}%")
@@ -261,7 +267,7 @@ def main():
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump({"per_ev_results": results,
                     "interfering_pairs": INTERFERING_PAIRS,
-                    "n_interfering_events_per_pair": N_INTERFERING_EVENTS_PER_PAIR},
+                    "n_interfering_events_per_pair": int(args.n_interfering_per_pair)},
                    f, indent=2)
     print(f"\nWrote {args.out}")
     return 0
