@@ -899,9 +899,101 @@ driven attractor formation needing sample-count threshold (Wang 2002)
 Findings:
 `research/findings/2026-05-21-Direction-B-Probe-1-100ev-single-seed-STRENGTHENS-200ev-sweet-spot-claim-8-arc-convergent-ceiling-now-empirically-validated-BOTH-directions.md`.
 
-**EXACT NEXT ACTION: Direction B Probe-2 -- characterize the substrate
-as a DUAL-CAPABILITY device at an intermediate training-event count
-(400ev seed 42 single-seed cheap-first; ~52 min wall-clock).** The
+**DIRECTION B PROBE-2 COMPLETE (commit will follow this state update,
+both remotes). Single-seed cheap-first probe at 400ev (seed 42) HIT
+BOTH conditions of the pre-registered dual-capability decision rule:
+direct binding 15/16 = 93.8% (>= 0.80 ✓; IDENTICAL to 800ev seed 42
+which scored 15/16) AND 6th arc compositional N=3 = 0.429 (>= 0.40 ✓;
+75% of the 200ev local optimum 0.571). Multi-seed expansion is the
+pre-registered next action.**
+
+Per-rung at 400ev seed 42:
+- Direct binding (16-word test): 15/16 = 0.938 -- PASS at 0.80 frozen bar
+- 6th arc compositional N=3: full_acc=0.429, uniform_ctrl=0.429,
+  direct_retain=0.500, abstain_correct=0.571
+- Runner verdict: GATE=VOID (n_seeds=1 < min_seeds=3; correct)
+- Smell-test recompute: matches runner-reported VERBATIM
+  (15th consecutive match between recompute and runner)
+
+Capability frontier updated (cross-arc trajectory at seed 42):
+
+| Phase-1 ev/word | Direct binding (16w) | Compositional N=3 (seed 42) |
+|-----------------|----------------------|------------------------------|
+| 100ev           | (untested)           | 0.286                        |
+| 200ev (6th arc) | 68.8% single-seed    | **0.571 LOCAL OPTIMUM**      |
+| **400ev (this)**| **93.8% (>= 0.80 ✓)**| **0.429 (>= 0.40 ✓)**       |
+| 800ev           | 93.8% multi-seed VALIDATED (85.4% aggregate) | 0.143 |
+
+Key empirical discoveries:
+
+1. Direct binding capability SATURATES somewhere between 200ev and
+   400ev (rising from 68.8% to 93.8%), NOT between 400ev and 800ev.
+   400ev seed 42 = 800ev seed 42 = 15/16 IDENTICAL.
+2. Compositional retrieval is MONOTONICALLY DECREASING above 200ev:
+   0.571 -> 0.429 -> 0.143. 400ev compositional is BETWEEN 200ev
+   optimum and 800ev floor (as expected for a smooth curve).
+3. 400ev sits in a regime where BOTH capabilities are above their
+   respective frozen bars -- the substrate has a non-empty
+   dual-capability operating region.
+
+**Biology-translatable insight #10 (NEW; conditional pending multi-
+seed):** A DUAL-CAPABILITY OPERATING REGIME exists on this substrate.
+The earlier hypothesis (after 800ev multi-seed) -- that direct binding
+and compositional retrieval have OPPOSITE optimal training durations
+-- was the STRONG form of the dissociation. The 400ev probe REJECTS
+the strong form: BOTH bars met simultaneously. The WEAKER form
+holds: SINGLE OPTIMA for the two capabilities are at different
+training-event counts (200ev compositional, ~400-800ev direct), but
+the joint operating region is non-empty (CLS-consistent: real cortex
+maintains schema + episodic binding at moderate training-event
+counts; only extremes produce the dissociation).
+
+Caveat: SINGLE-SEED probe. Seed 42 was the HIGHEST of the 3 6th arc
+seeds at N=3 (0.571 vs 3-seed mean 0.458 = +0.113); multi-seed 400ev
+compositional may pull below 0.40 if seed 42 is similarly favorable
+at this rung. Pre-registered discipline: PROCEED to multi-seed
+expansion; data decides.
+
+Findings:
+`research/findings/2026-05-21-Direction-B-Probe-2-400ev-single-seed-DUAL-CAPABILITY-SWEET-SPOT-CANDIDATE-direct-binding-93.8pct-AND-compositional-0.429-both-conditions-met.md`.
+
+**EXACT NEXT ACTION: Direction B Probe-2 multi-seed expansion (seeds
+43 + 44 at 400ev; ~76 min training + ~10 min eval = ~86 min total).**
+
+Concrete protocol (pre-registered before run):
+1. Train seed 43 at 400ev:
+   `python research/findings/raw/phase1_curve_diagnostic.py
+       --seed 43 --events-per-word 400`  (~38 min)
+2. Train seed 44 at 400ev similarly (~38 min)
+3. Direct binding test on each via
+   `direct_binding_single_seed_for_curve.py`
+4. 6th arc multi-seed compositional eval:
+   `python -m research.runners.generative_replay_pfc_frame_runner
+       --seeds 42 43 44 --loads 3
+       --phase1-cache-dir research/findings/raw/unified_per_regime/phase1_400ev
+       --ckpt research/findings/raw/phase1_400ev_multiseed_decisive.ckpt
+       --out research/findings/raw/phase1_400ev_multiseed_decisive.json`
+5. Apply FROZEN bars: PASS iff multi-seed direct binding >= 0.80
+   per-seed AND multi-seed compositional N=3 >= 0.40 across 3 seeds.
+
+Decision rule (pre-registered for the multi-seed outcome):
+
+- **PASS at multi-seed**: 400ev is a VALIDATED dual-capability
+  sweet-spot on the unified substrate. Add as a new pillar to
+  `webapp/capability_status.json`. Document as biology-translatable
+  insight #10 confirmed. This would be the SECOND positive
+  capability validation of this autonomous arc (after the 800ev
+  multi-seed direct binding 85.4%).
+- **FAIL at multi-seed** (multi-seed compositional N=3 mean < 0.40):
+  the substrate's dual-capability operating region was an artifact
+  of seed 42 being favorable; honest biology-translatable insight
+  is then "operating regime is seed-dependent at single-seed but
+  does not generalize multi-seed at the pre-registered bar".
+  Propagate honestly; queue NEXT biology-faithful direction (e.g.,
+  Probe-3 at 300ev, between 200ev optimum and 400ev candidate).
+
+Reuse-only: NO new code, NO frozen verdict / protected / moat module
+touched. GPU/CuPy mandatory. The
 current data shows direct binding multi-seed PASSES at 800ev (85.4%)
 and compositional retrieval LOCAL OPTIMUM is at 200ev (0.571 seed 42
 N=3); these are SEPARATED by 4x training-event budget. The natural
