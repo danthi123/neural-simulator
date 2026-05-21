@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-05-19",
+  "as_of": "2026-05-21",
   "headline": {
     "tier": "Stage-1 grounded generative conversational agent SHIPPED (trustworthy, NOT LLM-fluent)",
     "result": "The sim now has a working multi-turn conversational agent on the validated 320 G.20 substrate: grounded cross-bridge retrieval + pronoun coref + yes/no + productive concept-grammar generation + Stage-2 sequence logging, and -- the key trust property -- it correctly ABSTAINS on unknown input instead of confabulating (a small LLM does not). No cheating, no external LLM, no retrain. Integration gate caught + fixed a real multi-turn recall-decay bug (inter-turn recovery). Honest ceiling: productive grammar over grounded retrieval, NOT LLM-fluent prose; recall margin thin (~672-719 vs gate 650). Stage 2 (biology-grounded concept-sequence replay learning) remains the real open generative research, scoped in the design.",
@@ -9,6 +9,13 @@
     "summary": "Generative Stage 1 SHIPPED 2026-05-16: trustworthy grounded conversational agent (no confabulation moat) on the validated substrate. Honest: grounded-assistant not LLM-fluent; thin margin. Stage 2 = biology-grounded sequence replay (the real generative frontier), designed+scoped."
   },
   "pillars": [
+    {
+      "name": "Direct binding on unified substrate (with hippocampus + dlpfc) at biological scale - VALIDATED multi-seed 85.4% aggregate; ALL 3 seeds (42/43/44) individually >= 0.80 frozen bar; 800-event Phase-1 (2026-05-21)",
+      "status": "VALIDATED",
+      "metric": "16-word direct binding diagnostic on the unified per-regime substrate (8440 neurons, 4.83M synapses, includes hippocampus + dlpfc). Multi-seed at 800 events/word Phase-1 (4x the 200-event default): seed 42 = 15/16 = 93.8%; seed 43 = 13/16 = 81.2%; seed 44 = 13/16 = 81.2%. Aggregate 41/48 = 85.4%; ALL 3 seeds individually clear the 0.80 frozen trustworthy bar. Exceeds the v14 documented multi-seed baseline of 77.5% by +7.9pp despite the unified substrate's substantive architectural additions (hippocampus + dlpfc) that the v14 baseline did NOT include. The modest 200ev degradation (~68.8%) is fully recovered AND exceeded at 800ev. Bar was pre-registered (frozen direct_retain_min=0.80, set in prior verdict modules) and never tuned. Biology-translatable insight: direct binding and compositional retrieval have OPPOSITE optimal training durations (compositional retrieval LOCAL OPTIMUM at 200ev gentle gating with 0.458 N=3 full_acc; direct binding monotonically improves with extended training). When an architecture adds auxiliary subsystems (hippocampus, dlpfc) that participate in training but aren't strictly needed for direct retrieval, the system needs more training events to consolidate the discriminative pathways. Developmental neuroscience parallel: extended training is a normal biological compensation for added architectural complexity. First POSITIVE capability validation of the day after 8 compositional architecture failures (Unified, Theta-gamma, 6th replay+PFC, 7th aggressive, 8th pool readout, longer-Phase-1 N=3, aggressive-replay sweep, and the 6th arc convergent ceiling). NO bar change; protected set byte-empty diff vs e8a99a2; no-confab moat 7/7 byte-identical.",
+      "doc": "2026-05-21-DIRECT-BINDING-VALIDATED-multi-seed-85.4pct-aggregate-all-3-seeds-above-0.80-bar-on-unified-substrate-800ev-Phase-1.md",
+      "date": "2026-05-21"
+    },
     {
       "name": "\u00f0\u0178\u017d\u2030\u00f0\u0178\u017d\u2030\u00f0\u0178\u017d\u2030 Sparse-distributed G.20 64-concept at 100% PASS (true Kanerva form, 2026-05-15)",
       "status": "VALIDATED",
