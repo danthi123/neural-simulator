@@ -1,0 +1,167 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "N": 5,
+  "per_seed": [
+    {
+      "seed": 42,
+      "N": 5,
+      "lang_correct": 0,
+      "pool_correct": 1,
+      "per_query": [
+        {
+          "noun": "apple",
+          "target": "cold",
+          "lang_top": "go",
+          "lang_correct": false,
+          "pool_top": "small",
+          "pool_correct": false
+        },
+        {
+          "noun": "apple",
+          "target": "hot",
+          "lang_top": "big",
+          "lang_correct": false,
+          "pool_top": "small",
+          "pool_correct": false
+        },
+        {
+          "noun": "apple",
+          "target": "small",
+          "lang_top": "go",
+          "lang_correct": false,
+          "pool_top": "big",
+          "pool_correct": false
+        },
+        {
+          "noun": "cat",
+          "target": "small",
+          "lang_top": "go",
+          "lang_correct": false,
+          "pool_top": "big",
+          "pool_correct": false
+        },
+        {
+          "noun": "cat",
+          "target": "big",
+          "lang_top": "dog",
+          "lang_correct": false,
+          "pool_top": "big",
+          "pool_correct": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "N": 5,
+      "lang_correct": 0,
+      "pool_correct": 0,
+      "per_query": [
+        {
+          "noun": "dog",
+          "target": "cold",
+          "lang_top": "stop",
+          "lang_correct": false,
+          "pool_top": "hot",
+          "pool_correct": false
+        },
+        {
+          "noun": "apple",
+          "target": "small",
+          "lang_top": "cat",
+          "lang_correct": false,
+          "pool_top": "big",
+          "pool_correct": false
+        },
+        {
+          "noun": "dog",
+          "target": "hot",
+          "lang_top": "look",
+          "lang_correct": false,
+          "pool_top": "big",
+          "pool_correct": false
+        },
+        {
+          "noun": "river",
+          "target": "big",
+          "lang_top": "dog",
+          "lang_correct": false,
+          "pool_top": "cold",
+          "pool_correct": false
+        },
+        {
+          "noun": "river",
+          "target": "small",
+          "lang_top": "come",
+          "lang_correct": false,
+          "pool_top": "big",
+          "pool_correct": false
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "N": 5,
+      "lang_correct": 2,
+      "pool_correct": 3,
+      "per_query": [
+        {
+          "noun": "river",
+          "target": "small",
+          "lang_top": "small",
+          "lang_correct": true,
+          "pool_top": "big",
+          "pool_correct": false
+        },
+        {
+          "noun": "cat",
+          "target": "small",
+          "lang_top": "apple",
+          "lang_correct": false,
+          "pool_top": "small",
+          "pool_correct": true
+        },
+        {
+          "noun": "river",
+          "target": "cold",
+          "lang_top": "come",
+          "lang_correct": false,
+          "pool_top": "small",
+          "pool_correct": false
+        },
+        {
+          "noun": "dog",
+          "target": "big",
+          "lang_top": "big",
+          "lang_correct": true,
+          "pool_top": "big",
+          "pool_correct": true
+        },
+        {
+          "noun": "river",
+          "target": "hot",
+          "lang_top": "cat",
+          "lang_correct": false,
+          "pool_top": "hot",
+          "pool_correct": true
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "lang_correct": 2,
+    "pool_correct": 4,
+    "n_total": 15,
+    "lang_pct": 13.333333333333334,
+    "pool_pct": 26.666666666666668,
+    "delta": 2
+  },
+  "per_seed_deltas": [
+    1,
+    0,
+    1
+  ]
+}
