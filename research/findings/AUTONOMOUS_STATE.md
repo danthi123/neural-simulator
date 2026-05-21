@@ -1317,7 +1317,97 @@ byte-identical. 22 consecutive honest-propagation cycles.
 Findings:
 `research/findings/2026-05-21-Direction-H-multi-seed-silent-interval-length-sweep-THREE-QUALITATIVELY-DISTINCT-dynamics-monotonic-decay-vs-oscillatory-gains-vs-oscillatory-losses.md`.
 
-**EXACT NEXT ACTION: Direction I -- per-word attractor analysis.**
+**DIRECTIONS I + J COMPLETE (cumulative commit will follow this state
+update, both remotes). Per-word attractor analysis multi-seed reveals
+the substrate's silent-interval dynamics primarily affect MARGINALLY-
+BOUND words near the noise floor; well-bound words are STABLE.**
+
+3-seed per-word summary at 800ev 5000-step silent interval:
+- Seed 42: lost {west}; pure decay; west PRE rate=0.140 (near floor)
+- Seed 43: gained {go, come}; PRE rates 0.115, 0.100 (near floor)
+- Seed 44: lost {west, small}; PRE rates 0.150, 0.150 (near floor)
+- Multi-seed shared attractor-sensitive word: `west` (loses 2/3 seeds)
+- All attractor-sensitive words across all 3 seeds have PRE rates
+  0.10-0.27 (near noise floor); well-bound words (>0.30) are stable
+
+**Biology-translatable insight #19 (NEW; multi-seed):** the
+substrate's silent-interval dynamics primarily affect MARGINALLY-
+BOUND words near the discriminative threshold; well-bound words
+are STABLE. Biologically consistent with Stickgold 2013 / Diekelmann
+& Born 2010: intermediate-strength memories are the "consolidate-
+able" range. The substrate captures this mechanism at the per-word
+level.
+
+NO bar change; NO threshold tuning; reuse-only. Protected set byte-
+empty diff vs e8a99a2 holds; no-confab moat 7/7 byte-identical.
+24 consecutive honest-propagation cycles.
+
+Findings:
+- `research/findings/2026-05-21-Direction-I-per-word-attractor-analysis-ZERO-overlap-between-conjugate-seeds-substrate-specific-attractor-sensitive-sub-vocabulary.md`
+- `research/findings/2026-05-21-Direction-J-complete-3-seed-per-word-picture-marginally-bound-words-near-noise-floor-are-attractor-sensitive.md`
+
+## CUMULATIVE DELIVERABLE OF THE AUTONOMOUS ARC (2026-05-21)
+
+The unified substrate at biological scale has been thoroughly
+empirically characterized:
+- Training-event capability frontier (4 multi-seed regimes)
+- Memory persistence at fixed silent-interval length (multi-seed)
+- Silent-interval phase dynamics (multi-seed sweep across lengths)
+- Per-word attractor sensitivity (multi-seed; marginally-bound
+  words are attractor-sensitive)
+- **19 durable biology-translatable insights**
+- **24 consecutive honest-propagation cycles**
+- **2 multi-seed VALIDATED capability pillars** in capability_status.json
+- 0 bar changes, 0 threshold tunings, 0 re-runs throughout
+- Protected set byte-empty diff vs `e8a99a2` maintained throughout
+- No-confab moat 7/7 byte-identical throughout
+- Smell-test recompute matches runner-reported verdicts verbatim
+  19 of 19 times
+
+**EXACT NEXT ACTION (queued, lower priority for autonomous
+continuity):** The substrate has been substantively characterized
+across the empirically accessible dimensions within this design line;
+further iteration yields diminishing returns. Broader pivots are:
+
+- Direction K: **cross-substrate generalization smoke test** (test
+  the 4-regime frontier + per-word attractor findings on a different
+  architecture, e.g., v14-only without hippocampus/dlpfc). ~hours per
+  substrate; substantial new investment.
+- Direction L: **catastrophic forgetting scaling** across the 4
+  regimes. ~hours; new vocab training required.
+
+For autonomous continuity per the owner's "iterate-following-
+biology, no hand-back" rule, queuing Direction K (cross-substrate
+generalization smoke test) as the cheap-first next biology-faithful
+probe. Concrete protocol (single-seed cheap-first):
+
+1. Construct a v14-only substrate (concept pools only; no
+   hippocampus or dlpfc) at seed 42 + 800 events/word Phase-1.
+2. Run the 16-word direct binding diagnostic.
+3. Compare to the unified-substrate 800ev seed 42 result (15/16 =
+   93.8%) and to the v14 documented baseline (~89% multi-seed).
+4. Decision rule:
+   - If v14-only seed 42 800ev direct binding >= 0.80 AND matches
+     v14 baseline ~89%: the 4-regime + per-word findings may be
+     substrate-specific to the unified-architecture; v14-only
+     behaves differently.
+   - If v14-only seed 42 800ev direct binding < unified 93.8%:
+     unified substrate (with hippocampus + dlpfc) actually IMPROVES
+     direct binding over v14-only at extended training; honest
+     report of the architectural-addition effect.
+   - If v14-only matches the unified pattern exactly: the 4-regime
+     + per-word findings are substrate-general (not specific to the
+     hippocampus + dlpfc additions). Confirms broader applicability.
+
+Cost: ~70 min wall-clock (single-seed Phase-1 training at 800ev) +
+~3 min direct binding eval = ~75 min total. GPU/CuPy mandatory.
+Reuse-only: existing `phase1_curve_diagnostic.py` already accepts
+parameters; needs minor adaptation to disable hippocampus + dlpfc
+in the substrate builder.
+
+Historical text from prior next-action (preserved for context):
+
+[The oscillatory gains (seed 43) and losses (seed 44) at 5000 silent
 The oscillatory gains (seed 43) and losses (seed 44) at 5000 silent
 steps are CONJUGATE in magnitude (+/-15.4% = +/-2 words). Are these
 two-word swings concentrated on the SAME WORDS across the conjugate
@@ -1335,9 +1425,9 @@ Concrete protocol (reuse-only):
    accuracy. Cross-reference for overlap.
 
 Cost: ~1 min (just parsing existing JSON outputs). Pure analysis;
-no GPU; reuse-only.
+no GPU; reuse-only.]
 
-Pre-registered Direction I decision rule:
+[Pre-registered Direction I decision rule:
 - If seed-43-gain words OVERLAP with seed-44-loss words: the
   substrate's attractor-sensitive vocabulary is consistent across
   the conjugate seeds. Specific words have attractor sensitivity;
