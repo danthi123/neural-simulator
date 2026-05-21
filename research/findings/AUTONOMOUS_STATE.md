@@ -1179,9 +1179,82 @@ identical. 19 consecutive honest-propagation cycles.
 Findings:
 `research/findings/2026-05-21-Direction-E-single-seed-MEMORY-PERSISTENCE-monotonically-decreases-with-training-events-CLS-consistent.md`.
 
-**EXACT NEXT ACTION: Direction E multi-seed expansion (seeds 43 + 44;
-~40 min total for 8 silent-interval + diagnostic cells; pure eval, no
-new training).**
+**DIRECTION E MULTI-SEED COMPLETE (commit will follow this state
+update, both remotes). Multi-seed forgetting % is NON-MONOTONIC; the
+single-seed seed-42 CLS-consistent monotonic prediction does NOT hold
+multi-seed. Seed-dependent variance at 800ev (30.8pp spread) exceeds
+any regime-level mean difference.**
+
+Multi-seed memory persistence (3 seeds; 5000 silent steps each;
+forgetting % = (pre - post) / pre):
+
+| ev/word | s42 fgt% | s43 fgt% | s44 fgt% | MEAN fgt% | Range  |
+|---------|----------|----------|----------|-----------|--------|
+| 200ev   |  +9.1%   |  0.0%    |  0.0%    |  +3.0%    | 9.1pp  |
+| 300ev   |  +7.1%   |  0.0%    |  -8.3%   |  -0.4%    | 15.4pp |
+| 400ev   |  +6.7%   |  0.0%    |  +7.7%   |  +4.8%    | 7.7pp  |
+| 800ev   |  +6.7%   | -15.4%   | +15.4%   |  +2.2%    | 30.8pp |
+
+The mean forgetting trajectory is NON-MONOTONIC: 3.0% -> -0.4% ->
+4.8% -> 2.2%. Per the pre-registered Direction E multi-seed second
+branch, the CLS-prediction-at-training-event-regime is NOT multi-
+seed-robust. The substrate has SEED-DEPENDENT retention curves;
+individual-substrate variance dominates the population-mean CLS
+prediction.
+
+**Biology-translatable insight #15 (NEW; multi-seed):** Substrate's
+silent-interval dynamics produce SEED-DEPENDENT bidirectional
+changes (consolidation OR decay). Real brains show similar bi-
+directionality: sleep-like states can either improve memory
+retrieval (Wilson & McNaughton 1994 replay) OR degrade it through
+interference / anomalous plasticity. Which direction dominates
+depends on the specific neural circuit state at the start of the
+silent interval -- including factors not easily measurable
+(initial synaptic weight configuration, refractory phase
+distributions, OU noise state). The CLS prediction at training-
+event-regime level holds at single-seed seed 42 but not multi-seed;
+multi-seed substrate experiments are essential to characterize
+where the substrate sits on the individual-vs-population-mean axis.
+
+NO bar change; NO threshold tuning; reuse-only (silent-interval
+probe script added --out flag only; no logic change). Protected set
+byte-empty diff vs e8a99a2 holds; no-confab moat 7/7 byte-identical.
+20 consecutive honest-propagation cycles.
+
+Findings:
+`research/findings/2026-05-21-Direction-E-multi-seed-non-monotonic-FORGETTING-IS-SEED-DEPENDENT-CLS-prediction-NOT-multi-seed-robust.md`.
+
+**EXACT NEXT ACTION: Direction G -- characterize silent-interval
+LENGTH dependence at 800ev seed 43 (the seed showing the striking
++15.4% "anti-decay" gain).** Sweep silent interval lengths from 1000
+to 100000 in 5 increments; measure direct binding accuracy at each.
+Tests whether the seed-43 800ev gain is a transient peak or a
+systematic consolidation trajectory.
+
+Pre-registered Direction G decision rule (single-seed cheap-first):
+- If accuracy monotonically INCREASES with silent-interval length:
+  systematic silent-interval consolidation; the +15.4% gain is the
+  beginning of an attractor-stabilization trajectory.
+- If accuracy peaks then decays: transient consolidation followed
+  by passive decay; window-dependent retention.
+- If accuracy oscillates: non-trivial bidirectional dynamics;
+  retention not monotonic in time either.
+
+Concrete protocol (reuse-only):
+1. Extend `silent_interval_persistence_probe.py` (already has --out)
+   to sweep silent-interval lengths. Cheapest: a thin loop wrapper
+   that calls the existing probe with different --n-silent-steps
+   values per length, accumulating results.
+2. 5 lengths: 1000, 5000, 20000, 50000, 100000 silent steps.
+3. Apply pre-registered decision rule based on accuracy trajectory.
+
+Cost: roughly proportional to total silent steps; sum =
+176000 silent steps + 5 diagnostic passes. Estimated ~30-45 min
+wall-clock. Pure eval; no new training; reuse-only.
+
+Historical text from prior next-action (preserved for context):
+
+[1. Run `silent_interval_persistence_probe.py --seed 43 --n-silent-steps 5000`
 
 Per the pre-registered Direction E first-branch rule (monotonic
 decrease at single-seed), multi-seed validation of the retention
@@ -1204,7 +1277,7 @@ Pre-registered Direction E multi-seed decision rule (frozen):
 
 Cost: ~5 min per (seed, ev) cell * 8 cells = ~40 min total; pure
 eval; no new training; reuse-only (no new code beyond what was
-shipped in Direction E single-seed).
+shipped in Direction E single-seed).]
 
 Historical text from prior next-action (preserved for context):
 

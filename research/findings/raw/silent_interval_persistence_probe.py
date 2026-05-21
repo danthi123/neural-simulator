@@ -110,6 +110,10 @@ def main():
         "--ev-list", type=int, nargs="+", default=[200, 300, 400, 800],
         help="Training-event budgets to test (default 200 300 400 800)."
     )
+    parser.add_argument(
+        "--out", type=str, default=None,
+        help="Output JSON path (default silent_interval_persistence_probe.json)."
+    )
     args = parser.parse_args()
 
     results = []
@@ -161,7 +165,7 @@ def main():
         print(f"  {r['ev_per_word']:>5} {pre_pct:>9.1f}% {post_pct:>9.1f}% "
               f"{r['forgetting_pct']:>11.1f}%")
 
-    out = "research/findings/raw/silent_interval_persistence_probe.json"
+    out = args.out or "research/findings/raw/silent_interval_persistence_probe.json"
     with open(out, "w", encoding="utf-8") as f:
         json.dump({
             "seed": args.seed,
