@@ -723,8 +723,91 @@ discovery of the 6th arc as the LOCAL OPTIMUM are substantive
 biology-translatable scientific contributions per the user's reframe
 ("biology-translatable insights ARE the deliverable").
 
-**POOL-vs-LANG_OUTPUT MULTI-SEED CONFIRMED real signal (commit
-`4d6a3a6`, both remotes).** 3 seeds × N=5 = 15 queries on cached
+**8TH ARC DECISIVE COMPLETE (commit `69175d9`, both remotes) =
+GATE=FAIL with UNEXPECTED methodological finding: single-query
+diagnostic signal did NOT transfer to multi-pair encoding pipeline.**
+
+The 8th arc's pool-readout substitution -- empirically motivated by
+the multi-seed diagnostic at commit `4d6a3a6` (pool consistently
+beats lang_output by +13.3pp across 3 seeds in single-query
+measurements) -- REGRESSED in the full multi-pair encoding pipeline:
+
+| N | full | uniform_ctrl | advantage |
+|---|------|--------------|-----------|
+| 2 | 0.244 | 0.244 | +0.000 |
+| 3 | **0.315** | **0.363** | **-0.048** |
+| 5 | 0.399 | 0.399 | +0.000 |
+
+Per-cell N=3: seed 42 tie 0.286; seed 43 tie 0.375; seed 44 **-0.143**.
+Pool readout UNDERPERFORMS lang_output cosine at N=3 in the full
+pipeline.
+
+**8-architecture convergent ceiling now EMPIRICALLY EXHAUSTED.** The
+6th arc's 0.458 at N=3 is the LOCAL OPTIMUM; the trajectory of
+subsequent arcs (7th and 8th) has been negative; no further parameter
+variation or readout substitution in this design space is likely to
+cross the 0.80 bar.
+
+Smell-test PASSED (recompute matches runner-reported FAIL exactly).
+
+**Six durable biology-translatable insights** across the 8-arc series
+constitute the substantive scientific deliverable:
+
+1. Trustworthy abstention thresholds are SUBSTRATE-AND-PROTOCOL-specific
+   (4x validated: 650 / 5.6887 / 0.1977 / 0.2842)
+2. v1 half-split-of-trained-vocab calibration is statistically fragile;
+   v2 within-word target-vs-best-off-target is the principled fix
+3. Cue-suppression-during-RETRIEVE violates encoding-specificity
+   (Tulving 1973; theta-gamma negative)
+4. Replay + PFC-frame augmenting is LOAD-DEPENDENT (CLS-theory-
+   consistent; sweet-spot at moderate N)
+5. Over-consolidation is biologically harmful (7th arc; mechanism D
+   localised as primary culprit)
+6. **Single-query diagnostic readout signals don't transfer to multi-
+   pair encoding pipelines** (NEW; 8th arc methodological insight):
+   diagnostic isolation can mislead architecture decisions when the
+   deployment context has additional interacting mechanisms (multi-
+   pair cross-talk; replay sharpening lang_output specifically; bridge
+   state interactions the bare diagnostic doesn't probe).
+
+13 consecutive adversarial reviews; 9 of 13 caught real load-bearing
+defects; 4 CLEARs confirmed each fix. Findings:
+`research/findings/2026-05-20-8TH-ARC-decisive-honest-negative-pool-readout-substitution-did-NOT-transfer-8-architecture-convergent-ceiling-EMPIRICALLY-EXHAUSTED.md`.
+
+**EXACT NEXT ACTION: HONEST CLOSURE of the gating + augmenting +
+readout-variation composition design line.** The substantive
+scientific deliverables (6 biology-translatable insights + 13
+adversarial reviews + cross-arc trajectory + ablation localisation +
+diagnostic-vs-deployment transfer failure) are durable. Future work
+on conversational compositional retrieval requires fundamentally
+different substrate architecture or training paradigm, NOT further
+variations in the gating + augmenting + readout design space.
+
+This honest closure is NOT a "declare-unfit" -- the design line was
+thoroughly explored across 8 decisively-run architectures with
+mechanism-level characterisation at each step. The 6th arc's
+empirical local optimum (0.458 at N=3) stands as the best-observed
+performance on the v14/v16+hippocampus substrate using only already-
+validated subsystems. Closing the remaining 0.34 gap to 0.80 requires
+work outside this design line.
+
+Future iteration directions (queued; not started; deferred to user
+direction):
+- Fundamentally different substrate architecture (new connectivity;
+  per-region inhibitory normalisation requiring protected-file
+  modification with full discipline re-evaluation)
+- Different training paradigm (longer Phase-1; more diverse encoding;
+  different consolidation primitives)
+- Different task framing (easier compositional tasks; or harder tasks
+  revealing different mechanism-level signatures)
+
+NO bar change; protected set byte-empty diff vs `e8a99a2` holds;
+no-confab moat 7/7 byte-identical; 4 calibrated abstention moats
+byte-stable. Honest ceiling unchanged.
+
+---
+[Historical: POOL-vs-LANG_OUTPUT MULTI-SEED CONFIRMED real signal
+(commit `4d6a3a6`, both remotes).** 3 seeds × N=5 = 15 queries on cached
 substrate; aggregate pool 4/15 = 26.7% vs lang_output 2/15 = 13.3%;
 +13.3pp improvement; per-seed deltas [+1, 0, +1] = pool consistently
 >= lang_output across all 3 seeds. The signal is REAL.
