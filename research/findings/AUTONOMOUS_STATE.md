@@ -1051,10 +1051,83 @@ Capability_status.json updated with new pillar capturing the full
 frontier finding. 6/6 schema tests PASS. Findings:
 `research/findings/2026-05-21-Direction-C-200ev-multi-seed-direct-binding-72.9pct-NOT-validated-FULL-trade-off-curve-CHARACTERIZED-three-distinct-operating-regimes.md`.
 
-**EXACT NEXT ACTION: Direction D -- characterize the transitional
-regime granularity by probing at 300ev (single-seed cheap-first; ~30
-min training + ~3 min direct binding + ~7 min compositional eval =
-~40 min total).**
+**DIRECTION D PROBE COMPLETE (commit will follow this state update,
+both remotes). Single-seed cheap-first probe at 300ev seed 42:
+direct binding 14/16 = 87.5% (>= 0.80 ✓; the transition from below
+to above the bar happened between 200ev and 300ev) AND compositional
+N=3 = 0.429 (>= 0.40 ✓; same value as 400ev seed 42, both at 3/7).
+The transitional regime band extends DOWN to AT LEAST 300ev at
+single-seed seed 42.**
+
+Refined capability frontier (seed 42 single-seed; multi-seed where
+available):
+
+| ev/word | Direct binding (seed 42) | Compositional N=3 (seed 42) | Regime (s42) |
+|---------|--------------------------|------------------------------|--------------|
+| 200ev   | 68.8% (< 0.80)           | 0.571 (LOCAL OPTIMUM)       | COMP-FAVORED |
+| **300ev** | **87.5%** (>= 0.80)    | **0.429 (= 400ev)**         | **TRANSITIONAL** |
+| 400ev   | 93.8% (>= 0.80)          | 0.429                        | TRANSITIONAL |
+| 800ev   | 93.8% (>= 0.80)          | 0.143                        | DIRECT-FAVORED |
+
+Two empirical refinements (single-seed):
+
+1. Direct binding crosses 0.80 bar between 200ev and 300ev (68.8%
+   -> 87.5% = +18.7pp jump).
+2. Compositional retrieval is FLAT between 300ev and 400ev seed 42
+   (both 3/7 = 0.429); the first compositional drop is at 300ev
+   (0.571 -> 0.429); the second drop is between 400ev and 800ev
+   (0.429 -> 0.143).
+
+Biology-translatable insight #12 (NEW; single-seed): direct binding
+has a phase-transition-like crossing of the 0.80 trustworthy bar
+between 200ev and 300ev on this substrate; the substrate needs
+~250-300 events/word to consolidate sufficient discriminative
+pathways for multi-seed trustworthy direct binding.
+
+Smell-test recompute matches runner-reported VOID verbatim
+(17th consecutive match; correct for n_seeds=1 < min_seeds=3).
+NO bar change; NO threshold tuning; reuse-only.
+
+Findings:
+`research/findings/2026-05-21-Direction-D-Probe-300ev-single-seed-cheap-first-transitional-band-extends-DOWN-to-at-least-300ev-direct-87.5pct-composit-0.429.md`.
+
+**EXACT NEXT ACTION: Direction D multi-seed expansion (seeds 43 + 44
+at 300ev; ~60 min training + ~10 min eval = ~70 min total).**
+
+Per the pre-registered Direction D decision rule first branch (both
+single-seed conditions met), the next action is multi-seed
+validation at 300ev. Concrete protocol (reuse-only):
+
+1. `python research/findings/raw/phase1_curve_diagnostic.py
+    --seed 43 --events-per-word 300`  (~30 min)
+2. Same for seed 44 (~30 min)
+3. Multi-seed direct binding: extend
+   `direct_binding_multiseed_400ev.py` to a 300ev variant (cheapest
+   path: copy the file byte-for-byte with `CACHE_DIR` and output
+   path swapped)
+4. Multi-seed 6th arc compositional eval:
+   `python -m research.runners.generative_replay_pfc_frame_runner
+       --seeds 42 43 44 --loads 3
+       --phase1-cache-dir research/findings/raw/unified_per_regime/phase1_300ev
+       --ckpt research/findings/raw/phase1_300ev_multiseed_decisive.ckpt
+       --out research/findings/raw/phase1_300ev_multiseed_decisive.json`
+5. Smell-test recompute via byte-unchanged
+   `unified_DECISIVE_smell_test.py`.
+6. Apply the pre-registered decision rule; propagate honestly.
+
+Decision rule (pre-registered for the multi-seed outcome):
+- PASS multi-seed (all 3 seeds direct >= 0.80 AND multi-seed
+  compositional N=3 mean >= 0.40): 300ev is a SECOND validated
+  dual-capability point; the transitional band is empirically
+  ~300ev-400ev wide.
+- FAIL multi-seed: seed 42 was favorable; 300ev is NOT a multi-seed
+  dual-capability point. The transitional band remains uniquely
+  at ~400ev at multi-seed. Honest report; characterization
+  complete at the current resolution.
+
+Historical text from prior next-action (preserved for context):
+
+[Pre-registered Direction D decision rule:
 
 The transitional regime currently has ONE empirical data point at
 400ev. The compositional drop from 0.458 (200ev) to 0.405 (400ev) is
@@ -1093,7 +1166,7 @@ Concrete protocol (reuse-only):
 5. Apply the pre-registered decision rule; propagate honestly.
 
 NO new code; NO frozen verdict / protected / moat module touched.
-GPU/CuPy mandatory.
+GPU/CuPy mandatory.]
 
 Historical text from prior next-action (preserved for context):
 

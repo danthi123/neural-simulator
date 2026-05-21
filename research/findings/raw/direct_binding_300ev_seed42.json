@@ -1,0 +1,139 @@
+{
+  "seed": 42,
+  "cache_dir": "research/findings/raw/unified_per_regime/phase1_300ev",
+  "label": "300ev seed 42",
+  "n_correct": 14,
+  "n_total": 16,
+  "accuracy": 0.875,
+  "per_word": [
+    {
+      "word": "north",
+      "target_pool": "motor_N",
+      "top_pool": "motor_N",
+      "top_rate": 0.225,
+      "target_rate": 0.225,
+      "correct": true
+    },
+    {
+      "word": "east",
+      "target_pool": "motor_E",
+      "top_pool": "adjective_pool_SMALL",
+      "top_rate": 0.305,
+      "target_rate": 0.135,
+      "correct": false
+    },
+    {
+      "word": "south",
+      "target_pool": "motor_S",
+      "top_pool": "motor_S",
+      "top_rate": 0.435,
+      "target_rate": 0.435,
+      "correct": true
+    },
+    {
+      "word": "west",
+      "target_pool": "motor_W",
+      "top_pool": "motor_W",
+      "top_rate": 0.205,
+      "target_rate": 0.205,
+      "correct": true
+    },
+    {
+      "word": "apple",
+      "target_pool": "noun_pool_APPLE",
+      "top_pool": "noun_pool_APPLE",
+      "top_rate": 0.27,
+      "target_rate": 0.27,
+      "correct": true
+    },
+    {
+      "word": "river",
+      "target_pool": "noun_pool_RIVER",
+      "top_pool": "noun_pool_RIVER",
+      "top_rate": 0.435,
+      "target_rate": 0.435,
+      "correct": true
+    },
+    {
+      "word": "dog",
+      "target_pool": "noun_pool_DOG",
+      "top_pool": "noun_pool_DOG",
+      "top_rate": 0.455,
+      "target_rate": 0.455,
+      "correct": true
+    },
+    {
+      "word": "cat",
+      "target_pool": "noun_pool_CAT",
+      "top_pool": "noun_pool_CAT",
+      "top_rate": 0.865,
+      "target_rate": 0.865,
+      "correct": true
+    },
+    {
+      "word": "go",
+      "target_pool": "verb_pool_GO",
+      "top_pool": "verb_pool_GO",
+      "top_rate": 0.31,
+      "target_rate": 0.31,
+      "correct": true
+    },
+    {
+      "word": "come",
+      "target_pool": "verb_pool_COME",
+      "top_pool": "verb_pool_COME",
+      "top_rate": 0.23,
+      "target_rate": 0.23,
+      "correct": true
+    },
+    {
+      "word": "stop",
+      "target_pool": "verb_pool_STOP",
+      "top_pool": "adjective_pool_HOT",
+      "top_rate": 0.24,
+      "target_rate": 0.195,
+      "correct": false
+    },
+    {
+      "word": "look",
+      "target_pool": "verb_pool_LOOK",
+      "top_pool": "verb_pool_LOOK",
+      "top_rate": 0.32,
+      "target_rate": 0.32,
+      "correct": true
+    },
+    {
+      "word": "big",
+      "target_pool": "adjective_pool_BIG",
+      "top_pool": "adjective_pool_BIG",
+      "top_rate": 0.22,
+      "target_rate": 0.22,
+      "correct": true
+    },
+    {
+      "word": "small",
+      "target_pool": "adjective_pool_SMALL",
+      "top_pool": "adjective_pool_SMALL",
+      "top_rate": 0.865,
+      "target_rate": 0.865,
+      "correct": true
+    },
+    {
+      "word": "hot",
+      "target_pool": "adjective_pool_HOT",
+      "top_pool": "adjective_pool_HOT",
+      "top_rate": 0.51,
+      "target_rate": 0.51,
+      "correct": true
+    },
+    {
+      "word": "cold",
+      "target_pool": "adjective_pool_COLD",
+      "top_pool": "adjective_pool_COLD",
+      "top_rate": 0.155,
+      "target_rate": 0.155,
+      "correct": true
+    }
+  ],
+  "bar_0p80_pass": true
+}
