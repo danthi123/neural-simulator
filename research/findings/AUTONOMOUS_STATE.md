@@ -1224,9 +1224,87 @@ byte-empty diff vs e8a99a2 holds; no-confab moat 7/7 byte-identical.
 Findings:
 `research/findings/2026-05-21-Direction-E-multi-seed-non-monotonic-FORGETTING-IS-SEED-DEPENDENT-CLS-prediction-NOT-multi-seed-robust.md`.
 
-**EXACT NEXT ACTION: Direction G -- characterize silent-interval
-LENGTH dependence at 800ev seed 43 (the seed showing the striking
-+15.4% "anti-decay" gain).** Sweep silent interval lengths from 1000
+**DIRECTION G COMPLETE (commit will follow this state update, both
+remotes). Silent-interval LENGTH sweep at 800ev seed 43 reveals
+OSCILLATORY bidirectional dynamics; NOT monotonic consolidation;
+NOT monotonic decay.**
+
+| Silent steps | Post acc (n/16) | Forgetting % |
+|--------------|-----------------|--------------|
+| 1000         | 13/16 = 81.2%   | 0.0%         |
+| 5000         | 15/16 = 93.8%   | -15.4% (PEAK) |
+| 20000        | 14/16 = 87.5%   | -7.7%        |
+| 50000        | 13/16 = 81.2%   | 0.0%         |
+| 100000       | 14/16 = 87.5%   | -7.7%        |
+
+Third pre-registered decision-rule branch fires: accuracy oscillates;
+NON-TRIVIAL BIDIRECTIONAL DYNAMICS; retention not monotonic in time.
+
+The 5000-step PEAK +15.4% from Direction E multi-seed REPRODUCES
+EXACTLY at the same cell (byte-identical RNG state + cache load).
+The trajectory returns to baseline at 50000 steps and re-peaks at
++7.7% at 100000 steps -- apparent oscillation period on the order
+of 50000 steps (~25s biological time at dt=0.5ms).
+
+**Biology-translatable insight #16 (NEW; single-seed):** Substrate's
+silent-interval dynamics at near-saturated regimes are OSCILLATORY
+in time. Accuracy oscillates between 81.2% (baseline) and 93.8%
+(peak) across silent-interval lengths 1000-100000 steps. This
+CONTEXTUALIZES Direction E's seed-dependent +/-15.4% variance: those
+may be DIFFERENT PHASES of the same underlying oscillation, sampled
+at the same time point but starting from different initial
+conditions. Fixed-length retention measurements can be PHASE
+ARTIFACTS; multi-LENGTH characterization separates phase from mean.
+Biologically meaningful: Buzsaki 2011 / Lisman 2005 -- real brains
+show spontaneous oscillations even in silent states; substrate's
+~25s slow oscillation may correspond to homeostatic adaptation
+cycles or slow modulator rhythms.
+
+NO bar change; NO threshold tuning; reuse-only (silent-interval
+probe + shell loop wrapper; no new core code). Protected set byte-
+empty diff vs e8a99a2 holds; no-confab moat 7/7 byte-identical.
+21 consecutive honest-propagation cycles.
+
+Findings:
+`research/findings/2026-05-21-Direction-G-silent-interval-length-sweep-OSCILLATORY-dynamics-at-800ev-seed43-non-monotonic-bidirectional.md`.
+
+**EXACT NEXT ACTION: Direction H -- multi-seed oscillation-phase
+characterization at 800ev (test the phase-artifact hypothesis for
+Direction E's seed-dependent multi-seed variance).** Run the silent-
+interval length sweep at seeds 42 and 44 at 800ev. If their
+trajectories also show oscillatory bidirectional dynamics with
+similar period, the +/-15.4% Direction E seed-dependent result was
+a phase artifact of the 5000-step sampling window; biology-
+translatable insight #16 multi-seed-validated. If their trajectories
+show different patterns (monotonic decay, no oscillation), substrates
+have seed-dependent oscillation presence/absence; insight #16
+nuanced.
+
+Concrete protocol (reuse-only):
+1. Run sweep loop at seed 42, 800ev:
+   `for LEN in 1000 5000 20000 50000 100000; do
+     python research/findings/raw/silent_interval_persistence_probe.py
+         --seed 42 --n-silent-steps $LEN --ev-list 800
+         --out research/findings/raw/silent_interval_length_sweep_seed42_800ev_${LEN}.json
+   done`
+2. Same for seed 44.
+3. Aggregate the 3-seed trajectories; check for phase alignment vs
+   independent oscillation per seed.
+
+Cost: ~30 min per seed * 2 seeds = ~60 min. Pure eval; reuse-only;
+no new training; no new core code.
+
+Pre-registered Direction H decision rule:
+- If seeds 42 + 44 show oscillatory bidirectional dynamics with
+  similar period: phase-artifact hypothesis SUPPORTED; insight #16
+  multi-seed-validated; declare "fixed-length retention is phase-
+  sensitive" as a durable insight.
+- If seeds 42 + 44 show different patterns: substrate has seed-
+  dependent oscillation; insight #16 nuanced; honest report.
+
+Historical text from prior next-action (preserved for context):
+
+[Per the pre-registered Direction E first-branch rule (monotonic Sweep silent interval lengths from 1000
 to 100000 in 5 increments; measure direct binding accuracy at each.
 Tests whether the seed-43 800ev gain is a transient peak or a
 systematic consolidation trajectory.
@@ -1250,7 +1328,7 @@ Concrete protocol (reuse-only):
 
 Cost: roughly proportional to total silent steps; sum =
 176000 silent steps + 5 diagnostic passes. Estimated ~30-45 min
-wall-clock. Pure eval; no new training; reuse-only.
+wall-clock. Pure eval; no new training; reuse-only.]
 
 Historical text from prior next-action (preserved for context):
 
