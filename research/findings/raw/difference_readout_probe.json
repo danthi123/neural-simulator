@@ -1,0 +1,116 @@
+{
+  "seed": 42,
+  "cache_dir": "research/findings/raw/unified_per_regime/phase1",
+  "facts": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "river",
+      "small"
+    ],
+    [
+      "dog",
+      "hot"
+    ],
+    [
+      "cat",
+      "cold"
+    ]
+  ],
+  "tags": [
+    "ep_0",
+    "ep_1",
+    "ep_2",
+    "ep_3"
+  ],
+  "recall_steps": 100,
+  "groundable": [
+    {
+      "cue": "apple",
+      "target_adj": "big",
+      "tag": "ep_0",
+      "raw_top": "look",
+      "raw_top_val": 0.33333333333333337,
+      "raw_ok": false,
+      "diff_top": "look",
+      "diff_top_val": 0.09803921568627452,
+      "diff_ok": false
+    },
+    {
+      "cue": "river",
+      "target_adj": "small",
+      "tag": "ep_1",
+      "raw_top": "go",
+      "raw_top_val": 0.37254901960784315,
+      "raw_ok": false,
+      "diff_top": "look",
+      "diff_top_val": 0.08823529411764705,
+      "diff_ok": false
+    },
+    {
+      "cue": "dog",
+      "target_adj": "hot",
+      "tag": "ep_2",
+      "raw_top": "big",
+      "raw_top_val": 0.3529411764705882,
+      "raw_ok": false,
+      "diff_top": "big",
+      "diff_top_val": 0.11764705882352941,
+      "diff_ok": false
+    },
+    {
+      "cue": "cat",
+      "target_adj": "cold",
+      "tag": "ep_3",
+      "raw_top": "big",
+      "raw_top_val": 0.5294117647058824,
+      "raw_ok": false,
+      "diff_top": "big",
+      "diff_top_val": 0.2352941176470588,
+      "diff_ok": false
+    }
+  ],
+  "permuted_control": [
+    {
+      "cue": "apple",
+      "stimulated_tag": "ep_1",
+      "stimulated_tag_adj": "small",
+      "diff_top": "go",
+      "diff_top_val": 0.10784313725490195,
+      "control_ok": false
+    },
+    {
+      "cue": "river",
+      "stimulated_tag": "ep_2",
+      "stimulated_tag_adj": "hot",
+      "diff_top": "river",
+      "diff_top_val": 0.12745098039215685,
+      "control_ok": false
+    },
+    {
+      "cue": "dog",
+      "stimulated_tag": "ep_3",
+      "stimulated_tag_adj": "cold",
+      "diff_top": "big",
+      "diff_top_val": 0.2647058823529411,
+      "control_ok": false
+    },
+    {
+      "cue": "cat",
+      "stimulated_tag": "ep_0",
+      "stimulated_tag_adj": "big",
+      "diff_top": "cat",
+      "diff_top_val": 0.13725490196078433,
+      "control_ok": false
+    }
+  ],
+  "raw_correct": 0,
+  "diff_correct": 0,
+  "permuted_correct": 0,
+  "n": 4,
+  "diff_beats_raw": false,
+  "control_holds": false,
+  "verdict": "NEGATIVE"
+}
