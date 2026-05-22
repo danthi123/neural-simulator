@@ -551,28 +551,53 @@ compositional retrieval capability EXISTS (identity-level integration,
 pipeline, 0.98, reviewed CLEAR). The full biology-translatable insight
 set is delivered and propagated.
 
-**EXACT NEXT ACTION: scale the validated biologized compositional
-capability -- cheap-first.** The capability is validated at small load
-(loads {2,3,5}) and 16-word vocab; the natural, concrete, pre-
-registerable next arc that builds directly on it is scaling. Step 1,
-cheap-first (numpy, no GPU): extend the resonate-and-fire FHRR
-self-test (`resonate_fire_fhrr.py`) to higher LOADS {8, 12, 16, 24} at
-the validated N_dim=512 and at N_dim {1024, 2048} -- the FHRR is
-dimension-tunable, so this measures the capacity curve (load vs the
-phasor dimension needed to clear the frozen 0.80 bar) entirely in
-numpy. PRE-REGISTERED: report the load-vs-dimension capacity curve
-honestly; a clean curve means the composition layer scales with
-dimension as FHRR theory predicts; a ceiling means an honest capacity
-bound. Step 2 (after step 1, needs a GPU substrate run): vocab scaling
-beyond 16 concepts requires more substrate concept pools -- a substrate
-capture run; design it only after the cheap load/dimension curve is in
-hand. Reuse-by-import; no protected module; no autograd; frozen 0.80
-bar; smell-test a PASS harder than a FAIL; honest propagation both
-remotes. (Broader horizon, surfaced for the owner, NOT auto-launched:
-the compositional capability is one piece; the owner's standing
-conversational-path directives -- SPEAR theta-multiplexing, theta-gamma
-mode-unification, generative replay -- and the integrated closed loop
-are the larger arcs once scaling is characterised.)
+**LOAD-SCALING CHARACTERISED = load is not the bottleneck (2026-05-22,
+both remotes).** Cheap-first capacity-curve probe
+(`fhrr_capacity_curve_probe.py`, numpy): the composition layer clears
+the frozen 0.80 bar across load {2..96} -- 96 bound facts in one
+composite -- and the minimum phasor dimension grows LINEARLY with load
+(load 12 -> N>=128, 24 -> 256, 48 -> 512, 96 -> 1024), exactly the
+FHRR-theoretic proportional law. The resonate-and-fire spot-check
+matches the algebra at the capacity edge (L24/N256 0.970 vs 0.971;
+L48/N512 0.968 vs 0.965). The composition algebra has large headroom;
+the validated small-load capability sits at the easy end of the curve.
+This confirms the compositional line's convergent finding from the
+other side: the capability is recognition-bounded, NOT
+composition-bounded. Findings:
+`research/findings/2026-05-22-fhrr-capacity-curve-composition-scales-load-is-not-the-bottleneck.md`.
+
+THE COMPOSITIONAL ARC IS THOROUGHLY COMPLETE: a validated compositional
+retrieval capability; biologized end-to-end (3 shortcuts, adversarially
+reviewed CLEAR); load-scaling characterised (not the bottleneck);
+recognition characterised as the bound and shown reducible by temporal
+integration. A complete, honest, propagated, biology-translatable
+result set.
+
+**EXACT NEXT ACTION: vocabulary scaling -- design the substrate
+capture run, as a documented design call.** Load scaling is answered;
+the remaining scaling axis is VOCABULARY -- beyond the 16 concepts in
+the activity cache. More concepts need more substrate concept pools,
+so this needs a GPU substrate capture run; it begins with a documented
+design (the project pattern: design doc -> writing-plans -> subagent-
+driven build). Step 1, now: write
+`docs/plans/2026-05-22-vocabulary-scaling-design.md` -- (a) the target:
+capture per-neuron concept activity for a larger vocabulary (e.g. the
+v17 28-word architecture, or the G.20 sparse 64/160-concept tiers the
+project already has -- check CLAUDE.md's validated assets first); (b)
+reuse: the activity-capture path (`capture_activity` in
+`activity_level_integration.py`), the biologized grounded-composition
+pipeline (`biologized_grounded_composition.py`) byte-unchanged --
+only the vocabulary/substrate changes; (c) the honest question: does
+the common-mode-removed grounded-symbol pipeline still clear the frozen
+0.80 bar at a larger vocabulary, and does recognition (the bound) hold
+or degrade with vocabulary size; (d) pre-registered fixed-bar test;
+(e) honest ceiling. Then writing-plans -> subagent-driven build -> the
+GPU capture run -> honest propagation. (Broader horizon, surfaced for
+the owner, NOT auto-launched: the compositional capability is one
+piece; the owner's standing conversational-path directives -- SPEAR
+theta-multiplexing, theta-gamma mode-unification, generative replay --
+and the integrated closed loop are the larger arcs.) Standard
+discipline throughout; both remotes.
 
 ---
 [Historical content below preserved for context.]
