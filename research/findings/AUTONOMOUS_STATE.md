@@ -276,31 +276,62 @@ breaks it. Shortcut 2 (grounded symbols) was the activity-level arc
 above -- naive form NEGATIVE; its deeper form (attractor-grounded,
 denoised symbols) couples with shortcut 3.
 
-**EXACT NEXT ACTION: biologize FHRR shortcut 1 -- replace the
-function-first phasor-integrator neurons with resonate-and-fire
-neurons.** Highest-priority, best-defined biologization step (owner
-ordering). Resonate-and-fire (RF) neurons are a recognized biological
-neuron model (Izhikevich 2001); Frady & Sommer 2019 (PNAS, "Robust
-computation with rhythmic spike patterns") derived robust FHRR-style
-computation directly from RF-neuron dynamics, and Orchard & Jarvis's
-own clean-up already uses RF neurons. Concrete steps: (a) research the
-Frady & Sommer RF-neuron FHRR realization (WebSearch / the paper) --
-how RF dynamics realize bind / unbind / bundle -- and write a short
-design doc `docs/plans/2026-05-22-resonate-and-fire-biologization-design.md`.
-(b) Build a net-new RF-neuron composition module
-`research/runners/resonate_fire_fhrr.py` (reuse-by-import only; the
-validated `spiking_phasor_fhrr.py` is NOT modified -- this is a
-parallel biologized variant; no protected module; no autograd; RF
-dynamics are integrator-neuron dynamics, not gradients). (c) Re-run
-the subsystem self-test against the frozen 0.80 bar -- PRE-REGISTERED:
-the compositional capability + abstention separation must survive the
-RF replacement, or the honest finding is which biological constraint
-breaks it. (d) If it survives -> shortcut 3 (attractor clean-up
-replacing stored-vocabulary argmax), then shortcut 2's deeper
-attractor-grounded form. Propagate every outcome both remotes.
-Standard discipline throughout: cheap-first, frozen bar, smell-test a
-PASS HARDER than a FAIL, dedicated adversarial review for any
-load-bearing claim.
+**BIOLOGIZATION SHORTCUT 1 COMPLETE = PASS, propagated (2026-05-22,
+both remotes).** The function-first integrator neurons were replaced
+with resonate-and-fire neurons (Izhikevich 2001; Frady & Sommer 2019
+PNAS). Net-new module `research/runners/resonate_fire_fhrr.py`
+(reuse-by-import only; the validated `spiking_phasor_fhrr.py` NOT
+modified -- parallel biologized variant; no protected module; no
+autograd). The resonate-and-fire neuron is a genuine time-stepped
+damped complex oscillator with threshold-crossing spike detection;
+bind/unbind are complex synaptic-weight integration (Frady & Sommer
+eq [2], the phase arithmetic in the synapse where weights biologically
+live), bundle is postsynaptic complex summation; every operation
+re-emits a genuine spike. Self-test (the project's compositional task;
+8 cues / 8 fillers / N_dim 512 / 300 trials/load; frozen 0.80 bar):
+compositional accuracy 1.0000 at loads {2,3,5}, abstention separation
+clean at every load (groundable min 0.30-0.60 > ungroundable max
+~0.11). VERDICT PASS. Primitive check: bind/unbind/bundle phase error
+~0.002 (the discrete-time quantization floor), robustness error 0.001
+(spike phase magnitude-invariant -- genuine resonator property).
+Smell-test PASSED (genuine dynamical readout; nothing tuned; same
+task/seed/dim as the validated scaffold; 1.0000 is the clean-symbol
+ceiling the scaffold also reached). Honest scope: subsystem-level
+result, biologizes shortcut 1 only; NOT yet a capability claim
+(shortcuts 2+3 remain; dedicated adversarial review pending before any
+capability rollup). Findings:
+`research/findings/2026-05-22-resonate-and-fire-biologization-shortcut-1-PASS-function-first-integrator-replaced-with-biological-neuron-model.md`.
+
+**EXACT NEXT ACTION: biologize FHRR shortcut 3 -- replace the
+stored-vocabulary argmax clean-up with an attractor network whose
+fixed points are the vocabulary.** The clean-up currently takes an
+argmax over an explicitly enumerated vocabulary table -- the brain
+keeps no such list. Frady & Sommer 2019's Threshold Phasor Associative
+Memory (TPAM) is exactly the biological replacement: a complex-valued
+Hopfield-style attractor network, weight W = S S*^T (outer product of
+the stored phasor patterns), threshold transfer z = (u/|u|)*H(|u|-Theta)
+(keeps the phase, thresholds the magnitude), Lyapunov energy
+E(z) = -1/2 sum W_ij z_i z_j* + Theta||z||_1 -> settles to fixed-point
+attractors = the stored patterns. It is built from the same resonate-
+and-fire neurons. Concrete steps: (a) write a short design doc
+`docs/plans/2026-05-22-attractor-cleanup-biologization-design.md`
+(TPAM as the clean-up; pre-registered: the compositional capability +
+abstention separation must survive -- abstention = the settle failing
+to reach any stored attractor, the no-confab moat as a basin-of-
+attraction property). (b) Build the TPAM clean-up into a net-new module
+or extend `resonate_fire_fhrr.py` (reuse-by-import; no protected
+module; no autograd -- TPAM is attractor dynamics, a time-stepped
+recurrent settle, not gradients). (c) Re-run the subsystem self-test
+against the frozen 0.80 bar with the attractor clean-up replacing
+argmax -- PRE-REGISTERED: capability + abstention must survive, or the
+honest finding is which biological constraint breaks it. (d) If it
+survives -> shortcut 2's deeper attractor-grounded form (a symbol
+grounded in a denoised attractor-stabilised representation, since an
+attractor network both grounds and denoises -- this is what the
+activity-level NEGATIVE re-specified). Propagate every outcome both
+remotes. Standard discipline: cheap-first, frozen bar, smell-test a
+PASS HARDER than a FAIL, dedicated adversarial review before any
+capability claim.
 
 ---
 [Historical content below preserved for context.]

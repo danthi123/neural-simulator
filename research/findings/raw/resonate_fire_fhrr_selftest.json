@@ -1,0 +1,43 @@
+{
+  "n_cues": 8,
+  "n_fillers": 8,
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "n_dim": 512,
+  "cycle_steps": 1000,
+  "n_trials": 300,
+  "bar": 0.8,
+  "seed": 42,
+  "rf_omega": 0.006283185307179587,
+  "rf_lambda": -0.0003,
+  "primitive_check": {
+    "bind_max_phase_err": 0.0018932175385737422,
+    "unbind_max_phase_err": 0.0024989423462503657,
+    "bundle_max_phase_err": 0.0025782341923322734,
+    "robustness_max_phase_err": 0.0010000000000000009
+  },
+  "per_load": {
+    "2": {
+      "compositional_accuracy": 1.0,
+      "groundable_sim_min": 0.5961577170447572,
+      "ungroundable_sim_max": 0.11237330049637564,
+      "abstention_separates": true
+    },
+    "3": {
+      "compositional_accuracy": 1.0,
+      "groundable_sim_min": 0.45401285073071174,
+      "ungroundable_sim_max": 0.1145278012637453,
+      "abstention_separates": true
+    },
+    "5": {
+      "compositional_accuracy": 1.0,
+      "groundable_sim_min": 0.3025558170077175,
+      "ungroundable_sim_max": 0.11176664427715335,
+      "abstention_separates": true
+    }
+  },
+  "verdict": "PASS"
+}
