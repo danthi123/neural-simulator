@@ -58,10 +58,16 @@ The model, following Frady and Sommer:
   synapse's complex weight. The synapse weight is itself a complex
   number; its phase translates into a synaptic transmission delay
   (delay = T * synapse_phase / 2*pi).
-- The neuron emits a spike when its state crosses threshold (the real
-  part exceeds a threshold while the imaginary part is positive). The
+- The neuron emits a spike once per oscillation cycle, when its
+  internal state completes a cycle. (Frady and Sommer phrase this spike
+  condition as a threshold crossing on the real axis; the
+  implementation built here uses the equivalent and numerically
+  cleaner form -- the first upward zero-crossing of the imaginary part
+  of the state, with a magnitude floor that gates out a collapsed
+  state. Both place the spike one cycle after a phase-zero kick, so the
   spike time, relative to the global T-periodic cycle, is the phase of
-  the neuron's complex state.
+  the neuron's complex state. The module's own docstring describes its
+  exact spike rule.)
 
 This is a genuine, recognized neuron model, not a function-first
 device. The phase arithmetic that FHRR needs is not hand-built into a

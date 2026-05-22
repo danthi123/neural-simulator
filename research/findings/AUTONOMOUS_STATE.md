@@ -411,32 +411,66 @@ pipeline. The whole compositional line converges on ONE bound: the
 substrate's concept-recognition accuracy. This is a complete,
 biology-translatable result set, all propagated.
 
-**EXACT NEXT ACTION: dedicated adversarial review of the biologization
-arc.** The pre-registered discipline step before any capability-status
-synthesis. Spawn an independent reviewer (fresh agent, full tool
-access, no controller context) to scrutinise the load-bearing
-biologization claims: (1) shortcut 1 -- is `resonate_fire_fhrr.py`'s
-resonate-and-fire neuron a genuine time-stepped damped-oscillator with
-threshold-crossing spikes, or relabeled arithmetic; is the
-self-test PASS genuine; is the validated `spiking_phasor_fhrr.py`
-byte-unchanged. (2) shortcut 3 -- is the attractor clean-up genuine; is
-the separated-clean-up PASS real or did the familiarity threshold get
-tuned; is the structural finding (a pure attractor confabulates) sound.
-(3) the `settle_annealed(fast=)` closed-form path -- is the equivalence
-claim honest (0/16 settle mismatches). (4) shortcut 2 -- is the NEGATIVE
-genuine; is the 0.45-overlap measurement sound; is the pattern-
-separation probe's separation/recognition split honest; was the cheap
-probe's over-optimism recorded. (5) protected set byte-empty diff vs
-e8a99a2; no autograd in any shipped biologization file. The reviewer
-RUNS the checks, does not only read. If it returns CLEAR -> synthesise
-the biologization arc into the capability_status record (the FHRR
-scaffold's honest biological status: neurons + clean-up biologized,
-symbols recognition-bounded). If it returns BLOCK -> fix honestly and
-re-review. Then the next arc: the convergent finding (recognition is
-the bound) routes to improving the substrate's concept recognition --
-the project's standing recognition-substrate problem -- as the way to
-lift the compositional capability further. Standard discipline
-throughout; honest propagation both remotes.
+**BIOLOGIZATION ARC ADVERSARIAL REVIEW = CLEAR, arc synthesized
+(2026-05-22, both remotes).** An independent reviewer (fresh agent,
+full tool access, no controller context) RAN the exploit-class checks
+on the biologization arc: resonate-and-fire neuron genuine (hand-traced
+dynamics matched; self-test reproduced byte-identically); shortcut-3
+separated clean-up genuine (familiarity threshold 0.2 verified pre-set
+from prior measured data, not tuned; the annealed FAIL genuinely
+recorded); the `settle_annealed(fast=)` closed-form path equivalent
+(60/60 match, independent run); shortcut-2 NEGATIVE genuine (0.45
+overlap recomputed from the real cache; attractor recognition exactly
+1/16; pattern-separation probe reproduced byte-identically); no
+autograd; protected set byte-empty diff; no-confab moat 7/7. VERDICT
+CLEAR, no defect. One minor non-defect (the resonate-fire design doc's
+spike-condition phrasing) fixed. The arc is recorded as a
+capability_status pillar (status BOUNDARY -- the deliverable is the
+precise boundary characterization, not a new capability). Findings:
+`research/findings/2026-05-22-biologization-arc-adversarial-review-CLEAR.md`.
+
+THE COMPOSITIONAL LINE -- STANDING SYNTHESIS: the project has a
+validated compositional retrieval capability (the identity-level
+integration: substrate recognition + spiking-phasor FHRR composition,
+multi-seed 0.96-0.99, adversarially reviewed). The FHRR-biologization
+arc then established its precise biological status: the composition
+layer is biologizable in its neurons (resonate-and-fire) and its
+clean-up (attractor identification + a separate familiarity gate); its
+symbols are groundable from the substrate via pattern separation
+(validated dentate-gyrus D.12 orthogonalisation) but the grounded
+pipeline is RECOGNITION-BOUNDED, exactly as the oracle-symbol pipeline
+is. The whole compositional line converges on ONE bound -- the
+substrate's concept-recognition accuracy (per-observation ~0.66-0.74;
+documented direct-binding 0.74-0.88; trial-to-trial activity
+coefficient of variation ~1.6). This is a complete, honest, biology-
+translatable result set; the compositional blocker the renewed-focus
+arc was directed at is now precisely localised.
+
+**EXACT NEXT ACTION: cheap-first probe into the recognition bound --
+why is per-observation concept recognition only ~0.66-0.74, and is
+there a cheap biologically-grounded improvement?** The convergent
+finding routes here: lifting the compositional capability further
+means improving the substrate's concept recognition. Concrete cheap-
+first step: a probe that reuses the real activity cache
+(`research/findings/raw/activity_level_integration_cache/full_seed{42,43,44}.npz`,
+M=16 per-neuron observations/word) -- no new GPU run needed -- and
+asks: (a) does TEMPORAL AVERAGING of the activity across observations
+raise recognition (average K observations of a word, then argmax-pool;
+sweep K=1,2,4,8,16) -- biological analogue of a longer integration
+window / sustained attention; (b) does the recognition error
+concentrate on specific words (the documented fragile words) or spread
+uniformly; (c) is the per-observation noise dominated by the substrate
+state drifting across the 16-observation capture sequence (compare
+recognition of observation 1 vs observation 16). PRE-REGISTERED: if
+temporal averaging lifts recognition materially (toward >=0.85) -> a
+biologically-grounded longer-integration recognition front-end is the
+build; if recognition is irreducibly word-fragile -> the bound is the
+substrate's concept representation itself and routes to the concept-
+pool architecture (the v14/v16 line). Reuse-by-import; no protected
+module; no autograd; numpy-cheap (the cache is captured). Then
+propagate; build per the pre-registered reading. Standard discipline:
+cheap-first, frozen bar, smell-test a PASS HARDER than a FAIL, honest
+propagation both remotes.
 
 ---
 [Historical content below preserved for context.]
