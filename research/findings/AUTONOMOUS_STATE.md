@@ -97,33 +97,65 @@ design space). Findings:
 `research/findings/2026-05-21-consolidation-probe-TERMINAL-compositional-blocker-is-a-missing-substrate-pathway-no-ca1-to-concept-pool-consolidation-wire.md`
 (+ the two upstream probe findings dated 2026-05-21).
 
-**EXACT NEXT ACTION: build a NET-NEW experimental substrate variant
-that adds ca1 -> concept-pool consolidation pathways, WITHOUT modifying
-any protected module.** Route: a new runner that uses the brain-region
-framework's own pathway-declaration mechanism to construct a substrate
-including ca1 -> noun_pool / ca1 -> adjective_pool consolidation
-pathways (the same projection class the substrate already has as
-ca1 -> motor, extended to the concept pools). `build_biological_brain_regions`
-and `text_minimal_isolation.py` stay byte-unchanged (protected). Then:
-encode compositional (noun, adjective) bindings into the variant, run
-`run_concept_replay_phase` consolidation, and re-run the storage-locus
-+ consolidation probes against the variant. Pre-registered routing
-rule: if the tag-to-cortex readout lifts off the 0.0015 noise floor
-and the bound adjective becomes selectively retrievable, the missing
-pathway is confirmed as the fix and a full pre-registered arc follows;
-if not, even with the pathway compositional consolidation fails, which
-is a deeper substrate finding. Discipline: design doc first, then the
-variant builder + probe, reuse-by-import for everything else, no
-autograd, honest propagation both remotes.
+**ca1 -> concept-pool VARIANT ARC COMPLETE = honest NEGATIVE; the
+missing wire is NECESSARY BUT NOT SUFFICIENT (2026-05-22, both
+remotes, commits fb19b8a design + d488f72 result).** The variant
+builder appended 12 ca1 -> concept-pool pathways (no protected module
+modified; +57,525 synapses confirmed installed; direct-binding sanity
+68.8% IDENTICAL to base, so Phase-1 is intact and the variant is
+clean). Result: the bound-adjective pool firing rate during tag
+stimulation rose from 0.0015 (base, no wire) to only 0.0073 (variant)
+-- still ~3x below the 0.02 noise floor and 30-100x below readable;
+replay 0/20/60 cycles dead flat; selective 1/4 (chance), permuted
+control 0/4. Pre-registered verdict: NEGATIVE.
 
-**DECISION POINT FLAGGED FOR THE OWNER (does not block the autonomous
-next step):** the experimental variant above touches no protected
-module. But if the variant validates the fix, rolling the
-ca1 -> concept-pool pathway into the main `build_biological_brain_regions`
-modifies a protected, validated module and carries real risk to the
-validated direct-binding capability. That roll-in is an architectural
-decision for the owner, to be made with the variant's evidence in
-hand. The autonomous work proceeds on the variant; the roll-in waits.
+Deeper cause: the concept pools are built with deliberately WEAK
+internal dynamics (density 0.05, exc_weight 0.3) vs the motor pools'
+canon dynamics (density 0.10, exc_weight 2.0). Weak dynamics are the
+v14/v16 design choice that makes stable multi-concept Phase-1 training
+possible ("canon amplifies bias" collapse otherwise). But weak pools
+cannot ignite into a readable consolidated attractor from ca1 drive.
+The motor pools consolidate (Phase 1.3 validated) because they have
+canon dynamics. THE SAME PROPERTY THAT MAKES THE CONCEPT POOLS
+TRAINABLE MAKES THEM NON-CONSOLIDATABLE -- a genuine architectural
+tension between Phase-1 trainability and consolidatability.
+
+The renewed-focus compositional investigation (1 design + 3 cheap
+probes + this variant arc) drove the 8-architecture convergent ceiling
+to a precise, multi-level root cause: composition is blocked not by a
+missing feature that can be added, but by an architectural property
+tension. Findings:
+`research/findings/2026-05-22-ca1-concept-pool-variant-NEGATIVE-the-wire-is-necessary-not-sufficient-concept-pools-weak-dynamics-prevent-consolidation.md`.
+
+**EXACT NEXT ACTION: build a NET-NEW dedicated-compositional-attractor-
+region variant (route 1 of the variant findings doc).** Rather than
+consolidating into the weak Phase-1 concept pools, add a SEPARATE
+region with canon (strong) dynamics that receives from both ca1 and
+the concept pools and hosts the consolidated compositional attractor;
+read composition out THERE, not at the weak concept pools. This
+sidesteps the trainability-vs-consolidatability tension: the weak
+concept pools stay weak (Phase-1 unaffected), a distinct strong region
+hosts composition. Net-new, no protected module modified (same
+augment-the-returned-region/pathway-lists approach as the ca1 variant,
+adding one BrainRegion + its pathways). Discipline: design doc first
+(pin the new region's dynamics, its ca1 + concept-pool input pathways,
+the pre-registered decision rule, and the permuted-tag anti-cheat /
+selectivity-must-emerge-from-consolidation rule), then the variant
+builder + Phase-1 train + encode + consolidate + measure, reuse-by-
+import for everything else, no autograd, honest propagation both
+remotes. If route 1 also fails, the architectural tension is confirmed
+fundamental and the honest terminal finding is that compositional
+capability requires resolving the trainability-vs-consolidatability
+tension at the substrate level.
+
+**DECISION POINT STANDING FOR THE OWNER:** the compositional blocker
+is now precisely characterized as an architectural property tension.
+The autonomous work proceeds on route 1 (the dedicated region --
+net-new, no protected modification). But the eventual resolution --
+whether a dedicated region, staged dynamics, or a concept-pool
+dynamics change -- is an architectural decision that pits compositional
+capability against the validated direct-binding capability, and the
+owner should weigh in once route 1's evidence is in hand.
 
 ---
 [Historical content below preserved for context.]
