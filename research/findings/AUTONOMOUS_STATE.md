@@ -69,6 +69,65 @@ pre-registered fixed-bar test. Honest ceiling unchanged.
 
 ## Exact next concrete action
 
+**RENEWED-FOCUS COMPOSITIONAL INVESTIGATION -- ROOT CAUSE FOUND AND
+FULLY PROPAGATED (2026-05-21, both remotes; commits 8ea41d7, 8cb90bf,
+ddd714d, 5819df7).** The owner confirmed the substrate-characterization
+arc had drifted from the primary goal and directed renewed focus on
+the compositional capability. A three-probe cheap-first investigation
+(~5 min compute total) drilled the eight-architecture compositional
+convergent ceiling down to a single precise structural cause:
+
+1. Difference-readout probe (NEGATIVE) -- the blocker is not the
+   readout computation.
+2. Storage-locus probe -- the compositional engram tag is
+   hippocampal-only by construction; tag stimulation drives the
+   cortical concept pools only at the noise floor (0.0015 vs the
+   0.2-0.8 of direct binding). The binding is stored but stranded.
+3. Consolidation probe (TERMINAL) -- the validated replay-driven
+   consolidation does NOT bridge it, because the substrate has
+   ca1_to_motor + ca1_to_lang_out consolidation pathways (built for
+   the direct word-to-motor task) but NO ca1_to_concept_pool pathway.
+   Compositional bindings cannot be consolidated because the wire
+   that would carry them does not exist.
+
+This is the terminal biology-translatable finding of the compositional
+investigation: the blocker is a MISSING SUBSTRATE PATHWAY, precisely
+named. It cannot be fixed by any runner-side overlay (the whole 8-arc
+design space). Findings:
+`research/findings/2026-05-21-consolidation-probe-TERMINAL-compositional-blocker-is-a-missing-substrate-pathway-no-ca1-to-concept-pool-consolidation-wire.md`
+(+ the two upstream probe findings dated 2026-05-21).
+
+**EXACT NEXT ACTION: build a NET-NEW experimental substrate variant
+that adds ca1 -> concept-pool consolidation pathways, WITHOUT modifying
+any protected module.** Route: a new runner that uses the brain-region
+framework's own pathway-declaration mechanism to construct a substrate
+including ca1 -> noun_pool / ca1 -> adjective_pool consolidation
+pathways (the same projection class the substrate already has as
+ca1 -> motor, extended to the concept pools). `build_biological_brain_regions`
+and `text_minimal_isolation.py` stay byte-unchanged (protected). Then:
+encode compositional (noun, adjective) bindings into the variant, run
+`run_concept_replay_phase` consolidation, and re-run the storage-locus
++ consolidation probes against the variant. Pre-registered routing
+rule: if the tag-to-cortex readout lifts off the 0.0015 noise floor
+and the bound adjective becomes selectively retrievable, the missing
+pathway is confirmed as the fix and a full pre-registered arc follows;
+if not, even with the pathway compositional consolidation fails, which
+is a deeper substrate finding. Discipline: design doc first, then the
+variant builder + probe, reuse-by-import for everything else, no
+autograd, honest propagation both remotes.
+
+**DECISION POINT FLAGGED FOR THE OWNER (does not block the autonomous
+next step):** the experimental variant above touches no protected
+module. But if the variant validates the fix, rolling the
+ca1 -> concept-pool pathway into the main `build_biological_brain_regions`
+modifies a protected, validated module and carries real risk to the
+validated direct-binding capability. That roll-in is an architectural
+decision for the owner, to be made with the variant's evidence in
+hand. The autonomous work proceeds on the variant; the roll-in waits.
+
+---
+[Historical content below preserved for context.]
+
 **THE NECESSITY-INSTRUMENT LINE IS TERMINAL AND FULLY PROPAGATED
 (2026-05-19, both remotes).** Five convergent faithful routes establish
 that the integrated-loop necessity instrument is biologically
