@@ -225,53 +225,82 @@ Findings:
 `research/findings/2026-05-22-activity-level-integration-probe-REACHABLE-distributed-population-code-required.md`;
 design `docs/plans/2026-05-22-activity-level-integration-design.md`.
 
-**EXACT NEXT ACTION: read the decisive activity-level integration run,
-smell-test it, adversarially review, propagate.** The real activity-
-level integration runner is BUILT and smoke-tested end-to-end:
-`research/findings/raw/activity_level_integration.py` -- reuses the
-validated v14/v16 + hippocampus substrate builder and the validated
-spiking-phasor FHRR subsystem byte-unchanged; captures the substrate's
-distributed per-neuron concept-pool activity (M observations/word);
-derives phasor symbols via a fixed random complex projection; registers
-a clean-up vocabulary from K-averaged activity; composes via the reused
-subsystem; pre-registered frozen 0.80 bar; kill-safe per-seed activity
-cache at `research/findings/raw/activity_level_integration_cache/full_seed{42,43,44}.npz`.
-The decisive multi-seed run (3 seeds, M=16, 300 trials/load) is IN
-FLIGHT; output at `research/findings/raw/activity_level_integration_full.json`.
-The --smoke run (M=4, toy numbers NOT a result) already surfaced an
-honest early signal: the substrate's MEASURED trial-to-trial activity
-coefficient of variation is ~1.35 -- far above the probe's modelled
-<= 0.10 (and even <= 0.20) passing regime -- and smoke composition-only
-landed 0.49-0.58. The decisive run is very likely RECOGNITION_BOUNDED
-or a clean NEGATIVE; if so the honest, pre-registered, biology-
-translatable finding is that the real substrate's per-neuron activity
-is far noisier than the regime where activity-derived symbols compose,
-so the discrete-label lookup interface (which discards exactly that
-trial noise) is the validated ceiling -- and the next pre-registered
-arc becomes whether temporal integration / multi-observation averaging
-denoises enough (a NEW design, not a tweak to this run). When the
-decisive run completes: read the full JSON, run the mandatory smell-
-test (scrutinise a nominal PASS HARDER than a FAIL; recompute from the
-recorded JSON; confirm composition-only vs integrated; no re-run, no
-bar change), dedicated adversarial review of the runner + verdict
-before any claim, then honest propagation (findings doc; capability
-pillar update ONLY if a genuine PASS; both git remotes). Then the
-parallel arc -- scaling beyond the small-load task -- or the
-temporal-averaging arc if this run is negative.
+**ACTIVITY-LEVEL INTEGRATION DECISIVE RUN COMPLETE = NEGATIVE,
+propagated (2026-05-22, both remotes).** Runner
+`research/findings/raw/activity_level_integration.py` (seeds 42/43/44;
+300 trials/load; reuse-by-import of the validated substrate builder +
+the validated spiking-phasor FHRR subsystem byte-unchanged; no
+protected module; no autograd; pre-registered frozen 0.80 bar):
+integrated multi-seed mean 0.378 / 0.361 / 0.331, composition-only
+0.416 / 0.406 / 0.359 at loads {2,3,5} -- ALL far below 0.80.
+NEGATIVE. Measured mechanism: the substrate's trial-to-trial activity
+coefficient of variation is ~1.63 (160%) -- four-to-eight times
+noisier than the <=20% regime where the cheap probe showed activity-
+derived symbols compose. Built-in control: the identity-level
+integration (same substrate/subsystem/task/seeds) scored 0.96-0.99,
+differing ONLY in the symbol-derivation step -> the negative is
+cleanly attributed to the activity-derived symbol being too noisy, not
+a subsystem/substrate/task fault. composition-only is ALSO below the
+bar (NOT the recognition-bounded case) -- the symbol itself is too
+noisy. Honest, pre-registered, biology-translatable: a brain cannot
+use a raw single-observation population snapshot as a stable symbol
+either; it must denoise the representation first (attractor dynamics /
+temporal integration). Findings:
+`research/findings/2026-05-22-activity-level-integration-NEGATIVE-substrate-activity-too-noisy-for-naive-symbol-grounding.md`;
+capability_status NEGATIVE pillar recorded.
 
-**PARADIGM CONSIDERATION, SURFACED HONESTLY (does not block the
-autonomous next step):** the spiking-phasor FHRR layer is a NEW phase-
-coded representational substrate, not a variant of the validated
-v14/v16 rate-coded concept pools -- the validated integration is a
-two-system architecture (rate-coded recognition front-end +
-phase-coded composition back-end). Theta-gamma phase coding is real
-biology; the phasor neuron models are function-first engineered
-devices -- biology-INSPIRED engineering. The autonomous work proceeds
-on the activity-level arc; the owner may weigh in on the paradigm
-question (is a two-system recognition+composition architecture the
-brain-analogue direction they want, vs pushing the rate-coded
-substrate further) with the validated subsystem + integration +
-adversarial-review evidence now in hand.
+**FHRR REFRAME -- OWNER VIGILANCE CHECK, INTERNALIZED, NOT
+RE-LITIGATED (2026-05-22).** The owner asked: would FHRR be considered
+cheating if we aim for biological realism? Honest answer: partly yes.
+FHRR's representational principle (phase-of-spike coding relative to a
+theta/gamma rhythm; vector-symbolic binding) IS sound biology, and a
+dedicated phase-coded binding system is biologically plausible --
+adopting it follows biology, it does not evade it. But the FHRR
+subsystem AS BUILT carries three engineered shortcuts a brain does not
+have: (1) Orchard's phase-sum / phase-subtraction integrator neurons
+are function-first engineered devices, not a biological neuron model;
+(2) each concept gets a fixed phasor symbol by ORACLE LOOKUP, not
+grounded in the substrate's own activity; (3) clean-up is an ARGMAX
+over an explicitly stored vocabulary table, not an attractor network.
+THEREFORE: the validated FHRR integration (0.96-0.99 multi-seed) is a
+validated ENGINEERING SCAFFOLD and a proof the compositional target is
+REACHABLE -- it is NOT a biological compositional result and those
+numbers must never be reported as biological composition. The
+capability_status pillar + findings docs are reframed accordingly (the
+engineering result stays honest; the scaffold-vs-biological line is
+now explicit, not buried). PRE-REGISTERED biologization arc: replace
+the three shortcuts one at a time, each its own pre-registered step;
+the compositional capability + abstention separation must SURVIVE each
+replacement, or the honest finding is which biological constraint
+breaks it. Shortcut 2 (grounded symbols) was the activity-level arc
+above -- naive form NEGATIVE; its deeper form (attractor-grounded,
+denoised symbols) couples with shortcut 3.
+
+**EXACT NEXT ACTION: biologize FHRR shortcut 1 -- replace the
+function-first phasor-integrator neurons with resonate-and-fire
+neurons.** Highest-priority, best-defined biologization step (owner
+ordering). Resonate-and-fire (RF) neurons are a recognized biological
+neuron model (Izhikevich 2001); Frady & Sommer 2019 (PNAS, "Robust
+computation with rhythmic spike patterns") derived robust FHRR-style
+computation directly from RF-neuron dynamics, and Orchard & Jarvis's
+own clean-up already uses RF neurons. Concrete steps: (a) research the
+Frady & Sommer RF-neuron FHRR realization (WebSearch / the paper) --
+how RF dynamics realize bind / unbind / bundle -- and write a short
+design doc `docs/plans/2026-05-22-resonate-and-fire-biologization-design.md`.
+(b) Build a net-new RF-neuron composition module
+`research/runners/resonate_fire_fhrr.py` (reuse-by-import only; the
+validated `spiking_phasor_fhrr.py` is NOT modified -- this is a
+parallel biologized variant; no protected module; no autograd; RF
+dynamics are integrator-neuron dynamics, not gradients). (c) Re-run
+the subsystem self-test against the frozen 0.80 bar -- PRE-REGISTERED:
+the compositional capability + abstention separation must survive the
+RF replacement, or the honest finding is which biological constraint
+breaks it. (d) If it survives -> shortcut 3 (attractor clean-up
+replacing stored-vocabulary argmax), then shortcut 2's deeper
+attractor-grounded form. Propagate every outcome both remotes.
+Standard discipline throughout: cheap-first, frozen bar, smell-test a
+PASS HARDER than a FAIL, dedicated adversarial review for any
+load-bearing claim.
 
 ---
 [Historical content below preserved for context.]
