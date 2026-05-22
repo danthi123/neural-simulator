@@ -1,0 +1,200 @@
+{
+  "seed": 42,
+  "cache_dir": "research/findings/raw/unified_per_regime/phase1",
+  "facts": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "river",
+      "small"
+    ],
+    [
+      "dog",
+      "hot"
+    ],
+    [
+      "cat",
+      "cold"
+    ]
+  ],
+  "tags": [
+    "ep_0",
+    "ep_1",
+    "ep_2",
+    "ep_3"
+  ],
+  "replay_checkpoints": [
+    0,
+    20,
+    60
+  ],
+  "stim_steps": 100,
+  "snapshots": [
+    {
+      "cumulative_replay_cycles": 0,
+      "per_binding": [
+        {
+          "tag": "ep_0",
+          "noun": "apple",
+          "adj": "big",
+          "pool_top": "motor_E",
+          "pool_top_rate": 0.00265,
+          "bound_adj_pool_rate": 0.00115,
+          "bound_adj_pool_rank_among_adj": 2,
+          "langout_top": "go",
+          "langout_bound_adj_rate": 0.1568627450980392,
+          "langout_bound_adj_rank": 5
+        },
+        {
+          "tag": "ep_1",
+          "noun": "river",
+          "adj": "small",
+          "pool_top": "noun_pool_APPLE",
+          "pool_top_rate": 0.0024,
+          "bound_adj_pool_rate": 0.00175,
+          "bound_adj_pool_rank_among_adj": 2,
+          "langout_top": "cat",
+          "langout_bound_adj_rate": 0.14705882352941177,
+          "langout_bound_adj_rank": 6
+        },
+        {
+          "tag": "ep_2",
+          "noun": "dog",
+          "adj": "hot",
+          "pool_top": "motor_E",
+          "pool_top_rate": 0.00245,
+          "bound_adj_pool_rate": 0.0018,
+          "bound_adj_pool_rank_among_adj": 2,
+          "langout_top": "hot",
+          "langout_bound_adj_rate": 0.18627450980392157,
+          "langout_bound_adj_rank": 1
+        },
+        {
+          "tag": "ep_3",
+          "noun": "cat",
+          "adj": "cold",
+          "pool_top": "motor_S",
+          "pool_top_rate": 0.0025,
+          "bound_adj_pool_rate": 0.00145,
+          "bound_adj_pool_rank_among_adj": 3,
+          "langout_top": "big",
+          "langout_bound_adj_rate": 0.22549019607843138,
+          "langout_bound_adj_rank": 4
+        }
+      ]
+    },
+    {
+      "cumulative_replay_cycles": 20,
+      "per_binding": [
+        {
+          "tag": "ep_0",
+          "noun": "apple",
+          "adj": "big",
+          "pool_top": "motor_N",
+          "pool_top_rate": 0.00145,
+          "bound_adj_pool_rate": 0.00105,
+          "bound_adj_pool_rank_among_adj": 2,
+          "langout_top": "cold",
+          "langout_bound_adj_rate": 0.0784313725490196,
+          "langout_bound_adj_rank": 11
+        },
+        {
+          "tag": "ep_1",
+          "noun": "river",
+          "adj": "small",
+          "pool_top": "adjective_pool_SMALL",
+          "pool_top_rate": 0.0026,
+          "bound_adj_pool_rate": 0.0026,
+          "bound_adj_pool_rank_among_adj": 1,
+          "langout_top": "dog",
+          "langout_bound_adj_rate": 0.09803921568627451,
+          "langout_bound_adj_rank": 9
+        },
+        {
+          "tag": "ep_2",
+          "noun": "dog",
+          "adj": "hot",
+          "pool_top": "adjective_pool_COLD",
+          "pool_top_rate": 0.00305,
+          "bound_adj_pool_rate": 0.0015,
+          "bound_adj_pool_rank_among_adj": 4,
+          "langout_top": "river",
+          "langout_bound_adj_rate": 0.18627450980392157,
+          "langout_bound_adj_rank": 3
+        },
+        {
+          "tag": "ep_3",
+          "noun": "cat",
+          "adj": "cold",
+          "pool_top": "motor_E",
+          "pool_top_rate": 0.0037,
+          "bound_adj_pool_rate": 0.00175,
+          "bound_adj_pool_rank_among_adj": 4,
+          "langout_top": "go",
+          "langout_bound_adj_rate": 0.29411764705882354,
+          "langout_bound_adj_rank": 3
+        }
+      ]
+    },
+    {
+      "cumulative_replay_cycles": 60,
+      "per_binding": [
+        {
+          "tag": "ep_0",
+          "noun": "apple",
+          "adj": "big",
+          "pool_top": "adjective_pool_SMALL",
+          "pool_top_rate": 0.0022,
+          "bound_adj_pool_rate": 0.0011,
+          "bound_adj_pool_rank_among_adj": 3,
+          "langout_top": "go",
+          "langout_bound_adj_rate": 0.10784313725490197,
+          "langout_bound_adj_rank": 10
+        },
+        {
+          "tag": "ep_1",
+          "noun": "river",
+          "adj": "small",
+          "pool_top": "motor_E",
+          "pool_top_rate": 0.0018,
+          "bound_adj_pool_rate": 0.0008,
+          "bound_adj_pool_rank_among_adj": 2,
+          "langout_top": "go",
+          "langout_bound_adj_rate": 0.11764705882352941,
+          "langout_bound_adj_rank": 7
+        },
+        {
+          "tag": "ep_2",
+          "noun": "dog",
+          "adj": "hot",
+          "pool_top": "motor_E",
+          "pool_top_rate": 0.00215,
+          "bound_adj_pool_rate": 0.00135,
+          "bound_adj_pool_rank_among_adj": 1,
+          "langout_top": "apple",
+          "langout_bound_adj_rate": 0.16666666666666666,
+          "langout_bound_adj_rank": 4
+        },
+        {
+          "tag": "ep_3",
+          "noun": "cat",
+          "adj": "cold",
+          "pool_top": "motor_W",
+          "pool_top_rate": 0.00425,
+          "bound_adj_pool_rate": 0.00265,
+          "bound_adj_pool_rank_among_adj": 1,
+          "langout_top": "dog",
+          "langout_bound_adj_rate": 0.22549019607843138,
+          "langout_bound_adj_rank": 6
+        }
+      ]
+    }
+  ],
+  "verdict": "CONSOLIDATION_DOES_NOT_LIFT",
+  "base_pool_rate": 0.0015374999999999998,
+  "last_pool_rate": 0.0014750000000000002,
+  "base_langout_rate": 0.17892156862745098,
+  "last_langout_rate": 0.15441176470588236
+}
