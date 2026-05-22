@@ -1,0 +1,38 @@
+{
+  "n_cues": 8,
+  "n_fillers": 8,
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "n_dim": 512,
+  "cycle_steps": 1000,
+  "n_trials": 300,
+  "bar": 0.8,
+  "seed": 42,
+  "anneal_theta_low": 0.1,
+  "anneal_theta_high": 0.5,
+  "anneal_iters": 12,
+  "per_load": {
+    "2": {
+      "compositional_accuracy": 1.0,
+      "groundable_active_min": 0.96875,
+      "ungroundable_active_max": 1.0,
+      "abstention_separates": false
+    },
+    "3": {
+      "compositional_accuracy": 1.0,
+      "groundable_active_min": 0.947265625,
+      "ungroundable_active_max": 1.0,
+      "abstention_separates": false
+    },
+    "5": {
+      "compositional_accuracy": 1.0,
+      "groundable_active_min": 0.966796875,
+      "ungroundable_active_max": 1.0,
+      "abstention_separates": false
+    }
+  },
+  "verdict": "FAIL"
+}

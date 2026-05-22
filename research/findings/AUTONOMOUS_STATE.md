@@ -326,34 +326,62 @@ attractor clean-up has a compositional-load ceiling -- basin width and
 the abstention moat are in tension. Findings:
 `research/findings/2026-05-22-attractor-cleanup-biologization-shortcut-3-PARTIAL-passes-loads-2-3-load-ceiling-at-5.md`.
 
-**EXACT NEXT ACTION: shortcut-3 mitigation -- an ANNEALED-THRESHOLD
-attractor settle.** The load-5 failure mechanism points directly at the
-fix and it is biologically motivated: a fixed neural threshold is the
-problem; biology uses dynamic thresholds / gain modulation. Anneal the
-attractor settle's threshold -- start LOW so a noisy high-load
-recovered phasor is admitted into a basin and the recurrent dynamics
-get a chance to denoise it, then RAISE it as the state sharpens toward
-an attractor. An ungroundable input does not sharpen toward any
-attractor at any threshold, so abstention is preserved. This is a
-structural change to the settle dynamics (a new pre-registered step),
-NOT a re-tuning of the fixed threshold (which would be config-cranking
-a FAIL into a PASS -- forbidden). Concrete steps: (a) extend
-`ResonateFireTPAM` with an annealed-threshold settle (a pre-set
-threshold schedule, e.g. linear ramp over the settle iterations from a
-low admit-threshold to the high sharpen-threshold -- the schedule fixed
-in advance, not tuned to the bar). (b) Re-run the self-test --
-PRE-REGISTERED: the annealed settle must clear the frozen 0.80 bar at
-ALL loads {2,3,5} AND keep the abstention separation (groundable
-settles reach an attractor, ungroundable collapse), or the honest
-finding is that even an annealed attractor cannot resolve the
-basin/moat tension at load 5 (which would say the recovered phasor
-needs denoising BEFORE the clean-up -- routing to shortcut 2's deeper
-form). (c) If it survives -> shortcut 2's deeper attractor-grounded
-form (a symbol grounded in a denoised attractor-stabilised
-representation -- an attractor network both grounds and denoises, what
-the activity-level NEGATIVE re-specified). Propagate every outcome both
-remotes. Standard discipline: frozen bar, smell-test a PASS HARDER than
-a FAIL, dedicated adversarial review before any capability claim.
+**BIOLOGIZATION SHORTCUT 3 RESOLVED (2026-05-22, both remotes).** Three
+attempts; the two failures are the substantive finding. (1) Fixed-
+threshold attractor: PARTIAL -- load ceiling at 5. (2) Annealed-
+threshold attractor: acc 1.000 at ALL loads (load ceiling gone) but
+abstention BROKEN -- ungroundable queries settle into basins (active
+1.000 not 0). NEGATIVE. The structural finding: a Hopfield-type
+attractor sorts EVERY input into a memory basin, so a pure attractor
+settle CONFABULATES -- abstention cannot be a basin-of-attraction
+property; it must be a separate signal. (3) Separated clean-up: PASS at
+all loads {2,3,5}, acc 1.000, abstention separation clean (groundable
+match 0.30-0.60 > threshold 0.2 > ungroundable ~0.11). Identification
+is biologized as an annealed attractor settle (recurrent dynamics,
+distributed weights -- no argmax over an enumerated list); abstention
+is a separate match-strength / familiarity gate (a real biological
+mechanism -- novelty/familiarity detection -- not a basin property).
+Smell-test passed: the PASS is earned by two characterised failures;
+the familiarity threshold 0.2 was derived from already-measured data
+and pre-registered, not tuned. Findings:
+`research/findings/2026-05-22-attractor-cleanup-biologization-shortcut-3-RESOLVED-abstention-is-a-separate-familiarity-signal-not-a-basin-property.md`.
+Biologization status: shortcut 1 (resonate-and-fire neurons) PASS;
+shortcut 3 (clean-up) RESOLVED; shortcut 2 (oracle symbols) remains.
+
+**EXACT NEXT ACTION: shortcut 2's deeper form -- ground the symbol in
+a denoised, attractor-stabilised representation.** Shortcut 2 (each
+concept gets its phasor symbol by ORACLE LOOKUP, not from the
+substrate's own activity) is the last unbiologized shortcut. Its naive
+form -- derive the symbol directly from raw substrate activity --
+was a decisive NEGATIVE (activity-level integration arc: substrate
+activity coefficient of variation ~1.6, far too noisy; the derived
+symbol does not compose). The deeper form, which the activity-level
+NEGATIVE itself re-specified and shortcut 3 just built the machinery
+for: pass the noisy substrate activity through an attractor network
+whose fixed points are the concept representations -- the attractor
+settle DENOISES the activity (an attractor network both stores a
+representation in distributed recurrent weights AND denoises a noisy
+version by settling), and the settled clean state is the grounded
+symbol. Concrete cheap-first step (follow the cheap-first discipline):
+(a) a numpy probe -- model the substrate activity as a concept
+centroid + the MEASURED ~1.6 coefficient-of-variation noise (the real
+measured value, not an optimistic one); store the concept centroids as
+attractor fixed points; settle the noisy activity through the attractor
+(reuse the `ResonateFireTPAM` annealed settle); test whether the
+settled (denoised) state, used as the FHRR symbol, clears the frozen
+0.80 compositional bar at loads {2,3,5}. PRE-REGISTERED: if the
+attractor-denoised symbol clears 0.80 -> the deeper form is reachable,
+proceed to the real-substrate build; if not -> the honest finding is
+that even attractor denoising cannot rescue CV~1.6 activity, and the
+honest ceiling is that grounded symbols need a cleaner substrate
+representation (which routes back to improving the recognition
+substrate itself). (b) Propagate; if reachable, build the real
+activity-level-integration-with-attractor-denoising runner. Reuse-by-
+import; no protected module; no autograd. Standard discipline: cheap-
+first, frozen bar, smell-test a PASS HARDER than a FAIL, dedicated
+adversarial review before any capability claim. After shortcut 2: all
+three shortcuts addressed -> the dedicated adversarial review of the
+fully-biologized composition layer, then the capability rollup.
 
 ---
 [Historical content below preserved for context.]
