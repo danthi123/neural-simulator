@@ -1,0 +1,43 @@
+{
+  "seed": 42,
+  "scale": {
+    "n_lang_input": 8192,
+    "n_shared_pool": 2000,
+    "n_shared_fs": 300,
+    "pattern_size": 100
+  },
+  "n_concepts_tested": 6,
+  "m_obs": 4,
+  "stim_steps": 100,
+  "drive_pA": 200.0,
+  "v16_density": 0.075,
+  "decisive_run_density_recomputed": 0.00765,
+  "target_density_low": 0.04,
+  "near_silent_max": 0.025,
+  "conditions": {
+    "A_teacher_only": {
+      "pool_frac_nonzero": 0.0025833333333333337,
+      "pool_mean_rate": 6.958333333333332e-05,
+      "fs_frac_nonzero": 0.14277777777777778,
+      "fs_mean_rate": 0.002936111111111111
+    },
+    "B_lang_plus_teacher": {
+      "pool_frac_nonzero": 0.004124999999999999,
+      "pool_mean_rate": 0.00011708333333333334,
+      "fs_frac_nonzero": 0.14305555555555557,
+      "fs_mean_rate": 0.003120833333333333
+    },
+    "C_lang_only": {
+      "pool_frac_nonzero": 0.003958333333333334,
+      "pool_mean_rate": 0.00014458333333333334,
+      "fs_frac_nonzero": 0.14055555555555557,
+      "fs_mean_rate": 0.0029986111111111116
+    }
+  },
+  "teacher_sweep_under_lang_drive": {
+    "100.0": 0.0034791666666666664,
+    "600.0": 0.03264583333333334,
+    "2000.0": 0.052083333333333336
+  },
+  "verdict": "INCONCLUSIVE"
+}

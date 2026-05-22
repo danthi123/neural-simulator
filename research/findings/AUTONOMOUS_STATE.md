@@ -618,32 +618,70 @@ Findings:
 The completed twice-reviewed 16-concept FHRR-biologization arc
 (multi-seed 0.98) stands, unaffected.
 
-**EXACT NEXT ACTION: diagnose the near-silent-activity cause, then
-re-do the vocabulary-scaling test on a properly-exercised G.20 sparse
-substrate.** The NEGATIVE has a diagnosed setup gap; the intended test
-(the biologized pipeline on the VALIDATED G.20 sparse substrate) was
-not actually run. Cheapest-first: a numpy/GPU capture-drive probe --
-does a stronger teacher current / longer stim window / a TRAINED G.20
-sparse bridge bring the captured shared-pool activity to a density
-comparable to the validated v14/v16 substrate (~7.5% nonzero, the
-regime the pipeline passed at)? PRE-REGISTERED: (a) if a properly-
-exercised G.20 sparse capture reaches v14/v16-comparable activity
-density, re-run the pre-registered vocabulary-scaling test on it (this
-corrects a setup gap -- it is NOT config-cranking a NEGATIVE, the
-0.80 bar is unchanged and the substrate is being put into the state
-the design doc specified); (b) if even a trained / strongly-driven
-G.20 sparse pool stays too sparse to ground a clean symbol, the honest
-finding is that the activity-grounded pipeline needs a denser substrate
-than G.20 sparse provides -- and the alternative (grounding the symbol
-in the G.20 sparse K-of-N PATTERN, the concept's clean code) is weighed
-honestly against whether it is still substrate-grounded or closer to
-an oracle. Standard discipline: cheap-first, frozen bar never tuned,
-smell-test a PASS HARDER than a FAIL, dedicated adversarial review
-before any capability claim, honest propagation both remotes. (Broader
-horizon, surfaced for the owner, NOT auto-launched: the owner's
-standing conversational-path directives -- SPEAR, theta-gamma
-mode-unification, generative replay -- and the integrated closed loop
-are the larger arcs.)
+**CAPTURE-DRIVE PROBE ARC COMPLETE -- the near-silence is the UNTRAINED
+substrate; v1 scale-artifact retracted; the live fix is a TRAINED G.20
+sparse substrate (2026-05-22, both remotes).** Three cheap GPU
+diagnostic probes drilled the vocabulary-scaling NEGATIVE's near-silent
+captured activity to its cause. (v1) A teacher-current sweep on a
+REDUCED-scale bridge (1000-neuron pool) returned a DRIVE_GAP_RECOVERABLE
+verdict; a smell-test FALSIFIED it -- at the decisive run's exact 100 pA
+teacher current v1 recorded 0.0787 pool-nonzero, but the full-scale
+bridge records 0.0026; v1's reduced 1000-neuron pool has a lower
+feedback-inhibition loop gain and behaves nothing like the full
+2000-neuron decisive-run pool. v1 is a SCALE ARTIFACT, retracted
+(retraction notice in the file). (v2) A controlled probe at the
+decisive run's EXACT full scale: all three capture-drive conditions are
+near-silent at 100 pA -- teacher-only 0.0026, lang_input+teacher 0.0041
+(reproducing the decisive run's recomputed 0.0077), lang_input-only
+0.0040. The lang_input drive is NOT the suppressor; the whole
+freshly-built substrate is near-silent. A stronger teacher does recover
+pool density (2000 pA -> 0.052) but only by force-firing the concept's
+K-of-N pattern itself -- pattern-domination, which edges the captured
+"activity" toward the oracle-symbol shortcut the biologization arc
+exists to remove. (v3) Applying the validated G.20 topographic prior
+(the structural selectivity a fresh bridge lacks) lifts pool density
+0.004 -> 0.019-0.023 and own-pattern recruitment 2.4% -> 13.5%
+(selectivity 7.7x) -- a real, large improvement -- but prior-alone
+capture density (0.019) is still below the v14/v16-comparable 0.04
+proxy (the frozen proxy was NOT moved). The prior is only structural
+selectivity; the validated G.20 substrate also has a spike-timing
+training stage. NET DIAGNOSIS: the NEGATIVE's near-silence is the
+UNTRAINED substrate -- exactly as the NEGATIVE doc itself stated; the
+probes confirmed it, retracted the scale-artifact red herring, and
+ruled out the cheap fixes (a stronger teacher is oracle-adjacent; the
+prior alone is insufficient). The live fix is the original NEGATIVE's
+candidate 1: capture from a fully TRAINED G.20 sparse substrate.
+Findings:
+`research/findings/2026-05-22-vocabulary-scaling-capture-drive-probe-near-silence-diagnosed-to-untrained-substrate.md`.
+
+**EXACT NEXT ACTION: re-run the pre-registered 64-concept
+vocabulary-scaling test capturing from a fully TRAINED G.20 sparse
+substrate.** A new pre-registered runner inserts the validated G.20
+encoding -- `apply_sparse_topographic_prior` + `train_concept_sparse`,
+both reused by import byte-unchanged from the validated G.20 module --
+BEFORE the activity capture, then runs the biologized
+grounded-composition pipeline (reused byte-unchanged) against the
+frozen 0.80 compositional bar, multi-seed 42/43/44, loads {2,3,5}. The
+0.80 bar is unchanged; this corrects the diagnosed setup gap (the
+design doc specified the project's VALIDATED -- i.e. trained -- G.20
+sparse substrate, and the decisive run used a fresh untrained one). It
+is NOT config-cranking a NEGATIVE: the bar is frozen and the substrate
+is being put into the state the design doc specified. PRE-REGISTERED:
+(a) if the trained-substrate capture composes integrated multi-seed
+>= 0.80 at all loads, the biologized compositional capability scales to
+a 64-concept vocabulary -- proceed to the 160/320-concept ensemble;
+(b) if still NEGATIVE, the honest finding is that the activity-grounded
+pipeline needs a denser substrate than the G.20 sparse pool provides
+even when trained -- and grounding the symbol in the G.20 sparse K-of-N
+PATTERN (the concept's clean code, candidate 2) is weighed honestly
+against whether it is still substrate-grounded or closer to an oracle.
+Standard discipline: design + TDD plan + subagent-driven build, frozen
+bar never tuned, smell-test a PASS HARDER than a FAIL, dedicated
+adversarial review before any capability claim, honest propagation
+both remotes. (Broader horizon, surfaced for the owner, NOT
+auto-launched: the owner's standing conversational-path directives --
+SPEAR, theta-gamma mode-unification, generative replay -- and the
+integrated closed loop are the larger arcs.)
 
 ---
 [Historical content below preserved for context.]
