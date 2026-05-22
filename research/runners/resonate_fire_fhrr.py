@@ -176,6 +176,79 @@ class ResonateFireFHRR:
         return rf_unbind(composite_spikes, cue_spikes, self.t_steps)
 
 
+# Threshold of the attractor clean-up's resonate-and-fire transfer: a
+# structural parameter of the network, set from the drive-magnitude
+# analysis (a clean match drives a unit to about unit magnitude; an
+# ungroundable input drives it well below). NOT the compositional bar.
+TPAM_THETA = 0.5
+TPAM_MAX_ITERS = 10
+
+
+class ResonateFireTPAM:
+    """Threshold Phasor Associative Memory (Frady & Sommer 2019) as the
+    clean-up -- biologization step 3. A complex-valued attractor network
+    whose stable fixed points are the stored vocabulary patterns,
+    replacing the argmax-over-a-stored-list clean-up.
+
+    The vocabulary lives in the recurrent weight matrix W = S S* (S =
+    the stored phasor patterns as columns, normalised by the dimension).
+    A noisy recovered phasor is cleaned by SETTLING the recurrent
+    dynamics: iterate the recurrent synaptic integration u = W z and the
+    resonate-and-fire threshold transfer (above-threshold neurons
+    re-emit a spike at phase(u); below-threshold neurons stay silent).
+    Abstention is a basin-of-attraction property: an ungroundable input
+    lies in no attractor's basin, so the recurrent drive never exceeds
+    threshold and the state collapses to silence."""
+
+    def __init__(self, vocab_spikes, theta=TPAM_THETA, t_steps=CYCLE_STEPS,
+                 max_iters=TPAM_MAX_ITERS):
+        self.t_steps = int(t_steps)
+        self.theta = float(theta)
+        self.max_iters = int(max_iters)
+        # S: (N, K) -- the stored phasor patterns as columns.
+        self.s = np.stack([_to_phasor(v, t_steps) for v in vocab_spikes],
+                          axis=1)
+        n = self.s.shape[0]
+        # Recurrent weight = outer product of the stored patterns,
+        # normalised by the dimension (a clean match then drives each
+        # unit to about unit magnitude).
+        self.w = (self.s @ self.s.conj().T) / float(n)
+
+    def settle(self, recovered_spikes):
+        """Initialise the network with the recovered noisy phasor and
+        iterate the recurrent integration u = W z and the resonate-and-
+        fire threshold transfer. Returns (final phasor state, fraction
+        of neurons still active)."""
+        z = _to_phasor(recovered_spikes, self.t_steps)
+        active_frac = 1.0
+        for _ in range(self.max_iters):
+            u = self.w @ z                       # recurrent integration
+            active = np.abs(u) > self.theta
+            active_frac = float(np.mean(active))
+            if not active.any():                 # collapsed -> abstain
+                z = np.zeros_like(z)
+                break
+            # Genuine resonate-and-fire readout: kicked by u, the neuron
+            # spikes at phase(u); the magnitude gate decides whether it
+            # spikes at all.
+            spikes = rf_resonate(u, self.t_steps)
+            z_new = np.where(active, _to_phasor(spikes, self.t_steps),
+                             0.0 + 0.0j)
+            if np.allclose(z_new, z, atol=1e-6):
+                z = z_new
+                break
+            z = z_new
+        return z, active_frac
+
+    def cleanup(self, recovered_spikes):
+        """Settle the recovered phasor and read out which stored
+        attractor the network reached. Returns (index, active_fraction);
+        a low active fraction means the network collapsed -- abstain."""
+        z, active_frac = self.settle(recovered_spikes)
+        overlaps = np.abs(self.s.conj().T @ z)
+        return int(np.argmax(overlaps)), active_frac
+
+
 # =====================================================================
 # Self-test: the project's compositional task on resonate-and-fire
 # neurons, against the frozen 0.80 bar -- mirrors spiking_phasor_fhrr.py.
@@ -319,5 +392,99 @@ def run_self_test():
     return 0 if all_pass else 1
 
 
+def run_tpam_self_test():
+    """Biologization step 3: the project's compositional task with the
+    attractor (Threshold Phasor Associative Memory) clean-up replacing
+    the argmax-over-a-stored-list clean-up. Abstention is the attractor
+    settle collapsing -- the fraction of neurons still active after
+    settling separates groundable from ungroundable."""
+    print("\n=== resonate-and-fire FHRR + attractor (TPAM) clean-up "
+          "self-test ===")
+    print(f"vocab {N_CUES}x{N_FILLERS}; loads={LOADS}; N_dim={N_DIM}; "
+          f"cycle={CYCLE_STEPS} steps; trials={N_TRIALS}; bar={BAR}; "
+          f"TPAM theta={TPAM_THETA}")
+
+    rng = np.random.default_rng(SEED)
+    net = ResonateFireFHRR(N_DIM, rng)
+
+    per_load = {}
+    all_pass = True
+    for load in LOADS:
+        n_correct = 0
+        n_total = 0
+        groundable_active = []
+        ungroundable_active = []
+        for _ in range(N_TRIALS):
+            cues = [net.random_symbol() for _ in range(N_CUES)]
+            fillers = [net.random_symbol() for _ in range(N_FILLERS)]
+            tpam = ResonateFireTPAM(fillers)
+            cue_idx = list(rng.choice(N_CUES, size=load, replace=False))
+            fill_idx = list(rng.choice(N_FILLERS, size=load, replace=True))
+            facts = list(zip(cue_idx, fill_idx))
+            composite = net.encode([(cues[c], fillers[f]) for (c, f) in facts])
+            for (c, f) in facts:
+                recovered = net.query(composite, cues[c])
+                k, active_frac = tpam.cleanup(recovered)
+                if k == f:
+                    n_correct += 1
+                n_total += 1
+                groundable_active.append(active_frac)
+            for c in range(N_CUES):
+                if c in cue_idx:
+                    continue
+                recovered = net.query(composite, cues[c])
+                _, active_frac = tpam.cleanup(recovered)
+                ungroundable_active.append(active_frac)
+        acc = n_correct / n_total
+        g = np.array(groundable_active)
+        u = np.array(ungroundable_active)
+        abst_ok = float(np.min(g)) > float(np.max(u))
+        per_load[load] = {
+            "compositional_accuracy": acc,
+            "groundable_active_min": float(np.min(g)),
+            "ungroundable_active_max": float(np.max(u)),
+            "abstention_separates": abst_ok,
+        }
+        if acc < BAR or not abst_ok:
+            all_pass = False
+        print(f"  L={load}: compositional acc={acc:.4f} "
+              f"({'>=' if acc >= BAR else '<'} {BAR}) | settle active: "
+              f"groundable min={np.min(g):.3f} > ungroundable max="
+              f"{np.max(u):.3f} ? {abst_ok}")
+
+    verdict = "PASS" if all_pass else "FAIL"
+    print(f"\n=== TPAM SELF-TEST VERDICT: {verdict} ===")
+    if all_pass:
+        print("  The attractor (TPAM) clean-up clears the frozen 0.80 "
+              "compositional bar at all loads AND the abstention signal "
+              "(settle active fraction) cleanly separates groundable from "
+              "ungroundable. The compositional capability survives "
+              "replacing the argmax-over-a-stored-list clean-up with an "
+              "attractor network whose fixed points are the vocabulary -- "
+              "FHRR shortcut 3 biologized; the no-confabulation moat is "
+              "now a basin-of-attraction property.")
+    else:
+        print("  The attractor clean-up does not clear the frozen bar / "
+              "abstention separation -- the honest finding is which "
+              "property of the attractor dynamics breaks the capability. "
+              "Investigate before any claim.")
+
+    out = {
+        "n_cues": N_CUES, "n_fillers": N_FILLERS, "loads": LOADS,
+        "n_dim": N_DIM, "cycle_steps": CYCLE_STEPS, "n_trials": N_TRIALS,
+        "bar": BAR, "seed": SEED,
+        "tpam_theta": TPAM_THETA, "tpam_max_iters": TPAM_MAX_ITERS,
+        "per_load": {str(k): v for k, v in per_load.items()},
+        "verdict": verdict,
+    }
+    with open("research/findings/raw/resonate_fire_tpam_selftest.json", "w",
+              encoding="utf-8") as f:
+        json.dump(out, f, indent=2)
+    print("Wrote research/findings/raw/resonate_fire_tpam_selftest.json")
+    return 0 if all_pass else 1
+
+
 if __name__ == "__main__":
-    sys.exit(run_self_test())
+    rc1 = run_self_test()
+    rc2 = run_tpam_self_test()
+    sys.exit(rc1 | rc2)

@@ -302,36 +302,58 @@ result, biologizes shortcut 1 only; NOT yet a capability claim
 capability rollup). Findings:
 `research/findings/2026-05-22-resonate-and-fire-biologization-shortcut-1-PASS-function-first-integrator-replaced-with-biological-neuron-model.md`.
 
-**EXACT NEXT ACTION: biologize FHRR shortcut 3 -- replace the
-stored-vocabulary argmax clean-up with an attractor network whose
-fixed points are the vocabulary.** The clean-up currently takes an
-argmax over an explicitly enumerated vocabulary table -- the brain
-keeps no such list. Frady & Sommer 2019's Threshold Phasor Associative
-Memory (TPAM) is exactly the biological replacement: a complex-valued
-Hopfield-style attractor network, weight W = S S*^T (outer product of
-the stored phasor patterns), threshold transfer z = (u/|u|)*H(|u|-Theta)
-(keeps the phase, thresholds the magnitude), Lyapunov energy
-E(z) = -1/2 sum W_ij z_i z_j* + Theta||z||_1 -> settles to fixed-point
-attractors = the stored patterns. It is built from the same resonate-
-and-fire neurons. Concrete steps: (a) write a short design doc
-`docs/plans/2026-05-22-attractor-cleanup-biologization-design.md`
-(TPAM as the clean-up; pre-registered: the compositional capability +
-abstention separation must survive -- abstention = the settle failing
-to reach any stored attractor, the no-confab moat as a basin-of-
-attraction property). (b) Build the TPAM clean-up into a net-new module
-or extend `resonate_fire_fhrr.py` (reuse-by-import; no protected
-module; no autograd -- TPAM is attractor dynamics, a time-stepped
-recurrent settle, not gradients). (c) Re-run the subsystem self-test
-against the frozen 0.80 bar with the attractor clean-up replacing
-argmax -- PRE-REGISTERED: capability + abstention must survive, or the
-honest finding is which biological constraint breaks it. (d) If it
-survives -> shortcut 2's deeper attractor-grounded form (a symbol
-grounded in a denoised attractor-stabilised representation, since an
-attractor network both grounds and denoises -- this is what the
-activity-level NEGATIVE re-specified). Propagate every outcome both
-remotes. Standard discipline: cheap-first, frozen bar, smell-test a
-PASS HARDER than a FAIL, dedicated adversarial review before any
-capability claim.
+**BIOLOGIZATION SHORTCUT 3 COMPLETE = PARTIAL, propagated (2026-05-22,
+both remotes).** The argmax-over-a-stored-list clean-up was replaced
+with the Threshold Phasor Associative Memory (Frady & Sommer 2019) -- a
+complex-valued attractor network whose fixed points are the vocabulary,
+recurrent weight W = S S*/N, settled by recurrent integration + the
+resonate-and-fire threshold transfer; abstention = the settle
+collapsing to silence (a basin-of-attraction property). Built into
+`research/runners/resonate_fire_fhrr.py` (`ResonateFireTPAM`; reuse-by-
+import; no protected module; no autograd). Self-test (project's
+compositional task, frozen 0.80 bar): L=2 acc 1.0000, L=3 acc 0.9867,
+L=5 acc 0.1980 -- abstention separation clean at L2/L3 (groundable
+active 0.71-0.91 > ungroundable 0.000), collapses at L5. PRE-REGISTERED
+verdict (all loads) = FAIL; honestly PARTIAL (mechanism biologized,
+works at loads 2-3, load ceiling at 5). Smell-test confirmed genuine:
+TPAM mechanically correct (clean pattern -> identified, active 0.998;
+noise -> collapse, active 0.000); the L5 collapse is the SNR/basin
+tension -- the argmax clean-up (no threshold) got L5 acc 1.000, so the
+signal IS present; the fixed abstention threshold (high enough to
+reject ungroundable) also rejects the noisy high-load groundable
+queries. Honest biology-translatable finding: a FIXED-threshold
+attractor clean-up has a compositional-load ceiling -- basin width and
+the abstention moat are in tension. Findings:
+`research/findings/2026-05-22-attractor-cleanup-biologization-shortcut-3-PARTIAL-passes-loads-2-3-load-ceiling-at-5.md`.
+
+**EXACT NEXT ACTION: shortcut-3 mitigation -- an ANNEALED-THRESHOLD
+attractor settle.** The load-5 failure mechanism points directly at the
+fix and it is biologically motivated: a fixed neural threshold is the
+problem; biology uses dynamic thresholds / gain modulation. Anneal the
+attractor settle's threshold -- start LOW so a noisy high-load
+recovered phasor is admitted into a basin and the recurrent dynamics
+get a chance to denoise it, then RAISE it as the state sharpens toward
+an attractor. An ungroundable input does not sharpen toward any
+attractor at any threshold, so abstention is preserved. This is a
+structural change to the settle dynamics (a new pre-registered step),
+NOT a re-tuning of the fixed threshold (which would be config-cranking
+a FAIL into a PASS -- forbidden). Concrete steps: (a) extend
+`ResonateFireTPAM` with an annealed-threshold settle (a pre-set
+threshold schedule, e.g. linear ramp over the settle iterations from a
+low admit-threshold to the high sharpen-threshold -- the schedule fixed
+in advance, not tuned to the bar). (b) Re-run the self-test --
+PRE-REGISTERED: the annealed settle must clear the frozen 0.80 bar at
+ALL loads {2,3,5} AND keep the abstention separation (groundable
+settles reach an attractor, ungroundable collapse), or the honest
+finding is that even an annealed attractor cannot resolve the
+basin/moat tension at load 5 (which would say the recovered phasor
+needs denoising BEFORE the clean-up -- routing to shortcut 2's deeper
+form). (c) If it survives -> shortcut 2's deeper attractor-grounded
+form (a symbol grounded in a denoised attractor-stabilised
+representation -- an attractor network both grounds and denoises, what
+the activity-level NEGATIVE re-specified). Propagate every outcome both
+remotes. Standard discipline: frozen bar, smell-test a PASS HARDER than
+a FAIL, dedicated adversarial review before any capability claim.
 
 ---
 [Historical content below preserved for context.]
