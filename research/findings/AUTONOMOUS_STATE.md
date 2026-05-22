@@ -460,32 +460,71 @@ front-end recognizes concepts at 0.88-0.96 instead of 0.67, without
 changing the substrate. Findings:
 `research/findings/2026-05-22-recognition-bound-probe-temporal-averaging-lifts-recognition.md`.
 
-**EXACT NEXT ACTION: build the fully-biologized grounded compositional
-pipeline, end-to-end, on the cached activity.** Every piece is now in
-hand and the recognition-bound probe constructively reopened shortcut 2.
-Build a runner (`research/findings/raw/biologized_grounded_composition.py`,
-numpy-cheap, reuses the activity cache -- no GPU run): for each concept
-word, (1) RECOGNISE by averaging the per-neuron activity over K
-observations then per-pool argmax (the longer-integration readout; use
-K~8, recognition ~0.93); (2) the GROUNDED SYMBOL = the dentate-gyrus
-pattern-separated code of that concept's consolidated activity (reuse
-`dg_separate` from `pattern_separation_grounding_probe.py` -- the
-substrate's own representation, orthogonalised; NOT an oracle vector);
-(3) COMPOSE via the resonate-and-fire FHRR layer (`ResonateFireFHRR`)
-and CLEAN UP via the separated attractor clean-up + familiarity gate
-(`ResonateFireTPAM.cleanup_separated`). Measure integrated accuracy vs
-the frozen 0.80 bar, multi-seed {42,43,44}, loads {2,3,5}. PRE-
-REGISTERED: this pipeline is biological end-to-end (longer-integration
-rate readout + dentate-gyrus pattern separation + resonate-and-fire
-FHRR + attractor clean-up; NO oracle symbol table, NO autograd) -- if
-it clears 0.80 it is the constructive close of shortcut 2: a
-compositional capability that is biology-grounded end-to-end,
-recognition-bounded at ~0.93; if it does not, the honest finding is
-which stage costs the capability. Reuse-by-import; no protected module
-modified. Then a dedicated adversarial review of this end-to-end
-pipeline before any capability-status claim; honest propagation both
-remotes. Standard discipline: cheap-first, frozen bar, smell-test a
-PASS HARDER than a FAIL.
+**FULLY-BIOLOGIZED GROUNDED PIPELINE = NEGATIVE, compositional-
+biologization line at TERMINUS (2026-05-22, both remotes).** The
+end-to-end runner (`biologized_grounded_composition.py`; longer-
+integration recognition + dentate-gyrus pattern-separated grounded
+symbols + resonate-and-fire FHRR + attractor clean-up; NO oracle
+table; reuses the cache, no GPU run): integrated multi-seed
+0.353/0.327/0.326, composition-only ~equal -- far below 0.80, NOT
+recognition-bounded (the composition itself fails on the grounded
+symbols). Diagnostic-confirmed cause: the attractor clean-up identifies
+a CLEAN grounded symbol at only 1/16 (chance) while a soft argmax gets
+16/16 -- the attractor is degenerate over the 0.19-similar pattern-
+separated symbols. The biologized attractor clean-up needs near-
+orthogonal symbols (~0.04); pattern separation orthogonalises the
+substrate's representations only to ~0.19. Two biologized pieces, each
+validated in isolation, have INCOMPATIBLE orthogonality requirements.
+Findings:
+`research/findings/2026-05-22-biologized-grounded-composition-NEGATIVE-the-attractor-cleanup-and-grounded-symbols-have-incompatible-orthogonality-requirements.md`.
+
+COMPOSITIONAL-BIOLOGIZATION LINE -- TERMINAL SYNTHESIS (complete, honest,
+all propagated): the project HAS a validated compositional retrieval
+capability (the identity-level integration, multi-seed 0.96-0.99,
+adversarially reviewed). Its composition layer's NEURONS biologize
+unconditionally (resonate-and-fire). Its SYMBOL and CLEAN-UP cannot
+both be biologized end-to-end on this substrate -- the attractor
+clean-up needs near-orthogonal symbols, the substrate's grounded
+representations (even pattern-separated) are 0.19-correlated, the
+requirements conflict. The ROOT CAUSE the whole line converged on: the
+substrate's concept representations are fundamentally mutually
+overlapping (~0.45 raw); every orthogonality-needing mechanism inherits
+that as a bound. Biology-translatable insight set delivered: RF neurons
+realize FHRR ops; a pure attractor confabulates so abstention needs a
+separate familiarity signal; FHRR + attractor clean-up both need
+orthogonal atomic symbols; pattern separation orthogonalises only
+partially (0.45->0.19) and trades against recognition; recognition is
+reducible by temporal integration (0.67->0.96).
+
+**EXACT NEXT ACTION: the substrate concept-representation separability
+arc -- the root cause.** The whole compositional line converged on one
+root cause: the substrate's concept representations overlap by ~0.45.
+That overlap is produced by the concept-pool architecture (the v14/v16
+line) during training. The genuinely next arc, per the project goal
+(biology-translatable insight; brain analogue): can the substrate be
+trained so its STORED concept representations are more separable --
+specifically, route the concept pools through the project's validated
+dentate gyrus (catalog D.12 pattern separation) DURING training/
+encoding, so the concepts are stored separated rather than separated
+after the fact (which the pattern-separation probe showed breaks
+recognition -- the separation/completion tension; separating at
+ENCODING time, once, does not have that tension). Concrete cheap-first
+step FIRST: a numpy probe that does NOT need a substrate run -- take
+the cached concept activity, ask whether there exists ANY fixed
+encoding-time transform (the DG expansion+sparsification swept over
+expansion ratio and sparsity) that BOTH (a) drives the stored
+concept-symbol mutual similarity below ~0.05 (orthogonal enough for
+the attractor clean-up) AND (b) keeps a noisy observation, passed
+through the SAME fixed transform, recognisable to its concept >=0.85
+(the recognition the attractor then needs). PRE-REGISTERED: if such a
+transform exists -> a separated-encoding substrate variant is the
+build (a GPU substrate run); if no DG setting satisfies both ->
+the orthogonality/recognition conflict is irreducible on this
+representation and the honest terminus is that the substrate's
+concept code itself must change (a deeper concept-pool architecture
+arc). Reuse-by-import; no protected module; no autograd; numpy-cheap.
+Propagate; build per the pre-registered reading. Standard discipline
+throughout.
 
 ---
 [Historical content below preserved for context.]

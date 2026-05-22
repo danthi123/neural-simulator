@@ -1,0 +1,110 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_dim": 512,
+  "k_recog": 8,
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "n_trials": 200,
+  "bar": 0.8,
+  "dg_expansion": 4.0,
+  "dg_sparsity": 0.02,
+  "per_seed": [
+    {
+      "seed": 42,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.2775,
+          "composition_only_accuracy": 0.2838196286472148,
+          "n_composition_only": 377
+        },
+        "3": {
+          "integrated_accuracy": 0.265,
+          "composition_only_accuracy": 0.2698412698412698,
+          "n_composition_only": 567
+        },
+        "5": {
+          "integrated_accuracy": 0.267,
+          "composition_only_accuracy": 0.2679528403001072,
+          "n_composition_only": 933
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.2875,
+          "composition_only_accuracy": 0.29444444444444445,
+          "n_composition_only": 360
+        },
+        "3": {
+          "integrated_accuracy": 0.22,
+          "composition_only_accuracy": 0.22075471698113208,
+          "n_composition_only": 530
+        },
+        "5": {
+          "integrated_accuracy": 0.234,
+          "composition_only_accuracy": 0.24505494505494504,
+          "n_composition_only": 910
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.495,
+          "composition_only_accuracy": 0.4891891891891892,
+          "n_composition_only": 370
+        },
+        "3": {
+          "integrated_accuracy": 0.495,
+          "composition_only_accuracy": 0.4972875226039783,
+          "n_composition_only": 553
+        },
+        "5": {
+          "integrated_accuracy": 0.478,
+          "composition_only_accuracy": 0.48034006376195537,
+          "n_composition_only": 941
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "2": {
+      "mean_integrated": 0.35333333333333333,
+      "per_seed_integrated": [
+        0.2775,
+        0.2875,
+        0.495
+      ],
+      "mean_composition_only": 0.3558177540936162
+    },
+    "3": {
+      "mean_integrated": 0.32666666666666666,
+      "per_seed_integrated": [
+        0.265,
+        0.22,
+        0.495
+      ],
+      "mean_composition_only": 0.32929450314212677
+    },
+    "5": {
+      "mean_integrated": 0.3263333333333333,
+      "per_seed_integrated": [
+        0.267,
+        0.234,
+        0.478
+      ],
+      "mean_composition_only": 0.3311159497056692
+    }
+  },
+  "verdict": "BIOLOGIZED_GROUNDED_COMPOSITION_BELOW_BAR"
+}
