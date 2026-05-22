@@ -1,0 +1,48 @@
+{
+  "n_cues": 8,
+  "n_fillers": 8,
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "dim": 512,
+  "jitter": 0.05,
+  "t_steps": 1000,
+  "n_trials": 400,
+  "acc_bar": 0.95,
+  "seed": 42,
+  "per_load": {
+    "2": {
+      "groundable_mean": 0.47222081936706817,
+      "groundable_min": 0.39199171516880205,
+      "ungroundable_mean": 0.04506042742040061,
+      "ungroundable_max": 0.1256598126218824,
+      "best_threshold": 0.39199171516880205,
+      "separation_accuracy": 1.0,
+      "n_groundable": 800,
+      "n_ungroundable": 2400
+    },
+    "3": {
+      "groundable_mean": 0.38958437236395244,
+      "groundable_min": 0.28825636517105063,
+      "ungroundable_mean": 0.043833295157260914,
+      "ungroundable_max": 0.11855192042679963,
+      "best_threshold": 0.28825636517105063,
+      "separation_accuracy": 1.0,
+      "n_groundable": 1200,
+      "n_ungroundable": 2000
+    },
+    "5": {
+      "groundable_mean": 0.29904473233334605,
+      "groundable_min": 0.1906187707235335,
+      "ungroundable_mean": 0.04477815514057341,
+      "ungroundable_max": 0.12248203752199609,
+      "best_threshold": 0.1906187707235335,
+      "separation_accuracy": 1.0,
+      "n_groundable": 2000,
+      "n_ungroundable": 1200
+    }
+  },
+  "verdict": "ABSTENTION_PRESERVABLE"
+}
