@@ -1,0 +1,64 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "dg_expansion": 4.0,
+  "dg_sparsity": 0.02,
+  "n_dim": 512,
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "n_trials": 200,
+  "bar": 0.8,
+  "separation_target": 0.3,
+  "per_seed": [
+    {
+      "seed": 42,
+      "raw_mean_similarity": 0.4441240859360452,
+      "separated_mean_similarity": 0.18646398596033117,
+      "recognition_acc": 0.44921875,
+      "composition": {
+        "2": 1.0,
+        "3": 1.0,
+        "5": 1.0
+      }
+    },
+    {
+      "seed": 43,
+      "raw_mean_similarity": 0.42060440979712255,
+      "separated_mean_similarity": 0.1677614035632263,
+      "recognition_acc": 0.48828125,
+      "composition": {
+        "2": 1.0,
+        "3": 1.0,
+        "5": 1.0
+      }
+    },
+    {
+      "seed": 44,
+      "raw_mean_similarity": 0.433645559123678,
+      "separated_mean_similarity": 0.15516047884344572,
+      "recognition_acc": 0.43359375,
+      "composition": {
+        "2": 1.0,
+        "3": 1.0,
+        "5": 1.0
+      }
+    }
+  ],
+  "aggregate": {
+    "raw_mean_similarity": 0.4327913516189486,
+    "separated_mean_similarity": 0.16979528945566771,
+    "recognition_acc": 0.45703125,
+    "composition": {
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    }
+  },
+  "verdict": "PATTERN_SEPARATION_GROUNDING_INSUFFICIENT"
+}

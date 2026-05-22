@@ -381,34 +381,62 @@ in its symbols on this substrate -- the un-biologizable piece is now
 precisely named (near-orthogonal atomic symbols) and the cause
 precisely measured (0.45 concept-representation overlap).
 
-**EXACT NEXT ACTION: pattern-separate the concept representations, then
-ground the symbol.** The shortcut-2 NEGATIVE relocates the problem with
-precision and the project's OWN validated biology supplies the fix. The
-substrate's concept representations overlap by 0.45; FHRR needs them
-near-orthogonal; the brain's mechanism for orthogonalising overlapping
-representations is PATTERN SEPARATION, and the project has a validated
-pattern-separation result -- the hippocampal dentate gyrus (catalog
-D.12): a validation run measured input cosine 0.80 reduced to dentate-
-gyrus cosine 0.218. Concrete cheap-first step: (a) numpy probe -- take
-the substrate's consolidated concept activity vectors (from the
-activity cache, the real ones with 0.45 overlap), apply a pattern-
-separation / orthogonalising transform (model the dentate-gyrus
-expansion + sparsification, or test the validated DG directly), measure
-whether the separated symbols are near-orthogonal (mean pairwise
-similarity well below 0.45 -- target the D.12-measured ~0.2 range) AND
-whether they FHRR-compose at or above the frozen 0.80 bar. PRE-
-REGISTERED: if the pattern-separated symbols clear 0.80 -> grounding
-via pattern separation is reachable, proceed to the real build (route
-the substrate activity through the validated DG before the FHRR
-symbol); if not -> the honest ceiling is that even pattern separation
-cannot produce composable grounded symbols on this substrate, and
-shortcut 2 is definitively closed (the composition layer stays
-oracle-symbol'd, honestly framed). (b) Propagate. Reuse-by-import; no
-protected module; no autograd. Standard discipline: cheap-first, frozen
-bar, smell-test a PASS HARDER than a FAIL, dedicated adversarial review
-before any capability claim. Whatever shortcut 2's final outcome, the
-biologization arc then has a dedicated adversarial review of the
-biologized pieces (shortcuts 1+3) before any capability rollup.
+**PATTERN-SEPARATION GROUNDING PROBE COMPLETE = orthogonality solved,
+recognition is the bound (2026-05-22, both remotes).** Cheap-first
+probe: model the dentate gyrus (fixed random expansion + 2% k-winners-
+take-all) and apply it to the substrate's overlapping concept
+representations. Result, multi-seed: pattern separation reduces the
+concept symbols' mean pairwise similarity from 0.433 to 0.170 (into the
+D.12-measured ~0.2 range) and the separated symbols FHRR-compose at
+1.000 at all loads {2,3,5} -- the orthogonality half of shortcut 2 is
+SOLVED by a biology-grounded mechanism the project had validated. But
+recognizing a noisy observation by separating it fails (0.457) -- the
+classic separation-versus-completion tension: the dentate gyrus
+separates noisy observations of the SAME concept too. The honest
+synthesis: grounding the symbol decomposes into orthogonality (pattern
+separation supplies it) + concept recognition (the substrate's own
+~0.74-0.88 capability, NOT 1.0). A grounded-symbol pipeline is
+RECOGNITION-BOUNDED -- the SAME bound the validated identity-level
+integration already operates under and states. The oracle lookup was
+never the limiting shortcut; recognition is the bound. Findings:
+`research/findings/2026-05-22-pattern-separation-grounding-probe-orthogonality-solved-recognition-is-the-bound.md`.
+
+BIOLOGIZATION ARC -- TERMINAL SYNTHESIS: the phase-coded composition
+layer can be biologized in its neurons (shortcut 1, resonate-and-fire,
+PASS) and its clean-up (shortcut 3, attractor identification + separate
+familiarity gate, RESOLVED). Its symbols are groundable in the
+substrate via pattern separation (orthogonality solved) but the
+grounded pipeline is recognition-bounded -- as is the oracle-symbol
+pipeline. The whole compositional line converges on ONE bound: the
+substrate's concept-recognition accuracy. This is a complete,
+biology-translatable result set, all propagated.
+
+**EXACT NEXT ACTION: dedicated adversarial review of the biologization
+arc.** The pre-registered discipline step before any capability-status
+synthesis. Spawn an independent reviewer (fresh agent, full tool
+access, no controller context) to scrutinise the load-bearing
+biologization claims: (1) shortcut 1 -- is `resonate_fire_fhrr.py`'s
+resonate-and-fire neuron a genuine time-stepped damped-oscillator with
+threshold-crossing spikes, or relabeled arithmetic; is the
+self-test PASS genuine; is the validated `spiking_phasor_fhrr.py`
+byte-unchanged. (2) shortcut 3 -- is the attractor clean-up genuine; is
+the separated-clean-up PASS real or did the familiarity threshold get
+tuned; is the structural finding (a pure attractor confabulates) sound.
+(3) the `settle_annealed(fast=)` closed-form path -- is the equivalence
+claim honest (0/16 settle mismatches). (4) shortcut 2 -- is the NEGATIVE
+genuine; is the 0.45-overlap measurement sound; is the pattern-
+separation probe's separation/recognition split honest; was the cheap
+probe's over-optimism recorded. (5) protected set byte-empty diff vs
+e8a99a2; no autograd in any shipped biologization file. The reviewer
+RUNS the checks, does not only read. If it returns CLEAR -> synthesise
+the biologization arc into the capability_status record (the FHRR
+scaffold's honest biological status: neurons + clean-up biologized,
+symbols recognition-bounded). If it returns BLOCK -> fix honestly and
+re-review. Then the next arc: the convergent finding (recognition is
+the bound) routes to improving the substrate's concept recognition --
+the project's standing recognition-substrate problem -- as the way to
+lift the compositional capability further. Standard discipline
+throughout; honest propagation both remotes.
 
 ---
 [Historical content below preserved for context.]
