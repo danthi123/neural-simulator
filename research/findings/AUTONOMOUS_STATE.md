@@ -206,32 +206,58 @@ produce one. Findings:
 `research/findings/2026-05-22-INTEGRATED-compositional-capability-multi-seed-PASS-substrate-recognition-plus-spiking-phasor-FHRR.md`
 and `research/findings/2026-05-22-integration-adversarial-review-CLEAR-capability-validated.md`.
 
-**EXACT NEXT ACTION: cheap-first probe for ACTIVITY-LEVEL integration
-(the next pre-registered arc).** The validated integration joins the
-two systems at the concept-IDENTITY level: the substrate recognizes a
-word to a discrete pool label, and a fixed lookup keys that label to a
-phasor symbol -- the substrate's actual neural activity does not itself
-flow into the FHRR layer. The deeper, more biology-faithful arc is
-ACTIVITY-LEVEL integration: derive the phasor symbol FROM the
-substrate's population activity vector, not from a discrete-label
-lookup. Cheap-first probe (numpy, non-load-bearing ceiling-
-clarification, follow the cheap-first discipline that de-risked the
-FHRR arc): for each concept word, run substrate recognition and
-capture the concept-pool population firing-rate VECTOR (not just the
-argmax label); map that activity vector to an FHRR phase pattern via a
-fixed deterministic projection; test whether FHRR bind/unbind/clean-up
-still clears the frozen 0.80 bar with activity-DERIVED symbols at loads
-{2,3,5}. PRE-REGISTERED reading (fixed before the run): if activity-
-derived symbols clear 0.80 -> activity-level integration is reachable,
-proceed to design + build the full version under the standard
-discipline; if they do not -> the identity-level interface is the
-validated ceiling and the honest finding is WHY (recognition trial-
-noise corrupts the derived phase structure, not just the symbol
-choice) -- that is itself a biology-translatable result. Build the
-probe at `research/findings/raw/activity_level_integration_probe.py`;
-reuse-by-import; no protected module modified; no autograd. The
-parallel arc (scaling beyond the small-load task) is queued after the
-activity-level probe resolves.
+**ACTIVITY-LEVEL CHEAP-FIRST PROBE COMPLETE = REACHABLE, with a
+precise design constraint (2026-05-22, both remotes, commit 52d35ac
+design + probe + findings).** The cheap-first numpy probe
+(`research/findings/raw/activity_level_integration_probe.py`) tested
+whether the phasor symbol can be DERIVED from the substrate's
+population activity vector instead of looked up from a discrete
+recognized label. Pre-registered PASS condition: clears the frozen
+0.80 bar at loads {2,3,5} at modelled activity-noise std <= 0.10 at
+some phasor dim <= 1024. Result PASS, conditional: the coarse 16-dim
+per-pool activity vector FAILS (load 5 at noise 0.10 = 0.53 even at
+dim 1024 -- 16 degrees of freedom, no redundancy), but the distributed
+256-dim population code PASSES decisively (load 5 at noise 0.10 = 0.90
+at dim 256, 0.98 at 1024). Biology-translatable: the substrate's
+per-neuron population activity carries the redundancy needed to
+denoise an activity-derived symbol; the per-pool aggregate does not.
+Findings:
+`research/findings/2026-05-22-activity-level-integration-probe-REACHABLE-distributed-population-code-required.md`;
+design `docs/plans/2026-05-22-activity-level-integration-design.md`.
+
+**EXACT NEXT ACTION: read the decisive activity-level integration run,
+smell-test it, adversarially review, propagate.** The real activity-
+level integration runner is BUILT and smoke-tested end-to-end:
+`research/findings/raw/activity_level_integration.py` -- reuses the
+validated v14/v16 + hippocampus substrate builder and the validated
+spiking-phasor FHRR subsystem byte-unchanged; captures the substrate's
+distributed per-neuron concept-pool activity (M observations/word);
+derives phasor symbols via a fixed random complex projection; registers
+a clean-up vocabulary from K-averaged activity; composes via the reused
+subsystem; pre-registered frozen 0.80 bar; kill-safe per-seed activity
+cache at `research/findings/raw/activity_level_integration_cache/full_seed{42,43,44}.npz`.
+The decisive multi-seed run (3 seeds, M=16, 300 trials/load) is IN
+FLIGHT; output at `research/findings/raw/activity_level_integration_full.json`.
+The --smoke run (M=4, toy numbers NOT a result) already surfaced an
+honest early signal: the substrate's MEASURED trial-to-trial activity
+coefficient of variation is ~1.35 -- far above the probe's modelled
+<= 0.10 (and even <= 0.20) passing regime -- and smoke composition-only
+landed 0.49-0.58. The decisive run is very likely RECOGNITION_BOUNDED
+or a clean NEGATIVE; if so the honest, pre-registered, biology-
+translatable finding is that the real substrate's per-neuron activity
+is far noisier than the regime where activity-derived symbols compose,
+so the discrete-label lookup interface (which discards exactly that
+trial noise) is the validated ceiling -- and the next pre-registered
+arc becomes whether temporal integration / multi-observation averaging
+denoises enough (a NEW design, not a tweak to this run). When the
+decisive run completes: read the full JSON, run the mandatory smell-
+test (scrutinise a nominal PASS HARDER than a FAIL; recompute from the
+recorded JSON; confirm composition-only vs integrated; no re-run, no
+bar change), dedicated adversarial review of the runner + verdict
+before any claim, then honest propagation (findings doc; capability
+pillar update ONLY if a genuine PASS; both git remotes). Then the
+parallel arc -- scaling beyond the small-load task -- or the
+temporal-averaging arc if this run is negative.
 
 **PARADIGM CONSIDERATION, SURFACED HONESTLY (does not block the
 autonomous next step):** the spiking-phasor FHRR layer is a NEW phase-
