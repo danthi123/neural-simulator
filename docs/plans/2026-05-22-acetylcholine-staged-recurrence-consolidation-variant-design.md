@@ -57,6 +57,49 @@ so released recurrent excitation has an inhibitory partner. If the
 released recurrence runs away, ISN tuning -- matched inhibition -- is
 the documented next step.)
 
+## Honest relationship to the prior SPEAR arc (correction)
+
+An earlier draft of this design mischaracterised the prior SPEAR arc
+as "ACh plasticity-gating". That is wrong, and the record is
+corrected here. The prior SPEAR arc (findings
+`2026-05-19-SPEAR-conversational-Stage-decisive-honest-negative-with-convergent-ceiling.md`)
+DID test ACh phase-separation via synaptic transmission gain: after
+its adversarial-review faithfulness fix it modulated `synaptic_gain
+(scope=all)` and `plasticity_rate (scope=all)` across a theta cycle.
+Decisive result: `full_acc = 0.00` on every rung.
+
+This variant is genuinely a different experiment, and the difference
+is precise:
+
+- SPEAR multiplexed the encode/retrieve phases of the **readout**, at
+  the ~125ms theta-cycle timescale, with a GLOBAL scope=all +-30%
+  gain. This variant stages the **storage/consolidation** phase
+  boundary (Phase-1 training vs replay consolidation, a coarse
+  two-phase split) and installs a SELECTIVE, attractor-capable
+  recurrent matrix into the concept pools -- not a +-30% global tweak.
+- SPEAR had no `ca1 -> concept-pool` wire. That wire was discovered
+  necessary only AFTER SPEAR, by this session's consolidation probe.
+  In hindsight SPEAR's hard zero is consistent with the storage-locus
+  finding: SPEAR was multiplexing the readout of a binding that never
+  reached the cortex.
+
+But the honest overlap must also be stated: both are ACh-gated-
+dynamics interventions, and SPEAR's own conclusion was that gating
+dynamics is insufficient -- composition "introduces noise via the
+combination step" and the readout needs a STRUCTURED DECODABLE
+object, not a sum of partially-active sub-populations. SPEAR's own
+pre-registered next step was phase-coded vector-symbolic composition
+(Orchard 2023/2024 spiking-phasor), which was never built.
+
+Consequence for this variant: it is run as a CHEAP (~5-8 min, cache
+reused), TIME-BOXED, decisive close of the storage-investigation
+chain -- it answers the exact open question the ca1-variant left
+("the weak pools cannot ignite; would released recurrence let
+them?"). It is NOT positioned as the fix. If it is NEGATIVE, that
+converges with SPEAR and the convergent evidence points hard at the
+genuinely-missed phase-coded-VSA thread as the next major arc -- which
+is pursued regardless of this variant's outcome.
+
 ## The change (net-new; no protected module modified)
 
 Reuse the ca1-variant substrate exactly: `build_biological_brain_regions`
@@ -139,5 +182,8 @@ amplified attractor track the stimulated tag.
 Write `research/findings/raw/ach_staged_recurrence_variant.py` (reuse
 `build_variant_bridge` + the ca1-variant Phase-1 checkpoint; add the
 staged-recurrence install; run the pre-registered test), run it on
-seed 42, apply the decision rule, propagate. Continue straight through
+seed 42, apply the decision rule, propagate. Time-boxed: one run, no
+iteration. Then -- regardless of the outcome -- pivot the major effort
+to the phase-coded vector-symbolic composition thread (SPEAR's own
+pre-registered-but-never-built next step). Continue straight through
 -- no hand-back.
