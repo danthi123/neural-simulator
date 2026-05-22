@@ -522,29 +522,57 @@ line CLOSES POSITIVELY -- all three engineered shortcuts biologized.
 Findings:
 `research/findings/2026-05-22-biologized-grounded-composition-PASS-mean-centering-closes-the-arc-and-corrects-the-premature-negatives.md`.
 
-**EXACT NEXT ACTION: dedicated adversarial review of the biologized-
-grounded-composition PASS, then the capability_status update.** This
-PASS is load-bearing AND it overturns propagated NEGATIVEs -- exactly
-when an independent review is mandatory before any capability claim.
-Spawn an independent reviewer (fresh agent, full tool access, no
-controller context) to RUN the exploit-class checks: (1) is the PASS
-genuine -- reproduce `biologized_grounded_composition.py --grounding
-meancenter`, confirm integrated ~0.98 multi-seed. (2) Is mean-centering
-a legitimate biological operation or a cheat -- is the grounded symbol
-still a deterministic function of the substrate's own activity (not an
-oracle vector); is the common-mode computed only from activity (no
-task-label leakage). (3) Is the recognition genuinely the
-longer-integration readout (raw-space averaging) and is the cached
-activity the real substrate's. (4) Is the composition-only 0.99 real;
-is the attractor clean-up genuinely discriminating the mean-centered
-symbols. (5) No autograd; protected set byte-empty diff; no-confab
-moat 7/7. (6) Is the correction of the prior NEGATIVEs honest and
-complete. If CLEAR -> update capability_status (the BOUNDARY
-biologization pillar is now wrong on shortcut 2; replace it with the
-corrected outcome -- the composition layer biologized end-to-end,
-grounded-symbol pipeline PASS 0.98, recognition-bounded). If BLOCK ->
-fix honestly and re-review. Standard discipline; honest propagation
-both remotes.
+**BIOLOGIZED-GROUNDED-COMPOSITION PASS ADVERSARIALLY REVIEWED = CLEAR;
+the FHRR-biologization arc is COMPLETE and positively closed
+(2026-05-22, both remotes).** An independent reviewer RAN the
+exploit-class checks: reproduced the pipeline (integrated multi-seed
+0.988/0.981/0.979); confirmed mean-centering is a legitimate biological
+operation -- the grounded symbol is a deterministic function of the
+substrate's own cached activity, the common-mode is computed only from
+activity (no task-label leakage), subtractive normalisation is a real
+cortical computation; confirmed recognition is raw-space temporal
+averaging; independently rebuilt the attractor self-ID test (15-16/16
+mean-centered vs 1/16 raw); no autograd, protected set byte-empty,
+moat 7/7; the corrections of the two prior NEGATIVEs honest and
+traceable. VERDICT CLEAR, no defect. The capability_status
+biologization pillar is updated (status VALIDATED): the phase-coded
+composition layer is biologized end-to-end (resonate-and-fire neurons
++ attractor clean-up with familiarity gate + common-mode-removed
+grounded symbols) and the fully-biologized grounded compositional
+pipeline clears the frozen 0.80 bar at multi-seed 0.98 with NO oracle
+symbol table. Findings:
+`research/findings/2026-05-22-biologized-grounded-composition-PASS-adversarial-review-CLEAR.md`.
+
+THE COMPOSITIONAL ARC -- COMPLETE, POSITIVE, REVIEWED. The renewed-
+focus compositional investigation (the owner-directed arc) is at a
+genuine, thorough, positively-closed terminus: a validated
+compositional retrieval capability EXISTS (identity-level integration,
+0.96-0.99) AND it is biologizable end-to-end (the grounded-symbol
+pipeline, 0.98, reviewed CLEAR). The full biology-translatable insight
+set is delivered and propagated.
+
+**EXACT NEXT ACTION: scale the validated biologized compositional
+capability -- cheap-first.** The capability is validated at small load
+(loads {2,3,5}) and 16-word vocab; the natural, concrete, pre-
+registerable next arc that builds directly on it is scaling. Step 1,
+cheap-first (numpy, no GPU): extend the resonate-and-fire FHRR
+self-test (`resonate_fire_fhrr.py`) to higher LOADS {8, 12, 16, 24} at
+the validated N_dim=512 and at N_dim {1024, 2048} -- the FHRR is
+dimension-tunable, so this measures the capacity curve (load vs the
+phasor dimension needed to clear the frozen 0.80 bar) entirely in
+numpy. PRE-REGISTERED: report the load-vs-dimension capacity curve
+honestly; a clean curve means the composition layer scales with
+dimension as FHRR theory predicts; a ceiling means an honest capacity
+bound. Step 2 (after step 1, needs a GPU substrate run): vocab scaling
+beyond 16 concepts requires more substrate concept pools -- a substrate
+capture run; design it only after the cheap load/dimension curve is in
+hand. Reuse-by-import; no protected module; no autograd; frozen 0.80
+bar; smell-test a PASS harder than a FAIL; honest propagation both
+remotes. (Broader horizon, surfaced for the owner, NOT auto-launched:
+the compositional capability is one piece; the owner's standing
+conversational-path directives -- SPEAR theta-multiplexing, theta-gamma
+mode-unification, generative replay -- and the integrated closed loop
+are the larger arcs once scaling is characterised.)
 
 ---
 [Historical content below preserved for context.]
