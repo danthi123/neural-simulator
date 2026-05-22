@@ -1,0 +1,99 @@
+{
+  "seed": 42,
+  "cache_dir": "research/findings/raw/unified_per_regime/phase1",
+  "facts": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "river",
+      "small"
+    ],
+    [
+      "dog",
+      "hot"
+    ],
+    [
+      "cat",
+      "cold"
+    ]
+  ],
+  "tags": [
+    "ep_0",
+    "ep_1",
+    "ep_2",
+    "ep_3"
+  ],
+  "stim_steps": 100,
+  "per_binding": [
+    {
+      "tag": "ep_0",
+      "noun": "apple",
+      "adj": "big",
+      "top_pool": "motor_E",
+      "top_rate": 0.00265,
+      "bound_adj_pool": "adjective_pool_BIG",
+      "bound_adj_rate": 0.00115,
+      "bound_adj_rank_all": 11,
+      "bound_adj_rank_among_adj_pools": 2,
+      "cued_noun_pool": "noun_pool_APPLE",
+      "cued_noun_rate": 0.0016,
+      "cued_noun_rank_all": 7,
+      "bound_adj_is_top_adj_pool": false,
+      "noun_dominates_adj": false
+    },
+    {
+      "tag": "ep_1",
+      "noun": "river",
+      "adj": "small",
+      "top_pool": "motor_S",
+      "top_rate": 0.00365,
+      "bound_adj_pool": "adjective_pool_SMALL",
+      "bound_adj_rate": 0.0031,
+      "bound_adj_rank_all": 3,
+      "bound_adj_rank_among_adj_pools": 1,
+      "cued_noun_pool": "noun_pool_RIVER",
+      "cued_noun_rate": 0.0025,
+      "cued_noun_rank_all": 7,
+      "bound_adj_is_top_adj_pool": true,
+      "noun_dominates_adj": false
+    },
+    {
+      "tag": "ep_2",
+      "noun": "dog",
+      "adj": "hot",
+      "top_pool": "noun_pool_APPLE",
+      "top_rate": 0.0024,
+      "bound_adj_pool": "adjective_pool_HOT",
+      "bound_adj_rate": 0.00135,
+      "bound_adj_rank_all": 13,
+      "bound_adj_rank_among_adj_pools": 4,
+      "cued_noun_pool": "noun_pool_DOG",
+      "cued_noun_rate": 0.00225,
+      "cued_noun_rank_all": 3,
+      "bound_adj_is_top_adj_pool": false,
+      "noun_dominates_adj": true
+    },
+    {
+      "tag": "ep_3",
+      "noun": "cat",
+      "adj": "cold",
+      "top_pool": "motor_W",
+      "top_rate": 0.0024,
+      "bound_adj_pool": "adjective_pool_COLD",
+      "bound_adj_rate": 0.0008,
+      "bound_adj_rank_all": 12,
+      "bound_adj_rank_among_adj_pools": 4,
+      "cued_noun_pool": "noun_pool_CAT",
+      "cued_noun_rate": 0.0007,
+      "cued_noun_rank_all": 14,
+      "bound_adj_is_top_adj_pool": false,
+      "noun_dominates_adj": false
+    }
+  ],
+  "n_bound_adj_top": 1,
+  "n_noun_dominates": 1,
+  "n": 4,
+  "locus": "ENCODING_GAP_DIFFUSE"
+}
