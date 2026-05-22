@@ -573,31 +573,44 @@ recognition characterised as the bound and shown reducible by temporal
 integration. A complete, honest, propagated, biology-translatable
 result set.
 
-**EXACT NEXT ACTION: vocabulary scaling -- design the substrate
-capture run, as a documented design call.** Load scaling is answered;
-the remaining scaling axis is VOCABULARY -- beyond the 16 concepts in
-the activity cache. More concepts need more substrate concept pools,
-so this needs a GPU substrate capture run; it begins with a documented
-design (the project pattern: design doc -> writing-plans -> subagent-
-driven build). Step 1, now: write
-`docs/plans/2026-05-22-vocabulary-scaling-design.md` -- (a) the target:
-capture per-neuron concept activity for a larger vocabulary (e.g. the
-v17 28-word architecture, or the G.20 sparse 64/160-concept tiers the
-project already has -- check CLAUDE.md's validated assets first); (b)
-reuse: the activity-capture path (`capture_activity` in
-`activity_level_integration.py`), the biologized grounded-composition
-pipeline (`biologized_grounded_composition.py`) byte-unchanged --
-only the vocabulary/substrate changes; (c) the honest question: does
-the common-mode-removed grounded-symbol pipeline still clear the frozen
-0.80 bar at a larger vocabulary, and does recognition (the bound) hold
-or degrade with vocabulary size; (d) pre-registered fixed-bar test;
-(e) honest ceiling. Then writing-plans -> subagent-driven build -> the
-GPU capture run -> honest propagation. (Broader horizon, surfaced for
-the owner, NOT auto-launched: the compositional capability is one
-piece; the owner's standing conversational-path directives -- SPEAR
-theta-multiplexing, theta-gamma mode-unification, generative replay --
-and the integrated closed loop are the larger arcs.) Standard
-discipline throughout; both remotes.
+**VOCABULARY-SCALING DESIGN DOC WRITTEN (2026-05-22, both remotes):**
+`docs/plans/2026-05-22-vocabulary-scaling-design.md`. It picks the
+substrate (the G.20 sparse-distributed ensemble -- the project's
+validated large-vocabulary substrate, whose sparse K-of-N codes
+directly address the concept-separability limit the compositional line
+found), the cheapest-to-falsify first step (a single 64-concept G.20
+sparse bridge, not the full 160/320 ensemble), and a pre-registered
+fixed-bar test (the biologized grounded-composition pipeline, run on
+per-neuron activity captured from the 64-concept bridge, integrated
+multi-seed >= 0.80 at loads {2,3,5}; recognition reported separately).
+
+**EXACT NEXT ACTION: writing-plans for the vocabulary-scaling
+implementation, then subagent-driven build, then the GPU capture run.**
+Per the project's standing pattern (design -> writing-plans ->
+subagent-driven-development). Step 1, now: write the TDD implementation
+plan `docs/plans/2026-05-22-vocabulary-scaling-implementation.md` from
+the design doc -- the build is small and reuse-heavy: a runner that
+(a) builds/loads a 64-concept G.20 sparse bridge (reuse the validated
+`g20_multibridge --sparse` builder / `build_sparse_pool_bridge`,
+byte-unchanged), (b) captures per-neuron concept-population activity
+for the 64 concepts via the activity-capture path (mirror
+`capture_activity` in `activity_level_integration.py`), (c) runs the
+biologized grounded-composition pipeline
+(`biologized_grounded_composition.py`, byte-unchanged) on that captured
+activity against the frozen 0.80 bar. Then subagent-driven build (fresh
+subagent per task; failing-test -> minimal-impl -> run -> commit;
+controller trust-but-verify, protected set byte-empty each commit), the
+GPU capture run (controller-monitored to completion -- the substrate
+capture is genuinely GPU work; kill-safe; never a false 'will be
+notified'), the mandatory smell-test (scrutinise a PASS HARDER than a
+FAIL), a dedicated adversarial review before any capability claim, and
+honest propagation of every outcome to both remotes. Reuse-by-import;
+no protected/frozen/moat module modified; no autograd; frozen 0.80 bar
+never tuned. (Broader horizon, surfaced for the owner, NOT
+auto-launched: the compositional capability is one piece; the owner's
+standing conversational-path directives -- SPEAR theta-multiplexing,
+theta-gamma mode-unification, generative replay -- and the integrated
+closed loop are the larger arcs after vocabulary scaling.)
 
 ---
 [Historical content below preserved for context.]
