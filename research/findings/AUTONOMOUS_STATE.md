@@ -5,7 +5,7 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-05-21
+**Updated:** 2026-05-22
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
@@ -127,35 +127,78 @@ missing feature that can be added, but by an architectural property
 tension. Findings:
 `research/findings/2026-05-22-ca1-concept-pool-variant-NEGATIVE-the-wire-is-necessary-not-sufficient-concept-pools-weak-dynamics-prevent-consolidation.md`.
 
-**EXACT NEXT ACTION: build a NET-NEW dedicated-compositional-attractor-
-region variant (route 1 of the variant findings doc).** Rather than
-consolidating into the weak Phase-1 concept pools, add a SEPARATE
-region with canon (strong) dynamics that receives from both ca1 and
-the concept pools and hosts the consolidated compositional attractor;
-read composition out THERE, not at the weak concept pools. This
-sidesteps the trainability-vs-consolidatability tension: the weak
-concept pools stay weak (Phase-1 unaffected), a distinct strong region
-hosts composition. Net-new, no protected module modified (same
-augment-the-returned-region/pathway-lists approach as the ca1 variant,
-adding one BrainRegion + its pathways). Discipline: design doc first
-(pin the new region's dynamics, its ca1 + concept-pool input pathways,
-the pre-registered decision rule, and the permuted-tag anti-cheat /
-selectivity-must-emerge-from-consolidation rule), then the variant
-builder + Phase-1 train + encode + consolidate + measure, reuse-by-
-import for everything else, no autograd, honest propagation both
-remotes. If route 1 also fails, the architectural tension is confirmed
-fundamental and the honest terminal finding is that compositional
-capability requires resolving the trainability-vs-consolidatability
-tension at the substrate level.
+**ACh-STAGED-RECURRENCE VARIANT COMPLETE = NEGATIVE, verified valid
+(2026-05-22, both remotes, commits 440bd73 design + 4c94718 SPEAR-
+correction + a55ec4c result).** Owner challenge ("haven't you tested
+SPEAR -- did we miss something") was checked against the actual SPEAR
+artifacts: the prior SPEAR arc DID test ACh phase-separation via
+global synaptic-gain (full_acc=0.00 every rung); the staged-recurrence
+variant is a distinct experiment (storage/consolidation target, on the
+ca1-wire SPEAR lacked, selective not global) but in the same family.
+The variant installed canon-strength recurrent excitation into the
+concept pools post-Phase-1 (the "low-ACh release"); a structural-
+effect check VERIFIED the recurrence transmits (1.41x activity spread
+on a supra-threshold drive -- so the verdict is NEGATIVE not VOID).
+Result: tag-stim pool firing unchanged; replay flat; selective 1/4.
+The concept pools are so heavily damped that even a direct 200pA
+drive yields ~0.009 firing -- 1.41x of sub-threshold is still sub-
+threshold. Two distinct ACh-gated-dynamics interventions (SPEAR +
+staged-recurrence), both negative: the entire DYNAMICS-GATING fix
+class is exhausted.
 
-**DECISION POINT STANDING FOR THE OWNER:** the compositional blocker
-is now precisely characterized as an architectural property tension.
-The autonomous work proceeds on route 1 (the dedicated region --
-net-new, no protected modification). But the eventual resolution --
-whether a dedicated region, staged dynamics, or a concept-pool
-dynamics change -- is an architectural decision that pits compositional
-capability against the validated direct-binding capability, and the
-owner should weigh in once route 1's evidence is in hand.
+**FHRR NUMPY PROBE COMPLETE = ALGEBRA SUFFICIENT (2026-05-22, both
+remotes, commits 1096a11 design + 3c6db46 result).** Owner directed
+external research (biology + open source). Biology: theta-gamma phase
+coding (Lisman & Jensen). Open source: Orchard & Jarvis 2023 spiking-
+phasor FHRR -- a full vector-symbolic architecture in spiking neurons,
+phase = spike timing, bind = phase addition. Cheap-first numpy FHRR
+reference probe (explicitly engineering ceiling-clarification, non-
+load-bearing): FHRR clears the project's frozen 0.80 compositional bar
+at ALL loads {2,3,5} at the SMALLEST dimension tested (N=64); 100% /
+100% / 99.8%. The compositional task that 8 architectures + 4 probes +
+2 substrate variants of the biology-grounded substrate could not crack
+is solved by the FHRR algebra at 100% with a 64-dim vector.
+COMPOSITION IS NOT ALGEBRAICALLY HARD; IT IS HARD TO REALIZE IN A
+BIOLOGY-GROUNDED SPIKING SUBSTRATE -- the precise honest statement of
+the project's open problem. Findings:
+`research/findings/2026-05-22-FHRR-numpy-probe-ALGEBRA-SUFFICIENT-composition-trivial-in-algebra-impossible-in-substrate-next-arc-spiking-phasor.md`.
+
+**EXACT NEXT ACTION: design pass for the biology-grounded spiking-
+phasor FHRR composition arc.** The algebra is settled sufficient; the
+remaining work is the biology-grounded spiking realization. Implement
+Orchard & Jarvis's spiking-phasor neuron models -- phase-sum
+(binding), phase-subtraction (unbinding), phase-midpoint (bundling),
+resonate-and-fire mutually-inhibiting clean-up populations -- in the
+project's simulator, and test whether a spiking-phasor compositional
+layer clears the frozen 0.80 bar at biological scale, multi-seed.
+
+Concrete next step: write the design doc for this arc. It must pin:
+(a) the spiking-phasor neuron models as integrator dynamics in the
+project's bridge framework (no autograd -- the operators are
+integrators, per Orchard); (b) the global theta cycle / phase
+reference; (c) a frozen capability-verdict module with pre-registered
+fixed bars mirroring the prior arcs' discipline; (d) the cheap-first
+scaling (small spiking-phasor network first, e.g. Orchard's 705-neuron
+state-transition scale, before biological scale); (e) the THREE open
+scientific questions the arc must answer -- can the simulator host the
+integrator dynamics; does it clear the frozen bar at biological scale;
+and the project-distinctive one, does a spiking-phasor layer composed
+with the no-confabulation moat PRESERVE the moat (abstain on
+ungroundable queries rather than confidently cleaning-up to the
+nearest vocabulary vector). Then build under the standard discipline:
+design -> writing-plans -> subagent-driven build -> dedicated
+adversarial review BEFORE the decisive run -> honest propagation.
+
+**PARADIGM CONSIDERATION, SURFACED HONESTLY (does not block the
+autonomous next step):** a spiking-phasor FHRR layer is a NEW phase-
+coded representational substrate, not a variant of the validated
+v14/v16 rate-coded concept pools. Theta-gamma phase coding is real
+biology; the phasor neuron models are function-first engineered
+devices -- this is biology-INSPIRED engineering. The autonomous work
+proceeds on the design pass and build; the owner may weigh in on the
+paradigm question (is a phase-coded VSA layer the brain-analogue
+direction they want, or do they want the rate-coded substrate pushed
+further) with the design doc in hand.
 
 ---
 [Historical content below preserved for context.]
