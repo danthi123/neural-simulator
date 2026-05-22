@@ -1,5 +1,18 @@
 # Fully-biologized grounded composition = NEGATIVE: the biologized attractor clean-up and the biologized grounded symbols have incompatible orthogonality requirements
 
+> **CORRECTION (2026-05-22, same day): this NEGATIVE is SUPERSEDED.**
+> It was specific to dentate-gyrus pattern separation as the grounding
+> transform, which floors the symbol overlap at ~0.07 -- too correlated
+> for the attractor clean-up. The correct transform is common-mode
+> removal (mean-centering): subtracting the across-concept mean activity
+> drops the grounded-symbol overlap to ~ -0.05 (near-orthogonal), and
+> the same end-to-end pipeline then clears the frozen 0.80 bar at 0.98
+> multi-seed. The "incompatible orthogonality requirements" framing was
+> wrong: the requirements are compatible once the symbol is grounded by
+> common-mode removal rather than dentate-gyrus separation. See
+> `2026-05-22-biologized-grounded-composition-PASS-mean-centering-closes-the-arc-and-corrects-the-premature-negatives.md`.
+> This document is kept as the honest trail.
+
 ## Status
 
 The end-to-end test of a compositional pipeline that is biology-grounded

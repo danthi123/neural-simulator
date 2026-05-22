@@ -1,5 +1,21 @@
 # Biologization step 2 = NEGATIVE, terminal: the symbol cannot be grounded in the substrate's activity, because the oracle lookup's load-bearing function is supplying ORTHOGONALITY -- and the substrate's concept representations are mutually overlapping
 
+> **CORRECTION (2026-05-22, same day): the conclusion of this document
+> is OVERTURNED.** This NEGATIVE concluded the composition symbol could
+> not be grounded in the substrate's activity. That conclusion was
+> premature: it tested an oracle-lookup replacement and (in the
+> follow-on) dentate-gyrus separation, but not the obvious transform --
+> removing the common-mode. The substrate's 0.45 concept-representation
+> overlap is almost entirely shared common-mode; subtracting the
+> across-concept mean activity (subtractive normalisation, a recognised
+> cortical computation) exposes the near-orthogonal concept-specific
+> structure, and a fully-biologized grounded compositional pipeline then
+> clears the frozen 0.80 bar at 0.98 multi-seed. The 0.45-overlap
+> MEASUREMENT here is correct; the "cannot be grounded" CONCLUSION is
+> withdrawn. See
+> `2026-05-22-biologized-grounded-composition-PASS-mean-centering-closes-the-arc-and-corrects-the-premature-negatives.md`.
+> This document is kept as the honest trail.
+
 ## Status
 
 The second step of the biologization arc -- replace the composition

@@ -496,62 +496,55 @@ orthogonal atomic symbols; pattern separation orthogonalises only
 partially (0.45->0.19) and trades against recognition; recognition is
 reducible by temporal integration (0.67->0.96).
 
-**SMELL-TEST OF THE PIPELINE NEGATIVE DONE = the NEGATIVE is genuine;
-the post-hoc-transform route is closed (2026-05-22, both remotes).**
-The fully-biologized pipeline NEGATIVE was smell-tested: could a
-stronger dentate-gyrus setting orthogonalise the substrate's concept
-symbols enough for the attractor clean-up? A multi-seed DG sweep
-(`dg_orthogonality_sweep.py`) over expansion {4-32x} and sparsity
-{2%-0.2%} -- far past biological values -- answers no: the stored-
-symbol mean similarity floors at 0.070 and the attractor stays
-degenerate (1/16) at every setting; the attractor needs <~0.05. (One
-honest correction to the pipeline-NEGATIVE findings doc: recognition
-in that pipeline is raw-activity-space temporal averaging, NOT through
-the dentate gyrus, so stronger separation does not cost recognition --
-the limit is purely that the substrate's 16 concept activity vectors
-are too mutually structured to orthogonalise below ~0.07; doc
-corrected.) The NEGATIVE is genuine and the post-hoc route is closed:
-no fixed transform of the substrate's concept activity yields
-attractor-composable grounded symbols.
+**FULLY-BIOLOGIZED GROUNDED COMPOSITION = PASS; the premature NEGATIVEs
+are CORRECTED (2026-05-22, both remotes).** A smell-test of the
+over-broad "post-hoc route closed" claim tested the obvious untested
+transform -- common-mode removal. The substrate's 0.45
+concept-representation overlap is almost entirely shared common-mode;
+subtracting the across-concept mean activity (mean-centering --
+subtractive normalisation, a recognised cortical computation
+implemented by pooled inhibition) drops the grounded-symbol mean
+similarity from 0.45 to -0.05 (the random-symbol level), and the
+attractor clean-up then identifies clean grounded symbols 15-16/16.
+The fully-biologized grounded compositional pipeline, re-run with
+mean-centering as the grounding transform
+(`biologized_grounded_composition.py --grounding meancenter`):
+integrated multi-seed 0.987 / 0.981 / 0.982, composition-only 0.99+ at
+loads {2,3,5} -- PASS at the frozen 0.80 bar. Every stage is biological
+(longer-integration recognition + common-mode-removed grounded symbol +
+resonate-and-fire FHRR + attractor clean-up; NO oracle symbol table).
+This OVERTURNS the shortcut-2 NEGATIVE and SUPERSEDES the DG-pipeline
+NEGATIVE (both tested only oracle-replacement and dentate-gyrus
+separation, not common-mode removal; their measurements were real,
+their "cannot ground the symbol" conclusions premature). Correction
+notices added to both superseded docs. The compositional-biologization
+line CLOSES POSITIVELY -- all three engineered shortcuts biologized.
+Findings:
+`research/findings/2026-05-22-biologized-grounded-composition-PASS-mean-centering-closes-the-arc-and-corrects-the-premature-negatives.md`.
 
-THE COMPOSITIONAL-BIOLOGIZATION LINE IS AT A COMPLETE, ADVERSARIALLY-
-REVIEWED, THOROUGHLY-CHARACTERISED TERMINUS. Delivered + propagated:
-a validated compositional retrieval capability (identity-level
-integration, 0.96-0.99); the composition layer's neurons biologized
-(resonate-and-fire); its clean-up biologized for near-orthogonal
-symbols (attractor + familiarity gate); its symbols NOT fully
-biologizable on this substrate (the substrate's concept
-representations are irreducibly ~0.45-overlapping, ~0.07-floored even
-under extreme pattern separation, below the orthogonality FHRR and the
-attractor need). Root cause precisely named: the substrate's concept
-code. Biology-translatable insight set delivered in full.
-
-**EXACT NEXT ACTION: design the substrate concept-code separability
-arc (the root cause), as a documented design call.** The post-hoc
-route is closed (DG sweep); the only remaining route is the substrate
-itself -- training the concept-pool architecture so its STORED concept
-representations are intrinsically more separable (lower mutual overlap
-than ~0.45). This is a substantial GPU-substrate arc and a genuine
-architecture question, so it begins with a documented design (the
-project's standing pattern: brainstorm -> design doc -> writing-plans
--> subagent-driven build). Step 1, now: write
-`docs/plans/2026-05-22-substrate-concept-separability-design.md` --
-(a) state the precise target (concept-pool representations whose mean
-pairwise activity similarity is well below 0.45, ideally toward a
-range where derived symbols clear the attractor's orthogonality need);
-(b) survey the candidate mechanisms grounded in the project's OWN
-validated biology -- dentate-gyrus pattern separation in the training
-loop (catalog D.12, validated), sparser/decorrelated concept-pool
-coding, FS-interneuron lateral inhibition between concept pools
-(already in the v14/v16 architecture -- is it strong enough?),
-expansion recoding; (c) pick the cheapest-to-falsify candidate and a
-pre-registered fixed-bar test; (d) honest ceiling -- a substrate with
-more separable concepts would lift the recognition bound AND make a
-fully-biological grounded composition reachable, but it is a retrain
-of the concept-pool substrate and must not regress the validated
-v14/v16 direct-binding capability. Then writing-plans -> subagent-
-driven build -> GPU substrate run -> honest propagation. Standard
-discipline throughout; both remotes.
+**EXACT NEXT ACTION: dedicated adversarial review of the biologized-
+grounded-composition PASS, then the capability_status update.** This
+PASS is load-bearing AND it overturns propagated NEGATIVEs -- exactly
+when an independent review is mandatory before any capability claim.
+Spawn an independent reviewer (fresh agent, full tool access, no
+controller context) to RUN the exploit-class checks: (1) is the PASS
+genuine -- reproduce `biologized_grounded_composition.py --grounding
+meancenter`, confirm integrated ~0.98 multi-seed. (2) Is mean-centering
+a legitimate biological operation or a cheat -- is the grounded symbol
+still a deterministic function of the substrate's own activity (not an
+oracle vector); is the common-mode computed only from activity (no
+task-label leakage). (3) Is the recognition genuinely the
+longer-integration readout (raw-space averaging) and is the cached
+activity the real substrate's. (4) Is the composition-only 0.99 real;
+is the attractor clean-up genuinely discriminating the mean-centered
+symbols. (5) No autograd; protected set byte-empty diff; no-confab
+moat 7/7. (6) Is the correction of the prior NEGATIVEs honest and
+complete. If CLEAR -> update capability_status (the BOUNDARY
+biologization pillar is now wrong on shortcut 2; replace it with the
+corrected outcome -- the composition layer biologized end-to-end,
+grounded-symbol pipeline PASS 0.98, recognition-bounded). If BLOCK ->
+fix honestly and re-review. Standard discipline; honest propagation
+both remotes.
 
 ---
 [Historical content below preserved for context.]

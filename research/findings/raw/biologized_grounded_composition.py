@@ -97,7 +97,7 @@ def recognize(word_obs, k_recog, slices, all_pools, rng):
     return best_pool
 
 
-def run_one_seed(seed):
+def run_one_seed(seed, grounding):
     print(f"\n--- seed {seed} ---")
     cache_path = os.path.join(CACHE_DIR, f"full_seed{seed}.npz")
     obs, _clean, slices, all_pools, words = capture_seed(
@@ -105,17 +105,33 @@ def run_one_seed(seed):
     d_act = obs[words[0]].shape[1]
     target_pool = {w: _direct_pool_target(w) for w in words}
     pool_to_word = {target_pool[w]: w for w in words}
-
-    # Grounded symbols: the dentate-gyrus pattern-separated code of each
-    # concept's consolidated activity, projected to a phasor symbol.
-    d_dg = int(DG_EXPANSION * d_act)
-    k_dg = max(1, int(DG_SPARSITY * d_dg))
-    e_matrix = np.random.default_rng(DG_SEED).normal(
-        0.0, 1.0, size=(d_dg, d_act))
-    deriver = make_deriver(N_DIM, d_dg, DERIV_SEED)
     consolidated = {w: obs[w][:K_VOCAB].mean(axis=0) for w in words}
-    grounded = {w: phases_to_spikes(deriver(
-        dg_separate(consolidated[w], e_matrix, k_dg))) for w in words}
+
+    # The grounded symbol of each concept = a phasor derived from the
+    # concept's consolidated activity. Two grounding modes:
+    #  - "meancenter": subtract the across-concept common-mode activity
+    #    (subtractive normalisation -- a recognised cortical computation),
+    #    then derive. The 0.45 raw overlap is almost all common-mode; the
+    #    concept-specific activity is near-orthogonal, so the derived
+    #    symbols come out near-orthogonal (~ -0.05).
+    #  - "dg": route through a dentate-gyrus pattern-separation transform
+    #    first (kept for the comparison; it floors symbol overlap at
+    #    ~0.07, too correlated for the attractor clean-up).
+    if grounding == "meancenter":
+        common = np.mean([consolidated[w] for w in words], axis=0)
+        deriver = make_deriver(N_DIM, d_act, DERIV_SEED)
+        grounded = {w: phases_to_spikes(deriver(consolidated[w] - common))
+                    for w in words}
+    elif grounding == "dg":
+        d_dg = int(DG_EXPANSION * d_act)
+        k_dg = max(1, int(DG_SPARSITY * d_dg))
+        e_matrix = np.random.default_rng(DG_SEED).normal(
+            0.0, 1.0, size=(d_dg, d_act))
+        deriver = make_deriver(N_DIM, d_dg, DERIV_SEED)
+        grounded = {w: phases_to_spikes(deriver(
+            dg_separate(consolidated[w], e_matrix, k_dg))) for w in words}
+    else:
+        raise ValueError("grounding must be 'meancenter' or 'dg'")
 
     cue_words = [w for w in words
                  if target_pool[w].startswith(("noun_pool_", "verb_pool_"))]
@@ -174,13 +190,20 @@ def run_one_seed(seed):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--grounding", choices=["meancenter", "dg"],
+                    default="meancenter",
+                    help="how the grounded symbol is derived from the "
+                         "substrate's concept activity")
+    args = ap.parse_args()
+
     print("=== fully-biologized grounded compositional pipeline ===")
     print(f"seeds {SEEDS}; FHRR N_dim={N_DIM}; recognition K={K_RECOG}; "
           f"loads={LOADS}; trials={N_TRIALS}; bar={BAR}; "
-          f"DG expansion={DG_EXPANSION}x sparsity={DG_SPARSITY}; "
-          f"NO oracle symbol table")
+          f"grounding={args.grounding}; NO oracle symbol table")
 
-    seed_results = [run_one_seed(s) for s in SEEDS]
+    seed_results = [run_one_seed(s, args.grounding) for s in SEEDS]
 
     print(f"\n=== MULTI-SEED AGGREGATE ===")
     agg = {}
@@ -206,12 +229,12 @@ def main():
     if all_pass:
         verdict = "BIOLOGIZED_GROUNDED_COMPOSITION_PASS"
         print("  A compositional capability that is biology-grounded "
-              "end-to-end -- longer-integration recognition + dentate-"
-              "gyrus pattern-separated grounded symbols + resonate-and-"
-              "fire FHRR composition + attractor clean-up, NO oracle "
-              "symbol table -- clears the frozen 0.80 bar multi-seed at "
-              "all loads. The constructive close of the biologization "
-              "arc, recognition-bounded.")
+              "end-to-end -- longer-integration recognition + grounded "
+              "symbols derived from the substrate's own concept activity "
+              "+ resonate-and-fire FHRR composition + attractor clean-up, "
+              "NO oracle symbol table -- clears the frozen 0.80 bar "
+              "multi-seed at all loads. The constructive close of the "
+              "biologization arc, recognition-bounded.")
     else:
         verdict = "BIOLOGIZED_GROUNDED_COMPOSITION_BELOW_BAR"
         print("  The biology-grounded end-to-end pipeline does not clear "
@@ -221,13 +244,13 @@ def main():
 
     out = {
         "seeds": SEEDS, "n_dim": N_DIM, "k_recog": K_RECOG, "loads": LOADS,
-        "n_trials": N_TRIALS, "bar": BAR,
-        "dg_expansion": DG_EXPANSION, "dg_sparsity": DG_SPARSITY,
+        "n_trials": N_TRIALS, "bar": BAR, "grounding": args.grounding,
         "per_seed": seed_results,
         "aggregate": {str(k): v for k, v in agg.items()},
         "verdict": verdict,
     }
-    out_path = "research/findings/raw/biologized_grounded_composition.json"
+    out_path = ("research/findings/raw/biologized_grounded_composition_"
+                f"{args.grounding}.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2)
     print(f"\nWrote {out_path}")
