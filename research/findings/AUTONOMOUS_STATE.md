@@ -177,34 +177,75 @@ and its frozen-0.80-bar self-test PASSED: 100% compositional accuracy
 at loads {2,3,5} with clean abstention separation. First working
 compositional layer the project has.
 
-**EXACT NEXT ACTION: interface the spiking-phasor FHRR subsystem with
-the project's concept substrate, end-to-end.** The subsystem works on
-abstract symbols; the genuine open arc is the interface. Build an
-integration runner: load a project substrate that does validated
-concept recognition (a v14/v16 + hippocampus cache), recognize each
-concept word via the validated direct-binding readout, map each
-recognized concept identity to a deterministic spiking-phasor symbol,
-run the FHRR subsystem to encode + query + clean-up-with-abstention
-the compositional facts, measure against the frozen 0.80 bar. This is
-the project's substrate as the concept-recognition front-end + the
-FHRR subsystem as the composition back-end -- a two-system
-architecture. Reuse-by-import; no protected module modified. Then
-propagate; proceed to a biological-scale decisive run under the
-standard discipline (frozen verdict module, dedicated adversarial
-review, honest propagation).
+**INTEGRATION MILESTONE COMPLETE = MULTI-SEED PASS, ADVERSARIALLY
+REVIEWED CLEAR, VALIDATED CAPABILITY PILLAR RECORDED (2026-05-22, both
+remotes, commits aee3707 integration + 55938fb adversarial-review +
+pillar).** The spiking-phasor FHRR subsystem was interfaced with the
+project's concept substrate end-to-end. Integration runner
+`research/findings/raw/spiking_phasor_integration.py`: the validated
+v14/v16 + hippocampus substrate is the concept-RECOGNITION front-end
+(direct-binding readout); the spiking-phasor FHRR subsystem is the
+composition BACK-END; they join at the concept-identity level (a
+recognized pool label keys a fixed deterministic phasor symbol, so
+recognition error propagates honestly). Pre-registered, frozen 0.80
+bar, seeds 42/43/44, 300 trials/load: integrated multi-seed mean
+0.988 / 0.976 / 0.960 at loads {2,3,5} -- clears the bar at every
+load. Composition-only accuracy (facts whose words were all correctly
+recognized) 0.97-1.00 -- the FHRR composition itself is essentially
+perfect; the integrated shortfall from 1.0 is purely recognition
+error propagating. An independent adversarial reviewer (fresh agent,
+RAN the exploit probes) returned CLEAR: integrator-neuron genuine
+(fires 512/512 dims, fallback never reached), no symbol/answer leak,
+recognition genuinely load-bearing, not cherry-picked, abstention
+moat preserved, protected set byte-empty diff. Recorded as a VALIDATED
+pillar in `webapp/capability_status.json` (schema 6/6 green;
+no-confab moat 7/7 green). The project's first working, multi-seed-
+validated, adversarially-reviewed compositional capability -- after
+eight architectures + four probes + two substrate variants could not
+produce one. Findings:
+`research/findings/2026-05-22-INTEGRATED-compositional-capability-multi-seed-PASS-substrate-recognition-plus-spiking-phasor-FHRR.md`
+and `research/findings/2026-05-22-integration-adversarial-review-CLEAR-capability-validated.md`.
+
+**EXACT NEXT ACTION: cheap-first probe for ACTIVITY-LEVEL integration
+(the next pre-registered arc).** The validated integration joins the
+two systems at the concept-IDENTITY level: the substrate recognizes a
+word to a discrete pool label, and a fixed lookup keys that label to a
+phasor symbol -- the substrate's actual neural activity does not itself
+flow into the FHRR layer. The deeper, more biology-faithful arc is
+ACTIVITY-LEVEL integration: derive the phasor symbol FROM the
+substrate's population activity vector, not from a discrete-label
+lookup. Cheap-first probe (numpy, non-load-bearing ceiling-
+clarification, follow the cheap-first discipline that de-risked the
+FHRR arc): for each concept word, run substrate recognition and
+capture the concept-pool population firing-rate VECTOR (not just the
+argmax label); map that activity vector to an FHRR phase pattern via a
+fixed deterministic projection; test whether FHRR bind/unbind/clean-up
+still clears the frozen 0.80 bar with activity-DERIVED symbols at loads
+{2,3,5}. PRE-REGISTERED reading (fixed before the run): if activity-
+derived symbols clear 0.80 -> activity-level integration is reachable,
+proceed to design + build the full version under the standard
+discipline; if they do not -> the identity-level interface is the
+validated ceiling and the honest finding is WHY (recognition trial-
+noise corrupts the derived phase structure, not just the symbol
+choice) -- that is itself a biology-translatable result. Build the
+probe at `research/findings/raw/activity_level_integration_probe.py`;
+reuse-by-import; no protected module modified; no autograd. The
+parallel arc (scaling beyond the small-load task) is queued after the
+activity-level probe resolves.
 
 **PARADIGM CONSIDERATION, SURFACED HONESTLY (does not block the
 autonomous next step):** the spiking-phasor FHRR layer is a NEW phase-
 coded representational substrate, not a variant of the validated
-v14/v16 rate-coded concept pools -- the integration arc is therefore
-a two-system architecture (rate-coded recognition front-end +
+v14/v16 rate-coded concept pools -- the validated integration is a
+two-system architecture (rate-coded recognition front-end +
 phase-coded composition back-end). Theta-gamma phase coding is real
 biology; the phasor neuron models are function-first engineered
 devices -- biology-INSPIRED engineering. The autonomous work proceeds
-on the integration; the owner may weigh in on the paradigm question
-(is a two-system recognition+composition architecture the brain-
-analogue direction they want, vs pushing the rate-coded substrate
-further) with the subsystem + integration evidence in hand.
+on the activity-level arc; the owner may weigh in on the paradigm
+question (is a two-system recognition+composition architecture the
+brain-analogue direction they want, vs pushing the rate-coded
+substrate further) with the validated subsystem + integration +
+adversarial-review evidence now in hand.
 
 ---
 [Historical content below preserved for context.]
