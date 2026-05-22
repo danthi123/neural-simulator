@@ -446,31 +446,46 @@ coefficient of variation ~1.6). This is a complete, honest, biology-
 translatable result set; the compositional blocker the renewed-focus
 arc was directed at is now precisely localised.
 
-**EXACT NEXT ACTION: cheap-first probe into the recognition bound --
-why is per-observation concept recognition only ~0.66-0.74, and is
-there a cheap biologically-grounded improvement?** The convergent
-finding routes here: lifting the compositional capability further
-means improving the substrate's concept recognition. Concrete cheap-
-first step: a probe that reuses the real activity cache
-(`research/findings/raw/activity_level_integration_cache/full_seed{42,43,44}.npz`,
-M=16 per-neuron observations/word) -- no new GPU run needed -- and
-asks: (a) does TEMPORAL AVERAGING of the activity across observations
-raise recognition (average K observations of a word, then argmax-pool;
-sweep K=1,2,4,8,16) -- biological analogue of a longer integration
-window / sustained attention; (b) does the recognition error
-concentrate on specific words (the documented fragile words) or spread
-uniformly; (c) is the per-observation noise dominated by the substrate
-state drifting across the 16-observation capture sequence (compare
-recognition of observation 1 vs observation 16). PRE-REGISTERED: if
-temporal averaging lifts recognition materially (toward >=0.85) -> a
-biologically-grounded longer-integration recognition front-end is the
-build; if recognition is irreducibly word-fragile -> the bound is the
-substrate's concept representation itself and routes to the concept-
-pool architecture (the v14/v16 line). Reuse-by-import; no protected
-module; no autograd; numpy-cheap (the cache is captured). Then
-propagate; build per the pre-registered reading. Standard discipline:
-cheap-first, frozen bar, smell-test a PASS HARDER than a FAIL, honest
-propagation both remotes.
+**RECOGNITION-BOUND PROBE COMPLETE = the bound is reducible by temporal
+integration (2026-05-22, both remotes).** Cheap-first probe (reuses the
+activity cache; no GPU run): temporal averaging of the per-neuron
+activity over K observations lifts concept recognition monotonically --
+K=1 0.667, K=2 0.795, K=4 0.878, K=8 0.934, K=16 0.958 (multi-seed).
+The pre-registered 0.85-by-K=16 target is cleared. Only 2/16 words
+("go", "stop") stay fragile; capture-drift slope +0.000 (the
+per-observation noise is intrinsic trial-to-trial variability, not a
+capture artifact -- averaging it down is a real effect). The
+recognition bound is reducible: a longer-integration recognition
+front-end recognizes concepts at 0.88-0.96 instead of 0.67, without
+changing the substrate. Findings:
+`research/findings/2026-05-22-recognition-bound-probe-temporal-averaging-lifts-recognition.md`.
+
+**EXACT NEXT ACTION: build the fully-biologized grounded compositional
+pipeline, end-to-end, on the cached activity.** Every piece is now in
+hand and the recognition-bound probe constructively reopened shortcut 2.
+Build a runner (`research/findings/raw/biologized_grounded_composition.py`,
+numpy-cheap, reuses the activity cache -- no GPU run): for each concept
+word, (1) RECOGNISE by averaging the per-neuron activity over K
+observations then per-pool argmax (the longer-integration readout; use
+K~8, recognition ~0.93); (2) the GROUNDED SYMBOL = the dentate-gyrus
+pattern-separated code of that concept's consolidated activity (reuse
+`dg_separate` from `pattern_separation_grounding_probe.py` -- the
+substrate's own representation, orthogonalised; NOT an oracle vector);
+(3) COMPOSE via the resonate-and-fire FHRR layer (`ResonateFireFHRR`)
+and CLEAN UP via the separated attractor clean-up + familiarity gate
+(`ResonateFireTPAM.cleanup_separated`). Measure integrated accuracy vs
+the frozen 0.80 bar, multi-seed {42,43,44}, loads {2,3,5}. PRE-
+REGISTERED: this pipeline is biological end-to-end (longer-integration
+rate readout + dentate-gyrus pattern separation + resonate-and-fire
+FHRR + attractor clean-up; NO oracle symbol table, NO autograd) -- if
+it clears 0.80 it is the constructive close of shortcut 2: a
+compositional capability that is biology-grounded end-to-end,
+recognition-bounded at ~0.93; if it does not, the honest finding is
+which stage costs the capability. Reuse-by-import; no protected module
+modified. Then a dedicated adversarial review of this end-to-end
+pipeline before any capability-status claim; honest propagation both
+remotes. Standard discipline: cheap-first, frozen bar, smell-test a
+PASS HARDER than a FAIL.
 
 ---
 [Historical content below preserved for context.]
