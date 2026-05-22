@@ -163,42 +163,48 @@ BIOLOGY-GROUNDED SPIKING SUBSTRATE -- the precise honest statement of
 the project's open problem. Findings:
 `research/findings/2026-05-22-FHRR-numpy-probe-ALGEBRA-SUFFICIENT-composition-trivial-in-algebra-impossible-in-substrate-next-arc-spiking-phasor.md`.
 
-**EXACT NEXT ACTION: design pass for the biology-grounded spiking-
-phasor FHRR composition arc.** The algebra is settled sufficient; the
-remaining work is the biology-grounded spiking realization. Implement
-Orchard & Jarvis's spiking-phasor neuron models -- phase-sum
-(binding), phase-subtraction (unbinding), phase-midpoint (bundling),
-resonate-and-fire mutually-inhibiting clean-up populations -- in the
-project's simulator, and test whether a spiking-phasor compositional
-layer clears the frozen 0.80 bar at biological scale, multi-seed.
+**CHEAP-FIRST TRILOGY COMPLETE + SPIKING-PHASOR FHRR SUBSYSTEM BUILT
+AND VALIDATED (2026-05-22, both remotes, commits 6478b92 trilogy +
+031796d subsystem).** Three cheap-first probes all green: FHRR algebra
+sufficient (100% at N=64); spiking-phasor realization noise-tolerant
+(100% at biological-precision jitter sigma=0.05); abstention
+preservable (clean groundable/ungroundable separation, 100%). Then the
+working subsystem `research/runners/spiking_phasor_fhrr.py` was built
+-- a genuine time-stepped spiking implementation of FHRR (phase-sum /
+phase-subtraction / phase-midpoint integrator neurons + abstention-
+thresholded clean-up; net-new, no protected module, no autograd) --
+and its frozen-0.80-bar self-test PASSED: 100% compositional accuracy
+at loads {2,3,5} with clean abstention separation. First working
+compositional layer the project has.
 
-Concrete next step: write the design doc for this arc. It must pin:
-(a) the spiking-phasor neuron models as integrator dynamics in the
-project's bridge framework (no autograd -- the operators are
-integrators, per Orchard); (b) the global theta cycle / phase
-reference; (c) a frozen capability-verdict module with pre-registered
-fixed bars mirroring the prior arcs' discipline; (d) the cheap-first
-scaling (small spiking-phasor network first, e.g. Orchard's 705-neuron
-state-transition scale, before biological scale); (e) the THREE open
-scientific questions the arc must answer -- can the simulator host the
-integrator dynamics; does it clear the frozen bar at biological scale;
-and the project-distinctive one, does a spiking-phasor layer composed
-with the no-confabulation moat PRESERVE the moat (abstain on
-ungroundable queries rather than confidently cleaning-up to the
-nearest vocabulary vector). Then build under the standard discipline:
-design -> writing-plans -> subagent-driven build -> dedicated
-adversarial review BEFORE the decisive run -> honest propagation.
+**EXACT NEXT ACTION: interface the spiking-phasor FHRR subsystem with
+the project's concept substrate, end-to-end.** The subsystem works on
+abstract symbols; the genuine open arc is the interface. Build an
+integration runner: load a project substrate that does validated
+concept recognition (a v14/v16 + hippocampus cache), recognize each
+concept word via the validated direct-binding readout, map each
+recognized concept identity to a deterministic spiking-phasor symbol,
+run the FHRR subsystem to encode + query + clean-up-with-abstention
+the compositional facts, measure against the frozen 0.80 bar. This is
+the project's substrate as the concept-recognition front-end + the
+FHRR subsystem as the composition back-end -- a two-system
+architecture. Reuse-by-import; no protected module modified. Then
+propagate; proceed to a biological-scale decisive run under the
+standard discipline (frozen verdict module, dedicated adversarial
+review, honest propagation).
 
 **PARADIGM CONSIDERATION, SURFACED HONESTLY (does not block the
-autonomous next step):** a spiking-phasor FHRR layer is a NEW phase-
+autonomous next step):** the spiking-phasor FHRR layer is a NEW phase-
 coded representational substrate, not a variant of the validated
-v14/v16 rate-coded concept pools. Theta-gamma phase coding is real
+v14/v16 rate-coded concept pools -- the integration arc is therefore
+a two-system architecture (rate-coded recognition front-end +
+phase-coded composition back-end). Theta-gamma phase coding is real
 biology; the phasor neuron models are function-first engineered
-devices -- this is biology-INSPIRED engineering. The autonomous work
-proceeds on the design pass and build; the owner may weigh in on the
-paradigm question (is a phase-coded VSA layer the brain-analogue
-direction they want, or do they want the rate-coded substrate pushed
-further) with the design doc in hand.
+devices -- biology-INSPIRED engineering. The autonomous work proceeds
+on the integration; the owner may weigh in on the paradigm question
+(is a two-system recognition+composition architecture the brain-
+analogue direction they want, vs pushing the rate-coded substrate
+further) with the subsystem + integration evidence in hand.
 
 ---
 [Historical content below preserved for context.]
