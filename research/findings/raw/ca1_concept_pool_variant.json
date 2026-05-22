@@ -1,0 +1,281 @@
+{
+  "seed": 42,
+  "facts": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "river",
+      "small"
+    ],
+    [
+      "dog",
+      "hot"
+    ],
+    [
+      "cat",
+      "cold"
+    ]
+  ],
+  "tags": [
+    "ep_0",
+    "ep_1",
+    "ep_2",
+    "ep_3"
+  ],
+  "replay_checkpoints": [
+    0,
+    20,
+    60
+  ],
+  "direct_binding_sanity": {
+    "n_ok": 11,
+    "n_total": 16
+  },
+  "snapshots": [
+    {
+      "cumulative_replay_cycles": 0,
+      "groundable": [
+        {
+          "tag": "ep_0",
+          "noun": "apple",
+          "adj": "big",
+          "bound_adj_pool_rate": 0.0044,
+          "bound_adj_rank_among_adj": 3,
+          "top_adj_pool": "adjective_pool_HOT",
+          "top_adj_rate": 0.0063,
+          "is_selective": false
+        },
+        {
+          "tag": "ep_1",
+          "noun": "river",
+          "adj": "small",
+          "bound_adj_pool_rate": 0.0087,
+          "bound_adj_rank_among_adj": 3,
+          "top_adj_pool": "adjective_pool_HOT",
+          "top_adj_rate": 0.0095,
+          "is_selective": false
+        },
+        {
+          "tag": "ep_2",
+          "noun": "dog",
+          "adj": "hot",
+          "bound_adj_pool_rate": 0.0097,
+          "bound_adj_rank_among_adj": 3,
+          "top_adj_pool": "adjective_pool_COLD",
+          "top_adj_rate": 0.0109,
+          "is_selective": false
+        },
+        {
+          "tag": "ep_3",
+          "noun": "cat",
+          "adj": "cold",
+          "bound_adj_pool_rate": 0.0064,
+          "bound_adj_rank_among_adj": 2,
+          "top_adj_pool": "adjective_pool_HOT",
+          "top_adj_rate": 0.0075,
+          "is_selective": false
+        }
+      ],
+      "permuted_control": [
+        {
+          "cue_index": 0,
+          "stimulated_tag": "ep_1",
+          "stimulated_adj": "small",
+          "top_adj_pool": "adjective_pool_SMALL",
+          "control_ok": true
+        },
+        {
+          "cue_index": 1,
+          "stimulated_tag": "ep_2",
+          "stimulated_adj": "hot",
+          "top_adj_pool": "adjective_pool_HOT",
+          "control_ok": true
+        },
+        {
+          "cue_index": 2,
+          "stimulated_tag": "ep_3",
+          "stimulated_adj": "cold",
+          "top_adj_pool": "adjective_pool_SMALL",
+          "control_ok": false
+        },
+        {
+          "cue_index": 3,
+          "stimulated_tag": "ep_0",
+          "stimulated_adj": "big",
+          "top_adj_pool": "adjective_pool_HOT",
+          "control_ok": false
+        }
+      ],
+      "n_selective": 0,
+      "n_lifted": 0,
+      "n_control_ok": 2,
+      "mean_bound_adj_rate": 0.0073
+    },
+    {
+      "cumulative_replay_cycles": 20,
+      "groundable": [
+        {
+          "tag": "ep_0",
+          "noun": "apple",
+          "adj": "big",
+          "bound_adj_pool_rate": 0.0077,
+          "bound_adj_rank_among_adj": 3,
+          "top_adj_pool": "adjective_pool_SMALL",
+          "top_adj_rate": 0.0101,
+          "is_selective": false
+        },
+        {
+          "tag": "ep_1",
+          "noun": "river",
+          "adj": "small",
+          "bound_adj_pool_rate": 0.00675,
+          "bound_adj_rank_among_adj": 1,
+          "top_adj_pool": "adjective_pool_SMALL",
+          "top_adj_rate": 0.00675,
+          "is_selective": true
+        },
+        {
+          "tag": "ep_2",
+          "noun": "dog",
+          "adj": "hot",
+          "bound_adj_pool_rate": 0.00765,
+          "bound_adj_rank_among_adj": 2,
+          "top_adj_pool": "adjective_pool_BIG",
+          "top_adj_rate": 0.00825,
+          "is_selective": false
+        },
+        {
+          "tag": "ep_3",
+          "noun": "cat",
+          "adj": "cold",
+          "bound_adj_pool_rate": 0.0041,
+          "bound_adj_rank_among_adj": 4,
+          "top_adj_pool": "adjective_pool_SMALL",
+          "top_adj_rate": 0.0054,
+          "is_selective": false
+        }
+      ],
+      "permuted_control": [
+        {
+          "cue_index": 0,
+          "stimulated_tag": "ep_1",
+          "stimulated_adj": "small",
+          "top_adj_pool": "adjective_pool_HOT",
+          "control_ok": false
+        },
+        {
+          "cue_index": 1,
+          "stimulated_tag": "ep_2",
+          "stimulated_adj": "hot",
+          "top_adj_pool": "adjective_pool_SMALL",
+          "control_ok": false
+        },
+        {
+          "cue_index": 2,
+          "stimulated_tag": "ep_3",
+          "stimulated_adj": "cold",
+          "top_adj_pool": "adjective_pool_BIG",
+          "control_ok": false
+        },
+        {
+          "cue_index": 3,
+          "stimulated_tag": "ep_0",
+          "stimulated_adj": "big",
+          "top_adj_pool": "adjective_pool_SMALL",
+          "control_ok": false
+        }
+      ],
+      "n_selective": 1,
+      "n_lifted": 0,
+      "n_control_ok": 0,
+      "mean_bound_adj_rate": 0.00655
+    },
+    {
+      "cumulative_replay_cycles": 60,
+      "groundable": [
+        {
+          "tag": "ep_0",
+          "noun": "apple",
+          "adj": "big",
+          "bound_adj_pool_rate": 0.0054,
+          "bound_adj_rank_among_adj": 2,
+          "top_adj_pool": "adjective_pool_COLD",
+          "top_adj_rate": 0.00585,
+          "is_selective": false
+        },
+        {
+          "tag": "ep_1",
+          "noun": "river",
+          "adj": "small",
+          "bound_adj_pool_rate": 0.0064,
+          "bound_adj_rank_among_adj": 2,
+          "top_adj_pool": "adjective_pool_HOT",
+          "top_adj_rate": 0.0093,
+          "is_selective": false
+        },
+        {
+          "tag": "ep_2",
+          "noun": "dog",
+          "adj": "hot",
+          "bound_adj_pool_rate": 0.0073,
+          "bound_adj_rank_among_adj": 3,
+          "top_adj_pool": "adjective_pool_BIG",
+          "top_adj_rate": 0.00875,
+          "is_selective": false
+        },
+        {
+          "tag": "ep_3",
+          "noun": "cat",
+          "adj": "cold",
+          "bound_adj_pool_rate": 0.01155,
+          "bound_adj_rank_among_adj": 1,
+          "top_adj_pool": "adjective_pool_COLD",
+          "top_adj_rate": 0.01155,
+          "is_selective": true
+        }
+      ],
+      "permuted_control": [
+        {
+          "cue_index": 0,
+          "stimulated_tag": "ep_1",
+          "stimulated_adj": "small",
+          "top_adj_pool": "adjective_pool_HOT",
+          "control_ok": false
+        },
+        {
+          "cue_index": 1,
+          "stimulated_tag": "ep_2",
+          "stimulated_adj": "hot",
+          "top_adj_pool": "adjective_pool_SMALL",
+          "control_ok": false
+        },
+        {
+          "cue_index": 2,
+          "stimulated_tag": "ep_3",
+          "stimulated_adj": "cold",
+          "top_adj_pool": "adjective_pool_SMALL",
+          "control_ok": false
+        },
+        {
+          "cue_index": 3,
+          "stimulated_tag": "ep_0",
+          "stimulated_adj": "big",
+          "top_adj_pool": "adjective_pool_HOT",
+          "control_ok": false
+        }
+      ],
+      "n_selective": 1,
+      "n_lifted": 0,
+      "n_control_ok": 0,
+      "mean_bound_adj_rate": 0.007662500000000001
+    }
+  ],
+  "verdict": "NEGATIVE",
+  "pre_selective": 0,
+  "post_selective": 1,
+  "post_control_ok": 0,
+  "post_lifted": 0,
+  "noise_floor": 0.02
+}
