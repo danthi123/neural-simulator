@@ -348,40 +348,67 @@ and pre-registered, not tuned. Findings:
 Biologization status: shortcut 1 (resonate-and-fire neurons) PASS;
 shortcut 3 (clean-up) RESOLVED; shortcut 2 (oracle symbols) remains.
 
-**EXACT NEXT ACTION: shortcut 2's deeper form -- ground the symbol in
-a denoised, attractor-stabilised representation.** Shortcut 2 (each
-concept gets its phasor symbol by ORACLE LOOKUP, not from the
-substrate's own activity) is the last unbiologized shortcut. Its naive
-form -- derive the symbol directly from raw substrate activity --
-was a decisive NEGATIVE (activity-level integration arc: substrate
-activity coefficient of variation ~1.6, far too noisy; the derived
-symbol does not compose). The deeper form, which the activity-level
-NEGATIVE itself re-specified and shortcut 3 just built the machinery
-for: pass the noisy substrate activity through an attractor network
-whose fixed points are the concept representations -- the attractor
-settle DENOISES the activity (an attractor network both stores a
-representation in distributed recurrent weights AND denoises a noisy
-version by settling), and the settled clean state is the grounded
-symbol. Concrete cheap-first step (follow the cheap-first discipline):
-(a) a numpy probe -- model the substrate activity as a concept
-centroid + the MEASURED ~1.6 coefficient-of-variation noise (the real
-measured value, not an optimistic one); store the concept centroids as
-attractor fixed points; settle the noisy activity through the attractor
-(reuse the `ResonateFireTPAM` annealed settle); test whether the
-settled (denoised) state, used as the FHRR symbol, clears the frozen
-0.80 compositional bar at loads {2,3,5}. PRE-REGISTERED: if the
-attractor-denoised symbol clears 0.80 -> the deeper form is reachable,
-proceed to the real-substrate build; if not -> the honest finding is
-that even attractor denoising cannot rescue CV~1.6 activity, and the
-honest ceiling is that grounded symbols need a cleaner substrate
-representation (which routes back to improving the recognition
-substrate itself). (b) Propagate; if reachable, build the real
-activity-level-integration-with-attractor-denoising runner. Reuse-by-
-import; no protected module; no autograd. Standard discipline: cheap-
-first, frozen bar, smell-test a PASS HARDER than a FAIL, dedicated
-adversarial review before any capability claim. After shortcut 2: all
-three shortcuts addressed -> the dedicated adversarial review of the
-fully-biologized composition layer, then the capability rollup.
+**BIOLOGIZATION SHORTCUT 2 = NEGATIVE, terminal, propagated (2026-05-22,
+both remotes).** Both forms failed. Naive (derive the symbol from raw
+substrate activity): NEGATIVE (CV ~1.6). Deeper (attractor-denoise the
+activity-derived symbol): NEGATIVE, and WORSE than the un-grounded
+baseline -- decisive real-substrate run (reuses the activity cache; no
+new GPU run; `activity_level_integration_attractor.py`): integrated
+multi-seed 0.247/0.243/0.252, composition-only 0.31/0.28/0.31 at loads
+{2,3,5} -- ~chance (0.25 for the 4-way clean-up), below the un-grounded
+activity-level integration's 0.33-0.42. A confirmatory measurement
+pinned the precise mechanism: attractor recognition of an activity-
+derived symbol = 16/256 = 0.062 (EXACTLY 1/16 chance, all 3 seeds);
+raw soft nearest-match recognition = 0.74; MEAN PAIRWISE SIMILARITY
+BETWEEN THE 16 CONSOLIDATED CONCEPT SYMBOLS = 0.45. The terminal
+finding: FHRR/VSA requires near-ORTHOGONAL atomic symbols (bind/unbind
+crosstalk otherwise); the oracle lookup's load-bearing function is
+supplying that orthogonality (random high-dim vectors are near-
+orthogonal by construction); the substrate's own concept
+representations are NOT orthogonal -- they overlap by 0.45 (shared
+common-mode population activity) -- so an attractor over them is
+degenerate (one dominant basin -> chance recognition) and FHRR over
+them crosstalks. The cheap probe said REACHABLE because it modelled
+random near-orthogonal symbols -- the wrong assumption; recorded
+honestly. Findings:
+`research/findings/2026-05-22-biologization-shortcut-2-NEGATIVE-the-oracle-supplies-orthogonality-the-substrate-cannot.md`.
+
+BIOLOGIZATION ARC OUTCOME: shortcut 1 (resonate-and-fire neurons) PASS;
+shortcut 3 (clean-up: attractor identification + separate familiarity
+gate) RESOLVED; shortcut 2 (grounded symbols) NEGATIVE-terminal. The
+composition layer is biologizable in its neurons and clean-up but NOT
+in its symbols on this substrate -- the un-biologizable piece is now
+precisely named (near-orthogonal atomic symbols) and the cause
+precisely measured (0.45 concept-representation overlap).
+
+**EXACT NEXT ACTION: pattern-separate the concept representations, then
+ground the symbol.** The shortcut-2 NEGATIVE relocates the problem with
+precision and the project's OWN validated biology supplies the fix. The
+substrate's concept representations overlap by 0.45; FHRR needs them
+near-orthogonal; the brain's mechanism for orthogonalising overlapping
+representations is PATTERN SEPARATION, and the project has a validated
+pattern-separation result -- the hippocampal dentate gyrus (catalog
+D.12): a validation run measured input cosine 0.80 reduced to dentate-
+gyrus cosine 0.218. Concrete cheap-first step: (a) numpy probe -- take
+the substrate's consolidated concept activity vectors (from the
+activity cache, the real ones with 0.45 overlap), apply a pattern-
+separation / orthogonalising transform (model the dentate-gyrus
+expansion + sparsification, or test the validated DG directly), measure
+whether the separated symbols are near-orthogonal (mean pairwise
+similarity well below 0.45 -- target the D.12-measured ~0.2 range) AND
+whether they FHRR-compose at or above the frozen 0.80 bar. PRE-
+REGISTERED: if the pattern-separated symbols clear 0.80 -> grounding
+via pattern separation is reachable, proceed to the real build (route
+the substrate activity through the validated DG before the FHRR
+symbol); if not -> the honest ceiling is that even pattern separation
+cannot produce composable grounded symbols on this substrate, and
+shortcut 2 is definitively closed (the composition layer stays
+oracle-symbol'd, honestly framed). (b) Propagate. Reuse-by-import; no
+protected module; no autograd. Standard discipline: cheap-first, frozen
+bar, smell-test a PASS HARDER than a FAIL, dedicated adversarial review
+before any capability claim. Whatever shortcut 2's final outcome, the
+biologization arc then has a dedicated adversarial review of the
+biologized pieces (shortcuts 1+3) before any capability rollup.
 
 ---
 [Historical content below preserved for context.]

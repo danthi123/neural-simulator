@@ -250,7 +250,7 @@ class ResonateFireTPAM:
         return int(np.argmax(overlaps)), active_frac
 
     def settle_annealed(self, recovered_spikes, theta_low, theta_high,
-                        n_anneal):
+                        n_anneal, fast=False):
         """Settle with the threshold ANNEALED from theta_low to
         theta_high over n_anneal iterations.
 
@@ -264,21 +264,34 @@ class ResonateFireTPAM:
         the recurrent dynamics and survives the rising threshold; an
         ungroundable input does not sharpen toward any attractor at any
         threshold, so the rising threshold rejects it. The schedule is
-        fixed in advance from this mechanism, not tuned."""
+        fixed in advance from this mechanism, not tuned.
+
+        fast: if True, the per-iteration resonate-and-fire threshold
+        transfer is computed in CLOSED FORM (the unit phasor at the
+        phase of the recurrent drive). Biologization step 1 validated
+        that the genuine time-stepped rf_resonate realizes exactly this
+        transfer (primitive phase error ~0.002); the closed form is the
+        same transfer, used downstream where 100k+ settle steps make
+        full time-stepping intractable. fast=False (the default) uses
+        the genuine time-stepped rf_resonate and is unchanged."""
         z = _to_phasor(recovered_spikes, self.t_steps)
         active_frac = 1.0
         for it in range(n_anneal):
             frac = it / max(1, n_anneal - 1)         # 0.0 -> 1.0
             theta = theta_low + frac * (theta_high - theta_low)
             u = self.w @ z
-            active = np.abs(u) > theta
+            mag = np.abs(u)
+            active = mag > theta
             active_frac = float(np.mean(active))
             if not active.any():                     # collapsed -> abstain
                 z = np.zeros_like(z)
                 break
-            spikes = rf_resonate(u, self.t_steps)
-            z = np.where(active, _to_phasor(spikes, self.t_steps),
-                         0.0 + 0.0j)
+            if fast:
+                readout = u / np.maximum(mag, 1e-12)
+            else:
+                readout = _to_phasor(rf_resonate(u, self.t_steps),
+                                     self.t_steps)
+            z = np.where(active, readout, 0.0 + 0.0j)
         return z, active_frac
 
     def cleanup_annealed(self, recovered_spikes, theta_low, theta_high,

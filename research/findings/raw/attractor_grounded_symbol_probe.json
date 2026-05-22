@@ -1,0 +1,54 @@
+{
+  "n_concepts": 16,
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "n_dim": 256,
+  "n_trials": 120,
+  "sigmas": [
+    0.0,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.3
+  ],
+  "bar": 0.8,
+  "substrate_band": [
+    0.36,
+    0.42
+  ],
+  "seed": 42,
+  "grid": {
+    "sigma_0.0": {
+      "recognition_acc": 0.9994791666666667,
+      "undenoised_composition": 1.0
+    },
+    "sigma_0.05": {
+      "recognition_acc": 0.9994791666666667,
+      "undenoised_composition": 1.0
+    },
+    "sigma_0.1": {
+      "recognition_acc": 0.9989583333333333,
+      "undenoised_composition": 1.0
+    },
+    "sigma_0.15": {
+      "recognition_acc": 1.0,
+      "undenoised_composition": 0.885
+    },
+    "sigma_0.2": {
+      "recognition_acc": 0.9963541666666667,
+      "undenoised_composition": 0.38
+    },
+    "sigma_0.3": {
+      "recognition_acc": 0.48072916666666665,
+      "undenoised_composition": 0.14
+    }
+  },
+  "operating_point_sigma": 0.2,
+  "operating_point_recognition_acc": 0.9963541666666667,
+  "operating_point_undenoised_composition": 0.38,
+  "verdict": "DEEPER_FORM_REACHABLE"
+}

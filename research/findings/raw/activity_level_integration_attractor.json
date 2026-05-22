@@ -1,0 +1,117 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_dim": 512,
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "n_trials": 300,
+  "bar": 0.8,
+  "m_obs": 16,
+  "k_vocab": 8,
+  "anneal": [
+    0.1,
+    0.5,
+    12
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "activity_dim": 3200,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.22666666666666666,
+          "composition_only_accuracy": 0.2570093457943925,
+          "n_composition_only": 214
+        },
+        "3": {
+          "integrated_accuracy": 0.2577777777777778,
+          "composition_only_accuracy": 0.2425249169435216,
+          "n_composition_only": 301
+        },
+        "5": {
+          "integrated_accuracy": 0.24533333333333332,
+          "composition_only_accuracy": 0.26579925650557623,
+          "n_composition_only": 538
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "activity_dim": 3200,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.2683333333333333,
+          "composition_only_accuracy": 0.3125,
+          "n_composition_only": 176
+        },
+        "3": {
+          "integrated_accuracy": 0.2411111111111111,
+          "composition_only_accuracy": 0.2633587786259542,
+          "n_composition_only": 262
+        },
+        "5": {
+          "integrated_accuracy": 0.25533333333333336,
+          "composition_only_accuracy": 0.27927927927927926,
+          "n_composition_only": 444
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "activity_dim": 3200,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.24666666666666667,
+          "composition_only_accuracy": 0.34977578475336324,
+          "n_composition_only": 223
+        },
+        "3": {
+          "integrated_accuracy": 0.2311111111111111,
+          "composition_only_accuracy": 0.3391812865497076,
+          "n_composition_only": 342
+        },
+        "5": {
+          "integrated_accuracy": 0.256,
+          "composition_only_accuracy": 0.37006578947368424,
+          "n_composition_only": 608
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "2": {
+      "mean_integrated": 0.24722222222222223,
+      "per_seed_integrated": [
+        0.22666666666666666,
+        0.2683333333333333,
+        0.24666666666666667
+      ],
+      "mean_composition_only": 0.3064283768492519
+    },
+    "3": {
+      "mean_integrated": 0.24333333333333332,
+      "per_seed_integrated": [
+        0.2577777777777778,
+        0.2411111111111111,
+        0.2311111111111111
+      ],
+      "mean_composition_only": 0.2816883273730611
+    },
+    "5": {
+      "mean_integrated": 0.25222222222222224,
+      "per_seed_integrated": [
+        0.24533333333333332,
+        0.25533333333333336,
+        0.256
+      ],
+      "mean_composition_only": 0.3050481084195133
+    }
+  },
+  "verdict": "ATTRACTOR_DENOISING_INSUFFICIENT"
+}
