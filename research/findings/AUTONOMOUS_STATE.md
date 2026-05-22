@@ -584,33 +584,42 @@ fixed-bar test (the biologized grounded-composition pipeline, run on
 per-neuron activity captured from the 64-concept bridge, integrated
 multi-seed >= 0.80 at loads {2,3,5}; recognition reported separately).
 
-**EXACT NEXT ACTION: writing-plans for the vocabulary-scaling
-implementation, then subagent-driven build, then the GPU capture run.**
-Per the project's standing pattern (design -> writing-plans ->
-subagent-driven-development). Step 1, now: write the TDD implementation
-plan `docs/plans/2026-05-22-vocabulary-scaling-implementation.md` from
-the design doc -- the build is small and reuse-heavy: a runner that
-(a) builds/loads a 64-concept G.20 sparse bridge (reuse the validated
-`g20_multibridge --sparse` builder / `build_sparse_pool_bridge`,
-byte-unchanged), (b) captures per-neuron concept-population activity
-for the 64 concepts via the activity-capture path (mirror
-`capture_activity` in `activity_level_integration.py`), (c) runs the
-biologized grounded-composition pipeline
-(`biologized_grounded_composition.py`, byte-unchanged) on that captured
-activity against the frozen 0.80 bar. Then subagent-driven build (fresh
-subagent per task; failing-test -> minimal-impl -> run -> commit;
-controller trust-but-verify, protected set byte-empty each commit), the
-GPU capture run (controller-monitored to completion -- the substrate
-capture is genuinely GPU work; kill-safe; never a false 'will be
-notified'), the mandatory smell-test (scrutinise a PASS HARDER than a
-FAIL), a dedicated adversarial review before any capability claim, and
-honest propagation of every outcome to both remotes. Reuse-by-import;
-no protected/frozen/moat module modified; no autograd; frozen 0.80 bar
-never tuned. (Broader horizon, surfaced for the owner, NOT
-auto-launched: the compositional capability is one piece; the owner's
-standing conversational-path directives -- SPEAR theta-multiplexing,
-theta-gamma mode-unification, generative replay -- and the integrated
-closed loop are the larger arcs after vocabulary scaling.)
+**VOCABULARY-SCALING DESIGN + TDD IMPLEMENTATION PLAN WRITTEN
+(2026-05-22, both remotes):**
+`docs/plans/2026-05-22-vocabulary-scaling-design.md` and
+`docs/plans/2026-05-22-vocabulary-scaling-implementation.md`. The plan
+has Task 0 (grounding pin), Task 1 (64-concept G.20 sparse bridge
+builder -- reuse `build_sparse_pool_bridge` byte-unchanged), Task 2
+(per-neuron activity capture + the biologized grounded-composition
+pipeline generalised to N concepts), Task 3 (adversarial review of the
+runner), Task 4 (CONTROLLER-ONLY decisive GPU capture run).
+
+**EXACT NEXT ACTION: subagent-driven build of the vocabulary-scaling
+plan.** Per superpowers:subagent-driven-development. Tasks 0-2: fresh
+subagent per task, strict failing-test -> minimal-impl -> run ->
+commit, controller trust-but-verify each commit (protected set
+byte-empty in every commit-scoped diff: sim/*, abstention_gate.py +
+test_abstention_gate.py [no-confab moat, MUST stay 7/7], every frozen
+*_core.py, build_biological_brain_regions / text_minimal_isolation.py,
+spiking_phasor_fhrr.py, resonate_fire_fhrr.py). Task 0 is a trivial
+grounding pin -- the controller may write it directly and commit
+(green only after Task 2 -- intentional, it IS the Task-2 gate). Task 1
++ Task 2 are subagent tasks. Task 3 = dedicated adversarial reviewer
+subagent BEFORE the decisive run. Task 4 = CONTROLLER-ONLY: the
+decisive multi-seed GPU substrate capture + pipeline run
+(seeds 42/43/44), kill-safe, monitored to actual completion (the
+substrate capture is genuine GPU work -- run_in_background or
+foreground, completion actively confirmed, never a false 'will be
+notified'); then the mandatory smell-test (scrutinise a PASS HARDER
+than a FAIL; recompute from the recorded JSON; recognition reported
+separately; no re-run, no bar change); then honest propagation
+(findings doc + capability_status entry + schema test green + push
+both remotes). Reuse-by-import; no protected module modified; no
+autograd; frozen 0.80 bar never tuned. (Broader horizon, surfaced for
+the owner, NOT auto-launched: the owner's standing conversational-path
+directives -- SPEAR theta-multiplexing, theta-gamma mode-unification,
+generative replay -- and the integrated closed loop are the larger
+arcs after vocabulary scaling.)
 
 ---
 [Historical content below preserved for context.]
