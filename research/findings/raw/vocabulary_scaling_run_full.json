@@ -1,0 +1,143 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_concepts": 64,
+  "n_dim": 512,
+  "k_recog": 8,
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "n_trials": 200,
+  "bar": 0.8,
+  "grounding": "meancenter",
+  "smoke": false,
+  "per_seed": [
+    {
+      "seed": 42,
+      "smoke": false,
+      "n_concepts_captured": 64,
+      "activity_dim": 2000,
+      "m_obs": 16,
+      "recognition_accuracy": 0.890625,
+      "recognition_per_observation": 0.3134765625,
+      "recognition_temporally_averaged": 0.890625,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.2475,
+          "composition_only_accuracy": 0.2847682119205298,
+          "n_composition_only": 302,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.24666666666666667,
+          "composition_only_accuracy": 0.23157894736842105,
+          "n_composition_only": 475,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.206,
+          "composition_only_accuracy": 0.20654911838790932,
+          "n_composition_only": 794,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "smoke": false,
+      "n_concepts_captured": 64,
+      "activity_dim": 2000,
+      "m_obs": 16,
+      "recognition_accuracy": 0.810546875,
+      "recognition_per_observation": 0.251953125,
+      "recognition_temporally_averaged": 0.810546875,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.025,
+          "composition_only_accuracy": 0.012658227848101266,
+          "n_composition_only": 237,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.03833333333333333,
+          "composition_only_accuracy": 0.035897435897435895,
+          "n_composition_only": 390,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.027,
+          "composition_only_accuracy": 0.0327613104524181,
+          "n_composition_only": 641,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "smoke": false,
+      "n_concepts_captured": 64,
+      "activity_dim": 2000,
+      "m_obs": 16,
+      "recognition_accuracy": 0.822265625,
+      "recognition_per_observation": 0.228515625,
+      "recognition_temporally_averaged": 0.822265625,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.045,
+          "composition_only_accuracy": 0.05019305019305019,
+          "n_composition_only": 259,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.06666666666666667,
+          "composition_only_accuracy": 0.07178217821782178,
+          "n_composition_only": 404,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.07,
+          "composition_only_accuracy": 0.0804953560371517,
+          "n_composition_only": 646,
+          "effective_load": 5
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "2": {
+      "mean_integrated": 0.10583333333333333,
+      "per_seed_integrated": [
+        0.2475,
+        0.025,
+        0.045
+      ],
+      "mean_composition_only": 0.11587316332056043
+    },
+    "3": {
+      "mean_integrated": 0.11722222222222223,
+      "per_seed_integrated": [
+        0.24666666666666667,
+        0.03833333333333333,
+        0.06666666666666667
+      ],
+      "mean_composition_only": 0.11308618716122625
+    },
+    "5": {
+      "mean_integrated": 0.10099999999999999,
+      "per_seed_integrated": [
+        0.206,
+        0.027,
+        0.07
+      ],
+      "mean_composition_only": 0.10660192829249304
+    }
+  },
+  "recognition_per_observation_mean": 0.2646484375,
+  "recognition_temporally_averaged_mean": 0.8411458333333334,
+  "verdict": "VOCABULARY_SCALING_64CONCEPT_BELOW_BAR"
+}

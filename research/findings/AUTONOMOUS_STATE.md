@@ -594,32 +594,56 @@ builder -- reuse `build_sparse_pool_bridge` byte-unchanged), Task 2
 pipeline generalised to N concepts), Task 3 (adversarial review of the
 runner), Task 4 (CONTROLLER-ONLY decisive GPU capture run).
 
-**EXACT NEXT ACTION: subagent-driven build of the vocabulary-scaling
-plan.** Per superpowers:subagent-driven-development. Tasks 0-2: fresh
-subagent per task, strict failing-test -> minimal-impl -> run ->
-commit, controller trust-but-verify each commit (protected set
-byte-empty in every commit-scoped diff: sim/*, abstention_gate.py +
-test_abstention_gate.py [no-confab moat, MUST stay 7/7], every frozen
-*_core.py, build_biological_brain_regions / text_minimal_isolation.py,
-spiking_phasor_fhrr.py, resonate_fire_fhrr.py). Task 0 is a trivial
-grounding pin -- the controller may write it directly and commit
-(green only after Task 2 -- intentional, it IS the Task-2 gate). Task 1
-+ Task 2 are subagent tasks. Task 3 = dedicated adversarial reviewer
-subagent BEFORE the decisive run. Task 4 = CONTROLLER-ONLY: the
-decisive multi-seed GPU substrate capture + pipeline run
-(seeds 42/43/44), kill-safe, monitored to actual completion (the
-substrate capture is genuine GPU work -- run_in_background or
-foreground, completion actively confirmed, never a false 'will be
-notified'); then the mandatory smell-test (scrutinise a PASS HARDER
-than a FAIL; recompute from the recorded JSON; recognition reported
-separately; no re-run, no bar change); then honest propagation
-(findings doc + capability_status entry + schema test green + push
-both remotes). Reuse-by-import; no protected module modified; no
-autograd; frozen 0.80 bar never tuned. (Broader horizon, surfaced for
-the owner, NOT auto-launched: the owner's standing conversational-path
-directives -- SPEAR theta-multiplexing, theta-gamma mode-unification,
-generative replay -- and the integrated closed loop are the larger
-arcs after vocabulary scaling.)
+**VOCABULARY-SCALING SUBAGENT-DRIVEN BUILD COMPLETE; DECISIVE RUN =
+NEGATIVE, diagnosed, propagated (2026-05-22, both remotes).** Tasks 0-3
+built + verified + adversarially reviewed CLEAR (commits d628b70,
+e771c3c; protected set byte-empty each commit; the runner reviewed
+genuine -- a broken run cannot score a PASS). Task 4 decisive run
+(seeds 42/43/44, 64-concept G.20 sparse substrate): integrated
+multi-seed 0.106/0.117/0.101, composition-only ~0.11 -- NEGATIVE, far
+below 0.80. Smell-test diagnosis (direct activity comparison): the
+captured G.20 sparse activity is NEAR-SILENT -- mean 0.00015, 0.5% of
+neurons nonzero, vs the validated v14/v16 substrate's 0.00099 / 7.5%
+(~15x sparser). The grounded symbols derived from near-silent
+Poisson-noise-dominated activity do not compose; recognition (averaged
+cosine) partly survives at 0.84, composition does not (composition-only
+~0.11, NOT recognition-bounded). Honest setup gap surfaced by the
+diagnosis: the run captured from a freshly-built UNTRAINED G.20 sparse
+bridge, but the design doc specified the project's VALIDATED (trained)
+G.20 sparse substrate -- so the decisive run, as executed, did not test
+the intended substrate. NOT a runner artifact (the runner was reviewed
+CLEAR); the NEGATIVE reflects the near-silent captured activity.
+Findings:
+`research/findings/2026-05-22-vocabulary-scaling-64concept-NEGATIVE-G20-sparse-activity-too-sparse-for-the-activity-grounded-pipeline.md`.
+The completed twice-reviewed 16-concept FHRR-biologization arc
+(multi-seed 0.98) stands, unaffected.
+
+**EXACT NEXT ACTION: diagnose the near-silent-activity cause, then
+re-do the vocabulary-scaling test on a properly-exercised G.20 sparse
+substrate.** The NEGATIVE has a diagnosed setup gap; the intended test
+(the biologized pipeline on the VALIDATED G.20 sparse substrate) was
+not actually run. Cheapest-first: a numpy/GPU capture-drive probe --
+does a stronger teacher current / longer stim window / a TRAINED G.20
+sparse bridge bring the captured shared-pool activity to a density
+comparable to the validated v14/v16 substrate (~7.5% nonzero, the
+regime the pipeline passed at)? PRE-REGISTERED: (a) if a properly-
+exercised G.20 sparse capture reaches v14/v16-comparable activity
+density, re-run the pre-registered vocabulary-scaling test on it (this
+corrects a setup gap -- it is NOT config-cranking a NEGATIVE, the
+0.80 bar is unchanged and the substrate is being put into the state
+the design doc specified); (b) if even a trained / strongly-driven
+G.20 sparse pool stays too sparse to ground a clean symbol, the honest
+finding is that the activity-grounded pipeline needs a denser substrate
+than G.20 sparse provides -- and the alternative (grounding the symbol
+in the G.20 sparse K-of-N PATTERN, the concept's clean code) is weighed
+honestly against whether it is still substrate-grounded or closer to
+an oracle. Standard discipline: cheap-first, frozen bar never tuned,
+smell-test a PASS HARDER than a FAIL, dedicated adversarial review
+before any capability claim, honest propagation both remotes. (Broader
+horizon, surfaced for the owner, NOT auto-launched: the owner's
+standing conversational-path directives -- SPEAR, theta-gamma
+mode-unification, generative replay -- and the integrated closed loop
+are the larger arcs.)
 
 ---
 [Historical content below preserved for context.]
