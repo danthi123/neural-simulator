@@ -1,0 +1,13 @@
+{
+  "seed": 42,
+  "probe_pool": "adjective_pool_BIG",
+  "drive_pA": 200.0,
+  "drive_fraction": 0.3,
+  "n_recurrent_edges": 30335,
+  "set_pathway_weights_returned": 30335,
+  "before_rate": 0.0066,
+  "after_rate": 0.0093,
+  "ratio": 1.409090909090909,
+  "abs_rise": 0.0026999999999999993,
+  "verdict": "RECURRENCE_ACTIVE"
+}
