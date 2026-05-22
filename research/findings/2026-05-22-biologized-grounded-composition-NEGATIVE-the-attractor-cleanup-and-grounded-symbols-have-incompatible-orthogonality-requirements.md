@@ -84,10 +84,19 @@ Two of the biologized pieces have incompatible requirements:
   condition that the attractor clean-up is degenerate once the symbols
   are even moderately correlated (0.19).
 - The biologized grounded symbol (shortcut 2's pattern-separation
-  route) produces symbols at 0.19 mutual similarity. Pattern separation
-  cannot reach the ~0.04 the attractor needs without separating so
-  hard that recognition collapses (the separation-versus-completion
-  tension already found).
+  route) produces symbols at 0.19 mutual similarity at the biological
+  dentate-gyrus setting, and pattern separation cannot reach the ~0.05
+  the attractor needs. A multi-seed dentate-gyrus sweep
+  (`dg_orthogonality_sweep.py`) over expansion ratios {4, 8, 16, 32}
+  and sparsities {2%, 1%, 0.5%, 0.2%} -- far past biological values --
+  confirms this: the stored-symbol mean similarity floors at 0.070,
+  and the attractor stays degenerate (1-of-16 self-identification) at
+  every one of the sixteen settings. Recognition in this pipeline is
+  done by temporal averaging in the raw activity space; it does not
+  pass through the dentate gyrus, so a stronger separation does not
+  cost recognition -- the limit is purely that the substrate's
+  sixteen concept activity vectors are too mutually structured to
+  orthogonalise below ~0.07, while the attractor needs below ~0.05.
 
 So a composition layer that is biology-grounded at every stage does not
 compose end-to-end on this substrate. The neurons biologize

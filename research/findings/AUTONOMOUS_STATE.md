@@ -496,35 +496,62 @@ orthogonal atomic symbols; pattern separation orthogonalises only
 partially (0.45->0.19) and trades against recognition; recognition is
 reducible by temporal integration (0.67->0.96).
 
-**EXACT NEXT ACTION: the substrate concept-representation separability
-arc -- the root cause.** The whole compositional line converged on one
-root cause: the substrate's concept representations overlap by ~0.45.
-That overlap is produced by the concept-pool architecture (the v14/v16
-line) during training. The genuinely next arc, per the project goal
-(biology-translatable insight; brain analogue): can the substrate be
-trained so its STORED concept representations are more separable --
-specifically, route the concept pools through the project's validated
-dentate gyrus (catalog D.12 pattern separation) DURING training/
-encoding, so the concepts are stored separated rather than separated
-after the fact (which the pattern-separation probe showed breaks
-recognition -- the separation/completion tension; separating at
-ENCODING time, once, does not have that tension). Concrete cheap-first
-step FIRST: a numpy probe that does NOT need a substrate run -- take
-the cached concept activity, ask whether there exists ANY fixed
-encoding-time transform (the DG expansion+sparsification swept over
-expansion ratio and sparsity) that BOTH (a) drives the stored
-concept-symbol mutual similarity below ~0.05 (orthogonal enough for
-the attractor clean-up) AND (b) keeps a noisy observation, passed
-through the SAME fixed transform, recognisable to its concept >=0.85
-(the recognition the attractor then needs). PRE-REGISTERED: if such a
-transform exists -> a separated-encoding substrate variant is the
-build (a GPU substrate run); if no DG setting satisfies both ->
-the orthogonality/recognition conflict is irreducible on this
-representation and the honest terminus is that the substrate's
-concept code itself must change (a deeper concept-pool architecture
-arc). Reuse-by-import; no protected module; no autograd; numpy-cheap.
-Propagate; build per the pre-registered reading. Standard discipline
-throughout.
+**SMELL-TEST OF THE PIPELINE NEGATIVE DONE = the NEGATIVE is genuine;
+the post-hoc-transform route is closed (2026-05-22, both remotes).**
+The fully-biologized pipeline NEGATIVE was smell-tested: could a
+stronger dentate-gyrus setting orthogonalise the substrate's concept
+symbols enough for the attractor clean-up? A multi-seed DG sweep
+(`dg_orthogonality_sweep.py`) over expansion {4-32x} and sparsity
+{2%-0.2%} -- far past biological values -- answers no: the stored-
+symbol mean similarity floors at 0.070 and the attractor stays
+degenerate (1/16) at every setting; the attractor needs <~0.05. (One
+honest correction to the pipeline-NEGATIVE findings doc: recognition
+in that pipeline is raw-activity-space temporal averaging, NOT through
+the dentate gyrus, so stronger separation does not cost recognition --
+the limit is purely that the substrate's 16 concept activity vectors
+are too mutually structured to orthogonalise below ~0.07; doc
+corrected.) The NEGATIVE is genuine and the post-hoc route is closed:
+no fixed transform of the substrate's concept activity yields
+attractor-composable grounded symbols.
+
+THE COMPOSITIONAL-BIOLOGIZATION LINE IS AT A COMPLETE, ADVERSARIALLY-
+REVIEWED, THOROUGHLY-CHARACTERISED TERMINUS. Delivered + propagated:
+a validated compositional retrieval capability (identity-level
+integration, 0.96-0.99); the composition layer's neurons biologized
+(resonate-and-fire); its clean-up biologized for near-orthogonal
+symbols (attractor + familiarity gate); its symbols NOT fully
+biologizable on this substrate (the substrate's concept
+representations are irreducibly ~0.45-overlapping, ~0.07-floored even
+under extreme pattern separation, below the orthogonality FHRR and the
+attractor need). Root cause precisely named: the substrate's concept
+code. Biology-translatable insight set delivered in full.
+
+**EXACT NEXT ACTION: design the substrate concept-code separability
+arc (the root cause), as a documented design call.** The post-hoc
+route is closed (DG sweep); the only remaining route is the substrate
+itself -- training the concept-pool architecture so its STORED concept
+representations are intrinsically more separable (lower mutual overlap
+than ~0.45). This is a substantial GPU-substrate arc and a genuine
+architecture question, so it begins with a documented design (the
+project's standing pattern: brainstorm -> design doc -> writing-plans
+-> subagent-driven build). Step 1, now: write
+`docs/plans/2026-05-22-substrate-concept-separability-design.md` --
+(a) state the precise target (concept-pool representations whose mean
+pairwise activity similarity is well below 0.45, ideally toward a
+range where derived symbols clear the attractor's orthogonality need);
+(b) survey the candidate mechanisms grounded in the project's OWN
+validated biology -- dentate-gyrus pattern separation in the training
+loop (catalog D.12, validated), sparser/decorrelated concept-pool
+coding, FS-interneuron lateral inhibition between concept pools
+(already in the v14/v16 architecture -- is it strong enough?),
+expansion recoding; (c) pick the cheapest-to-falsify candidate and a
+pre-registered fixed-bar test; (d) honest ceiling -- a substrate with
+more separable concepts would lift the recognition bound AND make a
+fully-biological grounded composition reachable, but it is a retrain
+of the concept-pool substrate and must not regress the validated
+v14/v16 direct-binding capability. Then writing-plans -> subagent-
+driven build -> GPU substrate run -> honest propagation. Standard
+discipline throughout; both remotes.
 
 ---
 [Historical content below preserved for context.]

@@ -1,0 +1,104 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "expansions": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "sparsities": [
+    0.02,
+    0.01,
+    0.005,
+    0.002
+  ],
+  "attractor_orthogonality_need": 0.05,
+  "grid": {
+    "exp4_spars0.02": {
+      "mean_similarity": 0.15555712797848922,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp4_spars0.01": {
+      "mean_similarity": 0.11976869388797184,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp4_spars0.005": {
+      "mean_similarity": 0.1035083610408472,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp4_spars0.002": {
+      "mean_similarity": 0.08355036454101607,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp8_spars0.02": {
+      "mean_similarity": 0.16578640847221907,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp8_spars0.01": {
+      "mean_similarity": 0.12782346682911985,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp8_spars0.005": {
+      "mean_similarity": 0.10530749008461643,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp8_spars0.002": {
+      "mean_similarity": 0.0758970683870117,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp16_spars0.02": {
+      "mean_similarity": 0.16332276949675475,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp16_spars0.01": {
+      "mean_similarity": 0.12666885513039935,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp16_spars0.005": {
+      "mean_similarity": 0.09767510531882806,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp16_spars0.002": {
+      "mean_similarity": 0.0741990140127588,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp32_spars0.02": {
+      "mean_similarity": 0.16592681809363638,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp32_spars0.01": {
+      "mean_similarity": 0.12472094337009548,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp32_spars0.005": {
+      "mean_similarity": 0.09989097432618628,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    },
+    "exp32_spars0.002": {
+      "mean_similarity": 0.06998582962204426,
+      "mean_attractor_self_id": 1.0,
+      "n_words": 16
+    }
+  },
+  "best_similarity": 0.06998582962204426,
+  "verdict": "DG_CANNOT_ORTHOGONALISE_FOR_ATTRACTOR"
+}
