@@ -1,0 +1,35 @@
+{
+  "n_cues": 8,
+  "n_fillers": 8,
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "n_dim": 512,
+  "cycle_steps": 1000,
+  "n_trials": 300,
+  "bar": 0.8,
+  "seed": 42,
+  "per_load": {
+    "2": {
+      "compositional_accuracy": 1.0,
+      "groundable_sim_min": 0.5965483710073041,
+      "ungroundable_sim_max": 0.11429430837613241,
+      "abstention_separates": true
+    },
+    "3": {
+      "compositional_accuracy": 1.0,
+      "groundable_sim_min": 0.4540584509350668,
+      "ungroundable_sim_max": 0.11364400366864535,
+      "abstention_separates": true
+    },
+    "5": {
+      "compositional_accuracy": 1.0,
+      "groundable_sim_min": 0.3027387401034751,
+      "ungroundable_sim_max": 0.11191743408255485,
+      "abstention_separates": true
+    }
+  },
+  "verdict": "PASS"
+}
