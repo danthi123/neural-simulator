@@ -806,43 +806,68 @@ this). capability_status.json updated (NEGATIVE pillar, n=89,
 schema 6/6 green; no-confab moat 7/7 green). Findings:
 `research/findings/2026-05-22-pattern-grounded-NEGATIVE-symbol-geometry-not-spiking-noise-is-the-load-ceiling.md`.
 
-**EXACT NEXT ACTION: cheap CPU K_VOCAB sweep on the existing
-activity cache to test whether more observations averaged in the
-consolidated activity-grounded symbol pushes the activity-grounded
-ceiling toward the geometry-clean reference -- directly testing the
-noise-bounded interpretation.** The diagnostic pinned the geometry
-as the load-bearing structural condition; activity-grounded already
-satisfies it via mean-centring. If the activity-grounded L=5 ceiling
-(multi-seed 0.756) is purely the residual spiking-symbol noise on
-top of clean geometry, then averaging more observations per concept
-before deriving the symbol should lift the ceiling toward the
-geometry-clean reference (~1.000). The activity cache has M_OBS=16
-observations per concept; the current pipeline uses K_VOCAB=8 for
-the consolidated symbol. A cheap CPU sweep over K_VOCAB in
-{1, 2, 4, 8, 16} on the existing cache (no GPU, no re-train; reuse
-the pipeline byte-unchanged) directly tests the interpretation.
-Pre-registered reading: (a) if K_VOCAB=16 lifts the activity-
-grounded L=5 mean substantially toward 1.0 (e.g. above 0.90 vs the
-current 0.756), the ceiling is noise-bounded as hypothesised --
-biology-translatable: longer temporal integration in cortex closes
-the noise gap; (b) if K_VOCAB=16 does NOT lift it meaningfully (stays
-near 0.756), there is residual structural crosstalk between
-activity-grounded symbols that more observations cannot remove --
-sharpens the diagnosis further. Standard discipline: design + tiny
-runner + soundness test (the sweep must reproduce the K=8 result
-exactly at K=8) + smell-test + propagation. On any re-trigger
-(watchdog, new session) the next concrete step is the K_VOCAB sweep
-runner unless it is already in flight (check git log + JSON output).
-(Broader horizon, surfaced for the owner, NOT auto-launched: the
-owner's standing conversational-path directives -- SPEAR, theta-
-gamma mode-unification, generative replay -- and the integrated
-closed loop are the larger arcs. The vocabulary-scaling thread on
-the activity-grounded biologized pipeline is now thoroughly
-characterised: validated at 16 concepts; BOUNDARY at 64 concepts
-trained substrate, loads 2-3 PASS, ceiling at L=4 borderline;
-geometry is the load-bearing condition, satisfied by mean-centring;
-spiking-symbol noise is the residual ceiling-cost; the K_VOCAB sweep
-is the cheap final probe on this thread.)
+**K_VOCAB SWEEP COMPLETE = REFINED CAPABILITY PASS, adversarially
+reviewed CLEAR (2026-05-23, both remotes).** Cheap CPU multi-seed
+sweep on the existing trained activity cache; monotonic-in-K curve
+(K=1 chance / K=2 0.39 / K=4 0.76 / K=8 0.80 boundary / K=16 0.91
+across all loads). At K_VOCAB=16 (the cache MAXIMUM = use all 16
+cached observations; not a tuning point), the activity-grounded
+biologized pipeline clears the frozen 0.80 bar multi-seed at every
+tested compositional load {2,3,5}: integrated means 0.933 / 0.924 /
+0.864 at L=2/3/5; per-seed L=5 [0.898, 0.817, 0.877] -- every seed
+individually above the bar. Sanity contract: K=8 reproduces the
+trained-substrate decisive recording BYTE-FOR-BYTE
+(0.8417/0.8139/0.7560 -- exact match), confirming pipeline + cache
+are deterministic and the decisive result is reproducible. A
+dedicated adversarial reviewer (fresh agent, full tool access, RAN
+all 10 exploit-class checks) returned VERDICT CLEAR with no defect:
+the pre-registration of the noise-bounded hypothesis predates the
+sweep result in git history; K_VOCAB=16 is the cache maximum, NOT
+tuning; the K_VOCAB ladder is natural log2 doubling, not a
+cherry-picked sweet spot; the curve is monotonic; all 3 seeds
+individually clear the bar at every load; the bar is unchanged;
+the pipeline is byte-unchanged; the protected set has zero diff;
+no autograd; K_VOCAB and K_RECOG are independent (recognition path
+identical to the decisive run). HONEST NON-BLOCKING CAVEAT preserved
+front and centre: the L=5 margin is thin (multi-seed mean 0.864
+below the pre-registered above-0.90 lift target; lowest seed 0.817
+only +0.017 above bar). K=16 is the cache max; the curve at K>16 is
+not tested. Biology-translatable: the residual ceiling at K=8 was
+residual spiking-symbol noise on top of correct symbol geometry; the
+mean-centring (subtractive normalisation / pooled inhibition)
+already in place delivers the geometric load-bearing condition;
+longer temporal integration in cortex closes the residual noise gap,
+exactly the kind of operation a brain naturally performs when
+reading a noisy population code. capability_status.json updated (new
+VALIDATED pillar, n=90; schema 6/6 green; no-confab moat 7/7 green).
+Findings:
+`research/findings/2026-05-22-vocabulary-scaling-trained-substrate-Kvocab16-PASS-activity-grounded-clears-the-bar-at-all-loads-with-thin-L5-margin.md`.
+
+**EXACT NEXT ACTION: cheap CPU extended load-ceiling map at K=16,
+loads {2..7}, on the existing trained activity cache -- fully maps
+the activity-grounded ceiling at the cache's full integration
+budget.** A direct follow-up to the K=16 PASS that extends the
+load-ceiling characterisation curve from K=8 to K=16. Cheap CPU; no
+GPU; no re-train; the pipeline is reused byte-unchanged; same
+discipline as the original load-ceiling probe (sanity loads {2,3,5}
+at K=16 must reproduce the K=16 sweep result byte-for-byte; new
+loads {4,6,7} extend the curve). Pre-registered reading: PASS at L=4
+follows from the K=16 monotonic curve (very likely); the new map
+point is L=6 and L=7 -- where does the K=16 ceiling sit? If L=6 and
+L=7 also clear the bar, the activity-grounded pipeline at K=16
+extends meaningfully past load 5 (a strong refined capability). If
+they miss, the K=16 ceiling sits between L=5 and L=6 (or L=6 and
+L=7) -- a sharper map of where noise-averaging tops out at this
+substrate density. Standard discipline: frozen bar never tuned;
+smell-test a PASS HARDER than a FAIL; sanity reproduction at L=5
+exactly; honest propagation both remotes; the thin-margin caveat
+preserved if a refined claim is made. After (b) the natural next
+pre-registered tier is the 160/320-concept ensemble at K=16 -- the
+broader vocabulary scaling the design doc names. (Broader horizon,
+surfaced for the owner, NOT auto-launched: the owner's standing
+conversational-path directives -- SPEAR, theta-gamma mode-
+unification, generative replay -- and the integrated closed loop are
+the larger arcs.)
 
 ---
 [Historical content below preserved for context.]
