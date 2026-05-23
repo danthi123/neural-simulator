@@ -1,0 +1,251 @@
+{
+  "n_dim": 512,
+  "n_gamma_slots": 7,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_trials": 200,
+  "bar": 0.8,
+  "capacity_sweep_vocab": 32,
+  "noise_sweep_vocab": 32,
+  "noise_sweep_load": 5,
+  "vocab_sweep_load": 5,
+  "capacity_sweep": {
+    "2": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "3": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "5": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "7": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 0.9516666666666667,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        0.955,
+        0.94,
+        0.96
+      ]
+    }
+  },
+  "noise_sweep": {
+    "0.0": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "0.05": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "0.1": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "0.2": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 0.9983333333333334,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        0.995
+      ]
+    },
+    "0.4": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 0.9983333333333334,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        0.995
+      ]
+    },
+    "0.8": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 0.9966666666666667,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        0.99
+      ]
+    },
+    "1.6": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 0.9500000000000001,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        0.95,
+        0.965,
+        0.935
+      ]
+    }
+  },
+  "vocab_sweep": {
+    "32": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "64": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "128": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 0.9983333333333334,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        0.995,
+        1.0
+      ]
+    },
+    "256": {
+      "order_bearing_mean": 1.0,
+      "order_invariant_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "envelope_summary": {
+    "capacity": {
+      "axis": "load (vocab=32, noise=0)",
+      "last_value_both_PASS": 7,
+      "first_value_any_miss": null,
+      "first_miss_readouts": null
+    },
+    "noise": {
+      "axis": "noise std (vocab=32, load=5)",
+      "last_value_both_PASS": 1.6,
+      "first_value_any_miss": null,
+      "first_miss_readouts": null
+    },
+    "vocab": {
+      "axis": "vocab (load=5, noise=0)",
+      "last_value_both_PASS": 256,
+      "first_value_any_miss": null,
+      "first_miss_readouts": null
+    }
+  }
+}

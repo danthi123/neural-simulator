@@ -1083,44 +1083,67 @@ within the SPEAR theta cycle) is now a justifiable next pre-
 registered step. Findings:
 `research/findings/2026-05-23-theta-gamma-mode-unification-cheap-numpy-probe-ALGEBRA-PASS-Lisman-Idiart-N16-realisable-on-FHRR.md`.
 
-**EXACT NEXT ACTION: cheap-first follow-up probes characterising the
-algebra-PASS further BEFORE committing to the substantial multi-week
-biologized spiking implementation.** Three cheap CPU probes naturally
-follow from the algebra-PASS, each ~minutes; together they map the
-ALGEBRA's mode-unification capacity boundary and would inform the
-biologized implementation's design budget:
+**THETA-GAMMA MODE-UNIFICATION CHARACTERISATION COMPLETE: algebra
+capacity envelope wide on all three tested axes; critically the
+algebra survives substrate-realistic noise (2026-05-23, both
+remotes).** All three cheap-first follow-up probes (capacity / noise
+/ vocab) propagated as one comprehensive characterisation. At
+N_dim=512, BOTH readouts (order-bearing AND order-invariant) clear
+the frozen 0.80 bar at every tested cell: load up to L=7 (the
+gamma-slot ceiling), noise std up to 1.60 (matching the substrate's
+raw spiking CV), vocab up to 256 (8x the algebra-PASS value).
+Order-bearing is exactly 1.000 at every cell; order-invariant has
+slight degradation at the extremes (L=7 0.952; noise 1.60 0.950;
+vocab 128 0.998) but every cell clears the bar. The single most
+actionable result for the biologized spiking implementation: at
+noise std=1.6 (matching the substrate's raw spiking CV measured in
+the FHRR-biologization arc), both readouts clear the bar -- the
+algebra has ample headroom for substrate-realistic noise. The
+biologized spiking implementation on the project's substrate is now
+justified as the next pre-registered step. Findings:
+`research/findings/2026-05-23-theta-gamma-mode-unification-characterisation-capacity-envelope-wide-on-all-three-axes-algebra-survives-substrate-realistic-noise.md`.
 
-(a) **Capacity-edge sweep**: re-run the probe at higher loads
-    {5, 7, 10, 15, 20} keeping vocabulary 32 and N_dim=512 fixed --
-    where does ORDER-BEARING break? where does ORDER-INVARIANT
-    break? Both are likely to clear past load 10 (FHRR-theoretic
-    capacity ~96 at this dim); the question is whether one fails
-    before the other.
+THE CHEAP-FIRST PROBING ON THE THETA-GAMMA MODE-UNIFICATION THREAD
+IS NOW COMPLETE: algebra PASS at the algebra-PASS configuration;
+capacity envelope wide on three tested axes; noise robust to
+substrate-realistic levels. The pattern is exactly the
+FHRR-biologization arc's: algebra-PASS first (probe), capacity-
+envelope mapped (characterisation), substrate-noise-robustness
+demonstrated (the most actionable for the build), THEN the
+biologized spiking implementation as a substantial pre-registered
+build. All three groundwork steps are propagated.
 
-(b) **Noise-robustness probe**: add per-symbol Gaussian noise at
-    levels matching the spiking-substrate noise envelope the FHRR-
-    biologization arc characterised (~CV 1.6 for raw activity;
-    ~CV 0.1 after pattern-separation + mean-centring) -- does the
-    algebra-PASS survive substrate-realistic noise? If yes the
-    biologized implementation is straightforward; if not the
-    biologization needs additional noise-reduction.
+**EXACT NEXT ACTION: design + TDD plan for the biologized spiking
+mode-unification implementation on the project's substrate.** This is
+a substantial multi-week build commitment, justified by the algebra-
+PASS + characterisation envelope; it follows the same disciplined
+arc as the FHRR-biologization (design + plan + subagent-driven build
++ adversarial review CLEAR + controller-only decisive GPU run). The
+design would: reuse the SPEAR theta-rhythm timing controller
+(validated; exists from the SPEAR arc); reuse the substrate's
+validated per-concept activity capture + trained-substrate runner
+pipeline; reuse the FHRR-biologization arc's resonate-and-fire
+neurons, attractor clean-up, separate familiarity gate (all
+validated); reuse the K=16 PASS recipe; reuse the validated G.20
+sparse substrate at 32-64 concepts per bridge. Genuinely-new
+components: (i) a gamma-slot timing mechanism that places items at
+specific phase positions within each theta cycle (the load-bearing
+NEW component); (ii) per-slot decoder for order-bearing readout;
+(iii) marginal-sum decoder for order-invariant readout. Tests BOTH
+readouts on the SAME spiking-substrate encoding against the frozen
+0.80 bar, multi-seed, at compositional loads {2, 3, 5}. On a
+watchdog re-trigger: the design doc is the next concrete step (or
+if the design doc exists, the TDD plan; or if the plan exists, Task
+0 of subagent-driven build). The biologization-arc discipline is
+the precedent (frozen bar never tuned; oracle-adjacency caveats
+stated up front; smell-test PASS HARDER than FAIL; honest
+propagation both remotes).
 
-(c) **Vocab-scaling probe**: sweep vocabulary size at fixed loads
-    {2, 3, 5} -- does the algebra still PASS at vocab 64, 128, 160
-    (matching the vocab-scaling thread's tiers)? The FHRR capacity
-    curve predicts yes well past vocab 1000 at N_dim=512, but the
-    mode-unification readout's marginal-scoring crosstalk grows
-    with vocab and may bite earlier.
-
-Pre-registered for each: PASS iff multi-seed-mean >= 0.80 on both
-readouts at every probed value. Each writes its own findings doc.
-After (a)-(c) is propagated, the spiking biologized implementation
-on the project's substrate is the natural multi-week next pre-
-registered step (design + TDD plan + subagent-driven build +
-dedicated adversarial review + GPU run). On a watchdog re-trigger:
-pick the next un-completed cheap follow-up of (a), (b), (c) from
-the order above (cheap-first discipline); after all three are
-propagated, surface the spiking-implementation design. (Broader horizon, surfaced for the
+(Broader horizon: generative replay builds ON TOP OF biologized
+mode-unification once that is built. The biologized mode-unification
+is the next major direction; generative replay then closes the
+conversational loop. Cross-bridge composition is also an open
+direction the 160-concept arc explicitly bracketed.) (Broader horizon, surfaced for the
 owner, NOT auto-launched: the owner's standing conversational-path
 directives -- SPEAR, theta-gamma mode-unification, generative
 replay -- and the integrated closed loop are the larger arcs. The
