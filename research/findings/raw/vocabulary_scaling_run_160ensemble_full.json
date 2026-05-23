@@ -1,0 +1,614 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "bridges": [
+    "bridgeA_nouns",
+    "bridgeB_verbs",
+    "bridgeC_adj",
+    "bridgeD_spatial",
+    "bridgeE_functional"
+  ],
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar": 0.8,
+  "k_vocab": 16,
+  "k_recog": 8,
+  "n_trials": 200,
+  "n_train_events": 400,
+  "n_concepts_per_bridge_full": 32,
+  "n_dim": 512,
+  "substrate": "trained_per_bridge",
+  "symbol_grounding": "meancenter_activity",
+  "smoke": false,
+  "cell_results": [
+    {
+      "bridge": "bridgeA_nouns",
+      "seed": 42,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.9375,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.998,
+          "composition_only_accuracy": 0.998,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeA_nouns",
+      "seed": 43,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.87890625,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.999,
+          "composition_only_accuracy": 0.999,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeA_nouns",
+      "seed": 44,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.87109375,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.995,
+          "composition_only_accuracy": 0.995,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeB_verbs",
+      "seed": 42,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.90234375,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.89,
+          "composition_only_accuracy": 0.89,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.86,
+          "composition_only_accuracy": 0.86,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.824,
+          "composition_only_accuracy": 0.824,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeB_verbs",
+      "seed": 43,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.87890625,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeB_verbs",
+      "seed": 44,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.87890625,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.996,
+          "composition_only_accuracy": 0.996,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeC_adj",
+      "seed": 42,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.921875,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeC_adj",
+      "seed": 43,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.900390625,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.55,
+          "composition_only_accuracy": 0.55,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.5383333333333333,
+          "composition_only_accuracy": 0.5383333333333333,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.523,
+          "composition_only_accuracy": 0.523,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeC_adj",
+      "seed": 44,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.87890625,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.94,
+          "composition_only_accuracy": 0.94,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.9516666666666667,
+          "composition_only_accuracy": 0.9516666666666667,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.951,
+          "composition_only_accuracy": 0.951,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeD_spatial",
+      "seed": 42,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.9296875,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.81,
+          "composition_only_accuracy": 0.81,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.81,
+          "composition_only_accuracy": 0.81,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.78,
+          "composition_only_accuracy": 0.78,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeD_spatial",
+      "seed": 43,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.908203125,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.6425,
+          "composition_only_accuracy": 0.6425,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.6316666666666667,
+          "composition_only_accuracy": 0.6316666666666667,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.621,
+          "composition_only_accuracy": 0.621,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeD_spatial",
+      "seed": 44,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.8828125,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.8725,
+          "composition_only_accuracy": 0.8725,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.8666666666666667,
+          "composition_only_accuracy": 0.8666666666666667,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.812,
+          "composition_only_accuracy": 0.812,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeE_functional",
+      "seed": 42,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.884765625,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.999,
+          "composition_only_accuracy": 0.999,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeE_functional",
+      "seed": 43,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.8984375,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.975,
+          "composition_only_accuracy": 0.975,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.955,
+          "composition_only_accuracy": 0.955,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.964,
+          "composition_only_accuracy": 0.964,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "bridge": "bridgeE_functional",
+      "seed": 44,
+      "smoke": false,
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts_tested": 32,
+      "recognition_per_observation": 0.87890625,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 1.0,
+          "composition_only_accuracy": 1.0,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.972,
+          "composition_only_accuracy": 0.972,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    }
+  ],
+  "per_bridge_aggregate": {
+    "bridgeA_nouns": {
+      "2": {
+        "mean_integrated": 1.0,
+        "per_seed_integrated": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "3": {
+        "mean_integrated": 1.0,
+        "per_seed_integrated": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "5": {
+        "mean_integrated": 0.9973333333333333,
+        "per_seed_integrated": [
+          0.998,
+          0.999,
+          0.995
+        ]
+      }
+    },
+    "bridgeB_verbs": {
+      "2": {
+        "mean_integrated": 0.9633333333333334,
+        "per_seed_integrated": [
+          0.89,
+          1.0,
+          1.0
+        ]
+      },
+      "3": {
+        "mean_integrated": 0.9533333333333333,
+        "per_seed_integrated": [
+          0.86,
+          1.0,
+          1.0
+        ]
+      },
+      "5": {
+        "mean_integrated": 0.94,
+        "per_seed_integrated": [
+          0.824,
+          1.0,
+          0.996
+        ]
+      }
+    },
+    "bridgeC_adj": {
+      "2": {
+        "mean_integrated": 0.8300000000000001,
+        "per_seed_integrated": [
+          1.0,
+          0.55,
+          0.94
+        ]
+      },
+      "3": {
+        "mean_integrated": 0.8300000000000001,
+        "per_seed_integrated": [
+          1.0,
+          0.5383333333333333,
+          0.9516666666666667
+        ]
+      },
+      "5": {
+        "mean_integrated": 0.8246666666666668,
+        "per_seed_integrated": [
+          1.0,
+          0.523,
+          0.951
+        ]
+      }
+    },
+    "bridgeD_spatial": {
+      "2": {
+        "mean_integrated": 0.775,
+        "per_seed_integrated": [
+          0.81,
+          0.6425,
+          0.8725
+        ]
+      },
+      "3": {
+        "mean_integrated": 0.7694444444444445,
+        "per_seed_integrated": [
+          0.81,
+          0.6316666666666667,
+          0.8666666666666667
+        ]
+      },
+      "5": {
+        "mean_integrated": 0.7376666666666667,
+        "per_seed_integrated": [
+          0.78,
+          0.621,
+          0.812
+        ]
+      }
+    },
+    "bridgeE_functional": {
+      "2": {
+        "mean_integrated": 0.9916666666666667,
+        "per_seed_integrated": [
+          1.0,
+          0.975,
+          1.0
+        ]
+      },
+      "3": {
+        "mean_integrated": 0.985,
+        "per_seed_integrated": [
+          1.0,
+          0.955,
+          1.0
+        ]
+      },
+      "5": {
+        "mean_integrated": 0.9783333333333334,
+        "per_seed_integrated": [
+          0.999,
+          0.964,
+          0.972
+        ]
+      }
+    }
+  },
+  "verdict": "ENSEMBLE_160CONCEPT_K16_BELOW_BAR"
+}
