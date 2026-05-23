@@ -756,32 +756,93 @@ pattern store; recognition genuinely load-bearing; the deriver
 identical to the activity-grounded path; no protected module
 modified; no autograd; frozen bar immovable).
 
-**EXACT NEXT ACTION: write the TDD implementation plan for the
-pattern-grounded runner, then subagent-driven build, then dedicated
-adversarial review, then controller-only decisive run.** Tasks per the
-design doc: Task 0 grounding pin (constants + bar unchanged), Task 1
-the `pattern_vector` helper (pure function, unit-tested), Task 2 the
-runner `vocabulary_scaling_run_pattern_grounded.py` (focused byte-
-reuse extension of the trained-substrate runner; substitute symbol-
-derivation only; pipeline + capture + recognition + multi-seed +
-smell-test reused by import), Task 3 soundness tests (the load-bearing
-guards -- input differs, recognition is the only handle), Task 4
-adversarial review (RUNS the exploit-class checks; CLEAR required
-before any decisive run), Task 5 CONTROLLER-ONLY decisive run
-(multi-seed, the trained activity cache is reused for recognition; CPU
-sufficient since the symbol-derivation change is pure-numpy; mandatory
-smell-test recomputes from the recording). After Task 5, regardless of
-verdict, re-run the load-ceiling probe on the pattern-grounded
-pipeline so the comparison curve extends across loads {2..7}. Standard
-discipline throughout: frozen bar never tuned; smell-test a PASS
-HARDER than a FAIL; honest propagation both remotes; the oracle-
-adjacency caveat front and centre on every artefact. On any re-trigger
-(watchdog, new session, post-compaction) the next concrete step is the
-TDD plan unless one of Tasks 1-5 is in flight (check git log + the
-output files). (Broader horizon, surfaced for the owner, NOT auto-
-launched: the owner's standing conversational-path directives --
-SPEAR, theta-gamma mode-unification, generative replay -- and the
-integrated closed loop are the larger arcs.)
+**PATTERN-GROUNDED DECISIVE RUN COMPLETE = NEGATIVE at chance;
+diagnostic pinpoints the cause to symbol GEOMETRY, not spiking-symbol
+noise (2026-05-22, both remotes).** TDD-driven build executed cleanly:
+Task 0 grounding pin landed red (intentional), Task 1 `pattern_vector`
+helper (pure function, 4/4 tests), Task 2 the runner (focused byte-
+reuse extension; Task 0 pin then green), Task 3 soundness tests (3/3
+after a fix where the original phasor-type assertion was corrected
+to match the integer spike-phase representation that
+`phases_to_spikes` actually returns), Task 4 dedicated adversarial
+reviewer (fresh agent, full tool access, RAN all 10 exploit-class
+checks) returned VERDICT CLEAR -- no defect on any check (no answer
+leak; recognition genuinely load-bearing via the composition-only
+gate `rec_cue[c] == c and rec_fill[f] == f`; deriver identical to
+the activity-grounded path; frozen bar immovable; byte-unchanged
+reuse with zero modifications to any protected module; no autograd;
+pipeline body byte-equivalent to `run_pipeline` modulo only the
+`grounded` source; pattern store is the substrate's
+`sixty_four_concept_sparse_patterns(seed)` saved by the
+trained-substrate runner -- not freely chosen). Task 5 controller-
+only decisive run, multi-seed (42/43/44), CPU on the existing trained
+activity cache: integrated multi-seed 0.038 / 0.033 / 0.029 at loads
+{2,3,5} -- NEGATIVE, essentially chance (1/32 = 0.031 for the
+32-filler argmax), about TWENTY TIMES WORSE than the activity-
+grounded reference (0.842/0.814/0.756) on the same trained
+substrate. The pre-registered hypothesis (the spiking-symbol noise
+is the load-ceiling cause) is REFUTED. Built-in diagnostic pinpoints
+the actual cause precisely: direct measurement of symbol-input
+pairwise cosine across all 2016 concept pairs shows activity-
+grounded (mean-centered consolidated activity) is near-orthogonal
+with both positive AND negative correlations (mean -0.016, std
+0.053); pattern-grounded (binary K-of-N indicator) has UNIFORMLY
+non-negative cosines with mean exactly K/N = 0.050 (the birthday
+calculation). The compositional algebra requires near-orthogonal
+signed symbols; uniformly positive cosines degenerate the attractor
+clean-up. A confirmatory diagnostic (mean-centered pattern --
+subtract the across-concept mean indicator from each pattern --
+which restores the activity-grounded geometry exactly: mean cosine
+-0.016, std 0.022) scores ~1.000 multi-seed at all loads -- the
+geometric mechanism is exactly the load-bearing operation. This
+diagnostic is reported only to pinpoint the cause; it is NOT a
+capability claim and the oracle-adjacency caveat is sharpened
+(deterministic function of stored patterns, no per-observation
+noise). Biology-translatable refinement: the compositional substrate
+cannot be just the stable identity-defining ensemble (the engram
+cells; the K-of-N pattern); it must ALSO be common-mode-removed
+(subtractive normalisation / pooled inhibition delivers exactly
+this). capability_status.json updated (NEGATIVE pillar, n=89,
+schema 6/6 green; no-confab moat 7/7 green). Findings:
+`research/findings/2026-05-22-pattern-grounded-NEGATIVE-symbol-geometry-not-spiking-noise-is-the-load-ceiling.md`.
+
+**EXACT NEXT ACTION: cheap CPU K_VOCAB sweep on the existing
+activity cache to test whether more observations averaged in the
+consolidated activity-grounded symbol pushes the activity-grounded
+ceiling toward the geometry-clean reference -- directly testing the
+noise-bounded interpretation.** The diagnostic pinned the geometry
+as the load-bearing structural condition; activity-grounded already
+satisfies it via mean-centring. If the activity-grounded L=5 ceiling
+(multi-seed 0.756) is purely the residual spiking-symbol noise on
+top of clean geometry, then averaging more observations per concept
+before deriving the symbol should lift the ceiling toward the
+geometry-clean reference (~1.000). The activity cache has M_OBS=16
+observations per concept; the current pipeline uses K_VOCAB=8 for
+the consolidated symbol. A cheap CPU sweep over K_VOCAB in
+{1, 2, 4, 8, 16} on the existing cache (no GPU, no re-train; reuse
+the pipeline byte-unchanged) directly tests the interpretation.
+Pre-registered reading: (a) if K_VOCAB=16 lifts the activity-
+grounded L=5 mean substantially toward 1.0 (e.g. above 0.90 vs the
+current 0.756), the ceiling is noise-bounded as hypothesised --
+biology-translatable: longer temporal integration in cortex closes
+the noise gap; (b) if K_VOCAB=16 does NOT lift it meaningfully (stays
+near 0.756), there is residual structural crosstalk between
+activity-grounded symbols that more observations cannot remove --
+sharpens the diagnosis further. Standard discipline: design + tiny
+runner + soundness test (the sweep must reproduce the K=8 result
+exactly at K=8) + smell-test + propagation. On any re-trigger
+(watchdog, new session) the next concrete step is the K_VOCAB sweep
+runner unless it is already in flight (check git log + JSON output).
+(Broader horizon, surfaced for the owner, NOT auto-launched: the
+owner's standing conversational-path directives -- SPEAR, theta-
+gamma mode-unification, generative replay -- and the integrated
+closed loop are the larger arcs. The vocabulary-scaling thread on
+the activity-grounded biologized pipeline is now thoroughly
+characterised: validated at 16 concepts; BOUNDARY at 64 concepts
+trained substrate, loads 2-3 PASS, ceiling at L=4 borderline;
+geometry is the load-bearing condition, satisfied by mean-centring;
+spiking-symbol noise is the residual ceiling-cost; the K_VOCAB sweep
+is the cheap final probe on this thread.)
 
 ---
 [Historical content below preserved for context.]

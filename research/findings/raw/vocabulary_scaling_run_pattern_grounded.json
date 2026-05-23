@@ -1,0 +1,139 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_concepts": 64,
+  "n_dim": 512,
+  "k_recog": 8,
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "n_trials": 200,
+  "bar": 0.8,
+  "substrate": "trained",
+  "symbol_grounding": "pattern",
+  "oracle_adjacency_caveat": "The K-of-N pattern is the substrate's own concept code -- still substrate-grounded -- but one step closer to oracle-lookup than activity-grounded; a PASS is read with this caveat.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "trained_substrate": true,
+      "symbol_grounding": "pattern",
+      "n_concepts": 64,
+      "activity_dim": 2000,
+      "recognition_per_observation": 0.7939453125,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.04,
+          "composition_only_accuracy": 0.04,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.03666666666666667,
+          "composition_only_accuracy": 0.03666666666666667,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.03,
+          "composition_only_accuracy": 0.03,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "trained_substrate": true,
+      "symbol_grounding": "pattern",
+      "n_concepts": 64,
+      "activity_dim": 2000,
+      "recognition_per_observation": 0.76171875,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.0425,
+          "composition_only_accuracy": 0.0425,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.03833333333333333,
+          "composition_only_accuracy": 0.03833333333333333,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.035,
+          "composition_only_accuracy": 0.035,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "trained_substrate": true,
+      "symbol_grounding": "pattern",
+      "n_concepts": 64,
+      "activity_dim": 2000,
+      "recognition_per_observation": 0.7666015625,
+      "recognition_temporally_averaged": 1.0,
+      "per_load": {
+        "2": {
+          "integrated_accuracy": 0.0325,
+          "composition_only_accuracy": 0.0325,
+          "n_composition_only": 400,
+          "effective_load": 2
+        },
+        "3": {
+          "integrated_accuracy": 0.023333333333333334,
+          "composition_only_accuracy": 0.023333333333333334,
+          "n_composition_only": 600,
+          "effective_load": 3
+        },
+        "5": {
+          "integrated_accuracy": 0.023,
+          "composition_only_accuracy": 0.023,
+          "n_composition_only": 1000,
+          "effective_load": 5
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "2": {
+      "mean_integrated": 0.03833333333333334,
+      "per_seed_integrated": [
+        0.04,
+        0.0425,
+        0.0325
+      ],
+      "mean_composition_only": 0.03833333333333334
+    },
+    "3": {
+      "mean_integrated": 0.032777777777777774,
+      "per_seed_integrated": [
+        0.03666666666666667,
+        0.03833333333333333,
+        0.023333333333333334
+      ],
+      "mean_composition_only": 0.032777777777777774
+    },
+    "5": {
+      "mean_integrated": 0.029333333333333333,
+      "per_seed_integrated": [
+        0.03,
+        0.035,
+        0.023
+      ],
+      "mean_composition_only": 0.029333333333333333
+    }
+  },
+  "verdict": "VOCABULARY_SCALING_64CONCEPT_PATTERN_GROUNDED_BELOW_BAR"
+}
