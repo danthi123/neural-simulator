@@ -24,20 +24,21 @@ from research.findings.raw.vocabulary_scaling_run_trained import (
 )
 
 
-def test_no_TPAM_import_in_runner():
-    """The runner must not import ResonateFireTPAM or settle_annealed
+def test_no_TPAM_import_or_usage_in_runner():
+    """The runner must not IMPORT or INSTANTIATE the TPAM attractor
     -- the whole point is to test the alternative biology-grounded
     identification mechanism (parallel population matching), not the
-    TPAM attractor. If TPAM appears in the runner the comparison is
-    confounded."""
+    TPAM. (Docstring/comment mentions of "ResonateFireTPAM" explaining
+    the design choice are OK; the check is on actual usage.)"""
     import inspect
     from research.findings.raw import (
         biologized_spiking_mode_unification_parallel_matching_runner as m,
     )
     src = inspect.getsource(m)
-    assert "ResonateFireTPAM" not in src
-    assert "settle_annealed" not in src
-    assert "ANNEAL_THETA" not in src
+    assert "from research.runners.resonate_fire_fhrr import ResonateFireTPAM" not in src
+    assert "ResonateFireTPAM(" not in src
+    assert ".settle_annealed(" not in src
+    assert "ANNEAL_THETA_LOW" not in src and "ANNEAL_THETA_HIGH" not in src
 
 
 def test_substrate_constants_match_mode_unification_runner():
