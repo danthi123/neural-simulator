@@ -843,27 +843,70 @@ VALIDATED pillar, n=90; schema 6/6 green; no-confab moat 7/7 green).
 Findings:
 `research/findings/2026-05-22-vocabulary-scaling-trained-substrate-Kvocab16-PASS-activity-grounded-clears-the-bar-at-all-loads-with-thin-L5-margin.md`.
 
-**EXACT NEXT ACTION: cheap CPU extended load-ceiling map at K=16,
-loads {2..7}, on the existing trained activity cache -- fully maps
-the activity-grounded ceiling at the cache's full integration
-budget.** A direct follow-up to the K=16 PASS that extends the
-load-ceiling characterisation curve from K=8 to K=16. Cheap CPU; no
-GPU; no re-train; the pipeline is reused byte-unchanged; same
-discipline as the original load-ceiling probe (sanity loads {2,3,5}
-at K=16 must reproduce the K=16 sweep result byte-for-byte; new
-loads {4,6,7} extend the curve). Pre-registered reading: PASS at L=4
-follows from the K=16 monotonic curve (very likely); the new map
-point is L=6 and L=7 -- where does the K=16 ceiling sit? If L=6 and
-L=7 also clear the bar, the activity-grounded pipeline at K=16
-extends meaningfully past load 5 (a strong refined capability). If
-they miss, the K=16 ceiling sits between L=5 and L=6 (or L=6 and
-L=7) -- a sharper map of where noise-averaging tops out at this
-substrate density. Standard discipline: frozen bar never tuned;
-smell-test a PASS HARDER than a FAIL; sanity reproduction at L=5
-exactly; honest propagation both remotes; the thin-margin caveat
-preserved if a refined claim is made. After (b) the natural next
-pre-registered tier is the 160/320-concept ensemble at K=16 -- the
-broader vocabulary scaling the design doc names. (Broader horizon,
+**K=16 EXTENDED LOAD-CEILING MAP COMPLETE -- ceiling between L=6 and
+L=7; multi-seed-mean PASS through L=6, strict per-seed PASS through
+L=5; sanity verified (2026-05-23, both remotes).** Cheap CPU
+characterisation; loads {2,3,4,5,6,7} at K=16 on the existing trained
+activity cache. Multi-seed integrated means: L=2 0.9325, L=3 0.9244,
+L=4 0.8921 (new -- was 0.7988 BOUNDARY at K=8), L=5 0.8623, L=6
+0.8336, L=7 0.7855 (miss). The ceiling sits BETWEEN binding loads 6
+and 7. Per-seed analysis: every seed individually clears the 0.80 bar
+through L=5; at L=6, seed 43 sits at 0.7750 (below bar) while seeds
+42 and 44 clear (0.8908, 0.8350) -- multi-seed-mean PASS at L=6 with
+an honest one-seed-below caveat. The decay above L=6 is smooth and
+monotonic (about 0.05 per binding) -- consistent with the noise-
+bounded interpretation. SANITY: first run produced an L=5 mismatch
+(0.8623 vs the sweep's 0.8640, by 0.0017). Investigation root-caused
+it to a known property of `run_pipeline` -- the shared `qrng` advances
+through the load loop, so per-seed values at L=5 depend on whether
+L=4 ran before it. A confirmatory re-run at K=16 with LOADS=[2,3,5]
+reproduces the sweep BYTE-FOR-BYTE (0.9325/0.9244/0.8640 -- exact at
+every per-seed value). The shared-qrng artifact is confirmed; no
+pipeline drift, no cache corruption. The K=16 PASS pillar (n=90)
+stands; this is a characterisation extension to it, not a new pillar.
+Findings:
+`research/findings/2026-05-23-vocabulary-scaling-K16-extended-load-ceiling-map-ceiling-sits-between-L6-and-L7-with-honest-per-seed-caveat-at-L6.md`.
+
+THE 64-CONCEPT VOCAB-SCALING THREAD ON THE ACTIVITY-GROUNDED
+BIOLOGIZED PIPELINE IS NOW THOROUGHLY CHARACTERISED: 16-concept
+validated capability (multi-seed 0.98); 64-concept K=8 BOUNDARY
+(multi-seed-mean PASS through L=3, ceiling at L=4); 64-concept K=16
+refined PASS (multi-seed-mean PASS through L=6, strict per-seed PASS
+through L=5, ceiling between L=6 and L=7); geometric mechanism
+precisely pinned (mean-centring required -- subtractive normalisation
+/ pooled inhibition); noise-bounded interpretation confirmed (longer
+temporal integration closes residual noise on top of correct
+geometry). A complete, honest, biology-translatable result set, all
+propagated.
+
+**EXACT NEXT ACTION: 160-concept ensemble at K=16, the next
+vocabulary tier the vocab-scaling design doc names (PASS-branch
+action).** Builds on the K=16 PASS at 64 concepts. Reuses the
+validated 5-bridge G.20 sparse ensemble pattern documented in
+CLAUDE.md: 5 bridges (A nouns / B verbs / C adj / D spatial / E
+functional) at 32 concepts each = 160 unique concepts. Per-bridge
+training per the validated G.20 encoding (apply prior +
+train_concept_sparse, the same byte-unchanged path the
+trained-substrate runner uses); per-bridge activity capture at
+M_OBS=16 (matching the K_VOCAB=16 cache the 64-concept arc used);
+biologized grounded-composition pipeline reused byte-unchanged
+against the SAME frozen 0.80 bar at the SAME loads (the same test
+shape -- multi-seed {42,43,44}, loads {2,3,5}). The honest open
+question: does the activity-grounded pipeline scale per-bridge at
+160 concepts the same way the 64-concept thread did? PRE-REGISTERED:
+PASS = multi-seed-mean >= 0.80 at all loads on each of 5 bridges;
+NEGATIVE = below 0.80 at some load on some bridge (honest finding:
+the per-bridge scaling has a vocabulary ceiling beyond 64 even with
+the corrected substrate + K=16). Bigger commitment than the
+64-concept thread (each bridge trains separately, ~58 min/seed × 5
+bridges × 3 seeds ~ 14-15 hours total; kill-safe per-bridge per-seed
+cache). Standard discipline: design + TDD plan + subagent-driven
+build + dedicated adversarial review before any decisive run;
+frozen bar never tuned; mandatory smell-test; honest propagation
+both remotes. (Broader horizon, surfaced for the owner, NOT auto-
+launched: the owner's standing conversational-path directives --
+SPEAR, theta-gamma mode-unification, generative replay -- and the
+integrated closed loop are the larger arcs.) (Broader horizon,
 surfaced for the owner, NOT auto-launched: the owner's standing
 conversational-path directives -- SPEAR, theta-gamma mode-
 unification, generative replay -- and the integrated closed loop are
