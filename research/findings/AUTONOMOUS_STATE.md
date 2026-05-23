@@ -1212,41 +1212,70 @@ A diagnostic-validated alternative biology-grounded mechanism
 range but using it would be a new pre-registered arc (not post-hoc
 decoder-substitution).
 
-**EXACT NEXT ACTION: SURFACE for owner steer on the major direction
-choice.** The mode-unification thread's cheap-first probing avenues
-are exhausted. Substantive next directions, each requiring owner
-steer or owner-authorised continuation:
+**OWNER AUTHORISED (b) THEN DESIGN-DOC-FOR-(c) (2026-05-23).** After
+reviewing the trichotomy, the owner authorised proceeding with (b)
+first (parallel-population-matching decoder; predicted PASS) then
+the design doc for (c) generative replay. Reasoning: (c) depends on
+order-bearing mode-unification for the PFC compositional frame; (b)
+is cheap and solves the dependency; sequencing preserves the
+standing autonomy pattern.
 
-(b) **New pre-registered runner with parallel-population-matching
-    order-bearing decoder.** Biology-grounded alternative to TPAM
-    (argmax of phase-similarities to substrate-derived grounded
-    vocab symbols); diagnostic predicts PASS. Own design + adversarial
-    review + honest oracle-adjacency analysis (parallel population
-    matching IS close to "argmax over stored list" but the "stored
-    list" is the substrate's own derived concept symbols, biology-
-    grounded via dendritic integration + lateral inhibition).
-    Focused arc (~hours of build + minutes CPU; reuses substrate
-    cache).
+**(b) COMPLETE = BIOLOGIZED MODE-UNIFICATION VALIDATED VIA PARALLEL-
+POPULATION-MATCHING (2026-05-23, both remotes).** Full disciplined
+arc: design + Tasks 0+2+3 + pre-launch adversarial review CLEAR
+(11 exploit-class checks) + controller-only CPU run + mandatory
+smell-test PASSED (recompute byte-for-byte) + post-PASS fresh
+adversarial review CLEAR on 12 checks (different agent, independent
+re-run from cache + grounded deriver confirmed byte-identical
+PASS). RESULT: VERDICT MODE_UNIFICATION_BIOLOGIZED_PASS_VIA_-
+PARALLEL_MATCHING with multi-seed-mean OB 1.0000/1.0000/1.0000 and
+OI 1.0000/1.0000/0.9817 at loads {2,3,5}; per-seed OB exactly 1.000
+at every cell (zero errors across 1800 trials); per-seed OI L=5
+[0.99, 0.97, 0.985]. Biology: feedforward similarity comparison
+(dendritic integration) across a population of neurons each tuned
+to one substrate-derived concept + lateral-inhibition winner-take-
+all. The 'vocabulary' is the substrate's OWN derived grounded
+symbols (mean-centred consolidated activity → fixed-seed deriver →
+spike-phase rep), NOT a hand-supplied engineered table. HONEST
+ORACLE-ADJACENCY CAVEAT preserved up front in design doc, runner
+header, runner stdout, JSON verdict label, and capability_status
+pillar metric: parallel matching IS structurally closer to "argmax
+over a stored vocabulary" than TPAM's recurrent attractor; the
+substrate-derived 'vocabulary' is what keeps it biology-grounded.
+Two honest biologizations stand: TPAM (BOUNDARY pillar n=92; non-
+monotonic V=8-V=20 capacity window) and parallel matching
+(VALIDATED pillar n=93; scales past V=32 with the structural
+proximity caveat). capability_status updated: new VALIDATED pillar
+n=93; schema 6/6 green; no-confab moat 7/7 green; protected set
+zero diff. The load-bearing prerequisite for (c) generative replay
+is now in place: PFC can hold an ORDERED compositional frame on the
+biologized substrate. Findings:
+`research/findings/2026-05-23-biologized-mode-unification-PASS-via-parallel-population-matching-VALIDATED-with-oracle-adjacency-caveat.md`.
 
-(c) **Generative replay**: the standing conversational-path
-    directive that builds ON TOP OF mode-unification once order-
-    bearing is solved with a biology-grounded mechanism. Substantial
-    multi-week build (would require option (b) first OR accept the
-    order-invariant PASS as sufficient and build generative replay
-    on top of the order-invariant readout alone -- design call).
-
-(d) **Integrated closed loop** OR **cross-bridge composition**.
-    Other broader-horizon arcs the owner has flagged as load-
-    bearing for the brain-analogue goal.
-
-The vocab-scaling + mode-unification threads have together produced
-~12 biology-translatable insights across the project's core
-compositional layer this session. Honest pause for owner steer on
-the major direction is the most disciplined call. On any re-trigger:
-present the trichotomy to the owner; do not autonomously launch
-(c) or (d) without owner steer; (b) could be autonomously launched
-under standing "Proceed autonomously" instruction if the owner has
-not re-engaged.
+**EXACT NEXT ACTION: write the design doc for (c) generative replay
+per the owner's prior authorization.** The third leg of the owner's
+2026-05-19 conversational-path reframe (1. SPEAR temporal
+multiplexing -- built, convergent ceiling; 2. theta-gamma mode-
+unification -- built, both readouts now VALIDATED biologized via
+parallel matching; 3. generative replay -- NEXT). The
+hippocampal-prefrontal replay loop: PFC holds the ordered
+compositional frame; hippocampus replays and pattern-completes
+against the consolidated cortical schema; the loop generates
+context-appropriate continuations from the consolidated schema.
+ALL prerequisite subsystems are validated: trisynaptic loop (D.12
+separation + D.13 completion), engram tagging (D.14), SWR
+consolidation (Phase 1.3, 3/3 strict anti-cheat), NMDA bistable
+PFC working memory, abstention gate, mode-unification both
+readouts (VALIDATED this session). Genuinely-new component: the
+generative replay LOOP wiring -- a small controller that gates
+replay against the held PFC frame and reads the replay-pattern-
+completed responses back into the frame. Substantial design
+exercise (the loop has many subsystems to integrate cleanly with
+the biology-faithful timing); subsequent TDD plan + subagent-
+driven build + adversarial review + GPU run would be the multi-
+week build phase. Per owner's prior instruction: write the design
+doc now; the multi-week build is for owner-steered execution after
+design review.
 
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification
