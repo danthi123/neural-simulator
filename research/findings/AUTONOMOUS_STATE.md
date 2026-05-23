@@ -977,29 +977,66 @@ log:
 `research/findings/raw/vocabulary_scaling_run_160ensemble_extra_seeds.log`.
 Kill-safe via the reviewed runner's per-bridge per-seed cache.
 
-**EXACT NEXT ACTION: monitor the in-flight extension run to actual
-completion, then smell-test and propagate.** On any re-trigger
-(watchdog, new session, post-compaction): FIRST check whether the
-extension run is still running (a `python.exe` whose command line
-contains `vocabulary_scaling_run_160ensemble_extra_seeds.py`, or
-whether `vocabulary_scaling_run_160ensemble_5seeds.json` already
-exists). If still running, do NOT re-launch; let it finish (kill-
-safe per-bridge per-seed). If finished: (1) MANDATORY smell-test
-(recompute from the recording + per-bridge per-seed cache
-verification + sanity check that the 15 existing cells in the
-combined JSON are byte-identical to the decisive run's cells, no
-re-run, no bar change); (2) PRE-REGISTERED reading per the
-ANOMALY_WASHES_OUT / OTHER_BRIDGE_MISSES / BRIDGED_ROBUST_MISS
-trichotomy above; (3) write a findings doc (per-bridge 5-seed
-breakdown; both multi-seed-mean and strict per-seed criteria
-reported with any per-seed caveats preserved); update
-capability_status.json (upgrade the BOUNDARY pillar n=91 to
-VALIDATED on ANOMALY_WASHES_OUT, OR add a NEGATIVE pillar on
-BRIDGED_ROBUST_MISS with the precise per-category characterisation);
-update AUTONOMOUS_STATE EXACT NEXT ACTION; commit + push BOTH
-remotes. (4) On an ANOMALY_WASHES_OUT outcome: a fresh dedicated
-adversarial review BEFORE the capability claim. Then continue
-autonomously per the discipline. (Broader horizon, surfaced for the
+**5-SEED EXTENSION COMPLETE = BRIDGED_ROBUST_MISS REFINED: ALL 5
+BRIDGES PASS multi-seed-mean at L=2 and L=3; bridgeD uniquely misses
+only at L=5; seed 46 is a systematic L=5-collapse outlier across 4
+of 5 bridges (2026-05-23, both remotes).** Per-bridge 5-seed multi-
+seed-mean integrated accuracy at loads {L=2, L=3, L=5}: bridgeA_nouns
+0.92 / 0.92 / 0.91 PASS; bridgeB_verbs 0.86 / 0.85 / 0.84 PASS;
+bridgeC_adj 0.88 / 0.88 / 0.86 PASS; bridgeD_spatial 0.81 / 0.80 /
+0.76 (MISS at L=5 only -- L=2 and L=3 now CLEAR vs the 3-seed run
+where bridgeD missed at every load); bridgeE_functional 0.89 / 0.89
+/ 0.88 PASS. 14 of 15 cells PASS multi-seed-mean; only the bridgeD/
+L=5 cell misses (0.76 < 0.80). Per-seed L=5 reveals a striking
+systematic pattern: seed 46 collapses L=5 at 4 of 5 bridges (bridgeA
+0.600, bridgeB 0.402, bridgeD 0.591, bridgeE 0.513; only bridgeC
+seed 46 scored 0.997). Seed 45 is uniformly strong across all
+bridges (0.948 / 0.996 / 0.841 / 0.996 / 0.947). The seed-46
+collapse is more than per-bridge noise -- it suggests the seed-46
+pattern sets across bridges share a structural property that
+interacts badly with FHRR at 5-binding load. Refined biology-
+translatable insight set: the K=16 PASS recipe DOES extend per-
+bridge to ALL 5 categories at the 160-concept tier at compositional
+loads 2 and 3 (5-seed multi-seed-mean PASS at every cell); the L=5
+multi-seed-mean has non-trivial seed-46-driven variance across the
+ensemble; bridgeD is the residual category-specific deficit at L=5
+(0.76 mean, ~0.08-0.10 below the other bridges' L=5 means even
+absorbing the seed-46 outlier). The 3-seed BOUNDARY pillar n=91
+stands and is sharpened by this 5-seed breakdown (no new pillar --
+characterisation refinement). Verdict per the strict pre-registered
+bar (every cell >= 0.80): BELOW BAR (only on 1 of 15 cells now,
+versus 3 of 15 at the 3-seed sample). Findings:
+`research/findings/2026-05-23-160-ensemble-5seed-extension-refined-finding-all-5-bridges-PASS-at-L2-L3-bridgeD-uniquely-misses-only-at-L5.md`.
+
+**EXACT NEXT ACTION: cheap CPU diagnostic of the systematic seed-46
+L=5 collapse across 4 of 5 bridges.** The more interesting open
+question per the 5-seed refined picture is not bridgeD-specific but
+seed-specific: seed 46 collapses L=5 at bridgeA, B, D, E (4 of 5);
+bridgeC seed 46 is fine. This is a systematic enough pattern to
+suggest the seed-46 per-bridge pattern sets share a measurable
+structural property that interacts badly with FHRR composition at
+high binding load. A cheap CPU probe: measure (a) per-seed mean
+pairwise concept-pattern overlap fraction for each bridge (does
+seed 46 produce systematically higher pattern overlaps?); (b) per-
+seed mean pairwise SYMBOL-input cosine (do the seed-46 derived
+symbols cluster more positively than the seed 42/43/44/45 symbols
+at any bridge?); (c) per-seed mean pairwise symbol-output-after-
+deriver cosine. ~minutes CPU, no GPU. Pre-registered reading: if
+seed 46 has systematically higher pattern overlap OR higher symbol
+positive-cosine fraction across bridges, the L=5 collapse is
+explained as a per-seed substrate property that traces from
+patterns to symbol geometry to FHRR crosstalk; if not, the seed-46
+collapse has a deeper cause (e.g. interaction between specific
+pattern sets and FHRR composition that doesn't show in obvious
+geometry diagnostics). After (a)-(c) is propagated, surface the
+complete vocab-scaling thread for the owner. (Broader horizon,
+surfaced for the owner, NOT auto-launched: the owner's standing
+conversational-path directives -- SPEAR, theta-gamma mode-
+unification, generative replay -- and the integrated closed loop
+are the larger arcs. The vocab-scaling thread is now substantively
+characterised across 16, 64, and 160-concept tiers; the per-bridge
+per-load per-seed breakdown is mapped; the bigger arcs may be the
+higher-leverage direction after this final cheap diagnostic.) (Broader horizon, surfaced for the
 owner, NOT auto-launched: the owner's standing conversational-path
 directives -- SPEAR, theta-gamma mode-unification, generative
 replay -- and the integrated closed loop are the larger arcs. The
