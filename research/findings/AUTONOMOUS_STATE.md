@@ -1113,31 +1113,38 @@ demonstrated (the most actionable for the build), THEN the
 biologized spiking implementation as a substantial pre-registered
 build. All three groundwork steps are propagated.
 
-**EXACT NEXT ACTION: design + TDD plan for the biologized spiking
-mode-unification implementation on the project's substrate.** This is
-a substantial multi-week build commitment, justified by the algebra-
-PASS + characterisation envelope; it follows the same disciplined
-arc as the FHRR-biologization (design + plan + subagent-driven build
-+ adversarial review CLEAR + controller-only decisive GPU run). The
-design would: reuse the SPEAR theta-rhythm timing controller
-(validated; exists from the SPEAR arc); reuse the substrate's
-validated per-concept activity capture + trained-substrate runner
-pipeline; reuse the FHRR-biologization arc's resonate-and-fire
-neurons, attractor clean-up, separate familiarity gate (all
-validated); reuse the K=16 PASS recipe; reuse the validated G.20
-sparse substrate at 32-64 concepts per bridge. Genuinely-new
-components: (i) a gamma-slot timing mechanism that places items at
-specific phase positions within each theta cycle (the load-bearing
-NEW component); (ii) per-slot decoder for order-bearing readout;
-(iii) marginal-sum decoder for order-invariant readout. Tests BOTH
-readouts on the SAME spiking-substrate encoding against the frozen
-0.80 bar, multi-seed, at compositional loads {2, 3, 5}. On a
-watchdog re-trigger: the design doc is the next concrete step (or
-if the design doc exists, the TDD plan; or if the plan exists, Task
-0 of subagent-driven build). The biologization-arc discipline is
-the precedent (frozen bar never tuned; oracle-adjacency caveats
-stated up front; smell-test PASS HARDER than FAIL; honest
-propagation both remotes).
+**BIOLOGIZED SPIKING MODE-UNIFICATION DESIGN DOC WRITTEN (2026-05-23,
+both remotes).** Design at
+`docs/plans/2026-05-23-biologized-spiking-mode-unification-design.md`.
+On reflection, the build is NOT multi-week -- it is a focused
+single-runner extension similar in scope to the trained-substrate
+runner. The mode-unification only adds the gamma-slot position
+phasors + two readout decoders + a new orchestration loop on top of
+the EXISTING K=16 PASS recipe; the FHRR-biologization arc's
+infrastructure (resonate-and-fire neurons, attractor clean-up,
+familiarity gate, common-mode-removed grounded symbols) is reused
+byte-unchanged. Genuinely-new code is small. Wall-clock for the
+decisive run: ~2 hours GPU on 1 bridge (matching the trained-
+substrate runner's per-bridge-seed cost) -- not multi-week.
+Pre-registered: PASS iff BOTH readouts multi-seed-mean >= 0.80 at
+every load {2, 3, 5} on the tested bridge; NEGATIVE_*  variants if
+either readout misses. The design records the load-bearing soundness
+considerations (no answer leak in decoding; both readouts share the
+SAME encoded C; biologized pipeline byte-unchanged; capacity envelope
+respected per the characterisation).
+
+**EXACT NEXT ACTION: TDD implementation plan for the biologized
+spiking mode-unification runner.** Tasks per the design doc (Task 0
+grounding pin; Task 1 gamma_slot_positions helper; Task 2 the
+runner; Task 3 soundness tests; Task 4 dedicated adversarial review;
+Task 5 controller-only decisive GPU run on 1 bridge ~2 hr) -- same
+disciplined arc as the FHRR-biologization, trained-substrate runner,
+and 160-ensemble arcs. On any re-trigger (watchdog, new session):
+write the TDD plan unless one of Tasks 0-5 is already in flight
+(check git log + output files). The build is focused single-runner;
+estimated total turn-around (design + plan + build + review + GPU
+run + smell-test + propagate) is similar to the trained-substrate
+arc -- one to two sessions, not weeks.
 
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification
