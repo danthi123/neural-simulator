@@ -1,0 +1,137 @@
+{
+  "load": 2,
+  "k_vocab": 16,
+  "n_trials": 100,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "bar": 0.8,
+  "vocab_sizes": [
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32
+  ],
+  "results": {
+    "4": {
+      "tpam_mean": 0.7433333333333333,
+      "simple_mean": 1.0,
+      "tpam_per_seed": [
+        1.0,
+        0.23,
+        1.0
+      ],
+      "simple_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "8": {
+      "tpam_mean": 0.9033333333333333,
+      "simple_mean": 1.0,
+      "tpam_per_seed": [
+        1.0,
+        1.0,
+        0.71
+      ],
+      "simple_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "12": {
+      "tpam_mean": 1.0,
+      "simple_mean": 1.0,
+      "tpam_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "simple_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "16": {
+      "tpam_mean": 0.9700000000000001,
+      "simple_mean": 1.0,
+      "tpam_per_seed": [
+        1.0,
+        0.91,
+        1.0
+      ],
+      "simple_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "20": {
+      "tpam_mean": 0.8066666666666666,
+      "simple_mean": 1.0,
+      "tpam_per_seed": [
+        1.0,
+        0.51,
+        0.91
+      ],
+      "simple_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "24": {
+      "tpam_mean": 0.6066666666666667,
+      "simple_mean": 1.0,
+      "tpam_per_seed": [
+        0.92,
+        0.21,
+        0.69
+      ],
+      "simple_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "28": {
+      "tpam_mean": 0.4766666666666666,
+      "simple_mean": 1.0,
+      "tpam_per_seed": [
+        0.99,
+        0.25,
+        0.19
+      ],
+      "simple_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "32": {
+      "tpam_mean": 0.5,
+      "simple_mean": 1.0,
+      "tpam_per_seed": [
+        0.57,
+        0.57,
+        0.36
+      ],
+      "simple_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "tpam_last_pass": 20,
+  "tpam_first_miss": 4
+}

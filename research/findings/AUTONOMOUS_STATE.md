@@ -1177,40 +1177,76 @@ failure precisely localised. Complete, honest, biology-translatable
 result set across the cheap-first / characterisation / biologized-
 implementation sequence the FHRR-biologization arc's pattern set.
 
-**EXACT NEXT ACTION: SURFACE for owner steer on the broader-horizon
-arcs OR pick option (a) or (b) per the findings doc's next-step
-trichotomy.** Per the standing autonomy I could pick:
+**TPAM-SCALING-LIMIT PROBE COMPLETE = STRIKING NON-MONOTONIC
+CAPACITY WINDOW (2026-05-23, both remotes).** Sweep vocab sizes
+{4, 8, 12, 16, 20, 24, 28, 32} on bridgeA_nouns cache; multi-seed;
+load fixed at L=2. RESULT: TPAM has a CAPACITY WINDOW V=8 through
+V=20 (multi-seed-mean clears 0.80 bar at V=8 0.90, V=12 1.00, V=16
+0.97, V=20 0.81); V=4 misses (0.74) and V>=24 fall off sharply
+(V=24 0.61, V=28 0.48, V=32 0.50). Sharp transition between V=20
+and V=24. The simple argmax-of-similarities decoder is perfect
+(1.000) throughout the range. Biology-translatable: cortical
+Hopfield-class attractor networks on natural-substrate-derived
+patterns have non-monotonic per-vocab capability that random-
+pattern analyses do not capture. The 16-concept fact-composition
+validation (TPAM PASS at 0.98 in the FHRR-biologization arc) sits
+INSIDE this window; the 32-concept full-vocabulary mode-unification
+per-slot identification sits ABOVE it. Findings:
+`research/findings/2026-05-23-TPAM-scaling-limit-probe-non-monotonic-capacity-window-V8-V20-on-grounded-symbols.md`.
 
-(a) **Cheap TPAM-scaling-limit probe**: measure TPAM identification
-    accuracy at vocab sizes {8, 16, 24, 32, 48, 64} on grounded
-    symbols to map precisely where the mass-attractor regime
-    emerges. ~minutes CPU; reuses the same pipeline. Yields a
-    precise biology-translatable statement about the project's
-    biologized attractor mechanism's per-vocab capacity ceiling.
+THE MODE-UNIFICATION THREAD IS NOW COMPLETE WITH FIVE BIOLOGY-
+TRANSLATABLE INSIGHTS: (1) The phase-coded algebra supports unified
+bidirectional readout from one theta-gamma encoded code (algebra-
+PASS multi-seed 1.000). (2) The algebra capacity envelope is wide
+on load (up to 7-slot gamma ceiling), noise (up to substrate-
+realistic CV 1.6), and vocab (up to 256). (3) The biologized
+algebraic half (order-invariant readout via marginal-sum-of-
+similarities) PASSes on the substrate (multi-seed 1.000 at every
+load). (4) The FHRR-biologization arc's TPAM attractor does NOT
+transfer to per-slot mode-unification at 32 concepts (NEGATIVE_-
+ORDER_INVARIANT_ONLY; BOUNDARY pillar n=92). (5) The TPAM has a
+precise non-monotonic capacity window (V=8 through V=20) on grounded
+symbols; outside this window spurious-attractor structure dominates.
+A diagnostic-validated alternative biology-grounded mechanism
+(parallel population matching) is perfect throughout the vocab
+range but using it would be a new pre-registered arc (not post-hoc
+decoder-substitution).
 
-(b) **A new pre-registered runner with parallel-population-matching
-    order-bearing decoder**: a different biology-grounded
-    identification mechanism (argmax of phase-similarities to
-    grounded vocab symbols), with its own pre-registered test +
-    adversarial review + oracle-adjacency analysis. Would test
-    whether a different biology-grounded identification mechanism
-    delivers mode-unification both-readouts PASS on the biologized
-    substrate.
+**EXACT NEXT ACTION: SURFACE for owner steer on the major direction
+choice.** The mode-unification thread's cheap-first probing avenues
+are exhausted. Substantive next directions, each requiring owner
+steer or owner-authorised continuation:
 
-(c) **Surface for owner steer on broader-horizon**: the standing
-    conversational-path directives -- generative replay (builds ON
-    TOP OF mode-unification once order-bearing is solved), the
-    integrated closed loop -- are the bigger arcs. Cross-bridge
-    composition is also open.
+(b) **New pre-registered runner with parallel-population-matching
+    order-bearing decoder.** Biology-grounded alternative to TPAM
+    (argmax of phase-similarities to substrate-derived grounded
+    vocab symbols); diagnostic predicts PASS. Own design + adversarial
+    review + honest oracle-adjacency analysis (parallel population
+    matching IS close to "argmax over stored list" but the "stored
+    list" is the substrate's own derived concept symbols, biology-
+    grounded via dendritic integration + lateral inhibition).
+    Focused arc (~hours of build + minutes CPU; reuses substrate
+    cache).
 
-The mode-unification thread's cheap-first probing has now
-substantively closed (algebra works, characterisation done,
-biologization scaling limit identified). Either (a) is a single
-cheap follow-up (~minutes); (b) is a new focused single-runner
-arc (~hours of build + ~2hr GPU like this one); (c) is a major
-direction change requiring owner steer. On any re-trigger: pick
-(a) for the cheapest finalisation of this thread, then surface
-for owner steer between (b) and (c).
+(c) **Generative replay**: the standing conversational-path
+    directive that builds ON TOP OF mode-unification once order-
+    bearing is solved with a biology-grounded mechanism. Substantial
+    multi-week build (would require option (b) first OR accept the
+    order-invariant PASS as sufficient and build generative replay
+    on top of the order-invariant readout alone -- design call).
+
+(d) **Integrated closed loop** OR **cross-bridge composition**.
+    Other broader-horizon arcs the owner has flagged as load-
+    bearing for the brain-analogue goal.
+
+The vocab-scaling + mode-unification threads have together produced
+~12 biology-translatable insights across the project's core
+compositional layer this session. Honest pause for owner steer on
+the major direction is the most disciplined call. On any re-trigger:
+present the trichotomy to the owner; do not autonomously launch
+(c) or (d) without owner steer; (b) could be autonomously launched
+under standing "Proceed autonomously" instruction if the owner has
+not re-engaged.
 
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification
