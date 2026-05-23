@@ -955,28 +955,51 @@ per-seed scaling limit at this tier. capability_status.json updated
 green). Findings:
 `research/findings/2026-05-23-160-concept-ensemble-K16-BOUNDARY-4-of-5-bridges-PASS-multiseed-bridgeD-uniquely-misses-with-honest-perseed-caveats.md`.
 
-**EXACT NEXT ACTION: cheap-first 2-additional-seeds extension run
-to disambiguate seed-43 anomaly vs robust bridgeD miss.** Add 2 more
-seeds (45, 46) across all 5 bridges; 5 bridges x 2 new seeds = 10
-new bridge-seed combinations x ~35 minutes = roughly 6 hours of GPU.
-The existing 15 cached bridge-seeds at seeds 42/43/44 are reused
-unchanged; only the 10 new ones cost. Pre-registered reading: PASS
-iff every (bridge, load) cell across 5 bridges x 3 loads x 5 seeds
-multi-seed-mean >= 0.80. Specifically: (a) if bridgeD continues to
-miss at the larger sample (per-bridge multi-seed-mean still < 0.80
-across 5 seeds), the bridgeD miss is robust and the per-category
-scaling limit at this tier is real; (b) if bridgeD's mean rises
-above 0.80 once seed 43 is averaged with more seeds, the original
-miss was seed-43-anomaly that washes out at larger sample. Either
-outcome is honest. Standard discipline: reuse the existing
-160-ensemble runner unchanged (the seed list is the only parameter
-the runner cares about; SEEDS = [42,43,44,45,46] via a CLI flag or
-a small parameterised re-run); the runner's cache will skip the
-already-completed 15 combos and only compute the 10 new ones; the
-adversarial review of the runner already covers this code path
-(seed iteration is not new logic); smell-test the new result
-identically. After this disambiguation, surface the per-bridge
-characterisation for the owner. (Broader horizon, surfaced for the
+**2-ADDITIONAL-SEEDS EXTENSION RUN IN FLIGHT (2026-05-23, both
+remotes).** Cheap extension script
+`research/findings/raw/vocabulary_scaling_run_160ensemble_extra_seeds.py`
+launched as harness-tracked background task `bk74d87ka`. The script
+reuses the reviewed 160-ensemble runner's `run_one_bridge_seed`
+byte-unchanged for 10 new bridge-seed combinations (5 bridges x
+seeds {45, 46}); combines the result with the 15 existing cells
+(loaded from the decisive run's JSON) for a 5-seed aggregate.
+Pre-registered reading: ANOMALY_WASHES_OUT iff every (bridge, load)
+cell multi-seed-mean across 5 seeds >= 0.80 (the K=16 PASS recipe
+extends per-bridge to all 5 categories at this tier; subject to a
+fresh dedicated adversarial review before any capability claim);
+BRIDGED_ROBUST_MISS iff bridgeD continues to miss at the 5-seed
+sample (the per-category scaling limit is real); OTHER_BRIDGE_MISSES
+iff bridgeD now clears but a different bridge misses (sample-size-
+dependent variability). Estimated wall-clock ~6 hours GPU (10 new
+bridge-seeds x ~35 min). Output JSON:
+`research/findings/raw/vocabulary_scaling_run_160ensemble_5seeds.json`;
+log:
+`research/findings/raw/vocabulary_scaling_run_160ensemble_extra_seeds.log`.
+Kill-safe via the reviewed runner's per-bridge per-seed cache.
+
+**EXACT NEXT ACTION: monitor the in-flight extension run to actual
+completion, then smell-test and propagate.** On any re-trigger
+(watchdog, new session, post-compaction): FIRST check whether the
+extension run is still running (a `python.exe` whose command line
+contains `vocabulary_scaling_run_160ensemble_extra_seeds.py`, or
+whether `vocabulary_scaling_run_160ensemble_5seeds.json` already
+exists). If still running, do NOT re-launch; let it finish (kill-
+safe per-bridge per-seed). If finished: (1) MANDATORY smell-test
+(recompute from the recording + per-bridge per-seed cache
+verification + sanity check that the 15 existing cells in the
+combined JSON are byte-identical to the decisive run's cells, no
+re-run, no bar change); (2) PRE-REGISTERED reading per the
+ANOMALY_WASHES_OUT / OTHER_BRIDGE_MISSES / BRIDGED_ROBUST_MISS
+trichotomy above; (3) write a findings doc (per-bridge 5-seed
+breakdown; both multi-seed-mean and strict per-seed criteria
+reported with any per-seed caveats preserved); update
+capability_status.json (upgrade the BOUNDARY pillar n=91 to
+VALIDATED on ANOMALY_WASHES_OUT, OR add a NEGATIVE pillar on
+BRIDGED_ROBUST_MISS with the precise per-category characterisation);
+update AUTONOMOUS_STATE EXACT NEXT ACTION; commit + push BOTH
+remotes. (4) On an ANOMALY_WASHES_OUT outcome: a fresh dedicated
+adversarial review BEFORE the capability claim. Then continue
+autonomously per the discipline. (Broader horizon, surfaced for the
 owner, NOT auto-launched: the owner's standing conversational-path
 directives -- SPEAR, theta-gamma mode-unification, generative
 replay -- and the integrated closed loop are the larger arcs. The
