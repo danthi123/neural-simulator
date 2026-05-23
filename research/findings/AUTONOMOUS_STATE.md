@@ -684,37 +684,67 @@ JSON output at
 `research/findings/raw/vocabulary_scaling_run_trained_full.json`;
 ~2 hr/seed, ~6 hr total).
 
-**EXACT NEXT ACTION: monitor the in-flight decisive trained-substrate
-run to actual completion, then smell-test and propagate.** On any
-re-trigger (watchdog, new session, post-compaction): FIRST check
-whether the decisive run is still running -- a `python.exe` whose
-command line contains `vocabulary_scaling_run_trained.py`, or whether
-`vocabulary_scaling_run_trained_full.json` already exists. If it is
-still running, do NOT re-launch; let it finish (it is kill-safe -- a
-re-launch resumes from the per-seed cache). If it has finished (the
-JSON exists): (1) MANDATORY smell-test, scrutinising a nominal PASS
-HARDER than a NEGATIVE -- recompute the per-load means from the single
-recorded JSON, confirm the captured pool density genuinely rose toward
-the v14/v16-comparable regime (the log prints per-seed `captured pool
-density`), confirm composition-only is consistent with integrated,
-confirm nothing in the recording is degenerate, no re-run, no bar
-change; (2) PRE-REGISTERED reading -- a PASS = integrated multi-seed
-mean >= 0.80 at all loads {2,3,5} -> the biologized compositional
-capability scales to a 64-concept vocabulary; a NEGATIVE = below 0.80
-at some load -> the honest finding is that the activity-grounded
-pipeline needs a denser substrate than the G.20 sparse pool provides
-even when trained, and grounding the symbol in the G.20 sparse K-of-N
-PATTERN itself (candidate 2) is weighed honestly against
-oracle-adjacency; (3) write a findings doc, update
-`webapp/capability_status.json` (schema test green), and on a clean
-PASS a dedicated adversarial review before any capability-pillar
-claim; commit + push BOTH remotes. Then continue autonomously: a clean
-PASS -> proceed to the 160/320-concept ensemble; a NEGATIVE ->
-candidate 2 (pattern-grounded symbols) as a new pre-registered step.
-(Broader horizon, surfaced for the owner, NOT auto-launched: the
-owner's standing conversational-path directives -- SPEAR, theta-gamma
-mode-unification, generative replay -- and the integrated closed loop
-are the larger arcs.)
+**TRAINED-SUBSTRATE DECISIVE RUN COMPLETE = BOUNDARY: BELOW the strict
+bar at L=5 by 0.044, but loads 2-3 cleanly PASS multi-seed; the
+substrate-fix worked, the failure mode is a load ceiling at 5, not a
+substrate or recognition failure (2026-05-22, both remotes).** Multi-
+seed (42/43/44), full-scale 18684-neuron trained substrate, ~58 min/
+seed on the RTX 3090. RESULT: integrated multi-seed 0.842 / 0.814 /
+0.756 at loads {2,3,5}; composition-only equal (temporally-averaged
+recognition is a clean 1.000); per-seed L=5 0.769/0.803/0.696. Per the
+frozen bar (PASS = mean >= 0.80 at all loads) -> BELOW BAR at L=5
+(0.756 < 0.80). Mandatory anti-cheat smell-test
+(`vocabulary_scaling_smell_test.py`, recompute-from-recording, no
+re-run, no bar change) PASSED 14/14: per-load means recompute exactly,
+captured pool density 0.097-0.107 across seeds (DECISIVELY above the
+untrained run's 0.0077 that caused the original NEGATIVE, slightly
+above the validated v14/v16 substrate's 0.075), re-derived verdict
+matches, all consistency checks pass. The corrective intervention
+worked exactly as the probe-arc predicted: the substrate is no longer
+near-silent, recognition is perfect, the biologized pipeline cleanly
+clears 0.80 at loads 2-3 -- the first multi-seed 64-concept activity-
+grounded compositional capability the project has demonstrated. The
+pre-registered routing premise (a NEGATIVE here would mean too-sparse
+substrate) is CONTRADICTED by the data: the trained substrate is
+denser than the validated benchmark; the ceiling is in the composition
+itself at higher binding loads (the spiking-symbol noise floor, NOT an
+algebraic limit -- the pure FHRR algebra at the same phasor dimension
+clears the bar past load 96). Refined biology-translatable finding:
+the spiking-grounded compositional pipeline ceilings much earlier than
+the algebra. capability_status.json updated (new BOUNDARY pillar,
+n=88, schema 6/6 green; no-confab moat 7/7 green). Findings:
+`research/findings/2026-05-22-vocabulary-scaling-trained-substrate-BELOW-BAR-with-loads-2-3-PASS-and-load-5-ceiling.md`.
+
+**EXACT NEXT ACTION: cheap-first load-ceiling characterisation on the
+existing trained activity cache, then candidate 2 (pattern-grounded
+symbols) as a new pre-registered step.** The actual failure mode -- a
+load ceiling at 5 with the substrate dense and recognition perfect --
+is sharper than the pre-registered routing premise expected, and the
+existing trained activity cache lets us map the ceiling cheaply
+without any new GPU run. STEP A (cheap, ~minutes): re-run the
+biologized grounded-composition pipeline on the cached trained
+activity at loads {2, 3, 4, 5, 6, 7} -- the cache is in
+`research/findings/raw/vocabulary_scaling_trained_cache/` and the
+pipeline `run_pipeline` is reused unchanged -- to map the ceiling
+precisely (where does it cross the 0.80 bar?) and quantify per-seed
+spread. Pre-registered: this is a finer-grained CHARACTERISATION of
+the BOUNDARY result, not a re-test of the same load set (loads {2,3,5}
+recompute from the cache must match the recording; new loads {4,6,7}
+extend the curve). STEP B (the pre-registered NEGATIVE-branch
+candidate, sharpened by Step A): grounding the symbol in the K-of-N
+PATTERN itself (the concept's clean code on the trained substrate),
+weighed honestly against whether that is still substrate-grounded or
+closer to an oracle lookup. The motivation is now sharpened: the
+spiking-symbol noise floor is the limit, so replacing the noisy
+activity-derived symbol with the clean pattern symbol directly tests
+whether removing that noise raises the ceiling. STEP B is a new
+pre-registered step (design + plan + soundness tests + adversarial
+review before any decisive run, per discipline). Standard discipline:
+cheap-first, frozen bar never tuned, smell-test a PASS HARDER than a
+FAIL, honest propagation both remotes. (Broader horizon, surfaced for
+the owner, NOT auto-launched: the owner's standing conversational-path
+directives -- SPEAR, theta-gamma mode-unification, generative replay
+-- and the integrated closed loop are the larger arcs.)
 
 ---
 [Historical content below preserved for context.]
