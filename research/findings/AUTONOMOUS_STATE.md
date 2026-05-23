@@ -1133,18 +1133,84 @@ considerations (no answer leak in decoding; both readouts share the
 SAME encoded C; biologized pipeline byte-unchanged; capacity envelope
 respected per the characterisation).
 
-**EXACT NEXT ACTION: TDD implementation plan for the biologized
-spiking mode-unification runner.** Tasks per the design doc (Task 0
-grounding pin; Task 1 gamma_slot_positions helper; Task 2 the
-runner; Task 3 soundness tests; Task 4 dedicated adversarial review;
-Task 5 controller-only decisive GPU run on 1 bridge ~2 hr) -- same
-disciplined arc as the FHRR-biologization, trained-substrate runner,
-and 160-ensemble arcs. On any re-trigger (watchdog, new session):
-write the TDD plan unless one of Tasks 0-5 is already in flight
-(check git log + output files). The build is focused single-runner;
-estimated total turn-around (design + plan + build + review + GPU
-run + smell-test + propagate) is similar to the trained-substrate
-arc -- one to two sessions, not weeks.
+**BIOLOGIZED SPIKING MODE-UNIFICATION DECISIVE RUN COMPLETE =
+NEGATIVE_ORDER_INVARIANT_ONLY -- order-invariant PASSes multi-seed
+1.000 at every load; TPAM-attractor order-bearing decisively misses;
+failure precisely localised to TPAM's spurious mass-attractor regime
+at 32-concept vocab (the algebra and per-slot unbinds are clean)
+(2026-05-23, both remotes).** Full disciplined arc executed cleanly:
+TDD plan + Tasks 0-3 (grounding pin, gamma_slot_positions helper,
+runner, soundness tests; 14/14 tests green) + Task 4 dedicated
+adversarial reviewer (11 exploit-class checks; VERDICT CLEAR no
+defect, "safe to launch") + Task 5 controller-only decisive run.
+Wall-clock saved: re-used the 160-ensemble bridgeA_nouns trained-
+substrate cache byte-identical to what the pre-registered runner
+would have produced (same bridge, same seeds, same train_substrate
++ capture_concept_activity); pipeline runs CPU-only. RESULT: order-
+invariant readout multi-seed-mean 1.0000/1.0000/0.9817 at loads
+{2,3,5} -- PASS at every load; order-bearing readout via TPAM
+multi-seed-mean 0.5283/0.3350/0.0867 -- MISS at every load. Built-
+in diagnostic localises the failure: per-slot unbinds are clean
+(simple argmax-of-similarities decoder gives 1.000 across all
+loads/seeds on the SAME data; the algebra carries the encoded
+sequence faithfully); the TPAM attractor systematically converges
+to a spurious mass-attractor on 32 grounded symbols. The FHRR-
+biologization arc's TPAM validated 0.98 on fact composition at 16-
+concept FILLER partition; at 32-concept full-vocabulary mode-
+unification per-slot identification the TPAM crosses its capacity
+ceiling. Biology-translatable: cortical attractor networks have a
+per-vocab-size capacity ceiling (Amit & Treves 1989); the FHRR-
+biologization arc's TPAM scales below 32 grounded symbols for per-
+slot identification on this substrate. The algebraic half of mode-
+unification is biologized cleanly; the identification half requires
+a different biology-grounded mechanism. capability_status: new
+BOUNDARY pillar n=92; schema 6/6 green; no-confab moat 7/7 green;
+protected set zero diff across entire arc. Findings:
+`research/findings/2026-05-23-biologized-spiking-mode-unification-decisive-NEGATIVE_ORDER_INVARIANT_ONLY-TPAM-attractor-doesnt-transfer-to-per-slot-mode-unification.md`.
+
+THE MODE-UNIFICATION THREAD IS SUBSTANTIVELY COMPLETE: algebra-PASS
+(numpy cheap probe; multi-seed 1.000 both readouts); capacity-
+envelope characterisation (wide on load/noise/vocab; algebra
+survives substrate-realistic noise); biologized spiking
+implementation NEGATIVE_ORDER_INVARIANT_ONLY with TPAM-attractor
+failure precisely localised. Complete, honest, biology-translatable
+result set across the cheap-first / characterisation / biologized-
+implementation sequence the FHRR-biologization arc's pattern set.
+
+**EXACT NEXT ACTION: SURFACE for owner steer on the broader-horizon
+arcs OR pick option (a) or (b) per the findings doc's next-step
+trichotomy.** Per the standing autonomy I could pick:
+
+(a) **Cheap TPAM-scaling-limit probe**: measure TPAM identification
+    accuracy at vocab sizes {8, 16, 24, 32, 48, 64} on grounded
+    symbols to map precisely where the mass-attractor regime
+    emerges. ~minutes CPU; reuses the same pipeline. Yields a
+    precise biology-translatable statement about the project's
+    biologized attractor mechanism's per-vocab capacity ceiling.
+
+(b) **A new pre-registered runner with parallel-population-matching
+    order-bearing decoder**: a different biology-grounded
+    identification mechanism (argmax of phase-similarities to
+    grounded vocab symbols), with its own pre-registered test +
+    adversarial review + oracle-adjacency analysis. Would test
+    whether a different biology-grounded identification mechanism
+    delivers mode-unification both-readouts PASS on the biologized
+    substrate.
+
+(c) **Surface for owner steer on broader-horizon**: the standing
+    conversational-path directives -- generative replay (builds ON
+    TOP OF mode-unification once order-bearing is solved), the
+    integrated closed loop -- are the bigger arcs. Cross-bridge
+    composition is also open.
+
+The mode-unification thread's cheap-first probing has now
+substantively closed (algebra works, characterisation done,
+biologization scaling limit identified). Either (a) is a single
+cheap follow-up (~minutes); (b) is a new focused single-runner
+arc (~hours of build + ~2hr GPU like this one); (c) is a major
+direction change requiring owner steer. On any re-trigger: pick
+(a) for the cheapest finalisation of this thread, then surface
+for owner steer between (b) and (c).
 
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification

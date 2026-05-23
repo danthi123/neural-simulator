@@ -1,0 +1,147 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "bridge": "bridgeA_nouns",
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar": 0.8,
+  "n_gamma_slots": 7,
+  "k_vocab": 16,
+  "k_recog": 8,
+  "n_trials": 200,
+  "n_train_events": 400,
+  "n_concepts_per_bridge": 32,
+  "n_dim": 512,
+  "smoke": false,
+  "per_seed": [
+    {
+      "seed": 42,
+      "smoke": false,
+      "bridge": "bridgeA_nouns",
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts": 32,
+      "activity_dim": 2000,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 0.595,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 0.44,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 0.09,
+          "order_invariant_accuracy": 0.99,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "smoke": false,
+      "bridge": "bridgeA_nouns",
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts": 32,
+      "activity_dim": 2000,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 0.58,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 0.395,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 0.13,
+          "order_invariant_accuracy": 0.97,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "smoke": false,
+      "bridge": "bridgeA_nouns",
+      "k_vocab": 16,
+      "k_recog": 8,
+      "n_concepts": 32,
+      "activity_dim": 2000,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 0.41,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 0.17,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 0.04,
+          "order_invariant_accuracy": 0.985,
+          "n_trials": 200
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "2": {
+      "order_bearing_mean": 0.5283333333333332,
+      "order_bearing_per_seed": [
+        0.595,
+        0.58,
+        0.41
+      ],
+      "order_invariant_mean": 1.0,
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "3": {
+      "order_bearing_mean": 0.33499999999999996,
+      "order_bearing_per_seed": [
+        0.44,
+        0.395,
+        0.17
+      ],
+      "order_invariant_mean": 1.0,
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "5": {
+      "order_bearing_mean": 0.08666666666666667,
+      "order_bearing_per_seed": [
+        0.09,
+        0.13,
+        0.04
+      ],
+      "order_invariant_mean": 0.9816666666666666,
+      "order_invariant_per_seed": [
+        0.99,
+        0.97,
+        0.985
+      ]
+    }
+  },
+  "verdict": "NEGATIVE_ORDER_INVARIANT_ONLY"
+}
