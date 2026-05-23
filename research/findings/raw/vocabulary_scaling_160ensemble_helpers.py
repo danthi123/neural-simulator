@@ -28,13 +28,15 @@ BRIDGE_NAMES = list(ALL_BRIDGES.keys())
 
 
 def _bridge_seed(name: str, seed: int) -> int:
-    """A deterministic per-bridge seed: base seed XOR a stable hash of
-    the bridge name. Keeps each bridge's pattern set independent of
-    the others while remaining fully reproducible from (seed, name).
-    The XOR with a 32-bit hash slice gives a uniform spread without
-    introducing any seed-dependent collisions between bridges."""
+    """A deterministic per-bridge seed: base seed XOR a stable 24-bit
+    hash of the bridge name. Keeps each bridge's pattern set
+    independent of the others while remaining fully reproducible from
+    (seed, name). The 24-bit mask keeps the result safely under
+    2**24 so that downstream generators that multiply (e.g. the
+    validated generate_sparse_patterns does seed * 17 + 19 internally)
+    stay well within the uint32 range numpy RandomState accepts."""
     h = hashlib.sha256(name.encode("utf-8")).digest()
-    return int(seed) ^ int.from_bytes(h[:4], "big")
+    return (int(seed) ^ int.from_bytes(h[:3], "big")) & 0xFFFFFF
 
 
 def bridge_vocab_and_patterns(
