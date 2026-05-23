@@ -715,36 +715,51 @@ the algebra. capability_status.json updated (new BOUNDARY pillar,
 n=88, schema 6/6 green; no-confab moat 7/7 green). Findings:
 `research/findings/2026-05-22-vocabulary-scaling-trained-substrate-BELOW-BAR-with-loads-2-3-PASS-and-load-5-ceiling.md`.
 
-**EXACT NEXT ACTION: cheap-first load-ceiling characterisation on the
-existing trained activity cache, then candidate 2 (pattern-grounded
-symbols) as a new pre-registered step.** The actual failure mode -- a
-load ceiling at 5 with the substrate dense and recognition perfect --
-is sharper than the pre-registered routing premise expected, and the
-existing trained activity cache lets us map the ceiling cheaply
-without any new GPU run. STEP A (cheap, ~minutes): re-run the
-biologized grounded-composition pipeline on the cached trained
-activity at loads {2, 3, 4, 5, 6, 7} -- the cache is in
-`research/findings/raw/vocabulary_scaling_trained_cache/` and the
-pipeline `run_pipeline` is reused unchanged -- to map the ceiling
-precisely (where does it cross the 0.80 bar?) and quantify per-seed
-spread. Pre-registered: this is a finer-grained CHARACTERISATION of
-the BOUNDARY result, not a re-test of the same load set (loads {2,3,5}
-recompute from the cache must match the recording; new loads {4,6,7}
-extend the curve). STEP B (the pre-registered NEGATIVE-branch
-candidate, sharpened by Step A): grounding the symbol in the K-of-N
-PATTERN itself (the concept's clean code on the trained substrate),
-weighed honestly against whether that is still substrate-grounded or
-closer to an oracle lookup. The motivation is now sharpened: the
-spiking-symbol noise floor is the limit, so replacing the noisy
-activity-derived symbol with the clean pattern symbol directly tests
-whether removing that noise raises the ceiling. STEP B is a new
-pre-registered step (design + plan + soundness tests + adversarial
-review before any decisive run, per discipline). Standard discipline:
-cheap-first, frozen bar never tuned, smell-test a PASS HARDER than a
-FAIL, honest propagation both remotes. (Broader horizon, surfaced for
-the owner, NOT auto-launched: the owner's standing conversational-path
-directives -- SPEAR, theta-gamma mode-unification, generative replay
--- and the integrated closed loop are the larger arcs.)
+**LOAD-CEILING MAP COMPLETE -- the ceiling sits between binding loads
+3 and 4; the decay is smooth and monotonic (2026-05-22, both remotes).**
+The cheap CPU re-run of the biologized pipeline on the existing trained
+activity cache at loads {2..7} produced a clean ceiling map. Sanity:
+the re-runs at loads {2, 3, 5} reproduce the decisive recording
+BYTE-FOR-FOR-BYTE at every seed and at the multi-seed mean (0.8417 /
+0.8139 / 0.7560 -- identical) -- pipeline + cache are deterministic;
+the BOUNDARY result is reproducible from the cache alone. Extended
+multi-seed integrated means: L=2 0.8417 PASS, L=3 0.8139 PASS, L=4
+0.7988 miss by 0.0012 (BORDERLINE -- two of three seeds individually
+clear at L=4: 0.8213, 0.8275), L=5 0.7573, L=6 0.7225, L=7 0.6721.
+Highest load with multi-seed mean above the bar is 3; lowest with mean
+below is 4. Decay is smooth and monotonic at about 0.03-0.04 per
+binding. Compared to the pure FHRR algebra (clears past load 96 at the
+same phasor dimension), the spiking-grounded pipeline ceilings at
+roughly load 3 -- about a 30x capacity reduction, the precise
+biology-translatable cost of grounding the symbol in noisy spiking
+activity rather than supplying it from an oracle lookup. Findings:
+`research/findings/2026-05-22-vocabulary-scaling-load-ceiling-map-ceiling-sits-between-loads-3-and-4.md`.
+
+**EXACT NEXT ACTION: candidate 2 -- grounding the symbol in the K-of-N
+PATTERN itself, as a new pre-registered step, with the ceiling map as
+the reference curve.** Motivation now precisely sharpened: the
+spiking-grounded pipeline ceilings between loads 3 and 4 (a ~30x
+capacity reduction from the pure FHRR algebra); the failure mode is
+the spiking-symbol noise floor, not algebraic capacity. Replacing the
+noisy activity-derived symbol with the clean K-of-N pattern-derived
+symbol directly tests whether removing that noise raises the ceiling
+-- and by how much. The K-of-N pattern is the substrate's own concept
+code (selectable on the trained bridge from the cached pool
+populations), which is more substrate-grounded than a freely-designed
+phasor but also closer to an oracle than the activity-derived symbol;
+the honest oracle-adjacency caveat is recorded up front. Standard
+discipline: design doc + TDD plan + subagent-driven build + dedicated
+adversarial review before any decisive run; frozen 0.80 bar never
+tuned; smell-test a PASS HARDER than a FAIL; honest propagation both
+remotes. Pre-registered reading (fixed): PASS = pattern-grounded
+multi-seed integrated mean >= 0.80 at all loads {2,3,5} (the same load
+set the decisive run used); the decisive comparison is whether
+pattern-grounded clears the bar where activity-grounded missed at L=5
+-- and how far the new ceiling extends on the extended {4,6,7}
+characterisation. (Broader horizon, surfaced for the owner, NOT
+auto-launched: the owner's standing conversational-path directives --
+SPEAR, theta-gamma mode-unification, generative replay -- and the
+integrated closed loop are the larger arcs.)
 
 ---
 [Historical content below preserved for context.]
