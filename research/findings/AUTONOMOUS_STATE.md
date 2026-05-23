@@ -879,38 +879,71 @@ temporal integration closes residual noise on top of correct
 geometry). A complete, honest, biology-translatable result set, all
 propagated.
 
-**EXACT NEXT ACTION: 160-concept ensemble at K=16, the next
-vocabulary tier the vocab-scaling design doc names (PASS-branch
-action).** Builds on the K=16 PASS at 64 concepts. Reuses the
-validated 5-bridge G.20 sparse ensemble pattern documented in
-CLAUDE.md: 5 bridges (A nouns / B verbs / C adj / D spatial / E
-functional) at 32 concepts each = 160 unique concepts. Per-bridge
-training per the validated G.20 encoding (apply prior +
-train_concept_sparse, the same byte-unchanged path the
-trained-substrate runner uses); per-bridge activity capture at
-M_OBS=16 (matching the K_VOCAB=16 cache the 64-concept arc used);
-biologized grounded-composition pipeline reused byte-unchanged
-against the SAME frozen 0.80 bar at the SAME loads (the same test
-shape -- multi-seed {42,43,44}, loads {2,3,5}). The honest open
-question: does the activity-grounded pipeline scale per-bridge at
-160 concepts the same way the 64-concept thread did? PRE-REGISTERED:
-PASS = multi-seed-mean >= 0.80 at all loads on each of 5 bridges;
-NEGATIVE = below 0.80 at some load on some bridge (honest finding:
-the per-bridge scaling has a vocabulary ceiling beyond 64 even with
-the corrected substrate + K=16). Bigger commitment than the
-64-concept thread (each bridge trains separately, ~58 min/seed × 5
-bridges × 3 seeds ~ 14-15 hours total; kill-safe per-bridge per-seed
-cache). Standard discipline: design + TDD plan + subagent-driven
-build + dedicated adversarial review before any decisive run;
-frozen bar never tuned; mandatory smell-test; honest propagation
-both remotes. (Broader horizon, surfaced for the owner, NOT auto-
-launched: the owner's standing conversational-path directives --
-SPEAR, theta-gamma mode-unification, generative replay -- and the
-integrated closed loop are the larger arcs.) (Broader horizon,
-surfaced for the owner, NOT auto-launched: the owner's standing
-conversational-path directives -- SPEAR, theta-gamma mode-
-unification, generative replay -- and the integrated closed loop are
-the larger arcs.)
+**160-CONCEPT ENSEMBLE BUILT + ADVERSARIALLY REVIEWED CLEAR;
+DECISIVE 9-HOUR GPU RUN IN FLIGHT (2026-05-23, both remotes).** Full
+disciplined arc executed: design doc + TDD implementation plan
+(commit 3b27e45); Task 0 grounding pin (4 tests, red until Task 2
+intentional, commit 9708708); Task 1 bridge_vocab_and_patterns
+helper (pure function, 6/6 unit tests, with one fix for uint32
+overflow in the per-bridge seed mask, commits 330edca + a474bec);
+Task 2 the multi-bridge runner (focused byte-reuse extension of the
+trained-substrate runner, commit 4667334, Task 0 pin then 4/4
+green); Task 3 soundness tests (4/4 pass on GPU including the smoke
+build+train+capture sanity, commit dfa9f45). The runner orchestrates
+5 bridges × 3 seeds (15 bridge-seed combinations); per-bridge per-
+seed kill-safe cache in
+`research/findings/raw/vocabulary_scaling_160ensemble_cache/`;
+per-bridge sized at the validated G.20 sparse defaults
+(lang=8192, pool=2000, FS=300, K=100); per-bridge training via
+train_substrate (byte-unchanged) at the validated G.20 encoding;
+per-bridge capture at M_OBS=16; per-bridge pipeline at K_VOCAB=16,
+K_RECOG=8, loads {2,3,5}, N_TRIALS=200 (the K=16 PASS recipe). A
+dedicated adversarial reviewer (fresh agent, full tool access, RAN
+all 10 exploit-class checks: no vocab drift; per-bridge pattern
+determinism + decorrelation; K=16 recipe pinned; BAR immovable;
+reuse byte-unchanged across the entire arc; no answer leak; train
+orchestration correct per-bridge incl. sparsity + n_words_for_-
+orthogonal consistency; per-bridge cache cannot poison; no autograd;
+GPU plan + aggregate logic correct) returned VERDICT CLEAR with no
+defect ("Ship it."). The smoke ran clean end-to-end (2 bridges, toy
+sizes, ~minutes; numbers NOT propagated). The decisive 9-hour GPU
+run is IN FLIGHT as harness-tracked background task `b9pxwd6zq`
+(log: `research/findings/raw/vocabulary_scaling_run_160ensemble_full.log`;
+JSON output: `research/findings/raw/vocabulary_scaling_run_160ensemble_full.json`;
+per-bridge per-seed activity caches under
+`vocabulary_scaling_160ensemble_cache/full_*`). 14/14 tests green
+across the arc; no-confab moat 7/7 green; protected set zero diff.
+
+**EXACT NEXT ACTION: monitor the in-flight 160-ensemble run to actual
+completion, then smell-test and propagate.** On any re-trigger
+(watchdog, new session, post-compaction): FIRST check whether the
+decisive run is still running -- a `python.exe` whose command line
+contains `vocabulary_scaling_run_160ensemble.py`, or whether
+`vocabulary_scaling_run_160ensemble_full.json` already exists. If
+still running, do NOT re-launch; let it finish (it is kill-safe per-
+bridge per-seed -- a re-launch would resume from the next uncached
+(bridge, seed)). If finished (the JSON exists): (1) MANDATORY anti-
+cheat smell-test, scrutinising a nominal PASS HARDER than a NEGATIVE
+-- recompute per-bridge per-load means from `cell_results`
+independently of the runner's aggregate; recompute captured pool
+density from each bridge's activity cache (must sit in the 0.09-0.11
+regime the 64-concept K=16 trained substrate achieved, decisively
+above the untrained ~0.008); per-bridge per-load consistency checks
+(composition-only >= integrated; per-seed variation); no re-run, no
+bar change; (2) PRE-REGISTERED reading -- PASS iff every (bridge,
+load) cell multi-seed mean >= 0.80 across 5 bridges × 3 loads = 15
+cells; NEGATIVE if some cell misses, per-bridge breakdown reported;
+(3) write a findings doc (per-bridge breakdown; multi-seed-mean AND
+strict per-seed criteria both reported with any per-seed caveats
+preserved); update `webapp/capability_status.json` (new VALIDATED
+pillar on PASS, NEGATIVE pillar on miss); update AUTONOMOUS_STATE
+EXACT NEXT ACTION; commit + push BOTH remotes. (4) On a clean PASS:
+a fresh dedicated adversarial review BEFORE the capability-pillar
+claim (matching the K=16 PASS arc's discipline). Then continue
+autonomously per the discipline. (Broader horizon, surfaced for the
+owner, NOT auto-launched: the owner's standing conversational-path
+directives -- SPEAR, theta-gamma mode-unification, generative replay
+-- and the integrated closed loop are the larger arcs.)
 
 ---
 [Historical content below preserved for context.]
