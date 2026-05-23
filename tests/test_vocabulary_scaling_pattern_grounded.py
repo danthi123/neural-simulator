@@ -68,9 +68,13 @@ def test_pattern_indicator_differs_from_activity():
     assert not set(np.unique(av).tolist()).issubset({0.0, 1.0})
 
 
-def test_ground_symbols_pattern_returns_one_phasor_per_word():
-    """Each grounded symbol must be a complex phasor of length N_DIM,
-    keyed by the input word."""
+def test_ground_symbols_pattern_returns_one_symbol_per_word():
+    """Each grounded symbol must be a well-formed spike-phase array of
+    length N_DIM, keyed by the input word, with the same shape and
+    integer dtype the activity-grounded path produces (the pipeline's
+    FHRR + attractor stages consume the spike-phase representation
+    `phases_to_spikes` returns -- integer phase quantisation, NOT a
+    complex phasor)."""
     cache = os.path.join(TRAINED_CACHE_DIR, "trained_full_seed42.npz")
     if not os.path.exists(cache):
         pytest.skip("trained activity cache not yet populated")
@@ -82,5 +86,8 @@ def test_ground_symbols_pattern_returns_one_phasor_per_word():
     for w in words:
         z = grounded[w]
         assert z.shape == (N_DIM,)
-        assert np.iscomplexobj(z)
-        assert np.all(np.isfinite(z))
+        # Same integer dtype the activity-grounded path produces; the
+        # downstream FHRR + attractor pipeline consumes this format.
+        assert np.issubdtype(z.dtype, np.integer)
+        # Phase indices are non-negative finite integers.
+        assert np.all(z >= 0)
