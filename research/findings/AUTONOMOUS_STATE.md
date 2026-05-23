@@ -1047,30 +1047,80 @@ load-capacity edge precisely characterised as stochastic FHRR
 variance not traceable to surface substrate geometry. Complete,
 honest, biology-translatable result set, all propagated.
 
-**EXACT NEXT ACTION: SURFACE for owner steer -- the vocab-scaling
-thread is substantively complete; the broader-horizon arcs are the
-higher-leverage next direction.** The owner's standing
-conversational-path directives -- SPEAR theta-gamma multiplexing,
-generative replay, the integrated closed loop -- have been queued as
-"NOT auto-launched" throughout this thread. With the vocab-scaling
-thread now substantively complete (every avenue of cheap-first
-probing exhausted on the per-bridge / per-load / per-seed / geometry
-axes), these larger arcs are the natural next direction for the
-project's brain-analogue goal. On any re-trigger (watchdog, new
-session): the cheap probing avenues on this thread are exhausted;
-either (a) await owner steer on which broader-horizon arc to pursue
-(SPEAR, theta-gamma, generative replay, integrated closed loop --
-each a substantial multi-week design + plan + build + GPU
-commitment), or (b) per the standing autonomy, pick the most
-prescient broader-horizon arc and begin its design doc, surfaced as
-a steering question rather than autonomously launching a multi-week
-GPU build. The compositional capability findings stand: 64-concept
-K=16 refined PASS (n=90 VALIDATED); 160-concept K=16 BOUNDARY
-(n=91; 14 of 15 cells PASS multi-seed-mean at 5 seeds; bridgeD/L=5
-the only miss). The no-confab moat (7/7), the FHRR-biologization
-arc (twice-reviewed; mean-centring as the load-bearing geometric
-condition), and the wider project's prior validated assets all
-stand unchanged. (Broader horizon, surfaced for the
+**THETA-GAMMA MODE-UNIFICATION CHEAP-FIRST NUMPY PROBE = ALGEBRA
+PASS at multi-seed 1.000 across both readouts at every load
+(2026-05-23, both remotes).** Owner-authorised autonomous selection
+of the highest-leverage next direction toward the project's brain-
+analogue goal. The catalog-documented Lisman-Idiart N.16 mechanism
+(order-bearing AND order-invariant as operating MODES of one
+theta-gamma encoded code, NOT two stores) the owner explicitly
+flagged on 2026-05-19 as "the key catalog-documented interconnection
+the project never built" and load-bearing for the conversational
+path. Cheap-first algebra probe, same pattern as the FHRR-numpy
+probe -> spiking-phasor-FHRR build sequence: pure numpy; complex-
+phasor FHRR primitives inline (textbook); multi-seed (42, 43, 44);
+N_dim=512; vocabulary 32; loads {2, 3, 5}; 200 trials per load per
+seed; pre-registered frozen 0.80 bar; encoding C = sum_k bind(
+item_k, position_k) over the K gamma-slot positions; ORDER-BEARING
+readout = per-slot unbind + nearest_match over the full vocabulary;
+ORDER-INVARIANT readout = full-vocabulary marginal-sum-of-
+similarities scoring + top-K. RESULT: BOTH readouts score 1.000 at
+every load multi-seed -- zero errors across 21,600 trials. Smell-
+test passed: no answer leak (full vocabulary at readout; true items
+never privileged); distinct items per encoding; same gamma-slot
+positions across all trials per seed (no per-trial tuning); the
+algebra capacity at N_dim=512 has 10-50x headroom over loads 2-5;
+the frozen bar is unchanged. This is an ALGEBRA-PASS, not a
+capability claim -- same framing as the prior FHRR-numpy probe.
+Biology-translatable: the project's chosen phase-coded vector-
+symbolic algebra supports the catalog-documented bidirectional
+readout mechanism; the spiking biologized implementation on the
+project's substrate (which would reuse the FHRR-biologization arc's
+resonate-and-fire neurons + attractor clean-up + familiarity gate +
+substrate's common-mode-removed activity, and add a gamma-slot
+timing mechanism that places items at specific phase positions
+within the SPEAR theta cycle) is now a justifiable next pre-
+registered step. Findings:
+`research/findings/2026-05-23-theta-gamma-mode-unification-cheap-numpy-probe-ALGEBRA-PASS-Lisman-Idiart-N16-realisable-on-FHRR.md`.
+
+**EXACT NEXT ACTION: cheap-first follow-up probes characterising the
+algebra-PASS further BEFORE committing to the substantial multi-week
+biologized spiking implementation.** Three cheap CPU probes naturally
+follow from the algebra-PASS, each ~minutes; together they map the
+ALGEBRA's mode-unification capacity boundary and would inform the
+biologized implementation's design budget:
+
+(a) **Capacity-edge sweep**: re-run the probe at higher loads
+    {5, 7, 10, 15, 20} keeping vocabulary 32 and N_dim=512 fixed --
+    where does ORDER-BEARING break? where does ORDER-INVARIANT
+    break? Both are likely to clear past load 10 (FHRR-theoretic
+    capacity ~96 at this dim); the question is whether one fails
+    before the other.
+
+(b) **Noise-robustness probe**: add per-symbol Gaussian noise at
+    levels matching the spiking-substrate noise envelope the FHRR-
+    biologization arc characterised (~CV 1.6 for raw activity;
+    ~CV 0.1 after pattern-separation + mean-centring) -- does the
+    algebra-PASS survive substrate-realistic noise? If yes the
+    biologized implementation is straightforward; if not the
+    biologization needs additional noise-reduction.
+
+(c) **Vocab-scaling probe**: sweep vocabulary size at fixed loads
+    {2, 3, 5} -- does the algebra still PASS at vocab 64, 128, 160
+    (matching the vocab-scaling thread's tiers)? The FHRR capacity
+    curve predicts yes well past vocab 1000 at N_dim=512, but the
+    mode-unification readout's marginal-scoring crosstalk grows
+    with vocab and may bite earlier.
+
+Pre-registered for each: PASS iff multi-seed-mean >= 0.80 on both
+readouts at every probed value. Each writes its own findings doc.
+After (a)-(c) is propagated, the spiking biologized implementation
+on the project's substrate is the natural multi-week next pre-
+registered step (design + TDD plan + subagent-driven build +
+dedicated adversarial review + GPU run). On a watchdog re-trigger:
+pick the next un-completed cheap follow-up of (a), (b), (c) from
+the order above (cheap-first discipline); after all three are
+propagated, surface the spiking-implementation design. (Broader horizon, surfaced for the
 owner, NOT auto-launched: the owner's standing conversational-path
 directives -- SPEAR, theta-gamma mode-unification, generative
 replay -- and the integrated closed loop are the larger arcs. The
