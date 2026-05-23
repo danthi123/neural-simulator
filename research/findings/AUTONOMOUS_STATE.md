@@ -735,29 +735,51 @@ biology-translatable cost of grounding the symbol in noisy spiking
 activity rather than supplying it from an oracle lookup. Findings:
 `research/findings/2026-05-22-vocabulary-scaling-load-ceiling-map-ceiling-sits-between-loads-3-and-4.md`.
 
-**EXACT NEXT ACTION: candidate 2 -- grounding the symbol in the K-of-N
-PATTERN itself, as a new pre-registered step, with the ceiling map as
-the reference curve.** Motivation now precisely sharpened: the
-spiking-grounded pipeline ceilings between loads 3 and 4 (a ~30x
-capacity reduction from the pure FHRR algebra); the failure mode is
-the spiking-symbol noise floor, not algebraic capacity. Replacing the
-noisy activity-derived symbol with the clean K-of-N pattern-derived
-symbol directly tests whether removing that noise raises the ceiling
--- and by how much. The K-of-N pattern is the substrate's own concept
-code (selectable on the trained bridge from the cached pool
-populations), which is more substrate-grounded than a freely-designed
-phasor but also closer to an oracle than the activity-derived symbol;
-the honest oracle-adjacency caveat is recorded up front. Standard
-discipline: design doc + TDD plan + subagent-driven build + dedicated
-adversarial review before any decisive run; frozen 0.80 bar never
-tuned; smell-test a PASS HARDER than a FAIL; honest propagation both
-remotes. Pre-registered reading (fixed): PASS = pattern-grounded
-multi-seed integrated mean >= 0.80 at all loads {2,3,5} (the same load
-set the decisive run used); the decisive comparison is whether
-pattern-grounded clears the bar where activity-grounded missed at L=5
--- and how far the new ceiling extends on the extended {4,6,7}
-characterisation. (Broader horizon, surfaced for the owner, NOT
-auto-launched: the owner's standing conversational-path directives --
+**PATTERN-GROUNDED-SYMBOL (CANDIDATE 2) DESIGN DOC WRITTEN
+(2026-05-22, both remotes).** Plain-language design doc at
+`docs/plans/2026-05-22-pattern-grounded-symbol-design.md`. Frames the
+question precisely (does replacing the noisy activity-derived symbol
+with the substrate's clean K-of-N pattern-derived symbol raise the
+load ceiling, and by how much), the mechanism (substitute the symbol-
+derivation step only -- everything else identical to the trained-
+substrate decisive run; same recognition front-end, same FHRR
+operations, same attractor clean-up, same frozen 0.80 bar, same
+multi-seed, same loads {2,3,5}), the honest oracle-adjacency caveat
+recorded up front (the K-of-N pattern is the substrate's own concept
+code -- still substrate-grounded -- but one step closer to oracle-
+lookup than activity-grounded; a PASS is read with that caveat), the
+pre-registered reading (PASS = multi-seed mean >= 0.80 at all loads;
+NEGATIVE = the spiking-symbol noise is NOT the only ceiling cause --
+sharpens diagnosis), and the soundness checks an adversarial reviewer
+must run (no answer leak -- the true label must never index the
+pattern store; recognition genuinely load-bearing; the deriver
+identical to the activity-grounded path; no protected module
+modified; no autograd; frozen bar immovable).
+
+**EXACT NEXT ACTION: write the TDD implementation plan for the
+pattern-grounded runner, then subagent-driven build, then dedicated
+adversarial review, then controller-only decisive run.** Tasks per the
+design doc: Task 0 grounding pin (constants + bar unchanged), Task 1
+the `pattern_vector` helper (pure function, unit-tested), Task 2 the
+runner `vocabulary_scaling_run_pattern_grounded.py` (focused byte-
+reuse extension of the trained-substrate runner; substitute symbol-
+derivation only; pipeline + capture + recognition + multi-seed +
+smell-test reused by import), Task 3 soundness tests (the load-bearing
+guards -- input differs, recognition is the only handle), Task 4
+adversarial review (RUNS the exploit-class checks; CLEAR required
+before any decisive run), Task 5 CONTROLLER-ONLY decisive run
+(multi-seed, the trained activity cache is reused for recognition; CPU
+sufficient since the symbol-derivation change is pure-numpy; mandatory
+smell-test recomputes from the recording). After Task 5, regardless of
+verdict, re-run the load-ceiling probe on the pattern-grounded
+pipeline so the comparison curve extends across loads {2..7}. Standard
+discipline throughout: frozen bar never tuned; smell-test a PASS
+HARDER than a FAIL; honest propagation both remotes; the oracle-
+adjacency caveat front and centre on every artefact. On any re-trigger
+(watchdog, new session, post-compaction) the next concrete step is the
+TDD plan unless one of Tasks 1-5 is in flight (check git log + the
+output files). (Broader horizon, surfaced for the owner, NOT auto-
+launched: the owner's standing conversational-path directives --
 SPEAR, theta-gamma mode-unification, generative replay -- and the
 integrated closed loop are the larger arcs.)
 
