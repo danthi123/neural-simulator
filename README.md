@@ -414,7 +414,78 @@ batch finishes in ~45-55 minutes on an RTX 3090.
 
 ## Latest validated result
 
-**A trustworthy, continual, fully-local concept memory + an
+**Biologized theta-gamma mode-unification (Lisman-Idiart N.16)
+END-TO-END COMPLETE; substrate readiness for the conversational
+generative-replay loop validated through the natural biology match
+(2026-05-23/24):**
+
+The catalog-documented mechanism for order-bearing AND order-invariant
+readouts from one theta-gamma encoded code — flagged earlier as
+"the key catalog-documented interconnection the project never built"
+— is now biologized end-to-end on the project's spiking substrate
+across three nested scales:
+
+```
+Per-bridge mode-unification (n=94):  multi-seed OB 1.000 + OI 1.000/
+                                      1.000/0.960-0.987 across all 5
+                                      bridges of the 160-concept
+                                      ensemble; both readouts PASS
+                                      with parallel-population-matching
+                                      identification (feedforward
+                                      dendritic-integration + lateral-
+                                      inhibition WTA over substrate-
+                                      derived grounded symbols)
+Cross-bridge characterisation (n=95): OB extends PERFECTLY cross-
+                                      bridge (1.000 every cell on 160-
+                                      symbol distractors; zero errors
+                                      / 3600 trials); OI marginal-sum
+                                      top-K ceilings at L=5 x V=160
+                                      (~0.79; just below the 0.80 bar)
+Substrate-grounding on build_biological_brain_regions (n=96):
+                                      parallel-matching PASSes on the
+                                      v14/v16 16-pool concept architecture
+                                      (multi-seed 1.000/1.000/0.997 at
+                                      L=2/3/5) -- CLEANER than G.20
+                                      sparse because per-concept pools
+                                      have near-orthogonal raw activity
+With hippocampus PRESENT (n=97):      parallel-matching still PASSes
+                                      with hippocampus EC/DG/CA3/CA1 +
+                                      Phase 1.3 SWR consolidation
+                                      pathways enabled (multi-seed
+                                      1.000/1.000/0.993) -- the
+                                      substrate that ALSO has Phase
+                                      1.3 SWR consolidation validated
+                                      (3/3 strict anti-cheat multi-seed)
+                                      supports the mode-unification
+                                      mechanism cleanly
+```
+
+Five adversarial reviews CLEAR across 69+ exploit-class checks total
+(including independent byte-exact reproductions of single cells from
+caches; per-concept activity-vector distinctness verification;
+substrate-identity checks; no-confab moat 7/7 throughout; frozen 0.80
+bar never tuned). The (c) generative-replay loop -- the third leg of
+the 2026-05-19 conversational-path reframe (SPEAR → theta-gamma mode-
+unification → generative replay) -- can now build on a substrate where
+ALL FIVE load-bearing components are validated together. Honest scope:
+this is the biology-grounded compositional substrate; explicitly NOT
+LLM-fluent prose; the conversational arc's next milestone is the (c)
+loop-controller build that produces partial-sequence completion via
+SWR replay against the consolidated cortical schema. The oracle-
+adjacency caveat from the parallel-matching design (decoder
+structurally closer to argmax-over-vocab than TPAM's recurrent
+attractor; "vocabulary" IS the substrate's own grounded symbols, not
+engineered) is preserved throughout.
+
+See `research/findings/2026-05-23-OPTION3-parallel-matching-PASSES-on-build_biological_brain_regions-substrate-cleanest-biology-match-for-generative-replay.md`,
+`research/findings/2026-05-23-HIPPO-OPTION3-PASS-parallel-matching-mode-unification-still-works-with-hippocampus-PRESENT-c-can-build-cleanly.md`,
+and `docs/plans/2026-05-23-generative-replay-design.md` /
+`docs/plans/2026-05-24-generative-replay-implementation.md` for the
+full thread + (c) build plan.
+
+---
+
+**Earlier flagship — trustworthy, continual, fully-local concept memory + an
 early own-network speech generator (2026-05-16):**
 
 A multi-part cortex storing many concepts as distributed sparse
