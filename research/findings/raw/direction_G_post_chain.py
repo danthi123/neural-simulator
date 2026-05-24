@@ -29,7 +29,9 @@ case from pillar n=104 already characterized the controls).
 from __future__ import annotations
 import json
 import os
+import subprocess
 import sys
+import time
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _REPO_ROOT = os.path.normpath(os.path.join(_HERE, "..", "..", ".."))
@@ -65,6 +67,28 @@ def main():
           flush=True)
     print(f"    Direction G (HIPPO+theta-gamma):              "
           f"{g_top1:.3f}", flush=True)
+
+    # If PASS, run smell test for full controls verification
+    smell_verdict = None
+    if g_top1 >= 0.80:
+        print(f"\n--- Direction G PASS -> running smell test ---",
+              flush=True)
+        t0 = time.time()
+        try:
+            subprocess.run(
+                [sys.executable, "-m",
+                 "research.findings.raw.direction_G_smell_test"],
+                cwd=_REPO_ROOT, check=True)
+            smell_p = os.path.join(
+                _HERE, "direction_G_smell_test.json")
+            if os.path.exists(smell_p):
+                with open(smell_p, "r", encoding="utf-8") as f:
+                    smell_data = json.load(f)
+                smell_verdict = smell_data.get("verdict")
+            print(f"  smell test wall: {(time.time()-t0)/60:.1f} min;"
+                  f" verdict: {smell_verdict}", flush=True)
+        except Exception as e:
+            print(f"  smell test failed: {e}", flush=True)
 
     print(f"\n=== NEXT-DIRECTION RECOMMENDATION ===", flush=True)
     if g_top1 >= 0.80:
@@ -113,6 +137,7 @@ def main():
         "direction_G_strict_top1_mean": g_top1,
         "direction_G_per_seed": g_per_seed,
         "direction_G_verdict": g_verdict,
+        "smell_test_verdict": smell_verdict,
         "next_direction_recommendation": recommendation,
         "comparison": {
             "direction_A_v1": 0.333,
