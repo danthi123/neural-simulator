@@ -202,8 +202,12 @@ def _build_bridge_with_hippo(seed: int, enable_adjective: bool,
               f"{total_neurons} neurons total, "
               f"{n_concept_pools} concept pools "
               f"({n_concept_pools * n_per_pool} pool neurons); "
-              f"hippocampus + dlpfc_wm + Phase 1.3 SWR consolidation "
-              f"pathways PRESENT", flush=True)
+              f"hippocampus (EC/DG/CA3/CA1) + Phase 1.3 SWR "
+              f"consolidation pathways PRESENT (NOTE: dlpfc_wm NOT "
+              f"enabled by this flag; the dlpfc_wm region is built "
+              f"only by g11_bg_runner.py via explicit BrainRegion; "
+              f"adding it is a separate substrate-extension step)",
+              flush=True)
     return bridge
 
 

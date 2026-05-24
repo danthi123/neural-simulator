@@ -1605,6 +1605,94 @@ clock: similar to OPTION 3 (~30 min/seed train + capture + pipeline;
 PASSes, the (c) generative-replay TDD plan + build is the next
 pre-registered substantial direction.
 
+**HIPPO-OPTION3 COMPLETE = VALIDATED PASS; ADVERSARIAL REVIEW CLEAR
+ON 15 EXPLOIT-CHECKS WITH ONE NON-BLOCKING DOC ACCURACY CORRECTION;
+VALIDATED PILLAR n=97 RECORDED (2026-05-23/24, both remotes).** Smoke
+PASSED clean (5.6 min; OB 1.000 OI 1.000 at L=2,3); two minor bugs
+fixed (bridge.num_neurons attribute reference; missing _initialize_-
+simulation_data call). Full multi-seed (seeds 42/43/44; 16 words x
+200 events x 16 obs; 119.4 min GPU; kill-safe per-seed cache)
+returned:
+
+RESULT: HIPPO_OPTION3_PASS. Multi-seed (42/43/44) at L=2/3/5: OB
+1.000/1.000/1.000 (zero errors / 1800 OB trials); OI 1.000/1.000/
+0.993 (per-seed L=5 OI [0.990, 0.990, 1.000]). Statistically
+indistinguishable from OPTION 3 no-hippo (0.997 vs 0.993; both
+essentially perfect; both 0.19+ above the 0.80 bar). Activity
+stats: pool-union mean rate 0.38-0.47 (vs OPTION 3 0.35-0.43;
+hippocampus presence slightly increases cortical pool activity via
+baseline EC-driven input). Bridge: 8240 neurons (vs OPTION 3's
+7680; +560 = EC/DG/dg_pv_basket/CA3/CA1 region sizes); 3.67M
+synapses (vs 3.52M).
+
+DEDICATED FRESH-AGENT ADVERSARIAL REVIEWER (15 exploit-class checks
+RAN) returned VERDICT CLEAR with ONE NON-BLOCKING DOCUMENTATION
+ACCURACY ISSUE: my initial findings doc + runner print claimed
+"hippocampus + dlpfc_wm + Phase 1.3 SWR consolidation pathways
+PRESENT" but the dlpfc_wm region is built ONLY by g11_bg_runner.py
+via explicit BrainRegion declaration -- NOT by enable_hippocampus_-
+consolidation. The hippocampus IS present (EC/DG/CA3/CA1, 560
+neurons, all pathways verified); SWR consolidation pathways ARE
+present (ca3_swr_burst, ca3_to_ca1, ca1_to_motor, ca1_to_lang_out);
+dlpfc_wm is NOT. Doc + runner print + pillar n=97 metric corrected
+post-review to honestly reflect: HIPPO-OPTION3 validates parallel-
+matching mode-unification with hippocampus + SWR consolidation
+PRESENT, NOT with dlpfc_wm. Other 14 checks: frozen bar immovable;
+hippocampus IS actually built (delta 560 neurons matches EC+DG+CA3+
+CA1 sizes; pathways verified); enable_hippocampus_consolidation=
+True actually passed; pipeline byte-equivalent to OPTION 3;
+batched-vs-scalar equivalence verified at machine precision;
+no oracle leak; activity caches non-trivial; activity DIFFERS
+measurably from no-hippo (mean rates shifted 7-22%; mean abs diff
+0.53 -- confirms hippo flag had effect); OB perfection genuine
+(items_idx tuples distinct, recoveries element-wise correct, 1.000
+is 4300x chance); INDEPENDENT byte-exact reproduction of seed 42
+(L=5 OI=0.99, max_diff=1.39e-17); GPU backend genuine; protected
+set zero diff; no autograd; no-confab moat 7/7 green; verdict
+logic correct. capability_status.json: VALIDATED pillar n=97
+recorded (with honest dlpfc_wm correction); schema 6/6 green;
+no-confab moat 7/7 green. Findings:
+`research/findings/2026-05-23-HIPPO-OPTION3-PASS-parallel-matching-
+mode-unification-still-works-with-hippocampus-PRESENT-c-can-build-
+cleanly.md`.
+
+INTEGRATION-CHOICE STATUS POST-HIPPO-OPTION3:
+- OPTION 1 (substrate-merge): NOT NEEDED.
+- OPTION 2 (G.20 sparse alone): NOT NEEDED.
+- OPTION 3 (build_biological_brain_regions): VIABLE through this
+  step. ONE remaining substrate-extension (dlpfc_wm region addition
+  + its own pre-registered re-validation) before the (c) loop-
+  controller TDD build can proceed.
+
+WHAT (c) STILL NEEDS:
+1. **dlpfc_wm region addition + parallel-matching re-validation**:
+   bring the NMDA bistable PFC working memory region (existing
+   pattern in g11_bg_runner.py at line 412+) into the build_
+   biological_brain_regions substrate; re-run the parallel-matching
+   mode-unification probe; confirm PASS holds. Estimated ~20-30
+   lines of declarative wiring + ~2 hr GPU re-validation. SMALL
+   discrete next step.
+2. **(c) generative-replay loop controller wiring**: encode PFC
+   frame via mode-unification -> trigger SWR replay against
+   consolidated schema -> capture post-replay cortical activity ->
+   decode via parallel-matching -> update PFC frame; iterate.
+   Pre-registered test: partial-sequence-completion accuracy >=
+   0.80 multi-seed. Substantial multi-week TDD build.
+
+**EXACT NEXT ACTION: dlpfc_wm-extension parallel-matching probe.**
+Add dlpfc_wm to the HIPPO-OPTION3 substrate (reuse g11_bg_runner's
+BrainRegion pattern; declarative); re-run the same parallel-matching
+mode-unification probe (reuses all primitives byte-unchanged); pre-
+registered reading: DLPFC_PASS iff multi-seed-mean >= 0.80 every
+cell on BOTH readouts. If PASS, all five load-bearing components
+of (c) are validated on a single coherent substrate; the (c) TDD
+plan + loop-controller build is the next substantial direction. If
+NEGATIVE, dlpfc_wm presence perturbs the substrate enough that (c)
+needs a different integration path (biology-translatable either
+way). Wall-clock estimate: ~2-2.5 hr GPU (matches OPTION 3 and
+HIPPO-OPTION3 cost; kill-safe per-seed cache; smoke-first per
+discipline).
+
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification
 is the next major direction; generative replay then closes the
