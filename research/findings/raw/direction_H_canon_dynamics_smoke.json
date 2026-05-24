@@ -1,0 +1,12 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seed": 42,
+  "weak_dynamics": false,
+  "canon_dynamics": true,
+  "n_train_events": 50,
+  "w_to_a_test_repeats": 8,
+  "phase1_w_to_a_acc": 0.5,
+  "verdict": "DIRECTION_H_SMOKE_PHASE1_PRESERVED",
+  "wall_clock_minutes": 10.093496398131053
+}
