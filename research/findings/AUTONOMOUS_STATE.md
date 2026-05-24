@@ -1860,6 +1860,85 @@ import only; protected set zero diff; no autograd; no-confab moat
 7/7 green; frozen 0.80 bar unchanged; plain ASCII; both remotes
 propagated at every commit; wiki-sync session captured (twice).
 
+**LATE-OVERNIGHT POSITIVE CHAIN COMPLETE (n=100 + n=101 + n=102)
+(2026-05-24 ~06:00 AM, both remotes).** Pivoted from the convergent
+NEGATIVE chain by reading the ORIGINAL 2026-05-14 validated multitag
+recipe (research/runners/multitag_eval.py; encode_concept_pair +
+balanced_teacher_pA=500 + region_filter=concept pools -- the CORTICAL
+mechanism). Discovered my earlier multitag probes used the WRONG
+region_filter (ca3 vs concept pools) and MISSED the balanced_teacher
+parameter -- a RECIPE artifact, not substrate degradation.
+
+Ran the ORIGINAL validated multitag_eval.py on the OPTION 3 cached
+substrate (pillar n=96) multi-seed: PERFECT REPLICATION at 91.7%
+FULL multi-seed (22/24) + 100% PARTIAL (24/24); slight improvement
+over the original 2026-05-14 90%. Adversarially reviewed CLEAR (14
+checks; INDEPENDENT FRESH-SESSION BYTE-IDENTICAL reproduction of
+seed 42 cue=apple top-2). Recorded as VALIDATED pillar n=100 (the
+round-number milestone).
+
+Extended to multi-substrate comparison: VALIDATED pillar n=101 (HIPPO-
+OPTION3 n=97 substrate also PASSes at 91.7% multi-seed -- exactly
+matches OPTION 3; hippocampus addition does NOT degrade multitag);
+BOUNDARY pillar n=102 (DLPFC-extension n=98 substrate DEGRADES to
+70.8% multi-seed -- dlpfc_wm NMDA bistability specifically pulls
+cortical drive 3.09x sparser per prior n=98 characterisation; scale-
+sensitive multitag readout affected; scale-invariant mode-unification
+(per n=98 PASS) remains UNCHANGED on same substrate; PARTIAL = 100%
+preserved). Both pillars adversarially reviewed CLEAR in single
+review (14 exploit-class checks; INDEPENDENT reproduction of DLPFC
+failure pattern verified deterministic).
+
+KEY BIOLOGY-TRANSLATABLE BOUND (the precise scientific deliverable
+of the overnight): on the dlpfc-extension substrate (n=98), the SAME
+cortical engrams support TWO readout mechanisms with DIFFERENT
+sensitivity: scale-INVARIANT (parallel-matching mode-unification with
+L2-normalised phase-similarity) PASSes; scale-SENSITIVE (multitag
+via raw lang_output spike-count cosine) BOUNDARIES. Cortical drive
+intensity (reduced 3x by dlpfc_wm NMDA bistability competition)
+affects scale-sensitive readouts; scale-invariant readouts are robust.
+Biology: cortical circuits implement BOTH readout sensitivity classes
+for redundancy.
+
+SESSION ARC TOTAL: 11 new pillars n=92-102; 8 adversarial reviews
+CLEAR (~110+ exploit-class checks); (c) generative-replay arc fully
+characterised; substrate-readiness chain VALIDATED across 3 nested
+configurations PLUS extended with multitag replication + multitag
+bound characterisation; comprehensive synthesis written; biology
+reference docs (Schwartenbeck + PFC-SWR + multi-turn dialog); post-(c)
+direction roadmap; README + headline + phase_status updated; GPU-
+batched runner default pattern shipped; 2 wiki-syncs.
+
+THE BIO_BRAIN_REGIONS SUBSTRATE'S CONVERSATIONAL CAPABILITY MAP
+(deliverable for owner steering, as of 2026-05-24 morning):
+- OPTION 3 (n=96; no hippo, no dlpfc): parallel-matching PASS + multitag PASS
+- HIPPO-OPTION3 (n=97; +hippocampus): parallel-matching PASS + multitag PASS
+- DLPFC-extension (n=98; +dlpfc_wm): parallel-matching PASS + multitag BOUNDARY (scale-sensitivity bound localised)
+
+The substrate is RICHER than the (c) loop's single-mechanism NEGATIVE
+suggested. The night's substantive conversational-capability gain:
+two independent validated retrieval primitives on the bio_brain_regions
+substrate, with precise localisation of which substrate extensions
+preserve vs perturb each readout class.
+
+NEXT-DIRECTION PROPOSALS (refined post-n=102):
+- Direction A (ec_context-based sequence storage): smoke
+  INCONCLUSIVE; would need full-scale verification (~3-4 hr GPU)
+- Direction B (cross-bridge bio_brain_regions): substantial
+  (~5-8 hr GPU)
+- Direction C (multitag refinements): ALREADY DELIVERED via n=100/
+  n=101/n=102 chain; the validated multitag conversational primitive
+  is intact on n=96/n=97 and characterised on n=98
+- Direction D (NEW, surfaced by n=102): could test whether the
+  multitag mechanism can be "rescued" on n=98 by increasing stim
+  drive or capture window (compensating for the 3x reduced pool
+  activity) -- cheap diagnostic; would either restore PASS or
+  precisely confirm the scale-sensitivity bound
+
+Per standing autonomy: continuous chain healthy; if owner doesn't
+steer, the next autonomous step is Direction D (cheap diagnostic to
+test whether multitag-on-n=98 can be rescued by stronger stim drive).
+
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification
 is the next major direction; generative replay then closes the
