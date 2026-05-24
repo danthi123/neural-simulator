@@ -1,0 +1,37 @@
+{
+  "config": {
+    "N_BRIDGES": 5,
+    "N_CONCEPTS_PER_BRIDGE": 32,
+    "N_DIM": 256,
+    "SLOT_COUNT": 5,
+    "SPARSITY": 0.05,
+    "NOISE_STD": 0.05,
+    "BAR": 0.8,
+    "THRESHOLD_NORM_RATIO": 1.5,
+    "N_TRIALS": 200,
+    "SEEDS": [
+      42,
+      43,
+      44
+    ],
+    "expected_noise_floor_norm": 0.35707142142714254,
+    "expected_signal_norm": 1.4142135623730951,
+    "snr": 3.960590171906697
+  },
+  "baseline_test1": 0.712,
+  "baseline_test2": 0.996,
+  "fix_test1_mean": 0.9993333333333334,
+  "fix_test1_per_seed": [
+    0.998,
+    1.0,
+    1.0
+  ],
+  "fix_test2_mean": 0.996,
+  "fix_test2_per_seed": [
+    0.988,
+    1.0,
+    1.0
+  ],
+  "verdict": "FAMILIARITY_GATE_RESOLVES_ABSTENTION",
+  "wall_clock_minutes": 0.027426520983378094
+}
