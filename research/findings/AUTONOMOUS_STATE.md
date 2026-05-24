@@ -1321,6 +1321,109 @@ bridge if PASS; or add BOUNDARY pillar if partial); update this state
 file; commit + push both remotes. Then surface (c) generative-replay
 architecture-integration choice to the owner with a revised design.
 
+**(e) COMPLETE = ENSEMBLE PASS MULTI-SEED ACROSS ALL 5 BRIDGES,
+ADVERSARIALLY REVIEWED CLEAR, VALIDATED PILLAR n=94 RECORDED
+(2026-05-23, both remotes).** Background task `bzpl2qfmp` exit code 0
+in 15.2 min wall-clock on CPU. RESULT:
+ENSEMBLE_PASS_PARALLEL_MATCHING_ALL_5_BRIDGES. Per-bridge multi-seed
+(OB, OI) at L=2/3/5: bridgeA_nouns (1.000/1.000/1.000, 1.000/1.000/
+0.982); bridgeB_verbs (1.000/1.000/1.000, 1.000/1.000/0.987);
+bridgeC_adj (1.000/1.000/1.000, 1.000/1.000/0.960); bridgeD_spatial
+(1.000/1.000/1.000, 1.000/1.000/0.978); bridgeE_functional
+(1.000/1.000/1.000, 1.000/1.000/0.978). OB exactly 1.000 every cell
+(zero errors / 9000 trials); OI exactly 1.000 at L=2/L=3 every cell;
+L=5 OI 0.960-0.987 multi-seed; lowest single-seed cell 0.945. The
+decoder matters: bridgeD_spatial uniquely missed at TPAM (0.78/0.77/
+0.74; BOUNDARY n=91) and clears decisively at parallel-matching on
+the SAME substrate. Mandatory smell-test PASSED (recompute byte-for-
+byte; bridgeA reproduces (b) multi-seed-mean 0.9817 at L=5 OI
+exactly). DEDICATED FRESH-AGENT adversarial reviewer (12 exploit-
+class checks; RAN independent re-execution of bridgeD_spatial seed 42
+from scratch using (b) primitives -> reproduced extension's exact
+values; all-bridge vocabulary disjointness verified; cache integrity
+verified) returned VERDICT CLEAR with no defect, recommendation "Safe
+to claim this as multi-bridge mode-unification capability extension
+across the full 160-concept ensemble, with the same oracle-adjacency
+caveat from the parent (b) design doc explicitly preserved."
+capability_status.json: VALIDATED pillar n=94 appended; schema 6/6
+green; no-confab moat 7/7 green; protected set zero diff. Findings:
+`research/findings/2026-05-23-biologized-mode-unification-parallel-
+matching-EXTENDS-PER-BRIDGE-across-the-FULL-160-concept-ensemble.md`.
+
+THE BIOLOGIZED THETA-GAMMA MODE-UNIFICATION THREAD IS FULLY COMPLETE
+across the cheap-first / characterisation / biologized-implementation
+sequence the FHRR-biologization arc established: algebra-PASS (numpy
+cheap probe; multi-seed 1.000); capacity-envelope wide on three axes;
+TPAM-biologization NEGATIVE_ORDER_INVARIANT_ONLY (BOUNDARY n=92;
+V=8-V=20 capacity window); parallel-matching biologization VALIDATED
+on bridgeA (n=93); parallel-matching biologization ENSEMBLE-PASS
+per-bridge across all 5 categories of the 160-concept ensemble (n=94,
+this completion). Two honest biologizations stand side-by-side, each
+with its precise scaling property; the catalog-documented
+Lisman-Idiart N.16 mechanism is biologized end-to-end on the project's
+substrate at multi-bridge ensemble scale. The load-bearing prerequisite
+for the (c) generative-replay arc is in place at ensemble scale.
+
+**EXACT NEXT ACTION: surface the (c) generative-replay integration-
+choice options to the owner WITH the (e) ensemble-extension result
+in hand.** Four honest options for the (c) build's substrate, surfaced
+together so the owner can steer:
+
+OPTION 1 (the (c) design as written): port G.20 sparse pools INTO
+build_biological_brain_regions to obtain a merged substrate with
+sparse-distributed concept identity + hippocampus trisynaptic loop +
+SWR consolidation pathways + dlpfc_wm NMDA bistability. Substantial
+reuse + integration work; requires NEW pre-registered substrate-
+property tests (D.12 separation, D.13 completion, Phase 1.3
+consolidation, dlpfc_wm bistability under sparse encoding,
+parallel-matching capability on the merged substrate). Risk: re-
+validation may reveal incompatibilities analogous to the 2026-05-22
+ca1-wire NEGATIVE (weak-dynamics concept pools couldn't consolidate).
+Most faithful to the (c) design's vision but slowest path.
+
+OPTION 2 (G.20 sparse alone, narrowest claim, cheapest): the PFC
+frame is held by sustained re-injection of the encoded composite C
+(no NMDA bistability needed); "replay" is iteratively decoded
+continuations from the same composite drawing from the substrate's
+own consolidated cortical schema (the trained substrate IS the
+schema). No hippocampal SWR mechanism; the generative loop is the
+parallel-matching decoder repeatedly applied. Narrowest biology; runs
+on the existing VALIDATED substrate (pillar n=93/n=94). May not
+deliver the conversational-substrate claim the owner reframe
+described.
+
+OPTION 3 (build_biological_brain_regions alone, the natural biology
+match): use the existing 16-pool concept architecture with
+hippocampus + dlpfc_wm + Phase 1.3 consolidation already validated.
+First requires a NEW pre-registered re-validation of parallel-matching
+mode-unification on THIS substrate's concept pools (capture their
+activity; ground via the same mean-centred deriver pipeline; run the
+parallel-matching decoder; multi-seed). v14/v16's 88.75% W->A multi-
+seed binding suggests symbols ARE recognizable from pool activity;
+re-validation expected to PASS with moderate per-cell variance.
+If re-validation PASSes, (c) builds cleanly on this substrate with
+its existing PFC + hippocampus + SWR + consolidation pathways.
+Cleanest biology match to the owner reframe's conversational design;
+medium build cost.
+
+OPTION 4 (defer (c); pursue cross-bridge mode-unification the
+160-ensemble decisive run explicitly bracketed): one composite drawing
+items from MULTIPLE bridges' vocabularies (e.g. apple+go+big spanning
+nouns/verbs/adj); tests whether mode-unification generalises across
+bridge boundaries via a cross-bridge grounded-symbol space. Distinct
+from generative replay; same substrate (G.20 sparse ensemble); same
+mode-unification primitives. Lower owner-decision dependency; could
+run in parallel with the owner's (c) deliberation; completes another
+open thread.
+
+Per standing autonomy + best judgment toward the project's
+brain-analogue goal: this state file + the next message are the
+surfaced report for the owner; if the owner does not respond promptly
+the next autonomous step is to begin OPTION 4 (cheapest; CPU-only
+cross-bridge probe on existing caches; same standing discipline as
+the (e) extension) while leaving (c) options 1-3 awaiting steer.
+This preserves momentum without preempting the (c) substrate choice.
+
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification
 is the next major direction; generative replay then closes the

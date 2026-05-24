@@ -1,0 +1,565 @@
+{
+  "bridges": [
+    "bridgeA_nouns",
+    "bridgeB_verbs",
+    "bridgeC_adj",
+    "bridgeD_spatial",
+    "bridgeE_functional"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar": 0.8,
+  "n_gamma_slots": 7,
+  "k_vocab": 16,
+  "n_trials": 200,
+  "decoder_order_bearing": "parallel_population_matching",
+  "decoder_order_invariant": "marginal_sum_phase_similarity",
+  "cell_results": [
+    {
+      "bridge": "bridgeA_nouns",
+      "seed": 42,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.99,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeA_nouns",
+      "seed": 43,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.97,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeA_nouns",
+      "seed": 44,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.985,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeB_verbs",
+      "seed": 42,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.99,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeB_verbs",
+      "seed": 43,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.98,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeB_verbs",
+      "seed": 44,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.99,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeC_adj",
+      "seed": 42,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.985,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeC_adj",
+      "seed": 43,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.945,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeC_adj",
+      "seed": 44,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.95,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeD_spatial",
+      "seed": 42,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.98,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeD_spatial",
+      "seed": 43,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.985,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeD_spatial",
+      "seed": 44,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.97,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeE_functional",
+      "seed": 42,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.995,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeE_functional",
+      "seed": 43,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.97,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "bridge": "bridgeE_functional",
+      "seed": 44,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.97,
+          "n_trials": 200
+        }
+      }
+    }
+  ],
+  "per_bridge_aggregate": {
+    "bridgeA_nouns": {
+      "2": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "3": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "5": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 0.9816666666666666,
+        "order_invariant_per_seed": [
+          0.99,
+          0.97,
+          0.985
+        ]
+      }
+    },
+    "bridgeB_verbs": {
+      "2": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "3": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "5": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 0.9866666666666667,
+        "order_invariant_per_seed": [
+          0.99,
+          0.98,
+          0.99
+        ]
+      }
+    },
+    "bridgeC_adj": {
+      "2": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "3": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "5": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 0.96,
+        "order_invariant_per_seed": [
+          0.985,
+          0.945,
+          0.95
+        ]
+      }
+    },
+    "bridgeD_spatial": {
+      "2": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "3": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "5": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 0.9783333333333332,
+        "order_invariant_per_seed": [
+          0.98,
+          0.985,
+          0.97
+        ]
+      }
+    },
+    "bridgeE_functional": {
+      "2": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "3": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "5": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 0.9783333333333332,
+        "order_invariant_per_seed": [
+          0.995,
+          0.97,
+          0.97
+        ]
+      }
+    }
+  },
+  "verdict": "ENSEMBLE_PASS_PARALLEL_MATCHING_ALL_5_BRIDGES"
+}

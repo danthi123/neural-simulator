@@ -66,14 +66,14 @@
       "date": "2026-05-21"
     },
     {
-      "name": "\u00f0\u0178\u017d\u2030\u00f0\u0178\u017d\u2030\u00f0\u0178\u017d\u2030 Sparse-distributed G.20 64-concept at 100% PASS (true Kanerva form, 2026-05-15)",
+      "name": "ðŸŽ‰ðŸŽ‰ðŸŽ‰ Sparse-distributed G.20 64-concept at 100% PASS (true Kanerva form, 2026-05-15)",
       "status": "VALIDATED",
       "metric": "After contiguous-slice 60-concept hit a wall at 78.3% top-1, pivoted to TRUE Kanerva-style sparse-distributed encoding (random sparse patterns, not contiguous blocks). Result: 64/64 (100%) top-1, 64/64 (100%) top-5 at seed 42 in 2000-neuron pool with 100-neuron sparse patterns. MORE concepts (64 vs 60), LESS substrate (2000 vs 3200), PERFECT discrimination (vs 78.3% / 96.7%). Architecture pivot validated. The contiguous-slice approximation was the bottleneck at 60+; sparse-distributed unlocks linear scaling. Capacity implications: 5-bridge sparse-distributed at 64/bridge = 320 concepts (vs current 160); at 128/bridge (testing) = 640 concepts. Combined with expanded morpheme dict (~10x reach): 3200-6400 surface forms = mid-child to early-adult vocabulary range. Catalog G.20 (Pulvermuller distributed cortical word ensembles): 'SAME NEURONS PARTICIPATE' specification now properly implemented via overlapping random patterns.",
       "doc": "2026-05-15-sparse-distributed-BREAKTHROUGH.md",
       "date": "2026-05-15"
     },
     {
-      "name": "\u00f0\u0178\u017d\u2030\u00f0\u0178\u017d\u2030 G.20 contiguous-slice 160-concept ensemble at 100% PASS (5 bridges, 2026-05-15)",
+      "name": "ðŸŽ‰ðŸŽ‰ G.20 contiguous-slice 160-concept ensemble at 100% PASS (5 bridges, 2026-05-15)",
       "status": "VALIDATED",
       "metric": "Teacher-bias capture method achieves 100% top-1 PASS across all 5 contiguous-slice bridges at 32 concepts each (160 total). Production-tested. Sparse-distributed prototype now beats this with 64 concepts in single bridge, but the 5-bridge contiguous ensemble remains a validated production artifact.",
       "doc": "2026-05-15-G20-100-percent-PASS-teacher-bias.md",
@@ -82,7 +82,7 @@
     {
       "name": "60-word multi-bridge ensemble + 11 conversational features (5-seed VALIDATED 2026-05-15)",
       "status": "VALIDATED",
-      "metric": "5 v16 bridges (set1-5) each owning 12 distinct concept words, routed by dispatch layer. FULL 5-SEED VALIDATION (seeds 42-46) for 4 new sets: 238/320 = 74.4% combined Phase 1 PASS rate, mean per-bridge 11.9/16 \u00c2\u00b1 0.7 -- statistically indistinguishable from v16 baseline (12.4/16 \u00c2\u00b1 1.52). 19 robust words (PASS at ALL 5 seeds), 45 fragile, 0 fail. End-to-end demo validates 11 features: pair encoding, N-word sentences, negation, conjunctions, possessives, pronoun coreference, tense (PAST/FUTURE), comparisons, yes/no, role queries, relational queries, memory CRUD. 91 unit tests pass (1.2s CPU). Total bridge state: 5 seeds * 4 sets * 25MB + 1 set1 = ~525 MB. Per-seed wall clock ~72 min for 4 new sets. Full 5-seed wall clock: ~6.3 hours total.",
+      "metric": "5 v16 bridges (set1-5) each owning 12 distinct concept words, routed by dispatch layer. FULL 5-SEED VALIDATION (seeds 42-46) for 4 new sets: 238/320 = 74.4% combined Phase 1 PASS rate, mean per-bridge 11.9/16 Â± 0.7 -- statistically indistinguishable from v16 baseline (12.4/16 Â± 1.52). 19 robust words (PASS at ALL 5 seeds), 45 fragile, 0 fail. End-to-end demo validates 11 features: pair encoding, N-word sentences, negation, conjunctions, possessives, pronoun coreference, tense (PAST/FUTURE), comparisons, yes/no, role queries, relational queries, memory CRUD. 91 unit tests pass (1.2s CPU). Total bridge state: 5 seeds * 4 sets * 25MB + 1 set1 = ~525 MB. Per-seed wall clock ~72 min for 4 new sets. Full 5-seed wall clock: ~6.3 hours total.",
       "doc": "2026-05-15-multibridge-5seed-FINAL.md",
       "date": "2026-05-15"
     },
@@ -227,105 +227,105 @@
       "date": "2026-05-13"
     },
     {
-      "name": "Phase 1.4 BRANCH A \u00e2\u20ac\u201d no catastrophic forgetting",
+      "name": "Phase 1.4 BRANCH A â€” no catastrophic forgetting",
       "status": "VALIDATED",
       "metric": "5/6 PASS, mean 103% primary retention",
       "doc": "2026-05-07-Phase-1.4-v3-6seed-FINAL.md",
       "date": "2026-05-07"
     },
     {
-      "name": "8-word Phase 1.3 + Tier 2.1 \u00e2\u20ac\u201d CLS at synonym scale",
+      "name": "8-word Phase 1.3 + Tier 2.1 â€” CLS at synonym scale",
       "status": "VALIDATED",
       "metric": "3/3 GO, mean primary 91% / synonym 128%",
       "doc": "2026-05-08-Phase1.3-Tier2.1-combined-3seed-CONFIRMED.md",
       "date": "2026-05-08"
     },
     {
-      "name": "8-word strict anti-cheat \u00e2\u20ac\u201d cortex truly retains",
+      "name": "8-word strict anti-cheat â€” cortex truly retains",
       "status": "VALIDATED",
       "metric": "3/3 GO, identical to non-strict (eval not artifact)",
       "doc": "2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md",
       "date": "2026-05-08"
     },
     {
-      "name": "12-word default arch \u00e2\u20ac\u201d capacity boundary defined",
+      "name": "12-word default arch â€” capacity boundary defined",
       "status": "BOUNDARY",
       "metric": "2/3 GO PARTIAL (one seed fails at 71% primary)",
       "doc": "2026-05-08-Phase1.3-Tier2.1-12word-medium-3seed-PARTIAL.md",
       "date": "2026-05-08"
     },
     {
-      "name": "12-word scaled single-seed \u00e2\u20ac\u201d capacity hypothesis lift",
+      "name": "12-word scaled single-seed â€” capacity hypothesis lift",
       "status": "VALIDATED",
       "metric": "PARTIAL -> GO at +29pp primary",
       "doc": "2026-05-08-Phase1.3-Tier2.1-12word-scaled-CAPACITY-CONFIRMED.md",
       "date": "2026-05-08"
     },
     {
-      "name": "12-word scaled 3-seed \u00e2\u20ac\u201d capacity hypothesis confirmed",
+      "name": "12-word scaled 3-seed â€” capacity hypothesis confirmed",
       "status": "VALIDATED",
       "metric": "3/3 GO unanimous, mean 95.5% / 115.0%",
       "doc": "2026-05-09-Phase1.3-Tier2.1-12word-scaled-3seed-CONFIRMED.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Phase 1.5 unified suite \u00e2\u20ac\u201d sequential regime sound",
+      "name": "Phase 1.5 unified suite â€” sequential regime sound",
       "status": "BOUNDARY",
       "metric": "2/4 PASS multi-seed: sequential 0.95 + retention 0.94 (both 3/3); interference 0.39 + long_tail 0.23 fail",
       "doc": "2026-05-09-Phase-1.5-multi-seed-FINAL.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Phase 1.5 v400 interference \u00e2\u20ac\u201d under-training hypothesis refuted",
+      "name": "Phase 1.5 v400 interference â€” under-training hypothesis refuted",
       "status": "NEGATIVE",
       "metric": "v200 0.340 -> v400 0.345; failure is architectural not dose-bound",
       "doc": "2026-05-09-Phase-1.5-v400-interference-REFUTED.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Phase 1.5 n_motor=2000 interference \u00e2\u20ac\u201d capacity hypothesis refuted",
+      "name": "Phase 1.5 n_motor=2000 interference â€” capacity hypothesis refuted",
       "status": "NEGATIVE",
       "metric": "v400 + n=2000 score 0.390 (+0.045 vs n=1000); below 0.50 threshold; both tunable levers fail",
       "doc": "2026-05-09-Phase-1.5-n_motor_2000-interference-REFUTED.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Phase 2.3b 50M-param cosine smoke \u00e2\u20ac\u201d scale hypothesis REFUTED",
+      "name": "Phase 2.3b 50M-param cosine smoke â€” scale hypothesis REFUTED",
       "status": "NEGATIVE",
       "metric": "134K cosine 0.72 -> 50M cosine 0.85 (WORSE); bigger model pushes features more alike across direction words; path-f-hybrid is dead-end at single-3090 scale",
       "doc": "2026-05-09-Phase-2.3b-50M-cosine-REFUTED.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Track 3 layer 4 :speak \u00e2\u20ac\u201d 6-seed multi-seed VALIDATED",
+      "name": "Track 3 layer 4 :speak â€” 6-seed multi-seed VALIDATED",
       "status": "VALIDATED",
       "metric": "A2W mean 58.3% +/- 20.4% (5/6 seeds at >= 50%, 5/6 above chance); single-seed 75% reproduces; per-direction N=67% E=67% S=67% W=33%",
       "doc": "2026-05-09-chat_speak_demo-Track3-layer4-MULTI-SEED.md",
       "date": "2026-05-09"
     },
     {
-      "name": "Tier 2.1 8-word :speak (production-side analog) \u00e2\u20ac\u201d 6/6 GO EXCEEDS paper",
+      "name": "Tier 2.1 8-word :speak (production-side analog) â€” 6/6 GO EXCEEDS paper",
       "status": "VALIDATED",
       "metric": "A2W any-synonym mean 87.5% +/- 20.9% (6/6 above 50%, 5/6 at 100%); paper's 6/6 aligned reproduces and exceeds (paper was 63.7% +/- 11.8%); STDP WTA primary-wins confirmed at production-side (synonym top-1 0% across all seeds)",
       "doc": "2026-05-09-chat_speak_synonym_demo-Tier2.1-8word-MULTI-SEED.md",
       "date": "2026-05-10"
     },
     {
-      "name": "64-word smoke \u00e2\u20ac\u201d capacity rule extends to 16 sub-pops/motor_X",
+      "name": "64-word smoke â€” capacity rule extends to 16 sub-pops/motor_X",
       "status": "BOUNDARY",
       "metric": "pre-silence primary 62.5% (anchor binding scales to 64-word vocab!); retention primary 76% (just under 80% threshold); retention synonym 157% (anomalous, secondaries IMPROVE post-hippo-silence)",
       "doc": "2026-05-10-64word-smoke-PARTIAL-capacity-extends.md",
       "date": "2026-05-10"
     },
     {
-      "name": "STP DEFAULT FLIPPED \u00e2\u20ac\u201d 3.28x faster + accuracy improved",
+      "name": "STP DEFAULT FLIPPED â€” 3.28x faster + accuracy improved",
       "status": "VALIDATED",
       "metric": "3-seed validation: wall clock 506s vs 1660s (3.28x); A2W primary 100% vs 87.5% (+12.5pp); W2A 52% vs 35% (+17pp). STP was 57% of inner-loop step time AND degrading binding via millisecond synaptic fatigue. Default flipped in chat training paths.",
       "doc": "2026-05-10-stp-default-flip.md",
       "date": "2026-05-10"
     },
     {
-      "name": "Encoding-axis 64-word 3-seed \u00e2\u20ac\u201d capacity rule revised",
+      "name": "Encoding-axis 64-word 3-seed â€” capacity rule revised",
       "status": "VALIDATED",
       "metric": "3/3 GO unanimous. Retention primary 110% +/- 23%, synonym 119% +/- 34%. Wall clock 954s +/- 7s (35x faster than prior 9.4 hr baseline). User's encoding-vs-motor hypothesis confirmed: n_motor=2000 + n_lang=8192 outperforms n_motor=6000 + n_lang=4096 at 64-word vocab. New rule: lang_input encoding is rate-limiting, not motor capacity.",
       "doc": "2026-05-10-encoding-axis-64word-3SEED-GO.md",
@@ -346,7 +346,7 @@
       "date": "2026-05-16"
     },
     {
-      "name": "160-concept sparse ensemble \u2014 multi-seed (42-46)",
+      "name": "160-concept sparse ensemble — multi-seed (42-46)",
       "status": "VALIDATED",
       "metric": "Integration 5/5 seeds PASS; per-bridge 98.1% mean. Cross-bridge anti-cheat benchmark MULTI-SEED (42-46): mean 92.7% genuine (range 90.0-100.0%; seed42 100% was favorable -- corrected from earlier seed-42-only 100% claim). Signal higher at 43-46 (variance is success-rate not binding strength).",
       "doc": "2026-05-16-G20-sparse-160-multiseed-VALIDATED.md",
@@ -610,8 +610,15 @@
     {
       "name": "Biologized spiking theta-gamma mode-unification on the project's substrate -- VALIDATED via parallel-population-matching identification: BOTH order-bearing AND order-invariant readouts clear the frozen 0.80 bar multi-seed at every load (OB 1.000/1.000/1.000; OI 1.000/1.000/0.982 at L=2/3/5) on bridgeA_nouns at 32 concepts; honest oracle-adjacency caveat preserved up front (2026-05-23)",
       "status": "VALIDATED",
-      "metric": "The biologized spiking implementation of the catalog-documented Lisman-Idiart N.16 mechanism (order-bearing AND order-invariant as operating MODES of one theta-gamma encoded code) on the project's substrate, using parallel-population-matching as the biology-grounded alternative to the FHRR-biologization arc's TPAM attractor. Full disciplined arc: algebra-PASS probe (multi-seed 1.000); capacity-envelope characterisation (algebra survives substrate-realistic noise); biologized spiking with TPAM (NEGATIVE_ORDER_INVARIANT_ONLY -- TPAM at V=32 crosses its V=8-V=20 capacity ceiling; BOUNDARY pillar n=92); TPAM-scaling-limit probe (mapped the capacity window precisely); owner authorised (b) parallel-matching alternative; pre-launch adversarial review CLEAR on 11 checks; controller-only decisive CPU run; mandatory smell-test PASSED (recompute byte-for-byte; verdict re-derives); post-PASS fresh adversarial reviewer (different agent, independent re-run from cache + grounded deriver, confirmed byte-identical PASS) returned CLEAR on 12 checks judging the finding 'honest biology-grounded capability ... capability claim warranted, subject to the recorded caveat'. RESULT: multi-seed-mean order-bearing 1.0000/1.0000/1.0000 at loads {2,3,5} (per-seed exactly 1.000 every cell, zero errors across 1800 trials); order-invariant 1.0000/1.0000/0.9817 (per-seed L=5 [0.990,0.970,0.985]). VERDICT: MODE_UNIFICATION_BIOLOGIZED_PASS_VIA_PARALLEL_MATCHING. The biology: parallel population matching = feedforward similarity comparison (dendritic integration) across a population of neurons each tuned to one substrate-derived concept + lateral-inhibition winner-take-all. The 'vocabulary' is the substrate's OWN derived grounded symbols (mean-centred consolidated activity \u2192 fixed-seed deriver \u2192 spike-phase representation), NOT a hand-supplied engineered table. HONEST ORACLE-ADJACENCY CAVEAT: parallel matching IS structurally closer to 'argmax over a stored vocabulary' than TPAM's recurrent attractor; the substrate-derived 'vocabulary' is what keeps it biology-grounded rather than engineered. Two honest biologizations with different scaling properties: TPAM (recurrent attractor; non-monotonic V=8-V=20 capacity window on grounded symbols); parallel matching (feedforward + WTA; scales past V=32 with the structural-proximity caveat). Both stand; this VALIDATED pillar records the parallel-matching biologization. Biology-translatable: cortical identification of stored patterns can use either mechanism; for per-slot identification at high vocab the feedforward mechanism scales where the recurrent does not. The load-bearing prerequisite for the (c) generative-replay arc (PFC can now hold an ordered compositional frame on the biologized substrate). Bar NOT tuned; reuse-by-import only; no protected/frozen/moat module modified; no autograd; no-confab moat 7/7 green; protected set zero diff across entire arc.",
+      "metric": "The biologized spiking implementation of the catalog-documented Lisman-Idiart N.16 mechanism (order-bearing AND order-invariant as operating MODES of one theta-gamma encoded code) on the project's substrate, using parallel-population-matching as the biology-grounded alternative to the FHRR-biologization arc's TPAM attractor. Full disciplined arc: algebra-PASS probe (multi-seed 1.000); capacity-envelope characterisation (algebra survives substrate-realistic noise); biologized spiking with TPAM (NEGATIVE_ORDER_INVARIANT_ONLY -- TPAM at V=32 crosses its V=8-V=20 capacity ceiling; BOUNDARY pillar n=92); TPAM-scaling-limit probe (mapped the capacity window precisely); owner authorised (b) parallel-matching alternative; pre-launch adversarial review CLEAR on 11 checks; controller-only decisive CPU run; mandatory smell-test PASSED (recompute byte-for-byte; verdict re-derives); post-PASS fresh adversarial reviewer (different agent, independent re-run from cache + grounded deriver, confirmed byte-identical PASS) returned CLEAR on 12 checks judging the finding 'honest biology-grounded capability ... capability claim warranted, subject to the recorded caveat'. RESULT: multi-seed-mean order-bearing 1.0000/1.0000/1.0000 at loads {2,3,5} (per-seed exactly 1.000 every cell, zero errors across 1800 trials); order-invariant 1.0000/1.0000/0.9817 (per-seed L=5 [0.990,0.970,0.985]). VERDICT: MODE_UNIFICATION_BIOLOGIZED_PASS_VIA_PARALLEL_MATCHING. The biology: parallel population matching = feedforward similarity comparison (dendritic integration) across a population of neurons each tuned to one substrate-derived concept + lateral-inhibition winner-take-all. The 'vocabulary' is the substrate's OWN derived grounded symbols (mean-centred consolidated activity → fixed-seed deriver → spike-phase representation), NOT a hand-supplied engineered table. HONEST ORACLE-ADJACENCY CAVEAT: parallel matching IS structurally closer to 'argmax over a stored vocabulary' than TPAM's recurrent attractor; the substrate-derived 'vocabulary' is what keeps it biology-grounded rather than engineered. Two honest biologizations with different scaling properties: TPAM (recurrent attractor; non-monotonic V=8-V=20 capacity window on grounded symbols); parallel matching (feedforward + WTA; scales past V=32 with the structural-proximity caveat). Both stand; this VALIDATED pillar records the parallel-matching biologization. Biology-translatable: cortical identification of stored patterns can use either mechanism; for per-slot identification at high vocab the feedforward mechanism scales where the recurrent does not. The load-bearing prerequisite for the (c) generative-replay arc (PFC can now hold an ordered compositional frame on the biologized substrate). Bar NOT tuned; reuse-by-import only; no protected/frozen/moat module modified; no autograd; no-confab moat 7/7 green; protected set zero diff across entire arc.",
       "doc": "2026-05-23-biologized-mode-unification-PASS-via-parallel-population-matching-VALIDATED-with-oracle-adjacency-caveat.md",
+      "date": "2026-05-23"
+    },
+    {
+      "name": "Biologized spiking theta-gamma mode-unification extended PER-BRIDGE across the FULL 160-concept ensemble via parallel-population-matching identification -- ENSEMBLE PASS multi-seed on BOTH readouts across all 5 bridges of the project's 160-concept G.20 sparse ensemble; honest oracle-adjacency caveat preserved (2026-05-23)",
+      "status": "VALIDATED",
+      "metric": "Natural completion of the (b) VALIDATED mode-unification biologization thread (pillar n=93, bridgeA_nouns only) extended to all 5 bridges of the project's 160-concept G.20 sparse ensemble (bridgeA_nouns, bridgeB_verbs, bridgeC_adj, bridgeD_spatial, bridgeE_functional). The extension probe (research/findings/raw/biologized_mode_unification_parallel_matching_5bridge_extension.py; 215 lines; net-new orchestration; mirrors the (b) per-trial loop for cross-bridge iteration; reuses BAR/LOADS/SEEDS/N_DIM/N_TRIALS/_load_cache, K_VOCAB_TARGET=16, DERIV_SEED=90909, _ground_symbols, gamma_slot_positions, ResonateFireFHRR, phase_similarity ALL byte-unchanged) runs the IDENTICAL pre-registered pipeline on each bridge's trained activity cache from the 160-ensemble decisive 9-hour GPU run. CPU-only; no new GPU run. PRE-REGISTERED reading: ENSEMBLE_PASS iff every (bridge, load) cell across 5 bridges x 3 loads = 15 cells multi-seed-mean >= 0.80 on BOTH order-bearing AND order-invariant readouts (30 cells total). RESULT: ENSEMBLE_PASS_PARALLEL_MATCHING_ALL_5_BRIDGES. Per-bridge multi-seed-mean (OB, OI) at L=2/3/5: bridgeA_nouns (1.000/1.000/1.000, 1.000/1.000/0.982); bridgeB_verbs (1.000/1.000/1.000, 1.000/1.000/0.987); bridgeC_adj (1.000/1.000/1.000, 1.000/1.000/0.960); bridgeD_spatial (1.000/1.000/1.000, 1.000/1.000/0.978); bridgeE_functional (1.000/1.000/1.000, 1.000/1.000/0.978). Order-bearing is exactly 1.000 at every cell (zero errors across 9000 trials); order-invariant is exactly 1.000 at L=2 and L=3 at every cell; L=5 OI 0.960-0.987 multi-seed per-bridge with lowest single-seed cell 0.945 (bridgeC seed 43). Wall-clock 911.5s = 15.2 min for 15 cells; 18000 total trials. The decoder genuinely matters: bridgeD_spatial uniquely missed at TPAM (0.78/0.77/0.74 -- BOUNDARY pillar n=91 contributor) and now clears decisively at parallel-matching (1.000/1.000/0.978) on the SAME substrate, SAME grounded symbols, SAME encoded composites, SAME gamma-slot positions -- only the identification mechanism differs. Mandatory anti-cheat smell-test PASSED (recompute byte-for-byte from cell_results JSON; verdict re-derives; bridgeA reproduces (b) byte-for-byte multi-seed-mean 0.9817 at L=5 OI). DEDICATED ADVERSARIAL REVIEWER (fresh agent, full tool access, RAN all 12 exploit-class checks) returned VERDICT CLEAR: frozen 0.80 bar immovable (git-diff 72d4f8e..75808a2 byte-empty in vocabulary_scaling_run.py); pipeline byte-equivalent to (b) parent runner (decoder loops side-by-side match; K_VOCAB/N_GAMMA_SLOTS/DERIV_SEED identical); bridgeA reproduces (b) byte-for-byte; no oracle leak (items_idx only in post-hoc comparison, never in decoder scoring); each bridge uses its OWN 32-word vocabulary (all 10 pairwise intersections = 0); caches genuine 160-ensemble trained caches (15 files present; (16, 2000) shape; plausible 5.7-6.0% non-zero); INDEPENDENT RE-EXECUTION of bridgeD_spatial seed 42 from scratch using (b) primitives directly reproduced the extension's exact reported values (L=2/3/5 OB 1.0/1.0/1.0, OI 1.0/1.0/0.98); protected set byte-empty diff; no autograd; no-confab moat 7/7 pytest green; all 15 cells fully ran with n_trials=200; per-bridge variance plausible. HONEST ORACLE-ADJACENCY CAVEAT preserved up front (carried from (b) parent): parallel matching IS structurally closer to argmax-over-a-stored-vocabulary than TPAM's recurrent attractor; the substrate-derived 'vocabulary' is each per-bridge cache's mean-centred consolidated activity -> fixed-seed deriver -> spike-phase representation (NOT a hand-supplied engineered table); biology-grounded mechanism, caveat recorded. Per-bridge NOT cross-bridge: each bridge's mode-unification is tested on its own 32-word vocabulary; cross-bridge composition across all 160 concepts remains a distinct, still-open direction the 160-ensemble decisive-run findings explicitly bracketed. Biology-translatable: cortical identification at high vocabulary scale uses feedforward population WTA where recurrent attractor refinement crosses its capacity ceiling; both mechanisms are real cortical computations in division of labor (TPAM BOUNDARY n=92 and parallel-matching VALIDATED n=93/n=94 stand together as honest characterisations of the two biological mechanisms). The load-bearing prerequisite for the (c) generative-replay arc (PFC can hold an ordered compositional frame on the biologized substrate per-bridge across the full 160-concept ensemble) is now in place at ensemble scale. Bar NOT tuned; reuse-by-import only; no protected/frozen/moat module modified; no autograd; no-confab moat 7/7 green; protected set zero diff across entire arc; both remotes propagated.",
+      "doc": "2026-05-23-biologized-mode-unification-parallel-matching-EXTENDS-PER-BRIDGE-across-the-FULL-160-concept-ensemble.md",
       "date": "2026-05-23"
     }
   ],
