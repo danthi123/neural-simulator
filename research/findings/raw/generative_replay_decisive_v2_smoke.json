@@ -1,0 +1,50 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "smoke": true,
+  "seeds": [
+    42
+  ],
+  "k_ladder": [
+    4
+  ],
+  "slot_count": 3,
+  "n_trials_per_k": 50,
+  "bar": 0.8,
+  "swr_steps": 100,
+  "capture_steps": 50,
+  "n_replays_per_tag": 8,
+  "decoder": "parallel_population_matching_batched",
+  "substrate": "build_biological_brain_regions_v16_recipe_WITH_HIPPO_AND_DLPFC_n=98",
+  "fixes": [
+    "stim_tag_during_swr",
+    "global_mean_centring_at_decode"
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_pool_union": 3200,
+      "d_act": 3200,
+      "batched_vs_scalar_max_diff": 2.0816681711721685e-17,
+      "wall_clock_s": 44.195361375808716,
+      "per_k": {
+        "4": {
+          "K": 4,
+          "n_trials": 50,
+          "n_correct": 1,
+          "completion_accuracy": 0.02
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "4": {
+      "completion_accuracy_mean": 0.02,
+      "completion_accuracy_per_seed": [
+        0.02
+      ]
+    }
+  },
+  "verdict": "SMOKE_V2",
+  "wall_clock_minutes": 0.7370063304901123
+}
