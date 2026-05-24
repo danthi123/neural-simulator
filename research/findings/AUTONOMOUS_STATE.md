@@ -1784,6 +1784,82 @@ protected set byte-empty.
 
 Continuous arc per the standing overnight-autonomy directive.
 
+**OVERNIGHT 2026-05-23 night to 2026-05-24 morning COMPLETE — clean
+state for owner check-in.** The (c) generative-replay arc went all
+the way through Tasks 0-5 + diagnostic localization + 3 additional
+characterisation probes; 8 pillars recorded (n=92 through n=99); 6
+adversarial reviews CLEAR (84 exploit-class checks total); 4
+NEGATIVES converging on a precise biology-translatable bound.
+Comprehensive overnight synthesis at
+`research/findings/2026-05-24-OVERNIGHT-SYNTHESIS-c-loop-fully-
+characterised-NEGATIVE-substrate-validated-positive-precise-biology-
+bound.md`.
+
+CONVERGENT BIOLOGY-TRANSLATABLE FINDING (most leveraged result of
+the night): the bio_brain_regions substrate validated for direct-
+binding (Phase 1.3 SWR consolidation for W->A; pillar n=98 multi-
+seed) and parallel-matching mode-unification compositional retrieval
+(scale-invariant; pillars n=93-n=98 + load-ceiling map sharpening
+to L=2..7 PASS) does NOT support SEQUENTIAL slot-position engram
+storage in any of the 4 integration designs tested. Driving K words
+sequentially produces a MIXED engram pattern; the sequence
+STRUCTURE is not preserved by the engram-tagging + Phase 1.3 SWR
+consolidation mechanisms in their current configuration. Sequence-
+structure preservation requires explicit slot-position encoding
+(the project has ec_context per catalog D.01+D.02+D.11 but did
+not integrate it in the (c) build).
+
+VALIDATED INSIGHT (positive bound): the substrate has HUGE capacity
+for the validated parallel-matching mode-unification at V=16 (PASSes
+at every L=2..7; OB=1.000 every cell across 54 cells with 10800
+trials zero errors; OI >= 0.895 every cell with 0.10+ margin above
+0.80 bar). The substrate extensions (hippocampus + dlpfc_wm) do NOT
+degrade the SCALE-INVARIANT mode-unification decoder; they DO
+reduce raw pool activity 3-4x which degrades scale-sensitive
+readouts (like raw lang_output cosine for multitag in my probe).
+
+THREE NEXT-DIRECTION PROPOSALS (surfaced for owner steering):
+
+DIRECTION A: ec_context-based sequence storage refinement (MOST
+BIOLOGY-FAITHFUL + cheap). Refine the (c) loop to use ec_context
+positional binding for sequence encoding (drive lang_input(slot_word)
++ ec_context(slot_position) simultaneously per slot; engram tags
+capture (word, position) tuples; sequence-structure preserved).
+Tests partial-sequence completion. If PASS: turns the (c) NEGATIVE
+into a PASS via the biology-correct mechanism. Estimated cost: ~1-2
+hr subagent-driven refinement + ~2-3 hr GPU decisive multi-seed.
+The project HAS ec_context as a validated substrate component (D.01+
+D.02+D.11; positional_drive_pattern function in sim/text_embeddings).
+The (c) build did NOT integrate it; integration is the natural next
+step.
+
+DIRECTION B: cross-bridge bio_brain_regions composition (extends
+validated mode-unification to multi-substrate). Train 5 bio_brain_
+regions bridges on different vocab categories; test cross-bridge
+mode-unification on union. Substantial ~5-8 hr GPU; mirrors the
+G.20 sparse 5-bridge structure.
+
+DIRECTION C: replicate the original 2026-05-14 multitag recipe
+EXACTLY on the dlpfc-extension substrate (the diagnostic showed my
+probe's recipe differs from the original). Re-validate the
+project's 90% multitag conversational primitive on the n=98
+substrate. Smaller cost ~1-2 hr GPU.
+
+Recommended order: A -> C -> B (per the overnight synthesis).
+Direction A directly turns the night's NEGATIVE into a potential
+PASS via the missing substrate component. Direction C validates a
+known conversational primitive on the substrate (low-risk).
+Direction B is the most ambitious + longest.
+
+Per standing overnight autonomy: if owner does not steer, the next
+chain step is Direction A (ec_context-based sequence storage
+refinement). Otherwise, await steer.
+
+ALL standing constraints upheld throughout the night: reuse-by-
+import only; protected set zero diff; no autograd; no-confab moat
+7/7 green; frozen 0.80 bar unchanged; plain ASCII; both remotes
+propagated at every commit; wiki-sync session captured (twice).
+
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification
 is the next major direction; generative replay then closes the
