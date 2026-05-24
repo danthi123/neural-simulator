@@ -1,0 +1,60 @@
+{
+  "config": {
+    "N_THETA": 125,
+    "N_GAMMA": 7,
+    "GAMMA_PERIOD": 17,
+    "N_DIM": 256,
+    "PHASE_NOISE_STD": 0.05,
+    "N_VOCAB": 16,
+    "N_TRIALS_PER_LOAD": 300,
+    "BAR": 0.8,
+    "ACTIVE_FRAC": 0.05,
+    "LOADS": [
+      2,
+      3,
+      5,
+      7
+    ],
+    "SEEDS": [
+      42,
+      43,
+      44
+    ]
+  },
+  "results": {
+    "2": {
+      "per_seed_acc": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "mean_acc": 1.0
+    },
+    "3": {
+      "per_seed_acc": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "mean_acc": 1.0
+    },
+    "5": {
+      "per_seed_acc": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "mean_acc": 1.0
+    },
+    "7": {
+      "per_seed_acc": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "mean_acc": 1.0
+    }
+  },
+  "verdict": "THETA_GAMMA_ALGEBRA_SUFFICIENT",
+  "wall_clock_minutes": 0.06392078797022502
+}
