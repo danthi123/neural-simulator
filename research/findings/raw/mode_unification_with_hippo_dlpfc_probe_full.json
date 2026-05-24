@@ -1,0 +1,137 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "smoke": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar": 0.8,
+  "k_vocab": 16,
+  "decoder_order_bearing": "parallel_population_matching_batched",
+  "decoder_order_invariant": "marginal_sum_phase_similarity_batched",
+  "substrate": "build_biological_brain_regions_v16_recipe_WITH_HIPPO_AND_DLPFC",
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 16,
+      "d_act": 3200,
+      "batched_vs_scalar_max_diff": 2.0816681711721685e-17,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.995,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "V": 16,
+      "d_act": 3200,
+      "batched_vs_scalar_max_diff": 1.3877787807814457e-17,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "V": 16,
+      "d_act": 3200,
+      "batched_vs_scalar_max_diff": 2.0816681711721685e-17,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "2": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 1.0,
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "3": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 1.0,
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "5": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 0.9983333333333334,
+      "order_invariant_per_seed": [
+        0.995,
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "verdict": "DLPFC_PASS",
+  "wall_clock_minutes": 88.53738663991292
+}

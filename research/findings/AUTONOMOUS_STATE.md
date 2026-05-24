@@ -1693,6 +1693,97 @@ way). Wall-clock estimate: ~2-2.5 hr GPU (matches OPTION 3 and
 HIPPO-OPTION3 cost; kill-safe per-seed cache; smoke-first per
 discipline).
 
+**DLPFC-EXTENSION COMPLETE = VALIDATED PASS; ADVERSARIAL REVIEW
+CLEAR ON 16 EXPLOIT-CHECKS; VALIDATED PILLAR n=98 RECORDED;
+SUBSTRATE-READINESS CHAIN FOR (c) COMPLETE (2026-05-24, both
+remotes).** Smoke PASSED clean (5.4 min; OB 1.000 OI 1.000 at L=2,3;
+flagged 3-4x activity reduction); two minor bugs fixed (cosmetic
+bridge.num_neurons; missing _initialize_simulation_data). Full
+multi-seed (seeds 42/43/44; 16 words x 200 events x 16 obs; 88.5
+min GPU; kill-safe per-seed cache) returned:
+
+RESULT: DLPFC_PASS. Multi-seed at L=2/3/5: OB 1.000/1.000/1.000;
+OI 1.000/1.000/0.998 (per-seed L=5 OI [0.995, 1.000, 1.000]).
+Essentially indistinguishable from OPTION 3 no-hippo (0.997) and
+HIPPO-OPTION3 hippo-no-dlpfc (0.993) -- all three nested
+configurations cluster within 0.005 of perfect, far above 0.80 bar.
+
+NOTABLE biology-translatable finding: pool-union mean firing rate
+dropped 3.09x (0.0956 vs HIPPO's 0.2955) -- the dlpfc_wm NMDA
+bistability pulls cortical drive during baseline. YET the grounded-
+symbol pipeline still PASSes essentially perfectly. Adversarial
+reviewer's forensic mechanism: the _ground_symbols pipeline L2-
+normalises the grounded vectors before phasor encoding, and
+parallel-matching is scale-invariant -- so 3x activity reduction
+does NOT perturb the phase geometry the decoder relies on. Biology-
+translatable: the validated cortical identification mechanism is
+ROBUST to substrate-level perturbations of this magnitude.
+
+DEDICATED FRESH-AGENT ADVERSARIAL REVIEWER (16 exploit-class checks
+RAN) returned VERDICT CLEAR with no defect: frozen bar immovable;
+dlpfc_wm IS actually built (8300 neurons; +60 vs HIPPO baseline);
+lang_input->dlpfc_wm pathway present with exact spec (density=0.10/
+weight=1.0/jitter=0.3/plastic=True/gate=lang_to_dlpfc_wm); pipeline
+byte-equivalent to HIPPO via shared imports from OPTION 3 probe;
+batched-vs-scalar verified at machine precision (2.08e-17 / 1.39e-17
+/ 2.08e-17); no oracle leak; activity caches non-trivial; activity
+DIFFERS measurably from HIPPO in dlpfc-impact-consistent direction
+(3.09x sparser confirmed); OB perfection genuine (5 L=5 trials
+inspected: distinct items, element-wise correct recovery);
+INDEPENDENT byte-exact reproduction of seed 42 (L=5 OI=0.995,
+max_diff=2.08e-17); GPU backend genuine; protected set zero diff;
+no autograd; no-confab moat 7/7 green; verdict logic correct;
+dlpfc_wm BrainRegion matches g11_bg_runner pattern verbatim
+(n_neurons=60/exc=0.8/density=0.10/exc_weight=2.0/inh_weight=4.0/
+jitter=0.2/plastic_internal=True/IZH2007_HIPPO_PYRAMIDAL/NMDA=True).
+Reviewer recommendation: "SHIP. Substrate-readiness chain for (c)
+generative-replay is complete; proceed to pre-registered (c) TDD
+loop-controller build." capability_status.json: VALIDATED pillar
+n=98 recorded; schema 6/6 green; no-confab moat 7/7 green.
+Findings: `research/findings/2026-05-24-DLPFC-extension-PASS-all-
+five-load-bearing-c-components-validated-on-single-coherent-
+substrate.md`.
+
+SUBSTRATE-READINESS CHAIN FOR (c) GENERATIVE-REPLAY = COMPLETE.
+ALL FIVE LOAD-BEARING COMPONENTS validated on a single coherent
+substrate:
+1. v14/v16 16-pool concept architecture with W->A multi-seed
+   binding (88.75% validated independently)
+2. Hippocampus EC/DG/CA3/CA1 trisynaptic loop (D.12 separation +
+   D.13 completion validated)
+3. Engram tagging (D.14 validated)
+4. Phase 1.3 SWR consolidation pathways (3/3 strict anti-cheat
+   multi-seed validated)
+5. dlpfc_wm NMDA bistable PFC working memory region (n=98, this
+   pillar)
+
+PLUS the parallel-matching biologized mode-unification mechanism
+(pillars n=93/n=94/n=96/n=97/n=98). The cortical mode-unification
+mechanism is INDEPENDENT of which biological substrate components
+are present (within tested perturbation magnitudes).
+
+**EXACT NEXT ACTION: dispatch (c) TDD plan Tasks 0-5 via
+superpowers:subagent-driven-development.** The plan
+(docs/plans/2026-05-24-generative-replay-implementation.md) is
+ready to execute. Task structure:
+- Task 0: grounding pin (5 RED tests until Task 2 lands)
+- Task 1: sequence vocabulary helper + 4 unit tests
+- Task 2: loop controller (research/runners/generative_replay_loop.py)
+  + decisive runner (research/findings/raw/generative_replay_decisive.py);
+  Task 0 turns GREEN
+- Task 3: soundness tests (9 tests; reuse-by-import + no oracle leak +
+  no autograd + moat 7/7 + bar immovable)
+- Task 4: dedicated adversarial review BEFORE decisive run
+- Task 5: CONTROLLER-ONLY decisive multi-seed GPU run + smell-test +
+  adversarial review + propagation; estimated ~6-9 hr GPU
+
+Dispatch via the superpowers:subagent-driven-development skill;
+fresh subagent per task; two-stage review (spec compliance, then code
+quality) after each; controller verifies every commit leaves the
+protected set byte-empty.
+
+Continuous arc per the standing overnight-autonomy directive.
+
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification
 is the next major direction; generative replay then closes the
