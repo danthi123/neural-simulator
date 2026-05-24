@@ -1,0 +1,25 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "K_PAIRS": 8,
+  "SLOT_COUNT": 3,
+  "bar": 0.8,
+  "substrate_strict_top1_mean": 0.0,
+  "substrate_per_seed": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "random_strict_top1_mean": 0.08333333333333333,
+  "random_per_seed": [
+    0.125,
+    0.125,
+    0.0
+  ],
+  "delta": -0.08333333333333333,
+  "verdict": "BIOLOGIZED_BOTH_FAIL",
+  "wall_clock_minutes": 0.22689805030822754
+}
