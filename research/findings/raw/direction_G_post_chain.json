@@ -1,0 +1,17 @@
+{
+  "direction_G_strict_top1_mean": 0.3333333333333333,
+  "direction_G_per_seed": [
+    0.125,
+    0.25,
+    0.625
+  ],
+  "direction_G_verdict": "DIRECTION_G_NO_IMPROVEMENT_OVER_CORTICAL",
+  "smell_test_verdict": null,
+  "next_direction_recommendation": "NO_IMPROVEMENT_PIVOT_TO_DIRECTION_H",
+  "comparison": {
+    "direction_A_v1": 0.333,
+    "direction_A_v2": 0.292,
+    "direction_E_task1": 0.25,
+    "direction_G": 0.3333333333333333
+  }
+}

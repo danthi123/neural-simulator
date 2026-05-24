@@ -1,0 +1,153 @@
+{
+  "seed": 43,
+  "K_PAIRS": 8,
+  "SLOT_COUNT": 3,
+  "n_top1": 2,
+  "strict_top1_accuracy": 0.25,
+  "per_seq": [
+    {
+      "seq_idx": 0,
+      "sequence": [
+        "dog",
+        "come",
+        "cat"
+      ],
+      "true_slot": "cat",
+      "top1_word": "dog",
+      "top1_correct": false,
+      "topK_words": [
+        "dog",
+        "come",
+        "cat",
+        "north",
+        "small"
+      ]
+    },
+    {
+      "seq_idx": 1,
+      "sequence": [
+        "north",
+        "small",
+        "apple"
+      ],
+      "true_slot": "apple",
+      "top1_word": "north",
+      "top1_correct": false,
+      "topK_words": [
+        "north",
+        "apple",
+        "small",
+        "dog",
+        "come"
+      ]
+    },
+    {
+      "seq_idx": 2,
+      "sequence": [
+        "west",
+        "small",
+        "cold"
+      ],
+      "true_slot": "cold",
+      "top1_word": "west",
+      "top1_correct": false,
+      "topK_words": [
+        "west",
+        "cold",
+        "small",
+        "north",
+        "apple"
+      ]
+    },
+    {
+      "seq_idx": 3,
+      "sequence": [
+        "dog",
+        "west",
+        "apple"
+      ],
+      "true_slot": "apple",
+      "top1_word": "west",
+      "top1_correct": false,
+      "topK_words": [
+        "west",
+        "apple",
+        "dog",
+        "east",
+        "cold"
+      ]
+    },
+    {
+      "seq_idx": 4,
+      "sequence": [
+        "hot",
+        "south",
+        "dog"
+      ],
+      "true_slot": "dog",
+      "top1_word": "hot",
+      "top1_correct": false,
+      "topK_words": [
+        "hot",
+        "south",
+        "dog",
+        "apple",
+        "west"
+      ]
+    },
+    {
+      "seq_idx": 5,
+      "sequence": [
+        "look",
+        "west",
+        "apple"
+      ],
+      "true_slot": "apple",
+      "top1_word": "apple",
+      "top1_correct": true,
+      "topK_words": [
+        "apple",
+        "west",
+        "look",
+        "dog",
+        "hot"
+      ]
+    },
+    {
+      "seq_idx": 6,
+      "sequence": [
+        "cold",
+        "north",
+        "dog"
+      ],
+      "true_slot": "dog",
+      "top1_word": "north",
+      "top1_correct": false,
+      "topK_words": [
+        "north",
+        "dog",
+        "cold",
+        "apple",
+        "west"
+      ]
+    },
+    {
+      "seq_idx": 7,
+      "sequence": [
+        "small",
+        "cold",
+        "north"
+      ],
+      "true_slot": "north",
+      "top1_word": "north",
+      "top1_correct": true,
+      "topK_words": [
+        "north",
+        "cold",
+        "go",
+        "dog",
+        "big"
+      ]
+    }
+  ]
+}

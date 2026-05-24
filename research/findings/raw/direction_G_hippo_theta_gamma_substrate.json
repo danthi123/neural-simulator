@@ -1,0 +1,490 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "K_PAIRS": 8,
+  "SLOT_COUNT": 3,
+  "theta_ms": 125.0,
+  "n_gamma": 7,
+  "n_theta_cycles_encode": 3,
+  "bar": 0.8,
+  "chance": 0.0625,
+  "strict_top1_mean": 0.3333333333333333,
+  "per_seed_acc": [
+    0.125,
+    0.25,
+    0.625
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "K_PAIRS": 8,
+      "SLOT_COUNT": 3,
+      "n_top1": 1,
+      "strict_top1_accuracy": 0.125,
+      "per_seq": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "stop",
+            "east",
+            "look"
+          ],
+          "true_slot": "look",
+          "top1_word": "east",
+          "top1_correct": false,
+          "topK_words": [
+            "east",
+            "stop",
+            "look",
+            "cat",
+            "cold"
+          ]
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "east",
+            "look",
+            "big"
+          ],
+          "true_slot": "big",
+          "top1_word": "east",
+          "top1_correct": false,
+          "topK_words": [
+            "east",
+            "look",
+            "stop",
+            "dog",
+            "big"
+          ]
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "cat",
+            "hot",
+            "look"
+          ],
+          "true_slot": "look",
+          "top1_word": "cat",
+          "top1_correct": false,
+          "topK_words": [
+            "cat",
+            "look",
+            "hot",
+            "east",
+            "big"
+          ]
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "cat",
+            "look",
+            "south"
+          ],
+          "true_slot": "south",
+          "top1_word": "cat",
+          "top1_correct": false,
+          "topK_words": [
+            "cat",
+            "look",
+            "south",
+            "hot",
+            "west"
+          ]
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "cat",
+            "river",
+            "south"
+          ],
+          "true_slot": "south",
+          "top1_word": "cat",
+          "top1_correct": false,
+          "topK_words": [
+            "cat",
+            "south",
+            "come",
+            "look",
+            "east"
+          ]
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "small",
+            "come",
+            "dog"
+          ],
+          "true_slot": "dog",
+          "top1_word": "small",
+          "top1_correct": false,
+          "topK_words": [
+            "small",
+            "dog",
+            "come",
+            "south",
+            "cat"
+          ]
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "dog",
+            "east",
+            "west"
+          ],
+          "true_slot": "west",
+          "top1_word": "dog",
+          "top1_correct": false,
+          "topK_words": [
+            "dog",
+            "east",
+            "come",
+            "small",
+            "west"
+          ]
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "small",
+            "big",
+            "north"
+          ],
+          "true_slot": "north",
+          "top1_word": "north",
+          "top1_correct": true,
+          "topK_words": [
+            "north",
+            "small",
+            "dog",
+            "west",
+            "cold"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "K_PAIRS": 8,
+      "SLOT_COUNT": 3,
+      "n_top1": 2,
+      "strict_top1_accuracy": 0.25,
+      "per_seq": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "dog",
+            "come",
+            "cat"
+          ],
+          "true_slot": "cat",
+          "top1_word": "dog",
+          "top1_correct": false,
+          "topK_words": [
+            "dog",
+            "come",
+            "cat",
+            "north",
+            "small"
+          ]
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "north",
+            "small",
+            "apple"
+          ],
+          "true_slot": "apple",
+          "top1_word": "north",
+          "top1_correct": false,
+          "topK_words": [
+            "north",
+            "apple",
+            "small",
+            "dog",
+            "come"
+          ]
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "west",
+            "small",
+            "cold"
+          ],
+          "true_slot": "cold",
+          "top1_word": "west",
+          "top1_correct": false,
+          "topK_words": [
+            "west",
+            "cold",
+            "small",
+            "north",
+            "apple"
+          ]
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "dog",
+            "west",
+            "apple"
+          ],
+          "true_slot": "apple",
+          "top1_word": "west",
+          "top1_correct": false,
+          "topK_words": [
+            "west",
+            "apple",
+            "dog",
+            "east",
+            "cold"
+          ]
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "hot",
+            "south",
+            "dog"
+          ],
+          "true_slot": "dog",
+          "top1_word": "hot",
+          "top1_correct": false,
+          "topK_words": [
+            "hot",
+            "south",
+            "dog",
+            "apple",
+            "west"
+          ]
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "look",
+            "west",
+            "apple"
+          ],
+          "true_slot": "apple",
+          "top1_word": "apple",
+          "top1_correct": true,
+          "topK_words": [
+            "apple",
+            "west",
+            "look",
+            "dog",
+            "hot"
+          ]
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "cold",
+            "north",
+            "dog"
+          ],
+          "true_slot": "dog",
+          "top1_word": "north",
+          "top1_correct": false,
+          "topK_words": [
+            "north",
+            "dog",
+            "cold",
+            "apple",
+            "west"
+          ]
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "small",
+            "cold",
+            "north"
+          ],
+          "true_slot": "north",
+          "top1_word": "north",
+          "top1_correct": true,
+          "topK_words": [
+            "north",
+            "cold",
+            "go",
+            "dog",
+            "big"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "K_PAIRS": 8,
+      "SLOT_COUNT": 3,
+      "n_top1": 5,
+      "strict_top1_accuracy": 0.625,
+      "per_seq": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "small",
+            "east",
+            "come"
+          ],
+          "true_slot": "come",
+          "top1_word": "east",
+          "top1_correct": false,
+          "topK_words": [
+            "east",
+            "come",
+            "small",
+            "go",
+            "big"
+          ]
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "cold",
+            "river",
+            "east"
+          ],
+          "true_slot": "east",
+          "top1_word": "east",
+          "top1_correct": true,
+          "topK_words": [
+            "east",
+            "river",
+            "cold",
+            "small",
+            "come"
+          ]
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "big",
+            "north",
+            "small"
+          ],
+          "true_slot": "small",
+          "top1_word": "north",
+          "top1_correct": false,
+          "topK_words": [
+            "north",
+            "small",
+            "east",
+            "big",
+            "cold"
+          ]
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "apple",
+            "dog",
+            "stop"
+          ],
+          "true_slot": "stop",
+          "top1_word": "stop",
+          "top1_correct": true,
+          "topK_words": [
+            "stop",
+            "dog",
+            "apple",
+            "big",
+            "north"
+          ]
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "river",
+            "dog",
+            "hot"
+          ],
+          "true_slot": "hot",
+          "top1_word": "hot",
+          "top1_correct": true,
+          "topK_words": [
+            "hot",
+            "dog",
+            "river",
+            "south",
+            "north"
+          ]
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "small",
+            "cold",
+            "hot"
+          ],
+          "true_slot": "hot",
+          "top1_word": "hot",
+          "top1_correct": true,
+          "topK_words": [
+            "hot",
+            "cold",
+            "small",
+            "dog",
+            "south"
+          ]
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "north",
+            "river",
+            "come"
+          ],
+          "true_slot": "come",
+          "top1_word": "river",
+          "top1_correct": false,
+          "topK_words": [
+            "river",
+            "north",
+            "hot",
+            "cold",
+            "small"
+          ]
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "go",
+            "big",
+            "cold"
+          ],
+          "true_slot": "cold",
+          "top1_word": "cold",
+          "top1_correct": true,
+          "topK_words": [
+            "cold",
+            "river",
+            "big",
+            "come",
+            "north"
+          ]
+        }
+      ]
+    }
+  ],
+  "verdict": "DIRECTION_G_NO_IMPROVEMENT_OVER_CORTICAL",
+  "wall_clock_minutes": 83.48605156342188,
+  "comparison": {
+    "direction_A_v1_top1": 0.333,
+    "direction_A_v2_top1": 0.292,
+    "direction_E_task1_top1": 0.25
+  }
+}
