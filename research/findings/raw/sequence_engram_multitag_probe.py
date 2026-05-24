@@ -5,14 +5,14 @@ for SEQUENCE COMPLETION on the bio_brain_regions substrate.
 CONTEXT (the pivot informed by tonight's findings):
 - (c) generative-replay decisive: NEGATIVE (pillar n=99; aggregate
   104/1800=5.78% vs chance 6.25%)
-- (c) loop diagnostic: REPLAY_DOESNT_REACTIVATE (the SWR→cortex
+- (c) loop diagnostic: REPLAY_DOESNT_REACTIVATE (the SWR->cortex
   pathway doesn't carry sequence-specific signal)
 - bio_brain_regions load-ceiling map: substrate PASSes at every load
   L=2..7 (substrate has HUGE capacity headroom; the (c) NEGATIVE is
   a (c)-integration limitation, NOT a substrate limitation)
 - MULTITAG mechanism (project's validated conversational primitive,
-  90% multi-seed): stim engram tag → readout via lang_output cosine
-  matches the bound concepts in top-K (bypasses SWR→cortex)
+  90% multi-seed): stim engram tag -> readout via lang_output cosine
+  matches the bound concepts in top-K (bypasses SWR->cortex)
 
 This probe asks: does the validated MULTITAG mechanism produce
 SEQUENCE COMPLETION when sequence engrams are tagged on the dlpfc-
@@ -263,7 +263,7 @@ def main():
     print(f"  backend={backend_name} (GPU={gpu})", flush=True)
     print("  Pivot from (c) NEGATIVE: test validated MULTITAG "
           "mechanism on sequence engrams; bypasses (c)'s broken "
-          "SWR→cortex path.", flush=True)
+          "SWR->cortex path.", flush=True)
     print(f"  Pre-registered bar={BAR}; SEEDS={list(SEEDS)}; "
           f"K_TEST={K_TEST}; SLOT_COUNT={SLOT_COUNT}; "
           f"stim_drive_pA={STIM_DRIVE_PA}; "
@@ -331,7 +331,7 @@ def main():
         "substrate": ("build_biological_brain_regions_v16_recipe_"
                        "WITH_HIPPO_AND_DLPFC_n=98"),
         "method": ("sequence engrams via D.14; stim_tag (validated "
-                    "reactivation) → lang_output cosine to vocab; "
+                    "reactivation) -> lang_output cosine to vocab; "
                     "multitag-analogous readout"),
         "per_seed": seed_results,
         "aggregate": {

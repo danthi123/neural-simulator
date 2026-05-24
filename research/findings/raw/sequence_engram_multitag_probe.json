@@ -1,0 +1,654 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "K_TEST": 8,
+  "slot_count": 3,
+  "bar": 0.8,
+  "stim_drive_pA": 1500.0,
+  "n_repeats_per_tag": 5,
+  "substrate": "build_biological_brain_regions_v16_recipe_WITH_HIPPO_AND_DLPFC_n=98",
+  "method": "sequence engrams via D.14; stim_tag (validated reactivation) -> lang_output cosine to vocab; multitag-analogous readout",
+  "per_seed": [
+    {
+      "seed": 42,
+      "K_TEST": 8,
+      "n_correct_full": 0,
+      "n_correct_partial": 1,
+      "n_slot3_in_top3": 2,
+      "full_accuracy": 0.0,
+      "partial_accuracy": 0.125,
+      "slot3_accuracy": 0.25,
+      "per_seq": [
+        {
+          "seq_idx": 0,
+          "tag_name": "generative_seq_000",
+          "sequence": [
+            "stop",
+            "east",
+            "look"
+          ],
+          "top3_words": [
+            "come",
+            "cat",
+            "west"
+          ],
+          "top3_scores": [
+            0.165,
+            0.1548,
+            0.1496
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 1,
+          "tag_name": "generative_seq_001",
+          "sequence": [
+            "east",
+            "look",
+            "big"
+          ],
+          "top3_words": [
+            "big",
+            "cold",
+            "west"
+          ],
+          "top3_scores": [
+            0.1702,
+            0.1656,
+            0.1635
+          ],
+          "in_top3": [
+            "big"
+          ],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": true
+        },
+        {
+          "seq_idx": 2,
+          "tag_name": "generative_seq_002",
+          "sequence": [
+            "cat",
+            "hot",
+            "look"
+          ],
+          "top3_words": [
+            "cat",
+            "cold",
+            "east"
+          ],
+          "top3_scores": [
+            0.1709,
+            0.1662,
+            0.1525
+          ],
+          "in_top3": [
+            "cat"
+          ],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 3,
+          "tag_name": "generative_seq_003",
+          "sequence": [
+            "cat",
+            "look",
+            "south"
+          ],
+          "top3_words": [
+            "cold",
+            "west",
+            "big"
+          ],
+          "top3_scores": [
+            0.1496,
+            0.1486,
+            0.1451
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 4,
+          "tag_name": "generative_seq_004",
+          "sequence": [
+            "cat",
+            "river",
+            "south"
+          ],
+          "top3_words": [
+            "cold",
+            "big",
+            "come"
+          ],
+          "top3_scores": [
+            0.1976,
+            0.1733,
+            0.1604
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 5,
+          "tag_name": "generative_seq_005",
+          "sequence": [
+            "small",
+            "come",
+            "dog"
+          ],
+          "top3_words": [
+            "come",
+            "small",
+            "east"
+          ],
+          "top3_scores": [
+            0.175,
+            0.1514,
+            0.145
+          ],
+          "in_top3": [
+            "come",
+            "small"
+          ],
+          "all_3_correct": false,
+          "partial_correct": true,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 6,
+          "tag_name": "generative_seq_006",
+          "sequence": [
+            "dog",
+            "east",
+            "west"
+          ],
+          "top3_words": [
+            "west",
+            "big",
+            "cold"
+          ],
+          "top3_scores": [
+            0.1737,
+            0.1711,
+            0.1665
+          ],
+          "in_top3": [
+            "west"
+          ],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": true
+        },
+        {
+          "seq_idx": 7,
+          "tag_name": "generative_seq_007",
+          "sequence": [
+            "small",
+            "big",
+            "north"
+          ],
+          "top3_words": [
+            "cold",
+            "big",
+            "cat"
+          ],
+          "top3_scores": [
+            0.1763,
+            0.1642,
+            0.1484
+          ],
+          "in_top3": [
+            "big"
+          ],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "K_TEST": 8,
+      "n_correct_full": 0,
+      "n_correct_partial": 1,
+      "n_slot3_in_top3": 3,
+      "full_accuracy": 0.0,
+      "partial_accuracy": 0.125,
+      "slot3_accuracy": 0.375,
+      "per_seq": [
+        {
+          "seq_idx": 0,
+          "tag_name": "generative_seq_000",
+          "sequence": [
+            "dog",
+            "come",
+            "cat"
+          ],
+          "top3_words": [
+            "small",
+            "west",
+            "cat"
+          ],
+          "top3_scores": [
+            0.1665,
+            0.1637,
+            0.1603
+          ],
+          "in_top3": [
+            "cat"
+          ],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": true
+        },
+        {
+          "seq_idx": 1,
+          "tag_name": "generative_seq_001",
+          "sequence": [
+            "north",
+            "small",
+            "apple"
+          ],
+          "top3_words": [
+            "apple",
+            "small",
+            "stop"
+          ],
+          "top3_scores": [
+            0.1793,
+            0.1613,
+            0.1576
+          ],
+          "in_top3": [
+            "apple",
+            "small"
+          ],
+          "all_3_correct": false,
+          "partial_correct": true,
+          "slot3_in_top3": true
+        },
+        {
+          "seq_idx": 2,
+          "tag_name": "generative_seq_002",
+          "sequence": [
+            "west",
+            "small",
+            "cold"
+          ],
+          "top3_words": [
+            "apple",
+            "west",
+            "cat"
+          ],
+          "top3_scores": [
+            0.1639,
+            0.1606,
+            0.1601
+          ],
+          "in_top3": [
+            "west"
+          ],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 3,
+          "tag_name": "generative_seq_003",
+          "sequence": [
+            "dog",
+            "west",
+            "apple"
+          ],
+          "top3_words": [
+            "cat",
+            "stop",
+            "small"
+          ],
+          "top3_scores": [
+            0.1672,
+            0.1574,
+            0.1532
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 4,
+          "tag_name": "generative_seq_004",
+          "sequence": [
+            "hot",
+            "south",
+            "dog"
+          ],
+          "top3_words": [
+            "apple",
+            "small",
+            "cat"
+          ],
+          "top3_scores": [
+            0.1649,
+            0.1613,
+            0.1551
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 5,
+          "tag_name": "generative_seq_005",
+          "sequence": [
+            "look",
+            "west",
+            "apple"
+          ],
+          "top3_words": [
+            "cat",
+            "small",
+            "apple"
+          ],
+          "top3_scores": [
+            0.1716,
+            0.1562,
+            0.1485
+          ],
+          "in_top3": [
+            "apple"
+          ],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": true
+        },
+        {
+          "seq_idx": 6,
+          "tag_name": "generative_seq_006",
+          "sequence": [
+            "cold",
+            "north",
+            "dog"
+          ],
+          "top3_words": [
+            "apple",
+            "cat",
+            "small"
+          ],
+          "top3_scores": [
+            0.183,
+            0.1691,
+            0.1534
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 7,
+          "tag_name": "generative_seq_007",
+          "sequence": [
+            "small",
+            "cold",
+            "north"
+          ],
+          "top3_words": [
+            "cat",
+            "small",
+            "apple"
+          ],
+          "top3_scores": [
+            0.1896,
+            0.1596,
+            0.1558
+          ],
+          "in_top3": [
+            "small"
+          ],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "K_TEST": 8,
+      "n_correct_full": 0,
+      "n_correct_partial": 0,
+      "n_slot3_in_top3": 0,
+      "full_accuracy": 0.0,
+      "partial_accuracy": 0.0,
+      "slot3_accuracy": 0.0,
+      "per_seq": [
+        {
+          "seq_idx": 0,
+          "tag_name": "generative_seq_000",
+          "sequence": [
+            "small",
+            "east",
+            "come"
+          ],
+          "top3_words": [
+            "west",
+            "big",
+            "east"
+          ],
+          "top3_scores": [
+            0.1821,
+            0.1587,
+            0.1572
+          ],
+          "in_top3": [
+            "east"
+          ],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 1,
+          "tag_name": "generative_seq_001",
+          "sequence": [
+            "cold",
+            "river",
+            "east"
+          ],
+          "top3_words": [
+            "west",
+            "hot",
+            "go"
+          ],
+          "top3_scores": [
+            0.1605,
+            0.1539,
+            0.1478
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 2,
+          "tag_name": "generative_seq_002",
+          "sequence": [
+            "big",
+            "north",
+            "small"
+          ],
+          "top3_words": [
+            "cat",
+            "big",
+            "west"
+          ],
+          "top3_scores": [
+            0.1572,
+            0.1552,
+            0.1547
+          ],
+          "in_top3": [
+            "big"
+          ],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 3,
+          "tag_name": "generative_seq_003",
+          "sequence": [
+            "apple",
+            "dog",
+            "stop"
+          ],
+          "top3_words": [
+            "west",
+            "cat",
+            "south"
+          ],
+          "top3_scores": [
+            0.1664,
+            0.1616,
+            0.1489
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 4,
+          "tag_name": "generative_seq_004",
+          "sequence": [
+            "river",
+            "dog",
+            "hot"
+          ],
+          "top3_words": [
+            "west",
+            "east",
+            "big"
+          ],
+          "top3_scores": [
+            0.1674,
+            0.1531,
+            0.1482
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 5,
+          "tag_name": "generative_seq_005",
+          "sequence": [
+            "small",
+            "cold",
+            "hot"
+          ],
+          "top3_words": [
+            "west",
+            "big",
+            "look"
+          ],
+          "top3_scores": [
+            0.1837,
+            0.1689,
+            0.1566
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 6,
+          "tag_name": "generative_seq_006",
+          "sequence": [
+            "north",
+            "river",
+            "come"
+          ],
+          "top3_words": [
+            "big",
+            "hot",
+            "west"
+          ],
+          "top3_scores": [
+            0.168,
+            0.1542,
+            0.1508
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        },
+        {
+          "seq_idx": 7,
+          "tag_name": "generative_seq_007",
+          "sequence": [
+            "go",
+            "big",
+            "cold"
+          ],
+          "top3_words": [
+            "cat",
+            "west",
+            "small"
+          ],
+          "top3_scores": [
+            0.1801,
+            0.1607,
+            0.1524
+          ],
+          "in_top3": [],
+          "all_3_correct": false,
+          "partial_correct": false,
+          "slot3_in_top3": false
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "full_sequence_accuracy_mean": 0.0,
+    "full_sequence_per_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "partial_accuracy_mean": 0.08333333333333333,
+    "partial_per_seed": [
+      0.125,
+      0.125,
+      0.0
+    ],
+    "slot3_accuracy_mean": 0.20833333333333334,
+    "slot3_per_seed": [
+      0.25,
+      0.375,
+      0.0
+    ]
+  },
+  "verdict": "SEQUENCE_MULTITAG_NEGATIVE",
+  "wall_clock_minutes": 2.780931488672892
+}
