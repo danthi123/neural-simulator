@@ -50,6 +50,7 @@ from research.runners.concept_pool_demo import (
     train_word_to_pool, DIRECTION_VOCAB, NOUN_VOCAB, VERB_VOCAB,
     ADJECTIVE_VOCAB,
 )
+from research.runners.concept_compose_train import _WORD_TO_POOL
 from research.findings.raw.generative_replay_sequence_vocab import (
     generate_k_stored_sequences,
 )
@@ -82,6 +83,12 @@ STIM_DRIVE_PA = 1500.0
 EC_DRIVE_PA = 200.0
 ENCODING_STEPS_PER_SLOT = 60  # ~2x baseline since lang_input + ec_context
 ENGRAM_TOP_K = 100
+# Validated multitag uses balanced_teacher_pA=500 to ensure target pool
+# fires during encoding (the v14/v16 substrate's weak concept-pool
+# dynamics don't ignite from lang_input alone reliably). Without teacher,
+# engram tags are 0-neuron and the readout collapses to chance. Mirrors
+# the validated 2026-05-14 multitag recipe.
+TEACHER_PA = 500.0
 
 OUT_JSON = os.path.join(
     _HERE, "direction_A_ec_context_sequence_full.json")
@@ -187,10 +194,42 @@ def _build_and_train(seed, verbose=True):
     return bridge, words, word_to_idx
 
 
-def _encode_sequence_with_ec_context(bridge, seq, words, seq_idx):
-    """Drive lang_input(slot_word) + ec_context(slot_position)
-    simultaneously per slot; engram captures (word, position) co-
-    firing across all slots."""
+def _build_region_filter(rm):
+    """Build the concept-pool region filter the validated multitag
+    uses (noun/verb/adjective pools + motor regions). Mirrors
+    multitag_eval.py lines 62-72."""
+    region_filter = []
+    for kind, names in [
+        ("noun_pool", ["APPLE", "RIVER", "DOG", "CAT"]),
+        ("verb_pool", ["GO", "COME", "STOP", "LOOK"]),
+        ("adjective_pool", ["BIG", "SMALL", "HOT", "COLD"]),
+    ]:
+        for n in names:
+            try:
+                rm.indices(f"{kind}_{n}")
+                region_filter.append(f"{kind}_{n}")
+            except Exception:
+                pass
+    for m in ["motor_N", "motor_E", "motor_S", "motor_W"]:
+        try:
+            rm.indices(m)
+            region_filter.append(m)
+        except Exception:
+            pass
+    return region_filter
+
+
+def _encode_sequence_with_ec_context(bridge, seq, words, seq_idx,
+                                       region_filter):
+    """Drive lang_input(slot_word) + ec_context(slot_position) +
+    teacher current on slot_word's target pool simultaneously per
+    slot; engram (on the concept pools + motors, not CA3) captures
+    (word, position) co-firing across all slots.
+
+    Mirrors validated multitag encoding (compose_concept_engram.
+    encode_concept_pair) byte-equivalent for the word side; adds
+    ec_context positional drive per slot.
+    """
     cp, _ = get_backend()
     rm = bridge.region_manager
     lang_in_idx = list(rm.indices("language_input"))
@@ -200,14 +239,29 @@ def _encode_sequence_with_ec_context(bridge, seq, words, seq_idx):
     ec_arr = cp.asarray(ec_idx, dtype=cp.int64)
     n_ec = len(ec_idx)
     word_to_idx = {w: i for i, w in enumerate(words)}
+    n_total = bridge.cp_external_input_current.shape[0]
     tag_name = f"ec_seq_{seq_idx:03d}"
 
+    # Pre-build the per-slot target pool index arrays.
+    pool_arrs = []
+    for slot_word in seq:
+        pool_region = _WORD_TO_POOL.get(slot_word, None)
+        if pool_region is None:
+            pool_arrs.append(None)
+            continue
+        try:
+            pool_idx = list(rm.indices(pool_region))
+            pool_arrs.append(cp.asarray(pool_idx, dtype=cp.int64))
+        except Exception:
+            pool_arrs.append(None)
+
     bridge.cp_external_input_current[:] = 0.0
-    for _ in range(50):
+    for _ in range(30):
         bridge._run_one_simulation_step()
         bridge.runtime_state.current_time_step += 1
 
     bridge.start_engram_recording(tag_name)
+    ext = cp.zeros(n_total, dtype=cp.float32)
     for slot_idx, word in enumerate(seq):
         drive_word = orthogonal_drive_pattern(
             cue_idx=word_to_idx[word], n_cues=len(words),
@@ -215,18 +269,24 @@ def _encode_sequence_with_ec_context(bridge, seq, words, seq_idx):
             sparsity=SPARSITY)
         drive_pos = positional_drive_pattern(
             slot_idx, n_neurons=n_ec, n_max_positions=SLOT_COUNT)
-        # Convert positional_drive_pattern output to pA pattern.
         pos_pattern = (drive_pos > 0).astype(np.float32) * EC_DRIVE_PA
-        bridge.cp_external_input_current[:] = 0.0
-        bridge.cp_external_input_current[lang_in_arr] = cp.asarray(
-            drive_word, dtype=cp.float32)
-        bridge.cp_external_input_current[ec_arr] = cp.asarray(
-            pos_pattern, dtype=cp.float32)
         for _ in range(ENCODING_STEPS_PER_SLOT):
+            ext.fill(0)
+            ext[lang_in_arr] = cp.asarray(drive_word, dtype=cp.float32)
+            ext[ec_arr] = cp.asarray(pos_pattern, dtype=cp.float32)
+            if pool_arrs[slot_idx] is not None:
+                ext[pool_arrs[slot_idx]] = TEACHER_PA
+            bridge.cp_external_input_current[:] = ext
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
+
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(20):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+
     stats = bridge.commit_engram_tag(
-        tag_name, top_k=ENGRAM_TOP_K, region_filter=["ca3"])
+        tag_name, top_k=ENGRAM_TOP_K, region_filter=region_filter)
     bridge.cp_external_input_current[:] = 0.0
     return tag_name, stats
 
@@ -287,6 +347,9 @@ def run_one_seed(seed, verbose=True):
     ec_arr = cp.asarray(ec_idx, dtype=cp.int64)
     n_ec = len(ec_idx)
     n_lang_output = N_LANG_INPUT
+    region_filter = _build_region_filter(rm)
+    print(f"  [seed {seed}] region_filter ({len(region_filter)}"
+          f" regions): {region_filter}", flush=True)
 
     sequences = generate_k_stored_sequences(
         seed=seed, k=K_PAIRS, n_words=len(words),
@@ -298,7 +361,7 @@ def run_one_seed(seed, verbose=True):
     tag_names = []
     for seq_idx, seq in enumerate(sequences):
         tag, stats = _encode_sequence_with_ec_context(
-            bridge, seq, words, seq_idx)
+            bridge, seq, words, seq_idx, region_filter)
         tag_names.append(tag)
         print(f"  encoded {tag} ({list(seq)}); n_tagged="
               f"{stats.get('n_tagged', 0)}", flush=True)
