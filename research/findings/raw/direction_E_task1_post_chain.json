@@ -1,0 +1,11 @@
+{
+  "task1_strict_top1_mean": 0.25,
+  "task1_per_seed": [
+    0.0,
+    0.375,
+    0.375
+  ],
+  "task1_verdict": "DIRECTION_E_SUBSTRATE_TASK1_BOUNDARY",
+  "smell_test_verdict": "MAIN_BELOW_BAR_CONTROLS_RECORDED",
+  "next_direction_recommendation": "NEGATIVE_HONEST_BOTH_SUBSTRATES_BOUNDED"
+}

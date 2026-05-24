@@ -1,0 +1,329 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "main_strict_top1_mean": 0.25,
+  "ctrl_wrong_slot_top1_mean": 0.20833333333333334,
+  "ctrl_no_stim_top1_mean": 0.0,
+  "ctrl_no_window_top1_mean": 0.20833333333333334,
+  "per_seed_ctrl": [
+    {
+      "seed": 42,
+      "ctrl_wrong_slot_top1": 0.0,
+      "ctrl_no_stim_top1": 0.0,
+      "ctrl_no_window_top1": 0.0,
+      "per_seq_ctrl": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "stop",
+            "east",
+            "look"
+          ],
+          "true_slot": "look",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "east",
+            "look",
+            "big"
+          ],
+          "true_slot": "big",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "cat",
+            "hot",
+            "look"
+          ],
+          "true_slot": "look",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "cat",
+            "look",
+            "south"
+          ],
+          "true_slot": "south",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "cat",
+            "river",
+            "south"
+          ],
+          "true_slot": "south",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "small",
+            "come",
+            "dog"
+          ],
+          "true_slot": "dog",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "dog",
+            "east",
+            "west"
+          ],
+          "true_slot": "west",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "small",
+            "big",
+            "north"
+          ],
+          "true_slot": "north",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "ctrl_wrong_slot_top1": 0.25,
+      "ctrl_no_stim_top1": 0.0,
+      "ctrl_no_window_top1": 0.25,
+      "per_seq_ctrl": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "dog",
+            "come",
+            "cat"
+          ],
+          "true_slot": "cat",
+          "wrong_slot_top1": true,
+          "no_stim_top1": false,
+          "no_window_top1": true
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "north",
+            "small",
+            "apple"
+          ],
+          "true_slot": "apple",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "west",
+            "small",
+            "cold"
+          ],
+          "true_slot": "cold",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "dog",
+            "west",
+            "apple"
+          ],
+          "true_slot": "apple",
+          "wrong_slot_top1": true,
+          "no_stim_top1": false,
+          "no_window_top1": true
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "hot",
+            "south",
+            "dog"
+          ],
+          "true_slot": "dog",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "look",
+            "west",
+            "apple"
+          ],
+          "true_slot": "apple",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "cold",
+            "north",
+            "dog"
+          ],
+          "true_slot": "dog",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "small",
+            "cold",
+            "north"
+          ],
+          "true_slot": "north",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "ctrl_wrong_slot_top1": 0.375,
+      "ctrl_no_stim_top1": 0.0,
+      "ctrl_no_window_top1": 0.375,
+      "per_seq_ctrl": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "small",
+            "east",
+            "come"
+          ],
+          "true_slot": "come",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "cold",
+            "river",
+            "east"
+          ],
+          "true_slot": "east",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "big",
+            "north",
+            "small"
+          ],
+          "true_slot": "small",
+          "wrong_slot_top1": true,
+          "no_stim_top1": false,
+          "no_window_top1": true
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "apple",
+            "dog",
+            "stop"
+          ],
+          "true_slot": "stop",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "river",
+            "dog",
+            "hot"
+          ],
+          "true_slot": "hot",
+          "wrong_slot_top1": true,
+          "no_stim_top1": false,
+          "no_window_top1": true
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "small",
+            "cold",
+            "hot"
+          ],
+          "true_slot": "hot",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "north",
+            "river",
+            "come"
+          ],
+          "true_slot": "come",
+          "wrong_slot_top1": true,
+          "no_stim_top1": false,
+          "no_window_top1": true
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "go",
+            "big",
+            "cold"
+          ],
+          "true_slot": "cold",
+          "wrong_slot_top1": false,
+          "no_stim_top1": false,
+          "no_window_top1": false
+        }
+      ]
+    }
+  ],
+  "verdict": "MAIN_BELOW_BAR_CONTROLS_RECORDED",
+  "wall_clock_minutes": 9.083166142304739
+}
