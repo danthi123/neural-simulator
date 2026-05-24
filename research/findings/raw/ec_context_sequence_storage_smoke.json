@@ -1,0 +1,98 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seed": 42,
+  "V": 12,
+  "K_PAIRS": 4,
+  "SLOT_COUNT": 3,
+  "TOP_K_READOUT": 3,
+  "n_ec_context": 200,
+  "n_train_events_per_word": 30,
+  "stim_drive_pA": 1500.0,
+  "ec_drive_pA": 200.0,
+  "chance_baseline": 0.25,
+  "slot3_accuracy_smoke": 0.25,
+  "per_seq": [
+    {
+      "seq_idx": 0,
+      "sequence": [
+        "cat",
+        "north",
+        "go"
+      ],
+      "true_slot3": "go",
+      "topK_words": [
+        "go",
+        "river",
+        "cat"
+      ],
+      "topK_scores": [
+        0.1561,
+        0.1472,
+        0.1405
+      ],
+      "correct": true
+    },
+    {
+      "seq_idx": 1,
+      "sequence": [
+        "north",
+        "look",
+        "go"
+      ],
+      "true_slot3": "go",
+      "topK_words": [
+        "cat",
+        "west",
+        "river"
+      ],
+      "topK_scores": [
+        0.1956,
+        0.1689,
+        0.1623
+      ],
+      "correct": false
+    },
+    {
+      "seq_idx": 2,
+      "sequence": [
+        "river",
+        "stop",
+        "go"
+      ],
+      "true_slot3": "go",
+      "topK_words": [
+        "cat",
+        "north",
+        "river"
+      ],
+      "topK_scores": [
+        0.1961,
+        0.1522,
+        0.1342
+      ],
+      "correct": false
+    },
+    {
+      "seq_idx": 3,
+      "sequence": [
+        "river",
+        "cat",
+        "east"
+      ],
+      "true_slot3": "east",
+      "topK_words": [
+        "south",
+        "look",
+        "river"
+      ],
+      "topK_scores": [
+        0.176,
+        0.1482,
+        0.1436
+      ],
+      "correct": false
+    }
+  ],
+  "verdict_smoke": "EC_CONTEXT_NEGATIVE_SMOKE"
+}
