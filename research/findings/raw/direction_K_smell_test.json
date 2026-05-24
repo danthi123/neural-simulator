@@ -1,0 +1,35 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "main_strict_top1_mean": 1.0,
+  "ctrl_permutation_mean": 0.4166666666666667,
+  "ctrl_random_phasor_mean": 1.0,
+  "ctrl_same_position_mean": 0.5833333333333334,
+  "per_seed_ctrl": [
+    {
+      "seed": 42,
+      "ctrl_permutation_top1": 0.5,
+      "ctrl_random_phasor_top1": 1.0,
+      "ctrl_same_position_top1": 0.625
+    },
+    {
+      "seed": 43,
+      "ctrl_permutation_top1": 0.375,
+      "ctrl_random_phasor_top1": 1.0,
+      "ctrl_same_position_top1": 0.75
+    },
+    {
+      "seed": 44,
+      "ctrl_permutation_top1": 0.375,
+      "ctrl_random_phasor_top1": 1.0,
+      "ctrl_same_position_top1": 0.375
+    }
+  ],
+  "verdict": "SAME_POSITION_HOLDS",
+  "wall_clock_minutes": 1.4371764739354451
+}
