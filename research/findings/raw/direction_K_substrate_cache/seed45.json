@@ -1,0 +1,152 @@
+{
+  "seed": 45,
+  "n_top1": 8,
+  "K_PAIRS": 8,
+  "strict_top1_accuracy": 1.0,
+  "per_seq": [
+    {
+      "seq_idx": 0,
+      "sequence": [
+        "big",
+        "look",
+        "go"
+      ],
+      "true_slot": "go",
+      "top1": "go",
+      "top1_correct": true,
+      "topK_words": [
+        "go",
+        "small",
+        "hot",
+        "look",
+        "south"
+      ]
+    },
+    {
+      "seq_idx": 1,
+      "sequence": [
+        "stop",
+        "big",
+        "hot"
+      ],
+      "true_slot": "hot",
+      "top1": "hot",
+      "top1_correct": true,
+      "topK_words": [
+        "hot",
+        "south",
+        "east",
+        "go",
+        "cat"
+      ]
+    },
+    {
+      "seq_idx": 2,
+      "sequence": [
+        "river",
+        "look",
+        "come"
+      ],
+      "true_slot": "come",
+      "top1": "come",
+      "top1_correct": true,
+      "topK_words": [
+        "come",
+        "small",
+        "cat",
+        "south",
+        "east"
+      ]
+    },
+    {
+      "seq_idx": 3,
+      "sequence": [
+        "go",
+        "dog",
+        "apple"
+      ],
+      "true_slot": "apple",
+      "top1": "apple",
+      "top1_correct": true,
+      "topK_words": [
+        "apple",
+        "small",
+        "cold",
+        "look",
+        "go"
+      ]
+    },
+    {
+      "seq_idx": 4,
+      "sequence": [
+        "come",
+        "cat",
+        "small"
+      ],
+      "true_slot": "small",
+      "top1": "small",
+      "top1_correct": true,
+      "topK_words": [
+        "small",
+        "west",
+        "river",
+        "dog",
+        "south"
+      ]
+    },
+    {
+      "seq_idx": 5,
+      "sequence": [
+        "stop",
+        "go",
+        "hot"
+      ],
+      "true_slot": "hot",
+      "top1": "hot",
+      "top1_correct": true,
+      "topK_words": [
+        "hot",
+        "east",
+        "river",
+        "south",
+        "west"
+      ]
+    },
+    {
+      "seq_idx": 6,
+      "sequence": [
+        "dog",
+        "cat",
+        "cold"
+      ],
+      "true_slot": "cold",
+      "top1": "cold",
+      "top1_correct": true,
+      "topK_words": [
+        "cold",
+        "west",
+        "river",
+        "look",
+        "small"
+      ]
+    },
+    {
+      "seq_idx": 7,
+      "sequence": [
+        "river",
+        "big",
+        "stop"
+      ],
+      "true_slot": "stop",
+      "top1": "stop",
+      "top1_correct": true,
+      "topK_words": [
+        "stop",
+        "small",
+        "cat",
+        "south",
+        "go"
+      ]
+    }
+  ]
+}
