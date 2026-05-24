@@ -1,0 +1,15 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seed": 42,
+  "sequence": [
+    "apple",
+    "big",
+    "north"
+  ],
+  "n_correct": 3,
+  "slot_count": 3,
+  "n_pool_total": 3200,
+  "verdict": "SMOKE_PERFECT",
+  "wall_clock_minutes": 0.5069677511850993
+}
