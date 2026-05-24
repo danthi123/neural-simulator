@@ -1,0 +1,113 @@
+{
+  "n_dims": [
+    64,
+    128,
+    256,
+    512,
+    1024,
+    3200
+  ],
+  "n_trials_per_seed": 100,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_vocab": 16,
+  "slot_count": 3,
+  "bar": 0.8,
+  "results": {
+    "64": {
+      "substrate_mean": 0.7233333333333333,
+      "random_mean": 1.0,
+      "substrate_per_seed": [
+        0.83,
+        0.84,
+        0.5
+      ],
+      "random_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "delta": -0.2766666666666667
+    },
+    "128": {
+      "substrate_mean": 0.6066666666666668,
+      "random_mean": 1.0,
+      "substrate_per_seed": [
+        0.79,
+        0.39,
+        0.64
+      ],
+      "random_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "delta": -0.3933333333333332
+    },
+    "256": {
+      "substrate_mean": 0.6766666666666666,
+      "random_mean": 1.0,
+      "substrate_per_seed": [
+        0.86,
+        0.75,
+        0.42
+      ],
+      "random_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "delta": -0.32333333333333336
+    },
+    "512": {
+      "substrate_mean": 0.7466666666666667,
+      "random_mean": 1.0,
+      "substrate_per_seed": [
+        0.8,
+        0.64,
+        0.8
+      ],
+      "random_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "delta": -0.2533333333333333
+    },
+    "1024": {
+      "substrate_mean": 0.7066666666666667,
+      "random_mean": 1.0,
+      "substrate_per_seed": [
+        0.81,
+        0.78,
+        0.53
+      ],
+      "random_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "delta": -0.29333333333333333
+    },
+    "3200": {
+      "substrate_mean": 0.7433333333333333,
+      "random_mean": 1.0,
+      "substrate_per_seed": [
+        0.74,
+        0.77,
+        0.72
+      ],
+      "random_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "delta": -0.2566666666666667
+    }
+  },
+  "verdict": "NO_LOAD_BEARING_REGIME",
+  "wall_clock_minutes": 0.005611892541249593
+}
