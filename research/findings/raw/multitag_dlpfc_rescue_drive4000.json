@@ -1,0 +1,365 @@
+{
+  "drive_pA": 4000.0,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "per_seed": [
+    {
+      "drive_pA": 4000.0,
+      "n_total": 8,
+      "n_full": 8,
+      "n_partial": 8,
+      "full_acc": 1.0,
+      "partial_acc": 1.0,
+      "per_cue": [
+        {
+          "cue": "apple",
+          "expected": [
+            "big",
+            "cat"
+          ],
+          "topN": [
+            "cat",
+            "big"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "big",
+          "expected": [
+            "apple",
+            "hot"
+          ],
+          "topN": [
+            "apple",
+            "hot"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "dog",
+          "expected": [
+            "small",
+            "river"
+          ],
+          "topN": [
+            "small",
+            "river"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "small",
+          "expected": [
+            "dog",
+            "cold"
+          ],
+          "topN": [
+            "cold",
+            "dog"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "cat",
+          "expected": [
+            "hot",
+            "apple"
+          ],
+          "topN": [
+            "apple",
+            "hot"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "hot",
+          "expected": [
+            "cat",
+            "big"
+          ],
+          "topN": [
+            "cat",
+            "big"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "river",
+          "expected": [
+            "cold",
+            "dog"
+          ],
+          "topN": [
+            "dog",
+            "cold"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "cold",
+          "expected": [
+            "river",
+            "small"
+          ],
+          "topN": [
+            "small",
+            "river"
+          ],
+          "full": true,
+          "partial": true
+        }
+      ],
+      "seed": 42
+    },
+    {
+      "drive_pA": 4000.0,
+      "n_total": 8,
+      "n_full": 6,
+      "n_partial": 8,
+      "full_acc": 0.75,
+      "partial_acc": 1.0,
+      "per_cue": [
+        {
+          "cue": "apple",
+          "expected": [
+            "big",
+            "cat"
+          ],
+          "topN": [
+            "cat",
+            "big"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "big",
+          "expected": [
+            "apple",
+            "hot"
+          ],
+          "topN": [
+            "hot",
+            "apple"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "dog",
+          "expected": [
+            "small",
+            "river"
+          ],
+          "topN": [
+            "small",
+            "river"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "small",
+          "expected": [
+            "dog",
+            "cold"
+          ],
+          "topN": [
+            "dog",
+            "cold"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "cat",
+          "expected": [
+            "hot",
+            "apple"
+          ],
+          "topN": [
+            "apple",
+            "hot"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "hot",
+          "expected": [
+            "cat",
+            "big"
+          ],
+          "topN": [
+            "big",
+            "small"
+          ],
+          "full": false,
+          "partial": true
+        },
+        {
+          "cue": "river",
+          "expected": [
+            "cold",
+            "dog"
+          ],
+          "topN": [
+            "dog",
+            "apple"
+          ],
+          "full": false,
+          "partial": true
+        },
+        {
+          "cue": "cold",
+          "expected": [
+            "river",
+            "small"
+          ],
+          "topN": [
+            "small",
+            "river"
+          ],
+          "full": true,
+          "partial": true
+        }
+      ],
+      "seed": 43
+    },
+    {
+      "drive_pA": 4000.0,
+      "n_total": 8,
+      "n_full": 5,
+      "n_partial": 8,
+      "full_acc": 0.625,
+      "partial_acc": 1.0,
+      "per_cue": [
+        {
+          "cue": "apple",
+          "expected": [
+            "big",
+            "cat"
+          ],
+          "topN": [
+            "big",
+            "cat"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "big",
+          "expected": [
+            "apple",
+            "hot"
+          ],
+          "topN": [
+            "hot",
+            "small"
+          ],
+          "full": false,
+          "partial": true
+        },
+        {
+          "cue": "dog",
+          "expected": [
+            "small",
+            "river"
+          ],
+          "topN": [
+            "small",
+            "cat"
+          ],
+          "full": false,
+          "partial": true
+        },
+        {
+          "cue": "small",
+          "expected": [
+            "dog",
+            "cold"
+          ],
+          "topN": [
+            "cold",
+            "dog"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "cat",
+          "expected": [
+            "hot",
+            "apple"
+          ],
+          "topN": [
+            "hot",
+            "apple"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "hot",
+          "expected": [
+            "cat",
+            "big"
+          ],
+          "topN": [
+            "big",
+            "cat"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "river",
+          "expected": [
+            "cold",
+            "dog"
+          ],
+          "topN": [
+            "cold",
+            "dog"
+          ],
+          "full": true,
+          "partial": true
+        },
+        {
+          "cue": "cold",
+          "expected": [
+            "river",
+            "small"
+          ],
+          "topN": [
+            "small",
+            "big"
+          ],
+          "full": false,
+          "partial": true
+        }
+      ],
+      "seed": 44
+    }
+  ],
+  "multi_seed_full_mean": 0.7916666666666666,
+  "multi_seed_full_per_seed": [
+    1.0,
+    0.75,
+    0.625
+  ],
+  "multi_seed_partial_mean": 1.0,
+  "comparison_n102_baseline_1500pA": 0.708,
+  "comparison_rescue_3000pA_multiseed": 0.792,
+  "verdict": "BOUND_PERSISTS_AT_4000PA"
+}
