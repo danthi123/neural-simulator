@@ -69,6 +69,73 @@ pre-registered fixed-bar test. Honest ceiling unchanged.
 
 ## Exact next concrete action
 
+**DIRECTION A FULL-SCALE IN FLIGHT 2026-05-24 (background task
+`bzfui0zh0`; ~3 hr GPU; commits 7330dd7 launch + 219ff2a fix +
+f272c0d smell-test, all both remotes).** Per overnight: the (c)
+generative-replay arc converged on REPLAY_DOESNT_REACTIVATE -- the
+substrate stores SIMULTANEOUS engrams perfectly (multitag 91.7%
+multi-seed at n=100/n=101) but NOT SEQUENTIAL slot-position
+structure. Direction A tests the catalog-grounded fix: ec_context
+positional binding (D.01+D.02+D.11; the validated 200-neuron sparse
+per-position drive component that adds positional drive alongside
+lang_input drive per slot during engram encoding). Bridge =
+build_concept_bridge(enable_positional_context=True); full v16
+recipe per seed (200 events x 16 words); K=8 sequences x slot_count=3;
+test slot-3 in top-3 with positional cue; multi-seed 42/43/44.
+Pre-registered 0.80 multi-seed bar (frozen).
+
+CRITICAL BUG CAUGHT IN FLIGHT + corrected per falsify-cheaply-first:
+the originally-launched runner (commit 7330dd7) used
+region_filter=["ca3"] for commit_engram_tag, but the v16+ec_context
+substrate has NO ca3 region; same exact recipe bug as the 2026-05-14
+multitag NEGATIVE (corrected at cbcabf2). Plus no teacher current on
+target pools. Killed the in-flight run before wasting GPU; fixed
+both bugs (commit 219ff2a): region_filter = the 16 concept-pool
+regions the validated multitag_eval uses, byte-equivalent to its
+recipe; TEACHER_PA=500 on per-slot target pool during encoding.
+Encoding-smoke verification (commit 219ff2a; ran in ~24 s wall):
+8/8 sequences engram exactly 100 neurons -- recipe SOUND; relaunched
+full-scale (background task `bzfui0zh0`).
+
+Post-run smell test ready (commit f272c0d; ~10-15 min wall after
+Direction A completes): three anti-cheat controls reusing the cached
+bridges + tags --- (A) WRONG-POSITION CUE (slot 0 cue for slot-2
+retrieval; if accuracy holds, ec_context cue not load-bearing); (B)
+NO-STIM (cue only, no tag stim; if accuracy holds, engram not load-
+bearing); (C) NO-CUE (stim only, no cue; if accuracy holds, Direction
+A collapses to plain multitag, not sequence storage). Verdict logic
+encoded: PASS_CONTROLS_DECISIVE (every control margin > 0.2),
+PASS_COLLAPSES_TO_MULTITAG, PASS_COLLAPSES_TO_CUE_ALONE,
+PASS_WITH_WEAK_CONTROLS, MAIN_BELOW_BAR_CONTROLS_RECORDED.
+
+Outcomes + branches:
+  - PASS at >= 0.80 multi-seed + smell-test PASS_CONTROLS_DECISIVE
+    -> dedicated adversarial review -> capability_status pillar
+    n=103 VALIDATED (ec_context positional binding mechanism is a
+    decisive substrate-component for sequence storage / conversational
+    foundation) -> next direction = scale-up (4, 5, 6 slots) or
+    cross-bridge extension.
+  - PASS but COLLAPSES_TO_MULTITAG -> honest BOUNDARY pillar; the
+    ec_context primitive doesn't add positional signal at this recipe;
+    next direction = theta-gamma multiplexing (catalog N.16 / Lisman-
+    Idiart) as the alternate positional-binding mechanism.
+  - PASS but COLLAPSES_TO_CUE_ALONE -> the ec_context -> concept_pool
+    pathway IS the load-bearing piece (not the engram); refine to
+    test whether per-slot patterning is preserved.
+  - BOUNDARY (chance < mean < 0.80) -> precise characterization of
+    where ec_context helps + where it doesn't; iterate recipe.
+  - NEGATIVE at chance -> deeper substrate-level positional-binding
+    work needed; next direction = theta-gamma multiplexing build.
+
+While Direction A runs (~3 hr), parallel CPU work continues per the
+autonomous-runs discipline (no idle waiting): smell-test runner
+ready (commit f272c0d), this state update, design + write follow-up
+Direction B/E runners.
+
+---
+
+## Prior state (preserved for context)
+
 **RENEWED-FOCUS COMPOSITIONAL INVESTIGATION -- ROOT CAUSE FOUND AND
 FULLY PROPAGATED (2026-05-21, both remotes; commits 8ea41d7, 8cb90bf,
 ddd714d, 5819df7).** The owner confirmed the substrate-characterization
