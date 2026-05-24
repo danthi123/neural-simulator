@@ -99,6 +99,94 @@ requires a SEPARATE familiarity / match-strength signal (perirhinal
 threshold on the identification score. Same principle as FHRR
 shortcut-3 RESOLVED (2026-05-22).
 
+**CHAIN COMPLETE: Direction A v1 + v2 done; Direction E substrate
+Task 1 LAUNCHED 2026-05-24 (background task `bk91wak0v`; ~3 hr GPU;
+kill-safe per-seed cache).**
+
+Direction A v1 multi-seed (completed; commit ed9f7c9):
+- top-3 0.875 (DEGENERATE per reviewer)
+- STRICT TOP-1 = 0.333 multi-seed (5x chance 0.063 but BELOW 0.80 bar)
+- per-seed top-1 [0.250, 0.375, 0.375]
+- smell test: ENGRAM IS load-bearing (no-stim margin +0.333);
+  ec_context cue NOT load-bearing (no-cue margin +0.042; wrong-pos
+  margin -0.042)
+- Diagnosis: v1 collapses to multitag set-membership
+
+Weight inspection (commit 6d2b9f3 runner; ran 2026-05-24): ec_context
+-> pool weights UNIFORM at 3.0 mean (std 0.6) across all 16 target
+regions. No selectivity from initialization. v2 plasticity expected
+to add differential weights ON TOP of uniform baseline.
+
+Direction A v2 multi-seed (completed; commit af3c1dc):
+- STRICT TOP-1 = 0.292 multi-seed (LOWER than v1's 0.333; delta
+  -0.042)
+- top-3 = 0.917 (up from v1's 0.875 -- multitag fires even more
+  saturated)
+- per-seed top-1 [0.250, 0.250, 0.375]
+- VERDICT V2_STRICT_TOP1_ABOVE_CHANCE_BELOW_BAR
+
+CONCLUSION: ec_context substrate (whether with v1 frozen or v2
+trained plasticity) cannot do reliable positional binding. The
+mechanism is fundamentally bounded at ~0.30 strict top-1 (above
+chance, below bar). The honest biology-translatable finding: spatial
+ec_context positional code on v16 substrate produces PARTIAL
+positional signal but doesn't clear the bar; engram-only multitag
+set-membership is the load-bearing mechanism.
+
+Direction E substrate Task 0 (commit af3c1dc) = GROUNDING GREEN:
+- theta_steps=250 (dt=0.5ms, theta_ms=125), gamma_period=35 (7 slots)
+- phase_to_gamma_slot function correct
+- per-slot encoding fires right neurons (108 steps/slot)
+- engram tag captures 100 neurons
+- VERDICT TASK0_GROUNDING_GREEN; Task 1 build justified
+
+Direction E substrate Task 1 LAUNCHED (background task bk91wak0v;
+~3 hr GPU; commit af3c1dc). Multi-seed (42/43/44) full theta-gamma
+substrate sequence storage; same frozen 0.80 multi-seed STRICT TOP-1
+bar; THETA_MS=125 (Lisman-Idiart 8Hz), N_GAMMA=7 (catalog cap).
+Mechanism: phase-cued retrieval (stim engram + read lang_output ONLY
+during slot-i gamma window of recall theta cycle).
+
+Outcomes:
+- TASK1_PASS: pillar n=104 (substrate theta-gamma sequence storage
+  validated); the catalog's load-bearing positional binding primitive
+  works in substrate
+- TASK1_BOUNDARY: precise characterization of substrate noise floor
+  vs algebra bar; substrate has fundamental limits the algebra
+  doesn't expose
+- TASK1_NEGATIVE: both ec_context AND theta-gamma mechanisms fail at
+  the substrate level; substrate dynamics fundamentally incompatible
+  with sequence storage; requires substantive architectural changes
+  (next direction would be a substrate redesign exercise)
+
+**EARLIER OVERNIGHT WORK (preserved):**
+
+**Direction E theta-gamma ALGEBRA pillar n=103 VALIDATED** (commits
+1e14548 + 794f2f8 + 7419a57 + ed7f028; fresh-agent reviewer CLEAR
+a25f4bc73869baec8): Lisman-Idiart theta-gamma multiplexing (catalog
+N.16) clears 0.80 bar at loads {2,3,5,7} multi-seed with controls
+decisive.
+
+**Direction F cross-bridge cheap-first probes** (commits 3af929d +
+1d4e866): interference variant identified abstention bound (Test I
+0.712 multi-seed); familiarity-gate fix RESOLVED it (Test I 0.999).
+Generalizable insight: abstention always requires a SEPARATE
+familiarity / match-strength signal, never a single threshold on the
+identification score.
+
+**Direction E+F INTEGRATED probe** (commit 94c539e): theta-gamma +
+cross-bridge + familiarity-gate at G.20 "age-5" 160-concept vocab +
+5 slots + 2-bridges-per-slot interference: 0.997 / 1.000 / 0.999
+multi-seed.
+
+When Task 1 completes: smell test + dedicated fresh-agent adversarial
+review + pillar n=104 (if PASS) + honest propagation regardless of
+outcome.
+
+---
+
+## Earlier in-flight state (preserved for context)
+
 **DIRECTION A FULL-SCALE IN FLIGHT 2026-05-24 (background task
 `bzfui0zh0`; ~3 hr GPU; commits 7330dd7 launch + 219ff2a fix +
 f272c0d smell-test, all both remotes).** SEED 42 + SEED 43 RESULTS
