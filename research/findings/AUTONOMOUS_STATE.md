@@ -69,9 +69,46 @@ pre-registered fixed-bar test. Honest ceiling unchanged.
 
 ## Exact next concrete action
 
+**DIRECTION E ALGEBRA PILLAR n=103 VALIDATED (2026-05-24, both remotes;
+commits 1e14548 probe + 794f2f8 review + 7419a57 findings + ed7f028
+pillar; subagent reviewer CLEAR a25f4bc73869baec8).** Lisman-Idiart
+theta-gamma multiplexing (catalog N.16) numpy probe: 12/12 PASS multi-
+seed at loads {2,3,5,7}; controls decisive (permutation + no-window at
+1/LOAD chance; high-overlap robust); fresh-agent adversarial reviewer
+analytically + 100k empirically confirmed chance baselines, RAN
+exploits (degenerate-sequence + slot-phase-ignoring), found no
+defects, recommended pillar. Honest scope: ALGEBRA only; substrate
+biologization design at docs/plans/2026-05-24-direction-E-theta-
+gamma-substrate-design.md (4-substitution pattern mirroring FHRR
+biologization arc).
+
+**DIRECTION F CROSS-BRIDGE ABSTENTION BOUND IDENTIFIED + RESOLVED
+(2026-05-24, both remotes; commits 3af929d trivial+interference +
+1d4e866 familiarity-gate fix).** Three cheap-first numpy probes: (1)
+trivial test (no inter-bridge interference) PASS 1.000 -- correctly
+flagged as uninformative; (2) realistic interference test (shared
+substrate; per-bridge cosine-threshold queries) found CROSS_BRIDGE_
+ABSTENTION_FAILS at multi-seed 0.712 on the non-overlapping
+abstention test (Test I) while passing discrimination (Test II at
+0.996); (3) familiarity-gate fix (separate norm-ratio familiarity
+signal at frozen THRESHOLD_NORM_RATIO=1.5) RESOLVES the abstention
+bound -- Test I 0.712 -> 0.999 (+0.287); Test II preserved at 0.996.
+Generalizable biology-translatable insight: abstention always
+requires a SEPARATE familiarity / match-strength signal (perirhinal
+/ hippocampal novelty detection + LC norepinephrine), never a single
+threshold on the identification score. Same principle as FHRR
+shortcut-3 RESOLVED (2026-05-22).
+
 **DIRECTION A FULL-SCALE IN FLIGHT 2026-05-24 (background task
 `bzfui0zh0`; ~3 hr GPU; commits 7330dd7 launch + 219ff2a fix +
-f272c0d smell-test, all both remotes).** Per overnight: the (c)
+f272c0d smell-test, all both remotes).** SEED 42 RESULT IN (45 min
+elapsed; ~2 hr remaining): **slot3 accuracy 0.875 (7/8) -- ABOVE the
+0.80 bar at single-seed**. Per-sequence: 7/8 PASS; 1 FAIL (seq 7:
+['small','big','north'] -- top-3 were ['small','big','west'] missing
+'north'; possible mechanism: positional cue too weak to disambiguate
+among 3 engrammed slots; in-sequence other-slot words pulled instead).
+Seed 43 now at 1920/3200 events training. Multi-seed completion ETA
+~15:30 EDT. Per overnight: the (c)
 generative-replay arc converged on REPLAY_DOESNT_REACTIVATE -- the
 substrate stores SIMULTANEOUS engrams perfectly (multitag 91.7%
 multi-seed at n=100/n=101) but NOT SEQUENTIAL slot-position
