@@ -1,0 +1,46 @@
+{
+  "config": {
+    "N_BRIDGES": 5,
+    "N_CONCEPTS_PER_BRIDGE": 32,
+    "N_DIM_PER_BRIDGE": 256,
+    "SPARSITY": 0.05,
+    "SLOT_COUNT": 5,
+    "N_TRIALS_PER_LOAD": 200,
+    "BAR": 0.8,
+    "NOISE_STD": 0.05,
+    "SEEDS": [
+      42,
+      43,
+      44
+    ],
+    "ABSTENTION_THRESHOLD": 0.3
+  },
+  "total_vocab": 160,
+  "chance": 0.00625,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_correct": 1000,
+      "n_total_slots": 1000,
+      "accuracy": 1.0,
+      "n_trials": 200
+    },
+    {
+      "seed": 43,
+      "n_correct": 1000,
+      "n_total_slots": 1000,
+      "accuracy": 1.0,
+      "n_trials": 200
+    },
+    {
+      "seed": 44,
+      "n_correct": 1000,
+      "n_total_slots": 1000,
+      "accuracy": 1.0,
+      "n_trials": 200
+    }
+  ],
+  "multi_seed_mean": 1.0,
+  "verdict": "CROSS_BRIDGE_ALGEBRA_SUFFICIENT",
+  "wall_clock_minutes": 0.03577009836832682
+}

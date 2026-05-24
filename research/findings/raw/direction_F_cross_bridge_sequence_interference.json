@@ -1,0 +1,31 @@
+{
+  "config": {
+    "N_BRIDGES": 5,
+    "N_CONCEPTS_PER_BRIDGE": 32,
+    "N_DIM_SHARED": 256,
+    "SLOT_COUNT": 5,
+    "SPARSITY": 0.05,
+    "NOISE_STD": 0.05,
+    "BAR": 0.8,
+    "N_TRIALS": 200,
+    "SEEDS": [
+      42,
+      43,
+      44
+    ]
+  },
+  "test1_non_overlap_mean": 0.7120000000000001,
+  "test1_non_overlap_per_seed": [
+    0.7168,
+    0.7074,
+    0.7118
+  ],
+  "test2_overlap_mean": 0.996,
+  "test2_overlap_per_seed": [
+    0.988,
+    1.0,
+    1.0
+  ],
+  "verdict": "CROSS_BRIDGE_ABSTENTION_FAILS",
+  "wall_clock_minutes": 0.059904042879740396
+}
