@@ -1,0 +1,604 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "K_PAIRS": 8,
+  "TOP_K_READOUT": 5,
+  "bar": 0.8,
+  "substrate": "OPTION3_no_hippo_no_dlpfc (pillar n=96)",
+  "per_seed": [
+    {
+      "seed": 42,
+      "consolidation_run": true,
+      "n_both_in_topK": 0,
+      "n_at_least_one_in_topK": 5,
+      "both_accuracy": 0.0,
+      "at_least_one_accuracy": 0.625,
+      "per_pair": [
+        {
+          "pair_idx": 0,
+          "tag_name": "multitag_pair_000",
+          "pair_A": "look",
+          "pair_B": "north",
+          "topK_words": [
+            "small",
+            "go",
+            "cat",
+            "stop",
+            "apple"
+          ],
+          "topK_scores": [
+            0.1932,
+            0.1692,
+            0.1582,
+            0.1564,
+            0.1545
+          ],
+          "A_in": false,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 1,
+          "tag_name": "multitag_pair_001",
+          "pair_A": "big",
+          "pair_B": "stop",
+          "topK_words": [
+            "small",
+            "dog",
+            "west",
+            "cold",
+            "go"
+          ],
+          "topK_scores": [
+            0.177,
+            0.1751,
+            0.1636,
+            0.1617,
+            0.1503
+          ],
+          "A_in": false,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 2,
+          "tag_name": "multitag_pair_002",
+          "pair_A": "hot",
+          "pair_B": "cat",
+          "topK_words": [
+            "dog",
+            "east",
+            "big",
+            "cat",
+            "small"
+          ],
+          "topK_scores": [
+            0.1853,
+            0.1814,
+            0.1755,
+            0.1541,
+            0.1463
+          ],
+          "A_in": false,
+          "B_in": true,
+          "both_in": false
+        },
+        {
+          "pair_idx": 3,
+          "tag_name": "multitag_pair_003",
+          "pair_A": "east",
+          "pair_B": "south",
+          "topK_words": [
+            "east",
+            "river",
+            "go",
+            "look",
+            "hot"
+          ],
+          "topK_scores": [
+            0.1911,
+            0.1602,
+            0.1602,
+            0.1583,
+            0.1583
+          ],
+          "A_in": true,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 4,
+          "tag_name": "multitag_pair_004",
+          "pair_A": "small",
+          "pair_B": "look",
+          "topK_words": [
+            "big",
+            "look",
+            "cat",
+            "cold",
+            "west"
+          ],
+          "topK_scores": [
+            0.1932,
+            0.178,
+            0.1667,
+            0.1629,
+            0.1629
+          ],
+          "A_in": false,
+          "B_in": true,
+          "both_in": false
+        },
+        {
+          "pair_idx": 5,
+          "tag_name": "multitag_pair_005",
+          "pair_A": "stop",
+          "pair_B": "look",
+          "topK_words": [
+            "big",
+            "apple",
+            "look",
+            "cat",
+            "come"
+          ],
+          "topK_scores": [
+            0.1744,
+            0.1618,
+            0.1618,
+            0.16,
+            0.1564
+          ],
+          "A_in": false,
+          "B_in": true,
+          "both_in": false
+        },
+        {
+          "pair_idx": 6,
+          "tag_name": "multitag_pair_006",
+          "pair_A": "big",
+          "pair_B": "cold",
+          "topK_words": [
+            "small",
+            "dog",
+            "cat",
+            "river",
+            "apple"
+          ],
+          "topK_scores": [
+            0.1736,
+            0.1718,
+            0.1718,
+            0.1682,
+            0.1592
+          ],
+          "A_in": false,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 7,
+          "tag_name": "multitag_pair_007",
+          "pair_A": "cold",
+          "pair_B": "apple",
+          "topK_words": [
+            "go",
+            "small",
+            "big",
+            "north",
+            "apple"
+          ],
+          "topK_scores": [
+            0.2072,
+            0.199,
+            0.1825,
+            0.1529,
+            0.1513
+          ],
+          "A_in": false,
+          "B_in": true,
+          "both_in": false
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "consolidation_run": true,
+      "n_both_in_topK": 1,
+      "n_at_least_one_in_topK": 5,
+      "both_accuracy": 0.125,
+      "at_least_one_accuracy": 0.625,
+      "per_pair": [
+        {
+          "pair_idx": 0,
+          "tag_name": "multitag_pair_000",
+          "pair_A": "west",
+          "pair_B": "apple",
+          "topK_words": [
+            "big",
+            "look",
+            "north",
+            "cold",
+            "come"
+          ],
+          "topK_scores": [
+            0.1893,
+            0.186,
+            0.1712,
+            0.1712,
+            0.1663
+          ],
+          "A_in": false,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 1,
+          "tag_name": "multitag_pair_001",
+          "pair_A": "go",
+          "pair_B": "cat",
+          "topK_words": [
+            "stop",
+            "big",
+            "east",
+            "river",
+            "come"
+          ],
+          "topK_scores": [
+            0.1939,
+            0.1872,
+            0.1755,
+            0.1655,
+            0.1638
+          ],
+          "A_in": false,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 2,
+          "tag_name": "multitag_pair_002",
+          "pair_A": "big",
+          "pair_B": "come",
+          "topK_words": [
+            "big",
+            "cold",
+            "stop",
+            "east",
+            "come"
+          ],
+          "topK_scores": [
+            0.1673,
+            0.1673,
+            0.1641,
+            0.1608,
+            0.1592
+          ],
+          "A_in": true,
+          "B_in": true,
+          "both_in": true
+        },
+        {
+          "pair_idx": 3,
+          "tag_name": "multitag_pair_003",
+          "pair_A": "come",
+          "pair_B": "east",
+          "topK_words": [
+            "small",
+            "hot",
+            "east",
+            "stop",
+            "go"
+          ],
+          "topK_scores": [
+            0.1716,
+            0.1683,
+            0.165,
+            0.1634,
+            0.1568
+          ],
+          "A_in": false,
+          "B_in": true,
+          "both_in": false
+        },
+        {
+          "pair_idx": 4,
+          "tag_name": "multitag_pair_004",
+          "pair_A": "stop",
+          "pair_B": "apple",
+          "topK_words": [
+            "look",
+            "stop",
+            "cold",
+            "come",
+            "go"
+          ],
+          "topK_scores": [
+            0.1805,
+            0.1682,
+            0.1611,
+            0.1593,
+            0.1558
+          ],
+          "A_in": true,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 5,
+          "tag_name": "multitag_pair_005",
+          "pair_A": "east",
+          "pair_B": "big",
+          "topK_words": [
+            "small",
+            "big",
+            "north",
+            "look",
+            "stop"
+          ],
+          "topK_scores": [
+            0.1882,
+            0.1783,
+            0.1716,
+            0.165,
+            0.1584
+          ],
+          "A_in": false,
+          "B_in": true,
+          "both_in": false
+        },
+        {
+          "pair_idx": 6,
+          "tag_name": "multitag_pair_006",
+          "pair_A": "hot",
+          "pair_B": "small",
+          "topK_words": [
+            "go",
+            "come",
+            "river",
+            "big",
+            "west"
+          ],
+          "topK_scores": [
+            0.1814,
+            0.1646,
+            0.1545,
+            0.1545,
+            0.1528
+          ],
+          "A_in": false,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 7,
+          "tag_name": "multitag_pair_007",
+          "pair_A": "cat",
+          "pair_B": "apple",
+          "topK_words": [
+            "come",
+            "look",
+            "big",
+            "apple",
+            "north"
+          ],
+          "topK_scores": [
+            0.1886,
+            0.1838,
+            0.1521,
+            0.1505,
+            0.149
+          ],
+          "A_in": false,
+          "B_in": true,
+          "both_in": false
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "consolidation_run": true,
+      "n_both_in_topK": 0,
+      "n_at_least_one_in_topK": 4,
+      "both_accuracy": 0.0,
+      "at_least_one_accuracy": 0.5,
+      "per_pair": [
+        {
+          "pair_idx": 0,
+          "tag_name": "multitag_pair_000",
+          "pair_A": "hot",
+          "pair_B": "small",
+          "topK_words": [
+            "cat",
+            "cold",
+            "apple",
+            "go",
+            "north"
+          ],
+          "topK_scores": [
+            0.1732,
+            0.1649,
+            0.1616,
+            0.1616,
+            0.1599
+          ],
+          "A_in": false,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 1,
+          "tag_name": "multitag_pair_001",
+          "pair_A": "west",
+          "pair_B": "small",
+          "topK_words": [
+            "north",
+            "cat",
+            "west",
+            "dog",
+            "stop"
+          ],
+          "topK_scores": [
+            0.1681,
+            0.165,
+            0.1635,
+            0.1619,
+            0.1619
+          ],
+          "A_in": true,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 2,
+          "tag_name": "multitag_pair_002",
+          "pair_A": "look",
+          "pair_B": "west",
+          "topK_words": [
+            "stop",
+            "cat",
+            "east",
+            "west",
+            "go"
+          ],
+          "topK_scores": [
+            0.1943,
+            0.1854,
+            0.166,
+            0.166,
+            0.166
+          ],
+          "A_in": false,
+          "B_in": true,
+          "both_in": false
+        },
+        {
+          "pair_idx": 3,
+          "tag_name": "multitag_pair_003",
+          "pair_A": "cat",
+          "pair_B": "river",
+          "topK_words": [
+            "small",
+            "hot",
+            "go",
+            "stop",
+            "south"
+          ],
+          "topK_scores": [
+            0.1728,
+            0.1694,
+            0.1625,
+            0.1625,
+            0.1504
+          ],
+          "A_in": false,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 4,
+          "tag_name": "multitag_pair_004",
+          "pair_A": "look",
+          "pair_B": "cat",
+          "topK_words": [
+            "hot",
+            "west",
+            "stop",
+            "dog",
+            "south"
+          ],
+          "topK_scores": [
+            0.1917,
+            0.1848,
+            0.1694,
+            0.1643,
+            0.1575
+          ],
+          "A_in": false,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 5,
+          "tag_name": "multitag_pair_005",
+          "pair_A": "big",
+          "pair_B": "hot",
+          "topK_words": [
+            "north",
+            "dog",
+            "small",
+            "west",
+            "big"
+          ],
+          "topK_scores": [
+            0.1754,
+            0.1754,
+            0.164,
+            0.1623,
+            0.1525
+          ],
+          "A_in": true,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 6,
+          "tag_name": "multitag_pair_006",
+          "pair_A": "cat",
+          "pair_B": "stop",
+          "topK_words": [
+            "small",
+            "cat",
+            "go",
+            "north",
+            "west"
+          ],
+          "topK_scores": [
+            0.1883,
+            0.16,
+            0.1583,
+            0.155,
+            0.155
+          ],
+          "A_in": true,
+          "B_in": false,
+          "both_in": false
+        },
+        {
+          "pair_idx": 7,
+          "tag_name": "multitag_pair_007",
+          "pair_A": "river",
+          "pair_B": "dog",
+          "topK_words": [
+            "stop",
+            "hot",
+            "north",
+            "go",
+            "west"
+          ],
+          "topK_scores": [
+            0.1999,
+            0.1929,
+            0.1912,
+            0.1631,
+            0.1614
+          ],
+          "A_in": false,
+          "B_in": false,
+          "both_in": false
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "both_in_topK_mean": 0.041666666666666664,
+    "at_least_one_mean": 0.5833333333333334
+  },
+  "comparison_to_dlpfc_extension_both_mean": 0.083,
+  "diagnosis": "RECIPE_DIFFERS_FROM_ORIGINAL_VALIDATION",
+  "wall_clock_minutes": 1.5350858648618062
+}
