@@ -1506,6 +1506,105 @@ ceiling precisely and yields a sharper biology-translatable claim
 than the BOUNDARY pillar alone). This stays within the mode-
 unification thread's natural completion without preempting (c).
 
+**OWNER 2nd AUTONOMY DIRECTIVE (2026-05-23): "Go with whatever you
+think is most effective to reach our goals."** Authorised pursuing
+the highest-leverage direction with judgment-driven autonomy.
+
+**OPTION 3 PROBE COMPLETE = VALIDATED PASS; (c) INTEGRATION-CHOICE
+RESOLVED EMPIRICALLY; VALIDATED PILLAR n=96 RECORDED (2026-05-23,
+both remotes).** The OPTION 3 cheap-first probe -- chosen as the
+highest-leverage next direction because it resolves the (c)
+integration-choice question empirically (vs further deliberation)
+-- ran cleanly end-to-end. Smoke first (12 words x 30 events; OB
+1.000 OI 1.000 at L=2,3 in 3.8 min) caught two scale-specific bugs
+(verb-vocab-in-word_to_idx, n_lang_output default mismatch) that
+were fixed; full multi-seed (seeds 42/43/44; 16 words x 200 events
+x 16 obs; v16 production recipe; kill-safe per-seed bridge +
+activity cache; 92.6 min wall-clock on RTX 3090) returned:
+
+RESULT: OPTION3_BASIC_PASS. Multi-seed (42/43/44) integrated
+accuracy at L=2/3/5: OB 1.000/1.000/1.000 (zero errors across 1800
+OB trials); OI 1.000/1.000/0.997 (per-seed L=5 OI [0.995, 0.995,
+1.000]). Every cell well above bar with huge margin (multi-seed OI
+L=5 = 0.997 is 0.197 above the 0.80 bar). CLEANER than the (e)
+ensemble result on G.20 sparse (OI L=5 0.960-0.987 across 5 bridges)
+because the bio_brain_regions substrate's concept-pool activity is
+5-7x denser per neuron (mean rate 0.35-0.43 vs G.20 sparse 0.05-
+0.10) -- each concept fires its own distinct ~200-neuron pool with
+near-orthogonal raw activity vectors before mean-centring.
+
+Mandatory smell-test PASSED (per-seed verdicts recompute byte-for-
+byte from JSON; batched-vs-scalar 2.08e-17 to 2.78e-17 every seed).
+DEDICATED FRESH-AGENT ADVERSARIAL REVIEWER (17 exploit-class checks
+RAN; the most thorough review this session: included independent
+byte-exact reproduction of seed 42 from cache short-circuit; per-
+concept activity vector distinctness check (off-diagonal cosine
+0.79-0.85 NOT 1.0; apple != river); OB perfection genuineness
+inspection at L=5 (items_idx tuples all distinct, recoveries element-
+wise correct); W->A binding signature confirmation (target/off-
+target firing rate ratio 2.04x mean -- v14/v16 training real); and
+substrate-identity check (probe captures from 16 distinct concept-
+pool regions, NOT silent G.20-sparse substitution)) returned VERDICT
+CLEAR with no defect on any check. Recommendation: SHIP as VALIDATED
+pillar; OPTION 3 viable for (c). capability_status.json: VALIDATED
+pillar n=96 recorded; schema 6/6 green; no-confab moat 7/7 green;
+protected set zero diff across entire (OPTION 3) arc. Findings:
+`research/findings/2026-05-23-OPTION3-parallel-matching-PASSES-on-
+build_biological_brain_regions-substrate-cleanest-biology-match-
+for-generative-replay.md`.
+
+BIOLOGY-TRANSLATABLE INSIGHT (this pillar's deliverable): the SAME
+parallel-population-matching identification mechanism PASSes on TWO
+independently-developed biological substrate styles with characterised
+division of labor: G.20 sparse (K-of-N sparse codes; per-bridge V=32
+PASS via n=94; cross-bridge V=160 OB extends OI ceilings at L=5 via
+n=95) AND build_biological_brain_regions concept pools (distinct
+per-concept pools; V=16 essentially perfect 1.000/1.000/0.997 this
+pillar). The validated cortical identification mechanism transfers
+across substrate architectures -- evidence that the underlying
+biological computation is substrate-style-agnostic. Both biological
+substrates ground the same parallel-matching mechanism cleanly.
+
+IMPLICATION FOR (c) GENERATIVE-REPLAY: OPTION 3 of the integration-
+choice trichotomy is now EMPIRICALLY VIABLE. (c) can build on the
+build_biological_brain_regions substrate WITHOUT requiring the
+OPTION 1 substrate-merge (port G.20 sparse into build_biological_
+brain_regions). The cleanest biology match for the conversational
+arc -- the substrate with hippocampus + dlpfc_wm + Phase 1.3 SWR
+consolidation already validated -- is also the substrate on which
+parallel-matching mode-unification just PASSed. The next pre-
+registered step toward (c) is straightforward: enable hippocampus
+on this substrate (`enable_hippocampus_consolidation=True`) and
+re-run the parallel-matching mode-unification probe to confirm the
+PASS holds WITH hippocampus present. If it does, (c) builds cleanly;
+the generative-replay loop wiring becomes the only genuinely-new
+code (substrate components + grounded-symbol derivation + mode-
+unification decoder ALL already validated).
+
+**EXACT NEXT ACTION: per standing autonomy, proceed with the
+hippocampus-enabled extension of OPTION 3 -- a parallel-matching
+mode-unification probe on the build_biological_brain_regions
+substrate WITH `enable_hippocampus_consolidation=True`.** This is
+the natural next pre-registered step toward (c) -- cheapest
+empirical confirmation that the hippocampus addition doesn't break
+the basic substrate-grounding (mode-unification's grounded symbols
+are derived from concept-pool activity, not hippocampus state;
+hippocampus only enters during the generative-replay loop's replay-
+against-schema phase). Pre-registered reading: HIPPO_OPTION3_PASS
+iff multi-seed-mean >= 0.80 every cell on BOTH readouts (matches
+the OPTION 3 basic PASS framing). NEGATIVE if hippocampus
+introduction perturbs the concept-pool activity geometry enough to
+break the grounded-symbol pipeline -- biology-translatable either
+way (the hippocampus modulates basal cortical activity even at rest;
+quantifying whether that modulation breaks the substrate-grounding
+is a real result). Reuse-by-import only via concept_pool_demo's
+existing flag; no new code beyond the runner wiring (which can
+extend the OPTION 3 probe with a one-line flag). Expected wall-
+clock: similar to OPTION 3 (~30 min/seed train + capture + pipeline;
+~2 hr total multi-seed; kill-safe per-seed cache). Then if HIPPO
+PASSes, the (c) generative-replay TDD plan + build is the next
+pre-registered substantial direction.
+
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification
 is the next major direction; generative replay then closes the
