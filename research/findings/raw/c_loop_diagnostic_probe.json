@@ -1,0 +1,120 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seed": 42,
+  "V": 16,
+  "K": 4,
+  "tag_names": [
+    "generative_seq_000",
+    "generative_seq_001",
+    "generative_seq_002",
+    "generative_seq_003"
+  ],
+  "sequences": [
+    [
+      "stop",
+      "east",
+      "look"
+    ],
+    [
+      "east",
+      "look",
+      "big"
+    ],
+    [
+      "cat",
+      "hot",
+      "look"
+    ],
+    [
+      "cat",
+      "look",
+      "south"
+    ]
+  ],
+  "encoded_cortex_pattern_means": {
+    "generative_seq_000": 0.078125,
+    "generative_seq_001": 0.04625000059604645,
+    "generative_seq_002": 0.03750000149011612,
+    "generative_seq_003": 0.05562499910593033
+  },
+  "baseline_activity_mean": 0.09749999642372131,
+  "per_engram_results": [
+    {
+      "chosen_tag": "generative_seq_000",
+      "chosen_seq": [
+        "stop",
+        "east",
+        "look"
+      ],
+      "post_replay_mean_rate": 0.08375000208616257,
+      "sim_to_correct_engram_cortex": 0.07860548300880091,
+      "sim_to_other_engrams_mean": 0.056643310775378895,
+      "sim_to_other_engrams_individual": [
+        0.03499688930364226,
+        0.07567943486441664,
+        0.05925360815807778
+      ],
+      "sim_to_baseline_no_drive": 0.01894171875657411
+    },
+    {
+      "chosen_tag": "generative_seq_001",
+      "chosen_seq": [
+        "east",
+        "look",
+        "big"
+      ],
+      "post_replay_mean_rate": 0.0637499988079071,
+      "sim_to_correct_engram_cortex": 0.04864304284222525,
+      "sim_to_other_engrams_mean": 0.08802058209099826,
+      "sim_to_other_engrams_individual": [
+        0.13538654443022938,
+        0.051133405591022495,
+        0.07754179625174289
+      ],
+      "sim_to_baseline_no_drive": 0.11804384828203429
+    },
+    {
+      "chosen_tag": "generative_seq_002",
+      "chosen_seq": [
+        "cat",
+        "hot",
+        "look"
+      ],
+      "post_replay_mean_rate": 0.15468749403953552,
+      "sim_to_correct_engram_cortex": 0.0976383167910525,
+      "sim_to_other_engrams_mean": 0.0747728780468095,
+      "sim_to_other_engrams_individual": [
+        0.08865754626454568,
+        0.06789694004892001,
+        0.06776414782696283
+      ],
+      "sim_to_baseline_no_drive": 0.09381687234932576
+    },
+    {
+      "chosen_tag": "generative_seq_003",
+      "chosen_seq": [
+        "cat",
+        "look",
+        "south"
+      ],
+      "post_replay_mean_rate": 0.16687500476837158,
+      "sim_to_correct_engram_cortex": 0.1198336876479057,
+      "sim_to_other_engrams_mean": 0.10223138025940325,
+      "sim_to_other_engrams_individual": [
+        0.15887774400967172,
+        0.009936704819411864,
+        0.13787969194912614
+      ],
+      "sim_to_baseline_no_drive": 0.1483734688742948
+    }
+  ],
+  "aggregate": {
+    "mean_sim_correct": 0.0861801325724961,
+    "mean_sim_other": 0.08041703779314748,
+    "mean_sim_baseline": 0.09479397706555724,
+    "selectivity": 0.005763094779348624,
+    "above_baseline": -0.008613844493061143
+  },
+  "diagnosis": "REPLAY_DOESNT_REACTIVATE"
+}
