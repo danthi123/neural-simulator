@@ -3,6 +3,20 @@ to characterize where the ec_context positional binding mechanism
 ceilings. Reuses the trained bridges from the main Direction A run
 (no extra training); ~30-60 min wall total for the sweep.
 
+REVIEWER NOTE (2026-05-24, STRENGTHEN clarification per BLOCK
+verdict #3): The bridge is trained at n_max_positions=3 (the only
+positions encountered during training are slots {0, 1, 2}). The
+sweep tests {3, 4, 5, 6, 7} by passing n_max_positions=slot_count
+to positional_drive_pattern -- which uses a STRIDE-3 layout in v1,
+STRIDE-N layout at slot_count=N. So at slot_count=7 the drives
+occupy positional bands the substrate's trained ec_context->pool
+weights NEVER saw. This sweep therefore measures the ENGRAM-
+CAPTURE+STIM mechanism at varying stride (the engram is re-captured
+per-slot_count), NOT extrapolation of trained positional weights.
+Any PASS here is about engram-tagging capacity at varying stride,
+not about the substrate having learned positions 3-6.
+"""
+
 This runs AFTER the main Direction A completes. If main PASSes at
 slot_count=3, this characterizes the load-ceiling: at what slot count
 does the mechanism break? Mirrors the FHRR capacity-curve pattern
