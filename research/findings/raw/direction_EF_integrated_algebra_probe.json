@@ -1,0 +1,54 @@
+{
+  "config": {
+    "N_BRIDGES": 5,
+    "N_CONCEPTS_PER_BRIDGE": 32,
+    "N_DIM": 256,
+    "N_THETA": 119,
+    "N_GAMMA": 7,
+    "GAMMA_PERIOD": 17,
+    "SLOT_COUNT": 5,
+    "BRIDGES_PER_SLOT": 2,
+    "SPARSITY": 0.05,
+    "NOISE_STD": 0.05,
+    "BAR": 0.8,
+    "N_TRIALS": 200,
+    "SEEDS": [
+      42,
+      43,
+      44
+    ],
+    "THRESHOLD_NORM_RATIO": 1.5,
+    "total_vocab": 160
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "active_acc": 0.9915,
+      "inactive_abstain_acc": 1.0,
+      "combined_acc": 0.9966,
+      "n_active_queries": 2000,
+      "n_inactive_queries": 3000
+    },
+    {
+      "seed": 43,
+      "active_acc": 1.0,
+      "inactive_abstain_acc": 1.0,
+      "combined_acc": 1.0,
+      "n_active_queries": 2000,
+      "n_inactive_queries": 3000
+    },
+    {
+      "seed": 44,
+      "active_acc": 1.0,
+      "inactive_abstain_acc": 1.0,
+      "combined_acc": 1.0,
+      "n_active_queries": 2000,
+      "n_inactive_queries": 3000
+    }
+  ],
+  "active_concept_id_mean": 0.9971666666666668,
+  "inactive_abstain_mean": 1.0,
+  "combined_mean": 0.9988666666666667,
+  "verdict": "EF_INTEGRATED_ALGEBRA_SUFFICIENT",
+  "wall_clock_minutes": 0.030603118737538657
+}
