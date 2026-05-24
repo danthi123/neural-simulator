@@ -99,6 +99,50 @@ requires a SEPARATE familiarity / match-strength signal (perirhinal
 threshold on the identification score. Same principle as FHRR
 shortcut-3 RESOLVED (2026-05-22).
 
+**CHAIN PROGRESS: Direction A v1/v2/E-Task-1 ALL BOUNDARY -> Direction
+G LAUNCHED 2026-05-24 (background task `bss6rkbtc`; ~4 hr GPU;
+HIPPO-OPTION3 substrate + theta-gamma; pillar n=104 BOUNDARY recorded).**
+
+PILLAR n=104 RECORDED (BOUNDARY) -- v16 cortical-only substrate
+FUNDAMENTALLY BOUNDED for sequence-position retrieval (commit
+e79d9da): convergent across three attempts (Direction A v1 0.333;
+v2 0.292; Direction E Task 1 0.250; all 4-5x chance but below 0.80
+strict top-1 bar). Engram IS load-bearing in all three; positional
+cue (whether spatial ec_context or temporal theta-gamma) is NOT.
+Diagnosis: v16's weak concept-pool dynamics (deliberate v14/v16
+canon-amplifies-bias-collapse design) make all pool neurons fire
+equally during engram capture; no positional cue breaks the tie.
+Biology-translatable: substrate that supports SIMULTANEOUS multitag
+binding (pillar n=100/n=101 91.7%) does NOT support SEQUENTIAL
+slot-position retrieval; real biology uses dedicated sequence-binding
+machinery (hippocampal CA3 + CA1 sequence/time cells + theta-gamma
+in concert with trisynaptic loop).
+
+DIRECTION G IN FLIGHT (background task `bss6rkbtc`; commit e8c9185
++ b411e87): tests if hippocampus + theta-gamma combination clears
+the bar where cortical-only failed. Reuses _build_bridge_with_hippo
+(HIPPO-OPTION3 builder; pillar n=97 substrate) + Direction E Task 1
+mechanism (encode_gamma_slot + capture_phase_windowed + phase_to
+_gamma_slot) byte-unchanged. Pre-registered FROZEN bar 0.80 multi-
+seed strict top-1.
+
+Direction G outcomes pre-registered:
+- PASS (>= 0.80): pillar n=105 + catalog D.04+D.11+N.16 vindicated;
+  chat REPL integration; user-facing sequence demos
+- PARTIAL (0.40-0.80): hippocampus HELPS; diagnose which hippocampal
+  subcircuit is load-bearing; honest BOUNDARY
+- NO_IMPROVEMENT (~0.25-0.33): bound deeper than hippocampus;
+  pivot to Direction H (canon concept-pool dynamics with v14/v16
+  trainability controls)
+- HIPPO_HURT (< 0.125): SWR interaction noise; cheap diagnostic
+
+ETA Direction G completion ~21:30 EDT (~4 hr from 17:27 launch).
+Post chain (direction_G_post_chain.py) auto-runs recommendation.
+
+---
+
+## Earlier in-flight state (preserved for context)
+
 **CHAIN COMPLETE: Direction A v1 + v2 done; Direction E substrate
 Task 1 LAUNCHED 2026-05-24 (background task `bk91wak0v`; ~3 hr GPU;
 kill-safe per-seed cache).**
