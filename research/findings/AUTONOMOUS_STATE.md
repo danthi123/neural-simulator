@@ -1252,30 +1252,74 @@ is now in place: PFC can hold an ORDERED compositional frame on the
 biologized substrate. Findings:
 `research/findings/2026-05-23-biologized-mode-unification-PASS-via-parallel-population-matching-VALIDATED-with-oracle-adjacency-caveat.md`.
 
-**EXACT NEXT ACTION: write the design doc for (c) generative replay
-per the owner's prior authorization.** The third leg of the owner's
-2026-05-19 conversational-path reframe (1. SPEAR temporal
-multiplexing -- built, convergent ceiling; 2. theta-gamma mode-
-unification -- built, both readouts now VALIDATED biologized via
-parallel matching; 3. generative replay -- NEXT). The
-hippocampal-prefrontal replay loop: PFC holds the ordered
-compositional frame; hippocampus replays and pattern-completes
-against the consolidated cortical schema; the loop generates
-context-appropriate continuations from the consolidated schema.
-ALL prerequisite subsystems are validated: trisynaptic loop (D.12
-separation + D.13 completion), engram tagging (D.14), SWR
-consolidation (Phase 1.3, 3/3 strict anti-cheat), NMDA bistable
-PFC working memory, abstention gate, mode-unification both
-readouts (VALIDATED this session). Genuinely-new component: the
-generative replay LOOP wiring -- a small controller that gates
-replay against the held PFC frame and reads the replay-pattern-
-completed responses back into the frame. Substantial design
-exercise (the loop has many subsystems to integrate cleanly with
-the biology-faithful timing); subsequent TDD plan + subagent-
-driven build + adversarial review + GPU run would be the multi-
-week build phase. Per owner's prior instruction: write the design
-doc now; the multi-week build is for owner-steered execution after
-design review.
+**(c) GENERATIVE-REPLAY DESIGN DOC WRITTEN AND COMMITTED (2026-05-23,
+both remotes, commit 97f21c5).** Third leg of the owner's 2026-05-19
+conversational-path reframe. The doc sketches the hippocampal-prefrontal
+replay loop: PFC holds the ordered compositional frame via NMDA
+bistability + dlpfc_wm; hippocampus replays SWR sequences and pattern-
+completes against the consolidated cortical schema; the parallel-
+matching mode-unification decoder identifies the replayed continuation;
+the loop updates the PFC frame. Pre-registered test: partial-sequence
+completion via replay; PASS iff multi-seed-mean >= 0.80 at every K in
+the K-ladder.
+
+**ARCHITECTURE-MISMATCH CONCERN SURFACED (best-judgment honest reading
+of the (c) design as written).** The (c) design implicitly assumes a
+single substrate that has (i) the G.20 sparse pools where mode-
+unification is VALIDATED (parallel-matching pillar n=93), AND (ii) the
+build_biological_brain_regions architecture where Phase 1.3 SWR
+consolidation (3/3 strict anti-cheat) and dlpfc_wm NMDA bistability
+validated. These are TWO DIFFERENT substrates in the project today.
+The minimal (c) build would either need to port G.20 sparse into the
+build_biological_brain_regions architecture (substantial reuse +
+substrate-integration work; new pre-registered tests for the merged
+substrate), OR rescope (c) to a form that runs on one of the two
+substrates without the other's load-bearing pieces (smaller scope but
+narrower biology-translatable claim). Either path is a substantial
+pre-registered build; the right move per the standing autonomy is to
+complete the natural mode-unification thread first, propagate
+honestly, then surface the (c) integration choice to the owner with
+a revised design rather than rush a substrate-merge in this turn.
+
+**EXACT NEXT ACTION: (e) NATURAL COMPLETION OF THE MODE-UNIFICATION
+THREAD = parallel-matching biologized mode-unification across all 5
+bridges of the 160-concept ensemble IS IN FLIGHT (CPU-only, harness-
+tracked, no GPU re-run).** The (b) VALIDATED parallel-matching runner
+was tested on bridgeA_nouns only. The 160-ensemble's other 4 bridges
+(B_verbs, C_adj, D_spatial, E_functional) have trained-substrate
+caches available from the decisive 9-hour GPU run (per-bridge per-seed
+`vocabulary_scaling_160ensemble_cache/full_<bridge>_seed{42,43,44}.npz`).
+The extension probe runs the IDENTICAL pre-registered parallel-matching
+pipeline (byte-unchanged reuse of vocabulary_scaling_run + the parallel-
+matching runner's primitives) on each bridge's cache; characterises
+per-bridge per-load whether the (b) capability extends to the full
+160-concept ensemble. Pre-registered reading: ENSEMBLE_PASS iff every
+(bridge, load) cell across 5 bridges x 3 loads multi-seed-mean >= 0.80
+on BOTH order-bearing AND order-invariant readouts (15 cells per
+readout = 30 cells total; the K=16 PASS recipe extends per-bridge
+across the full 160-concept ensemble under the parallel-matching
+identification mechanism; subject to fresh dedicated adversarial review
+before any capability claim; the oracle-adjacency caveat from (b)
+applies); BOUNDARY iff some bridge or load misses (per-bridge breakdown
+reported honestly, similar to the 160-ensemble decisive run's
+bridgeD_spatial miss at TPAM).
+
+In-flight: background task `bzpl2qfmp` running
+`research/findings/raw/biologized_mode_unification_parallel_matching_5bridge_extension.py`
+under `SIM_BACKEND=numpy`; log
+`research/findings/raw/biologized_mode_unification_parallel_matching_5bridge_extension.log`;
+output JSON
+`research/findings/raw/biologized_mode_unification_parallel_matching_5bridge_extension.json`.
+Reuses all 15 existing 160-ensemble caches; no GPU; estimated
+wall-clock ~10-15 minutes; the harness genuinely notifies on
+completion.
+
+After completion: smell-test (recompute per-bridge per-load means from
+cell_results; verify no oracle leak; check per-seed variation); write
+findings doc; update capability_status pillar (upgrade n=93 to multi-
+bridge if PASS; or add BOUNDARY pillar if partial); update this state
+file; commit + push both remotes. Then surface (c) generative-replay
+architecture-integration choice to the owner with a revised design.
 
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification
