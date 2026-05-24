@@ -99,6 +99,57 @@ requires a SEPARATE familiarity / match-strength signal (perirhinal
 threshold on the identification score. Same principle as FHRR
 shortcut-3 RESOLVED (2026-05-22).
 
+**FINAL CHAIN RESULT 2026-05-24: substrate-sequence-storage arc THOROUGHLY
+CHARACTERIZED via 6 mechanism attempts; pillar n=104 extended; reviewer
+fix #3 BOTH FAIL closes biology-grounded path; next directions queued
+(H canon dynamics OR I PFC buffer OR L chat REPL on validated multitag).**
+
+Complete arc:
+| # | Mechanism | Multi-seed strict top-1 | Verdict |
+|---|-----------|--------------------------|---------|
+| A v1 | cortical + ec_context, frozen | 0.333 | BOUNDARY |
+| A v2 | cortical + ec_context, learned | 0.292 | BOUNDARY |
+| E T1 | cortical + theta-gamma | 0.250 | BOUNDARY |
+| G | HIPPO + theta-gamma | 0.333 | BOUNDARY |
+| K teacher | FHRR + substrate-grounded (teacher) | 1.000 | NOT pillar (teacher artifact) |
+| K no-teach | FHRR + substrate-grounded (fair) | 1.000 | NOT pillar (substrate not load-bearing per reviewer BLOCK) |
+| K biolog | FHRR + biologization (reviewer fix #3) | 0.000 | BOUNDARY (too strict at scale) |
+
+Pillar n=104 BOUNDARY (extended) = v16 cortical-only substrate
+fundamentally bounded for sequence-position retrieval across ALL
+biology-grounded mechanisms tested today: engram-tag (4 attempts),
+plain FHRR algebra (substrate not load-bearing per reviewer),
+biologized FHRR (both substrate and random fail). Substrate CAN do
+SIMULTANEOUS multitag binding (pillar n=100/n=101 91.7%); CANNOT do
+SEQUENTIAL positional binding. Real biology likely uses dedicated
+sequence-binding machinery (CA3 recurrent + CA1 sequence cells +
+PFC sequence buffer) not in v16.
+
+NEXT DIRECTIONS PRE-REGISTERED (each its own pillar candidate; per
+user's standing autonomy instructions):
+- **Direction H**: stronger concept-pool dynamics (canon vs weak;
+  RISKY for v14/v16 multi-concept trainability; pre-registered
+  Phase 1 control). ~3-5 hr GPU.
+- **Direction I**: dedicated PFC sequence buffer region (substantive
+  build; ~2-4 weeks). High-confidence biology iteration.
+- **Direction L**: chat REPL on validated multitag mechanism. Not
+  biology iteration; user-facing demo of what IS validated.
+
+The autonomous chain continues with H (cheapest biology iteration)
+unless user steers. The watchdog will fire next at 15:02 + 20 min
+intervals; will re-invoke session to continue from this state.
+
+Today's commits: ~90; pillars: 2 (n=103 VALIDATED, n=104 BOUNDARY
+extended); 2 fresh-agent adversarial reviews (one CLEAR for Direction
+E ALGEBRA pillar n=103, one BLOCK for Direction K with 4
+STRENGTHEN-only fixes all implemented + 3 ran); discipline preserved
+throughout (bar frozen; no protected modification; no autograd;
+honest propagation every outcome).
+
+---
+
+## Earlier in flight (preserved)
+
 **BREAKTHROUGH: Direction K substrate-grounded FHRR sequence storage =
 1.000 MULTI-SEED PASS (no-teacher fair test); reviewer in flight for
 pillar n=105 decision. 2026-05-24.**
