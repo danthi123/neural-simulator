@@ -1,22 +1,30 @@
 {
-  "bar": 0.8,
-  "chance_top1": 0.0625,
-  "chance_top3": 0.1875,
-  "n_seeds_analyzed": 3,
-  "top3_mean_original": 0.875,
-  "strict_top1_mean": 0.3333333333333333,
+  "backend": "cupy",
+  "gpu": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "K_PAIRS": 8,
+  "SLOT_COUNT": 3,
+  "n_train_events": 200,
+  "n_ec_context": 200,
+  "chance_baseline": 0.1875,
+  "slot3_accuracy_mean": 0.875,
+  "slot3_accuracy_per_seed": [
+    0.875,
+    0.75,
+    1.0
+  ],
   "per_seed": [
     {
-      "n_top1": 2,
-      "n_total": 8,
-      "strict_top1_acc": 0.25,
-      "rank_distribution": {
-        "2": 2,
-        "0": 2,
-        "1": 3,
-        "-1": 1
-      },
-      "per_seq_strict": [
+      "seed": 42,
+      "K_PAIRS": 8,
+      "SLOT_COUNT": 3,
+      "n_correct": 7,
+      "slot3_accuracy": 0.875,
+      "per_seq": [
         {
           "seq_idx": 0,
           "sequence": [
@@ -30,8 +38,12 @@
             "east",
             "look"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 2
+          "topK_scores": [
+            0.3179,
+            0.2922,
+            0.1734
+          ],
+          "correct": true
         },
         {
           "seq_idx": 1,
@@ -46,8 +58,12 @@
             "look",
             "big"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 2
+          "topK_scores": [
+            0.358,
+            0.2886,
+            0.2151
+          ],
+          "correct": true
         },
         {
           "seq_idx": 2,
@@ -62,8 +78,12 @@
             "hot",
             "cat"
           ],
-          "strict_top1_correct": true,
-          "true_rank": 0
+          "topK_scores": [
+            0.3116,
+            0.2819,
+            0.1887
+          ],
+          "correct": true
         },
         {
           "seq_idx": 3,
@@ -78,8 +98,12 @@
             "south",
             "hot"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 1
+          "topK_scores": [
+            0.4018,
+            0.3094,
+            0.1565
+          ],
+          "correct": true
         },
         {
           "seq_idx": 4,
@@ -94,8 +118,12 @@
             "cat",
             "river"
           ],
-          "strict_top1_correct": true,
-          "true_rank": 0
+          "topK_scores": [
+            0.423,
+            0.2574,
+            0.2212
+          ],
+          "correct": true
         },
         {
           "seq_idx": 5,
@@ -110,8 +138,12 @@
             "dog",
             "south"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 1
+          "topK_scores": [
+            0.3346,
+            0.3173,
+            0.1906
+          ],
+          "correct": true
         },
         {
           "seq_idx": 6,
@@ -126,8 +158,12 @@
             "west",
             "dog"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 1
+          "topK_scores": [
+            0.2906,
+            0.2645,
+            0.2267
+          ],
+          "correct": true
         },
         {
           "seq_idx": 7,
@@ -142,23 +178,22 @@
             "big",
             "west"
           ],
-          "strict_top1_correct": false,
-          "true_rank": -1
+          "topK_scores": [
+            0.2942,
+            0.2483,
+            0.1864
+          ],
+          "correct": false
         }
-      ],
-      "seed": 42,
-      "original_top3_acc": 0.875
+      ]
     },
     {
-      "n_top1": 3,
-      "n_total": 8,
-      "strict_top1_acc": 0.375,
-      "rank_distribution": {
-        "0": 3,
-        "1": 3,
-        "-1": 2
-      },
-      "per_seq_strict": [
+      "seed": 43,
+      "K_PAIRS": 8,
+      "SLOT_COUNT": 3,
+      "n_correct": 6,
+      "slot3_accuracy": 0.75,
+      "per_seq": [
         {
           "seq_idx": 0,
           "sequence": [
@@ -172,8 +207,12 @@
             "come",
             "north"
           ],
-          "strict_top1_correct": true,
-          "true_rank": 0
+          "topK_scores": [
+            0.3353,
+            0.2858,
+            0.1811
+          ],
+          "correct": true
         },
         {
           "seq_idx": 1,
@@ -188,8 +227,12 @@
             "north",
             "small"
           ],
-          "strict_top1_correct": true,
-          "true_rank": 0
+          "topK_scores": [
+            0.2936,
+            0.2886,
+            0.1852
+          ],
+          "correct": true
         },
         {
           "seq_idx": 2,
@@ -204,8 +247,12 @@
             "small",
             "west"
           ],
-          "strict_top1_correct": true,
-          "true_rank": 0
+          "topK_scores": [
+            0.3869,
+            0.2246,
+            0.2161
+          ],
+          "correct": true
         },
         {
           "seq_idx": 3,
@@ -220,8 +267,12 @@
             "apple",
             "small"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 1
+          "topK_scores": [
+            0.4066,
+            0.3066,
+            0.167
+          ],
+          "correct": true
         },
         {
           "seq_idx": 4,
@@ -236,8 +287,12 @@
             "south",
             "apple"
           ],
-          "strict_top1_correct": false,
-          "true_rank": -1
+          "topK_scores": [
+            0.3403,
+            0.3224,
+            0.1872
+          ],
+          "correct": false
         },
         {
           "seq_idx": 5,
@@ -252,8 +307,12 @@
             "apple",
             "dog"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 1
+          "topK_scores": [
+            0.3575,
+            0.2802,
+            0.174
+          ],
+          "correct": true
         },
         {
           "seq_idx": 6,
@@ -268,8 +327,12 @@
             "apple",
             "west"
           ],
-          "strict_top1_correct": false,
-          "true_rank": -1
+          "topK_scores": [
+            0.3661,
+            0.2242,
+            0.1988
+          ],
+          "correct": false
         },
         {
           "seq_idx": 7,
@@ -284,23 +347,22 @@
             "north",
             "dog"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 1
+          "topK_scores": [
+            0.3964,
+            0.3014,
+            0.1764
+          ],
+          "correct": true
         }
-      ],
-      "seed": 43,
-      "original_top3_acc": 0.75
+      ]
     },
     {
-      "n_top1": 3,
-      "n_total": 8,
-      "strict_top1_acc": 0.375,
-      "rank_distribution": {
-        "1": 4,
-        "0": 3,
-        "2": 1
-      },
-      "per_seq_strict": [
+      "seed": 44,
+      "K_PAIRS": 8,
+      "SLOT_COUNT": 3,
+      "n_correct": 8,
+      "slot3_accuracy": 1.0,
+      "per_seq": [
         {
           "seq_idx": 0,
           "sequence": [
@@ -314,8 +376,12 @@
             "come",
             "small"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 1
+          "topK_scores": [
+            0.2837,
+            0.2392,
+            0.2224
+          ],
+          "correct": true
         },
         {
           "seq_idx": 1,
@@ -330,8 +396,12 @@
             "cold",
             "come"
           ],
-          "strict_top1_correct": true,
-          "true_rank": 0
+          "topK_scores": [
+            0.28,
+            0.2267,
+            0.2061
+          ],
+          "correct": true
         },
         {
           "seq_idx": 2,
@@ -346,8 +416,12 @@
             "small",
             "east"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 1
+          "topK_scores": [
+            0.4258,
+            0.2131,
+            0.1779
+          ],
+          "correct": true
         },
         {
           "seq_idx": 3,
@@ -362,8 +436,12 @@
             "dog",
             "north"
           ],
-          "strict_top1_correct": true,
-          "true_rank": 0
+          "topK_scores": [
+            0.3067,
+            0.2632,
+            0.1905
+          ],
+          "correct": true
         },
         {
           "seq_idx": 4,
@@ -378,8 +456,12 @@
             "hot",
             "river"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 1
+          "topK_scores": [
+            0.3031,
+            0.243,
+            0.2007
+          ],
+          "correct": true
         },
         {
           "seq_idx": 5,
@@ -394,8 +476,12 @@
             "hot",
             "cold"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 1
+          "topK_scores": [
+            0.2817,
+            0.2014,
+            0.1991
+          ],
+          "correct": true
         },
         {
           "seq_idx": 6,
@@ -410,8 +496,12 @@
             "river",
             "come"
           ],
-          "strict_top1_correct": false,
-          "true_rank": 2
+          "topK_scores": [
+            0.3928,
+            0.2179,
+            0.1955
+          ],
+          "correct": true
         },
         {
           "seq_idx": 7,
@@ -426,14 +516,16 @@
             "come",
             "big"
           ],
-          "strict_top1_correct": true,
-          "true_rank": 0
+          "topK_scores": [
+            0.3517,
+            0.1756,
+            0.1751
+          ],
+          "correct": true
         }
-      ],
-      "seed": 44,
-      "original_top3_acc": 1.0
+      ]
     }
   ],
-  "verdict": "STRICT_TOP1_ABOVE_CHANCE_BELOW_BAR",
-  "interpretation": "STRICT TOP-1 metric introduced by adversarial reviewer VERDICT BLOCK (2026-05-24); top-3 readout is degenerate with the engram-captures-all-slot-words mechanism. Strict top-1 = true positional binding test."
+  "verdict": "DIRECTION_A_PASS_EC_CONTEXT_SEQUENCE_STORAGE",
+  "wall_clock_minutes": 96.6861359000206
 }

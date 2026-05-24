@@ -1,0 +1,782 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "main_result_summary": {
+    "slot3_accuracy_mean": 0.875,
+    "slot3_accuracy_per_seed": [
+      0.875,
+      0.75,
+      1.0
+    ]
+  },
+  "ctrl_wrong_position_mean": 0.875,
+  "ctrl_no_stim_mean": 0.125,
+  "ctrl_no_cue_mean": 0.875,
+  "ctrl_wrong_position_top1_mean": 0.375,
+  "ctrl_no_stim_top1_mean": 0.0,
+  "ctrl_no_cue_top1_mean": 0.2916666666666667,
+  "per_seed_ctrl": [
+    {
+      "seed": 42,
+      "ctrl_wrong_position_acc": 1.0,
+      "ctrl_no_stim_acc": 0.125,
+      "ctrl_no_cue_acc": 1.0,
+      "ctrl_wrong_position_top1_acc": 0.375,
+      "ctrl_no_stim_top1_acc": 0.0,
+      "ctrl_no_cue_top1_acc": 0.25,
+      "per_seq_ctrl": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "stop",
+            "east",
+            "look"
+          ],
+          "true_slot3": "look",
+          "wrong_pos_topK": [
+            "stop",
+            "east",
+            "look"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "east",
+            "cat",
+            "come"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "east",
+            "stop",
+            "look"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "east",
+            "look",
+            "big"
+          ],
+          "true_slot3": "big",
+          "wrong_pos_topK": [
+            "east",
+            "look",
+            "big"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "look",
+            "come",
+            "go"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "east",
+            "look",
+            "big"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "cat",
+            "hot",
+            "look"
+          ],
+          "true_slot3": "look",
+          "wrong_pos_topK": [
+            "look",
+            "hot",
+            "cat"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": true,
+          "no_stim_topK": [
+            "go",
+            "look",
+            "apple"
+          ],
+          "no_stim_correct": true,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "look",
+            "hot",
+            "cat"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": true
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "cat",
+            "look",
+            "south"
+          ],
+          "true_slot3": "south",
+          "wrong_pos_topK": [
+            "cat",
+            "south",
+            "look"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "stop",
+            "cold",
+            "dog"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "cat",
+            "look",
+            "south"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "cat",
+            "river",
+            "south"
+          ],
+          "true_slot3": "south",
+          "wrong_pos_topK": [
+            "south",
+            "cat",
+            "river"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": true,
+          "no_stim_topK": [
+            "cold",
+            "hot",
+            "stop"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "cat",
+            "south",
+            "river"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "small",
+            "come",
+            "dog"
+          ],
+          "true_slot3": "dog",
+          "wrong_pos_topK": [
+            "come",
+            "dog",
+            "small"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "stop",
+            "small",
+            "apple"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "come",
+            "dog",
+            "small"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "dog",
+            "east",
+            "west"
+          ],
+          "true_slot3": "west",
+          "wrong_pos_topK": [
+            "west",
+            "dog",
+            "east"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": true,
+          "no_stim_topK": [
+            "big",
+            "come",
+            "hot"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "west",
+            "dog",
+            "look"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": true
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "small",
+            "big",
+            "north"
+          ],
+          "true_slot3": "north",
+          "wrong_pos_topK": [
+            "big",
+            "north",
+            "small"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "look",
+            "come",
+            "dog"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "big",
+            "north",
+            "small"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "ctrl_wrong_position_acc": 0.75,
+      "ctrl_no_stim_acc": 0.0,
+      "ctrl_no_cue_acc": 0.75,
+      "ctrl_wrong_position_top1_acc": 0.25,
+      "ctrl_no_stim_top1_acc": 0.0,
+      "ctrl_no_cue_top1_acc": 0.25,
+      "per_seq_ctrl": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "dog",
+            "come",
+            "cat"
+          ],
+          "true_slot3": "cat",
+          "wrong_pos_topK": [
+            "come",
+            "dog",
+            "cat"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "hot",
+            "stop",
+            "dog"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "come",
+            "dog",
+            "cat"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "north",
+            "small",
+            "apple"
+          ],
+          "true_slot3": "apple",
+          "wrong_pos_topK": [
+            "apple",
+            "north",
+            "river"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": true,
+          "no_stim_topK": [
+            "east",
+            "go",
+            "stop"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "apple",
+            "north",
+            "stop"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": true
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "west",
+            "small",
+            "cold"
+          ],
+          "true_slot3": "cold",
+          "wrong_pos_topK": [
+            "cold",
+            "west",
+            "small"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": true,
+          "no_stim_topK": [
+            "west",
+            "small",
+            "north"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "cold",
+            "west",
+            "small"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": true
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "dog",
+            "west",
+            "apple"
+          ],
+          "true_slot3": "apple",
+          "wrong_pos_topK": [
+            "west",
+            "apple",
+            "dog"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "go",
+            "dog",
+            "stop"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "west",
+            "apple",
+            "dog"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "hot",
+            "south",
+            "dog"
+          ],
+          "true_slot3": "dog",
+          "wrong_pos_topK": [
+            "south",
+            "hot",
+            "stop"
+          ],
+          "wrong_pos_correct": false,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "stop",
+            "east",
+            "go"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "south",
+            "hot",
+            "stop"
+          ],
+          "no_cue_correct": false,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "look",
+            "west",
+            "apple"
+          ],
+          "true_slot3": "apple",
+          "wrong_pos_topK": [
+            "west",
+            "apple",
+            "look"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "go",
+            "stop",
+            "dog"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "west",
+            "apple",
+            "look"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "cold",
+            "north",
+            "dog"
+          ],
+          "true_slot3": "dog",
+          "wrong_pos_topK": [
+            "cold",
+            "north",
+            "stop"
+          ],
+          "wrong_pos_correct": false,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "north",
+            "cat",
+            "come"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "cold",
+            "stop",
+            "north"
+          ],
+          "no_cue_correct": false,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "small",
+            "cold",
+            "north"
+          ],
+          "true_slot3": "north",
+          "wrong_pos_topK": [
+            "cold",
+            "north",
+            "go"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "stop",
+            "big",
+            "cat"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "cold",
+            "north",
+            "stop"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "ctrl_wrong_position_acc": 0.875,
+      "ctrl_no_stim_acc": 0.25,
+      "ctrl_no_cue_acc": 0.875,
+      "ctrl_wrong_position_top1_acc": 0.5,
+      "ctrl_no_stim_top1_acc": 0.0,
+      "ctrl_no_cue_top1_acc": 0.375,
+      "per_seq_ctrl": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "small",
+            "east",
+            "come"
+          ],
+          "true_slot3": "come",
+          "wrong_pos_topK": [
+            "east",
+            "small",
+            "come"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "stop",
+            "cat",
+            "look"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "small",
+            "east",
+            "come"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "cold",
+            "river",
+            "east"
+          ],
+          "true_slot3": "east",
+          "wrong_pos_topK": [
+            "east",
+            "river",
+            "cat"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": true,
+          "no_stim_topK": [
+            "hot",
+            "cat",
+            "cold"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "river",
+            "east",
+            "cold"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "big",
+            "north",
+            "small"
+          ],
+          "true_slot3": "small",
+          "wrong_pos_topK": [
+            "north",
+            "small",
+            "big"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "east",
+            "cold",
+            "go"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "north",
+            "small",
+            "big"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "apple",
+            "dog",
+            "stop"
+          ],
+          "true_slot3": "stop",
+          "wrong_pos_topK": [
+            "stop",
+            "dog",
+            "come"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": true,
+          "no_stim_topK": [
+            "cold",
+            "dog",
+            "east"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "stop",
+            "dog",
+            "river"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": true
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "river",
+            "dog",
+            "hot"
+          ],
+          "true_slot3": "hot",
+          "wrong_pos_topK": [
+            "hot",
+            "river",
+            "dog"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": true,
+          "no_stim_topK": [
+            "north",
+            "east",
+            "stop"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "hot",
+            "river",
+            "dog"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": true
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "small",
+            "cold",
+            "hot"
+          ],
+          "true_slot3": "hot",
+          "wrong_pos_topK": [
+            "hot",
+            "small",
+            "cold"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": true,
+          "no_stim_topK": [
+            "apple",
+            "look",
+            "river"
+          ],
+          "no_stim_correct": false,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "hot",
+            "small",
+            "cold"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": true
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "north",
+            "river",
+            "come"
+          ],
+          "true_slot3": "come",
+          "wrong_pos_topK": [
+            "north",
+            "river",
+            "hot"
+          ],
+          "wrong_pos_correct": false,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "look",
+            "small",
+            "come"
+          ],
+          "no_stim_correct": true,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "north",
+            "river",
+            "big"
+          ],
+          "no_cue_correct": false,
+          "no_cue_top1_correct": false
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "go",
+            "big",
+            "cold"
+          ],
+          "true_slot3": "cold",
+          "wrong_pos_topK": [
+            "big",
+            "cold",
+            "cat"
+          ],
+          "wrong_pos_correct": true,
+          "wrong_pos_top1_correct": false,
+          "no_stim_topK": [
+            "north",
+            "east",
+            "cold"
+          ],
+          "no_stim_correct": true,
+          "no_stim_top1_correct": false,
+          "no_cue_topK": [
+            "big",
+            "cold",
+            "cat"
+          ],
+          "no_cue_correct": true,
+          "no_cue_top1_correct": false
+        }
+      ]
+    }
+  ],
+  "chance_baseline_top3": 0.1875,
+  "chance_baseline_top1": 0.0625,
+  "verdict": "MAIN_TOP1_BELOW_BAR_CONTROLS_RECORDED",
+  "wall_clock_minutes": 5.534905175367991
+}

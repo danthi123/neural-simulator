@@ -1,0 +1,169 @@
+{
+  "seed": 44,
+  "K_PAIRS": 8,
+  "SLOT_COUNT": 3,
+  "n_correct": 8,
+  "slot3_accuracy": 1.0,
+  "per_seq": [
+    {
+      "seq_idx": 0,
+      "sequence": [
+        "small",
+        "east",
+        "come"
+      ],
+      "true_slot3": "come",
+      "topK_words": [
+        "east",
+        "come",
+        "small"
+      ],
+      "topK_scores": [
+        0.2837,
+        0.2392,
+        0.2224
+      ],
+      "correct": true
+    },
+    {
+      "seq_idx": 1,
+      "sequence": [
+        "cold",
+        "river",
+        "east"
+      ],
+      "true_slot3": "east",
+      "topK_words": [
+        "east",
+        "cold",
+        "come"
+      ],
+      "topK_scores": [
+        0.28,
+        0.2267,
+        0.2061
+      ],
+      "correct": true
+    },
+    {
+      "seq_idx": 2,
+      "sequence": [
+        "big",
+        "north",
+        "small"
+      ],
+      "true_slot3": "small",
+      "topK_words": [
+        "north",
+        "small",
+        "east"
+      ],
+      "topK_scores": [
+        0.4258,
+        0.2131,
+        0.1779
+      ],
+      "correct": true
+    },
+    {
+      "seq_idx": 3,
+      "sequence": [
+        "apple",
+        "dog",
+        "stop"
+      ],
+      "true_slot3": "stop",
+      "topK_words": [
+        "stop",
+        "dog",
+        "north"
+      ],
+      "topK_scores": [
+        0.3067,
+        0.2632,
+        0.1905
+      ],
+      "correct": true
+    },
+    {
+      "seq_idx": 4,
+      "sequence": [
+        "river",
+        "dog",
+        "hot"
+      ],
+      "true_slot3": "hot",
+      "topK_words": [
+        "dog",
+        "hot",
+        "river"
+      ],
+      "topK_scores": [
+        0.3031,
+        0.243,
+        0.2007
+      ],
+      "correct": true
+    },
+    {
+      "seq_idx": 5,
+      "sequence": [
+        "small",
+        "cold",
+        "hot"
+      ],
+      "true_slot3": "hot",
+      "topK_words": [
+        "dog",
+        "hot",
+        "cold"
+      ],
+      "topK_scores": [
+        0.2817,
+        0.2014,
+        0.1991
+      ],
+      "correct": true
+    },
+    {
+      "seq_idx": 6,
+      "sequence": [
+        "north",
+        "river",
+        "come"
+      ],
+      "true_slot3": "come",
+      "topK_words": [
+        "north",
+        "river",
+        "come"
+      ],
+      "topK_scores": [
+        0.3928,
+        0.2179,
+        0.1955
+      ],
+      "correct": true
+    },
+    {
+      "seq_idx": 7,
+      "sequence": [
+        "go",
+        "big",
+        "cold"
+      ],
+      "true_slot3": "cold",
+      "topK_words": [
+        "cold",
+        "come",
+        "big"
+      ],
+      "topK_scores": [
+        0.3517,
+        0.1756,
+        0.1751
+      ],
+      "correct": true
+    }
+  ]
+}

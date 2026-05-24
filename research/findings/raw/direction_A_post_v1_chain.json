@@ -1,0 +1,12 @@
+{
+  "v1_top3_mean": 0.875,
+  "v1_top3_per_seed": [
+    0.875,
+    0.75,
+    1.0
+  ],
+  "strict_top1_mean": 0.3333333333333333,
+  "strict_top1_verdict": "STRICT_TOP1_ABOVE_CHANCE_BELOW_BAR",
+  "smell_test_verdict": "MAIN_TOP1_BELOW_BAR_CONTROLS_RECORDED",
+  "next_direction_recommendation": "LAUNCH_V2_INVESTIGATE_BOUND"
+}
