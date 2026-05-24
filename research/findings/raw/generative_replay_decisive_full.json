@@ -1,0 +1,904 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "smoke": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "k_ladder": [
+    4,
+    8,
+    16
+  ],
+  "slot_count": 3,
+  "n_trials_per_k": 200,
+  "bar": 0.8,
+  "swr_steps": 100,
+  "capture_steps": 50,
+  "encoding_steps_per_slot": 30,
+  "n_replays_per_tag": 8,
+  "engram_top_k": 100,
+  "engram_region_filter": [
+    "ca3"
+  ],
+  "decoder": "parallel_population_matching_batched",
+  "substrate": "build_biological_brain_regions_v16_recipe_WITH_HIPPO_AND_DLPFC_n=98",
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_pool_union": 3200,
+      "d_act": 3200,
+      "batched_vs_scalar_max_diff": 2.0816681711721685e-17,
+      "wall_clock_s": 418.6093385219574,
+      "per_k": {
+        "4": {
+          "K": 4,
+          "n_trials": 200,
+          "n_correct": 17,
+          "completion_accuracy": 0.085,
+          "n_engrams": 4,
+          "replay_stats": {
+            "n_replays": 32
+          },
+          "engram_stats_first3": [
+            {
+              "name": "generative_seq_000",
+              "n_tagged": 6,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3210843503475189
+            },
+            {
+              "name": "generative_seq_001",
+              "n_tagged": 3,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.2804819345474243
+            },
+            {
+              "name": "generative_seq_002",
+              "n_tagged": 1,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.2815662622451782
+            }
+          ],
+          "trial_log_first5": [
+            {
+              "trial": 0,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "cat",
+                "hot"
+              ],
+              "true_continuation": "look",
+              "decoded_word": "dog",
+              "correct": false
+            },
+            {
+              "trial": 1,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "cat",
+                "hot"
+              ],
+              "true_continuation": "look",
+              "decoded_word": "cold",
+              "correct": false
+            },
+            {
+              "trial": 2,
+              "chosen_seq_idx": 1,
+              "cue": [
+                "east",
+                "look"
+              ],
+              "true_continuation": "big",
+              "decoded_word": "cat",
+              "correct": false
+            },
+            {
+              "trial": 3,
+              "chosen_seq_idx": 0,
+              "cue": [
+                "stop",
+                "east"
+              ],
+              "true_continuation": "look",
+              "decoded_word": "stop",
+              "correct": false
+            },
+            {
+              "trial": 4,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "cat",
+                "hot"
+              ],
+              "true_continuation": "look",
+              "decoded_word": "south",
+              "correct": false
+            }
+          ],
+          "wall_clock_s": 123.17359590530396
+        },
+        "8": {
+          "K": 8,
+          "n_trials": 200,
+          "n_correct": 5,
+          "completion_accuracy": 0.025,
+          "n_engrams": 8,
+          "replay_stats": {
+            "n_replays": 64
+          },
+          "engram_stats_first3": [
+            {
+              "name": "generative_seq_000",
+              "n_tagged": 6,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3707228899002075
+            },
+            {
+              "name": "generative_seq_001",
+              "n_tagged": 2,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3546988070011139
+            },
+            {
+              "name": "generative_seq_002",
+              "n_tagged": 4,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.29542168974876404
+            }
+          ],
+          "trial_log_first5": [
+            {
+              "trial": 0,
+              "chosen_seq_idx": 7,
+              "cue": [
+                "small",
+                "big"
+              ],
+              "true_continuation": "north",
+              "decoded_word": "east",
+              "correct": false
+            },
+            {
+              "trial": 1,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "cat",
+                "hot"
+              ],
+              "true_continuation": "look",
+              "decoded_word": "river",
+              "correct": false
+            },
+            {
+              "trial": 2,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "cat",
+                "hot"
+              ],
+              "true_continuation": "look",
+              "decoded_word": "big",
+              "correct": false
+            },
+            {
+              "trial": 3,
+              "chosen_seq_idx": 7,
+              "cue": [
+                "small",
+                "big"
+              ],
+              "true_continuation": "north",
+              "decoded_word": "east",
+              "correct": false
+            },
+            {
+              "trial": 4,
+              "chosen_seq_idx": 6,
+              "cue": [
+                "dog",
+                "east"
+              ],
+              "true_continuation": "west",
+              "decoded_word": "big",
+              "correct": false
+            }
+          ],
+          "wall_clock_s": 134.36959624290466
+        },
+        "16": {
+          "K": 16,
+          "n_trials": 200,
+          "n_correct": 9,
+          "completion_accuracy": 0.045,
+          "n_engrams": 16,
+          "replay_stats": {
+            "n_replays": 128
+          },
+          "engram_stats_first3": [
+            {
+              "name": "generative_seq_000",
+              "n_tagged": 3,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3983132541179657
+            },
+            {
+              "name": "generative_seq_001",
+              "n_tagged": 4,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.350120484828949
+            },
+            {
+              "name": "generative_seq_002",
+              "n_tagged": 7,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.37506023049354553
+            }
+          ],
+          "trial_log_first5": [
+            {
+              "trial": 0,
+              "chosen_seq_idx": 11,
+              "cue": [
+                "north",
+                "go"
+              ],
+              "true_continuation": "south",
+              "decoded_word": "stop",
+              "correct": false
+            },
+            {
+              "trial": 1,
+              "chosen_seq_idx": 10,
+              "cue": [
+                "river",
+                "stop"
+              ],
+              "true_continuation": "south",
+              "decoded_word": "look",
+              "correct": false
+            },
+            {
+              "trial": 2,
+              "chosen_seq_idx": 5,
+              "cue": [
+                "small",
+                "come"
+              ],
+              "true_continuation": "dog",
+              "decoded_word": "dog",
+              "correct": true
+            },
+            {
+              "trial": 3,
+              "chosen_seq_idx": 7,
+              "cue": [
+                "small",
+                "big"
+              ],
+              "true_continuation": "north",
+              "decoded_word": "apple",
+              "correct": false
+            },
+            {
+              "trial": 4,
+              "chosen_seq_idx": 11,
+              "cue": [
+                "north",
+                "go"
+              ],
+              "true_continuation": "south",
+              "decoded_word": "small",
+              "correct": false
+            }
+          ],
+          "wall_clock_s": 153.81784868240356
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "n_pool_union": 3200,
+      "d_act": 3200,
+      "batched_vs_scalar_max_diff": 1.3877787807814457e-17,
+      "wall_clock_s": 405.9453275203705,
+      "per_k": {
+        "4": {
+          "K": 4,
+          "n_trials": 200,
+          "n_correct": 12,
+          "completion_accuracy": 0.06,
+          "n_engrams": 4,
+          "replay_stats": {
+            "n_replays": 32
+          },
+          "engram_stats_first3": [
+            {
+              "name": "generative_seq_000",
+              "n_tagged": 3,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3577108383178711
+            },
+            {
+              "name": "generative_seq_001",
+              "n_tagged": 2,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3385542035102844
+            },
+            {
+              "name": "generative_seq_002",
+              "n_tagged": 1,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.30686748027801514
+            }
+          ],
+          "trial_log_first5": [
+            {
+              "trial": 0,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "west",
+                "small"
+              ],
+              "true_continuation": "cold",
+              "decoded_word": "west",
+              "correct": false
+            },
+            {
+              "trial": 1,
+              "chosen_seq_idx": 0,
+              "cue": [
+                "dog",
+                "come"
+              ],
+              "true_continuation": "cat",
+              "decoded_word": "small",
+              "correct": false
+            },
+            {
+              "trial": 2,
+              "chosen_seq_idx": 3,
+              "cue": [
+                "dog",
+                "west"
+              ],
+              "true_continuation": "apple",
+              "decoded_word": "apple",
+              "correct": true
+            },
+            {
+              "trial": 3,
+              "chosen_seq_idx": 1,
+              "cue": [
+                "north",
+                "small"
+              ],
+              "true_continuation": "apple",
+              "decoded_word": "east",
+              "correct": false
+            },
+            {
+              "trial": 4,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "west",
+                "small"
+              ],
+              "true_continuation": "cold",
+              "decoded_word": "north",
+              "correct": false
+            }
+          ],
+          "wall_clock_s": 117.66331815719604
+        },
+        "8": {
+          "K": 8,
+          "n_trials": 200,
+          "n_correct": 13,
+          "completion_accuracy": 0.065,
+          "n_engrams": 8,
+          "replay_stats": {
+            "n_replays": 56
+          },
+          "engram_stats_first3": [
+            {
+              "name": "generative_seq_000",
+              "n_tagged": 3,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.4185542166233063
+            },
+            {
+              "name": "generative_seq_001",
+              "n_tagged": 4,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3127710819244385
+            },
+            {
+              "name": "generative_seq_002",
+              "n_tagged": 8,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.35240963101387024
+            }
+          ],
+          "trial_log_first5": [
+            {
+              "trial": 0,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "west",
+                "small"
+              ],
+              "true_continuation": "cold",
+              "decoded_word": "east",
+              "correct": false
+            },
+            {
+              "trial": 1,
+              "chosen_seq_idx": 0,
+              "cue": [
+                "dog",
+                "come"
+              ],
+              "true_continuation": "cat",
+              "decoded_word": "west",
+              "correct": false
+            },
+            {
+              "trial": 2,
+              "chosen_seq_idx": 3,
+              "cue": [
+                "dog",
+                "west"
+              ],
+              "true_continuation": "apple",
+              "decoded_word": "cold",
+              "correct": false
+            },
+            {
+              "trial": 3,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "west",
+                "small"
+              ],
+              "true_continuation": "cold",
+              "decoded_word": "stop",
+              "correct": false
+            },
+            {
+              "trial": 4,
+              "chosen_seq_idx": 1,
+              "cue": [
+                "north",
+                "small"
+              ],
+              "true_continuation": "apple",
+              "decoded_word": "hot",
+              "correct": false
+            }
+          ],
+          "wall_clock_s": 122.6807062625885
+        },
+        "16": {
+          "K": 16,
+          "n_trials": 200,
+          "n_correct": 14,
+          "completion_accuracy": 0.07,
+          "n_engrams": 16,
+          "replay_stats": {
+            "n_replays": 128
+          },
+          "engram_stats_first3": [
+            {
+              "name": "generative_seq_000",
+              "n_tagged": 5,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.4634939730167389
+            },
+            {
+              "name": "generative_seq_001",
+              "n_tagged": 2,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.39795181155204773
+            },
+            {
+              "name": "generative_seq_002",
+              "n_tagged": 5,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.31662651896476746
+            }
+          ],
+          "trial_log_first5": [
+            {
+              "trial": 0,
+              "chosen_seq_idx": 7,
+              "cue": [
+                "small",
+                "cold"
+              ],
+              "true_continuation": "north",
+              "decoded_word": "river",
+              "correct": false
+            },
+            {
+              "trial": 1,
+              "chosen_seq_idx": 7,
+              "cue": [
+                "small",
+                "cold"
+              ],
+              "true_continuation": "north",
+              "decoded_word": "go",
+              "correct": false
+            },
+            {
+              "trial": 2,
+              "chosen_seq_idx": 4,
+              "cue": [
+                "hot",
+                "south"
+              ],
+              "true_continuation": "dog",
+              "decoded_word": "look",
+              "correct": false
+            },
+            {
+              "trial": 3,
+              "chosen_seq_idx": 5,
+              "cue": [
+                "look",
+                "west"
+              ],
+              "true_continuation": "apple",
+              "decoded_word": "cat",
+              "correct": false
+            },
+            {
+              "trial": 4,
+              "chosen_seq_idx": 4,
+              "cue": [
+                "hot",
+                "south"
+              ],
+              "true_continuation": "dog",
+              "decoded_word": "river",
+              "correct": false
+            }
+          ],
+          "wall_clock_s": 158.5410454273224
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "n_pool_union": 3200,
+      "d_act": 3200,
+      "batched_vs_scalar_max_diff": 1.734723475976807e-17,
+      "wall_clock_s": 400.8358545303345,
+      "per_k": {
+        "4": {
+          "K": 4,
+          "n_trials": 200,
+          "n_correct": 13,
+          "completion_accuracy": 0.065,
+          "n_engrams": 4,
+          "replay_stats": {
+            "n_replays": 32
+          },
+          "engram_stats_first3": [
+            {
+              "name": "generative_seq_000",
+              "n_tagged": 1,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3326506018638611
+            },
+            {
+              "name": "generative_seq_001",
+              "n_tagged": 7,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3460240960121155
+            },
+            {
+              "name": "generative_seq_002",
+              "n_tagged": 2,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3473494052886963
+            }
+          ],
+          "trial_log_first5": [
+            {
+              "trial": 0,
+              "chosen_seq_idx": 3,
+              "cue": [
+                "apple",
+                "dog"
+              ],
+              "true_continuation": "stop",
+              "decoded_word": "east",
+              "correct": false
+            },
+            {
+              "trial": 1,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "big",
+                "north"
+              ],
+              "true_continuation": "small",
+              "decoded_word": "come",
+              "correct": false
+            },
+            {
+              "trial": 2,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "big",
+                "north"
+              ],
+              "true_continuation": "small",
+              "decoded_word": "come",
+              "correct": false
+            },
+            {
+              "trial": 3,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "big",
+                "north"
+              ],
+              "true_continuation": "small",
+              "decoded_word": "cat",
+              "correct": false
+            },
+            {
+              "trial": 4,
+              "chosen_seq_idx": 2,
+              "cue": [
+                "big",
+                "north"
+              ],
+              "true_continuation": "small",
+              "decoded_word": "east",
+              "correct": false
+            }
+          ],
+          "wall_clock_s": 111.77910614013672
+        },
+        "8": {
+          "K": 8,
+          "n_trials": 200,
+          "n_correct": 10,
+          "completion_accuracy": 0.05,
+          "n_engrams": 8,
+          "replay_stats": {
+            "n_replays": 64
+          },
+          "engram_stats_first3": [
+            {
+              "name": "generative_seq_000",
+              "n_tagged": 2,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.4787951707839966
+            },
+            {
+              "name": "generative_seq_001",
+              "n_tagged": 1,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3192771077156067
+            },
+            {
+              "name": "generative_seq_002",
+              "n_tagged": 2,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.34120482206344604
+            }
+          ],
+          "trial_log_first5": [
+            {
+              "trial": 0,
+              "chosen_seq_idx": 0,
+              "cue": [
+                "small",
+                "east"
+              ],
+              "true_continuation": "come",
+              "decoded_word": "cat",
+              "correct": false
+            },
+            {
+              "trial": 1,
+              "chosen_seq_idx": 6,
+              "cue": [
+                "north",
+                "river"
+              ],
+              "true_continuation": "come",
+              "decoded_word": "big",
+              "correct": false
+            },
+            {
+              "trial": 2,
+              "chosen_seq_idx": 1,
+              "cue": [
+                "cold",
+                "river"
+              ],
+              "true_continuation": "east",
+              "decoded_word": "go",
+              "correct": false
+            },
+            {
+              "trial": 3,
+              "chosen_seq_idx": 1,
+              "cue": [
+                "cold",
+                "river"
+              ],
+              "true_continuation": "east",
+              "decoded_word": "stop",
+              "correct": false
+            },
+            {
+              "trial": 4,
+              "chosen_seq_idx": 0,
+              "cue": [
+                "small",
+                "east"
+              ],
+              "true_continuation": "come",
+              "decoded_word": "dog",
+              "correct": false
+            }
+          ],
+          "wall_clock_s": 125.06008315086365
+        },
+        "16": {
+          "K": 16,
+          "n_trials": 200,
+          "n_correct": 11,
+          "completion_accuracy": 0.055,
+          "n_engrams": 16,
+          "replay_stats": {
+            "n_replays": 120
+          },
+          "engram_stats_first3": [
+            {
+              "name": "generative_seq_000",
+              "n_tagged": 6,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.3890361487865448
+            },
+            {
+              "name": "generative_seq_001",
+              "n_tagged": 3,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.45951807498931885
+            },
+            {
+              "name": "generative_seq_002",
+              "n_tagged": 4,
+              "n_recorded_steps": 90,
+              "window_ms": 45.0,
+              "mean_spike_count": 0.40120482444763184
+            }
+          ],
+          "trial_log_first5": [
+            {
+              "trial": 0,
+              "chosen_seq_idx": 8,
+              "cue": [
+                "small",
+                "south"
+              ],
+              "true_continuation": "look",
+              "decoded_word": "stop",
+              "correct": false
+            },
+            {
+              "trial": 1,
+              "chosen_seq_idx": 3,
+              "cue": [
+                "apple",
+                "dog"
+              ],
+              "true_continuation": "stop",
+              "decoded_word": "cold",
+              "correct": false
+            },
+            {
+              "trial": 2,
+              "chosen_seq_idx": 4,
+              "cue": [
+                "river",
+                "dog"
+              ],
+              "true_continuation": "hot",
+              "decoded_word": "big",
+              "correct": false
+            },
+            {
+              "trial": 3,
+              "chosen_seq_idx": 12,
+              "cue": [
+                "apple",
+                "river"
+              ],
+              "true_continuation": "come",
+              "decoded_word": "dog",
+              "correct": false
+            },
+            {
+              "trial": 4,
+              "chosen_seq_idx": 11,
+              "cue": [
+                "cold",
+                "stop"
+              ],
+              "true_continuation": "west",
+              "decoded_word": "apple",
+              "correct": false
+            }
+          ],
+          "wall_clock_s": 157.06815719604492
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "4": {
+      "completion_accuracy_mean": 0.07,
+      "completion_accuracy_per_seed": [
+        0.085,
+        0.06,
+        0.065
+      ]
+    },
+    "8": {
+      "completion_accuracy_mean": 0.04666666666666667,
+      "completion_accuracy_per_seed": [
+        0.025,
+        0.065,
+        0.05
+      ]
+    },
+    "16": {
+      "completion_accuracy_mean": 0.05666666666666667,
+      "completion_accuracy_per_seed": [
+        0.045,
+        0.07,
+        0.055
+      ]
+    }
+  },
+  "verdict": "GENERATIVE_REPLAY_NEGATIVE",
+  "wall_clock_minutes": 20.42452766895294
+}
