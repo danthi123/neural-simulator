@@ -184,15 +184,15 @@ def run_one_substrate_one_seed(substrate_name, seed):
         # Aggregate cosines.
         agg_cos = {w: 0.0 for w in valid_concepts}
         for tag in matching_tags:
-            pattern = lang_output_pattern_during_stim(
+            pattern, n_lang_out = lang_output_pattern_during_stim(
                 bridge, tag, drive_pA=1500.0,
-                stim_steps=DRIVE_STEPS, readout_steps=50)
+                stim_steps=DRIVE_STEPS)
             for w in valid_concepts:
                 if w == cue:
                     continue
                 cos = cosine_to_word(
-                    pattern, w, _WORD_TO_IDX[w],
-                    N_WORDS_FOR_ORTHOGONAL, len(pattern),
+                    pattern, w, n_lang_out,
+                    n_words_for_orthogonal=N_WORDS_FOR_ORTHOGONAL,
                     sparsity=SPARSITY)
                 agg_cos[w] = agg_cos.get(w, 0.0) + cos
 
