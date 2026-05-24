@@ -101,14 +101,61 @@ shortcut-3 RESOLVED (2026-05-22).
 
 **DIRECTION A FULL-SCALE IN FLIGHT 2026-05-24 (background task
 `bzfui0zh0`; ~3 hr GPU; commits 7330dd7 launch + 219ff2a fix +
-f272c0d smell-test, all both remotes).** SEED 42 RESULT IN (45 min
-elapsed; ~2 hr remaining): **slot3 accuracy 0.875 (7/8) -- ABOVE the
-0.80 bar at single-seed**. Per-sequence: 7/8 PASS; 1 FAIL (seq 7:
-['small','big','north'] -- top-3 were ['small','big','west'] missing
-'north'; possible mechanism: positional cue too weak to disambiguate
-among 3 engrammed slots; in-sequence other-slot words pulled instead).
-Seed 43 now at 1920/3200 events training. Multi-seed completion ETA
-~15:30 EDT. Per overnight: the (c)
+f272c0d smell-test, all both remotes).** SEED 42 + SEED 43 RESULTS
+IN; SEED 44 IN TRAINING.
+
+**CRITICAL FINDING: top-3 metric is DEGENERATE (commit 95306ce).**
+Adversarial reviewer (background subagent a9c7a4475ca26c33a; VERDICT
+BLOCK with STRENGTHEN-only fixes) caught a methodology defect BEFORE
+multi-seed completion: the engram captures all 3 slot-word concept
+pools (each fired by 60 steps of TEACHER_PA=500), stim drives all 3,
+lang_output cosines all 3 slot words; including true slot-3 word in
+top-3 is AUTOMATIC. Seed 42 top-3 = 0.875 BUT seed 42 strict top-1 =
+0.250 (2/8). Seed 43 top-3 = 0.750 BUT strict top-1 = 0.375 (3/8).
+Multi-seed (n=2): top-3 mean 0.812 vs strict top-1 mean 0.312 -- the
+honest mechanism strength is ABOVE chance (5x) but well BELOW the
+frozen 0.80 bar.
+
+**STRENGTHEN-only fixes implemented (no bar tuning):**
+- Strict top-1 post-processor (commit 95306ce): reads cached trials
+  JSON; computes true_slot3 == topK_words[0] per seed; multi-seed mean.
+- Smell test top-1 metrics + verdict (commit 72397a1): updates verdict
+  logic to PASS_CONTROLS_DECISIVE_TOP1 etc., evaluated on strict top-1.
+- Capacity sweep clarification (commit 9315b8e): notes engram-capture
+  -at-new-stride vs trained-weight-extrapolation distinction.
+- Direction A v2 pre-staged (commit 5f8a48d): opens ec_context_to_pool
+  plasticity DURING encoding (the intended mechanism v1 had frozen).
+  Reuses cached trained bridges; ~30 min GPU after v1 completes.
+- Direction A weight inspection diagnostic (commit 6d2b9f3): verifies
+  v2 hypothesis (ec_context->pool weights near-zero post-v1 freeze).
+
+**Direction E theta-gamma ALGEBRA pillar n=103 VALIDATED** (commits
+1e14548 + 794f2f8 + 7419a57 + ed7f028; fresh-agent reviewer CLEAR
+a25f4bc73869baec8): Lisman-Idiart theta-gamma multiplexing (catalog
+N.16) clears 0.80 bar at loads {2,3,5,7} multi-seed with controls
+decisive; substrate biologization design at docs/plans/2026-05-24-
+direction-E-theta-gamma-substrate-design.md (simplified via pirazzini
+step-index phase pattern reuse; commit af3a6b1); Task 0 grounding pin
+written (commit ca7c655) for after Direction A.
+
+**Direction F cross-bridge cheap-first probes** (commits 3af929d +
+1d4e866): interference variant identified abstention bound (Test I
+0.712 multi-seed); familiarity-gate fix RESOLVED it (Test I 0.999).
+Generalizable insight: abstention always requires a SEPARATE
+familiarity / match-strength signal, never a single threshold on the
+identification score (same principle as FHRR shortcut-3 RESOLVED).
+
+**Direction E+F INTEGRATED probe** (commit 94c539e): theta-gamma +
+cross-bridge + familiarity-gate at G.20 "age-5" 160-concept vocab + 5
+slots + 2-bridges-per-slot interference: 0.997 / 1.000 / 0.999 multi-
+seed. Complete algebra-level demo of the conversational-primitive
+stack.
+
+Seed 44 in training at 1280/3200 events. Multi-seed completion ETA
+~14:40 EDT. When complete: run strict top-1 post-processor on full
+3-seed cache + smell test with top-1 verdict + (most likely) launch
+Direction A v2 (plasticity-during-encoding fix) + analyze; if v2
+also fails, pivot to Direction E substrate biologization (Task 0+). Per overnight: the (c)
 generative-replay arc converged on REPLAY_DOESNT_REACTIVATE -- the
 substrate stores SIMULTANEOUS engrams perfectly (multitag 91.7%
 multi-seed at n=100/n=101) but NOT SEQUENTIAL slot-position
