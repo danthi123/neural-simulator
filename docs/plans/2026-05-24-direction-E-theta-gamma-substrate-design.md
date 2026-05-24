@@ -37,29 +37,58 @@ The substrate has:
 
 **Replace:** abstract slot indexing.
 **With:** an explicit theta-clock signal that gates which gamma slot is
-"active" at each simulation step. Implementation options:
+"active" at each simulation step.
 
-**(1a)** Use an existing project neuromodulator (e.g. ACh phase via
-the validated Hasselmo SPEAR mechanism) as the theta clock. ACh
-high/low alternates between encoding/retrieval; we can repurpose
-its phase signal as a slot index. PROS: validated mechanism. CONS:
-ACh has 2-phase periodicity, not 7-slot; would need extension.
+**REUSE INSIGHT (2026-05-24):** the pirazzini_three_layer_runner.py
+ALREADY has theta+gamma step counting from the bridge dt:
 
-**(1b)** Add a new `theta_clock` region (~50 neurons) with intrinsic
-oscillation at theta frequency (~8 Hz). Use the project's existing
-oscillator infrastructure (the Cluster G NMDA bistability could drive
-a slow oscillation). PROS: dedicated, biology-grounded (real theta
-generators exist in MS-DBB, hippocampus). CONS: new infrastructure.
+```python
+theta_ms = 250.0   # Pirazzini 4Hz
+theta_steps = max(2, int(round(theta_ms / cfg.dt_ms)))
+gamma_ms = 25.0    # 40Hz
+gamma_steps = max(1, int(round(gamma_ms / cfg.dt_ms)))
 
-**(1c)** External sinusoidal drive on a dedicated `theta_pacemaker`
-region; gates downstream regions via gain modulation. PROS: simplest;
-matches how real experiments use optogenetic theta drives. CONS:
-external clock isn't fully autonomous.
+def _phase_is_trough(step_idx, theta_steps):
+    return (int(step_idx) % int(theta_steps)) >= max(1, theta_steps // 2)
+```
 
-**Pick (1c) for cheap-first version**: it's the simplest faithful
-implementation. Theta cycle = 125 simulation steps; gamma slot
-boundaries every 17 steps. The pacemaker provides phase reference;
-gating is straightforward.
+For Direction E theta-gamma (Lisman-Idiart 8Hz theta x 7 gamma slots):
+```python
+theta_ms = 125.0   # 8Hz theta (Lisman-Idiart)
+gamma_ms = 17.86   # 7 cycles per theta = 56Hz gamma
+theta_steps = ...
+gamma_steps = ...
+
+def _phase_to_gamma_slot(step_idx, theta_steps, n_gamma=7):
+    phase = int(step_idx) % int(theta_steps)
+    return min(n_gamma - 1, (phase * n_gamma) // theta_steps)
+```
+
+This is the **SIMPLEST substrate-faithful implementation**: NO new
+oscillator region needed; NO new pacemaker entity. The slot index
+is computed directly from the simulation step counter. The pirazzini
+discipline of THREADING the absolute step index through every phase-
+check call (FIX A from pirazzini commit history) is the discipline
+to follow.
+
+Implementation options (in order of build complexity):
+
+**(1a)** Step-index phase function (CHEAPEST, recommended). Reuses
+the pirazzini pattern byte-equivalent except `_phase_is_trough` ->
+`_phase_to_gamma_slot`. No new region, no new neurons.
+
+**(1b)** If (1a) is sufficient at controller-discipline tests but the
+substrate response needs an actual oscillating signal: add a
+`theta_pacemaker` region (~50 neurons; external sinusoidal drive)
+that downstream regions can consume via the existing
+NeuromodulatorConfig synaptic_gain pattern. Build only if (1a) is
+insufficient.
+
+**(1c)** Full intrinsic theta generator (e.g. MS-DBB analog with
+NMDA bistability driving 8Hz oscillation). Deferred; full
+substrate-internal autonomy is a much larger build.
+
+**Pick (1a) for first substrate build**.
 
 ### Substitution 2: gamma-slot-gated encoding
 
