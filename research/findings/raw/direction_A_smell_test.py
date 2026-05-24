@@ -188,9 +188,12 @@ def run_controls_for_seed(seed, verbose=True):
                   f"{stats.get('n_tagged', 0)}", flush=True)
 
     # Run three controls per sequence.
-    n_correct_wrong = 0
-    n_correct_nostim = 0
-    n_correct_nocue = 0
+    # STRENGTHEN per reviewer: report BOTH strict top-1 AND top-3
+    # accuracies; top-1 is the load-bearing metric (top-3 is
+    # degenerate with the 3-slot engram set-membership mechanism).
+    n_correct_wrong = 0; n_correct_wrong_top1 = 0
+    n_correct_nostim = 0; n_correct_nostim_top1 = 0
+    n_correct_nocue = 0; n_correct_nocue_top1 = 0
     per_seq_ctrl = []
     for seq_idx, (seq, tag_name) in enumerate(zip(sequences, tag_names)):
         true_slot3 = seq[SLOT_COUNT - 1]
@@ -204,10 +207,13 @@ def run_controls_for_seed(seed, verbose=True):
         avg_wrong = avg_wrong / N_REPEATS_PER_TAG
         scores_wrong = {w: _word_score(avg_wrong, w, n_lang_output, words)
                          for w in words}
-        topK_wrong = sorted(scores_wrong.items(), key=lambda x: x[1],
-                             reverse=True)[:TOP_K_READOUT]
+        topK_wrong_full = sorted(scores_wrong.items(), key=lambda x: x[1],
+                                   reverse=True)
+        topK_wrong = topK_wrong_full[:TOP_K_READOUT]
         correct_wrong = true_slot3 in [w for w, s in topK_wrong]
+        correct_wrong_top1 = (topK_wrong_full[0][0] == true_slot3)
         if correct_wrong: n_correct_wrong += 1
+        if correct_wrong_top1: n_correct_wrong_top1 += 1
 
         # (B) No stim (positional cue only).
         avg_nostim = np.zeros(n_lang_output, dtype=np.float64)
@@ -218,10 +224,13 @@ def run_controls_for_seed(seed, verbose=True):
         avg_nostim = avg_nostim / N_REPEATS_PER_TAG
         scores_nostim = {w: _word_score(avg_nostim, w, n_lang_output, words)
                           for w in words}
-        topK_nostim = sorted(scores_nostim.items(), key=lambda x: x[1],
-                              reverse=True)[:TOP_K_READOUT]
+        topK_nostim_full = sorted(scores_nostim.items(), key=lambda x: x[1],
+                                     reverse=True)
+        topK_nostim = topK_nostim_full[:TOP_K_READOUT]
         correct_nostim = true_slot3 in [w for w, s in topK_nostim]
+        correct_nostim_top1 = (topK_nostim_full[0][0] == true_slot3)
         if correct_nostim: n_correct_nostim += 1
+        if correct_nostim_top1: n_correct_nostim_top1 += 1
 
         # (C) No cue (tag stim only).
         avg_nocue = np.zeros(n_lang_output, dtype=np.float64)
@@ -231,36 +240,49 @@ def run_controls_for_seed(seed, verbose=True):
         avg_nocue = avg_nocue / N_REPEATS_PER_TAG
         scores_nocue = {w: _word_score(avg_nocue, w, n_lang_output, words)
                          for w in words}
-        topK_nocue = sorted(scores_nocue.items(), key=lambda x: x[1],
-                             reverse=True)[:TOP_K_READOUT]
+        topK_nocue_full = sorted(scores_nocue.items(), key=lambda x: x[1],
+                                    reverse=True)
+        topK_nocue = topK_nocue_full[:TOP_K_READOUT]
         correct_nocue = true_slot3 in [w for w, s in topK_nocue]
+        correct_nocue_top1 = (topK_nocue_full[0][0] == true_slot3)
         if correct_nocue: n_correct_nocue += 1
+        if correct_nocue_top1: n_correct_nocue_top1 += 1
 
         per_seq_ctrl.append({
             "seq_idx": seq_idx, "sequence": list(seq),
             "true_slot3": true_slot3,
             "wrong_pos_topK": [w for w, s in topK_wrong],
             "wrong_pos_correct": correct_wrong,
+            "wrong_pos_top1_correct": correct_wrong_top1,
             "no_stim_topK": [w for w, s in topK_nostim],
             "no_stim_correct": correct_nostim,
+            "no_stim_top1_correct": correct_nostim_top1,
             "no_cue_topK": [w for w, s in topK_nocue],
             "no_cue_correct": correct_nocue,
+            "no_cue_top1_correct": correct_nocue_top1,
         })
         if verbose:
             print(f"    seq {seq_idx} true={true_slot3}: "
-                  f"wrong_pos_corr={correct_wrong}; "
-                  f"no_stim_corr={correct_nostim}; "
-                  f"no_cue_corr={correct_nocue}", flush=True)
+                  f"wrong_pos_corr={correct_wrong}(top1={correct_wrong_top1}); "
+                  f"no_stim_corr={correct_nostim}(top1={correct_nostim_top1}); "
+                  f"no_cue_corr={correct_nocue}(top1={correct_nocue_top1})",
+                  flush=True)
 
     acc_wrong = n_correct_wrong / K_PAIRS
     acc_nostim = n_correct_nostim / K_PAIRS
     acc_nocue = n_correct_nocue / K_PAIRS
+    acc_wrong_top1 = n_correct_wrong_top1 / K_PAIRS
+    acc_nostim_top1 = n_correct_nostim_top1 / K_PAIRS
+    acc_nocue_top1 = n_correct_nocue_top1 / K_PAIRS
 
     return {
         "seed": seed,
         "ctrl_wrong_position_acc": acc_wrong,
         "ctrl_no_stim_acc": acc_nostim,
         "ctrl_no_cue_acc": acc_nocue,
+        "ctrl_wrong_position_top1_acc": acc_wrong_top1,
+        "ctrl_no_stim_top1_acc": acc_nostim_top1,
+        "ctrl_no_cue_top1_acc": acc_nocue_top1,
         "per_seq_ctrl": per_seq_ctrl,
     }
 
@@ -311,60 +333,101 @@ def main():
         [c["ctrl_no_stim_acc"] for c in seed_ctrls]))
     acc_nocue_mean = float(np.mean(
         [c["ctrl_no_cue_acc"] for c in seed_ctrls]))
+    # STRENGTHEN per reviewer: also report strict TOP-1 (load-bearing
+    # metric; top-3 is degenerate with the engram-tag mechanism).
+    acc_wrong_top1_mean = float(np.mean(
+        [c["ctrl_wrong_position_top1_acc"] for c in seed_ctrls]))
+    acc_nostim_top1_mean = float(np.mean(
+        [c["ctrl_no_stim_top1_acc"] for c in seed_ctrls]))
+    acc_nocue_top1_mean = float(np.mean(
+        [c["ctrl_no_cue_top1_acc"] for c in seed_ctrls]))
 
-    print(f"\n=== CONTROL RESULTS (multi-seed mean) ===", flush=True)
+    print(f"\n=== CONTROL RESULTS top-3 (multi-seed mean) ===",
+          flush=True)
     print(f"  (A) wrong-position cue: {acc_wrong_mean:.3f}",
           flush=True)
     print(f"  (B) no-stim (cue only): {acc_nostim_mean:.3f}",
           flush=True)
     print(f"  (C) no-cue (stim only): {acc_nocue_mean:.3f}",
           flush=True)
+    print(f"\n=== CONTROL RESULTS STRICT TOP-1 (load-bearing) ===",
+          flush=True)
+    print(f"  (A) wrong-position cue: {acc_wrong_top1_mean:.3f}",
+          flush=True)
+    print(f"  (B) no-stim (cue only): {acc_nostim_top1_mean:.3f}",
+          flush=True)
+    print(f"  (C) no-cue (stim only): {acc_nocue_top1_mean:.3f}",
+          flush=True)
 
     chance = TOP_K_READOUT / 16.0
-    print(f"  chance: {chance:.3f}", flush=True)
+    chance_top1 = 1.0 / 16.0
+    print(f"  chance top-3: {chance:.3f}", flush=True)
+    print(f"  chance top-1: {chance_top1:.3f}", flush=True)
 
     if main_result is not None:
         main_mean = main_result.get("slot3_accuracy_mean", float("nan"))
+        # Compute strict top-1 from main result's per_seq data
+        main_per_seed = main_result.get("per_seed", [])
+        main_top1_per_seed = []
+        for r in main_per_seed:
+            n_top1 = sum(1 for p in r.get("per_seq", [])
+                          if p.get("topK_words", [None])[0] ==
+                             p.get("true_slot3"))
+            n_tot = len(r.get("per_seq", []))
+            if n_tot > 0:
+                main_top1_per_seed.append(n_top1 / n_tot)
+        main_top1_mean = (float(np.mean(main_top1_per_seed))
+                          if main_top1_per_seed else float("nan"))
+
         margin_wrong = main_mean - acc_wrong_mean
         margin_nostim = main_mean - acc_nostim_mean
         margin_nocue = main_mean - acc_nocue_mean
-        print(f"\n  Main - wrong_pos margin: {margin_wrong:+.3f}",
-              flush=True)
-        print(f"  Main - no_stim   margin: {margin_nostim:+.3f}",
-              flush=True)
-        print(f"  Main - no_cue    margin: {margin_nocue:+.3f}",
-              flush=True)
+        margin_wrong_top1 = main_top1_mean - acc_wrong_top1_mean
+        margin_nostim_top1 = main_top1_mean - acc_nostim_top1_mean
+        margin_nocue_top1 = main_top1_mean - acc_nocue_top1_mean
 
-        if main_mean >= 0.80:
-            # PASS: scrutinize harder
-            if (margin_wrong > 0.2 and margin_nostim > 0.2
-                    and margin_nocue > 0.2):
-                verdict = "PASS_CONTROLS_DECISIVE"
-                print(f"\n  ALL CONTROLS PASS: main {main_mean:.3f}"
-                      f" decisively exceeds every control by > 0.2;"
-                      f" the positional binding is genuinely "
-                      f"load-bearing.", flush=True)
-            elif margin_nocue <= 0.1:
-                verdict = "PASS_COLLAPSES_TO_MULTITAG"
-                print(f"\n  no_cue control near main result -- the "
-                      f"ec_context cue is NOT load-bearing; "
-                      f"Direction A collapses to plain multitag, "
-                      f"not sequence-storage.", flush=True)
-            elif margin_nostim <= 0.1:
-                verdict = "PASS_COLLAPSES_TO_CUE_ALONE"
-                print(f"\n  no_stim control near main result -- the "
-                      f"engram tag is NOT load-bearing; cue alone "
-                      f"drives concept pools via ec_context "
-                      f"pathways.", flush=True)
+        print(f"\n  Main top-3 mean: {main_mean:.3f}", flush=True)
+        print(f"  Main top-1 mean: {main_top1_mean:.3f} "
+              f"(load-bearing)", flush=True)
+        print(f"\n  top-3 margins:", flush=True)
+        print(f"    wrong_pos: {margin_wrong:+.3f}", flush=True)
+        print(f"    no_stim:   {margin_nostim:+.3f}", flush=True)
+        print(f"    no_cue:    {margin_nocue:+.3f}", flush=True)
+        print(f"  top-1 margins (load-bearing):", flush=True)
+        print(f"    wrong_pos: {margin_wrong_top1:+.3f}", flush=True)
+        print(f"    no_stim:   {margin_nostim_top1:+.3f}", flush=True)
+        print(f"    no_cue:    {margin_nocue_top1:+.3f}", flush=True)
+
+        # Verdict on STRICT TOP-1 (load-bearing per reviewer)
+        if main_top1_mean >= 0.80:
+            if (margin_wrong_top1 > 0.2 and margin_nostim_top1 > 0.2
+                    and margin_nocue_top1 > 0.2):
+                verdict = "PASS_CONTROLS_DECISIVE_TOP1"
+                print(f"\n  ALL TOP-1 CONTROLS PASS: main "
+                      f"{main_top1_mean:.3f} decisively exceeds "
+                      f"every control by > 0.2 -- positional "
+                      f"binding genuinely load-bearing.",
+                      flush=True)
+            elif margin_nocue_top1 <= 0.1:
+                verdict = "PASS_TOP1_COLLAPSES_TO_MULTITAG"
+                print(f"\n  Top-1 no_cue control near main; "
+                      f"ec_context cue not load-bearing.",
+                      flush=True)
+            elif margin_nostim_top1 <= 0.1:
+                verdict = "PASS_TOP1_COLLAPSES_TO_CUE_ALONE"
+                print(f"\n  Top-1 no_stim control near main; "
+                      f"engram tag not load-bearing.", flush=True)
             else:
-                verdict = "PASS_WITH_WEAK_CONTROLS"
-                print(f"\n  Some control margins < 0.2 -- positional"
-                      f" binding contributes but not exclusively.",
+                verdict = "PASS_TOP1_WITH_WEAK_CONTROLS"
+                print(f"\n  Some top-1 control margins < 0.2; "
+                      f"positional binding partially contributes.",
                       flush=True)
         else:
-            verdict = "MAIN_BELOW_BAR_CONTROLS_RECORDED"
-            print(f"\n  Main result below 0.80 bar; controls "
-                  f"recorded for diagnosis.", flush=True)
+            verdict = "MAIN_TOP1_BELOW_BAR_CONTROLS_RECORDED"
+            print(f"\n  Main strict top-1 {main_top1_mean:.3f} "
+                  f"below 0.80 bar; top-3 was {main_mean:.3f} "
+                  f"(degenerate per reviewer); controls recorded "
+                  f"for diagnosis.", flush=True)
     else:
         verdict = "CONTROLS_ONLY_NO_MAIN"
 
@@ -374,11 +437,17 @@ def main():
             {"slot3_accuracy_mean": main_result["slot3_accuracy_mean"],
              "slot3_accuracy_per_seed": main_result["slot3_accuracy_per_seed"]}
             if main_result is not None else None),
+        # top-3 metrics (degenerate but retained for transparency)
         "ctrl_wrong_position_mean": acc_wrong_mean,
         "ctrl_no_stim_mean": acc_nostim_mean,
         "ctrl_no_cue_mean": acc_nocue_mean,
+        # top-1 metrics (LOAD-BEARING per reviewer's STRENGTHEN fix)
+        "ctrl_wrong_position_top1_mean": acc_wrong_top1_mean,
+        "ctrl_no_stim_top1_mean": acc_nostim_top1_mean,
+        "ctrl_no_cue_top1_mean": acc_nocue_top1_mean,
         "per_seed_ctrl": seed_ctrls,
-        "chance_baseline": chance,
+        "chance_baseline_top3": chance,
+        "chance_baseline_top1": chance_top1,
         "verdict": verdict,
         "wall_clock_minutes": total_min,
     }
