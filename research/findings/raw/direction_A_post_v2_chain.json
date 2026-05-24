@@ -1,0 +1,13 @@
+{
+  "v1_top3_mean": 0.875,
+  "v1_top1_mean": 0.3333333333333333,
+  "v2_top3_mean": 0.9166666666666666,
+  "v2_top1_mean": 0.2916666666666667,
+  "v2_per_seed_top1": [
+    0.25,
+    0.25,
+    0.375
+  ],
+  "v2_verdict": "V2_STRICT_TOP1_ABOVE_CHANCE_BELOW_BAR",
+  "next_direction_recommendation": "LAUNCH_DIRECTION_E_SUBSTRATE_TASK0_PLUS_1"
+}

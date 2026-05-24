@@ -1,0 +1,21 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seed": 42,
+  "theta_ms": 125.0,
+  "theta_steps": 250,
+  "n_gamma": 7,
+  "gamma_period": 35,
+  "slot_count": 3,
+  "n_theta_cycles": 3,
+  "slot_step_counts": [
+    108,
+    108,
+    108
+  ],
+  "first_slot1_step": 36,
+  "last_slot_first_cycle": 6,
+  "second_cycle_first_slot": 0,
+  "n_tagged": 100,
+  "verdict": "TASK0_GROUNDING_GREEN"
+}

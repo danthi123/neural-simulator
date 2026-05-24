@@ -107,7 +107,7 @@ def main():
     print(f"  built bridge in {(time.time()-t0):.1f}s",
           flush=True)
 
-    cfg = bridge.simulation_config
+    cfg = bridge.core_config
     theta_steps = max(2, int(round(THETA_MS / cfg.dt_ms)))
     gamma_period = max(1, theta_steps // N_GAMMA)
     print(f"  bridge dt={cfg.dt_ms} ms -> theta_steps={theta_steps},"

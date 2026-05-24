@@ -1,0 +1,465 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "bar": 0.8,
+  "chance_top1": 0.0625,
+  "strict_top1_mean": 0.2916666666666667,
+  "strict_top1_per_seed": [
+    0.25,
+    0.25,
+    0.375
+  ],
+  "top3_mean": 0.9166666666666666,
+  "top3_per_seed": [
+    1.0,
+    0.75,
+    1.0
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "top1_acc": 0.25,
+      "n_top1": 2,
+      "top3_acc": 1.0,
+      "n_top3": 8,
+      "n_total": 8,
+      "per_seq": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "stop",
+            "east",
+            "look"
+          ],
+          "true_slot": "look",
+          "top1_word": "stop",
+          "top1_correct": false,
+          "top3_words": [
+            "stop",
+            "east",
+            "look"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "east",
+            "look",
+            "big"
+          ],
+          "true_slot": "big",
+          "top1_word": "east",
+          "top1_correct": false,
+          "top3_words": [
+            "east",
+            "big",
+            "look"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "cat",
+            "hot",
+            "look"
+          ],
+          "true_slot": "look",
+          "top1_word": "look",
+          "top1_correct": true,
+          "top3_words": [
+            "look",
+            "hot",
+            "cat"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "cat",
+            "look",
+            "south"
+          ],
+          "true_slot": "south",
+          "top1_word": "cat",
+          "top1_correct": false,
+          "top3_words": [
+            "cat",
+            "look",
+            "south"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "cat",
+            "river",
+            "south"
+          ],
+          "true_slot": "south",
+          "top1_word": "river",
+          "top1_correct": false,
+          "top3_words": [
+            "river",
+            "cat",
+            "south"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "small",
+            "come",
+            "dog"
+          ],
+          "true_slot": "dog",
+          "top1_word": "come",
+          "top1_correct": false,
+          "top3_words": [
+            "come",
+            "dog",
+            "east"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "dog",
+            "east",
+            "west"
+          ],
+          "true_slot": "west",
+          "top1_word": "west",
+          "top1_correct": true,
+          "top3_words": [
+            "west",
+            "dog",
+            "east"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "small",
+            "big",
+            "north"
+          ],
+          "true_slot": "north",
+          "top1_word": "big",
+          "top1_correct": false,
+          "top3_words": [
+            "big",
+            "north",
+            "small"
+          ],
+          "top3_correct": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "top1_acc": 0.25,
+      "n_top1": 2,
+      "top3_acc": 0.75,
+      "n_top3": 6,
+      "n_total": 8,
+      "per_seq": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "dog",
+            "come",
+            "cat"
+          ],
+          "true_slot": "cat",
+          "top1_word": "come",
+          "top1_correct": false,
+          "top3_words": [
+            "come",
+            "cat",
+            "dog"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "north",
+            "small",
+            "apple"
+          ],
+          "true_slot": "apple",
+          "top1_word": "apple",
+          "top1_correct": true,
+          "top3_words": [
+            "apple",
+            "north",
+            "stop"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "west",
+            "small",
+            "cold"
+          ],
+          "true_slot": "cold",
+          "top1_word": "cold",
+          "top1_correct": true,
+          "top3_words": [
+            "cold",
+            "west",
+            "small"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "dog",
+            "west",
+            "apple"
+          ],
+          "true_slot": "apple",
+          "top1_word": "west",
+          "top1_correct": false,
+          "top3_words": [
+            "west",
+            "apple",
+            "dog"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "hot",
+            "south",
+            "dog"
+          ],
+          "true_slot": "dog",
+          "top1_word": "south",
+          "top1_correct": false,
+          "top3_words": [
+            "south",
+            "hot",
+            "cold"
+          ],
+          "top3_correct": false
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "look",
+            "west",
+            "apple"
+          ],
+          "true_slot": "apple",
+          "top1_word": "west",
+          "top1_correct": false,
+          "top3_words": [
+            "west",
+            "apple",
+            "look"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "cold",
+            "north",
+            "dog"
+          ],
+          "true_slot": "dog",
+          "top1_word": "cold",
+          "top1_correct": false,
+          "top3_words": [
+            "cold",
+            "north",
+            "stop"
+          ],
+          "top3_correct": false
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "small",
+            "cold",
+            "north"
+          ],
+          "true_slot": "north",
+          "top1_word": "cold",
+          "top1_correct": false,
+          "top3_words": [
+            "cold",
+            "north",
+            "stop"
+          ],
+          "top3_correct": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "top1_acc": 0.375,
+      "n_top1": 3,
+      "top3_acc": 1.0,
+      "n_top3": 8,
+      "n_total": 8,
+      "per_seq": [
+        {
+          "seq_idx": 0,
+          "sequence": [
+            "small",
+            "east",
+            "come"
+          ],
+          "true_slot": "come",
+          "top1_word": "east",
+          "top1_correct": false,
+          "top3_words": [
+            "east",
+            "small",
+            "come"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 1,
+          "sequence": [
+            "cold",
+            "river",
+            "east"
+          ],
+          "true_slot": "east",
+          "top1_word": "river",
+          "top1_correct": false,
+          "top3_words": [
+            "river",
+            "east",
+            "stop"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 2,
+          "sequence": [
+            "big",
+            "north",
+            "small"
+          ],
+          "true_slot": "small",
+          "top1_word": "north",
+          "top1_correct": false,
+          "top3_words": [
+            "north",
+            "small",
+            "big"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 3,
+          "sequence": [
+            "apple",
+            "dog",
+            "stop"
+          ],
+          "true_slot": "stop",
+          "top1_word": "stop",
+          "top1_correct": true,
+          "top3_words": [
+            "stop",
+            "dog",
+            "hot"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 4,
+          "sequence": [
+            "river",
+            "dog",
+            "hot"
+          ],
+          "true_slot": "hot",
+          "top1_word": "hot",
+          "top1_correct": true,
+          "top3_words": [
+            "hot",
+            "river",
+            "dog"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 5,
+          "sequence": [
+            "small",
+            "cold",
+            "hot"
+          ],
+          "true_slot": "hot",
+          "top1_word": "hot",
+          "top1_correct": true,
+          "top3_words": [
+            "hot",
+            "small",
+            "cold"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 6,
+          "sequence": [
+            "north",
+            "river",
+            "come"
+          ],
+          "true_slot": "come",
+          "top1_word": "north",
+          "top1_correct": false,
+          "top3_words": [
+            "north",
+            "river",
+            "come"
+          ],
+          "top3_correct": true
+        },
+        {
+          "seq_idx": 7,
+          "sequence": [
+            "go",
+            "big",
+            "cold"
+          ],
+          "true_slot": "cold",
+          "top1_word": "big",
+          "top1_correct": false,
+          "top3_words": [
+            "big",
+            "cold",
+            "cat"
+          ],
+          "top3_correct": true
+        }
+      ]
+    }
+  ],
+  "verdict": "V2_STRICT_TOP1_ABOVE_CHANCE_BELOW_BAR",
+  "wall_clock_minutes": 2.6780108054478964
+}

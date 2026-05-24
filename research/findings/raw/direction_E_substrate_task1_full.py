@@ -307,7 +307,7 @@ def run_one_seed(seed, verbose=True):
     n_lang_output = N_LANG_INPUT
     region_filter = _build_region_filter(rm)
 
-    cfg = bridge.simulation_config
+    cfg = bridge.core_config
     theta_steps = max(2, int(round(THETA_MS / cfg.dt_ms)))
     print(f"  [seed {seed}] theta_steps={theta_steps} from dt="
           f"{cfg.dt_ms} ms", flush=True)
