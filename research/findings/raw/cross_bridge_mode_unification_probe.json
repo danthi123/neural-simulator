@@ -1,0 +1,264 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "bridges": [
+    "bridgeA_nouns",
+    "bridgeB_verbs",
+    "bridgeC_adj",
+    "bridgeD_spatial",
+    "bridgeE_functional"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar": 0.8,
+  "n_gamma_slots": 7,
+  "k_vocab": 16,
+  "decoder_order_bearing": "parallel_population_matching_batched",
+  "decoder_order_invariant": "marginal_sum_phase_similarity_batched",
+  "vocab_size": "union_of_5_bridges_32_concepts_each",
+  "conditions": [
+    "global_mean",
+    "per_bridge_mean"
+  ],
+  "per_condition_per_seed": {
+    "global_mean": [
+      {
+        "seed": 42,
+        "V": 160,
+        "batched_vs_scalar_max_diff": 2.0816681711721685e-17,
+        "per_load": {
+          "2": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "3": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "5": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 0.815,
+            "n_trials": 200
+          }
+        }
+      },
+      {
+        "seed": 43,
+        "V": 160,
+        "batched_vs_scalar_max_diff": 2.7755575615628914e-17,
+        "per_load": {
+          "2": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "3": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "5": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 0.755,
+            "n_trials": 200
+          }
+        }
+      },
+      {
+        "seed": 44,
+        "V": 160,
+        "batched_vs_scalar_max_diff": 2.7755575615628914e-17,
+        "per_load": {
+          "2": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "3": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "5": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 0.8,
+            "n_trials": 200
+          }
+        }
+      }
+    ],
+    "per_bridge_mean": [
+      {
+        "seed": 42,
+        "V": 160,
+        "batched_vs_scalar_max_diff": 2.7755575615628914e-17,
+        "per_load": {
+          "2": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "3": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "5": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 0.78,
+            "n_trials": 200
+          }
+        }
+      },
+      {
+        "seed": 43,
+        "V": 160,
+        "batched_vs_scalar_max_diff": 2.7755575615628914e-17,
+        "per_load": {
+          "2": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "3": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "5": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 0.77,
+            "n_trials": 200
+          }
+        }
+      },
+      {
+        "seed": 44,
+        "V": 160,
+        "batched_vs_scalar_max_diff": 2.0816681711721685e-17,
+        "per_load": {
+          "2": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "3": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 0.995,
+            "n_trials": 200
+          },
+          "5": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 0.805,
+            "n_trials": 200
+          }
+        }
+      }
+    ]
+  },
+  "per_condition_aggregate": {
+    "global_mean": {
+      "2": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "3": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "5": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 0.79,
+        "order_invariant_per_seed": [
+          0.815,
+          0.755,
+          0.8
+        ]
+      }
+    },
+    "per_bridge_mean": {
+      "2": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "3": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 0.9983333333333334,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          0.995
+        ]
+      },
+      "5": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 0.785,
+        "order_invariant_per_seed": [
+          0.78,
+          0.77,
+          0.805
+        ]
+      }
+    }
+  },
+  "per_condition_verdict": {
+    "global_mean": "CROSS_BRIDGE_BOUNDARY",
+    "per_bridge_mean": "CROSS_BRIDGE_BOUNDARY"
+  },
+  "primary_verdict": "CROSS_BRIDGE_BOUNDARY"
+}

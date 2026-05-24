@@ -6,15 +6,17 @@ Tests whether the parallel-matching biologized mode-unification
 extends ACROSS bridge boundaries: encode a composite whose K items are
 drawn UNIFORMLY from the union of all 5 bridges' 32-concept
 vocabularies (160 concepts total), and decode per-slot via the
-parallel-matching mechanism over the FULL 160-concept union. This is
-the cross-bridge composition direction the 160-ensemble decisive run
-explicitly bracketed.
+parallel-matching mechanism over the FULL 160-concept union.
 
-The (e) extension validated per-bridge mode-unification (each bridge's
-own 32-word vocabulary; pillar n=94). This probe asks the next
-natural question: does the same algebra + same decoder + same
-substrate handle composites that SPAN bridges (e.g. apple_noun +
-go_verb + big_adj from three different bridges)?
+GPU-BATCHED PATH (the only path; CuPy backend; falls back to numpy if
+SIM_BACKEND=numpy or no GPU). The per-slot decoder stacks the 160
+grounded symbols as a (V, N_dim) phase matrix and computes all V
+similarities in one broadcast + mean operation per slot per trial,
+replacing 160 scalar phase_similarity calls. ~5-20x faster than the
+scalar Python-loop pattern the (b) and (e) parents used. Same scalar
+contract: the BATCHED phase_similarity is verified byte-equivalent to
+the reused scalar phase_similarity at startup before any
+characterisation work; if not equivalent the runner refuses to run.
 
 CRITICAL TECHNICAL DECISION (recorded honestly): per-bridge
 _ground_symbols subtracts each bridge's OWN common mode (mean across
@@ -23,7 +25,8 @@ re-mean-centre GLOBALLY across all 160 concepts and re-derive the
 grounded symbols via the SAME fixed-seed deriver pipeline. This is
 more biology-faithful (cortical pooled inhibition normalises across
 the whole cortical extent, not per-region) and yields a uniform
-phasor space across bridges.
+phasor space across bridges. The probe also runs a comparison
+condition (per_bridge_mean) so the choice is characterised.
 
 PRE-REGISTERED reading (fixed; never tuned):
 - CROSS_BRIDGE_PASS: multi-seed-mean >= the frozen 0.80 bar at every
@@ -40,9 +43,9 @@ If PASS: NOT YET a capability pillar -- pending fresh dedicated
 adversarial review (matching the (b) and (e) standing discipline).
 If NEGATIVE: honest characterisation finding, propagated.
 
-CPU-only; reuses every 160-ensemble cache + parallel-matching
-primitives byte-unchanged; no protected/frozen/moat module modified;
-no autograd; no-confab moat must stay 7/7 green.
+Reuses every 160-ensemble cache + parallel-matching primitives byte-
+unchanged; no protected/frozen/moat module modified; no autograd;
+no-confab moat must stay 7/7 green.
 """
 from __future__ import annotations
 
@@ -73,8 +76,9 @@ from research.findings.raw.biologized_spiking_mode_unification_helpers import (
 )
 from research.runners.resonate_fire_fhrr import ResonateFireFHRR
 from research.runners.spiking_phasor_fhrr import (
-    phases_to_spikes, phase_similarity,
+    phases_to_spikes, phase_similarity, spikes_to_phases, CYCLE_STEPS,
 )
+from sim.backend import get_backend, to_host, is_gpu_backend
 
 BRIDGES = ["bridgeA_nouns", "bridgeB_verbs", "bridgeC_adj",
            "bridgeD_spatial", "bridgeE_functional"]
@@ -85,13 +89,61 @@ OUT_JSON = os.path.join(
     _HERE, "cross_bridge_mode_unification_probe.json")
 
 
+def build_vocab_phase_matrix(grounded, all_words, xp):
+    """Stack all V grounded symbols as a (V, N_dim) phase matrix on the
+    active backend. spikes_to_phases is the reused conversion (byte-
+    unchanged); the stacking is the only new operation. Returns the
+    matrix on the active backend (xp arrays)."""
+    phases_list = [spikes_to_phases(grounded[bw], CYCLE_STEPS)
+                   for bw in all_words]
+    # Stack on host first (numpy), then move to backend.
+    phase_matrix_host = np.stack(phases_list, axis=0)  # (V, N_dim)
+    return xp.asarray(phase_matrix_host)
+
+
+def batched_phase_similarity(unbind_spikes, vocab_phase_matrix, xp):
+    """Vectorised FHRR similarity of one unbind against ALL V vocab
+    symbols. Returns (V,) array on the active backend.
+
+    Mathematically IDENTICAL to scalar phase_similarity(unbind, v)
+    iterated for v in vocab: mean(cos(2*pi*(pu - pv))) along the
+    N_dim axis. The broadcast is the only optimisation."""
+    pu_host = spikes_to_phases(unbind_spikes, CYCLE_STEPS)  # (N_dim,) numpy
+    pu = xp.asarray(pu_host)
+    # vocab_phase_matrix: (V, N_dim); pu[None, :]: (1, N_dim) -> broadcast
+    diffs = pu[None, :] - vocab_phase_matrix  # (V, N_dim)
+    sims = xp.mean(xp.cos(2.0 * xp.pi * diffs), axis=1)  # (V,)
+    return sims
+
+
+def verify_batched_equivalent_to_scalar(grounded, all_words, xp,
+                                          rng_seed=0):
+    """Byte-equivalence check: build a phase matrix; compute batched
+    similarities of one random unbind against ALL vocab; compare to
+    scalar phase_similarity(unbind, v) for each v. Tolerance 1e-10
+    (both paths are double-precision phase cosine). Fail-closed."""
+    vocab_phase_matrix = build_vocab_phase_matrix(grounded, all_words, xp)
+    rng = np.random.default_rng(rng_seed)
+    # Probe vector: random spike pattern in the same integer space.
+    probe = rng.integers(0, CYCLE_STEPS, size=N_DIM).astype(np.int64)
+    sims_batched = to_host(batched_phase_similarity(
+        probe, vocab_phase_matrix, xp))  # (V,)
+    sims_scalar = np.array(
+        [phase_similarity(probe, grounded[bw], CYCLE_STEPS)
+         for bw in all_words])  # (V,)
+    max_diff = float(np.max(np.abs(sims_batched - sims_scalar)))
+    if max_diff > 1e-10:
+        raise RuntimeError(
+            f"Batched vs scalar phase_similarity max-diff {max_diff:.3e} "
+            f"exceeds tolerance 1e-10 -- refusing to run.")
+    return max_diff, vocab_phase_matrix
+
+
 def _global_ground_symbols(seed):
     """Load all 5 bridges' caches for this seed; build the 160-
     concept union; re-mean-centre GLOBALLY across all 160 concepts;
     derive grounded symbols via the SAME fixed-seed deriver
-    (DERIV_SEED=90909). Returns (all_words, grounded, d_act) where
-    all_words is a list of (bridge, word) tuples in deterministic
-    order and grounded is a dict keyed on (bridge, word)."""
+    (DERIV_SEED=90909). Returns (all_words, grounded, d_act)."""
     consolidated = {}
     all_words = []
     d_act = None
@@ -111,7 +163,6 @@ def _global_ground_symbols(seed):
             consolidated[(bridge, w)] = acts[w][:K_VOCAB_TARGET].mean(
                 axis=0)
             all_words.append((bridge, w))
-    # GLOBAL common-mode removal across all 160 concepts.
     common = np.mean([consolidated[bw] for bw in all_words], axis=0)
     deriver = make_deriver(N_DIM, d_act, DERIV_SEED)
     grounded = {bw: phases_to_spikes(deriver(consolidated[bw] - common))
@@ -121,9 +172,7 @@ def _global_ground_symbols(seed):
 
 def _per_bridge_ground_symbols(seed):
     """Comparison condition: per-bridge mean-centring (each bridge's
-    own common mode subtracted independently, as the (e) extension
-    does). Used as a control to characterise whether the global vs
-    per-bridge mean-centring choice matters."""
+    own common mode; the (e) extension's choice)."""
     all_words = []
     grounded = {}
     d_act = None
@@ -144,8 +193,7 @@ def _per_bridge_ground_symbols(seed):
     return all_words, grounded, d_act
 
 
-def run_one_seed_one_condition(seed, condition):
-    """condition in {'global_mean', 'per_bridge_mean'}."""
+def run_one_seed_one_condition(seed, condition, xp):
     if condition == "global_mean":
         all_words, grounded, d_act = _global_ground_symbols(seed)
     elif condition == "per_bridge_mean":
@@ -153,6 +201,9 @@ def run_one_seed_one_condition(seed, condition):
     else:
         raise ValueError(f"unknown condition: {condition}")
     V = len(all_words)
+    # Equivalence check at the start of every cell -- fail-closed.
+    max_diff, vocab_phase_matrix = verify_batched_equivalent_to_scalar(
+        grounded, all_words, xp, rng_seed=seed)
     positions = gamma_slot_positions(seed, N_GAMMA_SLOTS, N_DIM)
     net = ResonateFireFHRR(N_DIM, np.random.default_rng(seed))
     qrng = np.random.default_rng(seed + 1)
@@ -167,23 +218,23 @@ def run_one_seed_one_condition(seed, condition):
             C = net.encode([(grounded[items[k]], positions[k])
                             for k in range(load)])
             unbinds = [net.query(C, positions[k]) for k in range(load)]
-            # ORDER-BEARING: per-slot argmax over the FULL 160-concept
-            # union via parallel-population matching.
+            # ORDER-BEARING: per-slot argmax over the 160-concept union
+            # via BATCHED phase-similarity (mathematically identical to
+            # scalar; ~V-fold speedup on GPU; verified at cell start).
             recovered = []
+            scores_oi_gpu = xp.zeros(V)
             for k in range(load):
-                scores = [phase_similarity(unbinds[k], grounded[bw])
-                          for bw in all_words]
-                recovered.append(int(np.argmax(scores)))
+                sims_k = batched_phase_similarity(
+                    unbinds[k], vocab_phase_matrix, xp)  # (V,) on xp
+                recovered.append(int(xp.argmax(sims_k)))
+                scores_oi_gpu = scores_oi_gpu + sims_k
             if tuple(recovered) == items_idx:
                 ob_ok += 1
-            # ORDER-INVARIANT: marginal-sum across slots over 160-
-            # concept union; top-K sorted by index.
-            scores_oi = np.zeros(V)
-            for k in range(load):
-                for v, bw in enumerate(all_words):
-                    scores_oi[v] += phase_similarity(unbinds[k],
-                                                     grounded[bw])
-            topK = sorted(int(i) for i in np.argsort(scores_oi)[-load:])
+            # ORDER-INVARIANT: marginal-sum already accumulated above
+            # via the same batched primitive; top-K via argsort.
+            scores_oi_host = to_host(scores_oi_gpu)
+            topK = sorted(
+                int(i) for i in np.argsort(scores_oi_host)[-load:])
             if tuple(topK) == tuple(sorted(items_idx)):
                 oi_ok += 1
         per_load[load] = {
@@ -191,21 +242,22 @@ def run_one_seed_one_condition(seed, condition):
             "order_invariant_accuracy": oi_ok / N_TRIALS,
             "n_trials": N_TRIALS,
         }
-    return per_load, V
+    return per_load, V, max_diff
 
 
 def main():
+    xp, backend_name = get_backend()
+    gpu = is_gpu_backend()
     print("=== cross-bridge biologized mode-unification probe "
-          "(OPTION 4) ===", flush=True)
-    print(f"seeds={list(SEEDS)}; loads={LOADS}; bridges={BRIDGES}; "
-          f"K_VOCAB={K_VOCAB_TARGET}; bar={BAR}; "
-          f"decoder=parallel_population_matching on 160-concept union",
-          flush=True)
-    print("Two conditions: global_mean (mean-centre across all 160) "
-          "and per_bridge_mean (each bridge's own mean; the (e) "
-          "extension's mean-centring choice).", flush=True)
+          "(OPTION 4, BATCHED) ===", flush=True)
+    print(f"backend={backend_name} (GPU={gpu}); seeds={list(SEEDS)}; "
+          f"loads={LOADS}; bridges={BRIDGES}; K_VOCAB={K_VOCAB_TARGET}; "
+          f"bar={BAR}; decoder=parallel_population_matching on "
+          f"160-concept union (batched)", flush=True)
     print("Reuses 160-ensemble caches + parallel-matching primitives "
-          "byte-unchanged; CPU-only.", flush=True)
+          "byte-unchanged; per-cell startup verifies batched ==  "
+          "scalar phase_similarity within 1e-10 (fail-closed).",
+          flush=True)
 
     results = {"global_mean": [], "per_bridge_mean": []}
     t0 = time.time()
@@ -213,19 +265,22 @@ def main():
         print(f"\n--- condition: {condition} ---", flush=True)
         for seed in SEEDS:
             t_seed = time.time()
-            per_load, V = run_one_seed_one_condition(seed, condition)
+            per_load, V, max_diff = run_one_seed_one_condition(
+                seed, condition, xp)
             results[condition].append(
                 {"seed": seed, "V": V,
+                 "batched_vs_scalar_max_diff": max_diff,
                  "per_load": {str(l): v for l, v in per_load.items()}})
             ob_str = ", ".join(f"L{l}={per_load[l]['order_bearing_accuracy']:.3f}"
                                 for l in LOADS)
             oi_str = ", ".join(f"L{l}={per_load[l]['order_invariant_accuracy']:.3f}"
                                 for l in LOADS)
-            print(f"  [seed={seed} V={V}] OB({ob_str}) | OI({oi_str})  "
+            print(f"  [seed={seed} V={V} diff={max_diff:.2e}] "
+                  f"OB({ob_str}) | OI({oi_str})  "
                   f"({time.time()-t_seed:.1f}s)", flush=True)
-    print(f"\nTotal wall-clock: {time.time()-t0:.1f}s", flush=True)
+    print(f"\nTotal wall-clock: {time.time()-t0:.1f}s "
+          f"(backend={backend_name})", flush=True)
 
-    # Per-condition multi-seed aggregate + verdict.
     print(f"\n=== MULTI-SEED AGGREGATE PER CONDITION ===", flush=True)
     agg = {}
     verdicts = {}
@@ -277,11 +332,12 @@ def main():
               flush=True)
 
     out = {
+        "backend": backend_name, "gpu": gpu,
         "bridges": BRIDGES, "seeds": list(SEEDS), "loads": LOADS,
         "bar": BAR, "n_gamma_slots": N_GAMMA_SLOTS,
         "k_vocab": K_VOCAB_TARGET,
-        "decoder_order_bearing": "parallel_population_matching",
-        "decoder_order_invariant": "marginal_sum_phase_similarity",
+        "decoder_order_bearing": "parallel_population_matching_batched",
+        "decoder_order_invariant": "marginal_sum_phase_similarity_batched",
         "vocab_size": "union_of_5_bridges_32_concepts_each",
         "conditions": ["global_mean", "per_bridge_mean"],
         "per_condition_per_seed": results,

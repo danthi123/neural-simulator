@@ -1424,6 +1424,88 @@ cross-bridge probe on existing caches; same standing discipline as
 the (e) extension) while leaving (c) options 1-3 awaiting steer.
 This preserves momentum without preempting the (c) substrate choice.
 
+**OPTION 4 COMPLETE = CROSS_BRIDGE_BOUNDARY (both conditions);
+ORDER-BEARING parallel-matching extends PERFECTLY cross-bridge (1.000
+multi-seed every cell on 160-concept union; ZERO errors across 3600
+OB trials); ORDER-INVARIANT marginal-sum top-K CEILINGS at L=5 just
+below the 0.80 bar (~0.785-0.790 multi-seed); adversarially reviewed
+CLEAR (14 exploit-class checks incl. independent reproduction byte-
+exact); BOUNDARY pillar n=95 recorded (2026-05-23, both remotes).**
+
+The owner correctly challenged the CPU-only choice for these probes
+mid-run ("GPU/CuPy for real runs"). Honest fix: refactored the runner
+with a GPU-batched phase_similarity (stacks 160 grounded symbols as
+one (V, N_dim) phase matrix; computes all V similarities in one
+broadcast + mean per slot per trial; replaces 160 scalar calls per
+slot per trial). Backend-aware via sim.backend.get_backend(). Per-cell
+startup fail-closed equivalence check verifies batched == scalar to
+1e-10 (observed max-diff 2.08e-17 to 2.78e-17 across all 6 cells --
+double-precision machine epsilon). The CPU partial-run (4 of 6 cells
+before kill) reproduces byte-for-byte under GPU on every overlapping
+cell (global_mean seed 42 L=5 OI = 0.815 GPU == 0.815 CPU; etc.).
+GPU wall-clock 283.5s vs estimated ~30 min CPU = ~6x speedup at run
+level. The GPU-batched runner is now the DEFAULT pattern for future
+characterisation probes.
+
+Final per-condition multi-seed (42/43/44) integrated accuracy at
+L=2/3/5:
+- global_mean: OB 1.000/1.000/1.000; OI 1.000/1.000/0.790
+- per_bridge_mean: OB 1.000/1.000/1.000; OI 1.000/0.998/0.785
+
+Per-seed L=5 OI: global_mean [0.815, 0.755, 0.800]; per_bridge_mean
+[0.780, 0.770, 0.805]. Mean-centring choice (global vs per-bridge)
+doesn't materially affect outcome -- the boundary is in the spiking-
+grounded symbol noise floor at L=5 x V=160, not in the mean-centring
+framing. Adversarial reviewer ran the OB-perfection genuineness check
+on actual trials (inspected items_idx tuples; all distinct items via
+replace=False; recoveries are real per-slot argmaxes, not degenerate),
+the cache identity check (md5 of bridgeC_seed44 cache; same files the
+(e) extension used), and the independent BOUNDARY cell reproduction
+(per_bridge_mean seed 44 L=5 OI = 0.805 byte-exact). VERDICT CLEAR on
+all 14 checks. Recommendation: "Safe to record cross_bridge_BOUNDARY
+as a capability_status pillar with the honest BOUNDARY framing -- the
+result characterises precisely what extends and what ceilings out as
+5-bridge composites stress the parallel-matching mechanism's
+interference floor."
+
+BIOLOGY-TRANSLATABLE INSIGHTS: (1) parallel-population matching
+ORDER-BEARING identification scales perfectly from per-bridge (32
+distractors) to cross-bridge (160 distractors) -- the dendritic-
+integration + lateral-inhibition WTA handles the 5x distractor
+increase without per-slot degradation. (2) The marginal-sum top-K
+ORDER-INVARIANT mechanism has a sharper noise floor at high load x
+large vocab -- ceilings at L=5 x V=160 (where per-slot OB stays
+perfect). (3) Mean-centring choice is NOT the load-bearing geometric
+property at this scale (~0.005 difference between conditions); the
+substrate's grounded-symbol noise floor is. (4) The OB-vs-OI split
+parallels the FHRR capacity-envelope arc: at N_dim=512 the algebra
+has more OB than OI headroom at the vocab edge; the cross-bridge
+spiking-grounded pipeline reproduces that pattern. (5) Cortical per-
+slot identification and cortical multi-slot set-comparison are
+honest division of labor with different load x vocab boundaries; both
+biology-translatable.
+
+THE BIOLOGIZED THETA-GAMMA MODE-UNIFICATION THREAD IS NOW
+CHARACTERISED AT THREE NESTED SCALES: single-bridge VALIDATED (n=93)
+-> per-bridge ensemble VALIDATED across all 5 bridges (n=94) ->
+cross-bridge union BOUNDARY at L=5 OI (n=95). The compositional
+mechanism has a precise boundary at the cross-bridge x high-load x
+order-invariant corner; everywhere else it PASSes (per-bridge at
+every load; cross-bridge OB at every load).
+
+**EXACT NEXT ACTION: stay with the standing autonomy; the (c)
+generative-replay integration choice (options 1-4 surfaced above)
+remains pending owner steer; this state file + the next message
+deliver the OPTION 4 result + the (c) choice. If no prompt owner
+input, the next autonomous step is the cheapest characterisation
+follow-up to the OPTION 4 BOUNDARY: a cheap CPU/GPU probe of OI
+load-ceiling at higher loads {2..7} on the 160-concept union (matches
+the (e) load-ceiling-map pattern; no GPU substrate work; reuses every
+cache + the GPU-batched runner; ~10 min GPU; characterises the OI
+ceiling precisely and yields a sharper biology-translatable claim
+than the BOUNDARY pillar alone). This stays within the mode-
+unification thread's natural completion without preempting (c).
+
 (Broader horizon: generative replay builds ON TOP OF biologized
 mode-unification once that is built. The biologized mode-unification
 is the next major direction; generative replay then closes the
