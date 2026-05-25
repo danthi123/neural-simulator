@@ -9,44 +9,60 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## In flight RIGHT NOW (2026-05-25)
+## DIRECTION P-v3 REDISCOVERED AS DUPLICATE; KILLED + ARC CLOSED (2026-05-25)
 
-- **Direction P-v3 LAUNCHED** as background python (PID 15676,
-  log `research/findings/raw/direction_P_v3.log`, completion watcher
-  background task `bbdxnx5hg`). Bar UNCHANGED 0.50/0.30/0.30. Multi-
-  seed [42,43,44]. ETA 3-5 hr (fresh substrate build + encode + SWR +
-  tests per seed). Tests the CLS architectural fix prescribed by
-  P-v2 finding: appends 12 plastic ca1->concept_pool RegionPathways
-  before bridge construction (build_biological_brain_regions itself
-  byte-unchanged). Pre-registered verdict tags:
-  CLS_CONFIRMED_PILLAR_N105_CANDIDATE (pass);
-  HIPPO_ENCODING_INSUFFICIENT_EVEN_WITH_NEW_PATHWAYS (still bounded);
-  SWR_DOES_NOT_TRANSFER_CONCEPT_ASSOC_VIA_CA1_PATHWAYS (pathway
-  insufficient).
-- **Parallel work during the GPU wait**: existing-biology-sim audit
-  per owner 2026-05-19 reframe (Hasselmo SPEAR, Ursino-2022
-  Lisman-Idiart, Spaun/Nengo SPA, Spiking TEM, generative replay).
+Direction P-v3 was launched then killed mid-seed-42 after parallel
+literature pass discovered the proposed architectural fix is a STRICT
+SUBSET of the already-NEGATIVE 2026-05-22 ca1-variant + staged-
+recurrence work. The 2026-05-22 finding explicitly closed the
+dynamics-gating / wiring / amplification class with the conclusion:
 
-## Pre-registered post-P-v3 chain (per verdict)
+> "The compositional fix is not in the network dynamics. It is in
+> the REPRESENTATION."
 
-- **CONFIRMED**: pillar n=105 candidate; commit findings doc; adversarial
-  reviewer dispatch; if reviewer CLEAR record pillar; then either
-  (a) extend to multi-pair concept-concept consolidation or
-  (b) integrate into chat substrate.
-- **HIPPO_ENCODING_INSUFFICIENT_EVEN_WITH_NEW_PATHWAYS**: 4th convergent
-  BOUNDARY finding on substrate-consolidation arc; record + extend
-  pillar n=104 BOUNDARY characterization; substrate-consolidation arc
-  formally CLOSED at FOUR convergent findings; pivot to
-  scale-up direction (Direction Q dlpfc_wm 60->1000 neurons) OR
-  the existing-sims-audit-driven direction.
-- **SWR_DOES_NOT_TRANSFER_CONCEPT_ASSOC_VIA_CA1_PATHWAYS**: pathway
-  present but SWR consolidation doesn't move concept association
-  through it; diagnostic next probe is to drive ca1 directly during
-  the post-sleep test (bypass the SWR mechanism) to isolate whether
-  the failure is in SWR replay or in CA1->concept readout.
-- **HIPPO_SILENCE_INEFFECTIVE**: should not happen (silence is the
-  same byte-identical mechanism as P-v2 which worked); if it does,
-  fix the silence wiring first.
+P-v3 partial result (seed 42 only, killed mid-SWR):
+- pre-A (fresh untrained substrate): 0.375 (below 0.50 bar)
+- pre-B (hippo silenced): 0.125
+- Killed before SWR cycle completed
+
+**Cumulative dynamics-class NEGATIVE arc (5+ convergent findings):**
+SPEAR ACh phase-separation; ca1-variant substrate (P-v3 equivalent);
+ACh-staged recurrent excitation on ca1-variant; difference-readout
+probe; 8 prior compositional architectures; Direction P trivial;
+Direction P-v2 honest negative; (c) generative-replay decisive
+NEGATIVE pillar n=99 with REPLAY_DOESNT_REACTIVATE diagnostic.
+
+**Findings doc**: `research/findings/2026-05-25-DIRECTION-P-v3-DUPLICATE-REDISCOVERY-ca1-variant-arc-CONVERGENT-NEGATIVE-pivot-to-representation-class.md`.
+
+**Discipline lesson recorded**: before launching ANY new direction,
+grep prior findings dir for the proposed mechanism's architectural
+substrate + mechanism class; the P-v2 -> P-v3 chain re-derived a
+closed-arc fix as if it were novel. Auto-grep for similar-architecture
+findings should be a pre-launch step.
+
+## Exact next concrete action
+
+Per 2026-05-24 post-c roadmap (`docs/plans/2026-05-24-post-c-direction-roadmap-multi-turn-and-beyond.md`)
+the cheapest-first frontier direction that has NOT been duplicated
+is **Direction 4: cross-bridge bio_brain_regions composition** (mirror
+G.20 sparse's 5-bridge pattern but on bio_brain_regions substrates;
+~per-bridge 30 min train; ensemble ~3 hr; cross-bridge probe ~10 min
+CPU). Followed by **Direction 3: extend OPTION 3 / HIPPO-OPTION3 /
+DLPFC-extension chain to 32 / 64 / 160 concepts on bio_brain_regions**
+(~1.5-2 hr per tier).
+
+These directions:
+1. Reuse the validated substrate-readiness chain (n=93/n=94/n=96/n=97/
+   n=98) and the working deliverable Direction M (320-concept multi-
+   bridge chat).
+2. Test the scale axis (which dynamics-class and representation-class
+   arcs both converged on as the bottleneck).
+3. Each tier has its own pre-registered fixed-bar test per the
+   roadmap.
+
+Frozen bar 0.80 multi-seed strict top-1 unchanged. GPU/CuPy for real
+runs; numpy only for cheap-first probes. Reuse-by-import only; no
+protected/frozen/moat modification; no autograd.
 
 
 
