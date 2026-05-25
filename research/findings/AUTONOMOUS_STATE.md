@@ -9,6 +9,31 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## STATUS UPDATE (~05:37 EDT 2026-05-25)
+
+- **Direction R-v3 envelope COMPLETE** (commit 21b9e9f): ALL 3 cells
+  PASS at top-3 bar (N=256 100%, N=384 95%, N=512 85%). Direction M
+  capacity envelope now mapped N=50 -> N=512 with graceful degradation.
+  Findings doc:
+  `research/findings/2026-05-25-DIRECTION-R-v3-ENVELOPE-PASS-...md`.
+- **D3 V=32 production in flight**: seed 42 TRAINED (57.8 min wall;
+  in capture phase now); seeds 43 + 44 yet to train (will run on
+  freed GPU at ~30-40 min/seed; ETA D3 verdict ~60-70 more min).
+- **D4 ready to launch** when D3 production frees GPU completely
+  (Tasks 0-5 scaffolded; controller-only Task 5 GPU training).
+
+## Per user ordered direction (Q -> 3 -> 4 -> R) — STATUS
+
+- **Q (dlpfc_wm scale-up)**: COMPLETE = PARTIAL across 3 scaling-
+  envelope cells (biology-translatable: substrate engages NMDA but
+  doesn't sustain attractor; bottleneck structural/dynamical).
+- **3 V=32 (vocab scaling)**: SMOKE PASS + production decisive IN
+  FLIGHT (pillar n=105 candidate if production PASSes).
+- **4 (cross-bridge bio_brain_regions)**: SCAFFOLDED (Tasks 0-5);
+  GPU training queued for when D3 production frees GPU.
+- **R-v3 (capacity envelope)**: COMPLETE = ALL 3 CELLS PASS at
+  top-3 bar; Direction M extends ~10x beyond initial validation.
+
 ## IN FLIGHT (~05:05 EDT 2026-05-25)
 
 - **D3 V=32 production decisive**: PID 36700; seed 42 at 2560/6400
