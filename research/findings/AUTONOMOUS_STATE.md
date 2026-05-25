@@ -99,6 +99,24 @@ requires a SEPARATE familiarity / match-strength signal (perirhinal
 threshold on the identification score. Same principle as FHRR
 shortcut-3 RESOLVED (2026-05-22).
 
+**2026-05-24 SESSION COMPLETE + DIRECTION M DELIVERABLE: 320-concept
+G.20 multi-bridge conversational chat VERIFIED working end-to-end
+(20x scale-up of the validated 16-concept multitag chat) -- the
+biggest user-visible conversational deliverable. Substrate-sequence-
+storage arc THOROUGHLY characterized; pillar n=104 extended; ~108
+commits both remotes.**
+
+**DIRECTION M VERIFIED (2026-05-24 evening):** 320-concept G.20
+5-sparse-bridge ensemble + multitag mechanism = working conversational
+chat. Real-time learning ("remember apple is big"), correct retrieval
+("apple" -> "big" top-1), exact tag match ("is apple big?" -> YES),
+honest abstention ("is cat fast?" -> UNKNOWN when untrained). 18,684
+neurons + 10.4M synapses; uses cached pre-trained bridges (G.20
+production tier from 2026-05-16 at 98.4% per-bridge). Reuses validated
+architecture byte-unchanged. Findings:
+`research/findings/2026-05-24-DIRECTION-M-COMPLETE-320-concept-multi-
+bridge-chat-deliverable-VALIDATED.md`.
+
 **2026-05-24 SESSION COMPLETE: substrate-sequence-storage arc THOROUGHLY
 CHARACTERIZED via 7 mechanism attempts; pillar n=104 extended (4
 reviewer-driven updates); Direction H added (canon dynamics REFUTE
