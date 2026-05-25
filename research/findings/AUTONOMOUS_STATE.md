@@ -9,6 +9,26 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## NIGHT AUTONOMOUS ARC COMPLETE + D4 DIAGNOSTIC RULES OUT CHEAP FIX (~09:30 EDT 2026-05-25)
+
+**D4 global_mean diagnostic** (commit ca5b000): per_bridge_local and
+global_mean centring produce BYTE-IDENTICAL results (cos=1.0; L2=0;
+identical norms). The 5 bridges' local means are already byte-
+identical to the global mean. Hypothesized "5 misaligned phasor
+sub-spaces" doesn't exist. The bio_brain_regions v14/v16 recipe
+produces such uniform pool-wide baseline activity that any scalar
+mean recovers the same residual. **GLOBAL_MEAN_DOES_NOT_HELP**;
+D4 NEGATIVE is substrate-geometry limited, not centring-choice
+limited. Cheap fix RULED OUT.
+
+Sharpened biology-translatable finding: bio_brain_regions concept-
+pool architecture has uniform baseline activity that dwarfs the
+differential concept signal at cross-bridge probe level. The fix is
+in the REPRESENTATION (sparse Kanerva-style coding as in G.20 pillar
+n=95 which got OB 1.000 cross-bridge at V=160), not the centring
+recipe. Per pre-registered NEGATIVE chain, this is the honest
+diagnostic; do NOT iterate further centring recipes.
+
 ## NIGHT AUTONOMOUS ARC COMPLETE (~09:20 EDT 2026-05-25)
 
 User wakes to substantial autonomous progress (~30 commits both remotes):
