@@ -9,6 +9,40 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## DIRECTION Q LAUNCHED (2026-05-25 02:11): Wang 2002 NMDA persistence test at n=1000
+
+Tasks 0-5 of the Direction Q implementation plan COMPLETE via
+subagent-driven-development (commits 8715aa3, 70695cc, 957ac51,
+c93495f, c60fdd8). All grounding pin tests + per-task tests GREEN.
+
+Task 6 CONTROLLER-ONLY decisive run LAUNCHED at 02:11 EDT:
+- PID 9308; log `research/findings/raw/direction_Q_dlpfc_scale_up_standalone.log`
+- Background watcher `bmlhxb5u6` (until-loop for `verdict:` or failure markers)
+- Config: n_dlpfc=1000, density=0.10, baseline 500ms, cue 500ms at 1500pA + cue_fraction=0.5, delay 3000ms in 50ms bins, seeds [42,43,44] x NMDA-on AND NMDA-off control
+- Seed 42 in flight: cue period drove 269.965 Hz (NMDA-on); waiting for delay-period rate
+- ETA based on smoke timing scale-up: ~10-30 min total (smoke was 45s at n=200)
+
+**Pre-registered verdict** (frozen in research/findings/raw/direction_Q_verdict.py at Task 3):
+- _Q_RATE_RATIO_MIN = 2.0
+- _Q_DELAY_MIN_SEC = 3.0
+- _Q_MIN_SEEDS_PASS = 3
+
+**Pre-registered post-verdict chain**:
+- Q_BISTABILITY_PASS: pillar n=105 candidate; commit findings doc;
+  dispatch adversarial reviewer; if reviewer CLEAR record pillar +
+  update capability_status.json; integrate dlpfc_wm n=1000 into
+  bio_brain_regions substrate; revisit Direction I (now closed
+  by PASS at scale)
+- Q_BISTABILITY_PARTIAL: characterize scaling envelope at
+  n=200/500/2000 to find the threshold; biology-translatable scale
+  threshold finding
+- Q_BISTABILITY_NEGATIVE: deeper structural diagnosis required;
+  localize what microcircuit element is missing beyond scale;
+  pivot to Direction 3 (vocab scaling) or Direction 4 (cross-bridge
+  bio_brain_regions) per the mechanism-class audit guide
+- Q_VOID_CONTROL_ALSO_PASSED: persistence not NMDA-driven;
+  diagnose substrate bug; do NOT propagate as pillar
+
 ## DIRECTION P-v3 REDISCOVERED AS DUPLICATE; KILLED + ARC CLOSED (2026-05-25)
 
 Direction P-v3 was launched then killed mid-seed-42 after parallel
