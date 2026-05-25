@@ -1,0 +1,913 @@
+{
+  "ladder": [
+    256,
+    384,
+    512
+  ],
+  "seed": 42,
+  "bar_top3_min": 0.8,
+  "cells": [
+    {
+      "n": 256,
+      "seed": 42,
+      "n_queries": 20,
+      "top1_correct": 12,
+      "top3_correct": 20,
+      "top1_accuracy": 0.6,
+      "top3_accuracy": 1.0,
+      "verdict": "DIRECTION_R_V3_PASS_AT_256",
+      "per_query": [
+        {
+          "query": "often",
+          "expected": [
+            "huge"
+          ],
+          "top1": "huge",
+          "top3": [
+            "huge",
+            "big",
+            "cool"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "these",
+          "expected": [
+            "chair"
+          ],
+          "top1": "chair",
+          "top3": [
+            "chair",
+            "yes",
+            "seven"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "any",
+          "expected": [
+            "stand"
+          ],
+          "top1": "stand",
+          "top3": [
+            "stand",
+            "hard",
+            "build"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "house",
+          "expected": [
+            "now"
+          ],
+          "top1": "now",
+          "top3": [
+            "now",
+            "sun",
+            "arm"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "back",
+          "expected": [
+            "around"
+          ],
+          "top1": "around",
+          "top3": [
+            "around",
+            "fast",
+            "north"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "school",
+          "expected": [
+            "far"
+          ],
+          "top1": "far",
+          "top3": [
+            "far",
+            "here",
+            "west"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "very",
+          "expected": [
+            "old"
+          ],
+          "top1": "moon",
+          "top3": [
+            "moon",
+            "tree",
+            "old"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "smell",
+          "expected": [
+            "if"
+          ],
+          "top1": "young",
+          "top3": [
+            "young",
+            "if",
+            "below"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "many",
+          "expected": [
+            "can"
+          ],
+          "top1": "sheep",
+          "top3": [
+            "sheep",
+            "can",
+            "other"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "deep",
+          "expected": [
+            "jump"
+          ],
+          "top1": "zero",
+          "top3": [
+            "zero",
+            "jump",
+            "build"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "build",
+          "expected": [
+            "hold"
+          ],
+          "top1": "hold",
+          "top3": [
+            "hold",
+            "go",
+            "make"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "down",
+          "expected": [
+            "tomorrow"
+          ],
+          "top1": "tomorrow",
+          "top3": [
+            "tomorrow",
+            "six",
+            "often"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "is",
+          "expected": [
+            "on"
+          ],
+          "top1": "dark",
+          "top3": [
+            "dark",
+            "during",
+            "on"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "thin",
+          "expected": [
+            "kick"
+          ],
+          "top1": "kick",
+          "top3": [
+            "kick",
+            "head",
+            "fall"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "once",
+          "expected": [
+            "eat"
+          ],
+          "top1": "key",
+          "top3": [
+            "key",
+            "eat",
+            "often"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "because",
+          "expected": [
+            "eye"
+          ],
+          "top1": "few",
+          "top3": [
+            "few",
+            "eye",
+            "yes"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "whenever",
+          "expected": [
+            "cook"
+          ],
+          "top1": "cook",
+          "top3": [
+            "cook",
+            "run",
+            "during"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "blue",
+          "expected": [
+            "true"
+          ],
+          "top1": "big",
+          "top3": [
+            "big",
+            "true",
+            "warm"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "corner",
+          "expected": [
+            "warm"
+          ],
+          "top1": "warm",
+          "top3": [
+            "warm",
+            "soon",
+            "top"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "no",
+          "expected": [
+            "maybe"
+          ],
+          "top1": "maybe",
+          "top3": [
+            "maybe",
+            "hand",
+            "none"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        }
+      ]
+    },
+    {
+      "n": 384,
+      "seed": 42,
+      "n_queries": 20,
+      "top1_correct": 14,
+      "top3_correct": 19,
+      "top1_accuracy": 0.7,
+      "top3_accuracy": 0.95,
+      "verdict": "DIRECTION_R_V3_PASS_AT_384",
+      "per_query": [
+        {
+          "query": "edge",
+          "expected": [
+            "few"
+          ],
+          "top1": "few",
+          "top3": [
+            "few",
+            "table",
+            "tomorrow"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "please",
+          "expected": [
+            "play",
+            "bright"
+          ],
+          "top1": "bright",
+          "top3": [
+            "bright",
+            "play",
+            "want"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "is",
+          "expected": [
+            "fall"
+          ],
+          "top1": "fall",
+          "top3": [
+            "fall",
+            "each",
+            "other"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "fix",
+          "expected": [
+            "ride"
+          ],
+          "top1": "east",
+          "top3": [
+            "east",
+            "ride",
+            "back"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "foot",
+          "expected": [
+            "forward"
+          ],
+          "top1": "forward",
+          "top3": [
+            "forward",
+            "south",
+            "apple"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "bad",
+          "expected": [
+            "eye"
+          ],
+          "top1": "find",
+          "top3": [
+            "find",
+            "eye",
+            "bird"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "across",
+          "expected": [
+            "nose"
+          ],
+          "top1": "nose",
+          "top3": [
+            "nose",
+            "here",
+            "always"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "bottom",
+          "expected": [
+            "green"
+          ],
+          "top1": "throw",
+          "top3": [
+            "throw",
+            "branch",
+            "window"
+          ],
+          "top1_correct": false,
+          "top3_correct": false
+        },
+        {
+          "query": "touch",
+          "expected": [
+            "up"
+          ],
+          "top1": "up",
+          "top3": [
+            "up",
+            "yesterday",
+            "hold"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "mean",
+          "expected": [
+            "because"
+          ],
+          "top1": "because",
+          "top3": [
+            "because",
+            "seven",
+            "empty"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "sad",
+          "expected": [
+            "that"
+          ],
+          "top1": "cool",
+          "top3": [
+            "cool",
+            "that",
+            "and"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "but",
+          "expected": [
+            "give",
+            "well"
+          ],
+          "top1": "well",
+          "top3": [
+            "well",
+            "big",
+            "please"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "ear",
+          "expected": [
+            "bed"
+          ],
+          "top1": "bed",
+          "top3": [
+            "bed",
+            "arm",
+            "cat"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "hot",
+          "expected": [
+            "can"
+          ],
+          "top1": "can",
+          "top3": [
+            "can",
+            "quiet",
+            "four"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "smell",
+          "expected": [
+            "key",
+            "later"
+          ],
+          "top1": "later",
+          "top3": [
+            "later",
+            "key",
+            "fly"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "on",
+          "expected": [
+            "hit",
+            "also"
+          ],
+          "top1": "hit",
+          "top3": [
+            "hit",
+            "also",
+            "tell"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "true",
+          "expected": [
+            "slow"
+          ],
+          "top1": "box",
+          "top3": [
+            "box",
+            "sheep",
+            "slow"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "away",
+          "expected": [
+            "grass"
+          ],
+          "top1": "grass",
+          "top3": [
+            "grass",
+            "outside",
+            "cup"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "hit",
+          "expected": [
+            "drink"
+          ],
+          "top1": "drink",
+          "top3": [
+            "drink",
+            "on",
+            "look"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "this",
+          "expected": [
+            "small"
+          ],
+          "top1": "warm",
+          "top3": [
+            "warm",
+            "small",
+            "light"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        }
+      ]
+    },
+    {
+      "n": 512,
+      "seed": 42,
+      "n_queries": 20,
+      "top1_correct": 11,
+      "top3_correct": 17,
+      "top1_accuracy": 0.55,
+      "top3_accuracy": 0.85,
+      "verdict": "DIRECTION_R_V3_PASS_AT_512",
+      "per_query": [
+        {
+          "query": "carry",
+          "expected": [
+            "once"
+          ],
+          "top1": "big",
+          "top3": [
+            "big",
+            "once",
+            "watch"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "touch",
+          "expected": [
+            "why"
+          ],
+          "top1": "why",
+          "top3": [
+            "why",
+            "some",
+            "any"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "hit",
+          "expected": [
+            "road"
+          ],
+          "top1": "arm",
+          "top3": [
+            "arm",
+            "road",
+            "after"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "fall",
+          "expected": [
+            "feel"
+          ],
+          "top1": "say",
+          "top3": [
+            "say",
+            "feel",
+            "laugh"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "early",
+          "expected": [
+            "top"
+          ],
+          "top1": "top",
+          "top3": [
+            "top",
+            "north",
+            "any"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "seed",
+          "expected": [
+            "have"
+          ],
+          "top1": "horse",
+          "top3": [
+            "horse",
+            "narrow",
+            "kick"
+          ],
+          "top1_correct": false,
+          "top3_correct": false
+        },
+        {
+          "query": "kick",
+          "expected": [
+            "bottom",
+            "seed",
+            "ride"
+          ],
+          "top1": "bottom",
+          "top3": [
+            "bottom",
+            "ride",
+            "seed"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "when",
+          "expected": [
+            "window",
+            "open"
+          ],
+          "top1": "window",
+          "top3": [
+            "window",
+            "any",
+            "arm"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "can",
+          "expected": [
+            "many"
+          ],
+          "top1": "go",
+          "top3": [
+            "go",
+            "cow",
+            "too"
+          ],
+          "top1_correct": false,
+          "top3_correct": false
+        },
+        {
+          "query": "after",
+          "expected": [
+            "hit"
+          ],
+          "top1": "hit",
+          "top3": [
+            "hit",
+            "catch",
+            "hold"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "because",
+          "expected": [
+            "slow",
+            "whenever"
+          ],
+          "top1": "all",
+          "top3": [
+            "all",
+            "drink",
+            "whenever"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "ear",
+          "expected": [
+            "between",
+            "red"
+          ],
+          "top1": "between",
+          "top3": [
+            "between",
+            "duck",
+            "warm"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "cat",
+          "expected": [
+            "very"
+          ],
+          "top1": "and",
+          "top3": [
+            "and",
+            "very",
+            "all"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "run",
+          "expected": [
+            "inside",
+            "maybe"
+          ],
+          "top1": "maybe",
+          "top3": [
+            "maybe",
+            "inside",
+            "feel"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "push",
+          "expected": [
+            "loud"
+          ],
+          "top1": "quiet",
+          "top3": [
+            "quiet",
+            "young",
+            "deep"
+          ],
+          "top1_correct": false,
+          "top3_correct": false
+        },
+        {
+          "query": "throw",
+          "expected": [
+            "fast",
+            "during"
+          ],
+          "top1": "far",
+          "top3": [
+            "far",
+            "box",
+            "during"
+          ],
+          "top1_correct": false,
+          "top3_correct": true
+        },
+        {
+          "query": "but",
+          "expected": [
+            "soon",
+            "later",
+            "yesterday"
+          ],
+          "top1": "later",
+          "top3": [
+            "later",
+            "yesterday",
+            "behind"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "want",
+          "expected": [
+            "yes",
+            "person"
+          ],
+          "top1": "yes",
+          "top3": [
+            "yes",
+            "cold",
+            "person"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "well",
+          "expected": [
+            "until",
+            "cold",
+            "wolf"
+          ],
+          "top1": "cold",
+          "top3": [
+            "cold",
+            "wolf",
+            "bring"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        },
+        {
+          "query": "nine",
+          "expected": [
+            "wash",
+            "small",
+            "blue"
+          ],
+          "top1": "blue",
+          "top3": [
+            "blue",
+            "small",
+            "wash"
+          ],
+          "top1_correct": true,
+          "top3_correct": true
+        }
+      ]
+    }
+  ],
+  "wall_minutes": 38.77242694695791,
+  "bridges": [
+    "bridgeA_nouns",
+    "bridgeB_verbs",
+    "bridgeC_adj",
+    "bridgeD_spatial",
+    "bridgeE_functional"
+  ]
+}
