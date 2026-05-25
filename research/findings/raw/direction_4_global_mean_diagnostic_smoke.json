@@ -1,0 +1,335 @@
+{
+  "diagnostic": "direction_4_global_mean_centring",
+  "diagnostic_tag": "GLOBAL_MEAN_DOES_NOT_HELP",
+  "interpretation_threshold": 0.2,
+  "interpretation_note": "GLOBAL_MEAN_HELPS: any cell > 0.20 implies per_bridge_local centring was the constraint -> next-stage probe should use global_mean centring. GLOBAL_MEAN_DOES_NOT_HELP (all cells <= 0.20): bottleneck is bio_brain_regions substrate geometry, not the centring choice. Substantial redesign (e.g. sparse Kanerva-style coding per pillar n=95) would be needed.",
+  "backend": "cupy",
+  "gpu": true,
+  "tag": "smoke",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar_ob": 0.8,
+  "bar_oi": 0.8,
+  "min_seeds": 3,
+  "V": 80,
+  "n_bridges": 5,
+  "bridges": [
+    "A_nouns",
+    "B_verbs",
+    "C_adj",
+    "D_spatial",
+    "E_functional"
+  ],
+  "decoder_order_bearing": "parallel_population_matching_batched",
+  "decoder_order_invariant": "marginal_sum_phase_similarity_batched",
+  "mean_centring": "global_mean",
+  "centring_option": "A (single shared mean across 80*M_OBS rows)",
+  "substrate": "bio_brain_regions_5bridge_ensemble_v14v16_recipe",
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 80,
+      "batched_vs_scalar_max_diff": 1.0408340855860843e-17,
+      "centring_info": {
+        "centring": "global_mean",
+        "d_act_per_bridge": {
+          "A_nouns": 1600,
+          "B_verbs": 1600,
+          "C_adj": 1600,
+          "D_spatial": 1600,
+          "E_functional": 1600
+        },
+        "d_act_uniform": 1600,
+        "global_mean_norm": 7.448955535888672,
+        "per_bridge_local_mean_norms": {
+          "A_nouns": 7.448955535888672,
+          "B_verbs": 7.448955535888672,
+          "C_adj": 7.448955535888672,
+          "D_spatial": 7.448955535888672,
+          "E_functional": 7.448955535888672
+        },
+        "cos_global_to_local_mean": {
+          "A_nouns": 0.9999999999999819,
+          "B_verbs": 0.9999999999999819,
+          "C_adj": 0.9999999999999819,
+          "D_spatial": 0.9999999999999819,
+          "E_functional": 0.9999999999999819
+        },
+        "l2_dist_global_to_local_mean": {
+          "A_nouns": 0.0,
+          "B_verbs": 0.0,
+          "C_adj": 0.0,
+          "D_spatial": 0.0,
+          "E_functional": 0.0
+        }
+      },
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 0.045,
+          "order_invariant_accuracy": 0.015,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 0.01,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 0.0,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=2": {
+          "OB": 0.045,
+          "OI": 0.015
+        },
+        "L=3": {
+          "OB": 0.01,
+          "OI": 0.0
+        },
+        "L=5": {
+          "OB": 0.0,
+          "OI": 0.0
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "V": 80,
+      "batched_vs_scalar_max_diff": 2.6020852139652106e-17,
+      "centring_info": {
+        "centring": "global_mean",
+        "d_act_per_bridge": {
+          "A_nouns": 1600,
+          "B_verbs": 1600,
+          "C_adj": 1600,
+          "D_spatial": 1600,
+          "E_functional": 1600
+        },
+        "d_act_uniform": 1600,
+        "global_mean_norm": 5.7779340744018555,
+        "per_bridge_local_mean_norms": {
+          "A_nouns": 5.7779340744018555,
+          "B_verbs": 5.7779340744018555,
+          "C_adj": 5.7779340744018555,
+          "D_spatial": 5.7779340744018555,
+          "E_functional": 5.7779340744018555
+        },
+        "cos_global_to_local_mean": {
+          "A_nouns": 0.99999999999997,
+          "B_verbs": 0.99999999999997,
+          "C_adj": 0.99999999999997,
+          "D_spatial": 0.99999999999997,
+          "E_functional": 0.99999999999997
+        },
+        "l2_dist_global_to_local_mean": {
+          "A_nouns": 0.0,
+          "B_verbs": 0.0,
+          "C_adj": 0.0,
+          "D_spatial": 0.0,
+          "E_functional": 0.0
+        }
+      },
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 0.045,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 0.01,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 0.01,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=2": {
+          "OB": 0.045,
+          "OI": 0.0
+        },
+        "L=3": {
+          "OB": 0.01,
+          "OI": 0.0
+        },
+        "L=5": {
+          "OB": 0.01,
+          "OI": 0.0
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "V": 80,
+      "batched_vs_scalar_max_diff": 1.3877787807814457e-17,
+      "centring_info": {
+        "centring": "global_mean",
+        "d_act_per_bridge": {
+          "A_nouns": 1600,
+          "B_verbs": 1600,
+          "C_adj": 1600,
+          "D_spatial": 1600,
+          "E_functional": 1600
+        },
+        "d_act_uniform": 1600,
+        "global_mean_norm": 6.0566630363464355,
+        "per_bridge_local_mean_norms": {
+          "A_nouns": 6.0566630363464355,
+          "B_verbs": 6.0566630363464355,
+          "C_adj": 6.0566630363464355,
+          "D_spatial": 6.0566630363464355,
+          "E_functional": 6.0566630363464355
+        },
+        "cos_global_to_local_mean": {
+          "A_nouns": 0.9999999999999727,
+          "B_verbs": 0.9999999999999727,
+          "C_adj": 0.9999999999999727,
+          "D_spatial": 0.9999999999999727,
+          "E_functional": 0.9999999999999727
+        },
+        "l2_dist_global_to_local_mean": {
+          "A_nouns": 0.0,
+          "B_verbs": 0.0,
+          "C_adj": 0.0,
+          "D_spatial": 0.0,
+          "E_functional": 0.0
+        }
+      },
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 0.06,
+          "order_invariant_accuracy": 0.005,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 0.005,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 0.005,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=2": {
+          "OB": 0.06,
+          "OI": 0.005
+        },
+        "L=3": {
+          "OB": 0.005,
+          "OI": 0.0
+        },
+        "L=5": {
+          "OB": 0.005,
+          "OI": 0.0
+        }
+      }
+    }
+  ],
+  "aggregate_global_mean": {
+    "2": {
+      "order_bearing_mean": 0.049999999999999996,
+      "order_bearing_per_seed": [
+        0.045,
+        0.045,
+        0.06
+      ],
+      "order_invariant_mean": 0.006666666666666667,
+      "order_invariant_per_seed": [
+        0.015,
+        0.0,
+        0.005
+      ]
+    },
+    "3": {
+      "order_bearing_mean": 0.008333333333333333,
+      "order_bearing_per_seed": [
+        0.01,
+        0.01,
+        0.005
+      ],
+      "order_invariant_mean": 0.0,
+      "order_invariant_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "5": {
+      "order_bearing_mean": 0.005,
+      "order_bearing_per_seed": [
+        0.0,
+        0.01,
+        0.005
+      ],
+      "order_invariant_mean": 0.0,
+      "order_invariant_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "aggregate_per_bridge_local_for_comparison": {
+    "2": {
+      "order_bearing_mean": 0.049999999999999996,
+      "order_invariant_mean": 0.006666666666666667,
+      "order_bearing_per_seed": [
+        0.045,
+        0.045,
+        0.06
+      ],
+      "order_invariant_per_seed": [
+        0.015,
+        0.0,
+        0.005
+      ]
+    },
+    "3": {
+      "order_bearing_mean": 0.008333333333333333,
+      "order_invariant_mean": 0.0,
+      "order_bearing_per_seed": [
+        0.01,
+        0.01,
+        0.005
+      ],
+      "order_invariant_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "5": {
+      "order_bearing_mean": 0.005,
+      "order_invariant_mean": 0.0,
+      "order_bearing_per_seed": [
+        0.0,
+        0.01,
+        0.005
+      ],
+      "order_invariant_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verdict_global_mean": "DIRECTION_4_NEGATIVE",
+  "wall_clock_seconds": 131.81290245056152
+}
