@@ -9,6 +9,58 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## NIGHT AUTONOMOUS ARC COMPLETE (~09:20 EDT 2026-05-25)
+
+User wakes to substantial autonomous progress (~30 commits both remotes):
+
+**Pillar n=105 PROMOTED**: Direction 3 V=32 production decisive PASS
+multi-seed (18/18 cells; L=5 OI 0.993; reviewer CLEAR commit 7a65e53;
+capability_status.json updated commit 068bf1a). Bio_brain_regions
+concept-pool architecture scales V=16 -> V=32 cleanly.
+
+**Direction R-v3 envelope**: ALL 3 cells PASS (N=256 top-3 100%;
+N=384 top-3 95%; N=512 top-3 85%). Direction M deliverable extends
+~10x beyond initial 50-assoc validation.
+
+**Direction Q (Wang 2002 NMDA scale-up)**: PARTIAL across 3
+scaling-envelope cells (n=1000 d=0.10; n=1000 d=0.20; n=2000 d=0.10).
+Biology-translatable: NMDA mechanism engages at scale but doesn't
+form self-sustaining attractor; bottleneck structural/dynamical.
+
+**Direction 4 5-bridge SMOKE**: NEGATIVE (essentially chance at all
+18 cells). Bio_brain_regions cross-bridge composition does NOT
+engage at smoke scale, in stark contrast to G.20 sparse n=95 (which
+got OB perfect cross-bridge at V=160). Biology-translatable insight
+about substrate geometry differences. Pre-registered next: cheaper
+global_mean centring probe OR Approach B (D3 V=32 x 5 = 160
+cross-bridge using pillar n=105 substrates).
+
+**Direction P-v3 rediscovery + arc closure**: P-v3 was a duplicate
+of NEGATIVE 2026-05-22 ca1-variant; killed before consuming GPU.
+Mechanism-class audit guide built to prevent future duplicates.
+
+## Per user ordered direction (Q -> 3 -> 4 -> R) FINAL STATUS
+
+- **Q**: COMPLETE = PARTIAL (3 cells; biology-translatable)
+- **3**: PILLAR N=105 PROMOTED ✓ (bio_brain_regions V=32)
+- **4**: SMOKE = NEGATIVE (cross-bridge geometry doesn't extend)
+- **R-v3**: COMPLETE = ALL 3 CELLS PASS (capacity envelope)
+
+## Next-session continuation pointers
+
+Per pre-registered post-NEGATIVE chain for D4:
+1. (Cheapest) Global-mean centring probe on existing D4 smoke cache;
+   ~5-10 min CPU; characterizes whether per_bridge_local centring
+   is the binding constraint (vs substrate-fundamental cross-bridge
+   incompatibility).
+2. Approach B: D3 V=32 × 5 = 160 cross-bridge concepts using pillar
+   n=105 substrates; ~7-15 hr GPU.
+3. Direction Q deeper: E/I balance test (was deferred during this
+   arc; cheap ~15-20 min).
+
+Windows watchdog (SimAutonomousWatchdog) every 20 min as ultimate
+continuity fallback; reads this file + continues.
+
 ## 🎉 PILLAR N=105 RECORDED (~07:15 EDT 2026-05-25)
 
 - **Direction 3 V=32 PRODUCTION DECISIVE = DIRECTION_3_V32_PASS**
