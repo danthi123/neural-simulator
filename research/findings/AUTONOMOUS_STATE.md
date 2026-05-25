@@ -9,6 +9,60 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## IN FLIGHT (~05:00 EDT 2026-05-25)
+
+- **Direction 3 V=32 SMOKE = PASS** (commit 9a09576): bio_brain_regions
+  scales to V=32 cleanly at smoke (L=2/3 perfect; L=5 OB 1.000 / OI
+  0.993 multi-seed; 18/18 cells clear 0.80 bar). Findings doc:
+  `research/findings/2026-05-25-DIRECTION-3-V32-SMOKE-PASS-...md`.
+- **Direction 3 V=32 PRODUCTION DECISIVE in flight** (PID 36700;
+  launched 04:41; log `direction_3_v32_production.log`; watcher
+  `bl0wjskjb` monitors; ETA ~3 hr based on 10%-progress timing
+  (seed 42 at 640/6400 events in 5.3 min)). Production config:
+  n_lang=2048, n_per_pool=200, n_events=200, M_OBS=16 (2-4x larger
+  than smoke). Bridge: 11264 neurons, 9.1M synapses, 2GB GPU.
+- **Direction 4 scaffolding SHIPPED** (commits aeb9314 + d162dc3):
+  vocab spec (80 cross-bridge concepts), 5 builder wrappers,
+  frozen verdict module (28 adversarial tests), cross-bridge
+  probe (CPU-only), 5-bridge runner (controller-only GPU). Ready
+  to launch when D3 production frees GPU.
+- **Direction R-v3 launcher SHIPPED** (commit 8ddda46): generates
+  scripted commands at N=256/384/512; invokes g20_multibridge
+  --sparse; parses for top-1/top-3; pre-registered top-3 >= 0.80
+  bar. Ready to launch when GPU contention is tolerable.
+- **Adversarial reviewer prompt pre-staged** (commit 30ad98a)
+  at `docs/plans/2026-05-25-direction-3-v32-production-adversarial-reviewer-prompt.md`
+  for immediate dispatch when D3 production verdict lands.
+- **Documentation maintenance complete** (commit 30ad98a):
+  capability_status.json updated with day's arc; CLAUDE.md /
+  CONTRIBUTING.md / README.md numerical drift fixed.
+
+## Pre-registered post-D3-production chain (executing on verdict)
+
+- **DIRECTION_3_V32_PASS at production**: dispatch adversarial
+  reviewer subagent with the pre-staged prompt. If reviewer CLEAR:
+  record pillar n=105 + update capability_status.json headline +
+  commit findings doc. If reviewer BLOCK: document strengthening
+  fix + do NOT promote pillar.
+- **DIRECTION_3_V32_PARTIAL at production**: characterize per-load
+  breakdown; biology-translatable insight (which axis bounds); the
+  smoke PASS becomes the headline finding instead.
+- **DIRECTION_3_V32_NEGATIVE at production**: substantial; would
+  indicate smoke artifact (unlikely given smoke's clean numbers but
+  honest discipline requires pre-registering the possibility).
+
+## Pre-registered post-D3-production-PILLAR chain (chains naturally to D4)
+
+After pillar n=105 records (assuming PASS + CLEAR), the natural next
+step per user ordered direction (Q -> 3 -> 4 -> R) is:
+- Launch D4 SMOKE (~7-10 hr GPU at smoke scale; 5 bridges x 3 seeds);
+  reuses Direction Q + Direction 3 TDD pattern; pre-staged
+  infrastructure ready
+- After D4 smoke result: if PASS launch D4 production (~12-15 hr);
+  if PARTIAL/NEGATIVE pivot to Direction R-v3
+- Direction R-v3 capacity envelope as final cell in user's order
+  (cheapest probe ~45-55 min total for 3 N values)
+
 ## IN FLIGHT (~04:18 EDT 2026-05-25)
 
 - **Direction 3 V=32 smoke** training in flight (PID 37364 since
