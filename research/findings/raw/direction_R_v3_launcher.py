@@ -58,7 +58,8 @@ BRIDGE_FILES = [
     for name in BRIDGE_NAMES
 ]
 VOCAB_FILES = [
-    os.path.join(BRIDGES_DIR, f"{name}_vocab64.txt")
+    os.path.join(_REPO_ROOT, "research/findings/raw/g11_bg",
+                 f"g20_{name}_vocab64.txt")
     for name in BRIDGE_NAMES
 ]
 
@@ -84,21 +85,28 @@ def _bridge_for_word(word: str) -> str:
 
 
 def _generate_associations(n: int, seed: int):
-    """Generate N random (a, b) pairs where a and b are different
-    words drawn from the 320-concept union with replacement-free
-    sampling for a; b drawn separately.
+    """Generate N random (a, b) pairs.
+
+    For N <= 320 unique vocab: sample N distinct a's; b drawn
+    separately ensuring a != b.
+
+    For N > 320: relax the unique-a constraint (allow some words
+    to have multiple associations). The capacity probe at N > vocab
+    size tests how the substrate handles MULTIPLE associations per
+    word (some words become polysemous).
 
     Returns list of (a, b) tuples.
     """
     rng = random.Random(seed)
-    # Sample N distinct a's; b can be any other word
     n_total = len(ALL_WORDS_64)
-    if n > n_total:
-        raise ValueError(
-            f"requested N={n} associations but only "
-            f"{n_total} unique words available"
-        )
-    a_samples = rng.sample(ALL_WORDS_64, n)
+    if n <= n_total:
+        a_samples = rng.sample(ALL_WORDS_64, n)
+    else:
+        # First use all 320 unique words once; then sample with replacement
+        a_samples = list(ALL_WORDS_64)
+        rng.shuffle(a_samples)
+        extras = [rng.choice(ALL_WORDS_64) for _ in range(n - n_total)]
+        a_samples += extras
     b_samples = []
     for a in a_samples:
         candidates = [w for w in ALL_WORDS_64 if w != a]
@@ -150,17 +158,22 @@ def _parse_chat_output(log_path: str, pairs, queries):
     """Parse g20_multibridge log to extract per-query top-1 and top-3
     retrieval results. Compares against the ground truth from 'pairs'.
 
-    g20_multibridge output for 'what is X' includes lines like:
+    g20_multibridge output for 'what is X' (actual 2026-05 format):
       > what is apple
-        matched 2 tag(s): ['apple_big', 'apple_cat']
-        top-5: [big=0.20, cat=0.17, stop=0.06, go=0.06, come=0.06]
-    OR for unmatched words an UNKNOWN response.
+        'apple' associates (from N tag(s) across M bridges):
+          big          677 via bridgeC_adj/apple_big
+          spoon        605 via bridgeA_nouns/apple
+          angry        475 via bridgeC_adj/apple_big
+          person       413 via bridgeA_nouns/apple
 
-    Returns dict with:
-      n_queries (int), top1_correct (int), top3_correct (int),
-      top1_accuracy (float), top3_accuracy (float),
-      per_query: list of {query, expected, top1, top3, top1_correct, top3_correct}
+    The TOP-N is the ORDER of the associate lines (highest score first).
+    Top-1 = first associate; top-3 = first 3 associates.
+
+    Returns dict with: n_queries, top1_correct, top3_correct,
+    top1_accuracy, top3_accuracy, per_query.
     """
+    import re
+
     pair_dict = {}  # a -> list of b's that were associated with a
     for a, b in pairs:
         pair_dict.setdefault(a, []).append(b)
@@ -168,16 +181,18 @@ def _parse_chat_output(log_path: str, pairs, queries):
     with open(log_path, "r", encoding="utf-8", errors="replace") as f:
         log_text = f.read()
 
+    # Per-query response regex: matches the "> what is {q}\n" line,
+    # then the "'{q}' associates ..." header, then per-associate lines
+    # until a blank line OR next "> ".
     per_query = []
     top1_correct = 0
     top3_correct = 0
     for q in queries:
         expected = pair_dict.get(q, [])
-        # Find the "> what is {q}" block in the log
-        idx = log_text.find(f"> what is {q}\n")
-        if idx == -1:
-            # Try with different markers
-            idx = log_text.find(f"what is {q}")
+
+        # Find the query block
+        marker = f"> what is {q}\n"
+        idx = log_text.find(marker)
         if idx == -1:
             per_query.append({
                 "query": q,
@@ -189,51 +204,71 @@ def _parse_chat_output(log_path: str, pairs, queries):
                 "missing_in_log": True,
             })
             continue
-        # Extract next ~10 lines after the query
-        block = log_text[idx:idx + 800]
-        # Look for top-5 line
-        top_line = None
-        for line in block.split("\n"):
-            if "top-5:" in line.lower() or "top-3:" in line.lower():
-                top_line = line.strip()
-                break
-        if top_line is None:
-            per_query.append({
-                "query": q,
-                "expected": expected,
-                "top1": None,
-                "top3": [],
-                "top1_correct": False,
-                "top3_correct": False,
-                "no_top_line": True,
-            })
-            continue
-        # Parse top-N list (format: "  top-5: [big=0.20, cat=0.17, stop=0.06, go=0.06, come=0.06]")
-        # Extract bracketed content
-        try:
-            bracket_start = top_line.index("[")
-            bracket_end = top_line.rindex("]")
-            inner = top_line[bracket_start + 1:bracket_end]
-            # Split entries; each entry is "word=score"
-            entries = [e.strip() for e in inner.split(",")]
-            top_words = []
-            for e in entries:
-                if "=" in e:
-                    word = e.split("=")[0].strip()
-                    top_words.append(word)
-        except (ValueError, IndexError):
-            per_query.append({
-                "query": q,
-                "expected": expected,
-                "top1": None,
-                "top3": [],
-                "top1_correct": False,
-                "top3_correct": False,
-                "parse_error": True,
-            })
-            continue
 
-        top1 = top_words[0] if top_words else None
+        # Extract block from marker until next "> " line (start of next command)
+        # or EOF
+        rest = log_text[idx + len(marker):]
+        next_cmd = rest.find("\n> ")
+        block = rest[:next_cmd] if next_cmd >= 0 else rest
+
+        # Parse associate lines: format is whitespace + word + whitespace + score + " via " + bridge/tag
+        # Or for UNKNOWN response: "UNKNOWN: {q} ..." style
+        # Use regex to extract associate words in order
+        top_words = []
+        # Look for the header line "'{q}' associates ..."
+        header_match = re.search(
+            r"'" + re.escape(q) + r"' associates \(from \d+ tag\(s\) across \d+ bridges\):",
+            block,
+        )
+        if header_match is not None:
+            # Parse subsequent lines
+            after_header = block[header_match.end():]
+            for line in after_header.split("\n"):
+                line_stripped = line.strip()
+                if not line_stripped:
+                    continue
+                # Stop at next "Done." or next "> " or other section markers
+                if (line_stripped.startswith(">")
+                    or line_stripped == "Done."
+                    or line_stripped.startswith("Commands:")):
+                    break
+                # Parse associate line: "word    score via bridge/tag"
+                # Word is the first token; might include hyphen or apostrophe
+                # but is alphanumeric in our vocab
+                tokens = line_stripped.split()
+                if len(tokens) >= 1:
+                    candidate = tokens[0]
+                    # Verify it's plausibly a vocab word (not "Done.", not a number)
+                    if candidate and not candidate[0].isdigit():
+                        top_words.append(candidate)
+
+        # Handle case where query was UNKNOWN (no associates found)
+        if not top_words:
+            # Check for UNKNOWN-style response
+            if "UNKNOWN" in block or "no tags" in block.lower() or "no engram" in block.lower():
+                per_query.append({
+                    "query": q,
+                    "expected": expected,
+                    "top1": None,
+                    "top3": [],
+                    "top1_correct": False,
+                    "top3_correct": False,
+                    "abstained": True,
+                })
+                continue
+            else:
+                per_query.append({
+                    "query": q,
+                    "expected": expected,
+                    "top1": None,
+                    "top3": [],
+                    "top1_correct": False,
+                    "top3_correct": False,
+                    "no_associates_parsed": True,
+                })
+                continue
+
+        top1 = top_words[0]
         top3 = top_words[:3]
         is_top1 = top1 in expected if expected else False
         is_top3 = any(w in expected for w in top3) if expected else False
