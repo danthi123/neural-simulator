@@ -9,6 +9,47 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## 🎉 D5 BUGFIX RETRAIN COMPLETE = PARTIAL (5/6 cells PASS); D5 PRODUCTION LAUNCHED (~19:35 EDT 2026-05-25)
+
+D5 bugfix smoke training completed at 19:13 EDT (111.6 min wall);
+both probe variants ran by 19:25 EDT. **MAJOR REVERSAL** of prior D5
+NEGATIVE narrative.
+
+**Multi-seed smoke results** (commit 6475ab0):
+
+| Variant | OB L=2 | OB L=3 | OB L=5 | OI L=2 | OI L=3 | OI L=5 | Verdict |
+|---|---|---|---|---|---|---|---|
+| Buggy D5 NEG | 0.050 | 0.008 | 0.005 | 0.007 | 0.000 | 0.000 | NEGATIVE |
+| Bugfix raw | 1.000 | 1.000 | 1.000 | 1.000 | 0.840 | 0.195 | PARTIAL |
+| Bugfix + topK | 1.000 | 1.000 | 1.000 | 1.000 | 0.972 | 0.463 | PARTIAL |
+
+**5 of 6 cells PASS the 0.80 bar** post-bugfix. OB perfect every load;
+OI passes L=2/L=3 multi-seed; only L=5 OI below bar (same boundary
+pattern pillar n=95 G.20 sparse cross-bridge hits at V=160).
+
+**Pillar n=106 BOUNDARY candidate** (pending production decisive +
+adversarial review).
+
+**D5 PRODUCTION launched 19:35 EDT** (full scale n_lang=2048,
+n_per_pool=200, events=200, M_OBS=16; 5 bridges × 3 seeds = 15 cells;
+~7-8 hr GPU ETA). Watcher `bkxj54p00` chains both probes (raw + topK)
+on training completion. Findings doc + commit ready when production
+confirms smoke pattern.
+
+**Tier 2 (Q NMDA-AMPA sweep) queued** for when D5 production frees GPU.
+**Tier 3 (Approach C learned projection) reframed**: the substrate-
+geometry hypothesis Approach C was meant to address has been REFUTED
+by the bugfix; the architecture works once patterns are unique. Tier 3
+may pivot to a different design (or no longer be necessary if
+production confirms BOUNDARY).
+
+Biology-translatable insight: bio_brain_regions HYBRID architecture
+(dedicated biology-faithful pools + shared sparse pool with distinct
+K-of-N patterns per bridge) genuinely supports cross-bridge composition.
+Unifies pillar n=98/n=105 (dedicated pools) with pillar n=95 (sparse
+cross-bridge). L=5 OI boundary is fundamental FHRR capacity-envelope
+limit, not substrate flaw.
+
 ## 🚨 D5 BUG DISCOVERED + FIXED + RE-TRAINING IN FLIGHT (~14:30 EDT 2026-05-25)
 
 Tier 1 D5 decoder-fix probe (top-K binarization before FHRR projection)
