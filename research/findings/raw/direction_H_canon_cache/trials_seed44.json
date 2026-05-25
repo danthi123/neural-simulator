@@ -1,0 +1,153 @@
+{
+  "seed": 44,
+  "phase1_w_to_a_acc": 0.75,
+  "sequence_storage_top1": 0.625,
+  "K_PAIRS": 8,
+  "SLOT_COUNT": 3,
+  "per_seq": [
+    {
+      "seq_idx": 0,
+      "sequence": [
+        "small",
+        "east",
+        "come"
+      ],
+      "true_slot": "come",
+      "top1": "come",
+      "top1_correct": true,
+      "topK_words": [
+        "come",
+        "small",
+        "east",
+        "cold",
+        "big"
+      ]
+    },
+    {
+      "seq_idx": 1,
+      "sequence": [
+        "cold",
+        "river",
+        "east"
+      ],
+      "true_slot": "east",
+      "top1": "river",
+      "top1_correct": false,
+      "topK_words": [
+        "river",
+        "come",
+        "cold",
+        "small",
+        "east"
+      ]
+    },
+    {
+      "seq_idx": 2,
+      "sequence": [
+        "big",
+        "north",
+        "small"
+      ],
+      "true_slot": "small",
+      "top1": "small",
+      "top1_correct": true,
+      "topK_words": [
+        "small",
+        "north",
+        "big",
+        "river",
+        "cold"
+      ]
+    },
+    {
+      "seq_idx": 3,
+      "sequence": [
+        "apple",
+        "dog",
+        "stop"
+      ],
+      "true_slot": "stop",
+      "top1": "apple",
+      "top1_correct": false,
+      "topK_words": [
+        "apple",
+        "dog",
+        "small",
+        "north",
+        "big"
+      ]
+    },
+    {
+      "seq_idx": 4,
+      "sequence": [
+        "river",
+        "dog",
+        "hot"
+      ],
+      "true_slot": "hot",
+      "top1": "hot",
+      "top1_correct": true,
+      "topK_words": [
+        "hot",
+        "river",
+        "dog",
+        "big",
+        "apple"
+      ]
+    },
+    {
+      "seq_idx": 5,
+      "sequence": [
+        "small",
+        "cold",
+        "hot"
+      ],
+      "true_slot": "hot",
+      "top1": "hot",
+      "top1_correct": true,
+      "topK_words": [
+        "hot",
+        "small",
+        "dog",
+        "river",
+        "north"
+      ]
+    },
+    {
+      "seq_idx": 6,
+      "sequence": [
+        "north",
+        "river",
+        "come"
+      ],
+      "true_slot": "come",
+      "top1": "river",
+      "top1_correct": false,
+      "topK_words": [
+        "river",
+        "come",
+        "north",
+        "hot",
+        "small"
+      ]
+    },
+    {
+      "seq_idx": 7,
+      "sequence": [
+        "go",
+        "big",
+        "cold"
+      ],
+      "true_slot": "cold",
+      "top1": "cold",
+      "top1_correct": true,
+      "topK_words": [
+        "cold",
+        "come",
+        "north",
+        "big",
+        "river"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "seed": 42,
+  "phase1_w_to_a_acc": 0.75,
+  "sequence_storage_top1": 0.375,
+  "K_PAIRS": 8,
+  "SLOT_COUNT": 3,
+  "per_seq": [
+    {
+      "seq_idx": 0,
+      "sequence": [
+        "stop",
+        "east",
+        "look"
+      ],
+      "true_slot": "look",
+      "top1": "look",
+      "top1_correct": true,
+      "topK_words": [
+        "look",
+        "east",
+        "stop",
+        "big",
+        "dog"
+      ]
+    },
+    {
+      "seq_idx": 1,
+      "sequence": [
+        "east",
+        "look",
+        "big"
+      ],
+      "true_slot": "big",
+      "top1": "east",
+      "top1_correct": false,
+      "topK_words": [
+        "east",
+        "look",
+        "big",
+        "stop",
+        "come"
+      ]
+    },
+    {
+      "seq_idx": 2,
+      "sequence": [
+        "cat",
+        "hot",
+        "look"
+      ],
+      "true_slot": "look",
+      "top1": "look",
+      "top1_correct": true,
+      "topK_words": [
+        "look",
+        "hot",
+        "cat",
+        "east",
+        "big"
+      ]
+    },
+    {
+      "seq_idx": 3,
+      "sequence": [
+        "cat",
+        "look",
+        "south"
+      ],
+      "true_slot": "south",
+      "top1": "cat",
+      "top1_correct": false,
+      "topK_words": [
+        "cat",
+        "south",
+        "look",
+        "hot",
+        "east"
+      ]
+    },
+    {
+      "seq_idx": 4,
+      "sequence": [
+        "cat",
+        "river",
+        "south"
+      ],
+      "true_slot": "south",
+      "top1": "cat",
+      "top1_correct": false,
+      "topK_words": [
+        "cat",
+        "south",
+        "river",
+        "look",
+        "east"
+      ]
+    },
+    {
+      "seq_idx": 5,
+      "sequence": [
+        "small",
+        "come",
+        "dog"
+      ],
+      "true_slot": "dog",
+      "top1": "dog",
+      "top1_correct": true,
+      "topK_words": [
+        "dog",
+        "small",
+        "come",
+        "south",
+        "cat"
+      ]
+    },
+    {
+      "seq_idx": 6,
+      "sequence": [
+        "dog",
+        "east",
+        "west"
+      ],
+      "true_slot": "west",
+      "top1": "dog",
+      "top1_correct": false,
+      "topK_words": [
+        "dog",
+        "east",
+        "come",
+        "small",
+        "west"
+      ]
+    },
+    {
+      "seq_idx": 7,
+      "sequence": [
+        "small",
+        "big",
+        "north"
+      ],
+      "true_slot": "north",
+      "top1": "big",
+      "top1_correct": false,
+      "topK_words": [
+        "big",
+        "small",
+        "east",
+        "dog",
+        "north"
+      ]
+    }
+  ]
+}
