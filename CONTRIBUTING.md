@@ -390,7 +390,7 @@ docs/
   SCIENCE_ROADMAP.md           # validation pillars + gate progression
   plans/                       # per-feature design docs (paired with findings)
 webapp/                        # FastAPI dashboard (server.py + static/)
-tests/                         # 236 test files
+tests/                         # 244 test files
   test_determinism.py          # RNG determinism (init + step)
   test_kernels_cpu.py          # CPU validation of fused kernels
   test_experiment_system.py    # experiment engine + stimulus manager
