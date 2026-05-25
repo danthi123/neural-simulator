@@ -9,6 +9,53 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## DIRECTION Q COMPLETE = PARTIAL across scaling envelope; pivot to Direction 3 per user order (2026-05-25)
+
+Direction Q (Wang 2002 NMDA persistence test at n=1000+) executed
+end-to-end via subagent-driven-development. Tasks 0-5 implementation
+complete; Task 6 controller-only decisive run + 2 scaling-envelope
+probes complete. All 3 cells in the pre-registered envelope are
+PARTIAL with consistent multi-seed pattern:
+
+| n | density | TEST rate_ratio mean | TEST sustained_sec max | Verdict |
+|---|---|---|---|---|
+| 1000 | 0.10 | 2.27 | 0.45s | PARTIAL |
+| 1000 | 0.20 | 8.47 | 0.60s | PARTIAL |
+| 2000 | 0.10 | 8.87 | 0.65s | PARTIAL |
+
+**Biology-translatable finding** (4th convergent BOUNDARY data point
+spanning all 3 mechanism classes from the 2026-05-25 audit): the
+substrate produces strong cue-driven NMDA transients (10x baseline
+at the high end) but the transient DECAYS in ~500-650ms regardless
+of scale. The Wang 2002 self-sustaining attractor does NOT form on
+the Izhikevich substrate with these parameters. Rate elevation
+scales with effective recurrent connection count; sustained_sec
+does NOT. The bottleneck is structural/dynamical, NOT scale.
+
+**Pre-registered next within Direction Q** (deferred per user's
+explicit ordering Q -> 3 -> 4 -> R): E/I balance test (cheap; add
+inh_weight_mean parameter to direction_Q_bridge_builder.py; ~15-20
+min total). This is queued for a later session if the deeper biology
+investigation has compounding value.
+
+**Per user's explicit ordering**: next direction is Direction 3
+(vocab scaling on bio_brain_regions V=32 then V=64). This advances
+the project's conversational-capability goal directly (compounds
+on Direction M 320-concept chat deliverable) AND tests the bio_
+brain_regions substrate's vocab-capacity envelope (which the 2026-
+05-24 load-ceiling map showed has huge headroom at V=16: L=7 OI
+0.90+).
+
+**Findings docs**:
+- `research/findings/2026-05-25-DIRECTION-Q-PARTIAL-dlpfc-n1000-NMDA-elevates-rate-but-not-sustained.md`
+- `research/findings/2026-05-25-DIRECTION-Q-prime-scaling-envelope-density-and-neuron-count-BOTH-yield-PARTIAL-substrate-cannot-form-sustained-attractor.md`
+
+**Reusable infrastructure**: the Direction Q runner + bridge builder
++ protocol + frozen verdict module (17/17 adversarial tests) is
+production-quality for any future PFC bistability investigation
+(E/I sweep, NMDA-AMPA ratio sweep, HH neuron model variant per
+Approach C, longer cue protocol, etc.).
+
 ## DIRECTION Q LAUNCHED (2026-05-25 02:11): Wang 2002 NMDA persistence test at n=1000
 
 Tasks 0-5 of the Direction Q implementation plan COMPLETE via
