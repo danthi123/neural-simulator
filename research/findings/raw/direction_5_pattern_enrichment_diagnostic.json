@@ -1,0 +1,127 @@
+{
+  "tag": "smoke",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "bridges": [
+    "A_nouns",
+    "B_verbs",
+    "C_adj",
+    "D_spatial",
+    "E_functional"
+  ],
+  "per_cell": [
+    {
+      "seed": 42,
+      "bridge": "A_nouns",
+      "mean_pattern_enrichment_ratio": 2.173161973747471,
+      "min": 1.2026496001394105,
+      "max": 3.4588234997125653
+    },
+    {
+      "seed": 42,
+      "bridge": "B_verbs",
+      "mean_pattern_enrichment_ratio": 2.173161973747471,
+      "min": 1.2026496001394105,
+      "max": 3.4588234997125653
+    },
+    {
+      "seed": 42,
+      "bridge": "C_adj",
+      "mean_pattern_enrichment_ratio": 2.173161973747471,
+      "min": 1.2026496001394105,
+      "max": 3.4588234997125653
+    },
+    {
+      "seed": 42,
+      "bridge": "D_spatial",
+      "mean_pattern_enrichment_ratio": 2.173161973747471,
+      "min": 1.2026496001394105,
+      "max": 3.4588234997125653
+    },
+    {
+      "seed": 42,
+      "bridge": "E_functional",
+      "mean_pattern_enrichment_ratio": 2.173161973747471,
+      "min": 1.2026496001394105,
+      "max": 3.4588234997125653
+    },
+    {
+      "seed": 43,
+      "bridge": "A_nouns",
+      "mean_pattern_enrichment_ratio": 2.108912626350939,
+      "min": 0.6584630945335912,
+      "max": 3.906167649091747
+    },
+    {
+      "seed": 43,
+      "bridge": "B_verbs",
+      "mean_pattern_enrichment_ratio": 2.108912626350939,
+      "min": 0.6584630945335912,
+      "max": 3.906167649091747
+    },
+    {
+      "seed": 43,
+      "bridge": "C_adj",
+      "mean_pattern_enrichment_ratio": 2.108912626350939,
+      "min": 0.6584630945335912,
+      "max": 3.906167649091747
+    },
+    {
+      "seed": 43,
+      "bridge": "D_spatial",
+      "mean_pattern_enrichment_ratio": 2.108912626350939,
+      "min": 0.6584630945335912,
+      "max": 3.906167649091747
+    },
+    {
+      "seed": 43,
+      "bridge": "E_functional",
+      "mean_pattern_enrichment_ratio": 2.108912626350939,
+      "min": 0.6584630945335912,
+      "max": 3.906167649091747
+    },
+    {
+      "seed": 44,
+      "bridge": "A_nouns",
+      "mean_pattern_enrichment_ratio": 2.0619679952577377,
+      "min": 1.3847609849485718,
+      "max": 3.022727088526186
+    },
+    {
+      "seed": 44,
+      "bridge": "B_verbs",
+      "mean_pattern_enrichment_ratio": 2.0619679952577377,
+      "min": 1.3847609849485718,
+      "max": 3.022727088526186
+    },
+    {
+      "seed": 44,
+      "bridge": "C_adj",
+      "mean_pattern_enrichment_ratio": 2.0619679952577377,
+      "min": 1.3847609849485718,
+      "max": 3.022727088526186
+    },
+    {
+      "seed": 44,
+      "bridge": "D_spatial",
+      "mean_pattern_enrichment_ratio": 2.0619679952577377,
+      "min": 1.3847609849485718,
+      "max": 3.022727088526186
+    },
+    {
+      "seed": 44,
+      "bridge": "E_functional",
+      "mean_pattern_enrichment_ratio": 2.0619679952577377,
+      "min": 1.3847609849485718,
+      "max": 3.022727088526186
+    }
+  ],
+  "overall_mean_enrichment": 2.114680865118716,
+  "overall_min_enrichment": 2.0619679952577377,
+  "overall_max_enrichment": 2.173161973747471,
+  "baseline_no_enrichment": 1.0,
+  "interpretation": "mean enrichment 1.91x indicates K-of-N patterns ARE embedded in shared pool activity above baseline; cross-bridge decoder fails to extract this signal"
+}
