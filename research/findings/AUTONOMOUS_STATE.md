@@ -9,6 +9,53 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## 🚨 D5 BUG DISCOVERED + FIXED + RE-TRAINING IN FLIGHT (~14:30 EDT 2026-05-25)
+
+Tier 1 D5 decoder-fix probe (top-K binarization before FHRR projection)
+revealed a CRITICAL bug:
+
+**Direction 5 sparse K-of-N patterns were 100% IDENTICAL across all 5
+bridges at the same seed.** pattern_0 in A_nouns = pattern_0 in B_verbs
+= pattern_0 in C_adj = pattern_0 in D_spatial = pattern_0 in E_functional
+(verified: same first-5 indices [17, 42, 99, 106, 109]; 100/100 overlap).
+
+Root cause (direction_5_bridge_builder.py:359): `seed=seed` passed to
+generate_sparse_patterns from all 5 per-bridge builders. The docstring
+at line 165 claimed "deterministic per-(bridge, seed)" but the
+implementation didn't include bridge-specific seeding.
+
+This bug explains:
+- Why D5 SMOKE NEGATIVE was byte-identical to D4 NEGATIVE
+- Why decoder-fix (top-K binarization) didn't help
+- Why D5 enrichment diagnostic showed identical 2.1x ratios across bridges
+
+Cross-bridge discrimination was MATHEMATICALLY IMPOSSIBLE with identical
+patterns: pattern_0 in A_nouns ≡ pattern_0 in B_verbs means apple and
+go have identical K-of-N codes in the shared pool; the decoder
+correctly returned chance.
+
+**Bug fix committed (c4e18f2)**: _BRIDGE_LABEL_SEED_OFFSETS map at 100k
+offsets per bridge; verified post-fix 5 distinct pattern_0 across the
+5 bridges.
+
+**D5 SMOKE BUGFIX RETRAIN LAUNCHED ~14:35 EDT** (background PID;
+watcher b2mlh0bsg). Cache cleared. ETA ~95 min training + ~2 min probe.
+Auto-runs topK probe on completion (the watcher script chains it).
+
+**If bugfix retrain PASSES:** Major reversal - D5 hybrid architecture
+DOES support cross-bridge composition when bridges have unique patterns;
+the substrate isn't the limit; pillar n=106 candidate (the hybrid
+architecture unifies pillar n=95 G.20 sparse cross-bridge with pillar
+n=105 bio_brain_regions V=32). Best outcome of the autonomous arc.
+
+**If bugfix retrain still NEGATIVE:** the substrate-geometry constraint
+is deeper than pattern-uniqueness; Approach C (learned dedicated->shared
+projection) remains the principled next step.
+
+Tier 2 (Direction Q NMDA-AMPA ratio sweep) queued after D5 retrain
+frees GPU; Tier 3 (Approach C learned projection) queued conditional
+on Tier 1 outcome.
+
 ## D5 HYBRID SMOKE COMPLETE = NEGATIVE byte-identical to D4 (~13:35 EDT 2026-05-25)
 
 D5 smoke training (94.7 min) + cross-bridge probe (132.6s) COMPLETE.
