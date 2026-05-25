@@ -9,6 +9,23 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## IN FLIGHT (~05:05 EDT 2026-05-25)
+
+- **D3 V=32 production decisive**: PID 36700; seed 42 at 2560/6400
+  events (40% in 20.9 min); ETA ~2 more hr (slightly slowed by R-v3
+  parallel running ~10-15%); pre-staged adversarial reviewer prompt
+  + pre-registered post-verdict chain.
+- **R-v3 envelope characterization**: PID 32600; N=256 cell encoding
+  ~150 of 256 associations; ETA ~60-120 min total (3 cells; some
+  GPU contention from D3).
+- **Watchers active**:
+  * `b2qpl00ba` polls D3 production log for verdict line (5-min interval)
+  * `bqi5m12md` polls R-v3 envelope log for completion (5-min interval)
+- **D4 GPU training queued** (Tasks 5-6 of D4): ready to launch when
+  D3 production frees GPU; smoke ~7-10 hr, production ~12-15 hr.
+- **Night-arc synthesis findings doc shipped** (commit f547aa2)
+  documenting the full chain so far.
+
 ## IN FLIGHT (~05:00 EDT 2026-05-25)
 
 - **Direction 3 V=32 SMOKE = PASS** (commit 9a09576): bio_brain_regions
