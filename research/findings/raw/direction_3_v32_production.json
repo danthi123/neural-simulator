@@ -1,0 +1,181 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "smoke": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar_ob": 0.8,
+  "bar_oi": 0.8,
+  "min_seeds": 3,
+  "V": 32,
+  "decoder_order_bearing": "parallel_population_matching_batched",
+  "decoder_order_invariant": "marginal_sum_phase_similarity_batched",
+  "substrate": "bio_brain_regions_v14v16_recipe_V32",
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 32,
+      "d_act": 6400,
+      "batched_vs_scalar_max_diff": 2.7755575615628914e-17,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.995,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=2": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=3": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=5": {
+          "OB": 1.0,
+          "OI": 0.995
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "V": 32,
+      "d_act": 6400,
+      "batched_vs_scalar_max_diff": 1.3877787807814457e-17,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.995,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=2": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=3": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=5": {
+          "OB": 1.0,
+          "OI": 0.995
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "V": 32,
+      "d_act": 6400,
+      "batched_vs_scalar_max_diff": 2.0816681711721685e-17,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.99,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=2": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=3": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=5": {
+          "OB": 1.0,
+          "OI": 0.99
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "2": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 1.0,
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "3": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 1.0,
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "5": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 0.9933333333333333,
+      "order_invariant_per_seed": [
+        0.995,
+        0.995,
+        0.99
+      ]
+    }
+  },
+  "verdict": "DIRECTION_3_V32_PASS",
+  "wall_clock_minutes": 146.8081865588824
+}
