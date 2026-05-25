@@ -134,6 +134,20 @@ _G20_SPARSE_SPARSITY: float = 0.05             # ~102 active lang_input per driv
 # Pre-registered V=16 per bridge (matches direction_5_vocab_spec).
 _N_CONCEPTS_PER_BRIDGE: int = 16
 
+# Per-bridge sparse-pattern seed offsets (BUG FIX 2026-05-25).
+# Each bridge needs UNIQUE K-of-N patterns; without offsets all 5
+# bridges share identical patterns at the same base seed which makes
+# cross-bridge discrimination mathematically impossible. Fixed offsets
+# (deterministic + reproducible) so multi-seed reproduces; offsets
+# spaced at 100k to avoid any collision with the base_seed range.
+_BRIDGE_LABEL_SEED_OFFSETS: Dict[str, int] = {
+    "A_nouns":      0,
+    "B_verbs":      100000,
+    "C_adj":        200000,
+    "D_spatial":    300000,
+    "E_functional": 400000,
+}
+
 
 def _build_hybrid_bridge_core(
     seed: int,
@@ -349,14 +363,27 @@ def _build_hybrid_bridge_core(
 
     # ----- 4. SPARSE PATTERNS + TOPOGRAPHIC PRIOR (G.20 sparse pillar
     #          n=95 primitives; reused byte-unchanged).
-    # Deterministic per-(bridge_seed) sparse patterns (the same seed
-    # always yields the same K-of-N patterns; the sparse-pool RNG
-    # is seeded as seed*17 + 19 inside generate_sparse_patterns).
+    # Deterministic per-(bridge_seed) sparse patterns. CRITICAL BUG FIX
+    # (2026-05-25): the prior implementation passed `seed=seed` directly
+    # to generate_sparse_patterns, causing ALL 5 bridges to receive
+    # IDENTICAL K-of-N patterns at the same base seed. Cross-bridge
+    # discrimination was mathematically impossible (pattern_0 in
+    # A_nouns = pattern_0 in B_verbs = ... 100% overlap). This was the
+    # root cause of D5 SMOKE NEGATIVE being byte-identical to D4
+    # NEGATIVE: the cross-bridge probe received DUPLICATE patterns
+    # across bridges. Fix: derive a bridge-specific seed from
+    # (base_seed, label) so each bridge gets unique patterns.
+    _bridge_seed_offset = _BRIDGE_LABEL_SEED_OFFSETS.get(label, 0)
+    if _bridge_seed_offset == 0 and label != "A_nouns" and label != "":
+        # Defensive: an unknown label gets a unique offset via hash
+        # (but we should have all 5 known labels covered above).
+        _bridge_seed_offset = (abs(hash(label)) % 900000) + 100000
+    pattern_seed = seed + _bridge_seed_offset
     sparse_patterns: List[List[int]] = generate_sparse_patterns(
         n_concepts=_N_CONCEPTS_PER_BRIDGE,
         n_pool=n_shared_pool,
         pattern_size=pattern_size,
-        seed=seed,
+        seed=pattern_seed,
     )
 
     prior_meta: Dict[str, Any] = {}

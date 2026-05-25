@@ -1,0 +1,111 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "tag": "smoke",
+  "decoder_fix": "top_K_binary",
+  "top_K_threshold": 100,
+  "n_trials": 200,
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar_ob": 0.8,
+  "bar_oi": 0.8,
+  "min_seeds": 3,
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 80,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 0.045,
+          "order_invariant_accuracy": 0.01,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 0.01,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 0.0,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        }
+      },
+      "batched_vs_scalar_max_diff": 1.3877787807814457e-17,
+      "elapsed_seconds": 124.55360341072083
+    },
+    {
+      "seed": 43,
+      "V": 80,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 0.045,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 0.01,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 0.01,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        }
+      },
+      "batched_vs_scalar_max_diff": 1.1275702593849246e-17,
+      "elapsed_seconds": 133.7984848022461
+    },
+    {
+      "seed": 44,
+      "V": 80,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 0.06,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 0.005,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 0.005,
+          "order_invariant_accuracy": 0.0,
+          "n_trials": 200
+        }
+      },
+      "batched_vs_scalar_max_diff": 1.6479873021779667e-17,
+      "elapsed_seconds": 130.26109409332275
+    }
+  ],
+  "aggregate": {
+    "2": {
+      "order_bearing_accuracy_mean": 0.049999999999999996,
+      "order_invariant_accuracy_mean": 0.0033333333333333335,
+      "n_seeds": 3
+    },
+    "3": {
+      "order_bearing_accuracy_mean": 0.008333333333333333,
+      "order_invariant_accuracy_mean": 0.0,
+      "n_seeds": 3
+    },
+    "5": {
+      "order_bearing_accuracy_mean": 0.005,
+      "order_invariant_accuracy_mean": 0.0,
+      "n_seeds": 3
+    }
+  },
+  "verdict": "DIRECTION_5_VOID_MALFORMED",
+  "wall_clock_seconds": 388.69480061531067
+}
