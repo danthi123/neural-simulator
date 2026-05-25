@@ -1,0 +1,723 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "concept_pairs": "apple:big,dog:small,cat:hot,river:cold,big:hot,small:cold,apple:cat,dog:river",
+  "n_swr_events": 200,
+  "pre_sleep_full_mean": 1.0,
+  "pre_sleep_per_seed": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "post_sleep_full_mean": 1.0,
+  "post_sleep_per_seed": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "retention_mean": 0.9999999989999999,
+  "retention_per_seed": [
+    0.9999999989999999,
+    0.9999999989999999,
+    0.9999999989999999
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "pre_sleep": {
+        "n_full": 8,
+        "n_partial": 8,
+        "n_total": 8,
+        "full_pass_rate": 1.0,
+        "partial_pass_rate": 1.0,
+        "per_pair": [
+          {
+            "pair": "apple_big",
+            "top5": [
+              "apple",
+              "big",
+              "cold",
+              "go",
+              "come"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_small",
+            "top5": [
+              "small",
+              "dog",
+              "come",
+              "cold",
+              "look"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "cat_hot",
+            "top5": [
+              "cat",
+              "hot",
+              "cold",
+              "stop",
+              "apple"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "river_cold",
+            "top5": [
+              "cold",
+              "river",
+              "big",
+              "small",
+              "apple"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "big_hot",
+            "top5": [
+              "hot",
+              "big",
+              "look",
+              "cat",
+              "go"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "small_cold",
+            "top5": [
+              "small",
+              "cold",
+              "come",
+              "river",
+              "hot"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "apple_cat",
+            "top5": [
+              "cat",
+              "apple",
+              "big",
+              "look",
+              "cold"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_river",
+            "top5": [
+              "dog",
+              "river",
+              "cold",
+              "come",
+              "hot"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          }
+        ]
+      },
+      "post_sleep": {
+        "n_full": 8,
+        "n_partial": 8,
+        "n_total": 8,
+        "full_pass_rate": 1.0,
+        "partial_pass_rate": 1.0,
+        "per_pair": [
+          {
+            "pair": "apple_big",
+            "top5": [
+              "big",
+              "apple",
+              "dog",
+              "hot",
+              "go"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_small",
+            "top5": [
+              "small",
+              "dog",
+              "cold",
+              "hot",
+              "look"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "cat_hot",
+            "top5": [
+              "cat",
+              "hot",
+              "come",
+              "cold",
+              "stop"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "river_cold",
+            "top5": [
+              "cold",
+              "river",
+              "come",
+              "small",
+              "dog"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "big_hot",
+            "top5": [
+              "hot",
+              "big",
+              "stop",
+              "come",
+              "cold"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "small_cold",
+            "top5": [
+              "small",
+              "cold",
+              "go",
+              "come",
+              "apple"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "apple_cat",
+            "top5": [
+              "cat",
+              "apple",
+              "river",
+              "stop",
+              "look"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_river",
+            "top5": [
+              "dog",
+              "river",
+              "come",
+              "big",
+              "go"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          }
+        ]
+      },
+      "retention_full_ratio": 0.9999999989999999
+    },
+    {
+      "seed": 43,
+      "pre_sleep": {
+        "n_full": 8,
+        "n_partial": 8,
+        "n_total": 8,
+        "full_pass_rate": 1.0,
+        "partial_pass_rate": 1.0,
+        "per_pair": [
+          {
+            "pair": "apple_big",
+            "top5": [
+              "apple",
+              "big",
+              "go",
+              "small",
+              "hot"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_small",
+            "top5": [
+              "dog",
+              "small",
+              "river",
+              "cold",
+              "hot"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "cat_hot",
+            "top5": [
+              "hot",
+              "cat",
+              "go",
+              "stop",
+              "apple"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "river_cold",
+            "top5": [
+              "river",
+              "cold",
+              "look",
+              "apple",
+              "small"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "big_hot",
+            "top5": [
+              "hot",
+              "big",
+              "come",
+              "cat",
+              "look"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "small_cold",
+            "top5": [
+              "cold",
+              "small",
+              "apple",
+              "river",
+              "come"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "apple_cat",
+            "top5": [
+              "cat",
+              "apple",
+              "dog",
+              "go",
+              "come"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_river",
+            "top5": [
+              "river",
+              "dog",
+              "look",
+              "small",
+              "big"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          }
+        ]
+      },
+      "post_sleep": {
+        "n_full": 8,
+        "n_partial": 8,
+        "n_total": 8,
+        "full_pass_rate": 1.0,
+        "partial_pass_rate": 1.0,
+        "per_pair": [
+          {
+            "pair": "apple_big",
+            "top5": [
+              "apple",
+              "big",
+              "go",
+              "cat",
+              "stop"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_small",
+            "top5": [
+              "dog",
+              "small",
+              "look",
+              "river",
+              "stop"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "cat_hot",
+            "top5": [
+              "hot",
+              "cat",
+              "go",
+              "apple",
+              "look"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "river_cold",
+            "top5": [
+              "river",
+              "cold",
+              "small",
+              "apple",
+              "go"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "big_hot",
+            "top5": [
+              "hot",
+              "big",
+              "small",
+              "stop",
+              "apple"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "small_cold",
+            "top5": [
+              "cold",
+              "small",
+              "apple",
+              "come",
+              "river"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "apple_cat",
+            "top5": [
+              "apple",
+              "cat",
+              "dog",
+              "hot",
+              "go"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_river",
+            "top5": [
+              "river",
+              "dog",
+              "stop",
+              "go",
+              "big"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          }
+        ]
+      },
+      "retention_full_ratio": 0.9999999989999999
+    },
+    {
+      "seed": 44,
+      "pre_sleep": {
+        "n_full": 8,
+        "n_partial": 8,
+        "n_total": 8,
+        "full_pass_rate": 1.0,
+        "partial_pass_rate": 1.0,
+        "per_pair": [
+          {
+            "pair": "apple_big",
+            "top5": [
+              "apple",
+              "big",
+              "small",
+              "hot",
+              "go"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_small",
+            "top5": [
+              "dog",
+              "small",
+              "hot",
+              "go",
+              "river"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "cat_hot",
+            "top5": [
+              "hot",
+              "cat",
+              "river",
+              "come",
+              "big"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "river_cold",
+            "top5": [
+              "river",
+              "cold",
+              "come",
+              "apple",
+              "small"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "big_hot",
+            "top5": [
+              "hot",
+              "big",
+              "cat",
+              "stop",
+              "go"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "small_cold",
+            "top5": [
+              "small",
+              "cold",
+              "apple",
+              "big",
+              "stop"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "apple_cat",
+            "top5": [
+              "apple",
+              "cat",
+              "look",
+              "stop",
+              "big"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_river",
+            "top5": [
+              "dog",
+              "river",
+              "small",
+              "come",
+              "look"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          }
+        ]
+      },
+      "post_sleep": {
+        "n_full": 8,
+        "n_partial": 8,
+        "n_total": 8,
+        "full_pass_rate": 1.0,
+        "partial_pass_rate": 1.0,
+        "per_pair": [
+          {
+            "pair": "apple_big",
+            "top5": [
+              "apple",
+              "big",
+              "small",
+              "cat",
+              "go"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_small",
+            "top5": [
+              "small",
+              "dog",
+              "come",
+              "cat",
+              "stop"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "cat_hot",
+            "top5": [
+              "hot",
+              "cat",
+              "come",
+              "big",
+              "go"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "river_cold",
+            "top5": [
+              "river",
+              "cold",
+              "apple",
+              "dog",
+              "small"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "big_hot",
+            "top5": [
+              "hot",
+              "big",
+              "apple",
+              "stop",
+              "look"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "small_cold",
+            "top5": [
+              "small",
+              "cold",
+              "dog",
+              "apple",
+              "river"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "apple_cat",
+            "top5": [
+              "apple",
+              "cat",
+              "go",
+              "big",
+              "come"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          },
+          {
+            "pair": "dog_river",
+            "top5": [
+              "dog",
+              "river",
+              "small",
+              "cat",
+              "look"
+            ],
+            "a_in_top5": true,
+            "b_in_top5": true,
+            "full_pass": true
+          }
+        ]
+      },
+      "retention_full_ratio": 0.9999999989999999
+    }
+  ],
+  "verdict": "MULTITAG_SURVIVES_SLEEP_CONSOLIDATION_VALIDATED",
+  "wall_clock_minutes": 9.486221504211425
+}
