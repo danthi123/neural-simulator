@@ -5,9 +5,50 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-05-22
+**Updated:** 2026-05-25
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
+
+## In flight RIGHT NOW (2026-05-25)
+
+- **Direction P-v3 LAUNCHED** as background python (PID 15676,
+  log `research/findings/raw/direction_P_v3.log`, completion watcher
+  background task `bbdxnx5hg`). Bar UNCHANGED 0.50/0.30/0.30. Multi-
+  seed [42,43,44]. ETA 3-5 hr (fresh substrate build + encode + SWR +
+  tests per seed). Tests the CLS architectural fix prescribed by
+  P-v2 finding: appends 12 plastic ca1->concept_pool RegionPathways
+  before bridge construction (build_biological_brain_regions itself
+  byte-unchanged). Pre-registered verdict tags:
+  CLS_CONFIRMED_PILLAR_N105_CANDIDATE (pass);
+  HIPPO_ENCODING_INSUFFICIENT_EVEN_WITH_NEW_PATHWAYS (still bounded);
+  SWR_DOES_NOT_TRANSFER_CONCEPT_ASSOC_VIA_CA1_PATHWAYS (pathway
+  insufficient).
+- **Parallel work during the GPU wait**: existing-biology-sim audit
+  per owner 2026-05-19 reframe (Hasselmo SPEAR, Ursino-2022
+  Lisman-Idiart, Spaun/Nengo SPA, Spiking TEM, generative replay).
+
+## Pre-registered post-P-v3 chain (per verdict)
+
+- **CONFIRMED**: pillar n=105 candidate; commit findings doc; adversarial
+  reviewer dispatch; if reviewer CLEAR record pillar; then either
+  (a) extend to multi-pair concept-concept consolidation or
+  (b) integrate into chat substrate.
+- **HIPPO_ENCODING_INSUFFICIENT_EVEN_WITH_NEW_PATHWAYS**: 4th convergent
+  BOUNDARY finding on substrate-consolidation arc; record + extend
+  pillar n=104 BOUNDARY characterization; substrate-consolidation arc
+  formally CLOSED at FOUR convergent findings; pivot to
+  scale-up direction (Direction Q dlpfc_wm 60->1000 neurons) OR
+  the existing-sims-audit-driven direction.
+- **SWR_DOES_NOT_TRANSFER_CONCEPT_ASSOC_VIA_CA1_PATHWAYS**: pathway
+  present but SWR consolidation doesn't move concept association
+  through it; diagnostic next probe is to drive ca1 directly during
+  the post-sleep test (bypass the SWR mechanism) to isolate whether
+  the failure is in SWR replay or in CA1->concept readout.
+- **HIPPO_SILENCE_INEFFECTIVE**: should not happen (silence is the
+  same byte-identical mechanism as P-v2 which worked); if it does,
+  fix the silence wiring first.
+
+
 
 ## Project goal (top-level orienting context, owner-stated 2026-05-19)
 
