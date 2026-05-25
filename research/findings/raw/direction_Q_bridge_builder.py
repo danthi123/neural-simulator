@@ -18,6 +18,7 @@ def build_q_test_bridge(seed: int, n_dlpfc: int = 1000,
                           dlpfc_density: float = 0.10,
                           n_stim: int = 200,
                           enable_nmda: bool = True,
+                          inh_weight_mean: float = 4.0,
                           verbose: bool = False):
     """Construct a standalone Direction Q test bridge.
 
@@ -28,6 +29,15 @@ def build_q_test_bridge(seed: int, n_dlpfc: int = 1000,
                        0.10 is conservative starting point)
         n_stim: stimulus input region size
         enable_nmda: NMDA on/off (False = AMPA-only control)
+        inh_weight_mean: dlpfc_wm internal inhibitory weight magnitude.
+                         Default 4.0 preserves the prior Q-prime
+                         scaling-envelope behavior (inh:exc = 2:1).
+                         Direction Q-secondary E/I balance sweep varies
+                         this parameter to test whether the substrate's
+                         inhibition-dominance throttles the recurrent
+                         attractor formation; smaller values (2.0, 3.0)
+                         relax inhibition toward parity with excitation
+                         (exc_weight_mean=2.0 is held fixed).
         verbose: print build info
     """
     from sim.config import (CoreSimConfig, VisualizationConfig,
@@ -43,7 +53,7 @@ def build_q_test_bridge(seed: int, n_dlpfc: int = 1000,
             exc_fraction=0.8,
             internal_density=dlpfc_density,
             exc_weight_mean=2.0,
-            inh_weight_mean=4.0,
+            inh_weight_mean=float(inh_weight_mean),
             weight_jitter=0.2,
             plastic_internal=False,  # frozen for test (no learning)
             izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
@@ -101,6 +111,7 @@ def build_q_test_bridge(seed: int, n_dlpfc: int = 1000,
     if verbose:
         print("[BUILD-Q] dlpfc_wm n=" + str(n_dlpfc)
               + " density=" + str(dlpfc_density)
+              + " inh_w=" + str(inh_weight_mean)
               + " NMDA=" + str(enable_nmda)
               + " stim_input n=" + str(n_stim), flush=True)
     return bridge
