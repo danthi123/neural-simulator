@@ -9,6 +9,24 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## TIER 2 + TIER 1 EXECUTED PER USER DIRECTION (~10:00 EDT 2026-05-25)
+
+**Tier 2 (Q E/I balance test)** COMPLETE (commit a040c2a):
+3 inh values × 3 seeds at n=1000 d=0.20. All cells PARTIAL.
+- inh=2.0: rate_ratio 30.28, sustained 0.93s max
+- inh=3.0: rate_ratio 13.77, sustained 0.70s
+- inh=4.0: rate_ratio 8.47, sustained 0.57s (= prior Q-prime baseline byte-identical)
+Biology insight: E/I amplifies rate 3.6x but only stretches decay 1.6x. **E/I is NOT the binding constraint**. Bottleneck in NMDA-AMPA ratio OR neuron model kinetics (HH vs Izh).
+
+**Tier 1 (Direction 5 hybrid sparse-distributed)** SCAFFOLDED + Tasks 4-5 IMPLEMENTED + SMOKE LAUNCHED:
+- Commit 7ff60a7: Tasks 0-3 scaffold (design + impl plan + vocab + 5 builders + verdict + tests; 40 PASS + 1 SKIP)
+- Commit 0fcaf07: Tasks 4-5 (CPU probe + GPU runner; 12/12 grounding PASS; 28/28 verdict adversarial)
+- D5 SMOKE LAUNCHED (background; watcher bwf76zrn2; ETA ~75-105 min)
+- Architecture: each bridge keeps 16 dedicated 200-neuron concept pools (bio_brain_regions byte-unchanged) + adds 2000-neuron shared_concept_pool + 300-neuron shared_FS WTA + lang_input→shared plastic pathway. Cross-bridge probe reads from shared_concept_pool (uniform 2000-feature substrate). Reuses G.20 sparse K=100 patterns + n=95 topographic prior byte-unchanged.
+
+If D5 SMOKE PASS: pillar n=106 candidate; first architecture unifying biology-faithful dedicated pools (n=98/n=105) with sparse cross-bridge composition (n=95). Production decisive ~7-8 hr GPU.
+If D5 SMOKE NEGATIVE: hybrid doesn't help; the substrate-geometry constraint in D4 is deeper than additive sparse pool addition. Pivot to dedicated→shared learned projection (Approach C deferred from D5 design).
+
 ## NIGHT AUTONOMOUS ARC COMPLETE + D4 DIAGNOSTIC RULES OUT CHEAP FIX (~09:30 EDT 2026-05-25)
 
 **D4 global_mean diagnostic** (commit ca5b000): per_bridge_local and
