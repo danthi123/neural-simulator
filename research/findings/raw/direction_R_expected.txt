@@ -1,0 +1,10 @@
+mouth -> scared
+flower -> white
+sheep -> yellow
+bear -> nice
+horse -> flat
+arm -> dark
+bed -> sharp
+branch -> wide
+cat -> tall
+door -> thin

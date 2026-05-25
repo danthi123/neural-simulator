@@ -1,0 +1,22 @@
+{
+  "n_associations_encoded": 50,
+  "n_queried": 10,
+  "top_1_correct": 8,
+  "top_3_correct": 9,
+  "top_1_accuracy": 0.80,
+  "top_3_accuracy": 0.90,
+  "queries": [
+    {"q": "mouth", "expected": "scared", "top1": "scared", "top1_correct": true, "score": 709},
+    {"q": "flower", "expected": "white", "top1": "quiet", "top1_correct": false, "top3": ["quiet", "spoon", "light"], "top3_correct": false, "note": "substrate-level pattern overlap; tag flower_white drove pattern closer to quiet than white"},
+    {"q": "sheep", "expected": "yellow", "top1": "yellow", "top1_correct": true, "score": 868},
+    {"q": "bear", "expected": "nice", "top1": "nice", "top1_correct": true, "score": 506},
+    {"q": "horse", "expected": "flat", "top1": "flat", "top1_correct": true, "score": 556},
+    {"q": "arm", "expected": "dark", "top1": "warm", "top1_correct": false, "top3": ["warm", "dark", "huge"], "top3_correct": true, "note": "dark in top-3 rank 2 (565); warm slightly stronger (597)"},
+    {"q": "bed", "expected": "sharp", "top1": "sharp", "top1_correct": true, "score": 731},
+    {"q": "branch", "expected": "wide", "top1": "wide", "top1_correct": true, "score": 461},
+    {"q": "cat", "expected": "tall", "top1": "tall", "top1_correct": true, "score": 993},
+    {"q": "door", "expected": "thin", "top1": "thin", "top1_correct": true, "score": 646}
+  ],
+  "interpretation": "The 320-concept multi-bridge chat scales to 50 cross-bridge associations with 80% top-1 and 90% top-3 retrieval accuracy. Single substrate-level retrieval error (flower flexed to quiet) shows the precision limit. Chat is genuinely usable for substantial conversational scope.",
+  "context": "Direction M delivered 320-concept multi-bridge chat; this Direction R characterizes its actual capacity. At 50 associations encoded sequentially with no training between, retrieval remains high."
+}
