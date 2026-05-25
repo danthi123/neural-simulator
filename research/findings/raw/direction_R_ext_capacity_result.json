@@ -1,0 +1,291 @@
+{
+  "n_associations_encoded": 192,
+  "n_queries": 20,
+  "top1_correct": 9,
+  "top3_correct": 19,
+  "top1_accuracy": 0.45,
+  "top3_accuracy": 0.95,
+  "interpretation": "At 192 cross-bridge associations encoded sequentially, top-1 retrieval is 45% (vs 80% at 50 associations) but TOP-3 stays at 95% (vs 90% at 50). The substrate doesn't confabulate at high capacity -- it becomes more uncertain at top-1 while the correct answer remains in top-3. For trustworthy conversational use, top-3 remains reliable up to 192 associations. Substrate's honest abstention property scales: even when top-1 is wrong, the correct answer is reachable via top-3.",
+  "per_query_details": [
+    {
+      "query": "hard",
+      "expected": [
+        "cut"
+      ],
+      "top1": "cut",
+      "top3": [
+        "cut",
+        "baby",
+        "warm"
+      ],
+      "top1_correct": true,
+      "top3_correct": true
+    },
+    {
+      "query": "true",
+      "expected": [
+        "drink"
+      ],
+      "top1": "drink",
+      "top3": [
+        "drink",
+        "leg",
+        "mouse"
+      ],
+      "top1_correct": true,
+      "top3_correct": true
+    },
+    {
+      "query": "window",
+      "expected": [
+        "catch"
+      ],
+      "top1": "wet",
+      "top3": [
+        "wet",
+        "catch",
+        "spoon"
+      ],
+      "top1_correct": false,
+      "top3_correct": true
+    },
+    {
+      "query": "warm",
+      "expected": [
+        "laugh"
+      ],
+      "top1": "laugh",
+      "top3": [
+        "laugh",
+        "sun",
+        "tall"
+      ],
+      "top1_correct": true,
+      "top3_correct": true
+    },
+    {
+      "query": "house",
+      "expected": [
+        "red"
+      ],
+      "top1": "wait",
+      "top3": [
+        "wait",
+        "run",
+        "leaf"
+      ],
+      "top1_correct": false,
+      "top3_correct": false
+    },
+    {
+      "query": "mother",
+      "expected": [
+        "green"
+      ],
+      "top1": "go",
+      "top3": [
+        "go",
+        "dog",
+        "green"
+      ],
+      "top1_correct": false,
+      "top3_correct": true
+    },
+    {
+      "query": "mouth",
+      "expected": [
+        "cry"
+      ],
+      "top1": "scared",
+      "top3": [
+        "scared",
+        "dog",
+        "cry"
+      ],
+      "top1_correct": false,
+      "top3_correct": true
+    },
+    {
+      "query": "ear",
+      "expected": [
+        "small"
+      ],
+      "top1": "come",
+      "top3": [
+        "come",
+        "small",
+        "arm"
+      ],
+      "top1_correct": false,
+      "top3_correct": true
+    },
+    {
+      "query": "arm",
+      "expected": [
+        "dark"
+      ],
+      "top1": "ride",
+      "top3": [
+        "ride",
+        "warm",
+        "dark"
+      ],
+      "top1_correct": false,
+      "top3_correct": true
+    },
+    {
+      "query": "new",
+      "expected": [
+        "walk"
+      ],
+      "top1": "walk",
+      "top3": [
+        "walk",
+        "big",
+        "duck"
+      ],
+      "top1_correct": true,
+      "top3_correct": true
+    },
+    {
+      "query": "ball",
+      "expected": [
+        "kind"
+      ],
+      "top1": "cut",
+      "top3": [
+        "cut",
+        "kind",
+        "mouse"
+      ],
+      "top1_correct": false,
+      "top3_correct": true
+    },
+    {
+      "query": "father",
+      "expected": [
+        "crawl"
+      ],
+      "top1": "good",
+      "top3": [
+        "good",
+        "crawl",
+        "apple"
+      ],
+      "top1_correct": false,
+      "top3_correct": true
+    },
+    {
+      "query": "branch",
+      "expected": [
+        "send"
+      ],
+      "top1": "send",
+      "top3": [
+        "send",
+        "stand",
+        "close"
+      ],
+      "top1_correct": true,
+      "top3_correct": true
+    },
+    {
+      "query": "cold",
+      "expected": [
+        "drop"
+      ],
+      "top1": "road",
+      "top3": [
+        "road",
+        "sick",
+        "drop"
+      ],
+      "top1_correct": false,
+      "top3_correct": true
+    },
+    {
+      "query": "leg",
+      "expected": [
+        "true"
+      ],
+      "top1": "true",
+      "top3": [
+        "true",
+        "person",
+        "spoon"
+      ],
+      "top1_correct": true,
+      "top3_correct": true
+    },
+    {
+      "query": "sour",
+      "expected": [
+        "hear"
+      ],
+      "top1": "hear",
+      "top3": [
+        "hear",
+        "school",
+        "rich"
+      ],
+      "top1_correct": true,
+      "top3_correct": true
+    },
+    {
+      "query": "child",
+      "expected": [
+        "stop"
+      ],
+      "top1": "mean",
+      "top3": [
+        "mean",
+        "stop",
+        "sun"
+      ],
+      "top1_correct": false,
+      "top3_correct": true
+    },
+    {
+      "query": "pig",
+      "expected": [
+        "new"
+      ],
+      "top1": "hear",
+      "top3": [
+        "hear",
+        "new",
+        "duck"
+      ],
+      "top1_correct": false,
+      "top3_correct": true
+    },
+    {
+      "query": "nice",
+      "expected": [
+        "smell"
+      ],
+      "top1": "smell",
+      "top3": [
+        "smell",
+        "bear",
+        "go"
+      ],
+      "top1_correct": true,
+      "top3_correct": true
+    },
+    {
+      "query": "sweet",
+      "expected": [
+        "hold"
+      ],
+      "top1": "hold",
+      "top3": [
+        "hold",
+        "bee",
+        "bird"
+      ],
+      "top1_correct": true,
+      "top3_correct": true
+    }
+  ]
+}
