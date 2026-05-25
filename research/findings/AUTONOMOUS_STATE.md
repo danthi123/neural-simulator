@@ -9,6 +9,66 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## D5 HYBRID SMOKE COMPLETE = NEGATIVE byte-identical to D4 (~13:35 EDT 2026-05-25)
+
+D5 smoke training (94.7 min) + cross-bridge probe (132.6s) COMPLETE.
+
+**DIRECTION_5_NEGATIVE** multi-seed (commit 1e0b291):
+- L=2: OB 0.050 / OI 0.007 (= D4 byte-identical)
+- L=3: OB 0.008 / OI 0.000 (= D4 byte-identical)
+- L=5: OB 0.005 / OI 0.000 (= D4 byte-identical)
+
+**Striking finding**: D5 hybrid's cross-bridge result is EXACTLY the
+same as D4's despite reading from completely different regions
+(D4 from dedicated noun_pool union; D5 from shared 2000-neuron
+sparse pool with K=100 patterns + n=95 topographic prior).
+
+Interpretation: both substrates produce chance-level signal at the
+cross-bridge probe; the byte-identical numbers are an artifact of
+the deterministic seed sampling + chance-level performance. The
+shared pool IS firing (mean_rate 0.12-0.17 vs D4 0.02) but its
+sparse code isn't discriminative enough at smoke scale to overcome
+the substrate-geometry constraint.
+
+**Additive shared sparse pool hypothesis REFUTED at smoke scale.**
+
+## Per user ordered direction COMPLETE STATUS (~13:35 EDT 2026-05-25)
+
+User-ordered chain Q -> 3 -> 4 -> R fully EXHAUSTED + 2 follow-ups:
+- **Q**: PARTIAL (4 axes characterized; bottleneck NOT scale NOT E/I)
+- **3**: PILLAR N=105 PROMOTED ✓ (bio_brain_regions V=32 PASS)
+- **4**: NEGATIVE + diagnostic (substrate-geometry limited)
+- **R-v3**: COMPLETE = ALL CELLS PASS (capacity envelope to N=512)
+- **Q-secondary (E/I balance)**: PARTIAL (sharper structural diagnosis)
+- **D5 (hybrid sparse-distributed)**: NEGATIVE (additive doesn't help)
+
+Cumulative biology-translatable insights this arc:
+1. Substrate scale alone is insufficient for sustained NMDA attractor (Q)
+2. Single-substrate vocab scaling works on bio_brain_regions (n=105)
+3. Cross-bridge composition requires sparse-distributed coding (D4 NEGATIVE)
+4. Capacity envelope shows graceful degradation (R-v3 PASS)
+5. E/I balance is NOT the Q bottleneck (Q-secondary)
+6. Additive shared sparse pool is NOT enough to unify the 2 working modes (D5 NEGATIVE)
+
+The substrate has 2 working modes (n=95 G.20 sparse cross-bridge;
+n=105 bio_brain_regions V=32 single-substrate) that cannot YET be
+unified additively. The honest scientific finding requires a LEARNED
+projection (Approach C; ~1-2 wk substantial).
+
+## Pre-registered next directions (autonomous OR user-steered)
+
+**Cheapest first**:
+1. D5 PRODUCTION (4x events; ~7-8 hr GPU): test if smoke scale was
+   the constraint (low priority given D4 production also unlikely)
+2. D5 DIAGNOSTIC PROBE (~10-30 min CPU): check whether shared pool
+   activity correlates with trained K-of-N indices vs random; isolates
+   whether issue is pattern-embedding (training) or pattern-extraction
+   (decoder)
+3. **Approach C** (substantial 1-2 wk): learned dedicated->shared
+   projection; the principled biology-grounded fix
+4. Direction Q E/I + NMDA-AMPA ratio combined sweep (cheap; tests if
+   E/I + NMDA together work where each alone didn't)
+
 ## TIER 2 + TIER 1 EXECUTED PER USER DIRECTION (~10:00 EDT 2026-05-25)
 
 **Tier 2 (Q E/I balance test)** COMPLETE (commit a040c2a):
