@@ -106,6 +106,47 @@ biggest user-visible conversational deliverable. Substrate-sequence-
 storage arc THOROUGHLY characterized; pillar n=104 extended; ~108
 commits both remotes.**
 
+**DIRECTION I CLOSED 2026-05-24 night:** PFC NMDA bistability at the
+60-neuron dlpfc_wm substrate scale genuinely fails to produce Wang
+2002 persistent activity (3 cheap probes: basic smoke + 36-cell
+parameter stress + direct injection 500-5000pA + HH biophysics
+variant; ALL FAIL the persistence gate). Closing the sequence-storage
+bound via dedicated PFC sequence buffer would require 10-100x
+substrate scale-up (1000+ dlpfc_wm neurons + dense recurrent) --
+outside cheap-probe scope. Findings:
+`research/findings/2026-05-24-DIRECTION-I-Stage1-CLOSED-PFC-
+bistability-genuinely-fails-substrate-scale.md`.
+
+CUMULATIVE 2026-05-24 SCIENTIFIC FINDING SET (11 mechanism attempts;
+~115 commits today):
+- 7 substrate sequence-storage mechanism attempts (pillar n=104
+  BOUNDARY 4x extended): engram-tag spatial + temporal + hippocampus
+  + plain FHRR + biologized FHRR + canon dynamics
+- 3 PFC bistability probes (Direction I; 60-neuron dlpfc_wm fails on
+  both Izh + HH at this scale)
+- 1 working deliverable (Direction M; 320-concept multi-bridge chat)
+- 2 pillars added (n=103 VALIDATED, n=104 BOUNDARY extended)
+- 2 fresh-agent adversarial reviews (n=103 CLEAR, Direction K BLOCK
+  with STRENGTHEN-only fixes all implemented)
+
+NEXT-DIRECTION QUEUED (next session OR user steering):
+- **Direction N**: scale chat 320 -> 640 concepts (5 more G.20
+  bridges; ~85 min GPU; needs new vocab curation)
+- **Direction O**: sentence-parser UI on 320-concept chat (UX work;
+  parser partly in g20_multibridge.py)
+- **Direction P**: combine validated multitag chat + Phase 1.3
+  hippocampal SWR consolidation -> "associations across simulated
+  sleep" capability (3-4 hr GPU on HIPPO-OPTION3 substrate)
+- **Direction Q (scale-up Direction I)**: 1000+ neuron dlpfc_wm region
+  + dense recurrent + dedicated PFC training to attempt Wang 2002
+  attractor at proper scale (substantial; 1-2 weeks build)
+
+The autonomous chain reached a comprehensive characterization of the
+substrate's sequence-storage bound + delivered the biggest current
+conversational capability. Further work is steering-eligible.
+
+---
+
 **DIRECTION M VERIFIED (2026-05-24 evening):** 320-concept G.20
 5-sparse-bridge ensemble + multitag mechanism = working conversational
 chat. Real-time learning ("remember apple is big"), correct retrieval
