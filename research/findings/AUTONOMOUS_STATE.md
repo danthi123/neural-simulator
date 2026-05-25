@@ -9,6 +9,51 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## IN FLIGHT (~04:18 EDT 2026-05-25)
+
+- **Direction 3 V=32 smoke** training in flight (PID 37364 since
+  02:50). Seed 42 + 43 trained (caches written 03:29 + 04:08); seed
+  44 in flight (640/3200 events at 9.2 min; ~40 more min ETA).
+  After all 3 seeds train: ~5-10 min probe step. Total smoke wall
+  ETA ~50-60 more min from 04:18. Watcher `bpmev8akv` will fire on
+  verdict line.
+- **Direction 4 scaffolding (Tasks 0-3) SHIPPED** via subagent
+  while D3 trained (commit aeb9314): writing-plans output +
+  5-category vocab spec (80 cross-bridge concepts) + 5 builder
+  wrappers + frozen verdict module (28 adversarial tests; all
+  GREEN). Tasks 5-6 (GPU training + decisive probe) are
+  controller-only and queued for when D3 frees GPU.
+
+## Pre-registered post-D3-smoke chain
+
+- **DIRECTION_3_V32_PASS** at smoke scale: commit smoke + launch
+  production-scale decisive multi-seed (n_per_pool=200, n_events=200,
+  n_lang_input=2048; ~2-3 hr/seed * 3 seeds = ~6-9 hr GPU); if
+  decisive PASSes, pillar n=105 candidate
+- **DIRECTION_3_V32_PARTIAL**: characterize the per-load breakdown
+  (which L value misses); biology-translatable insight (which
+  capacity axis breaks first); decide whether to (a) push to
+  production scale anyway (decisive may PASS where smoke PARTIAL
+  -- training has more events) OR (b) pivot directly to Direction 4
+  (cross-bridge is the natural complement; doesn't depend on V=32
+  PASS)
+- **DIRECTION_3_V32_NEGATIVE**: substrate's concept-pool architecture
+  doesn't scale to V=32; pivot to Direction 4 (which uses V=16
+  per-bridge so doesn't depend on V=32) immediately
+
+## Pre-registered post-D4-decisive chain (once D4 Tasks 5-6 run)
+
+- **DIRECTION_4_PASS**: pillar n=105 or n=106 candidate; cross-
+  bridge bio_brain_regions composition validated; conversational
+  capability extended to 80 cross-bridge concepts on biology-faithful
+  substrate (vs Direction M's G.20 sparse 320 on Kanerva sparse)
+- **DIRECTION_4_BOUNDARY**: precise comparison to G.20 sparse n=95
+  (which mechanism is the bottleneck: bio_brain_regions geometry
+  vs sparse coding?)
+- **DIRECTION_4_NEGATIVE**: cross-bridge requires sparse coding;
+  pivot to Approach B (use D3 V=32 x 5 = 160 cross-bridge concepts)
+  if D3 PASSed, otherwise re-think architecture
+
 ## DIRECTION Q COMPLETE = PARTIAL across scaling envelope; pivot to Direction 3 per user order (2026-05-25)
 
 Direction Q (Wang 2002 NMDA persistence test at n=1000+) executed
