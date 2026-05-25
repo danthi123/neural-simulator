@@ -1,0 +1,55 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seed": 42,
+  "n_dlpfc_wm": 60,
+  "nmda_ratio": 0.5,
+  "neuron_type": "HH_PFC_PYRAMIDAL",
+  "dt_ms": 0.05,
+  "injection_values": [
+    500,
+    1000,
+    2000,
+    5000
+  ],
+  "results": [
+    {
+      "inject_pA": 500,
+      "baseline": 0.0013333333333333333,
+      "stim": 0.0013,
+      "delay": 0.0012833333333333334,
+      "d_b": 0.9624992781255416,
+      "d_s": 0.9871787278112352,
+      "passes": false
+    },
+    {
+      "inject_pA": 1000,
+      "baseline": 0.0013,
+      "stim": 0.00125,
+      "delay": 0.0013,
+      "d_b": 0.9999992307698226,
+      "d_s": 1.0399991680006655,
+      "passes": false
+    },
+    {
+      "inject_pA": 2000,
+      "baseline": 0.0011666666666666668,
+      "stim": 0.0013,
+      "delay": 0.0012416666666666667,
+      "d_b": 1.0642848020415983,
+      "d_s": 0.9551274704147665,
+      "passes": false
+    },
+    {
+      "inject_pA": 5000,
+      "baseline": 0.0014,
+      "stim": 0.0012166666666666667,
+      "delay": 0.0013083333333333334,
+      "d_b": 0.9345231420072797,
+      "d_s": 1.0753415819110288,
+      "passes": false
+    }
+  ],
+  "verdict": "HH_PFC_PARTIAL_NOT_BISTABLE",
+  "wall_clock_minutes": 0.9452254851659139
+}

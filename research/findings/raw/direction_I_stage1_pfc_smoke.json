@@ -1,0 +1,51 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seed": 42,
+  "n_lang_input": 256,
+  "n_dlpfc_wm": 60,
+  "stim_steps": 100,
+  "delay_steps": 100,
+  "baseline_steps": 50,
+  "per_word": [
+    {
+      "word": "word0",
+      "baseline_rate": 0.0,
+      "stim_rate": 0.0011666666666666668,
+      "delay_rate": 0.00016666666666666666,
+      "delay_vs_baseline_ratio": 166666.66666666666,
+      "delay_vs_stim_ratio": 0.14285702040826823
+    },
+    {
+      "word": "word1",
+      "baseline_rate": 0.0013333333333333333,
+      "stim_rate": 0.0011666666666666668,
+      "delay_rate": 0.0006666666666666666,
+      "delay_vs_baseline_ratio": 0.4999996250002813,
+      "delay_vs_stim_ratio": 0.5714280816330729
+    },
+    {
+      "word": "word2",
+      "baseline_rate": 0.001,
+      "stim_rate": 0.0016666666666666668,
+      "delay_rate": 0.0005,
+      "delay_vs_baseline_ratio": 0.49999950000050003,
+      "delay_vs_stim_ratio": 0.299999820000108
+    },
+    {
+      "word": "word3",
+      "baseline_rate": 0.0,
+      "stim_rate": 0.0011666666666666668,
+      "delay_rate": 0.001,
+      "delay_vs_baseline_ratio": 1000000.0,
+      "delay_vs_stim_ratio": 0.8571421224496093
+    }
+  ],
+  "mean_baseline_rate": 0.0005833333333333333,
+  "mean_stim_rate": 0.0012916666666666667,
+  "mean_delay_rate": 0.0005833333333333333,
+  "delay_baseline_ratio": 0.9999982857172245,
+  "delay_stim_ratio": 0.4516125535902811,
+  "verdict": "PFC_BISTABILITY_FAILS_PIVOT",
+  "wall_clock_minutes": 0.08482298453648886
+}

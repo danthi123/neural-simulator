@@ -1,0 +1,53 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "seed": 42,
+  "n_dlpfc_wm": 60,
+  "nmda_ratio": 0.5,
+  "injection_values": [
+    500,
+    1000,
+    2000,
+    5000
+  ],
+  "results": [
+    {
+      "inject_pA": 500,
+      "baseline": 0.0006666666666666666,
+      "stim": 0.072,
+      "delay": 8.333333333333333e-05,
+      "d_b": 0.12499981250028125,
+      "d_s": 0.0011574073913323047,
+      "passes": false
+    },
+    {
+      "inject_pA": 1000,
+      "baseline": 0.0,
+      "stim": 0.15916666666666668,
+      "delay": 0.0,
+      "d_b": 0.0,
+      "d_s": 0.0,
+      "passes": false
+    },
+    {
+      "inject_pA": 2000,
+      "baseline": 0.0,
+      "stim": 0.313,
+      "delay": 8.333333333333333e-05,
+      "d_b": 83333.33333333333,
+      "d_s": 0.0002662406807255356,
+      "passes": false
+    },
+    {
+      "inject_pA": 5000,
+      "baseline": 0.0,
+      "stim": 0.49583333333333335,
+      "delay": 0.0006666666666666666,
+      "d_b": 666666.6666666666,
+      "d_s": 0.0013445378124143773,
+      "passes": false
+    }
+  ],
+  "verdict": "PFC_BISTABILITY_GENUINELY_FAILS_PIVOT",
+  "wall_clock_minutes": 0.0908306876818339
+}
