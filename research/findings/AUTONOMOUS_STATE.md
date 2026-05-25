@@ -9,6 +9,34 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## 🎉 PILLAR N=105 RECORDED (~07:15 EDT 2026-05-25)
+
+- **Direction 3 V=32 PRODUCTION DECISIVE = DIRECTION_3_V32_PASS**
+  multi-seed (commit 3ffae15; 18/18 cells; L=5 OI 0.993).
+- **Adversarial reviewer = CLEAR** (commit 7a65e53; all 7 scrutiny
+  items PASS).
+- **Pillar n=105 RECORDED** in capability_status.json (commit 068bf1a):
+  new headline = "bio_brain_regions vocab scaling V=16 -> V=32
+  PRODUCTION DECISIVE multi-seed PASS"; prepended pillar n=105 entry
+  at top of pillars[] array; all 6 capability_status tests PASS.
+- **Direction 4 5-bridge SMOKE LAUNCHED 07:11 EDT** on now-free GPU
+  (5 bridges x 3 seeds = 15 trainings at reduced scale; ETA 7-10 hr;
+  watcher bqwngytek polls every 10 min for verdict line).
+
+## Per user ordered direction (Q -> 3 -> 4 -> R) FINAL STATUS
+
+- **Q (dlpfc_wm scale-up)**: COMPLETE = PARTIAL across 3 scaling-
+  envelope cells (biology-translatable: substrate engages NMDA but
+  doesn't sustain attractor; bottleneck structural/dynamical).
+- **3 V=32 (vocab scaling)**: PILLAR N=105 PROMOTED ✓ (bio_brain_
+  regions concept-pool architecture scales V=16 -> V=32 cleanly
+  multi-seed; production decisive 146.8 min wall; reviewer CLEAR).
+- **4 (cross-bridge bio_brain_regions)**: SMOKE in flight (5
+  bridges x 3 seeds; ETA 7-10 hr; D4 verdict imminent on watcher).
+- **R-v3 (capacity envelope)**: COMPLETE = ALL 3 CELLS PASS at
+  top-3 bar (Direction M working deliverable extends ~10x beyond
+  initial 50-assoc validation).
+
 ## STATUS UPDATE (~05:37 EDT 2026-05-25)
 
 - **Direction R-v3 envelope COMPLETE** (commit 21b9e9f): ALL 3 cells
