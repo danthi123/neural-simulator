@@ -99,6 +99,67 @@ requires a SEPARATE familiarity / match-strength signal (perirhinal
 threshold on the identification score. Same principle as FHRR
 shortcut-3 RESOLVED (2026-05-22).
 
+**2026-05-24 SESSION COMPLETE: substrate-sequence-storage arc THOROUGHLY
+CHARACTERIZED via 7 mechanism attempts; pillar n=104 extended (4
+reviewer-driven updates); Direction H added (canon dynamics REFUTE
+v14 collapse finding, sequence bounded at 0.417); validated multitag
+chat REPL VERIFIED WORKING multi-seed; ~100 commits both remotes.**
+
+The 7 substrate sequence-storage attempts:
+| # | Mechanism | Strict top-1 multi-seed |
+|---|-----------|--------------------------|
+| A v1 | cortical + ec_context, frozen | 0.333 BOUNDARY |
+| A v2 | cortical + ec_context, learned | 0.292 BOUNDARY |
+| E T1 | cortical + theta-gamma | 0.250 BOUNDARY |
+| G | HIPPO + theta-gamma | 0.333 BOUNDARY |
+| K teacher | FHRR + substrate, teacher | 1.000 (artifact) |
+| K no-teach | FHRR + substrate, fair | 1.000 (substrate not load-bearing per reviewer BLOCK) |
+| K biolog | FHRR + biologized pipeline | 0.000 (too strict at scale) |
+| **H** | **engram-tag + canon dynamics** | **0.417 (above prior cluster; v14 finding REFUTED)** |
+
+Pillar n=103 VALIDATED: Direction E theta-gamma ALGEBRA (reviewer
+CLEAR).
+Pillar n=104 BOUNDARY (extended): v16 cortical-only substrate
+fundamentally bounded for sequence-position retrieval; bound is BOTH
+dynamics-level AND mechanism-level.
+
+Validated multitag chat REPL VERIFIED working multi-seed (seeds 42 +
+43; `compose_concept_chat.py`): user types concept; system retrieves
+trained associates with confidence scores; both correct associates
+marked ** in top-3 across tested cues. The project's deliverable
+conversational capability at 91.7% multi-seed.
+
+Comprehensive synthesis findings doc:
+`research/findings/2026-05-24-COMPLETE-DAY-SYNTHESIS-substrate-
+sequence-storage-bound-characterized-validated-multitag-chat-
+deliverable.md`.
+
+NEXT-DIRECTION OPTIONS pre-registered:
+- **Direction I**: dedicated PFC sequence buffer region (~2-4 week
+  build; substantive architectural iteration; most likely to close
+  the bound)
+- **Direction L DELIVERABLE TODAY**: multitag chat REPL on cached v16
+  bridges -- user can interact with validated 91.7% conversational
+  capability immediately
+- **Direction M**: scale multitag from 16-word to G.20 320-concept
+  vocab (~2 hr GPU; reuses validated G.20 sparse architecture
+  multi-bridge ensemble + multitag mechanism)
+
+Per user's standing autonomy: continuing with next biology-grounded
+direction when watchdog re-invokes session or user steers. Direction M
+is the cheapest biology iteration that extends working capability.
+
+DISCIPLINE PRESERVED throughout session: bar frozen 0.80; no
+protected/frozen/moat modification (e8a99a2..HEAD byte-empty diff);
+2 fresh-agent adversarial reviews (one CLEAR, one BLOCK with 4
+STRENGTHEN-only fixes all implemented + 3 run); honest propagation
+every outcome positive/negative/boundary; both remotes propagated
+every commit; ~100 commits today.
+
+---
+
+## Earlier in flight (preserved)
+
 **FINAL CHAIN RESULT 2026-05-24: substrate-sequence-storage arc THOROUGHLY
 CHARACTERIZED via 6 mechanism attempts; pillar n=104 extended; reviewer
 fix #3 BOTH FAIL closes biology-grounded path; next directions queued
