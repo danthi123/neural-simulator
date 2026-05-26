@@ -9,6 +9,49 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## 🎉🎉🎉 FOUR REVERSALS IN ONE ARC — THREE NEW PILLARS PROMOTED + D4 PASS PRODUCTION IN FLIGHT (~06:30 EDT 2026-05-26)
+
+The "many NEGATIVES might be bugs in disguise" pattern proved out
+FOUR times in 24 hours:
+
+**Pillar n=106 BOUNDARY** (D5 hybrid sparse-distributed bio_brain_regions):
+- Prior D5 NEGATIVE was the same identical-patterns-across-bridges bug
+- Bug fix (commit c4e18f2) + production decisive (commit 7ba8e8d) +
+  reviewer 9/9 CLEAR (commit 1c7e51a)
+- Production OI L=5 = 0.790 EXACTLY matches pillar n=95 G.20 sparse
+- capability_status updated commit 8737d41
+
+**Pillar n=107 VALIDATED** (Q-tertiary: Wang 2002 cortical bistability via
+NMDA:AMPA ratio fix):
+- Prior Q PARTIAL across 4 axes (density, scale, E/I) all dead ends
+- Q-tertiary NMDA-AMPA ratio sweep: nmda_ratio=0.6 → 3.00s sustained
+  multi-seed (rate_ratio 753); nmda_ratio=0.8 → 3.00s (rate_ratio 897);
+  nmda_ratio=0.4 (default) still PARTIAL
+- Commit e94017e + reviewer 12/12 CLEAR commit c23b7c6
+- capability_status updated commit a328d00
+- Falsifies "Izhikevich isn't biological enough" alternative; closes
+  Direction I bound at scale
+
+**D4 NEGATIVE INVALIDATED → SMOKE PASS 6/6** (commit efbad3d):
+- D4 had same systematic uniformity bug as D5 (activity byte-identical
+  across all 5 bridges)
+- Bridge-specific seed offsets fix (analog of D5 c4e18f2)
+- Activity verification: cos = 0.01-0.03 across bridges post-fix (was
+  1.0000 byte-identical)
+- D4 SMOKE result: L=2 OB 1.000 / OI 1.000; L=3 OB 1.000 / OI 1.000;
+  L=5 OB 1.000 / OI 0.983 — DRAMATICALLY OUTPERFORMS D5 hybrid (0.790)
+- Pillar n=108 candidate pending production confirmation
+
+**D4 PRODUCTION DECISIVE LAUNCHED** ~06:35 EDT (background; ~7-15 hr ETA;
+watcher b0rjhn0vq). Expected to confirm smoke PASS pattern. If
+confirmed + reviewer CLEAR: pillar n=108 PASS.
+
+## Cumulative scientific deliverables this autonomous arc
+
+THREE new pillars promoted (n=105, n=106, n=107) + ONE more candidate
+(n=108 production in flight). Multiple "fundamental architectural
+limits" reframed as parameter/seeding bugs.
+
 ## 🎉 D5 BUGFIX RETRAIN COMPLETE = PARTIAL (5/6 cells PASS); D5 PRODUCTION LAUNCHED (~19:35 EDT 2026-05-25)
 
 D5 bugfix smoke training completed at 19:13 EDT (111.6 min wall);
