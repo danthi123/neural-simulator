@@ -1,0 +1,188 @@
+{
+  "backend": "numpy",
+  "gpu": false,
+  "tag": "full",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "loads": [
+    4,
+    6,
+    7
+  ],
+  "bar_ob": 0.8,
+  "bar_oi": 0.8,
+  "min_seeds": 3,
+  "V": 80,
+  "n_bridges": 5,
+  "bridges": [
+    "A_nouns",
+    "B_verbs",
+    "C_adj",
+    "D_spatial",
+    "E_functional"
+  ],
+  "decoder_order_bearing": "parallel_population_matching_batched",
+  "decoder_order_invariant": "marginal_sum_phase_similarity_batched",
+  "mean_centring": "per_bridge_local",
+  "substrate": "bio_brain_regions_5bridge_ensemble_v14v16_recipe",
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 80,
+      "batched_vs_scalar_max_diff": 0.0,
+      "per_load": {
+        "4": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "6": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.8,
+          "n_trials": 200
+        },
+        "7": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.61,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=4": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=6": {
+          "OB": 1.0,
+          "OI": 0.8
+        },
+        "L=7": {
+          "OB": 1.0,
+          "OI": 0.61
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "V": 80,
+      "batched_vs_scalar_max_diff": 0.0,
+      "per_load": {
+        "4": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "6": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.755,
+          "n_trials": 200
+        },
+        "7": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.61,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=4": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=6": {
+          "OB": 1.0,
+          "OI": 0.755
+        },
+        "L=7": {
+          "OB": 1.0,
+          "OI": 0.61
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "V": 80,
+      "batched_vs_scalar_max_diff": 0.0,
+      "per_load": {
+        "4": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "6": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.885,
+          "n_trials": 200
+        },
+        "7": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.605,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=4": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=6": {
+          "OB": 1.0,
+          "OI": 0.885
+        },
+        "L=7": {
+          "OB": 1.0,
+          "OI": 0.605
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "4": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 1.0,
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "6": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 0.8133333333333335,
+      "order_invariant_per_seed": [
+        0.8,
+        0.755,
+        0.885
+      ]
+    },
+    "7": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 0.6083333333333333,
+      "order_invariant_per_seed": [
+        0.61,
+        0.61,
+        0.605
+      ]
+    }
+  },
+  "verdict": "DIRECTION_4_VOID_MALFORMED",
+  "wall_clock_seconds": 192.08275485038757,
+  "framing": "DESCRIPTIVE_EXTENDED_LOAD_CHARACTERISATION (NOT a re-verdict on canonical Direction 4 LOADS={2,3,5}; pillar n=108 stands)"
+}
