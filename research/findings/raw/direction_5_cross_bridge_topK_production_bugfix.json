@@ -40,7 +40,7 @@
         }
       },
       "batched_vs_scalar_max_diff": 2.0816681711721685e-17,
-      "elapsed_seconds": 41.64639067649841
+      "elapsed_seconds": 40.561378479003906
     },
     {
       "seed": 43,
@@ -63,7 +63,7 @@
         }
       },
       "batched_vs_scalar_max_diff": 2.0816681711721685e-17,
-      "elapsed_seconds": 41.50645971298218
+      "elapsed_seconds": 40.601009368896484
     },
     {
       "seed": 44,
@@ -86,7 +86,7 @@
         }
       },
       "batched_vs_scalar_max_diff": 2.0816681711721685e-17,
-      "elapsed_seconds": 42.399237394332886
+      "elapsed_seconds": 40.49056553840637
     }
   ],
   "aggregate": {
@@ -107,5 +107,5 @@
     }
   },
   "verdict": "DIRECTION_5_VOID_MALFORMED",
-  "wall_clock_seconds": 125.59701466560364
+  "wall_clock_seconds": 121.6979341506958
 }
