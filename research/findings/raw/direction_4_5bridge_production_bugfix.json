@@ -1,0 +1,322 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "smoke": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "bridges": [
+    "A_nouns",
+    "B_verbs",
+    "C_adj",
+    "D_spatial",
+    "E_functional"
+  ],
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar_ob": 0.8,
+  "bar_oi": 0.8,
+  "min_seeds": 3,
+  "V_total": 80,
+  "n_bridges": 5,
+  "training_log": [
+    {
+      "bridge": "A_nouns",
+      "seed": 42,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 19.52518155177434,
+      "status": "OK"
+    },
+    {
+      "bridge": "A_nouns",
+      "seed": 43,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 18.940608354409537,
+      "status": "OK"
+    },
+    {
+      "bridge": "A_nouns",
+      "seed": 44,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 19.104379570484163,
+      "status": "OK"
+    },
+    {
+      "bridge": "B_verbs",
+      "seed": 42,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 19.248972169558208,
+      "status": "OK"
+    },
+    {
+      "bridge": "B_verbs",
+      "seed": 43,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 18.730878818035126,
+      "status": "OK"
+    },
+    {
+      "bridge": "B_verbs",
+      "seed": 44,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 18.89617462158203,
+      "status": "OK"
+    },
+    {
+      "bridge": "C_adj",
+      "seed": 42,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 18.8116276661555,
+      "status": "OK"
+    },
+    {
+      "bridge": "C_adj",
+      "seed": 43,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 19.263977070649464,
+      "status": "OK"
+    },
+    {
+      "bridge": "C_adj",
+      "seed": 44,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 19.040144928296407,
+      "status": "OK"
+    },
+    {
+      "bridge": "D_spatial",
+      "seed": 42,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 18.951709040006,
+      "status": "OK"
+    },
+    {
+      "bridge": "D_spatial",
+      "seed": 43,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 18.647050015131633,
+      "status": "OK"
+    },
+    {
+      "bridge": "D_spatial",
+      "seed": 44,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 19.319866863886514,
+      "status": "OK"
+    },
+    {
+      "bridge": "E_functional",
+      "seed": 42,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 18.898738332589467,
+      "status": "OK"
+    },
+    {
+      "bridge": "E_functional",
+      "seed": 43,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 18.944877644379932,
+      "status": "OK"
+    },
+    {
+      "bridge": "E_functional",
+      "seed": 44,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 19.145593428611754,
+      "status": "OK"
+    }
+  ],
+  "training_wall_clock_minutes": 285.4697800755501,
+  "probe_result": {
+    "backend": "cupy",
+    "gpu": true,
+    "tag": "full",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "loads": [
+      2,
+      3,
+      5
+    ],
+    "bar_ob": 0.8,
+    "bar_oi": 0.8,
+    "min_seeds": 3,
+    "V": 80,
+    "n_bridges": 5,
+    "bridges": [
+      "A_nouns",
+      "B_verbs",
+      "C_adj",
+      "D_spatial",
+      "E_functional"
+    ],
+    "decoder_order_bearing": "parallel_population_matching_batched",
+    "decoder_order_invariant": "marginal_sum_phase_similarity_batched",
+    "mean_centring": "per_bridge_local",
+    "substrate": "bio_brain_regions_5bridge_ensemble_v14v16_recipe",
+    "per_seed": [
+      {
+        "seed": 42,
+        "V": 80,
+        "batched_vs_scalar_max_diff": 2.7755575615628914e-17,
+        "per_load": {
+          "2": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "3": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "5": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 0.965,
+            "n_trials": 200
+          }
+        },
+        "verdict_entry": {
+          "L=2": {
+            "OB": 1.0,
+            "OI": 1.0
+          },
+          "L=3": {
+            "OB": 1.0,
+            "OI": 1.0
+          },
+          "L=5": {
+            "OB": 1.0,
+            "OI": 0.965
+          }
+        }
+      },
+      {
+        "seed": 43,
+        "V": 80,
+        "batched_vs_scalar_max_diff": 1.734723475976807e-17,
+        "per_load": {
+          "2": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "3": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "5": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 0.99,
+            "n_trials": 200
+          }
+        },
+        "verdict_entry": {
+          "L=2": {
+            "OB": 1.0,
+            "OI": 1.0
+          },
+          "L=3": {
+            "OB": 1.0,
+            "OI": 1.0
+          },
+          "L=5": {
+            "OB": 1.0,
+            "OI": 0.99
+          }
+        }
+      },
+      {
+        "seed": 44,
+        "V": 80,
+        "batched_vs_scalar_max_diff": 2.0816681711721685e-17,
+        "per_load": {
+          "2": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "3": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 1.0,
+            "n_trials": 200
+          },
+          "5": {
+            "order_bearing_accuracy": 1.0,
+            "order_invariant_accuracy": 0.975,
+            "n_trials": 200
+          }
+        },
+        "verdict_entry": {
+          "L=2": {
+            "OB": 1.0,
+            "OI": 1.0
+          },
+          "L=3": {
+            "OB": 1.0,
+            "OI": 1.0
+          },
+          "L=5": {
+            "OB": 1.0,
+            "OI": 0.975
+          }
+        }
+      }
+    ],
+    "aggregate": {
+      "2": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "3": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 1.0,
+        "order_invariant_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "5": {
+        "order_bearing_mean": 1.0,
+        "order_bearing_per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "order_invariant_mean": 0.9766666666666667,
+        "order_invariant_per_seed": [
+          0.965,
+          0.99,
+          0.975
+        ]
+      }
+    },
+    "verdict": "DIRECTION_4_PASS",
+    "wall_clock_seconds": 115.8621153831482
+  }
+}
