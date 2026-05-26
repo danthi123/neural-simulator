@@ -414,10 +414,50 @@ batch finishes in ~45-55 minutes on an RTX 3090.
 
 ## Latest validated result
 
-**Biologized theta-gamma mode-unification (Lisman-Idiart N.16)
-END-TO-END COMPLETE; substrate readiness for the conversational
-generative-replay loop validated through the natural biology match
-(2026-05-23/24):**
+**Four new pillars in one autonomous arc (2026-05-25/26):**
+
+- **Pillar n=108 VALIDATED**: D4 dedicated-pool bio_brain_regions
+  cross-bridge composition (V=80 = 5 bridges × V=16). OB 1.000 every
+  load through L=7 (zero errors / 3600 trials); OI 1.000 / 1.000 /
+  0.977 at L=2/3/5; capacity envelope passes through L=6 (0.813)
+  before collapse at L=7. Dramatically beats both D5 hybrid (0.790)
+  and pillar n=95 G.20 sparse (0.790) at L=5 OI. Pure dedicated-pool
+  is the cleanest cross-bridge composition substrate the project has
+  produced. Reviewer 9/9 CLEAR.
+
+- **Pillar n=107 VALIDATED**: Wang 2002 cortical NMDA bistability at
+  substrate scale via NMDA:AMPA conductance ratio fix. n=1000
+  dlpfc_wm density=0.20 with nmda_ratio=0.6 (or 0.8) → 3.00s
+  sustained activity all 3 seeds (rate_ratio 753-897). NMDA-off
+  control silent. Closes Direction Q across 4 prior PARTIAL axes
+  (density / scale / E/I balance); falsifies "Izhikevich isn't
+  biological enough" alternative. Reviewer 12/12 CLEAR.
+
+- **Pillar n=106 VALIDATED (BOUNDARY)**: D5 hybrid sparse-distributed
+  bio_brain_regions cross-bridge composition. OB 1.000 every load;
+  OI 1.000 / 0.998 / 0.790 at L=2/3/5; L=5 OI EXACTLY mirrors pillar
+  n=95 G.20 sparse boundary. First architecture unifying biology-
+  faithful dedicated pools (n=98/n=105) with sparse-distributed
+  cross-bridge composition (n=95). Reviewer 9/9 CLEAR.
+
+- **Pillar n=105 VALIDATED**: bio_brain_regions V=16 → V=32 single-
+  substrate vocab scaling. 18/18 cells PASS at 0.80 bar; L=5 OI =
+  0.993. Reviewer 7/7 CLEAR.
+
+**Bug-discovery pattern recognized**: 4 reversals in 24 hours where
+prior NEGATIVE findings turned out to be specific seeding/parameter
+bugs (D5/D4 cross-bridge uniformity; Q NMDA-AMPA ratio default).
+Standing discipline going forward: when architecture returns
+essentially-chance results, suspect a systematic bug BEFORE
+declaring architectural failure.
+
+See [CHANGELOG.md](CHANGELOG.md) 2026-05-26 entry for full per-pillar
+details + commit SHAs.
+
+---
+
+**Prior validated tier (2026-05-23/24):
+Biologized theta-gamma mode-unification (Lisman-Idiart N.16):**
 
 The catalog-documented mechanism for order-bearing AND order-invariant
 readouts from one theta-gamma encoded code — flagged earlier as
