@@ -19,6 +19,7 @@ def build_q_test_bridge(seed: int, n_dlpfc: int = 1000,
                           n_stim: int = 200,
                           enable_nmda: bool = True,
                           inh_weight_mean: float = 4.0,
+                          nmda_ratio: float = 0.4,
                           verbose: bool = False):
     """Construct a standalone Direction Q test bridge.
 
@@ -38,6 +39,18 @@ def build_q_test_bridge(seed: int, n_dlpfc: int = 1000,
                          attractor formation; smaller values (2.0, 3.0)
                          relax inhibition toward parity with excitation
                          (exc_weight_mean=2.0 is held fixed).
+        nmda_ratio: NMDA:AMPA conductance ratio (default 0.4 = CoreSimConfig
+                    default; preserves prior Q / Q-prime / Q-secondary
+                    behavior byte-identically). Wang 2002 used ratios
+                    in the 0.05–0.10 range (NMDA-dominated AMPA-light)
+                    for some figures; higher ratios produce slower,
+                    more sustained activity by weighting the slow
+                    NMDA tail more strongly relative to fast AMPA.
+                    Direction Q-tertiary varies this across {0.4, 0.6,
+                    0.8} at the best-signal cell (n=1000 d=0.20
+                    inh=2.0) to test whether the AMPA-leakage rate
+                    is the bottleneck preventing the Wang 2002
+                    bistable attractor from self-sustaining.
         verbose: print build info
     """
     from sim.config import (CoreSimConfig, VisualizationConfig,
@@ -90,6 +103,7 @@ def build_q_test_bridge(seed: int, n_dlpfc: int = 1000,
     cfg.dt_ms = 0.5
     cfg.seed = seed
     cfg.enable_nmda = enable_nmda
+    cfg.nmda_ratio = float(nmda_ratio)
     cfg.nmda_tau_decay = 100.0  # Wang 2002 calibration
     cfg.enable_structural_plasticity = False
     cfg.enable_per_type_stp = False
@@ -113,5 +127,6 @@ def build_q_test_bridge(seed: int, n_dlpfc: int = 1000,
               + " density=" + str(dlpfc_density)
               + " inh_w=" + str(inh_weight_mean)
               + " NMDA=" + str(enable_nmda)
+              + " nmda_ratio=" + str(nmda_ratio)
               + " stim_input n=" + str(n_stim), flush=True)
     return bridge
