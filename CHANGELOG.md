@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-05-26 — Four pillars in one autonomous arc + bug-discovery pattern
+
+### Four pillars promoted (n=105 / n=106 / n=107 / n=108)
+
+- **Pillar n=108 VALIDATED (D4 dedicated-pool cross-bridge composition)** — Direction 4 production decisive multi-seed: OB 1.000 every load through L=7 (3600 trials, zero errors); OI 1.000 / 1.000 / 0.977 at L=2/3/5; capacity envelope passes through L=6 (0.813) before collapse at L=7 (0.608). DRAMATICALLY beats both D5 hybrid (0.790) and pillar n=95 G.20 sparse (0.790) at L=5 OI — pure dedicated-pool is the cleanest cross-bridge substrate the project has produced. The D5 hybrid's shared sparse pool was a workaround for the cross-bridge uniformity bug, not a necessary architectural component. Adversarial reviewer 9/9 CLEAR. Commit 0f7dfd9 (capability_status); 9acadb4 (decisive); 79c1dd3 (reviewer); efbad3d (bug fix). Biology-translatable: 6 simultaneous compositional bindings per theta cycle matches natural utterance complexity (Lisman 2005 theta-gamma 5-9).
+
+- **Pillar n=107 VALIDATED (Wang 2002 cortical NMDA bistability at substrate scale via NMDA:AMPA ratio fix)** — Direction Q-tertiary NMDA-AMPA ratio sweep at n=1000 dlpfc_wm density=0.20 inh=2.0: PASS at nmda_ratio=0.6 and 0.8 (3.00s sustained activity all 3 seeds; rate_ratio 753-897); nmda_ratio=0.4 (default) still PARTIAL. NMDA-off control silent (ratio 0.92-1.06) confirms NMDA-mediated. Closes Direction Q across 4 prior PARTIAL axes (density 0.10/0.20, scale 1000/2000, E/I 2.0/3.0/4.0). Falsifies "Izhikevich isn't biological enough" alternative hypothesis — the substrate genuinely supports Wang 2002 bistability once the conductance ratio is correctly tuned. Reframes Direction I bound (60-neuron PFC bistability failure): works at 1000+ neurons with NMDA-dominant conductance ratio. Adversarial reviewer 12/12 CLEAR. Commit a328d00 (capability_status); e94017e (sweep); c23b7c6 (reviewer).
+
+- **Pillar n=106 VALIDATED (BOUNDARY) (D5 hybrid sparse-distributed bio_brain_regions cross-bridge)** — Direction 5 hybrid production decisive: OB 1.000 every load; OI 1.000 / 0.998 / 0.790 at L=2/3/5; L=5 OI EXACTLY mirrors pillar n=95 G.20 sparse cross-bridge boundary at 0.790. First architecture unifying biology-faithful dedicated pools (n=98/n=105) with sparse-distributed cross-bridge composition (n=95) on a single substrate. Adversarial reviewer 9/9 CLEAR. Commit 8737d41 (capability_status); 7ba8e8d (decisive); 1c7e51a (reviewer); c4e18f2 (bug fix).
+
+- **Pillar n=105 VALIDATED (bio_brain_regions V=16 → V=32 single-substrate vocab scaling)** — Direction 3 V=32 production decisive multi-seed: 18/18 cells PASS at 0.80 bar; L=5 OI = 0.993. Doubles single-substrate vocab from V=16 (pillars n=96/n=97/n=98) to V=32 cleanly without precision loss. Adversarial reviewer 7/7 CLEAR. Commit 068bf1a (capability_status); 3ffae15 (decisive); 7a65e53 (reviewer).
+
+### Bug-discovery discipline lesson
+
+Four reversals in 24 hours where prior NEGATIVE findings turned out to be specific seeding/parameter bugs rather than fundamental architectural limits:
+
+1. **D5 NEGATIVE → bug fix → BOUNDARY**: K-of-N sparse patterns 100% identical across all 5 bridges (seeded only by base_seed); cross-bridge discrimination mathematically impossible. Fix: `_BRIDGE_LABEL_SEED_OFFSETS` map at 100k spacing.
+2. **D4 NEGATIVE → bug fix → PASS**: activity vectors byte-identical across bridges at every word position (same RNG seed → identical orthogonal codes + weight matrices). Fix: analog of D5's seed-offset.
+3. **Q PARTIAL across 4 axes → conductance fix → PASS**: NMDA-AMPA ratio 0.4 (AMPA-dominant default) drained recurrent loop before NMDA could rebuild it; inverting to 0.6 (NMDA-dominant) latched the attractor.
+4. **Direction I bound (60-neuron PFC bistability) → reframed by n=107**: works at 1000+ neurons with correct conductance ratio.
+
+Standing discipline going forward: when architecture returns essentially-chance results, suspect a systematic bug BEFORE declaring architectural failure. Verify cross-bridge inputs are genuinely distinct; verify conductance/synapse parameters are in biological range; only then conclude the architecture itself is bounded.
+
 ## [Unreleased] — 2026-05-16 — Trustworthy continual memory + self-contained generator (Increment 1)
 
 ### Distributed-sparse cortical memory (G.20), validated + characterized
