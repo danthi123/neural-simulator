@@ -56,6 +56,26 @@ from research.findings.raw.direction_4_vocab_spec import (
 )
 
 
+# Per-bridge SimulationBridge seed offsets (BUG FIX 2026-05-26, analog of
+# D5 commit c4e18f2). Each bridge needs UNIQUE random initialization of
+# lang_input -> pool weight matrices; without offsets all 5 bridges
+# share identical base_seed (e.g. 42) and the protected
+# build_biological_brain_regions / SimulationBridge construction produces
+# byte-identical pool weights across bridges. Since orthogonal_drive_pattern
+# is deterministic per (cue_idx, n_cues), identical weights drive
+# identical pool activity per cue position, making cross-bridge
+# discrimination mathematically impossible. Fixed offsets (deterministic
+# + reproducible) so multi-seed reproduces; offsets spaced at 100k to
+# avoid any collision with the base_seed range.
+_DIRECTION_4_BRIDGE_LABEL_SEED_OFFSETS: dict = {
+    "A_nouns":      0,
+    "B_verbs":      100000,
+    "C_adj":        200000,
+    "D_spatial":    300000,
+    "E_functional": 400000,
+}
+
+
 # v14/v16 production recipe defaults (pinned).
 _V14_N_LANG_INPUT_DEFAULT: int = 2048
 _V14_N_PER_POOL_DEFAULT: int = 200
@@ -107,6 +127,24 @@ def _build_bridge_core(
             "Direction 4 per-bridge builder requires exactly ONE pool "
             "slot non-None per call; got " + str(n_active_slots)
         )
+
+    # CRITICAL BUG FIX 2026-05-26 (analog of D5 c4e18f2): derive a
+    # bridge-specific seed from (base_seed, label) so each of the 5
+    # bridges initializes its lang_input -> pool weight matrices
+    # uniquely. Without this fix, all 5 bridges at the same base seed
+    # produce byte-identical pool activity per cue position
+    # (orthogonal_drive_pattern is deterministic; identical weights
+    # + identical drive = identical activity), making the cross-bridge
+    # probe operate on duplicate inputs. See finding
+    # 2026-05-26-DIRECTION-4-NEGATIVE-INVALIDATED.md.
+    _bridge_seed_offset = _DIRECTION_4_BRIDGE_LABEL_SEED_OFFSETS.get(
+        label, 0,
+    )
+    if _bridge_seed_offset == 0 and label != "A_nouns" and label != "":
+        # Defensive: an unknown label gets a unique offset via hash
+        # (but we should have all 5 known labels covered above).
+        _bridge_seed_offset = (abs(hash(label)) % 900000) + 100000
+    bridge_seed = int(seed) + int(_bridge_seed_offset)
 
     # Imports deferred so importing this module is CPU-light (does not
     # trigger CuPy bridge initialization until construction is invoked).
@@ -165,7 +203,7 @@ def _build_bridge_core(
     cfg.brain_regions = list(regions)
     cfg.region_pathways = list(pathways)
     cfg.dt_ms = 0.5
-    cfg.seed = seed
+    cfg.seed = bridge_seed
     cfg.enable_nmda = True
     cfg.nmda_tau_decay = _V14_NMDA_TAU_DECAY_MS
     cfg.enable_structural_plasticity = False
@@ -195,7 +233,10 @@ def _build_bridge_core(
               + str(n_lang_input) + ", n_per_pool=" + str(n_per_pool)
               + ", n_fs_per_pool=" + str(n_fs_per_pool)
               + ", weak_dynamics=" + str(weak_dynamics)
-              + ", seed=" + str(seed), flush=True)
+              + ", base_seed=" + str(seed)
+              + ", bridge_seed=" + str(bridge_seed)
+              + " (offset=" + str(_bridge_seed_offset) + ")",
+              flush=True)
     return bridge
 
 
