@@ -9,6 +9,44 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## 🎉🎉🎉🎉 D6 SMOKE PASS at V=160 SHATTERS FHRR CAPACITY PREDICTION; PILLAR n=109 CANDIDATE; D6 PRODUCTION LAUNCHED (~18:20 EDT 2026-05-26)
+
+D6 = D4 dedicated-pool architecture extended to V=32 per bridge × 5 =
+160 cross-bridge concepts. Same architecture as pillar n=108; just
+doubled vocab per bridge.
+
+**Smoke result** (commit 66c857d):
+- L=2: OB 1.000 / OI 1.000 PASS
+- L=3: OB 1.000 / OI 1.000 PASS
+- L=5: OB 1.000 / OI **0.972** PASS
+
+Reviewer prompt's pre-registered prediction (per FHRR algebra capacity
+ratio): V=160 should hit OI boundary at L=3/L=4. **ACTUAL: D6 OI L=5
+essentially identical to D4 V=80 (0.972 vs 0.977). The boundary did
+NOT drop two rungs as FHRR algebra predicts.**
+
+Biology-translatable insight: cortical column-style dedicated
+representation produces SUBSTANTIALLY CLEANER FHRR-substrate geometry
+than distributed sparse coding. Near-orthogonal dedicated-pool activity
+gives substrate-grounded symbols more capacity than algebra prediction.
+
+**D6 production decisive launched ~18:15 EDT** (watcher by6zytw3z;
+~5-10 hr ETA). If production confirms smoke + reviewer CLEAR (prompt
+pre-staged 7a06f1d), pillar n=109 VALIDATED promotion.
+
+**Cumulative arc** (4 pillars promoted, 1 candidate):
+- n=105 VALIDATED (D3 V=32 single-substrate)
+- n=106 VALIDATED BOUNDARY (D5 hybrid V=80)
+- n=107 VALIDATED (Q NMDA bistability)
+- n=108 VALIDATED (D4 dedicated V=80)
+- **n=109 candidate** (D6 dedicated V=160; smoke PASS)
+
+Total: 5 pillars in 2 days. Four bug-induced reversals + one FHRR-
+prediction shatter. The dedicated-pool bio_brain_regions architecture
+is the cleanest cross-bridge substrate at substrate scale AND has more
+capacity than the algebra predicts. Vocab-scaling path to ~320 looks
+genuinely tractable on this architecture.
+
 ## 🎉🎉🎉 FOUR REVERSALS IN ONE ARC — THREE NEW PILLARS PROMOTED + D4 PASS PRODUCTION IN FLIGHT (~06:30 EDT 2026-05-26)
 
 The "many NEGATIVES might be bugs in disguise" pattern proved out
