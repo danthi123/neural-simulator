@@ -1,0 +1,136 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "smoke": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "bridges": [
+    "A_nouns",
+    "B_verbs",
+    "C_adj",
+    "D_spatial",
+    "E_functional"
+  ],
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar_ob": 0.8,
+  "bar_oi": 0.8,
+  "min_seeds": 3,
+  "V_total": 160,
+  "n_bridges": 5,
+  "training_log": [
+    {
+      "bridge": "A_nouns",
+      "seed": 42,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 9.926169208685558,
+      "status": "OK"
+    },
+    {
+      "bridge": "A_nouns",
+      "seed": 43,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.757118316491445,
+      "status": "OK"
+    },
+    {
+      "bridge": "A_nouns",
+      "seed": 44,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.782532954216004,
+      "status": "OK"
+    },
+    {
+      "bridge": "B_verbs",
+      "seed": 42,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.735557448863982,
+      "status": "OK"
+    },
+    {
+      "bridge": "B_verbs",
+      "seed": 43,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.775588631629944,
+      "status": "OK"
+    },
+    {
+      "bridge": "B_verbs",
+      "seed": 44,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.787720402081808,
+      "status": "OK"
+    },
+    {
+      "bridge": "C_adj",
+      "seed": 42,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.74227159023285,
+      "status": "OK"
+    },
+    {
+      "bridge": "C_adj",
+      "seed": 43,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.726486953099569,
+      "status": "OK"
+    },
+    {
+      "bridge": "C_adj",
+      "seed": 44,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.80241551399231,
+      "status": "OK"
+    },
+    {
+      "bridge": "D_spatial",
+      "seed": 42,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.76390271584193,
+      "status": "OK"
+    },
+    {
+      "bridge": "D_spatial",
+      "seed": 43,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.75269012451172,
+      "status": "OK"
+    },
+    {
+      "bridge": "D_spatial",
+      "seed": 44,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.74644189675649,
+      "status": "OK"
+    },
+    {
+      "bridge": "E_functional",
+      "seed": 42,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.772444999217987,
+      "status": "OK"
+    },
+    {
+      "bridge": "E_functional",
+      "seed": 43,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.769373349348704,
+      "status": "OK"
+    },
+    {
+      "bridge": "E_functional",
+      "seed": 44,
+      "n_pool_union": 3200,
+      "wall_clock_minutes": 8.805997065703075,
+      "status": "OK"
+    }
+  ],
+  "training_wall_clock_minutes": 132.6467278202375,
+  "probe_result": null
+}

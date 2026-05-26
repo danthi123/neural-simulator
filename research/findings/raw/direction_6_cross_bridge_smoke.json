@@ -1,0 +1,187 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "tag": "smoke",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar_ob": 0.8,
+  "bar_oi": 0.8,
+  "min_seeds": 3,
+  "V": 160,
+  "n_bridges": 5,
+  "bridges": [
+    "A_nouns",
+    "B_verbs",
+    "C_adj",
+    "D_spatial",
+    "E_functional"
+  ],
+  "decoder_order_bearing": "parallel_population_matching_batched",
+  "decoder_order_invariant": "marginal_sum_phase_similarity_batched",
+  "mean_centring": "per_bridge_local",
+  "substrate": "bio_brain_regions_5bridge_ensemble_v14v16_recipe_V32_per_bridge",
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 160,
+      "batched_vs_scalar_max_diff": 2.7755575615628914e-17,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.975,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=2": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=3": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=5": {
+          "OB": 1.0,
+          "OI": 0.975
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "V": 160,
+      "batched_vs_scalar_max_diff": 2.7755575615628914e-17,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.96,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=2": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=3": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=5": {
+          "OB": 1.0,
+          "OI": 0.96
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "V": 160,
+      "batched_vs_scalar_max_diff": 2.7755575615628914e-17,
+      "per_load": {
+        "2": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "3": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 1.0,
+          "n_trials": 200
+        },
+        "5": {
+          "order_bearing_accuracy": 1.0,
+          "order_invariant_accuracy": 0.98,
+          "n_trials": 200
+        }
+      },
+      "verdict_entry": {
+        "L=2": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=3": {
+          "OB": 1.0,
+          "OI": 1.0
+        },
+        "L=5": {
+          "OB": 1.0,
+          "OI": 0.98
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "2": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 1.0,
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "3": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 1.0,
+      "order_invariant_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "5": {
+      "order_bearing_mean": 1.0,
+      "order_bearing_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "order_invariant_mean": 0.9716666666666667,
+      "order_invariant_per_seed": [
+        0.975,
+        0.96,
+        0.98
+      ]
+    }
+  },
+  "verdict": "DIRECTION_6_PASS",
+  "wall_clock_seconds": 117.20088601112366
+}
