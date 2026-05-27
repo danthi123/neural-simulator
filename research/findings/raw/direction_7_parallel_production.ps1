@@ -22,6 +22,31 @@
 # - KILL-SAFE: re-launching skips any cell whose cache already exists.
 # - No protected/frozen/moat module touched.
 
+# CAVEAT (measured 2026-05-27 16:09-18:06 EDT): on Windows + RTX 3090
+# WDDM driver, 5-way parallel achieved ZERO speedup vs sequential. CUDA
+# time-slicing across 5 concurrent CuPy contexts gave each process
+# exactly ~1/5 of GPU compute -> per-cell wall scaled 5x (116 min for
+# 10% of cell at 5-way vs ~21 min for 10% sequential), netting same
+# total throughput. The VRAM headroom (8/24 GB used) is real but
+# irrelevant: the binding bottleneck is GPU compute, not memory.
+#
+# DO NOT USE THIS LAUNCHER on Windows WDDM. Sequential is equivalent
+# or slightly faster (CUDA context-switch overhead in time-slicing).
+#
+# Real speedup paths (untested at this writing, but architecturally
+# more promising):
+# 1. fp16 eligibility traces (cfg.fp16_synapse_state = True; CLAUDE.md
+#    documents validated <1mV drift) -> est 10-25% speedup
+# 2. Reduce stim_steps per training event (50 -> 25) -> est 1.5-2x
+#    speedup IF training quality preserved (verify on smoke first)
+# 3. Linux + CUDA MPS (NOT Windows WDDM) -> real multi-process
+#    concurrency on the same GPU
+# 4. Consolidate 5 separate bridges into one multi-category bridge
+#    -> est 3-5x speedup but breaks the bridge-seed-offset anti-cheat
+#    that pillars n=108/n=109 depend on; needs design rework
+#
+# Keep this script as a TEMPLATE for Linux/MPS environments where
+# multi-process WOULD work, OR for the "consolidate-bridges" rewrite.
 $ErrorActionPreference = "Stop"
 $RepoRoot = (Resolve-Path "$PSScriptRoot/../../..").Path
 Set-Location $RepoRoot
@@ -131,3 +156,4 @@ foreach ($loadKey in @("2", "3", "5")) {
 $totalElapsed = ((Get-Date) - $StartTime).TotalMinutes
 Write-Host "[D7-parallel-launcher] TOTAL WALL: $([Math]::Round($totalElapsed, 1)) min"
 exit 0
+
