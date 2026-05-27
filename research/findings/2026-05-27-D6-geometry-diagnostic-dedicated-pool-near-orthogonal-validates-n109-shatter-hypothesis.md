@@ -50,11 +50,27 @@ If the geometry-cleanliness scaling continues (per-bridge mean-centring at V=64 
 
 If D7 V=320 PASSes, the bio_brain_regions dedicated-pool architecture's cleanliness scaling is confirmed across V=80 -> V=160 -> V=320; if D7 BOUNDARYs at L=5 OI, the SHATTER pattern has a natural ceiling somewhere between V=160 and V=320 -- itself an interesting characterisation.
 
+## Cross-vocab comparison (D4 V=80 vs D6 V=160; added 2026-05-27 09:10 EDT)
+
+The same diagnostic applied to the D4 V=80 cached production activity (pillar n=108) yields a direct cross-vocab comparison of the geometry:
+
+| Distribution | D4 V=80 (n=108 cells) | D6 V=160 (n=109 cells) | Direction |
+|---|---|---|---|
+| same-concept M_OBS cosine (mean) | 0.118 | 0.029 | D6 lower (each concept's pattern is sparser in n_pool_union=6400 vs 3200) |
+| raw different-concept cosine (mean) | 0.677 | 0.184 | **D6 4x lower** (per-concept signature occupies smaller fraction of total pool space at higher V) |
+| mean-centred different-concept cosine (abs_mean) | 0.070 | 0.041 | **D6 40% lower** (per-bridge mean-centring at V=32 gives sharper common-mode than at V=16) |
+
+Both vocab tiers show NEAR-ORTHOGONAL geometry post-mean-centring (abs_mean 0.07 and 0.04, both far below the FHRR algebra uniform-random assumption of ~0.5). D6 V=160 is slightly CLEANER than D4 V=80, empirically explaining why D6 OUTPERFORMED D4 at L=5 OI (0.987 vs 0.977). The per-bridge mean-centring at V=32 per bridge averages against more concepts than at V=16 per bridge, producing a sharper common-mode subtraction and cleaner concept-specific residuals.
+
+This monotone-cleaner-at-higher-V trend predicts D7 V=64-per-bridge mean-centring should produce yet sharper common-mode subtraction. If the trend continues, D7 V=320 should clear the L=5 OI bar with margin comparable to or better than D6 V=160 -- testable directly when the D7 SMOKE (in flight) and D7 PRODUCTION (auto-launches via the post-smoke chain watcher) complete.
+
 ## Files
 
-- Diagnostic script: `research/findings/raw/direction_6_geometry_diagnostic.py` (CPU-only; stdlib + numpy; no GPU; no protected/frozen/moat module touched)
-- Result JSON: `research/findings/raw/direction_6_geometry_diagnostic.json`
-- Cached activity (read-only): `research/findings/raw/direction_6_cache/activity_full_*_seed{42,43,44}.npz` (from pillar n=109 production runner, commit c1fca54)
+- D6 diagnostic script: `research/findings/raw/direction_6_geometry_diagnostic.py` (CPU-only; stdlib + numpy; no GPU; no protected/frozen/moat module touched)
+- D6 result JSON: `research/findings/raw/direction_6_geometry_diagnostic.json`
+- D4 diagnostic script: `research/findings/raw/direction_4_geometry_diagnostic.py` (cross-vocab comparison)
+- D4 result JSON: `research/findings/raw/direction_4_geometry_diagnostic.json`
+- Cached activity (read-only): `research/findings/raw/direction_{4,6}_cache/activity_full_*_seed{42,43,44}.npz` (from pillar n=108 + n=109 production runners)
 
 ## Discipline
 
