@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-05-27 — Pillar n=109 promoted (D6 V=160 SHATTERS FHRR capacity prediction); D7 V=320 infrastructure shipped
+
+### Pillar n=109 promoted (D6 dedicated-pool V=160 cross-bridge composition)
+
+- **Pillar n=109 VALIDATED (D6 dedicated-pool bio_brain_regions V=160 cross-bridge composition; SHATTERS FHRR algebra capacity-ratio prediction)** — Direction 6 production decisive multi-seed (3 seeds × 5 bridges × loads {2,3,5}; V=32 per bridge × 5 bridges = 160 unique cross-bridge concepts on pure dedicated-pool bio_brain_regions; doubled vocab per bridge vs the pillar n=108 D4 reference). Result: OB perfect every load (1.000 / 1.000 / 1.000); OI 1.000 / 1.000 / **0.987** at L=2 / 3 / 5 (margin > 0.18 every seed). BEATS BOTH pillar n=108 D4 V=80 (OI L=5 = 0.977) AND pillar n=95 G.20 sparse V=160 (OI L=5 = 0.790) at the L=5 OI cell. Production BETTER than smoke (0.987 vs 0.972 = +0.015pp at scale). The FHRR algebra capacity-ratio prediction (capacity ∝ N_dim/V; doubling V should drop boundary ~2 rungs from L=6/L=7 to L=3/L=4) was DECISIVELY SHATTERED at production scale — boundary did not drop, slightly improved with more vocabulary. Wall 817.4 min (~13.6 hr) training + 139.5s probe on CuPy/RTX 3090. Adversarial reviewer 9/9 CLEAR (commit e739543), including D6 > D4 surprise verification across 4 sub-checks (no duplicates; distractor pool genuinely V=160; per-bridge mean-centring at V=32 yields sharper common-mode; anti-cheat primitives byte-unchanged since cd30fc6). Commit c1fca54 (decisive findings); e739543 (reviewer); 43c443d (capability_status). Biology-translatable insight: cortical column-style dedicated representation produces substantially CLEANER FHRR-substrate geometry than distributed sparse coding OR uniform random codes (near-orthogonal because each concept fires its own dedicated pool with other pools quiet); this is a measurable architectural advantage for cross-bridge compositional capability.
+
+### Direction 7 V=320 infrastructure shipped (next-tier vocab scaling on biology-faithful substrate)
+
+- **Direction 7 V=320 infrastructure shipped (commit 72e8964)** — 5 categories × V=64 = 320 unique concepts; vocab byte-identical to the Direction M G.20 sparse production deliverable (g20_bridge{A..E}_*_vocab64.txt). Makes D7 the biology-faithful counterpart of the user-facing G.20 sparse 320-concept chat capability at identical vocabulary. Components:
+  - `research/findings/raw/direction_7_vocab_spec.py` — 5 frozen 64-word lists; 320 unique concepts; cross-validated byte-identical to G.20 production vocab via direct file comparison
+  - `research/findings/raw/direction_7_bridge_builder.py` — 5 per-bridge builders with `_DIRECTION_7_BRIDGE_LABEL_SEED_OFFSETS` (100k stride); reuses `build_biological_brain_regions` byte-unchanged
+  - `research/findings/raw/direction_7_verdict.py` — frozen 0.80 multi-seed bar; PASS / PARTIAL / NEGATIVE / VOID_MALFORMED tags; 14/14 adversarial cases pass
+  - `research/findings/raw/direction_7_5bridge_runner.py` — GPU controller with KILL-SAFE caches; scale params preserve D6 per-cue n_active=61 footprint exactly (FULL n_lang=4096 sparsity=0.015; SMOKE n_lang=2048 sparsity=0.01)
+  - `research/findings/raw/direction_7_cross_bridge_probe.py` — CPU-only V_total=320 union probe; reuses pillar n=95 + D4/D6 byte-unchanged primitives
+  - `tests/test_direction_7_grounding.py` — 11 grounding pin tests all PASS (vocab-uniqueness, V=64 per category, frozen-threshold tampering, bridge-builder seed-offset, protected-builder-byte-unchanged)
+- **Pre-staged adversarial reviewer prompt (commit 9303a99)** — 9 scrutiny items including D7 V=320 vs D6 V=160 surprise verification, G.20 sparse 320-tier comparison (same vocab; biology-faithful vs sparse), protected-set byte-empty diff vs reviewer commit e739543.
+
+### Cumulative autonomous arc state
+
+5 pillars promoted in the bug-discovery / FHRR-prediction-shatter arc (2026-05-25 through 2026-05-27): n=105 / n=106 / n=107 / n=108 / n=109. D7 V=320 is the pillar n=110 candidate; smoke in flight at this CHANGELOG entry's commit timestamp (ETA 2-3 hr GPU). The "bug-discovery first when architecture returns chance results" discipline + "FHRR algebra predictions derived for uniform-random codes overstate boundaries on dedicated-pool grounded geometry" discipline are now both empirically established standing principles for this codebase.
+
 ## [Unreleased] — 2026-05-26 — Four pillars in one autonomous arc + bug-discovery pattern
 
 ### Four pillars promoted (n=105 / n=106 / n=107 / n=108)
