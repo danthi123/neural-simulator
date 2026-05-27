@@ -52,7 +52,16 @@ Commits: c1fca54 (production findings) + e739543 (reviewer 9/9 CLEAR) + 43c443d 
 
 6 pillar promotions / candidates in 3 days. Five bug-induced / prediction-shatter reversals. Bug-discovery-first + FHRR-prediction-skepticism are both validated standing disciplines now.
 
-**Exact next concrete action (controller chain):** wait for D7 SMOKE completion → if SMOKE PASS launch D7 PRODUCTION decisive (~27-32 hr GPU) → on PRODUCTION PASS dispatch reviewer → on CLEAR promote pillar n=110. Use the bash watcher b29xs5cm9 to know when smoke is done.
+**Exact next concrete action (controller chain):** wait for D7 SMOKE completion → if SMOKE PASS launch D7 PRODUCTION decisive (~27-32 hr GPU) → on PRODUCTION PASS dispatch reviewer → on CLEAR promote pillar n=110. Use the bash watcher b29xs5cm9 to know when smoke is done. The PowerShell watcher PID 37132 (commit 266162d, v2 with corrected schema + fall-back to separate cross_bridge probe JSON) auto-launches production on smoke PASS/PARTIAL.
+
+**Parallel scientific work landed while D7 smoke runs (this session 2026-05-27 ~08:30-09:00 EDT):**
+- D6 geometry diagnostic (commit ff03d1a): empirically validates n=109 SHATTER hypothesis. Mean-centred different-concept cosine = -0.030 (abs_mean 0.041) across 15 cells -- NEAR-ORTHOGONAL vs FHRR algebra uniform-random ~0.5. CPU-only on cached production activity; no GPU contention.
+- D4 geometry diagnostic + cross-vocab comparison (commit 9c1038c): D4 V=80 also near-orthogonal post-mean-centring (abs_mean 0.070); D6 V=160 is QUANTITATIVELY CLEANER (abs_mean 0.041). Per-bridge mean-centring at V=32 gives sharper common-mode than at V=16. Predicts D7 V=64 per-bridge mean-centring should be yet sharper.
+
+**Robustness fixes (this session):**
+- Watcher v2 (commit 266162d): corrected probe-output schema (aggregate is keyed by load number string "2"/"3"/"5"; values have order_bearing_mean / order_invariant_mean not OB / OI); fall-back to direction_7_cross_bridge_smoke.json if inline probe_result null. Old watcher PID 35220 killed; new PID 37132 running.
+- Sync-doc auto-fixes (commit 65cc9ae): CLAUDE.md/CONTRIBUTING.md/README.md updated for current tests/runners/findings counts.
+- Wiki summary pushed (gitea knowledge-wiki commit 96c3eb67).
 
 ## 🎉🎉🎉🎉 D6 SMOKE PASS at V=160 SHATTERS FHRR CAPACITY PREDICTION; PILLAR n=109 CANDIDATE; D6 PRODUCTION LAUNCHED (~18:20 EDT 2026-05-26)
 
