@@ -5,9 +5,54 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-05-25
+**Updated:** 2026-05-27
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
+
+## 🎉🎉🎉🎉🎉 PILLAR n=109 PROMOTED (D6 V=160 production PASS + reviewer 9/9 CLEAR); D7 V=320 INFRASTRUCTURE SHIPPED + SMOKE IN FLIGHT (~08:28 EDT 2026-05-27)
+
+**Pillar n=109 VALIDATED** — Direction 6 production decisive PASS multi-seed at V=160 cross-bridge:
+- L=2: OB 1.000 / OI 1.000 PASS
+- L=3: OB 1.000 / OI 1.000 PASS
+- L=5: OB 1.000 / OI **0.987** PASS (margin > 0.18 every seed)
+
+D6 V=160 BEATS BOTH D4 V=80 (pillar n=108, 0.977) AND pillar n=95 G.20 sparse V=160 (0.790) at L=5 OI. FHRR algebra capacity-ratio prediction DECISIVELY SHATTERED at production scale (no boundary, slightly improved with doubled vocab). Production BETTER than smoke (0.987 vs 0.972 = +0.015pp at scale).
+
+Commits: c1fca54 (production findings) + e739543 (reviewer 9/9 CLEAR) + 43c443d (capability_status pillar n=109 promotion).
+
+**D7 V=320 INFRASTRUCTURE SHIPPED (commit 72e8964):**
+- Vocab spec: 5 categories × V=64 = 320 unique concepts, byte-identical to Direction M G.20 sparse production deliverable (g20_bridge{A..E}_*_vocab64.txt)
+- Bridge builder: 5 per-bridge wrappers with `_DIRECTION_7_BRIDGE_LABEL_SEED_OFFSETS` (100k stride; prevents the systematic cross-bridge uniformity bug class)
+- Verdict: frozen 0.80 multi-seed bar; 14/14 adversarial cases PASS
+- Runner: GPU controller with KILL-SAFE caches; scale params preserve D6 per-cue n_active=61 footprint (FULL n_lang=4096 sparsity=0.015; SMOKE n_lang=2048 sparsity=0.01)
+- Probe: CPU-only V_total=320 union probe
+- Grounding pin: tests/test_direction_7_grounding.py 11/11 PASS
+
+**D7 reviewer prompt pre-staged (commit 9303a99)** — 9 scrutiny items including D7 V=320 vs D6 V=160 surprise verification, G.20 sparse 320-tier comparison (same vocab; biology-faithful vs sparse).
+
+**D7 SMOKE in flight** (bash watcher b29xs5cm9; ETA ~2-3 hr GPU):
+- 5 bridges × 3 seeds × ~7-10 min/cell smoke scale
+- Bridge A_nouns seed 42 building (11712 neurons, 11.3M synapses, 2.1GB GPU) — training in progress at 08:28 EDT
+- Numbers NOT propagated as a result (smoke is mechanical PASS check only)
+- Production decisive launched IF smoke PASS pattern confirms (ETA ~27-32 hr GPU at FULL scale)
+
+**Pre-registered post-PRODUCTION chain (autonomous):**
+1. If production PASS multi-seed: dispatch pre-staged adversarial reviewer
+2. If reviewer 9/9 CLEAR: promote pillar n=110 (Direction 7 V=320 dedicated-pool cross-bridge composition; matches G.20 sparse production deliverable vocab on biology-faithful substrate)
+3. capability_status update + commit + push both remotes
+4. Continue autonomous chain to next pre-registered direction (D8 V=640 stretch test OR a new direction informed by the D7 result)
+
+**Cumulative autonomous arc state** (5 pillars promoted; 1 in-flight candidate):
+- n=105 VALIDATED (D3 V=32 single-substrate; 2026-05-25)
+- n=106 VALIDATED BOUNDARY (D5 hybrid V=80; 2026-05-26)
+- n=107 VALIDATED (Q NMDA bistability; 2026-05-26)
+- n=108 VALIDATED (D4 dedicated V=80; 2026-05-26)
+- n=109 VALIDATED (D6 dedicated V=160; 2026-05-27) — SHATTERED FHRR capacity prediction
+- **n=110 candidate** (D7 dedicated V=320; smoke in flight)
+
+6 pillar promotions / candidates in 3 days. Five bug-induced / prediction-shatter reversals. Bug-discovery-first + FHRR-prediction-skepticism are both validated standing disciplines now.
+
+**Exact next concrete action (controller chain):** wait for D7 SMOKE completion → if SMOKE PASS launch D7 PRODUCTION decisive (~27-32 hr GPU) → on PRODUCTION PASS dispatch reviewer → on CLEAR promote pillar n=110. Use the bash watcher b29xs5cm9 to know when smoke is done.
 
 ## 🎉🎉🎉🎉 D6 SMOKE PASS at V=160 SHATTERS FHRR CAPACITY PREDICTION; PILLAR n=109 CANDIDATE; D6 PRODUCTION LAUNCHED (~18:20 EDT 2026-05-26)
 
