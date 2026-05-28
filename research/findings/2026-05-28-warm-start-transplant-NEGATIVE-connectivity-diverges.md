@@ -65,3 +65,19 @@ BUT it is genuine engineering, not a quick smoke:
 ## Discipline
 
 No bar; engineering finding. No protected/frozen/moat module touched. CPU-only probe; no GPU contention with the in-flight D7 production. Cheap-first falsification saved a multi-day build of a transplant that would have silently corrupted 88%% of transferred weights.
+
+## Addendum (2026-05-28): cross-pool connectivity sharpens the grow-by-append tradeoff
+
+Owner asked whether grow-by-append precludes connections between old (previous-tier) and new pools. Architecture check (text_minimal_isolation.py) clarifies:
+
+**Two kinds of cross-pool connection in the base cross-bridge arch:**
+1. **Inhibitory winner-take-most (EXISTS, required):** each concept pool's FS interneuron inhibits all OTHER pools in its category (line ~897, "each pool's FS inhibits OTHER pools"). This lateral inhibition is what makes concepts discriminable.
+2. **Excitatory pool->pool (does NOT exist in base arch):** direct concept->concept excitatory pathways are opt-in only (v16 --enable-direct-verb-to-motor); D8 does not enable them. Cross-bridge composition is computed downstream (FHRR/probe), not through synapses.
+
+**Implication for grow-by-append:** it does NOT preclude old<->new connections -- but the REQUIRED WTA inhibition is itself an old<->new connection that must be added. To discriminate a new concept from an old one, new pools' FS must inhibit old pools and vice versa (all-pairs WTA). The moment that old<->new inhibition is wired, the OLD pools receive new inhibitory input -> their dynamics shift -> they are no longer byte-for-byte frozen. So "freeze old, train only new" is not clean; some re-equilibration training is needed, eroding the time saving. This is the stability-plasticity dilemma in miniature and is the honest reason cold-start (full all-pairs WTA from the start) stays the trustworthy baseline.
+
+**What survives grow-by-append regardless:** the project's VALIDATED associative capability (90%% multitag cue retrieval, engram stim-recall) works through engram tags (stored sets of co-firing neuron indices), NOT plastic pool->pool synapses. Tags span old + new pools freely at the activity level -- "apple (old) relates to horse (new)" is reachable via the engram mechanism without new synaptic pathways.
+
+**Where it bites (future):** a future arch wanting LEARNED excitatory concept->concept pathways would need old<->new edges + training, which makes old pools participate in new learning -> catastrophic-forgetting risk -> exactly the problem the project's hippocampal consolidation (Phase 1.3, validated no-catastrophic-forgetting) is the biological answer to.
+
+Net: grow-by-append is biologically correct (real cortex doesn't add concepts in isolation -- new concepts must join the WTA competition and can associate with old ones via fast hippocampal binding) and remains worth building as its own arc with CLS/consolidation, NOT a quick freeze-and-extend optimization. Owner elected to keep D7/D8 on the cold-start path for now.

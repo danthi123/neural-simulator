@@ -5,11 +5,71 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-05-27
+**Updated:** 2026-05-28
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## 🎉🎉🎉🎉🎉 PILLAR n=109 PROMOTED (D6 V=160 production PASS + reviewer 9/9 CLEAR); D7 V=320 INFRASTRUCTURE SHIPPED + SMOKE IN FLIGHT (~08:28 EDT 2026-05-27)
+## EXACT NEXT CONCRETE ACTION (read this first on any re-trigger)
+
+D7 V=320 PRODUCTION decisive is running SEQUENTIALLY (PID 30216, launched
+2026-05-27 18:08:40; cold-start; NO fp16). Per-cell wall ~250-300 min;
+~67 hr total; ETA ~2026-05-30 (Saturday). It runs the cross-bridge probe
+INLINE on completion (launched without --skip-probe).
+
+1. CHECK if D7 production is done: does
+   `research/findings/raw/direction_7_cross_bridge_production.json` exist
+   with a `verdict` field? (OR is PID 30216 gone + all 15
+   `direction_7_cache/activity_full_*_seed*.npz` present?)
+   - If NOT done: D7 still grinding. Nothing to launch (GPU busy; do NOT
+     start D8 -- Windows WDDM time-slices, zero parallel speedup, proven
+     commit 49e2d58). Optionally do CPU-only analysis. Re-check next cycle.
+   - If DONE + verdict DIRECTION_7_PASS: dispatch the pre-staged
+     adversarial reviewer (docs/plans/2026-05-27-direction-7-production-
+     adversarial-reviewer-prompt.md, 9 scrutiny items). On 9/9 CLEAR,
+     promote pillar n=110 in webapp/capability_status.json (mirror n=109
+     pattern), update INDEX/CHANGELOG/AUTONOMOUS_STATE, commit + push both
+     remotes.
+2. AFTER pillar n=110 lands: GPU is free. Launch the D8 speedup smoke:
+   `pwsh research/findings/raw/direction_8_speedup_smoke.ps1` (it
+   self-blocks if D7 production still alive). This A/B tests
+   --use-fp16 + --stim-steps-per-event 50 vs the D7 V=64 smoke baseline
+   (28.5 min/cell). If D8 smoke PASS at 0.80 bar AND wall reduction >=30%,
+   apply the optimization combo to D8 production (pillar n=111 candidate).
+   If smoke FAILs a cell the D7 smoke passed cleanly, fp16/short-stim
+   degraded the science -> revert to cold-start full-precision for D8.
+
+## DEFERRED (owner-acknowledged, not now): grow-by-append warm-start
+
+Owner asked if completed tiers can warm-start larger ones. Cheap-first
+falsification (commit 8a3702a): raw weight transplant NOT viable
+(connectivity diverges 88% at n_lang scaling; Jaccard 0.116). Clean path
+is grow-by-append (load D7 bridge, append new pools + lang_input, train
+only new), but it's real engineering (bridge array-resize + CSR extend +
+adapt sim/auto_growth.py to the cross-bridge arch) AND the WTA cross-
+inhibition forces old<->new wiring that un-freezes old pools (stability-
+plasticity tension). Owner elected to KEEP D7/D8 ON COLD-START for now;
+grow-by-append is its own future arc (after n=110/n=111). Full analysis:
+research/findings/2026-05-28-warm-start-transplant-NEGATIVE-connectivity-diverges.md
+
+## PERF FINDING (2026-05-27): multi-process parallelism is a no-op on Windows WDDM
+
+5-way parallel D7 production gave ZERO speedup (commit 49e2d58): CUDA
+time-slices each process to ~1/N compute; net throughput == sequential.
+GPU compute is the bottleneck, not VRAM (8/24 GB used). Sequential is the
+default for Windows. Real speed levers: (1) per-event compute reduction
+(fp16 + halved stim_steps -- built into D8 runner flags, validate on
+smoke first), (2) Linux+CUDA MPS (would make the parallel launcher work),
+(3) consolidated multi-category bridge (3-5x but breaks anti-cheat;
+needs rework). D8 runner has --use-fp16 / --stim-steps-per-event /
+--reset-steps flags (defaults = D7 byte-equivalent).
+
+## 🎉🎉🎉🎉🎉 PILLAR n=109 PROMOTED (D6 V=160 production PASS + reviewer 9/9 CLEAR); D7 V=320 INFRASTRUCTURE SHIPPED + SMOKE PASS (2026-05-27)
+
+D7 SMOKE = DIRECTION_7_PASS (OB 1.000 all loads; OI 1.000/1.000/0.970 at
+L=2/3/5; 426.8 min wall). D8 V=640 infrastructure fully built (commit
+7822205): vocab (strict superset of D7), builder (+use_fp16), verdict,
+runner (+3 speedup flags), probe, 11/11 grounding pins. D8 speedup smoke
+launcher pre-staged (self-blocks while D7 production alive).
 
 **Pillar n=109 VALIDATED** — Direction 6 production decisive PASS multi-seed at V=160 cross-bridge:
 - L=2: OB 1.000 / OI 1.000 PASS
