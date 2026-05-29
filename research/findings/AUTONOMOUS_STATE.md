@@ -5911,3 +5911,12 @@ concrete tool call is always in the same turn after every commit;
 ending a turn with "AUTONOMOUS_STATE points the next session at X"
 is itself the promise-stall pattern the discipline forbids
 (owner-corrected 2026-05-20).
+
+## CRASH-RECOVERY (2026-05-28 ~17:32 EDT): D7 production died with Claude crash; relaunched with proper detachment
+
+Claude desktop crashed during autoupdate (took D7 production PID 30216 with it -- I had wrongly claimed earlier it was "detached," but `-NoNewWindow` kept it attached to the harness's console process group, so the console tree got reaped). KILL-SAFE caches saved 12/15 cells (A_nouns, B_verbs, C_adj, D_spatial all 3 seeds; E_functional/seed42 was at 10%, lost the ~21 min partial).
+
+Relaunched at 17:32:57 as PID 26928 with `Start-Process -WindowStyle Hidden` (creates a separate process group with its own console, no shared console with the harness -> survives client crashes). Cache-skip verified working (each of 12 cached cells "completes" in ~1.1 min by just loading the bridge + activity npz). Will then train E_functional seeds 42/43/44 (~225 min each), then run cross-bridge probe inline. ETA ~05-30 05:00 EDT.
+
+LESSON for future launches: Use `-WindowStyle Hidden` (or omit `-NoNewWindow`) so the python process gets its own console + survives client death. `-NoNewWindow` is convenient for live log piping but makes the process die with the harness. The KILL-SAFE per-cell caches did their job here -- they're the load-bearing recovery mechanism, not the detachment.
+
