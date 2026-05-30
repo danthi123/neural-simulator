@@ -31,7 +31,28 @@ Progress:
   survival on real reps + keep the consolidation-updates-index path as
   insurance.
 
-EXACT NEXT ACTION: Task 2 — build the two-phase controller +
+UPDATE 2026-05-30 (Tasks 0-5 DONE; decisive run BLOCKED on instrument soundness):
+- Tasks 0-5 complete: grounding pin; cheap-first probe RESOLVES (caught circular,
+  strengthened; commit 4e1d10f); two-phase controller built (29 tests; reviewer
+  CLEAR Task 4); verdict-reuse pin; no-harm (protected byte-empty, moat 7/7).
+- Task 6 decisive orchestrator built (KILL-SAFE per-load; commit 3b04148).
+- FULL-SCALE GROUNDING PROBE (32 min, N=2 seed42) = INSTRUMENT UNSOUND (commit
+  e8cf685 + diagnosis 45e02d9). v1 wm=0.5 < 0.90 bar (decisive run would VOID).
+  Problem 1 (BLOCKER): wm readout is a role->filler BINDING query, near-chance,
+  no_bg_gate doesn't collapse it. Problem 2: ep collapses for the genuine task
+  (full ep=0.0 vs v1 ep=1.0) = substrate caveat materialized.
+- The grounding probe did its job: 32-min catch vs ~8-hr VOID. Decisive run NOT
+  launched.
+EXACT NEXT ACTION: DIAGNOSE the wm instrument-soundness failure (Problem 1) with a
+distinguishing probe -- measure wm (a) right after Phase 1 before Phase 2, and (b)
+with Phase 2 swapped train_word_to_pool vs run_concept_replay_phase. Hypothesis A
+(role->filler binding / PFC maintenance not built) vs B (Phase-2 SWR replay builds
+wrong selectivity). Fix the integration fidelity (reuse-preserved; no frozen bar
+moved; no protected module touched), re-probe v1 soundness, THEN the decisive run.
+Honest non-success -> iterate following biology, no hand-back. (D8 smoke killed
+2026-05-30; was marginal post-D-arc-closure.)
+
+OLD NEXT ACTION (superseded): Task 2 — build the two-phase controller +
 order-preserving index readout in the spiking bridge
 (research/runners/phase_factored_loop_gate.py), reusing 4 validated
 subsystems byte-unchanged (engram-tag API, consolidation_trainer /
