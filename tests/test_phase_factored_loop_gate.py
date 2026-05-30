@@ -283,3 +283,85 @@ def test_grounding_pin_part_c_flips_live():
     assert " skipped" not in proc.stdout or "passed" in proc.stdout, (
         proc.stdout)
     assert "passed" in proc.stdout, proc.stdout
+
+
+# ---------------------------------------------------------------------------
+# Increment 4: lesion-fidelity pin -- each lesion variant is identical
+# to the `full` run minus EXACTLY one subsystem with the SAME rng draws.
+# The faithfulness discipline: every mode builds its own bridge with its
+# own identically-seeded rng and _make_pairs is the SOLE per-trial rng
+# consumer (_episode draws none). So the (role, filler) pairs drawn AND
+# the rng state immediately after the draw must be byte-identical across
+# `full` and every lesion at the same (seed, N).
+# ---------------------------------------------------------------------------
+def _record_rng_draws_per_mode(mod, N=2):
+    """Monkeypatch _make_pairs to record, per call, the pairs drawn AND
+    the rng bit_generator state snapshot immediately AFTER the draw. Run
+    full + every lesion + v1 at tiny-synth. Returns {mode_label:
+    [(pairs_tuple, state_repr), ...]}. Restores the original
+    _make_pairs in a finally."""
+    import copy
+    orig = mod._make_pairs
+    records = {"_cur": None}
+    out = {}
+
+    def _spy(n, rng):
+        pairs = orig(n, rng)
+        # Snapshot the rng state AFTER the draw -> proves the post-draw
+        # stream position is identical for every mode (i.e. _episode
+        # consumed no rng before this call and the draw itself is the
+        # same).
+        try:
+            state = copy.deepcopy(rng.bit_generator.state)
+        except Exception:
+            state = None
+        records["_cur"].append((tuple(pairs), json.dumps(state,
+                                                          default=str)))
+        return pairs
+
+    mod._make_pairs = _spy
+    try:
+        for label, (mode, gap_zero) in {
+            "full": ("full", False),
+            "v1": ("full", True),
+            **{m: (m, False) for m in _ALL_LESIONS},
+        }.items():
+            records["_cur"] = []
+            mod._run_mode(mode, 42, N, True, gap_zero=gap_zero)
+            out[label] = list(records["_cur"])
+    finally:
+        mod._make_pairs = orig
+    return out
+
+
+def test_lesion_fidelity_same_rng_draws_as_full():
+    """Each lesion (and v1) draws the IDENTICAL (role, filler) pairs in
+    the IDENTICAL order as `full`, and the rng stream is at the SAME
+    position after each draw -- proving the only difference between full
+    and a lesion is the ablated subsystem, NOT a divergent rng draw
+    (the faithfulness discipline; a strawman lesion is rejected)."""
+    mod = _import_controller()
+    per_mode = _record_rng_draws_per_mode(mod, N=2)
+    ref = per_mode["full"]
+    assert len(ref) >= 1, "full made no _make_pairs draw"
+    for label, recs in per_mode.items():
+        assert recs == ref, (
+            "RNG-DRAW DIVERGENCE: mode %r drew different pairs / left "
+            "the rng in a different state than full.\n  full: %r\n  "
+            "%s: %r" % (label, ref, label, recs))
+
+
+def test_make_pairs_is_sole_per_trial_rng_consumer():
+    """_episode must draw NO rng (the only per-trial rng consumer is
+    _make_pairs). Pin: across n_train_epochs the number of _make_pairs
+    calls equals 1 (drawn ONCE per run, stable across epochs -- the v16
+    encode discipline), and the count is identical for full and every
+    lesion."""
+    mod = _import_controller()
+    per_mode = _record_rng_draws_per_mode(mod, N=2)
+    counts = {label: len(recs) for label, recs in per_mode.items()}
+    # Exactly one draw per run (the bijection is drawn ONCE, then
+    # interleaved-repeated across epochs).
+    assert all(c == 1 for c in counts.values()), (
+        "expected exactly 1 _make_pairs draw per run (v16 stable-"
+        "bijection discipline); got %r" % counts)
