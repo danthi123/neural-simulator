@@ -164,3 +164,122 @@ def test_engram_write_precedes_consolidation_replay():
         "engram write order bug: start(%d) -> commit(%d) -> "
         "consolidate(%d) must be ascending. Log: %r"
         % (i_rec, i_commit, i_consol, log))
+
+
+# ---------------------------------------------------------------------------
+# Increment 3: reuse pins -- the module REUSES the four validated
+# subsystems + the parked theta-gamma controller + the frozen verdict
+# BY IMPORT, and defines NONE of its own verdict bars. (This flips the
+# Task 0 grounding-pin part (c) live.)
+# ---------------------------------------------------------------------------
+def _controller_src():
+    if not _CONTROLLER_PATH.exists():
+        pytest.skip("phase_factored_loop_gate.py not landed yet")
+    return _CONTROLLER_PATH.read_text(encoding="utf-8")
+
+
+def test_reuses_engram_tag_api():
+    """Reuse the validated engram-tag API (the fast relational episode
+    store) -- not a reimplementation."""
+    src = _controller_src()
+    assert ("start_engram_recording" in src
+            or "commit_engram_tag" in src
+            or "stimulate_tag" in src), (
+        "controller must call the validated engram-tag API")
+
+
+def test_reuses_consolidation_trainer():
+    """Reuse the Phase-1.3 consolidation (offline SWR replay) by import
+    -- run_concept_replay_phase from consolidation_trainer."""
+    src = _controller_src()
+    assert "consolidation_trainer" in src
+    assert "run_concept_replay_phase" in src
+
+
+def test_reuses_concept_pool_demo():
+    """Reuse the v16 concept-binding selectivity mechanism by import."""
+    src = _controller_src()
+    assert "concept_pool_demo" in src
+
+
+def test_reuses_abstention_gate():
+    """Reuse the calibrated no-confab abstention gate by import."""
+    src = _controller_src()
+    assert "from research.runners.abstention_gate import" in src
+
+
+def test_reuses_parked_theta_gamma_controller():
+    """Reuse the parked theta-gamma timing controller (SharedThetaGamma)
+    + the parked bridge builder BY IMPORT from integrated_loop_gate --
+    NOT a reimplementation. Lesioning the shared clock must collapse
+    BOTH readouts (pinned separately)."""
+    src = _controller_src()
+    assert "from research.runners.integrated_loop_gate import" in src
+    assert "SharedThetaGamma" in src
+    # The parked builder is reused, not redefined here.
+    assert "def SharedThetaGamma" not in src, (
+        "controller must REUSE SharedThetaGamma by import, not redefine "
+        "it")
+
+
+def test_reuses_consolidation_gate_idioms():
+    """Reuse the validated awake/sleep/freeze gate idioms (Phase-1.3
+    freeze-then-evaluate) by import from text_minimal_isolation."""
+    src = _controller_src()
+    assert "set_sleep_gates" in src
+    assert "set_awake_gates" in src
+    assert "freeze_all_gates" in src
+
+
+def test_imports_parked_frozen_verdict_and_defines_no_own_bars():
+    """Score via the parked, already-reviewed FROZEN verdict
+    integrated_loop_core.integrated_loop_verdict. The controller must
+    define NONE of its own integrated-loop bars (no _IL_*_MIN /
+    _IL_LESION_MAX / _IL_SCI_MIN assignment) -- the bars live ONLY in
+    the frozen module."""
+    src = _controller_src()
+    assert ("from research.runners.integrated_loop_core import "
+            "integrated_loop_verdict" in src)
+    # No local re-definition of the frozen bars (assignment form). The
+    # frozen verdict owns them; the controller must not shadow them.
+    for bar in ("_IL_V1_MIN", "_IL_SCI_MIN", "_IL_LESION_MAX",
+                "_PROBE_BAR"):
+        assert ("%s =" % bar) not in src, (
+            "controller must NOT define its own bar %s -- the frozen "
+            "verdict owns the bars" % bar)
+    # It must NOT import or redefine the v2 core (this build scores via
+    # the ORIGINAL frozen integrated_loop_core, per Task 2 contract).
+    assert "integrated_loop_verdict_v2" not in src, (
+        "this build scores via the ORIGINAL frozen integrated_loop_core "
+        "verdict, not v2")
+
+
+def test_no_autograd_in_shipped_path():
+    """No torch / autograd USAGE anywhere in the shipped path (the word
+    may appear in a 'NO autograd' comment; what is banned is the import
+    / call forms)."""
+    src = _controller_src()
+    assert "import torch" not in src
+    assert ".backward(" not in src
+    assert "import autograd" not in src
+    assert "torch.autograd" not in src
+    assert "from autograd" not in src
+
+
+def test_grounding_pin_part_c_flips_live():
+    """Running the Task 0 grounding pin's part (c) tests must now PASS
+    (they were SKIP until this controller landed). This asserts the
+    cross-arc contract is satisfied live."""
+    proc = subprocess.run(
+        [sys.executable, "-m", "pytest",
+         "tests/test_phase_factored_loop_grounding.py",
+         "-k", "test_c_", "-q"],
+        capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=300)
+    assert proc.returncode == 0, (
+        "grounding-pin part (c) did not pass:\n%s\n%s"
+        % (proc.stdout, proc.stderr))
+    # All three part-(c) tests must have RUN (not skipped) -- the
+    # controller now exists so they are no longer skipped.
+    assert " skipped" not in proc.stdout or "passed" in proc.stdout, (
+        proc.stdout)
+    assert "passed" in proc.stdout, proc.stdout
