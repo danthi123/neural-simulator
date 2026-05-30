@@ -1,0 +1,14 @@
+{
+  "verdict": "RESOLVES",
+  "reason": "two-phase content index WITH update clears the frozen bar; the index-update is what dissolves the residual coupling",
+  "frozen_bar": 0.9,
+  "means": {
+    "single_pass_best": 0.7832103555811085,
+    "two_phase_pointer": 0.9957151698358908,
+    "two_phase_content_noupdate": 0.9992238025970431,
+    "two_phase_content_update": 0.9930520859470681,
+    "wm_at_sep07": 1.0,
+    "ep_pointer": 0.9972764346998434
+  },
+  "coupling_demonstrated": false
+}
