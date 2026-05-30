@@ -1,0 +1,11 @@
+=== verify sink is None by default + controller imports clean ===
+sink None by default OK
+
+=== DIAGNOSTIC: v1 full-scale with raw-counts sink (~3.5 min) ===
+V1_WM 0.500  V1_EP 1.000
+n_query_records 28 (expect 14 epochs x 2 queries = 28)
+--- LAST epoch 2 queries (the scored ones) ---
+true_F1  counts=[781.0, 1454.0, 1063.0, 1191.0, 1173.0, 1228.0, 1193.0, 1172.0]  top=F1  correct_rank=0  max=1454.0  gate650_decision=F1
+true_F0  counts=[1063.0, 948.0, 918.0, 925.0, 1150.0, 1155.0, 1144.0, 1033.0]  top=F5  correct_rank=3  max=1155.0  gate650_decision=F5
+--- across ALL last-epoch queries: does correct filler out-fire the other? ---
+last-8-queries: correct_filler_is_top 1/8 ; max_below_gate650 0/8

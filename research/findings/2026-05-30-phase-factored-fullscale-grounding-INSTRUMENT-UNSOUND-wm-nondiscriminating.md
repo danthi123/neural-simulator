@@ -49,3 +49,32 @@ The wm readout (phase_factored_loop_gate.py:400-443) drives a ROLE code onto lan
 Distinguishing probe (next): measure wm right after Phase 1 (before Phase 2), and with Phase 2 swapped to train_word_to_pool vs run_concept_replay_phase. If wm is sound after Phase-1-only or with train_word_to_pool, the issue is Phase 2's mechanism (B); if wm is chance even then, the role->filler binding/maintenance is missing (A).
 
 Either way this is an integration-fidelity correction (reuse-preserved; no frozen bar moved; no protected module touched), exactly the design's iterate-following-biology step. The ep substrate-caveat (Problem 2) is downstream of a sound wm instrument.
+
+## Diagnostic RESULT (raw-counts sink, v1 full-scale, ~min): wm retrieval is NON-SELECTIVE, NOT a gate-calibration issue
+
+Raw filler-pool firing counts at the v1 (trivial drilled bind) wm queries, last epoch:
+```
+true_F1: counts [781,1454,1063,1191,1173,1228,1193,1172] -> top=F1 (correct), gate emits F1
+true_F0: counts [1063,948,918,925,1150,1155,1144,1033]   -> top=F5 (WRONG; F5 not bound at N=2), gate emits F5
+last-8 queries: correct filler is top only 1/8; max-below-gate-650: 0/8
+```
+
+Decisive reading:
+- **Gate-mis-calibration RULED OUT.** All filler pools fire 900-1454, well ABOVE the 650 gate; the gate is NOT abstaining, it emits confidently. Lowering the threshold or boosting the query drive would NOT help.
+- **The retrieval is NON-SELECTIVE.** Driving role R's code lights up ALL 8 filler pools roughly equally (~1000-1200), including fillers F2-F7 that were NEVER bound at N=2. The correct filler is the top only 1/8 -> chance. So querying a role does not selectively reactivate its bound filler; it broadly excites every filler pool.
+
+Refined diagnosis (supersedes Hypotheses A/B as either-or; it is a selectivity failure):
+- The lang(role)->noun_pool pathway is broadly excitatory at readout -- there is no role-ADDRESSABLE specificity and no lateral-inhibition winner-take-most among the filler pools at query time. The role->filler binding's specificity, to the extent it exists, lives in the dlpfc working-memory slot (BG-gated, clock-timed during encode); the QUERY drives only the bare role code and reinstates NONE of that machinery, so the bound filler is not selected over the others.
+- This is an instrument-fidelity problem in the wm readout / role-addressable retrieval, NOT the composition science (which cannot be measured until the wm instrument is sound).
+
+## The partial success sitting beside it (worth stating honestly)
+
+v1 ep = 1.000. The EPISODIC ORDER readout WORKS for the trivial bind -- the two-phase design's core claim (online theta-ordered index recovers order) succeeds at v1. The encode-order conflict that stalled the single-pass loop is genuinely resolved on the ep side. The blocker is specifically the wm (role-addressable binding retrieval) instrument, plus the downstream substrate-caveat (ep collapse for the GENUINE gapped task, Problem 2), which awaits a sound wm instrument to measure.
+
+## The fix (next iteration; integration-fidelity, no frozen bar moved, no protected module touched)
+
+Make the wm query role-ADDRESSABLE and selective:
+1. At query time, reinstate the working-memory maintenance for the queried role: drive the role code AND re-gate the BG channel for that role's encode slot (clk.slot_for) so the dlpfc->filler pathway selectively reactivates the bound filler, rather than relying on a bare lang(role) broad excitation.
+2. Ensure filler-pool lateral inhibition (FS/WTA) is active at readout so one filler wins (the validated motor/concept-pool FS cross-inhibition pattern).
+3. Re-probe v1 soundness (both readouts >= 0.90) before the decisive run.
+This is a careful readout/retrieval rework -- the next concrete step. Until v1 wm >= 0.90, the decisive run stays unlaunched.
