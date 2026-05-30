@@ -9,6 +9,43 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## ACTIVE ARC 2026-05-30: phase-factored integrated closed-loop (goal pivot after closing the D-arc)
+
+D-arc CLOSED at pillar n=110 (cross-bridge FHRR-scaffold capacity track done;
+synthesis bbbf98f). Pivoted to the goal-aligned work: the phase-factored
+integrated loop — composition as emergent from online theta-ordered episodic
+encode + offline shuffled-replay consolidation (resolves the encode-order
+conflict the parked Q5 loop stalled on, 2026-05-19). Design 45fe0a7; plan
+c1e79b7 (subagent-driven, Task 6 controller-only).
+
+Progress:
+- Task 0 grounding pin: DONE (6bee885; 4 pass / 5 skip).
+- Task 1 cheap-first falsification probe: DONE (19ef6f1 + strengthen 23ae76e).
+  Controller caught the first version was CIRCULAR; strengthened the
+  residual-coupling to a GENUINE measurement. Verdict RESOLVES (gate met;
+  4e1d10f) but coupling_demonstrated FALSE at toy scale.
+  SUBSTRATE CAVEAT (carry forward): toy uses near-orthogonal reps (tiny
+  common-mode); the D-arc MEASURED real reps have LARGE common-mode
+  (0.18-0.68), so consolidation moves real reps substantially and the
+  residual-coupling could be real. The spiking build MUST test index
+  survival on real reps + keep the consolidation-updates-index path as
+  insurance.
+
+EXACT NEXT ACTION: Task 2 — build the two-phase controller +
+order-preserving index readout in the spiking bridge
+(research/runners/phase_factored_loop_gate.py), reusing 4 validated
+subsystems byte-unchanged (engram-tag API, consolidation_trainer /
+Phase-1.3 SWR replay, concept_pool_demo v16 binding, abstention_gate) +
+the parked theta-gamma controller (integrated_loop_gate.py). Expose
+run_rung(N, seed) emitting the rung shape integrated_loop_core.
+integrated_loop_verdict consumes. Tiny-synth CPU-testable; heavy GPU run
+is Task 6 (controller-only). Then Task 3 verdict-reuse, Task 4 adversarial
+review BEFORE the decisive run, Task 5 no-harm, Task 6 controller-only
+decisive multi-seed run.
+
+GPU note: D8 speedup smoke (methodology validation) still running in
+background; Task 2 is CPU-buildable so it does not wait.
+
 ## PILLAR n=110 PROMOTED 2026-05-30 (D7 V=320 VALIDATED BOUNDARY) — reviewer CLEAR 06af100
 
 D7 V=320 production COMPLETE. Result: DIRECTION_7_PASS by frozen mean-bar
