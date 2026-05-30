@@ -133,10 +133,33 @@ new rule/autograd; no protected/frozen/moat edit; engram API reuse byte-unchange
      instrument sound at this scale) -> park.
 Decisive multi-seed run stays UNLAUNCHED until v1 wm>=0.90.
 
-IN FLIGHT 2026-05-30: implementer subagent building the engram-based wm retrieval
-(background). On its completion the CONTROLLER must, BEFORE any decisive run, run the
-PRE-STAGED RE-REVIEW on the diff (the wm readout changed post-Task-4, so the Task-4
-review is stale):
+SUBAGENT DONE + COMMITTED 2026-05-30 (cb6834b, pushed both remotes; HONEST partial-
+verification status). The engram-based wm retrieval is built (per-binding tags at encode
++ stimulate_tag/CA3-completion retrieval, multitag). CONTROLLER VERIFICATION STATUS:
+  R2 (engram path real, not relabeled STDP): CLEAR (from diff).
+  R4 (rng faithful: deterministic sorted tag order, _make_pairs sole shared-rng consumer;
+     integrated_loop_core.py byte-empty): CLEAR.
+  Tests: 71/71 phase-factored+engram+moat PASS (controller re-ran, CPU). New test is a
+     real behavioral spy on engram-API calls, not an impl echo.
+  Tiny-synth partition: ep-side CORRECT (no_hippo_store ep=0, rest ep=1); wm-side FLOORED
+     at 0 for ALL modes (scale artifact -> tiny-synth CANNOT validate the wm partition;
+     R3 REQUIRES full scale).
+  R1 (v1 raw-count selectivity smell-test) + R3 (wm-side 7-lesion partition at FULL
+     scale): IN FLIGHT. Subagent's full-ladder probe (PID 6256, research.findings.raw.
+     _pf_full_ladder_probe) is STILL RUNNING on GPU; watcher bbw6or6pg waits for it +
+     dumps the table. After it lands: read the table for R3, then run _pf_v1_probe.py
+     (~3.5 min, has the _WM_RAW_SINK) for R1 raw counts. Subagent CLAIMS v1 wm=1.0 ep=1.0,
+     bound filler out-firing distractors ~13-50x -- MUST be controller-confirmed (scrutinize
+     a PASS harder than a FAIL).
+NEXT (controller): when bbw6or6pg notifies -> R3 from the table (require full preserves wm;
+no_bg_gate collapses wm not ep; SHARED collapse both; HELPER_EP collapse ep not wm) -> run
+_pf_v1_probe.py for R1 (require true filler HIGH, others LOW; not all-equal-top-by-luck) ->
+if R1+R3 CLEAR -> decisive cache empty (verified) -> launch controller-only decisive
+(phase_factored_decisive.py seeds 42/43/44 ladder 2/4/8) -> smell-test -> propagate both
+remotes. If R3 shows partition broken OR R1 non-selective -> honest NEGATIVE, do NOT run
+decisive, record + park/iterate.
+
+PRE-STAGED RE-REVIEW (R1/R3 detail; the wm readout changed post-Task-4):
   R1 [SELECTIVITY SMELL-TEST -- the load-bearing one]: scrutinize the _wm_raw raw filler
      counts on the scored v1 queries. A real PASS = the TRUE filler fires HIGH and the
      other 7 fire LOW (selective retrieval). A FALSE pass = all 8 fillers fire ~equally
