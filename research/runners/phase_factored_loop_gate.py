@@ -12,15 +12,22 @@ learning rule, NO autograd):
     gamma sub-cycle k binds item k (the shared theta-gamma rhythm times
     which gamma slot the hippocampal episode writes; the SHIFT rule
     rotates the assembly across theta so serial order is recoverable).
-  Phase 2 (OFFLINE, shuffled): replay the committed episode tag via the
-    validated Phase-1.3 SWR consolidation (run_concept_replay_phase
-    under set_sleep_gates, randomize_order=True) to build concept
-    selectivity in cortex, in SHUFFLED order. This ALSO updates the
-    hippocampus->cortex index pointer (ca1->concept consolidation), the
-    substrate-caveat insurance: on the real substrate the offline
-    separation moves the reps, and the order-index may not survive
-    without this update (research/findings/2026-05-30-phase-factored-
-    cheap-probe-RESOLVES-with-honest-caveats.md).
+  Phase 2 (OFFLINE, shuffled): build concept selectivity in cortex in
+    SHUFFLED order, in two stages. (2a) The validated v16 shuffled
+    teacher co-firing + STDP (concept_pool_demo.train_word_to_pool
+    mechanism) presents the SAME (role, filler) pairs in a deterministic
+    cross-mode-identical SHUFFLED order -- this is the selectivity carrier
+    that makes the wm role-query role-SELECTIVE (built OFFLINE + SHUFFLED
+    so it imposes NO order on the index; design-aligned fix 2026-05-30,
+    research/findings/2026-05-30-phase-factored-fullscale-grounding-
+    INSTRUMENT-UNSOUND-wm-nondiscriminating.md). (2b) Replay the committed
+    episode tag via the validated Phase-1.3 SWR consolidation
+    (run_concept_replay_phase under set_sleep_gates, randomize_order=True),
+    which updates the hippocampus->cortex index pointer (ca1->concept
+    consolidation), the substrate-caveat insurance: on the real substrate
+    the offline separation moves the reps, and the order-index may not
+    survive without this update (research/findings/2026-05-30-phase-
+    factored-cheap-probe-RESOLVES-with-honest-caveats.md).
   Readout 1 (wm / concept query): "is concept X in the buffer?" -- rank
     the cortical concept (filler) pools by firing during a role query
     and pass through the validated abstention gate; selectivity built
@@ -190,18 +197,29 @@ def _episode(bridge, mode, pairs, P, ctx):
     serial order is recoverable), the BG cascade gates the matching WM
     slot, and the engram-tagging API records + commits the episode
     (hippocampal index). The ONLINE order readout (Readout 2 source) is
-    written here.
+    written here. The concept-SELECTIVITY plasticity gates are FROZEN
+    during this in-order pass (design-aligned fix 2026-05-30) so the
+    fixed-order presentation does NOT write the winner-take-most
+    lang->filler selectivity; only the spike-count engram ORDER INDEX is
+    written here (ep preserved).
 
-    PHASE 2 (OFFLINE, shuffled): replay the committed tag via the
+    PHASE 2a (OFFLINE, shuffled): build cortical concept SELECTIVITY via
+    the validated v16 shuffled teacher co-firing + STDP (the SAME
+    (role, filler) pairs presented in a deterministic cross-mode-identical
+    SHUFFLED order, selectivity gates thawed). Selectivity built shuffled/
+    offline -> the wm role-query becomes role-SELECTIVE WITHOUT imposing
+    an order on the index (ep preserved).
+    PHASE 2b (OFFLINE, shuffled): replay the committed tag via the
     validated Phase-1.3 SWR consolidation under set_sleep_gates
-    (randomize_order=True), building cortical concept selectivity AND
-    updating the ca1->concept index pointer (substrate-caveat
-    insurance). Then freeze for evaluation.
+    (randomize_order=True), updating the ca1->concept index pointer
+    (the ep-side substrate-caveat insurance). Then freeze for evaluation.
 
     Returns (wm_acc, ep_acc). Every mode draws the SAME random numbers in
     the SAME order (the only per-trial rng consumer is _make_pairs in
-    _run_mode -- _episode draws NONE); only the lesioned subsystem's
-    effect is removed (the faithfulness discipline)."""
+    _run_mode -- _episode draws NONE; the Phase-2a shuffle uses a
+    dedicated LOCAL rng seeded identically across modes from (seed,
+    episode_id), so it perturbs no cross-mode draw); only the lesioned
+    subsystem's effect is removed (the faithfulness discipline)."""
     cp = bridge.xp if hasattr(bridge, "xp") else np
     n_lang = ctx["n_lang"]
     lang = ctx["lang"]
@@ -275,9 +293,12 @@ def _episode(bridge, mode, pairs, P, ctx):
         # dlpfc_verb input selects which sub-population crosses
         # threshold. Suppressed for no_binding (SHARED): without it the
         # BG-selected slot never reaches threshold -> slot<->filler
-        # co-fire never happens -> the dlpfc_verb->noun_pool STDP is
-        # never written AND the relational assembly never forms ->
-        # BOTH readouts collapse.
+        # co-fire never happens -> the relational assembly never forms
+        # here (so the order index degrades, ep) AND -- mirrored in the
+        # Phase-2a selectivity loop, where no_binding likewise suppresses
+        # this bias -> the dlpfc_verb->filler selectivity STDP is never
+        # written (wm). So no_binding collapses BOTH readouts across the
+        # two phases (a SHARED lesion).
         if mode != "no_binding":
             bridge.cp_external_input_current[dlpfc] += \
                 0.5 * float(P["teacher_pA"])
@@ -302,12 +323,34 @@ def _episode(bridge, mode, pairs, P, ctx):
                 _GAMMA_PER_THETA // 2) else 0.0
         else:
             ach_open = 1.0
-        for _g in ("language_input_to_noun_pool", "bg_thal_to_dlpfc",
+        # DESIGN-ALIGNED FIX (2026-05-30): Phase 1 is ONLINE + IN-ORDER, so
+        # it writes the episodic ORDER INDEX ONLY. The concept (role ->
+        # filler) SELECTIVITY must be built OFFLINE + SHUFFLED in Phase 2
+        # (the v16 mechanism) -- building it here in fixed presentation
+        # order, repeated every epoch, is the winner-take-most regime that
+        # makes the wm retrieval non-selective (the diagnosed instrument-
+        # soundness failure: research/findings/2026-05-30-phase-factored-
+        # fullscale-grounding-INSTRUMENT-UNSOUND-wm-nondiscriminating.md).
+        # So FREEZE the three SELECTIVITY gates during the Phase-1 in-order
+        # presentation: lang->filler (language_input_to_noun_pool), the
+        # role->dlpfc holding write (language_input_to_dlpfc_verb), and the
+        # held-slot->filler write (dlpfc_verb_to_filler). The engram tag
+        # (spike-count accumulation over ec/dg/ca3/ca1, gate-INDEPENDENT)
+        # and the clock-ordered slot dynamics still happen -> the ORDER
+        # INDEX is intact (ep preserved). bg_thal_to_dlpfc is NOT a
+        # selectivity gate (it routes the BG-disinhibited slot into dlpfc,
+        # part of the slot-held WM dynamics the order index needs) -> it
+        # keeps the ACh-timed value here.
+        for _g in ("language_input_to_noun_pool",
                    "language_input_to_dlpfc_verb", "dlpfc_verb_to_filler"):
             try:
-                bridge.set_plasticity_gate(_g, float(ach_open))
+                bridge.set_plasticity_gate(_g, 0.0)
             except Exception:
                 pass
+        try:
+            bridge.set_plasticity_gate("bg_thal_to_dlpfc", float(ach_open))
+        except Exception:
+            pass
 
         for _ in range(P["stim_steps"]):
             _step(bridge)
@@ -386,10 +429,153 @@ def _episode(bridge, mode, pairs, P, ctx):
                    if recovered[i] == true_order[i]) / float(N)
 
     # =================================================================
-    # PHASE 2 -- OFFLINE shuffled SWR consolidation (build cortical
-    # selectivity + UPDATE the ca1->concept index pointer). Strictly
-    # AFTER Phase 1 (a swapped order is a bug; the phase-ordering pin
-    # asserts this via _EVENT_LOG). Skipped for the no_cls_replay
+    # PHASE 2a -- OFFLINE *SHUFFLED* concept-SELECTIVITY binding (the v16
+    # train_word_to_pool mechanism: shuffled teacher co-firing + STDP).
+    # This is the DESIGN-MANDATED home of concept selectivity (built
+    # OFFLINE + SHUFFLED so it does NOT impose an order on the index ->
+    # ep preserved). It does EXACTLY the teacher co-fire + STDP that the
+    # OLD Phase 1 did, but (a) in SHUFFLED pair order and (b) with the
+    # selectivity gates THAWED here instead of in Phase 1. Building
+    # selectivity shuffled/offline (vs the old fixed-order/online) is
+    # what makes the role-query wm retrieval role-SELECTIVE rather than
+    # winner-take-most.
+    #
+    # Each lesion still removes EXACTLY its own subsystem here, so the
+    # frozen partition holds with selectivity now in Phase 2:
+    #   no_binding (SHARED, both): suppress the dlpfc holding bias -> the
+    #     slot<->filler co-fire never crosses threshold -> the
+    #     dlpfc_verb->filler STDP is never written -> selectivity (wm)
+    #     collapses (and the relational assembly never forms -> ep too).
+    #   no_shared_clock (SHARED, both): TWO desynced clocks -> the ACh
+    #     plasticity window (clk_hip) is out of phase with the BG slot
+    #     gating (clk_wm) -> selectivity STDP fires outside the co-fire
+    #     window -> wm collapses (and the Phase-1 order index desyncs ->
+    #     ep collapses).
+    #   no_neuromod_timing (HELPER_BOTH): ACh always on (untimed) ->
+    #     selectivity STDP never gated to the co-fire window -> degraded
+    #     write -> wm collapses (and Phase-1 untimed -> ep collapses).
+    #   no_bg_gate (HELPER_WM): drive ALL BG channels -> no single slot
+    #     cleanly held -> the held-slot->filler write is non-selective ->
+    #     wm collapses. ep survives (the clock-ordered, spike-count engram
+    #     index is BG-gating-independent).
+    #   no_sequencing (HELPER_EP): clock REPEAT (shift=False) changes only
+    #     slot_for's per-theta ROTATION (the order code), NOT the within-
+    #     theta gamma-phase ACh window nor the per-binding distinct BG
+    #     slot -> selectivity (wm) survives; only the Phase-1 order index
+    #     is lost -> ep collapses.
+    #   no_cls_replay (HELPER_EP): SKIPS the Phase-2b SWR consolidation
+    #     (the ca1->concept index-update insurance, ep-side) but KEEPS
+    #     this selectivity loop (wm-side) -> ep degrades, wm survives.
+    #   no_hippo_store (SHARED, both): no engram tag (ep=0) AND skips ALL
+    #     of Phase 2 incl. this selectivity loop -> no selectivity (wm=0).
+    #
+    # RNG faithfulness: the shuffle is a DETERMINISTIC permutation seeded
+    # from (run-seed, episode_id) computed IDENTICALLY for every mode, via
+    # a dedicated LOCAL rng. It does NOT touch the shared per-trial rng
+    # (whose SOLE consumer remains _make_pairs in _run_mode); so every
+    # mode still draws the IDENTICAL _make_pairs pairs at the IDENTICAL
+    # stream position (the lesion-fidelity discipline holds), AND the
+    # shuffle is byte-identical across modes for a given (seed, episode).
+    if mode != "no_hippo_store":
+        _log("phase2:offline_selectivity:start")
+        # Build the SAME clock topology as Phase 1 (one shared instance,
+        # or two desynced under no_shared_clock) so the timing lesions act
+        # here too. shift follows no_sequencing exactly as Phase 1.
+        if mode == "no_shared_clock":
+            sclk_wm = SharedThetaGamma(shift=_shift)
+            sclk_hip = SharedThetaGamma(shift=_shift)
+            for _ in range(_GAMMA_PER_THETA // 2):
+                sclk_hip.step()
+        else:
+            sclk_wm = SharedThetaGamma(shift=_shift)
+            sclk_hip = sclk_wm
+        # Open the selectivity gates for OFFLINE binding (re-timed per
+        # step by the ACh window below; symmetric with the Phase-1 freeze).
+        for _g in ("language_input_to_noun_pool", "bg_thal_to_dlpfc",
+                   "language_input_to_dlpfc_verb", "dlpfc_verb_to_filler"):
+            try:
+                bridge.set_plasticity_gate(_g, 1.0)
+            except Exception:
+                pass
+        # Deterministic, cross-mode-identical shuffle of the pair order.
+        _sel_rng = np.random.default_rng(
+            7919 * (int(ctx.get("seed", 0)) + 1)
+            + 31 * int(ctx["episode_id"]) + 17)
+        _order = list(range(N))
+        _sel_rng.shuffle(_order)
+        for _si, _pi in enumerate(_order):
+            ridx, fidx = pairs[_pi]
+            # Per-binding distinct BG slot (clock-assigned). Under
+            # no_sequencing (shift=False) this is _si % channels -- still
+            # distinct per binding within a shuffle, so wm is unaffected;
+            # only the Phase-1 ORDER code uses the rotation.
+            gslot = sclk_wm.slot_for(_si, N)
+            chan = gslot % len(_BG_CHANNELS)
+            # Reset between events (NMDA decay), like v16 train_word_to_pool.
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(P["reset_steps"]):
+                _step(bridge)
+                sclk_wm.step()
+                if sclk_hip is not sclk_wm:
+                    sclk_hip.step()
+            # Drive role + filler codes; teacher co-fires the bound
+            # role+filler pools (the validated v16 co-firing selectivity).
+            bridge.cp_external_input_current[:] = 0.0
+            drole = cp.asarray(_code(ridx, 2 * _MAX_LOAD, n_lang,
+                                     P["role_pA"], P), dtype=cp.float32)
+            dfill = cp.asarray(_code(_MAX_LOAD + fidx, 2 * _MAX_LOAD,
+                                     n_lang, P["filler_pA"], P),
+                               dtype=cp.float32)
+            bridge.cp_external_input_current[lang] = drole + dfill
+            bridge.cp_external_input_current[role_arr[ridx]] += \
+                float(P["teacher_pA"])
+            bridge.cp_external_input_current[filler_arr[fidx]] += \
+                float(P["teacher_pA"])
+            if mode != "no_binding":
+                bridge.cp_external_input_current[dlpfc] += \
+                    0.5 * float(P["teacher_pA"])
+            if mode == "no_bg_gate":
+                for ch in range(len(_BG_CHANNELS)):
+                    bridge.cp_external_input_current[bg_cortex[ch]] += \
+                        float(P["gate_drive_pA"])
+            else:
+                bridge.cp_external_input_current[bg_cortex[chan]] += \
+                    float(P["gate_drive_pA"])
+            for _ in range(P["stim_steps"]):
+                # ACh plasticity window times the selectivity STDP to the
+                # co-fire (gamma-phase, shift-independent). no_neuromod_
+                # timing -> always on; no_shared_clock -> clk_hip desynced.
+                if mode != "no_neuromod_timing":
+                    sach = 1.0 if sclk_hip.gamma_slot < (
+                        _GAMMA_PER_THETA // 2) else 0.0
+                else:
+                    sach = 1.0
+                for _g in ("language_input_to_noun_pool",
+                           "language_input_to_dlpfc_verb",
+                           "dlpfc_verb_to_filler"):
+                    try:
+                        bridge.set_plasticity_gate(_g, float(sach))
+                    except Exception:
+                        pass
+                try:
+                    bridge.set_plasticity_gate("bg_thal_to_dlpfc",
+                                               float(sach))
+                except Exception:
+                    pass
+                _step(bridge)
+                sclk_wm.step()
+                if sclk_hip is not sclk_wm:
+                    sclk_hip.step()
+        bridge.cp_external_input_current[:] = 0.0
+        _log("phase2:offline_selectivity:done")
+    else:
+        _log("phase2:offline_selectivity:skipped")
+
+    # =================================================================
+    # PHASE 2b -- OFFLINE shuffled SWR consolidation (UPDATE the
+    # ca1->concept index pointer; the ep-side substrate-caveat insurance).
+    # Strictly AFTER Phase 1 (a swapped order is a bug; the phase-ordering
+    # pin asserts this via _EVENT_LOG). Skipped for the no_cls_replay
     # HELPER_EP lesion and the no_hippo_store SHARED lesion (a
     # deterministic skip; no extra/missing rng draw -- a dedicated local
     # rng seeded from the episode id is used so passing it perturbs NO
@@ -526,7 +712,8 @@ def _run_mode(mode, seed, N, tiny, gap_zero=False):
                role_arr=role_arr, filler_arr=filler_arr,
                dlpfc=dlpfc, bg_cortex=bg_cortex,
                enc_value_table=enc_value_table,
-               episode_id=0, is_v1=bool(gap_zero))
+               episode_id=0, is_v1=bool(gap_zero),
+               seed=int(seed))
 
     # The validated v16 ENCODE DISCIPLINE: draw the bijection ONCE per
     # run (stable across ALL epochs, like v16's fixed vocab) and present
