@@ -1,0 +1,49 @@
+{
+  "GATE": "TINY",
+  "classification": "TINY-NOT-PROPAGATED",
+  "reason": "tiny-synth smoke; toy scale; the verdict is a TINY marker and is NEVER propagated as a real PASS/FAIL/VOID",
+  "rungs": [
+    {
+      "N": 2,
+      "n_seeds": 3,
+      "v1": {
+        "wm": 0.0,
+        "ep": 1.0
+      },
+      "full": {
+        "wm": 0.0,
+        "ep": 1.0
+      },
+      "lesions": {
+        "no_binding": {
+          "wm": 0.0,
+          "ep": 1.0
+        },
+        "no_shared_clock": {
+          "wm": 0.0,
+          "ep": 1.0
+        },
+        "no_hippo_store": {
+          "wm": 0.0,
+          "ep": 0.0
+        },
+        "no_bg_gate": {
+          "wm": 0.0,
+          "ep": 1.0
+        },
+        "no_sequencing": {
+          "wm": 0.0,
+          "ep": 1.0
+        },
+        "no_cls_replay": {
+          "wm": 0.0,
+          "ep": 1.0
+        },
+        "no_neuromod_timing": {
+          "wm": 0.0,
+          "ep": 1.0
+        }
+      }
+    }
+  ]
+}
