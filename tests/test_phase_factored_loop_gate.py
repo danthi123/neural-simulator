@@ -443,3 +443,45 @@ def test_no_shared_clock_genuinely_desynchronizes_timing():
         "no_shared_clock must genuinely desynchronize the WM-gating "
         "and hippocampal-write timing (got %d/%d steps desynced)"
         % (desynced, total))
+
+
+# ---------------------------------------------------------------------------
+# Increment 6: no-autograd pin -- no torch / .backward() in the shipped
+# path (the controller module AND every reuse-by-import target it pulls
+# in). The only learning is the reused validated native eligibility/
+# reward rule; there is NO automatic differentiation anywhere.
+# ---------------------------------------------------------------------------
+def test_no_torch_or_backward_in_controller_and_reused_path():
+    """The controller source AND its reuse-by-import dependencies must
+    contain no torch import and no .backward() call. The reuse targets
+    are the parked theta-gamma controller/bridge builder + the
+    consolidation trainer + the concept-pool selectivity helper -- the
+    'shipped path' for this two-phase build."""
+    import importlib
+    paths = [_CONTROLLER_PATH]
+    # The directly-imported reuse targets that make up the shipped path.
+    for relpath in (
+        "research/runners/integrated_loop_gate.py",
+        "research/runners/consolidation_trainer.py",
+        "research/runners/concept_pool_demo.py",
+        "research/runners/abstention_gate.py",
+        "research/runners/integrated_loop_core.py",
+    ):
+        p = REPO_ROOT / relpath
+        if p.exists():
+            paths.append(p)
+    for p in paths:
+        src = p.read_text(encoding="utf-8")
+        assert "import torch" not in src, (
+            "%s imports torch (no autograd allowed in the shipped "
+            "path)" % p.name)
+        assert ".backward(" not in src, (
+            "%s calls .backward() (no autograd allowed)" % p.name)
+        assert "torch.autograd" not in src, (
+            "%s uses torch.autograd" % p.name)
+    # And the live module: importing it must not have pulled torch in.
+    mod = _import_controller()
+    importlib.import_module("research.runners.phase_factored_loop_gate")
+    assert "torch" not in sys.modules, (
+        "importing the controller pulled torch into sys.modules -- the "
+        "shipped path must be autograd-free")
