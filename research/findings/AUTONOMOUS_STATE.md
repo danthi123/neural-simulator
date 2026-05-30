@@ -96,12 +96,42 @@ selectivity-carrier redesign [recommended, goal-aligned: lifts the substrate cei
 that blocks BOTH this arc and the D-arc]; OR park the integrated-loop instrument here
 as an honest characterized NEGATIVE + banked ep win, and pick the next goal-aligned
 arc.
-DEFAULT (watchdog/next-session, no owner steer present): begin path A's CHEAPEST-FIRST
-de-risk -- a focused read of the trisynaptic-loop builder + validate_trisynaptic_loop
-runner (already P1-validated) to confirm DG can be wired as the wm selectivity carrier
-reuse-by-import (no new rule, no protected/frozen/moat edit) BEFORE any spiking build.
-If that de-risk shows DG is not cleanly wireable as the carrier, record the honest
-cheap NEGATIVE and park the arc. Do NOT launch the decisive run until v1 wm>=0.90.
+OWNER STEER 2026-05-30: "Proceed as suggested" -> path A (DG selectivity carrier).
+
+DE-RISK DONE 2026-05-30 = GO (commit b809ac7+ this update). Read confirmed path A is
+wireable by reuse-by-import: (1) the built bridge ALREADY has DG/trisynaptic regions
+(_build_bridge -> build_biological_brain_regions(enable_hippocampus_consolidation=True),
+integrated_loop_gate.py:762 / phase_factored imports it). (2) The engram API
+(start/commit/stimulate/clear/delete_engram_tag) is a dict keyed by name
+(bridge.py:2483) -> MULTIPLE concurrent per-binding recordings supported, region-filtered
+commits, tag stimulation -- all existing blessed-reuse methods. (3) The ep readout ALREADY
+proves the path works: _episodic_order_readout (phase_factored_loop_gate.py:401-429)
+stimulate_tag -> DG-separated CA3 completion -> role-pool peaks, ep=1.0. The wm readout
+(606-649) currently does NOT use it -- it drives a bare role code + relies on the eroding
+cortical dlpfc_verb->filler STDP selectivity. The fix: route wm role->filler retrieval
+through the SAME DG/engram path.
+
+EXACT NEXT ACTION = BUILD path A (controller file phase_factored_loop_gate.py ONLY; no
+new rule/autograd; no protected/frozen/moat edit; engram API reuse byte-unchanged):
+  1. At encode (Phase 1 loop ~269-356), commit a PER-BINDING engram tag per (role,filler)
+     -- start_engram_recording("pf_ep%d_bind%d") around each binding's BG-gated co-fire,
+     commit_engram_tag(region_filter capturing the role pool + filler pool + ca3). Keep
+     the whole-episode tag (ep needs it).
+  2. Rework the wm readout (606-649) to retrieve via the engram path: at a role query,
+     stim the queried role's per-binding tag(s) (multitag stim-recall variant FIRST --
+     87.5%/90% validated, the higher-reliability path; CA3 partial-cue completion as
+     fallback) and rank filler pools by reactivation. Keep the DEFAULT_THRESHOLD gate +
+     the _wm_raw passive sink.
+  3. PRESERVE the 7-lesion partition: no_hippo_store/no_binding (SHARED) remove tag/
+     assembly -> wm collapses WITH ep; no_bg_gate (HELPER_WM) degrades the per-binding
+     gated co-fire -> wm collapses, ep survives. Map each lesion in comments; re-run the
+     tiny-synth lesion probe to confirm.
+  4. GATE: v1 full-scale probe (~3.5 min): require v1 wm>=0.90 AND v1 ep>=0.90. Iterate
+     (multitag -> CA3-completion). If v1 sound -> re-review (readout changed post-Task-4)
+     -> decisive run (controller-only, smell-test). If neither engram variant makes v1
+     wm sound -> honest NEGATIVE (DG/engram per-binding retrieval also can't make the wm
+     instrument sound at this scale) -> park.
+Decisive multi-seed run stays UNLAUNCHED until v1 wm>=0.90.
 (D8 smoke killed 2026-05-30; marginal post-closure.)
 
 OLD NEXT ACTION (superseded): Task 2 — build the two-phase controller +
