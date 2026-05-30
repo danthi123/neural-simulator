@@ -485,3 +485,36 @@ def test_no_torch_or_backward_in_controller_and_reused_path():
     assert "torch" not in sys.modules, (
         "importing the controller pulled torch into sys.modules -- the "
         "shipped path must be autograd-free")
+
+
+# ---------------------------------------------------------------------------
+# End-to-end CLI smoke: the runner runs a fast --tiny-synth smoke on the
+# CPU/numpy backend and writes a verdict JSON marked TINY (the toy
+# verdict is NEVER propagated as a real PASS/FAIL/VOID). Mirrors the
+# parked integrated_loop_gate's tiny-smoke grounding pin.
+# ---------------------------------------------------------------------------
+def test_cli_tiny_smoke_produces_tiny_verdict(tmp_path):
+    if not _CONTROLLER_PATH.exists():
+        pytest.skip("phase_factored_loop_gate.py not landed yet")
+    out = tmp_path / "tiny_pf.json"
+    env = dict(os.environ)
+    env["SIM_BACKEND"] = "numpy"
+    proc = subprocess.run(
+        [sys.executable, "-m", "research.runners.phase_factored_loop_gate",
+         "--tiny-synth", "--seeds", "42", "43", "44",
+         "--out", str(out)],
+        capture_output=True, text=True, timeout=900,
+        cwd=str(REPO_ROOT), env=env)
+    assert proc.returncode == 0, (
+        "runner failed: %s\n%s" % (proc.stdout, proc.stderr))
+    assert out.exists(), "runner did not write the verdict JSON"
+    v = json.loads(out.read_text())
+    assert "GATE" in v, "verdict has no GATE field"
+    assert "TINY" in json.dumps(v), (
+        "tiny-synth verdict must be marked TINY / NEVER propagated")
+    # The rung block carries the frozen schema: every rung has the 7
+    # lesion keys + v1 + full.
+    assert "rungs" in v and len(v["rungs"]) >= 1
+    rung = v["rungs"][0]
+    assert set(rung["lesions"].keys()) == set(_ALL_LESIONS)
+    assert int(rung["n_seeds"]) == 3
