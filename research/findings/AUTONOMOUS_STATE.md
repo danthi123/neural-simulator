@@ -43,14 +43,31 @@ UPDATE 2026-05-30 (Tasks 0-5 DONE; decisive run BLOCKED on instrument soundness)
   (full ep=0.0 vs v1 ep=1.0) = substrate caveat materialized.
 - The grounding probe did its job: 32-min catch vs ~8-hr VOID. Decisive run NOT
   launched.
-EXACT NEXT ACTION: DIAGNOSE the wm instrument-soundness failure (Problem 1) with a
-distinguishing probe -- measure wm (a) right after Phase 1 before Phase 2, and (b)
-with Phase 2 swapped train_word_to_pool vs run_concept_replay_phase. Hypothesis A
-(role->filler binding / PFC maintenance not built) vs B (Phase-2 SWR replay builds
-wrong selectivity). Fix the integration fidelity (reuse-preserved; no frozen bar
-moved; no protected module touched), re-probe v1 soundness, THEN the decisive run.
-Honest non-success -> iterate following biology, no hand-back. (D8 smoke killed
-2026-05-30; was marginal post-D-arc-closure.)
+DIAGNOSIS COMPLETE (raw-counts sink, commit 42c851a): the wm failure is
+NON-SELECTIVE RETRIEVAL, not gate calibration. Driving a role lights up ALL 8
+filler pools ~equally (900-1450, all above the 650 gate; unbound F2-F7 fire too);
+correct filler is top only 1/8 -> chance. Gate emits confidently on a near-random
+filler. PARTIAL SUCCESS: v1 ep=1.0 -- the two-phase ORDER readout WORKS (the
+encode-order conflict that stalled the single-pass loop is genuinely resolved on
+the ep side). The blocker is specifically the wm role-addressable retrieval.
+
+EXACT NEXT ACTION: implement the role-addressable wm-query fix (integration
+fidelity; my controller file phase_factored_loop_gate.py only; no frozen bar, no
+protected module). Steps:
+1. READ integrated_loop_gate.py _build_bridge (imported) to learn the filler-pool /
+   dlpfc_verb->filler / FS-interneuron wiring + the BG-channel->slot mapping.
+2. Rework the wm readout (phase_factored_loop_gate.py:408-443) so the query is
+   role-ADDRESSABLE: at query time reinstate the BG-gated dlpfc slot for the queried
+   role (so dlpfc_verb->filler selectively reactivates the bound filler) AND ensure
+   filler-pool lateral inhibition (FS/WTA) is active at readout so one filler wins.
+   Likely also suppress the broad lang->noun_pool excitation during the query so the
+   selective dlpfc->filler path is not swamped.
+3. Re-probe v1 (one _run_mode full-scale ~min): require v1 wm>=0.90 AND v1 ep>=0.90.
+   Iterate (probes are ~min each) until v1 is sound.
+4. THEN re-review (the readout changed post-Task-4) + the decisive run (Task 6).
+The passive _WM_RAW_SINK hook (commit c2be7a2) is the iteration instrument.
+Honest non-success -> iterate following biology, no hand-back. Decisive run stays
+unlaunched until v1 is sound. (D8 smoke killed 2026-05-30; marginal post-closure.)
 
 OLD NEXT ACTION (superseded): Task 2 — build the two-phase controller +
 order-preserving index readout in the spiking bridge
