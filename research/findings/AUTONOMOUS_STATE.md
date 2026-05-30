@@ -151,13 +151,41 @@ verification status). The engram-based wm retrieval is built (per-binding tags a
      (~3.5 min, has the _WM_RAW_SINK) for R1 raw counts. Subagent CLAIMS v1 wm=1.0 ep=1.0,
      bound filler out-firing distractors ~13-50x -- MUST be controller-confirmed (scrutinize
      a PASS harder than a FAIL).
-NEXT (controller): when bbw6or6pg notifies -> R3 from the table (require full preserves wm;
-no_bg_gate collapses wm not ep; SHARED collapse both; HELPER_EP collapse ep not wm) -> run
-_pf_v1_probe.py for R1 (require true filler HIGH, others LOW; not all-equal-top-by-luck) ->
-if R1+R3 CLEAR -> decisive cache empty (verified) -> launch controller-only decisive
-(phase_factored_decisive.py seeds 42/43/44 ladder 2/4/8) -> smell-test -> propagate both
-remotes. If R3 shows partition broken OR R1 non-selective -> honest NEGATIVE, do NOT run
-decisive, record + park/iterate.
+R3 DONE 2026-05-30 = VOID (full-scale partition table, N=2 seed42; finding doc
+2026-05-30-phase-factored-decisive-iteration2-engram-wm-SOUND-but-VOID-two-horns-characterized.md):
+  v1=(1.0,1.0) SOUND; full=(0.5,1.0); no_binding=(0.5,1.0); no_shared_clock=(0.5,1.0);
+  no_hippo_store=(0.0,0.0); no_bg_gate=(0.5,1.0); no_sequencing=(0.5,1.0);
+  no_cls_replay=(0.5,1.0); no_neuromod_timing=(0.5,0.0).
+  The frozen verdict VOIDs at the discrimination check: no_binding (SHARED) must drop BOTH
+  <=0.40 but wm=0.5 -> "not emergent-from-integration / wiring artifact" (and no_bg_gate /
+  no_sequencing / no_cls_replay independently fail their checks). wm is FLAT 0.5 for full +
+  6/7 lesions, 0.0 only under no_hippo_store -> the per-binding engram tag is a LOCALIZED
+  hippocampal-store LOOKUP, lesion-invariant except removing the store. Drilled query passes,
+  novel-recombination query fails (=0.5); v1 scores only the drilled query (=1.0).
+
+>>> DO NOT LAUNCH THE DECISIVE RUN. <<< It would VOID identically at every seed (the
+discrimination failure is STRUCTURAL -- the engram store is lesion-invariant by construction,
+not stochastic). Running ~8 hr to reconfirm a structural VOID violates the grounding discipline.
+
+TWO HORNS NOW CHARACTERIZED (both VOID-certified by the pre-registered verdict, OPPOSITE reasons):
+  iter 1 STDP selectivity: EMERGENT but UNSTABLE -> VOID (unsound, v1 wm<0.90).
+  iter 2 DG/engram store:   STABLE but NOT EMERGENT -> VOID (non-discriminating).
+No mechanism here is both stable-enough-for-soundness AND emergent-enough-for-the-partition.
+The integrated-loop wm-emergence thesis (role-filler binding retrieval) is NOT supported on
+this substrate. BANKED + unaffected: ep-decoupling validated (ep=1.0 both iters); engram v1
+soundness is genuinely SELECTIVE (R1 probe buzja4s2j confirming true filler >> distractors).
+
+FINAL pending micro-step: read R1 probe (buzja4s2j) -> quote exact selectivity in the finding
+doc -> commit finding + push both remotes. (R1 only confirms the soundness sub-claim; it does
+NOT change the VOID.)
+
+DECISION POINT (surfaced to owner; recommend A): (A) PARK the integrated-loop wm-emergence
+thesis as a characterized VOID + bank the ep win, pivot to the next goal-aligned arc
+(conversational / artificial-life). (B) attempt a THIRD mechanism -- loop-GATED engram readout
+(retrieval depends on BG gate + shared clock + binding so lesions collapse wm) -- deeper
+redesign, re-opens the instability risk (walks back toward horn 1), real risk of re-VOID.
+DEFAULT (no owner steer): A -- record the two-horns VOID as the arc's honest conclusion + pick
+the next goal-aligned arc; do NOT auto-start B (a deeper redesign warrants an explicit steer).
 
 PRE-STAGED RE-REVIEW (R1/R3 detail; the wm readout changed post-Task-4):
   R1 [SELECTIVITY SMELL-TEST -- the load-bearing one]: scrutinize the _wm_raw raw filler
