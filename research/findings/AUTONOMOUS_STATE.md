@@ -9,6 +9,40 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## PILLAR n=110 PROMOTED 2026-05-30 (D7 V=320 VALIDATED BOUNDARY) — reviewer CLEAR 06af100
+
+D7 V=320 production COMPLETE. Result: DIRECTION_7_PASS by frozen mean-bar
+(OB 1.000 all loads; OI 1.000/0.993/0.830 at L=2/3/5) but HONESTLY A
+BOUNDARY — per-seed L=5 OI [0.925, 0.700, 0.865], seed 43 below bar.
+First tier where the capacity envelope bends (FHRR prediction shattered
+at V=160, reasserts at V=320). Crash-retrain confound RULED OUT (seed 43
+uniformly degraded across all bridges; seeds 42/44 clean on same
+post-relaunch bridges). Reviewer 9/9 CLEAR + 3 doc corrections. Promoted
+VALIDATED BOUNDARY (commit fadba1b). SIXTH pillar (n=105..n=110).
+
+## STRATEGIC DECISION POINT (surfaced to owner 2026-05-30): is D8 V=640 worth ~100 hr?
+
+D7 showed the envelope BENDING at V=320. D8 V=640 (double again) is very
+likely a clean NEGATIVE/FAIL at L=5 (the bend continues). Cost ~100+ hr
+GPU (2x D7's 57 hr + slower at 2x vocab). A likely-NEGATIVE that only
+modestly tightens the ceiling bracket may not justify 4 days of compute.
+
+OPTIONS (owner to weigh in; my recommendation = A+C):
+A. RUN D8 SPEEDUP SMOKE NOW (cheap ~7 hr, independent value): validates
+   the --use-fp16 + --stim-steps-per-event 50 optimization combo vs the
+   D7 V=64 smoke baseline. Methodology validation, independent of whether
+   V=640 composition passes. pwsh research/findings/raw/direction_8_speedup_smoke.ps1
+B. RUN D8 V=640 FULL PRODUCTION (~100 hr): likely NEGATIVE; brackets the
+   ceiling at 320<ceiling<640. Modest info gain for high compute.
+C. CHEAPER CEILING CHARACTERIZATION instead of B: an intermediate tier
+   (V=400 or V=480, ~70-85 hr) or more seeds at V=320 (separate
+   characterization run, NOT changing the n=110 verdict) would LOCATE the
+   bend more precisely than a likely-fail at V=640. Higher info/GPU-hr.
+
+GPU is FREE now (D7 done). The D8 infrastructure + speedup flags are all
+built (commit 7822205). Awaiting owner steer on B vs C; A can run
+regardless.
+
 ## EXACT NEXT CONCRETE ACTION (read this first on any re-trigger)
 
 D7 V=320 PRODUCTION decisive is running SEQUENTIALLY (PID 30216, launched
