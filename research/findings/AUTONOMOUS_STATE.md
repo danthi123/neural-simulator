@@ -34,15 +34,27 @@ conflate-pipelines-composition-IS-decodable-at-0.46.md):
     reported the related conflation + ceiling-reframe instead. Does NOT dissolve the ceiling
     (~0.46 is a real cap below 0.80).
 
-PHASE 2 (decisive, pending owner nod; cheap reuse-probe): latent-composition decode probe on
-an existing validated bridge -- can a HELD-OUT linear/NN decoder recover the composed answer
-ABOVE the 0.46 cap (and >> chance) from the composed-query state where the spiking readout is
-capped? Pre-registered: READOUT-LIMIT (artifact b) if a held-out decoder >= 2x the spiking
-readout on the same states; REPRESENTATIONAL CEILING CONFIRMED if no decoder beats ~0.46 by a
-margin; three-state. Settles whether the 0.46->0.80 gap is representational (-> phase-coded VSA
-warranted) or readout-limited (-> cheaper readout/cleanup fix unlocks existing mechanisms).
-DEFAULT (no steer): proceed Phase 2 (cheap, reuse-by-import; surface design before any heavy
-run). Phase-coded VSA arc NOT started -- the audit gates it.
+PHASE 2 IN FLIGHT (owner said "ok" -> proceed): decisive latent-composition decode probe.
+Subagent a3a208e2fea58fb08 (background) builds a throwaway probe (research/findings/raw/
+_ceiling_audit_phase2_decode.py) reusing the EXACT 6th-arc machinery: generative_replay_pfc_
+frame_runner.py FULL arm = unified_per_regime_monitor_runner._build_bridge_with_phase1_recipe
++ _encode_facts + _unified_compositional_pairs + _compositional_query_ranked + consolidation_
+trainer.run_concept_replay_phase + PFC-frame priming (the ~0.46 regime). Captures the composed
+lang_output state + cosine-readout decision + true answer per query (>=200 instances, several
+seeds); trains a HELD-OUT linear (sklearn LogisticRegression) + NN decoder with EPISODE-LEVEL
+group k-fold (train/test never share an episode -> no leakage); compares decoder held-out acc
+(B) vs cosine readout acc (A) on identical test sets.
+PRE-REGISTERED (frozen): READOUT-LIMIT if B >= 2x A (and >> chance); REPRESENTATIONAL-CEILING
+if no decoder beats A by >= +0.10; INCONCLUSIVE else. Decoder is ANALYSIS-ONLY (sklearn/numpy
+CPU linear probe; NOT a sim learning rule, NOT autograd). No protected/frozen/moat/sim edit
+(throwaway script only). CONTROLLER forms the official verdict + scrutinizes (a READOUT-LIMIT
+result is the surprising/strong claim -> scrutinize it harder than a FAIL: episode-level split
+real? regime check ~0.46? chance baseline? class balance?).
+NEXT (controller, on subagent completion): verify regime check (~0.46) + anti-leakage (episode
+split) + form verdict. READOUT-LIMIT -> the big phase-coded VSA arc is NOT warranted as framed;
+a cheaper readout/cleanup fix is the lead (huge result). REPRESENTATIONAL -> the VSA premise
+holds; phase-coded VSA arc is the justified next big build. Either way: record finding + push
+both remotes + surface to owner. Phase-coded VSA arc NOT started -- the audit gates it.
 
 ---
 
