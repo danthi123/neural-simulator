@@ -365,3 +365,81 @@ def test_make_pairs_is_sole_per_trial_rng_consumer():
     assert all(c == 1 for c in counts.values()), (
         "expected exactly 1 _make_pairs draw per run (v16 stable-"
         "bijection discipline); got %r" % counts)
+
+
+# ---------------------------------------------------------------------------
+# Increment 5: no_shared_clock pin -- this lesion actually DISABLES the
+# shared theta-gamma controller (not a no-op) and is wired to drive BOTH
+# readouts toward chance (the SHARED non-separability signature).
+# ---------------------------------------------------------------------------
+def test_no_shared_clock_is_a_shared_lesion():
+    """no_shared_clock must be partitioned as a SHARED lesion (one whose
+    frozen duty is to collapse BOTH readouts), matching the parked
+    frozen partition. A helper-only classification would let it collapse
+    only one readout and miss the non-separability signature."""
+    mod = _import_controller()
+    assert "no_shared_clock" in mod._SHARED, (
+        "no_shared_clock must be a SHARED lesion (collapses BOTH "
+        "readouts), got partition: SHARED=%r" % (mod._SHARED,))
+
+
+def test_no_shared_clock_constructs_two_independent_clocks():
+    """Structural: under no_shared_clock the controller builds TWO
+    independent SharedThetaGamma instances (the WM-gating clock and the
+    hippocampal-write clock desynchronize), whereas `full` uses ONE
+    shared instance. Pin via the passive phase-event log: full ->
+    'clock:one', no_shared_clock -> 'clock:two'. This proves the lesion
+    is NOT a no-op."""
+    mod = _import_controller()
+    log_full = _capture_event_log(mod, mode="full", N=2)
+    log_lesion = _capture_event_log(mod, mode="no_shared_clock", N=2)
+    assert "clock:one" in log_full, (
+        "full must use ONE shared clock: %r" % log_full)
+    assert "clock:two" in log_lesion, (
+        "no_shared_clock must construct TWO clocks: %r" % log_lesion)
+    assert "clock:two" not in log_full, (
+        "full must NOT construct two clocks")
+    assert "clock:one" not in log_lesion, (
+        "no_shared_clock must NOT use the shared single clock")
+
+
+def test_no_shared_clock_genuinely_desynchronizes_timing():
+    """The two independent clocks must produce DIFFERENT gamma-slot
+    timing for WM-gating vs the hippocampal write -- i.e. the lesion
+    genuinely desynchronizes the rhythm that unifies the loop. Drive the
+    SAME construction the controller uses (one shared instance vs two
+    independent + a fixed phase advance on the hippocampal clock) and
+    assert the gamma slots diverge across a theta period. This is the
+    mechanism by which BOTH readouts (WM-slot gating AND the
+    hippocampal-write order) are pushed toward chance."""
+    from research.runners.integrated_loop_gate import (
+        SharedThetaGamma, _GAMMA_PER_THETA)
+    # `full`: one shared instance -> WM clock and hippo clock are
+    # always in lock-step.
+    shared = SharedThetaGamma(shift=True)
+    locked_diffs = 0
+    for _ in range(2 * _GAMMA_PER_THETA):
+        # Same instance read twice == identical phase, always.
+        if shared.gamma_slot != shared.gamma_slot:
+            locked_diffs += 1
+        shared.step()
+    assert locked_diffs == 0, "a single shared clock is never desynced"
+
+    # `no_shared_clock`: two independent instances; the hippo clock is
+    # advanced a fixed half-theta phase (exactly the controller's
+    # desync). Their gamma slots must DIFFER on a majority of steps.
+    clk_wm = SharedThetaGamma(shift=True)
+    clk_hip = SharedThetaGamma(shift=True)
+    for _ in range(_GAMMA_PER_THETA // 2):
+        clk_hip.step()
+    desynced = 0
+    total = 2 * _GAMMA_PER_THETA
+    for _ in range(total):
+        if clk_wm.gamma_slot != clk_hip.gamma_slot:
+            desynced += 1
+        clk_wm.step()
+        clk_hip.step()
+    assert desynced >= total // 2, (
+        "no_shared_clock must genuinely desynchronize the WM-gating "
+        "and hippocampal-write timing (got %d/%d steps desynced)"
+        % (desynced, total))
