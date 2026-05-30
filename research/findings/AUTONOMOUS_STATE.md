@@ -5,7 +5,7 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-05-28
+**Updated:** 2026-05-30
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
@@ -45,29 +45,46 @@ UPDATE 2026-05-30 (Tasks 0-5 DONE; decisive run BLOCKED on instrument soundness)
   launched.
 DIAGNOSIS COMPLETE (raw-counts sink, commit 42c851a): the wm failure is
 NON-SELECTIVE RETRIEVAL, not gate calibration. Driving a role lights up ALL 8
-filler pools ~equally (900-1450, all above the 650 gate; unbound F2-F7 fire too);
-correct filler is top only 1/8 -> chance. Gate emits confidently on a near-random
-filler. PARTIAL SUCCESS: v1 ep=1.0 -- the two-phase ORDER readout WORKS (the
-encode-order conflict that stalled the single-pass loop is genuinely resolved on
-the ep side). The blocker is specifically the wm role-addressable retrieval.
+filler pools ~equally; correct filler top only 1/8 -> chance. PARTIAL SUCCESS:
+v1 ep=1.0 -- the two-phase ORDER readout WORKS.
 
-EXACT NEXT ACTION: implement the role-addressable wm-query fix (integration
-fidelity; my controller file phase_factored_loop_gate.py only; no frozen bar, no
-protected module). Steps:
-1. READ integrated_loop_gate.py _build_bridge (imported) to learn the filler-pool /
-   dlpfc_verb->filler / FS-interneuron wiring + the BG-channel->slot mapping.
-2. Rework the wm readout (phase_factored_loop_gate.py:408-443) so the query is
-   role-ADDRESSABLE: at query time reinstate the BG-gated dlpfc slot for the queried
-   role (so dlpfc_verb->filler selectively reactivates the bound filler) AND ensure
-   filler-pool lateral inhibition (FS/WTA) is active at readout so one filler wins.
-   Likely also suppress the broad lang->noun_pool excitation during the query so the
-   selective dlpfc->filler path is not swamped.
-3. Re-probe v1 (one _run_mode full-scale ~min): require v1 wm>=0.90 AND v1 ep>=0.90.
-   Iterate (probes are ~min each) until v1 is sound.
-4. THEN re-review (the readout changed post-Task-4) + the decisive run (Task 6).
-The passive _WM_RAW_SINK hook (commit c2be7a2) is the iteration instrument.
-Honest non-success -> iterate following biology, no hand-back. Decisive run stays
-unlaunched until v1 is sound. (D8 smoke killed 2026-05-30; marginal post-closure.)
+UPDATE 2026-05-30 (decisive ITERATION 1: phase-restructure fix tried; EP DECOUPLING
+VALIDATED, WM blocked by a SUBSTRATE-LEVEL cause; findings a54f2a9, fix 06b13c1):
+The fix the prior NEXT-ACTION prescribed (move selectivity training to its correct
+phase) was implemented faithfully: Phase 1 now FREEZES the selectivity gates so the
+in-order pass writes only the ORDER INDEX (engram + theta-gamma slot order); Phase 2
+runs the validated v16 SHUFFLED teacher co-fire + STDP to build selectivity, plus the
+SWR consolidation. Full-scale v1 re-probe (seed 42, N=2): V1_EP=1.000, V1_WM=0.000.
+  - VALIDATED: ep stayed 1.0 through the restructure -> the two-phase ENCODE-ORDER
+    DECOUPLING is real (order written online, untouched by offline selectivity). Half
+    the two-phase thesis confirmed.
+  - NEGATIVE (characterized): wm still non-selective. Checkpoint probes show the
+    topographic PRIOR alone gives clean 2/2 role->filler selectivity, but repeated
+    selectivity-STDP over epochs ERODES the prior's margin (unbound fillers creep up,
+    overtake by ~ep6) in EVERY variant (phase placement, role-only co-fire, off-target
+    suppression, SWR on/off). Root cause = STDP-selectivity INSTABILITY on this
+    substrate. The deep tension: the STABLE selectivity source (prior) is
+    lesion-INVARIANT (can't satisfy lesion-collapse); the lesion-ABLATABLE source
+    (STDP) is UNSTABLE. No mechanism here is both. Same substrate theme as the D-arc
+    geometry erosion. This is the binding-retrieval problem localized to representation
+    stability -- NOT a phase-placement bug (which is now fixed).
+
+EXACT NEXT ACTION (DECISION POINT -- surfaced to user 2026-05-30): the wm instrument
+cannot be made sound by controller-side wiring; it needs a selectivity CARRIER that is
+both stable and lesion-ablatable. This is a deeper redesign, not a tweak. Two
+biology-grounded candidates, both genuine next steps:
+  (A) Hippocampal DG pattern-separation as the selectivity carrier (DG orthogonalizes
+      reps AND is a lesionable subsystem) -- replaces STDP-on-cortex as the selectivity
+      source. This is exactly where the D-arc independently pointed.
+  (B) A homeostatic / anti-Hebbian normalization rule that STABILIZES selectivity
+      (prevents the unbound-pool creep) rather than the plain Hebbian STDP that erodes
+      it -- keeping STDP lesion-ablatable but making it stable.
+Both reuse-by-import only (no new autograd; no protected/frozen/moat edits). Decisive
+multi-seed run STAYS UNLAUNCHED (v1 wm < 0.90, correctly). The frozen verdict + the
+two-phase controller + the grounding discipline all held; the ep result is a real
+partial win banked. Awaiting owner steer on A vs B (or park the integrated-loop
+instrument here as an honest characterized NEGATIVE and pick the next goal-aligned
+arc). (D8 smoke killed 2026-05-30; marginal post-closure.)
 
 OLD NEXT ACTION (superseded): Task 2 — build the two-phase controller +
 order-preserving index readout in the spiking bridge
