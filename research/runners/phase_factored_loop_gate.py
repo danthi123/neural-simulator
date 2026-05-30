@@ -28,10 +28,17 @@ learning rule, NO autograd):
     the offline separation moves the reps, and the order-index may not
     survive without this update (research/findings/2026-05-30-phase-
     factored-cheap-probe-RESOLVES-with-honest-caveats.md).
-  Readout 1 (wm / concept query): "is concept X in the buffer?" -- rank
-    the cortical concept (filler) pools by firing during a role query
-    and pass through the validated abstention gate; selectivity built
-    OFFLINE.
+  Readout 1 (wm / concept query): "is concept X in the buffer?" --
+    retrieve the queried role's bound filler through the DG/engram path:
+    stimulate the role's PER-BINDING engram tag (the SAME stimulate_tag
+    -> DG-separated CA3 completion + cortical reactivation the ep readout
+    uses), rank the filler pools by reactivation, pass through the
+    validated abstention gate. This routes wm retrieval through the
+    validated engram mechanism instead of the eroding cortical
+    dlpfc_verb->filler STDP selectivity (the diagnosed instrument-
+    soundness failure, research/findings/2026-05-30-phase-factored-
+    fullscale-grounding-INSTRUMENT-UNSOUND-wm-nondiscriminating.md) --
+    changing WHICH existing mechanism carries retrieval, NOT a new rule.
   Readout 2 (ep / episodic order): "what came after X?" -- recover the
     serial order from the gamma-slot order of the consolidated index
     replay; order built ONLINE.
@@ -195,24 +202,39 @@ def _episode(bridge, mode, pairs, P, ctx):
     PRESENTATION ORDER; the shared theta-gamma clock assigns binding k a
     gamma sub-cycle (SHIFT rule rotates the assembly across theta so
     serial order is recoverable), the BG cascade gates the matching WM
-    slot, and the engram-tagging API records + commits the episode
-    (hippocampal index). The ONLINE order readout (Readout 2 source) is
-    written here. The concept-SELECTIVITY plasticity gates are FROZEN
-    during this in-order pass (design-aligned fix 2026-05-30) so the
+    slot, and the engram-tagging API records + commits BOTH (a) the
+    whole-episode tag (the hippocampal ORDER INDEX the ep readout
+    completes) AND (b) a PER-BINDING tag per (role, filler) -- the WM-side
+    DG/engram relational store the reworked wm readout retrieves through
+    (the role pool + the BOUND filler pool + the DG-separated ca3
+    ensemble). The two recordings run concurrently (the engram-API
+    recordings dict is keyed by name). The ONLINE order readout (Readout 2
+    source) is written here. The concept-SELECTIVITY plasticity gates are
+    FROZEN during this in-order pass (design-aligned fix 2026-05-30) so the
     fixed-order presentation does NOT write the winner-take-most
-    lang->filler selectivity; only the spike-count engram ORDER INDEX is
-    written here (ep preserved).
+    lang->filler selectivity (the OLD wm path eroded here); only the
+    spike-count engram ORDER INDEX + the per-binding ensemble tags are
+    written here (ep preserved; wm now carried by the engram tags).
 
-    PHASE 2a (OFFLINE, shuffled): build cortical concept SELECTIVITY via
+    PHASE 2a (OFFLINE, shuffled): build cortical concept selectivity via
     the validated v16 shuffled teacher co-firing + STDP (the SAME
     (role, filler) pairs presented in a deterministic cross-mode-identical
-    SHUFFLED order, selectivity gates thawed). Selectivity built shuffled/
-    offline -> the wm role-query becomes role-SELECTIVE WITHOUT imposing
-    an order on the index (ep preserved).
-    PHASE 2b (OFFLINE, shuffled): replay the committed tag via the
-    validated Phase-1.3 SWR consolidation under set_sleep_gates
+    SHUFFLED order, selectivity gates thawed). This still builds the
+    cortical concept reps (off-the-readout-path now that wm retrieves via
+    the engram tags) WITHOUT imposing an order on the index (ep preserved).
+    PHASE 2b (OFFLINE, shuffled): replay the committed whole-episode tag
+    via the validated Phase-1.3 SWR consolidation under set_sleep_gates
     (randomize_order=True), updating the ca1->concept index pointer
     (the ep-side substrate-caveat insurance). Then freeze for evaluation.
+
+    READOUT 1 (wm): for the queried role, stimulate its PER-BINDING
+    engram tag(s) over the readout window (multitag stim-recall, the SAME
+    stimulate_tag -> DG-separated CA3 completion + cortical reactivation
+    the ep readout uses) and rank the filler pools by reactivation. This
+    REPLACES the eroding cortical dlpfc_verb->filler STDP selectivity
+    (the diagnosed instrument-soundness failure) with the validated
+    DG/engram mechanism -- changing WHICH existing mechanism carries
+    retrieval, NOT inventing a new one.
 
     Returns (wm_acc, ep_acc). Every mode draws the SAME random numbers in
     the SAME order (the only per-trial rng consumer is _make_pairs in
@@ -265,6 +287,33 @@ def _episode(bridge, mode, pairs, P, ctx):
     if mode != "no_hippo_store":
         bridge.start_engram_recording(tag)
         _log("engram:start_recording")
+
+    # WM-SIDE relational store (DG/engram per-binding tags). The OLD wm
+    # readout retrieved role->filler via CORTICAL dlpfc_verb->filler STDP
+    # selectivity, which ERODES on this substrate (repeated selectivity
+    # training degrades the topographic prior's clean margin -> a role
+    # query lights ALL filler pools ~equally -> v1 wm ~= chance; the
+    # diagnosed instrument-soundness failure, research/findings/
+    # 2026-05-30-phase-factored-fullscale-grounding-INSTRUMENT-UNSOUND-wm-
+    # nondiscriminating.md). THE FIX (de-risked GO): route wm retrieval
+    # through the SAME DG-separated hippocampal ENGRAM path the ep readout
+    # already uses to reach ep=1.0. Per (role, filler) binding we commit a
+    # PER-BINDING engram tag capturing that binding's co-active ensemble
+    # (the role pool + the BOUND filler pool + the DG-separated ca3
+    # ensemble). At query the role's per-binding tag is stimulated ->
+    # CA3 pattern completion + the cortical role/filler ensemble reactivate
+    # -> the BOUND filler pool out-fires the others (engram stim-recall,
+    # 87.5% multi-seed; multitag cue retrieval 90% FULL multi-seed). This
+    # is the SAME mechanism, NOT a new learning rule -- it changes WHICH
+    # validated mechanism carries retrieval. bind_tags_by_role maps each
+    # role index to the per-binding tag(s) committed for it THIS epoch
+    # (with the bijection _make_pairs draws, exactly one tag per role; the
+    # multitag aggregation degenerates to a single tag here but is written
+    # general so a future many-to-one role would stim ALL its tags).
+    # SKIPPED for no_hippo_store exactly like the whole-episode tag (the
+    # per-binding tags ARE the wm-side relational store -> wm collapses
+    # WITH ep under no_hippo_store, a SHARED lesion).
+    bind_tags_by_role = {}
 
     for bi, (ridx, fidx) in enumerate(pairs):
         # Shared clock decides this binding's gamma sub-cycle; the
@@ -352,6 +401,18 @@ def _episode(bridge, mode, pairs, P, ctx):
         except Exception:
             pass
 
+        # Begin this binding's PER-BINDING engram recording RIGHT BEFORE
+        # its stim window, so the recording accumulates spike counts over
+        # exactly the (role, filler) co-fire (the engram-API recordings
+        # dict is keyed by name, so this runs concurrently with the
+        # whole-episode recording -- both _tick on every step). Skipped
+        # for no_hippo_store (the wm-side relational store is the hippo
+        # store; skipping it collapses wm with ep).
+        bind_tag = "pf_ep%d_bind%d" % (ctx["episode_id"], bi)
+        if mode != "no_hippo_store":
+            bridge.start_engram_recording(bind_tag)
+            _log("engram:start_recording_bind")
+
         for _ in range(P["stim_steps"]):
             _step(bridge)
             clk_wm.step()
@@ -377,6 +438,47 @@ def _episode(bridge, mode, pairs, P, ctx):
             if clk_hip is not clk_wm:
                 clk_hip.step()
             bridge.core_config.current_reward_signal = 0.0
+
+        # Commit THIS binding's per-binding engram tag over the role pool
+        # + the BOUND filler pool + the DG-separated ca3 ensemble. top_k
+        # is sized to the three regions' co-firing cells (role+filler ~=
+        # 2*n_per_pool, ca3 ~= n_ca3). The tag's SELECTIVITY is carried by
+        # which sub-population actually co-fired in this window:
+        #   * full: the BG cleanly gates one dlpfc slot -> only the BOUND
+        #     filler pool's dlpfc_verb->filler efferent reinforces the
+        #     teacher, so under the per-pool FS WTM the BOUND filler wins
+        #     and its cells dominate the tag; ca3 holds the DG-separated
+        #     binding ensemble -> stimulating the tag reactivates the
+        #     BOUND filler preferentially (wm works).
+        #   * no_bg_gate (HELPER_WM): ALL BG channels driven -> ALL dlpfc
+        #     slots fire -> ALL filler efferents inject -> the per-pool FS
+        #     WTM has no single winner -> the tag's filler-pool content is
+        #     SMEARED across pools -> stimulating it does not preferentially
+        #     reactivate the BOUND filler -> wm collapses; ep survives (the
+        #     clock-ordered, spike-count whole-episode index is BG-gating-
+        #     independent).
+        #   * no_binding (SHARED): the dlpfc holding bias is suppressed ->
+        #     the BG-selected slot never crosses threshold -> the
+        #     dlpfc_verb->filler efferent stays silent + the relational
+        #     ca3 assembly is degenerate -> the per-binding tag is
+        #     degenerate/non-selective -> wm collapses (and the order index
+        #     degrades -> ep collapses).
+        #   * no_shared_clock / no_neuromod_timing: the co-fire/ACh window
+        #     desyncs or is untimed -> the bound ensemble forms poorly ->
+        #     the tag is degraded -> wm collapses (with ep).
+        if mode != "no_hippo_store":
+            try:
+                bridge.commit_engram_tag(
+                    bind_tag,
+                    top_k=2 * int(P["n_per_pool"]) + 100,
+                    region_filter=[
+                        "noun_pool_%s" % _ROLE_POOLS[ridx],
+                        "noun_pool_%s" % _FILLER_POOLS[fidx],
+                        "ca3"])
+                bind_tags_by_role.setdefault(ridx, []).append(bind_tag)
+                _log("engram:commit_tag_bind")
+            except Exception:
+                pass
 
     # Finalize the episode tag over the hippocampal regions only (the
     # relational store). Skipped for no_hippo_store.
@@ -604,9 +706,22 @@ def _episode(bridge, mode, pairs, P, ctx):
         _log("phase2:offline_consolidate:skipped")
 
     # =================================================================
-    # READOUT 1 (wm / concept query): rank the cortical concept (filler)
-    # pools by firing during a role query; pass through the validated
-    # abstention gate. Selectivity built OFFLINE in Phase 2.
+    # READOUT 1 (wm / concept query): retrieve the queried role's bound
+    # filler through the DG/engram path -- the SAME stimulate_tag ->
+    # DG-separated CA3 completion + cortical ensemble reactivation the ep
+    # readout already uses to reach ep=1.0 (NOT the old, eroding cortical
+    # dlpfc_verb->filler STDP "drive role code + rank pool firing" path).
+    # For the queried role we stimulate its per-binding tag(s) over the
+    # readout window (multitag stim-recall: stim ALL of the role's tags
+    # concurrently each step, additive -- with the _make_pairs bijection
+    # each role has exactly one tag, so this degenerates to a single tag
+    # but is written general) and rank the filler pools by reactivation.
+    # The gate, the [("F%d",count,"wm"),...] ranking shape, the
+    # _wm_raw(...) passive sink, and the scoring (correct iff gated top ==
+    # true filler) are UNCHANGED. NO rng is drawn here (deterministic
+    # sorted tag order), so the shared per-trial rng -- whose SOLE
+    # consumer is _make_pairs in _run_mode -- is untouched (the
+    # lesion-fidelity discipline holds).
     # =================================================================
     wm_correct = 0
     n_q = len(pairs)
@@ -622,18 +737,34 @@ def _episode(bridge, mode, pairs, P, ctx):
         else:
             true_fidx = fidx
             q_ridx = ridx
+        # The role's per-binding tag(s) committed this epoch (empty under
+        # no_hippo_store -> nothing to stimulate -> the gate abstains ->
+        # wm collapses with ep, the SHARED-lesion signature).
+        q_tags = sorted(bind_tags_by_role.get(q_ridx, []))
         bridge.cp_external_input_current[:] = 0.0
         for _ in range(P["reset_steps"]):
             _step(bridge)
-        dq = cp.asarray(_code(q_ridx, 2 * _MAX_LOAD, n_lang,
-                              P["role_pA"], P), dtype=cp.float32)
-        bridge.cp_external_input_current[lang] = dq
-        for _ in range(P["stim_steps"] + P["gap_steps"]):
-            _step(bridge)
         counts = np.zeros(_MAX_LOAD, dtype=np.float64)
         for _ in range(P["readout_steps"]):
+            # Stimulate the role's engram tag(s) (additive so multiple
+            # tags for one role aggregate; the first additive write needs
+            # a cleared drive each step). Then step and accumulate the
+            # filler-pool reactivation.
+            bridge.cp_external_input_current[:] = 0.0
+            for _bt in q_tags:
+                try:
+                    bridge.stimulate_tag(_bt, float(P["tag_stim_pA"]),
+                                         additive=True)
+                except Exception:
+                    pass
             _step(bridge)
             counts += _counts(bridge, filler_arr)
+        for _bt in q_tags:
+            try:
+                bridge.clear_tag_drive(_bt)
+            except Exception:
+                pass
+        bridge.cp_external_input_current[:] = 0.0
         # Rank fillers; trustworthy gate at DEFAULT_THRESHOLD.
         order = np.argsort(-counts)
         ranked = [("F%d" % int(j), float(counts[j]), "wm")
@@ -654,11 +785,18 @@ def _episode(bridge, mode, pairs, P, ctx):
     # =================================================================
     ep_acc = _episodic_order_readout()
 
-    # Drop the per-episode tag so tags don't accumulate across trials.
+    # Drop the per-episode tag AND the per-binding tags so tags don't
+    # accumulate across trials/epochs.
     try:
         bridge.delete_engram_tag(tag)
     except Exception:
         pass
+    for _tags in bind_tags_by_role.values():
+        for _bt in _tags:
+            try:
+                bridge.delete_engram_tag(_bt)
+            except Exception:
+                pass
     bridge.cp_external_input_current[:] = 0.0
     # Restore awake gates for the next trial (symmetric with the
     # freeze above).
