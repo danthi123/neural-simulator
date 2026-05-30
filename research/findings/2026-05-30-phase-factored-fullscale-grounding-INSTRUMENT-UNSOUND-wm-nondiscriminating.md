@@ -37,3 +37,15 @@ Per the design's iterate-following-biology discipline:
 ## Discipline
 
 No bar moved. No protected/frozen/moat module touched (the controller + verdict are unchanged; this is a probe finding). No science claim -- the instrument is unsound, so the composition question is unmeasured. Honest: the decisive run is not ready; the wm readout needs fixing first; the ep substrate-caveat is real and awaits a sound instrument to measure.
+
+## Root-cause diagnosis (code inspection, post-probe)
+
+The wm readout (phase_factored_loop_gate.py:400-443) drives a ROLE code onto language_input and ranks the cortical FILLER pools (noun_pool_F*) by firing, gated at DEFAULT_THRESHOLD=650 -- i.e. it is a role->filler BINDING query ("what filler is bound to this role?"), inherited structurally from the parked runner. For it to score above chance it needs a learned role->filler association that reactivates the correct filler when the role is queried. Two candidate root causes (a distinguishing probe is the next step):
+
+- **Hypothesis A -- the role->filler binding is not built/maintained.** The single-pass parked loop drilled role->filler via teacher-forced training epochs. The phase-factored split replaced that with Phase 1 (one-shot engram tag of the co-firing ensemble) + Phase 2 (offline consolidation). A one-shot engram tag is an index, not a drilled synaptic role->filler pathway; if neither phase strengthens lang(role)->filler_pool for the specific binding, the role query retrieves a filler only at chance -> wm=0.5. The working-memory query may need the PFC working-memory maintenance arm (dlpfc) to hold the role->filler binding, which is listed in the design but may not be wired into THIS readout path.
+
+- **Hypothesis B -- Phase 2's consolidation mechanism builds the wrong selectivity.** The parked iteration-4 built queryable selectivity with the validated train_word_to_pool (shuffled co-firing + topographic prior). Phase 2 here uses run_concept_replay_phase (SWR replay of engram tags) -- a DIFFERENT mechanism that consolidates hippocampus->cortex but may not strengthen the lang(role)->filler_pool readout pathway the wm query reads. If so, the offline phase builds the wrong thing for this readout.
+
+Distinguishing probe (next): measure wm right after Phase 1 (before Phase 2), and with Phase 2 swapped to train_word_to_pool vs run_concept_replay_phase. If wm is sound after Phase-1-only or with train_word_to_pool, the issue is Phase 2's mechanism (B); if wm is chance even then, the role->filler binding/maintenance is missing (A).
+
+Either way this is an integration-fidelity correction (reuse-preserved; no frozen bar moved; no protected module touched), exactly the design's iterate-following-biology step. The ep substrate-caveat (Problem 2) is downstream of a sound wm instrument.
