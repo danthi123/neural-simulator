@@ -95,7 +95,14 @@ partial win banked. FORK SURFACED TO OWNER 2026-05-30: (A) commit to the multi-d
 selectivity-carrier redesign [recommended, goal-aligned: lifts the substrate ceiling
 that blocks BOTH this arc and the D-arc]; OR park the integrated-loop instrument here
 as an honest characterized NEGATIVE + banked ep win, and pick the next goal-aligned
-arc. (D8 smoke killed 2026-05-30; marginal post-closure.)
+arc.
+DEFAULT (watchdog/next-session, no owner steer present): begin path A's CHEAPEST-FIRST
+de-risk -- a focused read of the trisynaptic-loop builder + validate_trisynaptic_loop
+runner (already P1-validated) to confirm DG can be wired as the wm selectivity carrier
+reuse-by-import (no new rule, no protected/frozen/moat edit) BEFORE any spiking build.
+If that de-risk shows DG is not cleanly wireable as the carrier, record the honest
+cheap NEGATIVE and park the arc. Do NOT launch the decisive run until v1 wm>=0.90.
+(D8 smoke killed 2026-05-30; marginal post-closure.)
 
 OLD NEXT ACTION (superseded): Task 2 — build the two-phase controller +
 order-preserving index readout in the spiking bridge
