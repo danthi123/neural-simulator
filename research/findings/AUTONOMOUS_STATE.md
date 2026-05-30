@@ -132,6 +132,33 @@ new rule/autograd; no protected/frozen/moat edit; engram API reuse byte-unchange
      wm sound -> honest NEGATIVE (DG/engram per-binding retrieval also can't make the wm
      instrument sound at this scale) -> park.
 Decisive multi-seed run stays UNLAUNCHED until v1 wm>=0.90.
+
+IN FLIGHT 2026-05-30: implementer subagent building the engram-based wm retrieval
+(background). On its completion the CONTROLLER must, BEFORE any decisive run, run the
+PRE-STAGED RE-REVIEW on the diff (the wm readout changed post-Task-4, so the Task-4
+review is stale):
+  R1 [SELECTIVITY SMELL-TEST -- the load-bearing one]: scrutinize the _wm_raw raw filler
+     counts on the scored v1 queries. A real PASS = the TRUE filler fires HIGH and the
+     other 7 fire LOW (selective retrieval). A FALSE pass = all 8 fillers fire ~equally
+     and the gated top is correct only by luck / because v1's drilled query trivially
+     matches. Scrutinize a PASS HARDER than a FAIL. If v1 wm>=0.90 but raw counts show
+     non-selective firing, it is NOT sound -> treat as NO-GO.
+  R2: the engram path is REAL (per-binding tags + stimulate_tag), not a relabeled
+     re-introduction of the eroding cortical dlpfc_verb->filler STDP.
+  R3: 7-lesion partition holds at FULL scale (not just tiny-synth): SHARED
+     (no_binding/no_shared_clock/no_hippo_store) collapse BOTH; HELPER_WM (no_bg_gate)
+     collapses wm not ep; HELPER_EP (no_sequencing/no_cls_replay) collapses ep not wm --
+     and each collapses for the RIGHT mechanistic reason via the new engram path.
+  R4: RNG faithfulness (_make_pairs SOLE shared-rng consumer; any new tag-stim-order rng
+     is a dedicated cross-mode-identical local rng); integrated_loop_core.py byte-empty;
+     4 validated subsystems byte-unchanged; no new rule/autograd; moat 7/7; ep still 1.0.
+Only if the re-review is CLEAR on all four -> re-confirm decisive cache empty
+(research/findings/raw/phase_factored_decisive_cache/ -- verified empty 2026-05-30) ->
+run the controller-only decisive multi-seed (phase_factored_decisive.py, seeds 42/43/44,
+ladder N=2/4/8) -> mandatory smell-test on the recorded JSON -> honest propagation both
+remotes. If NO-GO at v1 -> honest NEGATIVE finding (DG/engram per-binding retrieval also
+cannot make the wm instrument sound at this scale) -> park the integrated-loop instrument
++ bank the ep-decoupling win + surface the next goal-aligned arc.
 (D8 smoke killed 2026-05-30; marginal post-closure.)
 
 OLD NEXT ACTION (superseded): Task 2 — build the two-phase controller +
