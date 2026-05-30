@@ -108,3 +108,59 @@ def test_run_rung_values_are_finite_in_unit_interval():
             v = p[fld]
             assert math.isfinite(v), "%r not finite" % v
             assert 0.0 <= v <= 1.0, "%r out of [0,1]" % v
+
+
+# ---------------------------------------------------------------------------
+# Increment 2: phase-ordering pin -- Phase 1 (online bind) MUST run
+# BEFORE Phase 2 (offline consolidate). A swapped order is a bug.
+# ---------------------------------------------------------------------------
+def _capture_event_log(mod, mode="full", N=2, gap_zero=False):
+    """Run ONE tiny-synth _run_mode with the passive phase-event sink
+    enabled and return the recorded ordered marker list. The sink is a
+    passive recorder (None in every real run); enabling it changes NO
+    drive/gate/RNG/score -- it only RECORDS phase boundaries."""
+    mod._EVENT_LOG = []
+    try:
+        mod._run_mode(mode, 42, N, True, gap_zero=gap_zero)
+        return list(mod._EVENT_LOG)
+    finally:
+        mod._EVENT_LOG = None
+
+
+def test_phase1_online_bind_runs_before_phase2_offline_consolidate():
+    """The controller must call online-bind (Phase 1) BEFORE
+    offline-consolidate (Phase 2). Pin via the ordered phase-event log:
+    the Phase-1 'phase1:online_bind:done' marker precedes the Phase-2
+    'phase2:offline_consolidate:start' marker in EVERY epoch."""
+    mod = _import_controller()
+    log = _capture_event_log(mod, mode="full", N=2)
+    assert "phase1:online_bind:done" in log, (
+        "Phase 1 (online bind) marker absent: %r" % log)
+    assert "phase2:offline_consolidate:start" in log, (
+        "Phase 2 (offline consolidate) marker absent: %r" % log)
+    i_p1_done = log.index("phase1:online_bind:done")
+    i_p2_start = log.index("phase2:offline_consolidate:start")
+    assert i_p1_done < i_p2_start, (
+        "PHASE ORDER BUG: Phase 2 (offline consolidate, idx %d) ran "
+        "BEFORE Phase 1 finished binding (idx %d). Online-bind MUST "
+        "precede offline-consolidate. Log: %r"
+        % (i_p2_start, i_p1_done, log))
+
+
+def test_engram_write_precedes_consolidation_replay():
+    """The engram WRITE (start_engram_recording -> commit_engram_tag,
+    the Phase-1 hippocampal index) must complete BEFORE the Phase-2
+    consolidation replay starts -- the consolidation replays the
+    committed tag, so committing it first is load-bearing."""
+    mod = _import_controller()
+    log = _capture_event_log(mod, mode="full", N=2)
+    assert "engram:start_recording" in log
+    assert "engram:commit_tag" in log
+    assert "phase2:offline_consolidate:start" in log
+    i_rec = log.index("engram:start_recording")
+    i_commit = log.index("engram:commit_tag")
+    i_consol = log.index("phase2:offline_consolidate:start")
+    assert i_rec < i_commit < i_consol, (
+        "engram write order bug: start(%d) -> commit(%d) -> "
+        "consolidate(%d) must be ascending. Log: %r"
+        % (i_rec, i_commit, i_consol, log))
