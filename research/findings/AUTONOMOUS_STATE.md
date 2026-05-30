@@ -175,9 +175,21 @@ The integrated-loop wm-emergence thesis (role-filler binding retrieval) is NOT s
 this substrate. BANKED + unaffected: ep-decoupling validated (ep=1.0 both iters); engram v1
 soundness is genuinely SELECTIVE (R1 probe buzja4s2j confirming true filler >> distractors).
 
-FINAL pending micro-step: read R1 probe (buzja4s2j) -> quote exact selectivity in the finding
-doc -> commit finding + push both remotes. (R1 only confirms the soundness sub-claim; it does
-NOT change the VOID.)
+R1 DONE 2026-05-30: v1 retrieval DECISIVELY SELECTIVE at full scale (true filler 15x-400x over
+distractors; cleanest queries true ~6000-6900 vs distractors <=15). The engram store is a
+reliable, sharply selective role-filler memory -- the v1 soundness PASS is real (scrutinized
+harder than a FAIL, holds up massively). Finding doc finalized + committed (7f662e0 + R1
+sharpen). ARC iteration-2 fully recorded.
+
+>>> INTEGRATED-LOOP wm-EMERGENCE ARC CONCLUDED (honest VOID, two horns characterized). <<<
+Next per DEFAULT A: pivot to the next GOAL-ALIGNED arc (conversational capability / artificial
+life), banking (i) ep-decoupling validated, (ii) engram = reliable selective role-filler memory,
+(iii) the two-horns substrate finding. Do NOT auto-start path B (loop-gated readout = deeper
+redesign, reopens instability) without explicit owner steer. When picking the next arc, honor
+the standing reframes: check existing biology-grounded sims FIRST; build conversation on the
+biological conflict-resolution mechanisms (SPEAR theta-multiplexing / theta-gamma / generative
+replay), NOT static retrieval/RAG; bug-discovery-first on chance results; 0.80 multi-seed bar
+frozen; moat 7/7 never weakened.
 
 DECISION POINT (surfaced to owner; recommend A): (A) PARK the integrated-loop wm-emergence
 thesis as a characterized VOID + bank the ep win, pivot to the next goal-aligned arc
