@@ -154,12 +154,31 @@ _FULL = dict(
 # parked _SELFCHECK_SINK / _DIAG_SINK passive-sink discipline.
 _EVENT_LOG = None
 
+# Passive RAW-wm-readout sink (same zero-effect discipline as _EVENT_LOG):
+# None in every real/decisive run. A diagnostic sets it to a list; the wm
+# readout then APPENDS (true_fidx, raw_filler_counts, gated_decision) at
+# each query so a diagnostic can see WHETHER the correct filler out-fires
+# distractors (binding works; gate may be mis-calibrated) or not (the
+# role-query does not reactivate the bound filler). It only RECORDS
+# already-computed values; it never alters any drive/gate/RNG/score.
+_WM_RAW_SINK = None
+
 
 def _log(event):
     """Append `event` to the passive phase-event sink if a test enabled
     it; a no-op (zero overhead) otherwise."""
     if _EVENT_LOG is not None:
         _EVENT_LOG.append(event)
+
+
+def _wm_raw(true_fidx, counts, decision):
+    """Passive diagnostic sink: record raw wm-query outcome. No-op unless a
+    diagnostic enabled it. Records ONLY already-computed values; zero effect
+    on any drive/gate/RNG/score (mirrors _log)."""
+    if _WM_RAW_SINK is not None:
+        _WM_RAW_SINK.append(
+            (int(true_fidx), [float(c) for c in counts],
+             None if decision is None else str(decision[0])))
 
 
 def _episode(bridge, mode, pairs, P, ctx):
@@ -434,6 +453,7 @@ def _episode(bridge, mode, pairs, P, ctx):
         ranked = [("F%d" % int(j), float(counts[j]), "wm")
                   for j in order]
         decision = gate(ranked, DEFAULT_THRESHOLD)
+        _wm_raw(true_fidx, counts, decision)  # passive diagnostic sink
         # Wrong emission AND abstention-on-a-groundable-query both score
         # 0; only a correct gated emission scores 1.
         if decision is not None and \
