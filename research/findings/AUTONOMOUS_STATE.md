@@ -9,7 +9,44 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## ACTIVE ARC 2026-05-30: phase-factored integrated closed-loop (goal pivot after closing the D-arc)
+## ACTIVE ARC 2026-05-30 (PM): conversational-ceiling AUDIT (owner chose "audit the ceiling")
+
+Integrated-loop wm-emergence arc CONCLUDED (two-horns VOID, below). Owner picked A=pivot,
+then for the next arc chose "audit the ceiling" over building phase-coded VSA. Survey found
+the conversational line already ran 8+ decisive arcs (theta-gamma cue-supp / gentle-replay
+6th-arc local-optimum 0.458 / SPEAR phase-multiplex 0.00 / Pirazzini / generative-replay /
+staged-recurrence) all NEGATIVE/VOID, framed as a REPRESENTATION ceiling prescribing
+phase-coded VSA (Orchard spiking-phasor FHRR; resonate_fire_fhrr.py exists). Audit verifies
+that premise before the big build.
+
+PHASE 1 DONE (no GPU, code-read; finding doc 2026-05-30-ceiling-audit-phase1-headline-numbers-
+conflate-pipelines-composition-IS-decodable-at-0.46.md):
+  - SPEAR full_acc=0.00 gated on RAW FIRING RATE @650 moat (spear...runner.py:515-528). The
+    SPEAR units-bug hypothesis (cosine ranked @650 -> trivial abstain) is FALSIFIED (readout
+    is genuinely firing-rate scale).
+  - BUT headline numbers CONFLATE pipelines: 6th/8th-arc full_acc (0.458/0.315) is lang_output
+    COSINE gated @ COMPOSITIONAL_UNIFIED_THRESHOLD=0.1977 (cosine scale); SPEAR is firing-rate
+    sum @650. Non-comparable -> "8 arcs converge on ~0.46/0.00 ceiling" is a loose framing.
+  - Composition IS decodably represented at ~0.46 TRUSTWORTHY gated emission (6th-arc cosine,
+    calibrated gate, margins 0.064-0.118) -> the "composition not a structured decodable
+    object / phase-coded VSA needed to make it representable AT ALL" framing is OVERSTATED.
+  - Honest: the LITERAL pre-registered artifact (a)="raw vs gated" was NOT met (both gated);
+    reported the related conflation + ceiling-reframe instead. Does NOT dissolve the ceiling
+    (~0.46 is a real cap below 0.80).
+
+PHASE 2 (decisive, pending owner nod; cheap reuse-probe): latent-composition decode probe on
+an existing validated bridge -- can a HELD-OUT linear/NN decoder recover the composed answer
+ABOVE the 0.46 cap (and >> chance) from the composed-query state where the spiking readout is
+capped? Pre-registered: READOUT-LIMIT (artifact b) if a held-out decoder >= 2x the spiking
+readout on the same states; REPRESENTATIONAL CEILING CONFIRMED if no decoder beats ~0.46 by a
+margin; three-state. Settles whether the 0.46->0.80 gap is representational (-> phase-coded VSA
+warranted) or readout-limited (-> cheaper readout/cleanup fix unlocks existing mechanisms).
+DEFAULT (no steer): proceed Phase 2 (cheap, reuse-by-import; surface design before any heavy
+run). Phase-coded VSA arc NOT started -- the audit gates it.
+
+---
+
+## CONCLUDED ARC 2026-05-30: phase-factored integrated closed-loop (goal pivot after closing the D-arc)
 
 D-arc CLOSED at pillar n=110 (cross-bridge FHRR-scaffold capacity track done;
 synthesis bbbf98f). Pivoted to the goal-aligned work: the phase-factored
