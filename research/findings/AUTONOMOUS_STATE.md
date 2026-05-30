@@ -73,18 +73,29 @@ EXACT NEXT ACTION (DECISION POINT -- surfaced to user 2026-05-30): the wm instru
 cannot be made sound by controller-side wiring; it needs a selectivity CARRIER that is
 both stable and lesion-ablatable. This is a deeper redesign, not a tweak. Two
 biology-grounded candidates, both genuine next steps:
-  (A) Hippocampal DG pattern-separation as the selectivity carrier (DG orthogonalizes
-      reps AND is a lesionable subsystem) -- replaces STDP-on-cortex as the selectivity
-      source. This is exactly where the D-arc independently pointed.
-  (B) A homeostatic / anti-Hebbian normalization rule that STABILIZES selectivity
-      (prevents the unbound-pool creep) rather than the plain Hebbian STDP that erodes
-      it -- keeping STDP lesion-ablatable but making it stable.
+  (A) [RECOMMENDED] Hippocampal DG pattern-separation as the selectivity carrier (DG
+      orthogonalizes reps AND is a lesionable subsystem -> satisfies lesion-collapse) --
+      replaces STDP-on-cortex as the selectivity source. Where the D-arc independently
+      pointed. Largely BUILT + P1-validated (trisynaptic loop: D.12 separation 3/3,
+      D.13 completion). Function-matched to the failure (DG's job IS clean separation).
+      Still a multi-day redesign: wire DG as the wm selectivity carrier, re-validate
+      the instrument (v1 wm>=0.90), re-review, then decisive run.
+  (B) [DE-RISKED OUT as cheap reuse] homeostatic stabilization. Cheapest-first probe
+      (this turn) found the bridge's existing homeostasis (enable_synaptic_scaling,
+      Turrigiano 2008, bridge.py:5797-5827) is postsynaptic-RATE-HOMOGENIZING (pulls
+      every filler pool toward one target rate) -- that works AGAINST selectivity
+      (which needs bound-filler high / unbound low). A genuine stabilizer here is
+      divisive normalization across the filler population, which is a NEW learning rule
+      (conflicts with reuse-by-import / no-new-rule discipline). So B is NOT a clean
+      cheap reuse; A is the better-grounded path.
 Both reuse-by-import only (no new autograd; no protected/frozen/moat edits). Decisive
 multi-seed run STAYS UNLAUNCHED (v1 wm < 0.90, correctly). The frozen verdict + the
 two-phase controller + the grounding discipline all held; the ep result is a real
-partial win banked. Awaiting owner steer on A vs B (or park the integrated-loop
-instrument here as an honest characterized NEGATIVE and pick the next goal-aligned
-arc). (D8 smoke killed 2026-05-30; marginal post-closure.)
+partial win banked. FORK SURFACED TO OWNER 2026-05-30: (A) commit to the multi-day DG
+selectivity-carrier redesign [recommended, goal-aligned: lifts the substrate ceiling
+that blocks BOTH this arc and the D-arc]; OR park the integrated-loop instrument here
+as an honest characterized NEGATIVE + banked ep win, and pick the next goal-aligned
+arc. (D8 smoke killed 2026-05-30; marginal post-closure.)
 
 OLD NEXT ACTION (superseded): Task 2 — build the two-phase controller +
 order-preserving index readout in the spiking bridge
