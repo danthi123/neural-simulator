@@ -78,3 +78,24 @@ Make the wm query role-ADDRESSABLE and selective:
 2. Ensure filler-pool lateral inhibition (FS/WTA) is active at readout so one filler wins (the validated motor/concept-pool FS cross-inhibition pattern).
 3. Re-probe v1 soundness (both readouts >= 0.90) before the decisive run.
 This is a careful readout/retrieval rework -- the next concrete step. Until v1 wm >= 0.90, the decisive run stays unlaunched.
+
+## CRUX (reading the parked wm readout): non-selectivity is a PRE-EXISTING inherited problem + an implementation/design mismatch
+
+Reading integrated_loop_gate.py:1647-1736 (the parked loop's wm readout the phase-factored controller copied) shows it is STRUCTURALLY IDENTICAL and is surrounded by extensive UNRESOLVED diagnostic machinery: a "causal-liveness diagnostic", per-slot dlpfc tallies, an "order/persistence asymmetry hypothesis", and a 16-pool competition vector to see "which pools STEAL a weak bound pool's activity". I.e. the PARKED loop had the SAME non-selective wm retrieval problem and was actively (unsuccessfully) investigating it. The phase-factored loop inherited the problem by reusing the readout structure. This is not a new bug; it is the binding-retrieval problem this whole line of work has struggled with.
+
+**The actionable mismatch.** The phase-factored DESIGN says concept selectivity is built OFFLINE in Phase 2 (shuffled replay) so episodic order (Phase 1, online) survives. But the IMPLEMENTATION (_episode) builds the teacher-forced role->filler binding in PHASE 1, in FIXED presentation order, repeated identically across all 14 epochs (line 510-516: the bijection is drawn once and "presented interleaved-repeated" -- but the within-epoch order is fixed every epoch, NOT shuffled). Fixed-order teacher binding is exactly the winner-take-most regime that produces non-selective retrieval (the diagnostic: all fillers fire ~equally, correct top 1/8). Phase 2 (run_concept_replay_phase / SWR replay) does NOT add the shuffled co-firing selectivity that the validated v16 mechanism (train_word_to_pool) builds and that the parked iteration-4 PROVED makes wm selective.
+
+So: selectivity training is in the WRONG phase (Phase 1 in-order) and uses the WRONG mechanism (SWR replay in Phase 2 instead of shuffled teacher co-firing). The design intent -- selectivity OFFLINE + shuffled -- was not implemented; the code does selectivity ONLINE + in-order, which is the single-pass non-selectivity the split was meant to avoid.
+
+## Corrected fix (next iteration; the principled one)
+
+Restructure _episode to match the design intent:
+- Phase 1 (online, in-order): write the engram ORDER INDEX only (light); do NOT do the heavy teacher-forced selectivity binding in order.
+- Phase 2 (offline, SHUFFLED): build concept selectivity via the VALIDATED shuffled teacher co-firing mechanism (train_word_to_pool-style: shuffled (role,filler) co-fire + STDP), which iteration-4 proved makes wm selective. This is shuffled so it does NOT impose an order on the index (ep preserved).
+- Re-probe v1: require BOTH wm>=0.90 AND ep>=0.90 (the latter already works).
+
+This is the genuine test of the phase-factored thesis: selectivity built offline/shuffled gives a sound wm instrument WHILE the online order index keeps ep sound -- both readouts pass where the single pass had them mutually exclusive. If it works, v1 is sound and the decisive run proceeds. If wm becomes sound but ep breaks, the encode-order conflict is NOT actually resolved by the split (a deeper NEGATIVE). Either is a real result. This restructure changes the controller's encode mechanism -> it requires re-review before the decisive run.
+
+## Honest status
+
+The phase-factored build (Tasks 0-5) is sound and the order-readout works (v1 ep=1.0 -- a genuine partial success). But the wm instrument inherits a pre-existing binding-retrieval non-selectivity, traced to selectivity training being in the wrong phase/mechanism vs the design. The corrected fix (selectivity offline+shuffled) is the next iteration and is the actual test of the two-phase thesis. NOT a science result yet; the decisive run stays unlaunched until v1 wm>=0.90.
