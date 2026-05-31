@@ -124,16 +124,30 @@ K=4->K=6, adversarial CLEAR) -> queryable relational fact-memory (multi-seed 3/3
 architectural principle (separate storage universal; flat nesting/superposition NEGATIVE). 2 demos, pillar
 n=111, wiki-sync. ALL on the owner's conversation goal, ALL propagated both remotes. <<<
 
-EXACT NEXT CONCRETE ACTION (next arc = toward real conversation; cheap-first each, GPU for real runs):
-(1) LIVE-TEXT-INPUT integration -- drive a word SEQUENCE through lang_input -> concept-pool activity -> use
-that LIVE activity as the bind filler (vs cached denoise64 codes), with POSITIONAL role assignment (pos1->
-agent etc.; positions ARE the validated roles, so canonical-SVO parsing is ~free). This makes the relational
-fact-memory end-to-end from text. Requires the concept-pool bridge (build_biological_brain_regions/concept
-pools) + the coincidence bind bridge together -- a substantial 2-bridge or wire-pools-into-coincidence build;
-cheap-first = confirm a live-driven concept code (drive lang_input(word), capture pool activity) binds/recovers
-like the cached code. (2) LEARNED SYNTACTIC parser for non-canonical order (passive/questions) -- the big
-learning arc, after (1). Start with (1)'s cheap-first. Propagate every outcome to BOTH remotes.
-prior arc (multi-hop) below.
+LIVE-TEXT-INPUT integration DONE: end-to-end relational fact-memory from LIVE text (drive each word through
+the trained concept-pool bridge via activity_level_integration.build_substrate + capture_activity ->
+live concept-pool activity -> spiking bind -> relational query) RESOLVES multi-seed (42,43,44) all 1.000;
+front-end recognition 15-16/16; the bind is ROBUST to the recognition mislabel (uses distributed code, not
+pool label). Probe _insubstrate_live_text_relational_probe.py; demo compose_live_text_kb_demo.py.
+PARSER cheap-first DONE: voice-invariant role assignment ("dog chases cat" = "cat is chased by dog", same
+agent) requires CONJUNCTIVE position*voice coding (position-only 0.000, additive 0.000, conjunctive 1.000;
+seeds 42/43/44). Voice = function-word PRESENCE ("by") + relative position -- TRACTABLE features, NOT the
+substrate's bounded ordered-sequence processing (the concern that nearly killed the arc; resolved). Probe
+_vsa_parser_voice_probe.py. SYNTHESIS finding written (the deliverable per goal): 6 biology-translatable
+insights (bind=coincidence; opponency=mean-centering; capacity=firing-rate not window; separate-storage
+universal; bind robust to recognition errors; parsing needs conjunctive coding) +
+2026-05-31-composition-in-spiking-substrate-SYNTHESIS.md. All committed+pushed.
+
+EXACT NEXT CONCRETE ACTION: build the SPIKING LEARNED PARSER (integration of validated pieces; the parser's
+representational gate is settled, so this is engineering + an honest STDP-acquisition test, not a science
+gate). Architecture: position codes (P4.1 positional_drive_pattern) + a voice code (function-word 'by'
+presence) -> a CONJUNCTIVE coincidence layer (AND(position,voice) = the VALIDATED coincidence primitive) ->
+STDP-learned conjunction->role mapping (reuse v16 STDP co-firing; the mapping is the 6 (position,voice) combos)
+-> parsed role gates the validated bind. Test: train on example active+passive sentences, then for held-out
+sentences confirm the agent is extracted VOICE-INVARIANTLY (active and passive forms -> same agent) end-to-end,
++ honest control. Cheap-first the STDP-acquisition (can STDP learn the 6-combo conjunctive mapping + does it
+compose with the bind). If STDP acquires it -> real syntactic understanding in-substrate; if not -> honest
+negative on STDP-learned role binding. Propagate every outcome to BOTH remotes. prior arc (multi-hop) below.
 
 TWO live threads:
 
