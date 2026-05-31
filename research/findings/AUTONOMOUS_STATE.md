@@ -109,16 +109,31 @@ pushed both. So the session arc is COMPLETE + COHERENT: spiking composition (K=6
 CLEAR) -> queryable spiking relational fact-memory (3/3 multi-seed) -> 2 owner-facing demos. On the owner's
 conversation goal.
 
-EXACT NEXT CONCRETE ACTION: KB-SCALING cheap-first (CPU numpy, fast) -- parametrize
-_vsa_relational_query_probe.py by n_facts and sweep [2,3,5,8,12] (distinct AGENTS for unambiguous cue,
-actions/patients may repeat) to characterize HOW MANY facts the separate-fact relational memory holds
-(find-by-cue may get false matches as N grows -> the KB capacity). RESOLVES at large N -> a real
-multi-fact knowledge base; degrades -> honest KB-size bound. THEN the learned role-filler PARSER arc (the
-big lever to real conversation): roles are currently SUPPLIED; infer them from input/word-order. Simplest
-positional parser (pos1->agent etc.) is ~trivial (positions ARE the roles); the real new work is (a)
-driving the bind from LIVE text input (lang_input word sequence -> concept-pool activity -> bind, vs cached
-codes) and (b) a learned syntactic parser for non-canonical order. Cheap-first each. Propagate every
-outcome to BOTH remotes. prior arc (multi-hop) below.
+KB-SCALING DONE: relational query holds 1.000 to N=12 facts (numpy ceiling, vocab-limited at 16 distinct
+agents, all 3 seeds) and N=5 facts (spiking, seed42 bias-500, 1.000) -- separate-fact storage = each fact
+an independent K=3 bind = no superposition interference. NESTED-COMPOSITION cheap-first NEGATIVE (honest):
+flat phrase-as-filler ("big dog goes north", agent = bound "big dog") fails at depth-2 (descend to recover
+the phrase's noun/modifier = chance 0.025-0.10; outer single-level 1.000) -- the superposition/multi-hop
+wall. ARCHITECTURAL PRINCIPLE established + recorded: SEPARATE STORAGE is the universal structure mechanism
+(multi-fact AND hierarchy); flat superposition/nesting hits the SNR wall. Hierarchy must use the relational-
+memory pattern (store "big dog" as a {head:dog, modifier:big} fact, reference dog, recover modifier by cue),
+not flat nesting. Committed+pushed (_vsa_nested_composition_probe.py + finding architectural-finding note).
+
+>>> SESSION ARC FULLY COMPLETE + CHARACTERIZED: spiking composition (3 primitives, bind/unbind multi-seed
+K=4->K=6, adversarial CLEAR) -> queryable relational fact-memory (multi-seed 3/3, scales to ~12 facts) ->
+architectural principle (separate storage universal; flat nesting/superposition NEGATIVE). 2 demos, pillar
+n=111, wiki-sync. ALL on the owner's conversation goal, ALL propagated both remotes. <<<
+
+EXACT NEXT CONCRETE ACTION (next arc = toward real conversation; cheap-first each, GPU for real runs):
+(1) LIVE-TEXT-INPUT integration -- drive a word SEQUENCE through lang_input -> concept-pool activity -> use
+that LIVE activity as the bind filler (vs cached denoise64 codes), with POSITIONAL role assignment (pos1->
+agent etc.; positions ARE the validated roles, so canonical-SVO parsing is ~free). This makes the relational
+fact-memory end-to-end from text. Requires the concept-pool bridge (build_biological_brain_regions/concept
+pools) + the coincidence bind bridge together -- a substantial 2-bridge or wire-pools-into-coincidence build;
+cheap-first = confirm a live-driven concept code (drive lang_input(word), capture pool activity) binds/recovers
+like the cached code. (2) LEARNED SYNTACTIC parser for non-canonical order (passive/questions) -- the big
+learning arc, after (1). Start with (1)'s cheap-first. Propagate every outcome to BOTH remotes.
+prior arc (multi-hop) below.
 
 TWO live threads:
 
