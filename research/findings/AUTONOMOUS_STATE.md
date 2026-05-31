@@ -91,16 +91,28 @@ encode_pair_engram_sparse) -- a real sparse-encode change + re-validation, DEFER
 already-shipped+sound capability). MULTI-HOP ARC COMPLETE: clean->hub-crowding DEGRADES->directional RESCUE->
 bimodality DIAGNOSED (recall-strength lottery)->simple fix NEGATIVE->deeper fix specified+deferred.
 
-EXACT NEXT CONCRETE ACTION: the night's READY cheap research is genuinely COMPLETE across all threads
-(multi-hop fully characterized + directional trace shipped; biological-symbol-grounding boundary thoroughly
-characterized incl. the substrate-can't-reach-near-orthogonal limit; watchdog infra fixed). The remaining
-directions are NOT cheap probes: (1) deeper balanced-teacher sparse-encode = marginal polish, deferred;
-(2) the genuinely-next BIOLOGICAL advance for composition needs a MONTHS-SCALE new-substrate effort (e.g.
-predictive-coding / sparse-autoencoder pretraining to LEARN near-orthogonal concept codes -- a different
-mechanism than the boundary-blocked readout approaches; or scale) = a STRATEGIC OWNER decision, NOT a
-tail-of-turn launch. Per the autonomous-runs "all ready work complete -> wiki-sync" guidance, capture this
-substantial arc (wiki-sync), then on the next cycle pursue the next direction via brainstorming->design->
-cheap-first with check-existing-first FIRST. Working P4 stack is the deliverable pending owner strategic input.
+NEAR-ORTHO BOUNDARY now DEFINITIVE (3 methods, 2026-05-31). Foldiak learned anti-Hebbian decorrelation (a
+genuinely-new, check-existing-first'd, biology-grounded mechanism; finding 2026-05-31-foldiak-learned-
+decorrelation-BOUNDARY-...md) = BOUNDARY: it DOES actively decorrelate to near-ortho (between 0.299, beating
+the fixed-random floor 0.488) BUT over-sparsifies -> within collapses 0.484 + 7/16 dead codes (the near-ortho
+is partly a dead-code artifact). So 3 independent coding methods -- spiking DG (0.66, within-collapse), fixed
+random projection (0.45 floor, reliable), learned decorrelation (0.30, over-sparsified) -- all sit on the SAME
+separation-vs-reliability frontier; NONE reaches near-ortho + reliable + all-alive. The near-orthogonality bar
+for clean VSA binding is a GENERAL property of the substrate activity's structure, NOT method-specific. The
+oracle near-ortho code (G.20 Kanerva-SDM) is genuinely IRREDUCIBLE from the substrate activity = an engineering
+component, not a shortcut a cleverer code removes. The biologize-the-VSA-symbol line is DEFINITIVELY boundary-
+characterized + banked as the biology-translatable deliverable.
+
+EXACT NEXT CONCRETE ACTION: all READY cheap research is genuinely COMPLETE + the biological-symbol-grounding
+boundary is now definitively characterized (3 convergent methods). The remaining directions are NOT cheap
+probes: (1) deeper balanced-teacher sparse-encode = marginal P4 polish, deferred; (2) the genuinely-next
+BIOLOGICAL escape needs a different SUBSTRATE (learn near-ortho concept reps BY CONSTRUCTION during
+acquisition -- predictive-coding/pretraining, months-scale) = a STRATEGIC OWNER decision, NOT a tail-of-turn
+launch; (3) scale V=640 = owner-flagged ~100hr, do NOT unilaterally launch. The working P4 stack is the
+deliverable pending owner strategic input. NEXT CYCLE: surface the strategic fork to the owner (accept the
+oracle + scale P4, OR commit to a months-scale new-substrate pretraining effort) and pursue whichever via
+brainstorming->design->cheap-first with check-existing-first FIRST. Do NOT launch a months-scale effort or the
+~100hr scale without owner direction. Capture the arc (wiki-sync) is appropriate at this milestone.
 P4 is well-advanced (160/320 concepts, multitag 90%, directional trace, hierarchy, yes/no, tokenize);
 the biological-composition line is boundary-banked. Genuinely-open next directions all need a real design
 effort (new biological subsystem mechanism) -- do that via brainstorming->design->cheap-first, check-existing-
