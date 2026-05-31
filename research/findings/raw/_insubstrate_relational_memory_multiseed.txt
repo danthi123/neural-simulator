@@ -1,0 +1,15 @@
+##### SEED 42 #####
+=== in-substrate spiking RELATIONAL FACT-MEMORY (backend=cupy, seed=42, D=800, n_facts=2, bias=-1000.0) ===
+  spiking single-fact=0.917  relational(find-agent,read-patient)=0.917  control(no-false-match)=1.000  (chance=0.062)
+VERDICT: RESOLVES -- a queryable RELATIONAL FACT-MEMORY runs IN the spiking substrate (spiking bind stores SVO facts; spiking unbind + cleanup answers relational queries).
+
+##### SEED 43 #####
+=== in-substrate spiking RELATIONAL FACT-MEMORY (backend=cupy, seed=43, D=800, n_facts=2, bias=-1000.0) ===
+  spiking single-fact=1.000  relational(find-agent,read-patient)=0.917  control(no-false-match)=1.000  (chance=0.062)
+VERDICT: RESOLVES -- a queryable RELATIONAL FACT-MEMORY runs IN the spiking substrate (spiking bind stores SVO facts; spiking unbind + cleanup answers relational queries).
+
+##### SEED 44 #####
+=== in-substrate spiking RELATIONAL FACT-MEMORY (backend=cupy, seed=44, D=800, n_facts=2, bias=-1000.0) ===
+  spiking single-fact=0.833  relational(find-agent,read-patient)=0.750  control(no-false-match)=1.000  (chance=0.062)
+VERDICT: needs tuning -- single/relational below 0.80; raise rate (less-negative bias) or window, or check fact storage.
+

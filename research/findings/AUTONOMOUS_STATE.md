@@ -92,18 +92,28 @@ readout WINDOW does NOT extend it (window-300 negative, falsified+corrected). Fi
 realization + 3 primitives + multi-seed bind/unbind RESOLVES + capacity K=6 multi-seed + adversarial CLEAR
 + demo + pillar n=111 + wiki-sync). Owner's "biologically sound" composition realized in spiking dynamics. <<<
 
-EXACT NEXT CONCRETE ACTION: open the NEXT ARC = USE the validated bind toward conversation (owner priority).
-Cheap-first (CPU numpy, no GPU) IS the gate: test whether the bind supports MULTI-FACT RELATIONAL QUERY (a
-small knowledge base of subject/verb/object facts -> answer "what does dog chase?" / cross-fact
-disambiguation), because a 2-fact SVO KB = ~K=6 bindings = exactly the capacity just unlocked. Build
-research/findings/raw/_vsa_relational_query_probe.py: store N SVO facts (each agent(x)X + action(x)Y +
-patient(x)Z), query single-fact roles + multi-fact relational ("patient of the fact whose agent is dog");
-pre-reg bar single-fact >= 0.90, report multi-fact honestly (the 2026-05-31 multi-hop arc found relational
-CHAINING hard -- DEGRADES-WITH-FANIN -- so multi-fact disambiguation may hit that wall; that is itself a
-real finding). RESOLVES -> build the spiking version + demo; BOUNDARY -> the bind is a single-structure
-slot-filler memory (still a real capability), relational reasoning needs more (engram fact-IDs / a parser).
-Then per result choose: in-network pool wiring / learned positional-or-syntactic role parser / engram
-compose. Cheap-first before any spiking build. Propagate every outcome to BOTH remotes. prior arc below.
+NEXT ARC OPENED = RELATIONAL FACT-MEMORY (use the bind toward conversation). Cheap-first
+(_vsa_relational_query_probe.py) RESOLVED multi-seed: SEPARATE-fact storage + cue-based retrieval =
+single 1.000, relational-A(find-agent,read-patient) 1.000, two-role 1.000, control(no-false-match) 1.000
+(seeds 42/43/44); superposed-B 0.475 DEGRADES (the multi-hop wall -> separate-fact storage is correct).
+SPIKING version built (_insubstrate_relational_memory_probe.py, reuses bind/unbind machinery by import):
+a fact = agent(x)X + action(x)Y + patient(x)Z (K=3 separate spiking bind); query = spiking-unbind agent +
+cleanup-match cue, then spiking-unbind patient. RESULT D=800 bias-1000: 2/3 seeds RESOLVE (seed42 0.917/
+0.917, seed43 1.000/0.917) but seed44 dips (single 0.833, relational 0.750 -- below 0.80; D=800 cleanup
+margin thin). Owner-facing demo built (research/runners/compose_relational_memory_demo.py, syntax-OK, smoke
+pending GPU-free). EXACT NEXT CONCRETE ACTION: MULTI-SEED relational-memory at HIGHER MARGIN IN FLIGHT (task
+bdf36q4iv) = seeds 42,43,44 D=800 --coinc-bias -500 (the K=6-validated higher-rate point = more dynamic
+range), output -> research/findings/raw/_insubstrate_relational_memory_bias500_multiseed.txt. READ task
+bdf36q4iv / that file:
+  - if 3/3 RESOLVE at bias-500 -> relational fact-memory is multi-seed validated at the higher-rate point;
+    smoke-test+commit the demo, add a relational-memory section to the finding + a note to capability_status
+    pillar n=111 (queryable spiking SVO knowledge base), commit/push both; give the comprehensive session
+    capstone report; THEN open the learned role-filler PARSER arc (the big lever to real conversation:
+    infer roles from input/word-order vs the currently-supplied roles).
+  - if still <3/3 at bias-500 -> try D=3200 bias-1000 (more dims = better cleanup) OR report honest 2/3 at
+    D=800 + the config where 3/3 holds; do NOT overclaim multi-seed.
+  - the SPIKING relational fact-memory is DEMONSTRATED (seed-42/43 clean 0.917); robustness config is the
+    only open item. Propagate every outcome to BOTH remotes. prior arc (multi-hop) below.
 
 TWO live threads:
 
