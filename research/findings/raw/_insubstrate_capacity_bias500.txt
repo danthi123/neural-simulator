@@ -1,0 +1,5 @@
+=== in-substrate spiking BIND/UNBIND (backend=cupy, seed=42, D=3200, V=16, 8D=25600 neurons, opponency=True) ===
+  K=4 | numpy: recovery=1.000 ctrl=0.075 | SPIKING: recovery=0.950 ctrl=0.025 | recovery-vs-ctrl gap=+0.925
+  K=5 | numpy: recovery=1.000 ctrl=0.060 | SPIKING: recovery=0.900 ctrl=0.000 | recovery-vs-ctrl gap=+0.900
+  K=6 | numpy: recovery=1.000 ctrl=0.033 | SPIKING: recovery=0.817 ctrl=0.000 | recovery-vs-ctrl gap=+0.817
+VERDICT: RESOLVES -- spiking bind/unbind recovers >=0.80 up to K=6, faithful to the algebra (spiking ctrl ~ numpy ctrl), decisive recovery-vs-control gap.

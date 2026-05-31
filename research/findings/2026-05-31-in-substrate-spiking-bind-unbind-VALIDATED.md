@@ -169,8 +169,28 @@ noise (which a longer window removes); the GPU has a WINDOW-INDEPENDENT bottlene
 most likely the coincidence rate-resolution / dynamic range (rates live in [0, ~0.05], a coarse
 graded scale, so at high K the many small bound components are under-resolved) and/or cross-term
 interference, neither of which a longer readout fixes. Honest capacity at the validated operating
-point (w=320, bias=-1000): ~K=4. Whether a HIGHER firing-rate operating point (more dynamic
-range) extends it is the open lever [firing-rate test result appended below].
+point (w=320, bias=-1000): ~K=4.
+
+### The CAPACITY LEVER is firing rate, not window (seed 42 reaches K=6)
+
+Testing the firing-rate lever directly: a less-negative tonic bias (-500 vs -1000) roughly
+DOUBLES the coincidence firing rate (BOTH=0.097 vs 0.048 -> more dynamic range), at the cost
+of some single-input leakage (single=0.040). seed 42, window 150:
+
+| K | bias -1000 (window 300) | bias -500 (window 150) |
+|---|---|---|
+| 4 | 0.850 | 0.950 |
+| 5 | 0.760 | 0.900 |
+| 6 | 0.600 | 0.817 |
+
+The higher firing rate extends capacity to **K=6** (all clear the 0.80 bar; the Miller 7+-2
+range), where the longer window did not. This CONFIRMS the window-300 diagnosis: the K>=5
+bottleneck was the coincidence rate-RESOLUTION (dynamic range), which more firing rate addresses
+and a longer readout does not. The control did NOT degrade despite the leakage (it dropped to
+~0.00-0.025; recovery-vs-control gap +0.82..+0.93) -- recovery stays clean. So the complete
+honest capacity story: capacity is firing-rate-RESOLUTION bounded; +firing rate extends it
+(window does not); seed-42 reaches K=6. [Multi-seed (42,43,44) at bias=-500 confirmation in
+flight -- K=6 margin is thin (0.817) so robustness across seeds is the open question.]
 
 ## What this is and is not (honest scope)
 
