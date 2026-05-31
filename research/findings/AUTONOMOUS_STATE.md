@@ -58,19 +58,28 @@ seed 43's 0/8 is weak UNDERLYING big_red binding on that bridge, not a filter bu
 hub-crowding bottleneck (strict win 0.583 vs 0.000) and EXPOSES residual per-seed binding-quality variance
 as multi-hop's next limit. Directional multi-hop = REAL but NOT-UNIFORMLY-ROBUST.
 
-EXACT NEXT CONCRETE ACTION: the directional filter is a clean validated low-risk win (strict improvement,
-never hurts -- it only drops irrelevant incoming edges from the hub query). INTEGRATE it into the shipped
-chat: in research/runners/g20_multibridge.py add a `direction='any'|'out'|'in'` param to query_concept
-(closure ~line 359; default 'any' = backward-compat so existing behaviour byte-identical) using the SAME
-name-order tag filter the who/what-did handlers already use (lines ~501,530); add a multi-hop chat command
-(chained "what is X" -> take top -> "what is <that>" with direction='out') with HONEST framing (robust where
-binding is good; gated by per-seed binding quality). Add a focused unit test (pure-logic on the tag filter,
-no GPU). Then frontend-sync if it surfaces in a demo/preset (keep-webapp-current). SHIPPED-module change ->
-careful: backward-compat default, test, no protected/frozen/moat edit, g20 chat still works. Commit+push BOTH
-remotes. ALT if integration judged not worth it: next P4 extension (scale vocab toward 640 [D8 infra], or
-cleaner interactive chat). Honest frame: P4 is instrumental capability/usability of the working stack (the
-oracle-shortcut in another form); the DG separation-vs-reliability BOUNDARY stays the banked biology-
-translatable deliverable. moat 7/7; 0.80 bar frozen; honest negatives are the deliverable.
+INTEGRATION DONE (2026-05-31, commit 24ea2d4): directional filter SHIPPED into research/runners/
+g20_multibridge.py -- _tag_matches_direction pure helper (8 unit tests, no GPU) + query_concept gains
+direction='any'(default,backward-compat)/'out'/'in' + return_ranked + new "trace X" 2-hop command. GPU
+smoke (160-concept seed 42): existing what-is unaffected; "trace apple" -> "apple relates to big, which
+relates to red, new, angry". MULTI-HOP ARC COMPLETE end-to-end (characterized clean->DEGRADES->RESCUE-
+bimodal + the validated fix shipped). g20_multibridge no longer byte-unmodified (this is the deliberate
+shipped capability); no protected/frozen/moat module touched; backward-compat by construction.
+
+EXACT NEXT CONCRETE ACTION: pivot to the PRIMARY-goal-aligned question (biological mechanism), now that the
+instrumental P4 multi-hop arc is complete. The DG separation-vs-reliability BOUNDARY (sparse k-WTA cannot
+give separation AND within-concept reliability) is THE characterized blocker for biologizing the
+compositional symbol. Night-synthesis P3 candidate (a): a DIFFERENT biological code -- grid/place-cell
+CONJUNCTIVE coding -- might thread separation-AND-reliability where DG k-WTA could not (grid cells give a
+high-capacity, stable, separable conjunctive code by construction). STEP 1 (DO THIS FIRST, the check-
+existing-work-first discipline I just re-learned from the theta-gamma redundancy): grep findings/plans/sim
+for prior in-project grid-cell / place-cell / conjunctive-coding / entorhinal work (Spiking-TEM was named in
+MEMORY feedback_check_existing_sims_first). STEP 2 if genuinely open: design a CHEAP-FIRST numpy probe
+(does a grid/conjunctive code give between-concept separation AND within-concept stability on the SAME
+overlapping substrate activity the DG could not thread -- frozen bar, reproduce-the-failure control,
+three-state) BEFORE any spiking build. If prior work already ceiling'd it -> bank that + pick the next P3
+candidate (cortical sparse coding w/ tuned lateral inhibition) or accept the oracle-shortcut + advance P4.
+moat 7/7; 0.80 bar frozen; cheap-first before spiking; honest negatives are the deliverable; GPU/CuPy real.
 
 
 ## DG-BIOLOGIZATION CONCLUDED 2026-05-31 = FUNDAMENTAL BOUNDARY; ACTIVE ARC = P4 conversational capability
