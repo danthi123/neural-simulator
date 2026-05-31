@@ -49,14 +49,29 @@ real substrate concept codes (denoise64, projected D=800, V=16). seed42 RAW (no 
 1.000 all K; SPIKING recovery K1=0.933 K2=0.900 (>=0.80 RESOLVES) K3=0.756 K4=0.600 (SNR-degrade);
 control at chance (0.05-0.13) throughout -> binding does REAL work, not cleanup artifact. The K>=3 degrade
 is common-mode saturation (predicted: summing ON/OFF channels separately is non-canonical; the signed
-DIFFERENCE is exact but re-driving the saturated channels compresses signal). FIX = ON/OFF opponency
+DIFFERENCE is exact but re-driving the saturated channels compresses signal). FIX explored = ON/OFF opponency
 (re-canonicalize superposed bound to signed form before unbind = retinal/thalamic lateral inhibition =
-project's mean-centering; linear, in-substrate-realizable). EXACT NEXT CONCRETE ACTION: opponency re-run
-(--ks 1,2,3,4,6) IN FLIGHT (task b6kflsk1m) -- read it; if it lifts K>=3 above 0.80, multi-pair RESOLVES
--> scale to full real D=3200 + multi-seed (42,43,44) decisive run, then write findings doc + commit/push
-both. If opponency insufficient, raise RUN_STEPS (longer integration window cuts rate noise) then re-test;
-honest BOUNDARY (works K<=2) is itself a real finding to propagate. ALL probes commit+push both remotes.
-prior arc (multi-hop) below.
+project's mean-centering; linear, in-substrate-realizable). OPPONENCY RESULT (D=800 seed42): lifts K1=1.000
+K2=0.967 to the numpy ceiling but does NOT fix K>=3 (0.711, 0.683) -> common-mode saturation was NOT the
+dominant high-load bottleneck. DIAGNOSIS (CPU Poisson two-stage capacity model, run + recorded): the K>=3
+limit is finite firing-rate SNR = a READOUT-WINDOW/SPIKE-COUNT issue (Miller-like capacity), NOT a
+mechanism failure. Model: window60 ~3spikes/dim K4=0.89 K6=0.78; window150 ~7spikes/dim K4=1.00 K6=0.99.
+So capacity scales with the integration window (speed-accuracy tradeoff; biologically a longer readout =
+more confident decision). GPU has extra noise (source-neuron stochasticity) so needs a longer window than
+the ideal model, but the trend holds. EXACT NEXT CONCRETE ACTION: DECISIVE seed-42 run IN FLIGHT (task
+bujb4mkza) = full raw D=3200 (no projection; numpy ceiling 1.000 to K8 CPU-verified) + --run-steps 150
+(the two principled SNR levers: more dims + longer window), --ks 1,2,3,4. READ task bujb4mkza output:
+  - if K3,K4 >= 0.80 -> spiking composition RESOLVES at full scale to K=4 -> launch multi-seed (43,44)
+    SAME config sequentially (one heavy 25600-neuron run at a time, no GPU contention); then fill the
+    findings doc (2026-05-31-in-substrate-spiking-bind-unbind-VALIDATED.md) full-D table + verdict,
+    commit/push both.
+  - if K3,K4 still < 0.80 at window 150 -> bump --run-steps 300 (~14 spikes/dim, model says ample) and
+    re-test seed 42 before multi-seed; the operating-point firing rate (w/bias) can also be raised for
+    more spikes/window (w=320 bias=-500 gives BOTH=0.097 vs 0.048, 2x rate, at some selectivity cost).
+  - HONEST capacity framing either way: in-substrate spiking bind/unbind is DEMONSTRATED (K1,2 at ceiling
+    multi-config); the K-capacity is firing-rate/window-bounded and characterizable -- a real finding,
+    NOT a failure. control at chance throughout = recovery is genuine binding work. Propagate every
+    outcome to BOTH remotes. prior arc (multi-hop) below.
 
 TWO live threads:
 
