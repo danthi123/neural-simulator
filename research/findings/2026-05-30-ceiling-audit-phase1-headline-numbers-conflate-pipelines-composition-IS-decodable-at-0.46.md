@@ -1,6 +1,13 @@
 # Conversational-ceiling audit, Phase 1 (measurement-consistency, no GPU): the headline "~0.46 / 0.00 representation ceiling" CONFLATES two non-comparable readout pipelines. Composition IS decodably represented at ~0.46 trustworthy gated-emission (6th-arc cosine pipeline) -- the "composition not a structured decodable object" framing that motivates phase-coded VSA is OVERSTATED. The SPEAR-gate-scale-mismatch-bug hypothesis is FALSIFIED. The real open question is the 0.46->0.80 gap (representational vs readout-limited), which Phase 2 settles.
 
 **Date:** 2026-05-30
+**>>> CORRECTION (same day, by the Phase 2 decisive run): this Phase-1 doc's optimistic claim
+"composition IS decodable at ~0.46" is CORRECTED. The 0.46 is a DIRECT+COMPOSITIONAL BLEND;
+compositional-only is ~CHANCE and is NOT decodable above chance by any held-out decoder. The
+pipeline-conflation observation below still stands, but read "composition decodable at 0.46" as
+the blended number, NOT compositional-only. See
+2026-05-30-ceiling-audit-CONCLUSION-representational-confirmed-0.46-was-a-blend-VSA-warranted.md.
+The ceiling is REPRESENTATIONAL; phase-coded VSA is warranted. <<<**
 **Status:** Phase 1 of the owner-chosen "audit the ceiling" direction (cheap, read-only measurement-consistency pass). INTERIM finding -- Phase 2 (latent-composition decode probe) is the decisive representation-vs-readout test and is pending. Honest scope: this REFRAMES the ceiling and corrects a framing conflation; it does NOT by itself dissolve the ceiling (which is real at ~0.46 trustworthy compositional emission).
 
 ## Why this audit

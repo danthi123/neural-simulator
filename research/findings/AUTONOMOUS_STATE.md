@@ -68,20 +68,30 @@ FIX SUBAGENT (a2649185) STEP A + B DONE; STEP C decisive run IN FLIGHT:
     Phase 1: composition-only is decodable at ~0-0.30 (lower than the blended 0.46 implied); the
     Phase-1 doc's "composition decodable at ~0.46" should be read as the BLENDED number, not the
     compositional-only number. (Pending exact A from STEP C.)
-  STEP C IN FLIGHT: decisive run PID 38712 (_ceiling_audit_phase2_decode --seeds 42 43 44
-    --episodes-per-seed 8, FULL substrate), ~50-60 min. Watcher bst287wn5 (Wait-Process) extracts
-    DECISIVE.json verdict fields on exit -> _ceiling_audit_phase2_DECISIVE.json.
-  Subagent respected constraints: ONLY the throwaway probe script changed; no protected/runner/
-  sim/compose edits (controller verified git status).
-NEXT (controller, when bst287wn5 notifies): read decisive A(compositional cosine) vs B(held-out
-linear/NN decoder) on identical episode-level held-out sets; verify regime ~0.46 blend / comp
-~0-0.30, episode-split no-leakage, chance. Form pre-reg verdict (scrutinize READOUT-LIMIT HARDER:
-is B real generalization or leakage/imbalance?). READOUT-LIMIT (B>=2A & B>chance+0.10) -> the
-0.46->0.80 gap is a READOUT limit; big phase-coded VSA arc NOT warranted as framed; cheaper
-readout/cleanup fix is the lead. REPRESENTATIONAL (B<A+0.10) -> VSA premise holds, justified next
-build. Record consolidated finding (incl. STEP B blend refinement) + push both remotes + surface
-to owner. Phase-coded VSA arc NOT started -- the audit gates it. (If PID 38712 died w/o
-DECISIVE.json -> re-run the same command synchronously, controller-owned.)
+  STEP C DECISIVE DONE = REPRESENTATIONAL-CEILING-CONFIRMED (conclusion doc
+    2026-05-30-ceiling-audit-CONCLUSION-representational-confirmed-0.46-was-a-blend-VSA-warranted.md).
+    3 seeds x 24 episodes, 120 instances, chance 0.25: compositional cosine A=0.24 (answer-subspace)
+    / 0.04 (full-vocab); held-out linear B=0.21, NN 0.204, B_best 0.21; secondary pool-firing decoder
+    0.218/0.208. ALL ~chance. Verdict REPRESENTATIONAL (B_best 0.21 < A 0.24 + 0.10). Scrutiny passed:
+    episode-level no-leakage (decoders at chance not above); secondary state 16-dim WELL-sampled (not
+    underdetermined) yet still chance -> composition genuinely not decodable from lang_output OR pool
+    firing. Only throwaway probe changed; protected/runner/sim/compose untouched (verified).
+  HONEST SELF-CORRECTION: Phase-1's "composition decodable at ~0.46" over-read the BLEND; compositional-
+    only is ~chance & not decodable by any held-out decoder. Phase-1 doc banner-corrected.
+
+>>> AUDIT CONCLUDED. The conversational-composition ceiling is REPRESENTATIONAL, not readout-limited.
+The phase-coded vector-symbolic (Orchard spiking-phasor FHRR) arc is WARRANTED by a VERIFIED premise.
+The audit gate PASSES. <<<
+
+NEXT (owner decision point, surfaced): proceed to the phase-coded VSA arc DESIGN (brainstorm ->
+design doc -> cheap-first probe gate -> spiking build under frozen-verdict discipline). The rhythm
+must CARRY composition as spike phase so the composed state is a STRUCTURED DECODABLE object (the
+exact thing this audit proved is missing). resonate_fire_fhrr.py exists as the spiking-phasor
+primitive (reuse-by-import seed); check Orchard 2023/24 + Frady-Sommer resonator networks. Big new
+arc -> recommend a proper design pass, NOT a reflexive build; cheap-first probe MUST gate the spiking
+build. DEFAULT (no steer): begin the VSA arc brainstorm/design (check existing sims first). Standing
+reframes hold (biology-grounded conflict-resolution; 0.80 bar frozen; moat 7/7; reuse-by-import; no
+new autograd; honest negatives are the deliverable).
 
 ---
 
