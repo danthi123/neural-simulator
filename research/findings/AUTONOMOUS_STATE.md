@@ -138,16 +138,25 @@ insights (bind=coincidence; opponency=mean-centering; capacity=firing-rate not w
 universal; bind robust to recognition errors; parsing needs conjunctive coding) +
 2026-05-31-composition-in-spiking-substrate-SYNTHESIS.md. All committed+pushed.
 
-EXACT NEXT CONCRETE ACTION: build the SPIKING LEARNED PARSER (integration of validated pieces; the parser's
-representational gate is settled, so this is engineering + an honest STDP-acquisition test, not a science
-gate). Architecture: position codes (P4.1 positional_drive_pattern) + a voice code (function-word 'by'
-presence) -> a CONJUNCTIVE coincidence layer (AND(position,voice) = the VALIDATED coincidence primitive) ->
-STDP-learned conjunction->role mapping (reuse v16 STDP co-firing; the mapping is the 6 (position,voice) combos)
--> parsed role gates the validated bind. Test: train on example active+passive sentences, then for held-out
-sentences confirm the agent is extracted VOICE-INVARIANTLY (active and passive forms -> same agent) end-to-end,
-+ honest control. Cheap-first the STDP-acquisition (can STDP learn the 6-combo conjunctive mapping + does it
-compose with the bind). If STDP acquires it -> real syntactic understanding in-substrate; if not -> honest
-negative on STDP-learned role binding. Propagate every outcome to BOTH remotes. prior arc (multi-hop) below.
+SPIKING PARSER STDP-ACQUISITION = FIRST ATTEMPT DONE, honest status (NOT a boundary).
+_insubstrate_parser_stdp_probe.py: a BARE STDP config (enable_stdp + plastic conj->role pathway +
+simultaneous teacher) did NOT grow conj->role to firing strength -- role ensembles silent in test
+(rates 0.000 at w_max=8 AND w_max=400). NOT a fundamental limit: v16 (lang_input->pool) learns exactly
+this kind of input->output map via STDP, but uses embodied-Hebbian co-firing + v16 STDP params +
+eligibility + a teacher protocol with correct pre->post timing -- machinery the quick probe lacks.
+So the parser REPRESENTATION is validated (conjunctive coding, _vsa_parser_voice_probe.py) + its pieces
+are validated (coincidence, bind); the in-substrate STDP-LEARNING is a FOCUSED SUB-ARC. Committed honestly.
+EXACT NEXT CONCRETE ACTION (the focused sub-arc): replicate the v16 LEARNING config for the conj->role
+mapping. Study how text_minimal_isolation / bio_three_factor configures lang_input->pool STDP/embodied-
+Hebbian binding (the --embodied-hebbian co-firing rule, stdp_a_plus/tau, eligibility, teacher-current
+protocol, topographic bias) and apply that SAME config to drive (position+voice conjunction) -> role
+co-firing so the conj->role weights grow to firing strength. Then test voice-invariant role extraction
+end-to-end + integrate with the bind. Cheap-first = get ONE conj->role pair to grow to firing strength
+under the v16 config (confirms the mechanism transfers), then scale to 6. If it works -> real
+STDP-learned syntactic role binding in-substrate; if the v16 config ALSO fails to transfer -> an honest
+finding about what the v16 learning needs that the parser lacks. (Alternatively the owner may prefer a
+different direction -- scale vocab, multi-turn persistent dialogue, or bank the complete deliverable.)
+Propagate every outcome to BOTH remotes. prior arc (multi-hop) below.
 
 TWO live threads:
 

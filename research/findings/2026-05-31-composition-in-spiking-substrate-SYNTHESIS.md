@@ -82,6 +82,15 @@ Owner-facing demos: `compose_spiking_bind_demo.py`, `compose_relational_memory_d
 The learned role-filler parser: STDP-acquire the conjunctive (position×voice)→role mapping from
 example sentences (voice detected by function-word PRESENCE + relative position — both tractable
 features, NOT the substrate's bounded ordered-sequence processing), then wire parsed roles into the
-validated bind for voice-invariant understanding end-to-end. All component mechanisms (coincidence
-for the conjunction, STDP for the small mapping, the bind) are validated; the next arc is their
-integration plus an honest test of whether STDP acquires the conjunction and it composes.
+validated bind for voice-invariant understanding end-to-end.
+
+Honest update (a first attempt, same day): the conjunctive coincidence layer and the role->bind are
+validated pieces, but a quick STANDALONE STDP probe (_insubstrate_parser_stdp_probe.py) did NOT
+acquire the conjunction->role map -- with a bare config (enable_stdp + a plastic pathway +
+simultaneous teacher) the conj->role weights never grew to firing strength (role ensembles silent in
+test, at w_max=8 and w_max=400). This is NOT a boundary: the v16 mechanism (lang_input->pool) learns
+exactly this kind of input->output map, but uses machinery the quick probe lacks -- embodied-Hebbian
+co-firing, the v16 STDP params, eligibility, and a teacher protocol with correct pre->post timing. So
+the parser's REPRESENTATION is settled and its pieces are validated, but the in-substrate
+STDP-LEARNING of the role map is a FOCUSED SUB-ARC requiring the v16-scale learning config -- deferred,
+near-certain on the v16 precedent, characterized honestly rather than overclaimed as trivial.
