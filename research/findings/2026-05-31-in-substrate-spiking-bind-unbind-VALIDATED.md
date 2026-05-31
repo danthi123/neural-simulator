@@ -8,20 +8,25 @@ runs IN the spiking substrate -- not as numpy algebra on captured codes -- via t
 coincidence detection, on the project's real concept-pool codes. The bind/unbind operators
 are spiking; the load-bearing nonlinearity (the Hadamard) is computed by neurons.
 
-## VERDICT: RESOLVES, multi-seed (seeds 42, 43, 44) -- spiking bind/unbind recovers to K=4
+## VERDICT: RESOLVES, multi-seed (42,43,44) -- capacity K=4 to K=6, set by coincidence firing rate
 
-| K | seed 42 | seed 43 | seed 44 | mean spiking recovery |
+| K | seed 42 | seed 43 | seed 44 | mean (bias=-1000, clean AND) |
 |---|---|---|---|---|
 | 1 | 1.000 | 1.000 | 1.000 | **1.000** |
 | 2 | 1.000 | 1.000 | 1.000 | **1.000** |
 | 3 | 0.978 | 0.911 | 0.978 | **0.956** |
 | 4 | 0.833 | 0.833 | 0.917 | **0.861** |
 
-Full raw D=3200 (no projection), readout window 150 steps. Every seed clears the frozen 0.80
-bar at every K=1..4. numpy ceiling 1.000 all K. Control is faithful to the algebra's
-overlapping-code cleanup-bias floor (not a spiking artifact -- see below); recovery-vs-control
-gap decisive everywhere (+0.67 to +0.93). This is the owner's "biologically sound" composition,
-realized IN spiking dynamics, validated across three seeds.
+Full raw D=3200 (no projection), readout window 150. Every seed clears the frozen 0.80 bar at
+every K=1..4 at the clean-AND operating point. A HIGHER firing-rate operating point (bias=-500,
+~2x coincidence rate = more dynamic range) extends this to **K=6 multi-seed** (mean 0.975/0.933/
+0.856 at K=4/5/6, every seed >= 0.80 -- the Miller 7+-2 range; full table in the capacity ladder
+below). numpy ceiling 1.000 all K. Control is faithful to the algebra's overlapping-code
+cleanup-bias floor (not a spiking artifact -- see below); recovery-vs-control gap decisive
+everywhere (+0.67 to +0.93). This is the owner's "biologically sound" composition, realized IN
+spiking dynamics, validated across three seeds. Honest capacity correction (below): the readout
+WINDOW does not extend capacity (that earlier expectation was falsified); the coincidence FIRING
+RATE does, to K=6.
 
 **Adversarial review: CLEAR.** A dedicated skeptical reviewer (instructed to falsify) ran all 7
 exploit classes against the load-bearing probe and ruled out each, citing line numbers + an
@@ -187,10 +192,24 @@ The higher firing rate extends capacity to **K=6** (all clear the 0.80 bar; the 
 range), where the longer window did not. This CONFIRMS the window-300 diagnosis: the K>=5
 bottleneck was the coincidence rate-RESOLUTION (dynamic range), which more firing rate addresses
 and a longer readout does not. The control did NOT degrade despite the leakage (it dropped to
-~0.00-0.025; recovery-vs-control gap +0.82..+0.93) -- recovery stays clean. So the complete
-honest capacity story: capacity is firing-rate-RESOLUTION bounded; +firing rate extends it
-(window does not); seed-42 reaches K=6. [Multi-seed (42,43,44) at bias=-500 confirmation in
-flight -- K=6 margin is thin (0.817) so robustness across seeds is the open question.]
+~0.00-0.025; recovery-vs-control gap +0.82..+0.93) -- recovery stays clean.
+
+**Multi-seed (42,43,44) at bias=-500 confirms K=6:**
+
+| K | seed 42 | seed 43 | seed 44 | mean spiking recovery |
+|---|---|---|---|---|
+| 4 | 0.950 | 0.975 | 1.000 | **0.975** |
+| 5 | 0.900 | 0.960 | 0.940 | **0.933** |
+| 6 | 0.817 | 0.933 | 0.817 | **0.856** |
+
+All three seeds clear 0.80 at every K=4,5,6; control near zero throughout. So the complete,
+multi-seed-validated capacity story: **capacity is set by the coincidence FIRING RATE** -- K=4
+at the clean-AND operating point (bias=-1000, single-input leakage 0.000), K=6 at the higher-rate
+point (bias=-500, ~2x rate, leakage 0.040 that does NOT accumulate to hurt), all three seeds.
+The window lever does not extend it; the firing-rate (dynamic-range) lever does, to K=6 (the
+Miller 7+-2 range). This is a clean speed/precision tradeoff in the substrate: a higher
+coincidence rate trades a touch of AND-selectivity for the dynamic range that holds more
+superposed bindings.
 
 ## What this is and is not (honest scope)
 

@@ -1,0 +1,18 @@
+##### SEED 42 (bias=-500, window 150) #####
+  K=4 | numpy: recovery=1.000 ctrl=0.075 | SPIKING: recovery=0.950 ctrl=0.025 | recovery-vs-ctrl gap=+0.925
+  K=5 | numpy: recovery=1.000 ctrl=0.060 | SPIKING: recovery=0.900 ctrl=0.000 | recovery-vs-ctrl gap=+0.900
+  K=6 | numpy: recovery=1.000 ctrl=0.033 | SPIKING: recovery=0.817 ctrl=0.000 | recovery-vs-ctrl gap=+0.817
+VERDICT: RESOLVES -- spiking bind/unbind recovers >=0.80 up to K=6, faithful to the algebra (spiking ctrl ~ numpy ctrl), decisive recovery-vs-control gap.
+
+##### SEED 43 (bias=-500, window 150) #####
+  K=4 | numpy: recovery=1.000 ctrl=0.150 | SPIKING: recovery=0.975 ctrl=0.050 | recovery-vs-ctrl gap=+0.925
+  K=5 | numpy: recovery=1.000 ctrl=0.020 | SPIKING: recovery=0.960 ctrl=0.000 | recovery-vs-ctrl gap=+0.960
+  K=6 | numpy: recovery=1.000 ctrl=0.083 | SPIKING: recovery=0.933 ctrl=0.017 | recovery-vs-ctrl gap=+0.917
+VERDICT: RESOLVES -- spiking bind/unbind recovers >=0.80 up to K=6, faithful to the algebra (spiking ctrl ~ numpy ctrl), decisive recovery-vs-control gap.
+
+##### SEED 44 (bias=-500, window 150) #####
+  K=4 | numpy: recovery=1.000 ctrl=0.000 | SPIKING: recovery=1.000 ctrl=0.125 | recovery-vs-ctrl gap=+0.875
+  K=5 | numpy: recovery=1.000 ctrl=0.080 | SPIKING: recovery=0.940 ctrl=0.020 | recovery-vs-ctrl gap=+0.920
+  K=6 | numpy: recovery=1.000 ctrl=0.050 | SPIKING: recovery=0.817 ctrl=0.017 | recovery-vs-ctrl gap=+0.800
+VERDICT: RESOLVES -- spiking bind/unbind recovers >=0.80 up to K=6, faithful to the algebra (spiking ctrl ~ numpy ctrl), decisive recovery-vs-control gap.
+
