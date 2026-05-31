@@ -41,6 +41,9 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--proj-dim", type=int, default=800)
     ap.add_argument("--script", type=str, default=None, help="newline-or-;-separated lines (non-interactive)")
+    ap.add_argument("--learned-parser", action="store_true",
+                    help="assign roles via the LEARNED Hebbian parser (handles active+passive), not the "
+                         "positional template")
     a = ap.parse_args()
     P.RUN_STEPS = 150; P.COINC_BIAS = -500.0
     xp, backend = get_backend()
@@ -58,6 +61,25 @@ def main():
     roles = {r: v / np.linalg.norm(v) for r, v in roles.items()}
     bridge, idx = P.build(a.seed, D, xp)
     KB = []  # (label, bound)
+
+    # Optional LEARNED parser (Hebbian conjunction(position x voice)->role; no positional template)
+    learned_map = None
+    if a.learned_parser:
+        import research.findings.raw._insubstrate_parser_bind_e2e_probe as _E
+        print("  [training the Hebbian parser for LEARNED role assignment (no positional template)...]")
+        learned_map = _E.train_parser_and_extract(a.seed, xp)
+        print(f"  [learned conjunction->role map: {[learned_map[k] for k in range(6)]}]")
+
+    def parse_statement(toks):
+        """Assign roles by the LEARNED map (handles active + passive 'X is V by Y'), not by position.
+        Returns (agent, action, patient, polarity) or Nones if not parseable."""
+        polarity = "NEGATE" if "not" in toks else "AFFIRM"
+        voice = 1 if "by" in toks else 0
+        content = [w for w in toks if w in concepts and w not in ("AFFIRM", "NEGATE")][:3]
+        slots = {}
+        for p, w in enumerate(content):
+            slots[learned_map[p * 2 + voice]] = w
+        return slots.get("agent"), slots.get("action"), slots.get("patient"), polarity
 
     def store(agent, action, patient, polarity="AFFIRM"):
         fact = {"agent": agent, "action": action, "patient": patient, "polarity": polarity}
@@ -127,9 +149,15 @@ def main():
                 return "  (unknown)"
             pol = RM.unbind_spiking(bridge, idx, b, "polarity", roles, concepts, ["AFFIRM", "NEGATE"], D, xp)
             return "  yes" if pol == "AFFIRM" else "  no"
-        if "not" in t and len(t) >= 4:
-            i = t.index("not"); store(t[0], t[i+1], t[i+2], "NEGATE"); return "  [stored, negated]"
         if len(t) >= 3:
+            if learned_map is not None:                       # LEARNED parse (active + passive), no template
+                ag, ac, pa, pol = parse_statement(t)
+                if ag and ac and pa:
+                    store(ag, ac, pa, pol)
+                    return "  [stored, learned parse" + (", negated" if pol == "NEGATE" else "") + "]"
+                return "  (couldn't parse that)"
+            if "not" in t and len(t) >= 4:                    # positional template fallback
+                i = t.index("not"); store(t[0], t[i+1], t[i+2], "NEGATE"); return "  [stored, negated]"
             store(t[0], t[1], t[2]); return "  [stored]"
         return "  (didn't understand -- try 'dog go north' or 'who go north?')"
 

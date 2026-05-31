@@ -1,0 +1,17 @@
+  [training the Hebbian parser for LEARNED role assignment (no positional template)...]
+  [learned conjunction->role map: ['agent', 'patient', 'action', 'action', 'patient', 'agent']]
+=== Spiking conversational agent REPL (seed 42, vocab 16) ===
+vocab: ['north', 'east', 'south', 'west', 'apple', 'river', 'dog', 'cat', 'go', 'come', 'stop', 'look', 'big', 'small', 'hot', 'cold']
+teach facts ('dog go north'), ask ('who go north?', 'does dog go north?'); :facts :save :quit
+
+> dog go north
+  [stored, learned parse]
+> north is go by dog
+  [stored, learned parse]
+> who go north?
+  dog (dog go north)
+> describe dog
+  dog go north
+> :facts
+  dog go north
+  dog go north
