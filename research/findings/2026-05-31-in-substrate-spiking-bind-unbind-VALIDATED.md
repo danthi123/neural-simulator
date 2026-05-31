@@ -8,6 +8,39 @@ runs IN the spiking substrate -- not as numpy algebra on captured codes -- via t
 coincidence detection, on the project's real concept-pool codes. The bind/unbind operators
 are spiking; the load-bearing nonlinearity (the Hadamard) is computed by neurons.
 
+## VERDICT: RESOLVES, multi-seed (seeds 42, 43, 44) -- spiking bind/unbind recovers to K=4
+
+| K | seed 42 | seed 43 | seed 44 | mean spiking recovery |
+|---|---|---|---|---|
+| 1 | 1.000 | 1.000 | 1.000 | **1.000** |
+| 2 | 1.000 | 1.000 | 1.000 | **1.000** |
+| 3 | 0.978 | 0.911 | 0.978 | **0.956** |
+| 4 | 0.833 | 0.833 | 0.917 | **0.861** |
+
+Full raw D=3200 (no projection), readout window 150 steps. Every seed clears the frozen 0.80
+bar at every K=1..4. numpy ceiling 1.000 all K. Control is faithful to the algebra's
+overlapping-code cleanup-bias floor (not a spiking artifact -- see below); recovery-vs-control
+gap decisive everywhere (+0.67 to +0.93). This is the owner's "biologically sound" composition,
+realized IN spiking dynamics, validated across three seeds.
+
+**Adversarial review: CLEAR.** A dedicated skeptical reviewer (instructed to falsify) ran all 7
+exploit classes against the load-bearing probe and ruled out each, citing line numbers + an
+independent numpy re-derivation + a single-Izhikevich-neuron simulation of the operating point:
+(1) no answer leakage -- `est` is driven only by the spiking bind output `bound_*` rates, the
+original concept re-enters only as the legitimate cleanup codebook; (2) the bind AND unbind
+Hadamard are genuinely spiking (coincidence-bank `cp_firing_states` through the real synaptic-
+propagation + Izhikevich-threshold pipeline) -- the only numpy steps are the two LINEAR ops
+(superposition sum, ON/OFF opponency) the scope honestly discloses; (3) control valid (same
+bound, only query role changes; `_wrong_role` excludes the true role); (4) recovery non-trivial
+(numpy control << 1.0; K4<K1; role matters under identical normalization); (5) seeds are
+genuinely independent substrate realizations (`||r42-r43||/||r42|| = 1.02`) with re-drawn roles;
+(6) operating point a real supra-linear AND (0/1/2 sources -> 0.000/0.013/0.060; the -1000 pA
+bias fires nothing alone); (7) bridge genuinely steps + reads firing, plasticity OFF. Bookkeeping
+note from the review: the per-run numpy CONTROL column is a stochastic estimate of the
+cleanup-bias floor (varies ~0.1-0.5 with RNG/trial count across runs); the spiking RECOVERY
+numbers are stable and match exactly across the standalone and multi-seed runs. The multi-seed
+table above is canonical.
+
 ## Why this matters
 
 The prior composition revision (2026-05-31, `...-near-ortho-ROLES-not-FILLERS`) established
@@ -113,7 +146,30 @@ spike-count SNR (window 60 ~ 3 spikes/dim: K4=0.89, K6=0.78; window 150 ~ 7 spik
 K4=1.00 ideal). The GPU has extra noise (source-neuron stochasticity, threshold jitter) so
 it needs a longer window than the ideal model, but the trend held: D=3200 + window 150 lifts
 K3,4 over the bar. The capacity is firing-rate/window-bounded and extends with a longer
-readout -- not a mechanism ceiling. [Multi-seed 43,44 confirmation in flight.]
+readout -- not a mechanism ceiling. Multi-seed (42,43,44) confirmed RESOLVES at all K=1..4
+(table at top); per-seed K=4 = 0.833 / 0.833 / 0.917.
+
+## What this is and is not (honest scope)
+
+IS: the two NONLINEAR composition operators (bind Hadamard, unbind Hadamard) computed by
+spiking coincidence neurons, multi-seed, on the project's real overlapping concept codes,
+recovering bound role-filler pairs to K=4 (a subject/verb/object + manner frame). Generalizes
+by construction (VSA) -- any novel (role, filler) combination works with no training.
+
+IS NOT: (a) a learned parser -- roles and concept drives are supplied; the system does not yet
+infer role-filler structure from raw input (that is a downstream learning arc). (b) unlimited
+capacity -- K is firing-rate/readout-window bounded (~4 at window 150; extends with a longer
+readout, the biological speed-accuracy tradeoff). (c) fully end-to-end spiking storage -- the
+linear memory between bind and unbind (superposition sum, ON/OFF opponency) is captured-rate
+arithmetic, each step itself a linear/lateral-inhibition operation realizable in-substrate; it
+is not autograd or learning.
+
+## Next (future arcs, not this finding)
+
+1. Capacity scaling: longer readout window / higher operating-point firing rate -> K toward
+   Miller 7. 2. Wire the bind layer to the existing concept POOLS (concepts already are pools)
+   for a fully in-network path. 3. Learned role-filler parsing (infer the bindings from input)
+   -- the bridge from this fixed-wiring primitive to used-in-conversation composition.
 
 ## Honest scope
 
