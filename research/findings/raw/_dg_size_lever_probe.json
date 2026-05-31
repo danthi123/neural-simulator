@@ -1,0 +1,92 @@
+{
+  "results": [
+    {
+      "n_dg": 800,
+      "seed": 42,
+      "drive": 10.0,
+      "ffi": 0.16,
+      "sparsity": 0.04072916666666667,
+      "between_mean": 0.26495017786813096,
+      "between_max": 0.6323243259984419,
+      "within_mean": 0.23480302860807778,
+      "n_silent": 4
+    },
+    {
+      "n_dg": 800,
+      "seed": 42,
+      "drive": 9.0,
+      "ffi": 0.18,
+      "sparsity": 0.0032291666666666666,
+      "between_mean": 0.07968536858778259,
+      "between_max": 0.7071067811865476,
+      "within_mean": 0.05834918910503415,
+      "n_silent": 9
+    },
+    {
+      "n_dg": 800,
+      "seed": 42,
+      "drive": 8.0,
+      "ffi": 0.22,
+      "sparsity": 0.004791666666666667,
+      "between_mean": 0.008199132858111718,
+      "between_max": 0.35856858280031806,
+      "within_mean": 0.026563982406452583,
+      "n_silent": 11
+    },
+    {
+      "n_dg": 800,
+      "seed": 42,
+      "drive": 6.0,
+      "ffi": 0.3,
+      "sparsity": 0.0003125,
+      "between_mean": 0.0,
+      "between_max": 0.0,
+      "within_mean": 0.0,
+      "n_silent": 12
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 10.0,
+      "ffi": 0.16,
+      "sparsity": 0.8285625,
+      "between_mean": 0.9201947781725868,
+      "between_max": 0.995766970270105,
+      "within_mean": 0.9488203012387538,
+      "n_silent": 0
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 9.0,
+      "ffi": 0.18,
+      "sparsity": 0.8121249999999999,
+      "between_mean": 0.9229417471557557,
+      "between_max": 0.9942901582468996,
+      "within_mean": 0.9315481036414249,
+      "n_silent": 0
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 8.0,
+      "ffi": 0.22,
+      "sparsity": 0.9040416666666667,
+      "between_mean": 0.9138068514165278,
+      "between_max": 0.9968891360792622,
+      "within_mean": 0.9526676433106395,
+      "n_silent": 0
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 6.0,
+      "ffi": 0.3,
+      "sparsity": 0.8834583333333335,
+      "between_mean": 0.9440589092063849,
+      "between_max": 0.9977389514023163,
+      "within_mean": 0.9607538040997463,
+      "n_silent": 0
+    }
+  ]
+}
