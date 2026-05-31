@@ -143,6 +143,9 @@ ResonateFireFHRR composition + ResonateFireTPAM.cleanup_separated (read its self
 theta_low/high/n_anneal/abstain_threshold). RF + TPAM are time-stepped (slow) -> modest trials, can use
 cleanup_separated fast= path if needed. reuse-by-import; spiking_phasor_fhrr / resonate_fire_fhrr / moat
 byte-unchanged; no autograd. <<<
+
+
+P4 PIVOT IS READY (instant, no training): the validated G.20 multitag conversational stack's bridges EXIST on disk -- g20_sparse_bridges/bridge{A-E}_*_sparse.simstate.h5 (160 concepts) + g20_sparse_bridges_320/*_sparse64.simstate.h5 (320 concepts). Runnable now via g20_160word_demo / g20_multibridge --sparse (cross-bridge encode + multitag retrieve + hierarchy + tokenization). DECISION LOGIC: the corrected 4000-low-drive DG test (PID 10146, watcher blw3vj8hv) is the DG-line DECIDER. RESOLVE (4000 reaches sparsity ~0.05 with WITHIN>>0.235 & BETWEEN<=0.5) -> continue trisynaptic line (CA3 next, carefully tuned). CANNOT-REACH-SPARSE or UNSTABLE -> the DG-biologization separated+stable compositional symbol is BLOCKED by a tuning-sensitive separation-reliability tension across systematic attempts (mechanism confirmed, assembly unreached) = honest biology-translatable BOUNDARY, BANK it, PIVOT to P4 (advance the working stack: candidate extensions = multi-hop reasoning [known gap], scale-to-640 [D8 infra scaffolded], or interactive chat). worth-GPU-time frame favors P4 if DG boundaries.
 Re-run 64-obs (kill-safe): python -u -m research.findings.raw._denoiser_cheap_probe --capture-obs 64
 --distinct --k-list 4 8 16 24 32 (GPU/CuPy for capture).
 
