@@ -81,23 +81,29 @@ Miller 7" hypothesis -- window 150->300 barely moved K4 (0.833->0.850); K5,6,7,8
 WINDOW-INDEPENDENT (coincidence rate-resolution [rates in 0..0.05, coarse] / cross-term interference).
 Honest capacity at validated operating point ~K=4. Corrected finding + capability_status (removed
 window-extension over-claim, added capacity ladder); committed+pushed both. wiki-sync milestone pushed to
-Gitea. FIRING-RATE LEVER WORKS (seed 42): bias-500 (2x rate) extends capacity to K=6 (0.950/0.900/0.817 at
-K=4/5/6, all clear 0.80 = Miller 7+-2 range), where the longer window did NOT -> CONFIRMS the K>=5
-bottleneck is rate-RESOLUTION (dynamic range), addressable by more firing rate not a longer readout.
-Control stayed near zero despite single-input leakage (0.040). Committed+pushed; finding capacity-ladder
-updated. EXACT NEXT CONCRETE ACTION: MULTI-SEED firing-rate run IN FLIGHT (task bof3v34ac) = seeds 42,43,44
-D=3200 window 150 --coinc-bias -500 --ks 4,5,6, sequential, output ->
-research/findings/raw/_insubstrate_capacity_bias500_multiseed.txt. READ task bof3v34ac / that file:
-  - if 43,44 also clear 0.80 at K=5 (and ideally K=6) -> capacity extends to K=5-6 multi-seed at the higher
-    rate: update capability_status pillar n=111 K-number from conservative ~4 to the confirmed multi-seed K
-    (note the rate/leakage tradeoff); commit/push both. (K=6 margin thin 0.817 seed-42 -> K=5 likely robust,
-    K=6 maybe seed-sensitive; report per-seed honestly, do NOT overclaim.)
-  - if a seed drops below 0.80 at K=5/6 -> report honestly; the robust multi-seed capacity is wherever all
-    3 seeds clear; core K=4 multi-seed stands regardless.
-  - THEN choose next composition arc (owner priority = conversation): (1) wire spiking bind -> existing
-    concept POOLS (fully in-network); (2) learn role-filler PARSING from input (big lever to conversation);
-    (3) compose bind with validated multitag/engram retrieval. Cheap-first. Propagate every outcome to BOTH
-    remotes. prior arc (multi-hop) below.
+Gitea. CAPACITY FULLY CHARACTERIZED MULTI-SEED -> SPIKING-COMPOSITION ARC MILESTONE COMPLETE. Firing-rate lever
+CONFIRMED multi-seed (42,43,44) at bias-500: K=4 0.975, K=5 0.933, K=6 0.856 (mean), every seed >= 0.80 at
+K=4,5,6 -> capacity extends to K=6 (Miller 7+-2) multi-seed; control near zero. Complete honest story:
+capacity is set by the coincidence FIRING RATE (K=4 clean-AND bias-1000 -> K=6 higher-rate bias-500); the
+readout WINDOW does NOT extend it (window-300 negative, falsified+corrected). Finding + capability_status
+(pillar n=111 tier/result/metric/summary -> K=4-6) updated, JSON valid schema 6/6; committed+pushed both.
+
+>>> THE SPIKING-COMPOSITION ARC IS A COMPLETE, FULLY-PROPAGATED MILESTONE (mechanism + in-spiking
+realization + 3 primitives + multi-seed bind/unbind RESOLVES + capacity K=6 multi-seed + adversarial CLEAR
++ demo + pillar n=111 + wiki-sync). Owner's "biologically sound" composition realized in spiking dynamics. <<<
+
+EXACT NEXT CONCRETE ACTION: open the NEXT ARC = USE the validated bind toward conversation (owner priority).
+Cheap-first (CPU numpy, no GPU) IS the gate: test whether the bind supports MULTI-FACT RELATIONAL QUERY (a
+small knowledge base of subject/verb/object facts -> answer "what does dog chase?" / cross-fact
+disambiguation), because a 2-fact SVO KB = ~K=6 bindings = exactly the capacity just unlocked. Build
+research/findings/raw/_vsa_relational_query_probe.py: store N SVO facts (each agent(x)X + action(x)Y +
+patient(x)Z), query single-fact roles + multi-fact relational ("patient of the fact whose agent is dog");
+pre-reg bar single-fact >= 0.90, report multi-fact honestly (the 2026-05-31 multi-hop arc found relational
+CHAINING hard -- DEGRADES-WITH-FANIN -- so multi-fact disambiguation may hit that wall; that is itself a
+real finding). RESOLVES -> build the spiking version + demo; BOUNDARY -> the bind is a single-structure
+slot-filler memory (still a real capability), relational reasoning needs more (engram fact-IDs / a parser).
+Then per result choose: in-network pool wiring / learned positional-or-syntactic role parser / engram
+compose. Cheap-first before any spiking build. Propagate every outcome to BOTH remotes. prior arc below.
 
 TWO live threads:
 
