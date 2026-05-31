@@ -177,16 +177,28 @@ SCALING QUESTION RESOLVED HONESTLY (owner-prompted; _vocab_scaling_locus_note.md
 vocabulary-ROBUST (spiking cleanup 1.000 to V=320); the real ~320 limit is the RECOGNITION FRONT-END (98.4%
 sparse multi-bridge; v17 28-word structural imbalance), NOT composition; plus a separate ~6-binding load cap.
 Corrected two overstatements ('scaling tractable' + 'cleanup degrades with vocab', both WRONG).
-EXACT NEXT CONCRETE ACTION: 64-WORD QA demo IN FLIGHT (task b4nm2h3ph) = _insubstrate_qa64_probe.py, sparse
-codes V=64 (G.20 100%-per-bridge tier), to concretely demonstrate conversation at 4x the 16-word vocab.
-READ it; if RESOLVES -> 64-word conversation demonstrated; record + update conversation finding. THEN the
-real frontier (the honest one): the RECOGNITION FRONT-END is the conversation bottleneck -- but it's the
-project's documented hard problem (in-vivo binding 2/4, sparse multi-bridge 98.4%). A NEW angle worth a
-cheap-first: insight #5 (the bind is robust to recognition ERRORS, uses distributed code not pool label)
-suggests the front-end may not need PERFECT recognition for downstream conversation -- test whether
-noisy/large-V recognition still supports the bind/QA (effective vocab > recognition accuracy). Cheap-first.
-(Owner may steer: generation, deeper reasoning, or bank the complete conversational-agent deliverable.)
-Propagate every outcome to BOTH remotes. prior arc (multi-hop) below.
+SCALING FULLY ANSWERED + DEMONSTRATED: composition handles wh-QA at V=64 (3 seeds), 160, 320 ALL 1.000
+(sparse codes); cleanup robust to V=640. The vocabulary limit is ENTIRELY the recognition front-end, NOT
+composition. Conversation batch COMPLETE (bidirectional agent: understand/answer/negate/generate/persist +
+REPL, all multi-seed). 8 insights synthesized. The TRACTABLE conversation + scaling space is comprehensively
+done; everything committed both remotes.
+
+EXACT NEXT CONCRETE ACTION = the REAL frontier (recognition front-end), to be done CAREFULLY (heavy, has a
+documented-bug trap), NOT rushed:
+  ANGLE (new, worth it): insight #5 (the bind uses the DISTRIBUTED code, not the pool LABEL) is established
+  at 16 words (live-text 15/16 label but 1.000 bind). OPEN QUESTION: does the distributed-code bind-recovery
+  EXCEED the pool-LABEL recognition at LARGER vocab, where the label drops (v17 28-word = 50% label)? The v17
+  finding measured ONLY the pool-label (50%), never the distributed-code bind-recovery on the same bridge --
+  so this is genuinely NEW, not re-deriving. If distributed >> label at 28 words -> the front-end limit is
+  partly a READOUT artifact + the effective conversational vocab is larger -> a real path past the wall.
+  BUILD REQUIRED: train a 28-word concept-pool bridge (~28-44 min/seed) + capture distributed codes + measure
+  (a) pool-label recognition (b) bind/QA recovery on the captured distributed codes. CAUTION: concept_pool_
+  demo_v2 uses the MODULE-LEVEL MONKEY-PATCH pattern that caused the 2026-05-14 architecture-mismatch
+  retraction -- VERIFY bridge architecture matches between train + capture (the exact bug that invalidated
+  the concept-concept results). Prefer extending concept_pool_demo's vocab cleanly over the v2 monkey-patch,
+  OR assert architecture equality. Then adapt activity_level_integration.pool_layout for 28 pools to capture.
+  This is a dedicated focused arc, not a quick probe. Propagate honestly (a re-derived 50% OR a distributed>>
+  label breakthrough are BOTH real findings). prior arc (multi-hop) below.
 
 TWO live threads:
 
