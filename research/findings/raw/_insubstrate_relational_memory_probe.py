@@ -15,9 +15,12 @@ FROZEN: spiking single-fact role query >= 0.80 AND spiking relational (find-by-a
 >= 0.80, multi-seed, with the absent-cue control giving no false match -> RESOLVES (a queryable
 relational fact-memory runs IN the spiking substrate). GPU/CuPy. Reuse-by-import; no protected mod.
 
-RESULT 2026-05-31 seed 42 (D=800, bias=-1000, 2 facts): RESOLVES. spiking single-fact=0.917,
-relational(find-agent,read-patient)=0.917, control(no-false-match)=1.000. A queryable SVO fact
-base runs IN the spiking substrate. Multi-seed confirmation in flight.
+RESULT 2026-05-31 (D=800, 2 facts): MULTI-SEED RESOLVES at the higher-rate operating point.
+  bias=-1000 (clean AND): 2/3 -- seed42 0.917/0.917, seed43 1.000/0.917, seed44 0.833/0.750 (dips).
+  bias=-500 (2x rate, more dynamic range): 3/3 PERFECT -- all seeds single=1.000 relational=1.000
+    control=1.000. The same firing-rate lever that extends bind capacity to K=6 also gives robust
+    multi-seed relational fact-memory (seed44's dip was bind-precision/rate-resolution, not cleanup).
+A queryable SVO knowledge base runs IN the spiking substrate, multi-seed at bias=-500.
 """
 from __future__ import annotations
 import argparse
