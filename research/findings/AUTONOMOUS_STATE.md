@@ -9,7 +9,35 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## ACTIVE ARC 2026-05-30 (night): biologize shortcut-2 (activity-grounded symbol DENOISER)
+## ACTIVE DECISION POINT 2026-05-31: three arcs converge on DG PATTERN-SEPARATION
+
+Denoiser arc CONCLUDED = NEGATIVE (finding 2026-05-31-denoiser-arc-NEGATIVE-...-three-arcs-converge-on-
+DG-pattern-separation.md). Biologizing shortcut-2 (oracle lookup) via activity grounding FAILS the
+{2,3,5} bar: temporal integration denoises VARIANCE (CV ~1.63/sqrt(k) confirmed) but the activity-
+grounded symbol is SEPARABILITY-limited (not variance) -- L=3 0.69 / L=5 0.57 plateau below bar at k=32.
+The attractor cleanup is CATASTROPHICALLY WORSE (near-chance 0.23-0.26; it needs separable patterns,
+collapses on the overlapping activity symbols). Sanity-checked NOT a usage bug (attractor recovers clean
+vocab 100% at noise<=0.20). The oracle lookup's irreducible value = the ORTHOGONALITY the substrate
+activity lacks. Honest NEGATIVE = the deliverable.
+
+>>> CONVERGENCE (the strategic finding): THREE independent arcs now prescribe the SAME missing substrate
+mechanism -- DG-style PATTERN SEPARATION:
+  - integrated-loop (2026-05-30): wm binding needs stable+lesionable selectivity -> DG pattern-sep.
+  - D-arc capacity (2026-05): dedicated-pool geometry erodes -> DG pattern-sep.
+  - denoiser (2026-05-31): activity-grounded symbol not separable -> DG pattern-sep (orthogonalize
+    before composition).
+The project HAS a validated DG (trisynaptic loop, P1 D.12: DG cosine 0.218 from input 0.800, 58pp
+orthogonalization). The convergent next arc: insert DG pattern-separation between substrate raw activity
+and the composition-symbol derivation, then re-test whether DG-separated activity grounds a composable
+symbol. DEEPER arc -> DECISION POINT for owner (this is the third arc to land on DG; it is the strongest-
+evidenced direction the project has). DEFAULT (no steer): scope the DG-pattern-separation arc (check
+existing trisynaptic/DG sims first; reuse-by-import; cheap-first gate: does DG-separating the activity
+drop inter-symbol overlap enough that mean-of-k + argmax clears {3,5}?). Standing reframes hold (0.80
+bar frozen; moat 7/7; reuse-by-import; no new autograd; honest negatives are the deliverable). <<<
+
+---
+
+## CONCLUDED ARC 2026-05-30 (night): biologize shortcut-2 (activity-grounded symbol DENOISER)
 
 Owner delegated ("whatever you think most productive, keeping goals in mind"). Per the top-level
 goal (artificial life / biology-translatable; capabilities instrumental; honest negatives under
