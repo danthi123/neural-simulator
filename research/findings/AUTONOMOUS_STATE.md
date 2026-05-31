@@ -50,11 +50,27 @@ CPU linear probe; NOT a sim learning rule, NOT autograd). No protected/frozen/mo
 (throwaway script only). CONTROLLER forms the official verdict + scrutinizes (a READOUT-LIMIT
 result is the surprising/strong claim -> scrutinize it harder than a FAIL: episode-level split
 real? regime check ~0.46? chance baseline? class balance?).
-NEXT (controller, on subagent completion): verify regime check (~0.46) + anti-leakage (episode
-split) + form verdict. READOUT-LIMIT -> the big phase-coded VSA arc is NOT warranted as framed;
-a cheaper readout/cleanup fix is the lead (huge result). REPRESENTATIONAL -> the VSA premise
-holds; phase-coded VSA arc is the justified next big build. Either way: record finding + push
-both remotes + surface to owner. Phase-coded VSA arc NOT started -- the audit gates it.
+PHASE 2 ATTEMPT 1 INVALID (subagent a3a208e2 ended early w/o a valid result; controller
+diagnosed): the probe script is STRUCTURALLY SOUND (episode-level GroupKFold no-leakage, diff
+pairs/episode, primary lang_output + secondary pool states, pre-reg verdict) BUT FAILS THE
+REGIME CHECK -- on the captured data the cosine readout top1 = 0.0 (0/8), only 2/8 predictions
+are even adjectives (predicts "dog"/"go" for "small" answers). primary_state dim = 2048 => it
+ran on the FULL validated substrate (loaded unified_per_regime/phase1/seed42.simstate.h5, 27MB,
+EXISTS), so this is a PIPELINE-REPRODUCTION bug, NOT a substrate-scale issue: the probe does not
+reproduce generative_replay_pfc_frame_runner's FULL arm (the ~0.46 regime). Per pre-registration
+(STOP if regime wildly off) the decode comparison is INVALID -> NOT trusted.
+FIX IN FLIGHT (subagent, background): (1) FIRST confirm the 6th-arc 0.458 still reproduces by
+running the ACTUAL generative_replay_pfc_frame_runner small-scale (disambiguate REGRESSION vs
+PROBE-BUG); (2) if real runner ~0.46 -> fix the probe to reuse-by-import the runner's exact
+FULL-arm functions (encode/replay/PFC-frame/_compositional_query_ranked) until the probe's regime
+check hits ~0.35-0.55; (3) then run the decisive multi-episode episode-level CV (seeds 42/43/44,
+8 ep, 5-fold) + report A(cosine) vs B(decoder) + pre-reg verdict; RUN TO COMPLETION (no detached
+process). If real runner does NOT reproduce ~0.46 -> that REGRESSION is itself the finding.
+Validated cache: research/findings/raw/unified_per_regime/phase1/seed{42,43,44}.simstate.h5 (USE
+IT; do NOT train/tiny). NEXT (controller, on completion): verify regime ~0.46 + episode-split +
+form verdict (scrutinize READOUT-LIMIT harder). READOUT-LIMIT -> VSA arc not warranted as framed
+(cheaper readout/cleanup fix). REPRESENTATIONAL -> VSA premise holds. Record + push both remotes
++ surface to owner. Phase-coded VSA arc NOT started -- the audit gates it.
 
 ---
 
