@@ -29,6 +29,27 @@ Probe: `research/findings/raw/_denoiser_cheap_probe.py` (throwaway, CPU). Reuses
 
 3. **Honest caveat (the scrutiny):** there are only 16 cached observations, so mean-of-k is bootstrap-sampled with replacement; storage and query mean-of-k symbols sample from the same 16-pool and overlap, which can make the EXACT k-thresholds modestly OPTIMISTIC (more so at high k). The TREND (CV ~ 1/sqrt(k); composition rises and crosses 0.80) is robust to this -- the CV law is overlap-independent -- but the build must capture MORE observations (e.g. 48-64 distinct) to pin the exact k per load and confirm L=5 crosses the bar.
 
+## Distinct-observation confirmation (caveat resolved -- FAVORABLY)
+
+The bootstrap-overlap caveat was checked directly: re-ran with storage symbols sampled from the
+FIRST half of the 16 observations and query symbols from the SECOND half (distinct, non-overlapping;
+k capped at 8). Result (3-seed comp-only):
+
+| k | CV | L=2 | L=3 | L=5 |
+|---|----|-----|-----|-----|
+| 1 | 1.518 | 0.485 | 0.376 | 0.371 |
+| 2 | 1.079 | 0.695 | 0.606 | 0.495 |
+| 4 | 0.787 | **0.803 PASS** | 0.707 | 0.573 |
+| 8 | 0.552 | **0.901 PASS** | 0.733 | 0.593 |
+
+L=2 PASSes at k=4 (0.803) and k=8 (0.901) with ZERO storage/query observation overlap. And the
+distinct numbers are HIGHER than the bootstrap ones at every k (e.g. L=2 k=4: 0.803 distinct vs
+0.750 bootstrap; k=8: 0.901 vs 0.849) -- so bootstrap-with-replacement was if anything slightly
+PESSIMISTIC (it averages ~0.63k effective-distinct observations), NOT optimistic. The caveat is
+resolved in the favorable direction: viability is confirmed on the clean measure. L=3/L=5 need
+k>8, which 16 observations cannot reach distinct -- a 64-observation GPU capture is in flight to
+pin their exact k.
+
 ## Biology-translatable insight
 
 The substrate cannot use a raw single-observation population snapshot as a symbol (May-22 NEGATIVE) -- but it does NOT need an external oracle lookup either. Because the per-neuron activity noise is independent across observations, TEMPORAL INTEGRATION over a sustained encoding window grounds a clean, composable symbol from the substrate's own activity. This is exactly the biological mechanism the May-22 finding named (sustained encoding / temporal integration as a denoiser), now empirically confirmed to work on this substrate. The required window grows with compositional load. The oracle-lookup shortcut is biologizable.
