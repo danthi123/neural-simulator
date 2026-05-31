@@ -1,0 +1,7 @@
+##### SEED 42 #####
+  yes/no accuracy (affirmed->yes AND negated->no): 1.000  unknown-fact control: 1.000
+VERDICT: RESOLVES -- spiking negation via a bound POLARITY tag: 'does dog chase cat?' answered yes/no correctly for affirmed vs negated facts. Negation = an explicit bound polarity ensemble (K=4), not the absence of a fact.
+##### SEED 43 #####
+  yes/no accuracy (affirmed->yes AND negated->no): 1.000  unknown-fact control: 1.000
+VERDICT: RESOLVES -- spiking negation via a bound POLARITY tag: 'does dog chase cat?' answered yes/no correctly for affirmed vs negated facts. Negation = an explicit bound polarity ensemble (K=4), not the absence of a fact.
+##### SEED 44 #####
