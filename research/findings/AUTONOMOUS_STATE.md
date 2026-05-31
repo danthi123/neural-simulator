@@ -168,14 +168,25 @@ n=111 + summary finalized.
 multi-seed in spiking, with the scientific deliverable (7 insights) banked. On the owner's actual goal
 (artificial life / brain analogue / biology-translatable insights / conversation instrumental). <<<
 
-EXACT NEXT CONCRETE ACTION (richer conversation; cheap-first each; owner may steer): (1) SCALE VOCABULARY
--- the concept-pool architecture scales (G.20 160-320 concepts); wire a larger-vocab concept-pool bridge
-to the bind for more conversational range (tractable, pieces exist). (2) MORE SYNTACTIC CONSTRUCTIONS --
-questions ("who chases cat?" = query with an unknown slot; the bind already supports role queries) and
-relative clauses (needs separate-fact storage per the architectural principle, NOT flat nesting). (3)
-MULTI-TURN PERSISTENT DIALOGUE -- persist the bound fact structures across turns/sessions via the lineage
-system (the artificial-life / continual-learning aspect). Pick per owner-priority + cheap-first. Propagate
-every outcome to BOTH remotes. prior arc (multi-hop) below.
+CONVERSATION BATCH BUILT (2026-05-31, all spiking, all multi-seed, finding 2026-05-31-conversational-
+capabilities-on-the-spiking-bind.md): wh-QA (who/what 1.0/1.0/0.9), NEGATION+yes/no via a bound polarity
+tag (3/3 = 1.0; insight: negation = explicit polarity ensemble, not absence), PERSISTENT KB across sessions
+(3/3, no forgetting = the continual-learning premise), interactive REPL (compose_conversation_repl.py) the
+owner can TALK to (teach/negate/ask, persists), conversation demo (compose_conversation_demo.py).
+SCALING QUESTION RESOLVED HONESTLY (owner-prompted; _vocab_scaling_locus_note.md): the bind/COMPOSITION is
+vocabulary-ROBUST (spiking cleanup 1.000 to V=320); the real ~320 limit is the RECOGNITION FRONT-END (98.4%
+sparse multi-bridge; v17 28-word structural imbalance), NOT composition; plus a separate ~6-binding load cap.
+Corrected two overstatements ('scaling tractable' + 'cleanup degrades with vocab', both WRONG).
+EXACT NEXT CONCRETE ACTION: 64-WORD QA demo IN FLIGHT (task b4nm2h3ph) = _insubstrate_qa64_probe.py, sparse
+codes V=64 (G.20 100%-per-bridge tier), to concretely demonstrate conversation at 4x the 16-word vocab.
+READ it; if RESOLVES -> 64-word conversation demonstrated; record + update conversation finding. THEN the
+real frontier (the honest one): the RECOGNITION FRONT-END is the conversation bottleneck -- but it's the
+project's documented hard problem (in-vivo binding 2/4, sparse multi-bridge 98.4%). A NEW angle worth a
+cheap-first: insight #5 (the bind is robust to recognition ERRORS, uses distributed code not pool label)
+suggests the front-end may not need PERFECT recognition for downstream conversation -- test whether
+noisy/large-V recognition still supports the bind/QA (effective vocab > recognition accuracy). Cheap-first.
+(Owner may steer: generation, deeper reasoning, or bank the complete conversational-agent deliverable.)
+Propagate every outcome to BOTH remotes. prior arc (multi-hop) below.
 
 TWO live threads:
 
