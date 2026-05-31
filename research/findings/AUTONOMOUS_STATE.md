@@ -20,7 +20,7 @@ collapses on the overlapping activity symbols). Sanity-checked NOT a usage bug (
 vocab 100% at noise<=0.20). The oracle lookup's irreducible value = the ORTHOGONALITY the substrate
 activity lacks. Honest NEGATIVE = the deliverable.
 
->>> CONVERGENCE (the strategic finding): THREE independent arcs now prescribe the SAME missing substrate
+>>> CA3 DIAGNOSTIC DONE = INCONCLUSIVE/CONFOUNDED (CA3 saturated 0.946 active -> within/between 0.90 are artifacts; DG dense 0.37 -> not the separated regime; did NOT cleanly test CA3 on separated codes). Clean DG-side test P5 (larger DG: separation AND stability?) RUNNING (PID 10091, _dg_size_lever_probe, n_dg 800 vs 4000). If larger DG threads sparse-fraction-but-many-active -> stable+separated = resolution; else fundamental boundary (P3). Earlier note kept: CONVERGENCE (the strategic finding): THREE independent arcs now prescribe the SAME missing substrate
 mechanism -- DG-style PATTERN SEPARATION:
   - integrated-loop (2026-05-30): wm binding needs stable+lesionable selectivity -> DG pattern-sep.
   - D-arc capacity (2026-05): dedicated-pool geometry erodes -> DG pattern-sep.
