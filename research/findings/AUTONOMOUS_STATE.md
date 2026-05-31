@@ -40,6 +40,17 @@ on this substrate) = a biology-translatable deliverable. Cheap-first BEFORE desi
 falsify-cheaply discipline). resonate_fire_fhrr.ResonateFireTPAM is the reusable attractor denoiser.
 Standing: reuse-by-import; no new autograd; no protected/frozen/moat edit; moat 7/7; 0.80 bar frozen.
 
+PROBE BUILT + IN FLIGHT: research/findings/raw/_denoiser_cheap_probe.py (temporal-integration
+mean-of-k denoiser; reuses cached activity full_seed{42,43,44}.npz + byte-unchanged spiking_phasor_
+fhrr; CPU). k=1 REPRODUCES the NEGATIVE baseline (integrated 0.375, composition-only 0.367, CV 1.518
+~ documented 1.63) -- probe faithful. Sweeping k=[1,2,4,8,16] x 3 seeds (N_TRIALS=40; spiking FHRR is
+time-stepped 1000-step/op so slow, ~15 min). Background bqwl456g5 -> log _denoiser_cheap_probe.log +
+_denoiser_cheap_probe.json. NEXT (controller, on completion): read k-curve; VIABLE if composition-only
+rises toward 0.80 with CV falling as ~1.63/sqrt(k) at feasible k; NEGATIVE if flat / CV not falling as
+1/sqrt(k) (correlated noise, not averageable). SCRUTINIZE a rise: is it genuine CV-reduction or
+bootstrap-overlap optimism (only 16 cached obs)? If session dies, re-run: SIM_BACKEND=numpy python -u
+-m research.findings.raw._denoiser_cheap_probe.
+
 ---
 
 ## CONCLUDED ARC 2026-05-30 (PM): conversational-ceiling AUDIT (owner chose "audit the ceiling")
