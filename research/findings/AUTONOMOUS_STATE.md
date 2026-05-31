@@ -103,16 +103,25 @@ oracle near-ortho code (G.20 Kanerva-SDM) is genuinely IRREDUCIBLE from the subs
 component, not a shortcut a cleverer code removes. The biologize-the-VSA-symbol line is DEFINITIVELY boundary-
 characterized + banked as the biology-translatable deliverable.
 
-EXACT NEXT CONCRETE ACTION: all READY cheap research is genuinely COMPLETE + the biological-symbol-grounding
-boundary is now definitively characterized (3 convergent methods). The remaining directions are NOT cheap
-probes: (1) deeper balanced-teacher sparse-encode = marginal P4 polish, deferred; (2) the genuinely-next
-BIOLOGICAL escape needs a different SUBSTRATE (learn near-ortho concept reps BY CONSTRUCTION during
-acquisition -- predictive-coding/pretraining, months-scale) = a STRATEGIC OWNER decision, NOT a tail-of-turn
-launch; (3) scale V=640 = owner-flagged ~100hr, do NOT unilaterally launch. The working P4 stack is the
-deliverable pending owner strategic input. NEXT CYCLE: surface the strategic fork to the owner (accept the
-oracle + scale P4, OR commit to a months-scale new-substrate pretraining effort) and pursue whichever via
-brainstorming->design->cheap-first with check-existing-first FIRST. Do NOT launch a months-scale effort or the
-~100hr scale without owner direction. Capture the arc (wiki-sync) is appropriate at this milestone.
+STRATEGIC FORK RESOLVED WITH EVIDENCE (2026-05-31; finding 2026-05-31-near-ortho-boundary-is-FUNDAMENTAL-
+not-capacity-...md): the near-ortho floor is FLAT at ~0.48 from N=4 to N=16 concepts (delta +0.002) ->
+near-ortho is unreachable even at 4 concepts -> the boundary is per-pair-overlap-FUNDAMENTAL, NOT capacity-
+limited. So a "richer substrate" (more dims/concepts at the same overlap) would NOT help; the only biological
+escape is months-scale richer TRAINING (intrinsically less-overlapping concept reps -- Phase-2 BPTT, previously
+toy-scale falsified), which is HIGH-COST + UNCERTAIN. EVIDENCED RECOMMENDATION: ACCEPT the oracle near-ortho
+code as an engineering component + advance the validated P4 stack (the deliverable). The months-scale escape
+is an explicit OWNER decision, not autonomous.
+
+EXACT NEXT CONCRETE ACTION: the biological-symbol-grounding investigation is COMPLETE with an evidenced
+recommendation (accept oracle + advance P4). Cheap-first research is genuinely exhausted (4 results: 3-method
+frontier + N-independence). Shipped directional trace is QA'd (138 g20 tests pass). The remaining work is
+either OWNER-STRATEGIC (months-scale richer-training escape; ~100hr V=640 scale -- do NOT launch unilaterally)
+or marginal P4 polish (balanced-teacher sparse-encode -- deferred, regression-risk vs incremental gain).
+Pending owner strategic input, the working P4 stack IS the deliverable. WATCHDOG/NEXT-CYCLE: do NOT launch
+owner-gated big runs; if pursuing P4 polish, do it backward-compat + re-validate the g20 suite; any NEW
+biological direction must be check-existing-first'd (theta-gamma + grid + decorrelation arcs were all
+explored/bounded this session). The honest boundary characterization IS the biology-translatable deliverable
+per the owner's frame. Surface the evidenced recommendation to the owner.
 P4 is well-advanced (160/320 concepts, multitag 90%, directional trace, hierarchy, yes/no, tokenize);
 the biological-composition line is boundary-banked. Genuinely-open next directions all need a real design
 effort (new biological subsystem mechanism) -- do that via brainstorming->design->cheap-first, check-existing-
