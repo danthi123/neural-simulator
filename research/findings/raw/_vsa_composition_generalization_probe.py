@@ -65,8 +65,9 @@ def make_roles(mode, R, D, rng):
     return roles / (np.linalg.norm(roles, axis=1, keepdims=True) + 1e-12)
 
 
-def run(fillers, roles, rng, broken=False):
-    """broken=True: unbind with a WRONG (random other) role -> anti-cheat (should be chance)."""
+def run(fillers, roles, rng, broken=False, noise=0.0):
+    """broken=True: unbind with a WRONG role -> anti-cheat. noise>0: add Gaussian
+    readout noise (relative to per-component std of S) -> spiking-realism stress."""
     V, D = fillers.shape
     R = roles.shape[0]
     out = {}
@@ -80,6 +81,8 @@ def run(fillers, roles, rng, broken=False):
             S = np.zeros(D)
             for k in range(K):
                 S = S + roles[role_idx[k]] * fillers[fill_idx[k]]
+            if noise > 0:
+                S = S + noise * S.std() * rng.standard_normal(D)
             for k in range(K):
                 ub_role = roles[rng.integers(R)] if broken else roles[role_idx[k]]
                 est = S * ub_role
@@ -154,6 +157,17 @@ def main():
               "design constraint.", flush=True)
     else:
         print(f"VERDICT: see table (random {rnd4:.2f}, overlap {ovl4:.2f}, disjoint {dsj4:.2f}, broken {brk4:.2f}).", flush=True)
+
+    # spiking-realism stress: readout noise (random near-ortho roles + substrate fillers, K=4)
+    print("\n=== noise robustness (random roles + substrate fillers, K=4) ===", flush=True)
+    for nz in [0.0, 0.5, 1.0, 2.0]:
+        accs = []
+        for seed in seeds:
+            _, fillers = load_fillers(seed)
+            rng = np.random.default_rng(seed + 999)
+            roles = make_roles("random", 8, fillers.shape[1], rng)
+            accs.append(run(fillers, roles, rng, noise=nz).get(4, 0.0))
+        print(f"  noise={nz:.1f}x std -> K=4 acc = {np.mean(accs):.3f}", flush=True)
 
 
 if __name__ == "__main__":

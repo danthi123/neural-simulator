@@ -11,6 +11,25 @@ explicit user stop/pause or a true safety boundary halts work)
 
 ## >>> CURRENT POINTER (read THIS first; 2026-05-31) <<<
 
+ACTIVE ARC = BIOLOGICAL COMPOSITION (owner chose Option 2: "we absolutely want compositional
+capabilities, work autonomously even with new ideas, biologically sound, catalog as needed").
+POSITIVE REVISION (hardened, 2026-05-31; finding 2026-05-31-composition-REVISION-...-near-ortho-
+ROLES-not-FILLERS): generalizable compositional bind/unbind (role x filler) works at 1.000 up to
+K=8 with the SUBSTRATE's OVERLAPPING concept fillers (between 0.70) -- because cleanup uses
+ID-separability (within>between, which the substrate HAS), NOT near-orthogonality. So the near-ortho
+boundary blocks the WRONG thing (making MANY concepts near-ortho); composition only needs a FEW
+near-ortho ROLE codes (agent/patient/action -- trivially feasible) x MANY ID-separable fillers.
+Hardened: anti-cheat (broken binding ~chance by K=8; cleanup-bias 0.41 at K=1, an honest caveat);
+role-mode controls (DISJOINT sub-pop roles FAIL ~chance -> roles must be DISTRIBUTED; overlapping
+roles degrade); NOISE-robust (1.000 at 2x readout-noise std). Biologically-grounded: mean-centered
+rate codes (= baseline-subtracted firing = the project's common-mode-removal) realize the +-1;
+reconciles the denoiser NEGATIVE (that measured raw-symbol near-ortho separability; end-to-end
+composition works via cleanup on ID-separable codes -- a different, achievable bar). Check-existing-
+first found generative-replay (v2 smoke 0.02) + sequence-storage (DIRECTION-A/E) bounded; this
+revision REOPENS composition. NEXT (real build, owner-fork): validate on the SPIKING substrate --
+implement the few-role x concept-filler bind/unbind in spiking dynamics (the +-1/gain-field/phase
+bind needs the spiking substrate; mean-centering provides the signs). prior arc (multi-hop) below.
+
 TWO live threads:
 
 (1) DONE = DEGRADES-WITH-FANIN (2026-05-31; finding 2026-05-31-P4-multihop-hub-reuse-DECISIVE-
