@@ -26,3 +26,19 @@ many distractors there are -> the bind/cleanup COMPOSITION layer is vocabulary-r
 
 The new pipeline would consume a larger vocabulary fine IF the front-end supplied clean codes;
 the realistic ceiling is ~64/bridge at 100%, ~320 at 98.4%, gated by recognition.
+
+## Refinement (2026-05-31, owner follow-up): the front-end is less limiting than v17's 50% implied
+
+The v17 28-word 50% pool-label recognition was the OLD concept-pool architecture (motor pools dominate
+the argmax readout). Two things refine the picture upward:
+- The ENCODING-AXIS architecture (finding 2026-05-10-encoding-axis-64word-3SEED-GO, n_lang=8192,
+  n_motor=2000) validated 64-word RECOGNITION at 3/3 GO -- not 50%. So recognition scales cleanly to 64.
+- Insight #5 (the bind uses the DISTRIBUTED activity, not the pool LABEL): the pool-label argmax is the
+  lossy part; the distributed code the bind consumes is more separable (live-text 15/16 label but 1.000
+  bind). So the bind's effective recognition exceeds the pool-label accuracy.
+
+Demonstrated bind-side (sparse codes, spiking wh-QA): V=64 -> 1.000 (seed 42). So:
+- 64-word conversation: CLEAN (encoding-axis recognition 3/3 GO + vocabulary-robust bind, QA 1.000).
+- 320-word: feasible at ~98% (G.20 sparse multi-bridge 98.4% + robust bind).
+The honest "limit" is the soft 98.4% at 320, not a hard wall, and 64 is clean. Scaling richer conversation
+is front-end work (the documented arc), but the encoding-axis result shows it is tractable to ~64+.
