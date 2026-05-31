@@ -75,19 +75,25 @@ reviewer CLEAR (insubstrate_spiking_bind_reviewer_verdict.md; reviewer simulated
 point 0/1/2 sources -> 0.000/0.013/0.060, reproduced the overlapping-code control floor, ruled out leakage/
 non-spiking/triviality/seed-sharing). capability_status pillar n=111 promoted (JSON valid, schema 6/6).
 Demo compose_spiking_bind_demo.py smoke 12/12 novel sentences. ALL committed+pushed both remotes.
-EXACT NEXT CONCRETE ACTION: CAPACITY-SCALING run IN FLIGHT (task b8v8ssifo) = seed-42 D=3200 --run-steps 300
---ks 4,5,6,7,8, output -> research/findings/raw/_insubstrate_capacity_window300.txt. This EMPIRICALLY tests
-the "capacity extends with readout window" claim (currently asserted from a CPU Poisson model; window 150
-gave K=4=0.86 GPU). READ task b8v8ssifo / that file:
-  - record which K clear 0.80 at window 300 (if K6,7 clear -> capacity reaches Miller 7 = nameable
-    biological benchmark; append a capacity-ladder table to the findings doc + commit/push both).
-  - then wiki-sync the milestone (significant: new validated pillar; use the wiki-sync skill).
-  - THEN choose the next composition arc (future, owner priority = conversation): (1) wire the spiking bind
-    layer to the EXISTING concept POOLS (concepts already are pools -> fully in-network path); (2) learn
-    role-filler PARSING from input (the bridge from this fixed-wiring primitive to used-in-conversation
-    composition -- the big lever); (3) compose the spiking bind with the validated multitag/engram retrieval.
-    Pick per owner-priority + cheap-first discipline. Propagate every outcome to BOTH remotes.
-    prior arc (multi-hop) below.
+CAPACITY-SCALING DONE + WIKI-SYNCED. Window-300 run: HONEST NEGATIVE on the "window extends capacity to
+Miller 7" hypothesis -- window 150->300 barely moved K4 (0.833->0.850); K5,6,7,8 = 0.760/0.600/0.500/0.438
+(below bar). The CPU Poisson model overestimated (only spike-count noise); GPU K>=5 bottleneck is
+WINDOW-INDEPENDENT (coincidence rate-resolution [rates in 0..0.05, coarse] / cross-term interference).
+Honest capacity at validated operating point ~K=4. Corrected finding + capability_status (removed
+window-extension over-claim, added capacity ladder); committed+pushed both. wiki-sync milestone pushed to
+Gitea. EXACT NEXT CONCRETE ACTION: FIRING-RATE test IN FLIGHT (task beia62mr1) = seed-42 D=3200 window 150
+--coinc-bias -500 (2x rate, BOTH=0.097 vs 0.048; --coinc-bias CLI arg added) --ks 4,5,6, output ->
+research/findings/raw/_insubstrate_capacity_bias500.txt. Tests whether MORE firing-rate dynamic range
+extends capacity past K=4 (the remaining lever after window plateaued). READ task beia62mr1 / that file:
+  - if K5,6 clear 0.80 at bias-500 -> firing rate IS the capacity lever (positive; append to finding, note
+    rate/leakage tradeoff since single=0.040 at bias-500); maybe sweep bias-700 too.
+  - if NOT -> ~K=4 is the operating-point capacity (honest negative on extension); reaching Miller 7 needs
+    a different code (higher per-dim rate resolution / sparser bound rep), a separate future arc.
+  - EITHER WAY the core milestone (K=4 multi-seed RESOLVES + adversarial CLEAR + pillar n=111) stands.
+  - THEN choose next composition arc (owner priority = conversation): (1) wire spiking bind -> existing
+    concept POOLS (fully in-network); (2) learn role-filler PARSING from input (big lever to conversation);
+    (3) compose bind with validated multitag/engram retrieval. Cheap-first. Propagate every outcome to BOTH
+    remotes. prior arc (multi-hop) below.
 
 TWO live threads:
 
