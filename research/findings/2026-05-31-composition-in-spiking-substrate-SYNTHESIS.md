@@ -26,8 +26,8 @@ about how (and how far) a brain-analogue substrate can compose.
    (42,43,44) 6/6 conjunctions including the active↔passive flip every seed (bare spike-timing STDP
    fails on the simultaneous teacher); and the full pipeline composes end-to-end — the learned parser
    assigns roles, the spiking bind stores the sentence, a relational query extracts the agent
-   VOICE-INVARIANTLY (seed 42: parse 6/6, voice-invariant agent 1.000, scrambled-parse control 0.000;
-   multi-seed confirming). Different word orders, same meaning, correctly understood — learned, not
+   VOICE-INVARIANTLY (multi-seed 42/43/44: parse 6/6, voice-invariant agent 1.000, scrambled-parse
+   control 0.000 — every seed). Different word orders, same meaning, correctly understood — learned, not
    supplied.
 
 Owner-facing demos: `compose_spiking_bind_demo.py`, `compose_relational_memory_demo.py`,
@@ -113,7 +113,7 @@ the timing-based rule fails on simultaneous teaching. So ALL parser pieces are v
 (coincidence for the conjunction, Hebbian-learned conjunction->role, the bind for role->filler), and the
 FULL PIPELINE now composes END-TO-END (_insubstrate_parser_bind_e2e_probe.py): the learned parser assigns
 roles, the spiking bind stores the sentence, a relational query extracts the agent VOICE-INVARIANTLY --
-seed 42 parse 6/6, voice-invariant agent 1.000, scrambled-parse control 0.000 (multi-seed confirming).
+multi-seed (42,43,44) parse 6/6, voice-invariant agent 1.000, scrambled-parse control 0.000 every seed.
 "dog chases cat" and "cat is chased by dog" -- different word orders, same meaning -- are both correctly
 understood (dog is the agent), LEARNED not supplied. This is the first end-to-end learned syntactic
 understanding in-substrate, composing every validated piece. What remains for richer conversation: scale

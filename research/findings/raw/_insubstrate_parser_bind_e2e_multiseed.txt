@@ -1,0 +1,15 @@
+##### SEED 42 #####
+  learned parser map: 6/6 correct -> ['agent', 'patient', 'action', 'action', 'patient', 'agent']
+  VOICE-INVARIANT agent (active & passive -> same true agent): 1.000  scrambled-parse control: 0.000  (chance 0.062)
+VERDICT: RESOLVES -- end-to-end LEARNED syntactic understanding in-substrate: the Hebbian-learned parser + spiking bind extract the agent VOICE-INVARIANTLY from active AND passive.
+
+##### SEED 43 #####
+  learned parser map: 6/6 correct -> ['agent', 'patient', 'action', 'action', 'patient', 'agent']
+  VOICE-INVARIANT agent (active & passive -> same true agent): 1.000  scrambled-parse control: 0.000  (chance 0.062)
+VERDICT: RESOLVES -- end-to-end LEARNED syntactic understanding in-substrate: the Hebbian-learned parser + spiking bind extract the agent VOICE-INVARIANTLY from active AND passive.
+
+##### SEED 44 #####
+  learned parser map: 6/6 correct -> ['agent', 'patient', 'action', 'action', 'patient', 'agent']
+  VOICE-INVARIANT agent (active & passive -> same true agent): 1.000  scrambled-parse control: 0.000  (chance 0.062)
+VERDICT: RESOLVES -- end-to-end LEARNED syntactic understanding in-substrate: the Hebbian-learned parser + spiking bind extract the agent VOICE-INVARIANTLY from active AND passive.
+
