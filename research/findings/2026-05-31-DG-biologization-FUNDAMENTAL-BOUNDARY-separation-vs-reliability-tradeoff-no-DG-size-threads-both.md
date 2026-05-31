@@ -1,5 +1,22 @@
 # DG-biologization line: FUNDAMENTAL BOUNDARY. The hippocampal DG pattern-separation MECHANISM is confirmed (overlapping concept activity 0.82 -> 0.18), but turning the substrate's activity into a separated-AND-STABLE compositional symbol is blocked by a FUNDAMENTAL separation-vs-reliability tradeoff: separation needs few competitive k-WTA winners (sparse -> unstable within-concept); reliability needs many stable winners (denser -> unseparated). No DG SIZE threads both (800-sparse: separated 0.27 / unstable 0.24; 4000-sparse: stable 0.6-0.8 / unseparated 0.66-0.76 -- two points on the SAME tradeoff curve, the sweet-spot is never reached), and CA3 completion collapses separation further. The oracle lookup's orthogonality is IRREDUCIBLE on this substrate. Honest biology-translatable boundary = the deliverable. PIVOT to the validated conversational capability.
 
+> ## ⚠️ REFINEMENT (2026-05-31 later, from the modular-coding probe scrutiny)
+> The "FUNDAMENTAL ... no single competitive-sparse-coding stage can deliver both" framing is TOO STRONG
+> and is REFINED by finding 2026-05-31-modular-coding-probe-INSTRUMENT-INVALID-but-CLARIFYING-...md:
+> (1) the raw substrate concept activity is ALREADY ID-separable -- within-concept cosine 0.896 >
+> between-concept 0.768, nearest-neighbour identity 16/16, with NO DG/projection/coding. So basic
+> separability/identifiability is NOT the unmet bar (this is why the multitag/engram retrieval stack works).
+> (2) The genuinely-unmet bar is NEAR-ORTHOGONALITY (between -> ~0) for clean VSA/FHRR binding without
+> cross-talk -- a MUCH higher bar. The spiking DG reaches between ~0.66; a clean DETERMINISTIC rate-based
+> k-WTA reaches ~0.45 (within 0.64, id ~1.0); NEITHER reaches near-orthogonal. So the honest boundary is
+> "VSA-near-orthogonal separable+stable symbols are not cheaply achievable from the substrate activity",
+> NOT "the activity cannot be separated at all." (3) The spiking DG's within-collapse to 0.2-0.3 is a
+> SPIKING-DYNAMICS artifact (stochastic near-threshold spike-based k-WTA flips winners) -- a deterministic
+> top-k on the same inputs is stable; so that instability is implementation-specific, not intrinsic to
+> competitive sparse coding. NET: the boundary stands as "cheap biological VSA-near-orthogonal symbol
+> grounding is unmet", which still motivates accepting the oracle code as engineering + advancing P4 -- but
+> the over-strong "fundamental to ANY sparse-coding stage" wording is retracted. Read the body through this.
+
 **Date:** 2026-05-31
 **Status:** Decisive BOUNDARY for biologizing the oracle lookup (the last engineered shortcut) via the hippocampal trisynaptic loop. The DG separation mechanism is confirmed and reproducible; the assembly into a composable symbol is fundamentally blocked. Closes the trisynaptic-symbol-source line cleanly. The night's three-arc convergence on DG pattern-separation identified the right mechanism but the wrong expectation that it could yield a usable compositional symbol on this substrate.
 

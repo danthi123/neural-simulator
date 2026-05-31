@@ -66,19 +66,29 @@ relates to red, new, angry". MULTI-HOP ARC COMPLETE end-to-end (characterized cl
 bimodal + the validated fix shipped). g20_multibridge no longer byte-unmodified (this is the deliberate
 shipped capability); no protected/frozen/moat module touched; backward-compat by construction.
 
-EXACT NEXT CONCRETE ACTION: pivot to the PRIMARY-goal-aligned question (biological mechanism), now that the
-instrumental P4 multi-hop arc is complete. The DG separation-vs-reliability BOUNDARY (sparse k-WTA cannot
-give separation AND within-concept reliability) is THE characterized blocker for biologizing the
-compositional symbol. Night-synthesis P3 candidate (a): a DIFFERENT biological code -- grid/place-cell
-CONJUNCTIVE coding -- might thread separation-AND-reliability where DG k-WTA could not (grid cells give a
-high-capacity, stable, separable conjunctive code by construction). STEP 1 (DO THIS FIRST, the check-
-existing-work-first discipline I just re-learned from the theta-gamma redundancy): grep findings/plans/sim
-for prior in-project grid-cell / place-cell / conjunctive-coding / entorhinal work (Spiking-TEM was named in
-MEMORY feedback_check_existing_sims_first). STEP 2 if genuinely open: design a CHEAP-FIRST numpy probe
-(does a grid/conjunctive code give between-concept separation AND within-concept stability on the SAME
-overlapping substrate activity the DG could not thread -- frozen bar, reproduce-the-failure control,
-three-state) BEFORE any spiking build. If prior work already ceiling'd it -> bank that + pick the next P3
-candidate (cortical sparse coding w/ tuned lateral inhibition) or accept the oracle-shortcut + advance P4.
+GRID/CONJUNCTIVE BIOLOGICAL ARC = CONCLUDED 2026-05-31 (check-existing-first + cheap-first + scrutiny).
+Survey: TEM/tensor-product conjunctive BINDING already covered (2026-05-06 Pick 4) AND the binding algebra
+is already validated (FHRR) -> binding was never the blocker. The sharp grid idea (modular REDUNDANT coding)
+cheap probe = CANNOT-CONCLUDE (instrument-invalid: M=1 control passes at all densities + id metric saturated
+because the RAW activity is ALREADY 16/16 ID-separable, within 0.896 > between 0.768). CLARIFICATION (refines
+my own DG "fundamental" overclaim): the substrate activity is already ID-separable (why retrieval works); the
+unmet bar is NEAR-ORTHOGONALITY (between->~0) for clean VSA binding -- spiking DG reaches 0.66, clean k-WTA
+0.45, neither near-0; and the spiking within-collapse is an implementation artifact (deterministic top-k is
+stable). Findings: 2026-05-31-modular-coding-probe-INSTRUMENT-INVALID-...md + survey + DG-boundary banner.
+NET: cheap biological VSA-near-orthogonal symbol-grounding is unmet; CONVERGES on night-synthesis P3(c) =
+accept the oracle near-orthogonal code as an engineering component + advance the validated P4 retrieval stack.
+
+EXACT NEXT CONCRETE ACTION: the biologize-the-VSA-symbol line is honestly banked (near-orthogonality unmet;
+substrate is ID-separable, which the working retrieval stack already exploits). Per the converged P3(c)/P4
+direction, advance the VALIDATED conversational stack as the deliverable. Concrete options (pick highest-
+value, GPU/CuPy real runs): (a) the directional "trace" multi-hop is shipped but BIMODAL (gated by per-seed
+binding quality) -- a worthwhile diagnostic is WHY a given pair's binding is weak on some seeds (the stack-
+wide limiter); (b) a cleaner interactive chat surface over the 160/320-concept stack (the demos are
+scripted); (c) scale vocab toward 640 is an owner-flagged ~100hr decision -- do NOT unilaterally launch.
+Before any NEW biological arc: check-existing-first (grep findings/plans) -- the theta-gamma + grid arcs
+were both already-explored/over-claimed; the genuinely-open biological directions need new subsystem
+mechanisms (a real design effort), not another cheap probe of an already-characterized boundary. moat 7/7;
+0.80 bar frozen; cheap-first before spiking; honest negatives/clarifications are the deliverable.
 moat 7/7; 0.80 bar frozen; cheap-first before spiking; honest negatives are the deliverable; GPU/CuPy real.
 
 
