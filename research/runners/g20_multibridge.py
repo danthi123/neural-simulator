@@ -234,10 +234,18 @@ class SharedPoolMember:
     def encode_pair(self, a: str, b: str) -> str:
         """Encode (a, b) when BOTH live in this bridge."""
         if self.sparse:
+            # Pass the configured teacher strength (self.teacher_pA, default 500)
+            # -- the sparse path previously omitted it and silently used the
+            # function default (100), under-driving the engram capture. Validated
+            # fix for the multi-hop "trace" bimodality (finding 2026-05-31-P4-
+            # multihop-trace-bimodality-...): teacher 100->500 lifts a weak pair's
+            # target recall from rank 8 to rank 2, stably, without harming strong
+            # pairs. Now consistent with the non-sparse path below.
             return encode_pair_engram_sparse(
                 self.bridge, a, b, vocab=self.vocab,
                 sparse_patterns=self.sparse_patterns,
-                n_lang_input=self.n_lang_input, sparsity=self.sparsity)
+                n_lang_input=self.n_lang_input, sparsity=self.sparsity,
+                teacher_pA=self.teacher_pA)
         return encode_pair_engram(
             self.bridge, a, b, vocab=self.vocab,
             slice_size=self.slice_size, n_lang_input=self.n_lang_input,

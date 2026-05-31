@@ -15,6 +15,24 @@
 > encode (specified, deferred). The capability is shipped + sound + works for well-bound pairs; the residual
 > per-pair-per-seed variance is the same high-variance single-pass capture that gates the whole stack.
 
+> ## ✅ FIX SHIPPED + VALIDATED (2026-05-31): balanced-teacher consistency fix ELIMINATES the lottery
+> Root cause found: SharedPoolMember.encode_pair's SPARSE path silently OMITTED teacher_pA when calling
+> shared_pool_chat.encode_pair_engram_sparse -> used the function default 100 instead of the configured
+> self.teacher_pA=500 (the non-sparse path passed it; the sparse path's omission was a real inconsistency
+> bug). The teacher-strength probe (_teacher_strength_probe.py) validated teacher 100->500 lifts the weak
+> seed-43 big->red from rank 8 to rank 2, stably (500/1500/3000 all rank 2 -- saturates, no over-drive),
+> with no harm to strong pairs. ONE-LINE FIX shipped (commit pending): pass teacher_pA=self.teacher_pA in
+> the sparse call. POST-FIX per-seed diagnostic (through the SHIPPED SharedPoolMember.encode_pair):
+> ALL 12 (pair x seed) combinations now recall the target at rank <= 2 (was: big->red s43 rank 8,
+> hot->dry s44 rank 4, cold->wet s44 rank 8). The per-pair-per-seed recall-strength LOTTERY is ELIMINATED;
+> since multi-hop hop-2 needs the target in top-3 and all are now rank <=2, the trace bimodality is fixed
+> at the determinant level. 66 g20 tests pass; module parses. The reinforcement re-encode was NEGATIVE
+> (unstable) but a single stronger-teacher encode is RELIABLE -- the correct fix. CONFIRMING STEP (advisable,
+> deferred): full directional-multi-seed re-test (expect uniform pass) + multitag benchmark re-validation at
+> teacher=500 (expect improvement -- stronger engram bindings; existing 90% was at the buggy teacher=100).
+> MULTI-HOP ARC COMPLETE + FIXED: clean -> DEGRADES -> directional RESCUE -> bimodality DIAGNOSED -> reinforcement
+> fix NEGATIVE -> balanced-teacher fix VALIDATED + SHIPPED -> lottery eliminated.
+
 **Date:** 2026-05-31
 **Status:** Diagnostic of the RESCUED-but-BIMODAL directional multi-hop "trace" capability (finding 2026-05-31-P4-multihop-directional-fix-...). Localizes the residual limiter precisely. Throwaway probe (research/findings/raw/_perseed_binding_diagnostic.py); g20_multibridge.py reused byte-unchanged via import.
 

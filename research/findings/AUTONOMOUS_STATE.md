@@ -103,6 +103,18 @@ oracle near-ortho code (G.20 Kanerva-SDM) is genuinely IRREDUCIBLE from the subs
 component, not a shortcut a cleverer code removes. The biologize-the-VSA-symbol line is DEFINITIVELY boundary-
 characterized + banked as the biology-translatable deliverable.
 
+MULTI-HOP TRACE BIMODALITY FIXED + SHIPPED (2026-05-31): root cause = SharedPoolMember.encode_pair's SPARSE
+path silently OMITTED teacher_pA (used function default 100 vs configured self.teacher_pA=500; non-sparse path
+passed it -- a real inconsistency bug). Teacher-strength probe validated 100->500 lifts weak big->red rank
+8->2 stably (saturates, no over-drive, no harm to strong). One-line fix shipped (pass teacher_pA=self.teacher_pA
+in the sparse call). POST-FIX diagnostic through the SHIPPED path: ALL 12 (pair x seed) now rank <=2 (was
+big->red s43 r8, hot->dry s44 r4, cold->wet s44 r8) -> per-pair-per-seed lottery ELIMINATED -> trace bimodality
+fixed at the determinant level (hop-2 needs top-3; all now <=2). 66 g20 tests pass. CONFIRMING (deferred,
+advisable): full directional-multi-seed re-test (expect uniform pass) + multitag benchmark re-validation at
+teacher=500 (expect improvement; existing 90% was at buggy teacher=100; only NEW engram commits affected, not
+trained bridge weights). MULTI-HOP ARC COMPLETE+FIXED: clean->DEGRADES->RESCUE->DIAGNOSED->reinforcement
+NEGATIVE->balanced-teacher VALIDATED+SHIPPED. The fix also strengthens ALL sparse engram bindings stack-wide.
+
 STRATEGIC FORK RESOLVED WITH EVIDENCE (2026-05-31; finding 2026-05-31-near-ortho-boundary-is-FUNDAMENTAL-
 not-capacity-...md): the near-ortho floor is FLAT at ~0.48 from N=4 to N=16 concepts (delta +0.002) ->
 near-ortho is unreachable even at 4 concepts -> the boundary is per-pair-overlap-FUNDAMENTAL, NOT capacity-
