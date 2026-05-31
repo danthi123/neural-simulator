@@ -28,6 +28,15 @@ advance the highest-value extension toward conversational capability: candidates
 stored associations [known open gap, corrected-NEGATIVE], (b) scale toward 640 concepts [D8 infra scaffolded],
 (c) cleaner interactive chat. reuse-by-import; moat 7/7; 0.80 bar frozen; honest negatives are the deliverable.
 
+P4 STEP 1 IN FLIGHT (subagent a01683e9f6e46eafd, _multihop_reasoning_test.py): MULTI-HOP reasoning on the
+validated 160-concept g20_multibridge --sparse stack. Encode 2-hop chains (A->B, B->C; A->C NOT directly
+encoded), test whether CHAINING the 90% single-hop multitag (query A->B, query B->C) gives reliable transitive
+inference. PRE-REG: WORKS if 2-hop transitive >=0.50 (> prior corrected-NEGATIVE 0.25); PARTIAL if >0.25 but
+<0.50; NEGATIVE if <=0.25/chance. Controller scrutinizes (A->C genuinely not direct? hop-1 finds B? 2-hop
+degradation = hop1*hop2 or worse from drift/loops?). FOLLOW-UP: WORKS -> real multi-hop reasoning capability;
+build a multi-hop chat demo + characterize multi-seed. PARTIAL/NEGATIVE -> characterize the chaining limit
+(noise compounding / loops) honestly, then next P4 extension (scale-to-640 [D8 infra] or interactive chat).
+
 ## (CONCLUDED) DECISION POINT 2026-05-31: three arcs converge on DG PATTERN-SEPARATION
 
 Denoiser arc CONCLUDED = NEGATIVE (finding 2026-05-31-denoiser-arc-NEGATIVE-...-three-arcs-converge-on-
