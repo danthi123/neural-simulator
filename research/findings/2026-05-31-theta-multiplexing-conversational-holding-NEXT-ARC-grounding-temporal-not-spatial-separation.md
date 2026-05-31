@@ -1,5 +1,24 @@
 # Next-arc grounding: theta-phase multiplexing for conversational multi-item holding -- the owner-preferred biological mechanism that may SIDESTEP this session's separation-vs-reliability boundary, because it separates items in TIME (theta phase slots) not in SPATIAL pattern. Existing sim to adopt-from: Ursino-Cesaretti-Pirazzini 2022 (spiking Lisman-Idiart theta-gamma multi-item WM). Honest caveat recorded: a 2025 Nature Neuroscience result contests strict phase==order. CHEAP-FIRST gate pre-registered before any spiking build.
 
+> ## ⚠️ CORRECTION / DOWNGRADE (2026-05-31, same day, on checking prior in-project work)
+> This "NEXT ARC" proposal is SUPERSEDED. theta-gamma multiplexing is NOT an untried direction:
+> its ALGEBRA is already validated with decisive controls (2026-05-24 Direction E PERFECT 1.000 at
+> loads {2,3,5,7}; 2026-05-23 FHRR "N16 realisable"), and its SPIKING-SUBSTRATE composition application
+> already hit a DECISIVE 5-architecture CONVERGENT CEILING (2026-05-20-THETA-GAMMA-decisive-honest-
+> negative-...md: GATE=FAIL, per_regime_advantage NEGATIVE at N=5). The algebra was never the
+> bottleneck; the substrate composition is the wall. My night-arc strategic synthesis (2026-05-31-
+> NIGHT-ARC-strategic-synthesis-...md) had ALREADY pivoted correctly: DG fundamental boundary -> P4
+> (advance the VALIDATED conversational stack), explicitly noting the G.20/engram codes re-instantiate
+> the oracle shortcut and that grinding more biologization tuning is not worth GPU time once the
+> boundary is characterized. So proposing a theta-multiplexing spiking build as "the next arc" was a
+> REGRESSION to an already-ceiling'd direction. RESIDUAL value of this grounding pass (kept): the clean
+> cross-arc INSIGHT that temporal (phase-slot) separation sidesteps THIS session's SPATIAL DG
+> separation-vs-reliability boundary, + the Miller-7-under-jitter recovery (cheap probe). That insight
+> does NOT reopen theta-gamma as a substrate direction. ACTIVE direction remains P4 (the in-flight
+> multi-hop hub-reuse test + scaling/usability of the working conversational stack). Body preserved
+> below as written; read it through this banner. Root cause: I wrote this before reading the extensive
+> 2026-05-19..05-24 in-project theta-gamma work (the standing "check existing work first" directive).
+
 **Date:** 2026-05-31
 **Status:** Forward-looking design grounding (not a committed build). Written during the GPU-busy window while the P4 multi-hop hub-reuse decisive test runs. Purpose: set up the OWNER-ALIGNED next arc regardless of the hub-reuse verdict, honoring the standing "check existing sims FIRST" directive (MEMORY.md feedback_check_existing_sims_first) and the 2026-05-19 conversational-path reframe (build conversation on theta-multiplexing / theta-gamma mode-unification / generative replay, NOT static two-store retrieval ranking).
 

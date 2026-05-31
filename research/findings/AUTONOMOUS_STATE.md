@@ -44,15 +44,28 @@ artifact; phase jitter 2 bins -> cap exactly 7 = Miller, recovered from theta/ga
 RISK for spiking build: cheap model assumes reader already knows each item's phase slot -> spiking build
 MUST test phase-addressing LEARNABILITY + stability across encode/recall. HARD GATE PASSED.
 
-EXACT NEXT CONCRETE ACTION: when (1) lands -> record+scrutinize+push its verdict, then proceed to the
-thread-(2) SPIKING-BUILD design (cheap gate already PASSED): brainstorm -> design doc -> TDD plan for
-the theta-multiplexing HOLDING mechanism on the real spiking bridge, reusing-by-import the parked
-integrated-loop theta-timing controller + concept-pool gamma assemblies (NO new autograd; no protected/
-frozen/moat module edit). Load-bearing design question = phase-addressing learnability/stability. The
-plan MUST include: a DEDICATED ADVERSARIAL REVIEW of the phase-addressing risk BEFORE any decisive run,
-a frozen verdict module, a no-harm phase (protected set byte-unchanged), and a CONTROLLER-ONLY decisive
-multi-seed run with the smell-test (scrutinize a PASS harder than a FAIL). Honest-propagate every outcome
-(including a spiking NEGATIVE) to both remotes. Same staged discipline that killed integrated-loop+denoiser.
+>>> THREAD (2) CORRECTION (2026-05-31): the theta-multiplexing "next arc" is RETRACTED/DOWNGRADED, NOT
+a viable new direction. On checking prior in-project work: theta-gamma multiplexing ALGEBRA was already
+validated with decisive controls (2026-05-24 Direction E; 2026-05-23 FHRR N16) and its SPIKING-SUBSTRATE
+composition already hit a DECISIVE 5-architecture convergent ceiling (2026-05-20-THETA-GAMMA-decisive-
+honest-negative). The algebra was never the bottleneck; the substrate composition is the wall. My cheap
+gate RE-DERIVED the known algebra (banners on both theta-multiplex docs). The night synthesis (2026-05-31-
+NIGHT-ARC-...) had ALREADY pivoted correctly to P4. Residual value kept: the cross-arc insight (temporal
+sidesteps the spatial DG boundary) + Miller-7-under-jitter. Do NOT build a theta-multiplexing spiking
+arc -- it is a re-tread of ceiling'd work. <<<
+
+EXACT NEXT CONCRETE ACTION: when (1) lands -> record+scrutinize+push its verdict (scrutinize a PASS harder
+than a FAIL: is hop-1 still finding the hub? is degradation hub-crowding? chance 0.094), then continue the
+ACTIVE direction = P4 (advance the VALIDATED conversational stack; the night synthesis's correct pivot from
+the DG boundary). Per the hub-reuse branch: ROBUST(>=0.50 at fan-in 8) -> characterize multi-hop as a real
+(if mechanistically-shallow) retrieval-chaining capability + optionally a cleaner multi-hop chat surface;
+DEGRADES-WITH-FANIN -> characterize the hub-crowding curve honestly; NEGATIVE -> the clean 8/8 was the
+easiest-case artifact. Then the next P4 extension per the night synthesis P4 scope: (a) scale vocab toward
+640 (D8 V=640 infra scaffolded), or (b) a cleaner INTERACTIVE chat surface (current demo is scripted).
+reuse-by-import; moat 7/7; 0.80 bar frozen; honest negatives are the deliverable; GPU/CuPy for real runs.
+NOTE the night synthesis's honest frame: the validated stack IS the oracle-shortcut in another form (not a
+biologization of substrate activity) -- so P4 is instrumental capability/usability progress, and the
+biologization BOUNDARY (DG separation-vs-reliability) stays banked as the biology-translatable deliverable.
 
 NOTE: this file is 375KB (bloated with concluded-arc history). The block ABOVE is authoritative
 + current; everything below is historical trail. A future cycle should compact the trail (keep

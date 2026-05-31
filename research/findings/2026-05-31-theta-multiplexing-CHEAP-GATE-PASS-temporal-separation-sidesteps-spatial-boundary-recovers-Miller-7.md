@@ -1,5 +1,30 @@
 # Theta-multiplexing cheap-first gate: PASS (survives scrutiny). Temporal (theta-phase-slot) separation HOLDS N>=4 dense-stable items with positive decode margin while the no-phase superposition control collapses -- AND it holds the OVERLAPPING (between-cos 0.60) codes that this session's spatial DG separation could NOT separate. Under realistic phase jitter the permissive capacity (16) falls to exactly ~7, recovering Miller's working-memory number from theta/gamma ratio + phase precision. This de-risks the owner-preferred next arc and PASSES the hard gate to motivate the spiking build. Named open risk for the spiking build's adversarial review: the cheap model assumes a reader that already knows each item's phase slot; the spiking build must test whether phase-addressing is LEARNABLE and STABLE across encode/recall.
 
+> ## ⚠️ CORRECTION / PARTIAL RETRACTION (2026-05-31, same day, on checking prior in-project work)
+> This probe RE-DERIVED already-validated work; the "FIRST positive de-risking result" framing
+> is RETRACTED and the "motivates the spiking build" disposition is WRONG. The project had ALREADY
+> validated theta-gamma multiplexing at the ALGEBRA level with DECISIVE controls BEFORE this probe:
+> - 2026-05-24-direction-E-theta-gamma-multiplexing-ALGEBRA-VALIDATED-controls-decisive.md: PERFECT
+>   1.000 at loads {2,3,5,7}; THREE controls decisive (permutation->chance, no-slot-windowing->chance,
+>   high-overlap-vocab->robust). N_GAMMA=7 the natural ceiling. Explicitly ALGEBRA-ONLY.
+> - 2026-05-23 cheap FHRR probe: "Lisman-Idiart N16 realisable on FHRR"; capacity envelope wide,
+>   algebra survives substrate-realistic noise.
+> So my RESOLVES + overlap-robustness + Miller-7 is an INDEPENDENT RE-CONFIRMATION of already-validated
+> algebra, not a novel result. The only genuinely-additive bit is the Miller-7 capacity-recovery-under-
+> phase-jitter (a minor biology-translatable addendum), and even N_GAMMA~7 was already the documented cap.
+> CRUCIALLY: the algebra was NEVER the bottleneck. When theta-gamma multiplexing was actually BUILT INTO
+> THE SPIKING SUBSTRATE for composition, it hit a DECISIVE 5-architecture CONVERGENT CEILING:
+> 2026-05-20-THETA-GAMMA-decisive-honest-negative-...md (GATE=FAIL; per_regime_advantage NEGATIVE at N=5;
+> cue-suppression-during-retrieve gives an ANTI-effect, violating the encoding-specificity principle).
+> Therefore "cheap gate PASS -> motivate a NEW spiking build" is FALSE: that spiking build exists and
+> was ceiling'd. The genuinely-open next direction (per the 2026-05-20 pre-registration) is the 6th
+> architecture = generative replay + PFC-held compositional frame WITHOUT cue-suppression, or honest
+> closure -- NOT another phase-multiplexing variation. Root-cause of this overclaim: I built the cheap
+> probe WITHOUT first reading the extensive 2026-05-19..05-24 in-project theta-gamma work, violating the
+> standing "check existing work first" directive. The body below is preserved as written (pre-correction);
+> read it through this banner. The scrutiny IN the body (margin/jitter/Miller-7) is sound; the NOVELTY +
+> DISPOSITION claims are the retracted part.
+
 **Date:** 2026-05-31
 **Status:** Cheap-first CPU/numpy gate PASSED + scrutinized for the theta-phase-multiplexing conversational-holding arc (grounded in the prior note 2026-05-31-theta-multiplexing-...-NEXT-ARC-grounding-...md). This is the FIRST positive de-risking result for the owner's preferred biological conversational direction (2026-05-19 reframe: theta-multiplexing, not static retrieval) after this session's two biological attempts hit boundaries (integrated-loop VOID, DG separation-vs-reliability BOUNDARY). Run during the GPU-busy window while the P4 multi-hop hub-reuse test runs -- CPU-only, zero GPU contention.
 
