@@ -34,14 +34,29 @@ concepts, answers role queries, GENERALIZES 60/60 novel sentences multi-seed (42
 (1.000 at 0.5-5 spikes/neuron; the earlier BOUNDARY was MY mis-scaled spike budget, caught+corrected).
 So biological compositional GENERALIZATION is VALIDATED at the mechanism level (5 axes + demo). Owner
 said "go ahead, don't ask next time" -> fully autonomous, no more surfacing forks.
-NEXT = the in-substrate spiking BIND ARCHITECTURE (design 2026-05-31-spiking-composition-integration-
-design.md). Substantial from-scratch build: a custom bridge with role_in + filler(concept-pool) +
-ON/OFF channels + an identity-wired COINCIDENCE region (binding[i] fires on AND(role[i],filler[i]) via
-threshold), built with bridge.inject_explicit_wiring (wiring_plan = {name:{pre_indices,post_indices,
-initial_weights,plastic,conn_type}}; G1 runner is the explicit-wiring template). Threshold-tune coinc
-neurons so single input < theta < both. Test: bind 2-4 role-filler pairs, query, recover vs no-bind
-control. The mechanism is thoroughly de-risked so this is engineering realization, not a science gate.
-EXECUTE this build next (not bank-and-defer). prior arc (multi-hop) below.
+IN-SUBSTRATE SPIKING BIND BUILD = IN PROGRESS (2026-05-31), the design doc's gate. SHIPPED+VALIDATED so far:
+(a) PRIMITIVE 1 -- binary AND coincidence (research/findings/raw/_insubstrate_coincidence_probe.py):
+a spiking neuron computes AND(role,filler) via threshold + tonic hyperpolarizing bias. seed42, RTX3090:
+w=320 bias=-1000 -> BOTH=0.048 single=0.000 AND-selectivity=1.000 (perfect single rejection). Control
+is geometric (role-only coinc gets role input but silent filler partner -> dark). The all-zeros at first
+was sub-threshold 600pA drive (these Izh need ~2000pA); near-linear no-bias regime sharpens to clean AND
+with the bias. (b) PRIMITIVE 2 -- graded gating (_insubstrate_graded_gating_probe.py): role gates, coinc
+rate ~ filler magnitude (Spearman 1.000), role-OFF rate 0.000 at every filler level (perfect gating) ->
+the bind preserves graded filler magnitude. (c) FULL ON/OFF BIND/UNBIND (_insubstrate_bind_unbind_probe.py):
+one bridge, 8D neurons -- role_ON/OFF + fill_ON/OFF driven sources synapse into 4 coincidence banks A/B/C/D
+realizing the +-1 Hadamard (bound_ON=A+B, bound_OFF=C+D); SAME layer reused for unbind; cosine cleanup on
+real substrate concept codes (denoise64, projected D=800, V=16). seed42 RAW (no opponency): numpy-ceiling
+1.000 all K; SPIKING recovery K1=0.933 K2=0.900 (>=0.80 RESOLVES) K3=0.756 K4=0.600 (SNR-degrade);
+control at chance (0.05-0.13) throughout -> binding does REAL work, not cleanup artifact. The K>=3 degrade
+is common-mode saturation (predicted: summing ON/OFF channels separately is non-canonical; the signed
+DIFFERENCE is exact but re-driving the saturated channels compresses signal). FIX = ON/OFF opponency
+(re-canonicalize superposed bound to signed form before unbind = retinal/thalamic lateral inhibition =
+project's mean-centering; linear, in-substrate-realizable). EXACT NEXT CONCRETE ACTION: opponency re-run
+(--ks 1,2,3,4,6) IN FLIGHT (task b6kflsk1m) -- read it; if it lifts K>=3 above 0.80, multi-pair RESOLVES
+-> scale to full real D=3200 + multi-seed (42,43,44) decisive run, then write findings doc + commit/push
+both. If opponency insufficient, raise RUN_STEPS (longer integration window cuts rate noise) then re-test;
+honest BOUNDARY (works K<=2) is itself a real finding to propagate. ALL probes commit+push both remotes.
+prior arc (multi-hop) below.
 
 TWO live threads:
 
