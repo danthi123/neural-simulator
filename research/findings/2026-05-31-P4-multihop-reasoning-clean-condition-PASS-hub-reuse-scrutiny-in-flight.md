@@ -1,5 +1,15 @@
 # P4 (validated conversational stack): multi-hop (2-hop transitive) reasoning WORKS under clean conditions -- 8/8 on the 160-concept G.20 multitag stack via iterated single-hop chaining. Honest scope: this is the EASIEST case (all-distinct words, no hub competition at hop-2); the decisive HUB-REUSE + multi-seed scrutiny is in flight. The mechanism is two chained ~100%-reliable single-hop lookups linked by a shared tag-name middle term, not learned inference.
 
+> ## RESOLVED by the hub-reuse decisive test (2026-05-31): DEGRADES-WITH-FANIN
+> The hub-reuse + multi-seed scrutiny (finding 2026-05-31-P4-multihop-hub-reuse-DECISIVE-DEGRADES-WITH-
+> FANIN-...md) is in: the clean 8/8 below did NOT generalize. Multi-seed full-2hop = 0.833 at hub fan-in 2
+> but COLLAPSES to 0.000 at fan-in 8 (chance 0.094). The clean 8/8 was the fan-in-1 easiest case (each
+> middle term in exactly one chain -> no hub competition). Bottleneck LOCATED: hop-1 is fine (flat 0.83);
+> the entire loss is at hop-2 -- querying a crowded hub returns its many incoming nouns and buries the one
+> outgoing edge, because multitag retrieval is undirected/aggregate-ranked. Real association graphs are
+> hub-heavy, so the realistic regime is the failing one. A principled cheap fix (directional tag-name
+> filtering at hop-2) is queued. Read this doc through that resolution.
+
 **Date:** 2026-05-31
 **Status:** Clean-condition PASS for 2-hop transitive reasoning on the validated G.20 multitag conversational stack (the first P4 step after pivoting from the DG-biologization boundary). Genuine result (beats the prior corrected-NEGATIVE 0.25 via a DIFFERENT mechanism), but its final verdict depends on the hub-reuse + multi-seed scrutiny now running. The honest mechanistic read is recorded.
 

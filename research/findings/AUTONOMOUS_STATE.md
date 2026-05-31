@@ -13,16 +13,12 @@ explicit user stop/pause or a true safety boundary halts work)
 
 TWO live threads:
 
-(1) IN FLIGHT (GPU, harness-tracked, auto-notifies): P4 multi-hop hub-reuse decisive
-scrutiny, subagent a3d6187f2cb233796 (research/findings/raw/_multihop_hubreuse_test.py),
-hub fan-in 2/4/8 x seeds 42/43/44 on the validated 160-concept G.20 multitag stack.
-Verified healthy: sole live python GPU proc PID 10500, CPU climbing (141->172s), 2.7GB,
-no zombies. FROZEN verdict: ROBUST if 2-hop transitive >=0.50 at fan-in 8 multi-seed;
-DEGRADES-WITH-FANIN if high at fan-in 2 but <0.50 by fan-in 8; NEGATIVE if <=0.25/chance.
-When it lands: scrutinize a PASS harder than a FAIL (is hop-1 still finding the hub?
-is degradation hub-crowding? chance baseline 0.094); record honest finding; push BOTH
-remotes; update this pointer. Clean-condition 8/8 already banked (finding 2026-05-31-P4-
-multihop-...PASS...md) -- honest caveat: easiest case, chained lookups not learned inference.
+(1) DONE = DEGRADES-WITH-FANIN (2026-05-31; finding 2026-05-31-P4-multihop-hub-reuse-DECISIVE-
+DEGRADES-WITH-FANIN-...md). Multi-seed full-2hop 0.833 at fan-in 2 (>>chance 0.094) -> 0.000 at
+fan-in 8. Clean 8/8 was the fan-in-1 easiest case. Bottleneck LOCATED (controller-scrutinized,
+verdict survives): hop-1 flat/fine (0.83 all fan-in); entire loss at hop-2 -- querying a crowded
+hub returns its many INCOMING nouns and buries the one OUTGOING edge (multitag is undirected/
+aggregate-ranked). Anti-cheat held (13-14/14). Fundamental representational limit, not a tuning bug.
 
 (2) NEXT ARC GROUNDED + BANKED (owner-aligned, ready regardless of (1)'s verdict): finding
 2026-05-31-theta-multiplexing-conversational-holding-NEXT-ARC-grounding-temporal-not-
@@ -54,18 +50,21 @@ NIGHT-ARC-...) had ALREADY pivoted correctly to P4. Residual value kept: the cro
 sidesteps the spatial DG boundary) + Miller-7-under-jitter. Do NOT build a theta-multiplexing spiking
 arc -- it is a re-tread of ceiling'd work. <<<
 
-EXACT NEXT CONCRETE ACTION: when (1) lands -> record+scrutinize+push its verdict (scrutinize a PASS harder
-than a FAIL: is hop-1 still finding the hub? is degradation hub-crowding? chance 0.094), then continue the
-ACTIVE direction = P4 (advance the VALIDATED conversational stack; the night synthesis's correct pivot from
-the DG boundary). Per the hub-reuse branch: ROBUST(>=0.50 at fan-in 8) -> characterize multi-hop as a real
-(if mechanistically-shallow) retrieval-chaining capability + optionally a cleaner multi-hop chat surface;
-DEGRADES-WITH-FANIN -> characterize the hub-crowding curve honestly; NEGATIVE -> the clean 8/8 was the
-easiest-case artifact. Then the next P4 extension per the night synthesis P4 scope: (a) scale vocab toward
-640 (D8 V=640 infra scaffolded), or (b) a cleaner INTERACTIVE chat surface (current demo is scripted).
-reuse-by-import; moat 7/7; 0.80 bar frozen; honest negatives are the deliverable; GPU/CuPy for real runs.
-NOTE the night synthesis's honest frame: the validated stack IS the oracle-shortcut in another form (not a
-biologization of substrate activity) -- so P4 is instrumental capability/usability progress, and the
-biologization BOUNDARY (DG separation-vs-reliability) stays banked as the biology-translatable deliverable.
+EXACT NEXT CONCRETE ACTION: the DEGRADES bottleneck is LOCATED precisely enough to test a principled CHEAP
+FIX. Multitag tags are NAME-ORDERED ("remember a is b" -> tag "a_b", cue-first). So at hop-2, when querying
+the hub for its OUTGOING edge, FILTER to tags where the hub is the FIRST token (hub_*) and ignore incoming
+X_hub tags -> C should surface even at fan-in 8. NEXT: write a throwaway directional-multitag probe
+(research/findings/raw/_multihop_directional_probe.py) reusing the hub-reuse test structure + the tag store
++ recall logic, adding the name-direction filter at hop-2; smoke 1 seed at fan-in 8 first (does directional
+filtering surface C?), then multi-seed 42/43/44 if promising. PRE-REG: directional rescues multi-hop if
+fan-in-8 full-2hop >= 0.50 multi-seed -> robust retrieval-reasoning capability; if not -> encode-order not
+reliable / substrate aggregates regardless -> multi-hop honestly bounded to low-fan-in chains. Run GPU/CuPy
+(the 5 sparse bridges load ~per-seed; 32-concept tier ~19 min for 3 seeds). Reuse-by-import; g20_multibridge
+byte-unmodified; throwaway probe only; no protected/frozen/moat edit. Record+scrutinize+push BOTH remotes.
+THEN per outcome: rescued -> optional cleaner multi-hop chat surface; not -> next P4 extension (scale vocab
+toward 640 [D8 infra], or cleaner interactive chat). Honest frame: P4 is instrumental capability/usability
+of the working stack (itself the oracle-shortcut in another form); the DG separation-vs-reliability BOUNDARY
+stays the banked biology-translatable deliverable. moat 7/7; 0.80 bar frozen; honest negatives are deliverable.
 
 NOTE: this file is 375KB (bloated with concluded-arc history). The block ABOVE is authoritative
 + current; everything below is historical trail. A future cycle should compact the trail (keep
