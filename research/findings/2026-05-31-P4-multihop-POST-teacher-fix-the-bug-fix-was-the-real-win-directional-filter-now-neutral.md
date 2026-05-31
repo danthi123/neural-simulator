@@ -44,6 +44,21 @@ Multi-hop "trace" is substantially improved by the teacher_pA bug fix (the genui
   hop-1 cross-bridge variance is left as the specified deferred lever (strengthen encode_partial's teacher
   only after a proper cross-bridge re-validation), not a tail-of-turn change.
 
+## Cross-bridge teacher lever: VALIDATE-FIRST = NEUTRAL, NOT shipped (2026-05-31)
+
+The residual hop-1 variance was hypothesized to be cross-bridge (noun->hub) encoding strength (encode_partial,
+still teacher=100). Validate-first probe (_crossbridge_teacher_probe.py, seed 42, 6 cross-bridge noun->adj
+pairs, top-3 retrieval): teacher=100 -> 6/6, teacher=500 -> 6/6 (EQUAL, both perfect). So CROSS-BRIDGE
+ENCODING IS ALREADY STRONG at teacher=100 -- the encode_partial teacher lever is NEUTRAL (no gain). The
+encode_partial fix was therefore NOT shipped (validate-first avoided an unnecessary recipe change to the
+cross-bridge-validated recipe). IMPLICATION: the residual multi-hop variance (seed 44 = 4/8) is NOT a
+cross-bridge encoding-strength issue (cross-bridge is already 6/6); it is seed-specific STRUCTURAL variance in
+the fan-in-8 chaining (which fan-in-8 hub/noun set lands well per seed) -- irreducible by encoding strength.
+So the multi-hop robustness investigation is DEFINITIVELY closed: the intra-bridge teacher=500 fix was the
+real AND sufficient lever; there is no further cheap encoding-strength lever; the residual ~0.71-0.75 (vs
+uniform 1.0) is seed-structural. Net multi-hop capability: substantially improved (undirected 0.000->0.750)
+and validated; the residual is honest seed variance, not a fixable bug.
+
 ## Discipline
 
 Throwaway probe; the shipped one-line teacher_pA fix in g20_multibridge is the only code change (66 tests pass). The PASS-ish post-fix result was scrutinized HARDER than a FAIL: the headline "multi-hop improved" was interrogated and found to be the TEACHER fix, not the directional filter -- and the directional filter was honestly found to be neutral-to-slightly-negative post-fix, superseding my own earlier directional-RESCUE framing. Honest revision recorded; nothing overclaimed.

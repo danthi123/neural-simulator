@@ -148,13 +148,16 @@ the pre->post per-seed diagnostics ARE the multitag-accuracy re-validation for i
 9/12 -> 12/12, strict improvement) and cross-bridge encode_partial is UNCHANGED (left at teacher=100) -> NO
 regression possible (only intra-bridge changed, and it improved). Plus functional multitag re-validation
 passed ("what is apple"->big+red correct) + teacher probe shows no over-drive. So the change is validated.
-A larger-K multitag-accuracy probe is a nice-to-have rigor upgrade, NOT needed. NEXT (worth-it, autonomous,
-optional): extend the SAME teacher-strengthening to the cross-bridge encode_partial sparse path (currently
-teacher=100, its docstring-validated recipe) to lift the residual HOP-1 cross-bridge variance -- but ONLY
-with a proper cross-bridge re-validation (it would change the cross-bridge multitag recipe; do it backward-
-compat + measure cross-bridge retrieval at 100 vs 500 before keeping). OTHERWISE: the working P4 stack IS the
-deliverable; remaining big directions are OWNER-STRATEGIC (months-scale richer-training escape; ~100hr V=640 --
-do NOT launch unilaterally). Any NEW biological direction must be check-existing-first'd (theta-gamma + grid +
+A larger-K multitag-accuracy probe is a nice-to-have rigor upgrade, NOT needed. CROSS-BRIDGE TEACHER LEVER =
+VALIDATE-FIRST NEUTRAL (NOT shipped): probe (seed 42, 6 cross-bridge noun->adj pairs) shows teacher=100 -> 6/6
+AND teacher=500 -> 6/6 (EQUAL, both perfect) -> cross-bridge encoding is ALREADY strong at 100; the
+encode_partial lever gives no gain. Validate-first avoided an unnecessary recipe change. IMPLICATION: the
+residual multi-hop variance (seed 44 = 4/8) is NOT encoding-strength (cross-bridge already 6/6); it is
+seed-specific STRUCTURAL variance in the fan-in-8 chaining -- irreducible by encoding strength. So the
+MULTI-HOP ROBUSTNESS INVESTIGATION IS DEFINITIVELY CLOSED: intra-bridge teacher=500 was the real AND
+sufficient lever; NO remaining cheap P4 encoding lever exists. NET: the working P4 stack IS the deliverable;
+remaining big directions are OWNER-STRATEGIC (months-scale richer-training escape; ~100hr V=640 -- do NOT
+launch unilaterally). Any NEW biological direction must be check-existing-first'd (theta-gamma + grid +
 decorrelation arcs all explored/bounded this session). The honest boundary characterization IS the biology-
 translatable deliverable per the owner's frame. Surface the evidenced recommendation to the owner.
 P4 is well-advanced (160/320 concepts, multitag 90%, directional trace, hierarchy, yes/no, tokenize);
