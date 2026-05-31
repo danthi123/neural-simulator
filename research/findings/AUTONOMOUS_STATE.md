@@ -81,15 +81,19 @@ Miller 7" hypothesis -- window 150->300 barely moved K4 (0.833->0.850); K5,6,7,8
 WINDOW-INDEPENDENT (coincidence rate-resolution [rates in 0..0.05, coarse] / cross-term interference).
 Honest capacity at validated operating point ~K=4. Corrected finding + capability_status (removed
 window-extension over-claim, added capacity ladder); committed+pushed both. wiki-sync milestone pushed to
-Gitea. EXACT NEXT CONCRETE ACTION: FIRING-RATE test IN FLIGHT (task beia62mr1) = seed-42 D=3200 window 150
---coinc-bias -500 (2x rate, BOTH=0.097 vs 0.048; --coinc-bias CLI arg added) --ks 4,5,6, output ->
-research/findings/raw/_insubstrate_capacity_bias500.txt. Tests whether MORE firing-rate dynamic range
-extends capacity past K=4 (the remaining lever after window plateaued). READ task beia62mr1 / that file:
-  - if K5,6 clear 0.80 at bias-500 -> firing rate IS the capacity lever (positive; append to finding, note
-    rate/leakage tradeoff since single=0.040 at bias-500); maybe sweep bias-700 too.
-  - if NOT -> ~K=4 is the operating-point capacity (honest negative on extension); reaching Miller 7 needs
-    a different code (higher per-dim rate resolution / sparser bound rep), a separate future arc.
-  - EITHER WAY the core milestone (K=4 multi-seed RESOLVES + adversarial CLEAR + pillar n=111) stands.
+Gitea. FIRING-RATE LEVER WORKS (seed 42): bias-500 (2x rate) extends capacity to K=6 (0.950/0.900/0.817 at
+K=4/5/6, all clear 0.80 = Miller 7+-2 range), where the longer window did NOT -> CONFIRMS the K>=5
+bottleneck is rate-RESOLUTION (dynamic range), addressable by more firing rate not a longer readout.
+Control stayed near zero despite single-input leakage (0.040). Committed+pushed; finding capacity-ladder
+updated. EXACT NEXT CONCRETE ACTION: MULTI-SEED firing-rate run IN FLIGHT (task bof3v34ac) = seeds 42,43,44
+D=3200 window 150 --coinc-bias -500 --ks 4,5,6, sequential, output ->
+research/findings/raw/_insubstrate_capacity_bias500_multiseed.txt. READ task bof3v34ac / that file:
+  - if 43,44 also clear 0.80 at K=5 (and ideally K=6) -> capacity extends to K=5-6 multi-seed at the higher
+    rate: update capability_status pillar n=111 K-number from conservative ~4 to the confirmed multi-seed K
+    (note the rate/leakage tradeoff); commit/push both. (K=6 margin thin 0.817 seed-42 -> K=5 likely robust,
+    K=6 maybe seed-sensitive; report per-seed honestly, do NOT overclaim.)
+  - if a seed drops below 0.80 at K=5/6 -> report honestly; the robust multi-seed capacity is wherever all
+    3 seeds clear; core K=4 multi-seed stands regardless.
   - THEN choose next composition arc (owner priority = conversation): (1) wire spiking bind -> existing
     concept POOLS (fully in-network); (2) learn role-filler PARSING from input (big lever to conversation);
     (3) compose bind with validated multitag/engram retrieval. Cheap-first. Propagate every outcome to BOTH
