@@ -40,16 +40,25 @@ on this substrate) = a biology-translatable deliverable. Cheap-first BEFORE desi
 falsify-cheaply discipline). resonate_fire_fhrr.ResonateFireTPAM is the reusable attractor denoiser.
 Standing: reuse-by-import; no new autograd; no protected/frozen/moat edit; moat 7/7; 0.80 bar frozen.
 
-PROBE BUILT + IN FLIGHT: research/findings/raw/_denoiser_cheap_probe.py (temporal-integration
-mean-of-k denoiser; reuses cached activity full_seed{42,43,44}.npz + byte-unchanged spiking_phasor_
-fhrr; CPU). k=1 REPRODUCES the NEGATIVE baseline (integrated 0.375, composition-only 0.367, CV 1.518
-~ documented 1.63) -- probe faithful. Sweeping k=[1,2,4,8,16] x 3 seeds (N_TRIALS=40; spiking FHRR is
-time-stepped 1000-step/op so slow, ~15 min). Background bqwl456g5 -> log _denoiser_cheap_probe.log +
-_denoiser_cheap_probe.json. NEXT (controller, on completion): read k-curve; VIABLE if composition-only
-rises toward 0.80 with CV falling as ~1.63/sqrt(k) at feasible k; NEGATIVE if flat / CV not falling as
-1/sqrt(k) (correlated noise, not averageable). SCRUTINIZE a rise: is it genuine CV-reduction or
-bootstrap-overlap optimism (only 16 cached obs)? If session dies, re-run: SIM_BACKEND=numpy python -u
--m research.findings.raw._denoiser_cheap_probe.
+CHEAP-FIRST GATE DONE = VIABLE (finding doc 2026-05-30-denoiser-cheap-first-VIABLE-temporal-
+integration-denoises-activity-grounded-symbol-CV-falls-as-1-over-sqrt-k.md). k-curve (3-seed,
+comp-only): k=1 0.34/0.36/0.41 (reproduces NEGATIVE baseline); k=8 L=2 0.849 PASS; k=16 L=2 0.936
+PASS, L=3 0.802 PASS, L=5 0.659 (rising, extrapolates ~0.80 at k~32-48). CV falls ALMOST EXACTLY as
+1.63/sqrt(k) (1.518/1.079/0.787/0.552/0.395 vs 1.63/1.15/0.82/0.58/0.41) => the substrate noise is
+INDEPENDENT across observations (averageable), NOT correlated. So TEMPORAL INTEGRATION (sustained
+encoding) genuinely denoises the activity-grounded symbol; the oracle-lookup shortcut IS biologizable;
+required k grows with load. HONEST CAVEAT: 16 cached obs -> bootstrap-overlap may make exact k modestly
+optimistic (CV law is overlap-independent so viability is robust; exact k needs more obs).
+
+>>> THE DENOISER ARC IS GATED-IN (cheap-first VIABLE). Build it. <<<
+
+BUILD (in flight): step 1 = capture MORE observations (M_OBS=64, GPU) + re-run the denoiser with
+DISTINCT (non-overlapping) storage/query obs -> pin exact k per load WITHOUT bootstrap optimism + confirm
+L=5 crosses 0.80. Then: (2) wire the sustained-encoding mean-of-k symbol derivation into the integration
+pipeline; (3) validate end-to-end on the frozen 0.80 bar {2,3,5} multi-seed leakage-guarded; (4) optional
+attractor (ResonateFireTPAM) denoiser comparison (shortcuts 2+3 coupled). reuse-by-import; spiking_phasor_
+fhrr / resonate_fire_fhrr / moat byte-unchanged; no autograd. Re-run cheap probe if needed:
+SIM_BACKEND=numpy python -u -m research.findings.raw._denoiser_cheap_probe.
 
 ---
 
