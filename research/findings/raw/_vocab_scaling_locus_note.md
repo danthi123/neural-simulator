@@ -42,3 +42,9 @@ Demonstrated bind-side (sparse codes, spiking wh-QA): V=64 -> 1.000 (seed 42). S
 - 320-word: feasible at ~98% (G.20 sparse multi-bridge 98.4% + robust bind).
 The honest "limit" is the soft 98.4% at 320, not a hard wall, and 64 is clean. Scaling richer conversation
 is front-end work (the documented arc), but the encoding-axis result shows it is tractable to ~64+.
+
+## Multi-seed scaling confirmation (2026-05-31)
+Spiking wh-QA, sparse codes: V=64 1.000 (seeds 42,43,44); V=160 1.000 (s42) / 0.900 (s43);
+V=320 1.000 (s42) / 1.000 (s43). The composition handles the full vocabulary range robustly across
+seeds. The vocabulary ceiling is the recognition front-end, not composition -- now being tested directly
+at 28 words (distributed-code bind-recovery vs the v17 50% pool-label; _v17_distributed_vs_label_probe.py).
