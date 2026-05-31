@@ -34,7 +34,10 @@ concepts, answers role queries, GENERALIZES 60/60 novel sentences multi-seed (42
 (1.000 at 0.5-5 spikes/neuron; the earlier BOUNDARY was MY mis-scaled spike budget, caught+corrected).
 So biological compositional GENERALIZATION is VALIDATED at the mechanism level (5 axes + demo). Owner
 said "go ahead, don't ask next time" -> fully autonomous, no more surfacing forks.
-IN-SUBSTRATE SPIKING BIND BUILD = IN PROGRESS (2026-05-31), the design doc's gate. SHIPPED+VALIDATED so far:
+IN-SUBSTRATE SPIKING BIND BUILD = MILESTONE COMPLETE (2026-05-31): validated multi-seed (42,43,44) RESOLVES
+to K=4 + adversarial reviewer CLEAR (7 exploit classes) + capability_status pillar n=111 promoted + owner-
+facing demo shipped (compose_spiking_bind_demo.py, 12/12 novel sentences). The owner's "biologically sound"
+composition is now realized IN spiking dynamics. SHIPPED+VALIDATED:
 (a) PRIMITIVE 1 -- binary AND coincidence (research/findings/raw/_insubstrate_coincidence_probe.py):
 a spiking neuron computes AND(role,filler) via threshold + tonic hyperpolarizing bias. seed42, RTX3090:
 w=320 bias=-1000 -> BOTH=0.048 single=0.000 AND-selectivity=1.000 (perfect single rejection). Control
@@ -66,19 +69,25 @@ elevation (0.20/0.11; chance 0.062) because codes are OVERLAPPING (between-cos m
 control is FAITHFUL to the algebra's documented cleanup-bias floor, NOT a spiking artifact. "control==1/V"
 is unachievable with overlapping fillers (mis-specified sub-clause); correct criterion = FAITHFULNESS
 (spiking ctrl ~ numpy ctrl) + decisive recovery-vs-control gap (+0.73..+0.91) -- both hold. Probe verdict
-corrected to faithfulness (NOT tuned to pass; algebra reference = ground truth). EXACT NEXT CONCRETE
-ACTION: MULTI-SEED chain IN FLIGHT (task b5ttdibnp) = seeds 42,43,44 at D=3200 window 150 K=1,2,3,4,
-sequential (~45-60 min total), output -> research/findings/raw/_insubstrate_bind_unbind_multiseed.txt.
-READ task b5ttdibnp / that file:
-  - if 43,44 also recover >= 0.80 to K=3-4 -> 3-seed RESOLVES: finalize findings doc
-    (2026-05-31-in-substrate-spiking-bind-unbind-VALIDATED.md) multi-seed table + GO verdict, commit/push
-    both; then update webapp/capability_status.json (new validated pillar: in-substrate spiking
-    compositional bind/unbind, K<=4, multi-seed) + wiki-sync the milestone.
-  - if a seed underperforms -> honest per-seed report; bump --run-steps 300 for that config and re-test;
-    capacity is window-bounded so a longer readout is the lever, not a mechanism change.
-  - The in-substrate spiking compositional BIND is now DEMONSTRATED (3 primitives + full bind/unbind to
-    K=4 seed-42). This is the owner's "biologically sound" composition realized IN spiking dynamics.
-    Propagate every outcome to BOTH remotes. prior arc (multi-hop) below.
+corrected to faithfulness (NOT tuned to pass; algebra reference = ground truth). MULTI-SEED DONE: 3/3 seeds
+RESOLVE to K=4 (K1=1.000 K2=1.000 K3=0.956 K4=0.861 mean; per-seed K4 0.833/0.833/0.917). Adversarial
+reviewer CLEAR (insubstrate_spiking_bind_reviewer_verdict.md; reviewer simulated the single-Izh operating
+point 0/1/2 sources -> 0.000/0.013/0.060, reproduced the overlapping-code control floor, ruled out leakage/
+non-spiking/triviality/seed-sharing). capability_status pillar n=111 promoted (JSON valid, schema 6/6).
+Demo compose_spiking_bind_demo.py smoke 12/12 novel sentences. ALL committed+pushed both remotes.
+EXACT NEXT CONCRETE ACTION: CAPACITY-SCALING run IN FLIGHT (task b8v8ssifo) = seed-42 D=3200 --run-steps 300
+--ks 4,5,6,7,8, output -> research/findings/raw/_insubstrate_capacity_window300.txt. This EMPIRICALLY tests
+the "capacity extends with readout window" claim (currently asserted from a CPU Poisson model; window 150
+gave K=4=0.86 GPU). READ task b8v8ssifo / that file:
+  - record which K clear 0.80 at window 300 (if K6,7 clear -> capacity reaches Miller 7 = nameable
+    biological benchmark; append a capacity-ladder table to the findings doc + commit/push both).
+  - then wiki-sync the milestone (significant: new validated pillar; use the wiki-sync skill).
+  - THEN choose the next composition arc (future, owner priority = conversation): (1) wire the spiking bind
+    layer to the EXISTING concept POOLS (concepts already are pools -> fully in-network path); (2) learn
+    role-filler PARSING from input (the bridge from this fixed-wiring primitive to used-in-conversation
+    composition -- the big lever); (3) compose the spiking bind with the validated multitag/engram retrieval.
+    Pick per owner-priority + cheap-first discipline. Propagate every outcome to BOTH remotes.
+    prior arc (multi-hop) below.
 
 TWO live threads:
 
