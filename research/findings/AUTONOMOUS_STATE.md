@@ -26,9 +26,22 @@ rate codes (= baseline-subtracted firing = the project's common-mode-removal) re
 reconciles the denoiser NEGATIVE (that measured raw-symbol near-ortho separability; end-to-end
 composition works via cleanup on ID-separable codes -- a different, achievable bar). Check-existing-
 first found generative-replay (v2 smoke 0.02) + sequence-storage (DIRECTION-A/E) bounded; this
-revision REOPENS composition. NEXT (real build, owner-fork): validate on the SPIKING substrate --
-implement the few-role x concept-filler bind/unbind in spiking dynamics (the +-1/gain-field/phase
-bind needs the spiking substrate; mean-centering provides the signs). prior arc (multi-hop) below.
+revision REOPENS composition. SHIPPED + VALIDATED since: (a) biological bind RESOLVED -- ON/OFF rate
+coding + coincidence detection EXACTLY realizes the +-1 Hadamard with >=0 ops (verified max-diff 0.0);
+(b) WORKING DEMO research/runners/compose_vsa_demo.py -- binds subject/verb/object on real substrate
+concepts, answers role queries, GENERALIZES 60/60 novel sentences multi-seed (42/43/44), no training;
+(c) spiking-readout de-risk RESOLVES -- composition survives Poisson spike counts at realistic firing
+(1.000 at 0.5-5 spikes/neuron; the earlier BOUNDARY was MY mis-scaled spike budget, caught+corrected).
+So biological compositional GENERALIZATION is VALIDATED at the mechanism level (5 axes + demo). Owner
+said "go ahead, don't ask next time" -> fully autonomous, no more surfacing forks.
+NEXT = the in-substrate spiking BIND ARCHITECTURE (design 2026-05-31-spiking-composition-integration-
+design.md). Substantial from-scratch build: a custom bridge with role_in + filler(concept-pool) +
+ON/OFF channels + an identity-wired COINCIDENCE region (binding[i] fires on AND(role[i],filler[i]) via
+threshold), built with bridge.inject_explicit_wiring (wiring_plan = {name:{pre_indices,post_indices,
+initial_weights,plastic,conn_type}}; G1 runner is the explicit-wiring template). Threshold-tune coinc
+neurons so single input < theta < both. Test: bind 2-4 role-filler pairs, query, recover vs no-bind
+control. The mechanism is thoroughly de-risked so this is engineering realization, not a science gate.
+EXECUTE this build next (not bank-and-defer). prior arc (multi-hop) below.
 
 TWO live threads:
 
