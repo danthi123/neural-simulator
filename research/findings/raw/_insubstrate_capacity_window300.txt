@@ -1,0 +1,9 @@
+=== in-substrate spiking BIND/UNBIND (backend=cupy, seed=42, D=3200, V=16, 8D=25600 neurons, opponency=True) ===
+chance = 1/16 = 0.062; FROZEN bar: spiking recovery >= 0.80, control ~chance
+  K=4 | numpy: recovery=1.000 ctrl=0.075 | SPIKING: recovery=0.850 ctrl=0.150 | recovery-vs-ctrl gap=+0.700
+  K=5 | numpy: recovery=1.000 ctrl=0.060 | SPIKING: recovery=0.760 ctrl=0.080 | recovery-vs-ctrl gap=+0.680
+  K=6 | numpy: recovery=1.000 ctrl=0.033 | SPIKING: recovery=0.600 ctrl=0.033 | recovery-vs-ctrl gap=+0.567
+  K=7 | numpy: recovery=1.000 ctrl=0.000 | SPIKING: recovery=0.500 ctrl=0.071 | recovery-vs-ctrl gap=+0.429
+  K=8 | numpy: recovery=1.000 ctrl=0.000 | SPIKING: recovery=0.438 ctrl=0.050 | recovery-vs-ctrl gap=+0.388
+READ: spiking recovery >= 0.80, spiking control ~ numpy control (faithful, NOT a spiking artifact), decisive recovery-vs-control gap -> the spiking bind/unbind reproduces the validated algebra IN the substrate (overlapping codes -> control sits at the algebra's cleanup-bias floor, not 1/V).
+VERDICT: RESOLVES-TO-CAPACITY K<=4 -- recovers there; higher K is firing-rate/window-bounded (raise --run-steps or firing rate). faithful=True gap_ok=False.

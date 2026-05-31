@@ -144,10 +144,33 @@ the algebra's perfect recovery AND its overlapping-code cleanup-bias.
 A CPU Poisson two-stage capacity model localized the K>=3 falloff to readout-window /
 spike-count SNR (window 60 ~ 3 spikes/dim: K4=0.89, K6=0.78; window 150 ~ 7 spikes/dim:
 K4=1.00 ideal). The GPU has extra noise (source-neuron stochasticity, threshold jitter) so
-it needs a longer window than the ideal model, but the trend held: D=3200 + window 150 lifts
-K3,4 over the bar. The capacity is firing-rate/window-bounded and extends with a longer
-readout -- not a mechanism ceiling. Multi-seed (42,43,44) confirmed RESOLVES at all K=1..4
-(table at top); per-seed K=4 = 0.833 / 0.833 / 0.917.
+it needs a longer window than the ideal model, but the trend held from window 60 to 150:
+D=3200 + window 150 lifts K3,4 over the bar. Multi-seed (42,43,44) confirmed RESOLVES at all
+K=1..4 (table at top); per-seed K=4 = 0.833 / 0.833 / 0.917.
+
+### Capacity ladder: the window lever PLATEAUS by ~K=4 (honest correction)
+
+A follow-up window-300 run (seed 42, K=4..8) tested whether a longer readout extends capacity
+toward Miller 7. It does NOT:
+
+| K | spiking recovery, window 150 | spiking recovery, window 300 |
+|---|---|---|
+| 4 | 0.833 | 0.850 |
+| 5 | -- | 0.760 |
+| 6 | -- | 0.600 |
+| 7 | -- | 0.500 |
+| 8 | -- | 0.438 |
+
+Doubling the window 150 -> 300 barely moved K=4 (0.833 -> 0.850) and K=5,6,7 stay below the
+bar. So the earlier "extends with a longer readout -> Miller 7" expectation (from the CPU Poisson
+model) is FALSIFIED for the window lever: window 60 -> 150 helped a lot (K4 0.60 -> 0.83), but
+150 -> 300 plateaus. The CPU model overestimated because it modeled ONLY Poisson spike-count
+noise (which a longer window removes); the GPU has a WINDOW-INDEPENDENT bottleneck at K>=5 --
+most likely the coincidence rate-resolution / dynamic range (rates live in [0, ~0.05], a coarse
+graded scale, so at high K the many small bound components are under-resolved) and/or cross-term
+interference, neither of which a longer readout fixes. Honest capacity at the validated operating
+point (w=320, bias=-1000): ~K=4. Whether a HIGHER firing-rate operating point (more dynamic
+range) extends it is the open lever [firing-rate test result appended below].
 
 ## What this is and is not (honest scope)
 
@@ -166,10 +189,13 @@ is not autograd or learning.
 
 ## Next (future arcs, not this finding)
 
-1. Capacity scaling: longer readout window / higher operating-point firing rate -> K toward
-   Miller 7. 2. Wire the bind layer to the existing concept POOLS (concepts already are pools)
-   for a fully in-network path. 3. Learned role-filler parsing (infer the bindings from input)
-   -- the bridge from this fixed-wiring primitive to used-in-conversation composition.
+1. Capacity scaling: the WINDOW lever is exhausted by ~K=4 (above); the remaining lever is a
+   higher firing-rate operating point (more dynamic range) -- under test. If that also plateaus,
+   ~K=4 is the operating-point capacity and reaching Miller 7 would need a different code (e.g.
+   higher per-dim rate resolution or a sparser bound representation). 2. Wire the bind layer to
+   the existing concept POOLS (concepts already are pools) for a fully in-network path.
+   3. Learned role-filler parsing (infer the bindings from input) -- the bridge from this
+   fixed-wiring primitive to used-in-conversation composition.
 
 ## Honest scope
 

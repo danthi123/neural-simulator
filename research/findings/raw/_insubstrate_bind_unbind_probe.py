@@ -205,9 +205,12 @@ def run_spiking(bridge, idx, codes, roles, K, V, D, xp, rng, n_trials, opponency
 
 
 def main():
-    global RUN_STEPS
+    global RUN_STEPS, COINC_BIAS
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--coinc-bias", type=float, default=COINC_BIAS,
+                    help="tonic coinc bias (less negative = higher firing rate = more dynamic range, "
+                         "at the cost of single-input leakage)")
     ap.add_argument("--proj-dim", type=int, default=800)
     ap.add_argument("--n-trials", type=int, default=15)
     ap.add_argument("--ks", type=str, default="1,2,3")
@@ -218,6 +221,7 @@ def main():
     a = ap.parse_args()
     opponency = not a.no_opponency
     RUN_STEPS = a.run_steps
+    COINC_BIAS = a.coinc_bias
     if not os.path.exists(CACHE % a.seed):
         print("CANNOT-CONCLUDE (no cache)"); return
     xp, backend = get_backend()
