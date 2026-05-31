@@ -297,3 +297,67 @@ class TestComparisonParsing:
         """No ' than ' marker -> no comparison detected."""
         rest = "dog is big"
         assert " than " not in rest
+
+
+class TestDirectionalTagFilter:
+    """g20_multibridge._tag_matches_direction: name-ordered (cue-first) tag
+    filtering -- the validated multi-hop hub-crowding fix (finding
+    2026-05-31-P4-multihop-directional-fix-RESCUES-...). Pure logic, no GPU."""
+
+    @staticmethod
+    def _f():
+        # lazy import so a heavy module import never breaks collection of the
+        # other parser tests in this file.
+        from research.runners.g20_multibridge import _tag_matches_direction
+        return _tag_matches_direction
+
+    def test_any_matches_either_position(self):
+        """'any' = undirected: word anywhere in the tag (historical default)."""
+        f = self._f()
+        assert f("apple_big", "apple", "any")
+        assert f("apple_big", "big", "any")
+        assert not f("apple_big", "red", "any")
+
+    def test_default_is_any(self):
+        """Omitted direction == 'any' (backward compatibility)."""
+        f = self._f()
+        assert f("apple_big", "big") == f("apple_big", "big", "any")
+
+    def test_out_matches_first_token_only(self):
+        """'out' = word's OUTGOING edges = first token only."""
+        f = self._f()
+        assert f("big_red", "big", "out")
+        assert not f("big_red", "red", "out")
+        # the crowding case: an INCOMING edge apple_big must NOT match big 'out'
+        assert not f("apple_big", "big", "out")
+
+    def test_in_matches_last_token_only(self):
+        """'in' = word's INCOMING edges = last token only."""
+        f = self._f()
+        assert f("apple_big", "big", "in")
+        assert not f("apple_big", "apple", "in")
+
+    def test_hub_crowding_isolation(self):
+        """The decisive case: hub 'big' with 8 incoming + 1 outgoing edge.
+        direction='out' selects ONLY the outgoing big_red (the fix); 'any'
+        matches all 9 (the original hub-crowding bug)."""
+        f = self._f()
+        tags = ["apple_big", "river_big", "dog_big", "cat_big",
+                "tree_big", "fish_big", "mouse_big", "frog_big", "big_red"]
+        assert [t for t in tags if f(t, "big", "out")] == ["big_red"]
+        assert len([t for t in tags if f(t, "big", "any")]) == 9
+
+    def test_multiword_sentence_tag(self):
+        """Sentence tag 'dog_run_fast': dog first (out), fast last (in)."""
+        f = self._f()
+        assert f("dog_run_fast", "dog", "out")
+        assert not f("dog_run_fast", "run", "out")
+        assert f("dog_run_fast", "fast", "in")
+        assert f("dog_run_fast", "run", "any")
+        assert not f("dog_run_fast", "run", "in")
+
+    def test_word_absent(self):
+        """Word not in tag -> False regardless of direction."""
+        f = self._f()
+        for d in ("any", "out", "in"):
+            assert not f("apple_big", "zzz", d)

@@ -264,6 +264,33 @@ def find_member_for_pair(members: List[SharedPoolMember],
     return None
 
 
+def _tag_matches_direction(tag: str, word: str, direction: str = "any") -> bool:
+    """Whether engram tag `tag` matches `word` under a DIRECTION constraint.
+
+    Tags are name-ordered cue-first ("remember a is b" -> tag "a_b"), so the
+    token position encodes edge direction:
+      'any' -> word appears anywhere in the tag (the default; undirected, the
+               historical behaviour of query_concept).
+      'out' -> word is the FIRST token (the edges that point OUT from word,
+               i.e. word's associates / what word IS).
+      'in'  -> word is the LAST token (the edges that point IN to word, i.e.
+               the subjects that point at word).
+
+    This is the validated fix for multi-hop hub-crowding (finding 2026-05-31-
+    P4-multihop-directional-fix-RESCUES-...): at a hop into a crowded hub,
+    direction='out' isolates the hub's one outgoing edge from its many incoming
+    edges. Pure logic (no GPU / no bridge) so it is unit-testable in isolation.
+    """
+    toks = tag.split("_")
+    if word not in toks:
+        return False
+    if direction == "out":
+        return toks[0] == word
+    if direction == "in":
+        return toks[-1] == word
+    return True  # 'any' (or unrecognised) -> undirected
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--bridges", nargs="+", required=True,
@@ -356,8 +383,14 @@ def main():
               f"{len(m.encoded_tags)} engram tags restored", flush=True)
     print(flush=True)
 
-    def query_concept(word):
+    def query_concept(word, direction="any", return_ranked=False):
         """Find associates of `word` across ALL bridges.
+
+        direction: 'any' (default, undirected = historical behaviour) /
+        'out' (word's outgoing edges only) / 'in' (incoming only). 'out' is
+        the validated fix for multi-hop hub-crowding (used by 'trace').
+        return_ranked: if True, RETURN the ranked associate list instead of
+        printing (for programmatic chaining); default False = print as before.
 
         Searches tag NAMES for `word` across every bridge (not just
         the bridge that has `word` in vocab). This catches cross-bridge
@@ -367,7 +400,7 @@ def main():
         all_results = []
         for m in members:
             matches = [t for t in m.encoded_tags
-                        if word in t.split("_")]
+                        if _tag_matches_direction(t, word, direction)]
             for tag in matches:
                 rates = m.recall_rates(tag)
                 sorted_idx = np.argsort(-rates)
@@ -384,6 +417,8 @@ def main():
                     })
 
         if not all_results:
+            if return_ranked:
+                return []
             if args.friendly:
                 print(f"  I don't know anything about '{word}' yet.",
                       flush=True)
@@ -398,6 +433,8 @@ def main():
                     or r["rate"] > by_word[r["word"]]["rate"]):
                 by_word[r["word"]] = r
         ranked = sorted(by_word.values(), key=lambda r: -r["rate"])[:4]
+        if return_ranked:
+            return ranked
         if args.friendly:
             summaries = [f"{r['word']} ({r['rate']:.0f})" for r in ranked]
             print(f"  {word.capitalize()} is associated with: "
@@ -637,6 +674,35 @@ def main():
             word = line[len("what is "):].strip()
             query_concept(word)
             return None
+        if line.startswith("trace "):
+            # 2-hop directional reasoning: word -> its top associate -> ITS
+            # top associates. Uses direction='out' so a crowded middle term
+            # surfaces its OUTGOING edge (the validated multi-hop fix) instead
+            # of its many incoming edges. Honest scope: robust where the
+            # underlying per-pair binding is strong; gated by per-seed binding
+            # quality (finding 2026-05-31-P4-multihop-directional-fix-...).
+            word = line.rstrip("?").strip()[len("trace "):].strip()
+            hop1 = query_concept(word, direction="out", return_ranked=True)
+            if not hop1:
+                print(f"  I don't know what '{word}' relates to."
+                      if args.friendly
+                      else f"  [trace: no outgoing edge for '{word}']",
+                      flush=True)
+                return None
+            mid = hop1[0]["word"]
+            hop2 = query_concept(mid, direction="out", return_ranked=True)
+            chain = [r["word"] for r in hop2][:3]
+            if args.friendly:
+                if chain:
+                    print(f"  {word.capitalize()} relates to {mid}, which "
+                          f"relates to {', '.join(chain)}.", flush=True)
+                else:
+                    print(f"  {word.capitalize()} relates to {mid}.",
+                          flush=True)
+            else:
+                print(f"  [trace: {word} -out-> {mid} -out-> {chain}]",
+                      flush=True)
+            return None
         if line.startswith("is "):
             rest = line.rstrip("?").strip()[len("is "):]
             parts = rest.split()
@@ -668,6 +734,7 @@ def main():
     print("  remember a is b      Encode (a, b) on bridge containing both")
     print("  what is X            Find associates of X")
     print("  <word>               Same as 'what is'")
+    print("  trace X              2-hop reasoning: X -> assoc -> its assocs")
     print("  is X Y?              Exact tag match")
     print("  concepts / vocab     List per-bridge vocab")
     print("  tags                 List per-bridge tags")
