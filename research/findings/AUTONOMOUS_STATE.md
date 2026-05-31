@@ -9,7 +9,40 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## ACTIVE ARC 2026-05-30 (PM): conversational-ceiling AUDIT (owner chose "audit the ceiling")
+## ACTIVE ARC 2026-05-30 (night): biologize shortcut-2 (activity-grounded symbol DENOISER)
+
+Owner delegated ("whatever you think most productive, keeping goals in mind"). Per the top-level
+goal (artificial life / biology-translatable; capabilities instrumental; honest negatives under
+strict biology ARE the deliverable) -> chose the BIOLOGY-FAITHFUL path over a scaffold ceiling-break.
+
+CONTEXT (from "check existing sims first" survey + the May-22 findings): phase-coded FHRR
+composition is BUILT + VALIDATED -- spiking_phasor_fhrr.py (Orchard, PASS {2,3,5}), resonate_fire_
+fhrr.py (Frady-Sommer RF + separated-TPAM cleanup, PASS {2,3,5}), identity-level integration
+0.96-0.99 multi-seed. It rests on 3 engineered shortcuts: (1) function-first bind/unbind = BIOLOGIZED
+(RF); (3) argmax-over-vocab cleanup = BIOLOGIZED (attractor TPAM); (2) ORACLE LOOKUP (fixed clean
+symbol per concept) = STILL ENGINEERED. The May-22 activity-level integration tried to remove
+shortcut 2 (derive symbol from real activity) -> NEGATIVE: substrate per-neuron activity CV~1.63
+(160% noise); even composition-only collapses to 0.36 (<<0.80). Re-specified: a faithful activity-
+grounded symbol needs an ATTRACTOR / TEMPORAL-INTEGRATION DENOISER (CV 1.63 -> ~0.20, the regime
+where it composes >0.80). Shortcuts 2+3 COUPLED: a biological attractor grounds AND denoises.
+
+THE ARC: build the denoiser between substrate activity and the FHRR composition layer; reuse the
+validated FHRR composition + attractor (TPAM) machinery byte-unchanged; frozen 0.80 bar at loads
+{2,3,5}, multi-seed, leakage-guarded.
+CHEAP-FIRST GATE (next concrete step, CPU): reuse research/findings/raw/activity_level_integration.py
+(captures 3200-dim per-neuron concept-pool activity; measured CV 1.63; composes via byte-unchanged
+spiking_phasor_fhrr) -- INSERT a denoiser (temporal integration over k observations: CV~1.63/sqrt(k),
+k~66 -> 0.20; AND/OR an attractor settle like the validated TPAM) BEFORE symbol derivation; measure
+(a) post-denoiser CV, (b) composition accuracy vs 0.80. If any denoiser gets composition >0.80 (or CV
+near 0.20) -> the denoiser arc is VIABLE -> design + build properly. If NONE -> honest NEGATIVE (the
+substrate is irreducibly noisy for single-pass activity grounding; the oracle lookup is irreducible
+on this substrate) = a biology-translatable deliverable. Cheap-first BEFORE designing big (the
+falsify-cheaply discipline). resonate_fire_fhrr.ResonateFireTPAM is the reusable attractor denoiser.
+Standing: reuse-by-import; no new autograd; no protected/frozen/moat edit; moat 7/7; 0.80 bar frozen.
+
+---
+
+## CONCLUDED ARC 2026-05-30 (PM): conversational-ceiling AUDIT (owner chose "audit the ceiling")
 
 Integrated-loop wm-emergence arc CONCLUDED (two-horns VOID, below). Owner picked A=pivot,
 then for the next arc chose "audit the ceiling" over building phase-coded VSA. Survey found
