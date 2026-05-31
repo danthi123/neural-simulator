@@ -78,16 +78,26 @@ stable). Findings: 2026-05-31-modular-coding-probe-INSTRUMENT-INVALID-...md + su
 NET: cheap biological VSA-near-orthogonal symbol-grounding is unmet; CONVERGES on night-synthesis P3(c) =
 accept the oracle near-orthogonal code as an engineering component + advance the validated P4 retrieval stack.
 
-EXACT NEXT CONCRETE ACTION: the biologize-the-VSA-symbol line is honestly banked (near-orthogonality unmet;
-substrate is ID-separable, which the working retrieval stack already exploits). Per the converged P3(c)/P4
-direction, advance the VALIDATED conversational stack as the deliverable. Concrete options (pick highest-
-value, GPU/CuPy real runs): (a) the directional "trace" multi-hop is shipped but BIMODAL (gated by per-seed
-binding quality) -- a worthwhile diagnostic is WHY a given pair's binding is weak on some seeds (the stack-
-wide limiter); (b) a cleaner interactive chat surface over the 160/320-concept stack (the demos are
-scripted); (c) scale vocab toward 640 is an owner-flagged ~100hr decision -- do NOT unilaterally launch.
-Before any NEW biological arc: check-existing-first (grep findings/plans) -- the theta-gamma + grid arcs
-were both already-explored/over-claimed; the genuinely-open biological directions need new subsystem
-mechanisms (a real design effort), not another cheap probe of an already-characterized boundary. moat 7/7;
+TRACE BIMODALITY DIAGNOSED 2026-05-31 (finding 2026-05-31-P4-multihop-trace-bimodality-DIAGNOSED-...md):
+it is per-pair x per-seed RECALL-STRENGTH (an engram-binding lottery), NOT a filter flaw, NOT seed-global.
+Stim the tag, read target rank/32: big->red rank 2(s42)/8(s43,buried)/1(s44) -- mirrors multi-hop 8/0/6.
+Other pairs weak on OTHER seeds (hot->dry rank4 s44; cold->wet rank8 s44; s43's hot->dry is rank1 strongest).
+Where target falls below trace's top-3, multi-hop misses. Actionable in principle (strengthen weak bindings).
+REINFORCEMENT TEST IN FLIGHT (bf2wbr7n7, _perseed_binding_reinforce.py): does re-encoding a weak pair N times
+raise its target rank to <=3 (no-code-change fix)? Cases: s43 big->red, s44 cold->wet, s42 big->red (control).
+
+EXACT NEXT CONCRETE ACTION: when the reinforcement test (bf2wbr7n7) lands -> if rank falls to <=3 with more
+encodes -> reinforcement is the simple actionable fix for trace bimodality (could wire a "remember a is b"
+that reinforces weak bindings, or note it as a usage pattern); record+push. If FLAT (rank stays >3) -> the
+per-seed sparse-pattern structure caps the binding -> the deeper balanced-teacher encode (modify
+encode_pair_engram_sparse to drive both concepts strongly during the single-pass encode -- a real sparse-
+encode change needing re-validation, NOT rushed) OR accept the per-pair lottery as the honest residual.
+Either way the multi-hop characterization is COMPLETE (clean->DEGRADES->RESCUE->bimodality DIAGNOSED).
+THEN: P4 is well-advanced (160/320 concepts, multitag 90%, directional trace, hierarchy, yes/no, tokenize);
+the biological-composition line is boundary-banked. Genuinely-open next directions all need a real design
+effort (new biological subsystem mechanism) -- do that via brainstorming->design->cheap-first, check-existing-
+first FIRST (theta-gamma + grid arcs were both already-explored). Do NOT unilaterally launch the ~100hr V=640.
+moat 7/7;
 0.80 bar frozen; cheap-first before spiking; honest negatives/clarifications are the deliverable.
 moat 7/7; 0.80 bar frozen; cheap-first before spiking; honest negatives are the deliverable; GPU/CuPy real.
 
