@@ -1,0 +1,9 @@
+##### SEED 42 #####
+  spiking QA (who/what-obj/what-act all correct): 1.000  unknown-question control (-> none): 1.000
+VERDICT: RESOLVES -- spiking wh-question answering over an SVO knowledge base works in-substrate (who/what-object/what-action), via the validated bind + relational query.
+
+##### SEED 43 #####
+  spiking QA (who/what-obj/what-act all correct): 1.000  unknown-question control (-> none): 1.000
+VERDICT: RESOLVES -- spiking wh-question answering over an SVO knowledge base works in-substrate (who/what-object/what-action), via the validated bind + relational query.
+
+##### SEED 44 #####

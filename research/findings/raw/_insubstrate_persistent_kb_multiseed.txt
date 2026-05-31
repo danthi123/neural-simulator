@@ -1,0 +1,24 @@
+##### SEED 42 #####
+  SESSION 1: stored 2 facts -> persisted to research/findings/raw/_persistent_kb_seed42.npz
+  SESSION 2 (fresh bridge): reloaded 2 facts; adding 1 new fact C
+    Q 'who cat hot?' (session-1 fact) -> come  [OK]
+    Q 'who dog go?' (session-1 fact) -> west  [OK]
+    Q 'who look river?' (session-2 fact) -> north  [OK]
+VERDICT: RESOLVES -- a PERSISTENT spiking knowledge base: facts stored in session 1 SURVIVE a reload in a fresh session (no forgetting), and a new fact added in session 2 also answers -- continual accumulation across sessions, the artificial-life premise.
+
+##### SEED 43 #####
+  SESSION 1: stored 2 facts -> persisted to research/findings/raw/_persistent_kb_seed43.npz
+  SESSION 2 (fresh bridge): reloaded 2 facts; adding 1 new fact C
+    Q 'who big cat?' (session-1 fact) -> hot  [OK]
+    Q 'who dog west?' (session-1 fact) -> stop  [OK]
+    Q 'who small come?' (session-2 fact) -> look  [OK]
+VERDICT: RESOLVES -- a PERSISTENT spiking knowledge base: facts stored in session 1 SURVIVE a reload in a fresh session (no forgetting), and a new fact added in session 2 also answers -- continual accumulation across sessions, the artificial-life premise.
+
+##### SEED 44 #####
+  SESSION 1: stored 2 facts -> persisted to research/findings/raw/_persistent_kb_seed44.npz
+  SESSION 2 (fresh bridge): reloaded 2 facts; adding 1 new fact C
+    Q 'who west big?' (session-1 fact) -> stop  [OK]
+    Q 'who apple come?' (session-1 fact) -> small  [OK]
+    Q 'who cold hot?' (session-2 fact) -> go  [OK]
+VERDICT: RESOLVES -- a PERSISTENT spiking knowledge base: facts stored in session 1 SURVIVE a reload in a fresh session (no forgetting), and a new fact added in session 2 also answers -- continual accumulation across sessions, the artificial-life premise.
+
