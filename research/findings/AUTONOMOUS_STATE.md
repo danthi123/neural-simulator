@@ -28,7 +28,13 @@ advance the highest-value extension toward conversational capability: candidates
 stored associations [known open gap, corrected-NEGATIVE], (b) scale toward 640 concepts [D8 infra scaffolded],
 (c) cleaner interactive chat. reuse-by-import; moat 7/7; 0.80 bar frozen; honest negatives are the deliverable.
 
-P4 STEP 1 IN FLIGHT (subagent a01683e9f6e46eafd, _multihop_reasoning_test.py): MULTI-HOP reasoning on the
+P4 STEP 1 DONE (clean-condition PASS) + DECISIVE SCRUTINY IN FLIGHT. Multi-hop 2-hop transitive on the
+160-concept multitag stack = 8/8 PASS under CLEAN conditions (all-distinct words, anti-cheat 8/8, vs 0.25 prior /
+0.094 chance) -- but the EASIEST case (no hub competition at hop-2); mechanism is chained ~100% single-hops via a
+shared tag-name middle term, NOT learned inference. DECISIVE hub-reuse+multi-seed scrutiny RUNNING (subagent
+a3d6187f2cb233796, _multihop_hubreuse_test.py: hub fan-in 2/4/8 x seeds 42/43/44). ROBUST(>=0.50 at fan-in 8)
+-> real multi-hop reasoning capability -> build multi-hop chat demo. DEGRADES-WITH-FANIN -> bounded by hub
+crowding (characterize curve). NEGATIVE -> clean 8/8 didn't generalize. [superseded marker for prior in-flight:], _multihop_reasoning_test.py): MULTI-HOP reasoning on the
 validated 160-concept g20_multibridge --sparse stack. Encode 2-hop chains (A->B, B->C; A->C NOT directly
 encoded), test whether CHAINING the 90% single-hop multitag (query A->B, query B->C) gives reliable transitive
 inference. PRE-REG: WORKS if 2-hop transitive >=0.50 (> prior corrected-NEGATIVE 0.25); PARTIAL if >0.25 but
