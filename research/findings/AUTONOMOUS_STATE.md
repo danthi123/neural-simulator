@@ -5,9 +5,50 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-05-30
+**Updated:** 2026-05-31
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
+
+## >>> CURRENT POINTER (read THIS first; 2026-05-31) <<<
+
+TWO live threads:
+
+(1) IN FLIGHT (GPU, harness-tracked, auto-notifies): P4 multi-hop hub-reuse decisive
+scrutiny, subagent a3d6187f2cb233796 (research/findings/raw/_multihop_hubreuse_test.py),
+hub fan-in 2/4/8 x seeds 42/43/44 on the validated 160-concept G.20 multitag stack.
+Verified healthy: sole live python GPU proc PID 10500, CPU climbing (141->172s), 2.7GB,
+no zombies. FROZEN verdict: ROBUST if 2-hop transitive >=0.50 at fan-in 8 multi-seed;
+DEGRADES-WITH-FANIN if high at fan-in 2 but <0.50 by fan-in 8; NEGATIVE if <=0.25/chance.
+When it lands: scrutinize a PASS harder than a FAIL (is hop-1 still finding the hub?
+is degradation hub-crowding? chance baseline 0.094); record honest finding; push BOTH
+remotes; update this pointer. Clean-condition 8/8 already banked (finding 2026-05-31-P4-
+multihop-...PASS...md) -- honest caveat: easiest case, chained lookups not learned inference.
+
+(2) NEXT ARC GROUNDED + BANKED (owner-aligned, ready regardless of (1)'s verdict): finding
+2026-05-31-theta-multiplexing-conversational-holding-NEXT-ARC-grounding-temporal-not-
+spatial-separation.md. The owner's preferred mechanism (theta-phase multiplexing, 2026-05-19
+reframe) may SIDESTEP this session's separation-vs-reliability BOUNDARY because it separates
+held items in TIME (theta phase slots) not in SPATIAL pattern -- routing around the exact
+k-WTA knob that produced the boundary. Existing sim to adopt-from (check-existing-sims-first
+directive): Ursino-Cesaretti-Pirazzini 2022 spiking Lisman-Idiart theta-gamma multi-item WM
+(PMC10050512). Honest caveat recorded: 2025 Nat Neuro contests strict phase==order -> scope
+to HOLDING/non-interference, not order-coding. Substrate already has the ingredients (concept
+pools = gamma assemblies; parked integrated-loop Task-2 theta timing controller, reuse-by-import).
+
+EXACT NEXT CONCRETE ACTION: when (1) lands -> record+scrutinize+push its verdict, then per
+its branch (ROBUST=bank+proceed; DEGRADES/NEGATIVE=characterize+proceed) the primary next
+build is the thread-(2) CHEAP-FIRST theta-multiplexing HOLDING probe (CPU/numpy, stdlib+numpy
+only, no protected import): N>=4 dense-stable gamma-assembly codes in distinct theta-phase
+slots; measure phase-slot readback (>=0.90) + within-item stability + the NO-PHASE control
+that must collapse (<0.50) so a phase-separated PASS is a real falsification. FROZEN three-state
+(RESOLVES->spiking build / BOUNDARY->honest negative, no build / DOES-NOT-RESOLVE). HARD GATE:
+spiking build only on cheap RESOLVES. Same de-risking discipline that killed the integrated-loop
++ denoiser builds. Do NOT skip cheap-first. Do NOT start the spiking build before the cheap gate.
+
+NOTE: this file is 375KB (bloated with concluded-arc history). The block ABOVE is authoritative
++ current; everything below is historical trail. A future cycle should compact the trail (keep
+this pointer + the concluded-arc one-liners, archive the verbose middles).
+
 
 ## DG-BIOLOGIZATION CONCLUDED 2026-05-31 = FUNDAMENTAL BOUNDARY; ACTIVE ARC = P4 conversational capability
 
