@@ -153,16 +153,29 @@ the fix (bare spike-timing STDP failed -- a simultaneous teacher gives no pre->p
 syntactic role assignment in-substrate. 7th insight banked (role assignment = Hebbian co-activation
 learning, not fine-timing). All parser pieces validated (coincidence + Hebbian conj->role + bind).
 Synthesis + capability_status (pillar n=111 summary) + probe all updated/committed both remotes.
-EXACT NEXT CONCRETE ACTION: wire the LEARNED PARSER -> BIND end-to-end. Build the full pipeline: a sentence
-(content words + their positions + function-word 'by' presence) -> coincidence(position,voice) conjunctive
-units -> the Hebbian-learned conj->role mapping fires the role for each content word -> that role gates the
-bind (role(x)filler) of the word's concept code -> store + relational-query VOICE-INVARIANTLY. Decisive
-test: "dog chases cat" (active) and "cat is chased by dog" (passive) both -> query agent -> dog (same
-agent, voice-invariant), multi-seed, + control. This composes ALL validated pieces (parser core +
-coincidence + bind + relational memory + the cheap-first's voice-invariance result) into the first
-end-to-end LEARNED syntactic understanding in-substrate. Cheap-first the wiring on 1 sentence pair, then
-multi-seed. (Owner may also prefer: scale vocab / multi-turn persistent dialogue / bank the deliverable.)
-Propagate every outcome to BOTH remotes. prior arc (multi-hop) below.
+END-TO-END LEARNED SYNTACTIC UNDERSTANDING = RESOLVES MULTI-SEED (3/3). _insubstrate_parser_bind_e2e_probe.py:
+the Hebbian-learned parser assigns roles, the spiking bind stores the sentence, a relational query extracts
+the agent VOICE-INVARIANTLY -- seeds 42/43/44 ALL parse 6/6, voice-invariant agent 1.000, scrambled-parse
+control 0.000. "dog chases cat" (active) and "cat is chased by dog" (passive) both -> dog is the agent,
+LEARNED not supplied. The FULL conversational pipeline is now validated end-to-end in spiking, multi-seed:
+text -> live concept recognition (15-16/16) -> learned syntactic parsing (Hebbian conjunctive position*voice
+-> role, 6/6 + flip) -> compositional bind (coincidence, K<=6) -> relational fact-memory (scales to ~12
+facts) -> voice-invariant answer. 7 biology-translatable insights synthesized
+(2026-05-31-composition-in-spiking-substrate-SYNTHESIS.md). All committed+pushed; capability_status pillar
+n=111 + summary finalized.
+
+>>> THE COMPOSITION ARC IS A COMPLETE END-TO-END BIOLOGY-GROUNDED CONVERSATIONAL PIPELINE, validated
+multi-seed in spiking, with the scientific deliverable (7 insights) banked. On the owner's actual goal
+(artificial life / brain analogue / biology-translatable insights / conversation instrumental). <<<
+
+EXACT NEXT CONCRETE ACTION (richer conversation; cheap-first each; owner may steer): (1) SCALE VOCABULARY
+-- the concept-pool architecture scales (G.20 160-320 concepts); wire a larger-vocab concept-pool bridge
+to the bind for more conversational range (tractable, pieces exist). (2) MORE SYNTACTIC CONSTRUCTIONS --
+questions ("who chases cat?" = query with an unknown slot; the bind already supports role queries) and
+relative clauses (needs separate-fact storage per the architectural principle, NOT flat nesting). (3)
+MULTI-TURN PERSISTENT DIALOGUE -- persist the bound fact structures across turns/sessions via the lineage
+system (the artificial-life / continual-learning aspect). Pick per owner-priority + cheap-first. Propagate
+every outcome to BOTH remotes. prior arc (multi-hop) below.
 
 TWO live threads:
 
