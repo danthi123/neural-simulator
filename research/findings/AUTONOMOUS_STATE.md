@@ -183,8 +183,11 @@ composition. Conversation batch COMPLETE (bidirectional agent: understand/answer
 REPL, all multi-seed). 8 insights synthesized. The TRACTABLE conversation + scaling space is comprehensively
 done; everything committed both remotes.
 
-EXACT NEXT CONCRETE ACTION = front-end arc IN FLIGHT: 28-word concept-pool TRAINING running (task b1jvm9b2g,
-~28 min, saving research/findings/raw/_v17_28word_seed42.simstate.h5). WHEN IT COMPLETES -> run
+EXACT NEXT CONCRETE ACTION = front-end arc IN FLIGHT. NOTE: first training (task b1jvm9b2g, 200 events)
+TIMED OUT incomplete (~1.3s/event under demo contention = ~2hr not 28min; checkpoint never saved). RE-
+LAUNCHED smoke-scale (task bnl7ff9zh, 50 events/word -- enough since v17 showed 50-200 events all give
+~50% label; NO contending demos this time so it completes), saving research/findings/raw/
+_v17_28word_seed42.simstate.h5. WHEN IT COMPLETES -> run
 `python -m research.findings.raw._v17_distributed_vs_label_probe` (ALREADY WRITTEN + syntax-OK; loads the
 bridge with matched architecture, load_checkpoint validates so the monkey-patch mismatch is caught) -> get
 pool-label recognition (expect ~50% per v17) vs distributed-code bind/QA. If distributed >> label -> the
