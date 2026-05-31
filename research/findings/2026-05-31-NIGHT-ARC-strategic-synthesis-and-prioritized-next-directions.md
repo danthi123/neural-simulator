@@ -54,3 +54,20 @@ Findings: (1) NO clean sweet-spot -- BETWEEN and WITHIN fall TOGETHER as it spar
 ## CA3 completion diagnostic = INCONCLUSIVE (confounded; controller scrutiny)
 
 The CA3 diagnostic returned PARTIAL but is DISQUALIFIED on scrutiny: (1) CA3 was SATURATED (ca3_sparsity 0.946 = 94.6% of CA3 firing) -- not a sparse attractor; its within_ca3 0.900 AND between_ca3 0.899 are saturation artifacts (all-firing vectors are trivially similar both within and between concepts), not genuine completion. (2) DG ran DENSE (dg_sparsity 0.369, between-concept 0.66) -- NOT the sparse-separated 0.18 regime; so CA3 was fed poorly-separated codes to begin with. So the diagnostic did NOT cleanly test "does CA3 stabilize SEPARATED codes." It does weakly indicate CA3 stabilizes within-concept (within_dg 0.596 -> within_ca3 0.90, +0.30) but at a regime with no separation to preserve, and via saturation. A clean CA3 test needs DG sparse-separated + CA3 tuned to a sparse stable attractor (not saturated) -- deep multi-knob tuning. The repeated tuning confounds across the DG line (untrained pools -> degenerate DG -> dense DG -> saturated CA3) show this trisynaptic-symbol assembly is highly tuning-sensitive. The cleaner DG-side test (P5: does a LARGER DG give separation AND within-concept stability, no CA3 confound) is running now (PID 10091). If a larger DG threads the needle (sparse-fraction but many-active -> stable AND separated), that is the resolution; if not, the separation-vs-reliability tension is a fundamental boundary at this substrate scale (P3).
+
+## P4 scope (the validated conversational capability) -- more built than queued
+
+The conversational capability is ALREADY at 160-320 concepts: g20_160word_demo (5 G.20 shared-pool
+bridges, 160 unique concepts) runs cross-bridge encoding ("apple is big" = apple in nouns + big in
+adjectives), single-word multitag retrieval (the validated 90% mechanism), yes/no queries, Path-3
+hierarchy queries ("is a dog an animal?"), Path-2 morpheme tokenization ("dogs ate apples"). The
+320-concept tier shipped at 98.4% per-bridge (D7/G.20). So P4 is a validated, advanced, goal-relevant
+artifact -- NOT greenfield. Concrete extensions (all GPU, runnable): (a) scale vocab toward 640 (D8
+V=640 infra was scaffolded earlier this session); (b) a cleaner INTERACTIVE chat surface (the demo is
+scripted); (c) close a known capability gap (multi-hop reasoning over memory was a corrected-NEGATIVE
+-- a genuine open problem). STRATEGIC NOTE given the DG line's repeated tuning confounds + the
+"worth your/GPU time" frame: if P5 shows the separation-reliability tension is fundamental (the DG
+biologization can't cleanly yield a separated+stable compositional symbol), the HIGHEST-value pivot is
+to advance this WORKING conversational stack (P4) rather than grind more biologization tuning -- the
+biologization NEGATIVE/BOUNDARY is itself banked as the biology-translatable deliverable. P5 (running)
+is the decider: resolve -> finish the trisynaptic biologization; fundamental -> bank the boundary + pivot to P4.
