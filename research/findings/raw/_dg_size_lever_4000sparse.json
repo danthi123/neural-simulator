@@ -1,0 +1,59 @@
+{
+  "results": [
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 10.0,
+      "ffi": 0.5,
+      "sparsity": 1.0,
+      "between_mean": 0.9998059080497999,
+      "between_max": 0.9998747214846334,
+      "within_mean": 0.9998065631589265,
+      "n_silent": 0
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 10.0,
+      "ffi": 0.8,
+      "sparsity": 1.0,
+      "between_mean": 0.999875749650836,
+      "between_max": 0.9999317772792603,
+      "within_mean": 0.9998673612960367,
+      "n_silent": 0
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 12.0,
+      "ffi": 1.2,
+      "sparsity": 1.0,
+      "between_mean": 0.9998142762516209,
+      "between_max": 0.99995160829587,
+      "within_mean": 0.9998512824999332,
+      "n_silent": 0
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 12.0,
+      "ffi": 1.8,
+      "sparsity": 1.0,
+      "between_mean": 0.9999252866773706,
+      "between_max": 0.999992362748408,
+      "within_mean": 0.9999519859263928,
+      "n_silent": 0
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 14.0,
+      "ffi": 2.5,
+      "sparsity": 1.0,
+      "between_mean": 0.9999684058717424,
+      "between_max": 1.0000000000000002,
+      "within_mean": 0.9999841715403539,
+      "n_silent": 0
+    }
+  ]
+}
