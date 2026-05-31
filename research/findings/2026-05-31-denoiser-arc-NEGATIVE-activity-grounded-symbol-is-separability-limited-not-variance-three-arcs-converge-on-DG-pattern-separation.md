@@ -41,3 +41,18 @@ All three point to a DG-style PATTERN-SEPARATION stage as the missing substrate 
 ## Discipline
 
 No protected/frozen/moat/sim/runner module modified (throwaway probes only; spiking_phasor_fhrr / resonate_fire_fhrr / activity_level_integration reused by import byte-unchanged). No bars moved. No autograd. The optimistic cheap-first was honestly corrected by the rigorous confirmation (the grounding discipline caught it before it was a claimed result), and the surprising attractor near-chance was scrutinized (sanity check) before being concluded. Honest NEGATIVE = the deliverable. The cheap-first-before-build discipline held: no big build was committed on the optimistic premise.
+
+## Premise confirmed quantitatively (free, cached): concept activity overlaps at the EXACT P1 DG-input regime
+
+Measured the inter-concept cosine of the captured concept-pool mean activity (the deriver's input,
+64-obs cache, 3 seeds):
+- BETWEEN different concepts (fillers): cosine ~0.818/0.829/0.815 (max ~0.85)
+- BETWEEN different concepts (cues): ~0.80
+- WITHIN a concept (split-half, trial-to-trial): ~0.90
+
+So different concepts are only ~0.08 cosine apart from being the SAME concept -- the activity-grounded
+symbols are barely separable. This is WHY composition crosstalks at L>=3. And ~0.82 is almost exactly
+the P1 D.12 DG pattern-separation INPUT cosine (0.800), where the validated DG produced output cosine
+0.218 (58pp orthogonalization). So the convergent prescription makes a FALSIFIABLE QUANTITATIVE
+PREDICTION: routing the concept activity through DG should separate it from ~0.82 toward ~0.22, making
+the symbols separable enough to compose. The DG arc's cheap-first gate is exactly this measurement.

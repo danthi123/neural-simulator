@@ -30,9 +30,15 @@ The project HAS a validated DG (trisynaptic loop, P1 D.12: DG cosine 0.218 from 
 orthogonalization). The convergent next arc: insert DG pattern-separation between substrate raw activity
 and the composition-symbol derivation, then re-test whether DG-separated activity grounds a composable
 symbol. DEEPER arc -> DECISION POINT for owner (this is the third arc to land on DG; it is the strongest-
-evidenced direction the project has). DEFAULT (no steer): scope the DG-pattern-separation arc (check
-existing trisynaptic/DG sims first; reuse-by-import; cheap-first gate: does DG-separating the activity
-drop inter-symbol overlap enough that mean-of-k + argmax clears {3,5}?). Standing reframes hold (0.80
+evidenced direction the project has). PREMISE CONFIRMED (free): concept activity between-concept cosine ~0.82 (within ~0.90, margin ~0.08) ==
+the P1 D.12 DG-INPUT regime (0.800 -> DG 0.218). FALSIFIABLE PREDICTION: route concept activity -> DG
+separates ~0.82 -> ~0.22. DG cheap-first GATE (next): build bridge w/ concept pools + hippocampus
+(build_biological_brain_regions enable_hippocampus_consolidation=True), wire concept activity -> DG
+(survey Option A/C), drive each concept, capture DG activity, measure between-concept DG cosine vs the
+0.82 baseline. PASS if DG cosine drops materially toward ~0.22 (then derive symbols from DG + re-test
+composition clears {3,5}); NEGATIVE if DG doesn't separate the concept activity. Survey digest: DG
+regions ec/dg/dg_pv_basket/ca3/ca1; capture via cp_firing_states[region_manager.indices('dg')]; concept
+pools do NOT currently route to DG (needs wiring). reuse-by-import; builder byte-unchanged. Standing reframes hold (0.80
 bar frozen; moat 7/7; reuse-by-import; no new autograd; honest negatives are the deliverable). <<<
 
 ---
