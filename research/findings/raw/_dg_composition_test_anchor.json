@@ -1,0 +1,296 @@
+{
+  "probe": "dg_composition_test",
+  "backend": "cupy",
+  "cache_tag": "denoise64",
+  "regime": "anchor",
+  "concept_to_dg": {
+    "density": 0.4,
+    "weight_mean": 5.0,
+    "drive_scale": 9.0,
+    "ffi_scale": 0.18
+  },
+  "n_steps": 100,
+  "reset_steps": 40,
+  "n_trials": 60,
+  "bridge": {
+    "n_neurons": 1944,
+    "n_synapses": 401696,
+    "n_dg": 800,
+    "n_pv_basket": 240,
+    "real_dg_pv_basket_to_dg_ffi": true
+  },
+  "pool_baseline": {
+    "2": 0.834,
+    "3": 0.694,
+    "5": 0.575
+  },
+  "loads": [
+    2,
+    3,
+    5
+  ],
+  "bar": 0.8,
+  "per_seed": [
+    {
+      "seed": 42,
+      "cache": "denoise64",
+      "nobs": 64,
+      "d_act": 3200,
+      "n_dg": 800,
+      "regime": "anchor",
+      "pool_between_mean": 0.8061200060449583,
+      "pool_between_max": 0.8583282872540063,
+      "dg_between_mean": 0.05693538114189022,
+      "dg_between_max": 0.5715353405257774,
+      "store_dg_sparsity": {
+        "apple": 0.0,
+        "river": 0.0425,
+        "dog": 0.0025,
+        "cat": 0.00125,
+        "go": 0.0025,
+        "come": 0.0,
+        "stop": 0.065,
+        "look": 0.00375,
+        "big": 0.0,
+        "small": 0.095,
+        "hot": 0.0,
+        "cold": 0.0075
+      },
+      "query_dg_sparsity": {
+        "apple": 0.00875,
+        "river": 0.03375,
+        "dog": 0.00625,
+        "cat": 0.01,
+        "go": 0.0025,
+        "come": 0.02,
+        "stop": 0.00375,
+        "look": 0.0925,
+        "big": 0.0,
+        "small": 0.0075,
+        "hot": 0.1675,
+        "cold": 0.0
+      },
+      "mean_store_dg_sparsity": 0.018333333333333337,
+      "n_silent_words": 5,
+      "silent_words": [
+        "apple",
+        "come",
+        "big",
+        "hot",
+        "cold"
+      ],
+      "ec_undriven_rate": 0.003102083333333333,
+      "comp_all": {
+        "2": {
+          "composition_only": 0.26666666666666666,
+          "n_comp": 120
+        },
+        "3": {
+          "composition_only": 0.3111111111111111,
+          "n_comp": 180
+        },
+        "5": {
+          "composition_only": 0.2633333333333333,
+          "n_comp": 300
+        }
+      },
+      "comp_no_silent": {
+        "2": {
+          "composition_only": 1.0,
+          "n_comp": 120
+        },
+        "3": {
+          "composition_only": 1.0,
+          "n_comp": 180
+        },
+        "5": {
+          "composition_only": 1.0,
+          "n_comp": 300
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "cache": "denoise64",
+      "nobs": 64,
+      "d_act": 3200,
+      "n_dg": 800,
+      "regime": "anchor",
+      "pool_between_mean": 0.8089614654534794,
+      "pool_between_max": 0.8828579167608334,
+      "dg_between_mean": 0.15691152747586315,
+      "dg_between_max": 0.7071067811865476,
+      "store_dg_sparsity": {
+        "apple": 0.00125,
+        "river": 0.00375,
+        "dog": 0.0,
+        "cat": 0.0075,
+        "go": 0.04,
+        "come": 0.0,
+        "stop": 0.0025,
+        "look": 0.1275,
+        "big": 0.06375,
+        "small": 0.18625,
+        "hot": 0.035,
+        "cold": 0.0
+      },
+      "query_dg_sparsity": {
+        "apple": 0.025,
+        "river": 0.0025,
+        "dog": 0.0,
+        "cat": 0.01875,
+        "go": 0.005,
+        "come": 0.00375,
+        "stop": 0.0,
+        "look": 0.0,
+        "big": 0.0,
+        "small": 0.035,
+        "hot": 0.1275,
+        "cold": 0.0
+      },
+      "mean_store_dg_sparsity": 0.03895833333333334,
+      "n_silent_words": 6,
+      "silent_words": [
+        "dog",
+        "come",
+        "stop",
+        "look",
+        "big",
+        "cold"
+      ],
+      "ec_undriven_rate": 0.002766666666666666,
+      "comp_all": {
+        "2": {
+          "composition_only": 0.28431372549019607,
+          "n_comp": 102
+        },
+        "3": {
+          "composition_only": 0.36538461538461536,
+          "n_comp": 156
+        },
+        "5": {
+          "composition_only": 0.3435114503816794,
+          "n_comp": 262
+        }
+      },
+      "comp_no_silent": {
+        "2": {
+          "composition_only": 0.5166666666666667,
+          "n_comp": 120
+        },
+        "3": {
+          "composition_only": 0.5777777777777777,
+          "n_comp": 180
+        },
+        "5": {
+          "composition_only": NaN,
+          "n_comp": 0
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "cache": "denoise64",
+      "nobs": 64,
+      "d_act": 3200,
+      "n_dg": 800,
+      "regime": "anchor",
+      "pool_between_mean": 0.7999530387939755,
+      "pool_between_max": 0.877865322578138,
+      "dg_between_mean": 0.08219397128790708,
+      "dg_between_max": 0.43404614656470597,
+      "store_dg_sparsity": {
+        "apple": 0.0,
+        "river": 0.0,
+        "dog": 0.0175,
+        "cat": 0.0,
+        "go": 0.0,
+        "come": 0.085,
+        "stop": 0.0,
+        "look": 0.0225,
+        "big": 0.0025,
+        "small": 0.02625,
+        "hot": 0.01375,
+        "cold": 0.0175
+      },
+      "query_dg_sparsity": {
+        "apple": 0.0,
+        "river": 0.005,
+        "dog": 0.03375,
+        "cat": 0.0025,
+        "go": 0.0,
+        "come": 0.0075,
+        "stop": 0.00125,
+        "look": 0.0,
+        "big": 0.0,
+        "small": 0.00625,
+        "hot": 0.04375,
+        "cold": 0.005
+      },
+      "mean_store_dg_sparsity": 0.015416666666666667,
+      "n_silent_words": 7,
+      "silent_words": [
+        "apple",
+        "river",
+        "cat",
+        "go",
+        "stop",
+        "look",
+        "big"
+      ],
+      "ec_undriven_rate": 0.0028166666666666665,
+      "comp_all": {
+        "2": {
+          "composition_only": 0.5333333333333333,
+          "n_comp": 120
+        },
+        "3": {
+          "composition_only": 0.4666666666666667,
+          "n_comp": 180
+        },
+        "5": {
+          "composition_only": 0.36333333333333334,
+          "n_comp": 300
+        }
+      },
+      "comp_no_silent": {
+        "2": {
+          "composition_only": 0.5083333333333333,
+          "n_comp": 120
+        },
+        "3": {
+          "composition_only": NaN,
+          "n_comp": 0
+        },
+        "5": {
+          "composition_only": NaN,
+          "n_comp": 0
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "pool_between_mean": 0.8050115034308044,
+    "dg_between_mean": 0.09868029330188682,
+    "dg_mean_sparsity": 0.02423611111111111,
+    "n_silent_words_per_seed": [
+      5,
+      6,
+      7
+    ],
+    "dg_comp_all": {
+      "2": 0.3614379084967321,
+      "3": 0.38105413105413105,
+      "5": 0.32339270568278206
+    },
+    "dg_comp_no_silent": {
+      "2": 0.6749999999999999,
+      "3": 0.7888888888888889,
+      "5": 1.0
+    }
+  },
+  "verdict_no_silent": "NULL",
+  "deciding_no_silent": "L3 0.789 (d+0.095) / L5 1.000 (d+0.425) not materially over pool base",
+  "verdict_all_words": "NULL",
+  "deciding_all_words": "L3 0.381 (d-0.313) / L5 0.323 (d-0.252) not materially over pool base"
+}

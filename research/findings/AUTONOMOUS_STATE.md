@@ -51,13 +51,26 @@ FHRR composition + moat byte-unchanged. reuse-by-import; no autograd. Cheap-firs
 from the gate's DG-separated activity + run mean-of-k + argmax composition (reuse _denoiser_cheap_probe
 machinery) before any heavier build. <<<
 
-DG-COMPOSITION DECISIVE TEST IN FLIGHT (subagent acfbfe7542ce7b4d6, _dg_composition_test.py): derive
-symbols from DG-separated activity (distinct storage/query halves) -> FHRR compose + argmax cleanup ->
-composition-only accuracy {2,3,5} vs the pool baseline (L2 0.834 / L3 0.694 / L5 0.575). PRE-REG: FIXES if
-DG-symbol L3 AND L5 >=0.80; PARTIAL if >=+0.10 each over baseline; NULL else. Watch silent-DG words
-(degenerate symbols) + between-symbol cosine ~0.30. Controller forms verdict + scrutinizes. If FIXES ->
-DG biologizes the oracle lookup (3 shortcuts removable, artificial-life milestone) -> full build. If
-PARTIAL/NULL -> DG necessary-but-not-sufficient (narrower honest boundary) + diagnose. Standing reframes hold (0.80
+DG-COMPOSITION DECISIVE TEST DONE = NULL (finding 2026-05-31-DG-composition-NULL-...-needs-CA3-
+completion.md). DG-symbol composition WORSE than pool baseline at every load (L2 0.41/L3 0.37/L5 0.33 vs
+pool 0.83/0.69/0.58), barely above chance. Mechanism: separation is EXCELLENT (between-concept DG-symbol
+cosine 0.18/0.10) but within-concept RELIABILITY collapses -- sparse DG silent on one obs-half for ~1/3-1/2
+of words; storage vs query DG of the SAME concept near-disjoint (k-WTA picks different winners) -> unbind
+recovers noise. Classic SEPARATION-vs-RELIABILITY tension (gate dose-response: sparse separates/unstable,
+dense stable/no-separation; no single DG operating point gives both). 'no-silent' column is a vocab-collapse
+artifact (disregarded). DG pattern-separation = NECESSARY-BUT-NOT-SUFFICIENT.
+
+>>> RESOLUTION (biology prescribes it): CA3 PATTERN COMPLETION. The trisynaptic loop is DG->CA3 precisely
+because DG separation alone is unstable. CA3 is a recurrent attractor that COMPLETES a sparse/partial DG
+pattern to a STABLE stored ensemble -- the within-concept reliability the DG code lacks. P1 validated CA3
+completion (D.13, cosine 0.748). Convergent prescription REFINES: not DG-alone but the FULL trisynaptic loop
+(DG separates [confirmed 0.82->0.18], CA3 completes/stabilizes). NEXT TEST: drive concept->DG->CA3, TRAIN CA3
+ensembles per concept (D.13 direct-CA3: co-fire full pattern + ca3_swr_burst gate to store; recall by
+partial/noisy DG drive), derive symbol from the CA3 (completed, stable) code, re-test composition {2,3,5}.
+HONEST RISK: D.13 was seed-variable (direct-CA3 passed 0.748; EC-driven FAILED) -> CA3 reliability on the
+DG-separated concept activity is uncertain. FIXES -> trisynaptic loop biologizes the oracle lookup
+(artificial-life milestone). Cannot-both-separate-and-complete -> deeper honest boundary. reuse-by-import
+(builder/validate_trisynaptic_loop D.13 methodology byte-unchanged); no autograd; moat/FHRR byte-unchanged. <<< Standing reframes hold (0.80
 bar frozen; moat 7/7; reuse-by-import; no new autograd; honest negatives are the deliverable). <<<
 
 ---
