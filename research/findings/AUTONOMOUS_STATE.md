@@ -111,9 +111,18 @@ in the sparse call). POST-FIX diagnostic through the SHIPPED path: ALL 12 (pair 
 big->red s43 r8, hot->dry s44 r4, cold->wet s44 r8) -> per-pair-per-seed lottery ELIMINATED -> trace bimodality
 fixed at the determinant level (hop-2 needs top-3; all now <=2). 66 g20 tests pass. CONFIRMING (deferred,
 advisable): full directional-multi-seed re-test (expect uniform pass) + multitag benchmark re-validation at
-teacher=500 (expect improvement; existing 90% was at buggy teacher=100; only NEW engram commits affected, not
-trained bridge weights). MULTI-HOP ARC COMPLETE+FIXED: clean->DEGRADES->RESCUE->DIAGNOSED->reinforcement
-NEGATIVE->balanced-teacher VALIDATED+SHIPPED. The fix also strengthens ALL sparse engram bindings stack-wide.
+teacher=500. POST-FIX END-TO-END CONFIRMED (multi-seed directional re-test; finding 2026-05-31-P4-multihop-
+POST-teacher-fix-...md) WITH AN HONEST REVISION: the teacher fix was the REAL win -- undirected multi-hop at
+fan-in 8 jumped 0.000 -> 0.750; this makes the DIRECTIONAL filter (shipped earlier as "the fix") roughly
+NEUTRAL/slightly-negative now (0.708 vs 0.750), because strong bindings surface the outgoing edge even
+undirected. Directional treated the SYMPTOM (hub-crowding); teacher fix treated the CAUSE (weak bindings) ->
+symptom gone -> directional no longer load-bearing (retained as harmless semantic choice; earlier directional-
+RESCUES finding bannered superseded). Multi-hop now ~0.71-0.75 multi-seed at fan-in 8 (up from 0.00 undirected)
+but NOT uniformly 8/8; residual variance is now HOP-1 CROSS-bridge encoding (noun->hub, encode_partial path,
+NOT targeted by the intra-bridge teacher fix) -- a specified deferred lever (strengthen teacher in
+encode_partial_pair_engram_sparse). MULTI-HOP ARC COMPLETE+FIXED: clean->DEGRADES->directional RESCUE(symptom)
+->DIAGNOSED->reinforcement NEGATIVE->teacher_pA bug FOUND+FIXED(cause,real win)->end-to-end confirmed. The fix
+strengthens ALL sparse engram bindings stack-wide (multitag benchmark re-validation at teacher=500 advisable).
 
 STRATEGIC FORK RESOLVED WITH EVIDENCE (2026-05-31; finding 2026-05-31-near-ortho-boundary-is-FUNDAMENTAL-
 not-capacity-...md): the near-ortho floor is FLAT at ~0.48 from N=4 to N=16 concepts (delta +0.002) ->

@@ -1,5 +1,15 @@
 # P4 multi-hop directional fix: RESCUES the hub-crowding bottleneck per the frozen bar (multi-seed OUT full-2hop at fan-in 8 = 0.583 >= 0.50, vs undirected ANY = 0.000) -- the located cheap fix WORKS -- BUT the rescue is BIMODAL / seed-dependent (seed 42 = 8/8, seed 44 = 6/8, seed 43 = 0/8). The directional filter correctly isolates the outgoing edge on every seed; seed 43's total failure is weak UNDERLYING big_red binding on that seed's bridge, not a filter bug. So directional filtering removes the hop-2 hub-crowding bottleneck (clear improvement over undirected) and EXPOSES the residual per-seed binding-quality variance as multi-hop's next limit. Directional multi-hop is a REAL but NOT-UNIFORMLY-ROBUST capability.
 
+> ## SUPERSEDED (2026-05-31): the real fix was the teacher_pA bug, not the directional filter
+> The bimodality's root cause was found to be a teacher_pA bug (sparse encode_pair silently used teacher=100
+> instead of the configured 500). Fixing it made undirected multi-hop at fan-in 8 jump 0.000 -> 0.750, which
+> makes the DIRECTIONAL filter (this finding's subject) roughly NEUTRAL -- now slightly NEGATIVE (0.708 vs
+> 0.750). The directional filter treated the SYMPTOM (hub-crowding); the teacher fix treated the CAUSE (weak
+> bindings). See finding 2026-05-31-P4-multihop-POST-teacher-fix-the-bug-fix-was-the-real-win-directional-
+> filter-now-neutral.md. The directional filter is retained (semantic + harmless) but de-framed from "the
+> fix" to "a neutral semantic choice." This finding's RESCUED-but-BIMODAL result was at the BUGGY teacher=100;
+> read it through this supersession.
+
 **Date:** 2026-05-31
 **Status:** Controller verdict on the decisive multi-seed (42/43/44) directional-fix run, the follow-up to the hub-reuse DEGRADES-WITH-FANIN finding. RESCUED per the pre-registered (unmoved) bar, with the bimodality foregrounded per scrutinize-a-PASS-harder-than-a-FAIL. Throwaway probe (research/findings/raw/_multihop_directional_probe.py); g20_multibridge.py byte-unmodified.
 
