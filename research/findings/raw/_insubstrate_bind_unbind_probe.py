@@ -45,7 +45,7 @@ COINC_BIAS = -1000.0
 ROLE_DRIVE = 2500.0      # binary role source drive (active bit)
 FILL_DRIVE = 2500.0      # max graded fill source drive (scaled by concept magnitude)
 RESET_STEPS = 20
-RUN_STEPS = 60
+RUN_STEPS = 60         # readout window (steps); longer = less rate-estimate noise (CLI --run-steps)
 
 
 def _center(v):
@@ -54,14 +54,16 @@ def _center(v):
 
 
 def load_concepts(seed, D, rng):
-    """Load substrate concept codes, project to D (random Gaussian; preserves cosines),
-    mean-center + unit-normalize. Returns (words, codes[V,D])."""
+    """Load substrate concept codes; if D>0 project to D (random Gaussian, preserves
+    cosines); if D<=0 use the RAW codes (no projection -- most faithful). Mean-center +
+    unit-normalize. Returns (words, codes[V,Deff])."""
     d = np.load(CACHE % seed)
     ws = [k[5:] for k in d.files if k.startswith("obs__")]
     raw = np.stack([d["obs__" + w].mean(axis=0) for w in ws]).astype(np.float64)  # [V, 3200]
-    P = rng.standard_normal((raw.shape[1], D)) / np.sqrt(raw.shape[1])
-    proj = raw @ P
-    codes = np.stack([_center(proj[i]) for i in range(proj.shape[0])])
+    if D and D > 0:
+        P = rng.standard_normal((raw.shape[1], D)) / np.sqrt(raw.shape[1])
+        raw = raw @ P
+    codes = np.stack([_center(raw[i]) for i in range(raw.shape[0])])
     return ws, codes
 
 
@@ -203,6 +205,7 @@ def run_spiking(bridge, idx, codes, roles, K, V, D, xp, rng, n_trials, opponency
 
 
 def main():
+    global RUN_STEPS
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--proj-dim", type=int, default=800)
@@ -210,14 +213,17 @@ def main():
     ap.add_argument("--ks", type=str, default="1,2,3")
     ap.add_argument("--no-opponency", action="store_true",
                     help="disable ON/OFF common-mode removal before unbind (raw superposition)")
+    ap.add_argument("--run-steps", type=int, default=RUN_STEPS,
+                    help="readout integration window in steps (longer = less rate noise)")
     a = ap.parse_args()
     opponency = not a.no_opponency
+    RUN_STEPS = a.run_steps
     if not os.path.exists(CACHE % a.seed):
         print("CANNOT-CONCLUDE (no cache)"); return
     xp, backend = get_backend()
     rng = np.random.default_rng(a.seed)
-    D = a.proj_dim
-    words, codes = load_concepts(a.seed, D, rng)
+    words, codes = load_concepts(a.seed, a.proj_dim, rng)
+    D = codes.shape[1]            # effective dim (raw 3200 when --proj-dim <= 0)
     V = len(words)
     roles = make_roles(8, D, rng)
     print(f"=== in-substrate spiking BIND/UNBIND (backend={backend}, seed={a.seed}, "
