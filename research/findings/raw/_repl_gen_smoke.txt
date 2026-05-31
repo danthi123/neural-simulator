@@ -1,0 +1,14 @@
+=== Spiking conversational agent REPL (seed 42, vocab 16) ===
+vocab: ['north', 'east', 'south', 'west', 'apple', 'river', 'dog', 'cat', 'go', 'come', 'stop', 'look', 'big', 'small', 'hot', 'cold']
+teach facts ('dog go north'), ask ('who go north?', 'does dog go north?'); :facts :save :quit
+
+> dog go north
+  [stored]
+> cat come south
+  [stored]
+> describe dog
+  dog go north
+> who go north?
+  dog (dog go north)
+> tell me about cat
+  cat come south

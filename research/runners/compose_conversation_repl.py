@@ -99,9 +99,25 @@ def main():
             return f"  [saved {len(KB)} facts]"
         if t[0] == ":quit":
             return None
+        if t[0] in ("describe", "tell") and len(t) >= 2:
+            cue = t[-1]                                       # "describe dog" / "tell me about dog"
+            b = find(agent=cue)
+            if b is None:
+                return "  (I don't know anything about that)"
+            ag = RM.unbind_spiking(bridge, idx, b, "agent", roles, concepts, words, D, xp)
+            ac = RM.unbind_spiking(bridge, idx, b, "action", roles, concepts, words, D, xp)
+            pa = RM.unbind_spiking(bridge, idx, b, "patient", roles, concepts, words, D, xp)
+            pol = RM.unbind_spiking(bridge, idx, b, "polarity", roles, concepts, ["AFFIRM", "NEGATE"], D, xp)
+            neg = "" if pol == "AFFIRM" else "not "
+            return f"  {ag} {neg}{ac} {pa}"                   # GENERATED full sentence
         if t[0] == "who" and len(t) >= 3:
             b = find(action=t[1], patient=t[2])
-            return f"  {RM.unbind_spiking(bridge, idx, b, 'agent', roles, concepts, words, D, xp)}" if b is not None else "  (unknown)"
+            if b is None:
+                return "  (unknown)"
+            ag = RM.unbind_spiking(bridge, idx, b, "agent", roles, concepts, words, D, xp)
+            ac = RM.unbind_spiking(bridge, idx, b, "action", roles, concepts, words, D, xp)
+            pa = RM.unbind_spiking(bridge, idx, b, "patient", roles, concepts, words, D, xp)
+            return f"  {ag} ({ag} {ac} {pa})"                 # answer + the full fact it came from
         if t[0] == "what" and "does" in t and len(t) >= 4:
             b = find(agent=t[2], action=t[3])
             return f"  {RM.unbind_spiking(bridge, idx, b, 'patient', roles, concepts, words, D, xp)}" if b is not None else "  (unknown)"
