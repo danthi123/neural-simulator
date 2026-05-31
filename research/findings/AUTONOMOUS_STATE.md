@@ -59,18 +59,29 @@ ran on the FULL validated substrate (loaded unified_per_regime/phase1/seed42.sim
 EXISTS), so this is a PIPELINE-REPRODUCTION bug, NOT a substrate-scale issue: the probe does not
 reproduce generative_replay_pfc_frame_runner's FULL arm (the ~0.46 regime). Per pre-registration
 (STOP if regime wildly off) the decode comparison is INVALID -> NOT trusted.
-FIX IN FLIGHT (subagent, background): (1) FIRST confirm the 6th-arc 0.458 still reproduces by
-running the ACTUAL generative_replay_pfc_frame_runner small-scale (disambiguate REGRESSION vs
-PROBE-BUG); (2) if real runner ~0.46 -> fix the probe to reuse-by-import the runner's exact
-FULL-arm functions (encode/replay/PFC-frame/_compositional_query_ranked) until the probe's regime
-check hits ~0.35-0.55; (3) then run the decisive multi-episode episode-level CV (seeds 42/43/44,
-8 ep, 5-fold) + report A(cosine) vs B(decoder) + pre-reg verdict; RUN TO COMPLETION (no detached
-process). If real runner does NOT reproduce ~0.46 -> that REGRESSION is itself the finding.
-Validated cache: research/findings/raw/unified_per_regime/phase1/seed{42,43,44}.simstate.h5 (USE
-IT; do NOT train/tiny). NEXT (controller, on completion): verify regime ~0.46 + episode-split +
-form verdict (scrutinize READOUT-LIMIT harder). READOUT-LIMIT -> VSA arc not warranted as framed
-(cheaper readout/cleanup fix). REPRESENTATIONAL -> VSA premise holds. Record + push both remotes
-+ surface to owner. Phase-coded VSA arc NOT started -- the audit gates it.
+FIX SUBAGENT (a2649185) STEP A + B DONE; STEP C decisive run IN FLIGHT:
+  STEP A DONE: the REAL generative_replay_pfc_frame_runner REPRODUCES -- full_acc 0.40 (seed42 N2),
+    0.4583 (3-seed N3). The 0.46 regime is REAL, NOT a regression.
+  STEP B DONE (probe fixed to RUNNER-BLEND regime 0.4545, in band) + KEY REFINEMENT FINDING: the
+    6th-arc "full_acc 0.46" is a BLEND of DIRECT-retrieval queries (easy, high acc) + COMPOSITIONAL
+    queries (hard). The COMPOSITIONAL-cosine readout ALONE is ~0.0-0.30, NOT 0.46. This SHARPENS
+    Phase 1: composition-only is decodable at ~0-0.30 (lower than the blended 0.46 implied); the
+    Phase-1 doc's "composition decodable at ~0.46" should be read as the BLENDED number, not the
+    compositional-only number. (Pending exact A from STEP C.)
+  STEP C IN FLIGHT: decisive run PID 38712 (_ceiling_audit_phase2_decode --seeds 42 43 44
+    --episodes-per-seed 8, FULL substrate), ~50-60 min. Watcher bst287wn5 (Wait-Process) extracts
+    DECISIVE.json verdict fields on exit -> _ceiling_audit_phase2_DECISIVE.json.
+  Subagent respected constraints: ONLY the throwaway probe script changed; no protected/runner/
+  sim/compose edits (controller verified git status).
+NEXT (controller, when bst287wn5 notifies): read decisive A(compositional cosine) vs B(held-out
+linear/NN decoder) on identical episode-level held-out sets; verify regime ~0.46 blend / comp
+~0-0.30, episode-split no-leakage, chance. Form pre-reg verdict (scrutinize READOUT-LIMIT HARDER:
+is B real generalization or leakage/imbalance?). READOUT-LIMIT (B>=2A & B>chance+0.10) -> the
+0.46->0.80 gap is a READOUT limit; big phase-coded VSA arc NOT warranted as framed; cheaper
+readout/cleanup fix is the lead. REPRESENTATIONAL (B<A+0.10) -> VSA premise holds, justified next
+build. Record consolidated finding (incl. STEP B blend refinement) + push both remotes + surface
+to owner. Phase-coded VSA arc NOT started -- the audit gates it. (If PID 38712 died w/o
+DECISIVE.json -> re-run the same command synchronously, controller-owned.)
 
 ---
 
