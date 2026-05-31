@@ -1,0 +1,12 @@
+##### SEED 42 #####
+  captured 16 live codes (D=3200); concept-pool recognition 15/16 correct (the front-end's own accuracy)
+  LIVE-code spiking: single-fact=1.000  relational=1.000  control=1.000  (cached-code baseline at bias-500 = 1.000/1.000/1.000)
+
+##### SEED 43 #####
+  captured 16 live codes (D=3200); concept-pool recognition 15/16 correct (the front-end's own accuracy)
+  LIVE-code spiking: single-fact=1.000  relational=1.000  control=1.000  (cached-code baseline at bias-500 = 1.000/1.000/1.000)
+
+##### SEED 44 #####
+  captured 16 live codes (D=3200); concept-pool recognition 16/16 correct (the front-end's own accuracy)
+  LIVE-code spiking: single-fact=1.000  relational=1.000  control=1.000  (cached-code baseline at bias-500 = 1.000/1.000/1.000)
+
