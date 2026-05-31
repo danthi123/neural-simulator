@@ -50,24 +50,35 @@ encoding) genuinely denoises the activity-grounded symbol; the oracle-lookup sho
 required k grows with load. HONEST CAVEAT: 16 cached obs -> bootstrap-overlap may make exact k modestly
 optimistic (CV law is overlap-independent so viability is robust; exact k needs more obs).
 
->>> THE DENOISER ARC IS GATED-IN (cheap-first VIABLE). Build it. <<<
+>>> CORRECTED 2026-05-31: the cheap-first 16-obs "VIABLE" was OPTIMISTIC. The rigorous 64-obs DISTINCT
+confirmation (NO substrate confound -- RECOG_CACHE=phase1_800ev constant, both captures used it) shows
+temporal integration ALONE is INSUFFICIENT for L>=3. <<<
 
-BUILD step 1a DONE = DISTINCT-OBS CONFIRMATION (caveat resolved FAVORABLY; finding doc updated +
-committed 5c87e56). Non-overlapping storage/query halves (k<=8 from 16 obs): L=2 PASSes CLEAN at k=4
-(0.803) + k=8 (0.901); distinct >= bootstrap at every k -> bootstrap was slightly PESSIMISTIC not
-optimistic. Caveat resolved. L=3=0.733, L=5=0.593 at k=8 (need k>8).
-BUILD step 1b IN FLIGHT = 64-OBS GPU capture + distinct denoiser (PID 5553, log _denoiser_obs64.log,
-watcher bijgf5g57 on PID 34304; kill-safe per-seed cache denoise64_seed{N}.npz; k-list 4 8 16 24 32; writes
-_denoiser_cheap_probe_distinct.json [overwrites the 16-obs one -- 64-obs supersedes]). Pins exact k for
-L=3/L=5 distinct (no overlap) + confirms L=5 crosses 0.80 at k~32. ~75 min.
-NEXT (controller, when bsbh4r7xm notifies): read 64-obs k-curve; write the VALIDATED denoiser finding
-(all 3 shortcuts now biologizable: RF=1, denoiser=2, TPAM=3); commit+push. Then likely CAPSTONE arc:
-FULLY-biologized composition = resonate_fire_fhrr (RF bind/unbind) + mean-of-k denoiser (activity-
-grounded symbol) + ResonateFireTPAM cleanup, end-to-end on activity-grounded symbols, validate 0.80 bar
-{2,3,5} multi-seed -> "all engineering shortcuts removed" artificial-life milestone. reuse-by-import;
-spiking_phasor_fhrr / resonate_fire_fhrr / moat byte-unchanged; no autograd. If session dies: 64-obs
-re-run (kill-safe) = python -u -m research.findings.raw._denoiser_cheap_probe --capture-obs 64 --distinct
---k-list 4 8 16 24 32 (GPU/CuPy, NOT SIM_BACKEND=numpy, for the capture).
+64-OBS RESULT (distinct, k up to 32; finding doc CORRECTED + banner): CV still falls EXACTLY as
+1.63/sqrt(k) (variance-reduction mechanism real) BUT composition PLATEAUS below 0.80 for higher loads:
+  k=32 (CV 0.294): L=2 0.834 PASS (only at large k); L=3 0.694; L=5 0.575 (both BELOW bar, plateauing).
+The 16-obs cheap-first inflated via vocab/storage observation overlap (16 obs -> cleanup-target vocab
+shares obs with storage symbols). HONEST: temporal integration is a real VARIANCE denoiser but the
+activity-derived symbol has a residual QUALITY/SEPARABILITY limit (not variance) that averaging cannot
+fix -> at higher load, inter-concept crosstalk dominates. BOUNDARY for temporal-integration-ALONE
+(L=2 only). NO confound (verified RECOG_CACHE constant).
+
+KEY: the probe used a SIMPLE argmax cleanup, NOT the biological attractor. The May-22 'shortcuts 2+3
+coupled' insight = an attractor GROUNDS + DENOISES + its fixed points are clean/separable. So the
+residual is exactly what the attractor cleanup should fix.
+
+>>> NEXT = CAPSTONE (well-motivated): temporal-integration denoiser + ResonateFireTPAM ATTRACTOR cleanup
+(cleanup_separated), end-to-end on the 64-obs activity-grounded symbols, validate 0.80 bar {2,3,5}.
+Does the attractor's recurrent settling lift L=3/L=5 above 0.80 where simple argmax couldn't? If YES ->
+activity-grounded symbol biologizable WITH the coupled attractor (all 3 shortcuts removed). If NO ->
+activity grounding is fundamentally separability-limited on this substrate (honest biology-translatable
+boundary). Build: reuse 64-obs cache denoise64_seed{N}.npz + mean-of-k + resonate_fire_fhrr.
+ResonateFireFHRR composition + ResonateFireTPAM.cleanup_separated (read its self-test for the validated
+theta_low/high/n_anneal/abstain_threshold). RF + TPAM are time-stepped (slow) -> modest trials, can use
+cleanup_separated fast= path if needed. reuse-by-import; spiking_phasor_fhrr / resonate_fire_fhrr / moat
+byte-unchanged; no autograd. <<<
+Re-run 64-obs (kill-safe): python -u -m research.findings.raw._denoiser_cheap_probe --capture-obs 64
+--distinct --k-list 4 8 16 24 32 (GPU/CuPy for capture).
 
 ---
 

@@ -1,6 +1,15 @@
 # Denoiser arc, cheap-first gate = VIABLE: temporal integration (sustained encoding = mean of k activity observations) genuinely denoises the activity-grounded composition symbol. The substrate's per-neuron noise is INDEPENDENT across observations (CV falls as 1.63/sqrt(k), measured tightly), and composition-only crosses the frozen 0.80 bar at a feasible, load-dependent k (L=2 at k=8, L=3 at k=16, L=5 extrapolates to k~32-48). The oracle-lookup shortcut (shortcut 2) IS biologizable by temporal integration -> build the denoiser arc.
 
 **Date:** 2026-05-30
+**>>> CORRECTION (2026-05-31, by the rigorous 64-observation confirmation): this "VIABLE / crosses
+0.80" headline was OPTIMISTIC. The 16-obs cheap-first inflated the numbers (vocab/storage observation
+overlap with only 16 obs). The rigorous 64-obs DISTINCT measure (no substrate confound -- both used
+RECOG_CACHE=phase1_800ev) shows temporal integration ALONE clears the bar only at L=2 (0.834 at k=32);
+L=3 plateaus ~0.69 and L=5 ~0.57, BELOW the 0.80 bar, even as CV->0.29. So temporal integration is a
+real VARIANCE denoiser (CV ~ 1/sqrt(k) confirmed) but INSUFFICIENT alone for higher-load composition --
+the residual is symbol QUALITY/separability, not variance. The probe used a SIMPLE argmax cleanup, NOT
+the attractor; the next test (well-motivated by this) is temporal integration + the ResonateFireTPAM
+ATTRACTOR cleanup (the May-22 'shortcuts 2+3 coupled' denoiser). See the 64-obs section below. <<<**
 **Status:** Cheap-first gate for the biologize-shortcut-2 (activity-grounded symbol) arc = VIABLE. CPU-only, reuse-by-import, pre-registered. Gates the build. Honest caveat on exact k-thresholds (16 cached observations -> bootstrap-overlap; the build must capture more observations to pin them). Biology-translatable result either way.
 
 ## Why this probe
@@ -50,7 +59,42 @@ resolved in the favorable direction: viability is confirmed on the clean measure
 k>8, which 16 observations cannot reach distinct -- a 64-observation GPU capture is in flight to
 pin their exact k.
 
-## Biology-translatable insight
+## 64-observation RIGOROUS confirmation (2026-05-31): temporal integration ALONE is INSUFFICIENT for L>=3
+
+Captured 64 distinct observations/word/seed (GPU, same RECOG_CACHE=phase1_800ev substrate -- NO
+confound) and ran the distinct (non-overlapping storage/query, k up to 32) denoiser:
+
+| k | CV (meas / 1.63·k^-0.5) | L=2 comp | L=3 comp | L=5 comp |
+|---|---|---|---|---|
+| 4 | 0.827 / 0.815 | 0.595 | 0.556 | 0.401 |
+| 8 | 0.584 / 0.576 | 0.651 | 0.560 | 0.501 |
+| 16 | 0.415 / 0.407 | 0.793 | 0.637 | 0.521 |
+| 24 | 0.340 / 0.333 | 0.781 | 0.689 | 0.560 |
+| 32 | 0.294 / 0.288 | **0.834 PASS** | 0.694 | 0.575 |
+
+- The CV still falls EXACTLY as 1.63/sqrt(k) -> the variance-reduction mechanism is confirmed real.
+- BUT composition PLATEAUS below 0.80 for the higher loads: L=3 ~0.69, L=5 ~0.57 at k=32 (CV 0.29),
+  rising only marginally with further k. L=2 reaches 0.834 but only at k=32 (a long window).
+- The 16-obs cheap-first (L=2 0.90 at k=8, L=3 0.80 at k=16) was OPTIMISTIC: with 16 obs the cleanup-
+  target vocab (deriver of the first K_VOCAB obs) and the storage symbols share observations, inflating
+  the match. The 64-obs distinct measure (more obs, less relative overlap) is the truer one.
+
+**Honest verdict: temporal integration is a genuine VARIANCE denoiser but is INSUFFICIENT ALONE to
+clear the {2,3,5} bar.** It removes trial noise (CV ~ 1/sqrt(k)) but the activity-derived symbol has a
+residual QUALITY/SEPARABILITY limit (not variance) that averaging cannot fix; at higher compositional
+load the inter-concept crosstalk dominates and composition plateaus below the bar. This is a BOUNDARY
+result for temporal-integration-ALONE: viable at L=2 (large window), below bar at L=3/L=5.
+
+**What it points to (well-motivated next test):** the probe used a SIMPLE argmax cleanup, NOT the
+biological attractor. The May-22 finding noted shortcuts 2+3 are COUPLED -- a biological attractor
+GROUNDS and DENOISES at once, and its fixed points are the clean, separable stored patterns. So the
+next test is temporal integration + the ResonateFireTPAM ATTRACTOR cleanup (cleanup_separated): the
+attractor's recurrent settling is the additional, separability-restoring denoising that the residual
+demands. If that lifts L=3/L=5 above 0.80, the activity-grounded symbol is biologizable WITH the
+coupled attractor; if not, the activity grounding is fundamentally separability-limited on this
+substrate (an honest biology-translatable boundary). This is the capstone (all 3 shortcuts together).
+
+## Biology-translatable insight (NOTE: corrected -- see the 64-obs section above; temporal integration ALONE is insufficient, the attractor cleanup is the motivated next step)
 
 The substrate cannot use a raw single-observation population snapshot as a symbol (May-22 NEGATIVE) -- but it does NOT need an external oracle lookup either. Because the per-neuron activity noise is independent across observations, TEMPORAL INTEGRATION over a sustained encoding window grounds a clean, composable symbol from the substrate's own activity. This is exactly the biological mechanism the May-22 finding named (sustained encoding / temporal integration as a denoiser), now empirically confirmed to work on this substrate. The required window grows with compositional load. The oracle-lookup shortcut is biologizable.
 
