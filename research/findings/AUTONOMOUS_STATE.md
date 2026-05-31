@@ -49,7 +49,15 @@ removable (artificial-life milestone). If NO: DG separation necessary-but-not-su
 boundary). Build must (a) wire DG into sparse regime, (b) preserve sparse DG code as the symbol, (c) keep
 FHRR composition + moat byte-unchanged. reuse-by-import; no autograd. Cheap-first first: derive symbols
 from the gate's DG-separated activity + run mean-of-k + argmax composition (reuse _denoiser_cheap_probe
-machinery) before any heavier build. <<< Standing reframes hold (0.80
+machinery) before any heavier build. <<<
+
+DG-COMPOSITION DECISIVE TEST IN FLIGHT (subagent acfbfe7542ce7b4d6, _dg_composition_test.py): derive
+symbols from DG-separated activity (distinct storage/query halves) -> FHRR compose + argmax cleanup ->
+composition-only accuracy {2,3,5} vs the pool baseline (L2 0.834 / L3 0.694 / L5 0.575). PRE-REG: FIXES if
+DG-symbol L3 AND L5 >=0.80; PARTIAL if >=+0.10 each over baseline; NULL else. Watch silent-DG words
+(degenerate symbols) + between-symbol cosine ~0.30. Controller forms verdict + scrutinizes. If FIXES ->
+DG biologizes the oracle lookup (3 shortcuts removable, artificial-life milestone) -> full build. If
+PARTIAL/NULL -> DG necessary-but-not-sufficient (narrower honest boundary) + diagnose. Standing reframes hold (0.80
 bar frozen; moat 7/7; reuse-by-import; no new autograd; honest negatives are the deliverable). <<<
 
 ---
