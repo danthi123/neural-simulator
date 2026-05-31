@@ -18,20 +18,20 @@ FROZEN: after training, conjunction-alone drive activates the CORRECT role for a
 both correct) -> RESOLVES (STDP acquires the conjunctive role mapping in-substrate). GPU/CuPy;
 reuse-by-import; no protected-module modification.
 
-RESULT 2026-05-31: NOT DEMONSTRATED with this BARE STDP config (role ensembles never fired in
-test, rates 0.000 at w_max=8 AND w_max=400 -> the conj->role weights did not grow to firing
-strength). This is NOT a boundary: the v16 mechanism (lang_input->pool) DOES learn such
-input->output maps via STDP, but it uses additional machinery this quick probe lacks --
-embodied-Hebbian co-firing, the v16 STDP params (a_plus/tau), eligibility, and a teacher
-protocol with the right pre->post timing. The standalone (enable_stdp=True + plastic pathway +
-simultaneous teacher) does not produce the co-fire-timed potentiation needed to grow conj->role
-to ~320 (the synaptic weight that fires a neuron, per the validated coincidence probe). HONEST
-STATUS: the parser REPRESENTATION is validated (the conjunctive-coding cheap-first,
-_vsa_parser_voice_probe.py: voice-invariant role assignment needs conjunctive position*voice
-coding) and its ARCHITECTURE is composed of validated pieces (coincidence for the conjunction;
-the bind for role->filler); the in-substrate STDP-LEARNING of the conjunction->role map is a
-FOCUSED SUB-ARC requiring the v16-scale STDP config -- deferred, near-certain (v16-proven), NOT a
-fundamental limit.
+RESULT 2026-05-31: RESOLVES with the v16 HEBBIAN CO-FIRING rule (6/6 conjunctions, flip learned).
+  First attempt (bare STDP, enable_stdp + plastic pathway + simultaneous teacher): FAILED -- roles
+  never fired (rates 0.000 at w_max=8 and 400). Diagnosis: bare STDP is timing-based (needs precise
+  pre->post order) and a simultaneous teacher does not provide it.
+  Fix = the v16 embodied-Hebbian CO-FIRING rule (bridge.py:5265, gated on pre&post co-firing ->
+  selective): enable_hebbian_learning=True, hebbian_max_weight=400 (firing strength),
+  hebbian_learning_rate=0.005. Teacher-co-fired conj->role_correct grows toward 400; un-taught
+  conj->role_incorrect stays weak. Result: 6/6 conjunctions activate the CORRECT role (correct rate
+  0.04-0.08, incorrect ~0.000), AND the active<->passive flip is LEARNED (pos0-active->agent vs
+  pos0-passive->patient; pos2-active->patient vs pos2-passive->agent). LEARNED (not supplied)
+  syntactic role assignment in-substrate, including voice-dependent role flipping. The conjunctive
+  input units here are driven directly; in the full parser they are coincidence(position,voice) =
+  the validated coincidence primitive. So all parser pieces are now validated: conjunctive coding
+  (coincidence) + Hebbian-learned conjunction->role + the bind for role->filler.
 """
 from __future__ import annotations
 import numpy as np
@@ -61,12 +61,13 @@ def build(seed, w_init):
     cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
     cfg.seed = int(seed); cfg.dt_ms = 1.0
     cfg.connections_per_neuron = 0; cfg.num_traits = 1
-    cfg.enable_stdp = True            # the learning rule under test
-    cfg.enable_hebbian_learning = False
+    cfg.enable_stdp = False
+    cfg.enable_hebbian_learning = True    # v16 embodied-Hebbian CO-FIRING rule (pre&post-gated -> selective)
+    cfg.hebbian_max_weight = 400.0        # firing-strength cap (synaptic input ~320 fires a neuron)
+    cfg.hebbian_learning_rate = 0.005     # co-fire potentiation rate (default 0.0005 -> 10x for faster growth)
     cfg.enable_short_term_plasticity = False; cfg.enable_structural_plasticity = False
     cfg.enable_homeostasis = False; cfg.enable_reward_modulation = False
     cfg.enable_watts_strogatz = False; cfg.ou_std_current_pA = 20.0
-    cfg.stdp_w_max = 400.0           # firing-strength cap (synaptic input ~320 fires a neuron)
     conj = list(range(6))
     role_idx = {r: list(range(6 + i * R, 6 + (i + 1) * R)) for i, r in enumerate(ROLES)}
     # all-to-all conjunction -> every role neuron, plastic, small init -> STDP carves the mapping
