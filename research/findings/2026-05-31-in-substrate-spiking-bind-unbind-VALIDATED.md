@@ -273,6 +273,21 @@ answers "what does dog have as object?" -> north, action -> go, with the absent-
 (a learned role parser is the next arc); this is structured fact-memory with cue-based retrieval, not
 open-ended relational reasoning over superposition (that degrades).
 
+**Architectural finding -- separate storage is the universal structure mechanism (flat nesting
+fails).** A cheap-first tested FLAT NESTED composition: encode "big dog goes north" as
+agent (x) (modifier (x) big + noun (x) dog) + action (x) go + patient (x) north (a phrase as a
+filler in one vector), then descend -- unbind agent to get the phrase, then unbind noun/modifier.
+Result (seeds 42/43/44): outer single-level recovery 1.000, but DEPTH-2 descent collapses to chance
+(noun 0.025-0.050, modifier 0.050-0.100; chance 0.062). Unbinding the outer role leaves the phrase
+buried under full-magnitude cross-terms, so the depth-2 signal is ~1-of-5 terms and cleanup cannot
+find it -- the same superposition/multi-hop wall. So the bind is a FLAT slot-filler (one level);
+hierarchical structure (nesting, modification) must use SEPARATE storage + cue retrieval (the
+validated relational-memory pattern: store "big dog" as its own {head: dog, modifier: big} fact,
+reference dog as the agent, recover the modifier by cue), NOT flat nested binding. Separate-fact
+storage is thus the universal architecture for structure in this substrate -- for multi-fact AND for
+hierarchy -- because flat superposition/nesting hits the SNR wall. (Biologically sensible: distinct
+structured items as distinct ensembles, bound by association, not all summed into one vector.)
+
 ## Reproduce
 
 ```bash
