@@ -24,6 +24,26 @@ Per-seed fan-in 8 post-fix: seed 42 ANY 8/8 OUT 8/8; seed 43 ANY 6/8 OUT 5/8; se
 
 Multi-hop "trace" is substantially improved by the teacher_pA bug fix (the genuine win) and is now a reasonable retrieval-reasoning capability (~0.71-0.75 multi-seed at fan-in 8, up from 0.00 undirected). The directional filter is retained (semantic + harmless) but honestly de-framed from "the fix" to "a neutral semantic choice." The earlier directional-RESCUE finding is bannered as superseded. The residual limiter is now hop-1 cross-bridge encoding strength (a specified, deferred lever: extend the teacher strengthening to encode_partial_pair_engram_sparse). MULTI-HOP ARC COMPLETE: clean -> DEGRADES -> directional RESCUE (symptom) -> bimodality DIAGNOSED -> teacher_pA bug FOUND + FIXED (cause, the real win) -> end-to-end confirmed (directional now neutral; ~0.75 undirected).
 
+## Honest framing correction + multitag re-validation (added after the fix)
+
+- The encode_pair sparse-path change (teacher 100 -> self.teacher_pA=500) was framed in its commit as a
+  "consistency bug fix". That is PARTLY overstated: the encode_partial docstring states the sparse helper
+  default (teacher 100) is "the VALIDATED capture recipe", so the sparse teacher=100 was likely a DELIBERATE
+  recipe (the value the multitag 90% was validated at), and the non-sparse paths' use of self.teacher_pA=500
+  is the inconsistency. So the change is better framed as an EMPIRICALLY-SUPPORTED RECIPE CHANGE (teacher
+  100->500 for the intra-bridge sparse encode), justified by the teacher-strength probe (lifts weak bindings,
+  no harm) + the post-fix diagnostic (all 12 pairs rank <=2) + the multi-hop improvement -- NOT a pure bug fix.
+- MULTITAG FUNCTIONAL RE-VALIDATION at teacher=500 (the concern: does the recipe change regress the validated
+  multitag retrieval?): g20 scripted demo, teacher=500: "remember apple is big" + "remember apple is red" ->
+  "what is apple" correctly returns BOTH (big 896, red 627) at top; "what is dog" -> small 1012; "is apple big?"
+  -> Yes. Multitag retrieval FUNCTIONS CORRECTLY at 500. This is a functional check, NOT the full multi-seed
+  90% benchmark -- that full re-validation remains the rigorous deferred confirmation, but the functional check
+  + the teacher probe (no harm) + the multi-hop improvement support the change as net-positive.
+- encode_partial (the CROSS-bridge sparse path) was DELIBERATELY left at teacher=100 (its docstring-claimed
+  validated recipe) -- NOT changed, to avoid compounding un-re-validated recipe changes. So the residual
+  hop-1 cross-bridge variance is left as the specified deferred lever (strengthen encode_partial's teacher
+  only after a proper cross-bridge re-validation), not a tail-of-turn change.
+
 ## Discipline
 
 Throwaway probe; the shipped one-line teacher_pA fix in g20_multibridge is the only code change (66 tests pass). The PASS-ish post-fix result was scrutinized HARDER than a FAIL: the headline "multi-hop improved" was interrogated and found to be the TEACHER fix, not the directional filter -- and the directional filter was honestly found to be neutral-to-slightly-negative post-fix, superseding my own earlier directional-RESCUE framing. Honest revision recorded; nothing overclaimed.

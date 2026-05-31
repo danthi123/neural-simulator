@@ -121,8 +121,16 @@ RESCUES finding bannered superseded). Multi-hop now ~0.71-0.75 multi-seed at fan
 but NOT uniformly 8/8; residual variance is now HOP-1 CROSS-bridge encoding (noun->hub, encode_partial path,
 NOT targeted by the intra-bridge teacher fix) -- a specified deferred lever (strengthen teacher in
 encode_partial_pair_engram_sparse). MULTI-HOP ARC COMPLETE+FIXED: clean->DEGRADES->directional RESCUE(symptom)
-->DIAGNOSED->reinforcement NEGATIVE->teacher_pA bug FOUND+FIXED(cause,real win)->end-to-end confirmed. The fix
-strengthens ALL sparse engram bindings stack-wide (multitag benchmark re-validation at teacher=500 advisable).
+->DIAGNOSED->reinforcement NEGATIVE->teacher_pA bug FOUND+FIXED(cause,real win)->end-to-end confirmed. HONEST
+FRAMING CORRECTION: the encode_pair change (sparse teacher 100->500) was OVERSTATED as a "bug fix" -- the
+encode_partial docstring says sparse teacher=100 is "the VALIDATED capture recipe", so 100 was likely a
+DELIBERATE recipe (what the multitag 90% was validated at); the change is better framed as an EMPIRICALLY-
+SUPPORTED RECIPE CHANGE (teacher probe no-harm + diagnostic + multi-hop improvement). MULTITAG FUNCTIONALLY
+RE-VALIDATED at 500 (g20 scripted: "what is apple"->big 896, red 627 both correct; "is apple big?"->Yes); full
+multi-seed 90% benchmark re-validation remains the rigorous DEFERRED confirmation. encode_partial (CROSS-bridge
+sparse path) DELIBERATELY left at teacher=100 (its docstring-validated recipe) -- NOT changed, to avoid
+compounding un-re-validated recipe changes; the hop-1 cross-bridge lever stays deferred pending proper
+re-validation. Net: the intra-bridge teacher=500 change is empirically net-positive + functionally re-validated.
 
 STRATEGIC FORK RESOLVED WITH EVIDENCE (2026-05-31; finding 2026-05-31-near-ortho-boundary-is-FUNDAMENTAL-
 not-capacity-...md): the near-ortho floor is FLAT at ~0.48 from N=4 to N=16 concepts (delta +0.002) ->
