@@ -1,0 +1,20 @@
+=== Spiking conversational agent (backend=cupy, seed=42, vocab 16) ===
+(statements are bound + stored in spiking; questions answered by spiking relational query)
+
+-- Turn 1: the user tells the agent some facts --
+  > dog go north.            [stored]
+  > cat come south.            [stored]
+
+-- Turn 2: the user asks questions --
+  ? who go north?            -> dog
+  ? what does dog go?        -> north
+  ? who come south?          -> cat
+
+-- Turn 3: persist + reload (a fresh session), then keep answering --
+  [reloaded 2 facts into a fresh substrate]
+  ? who go north?            -> dog   (recalled across the session boundary)
+  + the user adds a new fact this session:
+  > cat stop big.            [stored]
+  ? who go north?            -> dog   (old fact still known)
+
+Everything -- storing facts, answering wh-questions, persisting across sessions -- runs as spiking compositional binding on real substrate concepts. Honest scope: 16-word vocab, SVO; the recognition front-end (not the composition) caps vocabulary growth.
