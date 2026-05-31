@@ -2,3 +2,5 @@
   QA at V=160 (who/what-obj/what-act all correct): 1.000  unknown control: 1.000  (chance 0.0063)
 VERDICT: RESOLVES -- wh-question answering works at 160 words (sparse codes) in-substrate. The bind/composition handles the larger vocabulary; the front-end (clean at 64/bridge) is the real ceiling.
 ##### V=320 (seed 42, sparse) #####
+  QA at V=320 (who/what-obj/what-act all correct): 1.000  unknown control: 1.000  (chance 0.0031)
+VERDICT: RESOLVES -- wh-question answering works at 320 words (sparse codes) in-substrate. The bind/composition handles the larger vocabulary; the front-end (clean at 64/bridge) is the real ceiling.

@@ -82,6 +82,26 @@ Owner-facing demos: `compose_spiking_bind_demo.py`, `compose_relational_memory_d
    conjunctive syntactic context with a role is a Hebbian co-activation (cell-assembly) learning
    problem, not a fine-timing one; the supervisory signal need only co-activate, not precede.
 
+## Conversational capabilities + the scaling answer (built on the bind)
+
+On the validated bind, a complete (small-vocab) conversational agent was built, all spiking, all
+multi-seed (finding `2026-05-31-conversational-capabilities-on-the-spiking-bind.md`): statements ->
+stored facts; wh-question answering (who/what, 1.0/1.0/0.9); NEGATION + yes/no via a bound polarity
+tag (3/3); GENERATION (full-sentence production: "describe dog" -> "dog go north"); a PERSISTENT KB
+across sessions (3/3, no forgetting -- the continual-learning premise); and an interactive REPL the
+owner can talk to (`compose_conversation_repl.py`). The agent both understands and produces.
+
+The owner asked whether vocabulary scales past the documented ~320 limit. Measured + demonstrated
+answer (`_vocab_scaling_locus_note.md`): the bind/COMPOSITION layer is vocabulary-ROBUST -- spiking
+wh-QA = 1.000 at V=64, 160, AND 320 (sparse codes), and cleanup recovery is 1.000 to V=640. The real
+~320 limit lives entirely in the RECOGNITION FRONT-END (getting hundreds of clean distinct concept
+codes), NOT in composition: v17's 28-word 50% was the OLD architecture; the encoding-axis arch
+validated 64-word recognition at 3/3 GO, and G.20 sparse reaches 320 at 98.4%. Plus insight #5 (the
+bind uses the distributed code, not the pool label) means the effective recognition exceeds the
+label accuracy. So 64-word conversation is clean and 320 is feasible at ~98%, gated by recognition.
+Two of my own overstatements were corrected by the data ("scaling is tractable" and "cleanup
+degrades with vocabulary" -- both wrong; the truth is precise: composition robust, front-end gated).
+
 ## Honest scope and boundaries
 
 - Fixed-wiring composition: generalizes by VSA construction (no training); the validated learning
