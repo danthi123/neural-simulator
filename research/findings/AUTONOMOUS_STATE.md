@@ -146,16 +146,22 @@ this kind of input->output map via STDP, but uses embodied-Hebbian co-firing + v
 eligibility + a teacher protocol with correct pre->post timing -- machinery the quick probe lacks.
 So the parser REPRESENTATION is validated (conjunctive coding, _vsa_parser_voice_probe.py) + its pieces
 are validated (coincidence, bind); the in-substrate STDP-LEARNING is a FOCUSED SUB-ARC. Committed honestly.
-EXACT NEXT CONCRETE ACTION (the focused sub-arc): replicate the v16 LEARNING config for the conj->role
-mapping. Study how text_minimal_isolation / bio_three_factor configures lang_input->pool STDP/embodied-
-Hebbian binding (the --embodied-hebbian co-firing rule, stdp_a_plus/tau, eligibility, teacher-current
-protocol, topographic bias) and apply that SAME config to drive (position+voice conjunction) -> role
-co-firing so the conj->role weights grow to firing strength. Then test voice-invariant role extraction
-end-to-end + integrate with the bind. Cheap-first = get ONE conj->role pair to grow to firing strength
-under the v16 config (confirms the mechanism transfers), then scale to 6. If it works -> real
-STDP-learned syntactic role binding in-substrate; if the v16 config ALSO fails to transfer -> an honest
-finding about what the v16 learning needs that the parser lacks. (Alternatively the owner may prefer a
-different direction -- scale vocab, multi-turn persistent dialogue, or bank the complete deliverable.)
+LEARNED PARSER CORE = RESOLVES MULTI-SEED. The "focused sub-arc" was just "use the right learning rule":
+the v16 HEBBIAN CO-FIRING rule (bridge.py:5265, pre&post-gated -> selective; hebbian_max_weight=400) was
+the fix (bare spike-timing STDP failed -- a simultaneous teacher gives no pre->post order). Multi-seed
+(42,43,44): 6/6 conjunctions including the active<->passive flip every seed. LEARNED (not supplied)
+syntactic role assignment in-substrate. 7th insight banked (role assignment = Hebbian co-activation
+learning, not fine-timing). All parser pieces validated (coincidence + Hebbian conj->role + bind).
+Synthesis + capability_status (pillar n=111 summary) + probe all updated/committed both remotes.
+EXACT NEXT CONCRETE ACTION: wire the LEARNED PARSER -> BIND end-to-end. Build the full pipeline: a sentence
+(content words + their positions + function-word 'by' presence) -> coincidence(position,voice) conjunctive
+units -> the Hebbian-learned conj->role mapping fires the role for each content word -> that role gates the
+bind (role(x)filler) of the word's concept code -> store + relational-query VOICE-INVARIANTLY. Decisive
+test: "dog chases cat" (active) and "cat is chased by dog" (passive) both -> query agent -> dog (same
+agent, voice-invariant), multi-seed, + control. This composes ALL validated pieces (parser core +
+coincidence + bind + relational memory + the cheap-first's voice-invariance result) into the first
+end-to-end LEARNED syntactic understanding in-substrate. Cheap-first the wiring on 1 sentence pair, then
+multi-seed. (Owner may also prefer: scale vocab / multi-turn persistent dialogue / bank the deliverable.)
 Propagate every outcome to BOTH remotes. prior arc (multi-hop) below.
 
 TWO live threads:
