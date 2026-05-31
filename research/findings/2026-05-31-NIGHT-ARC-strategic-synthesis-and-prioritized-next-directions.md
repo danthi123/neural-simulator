@@ -36,3 +36,17 @@ Synthesis only; no code/bars/protected modules touched. The queue is pre-staged 
 ## Drive-uniformity analysis (CPU, while CA3 ran): the DG instability is INTRINSIC k-WTA, not drive-fixable
 
 Tested P2's premise (is the silent/unstable-DG problem a low-drive uniformity issue?): correlated per-word concept-activity magnitude with per-word DG sparsity (store/query, 3 seeds). corr(magnitude, DG sparsity) = 0.15 -- NEAR-ZERO. Low-magnitude words are NOT the silent ones; the same word's store vs query DG sparsity swing wildly (hot 0.025<->0.195, small 0.175<->0.033, dog 0.011<->0.078). So the within-concept instability is INTRINSIC k-WTA near-threshold sensitivity (the two halves, cosine 0.90, flip the sparse winners), NOT fixable by per-word/stronger drive. IMPLICATIONS: (1) P2 (drive-uniformity fix) is weakened -- a simple drive tweak will not stabilize the sparse code. (2) The separation-vs-reliability tension is genuine (sparse k-WTA is near-threshold = maximally sensitive; the gate dose-response confirms stronger drive -> denser -> loses separation). (3) CA3 completion is therefore the NECESSARY (and essentially only) resolution -- an attractor is the one mechanism that maps intrinsically-unstable sparse inputs to a stable output. This raises the stakes on the CA3 diagnostic: if CA3 resolves it, CA3 is genuinely doing the load-bearing stabilization; if it does not, the tension is a hard boundary (the substrate's sparse separation code is irreducibly unstable, and no within-trisynaptic step fixes it -> P3).
+
+## Graded-sparse model (CPU, while CA3 ran): the tension is real, but the real DG is too SMALL/sparse (binary disjointness) -> a larger/graded DG is a concrete lever
+
+Modeled DG as random expansion (8000) + graded competitive top-k on the cached concept activity, sweeping sparsity, measuring BETWEEN (different concepts) AND WITHIN (a concept's store-vs-query halves):
+
+| sparsity frac | BETWEEN | WITHIN |
+|---|---|---|
+| 0.50 | 0.811 | 0.915 |
+| 0.20 | 0.696 | 0.832 |
+| 0.10 | 0.590 | 0.766 |
+| 0.05 | 0.490 | 0.698 |
+| 0.02 | 0.393 | 0.615 |
+
+Findings: (1) NO clean sweet-spot -- BETWEEN and WITHIN fall TOGETHER as it sparsifies (separation and within-concept instability are the SAME competitive-k-WTA mechanism; the tension is genuine). (2) BUT the GRADED model's WITHIN at sparse (0.61-0.70) is FAR better than the real spiking DG composition test's near-disjoint 0.0-0.3 -- because the real DG (800 neurons, 16-40 active at sparsity 0.02-0.05) is effectively BINARY, so a concept's two halves activate DIFFERENT few neurons. A LARGER DG (more neurons -> more active even at low sparsity fraction) and/or a GRADED (firing-rate, not binary-spike) readout would be materially more stable while keeping separation. CONCRETE LEVER (independent of CA3): scale the DG region (e.g. 800 -> 4000-8000 neurons) and/or use a graded DG-rate readout, then re-measure the separation/reliability tradeoff. This is a cheaper structural lever than the full CA3 line and may be combinable with it (larger DG for baseline stability + CA3 to sharpen separation). Add as P5: DG-SIZE / graded-readout stability lever (GPU; run after CA3 lands, or instead-of if CA3 is PARTIAL/NULL).
