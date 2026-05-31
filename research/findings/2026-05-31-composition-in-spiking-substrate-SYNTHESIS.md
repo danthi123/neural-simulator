@@ -20,12 +20,15 @@ about how (and how far) a brain-analogue substrate can compose.
    concept-pool activity -> spiking bind -> relational query -> answer. Multi-seed (42,43,44) all
    1.000 (single/relational/control), matching the cached-code baseline; front-end recognition
    15-16/16 -- the bind is robust to the 0-1 recognition mislabel per seed.
-4. **Learned syntactic role parser (core)**: voice-invariant role assignment ("dog chases cat" ≡
-   "cat is chased by dog", same agent) requires conjunctive position×voice coding (cheap-first), and
-   that conjunctive→role mapping is LEARNED in-substrate by the v16 Hebbian co-firing rule —
-   multi-seed (42,43,44) 6/6 conjunctions including the active↔passive flip every seed (bare
-   spike-timing STDP fails on the simultaneous teacher). Remaining: wire the learned role output to
-   gate the bind end-to-end.
+4. **End-to-end LEARNED syntactic understanding**: voice-invariant role assignment ("dog chases cat" ≡
+   "cat is chased by dog", same agent) requires conjunctive position×voice coding (cheap-first); that
+   conjunctive→role mapping is LEARNED in-substrate by the v16 Hebbian co-firing rule — multi-seed
+   (42,43,44) 6/6 conjunctions including the active↔passive flip every seed (bare spike-timing STDP
+   fails on the simultaneous teacher); and the full pipeline composes end-to-end — the learned parser
+   assigns roles, the spiking bind stores the sentence, a relational query extracts the agent
+   VOICE-INVARIANTLY (seed 42: parse 6/6, voice-invariant agent 1.000, scrambled-parse control 0.000;
+   multi-seed confirming). Different word orders, same meaning, correctly understood — learned, not
+   supplied.
 
 Owner-facing demos: `compose_spiking_bind_demo.py`, `compose_relational_memory_demo.py`,
 `compose_live_text_kb_demo.py`. Capability widget: pillar n=111.
@@ -106,6 +109,12 @@ active<->passive flip is LEARNED (pos0-active->agent vs pos0-passive->patient; p
 LEARNED (not supplied) syntactic role assignment in-substrate, including voice-dependent role flipping.
 A 7th insight: **role assignment is learned by Hebbian co-firing, not spike-timing STDP** -- a
 teacher-co-active protocol with a rate-based (pre&post-gated) rule grows the conjunctive->role map;
-the timing-based rule fails on simultaneous teaching. So ALL parser pieces are now validated in-substrate
-(coincidence for the conjunction, Hebbian-learned conjunction->role, the bind for role->filler); the
-remaining integration is wiring the learned parser's role output to gate the bind end-to-end.
+the timing-based rule fails on simultaneous teaching. So ALL parser pieces are validated in-substrate
+(coincidence for the conjunction, Hebbian-learned conjunction->role, the bind for role->filler), and the
+FULL PIPELINE now composes END-TO-END (_insubstrate_parser_bind_e2e_probe.py): the learned parser assigns
+roles, the spiking bind stores the sentence, a relational query extracts the agent VOICE-INVARIANTLY --
+seed 42 parse 6/6, voice-invariant agent 1.000, scrambled-parse control 0.000 (multi-seed confirming).
+"dog chases cat" and "cat is chased by dog" -- different word orders, same meaning -- are both correctly
+understood (dog is the agent), LEARNED not supplied. This is the first end-to-end learned syntactic
+understanding in-substrate, composing every validated piece. What remains for richer conversation: scale
+vocabulary, more syntactic constructions (questions, relative clauses), and multi-turn persistent dialogue.
