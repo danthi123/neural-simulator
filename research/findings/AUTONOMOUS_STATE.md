@@ -183,8 +183,14 @@ composition. Conversation batch COMPLETE (bidirectional agent: understand/answer
 REPL, all multi-seed). 8 insights synthesized. The TRACTABLE conversation + scaling space is comprehensively
 done; everything committed both remotes.
 
-EXACT NEXT CONCRETE ACTION = the REAL frontier (recognition front-end), to be done CAREFULLY (heavy, has a
-documented-bug trap), NOT rushed:
+EXACT NEXT CONCRETE ACTION = front-end arc IN FLIGHT: 28-word concept-pool TRAINING running (task b1jvm9b2g,
+~28 min, saving research/findings/raw/_v17_28word_seed42.simstate.h5). WHEN IT COMPLETES -> run
+`python -m research.findings.raw._v17_distributed_vs_label_probe` (ALREADY WRITTEN + syntax-OK; loads the
+bridge with matched architecture, load_checkpoint validates so the monkey-patch mismatch is caught) -> get
+pool-label recognition (expect ~50% per v17) vs distributed-code bind/QA. If distributed >> label -> the
+limit is a readout artifact (breakthrough); if ~equal -> the 28-word codes are genuinely inseparable (real
+limit). EITHER is a real finding -> record + commit both remotes; if interesting, train seeds 43/44 for
+multi-seed. The full front-end arc details:
   ANGLE (new, worth it): insight #5 (the bind uses the DISTRIBUTED code, not the pool LABEL) is established
   at 16 words (live-text 15/16 label but 1.000 bind). OPEN QUESTION: does the distributed-code bind-recovery
   EXCEED the pool-LABEL recognition at LARGER vocab, where the label drops (v17 28-word = 50% label)? The v17
