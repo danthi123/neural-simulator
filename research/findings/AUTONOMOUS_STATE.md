@@ -35,15 +35,24 @@ directive): Ursino-Cesaretti-Pirazzini 2022 spiking Lisman-Idiart theta-gamma mu
 to HOLDING/non-interference, not order-coding. Substrate already has the ingredients (concept
 pools = gamma assemblies; parked integrated-loop Task-2 theta timing controller, reuse-by-import).
 
-EXACT NEXT CONCRETE ACTION: when (1) lands -> record+scrutinize+push its verdict, then per
-its branch (ROBUST=bank+proceed; DEGRADES/NEGATIVE=characterize+proceed) the primary next
-build is the thread-(2) CHEAP-FIRST theta-multiplexing HOLDING probe (CPU/numpy, stdlib+numpy
-only, no protected import): N>=4 dense-stable gamma-assembly codes in distinct theta-phase
-slots; measure phase-slot readback (>=0.90) + within-item stability + the NO-PHASE control
-that must collapse (<0.50) so a phase-separated PASS is a real falsification. FROZEN three-state
-(RESOLVES->spiking build / BOUNDARY->honest negative, no build / DOES-NOT-RESOLVE). HARD GATE:
-spiking build only on cheap RESOLVES. Same de-risking discipline that killed the integrated-loop
-+ denoiser builds. Do NOT skip cheap-first. Do NOT start the spiking build before the cheap gate.
+thread-(2) CHEAP GATE: DONE = RESOLVES (PASS, scrutinized) 2026-05-31. finding 2026-05-31-theta-
+multiplexing-CHEAP-GATE-PASS-...-recovers-Miller-7.md. Pre-reg bar met (N=4 phaseRead 1.000>=0.90,
+ctrlRead 0.217<0.50). Survived 3 scrutiny checks: decode margin +0.22 at N<=7 (confident); BOUNDARY-
+ESCAPE demonstrated (overlapping cos-0.60 codes -- the regime that FAILED spatial DG separation -- held
+0.989 at N=7 via phase, control collapses 0.118); capacity-realism (no-jitter cap 16 is a permissive
+artifact; phase jitter 2 bins -> cap exactly 7 = Miller, recovered from theta/gamma ratio). NAMED OPEN
+RISK for spiking build: cheap model assumes reader already knows each item's phase slot -> spiking build
+MUST test phase-addressing LEARNABILITY + stability across encode/recall. HARD GATE PASSED.
+
+EXACT NEXT CONCRETE ACTION: when (1) lands -> record+scrutinize+push its verdict, then proceed to the
+thread-(2) SPIKING-BUILD design (cheap gate already PASSED): brainstorm -> design doc -> TDD plan for
+the theta-multiplexing HOLDING mechanism on the real spiking bridge, reusing-by-import the parked
+integrated-loop theta-timing controller + concept-pool gamma assemblies (NO new autograd; no protected/
+frozen/moat module edit). Load-bearing design question = phase-addressing learnability/stability. The
+plan MUST include: a DEDICATED ADVERSARIAL REVIEW of the phase-addressing risk BEFORE any decisive run,
+a frozen verdict module, a no-harm phase (protected set byte-unchanged), and a CONTROLLER-ONLY decisive
+multi-seed run with the smell-test (scrutinize a PASS harder than a FAIL). Honest-propagate every outcome
+(including a spiking NEGATIVE) to both remotes. Same staged discipline that killed integrated-loop+denoiser.
 
 NOTE: this file is 375KB (bloated with concluded-arc history). The block ABOVE is authoritative
 + current; everything below is historical trail. A future cycle should compact the trail (keep
