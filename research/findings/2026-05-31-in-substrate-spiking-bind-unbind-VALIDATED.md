@@ -262,7 +262,11 @@ Multi-seed (42,43,44), D=800, 2-fact KB, at the higher-rate operating point (bia
 **single-fact 1.000, relational (find-by-agent -> read-patient) 1.000, control (no false match on an
 absent cue) 1.000 -- all three seeds.** (At the clean-AND bias=-1000 point it is 2/3, seed 44 dipping
 to 0.750; the higher firing rate -- the same lever that extends bind capacity to K=6 -- gives the
-dynamic range for robust relational memory.) Owner-facing demo:
+dynamic range for robust relational memory.) The KB SCALES with no degradation: a numpy cheap-first
+holds relational query at 1.000 up to N=12 facts (vocab-limited at 16 distinct agents, all 3 seeds),
+and the spiking version holds 1.000 at N=5 facts (seed 42, bias=-500) -- because separate-fact
+storage means each fact is an INDEPENDENT K=3 bind, so adding facts adds no superposition
+interference. Owner-facing demo:
 `research/runners/compose_relational_memory_demo.py` stores "dog go north" + "cat come south" and
 answers "what does dog have as object?" -> north, action -> go, with the absent-cue control returning
 "(no fact found)". Honest scope: roles (agent/action/patient) are SUPPLIED, not parsed from raw input

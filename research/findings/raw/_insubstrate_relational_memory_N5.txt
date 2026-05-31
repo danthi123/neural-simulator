@@ -1,0 +1,1 @@
+spiking relational fact-memory N=5 (seed 42, D=800, bias=-500): single=1.000 relational=1.000 control=1.000 -> KB scales (each fact independent K=3 bind). numpy ceiling 1.000 to N=12 (vocab-limited).
