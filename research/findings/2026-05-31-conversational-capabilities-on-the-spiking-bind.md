@@ -27,7 +27,7 @@ and is multi-seed validated in spiking.
 
 4. **Negation + yes/no questions** (`_insubstrate_negation_probe.py`) -- "dog does NOT chase cat" =
    the SVO bind + a POLARITY role bound to a NEGATE filler (K=4, within capacity); "does dog chase
-   cat?" finds the fact and unbinds POLARITY -> yes/no. Multi-seed (42,43): yes/no 1.000, control 1.000 (seed 44 finishing) -- RESOLVES.
+   cat?" finds the fact and unbinds POLARITY -> yes/no. Multi-seed (42,43,44): yes/no 1.000, control 1.000 -- RESOLVES.
    Insight: negation is an explicit bound POLARITY ENSEMBLE (a distinct tag), not the absence of a
    fact -- consistent with separate-ensemble storage.
 
