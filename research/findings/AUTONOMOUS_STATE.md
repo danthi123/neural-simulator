@@ -100,20 +100,25 @@ SPIKING version built (_insubstrate_relational_memory_probe.py, reuses bind/unbi
 a fact = agent(x)X + action(x)Y + patient(x)Z (K=3 separate spiking bind); query = spiking-unbind agent +
 cleanup-match cue, then spiking-unbind patient. RESULT D=800 bias-1000: 2/3 seeds RESOLVE (seed42 0.917/
 0.917, seed43 1.000/0.917) but seed44 dips (single 0.833, relational 0.750 -- below 0.80; D=800 cleanup
-margin thin). Owner-facing demo built (research/runners/compose_relational_memory_demo.py, syntax-OK, smoke
-pending GPU-free). EXACT NEXT CONCRETE ACTION: MULTI-SEED relational-memory at HIGHER MARGIN IN FLIGHT (task
-bdf36q4iv) = seeds 42,43,44 D=800 --coinc-bias -500 (the K=6-validated higher-rate point = more dynamic
-range), output -> research/findings/raw/_insubstrate_relational_memory_bias500_multiseed.txt. READ task
-bdf36q4iv / that file:
-  - if 3/3 RESOLVE at bias-500 -> relational fact-memory is multi-seed validated at the higher-rate point;
-    smoke-test+commit the demo, add a relational-memory section to the finding + a note to capability_status
-    pillar n=111 (queryable spiking SVO knowledge base), commit/push both; give the comprehensive session
-    capstone report; THEN open the learned role-filler PARSER arc (the big lever to real conversation:
-    infer roles from input/word-order vs the currently-supplied roles).
-  - if still <3/3 at bias-500 -> try D=3200 bias-1000 (more dims = better cleanup) OR report honest 2/3 at
-    D=800 + the config where 3/3 holds; do NOT overclaim multi-seed.
-  - the SPIKING relational fact-memory is DEMONSTRATED (seed-42/43 clean 0.917); robustness config is the
-    only open item. Propagate every outcome to BOTH remotes. prior arc (multi-hop) below.
+margin thin). RELATIONAL FACT-MEMORY MULTI-SEED VALIDATED + DEMO SHIPPED. bias-500 3/3 PERFECT (all seeds
+single=1.000 relational=1.000 control=1.000); seed-44's bias-1000 dip was bind-precision (the higher rate
+= more dynamic range fixed it, same lever as K=6 capacity). Demo compose_relational_memory_demo.py smoke:
+stores "dog go north"+"cat come south", answers relational queries correctly, control "(no fact found)".
+Folded into finding (Downstream-capability section) + capability_status pillar n=111 summary; committed+
+pushed both. So the session arc is COMPLETE + COHERENT: spiking composition (K=6 multi-seed, adversarial
+CLEAR) -> queryable spiking relational fact-memory (3/3 multi-seed) -> 2 owner-facing demos. On the owner's
+conversation goal.
+
+EXACT NEXT CONCRETE ACTION: KB-SCALING cheap-first (CPU numpy, fast) -- parametrize
+_vsa_relational_query_probe.py by n_facts and sweep [2,3,5,8,12] (distinct AGENTS for unambiguous cue,
+actions/patients may repeat) to characterize HOW MANY facts the separate-fact relational memory holds
+(find-by-cue may get false matches as N grows -> the KB capacity). RESOLVES at large N -> a real
+multi-fact knowledge base; degrades -> honest KB-size bound. THEN the learned role-filler PARSER arc (the
+big lever to real conversation): roles are currently SUPPLIED; infer them from input/word-order. Simplest
+positional parser (pos1->agent etc.) is ~trivial (positions ARE the roles); the real new work is (a)
+driving the bind from LIVE text input (lang_input word sequence -> concept-pool activity -> bind, vs cached
+codes) and (b) a learned syntactic parser for non-canonical order. Cheap-first each. Propagate every
+outcome to BOTH remotes. prior arc (multi-hop) below.
 
 TWO live threads:
 
