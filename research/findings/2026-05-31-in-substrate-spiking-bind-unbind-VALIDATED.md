@@ -247,6 +247,28 @@ is not autograd or learning.
 - This is a fixed-wiring spiking computation; no plasticity, no training. Generalization is
   by construction (VSA), inherited from the validated algebra.
 
+## Downstream capability: a queryable relational FACT-MEMORY in the spiking substrate
+
+The validated bind composes into the first conversational primitive: a small subject/verb/object
+KNOWLEDGE BASE you can query relationally, all in spiking dynamics. A fact "dog chases cat" =
+agent (x) dog + action (x) chase + patient (x) cat (3 spiking-coincidence bindings, K=3). Facts
+are stored SEPARATELY (a numpy cheap-first confirmed this is the correct architecture: separate-fact
+storage + cue-based retrieval = 1.000 multi-seed, while SUPERPOSING facts into one vector degrades
+to 0.475 -- the multi-hop wall). A relational query "what does dog chase?" = spiking-unbind the
+agent of each stored fact + cleanup to match the cue, then spiking-unbind the patient of the matched
+fact.
+
+Multi-seed (42,43,44), D=800, 2-fact KB, at the higher-rate operating point (bias=-500):
+**single-fact 1.000, relational (find-by-agent -> read-patient) 1.000, control (no false match on an
+absent cue) 1.000 -- all three seeds.** (At the clean-AND bias=-1000 point it is 2/3, seed 44 dipping
+to 0.750; the higher firing rate -- the same lever that extends bind capacity to K=6 -- gives the
+dynamic range for robust relational memory.) Owner-facing demo:
+`research/runners/compose_relational_memory_demo.py` stores "dog go north" + "cat come south" and
+answers "what does dog have as object?" -> north, action -> go, with the absent-cue control returning
+"(no fact found)". Honest scope: roles (agent/action/patient) are SUPPLIED, not parsed from raw input
+(a learned role parser is the next arc); this is structured fact-memory with cue-based retrieval, not
+open-ended relational reasoning over superposition (that degrades).
+
 ## Reproduce
 
 ```bash
@@ -254,4 +276,9 @@ python -m research.findings.raw._insubstrate_coincidence_probe       # primitive
 python -m research.findings.raw._insubstrate_graded_gating_probe     # primitive 2
 python -m research.findings.raw._insubstrate_bind_unbind_probe --proj-dim 800 --ks 1,2,3,4
 python -m research.findings.raw._insubstrate_bind_unbind_probe --proj-dim 0 --seed 42 --ks 1,2,3,4  # raw D=3200
+python -m research.findings.raw._insubstrate_bind_unbind_probe --seed 42 --ks 4,5,6 --coinc-bias -500  # K=6 (firing-rate lever)
+python -m research.findings.raw._vsa_relational_query_probe                          # cheap-first: relational fact-memory
+python -m research.findings.raw._insubstrate_relational_memory_probe --coinc-bias -500  # spiking relational fact-memory
+python -m research.runners.compose_spiking_bind_demo                                  # demo: bind subject/verb/object
+python -m research.runners.compose_relational_memory_demo                             # demo: queryable SVO knowledge base
 ```
