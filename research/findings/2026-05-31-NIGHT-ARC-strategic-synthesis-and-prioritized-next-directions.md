@@ -29,6 +29,31 @@ P3 (CONDITIONAL on CA3 = NULL): characterize the separation-vs-reliability tensi
 
 P4 (INDEPENDENT, always-available): the validated conversational capability (multitag 90% / engram 87.5% / G.20 160-320 concepts) is the project's genuinely-working artifact. A high-value parallel direction: push its SCALE + usability (a larger vocab end-to-end ensemble, or a cleaner interactive chat surface) -- instrumental capability progress that does not depend on the biologization question resolving.
 
+## ADDENDUM (2026-05-31, post-DG-boundary): P4 executing + a check-existing-first lesson
+
+Two developments after the DG fundamental boundary banked the biologization deliverable:
+
+1. P4 is EXECUTING (the active direction per this synthesis's own pivot). Multi-hop reasoning over the
+   validated multitag stack: clean-condition 8/8 -> the hub-reuse DECISIVE test returned DEGRADES-WITH-FANIN
+   (multi-seed full-2hop 0.833 at hub fan-in 2 -> 0.000 at fan-in 8; finding 2026-05-31-P4-multihop-hub-reuse-
+   DECISIVE-DEGRADES-...md). Bottleneck LOCATED: hop-1 fine; the loss is hop-2 hub-crowding because multitag
+   is UNDIRECTED (querying a hub returns its many incoming edges, burying the one outgoing edge). A principled
+   cheap fix (directional tag-name filtering at hop-2: tags are name-ordered cue_associate, so filter the hub
+   query to hub-first tags) SMOKE-PASSED at seed 42 (fan-in 8: undirected 0/8 -> directional 8/8); the decisive
+   multi-seed directional run is in flight. If it holds, directional multi-hop is a real (if still "static-
+   retrieval") capability worth integrating into the shipped query_concept.
+
+2. CHECK-EXISTING-FIRST LESSON (self-correction). Mid-arc I proposed a "theta-multiplexing conversational-
+   holding" next arc + built a cheap probe that PASSED -- then found on checking prior work that theta-gamma
+   multiplexing was ALREADY algebra-validated with decisive controls (2026-05-24 Direction E; 2026-05-23 FHRR
+   N16) AND its spiking-substrate composition already hit a DECISIVE 5-architecture convergent ceiling
+   (2026-05-20). My probe RE-DERIVED known algebra; the "first de-risking / motivates spiking build" framing
+   was RETRACTED (banners on both theta-multiplex docs). The algebra was never the bottleneck; the substrate
+   composition is the wall -- which is exactly what this synthesis's pivot to P4 already encoded. Lesson
+   re-affirmed: before proposing any "new" biological direction, grep the findings/plans for prior in-project
+   work on it. The residual value kept: the cross-arc insight that temporal (phase) separation sidesteps the
+   spatial DG separation-vs-reliability boundary, + Miller-7-under-jitter recovery.
+
 ## Discipline
 
 Synthesis only; no code/bars/protected modules touched. The queue is pre-staged so autonomous work never stalls at a gate. Each conditional branch has a concrete first step. Honest assessment recorded (the trisynaptic line is the genuine biologization test; G.20/engram codes re-instantiate the oracle shortcut rather than bypass it).
