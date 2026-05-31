@@ -1,5 +1,20 @@
 # P4 multi-hop "trace" bimodality DIAGNOSED: it is per-pair x per-seed RECALL-STRENGTH variance (an engram-binding lottery), NOT a directional-filter flaw and NOT seed-global. Stim'ing the encoded tag and reading the target adjective's recall rank/32 shows big->red is rank 2 (seed 42) / rank 8 buried (seed 43) / rank 1 (seed 44) -- exactly mirroring the multi-hop 8/8 / 0/8 / 6/8. Other pairs are weak on OTHER seeds (hot->dry rank 4 on seed 44; cold->wet rank 8 on seed 44; seed 43's hot->dry is the STRONGEST at rank 1). So each pair's engram binding strength is a per-seed structural lottery; where the target falls below trace's top-3, multi-hop fails. Actionable in principle (reinforce/strengthen weak bindings); the directional filter is sound.
 
+> ## REINFORCEMENT-FIX RESULT (2026-05-31): NEGATIVE -- re-encoding is an unstable random walk, not a reliable fix
+> The reinforcement test (_perseed_binding_reinforce.py, encode the weak pair N=5x, track target rank each time):
+> - seed 43 big->red: rank 8 -> 1 -> 2 -> 2 -> 1 (reinforcement FIXED it, stays top-3). GOOD.
+> - seed 44 cold->wet: rank 1 -> 18 -> 2 -> 27 -> 2 (WILD oscillation -- re-encoding DESTABILIZES it). BAD.
+> - seed 42 big->red (control): 2/2/2/4/2 (stable).
+> So re-encoding is a RANDOM WALK in binding quality (fixes some cases, destabilizes others). The single-pass
+> sparse engram capture is HIGH-VARIANCE, and reinforcement adds variance rather than monotonically
+> strengthening. Reinforcement is NOT a reliable fix. The reliable fix would be a deeper BALANCED-TEACHER
+> encode (drive both concepts strongly in ONE controlled pass -> low-variance strong capture) -- a real change
+> to encode_pair_engram_sparse needing re-validation, NOT rushed. The multi-hop arc is COMPLETE as a
+> characterization: clean -> hub-crowding DEGRADES -> directional RESCUE -> bimodality DIAGNOSED (recall-
+> strength lottery) -> simple reinforcement fix NEGATIVE (unstable) -> reliable fix = deeper balanced-teacher
+> encode (specified, deferred). The capability is shipped + sound + works for well-bound pairs; the residual
+> per-pair-per-seed variance is the same high-variance single-pass capture that gates the whole stack.
+
 **Date:** 2026-05-31
 **Status:** Diagnostic of the RESCUED-but-BIMODAL directional multi-hop "trace" capability (finding 2026-05-31-P4-multihop-directional-fix-...). Localizes the residual limiter precisely. Throwaway probe (research/findings/raw/_perseed_binding_diagnostic.py); g20_multibridge.py reused byte-unchanged via import.
 

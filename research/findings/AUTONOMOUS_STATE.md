@@ -83,17 +83,25 @@ it is per-pair x per-seed RECALL-STRENGTH (an engram-binding lottery), NOT a fil
 Stim the tag, read target rank/32: big->red rank 2(s42)/8(s43,buried)/1(s44) -- mirrors multi-hop 8/0/6.
 Other pairs weak on OTHER seeds (hot->dry rank4 s44; cold->wet rank8 s44; s43's hot->dry is rank1 strongest).
 Where target falls below trace's top-3, multi-hop misses. Actionable in principle (strengthen weak bindings).
-REINFORCEMENT TEST IN FLIGHT (bf2wbr7n7, _perseed_binding_reinforce.py): does re-encoding a weak pair N times
-raise its target rank to <=3 (no-code-change fix)? Cases: s43 big->red, s44 cold->wet, s42 big->red (control).
+REINFORCEMENT-FIX = NEGATIVE (bf2wbr7n7 landed): re-encoding is an UNSTABLE random walk, not a reliable fix
+(s43 big->red 8->1->2->2->1 fixed; s44 cold->wet 1->18->2->27->2 wild oscillation; s42 control stable). The
+single-pass sparse engram capture is HIGH-VARIANCE; reinforcement adds variance not monotonic strengthening.
+Reliable fix = deeper BALANCED-TEACHER encode (drive both concepts strongly in ONE controlled pass in
+encode_pair_engram_sparse) -- a real sparse-encode change + re-validation, DEFERRED (marginal polish on an
+already-shipped+sound capability). MULTI-HOP ARC COMPLETE: clean->hub-crowding DEGRADES->directional RESCUE->
+bimodality DIAGNOSED (recall-strength lottery)->simple fix NEGATIVE->deeper fix specified+deferred.
 
-EXACT NEXT CONCRETE ACTION: when the reinforcement test (bf2wbr7n7) lands -> if rank falls to <=3 with more
-encodes -> reinforcement is the simple actionable fix for trace bimodality (could wire a "remember a is b"
-that reinforces weak bindings, or note it as a usage pattern); record+push. If FLAT (rank stays >3) -> the
-per-seed sparse-pattern structure caps the binding -> the deeper balanced-teacher encode (modify
-encode_pair_engram_sparse to drive both concepts strongly during the single-pass encode -- a real sparse-
-encode change needing re-validation, NOT rushed) OR accept the per-pair lottery as the honest residual.
-Either way the multi-hop characterization is COMPLETE (clean->DEGRADES->RESCUE->bimodality DIAGNOSED).
-THEN: P4 is well-advanced (160/320 concepts, multitag 90%, directional trace, hierarchy, yes/no, tokenize);
+EXACT NEXT CONCRETE ACTION: the night's READY cheap research is genuinely COMPLETE across all threads
+(multi-hop fully characterized + directional trace shipped; biological-symbol-grounding boundary thoroughly
+characterized incl. the substrate-can't-reach-near-orthogonal limit; watchdog infra fixed). The remaining
+directions are NOT cheap probes: (1) deeper balanced-teacher sparse-encode = marginal polish, deferred;
+(2) the genuinely-next BIOLOGICAL advance for composition needs a MONTHS-SCALE new-substrate effort (e.g.
+predictive-coding / sparse-autoencoder pretraining to LEARN near-orthogonal concept codes -- a different
+mechanism than the boundary-blocked readout approaches; or scale) = a STRATEGIC OWNER decision, NOT a
+tail-of-turn launch. Per the autonomous-runs "all ready work complete -> wiki-sync" guidance, capture this
+substantial arc (wiki-sync), then on the next cycle pursue the next direction via brainstorming->design->
+cheap-first with check-existing-first FIRST. Working P4 stack is the deliverable pending owner strategic input.
+P4 is well-advanced (160/320 concepts, multitag 90%, directional trace, hierarchy, yes/no, tokenize);
 the biological-composition line is boundary-banked. Genuinely-open next directions all need a real design
 effort (new biological subsystem mechanism) -- do that via brainstorming->design->cheap-first, check-existing-
 first FIRST (theta-gamma + grid arcs were both already-explored). Do NOT unilaterally launch the ~100hr V=640.
