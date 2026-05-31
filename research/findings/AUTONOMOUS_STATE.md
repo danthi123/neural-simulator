@@ -50,25 +50,27 @@ NIGHT-ARC-...) had ALREADY pivoted correctly to P4. Residual value kept: the cro
 sidesteps the spatial DG boundary) + Miller-7-under-jitter. Do NOT build a theta-multiplexing spiking
 arc -- it is a re-tread of ceiling'd work. <<<
 
-EXACT NEXT CONCRETE ACTION: the DEGRADES bottleneck is LOCATED precisely enough to test a principled CHEAP
-FIX. Multitag tags are NAME-ORDERED ("remember a is b" -> tag "a_b", cue-first). So at hop-2, when querying
-the hub for its OUTGOING edge, FILTER to tags where the hub is the FIRST token (hub_*) and ignore incoming
-X_hub tags -> C should surface even at fan-in 8. NEXT: write a throwaway directional-multitag probe
-(research/findings/raw/_multihop_directional_probe.py) reusing the hub-reuse test structure + the tag store
-+ recall logic, adding the name-direction filter at hop-2; smoke 1 seed at fan-in 8 first (does directional
-filtering surface C?), then multi-seed 42/43/44 if promising. PRE-REG: directional rescues multi-hop if
-fan-in-8 full-2hop >= 0.50 multi-seed -> robust retrieval-reasoning capability; if not -> encode-order not
-reliable / substrate aggregates regardless -> multi-hop honestly bounded to low-fan-in chains. Run GPU/CuPy
-(the 5 sparse bridges load ~per-seed; 32-concept tier ~19 min for 3 seeds). Reuse-by-import; g20_multibridge
-byte-unmodified; throwaway probe only; no protected/frozen/moat edit. Record+scrutinize+push BOTH remotes.
-THEN per outcome: rescued -> optional cleaner multi-hop chat surface; not -> next P4 extension (scale vocab
-toward 640 [D8 infra], or cleaner interactive chat). Honest frame: P4 is instrumental capability/usability
-of the working stack (itself the oracle-shortcut in another form); the DG separation-vs-reliability BOUNDARY
-stays the banked biology-translatable deliverable. moat 7/7; 0.80 bar frozen; honest negatives are deliverable.
+DIRECTIONAL FIX DONE = RESCUED-but-BIMODAL (2026-05-31; finding 2026-05-31-P4-multihop-directional-fix-
+RESCUES-per-bar-but-BIMODAL-...md). Multi-seed OUT full-2hop at fan-in 8 = 0.583 >= 0.50 bar (vs undirected
+ANY 0.000) => RESCUED per the unmoved frozen bar. BUT bimodal: seed 42 = 8/8, seed 44 = 6/8, seed 43 = 0/8.
+The directional filter (hop-2 hub query -> hub-first tags only) isolates big_red correctly on ALL seeds;
+seed 43's 0/8 is weak UNDERLYING big_red binding on that bridge, not a filter bug. So directional removes the
+hub-crowding bottleneck (strict win 0.583 vs 0.000) and EXPOSES residual per-seed binding-quality variance
+as multi-hop's next limit. Directional multi-hop = REAL but NOT-UNIFORMLY-ROBUST.
 
-NOTE: this file is 375KB (bloated with concluded-arc history). The block ABOVE is authoritative
-+ current; everything below is historical trail. A future cycle should compact the trail (keep
-this pointer + the concluded-arc one-liners, archive the verbose middles).
+EXACT NEXT CONCRETE ACTION: the directional filter is a clean validated low-risk win (strict improvement,
+never hurts -- it only drops irrelevant incoming edges from the hub query). INTEGRATE it into the shipped
+chat: in research/runners/g20_multibridge.py add a `direction='any'|'out'|'in'` param to query_concept
+(closure ~line 359; default 'any' = backward-compat so existing behaviour byte-identical) using the SAME
+name-order tag filter the who/what-did handlers already use (lines ~501,530); add a multi-hop chat command
+(chained "what is X" -> take top -> "what is <that>" with direction='out') with HONEST framing (robust where
+binding is good; gated by per-seed binding quality). Add a focused unit test (pure-logic on the tag filter,
+no GPU). Then frontend-sync if it surfaces in a demo/preset (keep-webapp-current). SHIPPED-module change ->
+careful: backward-compat default, test, no protected/frozen/moat edit, g20 chat still works. Commit+push BOTH
+remotes. ALT if integration judged not worth it: next P4 extension (scale vocab toward 640 [D8 infra], or
+cleaner interactive chat). Honest frame: P4 is instrumental capability/usability of the working stack (the
+oracle-shortcut in another form); the DG separation-vs-reliability BOUNDARY stays the banked biology-
+translatable deliverable. moat 7/7; 0.80 bar frozen; honest negatives are the deliverable.
 
 
 ## DG-BIOLOGIZATION CONCLUDED 2026-05-31 = FUNDAMENTAL BOUNDARY; ACTIVE ARC = P4 conversational capability
