@@ -9,7 +9,26 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## ACTIVE DECISION POINT 2026-05-31: three arcs converge on DG PATTERN-SEPARATION
+## DG-BIOLOGIZATION CONCLUDED 2026-05-31 = FUNDAMENTAL BOUNDARY; ACTIVE ARC = P4 conversational capability
+
+>>> DG-biologization line CLOSED at a clean fundamental separation-vs-reliability BOUNDARY (finding
+2026-05-31-DG-biologization-FUNDAMENTAL-BOUNDARY-...md). The DG separation MECHANISM is confirmed (0.82->0.18)
+but no DG SIZE threads separation AND within-concept reliability: 800-sparse separated(0.27)/unstable(0.24);
+4000-sparse stable(0.6-0.8)/unseparated(0.66-0.76) -- same competitive-k-WTA tradeoff curve, sweet-spot never
+reached; CA3 collapses separation further. The oracle lookup's orthogonality is IRREDUCIBLE on this substrate.
+Coherent night deliverable: integrated-loop VOID -> ceiling audit (representational) -> denoiser NEGATIVE ->
+3-arc DG convergence -> DG gate PASS -> DG-composition NULL -> this fundamental boundary. Honest biology-
+translatable scientific deliverable BANKED. (Controller mis-tuning in one 4000 re-run was caught + corrected;
+boundary is the clean tradeoff curve, not an artifact.) <<<
+
+ACTIVE = P4: advance the VALIDATED conversational capability (instant-runnable: g20_sparse_bridges 160-concept
++ g20_sparse_bridges_320 320-concept, multitag retrieval 90% / engram 87.5% / cross-bridge encode / hierarchy /
+tokenization). FIRST STEP: confirm the working stack runs (g20_multibridge --sparse / g20_160word_demo), then
+advance the highest-value extension toward conversational capability: candidates (a) multi-hop reasoning over
+stored associations [known open gap, corrected-NEGATIVE], (b) scale toward 640 concepts [D8 infra scaffolded],
+(c) cleaner interactive chat. reuse-by-import; moat 7/7; 0.80 bar frozen; honest negatives are the deliverable.
+
+## (CONCLUDED) DECISION POINT 2026-05-31: three arcs converge on DG PATTERN-SEPARATION
 
 Denoiser arc CONCLUDED = NEGATIVE (finding 2026-05-31-denoiser-arc-NEGATIVE-...-three-arcs-converge-on-
 DG-pattern-separation.md). Biologizing shortcut-2 (oracle lookup) via activity grounding FAILS the

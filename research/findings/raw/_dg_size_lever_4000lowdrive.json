@@ -1,0 +1,59 @@
+{
+  "results": [
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 1.0,
+      "ffi": 0.3,
+      "sparsity": 0.06843749999999998,
+      "between_mean": 0.6572427374653427,
+      "between_max": 0.9931042158358975,
+      "within_mean": 0.5910268670020842,
+      "n_silent": 0
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 2.0,
+      "ffi": 0.3,
+      "sparsity": 0.04560416666666667,
+      "between_mean": 0.7583579373714653,
+      "between_max": 0.9657998423240647,
+      "within_mean": 0.8159197217239068,
+      "n_silent": 0
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 3.0,
+      "ffi": 0.3,
+      "sparsity": 0.23347916666666668,
+      "between_mean": 0.7345412405711187,
+      "between_max": 0.9853554604217276,
+      "within_mean": 0.7733744739176185,
+      "n_silent": 0
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 4.0,
+      "ffi": 0.4,
+      "sparsity": 0.7769791666666667,
+      "between_mean": 0.9129466221251403,
+      "between_max": 0.99332321213953,
+      "within_mean": 0.947053857344411,
+      "n_silent": 0
+    },
+    {
+      "n_dg": 4000,
+      "seed": 42,
+      "drive": 5.0,
+      "ffi": 0.5,
+      "sparsity": 0.9991875,
+      "between_mean": 0.9920243480260887,
+      "between_max": 0.9992494915563775,
+      "within_mean": 0.9959090168219399,
+      "n_silent": 0
+    }
+  ]
+}
