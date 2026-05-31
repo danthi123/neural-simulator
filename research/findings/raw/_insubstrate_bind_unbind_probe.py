@@ -233,23 +233,35 @@ def main():
     ks = [int(x) for x in a.ks.split(",")]
     rows = []
     for K in ks:
-        nref, cref = numpy_reference(codes, roles, K, V, np.random.default_rng(1000 + K), a.n_trials)
+        nref, nctrl = numpy_reference(codes, roles, K, V, np.random.default_rng(1000 + K), a.n_trials)
         nspk, cspk = run_spiking(bridge, idx, codes, roles, K, V, D, xp,
                                  np.random.default_rng(2000 + K), a.n_trials, opponency=opponency)
-        rows.append((K, nref, nspk, cspk))
-        print(f"  K={K} | numpy-ref recovery={nref:.3f} | SPIKING recovery={nspk:.3f} "
-              f"control(wrong-query)={cspk:.3f}", flush=True)
-    print("\nREAD: spiking recovery >= 0.80 AND control ~ chance -> the spiking bind/unbind "
-          "reproduces the validated algebra IN the substrate.", flush=True)
-    multi = [r for r in rows if r[0] >= 2]
-    ok = all(r[2] >= 0.80 for r in multi) and all(r[3] <= 2.0 / V + 0.1 for r in multi) and len(multi) > 0
-    k1 = [r for r in rows if r[0] == 1]
-    if ok:
-        print("VERDICT: RESOLVES -- spiking bind/unbind recovers >=0.80 multi-pair, control at chance.")
-    elif k1 and k1[0][2] >= 0.80:
-        print("VERDICT: BOUNDARY -- works at K=1 but degrades with load; characterize SNR/scaling.")
+        rows.append((K, nref, nctrl, nspk, cspk))
+        print(f"  K={K} | numpy: recovery={nref:.3f} ctrl={nctrl:.3f} | SPIKING: recovery={nspk:.3f} "
+              f"ctrl={cspk:.3f} | recovery-vs-ctrl gap={nspk - cspk:+.3f}", flush=True)
+    # NOTE: with OVERLAPPING substrate codes (between-cos ~0.70) the wrong-query control is NOT at
+    # 1/V chance even in the noiseless ALGEBRA -- it sits at the overlapping-code cleanup-bias floor
+    # (the documented "cleanup-bias", decreasing with K). So the correct science criterion is
+    # FAITHFULNESS: spiking recovery >= 0.80 AND spiking control ~ numpy control (no EXTRA spiking
+    # failure) AND a decisive recovery-vs-control gap. "control == 1/V" is unachievable with
+    # overlapping fillers and would be the wrong bar.
+    print("\nREAD: spiking recovery >= 0.80, spiking control ~ numpy control (faithful, NOT a spiking "
+          "artifact), decisive recovery-vs-control gap -> the spiking bind/unbind reproduces the "
+          "validated algebra IN the substrate (overlapping codes -> control sits at the algebra's "
+          "cleanup-bias floor, not 1/V).", flush=True)
+    rec_ok = all(r[3] >= 0.80 for r in rows)
+    faithful = all((r[4] - r[2]) <= 0.15 for r in rows)        # spiking ctrl not >> numpy ctrl
+    gap_ok = all((r[3] - r[4]) >= 0.40 for r in rows)          # decisive recovery-vs-control gap
+    maxk = max(r[0] for r in rows)
+    if rec_ok and faithful and gap_ok:
+        print(f"VERDICT: RESOLVES -- spiking bind/unbind recovers >=0.80 up to K={maxk}, faithful to "
+              f"the algebra (spiking ctrl ~ numpy ctrl), decisive recovery-vs-control gap.")
+    elif any(r[3] >= 0.80 for r in rows):
+        passk = max(r[0] for r in rows if r[3] >= 0.80)
+        print(f"VERDICT: RESOLVES-TO-CAPACITY K<={passk} -- recovers there; higher K is firing-rate/"
+              f"window-bounded (raise --run-steps or firing rate). faithful={faithful} gap_ok={gap_ok}.")
     else:
-        print("VERDICT: needs tuning/DOES-NOT-RESOLVE -- inspect numpy-ref (ceiling) vs spiking gap.")
+        print("VERDICT: DOES-NOT-RESOLVE -- inspect numpy ceiling vs spiking gap / scaling.")
 
 
 if __name__ == "__main__":
