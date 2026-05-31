@@ -3,3 +3,6 @@
 ##### seed 43 V=320 #####
   QA at V=320 (who/what-obj/what-act all correct): 1.000  unknown control: 1.000  (chance 0.0031)
 ##### seed 44 V=160 #####
+  QA at V=160 (who/what-obj/what-act all correct): 1.000  unknown control: 1.000  (chance 0.0063)
+##### seed 44 V=320 #####
+  QA at V=320 (who/what-obj/what-act all correct): 0.900  unknown control: 1.000  (chance 0.0031)

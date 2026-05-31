@@ -34,6 +34,30 @@ and is multi-seed validated in spiking.
 Owner-facing artifact: `compose_conversation_demo.py` -- a scripted agent that stores statements,
 answers wh-questions, and persists its knowledge across a session boundary, all spiking.
 
+## Genuine composition vs conventional glue (honest audit, owner-prompted)
+
+Asked directly whether this is templates/cheating or real composition. Audit:
+
+GENUINE composition (the load-bearing claim, verified): the bind/unbind FORMS and RETRIEVES sentences
+that GENERALIZE to novel combinations. Test: bind 8 random nonsense SVO sentences ("go cold hot", "dog hot
+dog") + query each role -> 8/8 recovered; there are 16^3 = 4096 possible SVO sentences, NONE enumerated or
+stored -- only the bind/unbind operation is reused (60/60 in compose_vsa_demo; multi-seed bind/unbind;
+adversarial reviewer CLEAR). A template can only echo stored sentences; this forms+answers arbitrary new
+ones, computed by spiking coincidence neurons.
+
+CONVENTIONAL GLUE / one template (honest, not hidden): (1) the interactive REPL's text->role parsing is a
+hardcoded POSITIONAL template (store(word[0],word[1],word[2])); (2) the relational query is a Python loop
+over a fact-list with == matching (the unbinds inside are spiking; the search is control logic); (3) cleanup
+is argmax over the stored concept-code vocabulary (standard VSA cleanup, not an attractor net); (4)
+generation prints unbound words in a fixed role order (retrieval genuine, ordering a template). Scope: 3-slot
+SVO frames + voice-invariance, not fluent grammatical language.
+
+ONE TEMPLATE CLOSED (compose_learned_parse_demo.py): the LEARNED parser (Hebbian conjunction->role, 6/6
+incl the active<->passive flip) assigns roles in the pipeline -- active "dog go north" AND passive "north
+is go by dog" both -> agent=dog (voice-invariant), where a positional template would wrongly call "north"
+the agent of the passive. So the parse step is now LEARNED, not positional-hardcoded; bind/unbind remain
+genuine spiking composition.
+
 ## Honest scope
 
 Roles/cues are mapped from the (validated separately) learned parser; the vocabulary is 16 words

@@ -1,0 +1,16 @@
+=== Conversation with a LEARNED parser (no positional template) (backend=cupy, seed=42) ===
+training the Hebbian parser (conjunctive position x voice -> role)...
+  learned parser map 6/6: ['agent', 'patient', 'action', 'action', 'patient', 'agent']
+  (this map was ACQUIRED by Hebbian co-firing, including the active<->passive flip -- NOT hardcoded position->role)
+
+--- The user states the SAME fact two ways; the LEARNED parser assigns roles for each ---
+  active  'dog go north'         -> parsed {'agent': 'dog', 'action': 'go', 'patient': 'north'}
+  passive 'north is go by dog'   -> parsed {'patient': 'north', 'action': 'go', 'agent': 'dog'}
+
+--- Ask 'who is the agent?' of each (answered by spiking unbind + cleanup) ---
+  agent of the active  sentence -> dog
+  agent of the passive sentence -> dog
+
+  Both -> 'dog'? True  -- the LEARNED parser + spiking bind understand active and passive as the same meaning (voice-invariant). A positional template would call 'north' the agent of the passive sentence.
+
+The text->role step is LEARNED (Hebbian), not a positional template; the bind/unbind that form and query the fact are spiking composition. Honest scope: 16-word vocab, SVO frames.
