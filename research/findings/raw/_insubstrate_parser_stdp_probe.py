@@ -87,10 +87,13 @@ def build(seed, w_init):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(); ap.add_argument("--seed", type=int, default=42)
+    a = ap.parse_args()
     xp, backend = get_backend()
-    print(f"=== in-substrate spiking PARSER core: STDP acquires conjunction->role? "
-          f"(backend={backend}) ===", flush=True)
-    bridge, conj, role_idx = build(42, w_init=0.5)
+    print(f"=== in-substrate spiking PARSER core: Hebbian acquires conjunction->role? "
+          f"(backend={backend}, seed={a.seed}) ===", flush=True)
+    bridge, conj, role_idx = build(a.seed, w_init=0.5)
     conj_arr = xp.asarray(conj, dtype=xp.int64)
     role_arr = {r: xp.asarray(v, dtype=xp.int64) for r, v in role_idx.items()}
 

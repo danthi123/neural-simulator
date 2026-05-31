@@ -20,8 +20,12 @@ about how (and how far) a brain-analogue substrate can compose.
    concept-pool activity -> spiking bind -> relational query -> answer. Multi-seed (42,43,44) all
    1.000 (single/relational/control), matching the cached-code baseline; front-end recognition
    15-16/16 -- the bind is robust to the 0-1 recognition mislabel per seed.
-4. **Parser representational gate**: voice-invariant role assignment ("dog chases cat" ≡ "cat is
-   chased by dog", same agent) requires conjunctive position×voice coding (cheap-first).
+4. **Learned syntactic role parser (core)**: voice-invariant role assignment ("dog chases cat" ≡
+   "cat is chased by dog", same agent) requires conjunctive position×voice coding (cheap-first), and
+   that conjunctive→role mapping is LEARNED in-substrate by the v16 Hebbian co-firing rule —
+   multi-seed (42,43,44) 6/6 conjunctions including the active↔passive flip every seed (bare
+   spike-timing STDP fails on the simultaneous teacher). Remaining: wire the learned role output to
+   gate the bind end-to-end.
 
 Owner-facing demos: `compose_spiking_bind_demo.py`, `compose_relational_memory_demo.py`,
 `compose_live_text_kb_demo.py`. Capability widget: pillar n=111.
@@ -67,6 +71,14 @@ Owner-facing demos: `compose_spiking_bind_demo.py`, `compose_relational_memory_d
    mixed-selectivity neurons conjoining word-position with syntactic-voice cues, not a positional
    readout — and the substrate's distributed codes already are conjunctive-capable.
 
+7. **Role assignment is LEARNED by Hebbian co-firing, not spike-timing STDP.** The conjunctive
+   (position×voice)→role mapping is acquired in-substrate by a teacher-co-active protocol with the
+   v16 rate-based Hebbian rule (pre&post-gated, grows co-active synapses toward firing strength):
+   6/6 conjunctions learned including the active↔passive flip. Bare spike-timing STDP FAILS on the
+   same protocol — a simultaneous teacher provides no pre→post order. Translatable: associating a
+   conjunctive syntactic context with a role is a Hebbian co-activation (cell-assembly) learning
+   problem, not a fine-timing one; the supervisory signal need only co-activate, not precede.
+
 ## Honest scope and boundaries
 
 - Fixed-wiring composition: generalizes by VSA construction (no training); the validated learning
@@ -84,13 +96,16 @@ example sentences (voice detected by function-word PRESENCE + relative position 
 features, NOT the substrate's bounded ordered-sequence processing), then wire parsed roles into the
 validated bind for voice-invariant understanding end-to-end.
 
-Honest update (a first attempt, same day): the conjunctive coincidence layer and the role->bind are
-validated pieces, but a quick STANDALONE STDP probe (_insubstrate_parser_stdp_probe.py) did NOT
-acquire the conjunction->role map -- with a bare config (enable_stdp + a plastic pathway +
-simultaneous teacher) the conj->role weights never grew to firing strength (role ensembles silent in
-test, at w_max=8 and w_max=400). This is NOT a boundary: the v16 mechanism (lang_input->pool) learns
-exactly this kind of input->output map, but uses machinery the quick probe lacks -- embodied-Hebbian
-co-firing, the v16 STDP params, eligibility, and a teacher protocol with correct pre->post timing. So
-the parser's REPRESENTATION is settled and its pieces are validated, but the in-substrate
-STDP-LEARNING of the role map is a FOCUSED SUB-ARC requiring the v16-scale learning config -- deferred,
-near-certain on the v16 precedent, characterized honestly rather than overclaimed as trivial.
+Update (same day) -- the parser core now RESOLVES in-substrate. A first STANDALONE probe with BARE
+STDP (_insubstrate_parser_stdp_probe.py) FAILED (role ensembles silent, conj->role weights never grew
+to firing strength) -- the honest diagnosis was the WRONG learning rule: bare STDP is timing-based and
+a simultaneous teacher gives no pre->post order. Switching to the v16 embodied-Hebbian CO-FIRING rule
+(bridge.py:5265, gated on pre&post co-firing -> selective; hebbian_max_weight=400 = firing strength)
+RESOLVES: 6/6 conjunctions activate the CORRECT role (correct 0.04-0.08, incorrect ~0.000) AND the
+active<->passive flip is LEARNED (pos0-active->agent vs pos0-passive->patient; pos2 inverted). This is
+LEARNED (not supplied) syntactic role assignment in-substrate, including voice-dependent role flipping.
+A 7th insight: **role assignment is learned by Hebbian co-firing, not spike-timing STDP** -- a
+teacher-co-active protocol with a rate-based (pre&post-gated) rule grows the conjunctive->role map;
+the timing-based rule fails on simultaneous teaching. So ALL parser pieces are now validated in-substrate
+(coincidence for the conjunction, Hebbian-learned conjunction->role, the bind for role->filler); the
+remaining integration is wiring the learned parser's role output to gate the bind end-to-end.

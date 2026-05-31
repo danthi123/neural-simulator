@@ -1,0 +1,9 @@
+##### SEED 42 #####
+  STDP-acquired 6/6 conjunctions; active<->passive flip learned: True
+VERDICT: RESOLVES -- STDP acquires the conjunctive (position x voice) -> role mapping in-substrate, including the active<->passive flip. The learned parser core works.
+##### SEED 43 #####
+  STDP-acquired 6/6 conjunctions; active<->passive flip learned: True
+VERDICT: RESOLVES -- STDP acquires the conjunctive (position x voice) -> role mapping in-substrate, including the active<->passive flip. The learned parser core works.
+##### SEED 44 #####
+  STDP-acquired 6/6 conjunctions; active<->passive flip learned: True
+VERDICT: RESOLVES -- STDP acquires the conjunctive (position x voice) -> role mapping in-substrate, including the active<->passive flip. The learned parser core works.
