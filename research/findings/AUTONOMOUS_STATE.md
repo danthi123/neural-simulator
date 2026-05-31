@@ -52,13 +52,22 @@ optimistic (CV law is overlap-independent so viability is robust; exact k needs 
 
 >>> THE DENOISER ARC IS GATED-IN (cheap-first VIABLE). Build it. <<<
 
-BUILD (in flight): step 1 = capture MORE observations (M_OBS=64, GPU) + re-run the denoiser with
-DISTINCT (non-overlapping) storage/query obs -> pin exact k per load WITHOUT bootstrap optimism + confirm
-L=5 crosses 0.80. Then: (2) wire the sustained-encoding mean-of-k symbol derivation into the integration
-pipeline; (3) validate end-to-end on the frozen 0.80 bar {2,3,5} multi-seed leakage-guarded; (4) optional
-attractor (ResonateFireTPAM) denoiser comparison (shortcuts 2+3 coupled). reuse-by-import; spiking_phasor_
-fhrr / resonate_fire_fhrr / moat byte-unchanged; no autograd. Re-run cheap probe if needed:
-SIM_BACKEND=numpy python -u -m research.findings.raw._denoiser_cheap_probe.
+BUILD step 1a DONE = DISTINCT-OBS CONFIRMATION (caveat resolved FAVORABLY; finding doc updated +
+committed 5c87e56). Non-overlapping storage/query halves (k<=8 from 16 obs): L=2 PASSes CLEAN at k=4
+(0.803) + k=8 (0.901); distinct >= bootstrap at every k -> bootstrap was slightly PESSIMISTIC not
+optimistic. Caveat resolved. L=3=0.733, L=5=0.593 at k=8 (need k>8).
+BUILD step 1b IN FLIGHT = 64-OBS GPU capture + distinct denoiser (PID 5553, log _denoiser_obs64.log,
+watcher bijgf5g57 on PID 34304; kill-safe per-seed cache denoise64_seed{N}.npz; k-list 4 8 16 24 32; writes
+_denoiser_cheap_probe_distinct.json [overwrites the 16-obs one -- 64-obs supersedes]). Pins exact k for
+L=3/L=5 distinct (no overlap) + confirms L=5 crosses 0.80 at k~32. ~75 min.
+NEXT (controller, when bsbh4r7xm notifies): read 64-obs k-curve; write the VALIDATED denoiser finding
+(all 3 shortcuts now biologizable: RF=1, denoiser=2, TPAM=3); commit+push. Then likely CAPSTONE arc:
+FULLY-biologized composition = resonate_fire_fhrr (RF bind/unbind) + mean-of-k denoiser (activity-
+grounded symbol) + ResonateFireTPAM cleanup, end-to-end on activity-grounded symbols, validate 0.80 bar
+{2,3,5} multi-seed -> "all engineering shortcuts removed" artificial-life milestone. reuse-by-import;
+spiking_phasor_fhrr / resonate_fire_fhrr / moat byte-unchanged; no autograd. If session dies: 64-obs
+re-run (kill-safe) = python -u -m research.findings.raw._denoiser_cheap_probe --capture-obs 64 --distinct
+--k-list 4 8 16 24 32 (GPU/CuPy, NOT SIM_BACKEND=numpy, for the capture).
 
 ---
 
