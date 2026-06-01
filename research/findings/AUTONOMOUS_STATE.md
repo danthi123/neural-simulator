@@ -34,14 +34,20 @@ corrections: (1) 28-word is NOT a fundamental representation limit -- 150ev clea
 recovers it (mirrors the real-substrate boundary). MAJOR compute implication: the premise motivating the
 ~100hr richer-representation-learning (28-word = hard rep wall) is substantially WRONG; cheap levers (more
 training events + temporal-integration readout) carry the front-end far past the single-shot wall WITHOUT the
-100hr / BPTT / new rep learning. CONFIRMING SWEEP RUNNING (PID 23915, _gate2_sweep.log): 28-word at 50/300/500
-events matched recipe -- does clean separability rise toward ~0.95+ (training+readout problem, cheap) or
-plateau ~0.89 (modest ceiling)? EXACT NEXT: when sweep lands, read the trajectory -> if rising, the front-end
-is a cheap training+readout problem (no 100hr; characterize the training-events curve + extend to G.20 tiers);
-if plateau ~0.89, that's the 28-word ceiling (still NOT 0.64; weigh whether 0.89 is good enough or a modest
-acquisition lever helps). DISCIPLINE LESSON: a positive control validates the INSTRUMENT not the COMPARISON --
-Gate 1's cross-vocab comparison had a training-amount confound the control didn't catch. Do NOT launch the
-100hr -- the premise for it is now in question.
+100hr / BPTT / new rep learning. SWEEP DONE = REFUTES THE 100hr PREMISE (seed 42 trajectory 50/150/300/500 events): clean 28-word recognition
+0.643 -> 0.893 -> 0.929 -> 0.929 (RISES to ~0.93, plateaus); concept OVERLAP between-cos 0.606 -> 0.564 ->
+0.495 -> 0.389 (DECREASES monotonically -- more training makes the LEARNED codes genuinely less-overlapping,
+the cheap acquisition lever); single-shot 0.395->0.714 + NN 0.402->0.893 (readout helps too). So the 28-word
+"wall" was UNDERTRAINING + single-shot noise; the cheap fix (more training of the EXISTING v16 arch + temporal-
+integration/NN readout) reaches ~0.93 AND reduces overlap -- NO 100hr, NO BPTT, NO new mechanism. The premise
+for Direction A's big run is REFUTED at 28 words. (NOTE: I STALLED here -- launched the sweep with nohup &
+WITHOUT a harness-tracked waiter, so I missed completion; owner rightly annoyed. FIX: every long job gets a
+run_in_background waiter, no exceptions.) EXACT NEXT (running, WITH waiter): multi-seed confirm (seeds 43,44 @
+300ev) to solidify the refutation before recommending skip-the-100hr; THEN the real frontier = does "more
+training reduces overlap" hold at 64/160-word LEARNED vocab (a training x vocab-size sweep, far cheaper than
+100hr) -- that tells us if ANY big run is warranted + at what vocab the cheap lever breaks. DISCIPLINE: a
+positive control validates the INSTRUMENT not the COMPARISON (Gate 1's training-amount confound). Do NOT
+launch the 100hr -- its premise is refuted at 28 words; surface to owner.
 moat 7/7; 0.80 bar frozen; reuse-by-import; no autograd/protected-module edits; honest propagation both remotes.
 
 ## >>> LATEST ACTION (cheating-audit arc -- COMPLETE; 2026-05-31) <<<

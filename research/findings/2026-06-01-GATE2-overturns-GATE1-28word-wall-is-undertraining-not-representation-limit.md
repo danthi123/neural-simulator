@@ -38,12 +38,40 @@ readout, 28-word recognition is ~0.89. So the cheap levers (more training events
 readout) likely carry the front-end much further than the documented single-shot "wall" suggested -- WITHOUT
 the 100hr, WITHOUT BPTT, WITHOUT new representation learning.
 
-## Open question (the confirming sweep, launched)
-Does 28-word separability keep rising toward the 16-word 1.000 with MORE training (300, 500 events), or
-plateau at ~0.89? And does it hold at the larger G.20 vocab tiers? A training-events trajectory (300, 500
-events, matched recipe) is running. If it rises toward ~0.95+, the front-end is essentially a training+readout
-problem (cheap); if it plateaus at ~0.89, that is the modest 28-word ceiling (still far better than the
-retracted 0.64). Either way the 100hr representation-learning premise is not supported at 28 words.
+## RESOLVED by the training-events trajectory (50/150/300/500 events, matched recipe, validated pipeline)
+| events | clean 16-avg pool-argmax | single-shot k=1 | full-code best-NN | between-concept cos (OVERLAP) |
+|-------:|-------------------------:|----------------:|------------------:|------------------------------:|
+| 50  | 0.643 | 0.395 | 0.402 | 0.606 |
+| 150 | 0.893 | 0.569 | 0.625 | 0.564 |
+| 300 | 0.929 | 0.654 | 0.804 | 0.495 |
+| 500 | 0.929 | 0.714 | 0.893 | 0.389 |
+
+THREE decisive results:
+1. **Clean 28-word recognition RISES to ~0.93 and plateaus** (300 = 500 = 0.929). NOT a representation wall;
+   the documented ~0.57 "wall" and the retracted 0.64 "limit" were both UNDERTRAINING. ~0.93 is the practical
+   28-word recognition ceiling with adequate training (>= 300 events).
+2. **Concept OVERLAP DECREASES MONOTONICALLY with training** (between-cos 0.606 -> 0.564 -> 0.495 -> 0.389).
+   This is the key result: more training makes the learned concept codes genuinely LESS overlapping. The
+   internal map's lesson ("less-overlapping codes require it BY CONSTRUCTION during acquisition") is
+   CONFIRMED -- and the simplest acquisition lever (just more training of the existing v16 architecture)
+   achieves it. NO BPTT, NO new mechanism, NO 100hr needed -- the cheap lever IS more training.
+3. **Single-shot and NN keep rising** (k=1 0.395 -> 0.714; NN 0.402 -> 0.893). At 500 events the full-code NN
+   beats single-shot pool-argmax (0.893 vs 0.714) -- the lossy-readout escape RETURNS once the codes are
+   well-trained. So a temporal-integration / NN readout adds on top of training.
+
+## DECISIVE conclusion for Direction A (the compute decision)
+The ~100hr "richer representation learning at scale" is NOT warranted for the 28-word front-end. The wall was
+undertraining + single-shot noise. The CHEAP fix -- more training events (300-500, ~1-2 GPU-hr) of the
+existing architecture + a temporal-integration / NN readout -- reaches ~0.93 clean recognition AND
+genuinely reduces concept overlap (0.606 -> 0.389). The preparation has now REFUTED the premise that
+motivated the big run.
+
+The remaining real question is SCALE: does "more training reduces overlap" extend to 64/160/320-word vocab,
+or does the overlap floor reappear at larger N? The G.20 sparse-distributed architecture already handles
+64/bridge at 100% (engineered codes); the open piece is whether the LEARNED (v16) reps stay separable at
+those sizes with adequate training. THAT is the worthwhile next characterization -- a training x vocab-size
+sweep -- and it is far cheaper than the 100hr (and would tell us whether ANY big run is warranted, and at
+what vocab size the cheap lever finally breaks).
 
 ## Discipline note
 Gate 1's verdict was propagated as "validated" (it had a 16-word positive control). But the control validated
