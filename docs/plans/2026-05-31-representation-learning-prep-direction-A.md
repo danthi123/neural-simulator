@@ -89,8 +89,20 @@ Key findings (full report in the session; sources cited there):
   (checkpoint/resume), concept_pool_demo --save/load-bridge, the denoise64 caches. Perf: GPU util ~30-50%
   (memory-bandwidth-bound sparse SNN); fp16_synapse_state + reset/stim trims ~2.7x before cloud; H100 ~6-8x.
 
-## Revised gate order (compute-protecting)
-1. GATE 1 (CPU, decisive, IN PROGRESS): is the 28-word wall a lossy READOUT or a representation limit?
+## GATE 1 = DONE, VALIDATED: the 28-word wall is a REAL representation limit (NOT a cheap readout fix)
+Finding 2026-05-31-GATE1-frontend-wall-is-a-real-representation-limit-at-28-words.md. With a validated
+pipeline (16-word positive control reproduces NN 0.91 > pool-argmax 0.80 at k=1, both 1.000 at k=4 = the
+internal map's "lossy readout / 100% identifiable"), the 28-word fair head-to-head shows the full-code
+decoder is WORSE than pool-argmax at every averaging level (k=4: 0.527 vs 0.402), plateauing at ~0.53-0.64
+(NOT 1.000 like 16 words). It is OVERLAP not noise (averaging doesn't fix it). So the lossy-readout escape
+that works at 16 words does NOT extend to 28 -> a genuine representation-capacity transition. Cheap readout
+fix is OUT; representation learning at ACQUISITION is genuinely needed. (Several intermediate runs were
+caught as capture-faithfulness bugs and corrected -- the discipline.) -> The 100hr is warranted IF an
+acquisition-level lever is needed, but must target G.20-scaling or VSA-roles or acquisition-level e-prop /
+expansion+Hebbian -- NOT the bounded BPTT, NOT post-hoc transforms.
+
+## Original gate order (Gate 1 now resolved -> representation limit)
+1. GATE 1 (CPU, decisive, DONE = REPRESENTATION LIMIT): is the 28-word wall a lossy READOUT or a representation limit?
    (a) pool-argmax (the wall ~0.57) vs (b) nearest-centroid on mean-centered full code vs (c) learned linear
    decoder. If a proper decoder clears ~0.80 -> READOUT artifact -> cheap fix, NO 100hr. NOTE: first run was
    a CAUGHT BUG (capture state-drift -> pool-argmax 0.234 != the probe's 0.571; no mean-centering; p>>n

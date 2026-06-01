@@ -24,16 +24,20 @@ overlap (FLAT across N, NOT moved by coding on the SAME activity); IF reps neede
 better bets G.20-scaling or VSA role-binding. THE compute-protecting fact: 16-concept activity is 100%
 NN-identifiable though pool-argmax recognition is 81% -> the front-end wall may be a LOSSY-READOUT artifact.
 
-GATE 1 (decisive cheap-first, CPU): is the 28-word wall a lossy READOUT or a representation limit? Decoder
-(nearest-centroid mean-centered / learned linear) on the full per-neuron code vs pool-argmax (the 0.57 wall).
-clears ~0.80 -> READOUT artifact -> cheap fix, NO 100hr. CAPTURE-FAITHFULNESS DEBUGGING (the hard part, done
-right): first 2 Gate-1 runs were CAUGHT BUGS -- pool-argmax 0.234/0.250 != the front-end probe's 0.571.
-Root cause: capturing each word 16x consecutively SATURATES the pool (adaptation) + a cold reset hurt; fix =
-WARM continuation (no reset) + INTERLEAVED round-robin (each word once/round, like the probe). Re-capture +
-Gate 1 running (waiter b29lqsjk0); FAITHFULNESS CHECK = pool-argmax must recover to ~0.571 before trusting
-the separability numbers. EXACT NEXT: when it lands, verify pool-argmax~0.571; if faithful, read the decoder
-vs wall -> READOUT-artifact (cheap fix, propagate, no 100hr) OR representation-limit (-> Gate 1b
-expansion+Hebbian; the internal map predicts bounded). Do NOT launch the 100hr until Gates say it's earned.
+GATE 1 = DONE, VALIDATED = REPRESENTATION LIMIT (finding 2026-05-31-GATE1-frontend-wall-is-a-real-
+representation-limit-at-28-words.md). Capture-faithfulness was a multi-iteration bug-hunt (single captures
+are OU-noise-dominated, cos 0.13-0.18 same-word even after reload -> must AVERAGE per the validated denoise
+methodology; round-0 reproduces the probe's 0.571; restore clean state per round). VALIDATED with a 16-word
+POSITIVE CONTROL (_gate1_16word_control.py): 16-word NN 0.910 > pool-argmax 0.801 at k=1, BOTH 1.000 at k=4
+= the internal map's lossy-readout / 100%-identifiable, reproduced. 28-word fair head-to-head (same averaging,
+pool-argmax vs full-code LOO-NN): NN is WORSE than pool-argmax at every level (k=4: 0.527 vs 0.402),
+plateauing ~0.53-0.64 (NOT 1.000 like 16w). OVERLAP not noise. So the lossy-readout escape that works at 16w
+does NOT extend to 28w -> a genuine representation-capacity transition. Cheap readout fix OUT; acquisition-
+level representation learning genuinely needed. EXACT NEXT = GATE 2 (cheap, ~1 GPU-hr): test an ACQUISITION-
+level local-learning lever on 28-word recognition -- e-prop (three-factor) OR expansion+Hebbian-during-
+acquisition (Lindsay 2017) -- does it beat the ~0.64 clean-code wall? If yes -> cheaper-than-100hr lever
+exists. If no -> the 100hr is EARNED and targets G.20-scaling or VSA-roles (NOT BPTT [bounded], NOT post-hoc
+transforms [bounded]). Do NOT launch the 100hr until Gate 2 resolves.
 moat 7/7; 0.80 bar frozen; reuse-by-import; no autograd/protected-module edits; honest propagation both remotes.
 
 ## >>> LATEST ACTION (cheating-audit arc -- COMPLETE; 2026-05-31) <<<
