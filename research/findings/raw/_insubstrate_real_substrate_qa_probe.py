@@ -115,13 +115,17 @@ def run_qa(codes, words, seed, n_trials, n_facts, xp):
 
 
 def main():
+    global STIM
     ap = argparse.ArgumentParser()
     ap.add_argument("--bridge", type=str, required=True)
     ap.add_argument("--vocab", type=str, required=True)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--n-trials", type=int, default=10)
     ap.add_argument("--n-facts", type=int, default=2)
+    ap.add_argument("--stim-steps", type=int, default=STIM,
+                    help="capture window (temporal-integration denoising lever; default 120)")
     a = ap.parse_args()
+    STIM = a.stim_steps   # capture_real_codes reads the module STIM
     if not os.path.exists(a.bridge):
         print(f"CANNOT-CONCLUDE: bridge {a.bridge} not found", flush=True); return
     xp, backend = get_backend()
