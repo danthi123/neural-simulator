@@ -9,6 +9,32 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## >>> LATEST ACTION (read THIS first; 2026-05-31 cont'd) <<<
+
+CHEATING AUDIT (owner asked "are we still using templates/cheating, or is composition working?") =
+IN PROGRESS, part 1 committed both remotes. Rigorous controlled answer:
+(1) Composition a template? NO -- genuine VSA algebra: generalizes (8/8 nonsense, 60/60, 3/3 multi-seed)
+    AND correctly ABSTAINS on unstored facts (qa64 unknown-control 1.000 at V=160/320; drive-echo CANNOT
+    abstain). (2) Parser a positional template? NO (closed) -- live REPL uses the LEARNED Hebbian parser,
+    voice-invariant 3/3. (3) Concepts learned or given? PARTLY EACH, MEASURED: pool-label(trained) -
+    pool-label(untrained-random) = the genuinely LEARNED fraction. V=28: 0.571 - 0.036 = +53.5pp (decisive).
+    V=16: untrained floor 0.125 measured; TRAINED PENDING (_learned16 training PID 17088, ~20min, saving
+    research/findings/raw/_learned16_seed42.simstate.h5). The GIVEN component is the orthogonal input
+    encoding; large-V (160/320) concepts are GIVEN sparse codes (learned recognition validated only at
+    small vocab). Triggered by catching one of my OWN metrics as a drive-echo ARTIFACT (bind-on-codes read
+    1.000 even untrained) -- isolated to that one flawed front-end metric; abstention-controlled composition
+    unaffected. Findings: 2026-05-31-cheating-audit-learned-vs-given-and-genuine-composition.md (16-word
+    trained row pending) + 2026-05-31-front-end-distributed-vs-label-ARTIFACT-honest-negative.md.
+EXACT NEXT: (a) when _learned16 training completes -> run
+  `python -m research.findings.raw._learned_vs_given_probe --ckpt research/findings/raw/_learned16_seed42.simstate.h5`
+  -> fill the 16-word TRAINED pool-label row -> complete the audit doc -> commit+push both remotes.
+(b) SURFACE the honest cheating answer + the owner-strategic fork to the owner (per pointer below: tractable
+  composition+P4 space is concluded; remaining big direction = V=640 richer-training, owner-strategic, do NOT
+  launch unilaterally). (c) Proceed (tractable, non-100hr, real value): run the validated spiking relational
+  memory on the REAL G.20 160-concept sparse substrate (bridges exist: g20_sparse_bridges/) with the
+  abstention control -- the largest genuine-composition conversational artifact on a real substrate.
+moat 7/7; 0.80 bar frozen; cheap-first before spiking; honest negatives are the deliverable; GPU/CuPy real.
+
 ## >>> CURRENT POINTER (read THIS first; 2026-05-31) <<<
 
 ACTIVE ARC = BIOLOGICAL COMPOSITION (owner chose Option 2: "we absolutely want compositional
@@ -183,7 +209,19 @@ composition. Conversation batch COMPLETE (bidirectional agent: understand/answer
 REPL, all multi-seed). 8 insights synthesized. The TRACTABLE conversation + scaling space is comprehensively
 done; everything committed both remotes.
 
-EXACT NEXT CONCRETE ACTION = front-end arc IN FLIGHT. NOTE: first training (task b1jvm9b2g, 200 events)
+FRONT-END distributed-vs-label = DONE, honest NEGATIVE (ARTIFACT; scrutiny caught it). Trained 28-word
+bridge: pool-label 0.571, distributed-bind-QA 1.000 -- looked like a breakthrough. UNTRAINED CONTROL
+(random weights, pool-label 0.036 = chance) gives bind-QA STILL 1.000 -> the metric measures the
+ORTHOGONAL-DRIVE ECHO (distinct lang_input -> distinct codes even untrained), NOT learned separability.
+So "distributed >> label" is an artifact; the 28-word recognition limit (57% pool-label) is REAL. Finding
+2026-05-31-front-end-distributed-vs-label-ARTIFACT-honest-negative.md; committed both remotes. BROADER
+honest implication recorded: captured concept codes carry a large drive-echo component (concept
+separability substantially from the orthogonal INPUT encoding, not purely learned semantics) -- does NOT
+undermine the COMPOSITION (bind/unbind generalizes to novel sentences, genuine), but refines scope. The
+real front-end limit (learned word->concept routing) is unchanged. Possible NEXT (future): a drive-
+INDEPENDENT capture/test (non-orthogonal or held-out drive) to measure LEARNED separability cleanly; or
+accept the documented front-end as the hard frontier. NOTE on the dead first attempt: first training
+(task b1jvm9b2g, 200 events)
 TIMED OUT incomplete (~1.3s/event under demo contention = ~2hr not 28min; checkpoint never saved). RE-
 LAUNCHED smoke-scale (task bnl7ff9zh, 50 events/word -- enough since v17 showed 50-200 events all give
 ~50% label; NO contending demos this time so it completes), saving research/findings/raw/
