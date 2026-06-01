@@ -42,10 +42,15 @@ the cheap acquisition lever); single-shot 0.395->0.714 + NN 0.402->0.893 (readou
 integration/NN readout) reaches ~0.93 AND reduces overlap -- NO 100hr, NO BPTT, NO new mechanism. The premise
 for Direction A's big run is REFUTED at 28 words. (NOTE: I STALLED here -- launched the sweep with nohup &
 WITHOUT a harness-tracked waiter, so I missed completion; owner rightly annoyed. FIX: every long job gets a
-run_in_background waiter, no exceptions.) EXACT NEXT (running, WITH waiter): multi-seed confirm (seeds 43,44 @
-300ev) to solidify the refutation before recommending skip-the-100hr; THEN the real frontier = does "more
-training reduces overlap" hold at 64/160-word LEARNED vocab (a training x vocab-size sweep, far cheaper than
-100hr) -- that tells us if ANY big run is warranted + at what vocab the cheap lever breaks. DISCIPLINE: a
+run_in_background waiter, no exceptions.) MULTI-SEED CONFIRMED (seeds 42/43/44 @ 300ev): clean 28-word recognition
+0.929/0.964/0.964 (mean ~0.95), overlap ~0.50 -- refutation is ROBUST, not seed-luck. SCALE TEST RUNNING
+(WITH waiter b8d4xb0u6, _scale64.log): 64-word LEARNED vocab (v3: 4 motor + 20 noun + 20 verb + 20 adj),
+2048 lang, sparsity 0.01, 300ev -- does "training reduces overlap" hold at 64 words (overlap stays ~0.5,
+recognition ~0.9 -> cheap lever holds, no 100hr) or does the overlap floor reappear (-> a real rep-learning
+target at some N)? Compare to 28-word (overlap 0.50, recognition 0.95). v3 runner + generalized capture
+(--vocab-mod/--n-lang) committed. EXACT NEXT: when scale64 lands, read overlap/recognition at N=64; if cheap
+lever holds, optionally extend to 160 words (8192 lang); recommend hold-the-100hr to owner. If overlap
+climbs/recognition drops at 64, that localizes where a real big run is warranted. DISCIPLINE: a
 positive control validates the INSTRUMENT not the COMPARISON (Gate 1's training-amount confound). Do NOT
 launch the 100hr -- its premise is refuted at 28 words; surface to owner.
 moat 7/7; 0.80 bar frozen; reuse-by-import; no autograd/protected-module edits; honest propagation both remotes.
