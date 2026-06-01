@@ -1,3 +1,5 @@
+> **RETRACTED 2026-06-01 (verdict only):** the "representation limit" verdict was confounded by an UNDERTRAINED bridge (the _v17 28-word bridge was ~50 events; the 16-word control was 200). A matched 150-event 28-word bridge gives clean recognition 0.893, not 0.64. See 2026-06-01-GATE2-overturns-GATE1-28word-wall-is-undertraining-not-representation-limit.md. The PIPELINE + 16-word control remain valid; only the cross-vocab representation-limit conclusion is retracted.
+
 # GATE 1 (validated): the 28-word front-end wall is a REAL representation limit, not a cheap readout fix
 
 **Direction (A) preparation, compute-protecting cheap-first gate.** Decisive + validated with a positive
