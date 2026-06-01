@@ -64,23 +64,13 @@ def main():
     D = len(all_idx)
     print(f"  {len(words)} words, {len(pools)} pools, D={D} per-neuron concept code", flush=True)
 
-    def reset_to_rest():
-        # thorough reset so each capture is independent (no state drift across 448 sequential captures)
-        if bridge.cp_izh_vr is not None:
-            bridge.cp_membrane_potential_v[:] = bridge.cp_izh_vr
-        if bridge.cp_recovery_variable_u is not None:
-            bridge.cp_recovery_variable_u[:] = 0.0
-        bridge.cp_conductance_g_e[:] = 0.0
-        bridge.cp_conductance_g_i[:] = 0.0
-        bridge.cp_firing_states[:] = False
-        if getattr(bridge, "cp_prev_firing_states", None) is not None:
-            bridge.cp_prev_firing_states[:] = False
-
     def capture_once(word):
+        # WARM continuation (no cold reset -- matches the front-end probe that gets pool-argmax 0.571);
+        # samples are INTERLEAVED round-robin in main() so no word is driven 16x in a row (avoids the
+        # adaptation/saturation that collapsed pool-argmax to ~0.25 in the 16-in-a-row version).
         drive = orthogonal_drive_pattern(cue_idx=word_to_idx[word], n_cues=len(words), n_neurons=N_LANG,
                                          drive_max_pA=DRIVE_PA, sparsity=SPARSITY)
         bridge.cp_external_input_current[:] = 0.0
-        reset_to_rest()
         for _ in range(RESET):
             bridge._run_one_simulation_step()
         bridge.cp_external_input_current[lang_arr] = xp.asarray(drive, dtype=xp.float32)
@@ -94,11 +84,10 @@ def main():
     X = np.zeros((len(words) * a.m_samples, D), dtype=np.float32)
     y = np.zeros(len(words) * a.m_samples, dtype=np.int64)
     k = 0
-    for wi, w in enumerate(words):
-        for _ in range(a.m_samples):
+    for rnd in range(a.m_samples):                 # INTERLEAVED round-robin: each word once per round
+        for wi, w in enumerate(words):
             X[k] = capture_once(w); y[k] = wi; k += 1
-        if (wi + 1) % 7 == 0:
-            print(f"  captured {wi+1}/{len(words)} words", flush=True)
+        print(f"  round {rnd+1}/{a.m_samples} done", flush=True)
     pool_of_word = np.array([pools.index(word_to_pool[w]) for w in words], dtype=np.int64)
     np.savez_compressed(OUT, X=X, y=y, words=np.array(words), pools=np.array(pools),
                         pool_of_word=pool_of_word, m_samples=a.m_samples)

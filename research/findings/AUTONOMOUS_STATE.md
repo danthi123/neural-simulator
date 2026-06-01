@@ -9,7 +9,34 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> LATEST ACTION (read THIS first; 2026-05-31 cont'd) <<<
+## >>> DIRECTION A PREP -- ACTIVE (read THIS first; 2026-05-31) <<<
+
+OWNER CHOSE (A) richer representation learning at scale, "but spend time in preparation ensuring we make the
+most of all the time spent on compute." So: PREPARE thoroughly, run cheap-first GATES before the ~100hr.
+Design-prep doc: docs/plans/2026-05-31-representation-learning-prep-direction-A.md.
+
+INPUTS DONE (2 background agents): (1) external survey REFRAMES -- the bounded mechanisms (DG/Foldiak/random)
+all attack post-hoc readout-transform toward VSA near-ortho; the 54%-wins limit is UPSTREAM representation
+learning; 2 untried non-100hr levers (expansion+Hebbian Lindsay-2017; e-prop Bellec-Maass); predictive coding
+ruled out (100x costlier). (2) internal map: BPTT ALREADY decisively bounded (char-level Phase 2.3a/2.3b
+NEGATIVE, scale makes it WORSE), contrastive runner NEGATIVE, near-ortho floor ~0.48 set by intrinsic per-pair
+overlap (FLAT across N, NOT moved by coding on the SAME activity); IF reps needed, BPTT is the wrong tool ->
+better bets G.20-scaling or VSA role-binding. THE compute-protecting fact: 16-concept activity is 100%
+NN-identifiable though pool-argmax recognition is 81% -> the front-end wall may be a LOSSY-READOUT artifact.
+
+GATE 1 (decisive cheap-first, CPU): is the 28-word wall a lossy READOUT or a representation limit? Decoder
+(nearest-centroid mean-centered / learned linear) on the full per-neuron code vs pool-argmax (the 0.57 wall).
+clears ~0.80 -> READOUT artifact -> cheap fix, NO 100hr. CAPTURE-FAITHFULNESS DEBUGGING (the hard part, done
+right): first 2 Gate-1 runs were CAUGHT BUGS -- pool-argmax 0.234/0.250 != the front-end probe's 0.571.
+Root cause: capturing each word 16x consecutively SATURATES the pool (adaptation) + a cold reset hurt; fix =
+WARM continuation (no reset) + INTERLEAVED round-robin (each word once/round, like the probe). Re-capture +
+Gate 1 running (waiter b29lqsjk0); FAITHFULNESS CHECK = pool-argmax must recover to ~0.571 before trusting
+the separability numbers. EXACT NEXT: when it lands, verify pool-argmax~0.571; if faithful, read the decoder
+vs wall -> READOUT-artifact (cheap fix, propagate, no 100hr) OR representation-limit (-> Gate 1b
+expansion+Hebbian; the internal map predicts bounded). Do NOT launch the 100hr until Gates say it's earned.
+moat 7/7; 0.80 bar frozen; reuse-by-import; no autograd/protected-module edits; honest propagation both remotes.
+
+## >>> LATEST ACTION (cheating-audit arc -- COMPLETE; 2026-05-31) <<<
 
 CHEATING AUDIT (owner asked "are we still using templates/cheating, or is composition working?") =
 COMPLETE, committed both remotes (finding 2026-05-31-cheating-audit-learned-vs-given-and-genuine-
