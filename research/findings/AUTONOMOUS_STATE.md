@@ -12,7 +12,13 @@ explicit user stop/pause or a true safety boundary halts work)
 ## >>> LATEST ACTION (read THIS first; 2026-05-31 cont'd) <<<
 
 CHEATING AUDIT (owner asked "are we still using templates/cheating, or is composition working?") =
-IN PROGRESS, part 1 committed both remotes. Rigorous controlled answer:
+COMPLETE, committed both remotes (finding 2026-05-31-cheating-audit-learned-vs-given-and-genuine-
+composition.md). ANSWER: NOT cheating, honestly scoped. 16-word TRAINED pool-label 0.812 vs floor 0.125
+= +68.7pp LEARNED; 28-word 0.571 vs 0.036 = +53.5pp; learned fraction erodes with vocab = the quantified
+front-end wall. NOW IN FLIGHT: (c) real-substrate spiking QA cheap-first (PID 17280,
+_real_substrate_qa_bridgeA.log) -- does the validated relational memory + abstention hold on REAL captured
+160-substrate codes (bridgeA_nouns, 32 concepts) vs synthetic? RESOLVES (QA+ctrl>=0.80) -> scale to 160;
+PARTIAL/boundary -> characterize honestly. Full rigorous controlled answer below:
 (1) Composition a template? NO -- genuine VSA algebra: generalizes (8/8 nonsense, 60/60, 3/3 multi-seed)
     AND correctly ABSTAINS on unstored facts (qa64 unknown-control 1.000 at V=160/320; drive-echo CANNOT
     abstain). (2) Parser a positional template? NO (closed) -- live REPL uses the LEARNED Hebbian parser,
