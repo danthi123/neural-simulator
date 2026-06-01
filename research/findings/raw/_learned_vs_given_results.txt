@@ -9,8 +9,11 @@ V=28 (pool arch, v17 bridge):
 
 V=16 (pool arch, v14 recipe, _learned16_seed42):
   UNTRAINED pool-label = 0.125 (2/16; chance 0.062; the 2 hits coincidental)
-  TRAINED  pool-label = <pending _learned16 training, ~20 min>
-  LEARNED delta = <pending>
+  TRAINED  pool-label = 0.812 (13/16)
+  LEARNED delta = +0.687 (68.7 pp)
+
+CURVE: learned fraction HIGHER at small vocab (16: +68.7pp) and ERODES with scale (28: +53.5pp) = the
+quantified front-end wall (motor pools increasingly dominate the argmax as vocab grows).
 
 Conclusion (28-word already decisive): concept recognition is GENUINELY LEARNED, far above the
 drive-echo floor. The bind-on-codes metric that read 1.000 even untrained was a drive-echo ARTIFACT

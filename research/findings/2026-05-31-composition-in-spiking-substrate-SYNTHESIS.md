@@ -152,11 +152,11 @@ each has a control:
 2. Parsing a positional template? NO (closed). The live REPL uses the LEARNED Hebbian parser, voice-
    invariant, multi-seed 3/3.
 3. Concepts learned or given? PARTLY EACH, measured not hidden. Pool-label recognition (the honest metric)
-   trained-minus-untrained = the genuinely LEARNED fraction: +53.5 pp over the drive-echo floor at 28
-   words (trained 0.571 vs untrained-random 0.036), and a larger delta at 16 words (untrained floor 0.125).
-   The GIVEN component is the orthogonal input encoding; large-V (160/320) "concepts" are given sparse
-   codes, so learned word recognition is validated only at small vocab -- the front-end is the documented
-   ceiling.
+   trained-minus-untrained = the genuinely LEARNED fraction: +68.7 pp at 16 words (trained 0.812 vs
+   untrained-random floor 0.125) and +53.5 pp at 28 words (0.571 vs 0.036). The learned fraction is HIGHER at
+   small vocab and ERODES with scale -- the quantified front-end wall. The GIVEN component is the orthogonal
+   input encoding; large-V (160/320) "concepts" are given sparse codes, so learned word recognition is
+   validated only at small vocab -- the front-end is the documented ceiling.
 
 Honest-discipline note: this audit was triggered by catching one of my OWN metrics as a drive-echo
 ARTIFACT (a bind-QA on captured codes read 1.000 even untrained -- see
