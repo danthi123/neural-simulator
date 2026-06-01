@@ -15,10 +15,20 @@ CHEATING AUDIT (owner asked "are we still using templates/cheating, or is compos
 COMPLETE, committed both remotes (finding 2026-05-31-cheating-audit-learned-vs-given-and-genuine-
 composition.md). ANSWER: NOT cheating, honestly scoped. 16-word TRAINED pool-label 0.812 vs floor 0.125
 = +68.7pp LEARNED; 28-word 0.571 vs 0.036 = +53.5pp; learned fraction erodes with vocab = the quantified
-front-end wall. NOW IN FLIGHT: (c) real-substrate spiking QA cheap-first (PID 17280,
-_real_substrate_qa_bridgeA.log) -- does the validated relational memory + abstention hold on REAL captured
-160-substrate codes (bridgeA_nouns, 32 concepts) vs synthetic? RESOLVES (QA+ctrl>=0.80) -> scale to 160;
-PARTIAL/boundary -> characterize honestly. Full rigorous controlled answer below:
+front-end wall. (c) REAL-SUBSTRATE VALIDITY (finding 2026-05-31-real-substrate-spiking-composition-
+validity.md): does the validated spiking relational memory + abstention hold on REAL captured G.20 codes,
+not just synthetic? bridgeA_nouns (32 concepts): REAL QA 0.800 + abstention 1.000 = RESOLVES, but honestly
+DEGRADED ~20pp vs synthetic 1.000 (real codes cos 0.079 off the idealized pattern -> noisier; bind absorbs
+it + perfect abstention). SCRUTINY CAUGHT A 2nd ARTIFACT: the naive 160-pool QA read 0.000 but with MAX
+between-cos 1.000 -> DUPLICATE codes (all 5 bridges share byte-identical seed-42 sparse patterns) -> a global
+160-way cleanup has 5-way ties -> artifactual 0, NOT a substrate boundary. Did NOT propagate the false
+"boundary at scale"; corrected the finding + added a max-cos>0.95 VOID-DUPLICATE guard to the 160 probe.
+qa64 already showed the algebra handles 160 DISTINCT synthetic codes (1.000); the deployed 160 substrate uses
+within-bridge recall + cross-bridge engram TAGS, not global VSA. NOW IN FLIGHT: the VALID scale test =
+within-bridge real-code QA on the 4 remaining bridges B/C/D/E (PID 17424, _5bridge_within.log); all 5 RESOLVE
+-> real-substrate composition robust across the deployed bridges. TWO self-caught artifacts this arc
+(drive-echo + duplicate-code), both honest-negatives, genuine results intact = the discipline working. Full
+rigorous controlled answer below:
 (1) Composition a template? NO -- genuine VSA algebra: generalizes (8/8 nonsense, 60/60, 3/3 multi-seed)
     AND correctly ABSTAINS on unstored facts (qa64 unknown-control 1.000 at V=160/320; drive-echo CANNOT
     abstain). (2) Parser a positional template? NO (closed) -- live REPL uses the LEARNED Hebbian parser,
