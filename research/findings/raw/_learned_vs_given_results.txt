@@ -1,0 +1,17 @@
+=== learned-vs-given audit (pool-label recognition; the honest metric) ===
+Method: LEARNED separability = pool-label(trained) - pool-label(untrained random).
+The untrained value is the drive-echo / structural floor; the delta over it is genuinely learned.
+
+V=28 (pool arch, v17 bridge):
+  TRAINED  pool-label = 0.571 (16/28)
+  UNTRAINED pool-label = 0.036 (1/28, ~chance 0.036)
+  LEARNED delta = +0.535 (53.5 pp)
+
+V=16 (pool arch, v14 recipe, _learned16_seed42):
+  UNTRAINED pool-label = 0.125 (2/16; chance 0.062; the 2 hits coincidental)
+  TRAINED  pool-label = <pending _learned16 training, ~20 min>
+  LEARNED delta = <pending>
+
+Conclusion (28-word already decisive): concept recognition is GENUINELY LEARNED, far above the
+drive-echo floor. The bind-on-codes metric that read 1.000 even untrained was a drive-echo ARTIFACT
+(isolated; the abstention-controlled composition results are unaffected).

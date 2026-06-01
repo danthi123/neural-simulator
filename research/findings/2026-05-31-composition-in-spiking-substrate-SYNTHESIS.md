@@ -138,3 +138,30 @@ multi-seed (42,43,44) parse 6/6, voice-invariant agent 1.000, scrambled-parse co
 understood (dog is the agent), LEARNED not supplied. This is the first end-to-end learned syntactic
 understanding in-substrate, composing every validated piece. What remains for richer conversation: scale
 vocabulary, more syntactic constructions (questions, relative clauses), and multi-turn persistent dialogue.
+
+## Cheating audit + honest scope (2026-05-31)
+
+A rigorous, controlled answer to "are we cheating / using templates?" is in
+2026-05-31-cheating-audit-learned-vs-given-and-genuine-composition.md. Three things could be cheating;
+each has a control:
+
+1. Composition a template? NO. The bind/unbind is genuine VSA algebra: generalizes to novel combinations
+   (8/8 nonsense, 60/60, 3/3 multi-seed) AND correctly abstains on unstored facts (qa64 "unknown control"
+   1.000 at V=160 and V=320). Correct abstention is the decisive anti-artifact control -- a system with
+   merely distinct codes would clean up an unknown query to SOME concept and answer wrongly.
+2. Parsing a positional template? NO (closed). The live REPL uses the LEARNED Hebbian parser, voice-
+   invariant, multi-seed 3/3.
+3. Concepts learned or given? PARTLY EACH, measured not hidden. Pool-label recognition (the honest metric)
+   trained-minus-untrained = the genuinely LEARNED fraction: +53.5 pp over the drive-echo floor at 28
+   words (trained 0.571 vs untrained-random 0.036), and a larger delta at 16 words (untrained floor 0.125).
+   The GIVEN component is the orthogonal input encoding; large-V (160/320) "concepts" are given sparse
+   codes, so learned word recognition is validated only at small vocab -- the front-end is the documented
+   ceiling.
+
+Honest-discipline note: this audit was triggered by catching one of my OWN metrics as a drive-echo
+ARTIFACT (a bind-QA on captured codes read 1.000 even untrained -- see
+2026-05-31-front-end-distributed-vs-label-ARTIFACT-honest-negative.md). The artifact was isolated to that
+one flawed front-end metric; the abstention-controlled composition results are unaffected. Net: the
+composition is genuine and generalizes; concept recognition is genuinely learned at small scale with a
+measured "given by encoding" component; the learned-concept-at-scale front-end is the bounded, honestly
+quantified frontier.

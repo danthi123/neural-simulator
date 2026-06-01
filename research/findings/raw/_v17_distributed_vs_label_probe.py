@@ -127,9 +127,23 @@ def main():
     print(f"  DISTRIBUTED-code bind/QA (who): {qa:.3f}", flush=True)
     print(f"\nRESULT: pool-label={label_acc:.3f} vs distributed-bind-QA={qa:.3f}", flush=True)
     if qa > label_acc + 0.15:
-        print("VERDICT: DISTRIBUTED >> LABEL -- the 28-word front-end limit is partly a READOUT artifact; "
-              "the bind on distributed codes exceeds the pool-label -> effective conversational vocab is "
-              "larger than the label suggests. A real path past the v17 wall.", flush=True)
+        # HONEST-BY-CONSTRUCTION (2026-05-31): a high bind-QA on distributed codes is NOT evidence of a
+        # readout artifact unless the UNTRAINED control (random weights) gives a LOW bind-QA. The control
+        # showed bind-QA stays 1.000 untrained -> the metric is the orthogonal-DRIVE ECHO, not learned
+        # separability. So this branch must NOT claim "a real path past the wall". It is VOID without the
+        # paired --untrained run, and the paired run already falsified the readout-artifact hypothesis.
+        if untrained:
+            print("VERDICT: VOID-CONTROL -- this IS the untrained control. bind-QA is high here at "
+                  f"pool-label {label_acc:.3f} (~chance) -> the bind-QA measures the orthogonal-drive echo "
+                  "(distinct inputs -> distinct codes even with random weights), NOT learned separability. "
+                  "The 'distributed >> label' result on the trained bridge is therefore an ARTIFACT.", flush=True)
+        else:
+            print("VERDICT: INCONCLUSIVE-WITHOUT-CONTROL -- bind-QA exceeds pool-label, but bind/cleanup "
+                  "trivially separates orthogonally-distinct codes, so this does NOT by itself show the "
+                  "front-end limit is a readout artifact. You MUST run the paired --untrained control: if it "
+                  "ALSO gives high bind-QA (it does -> ARTIFACT), the metric is drive-echo and the 28-word "
+                  "recognition limit (pool-label) is the real signal. See 2026-05-31-front-end-distributed-"
+                  "vs-label-ARTIFACT-honest-negative.md. Do NOT report this as a breakthrough.", flush=True)
     elif qa >= label_acc - 0.1:
         print("VERDICT: distributed ~ label -- the distributed codes are about as separable as the label; "
               "the 28-word limit is a genuine code-separability limit, not just readout.", flush=True)
