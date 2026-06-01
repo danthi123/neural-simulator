@@ -38,10 +38,22 @@ limit (qa64 V=160 synth 1.000); the real substrate's code NOISE is, and biology 
 it. THREE self-caught artifacts this arc
 (drive-echo + duplicate-code + deterministic-copies), none propagated, each honestly corrected, genuine
 results intact = the discipline working. Finding 2026-05-31-real-substrate-spiking-composition-validity.md,
-all committed both remotes. NEXT: update capability_status honest scope -> surface comprehensive picture +
-strategic fork to owner (tractable composition space thoroughly validated+bounded; next lever = learned
-concepts AT SCALE = owner-strategic: richer training [~100hr, do NOT launch unilaterally] OR front-end
-architecture redesign [needs design effort, check-existing-first]). Full rigorous controlled answer below:
+all committed both remotes. capability_status + pointer updated; wiki-sync pushed to Gitea. FRONT-END
+DE-RISK DONE (cheap-first, no-retrain, _frontend_motor_dominance_probe.py; finding 2026-05-31-frontend-wall-
+not-cheap-motor-rebalance-needs-redesign.md): the 28-word wall is NOT a cheap motor-rebalance -- concept
+pools only separate concept words 13/24=0.54 among THEMSELVES (motors excluded), and down-weighting motors
+makes it WORSE (0.571->0.464, breaks the 4 motor words). So the wall is genuinely architectural (concept-
+representation separability at scale), refining v17's "motor dominance" (a symptom) -> NO cheap autonomous
+lever remains; pushing recognition past ~28 words is a real retrain/redesign = OWNER-STRATEGIC (richer reps
+/ more lang_input / concept-only arch / richer training; do NOT launch the ~100hr unilaterally).
+>>> ARC COMPLETE + FULLY PROPAGATED. The owner's "are we cheating?" question is rigorously answered
+(composition genuine + abstention-controlled; parser learned; concepts learned-at-small-scale measured;
+real-substrate works, variance-limited, temporal-integration-fixable; THREE self-caught artifacts none
+propagated). The tractable composition+recognition space is thoroughly validated + honestly bounded; the
+next lever (learned concepts AT SCALE) is owner-strategic and de-risked as NOT-cheap. NEXT GENUINE STEP =
+surface the comprehensive picture to the owner with the evidenced recommendation; await steer on the
+owner-strategic direction. Do NOT fabricate make-work; do NOT launch the ~100hr or an architectural redesign
+without owner buy-in (brainstorming/design + check-existing-first gate). <<<  Full rigorous answer below:
 (1) Composition a template? NO -- genuine VSA algebra: generalizes (8/8 nonsense, 60/60, 3/3 multi-seed)
     AND correctly ABSTAINS on unstored facts (qa64 unknown-control 1.000 at V=160/320; drive-echo CANNOT
     abstain). (2) Parser a positional template? NO (closed) -- live REPL uses the LEARNED Hebbian parser,
