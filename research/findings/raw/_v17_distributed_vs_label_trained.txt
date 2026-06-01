@@ -1,0 +1,7 @@
+=== v17 distributed-vs-label (28 words, backend=cupy) ===
+  28 words, 28 pools
+  POOL-LABEL recognition: 0.571 (16/28)
+  DISTRIBUTED-code bind/QA (who): 1.000
+
+RESULT: pool-label=0.571 vs distributed-bind-QA=1.000
+VERDICT: DISTRIBUTED >> LABEL -- the 28-word front-end limit is partly a READOUT artifact; the bind on distributed codes exceeds the pool-label -> effective conversational vocab is larger than the label suggests. A real path past the v17 wall.

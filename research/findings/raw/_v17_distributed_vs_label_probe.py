@@ -9,6 +9,14 @@ the SAME bridge -- genuinely new. Loads the 28-word bridge trained by concept_po
 matched; load_checkpoint validates so the 2026-05-14 monkey-patch mismatch bug is CAUGHT not silent).
 
 Run AFTER the 28-word training: python -m research.findings.raw._v17_distributed_vs_label_probe
+Control (MANDATORY): add --untrained (random weights, skip checkpoint).
+
+RESULT 2026-05-31: ARTIFACT, honest NEGATIVE (see 2026-05-31-front-end-distributed-vs-label-ARTIFACT-
+honest-negative.md). Trained: pool-label 0.571, bind/QA 1.000. UNTRAINED CONTROL: pool-label 0.036
+(chance) but bind/QA STILL 1.000 -> the bind/QA measures the ORTHOGONAL-DRIVE ECHO (distinct inputs ->
+distinct codes even with random weights), NOT learned separability. So "distributed >> label" is an
+artifact; the 28-word recognition limit (57% pool-label) is REAL. The auto-VERDICT below is INVALID
+without the --untrained control and is corrected by it. Scrutiny (the control) caught the artifact.
 """
 from __future__ import annotations
 import os
@@ -53,10 +61,16 @@ def main():
             [f"adjective_pool_{v}" for v in cpd.ADJECTIVE_VOCAB.values()]
     print(f"  {len(words)} words, {len(pools)} pools", flush=True)
 
+    import sys
+    untrained = "--untrained" in sys.argv     # CONTROL: random weights -> isolates drive-echo artifact
     # build matching architecture + load (load_checkpoint validates -> mismatch is caught)
     bridge = cpd.build_concept_bridge(seed=42, n_lang_input=N_LANG, n_per_pool=200, n_fs_per_pool=24,
                                       enable_adjective=True, weak_dynamics=True, verbose=False)
-    bridge.load_checkpoint(CKPT)
+    if untrained:
+        print("  [UNTRAINED CONTROL: random weights, NOT loading the checkpoint -- isolates whether the "
+              "separability is from the LEARNED routing or just the orthogonal-drive echo]", flush=True)
+    else:
+        bridge.load_checkpoint(CKPT)
     cpd._freeze_phase1_gates(bridge) if hasattr(cpd, "_freeze_phase1_gates") else None
     rm = bridge.region_manager
     all_idx = []
