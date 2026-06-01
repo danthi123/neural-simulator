@@ -48,9 +48,17 @@ run_in_background waiter, no exceptions.) MULTI-SEED CONFIRMED (seeds 42/43/44 @
 2048 lang, sparsity 0.01, 300ev -- does "training reduces overlap" hold at 64 words (overlap stays ~0.5,
 recognition ~0.9 -> cheap lever holds, no 100hr) or does the overlap floor reappear (-> a real rep-learning
 target at some N)? Compare to 28-word (overlap 0.50, recognition 0.95). v3 runner + generalized capture
-(--vocab-mod/--n-lang) committed. EXACT NEXT: when scale64 lands, read overlap/recognition at N=64; if cheap
-lever holds, optionally extend to 160 words (8192 lang); recommend hold-the-100hr to owner. If overlap
-climbs/recognition drops at 64, that localizes where a real big run is warranted. DISCIPLINE: a
+(--vocab-mod/--n-lang) committed. SCALE64 DONE (seed 42): cheap lever HOLDS -- overlap TINY 0.091 (did NOT
+climb; codes well-separated), clean recognition 0.844, single-shot 0.378 -> the 0.844 is READOUT/SNR-limited
+(inherent sparser codes: orthogonal coding needs sparsity<1/N), NOT representation-limited. PREPARATION
+CONCLUSION (finding 2026-06-01-DirectionA-prep-CONCLUSION-100hr-not-warranted.md): the ~100hr is NOT
+warranted -- the front-end is a cheap TRAINING+READOUT problem for v16 to ~64 words (28w ~0.95 multi-seed, 64w
+~0.84), and the validated G.20 sparse-distributed architecture already covers 160-320; BPTT is independently
+bounded. RECOMMEND HOLD THE 100hr; surface to owner. RUNNING (rigor completion, WITH waiter): 64-word
+multi-seed (seeds 43,44 @300ev) to confirm 0.844 isn't seed-luck. EXACT NEXT: when it lands, finalize the
+scale rigor; the direction call (push cheap follow-ups: matched-richness 64w / G.20-640 / consider solved) is
+OWNER-STRATEGIC given A's premise is refuted -- surfaced. Cheap levers + G.20 cover the conversational vocab
+range; no 100hr representation learning is justified. DISCIPLINE: a
 positive control validates the INSTRUMENT not the COMPARISON (Gate 1's training-amount confound). Do NOT
 launch the 100hr -- its premise is refuted at 28 words; surface to owner.
 moat 7/7; 0.80 bar frozen; reuse-by-import; no autograd/protected-module edits; honest propagation both remotes.
