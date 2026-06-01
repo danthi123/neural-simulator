@@ -75,6 +75,16 @@ def main():
     # MEAN-CENTER each code (remove common-mode = the project's ON/OFF / denoiser methodology) for (b),(c)
     Xmc = X - X.mean(axis=1, keepdims=True)
 
+    # within- vs between-concept cosine (the internal map's validated separability metric: at 16 words,
+    # within 0.896 > between 0.768 -> NN-identifiable). within >> between -> the CODES are separable even if
+    # pool-argmax (a) is lossy.
+    Xn_all = _l2(Xmc)
+    cos = Xn_all @ Xn_all.T
+    same = (y[:, None] == y[None, :]); off = ~np.eye(len(y), dtype=bool)
+    within = float(cos[same & off].mean()); between = float(cos[~same].mean())
+    print(f"  within-concept cos {within:.3f}  vs  between-concept cos {between:.3f}  "
+          f"(margin {within-between:+.3f}; internal map 16w: 0.896 vs 0.768)", flush=True)
+
     # (b) nearest-centroid on mean-centered per-neuron code (cosine), train centroids -> classify test by WORD
     Xn = _l2(Xmc)
     cents = _l2(np.stack([Xn[tr][y[tr] == c].mean(axis=0) for c in range(n_pools)]))

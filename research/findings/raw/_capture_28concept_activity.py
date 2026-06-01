@@ -56,6 +56,25 @@ def main():
                                       enable_adjective=True, weak_dynamics=True, verbose=False)
     bridge.load_checkpoint(CKPT)
     rm = bridge.region_manager
+
+    # Snapshot the clean loaded state. Restore it at the START of each round so EVERY round is a faithful
+    # capture from the clean checkpoint state (round 0 reproduces the front-end probe's pool-argmax 0.571);
+    # OU noise still varies the samples. Without this, the bridge state drifts after round 0 (0.571 -> 0.3).
+    _snap = {
+        "v": bridge.cp_membrane_potential_v.copy(),
+        "u": (bridge.cp_recovery_variable_u.copy() if bridge.cp_recovery_variable_u is not None else None),
+        "ge": bridge.cp_conductance_g_e.copy(),
+        "gi": bridge.cp_conductance_g_i.copy(),
+        "fire": bridge.cp_firing_states.copy(),
+    }
+
+    def restore_snap():
+        bridge.cp_membrane_potential_v[:] = _snap["v"]
+        if _snap["u"] is not None:
+            bridge.cp_recovery_variable_u[:] = _snap["u"]
+        bridge.cp_conductance_g_e[:] = _snap["ge"]
+        bridge.cp_conductance_g_i[:] = _snap["gi"]
+        bridge.cp_firing_states[:] = _snap["fire"]
     all_idx = []
     for p in pools:
         all_idx += list(rm.indices(p))
@@ -85,6 +104,7 @@ def main():
     y = np.zeros(len(words) * a.m_samples, dtype=np.int64)
     k = 0
     for rnd in range(a.m_samples):                 # INTERLEAVED round-robin: each word once per round
+        restore_snap()                             # each round starts from the clean loaded state (faithful)
         for wi, w in enumerate(words):
             X[k] = capture_once(w); y[k] = wi; k += 1
         print(f"  round {rnd+1}/{a.m_samples} done", flush=True)
