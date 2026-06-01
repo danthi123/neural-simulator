@@ -32,9 +32,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--m-samples", type=int, default=16, help="captures per word (OU noise -> variation)")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--ckpt", type=str, default=CKPT)
+    ap.add_argument("--out", type=str, default=OUT)
+    ap.add_argument("--sparsity", type=float, default=SPARSITY)
     a = ap.parse_args()
-    if not os.path.exists(CKPT):
-        print(f"CANNOT-CONCLUDE: {CKPT} not found", flush=True); return
+    ckpt = a.ckpt
+    if not os.path.exists(ckpt):
+        print(f"CANNOT-CONCLUDE: {ckpt} not found", flush=True); return
     from sim.text_embeddings import orthogonal_drive_pattern
     xp, backend = get_backend()
     print(f"=== capture 28-concept activity (M={a.m_samples}, backend={backend}) ===", flush=True)
@@ -54,7 +58,7 @@ def main():
 
     bridge = cpd.build_concept_bridge(seed=a.seed, n_lang_input=N_LANG, n_per_pool=200, n_fs_per_pool=24,
                                       enable_adjective=True, weak_dynamics=True, verbose=False)
-    bridge.load_checkpoint(CKPT)
+    bridge.load_checkpoint(ckpt)
     rm = bridge.region_manager
 
     # Snapshot the clean loaded state. Restore it at the START of each round so EVERY round is a faithful
@@ -88,7 +92,7 @@ def main():
         # samples are INTERLEAVED round-robin in main() so no word is driven 16x in a row (avoids the
         # adaptation/saturation that collapsed pool-argmax to ~0.25 in the 16-in-a-row version).
         drive = orthogonal_drive_pattern(cue_idx=word_to_idx[word], n_cues=len(words), n_neurons=N_LANG,
-                                         drive_max_pA=DRIVE_PA, sparsity=SPARSITY)
+                                         drive_max_pA=DRIVE_PA, sparsity=a.sparsity)
         bridge.cp_external_input_current[:] = 0.0
         for _ in range(RESET):
             bridge._run_one_simulation_step()
@@ -109,9 +113,9 @@ def main():
             X[k] = capture_once(w); y[k] = wi; k += 1
         print(f"  round {rnd+1}/{a.m_samples} done", flush=True)
     pool_of_word = np.array([pools.index(word_to_pool[w]) for w in words], dtype=np.int64)
-    np.savez_compressed(OUT, X=X, y=y, words=np.array(words), pools=np.array(pools),
+    np.savez_compressed(a.out, X=X, y=y, words=np.array(words), pools=np.array(pools),
                         pool_of_word=pool_of_word, m_samples=a.m_samples)
-    print(f"  SAVED {OUT}: X{X.shape}, {len(words)} classes x {a.m_samples} samples", flush=True)
+    print(f"  SAVED {a.out}: X{X.shape}, {len(words)} classes x {a.m_samples} samples", flush=True)
 
 
 if __name__ == "__main__":
