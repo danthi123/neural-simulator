@@ -46,6 +46,8 @@ the 100hr, WITHOUT BPTT, WITHOUT new representation learning.
 | 300 | 0.929 | 0.654 | 0.804 | 0.495 |
 | 500 | 0.929 | 0.714 | 0.893 | 0.389 |
 
+MULTI-SEED CONFIRMED (300 events, seeds 42/43/44): clean 28-word recognition 0.929/0.964/0.964 (mean ~0.95); between-cos ~0.50; single-shot 0.654/0.795/0.725; NN 0.804/0.884/0.893. The refutation is NOT seed-luck.
+
 THREE decisive results:
 1. **Clean 28-word recognition RISES to ~0.93 and plateaus** (300 = 500 = 0.929). NOT a representation wall;
    the documented ~0.57 "wall" and the retracted 0.64 "limit" were both UNDERTRAINING. ~0.93 is the practical
