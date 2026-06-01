@@ -24,11 +24,20 @@ between-cos 1.000 -> DUPLICATE codes (all 5 bridges share byte-identical seed-42
 160-way cleanup has 5-way ties -> artifactual 0, NOT a substrate boundary. Did NOT propagate the false
 "boundary at scale"; corrected the finding + added a max-cos>0.95 VOID-DUPLICATE guard to the 160 probe.
 qa64 already showed the algebra handles 160 DISTINCT synthetic codes (1.000); the deployed 160 substrate uses
-within-bridge recall + cross-bridge engram TAGS, not global VSA. NOW IN FLIGHT: the VALID scale test =
-within-bridge real-code QA on the 4 remaining bridges B/C/D/E (PID 17424, _5bridge_within.log); all 5 RESOLVE
--> real-substrate composition robust across the deployed bridges. TWO self-caught artifacts this arc
-(drive-echo + duplicate-code), both honest-negatives, genuine results intact = the discipline working. Full
-rigorous controlled answer below:
+within-bridge recall + cross-bridge engram TAGS, not global VSA. REAL-SUBSTRATE ARC COMPLETE = multi-seed
+BOUNDARY: the "5-bridge" 0.800x5 was DETERMINISTIC COPIES (shared seed-42 patterns + fixed RNG), not 5
+confirmations -> the real rigor = composition multi-seed (bridgeA seeds 42/43/44, n=20, varying roles/trials/
+capture-noise; load_checkpoint restores the trained CSR so no wiring mismatch): REAL QA 0.900/0.650/0.850
+(mean 0.800), synthetic 0.900/1.000/1.000 (mean 0.967), abstention 1.000 EVERY seed. VERDICT: composition is
+GENUINE on real codes (perfect abstention -- drive-echo can't), but a multi-seed BOUNDARY (seed 43 dips 0.650
+< bar while its synthetic = 1.000 -> real codes genuinely ~17pp harder, not noise). The ALGEBRA isn't the
+limit (qa64 V=160 synth 1.000); the real substrate's code QUALITY is. THREE self-caught artifacts this arc
+(drive-echo + duplicate-code + deterministic-copies), none propagated, each honestly corrected, genuine
+results intact = the discipline working. Finding 2026-05-31-real-substrate-spiking-composition-validity.md,
+all committed both remotes. NEXT: update capability_status honest scope -> surface comprehensive picture +
+strategic fork to owner (tractable composition space thoroughly validated+bounded; next lever = learned
+concepts AT SCALE = owner-strategic: richer training [~100hr, do NOT launch unilaterally] OR front-end
+architecture redesign [needs design effort, check-existing-first]). Full rigorous controlled answer below:
 (1) Composition a template? NO -- genuine VSA algebra: generalizes (8/8 nonsense, 60/60, 3/3 multi-seed)
     AND correctly ABSTAINS on unstored facts (qa64 unknown-control 1.000 at V=160/320; drive-echo CANNOT
     abstain). (2) Parser a positional template? NO (closed) -- live REPL uses the LEARNED Hebbian parser,
