@@ -33,11 +33,38 @@ RESOLVES (real QA 0.80 >= bar, abstention perfect), but with an HONEST caveat un
 - 0.800 at n_trials=10 is exactly at the bar (8/10; wide binomial CI). Treated as a directional PASS, not a
   comfortable one. The decisive scale test is 160 (n=20, the harder cross-bridge case).
 
-## Result -- full ensemble (160 concepts, 5 bridges, cross-bridge facts), seed 42
-PENDING (_real_substrate_qa160 in flight; n_trials=20). RESOLVES (>=0.80 + abstention) -> the largest
-genuine-composition conversational artifact in the project runs on the REAL deployed 160-concept substrate.
-PARTIAL/below-bar -> honest boundary: real-substrate cross-bridge structure degrades composition at scale,
-characterize the gap (vs the synthetic-code qa64 1.000 at V=160).
+## Result -- naive 160-pool (5 bridges) = INVALID TEST (probe artifact, caught by the smell test), NOT a boundary
+First 160 run: QA 0.000, abstention 1.000, and the giveaway -- **160-wide between-concept cos mean 0.191 but
+MAX 1.000**. Max cos 1.000 means two pooled concepts have IDENTICAL codes. Diagnosis: all 5 G.20 bridges
+regenerate their sparse patterns with generate_sparse_patterns(32, 2000, 100, seed=42) -- the SAME seed ->
+BYTE-IDENTICAL patterns across all 5 bridges (the documented 320-tier "all 5 train with seed 42 -> identical
+pattern set" issue). So bridge A concept i and bridge B concept i capture near-identical real codes. Naively
+pooling 160 = 32 distinct patterns x 5 duplicates; a GLOBAL cleanup then has 5-way ties for every concept ->
+exact-word QA collapses to ~0 (the cleanup returns one of the 5 identical-code copies, wrong word label 4/5
+of the time). This is MY test's flaw, NOT a substrate boundary:
+
+- qa64 ALREADY showed the composition handles 160 DISTINCT (synthetic) codes at 1.000 -- the algebra scales.
+- The DEPLOYED 160-concept substrate does NOT provide 160 distinct codes in ONE cleanup space; it provides
+  32 distinct x 5 bridges with SHARED per-index patterns. The deployed system never does a global 160-way
+  cleanup: it does WITHIN-bridge recall (32-concept cleanup) + CROSS-bridge association via engram TAGS (the
+  validated multitag mechanism), which is unaffected by the shared patterns.
+- So "global 160-way VSA cleanup over the real bridges" is the wrong test for THIS substrate; the probe now
+  asserts and reports max-cos > 0.95 as a duplicate-code instrument-invalidity (honest-by-construction).
+
+## Result -- VALID scale test: within-bridge real-code QA across all 5 bridges (each 32 distinct concepts), seed 42
+
+| Bridge | REAL QA | abstention | (synthetic QA) |
+|--------|--------:|-----------:|---------------:|
+| A nouns | 0.800 | 1.000 | 1.000 |
+| B verbs | PENDING | | |
+| C adj | PENDING | | |
+| D spatial | PENDING | | |
+| E functional | PENDING | | |
+
+This is the valid scale test (5 x 32 distinct within-bridge codes, no cross-bridge duplicate artifact). If
+all 5 RESOLVE -> real-substrate composition is robust across the deployed bridges (5x the single-bridge
+evidence). The cross-bridge conversational case is handled by the validated engram-tag mechanism, not a
+global VSA cleanup.
 
 ## Honest scope (carried from the cheating audit)
 The real codes are pool activity in response to orthogonal lang_input drives, so they retain a drive-echo
