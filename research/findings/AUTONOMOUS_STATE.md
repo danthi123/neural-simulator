@@ -24,20 +24,24 @@ overlap (FLAT across N, NOT moved by coding on the SAME activity); IF reps neede
 better bets G.20-scaling or VSA role-binding. THE compute-protecting fact: 16-concept activity is 100%
 NN-identifiable though pool-argmax recognition is 81% -> the front-end wall may be a LOSSY-READOUT artifact.
 
-GATE 1 = DONE, VALIDATED = REPRESENTATION LIMIT (finding 2026-05-31-GATE1-frontend-wall-is-a-real-
-representation-limit-at-28-words.md). Capture-faithfulness was a multi-iteration bug-hunt (single captures
-are OU-noise-dominated, cos 0.13-0.18 same-word even after reload -> must AVERAGE per the validated denoise
-methodology; round-0 reproduces the probe's 0.571; restore clean state per round). VALIDATED with a 16-word
-POSITIVE CONTROL (_gate1_16word_control.py): 16-word NN 0.910 > pool-argmax 0.801 at k=1, BOTH 1.000 at k=4
-= the internal map's lossy-readout / 100%-identifiable, reproduced. 28-word fair head-to-head (same averaging,
-pool-argmax vs full-code LOO-NN): NN is WORSE than pool-argmax at every level (k=4: 0.527 vs 0.402),
-plateauing ~0.53-0.64 (NOT 1.000 like 16w). OVERLAP not noise. So the lossy-readout escape that works at 16w
-does NOT extend to 28w -> a genuine representation-capacity transition. Cheap readout fix OUT; acquisition-
-level representation learning genuinely needed. EXACT NEXT = GATE 2 (cheap, ~1 GPU-hr): test an ACQUISITION-
-level local-learning lever on 28-word recognition -- e-prop (three-factor) OR expansion+Hebbian-during-
-acquisition (Lindsay 2017) -- does it beat the ~0.64 clean-code wall? If yes -> cheaper-than-100hr lever
-exists. If no -> the 100hr is EARNED and targets G.20-scaling or VSA-roles (NOT BPTT [bounded], NOT post-hoc
-transforms [bounded]). Do NOT launch the 100hr until Gate 2 resolves.
+GATE 1 verdict RETRACTED by GATE 2 (finding 2026-06-01-GATE2-overturns-GATE1-...). Gate 1 concluded "28-word
+representation limit" but that was CONFOUNDED: the _v17 28-word bridge was ~50 events while the 16-word
+control was 200 -- unfair cross-vocab comparison. Gate 2 (controlled training pair, topographic-prior lever)
+trained MATCHED 150-event 28-word bridges: baseline topo3.0 clean 16-avg pool-argmax 0.893 (single-shot k=1
+0.569); strong topo10.0 0.857 (stronger prior NEUTRAL). vs _v17 50ev 0.643 and 16-word 200ev ~1.000. TWO
+corrections: (1) 28-word is NOT a fundamental representation limit -- 150ev clean = 0.893, close to 16w 1.000;
+(2) the single-shot ~50% wall is largely NOISE/readout (k=1 0.569 vs clean 0.893) -- temporal integration
+recovers it (mirrors the real-substrate boundary). MAJOR compute implication: the premise motivating the
+~100hr richer-representation-learning (28-word = hard rep wall) is substantially WRONG; cheap levers (more
+training events + temporal-integration readout) carry the front-end far past the single-shot wall WITHOUT the
+100hr / BPTT / new rep learning. CONFIRMING SWEEP RUNNING (PID 23915, _gate2_sweep.log): 28-word at 50/300/500
+events matched recipe -- does clean separability rise toward ~0.95+ (training+readout problem, cheap) or
+plateau ~0.89 (modest ceiling)? EXACT NEXT: when sweep lands, read the trajectory -> if rising, the front-end
+is a cheap training+readout problem (no 100hr; characterize the training-events curve + extend to G.20 tiers);
+if plateau ~0.89, that's the 28-word ceiling (still NOT 0.64; weigh whether 0.89 is good enough or a modest
+acquisition lever helps). DISCIPLINE LESSON: a positive control validates the INSTRUMENT not the COMPARISON --
+Gate 1's cross-vocab comparison had a training-amount confound the control didn't catch. Do NOT launch the
+100hr -- the premise for it is now in question.
 moat 7/7; 0.80 bar frozen; reuse-by-import; no autograd/protected-module edits; honest propagation both remotes.
 
 ## >>> LATEST ACTION (cheating-audit arc -- COMPLETE; 2026-05-31) <<<
