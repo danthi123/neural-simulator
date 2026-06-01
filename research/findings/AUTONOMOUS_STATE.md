@@ -30,8 +30,12 @@ confirmations -> the real rigor = composition multi-seed (bridgeA seeds 42/43/44
 capture-noise; load_checkpoint restores the trained CSR so no wiring mismatch): REAL QA 0.900/0.650/0.850
 (mean 0.800), synthetic 0.900/1.000/1.000 (mean 0.967), abstention 1.000 EVERY seed. VERDICT: composition is
 GENUINE on real codes (perfect abstention -- drive-echo can't), but a multi-seed BOUNDARY (seed 43 dips 0.650
-< bar while its synthetic = 1.000 -> real codes genuinely ~17pp harder, not noise). The ALGEBRA isn't the
-limit (qa64 V=160 synth 1.000); the real substrate's code QUALITY is. THREE self-caught artifacts this arc
+< bar while its synthetic = 1.000 -> real codes genuinely ~17pp harder, not noise). RESOLUTION: a 2.5x longer
+capture window (stim 120->300, temporal integration) LIFTS real QA to 1.000/0.950/0.800 (mean 0.917, all 3
+>= bar; gap to synthetic 17pp->5pp) -> the boundary is VARIANCE-limited not fundamental, fixed by the
+project's validated temporal-integration denoiser (sustained encoding = cleaner code). The ALGEBRA isn't the
+limit (qa64 V=160 synth 1.000); the real substrate's code NOISE is, and biology (sustained encoding) fixes
+it. THREE self-caught artifacts this arc
 (drive-echo + duplicate-code + deterministic-copies), none propagated, each honestly corrected, genuine
 results intact = the discipline working. Finding 2026-05-31-real-substrate-spiking-composition-validity.md,
 all committed both remotes. NEXT: update capability_status honest scope -> surface comprehensive picture +

@@ -89,12 +89,37 @@ trials -> genuinely independent estimates on the real codes.)
   bar with one seed below. So the REAL-substrate concept codes (noisier; cos 0.079 off the idealized
   pattern) degrade composition by ~17pp on average AND make it not-uniformly-robust.
 
+## RESOLUTION -- the BOUNDARY is a VARIANCE limit, lifted by sustained encoding (temporal integration)
+Re-ran the multi-seed with a 2.5x longer capture window (stim=300 vs 120; the temporal-integration /
+sustained-encoding lever):
+
+| seed | REAL QA (stim=120) | REAL QA (stim=300) | synthetic (stim=300) |
+|------|-------------------:|-------------------:|---------------------:|
+| 42 | 0.900 | 1.000 | 0.900 |
+| 43 | 0.650 | 0.950 | 1.000 |
+| 44 | 0.850 | 0.800 | 1.000 |
+| **mean** | **0.800** | **0.917** | **0.967** |
+
+Longer sustained encoding lifts the real-substrate composition from the BOUNDARY (mean 0.800, seed 43 below
+bar) to ALL-3-SEEDS >= bar (mean 0.917), and shrinks the real-vs-synthetic gap from ~17pp to ~5pp. So the
+short-window boundary was substantially a VARIANCE / readout limit, NOT a fundamental separability wall:
+averaging the noisy real codes over more spikes denoises them enough for the cleanup to clear composition.
+Biologically grounded -- it matches the validated denoiser arc (substrate activity CV falls ~1.63/sqrt(k)
+with temporal integration); sustained encoding = a cleaner concept representation. (Scrutiny: seed 44 sits
+EXACTLY at 0.800, not a large margin; and between-concept overlap actually ROSE to ~0.40 with the longer
+window -- denser codes -- yet QA improved, confirming the gain is variance reduction outweighing the density
+increase. cos(real, synthetic) ~0 on seeds 43/44 confirms the real codes are genuinely distinct, not a
+drive-echo of the input patterns.)
+
 HONEST BOTTOM LINE: the validated spiking composition is GENUINE on the real deployed substrate's concept
-codes (perfect abstention, mean wh-QA at the bar), but the real substrate's noisier representations make it
-a multi-seed BOUNDARY rather than the clean 1.000 the idealized synthetic codes give. The algebra is not the
-limit (qa64: V=160 synthetic = 1.000); the real substrate's code quality is. The cross-bridge conversational
-case (apple is big; apple in nouns, big in adj) is handled by the validated engram-tag multitag mechanism
-(90% multi-seed), NOT a global VSA cleanup over the shared-pattern bridges.
+codes (perfect abstention every seed -- the anti-drive-echo control). At a short capture window it is a
+multi-seed BOUNDARY (mean 0.800), but that boundary is VARIANCE-limited: sustained encoding (temporal
+integration, stim 120->300) lifts it to all-3-seeds-pass (mean 0.917), closing most of the gap to the
+idealized synthetic codes. The algebra is not the limit (qa64: V=160 synthetic = 1.000); the real substrate's
+code NOISE is, and temporal integration -- a biological mechanism the project already validated -- is the
+fix. The cross-bridge conversational case (apple is big; apple in nouns, big in adj) is handled by the
+validated engram-tag multitag mechanism (90% multi-seed), NOT a global VSA cleanup over shared-pattern
+bridges.
 
 ## Three self-caught issues this arc (the discipline working)
 1. Front-end "distributed >> label breakthrough" -> drive-echo ARTIFACT (untrained control: bind-QA 1.000
