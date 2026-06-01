@@ -64,10 +64,23 @@ def main():
     D = len(all_idx)
     print(f"  {len(words)} words, {len(pools)} pools, D={D} per-neuron concept code", flush=True)
 
+    def reset_to_rest():
+        # thorough reset so each capture is independent (no state drift across 448 sequential captures)
+        if bridge.cp_izh_vr is not None:
+            bridge.cp_membrane_potential_v[:] = bridge.cp_izh_vr
+        if bridge.cp_recovery_variable_u is not None:
+            bridge.cp_recovery_variable_u[:] = 0.0
+        bridge.cp_conductance_g_e[:] = 0.0
+        bridge.cp_conductance_g_i[:] = 0.0
+        bridge.cp_firing_states[:] = False
+        if getattr(bridge, "cp_prev_firing_states", None) is not None:
+            bridge.cp_prev_firing_states[:] = False
+
     def capture_once(word):
         drive = orthogonal_drive_pattern(cue_idx=word_to_idx[word], n_cues=len(words), n_neurons=N_LANG,
                                          drive_max_pA=DRIVE_PA, sparsity=SPARSITY)
         bridge.cp_external_input_current[:] = 0.0
+        reset_to_rest()
         for _ in range(RESET):
             bridge._run_one_simulation_step()
         bridge.cp_external_input_current[lang_arr] = xp.asarray(drive, dtype=xp.float32)
