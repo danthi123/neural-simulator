@@ -16,7 +16,7 @@ import argparse
 import os
 import numpy as np
 
-import research.runners.concept_pool_demo_v2 as v2          # patches vocab to 28 words
+import importlib
 import research.runners.concept_pool_demo as cpd
 from sim.backend import get_backend, to_host
 
@@ -35,7 +35,12 @@ def main():
     ap.add_argument("--ckpt", type=str, default=CKPT)
     ap.add_argument("--out", type=str, default=OUT)
     ap.add_argument("--sparsity", type=float, default=SPARSITY)
+    ap.add_argument("--n-lang", type=int, default=N_LANG)
+    ap.add_argument("--vocab-mod", type=str, default="research.runners.concept_pool_demo_v2",
+                    help="vocab monkey-patch module (v2=28 words, v3=64 words)")
     a = ap.parse_args()
+    importlib.import_module(a.vocab_mod)   # patches cpd's vocab dicts (28 or 64 words)
+    n_lang = a.n_lang
     ckpt = a.ckpt
     if not os.path.exists(ckpt):
         print(f"CANNOT-CONCLUDE: {ckpt} not found", flush=True); return
@@ -56,7 +61,7 @@ def main():
              + [f"verb_pool_{vv}" for vv in cpd.VERB_VOCAB.values()]
              + [f"adjective_pool_{vv}" for vv in cpd.ADJECTIVE_VOCAB.values()])
 
-    bridge = cpd.build_concept_bridge(seed=a.seed, n_lang_input=N_LANG, n_per_pool=200, n_fs_per_pool=24,
+    bridge = cpd.build_concept_bridge(seed=a.seed, n_lang_input=n_lang, n_per_pool=200, n_fs_per_pool=24,
                                       enable_adjective=True, weak_dynamics=True, verbose=False)
     bridge.load_checkpoint(ckpt)
     rm = bridge.region_manager
@@ -91,7 +96,7 @@ def main():
         # WARM continuation (no cold reset -- matches the front-end probe that gets pool-argmax 0.571);
         # samples are INTERLEAVED round-robin in main() so no word is driven 16x in a row (avoids the
         # adaptation/saturation that collapsed pool-argmax to ~0.25 in the 16-in-a-row version).
-        drive = orthogonal_drive_pattern(cue_idx=word_to_idx[word], n_cues=len(words), n_neurons=N_LANG,
+        drive = orthogonal_drive_pattern(cue_idx=word_to_idx[word], n_cues=len(words), n_neurons=n_lang,
                                          drive_max_pA=DRIVE_PA, sparsity=a.sparsity)
         bridge.cp_external_input_current[:] = 0.0
         for _ in range(RESET):
