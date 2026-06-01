@@ -53,18 +53,33 @@ of the time). This is MY test's flaw, NOT a substrate boundary:
 
 ## Result -- VALID scale test: within-bridge real-code QA across all 5 bridges (each 32 distinct concepts), seed 42
 
-| Bridge | REAL QA | abstention | (synthetic QA) |
-|--------|--------:|-----------:|---------------:|
+| Bridge (seed 42) | REAL QA | abstention | synthetic QA |
+|------------------|--------:|-----------:|-------------:|
 | A nouns | 0.800 | 1.000 | 1.000 |
-| B verbs | PENDING | | |
-| C adj | PENDING | | |
-| D spatial | PENDING | | |
-| E functional | PENDING | | |
+| B verbs | 0.800 | 1.000 | 1.000 |
+| C adj | 0.800 | 1.000 | 1.000 |
+| D spatial | 0.800 | 1.000 | 1.000 |
+| E functional | 0.800 | 1.000 | 1.000 |
 
-This is the valid scale test (5 x 32 distinct within-bridge codes, no cross-bridge duplicate artifact). If
-all 5 RESOLVE -> real-substrate composition is robust across the deployed bridges (5x the single-bridge
-evidence). The cross-bridge conversational case is handled by the validated engram-tag mechanism, not a
-global VSA cleanup.
+HONEST SCRUTINY OF THIS "5x" RESULT: the five bridges returned BYTE-IDENTICAL numbers (0.800 / 1.000 /
+cos 0.079 / between 0.170). That is NOT five independent confirmations -- it is the SAME test five times.
+All 5 bridges regenerate the SAME seed-42 sparse patterns, and the probe used seed 42 throughout (same
+roles, same trial selection, same bind init, same RNG), so the runs are deterministic copies. So the
+"5-bridge scale" is really ONE bridge's worth of evidence. The genuinely independent rigor is varying the
+COMPOSITION RNG (roles, trials, capture noise) while holding the trained bridge fixed -- a real multi-seed.
+
+## Result -- real-substrate composition MULTI-SEED (bridgeA, seeds 42/43/44, n_trials=20)
+(load_checkpoint fully restores the trained CSR, so the build seed only varies capture-noise + roles +
+trials -> genuinely independent estimates on the real codes.)
+
+| seed | REAL QA | abstention | synthetic QA |
+|------|--------:|-----------:|-------------:|
+| 42 | PENDING | | |
+| 43 | PENDING | | |
+| 44 | PENDING | | |
+
+The cross-bridge conversational case (apple is big; apple in nouns, big in adj) is handled by the validated
+engram-tag multitag mechanism (90% multi-seed), NOT a global VSA cleanup over the shared-pattern bridges.
 
 ## Honest scope (carried from the cheating audit)
 The real codes are pool activity in response to orthogonal lang_input drives, so they retain a drive-echo
