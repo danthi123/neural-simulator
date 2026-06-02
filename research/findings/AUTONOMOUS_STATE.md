@@ -109,13 +109,25 @@ codes 0.045 vs 0.70); (2) NEGATION + yes/no + who-QA (K=4) RESOLVES multi-seed: 
 (boundary metric = the extra K=4 polarity unbind), who-QA 1.000, abstention 1.000. So the 320 substrate behaves
 like a small queryable, honestly-abstaining knowledge base in spiking, multi-seed. All committed both remotes.
 
->>> EXACT NEXT CONCRETE ACTION (in flight): KB CEILING probe -- job b8azh6357 (_flatdist320_kb_ceiling.log,
-40-min bound) tests N=30 (does the KB hold past 15?). WHEN b8azh6357 COMPLETES -> update the KB section of the
-conversation finding with the ceiling result (>=30 if perfect, else the break point); add capability_status
-pillar n=113 (conversation-on-320: KB capacity + negation/QA) + bump as_of; commit both remotes; then SURFACE
-the consolidated conversational-on-320 picture (composition + KB + negation/QA all validated multi-seed) +
-the two owner-strategic forks to the owner for steer (this is a natural checkpoint; the forks genuinely need
-owner buy-in). Probe loads the cached _flatdist320_codes.npz (no retrain). Owner-strategic forks to SURFACE
+CONVERSATION-ON-320 ARC = COMPLETE + FULLY PROPAGATED (2026-06-02). Composition (structured 1.000x3 / any-bank
+0.992 6-seed) + KB capacity (>=30 facts PERFECT, 6x prior, no ceiling) + negation/yes-no/who-QA (K=4) RESOLVES
++ abstention 1.000. capability_status pillars n=112 (composition) + n=113 (conversation), CLAUDE.md, finding
+docs, wiki -- all committed both remotes. HONEST scaling reality: composition scales LINEARLY with bridge count
+(distinct codes -> cleanup scales); the limit is per-bridge TRAINING TIME (~75 min/64 concepts), not the
+architecture. The learned-codes fork is a CLOSED near-ortho boundary (substrate provably can't produce
+near-ortho codes from activity -> given sparse codes are a legitimate engineering component, not a cheat).
+
+>>> EXACT NEXT CONCRETE ACTION (in flight): SCALING PAST 320 per the owner's explicit "scale past previous
+limits" mandate -- demonstrate composition holding with MORE real distinct-seed bridges. Job bvgd92m74
+(_flatdist_FG_scaling.log, 3.5-hr bound, ~2.5hr): retrains bridgeF@47 + bridgeG@48 (synthetic-label banks
+cz0320..cz0447), then runs _insubstrate_flatdist_scaling_test.py at 448 concepts (structured SVO noun/verb/adj
+fillers + any-bank, cleanup over all 448, seeds 42/43/44, bar min>=0.80). WHEN bvgd92m74 COMPLETES -> read the
+log; if RESOLVES at 448, write/extend a scaling finding + commit, then CONTINUE toward 640 (build banks H@49/
+I@50/J@51 + retrain + re-run the SAME generalized scaling test -> 576, 640). If a metric dips, that's the
+cleanup-width limit -- characterise (honest). The scaling test auto-includes whatever bridges exist, so it
+re-runs unchanged at each scale. Owner-strategic fork still open to SURFACE (only one, since learned-codes is
+closed): how far to push scale (640 / beyond) vs declare conversation sufficient + pivot to another goal aspect
+(artificial-life / brain-analogue dynamics). Owner-strategic forks to SURFACE
 (do NOT launch unilaterally): (a) 640-concept tier (10 bridges; near-ortho boundary findings say more scale at
 same overlap won't help recognition, but COMPOSITION scales fine -- cheap to test if owner wants); (b) LEARNED
 codes at scale (the cheating-audit frontier: 320 codes are given by sparse encoding, not learned end-to-end --
