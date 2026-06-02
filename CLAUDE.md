@@ -1858,6 +1858,23 @@ Cheap recovery path (deferred): per-bridge distinct seeds (42–46) /
 overlap-rejection in `generate_sparse_patterns`. Findings:
 `research/findings/2026-05-16-G20-sparse-ensemble-320concept-SHIPPED.md`.
 
+**320-concept BIOLOGICAL COMPOSITION — RESOLVES multi-seed 2026-06-02 (honest flat-distinct path):**
+Distinct from the retrieval tier above (multitag/ranking): this is the brain-analogue spiking COMPOSITION
+(VSA coincidence bind/unbind) at full 320-concept scale. The hierarchical-320 shortcut (shared seed-42 codes
++ a 2nd bridge-role binding level) catastrophically FAILED on STRUCTURED facts (0.000 at seed 42 — the
+nesting/multi-hop SNR wall) and was retracted. The fix is exactly the "per-bridge distinct seeds (42–46)"
+recovery path noted above: 5 bridges at seeds 42–46 → 320 DISTINCT flat codes (between-cos mean 0.045, max
+0.604) composed at a SINGLE binding level. Structured SVO (noun/verb/adj, cleanup over all 320) =
+**1.000/1.000/1.000** (seeds 42/43/44); the harder ANY-BANK (any concept, any role) = **0.992 mean 6-seed**
+(42–47, min 0.950, single miss localised to the spatial bridge, 119/120 facts); conversational demo 6/6 +
+absent-cue ABSTAINS (anti-artifact). Scope: codes GIVEN by sparse encoding (cheating-audit); the composition
+on top is GENUINE + robust at 320. Per-bridge retrain ~73–75 min (64c×400ev×8192lang — the docs' "~17 min"
+was wrong for the 64-concept tier; NOT fragmentation). Tools: `research/findings/raw/_run_flatdist_DE.sh`,
+`_insubstrate_flatdistinct320_test.py`, `_insubstrate_flatdist320_anybank_test.py`,
+`research/runners/compose_flatdist320_conversation_demo.py`. Incremental/resumable training
+(`concept_pool_sparse_distributed --resume-from`, shipped same day) lets such retrains chunk across breaks.
+Finding: `research/findings/2026-06-02-full-320-flat-distinct-composition-RESOLVES-multiseed.md`.
+
 ### Path 3 Phase 3.2 (2026-05-11): LLM-memory orchestrator + chat UI (now SECONDARY)
 
 ⚠️ **The Phase 3.2 stack is now framed as the SECONDARY application

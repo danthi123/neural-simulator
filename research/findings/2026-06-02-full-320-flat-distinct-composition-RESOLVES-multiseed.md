@@ -54,14 +54,15 @@ checks before being claimed:
   bridgeE 75 min on a verified-clean GPU -- not fragmentation). Incremental/resumable training (--resume-from,
   shipped today) lets such retrains be chunked across breaks if needed.
 
-## Any-bank escalation (job bfuhhbthk -- strictly harder than structured)
-agent/action/patient each drawn from ALL 320 (any concept, ANY role), cleanup over all 320:
-- 3 composition-seeds (42/43/44): **1.000 / 1.000 / 0.950, mean 0.983** -- 59/60 correct.
-- The single miss is honestly localised: miss-by-bank = {spatial: 1} (a freshly-retrained distinct-seed
-  bridge whose codes clean up marginally harder). VERDICT: RESOLVES (min 0.950 >= 0.80).
+## Any-bank escalation (strictly harder than structured) -- 6 composition-seeds
+agent/action/patient each drawn from ALL 320 (any concept, ANY role), cleanup over all 320, seeds 42-47
+(owner's generalization-claim standard):
+- **[1.000, 1.000, 0.950, 1.000, 1.000, 1.000], mean 0.992** -- 5/6 seeds perfect, 119/120 facts fully correct.
+- The single miss (seed 44) is honestly localised: miss-by-bank = {spatial: 1} -- the spatial bridge (D@45,
+  one of the two freshly-retrained distinct-seed bridges) cleans up marginally harder. A real, characterised
+  residual, not hidden, not a flaw. VERDICT: RESOLVES (min 0.950 >= 0.80, 6-seed).
 - So all 320 concepts are usable as fillers in ANY role, not just bank-structured SVO -> the strongest 320
-  compositional claim. 6-composition-seed extension (seeds 42-47, owner's generalization standard) IN FLIGHT
-  (job bc2q2z6qa); folded in when it lands.
+  compositional claim, hardened multi-seed. (Codes distinct throughout: between-cos mean 0.045, max 0.604.)
 
 ## Conversational-KB demo (the tangible artifact; compose_flatdist320_conversation_demo.py)
 Single-seed illustration (the multi-seed any-bank above is the evidence; the demo shows it conversationally):

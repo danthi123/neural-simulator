@@ -92,15 +92,27 @@ honest flat-distinct path extends robust cross-bridge biological composition fro
 target. Finding 2026-06-02-full-320-flat-distinct-composition-RESOLVES-multiseed.md WRITTEN (any-bank + demo
 sections pending bfuhhbthk).
 
->>> EXACT NEXT CONCRETE ACTION (in flight): the any-bank escalation + conversational-KB demo run as job
-bfuhhbthk (_flatdist320_anybank_demo.log, 20-min bound, ~10 min). any-bank = agent/action/patient each from
-ALL 320 (strictly harder: any concept any role, cleanup over 320). demo = stores cross-bank SVO facts, answers
-role+relational queries + absent-cue control (the tangible artifact). WHEN bfuhhbthk COMPLETES -> read the log;
-fold the any-bank result (RESOLVES adds the strongest 320 claim; a dip localises the residual via miss-by-bank)
-+ the demo transcript into the finding doc; COMMIT both remotes; update capability_status.json (new validated
-320 composition tier) + CLAUDE.md if a milestone. Then continue autonomously (next: surface the milestone +
-consider the next limit -- e.g. 640 tier owner-strategic, or layer more conversational abilities onto the
-320 biological substrate). The 192 + 320 structured composition both stand.
+>>> FULL-320 BIOLOGICAL COMPOSITION MILESTONE = COMPLETE + FULLY PROPAGATED (2026-06-02). All three results
+RESOLVE + scrutinised: structured SVO 1.000/1.000/1.000 (3-seed, job bh4o2reg3); any-bank (any concept any
+role, strictly harder) 0.992 mean 6-SEED 42-47 (job bc2q2z6qa, min 0.950, 119/120 facts, single miss localised
+to spatial bridge); conversational demo 6/6 role+relational + absent-cue ABSTAINS (anti-artifact). Honest flat-
+distinct path (5 distinct-seed bridges, single binding level) resolves the hierarchical-320 nesting wall (which
+scored 0.000 at seed 42 on the SAME structured test). PROPAGATED: finding 2026-06-02-full-320-flat-distinct-
+composition-RESOLVES-multiseed.md; capability_status pillar n=112 + as_of 2026-06-02 (schema tests 6/6);
+CLAUDE.md milestone note; committed both remotes. Scope honesty: codes GIVEN by sparse encoding (cheating-
+audit), composition GENUINE + robust at 320; per-bridge retrain ~73-75 min (the "17 min" doc was wrong).
+
+>>> EXACT NEXT CONCRETE ACTION: milestone done -> continue autonomously toward the goal (conversation on the
+brain-analogue mechanism, now validated at 320-concept scale). Tractable next step (no owner gate): layer the
+already-validated conversational abilities (wh-QA who/what, negation via polarity tag, MULTI-fact relational
+KB, persistent across sessions -- all validated at smaller scale, finding 2026-05-31-conversational-
+capabilities-on-the-spiking-bind.md) onto the NEW 320 biological substrate -> a richer 320-concept
+conversational artifact (the tangible scaled deliverable the owner asked for). Owner-strategic forks to SURFACE
+(do NOT launch unilaterally): (a) 640-concept tier (10 bridges; near-ortho boundary findings say more scale at
+same overlap won't help recognition, but COMPOSITION scales fine -- cheap to test if owner wants); (b) LEARNED
+codes at scale (the cheating-audit frontier: 320 codes are given by sparse encoding, not learned end-to-end --
+the deep brain-analogue frontier, BPTT-bounded, expensive). wiki-sync the milestone. moat/0.80 bar frozen;
+honest propagation both remotes; bounded waiters; GPU/CuPy real.
 
 HONEST CORRECTION (2026-06-02): the "full-320 biological composition RESOLVES 1.000/0.98 multi-seed" is
 RETRACTED -- it was a RANDOM-FILLER artifact. On STRUCTURED facts (noun/verb/adjective, the realistic case)
