@@ -48,7 +48,19 @@ run_in_background waiter, no exceptions.) MULTI-SEED CONFIRMED (seeds 42/43/44 @
 2048 lang, sparsity 0.01, 300ev -- does "training reduces overlap" hold at 64 words (overlap stays ~0.5,
 recognition ~0.9 -> cheap lever holds, no 100hr) or does the overlap floor reappear (-> a real rep-learning
 target at some N)? Compare to 28-word (overlap 0.50, recognition 0.95). v3 runner + generalized capture
-(--vocab-mod/--n-lang) committed. SCALE-UP STATUS (2026-06-02): 64-word CONFIRMED 2-seed (42,43 both 0.844, overlap ~0.10 -- robust; seed 44
+(--vocab-mod/--n-lang) committed. ACTIVE DIRECTION (2026-06-02, owner: "continue autonomously to lift the limits + get closer to goals"):
+make the BIOLOGICAL spiking composition robust AT SCALE so conversation is built on the brain-analogue
+mechanism, NOT the static engram-tag retrieval (which the owner's goal explicitly says not to build on). The
+320-concept demo (g20_multibridge --sparse) WORKS but is retrieval/ranking. The biological spiking bind is
+the genuine brain-analogue win but is a real-substrate BOUNDARY at scale (160-tier 0.80, temporal-integration
+lifted to 0.917). LIFT IT: running the spiking relational memory + wh-QA on a 320-TIER bridge (64 concepts,
+sparsity 0.007) with temporal integration (stim=300) -- _bio_compose_320tier.log, bounded waiter bzt982pjb.
+If robust (>=0.80 + abstention) -> multi-seed -> integrate into a biologically-grounded conversational agent
+at 64-concept-per-bridge scale (cross-bridge via tags). If boundary -> push the temporal-integration window
+further / characterize the scale limit honestly. EXACT NEXT: read the 64-concept bio-composition result;
+branch. moat/0.80-bar frozen; honest propagation both remotes; bounded waiters; cheap-first.
+
+SCALE-UP STATUS (2026-06-02): 64-word CONFIRMED 2-seed (42,43 both 0.844, overlap ~0.10 -- robust; seed 44
 HUNG/slow, killed). 128-word LEARNED (v4, 4096 lang, 300ev) = IMPRACTICALLY SLOW (>4hr training, still not
 done, killed) -> the practical ceiling of training fresh LEARNED orthogonal-code bridges is ~64-96 words;
 beyond that, training cost explodes. PIVOT (committed to owner): use the validated FAST G.20 sparse-
