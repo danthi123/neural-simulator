@@ -11,6 +11,8 @@ G.20 substrate, in ONE cleanup space, computed by actual spiking neurons:
 
 VERDICT: RESOLVES. The brain-analogue conversational substrate scales to 320 concepts.
 
+MULTI-SEED CONFIRMED (composition seeds 42/43/44 on the cached 320 codes): spiking 320-way QA 1.000/1.000/0.950 (mean 0.983), abstention 1.000 EVERY seed. Clean multi-seed PASS -- not seed-luck.
+
 ## How the duplicate-code blocker was solved (no retrain)
 The 320-tier's 5 bridges were all trained with seed 42, so they share sparse patterns -> bridgeA-i and
 bridgeB-i have near-identical FLAT codes (max-cos 1.000) -> a global 320-way spiking cleanup is ambiguous.
