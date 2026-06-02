@@ -190,3 +190,95 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# ===== v2 addition: is GENERALIZATION set by the learning RULE or by ARCHITECTURE/REPRESENTATION? =====
+# Achievable compositional-invariance task: next = f[a]; b is a DISTRACTOR. Held-out = (SEEN a, NEW b) pairs.
+# Generalizing = "learn output depends on a, ignore b" -> applies to new b. Overfit = use (a,b) jointly ->
+# fail on new b. Compare a GENERIC MLP (must LEARN the invariance) vs a STRUCTURED model (separate a-pathway,
+# the architectural inductive bias the brain's structured circuitry provides). If STRUCTURE generalizes where
+# the generic MLP overfits -> the missing piece is architecture/representation, not the learning rule.
+def make_invariance_dataset(vocab, seed):
+    rng = np.random.default_rng(20260602)
+    f = rng.integers(0, vocab, size=vocab)              # next = f[a], b ignored
+    r2 = np.random.default_rng(seed)
+    # train: every a paired with a RANDOM SUBSET of b's; held-out: every a with the REMAINING b's (new b, seen a)
+    tr, ho = [], []
+    for a in range(vocab):
+        bs = list(range(vocab)); r2.shuffle(bs)
+        k = vocab // 2
+        for b in bs[:k]:
+            tr.append((a, b))
+        for b in bs[k:]:
+            ho.append((a, b))
+
+    def build(ps):
+        X = np.zeros((len(ps), 2 * vocab)); Y = np.zeros(len(ps), dtype=np.int64)
+        for i, (a, b) in enumerate(ps):
+            X[i, a] = 1.0; X[i, vocab + b] = 1.0; Y[i] = f[a]
+        return X, Y
+    return build(tr), build(ho)
+
+
+def init_structured(vocab, H, seed):
+    rng = np.random.default_rng(seed)
+    # SEPARATE a-pathway and b-pathway (structured inductive bias), combined, then output.
+    Wa = rng.standard_normal((vocab, H)) * np.sqrt(2.0 / vocab)
+    Wb = rng.standard_normal((vocab, H)) * np.sqrt(2.0 / vocab)
+    Wo = rng.standard_normal((H, vocab)) * np.sqrt(2.0 / H)
+    return dict(Wa=Wa, Wb=Wb, Wo=Wo)
+
+
+def fwd_structured(net, X, vocab):
+    a_oh = X[:, :vocab]; b_oh = X[:, vocab:]
+    h = relu(a_oh @ net["Wa"] + b_oh @ net["Wb"])
+    return a_oh, b_oh, h, h @ net["Wo"]
+
+
+def train_structured(net, X, Y, vocab, epochs, lr, batch, seed):
+    rng = np.random.default_rng(seed * 7 + 3); n = len(X)
+    for _ in range(epochs):
+        perm = rng.permutation(n)
+        for bi in range(0, n, batch):
+            idx = perm[bi:bi + batch]; xb, yb = X[idx], Y[idx]
+            a_oh, b_oh, h, logit = fwd_structured(net, xb, vocab)
+            p = softmax(logit); dl = p.copy(); dl[np.arange(len(yb)), yb] -= 1.0; dl /= len(yb)
+            net["Wo"] -= lr * (h.T @ dl)
+            dh = (dl @ net["Wo"].T) * drelu(h)
+            net["Wa"] -= lr * (a_oh.T @ dh)
+            net["Wb"] -= lr * (b_oh.T @ dh)
+    return net
+
+
+def run_structure_test(seeds=(42, 43, 44), vocab=12, H=256, epochs=300, lr=0.05, batch=32):
+    print("\n=== v2: RULE vs ARCHITECTURE on an ACHIEVABLE invariance task (next=f[a], ignore distractor b) ===",
+          flush=True)
+    g_ho, s_ho = [], []
+    for s in seeds:
+        (Xtr, Ytr), (Xho, Yho) = make_invariance_dataset(vocab, s)
+        gnet = init_net(2 * vocab, H, vocab, seed=s)
+        gnet = train(gnet, Xtr, Ytr, vocab, "backprop", epochs, lr, batch, s)
+        g_tr = ce_loss(forward(gnet, Xtr)[-1], Ytr); g_h = ce_loss(forward(gnet, Xho)[-1], Yho)
+        snet = init_structured(vocab, H, seed=s)
+        snet = train_structured(snet, Xtr, Ytr, vocab, epochs, lr, batch, s)
+        s_tr = ce_loss(fwd_structured(snet, Xtr, vocab)[-1], Ytr)
+        s_h = ce_loss(fwd_structured(snet, Xho, vocab)[-1], Yho)
+        g_ho.append(g_h); s_ho.append(s_h)
+        print(f"  seed {s}: GENERIC-MLP+backprop train {g_tr:.3f} held-out {g_h:.3f} | "
+              f"STRUCTURED(a|b pathways)+backprop train {s_tr:.3f} held-out {s_h:.3f}  "
+              f"(uniform {np.log(vocab):.3f})", flush=True)
+    gm, sm = float(np.mean(g_ho)), float(np.mean(s_ho))
+    print(f"\nRESULT: generic-MLP held-out {gm:.3f} | structured held-out {sm:.3f} (uniform {np.log(vocab):.3f})",
+          flush=True)
+    if sm < gm - 0.1 and sm < np.log(vocab):
+        print("VERDICT: ARCHITECTURE is the lever -- the STRUCTURED model GENERALIZES (held-out << uniform) "
+              "where the generic MLP overfits, SAME backprop rule. The missing piece is structured/distributed "
+              "ARCHITECTURE (what the brain has + the project's working VSA composition used), not the learning "
+              "rule. -> build biology-faithful generation on the structured/distributed substrate + local "
+              "learning, NOT a generic spiking MLP.", flush=True)
+    else:
+        print("VERDICT: structure did not clearly beat generic here -- re-examine.", flush=True)
+
+
+if __name__ == "__main__":
+    run_structure_test()
