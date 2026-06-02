@@ -55,11 +55,14 @@ seed 42 where the hierarchical shortcut hit 0.000). Removing the 2nd binding lev
 PASS on the REALISTIC structured distribution (the one that exposed the overclaim) + multi-seed + distinct
 codes. Finding 2026-06-02-flat-distinct-RESOLVES-robust-cross-bridge-biological-composition.md. So robust
 cross-bridge biological composition over structured SVO (noun/verb/adj) at 192 concepts is VALIDATED the
-honest way. FULL-320 COMPLETION RUNNING (retrain bridges D@45 spatial + E@46 functional -> 320 distinct flat
-codes -> SVO composition over 320-wide cleanup; _flatdist_DE.log, waiter bdgtf5azt). GPU note: kill stuck
-python + clear pools when a 17-min train runs >45min (CuPy fragmentation over long sessions, NOT hardware --
-matmul stays fast). EXACT NEXT: when D+E retrain done -> run the 5-bridge 320 flat-distinct test (SVO over
-noun/verb/adj, cleanup over 320). High-confidence (same mechanism as 192). Then the honest 320 claim stands.
+honest way. FULL-320 COMPLETION = DEFERRED (GPU fragmentation recurred -- bridgeD@45 ran ~60min for a 17min
+job; killed). The 192 result is the validated honest deliverable; the 320 test (_insubstrate_flatdistinct320_
+test.py, built+ready) only adds 128 distractors (spatial/functional) to the SAME SVO composition -> marginal +
+high-confidence. bridgeB@43 + bridgeC@44 retrained+saved; D@45/E@46 need a CLEAN GPU session. GPU note: CuPy
+pool fragments over long sessions -> long retrains go pathologically slow (NOT hardware -- matmul fast 0.2s
+after killing python; clear python between long runs). EXACT NEXT (clean session): run _run_flatdist_DE.sh
+(D@45,E@46) then _insubstrate_flatdistinct320_test.py for the full honest 320 claim. The 192 robust structured
+composition stands as the validated honest recovery from the overclaim.
 
 HONEST CORRECTION (2026-06-02): the "full-320 biological composition RESOLVES 1.000/0.98 multi-seed" is
 RETRACTED -- it was a RANDOM-FILLER artifact. On STRUCTURED facts (noun/verb/adjective, the realistic case)
