@@ -19,6 +19,7 @@ Run (after _insubstrate_flatdistinct320_test has cached the codes):
   python -m research.findings.raw._insubstrate_flatdist320_kb_capacity_test
 """
 from __future__ import annotations
+import argparse
 import os
 import numpy as np
 
@@ -33,6 +34,15 @@ TRIALS_PER = 6   # independent KB draws per (N, seed); find-by-agent + control a
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--n-grid", default=",".join(str(n) for n in N_FACTS_GRID),
+                    help="comma-separated fact counts to test (default 5,10,15)")
+    ap.add_argument("--seeds", default=",".join(str(s) for s in SEEDS))
+    ap.add_argument("--trials", type=int, default=TRIALS_PER)
+    a = ap.parse_args()
+    n_grid = [int(x) for x in a.n_grid.split(",")]
+    seeds = [int(x) for x in a.seeds.split(",")]
+    trials = a.trials
     xp, backend = get_backend()
     if not os.path.exists(CACHE):
         print(f"CANNOT-CONCLUDE: {CACHE} missing -- run _insubstrate_flatdistinct320_test first.", flush=True)
@@ -47,17 +57,17 @@ def main():
           f"bias={P.COINC_BIAS}, run_steps={P.RUN_STEPS}) ===", flush=True)
 
     overall = {}
-    for n_facts in N_FACTS_GRID:
+    for n_facts in n_grid:
         per_seed_rel = []
         per_seed_role = []
         per_seed_ctrl = []
-        for seed in SEEDS:
+        for seed in seeds:
             rng = np.random.default_rng(seed * 1000 + n_facts)
             roles = {r: rng.choice([-1.0, 1.0], size=D) for r in RM.ROLES}
             roles = {r: v / np.linalg.norm(v) for r, v in roles.items()}
             bb, bidx = P.build(seed, D, xp)
             rel_ok = role_ok = ctrl_ok = tot = 0
-            for _ in range(TRIALS_PER):
+            for _ in range(trials):
                 pick = rng.choice(len(words), size=3 * n_facts, replace=False)
                 facts = [{"agent": words[pick[3 * f]], "action": words[pick[3 * f + 1]],
                           "patient": words[pick[3 * f + 2]]} for f in range(n_facts)]
