@@ -122,6 +122,29 @@ VSA SYMBOLIC SCALING CONFIRMED (job bvgd92m74): composition RESOLVES at 448 conc
 LINEARLY with distinct-seed bridges (training-time-bound, NOT architecture-bound). This complementary symbolic
 result stands; banks F/G + the generalized scaling test are committed.
 
+>>> LATEST OWNER STEER + ACTIVE DIRECTION (2026-06-02, read THIS first): owner: "100% stay biology-faithful;
+conversation AND artificial life; no shortcuts (except brief testing/validation); negatives mean we haven't
+implemented the right brain STRUCTURE yet -- use the reference catalog." So: NOT a transformer, NOT cloud; find
++ implement the missing biological STRUCTURES. Generative-ceiling exploration (below) is now CLOSED context
+(it showed scale doesn't rescue the spiking BPTT LM -- but BPTT itself is non-biological per biology.md).
+CATALOG RESEARCH DONE: candidate missing mechanism = apical-basal dendritic neurons + predictive coding (LOCAL
+learning, the project's deferred 2026-05-05 design; catalog flags "dendritic missing"/"columns missing").
+CHEAP-FIRST PROBE DONE (research/findings/raw/_pc_vs_bptt_probe.py; finding 2026-06-02-cheap-first-probe-
+learning-rule-is-NOT-the-generalization-lever.md): the LEARNING RULE is NOT the missing generalization
+mechanism. backprop ~ feedback-alignment ~ PC (Whittington-Bogacz: PC is mathematically ~ backprop); the
+overfit<->generalize flip is TASK DIFFICULTY, not the rule. So the multi-month spiking-dendritic build is NOT
+justified by a "fixes generalization" rationale -- cheap probe de-risked it correctly. REFINED DIRECTION
+(project's own evidence): VSA composition WORKS (320 concepts, generalizes) via STRUCTURED/DISTRIBUTED codes +
+generate-by-COMPOSITION; the generative LM OVERFIT via a generic MLP + next-token. The lever is REPRESENTATION
++ structured COMPUTATION, not the rule. The local rule stays valuable as the biology-faithful TRAINING method,
+not the generalization lever. >>> EXACT NEXT: research the catalog's SEQUENCE-GENERATION + language-PRODUCTION
+mechanisms (Indefrey word production; hippocampal/cortical sequence generation; theta-gamma ordering; SWR
+replay as generative) -> design + cheap-first-probe a biology-faithful GENERATE-BY-COMPOSITION mechanism on the
+EXISTING working distributed substrate (reuse the validated VSA bind/unbind + sequence mechanisms), rather than
+next-token prediction over a generic net. Brainstorm/design before the build (brainstorming skill). moat/honest
+negatives = deliverable; both remotes; no shortcuts; biology-faithful.
+
+--- SUPERSEDED CONTEXT (generative-ceiling exploration, now closed) ---
 >>> MAJOR DIRECTION PIVOT (2026-06-02, OWNER STEER): owner clarified the goal = "push scale, the ideal is at
 least comparable to a tiny/small SOTA modern LLM in CONVERSATIONAL capabilities." That is GENERATIVE language
 modeling, NOT VSA concept-scaling (which is a symbolic Q&A paradigm, cannot become open-ended LLM dialogue).
