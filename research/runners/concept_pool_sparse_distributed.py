@@ -378,6 +378,12 @@ def main():
     p.add_argument("--drive-steps", type=int, default=100)
     p.add_argument("--out", type=str, default=None)
     p.add_argument("--save-bridge", type=str, default=None)
+    p.add_argument("--resume-from", type=str, default=None,
+                   help="checkpoint to RESUME training from (accumulate more --n-train-events on top of "
+                        "prior training). Loads the trained weights instead of re-applying the from-scratch "
+                        "topographic prior. MUST use the same --seed and --vocab so the sparse patterns "
+                        "match. Enables incremental training across breaks (each chunk a fresh fast process "
+                        "-> no CuPy fragmentation from one long run).")
     p.add_argument("--vocab", type=str, default=None)
     args = p.parse_args()
 
@@ -432,18 +438,26 @@ def main():
               f"size {args.pattern_size}; mean pairwise overlap (first 20): "
               f"{mean_overlap:.1f} / {args.pattern_size}", flush=True)
 
-    # Apply topographic prior
+    # Apply topographic prior (from-scratch init) OR resume from a prior checkpoint (accumulate training).
+    # Resume loads the trained weights so the new --n-train-events accumulate ON TOP of prior training,
+    # enabling incremental training across breaks (each chunk a fresh fast process -> no CuPy fragmentation).
     t0 = time.time()
-    prior_stats = apply_sparse_topographic_prior(
-        bridge=bridge, n_concepts=args.n_concepts,
-        n_lang_input=args.n_lang_input,
-        sparse_patterns=sparse_patterns,
-        sparsity=args.sparsity,
-        topographic_factor=args.topographic_factor,
-        off_target_factor=args.off_target_factor,
-        n_words_for_orthogonal=args.n_concepts,
-    )
-    print(f"[topographic prior] {time.time() - t0:.1f}s", flush=True)
+    if args.resume_from:
+        bridge.load_checkpoint(args.resume_from)
+        prior_stats = {"resumed_from": args.resume_from}
+        print(f"[resume] loaded {args.resume_from}; accumulating +{args.n_train_events} events/concept on top "
+              f"of prior weights [{time.time() - t0:.1f}s]", flush=True)
+    else:
+        prior_stats = apply_sparse_topographic_prior(
+            bridge=bridge, n_concepts=args.n_concepts,
+            n_lang_input=args.n_lang_input,
+            sparse_patterns=sparse_patterns,
+            sparsity=args.sparsity,
+            topographic_factor=args.topographic_factor,
+            off_target_factor=args.off_target_factor,
+            n_words_for_orthogonal=args.n_concepts,
+        )
+        print(f"[topographic prior] {time.time() - t0:.1f}s", flush=True)
 
     # Open plasticity gates
     bridge.set_plasticity_gate("language_input_to_shared", 1.0)
