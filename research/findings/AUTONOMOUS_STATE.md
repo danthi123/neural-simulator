@@ -131,17 +131,31 @@ Owner CHOSE (AskUserQuestion) the "3090 generative ceiling" option: push the bio
 as ONE 3090 allows on a real dialogue corpus (word-level), measure generation quality + the HONEST GAP to a
 tiny SOTA LLM. No cost; cheap-first before any cloud spend; honest negative IS the deliverable.
 
->>> EXACT NEXT CONCRETE ACTION (building): GENERATIVE-CEILING experiment. Corpus = TinyStories (data/corpus/
-tinystories.txt, 1.5M words -- the canonical "how small can an LM be + still speak coherent English" benchmark,
-Eldan-Li 2023, with PUBLISHED tiny-LM baselines for the gap). Infra to REUSE: sim/bptt_snn_gpu.py (LIF
-surrogate-grad BPTT, forward/backward_unroll_xp, backend-agnostic), sim/char_tokenizer.py (extend to word-
-level), research/runners/corpus_fetch.py (TinyStories/WikiText). BUILD: (1) word-level tokenizer (top-K vocab,
-<unk> OOV); (2) SNN-LM trainer+eval reusing bptt_snn_gpu (next-token prediction, cross-entropy, val
-perplexity + sample generation); (3) smoke-test CPU/numpy; (4) launch 3090-ceiling training (wide hidden,
-V~4096-8192, T~32-64); (5) measure val perplexity + generation samples + honest gap to published TinyStories
-tiny-LM baselines. Honest framing: the project documented this path as a 3090 dead-end for VSA-transfer, but
-STANDALONE generation quality at the ceiling is the unexplored measurement -> document where it lands + the gap
-(the deliverable, even if far short of tiny-SOTA-LLM). No external LLM (standing constraint). Owner-strategic forks to SURFACE
+CHECK-EXISTING-FIRST (critical, 2026-06-02): the project ALREADY has a generative-LM "generator" arc
+(2026-05-17). Generator-S = subword spiking LM (surrogate-grad BPTT) on real TinyStories -> honest NEGATIVE
+(held-out ppl 117K-388K, token-soup, WORSE than uniform-random) -- BUT only hidden 256,256 (tiny, not a
+ceiling). Generator-F = 6M-param TRANSFORMER on same corpus -> PASS, held-out ppl ~6.1, coherent simple-story
+English (the "tiny LLM" reference). Generator-E (n-gram) PASS-bounded; Generator-D (distillation) NEGATIVE.
+Converged picture = "8 honest negatives": a modest spiking LM does NOT reach held-out language competence at
+feasible local scale; a transformer does. Reuse infra: scaled_subword_lm_train.py (train_subword_lm), sim/
+bpe_tokenizer.py, subword_lm_generate.py, subword_lm_gate.py (3-seed gate + _heldout_nll + ABSOLUTE-COMPETENCE
+floor = held-out ppl must beat uniform-random vocab_size).
+
+OWNER NOTES (2026-06-02): (1) open-source/free LLM corpora available to adopt; (2) we've hit COMPUTE/SPEED
+limits on the 3090 but NOT VRAM -> push model SIZE up (VRAM headroom), accept slow training.
+
+>>> EXACT NEXT CONCRETE ACTION (in flight): the OWNER'S CEILING TEST = the one unexplored cell -- does SCALING
+the subword spiking LM (hidden 256 -> VRAM-ceiling) rescue it? Job b5ccnq87x (_ceiling_big1.log, 2-hr bound):
+single-seed DECISIVE probe via _ceiling_probe.py -- ~25M-param spiking LM (hidden 4096x2, vocab 1024, T48,
+16000 samples = 8x Generator-S, 30 epochs) on TinyStories, reports held-out ppl vs uniform-random (1024) + vs
+the Generator-F transformer (6.1) + a generation sample. WHEN b5ccnq87x COMPLETES -> read the log: if TOKEN-SOUP
+(ppl >> 1024) the ceiling is NEGATIVE at this scale (definitive cheap negative; note the 50M char run ALSO got
+worse at 4096 -> scale predicted not to rescue) -> propagate honest NEGATIVE + the gap (spiking arch is the
+bottleneck, not size; a 6M transformer reaches ppl 6.1) -> SURFACE to owner (cloud/transformer/accept). If
+BEATS-RANDOM (ppl < 1024) -> real signal -> scale toward 50M (hidden 4096x3) + bigger/open corpus + run the
+3-seed gate (with the absolute floor) to validate. Honest framing: predicted NEGATIVE per the converged arc,
+but the owner explicitly chose to measure the ceiling -> the honest gap measurement IS the deliverable. No
+external LLM. Owner-strategic forks to SURFACE
 (do NOT launch unilaterally): (a) 640-concept tier (10 bridges; near-ortho boundary findings say more scale at
 same overlap won't help recognition, but COMPOSITION scales fine -- cheap to test if owner wants); (b) LEARNED
 codes at scale (the cheating-audit frontier: 320 codes are given by sparse encoding, not learned end-to-end --
