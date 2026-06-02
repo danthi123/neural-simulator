@@ -102,18 +102,20 @@ composition-RESOLVES-multiseed.md; capability_status pillar n=112 + as_of 2026-0
 CLAUDE.md milestone note; committed both remotes. Scope honesty: codes GIVEN by sparse encoding (cheating-
 audit), composition GENUINE + robust at 320; per-bridge retrain ~73-75 min (the "17 min" doc was wrong).
 
->>> EXACT NEXT CONCRETE ACTION (in flight): KB-CAPACITY on the 320 substrate -- job b2lb78tz9
-(_flatdist320_kb_capacity.log, 75-min bound). Stores N facts (separate K=3 spiking binds), measures relational
-retrieval (find-by-agent -> read-patient) + role query + absent-cue abstention, N in {5,10,15}, 3 seeds, bar
-min-across-seed >= 0.80. Extends the prior KB-scaling cap (~5 spiking / ~12 numpy on small-vocab denoise64) to
-the validated 320 distinct-code substrate -- does distinct coding raise the spiking fact cap? WHEN b2lb78tz9
-COMPLETES -> read the log; record the max-N that holds multi-seed; write/extend the finding; commit both
-remotes. THEN (GPU now free) run the already-BUILT negation/yes-no/who-QA test: `python -m
-research.findings.raw._insubstrate_flatdist320_negation_qa_test` (K=4 polarity stack on the 320 substrate,
-multi-seed, with abstention control + transcript) -> record yes/no + who + control accuracy, fold into a
-conversational-on-320 finding, commit both remotes. (Both probes load the cached _flatdist320_codes.npz; no
-retrain needed.) That completes the richer-conversation-on-320 layer (wh-QA + negation + multi-fact KB capacity
-all on the validated 320 biological substrate). Owner-strategic forks to SURFACE
+CONVERSATION-ON-320 LAYER = essentially COMPLETE (2026-06-02, finding 2026-06-02-conversation-on-the-full-320-
+substrate.md). On the validated 320 biological substrate: (1) KB CAPACITY holds to >= 15 facts PERFECT multi-
+seed (relational/role/abstention all 1.000, 3x the prior ~5-fact overlapping-code cap; mechanism = distinct
+codes 0.045 vs 0.70); (2) NEGATION + yes/no + who-QA (K=4) RESOLVES multi-seed: yes/no [0.9,0.9,0.8] mean 0.867
+(boundary metric = the extra K=4 polarity unbind), who-QA 1.000, abstention 1.000. So the 320 substrate behaves
+like a small queryable, honestly-abstaining knowledge base in spiking, multi-seed. All committed both remotes.
+
+>>> EXACT NEXT CONCRETE ACTION (in flight): KB CEILING probe -- job b8azh6357 (_flatdist320_kb_ceiling.log,
+40-min bound) tests N=30 (does the KB hold past 15?). WHEN b8azh6357 COMPLETES -> update the KB section of the
+conversation finding with the ceiling result (>=30 if perfect, else the break point); add capability_status
+pillar n=113 (conversation-on-320: KB capacity + negation/QA) + bump as_of; commit both remotes; then SURFACE
+the consolidated conversational-on-320 picture (composition + KB + negation/QA all validated multi-seed) +
+the two owner-strategic forks to the owner for steer (this is a natural checkpoint; the forks genuinely need
+owner buy-in). Probe loads the cached _flatdist320_codes.npz (no retrain). Owner-strategic forks to SURFACE
 (do NOT launch unilaterally): (a) 640-concept tier (10 bridges; near-ortho boundary findings say more scale at
 same overlap won't help recognition, but COMPOSITION scales fine -- cheap to test if owner wants); (b) LEARNED
 codes at scale (the cheating-audit frontier: 320 codes are given by sparse encoding, not learned end-to-end --
