@@ -48,7 +48,25 @@ run_in_background waiter, no exceptions.) MULTI-SEED CONFIRMED (seeds 42/43/44 @
 2048 lang, sparsity 0.01, 300ev -- does "training reduces overlap" hold at 64 words (overlap stays ~0.5,
 recognition ~0.9 -> cheap lever holds, no 100hr) or does the overlap floor reappear (-> a real rep-learning
 target at some N)? Compare to 28-word (overlap 0.50, recognition 0.95). v3 runner + generalized capture
-(--vocab-mod/--n-lang) committed. ACTIVE DIRECTION (2026-06-02, owner: "continue autonomously to lift the limits + get closer to goals"):
+(--vocab-mod/--n-lang) committed. HONEST CORRECTION (2026-06-02): the "full-320 biological composition RESOLVES 1.000/0.98 multi-seed" is
+RETRACTED -- it was a RANDOM-FILLER artifact. On STRUCTURED facts (noun/verb/adjective, the realistic case)
+the hierarchical-320 composition full-3-slot QA = 0.000/0.950/1.000 at seeds 42/43/44 -- CATASTROPHIC at seed
+42 (where random fillers scored 1.000). The integration demo (seed 42, structured) caught it (0/6). MECHANISM:
+the hierarchical bridge-role bind stacks a 2nd binding level (composition-role x bridge-role x code) -> the
+documented NESTING/multi-hop SNR wall; at some seeds the role vectors interfere catastrophically for
+structured (bridge-systematic) fillers. Recognition over the 320 distinct codes is fine; the COMPOSITION is
+not robust. WHAT STANDS: within-bridge 64-concept composition (FLAT codes, no nesting) ROBUST multi-seed
+(1.000/0.900/0.950). HONEST PATH to robust full-320: DISTINCT FLAT codes (retrain the bridges with DISTINCT
+seeds 42-46 -> single-level composition like the within-bridge 64), NOT the hierarchical shortcut. Findings:
+2026-06-02-hierarchical-320-NESTING-WALL-honest-retraction.md + banner on the milestone doc. LESSON: validate
+the REALISTIC input distribution (structured facts), not random samples -- a clean abstention control on the
+wrong distribution still misled. EXACT NEXT: cheap-first the flat-distinct path -- retrain a few bridges with
+DISTINCT seeds (bridgeB@43, bridgeC@44; bridgeA@42 exists) -> test cross-bridge SVO composition over the
+distinct flat codes; if robust (not seed-variable) the flat-distinct path works -> scale to 5 bridges. Do NOT
+re-claim full-320 composition until structured-fact multi-seed is robust. moat/0.80 bar; bounded waiters;
+honest propagation both remotes.
+
+ACTIVE DIRECTION (2026-06-02, owner: "continue autonomously to lift the limits + get closer to goals"):
 make the BIOLOGICAL spiking composition robust AT SCALE so conversation is built on the brain-analogue
 mechanism, NOT the static engram-tag retrieval (which the owner's goal explicitly says not to build on). The
 320-concept demo (g20_multibridge --sparse) WORKS but is retrieval/ranking. The biological spiking bind is
