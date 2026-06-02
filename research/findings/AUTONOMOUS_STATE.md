@@ -117,17 +117,31 @@ docs, wiki -- all committed both remotes. HONEST scaling reality: composition sc
 architecture. The learned-codes fork is a CLOSED near-ortho boundary (substrate provably can't produce
 near-ortho codes from activity -> given sparse codes are a legitimate engineering component, not a cheat).
 
->>> EXACT NEXT CONCRETE ACTION (in flight): SCALING PAST 320 per the owner's explicit "scale past previous
-limits" mandate -- demonstrate composition holding with MORE real distinct-seed bridges. Job bvgd92m74
-(_flatdist_FG_scaling.log, 3.5-hr bound, ~2.5hr): retrains bridgeF@47 + bridgeG@48 (synthetic-label banks
-cz0320..cz0447), then runs _insubstrate_flatdist_scaling_test.py at 448 concepts (structured SVO noun/verb/adj
-fillers + any-bank, cleanup over all 448, seeds 42/43/44, bar min>=0.80). WHEN bvgd92m74 COMPLETES -> read the
-log; if RESOLVES at 448, write/extend a scaling finding + commit, then CONTINUE toward 640 (build banks H@49/
-I@50/J@51 + retrain + re-run the SAME generalized scaling test -> 576, 640). If a metric dips, that's the
-cleanup-width limit -- characterise (honest). The scaling test auto-includes whatever bridges exist, so it
-re-runs unchanged at each scale. Owner-strategic fork still open to SURFACE (only one, since learned-codes is
-closed): how far to push scale (640 / beyond) vs declare conversation sufficient + pivot to another goal aspect
-(artificial-life / brain-analogue dynamics). Owner-strategic forks to SURFACE
+VSA SYMBOLIC SCALING CONFIRMED (job bvgd92m74): composition RESOLVES at 448 concepts (7 bridges, structured
+1.000x3 + any-bank 1.000x3, cleanup over 448, between-cos max 0.604). As predicted -- composition scales
+LINEARLY with distinct-seed bridges (training-time-bound, NOT architecture-bound). This complementary symbolic
+result stands; banks F/G + the generalized scaling test are committed.
+
+>>> MAJOR DIRECTION PIVOT (2026-06-02, OWNER STEER): owner clarified the goal = "push scale, the ideal is at
+least comparable to a tiny/small SOTA modern LLM in CONVERSATIONAL capabilities." That is GENERATIVE language
+modeling, NOT VSA concept-scaling (which is a symbolic Q&A paradigm, cannot become open-ended LLM dialogue).
+Surfaced the honest documented wall (Phase 2.3b: a 50M-param spiking BPTT net got WORSE not better -> "closed
+at single-3090 scale class"; tiny-SOTA-LLM = 135M+ params on trillions of tokens, orders of magnitude beyond).
+Owner CHOSE (AskUserQuestion) the "3090 generative ceiling" option: push the biological generative net as far
+as ONE 3090 allows on a real dialogue corpus (word-level), measure generation quality + the HONEST GAP to a
+tiny SOTA LLM. No cost; cheap-first before any cloud spend; honest negative IS the deliverable.
+
+>>> EXACT NEXT CONCRETE ACTION (building): GENERATIVE-CEILING experiment. Corpus = TinyStories (data/corpus/
+tinystories.txt, 1.5M words -- the canonical "how small can an LM be + still speak coherent English" benchmark,
+Eldan-Li 2023, with PUBLISHED tiny-LM baselines for the gap). Infra to REUSE: sim/bptt_snn_gpu.py (LIF
+surrogate-grad BPTT, forward/backward_unroll_xp, backend-agnostic), sim/char_tokenizer.py (extend to word-
+level), research/runners/corpus_fetch.py (TinyStories/WikiText). BUILD: (1) word-level tokenizer (top-K vocab,
+<unk> OOV); (2) SNN-LM trainer+eval reusing bptt_snn_gpu (next-token prediction, cross-entropy, val
+perplexity + sample generation); (3) smoke-test CPU/numpy; (4) launch 3090-ceiling training (wide hidden,
+V~4096-8192, T~32-64); (5) measure val perplexity + generation samples + honest gap to published TinyStories
+tiny-LM baselines. Honest framing: the project documented this path as a 3090 dead-end for VSA-transfer, but
+STANDALONE generation quality at the ceiling is the unexplored measurement -> document where it lands + the gap
+(the deliverable, even if far short of tiny-SOTA-LLM). No external LLM (standing constraint). Owner-strategic forks to SURFACE
 (do NOT launch unilaterally): (a) 640-concept tier (10 bridges; near-ortho boundary findings say more scale at
 same overlap won't help recognition, but COMPOSITION scales fine -- cheap to test if owner wants); (b) LEARNED
 codes at scale (the cheating-audit frontier: 320 codes are given by sparse encoding, not learned end-to-end --
