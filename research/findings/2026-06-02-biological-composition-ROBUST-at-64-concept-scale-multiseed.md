@@ -50,3 +50,24 @@ abstains on unknowns -- all spiking, at 64 concepts).
   per-bridge codes (the documented per-bridge-distinct-seed recovery path) -- a clean next step.
 - The concept codes are still substantially given by the sparse encoding (the cheating-audit honest scope);
   the COMPOSITION on top is genuine (abstention-controlled), here shown robust at 64 concepts.
+
+## Integration demo transcript (compose_bio_conversation_320_demo.py, 64 concepts, all spiking)
+```
+=== biological relational conversation @ 64 concepts (320-tier, backend=cupy) ===
+  loaded bridge; capturing 64 real concept codes (temporal integration)...
+  -- teaching facts (each stored as a spiking role(x)filler bind) --
+    stored:  agent=apple  action=fish  patient=leaf
+    stored:  agent=cat  action=tree  patient=cup
+    stored:  agent=person  action=road  patient=sun
+  -- asking (answers computed by spiking unbind + cleanup) --
+    who fish leaf?  -> apple   (OK)
+    what did apple fish?  -> leaf   (OK)
+    who tree cup?  -> cat   (OK)
+    what did cat tree?  -> cup   (OK)
+    who road sun?  -> person   (OK)
+    what did person road?  -> sun   (OK)
+  -- abstention (a fact never taught) --
+    who river dog?  -> (unknown -- correctly abstains)
+  RESULT: 6/6 wh-answers correct via the spiking bind; abstains on unknown = True. Relational reasoning computed by spiking neurons at 64 concepts.
+```
+6/6 wh-answers correct via the spiking bind; correct abstention on an untaught fact. Relational reasoning at 64 concepts computed by spiking neurons.

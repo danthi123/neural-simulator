@@ -1,0 +1,52 @@
+=== biological relational conversation @ 64 concepts (320-tier, backend=cupy) ===
+[2026-06-02 06:12:16][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-02 06:12:16][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-02 06:12:16][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 18684 total neurons, 4 pathways.
+[2026-06-02 06:12:16][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-02 06:12:17][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 18684 neurons...
+[2026-06-02 06:12:17][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-02 06:12:17][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-02 06:12:17][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-02 06:12:17][INFO] SIM_BRIDGE: Generating 3D neuron positions for 18684 neurons...
+[2026-06-02 06:12:17][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-02 06:12:38][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 10392398 synapses across 5 populations.
+[2026-06-02 06:12:39][INFO] SIM_BRIDGE: Initializing eligibility traces for 10392398 synapses (capacity: 15588597, dtype: float32)...
+[2026-06-02 06:12:39][INFO] SIM_BRIDGE: Initializing STDP state for 18684 neurons...
+[2026-06-02 06:12:39][INFO] SIM_BRIDGE: Simulation data initialized for 18684 neurons (3D). Synapses: 10392398. GPU memory: 2.1GB/25.8GB (8.0%)
+[2026-06-02 06:12:39][INFO] SIM_BRIDGE: Loading checkpoint from research/findings/raw/g11_bg/g20_sparse_bridges_320/bridgeA_nouns_sparse64.simstate.h5...
+[2026-06-02 06:12:39][INFO] SIM_BRIDGE: Clearing simulation state and GPU memory...
+[2026-06-02 06:12:39][INFO] SIM_BRIDGE: Cleared simulation state and GPU memory.
+[2026-06-02 06:12:39][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_adex_w' not found or was empty. Using default.
+[2026-06-02 06:12:40][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_u' not found or was empty. Using default.
+[2026-06-02 06:12:40][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_x' not found or was empty. Using default.
+[2026-06-02 06:12:40][SUCCESS] SIM_BRIDGE: Checkpoint loaded. Sim time: 0.0ms, Step: 0, Model: IZHIKEVICH
+  loaded bridge; capturing 64 real concept codes (temporal integration)...
+[2026-06-02 06:14:43][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-02 06:14:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-02 06:14:43][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-02 06:14:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 16000 neurons...
+[2026-06-02 06:14:43][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-02 06:14:43][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-02 06:14:43][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-06-02 06:14:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 16000 neurons...
+[2026-06-02 06:14:43][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-02 06:14:43][INFO] SIM_BRIDGE: Simulation data initialized for 16000 neurons (3D). Synapses: 0. GPU memory: 1.9GB/25.8GB (7.4%)
+[2026-06-02 06:14:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 16000 synapses across 1 populations.
+
+  -- teaching facts (each stored as a spiking role(x)filler bind) --
+    stored:  agent=apple  action=fish  patient=leaf
+    stored:  agent=cat  action=tree  patient=cup
+    stored:  agent=person  action=road  patient=sun
+
+  -- asking (answers computed by spiking unbind + cleanup) --
+    who fish leaf?  -> apple   (OK)
+    what did apple fish?  -> leaf   (OK)
+    who tree cup?  -> cat   (OK)
+    what did cat tree?  -> cup   (OK)
+    who road sun?  -> person   (OK)
+    what did person road?  -> sun   (OK)
+
+  -- abstention (a fact never taught) --
+    who river dog?  -> (unknown -- correctly abstains)
+
+  RESULT: 6/6 wh-answers correct via the spiking bind; abstains on unknown = True. Relational reasoning computed by spiking neurons at 64 concepts.
