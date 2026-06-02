@@ -77,18 +77,23 @@ wrong (likely a smaller config). The chain b7s1jtt1g TRUNCATED because its 90-mi
 bounded timeouts to the REAL per-job cost, and run one expensive bridge per process (the incremental "fresh
 process per chunk" lesson) rather than chaining two under one timeout.
 
->>> EXACT NEXT CONCRETE ACTION (in flight): FULL-320 flat-distinct completion, now correctly chunked.
-bridgeD@45 = SAVED (_flatdist_bridgeD_seed45.simstate.h5). bridgeE@46 = re-running SOLO as job b0vjpwbxx
-(_flatdist_E.log, 100-min bound, fresh process on the healthy GPU, ~73 min). WHEN b0vjpwbxx SAVES
-_flatdist_bridgeE_seed46.simstate.h5 -> run `python -m research.findings.raw._insubstrate_flatdistinct320_test`
-(its OWN fresh process, ~5 min) -- captures 320 distinct flat codes (5 bridges, seeds 42-46), checks distinct
-(max-cos<0.9), STRUCTURED SVO composition (noun/verb/adj fillers) cleanup over ALL 320 (D+E = 128 distractors)
-at seeds 42/43/44, bar min>=0.80. Extends validated 192-result (1.000/1.000/1.000) to the 320 "age-5" target.
-If VERDICT=RESOLVES SCRUTINISE THE PASS HARD (the 320 hierarchical shortcut FAILED structured facts 0.000 at
-seed 42 -> confirm codes truly distinct, structured not random fillers, cleanup over all 320), then run the
-pre-staged any-bank escalation (_insubstrate_flatdist320_anybank_test.py), write finding, commit both remotes.
-If BOUNDARY (min<0.80) characterise which bank/seed degrades (cleanup-capacity vs binding-quality) -- an honest
-negative is the deliverable. The 192 robust structured composition stands regardless.
+TIMING CONFIRMED: bridgeE@46 took 75 min (14:22->15:37), consistent with bridgeD@45's 73 min -> 73-75 min IS
+the genuine per-bridge cost at this config (64 concepts x 400 events x 8192 lang); the doc's "~17 min" was
+simply wrong for the 64-concept tier (NOT fragmentation). All 5 distinct-seed bridges now SAVED: bridgeA
+noun@42 (existing), B verb@43, C adj@44, D spatial@45, E functional@46.
+
+>>> EXACT NEXT CONCRETE ACTION (in flight): the 320 STRUCTURED composition test is running as job bh4o2reg3
+(_flatdist320_test.log, 40-min bound, ~15 min) -- captures 320 distinct flat codes from all 5 bridges, checks
+distinct (max-cos<0.9), runs STRUCTURED SVO composition (noun/verb/adj fillers) cleanup over ALL 320 (D+E =
+128 distractors) at seeds 42/43/44, bar min>=0.80. Extends the validated 192-result (1.000/1.000/1.000) to the
+320 "age-5" target. WHEN bh4o2reg3 COMPLETES -> read _flatdist320_test.log; if VERDICT=RESOLVES SCRUTINISE THE
+PASS HARD (the 320 hierarchical shortcut FAILED structured facts 0.000 at seed 42 -> confirm codes truly
+distinct max-cos<0.9, structured not random fillers, cleanup over all 320), then run the pre-staged any-bank
+escalation `python -m research.findings.raw._insubstrate_flatdist320_anybank_test` + the conversational demo
+`python -m research.runners.compose_flatdist320_conversation_demo`, write finding, commit both remotes
+(the demo commits only if the test resolves). If BOUNDARY (min<0.80) characterise which bank/seed degrades
+(cleanup-capacity vs binding-quality) -- an honest negative is the deliverable. The 192 robust structured
+composition stands regardless.
 
 HONEST CORRECTION (2026-06-02): the "full-320 biological composition RESOLVES 1.000/0.98 multi-seed" is
 RETRACTED -- it was a RANDOM-FILLER artifact. On STRUCTURED facts (noun/verb/adjective, the realistic case)
