@@ -48,7 +48,20 @@ run_in_background waiter, no exceptions.) MULTI-SEED CONFIRMED (seeds 42/43/44 @
 2048 lang, sparsity 0.01, 300ev -- does "training reduces overlap" hold at 64 words (overlap stays ~0.5,
 recognition ~0.9 -> cheap lever holds, no 100hr) or does the overlap floor reappear (-> a real rep-learning
 target at some N)? Compare to 28-word (overlap 0.50, recognition 0.95). v3 runner + generalized capture
-(--vocab-mod/--n-lang) committed. HONEST CORRECTION (2026-06-02): the "full-320 biological composition RESOLVES 1.000/0.98 multi-seed" is
+(--vocab-mod/--n-lang) committed. RECOVERY CONFIRMED (2026-06-02): the honest flat-distinct fix WORKS. Distinct-seed retrain (bridgeB verbs@43,
+bridgeC adj@44; bridgeA nouns@42 existing) -> 192 DISTINCT FLAT codes (between-cos max 0.604) -> STRUCTURED
+SVO composition (agent=noun/action=verb/patient=adj) full-3-slot QA = 1.000/1.000/1.000 (seeds 42/43/44, incl.
+seed 42 where the hierarchical shortcut hit 0.000). Removing the 2nd binding level removes the nesting wall.
+PASS on the REALISTIC structured distribution (the one that exposed the overclaim) + multi-seed + distinct
+codes. Finding 2026-06-02-flat-distinct-RESOLVES-robust-cross-bridge-biological-composition.md. So robust
+cross-bridge biological composition over structured SVO (noun/verb/adj) at 192 concepts is VALIDATED the
+honest way. FULL-320 COMPLETION RUNNING (retrain bridges D@45 spatial + E@46 functional -> 320 distinct flat
+codes -> SVO composition over 320-wide cleanup; _flatdist_DE.log, waiter bdgtf5azt). GPU note: kill stuck
+python + clear pools when a 17-min train runs >45min (CuPy fragmentation over long sessions, NOT hardware --
+matmul stays fast). EXACT NEXT: when D+E retrain done -> run the 5-bridge 320 flat-distinct test (SVO over
+noun/verb/adj, cleanup over 320). High-confidence (same mechanism as 192). Then the honest 320 claim stands.
+
+HONEST CORRECTION (2026-06-02): the "full-320 biological composition RESOLVES 1.000/0.98 multi-seed" is
 RETRACTED -- it was a RANDOM-FILLER artifact. On STRUCTURED facts (noun/verb/adjective, the realistic case)
 the hierarchical-320 composition full-3-slot QA = 0.000/0.950/1.000 at seeds 42/43/44 -- CATASTROPHIC at seed
 42 (where random fillers scored 1.000). The integration demo (seed 42, structured) caught it (0/6). MECHANISM:
