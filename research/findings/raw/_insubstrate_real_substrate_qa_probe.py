@@ -115,7 +115,7 @@ def run_qa(codes, words, seed, n_trials, n_facts, xp):
 
 
 def main():
-    global STIM
+    global STIM, SPARSITY
     ap = argparse.ArgumentParser()
     ap.add_argument("--bridge", type=str, required=True)
     ap.add_argument("--vocab", type=str, required=True)
@@ -124,8 +124,11 @@ def main():
     ap.add_argument("--n-facts", type=int, default=2)
     ap.add_argument("--stim-steps", type=int, default=STIM,
                     help="capture window (temporal-integration denoising lever; default 120)")
+    ap.add_argument("--sparsity", type=float, default=SPARSITY,
+                    help="orthogonal-drive sparsity (160-tier 0.02, 320-tier 0.007)")
     a = ap.parse_args()
-    STIM = a.stim_steps   # capture_real_codes reads the module STIM
+    STIM = a.stim_steps        # capture_real_codes reads the module STIM
+    SPARSITY = a.sparsity      # and the module SPARSITY (320-tier needs 0.007)
     if not os.path.exists(a.bridge):
         print(f"CANNOT-CONCLUDE: bridge {a.bridge} not found", flush=True); return
     xp, backend = get_backend()
