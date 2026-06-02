@@ -34,11 +34,17 @@ def _mc(v):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--rm-seed", type=int, default=42,
+                    help="composition RNG seed (roles/trials/bind); codes are cached so multi-seed is fast")
+    a = ap.parse_args()
     Q.STIM = 300; Q.SPARSITY = 0.007
     xp, backend = get_backend()
     D = Q.N_POOL
-    rng = np.random.default_rng(42)
-    bridge_roles = [rng.choice([-1.0, 1.0], size=D) / np.sqrt(D) for _ in range(len(BRIDGES))]
+    caprng = np.random.default_rng(42)   # bridge_roles FIXED at 42 (must match cached codes)
+    bridge_roles = [caprng.choice([-1.0, 1.0], size=D) / np.sqrt(D) for _ in range(len(BRIDGES))]
+    rng = np.random.default_rng(a.rm_seed)   # composition RNG (roles/trials/bind) -- varied for multi-seed
 
     if os.path.exists(CACHE):
         d = np.load(CACHE); hier = {w: d[w] for w in d.files if w != "_words"}; words = list(d["_words"])
@@ -82,7 +88,7 @@ def main():
     P.RUN_STEPS = 150; P.COINC_BIAS = -500.0
     roles = {r: rng.choice([-1.0, 1.0], size=D) for r in RM.ROLES}
     roles = {r: v / np.linalg.norm(v) for r, v in roles.items()}
-    bb, bidx = P.build(42, D, xp)
+    bb, bidx = P.build(a.rm_seed, D, xp)
 
     def q(bounds, given, qr):
         for b in bounds:
