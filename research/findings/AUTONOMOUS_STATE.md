@@ -82,18 +82,25 @@ the genuine per-bridge cost at this config (64 concepts x 400 events x 8192 lang
 simply wrong for the 64-concept tier (NOT fragmentation). All 5 distinct-seed bridges now SAVED: bridgeA
 noun@42 (existing), B verb@43, C adj@44, D spatial@45, E functional@46.
 
->>> EXACT NEXT CONCRETE ACTION (in flight): the 320 STRUCTURED composition test is running as job bh4o2reg3
-(_flatdist320_test.log, 40-min bound, ~15 min) -- captures 320 distinct flat codes from all 5 bridges, checks
-distinct (max-cos<0.9), runs STRUCTURED SVO composition (noun/verb/adj fillers) cleanup over ALL 320 (D+E =
-128 distractors) at seeds 42/43/44, bar min>=0.80. Extends the validated 192-result (1.000/1.000/1.000) to the
-320 "age-5" target. WHEN bh4o2reg3 COMPLETES -> read _flatdist320_test.log; if VERDICT=RESOLVES SCRUTINISE THE
-PASS HARD (the 320 hierarchical shortcut FAILED structured facts 0.000 at seed 42 -> confirm codes truly
-distinct max-cos<0.9, structured not random fillers, cleanup over all 320), then run the pre-staged any-bank
-escalation `python -m research.findings.raw._insubstrate_flatdist320_anybank_test` + the conversational demo
-`python -m research.runners.compose_flatdist320_conversation_demo`, write finding, commit both remotes
-(the demo commits only if the test resolves). If BOUNDARY (min<0.80) characterise which bank/seed degrades
-(cleanup-capacity vs binding-quality) -- an honest negative is the deliverable. The 192 robust structured
-composition stands regardless.
+320 STRUCTURED COMPOSITION RESOLVES (job bh4o2reg3, 2026-06-02): structured SVO full-3-slot QA =
+1.000/1.000/1.000 (seeds 42/43/44), cleanup over ALL 320 (D+E = 128 distractors), 320 codes DISTINCT
+(between-cos mean 0.045, max 0.604 < 0.9, VOID-duplicate guard not triggered). SCRUTINY PASSED (5 checks):
+distinct codes; STRUCTURED not random fillers (the distribution that exposed the hierarchical 0.000 overclaim);
+cleanup over all 320 incl. 128 distractors (harder than 192, per-fact chance ~(1/320)^3 -> 60/60 not luck);
+the harness CAN fail (hierarchical scored 0.000 seed 42 on the SAME harness); multi-seed not lucky-seed. So the
+honest flat-distinct path extends robust cross-bridge biological composition from 192 to the FULL 320 "age-5"
+target. Finding 2026-06-02-full-320-flat-distinct-composition-RESOLVES-multiseed.md WRITTEN (any-bank + demo
+sections pending bfuhhbthk).
+
+>>> EXACT NEXT CONCRETE ACTION (in flight): the any-bank escalation + conversational-KB demo run as job
+bfuhhbthk (_flatdist320_anybank_demo.log, 20-min bound, ~10 min). any-bank = agent/action/patient each from
+ALL 320 (strictly harder: any concept any role, cleanup over 320). demo = stores cross-bank SVO facts, answers
+role+relational queries + absent-cue control (the tangible artifact). WHEN bfuhhbthk COMPLETES -> read the log;
+fold the any-bank result (RESOLVES adds the strongest 320 claim; a dip localises the residual via miss-by-bank)
++ the demo transcript into the finding doc; COMMIT both remotes; update capability_status.json (new validated
+320 composition tier) + CLAUDE.md if a milestone. Then continue autonomously (next: surface the milestone +
+consider the next limit -- e.g. 640 tier owner-strategic, or layer more conversational abilities onto the
+320 biological substrate). The 192 + 320 structured composition both stand.
 
 HONEST CORRECTION (2026-06-02): the "full-320 biological composition RESOLVES 1.000/0.98 multi-seed" is
 RETRACTED -- it was a RANDOM-FILLER artifact. On STRUCTURED facts (noun/verb/adjective, the realistic case)
