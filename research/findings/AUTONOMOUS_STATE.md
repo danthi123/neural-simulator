@@ -102,12 +102,15 @@ composition-RESOLVES-multiseed.md; capability_status pillar n=112 + as_of 2026-0
 CLAUDE.md milestone note; committed both remotes. Scope honesty: codes GIVEN by sparse encoding (cheating-
 audit), composition GENUINE + robust at 320; per-bridge retrain ~73-75 min (the "17 min" doc was wrong).
 
->>> EXACT NEXT CONCRETE ACTION: milestone done -> continue autonomously toward the goal (conversation on the
-brain-analogue mechanism, now validated at 320-concept scale). Tractable next step (no owner gate): layer the
-already-validated conversational abilities (wh-QA who/what, negation via polarity tag, MULTI-fact relational
-KB, persistent across sessions -- all validated at smaller scale, finding 2026-05-31-conversational-
-capabilities-on-the-spiking-bind.md) onto the NEW 320 biological substrate -> a richer 320-concept
-conversational artifact (the tangible scaled deliverable the owner asked for). Owner-strategic forks to SURFACE
+>>> EXACT NEXT CONCRETE ACTION (in flight): KB-CAPACITY on the 320 substrate -- job b2lb78tz9
+(_flatdist320_kb_capacity.log, 75-min bound). Stores N facts (separate K=3 spiking binds), measures relational
+retrieval (find-by-agent -> read-patient) + role query + absent-cue abstention, N in {5,10,15}, 3 seeds, bar
+min-across-seed >= 0.80. Extends the prior KB-scaling cap (~5 spiking / ~12 numpy on small-vocab denoise64) to
+the validated 320 distinct-code substrate -- does distinct coding raise the spiking fact cap? WHEN b2lb78tz9
+COMPLETES -> read the log; record the max-N that holds multi-seed; write/extend the finding; commit both
+remotes. Then continue: layer the already-validated conversational abilities (wh-QA who/what, negation via
+polarity tag, persistent multi-fact KB -- finding 2026-05-31-conversational-capabilities-on-the-spiking-bind.md)
+onto the 320 substrate -> a richer 320-concept conversational artifact. Owner-strategic forks to SURFACE
 (do NOT launch unilaterally): (a) 640-concept tier (10 bridges; near-ortho boundary findings say more scale at
 same overlap won't help recognition, but COMPOSITION scales fine -- cheap to test if owner wants); (b) LEARNED
 codes at scale (the cheating-audit frontier: 320 codes are given by sparse encoding, not learned end-to-end --
