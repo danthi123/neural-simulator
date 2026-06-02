@@ -1,3 +1,5 @@
+> **RESOLVED 2026-06-02 (the path this finding proposed is CONFIRMED):** distinct-flat codes (retrain bridges with distinct seeds) compose ROBUSTLY on structured facts -- multi-seed 1.000/1.000/1.000 at 192 concepts (seeds 42/43/44, incl. seed 42 where hierarchical = 0.000). See 2026-06-02-flat-distinct-RESOLVES-robust-cross-bridge-biological-composition.md. The nesting wall is avoided by removing the 2nd binding level.
+
 # Honest retraction: full-320 biological composition via hierarchical bind hits the NESTING WALL (structured facts) -- 2026-06-02
 
 ## What was overclaimed
