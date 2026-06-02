@@ -15,10 +15,13 @@ abstention control. N in {5,10,15}, seeds 42/43/44, 6 KB draws per (N, seed). bi
 | 5  | 1.000 | 1.000 | 1.000 |
 | 10 | 1.000 | 1.000 | 1.000 |
 | 15 | 1.000 | 1.000 | 1.000 |
+| 30 | 1.000 | 1.000 | 1.000 |
 
-**VERDICT: reliable relational KB holds to at least N=15 facts, perfect multi-seed -- no ceiling reached.**
-This is ~3x the prior cap (~5 spiking / ~12 numpy on the small-vocab denoise64 substrate, finding
-2026-05-31, KB-scaling). 270 relational queries (15x6x3) all correct + perfect abstention.
+**VERDICT: reliable relational KB holds to at least N=30 facts, perfect multi-seed -- no ceiling reached.**
+This is ~6x the prior cap (~5 spiking / ~12 numpy on the small-vocab denoise64 substrate, finding 2026-05-31,
+KB-scaling). N=30 is still 1.000 with zero degradation from N=5, so the true ceiling is well above 30; in this
+separate-storage + distinct-code regime there is no obvious cleanup-capacity limit until fact draws start
+reusing the 320 vocab (each fact consumes 3 distinct words). The empirical claim is ">= 30, no ceiling found."
 
 ### Scrutiny of the perfect scores (a PASS scrutinised harder than a FAIL)
 A wall of 1.000s is suspicious by default; here it is mechanistically explained by the substrate change, not
