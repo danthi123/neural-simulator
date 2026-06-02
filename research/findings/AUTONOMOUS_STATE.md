@@ -54,11 +54,18 @@ mechanism, NOT the static engram-tag retrieval (which the owner's goal explicitl
 320-concept demo (g20_multibridge --sparse) WORKS but is retrieval/ranking. The biological spiking bind is
 the genuine brain-analogue win but is a real-substrate BOUNDARY at scale (160-tier 0.80, temporal-integration
 lifted to 0.917). LIFT IT: running the spiking relational memory + wh-QA on a 320-TIER bridge (64 concepts,
-sparsity 0.007) with temporal integration (stim=300) -- _bio_compose_320tier.log, bounded waiter bzt982pjb.
-If robust (>=0.80 + abstention) -> multi-seed -> integrate into a biologically-grounded conversational agent
-at 64-concept-per-bridge scale (cross-bridge via tags). If boundary -> push the temporal-integration window
-further / characterize the scale limit honestly. EXACT NEXT: read the 64-concept bio-composition result;
-branch. moat/0.80-bar frozen; honest propagation both remotes; bounded waiters; cheap-first.
+sparsity 0.007) with temporal integration (stim=300) -- _bio_compose_320tier.log. RESULT = RESOLVES,
+MULTI-SEED CLEAN PASS (finding 2026-06-02-biological-composition-ROBUST-at-64-concept-scale-multiseed.md):
+REAL wh-QA 1.000/0.900/0.950 (seeds 42/43/44, mean 0.95), abstention 1.000 EVERY seed -> the brain-analogue
+composition is ROBUST at 64 concepts/bridge on the real 320-tier substrate (NOT a boundary like the 160-tier
+0.80). Sparser 320-tier codes (between 0.350) compose CLEANER. The boundary is LIFTED via temporal
+integration. Integration demo compose_bio_conversation_320_demo.py running (bytmt3a2e). EXACT NEXT: (a) the
+demo transcript = biological relational conversation at 64 concepts (tangible); (b) push toward FULL 320
+biological composition = the 5 bridges share seed-42 patterns (duplicate global codes), so cross-bridge
+biological bind needs DISTINCT per-bridge codes (documented per-bridge-distinct-seed recovery path -- a
+retrain, slow); meanwhile cross-bridge uses tags. (c) layer more conversational abilities (negation, learned
+parser, generation) onto the 64-concept biological substrate. Honest scope: codes still given by sparse
+encoding (cheating-audit); the COMPOSITION on top is genuine + now robust at 64. moat/0.80-bar frozen; honest propagation both remotes; bounded waiters; cheap-first.
 
 SCALE-UP STATUS (2026-06-02): 64-word CONFIRMED 2-seed (42,43 both 0.844, overlap ~0.10 -- robust; seed 44
 HUNG/slow, killed). 128-word LEARNED (v4, 4096 lang, 300ev) = IMPRACTICALLY SLOW (>4hr training, still not
