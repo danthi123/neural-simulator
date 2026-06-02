@@ -152,10 +152,26 @@ the Generator-F transformer (6.1) + a generation sample. WHEN b5ccnq87x COMPLETE
 (ppl >> 1024) the ceiling is NEGATIVE at this scale (definitive cheap negative; note the 50M char run ALSO got
 worse at 4096 -> scale predicted not to rescue) -> propagate honest NEGATIVE + the gap (spiking arch is the
 bottleneck, not size; a 6M transformer reaches ppl 6.1) -> SURFACE to owner (cloud/transformer/accept). If
-BEATS-RANDOM (ppl < 1024) -> real signal -> scale toward 50M (hidden 4096x3) + bigger/open corpus + run the
-3-seed gate (with the absolute floor) to validate. Honest framing: predicted NEGATIVE per the converged arc,
-but the owner explicitly chose to measure the ceiling -> the honest gap measurement IS the deliverable. No
-external LLM. Owner-strategic forks to SURFACE
+BEATS-RANDOM (ppl < 1024) -> real signal -> scale up + run the 3-seed gate. (Per the converged arc, predicted
+NEGATIVE; the owner explicitly chose to measure the ceiling -> the honest gap measurement IS the deliverable.)
+
+CEILING RESULT (2026-06-02): 25M-param spiking LM (4096x2) = TOKEN-SOUP (held-out ppl 203,753, 200x worse than
+random; train loss 20.1->6.1 = FITS train but does NOT generalize -> OVERFIT, NOT a size/VRAM limit; a 6M
+transformer reaches ppl 6.1 on the SAME data+hardware). Scaling 100x params + 8x data did NOT rescue the spiking
+arch. Finding 2026-06-02-generative-ceiling-spiking-LM-NEGATIVE-overfit-not-size.md committed. 50M+bigdata
+confirmation (4096x3, 40k samples) IN FLIGHT job bhkf5gatm (airtight the negative; predicted soup).
+
+>>> EMERGING STRATEGIC FORK (surface when bhkf5gatm lands): the SPIKING/brain-analogue generative path is a
+3090 dead-end for coherent generation (confirmed at scale, architectural-not-size). BUT a LOCAL from-scratch
+TRANSFORMER (Generator-F, research/runners/tiny_transformer_train.py, ~6M params, ppl 6.1, coherent simple-
+story English, ZERO external dependency = standalone, honors "no external LLM") DOES generate coherent text +
+is scalable with the VRAM headroom toward a tiny-LLM (Generators G/H exist, later arc). The genuine fork =
+the project's core tension: (a) scale the LOCAL TRANSFORMER toward tiny-LLM conversation (achieves "LLM-
+comparable conversation", standalone, but NOT brain-analogue/spiking); (b) accept brain-analogue SYMBOLIC
+conversation (320-448 concepts + KB>=30 + negation/QA, validated, genuinely biological, but structured Q&A);
+(c) cloud-class spiking (expensive, uncertain). FUNDAMENTAL DIRECTION call (brain-analogue identity vs LLM-
+capability goal, in tension here) = OWNER's. No external LLM (a local from-scratch transformer is NOT external).
+Prior VSA forks (now lower priority given the generative pivot):
 (do NOT launch unilaterally): (a) 640-concept tier (10 bridges; near-ortho boundary findings say more scale at
 same overlap won't help recognition, but COMPOSITION scales fine -- cheap to test if owner wants); (b) LEARNED
 codes at scale (the cheating-audit frontier: 320 codes are given by sparse encoding, not learned end-to-end --
