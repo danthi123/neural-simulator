@@ -108,9 +108,12 @@ retrieval (find-by-agent -> read-patient) + role query + absent-cue abstention, 
 min-across-seed >= 0.80. Extends the prior KB-scaling cap (~5 spiking / ~12 numpy on small-vocab denoise64) to
 the validated 320 distinct-code substrate -- does distinct coding raise the spiking fact cap? WHEN b2lb78tz9
 COMPLETES -> read the log; record the max-N that holds multi-seed; write/extend the finding; commit both
-remotes. Then continue: layer the already-validated conversational abilities (wh-QA who/what, negation via
-polarity tag, persistent multi-fact KB -- finding 2026-05-31-conversational-capabilities-on-the-spiking-bind.md)
-onto the 320 substrate -> a richer 320-concept conversational artifact. Owner-strategic forks to SURFACE
+remotes. THEN (GPU now free) run the already-BUILT negation/yes-no/who-QA test: `python -m
+research.findings.raw._insubstrate_flatdist320_negation_qa_test` (K=4 polarity stack on the 320 substrate,
+multi-seed, with abstention control + transcript) -> record yes/no + who + control accuracy, fold into a
+conversational-on-320 finding, commit both remotes. (Both probes load the cached _flatdist320_codes.npz; no
+retrain needed.) That completes the richer-conversation-on-320 layer (wh-QA + negation + multi-fact KB capacity
+all on the validated 320 biological substrate). Owner-strategic forks to SURFACE
 (do NOT launch unilaterally): (a) 640-concept tier (10 bridges; near-ortho boundary findings say more scale at
 same overlap won't help recognition, but COMPOSITION scales fine -- cheap to test if owner wants); (b) LEARNED
 codes at scale (the cheating-audit frontier: 320 codes are given by sparse encoding, not learned end-to-end --
