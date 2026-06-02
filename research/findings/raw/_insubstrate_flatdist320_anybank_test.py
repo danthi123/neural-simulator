@@ -56,7 +56,7 @@ def main():
           flush=True)
     results = []
     bank_miss = {}   # which bank a wrong-recovered filler belonged to, for residual localisation
-    for seed in [42, 43, 44]:
+    for seed in [42, 43, 44, 45, 46, 47]:   # 6 composition-seeds (owner's generalization-claim standard)
         rng = np.random.default_rng(seed)
         roles = {r: rng.choice([-1.0, 1.0], size=D) for r in RM.ROLES}
         roles = {r: v / np.linalg.norm(v) for r, v in roles.items()}

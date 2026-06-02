@@ -54,12 +54,26 @@ checks before being claimed:
   bridgeE 75 min on a verified-clean GPU -- not fragmentation). Incremental/resumable training (--resume-from,
   shipped today) lets such retrains be chunked across breaks if needed.
 
-## Any-bank escalation + conversational demo (job bfuhhbthk)
-PENDING -- folded in below when bfuhhbthk lands:
-- any-bank: agent/action/patient each drawn from ALL 320 (any concept, any role) -- the strictly harder claim
-  that all 320 concepts are usable as fillers, cleanup over all 320.
-- conversational-KB demo: stores cross-bank SVO facts, answers role + relational queries, absent-cue control
-  -- the tangible owner-facing artifact of the 320-concept biological composition.
+## Any-bank escalation (job bfuhhbthk -- strictly harder than structured)
+agent/action/patient each drawn from ALL 320 (any concept, ANY role), cleanup over all 320:
+- 3 composition-seeds (42/43/44): **1.000 / 1.000 / 0.950, mean 0.983** -- 59/60 correct.
+- The single miss is honestly localised: miss-by-bank = {spatial: 1} (a freshly-retrained distinct-seed
+  bridge whose codes clean up marginally harder). VERDICT: RESOLVES (min 0.950 >= 0.80).
+- So all 320 concepts are usable as fillers in ANY role, not just bank-structured SVO -> the strongest 320
+  compositional claim. 6-composition-seed extension (seeds 42-47, owner's generalization standard) IN FLIGHT
+  (job bc2q2z6qa); folded in when it lands.
+
+## Conversational-KB demo (the tangible artifact; compose_flatdist320_conversation_demo.py)
+Single-seed illustration (the multi-seed any-bank above is the evidence; the demo shows it conversationally):
+stored 3 cross-bank SVO facts (bear/close/clean, ant/break/sweet, bed/pull/rich); answered **6/6** role +
+relational queries correctly; the absent-cue control ("apple", never stored -> "(no fact found)") correctly
+ABSTAINED -- the decisive anti-artifact check (a drive-echo/trivial store cannot abstain). Transcript:
+```
+   stored: agent=bear  action=close  patient=clean   (+ ant/break/sweet, bed/pull/rich)
+   Q: who is the agent of fact 0?         A: bear   (OK)
+   Q: what is 'bear' close?               A: clean  (OK)        ... 6/6 ...
+   Q: what is 'apple' (never stored)?     A: (no fact found)    (OK, clean abstention)
+```
 
 ## Reproduce
 ```
