@@ -33,11 +33,27 @@ a too-easy test:
 - Honest caveat: the ceiling is ABOVE 15 (untested higher). The claim is "holds to >= 15, no ceiling found at
   the tested range," not a measured maximum. A higher-N probe (20/30/50) would locate the actual ceiling.
 
-## (2) Negation + yes/no + who-QA (K=4 polarity stack)
-PENDING (job bbxy4s5kl) -- folded in when it lands. Ports the validated negation mechanism (a bound POLARITY
-tag AFFIRM/NEGATE, K=4) + who-QA to the 320 substrate; the genuine question is whether the 4th role still
-answers yes/no correctly on the noisier real 320 codes (composition was validated at K=3). Multi-seed, with
-the unknown-fact abstention control + a readable transcript.
+## (2) Negation + yes/no + who-QA (K=4 polarity stack) -- RESOLVES multi-seed
+Ports the validated negation mechanism (a bound POLARITY tag AFFIRM/NEGATE, K=4) + who-QA to the 320 substrate.
+The genuine question: composition was validated at K=3 (agent/action/patient); does the 4th polarity role still
+answer yes/no correctly on the noisier real 320 codes? Seeds 42/43/44, 10 trials each.
+
+| metric | seed 42 | seed 43 | seed 44 | mean |
+|--------|--------:|--------:|--------:|-----:|
+| yes/no (affirmed->yes AND negated->no) | 0.900 | 0.900 | 0.800 | 0.867 |
+| who-question -> agent | 1.000 | 1.000 | 1.000 | 1.000 |
+| unknown-fact abstention | 1.000 | 1.000 | 1.000 | 1.000 |
+
+**VERDICT: RESOLVES** (all metrics >= 0.80 multi-seed). Transcript (seed 42): taught "blue fast how" (affirm)
++ "book not cat house" (negate) -> *does blue fast how?* **yes**, *does book cat house?* **no**, *who fast
+how?* **blue**, *does apple river dog (never taught)?* **unknown**.
+
+Honest read: yes/no (0.867 mean, min 0.800) is the BOUNDARY metric -- it requires both finding the fact (K=3
+cleanup x3) AND unbinding the extra polarity role (the K=4 load), so it is precision-limited on the noisier
+real codes, while the K=3 parts (who, abstention) are perfect (consistent with the composition + KB results).
+Negation works as an explicit bound polarity tag (not absence). If a higher yes/no margin is wanted, the
+documented levers are a longer readout window / higher firing rate (the same K-capacity levers) or storing
+polarity in a separate K=3 fact rather than a 4th role.
 
 ## Why this matters (on the goal)
 The owner's goal is conversation built on the brain-analogue mechanism. The composition milestone showed the
