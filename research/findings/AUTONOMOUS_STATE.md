@@ -48,7 +48,19 @@ run_in_background waiter, no exceptions.) MULTI-SEED CONFIRMED (seeds 42/43/44 @
 2048 lang, sparsity 0.01, 300ev -- does "training reduces overlap" hold at 64 words (overlap stays ~0.5,
 recognition ~0.9 -> cheap lever holds, no 100hr) or does the overlap floor reappear (-> a real rep-learning
 target at some N)? Compare to 28-word (overlap 0.50, recognition 0.95). v3 runner + generalized capture
-(--vocab-mod/--n-lang) committed. SCALE64 DONE (seed 42): cheap lever HOLDS -- overlap TINY 0.091 (did NOT
+(--vocab-mod/--n-lang) committed. SCALE-UP STATUS (2026-06-02): 64-word CONFIRMED 2-seed (42,43 both 0.844, overlap ~0.10 -- robust; seed 44
+HUNG/slow, killed). 128-word LEARNED (v4, 4096 lang, 300ev) = IMPRACTICALLY SLOW (>4hr training, still not
+done, killed) -> the practical ceiling of training fresh LEARNED orthogonal-code bridges is ~64-96 words;
+beyond that, training cost explodes. PIVOT (committed to owner): use the validated FAST G.20 sparse-
+distributed architecture for larger vocab -- both 160-concept AND 320-concept tiers already TRAINED + SHIPPED
+(g20_sparse_bridges/ + g20_sparse_bridges_320/, 98.4% per-bridge). Running a 320-concept conversational demo
+(g20_multibridge --sparse, sparsity 0.007, 5 bridges x 64; _demo320.log) to show scale concretely. LESSON:
+long jobs now use BOUNDED waiters (max-iteration cap) so a hang/slow-run notifies me to reassess instead of
+looping forever (the seed-44 + 128-word both stalled the old unbounded waiters). HONEST SCALING ANSWER: cheap
+LEARNED recognition to ~64 words (128 too slow to train); G.20 sparse to 320 (validated); spiking composition
+on top (V=320 synthetic 1.000; real-substrate 160 = boundary, temporal-integration-fixed). EARLIER scale64
+detail below:
+SCALE64 DONE (seed 42): cheap lever HOLDS -- overlap TINY 0.091 (did NOT
 climb; codes well-separated), clean recognition 0.844, single-shot 0.378 -> the 0.844 is READOUT/SNR-limited
 (inherent sparser codes: orthogonal coding needs sparsity<1/N), NOT representation-limited. PREPARATION
 CONCLUSION (finding 2026-06-01-DirectionA-prep-CONCLUSION-100hr-not-warranted.md): the ~100hr is NOT
