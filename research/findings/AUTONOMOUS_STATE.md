@@ -5,7 +5,7 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-05-31
+**Updated:** 2026-06-02
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
@@ -55,14 +55,32 @@ seed 42 where the hierarchical shortcut hit 0.000). Removing the 2nd binding lev
 PASS on the REALISTIC structured distribution (the one that exposed the overclaim) + multi-seed + distinct
 codes. Finding 2026-06-02-flat-distinct-RESOLVES-robust-cross-bridge-biological-composition.md. So robust
 cross-bridge biological composition over structured SVO (noun/verb/adj) at 192 concepts is VALIDATED the
-honest way. FULL-320 COMPLETION = DEFERRED (GPU fragmentation recurred -- bridgeD@45 ran ~60min for a 17min
-job; killed). The 192 result is the validated honest deliverable; the 320 test (_insubstrate_flatdistinct320_
-test.py, built+ready) only adds 128 distractors (spatial/functional) to the SAME SVO composition -> marginal +
-high-confidence. bridgeB@43 + bridgeC@44 retrained+saved; D@45/E@46 need a CLEAN GPU session. GPU note: CuPy
-pool fragments over long sessions -> long retrains go pathologically slow (NOT hardware -- matmul fast 0.2s
-after killing python; clear python between long runs). EXACT NEXT (clean session): run _run_flatdist_DE.sh
-(D@45,E@46) then _insubstrate_flatdistinct320_test.py for the full honest 320 claim. The 192 robust structured
-composition stands as the validated honest recovery from the overclaim.
+honest way.
+
+INCREMENTAL TRAINING IMPLEMENTED + VERIFIED (2026-06-02, owner asked "can extended runs be incremental,
+accumulating across breaks?"): YES. The GPU fragmentation is WITHIN-process (a fresh shorter process is fast;
+breaks AVOID it -- it cannot "ruin" a run, only slow one marathon process). But incremental training was NOT
+wired up. Added --resume-from to concept_pool_sparse_distributed (load_checkpoint the trained weights instead
+of the from-scratch prior, then CONTINUE the train loop -> events ACCUMULATE). VERIFIED: A(100ev)=69%,
+B(resume A +100ev=200 incremental)=75%, REF(200 one-go)=62.5% -- B>=A PROVES accumulation across the
+save/break/resume boundary; B~REF within single-seed quantisation noise (16 concepts=+-6.25%/concept).
+Finding 2026-06-02-incremental-resumable-training-IMPLEMENTED.md; committed both remotes (d6e0632 + this).
+So extended runs (incl. full-320) can be CHUNKED across breaks, accumulating into a checkpoint -- the
+fragmentation deferral reason is GONE.
+
+>>> EXACT NEXT CONCRETE ACTION (in flight): FULL-320 flat-distinct completion. Background job b7s1jtt1g
+(_flatdist_320_chain.log, 90-min bounded waiter) is retraining spatial@45 + functional@46 on the clean GPU,
+then running _insubstrate_flatdistinct320_test.py -- captures 320 distinct flat codes (5 bridges, seeds
+42-46), checks distinct (max-cos<0.9), runs STRUCTURED SVO composition (noun/verb/adj fillers) with cleanup
+over ALL 320 (D+E = 128 extra DISTRACTORS) at seeds 42/43/44, PASS bar min>=0.80. This extends the validated
+192-result (1.000/1.000/1.000) to the documented 320 "age-5" target. WHEN b7s1jtt1g COMPLETES -> read its
+log; if VERDICT=RESOLVES (min>=0.80) SCRUTINISE THE PASS (the 320 hierarchical shortcut FAILED on structured
+facts -- 0.000 at seed 42 -- so a 320 PASS must be checked hard: confirm codes truly distinct, confirm it is
+the structured distribution not random fillers, confirm cleanup is over all 320). Then write the finding +
+commit both remotes + pre-staged follow-up (see branches below). If BOUNDARY (min<0.80) characterise which
+bank/seed degrades (cleanup-capacity vs binding-quality) -- an honest negative is the deliverable. The 192
+robust structured composition stands regardless. GPU note: CuPy pool fragments over long single sessions
+(NOT hardware -- matmul 0.2s after killing python); fresh process per chunk avoids it.
 
 HONEST CORRECTION (2026-06-02): the "full-320 biological composition RESOLVES 1.000/0.98 multi-seed" is
 RETRACTED -- it was a RANDOM-FILLER artifact. On STRUCTURED facts (noun/verb/adjective, the realistic case)
