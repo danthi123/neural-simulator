@@ -11,7 +11,13 @@ from research.runners.content_selection import (
     select_candidate,
     ContentSelectionController,
 )
-from research.runners.content_selection_eval import BaselineSelector
+from research.runners.content_selection_eval import (
+    BaselineSelector,
+    on_topic,
+    non_repetition,
+    turn_to_turn_coherence,
+    topic_progression,
+)
 
 
 # --- Task 1: Context buffer -------------------------------------------------
@@ -100,3 +106,44 @@ def test_baseline_ignores_context_and_repetition():
     b = BaselineSelector(graph, seed=0)
     out = [b.turn(["apple"]) for _ in range(3)]
     assert out == ["big", "big", "big"]   # repeats because no inhibition / context progression
+
+
+# --- Task 7: Coherence metrics ----------------------------------------------
+
+# A directed chain graph: apple -> big (2.0), big -> hot (4.0). Edges are looked up
+# as graph[prev][cur] (same orientation as relevance()).
+_CHAIN_GRAPH = {"apple": {"big": 2.0}, "big": {"hot": 4.0}, "hot": {}}
+_COHERENT_WALK = ["apple", "big", "hot"]      # non-repeating, each turn advances
+_PARKED_WALK = ["big", "big", "big"]          # parks on one concept
+
+
+def test_non_repetition_perfect_and_repeating():
+    assert abs(non_repetition(_COHERENT_WALK) - 1.0) < 1e-9     # no repeats
+    assert abs(non_repetition(_PARKED_WALK) - (1.0 / 3.0)) < 1e-9   # 2 of 3 turns are repeats
+
+
+def test_topic_progression_catches_parking():
+    # A coherent advancing walk introduces a new concept every turn -> 1.0.
+    assert abs(topic_progression(_COHERENT_WALK) - 1.0) < 1e-9
+    # A parked walk introduces a new concept only on turn 1 -> near 0 (the honesty guard).
+    assert abs(topic_progression(_PARKED_WALK) - (1.0 / 3.0)) < 1e-9
+
+
+def test_turn_to_turn_coherence_consecutive_pairs():
+    # consecutive edges: (apple->big)=2.0, (big->hot)=4.0 -> mean 3.0
+    assert abs(turn_to_turn_coherence(_COHERENT_WALK, _CHAIN_GRAPH) - 3.0) < 1e-9
+
+
+def test_on_topic_running_window():
+    # i=1 (big): window [apple] -> assoc(apple->big)=2.0, mean 2.0
+    # i=2 (hot): window [apple,big] -> assoc(apple->hot)=0.0, assoc(big->hot)=4.0, mean 2.0
+    # overall mean = (2.0 + 2.0) / 2 = 2.0
+    assert abs(on_topic(_COHERENT_WALK, _CHAIN_GRAPH) - 2.0) < 1e-9
+
+
+def test_parked_walk_high_coherence_low_progression():
+    # The honesty guard in action: parking on a concept that strongly self-associates can score
+    # high turn-to-turn coherence yet near-zero progression. Use a self-loop graph.
+    self_loop = {"big": {"big": 5.0}}
+    assert abs(turn_to_turn_coherence(_PARKED_WALK, self_loop) - 5.0) < 1e-9   # high coherence
+    assert abs(topic_progression(_PARKED_WALK) - (1.0 / 3.0)) < 1e-9           # low progression

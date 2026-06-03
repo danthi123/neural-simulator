@@ -65,3 +65,76 @@ class BaselineSelector:
             return tied[0]
         idx = int(self.rng.integers(0, len(tied)))
         return tied[idx]
+
+
+# --- Coherence metrics (Task 7) ---------------------------------------------
+#
+# Each metric takes a dialogue transcript (the list of concepts said, in order)
+# and -- where relevant -- the association graph, and returns a single float.
+# Association strength between two concepts a (earlier) and b (later) is read as
+# graph[a][b], the same orientation as content_selection.relevance().
+
+
+def _assoc(graph, a, b):
+    """Association strength of the directed edge a -> b (0.0 if absent)."""
+    return float(graph.get(a, {}).get(b, 0.0))
+
+
+def on_topic(transcript, graph):
+    """Mean association-strength of each said concept to the concepts said just before it
+    (a running window). Higher = stays on topic.
+
+    For each turn i >= 1, average the association strength from every preceding concept
+    (the running window = the whole prefix transcript[0:i]) to the current concept
+    transcript[i]; then average those per-turn means over all i >= 1. Returns 0.0 for
+    transcripts shorter than 2 turns."""
+    if transcript is None or len(transcript) < 2:
+        return 0.0
+    per_turn = []
+    for i in range(1, len(transcript)):
+        window = transcript[:i]
+        cur = transcript[i]
+        per_turn.append(sum(_assoc(graph, prev, cur) for prev in window) / len(window))
+    return float(sum(per_turn) / len(per_turn))
+
+
+def non_repetition(transcript):
+    """1 - (repeated_turns / total_turns). Higher = fewer repeats.
+
+    A turn is a "repeated turn" if its concept has already appeared earlier in the
+    transcript. Returns 1.0 for an empty transcript (nothing repeated)."""
+    if not transcript:
+        return 1.0
+    seen = set()
+    repeated = 0
+    for c in transcript:
+        if c in seen:
+            repeated += 1
+        else:
+            seen.add(c)
+    return float(1.0 - repeated / len(transcript))
+
+
+def turn_to_turn_coherence(transcript, graph):
+    """Mean association-strength between consecutive said concepts. Higher = adjacent turns
+    relate. Returns 0.0 for transcripts shorter than 2 turns."""
+    if transcript is None or len(transcript) < 2:
+        return 0.0
+    pairs = [_assoc(graph, transcript[i - 1], transcript[i]) for i in range(1, len(transcript))]
+    return float(sum(pairs) / len(pairs))
+
+
+def topic_progression(transcript):
+    """Fraction of turns that introduce a not-yet-said concept. Higher = keeps advancing.
+
+    A controller that parks on one concept scores high coherence but LOW progression, which is
+    exactly what this metric is designed to catch. Returns 0.0 for an empty transcript."""
+    if not transcript:
+        return 0.0
+    seen = set()
+    introduced = 0
+    for c in transcript:
+        if c not in seen:
+            introduced += 1
+            seen.add(c)
+    return float(introduced / len(transcript))
