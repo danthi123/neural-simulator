@@ -21,18 +21,20 @@ depth-4 degrades (0.70->0.38); depth-5 breaks — a clean D=1024-limited SNR bou
 Depth-3 exceeds human center-embedding. Smell-test logged: first sweep's ~0.05 was a FALSE NEGATIVE from a
 comparison bug (innermost-first vs outermost-first list), decode was correct — scrutinise a surprising
 NEGATIVE as hard as a positive. AGENT INTEGRATION: patient can now be a Clause namedtuple, auto-detected by a
-verb-presence detector (clause verb-conf 0.247-0.316 vs non-clause <=0.077, clean). ROBUST+TESTED: single
-embedded clause with flat args 6/6 seeds. HONEST BOUNDARY (documented, NOT claimed): the AGENT's
-auto-detection is robust to ONE embedded clause (clause-in-clause ~5/6; attribute-inside-clause unreliable —
-resonator past SNR); inside a clause it decodes flat-only so an attributed inner arg gracefully DROPS its adj
-rather than confabulating. The raw substrate recurses to depth-3 with KNOWN structure; the agent's
-auto-detection compounds per-level error so robust depth is 1. 17/17 tests. Commits pushed both remotes;
+verb-presence detector (clause verb-conf 0.247-0.316 vs non-clause <=0.077, clean). STRENGTHENED via
+inside-clause MODEL COMPARISON (cleanup confidence vs resonator residual, NO fixed threshold — a threshold
+can't separate flat nouns at depth-2 from attributed args at depth-1) + default D bumped 1024->2048
+("more capacity wins": lifts clause-in-clause 5/6->6/6). ROBUST+TESTED at D=2048 (12-seed): single embedded
+clause 12/12, ATTRIBUTE-INSIDE-CLAUSE 12/12 ("dog see (cat chase (big bird))" — was 0/6, fixed by model
+comparison; the earlier flat-only policy CONFABULATED the base noun), clause-in-clause 11/12. HONEST BOUNDARY
+(documented): TWO-OR-MORE clause levels (auto-detection compounds a per-level kind-decision; raw substrate
+recurses to depth-3 with KNOWN structure, agent robust depth ~2). 20/20 tests. Commits pushed both remotes;
 findings `2026-06-03-recursive-clause-nesting-RESOLVES-depth3-capacity.md`.
->>> NEXT (autonomous, open options): push the agent's robust clause depth (higher D to lift the SNR / a
-positive "attribute-present" detector to make attribute-in-clause non-confabulatory), or a fully-spiking
-unified agent (port encode+depth-detect to resonate_fire), or Direction B (thalamocortical dynamical gating,
+>>> NEXT (autonomous, open options): a fully-spiking unified agent (port encode+depth-detect to
+resonate_fire — the biology-faithfulness capstone), or Direction B (thalamocortical dynamical gating,
 Logiaco 2021 — the other untried mechanism from the deep research), or scale vocab + a richer multi-topic
-dialogue demo. Both remotes; biology-faithful; cheap-first; honest negatives deliverable.
+dialogue demo, or push clause-in-clause to 12/12 (higher D / better depth-2 detection). Both remotes;
+biology-faithful; cheap-first; honest negatives deliverable.
 
 ## >>> MULTI-MODIFIER ATTRIBUTION RESOLVES (2026-06-03) — the unified agent now nests TWO attributes <<<
 
