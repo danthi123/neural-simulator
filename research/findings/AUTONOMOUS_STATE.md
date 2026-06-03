@@ -5,11 +5,42 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-06-02
+**Updated:** 2026-06-03
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> DIRECTION A PREP -- ACTIVE (read THIS first; 2026-05-31) <<<
+## >>> NEWEST — SPIKING CONTENT-SELECTION SEED-ROBUSTNESS RESOLVED (2026-06-03; read THIS first) <<<
+
+ACTIVE ARC = conversation via the content-selection / dialogue-Control frontier (owner chose B,
+"effective/worth not fast"; staging Approach 2 structured -> 3 spiking dlPFC -> 1 fully spiking).
+Milestone 1 (structured Control) VALIDATED 5/5. Milestone 2 (faithful spiking Control) was
+DEMONSTRATED 2/3-seed and flagged seed-fragile.
+
+>>> RESOLVED THIS CYCLE: the 2/3-seed fragility of `SpikingController`
+(research/runners/content_selection_spiking.py) is FIXED -> **6/6 seeds (42-47), 12/12 conditions
+coherent** (apple->big/cat/hot, dog->river/cold/small). ROOT CAUSE (8-probe cheap-first falsification
+trail) = noise-tipped Hopfield spurious states: holding >=2 concepts raises global excitability enough
+that the seeded OU background noise tips OTHER concepts' over-eager bistable attractors into spurious
+ON states -> they hijack the relevance-based selection seed-dependently. SIX activity-level/readout
+fixes REFUTED with data (top-1/top-2 held readout = WORSE; attractor-weight window = none; biased
+competition k=40/bias=1000 = barely moves co-equal saturated attractors; etc.). FIX = clean
+within-concept attractors (`internal_density=0`) + quiet hold (`enable_ou=False`) -> EXACT
+multi-concept WM -> robust selection. Config baked into SpikingController defaults; 31 structured tests
+still green. Finding 2026-06-03-content-selection-milestone2-seed-robustness-RESOLVED.md; CHARACTERIZED
+doc updated with the RESOLVED banner. So the faithful brain-analogue conversation substrate
+(spiking cortico-PFC loop-attractor WM holding discourse context + PFC content-selection over it) is
+VALIDATED *and* seed-robust.
+
+>>> EXACT NEXT (pre-registered, the genuine remaining faithfulness steps — pick one as a fresh focused
+arc, cheap-first): (i) NOISE-ROBUST ATTRACTORS so biological OU noise can be restored — sparse k-of-N
+assemblies + per-assembly inhibitory shadows so attractors tolerate default OU without spurious tipping
+(this is the principled version of the enable_ou=False fix); (ii) LEARN the attractor weights with a
+stabilized one-shot rule (not vanilla Hebbian, which destabilized; the weights are currently SET
+outer-product); (iii) MILESTONE 3 = make the relevance/selection logic itself spiking; (iv) richer REAL
+association substrate (train a tagged engram bridge) + larger multi-seed coherence eval. Both remotes;
+biology-faithful; cheap-first; honest negatives are the deliverable.
+
+## >>> DIRECTION A PREP -- (superseded by the content-selection arc above; 2026-05-31) <<<
 
 OWNER CHOSE (A) richer representation learning at scale, "but spend time in preparation ensuring we make the
 most of all the time spent on compute." So: PREPARE thoroughly, run cheap-first GATES before the ~100hr.

@@ -191,6 +191,20 @@ spiking working memory and faithful spiking content-selection are *validated as 
 refinement -- the same spiking-dynamics-tuning difficulty that has been the through-line of the whole
 session, now precisely located at the content-selection layer.
 
+> **✅ RESOLVED 2026-06-03 (same session) — see
+> `2026-06-03-content-selection-milestone2-seed-robustness-RESOLVED.md`.** The seed-fragility was
+> root-caused by an 8-probe falsification trail to **noise-tipped Hopfield spurious states**: holding
+> >=2 concepts raises global excitability enough that the seeded OU background noise tips OTHER
+> concepts' over-eager bistable attractors into spurious ON states, which hijack selection
+> seed-dependently. Fix = clean within-concept attractors (`internal_density=0`) + quiet hold
+> (`enable_ou=False`) -> an EXACT multi-concept WM -> **6/6 seeds (12/12 conditions) coherent**. The
+> six refuted activity-level/readout fixes (top-1/top-2 readout, attractor-weight window, biased
+> competition, etc.) are documented in the RESOLVED finding. (Note: the "internal_density=0 -> WORSE
+> (3/6)" result above was confounded — density=0 alone still leaves OU-driven spurious; it is
+> density=0 AND OU-off TOGETHER that resolves it.) Remaining faithfulness steps: noise-robust
+> attractors via sparse coding + inhibitory stabilization (to restore biological OU noise), learned
+> (not set) attractor weights, and spiking selection logic (Milestone 3).
+
 **Net (the arc from a single session's cheap-first probes):** content-selection Control was validated
 structurally (Milestone 1), then the spiking working memory it needs was characterized
 (standalone=no / untrained-loop=blob / **trained-loop-attractor=works, 220x**), packaged

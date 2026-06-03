@@ -64,7 +64,7 @@ def build_dlpfc_context_bridge(n_pfc=500, pfc_density=0.2, seed=42, plastic_recu
 
 
 def build_loop_wm_bridge(n=400, density=0.1, loop_weight=4.0, loop_density=0.15, seed=42,
-                         plastic_loop=False, hebbian=False, verbose=True):
+                         plastic_loop=False, hebbian=False, enable_ou=True, verbose=True):
     """Two mutually-exciting regions forming a cortico-PFC LOOP (cortex_ctx <-> dlpfc_wm), both NMDA-
     enabled. The hypothesis (from the Milestone-2 standalone-region negative): persistent activity is
     sustained by reverberation around the loop, which a single recurrent region cannot do. With
@@ -91,6 +91,11 @@ def build_loop_wm_bridge(n=400, density=0.1, loop_weight=4.0, loop_density=0.15,
     cfg.dt_ms = 0.5
     cfg.seed = seed
     cfg.enable_nmda = True
+    # OU background noise tips over-eager bistable concept attractors into spurious ON states once the
+    # network is excited by holding >=2 concepts (Hopfield spurious-state behavior; see finding doc
+    # 2026-06-03). enable_ou=False gives a quiet, noise-robust multi-concept hold. Default True keeps
+    # biological realism for single-concept / characterization use.
+    cfg.enable_ou_process = bool(enable_ou)
     cfg.enable_structural_plasticity = False
     cfg.enable_hebbian_learning = bool(hebbian)
     cfg.enable_short_term_plasticity = False
@@ -102,7 +107,7 @@ def build_loop_wm_bridge(n=400, density=0.1, loop_weight=4.0, loop_density=0.15,
     bridge._initialize_simulation_data(called_from_playback_init=False)
     if verbose:
         print(f"[loop WM bridge] cortex_ctx<->dlpfc_wm loop, {n} neurons each, loop weight {loop_weight}, "
-              f"NMDA on", flush=True)
+              f"NMDA on, OU={'on' if enable_ou else 'off'}", flush=True)
     return bridge
 
 
@@ -167,7 +172,7 @@ class SpikingLoopContextBuffer:
     (outer-product); learning them with the correct rule is the documented next step."""
 
     def __init__(self, concepts, n=600, pattern_size=50, attractor_weight=50.0, loop_weight=0.0,
-                 internal_density=0.1, seed=42, verbose=False):
+                 internal_density=0.1, seed=42, enable_ou=True, verbose=False):
         import sim.backend as B
         self.B = B
         self.xp, _ = B.get_backend()
@@ -175,8 +180,11 @@ class SpikingLoopContextBuffer:
         # loop_weight=0 -> the installed concept attractors are the ONLY loop connections (no generic
         # random reverberation to bleed driven patterns into undriven ones -> less cross-talk).
         # internal_density=0 -> no random within-region recurrence coupling separate attractors.
+        # enable_ou=False -> quiet hold; prevents OU noise from tipping bistable attractors into spurious
+        # states when holding a multi-concept set (the validated clean-WM config; see finding doc).
         self.bridge = build_loop_wm_bridge(n=n, density=internal_density, loop_weight=loop_weight,
-                                           loop_density=0.05, seed=seed, verbose=verbose)
+                                           loop_density=0.05, seed=seed, enable_ou=enable_ou,
+                                           verbose=verbose)
         rm = self.bridge.region_manager
         cidx = np.asarray(rm.indices("cortex_ctx"))
         didx = np.asarray(rm.indices("dlpfc_wm"))
@@ -230,16 +238,23 @@ class SpikingController:
     drive the selection into the spiking context. The faithful spiking analogue of the Milestone-1
     ContentSelectionController -- same selection logic, but the context is real spiking working memory."""
 
-    def __init__(self, graph, seed=42, lam=1.0, said_decay=0.6, internal_density=0.1, verbose=False):
+    def __init__(self, graph, seed=42, lam=1.0, said_decay=0.6, internal_density=0.0, enable_ou=False,
+                 verbose=False):
         from research.runners.content_selection import SaidTrace
         self.graph = graph
         self._vocab = sorted(set(graph) | {a for v in graph.values() for a in v})
-        # internal_density 0.1 = the validated config (2/3 seeds coherent). Tried internal_density=0 to
-        # kill the diagnosed cross-talk -> made it WORSE (3/6 vs 4/6); the seed-fragility is a genuine
-        # spiking-dynamics issue, not the random recurrence. Honest open refinement (see finding doc).
+        # VALIDATED multi-seed config (2026-06-03): internal_density=0.0 + enable_ou=False -> 6/6 seeds.
+        # Root cause of the earlier 2/3-seed fragility (now SOLVED): holding >=2 concepts raises global
+        # excitability enough that the seeded OU background noise tips OTHER concepts' over-eager bistable
+        # attractors into spurious ON states (classic Hopfield spurious-state/capacity behavior); those
+        # then hijack the relevance-based selection, seed-dependently. The random recurrence
+        # (internal_density>0) adds further spurious cross-talk. Removing BOTH (clean within-concept
+        # attractors + quiet hold) yields an EXACT multi-concept WM -> robust coherent selection across
+        # all seeds. (The earlier "density=0 alone -> 3/6 WORSE" note was confounded: density=0 still
+        # leaves OU-driven spurious; it is density=0 AND OU-off TOGETHER that resolves it.)
         n = max(600, 60 * len(self._vocab))
         self.ctx = SpikingLoopContextBuffer(self._vocab, n=n, internal_density=internal_density,
-                                            seed=seed, verbose=verbose)
+                                            seed=seed, enable_ou=enable_ou, verbose=verbose)
         self.said = SaidTrace(decay=said_decay)
         self.lam = lam
 
