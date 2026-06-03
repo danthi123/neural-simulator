@@ -71,3 +71,14 @@ class SaidTrace:
 
     def activation(self, concept: str) -> float:
         return self._a.get(concept, 0.0)
+
+
+def select_candidate(candidates, context, graph, said, lam: float = 1.0):
+    """Pick the candidate with the highest  relevance - lam * inhibition.  Deterministic tie-break by
+    name so tests are stable."""
+    best, best_score = None, float("-inf")
+    for cand in candidates:
+        score = relevance(cand, context, graph) - lam * said.get(cand, 0.0)
+        if score > best_score or (score == best_score and (best is None or cand < best)):
+            best, best_score = cand, score
+    return best

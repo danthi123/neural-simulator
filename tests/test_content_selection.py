@@ -8,6 +8,7 @@ from research.runners.content_selection import (
     ContextBuffer,
     relevance,
     SaidTrace,
+    select_candidate,
 )
 
 
@@ -54,3 +55,21 @@ def test_said_trace_decays():
     st.step()                            # fade -> 0.5
     assert abs(st.activation("big") - 0.5) < 1e-9
     assert st.activation("apple") == 0.0
+
+
+# --- Task 4: Candidate selection --------------------------------------------
+
+def test_select_prefers_relevant_unsaid():
+    graph = {"apple": {"big": 2.0, "cat": 1.0}}
+    context = {"apple": 1.0}
+    said = {}                            # nothing said yet
+    # big (2.0) beats cat (1.0)
+    assert select_candidate(["big", "cat"], context, graph, said, lam=1.0) == "big"
+
+
+def test_select_inhibits_repeats():
+    graph = {"apple": {"big": 2.0, "cat": 1.0}}
+    context = {"apple": 1.0}
+    said = {"big": 2.0}                  # big was just said, strongly
+    # big score 2.0 - 1.0*2.0 = 0.0 ; cat score 1.0 - 0 = 1.0 -> cat wins
+    assert select_candidate(["big", "cat"], context, graph, said, lam=1.0) == "cat"
