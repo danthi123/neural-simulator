@@ -28,8 +28,14 @@ can't separate flat nouns at depth-2 from attributed args at depth-1) + default 
 clause 12/12, ATTRIBUTE-INSIDE-CLAUSE 12/12 ("dog see (cat chase (big bird))" — was 0/6, fixed by model
 comparison; the earlier flat-only policy CONFABULATED the base noun), clause-in-clause 11/12. HONEST BOUNDARY
 (documented): TWO-OR-MORE clause levels (auto-detection compounds a per-level kind-decision; raw substrate
-recurses to depth-3 with KNOWN structure, agent robust depth ~2). 20/20 tests. Commits pushed both remotes;
-findings `2026-06-03-recursive-clause-nesting-RESOLVES-depth3-capacity.md`.
+recurses to depth-3 with KNOWN structure, agent robust depth ~2). 20/20 tests. BIOLOGY-FAITHFUL CAPSTONE:
+`_spiking_recursive_clause_probe.py` — "dog see (cat chase bird)" built+decoded ENTIRELY in genuine
+resonate-and-fire spikes (rf_bind/rf_unbind/rf_bundle): full 5-filler 1.00 @ D=256, control 0.00. Smell-test
+caught a 2nd-level break (intermediate rf_resonate corrupts the phase structure the 2nd unbind needs; with=0.00
+without=1.00) — unbind the raw output directly. Commits pushed both remotes; findings
+`2026-06-03-recursive-clause-nesting-RESOLVES-depth3-capacity.md`. DIRECTION A is now COMPLETE as a research
+arc: a working biology-faithful COMPOSITIONAL conversational agent (resonator decoder -> multi-factor ->
+multi-modifier -> recursive clause -> spiking-validated -> unified agent).
 >>> NEXT (autonomous, open options): a fully-spiking unified agent (port encode+depth-detect to
 resonate_fire — the biology-faithfulness capstone), or Direction B (thalamocortical dynamical gating,
 Logiaco 2021 — the other untried mechanism from the deep research), or scale vocab + a richer multi-topic
