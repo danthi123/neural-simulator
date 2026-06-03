@@ -16,8 +16,10 @@ explicit user stop/pause or a true safety boundary halts work)
 end-to-end multi-seed: all-spiking mechanism (loop-attractor WM + spreading-activation relevance +
 SaidTrace IoR + clean reset) | seed-robust 6/6 | scaled 8/16/24c (12/12 strict) | robust on CONNECTED
 realistic graphs (turn_latency 18/18) | BEATS no-control baseline (decisive eval 5/5 RESOLVES, same bar as
-M1) | usable interactive artifact (DialogueAgent --repl --spiking, progression + clean topic shifts). There
-is no higher validation bar for THIS COMPONENT.
+M1) on BOTH synthetic AND the project's REAL learned associations (documented 90%-multitag pairs:
+apple->big,cat,hot ; dog->small,river,cold ; on_topic +0.500, 5/5) | usable interactive artifact
+(DialogueAgent --repl --spiking, progression + clean topic shifts). There is no higher validation bar for
+THIS COMPONENT.
 
 >>> NEXT FRONTIER (the genuine next arc, needs a DESIGNED start -- brainstorming skill + owner steer, since
 it is a NEW project not a refinement): INTEGRATION into a comprehend -> select -> PRODUCE loop. The

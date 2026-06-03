@@ -233,6 +233,12 @@ progression, with no regression on the clean-cluster strict sweeps (8-concept 6/
 So the spiking Control clears the **same decisive bar as the structured M1 Control** — the faithful spiking
 content-selection is validated end-to-end against a no-control baseline.
 
+**Also RESOLVES 5/5 on the project's REAL learned associations** (not just the synthetic graph): the
+documented multitag pairs (`apple_big`, `apple_cat`, `dog_small`, … — the validated 90%-multitag concept
+graph). on_topic +0.500, turn_to_turn +0.500, 5/5 seeds, with transcripts progressing through the real
+clusters (`apple → big, cat, hot`; `dog → small, river, cold`). So the spiking Control beats no-control on
+*both* synthetic multi-topic graphs *and* the substrate's real learned associations.
+
 ## Bottom line
 
 The faithful brain-analogue content-selection Control — the PFC "Control" function (deciding *what to say
