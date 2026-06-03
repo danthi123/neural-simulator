@@ -192,6 +192,76 @@ def test_recognition(bridge, vocab, rs, font, stim_steps=60, reset_steps=30):
     return acc
 
 
+def read_letters_test(bridge, rs, npos, n_letters=8, n_pos=3, n_words=80,
+                      stim_steps=100, reset_steps=30, seed=42):
+    """PATH 2 cheap-first decisive test: per-position letter reading on REAL spiking V1_simple.
+    Render multi-letter words, collect V1_simple spike-count vectors, read each letter from its V1s BAND
+    (position-specific -- the structure that produced the cheap probe's 0.91, never tested in spiking).
+    Per-position classifier trained on K words, tested on NOVEL words (the data-efficiency / open-vocab test)."""
+    import sim.backend as B
+    xp, _ = B.get_backend()
+    from research.findings.raw._text_as_pixels_probe import softmax, train_logreg
+    rm = bridge.region_manager
+    r_idx = xp.asarray(rm.indices("retina"))
+    v1 = rm.indices("cortex_v1_simple")
+    v1_arr = xp.asarray(v1)
+    n_v1s = len(v1)
+    alphabet = list("aeotxscn")[:n_letters]
+    rng = np.random.default_rng(seed)
+    words = set()
+    while len(words) < n_words:
+        words.add("".join(rng.choice(alphabet, size=n_pos)))
+    words = list(words)
+    try:
+        font = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", int(rs * 0.5))
+    except Exception:
+        font = ImageFont.load_default()
+    print(f"[read-letters] retina {rs}, {n_words} {n_pos}-letter words over {n_letters}-letter alphabet; "
+          f"collecting spiking V1_simple per-word...", flush=True)
+    feats = {}
+    for wi, w in enumerate(words):
+        drive = xp.asarray(VC.image_to_retina_drive(render_word_image(w, rs, font), drive_max_pA=2500.0),
+                           dtype=xp.float32)
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(reset_steps):
+            bridge._run_one_simulation_step()
+        bridge.cp_external_input_current[r_idx] = drive
+        acc = xp.zeros(n_v1s, dtype=xp.float32)
+        for _ in range(stim_steps):
+            bridge._run_one_simulation_step()
+            acc += bridge.cp_firing_states[v1_arr].astype(xp.float32)
+        feats[w] = B.to_host(acc)
+        if (wi + 1) % 25 == 0:
+            print(f"  collected {wi+1}/{n_words}", flush=True)
+    # V1_simple cell px (x-position) = (local_idx % npos^2) % npos; band p covers a third of px
+    px = (np.arange(n_v1s) % (npos * npos)) % npos
+    band_cells = {p: np.where((px >= p * npos // n_pos) & (px < (p + 1) * npos // n_pos))[0]
+                  for p in range(n_pos)}
+    def band_vec(w, p):
+        v = feats[w][band_cells[p]]
+        return v / (np.linalg.norm(v) + 1e-9)
+    n_ho = n_words // 3
+    ho, pool = words[-n_ho:], words[:-n_ho]
+    L = len(alphabet); lidx = {c: i for i, c in enumerate(alphabet)}
+    print(f"  per-position letter read on NOVEL words (chance per-letter {1/L:.2f}):", flush=True)
+    for K in (15, 30, len(pool)):
+        if K > len(pool):
+            continue
+        tr = pool[:K]
+        Ws = [train_logreg(np.array([band_vec(w, p) for w in tr]),
+                           np.array([lidx[w[p]] for w in tr]), L, seed=seed) for p in range(n_pos)]
+        ok = tot = word_ok = 0
+        for w in ho:
+            preds = [int(softmax(band_vec(w, p)[None, :] @ Ws[p]).argmax(1)[0]) for p in range(n_pos)]
+            ok += sum(int(preds[p] == lidx[w[p]]) for p in range(n_pos)); tot += n_pos
+            word_ok += int(all(preds[p] == lidx[w[p]] for p in range(n_pos)))
+        print(f"  K={K:>3} train words | per-letter {ok/tot:.3f} | per-word(novel) {word_ok/len(ho):.3f}",
+              flush=True)
+    print("  -> if per-letter >> chance on NOVEL words, spiking V1_simple per-position bands carry letter "
+          "structure -> data-efficient open-vocab recognizer viable in spiking (path 2). If ~chance -> "
+          "spiking sparsity kills per-position too -> path 1 (full V1->V2->IT hierarchy) required.", flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--retina", type=int, default=64)
@@ -199,12 +269,22 @@ def main():
     ap.add_argument("--steps", type=int, default=40)
     ap.add_argument("--recognize", action="store_true",
                     help="step-2a: STDP-train word-recognition pools off V1_simple, then test recognition")
+    ap.add_argument("--read-letters", action="store_true",
+                    help="path-2 cheap-first: per-position letter reading on spiking V1_simple (novel words)")
+    ap.add_argument("--n-words", type=int, default=80)
+    ap.add_argument("--integration-steps", type=int, default=100,
+                    help="V1_simple spike-count integration window for --read-letters")
     ap.add_argument("--events", type=int, default=80, help="training events per word (--recognize)")
     ap.add_argument("--vocab", type=str, default="dog,cat,run,sun")
     ap.add_argument("--test-steps", type=int, default=60, help="test integration window (temporal denoise)")
     ap.add_argument("--train-steps", type=int, default=60, help="stim steps per training event")
     ap.add_argument("--teacher-pa", type=float, default=2500.0)
     a = ap.parse_args()
+
+    if a.read_letters:
+        bridge, rs, npos = build_visual_text_bridge(retina_size=a.retina, seed=a.seed)
+        read_letters_test(bridge, rs, npos, n_words=a.n_words, stim_steps=a.integration_steps, seed=a.seed)
+        return
 
     if a.recognize:
         vocab = [w.strip() for w in a.vocab.split(",") if w.strip()]
