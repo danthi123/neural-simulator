@@ -193,3 +193,29 @@ recognizer -> concept pools (the earned tokenizer replacement).
 The input-side-fidelity *science* is validated 4 ways (cheap probes) and the *transduction* is live
 on the GPU. A faithful spiking *recognizer* is the well-specified next sub-arc (path 1 or 2 above),
 not a one-session tune. No shortcuts; biology-faithful; both remotes.
+
+## Where the kWTA must live: V1-LEVEL lateral inhibition (pool-level FS-WTA insufficient)
+
+Two follow-ups sharpened the production architecture:
+- kWTA fraction: 0.1 > 0.05 (tighter discards too much; 0.05 gave 0.43 vs 0.1's 0.575 per-letter).
+- **Pool-level FS cross-inhibition (the validated Tier 1 motor-WTA recipe) on the spiking word pools
+  = 0/5 chance.** Adding lateral inhibition at the POOL output did NOT fix the spiking recognizer.
+
+The reason is precise and important: the breakthrough kWTA operated on the **V1 features** -- it
+sparsified *which V1 cells* the readout reads (keep the earliest/strongest, drop the noisy rest). A
+spiking pool instead reads *all* its V1 inputs weighted by STDP, so per-cell spike noise flows
+straight in and STDP (local, unsupervised) can't learn the precise denoising a supervised readout
+does. => the kWTA must live at the **V1 level** (lateral inhibition that sparsifies the V1 spiking
+code *before* the pools read it) -- exactly the Thorpe/Masquelier per-layer-inhibition design (each
+conv layer is followed by lateral inhibition). The discriminative information is provably there (0.575
+readout proxy); a faithful spiking recognizer needs V1-level lateral inhibition to expose it, plus a
+readout rule stronger than vanilla STDP (reward-modulated STDP / a learned readout layer -- both
+biologically standard).
+
+**Net scoping (honest, de-risked):** faithful spiking visual word recognizer = V1_simple (latency
+code) + **V1-level lateral inhibition (kWTA sparsification)** + readout pools (R-STDP or learned
+readout) + optional conv layers for translation invariance. The MECHANISM is found and the
+representation is proven discriminative; the remaining work is the V1-level inhibition + readout rule
+-- a focused build, not a gamble. Also the multimodal-grounding prerequisite. Next: build V1-level
+lateral inhibition and test whether the sparsified V1 spiking code lets the pools/readout reach the
+0.575 the offline proxy showed.
