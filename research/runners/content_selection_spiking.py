@@ -156,6 +156,69 @@ class SpikingContextBuffer:
         return out
 
 
+class SpikingLoopContextBuffer:
+    """Spiking working-memory context buffer (Milestone 2): a cortico-PFC loop with a pattern-specific
+    attractor installed per concept. update() drives concepts (each held by its attractor); read()
+    decodes the held SET (which concepts are currently active). The spiking analogue of the structured
+    ContextBuffer -- the discourse context held as concept attractors reverberating in the loop.
+
+    Validated mechanism (this module's findings): the loop holds the specific driven concept (220x
+    specificity) and a SET of >=3 concepts at once (the WM span). Attractor weights are SET here
+    (outer-product); learning them with the correct rule is the documented next step."""
+
+    def __init__(self, concepts, n=600, pattern_size=50, attractor_weight=50.0, seed=42, verbose=False):
+        import sim.backend as B
+        self.B = B
+        self.xp, _ = B.get_backend()
+        self.concepts = list(concepts)
+        self.bridge = build_loop_wm_bridge(n=n, loop_weight=0.5, loop_density=0.05, seed=seed,
+                                           verbose=verbose)
+        rm = self.bridge.region_manager
+        cidx = np.asarray(rm.indices("cortex_ctx"))
+        didx = np.asarray(rm.indices("dlpfc_wm"))
+        rng = np.random.default_rng(seed)
+        perm = rng.permutation(n)
+        self._cpat = {}
+        for i, c in enumerate(self.concepts):
+            p = perm[i * pattern_size:(i + 1) * pattern_size]
+            cpat, dpat = cidx[p], didx[p]
+            self._cpat[c] = self.xp.asarray(cpat)
+            pre1 = np.repeat(cpat, pattern_size).astype(np.int64)
+            post1 = np.tile(dpat, pattern_size).astype(np.int64)
+            pre2 = np.repeat(dpat, pattern_size).astype(np.int64)
+            post2 = np.tile(cpat, pattern_size).astype(np.int64)
+            ww = np.full(pattern_size * pattern_size, attractor_weight, np.float32)
+            self.bridge.set_pathway_weights("c2d", pre_indices=pre1, post_indices=post1, weights=ww,
+                                            add_missing=True)
+            self.bridge.set_pathway_weights("d2c", pre_indices=pre2, post_indices=post2, weights=ww,
+                                            add_missing=True)
+        self._psize = pattern_size
+
+    def update(self, concepts, drive_pA=2500.0, stim=40, settle=15):
+        for c in concepts:
+            if c not in self._cpat:
+                continue
+            drv = self._cpat[c]
+            for _ in range(stim):
+                self.bridge.cp_external_input_current[:] = 0.0
+                self.bridge.cp_external_input_current[drv] = drive_pA
+                self.bridge._run_one_simulation_step()
+            self.bridge.cp_external_input_current[:] = 0.0
+            for _ in range(settle):
+                self.bridge._run_one_simulation_step()
+
+    def read(self, window=20):
+        """Decode the held set: per-neuron firing of each concept's attractor over a no-drive window."""
+        acc = {c: 0.0 for c in self.concepts}
+        for _ in range(window):
+            self.bridge.cp_external_input_current[:] = 0.0
+            self.bridge._run_one_simulation_step()
+            fs = self.bridge.cp_firing_states
+            for c in self.concepts:
+                acc[c] += float(self.B.to_host(fs[self._cpat[c]]).sum())
+        return {c: acc[c] / (self._psize * window) for c in self.concepts}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)

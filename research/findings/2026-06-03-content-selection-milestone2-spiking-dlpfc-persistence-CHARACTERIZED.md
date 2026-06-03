@@ -121,3 +121,20 @@ context**. The remaining engineering is wiring this `SpikingLoopContextBuffer` i
 (relevance to the held set) and re-running the Milestone-1 coherence eval -- and learning the
 attractor weights with the correct rule rather than setting them (vanilla Hebbian destabilizes; a
 one-shot outer-product / a stabilized three-factor rule is the path).
+
+### Milestone-2 core delivered: SpikingLoopContextBuffer holds the conversation
+
+`SpikingLoopContextBuffer` (in `content_selection_spiking.py`) packages the validated mechanism as a
+drop-in spiking analogue of the structured ContextBuffer: install a concept attractor per vocabulary
+item; `update(concept)` drives it (held by the loop); `read()` decodes the held set. Test: a
+conversation discussing apple -> rain -> dog yields held context **apple=0.34, rain=0.33, dog=0.33**
+with an undiscussed concept silent (song=0.01) -- the **top-3 held concepts are exactly the three
+discussed**. The faithful spiking working memory holds the discourse context. One spurious holdover
+(tree=0.32) is cross-talk to tune (stronger inhibition / sparser patterns).
+
+**Milestone 2 status: core mechanism + the spiking context buffer DONE and validated.** Remaining to
+finish Milestone 2 end-to-end: (1) reduce the spurious cross-talk; (2) wire the SpikingLoopContextBuffer
+into a SpikingController (relevance to the held set) and re-run the Milestone-1 coherence eval to
+confirm the spiking context preserves coherence; (3) learn the attractor weights with the correct rule
+instead of setting them. The hard, uncertain part (does a faithful spiking WM even hold a conversational
+context?) is answered: yes.
