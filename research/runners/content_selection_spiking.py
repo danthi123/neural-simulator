@@ -233,6 +233,9 @@ class SpikingController:
         from research.runners.content_selection import SaidTrace
         self.graph = graph
         self._vocab = sorted(set(graph) | {a for v in graph.values() for a in v})
+        # NOTE: coherence is config-fragile (cross-talk vs relevance interaction). This config is the
+        # validated-coherent one for the documented graph at seed 42; robustness across configs/seeds
+        # (and a cross-talk-clean config that is ALSO controller-coherent) is an open refinement.
         n = max(600, 60 * len(self._vocab))
         self.ctx = SpikingLoopContextBuffer(self._vocab, n=n, seed=seed, verbose=verbose)
         self.said = SaidTrace(decay=said_decay)

@@ -156,6 +156,17 @@ inhibition would clean it further.) **Robust across topics:** topic `dog` likewi
 `river -> cold -> small` (all of dog's cluster) -- both topics produce coherent in-cluster walks, the
 context held entirely in the spiking working memory.
 
+**Honest limitation -- coherence is config-fragile.** Trying to clean the spurious holdover with
+sparser patterns (larger n, smaller pattern_size) improved the held-SET margin (discussed 0.28 vs
+undiscussed 0.20, +0.08, vs the dense config's -0.02) BUT broke the *controller's* coherence (apple
+then picked `river` from the wrong cluster). So a cleaner held set does NOT guarantee coherent
+selection -- the held-set quality and the relevance-over-held-set coherence are different metrics, and
+the latter is sensitive to the exact pattern assignment (n / pattern_size / seed). The committed
+config (n=600, pattern 50, seed 42) is the validated-coherent one for the documented graph; making the
+spiking content-selection robustly coherent across configs and seeds (a config that is BOTH
+cross-talk-clean AND controller-coherent, likely needing tuned inhibition + a multi-seed sweep) is a
+genuine open refinement, honestly flagged.
+
 **Net (the arc from a single session's cheap-first probes):** content-selection Control was validated
 structurally (Milestone 1), then the spiking working memory it needs was characterized
 (standalone=no / untrained-loop=blob / **trained-loop-attractor=works, 220x**), packaged
