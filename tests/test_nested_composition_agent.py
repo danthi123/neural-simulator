@@ -5,7 +5,7 @@ STRUCTURED ENTITIES (an attributed patient, "big cat"), decoded by the resonator
 (_resonator_nested_fact_probe RESOLVES); these tests pin the agent that exposes it as learn/query.
 """
 
-from research.runners.nested_composition_agent import NestedCompositionAgent
+from research.runners.nested_composition_agent import NestedCompositionAgent, Clause
 
 NOUNS = ["dog", "cat", "ball", "bird", "river"]
 VERBS = ["chase", "hold", "see", "eat"]
@@ -72,6 +72,40 @@ def test_two_modifier_multi_seed_robust():
         a.learn("dog", "eat", (("small", "cold"), "river"))
         ok += int(a.query_patient("dog", "eat") == "small cold river")
     assert ok == 6, f"multi-modifier decoded {ok}/6 seeds"
+
+
+def test_embedded_clause_patient():
+    # a clause as an argument -- "dog see (cat chase bird)" -- the real syntactic recursion
+    a = _agent()
+    a.learn("dog", "see", Clause("cat", "chase", "bird"))
+    assert a.query_patient("dog", "see") == "cat chase bird"   # the whole embedded clause recovered
+
+
+def test_embedded_clause_multi_seed_robust():
+    # single embedded clause with flat arguments is the robust agent capability (auto-detected, no flag)
+    ok = 0
+    for seed in (42, 43, 44, 45, 46, 47):
+        a = _agent(seed)
+        a.learn("dog", "see", Clause("cat", "chase", "bird"))
+        ok += int(a.query_patient("dog", "see") == "cat chase bird")
+    assert ok == 6, f"embedded clause decoded {ok}/6 seeds"
+
+
+def test_clause_vs_flat_and_attributed_distinguished():
+    # the agent is NOT told the kind -- a verb-presence signal marks a clause; flat/attributed have no verb
+    a = _agent()
+    a.learn("dog", "chase", "cat")                          # flat
+    a.learn("bird", "hold", ("red", "ball"))               # attributed entity
+    a.learn("dog", "see", Clause("cat", "chase", "bird"))  # embedded clause
+    assert a.query_patient("dog", "chase") == "cat"        # flat stays flat (not mistaken for a clause)
+    assert a.query_patient("bird", "hold") == "red ball"   # attributed stays attributed
+    assert a.query_patient("dog", "see") == "cat chase bird"   # clause decoded as a clause
+
+
+def test_clause_patient_abstains_on_unknown():
+    a = _agent()
+    a.learn("dog", "see", Clause("cat", "chase", "bird"))
+    assert a.query_patient("dog", "chase") is None         # no such fact -> abstain (no confabulation)
 
 
 def test_abstain_on_unknown_query():
