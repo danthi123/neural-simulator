@@ -32,8 +32,9 @@ dynamical gating (Logiaco 2021). Owner chose "A for now."
 - So a genuinely-new biology-faithful mechanism gets past our characterized multi-factor/nesting decode
   wall. NOT a wall -- a path. Findings: 2026-06-03-resonator-decoder-cheap-first-RESOLVES-...md.
 
->>> EXACT NEXT (pre-registered, in order): (1) D-scaling sweep -- does spiking resonator capacity M scale
-quadratically with D (establish D for M~320 full-vocab nesting)? cheap. (2) Integrate the spiking resonator
+>>> EXACT NEXT (pre-registered, in order): (1) D-scaling sweep -- DONE: capacity scales with D (M=16/32/48/64
+at D=256/512/1024/2048, F=3; ~D^0.67). Realistic nesting (per-slot fan-out <=64) works at our 320-substrate
+D~2000; full M=320/slot needs D~22K (feasible). Capacity-safe lever, not a ceiling. (2) Integrate the spiking resonator
 decode into the 320-substrate composition pipeline (replace single-shot decode -> enable nested SVO /
 hierarchical structures). (3) DECISIVE capability re-test: the hierarchical-320 that scored 0.000 (forced
 flat-distinct) WITH the resonator decode -- does it now resolve? (a nested fact / fact-about-a-fact /
