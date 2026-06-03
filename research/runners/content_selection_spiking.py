@@ -219,6 +219,37 @@ class SpikingLoopContextBuffer:
         return {c: acc[c] / (self._psize * window) for c in self.concepts}
 
 
+class SpikingController:
+    """Milestone-2 end-to-end (Approach 3): content-selection Control whose discourse CONTEXT is held in
+    the spiking cortico-PFC loop. Per turn: drive the input into the spiking context; read the held set;
+    select the most relevant unsaid associate (reusing the validated relevance + inhibition-of-return);
+    drive the selection into the spiking context. The faithful spiking analogue of the Milestone-1
+    ContentSelectionController -- same selection logic, but the context is real spiking working memory."""
+
+    def __init__(self, graph, seed=42, lam=1.0, said_decay=0.6, verbose=False):
+        from research.runners.content_selection import SaidTrace
+        self.graph = graph
+        self._vocab = sorted(set(graph) | {a for v in graph.values() for a in v})
+        n = max(600, 60 * len(self._vocab))
+        self.ctx = SpikingLoopContextBuffer(self._vocab, n=n, seed=seed, verbose=verbose)
+        self.said = SaidTrace(decay=said_decay)
+        self.lam = lam
+
+    def turn(self, user_concepts):
+        from research.runners.content_selection import select_candidate
+        self.ctx.update(list(user_concepts))            # spiking working memory holds the input
+        self.said.step()
+        held = self.ctx.read()                          # the held set = the discourse context
+        candidates = [c for c in self._vocab if c not in set(user_concepts)
+                      and self.said.activation(c) < 0.5]   # hard inhibition-of-return
+        said_now = {c: self.said.activation(c) for c in candidates}
+        choice = select_candidate(candidates, held, self.graph, said_now, lam=self.lam)
+        if choice is not None:
+            self.said.mark(choice)
+            self.ctx.update([choice])
+        return choice
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
