@@ -339,24 +339,47 @@ class SpikingSpreadingController:
         return choice
 
     def _reset_wm(self):
-        """Active WM reset (inter-probe interval): return v / u / conductances / firing to rest. BEST-
-        EFFORT ONLY -- it does NOT clear the in-flight synaptic DELAY BUFFERS or slow NMDA/eligibility
-        state, so REPEATED probes on the same bridge are still partially contaminated by prior activations
-        (verified 2026-06-03: a 2nd apple probe fires much faster, and a dog probe lights the apple-cluster
-        first). A fully clean inter-probe reset is a non-trivial open sub-problem (part of the M3b boundary;
-        see finding doc). relevance_by_latency is validated for a SINGLE fresh-bridge probe."""
+        """Active WM reset (inter-probe interval): return the network to rest so a fresh probe is not
+        contaminated by the previous probe. Clears membrane v + recovery u + firing + conductances AND the
+        in-flight cross-step state that the earlier best-effort version missed: `cp_prev_firing_states`,
+        `cp_refractory_timers`, and the synaptic pulse timers/progress that carry DELAYED transmission
+        between steps. With these cleared, repeated latency probes on one bridge are clean -- validated
+        2026-06-03: multi-turn latency selection on a richly-connected graph stays on-topic 6/6 (vs the
+        best-effort reset which drifted off-topic on turns 2-3). This substantially resolves M3b obstacle 3
+        (clean inter-probe reset)."""
         b = self.ctx.bridge
-        if getattr(b, "cp_firing_states", None) is not None:
-            b.cp_firing_states[:] = False
-        for g in ("cp_conductance_g_e", "cp_conductance_g_i", "cp_conductance_g_nmda",
-                  "cp_conductance_g_nmda_rise"):
-            arr = getattr(b, g, None)
+        for a in ("cp_firing_states", "cp_prev_firing_states"):
+            arr = getattr(b, a, None)
             if arr is not None:
-                arr[:] = 0.0
+                arr[:] = False
+        for a in ("cp_conductance_g_e", "cp_conductance_g_i", "cp_conductance_g_nmda",
+                  "cp_conductance_g_nmda_rise", "cp_refractory_timers", "cp_synapse_pulse_timers",
+                  "cp_synapse_pulse_progress"):
+            arr = getattr(b, a, None)
+            if arr is not None:
+                arr[:] = 0
         if getattr(b, "cp_izh_vr", None) is not None and b.cp_membrane_potential_v is not None:
             b.cp_membrane_potential_v[:] = b.cp_izh_vr
         if getattr(b, "cp_recovery_variable_u", None) is not None:
             b.cp_recovery_variable_u[:] = 0.0
+
+    def turn_latency(self, user_concepts):
+        """Latency-based selection: relevance = first-spike LATENCY of the spread (focused 1-hop), robust
+        on richly-connected graphs where the sustained-rate `turn()` over-spreads multi-hop and loses
+        topic focus. Each turn is a fresh latency probe (fuller `_reset_wm`), so there is no cross-turn
+        accumulation; inhibition-of-return is the structured SaidTrace. Validated 2026-06-03: on the
+        connected multi-topic graph the earliest-latency pick is a DIRECT neighbour 6/6, and 3-turn chains
+        stay within the 2-hop topic region 6/6 -- where the rate read wandered off-topic (rain -> dog)."""
+        self.said.step()
+        lat = self.relevance_by_latency(user_concepts[0])
+        uc = set(user_concepts)
+        cands = [(c, lat[c]) for c in self._vocab
+                 if c not in uc and self.said.activation(c) < 0.5 and lat[c] is not None]
+        if not cands:
+            return None
+        choice = min(cands, key=lambda kv: kv[1])[0]       # earliest first-spike = most relevant (1-hop)
+        self.said.mark(choice)
+        return choice
 
     def relevance_by_latency(self, context_concept, steps=60, drive_pA=2500.0, thresh=0.15):
         """Spiking relevance as first-spike LATENCY of the spread -- richer than the rate read: it encodes

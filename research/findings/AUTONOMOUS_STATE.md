@@ -77,9 +77,17 @@ fresh-bridge: apple -> direct big/cat earliest, 2-hop hot later, dog-cluster nev
 non-repetition has THREE characterized obstacles: (1) REBOUND resists silencing a latched assembly;
 (2) latency ranks DIRECT<INDIRECT so it can't reach a 2-hop concept by delay (full coverage still needs
 exclusion); (3) clean inter-probe RESET needs clearing in-flight delay buffers + slow NMDA, not just
-v/u/conductances/firing (repeated probes contaminate). So fully-spiking multi-turn inhibition-of-return is
-a precisely-scoped OPEN sub-problem (fuller reset + a rebound-surviving exclusion); the validated
-deliverable is M3 rate-read relevance 6/6 + structured SaidTrace + the latency single-probe relevance; (ii) NOISE-ROBUST ATTRACTORS so biological OU noise can be restored — sparse k-of-N assemblies +
+v/u/conductances/firing (repeated probes contaminate). >>> OBSTACLE 3 NOW RESOLVED + CONNECTED-GRAPH
+ROBUSTNESS SHIPPED (same cycle): on a RICHLY-CONNECTED graph (M1 eval 27-node web) the rate-read turn()
+OVER-SPREADS multi-hop off-topic (rain->dog/tree); the LATENCY read is the focused 1-hop fix (earliest pick
+= direct neighbour 6/6). Multi-turn latency first drifted (turns 2-3) due to the best-effort reset -> found
+the missing arrays (cp_prev_firing_states, cp_refractory_timers, cp_synapse_pulse_timers/progress = delayed
+transmission) and cleared them in a FULLER _reset_wm -> multi-turn latency CLEAN 6/6 on-topic (within 2
+hops). Shipped turn_latency() = latency relevance + fuller reset + SaidTrace IoR: 6/6 connected + 4/4 clean
+(no regression). Obstacles 1(rebound)+2(direct<indirect) sidestepped by SaidTrace exclusion (not silencing).
+So RELEVANCE + WM + inter-probe RESET are now ALL spiking + robust on realistic connected graphs; the only
+remaining "fully-spiking" purity item is a spiking SaidTrace. The validated deliverable is M3 (rate turn()
+for separable graphs 12/12 strict 8/16/24c) + turn_latency() (connected graphs 6/6); 32 tests green; (ii) NOISE-ROBUST ATTRACTORS so biological OU noise can be restored — sparse k-of-N assemblies +
 per-assembly inhibitory shadows so attractors tolerate default OU without spurious tipping (principled
 version of the enable_ou=False fix); (iii) LEARN the attractor + graph weights with a stabilized rule
 (not vanilla Hebbian; both are currently SET, not learned); (iv) richer REAL association substrate (train

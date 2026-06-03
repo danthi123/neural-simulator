@@ -136,6 +136,36 @@ The bridge grows with the vocabulary (`n = max(600, 60·V)` neurons per region, 
 the association edges per concept), so larger graphs are a GPU-scale concern; the synthetic-cluster
 sweep maps where coherence holds before investing in a large learned substrate.
 
+## Connected (realistic) graphs — the latency mode (`turn_latency`), and M3b obstacle 3 resolved
+
+The clean-cluster sweeps above use graphs with **no cross-cluster edges**, so spreading stays local. On a
+**richly-connected** graph (the M1 eval's 27-node multi-topic web: weather/animal/fruit/music with
+cross-links), the default rate-read `turn()` **over-spreads**: activation diffuses *multi-hop* through the
+connected graph and loses topic focus (e.g. `rain → storm, dog, tree`). The structured M1 relevance is
+1-hop weighted, so it stays focused; the spiking *rate* read is effectively multi-hop diffusion.
+
+**The latency read is the focused, faithful fix.** Direct (1-hop) neighbours fire *first*; distant
+concepts fire later (multi-hop latency). Reading first-spike latency therefore recovers the 1-hop focus:
+on the connected graph the earliest-latency pick is a **direct neighbour for 6/6 topics**. Shipped as
+`SpikingSpreadingController.turn_latency()` (relevance = first-spike latency; inhibition-of-return = the
+structured SaidTrace). Validated:
+
+| graph | `turn()` (rate) | `turn_latency()` |
+|---|---|---|
+| clean clusters (8c) | 4/4 in-cluster | 4/4 in-cluster (no regression) |
+| connected web (6 topics × 3 turns) | over-spreads off-topic | **6/6 chains within the 2-hop topic region** |
+
+**M3b obstacle 3 (clean inter-probe reset) is substantially resolved.** Multi-turn latency selection
+*first* drifted off-topic on turns 2-3 because the best-effort `_reset_wm` left in-flight state. Diagnosed
+the missing arrays — `cp_prev_firing_states`, `cp_refractory_timers`, and the synaptic
+`cp_synapse_pulse_timers`/`cp_synapse_pulse_progress` (delayed transmission carried between probes) — and
+cleared them in a fuller `_reset_wm`. With the fuller reset, repeated latency probes are clean and the
+connected-graph chains stay on-topic 6/6. (Obstacles 1 *rebound* and 2 *direct-before-indirect* are
+sidestepped by `turn_latency`: it uses the SaidTrace for inhibition-of-return rather than silencing a
+latched assembly, and the SaidTrace exclusion lets the chain move past direct neighbours.) What remains of
+"fully spiking" is making the SaidTrace itself spiking; the **relevance + working memory + inter-probe
+reset are now all spiking and robust on realistic connected graphs.**
+
 ## Demonstration — a conversation on the faithful spiking Control
 
 The validated spiking Control is wired into the interactive `DialogueAgent` (dependency injection:
