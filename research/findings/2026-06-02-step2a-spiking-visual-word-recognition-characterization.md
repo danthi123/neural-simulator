@@ -160,6 +160,34 @@ multimodal-grounding milestone (robust visual object/word representations to Heb
 concepts to). Next: build the convergence + STDP-feature layers on top of the latency code (a real
 but de-risked sub-arc), brainstorming/design-first per its size.
 
+### kWTA BREAKTHROUGH: the recognizer is tractable CHEAPLY (verdict revised UP)
+
+The Thorpe/Masquelier mechanism has TWO halves: latency coding (tested -> helps) AND **k-winners-
+take-all lateral inhibition** (keep only the earliest/strongest responders per map, suppress the
+rest -- the denoising my readout lacked). Adding per-band kWTA (keep top 10% earliest cells) to the
+latency read off raw V1_simple:
+
+| Readout (V1_simple, retina 64, novel words) | K=15 | K=30 | K=80 |
+|---|---|---|---|
+| rate (500-step integration) | -- | -- | 0.242 (plateaued) |
+| latency only | 0.167 | 0.192 | 0.342 (noisy) |
+| **latency + kWTA (0.1)** | **0.267** | **0.417** | **0.575** |
+
+Per-letter **0.575 at K=80, 4.6x chance, and climbing STEEPLY with K** (per-word 0.025/0.10/0.15).
+The lateral-inhibition denoising was the decisive missing piece. **This REVISES the earlier
+"sparse-propagation wall / multi-week hierarchy required" framing DOWN**: the wall was the
+**wrong neural code + missing lateral inhibition**, NOT a fundamental substrate limit. The core
+recognition works on raw V1_simple with just the right *readout mechanism* (latency + kWTA) -- a
+cheap readout-side change, no deep hierarchy needed to get a strong, climbing signal.
+
+The full conv-SNN (conv feature layers + STDP-learned intermediate features) would push further and
+add translation invariance, but the headline is: **the spiking substrate carries the word-form
+structure fine; it just has to be read with the biologically-correct code (latency) + lateral
+inhibition (kWTA)** -- exactly the Thorpe/Masquelier prescription, now confirmed on our bridge. This
+is the cheap-first investigation paying off: the recognizer is a tractable build, not a multi-week
+gamble. Next: push K + tune the kWTA fraction toward usable per-word recognition, then wire the
+recognizer -> concept pools (the earned tokenizer replacement).
+
 ## Honest scope
 
 The input-side-fidelity *science* is validated 4 ways (cheap probes) and the *transduction* is live
