@@ -101,8 +101,23 @@ cl={'apple':{'big','cat','hot'},'dog':{'small','river','cold'}}; \
     open sub-problem, not a one-session drop-in.
 - **Graph is installed, not learned:** the association synapses are set from the known graph (`w·scale`),
   not learned from experience — same scope caveat as the set (not learned) attractor weights.
-- **Small toy substrate:** an 8-concept association graph. Scaling to a larger learned-association
-  substrate (a trained tagged bridge) is the richer-eval next step.
+- **Graph is installed, not learned (substrate):** the validation uses synthetic multi-cluster
+  association graphs (each cluster a 4-cycle, no cross-cluster edges) at increasing size. Scaling to a
+  larger *learned-association* substrate (a trained tagged engram bridge) is the richer-eval next step.
+
+## Scaling (synthetic multi-cluster graphs)
+
+The spiking content-selection scales past the original 8-concept toy:
+
+| concepts | clusters | result | note |
+|---|---|---|---|
+| 8 | 2 | 12/12 (6 seeds × 2) | the validated base case |
+| 16 | 4 | **11/12** (3 seeds × 4) | the single miss is a within-cluster `None`/repeat (seed 42 apple), **not** an off-topic confabulation — topic coherence holds |
+| 24 | 6 | _(in flight — append on completion)_ | |
+
+The bridge grows with the vocabulary (`n = max(600, 60·V)` neurons per region, one 50×50 attractor +
+the association edges per concept), so larger graphs are a GPU-scale concern; the synthetic-cluster
+sweep maps where coherence holds before investing in a large learned substrate.
 
 ## Bottom line
 
