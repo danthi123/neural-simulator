@@ -65,11 +65,26 @@ mean pairwise |cosine|:
 | 1.0 | 0.404 | 1.00 |
 | 1.5 | 0.768 | 1.00 |
 
-SVO decode holds at 1.00 even at mean cosine 0.768. **Honest caveat:** a single shared component is
-*common-mode* correlation — it shifts every cleanup candidate equally, so it does not move the argmax; this
-is the *easy* kind of correlation. It does **not** test *clustered/structured* correlation (semantically
-related concepts forming mutually-similar subsets), which is the harder grounded case and is not probed
-here. So this shows robustness to common-mode overlap at realistic levels, not a full grounded-code result.
+SVO decode holds at 1.00 even at mean cosine 0.768. A single shared component is *common-mode* correlation
+— it shifts every cleanup candidate equally, so it does not move the argmax. The harder, more grounded-faithful
+case is *clustered* correlation (semantically related concepts forming mutually-similar subsets):
+
+**Clustered correlation — 16 clusters × 20 concepts, the HARDEST case (S, V, O all drawn from the same
+cluster), D=1024:**
+
+| per-cluster component β | within-cluster mean \|cos\| | full-SVO (same-cluster) |
+|---|---|---|
+| 0.0 | 0.026 | 1.00 |
+| 0.5 | 0.067 | 1.00 |
+| 1.0 | 0.386 | 1.00 |
+| 2.0 | 0.829 | 1.00 |
+
+Still 1.00 even when within-cluster concepts have cosine 0.829 and all three roles are filled from the same
+cluster. The reason: each code keeps a distinct per-concept random component on top of the shared cluster
+component, and the argmax cleanup latches onto that distinguishing residual. The only thing that breaks this
+is *degenerate* codes (two concepts with near-identical codes, cosine → 1.0). So the grounded-capacity
+question is de-risked for both common-mode and clustered correlation, provided the grounded encoder gives
+each concept a distinguishable code (which any non-degenerate sparse encoding does).
 
 ## What this means (and what it does NOT)
 
