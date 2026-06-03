@@ -42,11 +42,18 @@ now demonstrated at THREE faithfulness levels: structured M1 -> spiking-WM M2 ->
 M3. Finding 2026-06-03-content-selection-milestone3-spiking-relevance-VALIDATED.md. 31 structured tests
 still green.
 
+>>> M3b CHEAP-PROBED THIS CYCLE (hyperpolarizing-fatigue approach REFUTED): applying targeted negative
+"fatigue" current to a latched, recently-selected assembly to silence it for the next relevance read does
+NOT work -- firing INCREASED (hot 0.395->0.490) due to IZH2007_HIPPO_PYRAMIDAL REBOUND dynamics (h-current
+rebound depolarization). A latched hippocampal-pyramidal attractor can't be hyperpolarized silent. So
+spiking inhibition-of-return needs the PRINCIPLED path: read the TRANSIENT spread (first-spike LATENCY,
+this project's validated latency/rank-order coding insight) not the sustained latch, so a fatigued
+slower-to-respond assembly loses the transient WTA race -- a real read-path redesign.
+
 >>> EXACT NEXT (pre-registered, genuine remaining faithfulness steps — pick one as a fresh focused arc,
-cheap-first): (i) M3b SPIKING INHIBITION-OF-RETURN — replace the structured SaidTrace with spike-frequency
-adaptation on the selected assembly (the current M3 is coherent 12/12 but can repeat, e.g. hot/cat/hot,
-because the said-trace decays; spiking adaptation gives non-repetition in the fully-spiking controller);
-(ii) NOISE-ROBUST ATTRACTORS so biological OU noise can be restored — sparse k-of-N assemblies +
+cheap-first): (i) M3b SPIKING INHIBITION-OF-RETURN via the LATENCY/TRANSIENT read redesign (above; the
+hyperpolarizing-fatigue shortcut is refuted -> read first-spike latency of the spread + fatigue delays
+recently-won assemblies -> non-repetition in the fully-spiking controller); (ii) NOISE-ROBUST ATTRACTORS so biological OU noise can be restored — sparse k-of-N assemblies +
 per-assembly inhibitory shadows so attractors tolerate default OU without spurious tipping (principled
 version of the enable_ou=False fix); (iii) LEARN the attractor + graph weights with a stabilized rule
 (not vanilla Hebbian; both are currently SET, not learned); (iv) richer REAL association substrate (train

@@ -68,10 +68,19 @@ cl={'apple':{'big','cat','hot'},'dog':{'small','river','cold'}}; \
 
 ## Honest scope
 
-- **Repetition:** with `SaidTrace` decay 0.6, picks can alternate (e.g. hot, cat, hot) — coherent (all
-  in-cluster) but not strictly non-repeating across 3 turns. The structured M1 controller gives clean
-  non-repetition; the spiking inhibition-of-return (M3b, spike-frequency adaptation) is the documented
-  next step for non-repetition in the fully-spiking controller.
+- **Repetition / inhibition-of-return is still structured:** with `SaidTrace` decay 0.6, picks can
+  alternate (e.g. hot, cat, hot) — coherent (all in-cluster) but not strictly non-repeating across 3
+  turns. The structured M1 controller gives clean non-repetition; making inhibition-of-return *spiking*
+  (M3b) is the documented next step.
+  - **M3b cheap-probe (2026-06-03): hyperpolarizing-fatigue approach REFUTED.** Applying targeted
+    negative ("fatigue") current to a recently-selected, latched assembly to silence it for the next
+    relevance read does **not** work: firing *increased* (hot 0.395 → 0.490 at amt=6000) instead of
+    going silent. Cause = the `IZH2007_HIPPO_PYRAMIDAL` **rebound** dynamics (hyperpolarization-activated
+    currents → rebound depolarization) — a latched hippocampal-pyramidal attractor cannot be silenced by
+    hyperpolarizing it. So spiking inhibition-of-return needs a different mechanism. The principled path
+    (pre-registered) connects to this project's validated **latency/rank-order coding** insight: read the
+    *transient* spread (first-spike latency) rather than the sustained latch, so a fatigued (slower-to-
+    respond) assembly loses the transient WTA race — a real read-path redesign, not a one-line fatigue.
 - **Graph is installed, not learned:** the association synapses are set from the known graph (`w·scale`),
   not learned from experience — same scope caveat as the set (not learned) attractor weights.
 - **Small toy substrate:** an 8-concept association graph. Scaling to a larger learned-association
