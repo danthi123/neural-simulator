@@ -58,7 +58,8 @@ wolf->taste->well / fish->send->weak; "wolf" -> "wolf fall huge", "more" -> "wol
 (non-repeating, Control-driven), "more" -> "that's all i know about wolf"; "fish" -> "fish send weak" --
 each produced by spiking unbind. PLUS factual Q&A via spiking unbind ("what does wolf fall" -> "wolf fall
 huge"; "who send weak" -> "fish send weak"; "tell me about X") -> a FULL conversational agent (learn +
-ask + elaborate) over 320 concepts, all faithful spiking except the parse. Reuses _insubstrate_bind_unbind_
+ask + elaborate) over 320 concepts, all faithful spiking except the parse -- ROBUST at seeds 42+43 (both
+perfect: Q&A + elaboration all correct, no misses). Reuses _insubstrate_bind_unbind_
 probe + _insubstrate_relational_memory_
 probe + the 320 codes cache; no protected-module change. So the tangible conversational agent now runs at
 the project's SCALE FRONTIER with mostly-faithful spiking pieces. >>> REMAINING milestone-3: (a) faithful
