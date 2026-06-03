@@ -114,3 +114,16 @@ pixels + referent sensory/motor feature -> Hebbian) for semantic meaning. All re
    4. FAITHFUL validation on the real retina->Gabor-V1 pathway: reads novel words 0.91, implementable. =>
    The missing sensory transduction/grounding IS a missing data-efficient structure, and the fix is concrete +
    reuses the existing visual pathway.
+
+## CAPSTONE: faithful end-to-end data-efficient word-learning loop -- RESOLVES
+research/findings/raw/_grounded_word_learning_loop_probe.py. Combines ALL validated pieces, tokenizer-free:
+render word as pixels -> real retina -> real Gabor V1 (word-FORM feature) -> ONE-SHOT Hebbian grounding of the
+V1 word-form to its concept feature -> grounded concept enters generate-by-composition.
+- (1) one-shot word recognition from V1 word-form: 24/24 (1.000), 1 exposure/word.
+- (2) grounded words COMPOSE into novel produced sentences (in order): 20/20 (1.000).
+1 exposure/word -> read + compose any sentence, no tokenizer, no co-occurrence-statistics training. The
+complete biology-faithful data-efficient language loop (visual transduction + V1 + one-shot grounding +
+composition + production). Honest caveat: the one-shot recognition uses identical re-renders (no view noise);
+robustness to rendering variation (jitter/scale/noise) is the next hardening. Next: (a) harden recognition
+with rendering variation; (b) wire this loop into the bridge (retina -> V1 -> grounded concept pools) as the
+production input path, replacing set_token_drive's orthogonal code.
