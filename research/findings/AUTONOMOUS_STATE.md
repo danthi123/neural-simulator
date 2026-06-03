@@ -9,6 +9,37 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
+## >>> DIRECTION A — RESONATOR DECODER: DOUBLE-RESOLVE, a real path past the nesting wall (2026-06-03; read THIS first) <<<
+
+OWNER ARC (this session): asked for deep research into the generative-conversation wall + "how others get
+past it" -> 5-thread web research (findings 2026-06-03-deep-research-...md). Owner then chose, in order:
+theta-gamma generation -> (I caught the 6-arch ceiling) -> generation-not-retrieval -> (still ceiling'd) ->
+HUNT a genuinely-untried angle -> the research found TWO genuinely-new biology-faithful mechanisms our ~10
+arcs did NOT cover: (A) RESONATOR-NETWORK DECODER + noise (Frady 2020 / Kymn 2024), (B) thalamocortical
+dynamical gating (Logiaco 2021). Owner chose "A for now."
+
+>>> DIRECTION A RESULT = DOUBLE-RESOLVE (cheap-first, both gates frozen + smell-tested):
+- Check-existing-first: NO resonator exists in the codebase (grep empty); our decode is single-shot
+  (batched_phase_similarity). The resonator targets our NESTING wall (hierarchical-320 scored 0.000 ->
+  forced the flat-distinct workaround): decoding a nested structure = factoring a product of F unknown
+  factors (search M^F); single-shot can't, a resonator searches M^F in superposition.
+- ALGEBRA probe (_resonator_capacity_probe.py): RESOLVES. Resonator factors at M=32 (32^3=32,768) 100%,
+  edge ~M=48-56 (D=1024 F=3); single-shot control collapses 0.07@M=16 -> 0.00@M=32. Honest secondary
+  negative: noise injection (Kymn >=50x) did NOT replicate on our well-conditioned FHRR codes.
+- SPIKING probe (_spiking_resonator_probe.py): RESOLVES. Genuine rf_unbind + rf_resonate + soft codebook
+  projection, M=16@D=256 (16^3=4096) 100% IN SPIKES; single-shot 0.00. **The "algebra works, substrate
+  fails" caveat does NOT extend to the resonator** -- it survives the resonate-and-fire substrate.
+- So a genuinely-new biology-faithful mechanism gets past our characterized multi-factor/nesting decode
+  wall. NOT a wall -- a path. Findings: 2026-06-03-resonator-decoder-cheap-first-RESOLVES-...md.
+
+>>> EXACT NEXT (pre-registered, in order): (1) D-scaling sweep -- does spiking resonator capacity M scale
+quadratically with D (establish D for M~320 full-vocab nesting)? cheap. (2) Integrate the spiking resonator
+decode into the 320-substrate composition pipeline (replace single-shot decode -> enable nested SVO /
+hierarchical structures). (3) DECISIVE capability re-test: the hierarchical-320 that scored 0.000 (forced
+flat-distinct) WITH the resonator decode -- does it now resolve? (a nested fact / fact-about-a-fact /
+embedded clause), frozen gate + no-confab moat preserved. Then optionally Direction B (thalamocortical
+gating). Both remotes; biology-faithful; cheap-first; honest negatives are the deliverable.
+
 ## >>> NEWEST — SPIKING CONTENT-SELECTION CONTROL: ARC COMPLETE, DECISIVE EVAL 5/5 RESOLVES (2026-06-03; read THIS first) <<<
 
 >>> ARC STATUS = COMPLETE + TERMINAL-VALIDATED. The faithful spiking content-selection Control (PFC

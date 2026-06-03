@@ -65,15 +65,43 @@ survives the SPIKING resonate-and-fire realization (iterated `rf_unbind` + `Reso
 spiking phase noise) is the decisive next test** and directly addresses that caveat. Capacity is D-bounded
 (theory: ~quadratic in D); M≈48 at D=1024, so larger vocab/nesting needs larger D — the capacity-safe lever.
 
-## Pre-registered next step (cheap-first, then build)
+## ✅ SPIKING PORT ALSO RESOLVES (the decisive test — addresses "substrate fails")
 
-**Port the resonator to the spiking resonate-and-fire substrate** (`resonate_fire_fhrr.py`): the iterative
-loop becomes `rf_unbind` of the other estimates + `ResonateFireTPAM.cleanup` (the spiking codebook
-auto-associator we already have), repeated to convergence. Pre-register a three-state gate measuring the
-same multi-factor recovery in spikes vs the single-shot spiking decode control. RESOLVES → the resonator is
-real on our biology-faithful substrate and unlocks nested composition (re-enabling the hierarchical
-structures the flat-distinct workaround avoided); BOUNDARY → the "substrate fails" caveat extends to the
-resonator (an honest negative tightening the wall). Reuse-by-import; no protected-module change.
+`research/findings/raw/_spiking_resonator_probe.py` ran the SAME iterative resonator factorization using the
+GENUINE spiking operations from `resonate_fire_fhrr.py` (`rf_unbind` resonate-and-fire phase-subtract +
+`rf_resonate` readout + soft codebook projection), F=3, D=256, frozen bars:
+
+| M | spiking resonator | single-shot control |
+|---|---|---|
+| 4 | 1.00 | 1.00 |
+| 8 | 1.00 | **0.07** |
+| 16 | 1.00 | **0.00** |
+| 32 | 0.07 | 0.00 |
+
+- Smell-test PASS (M=4 = 1.00). **Spiking operational capacity M=16** (16³ = 4,096-combination search
+  decoded 100% IN SPIKES); single-shot control collapses (0.07 at M=8 → 0.00 at M=16). **VERDICT: RESOLVES.**
+- **The resonator decode SURVIVES the resonate-and-fire substrate.** The prior "composition trivial in
+  algebra, impossible in substrate" caveat does NOT extend to the resonator — the iterative search is robust
+  to the genuine spiking unbind. (Spiking capacity M=16 at D=256 vs algebra M≈48 at D=1024 is the expected
+  D-scaling — resonator capacity ~quadratic in D; larger D → larger M, the capacity-safe lever.)
+
+**Net: a genuinely-new, biology-faithful mechanism (the resonator network), found via the owner-directed
+deep research, validated cheap-first in BOTH the algebra AND the spiking substrate, gets past our
+characterized multi-factor/nesting decode wall** — the one that scored 0.000 (hierarchical-320) and forced
+the flat-distinct workaround. This is a real path forward, not a wall.
+
+## Pre-registered next steps (build, in order)
+
+1. **D-scaling sweep** — confirm spiking resonator capacity M scales with D as theory predicts (quadratic);
+   establish the D needed for M≈320 (full-vocab nesting). Cheap.
+2. **Integrate the resonator decode into the composition pipeline** — replace the single-shot decode in the
+   320-substrate path with the spiking resonator, enabling NESTED SVO / hierarchical structures.
+3. **Re-test the hierarchical-320** (the structure that scored 0.000 and forced flat-distinct) WITH the
+   resonator decode — does it now resolve? This is the decisive capability test (a nested fact / a fact
+   about a fact / embedded clause), with a pre-registered gate + the no-confab moat preserved.
+
+(The noise-injection sub-claim stays a documented secondary negative on our codes; revisit only if a
+spiking limit-cycle regime appears at higher load.)
 
 ## Files / evidence
 
