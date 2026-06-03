@@ -136,6 +136,33 @@ The bridge grows with the vocabulary (`n = max(600, 60·V)` neurons per region, 
 the association edges per concept), so larger graphs are a GPU-scale concern; the synthetic-cluster
 sweep maps where coherence holds before investing in a large learned substrate.
 
+## Demonstration — a conversation on the faithful spiking Control
+
+The validated spiking Control is wired into the interactive `DialogueAgent` (dependency injection:
+`DialogueAgent(graph, controller=SpikingSpreadingController(graph))`, or `dialogue_agent.py --repl
+--spiking`). A scripted multi-turn conversation, *every elaboration computed by spreading spikes through
+the spiking working memory* (seed 42, 8-concept graph):
+
+```
+user : apple        agent: hot          (apple's cluster: big/cat/hot)
+user : more         agent: cat
+user : more         agent: hot
+user : is apple related to big?   agent: Yes -- apple and big are associated (strength 1.0)
+user : dog          agent: small        (clean topic shift -> dog's cluster: small/river/cold)
+user : more         agent: river
+user : more         agent: small
+```
+
+**Topic-shift contamination, caught and fixed.** Without intervention the shift to "dog" resurfaced
+"apple" (the prior topic's assemblies stay *latched* in the persistent spiking WM and bleed into the new
+topic). Fix: on an explicit topic shift the agent calls the spiking controller's `_reset_wm()` (clears
+v/u/conductances/firing) before refocusing — the disjoint new-topic spread then dominates. With the reset,
+the shift is clean (dog → small/river/small, all in-cluster). The structured `DialogueAgent` default
+handles shifts via its decaying context buffer; the spiking backend handles them via reset-on-shift.
+(This is the *benign* face of the same persistent-latch property whose *full* clearing — for fully-spiking
+inhibition-of-return — remains the M3b open sub-problem: best-effort `_reset_wm` suffices for a
+disjoint-topic switch but not for within-topic per-turn suppression.)
+
 ## Bottom line
 
 The faithful brain-analogue content-selection Control is now demonstrated **end-to-end in spikes**:

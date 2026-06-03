@@ -54,9 +54,13 @@ associates (M3 sufficient spread).
 
 >>> USABLE ARTIFACT: the validated spiking Control is now wired into the interactive DialogueAgent via
 dependency injection (controller= param). `dialogue_agent.py --repl --spiking` runs the SAME conversation
-on the faithful SpikingSpreadingController. Smoke: spiking-backed agent, apple -> ['hot','cat'] (in-cluster).
-32 structured tests green (+1 injection test). So the spiking content-selection is a usable interactive
-conversational artifact, not just an eval.
+on the faithful SpikingSpreadingController. CLEAN multi-turn transcript (every elaboration = spreading
+spikes): apple->hot->cat->hot, "is apple related to big?"->Yes, dog->small->river->small. CAUGHT+FIXED a
+topic-shift contamination (prior topic's latched assemblies bled into the new topic -> "dog" resurfaced
+"apple"); fix = call ctrl._reset_wm() on explicit topic shift (clears v/u/conductances/firing) so the
+disjoint new-topic spread dominates -> clean shift. (Benign face of the persistent-latch property whose
+FULL clearing for within-topic IoR is the M3b open sub-problem.) 33 structured tests green. So the spiking
+content-selection is a USABLE interactive conversational artifact with clean topic shifts, not just an eval.
 
 >>> M3b CHEAP-PROBED THIS CYCLE (hyperpolarizing-fatigue approach REFUTED): applying targeted negative
 "fatigue" current to a latched, recently-selected assembly to silence it for the next relevance read does

@@ -100,6 +100,8 @@ class DialogueAgent:
             return self._answer_yes_no(known[0], known[1], negated)
         if len(known) >= 1:                                       # a topic -> set focus, elaborate
             if known[0] != self.focus:                            # explicit topic shift: strongly refocus
+                if hasattr(self.ctrl, "_reset_wm"):               # spiking backend: clear the persistent WM
+                    self.ctrl._reset_wm()                         #  latches so the prior topic doesn't bleed in
                 for _ in range(3):                                # (PFC attention reorienting to the new topic
                     self.ctrl.ctx.update([known[0]])              #  so it dominates the accumulated context)
             self.focus = known[0]
