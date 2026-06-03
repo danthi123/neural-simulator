@@ -94,29 +94,39 @@ kind (no flag tells it), using a clause detector — a verb component is present
 (ACTION-unbind confidence: clause 0.247–0.316 vs flat/attributed ≤0.077, a clean split; validated
 cheap-first).
 
-**Robust (tested, claimed): a single embedded clause with flat-noun arguments — 6/6 seeds.**
-- `test_embedded_clause_multi_seed_robust`: "dog see (cat chase bird)" decoded 6/6.
-- Auto-distinguished from flat and attributed patients (`test_clause_vs_flat_and_attributed_distinguished`).
+**Robust (tested, claimed), at the agent's default D=2048:**
 
-**Boundary (documented, NOT claimed):** the *agent's auto-detection* is robust to **one** embedded
-clause, not the substrate's depth-3. Two distinct error sources compound the raw-substrate capacity:
-
-| Case | Agent multi-seed | Why |
+| Case | Agent multi-seed | Mechanism |
 |---|---|---|
-| Single clause, flat args ("cat chase bird") | 6/6 | within SNR; detection clean |
-| Clause-in-clause ("cat chase bird hold ball") | ~5/6 | detection error compounds per level |
-| Attribute inside a clause ("cat chase (big bird)") | unreliable | the resonator on a doubly-crosstalk'd `adj⊗noun` is past SNR |
+| Single clause, flat args ("dog see (cat chase bird)") | 12/12 | clause detector + recursive unbinding |
+| Attribute inside a clause ("dog see (cat chase (big bird))") | 12/12 | inside-clause model comparison (below) |
+| Clause-in-clause ("dog eat (cat chase (bird hold ball))") | 11/12 | depth-2 boundary occasionally costs a seed |
 
-The agent degrades **gracefully, not confabulatorily**: inside a clause it decodes arguments as flat
-nouns only (no resonator), so an attributed inner argument loses its adjective rather than inventing a
-wrong attribute. The distinction is honest: the **raw substrate** with *known* role structure recurses
-to depth 3 (the probe + sweep above); the **agent's auto-detection** adds a per-level kind-decision whose
-error compounds, so its robust depth is one embedded clause.
+- `test_embedded_clause_multi_seed_robust`, `test_attribute_inside_clause_multi_seed_robust` (6/6 each),
+  `test_clause_in_clause_depth_2` (≥5/6). Auto-distinguished from flat/attributed patients.
+
+**The key fix — inside-clause model comparison.** A first integration decoded clause arguments
+flat-only (no resonator), which *confabulated* the base noun for an attributed argument (cleaning
+`adj⊗bird` against nouns gives a random noun, ~1–2/6). The correct policy: inside a clause, decode an
+argument as a flat noun **or** a one-attribute entity by **comparing which model explains the vector
+better** — the flat-noun cleanup confidence vs the resonator's reconstruction residual — with no fixed
+threshold (a fixed threshold can't separate flat nouns at depth 2 from attributed arguments at depth 1).
+This made attribute-in-clause robust (0/6 → 6/6) without regressing clause-in-clause. The two attributes
+inside a clause are out of scope (the 1-vs-2 residual escalation is skipped), so an inside-clause
+attributed argument is always one adjective + noun.
+
+**The remaining boundary (documented, NOT over-claimed):** two or more levels of clause nesting
+(clause-in-clause is 11/12; three levels break). The raw substrate recurses to depth 3 with *known* role
+structure (the probe + sweep above); the agent's *auto-detection* adds a per-level kind-decision whose
+error compounds, so its robust depth is ~2 embedded clauses. The depth-2 case needs D ≥ 2048 (at D=1024
+it is ~5/6); "more capacity wins" — raising D lifts the agent's robust nesting depth, exactly as the SNR
+analysis predicts.
 
 ## Verdict
 
-**RESOLVES (substrate, depth 3) + agent capability (one embedded clause, robust).** Recursive clause
-nesting works to depth 3 (perfect, vocab-robust) on the phasor FHRR substrate with a clean
-dimension-limited boundary at depth 4–5; the unified agent exposes a single embedded clause with flat
-arguments robustly (6/6 seeds) and documents the deeper-nesting / attribute-in-clause boundary honestly.
-A genuine path past the nesting / multi-hop wall for embedded clauses.
+**RESOLVES (substrate, depth 3) + agent capability (embedded clause incl. attributed arguments, robust).**
+Recursive clause nesting works to depth 3 (perfect, vocab-robust) on the phasor FHRR substrate with a
+clean dimension-limited boundary at depth 4–5. At its default D=2048 the unified agent robustly decodes a
+single embedded clause (12/12), an attributed argument inside a clause (12/12, via inside-clause model
+comparison), and one level of clause-in-clause (11/12) — with two-or-more clause-nesting levels the
+documented boundary. A genuine path past the nesting / multi-hop wall for embedded clauses.

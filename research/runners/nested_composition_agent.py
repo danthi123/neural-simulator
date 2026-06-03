@@ -17,11 +17,14 @@ This agent exposes that capability:
     marks a flat concept, and the 2-factor reconstruction residual splits a one-attribute entity (2-factor
     resonator) from a two-attribute entity (3-factor resonator with restarts -- the adjectives share a
     codebook, so permutation symmetry is broken by restarts selected on reconstruction residual).
-  - SCOPE (honest): a single embedded clause with flat-noun arguments is robust multi-seed; recovering
-    attributes INSIDE a clause, or a second level of clause nesting, is past the bundle SNR at this dimension
-    (the auto-detection compounds error per level) and is a documented boundary -- the raw substrate recurses
-    to depth 3 with known structure (see the recursive-clause findings), but the agent's auto-detection is
-    robust to one embedded clause.
+  - SCOPE (honest, at the default D=2048): a single embedded clause with flat arguments, an attributed
+    argument INSIDE a clause ("dog see (cat chase (big bird))"), and one level of clause-in-clause all decode
+    robustly multi-seed (single clause + attribute-in-clause 6/6; clause-in-clause ~5-6/6 -- the depth-2
+    boundary occasionally costs a seed). Recovering attributes inside a clause works by COMPARING models (the
+    flat-noun cleanup confidence vs the resonator reconstruction residual) rather than a fixed threshold. Two
+    or more levels of clause nesting hit the dimension-limited bundle SNR (the raw substrate recurses to depth
+    3 with known structure -- see the recursive-clause findings -- but the agent's auto-detection compounds a
+    per-level kind-decision, so its robust depth is ~2). Lower D narrows this (clause-in-clause needs D>=2048).
   - ABSTAIN: a query with no matching stored fact returns None (no confabulation -- the project's distinctive
     trust property carries over).
 
@@ -49,7 +52,7 @@ class NestedCompositionAgent:
     recursive unbinding). The slot's depth is detected automatically from confidence signals -- no flag tells
     the agent which kind a stored filler is."""
 
-    def __init__(self, nouns, verbs, adjs, D=1024, seed=42, flat_threshold=0.30,
+    def __init__(self, nouns, verbs, adjs, D=2048, seed=42, flat_threshold=0.30,
                  n_iter=120, resid_threshold=0.5, n_restarts=16,
                  verb_threshold=0.12, max_clause_depth=4):
         self.nouns = list(nouns)
@@ -178,11 +181,10 @@ class NestedCompositionAgent:
         At the TOP level (depth 0): an embedded clause (a verb is present -> recurse), else a flat noun
         (clean cleanup), else a one- or two-attribute entity (the resonator + residual).
 
-        INSIDE a clause (depth >= 1): only an embedded sub-clause (recurse) or a flat noun (argmax) -- the
-        resonator is NOT run on a deeply-crosstalk'd argument. So an attributed argument inside a clause
-        gracefully loses its adjective ("cat chase big bird" -> "cat chase bird") rather than confabulating a
-        wrong attribute. Recovering attributes *inside* clauses is past the bundle SNR at this dimension and is
-        a documented boundary (see the recursive-clause findings)."""
+        INSIDE a clause (depth >= 1): an embedded sub-clause (recurse), a flat noun (confident cleanup), or a
+        ONE-attribute argument (the resonator, trusting its argmax -- two attributes are out of scope inside a
+        clause, so the residual-based 1-vs-2 escalation is skipped; the two-level crosstalk depresses that
+        residual even when the argmax adj+noun are correct, which is the resonator's recoverable case)."""
         p = self._unit(vec)
         if depth < self.max_clause_depth:                   # clause? (only a clause carries a verb component)
             ac, vconf = self._cleanup(p * np.conj(self.roles["ACTION"]), self.VMAT, self.verbs)
@@ -191,8 +193,9 @@ class NestedCompositionAgent:
                 pt = self._decode_filler(p * np.conj(self.roles["PATIENT"]), depth + 1)
                 return f"{ag} {ac} {pt}"
         noun, conf = self._cleanup(p, self.NMAT, self.nouns)  # not a clause -> a terminal filler
-        if depth > 0:                                       # inside a clause: flat-only (no spurious resonator)
-            return noun
+        if depth > 0:                                       # inside a clause: flat noun OR one-attribute argument
+            adj, nn, resid = self._resonator2(p)            # compare which model explains p better (no threshold):
+            return noun if conf >= resid else f"{adj} {nn}"  # flat-noun confidence vs attributed reconstruction
         if conf >= self.flat_threshold:                     # top level: flat noun
             return noun
         adj, nn, resid = self._resonator2(p)                # top level: attributed entity (one or two modifiers)
@@ -294,7 +297,7 @@ def main():
         ("dog", "chase", "cat"),                       # flat
         ("dog", "eat", ("red", "ball")),               # NESTED: one attribute
         ("cat", "want", (("big", "red"), "ball")),     # NESTED: TWO attributes
-        ("bird", "see", Clause("cat", "chase", "river")),   # NESTED: an embedded CLAUSE
+        ("bird", "see", Clause("cat", "chase", ("cold", "river"))),   # NESTED: an embedded CLAUSE (attributed arg)
         ("child", "hold", "ball"),                     # flat
     ]
     for ag, ac, pa in facts:
@@ -315,9 +318,10 @@ def main():
     for _ in range(3):
         print(f"  elaborate on dog -> {a.elaborate()}", flush=True)
     print("\n  -> a UNIFIED conversational agent: stores facts whose slot is itself a structured entity -- a", flush=True)
-    print("     one- OR two-attribute patient ('big red ball') OR an embedded clause ('cat chase river'),", flush=True)
-    print("     the kind auto-detected from confidence signals, plans dialogue over those facts, and ABSTAINS", flush=True)
-    print("     on the unknown -- nested composition the flat-distinct substrate fundamentally could not do.", flush=True)
+    print("     one- OR two-attribute patient ('big red ball') OR an embedded clause with its own attributed", flush=True)
+    print("     argument ('cat chase cold river'), the kind auto-detected from confidence signals, plans", flush=True)
+    print("     dialogue over those facts, and ABSTAINS on the unknown -- nested composition the flat-distinct", flush=True)
+    print("     substrate fundamentally could not do.", flush=True)
 
 
 if __name__ == "__main__":

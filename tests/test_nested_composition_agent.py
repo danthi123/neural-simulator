@@ -108,6 +108,34 @@ def test_clause_patient_abstains_on_unknown():
     assert a.query_patient("dog", "chase") is None         # no such fact -> abstain (no confabulation)
 
 
+def test_attribute_inside_clause():
+    # an attributed argument INSIDE a clause -- "dog see (cat chase (big bird))"
+    a = _agent()
+    a.learn("dog", "see", Clause("cat", "chase", ("big", "bird")))
+    assert a.query_patient("dog", "see") == "cat chase big bird"   # the attribute is recovered inside the clause
+
+
+def test_attribute_inside_clause_multi_seed_robust():
+    # the inside-clause flat-vs-attributed decision is model-comparison (cleanup confidence vs resonator residual)
+    ok = 0
+    for seed in (42, 43, 44, 45, 46, 47):
+        a = _agent(seed)
+        a.learn("dog", "see", Clause("cat", "chase", ("big", "bird")))
+        ok += int(a.query_patient("dog", "see") == "cat chase big bird")
+    assert ok == 6, f"attribute-in-clause decoded {ok}/6 seeds"
+
+
+def test_clause_in_clause_depth_2():
+    # a clause inside a clause -- "dog eat (cat chase (bird hold ball))" -- robust but the depth-2 boundary
+    # occasionally costs one seed, so the bar is >=5/6 (see the recursive-clause findings)
+    ok = 0
+    for seed in (42, 43, 44, 45, 46, 47):
+        a = _agent(seed)
+        a.learn("dog", "eat", Clause("cat", "chase", Clause("bird", "hold", "ball")))
+        ok += int(a.query_patient("dog", "eat") == "cat chase bird hold ball")
+    assert ok >= 5, f"clause-in-clause decoded {ok}/6 seeds"
+
+
 def test_abstain_on_unknown_query():
     a = _agent()
     a.learn("dog", "chase", "cat")
