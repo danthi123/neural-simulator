@@ -167,15 +167,16 @@ class SpikingLoopContextBuffer:
     (outer-product); learning them with the correct rule is the documented next step."""
 
     def __init__(self, concepts, n=600, pattern_size=50, attractor_weight=50.0, loop_weight=0.0,
-                 seed=42, verbose=False):
+                 internal_density=0.1, seed=42, verbose=False):
         import sim.backend as B
         self.B = B
         self.xp, _ = B.get_backend()
         self.concepts = list(concepts)
         # loop_weight=0 -> the installed concept attractors are the ONLY loop connections (no generic
         # random reverberation to bleed driven patterns into undriven ones -> less cross-talk).
-        self.bridge = build_loop_wm_bridge(n=n, loop_weight=loop_weight, loop_density=0.05, seed=seed,
-                                           verbose=verbose)
+        # internal_density=0 -> no random within-region recurrence coupling separate attractors.
+        self.bridge = build_loop_wm_bridge(n=n, density=internal_density, loop_weight=loop_weight,
+                                           loop_density=0.05, seed=seed, verbose=verbose)
         rm = self.bridge.region_manager
         cidx = np.asarray(rm.indices("cortex_ctx"))
         didx = np.asarray(rm.indices("dlpfc_wm"))
@@ -229,15 +230,16 @@ class SpikingController:
     drive the selection into the spiking context. The faithful spiking analogue of the Milestone-1
     ContentSelectionController -- same selection logic, but the context is real spiking working memory."""
 
-    def __init__(self, graph, seed=42, lam=1.0, said_decay=0.6, verbose=False):
+    def __init__(self, graph, seed=42, lam=1.0, said_decay=0.6, internal_density=0.1, verbose=False):
         from research.runners.content_selection import SaidTrace
         self.graph = graph
         self._vocab = sorted(set(graph) | {a for v in graph.values() for a in v})
-        # NOTE: coherence is config-fragile (cross-talk vs relevance interaction). This config is the
-        # validated-coherent one for the documented graph at seed 42; robustness across configs/seeds
-        # (and a cross-talk-clean config that is ALSO controller-coherent) is an open refinement.
+        # internal_density 0.1 = the validated config (2/3 seeds coherent). Tried internal_density=0 to
+        # kill the diagnosed cross-talk -> made it WORSE (3/6 vs 4/6); the seed-fragility is a genuine
+        # spiking-dynamics issue, not the random recurrence. Honest open refinement (see finding doc).
         n = max(600, 60 * len(self._vocab))
-        self.ctx = SpikingLoopContextBuffer(self._vocab, n=n, seed=seed, verbose=verbose)
+        self.ctx = SpikingLoopContextBuffer(self._vocab, n=n, internal_density=internal_density,
+                                            seed=seed, verbose=verbose)
         self.said = SaidTrace(decay=said_decay)
         self.lam = lam
 

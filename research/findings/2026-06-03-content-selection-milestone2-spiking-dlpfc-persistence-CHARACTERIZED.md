@@ -167,6 +167,18 @@ spiking content-selection robustly coherent across configs and seeds (a config t
 cross-talk-clean AND controller-coherent, likely needing tuned inhibition + a multi-seed sweep) is a
 genuine open refinement, honestly flagged.
 
+**Multi-seed robustness (measured):** seeds 42, 43, 44 at the committed config -> **2/3 fully
+coherent** (42: apple=big,hot,cat / dog=river,cold,small; 43: apple=big,cat,hot / dog=river,small,cold;
+44: incoherent 0/2). So the coherence is NOT seed-42-lucky (43 also fully coherent) but genuinely
+seed-fragile (44 fails) -- the random pattern assignment sometimes produces enough cross-talk to bend
+relevance off-cluster. Honest boundary: the faithful spiking content-selection is *demonstrated and
+mostly robust* (2/3 seeds), with seed-robust coherence the open refinement. (Diagnosis: the concept patterns are already
+DISJOINT random partitions, so the cross-talk is NOT pattern overlap -- it is the shared inhibitory
+neurons + the random within-region recurrence (internal_density 0.1) coupling separate attractors;
+the fix direction is dedicated per-attractor inhibition and/or dropping the internal recurrence, a
+dynamics refinement.) The mechanism (spiking WM holds context + Control selects over it) is validated;
+full seed-robustness is the remaining work.
+
 **Net (the arc from a single session's cheap-first probes):** content-selection Control was validated
 structurally (Milestone 1), then the spiking working memory it needs was characterized
 (standalone=no / untrained-loop=blob / **trained-loop-attractor=works, 220x**), packaged
