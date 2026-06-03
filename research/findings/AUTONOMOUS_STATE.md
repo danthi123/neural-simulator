@@ -21,11 +21,19 @@ apple->big,cat,hot ; dog->small,river,cold ; on_topic +0.500, 5/5) | usable inte
 (DialogueAgent --repl --spiking, progression + clean topic shifts). There is no higher validation bar for
 THIS COMPONENT.
 
->>> NEXT FRONTIER (the genuine next arc, needs a DESIGNED start -- brainstorming skill + owner steer, since
-it is a NEW project not a refinement): INTEGRATION into a comprehend -> select -> PRODUCE loop. The
-content-selection Control now supplies "what to say"; the validated generate-by-composition supplies "how
-to say it"; the validated comprehension (Hebbian parser) supplies "what was said". Wire them into one fluid
-spiking conversational loop = the tangible conversational artifact. >>> AUTONOMOUS-CONTINUABLE REFINEMENTS
+>>> INTEGRATION ARC STARTED -- MILESTONE 1 SHIPPED (2026-06-03, owner "let's continue" + "whatever leads to
+goals soonest/most efficiently" -> staged numpy-first). research/runners/integrated_conversation_loop.py:
+a ConversationalAgent unifying the THREE validated abilities into one fluid loop -- comprehend (SVO parse)
+-> DECIDE-WHAT-TO-SAY (the content-selection Control, validated this arc, over an association graph built
+from the agent's OWN KB) -> PRODUCE (generate-by-composition). It hears SVO statements (binds to KB),
+answers factual questions with produced sentences (what/who/tell), AND -- the NEW dialogue-planning piece --
+ELABORATES a topic by walking its associative memory: "dog" -> "dog eat apple", "more" -> "dog chase cat"
+(non-repeating), "more" -> "that's all i know about dog"; topic shift "child" -> "child hold ball". 9 tests
+pass. Design doc docs/plans/2026-06-03-integrated-conversation-loop-design.md. So the content-selection
+Control is now INTEGRATED into a working conversational agent (the tangible artifact). >>> MILESTONE 2 (next,
+faithful): swap ContentSelectionController -> SpikingSpreadingController (same .turn API; KB-graph + produce
+wiring unchanged) so the dialogue planning runs on the validated spiking substrate; optionally spiking
+production. >>> AUTONOMOUS-CONTINUABLE REFINEMENTS
 (no new-project approval needed, smaller builds): (a) fully-spiking SaidTrace = a persistent-across-reset
 spiking trace population modulating relevance (the last structured piece; turn_latency resets the WM each
 turn so the trace must live OUTSIDE the WM); (b) noise-robust attractors = sparse k-of-N assemblies +
