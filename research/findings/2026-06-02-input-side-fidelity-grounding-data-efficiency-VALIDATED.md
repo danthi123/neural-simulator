@@ -82,3 +82,35 @@ the input-side data-efficiency case and directly motivates the faithful build (r
 32x32 retina -> V1/V2/IT visual pathway; the network learns to segment + recognize word-forms from shared
 letter/stroke features). Next: implement the cheap-first text-as-pixels recognizer on the ACTUAL visual pathway
 (reuse sim/visual_cortex.py + the retina), then the multimodal-co-occurrence grounding loop.
+
+## FAITHFUL validation on the REAL visual pathway -- RESOLVES (implementable)
+research/findings/raw/_text_as_pixels_v1_probe.py. Reuses sim/visual_cortex.py: word -> 32x32 pixel image (PIL,
+letters in fixed x-bands) -> (2,32,32) ON/OFF -> image_to_retina_drive -> 2048 retina -> build_v1_simple_weights
+(real Gabor RFs) -> 8192 V1 simple responses. Read NOVEL held-out words from the V1 band features (per-position
+letter classifier), multi-seed:
+
+| train words | FAITHFUL V1 novel-word read (chance 0.10) |
+|---|---|
+| 8   | 0.567 |
+| 20  | 0.835 |
+| 50  | 0.886 |
+| 100 | 0.912 |
+
+The validated text-as-pixels principle HOLDS on the REAL retina->Gabor-V1 pathway: shared letter-features ->
+shared V1 structure -> a few training words suffice to read NOVEL words (0.91, climbing), no tokenizer. The
+faithful fix is IMPLEMENTABLE on the existing visual machinery + data-efficient. Honest caveat: the same-vs-
+different-first-letter V1 band cosine margin is thin (1.000 vs 0.984) -- the tiny default font yields
+overlapping V1 features; reading works regardless, and clearer/larger rendering (or learned V1 refinement)
+would sharpen the margin. The remaining steps to the production build: (1) wire the text-as-pixels recognizer
+into the bridge (retina region -> V1 -> learned word recognition, replacing set_token_drive's orthogonal code);
+(2) learned SEGMENTATION (word boundaries from the stream); (3) multimodal co-occurrence GROUNDING (word-form
+pixels + referent sensory/motor feature -> Hebbian) for semantic meaning. All reuse validated machinery.
+
+## Arc summary (owner input-side-fidelity insight -- fully validated, biology-faithful)
+1. Encoding path AUDITED: language input is GIVEN (tokenizer segmentation + orthogonal code, no grounding);
+   vision is EARNED (transduction). 2. Grounding DATA-EFFICIENCY validated (numpy, semantic): shared sensory
+   structure generalizes from few examples; orthogonal tokens never generalize. 3. Text-as-pixels OPEN-VOCAB
+   reading validated (numpy, orthographic): learn ~L letters -> read L^n words; tokenizer stuck at chance.
+   4. FAITHFUL validation on the real retina->Gabor-V1 pathway: reads novel words 0.91, implementable. =>
+   The missing sensory transduction/grounding IS a missing data-efficient structure, and the fix is concrete +
+   reuses the existing visual pathway.
