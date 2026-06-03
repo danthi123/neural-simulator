@@ -80,9 +80,37 @@ def build_v1_complex_pooling_weights(n_orientations, n_frequencies, npos, weight
     return (np.asarray(pre, np.int64), np.asarray(post, np.int64), np.asarray(wts, np.float32))
 
 
+def build_per_band_v1_fs_wiring(npos, n_orientations, n_frequencies, n_bands, v1_offset, fs_offsets,
+                                n_v1_fs, n_v1_to_fs=64, v1_to_fs_weight=1.5, fs_to_v1_weight=6.0, seed=42):
+    """Per-band V1 feedback lateral inhibition = in-substrate per-band kWTA. For each spatial band p
+    (x-position third), band-p V1_simple cells excite v1_fs_b{p}, which inhibits ONLY band-p V1_simple cells.
+    Strongest/earliest band-p cells fire before the FS suppresses the rest -> sparse per-band code (the kWTA
+    the readout proxy showed is decisive; global inhibition failed because it isn't per-position). fs_offsets[p]
+    = global start index of v1_fs_b{p}. Returns (V1->FS pre/post/w excitatory, FS->V1 pre/post/w inhibitory),
+    all GLOBAL indices."""
+    n_v1s_local = n_orientations * n_frequencies * npos * npos
+    px = (np.arange(n_v1s_local) % (npos * npos)) % npos
+    ee_pre, ee_post, ee_w, ie_pre, ie_post, ie_w = [], [], [], [], [], []
+    for p in range(n_bands):
+        lo, hi = p * npos // n_bands, (p + 1) * npos // n_bands
+        band_v1 = np.where((px >= lo) & (px < hi))[0] + int(v1_offset)   # global band-p V1 indices
+        fs = np.arange(n_v1_fs) + int(fs_offsets[p])                     # global band-p FS indices
+        rng = np.random.default_rng(seed + p)
+        k = min(n_v1_to_fs, len(band_v1))
+        for f in fs:  # V1 -> FS (excitatory): each FS integrates k random band-p V1 cells
+            srcs = rng.choice(band_v1, size=k, replace=False)
+            ee_pre.append(srcs); ee_post.append(np.full(k, f, np.int64)); ee_w.append(np.full(k, v1_to_fs_weight, np.float32))
+        # FS -> V1 (inhibitory feedback): every band-p V1 cell inhibited by all band-p FS cells
+        ie_pre.append(np.tile(fs, len(band_v1))); ie_post.append(np.repeat(band_v1, len(fs)))
+        ie_w.append(np.full(len(band_v1) * len(fs), fs_to_v1_weight, np.float32))
+    return (np.concatenate(ee_pre).astype(np.int64), np.concatenate(ee_post).astype(np.int64),
+            np.concatenate(ee_w).astype(np.float32), np.concatenate(ie_pre).astype(np.int64),
+            np.concatenate(ie_post).astype(np.int64), np.concatenate(ie_w).astype(np.float32))
+
+
 def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, n_v2=256, n_it=64, seed=42,
                              word_pools=None, n_per_pool=64, n_word_fs=24, structured_pooling=True,
-                             v1_lateral_inhibition=False, n_v1_fs=128, verbose=True):
+                             v1_inhibition_mode="none", n_v1_fs=128, n_v1_bands=3, verbose=True):
     from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -117,7 +145,7 @@ def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, 
     # V1 cells fire first, drive the inhibitory FS, which then suppresses the weaker/later cells -> a sparse,
     # denoised V1 spiking code (the kWTA the readout proxy showed is decisive, now IN the spiking substrate
     # before the pools read it). Standard cortical feedback-inhibition motif.
-    if v1_lateral_inhibition:
+    if v1_inhibition_mode == "global":
         from sim.enums import NeuronType
         regions.append(BrainRegion(name="v1_FS", n_neurons=n_v1_fs, exc_fraction=0.0,
                                    internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
@@ -127,6 +155,14 @@ def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, 
                                       density=0.02, weight_mean=2.0, weight_jitter=0.2, plastic=False))
         pathways.append(RegionPathway(from_region="v1_FS", to_region="cortex_v1_simple",
                                       density=0.3, weight_mean=4.0, weight_jitter=0.2, plastic=False))
+    elif v1_inhibition_mode == "per_band":
+        # per-band FS regions; band-restricted V1<->FS weights installed after init (set_pathway_weights)
+        from sim.enums import NeuronType
+        for p in range(n_v1_bands):
+            regions.append(BrainRegion(name=f"v1_fs_b{p}", n_neurons=n_v1_fs, exc_fraction=0.0,
+                                       internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                                       weight_jitter=0.0, plastic_internal=False,
+                                       izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
     # step-2a: word-recognition pools fed by a PLASTIC V1_simple->pool pathway (one gate per pool so each
     # word's training is isolated). Recognition is read DIRECTLY off the working V1_simple word-form via STDP,
     # bypassing the (sparse-text-starved) V1c->V2->IT cascade. Still cortically faithful: V1 simple cells ->
@@ -188,6 +224,15 @@ def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, 
             post_indices=(cpost + int(vc0)).astype(np.int64),
             weights=cwts.astype(np.float32),
             add_missing=True)
+    if v1_inhibition_mode == "per_band":
+        vs0 = rm.indices("cortex_v1_simple")[0]
+        fs_offsets = [rm.indices(f"v1_fs_b{p}")[0] for p in range(n_v1_bands)]
+        ee_pre, ee_post, ee_w, ie_pre, ie_post, ie_w = build_per_band_v1_fs_wiring(
+            npos, n_orientations, n_frequencies, n_v1_bands, vs0, fs_offsets, n_v1_fs, seed=seed)
+        bridge.set_pathway_weights(pathway_name="v1_to_fs_perband", pre_indices=ee_pre,
+                                   post_indices=ee_post, weights=ee_w, add_missing=True)
+        bridge.set_pathway_weights(pathway_name="fs_to_v1_perband", pre_indices=ie_pre,
+                                   post_indices=ie_post, weights=ie_w, add_missing=True)
     if verbose:
         print(f"[visual-text bridge] retina {retina_size}x{retina_size} ({n_retina}) -> V1s {n_v1s} -> "
               f"V1c {n_v1c} -> V2 {n_v2} -> IT {n_it}; scaled Gabor installed ({len(wts)} synapses)", flush=True)
@@ -369,8 +414,8 @@ def main():
                     help="--read-letters: k-winners-take-all fraction per band (Thorpe lateral inhibition)")
     ap.add_argument("--no-structured-pooling", action="store_true",
                     help="disable structured Hubel-Wiesel V1_complex pooling (use random density)")
-    ap.add_argument("--v1-lateral-inhibition", action="store_true",
-                    help="add V1-level feedback lateral inhibition (in-substrate kWTA sparsification)")
+    ap.add_argument("--v1-inhibition", type=str, default="none", choices=["none", "global", "per_band"],
+                    help="V1-level lateral inhibition mode (in-substrate kWTA): none / global / per_band")
     ap.add_argument("--events", type=int, default=80, help="training events per word (--recognize)")
     ap.add_argument("--vocab", type=str, default="dog,cat,run,sun")
     ap.add_argument("--test-steps", type=int, default=60, help="test integration window (temporal denoise)")
@@ -381,7 +426,7 @@ def main():
     if a.read_letters:
         bridge, rs, npos = build_visual_text_bridge(retina_size=a.retina, seed=a.seed,
                                                     structured_pooling=not a.no_structured_pooling,
-                                                    v1_lateral_inhibition=a.v1_lateral_inhibition)
+                                                    v1_inhibition_mode=a.v1_inhibition)
         read_letters_test(bridge, rs, npos, n_words=a.n_words, stim_steps=a.integration_steps,
                           seed=a.seed, code=("latency" if a.latency else "rate"),
                           read_region=a.read_region, kwta_frac=a.kwta_frac)
