@@ -19,8 +19,10 @@ NON-INVERTIBLE real-Hadamard binding (which CANNOT nest — hierarchical-320 sco
 has diversity + composition + NESTING + an invertible binding + a validated spiking realization
 (resonate-and-fire). HONEST CAVEATS: these are ALGEBRAIC bindings (production LEARNS via STDP -> migration is
 real engineering, not free); random phasor codes (grounded-code re-test is the natural follow-up); this
-de-risks the CAPACITY question, NOT the learning question. Finding
-`2026-06-03-phasor-FHRR-unified-substrate-candidate-diversity-plus-nesting.md`. >>> THIS is the decision the
+de-risks the CAPACITY question, NOT the learning question. CONFIRMED both common-mode AND clustered
+(grounded-like) inter-code correlation hold 1.00. THE AGENT ITSELF works at scale: 120-concept vocab (60n+
+30v+30adj), 40 mixed facts (flat/1-attr/2-attr/clause), ~96% (39/38/39 of 40) 3 seeds + abstention. 21 tests.
+Finding `2026-06-03-phasor-FHRR-unified-substrate-candidate-diversity-plus-nesting.md`. >>> THIS is the decision the
 owner may want to steer: whether to migrate the production substrate onto phasor FHRR to gain nesting. NEXT
 candidate (autonomous): grounded-code re-test (does the 320 result hold for sparse-encoded grounded codes,
 not just random phasors?) — cheap-first, decisive, the last capacity-side uncertainty before a migration
