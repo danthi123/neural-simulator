@@ -61,3 +61,24 @@ visual features SHARE structure across similar word-forms (vs orthogonal tokens)
 data-efficient. (2) Then the multimodal-co-occurrence grounding (word-form pixels + referent sensory feature
 -> Hebbian grounding) -> the faithful data-efficient word-learning loop. Brainstorm/design before the build.
 Biology-faithful; reuse the visual pathway; honest negatives; both remotes; no shortcuts.
+
+## Follow-up cheap-first: text-as-pixels READS NOVEL words (open-vocabulary) -- RESOLVES
+research/findings/raw/_text_as_pixels_probe.py. Controlled (only input rep differs): VISUAL code = concat of
+letter-glyphs (shared across words); ORTHOGONAL = independent per-word random vector (tokenizer). Task: read
+the letter at each position; test on HELD-OUT NOVEL words. Multi-seed:
+
+| train words | visual novel-word read | orthogonal |
+|---|---|---|
+| 5  | 0.352 | 0.108 |
+| 30 | 0.865 | 0.103 |
+| 50 | 0.966 | 0.113 |
+| 120 | 1.000 | 0.108 |
+
+VISUAL reads NOVEL words ->1.000 once the ~L letters are covered; ORTHOGONAL is stuck at chance (~0.10) at ALL
+K -- a novel word is an unseen symbol. So text-as-pixels turns "learn W words" into "learn ~L letters -> read
+L^n words" = COMBINATORIAL data-efficiency + OPEN-VOCABULARY reading (read words never seen, exactly how humans
+read). The tokenizer's closed-vocabulary orthogonal coding fundamentally cannot. This is the strongest form of
+the input-side data-efficiency case and directly motivates the faithful build (render text through the EXISTING
+32x32 retina -> V1/V2/IT visual pathway; the network learns to segment + recognize word-forms from shared
+letter/stroke features). Next: implement the cheap-first text-as-pixels recognizer on the ACTUAL visual pathway
+(reuse sim/visual_cortex.py + the retina), then the multimodal-co-occurrence grounding loop.
