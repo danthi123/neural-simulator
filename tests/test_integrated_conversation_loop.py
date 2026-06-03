@@ -81,3 +81,13 @@ def test_unknown_topic_is_honest():
 def test_unparseable_input():
     a = ConversationalAgent(seed=42)
     assert "didn't understand" in a.hear("").lower() or a.hear("") == "(i didn't understand)"
+
+
+def test_agent_understands_passive_voice():
+    # milestone 3a: the learned conjunctive parser makes comprehend VOICE-INVARIANT -- a passive sentence
+    # binds the SAME fact as its active form (dog is the agent in both).
+    a = ConversationalAgent(seed=42)
+    a.hear("cat is chased by dog")
+    assert a.kb[0] == {"agent": WORDS.index("dog"), "action": WORDS.index("chase"),
+                       "patient": WORDS.index("cat")}
+    assert a.hear("what does dog chase").split() == ["dog", "chase", "cat"]   # and answers about it

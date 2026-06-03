@@ -27,6 +27,7 @@ from __future__ import annotations
 
 from research.findings.raw._generate_by_composition_probe import build_world, compose, generate
 from research.runners.content_selection import build_association_graph, ContentSelectionController
+from research.runners.conjunctive_parser import ConjunctiveParser
 
 WORDS = ["dog", "cat", "bird", "child", "ball", "apple", "river", "sun",          # 0-7 nouns
          "chase", "eat", "see", "hold", "want", "give", "watch", "find",          # 8-15 verbs
@@ -50,6 +51,8 @@ class ConversationalAgent:
         # Inject a factory building a SpikingSpreadingController for the faithful spiking dialogue planning
         # (milestone 2) -- the .turn API is identical, so the KB-graph + produce wiring is unchanged.
         self._controller_factory = controller_factory or (lambda graph: ContentSelectionController(graph))
+        self.parser = ConjunctiveParser()           # learned, voice-invariant COMPREHEND (milestone 3a)
+        self._vocab = set(W2I)
 
     # --- PRODUCE (generate-by-composition) ---
     def _say(self, fact):
@@ -137,11 +140,12 @@ class ConversationalAgent:
             return self._answer_question(toks)
         if toks[0] in ("more", "and") and self.focus is not None:      # CONTINUE elaborating
             return self._elaborate()
-        content = [t for t in toks if t in W2I]
-        if len(content) >= 3:                                          # STATEMENT (SVO) -> bind
-            fact = {"agent": W2I[content[0]], "action": W2I[content[1]], "patient": W2I[content[2]]}
+        meaning = self.parser.parse(text, self._vocab)                 # STATEMENT (voice-invariant) -> bind
+        if meaning is not None:
+            fact = {r: W2I[meaning[r]] for r in ROLES3}
             self.kb.append(fact)
             return "ok -- i learned: " + self._say(fact)
+        content = [t for t in toks if t in W2I]
         if len(content) == 1:                                          # TOPIC -> elaborate via Control
             self._set_topic(content[0])
             return self._elaborate()

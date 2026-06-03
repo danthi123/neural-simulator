@@ -62,8 +62,16 @@ ask + elaborate) over 320 concepts, all faithful spiking except the parse -- ROB
 perfect: Q&A + elaboration all correct, no misses). Reuses _insubstrate_bind_unbind_
 probe + _insubstrate_relational_memory_
 probe + the 320 codes cache; no protected-module change. So the tangible conversational agent now runs at
-the project's SCALE FRONTIER with mostly-faithful spiking pieces. >>> REMAINING milestone-3: (a) faithful
-conjunctive-coding parser (the last numpy piece); (c) richer utterance types / multi-fact reasoning.
+the project's SCALE FRONTIER with mostly-faithful spiking pieces. >>> MILESTONE 3a SHIPPED (2026-06-03):
+faithful VOICE-INVARIANT parser research/runners/conjunctive_parser.py -- the comprehend piece is now
+LEARNED (closed-form conjunctive position*voice readout, the validated _vsa_parser_voice_probe science: PxV
+1.000 vs P/PV 0.000) + voice-invariant: "dog chase cat" (active) and "cat is chased by dog" (passive) bind
+the SAME fact {agent:dog,action:chase,patient:cat}; includes voice detection (BE...by) + light morphology
+(chased->chase, held->hold). Integrated into the numpy ConversationalAgent (replaced the hand-coded SVO
+parse). 48 conversation tests pass (parser 6 + integration 10 + content_selection 19 + dialogue 13). So the
+numpy loop's COMPREHEND is now learned + handles passive voice (a genuine capability add). >>> REMAINING
+milestone-3: (c) richer utterance types / multi-fact reasoning; a fully-SPIKING parser (conjunctive coding
+in the substrate's distributed codes) is the deeper faithfulness step.
 
 >>> AUTONOMOUS-CONTINUABLE REFINEMENTS
 (no new-project approval needed, smaller builds): (a) fully-spiking SaidTrace = a persistent-across-reset
