@@ -122,6 +122,29 @@ error compounds, so its robust depth is ~2 embedded clauses. The depth-2 case ne
 it is ~5/6); "more capacity wins" — raising D lifts the agent's robust nesting depth, exactly as the SNR
 analysis predicts.
 
+## Biology-faithful capstone — the recursive clause decodes IN SPIKES
+
+`research/findings/raw/_spiking_recursive_clause_probe.py` (D=256, M=8, 12 trials) builds and decodes
+"dog see (cat chase bird)" *entirely* with the genuine resonate-and-fire FHRR ops (`rf_bind` / `rf_unbind`
+/ `rf_bundle`; Izhikevich 2001 / Frady-Sommer 2019 phasor spikes):
+
+| Metric | Result |
+|---|---|
+| Outer level recovered (agent + action) | 1.00 |
+| Inner clause recovered (agent + action + patient) | 1.00 |
+| **Full 5-filler spiking recovery** | **1.00** |
+| Control (outer patient as a flat noun) | 0.00 (must stay low) |
+
+So recursive clause nesting is biology-faithful, not just a numpy convenience — it works through two
+bundle levels on the genuine spiking substrate, even at D=256.
+
+**Smell-test (a perfect spiking score earns scrutiny):** the first run scored inner-clause 0.00 with a
+correct outer 1.00 — a real signal of a second-level break. Diagnosed: an intermediate `rf_resonate`
+cleanup between the two unbind levels corrupts the phase structure the second unbind needs (with resonate
+0.00, without it 1.00, at D=256/512/1024). The fix is to unbind the raw `rf_unbind` output directly (the
+same pattern the existing `_spiking_nested_fact_probe` uses). The 1.00 is genuine — the control at 0.00
+confirms the decode uses the nested structure, not a leak.
+
 ## Verdict
 
 **RESOLVES (substrate, depth 3) + agent capability (embedded clause incl. attributed arguments, robust).**
