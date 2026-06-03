@@ -38,3 +38,18 @@ class ContextBuffer:
 
     def weights(self) -> dict:
         return dict(self._w)
+
+
+def relevance(candidate: str, context: dict, graph: dict) -> float:
+    """How strongly `candidate` is associated with the active context. Sum over active context
+    concepts c of  context_weight[c] * association_strength(c, candidate), i.e. the strength of the
+    edge from each active context concept to the candidate.
+
+    Note: the edge is looked up as graph[c][candidate] (context concept -> candidate). For the
+    symmetric graphs produced by build_association_graph this is equivalent to the reverse lookup,
+    but the orientation matters for the asymmetric hand-built test graphs, where association edges
+    are stored from the context concept outward (e.g. graph['apple']['big'])."""
+    total = 0.0
+    for c, w in context.items():
+        total += w * graph.get(c, {}).get(candidate, 0.0)
+    return total
