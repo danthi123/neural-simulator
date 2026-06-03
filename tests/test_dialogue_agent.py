@@ -46,3 +46,29 @@ def test_no_repeats_across_a_whole_conversation():
 def test_no_focus_yet_returns_none():
     agent = DialogueAgent(_graph())
     assert agent.respond("more") is None            # 'more' before any topic -> nothing to say
+
+
+def test_yes_no_question_associated():
+    agent = DialogueAgent(_graph())
+    ans = agent.respond("is rain related to storm?")   # rain-storm edge exists
+    assert ans.startswith("Yes")
+    assert "rain" in ans and "storm" in ans
+
+
+def test_yes_no_question_not_associated():
+    agent = DialogueAgent(_graph())
+    ans = agent.respond("is rain related to apple?")   # different topics, no edge
+    assert ans.startswith("No")
+
+
+def test_common_link_question():
+    # cloud associates {sky, rain}; storm associates {wind, rain} -> common = rain
+    g = {"cloud": {"sky": 2.0, "rain": 2.0}, "storm": {"wind": 1.8, "rain": 1.5}}
+    agent = DialogueAgent(g)
+    ans = agent.respond("what links cloud and storm?")
+    assert "rain" in ans and "both associated with" in ans
+
+
+def test_unknown_input():
+    agent = DialogueAgent(_graph())
+    assert agent.respond("xyzzy") == "I don't know about that."
